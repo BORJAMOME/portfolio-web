@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Borja Mora — Data Analyst · Power BI Developer</title>
+<style>
+/* ─── VARIABLES ─── */
+:root {
+  --ink: #08080e;
+  --ink2: #0f0f1a;
+  --ink3: #161625;
+  --p: #6c6fff;
+  --p2: #5152e8;
+  --p-glow: rgba(108,111,255,0.18);
+  --p-soft: rgba(108,111,255,0.08);
+  /* GOLD ELIMINADO — reemplazado por variantes del morado */
+  --gold: #8b8fff;
+  --gold2: #b8b9ff;
+  --w: #ffffff;
+  --off: #f5f5f8;
+  --mu: #737390;
+  --mu2: rgba(255,255,255,0.35);
+  --mu3: rgba(255,255,255,0.12);
+  --gr: #4adf6a;
+  --red: #ff4d6a;
+  --bd: rgba(255,255,255,0.06);
+  --bd2: rgba(255,255,255,0.1);
+  /* TIPOGRAFÍA: Segoe UI */
+  --serif: 'Segoe UI', 'Segoe UI Semibold', system-ui, sans-serif;
+  --sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --ease: cubic-bezier(0.16,1,0.3,1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--sans);
+  background: var(--ink);
+  color: var(--w);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ─── CUSTOM CURSOR ─── */
+.cursor {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background: var(--p);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s var(--ease), width 0.3s var(--ease), height 0.3s var(--ease), background 0.3s;
+  mix-blend-mode: screen;
+}
+.cursor-ring {
+  position: fixed;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(108,111,255,0.5);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: transform 0.18s var(--ease), width 0.3s var(--ease), height 0.3s var(--ease), opacity 0.3s;
+}
+body:hover .cursor { opacity: 1; }
+.cursor.hover { width: 16px; height: 16px; background: var(--gold); }
+.cursor-ring.hover { width: 52px; height: 52px; border-color: rgba(139,143,255,0.4); }
+
+/* ─── GRAIN OVERLAY ─── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.025;
+  pointer-events: none;
+  z-index: 9997;
+}
+
+/* ─── SCROLL PROGRESS ─── */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--p), var(--gold));
+  z-index: 1001;
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 0.1s linear;
+}
+
+/* ─── NAV ─── */
+nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  padding: 0 clamp(1.5rem, 5vw, 4rem);
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.4s, border-color 0.4s;
+}
+nav.scrolled {
+  background: rgba(8,8,14,0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--bd);
+}
+.logo {
+  font-family: var(--sans);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--w);
+  text-decoration: none;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.logo-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--p);
+  display: inline-block;
+  animation: breathe 3s ease-in-out infinite;
+}
+@keyframes breathe { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:.6} }
+
+.nav-links {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+.nav-links a {
+  font-size: 13px;
+  color: var(--mu2);
+  text-decoration: none;
+  padding: 7px 14px;
+  border-radius: 20px;
+  transition: color 0.2s, background 0.2s;
+  letter-spacing: 0.2px;
+}
+.nav-links a:hover { color: var(--w); background: var(--bd); }
+.nav-cta {
+  background: var(--p) !important;
+  color: var(--w) !important;
+  font-weight: 500 !important;
+}
+.nav-cta:hover { background: var(--p2) !important; }
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh;
+  padding: 0 clamp(1.5rem, 5vw, 4rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(80px);
+}
+.orb-1 {
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(108,111,255,0.12) 0%, transparent 70%);
+  top: -200px; left: 50%;
+  transform: translateX(-60%);
+  animation: drift1 12s ease-in-out infinite alternate;
+}
+.orb-2 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(139,143,255,0.07) 0%, transparent 70%);
+  bottom: 10%; right: 5%;
+  animation: drift2 10s ease-in-out infinite alternate;
+}
+@keyframes drift1 { 0%{transform:translateX(-60%) translateY(0)} 100%{transform:translateX(-40%) translateY(40px)} }
+@keyframes drift2 { 0%{transform:translate(0,0)} 100%{transform:translate(-30px, -40px)} }
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(108,111,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(108,111,255,0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 0%, transparent 100%);
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1080px;
+  margin: 0 auto;
+  width: 100%;
+  padding-top: 100px;
+  padding-bottom: 60px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(108,111,255,0.25);
+  background: rgba(108,111,255,0.06);
+  border-radius: 4px;
+  padding: 5px 14px;
+  font-size: 11px;
+  color: var(--gold2);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: 36px;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.1s var(--ease) forwards;
+}
+.badge-pulse {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--gr);
+  box-shadow: 0 0 8px var(--gr);
+  animation: pulse-gr 2s infinite;
+}
+@keyframes pulse-gr { 0%,100%{opacity:1;box-shadow:0 0 8px var(--gr)} 50%{opacity:.4;box-shadow:0 0 3px var(--gr)} }
+
+.hero-h1 {
+  font-family: var(--sans);
+  font-size: clamp(52px, 6.5vw, 88px);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -2px;
+  color: var(--w);
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: fadeUp 0.9s 0.2s var(--ease) forwards;
+}
+.hero-h1 em {
+  font-style: normal;
+  color: transparent;
+  background: linear-gradient(135deg, var(--p) 0%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.hero-h1 .line-accent {
+  display: block;
+  color: rgba(255,255,255,0.22);
+  font-size: 0.58em;
+  letter-spacing: 0px;
+  font-weight: 300;
+  font-style: normal;
+}
+
+/* ── HERO SUB: gris-negro ── */
+.hero-sub {
+  font-size: 16px;
+  color: #2a2a35;
+  line-height: 1.75;
+  font-weight: 400;
+  max-width: 400px;
+  margin-bottom: 44px;
+  opacity: 0;
+  animation: fadeUp 0.9s 0.35s var(--ease) forwards;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fadeUp 0.9s 0.45s var(--ease) forwards;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 28px;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.25s var(--ease);
+  cursor: none;
+  border: none;
+  font-family: var(--sans);
+  letter-spacing: 0.3px;
+}
+.btn-primary {
+  background: var(--p);
+  color: var(--w);
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.12) 100%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.btn-primary:hover::before { opacity: 1; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(108,111,255,0.3); }
+.btn-outline {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.14);
+  color: rgba(255,255,255,0.55);
+}
+.btn-outline:hover { border-color: rgba(255,255,255,0.3); color: var(--w); transform: translateY(-2px); }
+
+/* ─── HERO RIGHT: DASHBOARD MOCKUP ─── */
+.hero-right {
+  opacity: 0;
+  animation: fadeUp 1s 0.5s var(--ease) forwards;
+  position: relative;
+}
+
+.dashboard-frame {
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(108,111,255,0.1);
+  position: relative;
+}
+.dashboard-frame::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(108,111,255,0.5), rgba(139,143,255,0.3), transparent);
+}
+
+.df-titlebar {
+  background: rgba(255,255,255,0.03);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border-bottom: 1px solid var(--bd);
+}
+.df-dot { width: 9px; height: 9px; border-radius: 50%; }
+.df-url {
+  margin-left: 10px;
+  font-size: 10px;
+  color: rgba(255,255,255,0.16);
+  letter-spacing: 0.3px;
+}
+
+.df-body {
+  padding: 16px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.d-kpi {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 8px;
+  padding: 12px 14px;
+  transition: border-color 0.3s;
+}
+.d-kpi:hover { border-color: rgba(108,111,255,0.2); }
+.d-kpi-label { font-size: 9px; color: rgba(255,255,255,0.22); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+.d-kpi-value { font-family: var(--sans); font-size: 22px; font-weight: 600; color: var(--w); line-height: 1; margin-bottom: 5px; }
+.d-kpi-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: rgba(74,223,106,0.1);
+  color: #4adf6a;
+}
+
+.d-chart {
+  grid-column: span 2;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+}
+.d-chart-label { font-size: 9px; color: rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; }
+.d-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 60px;
+  flex: 1;
+}
+.d-bar {
+  flex: 1;
+  border-radius: 2px 2px 0 0;
+  background: rgba(108,111,255,0.18);
+  transition: background 0.3s;
+}
+.d-bar.hi { background: var(--p); }
+.d-bar.gold { background: rgba(139,143,255,0.4); }
+
+.d-list {
+  grid-column: span 2;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+.d-list-label { font-size: 9px; color: rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; }
+.d-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 7px;
+}
+.d-row:last-child { margin-bottom: 0; }
+.d-rname { font-size: 10px; color: rgba(255,255,255,0.3); min-width: 42px; }
+.d-track { flex: 1; height: 3px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden; }
+.d-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--p), rgba(139,143,255,0.7)); }
+.d-rval { font-size: 10px; color: rgba(255,255,255,0.28); min-width: 38px; text-align: right; }
+
+.dash-tag {
+  position: absolute;
+  top: -14px;
+  right: 24px;
+  background: var(--ink);
+  border: 1px solid rgba(108,111,255,0.3);
+  border-radius: 3px;
+  padding: 4px 12px;
+  font-size: 10px;
+  color: var(--gold2);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* ─── PROOF STRIP ─── */
+.proof-strip {
+  border-top: 1px solid var(--bd);
+  border-bottom: 1px solid var(--bd);
+  padding: 20px clamp(1.5rem, 5vw, 4rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(20px, 4vw, 56px);
+  flex-wrap: wrap;
+  position: relative;
+  overflow: hidden;
+}
+.proof-strip::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(108,111,255,0.03), transparent);
+}
+.proof-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12.5px;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.2px;
+}
+.proof-item strong { color: rgba(255,255,255,0.7); font-weight: 500; }
+.proof-icon {
+  width: 30px; height: 30px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--bd);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+/* ─── SECTION COMMONS ─── */
+section { padding: clamp(80px, 10vw, 120px) clamp(1.5rem, 5vw, 4rem); }
+.c { max-width: 1080px; margin: 0 auto; }
+
+.s-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+.s-tag::before {
+  content: '';
+  width: 20px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.5;
+}
+
+.s-h {
+  font-family: var(--sans);
+  font-size: clamp(36px, 4vw, 56px);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  color: var(--w);
+  margin-bottom: 16px;
+}
+.s-h em { font-style: normal; color: var(--p); }
+.s-h.dark-text { color: var(--ink); }
+.s-h.dark-text em { color: var(--p2); }
+
+.s-sub {
+  font-size: 15px;
+  color: rgba(255,255,255,0.35);
+  line-height: 1.7;
+  font-weight: 300;
+  max-width: 500px;
+}
+.s-sub.dk { color: var(--mu); }
+
+/* ─── WHAT I BUILD ─── */
+.wib-section { background: var(--ink2); }
+.wib-header { text-align: center; margin-bottom: 64px; }
+.wib-header .s-tag { justify-content: center; }
+.wib-header .s-sub { margin: 0 auto; }
+.wib-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--bd); border-radius: 12px; overflow: hidden; }
+.wib-card {
+  background: var(--ink2);
+  padding: 36px 32px;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.3s;
+}
+.wib-card:hover { background: rgba(108,111,255,0.06); }
+.wib-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 32px; right: 32px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(108,111,255,0.3), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.wib-card:hover::after { opacity: 1; }
+.wib-num {
+  font-family: var(--sans);
+  font-size: 72px;
+  font-weight: 700;
+  color: rgba(108,111,255,0.08);
+  line-height: 1;
+  position: absolute;
+  top: 20px; right: 24px;
+  letter-spacing: -3px;
+}
+.wib-icon { font-size: 28px; margin-bottom: 22px; display: block; filter: grayscale(0.2); }
+.wib-title { font-size: 17px; font-weight: 600; color: var(--w); margin-bottom: 12px; letter-spacing: -0.3px; }
+.wib-text { font-size: 13px; color: rgba(255,255,255,0.3); line-height: 1.7; }
+
+/* ─── PROJECTS ─── */
+.proj-section { background: var(--ink); }
+.proj-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 52px;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.proj-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 12px; }
+.proj-featured {
+  grid-row: span 2;
+  background: var(--ink3);
+  border: 1px solid rgba(108,111,255,0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.35s var(--ease);
+  cursor: none;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.proj-featured::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--p), var(--gold));
+}
+.proj-featured:hover {
+  border-color: rgba(108,111,255,0.25);
+  transform: translateY(-4px);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(108,111,255,0.15);
+}
+.pf-visual-top {
+  height: 220px;
+  background: linear-gradient(135deg, rgba(108,111,255,0.06) 0%, rgba(139,143,255,0.03) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  border-bottom: 1px solid var(--bd);
+  position: relative;
+  overflow: hidden;
+}
+.pf-visual-top::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(108,111,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(108,111,255,0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.pf-mini-dash {
+  width: 88%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 8px;
+  padding: 12px;
+  position: relative;
+  z-index: 1;
+}
+.pf-mini-kpis { display: flex; gap: 5px; margin-bottom: 7px; }
+.pf-mk { flex: 1; background: rgba(255,255,255,0.04); border-radius: 5px; padding: 7px 9px; }
+.pf-mkv { font-size: 14px; font-weight: 600; color: var(--w); font-family: var(--sans); }
+.pf-mkl { font-size: 8px; color: rgba(255,255,255,0.2); margin-top: 1px; }
+.pf-mini-bars { display: flex; gap: 2.5px; align-items: flex-end; height: 40px; }
+.pf-mb { flex: 1; border-radius: 2px 2px 0 0; background: rgba(108,111,255,0.22); }
+.pf-mb.hi { background: var(--p); }
+.pf-content { padding: 28px 30px 30px; flex: 1; display: flex; flex-direction: column; }
+.pf-cat { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+.pf-title { font-family: var(--sans); font-size: 22px; font-weight: 600; color: var(--w); line-height: 1.2; margin-bottom: 10px; letter-spacing: -0.3px; }
+.pf-desc { font-size: 13px; color: rgba(255,255,255,0.35); line-height: 1.65; flex: 1; margin-bottom: 22px; }
+.pf-tags { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.pf-tag {
+  font-size: 10px;
+  font-weight: 500;
+  background: rgba(108,111,255,0.1);
+  border: 1px solid rgba(108,111,255,0.18);
+  color: rgba(180,180,255,0.7);
+  padding: 3px 9px;
+  border-radius: 3px;
+  letter-spacing: 0.3px;
+}
+.pf-link { margin-left: auto; font-size: 12px; color: var(--p); font-weight: 500; text-decoration: none; letter-spacing: 0.3px; }
+.pf-link:hover { color: var(--gold); }
+.proj-card {
+  background: var(--ink3);
+  border: 1px solid var(--bd);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s var(--ease);
+  cursor: none;
+  display: flex;
+  flex-direction: column;
+}
+.proj-card:hover {
+  border-color: rgba(108,111,255,0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+}
+.pc-visual {
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.pc-body { padding: 18px 20px 20px; flex: 1; display: flex; flex-direction: column; }
+.pc-cat { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--p); margin-bottom: 7px; }
+.pc-name { font-size: 15px; font-weight: 600; color: var(--w); margin-bottom: 6px; letter-spacing: -0.2px; line-height: 1.3; }
+.pc-desc { font-size: 12px; color: rgba(255,255,255,0.28); line-height: 1.6; flex: 1; margin-bottom: 14px; }
+.pc-foot { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--bd); }
+.pc-pills { display: flex; gap: 4px; flex-wrap: wrap; }
+.pc-pill { font-size: 9px; font-weight: 500; background: rgba(255,255,255,0.04); border: 1px solid var(--bd); color: rgba(255,255,255,0.3); padding: 2px 7px; border-radius: 3px; }
+.pc-link { font-size: 12px; color: var(--p); font-weight: 500; text-decoration: none; }
+.proj-more { text-align: center; margin-top: 48px; }
+
+/* ─── QUOTE ─── */
+.quote-section {
+  background: var(--ink2);
+  position: relative;
+  overflow: hidden;
+}
+.quote-section::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 900px; height: 500px;
+  background: radial-gradient(ellipse, rgba(108,111,255,0.06) 0%, transparent 65%);
+  pointer-events: none;
+}
+.qs-inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.qs-number {
+  font-family: var(--sans);
+  font-size: 180px;
+  font-weight: 700;
+  color: rgba(108,111,255,0.04);
+  line-height: 1;
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  letter-spacing: -8px;
+  pointer-events: none;
+}
+.big-quote {
+  font-family: var(--sans);
+  font-size: clamp(28px, 3.2vw, 42px);
+  font-weight: 600;
+  color: var(--w);
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  margin-bottom: 36px;
+  position: relative;
+}
+.big-quote em { font-style: normal; color: var(--p); }
+.big-quote::before {
+  content: '"';
+  font-size: 100px;
+  color: rgba(108,111,255,0.12);
+  position: absolute;
+  top: -40px;
+  left: -20px;
+  line-height: 1;
+}
+.qs-right { display: flex; flex-direction: column; gap: 20px; }
+.qs-text { font-size: 15px; color: rgba(255,255,255,0.35); line-height: 1.8; font-weight: 300; }
+.qs-callout {
+  background: rgba(108,111,255,0.07);
+  border-left: 2px solid var(--p);
+  border-radius: 0 8px 8px 0;
+  padding: 18px 22px;
+}
+.qs-callout p { font-size: 14px; color: rgba(255,255,255,0.65); line-height: 1.65; font-style: italic; }
+
+/* ─── PRINCIPLES ─── */
+.prin-section { background: var(--ink); }
+.prin-header { text-align: center; margin-bottom: 64px; }
+.prin-header .s-tag { justify-content: center; }
+.prin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.prin-card {
+  background: var(--ink2);
+  border: 1px solid var(--bd);
+  border-radius: 12px;
+  padding: 32px 28px;
+  transition: all 0.3s var(--ease);
+  position: relative;
+  overflow: hidden;
+}
+.prin-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(108,111,255,0.04) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.prin-card:hover { border-color: rgba(108,111,255,0.2); transform: translateY(-3px); }
+.prin-card:hover::before { opacity: 1; }
+.prin-num {
+  font-family: var(--sans);
+  font-size: 52px;
+  font-weight: 700;
+  color: rgba(108,111,255,0.15);
+  line-height: 1;
+  margin-bottom: 18px;
+  letter-spacing: -1px;
+}
+.prin-title { font-size: 16px; font-weight: 600; color: var(--w); margin-bottom: 10px; letter-spacing: -0.2px; }
+.prin-text { font-size: 13px; color: rgba(255,255,255,0.3); line-height: 1.7; }
+
+/* ─── BUSINESS PROBLEMS ─── */
+.prob-section { background: var(--off); }
+.prob-header { text-align: center; margin-bottom: 60px; }
+.prob-header .s-tag { justify-content: center; color: var(--p2); }
+.prob-header .s-tag::before { background: var(--p2); }
+.prob-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.prob-card {
+  background: var(--w);
+  border: 1px solid rgba(0,0,0,0.07);
+  border-radius: 16px;
+  padding: 32px 28px;
+  transition: all 0.3s var(--ease);
+  position: relative;
+  overflow: hidden;
+}
+.prob-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--p), var(--gold));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s var(--ease);
+}
+.prob-card:hover::before { transform: scaleX(1); }
+.prob-card:hover { box-shadow: 0 16px 48px rgba(108,111,255,0.1); transform: translateY(-4px); border-color: rgba(108,111,255,0.15); }
+.prob-icon-wrap {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  background: rgba(108,111,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+.prob-title { font-size: 16px; font-weight: 600; color: var(--ink); margin-bottom: 10px; letter-spacing: -0.2px; }
+.prob-text { font-size: 13px; color: var(--mu); line-height: 1.68; }
+
+/* ─── STATS ─── */
+.stats-section {
+  background: linear-gradient(135deg, var(--ink) 0%, var(--ink2) 100%);
+  position: relative;
+  overflow: hidden;
+}
+.stats-section::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 30%;
+  transform: translate(-50%, -50%);
+  width: 600px; height: 400px;
+  background: radial-gradient(ellipse, rgba(108,111,255,0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+.stat-card {
+  padding: 48px 40px;
+  position: relative;
+  border-right: 1px solid var(--bd);
+}
+.stat-card:last-child { border-right: none; }
+.stat-line {
+  width: 36px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--p), var(--gold));
+  margin-bottom: 28px;
+}
+.stat-num {
+  font-family: var(--sans);
+  font-size: 64px;
+  font-weight: 700;
+  color: var(--w);
+  line-height: 1;
+  margin-bottom: 14px;
+  letter-spacing: -2px;
+}
+.stat-title { font-size: 16px; font-weight: 600; color: rgba(255,255,255,0.75); margin-bottom: 10px; }
+.stat-text { font-size: 13px; color: rgba(255,255,255,0.28); line-height: 1.65; }
+
+/* ─── COMMUNITY ─── */
+.com-section { background: var(--ink2); }
+.com-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 72px; align-items: center; }
+.com-posts { display: flex; flex-direction: column; gap: 8px; }
+.cp {
+  background: rgba(255,255,255,0.025);
+  border: 1px solid var(--bd);
+  border-radius: 10px;
+  padding: 16px 18px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  transition: all 0.25s var(--ease);
+  cursor: none;
+}
+.cp:hover { border-color: rgba(108,111,255,0.22); transform: translateX(5px); background: rgba(108,111,255,0.04); }
+.cp-av {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--p), var(--gold));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--w);
+  flex-shrink: 0;
+}
+.cp-name { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.6); margin-bottom: 4px; }
+.cp-text { font-size: 12px; color: rgba(255,255,255,0.28); line-height: 1.55; }
+.cp-stat { font-size: 11px; color: rgba(108,111,255,0.6); margin-top: 7px; font-weight: 500; }
+.com-right .s-sub { color: rgba(255,255,255,0.35); margin-bottom: 32px; }
+
+/* ─── CTA ─── */
+.cta-section {
+  background: var(--ink);
+  text-align: center;
+  padding: clamp(100px, 14vw, 160px) clamp(1.5rem, 5vw, 4rem);
+  position: relative;
+  overflow: hidden;
+}
+.cta-bg-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--sans);
+  font-size: clamp(120px, 18vw, 240px);
+  font-weight: 700;
+  color: rgba(255,255,255,0.018);
+  white-space: nowrap;
+  pointer-events: none;
+  letter-spacing: -8px;
+  user-select: none;
+}
+.cta-section::before {
+  content: '';
+  position: absolute;
+  bottom: -80px; left: 50%;
+  transform: translateX(-50%);
+  width: 800px; height: 600px;
+  background: radial-gradient(circle, rgba(108,111,255,0.1) 0%, transparent 65%);
+  pointer-events: none;
+}
+.cta-inner { position: relative; z-index: 1; }
+.cta-h {
+  font-family: var(--sans);
+  font-size: clamp(40px, 6vw, 72px);
+  font-weight: 600;
+  color: var(--w);
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+  margin-bottom: 20px;
+}
+.cta-h em { font-style: normal; color: transparent; background: linear-gradient(135deg, var(--p), var(--gold)); -webkit-background-clip: text; background-clip: text; }
+.cta-sub { font-size: 16px; color: rgba(255,255,255,0.3); margin-bottom: 48px; font-weight: 300; }
+.cta-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.cta-foot { font-size: 12px; color: rgba(255,255,255,0.16); margin-top: 36px; letter-spacing: 0.3px; }
+.cta-foot a { color: rgba(255,255,255,0.3); text-decoration: none; }
+.cta-foot a:hover { color: rgba(255,255,255,0.55); }
+
+/* ─── FOOTER — texto blanco ─── */
+footer {
+  background: var(--ink);
+  border-top: 1px solid var(--bd);
+  padding: 28px clamp(1.5rem, 5vw, 4rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.foot-logo { font-family: var(--sans); font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.85); }
+.foot-links { display: flex; gap: 22px; }
+.foot-links a { font-size: 12px; color: rgba(255,255,255,0.75); text-decoration: none; transition: color 0.2s; letter-spacing: 0.2px; }
+.foot-links a:hover { color: var(--w); }
+.foot-copy { font-size: 11px; color: rgba(255,255,255,0.55); }
+
+/* ─── SCROLL REVEAL ─── */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+.sr { opacity: 0; transform: translateY(22px); transition: opacity 0.75s var(--ease), transform 0.75s var(--ease); }
+.sr.visible { opacity: 1; transform: translateY(0); }
+.sr-d1 { transition-delay: 0.08s; }
+.sr-d2 { transition-delay: 0.16s; }
+.sr-d3 { transition-delay: 0.24s; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 900px) {
+  .hero-inner { grid-template-columns: 1fr; }
+  .hero-right { display: none; }
+  .wib-grid { grid-template-columns: 1fr; }
+  .proj-grid { grid-template-columns: 1fr; }
+  .proj-featured { grid-row: auto; }
+  .qs-inner { grid-template-columns: 1fr; gap: 40px; }
+  .prin-grid { grid-template-columns: 1fr; }
+  .prob-grid { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .stat-card { border-right: none; border-bottom: 1px solid var(--bd); }
+  .com-grid { grid-template-columns: 1fr; gap: 40px; }
+  .nav-links a:not(.nav-cta) { display: none; }
+  footer { flex-direction: column; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- ─── NAV ─── -->
+<nav id="nav">
+  <a href="index.html" class="logo">Borja Mora<span class="logo-dot"></span></a>
+  <div class="nav-links">
+    <a href="sobre-mi.html">Sobre mí</a>
+    <a href="proyectos.html">Proyectos</a>
+    <a href="https://linkedin.com/in/borjamora" target="_blank">LinkedIn</a>
+    <a href="mailto:hi@borjamora.es" class="nav-cta">Contacto</a>
+  </div>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section class="hero">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="hero-grid"></div>
+
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-badge">
+        <span class="badge-pulse"></span>
+        Disponible · Data Analyst / Power BI
+      </div>
+
+      <h1 class="hero-h1">
+        Datos claros.<br>
+        <em>Decisiones</em><br>
+        <span class="line-accent">mejores.</span>
+      </h1>
+
+      <p class="hero-sub">
+        Transformo datos complejos en dashboards que responden la pregunta correcta.
+        Power BI · DAX · Data Storytelling.
+      </p>
+
+      <div class="hero-actions">
+        <a href="proyectos.html" class="btn btn-primary">Ver proyectos →</a>
+        <a href="sobre-mi.html" class="btn btn-outline">Sobre mí</a>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="dash-tag">Live Preview</div>
+      <div class="dashboard-frame">
+        <div class="df-titlebar">
+          <div class="df-dot" style="background:#ff5f57"></div>
+          <div class="df-dot" style="background:#febc2e"></div>
+          <div class="df-dot" style="background:#28c840"></div>
+          <span class="df-url">borjamora.es / dashboard · ventas-ibcs</span>
+        </div>
+        <div class="df-body">
+          <div class="d-kpi">
+            <div class="d-kpi-label">Ingresos YTD</div>
+            <div class="d-kpi-value">€2.84M</div>
+            <div class="d-kpi-badge">▲ +12.4%</div>
+          </div>
+          <div class="d-kpi">
+            <div class="d-kpi-label">Unidades</div>
+            <div class="d-kpi-value">14,820</div>
+            <div class="d-kpi-badge">▲ +8.1%</div>
+          </div>
+          <div class="d-kpi">
+            <div class="d-kpi-label">Ticket medio</div>
+            <div class="d-kpi-value">€191</div>
+            <div class="d-kpi-badge">▲ +3.9%</div>
+          </div>
+          <div class="d-kpi">
+            <div class="d-kpi-label">Margen</div>
+            <div class="d-kpi-value">34.2%</div>
+            <div class="d-kpi-badge">▲ +1.2pp</div>
+          </div>
+          <div class="d-chart">
+            <div class="d-chart-label">Evolución mensual</div>
+            <div class="d-bars">
+              <div class="d-bar" style="height:35%"></div>
+              <div class="d-bar" style="height:52%"></div>
+              <div class="d-bar" style="height:44%"></div>
+              <div class="d-bar hi" style="height:74%"></div>
+              <div class="d-bar" style="height:58%"></div>
+              <div class="d-bar hi" style="height:90%"></div>
+              <div class="d-bar gold" style="height:68%"></div>
+              <div class="d-bar" style="height:80%"></div>
+              <div class="d-bar hi" style="height:96%"></div>
+              <div class="d-bar" style="height:75%"></div>
+              <div class="d-bar" style="height:82%"></div>
+              <div class="d-bar hi" style="height:88%"></div>
+            </div>
+          </div>
+          <div class="d-list">
+            <div class="d-list-label">Ventas por zona</div>
+            <div class="d-row">
+              <span class="d-rname">Norte</span>
+              <div class="d-track"><div class="d-fill" style="width:85%"></div></div>
+              <span class="d-rval">€812K</span>
+            </div>
+            <div class="d-row">
+              <span class="d-rname">Centro</span>
+              <div class="d-track"><div class="d-fill" style="width:67%;opacity:.6"></div></div>
+              <span class="d-rval">€638K</span>
+            </div>
+            <div class="d-row">
+              <span class="d-rname">Sur</span>
+              <div class="d-track"><div class="d-fill" style="width:48%;opacity:.4"></div></div>
+              <span class="d-rval">€457K</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PROOF STRIP ─── -->
+<div class="proof-strip sr">
+  <div class="proof-item"><div class="proof-icon">🏢</div><span><strong>NTT Data</strong> · Consultoría</span></div>
+  <div class="proof-item"><div class="proof-icon">🎓</div><span><strong>Máster Big Data</strong> · Business Intelligence</span></div>
+  <div class="proof-item"><div class="proof-icon">🏅</div><span><strong>Microsoft PL-300</strong> · Certified</span></div>
+  <div class="proof-item"><div class="proof-icon">👥</div><span><strong>2.3K seguidores</strong> · LinkedIn</span></div>
+  <div class="proof-item"><div class="proof-icon">📊</div><span><strong>Power BI · DAX</strong> · Data Storytelling</span></div>
+</div>
+
+<!-- ─── WHAT I BUILD ─── -->
+<section class="wib-section">
+  <div class="c">
+    <div class="wib-header sr">
+      <div class="s-tag">Qué tipo de informes construyo</div>
+      <h2 class="s-h">Análisis orientado<br><em>al negocio</em></h2>
+      <p class="s-sub">Me interesan especialmente los proyectos donde la complejidad de los datos hace que la claridad sea realmente importante.</p>
+    </div>
+    <div class="wib-grid sr">
+      <div class="wib-card">
+        <div class="wib-num">01</div>
+        <span class="wib-icon">▦</span>
+        <div class="wib-title">Reporting de ventas y KPIs</div>
+        <p class="wib-text">Dashboards comerciales con seguimiento de pipeline, performance por vendedor y comparativas vs plan. Diseñados para que el equipo de ventas tome decisiones en tiempo real.</p>
+      </div>
+      <div class="wib-card">
+        <div class="wib-num">02</div>
+        <span class="wib-icon">◈</span>
+        <div class="wib-title">Rendimiento de marketing</div>
+        <p class="wib-text">Análisis de canales, campañas y audiencias. Social media performance, atribución y ROI de inversión publicitaria con Power BI conectado a fuentes de datos externas.</p>
+      </div>
+      <div class="wib-card">
+        <div class="wib-num">03</div>
+        <span class="wib-icon">⬡</span>
+        <div class="wib-title">Reporting financiero</div>
+        <p class="wib-text">PyG, márgenes y seguimiento presupuestario. Informes financieros que conectan los datos contables con la toma de decisiones estratégica en empresas de cualquier tamaño.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PROYECTOS ─── -->
+<section class="proj-section">
+  <div class="c">
+    <div class="proj-header">
+      <div class="sr">
+        <div class="s-tag">Proyectos destacados</div>
+        <h2 class="s-h">Dashboards que<br><em>generan decisiones</em></h2>
+      </div>
+      <p class="s-sub sr" style="max-width:380px">Proyectos desarrollados con Power BI a partir de necesidades reales de negocio. Claridad, contexto y utilidad.</p>
+    </div>
+    <div class="proj-grid">
+      <div class="proj-featured sr">
+        <div class="pf-visual-top">
+          <div class="pf-mini-dash">
+            <div class="pf-mini-kpis">
+              <div class="pf-mk"><div class="pf-mkv">€2.84M</div><div class="pf-mkl">Ingresos</div></div>
+              <div class="pf-mk"><div class="pf-mkv">34.2%</div><div class="pf-mkl">Margen</div></div>
+              <div class="pf-mk"><div class="pf-mkv">14.8K</div><div class="pf-mkl">Unidades</div></div>
+            </div>
+            <div class="pf-mini-bars">
+              <div class="pf-mb" style="height:40%"></div>
+              <div class="pf-mb" style="height:55%"></div>
+              <div class="pf-mb" style="height:38%"></div>
+              <div class="pf-mb hi" style="height:80%"></div>
+              <div class="pf-mb" style="height:62%"></div>
+              <div class="pf-mb hi" style="height:95%"></div>
+              <div class="pf-mb" style="height:72%"></div>
+              <div class="pf-mb hi" style="height:88%"></div>
+            </div>
+          </div>
+        </div>
+        <div class="pf-content">
+          <div>
+            <div class="pf-cat">Ventas · IBCS</div>
+            <div class="pf-title">Informe de Ventas — Estándar IBCS</div>
+            <p class="pf-desc">Reporting de ventas con estándares IBCS: normalización visual, comparativa vs año anterior y vs plan, análisis de variaciones por producto y geografía.</p>
+          </div>
+          <div class="pf-tags">
+            <span class="pf-tag">Power BI</span>
+            <span class="pf-tag">DAX</span>
+            <span class="pf-tag">IBCS</span>
+            <a href="proyectos.html" class="pf-link">Ver proyecto →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="proj-card sr sr-d1">
+        <div class="pc-visual" style="background:linear-gradient(135deg,rgba(108,111,255,0.07) 0%,rgba(139,143,255,0.03) 100%)">
+          <div style="display:flex;flex-direction:column;gap:5px;width:100%;padding:0 8px">
+            <div style="display:flex;gap:6px">
+              <div style="background:rgba(108,111,255,0.15);border-radius:5px;padding:6px 10px;font-size:12px;font-weight:600;color:rgba(180,180,255,0.8)">€ 342K</div>
+              <div style="background:rgba(108,111,255,0.08);border-radius:5px;padding:6px 10px;font-size:12px;font-weight:600;color:rgba(180,180,255,0.5)">38.1%</div>
+            </div>
+            <div style="display:flex;gap:3px;align-items:flex-end;height:36px">
+              <div style="flex:1;height:45%;background:rgba(108,111,255,0.25);border-radius:2px 2px 0 0"></div>
+              <div style="flex:1;height:60%;background:rgba(108,111,255,0.35);border-radius:2px 2px 0 0"></div>
+              <div style="flex:1;height:35%;background:rgba(108,111,255,0.2);border-radius:2px 2px 0 0"></div>
+              <div style="flex:1;height:80%;background:var(--p);border-radius:2px 2px 0 0"></div>
+              <div style="flex:1;height:55%;background:rgba(108,111,255,0.45);border-radius:2px 2px 0 0"></div>
+              <div style="flex:1;height:95%;background:var(--p);border-radius:2px 2px 0 0"></div>
+              <div style="flex:1;height:65%;background:rgba(139,143,255,0.4);border-radius:2px 2px 0 0"></div>
+            </div>
+          </div>
+        </div>
+        <div class="pc-body">
+          <div class="pc-cat">Finanzas</div>
+          <div class="pc-name">Optimización del Reporting Financiero</div>
+          <p class="pc-desc">PyG, márgenes por línea de negocio y seguimiento presupuestario. Cuadro de mando para dirección financiera.</p>
+          <div class="pc-foot">
+            <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">Finanzas</span></div>
+            <a href="proyectos.html" class="pc-link">Ver →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="proj-card sr sr-d2">
+        <div class="pc-visual" style="background:linear-gradient(135deg,rgba(74,223,106,0.05) 0%,rgba(108,111,255,0.04) 100%)">
+          <div style="display:flex;flex-direction:column;gap:7px;align-items:center;width:100%">
+            <div style="background:rgba(108,111,255,0.12);border-radius:5px;padding:5px 12px;font-size:11px;font-weight:600;color:rgba(180,180,255,0.7)">413K impresiones</div>
+            <div style="display:flex;gap:4px;width:90%">
+              <div style="flex:3;height:6px;background:var(--p);border-radius:2px;opacity:.5"></div>
+              <div style="flex:2;height:6px;background:var(--p);border-radius:2px;opacity:.3"></div>
+            </div>
+            <div style="display:flex;gap:4px;width:90%">
+              <div style="flex:1.5;height:6px;background:var(--p);border-radius:2px;opacity:.2"></div>
+              <div style="flex:3;height:6px;background:var(--p);border-radius:2px;opacity:.4"></div>
+              <div style="flex:1;height:6px;background:rgba(139,143,255,0.6);border-radius:2px;opacity:.3"></div>
+            </div>
+          </div>
+        </div>
+        <div class="pc-body">
+          <div class="pc-cat">Marketing · Social</div>
+          <div class="pc-name">Social Media Performance — YoY</div>
+          <p class="pc-desc">Análisis de rendimiento de canales sociales con comparativas año a año, métricas de engagement y evolución de audiencia.</p>
+          <div class="pc-foot">
+            <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">Analytics</span></div>
+            <a href="proyectos.html" class="pc-link">Ver →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="proj-more sr">
+      <a href="proyectos.html" class="btn btn-outline">Ver todos los proyectos →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── QUOTE ─── -->
+<section class="quote-section">
+  <div class="c">
+    <div class="qs-inner">
+      <div class="qs-left sr">
+        <div class="qs-number">¿</div>
+        <div class="big-quote">
+          El problema no suele ser<br>
+          la falta de información.<br>
+          <em>Es cómo se organiza,<br>interpreta y comunica.</em>
+        </div>
+        <a href="sobre-mi.html" class="btn btn-primary">Conoce mi historia →</a>
+      </div>
+      <div class="qs-right sr sr-d1">
+        <p class="qs-text">Antes de construir cualquier informe, me gusta entender qué decisión tiene que facilitar. El análisis empieza por la pregunta, no por el dato.</p>
+        <div class="qs-callout">
+          <p>Un dashboard no solo muestra datos. Puede explicar lo que está pasando y ayudar a decidir qué hacer.</p>
+        </div>
+        <p class="qs-text">Combino modelado de datos, DAX, UX aplicado a visualización y data storytelling para convertir información en decisiones. Porque cuando los datos se comunican bien, las decisiones mejoran.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PRINCIPIOS ─── -->
+<section class="prin-section">
+  <div class="c">
+    <div class="prin-header sr">
+      <div class="s-tag">Principios que guían mi trabajo</div>
+      <h2 class="s-h">Cómo pienso<br><em>el análisis</em></h2>
+    </div>
+    <div class="prin-grid">
+      <div class="prin-card sr">
+        <div class="prin-num">01</div>
+        <div class="prin-title">Claridad ante todo</div>
+        <p class="prin-text">Un buen análisis es aquel que cualquier persona del equipo puede entender. Si necesitas explicar el gráfico, el gráfico falla. Diseño para que la información se lea sola.</p>
+      </div>
+      <div class="prin-card sr sr-d1">
+        <div class="prin-num">02</div>
+        <div class="prin-title">Ética como fundamento</div>
+        <p class="prin-text">Los datos tienen contexto y los gráficos pueden mentir. Me comprometo a representar la información de forma honesta, sin manipular escalas ni ocultar tendencias incómodas.</p>
+      </div>
+      <div class="prin-card sr sr-d2">
+        <div class="prin-num">03</div>
+        <div class="prin-title">Lo útil gana a lo bonito</div>
+        <p class="prin-text">Un dashboard puede ser visualmente impecable y completamente inútil. La belleza del análisis está en su capacidad de facilitar una decisión, no en los colores del tema.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── BUSINESS PROBLEMS ─── -->
+<section class="prob-section">
+  <div class="c">
+    <div class="prob-header sr">
+      <div class="s-tag" style="color:var(--p2)">Problemas de negocio</div>
+      <h2 class="s-h dark-text">Donde la complejidad<br><em>pide claridad</em></h2>
+    </div>
+    <div class="prob-grid">
+      <div class="prob-card sr">
+        <div class="prob-icon-wrap">▦</div>
+        <div class="prob-title">Performance de ventas y operaciones</div>
+        <p class="prob-text">Análisis del ciclo comercial, seguimiento de objetivos, detección de cuellos de botella y comparativas de rendimiento por equipo, producto o zona geográfica.</p>
+      </div>
+      <div class="prob-card sr sr-d1">
+        <div class="prob-icon-wrap">◈</div>
+        <div class="prob-title">Marketing analytics y atribución</div>
+        <p class="prob-text">Medición de campañas, análisis de canales digitales, comportamiento de audiencias y modelos de atribución que conecten inversión publicitaria con resultados reales.</p>
+      </div>
+      <div class="prob-card sr sr-d2">
+        <div class="prob-icon-wrap">⬡</div>
+        <div class="prob-title">Análisis financiero y control de gestión</div>
+        <p class="prob-text">PyG, márgenes por línea de negocio, seguimiento presupuestario y cuadros de mando para dirección financiera. Donde la complejidad del dato hace que la claridad sea crítica.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── STATS ─── -->
+<section class="stats-section">
+  <div class="c">
+    <div class="stats-grid sr">
+      <div class="stat-card">
+        <div class="stat-line"></div>
+        <div class="stat-num">3+</div>
+        <div class="stat-title">Áreas de especialización</div>
+        <p class="stat-text">Modelado de datos y DAX · Dashboards orientados a decisiones · UX y Data Storytelling aplicado a BI</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-line"></div>
+        <div class="stat-num">2.3K</div>
+        <div class="stat-title">Seguidores en LinkedIn</div>
+        <p class="stat-text">Comunidad activa donde comparto aprendizajes, experimentos de visualización y reflexiones sobre Power BI y Data Storytelling.</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-line"></div>
+        <div class="stat-num">PL-300</div>
+        <div class="stat-title">Microsoft Certified</div>
+        <p class="stat-text">Power BI Data Analyst Associate. Certificación oficial que valida el dominio de modelado, DAX, visualización y análisis de negocio.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── COMUNIDAD ─── -->
+<section class="com-section">
+  <div class="c">
+    <div class="com-grid">
+      <div class="com-posts sr">
+        <div class="cp">
+          <div class="cp-av">BM</div>
+          <div>
+            <div class="cp-name">Borja Mora · LinkedIn</div>
+            <p class="cp-text">¿Sabes cuándo un gráfico de barras empieza a mentir? Aquí te explico las 3 señales más comunes que nadie te cuenta en los cursos de Power BI...</p>
+            <div class="cp-stat">❤ 284 reacciones · 47 comentarios</div>
+          </div>
+        </div>
+        <div class="cp">
+          <div class="cp-av">BM</div>
+          <div>
+            <div class="cp-name">Borja Mora · LinkedIn</div>
+            <p class="cp-text">El futuro del dato no está en más herramientas. Está en saber explicar lo que significan. Mi reflexión sobre Data Storytelling en 2026.</p>
+            <div class="cp-stat">❤ 412 reacciones · 61 comentarios</div>
+          </div>
+        </div>
+        <div class="cp">
+          <div class="cp-av">BM</div>
+          <div>
+            <div class="cp-name">Borja Mora · LinkedIn</div>
+            <p class="cp-text">Reconstruí este dashboard financiero desde cero siguiendo principios IBCS. Antes: 12 gráficos. Después: 1 página. El mismo mensaje, 10x más claro.</p>
+            <div class="cp-stat">❤ 651 reacciones · 89 comentarios</div>
+          </div>
+        </div>
+      </div>
+      <div class="com-right sr sr-d1">
+        <div class="s-tag">Comunidad Power BI</div>
+        <h2 class="s-h">Aprendo<br><em>en público.</em></h2>
+        <p class="s-sub" style="color:rgba(255,255,255,0.35);margin-bottom:32px">Escribir sobre lo que voy aprendiendo me ayuda a profundizar en los conceptos y mejorar algo fundamental: saber explicar la información con claridad.</p>
+        <a href="https://linkedin.com/in/borjamora" target="_blank" class="btn btn-primary">Seguir en LinkedIn →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA ─── -->
+<section class="cta-section">
+  <div class="cta-bg-text">Claridad</div>
+  <div class="cta-inner sr">
+    <h2 class="cta-h">¿Tienes datos.<br>Necesitas <em>claridad?</em></h2>
+    <p class="cta-sub">Cuéntame tu proyecto. Hablamos sin compromiso.</p>
+    <div class="cta-actions">
+      <a href="mailto:hi@borjamora.es" class="btn btn-primary" style="font-size:15px;padding:15px 36px">Contáctame →</a>
+      <a href="sobre-mi.html" class="btn btn-outline" style="font-size:15px;padding:15px 36px">Sobre mí</a>
+    </div>
+    <p class="cta-foot">hi@borjamora.es · <a href="https://linkedin.com/in/borjamora">LinkedIn</a> · Madrid, España</p>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="foot-logo">Borja Mora Méndez.</div>
+  <div class="foot-links">
+    <a href="https://linkedin.com/in/borjamora" target="_blank">LinkedIn</a>
+    <a href="https://github.com/borjamora" target="_blank">GitHub</a>
+    <a href="proyectos.html">Proyectos</a>
+    <a href="sobre-mi.html">Sobre mí</a>
+  </div>
+  <div class="foot-copy">© Borja Mora Méndez. 2026 · Madrid, España</div>
+</footer>
+
+<script>
+// ─── CURSOR ───
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx + 'px';
+  cursor.style.top = my + 'px';
+});
+
+function animateRing() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px';
+  ring.style.top = ry + 'px';
+  requestAnimationFrame(animateRing);
+}
+animateRing();
+
+document.querySelectorAll('a, button, .proj-featured, .proj-card, .cp, .prob-card, .wib-card').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.classList.add('hover'); ring.classList.add('hover'); });
+  el.addEventListener('mouseleave', () => { cursor.classList.remove('hover'); ring.classList.remove('hover'); });
+});
+
+// ─── NAV SCROLL ───
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// ─── PROGRESS BAR ───
+const pb = document.getElementById('progressBar');
+window.addEventListener('scroll', () => {
+  const prog = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+  pb.style.transform = `scaleX(${prog})`;
+});
+
+// ─── SCROLL REVEAL ───
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.sr').forEach(el => observer.observe(el));
+
+// ─── BAR ANIMATION ───
+document.querySelectorAll('.d-bar, .pf-mb').forEach((b, i) => {
+  b.style.transition = `height 0.8s ${0.05 * i}s cubic-bezier(0.16,1,0.3,1)`;
+  const h = b.style.height;
+  b.style.height = '0%';
+  setTimeout(() => { b.style.height = h; }, 300 + i * 50);
+});
+</script>
+</body>
+</html>
