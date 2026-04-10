@@ -323,23 +323,24 @@ nav.scrolled { border-bottom-color: var(--gray); }
   display: flex;
   width: max-content;
   animation: scrollLoop 28s linear infinite;
+  will-change: transform; /* 🔥 clave */
 }
 
 /* contenido */
 .proof-content {
   display: flex;
-  gap: 48px;
+  gap: 28px; 
   padding: 0 clamp(1.5rem,5vw,4rem);
   white-space: nowrap;
 }
 
-  .proof-text {
-  font-size: 16px;
+.proof-text {
+  font-size: 15px;
   font-weight: 500;
-  color: #666666 ; /* gris tenue */
-  letter-spacing: 0.3px;
+  color: var(--muted); /* ✔️ mejor */
+  letter-spacing: 0.2px;
   white-space: nowrap;
-  opacity: 0.8;
+  opacity: 0.85;
   transition: opacity .2s ease;
 }
 
@@ -347,9 +348,10 @@ nav.scrolled { border-bottom-color: var(--gray); }
   opacity: 1;
 }
 
-  .proof-text::after {
+.proof-text::after {
   content: "•";
-  margin-left: 48px;
+  margin-left: 0; /* ❌ quitar spacing manual */
+  margin-right: 28px; /* 👉 mover a la derecha */
   color: var(--gray);
   opacity: 0.5;
 }
@@ -358,12 +360,33 @@ nav.scrolled { border-bottom-color: var(--gray); }
   content: "";
 }
 
+.proof-strip::before,
+.proof-strip::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 80px;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.proof-strip::before {
+  left: 0;
+  background: linear-gradient(to right, var(--white), transparent);
+}
+
+.proof-strip::after {
+  right: 0;
+  background: linear-gradient(to left, var(--white), transparent);
+}
+
 /* animación */
 @keyframes scrollLoop {
-  0% {
+  from {
     transform: translateX(0);
   }
-  100% {
+  to {
     transform: translateX(-50%);
   }
 }
