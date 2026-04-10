@@ -313,16 +313,34 @@ nav.scrolled { border-bottom-color: var(--gray); }
   background: var(--off);
   border-top: .5px solid var(--gray);
   border-bottom: .5px solid var(--gray);
-  padding: 18px clamp(1.5rem,5vw,4rem);
-  display: flex; align-items: center; justify-content: center;
-  gap: clamp(20px,4vw,48px); flex-wrap: wrap;
+  padding: 18px 0;
+  overflow: hidden;
+  position: relative;
 }
-.proof-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
-.proof-item strong { color: var(--ink); font-weight: 600; }
-.proof-icon {
-  width: 28px; height: 28px; border-radius: 7px;
-  background: var(--white); border: .5px solid var(--gray);
-  display: flex; align-items: center; justify-content: center; font-size: 13px;
+
+/* track animado */
+.proof-track {
+  display: flex;
+  width: max-content;
+  animation: scrollLoop 25s linear infinite;
+}
+
+/* contenido */
+.proof-content {
+  display: flex;
+  align-items: center;
+  gap: clamp(20px,4vw,48px);
+  padding: 0 clamp(1.5rem,5vw,4rem);
+}
+
+/* animación */
+@keyframes scrollLoop {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 /* ─── SECTION COMMONS ─── */
@@ -730,11 +748,26 @@ footer {
 
 <!-- ─── PROOF STRIP ─── -->
 <div class="proof-strip sr">
-  <div class="proof-item"><div class="proof-icon">🏢</div><span><strong>NTT Data</strong> · Consultoría</span></div>
-  <div class="proof-item"><div class="proof-icon">🎓</div><span><strong>Máster Big Data</strong> · Business Intelligence</span></div>
-  <div class="proof-item"><div class="proof-icon">🏅</div><span><strong>Microsoft PL-300</strong> · Certified</span></div>
-  <div class="proof-item"><div class="proof-icon">👥</div><span><strong>2.3K seguidores</strong> · LinkedIn</span></div>
-  <div class="proof-item"><div class="proof-icon">📊</div><span><strong>Power BI · DAX</strong> · Data Storytelling</span></div>
+  <div class="proof-track">
+
+    <div class="proof-content">
+      <div class="proof-item"><div class="proof-icon">🏢</div><span><strong>NTT Data</strong> · Consultoría</span></div>
+      <div class="proof-item"><div class="proof-icon">🎓</div><span><strong>Máster Big Data</strong> · Business Intelligence</span></div>
+      <div class="proof-item"><div class="proof-icon">🏅</div><span><strong>Microsoft PL-300</strong> · Certified</span></div>
+      <div class="proof-item"><div class="proof-icon">👥</div><span><strong>2.3K seguidores</strong> · LinkedIn</span></div>
+      <div class="proof-item"><div class="proof-icon">📊</div><span><strong>Power BI · DAX</strong> · Data Storytelling</span></div>
+    </div>
+
+    <!-- DUPLICADO -->
+    <div class="proof-content">
+      <div class="proof-item"><div class="proof-icon">🏢</div><span><strong>NTT Data</strong> · Consultoría</span></div>
+      <div class="proof-item"><div class="proof-icon">🎓</div><span><strong>Máster Big Data</strong> · Business Intelligence</span></div>
+      <div class="proof-item"><div class="proof-icon">🏅</div><span><strong>Microsoft PL-300</strong> · Certified</span></div>
+      <div class="proof-item"><div class="proof-icon">👥</div><span><strong>2.3K seguidores</strong> · LinkedIn</span></div>
+      <div class="proof-item"><div class="proof-icon">📊</div><span><strong>Power BI · DAX</strong> · Data Storytelling</span></div>
+    </div>
+
+  </div>
 </div>
 
 <!-- ─── WHAT I BUILD — blanco ─── -->
