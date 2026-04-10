@@ -145,8 +145,10 @@ nav.scrolled { border-bottom-color: var(--gray); }
 }
 
 .hero-inner {
-  grid-template-columns: 1.2fr 0.9fr;
-  gap: 80px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 72px;
+  align-items: center;
 }
 
 .hero-badge {
@@ -179,8 +181,9 @@ nav.scrolled { border-bottom-color: var(--gray); }
   gap: 6px; 
 }
 
-.hero-h1 .line {
-  display: block;
+.hero-left {
+  max-width: 520px;
+  width: 100%;
 }
 
 .hero-h1 .line-purple {
