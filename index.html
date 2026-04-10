@@ -172,13 +172,24 @@ nav.scrolled { border-bottom-color: var(--gray); }
 @keyframes pulse-gr { 0%,100%{opacity:1} 50%{opacity:.35} }
 
 .hero-h1 {
-  font-size: clamp(52px,6vw,84px);
+  font-size: clamp(56px, 6.5vw, 84px);
   font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: -2.5px;
+  line-height: 1.02; 
+  letter-spacing: -2.8px;
   color: var(--ink);
-  margin-bottom: 28px;
-  max-width: 540px;
+  margin-bottom: 32px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px; 
+}
+
+.hero-h1 .line {
+  display: block;
+}
+
+.hero-h1 .line-purple {
+  color: var(--purple);
 }
   
 .hero-h1 .line-purple { display: block; color: var(--purple); }
