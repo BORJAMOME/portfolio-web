@@ -443,6 +443,66 @@ footer{background:var(--off);border-top:.5px solid var(--gray);padding:24px clam
   transition:background .2s,gap .2s;
 }
 .nat-viz-card:hover .nat-viz-link{background:var(--purple2);gap:8px}
+
+/* ── LINKEDIN COMMUNITY CARDS ── */
+.li-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.li-card{
+  position:relative;border-radius:16px;overflow:hidden;
+  text-decoration:none;display:flex;flex-direction:column;
+  min-height:260px;transition:transform .3s,box-shadow .3s;
+  background:#0a1628;
+}
+.li-card:hover{transform:translateY(-5px);box-shadow:0 20px 48px rgba(0,119,181,.25)}
+.li-card-bg{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:top;
+  transition:transform .5s ease;opacity:.75;
+}
+.li-card:hover .li-card-bg{transform:scale(1.04);opacity:.6}
+.li-card-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,
+    rgba(0,15,35,.2) 0%,
+    rgba(0,15,35,.5) 40%,
+    rgba(0,15,35,.95) 100%);
+}
+.li-card-top{
+  position:relative;z-index:1;
+  padding:16px 16px 0;
+}
+.li-card-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:#0077b5;color:#fff;
+  font-size:10px;font-weight:700;letter-spacing:.3px;
+  padding:4px 10px;border-radius:20px;
+}
+.li-card-body{
+  position:relative;z-index:1;
+  padding:0 18px 18px;
+  margin-top:auto;
+  display:flex;flex-direction:column;gap:8px;
+}
+.li-card-title{
+  font-size:14.5px;font-weight:800;color:#fff;
+  line-height:1.3;letter-spacing:-.2px;
+  text-shadow:0 1px 8px rgba(0,0,0,.6);
+}
+.li-card-desc{
+  font-size:12px;color:rgba(255,255,255,.72);
+  line-height:1.6;
+  text-shadow:0 1px 4px rgba(0,0,0,.4);
+}
+.li-card-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  background:#0077b5;color:#fff;
+  font-size:11px;font-weight:700;
+  padding:6px 14px;border-radius:20px;
+  width:fit-content;margin-top:2px;
+  transition:background .2s,gap .2s;
+}
+.li-card:hover .li-card-btn{background:#005f92;gap:8px}
+@media(max-width:860px){.li-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.li-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -616,39 +676,81 @@ footer{background:var(--off);border-top:.5px solid var(--gray);padding:24px clam
       <!-- Community panel -->
       <div id="panelCom" style="background:var(--off);margin:0 -3rem;padding:40px 3rem;border-top:.5px solid var(--gray);">
         <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#bbb;margin-bottom:18px;">Aportaciones a la comunidad · LinkedIn</div>
-        <div class="com-grid">
-          <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7440740082766086144-4VZm" target="_blank" class="com-card">
-            <div class="com-card-head"><div class="com-li-dot"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg></div><div class="com-card-title">No estás filtrando datos. Estás eligiendo qué historia quieres ver.</div></div>
-            <p class="com-card-desc">Input Slicer, Field Parameters y DAX para análisis dinámicos en una sola tabla.</p>
-            <span class="com-badge">Ver en LinkedIn ↗</span>
+        <div class="li-grid">
+          <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7440740082766086144-4VZm" target="_blank" class="li-card">
+            <img src="./img/p1.png" alt="No estás filtrando datos. Estás eligiendo qué historia quieres ver." class="li-card-bg">
+            <div class="li-card-overlay"></div>
+            <div class="li-card-top">
+              <div class="li-card-badge"><svg viewBox="0 0 24 24" fill="#fff" width="14" height="14"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg> LinkedIn</div>
+            </div>
+            <div class="li-card-body">
+              <p class="li-card-title">No estás filtrando datos. Estás eligiendo qué historia quieres ver.</p>
+              <p class="li-card-desc">Input Slicer, Field Parameters y DAX para análisis dinámicos en una sola tabla.</p>
+              <span class="li-card-btn">Ver post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
           </a>
-          <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7442540385882554368-y4go" target="_blank" class="com-card">
-            <div class="com-card-head"><div class="com-li-dot"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg></div><div class="com-card-title">El futuro de los dashboards no son más gráficos, son mejores interacciones.</div></div>
-            <p class="com-card-desc">Input Slicer, Top N y títulos dinámicos para que el usuario explore sin perderse.</p>
-            <span class="com-badge">Ver en LinkedIn ↗</span>
+          <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7442540385882554368-y4go" target="_blank" class="li-card">
+            <img src="./img/p2.png" alt="El futuro de los dashboards no son más gráficos, son mejores interacciones." class="li-card-bg">
+            <div class="li-card-overlay"></div>
+            <div class="li-card-top">
+              <div class="li-card-badge"><svg viewBox="0 0 24 24" fill="#fff" width="14" height="14"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg> LinkedIn</div>
+            </div>
+            <div class="li-card-body">
+              <p class="li-card-title">El futuro de los dashboards no son más gráficos, son mejores interacciones.</p>
+              <p class="li-card-desc">Input Slicer, Top N y títulos dinámicos para que el usuario explore sin perderse.</p>
+              <span class="li-card-btn">Ver post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
           </a>
-          <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7404201819641597954-wwos" target="_blank" class="com-card">
-            <div class="com-card-head"><div class="com-li-dot"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg></div><div class="com-card-title">Producto a producto: cómo los datos cuentan historias.</div></div>
-            <p class="com-card-desc">Análisis anual con zoom trimestral que explica quién gana y cuándo.</p>
-            <span class="com-badge">Ver en LinkedIn ↗</span>
+          <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7404201819641597954-wwos" target="_blank" class="li-card">
+            <img src="./img/p3.png" alt="Producto a producto: cómo los datos cuentan historias." class="li-card-bg">
+            <div class="li-card-overlay"></div>
+            <div class="li-card-top">
+              <div class="li-card-badge"><svg viewBox="0 0 24 24" fill="#fff" width="14" height="14"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg> LinkedIn</div>
+            </div>
+            <div class="li-card-body">
+              <p class="li-card-title">Producto a producto: cómo los datos cuentan historias.</p>
+              <p class="li-card-desc">Análisis anual con zoom trimestral que explica quién gana y cuándo.</p>
+              <span class="li-card-btn">Ver post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
           </a>
-          <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7439647400132116480-1PFW" target="_blank" class="com-card">
-            <div class="com-card-head"><div class="com-li-dot"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg></div><div class="com-card-title">Si tienes que reconstruir la historia en tu cabeza, el dashboard falla.</div></div>
-            <p class="com-card-desc">Slope charts y small multiples para concentrar toda la información por producto.</p>
-            <span class="com-badge">Ver en LinkedIn ↗</span>
+          <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7439647400132116480-1PFW" target="_blank" class="li-card">
+            <img src="./img/p4.png" alt="Si tienes que reconstruir la historia en tu cabeza, el dashboard falla." class="li-card-bg">
+            <div class="li-card-overlay"></div>
+            <div class="li-card-top">
+              <div class="li-card-badge"><svg viewBox="0 0 24 24" fill="#fff" width="14" height="14"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg> LinkedIn</div>
+            </div>
+            <div class="li-card-body">
+              <p class="li-card-title">Si tienes que reconstruir la historia en tu cabeza, el dashboard falla.</p>
+              <p class="li-card-desc">Slope charts y small multiples para concentrar toda la información por producto.</p>
+              <span class="li-card-btn">Ver post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
           </a>
-          <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7437118505080020992-m7Em" target="_blank" class="com-card">
-            <div class="com-card-head"><div class="com-li-dot"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg></div><div class="com-card-title">Un gráfico puede ser correcto y aun así engañar.</div></div>
-            <p class="com-card-desc">Cómo los outliers distorsionan la escala y cómo construir un zoom visual.</p>
-            <span class="com-badge">Ver en LinkedIn ↗</span>
+          <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7437118505080020992-m7Em" target="_blank" class="li-card">
+            <img src="./img/p5.png" alt="Un gráfico puede ser correcto y aun así engañar." class="li-card-bg">
+            <div class="li-card-overlay"></div>
+            <div class="li-card-top">
+              <div class="li-card-badge"><svg viewBox="0 0 24 24" fill="#fff" width="14" height="14"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg> LinkedIn</div>
+            </div>
+            <div class="li-card-body">
+              <p class="li-card-title">Un gráfico puede ser correcto y aun así engañar.</p>
+              <p class="li-card-desc">Cómo los outliers distorsionan la escala y cómo construir un zoom visual.</p>
+              <span class="li-card-btn">Ver post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
           </a>
-          <a href="https://www.linkedin.com/feed/update/urn:li:activity:7376214576889098240/" target="_blank" class="com-card">
-            <div class="com-card-head"><div class="com-li-dot"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg></div><div class="com-card-title">Variaciones entre columnas al alcance de un vistazo.</div></div>
-            <p class="com-card-desc">Enfoque nativo para hacer comparables las variaciones porcentuales entre periodos.</p>
-            <span class="com-badge">Ver en LinkedIn ↗</span>
+          <a href="https://www.linkedin.com/feed/update/urn:li:activity:7376214576889098240/" target="_blank" class="li-card">
+            <img src="./img/p6.png" alt="Variaciones entre columnas al alcance de un vistazo." class="li-card-bg">
+            <div class="li-card-overlay"></div>
+            <div class="li-card-top">
+              <div class="li-card-badge"><svg viewBox="0 0 24 24" fill="#fff" width="14" height="14"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg> LinkedIn</div>
+            </div>
+            <div class="li-card-body">
+              <p class="li-card-title">Variaciones entre columnas al alcance de un vistazo.</p>
+              <p class="li-card-desc">Enfoque nativo para hacer comparables las variaciones porcentuales entre periodos.</p>
+              <span class="li-card-btn">Ver post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
           </a>
         </div>
-      </div>
+      </div>      </div>
 
       <!-- Native charts panel -->
       <div id="panelNat" style="padding-top:40px;">
