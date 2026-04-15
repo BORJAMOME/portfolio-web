@@ -336,6 +336,65 @@ footer{background:var(--off);border-top:.5px solid var(--gray);padding:24px clam
 .analysis-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--purple);text-decoration:none;margin-top:auto;transition:gap .2s}
 .analysis-link:hover{gap:10px}
 @media(max-width:860px){.analysis-grid{grid-template-columns:1fr}}
+
+/* ── VIZ CARDS (Diseño de la información) ── */
+.viz-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.viz-card{
+  position:relative;border-radius:16px;overflow:hidden;
+  text-decoration:none;display:flex;flex-direction:column;
+  min-height:280px;transition:transform .3s,box-shadow .3s;
+  background:var(--ink);
+}
+.viz-card:hover{transform:translateY(-5px);box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.viz-card-bg{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center;
+  transition:transform .5s ease;
+}
+.viz-card:hover .viz-card-bg{transform:scale(1.04)}
+.viz-card-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,
+    rgba(17,17,17,.15) 0%,
+    rgba(17,17,17,.45) 50%,
+    rgba(17,17,17,.88) 100%);
+  transition:opacity .3s;
+}
+.viz-card:hover .viz-card-overlay{opacity:.9}
+.viz-card-content{
+  position:relative;z-index:1;
+  padding:18px 20px 0;
+  margin-top:auto;
+}
+.viz-card-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.viz-card-tags span{
+  font-size:9.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  background:rgba(122,123,255,.35);color:#c8c9ff;
+  padding:2px 8px;border-radius:4px;backdrop-filter:blur(4px);
+}
+.viz-card-title{
+  font-size:16px;font-weight:700;color:#fff;
+  letter-spacing:-.3px;line-height:1.25;
+}
+.viz-card-footer{
+  position:relative;z-index:1;
+  padding:10px 20px 18px;
+}
+.viz-card-desc{font-size:12px;color:rgba(255,255,255,.65);line-height:1.65;margin-bottom:10px}
+.viz-card-link{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:12px;font-weight:700;color:rgba(255,255,255,.9);
+  transition:gap .2s;
+}
+.viz-card:hover .viz-card-link{gap:8px}
+.viz-card-more{
+  background:var(--off);border:.5px solid var(--gray);
+  align-items:center;justify-content:center;
+  color:var(--muted);min-height:280px;
+}
+.viz-card-more:hover{background:var(--purple-light);border-color:var(--purple);color:var(--purple);transform:translateY(-4px)}
+@media(max-width:860px){.viz-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:580px){.viz-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -616,29 +675,72 @@ footer{background:var(--off);border-top:.5px solid var(--gray);padding:24px clam
       </div>
       <div class="col-body" id="bodyDiseno">
         <p style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:28px;max-width:600px;">Infografías, mapas y visualizaciones que traducen datos complejos a lenguaje visual. No buscan embellecer el dato, sino ponerlo a prueba y explorar nuevas lecturas.</p>
-        <div class="dash-grid" style="margin-bottom:32px;">
-          <a href="https://www.behance.net/gallery/213119763/URBAN-ELEVATION-MAP" target="_blank" class="dash-card">
-            <div class="dash-card-img" style="height:160px;overflow:hidden;"><img src="./img/skyline.png" alt="El skyline oculto de Madrid" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;"></div>
-            <div class="dash-card-body"><div class="dash-card-title">El skyline oculto de Madrid</div><div class="dash-card-desc">Exploración 3D de la altura de los edificios que revela patrones urbanos invisibles.</div><div class="dash-card-foot"><div class="pills"><span class="pill pill-gray">3D</span><span class="pill pill-gray">Data Viz</span></div><span class="dash-card-link">Behance ↗</span></div></div>
+        <div class="viz-grid">
+          <a href="https://www.behance.net/gallery/213119763/URBAN-ELEVATION-MAP" target="_blank" class="viz-card">
+            <img src="./img/skyline.png" alt="El skyline oculto de Madrid" class="viz-card-bg">
+            <div class="viz-card-overlay"></div>
+            <div class="viz-card-content">
+              <div class="viz-card-tags"><span>3D</span><span>Data Viz</span></div>
+              <div class="viz-card-title">El skyline oculto de Madrid</div>
+            </div>
+            <div class="viz-card-footer">
+              <p class="viz-card-desc">Exploración 3D de la altura de los edificios que revela patrones urbanos invisibles.</p>
+              <span class="viz-card-link">Ver en Behance <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
           </a>
-          <a href="https://www.behance.net/gallery/212501517/DANA-in-Valencia-3D-Map" target="_blank" class="dash-card">
-            <div class="dash-card-img" style="height:160px;overflow:hidden;"><img src="./img/dana.png" alt="DANA en Valencia" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;"></div>
-            <div class="dash-card-body"><div class="dash-card-title">DANA en Valencia</div><div class="dash-card-desc">Visualización 3D del impacto real de la DANA y sus zonas más vulnerables.</div><div class="dash-card-foot"><div class="pills"><span class="pill pill-gray">Mapa 3D</span><span class="pill pill-gray">GIS</span></div><span class="dash-card-link">Behance ↗</span></div></div>
+          <a href="https://www.behance.net/gallery/212501517/DANA-in-Valencia-3D-Map" target="_blank" class="viz-card">
+            <img src="./img/dana.png" alt="DANA en Valencia" class="viz-card-bg">
+            <div class="viz-card-overlay"></div>
+            <div class="viz-card-content">
+              <div class="viz-card-tags"><span>Mapa 3D</span><span>GIS</span></div>
+              <div class="viz-card-title">DANA en Valencia</div>
+            </div>
+            <div class="viz-card-footer">
+              <p class="viz-card-desc">Visualización 3D del impacto real de la DANA y sus zonas más vulnerables.</p>
+              <span class="viz-card-link">Ver en Behance <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
           </a>
-          <a href="https://www.behance.net/gallery/212640571/Geological-Map-of-Spain-and-Portugal-3D" target="_blank" class="dash-card">
-            <div class="dash-card-img" style="height:160px;overflow:hidden;"><img src="./img/mapa.png" alt="Geología en tres dimensiones" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;"></div>
-            <div class="dash-card-body"><div class="dash-card-title">Geología en tres dimensiones</div><div class="dash-card-desc">Recreación 3D del mapa geológico de España y Portugal.</div><div class="dash-card-foot"><div class="pills"><span class="pill pill-gray">Geología</span><span class="pill pill-gray">3D</span></div><span class="dash-card-link">Behance ↗</span></div></div>
+          <a href="https://www.behance.net/gallery/212640571/Geological-Map-of-Spain-and-Portugal-3D" target="_blank" class="viz-card">
+            <img src="./img/mapa.png" alt="Geología en tres dimensiones" class="viz-card-bg">
+            <div class="viz-card-overlay"></div>
+            <div class="viz-card-content">
+              <div class="viz-card-tags"><span>Geología</span><span>3D</span></div>
+              <div class="viz-card-title">Geología en tres dimensiones</div>
+            </div>
+            <div class="viz-card-footer">
+              <p class="viz-card-desc">Recreación 3D del mapa geológico de España y Portugal.</p>
+              <span class="viz-card-link">Ver en Behance <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
           </a>
-          <a href="https://www.behance.net/gallery/211492633/Where-does-happiness-reside" target="_blank" class="dash-card">
-            <div class="dash-card-img" style="height:160px;overflow:hidden;"><img src="./img/feliz.png" alt="100 municipios, un índice y una pregunta incómoda" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;"></div>
-            <div class="dash-card-body"><div class="dash-card-title">100 municipios, un índice y una pregunta incómoda</div><div class="dash-card-desc">Población, renta e índice de felicidad en los municipios más poblados de España.</div><div class="dash-card-foot"><div class="pills"><span class="pill pill-gray">Infografía</span></div><span class="dash-card-link">Behance ↗</span></div></div>
+          <a href="https://www.behance.net/gallery/211492633/Where-does-happiness-reside" target="_blank" class="viz-card">
+            <img src="./img/feliz.png" alt="100 municipios, un índice y una pregunta incómoda" class="viz-card-bg">
+            <div class="viz-card-overlay"></div>
+            <div class="viz-card-content">
+              <div class="viz-card-tags"><span>Infografía</span><span>Datos</span></div>
+              <div class="viz-card-title">100 municipios, un índice y una pregunta incómoda</div>
+            </div>
+            <div class="viz-card-footer">
+              <p class="viz-card-desc">Población, renta e índice de felicidad en los municipios más poblados de España.</p>
+              <span class="viz-card-link">Ver en Behance <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
           </a>
-          <a href="https://www.behance.net/gallery/209226133/Metro-Walking-Map" target="_blank" class="dash-card">
-            <div class="dash-card-img" style="height:160px;overflow:hidden;"><img src="./img/metro.png" alt="Metro de Madrid rediseñado" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;"></div>
-            <div class="dash-card-body"><div class="dash-card-title">Redibujando el Metro desde el peatón</div><div class="dash-card-desc">Plano del Metro con distancias reales a pie entre estaciones.</div><div class="dash-card-foot"><div class="pills"><span class="pill pill-gray">Cartografía</span></div><span class="dash-card-link">Behance ↗</span></div></div>
+          <a href="https://www.behance.net/gallery/209226133/Metro-Walking-Map" target="_blank" class="viz-card">
+            <img src="./img/metro.png" alt="Redibujando el Metro desde el peatón" class="viz-card-bg">
+            <div class="viz-card-overlay"></div>
+            <div class="viz-card-content">
+              <div class="viz-card-tags"><span>Cartografía</span></div>
+              <div class="viz-card-title">Redibujando el Metro desde el peatón</div>
+            </div>
+            <div class="viz-card-footer">
+              <p class="viz-card-desc">Plano del Metro con distancias reales a pie entre estaciones.</p>
+              <span class="viz-card-link">Ver en Behance <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
           </a>
-          <a href="https://www.behance.net/borjamm2/projects" target="_blank" class="dash-card" style="display:flex;align-items:center;justify-content:center;min-height:220px;border-style:dashed;background:var(--off);">
-            <div style="text-align:center;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg><div style="font-size:13px;font-weight:600;color:var(--muted);margin-top:10px;">Ver más en Behance</div></div>
+          <a href="https://www.behance.net/borjamm2/projects" target="_blank" class="viz-card viz-card-more">
+            <div style="text-align:center;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+              <div style="font-size:13px;font-weight:700;margin-top:10px;">Ver más en Behance</div>
+            </div>
           </a>
         </div>
       </div>
