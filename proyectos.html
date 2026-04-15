@@ -322,6 +322,20 @@ footer{background:var(--off);border-top:.5px solid var(--gray);padding:24px clam
 }
 .pc-overlay-close:hover{background:var(--off)}
 .pc-overlay-close svg{stroke:var(--ink);fill:none;stroke-width:2;stroke-linecap:round}
+
+/* ── ANALYSIS CARDS (used in proyectos.html) ── */
+.analysis-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.analysis-card{background:var(--white);border:.5px solid #e4e4ec;border-radius:18px;padding:28px 26px 24px;display:flex;flex-direction:column;box-shadow:0 2px 12px rgba(0,0,0,.04);transition:all .3s;position:relative;overflow:hidden}
+.analysis-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--purple);transform:scaleX(0);transform-origin:left;transition:transform .3s}
+.analysis-card:hover{border-color:var(--purple);transform:translateY(-4px);box-shadow:0 20px 48px rgba(122,123,255,.12)}
+.analysis-card:hover::before{transform:scaleX(1)}
+.analysis-lang{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:18px}
+.analysis-lang span{font-size:10px;font-weight:700;background:var(--purple-light);color:var(--purple);padding:3px 9px;border-radius:5px;letter-spacing:.3px}
+.analysis-title{font-size:17px;font-weight:700;color:var(--ink);letter-spacing:-.3px;line-height:1.25;margin-bottom:10px}
+.analysis-desc{font-size:13px;color:var(--muted);line-height:1.7;flex:1;margin-bottom:20px}
+.analysis-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--purple);text-decoration:none;margin-top:auto;transition:gap .2s}
+.analysis-link:hover{gap:10px}
+@media(max-width:860px){.analysis-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -560,11 +574,33 @@ footer{background:var(--off);border-top:.5px solid var(--gray);padding:24px clam
         <div class="col-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
       </div>
       <div class="col-body" id="bodyAnalisis">
-        <p style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:24px;max-width:600px;">Exploración, limpieza y análisis de datos con Python, SQL y R. Proyectos con código documentado y conclusiones aplicables a negocio, disponibles en GitHub.</p>
-        <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main" target="_blank" class="ext-btn ext-btn-green">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.58v-2.03c-3.34.72-4.04-1.6-4.04-1.6-.54-1.38-1.33-1.74-1.33-1.74-1.08-.74.08-.73.08-.73 1.2.08 1.83 1.23 1.83 1.23 1.06 1.82 2.78 1.3 3.46.99.1-.77.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.13 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.82.57C20.57 21.8 24 17.3 24 12 24 5.37 18.63 0 12 0z"/></svg>
-          Ver en GitHub ↗
-        </a>
+        <p style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:32px;max-width:600px;">Exploración, limpieza y análisis de datos con Python, SQL y R. Proyectos con código documentado y conclusiones aplicables a negocio, disponibles en GitHub.</p>
+        <div class="analysis-grid" style="margin-bottom:36px;">
+          <div class="analysis-card">
+            <div class="analysis-lang"><span>Python</span><span>Pandas</span><span>Análisis de datos</span></div>
+            <div class="analysis-title">Mejores ciudades para teletrabajar</div>
+            <p class="analysis-desc">Análisis exploratorio para identificar municipios con buena conectividad, calidad ambiental y precios de vivienda competitivos.</p>
+            <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/python/Proyectos/03.Mejores%20Ciudades%20espa%C3%B1olas%20para%20vivir" target="_blank" class="analysis-link">Ver análisis completo <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+          </div>
+          <div class="analysis-card">
+            <div class="analysis-lang"><span>SQL</span><span>Exploración de datos</span><span>Visualización</span></div>
+            <div class="analysis-title">Mercado Airbnb — Análisis de precios</div>
+            <p class="analysis-desc">Exploración de datos para analizar patrones de precios, disponibilidad y demanda en el mercado de alquiler turístico.</p>
+            <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/SQL/Proyectos%20SQL/04.Estudio%20Airbnb%20Menorca" target="_blank" class="analysis-link">Ver consultas y conclusiones <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+          </div>
+          <div class="analysis-card">
+            <div class="analysis-lang"><span>R</span><span>Análisis de datos</span><span>Visualización</span></div>
+            <div class="analysis-title">Radiografía socioeconómica de Madrid</div>
+            <p class="analysis-desc">Análisis de indicadores demográficos y económicos para entender la distribución territorial de renta y población.</p>
+            <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/blob/main/r/Proyectos%20con%20R/01.Radiograf%C3%ADa%20de%20Madrid/README.md" target="_blank" class="analysis-link">Explorar análisis completo <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:center;">
+          <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main" target="_blank" class="ext-btn ext-btn-green">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.58v-2.03c-3.34.72-4.04-1.6-4.04-1.6-.54-1.38-1.33-1.74-1.33-1.74-1.08-.74.08-.73.08-.73 1.2.08 1.83 1.23 1.83 1.23 1.06 1.82 2.78 1.3 3.46.99.1-.77.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.13 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.82.57C20.57 21.8 24 17.3 24 12 24 5.37 18.63 0 12 0z"/></svg>
+            Ver más proyectos en GitHub
+          </a>
+        </div>
       </div>
     </div>
 
@@ -582,26 +618,26 @@ footer{background:var(--off);border-top:.5px solid var(--gray);padding:24px clam
         <p style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:28px;max-width:600px;">Infografías, mapas y visualizaciones que traducen datos complejos a lenguaje visual. No buscan embellecer el dato, sino ponerlo a prueba y explorar nuevas lecturas.</p>
         <div class="dash-grid" style="margin-bottom:32px;">
           <a href="https://www.behance.net/gallery/213119763/URBAN-ELEVATION-MAP" target="_blank" class="dash-card">
-            <div class="dash-card-img" style="height:140px;background:#1a1a2e;display:flex;align-items:center;justify-content:center;"><div style="text-align:center;"><div style="font-size:18px;font-weight:700;color:#fff;letter-spacing:-.3px;">Skyline oculto<br>de Madrid</div><div style="width:32px;height:2px;background:#7a7bff;margin:8px auto 0;border-radius:2px;"></div></div></div>
+            <div class="dash-card-img" style="height:160px;overflow:hidden;"><img src="./img/skyline.png" alt="El skyline oculto de Madrid" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;"></div>
             <div class="dash-card-body"><div class="dash-card-title">El skyline oculto de Madrid</div><div class="dash-card-desc">Exploración 3D de la altura de los edificios que revela patrones urbanos invisibles.</div><div class="dash-card-foot"><div class="pills"><span class="pill pill-gray">3D</span><span class="pill pill-gray">Data Viz</span></div><span class="dash-card-link">Behance ↗</span></div></div>
           </a>
           <a href="https://www.behance.net/gallery/212501517/DANA-in-Valencia-3D-Map" target="_blank" class="dash-card">
-            <div class="dash-card-img" style="height:140px;background:#2c3e50;display:flex;align-items:center;justify-content:center;"><div style="text-align:center;"><div style="font-size:18px;font-weight:700;color:#fff;letter-spacing:-.3px;">DANA<br>en Valencia</div><div style="width:32px;height:2px;background:#4a9fd4;margin:8px auto 0;border-radius:2px;"></div></div></div>
+            <div class="dash-card-img" style="height:160px;overflow:hidden;"><img src="./img/dana.png" alt="DANA en Valencia" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;"></div>
             <div class="dash-card-body"><div class="dash-card-title">DANA en Valencia</div><div class="dash-card-desc">Visualización 3D del impacto real de la DANA y sus zonas más vulnerables.</div><div class="dash-card-foot"><div class="pills"><span class="pill pill-gray">Mapa 3D</span><span class="pill pill-gray">GIS</span></div><span class="dash-card-link">Behance ↗</span></div></div>
           </a>
           <a href="https://www.behance.net/gallery/212640571/Geological-Map-of-Spain-and-Portugal-3D" target="_blank" class="dash-card">
-            <div class="dash-card-img" style="height:140px;background:#3d2b1f;display:flex;align-items:center;justify-content:center;"><div style="text-align:center;"><div style="font-size:18px;font-weight:700;color:#fff;letter-spacing:-.3px;">Geología<br>en 3D</div><div style="width:32px;height:2px;background:#c8854a;margin:8px auto 0;border-radius:2px;"></div></div></div>
+            <div class="dash-card-img" style="height:160px;overflow:hidden;"><img src="./img/mapa.png" alt="Geología en tres dimensiones" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;"></div>
             <div class="dash-card-body"><div class="dash-card-title">Geología en tres dimensiones</div><div class="dash-card-desc">Recreación 3D del mapa geológico de España y Portugal.</div><div class="dash-card-foot"><div class="pills"><span class="pill pill-gray">Geología</span><span class="pill pill-gray">3D</span></div><span class="dash-card-link">Behance ↗</span></div></div>
           </a>
           <a href="https://www.behance.net/gallery/211492633/Where-does-happiness-reside" target="_blank" class="dash-card">
-            <div class="dash-card-img" style="height:140px;background:#f5f0e8;display:flex;align-items:center;justify-content:center;"><div style="text-align:center;"><div style="font-size:22px;margin-bottom:6px;">☺</div><div style="font-size:15px;font-weight:700;color:#333;">¿Dónde se vive mejor?</div></div></div>
+            <div class="dash-card-img" style="height:160px;overflow:hidden;"><img src="./img/feliz.png" alt="100 municipios, un índice y una pregunta incómoda" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;"></div>
             <div class="dash-card-body"><div class="dash-card-title">100 municipios, un índice y una pregunta incómoda</div><div class="dash-card-desc">Población, renta e índice de felicidad en los municipios más poblados de España.</div><div class="dash-card-foot"><div class="pills"><span class="pill pill-gray">Infografía</span></div><span class="dash-card-link">Behance ↗</span></div></div>
           </a>
           <a href="https://www.behance.net/gallery/209226133/Metro-Walking-Map" target="_blank" class="dash-card">
-            <div class="dash-card-img" style="height:140px;background:#e8f0f8;display:flex;align-items:center;justify-content:center;"><div style="text-align:center;"><div style="font-size:15px;font-weight:700;color:#1a1a2e;">Metro de Madrid<br>rediseñado</div><div style="width:32px;height:2px;background:#0077c8;margin:8px auto 0;border-radius:2px;"></div></div></div>
+            <div class="dash-card-img" style="height:160px;overflow:hidden;"><img src="./img/metro.png" alt="Metro de Madrid rediseñado" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;"></div>
             <div class="dash-card-body"><div class="dash-card-title">Redibujando el Metro desde el peatón</div><div class="dash-card-desc">Plano del Metro con distancias reales a pie entre estaciones.</div><div class="dash-card-foot"><div class="pills"><span class="pill pill-gray">Cartografía</span></div><span class="dash-card-link">Behance ↗</span></div></div>
           </a>
-          <a href="https://www.behance.net/borjamoramendez" target="_blank" class="dash-card" style="display:flex;align-items:center;justify-content:center;min-height:220px;border-style:dashed;background:var(--off);">
+          <a href="https://www.behance.net/borjamm2/projects" target="_blank" class="dash-card" style="display:flex;align-items:center;justify-content:center;min-height:220px;border-style:dashed;background:var(--off);">
             <div style="text-align:center;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg><div style="font-size:13px;font-weight:600;color:var(--muted);margin-top:10px;">Ver más en Behance</div></div>
           </a>
         </div>
@@ -627,9 +663,9 @@ footer{background:var(--off);border-top:.5px solid var(--gray);padding:24px clam
           <!-- Content over image -->
           <div style="position:relative;z-index:1;padding:36px 40px;width:100%;display:flex;align-items:flex-end;justify-content:space-between;gap:32px;">
             <div style="max-width:560px;">
-              <div style="font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:10px;">Cartografía · 3D · GIS</div>
-              <h3 style="font-size:clamp(20px,2.5vw,30px);font-weight:700;color:#fff;letter-spacing:-.4px;line-height:1.2;margin-bottom:12px;">El territorio como dato</h3>
-              <p style="font-size:13.5px;color:rgba(255,255,255,.7);line-height:1.75;margin:0;">Mapas de relieve 3D, coropletas y cartografía avanzada que traducen datos geográficos y socioeconómicos en visualizaciones que revelan lo que los mapas planos no muestran.</p>
+              <div style="font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:10px;">QGIS · Blender · Cartografía 3D</div>
+              <h3 style="font-size:clamp(20px,2.5vw,30px);font-weight:700;color:#fff;letter-spacing:-.4px;line-height:1.2;margin-bottom:12px;">Comunidades Autónomas en tres dimensiones</h3>
+              <p style="font-size:13.5px;color:rgba(255,255,255,.7);line-height:1.75;margin:0;">Una colección de mapas 3D de las comunidades autónomas de España, construidos con QGIS y renderizados con Blender. Un enfoque diferente para visualizar y entender datos territoriales — cuando el relieve no es decoración, sino información.</p>
             </div>
             <a href="https://www.behance.net/gallery/213663039/Cartography-of-the-Spanish-Regions-3D" target="_blank" style="display:inline-flex;align-items:center;gap:7px;background:#fff;color:#111;font-size:13px;font-weight:700;padding:11px 22px;border-radius:9px;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:background .2s;">
               Ver en Behance
