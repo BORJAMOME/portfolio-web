@@ -395,6 +395,50 @@ footer{background:var(--off);border-top:.5px solid var(--gray);padding:24px clam
 .viz-card-more:hover{background:var(--purple-light);border-color:var(--purple);color:var(--purple);transform:translateY(-4px)}
 @media(max-width:860px){.viz-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:580px){.viz-grid{grid-template-columns:1fr}}
+
+/* ── NAT-VIZ CARDS (Gráficos nativos) ── */
+.nat-viz-card{
+  position:relative;border-radius:16px;overflow:hidden;
+  text-decoration:none;display:flex;flex-direction:column;
+  min-height:240px;transition:transform .3s,box-shadow .3s;
+}
+.nat-viz-card:hover{transform:translateY(-5px);box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.nat-viz-bg{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center;
+  transition:transform .5s ease;
+}
+.nat-viz-card:hover .nat-viz-bg{transform:scale(1.04)}
+.nat-viz-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,
+    rgba(0,0,0,.05) 0%,
+    rgba(0,0,0,.35) 55%,
+    rgba(0,0,0,.75) 100%);
+}
+.nat-viz-content{
+  position:relative;z-index:1;
+  padding:22px 22px 0;
+  display:flex;flex-direction:column;gap:10px;
+}
+.nat-viz-icon{opacity:.9}
+.nat-viz-icon svg{stroke-width:1.5}
+.nat-viz-title{
+  font-size:15px;font-weight:700;color:#fff;
+  letter-spacing:-.3px;line-height:1.25;
+}
+.nat-viz-footer{
+  position:relative;z-index:1;
+  padding:10px 22px 20px;
+  margin-top:auto;
+}
+.nat-viz-desc{font-size:12px;color:rgba(255,255,255,.65);line-height:1.65;margin-bottom:10px}
+.nat-viz-link{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:12px;font-weight:700;color:rgba(255,255,255,.85);
+  transition:gap .2s;
+}
+.nat-viz-card:hover .nat-viz-link{gap:8px}
 </style>
 </head>
 <body>
@@ -605,13 +649,79 @@ footer{background:var(--off);border-top:.5px solid var(--gray);padding:24px clam
       <!-- Native charts panel -->
       <div id="panelNat" style="padding-top:40px;">
         <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#bbb;margin-bottom:18px;padding-top:8px;">Gráficos nativos · Power BI</div>
-        <div class="nat-grid">
-          <a href="https://app.powerbi.com/view?r=eyJrIjoiYWY3ZjRlNzItNzZlNC00ZjgwLWFjYTItMGM2NjhlYzQ3MjdjIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" class="nat-card"><div class="nat-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div><div class="nat-title">Gráfico de Pareto</div><div class="nat-link">Ver en Power BI ↗</div></div></a>
-          <a href="https://app.powerbi.com/view?r=eyJrIjoiNjRlYTQzNWEtNzliNS00M2QxLWE1MWQtNGJiNjc0MmQ3Zjg2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" class="nat-card"><div class="nat-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div><div class="nat-title">Selección de periodos dinámico</div><div class="nat-link">Ver en Power BI ↗</div></div></a>
-          <a href="https://app.powerbi.com/view?r=eyJrIjoiOGJjY2VjOGQtNWRkZi00N2VjLWIwNTktZDY3NjI2OTFjYWY0IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=ab8db569d0c613296a15" target="_blank" class="nat-card"><div class="nat-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div><div><div class="nat-title">Small Multiples bar charts</div><div class="nat-link">Ver en Power BI ↗</div></div></a>
-          <a href="https://app.powerbi.com/view?r=eyJrIjoiYWJmYzZkZTktOTYzNS00NDFkLWJiYWMtY2ZlNzM2NmEzNjBkIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=808c33f3347a1aeb147d" target="_blank" class="nat-card"><div class="nat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><div class="nat-title">Perímetros temporales dinámicos</div><div class="nat-link">Ver en Power BI ↗</div></div></a>
-          <a href="https://app.powerbi.com/view?r=eyJrIjoiMDQ1ZGQxM2UtMTk2Ni00NTBlLWJkMzItOGYyN2U4YjFhYTNmIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=19113f5bd05395d09644" target="_blank" class="nat-card"><div class="nat-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg></div><div><div class="nat-title">Análisis visual de Delta</div><div class="nat-link">Ver en Power BI ↗</div></div></a>
-          <a href="https://app.powerbi.com/view?r=eyJrIjoiODI3YmJiMWYtNWQyYy00NzIyLWFhZTUtNjQwNWY0Mzc0YmI5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=6ec6a3ff0e01c9a1a92f" target="_blank" class="nat-card"><div class="nat-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><div><div class="nat-title">Gráfico de columnas agrupadas</div><div class="nat-link">Ver en Power BI ↗</div></div></a>
+        <div class="viz-grid">
+          <a href="https://app.powerbi.com/view?r=eyJrIjoiYWY3ZjRlNzItNzZlNC00ZjgwLWFjYTItMGM2NjhlYzQ3MjdjIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" class="nat-viz-card">
+            <img src="./img/pareto.png" alt="Gráfico de Pareto" class="nat-viz-bg" style="width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;">
+            <div class="nat-viz-overlay"></div>
+            <div class="nat-viz-content">
+              <div class="nat-viz-icon"><svg viewBox="0 0 24 24" width="42" height="42"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+              <div class="nat-viz-title">Gráfico de Pareto</div>
+            </div>
+            <div class="nat-viz-footer">
+              <p class="nat-viz-desc">Visualización del principio 80/20 aplicada a datos de negocio para identificar los factores con mayor impacto.</p>
+              <span class="nat-viz-link">Ver en Power BI <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
+          </a>
+          <a href="https://app.powerbi.com/view?r=eyJrIjoiNjRlYTQzNWEtNzliNS00M2QxLWE1MWQtNGJiNjc0MmQ3Zjg2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" class="nat-viz-card">
+            <img src="./img/periodo.png" alt="Selección de periodos dinámico" class="nat-viz-bg" style="width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;">
+            <div class="nat-viz-overlay"></div>
+            <div class="nat-viz-content">
+              <div class="nat-viz-icon"><svg viewBox="0 0 24 24" width="42" height="42"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+              <div class="nat-viz-title">Selección de periodos dinámico</div>
+            </div>
+            <div class="nat-viz-footer">
+              <p class="nat-viz-desc">Selector de rango temporal construido sin segmentadores estándar. Control total sobre el contexto de análisis.</p>
+              <span class="nat-viz-link">Ver en Power BI <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
+          </a>
+          <a href="https://app.powerbi.com/view?r=eyJrIjoiOGJjY2VjOGQtNWRkZi00N2VjLWIwNTktZDY3NjI2OTFjYWY0IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=ab8db569d0c613296a15" target="_blank" class="nat-viz-card">
+            <img src="./img/small.png" alt="Small Multiples bar charts" class="nat-viz-bg" style="width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;">
+            <div class="nat-viz-overlay"></div>
+            <div class="nat-viz-content">
+              <div class="nat-viz-icon"><svg viewBox="0 0 24 24" width="42" height="42"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+              <div class="nat-viz-title">Small Multiples bar charts</div>
+            </div>
+            <div class="nat-viz-footer">
+              <p class="nat-viz-desc">Grid de gráficos de barras sincronizados para comparar múltiples categorías manteniendo la misma escala.</p>
+              <span class="nat-viz-link">Ver en Power BI <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
+          </a>
+          <a href="https://app.powerbi.com/view?r=eyJrIjoiYWJmYzZkZTktOTYzNS00NDFkLWJiYWMtY2ZlNzM2NmEzNjBkIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=808c33f3347a1aeb147d" target="_blank" class="nat-viz-card">
+            <img src="./img/temporal.png" alt="Perímetros temporales dinámicos" class="nat-viz-bg" style="width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;">
+            <div class="nat-viz-overlay"></div>
+            <div class="nat-viz-content">
+              <div class="nat-viz-icon"><svg viewBox="0 0 24 24" width="42" height="42"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+              <div class="nat-viz-title">Perímetros temporales dinámicos</div>
+            </div>
+            <div class="nat-viz-footer">
+              <p class="nat-viz-desc">Cálculo de ventanas de tiempo variables en DAX que se adaptan al contexto del filtro sin romper la coherencia.</p>
+              <span class="nat-viz-link">Ver en Power BI <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
+          </a>
+          <a href="https://app.powerbi.com/view?r=eyJrIjoiMDQ1ZGQxM2UtMTk2Ni00NTBlLWJkMzItOGYyN2U4YjFhYTNmIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=19113f5bd05395d09644" target="_blank" class="nat-viz-card">
+            <img src="./img/delta.png" alt="Análisis visual de Delta" class="nat-viz-bg" style="width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;">
+            <div class="nat-viz-overlay"></div>
+            <div class="nat-viz-content">
+              <div class="nat-viz-icon"><svg viewBox="0 0 24 24" width="42" height="42"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg></div>
+              <div class="nat-viz-title">Análisis visual de Delta</div>
+            </div>
+            <div class="nat-viz-footer">
+              <p class="nat-viz-desc">Representación visual de variaciones absolutas y relativas entre periodos con indicadores direccionales.</p>
+              <span class="nat-viz-link">Ver en Power BI <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
+          </a>
+          <a href="https://app.powerbi.com/view?r=eyJrIjoiODI3YmJiMWYtNWQyYy00NzIyLWFhZTUtNjQwNWY0Mzc0YmI5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=6ec6a3ff0e01c9a1a92f" target="_blank" class="nat-viz-card">
+            <img src="./img/agrupada.png" alt="Gráfico de columnas agrupadas" class="nat-viz-bg" style="width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;">
+            <div class="nat-viz-overlay"></div>
+            <div class="nat-viz-content">
+              <div class="nat-viz-icon"><svg viewBox="0 0 24 24" width="42" height="42"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+              <div class="nat-viz-title">Gráfico de columnas agrupadas</div>
+            </div>
+            <div class="nat-viz-footer">
+              <p class="nat-viz-desc">Comparativa multidimensional en un único visual, con control de orden y jerarquía visual clara.</p>
+              <span class="nat-viz-link">Ver en Power BI <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
+          </a>
         </div>
       </div>
     </div>
