@@ -1,0 +1,2566 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Borja Mora — Data Analyst · Power BI Developer</title>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PSDM6B5Z7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PSDM6B5Z7');
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PSDM6B5Z7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-6PSDM6B5Z7');
+</script>
+  
+<style>
+:root {
+  --purple:       #7a7bff;
+  --purple2:      #5a5be0;
+  --purple-light: #ededff;
+  --green:        #3c8a37;
+  --green-light:  #e8f5e7;
+  --red:          #a3223e;
+  --red-light:    #f9e8ec;
+  --white:        #ffffff;
+  --off:          #f7f7fa;
+  --gray:         #e5e5e5;
+  --ink:          #111111;
+  --muted:        #888888;
+  --font:         'Segoe UI', sans-serif;
+  --ease:         cubic-bezier(0.16,1,0.3,1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--white);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+/* ─── PROGRESS ─── */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  background: var(--purple);
+  z-index: 1001;
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform .1s linear;
+}
+
+/* ─── NAV ─── */
+nav {
+  position: fixed;
+  top: 0; width: 100%;
+  z-index: 1000;
+  padding: 0 clamp(1.5rem,5vw,4rem);
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: .5px solid transparent;
+  transition: border-color .3s;
+}
+nav.scrolled { border-bottom-color: var(--gray); }
+
+.logo {
+  font-size: 17px; font-weight: 700;
+  color: var(--ink); text-decoration: none;
+  letter-spacing: -.3px;
+  display: flex; align-items: center; gap: 7px;
+}
+.logo-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--purple);
+  animation: breathe 3s ease-in-out infinite;
+}
+@keyframes breathe { 0%,100%{transform:scale(1)} 50%{transform:scale(1.5)} }
+
+/* ─── TYPING CURSOR ─── */
+#logoText::after {
+  content: '|';
+  color: var(--purple);
+  font-weight: 300;
+  animation: blink .7s step-end infinite;
+  margin-left: 1px;
+}
+#logoText.done::after { display: none; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+.nav-links { display: flex; gap: 2px; align-items: center; }
+.nav-links a {
+  font-size: 13px; color: var(--muted);
+  text-decoration: none; padding: 6px 14px;
+  border-radius: 7px; font-weight: 500;
+  transition: color .2s, background .2s;
+}
+.nav-links a:hover { color: var(--ink); background: var(--off); }
+.nav-cta {
+  background: var(--ink) !important;
+  color: var(--white) !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+}
+.nav-cta:hover { background: var(--purple) !important; }
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 92vh;
+  padding: 80px clamp(1.5rem,3vw,2.5rem) 48px;
+  display: flex; align-items: center;
+  background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(122,123,255,.06) 0%, transparent 70%), var(--white);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(122,123,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(122,123,255,.03) 1px, transparent 1px);
+  background-size: 56px 56px;
+  pointer-events: none;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  width: 560px; height: 560px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(122,123,255,.06) 0%, transparent 70%);
+  top: -80px; right: -60px;
+  pointer-events: none;
+}
+
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ── CHANGE 2: New pill/capsule above headline ── */
+.hero-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--purple-light);
+  border: .5px solid rgba(122,123,255,.25);
+  border-radius: 100px; padding: 6px 14px;
+  font-size: 11px; color: var(--purple2);
+  letter-spacing: .5px; font-weight: 600;
+  margin-bottom: 12px;
+  opacity: 0; animation: fadeUp .7s .05s var(--ease) forwards;
+}
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--off); border: .5px solid var(--gray);
+  border-radius: 7px; padding: 5px 13px;
+  font-size: 11px; color: var(--muted);
+  letter-spacing: .8px; text-transform: uppercase; font-weight: 600;
+  opacity: 0; animation: fadeUp .7s .52s var(--ease) forwards;
+}
+.badge-pulse {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px rgba(60,138,55,.6);
+  animation: pulse-gr 2s infinite;
+}
+@keyframes pulse-gr { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+/* ── CHANGE 1 & 3: Headline all black, "Decisiones mejores" on one line ── */
+.hero-h1 {
+  font-size: clamp(36px, 4.2vw, 58px);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -2.5px;
+  color: var(--ink);
+  margin-bottom: 28px;
+  opacity: 0; animation: fadeUp .8s .18s var(--ease) forwards;
+}
+
+.hero-left {
+  width: 100%;
+}
+
+.hero-sub {
+  font-size: 16px; color: var(--muted);
+  line-height: 1.75; max-width: 100%;
+  margin-bottom: 24px; font-weight: 400;
+  opacity: 0; animation: fadeUp .8s .32s var(--ease) forwards;
+}
+
+/* ── CHANGE 4: Certification badge ── */
+.hero-cert {
+  display: flex; align-items: center; gap: 7px;
+  margin-bottom: 10px;
+  opacity: 0; animation: fadeUp .8s .40s var(--ease) forwards;
+}
+.hero-cert-icon {
+  width: 20px; height: 20px;
+  background: var(--ink);
+  border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.hero-cert-icon svg { width: 11px; height: 11px; }
+.hero-cert span {
+  font-size: 13px; font-weight: 700;
+  color: var(--ink); letter-spacing: -.2px;
+}
+
+.hero-actions {
+  display: flex; gap: 10px; flex-wrap: wrap;
+  opacity: 0; animation: fadeUp .8s .62s var(--ease) forwards;
+}
+
+/* ─── BUTTONS ─── */
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 11px 24px; border-radius: 8px;
+  font-size: 13px; font-weight: 600;
+  text-decoration: none;
+  transition: all .2s var(--ease); border: none;
+  font-family: var(--font); letter-spacing: .2px;
+}
+.btn-primary { background: var(--ink); color: var(--white); }
+.btn-primary:hover { background: var(--purple); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(122,123,255,.3); }
+.btn-outline { background: var(--white); border: .5px solid var(--gray); color: var(--muted); }
+.btn-outline:hover { border-color: var(--ink); color: var(--ink); transform: translateY(-2px); }
+
+/* ─── HERO DASHBOARD ─── */
+.hero-right {
+  transform: scale(0.78);
+  transform-origin: center center;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.dashboard-frame {
+  background: var(--white);
+  border: .5px solid var(--gray);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(122,123,255,.08),
+    0 8px 24px rgba(0,0,0,.06),
+    0 32px 80px rgba(0,0,0,.1);
+  position: relative;
+}
+.dashboard-frame::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--purple), #b8b9ff, var(--purple));
+  z-index: 1;
+}
+
+.df-titlebar {
+  background: var(--off);
+  padding: 10px 15px;
+  display: flex; align-items: center; gap: 6px;
+  border-bottom: .5px solid var(--gray);
+}
+.df-dot { width: 9px; height: 9px; border-radius: 50%; }
+.df-url { margin-left: 10px; font-size: 10px; color: var(--muted); opacity: .5; letter-spacing: .3px; }
+
+.df-header {
+  padding: 12px 14px 0;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.df-title { font-size: 12px; font-weight: 700; color: var(--ink); letter-spacing: -.2px; }
+.df-period {
+  font-size: 9px; font-weight: 600;
+  background: var(--purple-light); color: var(--purple);
+  padding: 3px 8px; border-radius: 5px;
+  text-transform: uppercase; letter-spacing: .7px;
+}
+
+.df-body { padding: 10px 14px 14px; display: flex; flex-direction: column; gap: 9px; }
+
+/* KPI row */
+.df-kpis { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; }
+.dk {
+  background: var(--white);
+  border: .5px solid #e8e8ee;
+  border-radius: 8px;
+  padding: 10px 11px 9px;
+  position: relative;
+  overflow: hidden;
+}
+.dk::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: #e0e0ea;
+  border-radius: 8px 8px 0 0;
+}
+.dk-label { font-size: 7.5px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .7px; margin-bottom: 5px; }
+.dk-main { display: flex; align-items: flex-end; justify-content: space-between; gap: 4px; margin-bottom: 6px; }
+.dk-value { font-size: 20px; font-weight: 700; color: var(--ink); letter-spacing: -1px; line-height: 1; }
+.dk-sparkline { flex-shrink: 0; margin-bottom: 2px; opacity: .65; }
+.dk-pos { display: inline-flex; align-items: center; gap: 3px; font-size: 8.5px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: var(--green-light); color: var(--green); }
+.dk-neg { display: inline-flex; align-items: center; gap: 3px; font-size: 8.5px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: var(--red-light); color: var(--red); }
+
+/* charts row */
+.df-charts { display: grid; grid-template-columns: 2fr 1fr; gap: 6px; }
+.df-card {
+  background: var(--white); border: .5px solid #e8e8ee;
+  border-radius: 8px; padding: 10px 12px;
+}
+.dc-label { font-size: 7.5px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .7px; margin-bottom: 1px; }
+.dc-sublabel { font-size: 10.5px; font-weight: 700; color: var(--ink); margin-bottom: 7px; letter-spacing: -.2px; }
+.dc-legend { display: flex; gap: 10px; margin-bottom: 5px; }
+.dc-leg-item { display: flex; align-items: center; gap: 4px; font-size: 8px; color: var(--muted); }
+.dc-leg-dot { width: 7px; height: 7px; border-radius: 2px; }
+
+/* ranking */
+.df-ranking { background: var(--white); border: .5px solid #e8e8ee; border-radius: 8px; padding: 10px 12px 11px; }
+.dr-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
+.dr-row {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 0; border-bottom: .5px solid #f4f4f7;
+}
+.dr-row:last-child { border-bottom: none; padding-bottom: 1px; }
+.dr-rank { font-size: 8px; font-weight: 700; color: #bbb; min-width: 12px; }
+.dr-name { font-size: 9.5px; font-weight: 600; color: var(--ink); min-width: 36px; }
+.dr-track { flex: 1; height: 5px; background: #f0f0f5; border-radius: 3px; overflow: hidden; }
+.dr-fill { height: 100%; border-radius: 3px; background: var(--purple); }
+.dr-val { font-size: 9.5px; font-weight: 700; color: var(--ink); min-width: 38px; text-align: right; }
+.dr-badge { font-size: 7.5px; font-weight: 700; padding: 2px 5px; border-radius: 3px; white-space: nowrap; }
+
+/* ─── PROOF STRIP — CHANGE 7 ─── */
+.proof-strip {
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  background: #f9f9fb;
+  border-top: .5px solid #ebebeb;
+  border-bottom: .5px solid #ebebeb;
+}
+
+.proof-track {
+  display: flex;
+  width: max-content;
+  animation: scrollLoop 36s linear infinite;
+  will-change: transform;
+  padding: 18px 0;
+}
+
+.proof-track:hover {
+  animation-play-state: paused;
+}
+
+.proof-content {
+  display: flex;
+  gap: 0;
+  padding: 0;
+  white-space: nowrap;
+  align-items: center;
+}
+
+/* Each tag item */
+.proof-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 28px;
+  border-right: .5px solid #e0e0e5;
+}
+
+.proof-item:first-child {
+  padding-left: 28px;
+}
+
+.proof-abbr {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: #ebebf0;
+  border: .5px solid #e0e0e5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  font-weight: 700;
+  color: #888;
+  letter-spacing: .3px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  font-family: 'Segoe UI', monospace;
+}
+
+.proof-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #6a6a7a;
+  letter-spacing: .15px;
+  white-space: nowrap;
+}
+
+.proof-strip::before,
+.proof-strip::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 100px;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.proof-strip::before {
+  left: 0;
+  background: linear-gradient(to right, #f9f9fb, transparent);
+}
+
+.proof-strip::after {
+  right: 0;
+  background: linear-gradient(to left, #f9f9fb, transparent);
+}
+
+@keyframes scrollLoop {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ─── SECTION COMMONS ─── */
+section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
+.c { max-width: 1100px; margin: 0 auto; }
+
+.s-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1.4px; color: var(--purple); margin-bottom: 16px;
+}
+.s-tag::before { content:''; width:18px; height:1.5px; background:var(--purple); opacity:.45; }
+
+.s-h {
+  font-size: clamp(34px,4vw,52px); font-weight: 700;
+  line-height: 1.1; letter-spacing: -1.5px; color: var(--ink); margin-bottom: 14px;
+}
+.s-h em { font-style: normal; color: var(--purple); }
+
+.s-sub { font-size: 15px; color: var(--muted); line-height: 1.7; max-width: 480px; }
+
+/* ─── WHAT I BUILD ─── */
+.wib-section { background: var(--off); }
+.wib-header { text-align: center; margin-bottom: 52px; }
+.wib-header .s-tag { justify-content: center; }
+.wib-header .s-sub { margin: 0 auto; }
+.wib-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+.wib-card {
+  background: var(--white); border: .5px solid var(--gray);
+  border-radius: 14px; padding: 34px 28px;
+  position: relative; overflow: hidden;
+  transition: all .25s var(--ease);
+}
+.wib-card:hover { border-color: var(--purple); transform: translateY(-4px); box-shadow: 0 16px 40px rgba(122,123,255,.1); }
+.wib-num {
+  font-size: 60px; font-weight: 700;
+  color: rgba(122,123,255,.06); line-height: 1;
+  position: absolute; top: 14px; right: 18px; letter-spacing: -3px;
+}
+.wib-icon { font-size: 24px; margin-bottom: 18px; display: block; }
+.wib-title { font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 10px; letter-spacing: -.3px; }
+.wib-text { font-size: 13px; color: var(--muted); line-height: 1.7; }
+
+/* ─── PROJECTS ─── */
+.proj-section { background: var(--off); }
+.proj-section > .c { max-width: 100%; padding: 0 clamp(1.5rem,4vw,5rem); margin: 0 auto; }
+.proj-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 52px; gap: 24px; flex-wrap: wrap; }
+.proj-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; align-items: stretch; }
+
+.proj-featured {
+  grid-row: span 2;
+  background: var(--white); border: .5px solid var(--gray);
+  border-radius: 14px; overflow: hidden;
+  transition: all .3s var(--ease);
+  display: flex; flex-direction: column; position: relative;
+}
+.proj-featured::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 2px; background: var(--purple);
+}
+.proj-featured:hover { border-color: var(--purple); transform: translateY(-4px); box-shadow: 0 20px 48px rgba(122,123,255,.1); }
+
+.pf-visual-top {
+  height: 200px; background: var(--off);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px; border-bottom: .5px solid var(--gray);
+}
+.pf-mini {
+  width: 88%; background: var(--white);
+  border: .5px solid var(--gray); border-radius: 10px;
+  padding: 12px; box-shadow: 0 4px 16px rgba(0,0,0,.06);
+}
+.pf-mini-kpis { display: flex; gap: 6px; margin-bottom: 8px; }
+.pf-mk { flex: 1; background: var(--off); border-radius: 7px; padding: 7px 9px; }
+.pf-mkv { font-size: 13px; font-weight: 700; color: var(--ink); }
+.pf-mkl { font-size: 7.5px; color: var(--muted); margin-top: 1px; text-transform: uppercase; letter-spacing: .4px; }
+
+.pf-content { padding: 24px 26px 26px; flex: 1; display: flex; flex-direction: column; }
+.pf-cat { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--purple); margin-bottom: 9px; }
+.pf-title { font-size: 20px; font-weight: 700; color: var(--ink); line-height: 1.25; margin-bottom: 10px; letter-spacing: -.3px; }
+.pf-desc { font-size: 13px; color: var(--muted); line-height: 1.65; flex: 1; margin-bottom: 20px; }
+.pf-tags { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.pf-tag { font-size: 10px; font-weight: 600; background: var(--purple-light); color: var(--purple); padding: 3px 9px; border-radius: 5px; }
+.pf-link { margin-left: auto; font-size: 12px; color: var(--purple); font-weight: 600; text-decoration: none; }
+.pf-link:hover { color: var(--purple2); }
+
+.proj-card {
+  background: var(--white);
+  border: .5px solid #e4e4ec;
+  border-radius: 18px; overflow: hidden;
+  transition: all .3s var(--ease);
+  display: flex; flex-direction: column;
+  box-shadow: 0 2px 12px rgba(0,0,0,.04);
+}
+.proj-card:hover {
+  border-color: var(--purple);
+  transform: translateY(-6px);
+  box-shadow: 0 24px 56px rgba(122,123,255,.14), 0 4px 16px rgba(0,0,0,.06);
+}
+.pc-visual {
+  display: block;
+  background: #fafafa;
+  border-bottom: .5px solid #f0f0f5;
+  position: relative; overflow: hidden;
+}
+.pc-visual svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.pc-body { padding: 20px 30px 28px; flex: 1; display: flex; flex-direction: column; }
+.pc-cat { font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--purple); margin-bottom: 10px; }
+.pc-name { font-size: 20px; font-weight: 700; color: var(--ink); margin-bottom: 10px; letter-spacing: -.4px; line-height: 1.25; }
+.pc-desc { font-size: 13.5px; color: var(--muted); line-height: 1.7; flex: 1; margin-bottom: 20px; }
+.pc-foot { display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: .5px solid #f0f0f5; }
+.pc-pills { display: flex; gap: 5px; flex-wrap: wrap; }
+.pc-pill { font-size: 10px; font-weight: 600; background: var(--purple-light); border: none; color: var(--purple); padding: 3px 10px; border-radius: 5px; }
+.pc-link { font-size: 13px; color: var(--purple); font-weight: 700; text-decoration: none; }
+.proj-more { display: flex; justify-content: center; align-items: center; margin-top: 40px; width: 100%; }
+
+/* ─── PROYECTO ESTRELLA ─── */
+.star-section {
+  background: var(--white);
+  padding: 100px 0;
+  border-top: .5px solid #f0f0f5;
+}
+.star-inner {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 72px;
+  align-items: center;
+}
+.star-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--purple);
+  margin-bottom: 18px;
+}
+.star-tag::before {
+  content: '';
+  display: inline-block;
+  width: 18px;
+  height: 2px;
+  background: var(--purple);
+  border-radius: 2px;
+}
+.star-title {
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -.6px;
+  line-height: 1.15;
+  margin-bottom: 18px;
+}
+.star-lead {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+.star-reason {
+  background: var(--purple-light);
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin-bottom: 24px;
+}
+.star-reason-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--purple);
+  margin-bottom: 8px;
+}
+.star-reason p {
+  font-size: 13.5px;
+  color: #555;
+  line-height: 1.65;
+  margin: 0;
+}
+.star-decisions {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+.star-decision-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink);
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  margin-bottom: 4px;
+}
+.star-decision p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0;
+}
+.star-foot {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding-top: 20px;
+  border-top: .5px solid #f0f0f5;
+}
+.star-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.star-cta {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--purple);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all .2s var(--ease);
+}
+.star-cta:hover {
+  background: var(--purple2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(122,123,255,.3);
+}
+.star-cta span { font-size: 15px; }
+
+/* browser mockup */
+.star-preview {
+  position: relative;
+}
+.star-browser {
+  background: #fff;
+  border: .5px solid #e0e0e8;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0,0,0,.10), 0 4px 16px rgba(0,0,0,.06);
+}
+.star-browser-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: #f5f5f8;
+  border-bottom: .5px solid #e8e8f0;
+}
+.star-browser-dots {
+  display: flex;
+  gap: 5px;
+}
+.star-browser-dots span {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #e0e0e0;
+}
+.star-browser-dots span:first-child { background: #ffb3b3; }
+.star-browser-dots span:nth-child(2) { background: #ffe0a3; }
+.star-browser-dots span:nth-child(3) { background: #b3f0c8; }
+.star-browser-url {
+  flex: 1;
+  background: #ebebf0;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  color: #999;
+  font-family: 'Segoe UI', sans-serif;
+}
+.star-browser-content {
+  position: relative;
+  height: 420px;
+  overflow: hidden;
+  background: #fafafa;
+}
+.iframe-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  cursor: default;
+}
+.star-browser-content iframe {
+  width: 160%;
+  height: 160%;
+  border: none;
+  transform: scale(0.625);
+  transform-origin: top left;
+  pointer-events: none;
+}
+
+@media (max-width: 900px) {
+  .star-inner { grid-template-columns: 1fr; gap: 40px; }
+  .star-browser-content { height: 280px; }
+}
+
+/* ─── PROYECTO ESTRELLA ─── */
+.quote-section { background: var(--white); }
+.qs-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.big-quote {
+  font-size: clamp(24px,2.8vw,38px);
+  font-weight: 700; color: var(--ink);
+  line-height: 1.25; letter-spacing: -.8px;
+  margin-bottom: 32px;
+  padding-left: 22px;
+  border-left: 3px solid var(--purple);
+}
+.big-quote em { font-style: normal; color: var(--purple); }
+.qs-right { display: flex; flex-direction: column; gap: 18px; }
+.qs-text { font-size: 15px; color: var(--muted); line-height: 1.8; }
+.qs-callout { background: var(--purple-light); border-radius: 10px; padding: 18px 20px; }
+.qs-callout p { font-size: 14px; color: var(--purple2); line-height: 1.65; font-weight: 500; }
+
+/* ─── PRINCIPLES ─── */
+/* ─── PRINCIPLES ─── */
+.prin-section { background: var(--white); }
+.prin-new-inner {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 80px;
+  align-items: start;
+}
+.prin-new-left { position: sticky; top: 120px; }
+.prin-new-list {
+  background: var(--white);
+  border: .5px solid var(--gray);
+  border-radius: 18px;
+  overflow: hidden;
+}
+.prin-item {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  align-items: center;
+  gap: 0;
+  padding: 26px 32px 26px 0;
+  border-bottom: .5px solid #f0f0f5;
+  transition: background .2s var(--ease);
+  cursor: default;
+}
+.prin-item:last-child { border-bottom: none; }
+.prin-item:hover { background: #fafafe; }
+.prin-item-num {
+  font-size: 44px;
+  font-weight: 700;
+  color: rgba(122,123,255,.12);
+  letter-spacing: -2px;
+  line-height: 1;
+  text-align: center;
+  flex-shrink: 0;
+  transition: color .2s var(--ease);
+}
+.prin-item:hover .prin-item-num { color: rgba(122,123,255,.22); }
+.prin-item-body { border-left: .5px solid #f0f0f5; padding-left: 28px; }
+.prin-item-title {
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -.3px;
+  line-height: 1.3;
+  margin-bottom: 5px;
+}
+.prin-item-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+@media (max-width: 860px) {
+  .prin-new-inner { grid-template-columns: 1fr; gap: 40px; }
+  .prin-new-left { position: static; }
+}
+
+/* ─── ANALYSIS PROJECTS ─── */
+.analysis-section { background: var(--off); }
+.analysis-header { margin-bottom: 52px; }
+.analysis-header .s-tag { margin-bottom: 14px; }
+.analysis-header .s-sub { max-width: 560px; margin-top: 14px; font-size: 15px; color: var(--muted); line-height: 1.7; }
+.analysis-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+.analysis-card {
+  background: var(--white);
+  border: .5px solid #e4e4ec;
+  border-radius: 18px;
+  padding: 32px 30px 28px;
+  display: flex; flex-direction: column;
+  box-shadow: 0 2px 12px rgba(0,0,0,.04);
+  transition: all .3s var(--ease);
+  cursor: default;
+  position: relative;
+  overflow: hidden;
+}
+.analysis-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--purple);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .3s var(--ease);
+}
+.analysis-card:hover { border-color: var(--purple); transform: translateY(-6px); box-shadow: 0 24px 56px rgba(122,123,255,.12); }
+.analysis-card:hover::before { transform: scaleX(1); }
+.analysis-lang {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.analysis-lang span {
+  font-size: 10px; font-weight: 700;
+  background: var(--purple-light); color: var(--purple);
+  padding: 3px 10px; border-radius: 5px;
+  letter-spacing: .3px;
+}
+.analysis-title {
+  font-size: 18px; font-weight: 700;
+  color: var(--ink); letter-spacing: -.3px;
+  line-height: 1.25; margin-bottom: 12px;
+}
+.analysis-desc {
+  font-size: 13.5px; color: var(--muted);
+  line-height: 1.7; flex: 1; margin-bottom: 24px;
+}
+.analysis-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 700;
+  color: var(--purple); text-decoration: none;
+  margin-top: auto;
+  transition: gap .2s var(--ease);
+}
+.analysis-link:hover { gap: 10px; }
+@media (max-width: 860px) { .analysis-grid { grid-template-columns: 1fr; } }
+
+/* ─── DAX LAB ─── */
+.dax-section { background: var(--white); border-top: .5px solid #f0f0f5; }
+.dax-inner { display: grid; grid-template-columns: 1fr 2fr; gap: 80px; align-items: start; }
+.dax-left { position: sticky; top: 120px; }
+.dax-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
+  text-transform: uppercase; color: var(--purple); margin-bottom: 18px;
+}
+.dax-tag::before {
+  content: ''; display: inline-block;
+  width: 18px; height: 2px; background: var(--purple); border-radius: 2px;
+}
+.dax-title { font-size: clamp(26px, 2.8vw, 36px); font-weight: 700; color: var(--ink); letter-spacing: -.5px; line-height: 1.2; margin-bottom: 16px; }
+.dax-desc { font-size: 14px; color: var(--muted); line-height: 1.75; margin-bottom: 20px; }
+.dax-github {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 12px; font-weight: 700; color: var(--purple);
+  background: var(--purple-light); padding: 7px 14px;
+  border-radius: 8px; text-decoration: none;
+  transition: all .2s var(--ease);
+}
+.dax-github:hover { background: #dddeff; }
+.dax-github svg { width: 14px; height: 14px; fill: var(--purple); }
+.dax-cards { display: flex; flex-direction: column; gap: 0; background: var(--white); border: .5px solid #e4e4ec; border-radius: 18px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.04); }
+.dax-card {
+  display: grid; grid-template-columns: 1fr auto;
+  align-items: center; gap: 24px;
+  padding: 28px 32px;
+  border-bottom: .5px solid #f0f0f5;
+  transition: background .2s var(--ease);
+}
+.dax-card:last-child { border-bottom: none; }
+.dax-card:hover { background: #fafafe; }
+.dax-card-num { font-size: 11px; font-weight: 700; color: rgba(122,123,255,.3); letter-spacing: 1px; margin-bottom: 8px; }
+.dax-card-title { font-size: 16px; font-weight: 700; color: var(--ink); letter-spacing: -.2px; margin-bottom: 6px; }
+.dax-card-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+.dax-card-link {
+  flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 700; color: var(--purple);
+  background: var(--purple-light); padding: 8px 16px;
+  border-radius: 8px; text-decoration: none; white-space: nowrap;
+  transition: all .2s var(--ease);
+}
+.dax-card-link:hover { background: #dddeff; gap: 8px; }
+@media (max-width: 860px) {
+  .dax-inner { grid-template-columns: 1fr; gap: 40px; }
+  .dax-left { position: static; }
+  .dax-card { grid-template-columns: 1fr; }
+}
+
+/* ─── COMMUNITY ─── */
+.com-section {
+  background: var(--ink);
+  position: relative;
+  overflow: hidden;
+}
+.com-section::before {
+  content: '';
+  position: absolute;
+  top: -40%; left: 50%;
+  transform: translateX(-50%);
+  width: 700px; height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(122,123,255,.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+.com-inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 80px;
+  align-items: center;
+}
+.com-left {}
+.com-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.4px;
+  text-transform: uppercase; color: var(--purple);
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 20px;
+}
+.com-eyebrow::before {
+  content: ''; width: 18px; height: 2px;
+  background: var(--purple); border-radius: 2px;
+}
+.com-title {
+  font-size: clamp(28px, 3vw, 42px);
+  font-weight: 700; color: #fff;
+  letter-spacing: -.6px; line-height: 1.15;
+  margin-bottom: 18px;
+}
+.com-title em { color: var(--purple); font-style: normal; }
+.com-desc {
+  font-size: 15px; color: rgba(255,255,255,.55);
+  line-height: 1.75; margin-bottom: 32px; max-width: 440px;
+}
+.com-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--purple); color: #fff;
+  font-size: 13px; font-weight: 700;
+  padding: 12px 22px; border-radius: 10px;
+  text-decoration: none;
+  transition: all .2s var(--ease);
+}
+.com-cta:hover {
+  background: #6162e8;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(122,123,255,.4);
+}
+.com-cta svg { width: 16px; height: 16px; fill: #fff; }
+.com-right {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+}
+.com-stat {
+  padding: 0 36px;
+  border-right: .5px solid rgba(255,255,255,.08);
+}
+.com-stat:first-child { padding-left: 0; }
+.com-stat:last-child { border-right: none; padding-right: 0; }
+.com-stat-line {
+  width: 28px; height: 2px;
+  background: var(--purple);
+  margin-bottom: 24px;
+}
+.com-stat-num {
+  font-size: 56px; font-weight: 700;
+  color: #fff; letter-spacing: -2px;
+  line-height: 1; margin-bottom: 12px;
+}
+.com-stat-num span { color: #fff; }
+.com-stat-label {
+  font-size: 15px; font-weight: 700;
+  color: #fff; margin-bottom: 8px;
+}
+.com-stat-desc {
+  font-size: 13px; color: rgba(255,255,255,.45);
+  line-height: 1.65;
+}
+@media (max-width: 860px) {
+  .com-inner { grid-template-columns: 1fr; gap: 48px; }
+  .com-desc { max-width: 100%; }
+  .com-right { grid-template-columns: 1fr; gap: 32px; }
+  .com-stat { padding: 0; border-right: none; border-bottom: .5px solid rgba(255,255,255,.08); padding-bottom: 28px; }
+  .com-stat:last-child { border-bottom: none; padding-bottom: 0; }
+}
+
+/* ─── STATS ─── */
+.stats-section { background: var(--off); border-top: .5px solid var(--gray); border-bottom: .5px solid var(--gray); }
+.stats-grid { display: grid; grid-template-columns: repeat(3,1fr); }
+.stat-card { padding: 44px 40px; border-right: .5px solid var(--gray); }
+.stat-card:last-child { border-right: none; }
+.stat-line { width: 28px; height: 2px; background: var(--purple); margin-bottom: 24px; }
+.stat-num { font-size: 56px; font-weight: 700; color: var(--ink); line-height: 1; margin-bottom: 12px; letter-spacing: -2px; }
+.stat-title { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 9px; }
+.stat-text { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+
+/* ─── CTA FINAL ─── */
+.cta-final {
+  background: var(--white);
+  border-top: .5px solid var(--gray);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: 120px 0 100px;
+}
+.cta-final::before {
+  display: none;
+}
+.cta-final-inner {
+  position: relative; z-index: 1;
+  max-width: 600px; margin: 0 auto; padding: 0 24px;
+}
+.cta-final-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 10px; font-weight: 700; letter-spacing: 1.4px;
+  text-transform: uppercase; color: var(--purple);
+  margin-bottom: 24px;
+}
+.cta-final-eyebrow::before, .cta-final-eyebrow::after {
+  content: ''; width: 20px; height: 1.5px;
+  background: var(--purple); border-radius: 2px;
+}
+.cta-final-h {
+  font-size: clamp(32px, 4.5vw, 56px);
+  font-weight: 700; color: var(--ink);
+  letter-spacing: -1.5px; line-height: 1.12;
+  margin-bottom: 20px;
+}
+.cta-final-h em { color: var(--purple); font-style: normal; }
+.cta-final-sub {
+  font-size: 15.5px; color: var(--muted);
+  line-height: 1.75; margin-bottom: 44px;
+  max-width: 520px; margin-left: auto; margin-right: auto;
+}
+.cta-final-actions {
+  display: flex; align-items: center; justify-content: center;
+  gap: 12px; flex-wrap: wrap; margin-bottom: 40px;
+}
+.cta-final-btn-primary {
+  display: inline-flex; align-items: center; gap: 9px;
+  background: var(--purple); color: #fff;
+  font-size: 14px; font-weight: 700;
+  padding: 14px 28px; border-radius: 12px;
+  text-decoration: none;
+  transition: all .25s var(--ease);
+}
+.cta-final-btn-primary:hover {
+  background: var(--purple2); transform: translateY(-2px);
+  box-shadow: 0 14px 40px rgba(122,123,255,.35);
+}
+.cta-final-btn-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent;
+  border: 1.5px solid var(--gray);
+  color: var(--ink);
+  font-size: 14px; font-weight: 600;
+  padding: 14px 24px; border-radius: 12px;
+  text-decoration: none;
+  transition: all .25s var(--ease);
+}
+.cta-final-btn-secondary:hover {
+  border-color: var(--purple); color: var(--purple);
+}
+.cta-final-pills {
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; flex-wrap: wrap;
+}
+.cta-pill-item {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 500; color: var(--muted);
+  background: var(--off); border: .5px solid #e8e8f0;
+  padding: 7px 14px; border-radius: 20px;
+}
+.cta-pill-item svg { opacity: .6; }
+
+/* ─── DOT NAV ─── */
+.dot-nav {
+  position: fixed;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 50;
+  opacity: 0;
+  transition: opacity .4s ease;
+}
+.dot-nav.visible { opacity: 1; }
+.dot-nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  justify-content: center;
+}
+.dot-nav-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(0,0,0,.2);
+  transition: all .25s ease;
+  flex-shrink: 0;
+}
+.dot-nav-item.active .dot-nav-dot {
+  background: #7a7bff;
+  box-shadow: 0 0 0 3px rgba(122,123,255,.2);
+  transform: scale(1.3);
+}
+.dot-nav-item:hover .dot-nav-dot {
+  background: #7a7bff;
+  opacity: .7;
+}
+.dot-nav-label {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px;
+  font-weight: 600;
+  color: #111;
+  white-space: nowrap;
+  background: #fff;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: .5px solid #e0e0ec;
+  box-shadow: 0 2px 10px rgba(0,0,0,.1);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .15s ease;
+}
+.dot-nav-item:hover .dot-nav-label { opacity: 1; }
+.dot-nav.dark-mode .dot-nav-dot { background: rgba(255,255,255,.3); }
+.dot-nav.dark-mode .dot-nav-item.active .dot-nav-dot {
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(255,255,255,.15);
+}
+@media (max-width: 1100px) { .dot-nav { display: none; } }
+
+/* ─── FOOTER ─── */
+footer {
+  background: var(--off);
+  padding: 0;
+}
+.foot-inner {
+  max-width: 1100px; margin: 0 auto;
+  padding: 52px clamp(1.5rem,5vw,4rem) 28px;
+}
+.foot-top {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 48px;
+  padding-bottom: 40px;
+  border-bottom: .5px solid var(--gray);
+  margin-bottom: 28px;
+}
+.foot-brand-name {
+  font-size: 18px; font-weight: 700;
+  color: var(--ink); letter-spacing: -.3px;
+  margin-bottom: 10px;
+}
+.foot-brand-desc {
+  font-size: 12.5px; color: var(--muted);
+  line-height: 1.65; max-width: 240px;
+}
+.foot-col-title {
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 1.2px; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 14px;
+}
+.foot-col a {
+  display: block; font-size: 13px;
+  color: var(--muted); text-decoration: none;
+  margin-bottom: 8px;
+  transition: color .2s;
+}
+.foot-col a:hover { color: var(--ink); }
+.foot-bottom {
+  display: flex; align-items: center;
+  justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.foot-copy {
+  font-size: 11.5px; color: var(--muted); opacity: .7;
+}
+.foot-made {
+  font-size: 11.5px; color: var(--muted); opacity: .7;
+  display: flex; align-items: center; gap: 6px;
+}
+.foot-made span { color: var(--muted); }
+.foot-made .foot-tech {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--white); border: .5px solid var(--gray);
+  padding: 2px 8px; border-radius: 4px;
+  font-size: 10.5px; color: var(--muted);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+.foot-logo { font-size: 14px; font-weight: 700; color: var(--ink); }
+.foot-links { display: flex; gap: 20px; }
+.foot-links a { font-size: 12px; color: var(--muted); text-decoration: none; font-weight: 500; transition: color .2s; }
+.foot-links a:hover { color: var(--ink); }
+.foot-copy { font-size: 11px; color: var(--muted); opacity: .55; }
+
+/* ─── SCROLL REVEAL ─── */
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+.sr { opacity:0; transform:translateY(20px); transition:opacity .65s var(--ease), transform .65s var(--ease); }
+.sr.visible { opacity:1; transform:translateY(0); }
+.sr-d1 { transition-delay:.08s; }
+.sr-d2 { transition-delay:.16s; }
+.sr-d3 { transition-delay:.24s; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width:900px) {
+  .hero-inner,.qs-inner,.com-grid { grid-template-columns:1fr 1.15fr; }
+  .hero-right { display:none; }
+  .wib-grid,.proj-grid,.prin-grid,.prob-grid,.stats-grid { grid-template-columns:1fr; }
+  .proj-featured { grid-row:auto; }
+  .stat-card { border-right:none; border-bottom:.5px solid var(--gray); }
+  .nav-links a:not(.nav-cta) { display:none; }
+  footer { flex-direction:column; text-align:center; }
+}
+
+/* ─── DATA PHILOSOPHY SECTION ─── */
+.dph-section {
+  background: var(--off);
+  border-top: .5px solid #f0f0f5;
+}
+.dph-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(48px,6vw,88px);
+  align-items: center;
+}
+.dph-text .s-sub {
+  margin-top: 18px;
+  max-width: 400px;
+}
+
+/* ── PIPELINE ── */
+.dph-pipeline {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Rail vertical continuo */
+.dph-pipeline::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 20px;
+  bottom: 20px;
+  width: 1px;
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    rgba(122,123,255,.3) 8%,
+    rgba(122,123,255,.5) 50%,
+    rgba(122,123,255,.3) 92%,
+    transparent 100%);
+  pointer-events: none;
+}
+
+/* Cada fila del proceso */
+.dph-step-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  position: relative;
+}
+
+/* Columna izquierda: número + dot + línea */
+.dph-step-aside {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 30px;
+  flex-shrink: 0;
+  padding-top: 18px;
+  position: relative;
+  z-index: 1;
+}
+.dph-step-num {
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--purple);
+  letter-spacing: .5px;
+  line-height: 1;
+  background: var(--white);
+  padding: 2px 0;
+}
+
+/* Card del paso */
+.dph-step-card {
+  flex: 1;
+  margin: 6px 0 6px 12px;
+  background: var(--white);
+  border: .5px solid #e8e8f0;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: all .22s var(--ease);
+  cursor: default;
+  position: relative;
+  overflow: hidden;
+}
+.dph-step-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2px;
+  background: var(--purple);
+  border-radius: 2px 0 0 2px;
+  opacity: 0;
+  transition: opacity .22s var(--ease);
+}
+.dph-step-card:hover {
+  border-color: rgba(122,123,255,.35);
+  box-shadow: 0 4px 20px rgba(122,123,255,.09);
+  transform: translateX(3px);
+}
+.dph-step-card:hover::before { opacity: 1; }
+
+/* Icono — todos morado claro */
+.dph-step-ico {
+  width: 32px; height: 32px;
+  border-radius: 9px;
+  background: var(--purple-light);
+  border: .5px solid rgba(122,123,255,.22);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.dph-step-body { flex: 1; min-width: 0; }
+.dph-step-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -.2px;
+  margin-bottom: 2px;
+}
+.dph-step-desc {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* Flecha entre pasos */
+.dph-step-arrow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 15px;
+  height: 16px;
+  position: relative;
+  z-index: 1;
+}
+.dph-step-arrow::after {
+  content: '';
+  width: 5px; height: 5px;
+  border-right: 1.5px solid rgba(122,123,255,.45);
+  border-bottom: 1.5px solid rgba(122,123,255,.45);
+  transform: rotate(45deg);
+  margin-top: -3px;
+}
+
+/* Card resultado final — dark */
+.dph-step-card--result {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+  border-color: rgba(122,123,255,.35);
+  box-shadow: 0 4px 24px rgba(122,123,255,.14);
+}
+.dph-step-card--result::before { background: #7a7bff; opacity: 1; }
+.dph-step-card--result:hover {
+  border-color: rgba(122,123,255,.55);
+  box-shadow: 0 8px 32px rgba(122,123,255,.22);
+  transform: translateX(3px);
+}
+.dph-step-ico--result {
+  background: rgba(122,123,255,.18);
+  border-color: rgba(122,123,255,.3);
+}
+.dph-step-title--result {
+  color: #ffffff;
+  font-size: 14px;
+}
+.dph-result-dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--purple);
+  box-shadow: 0 0 10px rgba(122,123,255,.9);
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+@keyframes glow-pulse {
+  0%,100% { box-shadow: 0 0 6px rgba(122,123,255,.7); }
+  50%      { box-shadow: 0 0 16px rgba(122,123,255,1); }
+}
+@media (max-width: 820px) {
+  .dph-inner { grid-template-columns: 1fr; gap: 40px; }
+  .dph-text .s-sub { max-width: 100%; }
+  .dph-pipeline::before { display: none; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- ─── NAV ─── -->
+<nav id="nav">
+  <a href="./index.html" class="logo"><span id="logoText"></span><span class="logo-dot"></span></a>
+  <div class="nav-links">
+    <a href="./index.html" class="active">Inicio</a>
+    <a href="./sobre-mi.html">Sobre mí</a>
+    <a href="./proyectos.html">Proyectos</a>
+    <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" onclick="gtag('event', 'clic_linkedin', { location: 'nav' });">LinkedIn</a>
+    <a href="https://mail.google.com/mail/u/0/?fs=1&to=borja.mora.mendez@gmail.com&su=Oportunidad+laboral&body=Hola,+me+gustar%C3%ADa+hablar+contigo+sobre+una+posible+oportunidad.&tf=cm" target="_blank" class="nav-cta btn" onclick="gtag('event', 'clic_email', { location: 'nav' });">Contacto</a>
+  </div>
+</nav>
+
+<!-- ─── DOT NAV ─── -->
+<div class="dot-nav" id="dotNav">
+  <div class="dot-nav-item" data-section="hero"><div class="dot-nav-dot"></div><span class="dot-nav-label">Inicio</span></div>
+  <div class="dot-nav-item" data-section="projects"><div class="dot-nav-dot"></div><span class="dot-nav-label">Proyectos</span></div>
+  <div class="dot-nav-item" data-section="star"><div class="dot-nav-dot"></div><span class="dot-nav-label">PBI Mockup</span></div>
+  <div class="dot-nav-item" data-section="approach"><div class="dot-nav-dot"></div><span class="dot-nav-label">Enfoque</span></div>
+  <div class="dot-nav-item" data-section="principles"><div class="dot-nav-dot"></div><span class="dot-nav-label">Principios</span></div>
+  <div class="dot-nav-item" data-section="analysis"><div class="dot-nav-dot"></div><span class="dot-nav-label">Python · SQL · R</span></div>
+  <div class="dot-nav-item" data-section="daxlab"><div class="dot-nav-dot"></div><span class="dot-nav-label">DAX Lab</span></div>
+  <div class="dot-nav-item" data-section="community"><div class="dot-nav-dot"></div><span class="dot-nav-label">Comunidad</span></div>
+  <div class="dot-nav-item" data-section="cta"><div class="dot-nav-dot"></div><span class="dot-nav-label">Contacto</span></div>
+</div>
+
+<!-- ─── HERO ─── -->
+<section class="hero" id="hero">
+  <div class="hero-inner">
+    <div class="hero-left">
+
+      <!-- CHANGE 2: Purple light pill above headline -->
+      <div class="hero-pill">
+        Data Analyst &amp; Business Intelligence
+      </div>
+
+      <!-- CHANGE 1 & 3: All black, "Decisiones mejores" on one line -->
+      <h1 class="hero-h1">
+        Datos claros.<br>Decisiones mejores.
+      </h1>
+      
+      <!-- CHANGE 4: Subtitle -->
+      <p class="hero-sub">
+        Especializado en Power BI y sistemas de reporting. Construyo modelos de datos,<br>
+        resuelvo problemas con DAX y diseño dashboards para comunicar decisiones.
+      </p>
+
+      <!-- CHANGE 4: Certification badge -->
+      <div class="hero-cert">
+        <div class="hero-cert-icon">
+          <svg viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 1L6.18 3.64L9 4.18L7 6.14L7.45 9L5 7.77L2.55 9L3 6.14L1 4.18L3.82 3.64L5 1Z" fill="white" stroke="white" stroke-width=".4" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span>Microsoft Certified — Power BI Data Analyst (PL-300)</span>
+      </div>
+
+      <!-- CHANGE 5: Available badge -->
+      <div class="hero-badge" style="margin-bottom: 24px;">
+        <span class="badge-pulse"></span>
+        Disponible · Data Analyst / Power BI
+      </div>
+
+      <div class="hero-actions">
+        <a href="./proyectos.html" class="btn btn-primary">Ver proyectos →</a>
+        <a href="./sobre-mi.html" class="btn btn-outline">Sobre mí</a>
+      </div>
+    </div>
+
+    <!-- ─── DASHBOARD WOW ─── -->
+    <div class="hero-right">
+      <div class="dashboard-frame">
+        <div class="df-titlebar">
+          <div class="df-dot" style="background:#ff5f57"></div>
+          <div class="df-dot" style="background:#febc2e"></div>
+          <div class="df-dot" style="background:#28c840"></div>
+          <span class="df-url">ventas-ibcs · Q4 2025 · Power BI</span>
+        </div>
+
+        <div class="df-header">
+          <div>
+            <div class="df-title">Informe de Ventas · 2025</div>
+            <div style="font-size:8.5px;color:var(--muted);margin-top:2px">Análisis de ventas por canal y región · Acumulado Ene–Dic</div>
+          </div>
+          <span class="df-period">Ene – Dic 2025</span>
+        </div>
+
+        <div class="df-body">
+
+          <!-- KPIs -->
+          <div class="df-kpis">
+            <div class="dk">
+              <div class="dk-label">Ventas YTD</div>
+              <div class="dk-main">
+                <div class="dk-value">€2,84M</div>
+                <svg class="dk-sparkline" width="38" height="20" viewBox="0 0 38 20" fill="none">
+                  <polyline points="0,16 4,14 7,15 10,11 13,13 16,8 20,10 23,6 27,8 31,4 38,2" stroke="#d0d0db" stroke-width="1.3" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <span class="dk-pos">▲ +12,4%</span>
+            </div>
+            <div class="dk">
+              <div class="dk-label">Unidades</div>
+              <div class="dk-main">
+                <div class="dk-value">48.236</div>
+                <svg class="dk-sparkline" width="38" height="20" viewBox="0 0 38 20" fill="none">
+                  <polyline points="0,17 4,14 7,16 10,11 13,14 16,9 20,12 23,7 27,10 31,6 38,4" stroke="#d0d0db" stroke-width="1.3" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <span class="dk-pos">▲ +8,1%</span>
+            </div>
+            <div class="dk">
+              <div class="dk-label">Ticket Medio</div>
+              <div class="dk-main">
+                <div class="dk-value">€ 58,9</div>
+                <svg class="dk-sparkline" width="38" height="20" viewBox="0 0 38 20" fill="none">
+                  <polyline points="0,8 4,11 7,9 10,13 13,11 16,14 20,12 23,15 27,13 31,16 38,15" stroke="#d0d0db" stroke-width="1.3" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <span class="dk-neg">▼ −2,3%</span>
+            </div>
+            <div class="dk">
+              <div class="dk-label">Margen Bruto</div>
+              <div class="dk-main">
+                <div class="dk-value">34,7%</div>
+                <svg class="dk-sparkline" width="38" height="20" viewBox="0 0 38 20" fill="none">
+                  <polyline points="0,16 4,14 7,16 10,12 13,14 16,10 20,12 23,8 27,10 31,7 38,5" stroke="#d0d0db" stroke-width="1.3" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <span class="dk-pos">▲ +1,2pp</span>
+            </div>
+          </div>
+
+          <!-- Charts -->
+          <div class="df-charts">
+            <div class="df-card">
+              <div class="dc-label">Evolución mensual</div>
+              <div class="dc-sublabel">Ventas reales vs año anterior</div>
+              <div class="dc-legend">
+                <span class="dc-leg-item"><span class="dc-leg-dot" style="background:var(--purple)"></span>2025</span>
+                <span class="dc-leg-item"><span class="dc-leg-dot" style="background:#dde"></span>2024</span>
+              </div>
+              <div style="position:relative;width:100%;height:88px">
+                <canvas id="heroBar"></canvas>
+              </div>
+            </div>
+
+            <div class="df-card">
+              <div class="dc-label">Tendencia acum.</div>
+              <div class="dc-sublabel">Ingreso mensual</div>
+              <div style="display:flex;gap:12px;margin-bottom:5px;align-items:center">
+                <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#888">
+                  <span style="width:12px;height:2px;background:var(--purple);display:inline-block;border-radius:1px"></span>2025
+                </span>
+                <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#bbb">
+                  <span style="width:12px;height:2px;background:#dde;display:inline-block;border-radius:1px"></span>2024
+                </span>
+              </div>
+              <div style="position:relative;width:100%;height:76px">
+                <canvas id="heroLine"></canvas>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:5px;padding-top:5px;border-top:.5px solid #f0f0f5">
+                <span style="font-size:8px;color:var(--muted)">Mejor mes: <strong style="color:var(--ink)">Sep</strong></span>
+                <span style="font-size:8px;font-weight:700;color:var(--green)">▲ +9,2% YoY</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ranking zonas -->
+          <div class="df-ranking">
+            <div class="dr-head">
+              <span class="dc-label" style="margin:0">Ranking por zona</span>
+              <span style="font-size:8px;color:var(--purple);font-weight:600;cursor:default">Ver detalle →</span>
+            </div>
+            <div class="dr-row">
+              <span class="dr-rank">01</span>
+              <span class="dr-name">Norte</span>
+              <div class="dr-track"><div class="dr-fill" style="width:100%"></div></div>
+              <span class="dr-val">€ 812K</span>
+              <span class="dr-badge" style="background:var(--green-light);color:var(--green)">▲ +9,2%</span>
+            </div>
+            <div class="dr-row">
+              <span class="dr-rank">02</span>
+              <span class="dr-name">Centro</span>
+              <div class="dr-track"><div class="dr-fill" style="width:78%"></div></div>
+              <span class="dr-val">€ 635K</span>
+              <span class="dr-badge" style="background:var(--green-light);color:var(--green)">▲ +5,8%</span>
+            </div>
+            <div class="dr-row">
+              <span class="dr-rank">03</span>
+              <span class="dr-name">Sur</span>
+              <div class="dr-track"><div class="dr-fill" style="width:55%;background:#e0a0b0"></div></div>
+              <span class="dr-val">€ 451K</span>
+              <span class="dr-badge" style="background:var(--red-light);color:var(--red)">▼ −2,1%</span>
+            </div>
+            <div class="dr-row">
+              <span class="dr-rank">04</span>
+              <span class="dr-name">Este</span>
+              <div class="dr-track"><div class="dr-fill" style="width:41%;background:rgba(122,123,255,.4)"></div></div>
+              <span class="dr-val">€ 346K</span>
+              <span class="dr-badge" style="background:#f5f5fa;color:#aaa">→ 0,0%</span>
+            </div>
+          </div>
+
+        </div><!-- /df-body -->
+      </div><!-- /dashboard-frame -->
+    </div><!-- /hero-right -->
+  </div><!-- /hero-inner -->
+</section>
+
+<!-- ─── PROOF STRIP — CHANGE 7: Pro scrolling tag strip ─── -->
+<div class="proof-strip sr">
+  <div class="proof-track" id="proofTrack">
+
+    <!-- First set -->
+    <div class="proof-content" id="proofContent">
+      <div class="proof-item"><div class="proof-abbr">PBI</div><span class="proof-label">Power BI</span></div>
+      <div class="proof-item"><div class="proof-abbr">PQ</div><span class="proof-label">Power Query</span></div>
+      <div class="proof-item"><div class="proof-abbr">DAX</div><span class="proof-label">DAX</span></div>
+      <div class="proof-item"><div class="proof-abbr">DS</div><span class="proof-label">Data Storytelling</span></div>
+      <div class="proof-item"><div class="proof-abbr">FIG</div><span class="proof-label">Figma</span></div>
+      <div class="proof-item"><div class="proof-abbr">AI</div><span class="proof-label">Claude IA</span></div>
+      <div class="proof-item"><div class="proof-abbr">UX</div><span class="proof-label">UX / UI</span></div>
+      <div class="proof-item"><div class="proof-abbr">DB</div><span class="proof-label">Dashboard Design</span></div>
+      <div class="proof-item"><div class="proof-abbr">XLS</div><span class="proof-label">Excel</span></div>
+      <div class="proof-item"><div class="proof-abbr">SQL</div><span class="proof-label">SQL</span></div>
+    </div>
+
+    <!-- Duplicate set for seamless loop -->
+    <div class="proof-content" aria-hidden="true">
+      <div class="proof-item"><div class="proof-abbr">PBI</div><span class="proof-label">Power BI</span></div>
+      <div class="proof-item"><div class="proof-abbr">PQ</div><span class="proof-label">Power Query</span></div>
+      <div class="proof-item"><div class="proof-abbr">DAX</div><span class="proof-label">DAX</span></div>
+      <div class="proof-item"><div class="proof-abbr">DS</div><span class="proof-label">Data Storytelling</span></div>
+      <div class="proof-item"><div class="proof-abbr">FIG</div><span class="proof-label">Figma</span></div>
+      <div class="proof-item"><div class="proof-abbr">AI</div><span class="proof-label">Claude IA</span></div>
+      <div class="proof-item"><div class="proof-abbr">UX</div><span class="proof-label">UX / UI</span></div>
+      <div class="proof-item"><div class="proof-abbr">DB</div><span class="proof-label">Dashboard Design</span></div>
+      <div class="proof-item"><div class="proof-abbr">XLS</div><span class="proof-label">Excel</span></div>
+      <div class="proof-item"><div class="proof-abbr">SQL</div><span class="proof-label">SQL</span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ─── PROJECTS — gris ─── -->
+<section class="proj-section" id="projects">
+  <div class="c">
+    <div class="proj-header">
+      <div class="sr">
+        <div class="s-tag">Proyectos destacados</div>
+        <h2 class="s-h">Dashboards que<br><em>generan decisiones</em></h2>
+      </div>
+      <p class="s-sub sr" style="max-width:360px">Proyectos desarrollados con Power BI a partir de necesidades reales de negocio. Claridad, contexto y utilidad.</p>
+    </div>
+    <div class="proj-grid">
+
+      <!-- ── CARD 0: IBCS Lollipop ── -->
+      <div class="proj-card sr">
+        <div class="pc-visual">
+          <svg width="100%" viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+            <rect width="360" height="300" fill="#fafafa"/>
+            <!-- label — alineado con pc-body (x=30) -->
+            <text x="30" y="36" font-family="'Segoe UI',sans-serif" font-size="8" font-weight="700" fill="#ccc" letter-spacing="1.2">VENTAS · CY VS SPLY · 2024</text>
+            <!-- pills -->
+            <rect x="30" y="48" width="62" height="24" rx="12" fill="#ededff"/>
+            <text x="61" y="64" font-family="'Segoe UI',sans-serif" font-size="10" font-weight="700" fill="#5a5be0" text-anchor="middle">€2,84M</text>
+            <rect x="100" y="48" width="82" height="24" rx="12" fill="#e8f5e7"/>
+            <text x="141" y="64" font-family="'Segoe UI',sans-serif" font-size="10" font-weight="700" fill="#2d7a28" text-anchor="middle">+12,4% YoY</text>
+            <!-- baseline -->
+            <line x1="30" y1="222" x2="330" y2="222" stroke="#e0e0e8" stroke-width="0.8"/>
+            <!-- 6 lollipop pairs: CY filled purple, SPLY outline gray -->
+            <!-- spacing: 6 pairs over 300px width, centered -->
+            <!-- Ene -->
+            <line x1="60"  y1="152" x2="60"  y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
+            <circle cx="60"  cy="152" r="7" fill="#7a7bff"/>
+            <line x1="76"  y1="172" x2="76"  y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
+            <circle cx="76"  cy="172" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
+            <!-- Feb -->
+            <line x1="110" y1="138" x2="110" y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
+            <circle cx="110" cy="138" r="7" fill="#7a7bff"/>
+            <line x1="126" y1="162" x2="126" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
+            <circle cx="126" cy="162" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
+            <!-- Mar -->
+            <line x1="160" y1="162" x2="160" y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
+            <circle cx="160" cy="162" r="7" fill="#7a7bff"/>
+            <line x1="176" y1="150" x2="176" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
+            <circle cx="176" cy="150" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
+            <!-- Abr -->
+            <line x1="210" y1="145" x2="210" y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
+            <circle cx="210" cy="145" r="7" fill="#7a7bff"/>
+            <line x1="226" y1="165" x2="226" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
+            <circle cx="226" cy="165" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
+            <!-- May -->
+            <line x1="260" y1="158" x2="260" y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
+            <circle cx="260" cy="158" r="7" fill="#7a7bff"/>
+            <line x1="276" y1="146" x2="276" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
+            <circle cx="276" cy="146" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
+            <!-- Jun — pico máximo -->
+            <line x1="310" y1="118" x2="310" y2="222" stroke="#9898d8" stroke-width="1.5"/>
+            <circle cx="310" cy="118" r="8" fill="#5a5be0"/>
+            <line x1="326" y1="170" x2="326" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
+            <circle cx="326" cy="170" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
+            <!-- month labels — alineados al centro del par -->
+            <text x="68"  y="238" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Ene</text>
+            <text x="118" y="238" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Feb</text>
+            <text x="168" y="238" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Mar</text>
+            <text x="218" y="238" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Abr</text>
+            <text x="268" y="238" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">May</text>
+            <text x="318" y="238" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Jun</text>
+            <!-- legend -->
+            <circle cx="38"  cy="264" r="5" fill="#7a7bff"/>
+            <text x="48"  y="268" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#b8b8cc">CY 2024</text>
+            <circle cx="118" cy="264" r="5" fill="none" stroke="#cacade" stroke-width="1.8"/>
+            <text x="128" y="268" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#b8b8cc">SPLY 2023</text>
+          </svg>
+        </div>
+        <div class="pc-body">
+          <div class="pc-cat">Ventas · IBCS</div>
+          <div class="pc-name">Informe de Ventas — Estándar IBCS</div>
+          <p class="pc-desc">Dashboard de ventas diseñado siguiendo principios IBCS para mejorar la claridad, comparabilidad y lectura de las métricas comerciales.<br><br><strong>El reto:</strong> transformar datos de ventas en visualizaciones consistentes que faciliten detectar tendencias, variaciones y evolución del rendimiento.</p>
+          <div class="pc-foot">
+            <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">IBCS</span></div>
+            <a href="./proyectos.html" class="pc-link">Ver →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CARD 1: Balance ── -->
+      <div class="proj-card sr sr-d1">
+        <div class="pc-visual">
+          <svg width="100%" viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+            <rect width="360" height="300" fill="#fafafa"/>
+            <!-- nav -->
+            <rect x="0" y="0" width="360" height="36" fill="#f0f0f5"/>
+            <text x="16" y="22" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb">Inicio</text>
+            <text x="52" y="22" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb">Checklist</text>
+            <text x="107" y="22" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb">Balance SyS</text>
+            <text x="168" y="22" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#333" font-weight="700">Balance</text>
+            <line x1="168" y1="25" x2="200" y2="25" stroke="#333" stroke-width="1"/>
+            <text x="210" y="22" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb">PyG</text>
+            <!-- col headers -->
+            <rect x="0" y="36" width="360" height="18" fill="#e8e8f2"/>
+            <text x="16" y="49" font-family="'Segoe UI',sans-serif" font-size="7" font-weight="600" fill="#aaa">Partida</text>
+            <text x="228" y="49" font-family="'Segoe UI',sans-serif" font-size="7" font-weight="600" fill="#aaa" text-anchor="end">Importe</text>
+            <text x="284" y="49" font-family="'Segoe UI',sans-serif" font-size="7" font-weight="600" fill="#aaa" text-anchor="end">%</text>
+            <text x="348" y="49" font-family="'Segoe UI',sans-serif" font-size="7" font-weight="600" fill="#aaa" text-anchor="end">PY</text>
+            <!-- ACTIVO — y=54, h=24 -->
+            <rect x="0" y="54" width="360" height="24" fill="#f5f5fb"/>
+            <text x="16" y="71" font-family="'Segoe UI',sans-serif" font-size="9" font-weight="700" fill="#222">ACTIVO</text>
+            <text x="228" y="71" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#444" text-anchor="end">4.307.661€</text>
+            <text x="284" y="71" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#999" text-anchor="end">100,00%</text>
+            <text x="348" y="71" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#bbb" text-anchor="end">4.303.957€</text>
+            <!-- A) No Corriente — y=78, h=22 -->
+            <text x="24" y="93" font-family="'Segoe UI',sans-serif" font-size="7.5" font-weight="600" fill="#555">A) Activo No Corriente</text>
+            <text x="228" y="93" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#666" text-anchor="end">934.027€</text>
+            <text x="284" y="93" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#aaa" text-anchor="end">21,68%</text>
+            <text x="348" y="93" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">941.400€</text>
+            <line x1="16" y1="100" x2="344" y2="100" stroke="#eeeeef" stroke-width="0.5"/>
+            <!-- sub1 — y=100, h=20 -->
+            <rect x="0" y="100" width="360" height="20" fill="#fafafc"/>
+            <text x="34" y="114" font-family="'Segoe UI',sans-serif" font-size="7" fill="#888">I. Inmovilizado Intangible</text>
+            <text x="228" y="114" font-family="'Segoe UI',sans-serif" font-size="7" fill="#aaa" text-anchor="end">934,74€</text>
+            <text x="284" y="114" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">0,02%</text>
+            <text x="348" y="114" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">934,74€</text>
+            <!-- sub2 — y=120, h=20 -->
+            <text x="34" y="134" font-family="'Segoe UI',sans-serif" font-size="7" fill="#888">II. Inmovilizado Material</text>
+            <text x="228" y="134" font-family="'Segoe UI',sans-serif" font-size="7" fill="#aaa" text-anchor="end">736.910€</text>
+            <text x="284" y="134" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">17,11%</text>
+            <text x="348" y="134" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">744.284€</text>
+            <!-- B) Corriente — y=140, h=22 -->
+            <rect x="0" y="140" width="360" height="22" fill="#f5f5fb"/>
+            <text x="24" y="155" font-family="'Segoe UI',sans-serif" font-size="7.5" font-weight="600" fill="#555">B) Activo Corriente</text>
+            <text x="228" y="155" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#666" text-anchor="end">3.373.634€</text>
+            <text x="284" y="155" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#aaa" text-anchor="end">78,32%</text>
+            <text x="348" y="155" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">3.362.557€</text>
+            <line x1="16" y1="162" x2="344" y2="162" stroke="#eeeeef" stroke-width="0.5"/>
+            <!-- sub3 — y=162, h=20 -->
+            <rect x="0" y="162" width="360" height="20" fill="#fafafc"/>
+            <text x="34" y="176" font-family="'Segoe UI',sans-serif" font-size="7" fill="#888">III. Deudores comerciales</text>
+            <text x="228" y="176" font-family="'Segoe UI',sans-serif" font-size="7" fill="#aaa" text-anchor="end">1.535.306€</text>
+            <text x="284" y="176" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">35,64%</text>
+            <text x="348" y="176" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">1.481.048€</text>
+            <!-- sub4 — y=182, h=20 -->
+            <text x="34" y="196" font-family="'Segoe UI',sans-serif" font-size="7" fill="#888">VII. Efectivo y equivalentes</text>
+            <text x="228" y="196" font-family="'Segoe UI',sans-serif" font-size="7" fill="#aaa" text-anchor="end">409.007€</text>
+            <text x="284" y="196" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">9,49%</text>
+            <text x="348" y="196" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">452.188€</text>
+            <!-- PASIVO — y=202, h=24 -->
+            <rect x="0" y="202" width="360" height="24" fill="#f5f5fb"/>
+            <text x="16" y="219" font-family="'Segoe UI',sans-serif" font-size="9" font-weight="700" fill="#222">PASIVO</text>
+            <text x="228" y="219" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#444" text-anchor="end">4.307.661€</text>
+            <text x="284" y="219" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#999" text-anchor="end">100,00%</text>
+            <text x="348" y="219" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#bbb" text-anchor="end">4.303.957€</text>
+            <!-- A) Patrimonio — y=226, h=24 -->
+            <text x="24" y="242" font-family="'Segoe UI',sans-serif" font-size="7.5" font-weight="600" fill="#555">A) Patrimonio Neto</text>
+            <text x="228" y="242" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#666" text-anchor="end">2.309.004€</text>
+            <text x="284" y="242" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#aaa" text-anchor="end">53,60%</text>
+            <text x="348" y="242" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">2.352.501€</text>
+            <line x1="16" y1="250" x2="344" y2="250" stroke="#eeeeef" stroke-width="0.5"/>
+            <!-- B) Pasivo No Corriente — y=250, h=24 -->
+            <rect x="0" y="250" width="360" height="24" fill="#fafafc"/>
+            <text x="24" y="266" font-family="'Segoe UI',sans-serif" font-size="7.5" font-weight="600" fill="#555">B) Pasivo No Corriente</text>
+            <text x="228" y="266" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#7a7bff" text-anchor="end">640.033€</text>
+            <text x="284" y="266" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#7a7bff" text-anchor="end">14,86%</text>
+            <text x="348" y="266" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">640.033€</text>
+            <!-- C) Pasivo Corriente — y=274, h=26 -->
+            <rect x="0" y="274" width="360" height="26" fill="#f5f5fb"/>
+            <text x="24" y="291" font-family="'Segoe UI',sans-serif" font-size="7.5" font-weight="600" fill="#555">C) Pasivo Corriente</text>
+            <text x="228" y="291" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#7a7bff" text-anchor="end">1.358.624€</text>
+            <text x="284" y="291" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#7a7bff" text-anchor="end">31,54%</text>
+            <text x="348" y="291" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">1.311.423€</text>
+          </svg>
+        </div>
+        <div class="pc-body">
+          <div class="pc-cat">Finanzas</div>
+          <div class="pc-name">Optimización del Reporting Financiero</div>
+          <p class="pc-desc">Rediseño de un sistema de reporting en Power BI para analizar ingresos, márgenes y rentabilidad operativa.<br><br><strong>El reto:</strong> consolidar métricas financieras dispersas en un modelo de datos estructurado que permita identificar tendencias y apoyar la toma de decisiones.</p>
+          <div class="pc-foot">
+            <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">Modelado en estrella</span></div>
+            <a href="./proyectos.html" class="pc-link">Ver →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CARD 2: Marketing KPIs 2x2 ── -->
+      <div class="proj-card sr sr-d2">
+        <div class="pc-visual">
+          <svg width="100%" viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+            <rect width="360" height="300" fill="#fafafa"/>
+            <text x="20" y="14" font-family="'Segoe UI',sans-serif" font-size="7.5" font-weight="700" fill="#ccc" letter-spacing="1.2">SOCIAL MEDIA · 2025 VS 2024</text>
+
+            <!-- KPI 1: Impresiones -->
+            <rect x="16" y="22" width="328" height="126" rx="12" fill="#fff" stroke="#ecedf4" stroke-width="0.8"/>
+            <rect x="16" y="22" width="4" height="126" rx="2" fill="#7a7bff"/>
+            <text x="32" y="46" font-family="'Segoe UI',sans-serif" font-size="8" font-weight="700" fill="#c0c0d4" letter-spacing="1">IMPRESIONES</text>
+            <text x="32" y="82" font-family="'Segoe UI',sans-serif" font-size="38" font-weight="700" fill="#1a1a2e" letter-spacing="-1">607,9K</text>
+            <text x="32" y="102" font-family="'Segoe UI',sans-serif" font-size="9" fill="#bbb">PY: 696,8K</text>
+            <rect x="32" y="112" width="52" height="18" rx="5" fill="#f0f0f8"/>
+            <text x="58" y="124" font-family="'Segoe UI',sans-serif" font-size="8.5" font-weight="700" fill="#8888bb" text-anchor="middle">↓ −12,8%</text>
+            <line x1="200" y1="34" x2="200" y2="136" stroke="#f0f0f5" stroke-width="0.8"/>
+            <rect x="209" y="102" width="12" height="32" rx="2" fill="#e0e0f0"/>
+            <rect x="226" y="112" width="12" height="22" rx="2" fill="#d4d4ec"/>
+            <rect x="243" y="96" width="12" height="38" rx="2" fill="#c4c4e4"/>
+            <rect x="260" y="106" width="12" height="28" rx="2" fill="#b4b4dc"/>
+            <rect x="277" y="90" width="12" height="44" rx="2" fill="#a4a4d4"/>
+            <rect x="294" y="100" width="12" height="34" rx="2" fill="#9090cc"/>
+            <rect x="311" y="82" width="12" height="52" rx="2" fill="#7878c8"/>
+            <rect x="328" y="72" width="12" height="62" rx="2" fill="#7a7bff"/>
+
+            <!-- KPI 2: Alcance -->
+            <rect x="16" y="160" width="328" height="126" rx="12" fill="#fff" stroke="#ecedf4" stroke-width="0.8"/>
+            <rect x="16" y="160" width="4" height="126" rx="2" fill="#9898c8"/>
+            <text x="32" y="184" font-family="'Segoe UI',sans-serif" font-size="8" font-weight="700" fill="#c0c0d4" letter-spacing="1">ALCANCE</text>
+            <text x="32" y="220" font-family="'Segoe UI',sans-serif" font-size="38" font-weight="700" fill="#1a1a2e" letter-spacing="-1">460,9K</text>
+            <text x="32" y="240" font-family="'Segoe UI',sans-serif" font-size="9" fill="#bbb">PY: 513,0K</text>
+            <rect x="32" y="250" width="52" height="18" rx="5" fill="#f0f0f8"/>
+            <text x="58" y="262" font-family="'Segoe UI',sans-serif" font-size="8.5" font-weight="700" fill="#8888bb" text-anchor="middle">↓ −10,1%</text>
+            <line x1="200" y1="172" x2="200" y2="274" stroke="#f0f0f5" stroke-width="0.8"/>
+            <rect x="209" y="236" width="12" height="32" rx="2" fill="#e0e0f0"/>
+            <rect x="226" y="246" width="12" height="22" rx="2" fill="#d4d4ec"/>
+            <rect x="243" y="230" width="12" height="38" rx="2" fill="#c4c4e4"/>
+            <rect x="260" y="240" width="12" height="28" rx="2" fill="#b4b4dc"/>
+            <rect x="277" y="224" width="12" height="44" rx="2" fill="#a4a4d4"/>
+            <rect x="294" y="234" width="12" height="34" rx="2" fill="#9090cc"/>
+            <rect x="311" y="216" width="12" height="52" rx="2" fill="#7878c8"/>
+            <rect x="328" y="206" width="12" height="62" rx="2" fill="#7a7bff"/>
+          </svg>
+
+        <div class="pc-body">
+          <div class="pc-cat">Marketing · Analytics</div>
+          <div class="pc-name">Social Media Performance — Análisis YoY</div>
+          <p class="pc-desc">Dashboard de marketing analytics para analizar la evolución anual de métricas clave en redes sociales y evaluar el rendimiento de las campañas.<br><br><strong>El reto:</strong> comparar el comportamiento entre periodos y detectar tendencias en alcance, engagement y crecimiento de audiencia.</p>
+          <div class="pc-foot">
+            <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">Marketing Analytics</span></div>
+            <a href="./proyectos.html" class="pc-link">Ver →</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="proj-more sr">
+    <a href="./proyectos.html" class="btn btn-outline">Ver todos los proyectos →</a>
+  </div>
+</section>
+
+<!-- ─── PROYECTO ESTRELLA ─── -->
+<section class="star-section" id="star">
+  <div class="c">
+    <div class="star-inner sr">
+
+      <!-- LEFT: texto -->
+      <div class="star-text">
+        <div class="star-tag">Herramienta de Data Storytelling</div>
+        <h2 class="star-title">PBI Mockup Creator</h2>
+        <p class="star-lead">He creado esta herramienta de data storytelling para diseñar dashboards antes de abrir Power BI, pensada para definir qué quieres contar y cómo se va a leer antes de trabajar con datos.</p>
+
+        <div class="star-reason">
+          <div class="star-reason-label">Por qué la construí</div>
+          <p>Porque diseñar mientras construyes es donde empiezan los problemas. Un dashboard se debería pensar antes, no después.</p>
+        </div>
+
+        <div class="star-decisions">
+          <div class="star-decision">
+            <span class="star-decision-label">Qué tiene de diferente</span>
+            <p>No se centra en gráficos, se centra en estructura. Permite trabajar la jerarquía visual, el orden de lectura y la claridad del mensaje antes de entrar en Power BI.</p>
+          </div>
+          <div class="star-decision">
+            <span class="star-decision-label">Cómo la uso</span>
+            <p>Primero defino el layout y la estructura del dashboard, después organizo KPIs, visuales y niveles de importancia. Cuando todo tiene sentido, paso a construirlo.</p>
+          </div>
+        </div>
+
+        <div class="star-foot">
+          <div class="star-tags">
+            <span class="pc-pill">Power BI</span>
+            <span class="pc-pill">Claude</span>
+            <span class="pc-pill">Data Storytelling</span>
+          </div>
+          <a href="https://borjamome.github.io/powerbi-mockup/" target="_blank" class="star-cta">
+            Abrir herramienta <span>↗</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- RIGHT: iframe del proyecto -->
+      <div class="star-preview">
+        <div class="star-browser">
+          <div class="star-browser-bar">
+            <div class="star-browser-dots">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="star-browser-url">borjamome.github.io/powerbi-mockup</div>
+          </div>
+          <div class="star-browser-content">
+            <iframe
+              src="https://borjamome.github.io/powerbi-mockup/"
+              title="PBI Mockup Creator"
+              loading="lazy"
+              scrolling="no"
+              tabindex="-1"
+            ></iframe>
+            <div class="iframe-overlay"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── DATA PHILOSOPHY ─── -->
+<section class="dph-section" id="approach">
+  <div class="c">
+    <div class="dph-inner">
+
+      <!-- Izquierda: copy -->
+      <div class="dph-text sr">
+        <div class="s-tag">Qué hago (y cómo lo enfoco)</div>
+        <h2 class="s-h">Transformo preguntas de negocio<br>en sistemas de <em>análisis claros.</em></h2>
+        <p class="s-sub">Mi trabajo es transformarlos en información clara que ayude a entender qué ocurre y por qué ocurre.</p>
+      </div>
+
+      <!-- Derecha: pipeline visual -->
+      <div class="dph-pipeline sr sr-d1">
+
+        <!-- Step 00 — Entender el negocio -->
+        <div class="dph-step-row">
+          <div class="dph-step-aside">
+            <span class="dph-step-num">01</span>
+          </div>
+          <div class="dph-step-card">
+            <div class="dph-step-ico">
+              <span style="font-size:14px;line-height:1;color:#7a7bff">✦</span>
+            </div>
+            <div class="dph-step-body">
+              <div class="dph-step-title">Entender el negocio</div>
+              <div class="dph-step-desc">Qué decidir, qué preguntar y qué importa de verdad.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dph-step-arrow"></div>
+
+        <!-- Step 01 — Power Query -->
+        <div class="dph-step-row">
+          <div class="dph-step-aside">
+            <span class="dph-step-num">02</span>
+          </div>
+          <div class="dph-step-card">
+            <div class="dph-step-ico">
+              <span style="font-size:14px;line-height:1;color:#7a7bff">▦</span>
+            </div>
+            <div class="dph-step-body">
+              <div class="dph-step-title">Power Query</div>
+              <div class="dph-step-desc">Traer orden al caos: conectar, limpiar y dar forma a los datos.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dph-step-arrow"></div>
+
+        <!-- Step 02 — DAX -->
+        <div class="dph-step-row">
+          <div class="dph-step-aside">
+            <span class="dph-step-num">03</span>
+          </div>
+          <div class="dph-step-card">
+            <div class="dph-step-ico">
+              <span style="font-size:14px;line-height:1;color:#7a7bff">◈</span>
+            </div>
+            <div class="dph-step-body">
+              <div class="dph-step-title">DAX</div>
+              <div class="dph-step-desc">Convertir datos en decisiones: métricas, contexto y lógica de negocio.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dph-step-arrow"></div>
+
+        <!-- Step 03 — Data Storytelling + UX -->
+        <div class="dph-step-row">
+          <div class="dph-step-aside">
+            <span class="dph-step-num">04</span>
+          </div>
+          <div class="dph-step-card">
+            <div class="dph-step-ico">
+              <span style="font-size:14px;line-height:1;color:#7a7bff">⬡</span>
+            </div>
+            <div class="dph-step-body">
+              <div class="dph-step-title">Data Storytelling + UX</div>
+              <div class="dph-step-desc">Hacer visible lo importante: jerarquía, claridad y foco.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dph-step-arrow"></div>
+
+        <!-- Resultado -->
+        <div class="dph-step-row">
+          <div class="dph-step-aside">
+            <span class="dph-step-num" style="color:rgba(122,123,255,.5)">↓</span>
+          </div>
+          <div class="dph-step-card dph-step-card--result">
+            <div class="dph-step-ico dph-step-ico--result">
+              <div class="dph-result-dot"></div>
+            </div>
+            <div class="dph-step-body">
+              <div class="dph-step-title dph-step-title--result">Dashboard listo para decisiones</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── PRINCIPLES ─── -->
+<section class="prin-section" id="principles">
+  <div class="c">
+    <div class="prin-new-inner">
+
+      <div class="prin-new-left sr">
+        <div class="s-tag">Principios que guían mi trabajo</div>
+        <h2 class="s-h">Cómo pienso<br><em>el análisis.</em></h2>
+      </div>
+
+      <div class="prin-new-list sr sr-d1">
+        <div class="prin-item">
+          <span class="prin-item-num">1</span>
+          <div class="prin-item-body">
+            <div class="prin-item-title">Primero la decisión, después el gráfico</div>
+            <div class="prin-item-desc">El gráfico responde a una pregunta. No al revés.</div>
+          </div>
+        </div>
+        <div class="prin-item">
+          <span class="prin-item-num">2</span>
+          <div class="prin-item-body">
+            <div class="prin-item-title">Modelo antes de dashboard</div>
+            <div class="prin-item-desc">Entiende los datos antes de presentarlos.</div>
+          </div>
+        </div>
+        <div class="prin-item">
+          <span class="prin-item-num">3</span>
+          <div class="prin-item-body">
+            <div class="prin-item-title">Claridad frente a ruido visual</div>
+            <div class="prin-item-desc">Lo que sobra, distrae. Lo que falta, confunde.</div>
+          </div>
+        </div>
+        <div class="prin-item">
+          <span class="prin-item-num">4</span>
+          <div class="prin-item-body">
+            <div class="prin-item-title">Cada gráfico tiene un motivo</div>
+            <div class="prin-item-desc">Si no sabes para qué sirve, elimínalo.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── ANALYSIS PROJECTS ─── -->
+<section class="analysis-section" id="analysis">
+  <div class="c">
+    <div class="analysis-header sr">
+      <div class="s-tag">Otros proyectos de análisis (Python · SQL · R)</div>
+      <h2 class="s-h">Más allá del<br><em>dashboard</em></h2>
+      <p class="s-sub">También trabajo con Python, SQL y R para explorar datos, detectar patrones y responder preguntas de análisis antes de que lleguen a una visualización.</p>
+    </div>
+    <div class="analysis-grid">
+
+      <div class="analysis-card sr">
+        <div class="analysis-lang">
+          <span>Python</span><span>Pandas</span><span>Análisis de datos</span>
+        </div>
+        <div class="analysis-title">Mejores ciudades para teletrabajar</div>
+        <p class="analysis-desc">Análisis exploratorio para identificar municipios con buena conectividad, calidad ambiental y precios de vivienda competitivos.</p>
+        <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/python/Proyectos/03.Mejores%20Ciudades%20espa%C3%B1olas%20para%20vivir" target="_blank" class="analysis-link">Ver análisis completo →</a>
+      </div>
+
+      <div class="analysis-card sr sr-d1">
+        <div class="analysis-lang">
+          <span>SQL</span><span>Exploración de datos</span><span>Visualización</span>
+        </div>
+        <div class="analysis-title">Mercado Airbnb — Análisis de precios</div>
+        <p class="analysis-desc">Exploración de datos para analizar patrones de precios, disponibilidad y demanda en el mercado de alquiler turístico.</p>
+        <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/SQL/Proyectos%20SQL/04.Estudio%20Airbnb%20Menorca" target="_blank" class="analysis-link">Ver consultas y conclusiones →</a>
+      </div>
+
+      <div class="analysis-card sr sr-d2">
+        <div class="analysis-lang">
+          <span>R</span><span>Análisis de datos</span><span>Visualización</span>
+        </div>
+        <div class="analysis-title">Radiografía socioeconómica de Madrid</div>
+        <p class="analysis-desc">Análisis de indicadores demográficos y económicos para entender la distribución territorial de renta y población.</p>
+        <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/blob/main/r/Proyectos%20con%20R/01.Radiograf%C3%ADa%20de%20Madrid/README.md" target="_blank" class="analysis-link">Explorar análisis completo →</a>
+      </div>
+
+    </div>
+    <div class="proj-more sr">
+      <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main" target="_blank" class="btn btn-outline" onclick="gtag('event', 'clic_github', { location: 'proyectos' });">Ver más proyectos en GitHub →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DAX LAB ─── -->
+<section class="dax-section" id="daxlab">
+  <div class="c">
+    <div class="dax-inner">
+
+      <!-- LEFT -->
+      <div class="dax-left sr">
+        <div class="dax-tag">DAX Lab</div>
+        <h2 class="dax-title">Experimentos<br>con <em>DAX</em></h2>
+        <p class="dax-desc">Exploro patrones de modelado y cálculos avanzados en Power BI. Pequeños experimentos con DAX y modelado que ayudan a mejorar rendimiento, claridad y reutilización de medidas.</p>
+        <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio" target="_blank" class="dax-github">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.58v-2.03c-3.34.72-4.04-1.6-4.04-1.6-.54-1.38-1.33-1.74-1.33-1.74-1.08-.74.08-.73.08-.73 1.2.08 1.83 1.23 1.83 1.23 1.06 1.82 2.78 1.3 3.46.99.1-.77.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.13 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.82.57C20.57 21.8 24 17.3 24 12 24 5.37 18.63 0 12 0z"/></svg>
+          Disponible en GitHub
+        </a>
+      </div>
+
+      <!-- RIGHT: cards -->
+      <div class="dax-cards sr sr-d1">
+
+        <div class="dax-card">
+          <div>
+            <div class="dax-card-num">01</div>
+            <div class="dax-card-title">Time Intelligence reutilizable</div>
+            <p class="dax-card-desc">Medidas DAX diseñadas para reutilizar cálculos de periodos comparativos sin duplicar lógica.</p>
+          </div>
+          <a href="https://github.com/BORJAMOME/DAX-LAB/tree/main/Patrones/Medidas%20TIME%20INTELLIGENCE" target="_blank" class="dax-card-link">Ver medidas →</a>
+        </div>
+
+        <div class="dax-card">
+          <div>
+            <div class="dax-card-num">02</div>
+            <div class="dax-card-title">Ranking dinámico de métricas</div>
+            <p class="dax-card-desc">Implementación de rankings dinámicos que permiten analizar el rendimiento de categorías o segmentos en distintos contextos.</p>
+          </div>
+          <a href="https://github.com/BORJAMOME/DAX-LAB/tree/main/B%C3%A1sico/RANK" target="_blank" class="dax-card-link">Explorar →</a>
+        </div>
+
+        <div class="dax-card">
+          <div>
+            <div class="dax-card-num">03</div>
+            <div class="dax-card-title">Control de acceso con RLS</div>
+            <p class="dax-card-desc">Configuración de seguridad a nivel de fila para limitar el acceso a los datos según el perfil del usuario.</p>
+          </div>
+          <a href="https://github.com/BORJAMOME/DAX-LAB/tree/main/Avanzado/Control%20de%20acceso%20a%20p%C3%A1ginas" target="_blank" class="dax-card-link">Ver implementación →</a>
+        </div>
+
+      </div>
+    </div>
+    <div class="proj-more sr">
+      <a href="https://github.com/BORJAMOME/DAX-LAB" target="_blank" class="btn btn-outline" onclick="gtag('event', 'clic_github', { location: 'daxlab' });">Ver más experimentos DAX →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── COMMUNITY ─── -->
+<section class="com-section" id="community">
+  <div class="c" style="padding-top:100px;padding-bottom:100px;">
+    <div class="com-inner">
+
+      <!-- LEFT: copy -->
+      <div class="com-left sr">
+        <div class="com-eyebrow">Comunidad Power BI</div>
+        <h2 class="com-title">Compartir es<br>parte de <em>cómo aprendo</em></h2>
+        <p class="com-desc">Publico tutoriales, análisis y reflexiones sobre Power BI, DAX y data storytelling. Una forma de fijar lo que aprendo y conectar con gente que trabaja con datos.</p>
+        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" class="com-cta" onclick="gtag('event', 'clic_linkedin', { location: 'comunidad' });">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          Ver perfil en LinkedIn
+        </a>
+      </div>
+
+      <!-- RIGHT: stats grid -->
+      <div class="com-right sr sr-d1">
+
+        <div class="com-stat">
+          <div class="com-stat-line"></div>
+          <div class="com-stat-num">2.351</div>
+          <div class="com-stat-label">Seguidores en LinkedIn</div>
+          <p class="com-stat-desc">Comunidad activa de profesionales del dato. Crecimiento del +4.374% en el último año.</p>
+        </div>
+
+        <div class="com-stat">
+          <div class="com-stat-line"></div>
+          <div class="com-stat-num">192K</div>
+          <div class="com-stat-label">Impresiones totales</div>
+          <p class="com-stat-desc">+1.359% vs año anterior. 56.244 personas alcanzadas con contenido sobre Power BI y DAX.</p>
+        </div>
+
+        <div class="com-stat">
+          <div class="com-stat-line"></div>
+          <div class="com-stat-num">28K</div>
+          <div class="com-stat-label">Post más visto</div>
+          <p class="com-stat-desc">44% de la audiencia con experiencia senior. 19% en empresas de más de 10.000 empleados.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ─── CTA FINAL ─── -->
+<section class="cta-final" id="cta">
+  <div class="c">
+    <div class="cta-final-inner sr">
+
+      <!-- headline -->
+      <h2 class="cta-final-h">¿Hablamos?</h2>
+      <p class="cta-final-sub">Si te interesa trabajar juntos, hablar sobre datos, dashboards o explorar ideas en Business Intelligence, no dudes en escribirme. También puedes hacerlo simplemente para saludar.</p>
+
+      <!-- actions -->
+      <div class="cta-final-actions">
+        <a href="https://mail.google.com/mail/u/0/?fs=1&to=borja.mora.mendez@gmail.com&su=Oportunidad+laboral&body=Hola,+me+gustar%C3%ADa+hablar+contigo+sobre+una+posible+oportunidad.&tf=cm" target="_blank" class="cta-final-btn-primary" onclick="gtag('event', 'clic_email', { location: 'cta_final' });">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Envíame un mensaje
+        </a>
+        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" class="cta-final-btn-secondary" onclick="gtag('event', 'clic_linkedin', { location: 'cta_final' });">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          LinkedIn
+        </a>
+      </div>
+
+      <!-- info pills -->
+      <div class="cta-final-pills">
+        <div class="cta-pill-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Madrid, España
+        </div>
+        <div class="cta-pill-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          Presencial · Híbrido
+        </div>
+        <div class="cta-pill-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Respondo en &lt;24h
+        </div>
+        <div class="cta-pill-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          ES · EN
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+<!-- ─── FOOTER — blanco ─── -->
+<footer>
+  <div class="foot-inner">
+    <div class="foot-top">
+      <!-- Brand -->
+      <div class="foot-brand">
+        <div class="foot-brand-name">Borja Mora Méndez.</div>
+        <p class="foot-brand-desc">Data Analyst · Power BI · DAX · Data Storytelling</p>
+      </div>
+      <!-- Nav -->
+      <div class="foot-col">
+        <div class="foot-col-title">Navegación</div>
+        <a href="./index.html">Inicio</a>
+        <a href="./sobre-mi.html">Sobre mí</a>
+        <a href="./proyectos.html">Proyectos</a>
+      </div>
+      <!-- Links -->
+      <div class="foot-col">
+        <div class="foot-col-title">Encuéntrame en</div>
+        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" onclick="gtag('event', 'clic_linkedin', { location: 'footer' });">LinkedIn</a>
+        <a href="https://github.com/BORJAMOME" target="_blank" onclick="gtag('event', 'clic_github', { location: 'footer' });">GitHub</a>
+        <a href="https://mail.google.com/mail/u/0/?fs=1&to=borja.mora.mendez@gmail.com&su=Oportunidad+laboral&body=Hola,+me+gustar%C3%ADa+hablar+contigo+sobre+una+posible+oportunidad.&tf=cm" target="_blank" onclick="gtag('event', 'clic_email', { location: 'footer' });">Contacto</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <div class="foot-copy">© 2026 Borja Mora Méndez · Madrid, España</div>
+      <div class="foot-made">
+        Diseñado y construido por mí · <span class="foot-tech">HTML</span><span class="foot-tech">CSS</span><span class="foot-tech">JS</span> · Sin template
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// ─── TYPING EFFECT ───
+(function(){
+  const el = document.getElementById('logoText');
+  const text = 'Borja Mora';
+  let i = 0;
+  function type() {
+    if (i < text.length) {
+      el.textContent += text[i];
+      i++;
+      setTimeout(type, i === 1 ? 300 : 80 + Math.random() * 40);
+    } else {
+      setTimeout(() => el.classList.add('done'), 1200);
+    }
+  }
+  setTimeout(type, 400);
+})();
+
+
+// ─── NAV SCROLL ───
+const nav = document.getElementById('nav');
+window.addEventListener('scroll',()=> nav.classList.toggle('scrolled', scrollY > 40));
+
+// ─── PROGRESS BAR ───
+const pb = document.getElementById('progressBar');
+window.addEventListener('scroll',()=>{
+  pb.style.transform = `scaleX(${scrollY/(document.body.scrollHeight-innerHeight)})`;
+});
+
+// ─── SCROLL REVEAL ───
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+},{ threshold:.1, rootMargin:'0px 0px -30px 0px' });
+document.querySelectorAll('.sr').forEach(el=>io.observe(el));
+
+// ─── CHART DEFAULTS ───
+Chart.defaults.font.family = "'Segoe UI', sans-serif";
+Chart.defaults.font.size   = 9;
+
+const PURPLE = '#7a7bff';
+const GRAY   = '#e5e5e5';
+
+const chartOpts = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins:{ legend:{ display:false }, tooltip:{ enabled:false } },
+  animation:{ duration:900, easing:'easeOutQuart' }
+};
+
+// Hero bar — ventas reales con estacionalidad
+new Chart(document.getElementById('heroBar'), {
+  type:'bar',
+  data:{
+    labels:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+    datasets:[
+      {
+        label:'2025',
+        data:[198,224,268,245,312,287,253,301,418,356,389,392],
+        backgroundColor:'rgba(122,123,255,0.85)',
+        borderRadius:3, borderSkipped:false
+      },
+      {
+        label:'2024',
+        data:[176,201,238,219,278,256,228,272,372,318,347,349],
+        backgroundColor:'rgba(210,210,225,0.7)',
+        borderRadius:3, borderSkipped:false
+      }
+    ]
+  },
+  options:{
+    ...chartOpts,
+    plugins:{
+      legend:{ display:false },
+      tooltip:{
+        enabled:true,
+        backgroundColor:'rgba(17,17,17,.88)',
+        padding:8,
+        callbacks:{
+          title: ctx => ctx[0].label,
+          label: ctx => ` ${ctx.dataset.label}: €${ctx.raw.toLocaleString('es-ES')}K`
+        }
+      }
+    },
+    scales:{
+      x:{ grid:{display:false}, ticks:{color:'#bbb',font:{size:8}}, border:{display:false} },
+      y:{ display:false }
+    }
+  }
+});
+
+// Hero Line — tendencia acumulada
+new Chart(document.getElementById('heroLine'), {
+  type: 'line',
+  data: {
+    labels: ['E','F','M','A','M','J','J','A','S','O','N','D'],
+    datasets: [
+      {
+        label: '2025',
+        data: [198,422,690,935,1247,1534,1787,2088,2506,2862,3251,3643],
+        borderColor: PURPLE, borderWidth: 2,
+        pointRadius: 0, pointHoverRadius: 4,
+        tension: 0.35, fill: true,
+        backgroundColor: 'rgba(122,123,255,0.07)'
+      },
+      {
+        label: '2024',
+        data: [176,377,615,834,1112,1368,1596,1868,2240,2558,2905,3254],
+        borderColor: '#d8d8ea', borderWidth: 1.5,
+        pointRadius: 0, tension: 0.35, fill: false
+      }
+    ]
+  },
+  options: {
+    ...chartOpts,
+    plugins: {
+      legend:{ display:false },
+      tooltip:{
+        enabled:true,
+        backgroundColor:'rgba(17,17,17,.88)',
+        padding:7,
+        callbacks:{
+          title: ctx => ctx[0].label,
+          label: ctx => ` ${ctx.dataset.label}: €${(ctx.raw/1000).toFixed(2)}M`
+        }
+      }
+    },
+    scales: {
+      x: { grid:{display:false}, ticks:{color:'#bbb',font:{size:8}}, border:{display:false} },
+      y: { display:false }
+    }
+  }
+});
+
+
+
+
+// ─── SCROLL NAV ───
+(function(){
+  const nav = document.getElementById('dotNav');
+  const items = nav.querySelectorAll('.dot-nav-item');
+  const sections = ['hero','projects','star','approach','principles','analysis','daxlab','community','cta'];
+  const darkSections = ['community'];
+
+  function update() {
+    const scrollY = window.scrollY + window.innerHeight * .45;
+    let current = sections[0];
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.offsetTop <= scrollY) current = id;
+    });
+    const isDark = darkSections.includes(current);
+    nav.classList.toggle('dark-mode', isDark);
+    nav.classList.toggle('visible', window.scrollY > 200);
+    items.forEach(item => {
+      item.classList.toggle('active', item.dataset.section === current);
+    });
+  }
+
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+
+  items.forEach(item => {
+    item.addEventListener('click', () => {
+      const el = document.getElementById(item.dataset.section);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+})();
+
+// ─── LOGO LINK: always go to home ───
+(function(){
+  const logo = document.querySelector('a.logo');
+  if(!logo) return;
+  logo.addEventListener('click', function(e){
+    e.preventDefault();
+    // Navigate to root/index
+    const base = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/');
+    window.location.href = base.endsWith('/') ? base + 'index.html' : '/index.html';
+  });
+})();
+
+</script>
+</body>
+</html>
