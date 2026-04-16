@@ -25,6 +25,67 @@
 </script>
   
 <style>
+/* ── NAV REDESIGN ── */
+nav{
+  position:fixed;top:0;width:100%;z-index:1000;
+  height:60px;
+  display:grid;grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  padding:0 clamp(1.5rem,5vw,4rem);
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:.5px solid transparent;
+  transition:border-color .3s;
+}
+nav.scrolled{border-bottom-color:var(--gray)}
+.nav-center{display:flex;align-items:center;gap:2px;justify-content:center}
+.nav-right{display:flex;align-items:center;gap:10px;justify-content:flex-end}
+.nav-center a{
+  font-size:13px;color:var(--muted);
+  text-decoration:none;padding:6px 14px;
+  border-radius:7px;font-weight:500;
+  transition:color .2s,background .2s;
+}
+.nav-center a:hover{color:var(--ink);background:var(--off)}
+.nav-center a.active{color:var(--ink);font-weight:700}
+
+/* ── LANGUAGE TOGGLE ── */
+.lang-toggle{
+  display:flex;align-items:center;
+  background:var(--off);
+  border:0.5px solid var(--gray);
+  border-radius:8px;overflow:hidden;
+  height:32px;
+}
+.lang-btn{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:0 10px;height:100%;
+  font-size:11px;font-weight:700;letter-spacing:.3px;
+  color:var(--muted);text-decoration:none;
+  transition:background .18s,color .18s;
+  cursor:pointer;white-space:nowrap;
+}
+.lang-active{
+  background:var(--white);
+  color:var(--ink);
+  box-shadow:0 1px 4px rgba(0,0,0,.08);
+  border-radius:7px;
+  margin:2px;padding:0 8px;
+}
+.lang-other{color:var(--muted)}
+.lang-other:hover{background:rgba(0,0,0,.04);color:var(--ink)}
+.lang-code{font-size:11px;font-weight:700}
+.lang-btn svg{flex-shrink:0;border-radius:2px}
+
+@media(max-width:900px){
+  nav{grid-template-columns:auto 1fr auto}
+  .nav-center{display:none}
+}
+@media(max-width:540px){
+  .lang-toggle{display:none}
+}
+
+
 :root {
   --purple:       #7a7bff;
   --purple2:      #5a5be0;
@@ -65,34 +126,7 @@ body {
 }
 
 /* ─── NAV ─── */
-nav {
-  position: fixed;
-  top: 0; width: 100%;
-  z-index: 1000;
-  padding: 0 clamp(1.5rem,5vw,4rem);
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: rgba(255,255,255,.92);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: .5px solid transparent;
-  transition: border-color .3s;
-}
-nav.scrolled { border-bottom-color: var(--gray); }
 
-.logo {
-  font-size: 17px; font-weight: 700;
-  color: var(--ink); text-decoration: none;
-  letter-spacing: -.3px;
-  display: flex; align-items: center; gap: 7px;
-}
-.logo-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: var(--purple);
-  animation: breathe 3s ease-in-out infinite;
-}
 @keyframes breathe { 0%,100%{transform:scale(1)} 50%{transform:scale(1.5)} }
 
 /* ─── TYPING CURSOR ─── */
@@ -105,22 +139,6 @@ nav.scrolled { border-bottom-color: var(--gray); }
 }
 #logoText.done::after { display: none; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-
-.nav-links { display: flex; gap: 2px; align-items: center; }
-.nav-links a {
-  font-size: 13px; color: var(--muted);
-  text-decoration: none; padding: 6px 14px;
-  border-radius: 7px; font-weight: 500;
-  transition: color .2s, background .2s;
-}
-.nav-links a:hover { color: var(--ink); background: var(--off); }
-.nav-cta {
-  background: var(--ink) !important;
-  color: var(--white) !important;
-  font-weight: 600 !important;
-  border-radius: 8px !important;
-}
-.nav-cta:hover { background: var(--purple) !important; }
 
 /* ─── HERO ─── */
 .hero {
@@ -1038,7 +1056,6 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
 .stat-title { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 9px; }
 .stat-text { font-size: 13px; color: var(--muted); line-height: 1.65; }
 
-
 /* ─── CTA FINAL ─── */
 .cta-final {
   background: var(--white);
@@ -1119,18 +1136,7 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
 .cta-pill-item svg { opacity: .6; }
 
 /* ─── DOT NAV ─── */
-.dot-nav {
-  position: fixed;
-  right: 24px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  z-index: 50;
-  opacity: 0;
-  transition: opacity .4s ease;
-}
+.dot-
 .dot-nav.visible { opacity: 1; }
 .dot-nav-item {
   position: relative;
@@ -1182,7 +1188,7 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
   background: #fff;
   box-shadow: 0 0 0 3px rgba(255,255,255,.15);
 }
-@media (max-width: 1100px) { .dot-nav { display: none; } }
+@media (max-width: 1100px) { .dot- }
 
 /* ─── FOOTER ─── */
 footer {
@@ -1457,13 +1463,18 @@ footer {
 <!-- ─── NAV ─── -->
 <nav id="nav">
   <a href="./index.html" class="logo"><span id="logoText"></span><span class="logo-dot"></span></a>
-  <div class="nav-links">
-    <a href="./index.html" class="active">Inicio</a>
-    <a href="./sobre-mi.html">Sobre mí</a>
-    <a href="./proyectos.html">Proyectos</a>
-    <a href="./descargas.html">Descargas</a>
-    <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" onclick="gtag('event', 'clic_linkedin', { location: 'nav' });">LinkedIn</a>
-    <a href="https://mail.google.com/mail/u/0/?fs=1&to=borja.mora.mendez@gmail.com&su=Oportunidad+laboral&body=Hola,+me+gustar%C3%ADa+hablar+contigo+sobre+una+posible+oportunidad.&tf=cm" target="_blank" class="nav-cta btn" onclick="gtag('event', 'clic_email', { location: 'nav' });">Contacto</a>
+  <div class="nav-center">
+      <a href="./index.html" class="active">Inicio</a>
+      <a href="./sobre-mi.html">Sobre mí</a>
+      <a href="./proyectos.html">Proyectos</a>
+      <a href="./descargas.html">Descargas</a>
+  </div>
+  <div class="nav-right">
+    <div class="lang-toggle">
+      <span class="lang-btn lang-active"><svg width="20" height="14" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" rx="2" fill="#c60b1e"/><rect y="3.5" width="20" height="7" fill="#ffc400"/></svg><span class="lang-code">ES</span></span>
+      <a href="../en/index.html" class="lang-btn lang-other"><svg width="20" height="14" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" rx="2" fill="#c0c0c0"/><path d="M0 0L20 14M20 0L0 14" stroke="white" stroke-width="3"/><path d="M0 0L20 14M20 0L0 14" stroke="#e0e0e0" stroke-width="1.8"/><path d="M10 0V14M0 7H20" stroke="white" stroke-width="4.5"/><path d="M10 0V14M0 7H20" stroke="#e0e0e0" stroke-width="2.8"/></svg><span class="lang-code">EN</span></a>
+    </div>
+    <a href="https://mail.google.com/mail/u/0/?fs=1&to=borja.mora.mendez@gmail.com&su=Oportunidad+laboral&body=Hola,+me+gustar%C3%ADa+hablar+contigo+sobre+una+posible+oportunidad.&tf=cm" target="_blank" class="nav-cta btn">Contacto</a>
   </div>
 </nav>
 
@@ -1530,12 +1541,12 @@ footer {
           <div class="df-dot" style="background:#ff5f57"></div>
           <div class="df-dot" style="background:#febc2e"></div>
           <div class="df-dot" style="background:#28c840"></div>
-          <span class="df-url">Portfolio web · Borja Mora · Data Analyst · Q2 2026</span>
+          <span class="df-url">ventas-ibcs · Q4 2025 · Power BI</span>
         </div>
 
         <div class="df-header">
           <div>
-            <div class="df-title">Informe de Ventas · 2026</div>
+            <div class="df-title">Informe de Ventas · 2025</div>
             <div style="font-size:8.5px;color:var(--muted);margin-top:2px">Análisis de ventas por canal y región · Acumulado Ene–Dic</div>
           </div>
           <span class="df-period">Ene – Dic 2025</span>
