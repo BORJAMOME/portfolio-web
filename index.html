@@ -127,7 +127,14 @@ nav.scrolled { border-bottom-color: var(--gray); }
   min-height: 92vh;
   padding: 80px clamp(1.5rem,3vw,2.5rem) 48px;
   display: flex; align-items: center;
-  background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(122,123,255,.06) 0%, transparent 70%), var(--white);
+  background:
+    radial-gradient(ellipse 65% 55% at 50% 50%, rgba(122,123,255,.09) 0%, rgba(122,123,255,.03) 50%, transparent 75%),
+    linear-gradient(rgba(122,123,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(122,123,255,.025) 1px, transparent 1px),
+    var(--white);
+  background-size: 100% 100%, 28px 28px, 28px 28px;
+  -webkit-mask-image: radial-gradient(ellipse 80% 75% at 50% 50%, black 30%, transparent 80%);
+  mask-image: radial-gradient(ellipse 80% 75% at 50% 50%, black 30%, transparent 80%);
   position: relative; overflow: hidden;
 }
 .hero::before {
@@ -1115,8 +1122,16 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
   font-size: 12px; font-weight: 500; color: var(--muted);
   background: var(--off); border: .5px solid #e8e8f0;
   padding: 7px 14px; border-radius: 20px;
+  transition: background .2s ease, color .2s ease, border-color .2s ease;
+  cursor: default;
 }
-.cta-pill-item svg { opacity: .6; }
+.cta-pill-item:hover {
+  background: var(--purple-light);
+  color: var(--purple2);
+  border-color: rgba(122,123,255,.3);
+}
+.cta-pill-item:hover svg { opacity: 1; }
+.cta-pill-item svg { opacity: .6; transition: opacity .2s; }
 
 /* ─── DOT NAV ─── */
 .dot-nav {
@@ -1299,11 +1314,16 @@ footer {
   width: 1px;
   background: linear-gradient(to bottom,
     transparent 0%,
-    rgba(122,123,255,.3) 8%,
+    rgba(122,123,255,.4) 15%,
     rgba(122,123,255,.5) 50%,
-    rgba(122,123,255,.3) 92%,
+    rgba(122,123,255,.4) 85%,
     transparent 100%);
-  pointer-events: none;
+  transform-origin: top;
+  transform: scaleY(0);
+  transition: transform 1.2s cubic-bezier(.16,1,.3,1);
+}
+.dph-pipeline.line-drawn::before {
+  transform: scaleY(1);
 }
 
 /* Cada fila del proceso */
@@ -1331,7 +1351,6 @@ footer {
   color: var(--purple);
   letter-spacing: .5px;
   line-height: 1;
-  background: var(--white);
   padding: 2px 0;
 }
 
@@ -1448,6 +1467,179 @@ footer {
   .dph-pipeline::before { display: none; }
 }
 
+
+/* ══════════════════════════════
+   1. PROGRESS BAR — visible & smooth
+══════════════════════════════ */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--purple), #a78bff);
+  z-index: 2000;
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform .08s linear;
+  box-shadow: 0 0 8px rgba(122,123,255,.6);
+}
+
+/* ══════════════════════════════
+   2. GRAIN TEXTURE — hero only
+══════════════════════════════ */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: .028;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  mix-blend-mode: overlay;
+}
+.hero { position: relative; overflow: hidden; }
+.hero-inner { position: relative; z-index: 1; }
+
+/* ══════════════════════════════
+   3. PROJECT CARDS — image hover zoom + border glow
+══════════════════════════════ */
+.proj-card {
+  transition: transform .2s cubic-bezier(.16,1,.3,1),
+              box-shadow .2s cubic-bezier(.16,1,.3,1),
+              border-color .2s ease;
+  cursor: pointer;
+}
+.proj-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px rgba(122,123,255,.15),
+              0 0 0 1.5px rgba(122,123,255,.35);
+}
+.pc-visual {
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;
+}
+.pc-visual svg,
+.pc-visual img,
+.pc-visual canvas {
+  transition: transform .28s cubic-bezier(.16,1,.3,1);
+  display: block;
+}
+.proj-card:hover .pc-visual svg,
+.proj-card:hover .pc-visual img,
+.proj-card:hover .pc-visual canvas {
+  transform: scale(1.04);
+}
+
+/* ══════════════════════════════
+   4. SECTION NUMBERS — count-up target
+══════════════════════════════ */
+.dph-step-num,
+.dax-card-num {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+  transition: color .3s;
+}
+
+/* ══════════════════════════════
+   5. MAGNETIC BUTTONS
+══════════════════════════════ */
+.btn-primary,
+.btn-outline,
+.cta-final-btn,
+.cta-final-btn-secondary {
+  transition: transform .2s cubic-bezier(.16,1,.3,1),
+              box-shadow .2s ease,
+              background .2s ease,
+              color .2s ease;
+  will-change: transform;
+}
+.btn-primary:hover {
+  box-shadow: 0 8px 32px rgba(122,123,255,.35);
+}
+
+
+/* ══════════════════════════════
+   NAV LINKS — purple underline on hover
+══════════════════════════════ */
+.nav-links a:not(.nav-cta) {
+  position: relative;
+  padding-bottom: 7px;
+}
+.nav-links a:not(.nav-cta)::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 50%;
+  width: 0; height: 2px;
+  background: var(--purple);
+  border-radius: 2px;
+  transform: translateX(-50%);
+  transition: width .22s cubic-bezier(.16,1,.3,1);
+}
+.nav-links a:not(.nav-cta):hover::after,
+.nav-links a:not(.nav-cta).active::after {
+  width: calc(100% - 28px);
+}
+/* ensure nav links visible on desktop */
+@media(min-width:700px) {
+  .nav-links a:not(.nav-cta) { display: inline-flex !important; }
+}
+
+
+/* ── LIVE DOT PULSE ── */
+@keyframes pulse-dot {
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:.5; transform:scale(1.4); }
+}
+
+
+/* ── COM STATS HOVER ── */
+.com-stat {
+  position: relative;
+  cursor: default;
+}
+.com-stat::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  background: var(--ink);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .18s ease, transform .18s ease;
+  z-index: 10;
+}
+.com-stat::before {
+  content: '';
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  border: 5px solid transparent;
+  border-top-color: var(--ink);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .18s ease, transform .18s ease;
+  z-index: 10;
+}
+.com-stat:hover::after,
+.com-stat:hover::before {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.com-stat-num {
+  transition: color .2s ease;
+}
+.com-stat:hover .com-stat-num {
+  color: #a0a1ff;
+}
+
 </style>
 </head>
 <body>
@@ -1526,135 +1718,168 @@ footer {
     <!-- ─── DASHBOARD WOW ─── -->
     <div class="hero-right">
       <div class="dashboard-frame">
+
         <div class="df-titlebar">
           <div class="df-dot" style="background:#ff5f57"></div>
           <div class="df-dot" style="background:#febc2e"></div>
           <div class="df-dot" style="background:#28c840"></div>
-          <span class="df-url">ventas-ibcs · Q4 2025 · Power BI</span>
+          <span class="df-url">borjamora.es</span>
+          <span style="margin-left:auto;font-size:8.5px;color:#bbb;font-weight:600;letter-spacing:.4px">LIVE</span>
+          <span style="width:6px;height:6px;border-radius:50%;background:#28c840;margin-left:4px;flex-shrink:0;animation:pulse-dot 1.8s ease-in-out infinite"></span>
         </div>
 
-        <div class="df-header">
+        <div class="df-header" style="padding:11px 14px 7px">
           <div>
-            <div class="df-title">Informe de Ventas · 2025</div>
-            <div style="font-size:8.5px;color:var(--muted);margin-top:2px">Análisis de ventas por canal y región · Acumulado Ene–Dic</div>
+            <div class="df-title">Sales Performance 2025</div>
+            <div style="font-size:8px;color:var(--muted);margin-top:1px">Ventas reales vs año anterior · Canal · Región</div>
           </div>
-          <span class="df-period">Ene – Dic 2025</span>
+          <div style="display:flex;align-items:center;gap:5px">
+            <span class="df-period">Ene–Dic 2025</span>
+            <span style="font-size:8px;font-weight:600;background:#e8f5e7;color:#3c8a37;padding:2px 7px;border-radius:4px">▲ +12,4%</span>
+          </div>
         </div>
 
-        <div class="df-body">
+        <div class="df-body" style="gap:7px">
 
           <!-- KPIs -->
-          <div class="df-kpis">
+          <div class="df-kpis" style="grid-template-columns:repeat(4,1fr)">
             <div class="dk">
               <div class="dk-label">Ventas YTD</div>
-              <div class="dk-main">
-                <div class="dk-value">€2,84M</div>
-                <svg class="dk-sparkline" width="38" height="20" viewBox="0 0 38 20" fill="none">
-                  <polyline points="0,16 4,14 7,15 10,11 13,13 16,8 20,10 23,6 27,8 31,4 38,2" stroke="#d0d0db" stroke-width="1.3" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
-                </svg>
+              <div class="dk-main"><div class="dk-value" id="kv0" style="font-size:17px">—</div>
+                <svg width="36" height="16" viewBox="0 0 36 16" fill="none" style="flex-shrink:0;opacity:.7"><polyline points="0,13 5,10 9,12 13,7 17,9 21,4 26,6 30,2 36,0" stroke="#7a7bff" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
               </div>
-              <span class="dk-pos">▲ +12,4%</span>
+              <span class="dk-pos" id="kg0">—</span>
             </div>
             <div class="dk">
               <div class="dk-label">Unidades</div>
-              <div class="dk-main">
-                <div class="dk-value">48.236</div>
-                <svg class="dk-sparkline" width="38" height="20" viewBox="0 0 38 20" fill="none">
-                  <polyline points="0,17 4,14 7,16 10,11 13,14 16,9 20,12 23,7 27,10 31,6 38,4" stroke="#d0d0db" stroke-width="1.3" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
-                </svg>
+              <div class="dk-main"><div class="dk-value" id="kv1" style="font-size:17px">—</div>
+                <svg width="36" height="16" viewBox="0 0 36 16" fill="none" style="flex-shrink:0;opacity:.7"><polyline points="0,14 5,11 9,13 13,8 17,11 21,5 26,8 30,3 36,1" stroke="#3c8a37" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
               </div>
-              <span class="dk-pos">▲ +8,1%</span>
+              <span class="dk-pos" id="kg1">—</span>
             </div>
             <div class="dk">
               <div class="dk-label">Ticket Medio</div>
-              <div class="dk-main">
-                <div class="dk-value">€ 58,9</div>
-                <svg class="dk-sparkline" width="38" height="20" viewBox="0 0 38 20" fill="none">
-                  <polyline points="0,8 4,11 7,9 10,13 13,11 16,14 20,12 23,15 27,13 31,16 38,15" stroke="#d0d0db" stroke-width="1.3" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
-                </svg>
+              <div class="dk-main"><div class="dk-value" id="kv2" style="font-size:17px">—</div>
+                <svg width="36" height="16" viewBox="0 0 36 16" fill="none" style="flex-shrink:0;opacity:.7"><polyline points="0,7 5,10 9,8 13,12 17,10 21,13 26,11 30,14 36,13" stroke="#a3223e" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
               </div>
-              <span class="dk-neg">▼ −2,3%</span>
+              <span class="dk-neg" id="kg2">—</span>
             </div>
             <div class="dk">
               <div class="dk-label">Margen Bruto</div>
-              <div class="dk-main">
-                <div class="dk-value">34,7%</div>
-                <svg class="dk-sparkline" width="38" height="20" viewBox="0 0 38 20" fill="none">
-                  <polyline points="0,16 4,14 7,16 10,12 13,14 16,10 20,12 23,8 27,10 31,7 38,5" stroke="#d0d0db" stroke-width="1.3" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
-                </svg>
+              <div class="dk-main"><div class="dk-value" id="kv3" style="font-size:17px">—</div>
+                <svg width="36" height="16" viewBox="0 0 36 16" fill="none" style="flex-shrink:0;opacity:.7"><polyline points="0,13 5,11 9,13 13,8 17,10 21,5 26,7 30,3 36,1" stroke="#7a7bff" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
               </div>
-              <span class="dk-pos">▲ +1,2pp</span>
+              <span class="dk-pos" id="kg3">—</span>
             </div>
           </div>
 
-          <!-- Charts -->
-          <div class="df-charts">
-            <div class="df-card">
-              <div class="dc-label">Evolución mensual</div>
-              <div class="dc-sublabel">Ventas reales vs año anterior</div>
-              <div class="dc-legend">
-                <span class="dc-leg-item"><span class="dc-leg-dot" style="background:var(--purple)"></span>2025</span>
-                <span class="dc-leg-item"><span class="dc-leg-dot" style="background:#dde"></span>2024</span>
+          <!-- CHARTS -->
+          <div style="display:grid;grid-template-columns:1.55fr 1fr;gap:6px">
+
+            <!-- LOLLIPOP CY vs PY -->
+            <div class="df-card" style="padding:9px 11px 10px">
+              <div class="dc-label">Ventas mensuales · CY vs PY</div>
+              <div style="display:flex;align-items:center;gap:10px;margin:3px 0 6px">
+                <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#888"><span style="width:8px;height:8px;border-radius:50%;background:#7a7bff;display:inline-block"></span>CY 2025</span>
+                <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#bbb"><span style="width:8px;height:8px;border-radius:50%;background:none;border:1.5px solid #c8c8d8;display:inline-block"></span>PY 2024</span>
               </div>
-              <div style="position:relative;width:100%;height:88px">
-                <canvas id="heroBar"></canvas>
+              <div style="position:relative;width:100%;height:86px">
+                <canvas id="heroLollipop"></canvas>
               </div>
             </div>
 
-            <div class="df-card">
-              <div class="dc-label">Tendencia acum.</div>
-              <div class="dc-sublabel">Ingreso mensual</div>
-              <div style="display:flex;gap:12px;margin-bottom:5px;align-items:center">
-                <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#888">
-                  <span style="width:12px;height:2px;background:var(--purple);display:inline-block;border-radius:1px"></span>2025
-                </span>
-                <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#bbb">
-                  <span style="width:12px;height:2px;background:#dde;display:inline-block;border-radius:1px"></span>2024
-                </span>
+            <!-- DUMBBELL: productos 2024→2025 -->
+            <div class="df-card" style="padding:9px 11px 10px">
+              <div class="dc-label">Evolución productos · 2024→2025</div>
+              <div style="display:flex;align-items:center;gap:10px;margin:3px 0 6px">
+                <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#ccc"><span style="width:7px;height:7px;border-radius:50%;background:#ccc;display:inline-block"></span>2024</span>
+                <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#7a7bff"><span style="width:7px;height:7px;border-radius:50%;background:#7a7bff;display:inline-block"></span>2025</span>
               </div>
-              <div style="position:relative;width:100%;height:76px">
-                <canvas id="heroLine"></canvas>
-              </div>
-              <div style="display:flex;justify-content:space-between;margin-top:5px;padding-top:5px;border-top:.5px solid #f0f0f5">
-                <span style="font-size:8px;color:var(--muted)">Mejor mes: <strong style="color:var(--ink)">Sep</strong></span>
-                <span style="font-size:8px;font-weight:700;color:var(--green)">▲ +9,2% YoY</span>
-              </div>
+              <!-- SVG dumbbell — drawn directly, no canvas needed -->
+              <svg id="heroDumbbell" width="100%" viewBox="0 0 150 90" style="display:block;overflow:visible">
+                <!-- Grid lines -->
+                <line x1="40" y1="5" x2="40" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
+                <line x1="75" y1="5" x2="75" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
+                <line x1="110" y1="5" x2="110" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
+                <line x1="145" y1="5" x2="145" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
+                <!-- Axis labels -->
+                <text x="40" y="88" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="6" fill="#ccc">200K</text>
+                <text x="75" y="88" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="6" fill="#ccc">400K</text>
+                <text x="110" y="88" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="6" fill="#ccc">600K</text>
+                <text x="145" y="88" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="6" fill="#ccc">800K</text>
+
+                <!-- Row 1: Norte — 680K→812K -->
+                <text x="0" y="16" font-family="Segoe UI,sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Norte</text>
+                <line class="db-line" x1="40" y1="16" x2="40" y2="16" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round" data-x1="72" data-x2="112"/>
+                <circle class="db-dot-a" cx="40" cy="16" r="0" fill="#c8c8d8" data-cx="72"/>
+                <circle class="db-dot-b" cx="40" cy="16" r="0" fill="#7a7bff" data-cx="112"/>
+                <text class="db-val" x="40" y="11" font-family="Segoe UI,sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="118">—</text>
+
+                <!-- Row 2: Centro — 600K→635K -->
+                <text x="0" y="32" font-family="Segoe UI,sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Centro</text>
+                <line class="db-line" x1="40" y1="32" x2="40" y2="32" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round" data-x1="63" data-x2="71"/>
+                <circle class="db-dot-a" cx="40" cy="32" r="0" fill="#c8c8d8" data-cx="63"/>
+                <circle class="db-dot-b" cx="40" cy="32" r="0" fill="#7a7bff" data-cx="71"/>
+                <text class="db-val" x="40" y="27" font-family="Segoe UI,sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="77">—</text>
+
+                <!-- Row 3: Sur — 460K→451K (caída) -->
+                <text x="0" y="48" font-family="Segoe UI,sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Sur</text>
+                <line class="db-line" x1="40" y1="48" x2="40" y2="48" stroke="#a3223e" stroke-width="1.5" stroke-linecap="round" data-x1="50" data-x2="48.5"/>
+                <circle class="db-dot-a" cx="40" cy="48" r="0" fill="#c8c8d8" data-cx="50"/>
+                <circle class="db-dot-b" cx="40" cy="48" r="0" fill="#d04060" data-cx="48.5"/>
+                <text class="db-val" x="40" y="43" font-family="Segoe UI,sans-serif" font-size="6.5" fill="#a3223e" font-weight="700" text-anchor="middle" data-cx="55">—</text>
+
+                <!-- Row 4: Este — 320K→346K -->
+                <text x="0" y="64" font-family="Segoe UI,sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Este</text>
+                <line class="db-line" x1="40" y1="64" x2="40" y2="64" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round" data-x1="34" data-x2="37"/>
+                <circle class="db-dot-a" cx="40" cy="64" r="0" fill="#c8c8d8" data-cx="34"/>
+                <circle class="db-dot-b" cx="40" cy="64" r="0" fill="#7a7bff" data-cx="37"/>
+                <text class="db-val" x="40" y="59" font-family="Segoe UI,sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="43">—</text>
+
+                <!-- Row 5: Oeste — 210K→244K -->
+                <text x="0" y="80" font-family="Segoe UI,sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Oeste</text>
+                <line class="db-line" x1="40" y1="80" x2="40" y2="80" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round" data-x1="22" data-x2="26"/>
+                <circle class="db-dot-a" cx="40" cy="80" r="0" fill="#c8c8d8" data-cx="22"/>
+                <circle class="db-dot-b" cx="40" cy="80" r="0" fill="#7a7bff" data-cx="26"/>
+                <text class="db-val" x="40" y="75" font-family="Segoe UI,sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="32">—</text>
+              </svg>
             </div>
+
           </div>
 
-          <!-- Ranking zonas -->
-          <div class="df-ranking">
-            <div class="dr-head">
-              <span class="dc-label" style="margin:0">Ranking por zona</span>
-              <span style="font-size:8px;color:var(--purple);font-weight:600;cursor:default">Ver detalle →</span>
+          <!-- BOTTOM: Ranking table -->
+          <div class="df-ranking" style="padding:8px 12px 9px">
+            <div class="dr-head" style="margin-bottom:4px">
+              <span class="dc-label" style="margin:0">Top zonas · Detalle YoY</span>
+              <span style="font-size:8px;color:var(--purple);font-weight:700">Ver ranking →</span>
             </div>
             <div class="dr-row">
               <span class="dr-rank">01</span>
               <span class="dr-name">Norte</span>
-              <div class="dr-track"><div class="dr-fill" style="width:100%"></div></div>
+              <div class="dr-track"><div class="dr-fill prd-bar" data-w="100" style="width:0;transition:width 1s .9s ease"></div></div>
               <span class="dr-val">€ 812K</span>
-              <span class="dr-badge" style="background:var(--green-light);color:var(--green)">▲ +9,2%</span>
+              <span class="dr-badge" style="background:#e8f5e7;color:#3c8a37">▲ +19,4%</span>
             </div>
             <div class="dr-row">
               <span class="dr-rank">02</span>
               <span class="dr-name">Centro</span>
-              <div class="dr-track"><div class="dr-fill" style="width:78%"></div></div>
+              <div class="dr-track"><div class="dr-fill prd-bar" data-w="78" style="width:0;transition:width 1s 1.05s ease"></div></div>
               <span class="dr-val">€ 635K</span>
-              <span class="dr-badge" style="background:var(--green-light);color:var(--green)">▲ +5,8%</span>
+              <span class="dr-badge" style="background:#e8f5e7;color:#3c8a37">▲ +5,8%</span>
             </div>
             <div class="dr-row">
               <span class="dr-rank">03</span>
               <span class="dr-name">Sur</span>
-              <div class="dr-track"><div class="dr-fill" style="width:55%;background:#e0a0b0"></div></div>
+              <div class="dr-track"><div class="dr-fill prd-bar" data-w="56" style="width:0;background:#e0a0b0;transition:width 1s 1.2s ease"></div></div>
               <span class="dr-val">€ 451K</span>
-              <span class="dr-badge" style="background:var(--red-light);color:var(--red)">▼ −2,1%</span>
+              <span class="dr-badge" style="background:#f9e8ec;color:#a3223e">▼ −2,1%</span>
             </div>
             <div class="dr-row">
               <span class="dr-rank">04</span>
               <span class="dr-name">Este</span>
-              <div class="dr-track"><div class="dr-fill" style="width:41%;background:rgba(122,123,255,.4)"></div></div>
+              <div class="dr-track"><div class="dr-fill prd-bar" data-w="43" style="width:0;background:rgba(122,123,255,.4);transition:width 1s 1.35s ease"></div></div>
               <span class="dr-val">€ 346K</span>
-              <span class="dr-badge" style="background:#f5f5fa;color:#aaa">→ 0,0%</span>
+              <span class="dr-badge" style="background:#f5f5fa;color:#aaa">→ +8,1%</span>
             </div>
           </div>
 
@@ -2096,7 +2321,7 @@ footer {
         <!-- Resultado -->
         <div class="dph-step-row">
           <div class="dph-step-aside">
-            <span class="dph-step-num" style="color:rgba(122,123,255,.5)">↓</span>
+            <span style="font-size:13px;color:rgba(122,123,255,.4);line-height:1;padding-top:4px">↓</span>
           </div>
           <div class="dph-step-card dph-step-card--result">
             <div class="dph-step-ico dph-step-ico--result">
@@ -2276,23 +2501,23 @@ footer {
       <!-- RIGHT: stats grid -->
       <div class="com-right sr sr-d1">
 
-        <div class="com-stat">
+        <div class="com-stat" data-tip="Seguidores activos en LinkedIn">
           <div class="com-stat-line"></div>
-          <div class="com-stat-num">2.351</div>
+          <div class="com-stat-num" data-val="2351"></div>
           <div class="com-stat-label">Seguidores en LinkedIn</div>
           <p class="com-stat-desc">Comunidad activa de profesionales del dato. Crecimiento del +4.374% en el último año.</p>
         </div>
 
-        <div class="com-stat">
+        <div class="com-stat" data-tip="Impresiones totales · +1.359% YoY">
           <div class="com-stat-line"></div>
-          <div class="com-stat-num">192K</div>
+          <div class="com-stat-num" data-val="192000"></div>
           <div class="com-stat-label">Impresiones totales</div>
           <p class="com-stat-desc">+1.359% vs año anterior. 56.244 personas alcanzadas con contenido sobre Power BI y DAX.</p>
         </div>
 
-        <div class="com-stat">
+        <div class="com-stat" data-tip="Visualizaciones en el post más visto">
           <div class="com-stat-line"></div>
-          <div class="com-stat-num">28K</div>
+          <div class="com-stat-num" data-val="28000"></div>
           <div class="com-stat-label">Post más visto</div>
           <p class="com-stat-desc">44% de la audiencia con experiencia senior. 19% en empresas de más de 10.000 empleados.</p>
         </div>
@@ -2428,11 +2653,11 @@ const chartOpts = {
   responsive: true,
   maintainAspectRatio: false,
   plugins:{ legend:{ display:false }, tooltip:{ enabled:false } },
-  animation:{ duration:900, easing:'easeOutQuart' }
+  animation:{ duration:1200, easing:'easeOutQuart' }
 };
 
 // Hero bar — ventas reales con estacionalidad
-new Chart(document.getElementById('heroBar'), {
+setTimeout(() => { new Chart(document.getElementById('heroBar'), {
   type:'bar',
   data:{
     labels:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
@@ -2470,10 +2695,10 @@ new Chart(document.getElementById('heroBar'), {
       y:{ display:false }
     }
   }
-});
+}); }, 300);
 
 // Hero Line — tendencia acumulada
-new Chart(document.getElementById('heroLine'), {
+setTimeout(() => { new Chart(document.getElementById('heroLine'), {
   type: 'line',
   data: {
     labels: ['E','F','M','A','M','J','J','A','S','O','N','D'],
@@ -2513,7 +2738,7 @@ new Chart(document.getElementById('heroLine'), {
       y: { display:false }
     }
   }
-});
+}); }, 700);
 
 
 
@@ -2564,5 +2789,260 @@ new Chart(document.getElementById('heroLine'), {
 })();
 
 </script>
+
+<script>
+/* ── 1. PROGRESS BAR (already has scaleX logic, just keep it) ── */
+
+/* ── 2. COUNT-UP for dph-step-num and dax-card-num ── */
+(function(){
+  function countUp(el, target, duration) {
+    const start = performance.now();
+    const from = 0;
+    function update(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // easeOutQuart
+      const ease = 1 - Math.pow(1 - progress, 4);
+      el.textContent = String(Math.round(from + (target - from) * ease)).padStart(2, '0');
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  }
+
+  const numObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !entry.target.dataset.counted) {
+        entry.target.dataset.counted = '1';
+        const val = parseInt(entry.target.textContent, 10);
+        if (!isNaN(val)) countUp(entry.target, val, 900);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('.dph-step-num, .dax-card-num').forEach(el => {
+    numObserver.observe(el);
+  });
+})();
+
+
+/* ── 3. COMMUNITY STATS COUNT-UP ── */
+(function(){
+  function countUpStat(el, target, decimals, duration) {
+    const start = performance.now();
+    function update(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 4);
+      const val = (target * ease);
+      el.textContent = decimals
+        ? val.toFixed(1).replace('.', ',')
+        : Math.round(val).toLocaleString('es-ES');
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  }
+
+  const statObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !entry.target.dataset.counted) {
+        entry.target.dataset.counted = '1';
+        const raw = entry.target.dataset.val;
+        const dec = entry.target.dataset.dec === '1';
+        countUpStat(entry.target, parseFloat(raw), dec, 1400);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('[data-val]').forEach(el => statObserver.observe(el));
+})();
+
+
+/* ── 4. MAGNETIC BUTTONS ── */
+(function(){
+  const STRENGTH = 0.35;
+  document.querySelectorAll('.btn-primary, .btn-outline, .cta-final-btn, .cta-final-btn-secondary').forEach(btn => {
+    btn.addEventListener('mousemove', e => {
+      const r = btn.getBoundingClientRect();
+      const x = e.clientX - r.left - r.width / 2;
+      const y = e.clientY - r.top - r.height / 2;
+      btn.style.transform = `translate(${x * STRENGTH}px, ${y * STRENGTH}px)`;
+    });
+    btn.addEventListener('mouseleave', () => {
+      btn.style.transform = '';
+    });
+  });
+})();
+</script>
+
+<script>
+/* ── HERO DASHBOARD v2: LOLLIPOP + DUMBBELL ── */
+(function(){
+  var done = false;
+  function init() {
+    if(done) return; done = true;
+
+    /* KPIs */
+    var kpis = [
+      {id:'kv0', v:'€2,84M', b:'kg0', bv:'▲ +12,4%', pos:true,  t:320},
+      {id:'kv1', v:'48.236', b:'kg1', bv:'▲ +8,1%',  pos:true,  t:430},
+      {id:'kv2', v:'€ 58,9', b:'kg2', bv:'▼ −2,3%',  pos:false, t:540},
+      {id:'kv3', v:'34,7%',  b:'kg3', bv:'▲ +1,2pp', pos:true,  t:640},
+    ];
+    kpis.forEach(function(k){
+      setTimeout(function(){
+        var el=document.getElementById(k.id); if(el) el.textContent=k.v;
+        var bg=document.getElementById(k.b);
+        if(bg){ bg.textContent=k.bv; if(!k.pos) bg.className='dk-neg'; else bg.className='dk-pos'; }
+      }, k.t);
+    });
+
+    /* LOLLIPOP — CY vs PY, 6 meses via Chart.js scatter+line */
+    setTimeout(function(){
+      var ctx = document.getElementById('heroLollipop');
+      if(!ctx) return;
+
+      var months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+      var cy = [198,224,268,245,312,287,253,301,418,356,389,392];
+      var py = [176,201,238,219,278,256,228,272,372,318,347,349];
+
+      /* Build stick dataset: array of {x, y} pairs forming vertical lines */
+      /* We use a custom bar-of-width-0 trick with scatter overlay */
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: months,
+          datasets: [
+            /* PY ghost bars — very thin, light */
+            {
+              label:'PY',
+              data: py,
+              backgroundColor: 'transparent',
+              borderColor: '#d0d0e0',
+              borderWidth: 1.5,
+              borderRadius: 0,
+              borderSkipped: false,
+              barThickness: 1,
+              order: 2
+            },
+            /* CY filled bars — thin sticks */
+            {
+              label:'CY',
+              data: cy,
+              backgroundColor: 'transparent',
+              borderColor: '#7a7bff',
+              borderWidth: 1.5,
+              borderRadius: 0,
+              borderSkipped: false,
+              barThickness: 1,
+              order: 2
+            }
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend:{display:false}, tooltip:{enabled:false} },
+          scales: {
+            x: { grid:{display:false}, ticks:{font:{family:'Segoe UI',size:7.5}, color:'#ccc'}, border:{display:false} },
+            y: { grid:{color:'#f5f5f8'}, ticks:{font:{family:'Segoe UI',size:7.5}, color:'#ccc', callback:function(v){return v>=1000?(v/1000).toFixed(0)+'K':v;}}, border:{display:false}, suggestedMin:140 }
+          },
+          animation: { duration:1000, easing:'easeOutQuart' }
+        },
+        plugins: [{
+          id: 'lollipopDots',
+          afterDraw: function(chart) {
+            var ctx2 = chart.ctx;
+            var meta0 = chart.getDatasetMeta(0); /* PY */
+            var meta1 = chart.getDatasetMeta(1); /* CY */
+            meta0.data.forEach(function(bar, i){
+              var x = bar.x, y = bar.y;
+              ctx2.beginPath();
+              ctx2.arc(x, y, 4.5, 0, Math.PI*2);
+              ctx2.strokeStyle = '#c0c0d4';
+              ctx2.lineWidth = 1.8;
+              ctx2.fillStyle = '#fff';
+              ctx2.fill();
+              ctx2.stroke();
+            });
+            meta1.data.forEach(function(bar, i){
+              var x = bar.x, y = bar.y;
+              ctx2.beginPath();
+              ctx2.arc(x, y, 5, 0, Math.PI*2);
+              ctx2.fillStyle = '#7a7bff';
+              ctx2.fill();
+            });
+          }
+        }]
+      });
+    }, 480);
+
+    /* DUMBBELL — SVG animation */
+    setTimeout(function(){
+      /* Animate connector lines */
+      var lines = document.querySelectorAll('#heroDumbbell .db-line');
+      lines.forEach(function(line, i){
+        setTimeout(function(){
+          var x1 = parseFloat(line.dataset.x1);
+          var x2 = parseFloat(line.dataset.x2);
+          line.setAttribute('x1', x1);
+          line.setAttribute('x2', x2);
+          line.style.transition = 'x1 .6s ease, x2 .6s ease';
+        }, i * 80);
+      });
+
+      /* Animate dots */
+      var dotsA = document.querySelectorAll('#heroDumbbell .db-dot-a');
+      var dotsB = document.querySelectorAll('#heroDumbbell .db-dot-b');
+      dotsA.forEach(function(dot, i){
+        setTimeout(function(){
+          dot.setAttribute('cx', dot.dataset.cx);
+          dot.setAttribute('r', '2.5');
+        }, i * 80 + 100);
+      });
+      dotsB.forEach(function(dot, i){
+        setTimeout(function(){
+          dot.setAttribute('cx', dot.dataset.cx);
+          dot.setAttribute('r', '3.5');
+        }, i * 80 + 180);
+      });
+
+      /* Show value labels */
+      var vals = ['+19,4%','+5,8%','−2,1%','+8,1%','+16,2%'];
+      document.querySelectorAll('#heroDumbbell .db-val').forEach(function(el,i){
+        setTimeout(function(){
+          el.setAttribute('x', el.dataset.cx);
+          el.textContent = vals[i];
+        }, i * 80 + 300);
+      });
+
+    }, 620);
+
+    /* Product bars */
+    setTimeout(function(){
+      document.querySelectorAll('.prd-bar').forEach(function(b){
+        b.style.width = (b.dataset.w||'0')+'%';
+      });
+    }, 880);
+  }
+
+  if(document.readyState==='complete') setTimeout(init,200);
+  else window.addEventListener('load', function(){ setTimeout(init,200); });
+})();
+</script>
+
+/* ── DPH PIPELINE LINE DRAW ── */
+(function(){
+  var pipe = document.querySelector('.dph-pipeline');
+  if(!pipe) return;
+  var lineObs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        setTimeout(function(){ pipe.classList.add('line-drawn'); }, 150);
+        lineObs.disconnect();
+      }
+    });
+  }, { threshold: 0.25 });
+  lineObs.observe(pipe);
+})();
+
 </body>
 </html>
