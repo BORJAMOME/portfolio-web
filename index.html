@@ -3088,7 +3088,7 @@ setTimeout(() => { new Chart(document.getElementById('heroLine'), {
   else window.addEventListener('load', function(){ setTimeout(init,200); });
 })();
 </script>
-
+<script>
 /* ── DPH PIPELINE LINE DRAW ── */
 (function(){
   var pipe = document.querySelector('.dph-pipeline');
@@ -3103,6 +3103,7 @@ setTimeout(() => { new Chart(document.getElementById('heroLine'), {
   }, { threshold: 0.25 });
   lineObs.observe(pipe);
 })();
+</script>
 
 </body>
 </html>
