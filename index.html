@@ -175,12 +175,12 @@ nav.scrolled { border-bottom-color: var(--gray); }
 }
 .nav-links a:hover { color: var(--ink); background: var(--off); }
 .nav-cta {
-  background: var(--ink) !important;
-  color: var(--white) !important;
-  font-weight: 600 !important;
+  background: #111 !important;
+  color: #c6ff00 !important;
+  font-weight: 700 !important;
   border-radius: 8px !important;
 }
-.nav-cta:hover { background: var(--purple) !important; }
+.nav-cta:hover { background: #222 !important; }
 
 /* ─── HERO ─── */
 .hero {
@@ -1000,9 +1000,18 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
 
 /* ─── COMMUNITY ─── */
 .com-section {
-  background: var(--ink);
+  background: #282827;
   position: relative;
   overflow: hidden;
+}
+.com-section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,.18) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+  z-index: 0;
 }
 .com-section::before {
   content: '';
@@ -1011,9 +1020,11 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
   transform: translateX(-50%);
   width: 700px; height: 700px;
   border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(122,123,255,.18) 0%, transparent 70%);
+  background: radial-gradient(ellipse, rgba(122,123,255,.14) 0%, transparent 70%);
   pointer-events: none;
+  z-index: 1;
 }
+.com-section .c { position: relative; z-index: 2; }
 .com-inner {
   position: relative;
   display: grid;
@@ -1260,36 +1271,12 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
 @media (max-width: 1100px) { .dot-nav { display: none; } }
 
 /* ─── FOOTER ─── */
-footer {
-  background: var(--off);
-  padding: 0;
-}
-.foot-inner {
-  max-width: 1100px; margin: 0 auto;
-  padding: 52px clamp(1.5rem,5vw,4rem) 28px;
-}
-.foot-top {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr 1fr;
-  gap: 48px;
-  padding-bottom: 40px;
-  border-bottom: .5px solid var(--gray);
-  margin-bottom: 28px;
-}
-.foot-brand-name {
-  font-size: 18px; font-weight: 700;
-  color: var(--ink); letter-spacing: -.3px;
-  margin-bottom: 10px;
-}
-.foot-brand-desc {
-  font-size: 12.5px; color: var(--muted);
-  line-height: 1.65; max-width: 240px;
-}
-.foot-col-title {
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 1.2px; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 14px;
-}
+
+
+
+
+
+
 .foot-col a {
   display: block; font-size: 13px;
   color: var(--muted); text-decoration: none;
@@ -1699,6 +1686,62 @@ footer {
 .com-stat:hover .com-stat-num {
   color: #a0a1ff;
 }
+
+/* ── FOOTER REDESIGN ── */
+footer {
+  background: var(--off);
+  padding: 0;
+  border-top: .5px solid var(--gray);
+}
+.foot-inner {
+  max-width: 1100px; margin: 0 auto;
+  padding: 32px clamp(1.5rem,5vw,4rem) 24px;
+}
+.foot-top {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 24px;
+  padding-bottom: 24px;
+  border-bottom: .5px solid var(--gray);
+  margin-bottom: 20px;
+}
+.foot-brand-name {
+  font-size: 14px; font-weight: 700;
+  color: var(--ink); letter-spacing: -.2px;
+  text-transform: uppercase;
+}
+.foot-brand-desc { display: none; }
+.foot-col-title { display: none; }
+.foot-nav-center {
+  display: flex; align-items: center; gap: 20px;
+  justify-content: center;
+}
+.foot-nav-center a {
+  font-size: 11px; font-weight: 600;
+  color: #444; text-decoration: none;
+  letter-spacing: .6px; text-transform: uppercase;
+  padding: 4px 10px;
+  transition: color .2s;
+}
+.foot-nav-center a:hover { color: var(--purple); }
+.foot-nav-center span {
+  font-size: 9px; color: #ccc;
+}
+.foot-li-icon {
+  display: flex; justify-content: flex-end;
+}
+.foot-li-icon a {
+  display: flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px;
+  background: #111;
+  border-radius: 8px;
+  color: #fff;
+  transition: background .2s;
+  text-decoration: none;
+}
+.foot-li-icon a:hover { background: #0077b5; }
+.foot-li-icon svg { display: block; }
 
 </style>
 </head>
@@ -2636,25 +2679,24 @@ footer {
 <footer>
   <div class="foot-inner">
     <div class="foot-top">
-      <!-- Brand -->
+      <!-- Left: brand -->
       <div class="foot-brand">
-        <div class="foot-brand-name">Borja Mora Méndez.</div>
-        <p class="foot-brand-desc">Data Analyst · Power BI · DAX · Data Storytelling</p>
+        <div class="foot-brand-name">Borja Mora.</div>
       </div>
-      <!-- Nav -->
-      <div class="foot-col">
-        <div class="foot-col-title">Navegación</div>
+      <!-- Center: nav -->
+      <div class="foot-nav-center">
         <a href="./index.html">Inicio</a>
         <a href="./sobre-mi.html">Sobre mí</a>
         <a href="./proyectos.html">Proyectos</a>
         <a href="./descargas.html">Descargas</a>
       </div>
-      <!-- Links -->
-      <div class="foot-col">
-        <div class="foot-col-title">Encuéntrame en</div>
-        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event', 'clic_linkedin', { location: 'footer' });">LinkedIn</a>
-        <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" onclick="gtag('event', 'clic_github', { location: 'footer' });">GitHub</a>
-        <a href="https://mail.google.com/mail/u/0/?fs=1&to=borja.mora.mendez@gmail.com&su=Oportunidad+laboral&body=Hola,+me+gustar%C3%ADa+hablar+contigo+sobre+una+posible+oportunidad.&tf=cm" target="_blank" rel="noopener noreferrer" onclick="gtag('event', 'clic_email', { location: 'footer' });">Contacto</a>
+      <!-- Right: LinkedIn icon -->
+      <div class="foot-li-icon">
+        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" onclick="gtag('event','clic_linkedin',{location:'footer'});">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/>
+          </svg>
+        </a>
       </div>
     </div>
     <div class="foot-bottom">
