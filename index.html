@@ -66,7 +66,8 @@
       },
       "sameAs": [
         "https://www.linkedin.com/in/borjamoramendez/",
-        "https://github.com/BORJAMOME"
+        "https://github.com/BORJAMOME",
+        "https://www.behance.net/borjamora"
       ]
     },
     {
@@ -116,18 +117,6 @@ body {
   background: var(--white);
   color: var(--ink);
   overflow-x: hidden;
-}
-
-/* ─── PROGRESS ─── */
-.progress-bar {
-  position: fixed;
-  top: 0; left: 0;
-  height: 2px;
-  background: var(--purple);
-  z-index: 1001;
-  transform-origin: left;
-  transform: scaleX(0);
-  transition: transform .1s linear;
 }
 
 /* ─── NAV ─── */
@@ -212,16 +201,6 @@ nav.scrolled { border-bottom-color: var(--gray); }
   background-size: 56px 56px;
   pointer-events: none;
 }
-.hero::after {
-  content: '';
-  position: absolute;
-  width: 560px; height: 560px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(122,123,255,.06) 0%, transparent 70%);
-  top: -80px; right: -60px;
-  pointer-events: none;
-}
-
 .hero-inner {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -2256,6 +2235,7 @@ footer {
             <rect x="311" y="216" width="12" height="52" rx="2" fill="#7878c8"/>
             <rect x="328" y="206" width="12" height="62" rx="2" fill="#7a7bff"/>
           </svg>
+        </div>
 
         <div class="pc-body">
           <div class="pc-cat">Marketing · Analytics</div>
@@ -2330,6 +2310,7 @@ footer {
               loading="lazy"
               scrolling="no"
               tabindex="-1"
+              sandbox="allow-scripts allow-same-origin"
             ></iframe>
             <div class="iframe-overlay"></div>
           </div>
@@ -2763,92 +2744,6 @@ const chartOpts = {
   plugins:{ legend:{ display:false }, tooltip:{ enabled:false } },
   animation:{ duration:1200, easing:'easeOutQuart' }
 };
-
-// Hero bar — ventas reales con estacionalidad
-setTimeout(() => { new Chart(document.getElementById('heroBar'), {
-  type:'bar',
-  data:{
-    labels:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
-    datasets:[
-      {
-        label:'2025',
-        data:[198,224,268,245,312,287,253,301,418,356,389,392],
-        backgroundColor:'rgba(122,123,255,0.85)',
-        borderRadius:3, borderSkipped:false
-      },
-      {
-        label:'2024',
-        data:[176,201,238,219,278,256,228,272,372,318,347,349],
-        backgroundColor:'rgba(210,210,225,0.7)',
-        borderRadius:3, borderSkipped:false
-      }
-    ]
-  },
-  options:{
-    ...chartOpts,
-    plugins:{
-      legend:{ display:false },
-      tooltip:{
-        enabled:true,
-        backgroundColor:'rgba(17,17,17,.88)',
-        padding:8,
-        callbacks:{
-          title: ctx => ctx[0].label,
-          label: ctx => ` ${ctx.dataset.label}: €${ctx.raw.toLocaleString('es-ES')}K`
-        }
-      }
-    },
-    scales:{
-      x:{ grid:{display:false}, ticks:{color:'#bbb',font:{size:8}}, border:{display:false} },
-      y:{ display:false }
-    }
-  }
-}); }, 300);
-
-// Hero Line — tendencia acumulada
-setTimeout(() => { new Chart(document.getElementById('heroLine'), {
-  type: 'line',
-  data: {
-    labels: ['E','F','M','A','M','J','J','A','S','O','N','D'],
-    datasets: [
-      {
-        label: '2025',
-        data: [198,422,690,935,1247,1534,1787,2088,2506,2862,3251,3643],
-        borderColor: PURPLE, borderWidth: 2,
-        pointRadius: 0, pointHoverRadius: 4,
-        tension: 0.35, fill: true,
-        backgroundColor: 'rgba(122,123,255,0.07)'
-      },
-      {
-        label: '2024',
-        data: [176,377,615,834,1112,1368,1596,1868,2240,2558,2905,3254],
-        borderColor: '#d8d8ea', borderWidth: 1.5,
-        pointRadius: 0, tension: 0.35, fill: false
-      }
-    ]
-  },
-  options: {
-    ...chartOpts,
-    plugins: {
-      legend:{ display:false },
-      tooltip:{
-        enabled:true,
-        backgroundColor:'rgba(17,17,17,.88)',
-        padding:7,
-        callbacks:{
-          title: ctx => ctx[0].label,
-          label: ctx => ` ${ctx.dataset.label}: €${(ctx.raw/1000).toFixed(2)}M`
-        }
-      }
-    },
-    scales: {
-      x: { grid:{display:false}, ticks:{color:'#bbb',font:{size:8}}, border:{display:false} },
-      y: { display:false }
-    }
-  }
-}); }, 700);
-
-
 
 
 // ─── SCROLL NAV ───
