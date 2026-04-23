@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Favicon BM — Entrega</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0e0e0f;
+    font-family: 'Inter', sans-serif;
+    color: #fff;
+    padding: 60px 40px;
+    min-height: 100vh;
+  }
+
+  .header {
+    max-width: 860px; margin: 0 auto 56px;
+  }
+  .label {
+    font-size: 10px; font-weight: 700; letter-spacing: 2.5px;
+    text-transform: uppercase; color: #7a7bff; margin-bottom: 14px;
+  }
+  h1 {
+    font-size: clamp(26px, 4vw, 40px); font-weight: 800;
+    letter-spacing: -1.2px; line-height: 1.1; margin-bottom: 10px;
+  }
+  .sub { font-size: 13px; color: #555; }
+
+  .wrap { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+
+  /* Preview card */
+  .card {
+    background: #161618;
+    border: 0.5px solid #2a2a2e;
+    border-radius: 16px;
+    padding: 32px 36px;
+  }
+  .card-title {
+    font-size: 10px; font-weight: 700; letter-spacing: 1.8px;
+    text-transform: uppercase; color: #444; margin-bottom: 28px;
+  }
+
+  /* Sizes row */
+  .sizes-row {
+    display: flex; align-items: flex-end; gap: 32px; flex-wrap: wrap;
+  }
+  .size-item {
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  .size-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 1.2px;
+    text-transform: uppercase; color: #3a3a3a;
+  }
+
+  /* favicon renders */
+  .fav {
+    background: #111;
+    border-radius: calc(var(--sz) * 0.18);
+    display: flex; align-items: center; justify-content: center;
+    width: var(--sz); height: var(--sz);
+    position: relative;
+    overflow: hidden;
+  }
+  .fav svg { display: block; }
+
+  /* Light bg variant */
+  .fav.light { background: #f7f7fa; }
+
+  /* Browser mockup */
+  .browser {
+    background: #1e1e22;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 0.5px solid #2e2e34;
+  }
+  .browser-chrome {
+    background: #28282e;
+    padding: 10px 14px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 0.5px solid #333;
+  }
+  .dots { display: flex; gap: 5px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+  .address-bar {
+    flex: 1;
+    background: #1a1a1e;
+    border-radius: 5px;
+    padding: 5px 12px;
+    font-size: 11px;
+    color: #666;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .lock { font-size: 9px; color: #3a3a3a; }
+  .tabs-row {
+    background: #222226;
+    display: flex; gap: 2px; padding: 8px 10px 0;
+  }
+  .tab {
+    background: #1a1a1e;
+    border-radius: 8px 8px 0 0;
+    padding: 8px 14px;
+    display: flex; align-items: center; gap: 7px;
+    border: 0.5px solid #2e2e34;
+    border-bottom: none;
+    min-width: 180px;
+  }
+  .tab-inactive {
+    background: transparent;
+    border-color: transparent;
+    opacity: 0.4;
+  }
+  .tab-text { font-size: 11px; color: #bbb; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tab-x { font-size: 9px; color: #555; }
+  .browser-body {
+    background: #0e0e0f;
+    height: 60px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .browser-body span { font-size: 11px; color: #333; }
+
+  /* Code block */
+  .code-block {
+    background: #111;
+    border: 0.5px solid #222;
+    border-radius: 10px;
+    padding: 24px 28px;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 12px;
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+  .c-comment { color: #3a3a3a; }
+  .c-tag { color: #7a7bff; }
+  .c-attr { color: #a0a1ff; }
+  .c-val { color: #3c8a37; }
+
+  /* Files list */
+  .files-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+  }
+  .file-item {
+    background: #111;
+    border: 0.5px solid #222;
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .file-icon { font-size: 18px; }
+  .file-info { display: flex; flex-direction: column; gap: 2px; }
+  .file-name { font-size: 11px; font-weight: 600; color: #ddd; }
+  .file-meta { font-size: 10px; color: #444; }
+
+  /* Steps */
+  .steps { display: flex; flex-direction: column; gap: 16px; }
+  .step { display: flex; gap: 16px; align-items: flex-start; }
+  .step-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #7a7bff; color: #fff;
+    font-size: 11px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .step-text { font-size: 13px; color: #888; line-height: 1.6; }
+  .step-text strong { color: #ddd; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="label">Favicon · Opción 01 — Entrega final</div>
+  <h1>BM Tipográfico<br>listo para producción</h1>
+  <p class="sub">Todos los archivos generados · SVG vectorial · PNG multi-tamaño · ICO legacy · Apple Touch</p>
+</div>
+
+<div class="wrap">
+
+  <!-- VISUAL PREVIEW -->
+  <div class="card">
+    <div class="card-title">Preview por tamaños</div>
+    <div class="sizes-row">
+
+      <div class="size-item">
+        <div class="fav" style="--sz:128px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="100" height="100">
+            <rect width="32" height="32" rx="6" fill="#111111"/>
+            <text x="3" y="23" font-family="'Inter','Arial Black',sans-serif" font-weight="800" font-size="18" fill="#ffffff" letter-spacing="-1.2">BM</text>
+            <circle cx="28" cy="5" r="3" fill="#7a7bff"/>
+          </svg>
+        </div>
+        <span class="size-label">128 px</span>
+      </div>
+
+      <div class="size-item">
+        <div class="fav" style="--sz:64px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="50" height="50">
+            <rect width="32" height="32" rx="6" fill="#111111"/>
+            <text x="3" y="23" font-family="'Inter','Arial Black',sans-serif" font-weight="800" font-size="18" fill="#ffffff" letter-spacing="-1.2">BM</text>
+            <circle cx="28" cy="5" r="3" fill="#7a7bff"/>
+          </svg>
+        </div>
+        <span class="size-label">64 px</span>
+      </div>
+
+      <div class="size-item">
+        <div class="fav" style="--sz:48px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="38" height="38">
+            <rect width="32" height="32" rx="6" fill="#111111"/>
+            <text x="3" y="23" font-family="'Inter','Arial Black',sans-serif" font-weight="800" font-size="18" fill="#ffffff" letter-spacing="-1.2">BM</text>
+            <circle cx="28" cy="5" r="3" fill="#7a7bff"/>
+          </svg>
+        </div>
+        <span class="size-label">48 px</span>
+      </div>
+
+      <div class="size-item">
+        <div class="fav" style="--sz:32px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="24" height="24">
+            <rect width="32" height="32" rx="6" fill="#111111"/>
+            <text x="3" y="23" font-family="'Inter','Arial Black',sans-serif" font-weight="800" font-size="18" fill="#ffffff" letter-spacing="-1.2">BM</text>
+            <circle cx="28" cy="5" r="3" fill="#7a7bff"/>
+          </svg>
+        </div>
+        <span class="size-label">32 px</span>
+      </div>
+
+      <div class="size-item">
+        <div class="fav" style="--sz:16px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="12" height="12">
+            <rect width="32" height="32" rx="6" fill="#111111"/>
+            <text x="3" y="23" font-family="'Inter','Arial Black',sans-serif" font-weight="800" font-size="18" fill="#ffffff" letter-spacing="-1.2">BM</text>
+            <circle cx="28" cy="5" r="3" fill="#7a7bff"/>
+          </svg>
+        </div>
+        <span class="size-label">16 px</span>
+      </div>
+
+      <!-- On light bg -->
+      <div class="size-item" style="margin-left:24px;">
+        <div class="fav light" style="--sz:128px; border:0.5px solid #e5e5e5;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="100" height="100">
+            <rect width="32" height="32" rx="6" fill="#111111"/>
+            <text x="3" y="23" font-family="'Inter','Arial Black',sans-serif" font-weight="800" font-size="18" fill="#ffffff" letter-spacing="-1.2">BM</text>
+            <circle cx="28" cy="5" r="3" fill="#7a7bff"/>
+          </svg>
+        </div>
+        <span class="size-label">Sobre claro</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BROWSER MOCKUP -->
+  <div class="card">
+    <div class="card-title">Simulación en navegador</div>
+    <div class="browser">
+      <div class="browser-chrome">
+        <div class="dots">
+          <div class="dot dot-r"></div>
+          <div class="dot dot-y"></div>
+          <div class="dot dot-g"></div>
+        </div>
+        <div class="address-bar">
+          <span class="lock">🔒</span>
+          <span>borjamora.es</span>
+        </div>
+      </div>
+      <div class="tabs-row">
+        <div class="tab">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" style="flex-shrink:0;border-radius:3px;">
+            <rect width="32" height="32" rx="6" fill="#111111"/>
+            <text x="3" y="23" font-family="'Inter','Arial Black',sans-serif" font-weight="800" font-size="18" fill="#ffffff" letter-spacing="-1.2">BM</text>
+            <circle cx="28" cy="5" r="3" fill="#7a7bff"/>
+          </svg>
+          <span class="tab-text">Borja Mora — Data Analyst · Power BI</span>
+          <span class="tab-x">✕</span>
+        </div>
+        <div class="tab tab-inactive">
+          <div style="width:16px;height:16px;background:#333;border-radius:3px;flex-shrink:0;"></div>
+          <span class="tab-text" style="color:#555;">Nueva pestaña</span>
+        </div>
+      </div>
+      <div class="browser-body">
+        <span>borjamora.es — portfolio cargando...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILES DELIVERED -->
+  <div class="card">
+    <div class="card-title">Archivos generados</div>
+    <div class="files-grid">
+      <div class="file-item"><span class="file-icon">🎨</span><div class="file-info"><span class="file-name">favicon.svg</span><span class="file-meta">Vectorial · todos los browsers</span></div></div>
+      <div class="file-item"><span class="file-icon">🖼</span><div class="file-info"><span class="file-name">favicon-16x16.png</span><span class="file-meta">16 × 16 px</span></div></div>
+      <div class="file-item"><span class="file-icon">🖼</span><div class="file-info"><span class="file-name">favicon-32x32.png</span><span class="file-meta">32 × 32 px</span></div></div>
+      <div class="file-item"><span class="file-icon">🖼</span><div class="file-info"><span class="file-name">favicon-48x48.png</span><span class="file-meta">48 × 48 px</span></div></div>
+      <div class="file-item"><span class="file-icon">📱</span><div class="file-info"><span class="file-name">apple-touch-icon.png</span><span class="file-meta">180 × 180 px · iOS</span></div></div>
+      <div class="file-item"><span class="file-icon">🖼</span><div class="file-info"><span class="file-name">favicon-512x512.png</span><span class="file-meta">512 × 512 px · PWA</span></div></div>
+      <div class="file-item"><span class="file-icon">📦</span><div class="file-info"><span class="file-name">favicon.ico</span><span class="file-meta">16 + 32 + 48px · legacy</span></div></div>
+    </div>
+  </div>
+
+  <!-- CODE TO PASTE -->
+  <div class="card">
+    <div class="card-title">Código para el &lt;head&gt; de tus 4 páginas HTML</div>
+    <div class="code-block">
+<span class="c-comment">&lt;!-- ─── FAVICON ─── --&gt;</span><br>
+<span class="c-tag">&lt;link</span> <span class="c-attr">rel</span>=<span class="c-val">"icon"</span> <span class="c-attr">type</span>=<span class="c-val">"image/svg+xml"</span> <span class="c-attr">href</span>=<span class="c-val">"./favicon.svg"</span><span class="c-tag">&gt;</span><br>
+<span class="c-tag">&lt;link</span> <span class="c-attr">rel</span>=<span class="c-val">"icon"</span> <span class="c-attr">type</span>=<span class="c-val">"image/png"</span> <span class="c-attr">sizes</span>=<span class="c-val">"32x32"</span> <span class="c-attr">href</span>=<span class="c-val">"./favicon-32x32.png"</span><span class="c-tag">&gt;</span><br>
+<span class="c-tag">&lt;link</span> <span class="c-attr">rel</span>=<span class="c-val">"icon"</span> <span class="c-attr">type</span>=<span class="c-val">"image/png"</span> <span class="c-attr">sizes</span>=<span class="c-val">"16x16"</span> <span class="c-attr">href</span>=<span class="c-val">"./favicon-16x16.png"</span><span class="c-tag">&gt;</span><br>
+<span class="c-tag">&lt;link</span> <span class="c-attr">rel</span>=<span class="c-val">"apple-touch-icon"</span> <span class="c-attr">sizes</span>=<span class="c-val">"180x180"</span> <span class="c-attr">href</span>=<span class="c-val">"./apple-touch-icon.png"</span><span class="c-tag">&gt;</span><br>
+<span class="c-tag">&lt;link</span> <span class="c-attr">rel</span>=<span class="c-val">"shortcut icon"</span> <span class="c-attr">href</span>=<span class="c-val">"./favicon.ico"</span><span class="c-tag">&gt;</span>
+    </div>
+  </div>
+
+  <!-- STEPS -->
+  <div class="card">
+    <div class="card-title">Pasos para subir a GitHub</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>Descarga los 7 archivos</strong> que te he generado arriba (favicon.svg, favicon-16x16.png, favicon-32x32.png, favicon-48x48.png, apple-touch-icon.png, favicon-512x512.png, favicon.ico)</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>Súbelos a la raíz de tu repo</strong> en GitHub → Add file → Upload files. Al mismo nivel que index.html, sobre-mi.html, proyectos.html y descargas.html.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>Añade el bloque de código</strong> del &lt;head&gt; en tus 4 páginas HTML, justo después del &lt;meta charset&gt;. Dímelo y te meto el código yo directamente en todos los archivos.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text"><strong>Commit y push.</strong> GitHub Pages tarda ~1 minuto en actualizar. Si el browser hace caché, abre en incógnito o fuerza recarga con <strong>Ctrl+Shift+R</strong>.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
