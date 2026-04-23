@@ -43,41 +43,16 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "ItemList",
+  "@type": "CollectionPage",
   "url": "https://borjamora.es/descargas.html",
-  "name": "Archivos .pbix gratuitos de Power BI — Borja Mora",
+  "name": "Archivos .pbix — Descargas gratuitas",
   "description": "Proyectos Power BI desarrollados y compartidos en LinkedIn. Descarga el archivo, explora el modelo de datos y úsalo como referencia.",
   "inLanguage": "es-ES",
-  "numberOfItems": 17,
   "author": {
     "@type": "Person",
     "name": "Borja Mora Méndez",
-    "url": "https://borjamora.es/",
-    "sameAs": [
-      "https://www.linkedin.com/in/borjamoramendez/",
-      "https://github.com/BORJAMOME",
-      "https://www.behance.net/borjamora"
-    ]
-  },
-  "itemListElement": [
-    {"@type":"ListItem","position":1,"name":"Gantt Chart 100% nativo en Power BI"},
-    {"@type":"ListItem","position":2,"name":"Control de Presupuesto con DAX"},
-    {"@type":"ListItem","position":3,"name":"Widgets de KPI personalizados"},
-    {"@type":"ListItem","position":4,"name":"Small Multiples en Power BI"},
-    {"@type":"ListItem","position":5,"name":"Storytelling con colores condicionales"},
-    {"@type":"ListItem","position":6,"name":"Análisis de varianza con DAX"},
-    {"@type":"ListItem","position":7,"name":"Dumbbell Chart nativo"},
-    {"@type":"ListItem","position":8,"name":"Lollipop Chart CY vs PY"},
-    {"@type":"ListItem","position":9,"name":"Barras de progreso dinámicas"},
-    {"@type":"ListItem","position":10,"name":"Matriz IBCS en Power BI"},
-    {"@type":"ListItem","position":11,"name":"Títulos dinámicos con DAX"},
-    {"@type":"ListItem","position":12,"name":"Tooltips personalizados avanzados"},
-    {"@type":"ListItem","position":13,"name":"Ranking con storytelling — TopN dinámico"},
-    {"@type":"ListItem","position":14,"name":"Zoom visual sobre outliers"},
-    {"@type":"ListItem","position":15,"name":"Slope Chart — Evolución y ranking juntos"},
-    {"@type":"ListItem","position":16,"name":"Input Slicer I — Field Parameter + DAX"},
-    {"@type":"ListItem","position":17,"name":"Input Slicer II — Top N y títulos dinámicos"}
-  ]
+    "url": "https://borjamora.es/"
+  }
 }
 </script>
 
@@ -118,13 +93,21 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--off);c
 .nav-links a{font-size:13.5px;color:var(--muted);text-decoration:none;font-weight:500;transition:color .2s}
 .nav-links a:hover{color:var(--ink)}
 .nav-links a.active{color:var(--ink);font-weight:700}
-.nav-cta{
+.nav-cta, .nav-links a.nav-cta{
   font-size:13px;font-weight:700;
-  background:var(--ink);color:#fff;
-  padding:7px 18px;border-radius:8px;
-  text-decoration:none;transition:background .2s;
+  background:#111;color:#c6ff00;
+  padding:8px 28px;border-radius:8px;
+  text-decoration:none;
+  overflow:hidden;display:inline-block;
+  min-width:150px;text-align:center;
+  transition:none;
 }
-.nav-cta:hover{background:#333}
+.nav-cta .cta-text-wrap{display:block;position:relative;height:1.2em;overflow:hidden}
+.nav-cta .cta-text-wrap span{display:block;white-space:nowrap;line-height:1.2em;text-align:center;transition:transform .3s cubic-bezier(.16,1,.3,1)}
+.nav-cta .cta-text-wrap span:last-child{position:absolute;top:0;left:0;right:0;transform:translateY(100%)}
+.nav-cta:hover .cta-text-wrap span:first-child{transform:translateY(-100%)}
+.nav-cta:hover .cta-text-wrap span:last-child{transform:translateY(0)}
+.nav-links a.nav-cta:hover, .nav-cta:hover{background:#111;color:#c6ff00}
 
 /* ── CONTAINER ── */
 .c{max-width:860px;margin:0 auto;padding:0 clamp(1.5rem,4vw,3rem)}
@@ -236,65 +219,21 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--off);c
 .btn-li svg{fill:var(--li);flex-shrink:0}
 
 /* ── FOOTER ── */
-footer{
-  background:var(--white);border-top:0.5px solid var(--gray);
-  padding:24px clamp(1.5rem,4vw,3rem);
-  display:flex;align-items:center;justify-content:space-between;
-  flex-wrap:wrap;gap:12px;
-}
-.foot-copy{font-size:12px;color:var(--muted)}
-.foot-links{display:flex;gap:20px;flex-wrap:wrap}
-.foot-links a{font-size:12.5px;color:var(--muted);text-decoration:none;font-weight:500;transition:color .2s}
-.foot-links a:hover{color:var(--ink)}
-
-/* ── LINKEDIN CTA ── */
-.li-cta-wrap{
-  background:var(--white);
-  border-top:0.5px solid var(--gray);
-  padding:40px 0;
-  margin-top:64px;
-}
-.li-cta{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:32px;flex-wrap:wrap;
-  background:linear-gradient(135deg,#0a66c2 0%,#004f97 100%);
-  border-radius:18px;
-  padding:32px 36px;
-}
-.li-cta-left{display:flex;align-items:center;gap:20px;flex:1;min-width:260px}
-.li-cta-icon{
-  width:48px;height:48px;border-radius:12px;
-  background:rgba(255,255,255,.15);
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;
-}
-.li-cta-title{
-  font-size:16px;font-weight:700;color:#fff;
-  letter-spacing:-.3px;margin-bottom:5px;line-height:1.3;
-}
-.li-cta-sub{
-  font-size:13px;color:rgba(255,255,255,.72);
-  line-height:1.55;
-}
-.li-cta-btn{
-  display:inline-flex;align-items:center;gap:8px;
-  background:#fff;color:#0a66c2;
-  font-size:13px;font-weight:700;
-  padding:12px 24px;border-radius:10px;
-  text-decoration:none;white-space:nowrap;flex-shrink:0;
-  transition:all .2s;
-}
-.li-cta-btn:hover{
-  background:#f0f7ff;
-  transform:translateY(-2px);
-  box-shadow:0 8px 24px rgba(0,0,0,.12);
-}
-.li-cta-btn svg{stroke:#0a66c2;flex-shrink:0}
-@media(max-width:640px){
-  .li-cta{padding:24px 22px;gap:20px}
-  .li-cta-left{flex-direction:column;align-items:flex-start;gap:12px}
-  .li-cta-btn{width:100%;justify-content:center}
-}
+footer{background:var(--off);padding:0;border-top:.5px solid var(--gray)}
+.foot-inner{max-width:1100px;margin:0 auto;padding:32px clamp(1.5rem,5vw,4rem) 24px}
+.foot-top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:24px;padding-bottom:24px;border-bottom:.5px solid var(--gray);margin-bottom:20px}
+.foot-brand-name{font-size:14px;font-weight:700;color:var(--ink);letter-spacing:-.2px;text-transform:uppercase}
+.foot-nav-center{display:flex;align-items:center;gap:20px;justify-content:center}
+.foot-nav-center a{font-size:11px;font-weight:600;color:#444;text-decoration:none;letter-spacing:.6px;text-transform:uppercase;padding:4px 10px;transition:color .2s}
+.foot-nav-center a:hover{color:var(--purple)}
+.foot-li-icon{display:flex;justify-content:flex-end}
+.foot-li-icon a{display:flex;align-items:center;justify-content:center;width:44px;height:44px;background:#111;border-radius:8px;color:#fff;transition:background .2s;text-decoration:none}
+.foot-li-icon a:hover{background:#0077b5}
+.foot-li-icon svg{display:block}
+.foot-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.foot-copy{font-size:11.5px;color:var(--muted);opacity:.7}
+.foot-made{font-size:11.5px;color:var(--muted);opacity:.7;display:flex;align-items:center;gap:6px}
+.foot-tech{display:inline-flex;align-items:center;gap:4px;background:var(--white);border:.5px solid var(--gray);padding:2px 8px;border-radius:4px;font-size:10.5px;color:var(--muted);font-family:'SF Mono','Fira Code',monospace}
 
 /* ── RESPONSIVE ── */
 @media(max-width:700px){
@@ -319,7 +258,7 @@ footer{
     <a href="./proyectos.html">Proyectos</a>
     <a href="./descargas.html" class="active" aria-current="page">Descargas</a>
     <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event', 'clic_linkedin', { location: 'nav' });">LinkedIn</a>
-    <a href="https://mail.google.com/mail/u/0/?fs=1&to=borja.mora.mendez@gmail.com&su=Oportunidad+laboral&body=Hola,+me+gustar%C3%ADa+hablar+contigo+sobre+una+posible+oportunidad.&tf=cm" target="_blank" rel="noopener noreferrer" class="nav-cta" onclick="gtag('event', 'clic_email', { location: 'nav' });">Contacto</a>
+    <a href="https://mail.google.com/mail/u/0/?fs=1&to=borja.mora.mendez@gmail.com&su=Oportunidad+laboral&body=Hola,+me+gustar%C3%ADa+hablar+contigo+sobre+una+posible+oportunidad.&tf=cm" target="_blank" rel="noopener noreferrer" class="nav-cta" onclick="gtag('event', 'clic_email', { location: 'nav' });"><span class="cta-text-wrap"><span>Contacto</span><span>¿Hablamos?</span></span></a>
   </div>
 </nav>
 
@@ -585,37 +524,33 @@ footer{
 
 </div>
 
-<!-- ── CTA LINKEDIN ── -->
-<div class="li-cta-wrap">
-  <div class="c">
-    <div class="li-cta">
-      <div class="li-cta-left">
-        <div class="li-cta-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-        </div>
-        <div>
-          <div class="li-cta-title">¿Te ha sido útil alguno de estos archivos?</div>
-          <div class="li-cta-sub">Publico nuevas técnicas de Power BI cada semana en LinkedIn. Sígueme para no perderte el próximo.</div>
-        </div>
-      </div>
-      <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="li-cta-btn" onclick="gtag('event', 'clic_linkedin', { location: 'descargas_cta_footer' });">
-        Seguir en LinkedIn
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
-      </a>
-    </div>
-  </div>
-</div>
-
 <!-- ── FOOTER ── -->
 <footer>
-  <span class="foot-copy">© 2026 Borja Mora Méndez · Madrid, España</span>
-  <div class="foot-links">
-    <a href="./index.html">Inicio</a>
-    <a href="./sobre-mi.html">Sobre mí</a>
-    <a href="./proyectos.html">Proyectos</a>
-    <a href="./descargas.html">Descargas</a>
-    <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event', 'clic_linkedin', { location: 'footer' });">LinkedIn</a>
-    <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" onclick="gtag('event', 'clic_github', { location: 'footer' });">GitHub</a>
+  <div class="foot-inner">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <div class="foot-brand-name">Borja Mora.</div>
+      </div>
+      <div class="foot-nav-center">
+        <a href="./index.html">Inicio</a>
+        <a href="./sobre-mi.html">Sobre mí</a>
+        <a href="./proyectos.html">Proyectos</a>
+        <a href="./descargas.html">Descargas</a>
+      </div>
+      <div class="foot-li-icon">
+        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" onclick="gtag('event','clic_linkedin',{location:'footer'});">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <div class="foot-copy">© 2026 Borja Mora Méndez · Madrid, España</div>
+      <div class="foot-made">
+        Diseñado y construido por mí · <span class="foot-tech">HTML</span><span class="foot-tech">CSS</span><span class="foot-tech">JS</span> · Sin template
+      </div>
+    </div>
   </div>
 </footer>
 
