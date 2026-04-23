@@ -13,6 +13,7 @@
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <!-- Primary Meta Tags -->
 <meta name="description" content="Borja Mora — Data Analyst especializado en Power BI y Business Intelligence. Certificado Microsoft PL-300. Dashboards, DAX, modelado de datos y Data Storytelling para convertir datos en decisiones.">
@@ -1303,9 +1304,12 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
 .sr-d3 { transition-delay:.24s; }
 
 /* ─── RESPONSIVE ─── */
-@media (max-width:900px) {
-  .hero-inner,.qs-inner,.com-grid { grid-template-columns:1fr 1.15fr; }
+@media (max-width:1050px) {
   .hero-right { display:none; }
+  .hero-inner { grid-template-columns:1fr; }
+}
+@media (max-width:900px) {
+  .qs-inner,.com-grid { grid-template-columns:1fr 1.15fr; }
   .wib-grid,.proj-grid,.prin-grid,.prob-grid,.stats-grid { grid-template-columns:1fr; }
   .proj-featured { grid-row:auto; }
   .stat-card { border-right:none; border-bottom:.5px solid var(--gray); }
