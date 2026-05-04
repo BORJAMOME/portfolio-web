@@ -855,64 +855,6 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
 .qs-callout { background: var(--purple-light); border-radius: 10px; padding: 18px 20px; }
 .qs-callout p { font-size: 14px; color: var(--purple2); line-height: 1.65; font-weight: 500; }
 
-/* ─── PRINCIPLES ─── */
-/* ─── PRINCIPLES ─── */
-.prin-section { background: var(--white); }
-.prin-new-inner {
-  display: grid;
-  grid-template-columns: 1fr 1.6fr;
-  gap: 80px;
-  align-items: start;
-}
-.prin-new-left { position: sticky; top: 120px; }
-.prin-new-list {
-  background: var(--white);
-  border: .5px solid var(--gray);
-  border-radius: 18px;
-  overflow: hidden;
-}
-.prin-item {
-  display: grid;
-  grid-template-columns: 64px 1fr;
-  align-items: center;
-  gap: 0;
-  padding: 26px 32px 26px 0;
-  border-bottom: .5px solid #f0f0f5;
-  transition: background .2s var(--ease);
-  cursor: default;
-}
-.prin-item:last-child { border-bottom: none; }
-.prin-item:hover { background: #fafafe; }
-.prin-item-num {
-  font-size: 44px;
-  font-weight: 700;
-  color: rgba(122,123,255,.12);
-  letter-spacing: -2px;
-  line-height: 1;
-  text-align: center;
-  flex-shrink: 0;
-  transition: color .2s var(--ease);
-}
-.prin-item:hover .prin-item-num { color: rgba(122,123,255,.22); }
-.prin-item-body { border-left: .5px solid #f0f0f5; padding-left: 28px; }
-.prin-item-title {
-  font-size: 15.5px;
-  font-weight: 700;
-  color: var(--ink);
-  letter-spacing: -.3px;
-  line-height: 1.3;
-  margin-bottom: 5px;
-}
-.prin-item-desc {
-  font-size: 13px;
-  color: var(--muted);
-  line-height: 1.55;
-}
-@media (max-width: 860px) {
-  .prin-new-inner { grid-template-columns: 1fr; gap: 40px; }
-  .prin-new-left { position: static; }
-}
-
 /* ─── ANALYSIS PROJECTS ─── */
 .analysis-section { background: var(--off); }
 .analysis-header { margin-bottom: 52px; }
@@ -1348,199 +1290,895 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
 }
 @media (max-width:900px) {
   .qs-inner,.com-grid { grid-template-columns:1fr 1.15fr; }
-  .wib-grid,.proj-grid,.prin-grid,.prob-grid,.stats-grid { grid-template-columns:1fr; }
+  .wib-grid,.proj-grid,.prob-grid,.stats-grid { grid-template-columns:1fr; }
   .proj-featured { grid-row:auto; }
   .stat-card { border-right:none; border-bottom:.5px solid var(--gray); }
   .nav-links a:not(.nav-cta) { display:none; }
   footer { flex-direction:column; text-align:center; }
 }
 
-/* ─── DATA PHILOSOPHY SECTION ─── */
+/* ─── DATA PHILOSOPHY · DECISION ENGINE ─── */
 .dph-section {
   background: var(--off);
   border-top: .5px solid #f0f0f5;
+  position: relative;
 }
-.dph-inner {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(48px,6vw,88px);
+
+/* Header centrado (dentro de .c) */
+.dph-header {
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto 0;
+  padding-bottom: 56px;
+}
+.dph-header .s-h { line-height: 1.05; }
+.dph-header .s-sub {
+  margin-top: 20px;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ── ARQUITECTURA SCROLL-DRIVEN ── */
+/* TRACK: contenedor exterior con altura grande. Da el "recorrido" del scroll. */
+.de-track {
+  position: relative;
+  height: 380vh; /* 4 pasos × ~95vh cada uno */
+}
+/* STAGE: sticky de 100vh. Mientras el track avanza, el stage se queda quieto. */
+.de-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
   align-items: center;
+  overflow: hidden;
 }
-.dph-text .s-sub {
-  margin-top: 18px;
-  max-width: 400px;
+.de-stage > .c {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 32px;
 }
 
 /* ── PIPELINE ── */
-.dph-pipeline {
-  display: flex;
-  flex-direction: column;
-  position: relative;
+.de-pipeline-wrap {
+  padding: 0;
 }
-
-/* Rail vertical continuo */
-.dph-pipeline::before {
-  content: '';
-  position: absolute;
-  left: 15px;
-  top: 20px;
-  bottom: 20px;
-  width: 1px;
-  background: linear-gradient(to bottom,
-    transparent 0%,
-    rgba(122,123,255,.4) 15%,
-    rgba(122,123,255,.5) 50%,
-    rgba(122,123,255,.4) 85%,
-    transparent 100%);
-  transform-origin: top;
-  transform: scaleY(0);
-  transition: transform 1.2s cubic-bezier(.16,1,.3,1);
-}
-.dph-pipeline.line-drawn::before {
-  transform: scaleY(1);
-}
-
-/* Cada fila del proceso */
-.dph-step-row {
-  display: flex;
-  align-items: stretch;
-  gap: 0;
-  position: relative;
-}
-
-/* Columna izquierda: número + dot + línea */
-.dph-step-aside {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 30px;
-  flex-shrink: 0;
-  padding-top: 18px;
-  position: relative;
-  z-index: 1;
-}
-.dph-step-num {
-  font-size: 9px;
-  font-weight: 800;
-  color: var(--purple);
-  letter-spacing: .5px;
-  line-height: 1;
-  padding: 2px 0;
-}
-
-/* Card del paso */
-.dph-step-card {
-  flex: 1;
-  margin: 6px 0 6px 12px;
-  background: var(--white);
-  border: .5px solid #e8e8f0;
-  border-radius: 12px;
-  padding: 14px 16px;
+.de-pipeline {
   display: flex;
   align-items: center;
-  gap: 14px;
-  transition: all .22s var(--ease);
-  cursor: default;
+  justify-content: space-between;
+  gap: 8px;
   position: relative;
-  overflow: hidden;
+  padding: 0 6px;
+  height: 56px;
 }
-.dph-step-card::before {
-  content: '';
+.de-pipeline-track-bg {
   position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 2px;
+  left: 11%;
+  right: 11%;
+  top: 50%;
+  height: 1px;
+  background: #d8d8e2;
+  transform: translateY(-50%);
+}
+.de-pipeline-track {
+  position: absolute;
+  left: 11%;
+  top: 50%;
+  height: 1px;
   background: var(--purple);
-  border-radius: 2px 0 0 2px;
-  opacity: 0;
-  transition: opacity .22s var(--ease);
+  transform: translateY(-50%);
+  width: 0%;
+  transition: width .12s linear;
+  box-shadow: 0 0 8px rgba(122,123,255,.55);
 }
-.dph-step-card:hover {
-  border-color: rgba(122,123,255,.35);
-  box-shadow: 0 4px 20px rgba(122,123,255,.09);
-  transform: translateX(3px);
+.de-pipeline-light {
+  position: absolute;
+  left: 11%;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  background: var(--purple);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow:
+    0 0 0 5px rgba(122,123,255,.18),
+    0 0 28px 6px rgba(122,123,255,.55);
+  transition: left .12s linear;
+  z-index: 3;
 }
-.dph-step-card:hover::before { opacity: 1; }
 
-/* Icono — todos morado claro */
-.dph-step-ico {
-  width: 32px; height: 32px;
-  border-radius: 9px;
-  background: var(--purple-light);
-  border: .5px solid rgba(122,123,255,.22);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-
-.dph-step-body { flex: 1; min-width: 0; }
-.dph-step-title {
-  font-size: 13px;
+/* Etiquetas extremo (PREGUNTA / DECISIÓN) */
+.de-pill {
+  font-size: 10px;
+  letter-spacing: .18em;
   font-weight: 700;
-  color: var(--ink);
-  letter-spacing: -.2px;
-  margin-bottom: 2px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  z-index: 2;
+  white-space: nowrap;
+  transition: all .4s var(--ease);
 }
-.dph-step-desc {
+.de-pill--start {
+  color: var(--muted);
+  background: var(--white);
+  border: .5px solid #d8d8e2;
+}
+.de-pill--end {
+  color: var(--white);
+  background: var(--ink);
+  border: .5px solid var(--ink);
+}
+.de-pill--end.lit {
+  background: var(--purple);
+  border-color: var(--purple);
+  box-shadow: 0 0 28px rgba(122,123,255,.55);
+}
+
+/* Estaciones (las 4 bolas) */
+.de-st {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 2;
+}
+.de-dot {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--white);
+  border: .5px solid #d8d8e2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c8c8d4;
+  font-size: 18px;
+  transition: all .35s var(--ease);
+}
+.de-st.active .de-dot {
+  background: var(--purple-light);
+  border-color: var(--purple);
+  color: var(--purple);
+  transform: scale(1.12);
+  box-shadow: 0 4px 16px rgba(122,123,255,.22);
+}
+.de-lbl {
   font-size: 11px;
   color: var(--muted);
+  letter-spacing: .02em;
+  transition: color .3s, font-weight .3s;
+}
+.de-st.active .de-lbl {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ── PANELES ── */
+.de-grid {
+  display: grid;
+  grid-template-columns: 56px 56px 1fr 56px;
+  gap: 12px;
+  height: clamp(340px, 56vh, 460px);
+  transition: grid-template-columns .55s cubic-bezier(.2,.7,.2,1);
+}
+.de-pnl {
+  background: var(--white);
+  border: .5px solid #e8e8f0;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  min-width: 56px;
+  transition: border-color .4s var(--ease), box-shadow .4s var(--ease), background .55s var(--ease);
+}
+.de-pnl.active {
+  border-color: rgba(122,123,255,.45);
+  box-shadow: 0 8px 32px rgba(122,123,255,.10), 0 0 0 1px rgba(122,123,255,.06);
+}
+.de-pnl.final {
+  background: linear-gradient(135deg, #0f0f1f 0%, #1a1a2e 60%, #0f3460 100%);
+  border-color: rgba(122,123,255,.4);
+  box-shadow: 0 12px 40px rgba(122,123,255,.18);
+}
+
+/* Panel plegado (vertical) */
+.de-pnl-collapsed {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 18px 12px;
+  gap: 18px;
+  opacity: 1;
+  transition: opacity .25s ease;
+}
+.de-pnl.active .de-pnl-collapsed {
+  opacity: 0;
+  pointer-events: none;
+}
+.de-pnl-num-c {
+  font-size: 11px;
+  color: var(--purple);
+  font-weight: 700;
+  letter-spacing: .1em;
+}
+.de-pnl-name-c {
+  font-size: 11px;
+  color: var(--ink);
+  font-weight: 600;
+  letter-spacing: .03em;
+  opacity: .55;
+}
+
+/* Panel expandido — layout 2 columnas: texto a la izq, evidencia a la der */
+.de-pnl-full {
+  position: absolute;
+  inset: 0;
+  padding: 32px 36px 28px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s ease .15s;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 36px;
+  align-items: start;
+}
+.de-pnl.active .de-pnl-full {
+  opacity: 1;
+  pointer-events: auto;
+}
+.de-pnl-text {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+}
+.de-pnl-eb {
+  font-size: 10px;
+  color: var(--purple);
+  letter-spacing: .14em;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+.de-pnl-h {
+  font-size: clamp(24px, 2.4vw, 30px);
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.05;
+  letter-spacing: -.5px;
+  margin-bottom: 6px;
+}
+.de-pnl.final .de-pnl-h { color: #ffffff; }
+.de-pnl-sub {
+  font-size: 16px;
+  color: var(--purple);
+  font-weight: 600;
+  letter-spacing: -.2px;
+  margin-bottom: 20px;
+}
+.de-pnl.final .de-pnl-sub { color: var(--purple); }
+.de-pnl-rule {
+  width: 36px;
+  height: 1px;
+  background: #e0e0eb;
+  margin-bottom: 18px;
+}
+.de-pnl.final .de-pnl-rule { background: rgba(122,123,255,.45); }
+.de-pnl-body {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.7;
+  margin-bottom: 22px;
+  flex: 1;
+}
+.de-pnl.final .de-pnl-body { color: #b8b8c8; }
+.de-pnl-quote {
+  padding-top: 16px;
+  border-top: 1px solid var(--purple-light);
+  font-size: 14px;
+  font-style: italic;
+  color: var(--purple);
+  font-weight: 500;
+}
+.de-pnl.final .de-pnl-quote { border-top-color: rgba(122,123,255,.22); }
+.de-pnl-q-mark {
+  color: var(--purple);
+  font-style: normal;
+  font-weight: 700;
+}
+.de-pnl-q-sub {
+  font-size: 11px;
+  color: var(--muted);
+  font-style: normal;
+  font-weight: 400;
+  margin-top: 5px;
+  letter-spacing: .02em;
+}
+.de-pnl.final .de-pnl-q-sub { color: #6a6a85; }
+
+/* Adaptación al estado final (panel 04 oscuro) */
+.de-pnl.final .de-ev-cmp-card {
+  background: rgba(255,255,255,.04);
+  border-color: rgba(255,255,255,.1);
+}
+.de-pnl.final .de-ev-cmp-card--good {
+  background: rgba(122,123,255,.08);
+  border-color: rgba(122,123,255,.4);
+}
+.de-pnl.final .de-ev-cmp-lbl { color: #8a8aa0; }
+.de-pnl.final .de-ev-cmp-card--good .de-ev-cmp-lbl { color: var(--purple); }
+.de-pnl.final .de-ev-cmp-bar { background: rgba(255,255,255,.12); }
+.de-pnl.final .de-ev-cmp-bar--mute { background: rgba(255,255,255,.06); }
+.de-pnl.final .de-ev-cmp-bar--hl { background: var(--purple); }
+.de-pnl.final .de-ev-stat-lbl { color: #8a8aa0; }
+
+/* ── BLOQUES DE EVIDENCIA (columna derecha) ── */
+.de-ev {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-self: stretch;
+  min-width: 0;
+}
+.de-ev-label {
+  font-size: 9px;
+  letter-spacing: .18em;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.de-pnl.final .de-ev-label { color: #8a8aa0; }
+
+/* Evidencia 1 · Preguntas reales (panel Negocio) */
+.de-ev-questions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.de-ev-q {
+  display: grid;
+  grid-template-columns: 8px 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 12px 14px 12px 12px;
+  background: var(--white);
+  border: .5px solid #ededf3;
+  border-left: 2px solid var(--purple);
+  border-radius: 8px;
+}
+.de-ev-q-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--purple);
+  margin-top: 7px;
+}
+.de-ev-q-txt {
+  font-size: 13px;
+  color: var(--ink);
+  font-style: italic;
   line-height: 1.5;
 }
 
-/* Flecha entre pasos */
-.dph-step-arrow {
+/* Evidencia 2 · Chips de transformaciones (panel Power Query) */
+.de-ev-chips {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-left: 15px;
-  height: 16px;
-  position: relative;
-  z-index: 1;
+  flex-wrap: wrap;
+  gap: 6px;
 }
-.dph-step-arrow::after {
-  content: '';
-  width: 5px; height: 5px;
-  border-right: 1.5px solid rgba(122,123,255,.45);
-  border-bottom: 1.5px solid rgba(122,123,255,.45);
-  transform: rotate(45deg);
-  margin-top: -3px;
+.de-ev-chip {
+  font-family: var(--font-mono, ui-monospace, 'SF Mono', Consolas, monospace);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 6px 10px;
+  background: var(--purple-light);
+  color: var(--purple2);
+  border: .5px solid rgba(122,123,255,.2);
+  border-radius: 6px;
+  letter-spacing: -.1px;
+  white-space: nowrap;
+}
+.de-ev-chip-arrow {
+  color: rgba(122,123,255,.4);
+  font-size: 12px;
+  align-self: center;
+  padding: 0 2px;
+}
+.de-ev-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 10px;
+}
+.de-ev-stat-num {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--purple);
+  letter-spacing: -1px;
+  line-height: 1;
+}
+.de-ev-stat-lbl {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.35;
+  max-width: 160px;
 }
 
-/* Card resultado final — dark */
-.dph-step-card--result {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
-  border-color: rgba(122,123,255,.35);
-  box-shadow: 0 4px 24px rgba(122,123,255,.14);
+/* Evidencia 3 · Bloque de código DAX (panel DAX) */
+pre.de-ev-code,
+.de-ev-code {
+  margin: 0;
+  background: #0f0f1f;
+  border: .5px solid rgba(122,123,255,.25);
+  border-radius: 10px;
+  padding: 16px 18px;
+  font-family: var(--font-mono, ui-monospace, 'SF Mono', Consolas, monospace);
+  font-size: 12px;
+  line-height: 1.65;
+  color: #d8d8e8;
+  letter-spacing: -.1px;
+  overflow: hidden;
+  position: relative;
+  white-space: pre;
+  tab-size: 2;
 }
-.dph-step-card--result::before { background: #7a7bff; opacity: 1; }
-.dph-step-card--result:hover {
-  border-color: rgba(122,123,255,.55);
-  box-shadow: 0 8px 32px rgba(122,123,255,.22);
-  transform: translateX(3px);
+.de-ev-code::before {
+  content: 'DAX';
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 8px;
+  letter-spacing: .15em;
+  font-weight: 700;
+  color: rgba(122,123,255,.5);
 }
-.dph-step-ico--result {
-  background: rgba(122,123,255,.18);
-  border-color: rgba(122,123,255,.3);
+.de-ev-code .k { color: #c4a8ff; }       /* keywords: VAR, RETURN */
+.de-ev-code .f { color: #82e0c5; }       /* functions: DIVIDE, CALCULATE */
+.de-ev-code .v { color: #fff; font-weight: 500; }       /* variable name */
+.de-ev-code .r { color: #ff9b9b; }       /* references [...] */
+.de-ev-code .c { color: #6a6a85; font-style: italic; }  /* comments */
+.de-ev-code .p { color: #888; }          /* punctuation */
+
+/* Evidencia 4 · Antes/después (panel Storytelling) */
+.de-ev-compare {
+  display: grid;
+  grid-template-columns: 1fr 16px 1fr;
+  gap: 0;
+  align-items: stretch;
 }
-.dph-step-title--result {
-  color: #ffffff;
+.de-ev-cmp-card {
+  background: var(--white);
+  border: .5px solid #ededf3;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.de-ev-cmp-card--good {
+  border-color: rgba(122,123,255,.4);
+  box-shadow: 0 4px 16px rgba(122,123,255,.08);
+}
+.de-ev-cmp-lbl {
+  font-size: 9px;
+  letter-spacing: .15em;
+  font-weight: 700;
+  color: var(--muted);
+}
+.de-ev-cmp-card--good .de-ev-cmp-lbl { color: var(--purple); }
+.de-ev-cmp-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.de-ev-cmp-bar {
+  height: 6px;
+  border-radius: 2px;
+  background: #d8d8e2;
+}
+.de-ev-cmp-bar--hl {
+  background: var(--purple);
+}
+.de-ev-cmp-bar--mute {
+  background: #ededf3;
+}
+.de-ev-cmp-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(122,123,255,.5);
   font-size: 14px;
 }
-.dph-result-dot {
-  width: 9px; height: 9px;
-  border-radius: 50%;
+
+/* ── EVIDENCIA · MINI-FLOW (panel Power Query) ── */
+.de-ev-flow {
+  display: grid;
+  grid-template-columns: 1fr 14px 1fr 14px 1fr;
+  gap: 0;
+  align-items: stretch;
+}
+.de-ev-flow-step {
+  background: var(--white);
+  border: .5px solid #ededf3;
+  border-radius: 8px;
+  padding: 12px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 110px;
+  position: relative;
+  overflow: hidden;
+}
+.de-ev-flow-step--clean { border-color: rgba(122,123,255,.18); }
+.de-ev-flow-step--model {
+  border-color: rgba(122,123,255,.4);
+  background: linear-gradient(180deg, var(--white) 0%, rgba(237,237,255,.4) 100%);
+}
+.de-ev-flow-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(122,123,255,.55);
+  font-size: 14px;
+  font-weight: 700;
+}
+.de-ev-flow-cap {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .15em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.de-ev-flow-step--clean .de-ev-flow-cap { color: var(--purple2); }
+.de-ev-flow-step--model .de-ev-flow-cap { color: var(--purple); }
+
+/* Estado caos: filas desordenadas con bloques irregulares */
+.de-ev-flow-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  padding: 0 4px;
+}
+.de-ev-flow-row {
+  display: flex;
+  gap: 3px;
+  height: 5px;
+}
+.de-ev-flow-row span {
+  display: block;
+  height: 100%;
+  background: #d8d8e2;
+  border-radius: 1px;
+  opacity: .9;
+}
+.de-ev-flow-row span:nth-child(1) { background: #c8c8d4; }
+.de-ev-flow-row span:nth-child(3) { background: #e0e0eb; }
+
+/* Estado limpio: grid uniforme 4×3 */
+.de-ev-flow-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3px;
+  width: 100%;
+  padding: 0 6px;
+}
+.de-ev-flow-grid span {
+  display: block;
+  height: 8px;
+  background: rgba(122,123,255,.25);
+  border-radius: 1.5px;
+}
+.de-ev-flow-grid span:nth-child(3n+1) { background: rgba(122,123,255,.35); }
+
+/* Estado modelo: 3 tablas conectadas con líneas */
+.de-ev-flow-model {
+  position: relative;
+  width: 100%;
+  height: 60px;
+  flex-shrink: 0;
+}
+.de-ev-flow-tbl {
+  position: absolute;
+  width: 22px;
+  height: 14px;
+  border-radius: 2px;
   background: var(--purple);
-  box-shadow: 0 0 10px rgba(122,123,255,.9);
-  animation: glow-pulse 2s ease-in-out infinite;
+  border: .5px solid var(--purple2);
 }
-@keyframes glow-pulse {
-  0%,100% { box-shadow: 0 0 6px rgba(122,123,255,.7); }
-  50%      { box-shadow: 0 0 16px rgba(122,123,255,1); }
+.de-ev-flow-tbl::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-top: 1px solid rgba(255,255,255,.45);
+  border-bottom: 1px solid rgba(255,255,255,.25);
 }
-@media (max-width: 820px) {
-  .dph-inner { grid-template-columns: 1fr; gap: 40px; }
-  .dph-text .s-sub { max-width: 100%; }
-  .dph-pipeline::before { display: none; }
+.de-ev-flow-tbl--a { left: 14%; top: 4px; }
+.de-ev-flow-tbl--b { right: 14%; top: 4px; }
+.de-ev-flow-tbl--c { left: 50%; top: 32px; transform: translateX(-50%); }
+.de-ev-flow-links {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.de-ev-flow-links path {
+  stroke: var(--purple);
+  stroke-width: .8;
+  fill: none;
+  opacity: .55;
+  vector-effect: non-scaling-stroke;
 }
 
+/* ── EVIDENCIA · GRÁFICO DE BARRAS IBCS (panel Storytelling) ── */
+.de-ev-ibcs {
+  display: grid;
+  grid-template-columns: 1fr 18px 1fr;
+  gap: 0;
+  align-items: stretch;
+}
+.de-ev-ibcs-chart {
+  background: var(--white);
+  border: .5px solid #ededf3;
+  border-radius: 8px;
+  padding: 14px 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  min-height: 150px;
+}
+.de-ev-ibcs-chart--clear {
+  border-color: rgba(122,123,255,.4);
+  box-shadow: 0 4px 16px rgba(122,123,255,.08);
+}
+.de-ev-ibcs-title {
+  font-size: 9px;
+  letter-spacing: .14em;
+  font-weight: 700;
+  color: var(--muted);
+}
+.de-ev-ibcs-chart--clear .de-ev-ibcs-title { color: #555; }
+.de-ev-ibcs-bars {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  align-items: end;
+  flex: 1;
+  height: 90px;
+  border-bottom: .5px solid #d8d8e2;
+}
+.de-ev-ibcs-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  justify-content: flex-end;
+}
+.de-ev-ibcs-bar {
+  width: 100%;
+  background: #d8d8e2;
+  border-radius: 2px 2px 0 0;
+  transition: background .3s var(--ease);
+}
+.de-ev-ibcs-bar--hl { background: var(--purple) !important; }
+.de-ev-ibcs-lbl {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.de-ev-ibcs-tag {
+  font-size: 8px;
+  letter-spacing: .15em;
+  font-weight: 700;
+  padding: 3px 7px;
+  border-radius: 3px;
+  align-self: flex-start;
+  margin-top: -2px;
+}
+.de-ev-ibcs-tag--noise {
+  background: #fff0f0;
+  color: #c84a6e;
+  border: .5px solid #f5dada;
+}
+.de-ev-ibcs-tag--clear {
+  background: var(--purple-light);
+  color: var(--purple);
+  border: .5px solid rgba(122,123,255,.25);
+}
+.de-ev-ibcs-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(122,123,255,.55);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* Adaptación al estado final del panel 04 (oscuro) */
+.de-pnl.final .de-ev-ibcs-chart {
+  background: rgba(255,255,255,.04);
+  border-color: rgba(255,255,255,.1);
+}
+.de-pnl.final .de-ev-ibcs-chart--clear {
+  background: rgba(122,123,255,.08);
+  border-color: rgba(122,123,255,.4);
+}
+.de-pnl.final .de-ev-ibcs-title { color: #8a8aa0; }
+.de-pnl.final .de-ev-ibcs-chart--clear .de-ev-ibcs-title { color: #d8d8e8; }
+.de-pnl.final .de-ev-ibcs-bars { border-bottom-color: rgba(255,255,255,.15); }
+.de-pnl.final .de-ev-ibcs-bar { background: rgba(255,255,255,.18); }
+.de-pnl.final .de-ev-ibcs-lbl { color: #8a8aa0; }
+.de-pnl.final .de-ev-ibcs-tag--noise {
+  background: rgba(200,74,110,.15);
+  color: #ff8aa3;
+  border-color: rgba(200,74,110,.35);
+}
+.de-pnl.final .de-ev-ibcs-tag--clear {
+  background: rgba(122,123,255,.18);
+  border-color: rgba(122,123,255,.4);
+}
+
+/* ── MOBILE: pipeline vertical + scroll-driven real ── */
+@media (max-width: 820px) {
+  .dph-header { padding-bottom: 32px; }
+
+  /* Track mantiene altura grande; stage sigue sticky (igual que desktop) */
+  .de-track { height: 360vh; }
+  .de-stage {
+    height: 100vh;
+    padding: 16px 0;
+  }
+  .de-stage > .c {
+    gap: 16px;
+    padding-top: 0;
+  }
+
+  /* Layout dentro del stage: pipeline vertical a la izquierda + paneles apilados a la derecha */
+  .de-stage > .c {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 14px;
+    align-items: stretch;
+    height: 100%;
+  }
+
+  /* Pipeline pasa a vertical */
+  .de-pipeline-wrap {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .de-pipeline {
+    flex-direction: column;
+    height: 92%;
+    width: 56px;
+    padding: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0;
+  }
+  /* Línea de fondo vertical */
+  .de-pipeline-track-bg {
+    left: 50%;
+    right: auto;
+    top: 11%;
+    bottom: 11%;
+    width: 1px;
+    height: auto;
+    transform: translateX(-50%);
+  }
+  /* Línea morada que crece vertical */
+  .de-pipeline-track {
+    left: 50%;
+    top: 11%;
+    width: 1px;
+    height: 0;
+    transform: translateX(-50%);
+    transition: height .12s linear;
+  }
+  /* Luz que baja */
+  .de-pipeline-light {
+    left: 50%;
+    top: 11%;
+    transform: translate(-50%, -50%);
+    transition: top .12s linear;
+  }
+  /* Etiquetas extremo: ahora arriba/abajo */
+  .de-pill {
+    font-size: 8px;
+    padding: 4px 8px;
+    letter-spacing: .14em;
+    writing-mode: horizontal-tb;
+  }
+  .de-st { gap: 4px; }
+  .de-dot {
+    width: 32px;
+    height: 32px;
+    font-size: 13px;
+  }
+  /* Etiquetas de las estaciones — ocultas en móvil para no saturar */
+  .de-lbl { display: none; }
+
+  /* Paneles: ya no plegados/grid horizontal. Apilados verticalmente. */
+  .de-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .de-grid::-webkit-scrollbar { display: none; }
+
+  .de-pnl {
+    flex: 0 0 auto;
+    min-width: 0;
+    transition: opacity .35s var(--ease), transform .45s var(--ease), border-color .35s var(--ease);
+    opacity: .35;
+    transform: translateY(0);
+  }
+  .de-pnl.active {
+    opacity: 1;
+  }
+  /* Plegados: invisibles en móvil — todo el contenido se muestra siempre */
+  .de-pnl-collapsed { display: none; }
+  .de-pnl-full {
+    position: static;
+    opacity: 1;
+    pointer-events: auto;
+    padding: 18px 18px 16px;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .de-pnl-eb { margin-bottom: 12px; }
+  .de-pnl-h { font-size: 21px; }
+  .de-pnl-sub { font-size: 13px; margin-bottom: 12px; }
+  .de-pnl-rule { margin-bottom: 12px; }
+  .de-pnl-body { font-size: 13px; line-height: 1.6; margin-bottom: 14px; }
+  .de-pnl-quote { font-size: 13px; padding-top: 12px; }
+
+  /* Bloques de evidencia adaptados */
+  .de-ev { gap: 10px; }
+  .de-ev-stat-num { font-size: 22px; }
+  .de-ev-code { font-size: 10.5px; padding: 12px 12px; }
+  .de-ev-flow { grid-template-columns: 1fr 12px 1fr 12px 1fr; }
+  .de-ev-flow-step { min-height: 90px; padding: 10px 6px 8px; }
+  .de-ev-flow-arrow { font-size: 12px; }
+  .de-ev-ibcs { grid-template-columns: 1fr 14px 1fr; }
+  .de-ev-ibcs-chart { padding: 12px 8px 8px; min-height: 130px; }
+  .de-ev-ibcs-bars { height: 70px; }
+
+  /* Q questions más compactas */
+  .de-ev-q { padding: 10px 12px 10px 10px; }
+  .de-ev-q-txt { font-size: 12px; }
+}
+
+/* ── EXTRA-PEQUEÑO (≤480px): si la pantalla no aguanta 2 columnas internas, simplificar más ── */
+@media (max-width: 480px) {
+  .de-stage > .c { grid-template-columns: 44px 1fr; gap: 10px; }
+  .de-pipeline { width: 44px; }
+  .de-dot { width: 26px; height: 26px; font-size: 11px; }
+  .de-pill { font-size: 7px; padding: 3px 6px; }
+  .de-pnl-h { font-size: 19px; }
+  .de-ev-flow { grid-template-columns: 1fr 10px 1fr 10px 1fr; gap: 0; }
+  .de-ev-flow-step { padding: 8px 4px 6px; min-height: 80px; }
+  .de-ev-ibcs-bars { height: 60px; }
+  .de-ev-code { font-size: 9.5px; padding: 10px; }
+}
 
 /* ══════════════════════════════
    1. PROGRESS BAR — visible & smooth
@@ -1794,8 +2432,7 @@ footer {
   <div class="dot-nav-item" data-section="hero"><div class="dot-nav-dot"></div><span class="dot-nav-label">Inicio</span></div>
   <div class="dot-nav-item" data-section="projects"><div class="dot-nav-dot"></div><span class="dot-nav-label">Proyectos</span></div>
   <div class="dot-nav-item" data-section="star"><div class="dot-nav-dot"></div><span class="dot-nav-label">PBI Mockup</span></div>
-  <div class="dot-nav-item" data-section="approach"><div class="dot-nav-dot"></div><span class="dot-nav-label">Enfoque</span></div>
-  <div class="dot-nav-item" data-section="principles"><div class="dot-nav-dot"></div><span class="dot-nav-label">Principios</span></div>
+  <div class="dot-nav-item" data-section="approach"><div class="dot-nav-dot"></div><span class="dot-nav-label">Cómo trabajo</span></div>
   <div class="dot-nav-item" data-section="analysis"><div class="dot-nav-dot"></div><span class="dot-nav-label">Python · SQL · R</span></div>
   <div class="dot-nav-item" data-section="daxlab"><div class="dot-nav-dot"></div><span class="dot-nav-label">DAX Lab</span></div>
   <div class="dot-nav-item" data-section="community"><div class="dot-nav-dot"></div><span class="dot-nav-label">Comunidad</span></div>
@@ -2363,157 +3000,238 @@ footer {
   </div>
 </section>
 
-<!-- ─── DATA PHILOSOPHY ─── -->
+<!-- ─── DATA PHILOSOPHY · DECISION ENGINE ─── -->
 <section class="dph-section" id="approach">
   <div class="c">
-    <div class="dph-inner">
 
-      <!-- Izquierda: copy -->
-      <div class="dph-text sr">
-        <div class="s-tag">Qué hago (y cómo lo enfoco)</div>
-        <h2 class="s-h">Transformo preguntas de negocio<br>en sistemas de <em>análisis claros.</em></h2>
-        <p class="s-sub">Mi trabajo es transformarlos en información clara que ayude a entender qué ocurre y por qué ocurre.</p>
+    <!-- Header centrado -->
+    <div class="dph-header sr">
+      <div class="s-tag">Cómo trabajo</div>
+      <h2 class="s-h">Cuatro pasos para<br><em>decidir mejor.</em></h2>
+      <p class="s-sub">Mi trabajo es transformar preguntas de negocio en información clara que ayude a entender qué ocurre y por qué ocurre.</p>
+    </div>
+
+  </div>
+
+  <!-- Track exterior: da el "recorrido" de scroll -->
+  <div class="de-track" id="deTrack">
+    <!-- Stage sticky: contiene el pipeline + grid pegados en pantalla -->
+    <div class="de-stage">
+      <div class="c">
+
+        <!-- Pipeline con luz que viaja -->
+        <div class="de-pipeline-wrap">
+          <div class="de-pipeline">
+            <div class="de-pipeline-track-bg"></div>
+            <div class="de-pipeline-track" id="dePipeTrack"></div>
+            <div class="de-pipeline-light" id="dePipeLight"></div>
+
+            <span class="de-pill de-pill--start">PREGUNTA</span>
+
+            <div class="de-st" data-i="0">
+              <div class="de-dot">✦</div>
+              <div class="de-lbl">Negocio</div>
+            </div>
+            <div class="de-st" data-i="1">
+              <div class="de-dot">▦</div>
+              <div class="de-lbl">Power Query</div>
+            </div>
+            <div class="de-st" data-i="2">
+              <div class="de-dot">◈</div>
+              <div class="de-lbl">DAX</div>
+            </div>
+            <div class="de-st" data-i="3">
+              <div class="de-dot">⬡</div>
+              <div class="de-lbl">Storytelling</div>
+            </div>
+
+            <span class="de-pill de-pill--end" id="dePipeEnd">DECISIÓN</span>
+          </div>
+        </div>
+
+        <!-- 4 paneles -->
+        <div class="de-grid" id="deGrid">
+
+          <!-- PASO 01 -->
+          <div class="de-pnl" data-i="0">
+            <div class="de-pnl-collapsed">
+              <div class="de-pnl-num-c">01</div>
+              <div class="de-pnl-name-c">Entender el negocio</div>
+            </div>
+            <div class="de-pnl-full">
+              <div class="de-pnl-text">
+                <div class="de-pnl-eb">PASO 01 / 04</div>
+                <div class="de-pnl-h">Entender el negocio.</div>
+                <div class="de-pnl-sub">Qué decidir, qué preguntar.</div>
+                <div class="de-pnl-rule"></div>
+                <div class="de-pnl-body">Antes de abrir Power BI hay una conversación. Qué se quiere decidir, qué preguntas no se están haciendo y qué métricas importan de verdad. Sin esto, todo lo demás es decoración.</div>
+                <div class="de-pnl-quote"><span class="de-pnl-q-mark">❝</span> Primero la decisión, después el gráfico. <span class="de-pnl-q-mark">❞</span><div class="de-pnl-q-sub">— el principio que rige este paso</div></div>
+              </div>
+              <div class="de-ev">
+                <div class="de-ev-label">Preguntas que abren un proyecto</div>
+                <div class="de-ev-questions">
+                  <div class="de-ev-q"><div class="de-ev-q-dot"></div><div class="de-ev-q-txt">¿Qué campañas están convirtiendo de verdad y cuáles solo gastan?</div></div>
+                  <div class="de-ev-q"><div class="de-ev-q-dot"></div><div class="de-ev-q-txt">¿Dónde se nos escapa el margen entre lo presupuestado y lo real?</div></div>
+                  <div class="de-ev-q"><div class="de-ev-q-dot"></div><div class="de-ev-q-txt">¿Qué decisión necesitas tomar el lunes con estos datos?</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PASO 02 -->
+          <div class="de-pnl" data-i="1">
+            <div class="de-pnl-collapsed">
+              <div class="de-pnl-num-c">02</div>
+              <div class="de-pnl-name-c">Power Query</div>
+            </div>
+            <div class="de-pnl-full">
+              <div class="de-pnl-text">
+                <div class="de-pnl-eb">PASO 02 / 04</div>
+                <div class="de-pnl-h">Power Query.</div>
+                <div class="de-pnl-sub">Traer orden al caos.</div>
+                <div class="de-pnl-rule"></div>
+                <div class="de-pnl-body">Conectar fuentes, limpiar inconsistencias y dar forma a los datos antes de modelarlos. El 60% del trabajo real de un dashboard ocurre aquí — sin que se vea.</div>
+                <div class="de-pnl-quote"><span class="de-pnl-q-mark">❝</span> Modelo antes de dashboard. <span class="de-pnl-q-mark">❞</span><div class="de-pnl-q-sub">— el principio que rige este paso</div></div>
+              </div>
+              <div class="de-ev">
+                <div class="de-ev-label">De los datos al modelo</div>
+                <div class="de-ev-flow">
+                  <div class="de-ev-flow-step de-ev-flow-step--chaos" aria-label="Datos en bruto, sin estructura">
+                    <div class="de-ev-flow-rows">
+                      <div class="de-ev-flow-row" style="width:78%"><span style="width:24%"></span><span style="width:46%"></span><span style="width:18%"></span></div>
+                      <div class="de-ev-flow-row" style="width:62%"><span style="width:18%"></span><span style="width:30%"></span></div>
+                      <div class="de-ev-flow-row" style="width:88%"><span style="width:32%"></span><span style="width:22%"></span><span style="width:28%"></span></div>
+                      <div class="de-ev-flow-row" style="width:54%"><span style="width:38%"></span></div>
+                      <div class="de-ev-flow-row" style="width:74%"><span style="width:20%"></span><span style="width:48%"></span></div>
+                    </div>
+                    <div class="de-ev-flow-cap">Caos</div>
+                  </div>
+
+                  <div class="de-ev-flow-arrow">→</div>
+
+                  <div class="de-ev-flow-step de-ev-flow-step--clean" aria-label="Datos limpios y estructurados">
+                    <div class="de-ev-flow-grid">
+                      <span></span><span></span><span></span>
+                      <span></span><span></span><span></span>
+                      <span></span><span></span><span></span>
+                      <span></span><span></span><span></span>
+                    </div>
+                    <div class="de-ev-flow-cap">Orden</div>
+                  </div>
+
+                  <div class="de-ev-flow-arrow">→</div>
+
+                  <div class="de-ev-flow-step de-ev-flow-step--model" aria-label="Tablas relacionadas en un modelo">
+                    <div class="de-ev-flow-model">
+                      <div class="de-ev-flow-tbl de-ev-flow-tbl--a"></div>
+                      <div class="de-ev-flow-tbl de-ev-flow-tbl--b"></div>
+                      <div class="de-ev-flow-tbl de-ev-flow-tbl--c"></div>
+                      <svg class="de-ev-flow-links" viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true">
+                        <path d="M30 18 L 50 32" />
+                        <path d="M70 18 L 50 32" />
+                        <path d="M50 32 L 50 50" />
+                      </svg>
+                    </div>
+                    <div class="de-ev-flow-cap">Modelo</div>
+                  </div>
+                </div>
+                <div class="de-ev-stat">
+                  <div class="de-ev-stat-num">60%</div>
+                  <div class="de-ev-stat-lbl">del trabajo real de un dashboard ocurre aquí</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PASO 03 -->
+          <div class="de-pnl" data-i="2">
+            <div class="de-pnl-collapsed">
+              <div class="de-pnl-num-c">03</div>
+              <div class="de-pnl-name-c">DAX</div>
+            </div>
+            <div class="de-pnl-full">
+              <div class="de-pnl-text">
+                <div class="de-pnl-eb">PASO 03 / 04</div>
+                <div class="de-pnl-h">DAX.</div>
+                <div class="de-pnl-sub">Convertir datos en decisiones.</div>
+                <div class="de-pnl-rule"></div>
+                <div class="de-pnl-body">Métricas, contexto y lógica de negocio escritos en un lenguaje preciso. Una medida bien construida resuelve preguntas; una mal construida las multiplica.</div>
+                <div class="de-pnl-quote"><span class="de-pnl-q-mark">❝</span> Cada gráfico tiene un motivo. <span class="de-pnl-q-mark">❞</span><div class="de-pnl-q-sub">— el principio que rige este paso</div></div>
+              </div>
+              <div class="de-ev">
+                <div class="de-ev-label">Una medida real</div>
+<pre class="de-ev-code"><span class="c">// % Margen vs. año anterior</span>
+<span class="v">Margen YoY %</span> <span class="p">=</span>
+<span class="k">VAR</span> <span class="v">_actual</span> <span class="p">=</span> <span class="r">[Margen %]</span>
+<span class="k">VAR</span> <span class="v">_anterior</span> <span class="p">=</span>
+    <span class="f">CALCULATE</span><span class="p">(</span> <span class="r">[Margen %]</span><span class="p">,</span>
+        <span class="f">SAMEPERIODLASTYEAR</span><span class="p">(</span> <span class="r">'Calendario'[Fecha]</span> <span class="p">) )</span>
+<span class="k">RETURN</span>
+    <span class="f">DIVIDE</span><span class="p">(</span> <span class="v">_actual</span> <span class="p">-</span> <span class="v">_anterior</span><span class="p">,</span> <span class="v">_anterior</span> <span class="p">)</span></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- PASO 04 -->
+          <div class="de-pnl" data-i="3">
+            <div class="de-pnl-collapsed">
+              <div class="de-pnl-num-c">04</div>
+              <div class="de-pnl-name-c">Storytelling + UX</div>
+            </div>
+            <div class="de-pnl-full">
+              <div class="de-pnl-text">
+                <div class="de-pnl-eb">PASO 04 / 04</div>
+                <div class="de-pnl-h">Storytelling + UX.</div>
+                <div class="de-pnl-sub">Hacer visible lo importante.</div>
+                <div class="de-pnl-rule"></div>
+                <div class="de-pnl-body">Jerarquía visual, ritmo y foco. El dashboard no se diseña para impresionar, se diseña para que la decisión sea evidente en menos de tres segundos.</div>
+                <div class="de-pnl-quote"><span class="de-pnl-q-mark">❝</span> Claridad frente a ruido visual. <span class="de-pnl-q-mark">❞</span><div class="de-pnl-q-sub">— el principio que rige este paso</div></div>
+              </div>
+              <div class="de-ev">
+                <div class="de-ev-label">El mismo dato, dos lecturas</div>
+                <div class="de-ev-ibcs">
+
+                  <div class="de-ev-ibcs-chart de-ev-ibcs-chart--noise">
+                    <div class="de-ev-ibcs-title">VENTAS POR REGIÓN</div>
+                    <div class="de-ev-ibcs-bars">
+                      <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:55%; background:#5a8def"></div><div class="de-ev-ibcs-lbl">N</div></div>
+                      <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:72%; background:#3cb371"></div><div class="de-ev-ibcs-lbl">S</div></div>
+                      <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:88%; background:#e06b6b"></div><div class="de-ev-ibcs-lbl">E</div></div>
+                      <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:42%; background:#f0c040"></div><div class="de-ev-ibcs-lbl">O</div></div>
+                      <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:60%; background:#a86bd1"></div><div class="de-ev-ibcs-lbl">C</div></div>
+                    </div>
+                    <div class="de-ev-ibcs-tag de-ev-ibcs-tag--noise">RUIDO</div>
+                  </div>
+
+                  <div class="de-ev-ibcs-arrow">→</div>
+
+                  <div class="de-ev-ibcs-chart de-ev-ibcs-chart--clear">
+                    <div class="de-ev-ibcs-title">VENTAS POR REGIÓN</div>
+                    <div class="de-ev-ibcs-bars">
+                      <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:55%"></div><div class="de-ev-ibcs-lbl">N</div></div>
+                      <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:72%"></div><div class="de-ev-ibcs-lbl">S</div></div>
+                      <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar de-ev-ibcs-bar--hl" style="height:88%"></div><div class="de-ev-ibcs-lbl">E</div></div>
+                      <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:42%"></div><div class="de-ev-ibcs-lbl">O</div></div>
+                      <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:60%"></div><div class="de-ev-ibcs-lbl">C</div></div>
+                    </div>
+                    <div class="de-ev-ibcs-tag de-ev-ibcs-tag--clear">CLARIDAD</div>
+                  </div>
+
+                </div>
+                <div class="de-ev-stat">
+                  <div class="de-ev-stat-num">3s</div>
+                  <div class="de-ev-stat-lbl">para que la decisión sea evidente</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
       </div>
-
-      <!-- Derecha: pipeline visual -->
-      <div class="dph-pipeline sr sr-d1">
-
-        <!-- Step 00 — Entender el negocio -->
-        <div class="dph-step-row">
-          <div class="dph-step-aside">
-            <span class="dph-step-num">01</span>
-          </div>
-          <div class="dph-step-card">
-            <div class="dph-step-ico">
-              <span style="font-size:14px;line-height:1;color:#7a7bff">✦</span>
-            </div>
-            <div class="dph-step-body">
-              <div class="dph-step-title">Entender el negocio</div>
-              <div class="dph-step-desc">Qué decidir, qué preguntar y qué importa de verdad.</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="dph-step-arrow"></div>
-
-        <!-- Step 01 — Power Query -->
-        <div class="dph-step-row">
-          <div class="dph-step-aside">
-            <span class="dph-step-num">02</span>
-          </div>
-          <div class="dph-step-card">
-            <div class="dph-step-ico">
-              <span style="font-size:14px;line-height:1;color:#7a7bff">▦</span>
-            </div>
-            <div class="dph-step-body">
-              <div class="dph-step-title">Power Query</div>
-              <div class="dph-step-desc">Traer orden al caos: conectar, limpiar y dar forma a los datos.</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="dph-step-arrow"></div>
-
-        <!-- Step 02 — DAX -->
-        <div class="dph-step-row">
-          <div class="dph-step-aside">
-            <span class="dph-step-num">03</span>
-          </div>
-          <div class="dph-step-card">
-            <div class="dph-step-ico">
-              <span style="font-size:14px;line-height:1;color:#7a7bff">◈</span>
-            </div>
-            <div class="dph-step-body">
-              <div class="dph-step-title">DAX</div>
-              <div class="dph-step-desc">Convertir datos en decisiones: métricas, contexto y lógica de negocio.</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="dph-step-arrow"></div>
-
-        <!-- Step 03 — Data Storytelling + UX -->
-        <div class="dph-step-row">
-          <div class="dph-step-aside">
-            <span class="dph-step-num">04</span>
-          </div>
-          <div class="dph-step-card">
-            <div class="dph-step-ico">
-              <span style="font-size:14px;line-height:1;color:#7a7bff">⬡</span>
-            </div>
-            <div class="dph-step-body">
-              <div class="dph-step-title">Data Storytelling + UX</div>
-              <div class="dph-step-desc">Hacer visible lo importante: jerarquía, claridad y foco.</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="dph-step-arrow"></div>
-
-        <!-- Resultado -->
-        <div class="dph-step-row">
-          <div class="dph-step-aside">
-            <span style="font-size:13px;color:rgba(122,123,255,.4);line-height:1;padding-top:4px">↓</span>
-          </div>
-          <div class="dph-step-card dph-step-card--result">
-            <div class="dph-step-ico dph-step-ico--result">
-              <div class="dph-result-dot"></div>
-            </div>
-            <div class="dph-step-body">
-              <div class="dph-step-title dph-step-title--result">Dashboard listo para decisiones</div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
     </div>
   </div>
-</section>
 
-<!-- ─── PRINCIPLES ─── -->
-<section class="prin-section" id="principles">
-  <div class="c">
-    <div class="prin-new-inner">
-
-      <div class="prin-new-left sr">
-        <div class="s-tag">Principios que guían mi trabajo</div>
-        <h2 class="s-h">Cómo pienso<br><em>el análisis.</em></h2>
-      </div>
-
-      <div class="prin-new-list sr sr-d1">
-        <div class="prin-item">
-          <span class="prin-item-num">1</span>
-          <div class="prin-item-body">
-            <div class="prin-item-title">Primero la decisión, después el gráfico</div>
-            <div class="prin-item-desc">El gráfico responde a una pregunta. No al revés.</div>
-          </div>
-        </div>
-        <div class="prin-item">
-          <span class="prin-item-num">2</span>
-          <div class="prin-item-body">
-            <div class="prin-item-title">Modelo antes de dashboard</div>
-            <div class="prin-item-desc">Entiende los datos antes de presentarlos.</div>
-          </div>
-        </div>
-        <div class="prin-item">
-          <span class="prin-item-num">3</span>
-          <div class="prin-item-body">
-            <div class="prin-item-title">Claridad frente a ruido visual</div>
-            <div class="prin-item-desc">Lo que sobra, distrae. Lo que falta, confunde.</div>
-          </div>
-        </div>
-        <div class="prin-item">
-          <span class="prin-item-num">4</span>
-          <div class="prin-item-body">
-            <div class="prin-item-title">Cada gráfico tiene un motivo</div>
-            <div class="prin-item-desc">Si no sabes para qué sirve, elimínalo.</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
 </section>
 
 <!-- ─── ANALYSIS PROJECTS ─── -->
@@ -2792,7 +3510,7 @@ const chartOpts = {
 (function(){
   const nav = document.getElementById('dotNav');
   const items = nav.querySelectorAll('.dot-nav-item');
-  const sections = ['hero','projects','star','approach','principles','analysis','daxlab','community','cta'];
+  const sections = ['hero','projects','star','approach','analysis','daxlab','community','cta'];
   const darkSections = ['community'];
 
   function update() {
@@ -3087,6 +3805,132 @@ const chartOpts = {
     });
   }, { threshold: 0.25 });
   lineObs.observe(pipe);
+})();
+</script>
+
+<!-- ─── DECISION ENGINE — scroll-driven pipeline (desktop horizontal + mobile vertical) ─── -->
+<script>
+(function(){
+  const track  = document.getElementById('deTrack');
+  if (!track) return;
+
+  const light  = document.getElementById('dePipeLight');
+  const pipeT  = document.getElementById('dePipeTrack');
+  const endPil = document.getElementById('dePipeEnd');
+  const grid   = document.getElementById('deGrid');
+  const sts    = track.querySelectorAll('.de-st');
+  const pnls   = track.querySelectorAll('.de-pnl');
+
+  if (!light || !pipeT || !grid || !pnls.length) return;
+
+  const mobileQuery = window.matchMedia('(max-width: 820px)');
+
+  let progress = 0;
+  let target   = 0;
+  let raf      = null;
+  let isMobile = mobileQuery.matches;
+
+  function computeProgress() {
+    const r = track.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const total = r.height - vh;
+    if (total <= 0) return 0;
+    const offset = -r.top;
+    return Math.max(0, Math.min(1, offset / total));
+  }
+
+  /**
+   * Aplica estado visual:
+   *  - desktop: luz se mueve en eje X (left%), track crece en width
+   *  - mobile:  luz se mueve en eje Y (top%), track crece en height
+   *             además: paneles apilados se opacizan, el activo se enciende
+   */
+  function applyState(p) {
+    // Pipeline: la luz/track va del 11% al 89%
+    const pct = 11 + p * 78;
+
+    if (isMobile) {
+      light.style.top  = pct + '%';
+      light.style.left = '50%';
+      pipeT.style.top    = '11%';
+      pipeT.style.height = (pct - 11) + '%';
+      pipeT.style.width  = '1px';
+      pipeT.style.left   = '50%';
+    } else {
+      light.style.left = pct + '%';
+      light.style.top  = '50%';
+      pipeT.style.left  = '11%';
+      pipeT.style.width = (pct - 11) + '%';
+      pipeT.style.height = '1px';
+      pipeT.style.top    = '50%';
+    }
+
+    // Estación activa (4 tramos iguales)
+    const idx = Math.min(3, Math.floor(p * 4));
+    sts.forEach((s, i) => s.classList.toggle('active', i === idx));
+    pnls.forEach((pl, i) => pl.classList.toggle('active', i === idx));
+
+    if (isMobile) {
+      // En móvil los paneles son flex column dentro de .de-grid (overflow auto).
+      // Hacemos scroll programático para que el panel activo quede centrado.
+      const activePanel = pnls[idx];
+      if (activePanel && grid) {
+        const gridRect = grid.getBoundingClientRect();
+        const panelRect = activePanel.getBoundingClientRect();
+        // posición relativa del panel dentro del grid
+        const relTop = (panelRect.top - gridRect.top) + grid.scrollTop;
+        // queremos que el panel quede centrado en el grid
+        const desired = relTop - (grid.clientHeight - activePanel.offsetHeight) / 2;
+        // smooth scroll suave
+        grid.scrollTo({ top: Math.max(0, desired), behavior: 'smooth' });
+      }
+      // El grid columns no aplica en móvil (es flex column)
+      grid.style.gridTemplateColumns = '';
+    } else {
+      // Desktop: grid 4 columnas con plegado
+      const cols = ['56px','56px','56px','56px'];
+      cols[idx] = '1fr';
+      grid.style.gridTemplateColumns = cols.join(' ');
+    }
+
+    // Estado final
+    const isFinal = p > 0.92;
+    pnls[3].classList.toggle('final', isFinal);
+    endPil.classList.toggle('lit', isFinal);
+  }
+
+  function tick() {
+    progress += (target - progress) * 0.18;
+    if (Math.abs(target - progress) < 0.0008) progress = target;
+    applyState(progress);
+    if (progress !== target) {
+      raf = requestAnimationFrame(tick);
+    } else {
+      raf = null;
+    }
+  }
+
+  function onScroll() {
+    target = computeProgress();
+    if (!raf) raf = requestAnimationFrame(tick);
+  }
+
+  function init() {
+    isMobile = mobileQuery.matches;
+    // Reset inline styles que pudieran estar de un modo anterior
+    light.style.cssText = '';
+    pipeT.style.cssText = '';
+    grid.style.gridTemplateColumns = '';
+
+    target = computeProgress();
+    progress = target;
+    applyState(progress);
+  }
+
+  init();
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', init);
+  mobileQuery.addEventListener('change', init);
 })();
 </script>
 
