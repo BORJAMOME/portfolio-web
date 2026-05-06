@@ -1485,7 +1485,7 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
 /* TRACK: contenedor exterior con altura grande. Da el "recorrido" del scroll. */
 .de-track {
   position: relative;
-  height: 380vh; /* 4 pasos × ~95vh cada uno */
+  height: 260vh; /* 4 pasos × ~65vh cada uno — reducido para menor esfuerzo de scroll */
 }
 /* STAGE: sticky de 100vh. Mientras el track avanza, el stage se queda quieto. */
 .de-stage {
@@ -2394,18 +2394,7 @@ pre.de-ev-code,
   font-size: 1.1em;
 }
 
-/* Caret typewriter */
-.de-acta-text.typing::after {
-  content: '▌';
-  display: inline-block;
-  color: var(--purple);
-  margin-left: 3px;
-  font-style: normal;
-  animation: de-acta-caret 0.8s steps(2) infinite;
-}
-@keyframes de-acta-caret {
-  0%, 50%      { opacity: 1; }
-  50.01%, 100% { opacity: 0; }
+
 }
 
 /* Pie (Aprobado · responsable) */
@@ -2465,7 +2454,7 @@ pre.de-ev-code,
   .dph-header { padding-bottom: 32px; }
 
   /* Track mantiene altura grande; stage sigue sticky (igual que desktop) */
-  .de-track { height: 360vh; }
+  .de-track { height: 240vh; }
   .de-stage {
     height: 100vh;
     padding: 16px 0;
@@ -4014,7 +4003,7 @@ footer {
         <a href="mailto:borja.mora.mendez@gmail.com?subject=Oportunidad%20laboral&body=Hola%20Borja%2C" class="foot-cta-btn foot-cta-btn--primary" onclick="gtag('event','clic_email',{location:'footer'});">
           borja.mora.mendez@gmail.com
         </a>
-        <a href="./descargas.html" class="foot-cta-btn foot-cta-btn--secondary">
+        <a href="https://tally.so/r/6878EN" target="_blank" rel="noopener noreferrer" class="foot-cta-btn foot-cta-btn--secondary">
           Descargar CV
         </a>
       </div>
@@ -4039,16 +4028,14 @@ footer {
       <div class="foot-col">
         <div class="foot-col-title">Trabajo</div>
         <a href="./proyectos.html#power-bi">Power BI</a>
-        <a href="./proyectos.html#dax">DAX</a>
-        <a href="./proyectos.html#analysis">Python · SQL · R</a>
-        <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio" target="_blank" rel="noopener noreferrer">DAX Lab ↗</a>
+        <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio" target="_blank" rel="noopener noreferrer">Python · SQL · R</a>
+        <a href="https://github.com/BORJAMOME/DAX-LAB" target="_blank" rel="noopener noreferrer">DAX Lab</a>
       </div>
 
       <div class="foot-col">
         <div class="foot-col-title">Sígueme</div>
-        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_linkedin',{location:'footer'});">LinkedIn ↗</a>
-        <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_github',{location:'footer'});">GitHub ↗</a>
-        <a href="https://www.behance.net/borjamora" target="_blank" rel="noopener noreferrer">Behance ↗</a>
+        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_linkedin',{location:'footer'});">LinkedIn</a>
+        <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_github',{location:'footer'});">GitHub</a>
       </div>
     </div>
 
@@ -4458,38 +4445,8 @@ const chartOpts = {
     actaTimeEl.textContent = `${hh}:${mm}`;
   }
 
-  // Estado de la animación typewriter del acta
-  let actaTyped = false;
-  let actaTimers = [];
-  function clearActaTimers() {
-    actaTimers.forEach(t => clearTimeout(t));
-    actaTimers = [];
-  }
-  function startActaTypewriter() {
-    if (!actaTextEl || actaTyped) return;
-    actaTyped = true;
-    clearActaTimers();
-    actaTextEl.classList.add('typing');
-    actaTextEl.textContent = '';
-    const chars = ACTA_FULL_TEXT.split('');
-    // ~22ms por carácter → ~3s para todo el texto. Suficientemente rápido para no aburrir.
-    chars.forEach((ch, i) => {
-      const t = setTimeout(() => {
-        actaTextEl.textContent += ch;
-        if (i === chars.length - 1) {
-          // Quitar caret tras un breve delay
-          const t2 = setTimeout(() => actaTextEl.classList.remove('typing'), 600);
-          actaTimers.push(t2);
-        }
-      }, 22 * i);
-      actaTimers.push(t);
-    });
-  }
   function resetActa() {
     if (!actaTextEl) return;
-    clearActaTimers();
-    actaTyped = false;
-    actaTextEl.classList.remove('typing');
     actaTextEl.textContent = ACTA_FULL_TEXT;
   }
 
@@ -4601,12 +4558,6 @@ const chartOpts = {
     if (stageInner) stageInner.classList.toggle('is-final', isFinal);
     if (actaCard) actaCard.setAttribute('aria-hidden', isFinal ? 'false' : 'true');
 
-    // Disparar typewriter del acta cuando ACABA de entrar en final
-    if (isFinal && !wasFinal) {
-      // Pequeño delay para que coincida con la transición de entrada de la card
-      const tStart = setTimeout(() => startActaTypewriter(), 350);
-      actaTimers.push(tStart);
-    }
     // Resetear acta si salimos del estado final hacia atrás
     if (!isFinal && wasFinal) {
       resetActa();
