@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -9,12 +10,16 @@
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
 <link rel="shortcut icon" href="./favicon.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#7a7bff">
 <title>Borja Mora — Arquitectura del dato · Power BI · Data Storytelling · Madrid</title>
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link rel="preconnect" href="https://www.googletagmanager.com">
+<link rel="preconnect" href="https://borjamome.github.io">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" fetchpriority="high">
 <!-- Primary Meta Tags -->
 <meta name="description" content="Construyo espacios donde los datos calan. Data Analyst especializado en Power BI, DAX y Data Storytelling. Dashboards que se entienden solos y decisiones que no dependen de intuición. Disponible en Madrid.">
 <meta name="keywords" content="Data Analyst, Power BI Developer, Business Intelligence, DAX, Data Storytelling, Microsoft PL-300, Power BI España, dashboards Power BI, Borja Mora">
@@ -23,6 +28,7 @@
 <link rel="canonical" href="https://borjamora.es/">
 
 <!-- Open Graph / Facebook / LinkedIn -->
+
 <meta property="og:type" content="website">
 <meta property="og:locale" content="es_ES">
 <meta property="og:url" content="https://borjamora.es/">
@@ -35,12 +41,14 @@
 <meta property="og:site_name" content="Borja Mora">
 
 <!-- Twitter Card -->
+
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Borja Mora — Construyo espacios donde los datos calan.">
 <meta name="twitter:description" content="Construyo espacios donde los datos calan. Power BI · DAX · Data Storytelling · Madrid.">
 <meta name="twitter:image" content="https://borjamora.es/img/og-home.png">
 
 <!-- Schema.org Person + WebSite -->
+
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -84,14 +92,16 @@
 </script>
 
 <!-- Google tag (gtag.js) -->
+
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PSDM6B5Z7"></script>
+
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-6PSDM6B5Z7');
 </script>
-  
+
 <style>
 :root {
   --purple:       #7a7bff;
@@ -105,9 +115,28 @@
   --off:          #f7f7fa;
   --gray:         #e5e5e5;
   --ink:          #111111;
-  --muted:        #6e6e78;
+  --muted:        #606068;
   --font:         'Inter', 'Segoe UI', system-ui, sans-serif;
   --ease:         cubic-bezier(0.16,1,0.3,1);
+  /* ─── Z-INDEX SCALE ─── */
+  --z-base:       0;
+  --z-raised:     10;
+  --z-overlay:    40;
+  --z-nav:        100;
+  --z-modal:      400;
+  --z-progress:   2000;
+  /* ─── BORDER RADIUS SCALE ─── */
+  --radius-sm:    8px;
+  --radius-md:    12px;
+  --radius-lg:    14px;
+  --radius-xl:    18px;
+  /* ─── SHADOW SCALE ─── */
+  --shadow-sm:    0 2px 12px rgba(0,0,0,.04);
+  --shadow-md:    0 8px 24px rgba(0,0,0,.07);
+  --shadow-lg:    0 24px 56px rgba(122,123,255,.14);
+  --shadow-xl:    0 32px 80px rgba(0,0,0,.12);
+  --shadow-card:  0 2px 12px rgba(0,0,0,.04);
+  --shadow-hover: var(--shadow-hover);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -120,11 +149,22 @@ body {
   overflow-x: hidden;
 }
 
+/* ─── CRÍTICO 1: FOCUS VISIBLE GLOBAL ─── */
+/* Garantiza visibilidad para navegación por teclado (WCAG 2.4.7) */
+:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
 /* ─── NAV ─── */
 nav {
   position: fixed;
   top: 0; width: 100%;
-  z-index: 1000;
+  z-index: var(--z-nav);
   padding: 0 clamp(1.5rem,5vw,4rem);
   height: 60px;
   display: flex;
@@ -259,6 +299,10 @@ nav.scrolled { border-bottom-color: var(--gray); }
   86%  { opacity:1; transform: rotate(-0.3deg); }
   100% { opacity:1; transform: translate(0,0) skewX(0deg) rotate(0deg); filter: blur(0); clip-path: inset(0 0 0 0); }
 }
+/* Versión sin movimiento para usuarios sensibles */
+@media (prefers-reduced-motion: reduce) {
+  .hero-pill { animation: fadeUp .4s .05s ease forwards; }
+}
 
 /* ── Single credentials line (replaces pill + cert + badge) ── */
 .hero-meta {
@@ -341,12 +385,31 @@ nav.scrolled { border-bottom-color: var(--gray); }
 }
 
 /* ─── BUTTONS ─── */
+/* ─── TOUCH ACTION — elimina el delay de 300ms en móvil ─── */
+.btn,
+.nav-links a,
+.proj-card,
+.analysis-card,
+.dax-card-link,
+.dax-github,
+.dot-nav-item,
+.de-st,
+.star-float-cta,
+.com-cta,
+.foot-cta-btn,
+.cta-final-btn-primary,
+.cta-final-btn-secondary,
+.iframe-overlay {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
 .btn {
   display: inline-flex; align-items: center; gap: 7px;
   padding: 11px 24px; border-radius: 8px;
   font-size: 13px; font-weight: 600;
   text-decoration: none;
-  transition: all .2s var(--ease); border: none;
+  transition: background .2s var(--ease), color .2s var(--ease), transform .2s var(--ease), box-shadow .2s var(--ease), border-color .2s var(--ease); border: none;
   font-family: var(--font); letter-spacing: .2px;
 }
 .btn-primary { background: var(--ink); color: var(--white); }
@@ -460,7 +523,7 @@ nav.scrolled { border-bottom-color: var(--gray); }
 .dr-rank { font-size: 8px; font-weight: 700; color: #bbb; min-width: 12px; }
 .dr-name { font-size: 9.5px; font-weight: 600; color: var(--ink); min-width: 36px; }
 .dr-track { flex: 1; height: 5px; background: #f0f0f5; border-radius: 3px; overflow: hidden; }
-.dr-fill { height: 100%; border-radius: 3px; background: var(--purple); }
+.dr-fill { height: 100%; border-radius: 3px; background: var(--purple); width: 100%; transform: scaleX(0); transform-origin: left; }
 .dr-val { font-size: 9.5px; font-weight: 700; color: var(--ink); min-width: 38px; text-align: right; }
 .dr-badge { font-size: 7.5px; font-weight: 700; padding: 2px 5px; border-radius: 3px; white-space: nowrap; }
 
@@ -492,6 +555,7 @@ nav.scrolled { border-bottom-color: var(--gray); }
   padding: 0;
   white-space: nowrap;
   align-items: center;
+  list-style: none; /* necesario al usar ul */
 }
 
 /* Each tag item */
@@ -559,6 +623,11 @@ nav.scrolled { border-bottom-color: var(--gray); }
   to   { transform: translateX(-50%); }
 }
 
+/* ─── SCROLL MARGIN — compensa la nav fija en navegación por anclas ─── */
+section[id] {
+  scroll-margin-top: 72px;
+}
+
 /* ─── SECTION COMMONS ─── */
 section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
 .c { max-width: 1100px; margin: 0 auto; }
@@ -586,9 +655,9 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
 .wib-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
 .wib-card {
   background: var(--white); border: .5px solid var(--gray);
-  border-radius: 14px; padding: 34px 28px;
+  border-radius: var(--radius-lg); padding: 34px 28px;
   position: relative; overflow: hidden;
-  transition: all .25s var(--ease);
+  transition: border-color .25s var(--ease), transform .25s var(--ease), box-shadow .25s var(--ease);
 }
 .wib-card:hover { border-color: var(--purple); transform: translateY(-4px); box-shadow: 0 16px 40px rgba(122,123,255,.1); }
 .wib-num {
@@ -609,8 +678,8 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
 .proj-featured {
   grid-row: span 2;
   background: var(--white); border: .5px solid var(--gray);
-  border-radius: 14px; overflow: hidden;
-  transition: all .3s var(--ease);
+  border-radius: var(--radius-lg); overflow: hidden;
+  transition: border-color .3s var(--ease), transform .3s var(--ease), box-shadow .3s var(--ease);
   display: flex; flex-direction: column; position: relative;
 }
 .proj-featured::before {
@@ -646,15 +715,15 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
 .proj-card {
   background: var(--white);
   border: .5px solid #e4e4ec;
-  border-radius: 18px; overflow: hidden;
-  transition: all .3s var(--ease);
+  border-radius: var(--radius-xl); overflow: hidden;
+  transition: border-color .3s var(--ease), transform .3s var(--ease), box-shadow .3s var(--ease);
   display: flex; flex-direction: column;
-  box-shadow: 0 2px 12px rgba(0,0,0,.04);
+  box-shadow: var(--shadow-card);
 }
 .proj-card:hover {
   border-color: var(--purple);
   transform: translateY(-6px);
-  box-shadow: 0 24px 56px rgba(122,123,255,.14), 0 4px 16px rgba(0,0,0,.06);
+  box-shadow: var(--shadow-hover);
 }
 .pc-visual {
   display: block;
@@ -895,11 +964,36 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
   overflow: hidden;
   background: #fafafa;
 }
+/* CRÍTICO 4: overlay con affordance visual y accesibilidad (UX · Affordance) */
 .iframe-overlay {
   position: absolute;
   inset: 0;
   z-index: 2;
-  cursor: default;
+  cursor: pointer;
+  display: block;
+  text-decoration: none;
+}
+.iframe-overlay::after {
+  content: 'Abrir herramienta →';
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  background: rgba(17,17,17,.88);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font);
+  padding: 8px 16px;
+  border-radius: 8px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity .2s ease, transform .2s ease;
+  pointer-events: none;
+}
+.iframe-overlay:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 .star-browser-content iframe {
   width: 142.86%;
@@ -908,7 +1002,62 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
   transform: scale(0.7);
   transform-origin: top left;
   pointer-events: none;
+  opacity: 0;
+  transition: opacity .4s ease;
 }
+.star-browser-content iframe.loaded {
+  opacity: 1;
+}
+/* Skeleton de carga */
+.iframe-skeleton {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: #f7f7fa;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  transition: opacity .3s ease;
+}
+.iframe-skeleton.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.iframe-skel-bar {
+  background: linear-gradient(90deg, #ebebf0 25%, #f5f5f8 50%, #ebebf0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+}
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+/* Estado de error */
+.iframe-error {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #f7f7fa;
+  text-align: center;
+  padding: 24px;
+}
+.iframe-error.visible { display: flex; }
+.iframe-error-icon { font-size: 28px; opacity: .4; }
+.iframe-error-text { font-size: 13px; color: var(--muted); line-height: 1.5; }
+.iframe-error-link {
+  font-size: 13px; font-weight: 700; color: var(--purple);
+  text-decoration: none; padding: 8px 18px;
+  background: var(--purple-light); border-radius: 8px;
+  transition: background .2s ease;
+}
+.iframe-error-link:hover { background: #dddeff; }
 
 /* CTA flotante */
 .star-float-cta {
@@ -921,7 +1070,7 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
   background: var(--ink);
   color: #fff;
   padding: 14px 22px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   text-decoration: none;
   font-size: 14px;
   font-weight: 600;
@@ -1001,7 +1150,7 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
 .qs-callout p { font-size: 14px; color: var(--purple2); line-height: 1.65; font-weight: 500; }
 
 /* ─── ANALYSIS PROJECTS ─── */
-.analysis-section { background: var(--off); }
+.analysis-section { background: var(--off); contain: layout; }
 .analysis-header { margin-bottom: 52px; }
 .analysis-header .s-tag { margin-bottom: 14px; }
 .analysis-header .s-sub { max-width: 560px; margin-top: 14px; font-size: 15px; color: var(--muted); line-height: 1.7; }
@@ -1009,26 +1158,64 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
 .analysis-card {
   background: var(--white);
   border: .5px solid #e4e4ec;
-  border-radius: 18px;
-  padding: 32px 30px 28px;
+  border-radius: var(--radius-xl);
+  padding: 32px 30px 0;
   display: flex; flex-direction: column;
-  box-shadow: 0 2px 12px rgba(0,0,0,.04);
-  transition: all .3s var(--ease);
+  box-shadow: var(--shadow-card);
+  transition: border-color .3s var(--ease), transform .3s var(--ease), box-shadow .3s var(--ease);
   cursor: default;
   position: relative;
   overflow: hidden;
+  min-height: 320px;
 }
-.analysis-card::before {
+.analysis-card:hover {
+  border-color: var(--purple);
+  transform: translateY(-6px);
+  box-shadow: 0 24px 56px rgba(122,123,255,.12);
+}
+
+/* Gradiente inferior de color único por card */
+.analysis-card::after {
   content: '';
-  position: absolute; top: 0; left: 0; right: 0;
-  height: 2px;
-  background: var(--purple);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform .3s var(--ease);
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 48%;
+  pointer-events: none;
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+  opacity: .85;
+  transition: opacity .3s var(--ease);
 }
-.analysis-card:hover { border-color: var(--purple); transform: translateY(-6px); box-shadow: 0 24px 56px rgba(122,123,255,.12); }
-.analysis-card:hover::before { transform: scaleX(1); }
+.analysis-card:hover::after { opacity: 1; }
+
+/* Card 1 — Python: morado central denso, irradia desde el centro-inferior */
+.analysis-card--python::after {
+  background: radial-gradient(ellipse 80% 70% at 50% 120%,
+    rgba(122, 123, 255, .55) 0%,
+    rgba(122, 123, 255, .25) 45%,
+    transparent 75%);
+}
+/* Card 2 — SQL: morado desplazado a la izquierda, más difuso */
+.analysis-card--sql::after {
+  background: radial-gradient(ellipse 110% 65% at 20% 110%,
+    rgba(90, 91, 224, .50) 0%,
+    rgba(122, 123, 255, .20) 50%,
+    transparent 78%);
+}
+/* Card 3 — R: morado desplazado a la derecha, tono más claro */
+.analysis-card--r::after {
+  background: radial-gradient(ellipse 110% 65% at 80% 110%,
+    rgba(167, 139, 255, .52) 0%,
+    rgba(200, 185, 255, .22) 50%,
+    transparent 78%);
+}
+
+/* Contenido superior */
+.analysis-card-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding-bottom: 120px; /* espacio para el gradiente + footer */
+}
 .analysis-lang {
   display: flex; gap: 6px; flex-wrap: wrap;
   margin-bottom: 20px;
@@ -1046,20 +1233,79 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
 }
 .analysis-desc {
   font-size: 13.5px; color: var(--muted);
-  line-height: 1.7; flex: 1; margin-bottom: 24px;
+  line-height: 1.7; flex: 1;
+}
+
+/* Footer: avatar + nombre + link — encima del gradiente */
+.analysis-footer {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 0 30px 28px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  z-index: 2;
+}
+.analysis-author {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.analysis-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--purple-light);
+  border: 1.5px solid rgba(122,123,255,.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--purple2);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+/* Iniciales SVG dentro del avatar */
+.analysis-avatar-initials {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--purple2);
+  line-height: 1;
+  letter-spacing: -.3px;
+}
+.analysis-author-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.analysis-author-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -.1px;
+}
+.analysis-author-role {
+  font-size: 11px;
+  color: var(--muted);
 }
 .analysis-link {
   display: inline-flex; align-items: center; gap: 6px;
   font-size: 13px; font-weight: 700;
   color: var(--purple); text-decoration: none;
-  margin-top: auto;
   transition: gap .2s var(--ease);
+  white-space: nowrap;
 }
 .analysis-link:hover { gap: 10px; }
 @media (max-width: 860px) { .analysis-grid { grid-template-columns: 1fr; } }
+@media (max-width: 600px) {
+  .analysis-footer { flex-direction: column; align-items: flex-start; gap: 14px; padding-bottom: 24px; }
+  .analysis-card { min-height: 360px; }
+  .analysis-card-body { padding-bottom: 140px; }
+}
 
 /* ─── DAX LAB ─── */
-.dax-section { background: var(--white); border-top: .5px solid #f0f0f5; }
+.dax-section { background: var(--white); border-top: .5px solid #f0f0f5; contain: layout; }
 .dax-inner { display: grid; grid-template-columns: 1fr 2fr; gap: 80px; align-items: start; }
 .dax-left { position: sticky; top: 120px; }
 .dax-tag {
@@ -1078,11 +1324,11 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
   font-size: 12px; font-weight: 700; color: var(--purple);
   background: var(--purple-light); padding: 7px 14px;
   border-radius: 8px; text-decoration: none;
-  transition: all .2s var(--ease);
+  transition: background .2s var(--ease), color .2s var(--ease);
 }
 .dax-github:hover { background: #dddeff; }
 .dax-github svg { width: 14px; height: 14px; fill: var(--purple); }
-.dax-cards { display: flex; flex-direction: column; gap: 0; background: var(--white); border: .5px solid #e4e4ec; border-radius: 18px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.04); }
+.dax-cards { display: flex; flex-direction: column; gap: 0; background: var(--white); border: .5px solid #e4e4ec; border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-card); }
 .dax-card {
   display: grid; grid-template-columns: 1fr auto;
   align-items: center; gap: 24px;
@@ -1100,7 +1346,7 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
   font-size: 12px; font-weight: 700; color: var(--purple);
   background: var(--purple-light); padding: 8px 16px;
   border-radius: 8px; text-decoration: none; white-space: nowrap;
-  transition: all .2s var(--ease);
+  transition: background .2s var(--ease), gap .2s var(--ease);
 }
 .dax-card-link:hover { background: #dddeff; gap: 8px; }
 @media (max-width: 860px) {
@@ -1171,7 +1417,7 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
   font-size: 13px; font-weight: 700;
   padding: 12px 22px; border-radius: 10px;
   text-decoration: none;
-  transition: all .2s var(--ease);
+  transition: background .2s var(--ease), transform .2s var(--ease), box-shadow .2s var(--ease);
 }
 .com-cta:hover {
   background: #6162e8;
@@ -1283,9 +1529,9 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
   display: inline-flex; align-items: center; gap: 9px;
   background: var(--purple); color: #fff;
   font-size: 14px; font-weight: 700;
-  padding: 14px 28px; border-radius: 12px;
+  padding: 14px 28px; border-radius: var(--radius-md);
   text-decoration: none;
-  transition: all .25s var(--ease);
+  transition: background .25s var(--ease), transform .25s var(--ease), box-shadow .25s var(--ease);
 }
 .cta-final-btn-primary:hover {
   background: var(--purple2); transform: translateY(-2px);
@@ -1297,9 +1543,9 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
   border: 1.5px solid var(--gray);
   color: var(--ink);
   font-size: 14px; font-weight: 600;
-  padding: 14px 24px; border-radius: 12px;
+  padding: 14px 24px; border-radius: var(--radius-md);
   text-decoration: none;
-  transition: all .25s var(--ease);
+  transition: border-color .25s var(--ease), color .25s var(--ease), transform .25s var(--ease);
 }
 .cta-final-btn-secondary:hover {
   border-color: var(--purple); color: var(--purple);
@@ -1333,7 +1579,7 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
   display: flex;
   flex-direction: column;
   gap: 10px;
-  z-index: 50;
+  z-index: var(--z-overlay);
   opacity: 0;
   transition: opacity .4s ease;
 }
@@ -1352,7 +1598,7 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
   height: 6px;
   border-radius: 50%;
   background: rgba(0,0,0,.2);
-  transition: all .25s ease;
+  transition: background .25s ease, transform .25s ease, box-shadow .25s ease;
   flex-shrink: 0;
 }
 .dot-nav-item.active .dot-nav-dot {
@@ -1389,6 +1635,56 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
   box-shadow: 0 0 0 3px rgba(255,255,255,.15);
 }
 @media (max-width: 1100px) { .dot-nav { display: none; } }
+
+/* ─── BARRA DE PROGRESO DE SECCIÓN — mobile/tablet ─── */
+/* Sustituye al dot-nav en pantallas pequeñas */
+.section-progress {
+  display: none;
+}
+@media (max-width: 1100px) {
+  .section-progress {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-nav);
+    height: 3px;
+    background: rgba(229,229,229,.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  .section-progress-fill {
+    height: 100%;
+    background: var(--purple);
+    border-radius: 0 2px 2px 0;
+    transition: width .15s ease;
+    box-shadow: 0 0 6px rgba(122,123,255,.5);
+  }
+  /* Label de sección actual — aparece al cambiar de sección */
+  .section-progress-label {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%) translateY(0);
+    background: rgba(17,17,17,.82);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: var(--font);
+    padding: 5px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease, transform .25s ease;
+    z-index: calc(var(--z-nav) + 1);
+  }
+  .section-progress-label.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-2px);
+  }
+}
 
 /* ─── FOOTER ─── */
 
@@ -1464,6 +1760,7 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
   background: var(--off);
   border-top: .5px solid #f0f0f5;
   position: relative;
+  contain: layout;
 }
 
 /* Header centrado (dentro de .c) */
@@ -1659,7 +1956,7 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
   justify-content: center;
   color: #c8c8d4;
   font-size: 18px;
-  transition: all .25s var(--ease);
+  transition: border-color .25s var(--ease), color .25s var(--ease), transform .25s var(--ease), box-shadow .25s var(--ease);
 }
 .de-st:hover .de-dot {
   border-color: rgba(122,123,255,.55);
@@ -1705,7 +2002,7 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
 .de-pnl {
   background: var(--white);
   border: .5px solid #e8e8f0;
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
   position: relative;
   min-width: 56px;
@@ -2516,6 +2813,7 @@ pre.de-ev-code,
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
+    overscroll-behavior: contain;
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
@@ -2586,7 +2884,7 @@ pre.de-ev-code,
   top: 0; left: 0;
   height: 3px;
   background: linear-gradient(90deg, var(--purple), #a78bff);
-  z-index: 2000;
+  z-index: var(--z-progress);
   transform-origin: left;
   transform: scaleX(0);
   transition: transform .08s linear;
@@ -2937,13 +3235,148 @@ footer {
   .progress-bar, .grain, .hero::before { display: none !important; }
 }
 
+/* ─── SCROLL CLARITY WIDGET ─── */
+.scroll-widget {
+  position: fixed;
+  bottom: 32px;
+  left: 32px;
+  z-index: var(--z-overlay);
+  background: rgba(17,17,17,.45);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: .5px solid rgba(255,255,255,.12);
+  border-radius: 14px;
+  padding: 20px 22px 18px;
+  width: 196px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .5s ease, transform .5s ease;
+  pointer-events: none;
+  box-shadow:
+    0 4px 24px rgba(0,0,0,.18),
+    0 1px 0 rgba(255,255,255,.06) inset;
+}
+.scroll-widget.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.sw-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 52px;
+  margin-bottom: 16px;
+}
+.sw-bar {
+  flex: 1;
+  border-radius: 3px 3px 0 0;
+  background: rgba(255,255,255,.12);
+  transition: background .35s ease;
+}
+.sw-bar:nth-child(1)  { height: 100%; }
+.sw-bar:nth-child(2)  { height: 85%;  }
+.sw-bar:nth-child(3)  { height: 95%;  }
+.sw-bar:nth-child(4)  { height: 75%;  }
+.sw-bar:nth-child(5)  { height: 90%;  }
+.sw-bar:nth-child(6)  { height: 80%;  }
+.sw-bar:nth-child(7)  { height: 100%; }
+.sw-bar:nth-child(8)  { height: 70%;  }
+.sw-bar:nth-child(9)  { height: 88%;  }
+.sw-bar:nth-child(10) { height: 78%;  }
+.sw-bar.active {
+  background: var(--purple);
+  box-shadow: 0 0 10px rgba(122,123,255,.45);
+}
+.sw-bar.just-lit {
+  animation: sw-bar-pulse .5s cubic-bezier(.16,1,.3,1) 1;
+}
+@keyframes sw-bar-pulse {
+  0%   { filter: brightness(1.8); }
+  100% { filter: brightness(1); }
+}
+.sw-divider {
+  width: 100%;
+  height: .5px;
+  background: rgba(255,255,255,.08);
+  margin-bottom: 12px;
+}
+.sw-number {
+  font-size: 42px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+  letter-spacing: -2px;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: baseline;
+  gap: 1px;
+}
+.sw-number-pct {
+  font-size: 22px;
+  font-weight: 600;
+  color: rgba(255,255,255,.6);
+  letter-spacing: 0;
+}
+.sw-label {
+  font-size: 10.5px;
+  color: rgba(255,255,255,.4);
+  line-height: 1.45;
+  letter-spacing: .01em;
+  min-height: 30px;
+  transition: opacity .25s ease;
+}
+.sw-label.changing { opacity: 0; }
+@media (max-width: 600px) {
+  .scroll-widget { bottom: 20px; left: 16px; width: 172px; padding: 16px 18px 14px; }
+  .sw-number { font-size: 36px; }
+  .sw-bars { height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scroll-widget { transition: none; }
+  .sw-bar        { transition: none; }
+  .sw-bar.just-lit { animation: none; }
+}
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 1rem;
+  z-index: 9999;
+  background: var(--purple);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+}
+.skip-link:focus { left: 1rem; }
+
+/* ─── VISUALLY HIDDEN ─── */
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
 </style>
+
 </head>
 <body>
 
 <div class="progress-bar" id="progressBar"></div>
 
+<!-- ─── SKIP LINK (accesibilidad teclado) ─── -->
+
+<a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
 <!-- ─── NAV ─── -->
+
 <nav id="nav" aria-label="Navegación principal">
   <a href="./index.html" class="logo" aria-label="Borja Mora — Inicio"><span id="logoText"></span><span class="logo-dot"></span></a>
   <div class="nav-links">
@@ -2952,11 +3385,12 @@ footer {
     <a href="./proyectos.html">Proyectos</a>
     <a href="./descargas.html">Descargas</a>
     <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event', 'clic_linkedin', { location: 'nav' });">LinkedIn</a>
-    <a href="https://mail.google.com/mail/u/0/?fs=1&to=borja.mora.mendez@gmail.com&su=Oportunidad+laboral&body=Hola,+me+gustar%C3%ADa+hablar+contigo+sobre+una+posible+oportunidad.&tf=cm" target="_blank" rel="noopener noreferrer" class="nav-cta btn" onclick="gtag('event', 'clic_email', { location: 'nav' });" style="font-size: 14px; font-weight: 600; letter-spacing: 0.3px"><span class="cta-text-wrap"><span>Contacto</span><span>¿Hablamos?</span></span></a>
+    <a href="mailto:borja.mora.mendez@gmail.com?subject=Oportunidad%20laboral&body=Hola%20Borja%2C%20me%20gustar%C3%ADa%20hablar%20contigo%20sobre%20una%20posible%20oportunidad." class="nav-cta btn" onclick="gtag('event', 'clic_email', { location: 'nav' });" style="font-size: 14px; font-weight: 600; letter-spacing: 0.3px"><span class="cta-text-wrap"><span>Contacto</span><span>¿Hablamos?</span></span></a>
   </div>
 </nav>
 
 <!-- ─── DOT NAV ─── -->
+
 <div class="dot-nav" id="dotNav">
   <div class="dot-nav-item" data-section="hero"><div class="dot-nav-dot"></div><span class="dot-nav-label">Inicio</span></div>
   <div class="dot-nav-item" data-section="projects"><div class="dot-nav-dot"></div><span class="dot-nav-label">Proyectos</span></div>
@@ -2968,248 +3402,293 @@ footer {
   <div class="dot-nav-item" data-section="cta"><div class="dot-nav-dot"></div><span class="dot-nav-label">Contacto</span></div>
 </div>
 
+<!-- ─── BARRA DE PROGRESO MOBILE — alternativa al dot-nav en tablet/móvil ─── -->
+
+<div class="section-progress" id="sectionProgress" aria-hidden="true">
+  <div class="section-progress-fill" id="sectionProgressFill"></div>
+</div>
+<div class="section-progress-label" id="sectionProgressLabel"></div>
+
+<!-- ─── SCROLL CLARITY WIDGET ─── -->
+
+<div class="scroll-widget" id="scrollWidget" role="status" aria-live="polite" aria-label="Progreso de lectura del portfolio">
+  <div class="sw-bars" id="swBars" aria-hidden="true">
+    <div class="sw-bar"></div>
+    <div class="sw-bar"></div>
+    <div class="sw-bar"></div>
+    <div class="sw-bar"></div>
+    <div class="sw-bar"></div>
+    <div class="sw-bar"></div>
+    <div class="sw-bar"></div>
+    <div class="sw-bar"></div>
+    <div class="sw-bar"></div>
+    <div class="sw-bar"></div>
+  </div>
+  <div class="sw-divider" aria-hidden="true"></div>
+  <div class="sw-number" aria-hidden="true">
+    <span id="swNum">0</span><span class="sw-number-pct">%</span>
+  </div>
+  <div class="sw-label" id="swLabel">de claridad conseguida</div>
+</div>
+
+<!-- ─── MAIN CONTENT ─── -->
+
+<main id="main-content">
+
 <!-- ─── HERO ─── -->
+
 <section class="hero" id="hero">
   <div class="hero-inner">
     <div class="hero-left">
 
-      <!-- CHANGE 1 & 3: New claim -->
-      <h1 class="hero-h1">
-        Construyo espacios<br>donde los datos calan.
-      </h1>
-      
-      <!-- Subtitle — voz coherente con el headline -->
-      <p class="hero-sub">
-        Antes de cualquier visualización, una pregunta: ¿qué hay que decidir?
-        Power BI, DAX y data storytelling son las herramientas. La claridad es el oficio.
-      </p>
+```
+  <!-- CHANGE 1 & 3: New claim -->
+  <h1 class="hero-h1">
+    Construyo espacios<br>donde los datos calan.
+  </h1>
+  
+  <!-- Subtitle — voz coherente con el headline -->
+  <p class="hero-sub">
+    Antes de cualquier visualización, una pregunta: ¿qué hay que decidir?
+    Power BI, DAX y data storytelling son las herramientas. La claridad es el oficio.
+  </p>
 
-      <!-- Línea única de credenciales: disponibilidad · cert · ubicación -->
-      <div class="hero-meta" aria-label="Disponibilidad y credenciales">
-        <span class="hero-meta-pulse" aria-hidden="true"></span>
-        <span class="hero-meta-status">Disponible</span>
-        <span class="hero-meta-sep" aria-hidden="true">·</span>
-        <span class="hero-meta-item">Data Analyst / Power BI Dev.</span>
-        <span class="hero-meta-sep" aria-hidden="true">·</span>
-        <span class="hero-meta-item">Microsoft PL-300</span>
+  <!-- Línea única de credenciales: disponibilidad · cert · ubicación -->
+  <div class="hero-meta" aria-label="Disponibilidad y credenciales">
+    <span class="hero-meta-pulse" aria-hidden="true"></span>
+    <span class="hero-meta-status">Disponible</span>
+    <span class="hero-meta-sep" aria-hidden="true">·</span>
+    <span class="hero-meta-item">Data Analyst / Power BI Dev.</span>
+    <span class="hero-meta-sep" aria-hidden="true">·</span>
+    <span class="hero-meta-item">Microsoft PL-300</span>
+  </div>
+
+  <div class="hero-actions">
+    <a href="./proyectos.html" class="btn btn-primary">Ver proyectos →</a>
+    <a href="./sobre-mi.html" class="btn btn-outline">Sobre mí</a>
+  </div>
+</div>
+
+<!-- ─── DASHBOARD WOW ─── -->
+<div class="hero-right">
+  <!-- CRÍTICO 2: role="img" + aria-label para lectores de pantalla (WCAG 1.1.1) -->
+  <div class="dashboard-frame"
+    role="img"
+    aria-label="Dashboard de ventas 2025: €2,84M de ventas YTD con crecimiento interanual +12,4%. Gráfico lollipop de ventas mensuales CY vs PY, gráfico dumbbell de evolución por región y ranking de zonas con Norte liderando a €812K."
+  >
+
+    <div class="df-titlebar" aria-hidden="true">
+      <div class="df-dot" style="background:#ff5f57"></div>
+      <div class="df-dot" style="background:#febc2e"></div>
+      <div class="df-dot" style="background:#28c840"></div>
+      <span class="df-url">borjamora.es</span>
+      <span style="margin-left:auto;font-size:8.5px;color:#bbb;font-weight:600;letter-spacing:.4px">LIVE</span>
+      <span style="width:6px;height:6px;border-radius:50%;background:#28c840;margin-left:4px;flex-shrink:0;animation:pulse-dot 1.8s ease-in-out infinite"></span>
+    </div>
+
+    <div class="df-header" style="padding:11px 14px 7px" aria-hidden="true">
+      <div>
+        <div class="df-title">Sales Performance 2025</div>
+        <div style="font-size:8px;color:var(--muted);margin-top:1px">Ventas reales vs año anterior · Canal · Región</div>
       </div>
-
-      <div class="hero-actions">
-        <a href="./proyectos.html" class="btn btn-primary">Ver proyectos →</a>
-        <a href="./sobre-mi.html" class="btn btn-outline">Sobre mí</a>
+      <div style="display:flex;align-items:center;gap:5px">
+        <span class="df-period">Ene–Dic 2025</span>
+        <span style="font-size:8px;font-weight:600;background:#e8f5e7;color:#3c8a37;padding:2px 7px;border-radius:4px">▲ +12,4%</span>
       </div>
     </div>
 
-    <!-- ─── DASHBOARD WOW ─── -->
-    <div class="hero-right">
-      <div class="dashboard-frame">
+    <div class="df-body" style="gap:7px" aria-hidden="true">
 
-        <div class="df-titlebar">
-          <div class="df-dot" style="background:#ff5f57"></div>
-          <div class="df-dot" style="background:#febc2e"></div>
-          <div class="df-dot" style="background:#28c840"></div>
-          <span class="df-url">borjamora.es</span>
-          <span style="margin-left:auto;font-size:8.5px;color:#bbb;font-weight:600;letter-spacing:.4px">LIVE</span>
-          <span style="width:6px;height:6px;border-radius:50%;background:#28c840;margin-left:4px;flex-shrink:0;animation:pulse-dot 1.8s ease-in-out infinite"></span>
+      <!-- KPIs -->
+      <div class="df-kpis" style="grid-template-columns:repeat(4,1fr)">
+        <div class="dk">
+          <div class="dk-label">Ventas YTD</div>
+          <div class="dk-main"><div class="dk-value" id="kv0" style="font-size:17px">—</div>
+            <svg width="36" height="16" viewBox="0 0 36 16" fill="none" style="flex-shrink:0;opacity:.7"><polyline points="0,13 5,10 9,12 13,7 17,9 21,4 26,6 30,2 36,0" stroke="#7a7bff" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
+          </div>
+          <span class="dk-pos" id="kg0">—</span>
+        </div>
+        <div class="dk">
+          <div class="dk-label">Unidades</div>
+          <div class="dk-main"><div class="dk-value" id="kv1" style="font-size:17px">—</div>
+            <svg width="36" height="16" viewBox="0 0 36 16" fill="none" style="flex-shrink:0;opacity:.7"><polyline points="0,14 5,11 9,13 13,8 17,11 21,5 26,8 30,3 36,1" stroke="#3c8a37" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
+          </div>
+          <span class="dk-pos" id="kg1">—</span>
+        </div>
+        <div class="dk">
+          <div class="dk-label">Ticket Medio</div>
+          <div class="dk-main"><div class="dk-value" id="kv2" style="font-size:17px">—</div>
+            <svg width="36" height="16" viewBox="0 0 36 16" fill="none" style="flex-shrink:0;opacity:.7"><polyline points="0,7 5,10 9,8 13,12 17,10 21,13 26,11 30,14 36,13" stroke="#a3223e" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
+          </div>
+          <span class="dk-neg" id="kg2">—</span>
+        </div>
+        <div class="dk">
+          <div class="dk-label">Margen Bruto</div>
+          <div class="dk-main"><div class="dk-value" id="kv3" style="font-size:17px">—</div>
+            <svg width="36" height="16" viewBox="0 0 36 16" fill="none" style="flex-shrink:0;opacity:.7"><polyline points="0,13 5,11 9,13 13,8 17,10 21,5 26,7 30,3 36,1" stroke="#7a7bff" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
+          </div>
+          <span class="dk-pos" id="kg3">—</span>
+        </div>
+      </div>
+
+      <!-- CHARTS -->
+      <div style="display:grid;grid-template-columns:1.55fr 1fr;gap:6px">
+
+        <!-- LOLLIPOP CY vs PY -->
+        <div class="df-card" style="padding:9px 11px 10px">
+          <div class="dc-label">Ventas mensuales · CY vs PY</div>
+          <div style="display:flex;align-items:center;gap:10px;margin:3px 0 6px">
+            <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#888"><span style="width:8px;height:8px;border-radius:50%;background:#7a7bff;display:inline-block"></span>CY 2025</span>
+            <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#bbb"><span style="width:8px;height:8px;border-radius:50%;background:none;border:1.5px solid #c8c8d8;display:inline-block"></span>PY 2024</span>
+          </div>
+          <div style="position:relative;width:100%;height:86px">
+            <canvas id="heroLollipop" aria-hidden="true" role="presentation"></canvas>
+          </div>
         </div>
 
-        <div class="df-header" style="padding:11px 14px 7px">
-          <div>
-            <div class="df-title">Sales Performance 2025</div>
-            <div style="font-size:8px;color:var(--muted);margin-top:1px">Ventas reales vs año anterior · Canal · Región</div>
+        <!-- DUMBBELL: productos 2024→2025 -->
+        <div class="df-card" style="padding:9px 11px 10px">
+          <div class="dc-label">Evolución productos · 2024→2025</div>
+          <div style="display:flex;align-items:center;gap:10px;margin:3px 0 6px">
+            <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#ccc"><span style="width:7px;height:7px;border-radius:50%;background:#ccc;display:inline-block"></span>2024</span>
+            <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#7a7bff"><span style="width:7px;height:7px;border-radius:50%;background:#7a7bff;display:inline-block"></span>2025</span>
           </div>
-          <div style="display:flex;align-items:center;gap:5px">
-            <span class="df-period">Ene–Dic 2025</span>
-            <span style="font-size:8px;font-weight:600;background:#e8f5e7;color:#3c8a37;padding:2px 7px;border-radius:4px">▲ +12,4%</span>
-          </div>
+          <!-- SVG dumbbell — drawn directly, no canvas needed -->
+          <svg id="heroDumbbell" width="100%" viewBox="0 0 150 90" style="display:block;overflow:visible">
+            <!-- Grid lines -->
+            <line x1="40" y1="5" x2="40" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
+            <line x1="75" y1="5" x2="75" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
+            <line x1="110" y1="5" x2="110" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
+            <line x1="145" y1="5" x2="145" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
+            <!-- Axis labels -->
+            <text x="40" y="88" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="6" fill="#ccc">200K</text>
+            <text x="75" y="88" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="6" fill="#ccc">400K</text>
+            <text x="110" y="88" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="6" fill="#ccc">600K</text>
+            <text x="145" y="88" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="6" fill="#ccc">800K</text>
+
+            <!-- Row 1: Norte — 680K→812K -->
+            <text x="0" y="16" font-family="Segoe UI,sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Norte</text>
+            <line class="db-line" x1="40" y1="16" x2="40" y2="16" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round" data-x1="72" data-x2="112"/>
+            <circle class="db-dot-a" cx="40" cy="16" r="0" fill="#c8c8d8" data-cx="72"/>
+            <circle class="db-dot-b" cx="40" cy="16" r="0" fill="#7a7bff" data-cx="112"/>
+            <text class="db-val" x="40" y="11" font-family="Segoe UI,sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="118">—</text>
+
+            <!-- Row 2: Centro — 600K→635K -->
+            <text x="0" y="32" font-family="Segoe UI,sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Centro</text>
+            <line class="db-line" x1="40" y1="32" x2="40" y2="32" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round" data-x1="63" data-x2="71"/>
+            <circle class="db-dot-a" cx="40" cy="32" r="0" fill="#c8c8d8" data-cx="63"/>
+            <circle class="db-dot-b" cx="40" cy="32" r="0" fill="#7a7bff" data-cx="71"/>
+            <text class="db-val" x="40" y="27" font-family="Segoe UI,sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="77">—</text>
+
+            <!-- Row 3: Sur — 460K→451K (caída) -->
+            <text x="0" y="48" font-family="Segoe UI,sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Sur</text>
+            <line class="db-line" x1="40" y1="48" x2="40" y2="48" stroke="#a3223e" stroke-width="1.5" stroke-linecap="round" data-x1="50" data-x2="48.5"/>
+            <circle class="db-dot-a" cx="40" cy="48" r="0" fill="#c8c8d8" data-cx="50"/>
+            <circle class="db-dot-b" cx="40" cy="48" r="0" fill="#d04060" data-cx="48.5"/>
+            <text class="db-val" x="40" y="43" font-family="Segoe UI,sans-serif" font-size="6.5" fill="#a3223e" font-weight="700" text-anchor="middle" data-cx="55">—</text>
+
+            <!-- Row 4: Este — 320K→346K -->
+            <text x="0" y="64" font-family="Segoe UI,sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Este</text>
+            <line class="db-line" x1="40" y1="64" x2="40" y2="64" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round" data-x1="34" data-x2="37"/>
+            <circle class="db-dot-a" cx="40" cy="64" r="0" fill="#c8c8d8" data-cx="34"/>
+            <circle class="db-dot-b" cx="40" cy="64" r="0" fill="#7a7bff" data-cx="37"/>
+            <text class="db-val" x="40" y="59" font-family="Segoe UI,sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="43">—</text>
+
+            <!-- Row 5: Oeste — 210K→244K -->
+            <text x="0" y="80" font-family="Segoe UI,sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Oeste</text>
+            <line class="db-line" x1="40" y1="80" x2="40" y2="80" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round" data-x1="22" data-x2="26"/>
+            <circle class="db-dot-a" cx="40" cy="80" r="0" fill="#c8c8d8" data-cx="22"/>
+            <circle class="db-dot-b" cx="40" cy="80" r="0" fill="#7a7bff" data-cx="26"/>
+            <text class="db-val" x="40" y="75" font-family="Segoe UI,sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="32">—</text>
+          </svg>
         </div>
 
-        <div class="df-body" style="gap:7px">
+      </div>
 
-          <!-- KPIs -->
-          <div class="df-kpis" style="grid-template-columns:repeat(4,1fr)">
-            <div class="dk">
-              <div class="dk-label">Ventas YTD</div>
-              <div class="dk-main"><div class="dk-value" id="kv0" style="font-size:17px">—</div>
-                <svg width="36" height="16" viewBox="0 0 36 16" fill="none" style="flex-shrink:0;opacity:.7"><polyline points="0,13 5,10 9,12 13,7 17,9 21,4 26,6 30,2 36,0" stroke="#7a7bff" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
-              </div>
-              <span class="dk-pos" id="kg0">—</span>
-            </div>
-            <div class="dk">
-              <div class="dk-label">Unidades</div>
-              <div class="dk-main"><div class="dk-value" id="kv1" style="font-size:17px">—</div>
-                <svg width="36" height="16" viewBox="0 0 36 16" fill="none" style="flex-shrink:0;opacity:.7"><polyline points="0,14 5,11 9,13 13,8 17,11 21,5 26,8 30,3 36,1" stroke="#3c8a37" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
-              </div>
-              <span class="dk-pos" id="kg1">—</span>
-            </div>
-            <div class="dk">
-              <div class="dk-label">Ticket Medio</div>
-              <div class="dk-main"><div class="dk-value" id="kv2" style="font-size:17px">—</div>
-                <svg width="36" height="16" viewBox="0 0 36 16" fill="none" style="flex-shrink:0;opacity:.7"><polyline points="0,7 5,10 9,8 13,12 17,10 21,13 26,11 30,14 36,13" stroke="#a3223e" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
-              </div>
-              <span class="dk-neg" id="kg2">—</span>
-            </div>
-            <div class="dk">
-              <div class="dk-label">Margen Bruto</div>
-              <div class="dk-main"><div class="dk-value" id="kv3" style="font-size:17px">—</div>
-                <svg width="36" height="16" viewBox="0 0 36 16" fill="none" style="flex-shrink:0;opacity:.7"><polyline points="0,13 5,11 9,13 13,8 17,10 21,5 26,7 30,3 36,1" stroke="#7a7bff" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
-              </div>
-              <span class="dk-pos" id="kg3">—</span>
-            </div>
-          </div>
+      <!-- BOTTOM: Ranking table -->
+      <div class="df-ranking" style="padding:8px 12px 9px">
+        <div class="dr-head" style="margin-bottom:4px">
+          <span class="dc-label" style="margin:0">Top zonas · Detalle YoY</span>
+          <span style="font-size:8px;color:var(--purple);font-weight:700">Ver ranking →</span>
+        </div>
+        <div class="dr-row">
+          <span class="dr-rank">01</span>
+          <span class="dr-name">Norte</span>
+          <div class="dr-track"><div class="dr-fill prd-bar" data-w="100"></div></div>
+          <span class="dr-val">€ 812K</span>
+          <span class="dr-badge" style="background:#e8f5e7;color:#3c8a37" aria-label="Crecimiento positivo: +19,4%">▲ +19,4%</span>
+        </div>
+        <div class="dr-row">
+          <span class="dr-rank">02</span>
+          <span class="dr-name">Centro</span>
+          <div class="dr-track"><div class="dr-fill prd-bar" data-w="78"></div></div>
+          <span class="dr-val">€ 635K</span>
+          <span class="dr-badge" style="background:#e8f5e7;color:#3c8a37" aria-label="Crecimiento positivo: +5,8%">▲ +5,8%</span>
+        </div>
+        <div class="dr-row">
+          <span class="dr-rank">03</span>
+          <span class="dr-name">Sur</span>
+          <div class="dr-track"><div class="dr-fill prd-bar" data-w="56" style="background:#e0a0b0"></div></div>
+          <span class="dr-val">€ 451K</span>
+          <span class="dr-badge" style="background:#f9e8ec;color:#a3223e" aria-label="Caída: −2,1%">▼ −2,1%</span>
+        </div>
+        <div class="dr-row">
+          <span class="dr-rank">04</span>
+          <span class="dr-name">Este</span>
+          <div class="dr-track"><div class="dr-fill prd-bar" data-w="43" style="background:rgba(122,123,255,.4)"></div></div>
+          <span class="dr-val">€ 346K</span>
+          <span class="dr-badge" style="background:#f5f5fa;color:#aaa" aria-label="Sin cambio significativo: +8,1%">→ +8,1%</span>
+        </div>
+      </div>
 
-          <!-- CHARTS -->
-          <div style="display:grid;grid-template-columns:1.55fr 1fr;gap:6px">
+    </div><!-- /df-body -->
+  </div><!-- /dashboard-frame -->
+</div><!-- /hero-right -->
+```
 
-            <!-- LOLLIPOP CY vs PY -->
-            <div class="df-card" style="padding:9px 11px 10px">
-              <div class="dc-label">Ventas mensuales · CY vs PY</div>
-              <div style="display:flex;align-items:center;gap:10px;margin:3px 0 6px">
-                <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#888"><span style="width:8px;height:8px;border-radius:50%;background:#7a7bff;display:inline-block"></span>CY 2025</span>
-                <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#bbb"><span style="width:8px;height:8px;border-radius:50%;background:none;border:1.5px solid #c8c8d8;display:inline-block"></span>PY 2024</span>
-              </div>
-              <div style="position:relative;width:100%;height:86px">
-                <canvas id="heroLollipop"></canvas>
-              </div>
-            </div>
-
-            <!-- DUMBBELL: productos 2024→2025 -->
-            <div class="df-card" style="padding:9px 11px 10px">
-              <div class="dc-label">Evolución productos · 2024→2025</div>
-              <div style="display:flex;align-items:center;gap:10px;margin:3px 0 6px">
-                <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#ccc"><span style="width:7px;height:7px;border-radius:50%;background:#ccc;display:inline-block"></span>2024</span>
-                <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#7a7bff"><span style="width:7px;height:7px;border-radius:50%;background:#7a7bff;display:inline-block"></span>2025</span>
-              </div>
-              <!-- SVG dumbbell — drawn directly, no canvas needed -->
-              <svg id="heroDumbbell" width="100%" viewBox="0 0 150 90" style="display:block;overflow:visible">
-                <!-- Grid lines -->
-                <line x1="40" y1="5" x2="40" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
-                <line x1="75" y1="5" x2="75" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
-                <line x1="110" y1="5" x2="110" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
-                <line x1="145" y1="5" x2="145" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
-                <!-- Axis labels -->
-                <text x="40" y="88" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="6" fill="#ccc">200K</text>
-                <text x="75" y="88" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="6" fill="#ccc">400K</text>
-                <text x="110" y="88" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="6" fill="#ccc">600K</text>
-                <text x="145" y="88" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="6" fill="#ccc">800K</text>
-
-                <!-- Row 1: Norte — 680K→812K -->
-                <text x="0" y="16" font-family="Segoe UI,sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Norte</text>
-                <line class="db-line" x1="40" y1="16" x2="40" y2="16" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round" data-x1="72" data-x2="112"/>
-                <circle class="db-dot-a" cx="40" cy="16" r="0" fill="#c8c8d8" data-cx="72"/>
-                <circle class="db-dot-b" cx="40" cy="16" r="0" fill="#7a7bff" data-cx="112"/>
-                <text class="db-val" x="40" y="11" font-family="Segoe UI,sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="118">—</text>
-
-                <!-- Row 2: Centro — 600K→635K -->
-                <text x="0" y="32" font-family="Segoe UI,sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Centro</text>
-                <line class="db-line" x1="40" y1="32" x2="40" y2="32" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round" data-x1="63" data-x2="71"/>
-                <circle class="db-dot-a" cx="40" cy="32" r="0" fill="#c8c8d8" data-cx="63"/>
-                <circle class="db-dot-b" cx="40" cy="32" r="0" fill="#7a7bff" data-cx="71"/>
-                <text class="db-val" x="40" y="27" font-family="Segoe UI,sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="77">—</text>
-
-                <!-- Row 3: Sur — 460K→451K (caída) -->
-                <text x="0" y="48" font-family="Segoe UI,sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Sur</text>
-                <line class="db-line" x1="40" y1="48" x2="40" y2="48" stroke="#a3223e" stroke-width="1.5" stroke-linecap="round" data-x1="50" data-x2="48.5"/>
-                <circle class="db-dot-a" cx="40" cy="48" r="0" fill="#c8c8d8" data-cx="50"/>
-                <circle class="db-dot-b" cx="40" cy="48" r="0" fill="#d04060" data-cx="48.5"/>
-                <text class="db-val" x="40" y="43" font-family="Segoe UI,sans-serif" font-size="6.5" fill="#a3223e" font-weight="700" text-anchor="middle" data-cx="55">—</text>
-
-                <!-- Row 4: Este — 320K→346K -->
-                <text x="0" y="64" font-family="Segoe UI,sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Este</text>
-                <line class="db-line" x1="40" y1="64" x2="40" y2="64" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round" data-x1="34" data-x2="37"/>
-                <circle class="db-dot-a" cx="40" cy="64" r="0" fill="#c8c8d8" data-cx="34"/>
-                <circle class="db-dot-b" cx="40" cy="64" r="0" fill="#7a7bff" data-cx="37"/>
-                <text class="db-val" x="40" y="59" font-family="Segoe UI,sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="43">—</text>
-
-                <!-- Row 5: Oeste — 210K→244K -->
-                <text x="0" y="80" font-family="Segoe UI,sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Oeste</text>
-                <line class="db-line" x1="40" y1="80" x2="40" y2="80" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round" data-x1="22" data-x2="26"/>
-                <circle class="db-dot-a" cx="40" cy="80" r="0" fill="#c8c8d8" data-cx="22"/>
-                <circle class="db-dot-b" cx="40" cy="80" r="0" fill="#7a7bff" data-cx="26"/>
-                <text class="db-val" x="40" y="75" font-family="Segoe UI,sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="32">—</text>
-              </svg>
-            </div>
-
-          </div>
-
-          <!-- BOTTOM: Ranking table -->
-          <div class="df-ranking" style="padding:8px 12px 9px">
-            <div class="dr-head" style="margin-bottom:4px">
-              <span class="dc-label" style="margin:0">Top zonas · Detalle YoY</span>
-              <span style="font-size:8px;color:var(--purple);font-weight:700">Ver ranking →</span>
-            </div>
-            <div class="dr-row">
-              <span class="dr-rank">01</span>
-              <span class="dr-name">Norte</span>
-              <div class="dr-track"><div class="dr-fill prd-bar" data-w="100" style="width:0;transition:width 1s .9s ease"></div></div>
-              <span class="dr-val">€ 812K</span>
-              <span class="dr-badge" style="background:#e8f5e7;color:#3c8a37">▲ +19,4%</span>
-            </div>
-            <div class="dr-row">
-              <span class="dr-rank">02</span>
-              <span class="dr-name">Centro</span>
-              <div class="dr-track"><div class="dr-fill prd-bar" data-w="78" style="width:0;transition:width 1s 1.05s ease"></div></div>
-              <span class="dr-val">€ 635K</span>
-              <span class="dr-badge" style="background:#e8f5e7;color:#3c8a37">▲ +5,8%</span>
-            </div>
-            <div class="dr-row">
-              <span class="dr-rank">03</span>
-              <span class="dr-name">Sur</span>
-              <div class="dr-track"><div class="dr-fill prd-bar" data-w="56" style="width:0;background:#e0a0b0;transition:width 1s 1.2s ease"></div></div>
-              <span class="dr-val">€ 451K</span>
-              <span class="dr-badge" style="background:#f9e8ec;color:#a3223e">▼ −2,1%</span>
-            </div>
-            <div class="dr-row">
-              <span class="dr-rank">04</span>
-              <span class="dr-name">Este</span>
-              <div class="dr-track"><div class="dr-fill prd-bar" data-w="43" style="width:0;background:rgba(122,123,255,.4);transition:width 1s 1.35s ease"></div></div>
-              <span class="dr-val">€ 346K</span>
-              <span class="dr-badge" style="background:#f5f5fa;color:#aaa">→ +8,1%</span>
-            </div>
-          </div>
-
-        </div><!-- /df-body -->
-      </div><!-- /dashboard-frame -->
-    </div><!-- /hero-right -->
   </div><!-- /hero-inner -->
 </section>
 
 <!-- ─── PROOF STRIP — CHANGE 7: Pro scrolling tag strip ─── -->
+
 <div class="proof-strip sr">
   <div class="proof-track" id="proofTrack">
 
-    <!-- First set -->
-    <div class="proof-content" id="proofContent">
-      <div class="proof-item"><div class="proof-abbr">PBI</div><span class="proof-label">Power BI</span></div>
-      <div class="proof-item"><div class="proof-abbr">PQ</div><span class="proof-label">Power Query</span></div>
-      <div class="proof-item"><div class="proof-abbr">DAX</div><span class="proof-label">DAX</span></div>
-      <div class="proof-item"><div class="proof-abbr">DS</div><span class="proof-label">Data Storytelling</span></div>
-      <div class="proof-item"><div class="proof-abbr">FIG</div><span class="proof-label">Figma</span></div>
-      <div class="proof-item"><div class="proof-abbr">AI</div><span class="proof-label">Claude IA</span></div>
-      <div class="proof-item"><div class="proof-abbr">UX</div><span class="proof-label">UX / UI</span></div>
-      <div class="proof-item"><div class="proof-abbr">DB</div><span class="proof-label">Dashboard Design</span></div>
-      <div class="proof-item"><div class="proof-abbr">XLS</div><span class="proof-label">Excel</span></div>
-      <div class="proof-item"><div class="proof-abbr">SQL</div><span class="proof-label">SQL</span></div>
-    </div>
+```
+<!-- First set — lista semántica para AT -->
+<ul class="proof-content" id="proofContent" role="list">
+  <li class="proof-item"><div class="proof-abbr" aria-hidden="true">PBI</div><span class="proof-label" translate="no">Power BI</span></li>
+  <li class="proof-item"><div class="proof-abbr" aria-hidden="true">PQ</div><span class="proof-label" translate="no">Power Query</span></li>
+  <li class="proof-item"><div class="proof-abbr" aria-hidden="true">DAX</div><span class="proof-label" translate="no">DAX</span></li>
+  <li class="proof-item"><div class="proof-abbr" aria-hidden="true">DS</div><span class="proof-label">Data Storytelling</span></li>
+  <li class="proof-item"><div class="proof-abbr" aria-hidden="true">FIG</div><span class="proof-label" translate="no">Figma</span></li>
+  <li class="proof-item"><div class="proof-abbr" aria-hidden="true">AI</div><span class="proof-label" translate="no">Claude IA</span></li>
+  <li class="proof-item"><div class="proof-abbr" aria-hidden="true">UX</div><span class="proof-label">UX / UI</span></li>
+  <li class="proof-item"><div class="proof-abbr" aria-hidden="true">DB</div><span class="proof-label">Dashboard Design</span></li>
+  <li class="proof-item"><div class="proof-abbr" aria-hidden="true">XLS</div><span class="proof-label" translate="no">Excel</span></li>
+  <li class="proof-item"><div class="proof-abbr" aria-hidden="true">SQL</div><span class="proof-label" translate="no">SQL</span></li>
+</ul>
 
-    <!-- Duplicate set for seamless loop -->
-    <div class="proof-content" aria-hidden="true">
-      <div class="proof-item"><div class="proof-abbr">PBI</div><span class="proof-label">Power BI</span></div>
-      <div class="proof-item"><div class="proof-abbr">PQ</div><span class="proof-label">Power Query</span></div>
-      <div class="proof-item"><div class="proof-abbr">DAX</div><span class="proof-label">DAX</span></div>
-      <div class="proof-item"><div class="proof-abbr">DS</div><span class="proof-label">Data Storytelling</span></div>
-      <div class="proof-item"><div class="proof-abbr">FIG</div><span class="proof-label">Figma</span></div>
-      <div class="proof-item"><div class="proof-abbr">AI</div><span class="proof-label">Claude IA</span></div>
-      <div class="proof-item"><div class="proof-abbr">UX</div><span class="proof-label">UX / UI</span></div>
-      <div class="proof-item"><div class="proof-abbr">DB</div><span class="proof-label">Dashboard Design</span></div>
-      <div class="proof-item"><div class="proof-abbr">XLS</div><span class="proof-label">Excel</span></div>
-      <div class="proof-item"><div class="proof-abbr">SQL</div><span class="proof-label">SQL</span></div>
-    </div>
+<!-- Duplicate set for seamless loop — oculto para AT -->
+<ul class="proof-content" aria-hidden="true" role="presentation">
+  <li class="proof-item"><div class="proof-abbr">PBI</div><span class="proof-label">Power BI</span></li>
+  <li class="proof-item"><div class="proof-abbr">PQ</div><span class="proof-label">Power Query</span></li>
+  <li class="proof-item"><div class="proof-abbr">DAX</div><span class="proof-label">DAX</span></li>
+  <li class="proof-item"><div class="proof-abbr">DS</div><span class="proof-label">Data Storytelling</span></li>
+  <li class="proof-item"><div class="proof-abbr">FIG</div><span class="proof-label">Figma</span></li>
+  <li class="proof-item"><div class="proof-abbr">AI</div><span class="proof-label">Claude IA</span></li>
+  <li class="proof-item"><div class="proof-abbr">UX</div><span class="proof-label">UX / UI</span></li>
+  <li class="proof-item"><div class="proof-abbr">DB</div><span class="proof-label">Dashboard Design</span></li>
+  <li class="proof-item"><div class="proof-abbr">XLS</div><span class="proof-label">Excel</span></li>
+  <li class="proof-item"><div class="proof-abbr">SQL</div><span class="proof-label">SQL</span></li>
+</ul>
+```
 
   </div>
 </div>
 
 <!-- ─── PROJECTS — gris ─── -->
+
 <section class="proj-section" id="projects">
   <div class="c">
     <div class="proj-header">
@@ -3221,231 +3700,234 @@ footer {
     </div>
     <div class="proj-grid">
 
-      <!-- ── CARD 0: IBCS Lollipop ── -->
-      <div class="proj-card sr">
-        <div class="pc-visual">
-          <svg width="100%" viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-            <rect width="360" height="300" fill="#fafafa"/>
-            <!-- label — alineado con pc-body (x=30) -->
-            <text x="30" y="36" font-family="'Segoe UI',sans-serif" font-size="8" font-weight="700" fill="#ccc" letter-spacing="1.2">VENTAS · CY VS SPLY · 2024</text>
-            <!-- pills -->
-            <rect x="30" y="48" width="62" height="24" rx="12" fill="#ededff"/>
-            <text x="61" y="64" font-family="'Segoe UI',sans-serif" font-size="10" font-weight="700" fill="#5a5be0" text-anchor="middle">€2,84M</text>
-            <rect x="100" y="48" width="82" height="24" rx="12" fill="#e8f5e7"/>
-            <text x="141" y="64" font-family="'Segoe UI',sans-serif" font-size="10" font-weight="700" fill="#2d7a28" text-anchor="middle">+12,4% YoY</text>
-            <!-- baseline -->
-            <line x1="30" y1="222" x2="330" y2="222" stroke="#e0e0e8" stroke-width="0.8"/>
-            <!-- 6 lollipop pairs: CY filled purple, SPLY outline gray -->
-            <!-- spacing: 6 pairs over 300px width, centered -->
-            <!-- Ene -->
-            <line x1="60"  y1="152" x2="60"  y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
-            <circle cx="60"  cy="152" r="7" fill="#7a7bff"/>
-            <line x1="76"  y1="172" x2="76"  y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
-            <circle cx="76"  cy="172" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
-            <!-- Feb -->
-            <line x1="110" y1="138" x2="110" y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
-            <circle cx="110" cy="138" r="7" fill="#7a7bff"/>
-            <line x1="126" y1="162" x2="126" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
-            <circle cx="126" cy="162" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
-            <!-- Mar -->
-            <line x1="160" y1="162" x2="160" y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
-            <circle cx="160" cy="162" r="7" fill="#7a7bff"/>
-            <line x1="176" y1="150" x2="176" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
-            <circle cx="176" cy="150" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
-            <!-- Abr -->
-            <line x1="210" y1="145" x2="210" y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
-            <circle cx="210" cy="145" r="7" fill="#7a7bff"/>
-            <line x1="226" y1="165" x2="226" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
-            <circle cx="226" cy="165" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
-            <!-- May -->
-            <line x1="260" y1="158" x2="260" y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
-            <circle cx="260" cy="158" r="7" fill="#7a7bff"/>
-            <line x1="276" y1="146" x2="276" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
-            <circle cx="276" cy="146" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
-            <!-- Jun — pico máximo -->
-            <line x1="310" y1="118" x2="310" y2="222" stroke="#9898d8" stroke-width="1.5"/>
-            <circle cx="310" cy="118" r="8" fill="#5a5be0"/>
-            <line x1="326" y1="170" x2="326" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
-            <circle cx="326" cy="170" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
-            <!-- month labels — alineados al centro del par -->
-            <text x="68"  y="238" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Ene</text>
-            <text x="118" y="238" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Feb</text>
-            <text x="168" y="238" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Mar</text>
-            <text x="218" y="238" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Abr</text>
-            <text x="268" y="238" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">May</text>
-            <text x="318" y="238" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Jun</text>
-            <!-- legend -->
-            <circle cx="38"  cy="264" r="5" fill="#7a7bff"/>
-            <text x="48"  y="268" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#b8b8cc">CY 2024</text>
-            <circle cx="118" cy="264" r="5" fill="none" stroke="#cacade" stroke-width="1.8"/>
-            <text x="128" y="268" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#b8b8cc">SPLY 2023</text>
-          </svg>
-        </div>
-        <div class="pc-body">
-          <div class="pc-cat">Ventas · Comparativa anual</div>
-          <div class="pc-name">Cuando el dato de ventas dejó de necesitar explicación.</div>
-          <p class="pc-desc">El equipo miraba el mismo Excel en cada reunión de dirección. Los números estaban. La historia, no.<br><br>Diseñé un sistema bajo estándar IBCS donde cualquier persona —sin formación analítica— detecta en 30 segundos si el mes fue mejor o peor que el año pasado. Y por qué. Sin que nadie tenga que explicar nada.</p>
-          <div class="pc-foot">
-            <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">IBCS</span></div>
-            <a href="./proyectos.html" class="pc-link">Ver →</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── CARD 1: Balance ── -->
-      <div class="proj-card sr sr-d1">
-        <div class="pc-visual">
-          <svg width="100%" viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-            <rect width="360" height="300" fill="#fafafa"/>
-            <!-- nav -->
-            <rect x="0" y="0" width="360" height="36" fill="#f0f0f5"/>
-            <text x="16" y="22" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb">Inicio</text>
-            <text x="52" y="22" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb">Checklist</text>
-            <text x="107" y="22" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb">Balance SyS</text>
-            <text x="168" y="22" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#333" font-weight="700">Balance</text>
-            <line x1="168" y1="25" x2="200" y2="25" stroke="#333" stroke-width="1"/>
-            <text x="210" y="22" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb">PyG</text>
-            <!-- col headers -->
-            <rect x="0" y="36" width="360" height="18" fill="#e8e8f2"/>
-            <text x="16" y="49" font-family="'Segoe UI',sans-serif" font-size="7" font-weight="600" fill="#aaa">Partida</text>
-            <text x="228" y="49" font-family="'Segoe UI',sans-serif" font-size="7" font-weight="600" fill="#aaa" text-anchor="end">Importe</text>
-            <text x="284" y="49" font-family="'Segoe UI',sans-serif" font-size="7" font-weight="600" fill="#aaa" text-anchor="end">%</text>
-            <text x="348" y="49" font-family="'Segoe UI',sans-serif" font-size="7" font-weight="600" fill="#aaa" text-anchor="end">PY</text>
-            <!-- ACTIVO — y=54, h=24 -->
-            <rect x="0" y="54" width="360" height="24" fill="#f5f5fb"/>
-            <text x="16" y="71" font-family="'Segoe UI',sans-serif" font-size="9" font-weight="700" fill="#222">ACTIVO</text>
-            <text x="228" y="71" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#444" text-anchor="end">4.307.661€</text>
-            <text x="284" y="71" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#999" text-anchor="end">100,00%</text>
-            <text x="348" y="71" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#bbb" text-anchor="end">4.303.957€</text>
-            <!-- A) No Corriente — y=78, h=22 -->
-            <text x="24" y="93" font-family="'Segoe UI',sans-serif" font-size="7.5" font-weight="600" fill="#555">A) Activo No Corriente</text>
-            <text x="228" y="93" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#666" text-anchor="end">934.027€</text>
-            <text x="284" y="93" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#aaa" text-anchor="end">21,68%</text>
-            <text x="348" y="93" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">941.400€</text>
-            <line x1="16" y1="100" x2="344" y2="100" stroke="#eeeeef" stroke-width="0.5"/>
-            <!-- sub1 — y=100, h=20 -->
-            <rect x="0" y="100" width="360" height="20" fill="#fafafc"/>
-            <text x="34" y="114" font-family="'Segoe UI',sans-serif" font-size="7" fill="#888">I. Inmovilizado Intangible</text>
-            <text x="228" y="114" font-family="'Segoe UI',sans-serif" font-size="7" fill="#aaa" text-anchor="end">934,74€</text>
-            <text x="284" y="114" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">0,02%</text>
-            <text x="348" y="114" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">934,74€</text>
-            <!-- sub2 — y=120, h=20 -->
-            <text x="34" y="134" font-family="'Segoe UI',sans-serif" font-size="7" fill="#888">II. Inmovilizado Material</text>
-            <text x="228" y="134" font-family="'Segoe UI',sans-serif" font-size="7" fill="#aaa" text-anchor="end">736.910€</text>
-            <text x="284" y="134" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">17,11%</text>
-            <text x="348" y="134" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">744.284€</text>
-            <!-- B) Corriente — y=140, h=22 -->
-            <rect x="0" y="140" width="360" height="22" fill="#f5f5fb"/>
-            <text x="24" y="155" font-family="'Segoe UI',sans-serif" font-size="7.5" font-weight="600" fill="#555">B) Activo Corriente</text>
-            <text x="228" y="155" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#666" text-anchor="end">3.373.634€</text>
-            <text x="284" y="155" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#aaa" text-anchor="end">78,32%</text>
-            <text x="348" y="155" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">3.362.557€</text>
-            <line x1="16" y1="162" x2="344" y2="162" stroke="#eeeeef" stroke-width="0.5"/>
-            <!-- sub3 — y=162, h=20 -->
-            <rect x="0" y="162" width="360" height="20" fill="#fafafc"/>
-            <text x="34" y="176" font-family="'Segoe UI',sans-serif" font-size="7" fill="#888">III. Deudores comerciales</text>
-            <text x="228" y="176" font-family="'Segoe UI',sans-serif" font-size="7" fill="#aaa" text-anchor="end">1.535.306€</text>
-            <text x="284" y="176" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">35,64%</text>
-            <text x="348" y="176" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">1.481.048€</text>
-            <!-- sub4 — y=182, h=20 -->
-            <text x="34" y="196" font-family="'Segoe UI',sans-serif" font-size="7" fill="#888">VII. Efectivo y equivalentes</text>
-            <text x="228" y="196" font-family="'Segoe UI',sans-serif" font-size="7" fill="#aaa" text-anchor="end">409.007€</text>
-            <text x="284" y="196" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">9,49%</text>
-            <text x="348" y="196" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">452.188€</text>
-            <!-- PASIVO — y=202, h=24 -->
-            <rect x="0" y="202" width="360" height="24" fill="#f5f5fb"/>
-            <text x="16" y="219" font-family="'Segoe UI',sans-serif" font-size="9" font-weight="700" fill="#222">PASIVO</text>
-            <text x="228" y="219" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#444" text-anchor="end">4.307.661€</text>
-            <text x="284" y="219" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#999" text-anchor="end">100,00%</text>
-            <text x="348" y="219" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#bbb" text-anchor="end">4.303.957€</text>
-            <!-- A) Patrimonio — y=226, h=24 -->
-            <text x="24" y="242" font-family="'Segoe UI',sans-serif" font-size="7.5" font-weight="600" fill="#555">A) Patrimonio Neto</text>
-            <text x="228" y="242" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#666" text-anchor="end">2.309.004€</text>
-            <text x="284" y="242" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#aaa" text-anchor="end">53,60%</text>
-            <text x="348" y="242" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">2.352.501€</text>
-            <line x1="16" y1="250" x2="344" y2="250" stroke="#eeeeef" stroke-width="0.5"/>
-            <!-- B) Pasivo No Corriente — y=250, h=24 -->
-            <rect x="0" y="250" width="360" height="24" fill="#fafafc"/>
-            <text x="24" y="266" font-family="'Segoe UI',sans-serif" font-size="7.5" font-weight="600" fill="#555">B) Pasivo No Corriente</text>
-            <text x="228" y="266" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#7a7bff" text-anchor="end">640.033€</text>
-            <text x="284" y="266" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#7a7bff" text-anchor="end">14,86%</text>
-            <text x="348" y="266" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">640.033€</text>
-            <!-- C) Pasivo Corriente — y=274, h=26 -->
-            <rect x="0" y="274" width="360" height="26" fill="#f5f5fb"/>
-            <text x="24" y="291" font-family="'Segoe UI',sans-serif" font-size="7.5" font-weight="600" fill="#555">C) Pasivo Corriente</text>
-            <text x="228" y="291" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#7a7bff" text-anchor="end">1.358.624€</text>
-            <text x="284" y="291" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#7a7bff" text-anchor="end">31,54%</text>
-            <text x="348" y="291" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">1.311.423€</text>
-          </svg>
-        </div>
-        <div class="pc-body">
-          <div class="pc-cat">Finanzas · Reporting</div>
-          <div class="pc-name">La contabilidad que por fin se puede leer sola.</div>
-          <p class="pc-desc">Un balance contable tiene la mala fama de ser lo que solo entiende el controller. Este no.<br><br>Diseñé la estructura para que cualquier directivo navegue el activo, el pasivo y el patrimonio sin necesitar a nadie al lado que se lo traduzca.</p>
-          <div class="pc-foot">
-            <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">Modelado en estrella</span></div>
-            <a href="./proyectos.html" class="pc-link">Ver →</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── CARD 2: Marketing KPIs 2x2 ── -->
-      <div class="proj-card sr sr-d2">
-        <div class="pc-visual">
-          <svg width="100%" viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-            <rect width="360" height="300" fill="#fafafa"/>
-            <text x="20" y="14" font-family="'Segoe UI',sans-serif" font-size="7.5" font-weight="700" fill="#ccc" letter-spacing="1.2">SOCIAL MEDIA · 2025 VS 2024</text>
-
-            <!-- KPI 1: Impresiones -->
-            <rect x="16" y="22" width="328" height="126" rx="12" fill="#fff" stroke="#ecedf4" stroke-width="0.8"/>
-            <rect x="16" y="22" width="4" height="126" rx="2" fill="#7a7bff"/>
-            <text x="32" y="46" font-family="'Segoe UI',sans-serif" font-size="8" font-weight="700" fill="#c0c0d4" letter-spacing="1">IMPRESIONES</text>
-            <text x="32" y="82" font-family="'Segoe UI',sans-serif" font-size="38" font-weight="700" fill="#1a1a2e" letter-spacing="-1">607,9K</text>
-            <text x="32" y="102" font-family="'Segoe UI',sans-serif" font-size="9" fill="#bbb">PY: 696,8K</text>
-            <rect x="32" y="112" width="52" height="18" rx="5" fill="#f0f0f8"/>
-            <text x="58" y="124" font-family="'Segoe UI',sans-serif" font-size="8.5" font-weight="700" fill="#8888bb" text-anchor="middle">↓ −12,8%</text>
-            <line x1="200" y1="34" x2="200" y2="136" stroke="#f0f0f5" stroke-width="0.8"/>
-            <rect x="209" y="102" width="12" height="32" rx="2" fill="#e0e0f0"/>
-            <rect x="226" y="112" width="12" height="22" rx="2" fill="#d4d4ec"/>
-            <rect x="243" y="96" width="12" height="38" rx="2" fill="#c4c4e4"/>
-            <rect x="260" y="106" width="12" height="28" rx="2" fill="#b4b4dc"/>
-            <rect x="277" y="90" width="12" height="44" rx="2" fill="#a4a4d4"/>
-            <rect x="294" y="100" width="12" height="34" rx="2" fill="#9090cc"/>
-            <rect x="311" y="82" width="12" height="52" rx="2" fill="#7878c8"/>
-            <rect x="328" y="72" width="12" height="62" rx="2" fill="#7a7bff"/>
-
-            <!-- KPI 2: Alcance -->
-            <rect x="16" y="160" width="328" height="126" rx="12" fill="#fff" stroke="#ecedf4" stroke-width="0.8"/>
-            <rect x="16" y="160" width="4" height="126" rx="2" fill="#9898c8"/>
-            <text x="32" y="184" font-family="'Segoe UI',sans-serif" font-size="8" font-weight="700" fill="#c0c0d4" letter-spacing="1">ALCANCE</text>
-            <text x="32" y="220" font-family="'Segoe UI',sans-serif" font-size="38" font-weight="700" fill="#1a1a2e" letter-spacing="-1">460,9K</text>
-            <text x="32" y="240" font-family="'Segoe UI',sans-serif" font-size="9" fill="#bbb">PY: 513,0K</text>
-            <rect x="32" y="250" width="52" height="18" rx="5" fill="#f0f0f8"/>
-            <text x="58" y="262" font-family="'Segoe UI',sans-serif" font-size="8.5" font-weight="700" fill="#8888bb" text-anchor="middle">↓ −10,1%</text>
-            <line x1="200" y1="172" x2="200" y2="274" stroke="#f0f0f5" stroke-width="0.8"/>
-            <rect x="209" y="236" width="12" height="32" rx="2" fill="#e0e0f0"/>
-            <rect x="226" y="246" width="12" height="22" rx="2" fill="#d4d4ec"/>
-            <rect x="243" y="230" width="12" height="38" rx="2" fill="#c4c4e4"/>
-            <rect x="260" y="240" width="12" height="28" rx="2" fill="#b4b4dc"/>
-            <rect x="277" y="224" width="12" height="44" rx="2" fill="#a4a4d4"/>
-            <rect x="294" y="234" width="12" height="34" rx="2" fill="#9090cc"/>
-            <rect x="311" y="216" width="12" height="52" rx="2" fill="#7878c8"/>
-            <rect x="328" y="206" width="12" height="62" rx="2" fill="#7a7bff"/>
-          </svg>
-        </div>
-
-        <div class="pc-body">
-          <div class="pc-cat">Marketing · Análisis anual</div>
-          <div class="pc-name">El dashboard que eliminó la reunión de los lunes.</div>
-          <p class="pc-desc">El equipo de marketing pasaba 45 minutos cada semana en una reunión para repasar qué había pasado con las redes. 45 minutos para datos que podían verse en 30 segundos.<br><br>Construí un sistema de seguimiento YoY que consolida alcance, engagement y crecimiento en un espacio donde los datos calan solos. La reunión ya no existe.</p>
-          <div class="pc-foot">
-            <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">Marketing Analytics</span></div>
-            <a href="./proyectos.html" class="pc-link">Ver →</a>
-          </div>
-        </div>
-      </div>
-
+```
+  <!-- ── CARD 0: IBCS Lollipop ── -->
+  <div class="proj-card sr">
+    <div class="pc-visual">
+      <svg width="100%" viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+        <rect width="360" height="300" fill="#fafafa"/>
+        <!-- label — alineado con pc-body (x=30) -->
+        <text x="30" y="36" font-family="'Segoe UI',sans-serif" font-size="8" font-weight="700" fill="#ccc" letter-spacing="1.2">VENTAS · CY VS SPLY · 2024</text>
+        <!-- pills -->
+        <rect x="30" y="48" width="62" height="24" rx="12" fill="#ededff"/>
+        <text x="61" y="64" font-family="'Segoe UI',sans-serif" font-size="10" font-weight="700" fill="#5a5be0" text-anchor="middle">€2,84M</text>
+        <rect x="100" y="48" width="82" height="24" rx="12" fill="#e8f5e7"/>
+        <text x="141" y="64" font-family="'Segoe UI',sans-serif" font-size="10" font-weight="700" fill="#2d7a28" text-anchor="middle">+12,4% YoY</text>
+        <!-- baseline -->
+        <line x1="30" y1="222" x2="330" y2="222" stroke="#e0e0e8" stroke-width="0.8"/>
+        <!-- 6 lollipop pairs: CY filled purple, SPLY outline gray -->
+        <!-- spacing: 6 pairs over 300px width, centered -->
+        <!-- Ene -->
+        <line x1="60"  y1="152" x2="60"  y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
+        <circle cx="60"  cy="152" r="7" fill="#7a7bff"/>
+        <line x1="76"  y1="172" x2="76"  y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
+        <circle cx="76"  cy="172" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
+        <!-- Feb -->
+        <line x1="110" y1="138" x2="110" y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
+        <circle cx="110" cy="138" r="7" fill="#7a7bff"/>
+        <line x1="126" y1="162" x2="126" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
+        <circle cx="126" cy="162" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
+        <!-- Mar -->
+        <line x1="160" y1="162" x2="160" y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
+        <circle cx="160" cy="162" r="7" fill="#7a7bff"/>
+        <line x1="176" y1="150" x2="176" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
+        <circle cx="176" cy="150" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
+        <!-- Abr -->
+        <line x1="210" y1="145" x2="210" y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
+        <circle cx="210" cy="145" r="7" fill="#7a7bff"/>
+        <line x1="226" y1="165" x2="226" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
+        <circle cx="226" cy="165" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
+        <!-- May -->
+        <line x1="260" y1="158" x2="260" y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
+        <circle cx="260" cy="158" r="7" fill="#7a7bff"/>
+        <line x1="276" y1="146" x2="276" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
+        <circle cx="276" cy="146" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
+        <!-- Jun — pico máximo -->
+        <line x1="310" y1="118" x2="310" y2="222" stroke="#9898d8" stroke-width="1.5"/>
+        <circle cx="310" cy="118" r="8" fill="#5a5be0"/>
+        <line x1="326" y1="170" x2="326" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
+        <circle cx="326" cy="170" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
+        <!-- month labels — alineados al centro del par -->
+        <text x="68"  y="238" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Ene</text>
+        <text x="118" y="238" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Feb</text>
+        <text x="168" y="238" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Mar</text>
+        <text x="218" y="238" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Abr</text>
+        <text x="268" y="238" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">May</text>
+        <text x="318" y="238" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Jun</text>
+        <!-- legend -->
+        <circle cx="38"  cy="264" r="5" fill="#7a7bff"/>
+        <text x="48"  y="268" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#b8b8cc">CY 2024</text>
+        <circle cx="118" cy="264" r="5" fill="none" stroke="#cacade" stroke-width="1.8"/>
+        <text x="128" y="268" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#b8b8cc">SPLY 2023</text>
+      </svg>
     </div>
+    <div class="pc-body">
+      <div class="pc-cat">Ventas · Comparativa anual</div>
+      <div class="pc-name">Cuando el dato de ventas dejó de necesitar explicación.</div>
+      <p class="pc-desc">El equipo miraba el mismo Excel en cada reunión de dirección. Los números estaban. La historia, no.<br><br>Diseñé un sistema bajo estándar IBCS donde cualquier persona —sin formación analítica— detecta en 30 segundos si el mes fue mejor o peor que el año pasado. Y por qué. Sin que nadie tenga que explicar nada.</p>
+      <div class="pc-foot">
+        <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">IBCS</span></div>
+        <a href="./proyectos.html" class="pc-link">Ver →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CARD 1: Balance ── -->
+  <div class="proj-card sr sr-d1">
+    <div class="pc-visual">
+      <svg width="100%" viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+        <rect width="360" height="300" fill="#fafafa"/>
+        <!-- nav -->
+        <rect x="0" y="0" width="360" height="36" fill="#f0f0f5"/>
+        <text x="16" y="22" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb">Inicio</text>
+        <text x="52" y="22" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb">Checklist</text>
+        <text x="107" y="22" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb">Balance SyS</text>
+        <text x="168" y="22" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#333" font-weight="700">Balance</text>
+        <line x1="168" y1="25" x2="200" y2="25" stroke="#333" stroke-width="1"/>
+        <text x="210" y="22" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb">PyG</text>
+        <!-- col headers -->
+        <rect x="0" y="36" width="360" height="18" fill="#e8e8f2"/>
+        <text x="16" y="49" font-family="'Segoe UI',sans-serif" font-size="7" font-weight="600" fill="#aaa">Partida</text>
+        <text x="228" y="49" font-family="'Segoe UI',sans-serif" font-size="7" font-weight="600" fill="#aaa" text-anchor="end">Importe</text>
+        <text x="284" y="49" font-family="'Segoe UI',sans-serif" font-size="7" font-weight="600" fill="#aaa" text-anchor="end">%</text>
+        <text x="348" y="49" font-family="'Segoe UI',sans-serif" font-size="7" font-weight="600" fill="#aaa" text-anchor="end">PY</text>
+        <!-- ACTIVO — y=54, h=24 -->
+        <rect x="0" y="54" width="360" height="24" fill="#f5f5fb"/>
+        <text x="16" y="71" font-family="'Segoe UI',sans-serif" font-size="9" font-weight="700" fill="#222">ACTIVO</text>
+        <text x="228" y="71" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#444" text-anchor="end">4.307.661€</text>
+        <text x="284" y="71" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#999" text-anchor="end">100,00%</text>
+        <text x="348" y="71" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#bbb" text-anchor="end">4.303.957€</text>
+        <!-- A) No Corriente — y=78, h=22 -->
+        <text x="24" y="93" font-family="'Segoe UI',sans-serif" font-size="7.5" font-weight="600" fill="#555">A) Activo No Corriente</text>
+        <text x="228" y="93" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#666" text-anchor="end">934.027€</text>
+        <text x="284" y="93" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#aaa" text-anchor="end">21,68%</text>
+        <text x="348" y="93" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">941.400€</text>
+        <line x1="16" y1="100" x2="344" y2="100" stroke="#eeeeef" stroke-width="0.5"/>
+        <!-- sub1 — y=100, h=20 -->
+        <rect x="0" y="100" width="360" height="20" fill="#fafafc"/>
+        <text x="34" y="114" font-family="'Segoe UI',sans-serif" font-size="7" fill="#888">I. Inmovilizado Intangible</text>
+        <text x="228" y="114" font-family="'Segoe UI',sans-serif" font-size="7" fill="#aaa" text-anchor="end">934,74€</text>
+        <text x="284" y="114" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">0,02%</text>
+        <text x="348" y="114" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">934,74€</text>
+        <!-- sub2 — y=120, h=20 -->
+        <text x="34" y="134" font-family="'Segoe UI',sans-serif" font-size="7" fill="#888">II. Inmovilizado Material</text>
+        <text x="228" y="134" font-family="'Segoe UI',sans-serif" font-size="7" fill="#aaa" text-anchor="end">736.910€</text>
+        <text x="284" y="134" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">17,11%</text>
+        <text x="348" y="134" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">744.284€</text>
+        <!-- B) Corriente — y=140, h=22 -->
+        <rect x="0" y="140" width="360" height="22" fill="#f5f5fb"/>
+        <text x="24" y="155" font-family="'Segoe UI',sans-serif" font-size="7.5" font-weight="600" fill="#555">B) Activo Corriente</text>
+        <text x="228" y="155" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#666" text-anchor="end">3.373.634€</text>
+        <text x="284" y="155" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#aaa" text-anchor="end">78,32%</text>
+        <text x="348" y="155" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">3.362.557€</text>
+        <line x1="16" y1="162" x2="344" y2="162" stroke="#eeeeef" stroke-width="0.5"/>
+        <!-- sub3 — y=162, h=20 -->
+        <rect x="0" y="162" width="360" height="20" fill="#fafafc"/>
+        <text x="34" y="176" font-family="'Segoe UI',sans-serif" font-size="7" fill="#888">III. Deudores comerciales</text>
+        <text x="228" y="176" font-family="'Segoe UI',sans-serif" font-size="7" fill="#aaa" text-anchor="end">1.535.306€</text>
+        <text x="284" y="176" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">35,64%</text>
+        <text x="348" y="176" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">1.481.048€</text>
+        <!-- sub4 — y=182, h=20 -->
+        <text x="34" y="196" font-family="'Segoe UI',sans-serif" font-size="7" fill="#888">VII. Efectivo y equivalentes</text>
+        <text x="228" y="196" font-family="'Segoe UI',sans-serif" font-size="7" fill="#aaa" text-anchor="end">409.007€</text>
+        <text x="284" y="196" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">9,49%</text>
+        <text x="348" y="196" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">452.188€</text>
+        <!-- PASIVO — y=202, h=24 -->
+        <rect x="0" y="202" width="360" height="24" fill="#f5f5fb"/>
+        <text x="16" y="219" font-family="'Segoe UI',sans-serif" font-size="9" font-weight="700" fill="#222">PASIVO</text>
+        <text x="228" y="219" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#444" text-anchor="end">4.307.661€</text>
+        <text x="284" y="219" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#999" text-anchor="end">100,00%</text>
+        <text x="348" y="219" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#bbb" text-anchor="end">4.303.957€</text>
+        <!-- A) Patrimonio — y=226, h=24 -->
+        <text x="24" y="242" font-family="'Segoe UI',sans-serif" font-size="7.5" font-weight="600" fill="#555">A) Patrimonio Neto</text>
+        <text x="228" y="242" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#666" text-anchor="end">2.309.004€</text>
+        <text x="284" y="242" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#aaa" text-anchor="end">53,60%</text>
+        <text x="348" y="242" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">2.352.501€</text>
+        <line x1="16" y1="250" x2="344" y2="250" stroke="#eeeeef" stroke-width="0.5"/>
+        <!-- B) Pasivo No Corriente — y=250, h=24 -->
+        <rect x="0" y="250" width="360" height="24" fill="#fafafc"/>
+        <text x="24" y="266" font-family="'Segoe UI',sans-serif" font-size="7.5" font-weight="600" fill="#555">B) Pasivo No Corriente</text>
+        <text x="228" y="266" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#7a7bff" text-anchor="end">640.033€</text>
+        <text x="284" y="266" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#7a7bff" text-anchor="end">14,86%</text>
+        <text x="348" y="266" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">640.033€</text>
+        <!-- C) Pasivo Corriente — y=274, h=26 -->
+        <rect x="0" y="274" width="360" height="26" fill="#f5f5fb"/>
+        <text x="24" y="291" font-family="'Segoe UI',sans-serif" font-size="7.5" font-weight="600" fill="#555">C) Pasivo Corriente</text>
+        <text x="228" y="291" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#7a7bff" text-anchor="end">1.358.624€</text>
+        <text x="284" y="291" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#7a7bff" text-anchor="end">31,54%</text>
+        <text x="348" y="291" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">1.311.423€</text>
+      </svg>
+    </div>
+    <div class="pc-body">
+      <div class="pc-cat">Finanzas · Reporting</div>
+      <div class="pc-name">La contabilidad que por fin se puede leer sola.</div>
+      <p class="pc-desc">Un balance contable tiene la mala fama de ser lo que solo entiende el controller. Este no.<br><br>Diseñé la estructura para que cualquier directivo navegue el activo, el pasivo y el patrimonio sin necesitar a nadie al lado que se lo traduzca.</p>
+      <div class="pc-foot">
+        <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">Modelado en estrella</span></div>
+        <a href="./proyectos.html" class="pc-link">Ver →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CARD 2: Marketing KPIs 2x2 ── -->
+  <div class="proj-card sr sr-d2">
+    <div class="pc-visual">
+      <svg width="100%" viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+        <rect width="360" height="300" fill="#fafafa"/>
+        <text x="20" y="14" font-family="'Segoe UI',sans-serif" font-size="7.5" font-weight="700" fill="#ccc" letter-spacing="1.2">SOCIAL MEDIA · 2025 VS 2024</text>
+
+        <!-- KPI 1: Impresiones -->
+        <rect x="16" y="22" width="328" height="126" rx="12" fill="#fff" stroke="#ecedf4" stroke-width="0.8"/>
+        <rect x="16" y="22" width="4" height="126" rx="2" fill="#7a7bff"/>
+        <text x="32" y="46" font-family="'Segoe UI',sans-serif" font-size="8" font-weight="700" fill="#c0c0d4" letter-spacing="1">IMPRESIONES</text>
+        <text x="32" y="82" font-family="'Segoe UI',sans-serif" font-size="38" font-weight="700" fill="#1a1a2e" letter-spacing="-1">607,9K</text>
+        <text x="32" y="102" font-family="'Segoe UI',sans-serif" font-size="9" fill="#bbb">PY: 696,8K</text>
+        <rect x="32" y="112" width="52" height="18" rx="5" fill="#f0f0f8"/>
+        <text x="58" y="124" font-family="'Segoe UI',sans-serif" font-size="8.5" font-weight="700" fill="#8888bb" text-anchor="middle">↓ −12,8%</text>
+        <line x1="200" y1="34" x2="200" y2="136" stroke="#f0f0f5" stroke-width="0.8"/>
+        <rect x="209" y="102" width="12" height="32" rx="2" fill="#e0e0f0"/>
+        <rect x="226" y="112" width="12" height="22" rx="2" fill="#d4d4ec"/>
+        <rect x="243" y="96" width="12" height="38" rx="2" fill="#c4c4e4"/>
+        <rect x="260" y="106" width="12" height="28" rx="2" fill="#b4b4dc"/>
+        <rect x="277" y="90" width="12" height="44" rx="2" fill="#a4a4d4"/>
+        <rect x="294" y="100" width="12" height="34" rx="2" fill="#9090cc"/>
+        <rect x="311" y="82" width="12" height="52" rx="2" fill="#7878c8"/>
+        <rect x="328" y="72" width="12" height="62" rx="2" fill="#7a7bff"/>
+
+        <!-- KPI 2: Alcance -->
+        <rect x="16" y="160" width="328" height="126" rx="12" fill="#fff" stroke="#ecedf4" stroke-width="0.8"/>
+        <rect x="16" y="160" width="4" height="126" rx="2" fill="#9898c8"/>
+        <text x="32" y="184" font-family="'Segoe UI',sans-serif" font-size="8" font-weight="700" fill="#c0c0d4" letter-spacing="1">ALCANCE</text>
+        <text x="32" y="220" font-family="'Segoe UI',sans-serif" font-size="38" font-weight="700" fill="#1a1a2e" letter-spacing="-1">460,9K</text>
+        <text x="32" y="240" font-family="'Segoe UI',sans-serif" font-size="9" fill="#bbb">PY: 513,0K</text>
+        <rect x="32" y="250" width="52" height="18" rx="5" fill="#f0f0f8"/>
+        <text x="58" y="262" font-family="'Segoe UI',sans-serif" font-size="8.5" font-weight="700" fill="#8888bb" text-anchor="middle">↓ −10,1%</text>
+        <line x1="200" y1="172" x2="200" y2="274" stroke="#f0f0f5" stroke-width="0.8"/>
+        <rect x="209" y="236" width="12" height="32" rx="2" fill="#e0e0f0"/>
+        <rect x="226" y="246" width="12" height="22" rx="2" fill="#d4d4ec"/>
+        <rect x="243" y="230" width="12" height="38" rx="2" fill="#c4c4e4"/>
+        <rect x="260" y="240" width="12" height="28" rx="2" fill="#b4b4dc"/>
+        <rect x="277" y="224" width="12" height="44" rx="2" fill="#a4a4d4"/>
+        <rect x="294" y="234" width="12" height="34" rx="2" fill="#9090cc"/>
+        <rect x="311" y="216" width="12" height="52" rx="2" fill="#7878c8"/>
+        <rect x="328" y="206" width="12" height="62" rx="2" fill="#7a7bff"/>
+      </svg>
+    </div>
+
+    <div class="pc-body">
+      <div class="pc-cat">Marketing · Análisis anual</div>
+      <div class="pc-name">El dashboard que eliminó la reunión de los lunes.</div>
+      <p class="pc-desc">El equipo de marketing pasaba 45 minutos cada semana en una reunión para repasar qué había pasado con las redes. 45 minutos para datos que podían verse en 30 segundos.<br><br>Construí un sistema de seguimiento YoY que consolida alcance, engagement y crecimiento en un espacio donde los datos calan solos. La reunión ya no existe.</p>
+      <div class="pc-foot">
+        <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">Marketing Analytics</span></div>
+        <a href="./proyectos.html" class="pc-link">Ver →</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+```
+
   </div>
   <div class="proj-more sr">
     <a href="./proyectos.html" class="btn btn-outline">Ver todos los proyectos →</a>
@@ -3453,243 +3935,278 @@ footer {
 </section>
 
 <!-- ─── PROYECTO ESTRELLA — dos columnas ─── -->
+
 <section class="star-section" id="star">
   <div class="star-wrap">
     <div class="star-inner sr">
 
-      <!-- LEFT: texto editorial -->
-      <div class="star-text">
-        <div class="star-text-meta">
-          <div class="star-tag">Proyecto destacado</div>
-          <div class="star-head-num">01 / 01</div>
-        </div>
-
-        <h2 class="star-title">PBI Mockup<br>Creator.</h2>
-        <p class="star-lead">Una herramienta para diseñar el dashboard <em>antes</em> de tocar Power BI. Porque el problema casi nunca es el dato — es la pregunta que no se hizo a tiempo.</p>
-
-        <div class="star-blocks">
-          <div class="star-blk">
-            <div class="star-blk-num">01</div>
-            <h3 class="star-blk-title">Por qué existe</h3>
-            <p>Construí mi primer dashboard a cliente sin saber qué quería decidir con él. El modelo era correcto. La estructura funcionaba. Pero cuando llegó a sus manos, los datos no eran los que necesitaba. No era un problema de datos — era un problema de preguntas.</p>
-          </div>
-          <div class="star-blk">
-            <div class="star-blk-num">02</div>
-            <h3 class="star-blk-title">Qué tiene de diferente</h3>
-            <p>No trabaja con datos. Trabaja con preguntas. ¿Qué tiene que decidir quien va a mirar esto? ¿Qué es lo más importante que tiene que ver primero? ¿Qué sobra? Ahí es exactamente donde nace el edificio inhabitado.</p>
-          </div>
-          <div class="star-blk">
-            <div class="star-blk-num">03</div>
-            <h3 class="star-blk-title">Cómo la uso</h3>
-            <p>Primero defino el layout y la jerarquía del dashboard — qué lidera, qué acompaña, qué sobra. Cuando el espacio tiene sentido sin datos, paso a construirlo. El gráfico siempre es lo último.</p>
-          </div>
-        </div>
-
-        <div class="star-pull">
-          <div class="star-pull-quote">«&nbsp;Ningún arquitecto pone el primer ladrillo sin haber hecho el plano.&nbsp;»</div>
-          <div class="star-pull-tags">
-            <span class="pc-pill">Power BI</span>
-            <span class="pc-pill">Claude</span>
-            <span class="pc-pill">Data Storytelling</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- RIGHT: herramienta -->
-      <div class="star-stage">
-        <div class="star-browser">
-          <div class="star-browser-bar">
-            <div class="star-browser-dots">
-              <span></span><span></span><span></span>
-            </div>
-            <div class="star-browser-url">borjamome.github.io/powerbi-mockup</div>
-            <div class="star-browser-meta">
-              <span class="star-browser-live"><span class="sb-dot"></span>LIVE</span>
-            </div>
-          </div>
-          <div class="star-browser-content">
-            <iframe
-              src="https://borjamome.github.io/powerbi-mockup/"
-              title="PBI Mockup Creator"
-              loading="lazy"
-              scrolling="no"
-              tabindex="-1"
-              sandbox="allow-scripts allow-same-origin"
-            ></iframe>
-            <div class="iframe-overlay"></div>
-          </div>
-        </div>
-
-        <a href="https://borjamome.github.io/powerbi-mockup/" target="_blank" rel="noopener noreferrer" class="star-float-cta">
-          <span class="sfc-label">Abrir herramienta</span>
-          <span class="sfc-arrow">→</span>
-        </a>
-      </div>
-
+```
+  <!-- LEFT: texto editorial -->
+  <div class="star-text">
+    <div class="star-text-meta">
+      <div class="star-tag">Proyecto destacado</div>
+      <div class="star-head-num">01 / 01</div>
     </div>
+
+    <!-- CRÍTICO 3: H2 correcto — establece jerarquía para los H3 que siguen (WCAG 1.3.1) -->
+    <h2 class="star-title">PBI Mockup<br>Creator.</h2>
+    <p class="star-lead">Una herramienta para diseñar el dashboard <em>antes</em> de tocar Power BI. Porque el problema casi nunca es el dato — es la pregunta que no se hizo a tiempo.</p>
+
+    <div class="star-blocks">
+      <div class="star-blk">
+        <div class="star-blk-num">01</div>
+        <h3 class="star-blk-title">Por qué existe</h3>
+        <p>Construí mi primer dashboard a cliente sin saber qué quería decidir con él. El modelo era correcto. La estructura funcionaba. Pero cuando llegó a sus manos, los datos no eran los que necesitaba. No era un problema de datos — era un problema de preguntas.</p>
+      </div>
+      <div class="star-blk">
+        <div class="star-blk-num">02</div>
+        <h3 class="star-blk-title">Qué tiene de diferente</h3>
+        <p>No trabaja con datos. Trabaja con preguntas. ¿Qué tiene que decidir quien va a mirar esto? ¿Qué es lo más importante que tiene que ver primero? ¿Qué sobra? Ahí es exactamente donde nace el edificio inhabitado.</p>
+      </div>
+      <div class="star-blk">
+        <div class="star-blk-num">03</div>
+        <h3 class="star-blk-title">Cómo la uso</h3>
+        <p>Primero defino el layout y la jerarquía del dashboard — qué lidera, qué acompaña, qué sobra. Cuando el espacio tiene sentido sin datos, paso a construirlo. El gráfico siempre es lo último.</p>
+      </div>
+    </div>
+
+    <div class="star-pull">
+      <div class="star-pull-quote">«&nbsp;Ningún arquitecto pone el primer ladrillo sin haber hecho el plano.&nbsp;»</div>
+      <div class="star-pull-tags">
+        <span class="pc-pill">Power BI</span>
+        <span class="pc-pill">Claude</span>
+        <span class="pc-pill">Data Storytelling</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: herramienta -->
+  <div class="star-stage">
+    <div class="star-browser">
+      <div class="star-browser-bar">
+        <div class="star-browser-dots">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="star-browser-url">borjamome.github.io/powerbi-mockup</div>
+        <div class="star-browser-meta">
+          <span class="star-browser-live"><span class="sb-dot"></span>LIVE</span>
+        </div>
+      </div>
+      <div class="star-browser-content">
+        <!-- Skeleton de carga -->
+        <div class="iframe-skeleton" id="iframeSkeleton" aria-hidden="true">
+          <div class="iframe-skel-bar" style="height:14px;width:55%"></div>
+          <div class="iframe-skel-bar" style="height:80px;width:100%"></div>
+          <div class="iframe-skel-bar" style="height:14px;width:40%"></div>
+          <div class="iframe-skel-bar" style="height:120px;width:100%"></div>
+          <div class="iframe-skel-bar" style="height:14px;width:60%"></div>
+          <div class="iframe-skel-bar" style="height:60px;width:100%"></div>
+        </div>
+        <!-- Estado de error -->
+        <div class="iframe-error" id="iframeError" role="alert" aria-live="polite">
+          <div class="iframe-error-icon">⚠</div>
+          <p class="iframe-error-text">No se pudo cargar la herramienta.<br>Ábrela directamente.</p>
+          <a href="https://borjamome.github.io/powerbi-mockup/" target="_blank" rel="noopener noreferrer" class="iframe-error-link">Abrir PBI Mockup Creator →</a>
+        </div>
+        <iframe
+          id="starIframe"
+          src="https://borjamome.github.io/powerbi-mockup/"
+          title="PBI Mockup Creator"
+          loading="lazy"
+          scrolling="no"
+          tabindex="-1"
+          sandbox="allow-scripts allow-same-origin"
+        ></iframe>
+        <!-- CRÍTICO 4: overlay como enlace accesible con tooltip de affordance -->
+        <a
+          href="https://borjamome.github.io/powerbi-mockup/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="iframe-overlay"
+          aria-label="Abrir PBI Mockup Creator en nueva pestaña"
+        ></a>
+      </div>
+    </div>
+
+    <a href="https://borjamome.github.io/powerbi-mockup/" target="_blank" rel="noopener noreferrer" class="star-float-cta">
+      <span class="sfc-label">Abrir herramienta</span>
+      <span class="sfc-arrow">→</span>
+    </a>
+  </div>
+
+</div>
+```
+
   </div>
 </section>
 
 <!-- ─── DATA PHILOSOPHY · DECISION ENGINE ─── -->
+
 <section class="dph-section" id="approach">
   <div class="c">
 
-    <!-- Header centrado -->
-    <div class="dph-header sr">
-      <div class="s-tag">Cómo trabajo</div>
-      <h2 class="s-h">Cuatro pasos para<br><em>decidir mejor.</em></h2>
-      <p class="s-sub">La mayoría de los dashboards empiezan por la herramienta. El mío empieza por la pregunta.</p>
-    </div>
+```
+<!-- Header centrado -->
+<div class="dph-header sr">
+  <div class="s-tag">Cómo trabajo</div>
+  <h2 class="s-h">Cuatro pasos para<br><em>decidir mejor.</em></h2>
+  <p class="s-sub">La mayoría de los dashboards empiezan por la herramienta. El mío empieza por la pregunta.</p>
+</div>
+```
 
   </div>
 
   <!-- Track exterior: da el "recorrido" de scroll -->
+
   <div class="de-track" id="deTrack">
     <!-- Stage sticky: contiene el pipeline + grid pegados en pantalla -->
     <div class="de-stage">
       <div class="c">
 
-        <!-- Pipeline con luz que viaja -->
-        <div class="de-pipeline-wrap">
-          <div class="de-pipeline">
-            <div class="de-pipeline-track-bg"></div>
-            <div class="de-pipeline-track" id="dePipeTrack"></div>
-            <div class="de-pipeline-light" id="dePipeLight"></div>
+```
+    <!-- Pipeline con luz que viaja -->
+    <div class="de-pipeline-wrap">
+      <div class="de-pipeline">
+        <div class="de-pipeline-track-bg"></div>
+        <div class="de-pipeline-track" id="dePipeTrack"></div>
+        <div class="de-pipeline-light" id="dePipeLight"></div>
 
-            <span class="de-pill de-pill--start">PREGUNTA</span>
+        <span class="de-pill de-pill--start">PREGUNTA</span>
 
-            <div class="de-st" data-i="0">
-              <div class="de-dot">✦</div>
-              <div class="de-lbl">Negocio</div>
-            </div>
-            <div class="de-st" data-i="1">
-              <div class="de-dot">▦</div>
-              <div class="de-lbl">Power Query</div>
-            </div>
-            <div class="de-st" data-i="2">
-              <div class="de-dot">◈</div>
-              <div class="de-lbl">DAX</div>
-            </div>
-            <div class="de-st" data-i="3">
-              <div class="de-dot">⬡</div>
-              <div class="de-lbl">Storytelling</div>
-            </div>
-
-            <span class="de-pill de-pill--end">DECISIÓN</span>
-          </div>
+        <div class="de-st" data-i="0">
+          <div class="de-dot">✦</div>
+          <div class="de-lbl">Negocio</div>
+        </div>
+        <div class="de-st" data-i="1">
+          <div class="de-dot">▦</div>
+          <div class="de-lbl">Power Query</div>
+        </div>
+        <div class="de-st" data-i="2">
+          <div class="de-dot">◈</div>
+          <div class="de-lbl">DAX</div>
+        </div>
+        <div class="de-st" data-i="3">
+          <div class="de-dot">⬡</div>
+          <div class="de-lbl">Storytelling</div>
         </div>
 
-        <!-- 4 paneles -->
-        <div class="de-grid" id="deGrid">
+        <span class="de-pill de-pill--end">DECISIÓN</span>
+      </div>
+    </div>
 
-          <!-- PASO 01 -->
-          <div class="de-pnl" data-i="0">
-            <div class="de-pnl-collapsed">
-              <div class="de-pnl-num-c">01</div>
-              <div class="de-pnl-name-c">Entender el negocio</div>
-            </div>
-            <div class="de-pnl-full">
-              <div class="de-pnl-text">
-                <div class="de-pnl-eb">PASO 01 / 04</div>
-                <div class="de-pnl-h">Estudiar el terreno.</div>
-                <div class="de-pnl-sub">Antes de tocar un solo dato.</div>
-                <div class="de-pnl-rule"></div>
-                <div class="de-pnl-body">Qué hay que decidir, quién lo decide y qué necesita ver para decidirlo. Si la respuesta es vaga, el dashboard también lo será. Esta conversación es el cimiento de todo lo que viene después.</div>
-                <div class="de-pnl-quote"><span class="de-pnl-q-mark">❝</span> Primero la decisión, después el gráfico. <span class="de-pnl-q-mark">❞</span></div>
-              </div>
-              <div class="de-ev">
-                <div class="de-ev-label">Preguntas que abren un proyecto</div>
-                <div class="de-ev-questions">
-                  <div class="de-ev-q"><div class="de-ev-q-dot"></div><div class="de-ev-q-txt">¿Qué campañas están convirtiendo de verdad y cuáles solo gastan?</div></div>
-                  <div class="de-ev-q"><div class="de-ev-q-dot"></div><div class="de-ev-q-txt">¿Dónde se nos escapa el margen entre lo presupuestado y lo real?</div></div>
-                  <div class="de-ev-q"><div class="de-ev-q-dot"></div><div class="de-ev-q-txt">¿Qué decisión necesitas tomar el lunes con estos datos?</div></div>
-                </div>
-              </div>
+    <!-- 4 paneles -->
+    <div class="de-grid" id="deGrid">
+
+      <!-- PASO 01 -->
+      <div class="de-pnl" data-i="0">
+        <div class="de-pnl-collapsed">
+          <div class="de-pnl-num-c">01</div>
+          <div class="de-pnl-name-c">Entender el negocio</div>
+        </div>
+        <div class="de-pnl-full">
+          <div class="de-pnl-text">
+            <div class="de-pnl-eb">PASO 01 / 04</div>
+            <div class="de-pnl-h">Estudiar el terreno.</div>
+            <div class="de-pnl-sub">Antes de tocar un solo dato.</div>
+            <div class="de-pnl-rule"></div>
+            <div class="de-pnl-body">Qué hay que decidir, quién lo decide y qué necesita ver para decidirlo. Si la respuesta es vaga, el dashboard también lo será. Esta conversación es el cimiento de todo lo que viene después.</div>
+            <div class="de-pnl-quote"><span class="de-pnl-q-mark">❝</span> Primero la decisión, después el gráfico. <span class="de-pnl-q-mark">❞</span></div>
+          </div>
+          <div class="de-ev">
+            <div class="de-ev-label">Preguntas que abren un proyecto</div>
+            <div class="de-ev-questions">
+              <div class="de-ev-q"><div class="de-ev-q-dot"></div><div class="de-ev-q-txt">¿Qué campañas están convirtiendo de verdad y cuáles solo gastan?</div></div>
+              <div class="de-ev-q"><div class="de-ev-q-dot"></div><div class="de-ev-q-txt">¿Dónde se nos escapa el margen entre lo presupuestado y lo real?</div></div>
+              <div class="de-ev-q"><div class="de-ev-q-dot"></div><div class="de-ev-q-txt">¿Qué decisión necesitas tomar el lunes con estos datos?</div></div>
             </div>
           </div>
+        </div>
+      </div>
 
-          <!-- PASO 02 -->
-          <div class="de-pnl" data-i="1">
-            <div class="de-pnl-collapsed">
-              <div class="de-pnl-num-c">02</div>
-              <div class="de-pnl-name-c">Power Query</div>
+      <!-- PASO 02 -->
+      <div class="de-pnl" data-i="1">
+        <div class="de-pnl-collapsed">
+          <div class="de-pnl-num-c">02</div>
+          <div class="de-pnl-name-c">Power Query</div>
+        </div>
+        <div class="de-pnl-full">
+          <div class="de-pnl-text">
+            <div class="de-pnl-eb">PASO 02 / 04</div>
+            <div class="de-pnl-h">Sanear el solar.</div>
+            <div class="de-pnl-sub">Los datos raramente llegan limpios.</div>
+            <div class="de-pnl-rule"></div>
+            <div class="de-pnl-body">Conectar las fuentes, casar lo que no casa, decidir qué se ignora. Es la fase más larga y la menos visible. Invisible para quien recibe el dashboard — y la que hace que todo lo que viene después no se mueva.</div>
+            <div class="de-pnl-quote"><span class="de-pnl-q-mark">❝</span> Los cimientos antes que la fachada. <span class="de-pnl-q-mark">❞</span></div>
+          </div>
+          <div class="de-ev">
+            <div class="de-ev-label">De los datos al modelo</div>
+            <div class="de-ev-flow">
+              <div class="de-ev-flow-step de-ev-flow-step--chaos" aria-label="Datos en bruto, sin estructura">
+                <div class="de-ev-flow-rows">
+                  <div class="de-ev-flow-row" style="width:78%"><span style="width:24%"></span><span style="width:46%"></span><span style="width:18%"></span></div>
+                  <div class="de-ev-flow-row" style="width:62%"><span style="width:18%"></span><span style="width:30%"></span></div>
+                  <div class="de-ev-flow-row" style="width:88%"><span style="width:32%"></span><span style="width:22%"></span><span style="width:28%"></span></div>
+                  <div class="de-ev-flow-row" style="width:54%"><span style="width:38%"></span></div>
+                  <div class="de-ev-flow-row" style="width:74%"><span style="width:20%"></span><span style="width:48%"></span></div>
+                </div>
+                <div class="de-ev-flow-cap">En bruto</div>
+              </div>
+
+              <div class="de-ev-flow-arrow">→</div>
+
+              <div class="de-ev-flow-step de-ev-flow-step--clean" aria-label="Datos limpios y estructurados">
+                <div class="de-ev-flow-grid">
+                  <span></span><span></span><span></span>
+                  <span></span><span></span><span></span>
+                  <span></span><span></span><span></span>
+                  <span></span><span></span><span></span>
+                </div>
+                <div class="de-ev-flow-cap">Orden</div>
+              </div>
+
+              <div class="de-ev-flow-arrow">→</div>
+
+              <div class="de-ev-flow-step de-ev-flow-step--model" aria-label="Tablas relacionadas en un modelo">
+                <div class="de-ev-flow-model">
+                  <div class="de-ev-flow-tbl de-ev-flow-tbl--a"></div>
+                  <div class="de-ev-flow-tbl de-ev-flow-tbl--b"></div>
+                  <div class="de-ev-flow-tbl de-ev-flow-tbl--c"></div>
+                  <svg class="de-ev-flow-links" viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true">
+                    <path d="M30 18 L 50 32" />
+                    <path d="M70 18 L 50 32" />
+                    <path d="M50 32 L 50 50" />
+                  </svg>
+                </div>
+                <div class="de-ev-flow-cap">Modelo</div>
+              </div>
             </div>
-            <div class="de-pnl-full">
-              <div class="de-pnl-text">
-                <div class="de-pnl-eb">PASO 02 / 04</div>
-                <div class="de-pnl-h">Sanear el solar.</div>
-                <div class="de-pnl-sub">Los datos raramente llegan limpios.</div>
-                <div class="de-pnl-rule"></div>
-                <div class="de-pnl-body">Conectar las fuentes, casar lo que no casa, decidir qué se ignora. Es la fase más larga y la menos visible. Invisible para quien recibe el dashboard — y la que hace que todo lo que viene después no se mueva.</div>
-                <div class="de-pnl-quote"><span class="de-pnl-q-mark">❝</span> Los cimientos antes que la fachada. <span class="de-pnl-q-mark">❞</span></div>
-              </div>
-              <div class="de-ev">
-                <div class="de-ev-label">De los datos al modelo</div>
-                <div class="de-ev-flow">
-                  <div class="de-ev-flow-step de-ev-flow-step--chaos" aria-label="Datos en bruto, sin estructura">
-                    <div class="de-ev-flow-rows">
-                      <div class="de-ev-flow-row" style="width:78%"><span style="width:24%"></span><span style="width:46%"></span><span style="width:18%"></span></div>
-                      <div class="de-ev-flow-row" style="width:62%"><span style="width:18%"></span><span style="width:30%"></span></div>
-                      <div class="de-ev-flow-row" style="width:88%"><span style="width:32%"></span><span style="width:22%"></span><span style="width:28%"></span></div>
-                      <div class="de-ev-flow-row" style="width:54%"><span style="width:38%"></span></div>
-                      <div class="de-ev-flow-row" style="width:74%"><span style="width:20%"></span><span style="width:48%"></span></div>
-                    </div>
-                    <div class="de-ev-flow-cap">En bruto</div>
-                  </div>
-
-                  <div class="de-ev-flow-arrow">→</div>
-
-                  <div class="de-ev-flow-step de-ev-flow-step--clean" aria-label="Datos limpios y estructurados">
-                    <div class="de-ev-flow-grid">
-                      <span></span><span></span><span></span>
-                      <span></span><span></span><span></span>
-                      <span></span><span></span><span></span>
-                      <span></span><span></span><span></span>
-                    </div>
-                    <div class="de-ev-flow-cap">Orden</div>
-                  </div>
-
-                  <div class="de-ev-flow-arrow">→</div>
-
-                  <div class="de-ev-flow-step de-ev-flow-step--model" aria-label="Tablas relacionadas en un modelo">
-                    <div class="de-ev-flow-model">
-                      <div class="de-ev-flow-tbl de-ev-flow-tbl--a"></div>
-                      <div class="de-ev-flow-tbl de-ev-flow-tbl--b"></div>
-                      <div class="de-ev-flow-tbl de-ev-flow-tbl--c"></div>
-                      <svg class="de-ev-flow-links" viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true">
-                        <path d="M30 18 L 50 32" />
-                        <path d="M70 18 L 50 32" />
-                        <path d="M50 32 L 50 50" />
-                      </svg>
-                    </div>
-                    <div class="de-ev-flow-cap">Modelo</div>
-                  </div>
-                </div>
-                <div class="de-ev-stat">
-                  <div class="de-ev-stat-num">60%</div>
-                  <div class="de-ev-stat-lbl">del tiempo de un proyecto típico vive aquí</div>
-                </div>
-              </div>
+            <div class="de-ev-stat">
+              <div class="de-ev-stat-num">60%</div>
+              <div class="de-ev-stat-lbl">del tiempo de un proyecto típico vive aquí</div>
             </div>
           </div>
+        </div>
+      </div>
 
-          <!-- PASO 03 -->
-          <div class="de-pnl" data-i="2">
-            <div class="de-pnl-collapsed">
-              <div class="de-pnl-num-c">03</div>
-              <div class="de-pnl-name-c">DAX</div>
-            </div>
-            <div class="de-pnl-full">
-              <div class="de-pnl-text">
-                <div class="de-pnl-eb">PASO 03 / 04</div>
-                <div class="de-pnl-h">Los cimientos.</div>
-                <div class="de-pnl-sub">La parte que nadie ve.</div>
-                <div class="de-pnl-rule"></div>
-                <div class="de-pnl-body">Aquí se traduce lo que el negocio quiere saber a un lenguaje que el modelo entiende. Cada medida es una pregunta resuelta. Y cada error en una medida se propaga a cada gráfico que la usa. Se escribe con cuidado porque es lo que determina si el edificio aguanta o se cae a la primera pregunta real.</div>
-                <div class="de-pnl-quote"><span class="de-pnl-q-mark">❝</span> Las medidas son el motor del análisis. <span class="de-pnl-q-mark">❞</span></div>
-              </div>
-              <div class="de-ev">
-                <div class="de-ev-label">Una medida real</div>
+      <!-- PASO 03 -->
+      <div class="de-pnl" data-i="2">
+        <div class="de-pnl-collapsed">
+          <div class="de-pnl-num-c">03</div>
+          <div class="de-pnl-name-c">DAX</div>
+        </div>
+        <div class="de-pnl-full">
+          <div class="de-pnl-text">
+            <div class="de-pnl-eb">PASO 03 / 04</div>
+            <div class="de-pnl-h">Los cimientos.</div>
+            <div class="de-pnl-sub">La parte que nadie ve.</div>
+            <div class="de-pnl-rule"></div>
+            <div class="de-pnl-body">Aquí se traduce lo que el negocio quiere saber a un lenguaje que el modelo entiende. Cada medida es una pregunta resuelta. Y cada error en una medida se propaga a cada gráfico que la usa. Se escribe con cuidado porque es lo que determina si el edificio aguanta o se cae a la primera pregunta real.</div>
+            <div class="de-pnl-quote"><span class="de-pnl-q-mark">❝</span> Las medidas son el motor del análisis. <span class="de-pnl-q-mark">❞</span></div>
+          </div>
+          <div class="de-ev">
+            <div class="de-ev-label">Una medida real</div>
+```
+
 <pre class="de-ev-code"><span class="c">// % Margen vs. año anterior</span>
 <span class="v">Margen YoY %</span> <span class="p">=</span>
 <span class="k">VAR</span> <span class="v">_actual</span> <span class="p">=</span> <span class="r">[Margen %]</span>
@@ -3698,97 +4215,102 @@ footer {
         <span class="f">SAMEPERIODLASTYEAR</span><span class="p">(</span> <span class="r">'Calendario'[Fecha]</span> <span class="p">) )</span>
 <span class="k">RETURN</span>
     <span class="f">DIVIDE</span><span class="p">(</span> <span class="v">_actual</span> <span class="p">-</span> <span class="v">_anterior</span><span class="p">,</span> <span class="v">_anterior</span> <span class="p">)</span></pre>
-              </div>
-            </div>
+
+```
           </div>
-
-          <!-- PASO 04 -->
-          <div class="de-pnl" data-i="3">
-            <div class="de-pnl-collapsed">
-              <div class="de-pnl-num-c">04</div>
-              <div class="de-pnl-name-c">Storytelling + UX</div>
-            </div>
-            <div class="de-pnl-full">
-              <div class="de-pnl-text">
-                <div class="de-pnl-eb">PASO 04 / 04</div>
-                <div class="de-pnl-h">El espacio habitable.</div>
-                <div class="de-pnl-sub">El momento en que el dato deja de ser técnico.</div>
-                <div class="de-pnl-rule"></div>
-                <div class="de-pnl-body">Mismos datos, dos dashboards distintos: uno te hace mirar diez cosas, el otro te hace mirar una. La diferencia no es estética, es jerarquía. Un dashboard bien construido guía. No necesita que el analista esté en la sala explicándolo.</div>
-                <div class="de-pnl-quote"><span class="de-pnl-q-mark">❝</span> Cada gráfico tiene un motivo. <span class="de-pnl-q-mark">❞</span></div>
-              </div>
-              <div class="de-ev">
-                <div class="de-ev-label">El mismo dato, dos lecturas</div>
-                <div class="de-ev-ibcs">
-
-                  <div class="de-ev-ibcs-chart de-ev-ibcs-chart--noise">
-                    <div class="de-ev-ibcs-title">VENTAS POR REGIÓN</div>
-                    <div class="de-ev-ibcs-bars">
-                      <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:55%; background:#5a8def"></div><div class="de-ev-ibcs-lbl">N</div></div>
-                      <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:72%; background:#3cb371"></div><div class="de-ev-ibcs-lbl">S</div></div>
-                      <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:88%; background:#e06b6b"></div><div class="de-ev-ibcs-lbl">E</div></div>
-                      <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:42%; background:#f0c040"></div><div class="de-ev-ibcs-lbl">O</div></div>
-                      <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:60%; background:#a86bd1"></div><div class="de-ev-ibcs-lbl">C</div></div>
-                    </div>
-                    <div class="de-ev-ibcs-tag de-ev-ibcs-tag--noise">RUIDO</div>
-                  </div>
-
-                  <div class="de-ev-ibcs-arrow">→</div>
-
-                  <div class="de-ev-ibcs-chart de-ev-ibcs-chart--clear">
-                    <div class="de-ev-ibcs-title">VENTAS POR REGIÓN</div>
-                    <div class="de-ev-ibcs-bars">
-                      <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:55%"></div><div class="de-ev-ibcs-lbl">N</div></div>
-                      <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:72%"></div><div class="de-ev-ibcs-lbl">S</div></div>
-                      <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar de-ev-ibcs-bar--hl" style="height:88%"></div><div class="de-ev-ibcs-lbl">E</div></div>
-                      <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:42%"></div><div class="de-ev-ibcs-lbl">O</div></div>
-                      <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:60%"></div><div class="de-ev-ibcs-lbl">C</div></div>
-                    </div>
-                    <div class="de-ev-ibcs-tag de-ev-ibcs-tag--clear">CLARIDAD</div>
-                  </div>
-
-                </div>
-                <div class="de-ev-stat">
-                  <div class="de-ev-stat-num">3s</div>
-                  <div class="de-ev-stat-lbl">para localizar la respuesta principal</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
         </div>
+      </div>
 
-        <!-- Card del acta — solo visible cuando se llega al final del recorrido -->
-        <div class="de-acta-card" id="deActaCard" aria-hidden="true">
-          <div class="de-acta-card-inner">
-            <div class="de-acta-eb">ACTA DE DECISIÓN</div>
-            <div class="de-acta-meta">
-              <span class="de-acta-meta-title">Comité comercial</span>
-              <span class="de-acta-meta-sep">·</span>
-              <span class="de-acta-meta-date" id="deActaDate">Lun. 4 may.</span>
-              <span class="de-acta-meta-sep">·</span>
-              <span class="de-acta-meta-time" id="deActaTime">11:32</span>
+      <!-- PASO 04 -->
+      <div class="de-pnl" data-i="3">
+        <div class="de-pnl-collapsed">
+          <div class="de-pnl-num-c">04</div>
+          <div class="de-pnl-name-c">Storytelling + UX</div>
+        </div>
+        <div class="de-pnl-full">
+          <div class="de-pnl-text">
+            <div class="de-pnl-eb">PASO 04 / 04</div>
+            <div class="de-pnl-h">El espacio habitable.</div>
+            <div class="de-pnl-sub">El momento en que el dato deja de ser técnico.</div>
+            <div class="de-pnl-rule"></div>
+            <div class="de-pnl-body">Mismos datos, dos dashboards distintos: uno te hace mirar diez cosas, el otro te hace mirar una. La diferencia no es estética, es jerarquía. Un dashboard bien construido guía. No necesita que el analista esté en la sala explicándolo.</div>
+            <div class="de-pnl-quote"><span class="de-pnl-q-mark">❝</span> Cada gráfico tiene un motivo. <span class="de-pnl-q-mark">❞</span></div>
+          </div>
+          <div class="de-ev">
+            <div class="de-ev-label">El mismo dato, dos lecturas</div>
+            <div class="de-ev-ibcs">
+
+              <div class="de-ev-ibcs-chart de-ev-ibcs-chart--noise">
+                <div class="de-ev-ibcs-title">VENTAS POR REGIÓN</div>
+                <div class="de-ev-ibcs-bars">
+                  <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:55%; background:#5a8def"></div><div class="de-ev-ibcs-lbl">N</div></div>
+                  <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:72%; background:#3cb371"></div><div class="de-ev-ibcs-lbl">S</div></div>
+                  <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:88%; background:#e06b6b"></div><div class="de-ev-ibcs-lbl">E</div></div>
+                  <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:42%; background:#f0c040"></div><div class="de-ev-ibcs-lbl">O</div></div>
+                  <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:60%; background:#a86bd1"></div><div class="de-ev-ibcs-lbl">C</div></div>
+                </div>
+                <div class="de-ev-ibcs-tag de-ev-ibcs-tag--noise">RUIDO</div>
+              </div>
+
+              <div class="de-ev-ibcs-arrow">→</div>
+
+              <div class="de-ev-ibcs-chart de-ev-ibcs-chart--clear">
+                <div class="de-ev-ibcs-title">VENTAS POR REGIÓN</div>
+                <div class="de-ev-ibcs-bars">
+                  <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:55%"></div><div class="de-ev-ibcs-lbl">N</div></div>
+                  <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:72%"></div><div class="de-ev-ibcs-lbl">S</div></div>
+                  <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar de-ev-ibcs-bar--hl" style="height:88%"></div><div class="de-ev-ibcs-lbl">E</div></div>
+                  <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:42%"></div><div class="de-ev-ibcs-lbl">O</div></div>
+                  <div class="de-ev-ibcs-col"><div class="de-ev-ibcs-bar" style="height:60%"></div><div class="de-ev-ibcs-lbl">C</div></div>
+                </div>
+                <div class="de-ev-ibcs-tag de-ev-ibcs-tag--clear">CLARIDAD</div>
+              </div>
+
             </div>
-            <div class="de-acta-rule"></div>
-            <div class="de-acta-body">
-              <span class="de-acta-mark de-acta-mark--open">❝</span>
-              <span class="de-acta-text" id="deActaText">Lanzar plan de recuperación en Sur antes del 15 de junio. Reasignar €120k del presupuesto Q3 a refuerzo comercial regional.</span>
-              <span class="de-acta-mark de-acta-mark--close">❞</span>
-            </div>
-            <div class="de-acta-foot">
-              <span class="de-acta-stamp">Aprobado</span>
-              <span class="de-acta-resp">Responsable: dirección comercial Sur · Revisión T+45 días</span>
+            <div class="de-ev-stat">
+              <div class="de-ev-stat-num">3s</div>
+              <div class="de-ev-stat-lbl">para localizar la respuesta principal</div>
             </div>
           </div>
         </div>
+      </div>
 
+    </div>
+
+    <!-- Card del acta — solo visible cuando se llega al final del recorrido -->
+    <div class="de-acta-card" id="deActaCard" aria-hidden="true">
+      <div class="de-acta-card-inner">
+        <div class="de-acta-eb">ACTA DE DECISIÓN</div>
+        <div class="de-acta-meta">
+          <span class="de-acta-meta-title">Comité comercial</span>
+          <span class="de-acta-meta-sep">·</span>
+          <span class="de-acta-meta-date" id="deActaDate">Lun. 4 may.</span>
+          <span class="de-acta-meta-sep">·</span>
+          <span class="de-acta-meta-time" id="deActaTime">11:32</span>
+        </div>
+        <div class="de-acta-rule"></div>
+        <div class="de-acta-body">
+          <span class="de-acta-mark de-acta-mark--open">❝</span>
+          <span class="de-acta-text" id="deActaText">Lanzar plan de recuperación en Sur antes del 15 de junio. Reasignar €120k del presupuesto Q3 a refuerzo comercial regional.</span>
+          <span class="de-acta-mark de-acta-mark--close">❞</span>
+        </div>
+        <div class="de-acta-foot">
+          <span class="de-acta-stamp">Aprobado</span>
+          <span class="de-acta-resp">Responsable: dirección comercial Sur · Revisión T+45 días</span>
+        </div>
       </div>
     </div>
+
+  </div>
+</div>
+```
+
   </div>
 
 </section>
 
 <!-- ─── ANALYSIS PROJECTS ─── -->
+
 <section class="analysis-section" id="analysis">
   <div class="c">
     <div class="analysis-header sr">
@@ -3798,146 +4320,217 @@ footer {
     </div>
     <div class="analysis-grid">
 
-      <div class="analysis-card sr">
-        <div class="analysis-lang">
-          <span>Python</span><span>Pandas</span><span>Análisis de datos</span>
-        </div>
-        <div class="analysis-title">Mejores ciudades para teletrabajar</div>
-        <p class="analysis-desc">Análisis exploratorio para identificar municipios con buena conectividad, calidad ambiental y precios de vivienda competitivos.</p>
-        <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/python/Proyectos/03.Mejores%20Ciudades%20espa%C3%B1olas%20para%20vivir" target="_blank" rel="noopener noreferrer" class="analysis-link">Ver análisis completo →</a>
+```
+  <!-- Card 1: Python — gradiente amarillo -->
+  <div class="analysis-card analysis-card--python sr">
+    <div class="analysis-card-body">
+      <div class="analysis-lang">
+        <span>Python</span><span>Pandas</span><span>Análisis de datos</span>
       </div>
-
-      <div class="analysis-card sr sr-d1">
-        <div class="analysis-lang">
-          <span>SQL</span><span>Exploración de datos</span><span>Visualización</span>
-        </div>
-        <div class="analysis-title">Mercado Airbnb — Análisis de precios</div>
-        <p class="analysis-desc">Exploración de datos para analizar patrones de precios, disponibilidad y demanda en el mercado de alquiler turístico.</p>
-        <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/SQL/Proyectos%20SQL/04.Estudio%20Airbnb%20Menorca" target="_blank" rel="noopener noreferrer" class="analysis-link">Ver consultas y conclusiones →</a>
-      </div>
-
-      <div class="analysis-card sr sr-d2">
-        <div class="analysis-lang">
-          <span>R</span><span>Análisis de datos</span><span>Visualización</span>
-        </div>
-        <div class="analysis-title">Radiografía socioeconómica de Madrid</div>
-        <p class="analysis-desc">Análisis de indicadores demográficos y económicos para entender la distribución territorial de renta y población.</p>
-        <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/blob/main/r/Proyectos%20con%20R/01.Radiograf%C3%ADa%20de%20Madrid/README.md" target="_blank" rel="noopener noreferrer" class="analysis-link">Explorar análisis completo →</a>
-      </div>
-
+      <div class="analysis-title">Mejores ciudades para teletrabajar</div>
+      <p class="analysis-desc">Análisis exploratorio para identificar municipios con buena conectividad, calidad ambiental y precios de vivienda competitivos.</p>
     </div>
-    <div class="proj-more sr">
-      <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main" target="_blank" rel="noopener noreferrer" class="btn btn-outline" onclick="gtag('event', 'clic_github', { location: 'proyectos' });">Ver más proyectos en GitHub →</a>
+    <div class="analysis-footer">
+      <div class="analysis-author">
+        <div class="analysis-avatar" aria-hidden="true">
+          <span class="analysis-avatar-initials">Py</span>
+        </div>
+        <div class="analysis-author-meta">
+          <span class="analysis-author-name">Python · Pandas</span>
+          <span class="analysis-author-role">Exploración de datos</span>
+        </div>
+      </div>
+      <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/python/Proyectos/03.Mejores%20Ciudades%20espa%C3%B1olas%20para%20vivir"
+         target="_blank" rel="noopener noreferrer"
+         class="analysis-link"
+         aria-label="Ver análisis de mejores ciudades para teletrabajar en GitHub (se abre en nueva pestaña)">
+        Ver análisis →
+      </a>
     </div>
+  </div>
+
+  <!-- Card 2: SQL — gradiente morado -->
+  <div class="analysis-card analysis-card--sql sr sr-d1">
+    <div class="analysis-card-body">
+      <div class="analysis-lang">
+        <span>SQL</span><span>Exploración de datos</span><span>Visualización</span>
+      </div>
+      <div class="analysis-title">Mercado Airbnb — Análisis de precios</div>
+      <p class="analysis-desc">Exploración de datos para analizar patrones de precios, disponibilidad y demanda en el mercado de alquiler turístico.</p>
+    </div>
+    <div class="analysis-footer">
+      <div class="analysis-author">
+        <div class="analysis-avatar" aria-hidden="true">
+          <span class="analysis-avatar-initials">SQL</span>
+        </div>
+        <div class="analysis-author-meta">
+          <span class="analysis-author-name">SQL · PostgreSQL</span>
+          <span class="analysis-author-role">Análisis de mercado</span>
+        </div>
+      </div>
+      <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/SQL/Proyectos%20SQL/04.Estudio%20Airbnb%20Menorca"
+         target="_blank" rel="noopener noreferrer"
+         class="analysis-link"
+         aria-label="Ver consultas SQL y conclusiones del análisis Airbnb en GitHub (se abre en nueva pestaña)">
+        Ver consultas →
+      </a>
+    </div>
+  </div>
+
+  <!-- Card 3: R — gradiente coral -->
+  <div class="analysis-card analysis-card--r sr sr-d2">
+    <div class="analysis-card-body">
+      <div class="analysis-lang">
+        <span>R</span><span>Análisis de datos</span><span>Visualización</span>
+      </div>
+      <div class="analysis-title">Radiografía socioeconómica de Madrid</div>
+      <p class="analysis-desc">Análisis de indicadores demográficos y económicos para entender la distribución territorial de renta y población.</p>
+    </div>
+    <div class="analysis-footer">
+      <div class="analysis-author">
+        <div class="analysis-avatar" aria-hidden="true">
+          <span class="analysis-avatar-initials">R</span>
+        </div>
+        <div class="analysis-author-meta">
+          <span class="analysis-author-name">R · ggplot2</span>
+          <span class="analysis-author-role">Análisis territorial</span>
+        </div>
+      </div>
+      <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/blob/main/r/Proyectos%20con%20R/01.Radiograf%C3%ADa%20de%20Madrid/README.md"
+         target="_blank" rel="noopener noreferrer"
+         class="analysis-link"
+         aria-label="Explorar análisis socioeconómico de Madrid en GitHub (se abre en nueva pestaña)">
+        Explorar →
+      </a>
+    </div>
+  </div>
+
+</div>
+<div class="proj-more sr">
+  <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main" target="_blank" rel="noopener noreferrer" class="btn btn-outline" onclick="gtag('event', 'clic_github', { location: 'proyectos' });">Ver más proyectos en GitHub →</a>
+</div>
+```
+
   </div>
 </section>
 
 <!-- ─── DAX LAB ─── -->
+
 <section class="dax-section" id="daxlab">
   <div class="c">
     <div class="dax-inner">
 
-      <!-- LEFT -->
-      <div class="dax-left sr">
-        <div class="dax-tag">DAX Lab</div>
-        <h2 class="dax-title">Experimentos<br>con <em>DAX</em></h2>
-        <p class="dax-desc">Exploro patrones de modelado y cálculos avanzados en Power BI. Pequeños experimentos con DAX y modelado que ayudan a mejorar rendimiento, claridad y reutilización de medidas.</p>
-        <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio" target="_blank" rel="noopener noreferrer" class="dax-github">
-          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.58v-2.03c-3.34.72-4.04-1.6-4.04-1.6-.54-1.38-1.33-1.74-1.33-1.74-1.08-.74.08-.73.08-.73 1.2.08 1.83 1.23 1.83 1.23 1.06 1.82 2.78 1.3 3.46.99.1-.77.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.13 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.82.57C20.57 21.8 24 17.3 24 12 24 5.37 18.63 0 12 0z"/></svg>
-          Disponible en GitHub
-        </a>
+```
+  <!-- LEFT -->
+  <div class="dax-left sr">
+    <div class="dax-tag">DAX Lab</div>
+    <h2 class="dax-title">Experimentos<br>con <em>DAX</em></h2>
+    <p class="dax-desc">Exploro patrones de modelado y cálculos avanzados en Power BI. Pequeños experimentos con DAX y modelado que ayudan a mejorar rendimiento, claridad y reutilización de medidas.</p>
+    <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio" target="_blank" rel="noopener noreferrer" class="dax-github">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.58v-2.03c-3.34.72-4.04-1.6-4.04-1.6-.54-1.38-1.33-1.74-1.33-1.74-1.08-.74.08-.73.08-.73 1.2.08 1.83 1.23 1.83 1.23 1.06 1.82 2.78 1.3 3.46.99.1-.77.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.13 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.82.57C20.57 21.8 24 17.3 24 12 24 5.37 18.63 0 12 0z"/></svg>
+      Disponible en GitHub
+    </a>
+  </div>
+
+  <!-- RIGHT: cards -->
+  <div class="dax-cards sr sr-d1">
+
+    <div class="dax-card">
+      <div>
+        <div class="dax-card-num">01</div>
+        <div class="dax-card-title">Time Intelligence reutilizable</div>
+        <p class="dax-card-desc">Medidas DAX diseñadas para reutilizar cálculos de periodos comparativos sin duplicar lógica.</p>
       </div>
+      <a href="https://github.com/BORJAMOME/DAX-LAB/tree/main/Patrones/Medidas%20TIME%20INTELLIGENCE" target="_blank" rel="noopener noreferrer" class="dax-card-link">Ver medidas →</a>
+    </div>
 
-      <!-- RIGHT: cards -->
-      <div class="dax-cards sr sr-d1">
-
-        <div class="dax-card">
-          <div>
-            <div class="dax-card-num">01</div>
-            <div class="dax-card-title">Time Intelligence reutilizable</div>
-            <p class="dax-card-desc">Medidas DAX diseñadas para reutilizar cálculos de periodos comparativos sin duplicar lógica.</p>
-          </div>
-          <a href="https://github.com/BORJAMOME/DAX-LAB/tree/main/Patrones/Medidas%20TIME%20INTELLIGENCE" target="_blank" rel="noopener noreferrer" class="dax-card-link">Ver medidas →</a>
-        </div>
-
-        <div class="dax-card">
-          <div>
-            <div class="dax-card-num">02</div>
-            <div class="dax-card-title">Ranking dinámico de métricas</div>
-            <p class="dax-card-desc">Implementación de rankings dinámicos que permiten analizar el rendimiento de categorías o segmentos en distintos contextos.</p>
-          </div>
-          <a href="https://github.com/BORJAMOME/DAX-LAB/tree/main/B%C3%A1sico/RANK" target="_blank" rel="noopener noreferrer" class="dax-card-link">Explorar →</a>
-        </div>
-
-        <div class="dax-card">
-          <div>
-            <div class="dax-card-num">03</div>
-            <div class="dax-card-title">Control de acceso con RLS</div>
-            <p class="dax-card-desc">Configuración de seguridad a nivel de fila para limitar el acceso a los datos según el perfil del usuario.</p>
-          </div>
-          <a href="https://github.com/BORJAMOME/DAX-LAB/tree/main/Avanzado/Control%20de%20acceso%20a%20p%C3%A1ginas" target="_blank" rel="noopener noreferrer" class="dax-card-link">Ver implementación →</a>
-        </div>
-
+    <div class="dax-card">
+      <div>
+        <div class="dax-card-num">02</div>
+        <div class="dax-card-title">Ranking dinámico de métricas</div>
+        <p class="dax-card-desc">Implementación de rankings dinámicos que permiten analizar el rendimiento de categorías o segmentos en distintos contextos.</p>
       </div>
+      <a href="https://github.com/BORJAMOME/DAX-LAB/tree/main/B%C3%A1sico/RANK" target="_blank" rel="noopener noreferrer" class="dax-card-link">Explorar →</a>
     </div>
-    <div class="proj-more sr">
-      <a href="https://github.com/BORJAMOME/DAX-LAB" target="_blank" rel="noopener noreferrer" class="btn btn-outline" onclick="gtag('event', 'clic_github', { location: 'daxlab' });">Ver más experimentos DAX →</a>
+
+    <div class="dax-card">
+      <div>
+        <div class="dax-card-num">03</div>
+        <div class="dax-card-title">Control de acceso con RLS</div>
+        <p class="dax-card-desc">Configuración de seguridad a nivel de fila para limitar el acceso a los datos según el perfil del usuario.</p>
+      </div>
+      <a href="https://github.com/BORJAMOME/DAX-LAB/tree/main/Avanzado/Control%20de%20acceso%20a%20p%C3%A1ginas" target="_blank" rel="noopener noreferrer" class="dax-card-link">Ver implementación →</a>
     </div>
+
+  </div>
+</div>
+<div class="proj-more sr">
+  <a href="https://github.com/BORJAMOME/DAX-LAB" target="_blank" rel="noopener noreferrer" class="btn btn-outline" onclick="gtag('event', 'clic_github', { location: 'daxlab' });">Ver más experimentos DAX →</a>
+</div>
+```
+
   </div>
 </section>
 
 <!-- ─── COMMUNITY ─── -->
+
 <section class="com-section" id="community">
   <div class="c" style="padding-top:100px;padding-bottom:100px;">
     <div class="com-inner">
 
-      <!-- LEFT: copy -->
-      <div class="com-left sr">
-        <div class="com-eyebrow">Data Storytelling en español · En construcción pública</div>
-        <h2 class="com-title">Lo que construyo,<br><em>lo construyo en público.</em></h2>
-        <p class="com-desc">Publico semanalmente sobre Power BI, DAX y Data Storytelling en español porque hay una prueba de que sabes algo mejor que decir que lo sabes.<br><br>Explicarlo de forma que cualquiera lo entienda.</p>
-        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="com-cta" onclick="gtag('event', 'clic_linkedin', { location: 'comunidad' });">
-          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-          Ver perfil en LinkedIn
-        </a>
-      </div>
+```
+  <!-- LEFT: copy -->
+  <div class="com-left sr">
+    <div class="com-eyebrow">Data Storytelling en español · En construcción pública</div>
+    <h2 class="com-title">Lo que construyo,<br><em>lo construyo en público.</em></h2>
+    <p class="com-desc">Publico semanalmente sobre Power BI, DAX y Data Storytelling en español porque hay una prueba de que sabes algo mejor que decir que lo sabes.<br><br>Explicarlo de forma que cualquiera lo entienda.</p>
+    <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="com-cta" onclick="gtag('event', 'clic_linkedin', { location: 'comunidad' });">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      Ver perfil en LinkedIn
+    </a>
+  </div>
 
-      <!-- RIGHT: stats grid -->
-      <div class="com-right sr sr-d1">
+  <!-- RIGHT: stats grid -->
+  <div class="com-right sr sr-d1">
 
-        <div class="com-stat" data-tip="Seguidores activos en LinkedIn">
-          <div class="com-stat-line"></div>
-          <div class="com-stat-num" data-val="2674"></div>
-          <div class="com-stat-label">Seguidores en LinkedIn</div>
-          <p class="com-stat-desc">Profesionales de datos y directivos que trabajan con BI en empresas españolas. +4.374% de crecimiento en un año.</p>
-        </div>
-
-        <div class="com-stat" data-tip="Impresiones totales · +1.359% YoY">
-          <div class="com-stat-line"></div>
-          <div class="com-stat-num" data-val="192000"></div>
-          <div class="com-stat-label">Impresiones totales</div>
-          <p class="com-stat-desc">El territorio de Data Storytelling en español estaba vacío. Empecé a ocuparlo.</p>
-        </div>
-
-        <div class="com-stat" data-tip="Visualizaciones en el post más visto">
-          <div class="com-stat-line"></div>
-          <div class="com-stat-num" data-val="28000"></div>
-          <div class="com-stat-label">Post más visto</div>
-          <p class="com-stat-desc">El 44% con experiencia senior. El 19% en empresas de más de 10.000 empleados. No es una audiencia de estudiantes.</p>
-        </div>
-
-      </div>
+    <div class="com-stat" data-tip="Seguidores activos en LinkedIn">
+      <div class="com-stat-line"></div>
+      <div class="com-stat-num" data-val="2674"></div>
+      <div class="com-stat-label">Seguidores en LinkedIn</div>
+      <p class="com-stat-desc">Profesionales de datos y directivos que trabajan con BI en empresas españolas. +4.374% de crecimiento en un año.</p>
     </div>
+
+    <div class="com-stat" data-tip="Impresiones totales · +1.359% YoY">
+      <div class="com-stat-line"></div>
+      <div class="com-stat-num" data-val="192000"></div>
+      <div class="com-stat-label">Impresiones totales</div>
+      <p class="com-stat-desc">El territorio de Data Storytelling en español estaba vacío. Empecé a ocuparlo.</p>
+    </div>
+
+    <div class="com-stat" data-tip="Visualizaciones en el post más visto">
+      <div class="com-stat-line"></div>
+      <div class="com-stat-num" data-val="28000"></div>
+      <div class="com-stat-label">Post más visto</div>
+      <p class="com-stat-desc">El 44% con experiencia senior. El 19% en empresas de más de 10.000 empleados. No es una audiencia de estudiantes.</p>
+    </div>
+
+  </div>
+</div>
+```
+
   </div>
 </section>
 
-
 <!-- ─── CTA FINAL ─── -->
+
 <section class="cta-final" id="cta">
   <div class="c">
     <div class="cta-final-inner sr">
 
-    <!-- headline -->
+```
+<!-- headline -->
+```
+
 <h2 class="cta-final-h">¿Hablamos?</h2>
 
 <p class="cta-final-sub">
@@ -3951,109 +4544,122 @@ footer {
   Si eres de los segundos, escríbeme.
 </p>
 
-      <!-- actions -->
-      <div class="cta-final-actions">
-        <a href="https://mail.google.com/mail/u/0/?fs=1&to=borja.mora.mendez@gmail.com&su=Oportunidad+laboral&body=Hola,+me+gustar%C3%ADa+hablar+contigo+sobre+una+posible+oportunidad.&tf=cm" target="_blank" rel="noopener noreferrer" class="cta-final-btn-primary" onclick="gtag('event', 'clic_email', { location: 'cta_final' });">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          Envíame un mensaje
-        </a>
-        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="cta-final-btn-secondary" onclick="gtag('event', 'clic_linkedin', { location: 'cta_final' });">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-          LinkedIn
-        </a>
-      </div>
+```
+  <!-- actions -->
+  <div class="cta-final-actions">
+    <a href="mailto:borja.mora.mendez@gmail.com?subject=Oportunidad%20laboral&body=Hola%20Borja%2C%20me%20gustar%C3%ADa%20hablar%20contigo%20sobre%20una%20posible%20oportunidad." class="cta-final-btn-primary" onclick="gtag('event', 'clic_email', { location: 'cta_final' });">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Envíame un mensaje
+    </a>
+    <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="cta-final-btn-secondary" onclick="gtag('event', 'clic_linkedin', { location: 'cta_final' });">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      LinkedIn
+    </a>
+  </div>
 
-      <!-- info pills -->
-      <div class="cta-final-pills">
-        <div class="cta-pill-item">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          Madrid, España
-        </div>
-        <div class="cta-pill-item">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-          Presencial · Híbrido
-        </div>
-        <div class="cta-pill-item">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          Respondo en &lt;24h
-        </div>
-        <div class="cta-pill-item">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          ES · EN
-        </div>
-      </div>
-
+  <!-- info pills -->
+  <div class="cta-final-pills">
+    <div class="cta-pill-item">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      Madrid, España
+    </div>
+    <div class="cta-pill-item">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      Presencial · Híbrido
+    </div>
+    <div class="cta-pill-item">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Respondo en &lt;24h
+    </div>
+    <div class="cta-pill-item">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      ES · EN
     </div>
   </div>
+
+</div>
+```
+
+  </div>
 </section>
+<!-- ─── FIN MAIN CONTENT ─── -->
+</main>
+
 <!-- ─── FOOTER — profesional ─── -->
+
 <footer>
   <div class="foot-inner">
 
-    <!-- TOP: CTA principal -->
-    <div class="foot-cta-row">
-      <div class="foot-cta-left">
-        <div class="foot-availability">
-          <span class="foot-pulse" aria-hidden="true"></span>
-          <span>Disponible para nuevas oportunidades</span>
-        </div>
-        <h3 class="foot-cta-title">¿Construimos algo juntos?</h3>
-      </div>
-      <div class="foot-cta-actions">
-        <a href="mailto:borja.mora.mendez@gmail.com?subject=Oportunidad%20laboral&body=Hola%20Borja%2C" class="foot-cta-btn foot-cta-btn--primary" onclick="gtag('event','clic_email',{location:'footer'});">
-          borja.mora.mendez@gmail.com
-        </a>
-        <a href="https://tally.so/r/6878EN" target="_blank" rel="noopener noreferrer" class="foot-cta-btn foot-cta-btn--secondary">
-          Descargar CV
-        </a>
-      </div>
+```
+<!-- TOP: CTA principal -->
+<div class="foot-cta-row">
+  <div class="foot-cta-left">
+    <div class="foot-availability">
+      <span class="foot-pulse" aria-hidden="true"></span>
+      <span>Disponible para nuevas oportunidades</span>
     </div>
+  <h2 class="visually-hidden">Pie de página</h2>
+  <p class="foot-cta-title">¿Construimos algo juntos?</p>
+  </div>
+  <div class="foot-cta-actions">
+    <a href="mailto:borja.mora.mendez@gmail.com?subject=Oportunidad%20laboral&body=Hola%20Borja%2C" class="foot-cta-btn foot-cta-btn--primary" onclick="gtag('event','clic_email',{location:'footer'});">
+      borja.mora.mendez@gmail.com
+    </a>
+    <a href="https://tally.so/r/6878EN" target="_blank" rel="noopener noreferrer" class="foot-cta-btn foot-cta-btn--secondary">
+      Descargar CV
+    </a>
+  </div>
+</div>
 
-    <!-- MIDDLE: cuatro columnas -->
-    <div class="foot-grid">
-      <div class="foot-col foot-col--brand">
-        <div class="foot-brand-name">Borja Mora.</div>
-        <p class="foot-brand-desc">Construyo espacios donde los datos calan.</p>
-        <p class="foot-brand-loc">Madrid, España</p>
-      </div>
+<!-- MIDDLE: cuatro columnas -->
+<div class="foot-grid">
+  <div class="foot-col foot-col--brand">
+    <div class="foot-brand-name">Borja Mora.</div>
+    <p class="foot-brand-desc">Construyo espacios donde los datos calan.</p>
+    <p class="foot-brand-loc">Madrid, España</p>
+  </div>
 
-      <div class="foot-col">
-        <div class="foot-col-title">Navegación</div>
-        <a href="./index.html">Inicio</a>
-        <a href="./sobre-mi.html">Sobre mí</a>
-        <a href="./proyectos.html">Proyectos</a>
-        <a href="./descargas.html">Descargas</a>
-      </div>
+  <div class="foot-col">
+    <div class="foot-col-title">Navegación</div>
+    <a href="./index.html">Inicio</a>
+    <a href="./sobre-mi.html">Sobre mí</a>
+    <a href="./proyectos.html">Proyectos</a>
+    <a href="./descargas.html">Descargas</a>
+  </div>
 
-      <div class="foot-col">
-        <div class="foot-col-title">Trabajo</div>
-        <a href="./proyectos.html#power-bi">Power BI</a>
-        <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio" target="_blank" rel="noopener noreferrer">Python · SQL · R</a>
-        <a href="https://github.com/BORJAMOME/DAX-LAB" target="_blank" rel="noopener noreferrer">DAX Lab</a>
-      </div>
+  <div class="foot-col">
+    <div class="foot-col-title">Trabajo</div>
+    <a href="./proyectos.html#power-bi">Power BI</a>
+    <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio" target="_blank" rel="noopener noreferrer">Python · SQL · R</a>
+    <a href="https://github.com/BORJAMOME/DAX-LAB" target="_blank" rel="noopener noreferrer">DAX Lab</a>
+  </div>
 
-      <div class="foot-col">
-        <div class="foot-col-title">Sígueme</div>
-        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_linkedin',{location:'footer'});">LinkedIn</a>
-        <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_github',{location:'footer'});">GitHub</a>
-      </div>
-    </div>
+  <div class="foot-col">
+    <div class="foot-col-title">Sígueme</div>
+    <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_linkedin',{location:'footer'});">LinkedIn</a>
+    <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_github',{location:'footer'});">GitHub</a>
+  </div>
+</div>
 
-    <!-- BOTTOM: legal + colofón -->
-    <div class="foot-bottom">
-      <div class="foot-copy">© 2026 Borja Mora Méndez · Todos los derechos reservados</div>
-      <div class="foot-made">
-        <span>Diseñado y construido por mí</span>
-        <span class="foot-tech">HTML</span>
-        <span class="foot-tech">CSS</span>
-        <span class="foot-tech">JS</span>
-      </div>
-    </div>
+<!-- BOTTOM: legal + colofón -->
+<div class="foot-bottom">
+  <div class="foot-copy">© 2026 Borja Mora Méndez · Todos los derechos reservados</div>
+  <div class="foot-made">
+    <span>Diseñado y construido por mí</span>
+    <span class="foot-tech">HTML</span>
+    <span class="foot-tech">CSS</span>
+    <span class="foot-tech">JS</span>
+  </div>
+</div>
+```
 
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+
 <script>
 // ─── TYPING EFFECT ───
 (function(){
@@ -4075,13 +4681,13 @@ footer {
 
 // ─── NAV SCROLL ───
 const nav = document.getElementById('nav');
-window.addEventListener('scroll',()=> nav.classList.toggle('scrolled', scrollY > 40));
+window.addEventListener('scroll',()=> nav.classList.toggle('scrolled', scrollY > 40), { passive: true });
 
 // ─── PROGRESS BAR ───
 const pb = document.getElementById('progressBar');
 window.addEventListener('scroll',()=>{
   pb.style.transform = `scaleX(${scrollY/(document.body.scrollHeight-innerHeight)})`;
-});
+}, { passive: true });
 
 // ─── SCROLL REVEAL ───
 const io = new IntersectionObserver((entries)=>{
@@ -4135,6 +4741,139 @@ const chartOpts = {
       if (el) el.scrollIntoView({ behavior: 'smooth' });
     });
   });
+})();
+
+// ─── BARRA DE PROGRESO MOBILE ───
+(function(){
+  const fill  = document.getElementById('sectionProgressFill');
+  const label = document.getElementById('sectionProgressLabel');
+  if (!fill || !label) return;
+
+  const sections = ['hero','projects','star','approach','analysis','daxlab','community','cta'];
+  const labels   = {
+    hero:      'Inicio',
+    projects:  'Proyectos',
+    star:      'PBI Mockup',
+    approach:  'Cómo trabajo',
+    analysis:  'Python · SQL · R',
+    daxlab:    'DAX Lab',
+    community: 'Comunidad',
+    cta:       'Contacto'
+  };
+
+  let lastSection = '';
+  let labelTimer  = null;
+
+  function update() {
+    const scrollY    = window.scrollY;
+    const docH       = document.body.scrollHeight - window.innerHeight;
+    const pct        = docH > 0 ? Math.min(100, (scrollY / docH) * 100) : 0;
+    fill.style.width = pct.toFixed(1) + '%';
+
+    // Sección activa
+    const mid = scrollY + window.innerHeight * .45;
+    let current = sections[0];
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.offsetTop <= mid) current = id;
+    });
+
+    if (current !== lastSection) {
+      lastSection = current;
+      label.textContent = labels[current] || '';
+      label.classList.add('visible');
+      clearTimeout(labelTimer);
+      labelTimer = setTimeout(() => label.classList.remove('visible'), 1800);
+    }
+  }
+
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+})();
+
+// ─── SCROLL CLARITY WIDGET ───
+(function(){
+  const widget  = document.getElementById('scrollWidget');
+  const numEl   = document.getElementById('swNum');
+  const labelEl = document.getElementById('swLabel');
+  const bars    = document.querySelectorAll('#swBars .sw-bar');
+  if (!widget || !numEl || !labelEl || !bars.length) return;
+
+  const LABELS = [
+    { from: 0,   to: 15,  text: 'de claridad conseguida' },
+    { from: 15,  to: 30,  text: 'de preguntas respondidas' },
+    { from: 30,  to: 45,  text: 'del problema resuelto' },
+    { from: 45,  to: 60,  text: 'del proceso comprendido' },
+    { from: 60,  to: 75,  text: 'de decisiones tomadas' },
+    { from: 75,  to: 95,  text: 'de contexto acumulado' },
+    { from: 95,  to: 101, text: 'Listo para trabajar juntos.' },
+  ];
+
+  function getLabel(pct) {
+    for (const l of LABELS) {
+      if (pct >= l.from && pct < l.to) return l.text;
+    }
+    return LABELS[LABELS.length - 1].text;
+  }
+
+  let currentPct     = 0;
+  let targetPct      = 0;
+  let rafId          = null;
+  let lastLabel      = '';
+  let lastBarsFilled = 0;
+
+  function updateBars(filled) {
+    bars.forEach((bar, i) => {
+      const shouldBeActive = i < filled;
+      const wasActive = bar.classList.contains('active');
+      if (shouldBeActive && !wasActive) {
+        bar.classList.add('active', 'just-lit');
+        setTimeout(() => bar.classList.remove('just-lit'), 500);
+      } else if (!shouldBeActive && wasActive) {
+        bar.classList.remove('active', 'just-lit');
+      }
+    });
+  }
+
+  function tick() {
+    currentPct += (targetPct - currentPct) * 0.12;
+    if (Math.abs(targetPct - currentPct) < 0.15) currentPct = targetPct;
+
+    const displayed = Math.round(currentPct);
+    numEl.textContent = displayed;
+
+    const filled = Math.round((currentPct / 100) * 10);
+    if (filled !== lastBarsFilled) {
+      updateBars(filled);
+      lastBarsFilled = filled;
+    }
+
+    const newLabel = getLabel(displayed);
+    if (newLabel !== lastLabel) {
+      labelEl.classList.add('changing');
+      setTimeout(() => {
+        labelEl.textContent = newLabel;
+        labelEl.classList.remove('changing');
+      }, 150);
+      lastLabel = newLabel;
+    }
+
+    if (Math.abs(currentPct - targetPct) > 0.15) {
+      rafId = requestAnimationFrame(tick);
+    } else {
+      rafId = null;
+    }
+  }
+
+  function onScroll() {
+    const docH = document.body.scrollHeight - window.innerHeight;
+    targetPct = docH > 0 ? Math.min(100, (window.scrollY / docH) * 100) : 0;
+    widget.classList.toggle('visible', window.scrollY > 120);
+    if (!rafId) rafId = requestAnimationFrame(tick);
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 })();
 
 // ─── LOGO LINK: always go to home ───
@@ -4377,18 +5116,29 @@ const chartOpts = {
 
     }, 620);
 
-    /* Product bars */
+    /* Product bars — scaleX en lugar de width para evitar layout thrashing */
     setTimeout(function(){
-      document.querySelectorAll('.prd-bar').forEach(function(b){
-        b.style.width = (b.dataset.w||'0')+'%';
+      var delays = [0, 0.15, 0.3, 0.45];
+      document.querySelectorAll('.prd-bar').forEach(function(b, i){
+        var scale = (parseFloat(b.dataset.w) || 0) / 100;
+        b.style.transition = 'transform 1s ' + delays[i] + 's ease';
+        b.style.transform  = 'scaleX(' + scale + ')';
       });
     }, 880);
   }
 
-  if(document.readyState==='complete') setTimeout(init,200);
-  else window.addEventListener('load', function(){ setTimeout(init,200); });
+  function waitForChart(cb, attempts) {
+    attempts = attempts || 0;
+    if (typeof Chart !== 'undefined') { cb(); return; }
+    if (attempts > 40) return; // máx 2s de espera
+    setTimeout(function(){ waitForChart(cb, attempts + 1); }, 50);
+  }
+
+  if(document.readyState==='complete') waitForChart(function(){ setTimeout(init,200); });
+  else window.addEventListener('load', function(){ waitForChart(function(){ setTimeout(init,200); }); });
 })();
 </script>
+
 <script>
 /* ── DPH PIPELINE LINE DRAW ── */
 (function(){
@@ -4407,6 +5157,7 @@ const chartOpts = {
 </script>
 
 <!-- ─── DECISION ENGINE — scroll-driven pipeline (desktop horizontal + mobile vertical) ─── -->
+
 <script>
 (function(){
   const track  = document.getElementById('deTrack');
@@ -4433,12 +5184,11 @@ const chartOpts = {
   const ACTA_FULL_TEXT = 'Lanzar plan de recuperación en Sur antes del 15 de junio. Reasignar €120k del presupuesto Q3 a refuerzo comercial regional.';
   if (actaDateEl && actaTimeEl) {
     const now = new Date();
-    const diasAbr = ['dom.', 'lun.', 'mar.', 'mié.', 'jue.', 'vie.', 'sáb.'];
-    const mesesAbr = ['ene.', 'feb.', 'mar.', 'abr.', 'may.', 'jun.', 'jul.', 'ago.', 'sept.', 'oct.', 'nov.', 'dic.'];
-    const dia = diasAbr[now.getDay()];
-    const diaCap = dia.charAt(0).toUpperCase() + dia.slice(1);
-    const mes = mesesAbr[now.getMonth()];
-    const fechaStr = `${diaCap} ${now.getDate()} ${mes}`;
+    // Intl.DateTimeFormat — se adapta al locale del navegador automáticamente
+    const fechaStr = new Intl.DateTimeFormat('es-ES', {
+      weekday: 'short', day: 'numeric', month: 'short'
+    }).format(now)
+      .replace(/^\w/, c => c.toUpperCase()); // Capitalizar primer carácter
     const hh = String(now.getHours()).padStart(2, '0');
     const mm = String(now.getMinutes()).padStart(2, '0');
     actaDateEl.textContent = fechaStr;
@@ -4451,6 +5201,7 @@ const chartOpts = {
   }
 
   const mobileQuery = window.matchMedia('(max-width: 820px)');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   let progress = 0;
   let target   = 0;
@@ -4498,35 +5249,36 @@ const chartOpts = {
     // p=1 → centro del último dot (Storytelling)
     const pos = railStart + p * railLen;
 
-    if (isMobile) {
-      // Eje Y
-      light.style.top  = pos + 'px';
-      light.style.left = '50%';
-      pipeT.style.top    = railStart + 'px';
-      pipeT.style.height = (pos - railStart) + 'px';
-      pipeT.style.width  = '1px';
-      pipeT.style.left   = '50%';
-      // Línea de fondo: solo entre primer y último dot
-      pipeBg.style.top    = railStart + 'px';
-      pipeBg.style.height = railLen + 'px';
-      pipeBg.style.left   = '50%';
-      pipeBg.style.width  = '1px';
-      pipeBg.style.transform = 'translateX(-50%)';
-    } else {
-      // Eje X
-      light.style.left = pos + 'px';
-      light.style.top  = '50%';
-      pipeT.style.left   = railStart + 'px';
-      pipeT.style.width  = (pos - railStart) + 'px';
-      pipeT.style.height = '1px';
-      pipeT.style.top    = '50%';
-      // Línea de fondo: solo entre primer y último dot
-      pipeBg.style.left   = railStart + 'px';
-      pipeBg.style.width  = railLen + 'px';
-      pipeBg.style.top    = '50%';
-      pipeBg.style.height = '1px';
-      pipeBg.style.transform = 'translateY(-50%)';
-    }
+    // Si el usuario prefiere movimiento reducido, saltamos la animación del pipeline
+    if (!reducedMotion) {
+      if (isMobile) {
+        // Eje Y
+        light.style.top  = pos + 'px';
+        light.style.left = '50%';
+        pipeT.style.top    = railStart + 'px';
+        pipeT.style.height = (pos - railStart) + 'px';
+        pipeT.style.width  = '1px';
+        pipeT.style.left   = '50%';
+        pipeBg.style.top    = railStart + 'px';
+        pipeBg.style.height = railLen + 'px';
+        pipeBg.style.left   = '50%';
+        pipeBg.style.width  = '1px';
+        pipeBg.style.transform = 'translateX(-50%)';
+      } else {
+        // Eje X
+        light.style.left = pos + 'px';
+        light.style.top  = '50%';
+        pipeT.style.left   = railStart + 'px';
+        pipeT.style.width  = (pos - railStart) + 'px';
+        pipeT.style.height = '1px';
+        pipeT.style.top    = '50%';
+        pipeBg.style.left   = railStart + 'px';
+        pipeBg.style.width  = railLen + 'px';
+        pipeBg.style.top    = '50%';
+        pipeBg.style.height = '1px';
+        pipeBg.style.transform = 'translateY(-50%)';
+      }
+    } // end if (!reducedMotion)
 
     // Estación activa (4 tramos iguales)
     const idx = Math.min(3, Math.floor(p * 4));
@@ -4669,12 +5421,44 @@ const chartOpts = {
 
   init();
   window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', init);
+  let _resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(_resizeTimer);
+    _resizeTimer = setTimeout(init, 120);
+  });
   mobileQuery.addEventListener('change', init);
   // Re-medir si las fuentes cargan después y cambia el layout
   if (document.fonts && document.fonts.ready) {
     document.fonts.ready.then(init);
   }
+})();
+</script>
+
+<script>
+/* ── IFRAME FALLBACK: skeleton → loaded / error ── */
+(function(){
+  var iframe  = document.getElementById('starIframe');
+  var skel    = document.getElementById('iframeSkeleton');
+  var errBox  = document.getElementById('iframeError');
+  if (!iframe || !skel || !errBox) return;
+
+  var timer = setTimeout(function(){
+    /* Si tarda más de 8s, mostramos error */
+    skel.classList.add('hidden');
+    errBox.classList.add('visible');
+  }, 8000);
+
+  iframe.addEventListener('load', function(){
+    clearTimeout(timer);
+    iframe.classList.add('loaded');
+    skel.classList.add('hidden');
+  });
+
+  iframe.addEventListener('error', function(){
+    clearTimeout(timer);
+    skel.classList.add('hidden');
+    errBox.classList.add('visible');
+  });
 })();
 </script>
 
