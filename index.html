@@ -13,9 +13,8 @@
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 <!-- Primary Meta Tags -->
 <meta name="description" content="Construyo espacios donde los datos calan. Data Analyst especializado en Power BI, DAX y Data Storytelling. Dashboards que se entienden solos y decisiones que no dependen de intuición. Disponible en Madrid.">
 <meta name="keywords" content="Data Analyst, Power BI Developer, Business Intelligence, DAX, Data Storytelling, Microsoft PL-300, Power BI España, dashboards Power BI, Borja Mora">
@@ -107,7 +106,7 @@
   --gray:         #e5e5e5;
   --ink:          #111111;
   --muted:        #6e6e78;
-  --font:         'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font:         'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
   --ease:         cubic-bezier(0.16,1,0.3,1);
 }
 
@@ -212,6 +211,7 @@ nav.scrolled { border-bottom-color: var(--gray); }
   display: flex; align-items: center;
   background: var(--white);
   position: relative; overflow: hidden;
+  border-bottom: .5px solid var(--gray);
 }
 .hero::before {
   content: '';
@@ -246,19 +246,11 @@ nav.scrolled { border-bottom-color: var(--gray); }
   letter-spacing: .5px; font-weight: 600;
   margin-bottom: 12px;
   transform-origin: center center;
-  opacity: 0; animation: glitchBalance .75s .05s cubic-bezier(0.16,1,0.3,1) forwards;
+  opacity: 0; animation: pillFadeIn .55s .05s cubic-bezier(0.16,1,0.3,1) forwards;
 }
-@keyframes glitchBalance {
-  0%   { opacity:0; transform: translate(-3px, 2px) skewX(-4deg) rotate(-6deg);  filter: blur(1px); }
-  8%   { opacity:1; transform: translate(4px, -1px) skewX(4deg)  rotate(5deg);   clip-path: inset(0 0 40% 0); }
-  18%  { opacity:1; transform: translate(-2px, 1px) skewX(-3deg) rotate(-8deg);  clip-path: inset(25% 0 0 0); }
-  28%  { opacity:1; transform: translate(2px, 0px)  skewX(2deg)  rotate(6deg);   clip-path: inset(0 0 0 0); }
-  40%  { opacity:1; transform: translate(-1px, 0px) skewX(0deg)  rotate(-4deg);  filter: blur(.4px); }
-  54%  { opacity:1; transform: translate(1px, 0px)  skewX(0deg)  rotate(2.5deg); filter: blur(0); }
-  66%  { opacity:1; transform: rotate(-1.5deg); }
-  76%  { opacity:1; transform: rotate(0.8deg); }
-  86%  { opacity:1; transform: rotate(-0.3deg); }
-  100% { opacity:1; transform: translate(0,0) skewX(0deg) rotate(0deg); filter: blur(0); clip-path: inset(0 0 0 0); }
+@keyframes pillFadeIn {
+  0%   { opacity:0; transform: translateY(8px) scale(.96); }
+  100% { opacity:1; transform: translateY(0)   scale(1); }
 }
 
 /* ── Single credentials line (replaces pill + cert + badge) ── */
@@ -470,9 +462,9 @@ nav.scrolled { border-bottom-color: var(--gray); }
   padding: 0;
   overflow: hidden;
   position: relative;
-  background: #f9f9fb;
-  border-top: .5px solid #ebebeb;
-  border-bottom: .5px solid #ebebeb;
+  background: var(--off);
+  border-top: .5px solid var(--gray);
+  border-bottom: .5px solid var(--gray);
 }
 
 .proof-track {
@@ -1002,118 +994,10 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
 .qs-callout p { font-size: 14px; color: var(--purple2); line-height: 1.65; font-weight: 500; }
 
 /* ─── ANALYSIS PROJECTS ─── */
-.analysis-section { background: var(--off); }
-.analysis-header { margin-bottom: 52px; }
-.analysis-header .s-tag { margin-bottom: 14px; }
-.analysis-header .s-sub { max-width: 560px; margin-top: 14px; font-size: 15px; color: var(--muted); line-height: 1.7; }
-.analysis-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
-.analysis-card {
-  background: var(--white);
-  border: .5px solid #e4e4ec;
-  border-radius: 18px;
-  padding: 32px 30px 28px;
-  display: flex; flex-direction: column;
-  box-shadow: 0 2px 12px rgba(0,0,0,.04);
-  transition: all .3s var(--ease);
-  cursor: default;
-  position: relative;
-  overflow: hidden;
-}
-.analysis-card::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0;
-  height: 2px;
-  background: var(--purple);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform .3s var(--ease);
-}
-.analysis-card:hover { border-color: var(--purple); transform: translateY(-6px); box-shadow: 0 24px 56px rgba(122,123,255,.12); }
-.analysis-card:hover::before { transform: scaleX(1); }
-.analysis-lang {
-  display: flex; gap: 6px; flex-wrap: wrap;
-  margin-bottom: 20px;
-}
-.analysis-lang span {
-  font-size: 10px; font-weight: 700;
-  background: var(--purple-light); color: var(--purple);
-  padding: 3px 10px; border-radius: 5px;
-  letter-spacing: .3px;
-}
-.analysis-title {
-  font-size: 18px; font-weight: 700;
-  color: var(--ink); letter-spacing: -.3px;
-  line-height: 1.25; margin-bottom: 12px;
-}
-.analysis-desc {
-  font-size: 13.5px; color: var(--muted);
-  line-height: 1.7; flex: 1; margin-bottom: 24px;
-}
-.analysis-link {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 13px; font-weight: 700;
-  color: var(--purple); text-decoration: none;
-  margin-top: auto;
-  transition: gap .2s var(--ease);
-}
-.analysis-link:hover { gap: 10px; }
-@media (max-width: 860px) { .analysis-grid { grid-template-columns: 1fr; } }
-
-/* ─── DAX LAB ─── */
-.dax-section { background: var(--white); border-top: .5px solid #f0f0f5; }
-.dax-inner { display: grid; grid-template-columns: 1fr 2fr; gap: 80px; align-items: start; }
-.dax-left { position: sticky; top: 120px; }
-.dax-tag {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
-  text-transform: uppercase; color: var(--purple); margin-bottom: 18px;
-}
-.dax-tag::before {
-  content: ''; display: inline-block;
-  width: 18px; height: 2px; background: var(--purple); border-radius: 2px;
-}
-.dax-title { font-size: clamp(26px, 2.8vw, 36px); font-weight: 700; color: var(--ink); letter-spacing: -.5px; line-height: 1.2; margin-bottom: 16px; }
-.dax-desc { font-size: 14px; color: var(--muted); line-height: 1.75; margin-bottom: 20px; }
-.dax-github {
-  display: inline-flex; align-items: center; gap: 7px;
-  font-size: 12px; font-weight: 700; color: var(--purple);
-  background: var(--purple-light); padding: 7px 14px;
-  border-radius: 8px; text-decoration: none;
-  transition: all .2s var(--ease);
-}
-.dax-github:hover { background: #dddeff; }
-.dax-github svg { width: 14px; height: 14px; fill: var(--purple); }
-.dax-cards { display: flex; flex-direction: column; gap: 0; background: var(--white); border: .5px solid #e4e4ec; border-radius: 18px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.04); }
-.dax-card {
-  display: grid; grid-template-columns: 1fr auto;
-  align-items: center; gap: 24px;
-  padding: 28px 32px;
-  border-bottom: .5px solid #f0f0f5;
-  transition: background .2s var(--ease);
-}
-.dax-card:last-child { border-bottom: none; }
-.dax-card:hover { background: #fafafe; }
-.dax-card-num { font-size: 11px; font-weight: 700; color: rgba(122,123,255,.3); letter-spacing: 1px; margin-bottom: 8px; }
-.dax-card-title { font-size: 16px; font-weight: 700; color: var(--ink); letter-spacing: -.2px; margin-bottom: 6px; }
-.dax-card-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
-.dax-card-link {
-  flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px;
-  font-size: 12px; font-weight: 700; color: var(--purple);
-  background: var(--purple-light); padding: 8px 16px;
-  border-radius: 8px; text-decoration: none; white-space: nowrap;
-  transition: all .2s var(--ease);
-}
-.dax-card-link:hover { background: #dddeff; gap: 8px; }
-@media (max-width: 860px) {
-  .dax-inner { grid-template-columns: 1fr; gap: 40px; }
-  .dax-left { position: static; }
-  .dax-card { grid-template-columns: 1fr; }
-}
-
 /* ─── COMMUNITY ─── */
 /* ─── COMMUNITY ─── */
 .com-section {
-  background: var(--off);
+  background: var(--white);
   position: relative;
   overflow: hidden;
 }
@@ -1275,6 +1159,167 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
   .com-card--3 { grid-column: 1; grid-row: 4; min-height: 240px; }
 }
 
+/* ─── STACK SKILLS ─── */
+.stack-section { background: var(--white); border-top: .5px solid var(--gray); }
+.stack-section > .c { max-width: 100%; padding: 0 clamp(1.5rem,5vw,4rem); }
+.stack-wrap {
+  position: relative;
+  height: 580px;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+.stack-overlay {
+  position: absolute;
+  top: 0; left: 0;
+  z-index: 10;
+  pointer-events: none;
+  width: 62%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-top: 0;
+}
+.stack-overlay a { pointer-events: all; }
+.stack-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.4px;
+  text-transform: uppercase; color: var(--purple);
+  display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
+}
+.stack-eyebrow::before { content:''; width:18px; height:2px; background:var(--purple); border-radius:2px; }
+.stack-title {
+  font-size: clamp(36px,4.5vw,60px); font-weight: 700; color: var(--ink);
+  letter-spacing: -2px; line-height: 1.02; margin-bottom: 16px;
+  white-space: nowrap;
+}
+.stack-title em { font-style: normal; color: var(--purple); }
+.stack-desc {
+  font-size: 14px; color: var(--muted); line-height: 1.7;
+  margin-bottom: 20px; max-width: 100%;
+}
+.stack-cert {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--purple-light); border: .5px solid rgba(122,123,255,.25);
+  border-radius: 8px; padding: 8px 13px;
+  font-size: 11px; font-weight: 700; color: var(--purple2);
+  width: fit-content; text-decoration: none; transition: background .2s;
+}
+.stack-cert:hover { background: #dddeff; }
+.stack-cert svg { width: 12px; height: 12px; fill: var(--purple); flex-shrink: 0; }
+.stack-cols {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 100%;
+  width: 100%;
+}
+.sk-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  clip-path: inset(100% 0 0 0 round 14px);
+  transition: clip-path .85s cubic-bezier(0.22,1,0.36,1), transform .2s var(--ease);
+}
+.sk-col.sk-visible { clip-path: inset(0% 0 0 0 round 14px); }
+.sk-col.sk-visible:hover { transform: translateY(-4px); }
+.sk-card {
+  background: #e5e5e5; border-radius: 14px;
+  padding: 20px 16px 16px;
+  display: flex; flex-direction: column;
+  height: 100%;
+}
+.sk-card.hl { background: var(--purple); }
+.sk-pct {
+  font-size: 24px; font-weight: 700; color: var(--ink);
+  letter-spacing: -1px; line-height: 1; margin-bottom: 28px;
+}
+.sk-card.hl .sk-pct { color: #fff; }
+.sk-name {
+  font-size: 11px; font-weight: 700; color: var(--ink);
+  letter-spacing: .8px; line-height: 1.2; margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.sk-card.hl .sk-name { color: rgba(255,255,255,.95); }
+.sk-desc {
+  font-size: 10px; color: #666; line-height: 1.55; flex: 1;
+  overflow: hidden; display: -webkit-box;
+  -webkit-box-orient: vertical; -webkit-line-clamp: 8;
+  margin-bottom: 12px;
+}
+.sk-card.hl .sk-desc { color: rgba(255,255,255,.68); }
+.sk-pills {
+  display: flex; gap: 4px; flex-wrap: wrap; margin-top: auto;
+}
+.sk-bottom .sk-pills { margin-top: auto; }
+.sk-pill {
+  font-size: 9px; font-weight: 600;
+  background: rgba(0,0,0,.1); color: #444;
+  padding: 3px 8px; border-radius: 20px;
+  white-space: nowrap; letter-spacing: .1px;
+}
+.sk-card.hl .sk-pill { background: rgba(255,255,255,.2); color: #fff; }
+
+/* ── Barras cortas: descripción flotante encima ── */
+.sk-col.top-align {
+  overflow: visible;
+  position: relative;
+  clip-path: none !important;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .7s cubic-bezier(0.22,1,0.36,1), transform .7s cubic-bezier(0.22,1,0.36,1);
+}
+.sk-col.top-align.sk-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.sk-col.top-align.sk-visible:hover { transform: translateY(-4px); }
+.sk-col.top-align .sk-card {
+  position: relative;
+  overflow: visible;
+  height: 100%;
+}
+.sk-desc-above {
+  position: absolute;
+  bottom: 100%;
+  left: 0; right: 0;
+  padding-bottom: 80px;
+}
+.sk-desc-above p {
+  font-size: 9.5px; color: #555; line-height: 1.55;
+  overflow: hidden; display: -webkit-box;
+  -webkit-box-orient: vertical; -webkit-line-clamp: 5;
+}
+.sk-desc-above::after {
+  content: '';
+  position: absolute;
+  left: 50%; transform: translateX(-50%);
+  bottom: 8px; width: 1px; height: 74px;
+  background: rgba(0,0,0,.12);
+}
+.sk-desc-above::before {
+  content: '';
+  position: absolute;
+  left: 50%; transform: translateX(-50%);
+  bottom: 82px; width: 5px; height: 5px;
+  border-radius: 50%; background: rgba(0,0,0,.2);
+}
+
+.sk-bottom { display: flex; flex-direction: column; gap: 0; flex: 1; }
+.sk-col:nth-child(1){transition-delay:.05s} .sk-col:nth-child(2){transition-delay:.12s}
+.sk-col:nth-child(3){transition-delay:.19s} .sk-col:nth-child(4){transition-delay:.26s}
+.sk-col:nth-child(5){transition-delay:.33s} .sk-col:nth-child(6){transition-delay:.40s}
+.sk-col:nth-child(7){transition-delay:.47s}
+@media(max-width:860px){
+  .stack-wrap{height:auto; flex-direction:column; align-items:stretch; gap:32px}
+  .stack-overlay{position:static; width:100%; pointer-events:all}
+  .stack-cols{height:380px}
+}
+@media(max-width:640px){
+  .stack-cols{height:300px; gap:5px}
+  .sk-col:nth-child(n+5){display:none}
+  .sk-pct{font-size:18px}
+}
+
 /* ─── STATS ─── */
 .stats-section { background: var(--off); border-top: .5px solid var(--gray); border-bottom: .5px solid var(--gray); }
 .stats-grid { display: grid; grid-template-columns: repeat(3,1fr); }
@@ -1296,7 +1341,11 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
   padding: 120px 0 100px;
 }
 .cta-final::before {
-  display: none;
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 60% at 50% 0%, rgba(122,123,255,.07) 0%, transparent 70%);
+  pointer-events: none;
 }
 .cta-final-inner {
   position: relative; z-index: 1;
@@ -1448,44 +1497,8 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
 }
 @media (max-width: 1100px) { .dot-nav { display: none; } }
 
-/* ─── FOOTER ─── */
 
 
-
-
-
-
-.foot-col a {
-  display: block; font-size: 13px;
-  color: var(--muted); text-decoration: none;
-  margin-bottom: 8px;
-  transition: color .2s;
-}
-.foot-col a:hover { color: var(--ink); }
-.foot-bottom {
-  display: flex; align-items: center;
-  justify-content: space-between; flex-wrap: wrap; gap: 12px;
-}
-.foot-copy {
-  font-size: 11.5px; color: var(--muted); opacity: .7;
-}
-.foot-made {
-  font-size: 11.5px; color: var(--muted); opacity: .7;
-  display: flex; align-items: center; gap: 6px;
-}
-.foot-made span { color: var(--muted); }
-.foot-made .foot-tech {
-  display: inline-flex; align-items: center; gap: 4px;
-  background: var(--white); border: .5px solid var(--gray);
-  padding: 2px 8px; border-radius: 4px;
-  font-size: 10.5px; color: var(--muted);
-  font-family: 'SF Mono', 'Fira Code', monospace;
-}
-.foot-logo { font-size: 14px; font-weight: 700; color: var(--ink); }
-.foot-links { display: flex; gap: 20px; }
-.foot-links a { font-size: 12px; color: var(--muted); text-decoration: none; font-weight: 500; transition: color .2s; }
-.foot-links a:hover { color: var(--ink); }
-.foot-copy { font-size: 11px; color: var(--muted); opacity: .55; }
 
 /* ─── SCROLL REVEAL ─── */
 @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
@@ -1851,7 +1864,6 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
   background-size: 180px 180px;
   mix-blend-mode: overlay;
 }
-.hero { position: relative; overflow: hidden; }
 .hero-inner { position: relative; z-index: 1; }
 
 /* ══════════════════════════════
@@ -1899,7 +1911,7 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
 ══════════════════════════════ */
 .btn-primary,
 .btn-outline,
-.cta-final-btn,
+.cta-final-btn-primary,
 .cta-final-btn-secondary {
   transition: transform .2s cubic-bezier(.16,1,.3,1),
               box-shadow .2s ease,
@@ -2371,7 +2383,7 @@ footer {
 </section>
 
 <!-- ─── PROOF STRIP — CHANGE 7: Pro scrolling tag strip ─── -->
-<div class="proof-strip sr">
+<div class="proof-strip">
   <div class="proof-track" id="proofTrack">
 
     <!-- First set -->
@@ -2404,6 +2416,127 @@ footer {
 
   </div>
 </div>
+
+<!-- ─── STACK SKILLS ─── -->
+<section class="stack-section" id="stack">
+  <div class="c">
+    <div class="stack-wrap sr">
+
+      <!-- OVERLAY: copy flotante sobre el espacio libre izquierdo -->
+      <div class="stack-overlay">
+        <div class="stack-eyebrow">Stack técnico</div>
+        <h2 class="stack-title">Las herramientas que uso <em>cada día.</em></h2>
+        <p class="stack-desc">Los porcentajes no mienten. Power BI y Data Storytelling son el núcleo de lo que hago. DAX y modelado, construidos a base de proyectos reales. SQL y Python entran cuando el análisis lo exige. La IA la estoy integrando despacio, con criterio.</p>
+      </div>
+
+      <!-- BARRAS: full width, alineadas al fondo -->
+      <div class="stack-cols" id="stackCols">
+
+        <div class="sk-col top-align" style="height:20%">
+          <div class="sk-card">
+            <div class="sk-desc-above">
+              <p>Usada como acelerador dentro del flujo analítico: documentar, explorar datos, prototipar y depurar más rápido. En proceso de formación continua.</p>
+            </div>
+            <div class="sk-pct" style="margin-bottom:10px">20%</div>
+            <div class="sk-bottom">
+            <div class="sk-name">IA aplicada</div>
+            <div class="sk-pills">
+              <span class="sk-pill">Claude</span>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sk-col top-align" style="height:30%">
+          <div class="sk-card">
+            <div class="sk-desc-above">
+              <p>Los datos se trabajan desde la lógica de negocio. SQL, Python y Excel para explorar, validar y detectar patrones antes de construir cualquier modelo o visual.</p>
+            </div>
+            <div class="sk-pct" style="margin-bottom:10px">30%</div>
+            <div class="sk-bottom">
+            <div class="sk-name">Análisis de datos</div>
+            <div class="sk-pills">
+              <span class="sk-pill">SQL</span>
+              <span class="sk-pill">Python</span>
+              <span class="sk-pill">Excel</span>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sk-col" style="height:45%">
+          <div class="sk-card">
+            <div class="sk-pct">45%</div>
+            <div class="sk-bottom">
+            <div class="sk-name">DAX</div>
+            <p class="sk-desc">Medidas pensadas para responder preguntas reales de negocio: contexto de filtro, time intelligence, parámetros de campo, filtros, medidas dinámicas y cálculos visuales.</p>
+            <div class="sk-pills">
+              <span class="sk-pill">DAX Studio</span>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sk-col" style="height:50%">
+          <div class="sk-card">
+            <div class="sk-pct">50%</div>
+            <div class="sk-bottom">
+            <div class="sk-name">Power Query</div>
+            <p class="sk-desc">Fuentes heterogéneas transformadas y unificadas para que el modelo reciba datos limpios y estructurados desde el origen. Conexión, limpieza, transformación y combinación de datos con lenguaje M.</p>
+            <div class="sk-pills">
+              <span class="sk-pill">M</span>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sk-col" style="height:60%">
+          <div class="sk-card">
+            <div class="sk-pct">60%</div>
+            <div class="sk-bottom">
+            <div class="sk-name">Modelado de datos</div>
+            <p class="sk-desc">Modelos en estrella orientados a claridad y escalabilidad: relaciones limpias, tablas de calendario y RLS. Optimización, buenas prácticas, rendimiento, cardinalidad y granularidad desde el diseño.</p>
+            <div class="sk-pills">
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sk-col" style="height:95%">
+          <div class="sk-card">
+            <div class="sk-pct">80%</div>
+            <div class="sk-bottom">
+            <div class="sk-name">Data Storytelling</div>
+            <p class="sk-desc">Fundamentos del storytelling, teorías de la visualización, leyes de la Gestalt, psicología del color, orden visual y sistemas de layout para comunicar con elementos visuales efectivos.</p>
+            <div class="sk-pills">
+              <span class="sk-pill">Figma</span>
+              <span class="sk-pill">UX/UI</span>
+              <span class="sk-pill">Dashboard Design</span>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sk-col" style="height:90%">
+          <div class="sk-card hl">
+            <div class="sk-pct">75%</div>
+            <div class="sk-bottom">
+            <div class="sk-name">Power BI</div>
+            <p class="sk-desc">El entorno que unifica el proceso analítico completo: desde los datos en bruto hasta la decisión. Ingesta, transformación, modelado y visualización en un solo espacio.</p>
+            <div class="sk-pills">
+              <span class="sk-pill">Desktop</span>
+              <span class="sk-pill">Service</span>
+              <span class="sk-pill">PL-300</span>
+            </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>
 
 <!-- ─── PROJECTS — gris ─── -->
 <section class="proj-section" id="projects">
@@ -2850,104 +2983,6 @@ footer {
 
 </section>
 
-<!-- ─── ANALYSIS PROJECTS ─── -->
-<section class="analysis-section" id="analysis">
-  <div class="c">
-    <div class="analysis-header sr">
-      <div class="s-tag">Otros proyectos de análisis (Python · SQL · R)</div>
-      <h2 class="s-h">No todos los problemas<br><em>necesitan un dashboard.</em></h2>
-      <p class="s-sub">Algunos necesitan exploración, no presentación. Python, SQL y R para cuando los datos todavía no tienen forma y hay que entenderlos antes de decidir cómo mostrarlos.</p>
-    </div>
-    <div class="analysis-grid">
-
-      <div class="analysis-card sr">
-        <div class="analysis-lang">
-          <span>Python</span><span>Pandas</span><span>Análisis de datos</span>
-        </div>
-        <div class="analysis-title">Mejores ciudades para teletrabajar</div>
-        <p class="analysis-desc">Análisis exploratorio para identificar municipios con buena conectividad, calidad ambiental y precios de vivienda competitivos.</p>
-        <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/python/Proyectos/03.Mejores%20Ciudades%20espa%C3%B1olas%20para%20vivir" target="_blank" rel="noopener noreferrer" class="analysis-link">Ver análisis completo →</a>
-      </div>
-
-      <div class="analysis-card sr sr-d1">
-        <div class="analysis-lang">
-          <span>SQL</span><span>Exploración de datos</span><span>Visualización</span>
-        </div>
-        <div class="analysis-title">Mercado Airbnb — Análisis de precios</div>
-        <p class="analysis-desc">Exploración de datos para analizar patrones de precios, disponibilidad y demanda en el mercado de alquiler turístico.</p>
-        <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/SQL/Proyectos%20SQL/04.Estudio%20Airbnb%20Menorca" target="_blank" rel="noopener noreferrer" class="analysis-link">Ver consultas y conclusiones →</a>
-      </div>
-
-      <div class="analysis-card sr sr-d2">
-        <div class="analysis-lang">
-          <span>R</span><span>Análisis de datos</span><span>Visualización</span>
-        </div>
-        <div class="analysis-title">Radiografía socioeconómica de Madrid</div>
-        <p class="analysis-desc">Análisis de indicadores demográficos y económicos para entender la distribución territorial de renta y población.</p>
-        <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/blob/main/r/Proyectos%20con%20R/01.Radiograf%C3%ADa%20de%20Madrid/README.md" target="_blank" rel="noopener noreferrer" class="analysis-link">Explorar análisis completo →</a>
-      </div>
-
-    </div>
-    <div class="proj-more sr">
-      <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main" target="_blank" rel="noopener noreferrer" class="btn btn-outline" onclick="gtag('event', 'clic_github', { location: 'proyectos' });">Ver más proyectos en GitHub →</a>
-    </div>
-  </div>
-</section>
-
-<!-- ─── DAX LAB ─── -->
-<section class="dax-section" id="daxlab">
-  <div class="c">
-    <div class="dax-inner">
-
-      <!-- LEFT -->
-      <div class="dax-left sr">
-        <div class="dax-tag">DAX Lab</div>
-        <h2 class="dax-title">Experimentos<br>con <em>DAX</em></h2>
-        <p class="dax-desc">Exploro patrones de modelado y cálculos avanzados en Power BI. Pequeños experimentos con DAX y modelado que ayudan a mejorar rendimiento, claridad y reutilización de medidas.</p>
-        <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio" target="_blank" rel="noopener noreferrer" class="dax-github">
-          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.58v-2.03c-3.34.72-4.04-1.6-4.04-1.6-.54-1.38-1.33-1.74-1.33-1.74-1.08-.74.08-.73.08-.73 1.2.08 1.83 1.23 1.83 1.23 1.06 1.82 2.78 1.3 3.46.99.1-.77.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.13 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.82.57C20.57 21.8 24 17.3 24 12 24 5.37 18.63 0 12 0z"/></svg>
-          Disponible en GitHub
-        </a>
-      </div>
-
-      <!-- RIGHT: cards -->
-      <div class="dax-cards sr sr-d1">
-
-        <div class="dax-card">
-          <div>
-            <div class="dax-card-num">01</div>
-            <div class="dax-card-title">Time Intelligence reutilizable</div>
-            <p class="dax-card-desc">Medidas DAX diseñadas para reutilizar cálculos de periodos comparativos sin duplicar lógica.</p>
-          </div>
-          <a href="https://github.com/BORJAMOME/DAX-LAB/tree/main/Patrones/Medidas%20TIME%20INTELLIGENCE" target="_blank" rel="noopener noreferrer" class="dax-card-link">Ver medidas →</a>
-        </div>
-
-        <div class="dax-card">
-          <div>
-            <div class="dax-card-num">02</div>
-            <div class="dax-card-title">Ranking dinámico de métricas</div>
-            <p class="dax-card-desc">Implementación de rankings dinámicos que permiten analizar el rendimiento de categorías o segmentos en distintos contextos.</p>
-          </div>
-          <a href="https://github.com/BORJAMOME/DAX-LAB/tree/main/B%C3%A1sico/RANK" target="_blank" rel="noopener noreferrer" class="dax-card-link">Explorar →</a>
-        </div>
-
-        <div class="dax-card">
-          <div>
-            <div class="dax-card-num">03</div>
-            <div class="dax-card-title">Control de acceso con RLS</div>
-            <p class="dax-card-desc">Configuración de seguridad a nivel de fila para limitar el acceso a los datos según el perfil del usuario.</p>
-          </div>
-          <a href="https://github.com/BORJAMOME/DAX-LAB/tree/main/Avanzado/Control%20de%20acceso%20a%20p%C3%A1ginas" target="_blank" rel="noopener noreferrer" class="dax-card-link">Ver implementación →</a>
-        </div>
-
-      </div>
-    </div>
-    <div class="proj-more sr">
-      <a href="https://github.com/BORJAMOME/DAX-LAB" target="_blank" rel="noopener noreferrer" class="btn btn-outline" onclick="gtag('event', 'clic_github', { location: 'daxlab' });">Ver más experimentos DAX →</a>
-    </div>
-  </div>
-</section>
-
 <!-- ─── COMMUNITY ─── -->
 <section class="com-section" id="community">
   <div class="c" style="padding-top:100px;padding-bottom:100px;">
@@ -3020,7 +3055,8 @@ footer {
     <div class="cta-final-inner sr">
 
     <!-- headline -->
-<h2 class="cta-final-h">¿Hablamos?</h2>
+<div class="cta-final-eyebrow">Hablemos</div>
+<h2 class="cta-final-h">El siguiente paso<br>lo das <em>tú.</em></h2>
 
 <p class="cta-final-sub">
   Hay equipos que buscan a alguien que sepa Power BI.
@@ -3137,6 +3173,23 @@ footer {
 })();
 
 
+// ─── STACK SKILLS ANIMATION ───
+(function(){
+  const stackSection = document.querySelector('#stackCols');
+  if(!stackSection) return;
+  const skObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        skObserver.unobserve(e.target);
+        document.querySelectorAll('.sk-col').forEach((col)=>{
+          col.classList.add('sk-visible');
+        });
+      }
+    });
+  },{ threshold:.1 });
+  skObserver.observe(stackSection);
+})();
+
 // ─── NAV SCROLL ───
 const nav = document.getElementById('nav');
 window.addEventListener('scroll',()=> nav.classList.toggle('scrolled', scrollY > 40));
@@ -3215,7 +3268,7 @@ const chartOpts = {
 (function(){
   const nav = document.getElementById('dotNav');
   const items = nav.querySelectorAll('.dot-nav-item');
-  const sections = ['hero','projects','star','approach','analysis','daxlab','community','cta'];
+  const sections = ['hero','stack','projects','star','approach','community','cta'];
   const darkSections = ['community'];
 
   function update() {
@@ -3244,17 +3297,6 @@ const chartOpts = {
   });
 })();
 
-// ─── LOGO LINK: always go to home ───
-(function(){
-  const logo = document.querySelector('a.logo');
-  if(!logo) return;
-  logo.addEventListener('click', function(e){
-    e.preventDefault();
-    // Navigate to root/index
-    const base = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/');
-    window.location.href = base.endsWith('/') ? base + 'index.html' : '/index.html';
-  });
-})();
 
 </script>
 
@@ -3293,42 +3335,11 @@ const chartOpts = {
 })();
 
 
-/* ── 3. COMMUNITY STATS COUNT-UP ── */
-(function(){
-  function countUpStat(el, target, decimals, duration) {
-    const start = performance.now();
-    function update(now) {
-      const elapsed = now - start;
-      const progress = Math.min(elapsed / duration, 1);
-      const ease = 1 - Math.pow(1 - progress, 4);
-      const val = (target * ease);
-      el.textContent = decimals
-        ? val.toFixed(1).replace('.', ',')
-        : Math.round(val).toLocaleString('es-ES');
-      if (progress < 1) requestAnimationFrame(update);
-    }
-    requestAnimationFrame(update);
-  }
-
-  const statObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting && !entry.target.dataset.counted) {
-        entry.target.dataset.counted = '1';
-        const raw = entry.target.dataset.val;
-        const dec = entry.target.dataset.dec === '1';
-        countUpStat(entry.target, parseFloat(raw), dec, 1400);
-      }
-    });
-  }, { threshold: 0.5 });
-
-  document.querySelectorAll('[data-val]').forEach(el => statObserver.observe(el));
-})();
-
 
 /* ── 4. MAGNETIC BUTTONS ── */
 (function(){
   const STRENGTH = 0.35;
-  document.querySelectorAll('.btn-primary, .btn-outline, .cta-final-btn, .cta-final-btn-secondary').forEach(btn => {
+  document.querySelectorAll('.btn-primary, .btn-outline, .cta-final-btn-primary, .cta-final-btn-secondary').forEach(btn => {
     btn.addEventListener('mousemove', e => {
       const r = btn.getBoundingClientRect();
       const x = e.clientX - r.left - r.width / 2;
@@ -3492,8 +3503,12 @@ const chartOpts = {
     }, 880);
   }
 
-  if(document.readyState==='complete') setTimeout(init,200);
-  else window.addEventListener('load', function(){ setTimeout(init,200); });
+  var frame = document.querySelector('.dashboard-frame');
+  if(!frame){ if(document.readyState==='complete') setTimeout(init,200); else window.addEventListener('load',function(){setTimeout(init,200);}); return; }
+  var dashObs = new IntersectionObserver(function(entries){
+    if(entries[0].isIntersecting){ dashObs.disconnect(); setTimeout(init,120); }
+  },{ threshold:0.15 });
+  dashObs.observe(frame);
 })();
 </script>
 <script>
@@ -3515,8 +3530,35 @@ const chartOpts = {
 
 
 
-<!-- ─── THREE.JS FLIP CARD SCENES ─── -->
+<!-- ─── THREE.JS FLIP CARD SCENES — carga lazy al llegar a la sección ─── -->
 <script>
+(function(){
+  var loaded = false;
+  var section = document.getElementById('approach');
+  if (!section) return;
+
+  function loadThreeAndInit() {
+    if (loaded) return;
+    loaded = true;
+    var s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+    s.onload = function() { initFlipScenes(); };
+    document.body.appendChild(s);
+  }
+
+  var observer = new IntersectionObserver(function(entries) {
+    if (entries[0].isIntersecting) {
+      loadThreeAndInit();
+      observer.disconnect();
+    }
+  }, { rootMargin: '300px' });
+
+  observer.observe(section);
+})();
+</script>
+
+<script>
+function initFlipScenes() {
 (function() {
   if (typeof THREE === 'undefined') return;
 
@@ -3725,10 +3767,10 @@ const chartOpts = {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initAll);
   } else {
-    // Small delay to ensure flip card layout is rendered
     setTimeout(initAll, 100);
   }
 })();
+}
 </script>
 
 </body>
