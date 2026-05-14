@@ -284,7 +284,7 @@ nav#nav.scrolled{border-bottom-color:var(--gray)}
 .maps-card:hover{background:var(--purple)!important;transform:none;box-shadow:none}
 .maps-card .viz-card-bg{height:100%!important;width:100%!important;border-bottom:1px solid var(--rule)!important;border-right:0!important}
 .maps-card .viz-card-content{display:none}
-.maps-card .viz-card-footer{padding:16px 22px;display:flex;flex-direction:column;gap:0;justify-content:flex-start;background:var(--paper);border:0;overflow:auto}
+.maps-card .viz-card-footer{padding:12px 22px 8px;display:flex;flex-direction:column;gap:0;justify-content:flex-start;background:var(--paper);border:0;overflow:auto}
 .viz-card-bg{position:relative!important;inset:auto!important;width:100%!important;height:200px!important;object-fit:cover;object-position:center;border-bottom:1px solid var(--rule);transition:transform .25s}
 .viz-card:hover .viz-card-bg{transform:none}
 .viz-card-overlay{display:none}
@@ -1031,6 +1031,9 @@ document.querySelectorAll('.sec-nav a').forEach(a=>{
     showSection(a.dataset.sec);
   });
 });
+
+// Inicializar Power BI como sección activa por defecto
+showSection('powerbi');
 
 // ── OUTER CAROUSEL — INFINITE ──
 (function(){
