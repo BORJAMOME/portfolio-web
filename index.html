@@ -3161,12 +3161,12 @@ footer {
     if (i < text.length) {
       el.textContent += text[i];
       i++;
-      setTimeout(type, i === 1 ? 300 : 80 + Math.random() * 40);
+      setTimeout(type, i === 1 ? 60 : 70 + Math.random() * 30);
     } else {
-      setTimeout(() => el.classList.add('done'), 1200);
+      setTimeout(() => el.classList.add('done'), 800);
     }
   }
-  setTimeout(type, 400);
+  setTimeout(type, 50);
 })();
 
 
@@ -3550,7 +3550,7 @@ const chartOpts = {
       loadThreeAndInit();
       observer.disconnect();
     }
-  }, { rootMargin: '100px' });
+  }, { rootMargin: '500px' });
 
   observer.observe(section);
 })();
@@ -3755,18 +3755,19 @@ function initFlipScenes() {
     renderer.render(scene, cam);
   }
 
-  // Init all — wait for DOM to be ready
+  // Init all — escalonado para no bloquear el hilo principal
   function initAll() {
-    buildScene0();
-    buildScene1();
-    buildScene2();
-    buildScene3();
+    var scenes = [buildScene0, buildScene1, buildScene2, buildScene3];
+    var idle = typeof requestIdleCallback !== 'undefined' ? requestIdleCallback : function(cb){ setTimeout(cb, 16); };
+    scenes.forEach(function(fn, i) {
+      idle(function() { fn(); }, { timeout: 300 + i * 150 });
+    });
   }
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initAll);
   } else {
-    setTimeout(initAll, 100);
+    setTimeout(initAll, 0);
   }
 })();
 }
