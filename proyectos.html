@@ -243,27 +243,26 @@ nav#nav.scrolled{border-bottom-color:var(--gray)}
 .nat-viz-card:hover .nat-viz-link::after{transform:translateX(4px)}
 
 /* DAX Lab */
-.dax-cards{display:flex;flex-direction:column;background:transparent;border:0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);border-radius:0;box-shadow:none;overflow:visible}
-.dax-card{display:grid;grid-template-columns:1fr auto;align-items:center;gap:24px;padding:32px 0;border-bottom:1px solid var(--rule);transition:background .18s var(--ease),color .12s,padding .18s,margin .18s;color:var(--ink)}
-.dax-card:last-child{border-bottom:0}
-.dax-card:hover{background:var(--purple);color:var(--purple-ink);margin:0 calc(-1 * clamp(20px,4vw,48px));padding:32px clamp(20px,4vw,48px)}
+.dax-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--rule);border-left:1px solid var(--rule);border-right:1px solid var(--rule)}
+.dax-card{background:var(--paper);border:0;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);border-radius:0;padding:32px 26px 26px;display:flex;flex-direction:column;box-shadow:none;transition:background .18s var(--ease),color .12s;position:relative;overflow:hidden}
+.dax-card:hover{background:var(--purple);color:var(--purple-ink);transform:none;box-shadow:none;border-color:var(--rule)}
 .dax-card-num{font-size:11px;font-weight:600;color:var(--mutedB);letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px;font-variant-numeric:tabular-nums;transition:color .12s}
 .dax-card:hover .dax-card-num{color:rgba(255,255,255,.7)}
-.dax-card-title{font-size:18px;font-weight:700;color:var(--ink);letter-spacing:-.015em;margin-bottom:6px;transition:color .12s}
+.dax-card-title{font-size:17px;font-weight:700;letter-spacing:-.012em;line-height:1.25;color:var(--ink);margin-bottom:12px;transition:color .12s}
 .dax-card:hover .dax-card-title{color:var(--purple-ink)}
-.dax-card-desc{font-size:13px;color:var(--muted);line-height:1.55;max-width:60ch;transition:color .12s}
+.dax-card-desc{font-size:13px;color:var(--muted);line-height:1.55;flex:1;margin-bottom:24px;transition:color .12s}
 .dax-card:hover .dax-card-desc{color:rgba(255,255,255,.85)}
-.dax-card-link{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;letter-spacing:-.005em;color:#fff;background:var(--ink);padding:10px 18px;border:1px solid var(--ink);border-radius:0;text-decoration:none;white-space:nowrap;transition:background .15s,color .15s}
-.dax-card-link:hover{background:#c6ff00;color:var(--ink)}
-.dax-card:hover .dax-card-link{background:#fff;color:var(--ink);border-color:#fff}
-.dax-card:hover .dax-card-link:hover{background:#c6ff00;color:var(--ink)}
+.dax-card-link{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);text-decoration:none;margin-top:auto;background:transparent;transition:gap .2s,color .12s}
+.dax-card-link svg{stroke:currentColor;fill:none;stroke-width:2}
+.dax-card-link:hover{gap:10px}
+.dax-card:hover .dax-card-link{color:var(--purple-ink)}
 
 /* Analysis cards */
 .analysis-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--rule);border-left:1px solid var(--rule)}
-.analysis-card{background:var(--paper);border:0;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);border-radius:0;padding:32px 26px 26px;display:flex;flex-direction:column;box-shadow:none;transition:background .18s var(--ease),color .12s;position:relative;overflow:hidden}
+.analysis-card{background:var(--paper);border:0;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);border-radius:0;padding:32px 26px 26px;display:flex;flex-direction:column;box-shadow:none;transition:background .18s var(--ease),color .12s;position:relative;overflow:hidden;gap:12px}
 .analysis-card::before{display:none}
 .analysis-card:hover{background:var(--purple);color:var(--purple-ink);transform:none;box-shadow:none;border-color:var(--rule)}
-.analysis-lang{display:flex;gap:0;flex-wrap:wrap;margin-bottom:20px;font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--mutedB);font-weight:500;line-height:1.5;transition:color .12s}
+.analysis-lang{display:flex;gap:0;flex-wrap:wrap;margin-bottom:0;margin-top:12px;padding-top:16px;font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--mutedB);font-weight:500;line-height:1.5;transition:color .12s;border-top:1px solid var(--gray)}
 .analysis-lang span{background:transparent;color:inherit;padding:0;border-radius:0;font-size:inherit;font-weight:inherit;letter-spacing:inherit}
 .analysis-lang span::after{content:" · ";margin:0 2px}
 .analysis-lang span:last-child::after{content:""}
@@ -272,30 +271,33 @@ nav#nav.scrolled{border-bottom-color:var(--gray)}
 .analysis-card:hover .analysis-title{color:var(--purple-ink)}
 .analysis-desc{font-size:13px;color:var(--muted);line-height:1.55;flex:1;margin-bottom:24px;transition:color .12s}
 .analysis-card:hover .analysis-desc{color:rgba(255,255,255,.85)}
-.analysis-link{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);text-decoration:none;margin-top:auto;background:transparent;transition:gap .2s,color .12s}
+.analysis-link{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);text-decoration:none;margin-top:16px;background:transparent;transition:gap .2s,color .12s}
 .analysis-link svg{stroke:currentColor;fill:none;stroke-width:2}
 .analysis-link:hover{gap:10px}
 .analysis-card:hover .analysis-link{color:var(--purple-ink)}
 
 /* VIZ cards (Diseño info, image-bearing) */
 .viz-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--rule);border-left:1px solid var(--rule)}
+.maps-grid{display:grid;grid-template-columns:1fr;gap:0;border-top:1px solid var(--rule);border-left:1px solid var(--rule)}
 .viz-card{position:relative;overflow:hidden;text-decoration:none;display:flex;flex-direction:column;min-height:340px;background:var(--paper)!important;border:0;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);border-radius:0;transition:background .18s var(--ease);box-shadow:none}
 .viz-card:hover{background:var(--purple)!important;transform:none;box-shadow:none}
+.maps-card{position:relative;overflow:hidden;text-decoration:none;display:flex;flex-direction:column;min-height:500px;background:var(--paper)!important;border:0;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);border-radius:0;transition:background .18s var(--ease);box-shadow:none}
+.maps-card:hover{background:var(--purple)!important;transform:none;box-shadow:none}
 .viz-card-bg{position:relative!important;inset:auto!important;width:100%!important;height:200px!important;object-fit:cover;object-position:center;border-bottom:1px solid var(--rule);transition:transform .25s}
 .viz-card:hover .viz-card-bg{transform:none}
 .viz-card-overlay{display:none}
 .viz-card-content{position:relative;padding:22px 22px 8px;margin-top:0;z-index:1}
-.viz-card-tags{display:flex;gap:0;flex-wrap:wrap;margin-bottom:12px;font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--mutedB);font-weight:500;line-height:1.5}
+.viz-card-tags{display:flex;gap:0;flex-wrap:wrap;margin-bottom:0;padding-top:12px;margin-top:0;font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--mutedB);font-weight:500;line-height:1.5;border-top:1px solid var(--gray);transition:color .12s}
 .viz-card-tags span{background:transparent;color:inherit;padding:0;border-radius:0;backdrop-filter:none;font-size:inherit;font-weight:inherit;letter-spacing:inherit;text-transform:inherit}
 .viz-card-tags span::after{content:" · ";margin:0 2px}
 .viz-card-tags span:last-child::after{content:""}
 .viz-card:hover .viz-card-tags{color:rgba(255,255,255,.7)}
 .viz-card-title{font-size:15px;font-weight:700;letter-spacing:-.012em;line-height:1.3;color:var(--ink);text-shadow:none;text-wrap:balance;transition:color .12s}
 .viz-card:hover .viz-card-title{color:var(--purple-ink)}
-.viz-card-footer{position:relative;padding:0 22px 22px;z-index:1;display:flex;flex-direction:column;gap:10px;flex:1;justify-content:space-between}
-.viz-card-desc{font-size:12.5px;color:var(--muted);line-height:1.55;text-shadow:none;transition:color .12s;margin:0}
+.viz-card-footer{position:relative;padding:0 22px 22px;z-index:1;display:flex;flex-direction:column;gap:0;flex:1;justify-content:flex-start}
+.viz-card-desc{font-size:12.5px;color:var(--muted);line-height:1.55;text-shadow:none;transition:color .12s;margin:0;margin-bottom:12px}
 .viz-card:hover .viz-card-desc{color:rgba(255,255,255,.85)}
-.viz-card-link{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);transition:gap .2s,color .12s}
+.viz-card-link{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);transition:gap .2s,color .12s;margin-top:12px}
 .viz-card-link svg{display:none}
 .viz-card-link::after{content:"→";display:inline-block;transition:transform .2s}
 .viz-card:hover .viz-card-link{color:var(--purple-ink);gap:8px}
@@ -590,7 +592,6 @@ footer{background:var(--paper);padding:0;border-top:1px solid var(--rule);margin
             <img src="./img/p1.png" alt="No estás filtrando datos. Estás eligiendo qué historia quieres ver." class="li-card-bg">
             <div class="li-card-overlay"></div>
             <div class="li-card-top">
-              <div class="li-card-badge"><svg viewBox="0 0 24 24" fill="#fff" width="14" height="14"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg> LinkedIn</div>
             </div>
             <div class="li-card-body">
               <p class="li-card-title">No estás filtrando datos. Estás eligiendo qué historia quieres ver.</p>
@@ -602,7 +603,6 @@ footer{background:var(--paper);padding:0;border-top:1px solid var(--rule);margin
             <img src="./img/p2.png" alt="El futuro de los dashboards no son más gráficos, son mejores interacciones." class="li-card-bg">
             <div class="li-card-overlay"></div>
             <div class="li-card-top">
-              <div class="li-card-badge"><svg viewBox="0 0 24 24" fill="#fff" width="14" height="14"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg> LinkedIn</div>
             </div>
             <div class="li-card-body">
               <p class="li-card-title">El futuro de los dashboards no son más gráficos, son mejores interacciones.</p>
@@ -614,7 +614,6 @@ footer{background:var(--paper);padding:0;border-top:1px solid var(--rule);margin
             <img src="./img/p3.png" alt="Producto a producto: cómo los datos cuentan historias." class="li-card-bg">
             <div class="li-card-overlay"></div>
             <div class="li-card-top">
-              <div class="li-card-badge"><svg viewBox="0 0 24 24" fill="#fff" width="14" height="14"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg> LinkedIn</div>
             </div>
             <div class="li-card-body">
               <p class="li-card-title">Producto a producto: cómo los datos cuentan historias.</p>
@@ -626,7 +625,6 @@ footer{background:var(--paper);padding:0;border-top:1px solid var(--rule);margin
             <img src="./img/p4.png" alt="Si tienes que reconstruir la historia en tu cabeza, el dashboard falla." class="li-card-bg">
             <div class="li-card-overlay"></div>
             <div class="li-card-top">
-              <div class="li-card-badge"><svg viewBox="0 0 24 24" fill="#fff" width="14" height="14"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg> LinkedIn</div>
             </div>
             <div class="li-card-body">
               <p class="li-card-title">Si tienes que reconstruir la historia en tu cabeza, el dashboard falla.</p>
@@ -638,7 +636,6 @@ footer{background:var(--paper);padding:0;border-top:1px solid var(--rule);margin
             <img src="./img/p5.png" alt="Un gráfico puede ser correcto y aun así engañar." class="li-card-bg">
             <div class="li-card-overlay"></div>
             <div class="li-card-top">
-              <div class="li-card-badge"><svg viewBox="0 0 24 24" fill="#fff" width="14" height="14"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg> LinkedIn</div>
             </div>
             <div class="li-card-body">
               <p class="li-card-title">Un gráfico puede ser correcto y aun así engañar.</p>
@@ -650,7 +647,6 @@ footer{background:var(--paper);padding:0;border-top:1px solid var(--rule);margin
             <img src="./img/p6.png" alt="Variaciones entre columnas al alcance de un vistazo." class="li-card-bg">
             <div class="li-card-overlay"></div>
             <div class="li-card-top">
-              <div class="li-card-badge"><svg viewBox="0 0 24 24" fill="#fff" width="14" height="14"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg> LinkedIn</div>
             </div>
             <div class="li-card-body">
               <p class="li-card-title">Variaciones entre columnas al alcance de un vistazo.</p>
@@ -755,29 +751,23 @@ footer{background:var(--paper);padding:0;border-top:1px solid var(--rule);margin
         <div class="dax-cards" style="margin-bottom:48px;">
 
           <div class="dax-card">
-            <div>
-              <div class="dax-card-num">01</div>
-              <div class="dax-card-title">Time Intelligence reutilizable</div>
-              <p class="dax-card-desc">Medidas DAX diseñadas para reutilizar cálculos de periodos comparativos sin duplicar lógica.</p>
-            </div>
+            <div class="dax-card-num">01</div>
+            <div class="dax-card-title">Time Intelligence reutilizable</div>
+            <p class="dax-card-desc">Medidas DAX diseñadas para reutilizar cálculos de periodos comparativos sin duplicar lógica.</p>
             <a href="https://github.com/BORJAMOME/DAX-LAB/tree/main/Patrones/Medidas%20TIME%20INTELLIGENCE" target="_blank" rel="noopener noreferrer" class="dax-card-link">Ver medidas →</a>
           </div>
 
           <div class="dax-card">
-            <div>
-              <div class="dax-card-num">02</div>
-              <div class="dax-card-title">Ranking dinámico de métricas</div>
-              <p class="dax-card-desc">Implementación de rankings dinámicos que permiten analizar el rendimiento de categorías o segmentos en distintos contextos.</p>
-            </div>
+            <div class="dax-card-num">02</div>
+            <div class="dax-card-title">Ranking dinámico de métricas</div>
+            <p class="dax-card-desc">Implementación de rankings dinámicos que permiten analizar el rendimiento de categorías o segmentos en distintos contextos.</p>
             <a href="https://github.com/BORJAMOME/DAX-LAB/tree/main/B%C3%A1sico/RANK" target="_blank" rel="noopener noreferrer" class="dax-card-link">Explorar →</a>
           </div>
 
           <div class="dax-card">
-            <div>
-              <div class="dax-card-num">03</div>
-              <div class="dax-card-title">Control de acceso con RLS</div>
-              <p class="dax-card-desc">Configuración de seguridad a nivel de fila para limitar el acceso a los datos según el perfil del usuario.</p>
-            </div>
+            <div class="dax-card-num">03</div>
+            <div class="dax-card-title">Control de acceso con RLS</div>
+            <p class="dax-card-desc">Configuración de seguridad a nivel de fila para limitar el acceso a los datos según el perfil del usuario.</p>
             <a href="https://github.com/BORJAMOME/DAX-LAB/tree/main/Avanzado/Control%20de%20acceso%20a%20p%C3%A1ginas" target="_blank" rel="noopener noreferrer" class="dax-card-link">Ver implementación →</a>
           </div>
 
@@ -805,21 +795,21 @@ footer{background:var(--paper);padding:0;border-top:1px solid var(--rule);margin
         <p style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:32px;max-width:600px;">Exploración, limpieza y análisis de datos con Python, SQL y R. Proyectos con código documentado y conclusiones aplicables a negocio, disponibles en GitHub.</p>
         <div class="analysis-grid" style="margin-bottom:36px;">
           <div class="analysis-card">
-            <div class="analysis-lang"><span>Python</span><span>Pandas</span><span>Análisis de datos</span></div>
             <div class="analysis-title">Mejores ciudades para teletrabajar</div>
             <p class="analysis-desc">Análisis exploratorio para identificar municipios con buena conectividad, calidad ambiental y precios de vivienda competitivos.</p>
+            <div class="analysis-lang"><span>Python</span><span>Pandas</span><span>Análisis de datos</span></div>
             <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/python/Proyectos/03.Mejores%20Ciudades%20espa%C3%B1olas%20para%20vivir" target="_blank" rel="noopener noreferrer" class="analysis-link">Ver análisis completo <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
           </div>
           <div class="analysis-card">
-            <div class="analysis-lang"><span>SQL</span><span>Exploración de datos</span><span>Visualización</span></div>
             <div class="analysis-title">Mercado Airbnb — Análisis de precios</div>
             <p class="analysis-desc">Exploración de datos para analizar patrones de precios, disponibilidad y demanda en el mercado de alquiler turístico.</p>
+            <div class="analysis-lang"><span>SQL</span><span>Exploración de datos</span><span>Visualización</span></div>
             <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/SQL/Proyectos%20SQL/04.Estudio%20Airbnb%20Menorca" target="_blank" rel="noopener noreferrer" class="analysis-link">Ver consultas y conclusiones <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
           </div>
           <div class="analysis-card">
-            <div class="analysis-lang"><span>R</span><span>Análisis de datos</span><span>Visualización</span></div>
             <div class="analysis-title">Radiografía socioeconómica de Madrid</div>
             <p class="analysis-desc">Análisis de indicadores demográficos y económicos para entender la distribución territorial de renta y población.</p>
+            <div class="analysis-lang"><span>R</span><span>Análisis de datos</span><span>Visualización</span></div>
             <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/blob/main/r/Proyectos%20con%20R/01.Radiograf%C3%ADa%20de%20Madrid/README.md" target="_blank" rel="noopener noreferrer" class="analysis-link">Explorar análisis completo <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
           </div>
         </div>
@@ -849,60 +839,60 @@ footer{background:var(--paper);padding:0;border-top:1px solid var(--rule);margin
             <img src="./img/skyline.png" alt="El skyline oculto de Madrid" class="viz-card-bg">
             <div class="viz-card-overlay"></div>
             <div class="viz-card-content">
-              <div class="viz-card-tags"><span>3D</span><span>Data Viz</span></div>
               <div class="viz-card-title">El skyline oculto de Madrid</div>
             </div>
             <div class="viz-card-footer">
               <p class="viz-card-desc">Exploración 3D de la altura de los edificios que revela patrones urbanos invisibles.</p>
-              <span class="viz-card-link">Ver en Behance <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+              <div class="viz-card-tags"><span>3D</span><span>Data Viz</span></div>
+              <span class="viz-card-link">Ver proyecto <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
             </div>
           </a>
           <a href="https://www.behance.net/gallery/212501517/DANA-in-Valencia-3D-Map" target="_blank" rel="noopener noreferrer" class="viz-card">
             <img src="./img/dana.png" alt="DANA en Valencia" class="viz-card-bg">
             <div class="viz-card-overlay"></div>
             <div class="viz-card-content">
-              <div class="viz-card-tags"><span>Mapa 3D</span><span>GIS</span></div>
               <div class="viz-card-title">DANA en Valencia</div>
             </div>
             <div class="viz-card-footer">
               <p class="viz-card-desc">Visualización 3D del impacto real de la DANA y sus zonas más vulnerables.</p>
-              <span class="viz-card-link">Ver en Behance <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+              <div class="viz-card-tags"><span>Mapa 3D</span><span>GIS</span></div>
+              <span class="viz-card-link">Ver proyecto <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
             </div>
           </a>
           <a href="https://www.behance.net/gallery/212640571/Geological-Map-of-Spain-and-Portugal-3D" target="_blank" rel="noopener noreferrer" class="viz-card">
             <img src="./img/mapa.png" alt="Geología en tres dimensiones" class="viz-card-bg">
             <div class="viz-card-overlay"></div>
             <div class="viz-card-content">
-              <div class="viz-card-tags"><span>Geología</span><span>3D</span></div>
               <div class="viz-card-title">Geología en tres dimensiones</div>
             </div>
             <div class="viz-card-footer">
               <p class="viz-card-desc">Recreación 3D del mapa geológico de España y Portugal.</p>
-              <span class="viz-card-link">Ver en Behance <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+              <div class="viz-card-tags"><span>Geología</span><span>3D</span></div>
+              <span class="viz-card-link">Ver proyecto <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
             </div>
           </a>
           <a href="https://www.behance.net/gallery/211492633/Where-does-happiness-reside" target="_blank" rel="noopener noreferrer" class="viz-card">
             <img src="./img/feliz.png" alt="100 municipios, un índice y una pregunta incómoda" class="viz-card-bg">
             <div class="viz-card-overlay"></div>
             <div class="viz-card-content">
-              <div class="viz-card-tags"><span>Infografía</span><span>Datos</span></div>
               <div class="viz-card-title">100 municipios, un índice y una pregunta incómoda</div>
             </div>
             <div class="viz-card-footer">
               <p class="viz-card-desc">Población, renta e índice de felicidad en los municipios más poblados de España.</p>
-              <span class="viz-card-link">Ver en Behance <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+              <div class="viz-card-tags"><span>Infografía</span><span>Datos</span></div>
+              <span class="viz-card-link">Ver proyecto <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
             </div>
           </a>
           <a href="https://www.behance.net/gallery/209226133/Metro-Walking-Map" target="_blank" rel="noopener noreferrer" class="viz-card">
             <img src="./img/metro.png" alt="Redibujando el Metro desde el peatón" class="viz-card-bg">
             <div class="viz-card-overlay"></div>
             <div class="viz-card-content">
-              <div class="viz-card-tags"><span>Cartografía</span></div>
               <div class="viz-card-title">Redibujando el Metro desde el peatón</div>
             </div>
             <div class="viz-card-footer">
               <p class="viz-card-desc">Plano del Metro con distancias reales a pie entre estaciones.</p>
-              <span class="viz-card-link">Ver en Behance <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+              <div class="viz-card-tags"><span>Cartografía</span></div>
+              <span class="viz-card-link">Ver proyecto <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
             </div>
           </a>
           <a href="https://www.behance.net/borjamm2/projects" target="_blank" rel="noopener noreferrer" class="viz-card viz-card-more">
@@ -926,23 +916,20 @@ footer{background:var(--paper);padding:0;border-top:1px solid var(--rule);margin
         <div class="col-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
       </div>
       <div class="col-body" id="bodyMapas">
-        <div style="position:relative;border-radius:16px;overflow:hidden;min-height:420px;display:flex;align-items:flex-end;">
-          <!-- Background image -->
-          <img src="./img/madrid.png" alt="Mapa de relieve 3D de Madrid" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;">
-          <!-- Gradient overlay -->
-          <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(17,17,17,.85) 0%, rgba(17,17,17,.3) 50%, transparent 100%);"></div>
-          <!-- Content over image -->
-          <div style="position:relative;z-index:1;padding:36px 40px;width:100%;display:flex;align-items:flex-end;justify-content:space-between;gap:32px;">
-            <div style="max-width:560px;">
-              <div style="font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:10px;">QGIS · Blender · Cartografía 3D</div>
-              <h3 style="font-size:clamp(20px,2.5vw,30px);font-weight:700;color:#fff;letter-spacing:-.4px;line-height:1.2;margin-bottom:12px;">Comunidades Autónomas en tres dimensiones</h3>
-              <p style="font-size:13.5px;color:rgba(255,255,255,.7);line-height:1.75;margin:0;">Una colección de mapas 3D de las comunidades autónomas de España, construidos con QGIS y renderizados con Blender. Un enfoque diferente para visualizar y entender datos territoriales — cuando el relieve no es decoración, sino información.</p>
+        <p style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:32px;max-width:600px;">Visualización cartográfica en 3D y exploración territorial de datos geográficos. Proyectos que transforman datos sobre el terreno en lecturas visuales y experiencias inmersivas.</p>
+        <div class="maps-grid">
+          <a href="https://www.behance.net/gallery/213663039/Cartography-of-the-Spanish-Regions-3D" target="_blank" rel="noopener noreferrer" class="maps-card">
+            <img src="./img/madrid.png" alt="Comunidades Autónomas en tres dimensiones" class="viz-card-bg">
+            <div class="viz-card-overlay"></div>
+            <div class="viz-card-content">
+              <div class="viz-card-title">Comunidades Autónomas en tres dimensiones</div>
             </div>
-            <a href="https://www.behance.net/gallery/213663039/Cartography-of-the-Spanish-Regions-3D" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:7px;background:#fff;color:#111;font-size:13px;font-weight:700;padding:11px 22px;border-radius:9px;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:background .2s;">
-              Ver en Behance
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
-            </a>
-          </div>
+            <div class="viz-card-footer">
+              <p class="viz-card-desc">Una colección de mapas 3D de las comunidades autónomas de España para visualizar y entender datos territoriales.</p>
+              <div class="viz-card-tags"><span>Cartografía 3D</span><span>QGIS</span><span>Blender</span></div>
+              <span class="viz-card-link">Ver proyecto <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
+          </a>
         </div>
       </div>
     </div>
