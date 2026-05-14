@@ -108,7 +108,7 @@
   --gray:         #e5e5e5;
   --ink:          #111111;
   --muted:        #6e6e78;
-  --font:         'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+  --font:         'Plus Jakarta Sans', system-ui, sans-serif;
   --ease:         cubic-bezier(0.16,1,0.3,1);
 }
 
@@ -517,7 +517,7 @@ nav.scrolled { border-bottom-color: var(--gray); }
   letter-spacing: .3px;
   flex-shrink: 0;
   text-transform: uppercase;
-  font-family: 'Segoe UI', monospace;
+  font-family: 'Plus Jakarta Sans', monospace;
 }
 
 .proof-label {
@@ -674,7 +674,7 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
 
 /* ─── PROYECTO ESTRELLA — dos columnas ─── */
 .star-section {
-  background: var(--white);
+  background: var(--off);
   padding: clamp(80px, 9vw, 120px) 0;
   border-top: .5px solid #f0f0f5;
   overflow: hidden;
@@ -1231,11 +1231,6 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
   height: 100%;
 }
 .sk-card.hl { background: var(--purple); }
-.sk-pct {
-  font-size: 24px; font-weight: 700; color: var(--ink);
-  letter-spacing: -1px; line-height: 1; margin-bottom: 28px;
-}
-.sk-card.hl .sk-pct { color: #fff; }
 .sk-name {
   font-size: 11px; font-weight: 700; color: var(--ink);
   letter-spacing: .8px; line-height: 1.2; margin-bottom: 8px;
@@ -1319,7 +1314,6 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
 @media(max-width:640px){
   .stack-cols{height:300px; gap:5px}
   .sk-col:nth-child(n+5){display:none}
-  .sk-pct{font-size:18px}
 }
 
 /* ─── STATS ─── */
@@ -1536,7 +1530,7 @@ section { padding: clamp(80px,10vw,120px) clamp(1.5rem,5vw,4rem); }
 
 /* ─── CÓMO TRABAJO · FLIP CARDS ─── */
 .dph-section {
-  background: var(--off);
+  background: var(--white);
   border-top: .5px solid #f0f0f5;
   position: relative;
   padding: 100px 0 120px;
@@ -2169,11 +2163,10 @@ footer {
 <!-- ─── DOT NAV ─── -->
 <div class="dot-nav" id="dotNav">
   <div class="dot-nav-item" data-section="hero"><div class="dot-nav-dot"></div><span class="dot-nav-label">Inicio</span></div>
-  <div class="dot-nav-item" data-section="projects"><div class="dot-nav-dot"></div><span class="dot-nav-label">Proyectos</span></div>
-  <div class="dot-nav-item" data-section="star"><div class="dot-nav-dot"></div><span class="dot-nav-label">PBI Mockup</span></div>
   <div class="dot-nav-item" data-section="approach"><div class="dot-nav-dot"></div><span class="dot-nav-label">Cómo trabajo</span></div>
-  <div class="dot-nav-item" data-section="analysis"><div class="dot-nav-dot"></div><span class="dot-nav-label">Python · SQL · R</span></div>
-  <div class="dot-nav-item" data-section="daxlab"><div class="dot-nav-dot"></div><span class="dot-nav-label">DAX Lab</span></div>
+  <div class="dot-nav-item" data-section="projects"><div class="dot-nav-dot"></div><span class="dot-nav-label">Proyectos</span></div>
+  <div class="dot-nav-item" data-section="star"><div class="dot-nav-dot"></div><span class="dot-nav-label">Herramienta</span></div>
+  <div class="dot-nav-item" data-section="stack"><div class="dot-nav-dot"></div><span class="dot-nav-label">Skills</span></div>
   <div class="dot-nav-item" data-section="community"><div class="dot-nav-dot"></div><span class="dot-nav-label">Comunidad</span></div>
   <div class="dot-nav-item" data-section="cta"><div class="dot-nav-dot"></div><span class="dot-nav-label">Contacto</span></div>
 </div>
@@ -2205,7 +2198,7 @@ footer {
       </div> 
 
       <div class="hero-actions">
-        <a href="./proyectos.html" class="btn btn-primary">Ver cómo trabajo ↓</a>
+        <a href="#approach" class="btn btn-primary">Ver cómo trabajo ↓</a>
         <a href="./sobre-mi.html" class="btn btn-outline">Sobre mí</a>
       </div>
     </div>
@@ -2298,45 +2291,45 @@ footer {
                 <line x1="110" y1="5" x2="110" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
                 <line x1="145" y1="5" x2="145" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
                 <!-- Axis labels -->
-                <text x="40" y="88" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="6" fill="#ccc">200K</text>
-                <text x="75" y="88" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="6" fill="#ccc">400K</text>
-                <text x="110" y="88" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="6" fill="#ccc">600K</text>
-                <text x="145" y="88" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="6" fill="#ccc">800K</text>
+                <text x="40" y="88" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="6" fill="#ccc">200K</text>
+                <text x="75" y="88" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="6" fill="#ccc">400K</text>
+                <text x="110" y="88" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="6" fill="#ccc">600K</text>
+                <text x="145" y="88" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="6" fill="#ccc">800K</text>
 
                 <!-- Row 1: Norte — 680K→812K -->
-                <text x="0" y="16" font-family="Segoe UI,sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Norte</text>
+                <text x="0" y="16" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Norte</text>
                 <line class="db-line" x1="40" y1="16" x2="40" y2="16" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round" data-x1="72" data-x2="112"/>
                 <circle class="db-dot-a" cx="40" cy="16" r="0" fill="#c8c8d8" data-cx="72"/>
                 <circle class="db-dot-b" cx="40" cy="16" r="0" fill="#7a7bff" data-cx="112"/>
-                <text class="db-val" x="40" y="11" font-family="Segoe UI,sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="118">—</text>
+                <text class="db-val" x="40" y="11" font-family="'Plus Jakarta Sans',sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="118">—</text>
 
                 <!-- Row 2: Centro — 600K→635K -->
-                <text x="0" y="32" font-family="Segoe UI,sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Centro</text>
+                <text x="0" y="32" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Centro</text>
                 <line class="db-line" x1="40" y1="32" x2="40" y2="32" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round" data-x1="63" data-x2="71"/>
                 <circle class="db-dot-a" cx="40" cy="32" r="0" fill="#c8c8d8" data-cx="63"/>
                 <circle class="db-dot-b" cx="40" cy="32" r="0" fill="#7a7bff" data-cx="71"/>
-                <text class="db-val" x="40" y="27" font-family="Segoe UI,sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="77">—</text>
+                <text class="db-val" x="40" y="27" font-family="'Plus Jakarta Sans',sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="77">—</text>
 
                 <!-- Row 3: Sur — 460K→451K (caída) -->
-                <text x="0" y="48" font-family="Segoe UI,sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Sur</text>
+                <text x="0" y="48" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Sur</text>
                 <line class="db-line" x1="40" y1="48" x2="40" y2="48" stroke="#a3223e" stroke-width="1.5" stroke-linecap="round" data-x1="50" data-x2="48.5"/>
                 <circle class="db-dot-a" cx="40" cy="48" r="0" fill="#c8c8d8" data-cx="50"/>
                 <circle class="db-dot-b" cx="40" cy="48" r="0" fill="#d04060" data-cx="48.5"/>
-                <text class="db-val" x="40" y="43" font-family="Segoe UI,sans-serif" font-size="6.5" fill="#a3223e" font-weight="700" text-anchor="middle" data-cx="55">—</text>
+                <text class="db-val" x="40" y="43" font-family="'Plus Jakarta Sans',sans-serif" font-size="6.5" fill="#a3223e" font-weight="700" text-anchor="middle" data-cx="55">—</text>
 
                 <!-- Row 4: Este — 320K→346K -->
-                <text x="0" y="64" font-family="Segoe UI,sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Este</text>
+                <text x="0" y="64" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Este</text>
                 <line class="db-line" x1="40" y1="64" x2="40" y2="64" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round" data-x1="34" data-x2="37"/>
                 <circle class="db-dot-a" cx="40" cy="64" r="0" fill="#c8c8d8" data-cx="34"/>
                 <circle class="db-dot-b" cx="40" cy="64" r="0" fill="#7a7bff" data-cx="37"/>
-                <text class="db-val" x="40" y="59" font-family="Segoe UI,sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="43">—</text>
+                <text class="db-val" x="40" y="59" font-family="'Plus Jakarta Sans',sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="43">—</text>
 
                 <!-- Row 5: Oeste — 210K→244K -->
-                <text x="0" y="80" font-family="Segoe UI,sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Oeste</text>
+                <text x="0" y="80" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Oeste</text>
                 <line class="db-line" x1="40" y1="80" x2="40" y2="80" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round" data-x1="22" data-x2="26"/>
                 <circle class="db-dot-a" cx="40" cy="80" r="0" fill="#c8c8d8" data-cx="22"/>
                 <circle class="db-dot-b" cx="40" cy="80" r="0" fill="#7a7bff" data-cx="26"/>
-                <text class="db-val" x="40" y="75" font-family="Segoe UI,sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="32">—</text>
+                <text class="db-val" x="40" y="75" font-family="'Plus Jakarta Sans',sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="32">—</text>
               </svg>
             </div>
 
@@ -2384,482 +2377,6 @@ footer {
   </div><!-- /hero-inner -->
 </section>
 
-<!-- ─── PROOF STRIP — CHANGE 7: Pro scrolling tag strip ─── -->
-<div class="proof-strip">
-  <div class="proof-track" id="proofTrack">
-
-    <!-- First set -->
-    <div class="proof-content" id="proofContent">
-      <div class="proof-item"><div class="proof-abbr">PBI</div><span class="proof-label">Power BI</span></div>
-      <div class="proof-item"><div class="proof-abbr">PQ</div><span class="proof-label">Power Query</span></div>
-      <div class="proof-item"><div class="proof-abbr">DAX</div><span class="proof-label">DAX</span></div>
-      <div class="proof-item"><div class="proof-abbr">DS</div><span class="proof-label">Data Storytelling</span></div>
-      <div class="proof-item"><div class="proof-abbr">FIG</div><span class="proof-label">Figma</span></div>
-      <div class="proof-item"><div class="proof-abbr">AI</div><span class="proof-label">Claude IA</span></div>
-      <div class="proof-item"><div class="proof-abbr">UX</div><span class="proof-label">UX / UI</span></div>
-      <div class="proof-item"><div class="proof-abbr">DB</div><span class="proof-label">Dashboard Design</span></div>
-      <div class="proof-item"><div class="proof-abbr">XLS</div><span class="proof-label">Excel</span></div>
-      <div class="proof-item"><div class="proof-abbr">SQL</div><span class="proof-label">SQL</span></div>
-    </div>
-
-    <!-- Duplicate set for seamless loop -->
-    <div class="proof-content" aria-hidden="true">
-      <div class="proof-item"><div class="proof-abbr">PBI</div><span class="proof-label">Power BI</span></div>
-      <div class="proof-item"><div class="proof-abbr">PQ</div><span class="proof-label">Power Query</span></div>
-      <div class="proof-item"><div class="proof-abbr">DAX</div><span class="proof-label">DAX</span></div>
-      <div class="proof-item"><div class="proof-abbr">DS</div><span class="proof-label">Data Storytelling</span></div>
-      <div class="proof-item"><div class="proof-abbr">FIG</div><span class="proof-label">Figma</span></div>
-      <div class="proof-item"><div class="proof-abbr">AI</div><span class="proof-label">Claude IA</span></div>
-      <div class="proof-item"><div class="proof-abbr">UX</div><span class="proof-label">UX / UI</span></div>
-      <div class="proof-item"><div class="proof-abbr">DB</div><span class="proof-label">Dashboard Design</span></div>
-      <div class="proof-item"><div class="proof-abbr">XLS</div><span class="proof-label">Excel</span></div>
-      <div class="proof-item"><div class="proof-abbr">SQL</div><span class="proof-label">SQL</span></div>
-    </div>
-
-  </div>
-</div>
-
-<!-- ─── STACK SKILLS ─── -->
-<section class="stack-section" id="stack">
-  <div class="c">
-    <div class="stack-wrap sr">
-
-      <!-- OVERLAY: copy flotante sobre el espacio libre izquierdo -->
-      <div class="stack-overlay">
-        <div class="stack-eyebrow">Stack técnico</div>
-        <h2 class="stack-title">Las herramientas que uso <em>cada día.</em></h2>
-        <p class="stack-desc">Los porcentajes no mienten. Power BI y Data Storytelling son el núcleo de lo que hago. DAX y modelado, construidos a base de proyectos reales. SQL y Python entran cuando el análisis lo exige. La IA la estoy integrando despacio, con criterio.</p>
-      </div>
-
-      <!-- BARRAS: full width, alineadas al fondo -->
-      <div class="stack-cols" id="stackCols">
-
-        <div class="sk-col top-align" style="height:20%">
-          <div class="sk-card">
-            <div class="sk-desc-above">
-              <p>Usada como acelerador dentro del flujo analítico: documentar, explorar datos, prototipar y depurar más rápido. En proceso de formación continua.</p>
-            </div>
-            <div class="sk-pct" style="margin-bottom:10px">20%</div>
-            <div class="sk-bottom">
-            <div class="sk-name">IA aplicada</div>
-            <div class="sk-pills">
-              <span class="sk-pill">Claude</span>
-            </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="sk-col top-align" style="height:30%">
-          <div class="sk-card">
-            <div class="sk-desc-above">
-              <p>Los datos se trabajan desde la lógica de negocio. SQL, Python y Excel para explorar, validar y detectar patrones antes de construir cualquier modelo o visual.</p>
-            </div>
-            <div class="sk-pct" style="margin-bottom:10px">30%</div>
-            <div class="sk-bottom">
-            <div class="sk-name">Análisis de datos</div>
-            <div class="sk-pills">
-              <span class="sk-pill">SQL</span>
-              <span class="sk-pill">Python</span>
-              <span class="sk-pill">Excel</span>
-            </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="sk-col" style="height:45%">
-          <div class="sk-card">
-            <div class="sk-pct">45%</div>
-            <div class="sk-bottom">
-            <div class="sk-name">DAX</div>
-            <p class="sk-desc">Medidas pensadas para responder preguntas reales de negocio: contexto de filtro, time intelligence, parámetros de campo, filtros, medidas dinámicas y cálculos visuales.</p>
-            <div class="sk-pills">
-              <span class="sk-pill">DAX Studio</span>
-            </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="sk-col" style="height:50%">
-          <div class="sk-card">
-            <div class="sk-pct">50%</div>
-            <div class="sk-bottom">
-            <div class="sk-name">Power Query</div>
-            <p class="sk-desc">Fuentes heterogéneas transformadas y unificadas para que el modelo reciba datos limpios y estructurados desde el origen. Conexión, limpieza, transformación y combinación de datos con lenguaje M.</p>
-            <div class="sk-pills">
-              <span class="sk-pill">M</span>
-            </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="sk-col" style="height:60%">
-          <div class="sk-card">
-            <div class="sk-pct">60%</div>
-            <div class="sk-bottom">
-            <div class="sk-name">Modelado de datos</div>
-            <p class="sk-desc">Modelos en estrella orientados a claridad y escalabilidad: relaciones limpias, tablas de calendario y RLS. Optimización, buenas prácticas, rendimiento, cardinalidad y granularidad desde el diseño.</p>
-            <div class="sk-pills">
-            </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="sk-col" style="height:95%">
-          <div class="sk-card">
-            <div class="sk-pct">80%</div>
-            <div class="sk-bottom">
-            <div class="sk-name">Data Storytelling</div>
-            <p class="sk-desc">Fundamentos del storytelling, teorías de la visualización, leyes de la Gestalt, psicología del color, orden visual y sistemas de layout para comunicar con elementos visuales efectivos.</p>
-            <div class="sk-pills">
-              <span class="sk-pill">Figma</span>
-              <span class="sk-pill">UX/UI</span>
-              <span class="sk-pill">Dashboard Design</span>
-            </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="sk-col" style="height:90%">
-          <div class="sk-card hl">
-            <div class="sk-pct">75%</div>
-            <div class="sk-bottom">
-            <div class="sk-name">Power BI</div>
-            <p class="sk-desc">El entorno que unifica el proceso analítico completo: desde los datos en bruto hasta la decisión. Ingesta, transformación, modelado y visualización en un solo espacio.</p>
-            <div class="sk-pills">
-              <span class="sk-pill">Desktop</span>
-              <span class="sk-pill">Service</span>
-              <span class="sk-pill">PL-300</span>
-            </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- ─── PROJECTS — gris ─── -->
-<section class="proj-section" id="projects">
-  <div class="c">
-    <div class="proj-header">
-      <div class="sr">
-        <div class="s-tag">Proyectos destacados</div>
-        <h2 class="s-h">Edificios de datos<br><em>que se habitan.</em></h2>
-      </div>
-      <p class="s-sub sr" style="max-width:360px">Cada proyecto empieza por la misma pregunta: ¿qué tiene que decidir quien va a mirar esto? Lo demás viene después.</p>
-    </div>
-    <div class="proj-grid">
-
-      <!-- ── CARD 0: IBCS Lollipop ── -->
-      <div class="proj-card sr">
-        <div class="pc-visual">
-          <svg width="100%" viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-            <rect width="360" height="300" fill="#fafafa"/>
-            <!-- label — alineado con pc-body (x=30) -->
-            <text x="30" y="36" font-family="'Segoe UI',sans-serif" font-size="8" font-weight="700" fill="#ccc" letter-spacing="1.2">VENTAS · CY VS SPLY · 2024</text>
-            <!-- pills -->
-            <rect x="30" y="48" width="62" height="24" rx="12" fill="#ededff"/>
-            <text x="61" y="64" font-family="'Segoe UI',sans-serif" font-size="10" font-weight="700" fill="#5a5be0" text-anchor="middle">€2,84M</text>
-            <rect x="100" y="48" width="82" height="24" rx="12" fill="#e8f5e7"/>
-            <text x="141" y="64" font-family="'Segoe UI',sans-serif" font-size="10" font-weight="700" fill="#2d7a28" text-anchor="middle">+12,4% YoY</text>
-            <!-- baseline -->
-            <line x1="30" y1="222" x2="330" y2="222" stroke="#e0e0e8" stroke-width="0.8"/>
-            <!-- 6 lollipop pairs: CY filled purple, SPLY outline gray -->
-            <!-- spacing: 6 pairs over 300px width, centered -->
-            <!-- Ene -->
-            <line x1="60"  y1="152" x2="60"  y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
-            <circle cx="60"  cy="152" r="7" fill="#7a7bff"/>
-            <line x1="76"  y1="172" x2="76"  y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
-            <circle cx="76"  cy="172" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
-            <!-- Feb -->
-            <line x1="110" y1="138" x2="110" y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
-            <circle cx="110" cy="138" r="7" fill="#7a7bff"/>
-            <line x1="126" y1="162" x2="126" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
-            <circle cx="126" cy="162" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
-            <!-- Mar -->
-            <line x1="160" y1="162" x2="160" y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
-            <circle cx="160" cy="162" r="7" fill="#7a7bff"/>
-            <line x1="176" y1="150" x2="176" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
-            <circle cx="176" cy="150" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
-            <!-- Abr -->
-            <line x1="210" y1="145" x2="210" y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
-            <circle cx="210" cy="145" r="7" fill="#7a7bff"/>
-            <line x1="226" y1="165" x2="226" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
-            <circle cx="226" cy="165" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
-            <!-- May -->
-            <line x1="260" y1="158" x2="260" y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
-            <circle cx="260" cy="158" r="7" fill="#7a7bff"/>
-            <line x1="276" y1="146" x2="276" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
-            <circle cx="276" cy="146" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
-            <!-- Jun — pico máximo -->
-            <line x1="310" y1="118" x2="310" y2="222" stroke="#9898d8" stroke-width="1.5"/>
-            <circle cx="310" cy="118" r="8" fill="#5a5be0"/>
-            <line x1="326" y1="170" x2="326" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
-            <circle cx="326" cy="170" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
-            <!-- month labels — alineados al centro del par -->
-            <text x="68"  y="238" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Ene</text>
-            <text x="118" y="238" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Feb</text>
-            <text x="168" y="238" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Mar</text>
-            <text x="218" y="238" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Abr</text>
-            <text x="268" y="238" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">May</text>
-            <text x="318" y="238" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Jun</text>
-            <!-- legend -->
-            <circle cx="38"  cy="264" r="5" fill="#7a7bff"/>
-            <text x="48"  y="268" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#b8b8cc">CY 2024</text>
-            <circle cx="118" cy="264" r="5" fill="none" stroke="#cacade" stroke-width="1.8"/>
-            <text x="128" y="268" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#b8b8cc">SPLY 2023</text>
-          </svg>
-        </div>
-        <div class="pc-body">
-          <div class="pc-cat">Ventas · Comparativa anual</div>
-          <div class="pc-name">Cuando el dato de ventas dejó de necesitar explicación.</div>
-          <p class="pc-desc">El equipo miraba el mismo Excel en cada reunión de dirección. Los números estaban. La historia, no.<br><br>Diseñé un sistema bajo el estándar IBCS donde cualquier persona —sin formación analítica— detecta en 30 segundos si el mes fue mejor o peor que el año pasado. Sin que nadie tenga que explicar nada.</p>
-          <div class="pc-foot">
-            <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">IBCS</span></div>
-            <a href="./proyectos.html" class="pc-link">Ver →</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── CARD 1: Balance ── -->
-      <div class="proj-card sr sr-d1">
-        <div class="pc-visual">
-          <svg width="100%" viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-            <rect width="360" height="300" fill="#fafafa"/>
-            <!-- nav -->
-            <rect x="0" y="0" width="360" height="36" fill="#f0f0f5"/>
-            <text x="16" y="22" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb">Inicio</text>
-            <text x="52" y="22" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb">Checklist</text>
-            <text x="107" y="22" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb">Balance SyS</text>
-            <text x="168" y="22" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#333" font-weight="700">Balance</text>
-            <line x1="168" y1="25" x2="200" y2="25" stroke="#333" stroke-width="1"/>
-            <text x="210" y="22" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb">PyG</text>
-            <!-- col headers -->
-            <rect x="0" y="36" width="360" height="18" fill="#e8e8f2"/>
-            <text x="16" y="49" font-family="'Segoe UI',sans-serif" font-size="7" font-weight="600" fill="#aaa">Partida</text>
-            <text x="228" y="49" font-family="'Segoe UI',sans-serif" font-size="7" font-weight="600" fill="#aaa" text-anchor="end">Importe</text>
-            <text x="284" y="49" font-family="'Segoe UI',sans-serif" font-size="7" font-weight="600" fill="#aaa" text-anchor="end">%</text>
-            <text x="348" y="49" font-family="'Segoe UI',sans-serif" font-size="7" font-weight="600" fill="#aaa" text-anchor="end">PY</text>
-            <!-- ACTIVO — y=54, h=24 -->
-            <rect x="0" y="54" width="360" height="24" fill="#f5f5fb"/>
-            <text x="16" y="71" font-family="'Segoe UI',sans-serif" font-size="9" font-weight="700" fill="#222">ACTIVO</text>
-            <text x="228" y="71" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#444" text-anchor="end">4.307.661€</text>
-            <text x="284" y="71" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#999" text-anchor="end">100,00%</text>
-            <text x="348" y="71" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#bbb" text-anchor="end">4.303.957€</text>
-            <!-- A) No Corriente — y=78, h=22 -->
-            <text x="24" y="93" font-family="'Segoe UI',sans-serif" font-size="7.5" font-weight="600" fill="#555">A) Activo No Corriente</text>
-            <text x="228" y="93" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#666" text-anchor="end">934.027€</text>
-            <text x="284" y="93" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#aaa" text-anchor="end">21,68%</text>
-            <text x="348" y="93" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">941.400€</text>
-            <line x1="16" y1="100" x2="344" y2="100" stroke="#eeeeef" stroke-width="0.5"/>
-            <!-- sub1 — y=100, h=20 -->
-            <rect x="0" y="100" width="360" height="20" fill="#fafafc"/>
-            <text x="34" y="114" font-family="'Segoe UI',sans-serif" font-size="7" fill="#888">I. Inmovilizado Intangible</text>
-            <text x="228" y="114" font-family="'Segoe UI',sans-serif" font-size="7" fill="#aaa" text-anchor="end">934,74€</text>
-            <text x="284" y="114" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">0,02%</text>
-            <text x="348" y="114" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">934,74€</text>
-            <!-- sub2 — y=120, h=20 -->
-            <text x="34" y="134" font-family="'Segoe UI',sans-serif" font-size="7" fill="#888">II. Inmovilizado Material</text>
-            <text x="228" y="134" font-family="'Segoe UI',sans-serif" font-size="7" fill="#aaa" text-anchor="end">736.910€</text>
-            <text x="284" y="134" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">17,11%</text>
-            <text x="348" y="134" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">744.284€</text>
-            <!-- B) Corriente — y=140, h=22 -->
-            <rect x="0" y="140" width="360" height="22" fill="#f5f5fb"/>
-            <text x="24" y="155" font-family="'Segoe UI',sans-serif" font-size="7.5" font-weight="600" fill="#555">B) Activo Corriente</text>
-            <text x="228" y="155" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#666" text-anchor="end">3.373.634€</text>
-            <text x="284" y="155" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#aaa" text-anchor="end">78,32%</text>
-            <text x="348" y="155" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">3.362.557€</text>
-            <line x1="16" y1="162" x2="344" y2="162" stroke="#eeeeef" stroke-width="0.5"/>
-            <!-- sub3 — y=162, h=20 -->
-            <rect x="0" y="162" width="360" height="20" fill="#fafafc"/>
-            <text x="34" y="176" font-family="'Segoe UI',sans-serif" font-size="7" fill="#888">III. Deudores comerciales</text>
-            <text x="228" y="176" font-family="'Segoe UI',sans-serif" font-size="7" fill="#aaa" text-anchor="end">1.535.306€</text>
-            <text x="284" y="176" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">35,64%</text>
-            <text x="348" y="176" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">1.481.048€</text>
-            <!-- sub4 — y=182, h=20 -->
-            <text x="34" y="196" font-family="'Segoe UI',sans-serif" font-size="7" fill="#888">VII. Efectivo y equivalentes</text>
-            <text x="228" y="196" font-family="'Segoe UI',sans-serif" font-size="7" fill="#aaa" text-anchor="end">409.007€</text>
-            <text x="284" y="196" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">9,49%</text>
-            <text x="348" y="196" font-family="'Segoe UI',sans-serif" font-size="7" fill="#ccc" text-anchor="end">452.188€</text>
-            <!-- PASIVO — y=202, h=24 -->
-            <rect x="0" y="202" width="360" height="24" fill="#f5f5fb"/>
-            <text x="16" y="219" font-family="'Segoe UI',sans-serif" font-size="9" font-weight="700" fill="#222">PASIVO</text>
-            <text x="228" y="219" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#444" text-anchor="end">4.307.661€</text>
-            <text x="284" y="219" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#999" text-anchor="end">100,00%</text>
-            <text x="348" y="219" font-family="'Segoe UI',sans-serif" font-size="8.5" fill="#bbb" text-anchor="end">4.303.957€</text>
-            <!-- A) Patrimonio — y=226, h=24 -->
-            <text x="24" y="242" font-family="'Segoe UI',sans-serif" font-size="7.5" font-weight="600" fill="#555">A) Patrimonio Neto</text>
-            <text x="228" y="242" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#666" text-anchor="end">2.309.004€</text>
-            <text x="284" y="242" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#aaa" text-anchor="end">53,60%</text>
-            <text x="348" y="242" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">2.352.501€</text>
-            <line x1="16" y1="250" x2="344" y2="250" stroke="#eeeeef" stroke-width="0.5"/>
-            <!-- B) Pasivo No Corriente — y=250, h=24 -->
-            <rect x="0" y="250" width="360" height="24" fill="#fafafc"/>
-            <text x="24" y="266" font-family="'Segoe UI',sans-serif" font-size="7.5" font-weight="600" fill="#555">B) Pasivo No Corriente</text>
-            <text x="228" y="266" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#7a7bff" text-anchor="end">640.033€</text>
-            <text x="284" y="266" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#7a7bff" text-anchor="end">14,86%</text>
-            <text x="348" y="266" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">640.033€</text>
-            <!-- C) Pasivo Corriente — y=274, h=26 -->
-            <rect x="0" y="274" width="360" height="26" fill="#f5f5fb"/>
-            <text x="24" y="291" font-family="'Segoe UI',sans-serif" font-size="7.5" font-weight="600" fill="#555">C) Pasivo Corriente</text>
-            <text x="228" y="291" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#7a7bff" text-anchor="end">1.358.624€</text>
-            <text x="284" y="291" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#7a7bff" text-anchor="end">31,54%</text>
-            <text x="348" y="291" font-family="'Segoe UI',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">1.311.423€</text>
-          </svg>
-        </div>
-        <div class="pc-body">
-          <div class="pc-cat">Finanzas · Reporting</div>
-          <div class="pc-name">La contabilidad que por fin se puede leer sola.</div>
-          <p class="pc-desc">Un balance contable tiene la mala fama de ser lo que solo entiende el controller. Este no.<br><br>Diseñé la estructura para que cualquier directivo navegue el activo, el pasivo y el patrimonio sin necesitar a nadie al lado que se lo traduzca.</p>
-          <div class="pc-foot">
-            <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">Modelado en estrella</span></div>
-            <a href="./proyectos.html" class="pc-link">Ver →</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── CARD 2: Marketing KPIs 2x2 ── -->
-      <div class="proj-card sr sr-d2">
-        <div class="pc-visual">
-          <svg width="100%" viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-            <rect width="360" height="300" fill="#fafafa"/>
-            <text x="20" y="14" font-family="'Segoe UI',sans-serif" font-size="7.5" font-weight="700" fill="#ccc" letter-spacing="1.2">SOCIAL MEDIA · 2025 VS 2024</text>
-
-            <!-- KPI 1: Impresiones -->
-            <rect x="16" y="22" width="328" height="126" rx="12" fill="#fff" stroke="#ecedf4" stroke-width="0.8"/>
-            <rect x="16" y="22" width="4" height="126" rx="2" fill="#7a7bff"/>
-            <text x="32" y="46" font-family="'Segoe UI',sans-serif" font-size="8" font-weight="700" fill="#c0c0d4" letter-spacing="1">IMPRESIONES</text>
-            <text x="32" y="82" font-family="'Segoe UI',sans-serif" font-size="38" font-weight="700" fill="#1a1a2e" letter-spacing="-1">607,9K</text>
-            <text x="32" y="102" font-family="'Segoe UI',sans-serif" font-size="9" fill="#bbb">PY: 696,8K</text>
-            <rect x="32" y="112" width="52" height="18" rx="5" fill="#f0f0f8"/>
-            <text x="58" y="124" font-family="'Segoe UI',sans-serif" font-size="8.5" font-weight="700" fill="#8888bb" text-anchor="middle">↓ −12,8%</text>
-            <line x1="200" y1="34" x2="200" y2="136" stroke="#f0f0f5" stroke-width="0.8"/>
-            <rect x="209" y="102" width="12" height="32" rx="2" fill="#e0e0f0"/>
-            <rect x="226" y="112" width="12" height="22" rx="2" fill="#d4d4ec"/>
-            <rect x="243" y="96" width="12" height="38" rx="2" fill="#c4c4e4"/>
-            <rect x="260" y="106" width="12" height="28" rx="2" fill="#b4b4dc"/>
-            <rect x="277" y="90" width="12" height="44" rx="2" fill="#a4a4d4"/>
-            <rect x="294" y="100" width="12" height="34" rx="2" fill="#9090cc"/>
-            <rect x="311" y="82" width="12" height="52" rx="2" fill="#7878c8"/>
-            <rect x="328" y="72" width="12" height="62" rx="2" fill="#7a7bff"/>
-
-            <!-- KPI 2: Alcance -->
-            <rect x="16" y="160" width="328" height="126" rx="12" fill="#fff" stroke="#ecedf4" stroke-width="0.8"/>
-            <rect x="16" y="160" width="4" height="126" rx="2" fill="#9898c8"/>
-            <text x="32" y="184" font-family="'Segoe UI',sans-serif" font-size="8" font-weight="700" fill="#c0c0d4" letter-spacing="1">ALCANCE</text>
-            <text x="32" y="220" font-family="'Segoe UI',sans-serif" font-size="38" font-weight="700" fill="#1a1a2e" letter-spacing="-1">460,9K</text>
-            <text x="32" y="240" font-family="'Segoe UI',sans-serif" font-size="9" fill="#bbb">PY: 513,0K</text>
-            <rect x="32" y="250" width="52" height="18" rx="5" fill="#f0f0f8"/>
-            <text x="58" y="262" font-family="'Segoe UI',sans-serif" font-size="8.5" font-weight="700" fill="#8888bb" text-anchor="middle">↓ −10,1%</text>
-            <line x1="200" y1="172" x2="200" y2="274" stroke="#f0f0f5" stroke-width="0.8"/>
-            <rect x="209" y="236" width="12" height="32" rx="2" fill="#e0e0f0"/>
-            <rect x="226" y="246" width="12" height="22" rx="2" fill="#d4d4ec"/>
-            <rect x="243" y="230" width="12" height="38" rx="2" fill="#c4c4e4"/>
-            <rect x="260" y="240" width="12" height="28" rx="2" fill="#b4b4dc"/>
-            <rect x="277" y="224" width="12" height="44" rx="2" fill="#a4a4d4"/>
-            <rect x="294" y="234" width="12" height="34" rx="2" fill="#9090cc"/>
-            <rect x="311" y="216" width="12" height="52" rx="2" fill="#7878c8"/>
-            <rect x="328" y="206" width="12" height="62" rx="2" fill="#7a7bff"/>
-          </svg>
-        </div>
-
-        <div class="pc-body">
-          <div class="pc-cat">Marketing · Análisis anual</div>
-          <div class="pc-name">El dashboard que eliminó la reunión de los lunes.</div>
-          <p class="pc-desc">El equipo de marketing pasaba 45 minutos cada semana en una reunión para repasar qué había pasado con las redes. 45 minutos para datos que podían verse en 30 segundos.<br><br>Construí un sistema de seguimiento YoY que consolida alcance, engagement y crecimiento en un espacio donde los datos calan solos.</p>
-          <div class="pc-foot">
-            <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">Marketing Analytics</span></div>
-            <a href="./proyectos.html" class="pc-link">Ver →</a>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-  <div class="proj-more sr">
-    <a href="./proyectos.html" class="btn btn-outline">Ver todos los proyectos →</a>
-  </div>
-</section>
-
-<!-- ─── PROYECTO ESTRELLA — dos columnas ─── -->
-<section class="star-section" id="star">
-  <div class="star-wrap">
-    <div class="star-inner sr">
-
-      <!-- LEFT: texto editorial -->
-      <div class="star-text">
-        <div class="star-text-meta">
-          <div class="star-tag">Proyecto destacado</div>
-          <div class="star-head-num">01 / 01</div>
-        </div>
-
-        <h2 class="star-title">PBI Mockup<br>Creator.</h2>
-        <p class="star-lead">Una herramienta para diseñar el dashboard <em>antes</em> de tocar Power BI. Porque el problema casi nunca es el dato — es la pregunta que no se hizo a tiempo.</p>
-
-        <div class="star-blocks">
-          <div class="star-blk">
-            <div class="star-blk-num">01</div>
-            <h3 class="star-blk-title">Por qué existe</h3>
-            <p>Construí mi primer dashboard a cliente sin saber qué quería decidir con él. El modelo era correcto. La estructura funcionaba. Pero cuando llegó a sus manos, los datos no eran los que necesitaba. No era un problema de datos — era un problema de preguntas.</p>
-          </div>
-          <div class="star-blk">
-            <div class="star-blk-num">02</div>
-            <h3 class="star-blk-title">Qué tiene de diferente</h3>
-            <p>No trabaja con datos. Trabaja con preguntas. ¿Qué tiene que decidir quien va a mirar esto? ¿Qué es lo más importante que tiene que ver primero? ¿Qué sobra? Ahí es exactamente donde nace el edificio inhabitado.</p>
-          </div>
-          <div class="star-blk">
-            <div class="star-blk-num">03</div>
-            <h3 class="star-blk-title">Cómo la uso</h3>
-            <p>Primero defino el layout y la jerarquía del dashboard — qué lidera, qué acompaña, qué sobra. Cuando el espacio tiene sentido sin datos, paso a construirlo. El gráfico siempre es lo último.</p>
-          </div>
-        </div>
-
-        <div class="star-pull">
-          <div class="star-pull-quote">«&nbsp;Ningún arquitecto pone el primer ladrillo sin haber hecho el plano.&nbsp;»</div>
-          <div class="star-pull-tags">
-            <span class="pc-pill">Power BI</span>
-            <span class="pc-pill">Claude</span>
-            <span class="pc-pill">Data Storytelling</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- RIGHT: herramienta -->
-      <div class="star-stage">
-        <div class="star-browser">
-          <div class="star-browser-bar">
-            <div class="star-browser-dots">
-              <span></span><span></span><span></span>
-            </div>
-            <div class="star-browser-url">borjamome.github.io/powerbi-mockup</div>
-            <div class="star-browser-meta">
-              <span class="star-browser-live"><span class="sb-dot"></span>LIVE</span>
-            </div>
-          </div>
-          <div class="star-browser-content">
-            <iframe
-              src="https://borjamome.github.io/powerbi-mockup/"
-              title="PBI Mockup Creator"
-              loading="lazy"
-              scrolling="no"
-              tabindex="-1"
-              sandbox="allow-scripts allow-same-origin"
-            ></iframe>
-            <div class="iframe-overlay"></div>
-          </div>
-        </div>
-
-        <a href="https://borjamome.github.io/powerbi-mockup/" target="_blank" rel="noopener noreferrer" class="star-float-cta">
-          <span class="sfc-label">Abrir herramienta</span>
-          <span class="sfc-arrow">→</span>
-        </a>
-      </div>
-
-    </div>
-  </div>
-</section>
 
 <!-- ─── CÓMO TRABAJO · FLIP CARDS ─── -->
 <section class="dph-section" id="approach">
@@ -2983,7 +2500,439 @@ footer {
   </div>
 </section>
 
+<!-- ─── PROJECTS — gris ─── -->
+<section class="proj-section" id="projects">
+  <div class="c">
+    <div class="proj-header">
+      <div class="sr">
+        <div class="s-tag">Proyectos destacados</div>
+        <h2 class="s-h">Edificios de datos<br><em>que se habitan.</em></h2>
+      </div>
+      <p class="s-sub sr" style="max-width:360px">Cada proyecto empieza por la misma pregunta: ¿qué tiene que decidir quien va a mirar esto? Lo demás viene después.</p>
+    </div>
+    <div class="proj-grid">
+
+      <!-- ── CARD 0: IBCS Lollipop ── -->
+      <div class="proj-card sr">
+        <div class="pc-visual">
+          <svg width="100%" viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+            <rect width="360" height="300" fill="#fafafa"/>
+            <!-- label — alineado con pc-body (x=30) -->
+            <text x="30" y="36" font-family="'Plus Jakarta Sans',sans-serif" font-size="8" font-weight="700" fill="#ccc" letter-spacing="1.2">VENTAS · CY VS SPLY · 2024</text>
+            <!-- pills -->
+            <rect x="30" y="48" width="62" height="24" rx="12" fill="#ededff"/>
+            <text x="61" y="64" font-family="'Plus Jakarta Sans',sans-serif" font-size="10" font-weight="700" fill="#5a5be0" text-anchor="middle">€2,84M</text>
+            <rect x="100" y="48" width="82" height="24" rx="12" fill="#e8f5e7"/>
+            <text x="141" y="64" font-family="'Plus Jakarta Sans',sans-serif" font-size="10" font-weight="700" fill="#2d7a28" text-anchor="middle">+12,4% YoY</text>
+            <!-- baseline -->
+            <line x1="30" y1="222" x2="330" y2="222" stroke="#e0e0e8" stroke-width="0.8"/>
+            <!-- 6 lollipop pairs: CY filled purple, SPLY outline gray -->
+            <!-- spacing: 6 pairs over 300px width, centered -->
+            <!-- Ene -->
+            <line x1="60"  y1="152" x2="60"  y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
+            <circle cx="60"  cy="152" r="7" fill="#7a7bff"/>
+            <line x1="76"  y1="172" x2="76"  y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
+            <circle cx="76"  cy="172" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
+            <!-- Feb -->
+            <line x1="110" y1="138" x2="110" y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
+            <circle cx="110" cy="138" r="7" fill="#7a7bff"/>
+            <line x1="126" y1="162" x2="126" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
+            <circle cx="126" cy="162" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
+            <!-- Mar -->
+            <line x1="160" y1="162" x2="160" y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
+            <circle cx="160" cy="162" r="7" fill="#7a7bff"/>
+            <line x1="176" y1="150" x2="176" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
+            <circle cx="176" cy="150" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
+            <!-- Abr -->
+            <line x1="210" y1="145" x2="210" y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
+            <circle cx="210" cy="145" r="7" fill="#7a7bff"/>
+            <line x1="226" y1="165" x2="226" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
+            <circle cx="226" cy="165" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
+            <!-- May -->
+            <line x1="260" y1="158" x2="260" y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
+            <circle cx="260" cy="158" r="7" fill="#7a7bff"/>
+            <line x1="276" y1="146" x2="276" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
+            <circle cx="276" cy="146" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
+            <!-- Jun — pico máximo -->
+            <line x1="310" y1="118" x2="310" y2="222" stroke="#9898d8" stroke-width="1.5"/>
+            <circle cx="310" cy="118" r="8" fill="#5a5be0"/>
+            <line x1="326" y1="170" x2="326" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
+            <circle cx="326" cy="170" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
+            <!-- month labels — alineados al centro del par -->
+            <text x="68"  y="238" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Ene</text>
+            <text x="118" y="238" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Feb</text>
+            <text x="168" y="238" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Mar</text>
+            <text x="218" y="238" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Abr</text>
+            <text x="268" y="238" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">May</text>
+            <text x="318" y="238" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Jun</text>
+            <!-- legend -->
+            <circle cx="38"  cy="264" r="5" fill="#7a7bff"/>
+            <text x="48"  y="268" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#b8b8cc">CY 2024</text>
+            <circle cx="118" cy="264" r="5" fill="none" stroke="#cacade" stroke-width="1.8"/>
+            <text x="128" y="268" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#b8b8cc">SPLY 2023</text>
+          </svg>
+        </div>
+        <div class="pc-body">
+          <div class="pc-cat">Ventas · Comparativa anual</div>
+          <div class="pc-name">Cuando el dato de ventas dejó de necesitar explicación.</div>
+          <p class="pc-desc">El equipo miraba el mismo Excel en cada reunión de dirección. Los números estaban. La historia, no.<br><br>Diseñé un sistema bajo el estándar IBCS donde cualquier persona —sin formación analítica— detecta en 30 segundos si el mes fue mejor o peor que el año pasado. Sin que nadie tenga que explicar nada.</p>
+          <div class="pc-foot">
+            <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">IBCS</span></div>
+            <a href="./proyectos.html" class="pc-link">Ver →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CARD 1: Balance ── -->
+      <div class="proj-card sr sr-d1">
+        <div class="pc-visual">
+          <svg width="100%" viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+            <rect width="360" height="300" fill="#fafafa"/>
+            <!-- nav -->
+            <rect x="0" y="0" width="360" height="36" fill="#f0f0f5"/>
+            <text x="16" y="22" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#bbb">Inicio</text>
+            <text x="52" y="22" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#bbb">Checklist</text>
+            <text x="107" y="22" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#bbb">Balance SyS</text>
+            <text x="168" y="22" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#333" font-weight="700">Balance</text>
+            <line x1="168" y1="25" x2="200" y2="25" stroke="#333" stroke-width="1"/>
+            <text x="210" y="22" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#bbb">PyG</text>
+            <!-- col headers -->
+            <rect x="0" y="36" width="360" height="18" fill="#e8e8f2"/>
+            <text x="16" y="49" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" font-weight="600" fill="#aaa">Partida</text>
+            <text x="228" y="49" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" font-weight="600" fill="#aaa" text-anchor="end">Importe</text>
+            <text x="284" y="49" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" font-weight="600" fill="#aaa" text-anchor="end">%</text>
+            <text x="348" y="49" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" font-weight="600" fill="#aaa" text-anchor="end">PY</text>
+            <!-- ACTIVO — y=54, h=24 -->
+            <rect x="0" y="54" width="360" height="24" fill="#f5f5fb"/>
+            <text x="16" y="71" font-family="'Plus Jakarta Sans',sans-serif" font-size="9" font-weight="700" fill="#222">ACTIVO</text>
+            <text x="228" y="71" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#444" text-anchor="end">4.307.661€</text>
+            <text x="284" y="71" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#999" text-anchor="end">100,00%</text>
+            <text x="348" y="71" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#bbb" text-anchor="end">4.303.957€</text>
+            <!-- A) No Corriente — y=78, h=22 -->
+            <text x="24" y="93" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" font-weight="600" fill="#555">A) Activo No Corriente</text>
+            <text x="228" y="93" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#666" text-anchor="end">934.027€</text>
+            <text x="284" y="93" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#aaa" text-anchor="end">21,68%</text>
+            <text x="348" y="93" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">941.400€</text>
+            <line x1="16" y1="100" x2="344" y2="100" stroke="#eeeeef" stroke-width="0.5"/>
+            <!-- sub1 — y=100, h=20 -->
+            <rect x="0" y="100" width="360" height="20" fill="#fafafc"/>
+            <text x="34" y="114" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#888">I. Inmovilizado Intangible</text>
+            <text x="228" y="114" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#aaa" text-anchor="end">934,74€</text>
+            <text x="284" y="114" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#ccc" text-anchor="end">0,02%</text>
+            <text x="348" y="114" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#ccc" text-anchor="end">934,74€</text>
+            <!-- sub2 — y=120, h=20 -->
+            <text x="34" y="134" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#888">II. Inmovilizado Material</text>
+            <text x="228" y="134" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#aaa" text-anchor="end">736.910€</text>
+            <text x="284" y="134" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#ccc" text-anchor="end">17,11%</text>
+            <text x="348" y="134" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#ccc" text-anchor="end">744.284€</text>
+            <!-- B) Corriente — y=140, h=22 -->
+            <rect x="0" y="140" width="360" height="22" fill="#f5f5fb"/>
+            <text x="24" y="155" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" font-weight="600" fill="#555">B) Activo Corriente</text>
+            <text x="228" y="155" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#666" text-anchor="end">3.373.634€</text>
+            <text x="284" y="155" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#aaa" text-anchor="end">78,32%</text>
+            <text x="348" y="155" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">3.362.557€</text>
+            <line x1="16" y1="162" x2="344" y2="162" stroke="#eeeeef" stroke-width="0.5"/>
+            <!-- sub3 — y=162, h=20 -->
+            <rect x="0" y="162" width="360" height="20" fill="#fafafc"/>
+            <text x="34" y="176" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#888">III. Deudores comerciales</text>
+            <text x="228" y="176" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#aaa" text-anchor="end">1.535.306€</text>
+            <text x="284" y="176" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#ccc" text-anchor="end">35,64%</text>
+            <text x="348" y="176" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#ccc" text-anchor="end">1.481.048€</text>
+            <!-- sub4 — y=182, h=20 -->
+            <text x="34" y="196" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#888">VII. Efectivo y equivalentes</text>
+            <text x="228" y="196" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#aaa" text-anchor="end">409.007€</text>
+            <text x="284" y="196" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#ccc" text-anchor="end">9,49%</text>
+            <text x="348" y="196" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#ccc" text-anchor="end">452.188€</text>
+            <!-- PASIVO — y=202, h=24 -->
+            <rect x="0" y="202" width="360" height="24" fill="#f5f5fb"/>
+            <text x="16" y="219" font-family="'Plus Jakarta Sans',sans-serif" font-size="9" font-weight="700" fill="#222">PASIVO</text>
+            <text x="228" y="219" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#444" text-anchor="end">4.307.661€</text>
+            <text x="284" y="219" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#999" text-anchor="end">100,00%</text>
+            <text x="348" y="219" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#bbb" text-anchor="end">4.303.957€</text>
+            <!-- A) Patrimonio — y=226, h=24 -->
+            <text x="24" y="242" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" font-weight="600" fill="#555">A) Patrimonio Neto</text>
+            <text x="228" y="242" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#666" text-anchor="end">2.309.004€</text>
+            <text x="284" y="242" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#aaa" text-anchor="end">53,60%</text>
+            <text x="348" y="242" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">2.352.501€</text>
+            <line x1="16" y1="250" x2="344" y2="250" stroke="#eeeeef" stroke-width="0.5"/>
+            <!-- B) Pasivo No Corriente — y=250, h=24 -->
+            <rect x="0" y="250" width="360" height="24" fill="#fafafc"/>
+            <text x="24" y="266" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" font-weight="600" fill="#555">B) Pasivo No Corriente</text>
+            <text x="228" y="266" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#7a7bff" text-anchor="end">640.033€</text>
+            <text x="284" y="266" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#7a7bff" text-anchor="end">14,86%</text>
+            <text x="348" y="266" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">640.033€</text>
+            <!-- C) Pasivo Corriente — y=274, h=26 -->
+            <rect x="0" y="274" width="360" height="26" fill="#f5f5fb"/>
+            <text x="24" y="291" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" font-weight="600" fill="#555">C) Pasivo Corriente</text>
+            <text x="228" y="291" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#7a7bff" text-anchor="end">1.358.624€</text>
+            <text x="284" y="291" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#7a7bff" text-anchor="end">31,54%</text>
+            <text x="348" y="291" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">1.311.423€</text>
+          </svg>
+        </div>
+        <div class="pc-body">
+          <div class="pc-cat">Finanzas · Reporting</div>
+          <div class="pc-name">La contabilidad que por fin se puede leer sola.</div>
+          <p class="pc-desc">Un balance contable tiene la mala fama de ser lo que solo entiende el controller. Este no.<br><br>Diseñé la estructura para que cualquier directivo navegue el activo, el pasivo y el patrimonio sin necesitar a nadie al lado que se lo traduzca.</p>
+          <div class="pc-foot">
+            <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">Modelado en estrella</span></div>
+            <a href="./proyectos.html" class="pc-link">Ver →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CARD 2: Marketing KPIs 2x2 ── -->
+      <div class="proj-card sr sr-d2">
+        <div class="pc-visual">
+          <svg width="100%" viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+            <rect width="360" height="300" fill="#fafafa"/>
+            <text x="20" y="14" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" font-weight="700" fill="#ccc" letter-spacing="1.2">SOCIAL MEDIA · 2025 VS 2024</text>
+
+            <!-- KPI 1: Impresiones -->
+            <rect x="16" y="22" width="328" height="126" rx="12" fill="#fff" stroke="#ecedf4" stroke-width="0.8"/>
+            <rect x="16" y="22" width="4" height="126" rx="2" fill="#7a7bff"/>
+            <text x="32" y="46" font-family="'Plus Jakarta Sans',sans-serif" font-size="8" font-weight="700" fill="#c0c0d4" letter-spacing="1">IMPRESIONES</text>
+            <text x="32" y="82" font-family="'Plus Jakarta Sans',sans-serif" font-size="38" font-weight="700" fill="#1a1a2e" letter-spacing="-1">607,9K</text>
+            <text x="32" y="102" font-family="'Plus Jakarta Sans',sans-serif" font-size="9" fill="#bbb">PY: 696,8K</text>
+            <rect x="32" y="112" width="52" height="18" rx="5" fill="#f0f0f8"/>
+            <text x="58" y="124" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" font-weight="700" fill="#8888bb" text-anchor="middle">↓ −12,8%</text>
+            <line x1="200" y1="34" x2="200" y2="136" stroke="#f0f0f5" stroke-width="0.8"/>
+            <rect x="209" y="102" width="12" height="32" rx="2" fill="#e0e0f0"/>
+            <rect x="226" y="112" width="12" height="22" rx="2" fill="#d4d4ec"/>
+            <rect x="243" y="96" width="12" height="38" rx="2" fill="#c4c4e4"/>
+            <rect x="260" y="106" width="12" height="28" rx="2" fill="#b4b4dc"/>
+            <rect x="277" y="90" width="12" height="44" rx="2" fill="#a4a4d4"/>
+            <rect x="294" y="100" width="12" height="34" rx="2" fill="#9090cc"/>
+            <rect x="311" y="82" width="12" height="52" rx="2" fill="#7878c8"/>
+            <rect x="328" y="72" width="12" height="62" rx="2" fill="#7a7bff"/>
+
+            <!-- KPI 2: Alcance -->
+            <rect x="16" y="160" width="328" height="126" rx="12" fill="#fff" stroke="#ecedf4" stroke-width="0.8"/>
+            <rect x="16" y="160" width="4" height="126" rx="2" fill="#9898c8"/>
+            <text x="32" y="184" font-family="'Plus Jakarta Sans',sans-serif" font-size="8" font-weight="700" fill="#c0c0d4" letter-spacing="1">ALCANCE</text>
+            <text x="32" y="220" font-family="'Plus Jakarta Sans',sans-serif" font-size="38" font-weight="700" fill="#1a1a2e" letter-spacing="-1">460,9K</text>
+            <text x="32" y="240" font-family="'Plus Jakarta Sans',sans-serif" font-size="9" fill="#bbb">PY: 513,0K</text>
+            <rect x="32" y="250" width="52" height="18" rx="5" fill="#f0f0f8"/>
+            <text x="58" y="262" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" font-weight="700" fill="#8888bb" text-anchor="middle">↓ −10,1%</text>
+            <line x1="200" y1="172" x2="200" y2="274" stroke="#f0f0f5" stroke-width="0.8"/>
+            <rect x="209" y="236" width="12" height="32" rx="2" fill="#e0e0f0"/>
+            <rect x="226" y="246" width="12" height="22" rx="2" fill="#d4d4ec"/>
+            <rect x="243" y="230" width="12" height="38" rx="2" fill="#c4c4e4"/>
+            <rect x="260" y="240" width="12" height="28" rx="2" fill="#b4b4dc"/>
+            <rect x="277" y="224" width="12" height="44" rx="2" fill="#a4a4d4"/>
+            <rect x="294" y="234" width="12" height="34" rx="2" fill="#9090cc"/>
+            <rect x="311" y="216" width="12" height="52" rx="2" fill="#7878c8"/>
+            <rect x="328" y="206" width="12" height="62" rx="2" fill="#7a7bff"/>
+          </svg>
+        </div>
+
+        <div class="pc-body">
+          <div class="pc-cat">Marketing · Análisis anual</div>
+          <div class="pc-name">El dashboard que eliminó la reunión de los lunes.</div>
+          <p class="pc-desc">El equipo de marketing pasaba 45 minutos cada semana en una reunión para repasar qué había pasado con las redes. 45 minutos para datos que podían verse en 30 segundos.<br><br>Construí un sistema de seguimiento YoY que consolida alcance, engagement y crecimiento en un espacio donde los datos calan solos.</p>
+          <div class="pc-foot">
+            <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">Marketing Analytics</span></div>
+            <a href="./proyectos.html" class="pc-link">Ver →</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="proj-more sr">
+    <a href="./proyectos.html" class="btn btn-outline">Ver todos los proyectos →</a>
+  </div>
 </section>
+
+<!-- ─── PROYECTO ESTRELLA — dos columnas ─── -->
+<section class="star-section" id="star">
+  <div class="star-wrap">
+    <div class="star-inner sr">
+
+      <!-- LEFT: texto editorial -->
+      <div class="star-text">
+        <div class="star-text-meta">
+          <div class="star-tag">Herramienta de Data Storytelling</div>
+          <div class="star-head-num">01 / 01</div>
+        </div>
+
+        <h2 class="star-title">PBI Mockup<br>Creator.</h2>
+        <p class="star-lead">Una herramienta para diseñar el dashboard <em>antes</em> de tocar Power BI. Porque el problema casi nunca es el dato — es la pregunta que no se hizo a tiempo.</p>
+
+        <div class="star-blocks">
+          <div class="star-blk">
+            <div class="star-blk-num">01</div>
+            <h3 class="star-blk-title">Por qué existe</h3>
+            <p>Construí mi primer dashboard a cliente sin saber qué quería decidir con él. El modelo era correcto. La estructura funcionaba. Pero cuando llegó a sus manos, los datos no eran los que necesitaba. No era un problema de datos — era un problema de preguntas.</p>
+          </div>
+          <div class="star-blk">
+            <div class="star-blk-num">02</div>
+            <h3 class="star-blk-title">Qué tiene de diferente</h3>
+            <p>No trabaja con datos. Trabaja con preguntas. ¿Qué tiene que decidir quien va a mirar esto? ¿Qué es lo más importante que tiene que ver primero? ¿Qué sobra? Ahí es exactamente donde nace el edificio inhabitado.</p>
+          </div>
+          <div class="star-blk">
+            <div class="star-blk-num">03</div>
+            <h3 class="star-blk-title">Cómo la uso</h3>
+            <p>Primero defino el layout y la jerarquía del dashboard — qué lidera, qué acompaña, qué sobra. Cuando el espacio tiene sentido sin datos, paso a construirlo. El gráfico siempre es lo último.</p>
+          </div>
+        </div>
+
+        <div class="star-pull">
+          <div class="star-pull-quote">«&nbsp;Ningún arquitecto pone el primer ladrillo sin haber hecho el plano.&nbsp;»</div>
+          <div class="star-pull-tags">
+            <span class="pc-pill">Power BI</span>
+            <span class="pc-pill">Claude</span>
+            <span class="pc-pill">Data Storytelling</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: herramienta -->
+      <div class="star-stage">
+        <div class="star-browser">
+          <div class="star-browser-bar">
+            <div class="star-browser-dots">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="star-browser-url">borjamome.github.io/powerbi-mockup</div>
+            <div class="star-browser-meta">
+              <span class="star-browser-live"><span class="sb-dot"></span>LIVE</span>
+            </div>
+          </div>
+          <div class="star-browser-content">
+            <iframe
+              src="https://borjamome.github.io/powerbi-mockup/"
+              title="PBI Mockup Creator"
+              loading="lazy"
+              scrolling="no"
+              tabindex="-1"
+              sandbox="allow-scripts allow-same-origin"
+            ></iframe>
+            <div class="iframe-overlay"></div>
+          </div>
+        </div>
+
+        <a href="https://borjamome.github.io/powerbi-mockup/" target="_blank" rel="noopener noreferrer" class="star-float-cta">
+          <span class="sfc-label">Abrir herramienta</span>
+          <span class="sfc-arrow">→</span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── STACK SKILLS ─── -->
+<section class="stack-section" id="stack">
+  <div class="c">
+    <div class="stack-wrap sr">
+
+      <!-- OVERLAY: copy flotante sobre el espacio libre izquierdo -->
+      <div class="stack-overlay">
+        <div class="stack-eyebrow">Stack técnico</div>
+        <h2 class="stack-title">Las herramientas que uso <em>cada día.</em></h2>
+        <p class="stack-desc">Power BI y Data Storytelling son el núcleo de lo que hago. DAX y modelado, construidos a base de proyectos reales. SQL y Python entran cuando el análisis lo exige. La IA la estoy integrando despacio, con criterio.</p>
+      </div>
+
+      <!-- BARRAS: full width, alineadas al fondo -->
+      <div class="stack-cols" id="stackCols">
+
+        <div class="sk-col top-align" style="height:20%">
+          <div class="sk-card">
+            <div class="sk-desc-above">
+              <p>Usada como acelerador dentro del flujo analítico: documentar, explorar datos, prototipar y depurar más rápido. En proceso de formación continua.</p>
+            </div>
+            <div class="sk-bottom">
+            <div class="sk-name">IA aplicada</div>
+            <div class="sk-pills">
+              <span class="sk-pill">Claude</span>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sk-col" style="height:30%">
+          <div class="sk-card">
+            <div class="sk-bottom">
+            <div class="sk-name">Análisis de datos</div>
+            <p class="sk-desc">Los datos se trabajan desde la lógica de negocio. SQL, Python y Excel para explorar, validar y detectar patrones antes de construir cualquier modelo o visual.</p>
+            <div class="sk-pills">
+              <span class="sk-pill">SQL</span>
+              <span class="sk-pill">Python</span>
+              <span class="sk-pill">Excel</span>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sk-col" style="height:45%">
+          <div class="sk-card">
+            <div class="sk-bottom">
+            <div class="sk-name">DAX</div>
+            <p class="sk-desc">Medidas pensadas para responder preguntas reales de negocio: contexto de filtro, time intelligence, parámetros de campo, filtros, medidas dinámicas y cálculos visuales.</p>
+            <div class="sk-pills">
+              <span class="sk-pill">DAX Studio</span>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sk-col" style="height:50%">
+          <div class="sk-card">
+            <div class="sk-bottom">
+            <div class="sk-name">Power Query</div>
+            <p class="sk-desc">Fuentes heterogéneas transformadas y unificadas para que el modelo reciba datos limpios y estructurados desde el origen. Conexión, limpieza, transformación y combinación de datos con lenguaje M.</p>
+            <div class="sk-pills">
+              <span class="sk-pill">M</span>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sk-col" style="height:60%">
+          <div class="sk-card">
+            <div class="sk-bottom">
+            <div class="sk-name">Modelado de datos</div>
+            <p class="sk-desc">Modelos en estrella orientados a claridad y escalabilidad: relaciones limpias, tablas de calendario y RLS. Optimización, buenas prácticas, rendimiento, cardinalidad y granularidad desde el diseño.</p>
+            <div class="sk-pills">
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sk-col" style="height:95%">
+          <div class="sk-card">
+            <div class="sk-bottom">
+            <div class="sk-name">Data Storytelling</div>
+            <p class="sk-desc">Fundamentos del storytelling, teorías de la visualización, leyes de la Gestalt, psicología del color, orden visual y sistemas de layout para comunicar con elementos visuales efectivos.</p>
+            <div class="sk-pills">
+              <span class="sk-pill">Figma</span>
+              <span class="sk-pill">UX/UI</span>
+              <span class="sk-pill">Dashboard Design</span>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sk-col" style="height:90%">
+          <div class="sk-card hl">
+            <div class="sk-bottom">
+            <div class="sk-name">Power BI</div>
+            <p class="sk-desc">El entorno que unifica el proceso analítico completo: desde los datos en bruto hasta la decisión. Ingesta, transformación, modelado y visualización en un solo espacio.</p>
+            <div class="sk-pills">
+              <span class="sk-pill">Desktop</span>
+              <span class="sk-pill">Service</span>
+              <span class="sk-pill">PL-300</span>
+            </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
 
 <!-- ─── COMMUNITY ─── -->
 <section class="com-section" id="community">
@@ -3252,7 +3201,7 @@ if(comSection){
 }
 
 // ─── CHART DEFAULTS ───
-Chart.defaults.font.family = "'Segoe UI', sans-serif";
+Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
 Chart.defaults.font.size   = 9;
 
 const PURPLE = '#7a7bff';
@@ -3270,7 +3219,7 @@ const chartOpts = {
 (function(){
   const nav = document.getElementById('dotNav');
   const items = nav.querySelectorAll('.dot-nav-item');
-  const sections = ['hero','stack','projects','star','approach','community','cta'];
+  const sections = ['hero','approach','projects','star','stack','community','cta'];
   const darkSections = ['community'];
 
   function update() {
@@ -3423,8 +3372,8 @@ const chartOpts = {
           responsive: true, maintainAspectRatio: false,
           plugins: { legend:{display:false}, tooltip:{enabled:false} },
           scales: {
-            x: { grid:{display:false}, ticks:{font:{family:'Segoe UI',size:7.5}, color:'#ccc'}, border:{display:false} },
-            y: { grid:{color:'#f5f5f8'}, ticks:{font:{family:'Segoe UI',size:7.5}, color:'#ccc', callback:function(v){return v>=1000?(v/1000).toFixed(0)+'K':v;}}, border:{display:false}, suggestedMin:140 }
+            x: { grid:{display:false}, ticks:{font:{family:'Plus Jakarta Sans',size:7.5}, color:'#ccc'}, border:{display:false} },
+            y: { grid:{color:'#f5f5f8'}, ticks:{font:{family:'Plus Jakarta Sans',size:7.5}, color:'#ccc', callback:function(v){return v>=1000?(v/1000).toFixed(0)+'K':v;}}, border:{display:false}, suggestedMin:140 }
           },
           animation: { duration:1000, easing:'easeOutQuart' }
         },
