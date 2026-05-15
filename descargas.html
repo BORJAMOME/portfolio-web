@@ -105,9 +105,45 @@ a.nav-cta:hover,
   line-height:1.55;
   max-width:62ch;
 }
+.hero-stats{
+  display:flex;
+  align-items:center;
+  gap:32px;
+  flex-wrap:wrap;
+  padding-top:4px;
+}
+.hero-stat{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.hero-stat-num{
+  font-size:28px;
+  font-weight:700;
+  letter-spacing:-.04em;
+  color:var(--ink);
+  font-variant-numeric:tabular-nums;
+  line-height:1;
+}
+.hero-stat-num span{color:var(--purple)}
+.hero-stat-label{
+  font-size:11px;
+  font-weight:500;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  color:var(--mutedB);
+}
+.hero-stat-sep{
+  width:1px;
+  height:32px;
+  background:var(--gray);
+  flex-shrink:0;
+}
 @media(max-width:820px){
   .hero{padding:48px 0 48px;gap:20px}
   .hero-h1{white-space:normal;font-size:clamp(40px,10vw,64px)}
+  .hero-stats{gap:20px}
+  .hero-stat-sep{display:none}
 }
 
 /* ───────────── SEGMENTADOR · PASTILLAS ───────────── */
@@ -317,7 +353,18 @@ a.nav-cta:hover,
 }
 
 /* ── Estado oculto al filtrar (mantiene la grid limpia) ── */
-.m.is-hidden{display:none}
+.m.is-hidden{
+  display:none;
+}
+
+/* ── Entrada de cards al cargar ── */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.m:not(.m-soon):not(.m-filler){
+  animation:fadeUp .32s var(--ease) both;
+}
 
 /* ── Módulo "Próximamente" ── */
 .m-soon{
@@ -368,6 +415,45 @@ a.nav-cta:hover,
   letter-spacing:.16em;
   border-right:1px solid var(--rule);
   border-bottom:1px solid var(--rule);
+}
+
+/* ───────────── SECCIÓN CIERRE ───────────── */
+.cierre{
+  border-top:1px solid var(--rule);
+  padding:80px 0 96px;
+}
+.cierre-copy{}
+.cierre-copy .label{
+  font-size:11px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.18em;
+  color:var(--purple);
+  margin-bottom:20px;
+}
+.cierre-copy h2{
+  font-size:clamp(28px,4vw,42px);
+  font-weight:600;
+  letter-spacing:-.035em;
+  line-height:1.1;
+  color:var(--ink);
+  margin-bottom:24px;
+  text-wrap:balance;
+}
+.cierre-copy p{
+  font-size:15px;
+  color:var(--muted);
+  line-height:1.7;
+  margin:0;
+}
+.cierre-copy p + p{
+  margin-top:12px;
+}
+
+@media(max-width:820px){
+  .cierre{
+    padding:56px 0 72px;
+  }
 }
 
 /* ───────────── FOOTER (preservado) ───────────── */
@@ -441,16 +527,28 @@ footer{background:var(--paper);padding:0;border-top:.5px solid var(--gray)}
   <header class="hero">
     <h1 class="hero-h1">Archivos .pbix<span class="dot">.</span></h1>
     <p class="hero-sub">Proyectos desarrollados y compartidos en LinkedIn. Descarga el archivo, explora el modelo de datos y úsalo como referencia para tus propios desarrollos en Power BI.</p>
+    <div class="hero-stats" aria-hidden="true">
+      <div class="hero-stat">
+        <div class="hero-stat-num"><span id="stat-files">0</span></div>
+        <div class="hero-stat-label">Archivos .pbix</div>
+      </div>
+      <div class="hero-stat-sep"></div>
+      <div class="hero-stat">
+        <div class="hero-stat-num"><span id="stat-cats">0</span></div>
+        <div class="hero-stat-label">Categorías</div>
+      </div>
+
+    </div>
   </header>
 
   <!-- Segmentador -->
-  <div class="seg" role="tablist" aria-label="Categorías">
+  <div class="seg" role="group" aria-label="Filtrar por categoría">
     <div class="seg-list">
-      <button class="seg-btn is-active" data-filter="all" role="tab" aria-selected="true">Todos<span class="count">17</span></button>
-      <button class="seg-btn" data-filter="gestion" role="tab" aria-selected="false">Gestión de proyectos<span class="count">3</span></button>
-      <button class="seg-btn" data-filter="ventas" role="tab" aria-selected="false">Ventas y análisis comercial<span class="count">9</span></button>
-      <button class="seg-btn" data-filter="storytelling" role="tab" aria-selected="false">Data Storytelling<span class="count">3</span></button>
-      <button class="seg-btn" data-filter="slicer" role="tab" aria-selected="false">Input Slicer<span class="count">2</span></button>
+      <button class="seg-btn is-active" data-filter="all" aria-pressed="true">Todos<span class="count">17</span></button>
+      <button class="seg-btn" data-filter="gestion" aria-pressed="false">Gestión de proyectos<span class="count">3</span></button>
+      <button class="seg-btn" data-filter="ventas" aria-pressed="false">Ventas y análisis comercial<span class="count">9</span></button>
+      <button class="seg-btn" data-filter="storytelling" aria-pressed="false">Data Storytelling<span class="count">3</span></button>
+      <button class="seg-btn" data-filter="slicer" aria-pressed="false">Input Slicer<span class="count">2</span></button>
     </div>
     <div class="seg-counter"><b id="seg-visible">17</b> / 17 archivos</div>
   </div>
@@ -460,6 +558,18 @@ footer{background:var(--paper);padding:0;border-top:.5px solid var(--gray)}
     <div class="grid" id="grid"></div>
   </div>
 
+</div>
+
+<!-- ─────────── SECCIÓN CIERRE ─────────── -->
+<div class="shell">
+  <section class="cierre" aria-label="Por qué se comparten estos recursos">
+    <div class="cierre-copy">
+      <p class="label">Por qué lo comparto</p>
+      <h2>Detrás de cada archivo hay cientos de horas de aprendizaje.</h2>
+      <p>Detrás de cada .pbix hay horas de análisis, prueba, error y refinamiento. No son ejercicios académicos, son soluciones que han funcionado en proyectos reales y que hoy te traslado tal cual, sin filtros. La comunidad de Power BI en español crece cuando compartimos lo que sabemos.</p>
+      <p>Aprendo mejor cuando enseño, y tú aprendes mejor cuando ves código real.</p>
+    </div>
+  </section>
 </div>
 
 <!-- ─────────── FOOTER (intacto) ─────────── -->
@@ -513,7 +623,7 @@ const ITEMS = [
   {n:"04", cat:"ventas", title:"Variación entre columnas", subtitle:"El cambio visible al instante",
     desc:"Selecciona dos años y ve la variación porcentual directamente sobre las barras. Resalta solo las columnas relevantes y atenúa el resto con etiquetas dinámicas.",
     tags:["Variación %","Comparativa anual","DAX"],
-    dl:"https://drive.google.com/drive/folders/1qOBguC9N5qNSkoPBoLHJnOlaXqyPWgTy?usp=drive_link",
+    dl:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7376214576889098240-JzRp",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7376214576889098240-JzRp"},
   {n:"05", cat:"ventas", title:"Segmentador que dirige el análisis", subtitle:"No filtra, guía",
     desc:"El usuario decide qué pregunta quiere responder y el visual se adapta. Beneficio, unidades y margen en un mismo visual con colores que cambian según rendimiento.",
@@ -614,18 +724,19 @@ function moduleHtml(it){
 
 function soonHtml(n, label){
   return `
-  <div class="m m-soon" data-cat="soon">
+  <div class="m m-soon" data-cat="soon" aria-hidden="true">
     <div class="m-head">
       <span class="m-num">Nº ${n}</span>
     </div>
     <div class="m-body">
       <div class="m-head-text">
-        <h3 class="m-title">Próximamente</h3>
+        <h3 class="m-title" style="opacity:.4">En desarrollo</h3>
+        <p class="m-sub" style="opacity:.4">Próxima publicación</p>
       </div>
-      <p class="m-desc">Sígueme en LinkedIn para enterarte de cuándo se publica el siguiente .pbix.</p>
+      <p class="m-desc" style="opacity:.35">Sígueme en LinkedIn para ser el primero en descargar el siguiente archivo.</p>
     </div>
     <div class="m-foot">
-      <a class="m-cta-soon" href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer">Conecta conmigo en LinkedIn</a>
+      <a class="m-cta-soon" href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" tabindex="-1">Seguir en LinkedIn</a>
       <span></span>
     </div>
   </div>`;
@@ -676,53 +787,72 @@ function applyFilter(filter){
   const grid = document.getElementById('grid');
   const mods = grid.querySelectorAll('.m');
   let visible = 0;
+
   mods.forEach(m=>{
     const cat = m.dataset.cat;
-    const show = (filter==='all') ? (cat!=='soon' ? true : true) : cat===filter;
+    // "soon" solo se muestra en vista "all"
+    const show = cat==='soon' ? filter==='all' : (filter==='all' || cat===filter);
     m.classList.toggle('is-hidden', !show);
     if(show && cat!=='soon') visible++;
   });
 
-  // Si filtramos, ocultamos los "soon" excepto en "all"
-  if(filter!=='all'){
-    grid.querySelectorAll('.m-soon').forEach(el=>el.classList.add('is-hidden'));
-  }
+  // Limpiar fillers y mensajes vacíos previos
+  grid.querySelectorAll('.m-filler,.m-empty').forEach(e=>e.remove());
 
-  // Rellenar última fila SOLO si la categoría activa deja huecos visibles
-  // Para mantener la grid continua incluso filtrada, añadimos celdas vacías virtuales:
-  let extras = grid.querySelectorAll('.m-filler');
-  extras.forEach(e=>e.remove());
   const cols = window.matchMedia('(max-width:600px)').matches ? 1
-              : window.matchMedia('(max-width:960px)').matches ? 2 : 3;
-  const visibleTotal = grid.querySelectorAll('.m:not(.is-hidden)').length;
-  const rem = visibleTotal % cols;
-  if(rem !== 0 && cols > 1){
-    const fill = cols - rem;
-    for(let i=0;i<fill;i++){
-      const div = document.createElement('div');
-      div.className = 'm m-filler';
-      div.style.cursor = 'default';
-      div.setAttribute('aria-hidden','true');
-      grid.appendChild(div);
+             : window.matchMedia('(max-width:960px)').matches ? 2 : 3;
+
+  if(visible===0){
+    // Estado vacío — CSS .empty ya definido
+    const empty = document.createElement('div');
+    empty.className='empty m-empty';
+    empty.textContent='Sin archivos en esta categoría';
+    grid.appendChild(empty);
+  } else {
+    const visibleTotal = grid.querySelectorAll('.m:not(.is-hidden)').length;
+    const rem = visibleTotal % cols;
+    if(rem!==0 && cols>1){
+      for(let i=0;i<cols-rem;i++){
+        const div=document.createElement('div');
+        div.className='m m-filler';
+        div.style.cssText='cursor:default;pointer-events:none';
+        div.setAttribute('aria-hidden','true');
+        grid.appendChild(div);
+      }
     }
   }
 
-  // contador
-  document.getElementById('seg-visible').textContent = visible;
+  // Contador: solo archivos reales (excluye "soon")
+  document.getElementById('seg-visible').textContent=visible;
 }
 
 // Init
 render();
 applyFilter('all');
 
+// Count-up stats hero
+function countUp(el, target, duration){
+  const start = performance.now();
+  const update = now => {
+    const p = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(ease * target);
+    if(p < 1) requestAnimationFrame(update);
+  };
+  requestAnimationFrame(update);
+}
+const cats = [...new Set(ITEMS.map(i=>i.cat))].length;
+setTimeout(()=>{ countUp(document.getElementById('stat-files'), ITEMS.length, 900); }, 200);
+setTimeout(()=>{ countUp(document.getElementById('stat-cats'), cats, 900); }, 350);
+
 document.querySelectorAll('.seg-btn').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     document.querySelectorAll('.seg-btn').forEach(b=>{
       b.classList.remove('is-active');
-      b.setAttribute('aria-selected','false');
+      b.setAttribute('aria-pressed','false');
     });
     btn.classList.add('is-active');
-    btn.setAttribute('aria-selected','true');
+    btn.setAttribute('aria-pressed','true');
     applyFilter(btn.dataset.filter);
   });
 });
