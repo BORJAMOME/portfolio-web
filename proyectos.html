@@ -173,9 +173,9 @@ nav#nav.scrolled{border-bottom-color:var(--gray)}
 /* SECTION NAV — pills */
 .sec-nav{position:sticky;top:60px;z-index:99;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
 .sec-nav-inner{display:flex;align-items:center;gap:10px;padding:14px clamp(20px,4vw,48px);max-width:1240px;margin:0 auto;overflow-x:auto;flex-wrap:wrap;border:0}
-.sec-nav a{font-family:inherit;font-size:13px;font-weight:500;color:var(--ink);background:#fff;border:1px solid var(--ink);border-radius:999px;padding:9px 18px;text-decoration:none;white-space:nowrap;cursor:pointer;letter-spacing:-.005em;transition:background .15s var(--ease),color .15s var(--ease)}
-.sec-nav a:hover{background:#f2f2f2;color:var(--ink);border-color:var(--ink)}
-.sec-nav a.active{background:var(--ink);color:#fff;border-color:var(--ink);font-weight:600}
+.sec-nav a,.sec-nav button{font-family:inherit;font-size:13px;font-weight:500;color:var(--ink);background:#fff;border:1px solid var(--ink);border-radius:999px;padding:9px 18px;text-decoration:none;white-space:nowrap;cursor:pointer;letter-spacing:-.005em;transition:background .15s var(--ease),color .15s var(--ease)}
+.sec-nav a:hover,.sec-nav button:hover{background:#f2f2f2;color:var(--ink);border-color:var(--ink)}
+.sec-nav a.active,.sec-nav button.active{background:var(--ink);color:#fff;border-color:var(--ink);font-weight:600}
 
 @keyframes fadeSlideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 .sec-panel:not(.hidden){animation:fadeSlideUp .4s ease forwards}
@@ -236,14 +236,14 @@ nav#nav.scrolled{border-bottom-color:var(--gray)}
 .proj-card:hover .pc-read-more{color:rgba(255,255,255,.75)}
 .proj-card:hover .pc-read-more:hover{color:#c6ff00}
 
-.pco-arrow{position:absolute;top:90px;width:36px;height:36px;background:var(--paper);border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;box-shadow:none;transition:background .18s,color .12s}
+.pco-arrow{position:absolute;top:90px;width:44px;height:44px;background:var(--paper);border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;box-shadow:none;transition:background .18s,color .12s}
 .pco-arrow:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
 .pco-arrow svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:square;width:14px;height:14px}
 .pco-prev{left:-18px}
 .pco-next{right:-18px}
 .pco-dots{display:flex;gap:6px;justify-content:center;margin-top:22px}
-.pco-dot{width:8px;height:8px;background:var(--gray);border:0;padding:0;cursor:pointer;border-radius:0;transition:background .25s,width .25s}
-.pco-dot.active{background:var(--ink);width:24px}
+.pco-dot{width:8px;height:8px;background:var(--gray);border:0;padding:10px;cursor:pointer;border-radius:0;transition:background .25s,width .25s;background-clip:content-box;box-sizing:content-box}
+.pco-dot.active{background:var(--ink);width:24px;background-clip:content-box}
 
 /* Panel section headers (community / native) */
 .panel-section-header{display:flex;align-items:center;gap:14px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.16em;color:var(--ink);margin:0 0 28px 0;padding-top:56px;border-top:1px solid var(--rule)}
@@ -393,8 +393,8 @@ nav#nav.scrolled{border-bottom-color:var(--gray)}
 .pcov-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;opacity:0;transition:opacity .3s ease;padding:14px}
 .pcov-photo.pcov-active{opacity:1}
 .pcov-dots{display:flex;gap:6px;justify-content:center;padding:12px 0 18px}
-.pcov-dot{width:8px;height:8px;background:var(--gray);border:0;padding:0;cursor:pointer;border-radius:0;transition:background .25s,width .25s}
-.pcov-dot.pcov-dot-active{background:var(--ink);width:24px}
+.pcov-dot{width:8px;height:8px;background:var(--gray);border:0;padding:8px;cursor:pointer;border-radius:0;transition:background .25s,width .25s;background-clip:content-box;box-sizing:content-box}
+.pcov-dot.pcov-dot-active{background:var(--ink);width:24px;background-clip:content-box}
 .pc-overlay-imgs .pc-arrow{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;background:var(--paper);border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .18s,color .12s;z-index:2;box-shadow:none}
 .pc-overlay-imgs .pc-arrow:hover{background:var(--ink);color:#fff}
 .pc-overlay-imgs .pc-arrow svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:square}
@@ -444,6 +444,7 @@ footer{background:var(--paper);padding:0;border-top:1px solid var(--rule);margin
   .nav-links a:not(.nav-cta):not(.active){display:none}
   .proj-card{flex:0 0 100%}
   .li-grid,.nat-viz-grid,.viz-grid,.analysis-grid{grid-template-columns:1fr}
+  .dax-cards{grid-template-columns:1fr}
   .dax-card{grid-template-columns:1fr;gap:16px}
   .dax-card:hover{margin:0;padding:32px 0}
   .pc-overlay-inner{grid-template-columns:1fr;max-height:90vh;overflow-y:auto}
@@ -463,10 +464,12 @@ footer{background:var(--paper);padding:0;border-top:1px solid var(--rule);margin
 /* Prefers reduced motion */
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{transition-duration:0ms!important;animation-duration:0ms!important;animation-iteration-count:1!important}
+  .logo-dot{animation:none}
 }
 </style>
 </head>
 <body>
+<a href="#main-content" class="skip-link" style="position:absolute;left:-9999px;top:4px;z-index:9999;background:var(--ink);color:#fff;padding:8px 16px;font-size:13px;font-weight:600;text-decoration:none;border-radius:4px;transition:left 0s" onfocus="this.style.left='4px'" onblur="this.style.left='-9999px'">Saltar al contenido</a>
 <div class="progress-bar" id="progressBar"></div>
 
 <nav id="nav" aria-label="Navegación principal">
@@ -482,7 +485,7 @@ footer{background:var(--paper);padding:0;border-top:1px solid var(--rule);margin
 </nav>
 
 <!-- HERO -->
-<section class="proj-hero">
+<section class="proj-hero" id="main-content">
   <div class="c">
     <div class="sr">
       <div class="hero-tag">Portfolio</div>
@@ -495,11 +498,11 @@ footer{background:var(--paper);padding:0;border-top:1px solid var(--rule);margin
 <!-- STICKY NAV -->
 <div class="sec-nav" id="secNav">
   <div class="sec-nav-inner">
-    <a data-sec="powerbi" data-target="powerbi">Power BI</a>
-    <a data-sec="daxlab" data-target="daxlab">DAX Lab</a>
-    <a data-sec="analisis" data-target="analisis">Análisis de datos</a>
-    <a data-sec="diseno" data-target="diseno">Diseño de la información</a>
-    <a data-sec="mapas" data-target="mapas">Mapas</a>
+    <button data-sec="powerbi" data-target="powerbi">Power BI</button>
+    <button data-sec="daxlab" data-target="daxlab">DAX Lab</button>
+    <button data-sec="analisis" data-target="analisis">Análisis de datos</button>
+    <button data-sec="diseno" data-target="diseno">Diseño de la información</button>
+    <button data-sec="mapas" data-target="mapas">Mapas</button>
   </div>
 </div>
 
@@ -517,9 +520,9 @@ footer{background:var(--paper);padding:0;border-top:1px solid var(--rule);margin
         <button class="pco-arrow pco-prev" id="pcoPrev" aria-label="Proyecto anterior">
           <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
-        <div class="proj-cards-track-wrap">
-          <div class="proj-cards-track" id="pcoTrack" aria-live="polite" aria-atomic="false">
-<div class="proj-card" id="pcard-0">
+        <div class="proj-cards-track-wrap" role="region" aria-label="Proyectos Power BI">
+          <div class="proj-cards-track" id="pcoTrack" aria-live="polite" aria-atomic="false" aria-label="Proyecto 1 de 6">
+<div class="proj-card" id="pcard-0" role="group" aria-roledescription="slide">
   <div class="pc-photo-wrap">
     <img src="./img/ibcs-card.png" alt="Informe de ventas con enfoque IBCS" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
     <div class="pc-badge"><span class="pc-num">01 / 06</span><span class="pc-cat">Ventas</span></div>
@@ -535,7 +538,7 @@ footer{background:var(--paper);padding:0;border-top:1px solid var(--rule);margin
     </div>
   </div>
 </div>
-<div class="proj-card" id="pcard-1">
+<div class="proj-card" id="pcard-1" role="group" aria-roledescription="slide">
   <div class="pc-photo-wrap">
     <img src="./img/kosta-CARD.png" alt="Kosta Cálida — Reporting para red de tiendas" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
     <div class="pc-badge"><span class="pc-num">02 / 06</span><span class="pc-cat">Retail</span></div>
@@ -551,7 +554,7 @@ footer{background:var(--paper);padding:0;border-top:1px solid var(--rule);margin
     </div>
   </div>
 </div>
-<div class="proj-card" id="pcard-2">
+<div class="proj-card" id="pcard-2" role="group" aria-roledescription="slide">
   <div class="pc-photo-wrap">
     <img src="./img/social-card.png" alt="Social Media Performance | 2025 vs 2024" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
     <div class="pc-badge"><span class="pc-num">03 / 06</span><span class="pc-cat">Marketing</span></div>
@@ -567,7 +570,7 @@ footer{background:var(--paper);padding:0;border-top:1px solid var(--rule);margin
     </div>
   </div>
 </div>
-<div class="proj-card" id="pcard-3">
+<div class="proj-card" id="pcard-3" role="group" aria-roledescription="slide">
   <div class="pc-photo-wrap">
     <img src="./img/financiero-card.png" alt="Informe Financiero Completo" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
     <div class="pc-badge"><span class="pc-num">04 / 06</span><span class="pc-cat">Financiero</span></div>
@@ -583,7 +586,7 @@ footer{background:var(--paper);padding:0;border-top:1px solid var(--rule);margin
     </div>
   </div>
 </div>
-<div class="proj-card" id="pcard-4">
+<div class="proj-card" id="pcard-4" role="group" aria-roledescription="slide">
   <div class="pc-photo-wrap">
     <img src="./img/pyg-card.png" alt="Cuenta de Pérdidas y Ganancias" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
     <div class="pc-badge"><span class="pc-num">05 / 06</span><span class="pc-cat">Financiero</span></div>
@@ -599,7 +602,7 @@ footer{background:var(--paper);padding:0;border-top:1px solid var(--rule);margin
     </div>
   </div>
 </div>
-<div class="proj-card" id="pcard-5">
+<div class="proj-card" id="pcard-5" role="group" aria-roledescription="slide">
   <div class="pc-photo-wrap">
     <img src="./img/airbnb-card.png" alt="Análisis del Mercado de Airbnb — País Vasco" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
     <div class="pc-badge"><span class="pc-num">06 / 06</span><span class="pc-cat">Mercado</span></div>
@@ -1035,7 +1038,7 @@ document.querySelectorAll('.sr').forEach(el=>obs.observe(el));
 // ── SECTION FILTER ──
 function showSection(sec){
   // Nav active
-  document.querySelectorAll('.sec-nav a').forEach(a=>{
+  document.querySelectorAll('.sec-nav a,.sec-nav button').forEach(a=>{
     a.classList.toggle('active', a.dataset.sec === sec);
   });
 
@@ -1075,7 +1078,7 @@ function showSection(sec){
   }
 }
 
-document.querySelectorAll('.sec-nav a').forEach(a=>{
+document.querySelectorAll('.sec-nav a,.sec-nav button').forEach(a=>{
   a.addEventListener('click', e=>{
     e.preventDefault();
     showSection(a.dataset.sec);
@@ -1149,6 +1152,21 @@ const ovPhotoState = {};
 let activeOverlay = null;
 let _ovLastFocus = null;
 
+function trapFocus(el){
+  const focusable = el.querySelectorAll('a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])');
+  const first = focusable[0], last = focusable[focusable.length-1];
+  el._trapHandler = e => {
+    if(e.key !== 'Tab') return;
+    if(e.shiftKey){ if(document.activeElement===first){e.preventDefault();last.focus();} }
+    else { if(document.activeElement===last){e.preventDefault();first.focus();} }
+  };
+  el.addEventListener('keydown', el._trapHandler);
+}
+
+function releaseFocus(el){
+  if(el._trapHandler) el.removeEventListener('keydown', el._trapHandler);
+}
+
 function openOverlay(idx){
   closeAllOverlays();
   _ovLastFocus = document.activeElement;
@@ -1158,23 +1176,24 @@ function openOverlay(idx){
   document.body.style.overflow = 'hidden';
   activeOverlay = idx;
   if(ovPhotoState[idx] === undefined) ovPhotoState[idx] = 0;
-  // Mover foco al botón de cierre
+  trapFocus(ov);
   const closeBtn = ov.querySelector('.pc-overlay-close');
   if(closeBtn) setTimeout(() => closeBtn.focus(), 50);
 }
 
 function closeOverlay(idx){
   const ov = document.getElementById('pcoverlay-' + idx);
+  releaseFocus(ov);
   ov.classList.remove('open');
   ov.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
   activeOverlay = null;
-  // Restaurar foco al elemento que abrió el overlay
   if(_ovLastFocus) { _ovLastFocus.focus(); _ovLastFocus = null; }
 }
 
 function closeAllOverlays(){
   document.querySelectorAll('.pc-overlay.open').forEach(ov => {
+    releaseFocus(ov);
     ov.classList.remove('open');
     ov.setAttribute('aria-hidden', 'true');
   });
