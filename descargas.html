@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+<link rel="shortcut icon" href="./favicon.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Descargas · Borja Mora Méndez</title>
 
@@ -10,8 +14,36 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PSDM6B5Z7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6PSDM6B5Z7');
+</script>
+
 <meta name="description" content="Descarga gratis archivos .pbix de Power BI: Gantt nativo, widgets, Input Slicer, Slope charts, Small Multiples y técnicas avanzadas de DAX y Data Storytelling.">
+<meta name="author" content="Borja Mora Méndez">
+<meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://borjamora.es/descargas.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:url" content="https://borjamora.es/descargas.html">
+<meta property="og:title" content="Descargas Power BI — Archivos .pbix gratuitos | Borja Mora">
+<meta property="og:description" content="Descarga gratis archivos .pbix de Power BI: Gantt nativo, Input Slicer, Slope charts, Small Multiples y técnicas avanzadas de DAX y Data Storytelling.">
+<meta property="og:image" content="https://borjamora.es/img/og-descargas.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="Borja Mora">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Descargas Power BI — Archivos .pbix gratuitos | Borja Mora">
+<meta name="twitter:description" content="17 archivos .pbix listos para descargar. DAX, storytelling y técnicas avanzadas de Power BI.">
+<meta name="twitter:image" content="https://borjamora.es/img/og-descargas.png">
 
 <style>
 :root{
@@ -40,6 +72,7 @@ body{
   font-feature-settings:"tnum" 0;
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
+  overflow-x:hidden;
 }
 ::selection{background:var(--purple);color:#fff}
 
@@ -247,11 +280,12 @@ a.nav-cta:hover,
 
 .m-ext{
   display:inline-flex;align-items:center;justify-content:center;
-  width:24px;height:24px;
-  margin:-4px -4px 0 0;
+  width:44px;height:44px;
+  margin:-10px -10px 0 0;
   color:var(--mutedB);
   transition:color .15s var(--ease), transform .25s var(--ease);
   text-decoration:none;
+  background:none;border:none;cursor:pointer;font-family:inherit;padding:0;
 }
 .m:hover .m-ext{color:var(--purple-ink)}
 .m-ext:hover,
@@ -330,8 +364,8 @@ a.nav-cta:hover,
 
 .m-dl{
   display:inline-flex;align-items:center;justify-content:center;
-  width:32px;height:32px;
-  margin:0 -6px -4px 0;
+  width:44px;height:44px;
+  margin:0 -10px -6px 0;
   color:var(--ink);
   flex-shrink:0;
   transition:color .12s var(--ease), transform .2s var(--ease);
@@ -502,10 +536,12 @@ footer{background:var(--paper);padding:0;border-top:.5px solid var(--gray)}
     animation-duration:0ms !important;
     animation-iteration-count:1 !important;
   }
+  .m:not(.m-soon):not(.m-filler){ animation:none }
 }
 </style>
 </head>
 <body>
+<a href="#main-content" class="skip-link" style="position:absolute;left:-9999px;top:4px;z-index:9999;background:var(--ink);color:#fff;padding:8px 16px;font-size:13px;font-weight:600;text-decoration:none;border-radius:4px" onfocus="this.style.left='4px'" onblur="this.style.left='-9999px'">Saltar al contenido</a>
 
 <!-- ─────────── NAV ─────────── -->
 <nav id="nav" aria-label="Navegación principal">
@@ -524,7 +560,7 @@ footer{background:var(--paper);padding:0;border-top:.5px solid var(--gray)}
 <div class="shell">
 
   <!-- Hero -->
-  <header class="hero">
+  <header class="hero" id="main-content">
     <h1 class="hero-h1">Archivos .pbix<span class="dot">.</span></h1>
     <p class="hero-sub">Proyectos desarrollados y compartidos en LinkedIn. Descarga el archivo, explora el modelo de datos y úsalo como referencia para tus propios desarrollos en Power BI.</p>
     <div class="hero-stats" aria-hidden="true">
@@ -703,10 +739,10 @@ function tagsHtml(arr){
 
 function moduleHtml(it){
   return `
-  <a class="m" data-cat="${it.cat}" href="${esc(it.dl)}" target="_blank" rel="noopener noreferrer" aria-label="Descargar ${esc(it.title)}">
+  <div class="m" data-cat="${it.cat}" data-href="${esc(it.dl)}" tabindex="0" role="link" aria-label="Descargar ${esc(it.title)}">
     <div class="m-head">
       <span class="m-num">Nº ${esc(it.n)}</span>
-      <span class="m-ext" role="link" tabindex="0" data-href="${esc(it.li)}" aria-label="Ver post en LinkedIn">${ICON_EXT}</span>
+      <button class="m-ext" data-href="${esc(it.li)}" aria-label="Ver post en LinkedIn">${ICON_EXT}</button>
     </div>
     <div class="m-body">
       <div class="m-head-text">
@@ -719,7 +755,7 @@ function moduleHtml(it){
       <div class="m-tags">${tagsHtml(it.tags)}</div>
       <span class="m-dl" aria-hidden="true">${ICON_DL}</span>
     </div>
-  </a>`;
+  </div>`;
 }
 
 function soonHtml(n, label){
@@ -758,18 +794,29 @@ function render(){
   }
   grid.innerHTML = html;
 
-  // Interceptar click en la flechita externa para que abra LinkedIn, no la descarga
+  // Card principal: click y Enter/Space abren la descarga
+  grid.querySelectorAll('.m[data-href]').forEach(card=>{
+    const openCard = e => {
+      // No abrir si el click vino del botón LinkedIn o del dl
+      if(e.target.closest('.m-ext,.m-dl')) return;
+      stamp(card.querySelector('.m-dl'));
+      window.open(card.dataset.href,'_blank','noopener');
+    };
+    card.addEventListener('click', openCard);
+    card.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){e.preventDefault();openCard(e);} });
+  });
+
+  // Botón LinkedIn: abre el post, detiene propagación a la card
   grid.querySelectorAll('.m-ext[data-href]').forEach(el=>{
     const open = e => {
-      e.preventDefault(); e.stopPropagation();
+      e.stopPropagation();
       stamp(el);
       window.open(el.dataset.href,'_blank','noopener');
     };
     el.addEventListener('click', open);
-    el.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') open(e); });
   });
 
-  // Stamp en el icono de descarga (la card abre target=_blank, asi que la pagina se queda)
+  // Stamp en el icono de descarga
   grid.querySelectorAll('.m-dl').forEach(el=>{
     el.addEventListener('click', () => stamp(el));
   });
