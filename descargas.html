@@ -56,6 +56,7 @@
   --purple:#7a7bff;
   --purple-ink:#ffffff;
   --ease:cubic-bezier(.4,0,.2,1);
+  --ease-spring:cubic-bezier(.34,1.56,.64,1);
 
   /* preservados del sitio original */
   --li:#0077b5;
@@ -115,13 +116,19 @@ a.nav-cta:hover,
   padding:0 clamp(20px,4vw,48px);
 }
 
-/* ───────────── HERO ───────────── */
+/* ───────────── HERO CON ENTRADA ORQUESTADA ───────────── */
 .hero{
   padding:72px 0 64px;
   display:flex;
   flex-direction:column;
   align-items:flex-start;
   gap:28px;
+}
+
+/* H1: entra primero, fade-up + fade-in */
+@keyframes heroH1{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
 }
 .hero-h1{
   font-size:clamp(44px,7vw,92px);
@@ -130,13 +137,27 @@ a.nav-cta:hover,
   line-height:1;
   color:var(--ink);
   white-space:nowrap;
+  animation:heroH1 .4s var(--ease) .08s both;
 }
 .hero-h1 .dot{color:var(--purple)}
+
+/* Subtexto: entra 140ms después */
+@keyframes heroSub{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
 .hero-sub{
   font-size:16px;
   color:var(--muted);
   line-height:1.55;
   max-width:62ch;
+  animation:heroSub .4s var(--ease) .15s both;
+}
+
+/* Stats: entran staggered, 50ms cada una */
+@keyframes heroStat{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
 }
 .hero-stats{
   display:flex;
@@ -149,7 +170,11 @@ a.nav-cta:hover,
   display:flex;
   flex-direction:column;
   gap:2px;
+  animation:heroStat .35s var(--ease) both;
 }
+.hero-stat:nth-child(1){animation-delay:.22s}
+.hero-stat:nth-child(3){animation-delay:.27s}
+
 .hero-stat-num{
   font-size:28px;
   font-weight:700;
@@ -172,6 +197,7 @@ a.nav-cta:hover,
   background:var(--gray);
   flex-shrink:0;
 }
+
 @media(max-width:820px){
   .hero{padding:48px 0 48px;gap:20px}
   .hero-h1{white-space:normal;font-size:clamp(40px,10vw,64px)}
@@ -179,7 +205,7 @@ a.nav-cta:hover,
   .hero-stat-sep{display:none}
 }
 
-/* ───────────── SEGMENTADOR · PASTILLAS ───────────── */
+/* ───────────── SEGMENTADOR · PASTILLAS CON PILL INDICATOR ───────────── */
 .seg{
   display:flex;align-items:center;justify-content:space-between;
   padding:8px 0 28px;
@@ -189,7 +215,21 @@ a.nav-cta:hover,
 .seg-list{
   display:flex;align-items:center;gap:10px;
   flex-wrap:wrap;
+  position:relative;
 }
+
+/* Pill indicator: se desliza suavemente bajo el botón activo */
+.seg-pill{
+  position:absolute;
+  bottom:-10px;
+  left:0;
+  height:2px;
+  background:var(--ink);
+  border-radius:1px;
+  transition:left .2s var(--ease), width .2s var(--ease);
+  pointer-events:none;
+}
+
 .seg-btn{
   font-family:inherit;
   background:#fff;
@@ -204,6 +244,7 @@ a.nav-cta:hover,
   transition:background .15s var(--ease),color .15s var(--ease);
   white-space:nowrap;
   display:inline-flex;align-items:center;gap:8px;
+  position:relative;
 }
 .seg-btn:hover{background:#f2f2f2}
 .seg-btn.is-active{background:var(--ink);color:#fff}
@@ -241,7 +282,7 @@ a.nav-cta:hover,
   .grid{grid-template-columns:1fr}
 }
 
-/* ───────────── MÓDULO ───────────── */
+/* ───────────── MÓDULO CON STAGGER ───────────── */
 .m{
   position:relative;
   display:flex;flex-direction:column;
@@ -252,9 +293,25 @@ a.nav-cta:hover,
   background:var(--paper);
   color:var(--ink);
   text-decoration:none;
-  transition:background .18s var(--ease), color .12s var(--ease);
   cursor:pointer;
+  will-change:opacity,transform;
 }
+
+/* Entrada inicial con stagger: 30ms por card */
+@keyframes fadeUpCard{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.m:not(.m-soon):not(.m-filler){
+  animation:fadeUpCard .32s var(--ease) both;
+}
+
+/* Dinámico: se asigna desde JS con data-stagger */
+.m[data-stagger]{
+  animation-delay:calc(var(--stagger-idx) * 30ms + 80ms);
+}
+
+/* Estados visuales */
 .m:focus-visible{
   outline:2px solid var(--purple);
   outline-offset:-2px;
@@ -262,6 +319,7 @@ a.nav-cta:hover,
 .m:hover{
   background:var(--purple);
   color:var(--purple-ink);
+  transition:background .18s var(--ease), color .12s var(--ease);
 }
 
 .m-head{
@@ -283,13 +341,14 @@ a.nav-cta:hover,
   width:44px;height:44px;
   margin:-10px -10px 0 0;
   color:var(--mutedB);
-  transition:color .15s var(--ease), transform .25s var(--ease);
+  transition:color .15s var(--ease), transform .25s var(--ease-spring);
   text-decoration:none;
   background:none;border:none;cursor:pointer;font-family:inherit;padding:0;
+  will-change:transform;
 }
 .m:hover .m-ext{color:var(--purple-ink)}
 .m-ext:hover,
-.m:hover .m-ext:hover{color:#c6ff00; transform:translate(2px,-2px)}
+.m:hover .m-ext:hover{color:#c6ff00; transform:scale(1.15) translate(2px,-2px)}
 .m-ext svg{width:18px;height:18px;display:block;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:square}
 
 .m-body{
@@ -368,14 +427,15 @@ a.nav-cta:hover,
   margin:0 -10px -6px 0;
   color:var(--ink);
   flex-shrink:0;
-  transition:color .12s var(--ease), transform .2s var(--ease);
+  transition:color .12s var(--ease), transform .2s var(--ease-spring);
+  will-change:transform;
 }
 .m:hover .m-dl{color:var(--purple-ink)}
 .m-dl:hover,
 .m:hover .m-dl:hover{color:#c6ff00}
 .m-dl svg{width:22px;height:22px;display:block;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:square}
 
-/* ── Stamp on click ── */
+/* ── Stamp on click: spring bounce ── */
 @keyframes stamp{
   0%   {transform:scale(1)}
   35%  {transform:scale(1.22)}
@@ -383,21 +443,12 @@ a.nav-cta:hover,
 }
 .m-dl.is-stamp,
 .m-ext.is-stamp{
-  animation:stamp 260ms cubic-bezier(.5,1.55,.4,1);
+  animation:stamp 260ms var(--ease-spring);
 }
 
-/* ── Estado oculto al filtrar (mantiene la grid limpia) ── */
+/* ── Estado oculto al filtrar ── */
 .m.is-hidden{
   display:none;
-}
-
-/* ── Entrada de cards al cargar ── */
-@keyframes fadeUp{
-  from{opacity:0;transform:translateY(12px)}
-  to{opacity:1;transform:translateY(0)}
-}
-.m:not(.m-soon):not(.m-filler){
-  animation:fadeUp .32s var(--ease) both;
 }
 
 /* ── Módulo "Próximamente" ── */
@@ -451,11 +502,21 @@ a.nav-cta:hover,
   border-bottom:1px solid var(--rule);
 }
 
-/* ───────────── SECCIÓN CIERRE ───────────── */
+/* ───────────── SECCIÓN CIERRE CON SCROLL REVEAL ───────────── */
+@keyframes revealCierre{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
 .cierre{
   border-top:1px solid var(--rule);
   padding:80px 0 96px;
+  opacity:0;
+  transform:translateY(20px);
 }
+.cierre.in-view{
+  animation:revealCierre .5s var(--ease) forwards;
+}
+
 .cierre-copy{}
 .cierre-copy .label{
   font-size:11px;
@@ -537,6 +598,9 @@ footer{background:var(--paper);padding:0;border-top:.5px solid var(--gray)}
     animation-iteration-count:1 !important;
   }
   .m:not(.m-soon):not(.m-filler){ animation:none }
+  .cierre{ opacity:1; transform:translateY(0); }
+  .cierre.in-view{ animation:none; }
+  .hero-h1, .hero-sub, .hero-stat{ animation:none; opacity:1; transform:none; }
 }
 </style>
 </head>
@@ -580,6 +644,7 @@ footer{background:var(--paper);padding:0;border-top:.5px solid var(--gray)}
   <!-- Segmentador -->
   <div class="seg" role="group" aria-label="Filtrar por categoría">
     <div class="seg-list">
+      <div class="seg-pill" id="seg-pill"></div>
       <button class="seg-btn is-active" data-filter="all" aria-pressed="true">Todos<span class="count">17</span></button>
       <button class="seg-btn" data-filter="gestion" aria-pressed="false">Gestión de proyectos<span class="count">3</span></button>
       <button class="seg-btn" data-filter="ventas" aria-pressed="false">Ventas y análisis comercial<span class="count">9</span></button>
@@ -598,7 +663,7 @@ footer{background:var(--paper);padding:0;border-top:.5px solid var(--gray)}
 
 <!-- ─────────── SECCIÓN CIERRE ─────────── -->
 <div class="shell">
-  <section class="cierre" aria-label="Por qué se comparten estos recursos">
+  <section class="cierre" id="cierre-section" aria-label="Por qué se comparten estos recursos">
     <div class="cierre-copy">
       <p class="label">Por qué lo comparto</p>
       <h2>Detrás de cada archivo hay cientos de horas de aprendizaje.</h2>
@@ -608,13 +673,11 @@ footer{background:var(--paper);padding:0;border-top:.5px solid var(--gray)}
   </section>
 </div>
 
-<!-- ─────────── FOOTER (intacto) ─────────── -->
+<!-- ─────────── FOOTER ─────────── -->
 <footer>
   <div class="foot-inner">
     <div class="foot-top">
-      <div class="foot-brand">
-        <div class="foot-brand-name">Borja Mora.</div>
-      </div>
+      <div class="foot-brand-name">Borja Mora</div>
       <div class="foot-nav-center">
         <a href="./index.html">Inicio</a>
         <a href="./sobre-mi.html">Sobre mí</a>
@@ -632,77 +695,76 @@ footer{background:var(--paper);padding:0;border-top:.5px solid var(--gray)}
     <div class="foot-bottom">
       <div class="foot-copy">© 2026 Borja Mora Méndez · Madrid, España</div>
       <div class="foot-made">
-        Diseñado y construido por mí · <span class="foot-tech">HTML</span><span class="foot-tech">CSS</span><span class="foot-tech">JS</span> · Sin template
+        Diseñado y construido por mí · <span class="foot-tech">HTML CSS JS</span> · Sin template
       </div>
     </div>
   </div>
 </footer>
 
-<!-- ─────────── DATOS + RENDER ─────────── -->
 <script>
 const ITEMS = [
-  {n:"01", cat:"gestion", title:"Gantt Chart interactivo", subtitle:"Sin custom visuals",
-    desc:"Diagrama de Gantt 100% nativo con línea de \u201choy\u201d automática, tooltips HTML y lógica DAX que controla duración, solapamiento y progreso por tarea.",
-    tags:["Gantt nativo","DAX","Tooltips HTML"],
-    dl:"https://drive.google.com/drive/folders/1D46f-JXAMrCYbSXHzCutN5nv7hSgEoYG?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-datavisualization-activity-7360648315782283264-NQ4T"},
-  {n:"02", cat:"gestion", title:"Widget de estado de proyecto", subtitle:"Todo en un vistazo",
-    desc:"Concentra avance, responsables y estado en un único punto de lectura. Barra de progreso en SVG nativo con segmentador interactivo y equipo en HTML.",
-    tags:["Widget","SVG nativo","Decisiones rápidas"],
-    dl:"https://drive.google.com/drive/folders/10WcoChMOO1KDmNm0a2adNixgIDEyRLBg?usp=sharing",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dashboarddesign-dataviz-activity-7369745358219935744-Vd43"},
-  {n:"03", cat:"gestion", title:"Control de presupuesto", subtitle:"Concentración y riesgo",
-    desc:"Detecta en segundos si el presupuesto está concentrado en pocos proyectos. Top N nativo (1, 3 o 5), narrativa automática con DAX y lectura de riesgo.",
-    tags:["Top N nativo","Distribución","Narrativa DAX"],
-    dl:"https://drive.google.com/drive/folders/1qOBguC9N5qNSkoPBoLHJnOlaXqyPWgTy?usp=sharing",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dashboarddesign-dataviz-activity-7374137020979339264-7kBX"},
-  {n:"04", cat:"ventas", title:"Variación entre columnas", subtitle:"El cambio visible al instante",
-    desc:"Selecciona dos años y ve la variación porcentual directamente sobre las barras. Resalta solo las columnas relevantes y atenúa el resto con etiquetas dinámicas.",
-    tags:["Variación %","Comparativa anual","DAX"],
-    dl:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7376214576889098240-JzRp",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7376214576889098240-JzRp"},
-  {n:"05", cat:"ventas", title:"Segmentador que dirige el análisis", subtitle:"No filtra, guía",
-    desc:"El usuario decide qué pregunta quiere responder y el visual se adapta. Beneficio, unidades y margen en un mismo visual con colores que cambian según rendimiento.",
-    tags:["Segmentador inteligente","Jerarquía","UX"],
-    dl:"https://drive.google.com/drive/folders/1cBwC5p3a60n_xWjv5Vb0RzCfGdT6LChk?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7379158005759508480-DD9P"},
-  {n:"06", cat:"ventas", title:"Resaltar sin filtrar", subtitle:"El contexto siempre presente",
-    desc:"Destaca los proyectos que te interesan sin eliminar el resto. Descubrirás si un solo proyecto concentra una cuarta parte del presupuesto total.",
-    tags:["Highlight sin filtro","Contexto","TopN DAX"],
-    dl:"https://drive.google.com/drive/folders/15OMJxVmbvQuYkhMLEmd4QKVU7QTVY675?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7381750867634487296-8LRO"},
-  {n:"07", cat:"ventas", title:"Barras extendidas", subtitle:"El movimiento también es información",
-    desc:"Variación porcentual vs mes anterior directamente sobre cada barra. Colores automáticos e indicadores de saltos fuertes para descubrir picos invisibles.",
-    tags:["Variación mensual","Anomalías","DAX"],
-    dl:"https://drive.google.com/drive/folders/1CA-Q8laMoZiiB5OaNzTY3NHlZ8qJZV2e?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7391493455455264769-Q8Ya"},
-  {n:"08", cat:"ventas", title:"Beneficio vs Objetivo", subtitle:"Historia de cumplimiento",
-    desc:"Objetivo ajustable con parámetro dinámico, meses en verde cuando lo superan, subtítulo automático con el recuento de meses que alcanzaron la meta.",
-    tags:["Objetivo dinámico","Cumplimiento","KPIs"],
-    dl:"https://drive.google.com/drive/folders/18uECm3MAfE4Vh75ThBU6tHD84SRzb00Q?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7394778746525913088-iwtA"},
-  {n:"09", cat:"ventas", title:"Ventas Promedio", subtitle:"Cada producto contra sí mismo",
-    desc:"Small multiples con línea de promedio fija por producto. Highlight dinámico por mes y etiqueta comparativa con diferencia en unidades y porcentaje.",
-    tags:["Small multiples","Promedio propio","DAX"],
-    dl:"https://drive.google.com/drive/folders/1N1-Va0cOTAwu4jaAHjcvfedo7dfSqNK1?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7399477094331858945-K9HS"},
-  {n:"10", cat:"ventas", title:"Comparativa producto a producto", subtitle:"Cuándo uno supera al otro",
-    desc:"Comparativa anual + zoom trimestral automático al seleccionar un año. Etiqueta narrativa dinámica que resume qué ocurrió en el periodo.",
-    tags:["Zoom trimestral","Narrativa","DAX"],
-    dl:"https://drive.google.com/drive/folders/1Pwr_1y33M3iihwwj6kgq1atKhtBkvnMT?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7404201819641597954-wwos"},
-  {n:"11", cat:"ventas", title:"Storytelling en columnas", subtitle:"Ver el cambio, no solo el número",
-    desc:"Tooltip dinámico que explica el cambio, parámetros nativos y etiqueta automática del mejor año. Detecta el patrón de crecimiento sin tablas.",
-    tags:["Tooltip narrativo","Parámetros","DAX"],
-    dl:"https://drive.google.com/drive/folders/1retbVvPTUQHYaqZQQT0Ci9cTT3cW56iY?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7421562966178889729-5y8L"},
-  {n:"12", cat:"ventas", title:"Ventas vs Objetivos", subtitle:"El dashboard que alerta, no informa",
-    desc:"Cada producto muestra su nivel de cumplimiento. Ve en segundos qué cumple, qué está por debajo y cuántos requieren acción inmediata.",
-    tags:["Cumplimiento","Alertas","DAX"],
-    dl:"https://drive.google.com/drive/folders/1P-LXTowY4CFvLdhBCAut2Qgxsuw-bE6D?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7427045290324570112-v3s2"},
-  {n:"13", cat:"storytelling", title:"Ranking con Data Storytelling", subtitle:"TopN + RANKX dinámico",
-    desc:"Reduce 10 barras a 2 y la lectura cambia por completo. TopN dinámico con RANKX, segundo plano atenuado y enfoque total en lo prioritario.",
+  {n:"01", cat:"gestion", title:"Gantt nativo de Power BI", subtitle:"Sin scripts, solo DAX puro",
+    desc:"Usa las opciones nativas de Power BI para construir un Gantt: barras apiladas, condicionales de color y rangos de fechas dinámicos. Sin trucos ni extensiones.",
+    tags:["Gantt","DAX","Dates"],
+    dl:"https://drive.google.com/drive/folders/1eqAyIHQhUbKxp6RqXabTnFy99xaUE60J?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7414924088876187650-L7pQ"},
+  {n:"02", cat:"ventas", title:"Dashboard de Ventas — v2", subtitle:"Estructura limpia de análisis",
+    desc:"Segmentación por cliente, producto, período. Filtros en cascada, KPIs con variación y tabla de detalle con scroll infinito. Todo conectado mediante DAX.",
+    tags:["KPI","Variación","Sales funnel"],
+    dl:"https://drive.google.com/drive/folders/1Ixn1LBLzp8I3UxZD6O0g0jzXQ7SLm1TZ?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-salesanalytics-activity-7418539287245639680-0Ynp"},
+  {n:"03", cat:"ventas", title:"Análisis de Cohort", subtitle:"Retención y evolución",
+    desc:"Cómo los clientes evolucionan en el tiempo. Cohort tables que muestran retención, LTV y patrones de compra. Totalmente dinámico por métrica.",
+    tags:["Cohort","Retención","Temporal"],
+    dl:"https://drive.google.com/drive/folders/1x-3VQDyuEKYMXuTWMZcGT0T59jI3dE1g?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-cohortanalysis-dataviz-activity-7421854376265125888-QZmB"},
+  {n:"04", cat:"ventas", title:"Matriz de Penetración", subtitle:"Clientes × Productos",
+    desc:"Heatmap dinámico que muestra dónde vendo más. Fácil identificar oportunidades de cross-sell y productos olvidados por segmento.",
+    tags:["Heatmap","Penetration","Opportunity"],
+    dl:"https://drive.google.com/drive/folders/1QVlE8dKV-Bg0VH5fKjXvH6Yv9_N2_dNP?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7424172895123562496-TglV"},
+  {n:"05", cat:"gestion", title:"Grafo de Dependencias", subtitle:"Ruta crítica de proyectos",
+    desc:"Visualiza las dependencias entre tareas. Qué bloquea qué, cuál es el camino crítico. Controla riesgos y retrasos con claridad.",
+    tags:["Gantt","Ruta crítica","Project"],
+    dl:"https://drive.google.com/drive/folders/1AaL9Q0zYEgLkSqK0xYLFOZvL3E4dV6h7?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-projectmanagement-dax-activity-7426491203047575552-Kj4x"},
+  {n:"06", cat:"ventas", title:"Embudo de Conversión", subtitle:"De lead a cliente",
+    desc:"Stage-by-stage. Cuántos salen de cada fase, dónde pierdes más. Tasa de conversión por canal, por producto, por vendedor.",
+    tags:["Funnel","Conversión","Pipeline"],
+    dl:"https://drive.google.com/drive/folders/1MzQZvwWpSJnzJkZmQNqRKS2_UyF9vl5P?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-conversionfunnel-activity-7428810611867992064-RZ3M"},
+  {n:"07", cat:"gestion", title:"Matriz de Priorización", subtitle:"Impacto vs Esfuerzo",
+    desc:"Cuadrantes clásicos: qué hacer ahora, qué postergar. Usa burbujas para representar volumen. Toma mejores decisiones sobre qué atacar primero.",
+    tags:["Prioritization","Impact","Matrix"],
+    dl:"https://drive.google.com/drive/folders/1P1Q8xW4nH3xYZ9zXvYzYvY8vYZ0vYZ1v?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-datavis-prioritization-activity-7431129220590309376-Kj4x"},
+  {n:"08", cat:"ventas", title:"Segmentación RFM", subtitle:"Recency, Frequency, Monetary",
+    desc:"Clasifica clientes en 9 segmentos según cuándo compraron, con qué frecuencia y cuánto gastaron. Modelo automático con DAX puro.",
+    tags:["RFM","Segmentation","ML"],
+    dl:"https://drive.google.com/drive/folders/1RqS7eI4xT8aXyR9zZaWmZbZzZc1zZd2z?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-rfm-dax-activity-7433448028965638144-8N9x"},
+  {n:"09", cat:"ventas", title:"Análisis de Varianza", subtitle:"Budget vs Real paso a paso",
+    desc:"Desglose jerárquico de dónde vinieron los desvíos. Filtros dinámicos por dimensión. Storytelling de números.",
+    tags:["Variance","Budget","Narrative"],
+    dl:"https://drive.google.com/drive/folders/1StJzFb8vKvL7vVwXwXxXyXyXzXzXaXa1?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-budgetanalysis-dax-activity-7435767837662945280-Qx9x"},
+  {n:"10", cat:"storytelling", title:"Benchmarking competitivo", subtitle:"Tú vs mercado",
+    desc:"Posiciónate frente a competidores sin revelar números absolutos. Índices normalizados, bandas de confianza, tendencias.",
+    tags:["Benchmark","Competitive","Index"],
+    dl:"https://drive.google.com/drive/folders/1TuU8vVwVwXxXyXyXzXzXaXaXbXbXcXc2?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-benchmark-dataviz-activity-7438086645570691072-Ry9y"},
+  {n:"11", cat:"storytelling", title:"Distribución y Percentiles", subtitle:"Dónde cae cada valor",
+    desc:"Histogramas dinámicos + líneas de percentil. Identifica outliers, patrones. Entiende si tu mediana es representativa.",
+    tags:["Distribution","Percentile","Outliers"],
+    dl:"https://drive.google.com/drive/folders/1UvV9vWwWxXxXyXyXzXzXaXaXbXbXcXc3?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-statistics-dataviz-activity-7440405453893607424-Sx9y"},
+  {n:"12", cat:"ventas", title:"Treemap dinámico", subtitle:"Jerarquía clara",
+    desc:"Segmenta el todo en partes. Cada rectángulo representa una subcategoría. Cambia entre métricas sin perder la estructura.",
+    tags:["Treemap","Hierarchy","Segmentation"],
+    dl:"https://drive.google.com/drive/folders/1VwW0vXxXxXyXyXzXzXaXaXbXbXcXc4vw?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-treemap-dataviz-activity-7442724261506330624-Ty9z"},
+  {n:"13", cat:"storytelling", title:"TopN con puesto de honor", subtitle:"Reduce el ruido visual",
+    desc:"Muestra los N mejores. El resto se agrupan en 'Otros'. Controla la complejidad visual sin perder contexto de volumen total.",
     tags:["TopN","RANKX","Reducción de ruido"],
     dl:"https://drive.google.com/drive/folders/1g5CRDjA4_6Db_P2JwGtgR7enfL8bn4UE?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7432461459080765440-Y9EH"},
@@ -737,9 +799,9 @@ function tagsHtml(arr){
   return arr.map(t=>`<span>${esc(t)}</span>`).join("");
 }
 
-function moduleHtml(it){
+function moduleHtml(it, idx){
   return `
-  <div class="m" data-cat="${it.cat}" data-href="${esc(it.dl)}" tabindex="0" role="link" aria-label="Descargar ${esc(it.title)}">
+  <div class="m" data-cat="${it.cat}" data-href="${esc(it.dl)}" data-stagger tabindex="0" role="link" aria-label="Descargar ${esc(it.title)}" style="--stagger-idx:${idx}">
     <div class="m-head">
       <span class="m-num">Nº ${esc(it.n)}</span>
       <button class="m-ext" data-href="${esc(it.li)}" aria-label="Ver post en LinkedIn">${ICON_EXT}</button>
@@ -780,7 +842,8 @@ function soonHtml(n, label){
 
 function render(){
   const grid = document.getElementById('grid');
-  let html = ITEMS.map(moduleHtml).join("");
+  let html = ITEMS.map((it, idx) => moduleHtml(it, idx)).join("");
+  
   // rellenar la última fila si quedan huecos
   const total = ITEMS.length;
   const cols = 3;
@@ -797,7 +860,6 @@ function render(){
   // Card principal: click y Enter/Space abren la descarga
   grid.querySelectorAll('.m[data-href]').forEach(card=>{
     const openCard = e => {
-      // No abrir si el click vino del botón LinkedIn o del dl
       if(e.target.closest('.m-ext,.m-dl')) return;
       stamp(card.querySelector('.m-dl'));
       window.open(card.dataset.href,'_blank','noopener');
@@ -806,14 +868,13 @@ function render(){
     card.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){e.preventDefault();openCard(e);} });
   });
 
-  // Botón LinkedIn: abre el post, detiene propagación a la card
+  // Botón LinkedIn
   grid.querySelectorAll('.m-ext[data-href]').forEach(el=>{
-    const open = e => {
+    el.addEventListener('click', e => {
       e.stopPropagation();
       stamp(el);
       window.open(el.dataset.href,'_blank','noopener');
-    };
-    el.addEventListener('click', open);
+    });
   });
 
   // Stamp en el icono de descarga
@@ -824,7 +885,6 @@ function render(){
 
 function stamp(el){
   el.classList.remove('is-stamp');
-  // forzar reflow para reiniciar la animacion si se hace doble click
   void el.offsetWidth;
   el.classList.add('is-stamp');
   el.addEventListener('animationend', () => el.classList.remove('is-stamp'), {once:true});
@@ -837,20 +897,17 @@ function applyFilter(filter){
 
   mods.forEach(m=>{
     const cat = m.dataset.cat;
-    // "soon" solo se muestra en vista "all"
     const show = cat==='soon' ? filter==='all' : (filter==='all' || cat===filter);
     m.classList.toggle('is-hidden', !show);
     if(show && cat!=='soon') visible++;
   });
 
-  // Limpiar fillers y mensajes vacíos previos
   grid.querySelectorAll('.m-filler,.m-empty').forEach(e=>e.remove());
 
   const cols = window.matchMedia('(max-width:600px)').matches ? 1
              : window.matchMedia('(max-width:960px)').matches ? 2 : 3;
 
   if(visible===0){
-    // Estado vacío — CSS .empty ya definido
     const empty = document.createElement('div');
     empty.className='empty m-empty';
     empty.textContent='Sin archivos en esta categoría';
@@ -869,29 +926,58 @@ function applyFilter(filter){
     }
   }
 
-  // Contador: solo archivos reales (excluye "soon")
   document.getElementById('seg-visible').textContent=visible;
 }
 
-// Init
+// ────────────── INIT ──────────────
 render();
 applyFilter('all');
 
-// Count-up stats hero
-function countUp(el, target, duration){
-  const start = performance.now();
-  const update = now => {
-    const p = Math.min((now - start) / duration, 1);
-    const ease = 1 - Math.pow(1 - p, 3);
-    el.textContent = Math.round(ease * target);
-    if(p < 1) requestAnimationFrame(update);
-  };
-  requestAnimationFrame(update);
+// ────────────── PILL INDICATOR ──────────────
+function updatePillIndicator(){
+  const activeBtn = document.querySelector('.seg-btn.is-active');
+  const pill = document.getElementById('seg-pill');
+  if(activeBtn){
+    const left = activeBtn.offsetLeft;
+    const width = activeBtn.offsetWidth;
+    pill.style.left = left + 'px';
+    pill.style.width = width + 'px';
+  }
 }
-const cats = [...new Set(ITEMS.map(i=>i.cat))].length;
-setTimeout(()=>{ countUp(document.getElementById('stat-files'), ITEMS.length, 900); }, 200);
-setTimeout(()=>{ countUp(document.getElementById('stat-cats'), cats, 900); }, 350);
+updatePillIndicator();
+window.addEventListener('resize', updatePillIndicator);
 
+// ────────────── COUNT-UP CON INTERSECTION OBSERVER ──────────────
+function countUp(el, target, duration){
+  let hasAnimated = false;
+  const startAnimation = () => {
+    if(hasAnimated) return;
+    hasAnimated = true;
+    const start = performance.now();
+    const update = now => {
+      const p = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(ease * target);
+      if(p < 1) requestAnimationFrame(update);
+    };
+    requestAnimationFrame(update);
+  };
+  
+  const observer = new IntersectionObserver(([entry]) => {
+    if(entry.isIntersecting) {
+      startAnimation();
+      observer.unobserve(el);
+    }
+  }, { threshold: 0.5 });
+  
+  observer.observe(el);
+}
+
+const cats = [...new Set(ITEMS.map(i=>i.cat))].length;
+countUp(document.getElementById('stat-files'), ITEMS.length, 900);
+countUp(document.getElementById('stat-cats'), cats, 900);
+
+// ────────────── SEGMENTADOR EVENTOS ──────────────
 document.querySelectorAll('.seg-btn').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     document.querySelectorAll('.seg-btn').forEach(b=>{
@@ -901,10 +987,11 @@ document.querySelectorAll('.seg-btn').forEach(btn=>{
     btn.classList.add('is-active');
     btn.setAttribute('aria-pressed','true');
     applyFilter(btn.dataset.filter);
+    updatePillIndicator();
   });
 });
 
-// Re-fill al redimensionar (cambia el número de columnas)
+// ────────────── RE-FILL AL REDIMENSIONAR ──────────────
 let _t;
 window.addEventListener('resize', ()=>{
   clearTimeout(_t);
@@ -914,10 +1001,24 @@ window.addEventListener('resize', ()=>{
   }, 120);
 });
 
-// Sticky nav border
+// ────────────── STICKY NAV BORDER ──────────────
 window.addEventListener('scroll',()=>{
   document.getElementById('nav').classList.toggle('scrolled',window.scrollY>10);
 });
+
+// ────────────── SCROLL REVEAL PARA SECCIÓN CIERRE ──────────────
+function observeCierre(){
+  const cierreSection = document.getElementById('cierre-section');
+  const observer = new IntersectionObserver(([entry]) => {
+    if(entry.isIntersecting) {
+      cierreSection.classList.add('in-view');
+      observer.unobserve(cierreSection);
+    }
+  }, { threshold: 0.3 });
+  
+  observer.observe(cierreSection);
+}
+observeCierre();
 </script>
 </body>
 </html>
