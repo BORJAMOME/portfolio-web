@@ -2,49 +2,120 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<!-- ─── FAVICON ─── -->
 <link rel="icon" type="image/svg+xml" href="./favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
 <link rel="shortcut icon" href="./favicon.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Descargas · Borja Mora Méndez</title>
-
+<title>Proyectos — Borja Mora Méndez</title>
+<!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PSDM6B5Z7"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-6PSDM6B5Z7');
-</script>
-
-<meta name="description" content="Descarga gratis archivos .pbix de Power BI: Gantt nativo, widgets, Input Slicer, Slope charts, Small Multiples y técnicas avanzadas de DAX y Data Storytelling.">
+<!-- Primary Meta Tags -->
+<meta name="description" content="Portfolio de proyectos de Data Analytics: dashboards en Power BI, análisis con Python, SQL y R, y experimentos con mapas. Casos reales de IBCS, reporting financiero, ventas y marketing analytics.">
+<meta name="keywords" content="portfolio Power BI, dashboards Power BI, proyectos Data Analyst, IBCS, análisis financiero Power BI, marketing analytics, DAX ejemplos, Python análisis datos">
 <meta name="author" content="Borja Mora Méndez">
 <meta name="robots" content="index, follow, max-image-preview:large">
-<link rel="canonical" href="https://borjamora.es/descargas.html">
+<link rel="canonical" href="https://borjamora.es/proyectos.html">
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:locale" content="es_ES">
-<meta property="og:url" content="https://borjamora.es/descargas.html">
-<meta property="og:title" content="Descargas Power BI — Archivos .pbix gratuitos | Borja Mora">
-<meta property="og:description" content="Descarga gratis archivos .pbix de Power BI: Gantt nativo, Input Slicer, Slope charts, Small Multiples y técnicas avanzadas de DAX y Data Storytelling.">
-<meta property="og:image" content="https://borjamora.es/img/og-descargas.png">
+<meta property="og:url" content="https://borjamora.es/proyectos.html">
+<meta property="og:title" content="Proyectos — Portfolio de Power BI, Python, SQL y R | Borja Mora">
+<meta property="og:description" content="Dashboards en Power BI, visualizaciones de datos y análisis con Python, SQL y R. Proyectos construidos a partir de preguntas reales de negocio.">
+<meta property="og:image" content="https://borjamora.es/img/og-proyectos.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Portfolio de proyectos de Borja Mora — Power BI, Python, SQL, R">
 <meta property="og:site_name" content="Borja Mora">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Descargas Power BI — Archivos .pbix gratuitos | Borja Mora">
-<meta name="twitter:description" content="17 archivos .pbix listos para descargar. DAX, storytelling y técnicas avanzadas de Power BI.">
-<meta name="twitter:image" content="https://borjamora.es/img/og-descargas.png">
+<meta name="twitter:title" content="Proyectos — Portfolio Power BI | Borja Mora">
+<meta name="twitter:description" content="Dashboards en Power BI, Python, SQL y R. Proyectos con foco en claridad, contexto y decisión.">
+<meta name="twitter:image" content="https://borjamora.es/img/og-proyectos.png">
 
+<!-- Schema.org CollectionPage -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "@id": "https://borjamora.es/proyectos.html#page",
+      "url": "https://borjamora.es/proyectos.html",
+      "name": "Proyectos — Borja Mora Méndez",
+      "description": "Portfolio de dashboards en Power BI, análisis con Python, SQL y R.",
+      "inLanguage": "es-ES",
+      "author": { "@type": "Person", "name": "Borja Mora Méndez", "url": "https://borjamora.es/" },
+      "hasPart": [
+        { "@id": "https://borjamora.es/proyectos.html#ibcs" },
+        { "@id": "https://borjamora.es/proyectos.html#kosta" },
+        { "@id": "https://borjamora.es/proyectos.html#social" },
+        { "@id": "https://borjamora.es/proyectos.html#financiero" },
+        { "@id": "https://borjamora.es/proyectos.html#pyg" },
+        { "@id": "https://borjamora.es/proyectos.html#airbnb" }
+      ]
+    },
+    {
+      "@type": "CreativeWork",
+      "@id": "https://borjamora.es/proyectos.html#ibcs",
+      "name": "Informe de ventas con enfoque IBCS",
+      "description": "Dashboard de ventas bajo estándar IBCS que integra volumen, variación absoluta y porcentaje en un único visual. Modelado en estrella, DAX y drill-down.",
+      "keywords": "Power BI, IBCS, DAX, ventas, YoY, modelado en estrella",
+      "author": { "@type": "Person", "name": "Borja Mora Méndez" },
+      "url": "https://app.powerbi.com/view?r=eyJrIjoiYWFhNjA5YmQtNjEyYS00YTA3LWIxMzktYWQxOTYzMmZkYzIyIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9"
+    },
+    {
+      "@type": "CreativeWork",
+      "@id": "https://borjamora.es/proyectos.html#kosta",
+      "name": "Kosta Cálida — Reporting para red de tiendas",
+      "description": "Sistema de reporting integral para cadena de tiendas: desde el modelo de datos hasta el dashboard. Power Query, DAX, ventas vs objetivos y análisis de rentabilidad.",
+      "keywords": "Power BI, retail analytics, DAX, modelado en estrella, YTD",
+      "author": { "@type": "Person", "name": "Borja Mora Méndez" }
+    },
+    {
+      "@type": "CreativeWork",
+      "@id": "https://borjamora.es/proyectos.html#financiero",
+      "name": "Informe Financiero Completo",
+      "description": "Sistema financiero en Power BI con balance, PyG y cash flow conectados en esquema estrella. DAX financiero, drill-through a asiento, proyección a cierre.",
+      "keywords": "Power BI, DAX financiero, balance, PyG, EBITDA, cash flow, financial analytics",
+      "author": { "@type": "Person", "name": "Borja Mora Méndez" }
+    },
+    {
+      "@type": "CreativeWork",
+      "@id": "https://borjamora.es/proyectos.html#pyg",
+      "name": "Cuenta de Pérdidas y Ganancias",
+      "description": "P&L en Power BI con subtotales inteligentes, Real vs Presupuesto, waterfall chart y control de signos contables. Modelado en estrella con jerarquía contable.",
+      "keywords": "Power BI, P&L, DAX financiero, waterfall chart, presupuesto, financial analytics",
+      "author": { "@type": "Person", "name": "Borja Mora Méndez" }
+    },
+    {
+      "@type": "CreativeWork",
+      "@id": "https://borjamora.es/proyectos.html#airbnb",
+      "name": "Análisis del Mercado de Airbnb — País Vasco",
+      "description": "Dashboard de análisis territorial del mercado Airbnb en el País Vasco. Mapas en Power BI, segmentación de mercado, KPIs y análisis exploratorio con DAX.",
+      "keywords": "Power BI, Airbnb, análisis territorial, mapas, DAX, segmentación de mercado",
+      "author": { "@type": "Person", "name": "Borja Mora Méndez" }
+    }
+  ]
+}
+</script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-6PSDM6B5Z7');
+</script>
+  
 <style>
 :root{
   --ink:#0a0a0a;
@@ -57,508 +128,321 @@
   --purple-ink:#ffffff;
   --ease:cubic-bezier(.4,0,.2,1);
   --ease-spring:cubic-bezier(.34,1.56,.64,1);
-
-  /* preservados del sitio original */
   --li:#0077b5;
   --gray:#e5e5e5;
-  --logo-purple:#7a7bff;
+  --green:#3c8a37;
+  --font:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;
 }
-*{box-sizing:border-box;margin:0;padding:0}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{
-  font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;
-  background:var(--paper);
-  color:var(--ink);
-  line-height:1.55;
-  font-feature-settings:"tnum" 0;
-  -webkit-font-smoothing:antialiased;
-  text-rendering:optimizeLegibility;
-  overflow-x:hidden;
-}
+body{font-family:var(--font);background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.55}
 ::selection{background:var(--purple);color:#fff}
 
-/* ───────────── NAV (preservado del original) ───────────── */
-#nav{
-  position:sticky;top:0;z-index:100;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 clamp(1.5rem,4vw,3rem);height:60px;
-  background:rgba(255,255,255,.92);backdrop-filter:blur(12px);
-  border-bottom:0.5px solid transparent;transition:border-color .3s;
-}
-#nav.scrolled{border-color:var(--gray)}
-.logo{font-size:15px;font-weight:700;color:var(--ink);text-decoration:none;letter-spacing:-.3px}
-.logo-dot{color:var(--logo-purple)}
-.nav-links{display:flex;align-items:center;gap:28px}
-.nav-links a{font-size:13.5px;color:var(--muted);text-decoration:none;font-weight:500;transition:color .2s}
-.nav-links a:hover{color:var(--ink)}
+/* progress */
+.progress-bar{position:fixed;top:0;left:0;height:2px;background:var(--ink);z-index:1001;transform-origin:left;transform:scaleX(0);transition:transform .1s linear}
+
+/* NAV */
+nav#nav{position:fixed;top:0;width:100%;z-index:1000;padding:0 clamp(1.5rem,4vw,3rem);height:60px;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:.5px solid transparent;transition:border-color .3s}
+nav#nav.scrolled{border-bottom-color:var(--gray)}
+.logo{font-size:15px;font-weight:700;color:var(--ink);text-decoration:none;letter-spacing:-.3px;display:flex;align-items:center;gap:7px}
+.logo-dot{width:7px;height:7px;border-radius:50%;background:var(--purple);animation:breathe 3s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.5)}}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{font-size:13.5px;color:var(--muted);text-decoration:none;padding:6px 0;font-weight:500;border-radius:0;transition:color .2s,background .2s}
+.nav-links a:hover{color:var(--ink);background:transparent}
 .nav-links a.active{color:var(--ink);font-weight:700}
-a.nav-cta,
-.nav-links a.nav-cta{
-  font-size:13px;font-weight:700;
-  background:#111;color:#c6ff00;
-  padding:8px 28px;border-radius:8px;
-  text-decoration:none;display:inline-block;
-  min-width:150px;text-align:center;
-}
-a.nav-cta:hover,
-.nav-links a.nav-cta:hover{color:#c6ff00;background:#111}
-.nav-cta .cta-text-wrap span{color:#c6ff00}
+.nav-cta,a.nav-cta,.nav-links a.nav-cta{font-size:13px!important;font-weight:700!important;background:#111!important;color:#c6ff00!important;padding:8px 28px!important;border-radius:8px!important;text-decoration:none!important;display:inline-block!important;min-width:150px!important;text-align:center!important}
+.nav-cta:hover{background:#111!important;color:#c6ff00!important}
 .nav-cta .cta-text-wrap{display:block;position:relative;height:1.2em;overflow:hidden}
-.nav-cta .cta-text-wrap span{display:block;white-space:nowrap;line-height:1.2em;text-align:center;transition:transform .3s cubic-bezier(.16,1,.3,1)}
+.nav-cta .cta-text-wrap span{display:block;white-space:nowrap;line-height:1.2em;text-align:center;transition:transform .3s cubic-bezier(.16,1,.3,1);color:#c6ff00}
 .nav-cta .cta-text-wrap span:last-child{position:absolute;top:0;left:0;right:0;transform:translateY(100%)}
 .nav-cta:hover .cta-text-wrap span:first-child{transform:translateY(-100%)}
 .nav-cta:hover .cta-text-wrap span:last-child{transform:translateY(0)}
 
-/* ───────────── CONTAINERS ───────────── */
-.shell{
-  max-width:1240px;
-  margin:0 auto;
-  padding:0 clamp(20px,4vw,48px);
-}
+.sr{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.sr.in{opacity:1;transform:none}
 
-/* ───────────── HERO CON ENTRADA ORQUESTADA ───────────── */
-.hero{
-  padding:72px 0 64px;
-  display:flex;
-  flex-direction:column;
-  align-items:flex-start;
-  gap:28px;
-}
+@keyframes heroH1{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes heroSub{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.hero-h1{animation:heroH1 .4s var(--ease) .08s both}
+.hero-sub{animation:heroSub .4s var(--ease) .15s both}
 
-/* H1: entra primero, fade-up + fade-in */
-@keyframes heroH1{
-  from{opacity:0;transform:translateY(16px)}
-  to{opacity:1;transform:translateY(0)}
-}
-.hero-h1{
-  font-size:clamp(44px,7vw,92px);
-  font-weight:600;
-  letter-spacing:-0.045em;
-  line-height:1;
-  color:var(--ink);
-  white-space:nowrap;
-  animation:heroH1 .4s var(--ease) .08s both;
-}
-.hero-h1 .dot{color:var(--purple)}
+.c{max-width:1240px;margin:0 auto;padding:0 clamp(20px,4vw,48px)}
 
-/* Subtexto: entra 140ms después */
-@keyframes heroSub{
-  from{opacity:0;transform:translateY(16px)}
-  to{opacity:1;transform:translateY(0)}
-}
-.hero-sub{
-  font-size:16px;
-  color:var(--muted);
-  line-height:1.55;
-  max-width:62ch;
-  animation:heroSub .4s var(--ease) .15s both;
-}
+/* HERO */
+.proj-hero{padding:130px 0 64px;background:var(--paper)}
+.hero-tag{display:none}
+.hero-h1{font-size:clamp(44px,7vw,92px);font-weight:600;color:var(--ink);letter-spacing:-.045em;line-height:1;margin-bottom:28px;white-space:nowrap}
+.hero-sub{font-size:16px;color:var(--muted);line-height:1.55;max-width:62ch}
+@media(max-width:820px){.hero-h1{white-space:normal;font-size:clamp(40px,10vw,64px);letter-spacing:-.03em}}
 
-/* Stats: entran staggered, 50ms cada una */
-@keyframes heroStat{
-  from{opacity:0;transform:translateY(8px)}
-  to{opacity:1;transform:translateY(0)}
-}
-.hero-stats{
-  display:flex;
-  align-items:center;
-  gap:32px;
-  flex-wrap:wrap;
-  padding-top:4px;
-}
-.hero-stat{
-  display:flex;
-  flex-direction:column;
-  gap:2px;
-  animation:heroStat .35s var(--ease) both;
-}
-.hero-stat:nth-child(1){animation-delay:.22s}
-.hero-stat:nth-child(3){animation-delay:.27s}
+/* SECTION NAV — pills */
+.sec-nav{position:sticky;top:60px;z-index:99;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.sec-nav-inner{display:flex;align-items:center;gap:10px;padding:14px clamp(20px,4vw,48px);max-width:1240px;margin:0 auto;overflow-x:auto;flex-wrap:wrap;border:0}
+.sec-nav a,.sec-nav button{font-family:inherit;font-size:13px;font-weight:500;color:var(--ink);background:#fff;border:1px solid var(--ink);border-radius:999px;padding:9px 18px;text-decoration:none;white-space:nowrap;cursor:pointer;letter-spacing:-.005em;transition:background .15s var(--ease),color .15s var(--ease)}
+.sec-nav a:hover,.sec-nav button:hover{background:#f2f2f2;color:var(--ink);border-color:var(--ink)}
+.sec-nav a.active,.sec-nav button.active{background:var(--ink);color:#fff;border-color:var(--ink);font-weight:600}
 
-.hero-stat-num{
-  font-size:28px;
-  font-weight:700;
-  letter-spacing:-.04em;
-  color:var(--ink);
-  font-variant-numeric:tabular-nums;
-  line-height:1;
-}
-.hero-stat-num span{color:var(--purple)}
-.hero-stat-label{
-  font-size:11px;
-  font-weight:500;
-  text-transform:uppercase;
-  letter-spacing:.14em;
-  color:var(--mutedB);
-}
-.hero-stat-sep{
-  width:1px;
-  height:32px;
-  background:var(--gray);
-  flex-shrink:0;
-}
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.sec-panel:not(.hidden){animation:fadeSlideUp .4s ease forwards}
+.sec-col:not(.hidden){animation:fadeSlideUp .35s ease forwards}
+.sec-panel.hidden,.sec-col.hidden{display:none}
 
-@media(max-width:820px){
-  .hero{padding:48px 0 48px;gap:20px}
-  .hero-h1{white-space:normal;font-size:clamp(40px,10vw,64px)}
-  .hero-stats{gap:20px}
-  .hero-stat-sep{display:none}
-}
+@keyframes cardFadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.proj-card,.analysis-card,.viz-card{animation:cardFadeUp .32s var(--ease) both;will-change:opacity,transform}
+.proj-card[data-stagger],.analysis-card[data-stagger],.viz-card[data-stagger]{animation-delay:calc(var(--stagger-idx) * 30ms + 80ms)}
 
-/* ───────────── SEGMENTADOR · PASTILLAS CON PILL INDICATOR ───────────── */
-.seg{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:8px 0 28px;
-  gap:24px;
-  flex-wrap:wrap;
-}
-.seg-list{
-  display:flex;align-items:center;gap:10px;
-  flex-wrap:wrap;
-  position:relative;
-}
+/* POWER BI section */
+#powerbi{background:var(--paper)!important;padding:64px 0 24px!important;border-top:0!important}
+.pbi-header{margin-bottom:0}
+#powerbi .col-header-left{display:flex;align-items:baseline;gap:18px;margin-bottom:14px}
+#powerbi .col-header-left .col-num{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.16em;color:var(--mutedB);font-variant-numeric:tabular-nums}
+#powerbi .col-header-left .col-title{font-size:clamp(28px,4vw,44px);font-weight:600;letter-spacing:-.025em;color:var(--ink);line-height:1.05}
+.pbi-desc{font-size:14px;color:var(--muted);line-height:1.65;max-width:640px;margin:0 0 40px 0}
+.pbi-bar,.pbi-title{display:none}
 
-/* Pill indicator: se desliza suavemente bajo el botón activo */
-.seg-pill{
-  position:absolute;
-  bottom:-10px;
-  left:0;
-  height:2px;
-  background:var(--ink);
-  border-radius:1px;
-  transition:left .2s var(--ease), width .2s var(--ease);
-  pointer-events:none;
-}
+/* PBI CARDS — carrusel con bordes continuos */
+.pbi-cards-wrap{max-width:1240px;margin:0 auto;padding:0 clamp(20px,4vw,48px);position:relative}
+.proj-cards-outer{position:relative;margin:0}
+.proj-cards-track-wrap{overflow:hidden;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);border-left:1px solid var(--rule);border-right:1px solid var(--rule)}
+.proj-cards-track{display:flex;gap:0;padding:0;transition:transform .5s cubic-bezier(0.16,1,0.3,1)}
 
-.seg-btn{
-  font-family:inherit;
-  background:#fff;
-  border:1px solid var(--ink);
-  border-radius:999px;
-  cursor:pointer;
-  padding:9px 18px;
-  font-size:13px;
-  font-weight:500;
-  color:var(--ink);
-  letter-spacing:-.005em;
-  transition:background .15s var(--ease),color .15s var(--ease);
-  white-space:nowrap;
-  display:inline-flex;align-items:center;gap:8px;
-  position:relative;
-}
-.seg-btn:hover{background:#f2f2f2}
-.seg-btn.is-active{background:var(--ink);color:#fff}
-.seg-btn .count{
-  font-size:11px;
-  font-variant-numeric:tabular-nums;
-  font-weight:500;
-  opacity:.55;
-}
-.seg-btn.is-active .count{opacity:.7}
+.proj-card{flex:0 0 calc(100% / 3);background:var(--paper);border:0;border-right:1px solid var(--rule);border-radius:0;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:var(--ink);transition:background .18s var(--ease),color .12s var(--ease);box-shadow:none;position:relative}
+.proj-card:hover{background:var(--purple);color:var(--purple-ink);transform:none;box-shadow:none}
 
-.seg-counter{
-  font-size:11px;font-weight:500;
-  text-transform:uppercase;letter-spacing:.16em;
-  color:var(--mutedB);
-  font-variant-numeric:tabular-nums;
-  white-space:nowrap;
-}
-.seg-counter b{font-weight:600;color:var(--ink)}
+.pc-photo-wrap{position:relative;height:200px;overflow:hidden;background:#f0f0f6;flex-shrink:0;border-bottom:1px solid var(--rule)}
+.pc-arrow{display:none}
+.pc-photo-dots{display:none}
+.pc-badge{position:absolute;top:14px;left:14px;right:14px;display:flex;justify-content:space-between;z-index:2;gap:6px}
+.pc-num{font-size:11px;font-weight:600;letter-spacing:.04em;background:#111;color:#fff;padding:4px 10px;border:1px solid #111;border-radius:0;font-variant-numeric:tabular-nums}
+.pc-cat{font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;background:#111;color:#fff;padding:4px 10px;border:1px solid #111;border-radius:0}
 
-/* ───────────── GRID ───────────── */
-.grid-wrap{
-  border-top:1px solid var(--rule);
-  border-left:1px solid var(--rule);
-  margin-bottom:96px;
-}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-}
-@media(max-width:960px){
-  .grid{grid-template-columns:repeat(2,1fr)}
-}
-@media(max-width:600px){
-  .grid{grid-template-columns:1fr}
-}
+.pc-copy{padding:24px 22px 20px;display:flex;flex-direction:column;flex:1;gap:0}
+.pc-eyebrow{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--mutedB);margin-bottom:12px;display:flex;align-items:center;gap:8px;transition:color .12s}
+.pc-eyebrow span{display:none}
+.proj-card:hover .pc-eyebrow{color:rgba(255,255,255,.85)}
+.pc-headline{font-size:16px;font-weight:700;letter-spacing:-.012em;line-height:1.25;color:var(--ink);margin-bottom:12px;text-wrap:balance;transition:color .12s}
+.proj-card:hover .pc-headline{color:var(--purple-ink)}
+.pc-short{font-size:12.5px;color:var(--muted);line-height:1.6;margin-bottom:16px;flex:1;transition:color .12s}
+.pc-short strong{color:var(--ink);font-weight:600;transition:color .12s}
+.proj-card:hover .pc-short{color:rgba(255,255,255,.85)}
+.proj-card:hover .pc-short strong{color:#fff}
+.pc-pills{display:flex;flex-wrap:wrap;gap:0;margin-bottom:18px;font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:500;color:var(--mutedB);line-height:1.5;transition:color .12s}
+.proj-card:hover .pc-pills{color:rgba(255,255,255,.7)}
+.pc-pill{background:transparent;color:inherit;padding:0;border:0;border-radius:0;font-size:inherit;font-weight:inherit;letter-spacing:inherit;text-transform:inherit}
+.pc-pill::after{content:" · ";margin:0 2px;color:inherit}
+.pc-pills .pc-pill:last-child::after{content:""}
 
-/* ───────────── MÓDULO CON STAGGER ───────────── */
-.m{
-  position:relative;
-  display:flex;flex-direction:column;
-  padding:32px 30px 28px;
-  min-height:340px;
-  border-right:1px solid var(--rule);
-  border-bottom:1px solid var(--rule);
-  background:var(--paper);
-  color:var(--ink);
-  text-decoration:none;
-  cursor:pointer;
-  will-change:opacity,transform;
-}
+.pc-foot{display:flex;align-items:center;justify-content:space-between;padding-top:16px;border-top:1px solid rgba(10,10,10,.12);margin-top:auto;gap:12px;transition:border-color .12s}
+.proj-card:hover .pc-foot{border-top-color:rgba(255,255,255,.25)}
+.pc-btn{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;letter-spacing:-.005em;background:var(--ink);color:#fff;padding:9px 14px;border:1px solid var(--ink);border-radius:0;text-decoration:none;transition:background .15s,color .15s,transform .15s}
+.pc-btn svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:square}
+.pc-btn:hover{background:#c6ff00;color:var(--ink);border-color:var(--ink);transform:none}
+.proj-card:hover .pc-btn{background:#fff;color:var(--ink);border-color:#fff}
+.proj-card:hover .pc-btn:hover{background:#c6ff00;color:var(--ink)}
+.pc-read-more{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:none;border:0;cursor:pointer;padding:0;font-family:inherit;transition:color .2s}
+.pc-read-more svg{stroke:currentColor;fill:none;stroke-width:2;width:11px;height:11px}
+.pc-read-more:hover{color:var(--ink)}
+.proj-card:hover .pc-read-more{color:rgba(255,255,255,.75)}
+.proj-card:hover .pc-read-more:hover{color:#c6ff00}
 
-/* Entrada inicial con stagger: 30ms por card */
-@keyframes fadeUpCard{
-  from{opacity:0;transform:translateY(12px)}
-  to{opacity:1;transform:translateY(0)}
-}
-.m:not(.m-soon):not(.m-filler){
-  animation:fadeUpCard .32s var(--ease) both;
-}
+.pco-arrow{position:absolute;top:90px;width:44px;height:44px;background:var(--paper);border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;box-shadow:none;transition:background .18s,color .12s}
+.pco-arrow:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+.pco-arrow svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:square;width:14px;height:14px}
+.pco-prev{left:-18px}
+.pco-next{right:-18px}
+.pco-dots{display:flex;gap:6px;justify-content:center;margin-top:22px}
+.pco-dot{width:8px;height:8px;background:var(--gray);border:0;padding:10px;cursor:pointer;border-radius:0;transition:background .25s,width .25s;background-clip:content-box;box-sizing:content-box}
+.pco-dot.active{background:var(--ink);width:24px;background-clip:content-box}
 
-/* Dinámico: se asigna desde JS con data-stagger */
-.m[data-stagger]{
-  animation-delay:calc(var(--stagger-idx) * 30ms + 80ms);
-}
+/* Panel section headers (community / native) */
+.panel-section-header{display:flex;align-items:center;gap:14px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.16em;color:var(--ink);margin:0 0 28px 0;padding-top:56px;border-top:1px solid var(--rule)}
+.panel-section-header::before{content:"";flex:0 0 24px;height:1px;background:var(--ink)}
+.panel-section-dot{display:none}
 
-/* Estados visuales */
-.m:focus-visible{
-  outline:2px solid var(--purple);
-  outline-offset:-2px;
-}
-.m:hover{
-  background:var(--purple);
-  color:var(--purple-ink);
-  transition:background .18s var(--ease), color .12s var(--ease);
-}
+/* LI cards */
+.li-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--rule);border-left:1px solid var(--rule)}
+.li-card{position:relative;overflow:hidden;text-decoration:none;display:flex;flex-direction:column;min-height:340px;background:var(--paper)!important;border:0;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);border-radius:0;transition:background .18s var(--ease);color:var(--ink);box-shadow:none}
+.li-card:hover{background:var(--purple)!important;transform:none;box-shadow:none}
+.li-card-bg{position:relative!important;inset:auto!important;width:100%!important;height:200px!important;object-fit:cover;object-position:top;border-bottom:1px solid var(--rule);opacity:1!important;transition:transform .25s,opacity .25s;filter:none}
+.li-card:hover .li-card-bg{transform:none;opacity:1!important}
+.li-card-overlay{display:none}
+.li-card-top{position:absolute;top:14px;left:14px;z-index:2;padding:0}
+.li-card-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.95);color:var(--ink);font-size:9.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;padding:5px 10px;border:1px solid var(--ink);border-radius:0}
+.li-card-badge svg{width:11px;height:11px;fill:var(--li)}
+.li-card:hover .li-card-badge{background:#fff;color:var(--ink)}
+.li-card-body{display:flex;flex-direction:column;padding:22px 22px 22px;gap:10px;flex:1;margin-top:0}
+.li-card-title{font-size:14.5px;font-weight:700;line-height:1.3;letter-spacing:-.012em;color:var(--ink);text-shadow:none;transition:color .12s;text-wrap:balance}
+.li-card:hover .li-card-title{color:var(--purple-ink)}
+.li-card-desc{font-size:12.5px;line-height:1.55;color:var(--muted);text-shadow:none;transition:color .12s}
+.li-card:hover .li-card-desc{color:rgba(255,255,255,.85)}
+.li-card-btn{margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);padding:0;background:transparent;border-radius:0;border:0;width:fit-content;transition:color .12s,gap .2s}
+.li-card-btn::after{content:"→";display:inline-block;transition:transform .2s}
+.li-card-btn svg{display:none}
+.li-card:hover .li-card-btn{background:transparent;color:#c6ff00}
+.li-card:hover .li-card-btn::after{transform:translateX(4px)}
 
-.m-head{
-  display:flex;align-items:flex-start;justify-content:space-between;
-  margin-bottom:32px;
-}
-.m-num{
-  font-size:12.5px;
-  font-weight:600;
-  color:var(--ink);
-  font-variant-numeric:tabular-nums;
-  letter-spacing:.02em;
-  transition:color .12s var(--ease);
-}
-.m:hover .m-num{color:var(--purple-ink)}
+/* nat-viz */
+.nat-viz-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--rule);border-left:1px solid var(--rule);width:100%}
+.nat-viz-card{position:relative;overflow:hidden;text-decoration:none;display:flex;flex-direction:column;min-height:300px;background:var(--paper);border:0;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);border-radius:0;transition:background .18s var(--ease);color:var(--ink);box-shadow:none}
+.nat-viz-card:hover{background:var(--purple);transform:none;box-shadow:none}
+.nat-viz-bg{position:relative!important;inset:auto!important;width:100%!important;height:180px!important;object-fit:cover;object-position:center;border-bottom:1px solid var(--rule);transition:transform .25s}
+.nat-viz-card:hover .nat-viz-bg{transform:none}
+.nat-viz-overlay{display:none}
+.nat-viz-content{position:relative;z-index:1;padding:22px 22px 8px;margin-top:0}
+.nat-viz-title{font-size:15px;font-weight:700;letter-spacing:-.012em;line-height:1.3;color:var(--ink);text-shadow:none;transition:color .12s;text-wrap:balance}
+.nat-viz-card:hover .nat-viz-title{color:var(--purple-ink)}
+.nat-viz-footer{position:relative;z-index:1;padding:0 22px 22px;display:flex;flex-direction:column;gap:10px;flex:1;justify-content:space-between}
+.nat-viz-desc{font-size:12.5px;color:var(--muted);line-height:1.55;text-shadow:none;transition:color .12s;margin:0}
+.nat-viz-card:hover .nat-viz-desc{color:rgba(255,255,255,.85)}
+.nat-viz-link{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);background:transparent;padding:0;border-radius:0;width:fit-content;transition:color .12s,gap .2s}
+.nat-viz-link::after{content:"→";display:inline-block;transition:transform .2s}
+.nat-viz-link svg{display:none}
+.nat-viz-card:hover .nat-viz-link{background:transparent;color:#c6ff00}
+.nat-viz-card:hover .nat-viz-link::after{transform:translateX(4px)}
 
-.m-ext{
-  display:inline-flex;align-items:center;justify-content:center;
-  width:44px;height:44px;
-  margin:-10px -10px 0 0;
-  color:var(--mutedB);
-  transition:color .15s var(--ease), transform .25s var(--ease-spring);
-  text-decoration:none;
-  background:none;border:none;cursor:pointer;font-family:inherit;padding:0;
-  will-change:transform;
-}
-.m:hover .m-ext{color:var(--purple-ink)}
-.m-ext:hover,
-.m:hover .m-ext:hover{color:#c6ff00; transform:scale(1.15) translate(2px,-2px)}
-.m-ext svg{width:18px;height:18px;display:block;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:square}
+/* DAX Lab */
+.dax-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--rule);border-left:1px solid var(--rule);border-right:1px solid var(--rule)}
+.dax-card{background:var(--paper);border:0;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);border-radius:0;padding:32px 26px 26px;display:flex;flex-direction:column;box-shadow:none;transition:background .18s var(--ease),color .12s;position:relative;overflow:hidden}
+.dax-card:hover{background:var(--purple);color:var(--purple-ink);transform:none;box-shadow:none;border-color:var(--rule)}
+.dax-card-num{font-size:11px;font-weight:600;color:var(--mutedB);letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px;font-variant-numeric:tabular-nums;transition:color .12s}
+.dax-card:hover .dax-card-num{color:rgba(255,255,255,.7)}
+.dax-card-title{font-size:17px;font-weight:700;letter-spacing:-.012em;line-height:1.25;color:var(--ink);margin-bottom:12px;transition:color .12s}
+.dax-card:hover .dax-card-title{color:var(--purple-ink)}
+.dax-card-desc{font-size:13px;color:var(--muted);line-height:1.55;flex:1;margin-bottom:24px;transition:color .12s}
+.dax-card:hover .dax-card-desc{color:rgba(255,255,255,.85)}
+.dax-card-link{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);text-decoration:none;margin-top:auto;background:transparent;transition:gap .2s,color .12s}
+.dax-card-link svg{stroke:currentColor;fill:none;stroke-width:2}
+.dax-card-link:hover{gap:10px}
+.dax-card:hover .dax-card-link{color:#c6ff00}
 
-.m-body{
-  display:flex;
-  flex-direction:column;
-  gap:0;
-}
-.m-head-text{
-  display:flex;
-  flex-direction:column;
-  margin-bottom:18px;
-}
-.m-title{
-  font-size:17px;
-  font-weight:700;
-  line-height:1.22;
-  letter-spacing:-.012em;
-  color:var(--ink);
-  text-wrap:balance;
-  overflow-wrap:break-word;
-  word-break:normal;
-  hyphens:auto;
-  max-width:95%;
-  margin:0;
-  transition:color .12s var(--ease);
-}
-.m:hover .m-title{color:var(--purple-ink)}
-.m-sub{
-  display:block;
-  margin:4px 0 0;
-  font-size:13.5px;
-  font-weight:400;
-  line-height:1.4;
-  letter-spacing:-.005em;
-  color:var(--muted);
-  transition:color .12s var(--ease);
-}
-.m:hover .m-sub{color:rgba(255,255,255,.8)}
+/* Analysis cards */
+.analysis-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--rule);border-left:1px solid var(--rule)}
+.analysis-card{background:var(--paper);border:0;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);border-radius:0;padding:32px 26px 26px;display:flex;flex-direction:column;box-shadow:none;transition:background .18s var(--ease),color .12s;position:relative;overflow:hidden;gap:12px}
+.analysis-card::before{display:none}
+.analysis-card:hover{background:var(--purple);color:var(--purple-ink);transform:none;box-shadow:none;border-color:var(--rule)}
+.analysis-lang{display:flex;gap:0;flex-wrap:wrap;margin-bottom:0;margin-top:12px;padding-top:0;font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--mutedB);font-weight:500;line-height:1.5;transition:color .12s}
+.analysis-lang span{background:transparent;color:inherit;padding:0;border-radius:0;font-size:inherit;font-weight:inherit;letter-spacing:inherit}
+.analysis-lang span::after{content:" · ";margin:0 2px}
+.analysis-lang span:last-child::after{content:""}
+.analysis-card:hover .analysis-lang{color:rgba(255,255,255,.7)}
+.analysis-title{font-size:17px;font-weight:700;letter-spacing:-.012em;line-height:1.25;color:var(--ink);margin-bottom:12px;text-wrap:balance;transition:color .12s}
+.analysis-card:hover .analysis-title{color:var(--purple-ink)}
+.analysis-desc{font-size:13px;color:var(--muted);line-height:1.55;flex:1;margin-bottom:24px;transition:color .12s}
+.analysis-card:hover .analysis-desc{color:rgba(255,255,255,.85)}
+.analysis-link{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);text-decoration:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--gray);background:transparent;transition:gap .2s,color .12s}
+.analysis-link svg{stroke:currentColor;fill:none;stroke-width:2}
+.analysis-link:hover{gap:10px}
+.analysis-card:hover .analysis-link{color:#c6ff00}
 
-.m-desc{
-  font-size:13px;
-  font-weight:400;
-  line-height:1.55;
-  color:var(--muted);
-  margin:0;
-  transition:color .12s var(--ease);
-}
-.m:hover .m-desc{color:rgba(255,255,255,.85)}
+/* VIZ cards (Diseño info, image-bearing) */
+.viz-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--rule);border-left:1px solid var(--rule)}
+.maps-grid{display:grid;grid-template-columns:1fr;gap:0;border-top:1px solid var(--rule);border-left:1px solid var(--rule);border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.viz-card{position:relative;overflow:hidden;text-decoration:none;display:flex;flex-direction:column;min-height:340px;background:var(--paper)!important;border:0;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);border-radius:0;transition:background .18s var(--ease);box-shadow:none}
+.viz-card:hover{background:var(--purple)!important;transform:none;box-shadow:none}
+.maps-card{position:relative;overflow:hidden;text-decoration:none;display:grid;grid-template-columns:1fr;grid-template-rows:85% 15%;gap:0;min-height:400px;background:var(--paper)!important;border:0;border-right:1px solid var(--rule);border-radius:0;transition:background .18s var(--ease);box-shadow:none}
+.maps-card:hover{background:var(--purple)!important;transform:none;box-shadow:none}
+.maps-card .viz-card-bg{height:100%!important;width:100%!important;border-bottom:1px solid var(--rule)!important;border-right:0!important}
+.maps-card .viz-card-content{display:none}
+.maps-card .viz-card-footer{padding:12px 22px 8px;display:flex;flex-direction:column;gap:0;justify-content:flex-start;background:var(--paper);border:0;overflow:auto}
+.viz-card-bg{position:relative!important;inset:auto!important;width:100%!important;height:200px!important;object-fit:cover;object-position:center;border-bottom:1px solid var(--rule);transition:transform .25s}
+.viz-card:hover .viz-card-bg{transform:none}
+.viz-card-overlay{display:none}
+.viz-card-content{position:relative;padding:22px 22px 8px;margin-top:0;z-index:1}
+.viz-card-tags{display:flex;gap:0;flex-wrap:wrap;margin-bottom:0;padding-top:0;margin-top:0;font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--mutedB);font-weight:500;line-height:1.5;transition:color .12s}
+.viz-card-tags span{background:transparent;color:inherit;padding:0;border-radius:0;backdrop-filter:none;font-size:inherit;font-weight:inherit;letter-spacing:inherit;text-transform:inherit}
+.viz-card-tags span::after{content:" · ";margin:0 2px}
+.viz-card-tags span:last-child::after{content:""}
+.viz-card:hover .viz-card-tags{color:rgba(255,255,255,.7)}
+.viz-card-title{font-size:15px;font-weight:700;letter-spacing:-.012em;line-height:1.3;color:var(--ink);text-shadow:none;text-wrap:balance;transition:color .12s}
+.viz-card:hover .viz-card-title{color:var(--purple-ink)}
+.viz-card-footer{position:relative;padding:0 22px 22px;z-index:1;display:flex;flex-direction:column;gap:0;flex:1;justify-content:flex-start}
+.viz-card-desc{font-size:12.5px;color:var(--muted);line-height:1.55;text-shadow:none;transition:color .12s;margin:0;margin-bottom:12px}
+.viz-card:hover .viz-card-desc{color:rgba(255,255,255,.85)}
+.viz-card-link{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);transition:gap .2s,color .12s;margin-top:12px;padding-top:12px;border-top:1px solid var(--gray)}
+.viz-card-link svg{display:none}
+.viz-card-link::after{content:"→";display:inline-block;transition:transform .2s}
+.viz-card:hover .viz-card-link{color:#c6ff00;gap:8px}
+.viz-card:hover .viz-card-link::after{transform:translateX(4px)}
+.viz-card-more{background:var(--paper)!important;border:0;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);border-radius:0;align-items:center;justify-content:center;color:var(--ink);min-height:340px;transition:background .18s,color .12s}
+.viz-card-more:hover{background:var(--purple)!important;color:var(--purple-ink);transform:none}
+.viz-card-more div{color:inherit}
+.viz-card-more svg{stroke:currentColor}
 
-.m-foot{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:16px;
-  margin-top:auto;
-  padding-top:28px;
-}
-.m-tags{
-  font-size:10px;
-  font-weight:500;
-  text-transform:uppercase;
-  letter-spacing:.12em;
-  color:var(--mutedB);
-  line-height:1.5;
-  text-align:left;
-  transition:color .12s var(--ease);
-}
-.m:hover .m-tags{color:rgba(255,255,255,.75)}
-.m-tags span + span::before{
-  content:" · ";
-  color:inherit;
-  margin:0 2px;
-}
+/* Collapsible sections */
+.col-section{border-top:1px solid var(--rule)}
+.col-section:last-of-type{border-bottom:1px solid var(--rule)}
+#mapas{border-bottom:0}
+.col-header{display:flex;align-items:center;justify-content:space-between;padding:36px 0;cursor:pointer;user-select:none;transition:opacity .15s}
+.col-header:hover{opacity:.7}
+.col-header .col-header-left{display:flex;align-items:baseline;gap:20px}
+.col-header .col-num{font-size:12px;font-weight:600;color:var(--mutedB);letter-spacing:.16em;text-transform:uppercase;font-variant-numeric:tabular-nums}
+.col-header .col-title{font-size:clamp(22px,3vw,32px);font-weight:600;letter-spacing:-.02em;color:var(--ink);line-height:1.1}
+.col-desc{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.14em;color:var(--mutedB);margin-left:auto;margin-right:24px;display:none}
+@media(min-width:768px){.col-desc{display:block}}
+.col-arrow{width:36px;height:36px;background:transparent;border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .18s,color .12s}
+.col-arrow svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:square;transition:transform .3s}
+.col-header:hover .col-arrow{background:var(--ink);color:#fff}
+.col-header.open .col-arrow{background:var(--ink);color:#fff}
+.col-header.open .col-arrow svg{transform:rotate(180deg)}
+.col-body{display:none;padding-bottom:64px}
+.col-body.open{display:block;animation:expandBody .25s ease-out forwards}
 
-.m-dl{
-  display:inline-flex;align-items:center;justify-content:center;
-  width:44px;height:44px;
-  margin:0 -10px -6px 0;
-  color:var(--ink);
-  flex-shrink:0;
-  transition:color .12s var(--ease), transform .2s var(--ease-spring);
-  will-change:transform;
-}
-.m:hover .m-dl{color:var(--purple-ink)}
-.m-dl:hover,
-.m:hover .m-dl:hover{color:#c6ff00}
-.m-dl svg{width:22px;height:22px;display:block;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:square}
+@keyframes expandBody{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── Stamp on click: spring bounce ── */
-@keyframes stamp{
-  0%   {transform:scale(1)}
-  35%  {transform:scale(1.22)}
-  100% {transform:scale(1)}
-}
-.m-dl.is-stamp,
-.m-ext.is-stamp{
-  animation:stamp 260ms var(--ease-spring);
-}
+@keyframes overlayFade{from{opacity:0}to{opacity:1}}
+@keyframes overlayContentScale{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+.pc-overlay{animation:overlayFade .2s ease forwards}
+.pc-overlay-inner{animation:overlayContentScale .3s var(--ease) forwards}
 
-/* ── Estado oculto al filtrar ── */
-.m.is-hidden{
-  display:none;
-}
+/* Ext button */
+.ext-btn{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#fff;font-size:13px;font-weight:600;letter-spacing:-.005em;padding:12px 22px;border:1px solid var(--ink);border-radius:0;text-decoration:none;transition:background .15s,color .15s}
+.ext-btn:hover{background:#c6ff00;color:var(--ink)}
+.ext-btn-green{background:var(--ink)}
+.ext-btn svg{fill:currentColor}
 
-/* ── Módulo "Próximamente" ── */
-.m-soon{
-  cursor:default;
-  background:
-    repeating-linear-gradient(
-      135deg,
-      transparent 0 14px,
-      rgba(10,10,10,.04) 14px 15px
-    );
-}
-.m-soon:hover{background:
-    repeating-linear-gradient(
-      135deg,
-      transparent 0 14px,
-      rgba(10,10,10,.04) 14px 15px
-    );
-  color:var(--ink);
-}
-.m-soon:hover .m-num,
-.m-soon:hover .m-title,
-.m-soon:hover .m-desc,
-.m-soon:hover .m-tags{color:inherit}
-.m-soon .m-desc{color:var(--mutedB)}
-.m-soon .m-cta-soon{
-  font-size:11px;
-  font-weight:600;
-  text-transform:uppercase;
-  letter-spacing:.16em;
-  color:var(--purple);
-  text-decoration:none;
-  display:inline-flex;align-items:center;gap:8px;
-  margin-top:auto;
-  padding-top:20px;
-}
-.m-soon .m-cta-soon::after{
-  content:"";display:inline-block;width:18px;height:1px;background:currentColor;
-}
+/* Overlay modal */
+.pc-overlay{display:none;position:fixed;inset:0;z-index:2000;background:rgba(10,10,10,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:24px}
+.pc-overlay.open{display:flex}
+.pc-overlay-inner{background:var(--paper);border:1px solid var(--ink);border-radius:0;max-width:920px;width:100%;display:grid;grid-template-columns:1fr 1.1fr;gap:0;align-items:stretch;box-shadow:none;position:relative;overflow:hidden}
+.pc-overlay-imgs{position:relative;overflow:hidden;border-radius:0;border-right:1px solid var(--ink);background:#f0f0f6;display:flex;flex-direction:column}
+.pcov-track{position:relative;flex:1;min-height:320px;overflow:hidden;aspect-ratio:16/10}
+.pcov-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;opacity:0;transition:opacity .3s ease;padding:14px}
+.pcov-photo.pcov-active{opacity:1}
+.pcov-dots{display:flex;gap:6px;justify-content:center;padding:12px 0 18px}
+.pcov-dot{width:8px;height:8px;background:var(--gray);border:0;padding:8px;cursor:pointer;border-radius:0;transition:background .25s,width .25s;background-clip:content-box;box-sizing:content-box}
+.pcov-dot.pcov-dot-active{background:var(--ink);width:24px;background-clip:content-box}
+.pc-overlay-imgs .pc-arrow{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;background:var(--paper);border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .18s,color .12s;z-index:2;box-shadow:none}
+.pc-overlay-imgs .pc-arrow:hover{background:var(--ink);color:#fff}
+.pc-overlay-imgs .pc-arrow svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:square}
+.pc-arrow-prev{left:12px}
+.pc-arrow-next{right:12px}
+.pc-overlay-copy{padding:32px 32px;display:flex;flex-direction:column;overflow-y:auto;max-height:84vh}
+.pc-overlay-eyebrow{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--mutedB);margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.pc-overlay-eyebrow::before{content:"";width:24px;height:1px;background:var(--ink)}
+.pc-overlay-eyebrow span{display:none}
+.pc-overlay-title{font-size:22px;font-weight:700;letter-spacing:-.02em;line-height:1.2;color:var(--ink);margin-bottom:22px}
+.pc-overlay-long{display:flex;flex-direction:column;gap:14px;margin-bottom:22px}
+.pc-overlay-long p{font-size:13px;color:var(--muted);line-height:1.65}
+.pc-overlay-long p strong{color:var(--ink);font-weight:600}
+.pc-overlay-pills{display:flex;flex-wrap:wrap;gap:0;margin-bottom:24px;font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:500;color:var(--mutedB);line-height:1.5}
+.pc-overlay-pill{background:transparent;color:inherit;padding:0;border:0;border-radius:0;font-size:inherit;font-weight:inherit;letter-spacing:inherit;text-transform:inherit}
+.pc-overlay-pill::after{content:" · ";margin:0 2px;color:inherit}
+.pc-overlay-pills .pc-overlay-pill:last-child::after{content:""}
+.pc-overlay-foot{display:flex;align-items:center;justify-content:space-between;padding-top:18px;border-top:1px solid var(--rule);margin-top:auto;gap:12px}
+.pc-tech{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--mutedB);font-weight:500}
+.pc-overlay-close{position:absolute;top:14px;right:14px;width:32px;height:32px;background:var(--paper);border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;transition:background .18s,color .12s}
+.pc-overlay-close:hover{background:var(--ink);color:#fff}
+.pc-overlay-close svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:square}
 
-/* ── Estado vacío del filtro ── */
-.empty{
-  grid-column:1 / -1;
-  padding:64px 32px;
-  text-align:center;
-  font-size:13px;
-  color:var(--mutedB);
-  text-transform:uppercase;
-  letter-spacing:.16em;
-  border-right:1px solid var(--rule);
-  border-bottom:1px solid var(--rule);
-}
-
-/* ───────────── SECCIÓN CIERRE CON SCROLL REVEAL ───────────── */
-@keyframes revealCierre{
-  from{opacity:0;transform:translateY(20px)}
-  to{opacity:1;transform:translateY(0)}
-}
-.cierre{
-  border-top:1px solid var(--rule);
-  padding:80px 0 96px;
-  opacity:0;
-  transform:translateY(20px);
-}
-.cierre.in-view{
-  animation:revealCierre .5s var(--ease) forwards;
-}
-
-.cierre-copy{}
-.cierre-copy .label{
-  font-size:11px;
-  font-weight:600;
-  text-transform:uppercase;
-  letter-spacing:.18em;
-  color:var(--purple);
-  margin-bottom:20px;
-}
-.cierre-copy h2{
-  font-size:clamp(28px,4vw,42px);
-  font-weight:600;
-  letter-spacing:-.035em;
-  line-height:1.1;
-  color:var(--ink);
-  margin-bottom:24px;
-  text-wrap:balance;
-}
-.cierre-copy p{
-  font-size:15px;
-  color:var(--muted);
-  line-height:1.7;
-  margin:0;
-}
-.cierre-copy p + p{
-  margin-top:12px;
-}
-
-@media(max-width:820px){
-  .cierre{
-    padding:56px 0 72px;
-  }
-}
-
-/* ───────────── FOOTER (preservado) ───────────── */
-footer{background:var(--paper);padding:0;border-top:.5px solid var(--gray)}
+/* Footer preserved */
+footer{background:var(--paper);padding:0;border-top:1px solid var(--rule);margin-top:0}
 .foot-inner{max-width:1240px;margin:0 auto;padding:32px clamp(1.5rem,5vw,4rem) 24px}
 .foot-top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:24px;padding-bottom:24px;border-bottom:.5px solid var(--gray);margin-bottom:20px}
 .foot-brand-name{font-size:14px;font-weight:700;color:var(--ink);letter-spacing:-.2px;text-transform:uppercase}
 .foot-nav-center{display:flex;align-items:center;gap:20px;justify-content:center}
 .foot-nav-center a{font-size:11px;font-weight:600;color:#444;text-decoration:none;letter-spacing:.6px;text-transform:uppercase;padding:4px 10px;transition:color .2s}
-.foot-nav-center a:hover{color:var(--logo-purple)}
+.foot-nav-center a:hover{color:var(--purple)}
 .foot-li-icon{display:flex;justify-content:flex-end}
 .foot-li-icon a{display:flex;align-items:center;justify-content:center;width:44px;height:44px;background:#111;border-radius:8px;color:#fff;transition:background .2s;text-decoration:none}
 .foot-li-icon a:hover{background:#0077b5}
@@ -566,118 +450,576 @@ footer{background:var(--paper);padding:0;border-top:.5px solid var(--gray)}
 .foot-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
 .foot-copy{font-size:11.5px;color:var(--muted);opacity:.7}
 .foot-made{font-size:11.5px;color:var(--muted);opacity:.7;display:flex;align-items:center;gap:6px}
-.foot-tech{display:inline-flex;align-items:center;gap:4px;background:var(--off);border:.5px solid var(--gray);padding:2px 8px;border-radius:4px;font-size:10.5px;color:var(--muted);font-family:'SF Mono','Fira Code',monospace}
+.foot-tech{display:inline-flex;align-items:center;gap:4px;background:var(--off);border:.5px solid var(--gray);padding:2px 8px;border-radius:4px;font-size:10.5px;color:var(--muted);font-family:ui-monospace,'Cascadia Code','Consolas',monospace}
 
-/* ── pequeñas en móvil ── */
+/* Responsive */
+@media(max-width:960px){
+  .proj-card{flex:0 0 calc(100% / 2)}
+  .li-grid,.nat-viz-grid,.viz-grid,.analysis-grid{grid-template-columns:repeat(2,1fr)}
+}
 @media(max-width:600px){
   .nav-links a:not(.nav-cta):not(.active){display:none}
-  .m{min-height:300px;padding:28px 24px 24px}
-  .seg-btn{font-size:12.5px;padding:8px 14px}
-  .hero-h1{letter-spacing:-.03em}
+  .proj-card{flex:0 0 100%}
+  .li-grid,.nat-viz-grid,.viz-grid,.analysis-grid{grid-template-columns:1fr}
+  .dax-cards{grid-template-columns:1fr}
+  .dax-card{grid-template-columns:1fr;gap:16px}
+  .dax-card:hover{margin:0;padding:32px 0}
+  .pc-overlay-inner{grid-template-columns:1fr;max-height:90vh;overflow-y:auto}
+  .pco-arrow{display:none}
+  .col-header{padding:24px 0}
+  .col-header .col-title{font-size:20px}
+  .panel-section-header{padding-top:40px}
 }
 
-/* ── Dispositivos sin hover (touch): evita estado "pegado" tras el tap ── */
-@media (hover:none){
-  .m:hover{background:var(--paper);color:var(--ink)}
-  .m:hover .m-title,
-  .m:hover .m-sub,
-  .m:hover .m-desc,
-  .m:hover .m-num,
-  .m:hover .m-tags,
-  .m:hover .m-dl,
-  .m:hover .m-ext{color:inherit}
-  .m-soon:hover{background:
-    repeating-linear-gradient(135deg,transparent 0 14px,rgba(10,10,10,.04) 14px 15px)}
+/* Touch — no sticky hover */
+@media(hover:none){
+  .proj-card:hover,.li-card:hover,.nat-viz-card:hover,.viz-card:hover,.viz-card-more:hover,.analysis-card:hover,.dax-card:hover{background:var(--paper)!important;color:var(--ink)!important;margin:0!important;padding-left:0!important;padding-right:0!important}
+  .dax-card:hover{padding:32px 0!important}
+  .proj-card:hover *,.li-card:hover *,.nat-viz-card:hover *,.viz-card:hover *,.analysis-card:hover *,.dax-card:hover *{color:inherit!important}
 }
 
-/* ── Respeta la preferencia de reducir movimiento ── */
-@media (prefers-reduced-motion:reduce){
-  *,*::before,*::after{
-    transition-duration:0ms !important;
-    animation-duration:0ms !important;
-    animation-iteration-count:1 !important;
-  }
-  .m:not(.m-soon):not(.m-filler){ animation:none }
-  .cierre{ opacity:1; transform:translateY(0); }
-  .cierre.in-view{ animation:none; }
-  .hero-h1, .hero-sub, .hero-stat{ animation:none; opacity:1; transform:none; }
+/* Prefers reduced motion */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition-duration:0ms!important;animation-duration:0ms!important;animation-iteration-count:1!important}
+  .logo-dot{animation:none}
+  .hero-h1,.hero-sub{animation:none;opacity:1;transform:none}
+  .proj-card,.analysis-card,.viz-card{animation:none;opacity:1;transform:none}
+  .col-body.open{animation:none;opacity:1;transform:none}
+  .pc-overlay,.pc-overlay-inner{animation:none;opacity:1;transform:none}
 }
 </style>
 </head>
 <body>
-<a href="#main-content" class="skip-link" style="position:absolute;left:-9999px;top:4px;z-index:9999;background:var(--ink);color:#fff;padding:8px 16px;font-size:13px;font-weight:600;text-decoration:none;border-radius:4px" onfocus="this.style.left='4px'" onblur="this.style.left='-9999px'">Saltar al contenido</a>
+<a href="#main-content" class="skip-link" style="position:absolute;left:-9999px;top:4px;z-index:9999;background:var(--ink);color:#fff;padding:8px 16px;font-size:13px;font-weight:600;text-decoration:none;border-radius:4px;transition:left 0s" onfocus="this.style.left='4px'" onblur="this.style.left='-9999px'">Saltar al contenido</a>
+<div class="progress-bar" id="progressBar"></div>
 
-<!-- ─────────── NAV ─────────── -->
 <nav id="nav" aria-label="Navegación principal">
-  <a href="./index.html" class="logo">Borja Mora<span class="logo-dot">.</span></a>
+  <a href="./index.html" class="logo">Borja Mora<span class="logo-dot"></span></a>
   <div class="nav-links">
     <a href="./index.html">Inicio</a>
     <a href="./sobre-mi.html">Sobre mí</a>
-    <a href="./proyectos.html">Proyectos</a>
-    <a href="./descargas.html" class="active" aria-current="page">Descargas</a>
+    <a href="./proyectos.html" class="active" aria-current="page">Proyectos</a>
+    <a href="./descargas.html">Descargas</a>
     <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-    <a href="mailto:borja.mora.mendez@gmail.com" class="nav-cta"><span class="cta-text-wrap"><span>Contacto</span><span>¿Hablamos?</span></span></a>
+    <a id="navEmailBtn" href="#" target="_blank" rel="noopener noreferrer" class="nav-cta" onclick="gtag('event', 'clic_email', { location: 'nav' });"><span class="cta-text-wrap"><span>Contacto</span><span>¿Hablamos?</span></span></a>
   </div>
 </nav>
 
-<!-- ─────────── PÁGINA ─────────── -->
-<div class="shell">
-
-  <!-- Hero -->
-  <header class="hero" id="main-content">
-    <h1 class="hero-h1">Archivos .pbix<span class="dot">.</span></h1>
-    <p class="hero-sub">Proyectos desarrollados y compartidos en LinkedIn. Descarga el archivo, explora el modelo de datos y úsalo como referencia para tus propios desarrollos en Power BI.</p>
-    <div class="hero-stats" aria-hidden="true">
-      <div class="hero-stat">
-        <div class="hero-stat-num"><span id="stat-files">0</span></div>
-        <div class="hero-stat-label">Archivos .pbix</div>
-      </div>
-      <div class="hero-stat-sep"></div>
-      <div class="hero-stat">
-        <div class="hero-stat-num"><span id="stat-cats">0</span></div>
-        <div class="hero-stat-label">Categorías</div>
-      </div>
-
+<!-- HERO -->
+<section class="proj-hero" id="main-content">
+  <div class="c">
+    <div class="sr">
+      <div class="hero-tag">Portfolio</div>
+      <h1 class="hero-h1">Proyectos</h1>
+      <p class="hero-sub">Dashboards en Power BI, visualizaciones de datos, análisis con Python, SQL y R, y experimentos con mapas. Proyectos construidos a partir de preguntas reales de negocio, con foco en claridad, contexto y decisión.</p>
     </div>
-  </header>
-
-  <!-- Segmentador -->
-  <div class="seg" role="group" aria-label="Filtrar por categoría">
-    <div class="seg-list">
-      <div class="seg-pill" id="seg-pill"></div>
-      <button class="seg-btn is-active" data-filter="all" aria-pressed="true">Todos<span class="count">17</span></button>
-      <button class="seg-btn" data-filter="gestion" aria-pressed="false">Gestión de proyectos<span class="count">3</span></button>
-      <button class="seg-btn" data-filter="ventas" aria-pressed="false">Ventas y análisis comercial<span class="count">9</span></button>
-      <button class="seg-btn" data-filter="storytelling" aria-pressed="false">Data Storytelling<span class="count">3</span></button>
-      <button class="seg-btn" data-filter="slicer" aria-pressed="false">Input Slicer<span class="count">2</span></button>
-    </div>
-    <div class="seg-counter"><b id="seg-visible">17</b> / 17 archivos</div>
   </div>
+</section>
 
-  <!-- Grid -->
-  <div class="grid-wrap">
-    <div class="grid" id="grid"></div>
+<!-- STICKY NAV -->
+<div class="sec-nav" id="secNav">
+  <div class="sec-nav-inner">
+    <button data-sec="powerbi" data-target="powerbi">Power BI</button>
+    <button data-sec="daxlab" data-target="daxlab">DAX Lab</button>
+    <button data-sec="analisis" data-target="analisis">Análisis de datos</button>
+    <button data-sec="diseno" data-target="diseno">Diseño de la información</button>
+    <button data-sec="mapas" data-target="mapas">Mapas</button>
   </div>
-
 </div>
 
-<!-- ─────────── SECCIÓN CIERRE ─────────── -->
-<div class="shell">
-  <section class="cierre" id="cierre-section" aria-label="Por qué se comparten estos recursos">
-    <div class="cierre-copy">
-      <p class="label">Por qué lo comparto</p>
-      <h2>Detrás de cada archivo hay cientos de horas de aprendizaje.</h2>
-      <p>Detrás de cada .pbix hay horas de análisis, prueba, error y refinamiento. No son ejercicios académicos, son soluciones que han funcionado en proyectos reales y que hoy te traslado tal cual, sin filtros. La comunidad de Power BI en español crece cuando compartimos lo que sabemos.</p>
-      <p>Aprendo mejor cuando enseño, y tú aprendes mejor cuando ves código real.</p>
+<!-- ══ POWER BI ══ -->
+<section id="powerbi" class="sec-panel" data-panel="powerbi">
+  <div class="c" style="margin-bottom:24px;">
+    <div class="col-header-left">
+      <span class="col-num">01</span>
+      <span class="col-title">Power BI</span>
     </div>
-  </section>
+    <p class="pbi-desc">En esta página recopilo proyectos desarrollados con Power BI a partir de necesidades reales de negocio. Cada caso está diseñado para responder preguntas concretas, priorizando claridad, contexto y utilidad en la toma de decisiones.</p>
+  </div>
+  <div class="pbi-cards-wrap">
+      <div class="proj-cards-outer sr" id="projCardsOuter">
+        <button class="pco-arrow pco-prev" id="pcoPrev" aria-label="Proyecto anterior">
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="proj-cards-track-wrap" role="region" aria-label="Proyectos Power BI">
+          <div class="proj-cards-track" id="pcoTrack" aria-live="polite" aria-atomic="false" aria-label="Proyecto 1 de 6">
+<div class="proj-card" id="pcard-0" role="group" aria-roledescription="slide">
+  <div class="pc-photo-wrap">
+    <img src="./img/ibcs-card.png" alt="Informe de ventas con enfoque IBCS" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
+    <div class="pc-badge"><span class="pc-num">01 / 06</span><span class="pc-cat">Ventas</span></div>
+  </div>
+  <div class="pc-copy">
+    <div class="pc-eyebrow"><span></span>Análisis de ventas</div>
+    <h3 class="pc-headline">Informe de ventas con enfoque IBCS</h3>
+    <p class="pc-short">En muchos equipos comerciales, el análisis de ventas empieza y termina en el total anual. Si la cifra sube, todo bien. El problema es que <strong>dos años pueden cerrar con el mismo número y haber sido radicalmente distintos por dentro</strong>. Diseñé un informe que integra <strong>volumen, variación absoluta y porcentaje en un único visual</strong> — para que el usuario vea de un vistazo cuánto vendió, cuánto cambió y si ese cambio importa.</p>
+    <div class="pc-pills"><span class="pc-pill">IBCS</span><span class="pc-pill">DAX</span><span class="pc-pill">Modelado en estrella</span><span class="pc-pill">Drill-down</span><span class="pc-pill">Variación absoluta y relativa</span><span class="pc-pill">Parámetros dinámicos</span><span class="pc-pill">Jerarquía visual</span><span class="pc-pill">Sales analytics</span><span class="pc-pill">YoY analysis</span></div>
+    <div class="pc-foot">
+      <a href="https://app.powerbi.com/view?r=eyJrIjoiYWFhNjA5YmQtNjEyYS00YTA3LWIxMzktYWQxOTYzMmZkYzIyIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+      <button class="pc-read-more" onclick="openOverlay(0)">Leer más <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </div>
+</div>
+<div class="proj-card" id="pcard-1" role="group" aria-roledescription="slide">
+  <div class="pc-photo-wrap">
+    <img src="./img/kosta-CARD.png" alt="Kosta Cálida — Reporting para red de tiendas" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
+    <div class="pc-badge"><span class="pc-num">02 / 06</span><span class="pc-cat">Retail</span></div>
+  </div>
+  <div class="pc-copy">
+    <div class="pc-eyebrow"><span></span>Retail · Red de tiendas</div>
+    <h3 class="pc-headline">Kosta Cálida — Reporting para red de tiendas</h3>
+    <p class="pc-short">Una cadena de tiendas con <strong>datos completos en el TPV pero sin capacidad de responder preguntas básicas de negocio</strong>: qué tienda rinde mejor, dónde se pierde margen, si los objetivos se cumplen o solo se supera el mes anterior. Diseñé un <strong>sistema de reporting integral</strong> — desde el modelo de datos hasta el dashboard — que convirtió números dispersos en decisiones concretas.</p>
+    <div class="pc-pills"><span class="pc-pill">Modelado en estrella</span><span class="pc-pill">Power Query</span><span class="pc-pill">DAX</span><span class="pc-pill">Ventas vs Objetivos</span><span class="pc-pill">Análisis de rentabilidad</span><span class="pc-pill">Drill-down</span><span class="pc-pill">YTD</span><span class="pc-pill">Jerarquía visual</span><span class="pc-pill">Retail analytics</span></div>
+    <div class="pc-foot">
+      <a href="https://app.powerbi.com/view?r=eyJrIjoiMzhlYjliYTAtMWUzMS00YzE1LTgyNGEtZmZmNDVhNjQ1ZDY3IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=03634c064fb23f65778f" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+      <button class="pc-read-more" onclick="openOverlay(1)">Leer más <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </div>
+</div>
+<div class="proj-card" id="pcard-2" role="group" aria-roledescription="slide">
+  <div class="pc-photo-wrap">
+    <img src="./img/social-card.png" alt="Social Media Performance | 2025 vs 2024" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
+    <div class="pc-badge"><span class="pc-num">03 / 06</span><span class="pc-cat">Marketing</span></div>
+  </div>
+  <div class="pc-copy">
+    <div class="pc-eyebrow"><span></span>Marketing analytics</div>
+    <h3 class="pc-headline">Social Media Performance | 2025 vs 2024</h3>
+    <p class="pc-short">Cuando los resultados de marketing caen de un año a otro, la conclusión rápida es que algo ha empeorado. Pero un <strong>–12% en impresiones se lee de forma completamente distinta si el gasto también cayó un –26%</strong>. Diseñé un dashboard de comparación interanual que no mide solo si hay más o menos volumen, sino si el negocio está siendo <strong>más o menos eficiente con lo que invierte</strong>.</p>
+    <div class="pc-pills"><span class="pc-pill">DAX interanual</span><span class="pc-pill">Tablas desconectadas</span><span class="pc-pill">CTR · CPC</span><span class="pc-pill">Modelado en estrella</span><span class="pc-pill">Sparklines</span><span class="pc-pill">Comparativa YoY</span><span class="pc-pill">Marketing analytics</span><span class="pc-pill">Eficiencia vs volumen</span></div>
+    <div class="pc-foot">
+      <a href="https://app.powerbi.com/view?r=eyJrIjoiMzNlYjcwN2YtNWE0Yy00NTk2LThlNmUtZjVmMThkZTQ0YzZjIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+      <button class="pc-read-more" onclick="openOverlay(2)">Leer más <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </div>
+</div>
+<div class="proj-card" id="pcard-3" role="group" aria-roledescription="slide">
+  <div class="pc-photo-wrap">
+    <img src="./img/financiero-card.png" alt="Informe Financiero Completo" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
+    <div class="pc-badge"><span class="pc-num">04 / 06</span><span class="pc-cat">Financiero</span></div>
+  </div>
+  <div class="pc-copy">
+    <div class="pc-eyebrow"><span></span>Análisis financiero</div>
+    <h3 class="pc-headline">Informe Financiero Completo</h3>
+    <p class="pc-short">En la mayoría de empresas, la información financiera existe: hay balances, cuenta de resultados, presupuestos, asientos contables. <strong>El problema no es que falten datos, sino que están dispersos</strong> y nadie en dirección puede ver el negocio completo en una sola lectura. Diseñé un sistema de análisis financiero integral que conecta <strong>balance, PyG y cash flow</strong> — y permite pasar de un KPI de dirección hasta el asiento contable que lo explica.</p>
+    <div class="pc-pills"><span class="pc-pill">Modelado contable en estrella</span><span class="pc-pill">DAX financiero</span><span class="pc-pill">Balance · PyG · Cash Flow</span><span class="pc-pill">EBITDA</span><span class="pc-pill">Análisis vertical y horizontal</span><span class="pc-pill">Desviación vs presupuesto</span><span class="pc-pill">Proyección a cierre</span><span class="pc-pill">Drill-through a asiento</span><span class="pc-pill">Financial analytics</span></div>
+    <div class="pc-foot">
+      <a href="https://app.powerbi.com/view?r=eyJrIjoiNDgzZjBmY2MtMDhhMy00MGIzLTlmYmItODlkMmY2NDg3ZDdmIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=a961ceadc15fe4dcfcfb" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+      <button class="pc-read-more" onclick="openOverlay(3)">Leer más <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </div>
+</div>
+<div class="proj-card" id="pcard-4" role="group" aria-roledescription="slide">
+  <div class="pc-photo-wrap">
+    <img src="./img/pyg-card.png" alt="Cuenta de Pérdidas y Ganancias" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
+    <div class="pc-badge"><span class="pc-num">05 / 06</span><span class="pc-cat">Financiero</span></div>
+  </div>
+  <div class="pc-copy">
+    <div class="pc-eyebrow"><span></span>Análisis financiero</div>
+    <h3 class="pc-headline">Cuenta de Pérdidas y Ganancias</h3>
+    <p class="pc-short">La Cuenta de Pérdidas y Ganancias es el informe más importante de una empresa y, curiosamente, <strong>uno de los que peor funciona en herramientas de BI</strong>. El problema no es técnico: es que una PyG tiene <strong>subtotales con reglas propias, signos contables</strong> que no coinciden con la lógica analítica y totales que dejan de cuadrar en cuanto cambias el contexto. Construí un <strong>P&L en Power BI que es riguroso, dinámico</strong> y mantiene coherencia financiera en cualquier nivel de filtro.</p>
+    <div class="pc-pills"><span class="pc-pill">P&L en Power BI</span><span class="pc-pill">DAX financiero</span><span class="pc-pill">Subtotales inteligentes</span><span class="pc-pill">Real vs Presupuesto</span><span class="pc-pill">Waterfall chart</span><span class="pc-pill">Control de signos contables</span><span class="pc-pill">Modelado en estrella</span><span class="pc-pill">Financial analytics</span><span class="pc-pill">Jerarquía contable</span></div>
+    <div class="pc-foot">
+      <a href="https://app.powerbi.com/view?r=eyJrIjoiM2Y3MzMxNTQtMGMzOS00ZDhlLTljYWYtMmU5N2E5ZTA3MjU2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=41273635f861390cd9fd" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+      <button class="pc-read-more" onclick="openOverlay(4)">Leer más <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </div>
+</div>
+<div class="proj-card" id="pcard-5" role="group" aria-roledescription="slide">
+  <div class="pc-photo-wrap">
+    <img src="./img/airbnb-card.png" alt="Análisis del Mercado de Airbnb — País Vasco" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
+    <div class="pc-badge"><span class="pc-num">06 / 06</span><span class="pc-cat">Mercado</span></div>
+  </div>
+  <div class="pc-copy">
+    <div class="pc-eyebrow"><span></span>Análisis de mercado</div>
+    <h3 class="pc-headline">Análisis del Mercado de Airbnb — País Vasco</h3>
+    <p class="pc-short">"Airbnb en el País Vasco está carísimo" es una afirmación que se repite constantemente — y casi siempre se basa en una <strong>media general</strong>. El problema es que <strong>una media sin contexto puede ser tan engañosa como no tener datos</strong>. Diseñé un análisis del mercado turístico construido alrededor del territorio, no de un único número, para entender qué hay detrás del precio y dónde están las diferencias reales.</p>
+    <div class="pc-pills"><span class="pc-pill">Análisis territorial</span><span class="pc-pill">Mapas en Power BI</span><span class="pc-pill">Segmentación de mercado</span><span class="pc-pill">KPIs</span><span class="pc-pill">Análisis exploratorio</span><span class="pc-pill">DAX</span></div>
+    <div class="pc-foot">
+      <a href="https://app.powerbi.com/view?r=eyJrIjoiOTA2ZDExNjktYzE4Ny00Y2UzLThmM2YtMjI5Y2FmNDg1MzM5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=9c4b9193b627b78a0e01" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+      <button class="pc-read-more" onclick="openOverlay(5)">Leer más <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </div>
+</div>
+          
+          </div>
+        </div>
+        <button class="pco-arrow pco-next" id="pcoNext" aria-label="Proyecto siguiente">
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <div class="pco-dots" id="pcoDots">
+          <button class="pco-dot active" data-idx="0"></button>
+          <button class="pco-dot" data-idx="1"></button>
+          <button class="pco-dot" data-idx="2"></button>
+          <button class="pco-dot" data-idx="3"></button>
+          <button class="pco-dot" data-idx="4"></button>
+          <button class="pco-dot" data-idx="5"></button>
+        </div>
+      </div>
+
+  </div>
+</section>
+<section class="sec-panel" data-panel="powerbi" style="padding:0 0 56px;">
+  <div class="c">
+
+
+      <!-- Community panel -->
+      <div id="panelCom">
+        <div class="panel-section-header"><span class="panel-section-dot"></span>Aportaciones a la comunidad · LinkedIn</div>
+        <div class="li-grid">
+          <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7440740082766086144-4VZm" target="_blank" rel="noopener noreferrer" class="li-card">
+            <img src="./img/p1.png" alt="No estás filtrando datos. Estás eligiendo qué historia quieres ver." class="li-card-bg">
+            <div class="li-card-overlay"></div>
+            <div class="li-card-top">
+            </div>
+            <div class="li-card-body">
+              <p class="li-card-title">No estás filtrando datos. Estás eligiendo qué historia quieres ver.</p>
+              <p class="li-card-desc">Input Slicer, Field Parameters y DAX para análisis dinámicos en una sola tabla.</p>
+              <span class="li-card-btn">Ver post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
+          </a>
+          <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7442540385882554368-y4go" target="_blank" rel="noopener noreferrer" class="li-card">
+            <img src="./img/p2.png" alt="El futuro de los dashboards no son más gráficos, son mejores interacciones." class="li-card-bg">
+            <div class="li-card-overlay"></div>
+            <div class="li-card-top">
+            </div>
+            <div class="li-card-body">
+              <p class="li-card-title">El futuro de los dashboards no son más gráficos, son mejores interacciones.</p>
+              <p class="li-card-desc">Input Slicer, Top N y títulos dinámicos para que el usuario explore sin perderse.</p>
+              <span class="li-card-btn">Ver post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
+          </a>
+          <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7404201819641597954-wwos" target="_blank" rel="noopener noreferrer" class="li-card">
+            <img src="./img/p3.png" alt="Producto a producto: cómo los datos cuentan historias." class="li-card-bg">
+            <div class="li-card-overlay"></div>
+            <div class="li-card-top">
+            </div>
+            <div class="li-card-body">
+              <p class="li-card-title">Producto a producto: cómo los datos cuentan historias.</p>
+              <p class="li-card-desc">Análisis anual con zoom trimestral que explica quién gana y cuándo.</p>
+              <span class="li-card-btn">Ver post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
+          </a>
+          <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7439647400132116480-1PFW" target="_blank" rel="noopener noreferrer" class="li-card">
+            <img src="./img/p4.png" alt="Si tienes que reconstruir la historia en tu cabeza, el dashboard falla." class="li-card-bg">
+            <div class="li-card-overlay"></div>
+            <div class="li-card-top">
+            </div>
+            <div class="li-card-body">
+              <p class="li-card-title">Si tienes que reconstruir la historia en tu cabeza, el dashboard falla.</p>
+              <p class="li-card-desc">Slope charts y small multiples para concentrar toda la información por producto.</p>
+              <span class="li-card-btn">Ver post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
+          </a>
+          <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7437118505080020992-m7Em" target="_blank" rel="noopener noreferrer" class="li-card">
+            <img src="./img/p5.png" alt="Un gráfico puede ser correcto y aun así engañar." class="li-card-bg">
+            <div class="li-card-overlay"></div>
+            <div class="li-card-top">
+            </div>
+            <div class="li-card-body">
+              <p class="li-card-title">Un gráfico puede ser correcto y aun así engañar.</p>
+              <p class="li-card-desc">Cómo los outliers distorsionan la escala y cómo construir un zoom visual.</p>
+              <span class="li-card-btn">Ver post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
+          </a>
+          <a href="https://www.linkedin.com/feed/update/urn:li:activity:7376214576889098240/" target="_blank" rel="noopener noreferrer" class="li-card">
+            <img src="./img/p6.png" alt="Variaciones entre columnas al alcance de un vistazo." class="li-card-bg">
+            <div class="li-card-overlay"></div>
+            <div class="li-card-top">
+            </div>
+            <div class="li-card-body">
+              <p class="li-card-title">Variaciones entre columnas al alcance de un vistazo.</p>
+              <p class="li-card-desc">Enfoque nativo para hacer comparables las variaciones porcentuales entre periodos.</p>
+              <span class="li-card-btn">Ver post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Native charts panel -->
+      <div id="panelNat">
+        <div class="panel-section-header"><span class="panel-section-dot"></span>Gráficos nativos · Power BI</div>
+        <div class="nat-viz-grid">
+          <a href="https://app.powerbi.com/view?r=eyJrIjoiYWY3ZjRlNzItNzZlNC00ZjgwLWFjYTItMGM2NjhlYzQ3MjdjIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="nat-viz-card">
+            <img src="./img/pareto.png" alt="Gráfico de Pareto" class="nat-viz-bg" style="width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;">
+            <div class="nat-viz-overlay"></div>
+            <div class="nat-viz-content">
+              <div class="nat-viz-title">Gráfico de Pareto</div>
+            </div>
+            <div class="nat-viz-footer">
+              <p class="nat-viz-desc">Visualización del principio 80/20 aplicada a datos de negocio para identificar los factores con mayor impacto.</p>
+              <span class="nat-viz-link">Ver en Power BI <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
+          </a>
+          <a href="https://app.powerbi.com/view?r=eyJrIjoiNjRlYTQzNWEtNzliNS00M2QxLWE1MWQtNGJiNjc0MmQ3Zjg2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="nat-viz-card">
+            <img src="./img/periodo.png" alt="Selección de periodos dinámico" class="nat-viz-bg" style="width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;">
+            <div class="nat-viz-overlay"></div>
+            <div class="nat-viz-content">
+              <div class="nat-viz-title">Selección de periodos dinámico</div>
+            </div>
+            <div class="nat-viz-footer">
+              <p class="nat-viz-desc">Selector de rango temporal construido sin segmentadores estándar. Control total sobre el contexto de análisis.</p>
+              <span class="nat-viz-link">Ver en Power BI <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
+          </a>
+          <a href="https://app.powerbi.com/view?r=eyJrIjoiOGJjY2VjOGQtNWRkZi00N2VjLWIwNTktZDY3NjI2OTFjYWY0IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=ab8db569d0c613296a15" target="_blank" rel="noopener noreferrer" class="nat-viz-card">
+            <img src="./img/small.png" alt="Small Multiples bar charts" class="nat-viz-bg" style="width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;">
+            <div class="nat-viz-overlay"></div>
+            <div class="nat-viz-content">
+              <div class="nat-viz-title">Small Multiples bar charts</div>
+            </div>
+            <div class="nat-viz-footer">
+              <p class="nat-viz-desc">Grid de gráficos de barras sincronizados para comparar múltiples categorías manteniendo la misma escala.</p>
+              <span class="nat-viz-link">Ver en Power BI <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
+          </a>
+          <a href="https://app.powerbi.com/view?r=eyJrIjoiYWJmYzZkZTktOTYzNS00NDFkLWJiYWMtY2ZlNzM2NmEzNjBkIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=808c33f3347a1aeb147d" target="_blank" rel="noopener noreferrer" class="nat-viz-card">
+            <img src="./img/temporal.png" alt="Perímetros temporales dinámicos" class="nat-viz-bg" style="width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;">
+            <div class="nat-viz-overlay"></div>
+            <div class="nat-viz-content">
+              <div class="nat-viz-title">Perímetros temporales dinámicos</div>
+            </div>
+            <div class="nat-viz-footer">
+              <p class="nat-viz-desc">Cálculo de ventanas de tiempo variables en DAX que se adaptan al contexto del filtro sin romper la coherencia.</p>
+              <span class="nat-viz-link">Ver en Power BI <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
+          </a>
+          <a href="https://app.powerbi.com/view?r=eyJrIjoiMDQ1ZGQxM2UtMTk2Ni00NTBlLWJkMzItOGYyN2U4YjFhYTNmIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=19113f5bd05395d09644" target="_blank" rel="noopener noreferrer" class="nat-viz-card">
+            <img src="./img/delta.png" alt="Análisis visual de Delta" class="nat-viz-bg" style="width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;">
+            <div class="nat-viz-overlay"></div>
+            <div class="nat-viz-content">
+              <div class="nat-viz-title">Análisis visual de Delta</div>
+            </div>
+            <div class="nat-viz-footer">
+              <p class="nat-viz-desc">Representación visual de variaciones absolutas y relativas entre periodos con indicadores direccionales.</p>
+              <span class="nat-viz-link">Ver en Power BI <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
+          </a>
+          <a href="https://app.powerbi.com/view?r=eyJrIjoiODI3YmJiMWYtNWQyYy00NzIyLWFhZTUtNjQwNWY0Mzc0YmI5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=6ec6a3ff0e01c9a1a92f" target="_blank" rel="noopener noreferrer" class="nat-viz-card">
+            <img src="./img/agrupada.png" alt="Gráfico de columnas agrupadas" class="nat-viz-bg" style="width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;">
+            <div class="nat-viz-overlay"></div>
+            <div class="nat-viz-content">
+              <div class="nat-viz-title">Gráfico de columnas agrupadas</div>
+            </div>
+            <div class="nat-viz-footer">
+              <p class="nat-viz-desc">Comparativa multidimensional en un único visual, con control de orden y jerarquía visual clara.</p>
+              <span class="nat-viz-link">Ver en Power BI <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
+          </a>
+        </div>
+      </div>
+  </div>
+</section>
+
+<!-- ══ COLLAPSIBLE SECTIONS ══ -->
+<div id="collapseContainer" class="sec-panel" data-panel="other" style="padding:0 0 96px;">
+  <div class="c">
+
+    <!-- DAX Lab -->
+    <div class="col-section sec-col" data-col="daxlab" id="daxlab">
+      <div class="col-header" data-target="bodyDaxlab">
+        <div class="col-header-left">
+          <span class="col-num">02</span>
+          <span class="col-title">DAX Lab</span>
+        </div>
+        <span class="col-desc">Patrones DAX · Modelado · GitHub</span>
+        <div class="col-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="col-body" id="bodyDaxlab">
+        <p style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:32px;max-width:600px;">Experimentos con DAX y modelado avanzado en Power BI. Patrones diseñados para mejorar rendimiento, claridad y reutilización de medidas en proyectos reales.</p>
+        <div class="dax-cards" style="margin-bottom:48px;">
+
+          <div class="dax-card">
+            <div class="dax-card-num">01</div>
+            <div class="dax-card-title">Time Intelligence reutilizable</div>
+            <p class="dax-card-desc">Medidas DAX diseñadas para reutilizar cálculos de periodos comparativos sin duplicar lógica.</p>
+            <a href="https://github.com/BORJAMOME/DAX-LAB/tree/main/Patrones/Medidas%20TIME%20INTELLIGENCE" target="_blank" rel="noopener noreferrer" class="dax-card-link">Ver medidas →</a>
+          </div>
+
+          <div class="dax-card">
+            <div class="dax-card-num">02</div>
+            <div class="dax-card-title">Ranking dinámico de métricas</div>
+            <p class="dax-card-desc">Implementación de rankings dinámicos que permiten analizar el rendimiento de categorías o segmentos en distintos contextos.</p>
+            <a href="https://github.com/BORJAMOME/DAX-LAB/tree/main/B%C3%A1sico/RANK" target="_blank" rel="noopener noreferrer" class="dax-card-link">Explorar →</a>
+          </div>
+
+          <div class="dax-card">
+            <div class="dax-card-num">03</div>
+            <div class="dax-card-title">Control de acceso con RLS</div>
+            <p class="dax-card-desc">Configuración de seguridad a nivel de fila para limitar el acceso a los datos según el perfil del usuario.</p>
+            <a href="https://github.com/BORJAMOME/DAX-LAB/tree/main/Avanzado/Control%20de%20acceso%20a%20p%C3%A1ginas" target="_blank" rel="noopener noreferrer" class="dax-card-link">Ver implementación →</a>
+          </div>
+
+        </div>
+        <div style="display:flex;justify-content:center;">
+          <a href="https://github.com/BORJAMOME/DAX-LAB" target="_blank" rel="noopener noreferrer" class="ext-btn ext-btn-green">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.58v-2.03c-3.34.72-4.04-1.6-4.04-1.6-.54-1.38-1.33-1.74-1.33-1.74-1.08-.74.08-.73.08-.73 1.2.08 1.83 1.23 1.83 1.23 1.06 1.82 2.78 1.3 3.46.99.1-.77.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.13 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.82.57C20.57 21.8 24 17.3 24 12 24 5.37 18.63 0 12 0z"/></svg>
+            Ver más experimentos DAX
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Análisis -->
+    <div class="col-section sec-col" data-col="analisis" id="analisis">
+      <div class="col-header" data-target="bodyAnalisis">
+        <div class="col-header-left">
+          <span class="col-num">03</span>
+          <span class="col-title">Análisis de datos</span>
+        </div>
+        <span class="col-desc">Python · SQL · R · GitHub</span>
+        <div class="col-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="col-body" id="bodyAnalisis">
+        <p style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:32px;max-width:600px;">Exploración, limpieza y análisis de datos con Python, SQL y R. Proyectos con código documentado y conclusiones aplicables a negocio, disponibles en GitHub.</p>
+        <div class="analysis-grid" style="margin-bottom:36px;">
+          <div class="analysis-card">
+            <div class="analysis-title">Mejores ciudades para teletrabajar</div>
+            <p class="analysis-desc">Análisis exploratorio para identificar municipios con buena conectividad, calidad ambiental y precios de vivienda competitivos.</p>
+            <div class="analysis-lang"><span>Python</span><span>Pandas</span><span>Análisis de datos</span></div>
+            <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/python/Proyectos/03.Mejores%20Ciudades%20espa%C3%B1olas%20para%20vivir" target="_blank" rel="noopener noreferrer" class="analysis-link">Ver análisis completo <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+          </div>
+          <div class="analysis-card">
+            <div class="analysis-title">Mercado Airbnb — Análisis de precios</div>
+            <p class="analysis-desc">Exploración de datos para analizar patrones de precios, disponibilidad y demanda en el mercado de alquiler turístico.</p>
+            <div class="analysis-lang"><span>SQL</span><span>Exploración de datos</span><span>Visualización</span></div>
+            <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/SQL/Proyectos%20SQL/04.Estudio%20Airbnb%20Menorca" target="_blank" rel="noopener noreferrer" class="analysis-link">Ver consultas y conclusiones <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+          </div>
+          <div class="analysis-card">
+            <div class="analysis-title">Radiografía socioeconómica de Madrid</div>
+            <p class="analysis-desc">Análisis de indicadores demográficos y económicos para entender la distribución territorial de renta y población.</p>
+            <div class="analysis-lang"><span>R</span><span>Análisis de datos</span><span>Visualización</span></div>
+            <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/blob/main/r/Proyectos%20con%20R/01.Radiograf%C3%ADa%20de%20Madrid/README.md" target="_blank" rel="noopener noreferrer" class="analysis-link">Explorar análisis completo <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:center;">
+          <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main" target="_blank" rel="noopener noreferrer" class="ext-btn ext-btn-green">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.58v-2.03c-3.34.72-4.04-1.6-4.04-1.6-.54-1.38-1.33-1.74-1.33-1.74-1.08-.74.08-.73.08-.73 1.2.08 1.83 1.23 1.83 1.23 1.06 1.82 2.78 1.3 3.46.99.1-.77.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.13 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.82.57C20.57 21.8 24 17.3 24 12 24 5.37 18.63 0 12 0z"/></svg>
+            Ver más proyectos en GitHub
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Diseño -->
+    <div class="col-section sec-col" data-col="diseno" id="diseno">
+      <div class="col-header" data-target="bodyDiseno">
+        <div class="col-header-left">
+          <span class="col-num">04</span>
+          <span class="col-title">Diseño de la información</span>
+        </div>
+        <span class="col-desc">Infografías · Mapas · Data Viz · Behance</span>
+        <div class="col-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="col-body" id="bodyDiseno">
+        <p style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:28px;max-width:600px;">Infografías, mapas y visualizaciones que traducen datos complejos a lenguaje visual. No buscan embellecer el dato, sino ponerlo a prueba y explorar nuevas lecturas.</p>
+        <div class="viz-grid">
+          <a href="https://www.behance.net/gallery/213119763/URBAN-ELEVATION-MAP" target="_blank" rel="noopener noreferrer" class="viz-card">
+            <img src="./img/skyline.png" alt="El skyline oculto de Madrid" class="viz-card-bg">
+            <div class="viz-card-overlay"></div>
+            <div class="viz-card-content">
+              <div class="viz-card-title">El skyline oculto de Madrid</div>
+            </div>
+            <div class="viz-card-footer">
+              <p class="viz-card-desc">Exploración 3D de la altura de los edificios que revela patrones urbanos invisibles.</p>
+              <div class="viz-card-tags"><span>3D</span><span>Data Viz</span></div>
+              <span class="viz-card-link">Ver proyecto <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
+          </a>
+          <a href="https://www.behance.net/gallery/212501517/DANA-in-Valencia-3D-Map" target="_blank" rel="noopener noreferrer" class="viz-card">
+            <img src="./img/dana.png" alt="DANA en Valencia" class="viz-card-bg">
+            <div class="viz-card-overlay"></div>
+            <div class="viz-card-content">
+              <div class="viz-card-title">DANA en Valencia</div>
+            </div>
+            <div class="viz-card-footer">
+              <p class="viz-card-desc">Visualización 3D del impacto real de la DANA y sus zonas más vulnerables.</p>
+              <div class="viz-card-tags"><span>Mapa 3D</span><span>GIS</span></div>
+              <span class="viz-card-link">Ver proyecto <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
+          </a>
+          <a href="https://www.behance.net/gallery/212640571/Geological-Map-of-Spain-and-Portugal-3D" target="_blank" rel="noopener noreferrer" class="viz-card">
+            <img src="./img/mapa.png" alt="Geología en tres dimensiones" class="viz-card-bg">
+            <div class="viz-card-overlay"></div>
+            <div class="viz-card-content">
+              <div class="viz-card-title">Geología en tres dimensiones</div>
+            </div>
+            <div class="viz-card-footer">
+              <p class="viz-card-desc">Recreación 3D del mapa geológico de España y Portugal.</p>
+              <div class="viz-card-tags"><span>Geología</span><span>3D</span></div>
+              <span class="viz-card-link">Ver proyecto <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
+          </a>
+          <a href="https://www.behance.net/gallery/211492633/Where-does-happiness-reside" target="_blank" rel="noopener noreferrer" class="viz-card">
+            <img src="./img/feliz.png" alt="100 municipios, un índice y una pregunta incómoda" class="viz-card-bg">
+            <div class="viz-card-overlay"></div>
+            <div class="viz-card-content">
+              <div class="viz-card-title">100 municipios, un índice y una pregunta incómoda</div>
+            </div>
+            <div class="viz-card-footer">
+              <p class="viz-card-desc">Población, renta e índice de felicidad en los municipios más poblados de España.</p>
+              <div class="viz-card-tags"><span>Infografía</span><span>Datos</span></div>
+              <span class="viz-card-link">Ver proyecto <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
+          </a>
+          <a href="https://www.behance.net/gallery/209226133/Metro-Walking-Map" target="_blank" rel="noopener noreferrer" class="viz-card">
+            <img src="./img/metro.png" alt="Redibujando el Metro desde el peatón" class="viz-card-bg">
+            <div class="viz-card-overlay"></div>
+            <div class="viz-card-content">
+              <div class="viz-card-title">Redibujando el Metro desde el peatón</div>
+            </div>
+            <div class="viz-card-footer">
+              <p class="viz-card-desc">Plano del Metro con distancias reales a pie entre estaciones.</p>
+              <div class="viz-card-tags"><span>Cartografía</span></div>
+              <span class="viz-card-link">Ver proyecto <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
+          </a>
+          <a href="https://www.behance.net/borjamm2/projects" target="_blank" rel="noopener noreferrer" class="viz-card viz-card-more">
+            <div style="text-align:center;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+              <div style="font-size:13px;font-weight:700;margin-top:10px;">Ver más en Behance</div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mapas -->
+    <div class="col-section sec-col" data-col="mapas" id="mapas">
+      <div class="col-header" data-target="bodyMapas">
+        <div class="col-header-left">
+          <span class="col-num">05</span>
+          <span class="col-title">Mapas</span>
+        </div>
+        <span class="col-desc">Cartografía · 3D · Behance</span>
+        <div class="col-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="col-body" id="bodyMapas">
+        <p style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:32px;max-width:600px;">Visualización cartográfica en 3D y exploración territorial de datos geográficos. Proyectos que transforman datos sobre el terreno en lecturas visuales y experiencias inmersivas.</p>
+        <div class="maps-grid">
+          <a href="https://www.behance.net/gallery/213663039/Cartography-of-the-Spanish-Regions-3D" target="_blank" rel="noopener noreferrer" class="maps-card">
+            <img src="./img/madrid.png" alt="Comunidades Autónomas en tres dimensiones" class="viz-card-bg">
+            <div class="viz-card-overlay"></div>
+            <div class="viz-card-content">
+              <div class="viz-card-title">Comunidades Autónomas en tres dimensiones</div>
+            </div>
+            <div class="viz-card-footer">
+              <p class="viz-card-desc">Una colección de mapas 3D de las comunidades autónomas de España para visualizar y entender datos territoriales.</p>
+              <div class="viz-card-tags"><span>Cartografía 3D</span><span>QGIS</span><span>Blender</span></div>
+              <span class="viz-card-link">Ver proyecto <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
 
-<!-- ─────────── FOOTER ─────────── -->
 <footer>
   <div class="foot-inner">
     <div class="foot-top">
-      <div class="foot-brand-name">Borja Mora</div>
+      <div class="foot-brand">
+        <div class="foot-brand-name">Borja Mora.</div>
+      </div>
       <div class="foot-nav-center">
         <a href="./index.html">Inicio</a>
         <a href="./sobre-mi.html">Sobre mí</a>
@@ -685,7 +1027,7 @@ footer{background:var(--paper);padding:0;border-top:.5px solid var(--gray)}
         <a href="./descargas.html">Descargas</a>
       </div>
       <div class="foot-li-icon">
-        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" onclick="gtag('event','clic_linkedin',{location:'footer'});">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
             <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/>
           </svg>
@@ -695,330 +1037,398 @@ footer{background:var(--paper);padding:0;border-top:.5px solid var(--gray)}
     <div class="foot-bottom">
       <div class="foot-copy">© 2026 Borja Mora Méndez · Madrid, España</div>
       <div class="foot-made">
-        Diseñado y construido por mí · <span class="foot-tech">HTML CSS JS</span> · Sin template
+        Diseñado y construido por mí · <span class="foot-tech">HTML</span><span class="foot-tech">CSS</span><span class="foot-tech">JS</span> · Sin template
       </div>
     </div>
   </div>
 </footer>
 
 <script>
-const ITEMS = [
-  {n:"01", cat:"gestion", title:"Gantt nativo de Power BI", subtitle:"Sin scripts, solo DAX puro",
-    desc:"Usa las opciones nativas de Power BI para construir un Gantt: barras apiladas, condicionales de color y rangos de fechas dinámicos. Sin trucos ni extensiones.",
-    tags:["Gantt","DAX","Dates"],
-    dl:"https://drive.google.com/drive/folders/1eqAyIHQhUbKxp6RqXabTnFy99xaUE60J?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7414924088876187650-L7pQ"},
-  {n:"02", cat:"ventas", title:"Dashboard de Ventas — v2", subtitle:"Estructura limpia de análisis",
-    desc:"Segmentación por cliente, producto, período. Filtros en cascada, KPIs con variación y tabla de detalle con scroll infinito. Todo conectado mediante DAX.",
-    tags:["KPI","Variación","Sales funnel"],
-    dl:"https://drive.google.com/drive/folders/1Ixn1LBLzp8I3UxZD6O0g0jzXQ7SLm1TZ?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-salesanalytics-activity-7418539287245639680-0Ynp"},
-  {n:"03", cat:"ventas", title:"Análisis de Cohort", subtitle:"Retención y evolución",
-    desc:"Cómo los clientes evolucionan en el tiempo. Cohort tables que muestran retención, LTV y patrones de compra. Totalmente dinámico por métrica.",
-    tags:["Cohort","Retención","Temporal"],
-    dl:"https://drive.google.com/drive/folders/1x-3VQDyuEKYMXuTWMZcGT0T59jI3dE1g?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-cohortanalysis-dataviz-activity-7421854376265125888-QZmB"},
-  {n:"04", cat:"ventas", title:"Matriz de Penetración", subtitle:"Clientes × Productos",
-    desc:"Heatmap dinámico que muestra dónde vendo más. Fácil identificar oportunidades de cross-sell y productos olvidados por segmento.",
-    tags:["Heatmap","Penetration","Opportunity"],
-    dl:"https://drive.google.com/drive/folders/1QVlE8dKV-Bg0VH5fKjXvH6Yv9_N2_dNP?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7424172895123562496-TglV"},
-  {n:"05", cat:"gestion", title:"Grafo de Dependencias", subtitle:"Ruta crítica de proyectos",
-    desc:"Visualiza las dependencias entre tareas. Qué bloquea qué, cuál es el camino crítico. Controla riesgos y retrasos con claridad.",
-    tags:["Gantt","Ruta crítica","Project"],
-    dl:"https://drive.google.com/drive/folders/1AaL9Q0zYEgLkSqK0xYLFOZvL3E4dV6h7?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-projectmanagement-dax-activity-7426491203047575552-Kj4x"},
-  {n:"06", cat:"ventas", title:"Embudo de Conversión", subtitle:"De lead a cliente",
-    desc:"Stage-by-stage. Cuántos salen de cada fase, dónde pierdes más. Tasa de conversión por canal, por producto, por vendedor.",
-    tags:["Funnel","Conversión","Pipeline"],
-    dl:"https://drive.google.com/drive/folders/1MzQZvwWpSJnzJkZmQNqRKS2_UyF9vl5P?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-conversionfunnel-activity-7428810611867992064-RZ3M"},
-  {n:"07", cat:"gestion", title:"Matriz de Priorización", subtitle:"Impacto vs Esfuerzo",
-    desc:"Cuadrantes clásicos: qué hacer ahora, qué postergar. Usa burbujas para representar volumen. Toma mejores decisiones sobre qué atacar primero.",
-    tags:["Prioritization","Impact","Matrix"],
-    dl:"https://drive.google.com/drive/folders/1P1Q8xW4nH3xYZ9zXvYzYvY8vYZ0vYZ1v?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-datavis-prioritization-activity-7431129220590309376-Kj4x"},
-  {n:"08", cat:"ventas", title:"Segmentación RFM", subtitle:"Recency, Frequency, Monetary",
-    desc:"Clasifica clientes en 9 segmentos según cuándo compraron, con qué frecuencia y cuánto gastaron. Modelo automático con DAX puro.",
-    tags:["RFM","Segmentation","ML"],
-    dl:"https://drive.google.com/drive/folders/1RqS7eI4xT8aXyR9zZaWmZbZzZc1zZd2z?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-rfm-dax-activity-7433448028965638144-8N9x"},
-  {n:"09", cat:"ventas", title:"Análisis de Varianza", subtitle:"Budget vs Real paso a paso",
-    desc:"Desglose jerárquico de dónde vinieron los desvíos. Filtros dinámicos por dimensión. Storytelling de números.",
-    tags:["Variance","Budget","Narrative"],
-    dl:"https://drive.google.com/drive/folders/1StJzFb8vKvL7vVwXwXxXyXyXzXzXaXa1?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-budgetanalysis-dax-activity-7435767837662945280-Qx9x"},
-  {n:"10", cat:"storytelling", title:"Benchmarking competitivo", subtitle:"Tú vs mercado",
-    desc:"Posiciónate frente a competidores sin revelar números absolutos. Índices normalizados, bandas de confianza, tendencias.",
-    tags:["Benchmark","Competitive","Index"],
-    dl:"https://drive.google.com/drive/folders/1TuU8vVwVwXxXyXyXzXzXaXaXbXbXcXc2?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-benchmark-dataviz-activity-7438086645570691072-Ry9y"},
-  {n:"11", cat:"storytelling", title:"Distribución y Percentiles", subtitle:"Dónde cae cada valor",
-    desc:"Histogramas dinámicos + líneas de percentil. Identifica outliers, patrones. Entiende si tu mediana es representativa.",
-    tags:["Distribution","Percentile","Outliers"],
-    dl:"https://drive.google.com/drive/folders/1UvV9vWwWxXxXyXyXzXzXaXaXbXbXcXc3?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-statistics-dataviz-activity-7440405453893607424-Sx9y"},
-  {n:"12", cat:"ventas", title:"Treemap dinámico", subtitle:"Jerarquía clara",
-    desc:"Segmenta el todo en partes. Cada rectángulo representa una subcategoría. Cambia entre métricas sin perder la estructura.",
-    tags:["Treemap","Hierarchy","Segmentation"],
-    dl:"https://drive.google.com/drive/folders/1VwW0vXxXxXyXyXzXzXaXaXbXbXcXc4vw?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-treemap-dataviz-activity-7442724261506330624-Ty9z"},
-  {n:"13", cat:"storytelling", title:"TopN con puesto de honor", subtitle:"Reduce el ruido visual",
-    desc:"Muestra los N mejores. El resto se agrupan en 'Otros'. Controla la complejidad visual sin perder contexto de volumen total.",
-    tags:["TopN","RANKX","Reducción de ruido"],
-    dl:"https://drive.google.com/drive/folders/1g5CRDjA4_6Db_P2JwGtgR7enfL8bn4UE?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7432461459080765440-Y9EH"},
-  {n:"14", cat:"storytelling", title:"Zoom visual sobre outliers", subtitle:"El gráfico que no miente",
-    desc:"Un outlier puede hacer que el resto parezcan iguales. 4 medidas DAX y capas visuales generan un doble zoom: magnitud real y diferencias del resto.",
-    tags:["Outliers","Doble escala","DAX"],
-    dl:"https://drive.google.com/drive/folders/1mZj6EO8sKoNVlDjmYZtnXSVqbUDtb9jH?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7437118505080020992-m7Em"},
-  {n:"15", cat:"storytelling", title:"Slope Chart", subtitle:"Evolución, variación, peso y ranking",
-    desc:"Small multiples donde cada producto concentra toda su información en un bloque. Cambia de unidades a ingresos con un click y el ranking cambia.",
-    tags:["Slope chart","Small multiples","DAX"],
-    dl:"https://drive.google.com/drive/folders/1CVcug_-gF6urL1bz9dorhZIpV0t17bm-?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7439647400132116480-1PFW"},
-  {n:"16", cat:"slicer", title:"Input Slicer I", subtitle:"No filtras datos, eliges qué historia ver",
-    desc:"Input Slicer + Field Parameter + DAX trabajando juntos. Define el contexto escribiendo, cambia el ángulo eligiendo métricas y todo se recalcula.",
-    tags:["Input Slicer","Field Parameters","DAX"],
-    dl:"https://drive.google.com/drive/folders/1jUdeMz4ziWdyBJiKA48-JYqUdO_JqZp4?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7440740082766086144-4VZm"},
-  {n:"17", cat:"slicer", title:"Input Slicer II", subtitle:"Top N, métricas y títulos en un solo sitio",
-    desc:"Todas las decisiones centralizadas: Top N de clientes, filtro por país, gráfico que destaca automáticamente y títulos que cambian con la selección.",
-    tags:["Top N dinámico","Títulos dinámicos","Storytelling"],
-    dl:"https://drive.google.com/drive/folders/1l5ewaopHRJJlwrhoGSZamUSy_TiMGhH-?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7442540385882554368-y4go"}
-];
-
-const ICON_EXT = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"/><path d="M9 7h8v8"/></svg>';
-const ICON_DL  = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v13"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/></svg>';
-
-const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-
-function tagsHtml(arr){
-  return arr.map(t=>`<span>${esc(t)}</span>`).join("");
-}
-
-function moduleHtml(it, idx){
-  return `
-  <div class="m" data-cat="${it.cat}" data-href="${esc(it.dl)}" data-stagger tabindex="0" role="link" aria-label="Descargar ${esc(it.title)}" style="--stagger-idx:${idx}">
-    <div class="m-head">
-      <span class="m-num">Nº ${esc(it.n)}</span>
-      <button class="m-ext" data-href="${esc(it.li)}" aria-label="Ver post en LinkedIn">${ICON_EXT}</button>
-    </div>
-    <div class="m-body">
-      <div class="m-head-text">
-        <h3 class="m-title">${esc(it.title)}</h3>
-        ${it.subtitle?`<p class="m-sub">${esc(it.subtitle)}</p>`:""}
-      </div>
-      <p class="m-desc">${esc(it.desc)}</p>
-    </div>
-    <div class="m-foot">
-      <div class="m-tags">${tagsHtml(it.tags)}</div>
-      <span class="m-dl" aria-hidden="true">${ICON_DL}</span>
-    </div>
-  </div>`;
-}
-
-function soonHtml(n, label){
-  return `
-  <div class="m m-soon" data-cat="soon" aria-hidden="true">
-    <div class="m-head">
-      <span class="m-num">Nº ${n}</span>
-    </div>
-    <div class="m-body">
-      <div class="m-head-text">
-        <h3 class="m-title" style="opacity:.4">En desarrollo</h3>
-        <p class="m-sub" style="opacity:.4">Próxima publicación</p>
-      </div>
-      <p class="m-desc" style="opacity:.35">Sígueme en LinkedIn para ser el primero en descargar el siguiente archivo.</p>
-    </div>
-    <div class="m-foot">
-      <a class="m-cta-soon" href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" tabindex="-1">Seguir en LinkedIn</a>
-      <span></span>
-    </div>
-  </div>`;
-}
-
-function render(){
-  const grid = document.getElementById('grid');
-  let html = ITEMS.map((it, idx) => moduleHtml(it, idx)).join("");
-  
-  // rellenar la última fila si quedan huecos
-  const total = ITEMS.length;
-  const cols = 3;
-  const remainder = total % cols;
-  if(remainder !== 0){
-    const empty = cols - remainder;
-    for(let i=0;i<empty;i++){
-      const next = String(total + 1 + i).padStart(2,"0");
-      html += soonHtml(next);
-    }
-  }
-  grid.innerHTML = html;
-
-  // Card principal: click y Enter/Space abren la descarga
-  grid.querySelectorAll('.m[data-href]').forEach(card=>{
-    const openCard = e => {
-      if(e.target.closest('.m-ext,.m-dl')) return;
-      stamp(card.querySelector('.m-dl'));
-      window.open(card.dataset.href,'_blank','noopener');
-    };
-    card.addEventListener('click', openCard);
-    card.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){e.preventDefault();openCard(e);} });
-  });
-
-  // Botón LinkedIn
-  grid.querySelectorAll('.m-ext[data-href]').forEach(el=>{
-    el.addEventListener('click', e => {
-      e.stopPropagation();
-      stamp(el);
-      window.open(el.dataset.href,'_blank','noopener');
-    });
-  });
-
-  // Stamp en el icono de descarga
-  grid.querySelectorAll('.m-dl').forEach(el=>{
-    el.addEventListener('click', () => stamp(el));
-  });
-}
-
-function stamp(el){
-  el.classList.remove('is-stamp');
-  void el.offsetWidth;
-  el.classList.add('is-stamp');
-  el.addEventListener('animationend', () => el.classList.remove('is-stamp'), {once:true});
-}
-
-function applyFilter(filter){
-  const grid = document.getElementById('grid');
-  const mods = grid.querySelectorAll('.m');
-  let visible = 0;
-
-  mods.forEach(m=>{
-    const cat = m.dataset.cat;
-    const show = cat==='soon' ? filter==='all' : (filter==='all' || cat===filter);
-    m.classList.toggle('is-hidden', !show);
-    if(show && cat!=='soon') visible++;
-  });
-
-  grid.querySelectorAll('.m-filler,.m-empty').forEach(e=>e.remove());
-
-  const cols = window.matchMedia('(max-width:600px)').matches ? 1
-             : window.matchMedia('(max-width:960px)').matches ? 2 : 3;
-
-  if(visible===0){
-    const empty = document.createElement('div');
-    empty.className='empty m-empty';
-    empty.textContent='Sin archivos en esta categoría';
-    grid.appendChild(empty);
-  } else {
-    const visibleTotal = grid.querySelectorAll('.m:not(.is-hidden)').length;
-    const rem = visibleTotal % cols;
-    if(rem!==0 && cols>1){
-      for(let i=0;i<cols-rem;i++){
-        const div=document.createElement('div');
-        div.className='m m-filler';
-        div.style.cssText='cursor:default;pointer-events:none';
-        div.setAttribute('aria-hidden','true');
-        grid.appendChild(div);
-      }
-    }
-  }
-
-  document.getElementById('seg-visible').textContent=visible;
-}
-
-// ────────────── INIT ──────────────
-render();
-applyFilter('all');
-
-// ────────────── PILL INDICATOR ──────────────
-function updatePillIndicator(){
-  const activeBtn = document.querySelector('.seg-btn.is-active');
-  const pill = document.getElementById('seg-pill');
-  if(activeBtn){
-    const left = activeBtn.offsetLeft;
-    const width = activeBtn.offsetWidth;
-    pill.style.left = left + 'px';
-    pill.style.width = width + 'px';
-  }
-}
-updatePillIndicator();
-window.addEventListener('resize', updatePillIndicator);
-
-// ────────────── COUNT-UP CON INTERSECTION OBSERVER ──────────────
-function countUp(el, target, duration){
-  let hasAnimated = false;
-  const startAnimation = () => {
-    if(hasAnimated) return;
-    hasAnimated = true;
-    const start = performance.now();
-    const update = now => {
-      const p = Math.min((now - start) / duration, 1);
-      const ease = 1 - Math.pow(1 - p, 3);
-      el.textContent = Math.round(ease * target);
-      if(p < 1) requestAnimationFrame(update);
-    };
-    requestAnimationFrame(update);
-  };
-  
-  const observer = new IntersectionObserver(([entry]) => {
-    if(entry.isIntersecting) {
-      startAnimation();
-      observer.unobserve(el);
-    }
-  }, { threshold: 0.5 });
-  
-  observer.observe(el);
-}
-
-const cats = [...new Set(ITEMS.map(i=>i.cat))].length;
-countUp(document.getElementById('stat-files'), ITEMS.length, 900);
-countUp(document.getElementById('stat-cats'), cats, 900);
-
-// ────────────── SEGMENTADOR EVENTOS ──────────────
-document.querySelectorAll('.seg-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.seg-btn').forEach(b=>{
-      b.classList.remove('is-active');
-      b.setAttribute('aria-pressed','false');
-    });
-    btn.classList.add('is-active');
-    btn.setAttribute('aria-pressed','true');
-    applyFilter(btn.dataset.filter);
-    updatePillIndicator();
-  });
-});
-
-// ────────────── RE-FILL AL REDIMENSIONAR ──────────────
-let _t;
-window.addEventListener('resize', ()=>{
-  clearTimeout(_t);
-  _t = setTimeout(()=>{
-    const active = document.querySelector('.seg-btn.is-active');
-    applyFilter(active ? active.dataset.filter : 'all');
-  }, 120);
-});
-
-// ────────────── STICKY NAV BORDER ──────────────
+// Progress + nav scroll
 window.addEventListener('scroll',()=>{
   document.getElementById('nav').classList.toggle('scrolled',window.scrollY>10);
+  const h=document.documentElement;
+  document.getElementById('progressBar').style.transform=`scaleX(${window.scrollY/(h.scrollHeight-h.clientHeight)})`;
+
 });
 
-// ────────────── SCROLL REVEAL PARA SECCIÓN CIERRE ──────────────
-function observeCierre(){
-  const cierreSection = document.getElementById('cierre-section');
-  const observer = new IntersectionObserver(([entry]) => {
-    if(entry.isIntersecting) {
-      cierreSection.classList.add('in-view');
-      observer.unobserve(cierreSection);
+// SR observer
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});},{threshold:0.1});
+document.querySelectorAll('.sr').forEach(el=>obs.observe(el));
+
+// ── SECTION FILTER ──
+function showSection(sec){
+  // Nav active
+  document.querySelectorAll('.sec-nav a,.sec-nav button').forEach(a=>{
+    a.classList.toggle('active', a.dataset.sec === sec);
+  });
+
+  const isPBI = sec === 'powerbi';
+
+  // Show/hide Power BI sections
+  document.querySelectorAll('.sec-panel[data-panel="powerbi"]').forEach(el=>{
+    el.style.display = isPBI ? '' : 'none';
+  });
+
+  // Show/hide collapse container (other sections)
+  const cc = document.getElementById('collapseContainer');
+  if(cc) cc.style.display = isPBI ? 'none' : '';
+
+  // Show only the matching col-section, hide the rest
+  let headerToScroll = null;
+  document.querySelectorAll('.sec-col').forEach(el=>{
+    const match = el.dataset.col === sec;
+    el.style.display = match ? '' : 'none';
+    if(match){
+      const btn = el.querySelector('[data-target]');
+      if(btn){
+        const body = document.getElementById(btn.dataset.target);
+        const header = el.querySelector('.col-header');
+        if(body && !body.classList.contains('open')){
+          body.classList.add('open');
+          if(header) header.classList.add('open');
+        }
+        headerToScroll = header;
+      }
     }
-  }, { threshold: 0.3 });
-  
-  observer.observe(cierreSection);
+  });
+
+  // Scroll al título (col-header) de la sección, no al .sec-nav
+  if(headerToScroll){
+    window.scrollTo({top: headerToScroll.offsetTop - 80, behavior:'smooth'});
+  }
 }
-observeCierre();
+
+document.querySelectorAll('.sec-nav a,.sec-nav button').forEach(a=>{
+  a.addEventListener('click', e=>{
+    e.preventDefault();
+    showSection(a.dataset.sec);
+  });
+});
+
+// Inicializar Power BI como sección activa por defecto
+showSection('powerbi');
+
+// ── CARD STAGGER INITIALIZATION ──
+function initCardStagger(){
+  const cardTypes = ['.proj-card', '.analysis-card', '.viz-card'];
+  cardTypes.forEach(selector => {
+    document.querySelectorAll(selector).forEach((card, idx) => {
+      card.setAttribute('data-stagger', '');
+      card.style.setProperty('--stagger-idx', idx);
+    });
+  });
+}
+initCardStagger();
+
+// ── OUTER CAROUSEL — INFINITE ──
+(function(){
+  const track = document.getElementById('pcoTrack');
+  const dots = document.querySelectorAll('.pco-dot');
+  const TOTAL = 6;
+  let cur = 0;
+
+  function getSlideW(){
+    const card = track.querySelector('.proj-card');
+    if(!card) return 0;
+    const gap = parseFloat(window.getComputedStyle(track).gap) || 16;
+    return card.offsetWidth + gap;
+  }
+
+  function goTo(n){
+    // Close any open overlay first
+    if(typeof closeAllOverlays === 'function') closeAllOverlays();
+    // Infinite: wrap around
+    const targetCur = ((n % TOTAL) + TOTAL) % TOTAL;
+    
+    // Si es un salto grande (del último al primero o del primero al último), hazlo sin transición
+    const shouldSnap = Math.abs(targetCur - cur) > TOTAL / 2;
+    
+    if(shouldSnap){
+      // Snap instantáneo sin transición
+      track.style.transition = 'none';
+      cur = targetCur;
+      track.style.transform = `translateX(-${cur * getSlideW()}px)`;
+      // Fuerza reflow
+      void track.offsetHeight;
+      // Re-activa la transición para el siguiente movimiento
+      setTimeout(() => {
+        track.style.transition = 'transform .5s cubic-bezier(0.16,1,0.3,1)';
+      }, 10);
+    } else {
+      cur = targetCur;
+      track.style.transform = `translateX(-${cur * getSlideW()}px)`;
+    }
+    
+    dots.forEach((d,i) => d.classList.toggle('active', i === cur));
+    // Anunciar cambio a lectores de pantalla
+    const cards = track.querySelectorAll('.proj-card');
+    const heading = cards[cur] ? cards[cur].querySelector('h3') : null;
+    if(heading) track.setAttribute('aria-label', `Proyecto ${cur + 1} de ${TOTAL}: ${heading.textContent}`);
+  }
+
+  document.getElementById('pcoPrev').onclick = () => goTo(cur - 1);
+  document.getElementById('pcoNext').onclick = () => goTo(cur + 1);
+  dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.idx)));
+  window.addEventListener('resize', () => { track.style.transition='none'; goTo(cur); setTimeout(()=>track.style.transition='',50); });
+
+  let tx = 0;
+  track.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, {passive:true});
+  track.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - tx;
+    if(Math.abs(dx) > 40) goTo(cur + (dx < 0 ? 1 : -1));
+  });
+})();
+
+// ── OVERLAY EXPAND ──
+const ovPhotoState = {};
+let activeOverlay = null;
+let _ovLastFocus = null;
+
+function trapFocus(el){
+  const focusable = el.querySelectorAll('a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])');
+  const first = focusable[0], last = focusable[focusable.length-1];
+  el._trapHandler = e => {
+    if(e.key !== 'Tab') return;
+    if(e.shiftKey){ if(document.activeElement===first){e.preventDefault();last.focus();} }
+    else { if(document.activeElement===last){e.preventDefault();first.focus();} }
+  };
+  el.addEventListener('keydown', el._trapHandler);
+}
+
+function releaseFocus(el){
+  if(el._trapHandler) el.removeEventListener('keydown', el._trapHandler);
+}
+
+function openOverlay(idx){
+  closeAllOverlays();
+  _ovLastFocus = document.activeElement;
+  const ov = document.getElementById('pcoverlay-' + idx);
+  ov.classList.add('open');
+  ov.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  activeOverlay = idx;
+  if(ovPhotoState[idx] === undefined) ovPhotoState[idx] = 0;
+  trapFocus(ov);
+  const closeBtn = ov.querySelector('.pc-overlay-close');
+  if(closeBtn) setTimeout(() => closeBtn.focus(), 50);
+}
+
+function closeOverlay(idx){
+  const ov = document.getElementById('pcoverlay-' + idx);
+  releaseFocus(ov);
+  ov.classList.remove('open');
+  ov.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  activeOverlay = null;
+  if(_ovLastFocus) { _ovLastFocus.focus(); _ovLastFocus = null; }
+}
+
+function closeAllOverlays(){
+  document.querySelectorAll('.pc-overlay.open').forEach(ov => {
+    releaseFocus(ov);
+    ov.classList.remove('open');
+    ov.setAttribute('aria-hidden', 'true');
+  });
+  document.body.style.overflow = '';
+  if(_ovLastFocus) { _ovLastFocus.focus(); _ovLastFocus = null; }
+  activeOverlay = null;
+}
+
+function closeOverlayIfBg(e, idx){
+  if(e.target === e.currentTarget) closeOverlay(idx);
+}
+
+// Close on ESC
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeAllOverlays(); });
+
+// Overlay photo nav — dir is -1/+1 for arrows, or exact index from dots
+function overlayPhotoNav(idx, dir){
+  if(ovPhotoState[idx] === undefined) ovPhotoState[idx] = 0;
+  const track = document.getElementById('pcovtrack-' + idx);
+  if(!track) return;
+  const photos = track.querySelectorAll('.pcov-photo');
+  const dots = document.querySelectorAll('#pcoverlay-' + idx + ' .pcov-dot');
+  const total = photos.length;
+  // If dir is an absolute index (0,1,2 from dot click), use directly; else add to current
+  const newIdx = (Math.abs(dir) <= 1) ? ((ovPhotoState[idx] + dir + total) % total) : dir;
+  ovPhotoState[idx] = newIdx;
+  photos.forEach((p,i) => p.classList.toggle('pcov-active', i === newIdx));
+  dots.forEach((d,i) => d.classList.toggle('pcov-dot-active', i === newIdx));
+}
+
+// Collapsible sections
+document.querySelectorAll('.col-header').forEach(h=>{
+  h.addEventListener('click',()=>{
+    const body=document.getElementById(h.dataset.target);
+    const open=body.classList.toggle('open');
+    h.classList.toggle('open',open);
+  });
+});
+
+
+</script>
+<div class="pc-overlay" id="pcoverlay-0" role="dialog" aria-modal="true" aria-labelledby="pcoverlay-0-title" aria-hidden="true" onclick="closeOverlayIfBg(event,0)">
+  <div class="pc-overlay-inner">
+    <button class="pc-overlay-close" onclick="closeOverlay(0)">
+      <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pc-overlay-imgs">
+      <div class="pcov-track" id="pcovtrack-0"><img src="./img/ibcs-1.png" alt="Informe de ventas con enfoque IBCS 1" class="pcov-photo  pcov-active"><img src="./img/ibcs-2.png" alt="Informe de ventas con enfoque IBCS 2" class="pcov-photo"><img src="./img/ibcs-3.png" alt="Informe de ventas con enfoque IBCS 3" class="pcov-photo"></div>
+      <button class="pc-arrow pc-arrow-prev" onclick="overlayPhotoNav(0,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="pc-arrow pc-arrow-next" onclick="overlayPhotoNav(0,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <div class="pcov-dots"><button class="pcov-dot pcov-dot-active" onclick="overlayPhotoNav(0,0)"></button><button class="pcov-dot" onclick="overlayPhotoNav(0,1)"></button><button class="pcov-dot" onclick="overlayPhotoNav(0,2)"></button></div>
+    </div>
+    <div class="pc-overlay-copy">
+      <div class="pc-overlay-eyebrow"><span></span>Análisis de ventas</div>
+      <div class="pc-overlay-title" id="pcoverlay-0-title">Informe de ventas con enfoque IBCS</div>
+      <div class="pc-overlay-long"><p>En muchos equipos comerciales, el análisis empieza y termina con una pregunta: ¿hemos vendido más que el año pasado? Si el total anual sube, se respira tranquilo. Si baja, saltan las alarmas. El problema es que <strong>un total anual es solo el final de la película</strong> — no cuenta cómo ha sido el viaje. Dos años pueden cerrar con la misma cifra y haber tenido comportamientos completamente distintos por dentro.</p><p>El error de fondo no estaba en los datos sino en <strong>cómo se presentaban</strong>. La mayoría de informes separaban el volumen, la variación absoluta y el porcentaje en gráficos distintos, obligando al usuario a <strong>hacer el cálculo mental para conectarlos</strong>. Cuando alguien tiene que hacer ese esfuerzo, el informe ya está fallando: no está comunicando, está delegando la interpretación en quien menos debería tener que hacerla.</p><p>Apliqué principios <strong>IBCS</strong> — un estándar internacional de comunicación visual para datos de negocio — para forzar un orden en las decisiones de diseño: qué es señal, qué es contexto, qué merece color y qué no. El resultado fue un <strong>único patrón visual</strong> donde las columnas muestran el volumen, la variación absoluta se integra dentro de la propia barra y el porcentaje aparece como una capa adicional. El mismo patrón funciona para el análisis temporal y para el análisis por categoría y producto, de forma que el usuario no tiene que reaprender el gráfico cada vez que cambia de página.</p><p>Lo que cambia cuando se usa este informe es la <strong>calidad de las preguntas que genera</strong>. No solo si se vendió más, sino si ese crecimiento es sostenido o puntual, qué categorías impulsan el resultado y cuáles lo maquillan, qué meses críticos el total anual estaría ocultando. La diferencia entre un informe que muestra datos y uno que <strong>reduce el riesgo de interpretarlos mal</strong> es exactamente esa: uno responde preguntas, el otro las evita.</p><p><em>Diseñar bien un informe de ventas no es una decisión estética. Es una decisión sobre quién tiene que pensar — el gráfico o quien lo lee.</em></p></div>
+      <div class="pc-overlay-pills"><span class="pc-overlay-pill">IBCS</span><span class="pc-overlay-pill">DAX</span><span class="pc-overlay-pill">Modelado en estrella</span><span class="pc-overlay-pill">Drill-down</span><span class="pc-overlay-pill">Variación absoluta y relativa</span><span class="pc-overlay-pill">Parámetros dinámicos</span><span class="pc-overlay-pill">Jerarquía visual</span><span class="pc-overlay-pill">Sales analytics</span><span class="pc-overlay-pill">YoY analysis</span></div>
+      <div class="pc-overlay-foot">
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiYWFhNjA5YmQtNjEyYS00YTA3LWIxMzktYWQxOTYzMmZkYzIyIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+        <span class="pc-tech">Power BI · DAX</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="pc-overlay" id="pcoverlay-1" role="dialog" aria-modal="true" aria-labelledby="pcoverlay-1-title" aria-hidden="true" onclick="closeOverlayIfBg(event,1)">
+  <div class="pc-overlay-inner">
+    <button class="pc-overlay-close" onclick="closeOverlay(1)">
+      <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pc-overlay-imgs">
+      <div class="pcov-track" id="pcovtrack-1"><img src="./img/kosta-1.png" alt="Kosta Cálida — Reporting para red de tiendas 1" class="pcov-photo  pcov-active"><img src="./img/kosta-2.png" alt="Kosta Cálida — Reporting para red de tiendas 2" class="pcov-photo"><img src="./img/kosta-3.png" alt="Kosta Cálida — Reporting para red de tiendas 3" class="pcov-photo"></div>
+      <button class="pc-arrow pc-arrow-prev" onclick="overlayPhotoNav(1,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="pc-arrow pc-arrow-next" onclick="overlayPhotoNav(1,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <div class="pcov-dots"><button class="pcov-dot pcov-dot-active" onclick="overlayPhotoNav(1,0)"></button><button class="pcov-dot" onclick="overlayPhotoNav(1,1)"></button><button class="pcov-dot" onclick="overlayPhotoNav(1,2)"></button></div>
+    </div>
+    <div class="pc-overlay-copy">
+      <div class="pc-overlay-eyebrow"><span></span>Retail · Red de tiendas</div>
+      <div class="pc-overlay-title" id="pcoverlay-1-title">Kosta Cálida — Reporting para red de tiendas</div>
+      <div class="pc-overlay-long"><p>Una cadena de tiendas en zonas turísticas registraba cada venta, cada producto, cada ticket desde el primer día. Los datos existían, estaban ahí, y nadie los cuestionaba. El problema era otro: <strong>nadie podía responder con claridad si el negocio iba bien o simplemente estaba vendiendo</strong>.</p><p>La dirección tomaba decisiones con números delante pero sin contexto. Sabían la recaudación del día, pero no podían decir qué tienda rendía mejor en margen, qué categorías erosionaban el beneficio ni <strong>si estaban cumpliendo objetivos o solo superando el mes anterior</strong>. Cada departamento miraba su parte. No existía una fuente única que conectara ventas, rentabilidad y objetivos en una sola lectura coherente. Eso no es un problema de datos. Es un <strong>problema de estructura analítica</strong>.</p><p>Identifiqué que el error de fondo era el orden en que se había planteado el análisis: se habían construido vistas parciales sobre datos sin modelar, en lugar de <strong>diseñar primero cómo debía funcionar el negocio como modelo</strong>. Decidí empezar por ahí — <strong>modelo en estrella con tabla de hechos central</strong> y dimensiones limpias de fecha, tienda, producto y objetivos. Solo cuando la base era sólida y los cálculos eran fiables, diseñé los dashboards con una jerarquía visual clara: primero la pregunta que responde cada página, después el gráfico que la responde.</p><p>El resultado cambió la dinámica de las reuniones. Donde antes alguien decía "creo que Ibiza está floja este mes", ahora la conversación empieza con <strong>"Ibiza cumple en ventas, pero su margen está dos puntos por debajo de la media — hay que revisar el mix de producto"</strong>. El sistema permite bajar desde una desviación en un KPI hasta el ticket concreto que la explica. Las decisiones dejaron de basarse en percepción y empezaron a basarse en estructura.</p><p><em>Un dashboard no muestra datos. Responde preguntas — y la calidad de las preguntas determina la calidad de las decisiones.</em></p></div>
+      <div class="pc-overlay-pills"><span class="pc-overlay-pill">Modelado en estrella</span><span class="pc-overlay-pill">Power Query</span><span class="pc-overlay-pill">DAX</span><span class="pc-overlay-pill">Ventas vs Objetivos</span><span class="pc-overlay-pill">Análisis de rentabilidad</span><span class="pc-overlay-pill">Drill-down</span><span class="pc-overlay-pill">YTD</span><span class="pc-overlay-pill">Jerarquía visual</span><span class="pc-overlay-pill">Retail analytics</span></div>
+      <div class="pc-overlay-foot">
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiMzhlYjliYTAtMWUzMS00YzE1LTgyNGEtZmZmNDVhNjQ1ZDY3IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=03634c064fb23f65778f" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+        <span class="pc-tech">Power BI · DAX</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="pc-overlay" id="pcoverlay-2" role="dialog" aria-modal="true" aria-labelledby="pcoverlay-2-title" aria-hidden="true" onclick="closeOverlayIfBg(event,2)">
+  <div class="pc-overlay-inner">
+    <button class="pc-overlay-close" onclick="closeOverlay(2)">
+      <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pc-overlay-imgs">
+      <div class="pcov-track" id="pcovtrack-2"><img src="./img/social-1.png" alt="Social Media Performance | 2025 vs 2024 1" class="pcov-photo  pcov-active"><img src="./img/social-2.png" alt="Social Media Performance | 2025 vs 2024 2" class="pcov-photo"><img src="./img/social-3.png" alt="Social Media Performance | 2025 vs 2024 3" class="pcov-photo"></div>
+      <button class="pc-arrow pc-arrow-prev" onclick="overlayPhotoNav(2,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="pc-arrow pc-arrow-next" onclick="overlayPhotoNav(2,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <div class="pcov-dots"><button class="pcov-dot pcov-dot-active" onclick="overlayPhotoNav(2,0)"></button><button class="pcov-dot" onclick="overlayPhotoNav(2,1)"></button><button class="pcov-dot" onclick="overlayPhotoNav(2,2)"></button></div>
+    </div>
+    <div class="pc-overlay-copy">
+      <div class="pc-overlay-eyebrow"><span></span>Marketing analytics</div>
+      <div class="pc-overlay-title" id="pcoverlay-2-title">Social Media Performance | 2025 vs 2024</div>
+      <div class="pc-overlay-long"><p>Comparar resultados de un año a otro parece una tarea sencilla. Si en 2025 hay menos impresiones, menos clics y menos conversiones que en 2024, la conclusión rápida sería que el rendimiento ha empeorado. Pero en marketing <strong>el dato bruto rara vez cuenta toda la historia</strong>: una caída en volumen puede significar menor inversión, cambio de estrategia o, incluso, una mejora real en eficiencia. Este proyecto nace exactamente de esa duda.</p><p>El problema habitual en los reportes de marketing es que <strong>se compara volumen sin mirar inversión</strong>, se analizan clics sin mirar CTR, se celebran conversiones sin analizar su coste. Los KPIs se revisan de forma aislada, sin conectarlos entre sí, y eso genera lecturas engañosas que llevan a decisiones equivocadas. Identifiqué que el reto no era añadir más métricas, sino <strong>introducir contexto sin añadir ruido</strong> — obligar a que cada dato apareciera siempre junto a su referencia.</p><p>Diseñé un <strong>modelo en estrella</strong> con una tabla de hechos central y dimensiones de fecha, plataforma, campaña y audiencia. Uno de los puntos menos visibles pero más importantes fue el selector de periodos: en lugar de filtrar directamente el modelo, usé una <strong>tabla desconectada</strong> que marca el periodo a analizar. Eso garantiza que los cálculos interanuales sean siempre coherentes, independientemente de cómo navegue el usuario. Cada KPI se presenta con el mismo marco — valor actual, valor del año anterior, variación absoluta, variación porcentual y un <strong>mini gráfico mensual</strong> para detectar tendencia.</p><p>Lo que cambia cuando se usa este dashboard es el <strong>tipo de pregunta que se hace</strong>. No si hay más o menos volumen, sino si la caída es por menor inversión o por menor rendimiento, si hay meses con mejor retorno donde reforzar estrategia, si el negocio está siendo más eficiente con lo que gasta. Esa diferencia de pregunta es la diferencia entre <strong>gestionar con percepción y gestionar con criterio</strong>.</p><p><em>Un reporte de marketing no debería decirte si las cifras suben o bajan. Debería decirte si estás invirtiendo mejor o peor.</em></p></div>
+      <div class="pc-overlay-pills"><span class="pc-overlay-pill">DAX interanual</span><span class="pc-overlay-pill">Tablas desconectadas</span><span class="pc-overlay-pill">CTR · CPC</span><span class="pc-overlay-pill">Modelado en estrella</span><span class="pc-overlay-pill">Sparklines</span><span class="pc-overlay-pill">Comparativa YoY</span><span class="pc-overlay-pill">Marketing analytics</span><span class="pc-overlay-pill">Eficiencia vs volumen</span></div>
+      <div class="pc-overlay-foot">
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiMzNlYjcwN2YtNWE0Yy00NTk2LThlNmUtZjVmMThkZTQ0YzZjIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+        <span class="pc-tech">Power BI · DAX</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="pc-overlay" id="pcoverlay-3" role="dialog" aria-modal="true" aria-labelledby="pcoverlay-3-title" aria-hidden="true" onclick="closeOverlayIfBg(event,3)">
+  <div class="pc-overlay-inner">
+    <button class="pc-overlay-close" onclick="closeOverlay(3)">
+      <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pc-overlay-imgs">
+      <div class="pcov-track" id="pcovtrack-3"><img src="./img/financiero-1.png" alt="Informe Financiero Completo 1" class="pcov-photo  pcov-active"><img src="./img/financiero-2.png" alt="Informe Financiero Completo 2" class="pcov-photo"><img src="./img/financiero-3.png" alt="Informe Financiero Completo 3" class="pcov-photo"></div>
+      <button class="pc-arrow pc-arrow-prev" onclick="overlayPhotoNav(3,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="pc-arrow pc-arrow-next" onclick="overlayPhotoNav(3,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <div class="pcov-dots"><button class="pcov-dot pcov-dot-active" onclick="overlayPhotoNav(3,0)"></button><button class="pcov-dot" onclick="overlayPhotoNav(3,1)"></button><button class="pcov-dot" onclick="overlayPhotoNav(3,2)"></button></div>
+    </div>
+    <div class="pc-overlay-copy">
+      <div class="pc-overlay-eyebrow"><span></span>Análisis financiero</div>
+      <div class="pc-overlay-title" id="pcoverlay-3-title">Informe Financiero Completo</div>
+      <div class="pc-overlay-long"><p>En la mayoría de empresas, la información financiera existe en algún lugar. Hay asientos contables, balances, cuenta de resultados, presupuestos. El problema no es que falten datos — es que <strong>están dispersos, que cada área analiza su parte por separado</strong> y que cuando dirección necesita una visión completa del negocio, alguien tiene que construirla manualmente cada vez. Ese proceso es lento, poco trazable y genera versiones distintas de la misma realidad.</p><p>Identifiqué que el problema de fondo era estructural: no había un modelo que conectara las <strong>tres grandes piezas del análisis financiero — balance, PyG y cash flow</strong> — de forma coherente y con trazabilidad hasta el origen. Sin esa base, cualquier análisis era una foto parcial. Decidí empezar por ahí, diseñando una <strong>estructura contable en esquema estrella</strong> que unificara los tres estados financieros, mantuviera coherencia entre periodos y permitiera navegar desde un KPI de alto nivel hasta el asiento concreto que lo genera.</p><p>A partir de ese modelo construí el informe como si fuera una <strong>aplicación financiera</strong> con navegación clara entre áreas: vista general de KPIs, checklist de validación de calidad del dato, balance de sumas y saldos, análisis del balance con enfoque vertical y horizontal, cuenta de resultados con <strong>comparativa interanual y proyección a cierre</strong>, y cash flow con ratios de solvencia y liquidez. Cada página responde una pregunta distinta pero todas comparten el mismo lenguaje visual.</p><p>Lo que cambia cuando se usa este sistema no es solo la velocidad. Cambia el <strong>tipo de decisión que es posible tomar</strong>. Detectar que el margen empieza a deteriorarse antes de que se convierta en problema, ver tensiones de liquidez con semanas de antelación, evaluar si el negocio puede asumir una inversión — todo eso requiere que balance, resultados y tesorería <strong>hablen el mismo idioma al mismo tiempo</strong>. Antes no era posible sin rehacer el análisis desde cero.</p><p><em>La contabilidad registra lo que ha pasado. Un sistema financiero bien construido permite anticipar lo que va a pasar.</em></p></div>
+      <div class="pc-overlay-pills"><span class="pc-overlay-pill">Modelado contable en estrella</span><span class="pc-overlay-pill">DAX financiero</span><span class="pc-overlay-pill">Balance · PyG · Cash Flow</span><span class="pc-overlay-pill">EBITDA</span><span class="pc-overlay-pill">Análisis vertical y horizontal</span><span class="pc-overlay-pill">Desviación vs presupuesto</span><span class="pc-overlay-pill">Proyección a cierre</span><span class="pc-overlay-pill">Drill-through a asiento</span><span class="pc-overlay-pill">Financial analytics</span></div>
+      <div class="pc-overlay-foot">
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiNDgzZjBmY2MtMDhhMy00MGIzLTlmYmItODlkMmY2NDg3ZDdmIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=a961ceadc15fe4dcfcfb" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+        <span class="pc-tech">Power BI · DAX</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="pc-overlay" id="pcoverlay-4" role="dialog" aria-modal="true" aria-labelledby="pcoverlay-4-title" aria-hidden="true" onclick="closeOverlayIfBg(event,4)">
+  <div class="pc-overlay-inner">
+    <button class="pc-overlay-close" onclick="closeOverlay(4)">
+      <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pc-overlay-imgs">
+      <div class="pcov-track" id="pcovtrack-4"><img src="./img/pyg-1.png" alt="Cuenta de Pérdidas y Ganancias 1" class="pcov-photo  pcov-active"><img src="./img/pyg-2.png" alt="Cuenta de Pérdidas y Ganancias 2" class="pcov-photo"><img src="./img/pyg-3.png" alt="Cuenta de Pérdidas y Ganancias 3" class="pcov-photo"></div>
+      <button class="pc-arrow pc-arrow-prev" onclick="overlayPhotoNav(4,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="pc-arrow pc-arrow-next" onclick="overlayPhotoNav(4,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <div class="pcov-dots"><button class="pcov-dot pcov-dot-active" onclick="overlayPhotoNav(4,0)"></button><button class="pcov-dot" onclick="overlayPhotoNav(4,1)"></button><button class="pcov-dot" onclick="overlayPhotoNav(4,2)"></button></div>
+    </div>
+    <div class="pc-overlay-copy">
+      <div class="pc-overlay-eyebrow"><span></span>Análisis financiero</div>
+      <div class="pc-overlay-title" id="pcoverlay-4-title">Cuenta de Pérdidas y Ganancias</div>
+      <div class="pc-overlay-long"><p>La Cuenta de Pérdidas y Ganancias sigue viviendo en Excel en la mayoría de organizaciones — múltiples hojas, exportaciones del ERP que nadie quiere tocar, PDFs que muestran el resultado final pero <strong>no explican qué lo está generando</strong>. No es un problema de voluntad sino de complejidad: trasladar una PyG a una herramienta de BI con rigor es considerablemente más difícil de lo que parece desde fuera.</p><p>El problema real aparece cuando <strong>conviven datos reales y presupuesto</strong>, cuando las cuentas no siguen una jerarquía limpia o cuando los signos contables no coinciden con la lógica analítica. En esos casos, un error en el modelado o en una medida DAX puede romper toda la coherencia del informe. Y en un contexto financiero, <strong>perder coherencia significa perder credibilidad</strong> — que es exactamente lo peor que puede pasarle a un informe que dirección usa para tomar decisiones.</p><p>Construí el modelo desde la lógica contable, no desde la visual. <strong>Cada cuenta clasificada explícitamente</strong> como ingreso, coste o gasto, con reglas de signos definidas a nivel de modelo para que los totales cuadraran en cualquier nivel de filtro sin parches visuales. Los subtotales — <strong>Margen Bruto, Beneficio Operativo, Beneficio Neto</strong> — responden cada uno a su estructura contable concreta, no a una agregación automática. A partir de esa base construí la comparativa Real vs Presupuesto con variación absoluta, porcentaje de desviación y un <strong>gráfico de cascada</strong> que no solo muestra la diferencia sino que explica qué partidas la generan y en qué dirección.</p><p>Lo que cambia en una reunión financiera cuando se usa este informe es la <strong>precisión de la conversación</strong>. Donde antes alguien decía "estamos por debajo del presupuesto", ahora es posible decir "la desviación viene del aumento en gastos operativos, no de caída de ingresos". Esa diferencia no es cosmética — determina dónde se actúa y con qué urgencia.</p><p><em>En BI financiero la dificultad no está en el gráfico. Está en la lógica que lo sostiene.</em></p></div>
+      <div class="pc-overlay-pills"><span class="pc-overlay-pill">P&L en Power BI</span><span class="pc-overlay-pill">DAX financiero</span><span class="pc-overlay-pill">Subtotales inteligentes</span><span class="pc-overlay-pill">Real vs Presupuesto</span><span class="pc-overlay-pill">Waterfall chart</span><span class="pc-overlay-pill">Control de signos contables</span><span class="pc-overlay-pill">Modelado en estrella</span><span class="pc-overlay-pill">Financial analytics</span><span class="pc-overlay-pill">Jerarquía contable</span></div>
+      <div class="pc-overlay-foot">
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiM2Y3MzMxNTQtMGMzOS00ZDhlLTljYWYtMmU5N2E5ZTA3MjU2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=41273635f861390cd9fd" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+        <span class="pc-tech">Power BI · DAX</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="pc-overlay" id="pcoverlay-5" role="dialog" aria-modal="true" aria-labelledby="pcoverlay-5-title" aria-hidden="true" onclick="closeOverlayIfBg(event,5)">
+  <div class="pc-overlay-inner">
+    <button class="pc-overlay-close" onclick="closeOverlay(5)">
+      <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pc-overlay-imgs">
+      <div class="pcov-track" id="pcovtrack-5"><img src="./img/airbnb-1.png" alt="Análisis del Mercado de Airbnb — País Vasco 1" class="pcov-photo  pcov-active"><img src="./img/airbnb-2.png" alt="Análisis del Mercado de Airbnb — País Vasco 2" class="pcov-photo"><img src="./img/airbnb-3.png" alt="Análisis del Mercado de Airbnb — País Vasco 3" class="pcov-photo"></div>
+      <button class="pc-arrow pc-arrow-prev" onclick="overlayPhotoNav(5,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="pc-arrow pc-arrow-next" onclick="overlayPhotoNav(5,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <div class="pcov-dots"><button class="pcov-dot pcov-dot-active" onclick="overlayPhotoNav(5,0)"></button><button class="pcov-dot" onclick="overlayPhotoNav(5,1)"></button><button class="pcov-dot" onclick="overlayPhotoNav(5,2)"></button></div>
+    </div>
+    <div class="pc-overlay-copy">
+      <div class="pc-overlay-eyebrow"><span></span>Análisis de mercado</div>
+      <div class="pc-overlay-title" id="pcoverlay-5-title">Análisis del Mercado de Airbnb — País Vasco</div>
+      <div class="pc-overlay-long"><p>Hay afirmaciones sobre mercados que circulan como hechos cuando en realidad son simplificaciones. "Airbnb en el País Vasco está carísimo" es una de ellas — y casi siempre se sostiene sobre una <strong>media global que mezcla San Sebastián en agosto con un municipio interior en enero</strong>, un alojamiento completo con una habitación privada, un anfitrión ocasional con uno que gestiona treinta propiedades. Un mismo precio puede parecer caro o barato dependiendo del contexto. El problema no era la falta de datos sino la <strong>falta de estructura para interpretarlos</strong>.</p><p>Identifiqué que el error de fondo en los análisis habituales era tratar el mercado turístico como si fuera homogéneo. <strong>No lo es — es espacial antes que estadístico</strong>, y cualquier análisis que ignore esa dimensión territorial está describiendo un mercado que no existe. Diseñé el modelo alrededor de esa premisa: el <strong>mapa como eje principal de lectura</strong>, con filtros que modifican el patrón espacial en tiempo real según provincia, tipo de alojamiento, rango de precios y disponibilidad. La concentración y dispersión real de la oferta solo se ve cuando el territorio es protagonista.</p><p>A partir de esa base añadí la segmentación que los análisis habituales omiten: precio por tipo de alojamiento, clasificación por rangos, <strong>distinción entre anfitrión ocasional y operador profesional con cartera</strong>. Eso permite responder una pregunta mucho más útil que "¿es caro?": si un precio elevado responde a alta demanda, a baja oferta, a profesionalización del mercado o a estacionalidad puntual. Cada KPI aparece siempre acompañado de ese contexto, porque <strong>un número grande en pantalla sin referencia no informa — solo impresiona</strong>.</p><p>Lo que cambia cuando se usa este dashboard es la <strong>precisión del análisis</strong>. En lugar de decir "Airbnb es caro en el País Vasco", es posible decir "en zonas costeras concretas, en temporada alta y para alojamientos completos gestionados profesionalmente, el precio es alto — y responde a estas razones". Dejas de ver un mercado y empiezas a ver <strong>muchos mercados coexistiendo en el mismo territorio</strong>.</p><p><em>La media simplifica. El contexto explica. Y cuando ves las diferencias reales, decides mejor.</em></p></div>
+      <div class="pc-overlay-pills"><span class="pc-overlay-pill">Análisis territorial</span><span class="pc-overlay-pill">Mapas en Power BI</span><span class="pc-overlay-pill">Segmentación de mercado</span><span class="pc-overlay-pill">KPIs</span><span class="pc-overlay-pill">Análisis exploratorio</span><span class="pc-overlay-pill">DAX</span></div>
+      <div class="pc-overlay-foot">
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiOTA2ZDExNjktYzE4Ny00Y2UzLThmM2YtMjI5Y2FmNDg1MzM5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=9c4b9193b627b78a0e01" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+        <span class="pc-tech">Power BI · DAX</span>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var e = atob('Ym9yamEubW9yYS5tZW5kZXpAZ21haWwuY29t');
+  var su = encodeURIComponent('Oportunidad laboral');
+  var body = encodeURIComponent('Hola, me gustaría hablar contigo sobre una posible oportunidad.');
+  var url = 'https://mail.google.com/mail/u/0/?fs=1&to=' + e + '&su=' + su + '&body=' + body + '&tf=cm';
+  var nav = document.getElementById('navEmailBtn');
+  if (nav) nav.href = url;
+})();
+
+// ── COLLAPSIBLE HANDLERS ──
+document.querySelectorAll('.col-header').forEach(header => {
+  header.addEventListener('click', function(e) {
+    if(e.target.closest('.col-arrow')) return;
+    const targetId = this.dataset.target;
+    if(!targetId) return;
+    const body = document.getElementById(targetId);
+    if(!body) return;
+    
+    body.classList.toggle('open');
+    this.classList.toggle('open');
+  });
+});
 </script>
 </body>
 </html>
