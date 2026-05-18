@@ -15,8 +15,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- Chart.js precargado: el navegador lo descarga en paralelo al HTML para que esté listo al necesitarse -->
 <link rel="preload" as="script" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" crossorigin="anonymous">
-<!-- Three.js precargado: usado por las flip cards de "Cómo trabajo". Preload en paralelo evita la espera al hacer scroll. -->
-<link rel="preload" as="script" href="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" crossorigin="anonymous">
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <!-- Primary Meta Tags -->
@@ -109,8 +107,10 @@
   --off:          #f7f7fa;
   --gray:         #e5e5e5;
   --ink:          #111111;
-  --muted:        #6e6e78;
-  --font:         'Plus Jakarta Sans', system-ui, sans-serif;
+  --muted:        #5a5a5a;
+  --muted-light:  #888888;
+  --font:         'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+  --mono:         'JetBrains Mono', monospace;
   --ease:         cubic-bezier(0.16,1,0.3,1);
 }
 
@@ -174,6 +174,11 @@ nav.scrolled { border-bottom-color: var(--gray); }
   transition: color .2s, background .2s;
 }
 .nav-links a:hover { color: var(--ink); background: var(--off); }
+.nav-links a:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 2px;
+  background: var(--off);
+}
 .nav-cta {
   background: var(--ink) !important;
   color: #c6ff00 !important;
@@ -211,6 +216,38 @@ nav.scrolled { border-bottom-color: var(--gray); }
 .nav-cta:hover .cta-text-wrap span:first-child { transform: translateY(-100%); }
 .nav-cta:hover .cta-text-wrap span:last-child { transform: translateY(0); }
 .nav-cta:hover { background: #c6ff00 !important; color: var(--ink) !important; }
+.nav-cta:focus-visible {
+  outline: 2px dashed var(--white) !important;
+  outline-offset: 2px !important;
+}
+
+/* ─── RESPONSIVE BASE — MOBILE FIRST ─── */
+@media (max-width: 640px) {
+  nav { height: 56px; padding: 0 clamp(1rem, 3vw, 1.5rem); }
+  .logo { font-size: 15px; }
+  .nav-links { gap: 2px; }
+  .nav-links a { font-size: 12px; padding: 4px 10px; }
+  .nav-cta { padding: 6px 20px !important; min-width: auto !important; font-size: 12px !important; }
+  
+  h1 { font-size: clamp(28px, 8vw, 48px); }
+  h2 { font-size: clamp(24px, 6vw, 40px); }
+  
+  .c { padding: 0 clamp(16px, 3vw, 24px); }
+}
+
+@media (max-width: 768px) {
+  nav { padding: 0 clamp(1rem, 4vw, 2rem); }
+  
+  h1 { font-size: clamp(32px, 9vw, 64px); }
+  h2 { font-size: clamp(24px, 6vw, 44px); }
+  
+  [class*="grid"] { grid-template-columns: 1fr; gap: clamp(24px, 6vw, 40px); }
+}
+
+@media (max-width: 1024px) {
+  .c { max-width: calc(100% - 40px); }
+  h1 { font-size: clamp(40px, 8vw, 80px); }
+}
 
 /* ─── HERO ─── */
 .hero {
@@ -593,7 +630,7 @@ nav.scrolled { border-bottom-color: var(--gray); }
 /* Cada sección lleva la línea divisora pegada al borde superior (sin padding-top).
    El aire visual queda balanceado: divider→contenido ≈ contenido→borde inferior. */
 section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
-.c { max-width: 1100px; margin: 0 auto; }
+.c { max-width: 1240px; margin: 0 auto; padding: 0 clamp(20px, 4vw, 48px); }
 
 .s-tag {
   display: inline-flex; align-items: center; gap: 8px;
@@ -3577,7 +3614,7 @@ const chartOpts = {
 
 
 
-<!-- ─── THREE.JS FLIP CARD SCENES — precargado en <head>, se ejecuta cuanto antes ─── -->
+<!-- ─── THREE.JS FLIP CARD SCENES — LAZY LOAD AL ACERCARSE ─── -->
 <script>
 (function(){
   var section = document.querySelector('.dph-section') || document.getElementById('approach');
@@ -3587,38 +3624,32 @@ const chartOpts = {
   function loadThreeAndInit() {
     if (loaded) return;
     loaded = true;
-    if (typeof THREE !== 'undefined') { initFlipScenes(); return; }
+    
+    function init() {
+      if (typeof THREE !== 'undefined') {
+        initFlipScenes();
+      }
+    }
+
+    if (typeof THREE !== 'undefined') {
+      init();
+      return;
+    }
+
     var s = document.createElement('script');
     s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
-    s.onload = function() { initFlipScenes(); };
+    s.async = true;
+    s.onload = init;
     document.body.appendChild(s);
   }
 
-  // Disparamos cuanto antes: gracias al preload en <head>, three.js ya está descargándose
-  // en paralelo. Lo inyectamos en cuanto el DOM esté listo para que el parseo + ejecución
-  // ocurra antes de llegar a la sección.
-  function kickoff() {
-    // Usamos requestIdleCallback si está disponible para no bloquear el hilo principal,
-    // con un fallback corto en setTimeout.
-    if ('requestIdleCallback' in window) {
-      requestIdleCallback(loadThreeAndInit, { timeout: 800 });
-    } else {
-      setTimeout(loadThreeAndInit, 300);
-    }
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', kickoff);
-  } else {
-    kickoff();
-  }
-
-  // Salvaguarda: si por alguna razón no se cargó antes, garantizamos init al llegar.
+  // Lazy load: solo cargar Three.js cuando usuario se acerca a la sección
   var observer = new IntersectionObserver(function(entries) {
     if (entries[0].isIntersecting) {
       loadThreeAndInit();
       observer.disconnect();
     }
-  }, { rootMargin: '300px' });
+  }, { rootMargin: '600px' });
   observer.observe(section);
 })();
 </script>
@@ -3695,6 +3726,29 @@ function initFlipScenes() {
     sp.position.set(x, y, z);
     scene.add(sp);
   }
+
+  // ─── GEOMETRY POOLING — Optimize memory & reduce GC pressure ───
+  const geoPool = {
+    box: new Map(),
+    sphere: null,
+    cone: new Map(),
+    cylinder: new Map(),
+    getBox: function(w, h, d) {
+      const key = w + ':' + h + ':' + d;
+      if (!this.box.has(key)) {
+        this.box.set(key, new THREE.BoxGeometry(w, h, d));
+      }
+      return this.box.get(key);
+    },
+    getSphere: function(r, segs) {
+      if (!this.sphere) this.sphere = new THREE.SphereGeometry(r || 0.07, segs || 8, segs || 8);
+      return this.sphere;
+    }
+  };
+
+  // ── CONDITIONAL SCENE LOADING — Skip Scene 0 on mobile ──
+  const isMobile = window.innerWidth < 768;
+  const shouldRenderScene0 = !isMobile;
 
   // ── FASE 01: Parcelas + signos de interrogación ──
   function buildScene0() {
@@ -3822,12 +3876,27 @@ function initFlipScenes() {
     renderer.render(scene, cam);
   }
 
-  // Init all — wait for DOM to be ready
+  // Init secuencial: renderizar cada escena una por una para no bloquear
   function initAll() {
-    buildScene0();
-    buildScene1();
-    buildScene2();
-    buildScene3();
+    const isMobile = window.innerWidth < 768;
+    
+    // Renderizar secuencialmente en RAF para no bloquear main thread
+    if (isMobile || !shouldRenderScene0) {
+      // Mobile: saltar scene 0, renderizar 1, 2, 3
+      requestAnimationFrame(() => buildScene1());
+      requestAnimationFrame(() => buildScene2());
+      requestAnimationFrame(() => buildScene3());
+    } else {
+      // Desktop: renderizar las 4
+      if (shouldRenderScene0) buildScene0();
+      requestAnimationFrame(() => {
+        buildScene1();
+        requestAnimationFrame(() => {
+          buildScene2();
+          requestAnimationFrame(() => buildScene3());
+        });
+      });
+    }
   }
 
   if (document.readyState === 'loading') {
