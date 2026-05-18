@@ -1199,7 +1199,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 .com-title em { color: var(--purple); font-style: normal; }
 .com-desc {
   font-size: 14px; color: var(--muted);
-  line-height: 1.75; margin-bottom: 32px;
+  line-height: 1.75; margin-bottom: 14px;
 }
 .com-cta {
   display: inline-flex; align-items: center; gap: 8px;
@@ -3158,34 +3158,30 @@ footer {
         <p class="com-desc">Comparto cada semana lo que aprendo sobre Power BI, DAX y Data Storytelling. Para la comunidad de datos en habla hispana.</p>
         
         <!-- Sección de posts + botón encuadrados -->
-        <div style="margin-top: 32px;">
-          <div style="font-size: 12px; color: #5a5a5a; margin-bottom: 12px; font-weight: 500;">Últimos posts publicados en LinkedIn</div>
+        <div style="margin-top: 0;">
+          <div style="font-size: 12px; color: #5a5a5a; margin-bottom: 10px; font-weight: 500;">Últimos posts publicados en LinkedIn</div>
           
-          <!-- Marco conjunto: posts + botón -->
-          <div style="display: flex; gap: 0; border: 1px solid #0a0a0a;">
-            
-            <!-- Posts stack vertical (izquierda) -->
-            <div style="flex: 1; display: flex; flex-direction: column; gap: 0; border-right: 1px solid #0a0a0a;">
-              <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7458166054264111104-Hov2" target="_blank" rel="noopener noreferrer" style="padding: 12px 16px; border-bottom: 1px solid #0a0a0a; text-decoration: none; font-size: 13px; font-weight: 700; color: #0a0a0a; transition: background 0.15s; display: flex; justify-content: space-between; align-items: center;" onclick="gtag('event', 'clic_recent_post', { post: '19' });">
-                Resaltar sin ocultar
-                <span style="font-size: 12px; margin-left: 8px;">↗</span>
-              </a>
-              <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-businessintelligence-activity-7452022964017008640-Z-VH" target="_blank" rel="noopener noreferrer" style="padding: 12px 16px; border-bottom: 1px solid #0a0a0a; text-decoration: none; font-size: 13px; font-weight: 700; color: #0a0a0a; transition: background 0.15s; display: flex; justify-content: space-between; align-items: center;" onclick="gtag('event', 'clic_recent_post', { post: '18' });">
-                KPI Card adaptativo
-                <span style="font-size: 12px; margin-left: 8px;">↗</span>
-              </a>
-              <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7442540385882554368-y4go" target="_blank" rel="noopener noreferrer" style="padding: 12px 16px; text-decoration: none; font-size: 13px; font-weight: 700; color: #0a0a0a; transition: background 0.15s; display: flex; justify-content: space-between; align-items: center;" onclick="gtag('event', 'clic_recent_post', { post: '17' });">
-                Tabla de análisis total
-                <span style="font-size: 12px; margin-left: 8px;">↗</span>
-              </a>
-            </div>
-            
-            <!-- Botón LinkedIn (derecha, encuadrado) -->
-            <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="com-cta" onclick="gtag('event', 'clic_linkedin', { location: 'comunidad' });" style="border-radius: 0px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 12px 20px; font-size: 13px; font-weight: 700; gap: 8px; border: none;">
-              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 18px; height: 18px;"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-              Ver perfil en LinkedIn
+          <!-- Posts stack vertical — caja propia -->
+          <div style="border: 1px solid #0a0a0a;">
+            <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7458166054264111104-Hov2" target="_blank" rel="noopener noreferrer" style="padding: 8px 14px; border-bottom: 1px solid #0a0a0a; text-decoration: none; font-size: 13px; font-weight: 700; color: #0a0a0a; transition: background 0.15s; display: flex; justify-content: space-between; align-items: center;" onmouseenter="this.style.background='#f7f7fa'" onmouseleave="this.style.background=''" onclick="gtag('event', 'clic_recent_post', { post: '19' });">
+              Resaltar sin ocultar
+              <span style="font-size: 12px; margin-left: 8px;">↗</span>
+            </a>
+            <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-businessintelligence-activity-7452022964017008640-Z-VH" target="_blank" rel="noopener noreferrer" style="padding: 8px 14px; border-bottom: 1px solid #0a0a0a; text-decoration: none; font-size: 13px; font-weight: 700; color: #0a0a0a; transition: background 0.15s; display: flex; justify-content: space-between; align-items: center;" onmouseenter="this.style.background='#f7f7fa'" onmouseleave="this.style.background=''" onclick="gtag('event', 'clic_recent_post', { post: '18' });">
+              KPI Card adaptativo
+              <span style="font-size: 12px; margin-left: 8px;">↗</span>
+            </a>
+            <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7442540385882554368-y4go" target="_blank" rel="noopener noreferrer" style="padding: 8px 14px; text-decoration: none; font-size: 13px; font-weight: 700; color: #0a0a0a; transition: background 0.15s; display: flex; justify-content: space-between; align-items: center;" onmouseenter="this.style.background='#f7f7fa'" onmouseleave="this.style.background=''" onclick="gtag('event', 'clic_recent_post', { post: '17' });">
+              Tabla de análisis total
+              <span style="font-size: 12px; margin-left: 8px;">↗</span>
             </a>
           </div>
+
+          <!-- Botón LinkedIn — separado, debajo -->
+          <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="com-cta" onclick="gtag('event', 'clic_linkedin', { location: 'comunidad' });" style="margin-top: 10px; border-radius: 0px; display: inline-flex; align-items: center; justify-content: center; padding: 9px 18px; font-size: 13px; font-weight: 700; gap: 8px; border: none;">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 16px; height: 16px;"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            Ver perfil en LinkedIn
+          </a>
         </div>
       </div>
 
