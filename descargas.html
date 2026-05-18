@@ -74,52 +74,40 @@ body{
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
   overflow-x:hidden;
-  padding-top:60px;
 }
 ::selection{background:var(--purple);color:#fff}
 
-/* ───────────── NAV ───────────── */
+/* ───────────── NAV (preservado del original) ───────────── */
 #nav{
-  position:fixed;top:0;width:100%;z-index:1000;
+  position:sticky;top:0;z-index:100;
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 clamp(1.5rem,5vw,4rem);height:60px;
-  background:rgba(255,255,255,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border-bottom:.5px solid transparent;transition:border-color .3s;
+  padding:0 clamp(1.5rem,4vw,3rem);height:60px;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(12px);
+  border-bottom:0.5px solid transparent;transition:border-color .3s;
 }
-#nav.scrolled{border-bottom-color:var(--gray)}
-.logo{font-size:17px;font-weight:700;color:var(--ink);text-decoration:none;letter-spacing:-.3px;display:flex;align-items:center;gap:7px}
-.logo-dot{width:7px;height:7px;border-radius:50%;background:var(--purple);animation:breathe 3s ease-in-out infinite}
-@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.5)}}
-#logoText:not(.done)::after{content:'|';color:var(--purple);font-weight:300;animation:blink .7s step-end infinite;margin-left:1px}
-#logoText.done::after{content:none;display:none}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.nav-links{display:flex;align-items:center;gap:2px}
-.nav-links a{font-size:13px;color:var(--muted);text-decoration:none;padding:6px 14px;border-radius:7px;font-weight:500;transition:color .2s,background .2s}
-.nav-links a:hover{color:var(--ink);background:var(--off)}
-.nav-links a:focus-visible{outline:2px solid var(--purple);outline-offset:2px;background:var(--off)}
+#nav.scrolled{border-color:var(--gray)}
+.logo{font-size:15px;font-weight:700;color:var(--ink);text-decoration:none;letter-spacing:-.3px}
+.logo-dot{color:var(--logo-purple)}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{font-size:13.5px;color:var(--muted);text-decoration:none;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--ink)}
+.nav-links a.active{color:var(--ink);font-weight:700}
 a.nav-cta,
 .nav-links a.nav-cta{
-  font-size:13px!important;font-weight:600!important;letter-spacing:.3px!important;text-transform:uppercase!important;
-  background:var(--ink)!important;color:#c6ff00!important;
-  padding:12px 28px!important;border-radius:0!important;
-  text-decoration:none!important;display:inline-flex!important;
-  align-items:center!important;justify-content:center!important;
-  min-width:180px!important;text-align:center!important;
-  overflow:hidden!important;transition:background .25s cubic-bezier(.16,1,.3,1)!important;
+  font-size:13px;font-weight:700;
+  background:#111;color:#c6ff00;
+  padding:8px 28px;border-radius:8px;
+  text-decoration:none;display:inline-block;
+  min-width:150px;text-align:center;
 }
-.nav-cta .cta-text-wrap{display:grid;grid-template-columns:1fr;position:relative;height:1.2em;overflow:hidden}
-.nav-cta .cta-text-wrap span{display:block;white-space:nowrap;line-height:1.2em;text-align:center;transition:transform .3s cubic-bezier(.16,1,.3,1);grid-column:1;grid-row:1}
-.nav-cta .cta-text-wrap span:last-child{transform:translateY(100%)}
+a.nav-cta:hover,
+.nav-links a.nav-cta:hover{color:#c6ff00;background:#111}
+.nav-cta .cta-text-wrap span{color:#c6ff00}
+.nav-cta .cta-text-wrap{display:block;position:relative;height:1.2em;overflow:hidden}
+.nav-cta .cta-text-wrap span{display:block;white-space:nowrap;line-height:1.2em;text-align:center;transition:transform .3s cubic-bezier(.16,1,.3,1)}
+.nav-cta .cta-text-wrap span:last-child{position:absolute;top:0;left:0;right:0;transform:translateY(100%)}
 .nav-cta:hover .cta-text-wrap span:first-child{transform:translateY(-100%)}
 .nav-cta:hover .cta-text-wrap span:last-child{transform:translateY(0)}
-a.nav-cta:hover,.nav-links a.nav-cta:hover{background:#c6ff00!important;color:var(--ink)!important}
-.nav-cta:focus-visible{outline:2px dashed var(--white)!important;outline-offset:2px!important}
-.btn{text-transform:uppercase;letter-spacing:.3px}
-/* purple underline on hover/active */
-.nav-links a:not(.nav-cta){position:relative;padding-bottom:7px}
-.nav-links a:not(.nav-cta)::after{content:'';position:absolute;bottom:0;left:50%;width:0;height:2px;background:var(--purple);border-radius:2px;transform:translateX(-50%);transition:width .22s cubic-bezier(.16,1,.3,1)}
-.nav-links a:not(.nav-cta):hover::after,.nav-links a:not(.nav-cta).active::after{width:calc(100% - 28px)}
-@media(min-width:700px){.nav-links a:not(.nav-cta){display:inline-flex!important}}
 
 /* ───────────── CONTAINERS ───────────── */
 .shell{
@@ -656,14 +644,14 @@ footer{background:var(--paper);padding:0;border-top:.5px solid var(--gray)}
 
 <!-- ─────────── NAV ─────────── -->
 <nav id="nav" aria-label="Navegación principal">
-  <a href="./index.html" class="logo" aria-label="Borja Mora — Inicio"><span id="logoText"></span><span class="logo-dot"></span></a>
+  <a href="./index.html" class="logo">Borja Mora<span class="logo-dot">.</span></a>
   <div class="nav-links">
     <a href="./index.html">Inicio</a>
     <a href="./sobre-mi.html">Sobre mí</a>
     <a href="./proyectos.html">Proyectos</a>
     <a href="./descargas.html" class="active" aria-current="page">Descargas</a>
-    <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event', 'clic_linkedin', { location: 'nav' });">LinkedIn</a>
-    <a id="navEmailBtn" href="#" target="_blank" rel="noopener noreferrer" class="nav-cta btn" onclick="gtag('event', 'clic_email', { location: 'nav' });"><span class="cta-text-wrap"><span>Contacto</span><span>¿Hablamos?</span></span></a>
+    <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+    <a href="mailto:borja.mora.mendez@gmail.com" class="nav-cta"><span class="cta-text-wrap"><span>Contacto</span><span>¿Hablamos?</span></span></a>
   </div>
 </nav>
 
@@ -692,11 +680,11 @@ footer{background:var(--paper);padding:0;border-top:.5px solid var(--gray)}
   <div class="seg" role="group" aria-label="Filtrar por categoría">
     <div class="seg-list">
       <div class="seg-pill" id="seg-pill"></div>
-      <button class="seg-btn is-active" data-filter="all" aria-pressed="true">Todos<span class="count">17</span></button>
-      <button class="seg-btn" data-filter="gestion" aria-pressed="false">Gestión de proyectos<span class="count">3</span></button>
-      <button class="seg-btn" data-filter="ventas" aria-pressed="false">Ventas y análisis comercial<span class="count">9</span></button>
-      <button class="seg-btn" data-filter="storytelling" aria-pressed="false">Data Storytelling<span class="count">3</span></button>
-      <button class="seg-btn" data-filter="slicer" aria-pressed="false">Input Slicer<span class="count">2</span></button>
+      <button class="seg-btn is-active" data-filter="all" aria-pressed="true">Todos<span class="count">19</span></button>
+      <button class="seg-btn" data-filter="gestion" aria-pressed="false">Gestión de proyectos<span class="count">4</span></button>
+      <button class="seg-btn" data-filter="ventas" aria-pressed="false">Ventas y análisis comercial<span class="count">5</span></button>
+      <button class="seg-btn" data-filter="storytelling" aria-pressed="false">Data Storytelling<span class="count">5</span></button>
+      <button class="seg-btn" data-filter="slicer" aria-pressed="false">Input Slicer<span class="count">4</span></button>
     </div>
     <div class="seg-counter"><b id="seg-visible">17</b> / 17 archivos</div>
   </div>
@@ -755,9 +743,9 @@ const ITEMS = [
     tags:["Gantt","DAX","Dates"],
     dl:"https://drive.google.com/drive/folders/1eqAyIHQhUbKxp6RqXabTnFy99xaUE60J?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7414924088876187650-L7pQ"},
-  {n:"02", cat:"ventas", title:"Dashboard de Ventas — v2", subtitle:"Estructura limpia de análisis",
-    desc:"Segmentación por cliente, producto, período. Filtros en cascada, KPIs con variación y tabla de detalle con scroll infinito. Todo conectado mediante DAX.",
-    tags:["KPI","Variación","Sales funnel"],
+  {n:"02", cat:"gestion", title:"Control de presupuestos", subtitle:"Top N nativo · concentración real en segundos",
+    desc:"Detecta dónde se concentra la inversión antes de que sea tarde. Lógica Top N (1, 3 o 5 proyectos), narrativa automática con DAX y visualización del peso real de cada partida sin ruido.",
+    tags:["Top N dinámico","Budget","DAX narrativo"],
     dl:"https://drive.google.com/drive/folders/1Ixn1LBLzp8I3UxZD6O0g0jzXQ7SLm1TZ?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-salesanalytics-activity-7418539287245639680-0Ynp"},
   {n:"03", cat:"ventas", title:"Análisis de Cohort", subtitle:"Retención y evolución",
@@ -825,16 +813,26 @@ const ITEMS = [
     tags:["Slope chart","Small multiples","DAX"],
     dl:"https://drive.google.com/drive/folders/1CVcug_-gF6urL1bz9dorhZIpV0t17bm-?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7439647400132116480-1PFW"},
-  {n:"16", cat:"slicer", title:"Input Slicer I", subtitle:"No filtras datos, eliges qué historia ver",
-    desc:"Input Slicer + Field Parameter + DAX trabajando juntos. Define el contexto escribiendo, cambia el ángulo eligiendo métricas y todo se recalcula.",
-    tags:["Input Slicer","Field Parameters","DAX"],
+  {n:"16", cat:"slicer", title:"Tabla de análisis total", subtitle:"Tú decides qué datos entran, qué métricas y cómo se interpretan",
+    desc:"Una tabla donde el usuario escribe el contexto, elige sus métricas y todo se recalcula para mantener coherencia. Input Slicer + Field Parameter + DAX. Sin cambiar de página.",
+    tags:["Field Parameters","Input Slicer","DAX"],
     dl:"https://drive.google.com/drive/folders/1jUdeMz4ziWdyBJiKA48-JYqUdO_JqZp4?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7440740082766086144-4VZm"},
-  {n:"17", cat:"slicer", title:"Input Slicer II", subtitle:"Top N, métricas y títulos en un solo sitio",
-    desc:"Todas las decisiones centralizadas: Top N de clientes, filtro por país, gráfico que destaca automáticamente y títulos que cambian con la selección.",
+  {n:"17", cat:"slicer", title:"Explorador de ventas por cliente", subtitle:"Top N · filtro por país · títulos que reaccionan",
+    desc:"Centraliza todas las decisiones en un solo sitio: elige cuántos clientes ver, filtra por país y el gráfico destaca automáticamente el Top seleccionado con títulos que cambian solos.",
     tags:["Top N dinámico","Títulos dinámicos","Storytelling"],
     dl:"https://drive.google.com/drive/folders/1l5ewaopHRJJlwrhoGSZamUSy_TiMGhH-?usp=drive_link",
-    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7442540385882554368-y4go"}
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7442540385882554368-y4go"},
+  {n:"18", cat:"slicer", title:"KPI Card adaptativo", subtitle:"El usuario elige qué KPI ver, tú diseñas el sistema",
+    desc:"Ya no diseñas un KPI fijo. El usuario escribe su métrica (ventas, margen, ticket medio) y el modelo traduce, calcula y ajusta el formato solo. Todo nativo, sin código.",
+    tags:["Input Slicer","KPI dinámico","DAX"],
+    dl:"",
+    li:""},
+  {n:"19", cat:"slicer", title:"Resaltar sin ocultar", subtitle:"Filtrar destruye contexto · resaltar lo mantiene",
+    desc:"Escribes España y los clientes españoles cobran vida — el resto no desaparece, se aparta. Sigues viendo el negocio completo. Input Slicer + DAX + Formato Condicional.",
+    tags:["Input Slicer","Formato condicional","Contexto"],
+    dl:"",
+    li:""}
 ];
 
 const ICON_EXT = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"/><path d="M9 7h8v8"/></svg>';
@@ -891,16 +889,13 @@ function render(){
   const grid = document.getElementById('grid');
   let html = ITEMS.map((it, idx) => moduleHtml(it, idx)).join("");
   
-  // rellenar la última fila si quedan huecos
+  // rellenar la última fila si quedan huecos (máx 1 card "En desarrollo")
   const total = ITEMS.length;
   const cols = 3;
   const remainder = total % cols;
   if(remainder !== 0){
-    const empty = cols - remainder;
-    for(let i=0;i<empty;i++){
-      const next = String(total + 1 + i).padStart(2,"0");
-      html += soonHtml(next);
-    }
+    const next = String(total + 1).padStart(2,"0");
+    html += soonHtml(next);
   }
   grid.innerHTML = html;
 
@@ -1118,36 +1113,5 @@ function observeCierre(){
 }
 observeCierre();
 </script>
-
-<script>
-// ─── TYPING EFFECT (logo) ───
-(function(){
-  const el = document.getElementById('logoText');
-  if (!el) return;
-  const text = 'Borja Mora';
-  let i = 0;
-  function type() {
-    if (i < text.length) {
-      el.textContent += text[i];
-      i++;
-      setTimeout(type, i === 1 ? 300 : 80 + Math.random() * 40);
-    } else {
-      setTimeout(() => el.classList.add('done'), 1200);
-    }
-  }
-  setTimeout(type, 400);
-})();
-
-// ─── NAV EMAIL ───
-(function(){
-  var su = encodeURIComponent('Oportunidad laboral');
-  var body = encodeURIComponent('Hola, me gustaría hablar contigo sobre una posible oportunidad.');
-  var e = atob('Ym9yamEubW9yYS5tZW5kZXpAZ21haWwuY29t');
-  var url = 'https://mail.google.com/mail/u/0/?fs=1&to=' + e + '&su=' + su + '&body=' + body + '&tf=cm';
-  var nav = document.getElementById('navEmailBtn');
-  if (nav) nav.href = url;
-})();
-</script>
-
 </body>
 </html>
