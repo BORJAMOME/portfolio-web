@@ -1746,6 +1746,33 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   margin-right: auto;
 }
 
+/* ── FLIP INTERACTION HINT ── */
+.flip-interaction-hint {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.flip-interaction-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  font-weight: 400;
+  letter-spacing: .08em;
+  color: var(--muted);
+  text-transform: none;
+}
+.flip-interaction-arrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--purple);
+  animation: hint-nudge 1.6s ease-in-out infinite;
+}
+@keyframes hint-nudge {
+  0%, 100% { transform: translateX(0); }
+  50%       { transform: translateX(5px); }
+}
+
 /* ── FLIP GRID ── */
 .flip-grid {
   display: grid;
@@ -2581,6 +2608,12 @@ footer {
       <div class="s-tag" style="opacity: 0"></div>
       <h2 class="s-h">Cuatro pasos para<br><em>decidir mejor.</em></h2>
       <p class="s-sub">La mayoría de los dashboards empiezan por la herramienta.<br>El mío empieza por la pregunta.</p>
+    </div>
+
+    <!-- Hint de interacción -->
+    <div class="flip-interaction-hint">
+      <span class="flip-interaction-text">Pasa el cursor para descubrir cada fase</span>
+      <span class="flip-interaction-arrow">→</span>
     </div>
 
     <!-- Grid de 4 flip cards -->
