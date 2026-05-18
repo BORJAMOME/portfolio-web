@@ -74,40 +74,52 @@ body{
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
   overflow-x:hidden;
+  padding-top:60px;
 }
 ::selection{background:var(--purple);color:#fff}
 
-/* ───────────── NAV (preservado del original) ───────────── */
+/* ───────────── NAV ───────────── */
 #nav{
-  position:sticky;top:0;z-index:100;
+  position:fixed;top:0;width:100%;z-index:1000;
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 clamp(1.5rem,4vw,3rem);height:60px;
-  background:rgba(255,255,255,.92);backdrop-filter:blur(12px);
-  border-bottom:0.5px solid transparent;transition:border-color .3s;
+  padding:0 clamp(1.5rem,5vw,4rem);height:60px;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:.5px solid transparent;transition:border-color .3s;
 }
-#nav.scrolled{border-color:var(--gray)}
-.logo{font-size:15px;font-weight:700;color:var(--ink);text-decoration:none;letter-spacing:-.3px}
-.logo-dot{color:var(--logo-purple)}
-.nav-links{display:flex;align-items:center;gap:28px}
-.nav-links a{font-size:13.5px;color:var(--muted);text-decoration:none;font-weight:500;transition:color .2s}
-.nav-links a:hover{color:var(--ink)}
-.nav-links a.active{color:var(--ink);font-weight:700}
+#nav.scrolled{border-bottom-color:var(--gray)}
+.logo{font-size:17px;font-weight:700;color:var(--ink);text-decoration:none;letter-spacing:-.3px;display:flex;align-items:center;gap:7px}
+.logo-dot{width:7px;height:7px;border-radius:50%;background:var(--purple);animation:breathe 3s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.5)}}
+#logoText:not(.done)::after{content:'|';color:var(--purple);font-weight:300;animation:blink .7s step-end infinite;margin-left:1px}
+#logoText.done::after{content:none;display:none}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-links a{font-size:13px;color:var(--muted);text-decoration:none;padding:6px 14px;border-radius:7px;font-weight:500;transition:color .2s,background .2s}
+.nav-links a:hover{color:var(--ink);background:var(--off)}
+.nav-links a:focus-visible{outline:2px solid var(--purple);outline-offset:2px;background:var(--off)}
 a.nav-cta,
 .nav-links a.nav-cta{
-  font-size:13px;font-weight:700;
-  background:#111;color:#c6ff00;
-  padding:8px 28px;border-radius:8px;
-  text-decoration:none;display:inline-block;
-  min-width:150px;text-align:center;
+  font-size:13px!important;font-weight:600!important;letter-spacing:.3px!important;text-transform:uppercase!important;
+  background:var(--ink)!important;color:#c6ff00!important;
+  padding:12px 28px!important;border-radius:0!important;
+  text-decoration:none!important;display:inline-flex!important;
+  align-items:center!important;justify-content:center!important;
+  min-width:180px!important;text-align:center!important;
+  overflow:hidden!important;transition:background .25s cubic-bezier(.16,1,.3,1)!important;
 }
-a.nav-cta:hover,
-.nav-links a.nav-cta:hover{color:#c6ff00;background:#111}
-.nav-cta .cta-text-wrap span{color:#c6ff00}
-.nav-cta .cta-text-wrap{display:block;position:relative;height:1.2em;overflow:hidden}
-.nav-cta .cta-text-wrap span{display:block;white-space:nowrap;line-height:1.2em;text-align:center;transition:transform .3s cubic-bezier(.16,1,.3,1)}
-.nav-cta .cta-text-wrap span:last-child{position:absolute;top:0;left:0;right:0;transform:translateY(100%)}
+.nav-cta .cta-text-wrap{display:grid;grid-template-columns:1fr;position:relative;height:1.2em;overflow:hidden}
+.nav-cta .cta-text-wrap span{display:block;white-space:nowrap;line-height:1.2em;text-align:center;transition:transform .3s cubic-bezier(.16,1,.3,1);grid-column:1;grid-row:1}
+.nav-cta .cta-text-wrap span:last-child{transform:translateY(100%)}
 .nav-cta:hover .cta-text-wrap span:first-child{transform:translateY(-100%)}
 .nav-cta:hover .cta-text-wrap span:last-child{transform:translateY(0)}
+a.nav-cta:hover,.nav-links a.nav-cta:hover{background:#c6ff00!important;color:var(--ink)!important}
+.nav-cta:focus-visible{outline:2px dashed var(--white)!important;outline-offset:2px!important}
+.btn{text-transform:uppercase;letter-spacing:.3px}
+/* purple underline on hover/active */
+.nav-links a:not(.nav-cta){position:relative;padding-bottom:7px}
+.nav-links a:not(.nav-cta)::after{content:'';position:absolute;bottom:0;left:50%;width:0;height:2px;background:var(--purple);border-radius:2px;transform:translateX(-50%);transition:width .22s cubic-bezier(.16,1,.3,1)}
+.nav-links a:not(.nav-cta):hover::after,.nav-links a:not(.nav-cta).active::after{width:calc(100% - 28px)}
+@media(min-width:700px){.nav-links a:not(.nav-cta){display:inline-flex!important}}
 
 /* ───────────── CONTAINERS ───────────── */
 .shell{
@@ -644,14 +656,14 @@ footer{background:var(--paper);padding:0;border-top:.5px solid var(--gray)}
 
 <!-- ─────────── NAV ─────────── -->
 <nav id="nav" aria-label="Navegación principal">
-  <a href="./index.html" class="logo">Borja Mora<span class="logo-dot">.</span></a>
+  <a href="./index.html" class="logo" aria-label="Borja Mora — Inicio"><span id="logoText"></span><span class="logo-dot"></span></a>
   <div class="nav-links">
     <a href="./index.html">Inicio</a>
     <a href="./sobre-mi.html">Sobre mí</a>
     <a href="./proyectos.html">Proyectos</a>
     <a href="./descargas.html" class="active" aria-current="page">Descargas</a>
-    <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-    <a href="mailto:borja.mora.mendez@gmail.com" class="nav-cta"><span class="cta-text-wrap"><span>Contacto</span><span>¿Hablamos?</span></span></a>
+    <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event', 'clic_linkedin', { location: 'nav' });">LinkedIn</a>
+    <a id="navEmailBtn" href="#" target="_blank" rel="noopener noreferrer" class="nav-cta btn" onclick="gtag('event', 'clic_email', { location: 'nav' });"><span class="cta-text-wrap"><span>Contacto</span><span>¿Hablamos?</span></span></a>
   </div>
 </nav>
 
@@ -1106,5 +1118,36 @@ function observeCierre(){
 }
 observeCierre();
 </script>
+
+<script>
+// ─── TYPING EFFECT (logo) ───
+(function(){
+  const el = document.getElementById('logoText');
+  if (!el) return;
+  const text = 'Borja Mora';
+  let i = 0;
+  function type() {
+    if (i < text.length) {
+      el.textContent += text[i];
+      i++;
+      setTimeout(type, i === 1 ? 300 : 80 + Math.random() * 40);
+    } else {
+      setTimeout(() => el.classList.add('done'), 1200);
+    }
+  }
+  setTimeout(type, 400);
+})();
+
+// ─── NAV EMAIL ───
+(function(){
+  var su = encodeURIComponent('Oportunidad laboral');
+  var body = encodeURIComponent('Hola, me gustaría hablar contigo sobre una posible oportunidad.');
+  var e = atob('Ym9yamEubW9yYS5tZW5kZXpAZ21haWwuY29t');
+  var url = 'https://mail.google.com/mail/u/0/?fs=1&to=' + e + '&su=' + su + '&body=' + body + '&tf=cm';
+  var nav = document.getElementById('navEmailBtn');
+  if (nav) nav.href = url;
+})();
+</script>
+
 </body>
 </html>
