@@ -3454,16 +3454,16 @@ if(comSection){
             const p = Math.min((now - start) / duration, 1);
             const ease = 1 - Math.pow(1 - p, 4);
             const val = Math.round(ease * target);
-            if(target === 2674) el.textContent = val.toLocaleString('es-ES');
+            if(target === 2877) el.textContent = val.toLocaleString('es-ES');
             else el.textContent = (val >= 1000 ? Math.round(val/1000)+'K' : val);
             if(p < 1) requestAnimationFrame(update);
-            else el.textContent = target === 2674 ? '2.674' : target === 28000 ? '28K' : '192K';
+            else el.textContent = target === 2877 ? '2.877' : target === 28000 ? '28K' : '192K';
           }
           requestAnimationFrame(update);
         }
 
         const cardData = [
-          { card: cards[0], target: 2674 },
+          { card: cards[0], target: 2877 },
           { card: cards[1], target: 28000 },
           { card: cards[2], target: 192000 },
         ];
