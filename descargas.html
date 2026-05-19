@@ -8,6 +8,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
 <link rel="shortcut icon" href="./favicon.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#7a7bff">
 <title>Descargas · Borja Mora Méndez</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,6 +39,7 @@
 <meta property="og:image" content="https://borjamora.es/img/og-descargas.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Descargas Power BI — Archivos .pbix gratuitos de Borja Mora">
 <meta property="og:site_name" content="Borja Mora">
 
 <!-- Twitter Card -->
@@ -53,7 +55,7 @@
   --rule:#0a0a0a;
   --muted:#5a5a5a;
   --muted-light:#888888;
-  --mutedB:#8a8a8a;
+  --mutedB:var(--muted-light); /* alias — mismo valor que --muted-light */
   --off:#f7f7fa;
   --purple:#7a7bff;
   --purple2:#5a5be0;
@@ -87,7 +89,7 @@ body{
 
 /* ───────────── NAV ───────────── */
 #nav {
-  position: sticky;
+  position: fixed;
   top: 0; width: 100%;
   z-index: 1000;
   padding: 0 clamp(1.5rem,5vw,4rem);
@@ -225,7 +227,7 @@ body{
 
 /* ───────────── HERO CON ENTRADA ORQUESTADA ───────────── */
 .hero{
-  padding:72px 0 64px;
+  padding:132px 0 64px;
   display:flex;
   flex-direction:column;
   align-items:flex-start;
@@ -244,6 +246,8 @@ body{
   line-height:1;
   color:var(--ink);
   white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+  font-feature-settings:"tnum" 1;
   animation:heroH1 .4s var(--ease) .08s both;
 }
 .hero-h1 .dot{color:var(--purple)}
@@ -258,11 +262,13 @@ body{
   background:#111111;
   border-radius:0;
   vertical-align:middle;
-  font-size:clamp(36px,5.5vw,58px);
-  line-height:1;
-  color:#c6ff00;
-  font-weight:400;
   user-select:none;
+  flex-shrink:0;
+}
+.dl-badge svg{
+  width:clamp(22px,3.5vw,36px);
+  height:clamp(28px,4.5vw,46px);
+  display:block;
 }
 
 /* Subtexto: entra 140ms después */
@@ -903,7 +909,7 @@ footer {
 
   <!-- Hero -->
   <header class="hero" id="main-content">
-    <h1 class="hero-h1">Archivos .pbix<span class="dl-badge" aria-hidden="true">↓</span></h1>
+    <h1 class="hero-h1">Archivos .pbix<span class="dl-badge" aria-hidden="true"><svg viewBox="0 0 36 46" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="18" y1="2" x2="18" y2="36" stroke="#c6ff00" stroke-width="3" stroke-linecap="square"/><polyline points="6,26 18,40 30,26" stroke="#c6ff00" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter" fill="none"/></svg></span></h1>
     <p class="hero-sub">Proyectos desarrollados y compartidos en LinkedIn. Descarga el archivo, explora el modelo de datos y úsalo como referencia para tus propios desarrollos en Power BI.</p>
     <div class="hero-stats" aria-hidden="true">
       <div class="hero-stat">
@@ -1284,7 +1290,20 @@ function applyFilter(filter){
 
 // ────────────── INIT ──────────────
 render();
-applyFilter('all');
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  const catParam = params.get('cat') || 'all';
+  const targetBtn = document.querySelector(`.seg-btn[data-filter="${catParam}"]`);
+  if(targetBtn && catParam !== 'all'){
+    document.querySelectorAll('.seg-btn').forEach(b=>{
+      b.classList.remove('is-active');
+      b.setAttribute('aria-pressed','false');
+    });
+    targetBtn.classList.add('is-active');
+    targetBtn.setAttribute('aria-pressed','true');
+  }
+  applyFilter(catParam);
+})();
 
 // ────────────── PILL INDICATOR ──────────────
 function updatePillIndicator(){
@@ -1343,8 +1362,14 @@ document.querySelectorAll('.seg-btn').forEach(btn=>{
     });
     btn.classList.add('is-active');
     btn.setAttribute('aria-pressed','true');
-    applyFilter(btn.dataset.filter);
+    const f = btn.dataset.filter;
+    applyFilter(f);
     updatePillIndicator();
+    /* ── Estado URL: ?cat=dax o quitar param si es "all" ── */
+    const url = new URL(window.location);
+    if(f === 'all'){ url.searchParams.delete('cat'); }
+    else           { url.searchParams.set('cat', f); }
+    history.pushState({cat: f}, '', url);
   });
 });
 
