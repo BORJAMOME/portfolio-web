@@ -9,7 +9,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
 <link rel="shortcut icon" href="./favicon.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Borja Mora — Arquitectura del dato · Power BI · Data Storytelling · Madrid</title>
+<meta name="theme-color" content="#7a7bff">
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -346,6 +346,8 @@ nav.scrolled { border-bottom-color: #111111; }
   letter-spacing: -2.5px;
   color: var(--ink);
   margin-bottom: 28px;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
   opacity: 0; animation: fadeUp .8s .18s var(--ease) forwards;
 }
 
@@ -1298,6 +1300,8 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   font-size: clamp(40px, 4vw, 54px); font-weight: 700;
   color: var(--ink); letter-spacing: -0.04em;
   line-height: 1; margin-bottom: 12px;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
 }
 .com-card--3 .com-card-num { color: #fff; }
 
@@ -1783,6 +1787,12 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   .stat-card { border-right:none; border-bottom:1px solid #111111; }
   .nav-links a:not(.nav-cta) { display:none; }
   footer { flex-direction:column; text-align:center; }
+}
+
+/* ─── HERO — pantallas muy pequeñas (iPhone SE, etc.) ─── */
+@media (max-width: 480px) {
+  .hero-inner { grid-template-columns: 1fr; }
+  .hero-right  { display: none; }
 }
 
 /* ─── CÓMO TRABAJO · FLIP CARDS ─── */
@@ -2825,8 +2835,6 @@ footer {
 </section>
 
 
-<!-- ─── PROJECTS
-
 <!-- ─── PROJECTS — gris ─── -->
 <section class="proj-section" id="projects">
   <div class="c">
@@ -3376,7 +3384,7 @@ footer {
           <p>Hoy diseño dashboards centrados en claridad, contexto y toma de decisiones reales, combinando <strong>análisis de datos, UX y Data Storytelling</strong> para convertir información compleja en algo que cualquiera pueda entender en segundos.</p>
         </div>
 
-        <a href="#about" class="abm-cta">
+        <a href="./sobre-mi.html" class="abm-cta">
           Saber más de mí
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
@@ -3398,7 +3406,7 @@ footer {
 <section class="cta-final" id="cta">
   <div class="c">
     <div class="section-divider">
-      <span class="section-divider-num" style="font-size: 12px">06</span>
+      <span class="section-divider-num" style="font-size: 12px">07</span>
       <span class="section-divider-label" style="font-size: 12px">- CONTACTO</span>
     </div>
     <div class="cta-final-inner sr">
