@@ -9,6 +9,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
 <link rel="shortcut icon" href="./favicon.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#7a7bff">
 <title>Sobre mí — Borja Mora Méndez</title>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PSDM6B5Z7"></script>
@@ -115,7 +116,7 @@ body {
 
 /* ─── NAV ─── */
 #nav {
-  position: sticky;
+  position: fixed;
   top: 0; width: 100%;
   z-index: 1000;
   padding: 0 clamp(1.5rem,5vw,4rem);
@@ -384,7 +385,10 @@ body {
 }
 
 .tl-progress { display: none; }
-.tl-row { display: contents; }
+.tl-row {
+  display: contents;
+  scroll-margin-top: 80px; /* compensa nav fixed 60px + 20px de aire */
+}
 
 /* COLUMNA IZQUIERDA 25% — ETIQUETAS */
 .tl-label-col {
@@ -412,7 +416,23 @@ body {
   margin: 0;
   position: relative;
   text-transform: capitalize;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
+
+/* Ancla deeplink — visible en hover del label-col */
+.tl-label-anchor {
+  display: inline-flex;
+  align-items: center;
+  color: var(--purple);
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity .2s ease;
+  flex-shrink: 0;
+}
+.tl-label-col:hover .tl-label-anchor { opacity: 1; }
+.tl-label-anchor svg { width: 14px; height: 14px; display: block; }
 
 .tl-label::after { display: none; }
 .tl-dot { display: none; }
@@ -717,7 +737,7 @@ footer {
       <!-- PASADO -->
       <div class="tl-row" id="tl-pasado">
         <div class="tl-label-col sr" data-num="01">
-          <span class="tl-label">Pasado</span>
+          <span class="tl-label">Pasado<a href="#tl-pasado" class="tl-label-anchor" aria-label="Enlace directo a Pasado"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 2H3a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1V9M10 1h5m0 0v5m0-5L7 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a></span>
         </div>
         <div class="tl-dot" id="dot-pasado"></div>
         <div class="tl-body sr sr-d1" id="body-pasado">
@@ -737,7 +757,7 @@ footer {
       <!-- PRESENTE -->
       <div class="tl-row" id="tl-presente">
         <div class="tl-label-col sr" data-num="02">
-          <span class="tl-label">Presente</span>
+          <span class="tl-label">Presente<a href="#tl-presente" class="tl-label-anchor" aria-label="Enlace directo a Presente"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 2H3a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1V9M10 1h5m0 0v5m0-5L7 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a></span>
         </div>
         <div class="tl-dot" id="dot-presente"></div>
         <div class="tl-body sr sr-d1" id="body-presente">
@@ -753,7 +773,7 @@ footer {
       <!-- FUTURO -->
       <div class="tl-row" id="tl-futuro">
         <div class="tl-label-col sr" data-num="03">
-          <span class="tl-label">Futuro</span>
+          <span class="tl-label">Futuro<a href="#tl-futuro" class="tl-label-anchor" aria-label="Enlace directo a Futuro"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 2H3a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1V9M10 1h5m0 0v5m0-5L7 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a></span>
         </div>
         <div class="tl-dot" id="dot-futuro"></div>
         <div class="tl-body sr sr-d1" id="body-futuro">
@@ -870,14 +890,14 @@ window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY
 })();
 
 // ─── NAV EMAIL ───
-(function(){
+document.addEventListener('DOMContentLoaded', function(){
   var su = encodeURIComponent('Oportunidad laboral');
   var body = encodeURIComponent('Hola, me gustaría hablar contigo sobre una posible oportunidad.');
   var e = atob('Ym9yamEubW9yYS5tZW5kZXpAZ21haWwuY29t');
   var url = 'https://mail.google.com/mail/u/0/?fs=1&to=' + e + '&su=' + su + '&body=' + body + '&tf=cm';
   var nav = document.getElementById('navEmailBtn');
   if (nav) nav.href = url;
-})();
+});
 </script>
 
 </body>
