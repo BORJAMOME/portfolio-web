@@ -382,6 +382,11 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);-webkit-fo
 .maps-card .viz-card-content{display:none}
 .maps-card .viz-card-footer{padding:12px 22px 8px;display:flex;flex-direction:column;gap:0;justify-content:flex-start;background:var(--paper);border:0;overflow:auto;transition:background .18s var(--ease)}
 .maps-card:hover .viz-card-footer{background:#111}
+.maps-card:hover .viz-card-title{color:#c6ff00}
+.maps-card:hover .viz-card-desc{color:rgba(255,255,255,.75)}
+.maps-card:hover .viz-card-tags span{border-color:rgba(255,255,255,.4);color:rgba(255,255,255,.8)}
+.maps-card:hover .viz-card-link{color:#c6ff00;border-top-color:rgba(255,255,255,.15)}
+.maps-card:hover .viz-card-link::after{transform:translateX(4px)}
 .viz-card-bg{position:relative!important;inset:auto!important;width:100%!important;height:200px!important;object-fit:cover;object-position:center;border-bottom:1px solid var(--rule);transition:transform .25s}
 .viz-card:hover .viz-card-bg{transform:none}
 .viz-card-overlay{display:none}
@@ -1149,62 +1154,116 @@ document.querySelectorAll('.sec-nav a,.sec-nav button').forEach(a=>{
 // Inicializar Power BI como sección activa por defecto
 showSection('powerbi');
 
-// ── OUTER CAROUSEL — INFINITE ──
+// ── OUTER CAROUSEL — TRUE INFINITE (clone-based) ──
 (function(){
   const track = document.getElementById('pcoTrack');
-  const dots = document.querySelectorAll('.pco-dot');
+  if(!track) return;
   const TOTAL = 6;
+  const CLONES = 3; // clones en cada extremo (= cards visibles simultáneamente)
+  const EASING = 'transform .5s cubic-bezier(0.16,1,0.3,1)';
+
+  // ── 1. Clonar slides ──────────────────────────────────────────
+  const originals = Array.from(track.querySelectorAll('.proj-card'));
+
+  // Clones del FINAL al principio (para poder ir hacia atrás desde card 0)
+  for(let i = CLONES - 1; i >= 0; i--){
+    const c = originals[TOTAL - 1 - i].cloneNode(true);
+    c.setAttribute('aria-hidden','true');
+    c.removeAttribute('id');
+    track.insertBefore(c, track.firstChild);
+  }
+  // Clones del INICIO al final (para poder ir hacia adelante desde card TOTAL-1)
+  for(let i = 0; i < CLONES; i++){
+    const c = originals[i].cloneNode(true);
+    c.setAttribute('aria-hidden','true');
+    c.removeAttribute('id');
+    track.appendChild(c);
+  }
+
+  // ── 2. Estado interno ─────────────────────────────────────────
+  // trackPos: posición real dentro del track extendido (0 = primer clon)
+  // cur: índice lógico del slide real (0-5)
+  let trackPos = CLONES; // empezamos en el primer slide real
   let cur = 0;
+  let busy = false;
 
-  function getSlideW(){
-    const card = track.querySelector('.proj-card');
-    if(!card) return 0;
-    const gap = parseFloat(window.getComputedStyle(track).gap) || 16;
-    return card.offsetWidth + gap;
+  const dots = document.querySelectorAll('.pco-dot');
+
+  // ── 3. Helpers ────────────────────────────────────────────────
+  function slideW(){
+    const c = track.querySelector('.proj-card');
+    return c ? c.offsetWidth : 0;
   }
 
-  function goTo(n){
-    // Close any open overlay first
-    if(typeof closeAllOverlays === 'function') closeAllOverlays();
-    // Infinite: wrap around
-    const targetCur = ((n % TOTAL) + TOTAL) % TOTAL;
-    
-    // Si es un salto grande (del último al primero o del primero al último), hazlo sin transición
-    const shouldSnap = Math.abs(targetCur - cur) > TOTAL / 2;
-    
-    if(shouldSnap){
-      // Snap instantáneo sin transición
-      track.style.transition = 'none';
-      cur = targetCur;
-      track.style.transform = `translateX(-${cur * getSlideW()}px)`;
-      // Fuerza reflow
-      void track.offsetHeight;
-      // Re-activa la transición para el siguiente movimiento
-      setTimeout(() => {
-        track.style.transition = 'transform .5s cubic-bezier(0.16,1,0.3,1)';
-      }, 10);
-    } else {
-      cur = targetCur;
-      track.style.transform = `translateX(-${cur * getSlideW()}px)`;
-    }
-    
+  function moveTo(pos, animated){
+    track.style.transition = animated ? EASING : 'none';
+    track.style.transform = `translateX(-${pos * slideW()}px)`;
+  }
+
+  function syncDots(){
     dots.forEach((d,i) => d.classList.toggle('active', i === cur));
-    // Anunciar cambio a lectores de pantalla
-    const cards = track.querySelectorAll('.proj-card');
-    const heading = cards[cur] ? cards[cur].querySelector('h3') : null;
-    if(heading) track.setAttribute('aria-label', `Proyecto ${cur + 1} de ${TOTAL}: ${heading.textContent}`);
   }
 
-  document.getElementById('pcoPrev').onclick = () => goTo(cur - 1);
-  document.getElementById('pcoNext').onclick = () => goTo(cur + 1);
-  dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.idx)));
-  window.addEventListener('resize', () => { track.style.transition='none'; goTo(cur); setTimeout(()=>track.style.transition='',50); });
+  function syncAria(){
+    const h = originals[cur].querySelector('h3');
+    if(h) track.setAttribute('aria-label',`Proyecto ${cur+1} de ${TOTAL}: ${h.textContent}`);
+  }
 
+  // ── 4. Init ───────────────────────────────────────────────────
+  moveTo(trackPos, false);
+  syncDots();
+
+  // ── 5. Navegación ─────────────────────────────────────────────
+  function step(dir){ // dir: +1 o -1
+    if(busy) return;
+    busy = true;
+    trackPos += dir;
+    cur = ((cur + dir) % TOTAL + TOTAL) % TOTAL;
+    moveTo(trackPos, true);
+    syncDots();
+    syncAria();
+  }
+
+  function jumpTo(logicalIdx){
+    if(busy || logicalIdx === cur) return;
+    busy = true;
+    const diff = logicalIdx - cur;
+    trackPos += diff;
+    cur = logicalIdx;
+    moveTo(trackPos, true);
+    syncDots();
+    syncAria();
+  }
+
+  // ── 6. Reposición silenciosa tras transición ──────────────────
+  track.addEventListener('transitionend', () => {
+    // Si caímos en zona de clones del final → saltar al original equivalente
+    if(trackPos >= TOTAL + CLONES){
+      trackPos -= TOTAL;
+      moveTo(trackPos, false);
+    }
+    // Si caímos en zona de clones del inicio → saltar al original equivalente
+    else if(trackPos < CLONES){
+      trackPos += TOTAL;
+      moveTo(trackPos, false);
+    }
+    busy = false;
+  });
+
+  // ── 7. Controles ──────────────────────────────────────────────
+  document.getElementById('pcoPrev').onclick = () => step(-1);
+  document.getElementById('pcoNext').onclick = () => step(+1);
+  dots.forEach(d => d.addEventListener('click', () => jumpTo(+d.dataset.idx)));
+
+  // Resize: reposicionar sin animación
+  window.addEventListener('resize', () => moveTo(trackPos, false));
+
+  // Touch swipe
   let tx = 0;
   track.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, {passive:true});
   track.addEventListener('touchend', e => {
     const dx = e.changedTouches[0].clientX - tx;
-    if(Math.abs(dx) > 40) goTo(cur + (dx < 0 ? 1 : -1));
+    if(Math.abs(dx) > 40) step(dx < 0 ? 1 : -1);
   });
 })();
 
