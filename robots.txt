@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /img/
 
 Sitemap: https://borjamora.es/sitemap.xml
