@@ -268,8 +268,8 @@ body {
   align-items: center;
 }
 .about-role {
-  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-  font-size: 11px; font-weight: 600; letter-spacing: 0.8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.8px;
   text-transform: uppercase; color: var(--muted);
   margin-bottom: 16px;
 }
@@ -279,6 +279,11 @@ body {
   color: var(--ink); letter-spacing: -0.015em; line-height: 1.25;
   margin-bottom: 24px;
   max-width: 650px;
+}
+.about-h1 strong {
+  background-color: #c6ff00;
+  padding: 0 4px;
+  font-weight: 700;
 }
 .about-h1 em { 
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
@@ -291,30 +296,36 @@ body {
   font-size: 15px; color: #505050; line-height: 1.75;
   margin-bottom: 32px; max-width: 580px;
 }
-.about-intro strong { color: var(--ink); font-weight: 600; }
+.about-intro strong {
+  color: #0a0a0a;
+  font-weight: 700;
+  background: #c6ff00;
+  padding: 2px 6px;
+  display: inline;
+}
 .about-btns {
   display: flex; gap: 12px; margin-top: 0; flex-wrap: wrap;
 }
 .btn-li {
-  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-family: 'JetBrains Mono', monospace;
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  font-size: 13px; font-weight: 700;
+  font-size: 12px; font-weight: 600;
   background: #111; color: #ffffff;
-  padding: 10px 24px; border-radius: 8px;
+  padding: 11px 24px; border-radius: 0;
   text-decoration: none; transition: background .2s, color .2s;
-  border: none;
+  border: none; letter-spacing: .3px; text-transform: uppercase;
 }
 .btn-li:hover { background: #c6ff00; color: #111; }
 .btn-li svg { width: 14px; height: 14px; fill: #ffffff; }
 .btn-li:hover svg { fill: #111; }
 .btn-cv {
-  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-family: 'JetBrains Mono', monospace;
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  font-size: 13px; font-weight: 700;
+  font-size: 12px; font-weight: 600;
   background: #111; color: #ffffff;
-  padding: 10px 24px; border-radius: 8px;
+  padding: 11px 24px; border-radius: 0;
   text-decoration: none; transition: background .2s, color .2s;
-  border: none;
+  border: none; letter-spacing: .3px; text-transform: uppercase;
 }
 .btn-cv:hover { background: #c6ff00; color: #111; }
 .btn-cv svg { width: 14px; height: 14px; fill: #ffffff; }
@@ -386,7 +397,7 @@ body {
 
 .tl-row:last-child .tl-label-col {
   border-bottom: none;
-  padding-bottom: 40px;
+  padding-bottom: 120px;
 }
 
 .tl-label-col::before { display: none; }
@@ -417,7 +428,7 @@ body {
 
 .tl-row:last-child .tl-body {
   border-bottom: none;
-  padding-bottom: 40px;
+  padding-bottom: 120px;
 }
 
 .tl-body p {
@@ -435,49 +446,59 @@ body {
 .tl-body p strong {
   color: #0a0a0a;
   font-weight: 700;
-  background-size: 0% 1px;
-  background-image: linear-gradient(#7a7bff, #7a7bff);
-  background-repeat: no-repeat;
-  background-position: 0 100%;
-  transition: background-size .4s cubic-bezier(0.16, 1, 0.3, 1);
-  padding-bottom: 2px;
+  background-color: #c6ff00;
+  padding: 0 3px;
 }
 
 .tl-body.kw-active p strong {
-  background-size: 100% 1px;
+  background-color: #c6ff00;
 }
 
-/* CITAS — EDITORIAL PURO */
+/* CITAS — BRUTALISMO EDITORIAL */
 .tl-quote {
   position: relative;
-  background: transparent;
+  background: #0a0a0a;
   border: none;
-  border-left: 3px solid #7a7bff;
   border-radius: 0;
-  padding: 20px 0 20px 24px;
+  padding: 20px 24px 20px 28px;
   margin: 28px 0;
-  font-size: 15px;
-  font-style: italic;
-  color: #0a0a0a;
-  line-height: 1.8;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500;
+  color: #c6ff00;
+  line-height: 1.75;
+  letter-spacing: .1px;
   box-shadow: none;
 }
 
-.tl-quote::before { display: none; }
+.tl-quote::before {
+  content: '//';
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(198,255,0,.45);
+  position: absolute;
+  top: 20px;
+  left: -28px;
+  letter-spacing: -1px;
+}
+
 .tl-quote::after { display: none; }
 
 /* LINKS */
 .tl-link {
   color: #0a0a0a;
   text-decoration: underline;
-  text-decoration-color: #7a7bff;
+  text-decoration-color: #c6ff00;
   text-underline-offset: 4px;
-  text-decoration-thickness: 1px;
+  text-decoration-thickness: 1.5px;
   transition: color .25s, text-decoration-color .25s;
 }
 
 .tl-link:hover {
-  color: #7a7bff;
+  color: #0a0a0a;
+  text-decoration-color: #0a0a0a;
 }
 
 /* LISTAS */
@@ -505,7 +526,7 @@ body {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #7a7bff;
+  background: #c6ff00;
 }
 
 /* ══════════════════════════════
@@ -668,7 +689,7 @@ footer {
       <!-- LEFT: copy -->
       <div class="sr">
         <div class="about-role">Data Analyst · Power BI · Business Intelligence</div>
-        <h1 class="about-h1">Soy Borja Mora,<br><em>Data Analyst especializado</em><br>en Power BI.</h1>
+        <h1 class="about-h1"><strong>Soy Borja Mora,</strong><br><em>Data Analyst especializado</em><br>en Power BI.</h1>
         <p class="about-intro">Durante años recibí dashboards que nadie terminaba de entender. Eso cambió por completo la forma en la que hoy construyo los míos.</p>
         <div class="about-btns">
           <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="btn-li">
