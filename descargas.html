@@ -12,7 +12,8 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PSDM6B5Z7"></script>
@@ -51,12 +52,19 @@
   --paper:#ffffff;
   --rule:#0a0a0a;
   --muted:#5a5a5a;
+  --muted-light:#888888;
   --mutedB:#8a8a8a;
-  --off:#f7f7f7;
+  --off:#f7f7fa;
   --purple:#7a7bff;
+  --purple2:#5a5be0;
+  --purple-light:#ededff;
   --purple-ink:#ffffff;
+  --green:#3c8a37;
+  --green-light:#e8f5e7;
   --ease:cubic-bezier(.4,0,.2,1);
   --ease-spring:cubic-bezier(.34,1.56,.64,1);
+  --font:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;
+  --mono:'JetBrains Mono',monospace;
 
   /* preservados del sitio original */
   --li:#0077b5;
@@ -77,37 +85,136 @@ body{
 }
 ::selection{background:var(--purple);color:#fff}
 
-/* ───────────── NAV (preservado del original) ───────────── */
-#nav{
-  position:sticky;top:0;z-index:100;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 clamp(1.5rem,4vw,3rem);height:60px;
-  background:rgba(255,255,255,.92);backdrop-filter:blur(12px);
-  border-bottom:0.5px solid transparent;transition:border-color .3s;
+/* ───────────── NAV ───────────── */
+#nav {
+  position: sticky;
+  top: 0; width: 100%;
+  z-index: 1000;
+  padding: 0 clamp(1.5rem,5vw,4rem);
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: .5px solid transparent;
+  transition: border-color .3s;
 }
-#nav.scrolled{border-color:var(--gray)}
-.logo{font-size:15px;font-weight:700;color:var(--ink);text-decoration:none;letter-spacing:-.3px}
-.logo-dot{color:var(--logo-purple)}
-.nav-links{display:flex;align-items:center;gap:28px}
-.nav-links a{font-size:13.5px;color:var(--muted);text-decoration:none;font-weight:500;transition:color .2s}
-.nav-links a:hover{color:var(--ink)}
-.nav-links a.active{color:var(--ink);font-weight:700}
-a.nav-cta,
-.nav-links a.nav-cta{
-  font-size:13px;font-weight:700;
-  background:#111;color:#c6ff00;
-  padding:8px 28px;border-radius:8px;
-  text-decoration:none;display:inline-block;
-  min-width:150px;text-align:center;
+#nav.scrolled { border-bottom-color: #111111; }
+
+.logo {
+  font-size: 17px; font-weight: 700;
+  color: var(--ink); text-decoration: none;
+  letter-spacing: -.3px;
+  display: flex; align-items: center; gap: 7px;
 }
-a.nav-cta:hover,
-.nav-links a.nav-cta:hover{color:#c6ff00;background:#111}
-.nav-cta .cta-text-wrap span{color:#c6ff00}
-.nav-cta .cta-text-wrap{display:block;position:relative;height:1.2em;overflow:hidden}
-.nav-cta .cta-text-wrap span{display:block;white-space:nowrap;line-height:1.2em;text-align:center;transition:transform .3s cubic-bezier(.16,1,.3,1)}
-.nav-cta .cta-text-wrap span:last-child{position:absolute;top:0;left:0;right:0;transform:translateY(100%)}
-.nav-cta:hover .cta-text-wrap span:first-child{transform:translateY(-100%)}
-.nav-cta:hover .cta-text-wrap span:last-child{transform:translateY(0)}
+.logo-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--purple);
+  animation: breathe 3s ease-in-out infinite;
+}
+@keyframes breathe { 0%,100%{transform:scale(1)} 50%{transform:scale(1.5)} }
+
+#logoText:not(.done)::after {
+  content: '|';
+  color: var(--purple);
+  font-weight: 300;
+  animation: blink .7s step-end infinite;
+  margin-left: 1px;
+}
+#logoText.done::after { content: none; display: none; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+.nav-links { display: flex; gap: 2px; align-items: center; }
+.nav-links a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--muted);
+  text-decoration: none; padding: 6px 14px;
+  border-radius: 7px; font-weight: 500;
+  transition: color .2s, background .2s;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+}
+.nav-links a:hover { color: var(--ink); background: var(--off); }
+.nav-links a:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 2px;
+  background: var(--off);
+}
+.nav-cta {
+  background: var(--ink) !important;
+  color: #c6ff00 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-weight: 500 !important;
+  font-size: 11px !important;
+  letter-spacing: .4px !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 12px 28px !important;
+  min-width: 180px !important;
+  text-align: center !important;
+  text-transform: uppercase !important;
+  transition: background .25s var(--ease) !important;
+}
+.nav-cta .cta-text-wrap {
+  display: grid;
+  grid-template-columns: 1fr;
+  position: relative;
+  height: 1.2em;
+  overflow: hidden;
+}
+.nav-cta .cta-text-wrap span {
+  display: block;
+  white-space: nowrap;
+  line-height: 1.2em;
+  text-align: center;
+  transition: transform .3s cubic-bezier(.16,1,.3,1);
+  grid-column: 1;
+  grid-row: 1;
+}
+.nav-cta .cta-text-wrap span:last-child {
+  transform: translateY(100%);
+}
+.nav-cta:hover .cta-text-wrap span:first-child { transform: translateY(-100%); }
+.nav-cta:hover .cta-text-wrap span:last-child { transform: translateY(0); }
+.nav-cta:hover { background: #c6ff00 !important; color: var(--ink) !important; }
+.nav-cta:focus-visible {
+  outline: 2px dashed var(--white) !important;
+  outline-offset: 2px !important;
+}
+
+.nav-links a:not(.nav-cta) {
+  position: relative;
+}
+.nav-links a:not(.nav-cta)::after {
+  content: '';
+  position: absolute;
+  bottom: 2px; left: 14px; right: 14px;
+  height: 1.5px;
+  background: var(--ink);
+  transform: scaleX(0);
+  transition: transform .25s var(--ease);
+}
+.nav-links a:not(.nav-cta):hover::after,
+.nav-links a:not(.nav-cta).active::after {
+  transform: scaleX(1);
+}
+
+@media (max-width: 640px) {
+  #nav { height: 56px; padding: 0 clamp(1rem, 3vw, 1.5rem); }
+  .logo { font-size: 15px; }
+  .nav-links { gap: 2px; }
+  .nav-links a { font-size: 12px; padding: 4px 10px; }
+  .nav-cta { padding: 6px 20px !important; min-width: auto !important; font-size: 12px !important; }
+}
+@media (max-width: 768px) {
+  #nav { padding: 0 clamp(1rem, 4vw, 2rem); }
+  .nav-links a:not(.nav-cta) { display: none; }
+}
 
 /* ───────────── CONTAINERS ───────────── */
 .shell{
@@ -140,6 +247,23 @@ a.nav-cta:hover,
   animation:heroH1 .4s var(--ease) .08s both;
 }
 .hero-h1 .dot{color:var(--purple)}
+
+.dl-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:clamp(55px,8vw,75px);
+  height:clamp(70px,12vw,130px);
+  margin:0 24px;
+  background:#111111;
+  border-radius:0;
+  vertical-align:middle;
+  font-size:clamp(36px,5.5vw,58px);
+  line-height:1;
+  color:#c6ff00;
+  font-weight:400;
+  user-select:none;
+}
 
 /* Subtexto: entra 140ms después */
 @keyframes heroSub{
@@ -204,9 +328,11 @@ a.nav-cta:hover,
   .hero-h1{white-space:normal;font-size:clamp(40px,10vw,64px)}
   .hero-stats{gap:20px}
   .hero-stat-sep{display:none}
+  .dl-badge{margin:0 14px}
 }
 @media(max-width:680px){
   .hero-h1{white-space:normal}
+  .dl-badge{margin:0 8px;width:clamp(50px,7vw,65px);height:clamp(65px,10vw,100px)}
 }
 
 /* ───────────── SEGMENTADOR · PASTILLAS CON PILL INDICATOR ───────────── */
@@ -239,7 +365,7 @@ a.nav-cta:hover,
 }
 
 .seg-btn{
-  font-family:inherit;
+  font-family:var(--mono);
   background:#fff;
   border:1px solid var(--ink);
   border-radius:999px;
@@ -265,6 +391,7 @@ a.nav-cta:hover,
 .seg-btn.is-active .count{opacity:.7}
 
 .seg-counter{
+  font-family:var(--mono);
   font-size:11px;font-weight:500;
   text-transform:uppercase;letter-spacing:.16em;
   color:var(--mutedB);
@@ -328,7 +455,7 @@ a.nav-cta:hover,
   transition:background .18s var(--ease), color .12s var(--ease);
 }
 .m:hover{
-  background:var(--purple);
+  background:#111111;
   color:var(--purple-ink);
 }
 
@@ -337,6 +464,7 @@ a.nav-cta:hover,
   margin-bottom:32px;
 }
 .m-num{
+  font-family:var(--mono);
   font-size:12.5px;
   font-weight:600;
   color:var(--ink);
@@ -344,7 +472,7 @@ a.nav-cta:hover,
   letter-spacing:.02em;
   transition:color .12s var(--ease);
 }
-.m:hover .m-num{color:var(--purple-ink)}
+.m:hover .m-num{color:#c6ff00}
 
 .m-ext{
   display:inline-flex;align-items:center;justify-content:center;
@@ -356,7 +484,7 @@ a.nav-cta:hover,
   background:none;border:none;cursor:pointer;font-family:inherit;padding:0;
   will-change:transform;
 }
-.m:hover .m-ext{color:var(--purple-ink)}
+.m:hover .m-ext{color:#c6ff00}
 .m-ext:hover,
 .m:hover .m-ext:hover{color:#c6ff00; transform:scale(1.15) translate(2px,-2px)}
 .m-ext svg{width:18px;height:18px;display:block;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:square}
@@ -385,7 +513,7 @@ a.nav-cta:hover,
   margin:0;
   transition:color .12s var(--ease);
 }
-.m:hover .m-title{color:var(--purple-ink)}
+.m:hover .m-title{color:#ffffff}
 .m-sub{
   display:block;
   margin:4px 0 0;
@@ -415,6 +543,7 @@ a.nav-cta:hover,
   padding-top:28px;
 }
 .m-tags{
+  font-family:var(--mono);
   font-size:10px;
   font-weight:500;
   text-transform:uppercase;
@@ -423,12 +552,25 @@ a.nav-cta:hover,
   line-height:1.5;
   text-align:left;
   transition:color .12s var(--ease);
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
 }
-.m:hover .m-tags{color:rgba(255,255,255,.9)}
+.m-tags span{
+  background:transparent;
+  padding:4px 10px;
+  border-radius:12px;
+  border:1px solid var(--ink);
+  transition:background .12s var(--ease), color .12s var(--ease), border-color .12s var(--ease);
+}
+.m:hover .m-tags span{
+  background:#111111;
+  color:#ffffff;
+  border:1px solid #ffffff;
+}
 .m-tags span + span::before{
-  content:" · ";
-  color:inherit;
-  margin:0 2px;
+  content:"";
+  display:none;
 }
 
 .m-dl{
@@ -440,7 +582,7 @@ a.nav-cta:hover,
   transition:color .12s var(--ease), transform .2s var(--ease-spring);
   will-change:transform;
 }
-.m:hover .m-dl{color:var(--purple-ink)}
+.m:hover .m-dl{color:#c6ff00}
 .m-dl:hover,
 .m:hover .m-dl:hover{color:#c6ff00}
 .m-dl svg{width:22px;height:22px;display:block;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:square}
@@ -587,21 +729,124 @@ a.nav-cta:hover,
 }
 
 /* ───────────── FOOTER (preservado) ───────────── */
-footer{background:var(--paper);padding:0;border-top:.5px solid var(--gray)}
-.foot-inner{max-width:1240px;margin:0 auto;padding:32px clamp(1.5rem,5vw,4rem) 24px}
-.foot-top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:24px;padding-bottom:24px;border-bottom:.5px solid var(--gray);margin-bottom:20px}
-.foot-brand-name{font-size:14px;font-weight:700;color:var(--ink);letter-spacing:-.2px;text-transform:uppercase}
-.foot-nav-center{display:flex;align-items:center;gap:20px;justify-content:center}
-.foot-nav-center a{font-size:11px;font-weight:600;color:#444;text-decoration:none;letter-spacing:.6px;text-transform:uppercase;padding:4px 10px;transition:color .2s}
-.foot-nav-center a:hover{color:var(--logo-purple)}
-.foot-li-icon{display:flex;justify-content:flex-end}
-.foot-li-icon a{display:flex;align-items:center;justify-content:center;width:44px;height:44px;background:#111;border-radius:8px;color:#fff;transition:background .2s;text-decoration:none}
-.foot-li-icon a:hover{background:#0077b5}
-.foot-li-icon svg{display:block}
-.foot-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.foot-copy{font-size:11.5px;color:var(--muted);opacity:.7}
-.foot-made{font-size:11.5px;color:var(--muted);opacity:.7;display:flex;align-items:center;gap:6px}
-.foot-tech{display:inline-flex;align-items:center;gap:4px;background:var(--off);border:.5px solid var(--gray);padding:2px 8px;border-radius:4px;font-size:10.5px;color:var(--muted);font-family:'SF Mono','Fira Code',monospace}
+/* ───────────── FOOTER ───────────── */
+footer {
+  background: #111111;
+  padding: 0;
+  border-top: .5px solid rgba(255,255,255,.1);
+}
+.foot-inner {
+  max-width: 1180px; margin: 0 auto;
+  padding: 64px clamp(1.5rem,5vw,4rem) 32px;
+}
+
+/* Grid de columnas */
+.foot-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+.foot-col {
+  display: flex; flex-direction: column; gap: 10px;
+}
+.foot-col--brand { gap: 12px; }
+.foot-brand-name {
+  font-size: 14px; font-weight: 700;
+  color: #ffffff; letter-spacing: -.2px;
+  text-transform: none;
+  display: block;
+}
+.foot-brand-desc {
+  font-size: 14px;
+  color: rgba(255,255,255,.7);
+  line-height: 1.5;
+  margin: 0;
+  max-width: 280px;
+}
+.foot-brand-loc {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,.5);
+  margin: 0;
+  letter-spacing: .5px;
+}
+.foot-col-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(255,255,255,.4);
+  letter-spacing: .8px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.foot-col-title::before {
+  content: '—';
+  font-weight: 300;
+}
+.foot-col a {
+  font-size: 15px;
+  color: #ffffff;
+  text-decoration: none;
+  transition: color .2s;
+  letter-spacing: -.3px;
+  width: fit-content;
+  font-weight: 400;
+}
+.foot-col a:hover {
+  color: var(--purple);
+  transition: color .15s;
+}
+
+/* Bottom bar */
+.foot-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 24px;
+  border-top: .5px solid rgba(255,255,255,.1);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.foot-copy {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: rgba(255,255,255,.5);
+  letter-spacing: .3px;
+}
+.foot-made {
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: rgba(255,255,255,.5);
+  letter-spacing: .3px;
+  flex-wrap: wrap;
+}
+.foot-tech {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  background: rgba(255,255,255,.08);
+  padding: 2px 7px;
+  border-radius: 4px;
+  color: #ffffff;
+  font-weight: 500;
+  border: .5px solid rgba(255,255,255,.12);
+}
+
+@media (max-width: 900px) {
+  .foot-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  .foot-col--brand { grid-column: 1 / -1; margin-bottom: 8px; }
+  .foot-bottom { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 520px) {
+  .foot-grid { grid-template-columns: 1fr; gap: 28px; }
+}
 
 /* ── pequeñas en móvil ── */
 @media(max-width:600px){
@@ -615,12 +860,10 @@ footer{background:var(--paper);padding:0;border-top:.5px solid var(--gray)}
 @media (hover:none){
   .m:hover{background:var(--paper);color:var(--ink)}
   .m:hover .m-title,
+  .m:hover .m-title,
   .m:hover .m-sub,
   .m:hover .m-desc,
-  .m:hover .m-num,
-  .m:hover .m-tags,
-  .m:hover .m-dl,
-  .m:hover .m-ext{color:inherit}
+  .m:hover .m-num{color:inherit}
   .m-soon:hover{background:
     repeating-linear-gradient(135deg,transparent 0 14px,rgba(10,10,10,.04) 14px 15px)}
 }
@@ -644,14 +887,14 @@ footer{background:var(--paper);padding:0;border-top:.5px solid var(--gray)}
 
 <!-- ─────────── NAV ─────────── -->
 <nav id="nav" aria-label="Navegación principal">
-  <a href="./index.html" class="logo">Borja Mora<span class="logo-dot">.</span></a>
+  <a href="./index.html" class="logo" aria-label="Borja Mora — Inicio"><span id="logoText"></span><span class="logo-dot"></span></a>
   <div class="nav-links">
     <a href="./index.html">Inicio</a>
     <a href="./sobre-mi.html">Sobre mí</a>
     <a href="./proyectos.html">Proyectos</a>
     <a href="./descargas.html" class="active" aria-current="page">Descargas</a>
-    <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-    <a href="mailto:borja.mora.mendez@gmail.com" class="nav-cta"><span class="cta-text-wrap"><span>Contacto</span><span>¿Hablamos?</span></span></a>
+    <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event', 'clic_linkedin', { location: 'nav' });">LinkedIn</a>
+    <a id="navEmailBtn" href="#" target="_blank" rel="noopener noreferrer" class="nav-cta btn" onclick="gtag('event', 'clic_email', { location: 'nav' });"><span class="cta-text-wrap"><span>Contacto</span><span>¿Hablamos?</span></span></a>
   </div>
 </nav>
 
@@ -660,7 +903,7 @@ footer{background:var(--paper);padding:0;border-top:.5px solid var(--gray)}
 
   <!-- Hero -->
   <header class="hero" id="main-content">
-    <h1 class="hero-h1">Archivos .pbix<span class="dot">.</span></h1>
+    <h1 class="hero-h1">Archivos .pbix<span class="dl-badge" aria-hidden="true">↓</span></h1>
     <p class="hero-sub">Proyectos desarrollados y compartidos en LinkedIn. Descarga el archivo, explora el modelo de datos y úsalo como referencia para tus propios desarrollos en Power BI.</p>
     <div class="hero-stats" aria-hidden="true">
       <div class="hero-stat">
@@ -709,30 +952,51 @@ footer{background:var(--paper);padding:0;border-top:.5px solid var(--gray)}
 </div>
 
 <!-- ─────────── FOOTER ─────────── -->
-<footer>
+<!-- ─────────── FOOTER ─────────── -->
+<footer style="margin: 0px">
   <div class="foot-inner">
-    <div class="foot-top">
-      <div class="foot-brand-name">Borja Mora</div>
-      <div class="foot-nav-center">
+
+    <!-- Grid columnas -->
+    <div class="foot-grid">
+      <div class="foot-col foot-col--brand">
+        <div class="foot-brand-name">Borja Mora.</div>
+        <p class="foot-brand-desc" style="font-size: 13px">Construyo espacios donde los datos calan.</p>
+        <p class="foot-brand-loc">Madrid, España</p>
+      </div>
+
+      <div class="foot-col">
+        <div class="foot-col-title">Navegación</div>
         <a href="./index.html">Inicio</a>
         <a href="./sobre-mi.html">Sobre mí</a>
         <a href="./proyectos.html">Proyectos</a>
         <a href="./descargas.html">Descargas</a>
       </div>
-      <div class="foot-li-icon">
-        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/>
-          </svg>
-        </a>
+
+      <div class="foot-col">
+        <div class="foot-col-title">Trabajo</div>
+        <a href="./proyectos.html#power-bi">Power BI</a>
+        <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio" target="_blank" rel="noopener noreferrer">Python · SQL · R</a>
+        <a href="https://github.com/BORJAMOME/DAX-LAB" target="_blank" rel="noopener noreferrer">DAX Lab</a>
+      </div>
+
+      <div class="foot-col">
+        <div class="foot-col-title">Sígueme</div>
+        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_linkedin',{location:'footer'});">LinkedIn</a>
+        <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_github',{location:'footer'});">GitHub</a>
       </div>
     </div>
+
+    <!-- Bottom bar -->
     <div class="foot-bottom">
-      <div class="foot-copy">© 2026 Borja Mora Méndez · Madrid, España</div>
+      <div class="foot-copy">© 2026 Borja Mora Méndez · Todos los derechos reservados</div>
       <div class="foot-made">
-        Diseñado y construido por mí · <span class="foot-tech">HTML CSS JS</span> · Sin template
+        <span>Diseñado y construido por mí</span>
+        <span class="foot-tech">HTML</span>
+        <span class="foot-tech">CSS</span>
+        <span class="foot-tech">JS</span>
       </div>
     </div>
+
   </div>
 </footer>
 
@@ -1094,10 +1358,26 @@ window.addEventListener('resize', ()=>{
   }, 120);
 });
 
-// ────────────── STICKY NAV BORDER ──────────────
-window.addEventListener('scroll',()=>{
-  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>10);
-});
+// ────────────── NAV SCROLL ──────────────
+const nav = document.getElementById('nav');
+window.addEventListener('scroll',()=> nav.classList.toggle('scrolled', scrollY > 40));
+
+// ────────────── TYPING EFFECT LOGO ──────────────
+(function(){
+  const el = document.getElementById('logoText');
+  const text = 'Borja Mora';
+  let i = 0;
+  function type() {
+    if (i < text.length) {
+      el.textContent += text[i];
+      i++;
+      setTimeout(type, i === 1 ? 300 : 80 + Math.random() * 40);
+    } else {
+      setTimeout(() => el.classList.add('done'), 1200);
+    }
+  }
+  setTimeout(type, 400);
+})();
 
 // ────────────── SCROLL REVEAL PARA SECCIÓN CIERRE ──────────────
 function observeCierre(){
@@ -1112,6 +1392,16 @@ function observeCierre(){
   observer.observe(cierreSection);
 }
 observeCierre();
+
+// ────────────── EMAIL OBFUSCADO ──────────────
+(function(){
+  var su = encodeURIComponent('Hola Borja — Me gustaría hablar contigo');
+  var body = encodeURIComponent('Hola Borja,\n\nHe visto tu portfolio y me gustaría hablar contigo sobre...\n\n');
+  var e = atob('Ym9yamEubW9yYS5tZW5kZXpAZ21haWwuY29t');
+  var url = 'https://mail.google.com/mail/u/0/?fs=1&to=' + e + '&su=' + su + '&body=' + body + '&tf=cm';
+  var navBtn = document.getElementById('navEmailBtn');
+  if (navBtn) navBtn.href = url;
+})();
 </script>
 </body>
 </html>
