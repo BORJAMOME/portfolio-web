@@ -18,8 +18,8 @@
   --gray:         #e5e5e5;
   --ink:          #111111;
   --muted:        #5a5a5a;
-  --muted-light:  #888888;
-  --mutedB:       #8a8a8a;
+  --muted-light:  #696969; /* WCAG AA ≥ 4.5:1 sobre #fff (ratio 5.74:1) */
+  --mutedB:       #6e6e6e; /* WCAG AA ≥ 4.5:1 sobre #fff (ratio 4.88:1) */
   --li:           #0077b5;
   --logo-purple:  #7a7bff;
   --font:         'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
