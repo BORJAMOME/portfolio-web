@@ -567,6 +567,120 @@ footer {
   .sr { opacity: 1; transform: none; transition: none; }
   .tl-body p strong { transition: none; background-size: 100% 1px; }
 }
+
+/* ═══════════════════════════════════════
+   TIMELINE → CAJAS BRUTALISTAS (SOLO MÓVIL ≤640px)
+   Oculta el timeline vertical y convierte
+   cada periodo en una caja editorial con borde negro.
+   ═══════════════════════════════════════ */
+@media (max-width: 640px) {
+
+  /* ── Ocultar decoración del timeline ── */
+  .timeline-wrap::before,
+  .tl-progress,
+  .tl-dot,
+  .tl-label-anchor { display: none !important; }
+
+  /* ── Contenedor: columna de cajas ── */
+  .timeline-wrap {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+    padding: 0 16px 40px !important;
+    max-width: 100% !important;
+  }
+
+  /* ── Cada fila: caja brutalista ──
+     IMPORTANTE: romper "display:contents" del desktop */
+  .tl-row {
+    display: flex !important;
+    flex-direction: column !important;
+    border: 1.5px solid #111111 !important;
+    background: #ffffff !important;
+    scroll-margin-top: 80px;
+  }
+
+  /* ── Header de la caja: "01 — PASADO" ── */
+  .tl-label-col {
+    order: 0 !important;
+    padding: 14px 18px !important;
+    border-bottom: 1.5px solid #111111 !important;
+    border-right: none !important;
+    text-align: left !important;
+    background: #ffffff !important;
+    position: static !important;
+    width: auto !important;
+  }
+
+  /* Número del periodo via data-num */
+  .tl-label-col::before {
+    display: inline !important;
+    content: attr(data-num) " — ";
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    color: #888;
+  }
+
+  .tl-label {
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: .1em !important;
+    text-transform: uppercase !important;
+    color: #111111 !important;
+    display: inline !important;
+    line-height: 1 !important;
+  }
+
+  /* ── Cuerpo de la caja ── */
+  .tl-body {
+    order: 1 !important;
+    padding: 20px 18px !important;
+    border-bottom: none !important;
+    grid-column: auto !important;
+    position: static !important;
+  }
+
+  .tl-body p {
+    font-size: 14px !important;
+    line-height: 1.65 !important;
+    color: #404040 !important;
+    margin-bottom: 14px !important;
+  }
+
+  .tl-body p:last-child { margin-bottom: 0 !important; }
+
+  /* Mantener highlight lima */
+  .tl-body p strong {
+    background-color: #c6ff00 !important;
+    padding: 0 3px !important;
+    color: #111111 !important;
+  }
+
+  /* ── Blockquote brutalista ── */
+  .tl-quote {
+    margin: 16px 0 !important;
+    padding: 12px 14px !important;
+    border-left: 2px solid #111111 !important;
+    border-top: none !important;
+    border-right: none !important;
+    border-bottom: none !important;
+    font-style: italic !important;
+    color: #404040 !important;
+    font-size: 14px !important;
+    line-height: 1.65 !important;
+    background: #f7f7fa !important;
+    box-shadow: none !important;
+  }
+
+  /* Anular padding-bottom 120px del último hijo en desktop */
+  .tl-row:last-child .tl-body,
+  .tl-row:last-child .tl-label-col {
+    padding-bottom: 20px !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -617,7 +731,7 @@ footer {
   var closeBtn = document.getElementById('navDrawerClose');
   var backdrop = document.getElementById('navBackdrop');
   if(!burger||!drawer) return;
-  function open(){ drawer.classList.add('open'); burger.setAttribute('aria-expanded','true'); burger.setAttribute('aria-label','Cerrar menú'); document.body.style.overflow='hidden'; document.body.style.position='fixed'; document.body.style.width='100%'; }
+  function open(){ drawer.classList.add('open'); burger.setAttribute('aria-expanded','true'); burger.setAttribute('aria-label','Cerrar menú'); document.body.style.overflow='hidden'; document.body.style.position='fixed'; document.body.style.width='100%'; document.body.style.position='fixed'; document.body.style.width='100%'; }
   function close(){ drawer.classList.remove('open'); burger.setAttribute('aria-expanded','false'); burger.setAttribute('aria-label','Abrir menú'); document.body.style.overflow=''; document.body.style.position=''; document.body.style.width=''; }
   burger.addEventListener('click', function(){ drawer.classList.contains('open') ? close() : open(); });
   if(closeBtn) closeBtn.addEventListener('click', close);
