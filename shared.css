@@ -334,7 +334,6 @@ footer {
   z-index: 1050;
   pointer-events: none;
 }
-/* Fondo negro semitransparente */
 .nav-drawer-backdrop {
   position: absolute;
   inset: 0;
@@ -342,17 +341,17 @@ footer {
   transition: background .35s ease;
 }
 .nav-drawer.open .nav-drawer-backdrop {
-  background: rgba(0,0,0,.55);
+  background: rgba(0,0,0,.45);
   pointer-events: auto;
 }
-/* Panel derecho */
+/* Panel — blanco, borde izquierdo negro */
 .nav-drawer-panel {
   position: absolute;
   top: 0; right: 0;
-  width: min(300px, 85vw);
+  width: min(300px, 88vw);
   height: 100%;
-  background: #111111;
-  border-left: 1px solid rgba(255,255,255,.12);
+  background: #ffffff;
+  border-left: 1.5px solid #111111;
   transform: translateX(100%);
   transition: transform .4s cubic-bezier(.16,1,.3,1);
   display: flex;
@@ -366,123 +365,113 @@ footer {
   pointer-events: auto;
 }
 
-/* Header del drawer */
+/* ── Header ── */
 .nav-drawer-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
+  padding: 0 20px;
   height: 56px;
-  border-bottom: 1px solid rgba(255,255,255,.08);
+  border-bottom: 1.5px solid #111111;
   flex-shrink: 0;
 }
 .nav-drawer-brand {
   font-family: var(--font);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
-  color: #ffffff;
-  letter-spacing: -.2px;
+  color: #111111;
+  letter-spacing: -.3px;
 }
-.nav-drawer-brand span {
-  color: var(--purple);
-}
+/* Botón cerrar — caja brutalista */
 .nav-drawer-close {
-  width: 44px;
-  height: 44px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  height: 32px;
+  padding: 0 10px;
   background: none;
-  border: none;
+  border: 1.5px solid #111111;
   cursor: pointer;
-  color: rgba(255,255,255,.5);
-  margin-right: -10px;
-  transition: color .2s;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #111111;
+  transition: background .18s, color .18s;
+  white-space: nowrap;
 }
-.nav-drawer-close:hover { color: #ffffff; }
-.nav-drawer-close svg {
-  width: 18px; height: 18px;
-  stroke: currentColor; fill: none;
-  stroke-width: 1.5; stroke-linecap: square;
+.nav-drawer-close:hover {
+  background: #111111;
+  color: #ffffff;
 }
 
-/* Links del drawer */
+/* ── Links de navegación ── */
 .nav-drawer-links {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 8px 0;
-  flex: 1;
 }
 .nav-drawer-links a {
   font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: .4px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .05em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.65);
+  color: #111111;
   text-decoration: none;
-  padding: 16px 24px;
-  border-bottom: 1px solid rgba(255,255,255,.05);
+  padding: 0 20px;
+  flex: 1;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  transition: color .18s, background .18s;
-  position: relative;
+  border-bottom: 1px solid #111111;
+  transition: background .18s;
+  min-height: 56px;
+}
+.nav-drawer-links a:last-child {
+  border-bottom: none;
 }
 .nav-drawer-links a:hover {
-  color: #ffffff;
-  background: rgba(255,255,255,.04);
+  background: #f5f5f5;
 }
+/* Página activa — fondo lima, texto negro */
 .nav-drawer-links a.active {
-  color: #c6ff00;
+  background: #c6ff00;
+  color: #111111;
 }
-.nav-drawer-links a.active::after {
-  content: '●';
-  font-size: 6px;
-  color: #c6ff00;
-  line-height: 1;
-}
-.nav-drawer-links a:not(.active)::after {
-  content: '→';
-  font-size: 11px;
-  color: rgba(255,255,255,.2);
-  transition: color .18s, transform .2s;
-}
-.nav-drawer-links a:not(.active):hover::after {
-  color: rgba(255,255,255,.5);
-  transform: translateX(3px);
+.nav-drawer-links a.active:hover {
+  background: #d4ff33;
 }
 
-/* Separador externo / LinkedIn */
-.nav-drawer-sep {
-  height: 1px;
-  background: rgba(255,255,255,.08);
-  margin: 8px 0;
-}
-
-/* CTA dentro del drawer */
-.nav-drawer-cta {
-  padding: 20px 24px 32px;
+/* ── Footer — dos cajas ── */
+.nav-drawer-foot {
+  border-top: 1.5px solid #111111;
+  display: flex;
   flex-shrink: 0;
 }
-.nav-drawer-cta a {
+.nav-drawer-foot-item {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  padding: 14px 20px;
-  background: #c6ff00;
-  color: #111111 !important;
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .5px;
-  text-transform: uppercase;
+  padding: 18px 12px;
+  border-right: 1.5px solid #111111;
   text-decoration: none;
-  border: none;
-  transition: background .2s;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #111111;
+  transition: background .18s;
+  min-height: 56px;
 }
-.nav-drawer-cta a:hover { background: #d4ff33; }
+.nav-drawer-foot-item:last-child {
+  border-right: none;
+}
+.nav-drawer-foot-item:hover {
+  background: #f5f5f5;
+}
 
 /* ─── RESPONSIVE MOBILE NAV ─── */
 @media (max-width: 640px) {
