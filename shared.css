@@ -333,48 +333,52 @@ footer {
 
 /* ─── MOBILE DRAWER ─── */
 .nav-drawer {
+  display: none; /* oculto por defecto; JS añade .open */
   position: fixed;
   inset: 0;
   z-index: 1050;
-  pointer-events: none;
-  /* iOS Safari fix: force hardware acceleration */
+  /* iOS Safari: nuevo stacking context limpio */
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
 }
-.nav-drawer-backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0);
-  transition: background .35s ease;
-}
-.nav-drawer.open .nav-drawer-backdrop {
-  background: rgba(0,0,0,.45);
-  pointer-events: auto;
-}
-/* Panel — blanco, borde izquierdo negro */
-.nav-drawer-panel {
-  position: absolute;
-  top: 0; right: 0;
-  width: min(300px, 88vw);
-  height: 100%;
-  height: 100dvh; /* iOS Safari: dynamic viewport height */
-  background: #ffffff;
-  border-left: 1.5px solid #111111;
-  transform: translateX(100%);
-  transition: transform .4s cubic-bezier(.16,1,.3,1);
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-}
-.nav-drawer.open .nav-drawer-panel {
-  transform: translateX(0);
+.nav-drawer.open {
+  display: block;
   pointer-events: auto;
 }
 
-/* ── Header ── */
+/* Backdrop semitransparente detrás del panel */
+.nav-drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  cursor: pointer;
+}
+
+/* ── Panel principal ── */
+/* Ocupa toda la pantalla de izquierda hasta 300px máx, con borde negro en todos los lados */
+.nav-drawer-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: min(300px, calc(100vw - 24px));
+  height: 100%;
+  height: 100dvh;
+  background: #ffffff;
+  border: 1.5px solid #111111;
+  border-left: none;  /* el borde izquierdo lo da el borde de pantalla */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* Entrada desde la izquierda */
+  transform: translateX(-100%);
+  transition: transform .4s cubic-bezier(.16,1,.3,1);
+  -webkit-overflow-scrolling: touch;
+}
+.nav-drawer.open .nav-drawer-panel {
+  transform: translateX(0);
+}
+
+/* ── Header: "Borja Mora." + botón CERRAR ── */
 .nav-drawer-head {
   display: flex;
   align-items: center;
@@ -383,6 +387,7 @@ footer {
   height: 56px;
   border-bottom: 1.5px solid #111111;
   flex-shrink: 0;
+  background: #ffffff;
 }
 .nav-drawer-brand {
   font-family: var(--font);
@@ -391,54 +396,55 @@ footer {
   color: #111111;
   letter-spacing: -.3px;
 }
-/* Botón cerrar — caja brutalista */
+/* Botón CERRAR × — caja brutalista con borde */
 .nav-drawer-close {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   height: 32px;
-  padding: 0 10px;
+  padding: 0 12px;
   background: none;
   border: 1.5px solid #111111;
   cursor: pointer;
   font-family: var(--mono);
   font-size: 9px;
   font-weight: 700;
-  letter-spacing: .1em;
+  letter-spacing: .12em;
   text-transform: uppercase;
   color: #111111;
   transition: background .18s, color .18s;
   white-space: nowrap;
+  border-radius: 0;
 }
 .nav-drawer-close:hover {
   background: #111111;
   color: #ffffff;
 }
 
-/* ── Links de navegación ── */
+/* ── Links: columna flex que ocupa todo el espacio disponible ── */
 .nav-drawer-links {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  overflow: hidden;
 }
 .nav-drawer-links a {
   font-family: var(--mono);
   font-size: 13px;
   font-weight: 700;
-  letter-spacing: .05em;
+  letter-spacing: .06em;
   text-transform: uppercase;
   color: #111111;
   text-decoration: none;
-  padding: 0 20px;
+  padding: 0 24px;
+  /* Altura igual repartida entre los 4 links */
   flex: 1;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #111111;
+  border-bottom: 1.5px solid #111111;
   transition: background .18s;
-  min-height: 64px;
-  /* iOS Safari fix: prevent flex item shrinking to 0 */
-  flex-shrink: 0;
+  min-height: 72px;
+  box-sizing: border-box;
 }
 .nav-drawer-links a:last-child {
   border-bottom: none;
@@ -446,16 +452,16 @@ footer {
 .nav-drawer-links a:hover {
   background: #f5f5f5;
 }
-/* Página activa — fondo lima, texto negro */
+/* Activo: fondo lima (#c6ff00) todo el bloque */
 .nav-drawer-links a.active {
   background: #c6ff00;
   color: #111111;
 }
 .nav-drawer-links a.active:hover {
-  background: #d4ff33;
+  background: #b8ee00;
 }
 
-/* ── Footer — dos cajas ── */
+/* ── Footer: LINKEDIN | CONTACTAR ── */
 .nav-drawer-foot {
   border-top: 1.5px solid #111111;
   display: flex;
@@ -466,17 +472,18 @@ footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 18px 12px;
-  border-right: 1.5px solid #111111;
+  height: 56px;
+  padding: 0 12px;
   text-decoration: none;
   font-family: var(--mono);
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: .1em;
+  letter-spacing: .12em;
   text-transform: uppercase;
   color: #111111;
   transition: background .18s;
-  min-height: 56px;
+  border-right: 1.5px solid #111111;
+  box-sizing: border-box;
 }
 .nav-drawer-foot-item:last-child {
   border-right: none;
@@ -495,7 +502,7 @@ footer {
   .nav-burger { display: flex; }
 }
 @media (min-width: 641px) {
-  /* Desktop: ocultar todo lo del drawer */
+  /* Desktop: ocultar hamburger y drawer completamente */
   .nav-burger { display: none !important; }
   .nav-drawer { display: none !important; }
 }
