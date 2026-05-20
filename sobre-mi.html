@@ -681,6 +681,117 @@ footer {
     padding-bottom: 20px !important;
   }
 }
+
+/* ═══════════════════════════════════════
+   HERO MÓVIL: imagen a la derecha con
+   título superpuesto (solo ≤640px)
+   ═══════════════════════════════════════ */
+@media (max-width: 640px) {
+
+  /* Hero: menos padding top, sin overflow */
+  .about-hero {
+    padding: 72px 0 40px !important;
+    overflow: hidden;
+  }
+
+  /* Grid → una sola columna con posicionamiento relativo */
+  .about-hero-grid {
+    display: block !important;
+    position: relative;
+    padding: 0 !important;
+    gap: 0 !important;
+  }
+
+  /* ── IMAGEN: fondo a la derecha, altura fija ── */
+  .about-photo-wrap {
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    width: 52% !important;
+    height: 100% !important;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .about-photo {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: top center !important;
+    border-left: 1.5px solid #111 !important;
+    border-right: none !important;
+    border-top: none !important;
+    border-bottom: none !important;
+    filter: grayscale(100%) !important;
+    display: block !important;
+  }
+
+  /* Gradiente sobre la imagen: de blanco (izq) a transparente (der) */
+  .about-photo-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to right,
+      #ffffff 0%,
+      rgba(255,255,255,.7) 40%,
+      rgba(255,255,255,0) 100%
+    );
+    z-index: 1;
+  }
+
+  /* Ocultar la badge de certificación en móvil */
+  .about-cert { display: none !important; }
+
+  /* ── COPY: encima de la imagen, izquierda ── */
+  .about-hero-grid > .sr:first-child {
+    position: relative !important;
+    z-index: 2;
+    padding: 24px 20px 32px !important;
+    min-height: 300px;
+    display: flex !important;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  /* Role tag */
+  .about-role {
+    font-size: 9px !important;
+    letter-spacing: .06em !important;
+    margin-bottom: 10px !important;
+    color: #555 !important;
+  }
+
+  /* H1: grande, con peso sobre la imagen */
+  .about-h1 {
+    font-size: clamp(26px, 7vw, 36px) !important;
+    line-height: 1.15 !important;
+    margin-bottom: 16px !important;
+    max-width: 62% !important;
+  }
+
+  /* Intro: solo visible si cabe, reducido */
+  .about-intro {
+    font-size: 13px !important;
+    line-height: 1.6 !important;
+    margin-bottom: 20px !important;
+    max-width: 65% !important;
+    color: #444 !important;
+  }
+
+  /* Botones apilados */
+  .about-btns {
+    flex-direction: column !important;
+    gap: 8px !important;
+    align-items: flex-start !important;
+  }
+
+  .btn-li, .btn-cv {
+    font-size: 10px !important;
+    padding: 9px 16px !important;
+    width: auto !important;
+  }
+}
 </style>
 </head>
 <body>
