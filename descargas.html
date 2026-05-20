@@ -122,36 +122,13 @@
 /* ─── ESTILOS ESPECÍFICOS DE DESCARGAS.HTML ─── */
 /* Variables, nav, footer y botones → shared.css  */
 
-/* ─── BORDES DE CARDS — patrón grid sin dobles ─── */
-/* Redefinir --rule a negro puro para todos los bordes de esta página */
-:root { --rule: #111111; }
-
-/* Wrapper: top + left. Card: right + bottom → 1px en cada lado, sin duplicados */
-.grid-wrap {
-  border-top: 1px solid #111111;
-  border-left: 1px solid #111111;
-  margin-bottom: 96px;
-}
-.m {
-  border: 0 !important;
-  border-right: 1px solid #111111 !important;
-  border-bottom: 1px solid #111111 !important;
-}
-
-/* ───────────── CONTAINERS ───────────── */
-.shell{
-  max-width:1240px;
-  margin:0 auto;
-  padding:0 clamp(20px,4vw,48px);
-}
-
 /* ───────────── HERO CON ENTRADA ORQUESTADA ───────────── */
 .hero{
-  padding:132px 0 64px;
+  padding:96px 0 64px;
   display:flex;
   flex-direction:column;
   align-items:flex-start;
-  gap:28px;
+  gap:24px;
 }
 
 /* H1: entra primero, fade-up + fade-in */
@@ -163,12 +140,12 @@
   font-size:clamp(44px,7vw,92px);
   font-weight:600;
   letter-spacing:-0.045em;
-  line-height:1;
+  line-height:1.15;
   color:var(--ink);
-  white-space:nowrap;
   font-variant-numeric:tabular-nums;
   font-feature-settings:"tnum" 1;
   animation:heroH1 .4s var(--ease) .08s both;
+  max-width:95%;
 }
 .hero-h1 .dot{color:var(--purple)}
 
@@ -191,18 +168,23 @@
   display:block;
 }
 
-/* Subtexto: entra 140ms después */
-@keyframes heroSub{
-  from{opacity:0;transform:translateY(16px)}
+/* Párrafos de valor: entran secuencialmente */
+@keyframes heroValue{
+  from{opacity:0;transform:translateY(12px)}
   to{opacity:1;transform:translateY(0)}
 }
-.hero-sub{
-  font-size:16px;
+.hero-value{
+  font-size:clamp(15px,1.95vw,18px);
+  font-weight:400;
   color:var(--muted);
-  line-height:1.55;
-  max-width:62ch;
-  animation:heroSub .4s var(--ease) .15s both;
+  line-height:1.65;
+  max-width:72ch;
+  animation:heroValue .4s var(--ease) both;
+  margin:0;
 }
+.hero-value:nth-of-type(2){animation-delay:.12s}
+.hero-value:nth-of-type(3){animation-delay:.16s}
+.hero-value:nth-of-type(4){animation-delay:.20s}
 
 /* Stats: entran staggered, 50ms cada una */
 @keyframes heroStat{
@@ -259,6 +241,13 @@
 @media(max-width:680px){
   .hero-h1{white-space:normal}
   .dl-badge{margin:0 8px;width:clamp(50px,7vw,65px);height:clamp(65px,10vw,100px)}
+}
+
+/* ───────────── CONTAINERS ───────────── */
+.shell{
+  max-width:1240px;
+  margin:0 auto;
+  padding:0 clamp(20px,4vw,48px);
 }
 
 /* ───────────── SEGMENTADOR · PASTILLAS CON PILL INDICATOR ───────────── */
@@ -982,7 +971,22 @@ footer {
   <!-- Hero -->
   <header class="hero" id="main-content">
     <h1 class="hero-h1">Archivos .pbix<span class="dl-badge" aria-hidden="true"><svg viewBox="0 0 36 46" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="18" y1="2" x2="18" y2="36" stroke="#c6ff00" stroke-width="3" stroke-linecap="square"/><polyline points="6,26 18,40 30,26" stroke="#c6ff00" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter" fill="none"/></svg></span></h1>
-    <p class="hero-sub">Proyectos desarrollados y compartidos en LinkedIn. Descarga el archivo, explora el modelo de datos y úsalo como referencia para tus propios desarrollos en Power BI.</p>
+    <p class="hero-value">Esta página es una recopilación de ideas, pruebas y soluciones desarrolladas en Power BI durante mi proceso de formación como Data Analyst. Aquí encontrarás archivos .pbix centrados en análisis de datos, visualización y distintas formas de contar historias con datos.</p>
+    <p class="hero-value">Estos proyectos nacen de problemas reales o preguntas que me parecía interesante resolver.</p>
+    <p class="hero-value">Esta página está pensada para gente que quiere aprender, coger ideas, inspirarse o simplemente explorar diferentes formas de trabajar con datos.</p>
+    <div class="hero-stats" aria-hidden="true">
+      <div class="hero-stat">
+        <div class="hero-stat-num"><span id="stat-files">0</span></div>
+        <div class="hero-stat-label">Archivos .pbix</div>
+      </div>
+      <div class="hero-stat-sep"></div>
+      <div class="hero-stat">
+        <div class="hero-stat-num"><span id="stat-cats">0</span></div>
+        <div class="hero-stat-label">Categorías</div>
+      </div>
+
+    </div>
+  </header>
     <div class="hero-stats" aria-hidden="true">
       <div class="hero-stat">
         <div class="hero-stat-num"><span id="stat-files">0</span></div>
@@ -1013,9 +1017,7 @@ footer {
   <!-- Grid -->
   <div class="grid-wrap">
     <div class="grid" id="grid"></div>
-  </div>
-
-</div>
+  </div></div>
 
 <!-- ─────────── SECCIÓN CIERRE ─────────── -->
 <div class="shell">
