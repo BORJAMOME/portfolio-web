@@ -195,7 +195,7 @@
 
 /* PBI CARDS — carrusel con bordes continuos */
 .pbi-cards-wrap{max-width:1240px;margin:0 auto;padding:0 clamp(20px,4vw,48px);position:relative}
-.proj-cards-outer{position:relative;margin:0}
+.proj-cards-outer{position:relative;margin:0 68px}
 .proj-cards-track-wrap{overflow:hidden;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);border-left:1px solid var(--rule);border-right:1px solid var(--rule)}
 .proj-cards-track{display:flex;gap:0;padding:0;transition:transform .5s cubic-bezier(0.16,1,0.3,1)}
 
@@ -238,11 +238,11 @@
 .proj-card:hover .pc-read-more{color:#c6ff00}
 .proj-card:hover .pc-read-more:hover{color:#fff}
 
-.pco-arrow{position:absolute;top:90px;width:44px;height:44px;background:var(--paper);border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;box-shadow:none;transition:background .18s,color .12s}
-.pco-arrow:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
-.pco-arrow svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:square;width:14px;height:14px}
-.pco-prev{left:-18px}
-.pco-next{right:-18px}
+.pco-arrow{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;background:#111111;border:none;border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;box-shadow:none;transition:background .18s,color .12s;color:#ffffff}
+.pco-arrow:hover{background:#7a7bff;color:#fff}
+.pco-arrow svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:square;width:16px;height:16px}
+.pco-prev{left:-60px}
+.pco-next{right:-60px}
 .pco-dots{display:flex;gap:6px;justify-content:center;margin-top:22px}
 .pco-dot{width:8px;height:8px;background:var(--gray);border:0;padding:10px;cursor:pointer;border-radius:0;transition:background .25s,width .25s;background-clip:content-box;box-sizing:content-box}
 .pco-dot.active{background:var(--ink);width:24px;background-clip:content-box}
@@ -462,6 +462,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
   .dax-card:hover{margin:0;padding:32px 0}
   .pc-overlay-inner{grid-template-columns:1fr;max-height:90vh;overflow-y:auto}
   .pco-arrow{display:none}
+  .proj-cards-outer{margin:0}
   .col-header{padding:24px 0}
   .col-header .col-title{font-size:20px}
   .panel-section-header{padding-top:40px}
