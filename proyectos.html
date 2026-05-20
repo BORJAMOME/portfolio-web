@@ -123,13 +123,37 @@
 /* ─── ESTILOS ESPECÍFICOS DE PROYECTOS.HTML ─── */
 /* Variables, nav, footer y botones → shared.css  */
 
-/* ─── TODOS LOS CARDS: borde negro 1px ─── */
-.proj-card,
-.li-card,
-.nat-viz-card,
-.dax-card,
-.analysis-card {
-  border: 1px solid #111111 !important;
+/* ─── BORDES DE CARDS — patrón grid sin dobles ─── */
+/* Redefinir --rule a negro puro para todos los bordes de esta página */
+:root { --rule: #111111; }
+
+/* proj-card: el wrapper ya tiene border completo, card solo right+bottom */
+.proj-card {
+  border: 0 !important;
+  border-right: 1px solid #111111 !important;
+  border-bottom: 1px solid #111111 !important;
+}
+
+/* viz-card y maps-card: no cubiertos por estilos originales con --rule */
+.viz-grid {
+  border-top: 1px solid #111111;
+  border-left: 1px solid #111111;
+}
+.viz-card {
+  border: 0 !important;
+  border-right: 1px solid #111111 !important;
+  border-bottom: 1px solid #111111 !important;
+}
+
+.maps-grid {
+  border: 1px solid #111111;
+}
+.maps-card {
+  border: 0 !important;
+  border-bottom: 1px solid #111111 !important;
+}
+.maps-card:last-child {
+  border-bottom: 0 !important;
 }
 
 /* progress */
