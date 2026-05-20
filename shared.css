@@ -579,89 +579,122 @@ nav.nav-drawer-links {
   .sr { opacity: 1; transform: none; transition: none; }
 }
 
-/* ─── TIMELINE RESPONSIVE (SOBRE-MI.HTML) ─── */
-/* Desktop: timeline vertical con línea. Móvil: cajas brutalistas */
+/* ─── TIMELINE → CAJAS BRUTALISTAS (SOLO MÓVIL) ─── */
 @media (max-width: 640px) {
-  /* Ocultar la línea/progreso del timeline */
+
+  /* 1. Ocultar elementos decorativos del timeline */
   .timeline-wrap::before,
-  .tl-progress { display: none !important; }
-  
-  /* Convertir el contenedor en grid de cajas */
+  .tl-progress,
+  .tl-dot,
+  .tl-label-anchor { display: none !important; }
+
+  /* 2. Contenedor: columna simple, sin grid de 2 cols */
   .timeline-wrap {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-    padding: 0 !important;
-  }
-  
-  /* Cada fila = caja brutalista */
-  .tl-row {
-    display: flex;
+    display: flex !important;
     flex-direction: column;
-    gap: 0;
-    padding: 0;
+    gap: 20px;
+    padding: 0 16px !important;
+    max-width: 100%;
+  }
+
+  /* 3. Cada fila: display normal (romper display:contents del desktop) */
+  .tl-row {
+    display: flex !important;
+    flex-direction: column;
     border: 1.5px solid #111111;
     background: #ffffff;
-    border-radius: 0;
+    scroll-margin-top: 80px;
   }
-  
-  /* Título de la caja (Pasado, Presente, Futuro) */
+
+  /* 4. Header de la caja: label "PASADO / PRESENTE / FUTURO" */
   .tl-label-col {
-    order: -1; /* Título arriba */
-    padding: 16px 20px;
-    border-bottom: 1.5px solid #111111;
-    background: #ffffff;
-  }
-  .tl-label {
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: #111111;
-  }
-  /* Ocultar el ícono de anchor link en móvil */
-  .tl-label-anchor { display: none; }
-  .tl-label a { display: none; }
-  
-  /* Punto de la timeline: no visible en móvil */
-  .tl-dot { display: none !important; }
-  
-  /* Contenido: padding generoso en la caja */
-  .tl-body {
-    padding: 20px !important;
     order: 0;
+    padding: 14px 18px !important;
+    border-bottom: 1.5px solid #111111 !important;
+    border-right: none !important;
+    text-align: left !important;
+    background: #ffffff;
+    position: static !important;
   }
-  .tl-body p {
-    font-size: 14px;
-    line-height: 1.6;
-    color: #444;
-    margin-bottom: 12px;
+
+  .tl-label {
+    font-family: var(--mono) !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: .1em !important;
+    text-transform: uppercase !important;
+    color: #111111 !important;
+    display: block !important;
+    line-height: 1 !important;
   }
-  .tl-body p:last-child { margin-bottom: 0; }
-  .tl-body strong {
-    color: #111111;
+
+  /* Mostrar el número del data-num antes del label */
+  .tl-label-col::before {
+    display: inline !important;
+    content: attr(data-num) " — ";
+    font-family: var(--mono);
+    font-size: 11px;
     font-weight: 700;
+    letter-spacing: .1em;
+    color: #888;
   }
-  .tl-body a {
-    color: #7a7bff;
-    text-decoration: none;
-    border-bottom: 1px solid rgba(122,123,255,.4);
+
+  /* 5. Cuerpo de la caja: el contenido */
+  .tl-body {
+    order: 1;
+    padding: 20px 18px !important;
+    border-bottom: none !important;
+    grid-column: auto !important;
+    position: static !important;
   }
-  .tl-body a:hover {
-    color: #5a5be0;
-    border-bottom-color: rgba(90,91,224,.6);
+
+  .tl-body p {
+    font-size: 14px !important;
+    line-height: 1.65 !important;
+    color: #404040 !important;
+    margin-bottom: 14px !important;
   }
-  
-  /* Blockquote dentro de las cajas */
+
+  .tl-body p:last-child { margin-bottom: 0 !important; }
+
+  /* Mantener el highlight lima en strong */
+  .tl-body p strong {
+    background-color: #c6ff00 !important;
+    padding: 0 3px !important;
+    color: #111111 !important;
+  }
+
+  /* Links estilo original del sobre-mi */
+  .tl-link {
+    color: #0a0a0a !important;
+    text-decoration: underline !important;
+    text-decoration-color: #c6ff00 !important;
+    text-underline-offset: 4px !important;
+    text-decoration-thickness: 1.5px !important;
+  }
+
+  /* Blockquote: borde izquierdo brutalista */
   .tl-quote {
-    margin: 16px 0;
-    padding: 12px 14px;
-    border-left: 2px solid #111111;
-    font-style: italic;
-    color: #555;
-    font-size: 14px;
-    line-height: 1.6;
-    background: #f7f7fa;
+    margin: 16px 0 !important;
+    padding: 12px 14px !important;
+    border-left: 2px solid #111111 !important;
+    border-top: none !important;
+    border-right: none !important;
+    border-bottom: none !important;
+    font-style: italic !important;
+    color: #404040 !important;
+    font-size: 14px !important;
+    line-height: 1.65 !important;
+    background: #f7f7fa !important;
+  }
+
+  /* Última caja sin margen extra */
+  .tl-row:last-child {
+    margin-bottom: 0;
+  }
+  /* Anular el padding extra del último hijo que tiene desktop */
+  .tl-row:last-child .tl-body,
+  .tl-row:last-child .tl-label-col {
+    padding-bottom: 20px !important;
   }
 }
