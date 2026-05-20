@@ -123,9 +123,19 @@
 /* ─── ESTILOS ESPECÍFICOS DE PROYECTOS.HTML ─── */
 /* Variables, nav, footer y botones → shared.css  */
 
-/* Ensure card borders are visible */
+/* PBI CARDS — Restore grid border structure */
+.proj-cards-track-wrap {
+  border: 1px solid var(--rule);
+}
+
 .proj-card {
-  border-bottom: 1px solid var(--rule) !important;
+  border: 0;
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+.proj-card:last-child {
+  border-right: 0;
 }
 
 /* progress */
