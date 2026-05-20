@@ -1682,7 +1682,6 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   .wib-grid,.proj-grid,.prob-grid,.stats-grid { grid-template-columns:1fr; }
   .proj-featured { grid-row:auto; }
   .stat-card { border-right:none; border-bottom:1px solid #111111; }
-  .nav-links a:not(.nav-cta) { display:none; }
   footer { flex-direction:column; text-align:center; }
 }
 
@@ -2382,7 +2381,74 @@ footer {
     <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event', 'clic_linkedin', { location: 'nav' });">LinkedIn</a>
     <a id="navEmailBtn" href="#" target="_blank" rel="noopener noreferrer" class="nav-cta btn" onclick="gtag('event', 'clic_email', { location: 'nav' });" ><span class="cta-text-wrap"><span>Contacto</span><span>¿Hablamos?</span></span></a>
   </div>
+  <!-- Hamburger — solo visible en móvil (shared.css) -->
+  <button class="nav-burger" id="navBurger" aria-label="Abrir menú" aria-expanded="false" aria-controls="navDrawer">
+    <span class="nav-burger-line"></span>
+    <span class="nav-burger-line"></span>
+    <span class="nav-burger-line"></span>
+  </button>
 </nav>
+
+<!-- ─── MOBILE DRAWER ─── -->
+<div class="nav-drawer" id="navDrawer" role="dialog" aria-modal="true" aria-label="Menú de navegación">
+  <div class="nav-drawer-backdrop" id="navBackdrop"></div>
+  <div class="nav-drawer-panel">
+    <div class="nav-drawer-head">
+      <span class="nav-drawer-brand">Borja<span>.</span></span>
+      <button class="nav-drawer-close" id="navDrawerClose" aria-label="Cerrar menú">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <nav class="nav-drawer-links" aria-label="Navegación móvil">
+      <a href="./index.html" class="active" aria-current="page">Inicio</a>
+      <a href="./sobre-mi.html">Sobre mí</a>
+      <a href="./proyectos.html">Proyectos</a>
+      <a href="./descargas.html">Descargas</a>
+      <div class="nav-drawer-sep"></div>
+      <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_linkedin',{location:'drawer'});">LinkedIn</a>
+    </nav>
+    <div class="nav-drawer-cta">
+      <a id="drawerEmailBtn" href="#" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_email',{location:'drawer'});">Contacto →</a>
+    </div>
+  </div>
+</div>
+<script>
+/* ── NAV DRAWER ── */
+(function(){
+  var burger = document.getElementById('navBurger');
+  var drawer = document.getElementById('navDrawer');
+  var closeBtn = document.getElementById('navDrawerClose');
+  var backdrop = document.getElementById('navBackdrop');
+  if(!burger||!drawer) return;
+  function open(){
+    drawer.classList.add('open');
+    burger.setAttribute('aria-expanded','true');
+    burger.setAttribute('aria-label','Cerrar menú');
+    document.body.style.overflow='hidden';
+  }
+  function close(){
+    drawer.classList.remove('open');
+    burger.setAttribute('aria-expanded','false');
+    burger.setAttribute('aria-label','Abrir menú');
+    document.body.style.overflow='';
+  }
+  burger.addEventListener('click', function(){ drawer.classList.contains('open') ? close() : open(); });
+  if(closeBtn) closeBtn.addEventListener('click', close);
+  if(backdrop) backdrop.addEventListener('click', close);
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') close(); });
+  /* Propagar email al drawer */
+  var navEmail = document.getElementById('navEmailBtn');
+  var drawerEmail = document.getElementById('drawerEmailBtn');
+  if(navEmail && drawerEmail){
+    var obs = new MutationObserver(function(){
+      drawerEmail.href = navEmail.href;
+    });
+    obs.observe(navEmail, {attributes:true, attributeFilter:['href']});
+    if(navEmail.href && navEmail.href !== '#') drawerEmail.href = navEmail.href;
+  }
+})();
+</script>
 
 <!-- ─── DOT NAV ─── -->
 <div class="dot-nav" id="dotNav">
