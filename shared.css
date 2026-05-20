@@ -111,7 +111,7 @@ nav.scrolled, #nav.scrolled { border-bottom-color: #111111; }
   position: absolute;
   bottom: 2px; left: 14px; right: 14px;
   height: 1.5px;
-  background: var(--purple);
+  background: var(--ink);
   border-radius: 99px;
 }
 
