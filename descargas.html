@@ -14,18 +14,98 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
 
 <!-- Shared styles: variables, nav, footer, botones, reset -->
 <link rel="stylesheet" href="./shared.css">
 
+<!-- ── Cookie Consent + GA4 Consent Mode v2 (RGPD/LOPDGDD) ── -->
+<script>
+  /* 1. Consent Mode v2: defaults denegados hasta opt-in explícito */
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("consent", "default", {
+    analytics_storage:    "denied",
+    ad_storage:           "denied",
+    ad_user_data:         "denied",
+    ad_personalization:   "denied",
+    wait_for_update:      500
+  });
+</script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PSDM6B5Z7"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-6PSDM6B5Z7');
+  gtag("js", new Date());
+  gtag("config", "G-6PSDM6B5Z7", { anonymize_ip: true });
+
+  /* 2. Leer consentimiento previo del usuario */
+  (function(){
+    var consent = localStorage.getItem("bm_cookie_consent");
+    if (consent === "accepted") {
+      gtag("consent", "update", {
+        analytics_storage: "granted",
+        ad_storage:        "denied"
+      });
+    }
+  })();
+</script>
+
+<!-- ── Banner de cookies (RGPD/LOPDGDD) ── -->
+<style>
+  #bm-cookie-banner {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    z-index: 9999; width: min(520px, calc(100vw - 32px));
+    background: #111; color: #f7f7fa;
+    border: 1px solid rgba(122,123,255,.35);
+    border-radius: 14px; padding: 18px 22px;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    box-shadow: 0 8px 40px rgba(0,0,0,.45);
+    font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+    font-size: 13px; line-height: 1.5;
+    animation: bm-slide-up .35s cubic-bezier(.16,1,.3,1) both;
+  }
+  @keyframes bm-slide-up {
+    from { opacity:0; transform: translateX(-50%) translateY(20px); }
+    to   { opacity:1; transform: translateX(-50%) translateY(0); }
+  }
+  #bm-cookie-banner p { margin: 0; flex: 1; min-width: 200px; color: #c8c8d8; }
+  #bm-cookie-banner a { color: #7a7bff; text-decoration: underline; }
+  .bm-cb-btns { display: flex; gap: 8px; flex-shrink: 0; }
+  .bm-cb-btn {
+    cursor: pointer; border: none; border-radius: 8px;
+    padding: 8px 16px; font-size: 12px; font-weight: 600;
+    font-family: inherit; letter-spacing: .3px; transition: opacity .15s;
+  }
+  .bm-cb-btn:hover { opacity: .85; }
+  .bm-cb-accept { background: #7a7bff; color: #fff; }
+  .bm-cb-reject { background: rgba(255,255,255,.08); color: #f7f7fa; }
+</style>
+<div id="bm-cookie-banner" role="dialog" aria-label="Aviso de cookies" hidden>
+  <p>Uso cookies de analítica (Google Analytics) para mejorar esta web. Sin datos publicitarios ni rastreo de terceros. <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Más info</a>.</p>
+  <div class="bm-cb-btns">
+    <button class="bm-cb-btn bm-cb-reject" id="bm-cb-reject">Rechazar</button>
+    <button class="bm-cb-btn bm-cb-accept" id="bm-cb-accept">Aceptar</button>
+  </div>
+</div>
+<script>
+  (function(){
+    var banner = document.getElementById("bm-cookie-banner");
+    var stored = localStorage.getItem("bm_cookie_consent");
+    if (!stored) banner.removeAttribute("hidden");
+
+    document.getElementById("bm-cb-accept").addEventListener("click", function(){
+      localStorage.setItem("bm_cookie_consent", "accepted");
+      gtag("consent", "update", { analytics_storage: "granted" });
+      banner.setAttribute("hidden", "");
+    });
+    document.getElementById("bm-cb-reject").addEventListener("click", function(){
+      localStorage.setItem("bm_cookie_consent", "rejected");
+      banner.setAttribute("hidden", "");
+    });
+  })();
 </script>
 
 <meta name="description" content="Descarga gratis archivos .pbix de Power BI: Gantt nativo, widgets, Input Slicer, Slope charts, Small Multiples y técnicas avanzadas de DAX y Data Storytelling.">
@@ -740,6 +820,158 @@ footer {
   .hero-h1, .hero-sub, .hero-stat{ animation:none; opacity:1; transform:none; }
 }
 </style>
+<!-- ── Schema.org: SoftwareApplication para rich results (descargas .pbix) ── -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Descargas Power BI — Archivos .pbix gratuitos",
+  "description": "17 archivos .pbix listos para descargar: DAX, storytelling y técnicas avanzadas de Power BI.",
+  "url": "https://borjamora.es/descargas.html",
+  "author": {
+    "@type": "Person",
+    "name": "Borja Mora Méndez",
+    "url": "https://borjamora.es"
+  },
+  "hasPart": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "Gantt nativo de Power BI",
+      "description": "Sin scripts, solo DAX puro. Diagrama de Gantt completamente nativo en Power BI.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Power BI Desktop",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "downloadUrl": "https://drive.google.com/drive/folders/1eqAyIHQhUbKxp6RqXabTnFy99xaUE60J?usp=drive_link"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "Control de presupuestos",
+      "description": "Top N nativo · concentración real en segundos.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Power BI Desktop",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "downloadUrl": "https://drive.google.com/drive/folders/1Ixn1LBLzp8I3UxZD6O0g0jzXQ7SLm1TZ?usp=drive_link"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "Análisis de Cohort",
+      "description": "Retención y evolución de cohortes en Power BI.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Power BI Desktop",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "downloadUrl": "https://drive.google.com/drive/folders/1x-3VQDyuEKYMXuTWMZcGT0T59jI3dE1g?usp=drive_link"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "Matriz de Penetración",
+      "description": "Análisis Clientes × Productos en Power BI.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Power BI Desktop",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "downloadUrl": "https://drive.google.com/drive/folders/1QVlE8dKV-Bg0VH5fKjXvH6Yv9_N2_dNP?usp=drive_link"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "Grafo de Dependencias",
+      "description": "Ruta crítica de proyectos en Power BI.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Power BI Desktop",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "downloadUrl": "https://drive.google.com/drive/folders/1AaL9Q0zYEgLkSqK0xYLFOZvL3E4dV6h7?usp=drive_link"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "Embudo de Conversión",
+      "description": "De lead a cliente: embudo de ventas nativo en Power BI.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Power BI Desktop",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "downloadUrl": "https://drive.google.com/drive/folders/1MzQZvwWpSJnzJkZmQNqRKS2_UyF9vl5P?usp=drive_link"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "Segmentación RFM",
+      "description": "Recency, Frequency, Monetary — segmentación de clientes en Power BI.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Power BI Desktop",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "downloadUrl": "https://drive.google.com/drive/folders/1RqS7eI4xT8aXyR9zZaWmZbZzZc1zZd2z?usp=drive_link"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "Análisis de Varianza",
+      "description": "Budget vs Real paso a paso en Power BI.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Power BI Desktop",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "downloadUrl": "https://drive.google.com/drive/folders/1StJzFb8vKvL7vVwXwXxXyXyXzXzXaXa1?usp=drive_link"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "Slope Chart",
+      "description": "Evolución, variación, peso y ranking en Power BI.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Power BI Desktop",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "downloadUrl": "https://drive.google.com/drive/folders/1CVcug_-gF6urL1bz9dorhZIpV0t17bm-?usp=drive_link"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "TopN con puesto de honor",
+      "description": "Reduce el ruido visual con ranking dinámico en Power BI.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Power BI Desktop",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "downloadUrl": "https://drive.google.com/drive/folders/1g5CRDjA4_6Db_P2JwGtgR7enfL8bn4UE?usp=drive_link"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "Zoom visual sobre outliers",
+      "description": "El gráfico que no miente — detección de outliers en Power BI.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Power BI Desktop",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "downloadUrl": "https://drive.google.com/drive/folders/1mZj6EO8sKoNVlDjmYZtnXSVqbUDtb9jH?usp=drive_link"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "Tabla de análisis total",
+      "description": "Tú decides qué datos entran, qué métricas y cómo se interpretan.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Power BI Desktop",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "downloadUrl": "https://drive.google.com/drive/folders/1jUdeMz4ziWdyBJiKA48-JYqUdO_JqZp4?usp=drive_link"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "Explorador de ventas por cliente",
+      "description": "Top N · filtro por país · títulos que reaccionan en Power BI.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Power BI Desktop",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "downloadUrl": "https://drive.google.com/drive/folders/1l5ewaopHRJJlwrhoGSZamUSy_TiMGhH-?usp=drive_link"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "KPI Card adaptativo",
+      "description": "El usuario elige qué KPI ver, tú diseñas el sistema.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Power BI Desktop",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "downloadUrl": "https://drive.google.com/drive/folders/1l5ewaopHRJJlwrhoGSZamUSy_TiMGhH-?usp=drive_link"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "Resaltar sin ocultar",
+      "description": "Filtrar destruye contexto · resaltar lo mantiene.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Power BI Desktop",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "downloadUrl": "https://drive.google.com/drive/folders/1OlNUFuw8OL0m9zDgYWBeUMXJFsN_FwlN?usp=drive_link"
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <a href="#main-content" class="skip-link" style="position:absolute;left:-9999px;top:4px;z-index:9999;background:var(--ink);color:#fff;padding:8px 16px;font-size:13px;font-weight:600;text-decoration:none;border-radius:4px" onfocus="this.style.left='4px'" onblur="this.style.left='-9999px'">Saltar al contenido</a>
@@ -836,6 +1068,7 @@ footer {
         <a href="./proyectos.html#power-bi">Power BI</a>
         <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio" target="_blank" rel="noopener noreferrer">Python · SQL · R</a>
         <a href="https://github.com/BORJAMOME/DAX-LAB" target="_blank" rel="noopener noreferrer">DAX Lab</a>
+        <a href="./glosario-arquitectura-del-dato.html">Glosario de datos</a>
       </div>
 
       <div class="foot-col">
