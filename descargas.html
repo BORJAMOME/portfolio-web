@@ -55,15 +55,20 @@
 /* ─── ESTILOS ESPECÍFICOS DE DESCARGAS.HTML ─── */
 /* Variables, nav, footer y botones → shared.css  */
 
-/* GRID BORDERS */
+/* ─── BORDES DE CARDS — patrón grid sin dobles ─── */
+/* Redefinir --rule a negro puro para todos los bordes de esta página */
+:root { --rule: #111111; }
+
+/* Wrapper: top + left. Card: right + bottom → 1px en cada lado, sin duplicados */
 .grid-wrap {
-  border: none;
+  border-top: 1px solid #111111;
+  border-left: 1px solid #111111;
   margin-bottom: 96px;
 }
-
-/* ─── TODOS LOS CARDS: borde negro 1px ─── */
 .m {
-  border: 1px solid #111111 !important;
+  border: 0 !important;
+  border-right: 1px solid #111111 !important;
+  border-bottom: 1px solid #111111 !important;
 }
 
 /* ───────────── CONTAINERS ───────────── */
