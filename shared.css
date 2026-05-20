@@ -43,7 +43,9 @@ body {
 ::selection { background: var(--purple); color: #fff; }
 
 /* ─── NAV ─── */
-nav, #nav {
+/* Nota: limitamos el selector para NO afectar al <nav class="nav-drawer-links">
+   que vive dentro del drawer móvil. Solo aplica al nav principal con id="nav". */
+#nav, body > nav {
   position: fixed;
   top: 0; width: 100%;
   z-index: 1000;
@@ -58,7 +60,7 @@ nav, #nav {
   border-bottom: .5px solid transparent;
   transition: border-color .3s;
 }
-nav.scrolled, #nav.scrolled { border-bottom-color: #111111; }
+#nav.scrolled, body > nav.scrolled { border-bottom-color: #111111; }
 
 .logo {
   font-size: 17px; font-weight: 700;
@@ -329,23 +331,31 @@ footer {
 
 /* ─── MOBILE DRAWER ─── */
 /*
-  Diseño brutalista editorial:
-  - Overlay oscuro detrás
-  - Panel lateral derecho: blanco, borde negro izquierdo
-  - Header: "Borja Mora." (izq) + botón CERRAR × (der)
-  - 4 filas de nav con altura fija — activa en lima #c6ff00
-  - Footer: 2 celdas LINKEDIN | CONTACTAR
-  CLAVE iOS Safari: sin flex:1 en los <a> — alturas en px absolutos
+  Brutalismo editorial — drawer lateral derecho
+  - Panel blanco, borde negro izquierdo
+  - Header: "Borja Mora." + CERRAR ×
+  - 4 links de altura fija — activo en lima #c6ff00
+  - Footer: LINKEDIN | CONTACTAR
+  CLAVE: usa !important en los puntos críticos para vencer cualquier
+  estilo global de "nav" o "a" que herede de la página.
 */
 .nav-drawer {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: auto !important;
+  height: auto !important;
   z-index: 1050;
   pointer-events: none;
   visibility: hidden;
-  /* iOS: nuevo stacking context sin depender del padre */
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 .nav-drawer.open {
   pointer-events: auto;
@@ -355,7 +365,7 @@ footer {
 /* Backdrop */
 .nav-drawer-backdrop {
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+  inset: 0;
   background: rgba(0,0,0,.5);
   opacity: 0;
   transition: opacity .3s ease;
@@ -370,20 +380,16 @@ footer {
   position: absolute;
   top: 0;
   right: 0;
-  /* px fijos: evita que iOS Safari calcule mal el ancho */
-  width: 300px;
-  /* Altura con top/bottom absolutos — no depende de height:100% del padre */
   bottom: 0;
+  width: 300px;
+  max-width: 88vw;
   background: #ffffff;
   border-left: 1.5px solid #111111;
   transform: translateX(100%);
   transition: transform .38s cubic-bezier(.16,1,.3,1);
-  /* Columna interior con tamaños fijos en px — cero flex:1 en hijos */
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  /* iOS Safari: evita rebote en el panel */
-  -webkit-overflow-scrolling: auto;
 }
 .nav-drawer.open .nav-drawer-panel {
   transform: translateX(0);
@@ -391,17 +397,20 @@ footer {
 
 /* ── Header: "Borja Mora." + CERRAR × ── */
 .nav-drawer-head {
-  display: flex;
+  display: flex !important;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
-  /* Altura fija en px — no flex */
-  height: 56px;
+  padding: 0 20px !important;
+  height: 56px !important;
   min-height: 56px;
   max-height: 56px;
   flex: 0 0 56px;
   border-bottom: 1.5px solid #111111;
-  background: #ffffff;
+  background: #ffffff !important;
+  position: static !important;
+  width: auto !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 .nav-drawer-brand {
   font-family: var(--font);
@@ -437,34 +446,51 @@ footer {
   color: #ffffff;
 }
 
-/* ── Links: bloques con altura fija en px — NO flex:1 ──
-   iOS Safari no puede distribuir flex:1 cuando el padre
-   tiene height:100% sin px raíz. Solución: altura fija. */
-.nav-drawer-links {
-  /* Ocupa todo lo que queda entre header y footer */
-  flex: 1 1 auto;
-  /* display:block = sin flex, sin ambigüedad de distribución */
-  display: block;
+/* ── Links: el <nav class="nav-drawer-links"> se RESETEA ──
+   IMPORTANTE: vence el estilo global de "nav" que es position:fixed */
+.nav-drawer-links,
+nav.nav-drawer-links {
+  position: static !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: 100% !important;
+  height: auto !important;
+  flex: 1 1 auto !important;
+  display: block !important;
+  flex-direction: column;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: #ffffff !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  z-index: auto !important;
+  justify-content: flex-start !important;
+  align-items: stretch !important;
   overflow: hidden;
 }
+/* Cada link: bloque de altura fija, sin flex:1 (rompía en iOS) */
 .nav-drawer-links a {
-  /* Bloque completo — no flex item */
-  display: flex;
+  display: flex !important;
   align-items: center;
   width: 100%;
-  /* Altura fija: 4 links, 72px c/u → 288px total links */
-  height: 72px;
-  padding: 0 24px;
+  height: 72px !important;
+  min-height: 72px;
+  padding: 0 24px !important;
   font-family: var(--mono);
   font-size: 13px;
   font-weight: 700;
   letter-spacing: .06em;
   text-transform: uppercase;
-  color: #111111;
+  color: #111111 !important;
   text-decoration: none;
   border-bottom: 1.5px solid #111111;
+  background: #ffffff;
   transition: background .18s;
   box-sizing: border-box;
+  border-radius: 0;
 }
 .nav-drawer-links a:last-child {
   border-bottom: none;
@@ -472,42 +498,50 @@ footer {
 .nav-drawer-links a:hover {
   background: #f5f5f5;
 }
-/* Activo: fondo lima, texto negro en bold */
+/* Activo: fondo lima */
 .nav-drawer-links a.active {
-  background: #c6ff00;
-  color: #111111;
+  background: #c6ff00 !important;
+  color: #111111 !important;
 }
 .nav-drawer-links a.active:hover {
-  background: #b8ee00;
+  background: #b8ee00 !important;
+}
+/* Anular el ::after del .nav-links a.active que pone línea decorativa */
+.nav-drawer-links a::after,
+.nav-drawer-links a.active::after {
+  content: none !important;
+  display: none !important;
 }
 
-/* ── Footer: LINKEDIN | CONTACTAR con altura fija ── */
+/* ── Footer: LINKEDIN | CONTACTAR ── */
 .nav-drawer-foot {
-  /* Altura fija — no crece ni encoge */
   flex: 0 0 56px;
   height: 56px;
   min-height: 56px;
   max-height: 56px;
   border-top: 1.5px solid #111111;
   display: flex;
+  background: #ffffff;
 }
 .nav-drawer-foot-item {
   flex: 1;
-  display: flex;
+  display: flex !important;
   align-items: center;
   justify-content: center;
   height: 56px;
-  padding: 0 8px;
+  padding: 0 8px !important;
   text-decoration: none;
   font-family: var(--mono);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: .1em;
   text-transform: uppercase;
-  color: #111111;
+  color: #111111 !important;
   transition: background .18s;
   border-right: 1.5px solid #111111;
+  border-radius: 0;
   box-sizing: border-box;
+  background: #ffffff;
 }
 .nav-drawer-foot-item:last-child {
   border-right: none;
@@ -515,10 +549,14 @@ footer {
 .nav-drawer-foot-item:hover {
   background: #f5f5f5;
 }
+.nav-drawer-foot-item::after {
+  content: none !important;
+  display: none !important;
+}
 
 /* ─── RESPONSIVE MOBILE NAV ─── */
 @media (max-width: 640px) {
-  nav, #nav { height: 56px; padding: 0 clamp(1rem,3vw,1.5rem); }
+  #nav, body > nav { height: 56px; padding: 0 clamp(1rem,3vw,1.5rem); }
   .logo { font-size: 15px; }
   /* Ocultar nav-links y CTA normales */
   .nav-links { display: none !important; }
