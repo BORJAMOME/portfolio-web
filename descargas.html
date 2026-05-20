@@ -55,15 +55,17 @@
 /* ─── ESTILOS ESPECÍFICOS DE DESCARGAS.HTML ─── */
 /* Variables, nav, footer y botones → shared.css  */
 
-/* Ensure card borders are visible in grid layout */
-.grid {
+/* GRID BORDERS — Grid wrapper with top and left borders */
+.grid-wrap {
   border-top: 1px solid var(--rule);
   border-left: 1px solid var(--rule);
+  margin-bottom: 96px;
 }
 
+/* CARD BORDERS — Each card (module) with right and bottom borders */
 .m {
-  border-bottom: 1px solid var(--rule) !important;
-  border-right: 1px solid var(--rule) !important;
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
 }
 
 /* ───────────── CONTAINERS ───────────── */
