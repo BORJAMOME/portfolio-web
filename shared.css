@@ -57,6 +57,10 @@ nav, #nav {
   -webkit-backdrop-filter: blur(20px);
   border-bottom: .5px solid transparent;
   transition: border-color .3s;
+  /* iOS Safari: prevent backdrop-filter from creating a new containing block
+     that traps position:fixed descendants */
+  isolation: auto;
+  will-change: auto;
 }
 nav.scrolled, #nav.scrolled { border-bottom-color: #111111; }
 
@@ -333,6 +337,9 @@ footer {
   inset: 0;
   z-index: 1050;
   pointer-events: none;
+  /* iOS Safari fix: force hardware acceleration */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 .nav-drawer-backdrop {
   position: absolute;
@@ -350,6 +357,7 @@ footer {
   top: 0; right: 0;
   width: min(300px, 88vw);
   height: 100%;
+  height: 100dvh; /* iOS Safari: dynamic viewport height */
   background: #ffffff;
   border-left: 1.5px solid #111111;
   transform: translateX(100%);
@@ -357,6 +365,7 @@ footer {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
 }
@@ -411,6 +420,7 @@ footer {
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
 }
 .nav-drawer-links a {
   font-family: var(--mono);
@@ -426,7 +436,9 @@ footer {
   align-items: center;
   border-bottom: 1px solid #111111;
   transition: background .18s;
-  min-height: 56px;
+  min-height: 64px;
+  /* iOS Safari fix: prevent flex item shrinking to 0 */
+  flex-shrink: 0;
 }
 .nav-drawer-links a:last-child {
   border-bottom: none;
