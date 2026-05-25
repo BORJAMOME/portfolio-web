@@ -251,13 +251,14 @@
 
 /* PBI CARDS — carrusel con bordes continuos */
 .pbi-cards-wrap{max-width:1240px;margin:0 auto;padding:0 clamp(20px,4vw,48px);position:relative}
-.proj-cards-outer{position:relative;margin:0}
+.proj-cards-outer{position:relative;margin:0 68px}
 .proj-cards-track-wrap{overflow:hidden;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);border-left:1px solid var(--rule);border-right:1px solid var(--rule)}
 .proj-cards-track{display:flex;gap:0;padding:0;transition:transform .5s cubic-bezier(0.16,1,0.3,1)}
+
 .proj-card{flex:0 0 calc(100% / 3);background:var(--paper);border:0;border-right:1px solid var(--rule);border-radius:0;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:var(--ink);transition:background .18s var(--ease),color .12s var(--ease);box-shadow:none;position:relative}
 .proj-card:hover{background:#111;color:#fff;transform:none;box-shadow:none}
 
-.pc-photo-wrap{position:relative;height:280px;overflow:hidden;background:#f0f0f6;flex-shrink:0;border-bottom:1px solid var(--rule)}
+.pc-photo-wrap{position:relative;height:200px;overflow:hidden;background:#f0f0f6;flex-shrink:0;border-bottom:1px solid var(--rule)}
 .pc-arrow{display:none}
 .pc-photo-dots{display:none}
 .pc-badge{position:absolute;top:14px;left:14px;right:14px;display:flex;justify-content:space-between;z-index:2;gap:6px}
@@ -296,8 +297,8 @@
 .pco-arrow{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;background:#111111;border:none;border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;box-shadow:none;transition:background .18s,color .12s;color:#ffffff}
 .pco-arrow:hover{background:#7a7bff;color:#fff}
 .pco-arrow svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:square;width:16px;height:16px}
-.pco-prev{left:0}
-.pco-next{right:0}
+.pco-prev{left:-60px}
+.pco-next{right:-60px}
 .pco-dots{display:flex;gap:6px;justify-content:center;margin-top:22px}
 .pco-dot{width:8px;height:8px;background:var(--gray);border:0;padding:10px;cursor:pointer;border-radius:0;transition:background .25s,width .25s;background-clip:content-box;box-sizing:content-box}
 .pco-dot.active{background:var(--ink);width:24px;background-clip:content-box}
@@ -323,10 +324,10 @@
 .li-card:hover .li-card-title{color:#c6ff00}
 .li-card-desc{font-size:12.5px;line-height:1.55;color:var(--muted);text-shadow:none;transition:color .12s}
 .li-card:hover .li-card-desc{color:rgba(255,255,255,.75)}
-.li-card-btn{margin-top:auto;display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);padding:12px 0 0;background:transparent;border-radius:0;border:0;border-top:1px solid rgba(10,10,10,.12);width:100%;transition:color .12s,gap .2s,border-color .12s}
+.li-card-btn{margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);padding:0;background:transparent;border-radius:0;border:0;width:fit-content;transition:color .12s,gap .2s}
 .li-card-btn::after{content:"→";display:inline-block;transition:transform .2s}
 .li-card-btn svg{display:none}
-.li-card:hover .li-card-btn{background:transparent;color:#c6ff00;border-top-color:rgba(255,255,255,.15)}
+.li-card:hover .li-card-btn{background:transparent;color:#c6ff00}
 .li-card:hover .li-card-btn::after{transform:translateX(4px)}
 
 /* nat-viz */
@@ -342,10 +343,10 @@
 .nat-viz-footer{position:relative;z-index:1;padding:0 22px 22px;display:flex;flex-direction:column;gap:10px;flex:1;justify-content:space-between}
 .nat-viz-desc{font-size:12.5px;color:var(--muted);line-height:1.55;text-shadow:none;transition:color .12s;margin:0}
 .nat-viz-card:hover .nat-viz-desc{color:rgba(255,255,255,.75)}
-.nat-viz-link{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);background:transparent;padding:10px 0 0;border-radius:0;border-top:1px solid rgba(10,10,10,.12);width:100%;transition:color .12s,gap .2s,border-color .12s}
+.nat-viz-link{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);background:transparent;padding:0;border-radius:0;width:fit-content;transition:color .12s,gap .2s}
 .nat-viz-link::after{content:"→";display:inline-block;transition:transform .2s}
 .nat-viz-link svg{display:none}
-.nat-viz-card:hover .nat-viz-link{background:transparent;color:#c6ff00;border-top-color:rgba(255,255,255,.15)}
+.nat-viz-card:hover .nat-viz-link{background:transparent;color:#c6ff00}
 .nat-viz-card:hover .nat-viz-link::after{transform:translateX(4px)}
 
 /* DAX Lab */
@@ -358,10 +359,10 @@
 .dax-card:hover .dax-card-title{color:#c6ff00}
 .dax-card-desc{font-size:13px;color:var(--muted);line-height:1.55;flex:1;margin-bottom:24px;transition:color .12s}
 .dax-card:hover .dax-card-desc{color:rgba(255,255,255,.75)}
-.dax-card-link{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);text-decoration:none;margin-top:auto;background:transparent;padding-top:16px;border-top:1px solid rgba(10,10,10,.12);width:100%;transition:gap .2s,color .12s,border-color .12s}
+.dax-card-link{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);text-decoration:none;margin-top:auto;background:transparent;transition:gap .2s,color .12s}
 .dax-card-link svg{stroke:currentColor;fill:none;stroke-width:2}
 .dax-card-link:hover{gap:10px}
-.dax-card:hover .dax-card-link{color:#c6ff00;border-top-color:rgba(255,255,255,.15)}
+.dax-card:hover .dax-card-link{color:#c6ff00}
 
 /* Analysis cards */
 .analysis-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--rule);border-left:1px solid var(--rule)}
@@ -452,10 +453,10 @@
 /* Overlay modal */
 .pc-overlay{display:none;position:fixed;inset:0;z-index:2000;background:rgba(10,10,10,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:24px}
 .pc-overlay.open{display:flex}
-.pc-overlay-inner{background:#ffffff;background:var(--paper,#ffffff);border:1px solid var(--ink);border-radius:0;max-width:98vw;width:98vw;max-height:95vh;height:95vh;display:grid;grid-template-columns:1.6fr 1fr;gap:0;align-items:stretch;box-shadow:none;position:relative;overflow:hidden}
+.pc-overlay-inner{background:var(--paper);border:1px solid var(--ink);border-radius:0;max-width:920px;width:100%;display:grid;grid-template-columns:1fr 1.1fr;gap:0;align-items:stretch;box-shadow:none;position:relative;overflow:hidden}
 .pc-overlay-imgs{position:relative;overflow:hidden;border-radius:0;border-right:1px solid var(--ink);background:#f0f0f6;display:flex;flex-direction:column}
-.pcov-track{position:relative;flex:1;min-height:0;overflow:hidden;aspect-ratio:unset}
-.pcov-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;opacity:0;transition:opacity .3s ease;padding:6px}
+.pcov-track{position:relative;flex:1;min-height:320px;overflow:hidden;aspect-ratio:16/10}
+.pcov-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;opacity:0;transition:opacity .3s ease;padding:14px}
 .pcov-photo.pcov-active{opacity:1}
 .pcov-dots{display:flex;gap:6px;justify-content:center;padding:12px 0 18px}
 .pcov-dot{width:8px;height:8px;background:var(--gray);border:0;padding:8px;cursor:pointer;border-radius:0;transition:background .25s,width .25s;background-clip:content-box;box-sizing:content-box}
@@ -465,7 +466,7 @@
 .pc-overlay-imgs .pc-arrow svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:square}
 .pc-arrow-prev{left:12px}
 .pc-arrow-next{right:12px}
-.pc-overlay-copy{padding:28px 28px;display:flex;flex-direction:column;overflow-y:auto;max-height:95vh}
+.pc-overlay-copy{padding:32px 32px;display:flex;flex-direction:column;overflow-y:auto;max-height:84vh}
 .pc-overlay-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--mutedB);margin-bottom:18px;display:flex;align-items:center;gap:10px}
 .pc-overlay-eyebrow::before{content:"";width:24px;height:1px;background:var(--ink)}
 .pc-overlay-eyebrow span{display:none}
@@ -773,24 +774,24 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
         <div class="panel-section-header"><span class="panel-section-dot"></span>Aportaciones a la comunidad · LinkedIn</div>
         <div class="li-grid">
           <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7440740082766086144-4VZm" target="_blank" rel="noopener noreferrer" class="li-card">
-            <img src="./img/p1.png" alt="No estás filtrando datos. Estás eligiendo qué historia quieres ver." class="li-card-bg" width="600" height="400">
+            <img src="./img/p1.png" alt="Filtrar no oculta datos. Oculta el contexto que les da significado." class="li-card-bg" width="600" height="400">
             <div class="li-card-overlay"></div>
             <div class="li-card-top">
             </div>
             <div class="li-card-body">
-              <p class="li-card-title">No estás filtrando datos. Estás eligiendo qué historia quieres ver.</p>
-              <p class="li-card-desc">Input Slicer, Field Parameters y DAX para análisis dinámicos en una sola tabla.</p>
+              <p class="li-card-title">Filtrar no oculta datos. Oculta el contexto que les da significado.</p>
+              <p class="li-card-desc">Input Slicer, DAX y Formato Condicional para resaltar sin eliminar.</p>
               <span class="li-card-btn">Ver post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
             </div>
           </a>
           <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7442540385882554368-y4go" target="_blank" rel="noopener noreferrer" class="li-card">
-            <img src="./img/p2.png" alt="El futuro de los dashboards no son más gráficos, son mejores interacciones." class="li-card-bg" width="600" height="400">
+            <img src="./img/p2.png" alt="Un KPI Card que cambia según lo que el usuario quiere ver." class="li-card-bg" width="600" height="400">
             <div class="li-card-overlay"></div>
             <div class="li-card-top">
             </div>
             <div class="li-card-body">
-              <p class="li-card-title">El futuro de los dashboards no son más gráficos, son mejores interacciones.</p>
-              <p class="li-card-desc">Input Slicer, Top N y títulos dinámicos para que el usuario explore sin perderse.</p>
+              <p class="li-card-title">Un KPI Card que cambia según lo que el usuario quiere ver.</p>
+              <p class="li-card-desc">Input Slicer nativo para que el usuario elija métrica y comparación en tiempo real.</p>
               <span class="li-card-btn">Ver post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
             </div>
           </a>
@@ -816,14 +817,14 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
               <span class="li-card-btn">Ver post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
             </div>
           </a>
-          <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7437118505080020992-m7Em" target="_blank" rel="noopener noreferrer" class="li-card">
-            <img src="./img/p5.png" alt="Un gráfico puede ser correcto y aun así engañar." class="li-card-bg" width="600" height="400">
+          <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7394778746525913088-iwtA?utm_source=share&utm_medium=member_desktop&rcm=ACoAABTbbq8B1ZYeZSTEg8B45kwpKF4zm5yGJJs" target="_blank" rel="noopener noreferrer" class="li-card">
+            <img src="./img/p5.png" alt="Los números no cuentan historias. Las historias aparecen cuando los comparas con el objetivo." class="li-card-bg" width="600" height="400">
             <div class="li-card-overlay"></div>
             <div class="li-card-top">
             </div>
             <div class="li-card-body">
-              <p class="li-card-title">Un gráfico puede ser correcto y aun así engañar.</p>
-              <p class="li-card-desc">Cómo los outliers distorsionan la escala y cómo construir un zoom visual.</p>
+              <p class="li-card-title">Los números no cuentan historias. Las historias aparecen cuando los comparas con el objetivo.</p>
+              <p class="li-card-desc">Parámetro dinámico, línea de objetivo y % de cumplimiento sobre cada barra.</p>
               <span class="li-card-btn">Ver post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
             </div>
           </a>
@@ -1141,6 +1142,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
         <a href="./proyectos.html#power-bi">Power BI</a>
         <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio" target="_blank" rel="noopener noreferrer">Python · SQL · R</a>
         <a href="https://github.com/BORJAMOME/DAX-LAB" target="_blank" rel="noopener noreferrer">DAX Lab</a>
+        <a href="./glosario-arquitectura-del-dato.html">Glosario de datos</a>
       </div>
       <div class="foot-col">
         <div class="foot-col-title">Sígueme</div>
