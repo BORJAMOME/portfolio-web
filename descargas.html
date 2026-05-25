@@ -1096,12 +1096,26 @@ function render(){
   }
   grid.innerHTML = html;
 
+  // Helper: dispara evento GA4 de descarga
+  function trackDownload(card, trigger){
+    if(typeof gtag !== 'function') return;
+    const title = card.querySelector('.m-title')?.textContent?.trim() || '';
+    const cat   = card.dataset.cat || '';
+    gtag('event', 'descarga_pbix', {
+      file_id:       card.dataset.id,
+      file_title:    title,
+      file_category: cat,
+      trigger:       trigger   // 'card' | 'arrow'
+    });
+  }
+
   // Card principal: click y Enter/Space abren la descarga
   grid.querySelectorAll('.m[data-href]').forEach(card=>{
     const openCard = e => {
       if(e.target.closest('.m-ext,.m-dl')) return;
       stamp(card.querySelector('.m-dl'));
       markDownloaded(card.dataset.id);
+      trackDownload(card, 'card');
       window.open(card.dataset.href,'_blank','noopener');
     };
     card.addEventListener('click', openCard);
@@ -1125,6 +1139,7 @@ function render(){
       const card = el.closest('.m[data-href]');
       if(card){
         markDownloaded(card.dataset.id);
+        trackDownload(card, 'arrow');
         window.open(card.dataset.href,'_blank','noopener');
       }
     });
