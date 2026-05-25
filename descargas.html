@@ -1117,12 +1117,16 @@ function render(){
     });
   });
 
-  // Stamp en el icono de descarga
+  // Stamp en el icono de descarga + abrir enlace
   grid.querySelectorAll('.m-dl').forEach(el=>{
-    el.addEventListener('click', () => {
+    el.addEventListener('click', e => {
+      e.stopPropagation();
       stamp(el);
-      const card = el.closest('.m[data-id]');
-      if(card) markDownloaded(card.dataset.id);
+      const card = el.closest('.m[data-href]');
+      if(card){
+        markDownloaded(card.dataset.id);
+        window.open(card.dataset.href,'_blank','noopener');
+      }
     });
   });
 
