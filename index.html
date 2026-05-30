@@ -460,36 +460,38 @@
 .ext-btn svg{fill:currentColor}
 
 /* Overlay modal */
-.pc-overlay{display:none;position:fixed;inset:0;z-index:2000;background:rgba(10,10,10,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:24px}
+.pc-overlay{display:none;position:fixed;inset:0;z-index:2000;background:rgba(10,10,10,.78);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:16px}
 .pc-overlay.open{display:flex}
-.pc-overlay-inner{background:var(--paper);border:1px solid var(--ink);border-radius:0;max-width:920px;width:100%;display:grid;grid-template-columns:1fr 1.1fr;gap:0;align-items:stretch;box-shadow:none;position:relative;overflow:hidden}
-.pc-overlay-imgs{position:relative;overflow:hidden;border-radius:0;border-right:1px solid var(--ink);background:#f0f0f6;display:flex;flex-direction:column}
-.pcov-track{position:relative;flex:1;min-height:320px;overflow:hidden;aspect-ratio:16/10}
-.pcov-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;opacity:0;transition:opacity .3s ease;padding:14px}
+.pc-overlay-inner{background:#ffffff;border:1px solid var(--ink);border-radius:0;width:min(1400px,95vw);height:min(760px,92vh);display:grid;grid-template-columns:1.05fr 1fr;gap:0;align-items:stretch;box-shadow:0 40px 100px rgba(0,0,0,.35);position:relative;overflow:hidden}
+.pc-overlay-imgs{position:relative;overflow:hidden;border-right:1px solid var(--ink);background:#ffffff;display:flex;flex-direction:column}
+.pcov-track{position:relative;flex:1;overflow:hidden;background:#ffffff}
+.pcov-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;opacity:0;transition:opacity .3s ease;padding:20px;background:#ffffff}
 .pcov-photo.pcov-active{opacity:1}
-.pcov-dots{display:flex;gap:6px;justify-content:center;padding:12px 0 18px}
+.pcov-dots{display:flex;gap:6px;justify-content:center;padding:12px 0 16px;background:#ffffff;border-top:1px solid var(--rule);flex-shrink:0}
 .pcov-dot{width:8px;height:8px;background:var(--gray);border:0;padding:8px;cursor:pointer;border-radius:0;transition:background .25s,width .25s;background-clip:content-box;box-sizing:content-box}
 .pcov-dot.pcov-dot-active{background:var(--ink);width:24px;background-clip:content-box}
-.pc-overlay-imgs .pc-arrow{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;background:var(--paper);border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .18s,color .12s;z-index:2;box-shadow:none}
+.pc-overlay-imgs .pc-arrow{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;background:#ffffff;border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .18s,color .12s;z-index:2}
 .pc-overlay-imgs .pc-arrow:hover{background:var(--ink);color:#fff}
 .pc-overlay-imgs .pc-arrow svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:square}
 .pc-arrow-prev{left:12px}
 .pc-arrow-next{right:12px}
-.pc-overlay-copy{padding:32px 32px;display:flex;flex-direction:column;overflow-y:auto;max-height:84vh}
-.pc-overlay-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--mutedB);margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.pc-overlay-copy{padding:28px 32px 24px;display:flex;flex-direction:column;overflow:hidden;background:#ffffff}
+.pc-overlay-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--mutedB);margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-shrink:0}
 .pc-overlay-eyebrow::before{content:"";width:24px;height:1px;background:var(--ink)}
 .pc-overlay-eyebrow span{display:none}
-.pc-overlay-title{font-size:22px;font-weight:700;letter-spacing:-.02em;line-height:1.2;color:var(--ink);margin-bottom:22px}
-.pc-overlay-long{display:flex;flex-direction:column;gap:14px;margin-bottom:22px}
-.pc-overlay-long p{font-size:13px;color:var(--muted);line-height:1.65}
+.pc-overlay-title{font-size:22px;font-weight:700;letter-spacing:-.022em;line-height:1.2;color:var(--ink);margin-bottom:18px;flex-shrink:0}
+.pc-overlay-long{display:flex;flex-direction:column;gap:11px;margin-bottom:16px;overflow-y:auto;flex:1;padding-right:6px;scrollbar-width:thin;scrollbar-color:var(--rule) transparent}
+.pc-overlay-long::-webkit-scrollbar{width:4px}
+.pc-overlay-long::-webkit-scrollbar-thumb{background:var(--rule);border-radius:2px}
+.pc-overlay-long p{font-size:12.5px;color:var(--muted);line-height:1.68}
 .pc-overlay-long p strong{color:var(--ink);font-weight:600}
-.pc-overlay-pills{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:24px}
-.pc-overlay-pill{font-family:'JetBrains Mono',monospace;background:transparent;color:var(--ink);padding:3px 9px;border:0.8px solid var(--ink);border-radius:999px;font-size:9.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+.pc-overlay-pills{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:16px;flex-shrink:0}
+.pc-overlay-pill{font-family:'JetBrains Mono',monospace;background:transparent;color:var(--ink);padding:2px 8px;border:0.8px solid var(--ink);border-radius:999px;font-size:9px;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
 .pc-overlay-pill::after{content:""}
 .pc-overlay-pills .pc-overlay-pill:last-child::after{content:""}
-.pc-overlay-foot{display:flex;align-items:center;justify-content:space-between;padding-top:18px;border-top:1px solid var(--rule);margin-top:auto;gap:12px}
+.pc-overlay-foot{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--rule);flex-shrink:0;gap:12px}
 .pc-tech{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--mutedB);font-weight:500}
-.pc-overlay-close{position:absolute;top:14px;right:14px;width:32px;height:32px;background:var(--paper);border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;transition:background .18s,color .12s}
+.pc-overlay-close{position:absolute;top:14px;right:14px;width:32px;height:32px;background:#ffffff;border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;transition:background .18s,color .12s}
 .pc-overlay-close:hover{background:var(--ink);color:#fff}
 .pc-overlay-close svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:square}
 
@@ -525,8 +527,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
   .dax-cards{grid-template-columns:1fr}
   .dax-card{grid-template-columns:1fr;gap:16px}
   .dax-card:hover{margin:0;padding:32px 0}
-  .pc-overlay-inner{grid-template-columns:1fr;max-height:90vh;overflow-y:auto}
-  .pco-arrow{display:none}
+  .pc-overlay-inner{grid-template-columns:1fr;max-height:90vh;overflow-y:auto}  .pco-arrow{display:none}
   .proj-cards-outer{margin:0}
   .col-header{padding:24px 0}
   .col-header .col-title{font-size:20px}
@@ -767,7 +768,8 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
     <p class="pc-short">El revenue caía un 8% a pesar de haber incorporado clientes nuevos. El problema no era la captación. Era que <strong>los clientes que ya tenían se marchaban sin que nadie lo viera</strong>. Diseñé un sistema de segmentación RFM que clasifica a cada cliente por comportamiento real de compra — y pone nombre y cifra exacta al riesgo: <strong>más de €198.000 en clientes que antes compraban bien y que llevaban meses sin aparecer</strong>.</p>
     <div class="pc-pills"><span class="pc-pill">RFM</span><span class="pc-pill">Segmentación de clientes</span><span class="pc-pill">DAX avanzado</span><span class="pc-pill">Esquema estrella</span><span class="pc-pill">Tabla HTML en DAX</span><span class="pc-pill">KPIs condicionales</span><span class="pc-pill">B2B analytics</span><span class="pc-pill">Customer analytics</span></div>
     <div class="pc-foot">
-      <button class="pc-read-more" onclick="openOverlay(6)" style="margin-left:auto;">Ver más <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <a href="https://app.powerbi.com/view?r=eyJrIjoiNGQ1OWZhNmEtY2I3Ni00N2M5LTk1NWYtMTEwZTA3NWI3NmYwIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+      <button class="pc-read-more" onclick="openOverlay(6)">Ver más <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
     </div>
   </div>
 </div>
@@ -1631,6 +1633,7 @@ document.querySelectorAll('.col-header').forEach(h=>{
         <span class="pc-overlay-pill">Customer analytics</span>
       </div>
       <div class="pc-overlay-foot">
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiNGQ1OWZhNmEtY2I3Ni00N2M5LTk1NWYtMTEwZTA3NWI3NmYwIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
         <span class="pc-tech">Power BI · DAX · M Language</span>
       </div>
     </div>
