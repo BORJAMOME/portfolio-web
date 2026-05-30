@@ -64,7 +64,8 @@
         { "@id": "https://borjamora.es/proyectos.html#social" },
         { "@id": "https://borjamora.es/proyectos.html#financiero" },
         { "@id": "https://borjamora.es/proyectos.html#pyg" },
-        { "@id": "https://borjamora.es/proyectos.html#airbnb" }
+        { "@id": "https://borjamora.es/proyectos.html#airbnb" },
+        { "@id": "https://borjamora.es/proyectos.html#rfm" }
       ]
     },
     {
@@ -106,6 +107,14 @@
       "name": "Análisis del Mercado de Airbnb — País Vasco",
       "description": "Dashboard de análisis territorial del mercado Airbnb en el País Vasco. Mapas en Power BI, segmentación de mercado, KPIs y análisis exploratorio con DAX.",
       "keywords": "Power BI, Airbnb, análisis territorial, mapas, DAX, segmentación de mercado",
+      "author": { "@type": "Person", "name": "Borja Mora Méndez" }
+    },
+    {
+      "@type": "CreativeWork",
+      "@id": "https://borjamora.es/proyectos.html#rfm",
+      "name": "Análisis RFM — Distribuidora B2B de Hostelería",
+      "description": "Sistema de segmentación RFM en Power BI para distribuidora de bebidas. Esquema estrella, DAX avanzado y tabla HTML generada desde medida. Más de €198.000 en riesgo detectados.",
+      "keywords": "Power BI, RFM, segmentación de clientes, DAX, análisis de clientes, B2B analytics, customer analytics",
       "author": { "@type": "Person", "name": "Borja Mora Méndez" }
     }
   ]
@@ -451,36 +460,38 @@
 .ext-btn svg{fill:currentColor}
 
 /* Overlay modal */
-.pc-overlay{display:none;position:fixed;inset:0;z-index:2000;background:rgba(10,10,10,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:24px}
+.pc-overlay{display:none;position:fixed;inset:0;z-index:2000;background:rgba(10,10,10,.78);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:16px}
 .pc-overlay.open{display:flex}
-.pc-overlay-inner{background:var(--paper);border:1px solid var(--ink);border-radius:0;max-width:920px;width:100%;display:grid;grid-template-columns:1fr 1.1fr;gap:0;align-items:stretch;box-shadow:none;position:relative;overflow:hidden}
-.pc-overlay-imgs{position:relative;overflow:hidden;border-radius:0;border-right:1px solid var(--ink);background:#f0f0f6;display:flex;flex-direction:column}
-.pcov-track{position:relative;flex:1;min-height:320px;overflow:hidden;aspect-ratio:16/10}
-.pcov-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;opacity:0;transition:opacity .3s ease;padding:14px}
+.pc-overlay-inner{background:#ffffff;border:1px solid var(--ink);border-radius:0;width:min(1400px,95vw);height:min(760px,92vh);display:grid;grid-template-columns:1.05fr 1fr;gap:0;align-items:stretch;box-shadow:0 40px 100px rgba(0,0,0,.35);position:relative;overflow:hidden}
+.pc-overlay-imgs{position:relative;overflow:hidden;border-right:1px solid var(--ink);background:#ffffff;display:flex;flex-direction:column}
+.pcov-track{position:relative;flex:1;overflow:hidden;background:#ffffff}
+.pcov-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;opacity:0;transition:opacity .3s ease;padding:20px;background:#ffffff}
 .pcov-photo.pcov-active{opacity:1}
-.pcov-dots{display:flex;gap:6px;justify-content:center;padding:12px 0 18px}
+.pcov-dots{display:flex;gap:6px;justify-content:center;padding:12px 0 16px;background:#ffffff;border-top:1px solid var(--rule);flex-shrink:0}
 .pcov-dot{width:8px;height:8px;background:var(--gray);border:0;padding:8px;cursor:pointer;border-radius:0;transition:background .25s,width .25s;background-clip:content-box;box-sizing:content-box}
 .pcov-dot.pcov-dot-active{background:var(--ink);width:24px;background-clip:content-box}
-.pc-overlay-imgs .pc-arrow{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;background:var(--paper);border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .18s,color .12s;z-index:2;box-shadow:none}
+.pc-overlay-imgs .pc-arrow{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;background:#ffffff;border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .18s,color .12s;z-index:2}
 .pc-overlay-imgs .pc-arrow:hover{background:var(--ink);color:#fff}
 .pc-overlay-imgs .pc-arrow svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:square}
 .pc-arrow-prev{left:12px}
 .pc-arrow-next{right:12px}
-.pc-overlay-copy{padding:32px 32px;display:flex;flex-direction:column;overflow-y:auto;max-height:84vh}
-.pc-overlay-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--mutedB);margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.pc-overlay-copy{padding:28px 32px 24px;display:flex;flex-direction:column;overflow:hidden;background:#ffffff}
+.pc-overlay-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--mutedB);margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-shrink:0}
 .pc-overlay-eyebrow::before{content:"";width:24px;height:1px;background:var(--ink)}
 .pc-overlay-eyebrow span{display:none}
-.pc-overlay-title{font-size:22px;font-weight:700;letter-spacing:-.02em;line-height:1.2;color:var(--ink);margin-bottom:22px}
-.pc-overlay-long{display:flex;flex-direction:column;gap:14px;margin-bottom:22px}
-.pc-overlay-long p{font-size:13px;color:var(--muted);line-height:1.65}
+.pc-overlay-title{font-size:22px;font-weight:700;letter-spacing:-.022em;line-height:1.2;color:var(--ink);margin-bottom:18px;flex-shrink:0}
+.pc-overlay-long{display:flex;flex-direction:column;gap:11px;margin-bottom:16px;overflow-y:auto;flex:1;padding-right:6px;scrollbar-width:thin;scrollbar-color:var(--rule) transparent}
+.pc-overlay-long::-webkit-scrollbar{width:4px}
+.pc-overlay-long::-webkit-scrollbar-thumb{background:var(--rule);border-radius:2px}
+.pc-overlay-long p{font-size:12.5px;color:var(--muted);line-height:1.68}
 .pc-overlay-long p strong{color:var(--ink);font-weight:600}
-.pc-overlay-pills{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:24px}
-.pc-overlay-pill{font-family:'JetBrains Mono',monospace;background:transparent;color:var(--ink);padding:3px 9px;border:0.8px solid var(--ink);border-radius:999px;font-size:9.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+.pc-overlay-pills{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:16px;flex-shrink:0}
+.pc-overlay-pill{font-family:'JetBrains Mono',monospace;background:transparent;color:var(--ink);padding:2px 8px;border:0.8px solid var(--ink);border-radius:999px;font-size:9px;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
 .pc-overlay-pill::after{content:""}
 .pc-overlay-pills .pc-overlay-pill:last-child::after{content:""}
-.pc-overlay-foot{display:flex;align-items:center;justify-content:space-between;padding-top:18px;border-top:1px solid var(--rule);margin-top:auto;gap:12px}
+.pc-overlay-foot{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--rule);flex-shrink:0;gap:12px}
 .pc-tech{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--mutedB);font-weight:500}
-.pc-overlay-close{position:absolute;top:14px;right:14px;width:32px;height:32px;background:var(--paper);border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;transition:background .18s,color .12s}
+.pc-overlay-close{position:absolute;top:14px;right:14px;width:32px;height:32px;background:#ffffff;border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;transition:background .18s,color .12s}
 .pc-overlay-close:hover{background:var(--ink);color:#fff}
 .pc-overlay-close svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:square}
 
@@ -516,8 +527,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
   .dax-cards{grid-template-columns:1fr}
   .dax-card{grid-template-columns:1fr;gap:16px}
   .dax-card:hover{margin:0;padding:32px 0}
-  .pc-overlay-inner{grid-template-columns:1fr;max-height:90vh;overflow-y:auto}
-  .pco-arrow{display:none}
+  .pc-overlay-inner{grid-template-columns:1fr;max-height:90vh;overflow-y:auto}  .pco-arrow{display:none}
   .proj-cards-outer{margin:0}
   .col-header{padding:24px 0}
   .col-header .col-title{font-size:20px}
@@ -650,11 +660,11 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
           <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
         <div class="proj-cards-track-wrap" role="region" aria-label="Proyectos Power BI">
-          <div class="proj-cards-track" id="pcoTrack" aria-live="polite" aria-atomic="false" aria-label="Proyecto 1 de 6">
+          <div class="proj-cards-track" id="pcoTrack" aria-live="polite" aria-atomic="false" aria-label="Proyecto 1 de 7">
 <div class="proj-card" id="pcard-0" role="group" aria-roledescription="slide">
   <div class="pc-photo-wrap">
     <img src="./img/ibcs-card.png" alt="Informe de ventas con enfoque IBCS" width="800" height="200" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
-    <div class="pc-badge"><span class="pc-num">01 / 06</span><span class="pc-cat">Ventas</span></div>
+    <div class="pc-badge"><span class="pc-num">01 / 07</span><span class="pc-cat">Ventas</span></div>
   </div>
   <div class="pc-copy">
     <div class="pc-eyebrow"><span></span>Análisis de ventas</div>
@@ -670,7 +680,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
 <div class="proj-card" id="pcard-1" role="group" aria-roledescription="slide">
   <div class="pc-photo-wrap">
     <img src="./img/kosta-CARD.png" alt="Kosta Cálida — Reporting para red de tiendas" width="800" height="200" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
-    <div class="pc-badge"><span class="pc-num">02 / 06</span><span class="pc-cat">Retail</span></div>
+    <div class="pc-badge"><span class="pc-num">02 / 07</span><span class="pc-cat">Retail</span></div>
   </div>
   <div class="pc-copy">
     <div class="pc-eyebrow"><span></span>Retail · Red de tiendas</div>
@@ -686,7 +696,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
 <div class="proj-card" id="pcard-2" role="group" aria-roledescription="slide">
   <div class="pc-photo-wrap">
     <img src="./img/social-card.png" alt="Social Media Performance | 2025 vs 2024" width="800" height="200" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
-    <div class="pc-badge"><span class="pc-num">03 / 06</span><span class="pc-cat">Marketing</span></div>
+    <div class="pc-badge"><span class="pc-num">03 / 07</span><span class="pc-cat">Marketing</span></div>
   </div>
   <div class="pc-copy">
     <div class="pc-eyebrow"><span></span>Marketing analytics</div>
@@ -702,7 +712,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
 <div class="proj-card" id="pcard-3" role="group" aria-roledescription="slide">
   <div class="pc-photo-wrap">
     <img src="./img/financiero-card.png" alt="Informe Financiero Completo" width="800" height="200" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
-    <div class="pc-badge"><span class="pc-num">04 / 06</span><span class="pc-cat">Financiero</span></div>
+    <div class="pc-badge"><span class="pc-num">04 / 07</span><span class="pc-cat">Financiero</span></div>
   </div>
   <div class="pc-copy">
     <div class="pc-eyebrow"><span></span>Análisis financiero</div>
@@ -718,7 +728,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
 <div class="proj-card" id="pcard-4" role="group" aria-roledescription="slide">
   <div class="pc-photo-wrap">
     <img src="./img/pyg-card.png" alt="Cuenta de Pérdidas y Ganancias" width="800" height="200" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
-    <div class="pc-badge"><span class="pc-num">05 / 06</span><span class="pc-cat">Financiero</span></div>
+    <div class="pc-badge"><span class="pc-num">05 / 07</span><span class="pc-cat">Financiero</span></div>
   </div>
   <div class="pc-copy">
     <div class="pc-eyebrow"><span></span>Análisis financiero</div>
@@ -734,7 +744,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
 <div class="proj-card" id="pcard-5" role="group" aria-roledescription="slide">
   <div class="pc-photo-wrap">
     <img src="./img/airbnb-card.png" alt="Análisis del Mercado de Airbnb — País Vasco" width="800" height="200" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
-    <div class="pc-badge"><span class="pc-num">06 / 06</span><span class="pc-cat">Mercado</span></div>
+    <div class="pc-badge"><span class="pc-num">06 / 07</span><span class="pc-cat">Mercado</span></div>
   </div>
   <div class="pc-copy">
     <div class="pc-eyebrow"><span></span>Análisis de mercado</div>
@@ -744,6 +754,22 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
     <div class="pc-foot">
       <a href="https://app.powerbi.com/view?r=eyJrIjoiOTA2ZDExNjktYzE4Ny00Y2UzLThmM2YtMjI5Y2FmNDg1MzM5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=9c4b9193b627b78a0e01" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
       <button class="pc-read-more" onclick="openOverlay(5)">Leer más <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </div>
+</div>
+<div class="proj-card" id="pcard-6" role="group" aria-roledescription="slide">
+  <div class="pc-photo-wrap">
+    <img src="./img/rfmcard.png" alt="Análisis RFM — Distribuidora B2B de Hostelería" width="800" height="200" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
+    <div class="pc-badge"><span class="pc-num">07 / 07</span><span class="pc-cat">Clientes</span></div>
+  </div>
+  <div class="pc-copy">
+    <div class="pc-eyebrow"><span></span>Customer analytics</div>
+    <h3 class="pc-headline">Análisis RFM — Distribuidora B2B de Hostelería</h3>
+    <p class="pc-short">El revenue caía un 8% a pesar de haber incorporado clientes nuevos. El problema no era la captación. Era que <strong>los clientes que ya tenían se marchaban sin que nadie lo viera</strong>. Diseñé un sistema de segmentación RFM que clasifica a cada cliente por comportamiento real de compra — y pone nombre y cifra exacta al riesgo: <strong>más de €198.000 en clientes que antes compraban bien y que llevaban meses sin aparecer</strong>.</p>
+    <div class="pc-pills"><span class="pc-pill">RFM</span><span class="pc-pill">Segmentación de clientes</span><span class="pc-pill">DAX avanzado</span><span class="pc-pill">Esquema estrella</span><span class="pc-pill">Tabla HTML en DAX</span><span class="pc-pill">KPIs condicionales</span><span class="pc-pill">B2B analytics</span><span class="pc-pill">Customer analytics</span></div>
+    <div class="pc-foot">
+      <a href="https://app.powerbi.com/view?r=eyJrIjoiNGQ1OWZhNmEtY2I3Ni00N2M5LTk1NWYtMTEwZTA3NWI3NmYwIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+      <button class="pc-read-more" onclick="openOverlay(6)">Ver más <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
     </div>
   </div>
 </div>
@@ -760,6 +786,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
           <button class="pco-dot" data-idx="3"></button>
           <button class="pco-dot" data-idx="4"></button>
           <button class="pco-dot" data-idx="5"></button>
+          <button class="pco-dot" data-idx="6"></button>
         </div>
       </div>
 
@@ -773,25 +800,25 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
       <div id="panelCom">
         <div class="panel-section-header"><span class="panel-section-dot"></span>Aportaciones a la comunidad · LinkedIn</div>
         <div class="li-grid">
-          <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7458166054264111104-Hov2?utm_source=share&utm_medium=member_desktop&rcm=ACoAABTbbq8B1ZYeZSTEg8B45kwpKF4zm5yGJJs" target="_blank" rel="noopener noreferrer" class="li-card">
-            <img src="./img/p1.png" alt="Filtrar no oculta datos. Oculta el contexto que les da significado." class="li-card-bg" width="600" height="400">
+          <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7440740082766086144-4VZm" target="_blank" rel="noopener noreferrer" class="li-card">
+            <img src="./img/p1.png" alt="No estás filtrando datos. Estás eligiendo qué historia quieres ver." class="li-card-bg" width="600" height="400">
             <div class="li-card-overlay"></div>
             <div class="li-card-top">
             </div>
             <div class="li-card-body">
-              <p class="li-card-title">Filtrar no oculta datos. Oculta el contexto que les da significado.</p>
-              <p class="li-card-desc">Input Slicer, DAX y Formato Condicional para resaltar sin eliminar.</p>
+              <p class="li-card-title">No estás filtrando datos. Estás eligiendo qué historia quieres ver.</p>
+              <p class="li-card-desc">Input Slicer, Field Parameters y DAX para análisis dinámicos en una sola tabla.</p>
               <span class="li-card-btn">Ver post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
             </div>
           </a>
-          <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-businessintelligence-activity-7452022964017008640-Z-VH?utm_source=share&utm_medium=member_desktop&rcm=ACoAABTbbq8B1ZYeZSTEg8B45kwpKF4zm5yGJJs" target="_blank" rel="noopener noreferrer" class="li-card">
-            <img src="./img/p2.png" alt="Un KPI Card que cambia según lo que el usuario quiere ver." class="li-card-bg" width="600" height="400">
+          <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7442540385882554368-y4go" target="_blank" rel="noopener noreferrer" class="li-card">
+            <img src="./img/p2.png" alt="El futuro de los dashboards no son más gráficos, son mejores interacciones." class="li-card-bg" width="600" height="400">
             <div class="li-card-overlay"></div>
             <div class="li-card-top">
             </div>
             <div class="li-card-body">
-              <p class="li-card-title">Un KPI Card que cambia según lo que el usuario quiere ver.</p>
-              <p class="li-card-desc">Input Slicer nativo para que el usuario elija métrica y comparación en tiempo real.</p>
+              <p class="li-card-title">El futuro de los dashboards no son más gráficos, son mejores interacciones.</p>
+              <p class="li-card-desc">Input Slicer, Top N y títulos dinámicos para que el usuario explore sin perderse.</p>
               <span class="li-card-btn">Ver post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
             </div>
           </a>
@@ -817,14 +844,14 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
               <span class="li-card-btn">Ver post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
             </div>
           </a>
-          <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7394778746525913088-iwtA?utm_source=share&utm_medium=member_desktop&rcm=ACoAABTbbq8B1ZYeZSTEg8B45kwpKF4zm5yGJJs" target="_blank" rel="noopener noreferrer" class="li-card">
-            <img src="./img/p5.png" alt="Los números no cuentan historias. Las historias aparecen cuando los comparas con el objetivo." class="li-card-bg" width="600" height="400">
+          <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7437118505080020992-m7Em" target="_blank" rel="noopener noreferrer" class="li-card">
+            <img src="./img/p5.png" alt="Un gráfico puede ser correcto y aun así engañar." class="li-card-bg" width="600" height="400">
             <div class="li-card-overlay"></div>
             <div class="li-card-top">
             </div>
             <div class="li-card-body">
-              <p class="li-card-title">Los números no cuentan historias. Las historias aparecen cuando los comparas con el objetivo.</p>
-              <p class="li-card-desc">Parámetro dinámico, línea de objetivo y % de cumplimiento sobre cada barra.</p>
+              <p class="li-card-title">Un gráfico puede ser correcto y aun así engañar.</p>
+              <p class="li-card-desc">Cómo los outliers distorsionan la escala y cómo construir un zoom visual.</p>
               <span class="li-card-btn">Ver post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
             </div>
           </a>
@@ -1232,7 +1259,7 @@ showSection('powerbi');
 (function(){
   const track = document.getElementById('pcoTrack');
   if(!track) return;
-  const TOTAL = 6;
+  const TOTAL = 7;
   const CLONES = 3; // clones en cada extremo (= cards visibles simultáneamente)
   const EASING = 'transform .5s cubic-bezier(0.16,1,0.3,1)';
 
@@ -1563,6 +1590,51 @@ document.querySelectorAll('.col-header').forEach(h=>{
       <div class="pc-overlay-foot">
         <a href="https://app.powerbi.com/view?r=eyJrIjoiOTA2ZDExNjktYzE4Ny00Y2UzLThmM2YtMjI5Y2FmNDg1MzM5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=9c4b9193b627b78a0e01" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
         <span class="pc-tech">Power BI · DAX</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="pc-overlay" id="pcoverlay-6" role="dialog" aria-modal="true" aria-labelledby="pcoverlay-6-title" aria-hidden="true" onclick="closeOverlayIfBg(event,6)">
+  <div class="pc-overlay-inner">
+    <button class="pc-overlay-close" onclick="closeOverlay(6)">
+      <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pc-overlay-imgs">
+      <div class="pcov-track" id="pcovtrack-6">
+        <img src="./img/rfm1.png" alt="Análisis RFM — Distribuidora B2B de Hostelería, vista 1" class="pcov-photo pcov-active" width="1200" height="720">
+        <img src="./img/rfm2.png" alt="Análisis RFM — Distribuidora B2B de Hostelería, vista 2" class="pcov-photo" width="1200" height="720">
+      </div>
+      <button class="pc-arrow pc-arrow-prev" onclick="overlayPhotoNav(6,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="pc-arrow pc-arrow-next" onclick="overlayPhotoNav(6,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <div class="pcov-dots">
+        <button class="pcov-dot pcov-dot-active" onclick="overlayPhotoNav(6,0)"></button>
+        <button class="pcov-dot" onclick="overlayPhotoNav(6,1)"></button>
+      </div>
+    </div>
+    <div class="pc-overlay-copy">
+      <div class="pc-overlay-eyebrow"><span></span>Customer analytics</div>
+      <div class="pc-overlay-title" id="pcoverlay-6-title">Análisis RFM — Distribuidora B2B de Hostelería</div>
+      <div class="pc-overlay-long">
+        <p>Una distribuidora de bebidas para hostelería, 400 clientes activos y tres años de histórico de ventas. El director comercial detecta una caída del 8% en el revenue a pesar de haber incorporado clientes nuevos. La conclusión rápida habría sido "hay que vender más". La correcta era distinta: <strong>el problema no estaba en la captación, sino en la retención — y nadie lo estaba viendo</strong>.</p>
+        <p>El análisis RFM clasifica a cada cliente según tres comportamientos de compra: <strong>Recency</strong> (cuántos días llevan sin comprar), <strong>Frequency</strong> (cuántos pedidos distintos han hecho en el periodo) y <strong>Monetary</strong> (cuánto dinero han dejado en total). Con esas tres variables, cada cliente recibe una puntuación y queda asignado a uno de siete segmentos: Champion, Loyal, Potential, At Risk, Needs Attention, Average y Lost. Los cortes no son fijos — se calculan con <strong>percentiles dinámicos sobre toda la tabla</strong>, lo que hace que el sistema funcione bien con cualquier distribución de datos.</p>
+        <p>El análisis confirmó lo que el director sospechaba. El segmento Loyal — 111 clientes que generaban casi la mitad del revenue — <strong>estaba envejeciendo hacia At Risk</strong>. Más de €198.000 en riesgo real. Clientes que antes compraban bien y con frecuencia, y que llevaban meses sin aparecer. Sin segmentación, esa señal queda sepultada bajo el ruido del total. Con ella, tiene nombre, tiene cifra y tiene una acción comercial asociada.</p>
+        <p>El modelo se construyó en <strong>esquema estrella</strong> con una tabla de hechos central (Fact_Pedidos) y cinco dimensiones: Cliente, Fecha, Producto, Comercial y TipoEstablecimiento. Todas las columnas calculadas del RFM — Recency, Frequency, Monetary, los tres scores y el segmento — viven en Dim_Cliente. El dashboard responde cuatro preguntas en una sola página: la salud del negocio (cinco KPI cards con badges de color condicional), la distribución de clientes por segmento, la evolución mensual del revenue y las <strong>características y acción recomendada para cada segmento</strong> — esta última generada como tabla HTML directamente desde una medida DAX.</p>
+        <p><em>Un cliente que deja de comprar no lo anuncia. La segmentación RFM es la herramienta que detecta esa señal antes de que el revenue lo confirme.</em></p>
+      </div>
+      <div class="pc-overlay-pills">
+        <span class="pc-overlay-pill">RFM</span>
+        <span class="pc-overlay-pill">Segmentación de clientes</span>
+        <span class="pc-overlay-pill">DAX avanzado</span>
+        <span class="pc-overlay-pill">Esquema estrella</span>
+        <span class="pc-overlay-pill">Tabla HTML en DAX</span>
+        <span class="pc-overlay-pill">KPIs condicionales</span>
+        <span class="pc-overlay-pill">Percentiles dinámicos</span>
+        <span class="pc-overlay-pill">B2B analytics</span>
+        <span class="pc-overlay-pill">Customer analytics</span>
+      </div>
+      <div class="pc-overlay-foot">
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiNGQ1OWZhNmEtY2I3Ni00N2M5LTk1NWYtMTEwZTA3NWI3NmYwIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+        <span class="pc-tech">Power BI · DAX · M Language</span>
       </div>
     </div>
   </div>
