@@ -1710,405 +1710,108 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   .hero-right  { display: none; }
 }
 
-/* ─── CÓMO TRABAJO · FLIP CARDS ─── */
+/* ─── CÓMO TRABAJO · ÍNDICE XXL ─── */
 .dph-section {
   background: var(--white);
-  border-top: none;
-  position: relative;
-  padding: 0 0 100px;
+  padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px);
 }
 
 .dph-header {
-  text-align: center;
-  max-width: 720px;
-  margin: 0 auto 72px;
+  max-width: 760px;
+  margin: 0 0 48px;
 }
 .dph-header .s-h { line-height: 1.05; }
-.dph-header .s-sub {
-  margin-top: 20px;
-  max-width: 520px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* ── HINT MANUSCRITO: "Pasa el cursor sobre cada tarjeta" ── */
-.dph-section .c { position: relative; }
-.flip-grid { position: relative; }
-.dph-hover-hint {
-  position: absolute;
-  bottom: calc(100% + 2px);
-  right: 2px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 1px;
-  pointer-events: none;
-  z-index: 4;
-}
-.dph-hint-text {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12.5px;
-  font-weight: 500;
-  letter-spacing: .2px;
-  color: #a0a0ac;
-  white-space: nowrap;
-}
-.dph-hint-arrow {
-  width: 66px;
-  height: 60px;
-  margin-right: 16px;
-  overflow: visible;
-}
-.dph-hint-arrow path {
-  stroke: #bcbcc6;
-  stroke-width: 2.1;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  fill: none;
-}
-.dph-hint-stroke {
-  stroke-dasharray: 140;
-  stroke-dashoffset: 140;
-}
-.dph-hint-head { opacity: 0; }
-.dph-hover-hint.hint-in .dph-hint-stroke {
-  animation: dphDraw 1.05s .15s cubic-bezier(.65,0,.35,1) forwards;
-}
-.dph-hover-hint.hint-in .dph-hint-head {
-  animation: dphHead .3s 1.05s ease forwards;
-}
-.dph-hover-hint.hint-in .dph-hint-arrow {
-  animation: dphBob 2.8s 1.8s ease-in-out infinite;
-}
-@keyframes dphDraw { to { stroke-dashoffset: 0; } }
-@keyframes dphHead { to { opacity: 1; } }
-@keyframes dphBob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
-
-@media (prefers-reduced-motion: reduce) {
-  .dph-hint-stroke { stroke-dashoffset: 0; }
-  .dph-hint-head { opacity: 1; }
-  .dph-hover-hint.hint-in .dph-hint-arrow { animation: none; }
-}
-@media (max-width: 1040px) {
-  .dph-hover-hint { display: none; }
-}
-
-/* ── FLIP GRID ── */
-.flip-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0;
-  perspective: 1400px;
-  border-left: 1px solid #111111;
-  border-top: 1px solid #111111;
-}
-
-/* ── FLIP CARD WRAPPER ── */
-.flip-card {
-  height: 560px;
-  cursor: pointer;
-  outline: none;
-  border-right: 1px solid #111111;
-  border-bottom: 1px solid #111111;
-}
-
-.flip-card-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-  transition: transform .65s cubic-bezier(.2,.8,.2,1);
-  border-radius: 0;
-}
-
-.flip-card:hover .flip-card-inner,
-.flip-card:focus .flip-card-inner,
-.flip-card.flipped .flip-card-inner {
-  transform: rotateY(180deg);
-}
-
-/* ── CARA FRONTAL ── */
-.flip-front,
-.flip-back {
-  position: absolute;
-  inset: 0;
-  border-radius: 0;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  overflow: hidden;
-}
-
-.flip-front {
-  background: var(--white);
-  border: none;
-  display: flex;
-  flex-direction: column;
-  transition: background .18s cubic-bezier(.4,0,.2,1);
-}
-.flip-card:hover .flip-front {
-  border-color: #111111;
-  box-shadow: none;
-  background: var(--off);
-}
-
-/* Número de paso — esquina */
-.flip-step-num {
-  position: absolute;
-  top: 20px;
-  left: 22px;
+.dph-header .s-sub { margin-top: 16px; font-size: 14px; }
+.dph-header .dph-hint {
+  font-family: var(--mono);
   font-size: 11px;
-  font-weight: 400;
-  font-family: 'JetBrains Mono', monospace;
-  letter-spacing: .05em;
-  color: #999999;
-  z-index: 2;
-  text-transform: none;
-}
-
-/* Contenido superior de la cara frontal */
-.flip-front-top {
-  padding: 48px 24px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  position: relative;
-  z-index: 2;
-}
-
-.flip-symbol {
-  font-size: 28px;
-  color: var(--purple);
-  line-height: 1;
-  margin-bottom: 4px;
-}
-
-.flip-title {
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--ink);
-  line-height: 1.25;
-  letter-spacing: -.3px;
-}
-
-.flip-subtitle {
-  font-size: 12.5px;
-  color: var(--muted);
-  font-weight: 500;
-  line-height: 1.4;
-}
-
-/* Zona de ilustración SVG */
-.flip-illustration {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  min-height: 200px;
-}
-
-.flip-illustration svg,
-.flip-illustration canvas {
-  width: 100% !important;
-  height: 100% !important;
-  position: absolute;
-  inset: 0;
+  color: #aaa;
   display: block;
+  margin-top: 10px;
 }
 
-/* Gradiente fade-out hacia el fondo blanco en la parte superior de la imagen */
-.flip-illustration::after {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 30%;
-  background: linear-gradient(to bottom, var(--white), transparent);
-  pointer-events: none;
-  z-index: 1;
+/* ── ÍNDICE ── */
+.idx { border-bottom: 1px solid var(--ink); }
+.idx-row { border-top: 1px solid var(--ink); position: relative; }
+.idx-row::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 0;
+  background: #c6ff00; transition: width .45s cubic-bezier(.2,.8,.2,1);
 }
+.idx-row.open::before { width: 6px; }
 
-/* Hover hint */
-.flip-hint {
-  position: absolute;
-  bottom: 18px;
-  right: 18px;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .1em;
-  color: rgba(122,123,255,.5);
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  z-index: 3;
-  opacity: 0;
-  transform: translateX(4px);
-  transition: opacity .3s, transform .3s;
+.idx-head {
+  display: flex; align-items: center; gap: clamp(16px,3vw,40px);
+  padding: clamp(16px,2.4vw,30px) 4px clamp(16px,2.4vw,30px) clamp(14px,2vw,28px);
+  cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
 }
-.flip-hint::after {
-  content: '→';
-  font-size: 11px;
+.idx-num {
+  font-family: var(--mono); font-size: 13px; font-weight: 600;
+  color: #bbb; width: 38px; flex-shrink: 0;
+  transition: color .3s; letter-spacing: .02em;
 }
-.flip-card:hover .flip-hint {
-  opacity: 1;
-  transform: translateX(0);
+.idx-row.open .idx-num { color: var(--purple); }
+.idx-name {
+  font-size: clamp(38px,6.6vw,82px); font-weight: 800; letter-spacing: -2.5px;
+  line-height: .92; color: #d4d4da; text-transform: uppercase;
+  transition: color .35s var(--ease), transform .45s cubic-bezier(.2,.8,.2,1);
 }
-
-/* ── CARA TRASERA ── */
-.flip-back {
-  background: #111111;
-  border: none;
-  transform: rotateY(180deg);
-  display: flex;
-  flex-direction: column;
-  padding: 68px 28px 28px;
-  box-shadow: none;
-  position: relative;
-  min-height: 100%;
+.idx-head:hover .idx-name { color: #9a9aa3; }
+.idx-row.open .idx-name { color: var(--ink); transform: translateX(6px); }
+.idx-meta {
+  margin-left: auto; display: flex; align-items: center; gap: 18px; flex-shrink: 0;
 }
-
-.flip-back-step-num {
-  position: absolute;
-  top: 20px;
-  left: 28px;
-  font-size: 11px;
-  font-weight: 400;
-  font-family: 'JetBrains Mono', monospace;
-  letter-spacing: .05em;
-  color: #c6ff00;
-  z-index: 2;
-  text-transform: none;
-}
-
-/* Grano en la cara trasera */
-.flip-back::before {
+.idx-tag {
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  letter-spacing: .1em; text-transform: uppercase; color: #aaa;
   display: none;
 }
-
-/* Brillo radial esquina superior izquierda */
-.flip-back::after {
-  display: none;
+@media(min-width:760px){ .idx-tag { display: inline; } }
+.idx-toggle {
+  width: 30px; height: 30px; border: 1px solid var(--ink); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 15px; flex-shrink: 0;
+  transition: background .25s, color .25s, transform .35s;
 }
+.idx-row.open .idx-toggle { background: var(--ink); color: #c6ff00; transform: rotate(45deg); }
 
-.flip-back-symbol {
-  font-size: 28px;
-  color: #c6ff00;
-  opacity: 1;
-  line-height: 1;
-  margin-bottom: 12px;
-  position: relative;
-  z-index: 1;
+/* Panel expandible (técnica grid-template-rows) */
+.idx-panel {
+  display: grid; grid-template-rows: 0fr; opacity: 0;
+  transition: grid-template-rows .55s cubic-bezier(.2,.8,.2,1), opacity .4s ease;
 }
-
-.flip-back-num {
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: -.3px;
-  line-height: 1.25;
-  color: #c6ff00;
-  margin-bottom: 16px;
-  position: relative;
-  z-index: 1;
+.idx-row.open .idx-panel { grid-template-rows: 1fr; opacity: 1; }
+.idx-panel-inner { overflow: hidden; }
+.idx-detail {
+  display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px,4vw,64px);
+  padding: 0 4px clamp(28px,3vw,42px) clamp(52px,5vw,66px);
+  align-items: start;
 }
-
-.flip-back-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--white);
-  line-height: 1.2;
-  letter-spacing: -.3px;
-  margin-bottom: 6px;
-  position: relative;
-  z-index: 1;
+.idx-d-title {
+  font-size: clamp(20px,2vw,26px); font-weight: 700;
+  letter-spacing: -.5px; line-height: 1.15;
+  color: var(--ink); margin: 0 0 14px;
 }
-
-.flip-back-subtitle {
-  font-size: 12px;
-  color: var(--white);
-  font-weight: 500;
-  margin-bottom: 20px;
-  position: relative;
-  z-index: 1;
+.idx-d-title em { font-style: normal; color: var(--purple); }
+.idx-d-body { font-size: 14px; color: var(--muted); line-height: 1.7; margin: 0; max-width: 460px; }
+.idx-d-side { display: flex; flex-direction: column; gap: 14px; }
+.idx-d-tagrow { display: flex; flex-wrap: wrap; gap: 6px; }
+.idx-chip {
+  font-family: var(--mono); font-size: 10px; font-weight: 600;
+  letter-spacing: .4px; text-transform: uppercase; color: #1a1a1a;
+  background: #fff; border: 1px solid var(--ink); box-shadow: 0 2px 0 var(--ink);
+  padding: 6px 10px 5px; border-radius: 3px;
+  display: inline-flex; align-items: center; gap: 7px;
 }
-
-.flip-back-rule {
-  width: 32px;
-  height: 1px;
-  background: #c6ff00;
-  margin-bottom: 24px;
-  position: relative;
-  z-index: 1;
+.idx-chip::before { content: ''; width: 4px; height: 4px; background: var(--purple); flex-shrink: 0; }
+.idx-d-note {
+  font-family: var(--mono); font-size: 10px; color: #999;
+  letter-spacing: .06em; padding-top: 14px; border-top: 1px solid #ececec;
 }
-
-.flip-back-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--white);
-  line-height: 1.2;
-  letter-spacing: -.3px;
-  margin-bottom: 6px;
-  position: relative;
-  z-index: 1;
-}
-
-.flip-back-subtitle {
-  font-size: 12px;
-  color: var(--white);
-  font-weight: 500;
-  margin-bottom: 20px;
-  position: relative;
-  z-index: 1;
-}
-
-.flip-back-rule {
-  width: 32px;
-  height: 1px;
-  background: #c6ff00;
-  margin-bottom: 20px;
-  position: relative;
-  z-index: 1;
-}
-
-.flip-back-body {
-  font-size: 13.5px;
-  line-height: 1.7;
-  color: #b8b8cc;
-  flex: 1;
-  position: relative;
-  z-index: 1;
-}
-
-.flip-back-quote {
-  margin-top: 20px;
-  padding-top: 18px;
-  border-top: 1px solid rgba(255,255,255,.07);
-  font-size: 12.5px;
-  font-style: italic;
-  color: rgba(122,123,255,.75);
-  position: relative;
-  z-index: 1;
-  line-height: 1.5;
-}
-
-/* ── RESPONSIVE ── */
-@media (max-width: 1100px) {
-  .flip-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .flip-card { height: 480px; }
-}
-
+@media(max-width:680px){ .idx-detail { grid-template-columns: 1fr; gap: 20px; } }
 @media (max-width: 640px) {
   .dph-section { padding: 0 0 64px; }
   .dph-header { margin-bottom: 40px; }
-  .flip-grid {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-  .flip-card { height: 440px; }
-  .flip-back { padding: 28px 22px 24px; }
-  .flip-back-title { font-size: 16px; }
-  .flip-back-body { font-size: 13px; }
+  .idx-name { letter-spacing: -1.5px; }
 }
 
 /* ══════════════════════════════
@@ -2782,7 +2485,7 @@ footer {
 </section>
 
 
-<!-- ─── CÓMO TRABAJO · FLIP CARDS ─── -->
+<!-- ─── CÓMO TRABAJO · ÍNDICE XXL ─── -->
 <section class="dph-section" id="approach">
   <div class="c">
     <div class="section-divider">
@@ -2790,146 +2493,98 @@ footer {
       <span class="section-divider-label">CÓMO TRABAJO</span>
     </div>
     <div class="dph-header sr">
-      <div class="s-tag" style="opacity: 0"></div>
       <h2 class="s-h">Cuatro pasos para<br><em>decidir mejor.</em></h2>
       <p class="s-sub">La mayoría de los dashboards empiezan por la herramienta.<br>El mío empieza por la pregunta.</p>
+      <span class="dph-hint">— abre cada fase</span>
     </div>
 
-    <!-- Grid de 4 flip cards -->
-    <div class="flip-grid">
-
-      <!-- Hint manuscrito: invita a interactuar con las flip cards -->
-      <div class="dph-hover-hint" aria-hidden="true">
-        <span class="dph-hint-text">Pasa el cursor sobre cada tarjeta</span>
-        <svg class="dph-hint-arrow" viewBox="0 0 66 60" fill="none">
-          <path class="dph-hint-stroke" d="M55 5 C 60 23 53 35 41 41 C 33 45 26 47 18 50"/>
-          <path class="dph-hint-head" d="M18 50 L 32 49 M18 50 L 24 37"/>
-        </svg>
-      </div>
-      <script>
-        (function(){
-          var h = document.querySelector('.dph-hover-hint');
-          if(!h) return;
-          if(!('IntersectionObserver' in window)){ h.classList.add('hint-in'); return; }
-          var io = new IntersectionObserver(function(entries){
-            entries.forEach(function(e){
-              if(e.isIntersecting){ h.classList.add('hint-in'); io.disconnect(); }
-            });
-          }, { threshold: .35 });
-          io.observe(h);
-        })();
-      </script>
-
-      <!-- ── FASE 01 ── -->
-      <div class="flip-card sr" tabindex="0" aria-label="Fase 1: El plano de decisión">
-        <div class="flip-card-inner">
-          <!-- FRONTAL -->
-          <div class="flip-front">
-            <span class="flip-step-num">Fase 1 · INVESTIGAR</span>
-            <div class="flip-front-top">
-              <div class="flip-symbol">✦</div>
-              <div class="flip-title">El plano de decisión</div>
-              <div class="flip-subtitle">Antes del dashboard, está la pregunta correcta.</div>
-            </div>
-            <div class="flip-illustration">
-              <img src="https://raw.githubusercontent.com/BORJAMOME/portfolio-web/main/img/investigar.png" alt="Investigar" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;">
-            </div>
-            <div class="flip-hint">Ver detalle</div>
-          </div>
-          <!-- TRASERA -->
-          <div class="flip-back">
-            <div class="flip-back-step-num">Fase 1 · INVESTIGAR</div>
-            <div class="flip-back-symbol">✦</div>
-            <div class="flip-back-num">NEGOCIO</div>
-            <div class="flip-back-rule"></div>
-            <div class="flip-back-body">Muchos proyectos empiezan demasiado pronto: abriendo Power BI antes de entender qué necesita decidir el negocio. Mi trabajo empieza antes. Primero defino qué pregunta debe responder el dashboard, qué KPI realmente importa y qué contexto necesita la persona que va a usarlo. Porque cuando el objetivo es difuso, el análisis también lo será..</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── FASE 02 ── -->
-      <div class="flip-card sr sr-d1" tabindex="0" aria-label="Fase 2: Los cimientos.">
-        <div class="flip-card-inner">
-          <!-- FRONTAL -->
-          <div class="flip-front">
-            <span class="flip-step-num">Fase 2 · ESTRUCTURAR</span>
-            <div class="flip-front-top">
-              <div class="flip-symbol">⬡</div>
-              <div class="flip-title">Los cimientos.</div>
-              <div class="flip-subtitle">Un dashboard fiable empieza mucho antes del diseño.</div>
-            </div>
-            <div class="flip-illustration">
-              <img src="https://raw.githubusercontent.com/BORJAMOME/portfolio-web/main/img/estructurar.png" alt="Estructurar" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;">
-            </div>
-            <div class="flip-hint">Ver detalle</div>
-          </div>
-          <!-- TRASERA -->
-          <div class="flip-back">
-            <div class="flip-back-step-num">Fase 2 · ESTRUCTURAR</div>
-            <div class="flip-back-symbol">⬡</div>
-            <div class="flip-back-num">POWER QUERY + MODELADO</div>
-            <div class="flip-back-rule"></div>
-            <div class="flip-back-body">Los datos rara vez llegan preparados para analizar. En esta fase conecto fuentes, limpio inconsistencias y construyo una estructura que permita trabajar con información fiable y escalable. Es la parte menos visible del proyecto, pero también la más importante: cuando los cimientos fallan, todo lo que se construye encima pierde credibilidad.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── FASE 03 ── -->
-      <div class="flip-card sr sr-d2" tabindex="0" aria-label="Fase 3: La estructura lógica.">
-        <div class="flip-card-inner">
-          <!-- FRONTAL -->
-          <div class="flip-front">
-            <span class="flip-step-num">Fase 3 · CONSTRUIR</span>
-            <div class="flip-front-top">
-              <div class="flip-symbol">◈</div>
-              <div class="flip-title">La estructura lógica.</div>
-              <div class="flip-subtitle">Donde las preguntas se convierten en métricas.</div>
-            </div>
-            <div class="flip-illustration">
-              <img src="https://raw.githubusercontent.com/BORJAMOME/portfolio-web/main/img/construir.png" alt="Construir" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;">
-            </div>
-            <div class="flip-hint">Ver detalle</div>
-          </div>
-          <!-- TRASERA -->
-          <div class="flip-back">
-            <div class="flip-back-step-num">Fase 3 · CONSTRUIR</div>
-            <div class="flip-back-symbol">◈</div>
-            <div class="flip-back-num">DAX</div>
-            <div class="flip-back-rule"></div>
-            <div class="flip-back-body">Aquí convierto necesidades de negocio en lógica analítica. Cada medida, cálculo y relación define cómo se interpreta la información dentro del dashboard. No se trata solo de mostrar datos, sino de construir una estructura coherente que responda de forma clara y consistente a preguntas reales.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── FASE 04 ── -->
-      <div class="flip-card sr sr-d3" tabindex="0" aria-label="Fase 4: El espacio habitable">
-        <div class="flip-card-inner">
-          <!-- FRONTAL -->
-          <div class="flip-front">
-            <span class="flip-step-num">Fase 4 · COMUNICAR</span>
-            <div class="flip-front-top">
-              <div class="flip-symbol">▦</div>
-              <div class="flip-title">El espacio habitable.</div>
-              <div class="flip-subtitle">Diseñar dashboards que se entiendan solos.</div>
-            </div>
-            <div class="flip-illustration">
-              <img src="https://raw.githubusercontent.com/BORJAMOME/portfolio-web/main/img/comunicar.png" alt="Comunicar" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;">
-            </div>
-            <div class="flip-hint">Ver detalle</div>
-          </div>
-          <!-- TRASERA -->
-          <div class="flip-back">
-            <div class="flip-back-step-num">Fase 4 · COMUNICAR</div>
-            <div class="flip-back-symbol">▦</div>
-            <div class="flip-back-num">DATA STORYTELLING + UX</div>
-            <div class="flip-back-rule"></div>
-            <div class="flip-back-body">Un dashboard útil no necesita una explicación constante. Organizo la información usando jerarquía visual, contexto y narrativa para que la mirada encuentre rápidamente lo importante. El objetivo no es llenar la pantalla de gráficos, sino construir un espacio claro donde las decisiones puedan tomarse con rapidez y confianza.</div>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /flip-grid -->
+    <div class="idx" id="dph-idx"></div>
   </div>
+
+  <script>
+  (function(){
+    const PHASES = [
+      {
+        num:'01', verb:'Investigar', tag:'NEGOCIO',
+        title:'El <em>plano</em> de decisión',
+        body:'Muchos proyectos empiezan demasiado pronto: abriendo Power BI antes de entender qué necesita decidir el negocio. Mi trabajo empieza antes — primero defino qué pregunta debe responder el dashboard, qué KPI realmente importa y qué contexto necesita quien va a usarlo. Porque cuando el objetivo es difuso, el análisis también lo será.',
+        chips:['Negocio','KPI','Contexto'],
+        note:'INPUT: pregunta → OUTPUT: brief'
+      },
+      {
+        num:'02', verb:'Estructurar', tag:'MODELADO',
+        title:'Los <em>cimientos.</em>',
+        body:'Los datos rara vez llegan preparados para analizar. En esta fase conecto fuentes, limpio inconsistencias y construyo una estructura escalable: un esquema en estrella con relaciones limpias. Es la parte menos visible del proyecto, pero también la más importante: cuando los cimientos fallan, todo lo que se construye encima pierde credibilidad.',
+        chips:['Power Query','Modelado','Esquema estrella'],
+        note:'INPUT: datos crudos → OUTPUT: modelo'
+      },
+      {
+        num:'03', verb:'Construir', tag:'DAX',
+        title:'La <em>estructura</em> lógica.',
+        body:'Aquí convierto necesidades de negocio en lógica analítica. Cada medida, cálculo y relación define cómo se interpreta la información dentro del dashboard. No se trata de mostrar datos, sino de construir una estructura coherente que responda con claridad a preguntas reales.',
+        chips:['DAX','Time Intelligence','Medidas'],
+        note:'INPUT: modelo → OUTPUT: métricas'
+      },
+      {
+        num:'04', verb:'Comunicar', tag:'STORYTELLING + UX',
+        title:'El <em>espacio</em> habitable.',
+        body:'Un dashboard útil no necesita explicación constante. Organizo la información con jerarquía visual, contexto y narrativa para que la mirada encuentre rápido lo importante. No llenar la pantalla de gráficos: construir un espacio claro donde las decisiones puedan tomarse con rapidez y confianza.',
+        chips:['Data Storytelling','UX/UI','Layout'],
+        note:'INPUT: métricas → OUTPUT: decisión'
+      }
+    ];
+
+    const container = document.getElementById('dph-idx');
+    if(!container) return;
+
+    container.innerHTML = PHASES.map((p,i) => `
+      <div class="idx-row${i===0?' open':''}" data-i="${i}">
+        <div class="idx-head" role="button" tabindex="0" aria-expanded="${i===0}">
+          <span class="idx-num">${p.num}</span>
+          <span class="idx-name">${p.verb}</span>
+          <span class="idx-meta">
+            <span class="idx-tag">${p.tag}</span>
+            <span class="idx-toggle">+</span>
+          </span>
+        </div>
+        <div class="idx-panel">
+          <div class="idx-panel-inner">
+            <div class="idx-detail">
+              <div>
+                <h3 class="idx-d-title">${p.title}</h3>
+                <p class="idx-d-body">${p.body}</p>
+              </div>
+              <div class="idx-d-side">
+                <div class="idx-d-tagrow">${p.chips.map(c=>`<span class="idx-chip">${c}</span>`).join('')}</div>
+                <div class="idx-d-note">${p.note}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    const rows = [...container.querySelectorAll('.idx-row')];
+    function toggle(row){
+      const isOpen = row.classList.contains('open');
+      rows.forEach(r => {
+        r.classList.remove('open');
+        r.querySelector('.idx-head').setAttribute('aria-expanded','false');
+      });
+      if(!isOpen){
+        row.classList.add('open');
+        row.querySelector('.idx-head').setAttribute('aria-expanded','true');
+      }
+    }
+    rows.forEach(row => {
+      const head = row.querySelector('.idx-head');
+      head.addEventListener('click', () => toggle(row));
+      head.addEventListener('keydown', e => {
+        if(e.key==='Enter' || e.key===' '){ e.preventDefault(); toggle(row); }
+      });
+    });
+  })();
+  </script>
 </section>
 
 
@@ -3454,16 +3109,6 @@ footer {
     }
   }
   setTimeout(type, 400);
-})();
-
-// ─── FLIP CARDS — touch/click toggle para móvil ───
-(function(){
-  document.querySelectorAll('.flip-card').forEach(card => {
-    card.addEventListener('click', () => {
-      const isTouch = window.matchMedia('(hover: none)').matches;
-      if (isTouch) card.classList.toggle('flipped');
-    });
-  });
 })();
 
 // ─── STACK SKILLS ANIMATION ───
