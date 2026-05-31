@@ -2364,6 +2364,42 @@ footer {
   .progress-bar, .grain, .hero::before { display: none !important; }
 }
 
+/* ── OVERLAYS PROYECTOS DESTACADOS ── */
+.pc-overlay{display:none;position:fixed;inset:0;z-index:2000;background:rgba(10,10,10,.78);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:16px}
+.pc-overlay.open{display:flex}
+.pc-overlay-inner{background:#ffffff;border:1px solid var(--ink);border-radius:0;width:min(1400px,95vw);height:min(760px,92vh);display:grid;grid-template-columns:1.05fr 1fr;gap:0;align-items:stretch;box-shadow:0 40px 100px rgba(0,0,0,.35);position:relative;overflow:hidden}
+.pc-overlay-imgs{position:relative;overflow:hidden;border-right:1px solid var(--ink);background:#ffffff;display:flex;flex-direction:column}
+.pcov-track{position:relative;flex:1;overflow:hidden;background:#ffffff}
+.pcov-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;opacity:0;transition:opacity .3s ease;padding:20px;background:#ffffff}
+.pcov-photo.pcov-active{opacity:1}
+.pcov-dots{display:flex;gap:6px;justify-content:center;padding:12px 0 16px;background:#ffffff;border-top:1px solid var(--rule);flex-shrink:0}
+.pcov-dot{width:8px;height:8px;background:var(--gray);border:0;padding:8px;cursor:pointer;border-radius:0;transition:background .25s,width .25s;background-clip:content-box;box-sizing:content-box}
+.pcov-dot.pcov-dot-active{background:var(--ink);width:24px;background-clip:content-box}
+.pc-overlay-imgs .pc-arrow{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;background:#ffffff;border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .18s,color .12s;z-index:2}
+.pc-overlay-imgs .pc-arrow:hover{background:var(--ink);color:#fff}
+.pc-overlay-imgs .pc-arrow svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:square}
+.pc-overlay-imgs .pc-arrow-prev{left:10px}
+.pc-overlay-imgs .pc-arrow-next{right:10px}
+.pc-overlay-copy{padding:28px 32px 24px;display:flex;flex-direction:column;overflow:hidden;background:#ffffff}
+.pc-overlay-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--mutedB);margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.pc-overlay-eyebrow::before{content:"";width:24px;height:1px;background:var(--ink)}
+.pc-overlay-title{font-size:22px;font-weight:700;letter-spacing:-.022em;line-height:1.2;color:var(--ink);margin-bottom:18px;flex-shrink:0}
+.pc-overlay-long{display:flex;flex-direction:column;gap:11px;margin-bottom:16px;overflow-y:auto;flex:1;padding-right:6px;scrollbar-width:thin;scrollbar-color:var(--rule) transparent}
+.pc-overlay-long::-webkit-scrollbar{width:4px}
+.pc-overlay-long::-webkit-scrollbar-thumb{background:var(--rule);border-radius:2px}
+.pc-overlay-long p{font-size:12.5px;color:var(--muted);line-height:1.68}
+.pc-overlay-long p strong{color:var(--ink);font-weight:600}
+.pc-overlay-long code{font-family:'JetBrains Mono',monospace;font-size:11px;background:#f4f4f8;padding:1px 5px;border-radius:3px;color:var(--ink)}
+.pc-overlay-pills{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:16px;flex-shrink:0}
+.pc-overlay-pill{font-family:'JetBrains Mono',monospace;background:transparent;color:var(--ink);padding:2px 8px;border:.8px solid var(--ink);border-radius:999px;font-size:9px;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+.pc-overlay-foot{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--rule);flex-shrink:0;gap:12px}
+.pc-overlay-close{position:absolute;top:14px;right:14px;width:32px;height:32px;background:#ffffff;border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;transition:background .18s,color .12s}
+.pc-overlay-close:hover{background:var(--ink);color:#fff}
+.pc-overlay-btn{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);text-decoration:none;border:1px solid var(--ink);padding:8px 14px;transition:background .18s,color .12s}
+.pc-overlay-btn:hover{background:var(--ink);color:#fff}
+.pc-overlay-tech{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.04em}
+@media(max-width:768px){.pc-overlay-inner{grid-template-columns:1fr;grid-template-rows:240px 1fr;height:92vh}.pc-overlay-imgs{border-right:0;border-bottom:1px solid var(--ink)}}
+
 </style>
 </head>
 <body>
@@ -2813,70 +2849,15 @@ footer {
       <!-- ── CARD 0: IBCS Lollipop ── -->
       <div class="proj-card sr">
         <div class="pc-visual">
-          <svg width="100%" viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-            <rect width="360" height="300" fill="#fafafa"/>
-            <!-- label — alineado con pc-body (x=30) -->
-            <text x="30" y="36" font-family="'Plus Jakarta Sans',sans-serif" font-size="8" font-weight="700" fill="#ccc" letter-spacing="1.2">VENTAS · CY VS SPLY · 2024</text>
-            <!-- pills -->
-            <rect x="30" y="48" width="62" height="24" rx="12" fill="#ededff"/>
-            <text x="61" y="64" font-family="'Plus Jakarta Sans',sans-serif" font-size="10" font-weight="700" fill="#5a5be0" text-anchor="middle">€2,84M</text>
-            <rect x="100" y="48" width="82" height="24" rx="12" fill="#e8f5e7"/>
-            <text x="141" y="64" font-family="'Plus Jakarta Sans',sans-serif" font-size="10" font-weight="700" fill="#2d7a28" text-anchor="middle">+12,4% YoY</text>
-            <!-- baseline -->
-            <line x1="30" y1="222" x2="330" y2="222" stroke="#e0e0e8" stroke-width="0.8"/>
-            <!-- 6 lollipop pairs: CY filled purple, SPLY outline gray -->
-            <!-- spacing: 6 pairs over 300px width, centered -->
-            <!-- Ene -->
-            <line x1="60"  y1="152" x2="60"  y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
-            <circle cx="60"  cy="152" r="7" fill="#7a7bff"/>
-            <line x1="76"  y1="172" x2="76"  y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
-            <circle cx="76"  cy="172" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
-            <!-- Feb -->
-            <line x1="110" y1="138" x2="110" y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
-            <circle cx="110" cy="138" r="7" fill="#7a7bff"/>
-            <line x1="126" y1="162" x2="126" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
-            <circle cx="126" cy="162" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
-            <!-- Mar -->
-            <line x1="160" y1="162" x2="160" y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
-            <circle cx="160" cy="162" r="7" fill="#7a7bff"/>
-            <line x1="176" y1="150" x2="176" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
-            <circle cx="176" cy="150" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
-            <!-- Abr -->
-            <line x1="210" y1="145" x2="210" y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
-            <circle cx="210" cy="145" r="7" fill="#7a7bff"/>
-            <line x1="226" y1="165" x2="226" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
-            <circle cx="226" cy="165" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
-            <!-- May -->
-            <line x1="260" y1="158" x2="260" y2="222" stroke="#d0d0e8" stroke-width="1.5"/>
-            <circle cx="260" cy="158" r="7" fill="#7a7bff"/>
-            <line x1="276" y1="146" x2="276" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
-            <circle cx="276" cy="146" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
-            <!-- Jun — pico máximo -->
-            <line x1="310" y1="118" x2="310" y2="222" stroke="#9898d8" stroke-width="1.5"/>
-            <circle cx="310" cy="118" r="8" fill="#5a5be0"/>
-            <line x1="326" y1="170" x2="326" y2="222" stroke="#e0e0ec" stroke-width="1.5"/>
-            <circle cx="326" cy="170" r="6" fill="none" stroke="#cacade" stroke-width="1.8"/>
-            <!-- month labels — alineados al centro del par -->
-            <text x="68"  y="238" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Ene</text>
-            <text x="118" y="238" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Feb</text>
-            <text x="168" y="238" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Mar</text>
-            <text x="218" y="238" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Abr</text>
-            <text x="268" y="238" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">May</text>
-            <text x="318" y="238" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#c8c8d8" text-anchor="middle">Jun</text>
-            <!-- legend -->
-            <circle cx="38"  cy="264" r="5" fill="#7a7bff"/>
-            <text x="48"  y="268" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#b8b8cc">CY 2024</text>
-            <circle cx="118" cy="264" r="5" fill="none" stroke="#cacade" stroke-width="1.8"/>
-            <text x="128" y="268" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#b8b8cc">SPLY 2023</text>
-          </svg>
+          <img src="https://raw.githubusercontent.com/BORJAMOME/portfolio-web/main/img/ibcsprincipalcard.png" alt="Informe de ventas con enfoque IBCS" style="width:100%;height:auto;display:block;">
         </div>
         <div class="pc-body">
-          <div class="pc-cat">Ventas · Comparativa anual</div>
-          <div class="pc-name">Cuando el dato de ventas dejó de necesitar explicación.</div>
-          <p class="pc-desc">El equipo miraba el mismo Excel en cada reunión de dirección. Los números estaban. La historia, no.<br><br>Diseñé un sistema bajo el estándar IBCS donde cualquier persona —sin formación analítica— detecta en 30 segundos si el mes fue mejor o peor que el año pasado. Sin que nadie tenga que explicar nada.</p>
+          <div class="pc-cat">Análisis de ventas · IBCS</div>
+          <div class="pc-name">Informe de ventas con enfoque IBCS</div>
+          <p class="pc-desc">En muchos equipos el análisis de ventas empieza y termina en el total. Construí un informe que aplica el estándar IBCS para integrar <strong>volumen, variación absoluta y porcentaje en un único visual</strong>, con tres tipos de gráfico distintos según el ángulo de lectura.</p>
           <div class="pc-foot">
             <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">IBCS</span></div>
-            <a href="./proyectos.html" class="pc-link">Ver →</a>
+            <button class="pc-link" onclick="openIndexOverlay(0)" style="background:none;border:none;cursor:pointer;padding:0;">Ver →</button>
           </div>
         </div>
       </div>
@@ -2884,152 +2865,32 @@ footer {
       <!-- ── CARD 1: Balance ── -->
       <div class="proj-card sr sr-d1">
         <div class="pc-visual">
-          <svg width="100%" viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-            <rect width="360" height="300" fill="#fafafa"/>
-            <!-- nav -->
-            <rect x="0" y="0" width="360" height="36" fill="#f0f0f5"/>
-            <text x="16" y="22" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#bbb">Inicio</text>
-            <text x="52" y="22" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#bbb">Checklist</text>
-            <text x="107" y="22" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#bbb">Balance SyS</text>
-            <text x="168" y="22" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#333" font-weight="700">Balance</text>
-            <line x1="168" y1="25" x2="200" y2="25" stroke="#333" stroke-width="1"/>
-            <text x="210" y="22" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#bbb">PyG</text>
-            <!-- col headers -->
-            <rect x="0" y="36" width="360" height="18" fill="#e8e8f2"/>
-            <text x="16" y="49" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" font-weight="600" fill="#aaa">Partida</text>
-            <text x="228" y="49" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" font-weight="600" fill="#aaa" text-anchor="end">Importe</text>
-            <text x="284" y="49" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" font-weight="600" fill="#aaa" text-anchor="end">%</text>
-            <text x="348" y="49" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" font-weight="600" fill="#aaa" text-anchor="end">PY</text>
-            <!-- ACTIVO — y=54, h=24 -->
-            <rect x="0" y="54" width="360" height="24" fill="#f5f5fb"/>
-            <text x="16" y="71" font-family="'Plus Jakarta Sans',sans-serif" font-size="9" font-weight="700" fill="#222">ACTIVO</text>
-            <text x="228" y="71" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#444" text-anchor="end">4.307.661€</text>
-            <text x="284" y="71" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#999" text-anchor="end">100,00%</text>
-            <text x="348" y="71" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#bbb" text-anchor="end">4.303.957€</text>
-            <!-- A) No Corriente — y=78, h=22 -->
-            <text x="24" y="93" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" font-weight="600" fill="#555">A) Activo No Corriente</text>
-            <text x="228" y="93" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#666" text-anchor="end">934.027€</text>
-            <text x="284" y="93" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#aaa" text-anchor="end">21,68%</text>
-            <text x="348" y="93" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">941.400€</text>
-            <line x1="16" y1="100" x2="344" y2="100" stroke="#eeeeef" stroke-width="0.5"/>
-            <!-- sub1 — y=100, h=20 -->
-            <rect x="0" y="100" width="360" height="20" fill="#fafafc"/>
-            <text x="34" y="114" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#888">I. Inmovilizado Intangible</text>
-            <text x="228" y="114" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#aaa" text-anchor="end">934,74€</text>
-            <text x="284" y="114" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#ccc" text-anchor="end">0,02%</text>
-            <text x="348" y="114" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#ccc" text-anchor="end">934,74€</text>
-            <!-- sub2 — y=120, h=20 -->
-            <text x="34" y="134" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#888">II. Inmovilizado Material</text>
-            <text x="228" y="134" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#aaa" text-anchor="end">736.910€</text>
-            <text x="284" y="134" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#ccc" text-anchor="end">17,11%</text>
-            <text x="348" y="134" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#ccc" text-anchor="end">744.284€</text>
-            <!-- B) Corriente — y=140, h=22 -->
-            <rect x="0" y="140" width="360" height="22" fill="#f5f5fb"/>
-            <text x="24" y="155" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" font-weight="600" fill="#555">B) Activo Corriente</text>
-            <text x="228" y="155" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#666" text-anchor="end">3.373.634€</text>
-            <text x="284" y="155" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#aaa" text-anchor="end">78,32%</text>
-            <text x="348" y="155" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">3.362.557€</text>
-            <line x1="16" y1="162" x2="344" y2="162" stroke="#eeeeef" stroke-width="0.5"/>
-            <!-- sub3 — y=162, h=20 -->
-            <rect x="0" y="162" width="360" height="20" fill="#fafafc"/>
-            <text x="34" y="176" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#888">III. Deudores comerciales</text>
-            <text x="228" y="176" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#aaa" text-anchor="end">1.535.306€</text>
-            <text x="284" y="176" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#ccc" text-anchor="end">35,64%</text>
-            <text x="348" y="176" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#ccc" text-anchor="end">1.481.048€</text>
-            <!-- sub4 — y=182, h=20 -->
-            <text x="34" y="196" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#888">VII. Efectivo y equivalentes</text>
-            <text x="228" y="196" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#aaa" text-anchor="end">409.007€</text>
-            <text x="284" y="196" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#ccc" text-anchor="end">9,49%</text>
-            <text x="348" y="196" font-family="'Plus Jakarta Sans',sans-serif" font-size="7" fill="#ccc" text-anchor="end">452.188€</text>
-            <!-- PASIVO — y=202, h=24 -->
-            <rect x="0" y="202" width="360" height="24" fill="#f5f5fb"/>
-            <text x="16" y="219" font-family="'Plus Jakarta Sans',sans-serif" font-size="9" font-weight="700" fill="#222">PASIVO</text>
-            <text x="228" y="219" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#444" text-anchor="end">4.307.661€</text>
-            <text x="284" y="219" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#999" text-anchor="end">100,00%</text>
-            <text x="348" y="219" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" fill="#bbb" text-anchor="end">4.303.957€</text>
-            <!-- A) Patrimonio — y=226, h=24 -->
-            <text x="24" y="242" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" font-weight="600" fill="#555">A) Patrimonio Neto</text>
-            <text x="228" y="242" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#666" text-anchor="end">2.309.004€</text>
-            <text x="284" y="242" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#aaa" text-anchor="end">53,60%</text>
-            <text x="348" y="242" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">2.352.501€</text>
-            <line x1="16" y1="250" x2="344" y2="250" stroke="#eeeeef" stroke-width="0.5"/>
-            <!-- B) Pasivo No Corriente — y=250, h=24 -->
-            <rect x="0" y="250" width="360" height="24" fill="#fafafc"/>
-            <text x="24" y="266" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" font-weight="600" fill="#555">B) Pasivo No Corriente</text>
-            <text x="228" y="266" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#7a7bff" text-anchor="end">640.033€</text>
-            <text x="284" y="266" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#7a7bff" text-anchor="end">14,86%</text>
-            <text x="348" y="266" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">640.033€</text>
-            <!-- C) Pasivo Corriente — y=274, h=26 -->
-            <rect x="0" y="274" width="360" height="26" fill="#f5f5fb"/>
-            <text x="24" y="291" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" font-weight="600" fill="#555">C) Pasivo Corriente</text>
-            <text x="228" y="291" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#7a7bff" text-anchor="end">1.358.624€</text>
-            <text x="284" y="291" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#7a7bff" text-anchor="end">31,54%</text>
-            <text x="348" y="291" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#bbb" text-anchor="end">1.311.423€</text>
-          </svg>
+          <img src="https://raw.githubusercontent.com/BORJAMOME/portfolio-web/main/img/financieroprincipalcard.png" alt="Informe Financiero Completo" style="width:100%;height:auto;display:block;">
         </div>
         <div class="pc-body">
-          <div class="pc-cat">Finanzas · Reporting</div>
-          <div class="pc-name">La contabilidad que por fin se puede leer sola.</div>
-          <p class="pc-desc">Un balance contable tiene la mala fama de ser lo que solo entiende el controller. Este no.<br><br>Diseñé la estructura para que cualquier directivo navegue el activo, el pasivo y el patrimonio sin necesitar a nadie al lado que se lo traduzca.</p>
+          <div class="pc-cat">Análisis financiero · Reporting</div>
+          <div class="pc-name">Informe Financiero Completo</div>
+          <p class="pc-desc">En la mayoría de empresas la información financiera está dispersa. Construí un sistema que conecta <strong>balance, PyG y cash flow</strong> en una sola lectura, con drill-down hasta el asiento contable que explica cada número.</p>
           <div class="pc-foot">
             <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">Modelado en estrella</span></div>
-            <a href="./proyectos.html" class="pc-link">Ver →</a>
+            <button class="pc-link" onclick="openIndexOverlay(1)" style="background:none;border:none;cursor:pointer;padding:0;">Ver →</button>
           </div>
         </div>
       </div>
 
-      <!-- ── CARD 2: Marketing KPIs 2x2 ── -->
+      <!-- ── CARD 2: RFM B2B ── -->
       <div class="proj-card sr sr-d2">
         <div class="pc-visual">
-          <svg width="100%" viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-            <rect width="360" height="300" fill="#fafafa"/>
-            <text x="20" y="14" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" font-weight="700" fill="#ccc" letter-spacing="1.2">SOCIAL MEDIA · 2025 VS 2024</text>
-
-            <!-- KPI 1: Impresiones -->
-            <rect x="16" y="22" width="328" height="126" rx="12" fill="#fff" stroke="#ecedf4" stroke-width="0.8"/>
-            <rect x="16" y="22" width="4" height="126" rx="2" fill="#7a7bff"/>
-            <text x="32" y="46" font-family="'Plus Jakarta Sans',sans-serif" font-size="8" font-weight="700" fill="#c0c0d4" letter-spacing="1">IMPRESIONES</text>
-            <text x="32" y="82" font-family="'Plus Jakarta Sans',sans-serif" font-size="38" font-weight="700" fill="#1a1a2e" letter-spacing="-1">607,9K</text>
-            <text x="32" y="102" font-family="'Plus Jakarta Sans',sans-serif" font-size="9" fill="#bbb">PY: 696,8K</text>
-            <rect x="32" y="112" width="52" height="18" rx="5" fill="#f0f0f8"/>
-            <text x="58" y="124" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" font-weight="700" fill="#8888bb" text-anchor="middle">↓ −12,8%</text>
-            <line x1="200" y1="34" x2="200" y2="136" stroke="#f0f0f5" stroke-width="0.8"/>
-            <rect x="209" y="102" width="12" height="32" rx="2" fill="#e0e0f0"/>
-            <rect x="226" y="112" width="12" height="22" rx="2" fill="#d4d4ec"/>
-            <rect x="243" y="96" width="12" height="38" rx="2" fill="#c4c4e4"/>
-            <rect x="260" y="106" width="12" height="28" rx="2" fill="#b4b4dc"/>
-            <rect x="277" y="90" width="12" height="44" rx="2" fill="#a4a4d4"/>
-            <rect x="294" y="100" width="12" height="34" rx="2" fill="#9090cc"/>
-            <rect x="311" y="82" width="12" height="52" rx="2" fill="#7878c8"/>
-            <rect x="328" y="72" width="12" height="62" rx="2" fill="#7a7bff"/>
-
-            <!-- KPI 2: Alcance -->
-            <rect x="16" y="160" width="328" height="126" rx="12" fill="#fff" stroke="#ecedf4" stroke-width="0.8"/>
-            <rect x="16" y="160" width="4" height="126" rx="2" fill="#9898c8"/>
-            <text x="32" y="184" font-family="'Plus Jakarta Sans',sans-serif" font-size="8" font-weight="700" fill="#c0c0d4" letter-spacing="1">ALCANCE</text>
-            <text x="32" y="220" font-family="'Plus Jakarta Sans',sans-serif" font-size="38" font-weight="700" fill="#1a1a2e" letter-spacing="-1">460,9K</text>
-            <text x="32" y="240" font-family="'Plus Jakarta Sans',sans-serif" font-size="9" fill="#bbb">PY: 513,0K</text>
-            <rect x="32" y="250" width="52" height="18" rx="5" fill="#f0f0f8"/>
-            <text x="58" y="262" font-family="'Plus Jakarta Sans',sans-serif" font-size="8.5" font-weight="700" fill="#8888bb" text-anchor="middle">↓ −10,1%</text>
-            <line x1="200" y1="172" x2="200" y2="274" stroke="#f0f0f5" stroke-width="0.8"/>
-            <rect x="209" y="236" width="12" height="32" rx="2" fill="#e0e0f0"/>
-            <rect x="226" y="246" width="12" height="22" rx="2" fill="#d4d4ec"/>
-            <rect x="243" y="230" width="12" height="38" rx="2" fill="#c4c4e4"/>
-            <rect x="260" y="240" width="12" height="28" rx="2" fill="#b4b4dc"/>
-            <rect x="277" y="224" width="12" height="44" rx="2" fill="#a4a4d4"/>
-            <rect x="294" y="234" width="12" height="34" rx="2" fill="#9090cc"/>
-            <rect x="311" y="216" width="12" height="52" rx="2" fill="#7878c8"/>
-            <rect x="328" y="206" width="12" height="62" rx="2" fill="#7a7bff"/>
-          </svg>
+          <img src="https://raw.githubusercontent.com/BORJAMOME/portfolio-web/main/img/rfmprincipalcard.png" alt="Análisis RFM — Distribuidora B2B de Hostelería" style="width:100%;height:auto;display:block;">
         </div>
 
         <div class="pc-body">
-          <div class="pc-cat">Marketing · Análisis anual</div>
-          <div class="pc-name">El dashboard que eliminó la reunión de los lunes.</div>
-          <p class="pc-desc">El equipo de marketing pasaba 45 minutos cada semana en una reunión para repasar qué había pasado con las redes. 45 minutos para datos que podían verse en 30 segundos.<br><br>Construí un sistema de seguimiento YoY que consolida alcance, engagement y crecimiento en un espacio donde los datos calan solos.</p>
+          <div class="pc-cat">Customer analytics · B2B</div>
+          <div class="pc-name">Análisis RFM — Distribuidora B2B de Hostelería</div>
+          <p class="pc-desc">Una distribuidora de hostelería, 400 clientes y una caída de revenue que nadie sabía explicar. El análisis RFM identificó <strong>198.000€ en riesgo</strong> dentro del segmento que generaba la mitad del negocio.</p>
           <div class="pc-foot">
             <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">Marketing Analytics</span></div>
-            <a href="./proyectos.html" class="pc-link">Ver →</a>
+            <button class="pc-link" onclick="openIndexOverlay(2)" style="background:none;border:none;cursor:pointer;padding:0;">Ver →</button>
           </div>
         </div>
       </div>
@@ -3937,5 +3798,230 @@ const chartOpts = {
   });
 })();
 </script>
+
+<!-- ── OVERLAYS PROYECTOS DESTACADOS ── -->
+<script>
+var _indexOvLastFocus = null;
+var indexOvPhotoState = {};
+var activeIndexOverlay = null;
+
+function openIndexOverlay(idx){
+  closeAllIndexOverlays();
+  _indexOvLastFocus = document.activeElement;
+  var ov = document.getElementById('idx-overlay-' + idx);
+  if(!ov) return;
+  ov.classList.add('open');
+  ov.setAttribute('aria-hidden','false');
+  document.body.style.overflow = 'hidden';
+  activeIndexOverlay = idx;
+  if(indexOvPhotoState[idx] === undefined) indexOvPhotoState[idx] = 0;
+  var closeBtn = ov.querySelector('.pc-overlay-close');
+  if(closeBtn) setTimeout(function(){ closeBtn.focus(); }, 50);
+}
+
+function closeIndexOverlay(idx){
+  var ov = document.getElementById('idx-overlay-' + idx);
+  if(!ov) return;
+  ov.classList.remove('open');
+  ov.setAttribute('aria-hidden','true');
+  document.body.style.overflow = '';
+  activeIndexOverlay = null;
+  if(_indexOvLastFocus){ _indexOvLastFocus.focus(); _indexOvLastFocus = null; }
+}
+
+function closeAllIndexOverlays(){
+  document.querySelectorAll('[id^="idx-overlay-"].open').forEach(function(ov){
+    ov.classList.remove('open');
+    ov.setAttribute('aria-hidden','true');
+  });
+  document.body.style.overflow = '';
+  activeIndexOverlay = null;
+}
+
+function closeIndexOverlayIfBg(e, idx){
+  if(e.target === e.currentTarget) closeIndexOverlay(idx);
+}
+
+function indexOverlayPhotoNav(idx, dir){
+  if(indexOvPhotoState[idx] === undefined) indexOvPhotoState[idx] = 0;
+  var track = document.getElementById('idx-ovtrack-' + idx);
+  if(!track) return;
+  var photos = track.querySelectorAll('.pcov-photo');
+  var dots = document.querySelectorAll('#idx-overlay-' + idx + ' .pcov-dot');
+  var total = photos.length;
+  var newIdx = (Math.abs(dir) <= 1) ? ((indexOvPhotoState[idx] + dir + total) % total) : dir;
+  indexOvPhotoState[idx] = newIdx;
+  photos.forEach(function(p,i){ p.classList.toggle('pcov-active', i === newIdx); });
+  dots.forEach(function(d,i){ d.classList.toggle('pcov-dot-active', i === newIdx); });
+}
+
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape' && activeIndexOverlay !== null) closeIndexOverlay(activeIndexOverlay);
+});
+</script>
+
+<!-- OVERLAY 0: IBCS -->
+<div class="pc-overlay" id="idx-overlay-0" role="dialog" aria-modal="true" aria-labelledby="idx-overlay-0-title" aria-hidden="true" onclick="closeIndexOverlayIfBg(event,0)">
+  <div class="pc-overlay-inner">
+    <button class="pc-overlay-close" onclick="closeIndexOverlay(0)">
+      <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pc-overlay-imgs">
+      <div class="pcov-track" id="idx-ovtrack-0">
+        <img src="./img/ibcs-1.png" alt="Informe de ventas con enfoque IBCS 1" class="pcov-photo pcov-active" width="1200" height="720">
+        <img src="./img/ibcs-2.png" alt="Informe de ventas con enfoque IBCS 2" class="pcov-photo" width="1200" height="720">
+        <img src="./img/ibcs-3.png" alt="Informe de ventas con enfoque IBCS 3" class="pcov-photo" width="1200" height="720">
+      </div>
+      <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(0,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(0,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <div class="pcov-dots">
+        <button class="pcov-dot pcov-dot-active" onclick="indexOverlayPhotoNav(0,0)"></button>
+        <button class="pcov-dot" onclick="indexOverlayPhotoNav(0,1)"></button>
+        <button class="pcov-dot" onclick="indexOverlayPhotoNav(0,2)"></button>
+      </div>
+    </div>
+    <div class="pc-overlay-copy">
+      <div class="pc-overlay-eyebrow"><span></span>Análisis de ventas · IBCS</div>
+      <div class="pc-overlay-title" id="idx-overlay-0-title">Informe de ventas con enfoque IBCS</div>
+      <div class="pc-overlay-long">
+        <p><strong>El Problema</strong></p>
+        <p>En muchos equipos comerciales el análisis de ventas empieza y termina en el total. Si la cifra sube, todo bien. El problema es que <strong>dos períodos pueden cerrar con el mismo número y haber sido radicalmente distintos por dentro</strong>: uno con crecimiento real, otro con caída compensada por una campaña puntual. Sin variación integrada en el visual, esa diferencia no se ve.</p>
+        <p><strong>El Objetivo</strong></p>
+        <p>Construir un informe de ventas que permitiera leer <strong>volumen y variación en una sola lectura</strong>, sin necesidad de cruzar pestañas ni comparar tablas separadas. Y hacerlo siguiendo el estándar IBCS, que define cómo representar esa información de forma que cualquier persona lo lea igual, sin ambigüedad.</p>
+        <p><strong>Mi Enfoque</strong></p>
+        <p>El estándar <strong>IBCS (International Business Communication Standards)</strong> establece reglas concretas sobre cómo representar variaciones: qué color indica desviación positiva, qué forma indica valor real frente a presupuesto, cómo se integran volumen y variación en el mismo eje sin que se solapen ni confundan.</p>
+        <p>Construí tres tipos de visual siguiendo ese estándar. El <strong>gráfico de columnas con niveles múltiples</strong> permite ver simultáneamente el valor absoluto mensual, la variación absoluta respecto al año anterior y el porcentaje de cambio. El <strong>gráfico de columnas con variación integrada</strong> compacta esa información dentro de cada barra, útil cuando el eje tiene muchos elementos. El <strong>gráfico de líneas de variación</strong> muestra la evolución temporal con el área entre la línea real y el target coloreada según si se supera o no el objetivo.</p>
+        <p>La clave técnica está en combinar <strong>DAX con cálculos visuales</strong>: DAX para la lógica base del modelo y el selector dinámico de medidas, y cálculos visuales para generar las variaciones directamente sobre el visual sin multiplicar medidas en el modelo.</p>
+        <p><strong>Herramientas Utilizadas</strong></p>
+        <p><strong>Power BI</strong> para el modelo, los tres tipos de visual IBCS y la navegación entre vistas. <strong>DAX y cálculos visuales</strong> en combinación para las variaciones CY vs SPLY y contra Target.</p>
+        <p><strong>Qué Aprendí</strong></p>
+        <p>Replicar el estándar IBCS en Power BI sin custom visuals obliga a entender bien <strong>cómo funciona el formateo condicional a nivel de medida</strong>. La parte más exigente fue conseguir que los tres niveles del gráfico de columnas múltiples mantuvieran las proporciones correctas independientemente del rango de valores del filtro seleccionado.</p>
+      </div>
+      <div class="pc-overlay-pills">
+        <span class="pc-overlay-pill">IBCS</span>
+        <span class="pc-overlay-pill">DAX</span>
+        <span class="pc-overlay-pill">Cálculos visuales</span>
+        <span class="pc-overlay-pill">Modelado en estrella</span>
+        <span class="pc-overlay-pill">Variación absoluta y relativa</span>
+        <span class="pc-overlay-pill">Sales analytics</span>
+        <span class="pc-overlay-pill">YoY analysis</span>
+      </div>
+      <div class="pc-overlay-foot">
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiYWFhNjA5YmQtNjEyYS00YTA3LWIxMzktYWQxOTYzMmZkYzIyIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="pc-overlay-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+        <span class="pc-overlay-tech">Power BI · DAX</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY 1: Informe Financiero Completo -->
+<div class="pc-overlay" id="idx-overlay-1" role="dialog" aria-modal="true" aria-labelledby="idx-overlay-1-title" aria-hidden="true" onclick="closeIndexOverlayIfBg(event,1)">
+  <div class="pc-overlay-inner">
+    <button class="pc-overlay-close" onclick="closeIndexOverlay(1)">
+      <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pc-overlay-imgs">
+      <div class="pcov-track" id="idx-ovtrack-1">
+        <img src="./img/financiero-1.png" alt="Informe Financiero Completo 1" class="pcov-photo pcov-active" width="1200" height="720">
+        <img src="./img/financiero-2.png" alt="Informe Financiero Completo 2" class="pcov-photo" width="1200" height="720">
+        <img src="./img/financiero-3.png" alt="Informe Financiero Completo 3" class="pcov-photo" width="1200" height="720">
+      </div>
+      <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(1,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(1,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <div class="pcov-dots">
+        <button class="pcov-dot pcov-dot-active" onclick="indexOverlayPhotoNav(1,0)"></button>
+        <button class="pcov-dot" onclick="indexOverlayPhotoNav(1,1)"></button>
+        <button class="pcov-dot" onclick="indexOverlayPhotoNav(1,2)"></button>
+      </div>
+    </div>
+    <div class="pc-overlay-copy">
+      <div class="pc-overlay-eyebrow"><span></span>Análisis financiero</div>
+      <div class="pc-overlay-title" id="idx-overlay-1-title">Informe Financiero Completo</div>
+      <div class="pc-overlay-long">
+        <p><strong>El Problema</strong></p>
+        <p>Cuando cada área analiza su parte por separado, dirección necesita construir la visión completa manualmente cada vez. Ese proceso es lento, poco trazable y genera versiones distintas de la misma realidad. Sin un modelo que conectara los tres estados financieros de forma coherente, <strong>cualquier análisis era una foto parcial</strong>.</p>
+        <p><strong>El Objetivo</strong></p>
+        <p>Diseñar una estructura contable que unificara balance, PyG y cash flow, mantuviera coherencia entre periodos y permitiera navegar <strong>desde un KPI de alto nivel hasta el asiento concreto</strong> que lo genera, sin salir del informe.</p>
+        <p><strong>Mi Enfoque</strong></p>
+        <p>Empecé por el modelo. <strong>Dos tablas de hechos</strong>: <code>FactDiario</code> con los apuntes contables reales y <code>FactPresupuesto</code> con los datos presupuestados, conectadas a las mismas dimensiones. Una tabla <strong>TablaFechaCierre</strong> gestiona la proyección a cierre: extrapola el resultado esperado a fin de año a partir de los datos reales disponibles hasta la fecha de corte.</p>
+        <p>El informe tiene seis áreas: <strong>panel de KPIs</strong> con EBITDA, ROE, ROA, Test Ácido, Solvencia y Free Cash Flow; <strong>checklist de validación</strong> que detecta asientos descuadrados y cuentas sin clasificar; <strong>balance de sumas y saldos</strong> con drill-through hasta el apunte individual; <strong>balance general</strong> con análisis vertical y horizontal; <strong>PyG</strong> con tres vistas; y <strong>cash flow</strong> con los tres tipos de flujo comparados con el año anterior.</p>
+        <p><strong>Hallazgos Clave</strong></p>
+        <p>El checklist de validación fue una de las decisiones más importantes. En un modelo que consolida varias empresas, tener una página dedicada a detectar <strong>asientos descuadrados y cuentas sin clasificar</strong> evita que un error contable llegue a una reunión de dirección como si fuera un resultado real. En 2023, el <strong>Free Cash Flow fue de 678.208€</strong> frente a –1.165.649€ del año anterior.</p>
+        <p><strong>Herramientas Utilizadas</strong></p>
+        <p><strong>Power BI</strong> para el modelo completo, la navegación entre las seis áreas y el drill-through hasta el apunte contable de origen. <strong>DAX</strong> para ratios de solvencia y liquidez, EBITDA, variación interanual, desviación vs presupuesto y la lógica de proyección a cierre.</p>
+        <p><strong>Qué Aprendí</strong></p>
+        <p>Consolidar varias empresas en un único modelo añade una capa de complejidad que no existe en proyectos de una sola empresa. La <strong>proyección a cierre</strong> fue la pieza técnica más exigente: tiene que distinguir entre meses con datos reales y meses sin ellos, y ser coherente tanto en la tabla como en el gráfico de evolución temporal.</p>
+      </div>
+      <div class="pc-overlay-pills">
+        <span class="pc-overlay-pill">Modelado contable en estrella</span>
+        <span class="pc-overlay-pill">DAX financiero</span>
+        <span class="pc-overlay-pill">Balance · PyG · Cash Flow</span>
+        <span class="pc-overlay-pill">EBITDA</span>
+        <span class="pc-overlay-pill">Proyección a cierre</span>
+        <span class="pc-overlay-pill">Drill-through a asiento</span>
+        <span class="pc-overlay-pill">Financial analytics</span>
+      </div>
+      <div class="pc-overlay-foot">
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiNDgzZjBmY2MtMDhhMy00MGIzLTlmYmItODlkMmY2NDg3ZDdmIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=a961ceadc15fe4dcfcfb" target="_blank" rel="noopener noreferrer" class="pc-overlay-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+        <span class="pc-overlay-tech">Power BI · DAX</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY 2: RFM -->
+<div class="pc-overlay" id="idx-overlay-2" role="dialog" aria-modal="true" aria-labelledby="idx-overlay-2-title" aria-hidden="true" onclick="closeIndexOverlayIfBg(event,2)">
+  <div class="pc-overlay-inner">
+    <button class="pc-overlay-close" onclick="closeIndexOverlay(2)">
+      <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pc-overlay-imgs">
+      <div class="pcov-track" id="idx-ovtrack-2">
+        <img src="./img/rfm1.png" alt="Análisis RFM — Distribuidora B2B de Hostelería 1" class="pcov-photo pcov-active" width="1200" height="720">
+        <img src="./img/rfm2.png" alt="Análisis RFM — Distribuidora B2B de Hostelería 2" class="pcov-photo" width="1200" height="720">
+      </div>
+      <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(2,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(2,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <div class="pcov-dots">
+        <button class="pcov-dot pcov-dot-active" onclick="indexOverlayPhotoNav(2,0)"></button>
+        <button class="pcov-dot" onclick="indexOverlayPhotoNav(2,1)"></button>
+      </div>
+    </div>
+    <div class="pc-overlay-copy">
+      <div class="pc-overlay-eyebrow"><span></span>Customer analytics · B2B</div>
+      <div class="pc-overlay-title" id="idx-overlay-2-title">Análisis RFM — Distribuidora B2B de Hostelería</div>
+      <div class="pc-overlay-long">
+        <p><strong>El Problema</strong></p>
+        <p>El director comercial tenía los números y no los entendía. Revenue cayendo, cartera creciendo. La primera reacción fue buscar más ventas. Pero antes había que confirmar si el problema estaba en la <strong>captación o en la retención</strong>. Sin una forma de ver el comportamiento real de cada cliente, esa pregunta no tiene respuesta.</p>
+        <p><strong>El Objetivo</strong></p>
+        <p>Clasificar a los 400 clientes según su comportamiento real de compra — cuándo compraron por última vez, con qué frecuencia y cuánto — para identificar qué segmentos estaban perdiendo actividad y <strong>cuánto revenue había en riesgo real</strong>.</p>
+        <p><strong>Mi Enfoque</strong></p>
+        <p>Construí un modelo <strong>RFM</strong> sobre el histórico de pedidos. Cada cliente recibe tres puntuaciones: <strong>Recency</strong> (días desde la última compra), <strong>Frequency</strong> (número de pedidos) y <strong>Monetary</strong> (importe total acumulado). Los cortes se calculan con <strong>percentiles dinámicos</strong> sobre toda la tabla, lo que hace que el modelo funcione bien con cualquier distribución de datos.</p>
+        <p>El modelo vive sobre un <strong>esquema en estrella</strong> con <code>Fact_Pedidos</code> en el centro y cinco dimensiones: Cliente, Fecha, Producto, Comercial y TipoEstablecimiento. El dashboard responde cuatro preguntas en una sola página: salud del negocio, distribución por segmento, evolución mensual del revenue y <strong>acción comercial recomendada para cada grupo</strong> — esta última generada como tabla HTML directamente desde una medida DAX.</p>
+        <p><strong>Hallazgos Clave</strong></p>
+        <p>El segmento <strong>Loyal concentraba 111 clientes y casi la mitad del revenue total</strong>. Llevaban meses con la recency creciendo. Más de <strong>198.000€ en clientes que antes compraban bien y que llevaban tiempo sin aparecer</strong>. Sin segmentación esa señal se pierde en el total. Los <strong>Champions eran solo 34 clientes</strong>, con recency media de 14 días y ticket medio de 4.787€, recibiendo el mismo trato que el resto.</p>
+        <p><strong>Herramientas Utilizadas</strong></p>
+        <p><strong>Power BI</strong> para el modelo y el dashboard completo con filtros por zona, establecimiento, comercial y año. <strong>DAX</strong> para los tres scores, la asignación de segmento y la tabla de acciones comerciales generada como <strong>HTML dentro de una medida</strong>.</p>
+        <p><strong>Qué Aprendí</strong></p>
+        <p>Lo complicado fue decidir los cortes de segmentación: cuándo un cliente pasa de Loyal a At Risk no puede ser un número arbitrario. Usar <strong>percentiles dinámicos</strong> en lugar de umbrales fijos fue la decisión que más mejoró la calidad del modelo. Generar una <strong>tabla HTML desde DAX</strong> obliga a pensar más en el diseño antes de escribir la primera línea de código.</p>
+      </div>
+      <div class="pc-overlay-pills">
+        <span class="pc-overlay-pill">RFM</span>
+        <span class="pc-overlay-pill">Segmentación de clientes</span>
+        <span class="pc-overlay-pill">DAX avanzado</span>
+        <span class="pc-overlay-pill">Esquema estrella</span>
+        <span class="pc-overlay-pill">Tabla HTML en DAX</span>
+        <span class="pc-overlay-pill">Percentiles dinámicos</span>
+        <span class="pc-overlay-pill">B2B analytics</span>
+        <span class="pc-overlay-pill">Customer analytics</span>
+      </div>
+      <div class="pc-overlay-foot">
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiNGQ1OWZhNmEtY2I3Ni00N2M5LTk1NWYtMTEwZTA3NWI3NmYwIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="pc-overlay-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+        <span class="pc-overlay-tech">Power BI · DAX · M Language</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
