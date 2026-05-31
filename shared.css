@@ -1,0 +1,700 @@
+/* ═══════════════════════════════════════════════
+   shared.css — Borja Mora Portfolio
+   Variables, reset, nav, footer, botones, utilidades
+   Cargado en todas las páginas. NO duplicar en <style>.
+   ═══════════════════════════════════════════════ */
+
+/* ─── VARIABLES ─── */
+:root {
+  --purple:       #7a7bff;
+  --purple2:      #5a5be0;
+  --purple-light: #ededff;
+  --green:        #3c8a37;
+  --green-light:  #e8f5e7;
+  --red:          #a3223e;
+  --red-light:    #f9e8ec;
+  --white:        #ffffff;
+  --off:          #f7f7fa;
+  --gray:         #e5e5e5;
+  --ink:          #111111;
+  --muted:        #5a5a5a;
+  --muted-light:  #696969; /* WCAG AA ≥ 4.5:1 sobre #fff (ratio 5.74:1) */
+  --mutedB:       #6e6e6e; /* WCAG AA ≥ 4.5:1 sobre #fff (ratio 4.88:1) */
+  --li:           #0077b5;
+  --logo-purple:  #7a7bff;
+  --font:         'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+  --mono:         'JetBrains Mono', monospace;
+  --ease:         cubic-bezier(0.16,1,0.3,1);
+  --ease-spring:  cubic-bezier(.34,1.56,.64,1);
+}
+
+/* ─── RESET ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--white);
+  color: var(--ink);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  line-height: 1.55;
+}
+::selection { background: var(--purple); color: #fff; }
+
+/* ─── NAV ─── */
+/* Nota: limitamos el selector para NO afectar al <nav class="nav-drawer-links">
+   que vive dentro del drawer móvil. Solo aplica al nav principal con id="nav". */
+#nav, body > nav {
+  position: fixed;
+  top: 0; width: 100%;
+  z-index: 1000;
+  padding: 0 clamp(1.5rem,5vw,4rem);
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: .5px solid transparent;
+  transition: border-color .3s;
+}
+#nav.scrolled, body > nav.scrolled { border-bottom-color: #111111; }
+
+.logo {
+  font-size: 17px; font-weight: 700;
+  color: var(--ink); text-decoration: none;
+  letter-spacing: -.3px;
+  display: flex; align-items: center; gap: 7px;
+}
+.logo-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--purple);
+  animation: breathe 3s ease-in-out infinite;
+}
+@keyframes breathe { 0%,100%{transform:scale(1)} 50%{transform:scale(1.5)} }
+
+/* Typing cursor */
+#logoText:not(.done)::after {
+  content: '|';
+  color: var(--purple);
+  font-weight: 300;
+  animation: blink .7s step-end infinite;
+  margin-left: 1px;
+}
+#logoText.done::after { content: none; display: none; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+.nav-links { display: flex; gap: 2px; align-items: center; }
+.nav-links a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--muted);
+  text-decoration: none; padding: 6px 14px;
+  border-radius: 7px; font-weight: 500;
+  transition: color .2s, background .2s;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+  position: relative;
+}
+.nav-links a:hover { color: var(--ink); background: var(--off); }
+.nav-links a:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 2px;
+  background: var(--off);
+}
+/* Estado activo: indica la página actual */
+.nav-links a.active {
+  color: var(--ink);
+  font-weight: 700;
+}
+.nav-links a.active::after {
+  content: '';
+  position: absolute;
+  bottom: 2px; left: 14px; right: 14px;
+  height: 1.5px;
+  background: var(--ink);
+  border-radius: 99px;
+}
+
+.nav-cta {
+  background: var(--ink) !important;
+  color: #c6ff00 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-weight: 500 !important;
+  font-size: 11px !important;
+  letter-spacing: .4px !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 12px 28px !important;
+  min-width: 180px !important;
+  text-align: center !important;
+  text-transform: uppercase !important;
+  transition: background .25s var(--ease) !important;
+}
+.nav-cta .cta-text-wrap {
+  display: grid;
+  grid-template-columns: 1fr;
+  position: relative;
+  height: 1.2em;
+  overflow: hidden;
+}
+.nav-cta .cta-text-wrap span {
+  display: block;
+  white-space: nowrap;
+  line-height: 1.2em;
+  text-align: center;
+  transition: transform .3s cubic-bezier(.16,1,.3,1);
+  grid-column: 1;
+  grid-row: 1;
+}
+.nav-cta .cta-text-wrap span:last-child { transform: translateY(100%); }
+.nav-cta:hover .cta-text-wrap span:first-child { transform: translateY(-100%); }
+.nav-cta:hover .cta-text-wrap span:last-child { transform: translateY(0); }
+.nav-cta:hover { background: #c6ff00 !important; color: var(--ink) !important; }
+.nav-cta:focus-visible {
+  outline: 2px dashed var(--white) !important;
+  outline-offset: 2px !important;
+}
+
+/* ─── BOTONES ─── */
+.btn {
+  position: relative;
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 14px 26px; border-radius: 0;
+  font-size: 11px; font-weight: 500;
+  text-decoration: none;
+  overflow: hidden;
+  isolation: isolate;
+  transition: color .45s cubic-bezier(0.65,0,0.35,1),
+              border-color .45s cubic-bezier(0.65,0,0.35,1);
+  border: none;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  z-index: -1;
+  transform: translateY(101%);
+  transition: transform .55s cubic-bezier(0.65,0,0.35,1);
+}
+.btn:hover::before { transform: translateY(0); }
+.btn-arrow {
+  display: inline-block;
+  transition: transform .55s cubic-bezier(0.65,0,0.35,1);
+  will-change: transform;
+}
+.btn-primary { background: var(--ink); color: var(--white); }
+.btn-primary::before { background: var(--purple); }
+.btn-primary:hover { color: var(--white); }
+.btn-primary[data-arrow="right"]:hover .btn-arrow { transform: translateX(4px); }
+.btn-outline { background: transparent; border: 1px solid #111111; color: var(--ink); }
+.btn-outline::before { background: #111111; }
+.btn-outline:hover { color: #ffffff; border-color: #111111; }
+.btn-outline[data-arrow="right"]:hover .btn-arrow { transform: translateX(4px); }
+
+/* ─── FOOTER ─── */
+footer {
+  background: #111111;
+  padding: 0;
+  border-top: .5px solid rgba(255,255,255,.1);
+}
+.foot-inner {
+  max-width: 1180px; margin: 0 auto;
+  padding: 64px clamp(1.5rem,5vw,4rem) 32px;
+}
+.foot-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+.foot-col { display: flex; flex-direction: column; gap: 10px; }
+.foot-col--brand { gap: 12px; }
+.foot-brand-name {
+  font-size: 14px; font-weight: 700;
+  color: #ffffff; letter-spacing: -.2px;
+}
+.foot-brand-desc {
+  font-size: 14px; color: rgba(255,255,255,.7);
+  line-height: 1.5; margin: 0; max-width: 280px;
+}
+.foot-brand-loc {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: rgba(255,255,255,.5);
+  margin: 0; letter-spacing: .5px;
+}
+.foot-col-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; font-weight: 500;
+  color: rgba(255,255,255,.4);
+  letter-spacing: .8px; text-transform: uppercase;
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.foot-col-title::before { content: '—'; font-weight: 300; }
+.foot-col a {
+  font-size: 15px; color: #ffffff;
+  text-decoration: none; transition: color .2s;
+  letter-spacing: -.3px; width: fit-content; font-weight: 400;
+}
+.foot-col a:hover { color: var(--purple); transition: color .15s; }
+.foot-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 24px;
+  border-top: .5px solid rgba(255,255,255,.1);
+  flex-wrap: wrap; gap: 12px;
+}
+.foot-copy {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: rgba(255,255,255,.5); letter-spacing: .3px;
+}
+.foot-made {
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: rgba(255,255,255,.5); letter-spacing: .3px; flex-wrap: wrap;
+}
+.foot-tech {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  background: rgba(255,255,255,.08); padding: 2px 7px; border-radius: 4px;
+  color: #ffffff; font-weight: 500; border: .5px solid rgba(255,255,255,.12);
+}
+
+/* ─── SCROLL REVEAL (compartido) ─── */
+.sr {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .6s var(--ease), transform .6s var(--ease);
+}
+.sr.visible, .sr.in { opacity: 1; transform: none; }
+
+/* ─── SKIP LINK ─── */
+.skip-link {
+  position: absolute; left: -9999px; top: 4px; z-index: 9999;
+  background: var(--ink); color: #fff;
+  padding: 8px 16px; font-size: 13px; font-weight: 600;
+  text-decoration: none; border-radius: 4px;
+}
+.skip-link:focus { left: 4px; }
+
+/* ─── RESPONSIVE FOOTER ─── */
+@media (max-width: 900px) {
+  .foot-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .foot-col--brand { grid-column: 1 / -1; margin-bottom: 8px; }
+  .foot-bottom { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 520px) {
+  .foot-grid { grid-template-columns: 1fr; gap: 28px; }
+}
+/* ─── HAMBURGER BUTTON ─── */
+.nav-burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1100;
+}
+.nav-burger-line {
+  display: block;
+  width: 22px;
+  height: 1.5px;
+  background: var(--ink);
+  transition: transform .35s cubic-bezier(.16,1,.3,1), opacity .2s ease, width .35s cubic-bezier(.16,1,.3,1);
+  transform-origin: center;
+}
+/* Abierto: X brutalista */
+.nav-burger[aria-expanded="true"] .nav-burger-line:nth-child(1) {
+  transform: translateY(6.5px) rotate(45deg);
+}
+.nav-burger[aria-expanded="true"] .nav-burger-line:nth-child(2) {
+  opacity: 0;
+  width: 0;
+}
+.nav-burger[aria-expanded="true"] .nav-burger-line:nth-child(3) {
+  transform: translateY(-6.5px) rotate(-45deg);
+}
+
+/* ─── MOBILE DRAWER ─── */
+/*
+  Brutalismo editorial — drawer lateral derecho
+  - Panel blanco, borde negro izquierdo
+  - Header: "Borja Mora." + CERRAR ×
+  - 4 links de altura fija — activo en lima #c6ff00
+  - Footer: LINKEDIN | CONTACTAR
+  CLAVE: usa !important en los puntos críticos para vencer cualquier
+  estilo global de "nav" o "a" que herede de la página.
+*/
+.nav-drawer {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  z-index: 1050;
+  pointer-events: none;
+  visibility: hidden;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.nav-drawer.open {
+  pointer-events: auto;
+  visibility: visible;
+}
+
+/* Backdrop */
+.nav-drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  opacity: 0;
+  transition: opacity .3s ease;
+  cursor: pointer;
+}
+.nav-drawer.open .nav-drawer-backdrop {
+  opacity: 1;
+}
+
+/* Panel — entra desde la derecha */
+.nav-drawer-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 300px;
+  max-width: 88vw;
+  background: #ffffff;
+  border-left: 1.5px solid #111111;
+  transform: translateX(100%);
+  transition: transform .38s cubic-bezier(.16,1,.3,1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.nav-drawer.open .nav-drawer-panel {
+  transform: translateX(0);
+}
+
+/* ── Header: "Borja Mora." + CERRAR × ── */
+.nav-drawer-head {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px !important;
+  height: 56px !important;
+  min-height: 56px;
+  max-height: 56px;
+  flex: 0 0 56px;
+  border-bottom: 1.5px solid #111111;
+  background: #ffffff !important;
+  position: static !important;
+  width: auto !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+.nav-drawer-brand {
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 700;
+  color: #111111;
+  letter-spacing: -.3px;
+}
+/* Botón CERRAR × brutalista */
+.nav-drawer-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  padding: 0 10px;
+  background: none;
+  border: 1.5px solid #111111;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #111111;
+  transition: background .18s, color .18s;
+  white-space: nowrap;
+  border-radius: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.nav-drawer-close:hover {
+  background: #111111;
+  color: #ffffff;
+}
+
+/* ── Links: el <nav class="nav-drawer-links"> se RESETEA ──
+   IMPORTANTE: vence el estilo global de "nav" que es position:fixed */
+.nav-drawer-links,
+nav.nav-drawer-links {
+  position: static !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: 100% !important;
+  height: auto !important;
+  flex: 1 1 auto !important;
+  display: block !important;
+  flex-direction: column;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: #ffffff !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  z-index: auto !important;
+  justify-content: flex-start !important;
+  align-items: stretch !important;
+  overflow: hidden;
+}
+/* Cada link: bloque de altura fija, sin flex:1 (rompía en iOS) */
+.nav-drawer-links a {
+  display: flex !important;
+  align-items: center;
+  width: 100%;
+  height: 72px !important;
+  min-height: 72px;
+  padding: 0 24px !important;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #111111 !important;
+  text-decoration: none;
+  border-bottom: 1.5px solid #111111;
+  background: #ffffff;
+  transition: background .18s;
+  box-sizing: border-box;
+  border-radius: 0;
+}
+.nav-drawer-links a:last-child {
+  border-bottom: none;
+}
+.nav-drawer-links a:hover {
+  background: #f5f5f5;
+}
+/* Activo: fondo lima */
+.nav-drawer-links a.active {
+  background: #c6ff00 !important;
+  color: #111111 !important;
+}
+.nav-drawer-links a.active:hover {
+  background: #b8ee00 !important;
+}
+/* Anular el ::after del .nav-links a.active que pone línea decorativa */
+.nav-drawer-links a::after,
+.nav-drawer-links a.active::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* ── Footer: LINKEDIN | CONTACTAR ── */
+.nav-drawer-foot {
+  flex: 0 0 56px;
+  height: 56px;
+  min-height: 56px;
+  max-height: 56px;
+  border-top: 1.5px solid #111111;
+  display: flex;
+  background: #ffffff;
+}
+.nav-drawer-foot-item {
+  flex: 1;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  padding: 0 8px !important;
+  text-decoration: none;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #111111 !important;
+  transition: background .18s;
+  border-right: 1.5px solid #111111;
+  border-radius: 0;
+  box-sizing: border-box;
+  background: #ffffff;
+}
+.nav-drawer-foot-item:last-child {
+  border-right: none;
+}
+.nav-drawer-foot-item:hover {
+  background: #f5f5f5;
+}
+.nav-drawer-foot-item::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* ─── RESPONSIVE MOBILE NAV ─── */
+@media (max-width: 640px) {
+  #nav, body > nav { height: 56px; padding: 0 clamp(1rem,3vw,1.5rem); }
+  .logo { font-size: 15px; }
+  /* Ocultar nav-links y CTA normales */
+  .nav-links { display: none !important; }
+  /* Mostrar hamburger */
+  .nav-burger { display: flex; }
+}
+@media (min-width: 641px) {
+  /* Desktop: ocultar todo lo del drawer */
+  .nav-burger { display: none !important; }
+  .nav-drawer { display: none !important; }
+}
+
+/* ─── PREFERS REDUCED MOTION (global) ─── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  .sr { opacity: 1; transform: none; transition: none; }
+}
+
+/* ─── TIMELINE → CAJAS BRUTALISTAS (SOLO MÓVIL) ─── */
+@media (max-width: 640px) {
+
+  /* 1. Ocultar elementos decorativos del timeline */
+  .timeline-wrap::before,
+  .tl-progress,
+  .tl-dot,
+  .tl-label-anchor { display: none !important; }
+
+  /* 2. Contenedor: columna simple, sin grid de 2 cols */
+  .timeline-wrap {
+    display: flex !important;
+    flex-direction: column;
+    gap: 20px;
+    padding: 0 16px !important;
+    max-width: 100%;
+  }
+
+  /* 3. Cada fila: display normal (romper display:contents del desktop) */
+  .tl-row {
+    display: flex !important;
+    flex-direction: column;
+    border: 1.5px solid #111111;
+    background: #ffffff;
+    scroll-margin-top: 80px;
+  }
+
+  /* 4. Header de la caja: label "PASADO / PRESENTE / FUTURO" */
+  .tl-label-col {
+    order: 0;
+    padding: 14px 18px !important;
+    border-bottom: 1.5px solid #111111 !important;
+    border-right: none !important;
+    text-align: left !important;
+    background: #ffffff;
+    position: static !important;
+  }
+
+  .tl-label {
+    font-family: var(--mono) !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: .1em !important;
+    text-transform: uppercase !important;
+    color: #111111 !important;
+    display: block !important;
+    line-height: 1 !important;
+  }
+
+  /* Mostrar el número del data-num antes del label */
+  .tl-label-col::before {
+    display: inline !important;
+    content: attr(data-num) " — ";
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    color: #888;
+  }
+
+  /* 5. Cuerpo de la caja: el contenido */
+  .tl-body {
+    order: 1;
+    padding: 20px 18px !important;
+    border-bottom: none !important;
+    grid-column: auto !important;
+    position: static !important;
+  }
+
+  .tl-body p {
+    font-size: 14px !important;
+    line-height: 1.65 !important;
+    color: #404040 !important;
+    margin-bottom: 14px !important;
+  }
+
+  .tl-body p:last-child { margin-bottom: 0 !important; }
+
+  /* Mantener el highlight lima en strong */
+  .tl-body p strong {
+    background-color: #c6ff00 !important;
+    padding: 0 3px !important;
+    color: #111111 !important;
+  }
+
+  /* Links estilo original del sobre-mi */
+  .tl-link {
+    color: #0a0a0a !important;
+    text-decoration: underline !important;
+    text-decoration-color: #c6ff00 !important;
+    text-underline-offset: 4px !important;
+    text-decoration-thickness: 1.5px !important;
+  }
+
+  /* Blockquote: borde izquierdo brutalista */
+  .tl-quote {
+    margin: 16px 0 !important;
+    padding: 12px 14px !important;
+    border-left: 2px solid #111111 !important;
+    border-top: none !important;
+    border-right: none !important;
+    border-bottom: none !important;
+    font-style: italic !important;
+    color: #404040 !important;
+    font-size: 14px !important;
+    line-height: 1.65 !important;
+    background: #f7f7fa !important;
+  }
+
+  /* Última caja sin margen extra */
+  .tl-row:last-child {
+    margin-bottom: 0;
+  }
+  /* Anular el padding extra del último hijo que tiene desktop */
+  .tl-row:last-child .tl-body,
+  .tl-row:last-child .tl-label-col {
+    padding-bottom: 20px !important;
+  }
+}
