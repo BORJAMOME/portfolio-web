@@ -1,0 +1,3873 @@
+<!DOCTYPE html> 
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<!-- ─── FAVICON ─── -->
+<link rel="icon" type="image/svg+xml" href="./favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+<link rel="shortcut icon" href="./favicon.ico">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#7a7bff">
+<title>Borja Mora — Data Analyst · Power BI Developer · Madrid</title>
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Chart.js precargado: el navegador lo descarga en paralelo al HTML para que esté listo al necesitarse -->
+<link rel="preload" as="script" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" crossorigin="anonymous">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- Shared styles: variables, nav, footer, botones, reset -->
+<link rel="stylesheet" href="./shared.css">
+<!-- Primary Meta Tags -->
+<meta name="description" content="Construyo espacios donde los datos calan. Data Analyst especializado en Power BI, DAX y Data Storytelling. Dashboards que se entienden solos y decisiones que no dependen de intuición. Disponible en Madrid.">
+<meta name="keywords" content="Data Analyst, Power BI Developer, Business Intelligence, DAX, Data Storytelling, Microsoft PL-300, Power BI España, dashboards Power BI, Borja Mora">
+<meta name="author" content="Borja Mora Méndez">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://borjamora.es/">
+
+<!-- Open Graph / Facebook / LinkedIn -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:url" content="https://borjamora.es/">
+<meta property="og:title" content="Borja Mora — Construyo espacios donde los datos calan.">
+<meta property="og:description" content="Tengo una teoría sobre por qué los dashboards no se usan. No es un problema de datos. Es un problema de construcción.">
+<meta property="og:image" content="https://borjamora.es/img/og-home.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Borja Mora — Data Analyst · Power BI Developer">
+<meta property="og:site_name" content="Borja Mora">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Borja Mora — Construyo espacios donde los datos calan.">
+<meta name="twitter:description" content="Construyo espacios donde los datos calan. Power BI · DAX · Data Storytelling · Madrid.">
+<meta name="twitter:image" content="https://borjamora.es/img/og-home.png">
+
+<!-- Schema.org Person + WebSite -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://borjamora.es/#person",
+      "name": "Borja Mora Méndez",
+      "alternateName": "Borja Mora",
+      "url": "https://borjamora.es/",
+      "image": "https://borjamora.es/img/borja-mora.jpg",
+      "jobTitle": "Data Analyst · Power BI Developer",
+      "description": "Data Analyst especializado en Power BI y Business Intelligence. Certificado Microsoft PL-300.",
+      "knowsAbout": ["Power BI", "DAX", "Business Intelligence", "Data Storytelling", "Modelado de datos", "SQL", "Python"],
+      "hasCredential": {
+        "@type": "EducationalOccupationalCredential",
+        "name": "Microsoft Certified: Power BI Data Analyst Associate (PL-300)",
+        "credentialCategory": "certification"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Madrid",
+        "addressCountry": "ES"
+      },
+      "sameAs": [
+        "https://www.linkedin.com/in/borjamoramendez/",
+        "https://github.com/BORJAMOME",
+        "https://www.behance.net/borjamora"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://borjamora.es/#website",
+      "url": "https://borjamora.es/",
+      "name": "Borja Mora — Portfolio",
+      "inLanguage": "es-ES",
+      "publisher": { "@id": "https://borjamora.es/#person" }
+    }
+  ]
+}
+</script>
+
+<!-- ── Cookie Consent + GA4 Consent Mode v2 (RGPD/LOPDGDD) ── -->
+<script>
+  /* 1. Consent Mode v2: defaults denegados hasta opt-in explícito */
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("consent", "default", {
+    analytics_storage:    "denied",
+    ad_storage:           "denied",
+    ad_user_data:         "denied",
+    ad_personalization:   "denied",
+    wait_for_update:      500
+  });
+</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PSDM6B5Z7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-6PSDM6B5Z7", { anonymize_ip: true });
+
+  /* 2. Leer consentimiento previo del usuario */
+  (function(){
+    var consent = localStorage.getItem("bm_cookie_consent");
+    if (consent === "accepted") {
+      gtag("consent", "update", {
+        analytics_storage: "granted",
+        ad_storage:        "denied"
+      });
+    }
+  })();
+</script>
+
+<!-- ── Cookie banner CSS (RGPD/LOPDGDD) ── -->
+<style>
+  #bm-cookie-banner {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(0);
+    z-index: 99999; width: min(540px, calc(100vw - 32px));
+    background: #0e0e0e; color: #f7f7fa;
+    border: 1px solid rgba(122,123,255,.3);
+    border-radius: 16px; padding: 16px 20px;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    box-shadow: 0 12px 48px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.04);
+    font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+    font-size: 13px; line-height: 1.55;
+    opacity: 0; pointer-events: none;
+    transition: opacity .3s ease, transform .35s cubic-bezier(.16,1,.3,1);
+  }
+  #bm-cookie-banner.bm-visible {
+    opacity: 1; pointer-events: auto;
+  }
+  #bm-cookie-banner.bm-hiding {
+    opacity: 0; transform: translateX(-50%) translateY(16px);
+  }
+  #bm-cookie-banner p { margin: 0; flex: 1; min-width: 200px; color: #b8b8cc; }
+  #bm-cookie-banner strong { color: #f7f7fa; font-weight: 600; }
+  #bm-cookie-banner a { color: #7a7bff; text-decoration: none; border-bottom: 1px solid rgba(122,123,255,.4); }
+  .bm-cb-btns { display: flex; gap: 8px; flex-shrink: 0; }
+  .bm-cb-btn {
+    cursor: pointer; border: none; border-radius: 9px;
+    padding: 9px 18px; font-size: 12px; font-weight: 700;
+    font-family: inherit; letter-spacing: .4px;
+    transition: opacity .15s, transform .12s;
+    text-transform: uppercase;
+  }
+  .bm-cb-btn:hover { opacity: .82; transform: translateY(-1px); }
+  .bm-cb-btn:active { transform: translateY(0); }
+  .bm-cb-accept { background: #7a7bff; color: #fff; }
+  .bm-cb-reject { background: rgba(255,255,255,.07); color: #b8b8cc; border: 1px solid rgba(255,255,255,.1); }
+  @media (max-width: 480px) {
+    #bm-cookie-banner { bottom: 16px; padding: 14px 16px; border-radius: 12px; }
+    .bm-cb-btns { width: 100%; justify-content: flex-end; }
+  }
+</style>
+  
+<style>
+/* ─── ESTILOS ESPECÍFICOS DE INDEX.HTML ─── */
+/* Variables, nav, footer y botones → shared.css  */
+
+/* ─── RESPONSIVE BASE — MOBILE FIRST ─── */
+@media (max-width: 640px) {
+  nav { height: 56px; padding: 0 clamp(1rem, 3vw, 1.5rem); }
+  .logo { font-size: 15px; }
+  .nav-links { gap: 2px; }
+  .nav-links a { font-size: 12px; padding: 4px 10px; }
+  .nav-cta { padding: 6px 20px !important; min-width: auto !important; font-size: 12px !important; }
+  
+  h1 { font-size: clamp(28px, 8vw, 48px); }
+  h2 { font-size: clamp(24px, 6vw, 40px); }
+  
+  .c { padding: 0 clamp(16px, 3vw, 24px); }
+}
+
+@media (max-width: 768px) {
+  nav { padding: 0 clamp(1rem, 4vw, 2rem); }
+  
+  h1 { font-size: clamp(32px, 9vw, 64px); }
+  h2 { font-size: clamp(24px, 6vw, 44px); }
+  
+  [class*="grid"] { grid-template-columns: 1fr; gap: clamp(24px, 6vw, 40px); }
+}
+
+@media (max-width: 1024px) {
+  .c { max-width: calc(100% - 40px); }
+  h1 { font-size: clamp(40px, 8vw, 80px); }
+}
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 80px clamp(1.5rem,3vw,2.5rem) 80px;
+  display: flex; align-items: center;
+  background: var(--white);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 65% 55% at 50% 50%, rgba(122,123,255,.09) 0%, rgba(122,123,255,.03) 50%, transparent 75%),
+    linear-gradient(rgba(122,123,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(122,123,255,.025) 1px, transparent 1px);
+  background-size: 100% 100%, 28px 28px, 28px 28px;
+  -webkit-mask-image: radial-gradient(ellipse 80% 75% at 50% 50%, black 30%, transparent 80%);
+  mask-image: radial-gradient(ellipse 80% 75% at 50% 50%, black 30%, transparent 80%);
+  pointer-events: none;
+  z-index: 0;
+}
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ── CHANGE 2: New pill/capsule above headline ── */
+.hero-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--purple-light);
+  border: .5px solid rgba(122,123,255,.25);
+  border-radius: 100px; padding: 6px 14px;
+  font-size: 11px; color: var(--purple2);
+  letter-spacing: .5px; font-weight: 600;
+  margin-bottom: 12px;
+  transform-origin: center center;
+  opacity: 0; animation: pillFadeIn .55s .05s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+@keyframes pillFadeIn {
+  0%   { opacity:0; transform: translateY(8px) scale(.96); }
+  100% { opacity:1; transform: translateY(0)   scale(1); }
+}
+
+/* ── Single credentials line (replaces pill + cert + badge) ── */
+.hero-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: .1px;
+  flex-wrap: wrap;
+  opacity: 0; animation: fadeUp .8s .42s var(--ease) forwards;
+}
+.hero-meta-pulse {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 3px rgba(60,138,55,.18);
+  animation: pulse-gr 2s infinite;
+  flex-shrink: 0;
+}
+.hero-meta-status {
+  font-weight: 600;
+  color: var(--ink);
+}
+.hero-meta-item {
+  font-weight: 500;
+  color: var(--ink);
+  opacity: .75;
+}
+.hero-meta-sep {
+  color: var(--muted);
+  opacity: .5;
+}
+@keyframes pulse-gr { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+/* ── CHANGE 1 & 3: Headline all black, "Decisiones mejores" on one line ── */
+.hero-h1 {
+  font-size: clamp(36px, 4.2vw, 58px);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -2.5px;
+  color: var(--ink);
+  margin-bottom: 28px;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  opacity: 0; animation: fadeUp .8s .18s var(--ease) forwards;
+}
+
+.hero-left {
+  width: 100%;
+}
+
+.hero-sub {
+  font-size: 16px; color: var(--muted);
+  line-height: 1.75; max-width: 100%;
+  margin-bottom: 24px; font-weight: 400;
+  opacity: 0; animation: fadeUp .8s .32s var(--ease) forwards;
+}
+
+/* ── CHANGE 4: Certification badge ── */
+.hero-cert {
+  display: flex; align-items: center; gap: 7px;
+  margin-bottom: 10px;
+  opacity: 0; animation: fadeUp .8s .40s var(--ease) forwards;
+}
+.hero-cert-icon {
+  width: 20px; height: 20px;
+  background: var(--ink);
+  border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.hero-cert-icon svg { width: 11px; height: 11px; }
+.hero-cert span {
+  font-size: 13px; font-weight: 700;
+  color: var(--ink); letter-spacing: -.2px;
+}
+
+.hero-actions {
+  display: flex; gap: 10px; flex-wrap: wrap;
+  opacity: 0; animation: fadeUp .8s .62s var(--ease) forwards;
+}
+
+/* ─── HERO DASHBOARD ─── */
+.hero-right {
+  position: relative;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  /* Empuja el dashboard hacia fuera del viewport por la derecha
+     para sugerir que hay más detrás. Sutil, no agresivo. */
+  margin-right: clamp(-180px, -8vw, -60px);
+}
+.hero-right .dashboard-frame {
+  width: min(640px, 110%);
+  transform-origin: left center;
+}
+
+.dashboard-frame {
+  background: #fbfbfb;
+  border: .5px solid var(--gray);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(122,123,255,.08),
+    0 8px 24px rgba(0,0,0,.06),
+    0 32px 80px rgba(0,0,0,.1);
+  position: relative;
+}
+.dashboard-frame::before { content: none; }
+
+.df-titlebar {
+  background: #fbfbfb;
+  padding: 10px 15px;
+  display: flex; align-items: center; gap: 6px;
+  border-bottom: .5px solid var(--gray);
+}
+.df-dot { width: 9px; height: 9px; border-radius: 50%; }
+.df-url { margin-left: 10px; font-size: 10px; color: var(--muted); opacity: .5; letter-spacing: .3px; }
+.df-omnibox {
+  flex: 1 1 auto; min-width: 0;
+  display: flex; align-items: center; gap: 6px;
+  background: #ffffff;
+  border: .5px solid #e6e6ee;
+  border-radius: 6px;
+  padding: 4px 9px;
+  margin-left: 8px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.03);
+}
+.df-omnibox > svg { width: 9px; height: 9px; flex-shrink: 0; }
+.df-omnibox-refresh { margin-left: auto; }
+.df-omnibox-url {
+  font-size: 9.5px; letter-spacing: .2px; font-weight: 500;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
+}
+.df-omnibox-scheme, .df-omnibox-path { color: #b6b6c4; }
+.df-omnibox-url b { color: var(--ink); font-weight: 600; }
+
+.df-header {
+  padding: 12px 14px 0;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.df-title { font-size: 12px; font-weight: 700; color: var(--ink); letter-spacing: -.2px; }
+.df-period {
+  font-size: 9px; font-weight: 600;
+  background: var(--purple-light); color: var(--purple);
+  padding: 3px 8px; border-radius: 5px;
+  text-transform: uppercase; letter-spacing: .7px;
+}
+
+.df-body { padding: 10px 14px 14px; display: flex; flex-direction: column; gap: 9px; }
+
+/* KPI row */
+.df-kpis { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; }
+.dk {
+  background: var(--white);
+  border: .5px solid #e8e8ee;
+  border-radius: 8px;
+  padding: 10px 11px 9px;
+  position: relative;
+  overflow: hidden;
+}
+.dk::before { content: none; }
+.dk-label { font-size: 7.5px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .7px; margin-bottom: 5px; }
+.dk-main { display: flex; align-items: flex-end; justify-content: space-between; gap: 2px; margin-bottom: 4px; }
+.dk-value { font-size: 20px; font-weight: 700; color: var(--ink); letter-spacing: -1px; line-height: 1; }
+.dk-sparkline { flex-shrink: 0; margin-bottom: 0px; opacity: 1; }
+.dk-pos { display: inline-flex; align-items: center; gap: 3px; font-size: 7.5px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: var(--green-light); color: var(--green); }
+.dk-neg { display: inline-flex; align-items: center; gap: 3px; font-size: 7.5px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: var(--red-light); color: var(--red); }
+.dk-vs { font-size: 6.5px; color: var(--muted-light); font-weight: 500; display: inline-flex; align-items: center; margin-left: 5px; }
+
+/* charts row */
+.df-charts { display: grid; grid-template-columns: 2fr 1fr; gap: 6px; }
+.df-card {
+  background: var(--white); border: .5px solid #e8e8ee;
+  border-radius: 8px; padding: 10px 12px;
+}
+.dc-label { font-size: 7.5px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .7px; margin-bottom: 1px; }
+.dc-sublabel { font-size: 10.5px; font-weight: 700; color: var(--ink); margin-bottom: 7px; letter-spacing: -.2px; }
+.dc-legend { display: flex; gap: 10px; margin-bottom: 5px; }
+.dc-leg-item { display: flex; align-items: center; gap: 4px; font-size: 8px; color: var(--muted); }
+.dc-leg-dot { width: 7px; height: 7px; border-radius: 2px; }
+
+/* ranking */
+.df-ranking { background: var(--white); border: .5px solid #e8e8ee; border-radius: 8px; padding: 10px 12px 11px; }
+/* Tabla de detalle estilo informe BI */
+.dt { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.dt th {
+  font-size: 6.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+  color: var(--muted); text-align: right; padding: 0 0 5px 10px;
+  border-bottom: .5px solid #e8e8ee; white-space: nowrap;
+}
+.dt th:first-child { text-align: left; padding-left: 0; }
+.dt td {
+  font-size: 9px; font-weight: 600; text-align: right; padding: 4.5px 0 4.5px 10px;
+  border-bottom: .5px solid #f3f3f7; color: var(--ink); white-space: nowrap;
+}
+.dt td:first-child { text-align: left; padding-left: 0; font-weight: 700; }
+.dt tr:last-child td { border-bottom: none; }
+.dt-zone { display: inline-flex; align-items: center; gap: 5px; }
+.dt-rk { font-size: 7px; color: #b9b9c6; font-weight: 700; min-width: 9px; display: inline-block; }
+.dt-sales { position: relative; }
+.dt-bar { position: absolute; left: 0; top: 50%; transform: translateY(-50%); height: 13px; background: rgba(122,123,255,.16); border-radius: 2px; z-index: 0; }
+.dt-v { position: relative; z-index: 1; padding-left: 4px; }
+.dt-chip { display: inline-block; font-size: 7.5px; font-weight: 700; padding: 1.5px 5px; border-radius: 3px; }
+.dt-chip.pos { background: var(--green-light); color: var(--green); }
+.dt-chip.neg { background: var(--red-light); color: var(--red); }
+.dt-obj { font-weight: 700; }
+.dt-obj.ok { color: var(--green); }
+.dt-obj.warn { color: #b07a00; }
+.dt-obj.bad { color: var(--red); }
+.dt tr.dt-total td { border-top: .5px solid #d8d8e2; border-bottom: none; padding-top: 5px; font-weight: 800; }
+.dr-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
+.dr-row {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 0; border-bottom: .5px solid #f4f4f7;
+}
+.dr-row:last-child { border-bottom: none; padding-bottom: 1px; }
+.dr-rank { font-size: 8px; font-weight: 700; color: #bbb; min-width: 12px; }
+.dr-name { font-size: 9.5px; font-weight: 600; color: var(--ink); min-width: 36px; }
+.dr-track { flex: 1; height: 5px; background: #f0f0f5; border-radius: 3px; overflow: hidden; }
+.dr-fill { height: 100%; border-radius: 3px; background: var(--purple); }
+.dr-val { font-size: 9.5px; font-weight: 700; color: var(--ink); min-width: 38px; text-align: right; }
+.dr-badge { font-size: 7.5px; font-weight: 700; padding: 2px 5px; border-radius: 3px; white-space: nowrap; }
+
+/* ─── PROOF STRIP — CHANGE 7 ─── */
+.proof-strip {
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  background: var(--off);
+  border-top: .5px solid var(--gray);
+  border-bottom: .5px solid var(--gray);
+}
+
+.proof-track {
+  display: flex;
+  width: max-content;
+  animation: scrollLoop 36s linear infinite;
+  will-change: transform;
+  padding: 18px 0;
+}
+
+.proof-track:hover {
+  animation-play-state: paused;
+}
+
+.proof-content {
+  display: flex;
+  gap: 0;
+  padding: 0;
+  white-space: nowrap;
+  align-items: center;
+}
+
+/* Each tag item */
+.proof-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 28px;
+  border-right: .5px solid #e0e0e5;
+}
+
+.proof-item:first-child {
+  padding-left: 28px;
+}
+
+.proof-abbr {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: #ebebf0;
+  border: .5px solid #e0e0e5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  font-weight: 700;
+  color: #888;
+  letter-spacing: .3px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  font-family: 'Plus Jakarta Sans', monospace;
+}
+
+.proof-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #6a6a7a;
+  letter-spacing: .15px;
+  white-space: nowrap;
+}
+
+.proof-strip::before,
+.proof-strip::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 100px;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.proof-strip::before {
+  left: 0;
+  background: linear-gradient(to right, #f9f9fb, transparent);
+}
+
+.proof-strip::after {
+  right: 0;
+  background: linear-gradient(to left, #f9f9fb, transparent);
+}
+
+@keyframes scrollLoop {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ─── SECTION COMMONS ─── */
+/* Cada sección lleva la línea divisora pegada al borde superior (sin padding-top).
+   El aire visual queda balanceado: divider→contenido ≈ contenido→borde inferior. */
+section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
+.c { max-width: 1240px; margin: 0 auto; padding: 0 clamp(20px, 4vw, 48px); }
+
+.s-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1.4px; color: var(--purple); margin-bottom: 16px;
+}
+.s-tag::before { content:''; width:18px; height:1.5px; background:var(--purple); opacity:.45; }
+
+.s-h {
+  font-size: clamp(34px,4vw,52px); font-weight: 700;
+  line-height: 1.1; letter-spacing: -1.5px; color: var(--ink); margin-bottom: 14px;
+}
+.s-h em { font-style: normal; color: var(--purple); }
+
+.s-sub { font-size: 15px; color: var(--muted); line-height: 1.7; max-width: 480px; }
+
+/* ─── WHAT I BUILD ─── */
+.wib-section { background: var(--off); }
+.wib-header { text-align: center; margin-bottom: 52px; }
+.wib-header .s-tag { justify-content: center; }
+.wib-header .s-sub { margin: 0 auto; }
+.wib-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+.wib-card {
+  background: var(--white); border: .5px solid var(--gray);
+  border-radius: 14px; padding: 34px 28px;
+  position: relative; overflow: hidden;
+  transition: all .25s var(--ease);
+}
+.wib-card:hover { border-color: var(--purple); transform: translateY(-4px); box-shadow: 0 16px 40px rgba(122,123,255,.1); }
+.wib-num {
+  font-size: 60px; font-weight: 700;
+  color: rgba(122,123,255,.06); line-height: 1;
+  position: absolute; top: 14px; right: 18px; letter-spacing: -3px;
+}
+.wib-icon { font-size: 24px; margin-bottom: 18px; display: block; }
+.wib-title { font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 10px; letter-spacing: -.3px; }
+.wib-text { font-size: 13px; color: var(--muted); line-height: 1.7; }
+
+/* ─── SOBRE MÍ (index) ─── */
+.abm-section { background: var(--off); }
+.abm-section > .c { padding-top: 0; padding-bottom: 0; }
+.abm-card {
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  gap: 0;
+  border: 1px solid var(--gray);
+  background: var(--white);
+  overflow: hidden;
+}
+.abm-content {
+  display: flex; flex-direction: column; gap: 18px;
+  padding: 36px 40px;
+}
+.abm-body { display: flex; flex-direction: column; gap: 12px; }
+.abm-body p {
+  font-size: 14px; line-height: 1.75; color: var(--muted);
+}
+.abm-body p strong { 
+  color: var(--ink); 
+  font-weight: 600; 
+}
+.abm-body p:first-child strong {
+  color: var(--purple);
+}
+.abm-body p:nth-child(2) strong {
+  background: #c6ff00;
+  padding: 2px 0;
+}
+.abm-body p:nth-child(3) strong {
+  background: #c6ff00;
+  padding: 2px 0;
+}
+.abm-body p:first-child { color: var(--ink); font-weight: 600; font-size: 15px; }
+.abm-cta {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: #ffffff; color: #111111;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 500;
+  padding: 12px 20px; border-radius: 0;
+  text-decoration: none; width: fit-content;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  border: 1px solid #111111;
+  transition: background .2s, color .2s;
+}
+.abm-cta:hover { background: #111111; color: #ffffff; }
+.abm-cta svg { transition: transform .2s; }
+.abm-cta:hover svg { transform: translateX(3px); }
+
+/* Foto */
+.abm-photo {
+  position: relative;
+  overflow: hidden;
+  min-height: 260px;
+}
+.abm-photo img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: top center;
+  display: block;
+  transition: transform .6s cubic-bezier(0.16,1,0.3,1);
+}
+.abm-photo:hover img { transform: scale(1.04); }
+/* Badge sobre foto */
+.abm-badge {
+  position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+  background: rgba(255,255,255,.88);
+  backdrop-filter: blur(12px);
+  border: .5px solid rgba(0,0,0,.08);
+  padding: 6px 14px; border-radius: 100px;
+  font-size: 10px; font-weight: 700; letter-spacing: .3px;
+  color: var(--ink); white-space: nowrap;
+  display: flex; align-items: center; gap: 7px;
+}
+.abm-badge::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: #3c8a37;
+  box-shadow: 0 0 0 3px rgba(60,138,55,.2);
+  animation: abmPulse 2.4s ease-in-out infinite;
+}
+@keyframes abmPulse {
+  0%,100% { box-shadow: 0 0 0 3px rgba(60,138,55,.2); }
+  50%      { box-shadow: 0 0 0 6px rgba(60,138,55,.07); }
+}
+
+@media (max-width: 640px) {
+  .abm-card { grid-template-columns: 1fr; }
+  .abm-photo { min-height: 220px; order: -1; }
+  .abm-content { padding: 28px 24px; }
+}
+
+/* ─── PROJECTS ─── */
+.proj-section { background: var(--white); border-top: none; }
+.proj-section > .c { max-width: 100%; padding: 0 clamp(1.5rem,4vw,5rem); margin: 0 auto; }
+.proj-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 52px; gap: 24px; flex-wrap: wrap; }
+.proj-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0; align-items: stretch; border-left: 0.5px solid #111111; border-top: 0.5px solid #111111; }
+
+.proj-featured {
+  grid-row: span 2;
+  background: var(--white); border: .5px solid var(--gray);
+  border-radius: 14px; overflow: hidden;
+  transition: all .3s var(--ease);
+  display: flex; flex-direction: column; position: relative;
+}
+.proj-featured::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 2px; background: var(--purple);
+}
+.proj-featured:hover { border-color: var(--purple); transform: translateY(-4px); box-shadow: 0 20px 48px rgba(122,123,255,.1); }
+
+.pf-visual-top {
+  height: 200px; background: var(--off);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px; border-bottom: .5px solid var(--gray);
+}
+.pf-mini {
+  width: 88%; background: var(--white);
+  border: .5px solid var(--gray); border-radius: 10px;
+  padding: 12px; box-shadow: 0 4px 16px rgba(0,0,0,.06);
+}
+.pf-mini-kpis { display: flex; gap: 6px; margin-bottom: 8px; }
+.pf-mk { flex: 1; background: var(--off); border-radius: 7px; padding: 7px 9px; }
+.pf-mkv { font-size: 13px; font-weight: 700; color: var(--ink); }
+.pf-mkl { font-size: 7.5px; color: var(--muted); margin-top: 1px; text-transform: uppercase; letter-spacing: .4px; }
+
+.pf-content { padding: 24px 26px 26px; flex: 1; display: flex; flex-direction: column; }
+.pf-cat { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--purple); margin-bottom: 9px; }
+.pf-title { font-size: 20px; font-weight: 700; color: var(--ink); line-height: 1.25; margin-bottom: 10px; letter-spacing: -.3px; }
+.pf-desc { font-size: 13px; color: var(--muted); line-height: 1.65; flex: 1; margin-bottom: 20px; }
+.pf-tags { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.pf-tag { font-size: 10px; font-weight: 600; background: var(--purple-light); color: var(--purple); padding: 3px 9px; border-radius: 5px; }
+.pf-link { margin-left: auto; font-size: 12px; color: var(--purple); font-weight: 600; text-decoration: none; }
+.pf-link:hover { color: var(--purple2); }
+
+.proj-card {
+  background: var(--white);
+  border: 0.5px solid #111111;
+  border-radius: 0; overflow: hidden;
+  transition: background .18s cubic-bezier(.4,0,.2,1);
+  display: flex; flex-direction: column;
+  box-shadow: none;
+  cursor: pointer;
+}
+.pc-visual {
+  display: block;
+  background: #fafafa;
+  border-bottom: 0.5px solid #111111;
+  position: relative; overflow: hidden;
+  aspect-ratio: 360 / 300;
+}
+.pc-visual svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.pc-body { padding: 20px 30px 28px; flex: 1; display: flex; flex-direction: column; }
+.pc-cat { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--purple); margin-bottom: 10px; }
+.pc-name { font-size: 20px; font-weight: 700; color: var(--ink); margin-bottom: 10px; letter-spacing: -.4px; line-height: 1.25; }
+.pc-desc { font-size: 13.5px; color: var(--muted); line-height: 1.7; flex: 1; margin-bottom: 20px; }
+.pc-foot { display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 0.5px solid #111111; }
+.pc-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.pc-pill { 
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; 
+  font-weight: 500; 
+  background: transparent; 
+  border: 1.5px solid #111111;
+  color: var(--muted); 
+  padding: 6px 12px; 
+  border-radius: 20px; 
+  letter-spacing: .4px; 
+  text-transform: uppercase; 
+  transition: all .2s var(--ease);
+}
+.pc-pill + .pc-pill::before { content: ''; margin-right: 0; color: var(--muted); }
+.pc-link { font-size: 12px; color: var(--ink); font-weight: 700; text-decoration: none; letter-spacing: .05em; text-transform: uppercase; transition: color .18s; }
+.pc-link:hover { color: var(--purple); }
+.proj-more { display: flex; justify-content: center; align-items: center; margin-top: 40px; width: 100%; }
+
+/* ─── PROYECTO ESTRELLA — dos columnas ─── */
+.star-section {
+  background: var(--white);
+  padding: 0 0 clamp(96px, 10vw, 120px);
+  overflow: hidden;
+  position: relative;
+}
+.star-wrap {
+  max-width: none;
+  margin: 0;
+  /* Alinear el borde izquierdo con .c (max-width 1100px centrado) en pantallas anchas,
+     manteniendo clamp(1.5rem,5vw,4rem) como mínimo en pantallas pequeñas. */
+  padding: 0 0 0 max(clamp(1.5rem, 5vw, 4rem), calc(50vw - 550px));
+}
+.star-inner {
+  display: grid;
+  grid-template-columns: minmax(420px, 1fr) minmax(0, 1.4fr);
+  gap: clamp(40px, 5vw, 80px);
+  align-items: stretch;
+  max-width: 1600px;
+  margin: 0 auto 0 0;
+}
+
+/* LEFT: texto */
+.star-text {
+  display: flex;
+  flex-direction: column;
+  padding-right: 0;
+}
+.star-text-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.star-head-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  opacity: .7;
+}
+.star-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 1.2px; text-transform: uppercase;
+  color: var(--purple);
+  margin: 0;
+}
+.star-tag::before {
+  content: '';
+  display: inline-block;
+  width: 18px; height: 2px;
+  background: var(--purple);
+  border-radius: 2px;
+}
+.star-title {
+  font-size: clamp(36px, 4.2vw, 60px);
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -1.6px;
+  line-height: .98;
+  margin: 0 0 22px 0;
+  text-wrap: balance;
+}
+.star-lead {
+  font-size: clamp(15px, 1.1vw, 17px);
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0 0 36px;
+  text-wrap: pretty;
+}
+.star-lead em {
+  font-style: italic;
+  color: var(--ink);
+}
+
+.star-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 36px;
+}
+.star-blk {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 20px;
+  border-top: .5px solid #e8e8f0;
+}
+.star-blk-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--purple);
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+.star-blk-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -.2px;
+  line-height: 1.3;
+  margin: 0 0 2px;
+}
+.star-blk p {
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.65;
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.star-pull {
+  padding-top: 28px;
+  border-top: .5px solid #e8e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.star-pull-quote {
+  font-size: clamp(18px, 1.5vw, 22px);
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -.3px;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+.star-pull-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.star-pull-tags .pc-pill {
+  border: 1px solid #111111;
+  border-radius: 16px;
+  padding: 4px 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .2px;
+  text-transform: uppercase;
+}
+
+/* RIGHT: herramienta — full-bleed pegada al borde derecho, alto = alto del texto */
+.star-stage {
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.star-browser {
+  background: #fff;
+  border: 1px solid #111111;
+  border-radius: 0;
+  border-right: none;
+  overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: sticky;
+  top: 100px;
+  max-height: calc(100vh - 140px);
+  box-shadow: none;
+}
+.star-browser-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 18px;
+  background: #111111;
+  border-bottom: 1px solid #111111;
+}
+.star-browser-dots { display: flex; gap: 6px; }
+.star-browser-dots span {
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  background: #e0e0e0;
+}
+.star-browser-dots span:first-child { background: #ff5f57; }
+.star-browser-dots span:nth-child(2) { background: #febc2e; }
+.star-browser-dots span:nth-child(3) { background: #28c840; }
+.star-browser-url {
+  flex: 0 1 auto;
+  background: rgba(255,255,255,.08);
+  border: .5px solid rgba(255,255,255,.15);
+  border-radius: 7px;
+  padding: 5px 14px;
+  font-size: 11px;
+  color: rgba(255,255,255,.7);
+  font-family: 'JetBrains Mono', monospace;
+  min-width: 240px;
+  max-width: 420px;
+}
+.star-browser-meta { margin-left: auto; }
+.star-browser-live {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #c6ff00;
+  font-family: 'JetBrains Mono', monospace;
+}
+.sb-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #c6ff00;
+  box-shadow: 0 0 0 3px rgba(198,255,0,.15);
+  animation: pulse-gr 2s infinite;
+}
+.star-browser-content {
+  position: relative;
+  flex: 1;
+  min-height: 480px;
+  overflow: hidden;
+  background: #fafafa;
+}
+.iframe-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  cursor: default;
+}
+.star-browser-content iframe {
+  width: 142.86%;
+  height: 142.86%;
+  border: none;
+  transform: scale(0.7);
+  transform-origin: top left;
+  pointer-events: none;
+}
+
+/* CTA flotante */
+.star-float-cta {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--ink);
+  color: #fff;
+  padding: 14px 20px;
+  border-radius: 0;
+  border-top: 1px solid #111111;
+  text-decoration: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  box-shadow: none;
+  transition: background .25s var(--ease);
+  z-index: 5;
+}
+.star-float-cta .sfc-arrow {
+  display: inline-block;
+  font-size: 14px;
+  transition: transform .25s var(--ease);
+}
+.star-float-cta:hover {
+  background: #c6ff00;
+  color: #111111;
+  transform: none;
+  box-shadow: none;
+}
+.star-float-cta:hover .sfc-arrow { transform: translateX(4px); }
+
+/* RESPONSIVE */
+@media (max-width: 1100px) {
+  .star-wrap { padding: 0 clamp(1.5rem, 5vw, 4rem); }
+  .star-inner { grid-template-columns: 1fr; gap: 48px; max-width: 1200px; margin: 0 auto; }
+  .star-browser {
+    position: static;
+    max-height: none;
+    border-right: .5px solid #e0e0e8;
+    border-radius: 16px;
+    -webkit-mask-image: none;
+            mask-image: none;
+  }
+  .star-browser-content { min-height: 0; height: 520px; }
+}
+@media (max-width: 720px) {
+  .star-browser-content { height: 420px; }
+  .star-browser-url { min-width: 0; font-size: 10px; padding: 4px 10px; }
+  .star-float-cta { padding: 12px 18px; font-size: 13px; }
+}
+
+/* ─── PROYECTO ESTRELLA ─── */
+.quote-section { background: var(--white); }
+.qs-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.big-quote {
+  font-size: clamp(28px, 3.4vw, 46px);
+  font-weight: 700; color: var(--ink);
+  line-height: 1.18; letter-spacing: -1.2px;
+  margin-bottom: 32px;
+  position: relative;
+  text-wrap: balance;
+}
+.big-quote::before {
+  content: '«';
+  position: absolute;
+  left: -.55em;
+  top: -.15em;
+  font-size: 1.6em;
+  color: var(--purple);
+  font-weight: 400;
+  line-height: 1;
+  opacity: .85;
+}
+.big-quote::after {
+  content: ' »';
+  color: var(--purple);
+  font-weight: 400;
+  opacity: .85;
+}
+.big-quote em { font-style: normal; color: var(--purple); }
+.qs-right { display: flex; flex-direction: column; gap: 18px; }
+.qs-text { font-size: 15px; color: var(--muted); line-height: 1.8; }
+.qs-callout { background: var(--purple-light); border-radius: 10px; padding: 18px 20px; }
+.qs-callout p { font-size: 14px; color: var(--purple2); line-height: 1.65; font-weight: 500; }
+
+/* ─── COMMUNITY ─── */
+.com-section {
+  background: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+.com-section .c { position: relative; z-index: 2; }
+
+/*
+  Grid de 3 columnas, 3 filas — replica fiel de la imagen:
+  Col1 Row1      : copy (eyebrow + título + desc + cta)
+  Col1 Row2+Row3 : vacío / espacio natural del copy
+  Col1 Row3      : tarjeta gris pequeña (Seguidores) — abajo izquierda
+  Col2 Row2+Row3 : tarjeta gris mediana (Post más visto) — centro, empieza a media altura
+  Col3 Row1→Row3 : tarjeta morada alta (Impresiones) — derecha, ocupa todo
+*/
+.com-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto auto auto;
+  column-gap: 48px;
+  row-gap: 14px;
+  align-items: stretch;
+}
+
+/* Copy: col 1+2, fila 1 — se expande hasta antes de la tarjeta morada */
+.com-left {
+  grid-column: 1 / span 2;
+  grid-row: 1;
+  padding-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.com-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.4px;
+  text-transform: uppercase; color: var(--purple);
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 20px;
+}
+.com-eyebrow::before {
+  content: ''; width: 18px; height: 2px;
+  background: var(--purple); border-radius: 2px;
+}
+.com-title {
+  font-size: clamp(26px, 2.6vw, 38px);
+  font-weight: 700; color: var(--ink);
+  letter-spacing: -.6px; line-height: 1.15;
+  margin-bottom: 18px;
+}
+.com-title em { color: var(--purple); font-style: normal; }
+.com-desc {
+  font-size: 14px; color: var(--muted);
+  line-height: 1.75; margin-bottom: 14px;
+}
+.com-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--ink); color: #fff;
+  font-size: 13px; font-weight: 700;
+  padding: 12px 22px; border-radius: 10px;
+  text-decoration: none; align-self: flex-start;
+  transition: all .2s var(--ease);
+}
+.com-cta:hover {
+  background: #333;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0,0,0,.2);
+}
+.com-cta svg { width: 16px; height: 16px; fill: #fff; }
+
+/* Tarjetas base */
+.com-card {
+  background: #e5e5e5;
+  border-radius: 0;
+  border: 1px solid #111111;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path .9s cubic-bezier(0.22, 1, 0.36, 1), background .18s;
+}
+.com-card.com-visible {
+  clip-path: inset(0% 0 0 0);
+}
+.com-card.com-visible:hover { transform: none; background: #d8d8d8; }
+
+/* Tarjeta pequeña: col 1, fila 2+3 — pegada abajo bajo el copy */
+.com-card--1 {
+  grid-column: 1;
+  grid-row: 2 / span 2;
+  align-self: end;
+}
+
+/* Tarjeta mediana: col 2 — más alta, escalonada respecto a col 1 */
+.com-card--2 {
+  grid-column: 2;
+  grid-row: 2 / span 2;
+  align-self: start;
+  min-height: 320px;
+}
+
+/* Tarjeta morada: col 3, todas las filas — ocupa toda la altura */
+.com-card--3 {
+  grid-column: 3;
+  grid-row: 1 / span 3;
+  background: #111111;
+  border-color: #111111;
+  position: relative;
+  overflow: hidden;
+  min-height: 420px;
+}
+
+.com-card-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(40px, 4vw, 54px); font-weight: 700;
+  color: var(--ink); letter-spacing: -0.04em;
+  line-height: 1; margin-bottom: 12px;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+.com-card--3 .com-card-num { color: #fff; }
+
+.com-card-label {
+  font-size: 13px; font-weight: 700;
+  color: #333; margin-bottom: 6px;
+}
+.com-card--3 .com-card-label { color: rgba(255,255,255,.9); }
+
+.com-card-desc {
+  font-size: 12.5px; color: #777;
+  line-height: 1.6;
+}
+.com-card--3 .com-card-desc { color: rgba(255,255,255,.58); }
+
+/* Gráfico de barras — tarjeta morada */
+.com-card-bars {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 110px;
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  padding: 0 24px;
+}
+.com-card-bar {
+  flex: 1;
+  background: rgba(255,255,255,.35);
+  border-radius: 0;
+}
+
+@media (max-width: 860px) {
+  .com-inner {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+  }
+  .com-left   { grid-column: 1 / span 2; grid-row: 1; }
+  .com-card--1 { grid-column: 1; grid-row: 2; align-self: auto; }
+  .com-card--2 { grid-column: 2; grid-row: 2; margin-top: 0; align-self: auto; }
+  .com-card--3 { grid-column: 1 / span 2; grid-row: 3; min-height: 260px; }
+}
+@media (max-width: 540px) {
+  .com-inner { grid-template-columns: 1fr; }
+  .com-left   { grid-column: 1; grid-row: 1; }
+  .com-card--1 { grid-column: 1; grid-row: 2; }
+  .com-card--2 { grid-column: 1; grid-row: 3; margin-top: 0; }
+  .com-card--3 { grid-column: 1; grid-row: 4; min-height: 240px; }
+}
+
+/* ─── STACK SKILLS ─── */
+.stack-section { background: var(--white); border-top: none; }
+.stack-section > .c { max-width: 100%; padding: 0 clamp(1.5rem,5vw,4rem); }
+.stack-wrap {
+  position: relative;
+  height: 580px;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+.stack-overlay {
+  position: absolute;
+  top: 0; left: 0;
+  z-index: 10;
+  pointer-events: none;
+  width: 62%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-top: 0;
+}
+.stack-overlay a { pointer-events: all; }
+.stack-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.4px;
+  text-transform: uppercase; color: var(--purple);
+  display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
+}
+.stack-eyebrow::before { content:''; width:18px; height:2px; background:var(--purple); border-radius:2px; }
+.stack-title {
+  font-size: clamp(36px,4.5vw,60px); font-weight: 700; color: var(--ink);
+  letter-spacing: -2px; line-height: 1.02; margin-bottom: 16px;
+  white-space: nowrap;
+}
+.stack-title em { font-style: normal; color: var(--purple); }
+.stack-desc {
+  font-size: 14px; color: var(--muted); line-height: 1.7;
+  margin-bottom: 20px; max-width: 100%;
+}
+.stack-cert {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--purple-light); border: .5px solid rgba(122,123,255,.25);
+  border-radius: 8px; padding: 8px 13px;
+  font-size: 11px; font-weight: 700; color: var(--purple2);
+  width: fit-content; text-decoration: none; transition: background .2s;
+}
+.stack-cert:hover { background: #dddeff; }
+.stack-cert svg { width: 12px; height: 12px; fill: var(--purple); flex-shrink: 0; }
+.stack-cols {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 100%;
+  width: 100%;
+}
+.sk-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  clip-path: inset(100% 0 0 0 round 14px);
+  transition: clip-path .85s cubic-bezier(0.22,1,0.36,1), transform .2s var(--ease);
+}
+.sk-col.sk-visible { clip-path: inset(0% 0 0 0); }
+.sk-col.sk-visible:hover { transform: translateY(-4px); }
+.sk-col.sk-visible:hover .sk-card {
+  background: #111111;
+  border-color: #111111;
+}
+.sk-col.sk-visible:hover .sk-name {
+  color: #c6ff00;
+}
+.sk-col.sk-visible:hover .sk-desc {
+  color: rgba(255,255,255,.7);
+}
+.sk-col.sk-visible:hover .sk-pill {
+  background: #ffffff;
+  color: #1a1a1a;
+  border-color: #111111;
+  box-shadow: 0 2px 0 #111111;
+}
+.sk-col.sk-visible:hover .sk-pill::before {
+  background: #c6ff00;
+}
+.sk-card {
+  background: #f0f0f0; border-radius: 0;
+  border: 1px solid #111111;
+  padding: 20px 16px 16px;
+  display: flex; flex-direction: column;
+  height: 100%;
+}
+.sk-card.hl { background: #7a7bff; border-color: #7a7bff; }
+.sk-name {
+  font-size: 11px; font-weight: 700; color: var(--ink);
+  letter-spacing: .8px; line-height: 1.2; margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.sk-card.hl .sk-name { color: rgba(255,255,255,.95); }
+.sk-desc {
+  font-size: 10px; color: #666; line-height: 1.55; flex: 1;
+  overflow: hidden; display: -webkit-box;
+  -webkit-box-orient: vertical; -webkit-line-clamp: 8;
+  margin-bottom: 12px;
+}
+.sk-card.hl .sk-desc { color: rgba(255,255,255,.68); }
+.sk-pills {
+  display: flex; flex-direction: column; gap: 5px;
+  align-items: stretch; flex-wrap: nowrap; margin-top: auto;
+}
+.sk-bottom .sk-pills { margin-top: auto; }
+.sk-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  font-weight: 600;
+  background: #ffffff;
+  color: #1a1a1a;
+  padding: 6px 9px 5px;
+  border-radius: 3px;
+  border: 1px solid #111111;
+  box-shadow: 0 2px 0 #111111;
+  white-space: nowrap;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  display: flex; align-items: center; gap: 7px;
+  transition: transform .12s, box-shadow .12s;
+}
+.sk-pill::before {
+  content: ''; width: 4px; height: 4px;
+  background: #7a7bff; flex-shrink: 0;
+}
+.sk-card.hl .sk-pill { background: #ffffff; color: #1a1a1a; border-color: #111111; box-shadow: 0 2px 0 rgba(0,0,0,.55); }
+.sk-card.hl .sk-pill::before { background: #c6ff00; }
+
+/* ── Barras cortas: descripción flotante encima ── */
+.sk-col.top-align {
+  overflow: visible;
+  position: relative;
+  clip-path: none !important;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .7s cubic-bezier(0.22,1,0.36,1), transform .7s cubic-bezier(0.22,1,0.36,1);
+}
+.sk-col.top-align.sk-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.sk-col.top-align.sk-visible:hover { transform: translateY(-4px); }
+.sk-col.top-align .sk-card {
+  position: relative;
+  overflow: visible;
+  height: 100%;
+}
+.sk-desc-above {
+  position: absolute;
+  bottom: 100%;
+  left: 0; right: 0;
+  padding-bottom: 80px;
+}
+.sk-desc-above p {
+  font-size: 9.5px; color: #555; line-height: 1.55;
+  overflow: hidden; display: -webkit-box;
+  -webkit-box-orient: vertical; -webkit-line-clamp: 5;
+}
+.sk-desc-above::after {
+  content: '';
+  position: absolute;
+  left: 50%; transform: translateX(-50%);
+  bottom: 8px; width: 1px; height: 74px;
+  background: rgba(0,0,0,.12);
+}
+.sk-desc-above::before {
+  content: '';
+  position: absolute;
+  left: 50%; transform: translateX(-50%);
+  bottom: 82px; width: 5px; height: 5px;
+  border-radius: 50%; background: rgba(0,0,0,.2);
+}
+
+.sk-bottom { display: flex; flex-direction: column; gap: 0; flex: 1; }
+.sk-col:nth-child(1){transition-delay:.05s} .sk-col:nth-child(2){transition-delay:.12s}
+.sk-col:nth-child(3){transition-delay:.19s} .sk-col:nth-child(4){transition-delay:.26s}
+.sk-col:nth-child(5){transition-delay:.33s} .sk-col:nth-child(6){transition-delay:.40s}
+.sk-col:nth-child(7){transition-delay:.47s}
+@media(max-width:860px){
+  .stack-wrap{height:auto; flex-direction:column; align-items:stretch; gap:32px}
+  .stack-overlay{position:static; width:100%; pointer-events:all}
+  .stack-cols{height:380px}
+}
+@media(max-width:640px){
+  /* En móvil las barras horizontales no caben legibles: se convierten en
+     una lista vertical a ancho completo donde se ven TODAS las skills,
+     reordenadas por importancia (Power BI primero). */
+  .stack-cols{
+    flex-direction: column;
+    align-items: stretch;
+    height: auto;
+    gap: 10px;
+  }
+  .sk-col,
+  .sk-col.top-align{
+    height: auto !important;
+    flex: none;
+    width: 100%;
+    clip-path: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  /* Descripción flotante de las barras cortas → flujo normal */
+  .sk-col.top-align .sk-desc-above{
+    position: static;
+    padding-bottom: 0;
+    margin-bottom: 12px;
+  }
+  .sk-col.top-align .sk-desc-above::before,
+  .sk-col.top-align .sk-desc-above::after{ display: none; }
+  .sk-desc-above p{ height: auto !important; -webkit-line-clamp: unset; }
+  .sk-desc{ -webkit-line-clamp: unset; }
+  /* Orden por prioridad: lo estrella primero */
+  .sk-col:nth-child(7){ order: 1; } /* Power BI */
+  .sk-col:nth-child(6){ order: 2; } /* Data Storytelling */
+  .sk-col:nth-child(5){ order: 3; } /* Modelado de datos */
+  .sk-col:nth-child(3){ order: 4; } /* DAX */
+  .sk-col:nth-child(4){ order: 5; } /* Power Query */
+  .sk-col:nth-child(2){ order: 6; } /* Análisis de datos */
+  .sk-col:nth-child(1){ order: 7; } /* IA aplicada */
+}
+
+/* ─── STATS ─── */
+.stats-section { background: var(--white); border-top: 1px solid #111111; border-bottom: 1px solid #111111; }
+.stats-grid { display: grid; grid-template-columns: repeat(3,1fr); }
+.stat-card { padding: 56px 48px; border-right: 1px solid #111111; }
+.stat-card:last-child { border-right: none; }
+.stat-line { display: none; }
+.stat-num { font-family: 'JetBrains Mono', monospace; font-size: clamp(48px, 5vw, 64px); font-weight: 700; color: var(--ink); line-height: 1; margin-bottom: 12px; letter-spacing: -0.04em; }
+.stat-title { font-size: 11px; font-weight: 700; color: var(--ink); margin-bottom: 9px; text-transform: uppercase; letter-spacing: 1.2px; }
+.stat-text { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+
+/* ─── CTA FINAL ─── */
+.cta-final {
+  background: var(--white);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: 0 0 clamp(96px, 10vw, 120px);
+}
+.cta-final::before {
+  display: none;
+}
+.cta-final-inner {
+  position: relative; z-index: 1;
+  max-width: 600px; margin: 0 auto; padding: 0 24px;
+}
+.cta-final-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 10px; font-weight: 700; letter-spacing: 1.8px;
+  text-transform: uppercase; color: var(--ink);
+  margin-bottom: 24px;
+}
+.cta-final-eyebrow::before, .cta-final-eyebrow::after {
+  display: none;
+}
+.cta-final-h {
+  font-size: clamp(32px, 4.5vw, 56px);
+  font-weight: 700; color: var(--ink);
+  letter-spacing: -1.5px; line-height: 1.12;
+  margin-bottom: 20px;
+}
+.cta-final-h em { color: var(--purple); font-style: normal; }
+.cta-final-sub {
+  font-size: 15.5px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 8px 0;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.cta-final-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 28px;   
+  margin-bottom: 40px;
+}
+.cta-final-btn-primary {
+  display: inline-flex; align-items: center; gap: 9px;
+  background: #111111; color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 500;
+  padding: 16px 32px; border-radius: 0;
+  text-decoration: none; letter-spacing: .1em; text-transform: uppercase;
+  transition: background .18s cubic-bezier(.4,0,.2,1), color .18s;
+}
+.cta-final-sub.highlight {
+  background: #c6ff00;
+  padding: 4px 0;
+  display: inline-block;
+}
+.cta-final-btn-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent;
+  border: 1px solid #111111;
+  color: var(--ink);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 500;
+  padding: 16px 32px; border-radius: 0;
+  text-decoration: none; letter-spacing: .1em; text-transform: uppercase;
+  transition: background .18s cubic-bezier(.4,0,.2,1), color .18s;
+}
+.cta-final-btn-secondary:hover {
+  background: #111111; color: #fff;
+  border-color: #111111; transform: none;
+}
+.cta-final-pills {
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; flex-wrap: wrap;
+}
+.cta-pill-item {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; font-weight: 500; color: var(--muted);
+  background: transparent; border: 0.5px solid #cccccc;
+  padding: 8px 16px; border-radius: 20px;
+  transition: border-color .18s, color .18s;
+  cursor: default;
+  letter-spacing: .4px;
+}
+.cta-pill-item:hover {
+  background: transparent;
+  border-color: #111111;
+  color: var(--ink);
+}
+.cta-pill-item:hover svg { opacity: 1; }
+.cta-pill-item svg { opacity: .6; transition: opacity .2s; }
+
+/* ─── DOT NAV ─── */
+.dot-nav {
+  position: fixed;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 50;
+  opacity: 0;
+  transition: opacity .4s ease;
+}
+.dot-nav.visible { opacity: 1; }
+.dot-nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  justify-content: center;
+}
+.dot-nav-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(0,0,0,.2);
+  transition: all .25s ease;
+  flex-shrink: 0;
+}
+.dot-nav-item.active .dot-nav-dot {
+  background: #7a7bff;
+  box-shadow: 0 0 0 3px rgba(122,123,255,.2);
+  transform: scale(1.3);
+}
+.dot-nav-item:hover .dot-nav-dot {
+  background: #7a7bff;
+  opacity: .7;
+}
+.dot-nav-label {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px;
+  font-weight: 600;
+  color: #111;
+  white-space: nowrap;
+  background: #fff;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: .5px solid #e0e0ec;
+  box-shadow: 0 2px 10px rgba(0,0,0,.1);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .15s ease;
+}
+.dot-nav-item:hover .dot-nav-label { opacity: 1; }
+.dot-nav.dark-mode .dot-nav-dot { background: rgba(255,255,255,.3); }
+.dot-nav.dark-mode .dot-nav-item.active .dot-nav-dot {
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(255,255,255,.15);
+}
+@media (max-width: 1100px) { .dot-nav { display: none; } }
+
+
+
+
+/* ─── SEPARADORES DE SECCIÓN ─── */
+.section-divider {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: clamp(22px, 3vw, 38px);
+  position: relative;
+  /* Misma rejilla que .c en todas las secciones: ancho máx 1100px centrado. */
+  width: 100%;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0;
+  margin-bottom: clamp(72px, 7vw, 92px);
+  padding-top: 30px;
+}
+/* La star-section no tiene padding horizontal en la sección (el mockup del navegador
+   sale al borde derecho), así que el divider necesita su propio margen lateral
+   mínimo para no pegarse a los bordes en viewports estrechos. */
+.star-section > .section-divider {
+  width: calc(100% - 2 * clamp(1.5rem, 5vw, 4rem));
+}
+.section-divider::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  max-width: 100vw;
+  height: 1px;
+  background: #111111;
+  pointer-events: none;
+}
+.section-divider-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #111111;
+  flex-shrink: 0;
+}
+/* Compat: oculta cualquier numeración heredada */
+.section-divider-num {
+  display: none;
+}
+.section-divider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: #111111;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* ─── SCROLL REVEAL ─── */
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+.sr { opacity:0; transform:translateY(20px); transition:opacity .65s var(--ease), transform .65s var(--ease); }
+.sr.visible { opacity:1; transform:translateY(0); }
+.sr-d1 { transition-delay:.08s; }
+.sr-d2 { transition-delay:.16s; }
+.sr-d3 { transition-delay:.24s; }
+
+/* ── COM CARD HOVER — solo cuando ya es visible ── */
+
+/* ─── RESPONSIVE ─── */
+@media (max-width:1050px) {
+  .hero-inner { grid-template-columns:1fr; gap: 32px; }
+  .hero-right {
+    margin-right: 0;
+    margin-left: clamp(-32px, -3vw, -16px);
+    margin-top: 8px;
+    transform: scale(.92);
+    transform-origin: top left;
+    width: calc(100% + 32px);
+  }
+  .hero-right .dashboard-frame { width: 100%; }
+}
+@media (max-width:900px) {
+  .qs-inner,.com-grid { grid-template-columns:1fr 1.15fr; }
+  .wib-grid,.proj-grid,.prob-grid,.stats-grid { grid-template-columns:1fr; }
+  .proj-featured { grid-row:auto; }
+  .stat-card { border-right:none; border-bottom:1px solid #111111; }
+  footer { flex-direction:column; text-align:center; }
+}
+
+/* ─── HERO — pantallas muy pequeñas (iPhone SE, etc.) ─── */
+@media (max-width: 480px) {
+  .hero-inner { grid-template-columns: 1fr; }
+  .hero-right  { display: none; }
+}
+
+/* ─── CÓMO TRABAJO · ÍNDICE XXL ─── */
+.dph-section {
+  background: var(--white);
+  padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px);
+}
+
+.dph-header {
+  max-width: 760px;
+  margin: 0 0 48px;
+}
+.dph-header .s-h { line-height: 1.05; }
+.dph-header .s-sub { margin-top: 16px; font-size: 14px; }
+.dph-header .dph-hint {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: #aaa;
+  display: block;
+  margin-top: 10px;
+}
+
+/* ── ÍNDICE ── */
+.idx { border-bottom: 1px solid var(--ink); }
+.idx-row { border-top: 1px solid var(--ink); position: relative; }
+.idx-row::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 0;
+  background: #c6ff00; transition: width .45s cubic-bezier(.2,.8,.2,1);
+}
+.idx-row.open::before { width: 6px; }
+
+.idx-head {
+  display: flex; align-items: center; gap: clamp(16px,3vw,40px);
+  padding: clamp(16px,2.4vw,30px) 4px clamp(16px,2.4vw,30px) clamp(14px,2vw,28px);
+  cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
+}
+.idx-num {
+  font-family: var(--mono); font-size: 13px; font-weight: 600;
+  color: #bbb; width: 38px; flex-shrink: 0;
+  transition: color .3s; letter-spacing: .02em;
+}
+.idx-row.open .idx-num { color: var(--purple); }
+.idx-name {
+  font-size: clamp(38px,6.6vw,82px); font-weight: 800; letter-spacing: -2.5px;
+  line-height: .92; color: #d4d4da; text-transform: uppercase;
+  transition: color .35s var(--ease), transform .45s cubic-bezier(.2,.8,.2,1);
+}
+.idx-head:hover .idx-name { color: #9a9aa3; }
+.idx-row.open .idx-name { color: var(--ink); transform: translateX(6px); }
+.idx-meta {
+  margin-left: auto; display: flex; align-items: center; gap: 18px; flex-shrink: 0;
+}
+.idx-tag {
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  letter-spacing: .1em; text-transform: uppercase; color: #aaa;
+  display: none;
+}
+@media(min-width:760px){ .idx-tag { display: inline; } }
+.idx-toggle {
+  width: 30px; height: 30px; border: 1px solid var(--ink); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 15px; flex-shrink: 0;
+  transition: background .25s, color .25s, transform .35s;
+}
+.idx-row.open .idx-toggle { background: var(--ink); color: #c6ff00; transform: rotate(45deg); }
+
+/* Panel expandible (técnica grid-template-rows) */
+.idx-panel {
+  display: grid; grid-template-rows: 0fr; opacity: 0;
+  transition: grid-template-rows .55s cubic-bezier(.2,.8,.2,1), opacity .4s ease;
+}
+.idx-row.open .idx-panel { grid-template-rows: 1fr; opacity: 1; }
+.idx-panel-inner { overflow: hidden; }
+.idx-detail {
+  display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px,4vw,64px);
+  padding: 0 4px clamp(28px,3vw,42px) clamp(52px,5vw,66px);
+  align-items: start;
+}
+.idx-d-title {
+  font-size: clamp(20px,2vw,26px); font-weight: 700;
+  letter-spacing: -.5px; line-height: 1.15;
+  color: var(--ink); margin: 0 0 14px;
+}
+.idx-d-title em { font-style: normal; color: var(--purple); }
+.idx-d-body { font-size: 14px; color: var(--muted); line-height: 1.7; margin: 0; max-width: 460px; }
+.idx-d-side { display: flex; flex-direction: column; gap: 14px; }
+.idx-d-tagrow { display: flex; flex-wrap: wrap; gap: 6px; }
+.idx-chip {
+  font-family: var(--mono); font-size: 10px; font-weight: 600;
+  letter-spacing: .4px; text-transform: uppercase; color: #1a1a1a;
+  background: #fff; border: 1px solid var(--ink); box-shadow: 0 2px 0 var(--ink);
+  padding: 6px 10px 5px; border-radius: 3px;
+  display: inline-flex; align-items: center; gap: 7px;
+}
+.idx-chip::before { content: ''; width: 4px; height: 4px; background: var(--purple); flex-shrink: 0; }
+.idx-d-note {
+  font-family: var(--mono); font-size: 10px; color: #999;
+  letter-spacing: .06em; padding-top: 14px; border-top: 1px solid #ececec;
+}
+@media(max-width:680px){ .idx-detail { grid-template-columns: 1fr; gap: 20px; } }
+@media (max-width: 640px) {
+  .dph-section { padding: 0 0 64px; }
+  .dph-header { margin-bottom: 40px; }
+  .idx-name { letter-spacing: -1.5px; }
+}
+
+/* ══════════════════════════════
+   1. PROGRESS BAR — visible & smooth
+══════════════════════════════ */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--purple), #a78bff);
+  z-index: 2000;
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform .08s linear;
+  box-shadow: 0 0 8px rgba(122,123,255,.6);
+}
+
+/* ══════════════════════════════
+   2. GRAIN TEXTURE — hero only
+══════════════════════════════ */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: .028;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  mix-blend-mode: overlay;
+}
+.hero-inner { position: relative; z-index: 1; }
+
+/* ══════════════════════════════
+   3. PROJECT CARDS — image hover zoom + border glow
+══════════════════════════════ */
+.proj-card:hover {
+  background: var(--white);
+  transform: none;
+  box-shadow: none;
+}
+.proj-card:hover .pc-body {
+  background: #111111;
+  color: var(--white);
+}
+.proj-card:hover .pc-body .pc-cat,
+.proj-card:hover .pc-body .pc-name,
+.proj-card:hover .pc-body .pc-desc {
+  color: var(--white);
+}
+.proj-card:hover .pc-body .pc-cat {
+  color: #c6ff00;
+}
+.proj-card:hover .pc-link {
+  color: var(--white);
+}
+.proj-card:hover .pc-link:hover {
+  color: #c6ff00;
+}
+.proj-card:hover .pc-pill {
+  color: var(--white);
+  border-color: var(--white);
+}
+.proj-card:hover .pc-foot {
+  border-top-color: rgba(255,255,255,.2);
+}
+.pc-visual {
+  overflow: hidden;
+  border-radius: 0;
+}
+.pc-visual svg,
+.pc-visual img,
+.pc-visual canvas {
+  transition: none;
+  display: block;
+}
+.proj-card:hover .pc-visual svg,
+.proj-card:hover .pc-visual img,
+.proj-card:hover .pc-visual canvas {
+  transform: none;
+}
+
+/* ══════════════════════════════
+   4. SECTION NUMBERS — count-up target
+══════════════════════════════ */
+.dph-step-num,
+.dax-card-num {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+  transition: color .3s;
+}
+
+/* ══════════════════════════════
+   5. BUTTONS — directional sweep (era MAGNETIC)
+══════════════════════════════ */
+/* Las transiciones principales viven en .btn. El sweep se hace v\u00eda ::before. */
+.btn-primary:hover { box-shadow: none; }
+
+
+/* ══════════════════════════════
+   NAV LINKS — purple underline on hover
+══════════════════════════════ */
+.nav-links a:not(.nav-cta) {
+  position: relative;
+  padding-bottom: 7px;
+}
+.nav-links a:not(.nav-cta)::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 50%;
+  width: 0; height: 2px;
+  background: #111111;
+  border-radius: 2px;
+  transform: translateX(-50%);
+  transition: width .22s cubic-bezier(.16,1,.3,1);
+}
+.nav-links a:not(.nav-cta):hover::after,
+.nav-links a:not(.nav-cta).active::after {
+  width: calc(100% - 28px);
+}
+/* ensure nav links visible on desktop */
+@media(min-width:700px) {
+  .nav-links a:not(.nav-cta) { display: inline-flex !important; }
+}
+
+
+/* ── LIVE DOT PULSE ── */
+@keyframes pulse-dot {
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:.5; transform:scale(1.4); }
+}
+
+
+/* ── FOOTER — redesign profesional ── */
+footer {
+  background: #111111;
+  padding: 0;
+  border-top: .5px solid rgba(255,255,255,.1);
+}
+.foot-inner {
+  max-width: 1180px; margin: 0 auto;
+  padding: 64px clamp(1.5rem,5vw,4rem) 32px;
+}
+
+/* CTA row */
+.foot-cta-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 32px;
+  padding-bottom: 48px;
+  margin-bottom: 48px;
+  border-bottom: .5px solid rgba(255,255,255,.1);
+}
+.foot-availability {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 500;
+  color: rgba(255,255,255,.6);
+  margin-bottom: 14px;
+  letter-spacing: .2px;
+}
+.foot-pulse {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 3px rgba(60,138,55,.18);
+  animation: pulse-gr 2s infinite;
+}
+.foot-cta-title {
+  font-size: clamp(28px, 3.4vw, 44px);
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -1.2px;
+  line-height: 1.1;
+  margin: 0;
+}
+.foot-cta-actions {
+  display: flex; flex-direction: column; align-items: flex-end;
+  gap: 10px;
+}
+.foot-cta-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 22px;
+  border-radius: 8px;
+  font-size: 14px; font-weight: 600;
+  text-decoration: none;
+  letter-spacing: -.1px;
+  transition: transform .2s var(--ease), background .2s, color .2s, border-color .2s;
+  white-space: nowrap;
+}
+.foot-cta-btn--primary {
+  background: var(--ink);
+  color: #fff;
+}
+.foot-cta-btn--primary:hover {
+  background: var(--purple);
+  transform: translateY(-1px);
+}
+.foot-cta-btn--secondary {
+  background: transparent;
+  color: #ffffff;
+  border: .5px solid rgba(255,255,255,.2);
+}
+.foot-cta-btn--secondary:hover {
+  border-color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* Grid de columnas */
+.foot-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+.foot-col {
+  display: flex; flex-direction: column; gap: 10px;
+}
+.foot-col--brand { gap: 12px; }
+.foot-brand-name {
+  font-size: 14px; font-weight: 700;
+  color: #ffffff; letter-spacing: -.2px;
+  text-transform: none;
+  display: block;
+}
+.foot-brand-desc {
+  font-size: 14px;
+  color: rgba(255,255,255,.7);
+  line-height: 1.5;
+  margin: 0;
+  max-width: 280px;
+}
+.foot-brand-loc {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,.5);
+  opacity: 1;
+  margin: 0;
+  letter-spacing: .5px;
+}
+.foot-col-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(255,255,255,.4);
+  letter-spacing: .8px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.foot-col-title::before {
+  content: '—';
+  font-weight: 300;
+}
+.foot-col a {
+  font-size: 15px;
+  color: #ffffff;
+  text-decoration: none;
+  transition: color .2s;
+  letter-spacing: -.3px;
+  width: fit-content;
+  font-weight: 400;
+}
+.foot-col a:hover { 
+  color: var(--purple);
+  transition: color .15s;
+}
+
+/* Bottom bar */
+.foot-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 24px;
+  border-top: .5px solid rgba(255,255,255,.1);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.foot-copy {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: rgba(255,255,255,.5);
+  opacity: 1;
+  letter-spacing: .3px;
+}
+.foot-made {
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: rgba(255,255,255,.5);
+  opacity: 1;
+  letter-spacing: .3px;
+  flex-wrap: wrap;
+}
+.foot-tech {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  background: rgba(255,255,255,.08);
+  padding: 2px 7px;
+  border-radius: 4px;
+  color: #ffffff;
+  font-weight: 500;
+  border: .5px solid rgba(255,255,255,.12);
+}
+
+@media (max-width: 900px) {
+  .foot-cta-row {
+    grid-template-columns: 1fr;
+    align-items: flex-start;
+  }
+  .foot-cta-actions { align-items: flex-start; }
+  .foot-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  .foot-col--brand { grid-column: 1 / -1; margin-bottom: 8px; }
+  .foot-bottom { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 520px) {
+  .foot-cta-actions { width: 100%; }
+  .foot-cta-btn { width: 100%; justify-content: center; }
+  .foot-grid { grid-template-columns: 1fr; gap: 28px; }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .progress-bar, .grain, .hero::before { display: none !important; }
+}
+
+/* ── OVERLAYS PROYECTOS DESTACADOS ── */
+.pc-overlay{display:none;position:fixed;inset:0;z-index:2000;background:rgba(10,10,10,.78);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:16px}
+.pc-overlay.open{display:flex}
+.pc-overlay-inner{background:#ffffff;border:1px solid var(--ink);border-radius:0;width:min(1400px,95vw);height:min(760px,92vh);display:grid;grid-template-columns:1.05fr 1fr;gap:0;align-items:stretch;box-shadow:0 40px 100px rgba(0,0,0,.35);position:relative;overflow:hidden}
+.pc-overlay-imgs{position:relative;overflow:hidden;border-right:1px solid var(--ink);background:#ffffff;display:flex;flex-direction:column}
+.pcov-track{position:relative;flex:1;overflow:hidden;background:#ffffff}
+.pcov-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;opacity:0;transition:opacity .3s ease;padding:20px;background:#ffffff}
+.pcov-photo.pcov-active{opacity:1}
+.pcov-dots{display:flex;gap:6px;justify-content:center;padding:12px 0 16px;background:#ffffff;border-top:1px solid var(--rule);flex-shrink:0}
+.pcov-dot{width:8px;height:8px;background:var(--gray);border:0;padding:8px;cursor:pointer;border-radius:0;transition:background .25s,width .25s;background-clip:content-box;box-sizing:content-box}
+.pcov-dot.pcov-dot-active{background:var(--ink);width:24px;background-clip:content-box}
+.pc-overlay-imgs .pc-arrow{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;background:#ffffff;border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .18s,color .12s;z-index:2}
+.pc-overlay-imgs .pc-arrow:hover{background:var(--ink);color:#fff}
+.pc-overlay-imgs .pc-arrow svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:square}
+.pc-overlay-imgs .pc-arrow-prev{left:10px}
+.pc-overlay-imgs .pc-arrow-next{right:10px}
+.pc-overlay-copy{padding:28px 32px 24px;display:flex;flex-direction:column;overflow:hidden;background:#ffffff}
+.pc-overlay-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--mutedB);margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.pc-overlay-eyebrow::before{content:"";width:24px;height:1px;background:var(--ink)}
+.pc-overlay-title{font-size:22px;font-weight:700;letter-spacing:-.022em;line-height:1.2;color:var(--ink);margin-bottom:18px;flex-shrink:0}
+.pc-overlay-long{display:flex;flex-direction:column;gap:11px;margin-bottom:16px;overflow-y:auto;flex:1;padding-right:6px;scrollbar-width:thin;scrollbar-color:var(--rule) transparent}
+.pc-overlay-long::-webkit-scrollbar{width:4px}
+.pc-overlay-long::-webkit-scrollbar-thumb{background:var(--rule);border-radius:2px}
+.pc-overlay-long p{font-size:12.5px;color:var(--muted);line-height:1.68}
+.pc-overlay-long p strong{color:var(--ink);font-weight:600}
+.pc-overlay-long code{font-family:'JetBrains Mono',monospace;font-size:11px;background:#f4f4f8;padding:1px 5px;border-radius:3px;color:var(--ink)}
+.pc-overlay-pills{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:16px;flex-shrink:0}
+.pc-overlay-pill{font-family:'JetBrains Mono',monospace;background:transparent;color:var(--ink);padding:2px 8px;border:.8px solid var(--ink);border-radius:999px;font-size:9px;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+.pc-overlay-foot{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--rule);flex-shrink:0;gap:12px}
+.pc-overlay-close{position:absolute;top:14px;right:14px;width:32px;height:32px;background:#ffffff;border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;transition:background .18s,color .12s}
+.pc-overlay-close:hover{background:var(--ink);color:#fff}
+.pc-overlay-btn{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);text-decoration:none;border:1px solid var(--ink);padding:8px 14px;transition:background .18s,color .12s}
+.pc-overlay-btn:hover{background:var(--ink);color:#fff}
+.pc-overlay-tech{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.04em}
+@media(max-width:768px){.pc-overlay-inner{grid-template-columns:1fr;grid-template-rows:240px 1fr;height:92vh}.pc-overlay-imgs{border-right:0;border-bottom:1px solid var(--ink)}}
+
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- ─── NAV ─── -->
+<nav id="nav" aria-label="Navegación principal">
+  <a href="./index.html" class="logo" aria-label="Borja Mora — Inicio"><span id="logoText"></span><span class="logo-dot"></span></a>
+  <div class="nav-links">
+    <a href="./index.html" class="active" aria-current="page">Inicio</a>
+    <a href="./sobre-mi.html">Sobre mí</a>
+    <a href="./proyectos.html">Proyectos</a>
+    <a href="./descargas.html">Descargas</a>
+    <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event', 'clic_linkedin', { location: 'nav' });">LinkedIn</a>
+    <a id="navEmailBtn" href="#" target="_blank" rel="noopener noreferrer" class="nav-cta btn" onclick="gtag('event', 'clic_email', { location: 'nav' });" ><span class="cta-text-wrap"><span>Contacto</span><span>¿Hablamos?</span></span></a>
+  </div>
+  <!-- Hamburger — solo visible en móvil (shared.css) -->
+  <button class="nav-burger" id="navBurger" aria-label="Abrir menú" aria-expanded="false" aria-controls="navDrawer">
+    <span class="nav-burger-line"></span>
+    <span class="nav-burger-line"></span>
+    <span class="nav-burger-line"></span>
+  </button>
+</nav>
+
+<!-- ─── MOBILE DRAWER ─── -->
+<div class="nav-drawer" id="navDrawer" role="dialog" aria-modal="true" aria-label="Menú de navegación">
+  <div class="nav-drawer-backdrop" id="navBackdrop"></div>
+  <div class="nav-drawer-panel">
+    <div class="nav-drawer-head">
+      <span class="nav-drawer-brand">Borja Mora.</span>
+      <button class="nav-drawer-close" id="navDrawerClose" aria-label="Cerrar menú">Cerrar ×</button>
+    </div>
+    <nav class="nav-drawer-links" aria-label="Navegación móvil">
+      <a href="./index.html" class="active" aria-current="page">Inicio</a>
+      <a href="./sobre-mi.html">Sobre mí</a>
+      <a href="./proyectos.html">Proyectos</a>
+      <a href="./descargas.html">Descargas</a>
+    </nav>
+    <div class="nav-drawer-foot">
+      <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="nav-drawer-foot-item" onclick="gtag('event','clic_linkedin',{location:'drawer'});">LinkedIn</a>
+      <a id="drawerEmailBtn" href="#" target="_blank" rel="noopener noreferrer" class="nav-drawer-foot-item" onclick="gtag('event','clic_email',{location:'drawer'});">Contactar</a>
+    </div>
+  </div>
+</div>
+<script>
+/* ── NAV DRAWER ── */
+(function(){
+  var burger = document.getElementById('navBurger');
+  var drawer = document.getElementById('navDrawer');
+  var closeBtn = document.getElementById('navDrawerClose');
+  var backdrop = document.getElementById('navBackdrop');
+  if(!burger||!drawer) return;
+  function open(){
+    drawer.classList.add('open');
+    burger.setAttribute('aria-expanded','true');
+    burger.setAttribute('aria-label','Cerrar menú');
+    document.body.style.overflow='hidden'; document.body.style.position='fixed'; document.body.style.width='100%';
+  }
+  function close(){
+    drawer.classList.remove('open');
+    burger.setAttribute('aria-expanded','false');
+    burger.setAttribute('aria-label','Abrir menú');
+    document.body.style.overflow=''; document.body.style.position=''; document.body.style.width='';
+  }
+  burger.addEventListener('click', function(){ drawer.classList.contains('open') ? close() : open(); });
+  if(closeBtn) closeBtn.addEventListener('click', close);
+  if(backdrop) backdrop.addEventListener('click', close);
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') close(); });
+  /* Propagar email al drawer */
+  var navEmail = document.getElementById('navEmailBtn');
+  var drawerEmail = document.getElementById('drawerEmailBtn');
+  if(navEmail && drawerEmail){
+    var obs = new MutationObserver(function(){
+      drawerEmail.href = navEmail.href;
+    });
+    obs.observe(navEmail, {attributes:true, attributeFilter:['href']});
+    if(navEmail.href && navEmail.href !== '#') drawerEmail.href = navEmail.href;
+  }
+})();
+</script>
+
+<!-- ─── DOT NAV ─── -->
+<div class="dot-nav" id="dotNav">
+  <div class="dot-nav-item" data-section="hero"><div class="dot-nav-dot"></div><span class="dot-nav-label">Inicio</span></div>
+  <div class="dot-nav-item" data-section="approach"><div class="dot-nav-dot"></div><span class="dot-nav-label">Cómo trabajo</span></div>
+  <div class="dot-nav-item" data-section="projects"><div class="dot-nav-dot"></div><span class="dot-nav-label">Proyectos</span></div>
+  <div class="dot-nav-item" data-section="star"><div class="dot-nav-dot"></div><span class="dot-nav-label">Herramienta</span></div>
+  <div class="dot-nav-item" data-section="stack"><div class="dot-nav-dot"></div><span class="dot-nav-label">Skills</span></div>
+  <div class="dot-nav-item" data-section="community"><div class="dot-nav-dot"></div><span class="dot-nav-label">Comunidad</span></div>
+  <div class="dot-nav-item" data-section="about"><div class="dot-nav-dot"></div><span class="dot-nav-label">Sobre mí</span></div>
+  <div class="dot-nav-item" data-section="cta"><div class="dot-nav-dot"></div><span class="dot-nav-label">Contacto</span></div>
+</div>
+
+<!-- ─── HERO ─── -->
+<section class="hero" id="hero">
+  <div class="hero-inner">
+    <div class="hero-left">
+
+      <!-- CHANGE 1 & 3: New claim -->
+      <h1 class="hero-h1">
+        Construyo espacios<br>donde los datos calan.
+      </h1>
+      
+      <!-- Subtitle — voz coherente con el headline -->
+      <p class="hero-sub">
+        Antes de cualquier visualización, una pregunta: ¿qué hay que decidir?
+       Power BI, DAX y data storytelling como medios. El objetivo: que quien toma la decisión no tenga que interpretar nada.
+      </p>
+
+      <!-- Línea única de credenciales: disponibilidad · cert · ubicación -->
+      <div class="hero-meta" aria-label="Disponibilidad y credenciales">
+        <span class="hero-meta-pulse" aria-hidden="true"></span>
+        <span class="hero-meta-status">Abierto a proyectos</span>
+        <span class="hero-meta-sep" aria-hidden="true">·</span>
+        <span class="hero-meta-item">Microsoft PL-300</span>
+        <span class="hero-meta-sep" aria-hidden="true">·</span>
+        <span class="hero-meta-item">Data Analyst / Power BI Dev.</span>
+      </div> 
+
+      <div class="hero-actions">
+        <a href="#approach" class="btn btn-primary" data-arrow="down"><span>Ver cómo trabajo</span><span class="btn-arrow">↓</span></a>
+        <a href="#about" class="btn btn-outline" data-arrow="right"><span>Sobre mí</span><span class="btn-arrow">→</span></a>
+      </div>
+    </div>
+
+    <!-- ─── DASHBOARD WOW ─── -->
+    <div class="hero-right">
+      <div class="dashboard-frame">
+
+        <div class="df-titlebar">
+          <div class="df-dot" style="background:#ff5f57"></div>
+          <div class="df-dot" style="background:#febc2e"></div>
+          <div class="df-dot" style="background:#28c840"></div>
+          <div class="df-omnibox">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#9a9aae" stroke-width="2.4" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            <span class="df-omnibox-url"><span class="df-omnibox-scheme">https://</span><b>borjamora.es</b><span class="df-omnibox-path">/ventas-2025</span></span>
+            <svg class="df-omnibox-refresh" viewBox="0 0 24 24" fill="none" stroke="#bcbcca" stroke-width="2.4" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>
+          </div>
+          <span style="margin-left:8px;font-size:8.5px;color:#9a9aae;font-weight:700;letter-spacing:.4px;display:inline-flex;align-items:center;gap:5px;flex-shrink:0">
+            <span style="width:6px;height:6px;border-radius:50%;background:#28c840;flex-shrink:0;animation:pulse-dot 1.8s ease-in-out infinite"></span>EN VIVO
+          </span>
+        </div>
+
+        <div class="df-header" style="padding:11px 14px 7px">
+          <div>
+            <div class="df-title">Rendimiento de Ventas 2025</div>
+            <div style="font-size:8px;color:var(--muted);margin-top:1px">Ventas reales vs año anterior · Canal · Región</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:5px">
+            <span class="df-period">Ene–Dic 2025</span>
+            <span style="font-size:8px;font-weight:600;background:#e8f5e7;color:#3c8a37;padding:2px 7px;border-radius:4px">▲ +12,4%</span>
+          </div>
+        </div>
+
+        <div class="df-body" style="gap:7px">
+
+          <!-- KPIs -->
+          <div class="df-kpis" style="grid-template-columns:repeat(4,1fr)">
+            <div class="dk">
+              <div class="dk-label">Ventas acum.</div>
+              <div class="dk-main"><div class="dk-value" id="kv0" style="font-size:17px">—</div>
+                <svg width="36" height="16" viewBox="0 0 36 16" fill="none" style="flex-shrink:0;opacity:.9"><polyline points="0,13 5,10 9,12 13,7 17,9 21,4 26,6 30,2 36,0" stroke="#3c8a37" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
+              </div>
+              <span class="dk-pos" id="kg0">—</span><span class="dk-vs">vs año anterior</span>
+            </div>
+            <div class="dk">
+              <div class="dk-label">Unidades</div>
+              <div class="dk-main"><div class="dk-value" id="kv1" style="font-size:17px">—</div>
+                <svg width="36" height="16" viewBox="0 0 36 16" fill="none" style="flex-shrink:0;opacity:.7"><polyline points="0,14 5,11 9,13 13,8 17,11 21,5 26,8 30,3 36,1" stroke="#3c8a37" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
+              </div>
+              <span class="dk-pos" id="kg1">—</span><span class="dk-vs">vs año anterior</span>
+            </div>
+            <div class="dk">
+              <div class="dk-label">Ticket Medio</div>
+              <div class="dk-main"><div class="dk-value" id="kv2" style="font-size:17px">—</div>
+                <svg width="36" height="16" viewBox="0 0 36 16" fill="none" style="flex-shrink:0;opacity:.7"><polyline points="0,7 5,10 9,8 13,12 17,10 21,13 26,11 30,14 36,13" stroke="#a3223e" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
+              </div>
+              <span class="dk-neg" id="kg2">—</span><span class="dk-vs">vs año anterior</span>
+            </div>
+            <div class="dk">
+              <div class="dk-label">Margen Bruto</div>
+              <div class="dk-main"><div class="dk-value" id="kv3" style="font-size:17px">—</div>
+                <svg width="36" height="16" viewBox="0 0 36 16" fill="none" style="flex-shrink:0;opacity:.9"><polyline points="0,13 5,11 9,13 13,8 17,10 21,5 26,7 30,3 36,1" stroke="#3c8a37" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
+              </div>
+              <span class="dk-pos" id="kg3">—</span><span class="dk-vs">vs año anterior</span>
+            </div>
+          </div>
+
+          <!-- CHARTS -->
+          <div style="display:grid;grid-template-columns:1.55fr 1fr;gap:6px">
+
+            <!-- LOLLIPOP CY vs PY -->
+            <div class="df-card" style="padding:9px 11px 10px;display:flex;flex-direction:column">
+              <div class="dc-label">Ventas mensuales · Año actual vs anterior</div>
+              <div style="display:flex;align-items:center;gap:10px;margin:3px 0 6px">
+                <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#888"><span style="width:8px;height:8px;border-radius:50%;background:#7a7bff;display:inline-block"></span>Actual 2025</span>
+                <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#bbb"><span style="width:8px;height:8px;border-radius:50%;background:none;border:1.5px solid #c8c8d8;display:inline-block"></span>Anterior 2024</span>
+              </div>
+              <div style="position:relative;width:100%;flex:1;min-height:96px">
+                <canvas id="heroLollipop"></canvas>
+              </div>
+            </div>
+
+            <!-- DUMBBELL: evolución por región 2024→2025 -->
+            <div class="df-card" style="padding:9px 11px 10px;display:flex;flex-direction:column">
+              <div class="dc-label">Evolución por región · 2024 → 2025</div>
+              <div style="display:flex;align-items:center;gap:10px;margin:3px 0 6px">
+                <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#ccc"><span style="width:7px;height:7px;border-radius:50%;background:#ccc;display:inline-block"></span>2024</span>
+                <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#7a7bff"><span style="width:7px;height:7px;border-radius:50%;background:#7a7bff;display:inline-block"></span>2025</span>
+              </div>
+              <!-- SVG dumbbell — drawn directly, no canvas needed -->
+              <svg id="heroDumbbell" width="100%" viewBox="0 0 150 90" preserveAspectRatio="xMidYMid meet" style="display:block;overflow:visible;width:100%;flex:1;min-height:0">
+                <!-- Grid lines -->
+                <line x1="40" y1="5" x2="40" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
+                <line x1="66.25" y1="5" x2="66.25" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
+                <line x1="92.5" y1="5" x2="92.5" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
+                <line x1="118.75" y1="5" x2="118.75" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
+                <line x1="145" y1="5" x2="145" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
+                <!-- Axis labels -->
+                <text x="40" y="88" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="6" fill="#ccc">200K</text>
+                <text x="66.25" y="88" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="6" fill="#ccc">400K</text>
+                <text x="92.5" y="88" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="6" fill="#ccc">600K</text>
+                <text x="118.75" y="88" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="6" fill="#ccc">800K</text>
+                <text x="145" y="88" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="6" fill="#ccc">1,0M</text>
+
+                <!-- Row 1: Norte — 775K→925K (+19,4%) -->
+                <text x="0" y="16" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Norte</text>
+                <line class="db-line" x1="40" y1="16" x2="40" y2="16" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round" data-x1="115.5" data-x2="135.2"/>
+                <circle class="db-dot-a" cx="40" cy="16" r="0" fill="#c8c8d8" data-cx="115.5"/>
+                <circle class="db-dot-b" cx="40" cy="16" r="0" fill="#7a7bff" data-cx="135.2"/>
+                <text class="db-val" x="40" y="11" font-family="'Plus Jakarta Sans',sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="125.3">—</text>
+
+                <!-- Row 2: Centro — 642K→725K (+12,9%) -->
+                <text x="0" y="32" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Centro</text>
+                <line class="db-line" x1="40" y1="32" x2="40" y2="32" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round" data-x1="98" data-x2="108.9"/>
+                <circle class="db-dot-a" cx="40" cy="32" r="0" fill="#c8c8d8" data-cx="98"/>
+                <circle class="db-dot-b" cx="40" cy="32" r="0" fill="#7a7bff" data-cx="108.9"/>
+                <text class="db-val" x="40" y="27" font-family="'Plus Jakarta Sans',sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="103.5">—</text>
+
+                <!-- Row 3: Sur — 526K→515K (−2,1%, caída) -->
+                <text x="0" y="48" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Sur</text>
+                <line class="db-line" x1="40" y1="48" x2="40" y2="48" stroke="#a3223e" stroke-width="1.5" stroke-linecap="round" data-x1="82.8" data-x2="81.3"/>
+                <circle class="db-dot-a" cx="40" cy="48" r="0" fill="#c8c8d8" data-cx="82.8"/>
+                <circle class="db-dot-b" cx="40" cy="48" r="0" fill="#d04060" data-cx="81.3"/>
+                <text class="db-val" x="40" y="43" font-family="'Plus Jakarta Sans',sans-serif" font-size="6.5" fill="#a3223e" font-weight="700" text-anchor="middle" data-cx="82.1">—</text>
+
+                <!-- Row 4: Este — 343K→395K (+15,2%) -->
+                <text x="0" y="64" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Este</text>
+                <line class="db-line" x1="40" y1="64" x2="40" y2="64" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round" data-x1="58.8" data-x2="65.6"/>
+                <circle class="db-dot-a" cx="40" cy="64" r="0" fill="#c8c8d8" data-cx="58.8"/>
+                <circle class="db-dot-b" cx="40" cy="64" r="0" fill="#7a7bff" data-cx="65.6"/>
+                <text class="db-val" x="40" y="59" font-family="'Plus Jakarta Sans',sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="62.2">—</text>
+
+                <!-- Row 5: Oeste — 241K→280K (+16,2%) -->
+                <text x="0" y="80" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Oeste</text>
+                <line class="db-line" x1="40" y1="80" x2="40" y2="80" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round" data-x1="45.4" data-x2="50.5"/>
+                <circle class="db-dot-a" cx="40" cy="80" r="0" fill="#c8c8d8" data-cx="45.4"/>
+                <circle class="db-dot-b" cx="40" cy="80" r="0" fill="#7a7bff" data-cx="50.5"/>
+                <text class="db-val" x="40" y="75" font-family="'Plus Jakarta Sans',sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="48">—</text>
+              </svg>
+            </div>
+
+          </div>
+
+          <!-- BOTTOM: tabla de detalle por zona -->
+          <div class="df-ranking" style="padding:9px 12px 10px">
+            <div class="dr-head" style="margin-bottom:6px">
+              <span class="dc-label" style="margin:0">Ventas por zona · detalle</span>
+              <span style="font-size:8px;color:var(--purple);font-weight:700">Ver informe →</span>
+            </div>
+            <table class="dt">
+              <thead>
+                <tr><th>Zona</th><th>Ventas</th><th>% total</th><th>Var. AA</th><th>Objetivo</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="dt-zone"><span class="dt-rk">01</span>Norte</span></td>
+                  <td class="dt-sales"><span class="dt-bar prd-bar" data-w="100" style="width:0;transition:width 1s .9s ease"></span><span class="dt-v">€925K</span></td>
+                  <td>32,6%</td>
+                  <td><span class="dt-chip pos">▲ 19,4%</span></td>
+                  <td><span class="dt-obj ok">104%</span></td>
+                </tr>
+                <tr>
+                  <td><span class="dt-zone"><span class="dt-rk">02</span>Centro</span></td>
+                  <td class="dt-sales"><span class="dt-bar prd-bar" data-w="78" style="width:0;transition:width 1s 1s ease"></span><span class="dt-v">€725K</span></td>
+                  <td>25,5%</td>
+                  <td><span class="dt-chip pos">▲ 12,9%</span></td>
+                  <td><span class="dt-obj warn">99%</span></td>
+                </tr>
+                <tr>
+                  <td><span class="dt-zone"><span class="dt-rk">03</span>Sur</span></td>
+                  <td class="dt-sales"><span class="dt-bar prd-bar" data-w="56" style="width:0;background:rgba(163,34,62,.16);transition:width 1s 1.1s ease"></span><span class="dt-v">€515K</span></td>
+                  <td>18,1%</td>
+                  <td><span class="dt-chip neg">▼ 2,1%</span></td>
+                  <td><span class="dt-obj bad">91%</span></td>
+                </tr>
+                <tr>
+                  <td><span class="dt-zone"><span class="dt-rk">04</span>Este</span></td>
+                  <td class="dt-sales"><span class="dt-bar prd-bar" data-w="43" style="width:0;transition:width 1s 1.2s ease"></span><span class="dt-v">€395K</span></td>
+                  <td>13,9%</td>
+                  <td><span class="dt-chip pos">▲ 15,2%</span></td>
+                  <td><span class="dt-obj ok">103%</span></td>
+                </tr>
+                <tr>
+                  <td><span class="dt-zone"><span class="dt-rk">05</span>Oeste</span></td>
+                  <td class="dt-sales"><span class="dt-bar prd-bar" data-w="30" style="width:0;transition:width 1s 1.3s ease"></span><span class="dt-v">€280K</span></td>
+                  <td>9,9%</td>
+                  <td><span class="dt-chip pos">▲ 16,2%</span></td>
+                  <td><span class="dt-obj ok">108%</span></td>
+                </tr>
+                <tr class="dt-total">
+                  <td>Total</td>
+                  <td class="dt-sales"><span class="dt-v">€2,84M</span></td>
+                  <td>100%</td>
+                  <td><span class="dt-chip pos">▲ 12,4%</span></td>
+                  <td><span class="dt-obj ok">101%</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div><!-- /df-body -->
+      </div><!-- /dashboard-frame -->
+    </div><!-- /hero-right -->
+  </div><!-- /hero-inner -->
+</section>
+
+
+<!-- ─── CÓMO TRABAJO · ÍNDICE XXL ─── -->
+<section class="dph-section" id="approach">
+  <div class="c">
+    <div class="section-divider">
+      <span class="section-divider-dot" aria-hidden="true"></span>
+      <span class="section-divider-label">CÓMO TRABAJO</span>
+    </div>
+    <div class="dph-header sr">
+      <h2 class="s-h">Cuatro pasos para<br><em>decidir mejor.</em></h2>
+      <p class="s-sub">La mayoría de los dashboards empiezan por la herramienta.<br>El mío empieza por la pregunta.</p>
+      <span class="dph-hint">— abre cada fase</span>
+    </div>
+
+    <div class="idx" id="dph-idx"></div>
+  </div>
+
+  <script>
+  (function(){
+    const PHASES = [
+      {
+        num:'01', verb:'Investigar', tag:'NEGOCIO',
+        title:'El <em>plano</em> de decisión',
+        body:'Muchos proyectos empiezan demasiado pronto: abriendo Power BI antes de entender qué necesita decidir el negocio. Mi trabajo empieza antes — primero defino qué pregunta debe responder el dashboard, qué KPI realmente importa y qué contexto necesita quien va a usarlo. Porque cuando el objetivo es difuso, el análisis también lo será.',
+        chips:['Negocio','KPI','Contexto'],
+        note:'INPUT: pregunta → OUTPUT: brief'
+      },
+      {
+        num:'02', verb:'Estructurar', tag:'MODELADO',
+        title:'Los <em>cimientos.</em>',
+        body:'Los datos rara vez llegan preparados para analizar. En esta fase conecto fuentes, limpio inconsistencias y construyo una estructura escalable: un esquema en estrella con relaciones limpias. Es la parte menos visible del proyecto, pero también la más importante: cuando los cimientos fallan, todo lo que se construye encima pierde credibilidad.',
+        chips:['Power Query','Modelado','Esquema estrella'],
+        note:'INPUT: datos crudos → OUTPUT: modelo'
+      },
+      {
+        num:'03', verb:'Construir', tag:'DAX',
+        title:'La <em>estructura</em> lógica.',
+        body:'Aquí convierto necesidades de negocio en lógica analítica. Cada medida, cálculo y relación define cómo se interpreta la información dentro del dashboard. No se trata de mostrar datos, sino de construir una estructura coherente que responda con claridad a preguntas reales.',
+        chips:['DAX','Time Intelligence','Medidas'],
+        note:'INPUT: modelo → OUTPUT: métricas'
+      },
+      {
+        num:'04', verb:'Comunicar', tag:'STORYTELLING + UX',
+        title:'El <em>espacio</em> habitable.',
+        body:'Un dashboard útil no necesita explicación constante. Organizo la información con jerarquía visual, contexto y narrativa para que la mirada encuentre rápido lo importante. No llenar la pantalla de gráficos: construir un espacio claro donde las decisiones puedan tomarse con rapidez y confianza.',
+        chips:['Data Storytelling','UX/UI','Layout'],
+        note:'INPUT: métricas → OUTPUT: decisión'
+      }
+    ];
+
+    const container = document.getElementById('dph-idx');
+    if(!container) return;
+
+    container.innerHTML = PHASES.map((p,i) => `
+      <div class="idx-row${i===0?' open':''}" data-i="${i}">
+        <div class="idx-head" role="button" tabindex="0" aria-expanded="${i===0}">
+          <span class="idx-num">${p.num}</span>
+          <span class="idx-name">${p.verb}</span>
+          <span class="idx-meta">
+            <span class="idx-tag">${p.tag}</span>
+            <span class="idx-toggle">+</span>
+          </span>
+        </div>
+        <div class="idx-panel">
+          <div class="idx-panel-inner">
+            <div class="idx-detail">
+              <div>
+                <h3 class="idx-d-title">${p.title}</h3>
+                <p class="idx-d-body">${p.body}</p>
+              </div>
+              <div class="idx-d-side">
+                <div class="idx-d-tagrow">${p.chips.map(c=>`<span class="idx-chip">${c}</span>`).join('')}</div>
+                <div class="idx-d-note">${p.note}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    const rows = [...container.querySelectorAll('.idx-row')];
+    function toggle(row){
+      const isOpen = row.classList.contains('open');
+      rows.forEach(r => {
+        r.classList.remove('open');
+        r.querySelector('.idx-head').setAttribute('aria-expanded','false');
+      });
+      if(!isOpen){
+        row.classList.add('open');
+        row.querySelector('.idx-head').setAttribute('aria-expanded','true');
+      }
+    }
+    rows.forEach(row => {
+      const head = row.querySelector('.idx-head');
+      head.addEventListener('click', () => toggle(row));
+      head.addEventListener('keydown', e => {
+        if(e.key==='Enter' || e.key===' '){ e.preventDefault(); toggle(row); }
+      });
+    });
+  })();
+  </script>
+</section>
+
+
+<!-- ─── PROJECTS — gris ─── -->
+<section class="proj-section" id="projects">
+  <div class="c">
+    <div class="section-divider">
+      <span class="section-divider-dot" aria-hidden="true"></span>
+      <span class="section-divider-label">PROYECTOS DESTACADOS</span>
+    </div>
+    <div class="proj-header">
+      <div class="sr">
+        <div class="s-tag" style="opacity: 0"></div>
+        <h2 class="s-h">Edificios de datos<br><em>que se habitan.</em></h2>
+      </div>
+      <p class="s-sub sr" style="max-width:360px">Cada proyecto empieza por la misma pregunta: ¿qué tiene que decidir quien va a mirar esto? Lo demás viene después.</p>
+    </div>
+    <div class="proj-grid">
+
+      <!-- ── CARD 0: IBCS Lollipop ── -->
+      <div class="proj-card sr">
+        <div class="pc-visual">
+          <img src="https://raw.githubusercontent.com/BORJAMOME/portfolio-web/main/img/ibcprincipalcard.png" alt="Informe de ventas con enfoque IBCS" style="width:100%;height:auto;display:block;transform:scale(1.2);transform-origin:center;">
+        </div>
+        <div class="pc-body">
+          <div class="pc-cat">Análisis de ventas · IBCS</div>
+          <div class="pc-name">Informe de ventas con enfoque IBCS</div>
+          <p class="pc-desc">En muchos equipos el análisis de ventas empieza y termina en el total. Construí un informe que aplica el estándar IBCS para integrar <strong>volumen, variación absoluta y porcentaje en un único visual</strong>, con tres tipos de gráfico distintos según el ángulo de lectura.</p>
+          <div class="pc-foot">
+            <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">IBCS</span></div>
+            <button class="pc-link" onclick="openIndexOverlay(0)" style="background:none;border:none;cursor:pointer;padding:0;">Ver →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CARD 1: Balance ── -->
+      <div class="proj-card sr sr-d1">
+        <div class="pc-visual">
+          <img src="https://raw.githubusercontent.com/BORJAMOME/portfolio-web/main/img/financieroprincipalcard.png" alt="Informe Financiero Completo" style="width:100%;height:auto;display:block;transform:scale(1.2);transform-origin:center;">
+        </div>
+        <div class="pc-body">
+          <div class="pc-cat">Análisis financiero · Reporting</div>
+          <div class="pc-name">Informe Financiero Completo</div>
+          <p class="pc-desc">En la mayoría de empresas la información financiera está dispersa. Construí un sistema que conecta <strong>balance, PyG y cash flow</strong> en una sola lectura, con drill-down hasta el asiento contable que explica cada número.</p>
+          <div class="pc-foot">
+            <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">Modelado en estrella</span></div>
+            <button class="pc-link" onclick="openIndexOverlay(1)" style="background:none;border:none;cursor:pointer;padding:0;">Ver →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CARD 2: RFM B2B ── -->
+      <div class="proj-card sr sr-d2">
+        <div class="pc-visual">
+          <img src="https://raw.githubusercontent.com/BORJAMOME/portfolio-web/main/img/b2bprincipalcard.png" alt="Análisis RFM — Distribuidora B2B de Hostelería" style="width:100%;height:auto;display:block;transform:scale(1.2);transform-origin:center;">
+        </div>
+
+        <div class="pc-body">
+          <div class="pc-cat">Customer analytics · B2B</div>
+          <div class="pc-name">Análisis RFM — Distribuidora B2B de Hostelería</div>
+          <p class="pc-desc">Una distribuidora de hostelería, 400 clientes y una caída de revenue que nadie sabía explicar. El análisis RFM identificó <strong>198.000€ en riesgo</strong> dentro del segmento que generaba la mitad del negocio.</p>
+          <div class="pc-foot">
+            <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">Marketing Analytics</span></div>
+            <button class="pc-link" onclick="openIndexOverlay(2)" style="background:none;border:none;cursor:pointer;padding:0;">Ver →</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="proj-more sr">
+    <a href="./proyectos.html" class="btn btn-outline">Ver todos los proyectos →</a>
+  </div>
+</section>
+
+<!-- ─── PROYECTO ESTRELLA — dos columnas ─── -->
+<section class="star-section" id="star">
+  <div class="section-divider">
+    <span class="section-divider-dot" aria-hidden="true"></span>
+    <span class="section-divider-label">HERRAMIENTA DE DATA STORYTELLING</span>
+  </div>
+  <div class="star-wrap">
+    <div class="star-inner sr">
+
+      <!-- LEFT: texto editorial -->
+      <div class="star-text">
+        <h2 class="star-title">PBI Mockup<br>Creator.</h2>
+        <p class="star-lead">Una herramienta para diseñar el dashboard <em>antes</em> de tocar Power BI. Porque el problema casi nunca es el dato — es la pregunta que no se hizo a tiempo.</p>
+
+        <div class="star-blocks">
+          <div class="star-blk">
+            <div class="star-blk-num">01</div>
+            <h3 class="star-blk-title">Por qué existe</h3>
+            <p>Construí mi primer dashboard a cliente sin saber qué quería decidir con él. El modelo era correcto. La estructura funcionaba. Pero cuando llegó a sus manos, los datos no eran los que necesitaba. No era un problema de datos — era un problema de preguntas.</p>
+          </div>
+          <div class="star-blk">
+            <div class="star-blk-num">02</div>
+            <h3 class="star-blk-title">Qué tiene de diferente</h3>
+            <p>No trabaja con datos. Trabaja con preguntas. ¿Qué tiene que decidir quien va a mirar esto? ¿Qué es lo más importante que tiene que ver primero? ¿Qué sobra? Ahí es exactamente donde nace el edificio inhabitado.</p>
+          </div>
+          <div class="star-blk">
+            <div class="star-blk-num">03</div>
+            <h3 class="star-blk-title">Cómo la uso</h3>
+            <p>Primero defino el layout y la jerarquía del dashboard — qué lidera, qué acompaña, qué sobra. Cuando el espacio tiene sentido sin datos, paso a construirlo. El gráfico siempre es lo último.</p>
+          </div>
+        </div>
+
+        <div class="star-pull">
+          <div class="star-pull-quote">«&nbsp;Ningún arquitecto pone el primer ladrillo sin haber hecho el plano.&nbsp;»</div>
+          <div class="star-pull-tags">
+            <span class="pc-pill">Power BI</span>
+            <span class="pc-pill">Claude</span>
+            <span class="pc-pill">Data Storytelling</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: herramienta -->
+      <div class="star-stage">
+        <div class="star-browser">
+          <div class="star-browser-bar">
+            <div class="star-browser-dots">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="star-browser-url">borjamome.github.io/powerbi-mockup</div>
+            <div class="star-browser-meta">
+              <span class="star-browser-live"><span class="sb-dot"></span>LIVE</span>
+            </div>
+          </div>
+          <div class="star-browser-content">
+            <iframe
+              src="https://borjamome.github.io/powerbi-mockup/"
+              title="PBI Mockup Creator"
+              loading="lazy"
+              scrolling="no"
+              tabindex="-1"
+              sandbox="allow-scripts allow-same-origin"
+            ></iframe>
+            <div class="iframe-overlay"></div>
+          </div>
+        </div>
+
+        <a href="https://borjamome.github.io/powerbi-mockup/" target="_blank" rel="noopener noreferrer" class="star-float-cta">
+          <span class="sfc-label">Abrir herramienta</span>
+          <span class="sfc-arrow">→</span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── STACK SKILLS ─── -->
+<section class="stack-section" id="stack">
+  <div class="c">
+    <div class="section-divider">
+      <span class="section-divider-dot" aria-hidden="true"></span>
+      <span class="section-divider-label">STACK TÉCNICO</span>
+    </div>
+    <div class="stack-wrap sr">
+
+      <!-- OVERLAY: copy flotante sobre el espacio libre izquierdo -->
+      <div class="stack-overlay">
+        <h2 class="stack-title">Las herramientas <span style="color: var(--purple);">que uso.</span></h2>
+        <p class="stack-desc">Power BI y Data Storytelling son el núcleo de lo que hago. DAX y modelado, construidos a base de proyectos reales. SQL y Python entran cuando el análisis lo exige. La IA la estoy integrando despacio, con criterio.</p>
+      </div>
+
+      <!-- BARRAS: full width, alineadas al fondo -->
+      <div class="stack-cols" id="stackCols">
+
+        <div class="sk-col top-align" style="height:20%">
+          <div class="sk-card">
+            <div class="sk-desc-above">
+              <p style="height: 85px">Usada como acelerador dentro del flujo analítico: documentar, explorar datos, prototipar y depurar más rápido. En proceso de formación continua.</p>
+            </div>
+            <div class="sk-bottom">
+            <div class="sk-name">IA aplicada</div>
+            <div class="sk-pills">
+              <span class="sk-pill">Claude</span>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sk-col top-align" style="height:30%">
+          <div class="sk-card">
+            <div class="sk-desc-above">
+              <p style="height: 85px">Los datos se trabajan desde la lógica de negocio. SQL, Python y Excel para explorar, validar y detectar patrones antes de construir cualquier modelo o visual.</p>
+            </div>
+            <div class="sk-bottom">
+            <div class="sk-name">Análisis de datos</div>
+            <div class="sk-pills">
+              <span class="sk-pill">SQL</span>
+              <span class="sk-pill">Python</span>
+              <span class="sk-pill">Excel</span>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sk-col" style="height:45%">
+          <div class="sk-card">
+            <div class="sk-bottom">
+            <div class="sk-name">DAX</div>
+            <p class="sk-desc">Medidas pensadas para responder preguntas reales de negocio: contexto de filtro, time intelligence, parámetros de campo, filtros, medidas dinámicas y cálculos visuales.</p>
+            <div class="sk-pills">
+              <span class="sk-pill">DAX Studio</span>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sk-col" style="height:50%">
+          <div class="sk-card">
+            <div class="sk-bottom">
+            <div class="sk-name">Power Query</div>
+            <p class="sk-desc">Fuentes heterogéneas transformadas y unificadas para que el modelo reciba datos limpios y estructurados desde el origen. Conexión, limpieza, transformación y combinación de datos con lenguaje M.</p>
+            <div class="sk-pills">
+              <span class="sk-pill">M</span>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sk-col" style="height:60%">
+          <div class="sk-card">
+            <div class="sk-bottom">
+            <div class="sk-name">Modelado de datos</div>
+            <p class="sk-desc">Modelos en estrella orientados a claridad y escalabilidad: relaciones limpias, tablas de calendario y RLS. Optimización, buenas prácticas, rendimiento, cardinalidad y granularidad desde el diseño.</p>
+            <div class="sk-pills">
+              <span class="sk-pill">Esquema estrella</span>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sk-col" style="height:95%">
+          <div class="sk-card">
+            <div class="sk-bottom">
+            <div class="sk-name">Data Storytelling</div>
+            <p class="sk-desc">Fundamentos del storytelling, teorías de la visualización, leyes de la Gestalt, psicología del color, orden visual y sistemas de layout para comunicar con elementos visuales efectivos.</p>
+            <div class="sk-pills">
+              <span class="sk-pill">Gestalt</span>
+              <span class="sk-pill">Figma</span>
+              <span class="sk-pill">UX/UI</span>
+              <span class="sk-pill">Dashboard Design</span>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sk-col" style="height:90%">
+          <div class="sk-card hl">
+            <div class="sk-bottom">
+            <div class="sk-name" style="color: #c6ff00;">Power BI</div>
+            <p class="sk-desc">El entorno que unifica el proceso analítico completo: desde los datos en bruto hasta la decisión. Ingesta, transformación, modelado y visualización en un solo espacio.</p>
+            <div class="sk-pills">
+              <span class="sk-pill">Desktop</span>
+              <span class="sk-pill">Service</span>
+              <span class="sk-pill">PL-300</span>
+            </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ─── COMMUNITY ─── -->
+<section class="com-section" id="community">
+  <div class="c">
+    <div class="section-divider">
+      <span class="section-divider-dot" aria-hidden="true"></span>
+      <span class="section-divider-label">LINKEDIN · COMUNIDAD DATA STORYTELLING EN ESPAÑOL</span>
+    </div>
+    <div class="com-inner">
+
+      <!-- Col 1, Fila 1: copy -->
+      <div class="com-left sr">
+        <h2 class="com-title">Publico el contenido de Power BI <span style="color: var(--purple);">que me hubiera gustado leer</span> cuando empecé.</h2>
+        <p class="com-desc">Comparto cada semana lo que aprendo sobre Power BI, DAX y Data Storytelling. Para la comunidad de datos en habla hispana.</p>
+        
+        <!-- Sección de posts + botón encuadrados -->
+        <div style="margin-top: 0;">
+          <div style="font-size: 12px; color: #5a5a5a; margin-bottom: 10px; font-weight: 500;">Últimos posts publicados en LinkedIn</div>
+          
+          <!-- Posts stack vertical — caja propia -->
+          <div style="border: 1px solid #0a0a0a;">
+            <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7458166054264111104-Hov2" target="_blank" rel="noopener noreferrer" style="padding: 8px 14px; border-bottom: 1px solid #0a0a0a; text-decoration: none; font-size: 11px; font-weight: 500; color: #0a0a0a; transition: background 0.15s; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; letter-spacing: .3px; text-transform: uppercase;" onmouseenter="this.style.background='#f7f7fa'" onmouseleave="this.style.background=''" onclick="gtag('event', 'clic_recent_post', { post: '19' });">
+              Resaltar sin ocultar
+              <span style="font-size: 12px; margin-left: 8px;">↗</span>
+            </a>
+            <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-businessintelligence-activity-7452022964017008640-Z-VH" target="_blank" rel="noopener noreferrer" style="padding: 8px 14px; border-bottom: 1px solid #0a0a0a; text-decoration: none; font-size: 11px; font-weight: 500; color: #0a0a0a; transition: background 0.15s; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; letter-spacing: .3px; text-transform: uppercase;" onmouseenter="this.style.background='#f7f7fa'" onmouseleave="this.style.background=''" onclick="gtag('event', 'clic_recent_post', { post: '18' });">
+              KPI Card adaptativo
+              <span style="font-size: 12px; margin-left: 8px;">↗</span>
+            </a>
+            <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7442540385882554368-y4go" target="_blank" rel="noopener noreferrer" style="padding: 8px 14px; text-decoration: none; font-size: 11px; font-weight: 500; color: #0a0a0a; transition: background 0.15s; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; letter-spacing: .3px; text-transform: uppercase;" onmouseenter="this.style.background='#f7f7fa'" onmouseleave="this.style.background=''" onclick="gtag('event', 'clic_recent_post', { post: '17' });">
+              Tabla de análisis total
+              <span style="font-size: 12px; margin-left: 8px;">↗</span>
+            </a>
+          </div>
+
+          <!-- Botón LinkedIn — separado, debajo -->
+          <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="com-cta" onclick="gtag('event', 'clic_linkedin', { location: 'comunidad' });" style="margin-top: 10px; border-radius: 0px; display: inline-flex; align-items: center; justify-content: center; padding: 9px 18px; font-size: 11px; font-weight: 500; gap: 8px; border: none; font-family: 'JetBrains Mono', monospace; letter-spacing: .4px; text-transform: uppercase;">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 16px; height: 16px;"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            Ver perfil en LinkedIn
+          </a>
+        </div>
+      </div>
+
+      <!-- Col 1, Fila 2+3: tarjeta pequeña — Seguidores (abajo izquierda) -->
+      <div class="com-card com-card--1">
+        <div class="com-card-inner">
+          <div class="com-card-num">2.674</div>
+          <div class="com-card-label">Seguidores en LinkedIn</div>
+          <p class="com-card-desc">+4.374% de crecimiento en un año.</p>
+        </div>
+      </div>
+
+      <!-- Col 2, Fila 2+3: tarjeta mediana — Post más visto (centro, escalonada) -->
+      <div class="com-card com-card--2">
+        <div class="com-card-inner">
+          <div class="com-card-num">28K</div>
+          <div class="com-card-label">Post más visto</div>
+          <p class="com-card-desc">44% con experiencia senior.</p>
+        </div>
+      </div>
+
+      <!-- Col 3, Fila 1→3: tarjeta morada alta — Impresiones (derecha, ocupa todo) -->
+      <div class="com-card com-card--3" style="background-color: rgb(122, 123, 255); border-color: rgb(242, 236, 236)">
+        <div class="com-card-inner">
+          <div class="com-card-num">192K</div>
+          <div class="com-card-label">Impresiones totales</div>
+          <p class="com-card-desc">Data Storytelling es tendencia.</p>
+        </div>
+        <div class="com-card-bars">
+          <div class="com-card-bar" style="height:18%"></div>
+          <div class="com-card-bar" style="height:25%"></div>
+          <div class="com-card-bar" style="height:22%"></div>
+          <div class="com-card-bar" style="height:32%"></div>
+          <div class="com-card-bar" style="height:28%"></div>
+          <div class="com-card-bar" style="height:40%"></div>
+          <div class="com-card-bar" style="height:36%"></div>
+          <div class="com-card-bar" style="height:52%"></div>
+          <div class="com-card-bar" style="height:47%"></div>
+          <div class="com-card-bar" style="height:62%"></div>
+          <div class="com-card-bar" style="height:58%"></div>
+          <div class="com-card-bar" style="height:74%"></div>
+          <div class="com-card-bar" style="height:70%"></div>
+          <div class="com-card-bar" style="height:85%"></div>
+          <div class="com-card-bar" style="height:80%"></div>
+          <div class="com-card-bar" style="height:100%"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ─── SOBRE MÍ ─── -->
+<section class="abm-section" id="about">
+  <div class="c">
+    <div class="section-divider">
+      <span class="section-divider-dot" aria-hidden="true"></span>
+      <span class="section-divider-label">SOBRE MÍ</span>
+    </div>
+    <div class="abm-card sr">
+
+      <!-- TEXTO -->
+      <div class="abm-content">
+        <div class="abm-body">
+          <p>Hola, soy <strong>Borja Mora</strong>, Data Analyst especializado en Power BI.</p>
+          <p>Durante años trabajé en entornos donde las decisiones dependían de números que casi nadie entendía del todo. Ahí descubrí algo que terminó definiendo mi forma de trabajar: el problema no suelen ser los datos, sino <strong>la distancia entre el dato y la persona que tiene que decidir con él.</strong></p>
+          <p>Hoy diseño dashboards centrados en claridad, contexto y toma de decisiones reales, combinando <strong>análisis de datos, UX y Data Storytelling</strong> para convertir información compleja en algo que cualquiera pueda entender en segundos.</p>
+        </div>
+
+        <a href="./sobre-mi.html" class="abm-cta">
+          Saber más de mí
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+
+      <!-- FOTO -->
+      <div class="abm-photo">
+        <img src="./img/foto.jpeg" alt="Borja Mora Méndez — Data Analyst Power BI Madrid" loading="lazy">
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA FINAL ─── -->
+<section class="cta-final" id="cta">
+  <div class="c">
+    <div class="section-divider">
+      <span class="section-divider-dot" aria-hidden="true"></span>
+      <span class="section-divider-label">CONTACTO</span>
+    </div>
+    <div class="cta-final-inner sr">
+
+    <!-- headline -->
+<div class="cta-final-eyebrow"></div>
+<h2 class="cta-final-h">El siguiente paso<br>lo das <em>tú.</em></h2>
+
+<p class="cta-final-sub">
+  Hay equipos que buscan a alguien que sepa Power BI.
+</p>
+<p class="cta-final-sub">
+  Y otros que buscan a alguien que sepa qué preguntarle<br>
+  a los datos antes de abrirlo.
+</p>
+<p class="cta-final-sub highlight">
+  Si eres de los segundos, escríbeme.
+</p>
+
+      <!-- actions -->
+      <div class="cta-final-actions">
+        <a id="ctaEmailBtn" href="#" target="_blank" rel="noopener noreferrer" class="cta-final-btn-primary" onclick="gtag('event', 'clic_email', { location: 'cta_final' });">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Envíame un mensaje
+        </a>
+        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="cta-final-btn-secondary" onclick="gtag('event', 'clic_linkedin', { location: 'cta_final' });">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          LinkedIn
+        </a>
+      </div>
+
+      <!-- info pills -->
+      <div class="cta-final-pills">
+        <div class="cta-pill-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          MADRID, ESPAÑA
+        </div>
+        <div class="cta-pill-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          PRESENCIAL · HÍBRIDO
+        </div>
+        <div class="cta-pill-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          RESPONDO EN &lt;24H
+        </div>
+        <div class="cta-pill-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          ES · EN
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+<!-- ─── FOOTER — profesional ─── -->
+<footer style="margin: 0px">
+  <div class="foot-inner">
+
+    <!-- TOP: CTA principal -->
+    <!-- MIDDLE: cuatro columnas -->
+    <div class="foot-grid">
+      <div class="foot-col foot-col--brand">
+        <div class="foot-brand-name">Borja Mora.</div>
+        <p class="foot-brand-desc" style="font-size: 13px">Construyo espacios donde los datos calan.</p>
+        <p class="foot-brand-loc">Madrid, España</p>
+      </div>
+
+      <div class="foot-col">
+        <div class="foot-col-title">Navegación</div>
+        <a href="./index.html">Inicio</a>
+        <a href="./sobre-mi.html">Sobre mí</a>
+        <a href="./proyectos.html">Proyectos</a>
+        <a href="./descargas.html">Descargas</a>
+      </div>
+
+      <div class="foot-col">
+        <div class="foot-col-title">Trabajo</div>
+        <a href="./proyectos.html#power-bi">Power BI</a>
+        <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio" target="_blank" rel="noopener noreferrer">Python · SQL · R</a>
+        <a href="https://github.com/BORJAMOME/DAX-LAB" target="_blank" rel="noopener noreferrer">DAX Lab</a>
+      </div>
+
+      <div class="foot-col">
+        <div class="foot-col-title">Sígueme</div>
+        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_linkedin',{location:'footer'});">LinkedIn</a>
+        <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_github',{location:'footer'});">GitHub</a>
+      </div>
+    </div>
+
+    <!-- BOTTOM: legal + colofón -->
+    <div class="foot-bottom">
+      <div class="foot-copy">© 2026 Borja Mora Méndez · Todos los derechos reservados</div>
+      <div class="foot-made">
+        <span>Diseñado y construido por mí</span>
+        <span class="foot-tech">HTML</span>
+        <span class="foot-tech">CSS</span>
+        <span class="foot-tech">JS</span>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" onerror="window.__chartJsFailed=true"></script>
+<script>
+// ─── TYPING EFFECT ───
+(function(){
+  const el = document.getElementById('logoText');
+  const text = 'Borja Mora';
+  let i = 0;
+  function type() {
+    if (i < text.length) {
+      el.textContent += text[i];
+      i++;
+      setTimeout(type, i === 1 ? 300 : 80 + Math.random() * 40);
+    } else {
+      setTimeout(() => el.classList.add('done'), 1200);
+    }
+  }
+  setTimeout(type, 400);
+})();
+
+// ─── STACK SKILLS ANIMATION ───
+(function(){
+  const stackSection = document.querySelector('#stackCols');
+  if(!stackSection) return;
+  const skObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        skObserver.unobserve(e.target);
+        document.querySelectorAll('.sk-col').forEach((col)=>{
+          col.classList.add('sk-visible');
+        });
+      }
+    });
+  },{ threshold:.1 });
+  skObserver.observe(stackSection);
+})();
+
+// ─── NAV SCROLL ───
+const nav = document.getElementById('nav');
+window.addEventListener('scroll',()=> nav.classList.toggle('scrolled', scrollY > 40));
+
+// ─── PROGRESS BAR ───
+const pb = document.getElementById('progressBar');
+window.addEventListener('scroll',()=>{
+  pb.style.transform = `scaleX(${scrollY/(document.body.scrollHeight-innerHeight)})`;
+});
+
+// ─── SCROLL REVEAL ───
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+},{ threshold:.1, rootMargin:'0px 0px -30px 0px' });
+document.querySelectorAll('.sr').forEach(el=>io.observe(el));
+
+const comSection = document.querySelector('#community');
+if(comSection){
+  const cardObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        cardObserver.unobserve(e.target);
+        const cards = Array.from(document.querySelectorAll('.com-card'));
+
+        function animateNumber(el, target, suffix, duration){
+          const start = performance.now();
+          function update(now){
+            const p = Math.min((now - start) / duration, 1);
+            const ease = 1 - Math.pow(1 - p, 4);
+            const val = Math.round(ease * target);
+            if(target === 2877) el.textContent = val.toLocaleString('es-ES');
+            else el.textContent = (val >= 1000 ? Math.round(val/1000)+'K' : val);
+            if(p < 1) requestAnimationFrame(update);
+            else el.textContent = target === 2877 ? '2.877' : target === 28000 ? '28K' : '192K';
+          }
+          requestAnimationFrame(update);
+        }
+
+        const cardData = [
+          { card: cards[0], target: 2877 },
+          { card: cards[1], target: 28000 },
+          { card: cards[2], target: 192000 },
+        ];
+
+        cardData.forEach(({card, target}, i)=>{
+          setTimeout(()=>{
+            card.classList.add('com-visible');
+            setTimeout(()=>{
+              const numEl = card.querySelector('.com-card-num');
+              if(numEl) animateNumber(numEl, target, '', 900);
+            }, 400);
+          }, i * 950);
+        });
+      }
+    });
+  },{ threshold:.1 });
+  cardObserver.observe(comSection);
+}
+
+// ─── CHART DEFAULTS ───
+if (typeof Chart !== 'undefined') {
+Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+Chart.defaults.font.size   = 9;
+}
+
+const PURPLE = '#7a7bff';
+const GRAY   = '#e5e5e5';
+
+const chartOpts = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins:{ legend:{ display:false }, tooltip:{ enabled:false } },
+  animation:{ duration:1200, easing:'easeOutQuart' }
+};
+
+
+// ─── SCROLL NAV ───
+(function(){
+  const nav = document.getElementById('dotNav');
+  const items = nav.querySelectorAll('.dot-nav-item');
+  const sections = ['hero','approach','projects','star','stack','community','about','cta'];
+  const darkSections = ['community'];
+
+  function update() {
+    const scrollY = window.scrollY + window.innerHeight * .45;
+    let current = sections[0];
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.offsetTop <= scrollY) current = id;
+    });
+    const isDark = darkSections.includes(current);
+    nav.classList.toggle('dark-mode', isDark);
+    nav.classList.toggle('visible', window.scrollY > 200);
+    items.forEach(item => {
+      item.classList.toggle('active', item.dataset.section === current);
+    });
+  }
+
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+
+  items.forEach(item => {
+    item.addEventListener('click', () => {
+      const el = document.getElementById(item.dataset.section);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+})();
+
+
+</script>
+
+<script>
+/* ── COUNT-UP for dph-step-num and dax-card-num ── */
+(function(){
+  function countUp(el, target, duration) {
+    const start = performance.now();
+    const from = 0;
+    function update(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // easeOutQuart
+      const ease = 1 - Math.pow(1 - progress, 4);
+      el.textContent = String(Math.round(from + (target - from) * ease)).padStart(2, '0');
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  }
+
+  const numObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !entry.target.dataset.counted) {
+        entry.target.dataset.counted = '1';
+        const val = parseInt(entry.target.textContent, 10);
+        if (!isNaN(val)) countUp(entry.target, val, 900);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('.dph-step-num, .dax-card-num').forEach(el => {
+    numObserver.observe(el);
+  });
+})();
+
+
+
+/* ── 4. MAGNETIC BUTTONS (desactivado en favor del sweep direccional) ── */
+(function(){
+  // El efecto magnético se quitó; el sweep + arrow shift hace el trabajo.
+  // Si se quiere restaurar, descomentar el bloque de abajo con STRENGTH bajo (0.10).
+  /*
+  const STRENGTH = 0.10;
+  document.querySelectorAll('.btn-primary, .btn-outline, .cta-final-btn-primary, .cta-final-btn-secondary').forEach(btn => {
+    btn.addEventListener('mousemove', e => {
+      const r = btn.getBoundingClientRect();
+      const x = e.clientX - r.left - r.width / 2;
+      const y = e.clientY - r.top - r.height / 2;
+      btn.style.transform = `translate(${x * STRENGTH}px, ${y * STRENGTH}px)`;
+    });
+    btn.addEventListener('mouseleave', () => {
+      btn.style.transform = '';
+    });
+  });
+  */
+})();
+</script>
+
+<script>
+/* ── HERO DASHBOARD v2: LOLLIPOP + DUMBBELL ── */
+(function(){
+  if (typeof Chart === 'undefined') return;
+  var done = false;
+  function init() {
+    if(done) return; done = true;
+
+    /* KPIs */
+    var kpis = [
+      {id:'kv0', v:'€2,84M', b:'kg0', bv:'▲ +12,4%', pos:true,  t:60},
+      {id:'kv1', v:'48.236', b:'kg1', bv:'▲ +15,0%', pos:true,  t:110},
+      {id:'kv2', v:'€ 58,9', b:'kg2', bv:'▼ −2,3%',  pos:false, t:160},
+      {id:'kv3', v:'34,7%',  b:'kg3', bv:'▲ +1,2pp', pos:true,  t:210},
+    ];
+    kpis.forEach(function(k){
+      setTimeout(function(){
+        var el=document.getElementById(k.id); if(el) el.textContent=k.v;
+        var bg=document.getElementById(k.b);
+        if(bg){ bg.textContent=k.bv; if(!k.pos) bg.className='dk-neg'; else bg.className='dk-pos'; }
+      }, k.t);
+    });
+
+    /* LOLLIPOP — CY vs PY, 6 meses via Chart.js scatter+line */
+    setTimeout(function(){
+      var ctx = document.getElementById('heroLollipop');
+      if(!ctx) return;
+
+      var months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+      var cy = [154,175,209,191,243,224,197,235,326,278,303,306];
+      var py = [137,156,185,170,216,199,177,211,289,247,270,271];
+
+      /* Build stick dataset: array of {x, y} pairs forming vertical lines */
+      /* We use a custom bar-of-width-0 trick with scatter overlay */
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: months,
+          datasets: [
+            /* PY ghost bars — very thin, light */
+            {
+              label:'PY',
+              data: py,
+              backgroundColor: 'transparent',
+              borderColor: '#d0d0e0',
+              borderWidth: 1.5,
+              borderRadius: 0,
+              borderSkipped: false,
+              barThickness: 1,
+              order: 2
+            },
+            /* CY filled bars — thin sticks */
+            {
+              label:'CY',
+              data: cy,
+              backgroundColor: 'transparent',
+              borderColor: '#7a7bff',
+              borderWidth: 1.5,
+              borderRadius: 0,
+              borderSkipped: false,
+              barThickness: 1,
+              order: 2
+            }
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend:{display:false}, tooltip:{enabled:false} },
+          layout: { padding: { top: 8, right: 4, bottom: 0, left: 0 } },
+          scales: {
+            x: { grid:{display:false}, ticks:{font:{family:'Plus Jakarta Sans',size:7.5}, color:'#bbb'}, border:{display:false} },
+            y: { display:false, min:120, max:340 }
+          },
+          animation: { duration:600, easing:'easeOutQuart' }
+        },
+        plugins: [{
+          id: 'lollipopDots',
+          afterDraw: function(chart) {
+            var ctx2 = chart.ctx;
+            var meta0 = chart.getDatasetMeta(0); /* PY */
+            var meta1 = chart.getDatasetMeta(1); /* CY */
+            meta0.data.forEach(function(bar, i){
+              var x = bar.x, y = bar.y;
+              ctx2.beginPath();
+              ctx2.arc(x, y, 4.5, 0, Math.PI*2);
+              ctx2.strokeStyle = '#c0c0d4';
+              ctx2.lineWidth = 1.8;
+              ctx2.fillStyle = '#fff';
+              ctx2.fill();
+              ctx2.stroke();
+            });
+            meta1.data.forEach(function(bar, i){
+              var x = bar.x, y = bar.y;
+              ctx2.beginPath();
+              ctx2.arc(x, y, 5, 0, Math.PI*2);
+              ctx2.fillStyle = '#7a7bff';
+              ctx2.fill();
+            });
+          }
+        }]
+      });
+    }, 120);
+
+    /* DUMBBELL — SVG animation */
+    setTimeout(function(){
+      /* Animate connector lines */
+      var lines = document.querySelectorAll('#heroDumbbell .db-line');
+      lines.forEach(function(line, i){
+        setTimeout(function(){
+          var x1 = parseFloat(line.dataset.x1);
+          var x2 = parseFloat(line.dataset.x2);
+          line.setAttribute('x1', x1);
+          line.setAttribute('x2', x2);
+          line.style.transition = 'x1 .6s ease, x2 .6s ease';
+        }, i * 80);
+      });
+
+      /* Animate dots */
+      var dotsA = document.querySelectorAll('#heroDumbbell .db-dot-a');
+      var dotsB = document.querySelectorAll('#heroDumbbell .db-dot-b');
+      dotsA.forEach(function(dot, i){
+        setTimeout(function(){
+          dot.setAttribute('cx', dot.dataset.cx);
+          dot.setAttribute('r', '2.5');
+        }, i * 80 + 100);
+      });
+      dotsB.forEach(function(dot, i){
+        setTimeout(function(){
+          dot.setAttribute('cx', dot.dataset.cx);
+          dot.setAttribute('r', '3.5');
+        }, i * 80 + 180);
+      });
+
+      /* Show value labels */
+      var vals = ['+19,4%','+12,9%','−2,1%','+15,2%','+16,2%'];
+      document.querySelectorAll('#heroDumbbell .db-val').forEach(function(el,i){
+        setTimeout(function(){
+          el.setAttribute('x', el.dataset.cx);
+          el.textContent = vals[i];
+        }, i * 80 + 300);
+      });
+
+    }, 200);
+
+    /* Product bars */
+    setTimeout(function(){
+      document.querySelectorAll('.prd-bar').forEach(function(b){
+        b.style.width = (b.dataset.w||'0')+'%';
+      });
+    }, 280);
+  }
+
+  var frame = document.querySelector('.dashboard-frame');
+  // El dashboard está en el hero — visible al cargar. No tiene sentido esperar un IntersectionObserver.
+  // Arrancamos en cuanto Chart.js esté disponible y el DOM esté listo.
+  function start(){ if(!frame) return; init(); }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+})();
+</script>
+<script>
+/* ── DPH PIPELINE LINE DRAW ── */
+(function(){
+  var pipe = document.querySelector('.dph-pipeline');
+  if(!pipe) return;
+  var lineObs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        setTimeout(function(){ pipe.classList.add('line-drawn'); }, 150);
+        lineObs.disconnect();
+      }
+    });
+  }, { threshold: 0.25 });
+  lineObs.observe(pipe);
+})();
+</script>
+
+
+
+
+
+<script>
+(function(){
+  var su = encodeURIComponent('Oportunidad laboral');
+  var body = encodeURIComponent('Hola, me gustaría hablar contigo sobre una posible oportunidad.');
+  var e = atob('Ym9yamEubW9yYS5tZW5kZXpAZ21haWwuY29t');
+  /* En móvil/tablet usamos mailto: (abre la app de correo nativa).
+     En escritorio mantenemos el enlace a Gmail Web. */
+  var isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+  var url = isMobile
+    ? 'mailto:' + e + '?subject=' + su + '&body=' + body
+    : 'https://mail.google.com/mail/u/0/?fs=1&to=' + e + '&su=' + su + '&body=' + body + '&tf=cm';
+  var btn = document.getElementById('ctaEmailBtn');
+  if (btn) btn.href = url;
+  var nav = document.getElementById('navEmailBtn');
+  if (nav) nav.href = url;
+})();
+</script>
+
+
+<!-- ── Cookie banner HTML + lógica (RGPD/LOPDGDD) ── -->
+<div id="bm-cookie-banner" role="dialog" aria-live="polite" aria-label="Aviso de cookies">
+  <p><strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Política de privacidad</a>.</p>
+  <div class="bm-cb-btns">
+    <button class="bm-cb-btn bm-cb-reject" id="bm-cb-reject" aria-label="Rechazar cookies">Rechazar</button>
+    <button class="bm-cb-btn bm-cb-accept" id="bm-cb-accept" aria-label="Aceptar cookies">Aceptar</button>
+  </div>
+</div>
+<script>
+(function () {
+  var KEY = "bm_cookie_consent";
+  var banner = document.getElementById("bm-cookie-banner");
+  if (!banner) return;
+
+  function dismiss() {
+    banner.classList.remove("bm-visible");
+    banner.classList.add("bm-hiding");
+    setTimeout(function () {
+      banner.style.display = "none";
+    }, 380);
+  }
+
+  function grantAnalytics() {
+    if (typeof gtag === "function") {
+      gtag("consent", "update", { analytics_storage: "granted" });
+    }
+  }
+
+  /* Solo mostrar si no hay decisión previa */
+  if (!localStorage.getItem(KEY)) {
+    /* Pequeño delay para que la animación sea visible */
+    setTimeout(function () {
+      banner.classList.add("bm-visible");
+    }, 600);
+  } else if (localStorage.getItem(KEY) === "accepted") {
+    grantAnalytics();
+    banner.style.display = "none";
+  } else {
+    banner.style.display = "none";
+  }
+
+  document.getElementById("bm-cb-accept").addEventListener("click", function () {
+    localStorage.setItem(KEY, "accepted");
+    grantAnalytics();
+    dismiss();
+  });
+
+  document.getElementById("bm-cb-reject").addEventListener("click", function () {
+    localStorage.setItem(KEY, "rejected");
+    dismiss();
+  });
+})();
+</script>
+
+<!-- ── OVERLAYS PROYECTOS DESTACADOS ── -->
+<script>
+var _indexOvLastFocus = null;
+var indexOvPhotoState = {};
+var activeIndexOverlay = null;
+
+function openIndexOverlay(idx){
+  closeAllIndexOverlays();
+  _indexOvLastFocus = document.activeElement;
+  var ov = document.getElementById('idx-overlay-' + idx);
+  if(!ov) return;
+  ov.classList.add('open');
+  ov.setAttribute('aria-hidden','false');
+  document.body.style.overflow = 'hidden';
+  activeIndexOverlay = idx;
+  if(indexOvPhotoState[idx] === undefined) indexOvPhotoState[idx] = 0;
+  var closeBtn = ov.querySelector('.pc-overlay-close');
+  if(closeBtn) setTimeout(function(){ closeBtn.focus(); }, 50);
+}
+
+function closeIndexOverlay(idx){
+  var ov = document.getElementById('idx-overlay-' + idx);
+  if(!ov) return;
+  ov.classList.remove('open');
+  ov.setAttribute('aria-hidden','true');
+  document.body.style.overflow = '';
+  activeIndexOverlay = null;
+  if(_indexOvLastFocus){ _indexOvLastFocus.focus(); _indexOvLastFocus = null; }
+}
+
+function closeAllIndexOverlays(){
+  document.querySelectorAll('[id^="idx-overlay-"].open').forEach(function(ov){
+    ov.classList.remove('open');
+    ov.setAttribute('aria-hidden','true');
+  });
+  document.body.style.overflow = '';
+  activeIndexOverlay = null;
+}
+
+function closeIndexOverlayIfBg(e, idx){
+  if(e.target === e.currentTarget) closeIndexOverlay(idx);
+}
+
+function indexOverlayPhotoNav(idx, dir){
+  if(indexOvPhotoState[idx] === undefined) indexOvPhotoState[idx] = 0;
+  var track = document.getElementById('idx-ovtrack-' + idx);
+  if(!track) return;
+  var photos = track.querySelectorAll('.pcov-photo');
+  var dots = document.querySelectorAll('#idx-overlay-' + idx + ' .pcov-dot');
+  var total = photos.length;
+  var newIdx = (Math.abs(dir) <= 1) ? ((indexOvPhotoState[idx] + dir + total) % total) : dir;
+  indexOvPhotoState[idx] = newIdx;
+  photos.forEach(function(p,i){ p.classList.toggle('pcov-active', i === newIdx); });
+  dots.forEach(function(d,i){ d.classList.toggle('pcov-dot-active', i === newIdx); });
+}
+
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape' && activeIndexOverlay !== null) closeIndexOverlay(activeIndexOverlay);
+});
+</script>
+
+<!-- OVERLAY 0: IBCS -->
+<div class="pc-overlay" id="idx-overlay-0" role="dialog" aria-modal="true" aria-labelledby="idx-overlay-0-title" aria-hidden="true" onclick="closeIndexOverlayIfBg(event,0)">
+  <div class="pc-overlay-inner">
+    <button class="pc-overlay-close" onclick="closeIndexOverlay(0)">
+      <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pc-overlay-imgs">
+      <div class="pcov-track" id="idx-ovtrack-0">
+        <img src="./img/ibcs-1.png" alt="Informe de ventas con enfoque IBCS 1" class="pcov-photo pcov-active" width="1200" height="720">
+        <img src="./img/ibcs-2.png" alt="Informe de ventas con enfoque IBCS 2" class="pcov-photo" width="1200" height="720">
+        <img src="./img/ibcs-3.png" alt="Informe de ventas con enfoque IBCS 3" class="pcov-photo" width="1200" height="720">
+      </div>
+      <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(0,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(0,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <div class="pcov-dots">
+        <button class="pcov-dot pcov-dot-active" onclick="indexOverlayPhotoNav(0,0)"></button>
+        <button class="pcov-dot" onclick="indexOverlayPhotoNav(0,1)"></button>
+        <button class="pcov-dot" onclick="indexOverlayPhotoNav(0,2)"></button>
+      </div>
+    </div>
+    <div class="pc-overlay-copy">
+      <div class="pc-overlay-eyebrow"><span></span>Análisis de ventas · IBCS</div>
+      <div class="pc-overlay-title" id="idx-overlay-0-title">Informe de ventas con enfoque IBCS</div>
+      <div class="pc-overlay-long">
+        <p><strong>El Problema</strong></p>
+        <p>En muchos equipos comerciales el análisis de ventas empieza y termina en el total. Si la cifra sube, todo bien. El problema es que <strong>dos períodos pueden cerrar con el mismo número y haber sido radicalmente distintos por dentro</strong>: uno con crecimiento real, otro con caída compensada por una campaña puntual. Sin variación integrada en el visual, esa diferencia no se ve.</p>
+        <p><strong>El Objetivo</strong></p>
+        <p>Construir un informe de ventas que permitiera leer <strong>volumen y variación en una sola lectura</strong>, sin necesidad de cruzar pestañas ni comparar tablas separadas. Y hacerlo siguiendo el estándar IBCS, que define cómo representar esa información de forma que cualquier persona lo lea igual, sin ambigüedad.</p>
+        <p><strong>Mi Enfoque</strong></p>
+        <p>El estándar <strong>IBCS (International Business Communication Standards)</strong> establece reglas concretas sobre cómo representar variaciones: qué color indica desviación positiva, qué forma indica valor real frente a presupuesto, cómo se integran volumen y variación en el mismo eje sin que se solapen ni confundan.</p>
+        <p>Construí tres tipos de visual siguiendo ese estándar. El <strong>gráfico de columnas con niveles múltiples</strong> permite ver simultáneamente el valor absoluto mensual, la variación absoluta respecto al año anterior y el porcentaje de cambio. El <strong>gráfico de columnas con variación integrada</strong> compacta esa información dentro de cada barra, útil cuando el eje tiene muchos elementos. El <strong>gráfico de líneas de variación</strong> muestra la evolución temporal con el área entre la línea real y el target coloreada según si se supera o no el objetivo.</p>
+        <p>La clave técnica está en combinar <strong>DAX con cálculos visuales</strong>: DAX para la lógica base del modelo y el selector dinámico de medidas, y cálculos visuales para generar las variaciones directamente sobre el visual sin multiplicar medidas en el modelo.</p>
+        <p><strong>Herramientas Utilizadas</strong></p>
+        <p><strong>Power BI</strong> para el modelo, los tres tipos de visual IBCS y la navegación entre vistas. <strong>DAX y cálculos visuales</strong> en combinación para las variaciones CY vs SPLY y contra Target.</p>
+        <p><strong>Qué Aprendí</strong></p>
+        <p>Replicar el estándar IBCS en Power BI sin custom visuals obliga a entender bien <strong>cómo funciona el formateo condicional a nivel de medida</strong>. La parte más exigente fue conseguir que los tres niveles del gráfico de columnas múltiples mantuvieran las proporciones correctas independientemente del rango de valores del filtro seleccionado.</p>
+      </div>
+      <div class="pc-overlay-pills">
+        <span class="pc-overlay-pill">IBCS</span>
+        <span class="pc-overlay-pill">DAX</span>
+        <span class="pc-overlay-pill">Cálculos visuales</span>
+        <span class="pc-overlay-pill">Modelado en estrella</span>
+        <span class="pc-overlay-pill">Variación absoluta y relativa</span>
+        <span class="pc-overlay-pill">Sales analytics</span>
+        <span class="pc-overlay-pill">YoY analysis</span>
+      </div>
+      <div class="pc-overlay-foot">
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiYWFhNjA5YmQtNjEyYS00YTA3LWIxMzktYWQxOTYzMmZkYzIyIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="pc-overlay-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+        <span class="pc-overlay-tech">Power BI · DAX</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY 1: Informe Financiero Completo -->
+<div class="pc-overlay" id="idx-overlay-1" role="dialog" aria-modal="true" aria-labelledby="idx-overlay-1-title" aria-hidden="true" onclick="closeIndexOverlayIfBg(event,1)">
+  <div class="pc-overlay-inner">
+    <button class="pc-overlay-close" onclick="closeIndexOverlay(1)">
+      <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pc-overlay-imgs">
+      <div class="pcov-track" id="idx-ovtrack-1">
+        <img src="./img/financiero-1.png" alt="Informe Financiero Completo 1" class="pcov-photo pcov-active" width="1200" height="720">
+        <img src="./img/financiero-2.png" alt="Informe Financiero Completo 2" class="pcov-photo" width="1200" height="720">
+        <img src="./img/financiero-3.png" alt="Informe Financiero Completo 3" class="pcov-photo" width="1200" height="720">
+      </div>
+      <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(1,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(1,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <div class="pcov-dots">
+        <button class="pcov-dot pcov-dot-active" onclick="indexOverlayPhotoNav(1,0)"></button>
+        <button class="pcov-dot" onclick="indexOverlayPhotoNav(1,1)"></button>
+        <button class="pcov-dot" onclick="indexOverlayPhotoNav(1,2)"></button>
+      </div>
+    </div>
+    <div class="pc-overlay-copy">
+      <div class="pc-overlay-eyebrow"><span></span>Análisis financiero</div>
+      <div class="pc-overlay-title" id="idx-overlay-1-title">Informe Financiero Completo</div>
+      <div class="pc-overlay-long">
+        <p><strong>El Problema</strong></p>
+        <p>Cuando cada área analiza su parte por separado, dirección necesita construir la visión completa manualmente cada vez. Ese proceso es lento, poco trazable y genera versiones distintas de la misma realidad. Sin un modelo que conectara los tres estados financieros de forma coherente, <strong>cualquier análisis era una foto parcial</strong>.</p>
+        <p><strong>El Objetivo</strong></p>
+        <p>Diseñar una estructura contable que unificara balance, PyG y cash flow, mantuviera coherencia entre periodos y permitiera navegar <strong>desde un KPI de alto nivel hasta el asiento concreto</strong> que lo genera, sin salir del informe.</p>
+        <p><strong>Mi Enfoque</strong></p>
+        <p>Empecé por el modelo. <strong>Dos tablas de hechos</strong>: <code>FactDiario</code> con los apuntes contables reales y <code>FactPresupuesto</code> con los datos presupuestados, conectadas a las mismas dimensiones. Una tabla <strong>TablaFechaCierre</strong> gestiona la proyección a cierre: extrapola el resultado esperado a fin de año a partir de los datos reales disponibles hasta la fecha de corte.</p>
+        <p>El informe tiene seis áreas: <strong>panel de KPIs</strong> con EBITDA, ROE, ROA, Test Ácido, Solvencia y Free Cash Flow; <strong>checklist de validación</strong> que detecta asientos descuadrados y cuentas sin clasificar; <strong>balance de sumas y saldos</strong> con drill-through hasta el apunte individual; <strong>balance general</strong> con análisis vertical y horizontal; <strong>PyG</strong> con tres vistas; y <strong>cash flow</strong> con los tres tipos de flujo comparados con el año anterior.</p>
+        <p><strong>Hallazgos Clave</strong></p>
+        <p>El checklist de validación fue una de las decisiones más importantes. En un modelo que consolida varias empresas, tener una página dedicada a detectar <strong>asientos descuadrados y cuentas sin clasificar</strong> evita que un error contable llegue a una reunión de dirección como si fuera un resultado real. En 2023, el <strong>Free Cash Flow fue de 678.208€</strong> frente a –1.165.649€ del año anterior.</p>
+        <p><strong>Herramientas Utilizadas</strong></p>
+        <p><strong>Power BI</strong> para el modelo completo, la navegación entre las seis áreas y el drill-through hasta el apunte contable de origen. <strong>DAX</strong> para ratios de solvencia y liquidez, EBITDA, variación interanual, desviación vs presupuesto y la lógica de proyección a cierre.</p>
+        <p><strong>Qué Aprendí</strong></p>
+        <p>Consolidar varias empresas en un único modelo añade una capa de complejidad que no existe en proyectos de una sola empresa. La <strong>proyección a cierre</strong> fue la pieza técnica más exigente: tiene que distinguir entre meses con datos reales y meses sin ellos, y ser coherente tanto en la tabla como en el gráfico de evolución temporal.</p>
+      </div>
+      <div class="pc-overlay-pills">
+        <span class="pc-overlay-pill">Modelado contable en estrella</span>
+        <span class="pc-overlay-pill">DAX financiero</span>
+        <span class="pc-overlay-pill">Balance · PyG · Cash Flow</span>
+        <span class="pc-overlay-pill">EBITDA</span>
+        <span class="pc-overlay-pill">Proyección a cierre</span>
+        <span class="pc-overlay-pill">Drill-through a asiento</span>
+        <span class="pc-overlay-pill">Financial analytics</span>
+      </div>
+      <div class="pc-overlay-foot">
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiNDgzZjBmY2MtMDhhMy00MGIzLTlmYmItODlkMmY2NDg3ZDdmIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=a961ceadc15fe4dcfcfb" target="_blank" rel="noopener noreferrer" class="pc-overlay-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+        <span class="pc-overlay-tech">Power BI · DAX</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY 2: RFM -->
+<div class="pc-overlay" id="idx-overlay-2" role="dialog" aria-modal="true" aria-labelledby="idx-overlay-2-title" aria-hidden="true" onclick="closeIndexOverlayIfBg(event,2)">
+  <div class="pc-overlay-inner">
+    <button class="pc-overlay-close" onclick="closeIndexOverlay(2)">
+      <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pc-overlay-imgs">
+      <div class="pcov-track" id="idx-ovtrack-2">
+        <img src="./img/rfm1.png" alt="Análisis RFM — Distribuidora B2B de Hostelería 1" class="pcov-photo pcov-active" width="1200" height="720">
+        <img src="./img/rfm2.png" alt="Análisis RFM — Distribuidora B2B de Hostelería 2" class="pcov-photo" width="1200" height="720">
+      </div>
+      <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(2,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(2,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <div class="pcov-dots">
+        <button class="pcov-dot pcov-dot-active" onclick="indexOverlayPhotoNav(2,0)"></button>
+        <button class="pcov-dot" onclick="indexOverlayPhotoNav(2,1)"></button>
+      </div>
+    </div>
+    <div class="pc-overlay-copy">
+      <div class="pc-overlay-eyebrow"><span></span>Customer analytics · B2B</div>
+      <div class="pc-overlay-title" id="idx-overlay-2-title">Análisis RFM — Distribuidora B2B de Hostelería</div>
+      <div class="pc-overlay-long">
+        <p><strong>El Problema</strong></p>
+        <p>El director comercial tenía los números y no los entendía. Revenue cayendo, cartera creciendo. La primera reacción fue buscar más ventas. Pero antes había que confirmar si el problema estaba en la <strong>captación o en la retención</strong>. Sin una forma de ver el comportamiento real de cada cliente, esa pregunta no tiene respuesta.</p>
+        <p><strong>El Objetivo</strong></p>
+        <p>Clasificar a los 400 clientes según su comportamiento real de compra — cuándo compraron por última vez, con qué frecuencia y cuánto — para identificar qué segmentos estaban perdiendo actividad y <strong>cuánto revenue había en riesgo real</strong>.</p>
+        <p><strong>Mi Enfoque</strong></p>
+        <p>Construí un modelo <strong>RFM</strong> sobre el histórico de pedidos. Cada cliente recibe tres puntuaciones: <strong>Recency</strong> (días desde la última compra), <strong>Frequency</strong> (número de pedidos) y <strong>Monetary</strong> (importe total acumulado). Los cortes se calculan con <strong>percentiles dinámicos</strong> sobre toda la tabla, lo que hace que el modelo funcione bien con cualquier distribución de datos.</p>
+        <p>El modelo vive sobre un <strong>esquema en estrella</strong> con <code>Fact_Pedidos</code> en el centro y cinco dimensiones: Cliente, Fecha, Producto, Comercial y TipoEstablecimiento. El dashboard responde cuatro preguntas en una sola página: salud del negocio, distribución por segmento, evolución mensual del revenue y <strong>acción comercial recomendada para cada grupo</strong> — esta última generada como tabla HTML directamente desde una medida DAX.</p>
+        <p><strong>Hallazgos Clave</strong></p>
+        <p>El segmento <strong>Loyal concentraba 111 clientes y casi la mitad del revenue total</strong>. Llevaban meses con la recency creciendo. Más de <strong>198.000€ en clientes que antes compraban bien y que llevaban tiempo sin aparecer</strong>. Sin segmentación esa señal se pierde en el total. Los <strong>Champions eran solo 34 clientes</strong>, con recency media de 14 días y ticket medio de 4.787€, recibiendo el mismo trato que el resto.</p>
+        <p><strong>Herramientas Utilizadas</strong></p>
+        <p><strong>Power BI</strong> para el modelo y el dashboard completo con filtros por zona, establecimiento, comercial y año. <strong>DAX</strong> para los tres scores, la asignación de segmento y la tabla de acciones comerciales generada como <strong>HTML dentro de una medida</strong>.</p>
+        <p><strong>Qué Aprendí</strong></p>
+        <p>Lo complicado fue decidir los cortes de segmentación: cuándo un cliente pasa de Loyal a At Risk no puede ser un número arbitrario. Usar <strong>percentiles dinámicos</strong> en lugar de umbrales fijos fue la decisión que más mejoró la calidad del modelo. Generar una <strong>tabla HTML desde DAX</strong> obliga a pensar más en el diseño antes de escribir la primera línea de código.</p>
+      </div>
+      <div class="pc-overlay-pills">
+        <span class="pc-overlay-pill">RFM</span>
+        <span class="pc-overlay-pill">Segmentación de clientes</span>
+        <span class="pc-overlay-pill">DAX avanzado</span>
+        <span class="pc-overlay-pill">Esquema estrella</span>
+        <span class="pc-overlay-pill">Tabla HTML en DAX</span>
+        <span class="pc-overlay-pill">Percentiles dinámicos</span>
+        <span class="pc-overlay-pill">B2B analytics</span>
+        <span class="pc-overlay-pill">Customer analytics</span>
+      </div>
+      <div class="pc-overlay-foot">
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiNGQ1OWZhNmEtY2I3Ni00N2M5LTk1NWYtMTEwZTA3NWI3NmYwIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="pc-overlay-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+        <span class="pc-overlay-tech">Power BI · DAX · M Language</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
