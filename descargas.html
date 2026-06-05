@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+<link rel="shortcut icon" href="./favicon.ico">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#7a7bff">
+<title>Descargas · Borja Mora Méndez</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- Shared styles: variables, nav, footer, botones, reset -->
+<link rel="stylesheet" href="./shared.css">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PSDM6B5Z7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("consent", "default", {
+    analytics_storage:    "denied",
+    ad_storage:           "denied",
+    ad_user_data:         "denied",
+    ad_personalization:   "denied",
+    wait_for_update:      500
+  });
+  gtag("js", new Date());
+  gtag("config", "G-6PSDM6B5Z7", { anonymize_ip: true });
+  (function(){
+    var consent = localStorage.getItem("bm_cookie_consent");
+    if (consent === "accepted") {
+      gtag("consent", "update", { analytics_storage: "granted", ad_storage: "denied" });
+    }
+  })();
+</script>
+
+<meta name="description" content="Descarga gratis archivos .pbix de Power BI: Gantt nativo, widgets, Input Slicer, Slope charts, Small Multiples y técnicas avanzadas de DAX y Data Storytelling.">
+<meta name="author" content="Borja Mora Méndez">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://borjamora.es/descargas.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:url" content="https://borjamora.es/descargas.html">
+<meta property="og:title" content="Descargas Power BI — Archivos .pbix gratuitos | Borja Mora">
+<meta property="og:description" content="Descarga gratis archivos .pbix de Power BI: Gantt nativo, Input Slicer, Slope charts, Small Multiples y técnicas avanzadas de DAX y Data Storytelling.">
+<meta property="og:image" content="https://borjamora.es/img/og-descargas.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Descargas Power BI — Archivos .pbix gratuitos de Borja Mora">
+<meta property="og:site_name" content="Borja Mora">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Descargas Power BI — Archivos .pbix gratuitos | Borja Mora">
+<meta name="twitter:description" content="19 archivos .pbix listos para descargar. DAX, storytelling y técnicas avanzadas de Power BI.">
+<meta name="twitter:image" content="https://borjamora.es/img/og-descargas.png">
+
+<style>
+:root{
+  --ink:#111111;
+  --paper:#ffffff;
+  --white:#ffffff;
+  --rule:#111111;
+  --muted:#5a5a5a;
+  --muted-light:#696969;
+  --mutedB:#6e6e6e;
+  --off:#f7f7fa;
+  --purple:#7a7bff;
+  --purple2:#5a5be0;
+  --purple-light:#ededff;
+  --purple-ink:#ffffff;
+  --green:#3c8a37;
+  --green-light:#e8f5e7;
+  --gray:#e5e5e5;
+  --li:#0077b5;
+  --logo-purple:#7a7bff;
+  --ease:cubic-bezier(0.16,1,0.3,1);
+  --ease-spring:cubic-bezier(.34,1.56,.64,1);
+  --font:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  line-height:1.55;
+  font-feature-settings:"tnum" 0;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+::selection{background:var(--purple);color:#fff}
+
+/* ───────────── CONTAINERS ───────────── */
+.shell{
+  max-width:1240px;
+  margin:0 auto;
+  padding:0 clamp(20px,4vw,48px);
+}
+
+/* ───────────── HERO CON ENTRADA ORQUESTADA ───────────── */
+.hero{
+  padding:132px 0 64px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:28px;
+}
+
+/* H1: entra primero, fade-up + fade-in */
+@keyframes heroH1{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.hero-h1{
+  font-size:clamp(44px,7vw,92px);
+  font-weight:600;
+  letter-spacing:-0.045em;
+  line-height:1;
+  color:var(--ink);
+  white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+  font-feature-settings:"tnum" 1;
+  animation:heroH1 .4s var(--ease) .08s both;
+}
+.hero-h1 .dot{color:var(--purple)}
+
+.dl-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:clamp(55px,8vw,75px);
+  height:clamp(70px,12vw,130px);
+  margin:0 24px;
+  background:#111111;
+  border-radius:0;
+  vertical-align:middle;
+  user-select:none;
+  flex-shrink:0;
+}
+.dl-badge svg{
+  width:clamp(22px,3.5vw,36px);
+  height:clamp(28px,4.5vw,46px);
+  display:block;
+}
+
+/* Subtexto: entra 140ms después */
+@keyframes heroSub{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.hero-sub{
+  font-size:16px;
+  color:var(--muted);
+  line-height:1.55;
+  max-width:62ch;
+  animation:heroSub .4s var(--ease) .15s both;
+}
+
+/* Stats: entran staggered, 50ms cada una */
+@keyframes heroStat{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.hero-stats{
+  display:flex;
+  align-items:center;
+  gap:32px;
+  flex-wrap:wrap;
+  padding-top:4px;
+}
+.hero-stat{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  animation:heroStat .35s var(--ease) both;
+}
+.hero-stat:nth-child(1){animation-delay:.22s}
+.hero-stat:nth-child(2){animation-delay:.245s}
+.hero-stat:nth-child(3){animation-delay:.27s}
+
+.hero-stat-num{
+  font-size:28px;
+  font-weight:700;
+  letter-spacing:-.04em;
+  color:var(--ink);
+  font-variant-numeric:tabular-nums;
+  line-height:1;
+}
+.hero-stat-num span{color:var(--purple)}
+.hero-stat-label{
+  font-size:11px;
+  font-weight:500;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  color:var(--mutedB);
+}
+.hero-stat-sep{
+  width:1px;
+  height:32px;
+  background:var(--gray);
+  flex-shrink:0;
+}
+
+@media(max-width:820px){
+  .hero{padding:48px 0 48px;gap:20px}
+  .hero-h1{white-space:normal;font-size:clamp(40px,10vw,64px)}
+  .hero-stats{gap:20px}
+  .hero-stat-sep{display:none}
+  .dl-badge{margin:0 14px}
+}
+@media(max-width:680px){
+  .hero-h1{white-space:normal}
+  .dl-badge{margin:0 8px;width:clamp(50px,7vw,65px);height:clamp(65px,10vw,100px)}
+}
+
+/* ───────────── SEGMENTADOR · PASTILLAS CON PILL INDICATOR ───────────── */
+.seg{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 0 28px;
+  gap:24px;
+  flex-wrap:wrap;
+}
+.seg-list{
+  display:flex;align-items:center;gap:10px;
+  flex-wrap:wrap;
+  position:relative;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.seg-list::-webkit-scrollbar{display:none}
+
+/* Pill indicator: se desliza suavemente bajo el botón activo */
+.seg-pill{
+  position:absolute;
+  bottom:-10px;
+  left:0;
+  height:2px;
+  background:var(--ink);
+  border-radius:1px;
+  transition:left .2s var(--ease), width .2s var(--ease);
+  pointer-events:none;
+}
+
+.seg-btn{
+  font-family:var(--mono);
+  background:#fff;
+  border:1px solid var(--ink);
+  border-radius:999px;
+  cursor:pointer;
+  padding:9px 18px;
+  font-size:13px;
+  font-weight:500;
+  color:var(--ink);
+  letter-spacing:-.005em;
+  transition:background .15s var(--ease),color .15s var(--ease);
+  white-space:nowrap;
+  display:inline-flex;align-items:center;gap:8px;
+  position:relative;
+}
+.seg-btn:hover{background:#f2f2f2}
+.seg-btn.is-active{background:var(--ink);color:#fff}
+.seg-btn .count{
+  font-size:11px;
+  font-variant-numeric:tabular-nums;
+  font-weight:500;
+  opacity:.55;
+}
+.seg-btn.is-active .count{opacity:.7}
+
+.seg-counter{
+  font-family:var(--mono);
+  font-size:11px;font-weight:500;
+  text-transform:uppercase;letter-spacing:.16em;
+  color:var(--mutedB);
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+.seg-counter b{font-weight:600;color:var(--ink)}
+
+/* ───────────── GRID ───────────── */
+.grid-wrap{
+  border-top:1px solid var(--rule);
+  border-left:1px solid var(--rule);
+  margin-bottom:96px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+}
+@media(max-width:960px){
+  .grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:600px){
+  .grid{grid-template-columns:1fr}
+}
+
+/* ───────────── MÓDULO CON STAGGER ───────────── */
+.m{
+  position:relative;
+  display:flex;flex-direction:column;
+  padding:32px 30px 28px;
+  min-height:340px;
+  border-right:1px solid var(--rule);
+  border-bottom:1px solid var(--rule);
+  background:var(--paper);
+  color:var(--ink);
+  text-decoration:none;
+  cursor:pointer;
+  will-change:opacity,transform;
+}
+
+/* Entrada inicial con stagger: 30ms por card */
+@keyframes fadeUpCard{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.m:not(.m-soon):not(.m-filler){
+  animation:fadeUpCard .32s var(--ease) both;
+}
+
+/* Dinámico: se asigna desde JS con data-stagger */
+.m[data-stagger]{
+  animation-delay:calc(var(--stagger-idx) * 30ms + 80ms);
+}
+
+/* Estados visuales */
+.m:focus-visible{
+  outline:2px solid var(--purple);
+  outline-offset:-2px;
+}
+.m{
+  transition:background .18s var(--ease), color .12s var(--ease);
+}
+.m:hover{
+  background:#111111;
+  color:var(--purple-ink);
+}
+
+.m-head{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  margin-bottom:32px;
+}
+.m-num{
+  font-family:var(--mono);
+  font-size:12.5px;
+  font-weight:600;
+  color:var(--ink);
+  font-variant-numeric:tabular-nums;
+  letter-spacing:.02em;
+  transition:color .12s var(--ease);
+}
+.m:hover .m-num{color:#c6ff00}
+
+.m-ext{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:44px;height:44px;
+  margin:-10px -10px 0 0;
+  color:var(--mutedB);
+  transition:color .15s var(--ease), transform .25s var(--ease-spring);
+  text-decoration:none;
+  background:none;border:none;cursor:pointer;font-family:inherit;padding:0;
+  will-change:transform;
+}
+.m:hover .m-ext{color:#c6ff00}
+.m-ext:hover,
+.m:hover .m-ext:hover{color:#c6ff00; transform:scale(1.15) translate(2px,-2px)}
+.m-ext svg{width:18px;height:18px;display:block;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:square}
+
+.m-body{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+.m-head-text{
+  display:flex;
+  flex-direction:column;
+  margin-bottom:18px;
+}
+.m-title{
+  font-size:17px;
+  font-weight:700;
+  line-height:1.22;
+  letter-spacing:-.012em;
+  color:var(--ink);
+  text-wrap:balance;
+  overflow-wrap:break-word;
+  word-break:normal;
+  hyphens:auto;
+  max-width:95%;
+  margin:0;
+  transition:color .12s var(--ease);
+}
+.m:hover .m-title{color:#ffffff}
+.m-sub{
+  display:block;
+  margin:4px 0 0;
+  font-size:13.5px;
+  font-weight:400;
+  line-height:1.4;
+  letter-spacing:-.005em;
+  color:var(--muted);
+  transition:color .12s var(--ease);
+}
+.m:hover .m-sub{color:rgba(255,255,255,.8)}
+
+.m-desc{
+  font-size:13px;
+  font-weight:400;
+  line-height:1.55;
+  color:var(--muted);
+  margin:0;
+  transition:color .12s var(--ease);
+}
+.m:hover .m-desc{color:rgba(255,255,255,.85)}
+
+.m-foot{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:16px;
+  margin-top:auto;
+  padding-top:28px;
+}
+.m-tags{
+  font-family:var(--mono);
+  font-size:10px;
+  font-weight:500;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  color:var(--muted);
+  line-height:1.5;
+  text-align:left;
+  transition:color .12s var(--ease);
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.m-tags span{
+  background:transparent;
+  padding:4px 10px;
+  border-radius:12px;
+  border:1px solid var(--ink);
+  transition:background .12s var(--ease), color .12s var(--ease), border-color .12s var(--ease);
+}
+.m:hover .m-tags span{
+  background:#111111;
+  color:#ffffff;
+  border:1px solid #ffffff;
+}
+.m-tags span + span::before{
+  content:"";
+  display:none;
+}
+
+.m-dl{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:44px;height:44px;
+  margin:0 -10px -6px 0;
+  color:var(--ink);
+  flex-shrink:0;
+  transition:color .12s var(--ease), transform .2s var(--ease-spring);
+  will-change:transform;
+}
+.m:hover .m-dl{color:#c6ff00}
+.m-dl:hover,
+.m:hover .m-dl:hover{color:#c6ff00}
+.m-dl svg{width:22px;height:22px;display:block;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:square}
+
+/* ── Stamp on click: spring bounce ── */
+@keyframes stamp{
+  0%   {transform:scale(1)}
+  35%  {transform:scale(1.22)}
+  100% {transform:scale(1)}
+}
+.m-dl.is-stamp,
+.m-ext.is-stamp{
+  animation:stamp 260ms var(--ease-spring);
+}
+
+/* ── Estado oculto al filtrar ── */
+.m.is-hidden{
+  display:none;
+}
+
+/* ── Módulo "Próximamente" ── */
+.m-soon{
+  cursor:default;
+  background:
+    repeating-linear-gradient(
+      135deg,
+      transparent 0 14px,
+      rgba(10,10,10,.04) 14px 15px
+    );
+}
+.m-soon:hover{background:
+    repeating-linear-gradient(
+      135deg,
+      transparent 0 14px,
+      rgba(10,10,10,.04) 14px 15px
+    );
+  color:var(--ink);
+}
+.m-soon:hover .m-num,
+.m-soon:hover .m-title,
+.m-soon:hover .m-desc,
+.m-soon:hover .m-tags{color:inherit}
+.m-soon .m-desc{color:var(--mutedB)}
+.m-soon .m-cta-soon{
+  font-size:11px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.16em;
+  color:var(--purple);
+  text-decoration:none;
+  display:inline-flex;align-items:center;gap:8px;
+  margin-top:auto;
+  padding-top:20px;
+}
+.m-soon .m-cta-soon::after{
+  content:"";display:inline-block;width:18px;height:1px;background:currentColor;
+}
+
+/* ── Estado vacío del filtro ── */
+.empty{
+  grid-column:1 / -1;
+  padding:64px 32px;
+  text-align:center;
+  font-size:13px;
+  color:var(--mutedB);
+  text-transform:uppercase;
+  letter-spacing:.16em;
+  border-right:1px solid var(--rule);
+  border-bottom:1px solid var(--rule);
+}
+
+/* ── Badge "ya descargado" ── */
+.m-done{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:18px;height:18px;
+  border-radius:50%;
+  background:var(--purple);
+  color:#fff;
+  flex-shrink:0;
+  position:relative;
+}
+.m-done::after{
+  content:"";
+  display:block;
+  width:5px;height:9px;
+  border-right:1.5px solid #fff;
+  border-bottom:1.5px solid #fff;
+  transform:rotate(45deg) translate(-1px,-1px);
+}
+.m:hover .m-done{
+  background:#fff;
+}
+.m:hover .m-done::after{
+  border-color:var(--purple);
+}
+
+/* ───────────── SECCIÓN CIERRE CON SCROLL REVEAL ───────────── */
+@keyframes revealCierre{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.cierre{
+  border-top:1px solid var(--rule);
+  padding:80px 0 96px;
+  opacity:0;
+  transform:translateY(20px);
+}
+.cierre.in-view{
+  animation:revealCierre .5s var(--ease) forwards;
+}
+
+.cierre-copy{}
+.cierre-copy .label{
+  font-size:11px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.18em;
+  color:var(--purple);
+  margin-bottom:20px;
+}
+.cierre-copy h2{
+  font-size:clamp(28px,4vw,42px);
+  font-weight:600;
+  letter-spacing:-.035em;
+  line-height:1.1;
+  color:var(--ink);
+  margin-bottom:24px;
+  text-wrap:balance;
+}
+.cierre-copy p{
+  font-size:15px;
+  color:var(--muted);
+  line-height:1.7;
+  margin:0;
+}
+.cierre-copy p + p{
+  margin-top:12px;
+}
+
+@media(max-width:820px){
+  .cierre{
+    padding:56px 0 72px;
+  }
+}
+
+/* ───────────── FOOTER (preservado) ───────────── */
+/* ───────────── FOOTER ───────────── */
+footer {
+  background: #111111;
+  padding: 0;
+  border-top: .5px solid rgba(255,255,255,.1);
+}
+.foot-inner {
+  max-width: 1180px; margin: 0 auto;
+  padding: 64px clamp(1.5rem,5vw,4rem) 32px;
+}
+
+/* Grid de columnas */
+.foot-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+.foot-col {
+  display: flex; flex-direction: column; gap: 10px;
+}
+.foot-col--brand { gap: 12px; }
+.foot-brand-name {
+  font-size: 14px; font-weight: 700;
+  color: #ffffff; letter-spacing: -.2px;
+  text-transform: none;
+  display: block;
+}
+.foot-brand-desc {
+  font-size: 14px;
+  color: rgba(255,255,255,.7);
+  line-height: 1.5;
+  margin: 0;
+  max-width: 280px;
+}
+.foot-brand-loc {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,.5);
+  margin: 0;
+  letter-spacing: .5px;
+}
+.foot-col-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(255,255,255,.4);
+  letter-spacing: .8px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.foot-col-title::before {
+  content: '—';
+  font-weight: 300;
+}
+.foot-col a {
+  font-size: 15px;
+  color: #ffffff;
+  text-decoration: none;
+  transition: color .2s;
+  letter-spacing: -.3px;
+  width: fit-content;
+  font-weight: 400;
+}
+.foot-col a:hover {
+  color: var(--purple);
+  transition: color .15s;
+}
+
+/* Bottom bar */
+.foot-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 24px;
+  border-top: .5px solid rgba(255,255,255,.1);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.foot-copy {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: rgba(255,255,255,.5);
+  letter-spacing: .3px;
+}
+.foot-made {
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: rgba(255,255,255,.5);
+  letter-spacing: .3px;
+  flex-wrap: wrap;
+}
+.foot-tech {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  background: rgba(255,255,255,.08);
+  padding: 2px 7px;
+  border-radius: 4px;
+  color: #ffffff;
+  font-weight: 500;
+  border: .5px solid rgba(255,255,255,.12);
+}
+
+@media (max-width: 900px) {
+  .foot-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  .foot-col--brand { grid-column: 1 / -1; margin-bottom: 8px; }
+  .foot-bottom { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 520px) {
+  .foot-grid { grid-template-columns: 1fr; gap: 28px; }
+}
+
+/* ── pequeñas en móvil ── */
+@media(max-width:600px){
+  .nav-links a:not(.nav-cta):not(.active){display:none}
+  .m{min-height:300px;padding:28px 24px 24px}
+  .seg-btn{font-size:12.5px;padding:8px 14px}
+  .hero-h1{letter-spacing:-.03em}
+}
+
+/* ── Dispositivos sin hover (touch): evita estado "pegado" tras el tap ── */
+@media (hover:none){
+  .m:hover{background:var(--paper);color:var(--ink)}
+  .m:hover .m-title,
+  .m:hover .m-title,
+  .m:hover .m-sub,
+  .m:hover .m-desc,
+  .m:hover .m-num{color:inherit}
+  .m-soon:hover{background:
+    repeating-linear-gradient(135deg,transparent 0 14px,rgba(10,10,10,.04) 14px 15px)}
+}
+
+/* ── Respeta la preferencia de reducir movimiento ── */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    transition-duration:0ms !important;
+    animation-duration:0ms !important;
+    animation-iteration-count:1 !important;
+  }
+  .m:not(.m-soon):not(.m-filler){ animation:none }
+  .cierre{ opacity:1; transform:translateY(0); }
+  .cierre.in-view{ animation:none; }
+  .hero-h1, .hero-sub, .hero-stat{ animation:none; opacity:1; transform:none; }
+}
+</style>
+
+<!-- Schema.org DataDownload — mejora visibilidad en búsquedas de archivos Power BI -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {"@type":"DataDownload","@id":"https://borjamora.es/descargas.html#dl-01","name":"Gantt nativo de Power BI","description":"Diagrama de Gantt construido en Power BI sin scripts externos, solo DAX puro.","encodingFormat":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","creator":{"@id":"https://borjamora.es/#person"},"keywords":["Power BI","DAX","Gantt","gestión de proyectos"],"inLanguage":"es-ES"},
+    {"@type":"DataDownload","@id":"https://borjamora.es/descargas.html#dl-02","name":"Control de presupuestos Power BI","description":"Dashboard de control presupuestario con Top N nativo y concentración de desviaciones.","encodingFormat":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","creator":{"@id":"https://borjamora.es/#person"},"keywords":["Power BI","presupuestos","control","DAX"],"inLanguage":"es-ES"},
+    {"@type":"DataDownload","@id":"https://borjamora.es/descargas.html#dl-04","name":"Comparador de períodos Power BI","description":"Variación porcentual entre dos períodos seleccionables. Diseño para análisis interanual.","encodingFormat":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","creator":{"@id":"https://borjamora.es/#person"},"keywords":["Power BI","comparador","time intelligence","DAX"],"inLanguage":"es-ES"},
+    {"@type":"DataDownload","@id":"https://borjamora.es/descargas.html#dl-05","name":"Dashboard financiero adaptativo Power BI","description":"El usuario selecciona el KPI a analizar; el visual se adapta dinámicamente.","encodingFormat":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","creator":{"@id":"https://borjamora.es/#person"},"keywords":["Power BI","financiero","DAX","parámetros de campo"],"inLanguage":"es-ES"},
+    {"@type":"DataDownload","@id":"https://borjamora.es/descargas.html#dl-06","name":"Resaltar sin filtrar en Power BI","description":"Técnica para destacar elementos en un visual sin eliminar el contexto del resto.","encodingFormat":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","creator":{"@id":"https://borjamora.es/#person"},"keywords":["Power BI","resaltar","data storytelling","DAX"],"inLanguage":"es-ES"},
+    {"@type":"DataDownload","@id":"https://borjamora.es/descargas.html#dl-10","name":"Comparativa entre productos Power BI","description":"Vista anual con zoom trimestral automático. Análisis multidimensional de producto.","encodingFormat":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","creator":{"@id":"https://borjamora.es/#person"},"keywords":["Power BI","storytelling","small multiples","DAX"],"inLanguage":"es-ES"},
+    {"@type":"DataDownload","@id":"https://borjamora.es/descargas.html#dl-18","name":"KPI Card adaptativo Power BI","description":"Tarjeta KPI donde el usuario elige qué métrica visualizar mediante parámetro de campo.","encodingFormat":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","creator":{"@id":"https://borjamora.es/#person"},"keywords":["Power BI","KPI card","parámetros","DAX","data storytelling"],"inLanguage":"es-ES"}
+  ]
+}
+</script>
+</head>
+<body>
+<a href="#main-content" class="skip-link" style="position:absolute;left:-9999px;top:4px;z-index:9999;background:var(--ink);color:#fff;padding:8px 16px;font-size:13px;font-weight:600;text-decoration:none;border-radius:4px" onfocus="this.style.left='4px'" onblur="this.style.left='-9999px'">Saltar al contenido</a>
+
+<!-- ─────────── NAV ─────────── -->
+<nav id="nav" aria-label="Navegación principal">
+  <a href="./index.html" class="logo" aria-label="Borja Mora — Inicio"><span id="logoText"></span><span class="logo-dot"></span></a>
+  <div class="nav-links">
+    <a href="./index.html">Inicio</a>
+    <a href="./sobre-mi.html">Sobre mí</a>
+    <a href="./proyectos.html">Proyectos</a>
+    <a href="./descargas.html" class="active" aria-current="page">Descargas</a>
+    <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event', 'clic_linkedin', { location: 'nav' });">LinkedIn</a>
+    <a id="navEmailBtn" href="#" target="_blank" rel="noopener noreferrer" class="nav-cta btn" onclick="gtag('event', 'clic_email', { location: 'nav' });"><span class="cta-text-wrap"><span>Contacto</span><span>¿Hablamos?</span></span></a>
+  </div>
+  <button class="nav-burger" id="navBurger" aria-label="Abrir menú" aria-expanded="false" aria-controls="navDrawer">
+    <span class="nav-burger-line"></span>
+    <span class="nav-burger-line"></span>
+    <span class="nav-burger-line"></span>
+  </button>
+</nav>
+
+<!-- ─── MOBILE DRAWER ─── -->
+<div class="nav-drawer" id="navDrawer" role="dialog" aria-modal="true" aria-label="Menú de navegación">
+  <div class="nav-drawer-backdrop" id="navBackdrop"></div>
+  <div class="nav-drawer-panel">
+    <div class="nav-drawer-head">
+      <span class="nav-drawer-brand">Borja Mora.</span>
+      <button class="nav-drawer-close" id="navDrawerClose" aria-label="Cerrar menú">Cerrar ×</button>
+    </div>
+    <nav class="nav-drawer-links" aria-label="Navegación móvil">
+      <a href="./index.html">Inicio</a>
+      <a href="./sobre-mi.html">Sobre mí</a>
+      <a href="./proyectos.html">Proyectos</a>
+      <a href="./descargas.html" class="active" aria-current="page">Descargas</a>
+    </nav>
+    <div class="nav-drawer-foot">
+      <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="nav-drawer-foot-item" onclick="gtag('event','clic_linkedin',{location:'drawer'});">LinkedIn</a>
+      <a id="drawerEmailBtn" href="#" target="_blank" rel="noopener noreferrer" class="nav-drawer-foot-item" onclick="gtag('event','clic_email',{location:'drawer'});">Contactar</a>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var burger = document.getElementById('navBurger');
+  var drawer = document.getElementById('navDrawer');
+  var closeBtn = document.getElementById('navDrawerClose');
+  var backdrop = document.getElementById('navBackdrop');
+  if(!burger||!drawer) return;
+  function open(){ drawer.classList.add('open'); burger.setAttribute('aria-expanded','true'); burger.setAttribute('aria-label','Cerrar menú'); document.body.style.overflow='hidden'; document.body.style.position='fixed'; document.body.style.width='100%'; document.body.style.position='fixed'; document.body.style.width='100%'; }
+  function close(){ drawer.classList.remove('open'); burger.setAttribute('aria-expanded','false'); burger.setAttribute('aria-label','Abrir menú'); document.body.style.overflow=''; document.body.style.position=''; document.body.style.width=''; }
+  burger.addEventListener('click', function(){ drawer.classList.contains('open') ? close() : open(); });
+  if(closeBtn) closeBtn.addEventListener('click', close);
+  if(backdrop) backdrop.addEventListener('click', close);
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') close(); });
+  var navEmail = document.getElementById('navEmailBtn');
+  var drawerEmail = document.getElementById('drawerEmailBtn');
+  if(navEmail && drawerEmail){ var obs = new MutationObserver(function(){ drawerEmail.href = navEmail.href; }); obs.observe(navEmail,{attributes:true,attributeFilter:['href']}); if(navEmail.href && navEmail.href !== '#') drawerEmail.href = navEmail.href; }
+})();
+</script>
+
+<!-- ─────────── PÁGINA ─────────── -->
+<div class="shell">
+
+  <!-- Hero -->
+  <header class="hero" id="main-content">
+    <h1 class="hero-h1">Archivos .pbix<span class="dl-badge" aria-hidden="true"><svg viewBox="0 0 36 46" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="18" y1="2" x2="18" y2="36" stroke="#c6ff00" stroke-width="3" stroke-linecap="square"/><polyline points="6,26 18,40 30,26" stroke="#c6ff00" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter" fill="none"/></svg></span></h1>
+    <p class="hero-sub">Proyectos desarrollados y compartidos en LinkedIn. Descarga el archivo, explora el modelo de datos y úsalo como referencia para tus propios desarrollos en Power BI.</p>
+    <div class="hero-stats" aria-hidden="true">
+      <div class="hero-stat">
+        <div class="hero-stat-num"><span id="stat-files">0</span></div>
+        <div class="hero-stat-label">Archivos .pbix</div>
+      </div>
+      <div class="hero-stat-sep"></div>
+      <div class="hero-stat">
+        <div class="hero-stat-num"><span id="stat-cats">0</span></div>
+        <div class="hero-stat-label">Categorías</div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Segmentador -->
+  <div class="seg" role="group" aria-label="Filtrar por categoría">
+    <div class="seg-list">
+      <div class="seg-pill" id="seg-pill"></div>
+      <button class="seg-btn is-active" data-filter="all" aria-pressed="true">Todos<span class="count">19</span></button>
+      <button class="seg-btn" data-filter="gestion" aria-pressed="false">Gestión de proyectos<span class="count">3</span></button>
+      <button class="seg-btn" data-filter="ventas" aria-pressed="false">Ventas y análisis comercial<span class="count">6</span></button>
+      <button class="seg-btn" data-filter="storytelling" aria-pressed="false">Data Storytelling<span class="count">5</span></button>
+      <button class="seg-btn" data-filter="slicer" aria-pressed="false">Input Slicer<span class="count">4</span></button>
+    </div>
+    <div class="seg-counter"><b id="seg-visible">19</b> / 19 archivos</div>
+  </div>
+
+  <!-- Grid -->
+  <div class="grid-wrap">
+    <div class="grid" id="grid"></div>
+  </div>
+
+</div>
+
+<!-- ─────────── SECCIÓN CIERRE ─────────── -->
+<div class="shell">
+  <section class="cierre" id="cierre-section" aria-label="Por qué se comparten estos recursos">
+    <div class="cierre-copy">
+      <p class="label">Por qué lo comparto</p>
+      <h2>No hay mejor forma de aprender DAX que ver cómo funciona por dentro.</h2>
+      <p>Cada archivo empezó con una pregunta de negocio que no tenía respuesta clara. Lo que encontrarás no son ejercicios — son soluciones que funcionaron, con sus decisiones de modelado, su DAX y su lógica visible. Descárgalos, ábrelos, rómpelos.</p>
+      <p>Si algo no te cuadra o quieres saber cómo está construido, escríbeme. Para eso también están.</p>
+    </div>
+  </section>
+</div>
+
+<!-- ─────────── FOOTER ─────────── -->
+<!-- ─────────── FOOTER ─────────── -->
+<footer style="margin: 0px">
+  <div class="foot-inner">
+
+    <!-- Grid columnas -->
+    <div class="foot-grid">
+      <div class="foot-col foot-col--brand">
+        <div class="foot-brand-name">Borja Mora.</div>
+        <p class="foot-brand-desc" style="font-size: 13px">Construyo espacios donde los datos calan.</p>
+        <p class="foot-brand-loc">Madrid, España</p>
+        <p class="foot-brand-loc" style="color:rgba(60,138,55,.85);display:flex;align-items:center;gap:6px;margin-top:4px;">
+  <span style="width:5px;height:5px;border-radius:50%;background:#3c8a37;display:inline-block;flex-shrink:0;"></span>
+  Disponible para nuevas oportunidades
+</p>
+      </div>
+
+      <div class="foot-col">
+        <div class="foot-col-title">Navegación</div>
+        <a href="./index.html">Inicio</a>
+        <a href="./sobre-mi.html">Sobre mí</a>
+        <a href="./proyectos.html">Proyectos</a>
+        <a href="./descargas.html">Descargas</a>
+      </div>
+
+      <div class="foot-col">
+        <div class="foot-col-title">Trabajo</div>
+        <a href="./proyectos.html#power-bi">Power BI</a>
+        <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio" target="_blank" rel="noopener noreferrer">Python · SQL · R</a>
+        <a href="https://github.com/BORJAMOME/DAX-LAB" target="_blank" rel="noopener noreferrer">DAX Lab</a>
+      </div>
+
+      <div class="foot-col">
+        <div class="foot-col-title">Sígueme</div>
+        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_linkedin',{location:'footer'});">LinkedIn</a>
+        <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_github',{location:'footer'});">GitHub</a>
+      </div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="foot-bottom">
+      <div class="foot-copy">© 2026 Borja Mora Méndez · Todos los derechos reservados</div>
+      <div class="foot-made">
+        <span>Diseñado y construido por mí</span>
+        <span class="foot-tech">HTML</span>
+        <span class="foot-tech">CSS</span>
+        <span class="foot-tech">JS</span>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+<script>
+const ITEMS = [
+  {n:"01", cat:"gestion", title:"Gantt nativo de Power BI", subtitle:"Sin scripts, solo DAX puro",
+    desc:"Barras por tarea, línea de «hoy» automática, segmentación dinámica y tooltips HTML. Toda la lógica en DAX puro: duración, solapamiento y progreso. Cero visuals externos.",
+    tags:["Gantt","DAX","Tooltips HTML"],
+    dl:"https://drive.google.com/drive/folders/1D46f-JXAMrCYbSXHzCutN5nv7hSgEoYG?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-datavisualization-activity-7360648315782283264-NQ4T"},
+  {n:"02", cat:"gestion", title:"Control de presupuestos", subtitle:"Top N nativo · concentración real en segundos",
+    desc:"Detecta dónde se concentra la inversión antes de que sea tarde. Lógica Top N (1, 3 o 5 proyectos), narrativa automática con DAX y visualización del peso real de cada partida sin ruido.",
+    tags:["Top N dinámico","Budget","DAX narrativo"],
+    dl:"https://drive.google.com/drive/folders/10WcoChMOO1KDmNm0a2adNixgIDEyRLBg?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-salesanalytics-activity-7418539287245639680-0Ynp"},
+  {n:"03", cat:"gestion", title:"Control de presupuestos", subtitle:"Top N nativo · concentración real en segundos",
+    desc:"Analiza dónde se concentra realmente la inversión. Lógica Top N nativa (1, 3 o 5 proyectos), peso real de cada partida sin ruido y narrativa automática con DAX para interpretar la distribución.",
+    tags:["Top N dinámico","Budget","DAX narrativo"],
+    dl:"https://drive.google.com/drive/folders/1qOBguC9N5qNSkoPBoLHJnOlaXqyPWgTy?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dashboarddesign-dataviz-activity-7374137020979339264-7kBX"},
+  {n:"04", cat:"ventas", title:"Comparador de períodos", subtitle:"Variación % entre dos momentos en un clic",
+    desc:"Selecciona dos años y ve la variación porcentual al instante. Resalta solo las columnas relevantes, atenúa el resto y añade etiquetas dinámicas que interpretan el cambio. Sin cálculo mental.",
+    tags:["Variación %","Comparación temporal","DAX"],
+    dl:"https://drive.google.com/drive/folders/1bev8QdZ-oc38V70oOrk4uaZU5DNbd5dk?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7376214576889098240-JzRp"},
+  {n:"05", cat:"ventas", title:"Dashboard financiero adaptativo", subtitle:"El usuario decide la pregunta, el visual se adapta",
+    desc:"Beneficio, unidades y margen % en un mismo visual. Filtra por año, mes o día sin perder contexto. Colores que reaccionan al rendimiento y matriz de calendario interactiva. El segmentador dirige, no solo filtra.",
+    tags:["Financiero","Segmentador","Calendario"],
+    dl:"https://drive.google.com/drive/folders/1cBwC5p3a60n_xWjv5Vb0RzCfGdT6LChk?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7379158005759508480-DD9P"},
+  {n:"06", cat:"ventas", title:"Resaltar sin filtrar", subtitle:"Destaca lo que importa sin perder el contexto",
+    desc:"Resalta proyectos específicos sin eliminar el resto. Segmentadores que no rompen la visión completa y lectura financiera inmediata. Ves la parte y el todo a la vez.",
+    tags:["Resaltado","Contexto","TopN"],
+    dl:"https://drive.google.com/drive/folders/15OMJxVmbvQuYkhMLEmd4QKVU7QTVY675?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7381750867634487296-8LRO"},
+  {n:"07", cat:"ventas", title:"Variación sobre barras", subtitle:"El cambio visible directamente sobre cada barra",
+    desc:"Variación porcentual vs. mes anterior sobre cada barra, colores automáticos según tipo de cambio e indicadores que destacan los saltos más fuertes. Sin tablas auxiliares ni cálculos externos.",
+    tags:["Variación %","Ventas","Anomalías"],
+    dl:"https://drive.google.com/drive/folders/1CA-Q8laMoZiiB5OaNzTY3NHlZ8qJZV2e?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7391493455455264769-Q8Ya"},
+  {n:"08", cat:"ventas", title:"Beneficio vs. Objetivo", subtitle:"Cumplimiento mensual con contexto real",
+    desc:"Objetivo dinámico ajustable, colores automáticos por cumplimiento y porcentaje sobre cada barra. Línea de objetivo + promedio anual siempre visibles. El subtítulo se actualiza solo según los meses que alcanzan la meta.",
+    tags:["Objetivo dinámico","Cumplimiento","KPI financiero"],
+    dl:"https://drive.google.com/drive/folders/18uECm3MAfE4Vh75ThBU6tHD84SRzb00Q?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7394778746525913088-iwtA"},
+  {n:"09", cat:"ventas", title:"Small multiples por producto", subtitle:"Cada producto contra su propio promedio",
+    desc:"Small multiples donde cada producto tiene su propio gráfico y su línea de promedio fija. Highlight dinámico por mes, etiqueta comparativa con diferencia en unidades y %. Sin comparaciones forzadas entre productos.",
+    tags:["Small multiples","Promedio dinámico","Productos"],
+    dl:"https://drive.google.com/drive/folders/1N1-Va0cOTAwu4jaAHjcvfedo7dfSqNK1?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7399477094331858945-K9HS"},
+  {n:"10", cat:"storytelling", title:"Comparativa entre productos", subtitle:"Anual + zoom trimestral automático",
+    desc:"Comparativa anual con highlight del periodo seleccionado y zoom trimestral automático que aparece al elegir un año. Etiqueta narrativa dinámica que resume lo que ocurre. Ves el resultado y cómo se construyó.",
+    tags:["Comparativa","Zoom trimestral","Narrativa"],
+    dl:"https://drive.google.com/drive/folders/1Pwr_1y33M3iihwwj6kgq1atKhtBkvnMT?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7404201819641597954-wwos"},
+  {n:"11", cat:"storytelling", title:"Evolución con narrativa", subtitle:"El cambio entre periodos, explicado en el visual",
+    desc:"Tooltip dinámico que explica el cambio entre columnas, etiqueta automática del mejor año y parámetros dinámicos nativos. Storytelling visual sin ruido: entiendes la evolución sin leer una sola tabla.",
+    tags:["Tooltips dinámicos","Parámetros","Narrativa"],
+    dl:"https://drive.google.com/drive/folders/1retbVvPTUQHYaqZQQT0Ci9cTT3cW56iY?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7421562966178889729-5y8L"},
+  {n:"12", cat:"ventas", title:"Dashboard de alertas comerciales", subtitle:"El dashboard que alerta, no solo informa",
+    desc:"Cumplimiento de objetivo visible por producto de un vistazo. Sin revisar tablas ni comparar cifras: ves qué productos cumplen, cuáles están por debajo y cuáles requieren acción inmediata.",
+    tags:["Alertas","Cumplimiento","Comercial"],
+    dl:"https://drive.google.com/drive/folders/1P-LXTowY4CFvLdhBCAut2Qgxsuw-bE6D?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7427045290324570112-v3s2"},
+  {n:"13", cat:"storytelling", title:"Comparador de periodos flexible", subtitle:"Tú eliges la referencia, el visual hace el resto",
+    desc:"Elige fecha de referencia, periodo (30, 90, 180, 365 días o acumulado) y métrica. Calcula automáticamente el rango comparado, muestra variación en € y % con color. Sin fechas raras ni suposiciones.",
+    tags:["Periodos dinámicos","Variación","Contexto"],
+    dl:"https://drive.google.com/drive/folders/1GSQm1ZrgiwG_nFgdOocOp1eUf_3FgVR-?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-businessitelligence-activity-7430635213443035137-TJbj"},
+  {n:"14", cat:"storytelling", title:"TopN con puesto de honor", subtitle:"Reduce el ruido, enfoca la decisión",
+    desc:"TopN dinámico con RANKX que enfoca solo las barras que importan. El resto pasa a segundo plano. Menos análisis, más claridad: cuando el gráfico te obliga a mirar dos barras en lugar de diez, la decisión aparece sola.",
+    tags:["TopN","RANKX","Reducción de ruido"],
+    dl:"https://drive.google.com/drive/folders/1mZj6EO8sKoNVlDjmYZtnXSVqbUDtb9jH?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7432461459080765440-Y9EH"},
+  {n:"15", cat:"storytelling", title:"Zoom visual sobre outliers", subtitle:"El gráfico que no miente",
+    desc:"Cuando un producto domina la escala, el resto parece igual aunque no lo sea. 4 medidas DAX y capas visuales generan un doble zoom: magnitud real del dato dominante y diferencias reales entre todos los demás. Sin visuals de pago.",
+    tags:["Outliers","Doble escala","DAX"],
+    dl:"https://drive.google.com/drive/folders/1CVcug_-gF6urL1bz9dorhZIpV0t17bm-?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7437118505080020992-m7Em"},
+  {n:"16", cat:"slicer", title:"Slope Chart con small multiples", subtitle:"Evolución, variación, peso y ranking en un solo bloque",
+    desc:"Cada producto concentra su evolución, variación, peso y ranking en un único bloque visual. Cambia de unidades a ingresos con un clic y el ranking se transforma. Todo nativo, sin visuals externos.",
+    tags:["Slope chart","Small multiples","DAX"],
+    dl:"https://drive.google.com/drive/folders/1jUdeMz4ziWdyBJiKA48-JYqUdO_JqZp4?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7439647400132116480-1PFW"},
+  {n:"17", cat:"slicer", title:"Explorador de ventas por cliente", subtitle:"Top N · filtro por país · títulos que reaccionan",
+    desc:"Elige el Top N de clientes, filtra por país y el gráfico destaca automáticamente la selección. Títulos y subtítulos que cambian dinámicamente. Input Slicer que centraliza todas las decisiones en un solo sitio.",
+    tags:["Top N dinámico","Títulos dinámicos","Input Slicer"],
+    dl:"https://drive.google.com/drive/folders/1l5ewaopHRJJlwrhoGSZamUSy_TiMGhH-?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7442540385882554368-y4go"},
+  {n:"18", cat:"slicer", title:"KPI Card adaptativo", subtitle:"El usuario elige qué KPI ver, tú diseñas el sistema",
+    desc:"Ya no diseñas un KPI fijo. El usuario escribe su métrica (ventas, margen, ticket medio) y el modelo traduce, calcula y ajusta el formato solo. Todo nativo, sin código.",
+    tags:["Input Slicer","KPI dinámico","DAX"],
+    dl:"https://drive.google.com/drive/folders/1OlNUFuw8OL0m9zDgYWBeUMXJFsN_FwlN?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-businessintelligence-activity-7452022964017008640-Z-VH"},
+  {n:"19", cat:"slicer", title:"Resaltar sin ocultar", subtitle:"Filtrar destruye contexto · resaltar lo mantiene",
+    desc:"Escribes España y los clientes españoles cobran vida — el resto no desaparece, se aparta. Sigues viendo el negocio completo. Input Slicer + DAX + Formato Condicional.",
+    tags:["Input Slicer","Formato condicional","Contexto"],
+    dl:"https://drive.google.com/drive/folders/1_uE5tEbIOsRybNqSrlTwXy4Zr31jvyH3?usp=drive_link",
+    li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7458166054264111104-Hov2"}
+];
+
+const ICON_EXT = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"/><path d="M9 7h8v8"/></svg>';
+const ICON_DL  = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v13"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/></svg>';
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function tagsHtml(arr){
+  return arr.map(t=>`<span>${esc(t)}</span>`).join("");
+}
+
+function moduleHtml(it, idx){
+  return `
+  <div class="m" data-cat="${it.cat}" data-href="${esc(it.dl)}" data-id="${esc(it.n)}" data-stagger tabindex="0" role="link" aria-label="Descargar ${esc(it.title)}" style="--stagger-idx:${idx}">
+    <div class="m-head">
+      <span class="m-num">Nº ${esc(it.n)}</span>
+      <button class="m-ext" data-href="${esc(it.li)}" aria-label="Ver post en LinkedIn">${ICON_EXT}</button>
+    </div>
+    <div class="m-body">
+      <div class="m-head-text">
+        <h3 class="m-title">${esc(it.title)}</h3>
+        ${it.subtitle?`<p class="m-sub">${esc(it.subtitle)}</p>`:""}
+      </div>
+      <p class="m-desc">${esc(it.desc)}</p>
+    </div>
+    <div class="m-foot">
+      <div class="m-tags">${tagsHtml(it.tags)}</div>
+      <span class="m-dl" aria-hidden="true">${ICON_DL}</span>
+    </div>
+  </div>`;
+}
+
+function soonHtml(n, label){
+  return `
+  <div class="m m-soon" data-cat="soon" aria-hidden="true" inert>
+    <div class="m-head">
+      <span class="m-num">Nº ${n}</span>
+    </div>
+    <div class="m-body">
+      <div class="m-head-text">
+        <h3 class="m-title" style="opacity:.4">En desarrollo</h3>
+        <p class="m-sub" style="opacity:.4">Próxima publicación</p>
+      </div>
+      <p class="m-desc" style="opacity:.35">Sígueme en LinkedIn para ser el primero en descargar el siguiente archivo.</p>
+    </div>
+    <div class="m-foot">
+      <a class="m-cta-soon" href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" tabindex="-1">Seguir en LinkedIn</a>
+      <span></span>
+    </div>
+  </div>`;
+}
+
+function render(){
+  const grid = document.getElementById('grid');
+  let html = ITEMS.map((it, idx) => moduleHtml(it, idx)).join("");
+  
+  // rellenar la última fila si quedan huecos (máx 1 card "En desarrollo")
+  const total = ITEMS.length;
+  const cols = 3;
+  const remainder = total % cols;
+  if(remainder !== 0){
+    const next = String(total + 1).padStart(2,"0");
+    html += soonHtml(next);
+  }
+  grid.innerHTML = html;
+
+  // Helper: dispara evento GA4 de descarga
+  function trackDownload(card, trigger){
+    if(typeof gtag !== 'function') return;
+    const title = card.querySelector('.m-title')?.textContent?.trim() || '';
+    const cat   = card.dataset.cat || '';
+    gtag('event', 'descarga_pbix', {
+      file_id:       card.dataset.id,
+      file_title:    title,
+      file_category: cat,
+      trigger:       trigger   // 'card' | 'arrow'
+    });
+  }
+
+  // Card principal: click y Enter/Space abren la descarga
+  grid.querySelectorAll('.m[data-href]').forEach(card=>{
+    const openCard = e => {
+      if(e.target.closest('.m-ext,.m-dl')) return;
+      stamp(card.querySelector('.m-dl'));
+      markDownloaded(card.dataset.id);
+      trackDownload(card, 'card');
+      window.open(card.dataset.href,'_blank','noopener');
+    };
+    card.addEventListener('click', openCard);
+    card.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){e.preventDefault();openCard(e);} });
+  });
+
+  // Botón LinkedIn
+  grid.querySelectorAll('.m-ext[data-href]').forEach(el=>{
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      stamp(el);
+      window.open(el.dataset.href,'_blank','noopener');
+    });
+  });
+
+  // Stamp en el icono de descarga + abrir enlace
+  grid.querySelectorAll('.m-dl').forEach(el=>{
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      stamp(el);
+      const card = el.closest('.m[data-href]');
+      if(card){
+        markDownloaded(card.dataset.id);
+        trackDownload(card, 'arrow');
+        window.open(card.dataset.href,'_blank','noopener');
+      }
+    });
+  });
+
+  restoreDownloadedBadges();
+}
+
+// ────────────── DESCARGA PERSISTIDA (localStorage) ──────────────
+const DL_KEY = 'borjamora_dl_';
+
+function markDownloaded(id){
+  try{ localStorage.setItem(DL_KEY + id, '1'); } catch(e){}
+  updateDownloadedBadge(id);
+}
+
+function updateDownloadedBadge(id){
+  const card = document.querySelector(`.m[data-id="${id}"]`);
+  if(!card) return;
+  if(!card.querySelector('.m-done')){
+    const badge = document.createElement('span');
+    badge.className = 'm-done';
+    badge.setAttribute('aria-label', 'Ya descargado');
+    badge.title = 'Ya descargado';
+    card.querySelector('.m-head').appendChild(badge);
+  }
+}
+
+function restoreDownloadedBadges(){
+  try{
+    ITEMS.forEach(it=>{
+      if(localStorage.getItem(DL_KEY + it.n)){
+        updateDownloadedBadge(it.n);
+      }
+    });
+  } catch(e){}
+}
+
+function stamp(el){
+  el.classList.remove('is-stamp');
+  void el.offsetWidth;
+  el.classList.add('is-stamp');
+  el.addEventListener('animationend', () => el.classList.remove('is-stamp'), {once:true});
+}
+
+function applyFilter(filter){
+  const grid = document.getElementById('grid');
+  const mods = grid.querySelectorAll('.m');
+  let visible = 0;
+  let total = 0;
+
+  mods.forEach(m=>{
+    const cat = m.dataset.cat;
+    const show = cat==='soon' ? filter==='all' : (filter==='all' || cat===filter);
+    m.classList.toggle('is-hidden', !show);
+    if(cat!=='soon' && cat!=='filler'){
+      if(filter==='all' || cat===filter) total++;
+    }
+    if(show && cat!=='soon') visible++;
+  });
+
+  grid.querySelectorAll('.m-filler,.m-empty').forEach(e=>e.remove());
+
+  const cols = window.matchMedia('(max-width:600px)').matches ? 1
+             : window.matchMedia('(max-width:960px)').matches ? 2 : 3;
+
+  if(visible===0){
+    const empty = document.createElement('div');
+    empty.className='empty m-empty';
+    empty.textContent='Sin archivos en esta categoría';
+    grid.appendChild(empty);
+  } else {
+    const visibleTotal = grid.querySelectorAll('.m:not(.is-hidden)').length;
+    const rem = visibleTotal % cols;
+    if(rem!==0 && cols>1){
+      for(let i=0;i<cols-rem;i++){
+        const div=document.createElement('div');
+        div.className='m m-filler';
+        div.style.cssText='cursor:default;pointer-events:none';
+        div.setAttribute('aria-hidden','true');
+        grid.appendChild(div);
+      }
+    }
+  }
+
+  document.getElementById('seg-visible').textContent=visible;
+  // Actualizar denominador dinámicamente según filtro
+  const counterEl = document.querySelector('.seg-counter');
+  if(counterEl){
+    const denom = filter==='all' ? ITEMS.length : ITEMS.filter(i=>i.cat===filter).length;
+    counterEl.innerHTML = `<b id="seg-visible">${visible}</b> / ${denom} archivos`;
+  }
+}
+
+// ────────────── INIT ──────────────
+render();
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  const catParam = params.get('cat') || 'all';
+  const targetBtn = document.querySelector(`.seg-btn[data-filter="${catParam}"]`);
+  if(targetBtn && catParam !== 'all'){
+    document.querySelectorAll('.seg-btn').forEach(b=>{
+      b.classList.remove('is-active');
+      b.setAttribute('aria-pressed','false');
+    });
+    targetBtn.classList.add('is-active');
+    targetBtn.setAttribute('aria-pressed','true');
+  }
+  applyFilter(catParam);
+})();
+
+// ────────────── PILL INDICATOR ──────────────
+function updatePillIndicator(){
+  const activeBtn = document.querySelector('.seg-btn.is-active');
+  const pill = document.getElementById('seg-pill');
+  if(activeBtn){
+    const left = activeBtn.offsetLeft;
+    const width = activeBtn.offsetWidth;
+    pill.style.left = left + 'px';
+    pill.style.width = width + 'px';
+  }
+}
+updatePillIndicator();
+window.addEventListener('resize', updatePillIndicator);
+// Recalcular tras carga completa de fuentes para evitar desplazamiento incorrecto
+if(document.fonts && document.fonts.ready){
+  document.fonts.ready.then(updatePillIndicator);
+}
+
+// ────────────── COUNT-UP CON INTERSECTION OBSERVER ──────────────
+function countUp(el, target, duration){
+  let hasAnimated = false;
+  const startAnimation = () => {
+    if(hasAnimated) return;
+    hasAnimated = true;
+    const start = performance.now();
+    const update = now => {
+      const p = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(ease * target);
+      if(p < 1) requestAnimationFrame(update);
+    };
+    requestAnimationFrame(update);
+  };
+  
+  const observer = new IntersectionObserver(([entry]) => {
+    if(entry.isIntersecting) {
+      startAnimation();
+      observer.unobserve(el);
+    }
+  }, { threshold: 0.5 });
+  
+  observer.observe(el);
+}
+
+const cats = [...new Set(ITEMS.map(i=>i.cat))].length;
+countUp(document.getElementById('stat-files'), ITEMS.length, 900);
+countUp(document.getElementById('stat-cats'), cats, 900);
+
+// ────────────── SEGMENTADOR EVENTOS ──────────────
+document.querySelectorAll('.seg-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.seg-btn').forEach(b=>{
+      b.classList.remove('is-active');
+      b.setAttribute('aria-pressed','false');
+    });
+    btn.classList.add('is-active');
+    btn.setAttribute('aria-pressed','true');
+    const f = btn.dataset.filter;
+    applyFilter(f);
+    updatePillIndicator();
+    /* ── Estado URL: ?cat=dax o quitar param si es "all" ── */
+    const url = new URL(window.location);
+    if(f === 'all'){ url.searchParams.delete('cat'); }
+    else           { url.searchParams.set('cat', f); }
+    history.pushState({cat: f}, '', url);
+  });
+});
+
+// ────────────── RE-FILL AL REDIMENSIONAR ──────────────
+let _t;
+window.addEventListener('resize', ()=>{
+  clearTimeout(_t);
+  _t = setTimeout(()=>{
+    const active = document.querySelector('.seg-btn.is-active');
+    applyFilter(active ? active.dataset.filter : 'all');
+  }, 120);
+});
+
+// ────────────── NAV SCROLL ──────────────
+const nav = document.getElementById('nav');
+window.addEventListener('scroll',()=> nav.classList.toggle('scrolled', scrollY > 40));
+
+// ────────────── TYPING EFFECT LOGO ──────────────
+(function(){
+  const el = document.getElementById('logoText');
+  const text = 'Borja Mora';
+  let i = 0;
+  function type() {
+    if (i < text.length) {
+      el.textContent += text[i];
+      i++;
+      setTimeout(type, i === 1 ? 300 : 80 + Math.random() * 40);
+    } else {
+      setTimeout(() => el.classList.add('done'), 1200);
+    }
+  }
+  setTimeout(type, 400);
+})();
+
+// ────────────── SCROLL REVEAL PARA SECCIÓN CIERRE ──────────────
+function observeCierre(){
+  const cierreSection = document.getElementById('cierre-section');
+  const observer = new IntersectionObserver(([entry]) => {
+    if(entry.isIntersecting) {
+      cierreSection.classList.add('in-view');
+      observer.unobserve(cierreSection);
+    }
+  }, { threshold: 0.3 });
+  
+  observer.observe(cierreSection);
+}
+observeCierre();
+
+// ────────────── EMAIL OBFUSCADO ──────────────
+(function(){
+  var su = encodeURIComponent('Hola Borja — Me gustaría hablar contigo');
+  var body = encodeURIComponent('Hola Borja,\n\nHe visto tu portfolio y me gustaría hablar contigo sobre...\n\n');
+  var e = atob('Ym9yamEubW9yYS5tZW5kZXpAZ21haWwuY29t');
+  var url = 'https://mail.google.com/mail/u/0/?fs=1&to=' + e + '&su=' + su + '&body=' + body + '&tf=cm';
+  var navBtn = document.getElementById('navEmailBtn');
+  if (navBtn) navBtn.href = url;
+})();
+</script>
+</body>
+</html>
