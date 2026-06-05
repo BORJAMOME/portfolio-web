@@ -702,7 +702,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 .proj-section { background: var(--white); border-top: none; }
 .proj-section > .c { max-width: 100%; padding: 0 clamp(1.5rem,4vw,5rem); margin: 0 auto; }
 .proj-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 52px; gap: 24px; flex-wrap: wrap; }
-.proj-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0; align-items: stretch; border-left: 0.5px solid #111111; border-top: 0.5px solid #111111; }
+.proj-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; align-items: stretch; border-left: 0.5px solid #111111; border-top: 0.5px solid #111111; }
 
 .proj-featured {
   grid-row: span 2;
@@ -2355,14 +2355,13 @@ footer {
       
       <!-- Subtitle — voz coherente con el headline -->
       <p class="hero-sub">
-        Antes de cualquier visualización, una pregunta: ¿qué hay que decidir?
-       Power BI, DAX y data storytelling como medios. El objetivo: que quien toma la decisión no tenga que interpretar nada.
+        Los datos no fallan. Lo que falla es la distancia entre el número y la persona que tiene que actuar. Trabajo exactamente en ese espacio: entre el modelo y la reunión de dirección.
       </p>
 
       <!-- Línea única de credenciales: disponibilidad · cert · ubicación -->
       <div class="hero-meta" aria-label="Disponibilidad y credenciales">
         <span class="hero-meta-pulse" aria-hidden="true"></span>
-        <span class="hero-meta-status">Abierto a proyectos</span>
+        <span class="hero-meta-status">Disponible para incorporación inmediata</span>
         <span class="hero-meta-sep" aria-hidden="true">·</span>
         <span class="hero-meta-item">Microsoft PL-300</span>
         <span class="hero-meta-sep" aria-hidden="true">·</span>
@@ -2591,52 +2590,15 @@ footer {
       <span class="dph-hint">— abre cada fase</span>
     </div>
 
-    <div class="idx" id="dph-idx"></div>
-  </div>
+    <!-- Contenido en HTML base (indexable por bots). JS gestiona solo el comportamiento visual -->
+    <div class="idx" id="dph-idx">
 
-  <script>
-  (function(){
-    const PHASES = [
-      {
-        num:'01', verb:'Investigar', tag:'NEGOCIO',
-        title:'El <em>plano</em> de decisión',
-        body:'Muchos proyectos empiezan demasiado pronto: abriendo Power BI antes de entender qué necesita decidir el negocio. Mi trabajo empieza antes — primero defino qué pregunta debe responder el dashboard, qué KPI realmente importa y qué contexto necesita quien va a usarlo. Porque cuando el objetivo es difuso, el análisis también lo será.',
-        chips:['Negocio','KPI','Contexto'],
-        note:'INPUT: pregunta → OUTPUT: brief'
-      },
-      {
-        num:'02', verb:'Estructurar', tag:'MODELADO',
-        title:'Los <em>cimientos.</em>',
-        body:'Los datos rara vez llegan preparados para analizar. En esta fase conecto fuentes, limpio inconsistencias y construyo una estructura escalable: un esquema en estrella con relaciones limpias. Es la parte menos visible del proyecto, pero también la más importante: cuando los cimientos fallan, todo lo que se construye encima pierde credibilidad.',
-        chips:['Power Query','Modelado','Esquema estrella'],
-        note:'INPUT: datos crudos → OUTPUT: modelo'
-      },
-      {
-        num:'03', verb:'Construir', tag:'DAX',
-        title:'La <em>estructura</em> lógica.',
-        body:'Aquí convierto necesidades de negocio en lógica analítica. Cada medida, cálculo y relación define cómo se interpreta la información dentro del dashboard. No se trata de mostrar datos, sino de construir una estructura coherente que responda con claridad a preguntas reales.',
-        chips:['DAX','Time Intelligence','Medidas'],
-        note:'INPUT: modelo → OUTPUT: métricas'
-      },
-      {
-        num:'04', verb:'Comunicar', tag:'STORYTELLING + UX',
-        title:'El <em>espacio</em> habitable.',
-        body:'Un dashboard útil no necesita explicación constante. Organizo la información con jerarquía visual, contexto y narrativa para que la mirada encuentre rápido lo importante. No llenar la pantalla de gráficos: construir un espacio claro donde las decisiones puedan tomarse con rapidez y confianza.',
-        chips:['Data Storytelling','UX/UI','Layout'],
-        note:'INPUT: métricas → OUTPUT: decisión'
-      }
-    ];
-
-    const container = document.getElementById('dph-idx');
-    if(!container) return;
-
-    container.innerHTML = PHASES.map((p,i) => `
-      <div class="idx-row${i===0?' open':''}" data-i="${i}">
-        <div class="idx-head" role="button" tabindex="0" aria-expanded="${i===0}">
-          <span class="idx-num">${p.num}</span>
-          <span class="idx-name">${p.verb}</span>
+      <div class="idx-row open" data-i="0">
+        <div class="idx-head" role="button" tabindex="0" aria-expanded="true">
+          <span class="idx-num">01</span>
+          <span class="idx-name">Investigar</span>
           <span class="idx-meta">
-            <span class="idx-tag">${p.tag}</span>
+            <span class="idx-tag">NEGOCIO</span>
             <span class="idx-toggle">+</span>
           </span>
         </div>
@@ -2644,18 +2606,101 @@ footer {
           <div class="idx-panel-inner">
             <div class="idx-detail">
               <div>
-                <h3 class="idx-d-title">${p.title}</h3>
-                <p class="idx-d-body">${p.body}</p>
+                <h3 class="idx-d-title">El <em>plano</em> de decisión</h3>
+                <p class="idx-d-body">Muchos proyectos empiezan demasiado pronto: abriendo Power BI antes de entender qué necesita decidir el negocio. Mi trabajo empieza antes — primero defino qué pregunta debe responder el dashboard, qué KPI realmente importa y qué contexto necesita quien va a usarlo. Porque cuando el objetivo es difuso, el análisis también lo será.</p>
               </div>
               <div class="idx-d-side">
-                <div class="idx-d-tagrow">${p.chips.map(c=>`<span class="idx-chip">${c}</span>`).join('')}</div>
-                <div class="idx-d-note">${p.note}</div>
+                <div class="idx-d-tagrow"><span class="idx-chip">Negocio</span><span class="idx-chip">KPI</span><span class="idx-chip">Contexto</span></div>
+                <div class="idx-d-note">INPUT: pregunta → OUTPUT: brief</div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    `).join('');
+
+      <div class="idx-row" data-i="1">
+        <div class="idx-head" role="button" tabindex="0" aria-expanded="false">
+          <span class="idx-num">02</span>
+          <span class="idx-name">Estructurar</span>
+          <span class="idx-meta">
+            <span class="idx-tag">MODELADO</span>
+            <span class="idx-toggle">+</span>
+          </span>
+        </div>
+        <div class="idx-panel">
+          <div class="idx-panel-inner">
+            <div class="idx-detail">
+              <div>
+                <h3 class="idx-d-title">Los <em>cimientos.</em></h3>
+                <p class="idx-d-body">Los datos rara vez llegan preparados para analizar. En esta fase conecto fuentes, limpio inconsistencias y construyo una estructura escalable: un esquema en estrella con relaciones limpias. Es la parte menos visible del proyecto, pero también la más importante: cuando los cimientos fallan, todo lo que se construye encima pierde credibilidad.</p>
+              </div>
+              <div class="idx-d-side">
+                <div class="idx-d-tagrow"><span class="idx-chip">Power Query</span><span class="idx-chip">Modelado</span><span class="idx-chip">Esquema estrella</span></div>
+                <div class="idx-d-note">INPUT: datos crudos → OUTPUT: modelo</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="idx-row" data-i="2">
+        <div class="idx-head" role="button" tabindex="0" aria-expanded="false">
+          <span class="idx-num">03</span>
+          <span class="idx-name">Construir</span>
+          <span class="idx-meta">
+            <span class="idx-tag">DAX</span>
+            <span class="idx-toggle">+</span>
+          </span>
+        </div>
+        <div class="idx-panel">
+          <div class="idx-panel-inner">
+            <div class="idx-detail">
+              <div>
+                <h3 class="idx-d-title">La <em>estructura</em> lógica.</h3>
+                <p class="idx-d-body">Aquí convierto necesidades de negocio en lógica analítica. Cada medida, cálculo y relación define cómo se interpreta la información dentro del dashboard. No se trata de mostrar datos, sino de construir una estructura coherente que responda con claridad a preguntas reales.</p>
+              </div>
+              <div class="idx-d-side">
+                <div class="idx-d-tagrow"><span class="idx-chip">DAX</span><span class="idx-chip">Time Intelligence</span><span class="idx-chip">Medidas</span></div>
+                <div class="idx-d-note">INPUT: modelo → OUTPUT: métricas</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="idx-row" data-i="3">
+        <div class="idx-head" role="button" tabindex="0" aria-expanded="false">
+          <span class="idx-num">04</span>
+          <span class="idx-name">Comunicar</span>
+          <span class="idx-meta">
+            <span class="idx-tag">STORYTELLING + UX</span>
+            <span class="idx-toggle">+</span>
+          </span>
+        </div>
+        <div class="idx-panel">
+          <div class="idx-panel-inner">
+            <div class="idx-detail">
+              <div>
+                <h3 class="idx-d-title">El <em>espacio</em> habitable.</h3>
+                <p class="idx-d-body">Un dashboard útil no necesita explicación constante. Organizo la información con jerarquía visual, contexto y narrativa para que la mirada encuentre rápido lo importante. No llenar la pantalla de gráficos: construir un espacio claro donde las decisiones puedan tomarse con rapidez y confianza.</p>
+              </div>
+              <div class="idx-d-side">
+                <div class="idx-d-tagrow"><span class="idx-chip">Data Storytelling</span><span class="idx-chip">UX/UI</span><span class="idx-chip">Layout</span></div>
+                <div class="idx-d-note">INPUT: métricas → OUTPUT: decisión</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    /* Comportamiento visual del acordeón — el contenido ya está en el HTML base */
+    const container = document.getElementById('dph-idx');
+    if(!container) return;
 
     const rows = [...container.querySelectorAll('.idx-row')];
     function toggle(row){
@@ -2742,6 +2787,22 @@ footer {
           <div class="pc-foot">
             <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">Marketing Analytics</span></div>
             <button class="pc-link" onclick="openIndexOverlay(2)" style="background:none;border:none;cursor:pointer;padding:0;">Ver →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CARD 3: Kosta Cálida ── -->
+      <div class="proj-card sr sr-d2">
+        <div class="pc-visual">
+          <img src="./img/kosta-CARD.png" alt="Kosta Cálida — Reporting para red de tiendas" style="width:100%;height:auto;display:block;transform:scale(1.2);transform-origin:center;">
+        </div>
+        <div class="pc-body">
+          <div class="pc-cat">Retail · Red de tiendas</div>
+          <div class="pc-name">Kosta Cálida — Reporting para red de tiendas</div>
+          <p class="pc-desc">Una cadena de tiendas con datos completos en el TPV pero sin capacidad de responder preguntas básicas de negocio. Diseñé un <strong>sistema de reporting integral que conecta ventas, rentabilidad y objetivos en una sola lectura</strong>, con drill-down hasta el ticket y el producto que explica la desviación.</p>
+          <div class="pc-foot">
+            <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">Retail Analytics</span></div>
+            <button class="pc-link" onclick="openIndexOverlay(3)" style="background:none;border:none;cursor:pointer;padding:0;">Ver →</button>
           </div>
         </div>
       </div>
@@ -2995,7 +3056,7 @@ footer {
       <!-- Col 1, Fila 2+3: tarjeta pequeña — Seguidores (abajo izquierda) -->
       <div class="com-card com-card--1">
         <div class="com-card-inner">
-          <div class="com-card-num">2.674</div>
+          <div class="com-card-num">2.931</div>
           <div class="com-card-label">Seguidores en LinkedIn</div>
           <p class="com-card-desc">+4.374% de crecimiento en un año.</p>
         </div>
@@ -3103,7 +3164,7 @@ footer {
 
       <!-- actions -->
       <div class="cta-final-actions">
-        <a id="ctaEmailBtn" href="#" target="_blank" rel="noopener noreferrer" class="cta-final-btn-primary" onclick="gtag('event', 'clic_email', { location: 'cta_final' });">
+        <a id="ctaEmailBtn" href="mailto:borja.mora.mendez@gmail.com" target="_blank" rel="noopener noreferrer" class="cta-final-btn-primary" onclick="gtag('event', 'clic_email', { location: 'cta_final' });">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           Envíame un mensaje
         </a>
@@ -3121,7 +3182,7 @@ footer {
         </div>
         <div class="cta-pill-item">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-          PRESENCIAL · HÍBRIDO
+          PRESENCIAL · HÍBRIDO · REMOTO
         </div>
         <div class="cta-pill-item">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -3864,6 +3925,61 @@ document.addEventListener('keydown', function(e){
       <div class="pc-overlay-foot">
         <a href="https://app.powerbi.com/view?r=eyJrIjoiNGQ1OWZhNmEtY2I3Ni00N2M5LTk1NWYtMTEwZTA3NWI3NmYwIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="pc-overlay-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
         <span class="pc-overlay-tech">Power BI · DAX · M Language</span>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- OVERLAY 3: KOSTA CÁLIDA -->
+<div class="pc-overlay" id="idx-overlay-3" role="dialog" aria-modal="true" aria-labelledby="idx-overlay-3-title" aria-hidden="true" onclick="closeIndexOverlayIfBg(event,3)">
+  <div class="pc-overlay-inner">
+    <button class="pc-overlay-close" onclick="closeIndexOverlay(3)">
+      <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pc-overlay-imgs">
+      <div class="pcov-track" id="idx-ovtrack-3">
+        <img src="./img/kosta-1.png" alt="Kosta Cálida — Reporting para red de tiendas 1" class="pcov-photo pcov-active" width="1200" height="720">
+        <img src="./img/kosta-2.png" alt="Kosta Cálida — Reporting para red de tiendas 2" class="pcov-photo" width="1200" height="720">
+        <img src="./img/kosta-3.png" alt="Kosta Cálida — Reporting para red de tiendas 3" class="pcov-photo" width="1200" height="720">
+      </div>
+      <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(3,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(3,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <div class="pcov-dots">
+        <button class="pcov-dot pcov-dot-active" onclick="indexOverlayPhotoNav(3,0)"></button>
+        <button class="pcov-dot" onclick="indexOverlayPhotoNav(3,1)"></button>
+        <button class="pcov-dot" onclick="indexOverlayPhotoNav(3,2)"></button>
+      </div>
+    </div>
+    <div class="pc-overlay-copy">
+      <div class="pc-overlay-eyebrow"><span></span>Retail · Red de tiendas</div>
+      <div class="pc-overlay-title" id="idx-overlay-3-title">Kosta Cálida — Reporting para red de tiendas</div>
+      <div class="pc-overlay-long">
+        <p><strong>El Problema</strong></p>
+        <p>Una cadena de tiendas con datos completos en el TPV pero sin capacidad de responder preguntas básicas de negocio: qué tienda rinde mejor, dónde se pierde margen, si los objetivos se cumplen o solo se supera el mes anterior. Los datos existían; <strong>el problema era que nadie los podía leer juntos</strong>.</p>
+        <p><strong>El Objetivo</strong></p>
+        <p>Diseñar un <strong>sistema de reporting integral</strong> — desde el modelo de datos hasta el dashboard — que convirtiera números dispersos en decisiones concretas. Con un solo informe, dirección tenía que poder ver ventas, rentabilidad y cumplimiento de objetivos de cada tienda en una sola lectura.</p>
+        <p><strong>Mi Enfoque</strong></p>
+        <p>El modelo tiene <strong>dos tablas de hechos</strong>: <code>Ventas</code> con los datos reales del TPV y <code>Presupuestos</code> con los objetivos por tienda y periodo. Ambas conectan a las mismas dimensiones mediante <strong>tablas desconectadas T_DISC</strong> que permiten cambiar el eje de análisis sin afectar a las relaciones del modelo. Los parámetros TopN permiten filtrar las tiendas o productos más relevantes dinámicamente.</p>
+        <p>El informe cubre cuatro ángulos: <strong>resumen ejecutivo</strong> con KPIs de ventas, margen y cumplimiento; <strong>análisis por tienda</strong> con ranking y comparativa vs objetivo; <strong>análisis de producto</strong> con ticket medio, unidades y rentabilidad; y <strong>evolución temporal</strong> con YTD y comparativa interanual.</p>
+        <p><strong>Hallazgos Clave</strong></p>
+        <p>La lectura conjunta de ventas y margen reveló tiendas con volumen alto pero rentabilidad baja que no eran visibles en los informes anteriores. El drill-down hasta el ticket individual permitió identificar <strong>el producto exacto que explicaba la desviación</strong> en una tienda concreta, algo que antes requería exportar a Excel y cruzar manualmente.</p>
+        <p><strong>Herramientas Utilizadas</strong></p>
+        <p><strong>Power BI</strong> para el modelo completo y el dashboard con navegación entre las cuatro áreas. <strong>DAX</strong> para métricas de cumplimiento vs presupuesto, YTD, variación interanual, margen por producto y lógica de ranking dinámico con parámetros TopN. <strong>Power Query</strong> para la integración de las fuentes del TPV y los objetivos.</p>
+        <p><strong>Qué Aprendí</strong></p>
+        <p>Las tablas desconectadas T_DISC son imprescindibles cuando el mismo selector tiene que afectar a dos tablas de hechos sin crear ambigüedad en el modelo. Diseñar el modelo con esa separación desde el inicio evita tener que rehacer las relaciones cuando el negocio crece y añade nuevas tiendas o líneas de producto.</p>
+      </div>
+      <div class="pc-overlay-pills">
+        <span class="pc-overlay-pill">Modelado en estrella</span>
+        <span class="pc-overlay-pill">Dos fact tables</span>
+        <span class="pc-overlay-pill">T_DISC desconectadas</span>
+        <span class="pc-overlay-pill">TopN dinámico</span>
+        <span class="pc-overlay-pill">Ventas vs Objetivos</span>
+        <span class="pc-overlay-pill">Drill-down a ticket</span>
+        <span class="pc-overlay-pill">YTD</span>
+        <span class="pc-overlay-pill">Retail analytics</span>
+      </div>
+      <div class="pc-overlay-foot">
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiMzhlYjliYTAtMWUzMS00YzE1LTgyNGEtZmZmNDVhNjQ1ZDY3IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=03634c064fb23f65778f" target="_blank" rel="noopener noreferrer" class="pc-overlay-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+        <span class="pc-overlay-tech">Power BI · DAX · Power Query</span>
       </div>
     </div>
   </div>
