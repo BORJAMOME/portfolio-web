@@ -2,32 +2,26 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://borjamora.es/</loc>
-    <lastmod>2026-05-19</lastmod>
+    <lastmod>2026-06-05</lastmod>
     <priority>1.0</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://borjamora.es/sobre-mi.html</loc>
-    <lastmod>2026-05-19</lastmod>
+    <lastmod>2026-06-05</lastmod>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://borjamora.es/proyectos.html</loc>
-    <lastmod>2026-05-19</lastmod>
+    <lastmod>2026-06-05</lastmod>
     <priority>0.9</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://borjamora.es/descargas.html</loc>
-    <lastmod>2026-05-19</lastmod>
+    <lastmod>2026-06-05</lastmod>
     <priority>0.9</priority>
     <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://borjamora.es/glosario-arquitectura-del-dato.html</loc>
-    <lastmod>2026-05-19</lastmod>
-    <priority>0.7</priority>
-    <changefreq>monthly</changefreq>
   </url>
 </urlset>
