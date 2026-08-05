@@ -160,6 +160,18 @@ body {
   outline-offset: 2px !important;
 }
 
+/* ─── NAV SOCIAL ICONS ─── */
+.nav-social { display: flex; align-items: center; gap: 4px; margin-left: 6px; }
+.nav-social a {
+  display: flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 0;
+  color: var(--ink); opacity: .45;
+  transition: opacity .2s var(--ease);
+}
+.nav-social a:hover { opacity: 1; }
+.nav-social a:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+.nav-social svg { width: 16px; height: 16px; }
+
 /* ─── BOTONES ─── */
 .btn {
   position: relative;
@@ -558,8 +570,8 @@ nav.nav-drawer-links {
 @media (max-width: 640px) {
   #nav, body > nav { height: 56px; padding: 0 clamp(1rem,3vw,1.5rem); }
   .logo { font-size: 15px; }
-  /* Ocultar nav-links y CTA normales */
-  .nav-links { display: none !important; }
+  /* Ocultar nav-links, CTA y social icons en móvil */
+  .nav-links, .nav-social { display: none !important; }
   /* Mostrar hamburger */
   .nav-burger { display: flex; }
 }
