@@ -788,17 +788,16 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 
 /* ─── ML DARK CARDS ─── */
 .ml-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:#fff; border:.5px solid #111; border-top:.5px solid #111; }
-.card-c { background:#111; overflow:hidden; display:flex; flex-direction:column; }
-.cc-hero { padding:24px 22px 0; display:flex; align-items:baseline; gap:6px; margin-bottom:4px; }
-.cc-hero-num { font-family:'JetBrains Mono',monospace; font-size:32px; font-weight:700; color:#c6ff00; letter-spacing:-1px; line-height:1; }
-.cc-hero-unit { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:600; color:#c6ff00; opacity:.7; text-transform:uppercase; letter-spacing:.5px; }
-.cc-hero-desc { font-size:10.5px; color:#666; padding:0 22px; margin-bottom:18px; font-family:'JetBrains Mono',monospace; letter-spacing:.02em; line-height:1.5; }
-.cc-divider { height:.5px; background:#333; margin:0 22px; }
-.cc-body { padding:18px 22px 22px; flex:1; display:flex; flex-direction:column; }
-.cc-cat { font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:#7a7bff; margin-bottom:14px; }
-.cc-problem { font-size:12px; color:#888; line-height:1.65; margin-bottom:14px; }
-.cc-solution { font-size:13px; font-weight:600; color:#eee; line-height:1.5; letter-spacing:-.15px; margin-bottom:auto; padding-bottom:18px; }
-.cc-foot { display:flex; align-items:center; justify-content:space-between; padding-top:12px; border-top:.5px solid #333; }
+.card-c { background:#111; overflow:hidden; display:flex; flex-direction:column; padding:28px 24px 24px; }
+.cc-cat { font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:#7a7bff; margin-bottom:24px; }
+.cc-block { margin-bottom:22px; }
+.cc-label { font-size:11px; font-weight:700; color:#fff; margin-bottom:8px; letter-spacing:.02em; }
+.cc-text { font-size:12.5px; color:rgba(255,255,255,.75); line-height:1.7; letter-spacing:.01em; }
+.cc-result { margin-bottom:auto; padding-bottom:22px; }
+.cc-result .cc-label { margin-bottom:10px; }
+.cc-result-num { font-family:'JetBrains Mono',monospace; font-size:28px; font-weight:700; color:#c6ff00; letter-spacing:-1px; line-height:1; }
+.cc-result-unit { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:600; color:#c6ff00; opacity:.7; text-transform:uppercase; letter-spacing:.5px; }
+.cc-foot { display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:.5px solid #333; }
 .cc-pills { display:flex; gap:5px; flex-wrap:wrap; }
 .cc-pill { font-family:'JetBrains Mono',monospace; font-size:8.5px; font-weight:500; background:transparent; border:1px solid #444; color:#777; padding:4px 9px; border-radius:20px; letter-spacing:.4px; text-transform:uppercase; }
 .cc-link { font-size:10px; color:#fff; font-weight:700; text-decoration:none; letter-spacing:.05em; text-transform:uppercase; white-space:nowrap; }
@@ -2821,58 +2820,64 @@ footer {
 
       <!-- ── CARD ML-1: SARIMA Retail ── -->
       <div class="card-c">
-        <div class="cc-hero">
-          <div class="cc-hero-num">2,21%</div>
-          <div class="cc-hero-unit">MAPE</div>
+        <div class="cc-cat">Forecasting · Retail</div>
+        <div class="cc-block">
+          <div class="cc-label">El problema</div>
+          <div class="cc-text">Una cadena de supermercados perdía dinero cada semana: unas veces sobraba producto y acababa en la basura, otras faltaba y perdían ventas. El responsable de compras pedía basándose en su experiencia, pero no conseguía acertar.</div>
         </div>
-        <div class="cc-hero-desc">Error de predicción — más preciso que el jefe de tienda</div>
-        <div class="cc-divider"></div>
-        <div class="cc-body">
-          <div class="cc-cat">Forecasting · Retail</div>
-          <div class="cc-problem">Una cadena de supermercados perdía dinero cada semana: unas veces sobraba producto y acababa en la basura, otras faltaba y perdían ventas. El responsable de compras pedía basándose en su experiencia, pero no conseguía acertar.</div>
-          <div class="cc-solution">Analicé cinco años de ventas semanales y entrené un modelo SARIMA que captura la tendencia y la estacionalidad oculta en los datos. Ahora el sistema predice la demanda de cada semana antes de hacer el pedido.</div>
-          <div class="cc-foot">
-            <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">SARIMA</span><span class="cc-pill">statsmodels</span></div>
-            <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/04-series-temporales/arima/01-caso-retail" target="_blank" rel="noopener noreferrer">Ver →</a>
-          </div>
+        <div class="cc-block">
+          <div class="cc-label">La solución</div>
+          <div class="cc-text">Analicé cinco años de ventas semanales y entrené un modelo SARIMA que captura la tendencia y la estacionalidad oculta en los datos. Ahora el sistema predice la demanda de cada semana antes de hacer el pedido.</div>
+        </div>
+        <div class="cc-result">
+          <div class="cc-label">El resultado</div>
+          <span class="cc-result-num">2,21%</span> <span class="cc-result-unit">MAPE</span>
+        </div>
+        <div class="cc-foot">
+          <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">SARIMA</span><span class="cc-pill">statsmodels</span></div>
+          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/04-series-temporales/arima/01-caso-retail" target="_blank" rel="noopener noreferrer">Ver →</a>
         </div>
       </div>
 
       <!-- ── CARD ML-2: K-Means Política ── -->
       <div class="card-c">
-        <div class="cc-hero">
-          <div class="cc-hero-num">9→4</div>
-          <div class="cc-hero-unit">variables</div>
+        <div class="cc-cat">Clustering · Ciencia Política</div>
+        <div class="cc-block">
+          <div class="cc-label">El problema</div>
+          <div class="cc-text">Un equipo de investigación encuestó a 3.689 votantes con 9 preguntas sobre política, demografía y opinión. Cuando intentaron segmentarlos, el algoritmo agrupaba por edad y género — no por ideología. Los perfiles no tenían sentido.</div>
         </div>
-        <div class="cc-hero-desc">Menos ruido, más señal</div>
-        <div class="cc-divider"></div>
-        <div class="cc-body">
-          <div class="cc-cat">Clustering · Ciencia Política</div>
-          <div class="cc-problem">Un equipo de investigación encuestó a 3.689 votantes con 9 preguntas sobre política, demografía y opinión. Cuando intentaron segmentarlos, el algoritmo agrupaba por edad y género — no por ideología. Los perfiles no tenían sentido.</div>
-          <div class="cc-solution">Descarté las variables demográficas y entrené K-Means solo con las 4 preguntas de opinión real. Aparecieron tres perfiles ideológicos con posiciones claras sobre servicios públicos, fiscalidad y seguridad.</div>
-          <div class="cc-foot">
-            <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">K-Means</span><span class="cc-pill">scikit-learn</span></div>
-            <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/02-no-supervisado/clustering/kmeans/03-segmentacion-politica" target="_blank" rel="noopener noreferrer">Ver →</a>
-          </div>
+        <div class="cc-block">
+          <div class="cc-label">La solución</div>
+          <div class="cc-text">Descarté las variables demográficas y entrené K-Means solo con las 4 preguntas de opinión real. Aparecieron tres perfiles ideológicos con posiciones claras sobre servicios públicos, fiscalidad y seguridad.</div>
+        </div>
+        <div class="cc-result">
+          <div class="cc-label">El resultado</div>
+          <span class="cc-result-num">9→4</span> <span class="cc-result-unit">variables</span>
+        </div>
+        <div class="cc-foot">
+          <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">K-Means</span><span class="cc-pill">scikit-learn</span></div>
+          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/02-no-supervisado/clustering/kmeans/03-segmentacion-politica" target="_blank" rel="noopener noreferrer">Ver →</a>
         </div>
       </div>
 
       <!-- ── CARD ML-3: XGBoost Gym ── -->
       <div class="card-c">
-        <div class="cc-hero">
-          <div class="cc-hero-num">9/10</div>
-          <div class="cc-hero-unit">aciertos</div>
+        <div class="cc-cat">Clasificación · Fitness</div>
+        <div class="cc-block">
+          <div class="cc-label">El problema</div>
+          <div class="cc-text">Un gimnasio con 300 socios necesitaba saber quién estaba satisfecho y quién estaba a punto de irse. Lanzaban encuestas, pero las respuestas no revelaban un patrón claro ni permitían actuar a tiempo.</div>
         </div>
-        <div class="cc-hero-desc">Mejor que cualquier encuesta de satisfacción</div>
-        <div class="cc-divider"></div>
-        <div class="cc-body">
-          <div class="cc-cat">Clasificación · Fitness</div>
-          <div class="cc-problem">Un gimnasio con 300 socios necesitaba saber quién estaba satisfecho y quién estaba a punto de irse. Lanzaban encuestas, pero las respuestas no revelaban un patrón claro ni permitían actuar a tiempo.</div>
-          <div class="cc-solution">Entrené un modelo XGBoost con los datos de uso real de cada socio. El resultado fue directo: la frecuencia de asistencia mensual concentra el 80% de la predicción. Ni el precio ni las instalaciones pesaban tanto.</div>
-          <div class="cc-foot">
-            <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">XGBoost</span><span class="cc-pill">scikit-learn</span></div>
-            <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/01-supervisado/clasificacion/03-xgboost" target="_blank" rel="noopener noreferrer">Ver →</a>
-          </div>
+        <div class="cc-block">
+          <div class="cc-label">La solución</div>
+          <div class="cc-text">Entrené un modelo XGBoost con los datos de uso real de cada socio. El resultado fue directo: la frecuencia de asistencia mensual concentra el 80% de la predicción. Ni el precio ni las instalaciones pesaban tanto.</div>
+        </div>
+        <div class="cc-result">
+          <div class="cc-label">El resultado</div>
+          <span class="cc-result-num">9/10</span> <span class="cc-result-unit">aciertos</span>
+        </div>
+        <div class="cc-foot">
+          <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">XGBoost</span><span class="cc-pill">scikit-learn</span></div>
+          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/01-supervisado/clasificacion/03-xgboost" target="_blank" rel="noopener noreferrer">Ver →</a>
         </div>
       </div>
 
