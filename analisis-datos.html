@@ -345,7 +345,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
 <div class="progress-bar" id="progressBar"></div>
 
 <nav id="nav" aria-label="Navegación principal">
-  <a href="./index.html" class="logo" aria-label="Borja Mora — Inicio"><span id="logoText"></span><span class="logo-dot"></span></a>
+  <a href="./index.html" class="logo" aria-label="Borja Mora — Inicio"><span id="logoText" class="done">Borja Mora</span><span class="logo-dot"></span></a>
   <div class="nav-links">
     <a href="./index.html">Inicio</a>
     <a href="./sobre-mi.html">Sobre mí</a>
@@ -644,23 +644,7 @@ document.querySelectorAll('.sec-nav button').forEach(a=>{
 </script>
 
 <script>
-// ─── TYPING EFFECT (logo) ───
-(function(){
-  const el = document.getElementById('logoText');
-  if (!el) return;
-  const text = 'Borja Mora';
-  let i = 0;
-  function type() {
-    if (i < text.length) {
-      el.textContent += text[i];
-      i++;
-      setTimeout(type, i === 1 ? 300 : 80 + Math.random() * 40);
-    } else {
-      setTimeout(() => el.classList.add('done'), 1200);
-    }
-  }
-  setTimeout(type, 400);
-})();
+// ─── TYPING EFFECT — desactivado ───
 </script>
 
 
