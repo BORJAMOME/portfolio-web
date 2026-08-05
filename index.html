@@ -789,17 +789,18 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 /* ─── ML DARK CARDS ─── */
 .ml-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:#fff; border:.5px solid #111; border-top:.5px solid #111; }
 .card-c { background:#111; overflow:hidden; display:flex; flex-direction:column; padding:28px 24px 24px; }
-.cc-cat { font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:#7a7bff; margin-bottom:24px; }
+.cc-cat { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#7a7bff; margin-bottom:24px; }
 .cc-block { margin-bottom:22px; }
 .cc-label { font-size:11px; font-weight:700; color:#fff; margin-bottom:8px; letter-spacing:.02em; }
 .cc-text { font-size:12.5px; color:rgba(255,255,255,.75); line-height:1.7; letter-spacing:.01em; }
 .cc-result { margin-bottom:auto; padding-bottom:22px; }
-.cc-result .cc-label { margin-bottom:10px; }
+.cc-result .cc-label { margin-bottom:14px; }
+.cc-result-metric { display:flex; align-items:baseline; gap:10px; }
 .cc-result-num { font-family:'JetBrains Mono',monospace; font-size:28px; font-weight:700; color:#c6ff00; letter-spacing:-1px; line-height:1; }
-.cc-result-unit { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:600; color:#c6ff00; opacity:.7; text-transform:uppercase; letter-spacing:.5px; }
-.cc-foot { display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:.5px solid #333; }
+.cc-result-unit { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:600; color:#c6ff00; opacity:.8; text-transform:uppercase; letter-spacing:1px; }
+.cc-foot { display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:.5px solid rgba(255,255,255,.25); }
 .cc-pills { display:flex; gap:5px; flex-wrap:wrap; }
-.cc-pill { font-family:'JetBrains Mono',monospace; font-size:8.5px; font-weight:500; background:transparent; border:1px solid #444; color:#777; padding:4px 9px; border-radius:20px; letter-spacing:.4px; text-transform:uppercase; }
+.cc-pill { font-family:'JetBrains Mono',monospace; font-size:8.5px; font-weight:500; background:transparent; border:1px solid rgba(255,255,255,.35); color:rgba(255,255,255,.8); padding:4px 9px; border-radius:20px; letter-spacing:.4px; text-transform:uppercase; }
 .cc-link { font-size:10px; color:#fff; font-weight:700; text-decoration:none; letter-spacing:.05em; text-transform:uppercase; white-space:nowrap; }
 .cc-link:hover { color:#c6ff00; }
 @media (max-width:900px) { .ml-grid { grid-template-columns:1fr; } }
@@ -2831,7 +2832,7 @@ footer {
         </div>
         <div class="cc-result">
           <div class="cc-label">El resultado</div>
-          <span class="cc-result-num">2,21%</span> <span class="cc-result-unit"> MAPE</span>
+          <div class="cc-result-metric"><span class="cc-result-num">2,21%</span><span class="cc-result-unit">MAPE</span></div>
         </div>
         <div class="cc-foot">
           <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">SARIMA</span><span class="cc-pill">statsmodels</span></div>
@@ -2852,7 +2853,7 @@ footer {
         </div>
         <div class="cc-result">
           <div class="cc-label">El resultado</div>
-          <span class="cc-result-num">9 → 4</span> <span class="cc-result-unit"> variables</span>
+          <div class="cc-result-metric"><span class="cc-result-num">9→4</span><span class="cc-result-unit">variables</span></div>
         </div>
         <div class="cc-foot">
           <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">K-Means</span><span class="cc-pill">scikit-learn</span></div>
@@ -2873,7 +2874,7 @@ footer {
         </div>
         <div class="cc-result">
           <div class="cc-label">El resultado</div>
-          <span class="cc-result-num">9/10</span> <span class="cc-result-unit"> aciertos</span>
+          <div class="cc-result-metric"><span class="cc-result-num">9/10</span><span class="cc-result-unit">aciertos</span></div>
         </div>
         <div class="cc-foot">
           <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">XGBoost</span><span class="cc-pill">scikit-learn</span></div>
