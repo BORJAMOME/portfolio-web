@@ -461,7 +461,7 @@
   padding: 5px 0; border-bottom: .5px solid #f4f4f7;
 }
 .dr-row:last-child { border-bottom: none; padding-bottom: 1px; }
-.dr-rank { font-size: 8px; font-weight: 700; color: #bbb; min-width: 12px; }
+.dr-rank { font-size: 8px; font-weight: 700; color: #767676; min-width: 12px; }
 .dr-name { font-size: 9.5px; font-weight: 600; color: var(--ink); min-width: 36px; }
 .dr-track { flex: 1; height: 5px; background: #f0f0f5; border-radius: 3px; overflow: hidden; }
 .dr-fill { height: 100%; border-radius: 3px; background: var(--purple); }
@@ -522,7 +522,7 @@
   justify-content: center;
   font-size: 8px;
   font-weight: 700;
-  color: #888;
+  color: #696969;
   letter-spacing: .3px;
   flex-shrink: 0;
   text-transform: uppercase;
@@ -1259,7 +1259,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 .com-card--3 .com-card-label { color: rgba(255,255,255,.9); }
 
 .com-card-desc {
-  font-size: 12.5px; color: #777;
+  font-size: 12.5px; color: #595959;
   line-height: 1.6;
 }
 .com-card--3 .com-card-desc { color: rgba(255,255,255,.58); }
@@ -1830,7 +1830,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 }
 .idx-num {
   font-family: var(--mono); font-size: 13px; font-weight: 600;
-  color: #bbb; width: 38px; flex-shrink: 0;
+  color: #767676; width: 38px; flex-shrink: 0;
   transition: color .3s; letter-spacing: .02em;
 }
 .idx-row.open .idx-num { color: var(--purple); }
@@ -2271,6 +2271,7 @@ footer {
 </style>
 </head>
 <body>
+<a href="#main-content" class="skip-link" style="position:absolute;left:-9999px;top:4px;z-index:9999;background:var(--ink);color:#fff;padding:8px 16px;font-size:13px;font-weight:600;text-decoration:none;border-radius:4px;transition:left 0s" onfocus="this.style.left='4px'" onblur="this.style.left='-9999px'">Saltar al contenido</a>
 
 <div class="progress-bar" id="progressBar"></div>
 
@@ -2370,7 +2371,9 @@ footer {
 </div>
 
 <!-- ─── HERO ─── -->
-<section class="hero" id="hero">
+<section class="hero" id="hero" tabindex="-1">
+<!-- main-content anchor for skip-link -->
+<span id="main-content" style="position:absolute"></span>
   <div class="hero-inner">
     <div class="hero-left">
 
@@ -2470,8 +2473,8 @@ footer {
             <div class="df-card" style="padding:9px 11px 10px;display:flex;flex-direction:column">
               <div class="dc-label">Ventas mensuales · Año actual vs anterior</div>
               <div style="display:flex;align-items:center;gap:10px;margin:3px 0 6px">
-                <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#888"><span style="width:8px;height:8px;border-radius:50%;background:#7a7bff;display:inline-block"></span>Actual 2025</span>
-                <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#bbb"><span style="width:8px;height:8px;border-radius:50%;background:none;border:1.5px solid #c8c8d8;display:inline-block"></span>Anterior 2024</span>
+                <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#696969"><span style="width:8px;height:8px;border-radius:50%;background:#7a7bff;display:inline-block"></span>Actual 2025</span>
+                <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#767676"><span style="width:8px;height:8px;border-radius:50%;background:none;border:1.5px solid #c8c8d8;display:inline-block"></span>Anterior 2024</span>
               </div>
               <div style="position:relative;width:100%;flex:1;min-height:96px">
                 <canvas id="heroLollipop"></canvas>
@@ -3608,7 +3611,7 @@ const chartOpts = {
           plugins: { legend:{display:false}, tooltip:{enabled:false} },
           layout: { padding: { top: 8, right: 4, bottom: 0, left: 0 } },
           scales: {
-            x: { grid:{display:false}, ticks:{font:{family:'Plus Jakarta Sans',size:7.5}, color:'#bbb'}, border:{display:false} },
+            x: { grid:{display:false}, ticks:{font:{family:'Plus Jakarta Sans',size:7.5}, color:'#767676'}, border:{display:false} },
             y: { display:false, min:120, max:340 }
           },
           animation: { duration:600, easing:'easeOutQuart' }
