@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<!-- ─── FAVICON ─── -->
+<link rel="icon" type="image/svg+xml" href="./favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+<link rel="shortcut icon" href="./favicon.ico">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#7a7bff">
+<title>Análisis de datos — Borja Mora</title>
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- Shared styles: variables, nav, footer, botones, reset -->
+<link rel="stylesheet" href="./shared.css">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PSDM6B5Z7"></script>
+<!-- Primary Meta Tags -->
+<meta name="description" content="Proyectos de Machine Learning, análisis exploratorio y consultas avanzadas con Python, SQL y R. Modelos SARIMA, K-Means, XGBoost y análisis de datos reales.">
+<meta name="keywords" content="Machine Learning, Python, SQL, R, SARIMA, K-Means, XGBoost, análisis de datos, Data Analyst, portfolio">
+<meta name="author" content="Borja Mora Méndez">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://borjamora.es/analisis-datos.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:url" content="https://borjamora.es/analisis-datos.html">
+<meta property="og:title" content="Análisis de datos — Machine Learning, Python, SQL y R | Borja Mora">
+<meta property="og:description" content="Modelos predictivos, análisis exploratorio y consultas avanzadas. Proyectos con Python, SQL y R aplicados a problemas reales de negocio.">
+<meta property="og:image" content="https://borjamora.es/img/og-proyectos.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Análisis de datos — Borja Mora">
+<meta property="og:site_name" content="Borja Mora">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Análisis de datos — Borja Mora">
+<meta name="twitter:description" content="Machine Learning, Python, SQL y R. Modelos y análisis aplicados a problemas reales.">
+<meta name="twitter:image" content="https://borjamora.es/img/og-proyectos.png">
+
+<!-- Schema.org CollectionPage -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "@id": "https://borjamora.es/analisis-datos.html#page",
+      "url": "https://borjamora.es/analisis-datos.html",
+      "name": "Análisis de datos — Borja Mora",
+      "description": "Machine Learning, análisis exploratorio y consultas avanzadas con Python, SQL y R.",
+      "inLanguage": "es-ES",
+      "author": { "@type": "Person", "name": "Borja Mora Méndez", "url": "https://borjamora.es/" },
+      "hasPart": [
+        { "@id": "https://borjamora.es/analisis-datos.html#sarima" },
+        { "@id": "https://borjamora.es/analisis-datos.html#kmeans" },
+        { "@id": "https://borjamora.es/analisis-datos.html#xgboost" },
+        { "@id": "https://borjamora.es/analisis-datos.html#teletrabajo" },
+        { "@id": "https://borjamora.es/analisis-datos.html#airbnb-sql" },
+        { "@id": "https://borjamora.es/analisis-datos.html#madrid-r" },
+        { "@id": "https://borjamora.es/analisis-datos.html#sql-avanzado" }
+      ]
+    },
+    {
+      "@type": "CreativeWork",
+      "@id": "https://borjamora.es/analisis-datos.html#sarima",
+      "name": "SARIMA Retail — Predicción de demanda semanal",
+      "description": "Modelo SARIMA entrenado con cinco años de ventas semanales para predecir la demanda de una cadena de supermercados. MAPE del 2,21%.",
+      "keywords": "Python, SARIMA, statsmodels, forecasting, retail, series temporales",
+      "author": { "@type": "Person", "name": "Borja Mora Méndez" },
+      "url": "https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/04-series-temporales/arima/01-caso-retail"
+    },
+    {
+      "@type": "CreativeWork",
+      "@id": "https://borjamora.es/analisis-datos.html#kmeans",
+      "name": "K-Means — Segmentación ideológica de votantes",
+      "description": "Segmentación de 3.689 votantes con K-Means. Reducción de 9 a 4 variables para identificar perfiles ideológicos claros.",
+      "keywords": "Python, K-Means, scikit-learn, clustering, ciencia política",
+      "author": { "@type": "Person", "name": "Borja Mora Méndez" },
+      "url": "https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/02-no-supervisado/clustering/kmeans/03-segmentacion-politica"
+    },
+    {
+      "@type": "CreativeWork",
+      "@id": "https://borjamora.es/analisis-datos.html#xgboost",
+      "name": "XGBoost — Predicción de satisfacción en gimnasio",
+      "description": "Modelo XGBoost para predecir la satisfacción de socios de un gimnasio. 9 de cada 10 aciertos, con la frecuencia de asistencia como variable clave.",
+      "keywords": "Python, XGBoost, scikit-learn, clasificación, fitness",
+      "author": { "@type": "Person", "name": "Borja Mora Méndez" },
+      "url": "https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/01-supervisado/clasificacion/03-xgboost"
+    },
+    {
+      "@type": "CreativeWork",
+      "@id": "https://borjamora.es/analisis-datos.html#teletrabajo",
+      "name": "Mejores ciudades para teletrabajar",
+      "description": "Análisis exploratorio con Python y Pandas para identificar municipios con buena conectividad, calidad ambiental y precios de vivienda competitivos.",
+      "keywords": "Python, Pandas, análisis exploratorio, teletrabajo",
+      "author": { "@type": "Person", "name": "Borja Mora Méndez" },
+      "url": "https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/python/Proyectos/03.Mejores%20Ciudades%20espa%C3%B1olas%20para%20vivir"
+    },
+    {
+      "@type": "CreativeWork",
+      "@id": "https://borjamora.es/analisis-datos.html#airbnb-sql",
+      "name": "Mercado Airbnb — Análisis de precios",
+      "description": "Exploración de datos con SQL para analizar patrones de precios, disponibilidad y demanda en el mercado de alquiler turístico.",
+      "keywords": "SQL, PostgreSQL, Airbnb, análisis de precios",
+      "author": { "@type": "Person", "name": "Borja Mora Méndez" },
+      "url": "https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/SQL/Proyectos%20SQL/04.Estudio%20Airbnb%20Menorca"
+    },
+    {
+      "@type": "CreativeWork",
+      "@id": "https://borjamora.es/analisis-datos.html#madrid-r",
+      "name": "Radiografía socioeconómica de Madrid",
+      "description": "Análisis de indicadores demográficos y económicos con R para entender la distribución territorial de renta y población.",
+      "keywords": "R, tidyverse, ggplot2, análisis socioeconómico",
+      "author": { "@type": "Person", "name": "Borja Mora Méndez" },
+      "url": "https://github.com/BORJAMOME/Data-Analytics-Portfolio/blob/main/r/Proyectos%20con%20R/01.Radiograf%C3%ADa%20de%20Madrid/README.md"
+    },
+    {
+      "@type": "CreativeWork",
+      "@id": "https://borjamora.es/analisis-datos.html#sql-avanzado",
+      "name": "SQL Avanzado — CTEs, Window Functions y Subqueries",
+      "description": "61 ejercicios progresivos en T-SQL: desde agregaciones con GROUP BY hasta rankings con DENSE_RANK, sumas acumuladas, LAG/LEAD y percentiles.",
+      "keywords": "T-SQL, Window Functions, CTEs, SQL avanzado",
+      "author": { "@type": "Person", "name": "Borja Mora Méndez" },
+      "url": "https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/01-SQL"
+    }
+  ]
+}
+</script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("consent", "default", {
+    analytics_storage:    "denied",
+    ad_storage:           "denied",
+    ad_user_data:         "denied",
+    ad_personalization:   "denied",
+    wait_for_update:      500
+  });
+  gtag("js", new Date());
+  gtag("config", "G-6PSDM6B5Z7", { anonymize_ip: true });
+
+  /* Leer consentimiento previo */
+  (function(){
+    var consent = localStorage.getItem("bm_cookie_consent");
+    if (consent === "accepted") {
+      gtag("consent", "update", { analytics_storage: "granted", ad_storage: "denied" });
+    }
+  })();
+</script>
+
+<!-- ── Cookie banner CSS (RGPD/LOPDGDD) ── -->
+<style>
+  #bm-cookie-banner {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(0);
+    z-index: 99999; width: min(540px, calc(100vw - 32px));
+    background: #0e0e0e; color: #f7f7fa;
+    border: 1px solid rgba(122,123,255,.3);
+    border-radius: 16px; padding: 16px 20px;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    box-shadow: 0 12px 48px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.04);
+    font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+    font-size: 13px; line-height: 1.55;
+    opacity: 0; pointer-events: none;
+    transition: opacity .3s ease, transform .35s cubic-bezier(.16,1,.3,1);
+  }
+  #bm-cookie-banner.bm-visible {
+    opacity: 1; pointer-events: auto;
+  }
+  #bm-cookie-banner.bm-hiding {
+    opacity: 0; transform: translateX(-50%) translateY(16px);
+  }
+  #bm-cookie-banner p { margin: 0; flex: 1; min-width: 200px; color: #b8b8cc; }
+  #bm-cookie-banner strong { color: #f7f7fa; font-weight: 600; }
+  #bm-cookie-banner a { color: #7a7bff; text-decoration: none; border-bottom: 1px solid rgba(122,123,255,.4); }
+  .bm-cb-btns { display: flex; gap: 8px; flex-shrink: 0; }
+  .bm-cb-btn {
+    cursor: pointer; border: none; border-radius: 9px;
+    padding: 9px 18px; font-size: 12px; font-weight: 700;
+    font-family: inherit; letter-spacing: .4px;
+    transition: opacity .15s, transform .12s;
+    text-transform: uppercase;
+  }
+  .bm-cb-btn:hover { opacity: .82; transform: translateY(-1px); }
+  .bm-cb-btn:active { transform: translateY(0); }
+  .bm-cb-accept { background: #7a7bff; color: #fff; }
+  .bm-cb-reject { background: rgba(255,255,255,.07); color: #b8b8cc; border: 1px solid rgba(255,255,255,.1); }
+  @media (max-width: 480px) {
+    #bm-cookie-banner { bottom: 16px; padding: 14px 16px; border-radius: 12px; }
+    .bm-cb-btns { width: 100%; justify-content: flex-end; }
+  }
+</style>
+
+<style>
+/* ─── ESTILOS ESPECÍFICOS DE ANALISIS-DATOS.HTML ─── */
+/* Variables, nav, footer y botones → shared.css  */
+
+:root { --rule: #111111; }
+
+/* progress */
+.progress-bar{position:fixed;top:0;left:0;height:2px;background:var(--ink);z-index:1001;transform-origin:left;transform:scaleX(0);transition:transform .1s linear}
+
+.sr{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.sr.in{opacity:1;transform:none}
+
+.c{max-width:1240px;margin:0 auto;padding:0 clamp(20px,4vw,48px)}
+
+/* HERO */
+.proj-hero{padding:130px 0 64px;background:var(--paper)}
+.hero-tag{display:none}
+.hero-h1{font-size:clamp(44px,7vw,92px);font-weight:600;color:var(--ink);letter-spacing:-.045em;line-height:1;margin-bottom:28px;white-space:nowrap}
+.hero-sub{font-size:16px;color:var(--muted);line-height:1.55;max-width:62ch}
+.hero-highlight{background:#c6ff00;color:var(--ink);padding:0 4px;display:inline-block}
+@media(max-width:820px){.hero-h1{white-space:normal;font-size:clamp(40px,10vw,64px);letter-spacing:-.03em}}
+
+/* SECTION NAV — pills */
+.sec-nav{position:sticky;top:60px;z-index:99;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.sec-nav-inner{display:flex;align-items:center;gap:10px;padding:14px clamp(20px,4vw,48px);max-width:1240px;margin:0 auto;overflow-x:auto;flex-wrap:wrap;border:0}
+.sec-nav a,.sec-nav button{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;color:var(--ink);background:#fff;border:1px solid var(--ink);border-radius:999px;padding:9px 18px;text-decoration:none;white-space:nowrap;cursor:pointer;letter-spacing:.02em;transition:background .15s var(--ease),color .15s var(--ease)}
+.sec-nav a:hover,.sec-nav button:hover{background:#f2f2f2;color:var(--ink);border-color:var(--ink)}
+.sec-nav a.active,.sec-nav button.active{background:var(--ink);color:#fff;border-color:var(--ink);font-weight:600}
+
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* Section headers */
+.section-head{margin-bottom:40px}
+.section-title{font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;font-size:clamp(28px,4vw,44px);font-weight:600;letter-spacing:-.025em;color:var(--ink);line-height:1.05;margin-bottom:14px}
+.section-sub{font-size:14px;color:var(--muted);line-height:1.7;max-width:640px;margin:0}
+
+/* Project sections */
+.proj-section{padding:64px 0 48px;background:var(--paper)}
+.proj-section + .proj-section{border-top:1px solid var(--rule)}
+
+/* ─── ML DARK CARDS ─── */
+.ml-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:#fff; border:.5px solid #111; border-top:.5px solid #111; }
+.card-c { background:#111; overflow:hidden; display:flex; flex-direction:column; padding:28px 24px 24px; }
+.cc-cat { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#7a7bff; margin-bottom:24px; }
+.cc-block { margin-bottom:22px; }
+.cc-label { font-size:11px; font-weight:700; color:#fff; margin-bottom:8px; letter-spacing:.02em; }
+.cc-text { font-size:12.5px; color:rgba(255,255,255,.75); line-height:1.7; letter-spacing:.01em; }
+.cc-result { margin-bottom:auto; padding-bottom:22px; }
+.cc-result .cc-label { margin-bottom:14px; }
+.cc-result-metric { display:flex; align-items:baseline; gap:10px; }
+.cc-result-num { font-family:'JetBrains Mono',monospace; font-size:28px; font-weight:700; color:#c6ff00; letter-spacing:-1px; line-height:1; }
+.cc-result-unit { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:600; color:#c6ff00; opacity:.8; text-transform:uppercase; letter-spacing:1px; }
+.cc-foot { display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:.5px solid rgba(255,255,255,.25); }
+.cc-pills { display:flex; gap:5px; flex-wrap:wrap; }
+.cc-pill { font-family:'JetBrains Mono',monospace; font-size:8.5px; font-weight:500; background:transparent; border:1px solid rgba(255,255,255,.35); color:rgba(255,255,255,.8); padding:4px 9px; border-radius:20px; letter-spacing:.4px; text-transform:uppercase; }
+.cc-link { font-size:10px; color:#fff; font-weight:700; text-decoration:none; letter-spacing:.05em; text-transform:uppercase; white-space:nowrap; }
+.cc-link:hover { color:#c6ff00; }
+@media (max-width:900px) { .ml-grid { grid-template-columns:1fr; } }
+
+/* Analysis cards */
+.analysis-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--rule);border-left:1px solid var(--rule)}
+.analysis-card{background:var(--paper);border:0;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);border-radius:0;padding:32px 26px 26px;display:flex;flex-direction:column;box-shadow:none;transition:background .18s var(--ease),color .12s;position:relative;overflow:hidden;gap:12px}
+.analysis-card::before{display:none}
+.analysis-card:hover{background:#111;color:#fff;transform:none;box-shadow:none;border-color:var(--rule)}
+.analysis-lang{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:0;margin-top:12px;padding-top:0;transition:color .12s}
+.analysis-card:hover .analysis-lang{color:rgba(255,255,255,.9)}
+.analysis-lang span{font-family:'JetBrains Mono',monospace;background:transparent;color:var(--ink);padding:3px 9px;border:0.8px solid var(--ink);border-radius:999px;font-size:9.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;transition:border-color .12s,color .12s}
+.analysis-card:hover .analysis-lang span{border-color:rgba(255,255,255,.4);color:rgba(255,255,255,.8)}
+.analysis-lang span::after{content:""}
+.analysis-lang span:last-child::after{content:""}
+.analysis-title{font-size:17px;font-weight:700;letter-spacing:-.012em;line-height:1.25;color:var(--ink);margin-bottom:12px;text-wrap:balance;transition:color .12s}
+.analysis-card:hover .analysis-title{color:#c6ff00}
+.analysis-desc{font-size:13px;color:var(--muted);line-height:1.55;flex:1;margin-bottom:24px;transition:color .12s}
+.analysis-card:hover .analysis-desc{color:rgba(255,255,255,.75)}
+.analysis-link{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);text-decoration:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--gray);background:transparent;transition:gap .2s,color .12s,border-color .12s}
+.analysis-link svg{stroke:currentColor;fill:none;stroke-width:2}
+.analysis-link:hover{gap:10px}
+.analysis-card:hover .analysis-link{color:#c6ff00;border-top-color:rgba(255,255,255,.15)}
+
+/* Ext button */
+.ext-btn{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#fff;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:12px 22px;border:1px solid var(--ink);border-radius:0;text-decoration:none;transition:background .15s,color .15s}
+.ext-btn:hover{background:#c6ff00;color:var(--ink)}
+.ext-btn-green{background:var(--ink)}
+.ext-btn svg{fill:currentColor}
+
+/* Footer */
+footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
+.foot-inner{max-width:1180px;margin:0 auto;padding:64px clamp(1.5rem,5vw,4rem) 32px}
+.foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
+.foot-col{display:flex;flex-direction:column;gap:10px}
+.foot-col--brand{gap:12px}
+.foot-brand-name{font-size:14px;font-weight:700;color:#ffffff;letter-spacing:-.2px;text-transform:none;display:block}
+.foot-brand-desc{font-size:13px;color:rgba(255,255,255,.7);line-height:1.5;margin:0;max-width:280px}
+.foot-brand-loc{font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,.5);margin:0;letter-spacing:.5px}
+.foot-col-title{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;color:rgba(255,255,255,.4);letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.foot-col-title::before{content:'—';font-weight:300}
+.foot-col a{font-size:15px;color:#ffffff;text-decoration:none;transition:color .2s;letter-spacing:-.3px;width:fit-content;font-weight:400}
+.foot-col a:hover{color:var(--purple);transition:color .15s}
+.foot-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:24px;border-top:.5px solid rgba(255,255,255,.1);flex-wrap:wrap;gap:12px}
+.foot-copy{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.5);letter-spacing:.3px}
+.foot-made{display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.5);letter-spacing:.3px;flex-wrap:wrap}
+.foot-tech{font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(255,255,255,.08);padding:2px 7px;border-radius:4px;color:#ffffff;font-weight:500;border:.5px solid rgba(255,255,255,.12)}
+@media(max-width:900px){.foot-grid{grid-template-columns:1fr 1fr;gap:32px}.foot-col--brand{grid-column:1 / -1;margin-bottom:8px}.foot-bottom{flex-direction:column;align-items:flex-start}}
+@media(max-width:520px){.foot-grid{grid-template-columns:1fr;gap:28px}}
+
+/* Responsive */
+@media(max-width:960px){
+  .analysis-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:600px){
+  .nav-links a:not(.nav-cta):not(.active){display:none}
+  .analysis-grid{grid-template-columns:1fr}
+  /* ── sec-nav móvil: scroll horizontal compacto ── */
+  .sec-nav-inner{
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    padding:10px clamp(16px,4vw,24px);
+    gap:8px;
+  }
+  .sec-nav-inner::-webkit-scrollbar{display:none}
+  .sec-nav a,.sec-nav button{
+    font-size:11px;
+    padding:7px 13px;
+    flex-shrink:0;
+  }
+}
+
+/* Touch — no sticky hover */
+@media(hover:none){
+  .analysis-card:hover{background:var(--paper)!important;color:var(--ink)!important}
+  .analysis-card:hover *{color:inherit!important}
+}
+
+/* Prefers reduced motion */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition-duration:0ms!important;animation-duration:0ms!important;animation-iteration-count:1!important}
+  .logo-dot{animation:none}
+}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link" style="position:absolute;left:-9999px;top:4px;z-index:9999;background:var(--ink);color:#fff;padding:8px 16px;font-size:13px;font-weight:600;text-decoration:none;border-radius:4px;transition:left 0s" onfocus="this.style.left='4px'" onblur="this.style.left='-9999px'">Saltar al contenido</a>
+<div class="progress-bar" id="progressBar"></div>
+
+<nav id="nav" aria-label="Navegación principal">
+  <a href="./index.html" class="logo" aria-label="Borja Mora — Inicio"><span id="logoText"></span><span class="logo-dot"></span></a>
+  <div class="nav-links">
+    <a href="./index.html">Inicio</a>
+    <a href="./sobre-mi.html">Sobre mí</a>
+    <a href="./power-bi.html">Power BI</a>
+    <a href="./analisis-datos.html" class="active" aria-current="page">Análisis</a>
+    <a href="./visualizacion-datos.html">Visualización</a>
+    <a href="./descargas.html">Descargas</a>
+    <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event', 'clic_linkedin', { location: 'nav' });">LinkedIn</a>
+    <a id="navEmailBtn" href="#" target="_blank" rel="noopener noreferrer" class="nav-cta btn" onclick="gtag('event', 'clic_email', { location: 'nav' });"><span class="cta-text-wrap"><span>Contacto</span><span>¿Hablamos?</span></span></a>
+  </div>
+  <button class="nav-burger" id="navBurger" aria-label="Abrir menú" aria-expanded="false" aria-controls="navDrawer">
+    <span class="nav-burger-line"></span>
+    <span class="nav-burger-line"></span>
+    <span class="nav-burger-line"></span>
+  </button>
+</nav>
+
+<!-- ─── MOBILE DRAWER ─── -->
+<div class="nav-drawer" id="navDrawer" role="dialog" aria-modal="true" aria-label="Menú de navegación">
+  <div class="nav-drawer-backdrop" id="navBackdrop"></div>
+  <div class="nav-drawer-panel">
+    <div class="nav-drawer-head">
+      <span class="nav-drawer-brand">Borja Mora.</span>
+      <button class="nav-drawer-close" id="navDrawerClose" aria-label="Cerrar menú">Cerrar ×</button>
+    </div>
+    <nav class="nav-drawer-links" aria-label="Navegación móvil">
+      <a href="./index.html">Inicio</a>
+      <a href="./sobre-mi.html">Sobre mí</a>
+      <a href="./power-bi.html">Power BI</a>
+      <a href="./analisis-datos.html" class="active" aria-current="page">Análisis</a>
+      <a href="./visualizacion-datos.html">Visualización</a>
+      <a href="./descargas.html">Descargas</a>
+    </nav>
+    <div class="nav-drawer-foot">
+      <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="nav-drawer-foot-item" onclick="gtag('event','clic_linkedin',{location:'drawer'});">LinkedIn</a>
+      <a id="drawerEmailBtn" href="#" target="_blank" rel="noopener noreferrer" class="nav-drawer-foot-item" onclick="gtag('event','clic_email',{location:'drawer'});">Contactar</a>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var burger = document.getElementById('navBurger');
+  var drawer = document.getElementById('navDrawer');
+  var closeBtn = document.getElementById('navDrawerClose');
+  var backdrop = document.getElementById('navBackdrop');
+  if(!burger||!drawer) return;
+  function open(){ drawer.classList.add('open'); burger.setAttribute('aria-expanded','true'); burger.setAttribute('aria-label','Cerrar menú'); document.body.style.overflow='hidden'; document.body.style.position='fixed'; document.body.style.width='100%'; }
+  function close(){ drawer.classList.remove('open'); burger.setAttribute('aria-expanded','false'); burger.setAttribute('aria-label','Abrir menú'); document.body.style.overflow=''; document.body.style.position=''; document.body.style.width=''; }
+  burger.addEventListener('click', function(){ drawer.classList.contains('open') ? close() : open(); });
+  if(closeBtn) closeBtn.addEventListener('click', close);
+  if(backdrop) backdrop.addEventListener('click', close);
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') close(); });
+  var navEmail = document.getElementById('navEmailBtn');
+  var drawerEmail = document.getElementById('drawerEmailBtn');
+  if(navEmail && drawerEmail){ var obs = new MutationObserver(function(){ drawerEmail.href = navEmail.href; }); obs.observe(navEmail,{attributes:true,attributeFilter:['href']}); if(navEmail.href && navEmail.href !== '#') drawerEmail.href = navEmail.href; }
+})();
+</script>
+
+<!-- HERO -->
+<section class="proj-hero" id="main-content">
+  <div class="c">
+    <div class="sr">
+      <div class="hero-tag">Portfolio</div>
+      <h1 class="hero-h1">Análisis de datos</h1>
+      <p class="hero-sub">Machine Learning, análisis exploratorio y consultas avanzadas. Python, SQL y R aplicados a <span class="hero-highlight">problemas reales donde los datos necesitan estructura, limpieza y un modelo que responda preguntas concretas.</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- STICKY NAV -->
+<div class="sec-nav" id="secNav">
+  <div class="sec-nav-inner">
+    <button data-sec="ml" data-target="ml">Machine Learning</button>
+    <button data-sec="analisis" data-target="analisis">Python · SQL · R</button>
+  </div>
+</div>
+
+<!-- ══ MACHINE LEARNING ══ -->
+<section class="proj-section" id="ml" data-section="ml">
+  <div class="c">
+    <div class="section-head sr">
+      <h2 class="section-title">Machine Learning</h2>
+      <p class="section-sub">Modelos predictivos y de clasificación aplicados a problemas reales de negocio. Cada proyecto parte de una pregunta concreta y termina con una métrica que mide si la respuesta funciona.</p>
+    </div>
+    <div class="ml-grid">
+      <!-- CARD ML-1: SARIMA Retail -->
+      <div class="card-c">
+        <div class="cc-cat">Forecasting · Retail</div>
+        <div class="cc-block">
+          <div class="cc-label">El problema</div>
+          <div class="cc-text">Una cadena de supermercados perdía dinero cada semana: unas veces sobraba producto y acababa en la basura, otras faltaba y perdían ventas. El responsable de compras pedía basándose en su experiencia, pero no conseguía acertar.</div>
+        </div>
+        <div class="cc-block">
+          <div class="cc-label">La solución</div>
+          <div class="cc-text">Analicé cinco años de ventas semanales y entrené un modelo SARIMA que captura la tendencia y la estacionalidad oculta en los datos. Ahora el sistema predice la demanda de cada semana antes de hacer el pedido.</div>
+        </div>
+        <div class="cc-result">
+          <div class="cc-label">El resultado</div>
+          <div class="cc-result-metric"><span class="cc-result-num">2,21%</span><span class="cc-result-unit">MAPE</span></div>
+        </div>
+        <div class="cc-foot">
+          <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">SARIMA</span><span class="cc-pill">statsmodels</span></div>
+          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/04-series-temporales/arima/01-caso-retail" target="_blank" rel="noopener noreferrer">Ver →</a>
+        </div>
+      </div>
+      <!-- CARD ML-2: K-Means Política -->
+      <div class="card-c">
+        <div class="cc-cat">Clustering · Ciencia Política</div>
+        <div class="cc-block">
+          <div class="cc-label">El problema</div>
+          <div class="cc-text">Un equipo de investigación encuestó a 3.689 votantes con 9 preguntas sobre política, demografía y opinión. Cuando intentaron segmentarlos, el algoritmo agrupaba por edad y género — no por ideología. Los perfiles no tenían sentido.</div>
+        </div>
+        <div class="cc-block">
+          <div class="cc-label">La solución</div>
+          <div class="cc-text">Descarté las variables demográficas y entrené K-Means solo con las 4 preguntas de opinión real. Aparecieron tres perfiles ideológicos con posiciones claras sobre servicios públicos, fiscalidad y seguridad.</div>
+        </div>
+        <div class="cc-result">
+          <div class="cc-label">El resultado</div>
+          <div class="cc-result-metric"><span class="cc-result-num">9→4</span><span class="cc-result-unit">variables</span></div>
+        </div>
+        <div class="cc-foot">
+          <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">K-Means</span><span class="cc-pill">scikit-learn</span></div>
+          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/02-no-supervisado/clustering/kmeans/03-segmentacion-politica" target="_blank" rel="noopener noreferrer">Ver →</a>
+        </div>
+      </div>
+      <!-- CARD ML-3: XGBoost Gym -->
+      <div class="card-c">
+        <div class="cc-cat">Clasificación · Fitness</div>
+        <div class="cc-block">
+          <div class="cc-label">El problema</div>
+          <div class="cc-text">Un gimnasio con 300 socios necesitaba saber quién estaba satisfecho y quién estaba a punto de irse. Lanzaban encuestas, pero las respuestas no revelaban un patrón claro ni permitían actuar a tiempo.</div>
+        </div>
+        <div class="cc-block">
+          <div class="cc-label">La solución</div>
+          <div class="cc-text">Entrené un modelo XGBoost con los datos de uso real de cada socio. El resultado fue directo: la frecuencia de asistencia mensual concentra el 80% de la predicción. Ni el precio ni las instalaciones pesaban tanto.</div>
+        </div>
+        <div class="cc-result">
+          <div class="cc-label">El resultado</div>
+          <div class="cc-result-metric"><span class="cc-result-num">9/10</span><span class="cc-result-unit">aciertos</span></div>
+        </div>
+        <div class="cc-foot">
+          <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">XGBoost</span><span class="cc-pill">scikit-learn</span></div>
+          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/01-supervisado/clasificacion/03-xgboost" target="_blank" rel="noopener noreferrer">Ver →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PYTHON · SQL · R ══ -->
+<section class="proj-section" id="analisis" data-section="analisis">
+  <div class="c">
+    <div class="section-head sr">
+      <h2 class="section-title">Python · SQL · R</h2>
+      <p class="section-sub">Exploración, limpieza y análisis de datos con Python, SQL y R. Proyectos con código documentado y conclusiones aplicables a negocio, disponibles en GitHub.</p>
+    </div>
+    <div class="analysis-grid" style="margin-bottom:36px;">
+      <div class="analysis-card">
+        <div class="analysis-title">Mejores ciudades para teletrabajar</div>
+        <p class="analysis-desc">Análisis exploratorio para identificar municipios con buena conectividad, calidad ambiental y precios de vivienda competitivos.</p>
+        <div class="analysis-lang"><span>Python</span><span>Pandas</span><span>Análisis de datos</span></div>
+        <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/python/Proyectos/03.Mejores%20Ciudades%20espa%C3%B1olas%20para%20vivir" target="_blank" rel="noopener noreferrer" class="analysis-link">Ver análisis completo <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+      </div>
+      <div class="analysis-card">
+        <div class="analysis-title">Mercado Airbnb — Análisis de precios</div>
+        <p class="analysis-desc">Exploración de datos para analizar patrones de precios, disponibilidad y demanda en el mercado de alquiler turístico.</p>
+        <div class="analysis-lang"><span>SQL</span><span>Exploración de datos</span><span>Visualización</span></div>
+        <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/SQL/Proyectos%20SQL/04.Estudio%20Airbnb%20Menorca" target="_blank" rel="noopener noreferrer" class="analysis-link">Ver consultas y conclusiones <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+      </div>
+      <div class="analysis-card">
+        <div class="analysis-title">Radiografía socioeconómica de Madrid</div>
+        <p class="analysis-desc">Análisis de indicadores demográficos y económicos para entender la distribución territorial de renta y población.</p>
+        <div class="analysis-lang"><span>R</span><span>Análisis de datos</span><span>Visualización</span></div>
+        <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/blob/main/r/Proyectos%20con%20R/01.Radiograf%C3%ADa%20de%20Madrid/README.md" target="_blank" rel="noopener noreferrer" class="analysis-link">Explorar análisis completo <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+      </div>
+      <div class="analysis-card">
+        <div class="analysis-title">SQL Avanzado — CTEs, Window Functions y Subqueries</div>
+        <p class="analysis-desc">61 ejercicios progresivos en T-SQL: desde agregaciones con GROUP BY hasta rankings con DENSE_RANK, sumas acumuladas, LAG/LEAD y percentiles sobre AdventureWorks.</p>
+        <div class="analysis-lang"><span>T-SQL</span><span>Window Functions</span><span>CTEs</span></div>
+        <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/01-SQL" target="_blank" rel="noopener noreferrer" class="analysis-link">Ver ejercicios SQL <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:center;">
+      <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main" target="_blank" rel="noopener noreferrer" class="ext-btn ext-btn-green">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.58v-2.03c-3.34.72-4.04-1.6-4.04-1.6-.54-1.38-1.33-1.74-1.33-1.74-1.08-.74.08-.73.08-.73 1.2.08 1.83 1.23 1.83 1.23 1.06 1.82 2.78 1.3 3.46.99.1-.77.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.13 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.82.57C20.57 21.8 24 17.3 24 12 24 5.37 18.63 0 12 0z"/></svg>
+        Ver más proyectos en GitHub
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-grid">
+      <div class="foot-col foot-col--brand">
+        <div class="foot-brand-name">Borja Mora.</div>
+        <p class="foot-brand-desc">Construyo espacios donde los datos calan.</p>
+        <p class="foot-brand-loc">Madrid, España</p>
+        <p class="foot-brand-loc" style="color:rgba(60,138,55,.85);display:flex;align-items:center;gap:6px;margin-top:4px;">
+  <span style="width:5px;height:5px;border-radius:50%;background:#3c8a37;display:inline-block;flex-shrink:0;"></span>
+  Disponible para nuevas oportunidades
+</p>
+      </div>
+      <div class="foot-col">
+        <div class="foot-col-title">Navegación</div>
+        <a href="./index.html">Inicio</a>
+        <a href="./sobre-mi.html">Sobre mí</a>
+        <a href="./power-bi.html">Power BI</a>
+        <a href="./analisis-datos.html">Análisis</a>
+        <a href="./visualizacion-datos.html">Visualización</a>
+        <a href="./descargas.html">Descargas</a>
+      </div>
+      <div class="foot-col">
+        <div class="foot-col-title">Trabajo</div>
+        <a href="./power-bi.html">Power BI</a>
+        <a href="./analisis-datos.html">Python · SQL · R</a>
+        <a href="https://github.com/BORJAMOME/DAX-LAB" target="_blank" rel="noopener noreferrer">DAX Lab</a>
+      </div>
+      <div class="foot-col">
+        <div class="foot-col-title">Sígueme</div>
+        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_linkedin',{location:'footer'});">LinkedIn</a>
+        <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_github',{location:'footer'});">GitHub</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <div class="foot-copy">© 2026 Borja Mora Méndez · Todos los derechos reservados</div>
+      <div class="foot-made">
+        <span>Diseñado y construido por mí</span>
+        <span class="foot-tech">HTML</span>
+        <span class="foot-tech">CSS</span>
+        <span class="foot-tech">JS</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Progress + nav scroll
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>10);
+  const h=document.documentElement;
+  document.getElementById('progressBar').style.transform=`scaleX(${window.scrollY/(h.scrollHeight-h.clientHeight)})`;
+});
+
+// SR observer
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});},{threshold:0.1});
+document.querySelectorAll('.sr').forEach(el=>obs.observe(el));
+
+// ── SECTION FILTER ──
+function showSection(sec){
+  // Nav active
+  document.querySelectorAll('.sec-nav button').forEach(a=>{
+    a.classList.toggle('active', a.dataset.sec === sec);
+  });
+
+  // Show/hide sections
+  document.querySelectorAll('.proj-section').forEach(el=>{
+    const match = el.dataset.section === sec;
+    el.style.display = match ? '' : 'none';
+  });
+
+  // Scroll to section
+  const target = document.getElementById(sec);
+  if(target){
+    window.scrollTo({top: target.offsetTop - 120, behavior:'smooth'});
+  }
+}
+
+document.querySelectorAll('.sec-nav button').forEach(a=>{
+  a.addEventListener('click', e=>{
+    e.preventDefault();
+    showSection(a.dataset.sec);
+  });
+});
+
+// Show all sections by default (no filter active initially)
+(function(){
+  document.querySelectorAll('.sec-nav button').forEach((btn,i)=>{
+    if(i===0) btn.classList.add('active');
+  });
+})();
+</script>
+<script>
+(function(){
+  var e = atob('Ym9yamEubW9yYS5tZW5kZXpAZ21haWwuY29t');
+  var su = encodeURIComponent('Oportunidad laboral');
+  var body = encodeURIComponent('Hola, me gustaría hablar contigo sobre una posible oportunidad.');
+  var url = 'https://mail.google.com/mail/u/0/?fs=1&to=' + e + '&su=' + su + '&body=' + body + '&tf=cm';
+  var nav = document.getElementById('navEmailBtn');
+  if (nav) nav.href = url;
+})();
+</script>
+
+<script>
+// ─── TYPING EFFECT (logo) ───
+(function(){
+  const el = document.getElementById('logoText');
+  if (!el) return;
+  const text = 'Borja Mora';
+  let i = 0;
+  function type() {
+    if (i < text.length) {
+      el.textContent += text[i];
+      i++;
+      setTimeout(type, i === 1 ? 300 : 80 + Math.random() * 40);
+    } else {
+      setTimeout(() => el.classList.add('done'), 1200);
+    }
+  }
+  setTimeout(type, 400);
+})();
+</script>
+
+
+<!-- ── Cookie banner HTML + lógica (RGPD/LOPDGDD) ── -->
+<div id="bm-cookie-banner" role="dialog" aria-live="polite" aria-label="Aviso de cookies">
+  <p><strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Política de privacidad</a>.</p>
+  <div class="bm-cb-btns">
+    <button class="bm-cb-btn bm-cb-reject" id="bm-cb-reject" aria-label="Rechazar cookies">Rechazar</button>
+    <button class="bm-cb-btn bm-cb-accept" id="bm-cb-accept" aria-label="Aceptar cookies">Aceptar</button>
+  </div>
+</div>
+<script>
+(function () {
+  var KEY = "bm_cookie_consent";
+  var banner = document.getElementById("bm-cookie-banner");
+  if (!banner) return;
+
+  function dismiss() {
+    banner.classList.remove("bm-visible");
+    banner.classList.add("bm-hiding");
+    setTimeout(function () {
+      banner.style.display = "none";
+    }, 380);
+  }
+
+  function grantAnalytics() {
+    if (typeof gtag === "function") {
+      gtag("consent", "update", { analytics_storage: "granted" });
+    }
+  }
+
+  /* Solo mostrar si no hay decisión previa */
+  if (!localStorage.getItem(KEY)) {
+    /* Pequeño delay para que la animación sea visible */
+    setTimeout(function () {
+      banner.classList.add("bm-visible");
+    }, 600);
+  } else if (localStorage.getItem(KEY) === "accepted") {
+    grantAnalytics();
+    banner.style.display = "none";
+  } else {
+    banner.style.display = "none";
+  }
+
+  document.getElementById("bm-cb-accept").addEventListener("click", function () {
+    localStorage.setItem(KEY, "accepted");
+    grantAnalytics();
+    dismiss();
+  });
+
+  document.getElementById("bm-cb-reject").addEventListener("click", function () {
+    localStorage.setItem(KEY, "rejected");
+    dismiss();
+  });
+})();
+</script>
+</body>
+</html>
