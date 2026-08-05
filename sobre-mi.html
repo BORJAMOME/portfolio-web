@@ -803,7 +803,7 @@ footer {
 
 <!-- NAV -->
 <nav id="nav" aria-label="Navegación principal">
-  <a href="./index.html" class="logo" aria-label="Borja Mora — Inicio"><span id="logoText"></span><span class="logo-dot"></span></a>
+  <a href="./index.html" class="logo" aria-label="Borja Mora — Inicio"><span id="logoText" class="done">Borja Mora</span><span class="logo-dot"></span></a>
   <div class="nav-links">
     <a href="./index.html">Inicio</a>
     <a href="./sobre-mi.html" class="active" aria-current="page">Sobre mí</a>
@@ -1050,23 +1050,7 @@ document.querySelectorAll('.sr').forEach(el => obs.observe(el));
 const nav = document.getElementById('nav');
 window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 40));
 
-// ─── TYPING EFFECT (logo) ───
-(function(){
-  const el = document.getElementById('logoText');
-  if (!el) return;
-  const text = 'Borja Mora';
-  let i = 0;
-  function type() {
-    if (i < text.length) {
-      el.textContent += text[i];
-      i++;
-      setTimeout(type, i === 1 ? 300 : 80 + Math.random() * 40);
-    } else {
-      setTimeout(() => el.classList.add('done'), 1200);
-    }
-  }
-  setTimeout(type, 400);
-})();
+// ─── TYPING EFFECT — desactivado ───
 
 // ─── NAV EMAIL ───
 document.addEventListener('DOMContentLoaded', function(){

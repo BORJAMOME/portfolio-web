@@ -1464,7 +1464,7 @@ footer {
 
 <!-- ─── NAV ─── -->
 <nav id="nav">
-  <a href="../index.html" class="logo"><span id="logoText"></span><span class="logo-dot"></span></a>
+  <a href="../index.html" class="logo"><span id="logoText" class="done">Borja Mora</span><span class="logo-dot"></span></a>
   <div class="nav-center">
       <a href="./index.html" class="active">Home</a>
       <a href="./about.html">About</a>
@@ -2396,22 +2396,7 @@ footer {
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// ─── TYPING EFFECT ───
-(function(){
-  const el = document.getElementById('logoText');
-  const text = 'Borja Mora';
-  let i = 0;
-  function type() {
-    if (i < text.length) {
-      el.textContent += text[i];
-      i++;
-      setTimeout(type, i === 1 ? 300 : 80 + Math.random() * 40);
-    } else {
-      setTimeout(() => el.classList.add('done'), 1200);
-    }
-  }
-  setTimeout(type, 400);
-})();
+// ─── TYPING EFFECT — desactivado ───
 
 
 // ─── NAV SCROLL ───

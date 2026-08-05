@@ -75,16 +75,7 @@ body {
 }
 @keyframes breathe { 0%,100%{transform:scale(1)} 50%{transform:scale(1.5)} }
 
-/* Typing cursor */
-#logoText:not(.done)::after {
-  content: '|';
-  color: var(--purple);
-  font-weight: 300;
-  animation: blink .7s step-end infinite;
-  margin-left: 1px;
-}
-#logoText.done::after { content: none; display: none; }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+/* Typing cursor — desactivado */
 
 .nav-links { display: flex; gap: 2px; align-items: center; }
 .nav-links a {
@@ -165,10 +156,10 @@ body {
 .nav-social a {
   display: flex; align-items: center; justify-content: center;
   width: 32px; height: 32px; border-radius: 0;
-  color: var(--ink); opacity: .45;
+  color: var(--ink); opacity: 1;
   transition: opacity .2s var(--ease);
 }
-.nav-social a:hover { opacity: 1; }
+.nav-social a:hover { opacity: .7; }
 .nav-social a:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
 .nav-social svg { width: 16px; height: 16px; }
 
