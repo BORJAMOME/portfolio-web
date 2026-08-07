@@ -1208,11 +1208,12 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   padding: 28px 24px;
   display: flex;
   flex-direction: column;
-  clip-path: inset(100% 0 0 0);
-  transition: clip-path .9s cubic-bezier(0.22, 1, 0.36, 1), background .18s;
-}
-.com-card.com-visible {
   clip-path: inset(0% 0 0 0);
+  transition: background .18s;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .com-card { clip-path: inset(100% 0 0 0); transition: clip-path .9s cubic-bezier(0.22, 1, 0.36, 1), background .18s; }
+  .com-card.com-visible { clip-path: inset(0% 0 0 0); }
 }
 .com-card.com-visible:hover { transform: none; background: #d8d8d8; }
 
@@ -1356,10 +1357,13 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   flex: 1;
   display: flex;
   flex-direction: column;
-  clip-path: inset(100% 0 0 0 round 14px);
-  transition: clip-path .85s cubic-bezier(0.22,1,0.36,1), transform .2s var(--ease);
+  clip-path: inset(0% 0 0 0 round 14px);
+  transition: transform .2s var(--ease);
 }
-.sk-col.sk-visible { clip-path: inset(0% 0 0 0); }
+@media (prefers-reduced-motion: no-preference) {
+  .sk-col { clip-path: inset(100% 0 0 0 round 14px); transition: clip-path .85s cubic-bezier(0.22,1,0.36,1), transform .2s var(--ease); }
+  .sk-col.sk-visible { clip-path: inset(0% 0 0 0); }
+}
 .sk-col.sk-visible:hover { transform: translateY(-4px); }
 .sk-col.sk-visible:hover .sk-card {
   background: #111111;
@@ -1434,13 +1438,12 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   overflow: visible;
   position: relative;
   clip-path: none !important;
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity .7s cubic-bezier(0.22,1,0.36,1), transform .7s cubic-bezier(0.22,1,0.36,1);
-}
-.sk-col.top-align.sk-visible {
   opacity: 1;
   transform: translateY(0);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sk-col.top-align { opacity: 0; transform: translateY(24px); transition: opacity .7s cubic-bezier(0.22,1,0.36,1), transform .7s cubic-bezier(0.22,1,0.36,1); }
+  .sk-col.top-align.sk-visible { opacity: 1; transform: translateY(0); }
 }
 .sk-col.top-align.sk-visible:hover { transform: translateY(-4px); }
 .sk-col.top-align .sk-card {
@@ -1688,11 +1691,10 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   border-radius: 20px;
   border: .5px solid #e0e0ec;
   box-shadow: 0 2px 10px rgba(0,0,0,.1);
-  opacity: 0;
+  opacity: 1;
   pointer-events: none;
   transition: opacity .15s ease;
 }
-.dot-nav-item:hover .dot-nav-label { opacity: 1; }
 .dot-nav.dark-mode .dot-nav-dot { background: rgba(255,255,255,.3); }
 .dot-nav.dark-mode .dot-nav-item.active .dot-nav-dot {
   background: #fff;
@@ -1759,11 +1761,16 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 
 /* ─── SCROLL REVEAL ─── */
 @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
-.sr { opacity:0; transform:translateY(20px); transition:opacity .65s var(--ease), transform .65s var(--ease); }
-.sr.visible { opacity:1; transform:translateY(0); }
-.sr-d1 { transition-delay:.08s; }
-.sr-d2 { transition-delay:.16s; }
-.sr-d3 { transition-delay:.24s; }
+/* Contenido visible por defecto — accesible y SEO-friendly */
+.sr { opacity:1; transform:translateY(0); }
+/* Animaciones solo como progressive enhancement */
+@media (prefers-reduced-motion: no-preference) {
+  .sr { opacity:0; transform:translateY(20px); transition:opacity .65s var(--ease), transform .65s var(--ease); }
+  .sr.visible { opacity:1; transform:translateY(0); }
+  .sr-d1 { transition-delay:.08s; }
+  .sr-d2 { transition-delay:.16s; }
+  .sr-d3 { transition-delay:.24s; }
+}
 
 /* ── COM CARD HOVER — solo cuando ya es visible ── */
 
@@ -2360,11 +2367,11 @@ footer {
 
 <!-- ─── DOT NAV ─── -->
 <div class="dot-nav" id="dotNav">
-  <div class="dot-nav-item" data-section="hero"><div class="dot-nav-dot"></div><span class="dot-nav-label">Inicio</span></div>
-  <div class="dot-nav-item" data-section="approach"><div class="dot-nav-dot"></div><span class="dot-nav-label">Cómo trabajo</span></div>
-  <div class="dot-nav-item" data-section="projects"><div class="dot-nav-dot"></div><span class="dot-nav-label">Proyectos</span></div>
-  <div class="dot-nav-item" data-section="stack"><div class="dot-nav-dot"></div><span class="dot-nav-label">Skills</span></div>
-  <div class="dot-nav-item" data-section="cta"><div class="dot-nav-dot"></div><span class="dot-nav-label">Contacto</span></div>
+  <div class="dot-nav-item" data-section="hero"><div class="dot-nav-dot"></div><span class="dot-nav-label">¿Quién soy?</span></div>
+  <div class="dot-nav-item" data-section="approach"><div class="dot-nav-dot"></div><span class="dot-nav-label">¿Cómo trabajo?</span></div>
+  <div class="dot-nav-item" data-section="projects"><div class="dot-nav-dot"></div><span class="dot-nav-label">¿Qué he hecho?</span></div>
+  <div class="dot-nav-item" data-section="stack"><div class="dot-nav-dot"></div><span class="dot-nav-label">¿Qué domino?</span></div>
+  <div class="dot-nav-item" data-section="cta"><div class="dot-nav-dot"></div><span class="dot-nav-label">¿Hablamos?</span></div>
 </div>
 
 <!-- ─── HERO ─── -->
@@ -2395,8 +2402,8 @@ footer {
       </div>
 
       <div class="hero-actions">
-        <a href="#approach" class="btn btn-primary" data-arrow="down"><span>Ver cómo trabajo</span><span class="btn-arrow">↓</span></a>
-        <a href="#projects" class="btn btn-outline" data-arrow="right"><span>Ver proyectos</span><span class="btn-arrow">→</span></a>
+        <a href="./power-bi.html" class="btn btn-primary" data-arrow="right"><span>Ver proyectos</span><span class="btn-arrow">→</span></a>
+        <a href="#approach" class="btn btn-outline" data-arrow="down"><span>Cómo trabajo</span><span class="btn-arrow">↓</span></a>
       </div>
     </div>
 
@@ -2603,6 +2610,30 @@ footer {
 </section>
 
 
+<!-- ─── PROOF STRIP — SOCIAL PROOF ─── -->
+<div class="proof-strip" aria-label="Prueba social">
+  <div class="proof-track">
+    <div class="proof-content">
+      <span class="proof-item"><strong>2.963</strong>&nbsp;seguidores en LinkedIn</span>
+      <span class="proof-item" aria-hidden="true">·</span>
+      <span class="proof-item"><strong>192K</strong>&nbsp;impresiones acumuladas</span>
+      <span class="proof-item" aria-hidden="true">·</span>
+      <span class="proof-item">Microsoft PL-300 certificado</span>
+      <span class="proof-item" aria-hidden="true">·</span>
+      <span class="proof-item">Bootcamp Neoland · Data Analytics</span>
+      <span class="proof-item" aria-hidden="true">·</span>
+      <span class="proof-item"><strong>2.963</strong>&nbsp;seguidores en LinkedIn</span>
+      <span class="proof-item" aria-hidden="true">·</span>
+      <span class="proof-item"><strong>192K</strong>&nbsp;impresiones acumuladas</span>
+      <span class="proof-item" aria-hidden="true">·</span>
+      <span class="proof-item">Microsoft PL-300 certificado</span>
+      <span class="proof-item" aria-hidden="true">·</span>
+      <span class="proof-item">Bootcamp Neoland · Data Analytics</span>
+      <span class="proof-item" aria-hidden="true">·</span>
+    </div>
+  </div>
+</div>
+
 <!-- ─── CÓMO TRABAJO · ÍNDICE XXL ─── -->
 <section class="dph-section" id="approach">
   <div class="c">
@@ -2633,11 +2664,11 @@ footer {
             <div class="idx-detail">
               <div>
                 <h3 class="idx-d-title">La <em>pregunta</em> que falta.</h3>
-                <p class="idx-d-body">La mayoría de los proyectos de datos arrancan demasiado pronto: abriendo la herramienta antes de entender qué necesita decidir el negocio. Mi trabajo empieza antes — defino qué pregunta debe responder el análisis, qué KPI importa de verdad y qué contexto necesita quien va a usarlo.</p>
+                <p class="idx-d-body">Entrevisto al stakeholder. Identifico qué decisión necesita tomar. Defino los 3-5 KPIs que importan de verdad y descarto el ruido. Antes de abrir ninguna herramienta, tengo claro qué pregunta debe responder el análisis.</p>
               </div>
               <div class="idx-d-side">
                 <div class="idx-d-tagrow"><span class="idx-chip">Negocio</span><span class="idx-chip">KPI</span><span class="idx-chip">Contexto</span></div>
-                <div class="idx-d-note">INPUT: problema → OUTPUT: brief</div>
+                <div class="idx-d-note">Problema de negocio → Brief analítico</div>
               </div>
             </div>
           </div>
@@ -2658,11 +2689,11 @@ footer {
             <div class="idx-detail">
               <div>
                 <h3 class="idx-d-title">Datos que <em>se sostienen.</em></h3>
-                <p class="idx-d-body">Los datos rara vez llegan listos. Los conecto, limpio y estructuro con SQL, Python o Power Query — depende del origen y del volumen. Esquema en estrella, relaciones limpias, sin atajos. Esta fase no se ve en el dashboard, pero es la que decide si el análisis aguanta o se rompe.</p>
+                <p class="idx-d-body">Conecto las fuentes, limpio los datos y modelo el esquema en estrella. Uso SQL, Python o Power Query según el origen y el volumen. Valido relaciones, elimino duplicados y documento cada transformación. Si esta capa falla, todo lo que viene encima se rompe.</p>
               </div>
               <div class="idx-d-side">
                 <div class="idx-d-tagrow"><span class="idx-chip">SQL</span><span class="idx-chip">Python</span><span class="idx-chip">Power Query</span><span class="idx-chip">Modelado</span></div>
-                <div class="idx-d-note">INPUT: datos crudos → OUTPUT: modelo limpio</div>
+                <div class="idx-d-note">Datos crudos → Modelo estrella limpio</div>
               </div>
             </div>
           </div>
@@ -2683,11 +2714,11 @@ footer {
             <div class="idx-detail">
               <div>
                 <h3 class="idx-d-title">Lo que los datos <em>dicen de verdad.</em></h3>
-                <p class="idx-d-body">Aquí convierto necesidades de negocio en lógica analítica. Cada medida, cada cálculo define cómo se interpreta la información. No se trata de mostrar números — se trata de que respondan preguntas reales con precisión.</p>
+                <p class="idx-d-body">Escribo las medidas DAX que traducen preguntas de negocio en números accionables. Cruzo dimensiones, detecto patrones y valido cada cálculo contra la realidad del dato. No muestro cifras — construyo respuestas que aguantan cuando alguien pregunta "¿y esto por qué?".</p>
               </div>
               <div class="idx-d-side">
                 <div class="idx-d-tagrow"><span class="idx-chip">DAX</span><span class="idx-chip">Python</span><span class="idx-chip">Estadística</span></div>
-                <div class="idx-d-note">INPUT: modelo → OUTPUT: métricas + patrones</div>
+                <div class="idx-d-note">Modelo → Métricas + patrones accionables</div>
               </div>
             </div>
           </div>
@@ -2708,11 +2739,11 @@ footer {
             <div class="idx-detail">
               <div>
                 <h3 class="idx-d-title">Que alguien <em>actúe.</em></h3>
-                <p class="idx-d-body">Un dashboard útil no necesita manual. Organizo la información con jerarquía visual, contexto y narrativa para que la mirada encuentre rápido lo importante. Antes de abrir Power BI, diseño el layout con <a href="https://borjamome.github.io/powerbi-mockup/" target="_blank" rel="noopener noreferrer" style="color:var(--purple);text-decoration:underline">PBI Mockup Creator</a> — una herramienta que construí para definir qué lidera, qué acompaña y qué sobra.</p>
+                <p class="idx-d-body">Diseño el layout antes de tocar Power BI — con <a href="https://borjamome.github.io/powerbi-mockup/" target="_blank" rel="noopener noreferrer" style="color:var(--purple);text-decoration:underline">PBI Mockup Creator</a>, una herramienta que construí yo. Defino qué lidera la vista, qué acompaña y qué sobra. Aplico jerarquía visual, contexto y narrativa para que quien mire el dashboard tome una decisión sin necesitar que nadie se lo explique.</p>
               </div>
               <div class="idx-d-side">
                 <div class="idx-d-tagrow"><span class="idx-chip">Data Storytelling</span><span class="idx-chip">UX/UI</span><span class="idx-chip">Layout</span></div>
-                <div class="idx-d-note">INPUT: métricas → OUTPUT: decisión</div>
+                <div class="idx-d-note">Métricas → Decisión de negocio</div>
               </div>
             </div>
           </div>
@@ -3071,10 +3102,14 @@ footer {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           Envíame un mensaje
         </a>
-        <button type="button" id="ctaCopyBtn" class="cta-final-btn-secondary" style="cursor:pointer" onclick="navigator.clipboard.writeText('borja.mora.mendez@gmail.com');var s=this.querySelector('span');var t=s.textContent;s.textContent='¡Copiado!';gtag('event','copiar_email',{location:'cta_final'});setTimeout(function(){s.textContent=t;},2000);">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          <span>Copiar email</span>
-        </button>
+        <a href="https://calendar.app.google/YOUR_LINK" target="_blank" rel="noopener noreferrer" class="cta-final-btn-secondary" onclick="gtag('event', 'clic_agendar', { location: 'cta_final' });">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Agendar llamada
+        </a>
+        <a href="./sobre-mi.html#cv" class="cta-final-btn-secondary" onclick="gtag('event', 'clic_descargar_cv', { location: 'cta_final' });">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar CV
+        </a>
         <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="cta-final-btn-secondary" onclick="gtag('event', 'clic_linkedin', { location: 'cta_final' });">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
           LinkedIn
