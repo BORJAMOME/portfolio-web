@@ -2933,13 +2933,6 @@ footer {
         /* ── STACK: PIPELINE GRID ── */
         .pipe-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:0;position:relative}
 
-        /* Connector line behind stages */
-        .pipe-grid::before{
-          content:'';position:absolute;top:44px;left:10%;right:10%;height:2px;
-          background:linear-gradient(90deg,var(--purple) 0%,rgba(122,123,255,.2) 100%);
-          z-index:0;border-radius:1px;
-        }
-
         .pipe-stage{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center}
 
         /* Stage number + name header */
@@ -2951,14 +2944,6 @@ footer {
           color:var(--purple);letter-spacing:1.2px;margin-bottom:3px;
         }
         .pipe-name{font-size:13px;font-weight:700;color:var(--ink);letter-spacing:-.2px}
-
-        /* Dot connector on the horizontal line */
-        .pipe-dot{
-          width:12px;height:12px;border-radius:50%;
-          background:var(--white);border:2.5px solid var(--purple);
-          position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);
-          z-index:2;
-        }
 
         /* Card below each stage */
         .pipe-card{
@@ -2993,30 +2978,17 @@ footer {
           background:rgba(198,255,0,.12);color:#5a6a00;
           border:1px dashed rgba(138,155,0,.35);
         }
+        .pipe-edu-badge.exp{
+          background:rgba(198,255,0,.12);color:#5a6a00;
+          border:1px dashed rgba(138,155,0,.35);
+        }
+        .pipe-edu-badge.exp strong{color:#4a5800}
 
         /* Stage description */
         .pipe-desc{
           font-size:11.5px;color:var(--muted);line-height:1.5;
           margin-top:4px;text-align:center;
         }
-
-        /* ── STACK: TRANSVERSAL BAR (IA aplicada) ── */
-        .pipe-transversal{
-          margin-top:20px;padding:14px 20px;
-          border:1px solid var(--gray);border-radius:12px;
-          background:rgba(255,255,255,.55);
-          backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-          display:flex;align-items:center;gap:16px;flex-wrap:wrap;
-        }
-        .pipe-transversal-label{
-          font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
-          letter-spacing:.8px;text-transform:uppercase;color:var(--purple);
-          white-space:nowrap;
-        }
-        .pipe-transversal-text{
-          font-size:12.5px;color:var(--muted);line-height:1.5;flex:1;min-width:200px;
-        }
-        .pipe-transversal-chips{display:flex;gap:6px;flex-wrap:wrap}
 
         /* ── STACK: LEGEND ── */
         .pipe-legend{
@@ -3057,16 +3029,10 @@ footer {
         /* ── STACK: MOBILE ── */
         @media(max-width:768px){
           .pipe-grid{grid-template-columns:1fr;gap:0}
-          .pipe-grid::before{display:none}
 
           .pipe-stage{
             display:grid;grid-template-columns:auto 1fr;gap:0 16px;
             align-items:start;padding:0 0 20px;
-          }
-          /* Vertical line on mobile */
-          .pipe-stage:not(:last-child)::after{
-            content:'';position:absolute;left:22px;top:50px;bottom:0;
-            width:2px;background:rgba(122,123,255,.15);z-index:0;
           }
 
           .pipe-head{
@@ -3074,14 +3040,12 @@ footer {
             display:flex;flex-direction:column;align-items:center;
             width:44px;padding:0;margin:0;
           }
-          .pipe-dot{position:static;transform:none;margin-top:6px}
           .pipe-card{grid-row:1/3;grid-column:2;width:100%}
           .pipe-name{font-size:12px}
           .pipe-num{font-size:9px}
           .pipe-desc{text-align:left}
         }
         @media(max-width:480px){
-          .pipe-transversal{flex-direction:column;align-items:flex-start;gap:10px}
           .pipe-edu{flex-direction:column}
         }
       </style>
@@ -3099,16 +3063,13 @@ footer {
           <div class="pipe-head">
             <div class="pipe-num">01</div>
             <div class="pipe-name">Extraer</div>
-            <span class="pipe-dot"></span>
           </div>
           <div class="pipe-card">
-            <span class="pipe-chip uso">SQL</span>
+            <span class="pipe-chip dom">SQL</span>
             <span class="pipe-chip uso">SQL Server</span>
-            <span class="pipe-chip uso">PostgreSQL</span>
-            <span class="pipe-chip uso">BigQuery</span>
-            <span class="pipe-chip uso">Excel</span>
+            <span class="pipe-chip dom">Excel</span>
             <span class="pipe-chip exp">Microsoft Fabric</span>
-            <p class="pipe-desc">CTEs, window functions, joins &mdash; desde el origen hasta el staging.</p>
+            <p class="pipe-desc">CTEs, window functions, joins.</p>
           </div>
         </div>
 
@@ -3117,11 +3078,10 @@ footer {
           <div class="pipe-head">
             <div class="pipe-num">02</div>
             <div class="pipe-name">Transformar</div>
-            <span class="pipe-dot"></span>
           </div>
           <div class="pipe-card">
             <span class="pipe-chip dom">Power Query</span>
-            <span class="pipe-chip dom">Lenguaje M</span>
+            <span class="pipe-chip uso">Lenguaje M</span>
             <span class="pipe-chip uso">SQL</span>
             <span class="pipe-chip uso">Python</span>
             <p class="pipe-desc">Conecto, limpio y unifico. El dato nunca llega listo.</p>
@@ -3133,7 +3093,6 @@ footer {
           <div class="pipe-head">
             <div class="pipe-num">03</div>
             <div class="pipe-name">Modelar</div>
-            <span class="pipe-dot"></span>
           </div>
           <div class="pipe-card">
             <span class="pipe-chip dom">Esquema estrella</span>
@@ -3148,7 +3107,6 @@ footer {
           <div class="pipe-head">
             <div class="pipe-num">04</div>
             <div class="pipe-name">Analizar</div>
-            <span class="pipe-dot"></span>
           </div>
           <div class="pipe-card">
             <span class="pipe-chip uso">Python</span>
@@ -3156,8 +3114,7 @@ footer {
             <span class="pipe-chip uso">NumPy</span>
             <span class="pipe-chip uso">Matplotlib</span>
             <span class="pipe-chip uso">Seaborn</span>
-            <span class="pipe-chip uso">scikit-learn</span>
-            <span class="pipe-chip uso">XGBoost</span>
+            <span class="pipe-chip uso">Machine Learning</span>
             <p class="pipe-desc">EDA, estad&iacute;stica y machine learning aplicado a negocio.</p>
           </div>
         </div>
@@ -3167,27 +3124,16 @@ footer {
           <div class="pipe-head">
             <div class="pipe-num">05</div>
             <div class="pipe-name">Comunicar</div>
-            <span class="pipe-dot"></span>
           </div>
           <div class="pipe-card">
             <span class="pipe-chip dom">Power BI</span>
             <span class="pipe-chip uso">Tableau</span>
             <span class="pipe-chip dom">Data Storytelling</span>
-            <span class="pipe-chip dom">Gestalt &middot; UX</span>
+            <span class="pipe-chip exp">UX/UI</span>
             <p class="pipe-desc">El dato se vuelve decisi&oacute;n: dashboards que se entienden en segundos.</p>
           </div>
         </div>
 
-      </div>
-
-      <!-- ── TRANSVERSAL: IA ── -->
-      <div class="pipe-transversal sr">
-        <span class="pipe-transversal-label">Transversal</span>
-        <span class="pipe-transversal-text">Uso LLMs como Claude para documentar, explorar y prototipar m&aacute;s r&aacute;pido. Con criterio, no por moda.</span>
-        <div class="pipe-transversal-chips">
-          <span class="pipe-chip uso">Claude</span>
-          <span class="pipe-chip uso">LLMs</span>
-        </div>
       </div>
 
       <!-- ── LEGEND ── -->
@@ -3201,7 +3147,7 @@ footer {
       <div class="pipe-edu">
         <span class="pipe-edu-badge"><strong>Neoland</strong> Bootcamp Data Analytics (jun-jul 2026)</span>
         <span class="pipe-edu-badge"><strong>Namasdata</strong> Especializaci&oacute;n Power BI (2024)</span>
-        <span class="pipe-edu-badge"><strong>Neoland</strong> M&aacute;ster UX/UI (en curso)</span>
+        <span class="pipe-edu-badge exp"><strong>Neoland</strong> M&aacute;ster UX/UI (en curso)</span>
       </div>
     </div>
   </div>
