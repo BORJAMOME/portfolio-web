@@ -2375,6 +2375,7 @@ footer {
   <div class="dot-nav-item" data-section="hero"><div class="dot-nav-dot"></div><span class="dot-nav-label">¿Quién soy?</span></div>
   <div class="dot-nav-item" data-section="approach"><div class="dot-nav-dot"></div><span class="dot-nav-label">¿Cómo trabajo?</span></div>
   <div class="dot-nav-item" data-section="projects"><div class="dot-nav-dot"></div><span class="dot-nav-label">¿Qué he hecho?</span></div>
+  <div class="dot-nav-item" data-section="star"><div class="dot-nav-dot"></div><span class="dot-nav-label">Proyecto estrella</span></div>
   <div class="dot-nav-item" data-section="stack"><div class="dot-nav-dot"></div><span class="dot-nav-label">¿Qué domino?</span></div>
   <div class="dot-nav-item" data-section="cta"><div class="dot-nav-dot"></div><span class="dot-nav-label">¿Hablamos?</span></div>
 </div>
@@ -2911,6 +2912,86 @@ footer {
   </div>
   <div class="proj-more sr">
     <a href="./analisis-datos.html" class="btn btn-outline">Ver todos los proyectos →</a>
+  </div>
+</section>
+
+
+<!-- ─── PROYECTO ESTRELLA — Casa Origen ─── -->
+<section class="star-section" id="star">
+  <div class="section-divider">
+    <span class="section-divider-dot" aria-hidden="true"></span>
+    <span class="section-divider-label">PROYECTO ESTRELLA</span>
+  </div>
+  <div class="star-wrap">
+    <div class="star-inner">
+
+      <!-- LEFT: texto -->
+      <div class="star-text sr">
+        <div class="star-text-meta">
+          <span class="star-tag">Proyecto final · Bootcamp Neoland</span>
+        </div>
+        <h2 class="star-title">Casa Origen</h2>
+        <p class="star-lead">
+          Sistema de Business Intelligence end-to-end para una cafetería de especialidad con dos locales en Madrid.
+          <em>De los datos crudos a las decisiones de negocio.</em>
+        </p>
+
+        <div class="star-blocks">
+          <div class="star-blk">
+            <span class="star-blk-num">01</span>
+            <h3 class="star-blk-title">El dato</h3>
+            <p>1,58M€ facturados · 177.425 tickets · 1.200 clientes · 3 años de operaciones · 330.928 filas en 7 fuentes CSV.</p>
+          </div>
+          <div class="star-blk">
+            <span class="star-blk-num">02</span>
+            <h3 class="star-blk-title">Lo que encontré</h3>
+            <p>El 15% de los clientes genera el 30,8% de los ingresos. 2 franjas horarias operan por debajo del umbral de rentabilidad (RevPASH). 5 combos de cross-selling con pricing calculado. 14 productos candidatos a eliminación.</p>
+          </div>
+          <div class="star-blk">
+            <span class="star-blk-num">03</span>
+            <h3 class="star-blk-title">Lo que construí</h3>
+            <p>Python → SQL Server (Medallion) → Power BI (estrella: 1 fact, 6 dims, 30+ medidas DAX) → 2 modelos ML: segmentación RFM con K-Means y Market Basket con FP-Growth. 4 dashboards. 5 hipótesis validadas.</p>
+          </div>
+        </div>
+
+        <div class="star-pull">
+          <p class="star-pull-quote">No es un ejercicio de clase. Es un sistema que una cafetería real podría instalar mañana para decidir qué producto retirar, a qué cliente retener y en qué hora invertir.</p>
+          <div class="star-pull-tags">
+            <span class="pc-pill">Python</span>
+            <span class="pc-pill">SQL Server</span>
+            <span class="pc-pill">Power BI</span>
+            <span class="pc-pill">DAX</span>
+            <span class="pc-pill">Power Query</span>
+            <span class="pc-pill">scikit-learn</span>
+            <span class="pc-pill">K-Means</span>
+            <span class="pc-pill">FP-Growth</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: browser mockup con dashboard -->
+      <div class="star-stage">
+        <div class="star-browser">
+          <div class="star-browser-bar">
+            <div class="star-browser-dots">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="star-browser-url">casaorigen.borjamora.es</div>
+            <div class="star-browser-meta">
+              <span class="star-browser-live"><span class="sb-dot"></span>LIVE</span>
+            </div>
+          </div>
+          <div class="star-browser-content">
+            <div class="iframe-overlay"></div>
+            <img src="./img/casa-origen-hero.png" alt="Casa Origen — Dashboard ejecutivo en Power BI" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top left;display:block;">
+          </div>
+          <a href="./casa-origen.html" class="star-float-cta">
+            Ver caso completo <span class="sfc-arrow">→</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
   </div>
 </section>
 
