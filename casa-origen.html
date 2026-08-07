@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casa Origen — Sistema de Business Intelligence para una PYME</title>
+<meta name="description" content="Diseño e implementación de un Sistema de BI completo para una cafetería de especialidad en Madrid. Proyecto de Borja Mora Méndez.">
+<style>
+/* ═══════════════════════════════════════
+   CASA ORIGEN — SCROLLYTELLING
+   Paleta: #2B2118 #C2412E #6E7F5B #F4EFE6
+   Fondo: #FBFBFB
+   Georgia (títulos/KPIs) + Arial (cuerpo)
+   ═══════════════════════════════════════ */
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --co-brown: #2B2118;
+  --co-red: #C2412E;
+  --co-green: #6E7F5B;
+  --co-cream: #F4EFE6;
+  --co-bg: #FBFBFB;
+  --co-text: #3a3a3a;
+  --co-muted: #7a7a7a;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--co-bg);
+  color: var(--co-text);
+  line-height: 1.7;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, .kpi-num, .brand-name {
+  font-family: Georgia, 'Times New Roman', serif;
+  color: var(--co-brown);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a { color: var(--co-red); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── LAYOUT ── */
+.co-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+section {
+  padding: 6rem 0;
+}
+
+/* ── SCROLL ANIMATIONS ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(.16,1,.3,1),
+              transform 0.8s cubic-bezier(.16,1,.3,1);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: .12s; }
+.reveal-delay-2 { transition-delay: .24s; }
+.reveal-delay-3 { transition-delay: .36s; }
+.reveal-delay-4 { transition-delay: .48s; }
+.reveal-delay-5 { transition-delay: .60s; }
+
+/* ── S1: HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.hero .brand-name {
+  font-size: clamp(3.2rem, 8vw, 6.5rem);
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  color: var(--co-brown);
+  margin-bottom: 1.5rem;
+}
+
+.hero .subtitle {
+  font-family: Arial, sans-serif;
+  font-size: clamp(1rem, 2.2vw, 1.35rem);
+  color: var(--co-muted);
+  max-width: 600px;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+.hero .scroll-hint {
+  margin-top: 3rem;
+  font-size: .85rem;
+  color: var(--co-muted);
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  animation: pulse-down 2s ease-in-out infinite;
+}
+
+@keyframes pulse-down {
+  0%, 100% { opacity: .4; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(6px); }
+}
+
+/* ── S2: EL PROBLEMA ── */
+.problema-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+.problema-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.stat-card {
+  background: var(--co-cream);
+  border-radius: 12px;
+  padding: 1.8rem;
+  text-align: center;
+}
+
+.stat-card .kpi-num {
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: var(--co-red);
+  line-height: 1;
+  display: block;
+}
+
+.stat-card .stat-label {
+  font-size: .9rem;
+  color: var(--co-muted);
+  margin-top: .5rem;
+  line-height: 1.4;
+}
+
+/* ── S3: QUÉ ES CASA ORIGEN ── */
+.origen-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.origen-intro img {
+  border-radius: 12px;
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+}
+
+.origen-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.origen-kpi {
+  text-align: center;
+}
+
+.origen-kpi .kpi-num {
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: var(--co-brown);
+  font-weight: 700;
+  display: block;
+}
+
+.origen-kpi .stat-label {
+  font-size: .85rem;
+  color: var(--co-muted);
+  margin-top: .25rem;
+}
+
+/* ── S4: HIPÓTESIS ── */
+.hipotesis-section {
+  background: var(--co-cream);
+  border-radius: 16px;
+  padding: 4rem 3rem;
+  margin: 2rem 0;
+}
+
+.hipotesis-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.2rem;
+  margin-top: 2.5rem;
+}
+
+.hipotesis-grid .h-row-2 {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.2rem;
+}
+
+.h-card {
+  background: var(--co-bg);
+  border-radius: 10px;
+  padding: 1.5rem;
+  border-left: 4px solid var(--co-green);
+}
+
+.h-card .h-tag {
+  font-family: Georgia, serif;
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--co-green);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: .4rem;
+}
+
+.h-card p {
+  font-size: .95rem;
+  line-height: 1.5;
+  color: var(--co-text);
+}
+
+/* ── S5: STACK TÉCNICO ── */
+.stack-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.stack-badge {
+  background: var(--co-cream);
+  border-radius: 8px;
+  padding: .65rem 1.4rem;
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--co-brown);
+  letter-spacing: .02em;
+}
+
+/* ── S6: ARQUITECTURA MEDALLION ── */
+.medallion-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-top: 3rem;
+  flex-wrap: wrap;
+}
+
+.medallion-step {
+  text-align: center;
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
+  flex: 0 1 220px;
+}
+
+.medallion-step.bronze { background: #d4a574; color: #fff; }
+.medallion-step.silver { background: #a8a8a8; color: #fff; }
+.medallion-step.gold   { background: #c9a84c; color: #fff; }
+
+.medallion-step h3 {
+  font-size: 1.3rem;
+  color: #fff;
+  margin-bottom: .3rem;
+}
+
+.medallion-step p {
+  font-size: .82rem;
+  opacity: .9;
+  line-height: 1.4;
+}
+
+.medallion-arrow {
+  font-size: 1.8rem;
+  color: var(--co-muted);
+  padding: 0 .5rem;
+}
+
+.medallion-checks {
+  display: flex;
+  justify-content: center;
+  gap: 2.5rem;
+  margin-top: 2rem;
+  font-size: .9rem;
+  color: var(--co-green);
+  font-weight: 600;
+}
+
+/* ── S7: MODELO ESTRELLA ── */
+.modelo-wrapper {
+  text-align: center;
+}
+
+.modelo-wrapper img {
+  max-width: 800px;
+  margin: 2rem auto;
+  border-radius: 12px;
+  box-shadow: 0 8px 40px rgba(43,33,24,.08);
+}
+
+.dax-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .8rem;
+  margin-top: 1.5rem;
+}
+
+.dax-tag {
+  background: var(--co-cream);
+  border-radius: 6px;
+  padding: .45rem 1rem;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--co-brown);
+}
+
+.dax-tag span {
+  color: var(--co-green);
+  font-size: .72rem;
+  margin-left: .3rem;
+}
+
+/* ── S8: DASHBOARDS (STICKY SCROLLYTELLING) ── */
+.dashboard-story {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  min-height: 100vh;
+}
+
+.dashboard-visual {
+  position: sticky;
+  top: 4rem;
+  align-self: start;
+  height: fit-content;
+}
+
+.dashboard-visual img {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 12px 48px rgba(43,33,24,.1);
+}
+
+.dashboard-narrative {
+  padding: 4rem 0;
+}
+
+.dashboard-narrative .dash-num {
+  font-family: Georgia, serif;
+  font-size: 4rem;
+  font-weight: 700;
+  color: var(--co-cream);
+  line-height: 1;
+}
+
+.dashboard-narrative h3 {
+  font-size: 1.6rem;
+  margin: .5rem 0 .3rem;
+}
+
+.dashboard-narrative .dash-hyp {
+  display: inline-block;
+  background: var(--co-green);
+  color: #fff;
+  font-size: .72rem;
+  font-weight: 700;
+  padding: .2rem .6rem;
+  border-radius: 4px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.dashboard-narrative p {
+  font-size: 1rem;
+  color: var(--co-text);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+/* ── S9: FRASE IMPACTO ── */
+.impacto {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.impacto .big-stat {
+  font-family: Georgia, serif;
+  font-size: clamp(2.4rem, 6vw, 4.5rem);
+  font-weight: 700;
+  color: var(--co-red);
+  line-height: 1.15;
+  max-width: 800px;
+}
+
+.impacto .big-quote {
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
+  color: var(--co-muted);
+  max-width: 600px;
+  margin-top: 1.5rem;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+/* ── S10: MACHINE LEARNING ── */
+.ml-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+  margin-top: 2.5rem;
+}
+
+.ml-card {
+  background: var(--co-cream);
+  border-radius: 14px;
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.ml-card .ml-hyp {
+  display: inline-block;
+  background: var(--co-green);
+  color: #fff;
+  font-size: .72rem;
+  font-weight: 700;
+  padding: .2rem .6rem;
+  border-radius: 4px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: .8rem;
+}
+
+.ml-card h3 {
+  font-size: 1.4rem;
+  margin-bottom: .6rem;
+}
+
+.ml-card p {
+  font-size: .95rem;
+  line-height: 1.6;
+  color: var(--co-text);
+}
+
+.ml-card .ml-tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-top: 1rem;
+}
+
+.ml-card .ml-tech span {
+  background: var(--co-bg);
+  padding: .3rem .8rem;
+  border-radius: 5px;
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--co-brown);
+}
+
+.ml-card img {
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 1.2rem;
+}
+
+/* ── CTA FINAL ── */
+.cta-final {
+  text-align: center;
+  padding: 6rem 2rem 8rem;
+}
+
+.cta-final .cta-btn {
+  display: inline-block;
+  background: var(--co-red);
+  color: #fff;
+  font-family: Georgia, serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 1rem 2.8rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: transform .2s, box-shadow .2s;
+  box-shadow: 0 4px 20px rgba(194,65,46,.25);
+}
+
+.cta-final .cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(194,65,46,.35);
+  text-decoration: none;
+}
+
+.cta-final p {
+  margin-top: 1rem;
+  font-size: .85rem;
+  color: var(--co-muted);
+}
+
+/* ── SECTION HEADERS ── */
+.section-label {
+  font-family: Arial, sans-serif;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--co-green);
+  margin-bottom: .5rem;
+}
+
+.section-title {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  line-height: 1.2;
+  margin-bottom: 1.2rem;
+}
+
+.section-body {
+  font-size: 1.05rem;
+  color: var(--co-text);
+  max-width: 650px;
+  line-height: 1.7;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .problema-grid,
+  .origen-intro,
+  .dashboard-story,
+  .ml-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-visual {
+    position: relative;
+    top: 0;
+  }
+
+  .origen-kpis {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .hipotesis-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hipotesis-grid .h-row-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .medallion-flow {
+    flex-direction: column;
+    gap: .5rem;
+  }
+
+  .medallion-arrow {
+    transform: rotate(90deg);
+  }
+
+  section {
+    padding: 4rem 0;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════
+     S1 · HERO
+     ════════════════════════════════════ -->
+<section class="hero">
+  <h1 class="brand-name reveal">Casa Origen</h1>
+  <p class="subtitle reveal reveal-delay-1">Diseño e implementación de un Sistema de Business Intelligence en una PYME</p>
+  <p class="scroll-hint reveal reveal-delay-2">scroll &darr;</p>
+</section>
+
+<!-- ════════════════════════════════════
+     S2 · EL PROBLEMA
+     ════════════════════════════════════ -->
+<section id="problema">
+  <div class="co-wrap">
+    <div class="problema-grid">
+      <div>
+        <p class="section-label reveal">Antecedentes</p>
+        <h2 class="section-title reveal">Por qué este proyecto.</h2>
+        <p class="section-body reveal">El café de especialidad crece en Madrid, pero las PYMEs que lo sirven siguen tomando decisiones por intuición. Este proyecto nace para cambiar eso.</p>
+      </div>
+      <div class="problema-stats">
+        <div class="stat-card reveal reveal-delay-1">
+          <span class="kpi-num" data-count="10">0</span><span class="kpi-num">%</span>
+          <p class="stat-label">de las PYMEs españolas usa herramientas de BI</p>
+        </div>
+        <div class="stat-card reveal reveal-delay-2">
+          <span class="kpi-num" data-count="40">0</span><span class="kpi-num">%</span>
+          <p class="stat-label">de las decisiones se toman sin datos</p>
+        </div>
+        <div class="stat-card reveal reveal-delay-3">
+          <span class="kpi-num" data-count="61">0</span><span class="kpi-num">%</span>
+          <p class="stat-label">crecimiento del café de especialidad en España</p>
+        </div>
+        <div class="stat-card reveal reveal-delay-4">
+          <span class="kpi-num" data-count="43">0</span><span class="kpi-num">%</span>
+          <p class="stat-label">margen bruto medio en specialty coffee</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     S3 · QUÉ ES CASA ORIGEN
+     ════════════════════════════════════ -->
+<section id="casa-origen">
+  <div class="co-wrap">
+    <p class="section-label reveal">El caso</p>
+    <h2 class="section-title reveal">Dos locales. Tres años de operativa. Cero visibilidad.</h2>
+    <p class="section-body reveal">Casa Origen es una cafetería de especialidad con dos locales en Madrid. Datos transaccionales sintéticos reproducibles en Python con semilla fija, enriquecidos con datos públicos del INE.</p>
+
+    <div class="origen-intro">
+      <img src="./img/casa-origen/local-1.jpg" alt="Casa Origen — Local 1" class="reveal reveal-delay-1">
+      <img src="./img/casa-origen/local-2.jpg" alt="Casa Origen — Local 2" class="reveal reveal-delay-2">
+    </div>
+
+    <div class="origen-kpis">
+      <div class="origen-kpi reveal reveal-delay-1">
+        <span class="kpi-num" data-count="1.58" data-decimals="2" data-prefix="">0</span><span class="kpi-num"> M&euro;</span>
+        <p class="stat-label">Revenue acumulado</p>
+      </div>
+      <div class="origen-kpi reveal reveal-delay-2">
+        <span class="kpi-num" data-count="177425" data-format="thousands">0</span>
+        <p class="stat-label">Tickets de venta</p>
+      </div>
+      <div class="origen-kpi reveal reveal-delay-3">
+        <span class="kpi-num" data-count="1200" data-format="thousands">0</span>
+        <p class="stat-label">Clientes únicos</p>
+      </div>
+      <div class="origen-kpi reveal reveal-delay-4">
+        <span class="kpi-num" data-count="330928" data-format="thousands">0</span>
+        <p class="stat-label">Filas de datos</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     S4 · LAS 5 PREGUNTAS (HIPÓTESIS)
+     ════════════════════════════════════ -->
+<section id="hipotesis">
+  <div class="co-wrap">
+    <p class="section-label reveal">El objetivo</p>
+    <h2 class="section-title reveal">&iquest;Qué preguntas queremos responder?</h2>
+    <p class="section-body reveal">Dar a la dirección visibilidad accionable para responder con datos a cinco preguntas que hoy se deciden por intuición.</p>
+
+    <div class="hipotesis-section reveal">
+      <div class="hipotesis-grid">
+        <div class="h-card reveal reveal-delay-1">
+          <p class="h-tag">H1</p>
+          <p><strong>Optimización de carta (ABC):</strong> una minoría de productos concentra el margen.</p>
+        </div>
+        <div class="h-card reveal reveal-delay-2">
+          <p class="h-tag">H2</p>
+          <p><strong>Cesta de la compra:</strong> hay combos con lift &gt; 1 para venta cruzada.</p>
+        </div>
+        <div class="h-card reveal reveal-delay-3">
+          <p class="h-tag">H3</p>
+          <p><strong>Drivers del ticket medio:</strong> pesa más la franja y el canal que el día.</p>
+        </div>
+        <div class="h-row-2">
+          <div class="h-card reveal reveal-delay-4">
+            <p class="h-tag">H4</p>
+            <p><strong>Franjas deficitarias:</strong> hay tramos cuyo RevPASH no cubre coste.</p>
+          </div>
+          <div class="h-card reveal reveal-delay-5">
+            <p class="h-tag">H5</p>
+            <p><strong>Valor de cliente (RFM):</strong> el gasto se concentra en pocos clientes.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     S5 · STACK TÉCNICO
+     ════════════════════════════════════ -->
+<section id="stack">
+  <div class="co-wrap" style="text-align:center;">
+    <p class="section-label reveal">Herramientas</p>
+    <h2 class="section-title reveal" style="margin-left:auto;margin-right:auto;">Stack técnico</h2>
+    <div class="stack-row">
+      <span class="stack-badge reveal reveal-delay-1">Python</span>
+      <span class="stack-badge reveal reveal-delay-1">SQL Server</span>
+      <span class="stack-badge reveal reveal-delay-2">Power BI</span>
+      <span class="stack-badge reveal reveal-delay-2">DAX</span>
+      <span class="stack-badge reveal reveal-delay-3">scikit-learn</span>
+      <span class="stack-badge reveal reveal-delay-3">mlxtend</span>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     S6 · ARQUITECTURA MEDALLION
+     ════════════════════════════════════ -->
+<section id="arquitectura">
+  <div class="co-wrap">
+    <p class="section-label reveal">Arquitectura de datos</p>
+    <h2 class="section-title reveal">Un almacén por capas: Medallion.</h2>
+    <p class="section-body reveal">ETL por capas en SQL Server. Cada capa tiene un propósito claro: ingestar, limpiar y servir.</p>
+
+    <div class="medallion-flow reveal">
+      <div class="medallion-step bronze">
+        <h3>Bronze</h3>
+        <p>Capa cruda. Ingesta directa sin transformar.</p>
+      </div>
+      <span class="medallion-arrow">&rarr;</span>
+      <div class="medallion-step silver">
+        <h3>Silver</h3>
+        <p>Limpieza, validación, deduplicación y enriquecimiento con INE.</p>
+      </div>
+      <span class="medallion-arrow">&rarr;</span>
+      <div class="medallion-step gold">
+        <h3>Gold</h3>
+        <p>Capa de negocio. Modelo estrella listo para Power BI.</p>
+      </div>
+    </div>
+
+    <div class="medallion-checks reveal">
+      <span>&check; Trazabilidad</span>
+      <span>&check; Calidad de datos</span>
+      <span>&check; Escalabilidad</span>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     S7 · MODELO EN ESTRELLA
+     ════════════════════════════════════ -->
+<section id="modelo">
+  <div class="co-wrap">
+    <div class="modelo-wrapper">
+      <p class="section-label reveal">Modelo de datos</p>
+      <h2 class="section-title reveal" style="text-align:center;">Modelo en estrella.</h2>
+      <p class="section-body reveal" style="margin:0 auto 2rem;">1 tabla de hechos, 6 dimensiones y más de 30 medidas DAX ligadas directamente a las hipótesis de negocio.</p>
+
+      <img src="./img/casa-origen/modelo-estrella.png" alt="Modelo en estrella — fact_ventas + 6 dimensiones" class="reveal">
+
+      <div class="dax-tags reveal">
+        <span class="dax-tag">RevPASH <span>H4</span></span>
+        <span class="dax-tag">Margen % &middot; ABC <span>H1</span></span>
+        <span class="dax-tag">Ticket Medio <span>H3</span></span>
+        <span class="dax-tag">Segmentos RFM <span>H5</span></span>
+        <span class="dax-tag">Revenue &middot; %YoY <span></span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     S8 · DASHBOARD 01 — EXECUTIVE OVERVIEW
+     ════════════════════════════════════ -->
+<section id="dash-01">
+  <div class="co-wrap">
+    <div class="dashboard-story">
+      <div class="dashboard-visual reveal">
+        <img src="./img/casa-origen/dashboard-01.png" alt="Dashboard 01 — Executive Overview">
+      </div>
+      <div class="dashboard-narrative">
+        <span class="dash-num reveal">01</span>
+        <span class="dash-hyp reveal">H3</span>
+        <h3 class="reveal">Executive Overview</h3>
+        <p class="reveal">&iquest;Cómo va el negocio frente al año anterior?</p>
+        <p class="reveal">Visión 360° del rendimiento: revenue, tickets, ticket medio y margen bruto con comparativa YoY. Permite al gerente evaluar la salud general del negocio en un vistazo antes de profundizar en cualquier otra área.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     S9 · DASHBOARD 02 — PRODUCT & MENU
+     ════════════════════════════════════ -->
+<section id="dash-02">
+  <div class="co-wrap">
+    <div class="dashboard-story">
+      <div class="dashboard-visual reveal">
+        <img src="./img/casa-origen/dashboard-02.png" alt="Dashboard 02 — Product & Menu Intelligence">
+      </div>
+      <div class="dashboard-narrative">
+        <span class="dash-num reveal">02</span>
+        <span class="dash-hyp reveal">H1 · H2</span>
+        <h3 class="reveal">Product &amp; Menu Intelligence</h3>
+        <p class="reveal">&iquest;Qué mantengo, potencio o retiro? &iquest;Qué combino?</p>
+        <p class="reveal">Análisis ABC de la carta completa: 14 productos candidatos a eliminación por bajo margen y baja rotación. Identificación de 5 combos con lift significativo vía FP-Growth para estrategia de venta cruzada.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     S10 · DASHBOARD 03 — OPERATIONS
+     ════════════════════════════════════ -->
+<section id="dash-03">
+  <div class="co-wrap">
+    <div class="dashboard-story">
+      <div class="dashboard-visual reveal">
+        <img src="./img/casa-origen/dashboard-03.png" alt="Dashboard 03 — Operations & Time Analytics">
+      </div>
+      <div class="dashboard-narrative">
+        <span class="dash-num reveal">03</span>
+        <span class="dash-hyp reveal">H4 · H3</span>
+        <h3 class="reveal">Operations &amp; Time Analytics</h3>
+        <p class="reveal">&iquest;En qué franjas gano o pierdo dinero?</p>
+        <p class="reveal">RevPASH por franja horaria: 2 slots identificados por debajo del umbral de rentabilidad. Variación del ticket medio de hasta un 40% según franja y canal. Datos para optimizar turnos, promociones y pricing por hora.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     S11 · DASHBOARD 04 — CUSTOMER & CHANNEL
+     ════════════════════════════════════ -->
+<section id="dash-04">
+  <div class="co-wrap">
+    <div class="dashboard-story">
+      <div class="dashboard-visual reveal">
+        <img src="./img/casa-origen/dashboard-04.png" alt="Dashboard 04 — Customer & Channel Analytics">
+      </div>
+      <div class="dashboard-narrative">
+        <span class="dash-num reveal">04</span>
+        <span class="dash-hyp reveal">H5</span>
+        <h3 class="reveal">Customer &amp; Channel Analytics</h3>
+        <p class="reveal">&iquest;Quiénes son mis mejores clientes?</p>
+        <p class="reveal">Segmentación RFM combinada con K-Means (5 clusters validados por silhouette score). El 15% de los clientes genera el 30,8% del revenue. Identificación de segmentos Champions, At Risk y Lost para acciones de retención y reactivación diferenciadas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     S12 · FRASE DE IMPACTO
+     ════════════════════════════════════ -->
+<section class="impacto">
+  <p class="big-stat reveal">15% de clientes = 30,8% del revenue.</p>
+  <p class="big-quote reveal reveal-delay-1">&laquo;Antes de este proyecto, la cafetería no sabía quién era ese 15&percnt;. Ahora sí.&raquo;</p>
+</section>
+
+<!-- ════════════════════════════════════
+     S13 · MACHINE LEARNING
+     ════════════════════════════════════ -->
+<section id="ml">
+  <div class="co-wrap">
+    <p class="section-label reveal">Capa avanzada</p>
+    <h2 class="section-title reveal">Dos modelos que responden.</h2>
+    <p class="section-body reveal">Machine Learning integrado directamente en los dashboards. No es un anexo técnico — es parte de la solución de negocio.</p>
+
+    <div class="ml-grid">
+      <div class="ml-card reveal">
+        <span class="ml-hyp">H2</span>
+        <h3>Cesta de la compra</h3>
+        <p>Detección de asociaciones entre productos usando reglas de asociación. Identifica combos con lift significativo para diseñar promociones de venta cruzada por franja horaria.</p>
+        <div class="ml-tech">
+          <span>FP-Growth</span>
+          <span>Apriori</span>
+          <span>mlxtend</span>
+        </div>
+        <img src="./img/casa-origen/ml-cesta.png" alt="Análisis de cesta — combos y reglas de asociación">
+      </div>
+
+      <div class="ml-card reveal reveal-delay-2">
+        <span class="ml-hyp">H5</span>
+        <h3>Segmentación de clientes</h3>
+        <p>RFM scoring combinado con K-Means clustering y reducción dimensional PCA. 5 segmentos accionables: Champions, Loyal, At Risk, Hibernating y Lost.</p>
+        <div class="ml-tech">
+          <span>RFM</span>
+          <span>K-Means</span>
+          <span>PCA</span>
+          <span>scikit-learn</span>
+        </div>
+        <img src="./img/casa-origen/ml-rfm.png" alt="Segmentación RFM — clusters PCA">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     S14 · CTA FINAL
+     ════════════════════════════════════ -->
+<section class="cta-final">
+  <div class="co-wrap reveal">
+    <p class="section-label">Ver en acción</p>
+    <h2 class="section-title" style="text-align:center;">No me creas. Compruébalo.</h2>
+    <br>
+    <a href="#" class="cta-btn" target="_blank" rel="noopener">Abrir dashboard en Power BI</a>
+    <p>Dashboard interactivo publicado en Power BI Service</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     JAVASCRIPT — SCROLLYTELLING ENGINE
+     ════════════════════════════════════ -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  /* ── INTERSECTION OBSERVER: reveal on scroll ── */
+  const revealEls = document.querySelectorAll('.reveal');
+  const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+  revealEls.forEach(el => revealObs.observe(el));
+
+  /* ── COUNTER-UP ANIMATION ── */
+  const kpiEls = document.querySelectorAll('[data-count]');
+  const kpiObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCounter(entry.target);
+        kpiObs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  kpiEls.forEach(el => kpiObs.observe(el));
+
+  function animateCounter(el) {
+    const target = parseFloat(el.dataset.count);
+    const decimals = parseInt(el.dataset.decimals) || 0;
+    const format = el.dataset.format; // 'thousands' for 177,425 style
+    const duration = 1800;
+    const start = performance.now();
+
+    function step(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // ease-out cubic
+      const ease = 1 - Math.pow(1 - progress, 3);
+      const current = target * ease;
+
+      if (format === 'thousands') {
+        el.textContent = Math.round(current).toLocaleString('es-ES');
+      } else if (decimals > 0) {
+        el.textContent = current.toFixed(decimals).replace('.', ',');
+      } else {
+        el.textContent = Math.round(current);
+      }
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      }
+    }
+    requestAnimationFrame(step);
+  }
+});
+</script>
+
+</body>
+</html>
