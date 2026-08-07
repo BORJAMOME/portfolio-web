@@ -54,13 +54,18 @@ body {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  background: rgba(255,255,255,.92);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   border-bottom: .5px solid transparent;
-  transition: border-color .3s;
+  transition: background .35s ease, backdrop-filter .35s ease, -webkit-backdrop-filter .35s ease, border-color .35s ease;
 }
-#nav.scrolled, body > nav.scrolled { border-bottom-color: #111111; }
+#nav.scrolled, body > nav.scrolled {
+  background: rgba(255,255,255,.55);
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  border-bottom-color: rgba(17,17,17,.08);
+}
 
 .logo {
   font-size: 17px; font-weight: 700;
