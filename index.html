@@ -2922,136 +2922,287 @@ footer {
       <span class="section-divider-dot" aria-hidden="true"></span>
       <span class="section-divider-label">STACK TÉCNICO</span>
     </div>
-    <div class="skx-wrap" style="max-width:1040px;margin:0 auto;">
+    <div class="skx-wrap" style="max-width:1100px;margin:0 auto;">
       <style>
-        .skx-head{max-width:560px;margin-bottom:28px}
+        /* ── STACK: HEADER ── */
+        .skx-head{max-width:560px;margin-bottom:36px}
         .skx-h{font-size:clamp(30px,4vw,46px);font-weight:700;color:var(--ink);letter-spacing:-1.4px;line-height:1.06;margin:0 0 12px}
         .skx-h em{font-style:normal;color:var(--purple)}
         .skx-sub{font-size:14px;color:var(--muted);line-height:1.65;margin:0}
-        .skx-thead{display:grid;grid-template-columns:1fr 88px 88px 108px;padding-bottom:10px;border-bottom:2px solid #111}
-        .skx-th{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#9a9aa6;white-space:nowrap}
-        .skx-th.c{text-align:center}
-        .skx-th.dom{color:var(--purple2)} .skx-th.exp{color:#5a6a00}
-        .skx-row{display:grid;grid-template-columns:1fr 88px 88px 108px;align-items:start;padding:18px 0;border-top:1px solid var(--gray)}
-        .skx-name{font-size:16px;font-weight:700;color:var(--ink);letter-spacing:-.3px;margin-bottom:9px}
-        .skx-tools{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-        .skx-chip{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;color:var(--ink);background:var(--off);border:1px solid var(--gray);border-radius:5px;padding:3px 9px;letter-spacing:.2px;white-space:nowrap}
-        .skx-ctx{font-size:13px;color:var(--muted);line-height:1.55;max-width:560px;margin:0}
-        .skx-cell{display:flex;justify-content:center;padding-top:3px}
-        .skx-dot{width:16px;height:16px;border-radius:50%;display:inline-block}
-        .skx-dot.dom{background:var(--purple)}
-        .skx-dot.uso{background:#fff;border:2px solid var(--purple)}
-        .skx-dot.exp{background:#c6ff00;border:1.5px dashed #8a9b00;animation:skxPulse 2.4s infinite}
-        @keyframes skxPulse{0%,100%{box-shadow:0 0 0 3px rgba(170,200,0,.4)}50%{box-shadow:0 0 0 6px rgba(170,200,0,.08)}}
-        .skx-lvl-m{display:none}
-        .skx-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:20px;padding-top:16px;border-top:1px solid var(--gray)}
-        .skx-leg{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;color:var(--muted)}
-        @media(max-width:680px){
-          .skx-thead{display:none}
-          .skx-row{grid-template-columns:1fr}
-          .skx-cell{display:none}
-          .skx-lvl-m{display:inline-block;margin-left:8px;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:2px 7px;border-radius:4px;vertical-align:middle}
-          .skx-lvl-m.dom{color:var(--purple2);background:var(--purple-light)}
-          .skx-lvl-m.uso{color:#444;background:#f0f0f4}
-          .skx-lvl-m.exp{color:#5a6a00;background:#fff;border:1px dashed #b8cc00}
+
+        /* ── STACK: PIPELINE GRID ── */
+        .pipe-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:0;position:relative}
+
+        /* Connector line behind stages */
+        .pipe-grid::before{
+          content:'';position:absolute;top:44px;left:10%;right:10%;height:2px;
+          background:linear-gradient(90deg,var(--purple) 0%,rgba(122,123,255,.2) 100%);
+          z-index:0;border-radius:1px;
+        }
+
+        .pipe-stage{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center}
+
+        /* Stage number + name header */
+        .pipe-head{
+          text-align:center;padding:12px 6px 14px;margin-bottom:16px;position:relative;
+        }
+        .pipe-num{
+          font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+          color:var(--purple);letter-spacing:1.2px;margin-bottom:3px;
+        }
+        .pipe-name{font-size:13px;font-weight:700;color:var(--ink);letter-spacing:-.2px}
+
+        /* Dot connector on the horizontal line */
+        .pipe-dot{
+          width:12px;height:12px;border-radius:50%;
+          background:var(--white);border:2.5px solid var(--purple);
+          position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);
+          z-index:2;
+        }
+
+        /* Card below each stage */
+        .pipe-card{
+          width:calc(100% - 8px);
+          border:1px solid var(--gray);border-radius:12px;
+          background:rgba(255,255,255,.55);
+          backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+          padding:16px 12px;display:flex;flex-direction:column;gap:6px;
+          flex:1;
+          transition:border-color .25s,box-shadow .25s;
+        }
+        .pipe-card:hover{
+          border-color:rgba(122,123,255,.3);
+          box-shadow:0 6px 20px rgba(122,123,255,.07);
+        }
+
+        /* Tool chips inside cards */
+        .pipe-chip{
+          font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;
+          padding:5px 9px;border-radius:6px;text-align:center;
+          letter-spacing:.2px;white-space:nowrap;
+        }
+        .pipe-chip.dom{
+          background:rgba(122,123,255,.1);color:var(--purple2);
+          border:1px solid rgba(122,123,255,.22);
+        }
+        .pipe-chip.uso{
+          background:var(--off);color:var(--ink);
+          border:1px solid var(--gray);
+        }
+        .pipe-chip.exp{
+          background:rgba(198,255,0,.12);color:#5a6a00;
+          border:1px dashed rgba(138,155,0,.35);
+        }
+
+        /* Stage description */
+        .pipe-desc{
+          font-size:11.5px;color:var(--muted);line-height:1.5;
+          margin-top:4px;text-align:center;
+        }
+
+        /* ── STACK: TRANSVERSAL BAR (IA aplicada) ── */
+        .pipe-transversal{
+          margin-top:20px;padding:14px 20px;
+          border:1px solid var(--gray);border-radius:12px;
+          background:rgba(255,255,255,.55);
+          backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+          display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+        }
+        .pipe-transversal-label{
+          font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+          letter-spacing:.8px;text-transform:uppercase;color:var(--purple);
+          white-space:nowrap;
+        }
+        .pipe-transversal-text{
+          font-size:12.5px;color:var(--muted);line-height:1.5;flex:1;min-width:200px;
+        }
+        .pipe-transversal-chips{display:flex;gap:6px;flex-wrap:wrap}
+
+        /* ── STACK: LEGEND ── */
+        .pipe-legend{
+          display:flex;gap:18px;flex-wrap:wrap;margin-top:24px;
+          padding-top:16px;border-top:1px solid var(--gray);
+        }
+        .pipe-leg{
+          display:inline-flex;align-items:center;gap:7px;
+          font-size:11px;color:var(--muted);
+        }
+        .pipe-leg-dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0}
+        .pipe-leg-dot.dom{background:var(--purple)}
+        .pipe-leg-dot.uso{background:var(--white);border:2px solid var(--purple)}
+        .pipe-leg-dot.exp{background:#c6ff00;border:1.5px dashed #8a9b00}
+
+        /* ── STACK: EDUCATION BADGES ── */
+        .pipe-edu{
+          display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;
+        }
+        .pipe-edu-badge{
+          display:inline-flex;align-items:center;gap:7px;
+          font-size:11px;color:var(--muted);letter-spacing:.1px;
+          padding:6px 13px;border-radius:8px;
+          background:var(--off);border:1px solid var(--gray);
+        }
+        .pipe-edu-badge strong{color:var(--ink);font-weight:700}
+
+        /* ── STACK: SCROLL ANIMATION ── */
+        @media (prefers-reduced-motion: no-preference) {
+          .pipe-stage{opacity:0;transform:translateY(18px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
+          .pipe-stage.sk-visible{opacity:1;transform:translateY(0)}
+          .pipe-stage:nth-child(2){transition-delay:.08s}
+          .pipe-stage:nth-child(3){transition-delay:.16s}
+          .pipe-stage:nth-child(4){transition-delay:.24s}
+          .pipe-stage:nth-child(5){transition-delay:.32s}
+        }
+
+        /* ── STACK: MOBILE ── */
+        @media(max-width:768px){
+          .pipe-grid{grid-template-columns:1fr;gap:0}
+          .pipe-grid::before{display:none}
+
+          .pipe-stage{
+            display:grid;grid-template-columns:auto 1fr;gap:0 16px;
+            align-items:start;padding:0 0 20px;
+          }
+          /* Vertical line on mobile */
+          .pipe-stage:not(:last-child)::after{
+            content:'';position:absolute;left:22px;top:50px;bottom:0;
+            width:2px;background:rgba(122,123,255,.15);z-index:0;
+          }
+
+          .pipe-head{
+            grid-row:1;grid-column:1;
+            display:flex;flex-direction:column;align-items:center;
+            width:44px;padding:0;margin:0;
+          }
+          .pipe-dot{position:static;transform:none;margin-top:6px}
+          .pipe-card{grid-row:1/3;grid-column:2;width:100%}
+          .pipe-name{font-size:12px}
+          .pipe-num{font-size:9px}
+          .pipe-desc{text-align:left}
+        }
+        @media(max-width:480px){
+          .pipe-transversal{flex-direction:column;align-items:flex-start;gap:10px}
+          .pipe-edu{flex-direction:column}
         }
       </style>
 
-      <div class="skx-head">
+      <div class="skx-head sr">
         <h2 class="skx-h">Las herramientas de cada <em>etapa del dato.</em></h2>
-        <p class="skx-sub">Mi stack ordenado como fluye el dato: de la extracci&oacute;n a la decisi&oacute;n. Con los lenguajes que uso en cada punto y el nivel real en cada uno.</p>
+        <p class="skx-sub">Mi stack ordenado como fluye el dato: de la extracci&oacute;n a la decisi&oacute;n. Con el nivel real en cada herramienta.</p>
       </div>
 
-      <div class="skx-thead">
-        <span class="skx-th">Etapa &middot; herramientas</span>
-        <span class="skx-th c dom">Dominio</span>
-        <span class="skx-th c">En uso</span>
-        <span class="skx-th c exp">Expansi&oacute;n</span>
-      </div>
+      <!-- ── PIPELINE: 5 STAGES ── -->
+      <div class="pipe-grid">
 
-      <div class="skx-row" style="border-top:none">
-        <div>
-          <div class="skx-name">Extracci&oacute;n de datos<span class="skx-lvl-m uso">&#9680; En uso</span></div>
-          <div class="skx-tools"><span class="skx-chip">Excel</span><span class="skx-chip">SQL</span><span class="skx-chip">SQL Server</span><span class="skx-chip">PostgreSQL</span><span class="skx-chip">BigQuery</span><span class="skx-chip">Microsoft Fabric</span></div>
-          <p class="skx-ctx">Donde arranca el flujo. Excel para exploraci&oacute;n r&aacute;pida; SQL para traer el dato desde su origen &mdash;CTEs, window functions, subqueries, joins&mdash; en SQL Server, PostgreSQL, BigQuery o Fabric.</p>
+        <!-- 01 EXTRAER -->
+        <div class="pipe-stage">
+          <div class="pipe-head">
+            <div class="pipe-num">01</div>
+            <div class="pipe-name">Extraer</div>
+            <span class="pipe-dot"></span>
+          </div>
+          <div class="pipe-card">
+            <span class="pipe-chip uso">SQL</span>
+            <span class="pipe-chip uso">SQL Server</span>
+            <span class="pipe-chip uso">PostgreSQL</span>
+            <span class="pipe-chip uso">BigQuery</span>
+            <span class="pipe-chip uso">Excel</span>
+            <span class="pipe-chip exp">Microsoft Fabric</span>
+            <p class="pipe-desc">CTEs, window functions, joins &mdash; desde el origen hasta el staging.</p>
+          </div>
         </div>
-        <div class="skx-cell"></div>
-        <div class="skx-cell"><span class="skx-dot uso"></span></div>
-        <div class="skx-cell"></div>
-      </div>
 
-      <div class="skx-row">
-        <div>
-          <div class="skx-name">Transformaci&oacute;n &amp; limpieza<span class="skx-lvl-m dom">&#9679; Dominio</span></div>
-          <div class="skx-tools"><span class="skx-chip">Power Query</span><span class="skx-chip">Lenguaje M</span><span class="skx-chip">SQL</span><span class="skx-chip">Python</span></div>
-          <p class="skx-ctx">El dato casi nunca llega listo. Lo conecto, limpio y unifico con Power Query, SQL o Python &mdash; depende del origen y del volumen.</p>
+        <!-- 02 TRANSFORMAR -->
+        <div class="pipe-stage">
+          <div class="pipe-head">
+            <div class="pipe-num">02</div>
+            <div class="pipe-name">Transformar</div>
+            <span class="pipe-dot"></span>
+          </div>
+          <div class="pipe-card">
+            <span class="pipe-chip dom">Power Query</span>
+            <span class="pipe-chip dom">Lenguaje M</span>
+            <span class="pipe-chip uso">SQL</span>
+            <span class="pipe-chip uso">Python</span>
+            <p class="pipe-desc">Conecto, limpio y unifico. El dato nunca llega listo.</p>
+          </div>
         </div>
-        <div class="skx-cell"><span class="skx-dot dom"></span></div>
-        <div class="skx-cell"></div>
-        <div class="skx-cell"></div>
-      </div>
 
-      <div class="skx-row">
-        <div>
-          <div class="skx-name">Modelado de datos<span class="skx-lvl-m dom">&#9679; Dominio</span></div>
-          <div class="skx-tools"><span class="skx-chip">Esquema estrella</span><span class="skx-chip">DAX</span><span class="skx-chip">RLS</span></div>
-          <p class="skx-ctx">El n&uacute;cleo: relaciones limpias, medidas en DAX y seguridad por rol. Lo que hace que un informe escale sin romperse.</p>
+        <!-- 03 MODELAR -->
+        <div class="pipe-stage">
+          <div class="pipe-head">
+            <div class="pipe-num">03</div>
+            <div class="pipe-name">Modelar</div>
+            <span class="pipe-dot"></span>
+          </div>
+          <div class="pipe-card">
+            <span class="pipe-chip dom">Esquema estrella</span>
+            <span class="pipe-chip dom">DAX</span>
+            <span class="pipe-chip dom">RLS</span>
+            <p class="pipe-desc">Relaciones limpias, medidas calculadas y seguridad por rol.</p>
+          </div>
         </div>
-        <div class="skx-cell"><span class="skx-dot dom"></span></div>
-        <div class="skx-cell"></div>
-        <div class="skx-cell"></div>
-      </div>
 
-      <div class="skx-row">
-        <div>
-          <div class="skx-name">An&aacute;lisis &amp; estad&iacute;stica<span class="skx-lvl-m uso">&#9680; En uso</span></div>
-          <div class="skx-tools"><span class="skx-chip">Python</span><span class="skx-chip">pandas</span><span class="skx-chip">NumPy</span><span class="skx-chip">Matplotlib</span><span class="skx-chip">Seaborn</span></div>
-          <p class="skx-ctx">EDA, validaci&oacute;n y an&aacute;lisis con Python. Formaci&oacute;n intensiva en Neoland (jun-jul 2026).</p>
+        <!-- 04 ANALIZAR -->
+        <div class="pipe-stage">
+          <div class="pipe-head">
+            <div class="pipe-num">04</div>
+            <div class="pipe-name">Analizar</div>
+            <span class="pipe-dot"></span>
+          </div>
+          <div class="pipe-card">
+            <span class="pipe-chip uso">Python</span>
+            <span class="pipe-chip uso">pandas</span>
+            <span class="pipe-chip uso">NumPy</span>
+            <span class="pipe-chip uso">Matplotlib</span>
+            <span class="pipe-chip uso">Seaborn</span>
+            <span class="pipe-chip uso">scikit-learn</span>
+            <span class="pipe-chip uso">XGBoost</span>
+            <p class="pipe-desc">EDA, estad&iacute;stica y machine learning aplicado a negocio.</p>
+          </div>
         </div>
-        <div class="skx-cell"></div>
-        <div class="skx-cell"><span class="skx-dot uso"></span></div>
-        <div class="skx-cell"></div>
-      </div>
 
-      <div class="skx-row">
-        <div>
-          <div class="skx-name">Visualizaci&oacute;n &amp; reporting<span class="skx-lvl-m dom">&#9679; Dominio</span></div>
-          <div class="skx-tools"><span class="skx-chip">Power BI</span><span class="skx-chip">Tableau</span><span class="skx-chip">Data Storytelling</span><span class="skx-chip">Gestalt</span><span class="skx-chip">UX/UI</span></div>
-          <p class="skx-ctx">Donde el dato se vuelve decisi&oacute;n: dashboards que combinan Data Storytelling, principios de Gestalt y UX para que se entiendan en segundos.</p>
+        <!-- 05 COMUNICAR -->
+        <div class="pipe-stage">
+          <div class="pipe-head">
+            <div class="pipe-num">05</div>
+            <div class="pipe-name">Comunicar</div>
+            <span class="pipe-dot"></span>
+          </div>
+          <div class="pipe-card">
+            <span class="pipe-chip dom">Power BI</span>
+            <span class="pipe-chip uso">Tableau</span>
+            <span class="pipe-chip dom">Data Storytelling</span>
+            <span class="pipe-chip dom">Gestalt &middot; UX</span>
+            <p class="pipe-desc">El dato se vuelve decisi&oacute;n: dashboards que se entienden en segundos.</p>
+          </div>
         </div>
-        <div class="skx-cell"><span class="skx-dot dom"></span></div>
-        <div class="skx-cell"></div>
-        <div class="skx-cell"></div>
+
       </div>
 
-      <div class="skx-row">
-        <div>
-          <div class="skx-name">Machine Learning<span class="skx-lvl-m uso">&#9680; En uso</span></div>
-          <div class="skx-tools"><span class="skx-chip">scikit-learn</span><span class="skx-chip">XGBoost</span><span class="skx-chip">SARIMA</span><span class="skx-chip">K-Means</span></div>
-          <p class="skx-ctx">Supervisado, no supervisado y series temporales. Tres proyectos aplicados a problemas de negocio reales.</p>
+      <!-- ── TRANSVERSAL: IA ── -->
+      <div class="pipe-transversal sr">
+        <span class="pipe-transversal-label">Transversal</span>
+        <span class="pipe-transversal-text">Uso LLMs como Claude para documentar, explorar y prototipar m&aacute;s r&aacute;pido. Con criterio, no por moda.</span>
+        <div class="pipe-transversal-chips">
+          <span class="pipe-chip uso">Claude</span>
+          <span class="pipe-chip uso">LLMs</span>
         </div>
-        <div class="skx-cell"></div>
-        <div class="skx-cell"><span class="skx-dot uso"></span></div>
-        <div class="skx-cell"></div>
       </div>
 
-      <div class="skx-row">
-        <div>
-          <div class="skx-name">IA aplicada<span class="skx-lvl-m uso">&#9680; En uso</span></div>
-          <div class="skx-tools"><span class="skx-chip">Claude</span><span class="skx-chip">LLMs</span></div>
-          <p class="skx-ctx">Transversal a todo el flujo: uso LLMs como Claude para documentar, explorar y prototipar m&aacute;s r&aacute;pido. Con criterio, no por moda.</p>
-        </div>
-        <div class="skx-cell"></div>
-        <div class="skx-cell"><span class="skx-dot uso"></span></div>
-        <div class="skx-cell"></div>
+      <!-- ── LEGEND ── -->
+      <div class="pipe-legend">
+        <span class="pipe-leg"><span class="pipe-leg-dot dom"></span>Dominio &middot; proyectos reales</span>
+        <span class="pipe-leg"><span class="pipe-leg-dot uso"></span>En uso &middot; formaci&oacute;n aplicada</span>
+        <span class="pipe-leg"><span class="pipe-leg-dot exp"></span>En expansi&oacute;n</span>
       </div>
 
-      <div class="skx-legend">
-        <span class="skx-leg"><span class="skx-dot dom" style="width:12px;height:12px"></span>Dominio &middot; proyectos reales</span>
-        <span class="skx-leg"><span class="skx-dot uso" style="width:12px;height:12px"></span>En uso &middot; formaci&oacute;n aplicada (Neoland &middot; Namasdata)</span>
-        <span class="skx-leg"><span class="skx-dot exp" style="width:12px;height:12px;animation:none"></span>En expansi&oacute;n &mdash; Microsoft Fabric</span>
+      <!-- ── EDUCATION BADGES ── -->
+      <div class="pipe-edu">
+        <span class="pipe-edu-badge"><strong>Neoland</strong> Bootcamp Data Analytics (jun-jul 2026)</span>
+        <span class="pipe-edu-badge"><strong>Namasdata</strong> Especializaci&oacute;n Power BI (2024)</span>
+        <span class="pipe-edu-badge"><strong>Neoland</strong> M&aacute;ster UX/UI (en curso)</span>
       </div>
-      <p style="font-size:12px;color:var(--muted);margin-top:12px;line-height:1.5">Bootcamp Data Analytics &middot; Neoland (jun-jul 2026) &mdash; Especializaci&oacute;n Power BI &middot; Namasdata (2024) &mdash; M&aacute;ster UX/UI &middot; Neoland (en curso)</p>
     </div>
   </div>
 </section>
@@ -3182,21 +3333,21 @@ footer {
 <script>
 // ─── TYPING EFFECT — desactivado ───
 
-// ─── STACK SKILLS ANIMATION ───
+// ─── STACK PIPELINE ANIMATION ───
 (function(){
-  const stackSection = document.querySelector('#stackCols');
-  if(!stackSection) return;
-  const skObserver = new IntersectionObserver((entries)=>{
+  const pipeGrid = document.querySelector('.pipe-grid');
+  if(!pipeGrid) return;
+  const pipeObs = new IntersectionObserver((entries)=>{
     entries.forEach(e=>{
       if(e.isIntersecting){
-        skObserver.unobserve(e.target);
-        document.querySelectorAll('.sk-col').forEach((col)=>{
-          col.classList.add('sk-visible');
+        pipeObs.unobserve(e.target);
+        document.querySelectorAll('.pipe-stage').forEach((s)=>{
+          s.classList.add('sk-visible');
         });
       }
     });
   },{ threshold:.1 });
-  skObserver.observe(stackSection);
+  pipeObs.observe(pipeGrid);
 })();
 
 // ─── NAV SCROLL ───
