@@ -35,17 +35,18 @@
     padding: 80px 24px 120px;
   }
 
-  /* ── Divider (igual que el portfolio) ── */
+  /* ── Divider con estrella ── */
   .section-divider {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     margin-bottom: 48px;
   }
-  .section-divider-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--purple);
+  .section-divider-star {
+    width: 14px;
+    height: 14px;
+    color: var(--purple);
+    flex-shrink: 0;
   }
   .section-divider-label {
     font-family: 'JetBrains Mono', monospace;
@@ -57,7 +58,7 @@
   }
 
   /* ═══════════════════════════════════════════
-     STAR BOX — El box grande unificado
+     STAR BOX — Box grande unificado
      ═══════════════════════════════════════════ */
   .star-box {
     border: 0.5px solid var(--ink);
@@ -69,52 +70,7 @@
     box-shadow: 0 12px 40px rgba(0,0,0,.06);
   }
 
-  /* ── Browser chrome (parte superior del box) ── */
-  .star-box-bar {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 12px 18px;
-    background: var(--ink);
-    border-bottom: 1px solid var(--ink);
-  }
-  .star-box-dots { display: flex; gap: 6px; }
-  .star-box-dots span {
-    width: 11px; height: 11px;
-    border-radius: 50%;
-  }
-  .star-box-dots span:nth-child(1) { background: #ff5f57; }
-  .star-box-dots span:nth-child(2) { background: #febc2e; }
-  .star-box-dots span:nth-child(3) { background: #28c840; }
-  .star-box-url {
-    background: rgba(255,255,255,.08);
-    border: .5px solid rgba(255,255,255,.15);
-    border-radius: 7px;
-    padding: 5px 14px;
-    font-size: 11px;
-    color: rgba(255,255,255,.7);
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .star-box-live {
-    margin-left: auto;
-    display: inline-flex; align-items: center; gap: 6px;
-    font-size: 10px; font-weight: 700;
-    letter-spacing: 1px; color: #c6ff00;
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .star-box-live-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: #c6ff00;
-    box-shadow: 0 0 0 3px rgba(198,255,0,.15);
-    animation: pulse-gr 2s infinite;
-  }
-  @keyframes pulse-gr {
-    0%, 100% { box-shadow: 0 0 0 3px rgba(198,255,0,.15); }
-    50% { box-shadow: 0 0 0 6px rgba(198,255,0,.08); }
-  }
-
-  /* ── Imagen del dashboard ── */
+  /* ── Imagen del dashboard (sin browser chrome) ── */
   .star-box-img {
     position: relative;
     overflow: hidden;
@@ -128,12 +84,11 @@
     object-position: top left;
   }
 
-  /* ── Contenido de texto (parte inferior del box) ── */
+  /* ── Contenido de texto ── */
   .star-box-body {
     padding: 40px 48px 44px;
     display: flex;
     flex-direction: column;
-    gap: 0;
   }
 
   .star-box-tag {
@@ -165,7 +120,6 @@
     color: var(--muted);
     line-height: 1.6;
     max-width: 680px;
-    margin-bottom: 0;
   }
 
   .star-box-credential {
@@ -204,18 +158,32 @@
     transition: all .2s var(--ease);
   }
 
+  /* ── CTA botón morado sólido ── */
   .star-box-cta {
-    font-size: 12px;
-    color: var(--ink);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
     font-weight: 700;
+    color: var(--white);
+    background: var(--purple);
     text-decoration: none;
-    letter-spacing: .05em;
-    text-transform: uppercase;
-    transition: color .18s;
+    letter-spacing: .02em;
+    padding: 12px 28px;
+    border-radius: 0;
+    transition: background .2s var(--ease), transform .15s var(--ease);
     white-space: nowrap;
   }
   .star-box-cta:hover {
-    color: var(--purple);
+    background: var(--purple2);
+    transform: translateY(-1px);
+  }
+  .star-box-cta .cta-arrow {
+    font-size: 15px;
+    transition: transform .2s var(--ease);
+  }
+  .star-box-cta:hover .cta-arrow {
+    transform: translateX(3px);
   }
 
   /* ── Hover en pills ── */
@@ -241,27 +209,18 @@
 
 <div class="page-sim">
 
-  <!-- Divider -->
+  <!-- Divider con estrella -->
   <div class="section-divider">
-    <span class="section-divider-dot" aria-hidden="true"></span>
+    <svg class="section-divider-star" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2l2.09 6.26L20.18 9l-5 4.09L16.54 20 12 16.27 7.46 20l1.36-6.91L3.82 9l6.09-.74L12 2z"/>
+    </svg>
     <span class="section-divider-label">PROYECTO ESTRELLA</span>
   </div>
 
   <!-- ═══ STAR BOX ═══ -->
   <div class="star-box">
 
-    <!-- Browser chrome -->
-    <div class="star-box-bar">
-      <div class="star-box-dots">
-        <span></span><span></span><span></span>
-      </div>
-      <div class="star-box-url">casaorigen.borjamora.es</div>
-      <span class="star-box-live">
-        <span class="star-box-live-dot"></span>LIVE
-      </span>
-    </div>
-
-    <!-- Dashboard image -->
+    <!-- Dashboard image (sin browser chrome) -->
     <div class="star-box-img">
       <img src="./img/casa-origen-hero.png" alt="Casa Origen — Dashboard ejecutivo en Power BI" loading="lazy">
     </div>
@@ -284,7 +243,9 @@
           <span class="star-box-pill">Power BI</span>
           <span class="star-box-pill">Machine Learning</span>
         </div>
-        <a href="./casa-origen.html" class="star-box-cta">Ver caso completo →</a>
+        <a href="./casa-origen.html" class="star-box-cta">
+          Ver caso completo <span class="cta-arrow">→</span>
+        </a>
       </div>
     </div>
 
