@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup — Casa Origen Box</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --white: #ffffff;
+    --ink: #111111;
+    --muted: #5a5a5a;
+    --purple: #7a7bff;
+    --purple2: #6364d9;
+    --purple-light: rgba(122,123,255,.08);
+    --gray: #e8e8f0;
+    --off: #f6f6f9;
+    --ease: cubic-bezier(.4,0,.2,1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    background: var(--white);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Simulación del contenedor del portfolio ── */
+  .page-sim {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 80px 24px 120px;
+  }
+
+  /* ── Divider (igual que el portfolio) ── */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 48px;
+  }
+  .section-divider-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--purple);
+  }
+  .section-divider-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ═══════════════════════════════════════════
+     STAR BOX — El box grande unificado
+     ═══════════════════════════════════════════ */
+  .star-box {
+    border: 0.5px solid var(--ink);
+    background: var(--white);
+    overflow: hidden;
+    transition: box-shadow .3s var(--ease);
+  }
+  .star-box:hover {
+    box-shadow: 0 12px 40px rgba(0,0,0,.06);
+  }
+
+  /* ── Browser chrome (parte superior del box) ── */
+  .star-box-bar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 18px;
+    background: var(--ink);
+    border-bottom: 1px solid var(--ink);
+  }
+  .star-box-dots { display: flex; gap: 6px; }
+  .star-box-dots span {
+    width: 11px; height: 11px;
+    border-radius: 50%;
+  }
+  .star-box-dots span:nth-child(1) { background: #ff5f57; }
+  .star-box-dots span:nth-child(2) { background: #febc2e; }
+  .star-box-dots span:nth-child(3) { background: #28c840; }
+  .star-box-url {
+    background: rgba(255,255,255,.08);
+    border: .5px solid rgba(255,255,255,.15);
+    border-radius: 7px;
+    padding: 5px 14px;
+    font-size: 11px;
+    color: rgba(255,255,255,.7);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .star-box-live {
+    margin-left: auto;
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 1px; color: #c6ff00;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .star-box-live-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #c6ff00;
+    box-shadow: 0 0 0 3px rgba(198,255,0,.15);
+    animation: pulse-gr 2s infinite;
+  }
+  @keyframes pulse-gr {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(198,255,0,.15); }
+    50% { box-shadow: 0 0 0 6px rgba(198,255,0,.08); }
+  }
+
+  /* ── Imagen del dashboard ── */
+  .star-box-img {
+    position: relative;
+    overflow: hidden;
+    background: #fafafa;
+    border-bottom: 0.5px solid var(--ink);
+  }
+  .star-box-img img {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: top left;
+  }
+
+  /* ── Contenido de texto (parte inferior del box) ── */
+  .star-box-body {
+    padding: 40px 48px 44px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .star-box-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--purple);
+    margin-bottom: 16px;
+  }
+  .star-box-tag::before {
+    content: '';
+    display: inline-block;
+    width: 18px; height: 2px;
+    background: var(--purple);
+    border-radius: 2px;
+  }
+
+  .star-box-title {
+    font-size: clamp(36px, 4.2vw, 56px);
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -1.6px;
+    line-height: .98;
+    margin-bottom: 20px;
+  }
+
+  .star-box-lead {
+    font-size: clamp(15px, 1.1vw, 17px);
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 680px;
+    margin-bottom: 0;
+  }
+
+  .star-box-credential {
+    font-size: 13px;
+    font-weight: 500;
+    color: #999;
+    letter-spacing: 0.3px;
+    margin-top: 20px;
+    margin-bottom: 28px;
+  }
+
+  .star-box-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 20px;
+    border-top: 0.5px solid var(--ink);
+  }
+
+  .star-box-pills {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .star-box-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    background: transparent;
+    border: 1.5px solid var(--ink);
+    color: var(--muted);
+    padding: 6px 12px;
+    border-radius: 20px;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    transition: all .2s var(--ease);
+  }
+
+  .star-box-cta {
+    font-size: 12px;
+    color: var(--ink);
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    transition: color .18s;
+    white-space: nowrap;
+  }
+  .star-box-cta:hover {
+    color: var(--purple);
+  }
+
+  /* ── Hover en pills ── */
+  .star-box:hover .star-box-pill {
+    border-color: var(--purple);
+    color: var(--purple);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .star-box-body {
+      padding: 28px 24px 32px;
+    }
+    .star-box-footer {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-sim">
+
+  <!-- Divider -->
+  <div class="section-divider">
+    <span class="section-divider-dot" aria-hidden="true"></span>
+    <span class="section-divider-label">PROYECTO ESTRELLA</span>
+  </div>
+
+  <!-- ═══ STAR BOX ═══ -->
+  <div class="star-box">
+
+    <!-- Browser chrome -->
+    <div class="star-box-bar">
+      <div class="star-box-dots">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="star-box-url">casaorigen.borjamora.es</div>
+      <span class="star-box-live">
+        <span class="star-box-live-dot"></span>LIVE
+      </span>
+    </div>
+
+    <!-- Dashboard image -->
+    <div class="star-box-img">
+      <img src="./img/casa-origen-hero.png" alt="Casa Origen — Dashboard ejecutivo en Power BI" loading="lazy">
+    </div>
+
+    <!-- Copy -->
+    <div class="star-box-body">
+      <span class="star-box-tag">Sistema BI end-to-end</span>
+      <h2 class="star-box-title">Casa Origen</h2>
+      <p class="star-box-lead">
+        Cafetería de especialidad. Dos locales en Madrid. 330.928 filas de datos reales que nadie usaba para decidir. Construí el sistema BI completo para responder las 5 preguntas que el dueño no podía.
+      </p>
+      <p class="star-box-credential">
+        Proyecto finalista · Bootcamp Data Analytics · Neoland · Julio 2026
+      </p>
+
+      <div class="star-box-footer">
+        <div class="star-box-pills">
+          <span class="star-box-pill">Python</span>
+          <span class="star-box-pill">SQL</span>
+          <span class="star-box-pill">Power BI</span>
+          <span class="star-box-pill">Machine Learning</span>
+        </div>
+        <a href="./casa-origen.html" class="star-box-cta">Ver caso completo →</a>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>
