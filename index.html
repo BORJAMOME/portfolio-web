@@ -808,294 +808,133 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 .cc-link:hover { color:#c6ff00; }
 @media (max-width:900px) { .ml-grid { grid-template-columns:1fr; } }
 
-/* ─── PROYECTO ESTRELLA — dos columnas ─── */
+/* ─── PROYECTO ESTRELLA — box unificado ─── */
 .star-section {
   background: var(--white);
   padding: 0 0 clamp(96px, 10vw, 120px);
   overflow: hidden;
   position: relative;
 }
-.star-wrap {
-  max-width: none;
-  margin: 0;
-  /* Alinear el borde izquierdo con .c (max-width 1100px centrado) en pantallas anchas,
-     manteniendo clamp(1.5rem,5vw,4rem) como mínimo en pantallas pequeñas. */
-  padding: 0 0 0 max(clamp(1.5rem, 5vw, 4rem), calc(50vw - 550px));
-}
-.star-inner {
-  display: grid;
-  grid-template-columns: minmax(420px, 1fr) minmax(0, 1.4fr);
-  gap: clamp(40px, 5vw, 80px);
-  align-items: stretch;
-  max-width: 1600px;
-  margin: 0 auto 0 0;
+.section-divider-star {
+  color: var(--purple);
+  flex-shrink: 0;
 }
 
-/* LEFT: texto */
-.star-text {
+/* STAR BOX */
+.star-box {
+  border: 0.5px solid var(--ink);
+  background: var(--white);
+  overflow: hidden;
+  transition: box-shadow .3s var(--ease);
+}
+.star-box:hover {
+  box-shadow: 0 12px 40px rgba(0,0,0,.06);
+}
+.star-box-img {
+  position: relative;
+  overflow: hidden;
+  background: #fafafa;
+  border-bottom: 0.5px solid var(--ink);
+}
+.star-box-img img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: top left;
+}
+.star-box-body {
+  padding: 40px 48px 44px;
   display: flex;
   flex-direction: column;
-  padding-right: 0;
 }
-.star-text-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-.star-head-num {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--muted);
-  letter-spacing: 1px;
-  opacity: .7;
-}
-.star-tag {
+.star-box-tag {
   display: inline-flex; align-items: center; gap: 8px;
   font-size: 10px; font-weight: 700;
   letter-spacing: 1.2px; text-transform: uppercase;
   color: var(--purple);
-  margin: 0;
+  margin-bottom: 16px;
 }
-.star-tag::before {
+.star-box-tag::before {
   content: '';
   display: inline-block;
   width: 18px; height: 2px;
   background: var(--purple);
   border-radius: 2px;
 }
-.star-title {
-  font-size: clamp(36px, 4.2vw, 60px);
+.star-box-title {
+  font-size: clamp(36px, 4.2vw, 56px);
   font-weight: 700;
   color: var(--ink);
   letter-spacing: -1.6px;
   line-height: .98;
-  margin: 0 0 22px 0;
-  text-wrap: balance;
+  margin-bottom: 20px;
 }
-.star-lead {
+.star-box-lead {
   font-size: clamp(15px, 1.1vw, 17px);
   color: var(--muted);
   line-height: 1.6;
-  margin: 0 0 36px;
-  text-wrap: pretty;
+  max-width: 680px;
 }
-.star-lead em {
-  font-style: italic;
-  color: var(--ink);
+.star-box-credential {
+  font-size: 13px;
+  font-weight: 500;
+  color: #999;
+  letter-spacing: 0.3px;
+  margin-top: 20px;
+  margin-bottom: 28px;
 }
-
-.star-blocks {
+.star-box-footer {
   display: flex;
-  flex-direction: column;
-  gap: 24px;
-  margin-bottom: 36px;
-}
-.star-blk {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
   padding-top: 20px;
-  border-top: .5px solid #e8e8f0;
+  border-top: 0.5px solid var(--ink);
 }
-.star-blk-num {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  color: var(--purple);
-  letter-spacing: 1px;
-  font-weight: 600;
-}
-.star-blk-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--ink);
-  letter-spacing: -.2px;
-  line-height: 1.3;
-  margin: 0 0 2px;
-}
-.star-blk p {
-  font-size: 13.5px;
-  color: var(--muted);
-  line-height: 1.65;
-  margin: 0;
-  text-wrap: pretty;
-}
-
-.star-pull {
-  padding-top: 28px;
-  border-top: .5px solid #e8e8f0;
+.star-box-pills {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-.star-pull-quote {
-  font-size: clamp(18px, 1.5vw, 22px);
-  font-weight: 600;
-  color: var(--ink);
-  letter-spacing: -.3px;
-  line-height: 1.35;
-  text-wrap: balance;
-}
-.star-pull-tags {
-  display: flex;
-  gap: 6px;
+  gap: 8px;
   flex-wrap: wrap;
 }
-.star-pull-tags .pc-pill {
-  border: 1px solid #111111;
-  border-radius: 16px;
-  padding: 4px 10px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: .2px;
-  text-transform: uppercase;
-}
-
-/* RIGHT: herramienta — full-bleed pegada al borde derecho, alto = alto del texto */
-.star-stage {
-  position: relative;
-  align-self: stretch;
-  display: flex;
-  flex-direction: column;
+.star-box-cta {
+  display: inline-flex;
+  align-items: center;
   gap: 8px;
-}
-.star-browser {
-  background: #fff;
-  border: 1px solid #111111;
-  border-radius: 0;
-  border-right: none;
-  overflow: hidden;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  position: sticky;
-  top: 100px;
-  max-height: calc(100vh - 140px);
-  box-shadow: none;
-}
-.star-browser-bar {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 12px 18px;
-  background: #111111;
-  border-bottom: 1px solid #111111;
-}
-.star-browser-dots { display: flex; gap: 6px; }
-.star-browser-dots span {
-  width: 11px; height: 11px;
-  border-radius: 50%;
-  background: #e0e0e0;
-}
-.star-browser-dots span:first-child { background: #ff5f57; }
-.star-browser-dots span:nth-child(2) { background: #febc2e; }
-.star-browser-dots span:nth-child(3) { background: #28c840; }
-.star-browser-url {
-  flex: 0 1 auto;
-  background: rgba(255,255,255,.08);
-  border: .5px solid rgba(255,255,255,.15);
-  border-radius: 7px;
-  padding: 5px 14px;
-  font-size: 11px;
-  color: rgba(255,255,255,.7);
-  font-family: 'JetBrains Mono', monospace;
-  min-width: 240px;
-  max-width: 420px;
-}
-.star-browser-meta { margin-left: auto; }
-.star-browser-live {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 1px;
-  color: #c6ff00;
-  font-family: 'JetBrains Mono', monospace;
-}
-.sb-dot {
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  background: #c6ff00;
-  box-shadow: 0 0 0 3px rgba(198,255,0,.15);
-  animation: pulse-gr 2s infinite;
-}
-.star-browser-content {
-  position: relative;
-  flex: 1;
-  min-height: 480px;
-  overflow: hidden;
-  background: #fafafa;
-}
-.iframe-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  cursor: default;
-}
-.star-browser-content iframe {
-  width: 142.86%;
-  height: 142.86%;
-  border: none;
-  transform: scale(0.7);
-  transform-origin: top left;
-  pointer-events: none;
-}
-
-/* CTA flotante */
-.star-float-cta {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  background: var(--ink);
-  color: #fff;
-  padding: 14px 20px;
-  border-radius: 0;
-  border-top: 1px solid #111111;
+  color: var(--white);
+  background: var(--purple);
   text-decoration: none;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: .4px;
-  text-transform: uppercase;
-  box-shadow: none;
-  transition: background .25s var(--ease);
-  z-index: 5;
+  letter-spacing: .02em;
+  padding: 12px 28px;
+  transition: background .2s var(--ease), transform .15s var(--ease);
+  white-space: nowrap;
 }
-.star-float-cta .sfc-arrow {
-  display: inline-block;
-  font-size: 14px;
-  transition: transform .25s var(--ease);
+.star-box-cta:hover {
+  background: var(--purple2);
+  transform: translateY(-1px);
 }
-.star-float-cta:hover {
-  background: #c6ff00;
-  color: #111111;
-  transform: none;
-  box-shadow: none;
+.star-box-cta .sfc-arrow {
+  font-size: 15px;
+  transition: transform .2s var(--ease);
 }
-.star-float-cta:hover .sfc-arrow { transform: translateX(4px); }
+.star-box-cta:hover .sfc-arrow {
+  transform: translateX(3px);
+}
+.star-box:hover .pc-pill {
+  border-color: var(--purple);
+  color: var(--purple);
+}
 
-/* RESPONSIVE */
-@media (max-width: 1100px) {
-  .star-wrap { padding: 0 clamp(1.5rem, 5vw, 4rem); }
-  .star-inner { grid-template-columns: 1fr; gap: 48px; max-width: 1200px; margin: 0 auto; }
-  .star-browser {
-    position: static;
-    max-height: none;
-    border-right: .5px solid #e0e0e8;
-    border-radius: 16px;
-    -webkit-mask-image: none;
-            mask-image: none;
+/* STAR BOX RESPONSIVE */
+@media (max-width: 768px) {
+  .star-box-body {
+    padding: 28px 24px 32px;
   }
-  .star-browser-content { min-height: 0; height: 520px; }
-}
-@media (max-width: 720px) {
-  .star-browser-content { height: 420px; }
-  .star-browser-url { min-width: 0; font-size: 10px; padding: 4px 10px; }
-  .star-float-cta { padding: 12px 18px; font-size: 13px; }
+  .star-box-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
 }
 
 /* ─── PROYECTO ESTRELLA ─── */
@@ -2919,51 +2758,39 @@ footer {
 <!-- ─── PROYECTO ESTRELLA — Casa Origen ─── -->
 <section class="star-section" id="star">
   <div class="section-divider">
-    <span class="section-divider-dot" aria-hidden="true"></span>
+    <svg class="section-divider-star" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M12 2l2.09 6.26L20.18 9l-5 4.09L16.54 20 12 16.27 7.46 20l1.36-6.91L3.82 9l6.09-.74L12 2z"/>
+    </svg>
     <span class="section-divider-label">PROYECTO ESTRELLA</span>
   </div>
-  <div class="star-wrap">
-    <div class="star-inner">
 
-      <!-- LEFT: texto -->
-      <div class="star-text sr">
-        <div class="star-text-meta">
-          <span class="star-tag">Sistema BI end-to-end</span>
-        </div>
-        <h2 class="star-title">Casa Origen</h2>
-        <p class="star-lead">
+  <div class="c">
+    <div class="star-box sr">
+
+      <!-- Dashboard image -->
+      <div class="star-box-img">
+        <img src="./img/casa-origen-hero.png" alt="Casa Origen — Dashboard ejecutivo en Power BI" loading="lazy">
+      </div>
+
+      <!-- Copy -->
+      <div class="star-box-body">
+        <span class="star-box-tag">Sistema BI end-to-end</span>
+        <h2 class="star-box-title">Casa Origen</h2>
+        <p class="star-box-lead">
           Cafetería de especialidad. Dos locales en Madrid. 330.928 filas de datos reales que nadie usaba para decidir. Construí el sistema BI completo para responder las 5 preguntas que el dueño no podía.
         </p>
-
-        <p style="font-size:13px;font-weight:500;color:#999;letter-spacing:0.3px;margin-top:18px;margin-bottom:24px;">
+        <p class="star-box-credential">
           Proyecto finalista · Bootcamp Data Analytics · Neoland · Julio 2026
         </p>
 
-        <div class="star-pull-tags">
-          <span class="pc-pill">Python</span>
-          <span class="pc-pill">SQL</span>
-          <span class="pc-pill">Power BI</span>
-          <span class="pc-pill">Machine Learning</span>
-        </div>
-      </div>
-
-      <!-- RIGHT: browser mockup con dashboard -->
-      <div class="star-stage">
-        <div class="star-browser">
-          <div class="star-browser-bar">
-            <div class="star-browser-dots">
-              <span></span><span></span><span></span>
-            </div>
-            <div class="star-browser-url">casaorigen.borjamora.es</div>
-            <div class="star-browser-meta">
-              <span class="star-browser-live"><span class="sb-dot"></span>LIVE</span>
-            </div>
+        <div class="star-box-footer">
+          <div class="star-box-pills">
+            <span class="pc-pill">Python</span>
+            <span class="pc-pill">SQL</span>
+            <span class="pc-pill">Power BI</span>
+            <span class="pc-pill">Machine Learning</span>
           </div>
-          <div class="star-browser-content">
-            <div class="iframe-overlay"></div>
-            <img src="./img/casa-origen-hero.png" alt="Casa Origen — Dashboard ejecutivo en Power BI" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top left;display:block;">
-          </div>
-          <a href="./casa-origen.html" class="star-float-cta">
+          <a href="./casa-origen.html" class="star-box-cta">
             Ver caso completo <span class="sfc-arrow">→</span>
           </a>
         </div>
