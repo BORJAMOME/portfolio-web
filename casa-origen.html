@@ -1,8 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Casa Origen — Caso de Estudio BI | Borja Mora</title>
+<meta name="description" content="Diseño e implementación de un sistema de Business Intelligence completo para una cafetería de especialidad en Madrid. Power BI, DAX, SQL Server, Python y Machine Learning.">
+<meta name="theme-color" content="#2B2118">
+<link rel="canonical" href="https://borjamora.es/casa-origen.html">
+<link rel="icon" href="./img/favicon.ico" type="image/x-icon">
+<!-- Open Graph -->
+<meta property="og:title" content="Casa Origen — Caso de Estudio BI | Borja Mora">
+<meta property="og:description" content="Sistema BI completo para PYME: 4 dashboards, 2 modelos ML, arquitectura Medallion. Power BI + DAX + SQL Server + Python.">
+<meta property="og:image" content="https://borjamora.es/img/casa-origen/dashboard-01.png">
+<meta property="og:url" content="https://borjamora.es/casa-origen.html">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="es_ES">
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Casa Origen — Caso de Estudio BI | Borja Mora">
+<meta name="twitter:description" content="Sistema BI completo para PYME: 4 dashboards, 2 modelos ML, arquitectura Medallion.">
+<meta name="twitter:image" content="https://borjamora.es/img/casa-origen/dashboard-01.png">
 <script src="./support.js"></script>
 </head>
 <body>
@@ -121,6 +138,116 @@ section { padding: 6rem 0; }
     min-width: 40px !important;
   }
 }
+
+/* ── CTA Button ── */
+.co-cta {
+  display: inline-block;
+  background: var(--co-brown);
+  color: #fff;
+  font-family: Georgia, serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 1rem 2.8rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: transform .25s cubic-bezier(.16,1,.3,1), box-shadow .25s cubic-bezier(.16,1,.3,1);
+  box-shadow: 0 4px 20px rgba(43,33,24,.25);
+}
+.co-cta:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(43,33,24,.4);
+  text-decoration: none;
+}
+.co-cta:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(43,33,24,.3);
+}
+
+/* ── Hover lift on cards ── */
+.combo-grid > div,
+.campaign-grid > div,
+.metodo-grid-5 > div {
+  transition: transform .3s cubic-bezier(.16,1,.3,1), box-shadow .3s cubic-bezier(.16,1,.3,1);
+}
+.combo-grid > div:hover,
+.campaign-grid > div:hover,
+.metodo-grid-5 > div:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 28px rgba(43,33,24,.1);
+}
+
+/* ── Dashboard images subtle hover ── */
+.dash-layout img {
+  transition: transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s cubic-bezier(.16,1,.3,1);
+}
+.dash-layout img:hover {
+  transform: scale(1.015);
+  box-shadow: 0 16px 56px rgba(43,33,24,.14);
+}
+
+/* ── Hipótesis badge transitions ── */
+.hipotesis-row .h-badge {
+  transition: background .2s, color .2s, border-color .2s;
+}
+.hipotesis-row:hover .h-badge {
+  background: var(--co-green);
+  color: #fff;
+  border-color: var(--co-green);
+}
+.hipotesis-row {
+  transition: background .2s;
+}
+.hipotesis-row:hover {
+  background: rgba(110,127,91,.04);
+}
+
+/* ── Stack pills hover ── */
+#stack .reveal[style*="background:var(--co-cream)"] ~ .reveal,
+#stack div[style*="flex-wrap"] > span {
+  transition: transform .2s, box-shadow .2s;
+}
+
+/* ── RFM table responsive cards ── */
+@media (max-width: 900px) {
+  .rfm-table { min-width: 0 !important; }
+  .rfm-table thead { display: none; }
+  .rfm-table tbody tr {
+    display: block;
+    background: var(--co-cream);
+    border-radius: 12px;
+    padding: 1.2rem 1rem;
+    margin-bottom: 1rem;
+    border-bottom: none !important;
+  }
+  .rfm-table tbody tr:last-child { margin-bottom: 0; }
+  .rfm-table tbody td {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: .4rem .8rem !important;
+    font-size: .82rem !important;
+    border: none;
+  }
+  .rfm-table tbody td::before {
+    content: attr(data-label);
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--co-green);
+    flex-shrink: 0;
+    margin-right: 1rem;
+    padding-top: .15rem;
+  }
+  .rfm-table tbody td:first-child {
+    font-family: Georgia, serif;
+    font-size: 1.1rem !important;
+    font-weight: 700;
+    color: var(--co-brown);
+    margin-bottom: .3rem;
+  }
+  .rfm-table tbody td:first-child::before { display: none; }
+}
 </style>
 </helmet>
 
@@ -222,7 +349,7 @@ section { padding: 6rem 0; }
     <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; margin-bottom:1.2rem; font-family:Georgia,serif; color:var(--co-brown);">El objetivo</h2>
     
     <div class="reveal" style="background:var(--co-cream); border-radius:14px; padding:2.5rem 3rem; margin-bottom:2.5rem;">
-      <p class="objetivo-text" style="font-size: 1rem; line-height: 1.7; color: var(--co-text); position: absolute; left: 23px; top: 25px; width: 883px; height: 27px">Dar a la dirección <strong style="font-size: 15.6px; width: 157px; height: 30px">visibilidad accionable</strong> para responder con datos a <strong>cinco preguntas</strong> que hoy se deciden por intuición.</p>
+      <p class="objetivo-text" style="font-size: 1rem; line-height: 1.7; color: var(--co-text);">Dar a la dirección <strong>visibilidad accionable</strong> para responder con datos a <strong>cinco preguntas</strong> que hoy se deciden por intuición.</p>
     </div><p class="reveal" style="font-size:.75rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--co-green); margin-bottom:1.5rem;">Hipótesis a verificar</p>
     <!-- H rows — PPT style -->
     <div style="display:flex; flex-direction:column;">
@@ -309,14 +436,14 @@ section { padding: 6rem 0; }
     <div class="medallion-3 reveal" style="display:grid; grid-template-columns:1fr auto 1fr auto 1fr; gap:0; align-items:stretch;">
       <div style="background:#d4a574; border-radius:14px; padding:2.5rem 2rem; color:#fff;">
         <h3 style="font-size: 2.2rem; color: #fff; margin-bottom: .6rem; text-transform: none; letter-spacing: .04em; font-weight: 500">Bronze</h3>
-        <p style="font-size:.88rem; opacity:.92; line-height:1.6;"><b style="font-size: 12.08px">INGESTA CRUDA</b></p>
+        <p style="font-size:.88rem; opacity:.92; line-height:1.6;"><b style="font-size: .75rem">INGESTA CRUDA</b></p>
         <p style="font-size: 0.78rem; opacity: .92; line-height: 1.6; margin-top: .4rem">3 años simulados · 7 CSV</p>
         <p style="font-size: 0.78rem; opacity: .92; line-height: 1.6; margin-top: .4rem">Errores intencionados: nulos, duplicados, fechas raras y formatos rotos.</p>
       </div>
       <div class="medallion-arrow" style="display:flex; align-items:center; padding:0 .8rem; font-size:1.8rem; color:var(--co-muted);">→</div>
       <div style="background:#a8a8a8; border-radius:14px; padding:2.5rem 2rem; color:#fff;">
         <h3 style="font-size: 2.2rem; color: #fff; margin-bottom: .6rem; text-transform: none; letter-spacing: .04em; font-weight: 500">Silver</h3>
-        <p style="font-size: .88rem; opacity: .92; line-height: 1.6"><b style="font-size: 12.08px">LIMPIEZA DE DATOS Y REGLAS DE NEGOCIO</b></p>
+        <p style="font-size: .88rem; opacity: .92; line-height: 1.6"><b style="font-size: .75rem">LIMPIEZA DE DATOS Y REGLAS DE NEGOCIO</b></p>
         <p style="font-size: 0.78rem; opacity: .92; line-height: 1.6; margin-top: .4rem">Descarta duplicados, registros vacíos, validación temporal, coherencia de datos. Enriquecido con festivos de Madrid.</p>
       </div>
       <div class="medallion-arrow" style="display:flex; align-items:center; padding:0 .8rem; font-size:1.8rem; color:var(--co-muted);">→</div>
@@ -347,7 +474,7 @@ section { padding: 6rem 0; }
 </section>
 
 <!-- S8 · DASHBOARD 01 -->
-<section id="dash-01" data-screen-label="Dashboard 01" style="padding-bottom:3rem;">
+<section id="dash-01" data-screen-label="Dashboard 01">
   <div class="co-wrap">
     <p class="reveal" style="font-size:.75rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--co-green); margin-bottom:.5rem;">Visualización en Power BI</p>
     <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; margin-bottom:.5rem; font-family:Georgia,serif; color:var(--co-brown);">Cuatro dashboards.</h2>
@@ -369,7 +496,7 @@ section { padding: 6rem 0; }
 </section>
 
 <!-- S9 · DASHBOARD 02 -->
-<section id="dash-02" data-screen-label="Dashboard 02" style="padding-bottom:3rem;">
+<section id="dash-02" data-screen-label="Dashboard 02">
   <div class="co-wrap">
     <div class="reveal" style="display:flex; align-items:baseline; gap:.6rem; margin-bottom:1.5rem; flex-wrap:wrap;">
       <span style="font-family:Georgia,serif; font-size:2.6rem; font-weight:700; color:#2B2118; line-height:1">02</span>
@@ -388,7 +515,7 @@ section { padding: 6rem 0; }
 </section>
 
 <!-- S10 · DASHBOARD 03 -->
-<section id="dash-03" data-screen-label="Dashboard 03" style="padding-bottom:3rem;">
+<section id="dash-03" data-screen-label="Dashboard 03">
   <div class="co-wrap">
     <div class="reveal" style="display:flex; align-items:baseline; gap:.6rem; margin-bottom:1.5rem; flex-wrap:wrap;">
       <span style="font-family:Georgia,serif; font-size:2.6rem; font-weight:700; color:#2B2118; line-height:1">03</span>
@@ -409,7 +536,7 @@ section { padding: 6rem 0; }
 </section>
 
 <!-- S11 · DASHBOARD 04 -->
-<section id="dash-04" data-screen-label="Dashboard 04" style="padding-bottom:3rem;">
+<section id="dash-04" data-screen-label="Dashboard 04">
   <div class="co-wrap">
     <div class="reveal" style="display:flex; align-items:baseline; gap:.6rem; margin-bottom:1.5rem; flex-wrap:wrap;">
       <span style="font-family:Georgia,serif; font-size:2.6rem; font-weight:700; color:#2B2118; line-height:1">04</span>
@@ -440,7 +567,7 @@ section { padding: 6rem 0; }
 
 <!-- S12 · IMPACTO -->
 <section data-screen-label="Impacto" style="min-height:60vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:4rem 2rem; background:var(--co-brown);">
-  <p class="reveal reveal-scale impacto-text" style="font-family:Georgia,serif; font-size:clamp(2.4rem, 6vw, 4.5rem); font-weight:700; line-height:1.15; max-width:1000px; white-space:nowrap;"><span style="color: #F4EFE6; font-size: 58px">15% de clientes = </span><span style="color: var(--co-red); font-size: 58px">30,8% del revenue.</span></p>
+  <p class="reveal reveal-scale impacto-text" style="font-family:Georgia,serif; font-size:clamp(2.4rem, 6vw, 4.5rem); font-weight:700; line-height:1.15; max-width:1000px; white-space:nowrap;"><span style="color: #F4EFE6;">15% de clientes = </span><span style="color: var(--co-red);">30,8% del revenue.</span></p>
   <p class="reveal reveal-delay-1" style="font-size: clamp(1.05rem, 2vw, 1.3rem); color: #a09889; max-width: 727px; margin-top: 1.5rem; font-style: italic; line-height: 1.6">«Antes de este proyecto, la cafetería no sabía quién era ese 15%. Ahora sí.»</p>
 </section>
 
@@ -457,7 +584,7 @@ section { padding: 6rem 0; }
     </div>
 
     <div style="overflow-x:auto; margin-top:1.5rem;" class="reveal reveal-fade">
-      <table style="width:100%; border-collapse:collapse; font-size:.82rem; line-height:1.5; min-width:900px;">
+      <table class="rfm-table" style="width:100%; border-collapse:collapse; font-size:.82rem; line-height:1.5; min-width:900px;">
         <thead>
           <tr>
             <th style="padding: .6rem .8rem; font-size: .68rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--co-green); border-bottom: 2px solid var(--co-green); text-align: left">Segmento</th>
@@ -470,44 +597,45 @@ section { padding: 6rem 0; }
         </thead>
         <tbody>
           <tr style="border-bottom:1px solid #eae6e0;">
-            <td style="padding:.8rem; font-weight:700; color:var(--co-brown);">Champions</td>
-            <td style="padding: .8rem; text-align: center; font-weight: 700">180</td>
-            <td style="padding: .8rem; text-align: left">15,0%</td>
-            <td style="padding: .8rem; text-align: left; font-weight: 400; font-size: 12.12px; width: 123px; height: 89px">484.768 €/año</td>
-            
-            <td style="padding:.8rem;">Vienen cada 2 días · 307 tickets/año · gastan 2.693 €. 30,8% del revenue con el 15% de la base — son el motor.</td><td style="padding:.8rem;">Programa VIP (café gratis + preventa novedades). Retención +5pp → <b>+ 24K €</b></td>
+            <td style="padding:.8rem; font-weight:700; color:var(--co-brown);" data-label="Segmento">Champions</td>
+            <td style="padding: .8rem; text-align: center; font-weight: 700" data-label="Clientes">180</td>
+            <td style="padding: .8rem; text-align: left" data-label="% Total">15,0%</td>
+            <td style="padding: .8rem; text-align: left; font-weight: 400; font-size: .76rem;" data-label="Revenue">484.768 €/año</td>
+            <td style="padding:.8rem;" data-label="Cómo es">Vienen cada 2 días · 307 tickets/año · gastan 2.693 €. 30,8% del revenue con el 15% de la base — son el motor.</td>
+            <td style="padding:.8rem;" data-label="Decisiones">Programa VIP (café gratis + preventa novedades). Retención +5pp → <b>+ 24K €</b></td>
           </tr>
           <tr style="border-bottom:1px solid #eae6e0;">
-            <td style="padding:.8rem; font-weight:700; color:var(--co-brown);">Loyal</td>
-            <td style="padding: .8rem; text-align: center; font-weight: 700">452</td>
-            <td style="padding: .8rem; text-align: left">37,7%</td>
-            <td style="padding: .8rem; text-align: left; font-weight: 400; font-size: 12.12px">628.696 €/año</td>
-            
-            <td style="padding:.8rem;">Vienen cada 3 días · 158 tickets/año · gastan 1.391 €. 39,9% del revenue — la columna vertebral del negocio.</td><td style="padding:.8rem;">Fidelización blanda (5ª bebida gratis). Subir su gasto medio +8% → <b>+ 50K € (recomendaciones cruzadas, combos, upgrade de tamaño)</b></td>
+            <td style="padding:.8rem; font-weight:700; color:var(--co-brown);" data-label="Segmento">Loyal</td>
+            <td style="padding: .8rem; text-align: center; font-weight: 700" data-label="Clientes">452</td>
+            <td style="padding: .8rem; text-align: left" data-label="% Total">37,7%</td>
+            <td style="padding: .8rem; text-align: left; font-weight: 400; font-size: .76rem" data-label="Revenue">628.696 €/año</td>
+            <td style="padding:.8rem;" data-label="Cómo es">Vienen cada 3 días · 158 tickets/año · gastan 1.391 €. 39,9% del revenue — la columna vertebral del negocio.</td>
+            <td style="padding:.8rem;" data-label="Decisiones">Fidelización blanda (5ª bebida gratis). Subir su gasto medio +8% → <b>+ 50K € (recomendaciones cruzadas, combos, upgrade de tamaño)</b></td>
           </tr>
           <tr style="border-bottom:1px solid #eae6e0;">
-            <td style="padding:.8rem; font-weight:700; color:var(--co-brown);">At Risk</td>
-            <td style="padding: .8rem; text-align: center; font-weight: 700">268</td>
-            <td style="padding: .8rem; text-align: left">22,3%</td>
-            <td style="padding: .8rem; text-align: left; font-weight: 400; font-size: 11.12px">351.790 € en juego</td>
-            
-            <td style="padding:.8rem;">Historial idéntico a Loyal (F=149, M=€1.313) Llevan 60-90 días sin aparecer volver. <strong>Máxima urgencia.</strong></td><td style="padding:.8rem;">Reactivación con email/SMS urgente. <b>Recuperar 20% → + 70K €</b></td>
+            <td style="padding:.8rem; font-weight:700; color:var(--co-brown);" data-label="Segmento">At Risk</td>
+            <td style="padding: .8rem; text-align: center; font-weight: 700" data-label="Clientes">268</td>
+            <td style="padding: .8rem; text-align: left" data-label="% Total">22,3%</td>
+            <td style="padding: .8rem; text-align: left; font-weight: 400; font-size: .7rem" data-label="Revenue">351.790 € en juego</td>
+            <td style="padding:.8rem;" data-label="Cómo es">Historial idéntico a Loyal (F=149, M=€1.313) Llevan 60-90 días sin aparecer volver. <strong>Máxima urgencia.</strong></td>
+            <td style="padding:.8rem;" data-label="Decisiones">Reactivación con email/SMS urgente. <b>Recuperar 20% → + 70K €</b></td>
           </tr>
           <tr style="border-bottom:1px solid #eae6e0;">
-            <td style="padding:.8rem; font-weight:700; color:var(--co-brown);">Potential</td>
-            <td style="padding: .8rem; text-align: center; font-weight: 700">129</td>
-            <td style="padding: .8rem; text-align: left">10,8%</td>
-            <td style="padding: .8rem; text-align: left; font-weight: 400; font-size: 12.12px">47.848 €/año</td>
-            
-            <td style="padding:.8rem;">Clientes nuevos o poco frecuentes. Objetivo: graduar el 30% a Loyal en 6 meses.</td><td style="padding:.8rem;">Welcome pack, incentivos por visitas, app de fidelidad <b>+ 40K € en 6 meses</b></td>
+            <td style="padding:.8rem; font-weight:700; color:var(--co-brown);" data-label="Segmento">Potential</td>
+            <td style="padding: .8rem; text-align: center; font-weight: 700" data-label="Clientes">129</td>
+            <td style="padding: .8rem; text-align: left" data-label="% Total">10,8%</td>
+            <td style="padding: .8rem; text-align: left; font-weight: 400; font-size: .76rem" data-label="Revenue">47.848 €/año</td>
+            <td style="padding:.8rem;" data-label="Cómo es">Clientes nuevos o poco frecuentes. Objetivo: graduar el 30% a Loyal en 6 meses.</td>
+            <td style="padding:.8rem;" data-label="Decisiones">Welcome pack, incentivos por visitas, app de fidelidad <b>+ 40K € en 6 meses</b></td>
           </tr>
           <tr>
-            <td style="padding:.8rem; font-weight:700; color:var(--co-brown);">Lost</td>
-            <td style="padding: .8rem; text-align: center; font-weight: 700">171</td>
-            <td style="padding: .8rem; text-align: left">14,2%</td>
-            <td style="padding: .8rem; text-align: left; font-weight: 400; font-size: 12.12px">60.724 €/año</td>
+            <td style="padding:.8rem; font-weight:700; color:var(--co-brown);" data-label="Segmento">Lost</td>
+            <td style="padding: .8rem; text-align: center; font-weight: 700" data-label="Clientes">171</td>
+            <td style="padding: .8rem; text-align: left" data-label="% Total">14,2%</td>
+            <td style="padding: .8rem; text-align: left; font-weight: 400; font-size: .76rem" data-label="Revenue">60.724 €/año</td>
             
-            <td style="padding:.8rem;">303 días de silencio. Solo el 3,9% del revenue.</td><td style="padding:.8rem;">Sunset de comunicación tras 180 días sin visita. <b>Ahorro 600 €/año</b></td>
+            <td style="padding:.8rem;" data-label="Cómo es">303 días de silencio. Solo el 3,9% del revenue.</td>
+            <td style="padding:.8rem;" data-label="Decisiones">Sunset de comunicación tras 180 días sin visita. <b>Ahorro 600 €/año</b></td>
           </tr>
         </tbody>
       </table>
@@ -629,7 +757,7 @@ section { padding: 6rem 0; }
 <!-- S15 · CTA -->
 <section data-screen-label="CTA" style="text-align:center; padding:6rem 2rem 8rem;">
   <div class="co-wrap reveal">
-    <a href="https://app.powerbi.com/links/-sDd_7khMP?ctid=b8af2870-2d50-46ba-ab75-c78fa4736fb7&pbi_source=linkShare" style="display:inline-block; background:var(--co-brown); color:#fff; font-family:Georgia,serif; font-size:1.1rem; font-weight:700; padding:1rem 2.8rem; border-radius:8px; text-decoration:none; transition:transform .2s, box-shadow .2s; box-shadow:0 4px 20px rgba(43,33,24,.25);" style-hover="transform:translateY(-2px); box-shadow:0 8px 30px rgba(43,33,24,.35); text-decoration:none;" target="_blank" rel="noopener">Abrir dashboard en Power BI</a>
+    <a href="https://app.powerbi.com/links/-sDd_7khMP?ctid=b8af2870-2d50-46ba-ab75-c78fa4736fb7&pbi_source=linkShare" class="co-cta" target="_blank" rel="noopener">Abrir dashboard en Power BI</a>
     <p style="margin-top:1rem; font-size:.85rem; color:var(--co-muted);">Dashboard interactivo publicado en Power BI Service</p>
   </div>
 </section>
