@@ -1,27 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://borjamora.es/</loc>
-    <lastmod>2026-06-05</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <priority>1.0</priority>
     <changefreq>monthly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/index.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borjamora.es/"/>
   </url>
   <url>
     <loc>https://borjamora.es/sobre-mi.html</loc>
-    <lastmod>2026-06-05</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://borjamora.es/proyectos.html</loc>
-    <lastmod>2026-06-05</lastmod>
+    <loc>https://borjamora.es/power-bi.html</loc>
+    <lastmod>2026-08-13</lastmod>
+    <priority>0.9</priority>
+    <changefreq>monthly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/power-bi.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/projects.html"/>
+  </url>
+  <url>
+    <loc>https://borjamora.es/analisis-datos.html</loc>
+    <lastmod>2026-08-13</lastmod>
+    <priority>0.8</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://borjamora.es/visualizacion-datos.html</loc>
+    <lastmod>2026-08-13</lastmod>
+    <priority>0.8</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://borjamora.es/casa-origen.html</loc>
+    <lastmod>2026-08-13</lastmod>
     <priority>0.9</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://borjamora.es/descargas.html</loc>
-    <lastmod>2026-06-05</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <priority>0.9</priority>
     <changefreq>weekly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/descargas.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/downloads.html"/>
+  </url>
+  <url>
+    <loc>https://borjamora.es/en/index.html</loc>
+    <lastmod>2026-08-05</lastmod>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/index.html"/>
+  </url>
+  <url>
+    <loc>https://borjamora.es/en/projects.html</loc>
+    <lastmod>2026-08-05</lastmod>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/power-bi.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/projects.html"/>
+  </url>
+  <url>
+    <loc>https://borjamora.es/en/downloads.html</loc>
+    <lastmod>2026-08-05</lastmod>
+    <priority>0.7</priority>
+    <changefreq>weekly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/descargas.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/downloads.html"/>
   </url>
 </urlset>
