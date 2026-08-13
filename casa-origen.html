@@ -153,10 +153,12 @@ section { padding: 6rem 0; }
   transition: transform .25s cubic-bezier(.16,1,.3,1), box-shadow .25s cubic-bezier(.16,1,.3,1);
   box-shadow: 0 4px 20px rgba(43,33,24,.25);
 }
-.co-cta:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 32px rgba(43,33,24,.4);
-  text-decoration: none;
+@media (hover: hover) and (pointer: fine) {
+  .co-cta:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(43,33,24,.4);
+    text-decoration: none;
+  }
 }
 .co-cta:active {
   transform: translateY(-1px);
@@ -169,36 +171,42 @@ section { padding: 6rem 0; }
 .metodo-grid-5 > div {
   transition: transform .3s cubic-bezier(.16,1,.3,1), box-shadow .3s cubic-bezier(.16,1,.3,1);
 }
-.combo-grid > div:hover,
-.campaign-grid > div:hover,
-.metodo-grid-5 > div:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 28px rgba(43,33,24,.1);
+@media (hover: hover) and (pointer: fine) {
+  .combo-grid > div:hover,
+  .campaign-grid > div:hover,
+  .metodo-grid-5 > div:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 28px rgba(43,33,24,.1);
+  }
 }
 
 /* ── Dashboard images subtle hover ── */
 .dash-layout img {
   transition: transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s cubic-bezier(.16,1,.3,1);
 }
-.dash-layout img:hover {
-  transform: scale(1.015);
-  box-shadow: 0 16px 56px rgba(43,33,24,.14);
+@media (hover: hover) and (pointer: fine) {
+  .dash-layout img:hover {
+    transform: scale(1.015);
+    box-shadow: 0 16px 56px rgba(43,33,24,.14);
+  }
 }
 
 /* ── Hipótesis badge transitions ── */
 .hipotesis-row .h-badge {
   transition: background .2s, color .2s, border-color .2s;
 }
-.hipotesis-row:hover .h-badge {
-  background: var(--co-green);
-  color: #fff;
-  border-color: var(--co-green);
-}
 .hipotesis-row {
   transition: background .2s;
 }
-.hipotesis-row:hover {
-  background: rgba(110,127,91,.04);
+@media (hover: hover) and (pointer: fine) {
+  .hipotesis-row:hover .h-badge {
+    background: var(--co-green);
+    color: #fff;
+    border-color: var(--co-green);
+  }
+  .hipotesis-row:hover {
+    background: rgba(110,127,91,.04);
+  }
 }
 
 /* ── Stack pills hover ── */
