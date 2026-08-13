@@ -113,7 +113,7 @@
     font-family: "Plus Jakarta Sans", system-ui, sans-serif;
     font-size: 13px; line-height: 1.55;
     opacity: 0; pointer-events: none;
-    transition: opacity .3s ease, transform .35s cubic-bezier(.16,1,.3,1);
+    transition: opacity .3s ease, transform .35s var(--ease);
   }
   #bm-cookie-banner.bm-visible {
     opacity: 1; pointer-events: auto;
@@ -132,7 +132,9 @@
     transition: opacity .15s, transform .12s;
     text-transform: uppercase;
   }
-  .bm-cb-btn:hover { opacity: .82; transform: translateY(-1px); }
+  @media (hover: hover) and (pointer: fine) {
+    .bm-cb-btn:hover { opacity: .82; transform: translateY(-1px); }
+  }
   .bm-cb-btn:active { transform: translateY(0); }
   .bm-cb-accept { background: #7a7bff; color: #fff; }
   .bm-cb-reject { background: rgba(255,255,255,.07); color: #b8b8cc; border: 1px solid rgba(255,255,255,.1); }
@@ -190,8 +192,8 @@
 /* ─── SCROLL REVEAL ─── */
 .sr { opacity: 0; transform: translateY(20px); transition: opacity .55s ease, transform .55s ease; }
 .sr.in { opacity: 1; transform: none; }
-.sr-d1 { transition-delay: .1s; }
-.sr-d2 { transition-delay: .2s; }
+.sr-d1 { transition-delay: .08s; }
+.sr-d2 { transition-delay: .16s; }
 
 /* ─── CONTAINER ─── */
 .c { max-width: 1100px; margin: 0 auto; padding: 0 clamp(1.5rem,4vw,3rem); }
@@ -257,9 +259,11 @@
   text-decoration: none; transition: background .2s, color .2s;
   border: none; letter-spacing: .3px; text-transform: uppercase;
 }
-.btn-li:hover { background: #ffffff; color: #111; }
 .btn-li svg { width: 14px; height: 14px; fill: #ffffff; }
-.btn-li:hover svg { fill: #111; }
+@media (hover: hover) and (pointer: fine) {
+  .btn-li:hover { background: #ffffff; color: #111; }
+  .btn-li:hover svg { fill: #111; }
+}
 .btn-cv {
   font-family: 'JetBrains Mono', monospace;
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
@@ -269,9 +273,11 @@
   text-decoration: none; transition: background .2s, color .2s;
   border: none; letter-spacing: .3px; text-transform: uppercase;
 }
-.btn-cv:hover { background: #ffffff; color: #111; }
 .btn-cv svg { width: 14px; height: 14px; fill: #ffffff; }
-.btn-cv:hover svg { fill: #111; }
+@media (hover: hover) and (pointer: fine) {
+  .btn-cv:hover { background: #ffffff; color: #111; }
+  .btn-cv:hover svg { fill: #111; }
+}
 
 /* ── PHOTO COLUMN (left) ── */
 .about-photo-col {
