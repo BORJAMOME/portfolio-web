@@ -66,6 +66,60 @@ section { padding: 6rem 0; }
   .combo-grid { grid-template-columns: repeat(2, 1fr) !important; }
   .campaign-grid { grid-template-columns: repeat(2, 1fr) !important; }
   section { padding: 4rem 0; }
+  /* Hipótesis H1-H5: stack vertical */
+  .hipotesis-row {
+    flex-wrap: wrap !important;
+    gap: .4rem !important;
+  }
+  .hipotesis-row .h-label {
+    min-width: auto !important;
+    font-size: 1.2rem !important;
+  }
+  .hipotesis-row .h-title {
+    min-width: auto !important;
+    width: 100% !important;
+    order: -1 !important;
+  }
+  .hipotesis-row .h-question {
+    width: 100% !important;
+  }
+  .hipotesis-row .h-badge {
+    margin-left: 0 !important;
+  }
+  /* Medallion arrows ocultas */
+  .medallion-arrow { display: none !important; }
+  /* Impacto: permitir wrap */
+  .impacto-text { white-space: normal !important; font-size: clamp(1.6rem, 5vw, 3.6rem) !important; }
+  .impacto-text span { font-size: inherit !important; }
+  /* Objetivo fix */
+  .objetivo-text {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    left: auto !important;
+    top: auto !important;
+  }
+  /* Market Basket heading */
+  .ml-heading { flex-direction: column !important; gap: .8rem !important; }
+}
+@media (max-width: 600px) {
+  .co-wrap { padding: 0 1.2rem; }
+  section { padding: 3rem 0; }
+  .kpi-grid-4 { grid-template-columns: 1fr !important; }
+  .metodo-grid-5 { grid-template-columns: 1fr !important; }
+  .combo-grid { grid-template-columns: 1fr !important; }
+  .campaign-grid { grid-template-columns: 1fr !important; }
+  /* KPIs Madrid más pequeños */
+  .kpi-madrid { font-size: 2.2rem !important; }
+  .kpi-madrid-grid { grid-template-columns: 1fr 1fr !important; gap: 1.2rem 1.5rem !important; }
+  /* Hipótesis aún más compactas */
+  .hipotesis-row {
+    padding: 1rem 0 !important;
+  }
+  .hipotesis-row .h-label {
+    font-size: 1rem !important;
+    min-width: 40px !important;
+  }
 }
 </style>
 </helmet>
@@ -107,21 +161,21 @@ section { padding: 6rem 0; }
           </div>
         </div>
         <p class="reveal reveal-delay-2" style="font-size:.7rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--co-muted); margin-bottom:1.2rem;">LA OPORTUNIDAD · CAFETERÍA DE ESPECIALIDAD</p>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem 3rem;">
+        <div class="kpi-madrid-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem 3rem;">
           <div class="reveal reveal-delay-3" style="white-space:nowrap;">
-            <span style="font-family:Georgia,serif; font-size:3.2rem; font-weight:700; color:var(--co-brown); line-height:1;" data-count="3146" data-format="thousands">0</span>
+            <span class="kpi-madrid" style="font-family:Georgia,serif; font-size:3.2rem; font-weight:700; color:var(--co-brown); line-height:1;" data-count="3146" data-format="thousands">0</span>
             <p style="font-size: 0.72rem; color: var(--co-muted); margin-top: .3rem">cafeterías registradas</p>
           </div>
           <div class="reveal reveal-delay-4" style="white-space:nowrap;">
-            <span style="font-family:Georgia,serif; font-size:3.2rem; font-weight:700; color:var(--co-brown); line-height:1;">+<span data-count="135">0</span></span>
+            <span class="kpi-madrid" style="font-family:Georgia,serif; font-size:3.2rem; font-weight:700; color:var(--co-brown); line-height:1;">+<span data-count="135">0</span></span>
             <p style="font-size: 0.72rem; color: var(--co-muted); margin-top: .3rem">cafeterías de especialidad</p>
           </div>
           <div class="reveal reveal-delay-4" style="white-space:nowrap;">
-            <span style="font-family:Georgia,serif; font-size:3.2rem; font-weight:700; color:var(--co-brown); line-height:1;">+<span data-count="3">0</span>%</span>
+            <span class="kpi-madrid" style="font-family:Georgia,serif; font-size:3.2rem; font-weight:700; color:var(--co-brown); line-height:1;">+<span data-count="3">0</span>%</span>
             <p style="font-size: 0.72rem; color: var(--co-muted); margin-top: .3rem">facturación sector 2026</p>
           </div>
           <div class="reveal reveal-delay-5" style="white-space:nowrap;">
-            <span style="font-family:Georgia,serif; font-size:3.2rem; font-weight:700; color:var(--co-brown); line-height:1;">x <span data-count="2">0</span></span>
+            <span class="kpi-madrid" style="font-family:Georgia,serif; font-size:3.2rem; font-weight:700; color:var(--co-brown); line-height:1;">x <span data-count="2">0</span></span>
             <p style="font-size: 0.72rem; color: var(--co-muted); margin-top: .3rem; white-space: normal">café de especialidad vs tradicional</p>
           </div>
         </div>
@@ -168,39 +222,39 @@ section { padding: 6rem 0; }
     <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; margin-bottom:1.2rem; font-family:Georgia,serif; color:var(--co-brown);">El objetivo</h2>
     
     <div class="reveal" style="background:var(--co-cream); border-radius:14px; padding:2.5rem 3rem; margin-bottom:2.5rem;">
-      <p style="font-size: 1rem; line-height: 1.7; color: var(--co-text); position: absolute; left: 23px; top: 25px; width: 883px; height: 27px">Dar a la dirección <strong style="font-size: 15.6px; width: 157px; height: 30px">visibilidad accionable</strong> para responder con datos a <strong>cinco preguntas</strong> que hoy se deciden por intuición.</p>
+      <p class="objetivo-text" style="font-size: 1rem; line-height: 1.7; color: var(--co-text); position: absolute; left: 23px; top: 25px; width: 883px; height: 27px">Dar a la dirección <strong style="font-size: 15.6px; width: 157px; height: 30px">visibilidad accionable</strong> para responder con datos a <strong>cinco preguntas</strong> que hoy se deciden por intuición.</p>
     </div><p class="reveal" style="font-size:.75rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--co-green); margin-bottom:1.5rem;">Hipótesis a verificar</p>
     <!-- H rows — PPT style -->
     <div style="display:flex; flex-direction:column;">
-      <div class="reveal reveal-delay-1" style="display:flex; align-items:center; padding:1.3rem 0; border-bottom:1px solid #e8e4df;">
-        <span style="font-family:Georgia,serif; font-size:1.4rem; font-weight:700; color:var(--co-brown); min-width:60px;">H1</span>
-        <span style="font-weight:700; color:var(--co-brown); min-width:260px;">Optimización de carta (ABC)</span>
-        <span style="flex:1; color:var(--co-muted);">¿Qué productos debería retirar de la carta?</span>
-        <span style="font-size:.75rem; font-weight:600; color:var(--co-muted); border:1px solid #d5d0c9; padding:.2rem .7rem; border-radius:4px; white-space:nowrap; margin-left:1rem;">D2</span>
+      <div class="reveal reveal-delay-1 hipotesis-row" style="display:flex; align-items:center; padding:1.3rem 0; border-bottom:1px solid #e8e4df;">
+        <span class="h-label" style="font-family:Georgia,serif; font-size:1.4rem; font-weight:700; color:var(--co-brown); min-width:60px;">H1</span>
+        <span class="h-title" style="font-weight:700; color:var(--co-brown); min-width:260px;">Optimización de carta (ABC)</span>
+        <span class="h-question" style="flex:1; color:var(--co-muted);">¿Qué productos debería retirar de la carta?</span>
+        <span class="h-badge" style="font-size:.75rem; font-weight:600; color:var(--co-muted); border:1px solid #d5d0c9; padding:.2rem .7rem; border-radius:4px; white-space:nowrap; margin-left:1rem;">D2</span>
       </div>
-      <div class="reveal reveal-delay-2" style="display:flex; align-items:center; padding:1.3rem 0; border-bottom:1px solid #e8e4df;">
-        <span style="font-family:Georgia,serif; font-size:1.4rem; font-weight:700; color:var(--co-brown); min-width:60px;">H2</span>
-        <span style="font-weight:700; color:var(--co-brown); min-width:260px;">Cesta de la compra</span>
-        <span style="flex:1; color:var(--co-muted);">¿Qué productos se compran juntos y cómo diseño combos rentables?</span>
-        <span style="font-size:.75rem; font-weight:600; color:var(--co-muted); border:1px solid #d5d0c9; padding:.2rem .7rem; border-radius:4px; white-space:nowrap; margin-left:1rem;">D2 · ML</span>
+      <div class="reveal reveal-delay-2 hipotesis-row" style="display:flex; align-items:center; padding:1.3rem 0; border-bottom:1px solid #e8e4df;">
+        <span class="h-label" style="font-family:Georgia,serif; font-size:1.4rem; font-weight:700; color:var(--co-brown); min-width:60px;">H2</span>
+        <span class="h-title" style="font-weight:700; color:var(--co-brown); min-width:260px;">Cesta de la compra</span>
+        <span class="h-question" style="flex:1; color:var(--co-muted);">¿Qué productos se compran juntos y cómo diseño combos rentables?</span>
+        <span class="h-badge" style="font-size:.75rem; font-weight:600; color:var(--co-muted); border:1px solid #d5d0c9; padding:.2rem .7rem; border-radius:4px; white-space:nowrap; margin-left:1rem;">D2 · ML</span>
       </div>
-      <div class="reveal reveal-delay-3" style="display:flex; align-items:center; padding:1.3rem 0; border-bottom:1px solid #e8e4df;">
-        <span style="font-family:Georgia,serif; font-size:1.4rem; font-weight:700; color:var(--co-brown); min-width:60px;">H3</span>
-        <span style="font-weight:700; color:var(--co-brown); min-width:260px;">Anatomía del ticket medio</span>
-        <span style="flex:1; color:var(--co-muted);">¿Qué hace que un cliente gaste más en cada visita?</span>
-        <span style="font-size:.75rem; font-weight:600; color:var(--co-muted); border:1px solid #d5d0c9; padding:.2rem .7rem; border-radius:4px; white-space:nowrap; margin-left:1rem;">D1</span>
+      <div class="reveal reveal-delay-3 hipotesis-row" style="display:flex; align-items:center; padding:1.3rem 0; border-bottom:1px solid #e8e4df;">
+        <span class="h-label" style="font-family:Georgia,serif; font-size:1.4rem; font-weight:700; color:var(--co-brown); min-width:60px;">H3</span>
+        <span class="h-title" style="font-weight:700; color:var(--co-brown); min-width:260px;">Anatomía del ticket medio</span>
+        <span class="h-question" style="flex:1; color:var(--co-muted);">¿Qué hace que un cliente gaste más en cada visita?</span>
+        <span class="h-badge" style="font-size:.75rem; font-weight:600; color:var(--co-muted); border:1px solid #d5d0c9; padding:.2rem .7rem; border-radius:4px; white-space:nowrap; margin-left:1rem;">D1</span>
       </div>
-      <div class="reveal reveal-delay-4" style="display:flex; align-items:center; padding:1.3rem 0; border-bottom:1px solid #e8e4df;">
-        <span style="font-family:Georgia,serif; font-size:1.4rem; font-weight:700; color:var(--co-brown); min-width:60px;">H4</span>
-        <span style="font-weight:700; color:var(--co-brown); min-width:260px;">Franjas deficitarias (RevPASH)</span>
-        <span style="flex:1; color:var(--co-muted);">¿En qué horas del día pierdo dinero por estar abierto?</span>
-        <span style="font-size:.75rem; font-weight:600; color:var(--co-muted); border:1px solid #d5d0c9; padding:.2rem .7rem; border-radius:4px; white-space:nowrap; margin-left:1rem;">D3</span>
+      <div class="reveal reveal-delay-4 hipotesis-row" style="display:flex; align-items:center; padding:1.3rem 0; border-bottom:1px solid #e8e4df;">
+        <span class="h-label" style="font-family:Georgia,serif; font-size:1.4rem; font-weight:700; color:var(--co-brown); min-width:60px;">H4</span>
+        <span class="h-title" style="font-weight:700; color:var(--co-brown); min-width:260px;">Franjas deficitarias (RevPASH)</span>
+        <span class="h-question" style="flex:1; color:var(--co-muted);">¿En qué horas del día pierdo dinero por estar abierto?</span>
+        <span class="h-badge" style="font-size:.75rem; font-weight:600; color:var(--co-muted); border:1px solid #d5d0c9; padding:.2rem .7rem; border-radius:4px; white-space:nowrap; margin-left:1rem;">D3</span>
       </div>
-      <div class="reveal reveal-delay-5" style="display:flex; align-items:center; padding:1.3rem 0; border-bottom:1px solid #e8e4df;">
-        <span style="font-family:Georgia,serif; font-size:1.4rem; font-weight:700; color:var(--co-brown); min-width:60px;">H5</span>
-        <span style="font-weight:700; color:var(--co-brown); min-width:260px;">Valor de cliente (RFM)</span>
-        <span style="flex:1; color:var(--co-muted);">¿Quiénes son mis mejores clientes y cómo evito perderlos?</span>
-        <span style="font-size:.75rem; font-weight:600; color:var(--co-muted); border:1px solid #d5d0c9; padding:.2rem .7rem; border-radius:4px; white-space:nowrap; margin-left:1rem;">D4 · ML</span>
+      <div class="reveal reveal-delay-5 hipotesis-row" style="display:flex; align-items:center; padding:1.3rem 0; border-bottom:1px solid #e8e4df;">
+        <span class="h-label" style="font-family:Georgia,serif; font-size:1.4rem; font-weight:700; color:var(--co-brown); min-width:60px;">H5</span>
+        <span class="h-title" style="font-weight:700; color:var(--co-brown); min-width:260px;">Valor de cliente (RFM)</span>
+        <span class="h-question" style="flex:1; color:var(--co-muted);">¿Quiénes son mis mejores clientes y cómo evito perderlos?</span>
+        <span class="h-badge" style="font-size:.75rem; font-weight:600; color:var(--co-muted); border:1px solid #d5d0c9; padding:.2rem .7rem; border-radius:4px; white-space:nowrap; margin-left:1rem;">D4 · ML</span>
       </div>
     </div>
     <p class="reveal" style="font-size:.78rem; color:var(--co-muted); margin-top:1.5rem;">D1 Executive overview· D2 Product &amp; Menu Intelligence · D3 Operations &amp; Time Intelligence · D4 Customer &amp; Channel Analytics</p>
@@ -259,13 +313,13 @@ section { padding: 6rem 0; }
         <p style="font-size: 0.78rem; opacity: .92; line-height: 1.6; margin-top: .4rem">3 años simulados · 7 CSV</p>
         <p style="font-size: 0.78rem; opacity: .92; line-height: 1.6; margin-top: .4rem">Errores intencionados: nulos, duplicados, fechas raras y formatos rotos.</p>
       </div>
-      <div style="display:flex; align-items:center; padding:0 .8rem; font-size:1.8rem; color:var(--co-muted);">→</div>
+      <div class="medallion-arrow" style="display:flex; align-items:center; padding:0 .8rem; font-size:1.8rem; color:var(--co-muted);">→</div>
       <div style="background:#a8a8a8; border-radius:14px; padding:2.5rem 2rem; color:#fff;">
         <h3 style="font-size: 2.2rem; color: #fff; margin-bottom: .6rem; text-transform: none; letter-spacing: .04em; font-weight: 500">Silver</h3>
         <p style="font-size: .88rem; opacity: .92; line-height: 1.6"><b style="font-size: 12.08px">LIMPIEZA DE DATOS Y REGLAS DE NEGOCIO</b></p>
         <p style="font-size: 0.78rem; opacity: .92; line-height: 1.6; margin-top: .4rem">Descarta duplicados, registros vacíos, validación temporal, coherencia de datos. Enriquecido con festivos de Madrid.</p>
       </div>
-      <div style="display:flex; align-items:center; padding:0 .8rem; font-size:1.8rem; color:var(--co-muted);">→</div>
+      <div class="medallion-arrow" style="display:flex; align-items:center; padding:0 .8rem; font-size:1.8rem; color:var(--co-muted);">→</div>
       <div style="background:#c9a84c; border-radius:14px; padding:2.5rem 2rem; color:#fff;">
         <h3 style="font-size: 2.2rem; color: #fff; margin-bottom: .6rem; text-transform: none; letter-spacing: .04em; font-weight: 500">Gold</h3>
         <p style="font-size: 0.68rem; opacity: .92; line-height: 1.6"><b>MODELO EN ESTRELLA LISTO PARA CONSUMIR EN POWER BI Y MODELOS DE MACHINE LEARNING</b></p>
@@ -386,7 +440,7 @@ section { padding: 6rem 0; }
 
 <!-- S12 · IMPACTO -->
 <section data-screen-label="Impacto" style="min-height:60vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:4rem 2rem; background:var(--co-brown);">
-  <p class="reveal reveal-scale" style="font-family:Georgia,serif; font-size:clamp(2.4rem, 6vw, 4.5rem); font-weight:700; line-height:1.15; max-width:1000px; white-space:nowrap;"><span style="color: #F4EFE6; font-size: 58px">15% de clientes = </span><span style="color: var(--co-red); font-size: 58px">30,8% del revenue.</span></p>
+  <p class="reveal reveal-scale impacto-text" style="font-family:Georgia,serif; font-size:clamp(2.4rem, 6vw, 4.5rem); font-weight:700; line-height:1.15; max-width:1000px; white-space:nowrap;"><span style="color: #F4EFE6; font-size: 58px">15% de clientes = </span><span style="color: var(--co-red); font-size: 58px">30,8% del revenue.</span></p>
   <p class="reveal reveal-delay-1" style="font-size: clamp(1.05rem, 2vw, 1.3rem); color: #a09889; max-width: 727px; margin-top: 1.5rem; font-style: italic; line-height: 1.6">«Antes de este proyecto, la cafetería no sabía quién era ese 15%. Ahora sí.»</p>
 </section>
 
@@ -394,7 +448,7 @@ section { padding: 6rem 0; }
 <section id="ml-rfm" data-screen-label="ML — RFM">
   <div class="co-wrap">
     <p class="reveal" style="font-size:.75rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--co-green); margin-bottom:.5rem;">Capa de Machine Learning</p>
-    <div class="reveal" style="display:flex; justify-content:space-between; align-items:flex-start;">
+    <div class="reveal ml-heading" style="display:flex; justify-content:space-between; align-items:flex-start;">
       <div>
         <h2 style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; font-family:Georgia,serif; color:var(--co-brown);">RFM + K-Means = <span style="color: #2B2118">5 segmentos · 5 campañas</span></h2>
         <p style="font-size:.85rem; color:var(--co-muted); margin-top:.3rem;">1.200 clientes fidelizados · 3 años · 179.612 tickets</p>
@@ -465,7 +519,7 @@ section { padding: 6rem 0; }
 <!-- S14 · ML — MARKET BASKET (PPT style: combo cards + campaign cards) -->
 <section id="ml-basket" data-screen-label="ML — Market Basket">
   <div class="co-wrap">
-    <div class="reveal" style="display:flex; justify-content:space-between; align-items:flex-start;">
+    <div class="reveal ml-heading" style="display:flex; justify-content:space-between; align-items:flex-start;">
       <h2 style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; font-family:Georgia,serif; color:var(--co-brown);">Market Basket + FP-Growth = <span style="color: #2B2118">5 combos · 5 campañas</span></h2>
       <span style="font-size:.75rem; font-weight:700; background:var(--co-brown); color:#fff; padding:.3rem .7rem; border-radius:4px; white-space:nowrap; flex-shrink:0; margin-left:1rem;">H3</span>
     </div>
