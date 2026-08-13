@@ -269,7 +269,7 @@ body{
   display:inline-flex;align-items:center;gap:8px;
   position:relative;
 }
-.seg-btn:hover{background:#f2f2f2}
+@media (hover: hover) and (pointer: fine) { .seg-btn:hover{background:#f2f2f2} }
 .seg-btn.is-active{background:var(--ink);color:#fff}
 .seg-btn .count{
   font-size:11px;
@@ -343,9 +343,11 @@ body{
 .m{
   transition:background .18s var(--ease), color .12s var(--ease);
 }
-.m:hover{
-  background:#111111;
-  color:var(--purple-ink);
+@media (hover: hover) and (pointer: fine) {
+  .m:hover{
+    background:#111111;
+    color:var(--purple-ink);
+  }
 }
 
 .m-head{
@@ -361,7 +363,7 @@ body{
   letter-spacing:.02em;
   transition:color .12s var(--ease);
 }
-.m:hover .m-num{color:#c6ff00}
+@media (hover: hover) and (pointer: fine) { .m:hover .m-num{color:#c6ff00} }
 
 .m-ext{
   display:inline-flex;align-items:center;justify-content:center;
@@ -373,9 +375,11 @@ body{
   background:none;border:none;cursor:pointer;font-family:inherit;padding:0;
   will-change:transform;
 }
-.m:hover .m-ext{color:#c6ff00}
-.m-ext:hover,
-.m:hover .m-ext:hover{color:#c6ff00; transform:scale(1.15) translate(2px,-2px)}
+@media (hover: hover) and (pointer: fine) {
+  .m:hover .m-ext{color:#c6ff00}
+  .m-ext:hover,
+  .m:hover .m-ext:hover{color:#c6ff00; transform:scale(1.15) translate(2px,-2px)}
+}
 .m-ext svg{width:18px;height:18px;display:block;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:square}
 
 .m-body{
@@ -402,7 +406,7 @@ body{
   margin:0;
   transition:color .12s var(--ease);
 }
-.m:hover .m-title{color:#ffffff}
+@media (hover: hover) and (pointer: fine) { .m:hover .m-title{color:#ffffff} }
 .m-sub{
   display:block;
   margin:4px 0 0;
@@ -413,7 +417,7 @@ body{
   color:var(--muted);
   transition:color .12s var(--ease);
 }
-.m:hover .m-sub{color:rgba(255,255,255,.8)}
+@media (hover: hover) and (pointer: fine) { .m:hover .m-sub{color:rgba(255,255,255,.8)} }
 
 .m-desc{
   font-size:13px;
@@ -423,7 +427,7 @@ body{
   margin:0;
   transition:color .12s var(--ease);
 }
-.m:hover .m-desc{color:rgba(255,255,255,.85)}
+@media (hover: hover) and (pointer: fine) { .m:hover .m-desc{color:rgba(255,255,255,.85)} }
 
 .m-foot{
   display:flex;align-items:center;justify-content:space-between;
@@ -452,10 +456,12 @@ body{
   border:1px solid var(--ink);
   transition:background .12s var(--ease), color .12s var(--ease), border-color .12s var(--ease);
 }
-.m:hover .m-tags span{
-  background:#111111;
-  color:#ffffff;
-  border:1px solid #ffffff;
+@media (hover: hover) and (pointer: fine) {
+  .m:hover .m-tags span{
+    background:#111111;
+    color:#ffffff;
+    border:1px solid #ffffff;
+  }
 }
 .m-tags span + span::before{
   content:"";
@@ -471,9 +477,11 @@ body{
   transition:color .12s var(--ease), transform .2s var(--ease-spring);
   will-change:transform;
 }
-.m:hover .m-dl{color:#c6ff00}
-.m-dl:hover,
-.m:hover .m-dl:hover{color:#c6ff00}
+@media (hover: hover) and (pointer: fine) {
+  .m:hover .m-dl{color:#c6ff00}
+  .m-dl:hover,
+  .m:hover .m-dl:hover{color:#c6ff00}
+}
 .m-dl svg{width:22px;height:22px;display:block;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:square}
 
 /* ── Stamp on click: spring bounce ── */
@@ -561,11 +569,13 @@ body{
   border-bottom:1.5px solid #fff;
   transform:rotate(45deg) translate(-1px,-1px);
 }
-.m:hover .m-done{
-  background:#fff;
-}
-.m:hover .m-done::after{
-  border-color:var(--purple);
+@media (hover: hover) and (pointer: fine) {
+  .m:hover .m-done{
+    background:#fff;
+  }
+  .m:hover .m-done::after{
+    border-color:var(--purple);
+  }
 }
 
 /* ───────────── SECCIÓN CIERRE CON SCROLL REVEAL ───────────── */
