@@ -156,7 +156,7 @@
     border-radius: 16px; padding: 16px 20px;
     display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
     box-shadow: 0 12px 48px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.04);
-    font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+    font-family: var(--font);
     font-size: 13px; line-height: 1.55;
     opacity: 0; pointer-events: none;
     transition: opacity .3s ease, transform .35s var(--ease);
@@ -255,7 +255,7 @@
 @media (hover: hover) and (pointer: fine) { .col-header:hover{opacity:.7} }
 .col-header .col-header-left{display:flex;align-items:baseline;gap:20px}
 .col-header .col-num{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--mutedB);letter-spacing:.16em;text-transform:uppercase;font-variant-numeric:tabular-nums}
-.col-header .col-title{font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;font-size:clamp(22px,3vw,32px);font-weight:600;letter-spacing:-.02em;color:var(--ink);line-height:1.1}
+.col-header .col-title{font-family:var(--font);font-size:clamp(22px,3vw,32px);font-weight:600;letter-spacing:-.02em;color:var(--ink);line-height:1.1}
 .col-desc{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.14em;color:var(--mutedB);margin-left:auto;margin-right:24px;display:none}
 @media(min-width:768px){.col-desc{display:block}}
 .col-arrow{width:36px;height:36px;background:transparent;border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .18s,color .12s}
@@ -478,7 +478,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
         <p style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:28px;max-width:600px;">Infografías, mapas y visualizaciones que traducen datos complejos a lenguaje visual. No buscan embellecer el dato, sino ponerlo a prueba y explorar nuevas lecturas.</p>
         <div class="viz-grid">
           <a href="https://www.behance.net/gallery/213119763/URBAN-ELEVATION-MAP" target="_blank" rel="noopener noreferrer" class="viz-card">
-            <img src="./img/skyline.png" alt="El skyline oculto de Madrid" class="viz-card-bg" width="600" height="400">
+            <img loading="lazy" src="./img/skyline.png" alt="El skyline oculto de Madrid" class="viz-card-bg" width="600" height="400">
             <div class="viz-card-overlay"></div>
             <div class="viz-card-content">
               <div class="viz-card-title">El skyline oculto de Madrid</div>
@@ -490,7 +490,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
             </div>
           </a>
           <a href="https://www.behance.net/gallery/212501517/DANA-in-Valencia-3D-Map" target="_blank" rel="noopener noreferrer" class="viz-card">
-            <img src="./img/dana.png" alt="DANA en Valencia" class="viz-card-bg" width="600" height="400">
+            <img loading="lazy" src="./img/dana.png" alt="DANA en Valencia" class="viz-card-bg" width="600" height="400">
             <div class="viz-card-overlay"></div>
             <div class="viz-card-content">
               <div class="viz-card-title">DANA en Valencia</div>
@@ -502,7 +502,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
             </div>
           </a>
           <a href="https://www.behance.net/gallery/212640571/Geological-Map-of-Spain-and-Portugal-3D" target="_blank" rel="noopener noreferrer" class="viz-card">
-            <img src="./img/mapa.png" alt="Geología en tres dimensiones" class="viz-card-bg" width="600" height="400">
+            <img loading="lazy" src="./img/mapa.png" alt="Geología en tres dimensiones" class="viz-card-bg" width="600" height="400">
             <div class="viz-card-overlay"></div>
             <div class="viz-card-content">
               <div class="viz-card-title">Geología en tres dimensiones</div>
@@ -514,7 +514,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
             </div>
           </a>
           <a href="https://www.behance.net/gallery/211492633/Where-does-happiness-reside" target="_blank" rel="noopener noreferrer" class="viz-card">
-            <img src="./img/feliz.png" alt="100 municipios, un índice y una pregunta incómoda" class="viz-card-bg" width="600" height="400">
+            <img loading="lazy" src="./img/feliz.png" alt="100 municipios, un índice y una pregunta incómoda" class="viz-card-bg" width="600" height="400">
             <div class="viz-card-overlay"></div>
             <div class="viz-card-content">
               <div class="viz-card-title">100 municipios, un índice y una pregunta incómoda</div>
@@ -526,7 +526,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
             </div>
           </a>
           <a href="https://www.behance.net/gallery/209226133/Metro-Walking-Map" target="_blank" rel="noopener noreferrer" class="viz-card">
-            <img src="./img/metro.png" alt="Redibujando el Metro desde el peatón" class="viz-card-bg" width="600" height="400">
+            <img loading="lazy" src="./img/metro.png" alt="Redibujando el Metro desde el peatón" class="viz-card-bg" width="600" height="400">
             <div class="viz-card-overlay"></div>
             <div class="viz-card-content">
               <div class="viz-card-title">Redibujando el Metro desde el peatón</div>
@@ -561,7 +561,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
         <p style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:32px;max-width:600px;">Visualización cartográfica en 3D y exploración territorial de datos geográficos. Proyectos que transforman datos sobre el terreno en lecturas visuales y experiencias inmersivas.</p>
         <div class="maps-grid">
           <a href="https://www.behance.net/gallery/213663039/Cartography-of-the-Spanish-Regions-3D" target="_blank" rel="noopener noreferrer" class="maps-card">
-            <img src="./img/madrid.png" alt="Comunidades Autónomas en tres dimensiones" class="viz-card-bg" width="600" height="400">
+            <img loading="lazy" src="./img/madrid.png" alt="Comunidades Autónomas en tres dimensiones" class="viz-card-bg" width="600" height="400">
             <div class="viz-card-overlay"></div>
             <div class="viz-card-content">
               <div class="viz-card-title">Comunidades Autónomas en tres dimensiones</div>
