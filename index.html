@@ -131,7 +131,7 @@
     border-radius: 16px; padding: 16px 20px;
     display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
     box-shadow: 0 12px 48px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.04);
-    font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+    font-family: var(--font);
     font-size: 13px; line-height: 1.55;
     opacity: 0; pointer-events: none;
     transition: opacity .3s ease, transform .35s var(--ease);
@@ -3210,7 +3210,7 @@ footer {
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" onerror="window.__chartJsFailed=true"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" crossorigin="anonymous" onerror="window.__chartJsFailed=true"></script>
 <script>
 // ─── TYPING EFFECT — desactivado ───
 
@@ -3682,9 +3682,9 @@ document.addEventListener('keydown', function(e){
     </button>
     <div class="pc-overlay-imgs">
       <div class="pcov-track" id="idx-ovtrack-0">
-        <img src="./img/ibcs-1.png" alt="Informe de ventas con enfoque IBCS 1" class="pcov-photo pcov-active" width="1200" height="720">
-        <img src="./img/ibcs-2.png" alt="Informe de ventas con enfoque IBCS 2" class="pcov-photo" width="1200" height="720">
-        <img src="./img/ibcs-3.png" alt="Informe de ventas con enfoque IBCS 3" class="pcov-photo" width="1200" height="720">
+        <img loading="lazy" src="./img/ibcs-1.png" alt="Informe de ventas con enfoque IBCS 1" class="pcov-photo pcov-active" width="1200" height="720">
+        <img loading="lazy" src="./img/ibcs-2.png" alt="Informe de ventas con enfoque IBCS 2" class="pcov-photo" width="1200" height="720">
+        <img loading="lazy" src="./img/ibcs-3.png" alt="Informe de ventas con enfoque IBCS 3" class="pcov-photo" width="1200" height="720">
       </div>
       <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(0,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
       <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(0,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
@@ -3736,9 +3736,9 @@ document.addEventListener('keydown', function(e){
     </button>
     <div class="pc-overlay-imgs">
       <div class="pcov-track" id="idx-ovtrack-1">
-        <img src="./img/financiero-1.png" alt="Informe Financiero Completo 1" class="pcov-photo pcov-active" width="1200" height="720">
-        <img src="./img/financiero-2.png" alt="Informe Financiero Completo 2" class="pcov-photo" width="1200" height="720">
-        <img src="./img/financiero-3.png" alt="Informe Financiero Completo 3" class="pcov-photo" width="1200" height="720">
+        <img loading="lazy" src="./img/financiero-1.png" alt="Informe Financiero Completo 1" class="pcov-photo pcov-active" width="1200" height="720">
+        <img loading="lazy" src="./img/financiero-2.png" alt="Informe Financiero Completo 2" class="pcov-photo" width="1200" height="720">
+        <img loading="lazy" src="./img/financiero-3.png" alt="Informe Financiero Completo 3" class="pcov-photo" width="1200" height="720">
       </div>
       <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(1,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
       <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(1,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
@@ -3791,8 +3791,8 @@ document.addEventListener('keydown', function(e){
     </button>
     <div class="pc-overlay-imgs">
       <div class="pcov-track" id="idx-ovtrack-2">
-        <img src="./img/rfm1.png" alt="Análisis RFM — Distribuidora B2B de Hostelería 1" class="pcov-photo pcov-active" width="1200" height="720">
-        <img src="./img/rfm2.png" alt="Análisis RFM — Distribuidora B2B de Hostelería 2" class="pcov-photo" width="1200" height="720">
+        <img loading="lazy" src="./img/rfm1.png" alt="Análisis RFM — Distribuidora B2B de Hostelería 1" class="pcov-photo pcov-active" width="1200" height="720">
+        <img loading="lazy" src="./img/rfm2.png" alt="Análisis RFM — Distribuidora B2B de Hostelería 2" class="pcov-photo" width="1200" height="720">
       </div>
       <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(2,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
       <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(2,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
@@ -3844,9 +3844,9 @@ document.addEventListener('keydown', function(e){
     </button>
     <div class="pc-overlay-imgs">
       <div class="pcov-track" id="idx-ovtrack-3">
-        <img src="./img/kosta-1.png" alt="Kosta Cálida — Reporting para red de tiendas 1" class="pcov-photo pcov-active" width="1200" height="720">
-        <img src="./img/kosta-2.png" alt="Kosta Cálida — Reporting para red de tiendas 2" class="pcov-photo" width="1200" height="720">
-        <img src="./img/kosta-3.png" alt="Kosta Cálida — Reporting para red de tiendas 3" class="pcov-photo" width="1200" height="720">
+        <img loading="lazy" src="./img/kosta-1.png" alt="Kosta Cálida — Reporting para red de tiendas 1" class="pcov-photo pcov-active" width="1200" height="720">
+        <img loading="lazy" src="./img/kosta-2.png" alt="Kosta Cálida — Reporting para red de tiendas 2" class="pcov-photo" width="1200" height="720">
+        <img loading="lazy" src="./img/kosta-3.png" alt="Kosta Cálida — Reporting para red de tiendas 3" class="pcov-photo" width="1200" height="720">
       </div>
       <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(3,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
       <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(3,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>

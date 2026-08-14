@@ -386,10 +386,16 @@ body {
   animation: scrollLoop 36s linear infinite;
   will-change: transform;
   padding: 18px 0;
+  cursor: pointer;
 }
 
-.proof-track:hover {
+.proof-track:hover,
+.proof-track.paused {
   animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .proof-track { animation: none; }
 }
 
 .proof-content {
@@ -2414,6 +2420,23 @@ const io = new IntersectionObserver((entries)=>{
   entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); } });
 },{ threshold:.1, rootMargin:'0px 0px -30px 0px' });
 document.querySelectorAll('.sr').forEach(el=>io.observe(el));
+
+// ─── PROOF STRIP: TAP TO PAUSE (mobile has no hover) ───
+const proofTrack = document.getElementById('proofTrack');
+if (proofTrack) {
+  proofTrack.setAttribute('role', 'button');
+  proofTrack.setAttribute('tabindex', '0');
+  proofTrack.setAttribute('aria-pressed', 'false');
+  proofTrack.setAttribute('aria-label', 'Pause scrolling tag strip');
+  const toggleProofPause = () => {
+    const paused = proofTrack.classList.toggle('paused');
+    proofTrack.setAttribute('aria-pressed', String(paused));
+  };
+  proofTrack.addEventListener('click', toggleProofPause);
+  proofTrack.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleProofPause(); }
+  });
+}
 
 // ─── CHART DEFAULTS ───
 Chart.defaults.font.family = "'Segoe UI', sans-serif";
