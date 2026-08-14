@@ -2,11 +2,10 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<link rel="icon" type="image/svg+xml" href="./favicon.svg">
-<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
-<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
-<link rel="shortcut icon" href="./favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="./img/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="./img/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon.png">
+<link rel="shortcut icon" href="./img/favicon.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#7a7bff">
 <title>Descargas · Borja Mora Méndez</title>
@@ -627,125 +626,7 @@ body{
   }
 }
 
-/* ───────────── FOOTER (preservado) ───────────── */
-/* ───────────── FOOTER ───────────── */
-footer {
-  background: #111111;
-  padding: 0;
-  border-top: .5px solid rgba(255,255,255,.1);
-}
-.foot-inner {
-  max-width: 1180px; margin: 0 auto;
-  padding: 64px clamp(1.5rem,5vw,4rem) 32px;
-}
-
-/* Grid de columnas */
-.foot-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 48px;
-  margin-bottom: 48px;
-}
-.foot-col {
-  display: flex; flex-direction: column; gap: 10px;
-}
-.foot-col--brand { gap: 12px; }
-.foot-brand-name {
-  font-size: 14px; font-weight: 700;
-  color: #ffffff; letter-spacing: -.2px;
-  text-transform: none;
-  display: block;
-}
-.foot-brand-desc {
-  font-size: 14px;
-  color: rgba(255,255,255,.7);
-  line-height: 1.5;
-  margin: 0;
-  max-width: 280px;
-}
-.foot-brand-loc {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: rgba(255,255,255,.5);
-  margin: 0;
-  letter-spacing: .5px;
-}
-.foot-col-title {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  font-weight: 500;
-  color: rgba(255,255,255,.4);
-  letter-spacing: .8px;
-  text-transform: uppercase;
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.foot-col-title::before {
-  content: '—';
-  font-weight: 300;
-}
-.foot-col a {
-  font-size: 15px;
-  color: #ffffff;
-  text-decoration: none;
-  transition: color .2s;
-  letter-spacing: -.3px;
-  width: fit-content;
-  font-weight: 400;
-}
-.foot-col a:hover {
-  color: var(--purple);
-  transition: color .15s;
-}
-
-/* Bottom bar */
-.foot-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 24px;
-  border-top: .5px solid rgba(255,255,255,.1);
-  flex-wrap: wrap;
-  gap: 12px;
-}
-.foot-copy {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  color: rgba(255,255,255,.5);
-  letter-spacing: .3px;
-}
-.foot-made {
-  display: flex; align-items: center; gap: 8px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  color: rgba(255,255,255,.5);
-  letter-spacing: .3px;
-  flex-wrap: wrap;
-}
-.foot-tech {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  background: rgba(255,255,255,.08);
-  padding: 2px 7px;
-  border-radius: 4px;
-  color: #ffffff;
-  font-weight: 500;
-  border: .5px solid rgba(255,255,255,.12);
-}
-
-@media (max-width: 900px) {
-  .foot-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 32px;
-  }
-  .foot-col--brand { grid-column: 1 / -1; margin-bottom: 8px; }
-  .foot-bottom { flex-direction: column; align-items: flex-start; }
-}
-@media (max-width: 520px) {
-  .foot-grid { grid-template-columns: 1fr; gap: 28px; }
-}
+/* Footer → shared.css */
 
 /* ── pequeñas en móvil ── */
 @media(max-width:600px){
@@ -948,8 +829,8 @@ footer {
         <div class="foot-col-title">Trabajo</div>
         <a href="./power-bi.html">Power BI</a>
         <a href="./analisis-datos.html#ml">Machine Learning</a>
-        <a href="./analisis-datos.html#analisis">Python</a>
-        <a href="./analisis-datos.html#analisis">SQL</a>
+        <a href="./analisis-datos.html#python">Python</a>
+        <a href="./analisis-datos.html#sql">SQL</a>
       </div>
 
       <div class="foot-col">
