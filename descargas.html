@@ -83,7 +83,6 @@
   --li:#0077b5;
   --logo-purple:#7a7bff;
   --ease:cubic-bezier(0.16,1,0.3,1);
-  --ease-spring:cubic-bezier(.34,1.56,.64,1);
   --font:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;
   --mono:'JetBrains Mono',monospace;
 }
@@ -246,10 +245,12 @@ body{
   position:absolute;
   bottom:-10px;
   left:0;
+  width:1px;
   height:2px;
   background:var(--ink);
   border-radius:1px;
-  transition:left .2s var(--ease), width .2s var(--ease);
+  transform-origin:left;
+  transition:transform .2s var(--ease);
   pointer-events:none;
 }
 
@@ -370,7 +371,7 @@ body{
   width:44px;height:44px;
   margin:-10px -10px 0 0;
   color:var(--mutedB);
-  transition:color .15s var(--ease), transform .25s var(--ease-spring);
+  transition:color .15s var(--ease), transform .25s var(--ease);
   text-decoration:none;
   background:none;border:none;cursor:pointer;font-family:inherit;padding:0;
   will-change:transform;
@@ -474,7 +475,7 @@ body{
   margin:0 -10px -6px 0;
   color:var(--ink);
   flex-shrink:0;
-  transition:color .12s var(--ease), transform .2s var(--ease-spring);
+  transition:color .12s var(--ease), transform .2s var(--ease);
   will-change:transform;
 }
 @media (hover: hover) and (pointer: fine) {
@@ -492,7 +493,7 @@ body{
 }
 .m-dl.is-stamp,
 .m-ext.is-stamp{
-  animation:stamp 260ms var(--ease-spring);
+  animation:stamp 260ms var(--ease);
 }
 
 /* ── Estado oculto al filtrar ── */
@@ -1180,8 +1181,7 @@ function updatePillIndicator(){
   if(activeBtn){
     const left = activeBtn.offsetLeft;
     const width = activeBtn.offsetWidth;
-    pill.style.left = left + 'px';
-    pill.style.width = width + 'px';
+    pill.style.transform = 'translateX(' + left + 'px) scaleX(' + width + ')';
   }
 }
 updatePillIndicator();
