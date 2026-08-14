@@ -3,11 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <!-- ─── FAVICON ─── -->
-<link rel="icon" type="image/svg+xml" href="./favicon.svg">
-<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
-<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
-<link rel="shortcut icon" href="./favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="./img/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="./img/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon.png">
+<link rel="shortcut icon" href="./img/favicon.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#7a7bff">
 <title>Borja Mora — Data Analyst · Power BI Developer · Madrid</title>
@@ -1991,122 +1990,16 @@ footer {
   }
 }
 
-/* Grid de columnas */
-.foot-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 48px;
-  margin-bottom: 48px;
-}
-.foot-col {
-  display: flex; flex-direction: column; gap: 10px;
-}
-.foot-col--brand { gap: 12px; }
-.foot-brand-name {
-  font-size: 14px; font-weight: 700;
-  color: #ffffff; letter-spacing: -.2px;
-  text-transform: none;
-  display: block;
-}
-.foot-brand-desc {
-  font-size: 14px;
-  color: rgba(255,255,255,.7);
-  line-height: 1.5;
-  margin: 0;
-  max-width: 280px;
-}
-.foot-brand-loc {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: rgba(255,255,255,.5);
-  opacity: 1;
-  margin: 0;
-  letter-spacing: .5px;
-}
-.foot-col-title {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  font-weight: 500;
-  color: rgba(255,255,255,.4);
-  letter-spacing: .8px;
-  text-transform: uppercase;
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.foot-col-title::before {
-  content: '—';
-  font-weight: 300;
-}
-.foot-col a {
-  font-size: 15px;
-  color: #ffffff;
-  text-decoration: none;
-  transition: color .2s;
-  letter-spacing: -.3px;
-  width: fit-content;
-  font-weight: 400;
-}
-.foot-col a:hover { 
-  color: var(--purple);
-  transition: color .15s;
-}
-
-/* Bottom bar */
-.foot-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 24px;
-  border-top: .5px solid rgba(255,255,255,.1);
-  flex-wrap: wrap;
-  gap: 12px;
-}
-.foot-copy {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  color: rgba(255,255,255,.5);
-  opacity: 1;
-  letter-spacing: .3px;
-}
-.foot-made {
-  display: flex; align-items: center; gap: 8px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  color: rgba(255,255,255,.5);
-  opacity: 1;
-  letter-spacing: .3px;
-  flex-wrap: wrap;
-}
-.foot-tech {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  background: rgba(255,255,255,.08);
-  padding: 2px 7px;
-  border-radius: 4px;
-  color: #ffffff;
-  font-weight: 500;
-  border: .5px solid rgba(255,255,255,.12);
-}
-
 @media (max-width: 900px) {
   .foot-cta-row {
     grid-template-columns: 1fr;
     align-items: flex-start;
   }
   .foot-cta-actions { align-items: flex-start; }
-  .foot-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 32px;
-  }
-  .foot-col--brand { grid-column: 1 / -1; margin-bottom: 8px; }
-  .foot-bottom { flex-direction: column; align-items: flex-start; }
 }
 @media (max-width: 520px) {
   .foot-cta-actions { width: 100%; }
   .foot-cta-btn { width: 100%; justify-content: center; }
-  .foot-grid { grid-template-columns: 1fr; gap: 28px; }
 }
 
 /* ── Reduced motion ── */
@@ -3185,8 +3078,8 @@ footer {
         <div class="foot-col-title">Trabajo</div>
         <a href="./power-bi.html">Power BI</a>
         <a href="./analisis-datos.html#ml">Machine Learning</a>
-        <a href="./analisis-datos.html#analisis">Python</a>
-        <a href="./analisis-datos.html#analisis">SQL</a>
+        <a href="./analisis-datos.html#python">Python</a>
+        <a href="./analisis-datos.html#sql">SQL</a>
       </div>
 
       <div class="foot-col">
@@ -3686,8 +3579,8 @@ document.addEventListener('keydown', function(e){
         <img loading="lazy" src="./img/ibcs-2.png" alt="Informe de ventas con enfoque IBCS 2" class="pcov-photo" width="1200" height="720">
         <img loading="lazy" src="./img/ibcs-3.png" alt="Informe de ventas con enfoque IBCS 3" class="pcov-photo" width="1200" height="720">
       </div>
-      <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(0,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-      <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(0,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(0,-1)" aria-label="Foto anterior"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(0,1)" aria-label="Foto siguiente"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
       <div class="pcov-dots">
         <button class="pcov-dot pcov-dot-active" onclick="indexOverlayPhotoNav(0,0)"></button>
         <button class="pcov-dot" onclick="indexOverlayPhotoNav(0,1)"></button>
@@ -3740,8 +3633,8 @@ document.addEventListener('keydown', function(e){
         <img loading="lazy" src="./img/financiero-2.png" alt="Informe Financiero Completo 2" class="pcov-photo" width="1200" height="720">
         <img loading="lazy" src="./img/financiero-3.png" alt="Informe Financiero Completo 3" class="pcov-photo" width="1200" height="720">
       </div>
-      <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(1,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-      <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(1,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(1,-1)" aria-label="Foto anterior"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(1,1)" aria-label="Foto siguiente"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
       <div class="pcov-dots">
         <button class="pcov-dot pcov-dot-active" onclick="indexOverlayPhotoNav(1,0)"></button>
         <button class="pcov-dot" onclick="indexOverlayPhotoNav(1,1)"></button>
@@ -3794,8 +3687,8 @@ document.addEventListener('keydown', function(e){
         <img loading="lazy" src="./img/rfm1.png" alt="Análisis RFM — Distribuidora B2B de Hostelería 1" class="pcov-photo pcov-active" width="1200" height="720">
         <img loading="lazy" src="./img/rfm2.png" alt="Análisis RFM — Distribuidora B2B de Hostelería 2" class="pcov-photo" width="1200" height="720">
       </div>
-      <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(2,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-      <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(2,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(2,-1)" aria-label="Foto anterior"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(2,1)" aria-label="Foto siguiente"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
       <div class="pcov-dots">
         <button class="pcov-dot pcov-dot-active" onclick="indexOverlayPhotoNav(2,0)"></button>
         <button class="pcov-dot" onclick="indexOverlayPhotoNav(2,1)"></button>
@@ -3848,8 +3741,8 @@ document.addEventListener('keydown', function(e){
         <img loading="lazy" src="./img/kosta-2.png" alt="Kosta Cálida — Reporting para red de tiendas 2" class="pcov-photo" width="1200" height="720">
         <img loading="lazy" src="./img/kosta-3.png" alt="Kosta Cálida — Reporting para red de tiendas 3" class="pcov-photo" width="1200" height="720">
       </div>
-      <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(3,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-      <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(3,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(3,-1)" aria-label="Foto anterior"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(3,1)" aria-label="Foto siguiente"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
       <div class="pcov-dots">
         <button class="pcov-dot pcov-dot-active" onclick="indexOverlayPhotoNav(3,0)"></button>
         <button class="pcov-dot" onclick="indexOverlayPhotoNav(3,1)"></button>
