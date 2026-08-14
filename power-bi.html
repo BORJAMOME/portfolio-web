@@ -152,7 +152,7 @@
     border-radius: 16px; padding: 16px 20px;
     display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
     box-shadow: 0 12px 48px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.04);
-    font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+    font-family: var(--font);
     font-size: 13px; line-height: 1.55;
     opacity: 0; pointer-events: none;
     transition: opacity .3s ease, transform .35s var(--ease);
@@ -232,7 +232,7 @@
 .pbi-header{margin-bottom:0}
 #powerbi .col-header-left{display:flex;align-items:baseline;gap:18px;margin-bottom:14px}
 #powerbi .col-header-left .col-num{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.16em;color:var(--mutedB);font-variant-numeric:tabular-nums}
-#powerbi .col-header-left .col-title{font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;font-size:clamp(28px,4vw,44px);font-weight:600;letter-spacing:-.025em;color:var(--ink);line-height:1.05}
+#powerbi .col-header-left .col-title{font-family:var(--font);font-size:clamp(28px,4vw,44px);font-weight:600;letter-spacing:-.025em;color:var(--ink);line-height:1.05}
 .pbi-desc{font-size:14px;color:var(--muted);line-height:1.65;max-width:640px;margin:0 0 40px 0}
 .pbi-bar,.pbi-title{display:none}
 
@@ -370,7 +370,7 @@
 @media (hover: hover) and (pointer: fine) { .col-header:hover{opacity:.7} }
 .col-header .col-header-left{display:flex;align-items:baseline;gap:20px}
 .col-header .col-num{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--mutedB);letter-spacing:.16em;text-transform:uppercase;font-variant-numeric:tabular-nums}
-.col-header .col-title{font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;font-size:clamp(22px,3vw,32px);font-weight:600;letter-spacing:-.02em;color:var(--ink);line-height:1.1}
+.col-header .col-title{font-family:var(--font);font-size:clamp(22px,3vw,32px);font-weight:600;letter-spacing:-.02em;color:var(--ink);line-height:1.1}
 .col-desc{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.14em;color:var(--mutedB);margin-left:auto;margin-right:24px;display:none}
 @media(min-width:768px){.col-desc{display:block}}
 .col-arrow{width:36px;height:36px;background:transparent;border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .18s,color .12s}
@@ -598,7 +598,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
           <div class="proj-cards-track" id="pcoTrack" aria-live="polite" aria-atomic="false" aria-label="Proyecto 1 de 7">
 <div class="proj-card" id="pcard-0" role="group" aria-roledescription="slide">
   <div class="pc-photo-wrap">
-    <img src="./img/ibcs-card.png" alt="Informe de ventas con enfoque IBCS" width="800" height="200" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
+    <img loading="lazy" src="./img/ibcs-card.png" alt="Informe de ventas con enfoque IBCS" width="800" height="200" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
     <div class="pc-badge"><span class="pc-num">01 / 07</span><span class="pc-cat">Ventas</span></div>
   </div>
   <div class="pc-copy">
@@ -614,7 +614,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
 </div>
 <div class="proj-card" id="pcard-1" role="group" aria-roledescription="slide">
   <div class="pc-photo-wrap">
-    <img src="./img/kosta-CARD.png" alt="Kosta Cálida — Reporting para red de tiendas" width="800" height="200" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
+    <img loading="lazy" src="./img/kosta-CARD.png" alt="Kosta Cálida — Reporting para red de tiendas" width="800" height="200" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
     <div class="pc-badge"><span class="pc-num">02 / 07</span><span class="pc-cat">Retail</span></div>
   </div>
   <div class="pc-copy">
@@ -630,7 +630,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
 </div>
 <div class="proj-card" id="pcard-2" role="group" aria-roledescription="slide">
   <div class="pc-photo-wrap">
-    <img src="./img/social-card.png" alt="Social Media Performance | 2025 vs 2024" width="800" height="200" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
+    <img loading="lazy" src="./img/social-card.png" alt="Social Media Performance | 2025 vs 2024" width="800" height="200" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
     <div class="pc-badge"><span class="pc-num">03 / 07</span><span class="pc-cat">Marketing</span></div>
   </div>
   <div class="pc-copy">
@@ -646,7 +646,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
 </div>
 <div class="proj-card" id="pcard-3" role="group" aria-roledescription="slide">
   <div class="pc-photo-wrap">
-    <img src="./img/financiero-card.png" alt="Informe Financiero Completo" width="800" height="200" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
+    <img loading="lazy" src="./img/financiero-card.png" alt="Informe Financiero Completo" width="800" height="200" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
     <div class="pc-badge"><span class="pc-num">04 / 07</span><span class="pc-cat">Financiero</span></div>
   </div>
   <div class="pc-copy">
@@ -662,7 +662,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
 </div>
 <div class="proj-card" id="pcard-4" role="group" aria-roledescription="slide">
   <div class="pc-photo-wrap">
-    <img src="./img/pyg-card.png" alt="Cuenta de Pérdidas y Ganancias" width="800" height="200" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
+    <img loading="lazy" src="./img/pyg-card.png" alt="Cuenta de Pérdidas y Ganancias" width="800" height="200" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
     <div class="pc-badge"><span class="pc-num">05 / 07</span><span class="pc-cat">Financiero</span></div>
   </div>
   <div class="pc-copy">
@@ -678,7 +678,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
 </div>
 <div class="proj-card" id="pcard-5" role="group" aria-roledescription="slide">
   <div class="pc-photo-wrap">
-    <img src="./img/airbnb-card.png" alt="Análisis del Mercado de Airbnb — País Vasco" width="800" height="200" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
+    <img loading="lazy" src="./img/airbnb-card.png" alt="Análisis del Mercado de Airbnb — País Vasco" width="800" height="200" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
     <div class="pc-badge"><span class="pc-num">06 / 07</span><span class="pc-cat">Mercado</span></div>
   </div>
   <div class="pc-copy">
@@ -694,7 +694,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
 </div>
 <div class="proj-card" id="pcard-6" role="group" aria-roledescription="slide">
   <div class="pc-photo-wrap">
-    <img src="./img/rfmcard.png" alt="Análisis RFM — Distribuidora B2B de Hostelería" width="800" height="200" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
+    <img loading="lazy" src="./img/rfmcard.png" alt="Análisis RFM — Distribuidora B2B de Hostelería" width="800" height="200" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">
     <div class="pc-badge"><span class="pc-num">07 / 07</span><span class="pc-cat">Clientes</span></div>
   </div>
   <div class="pc-copy">
@@ -783,7 +783,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
       <div class="panel-section-header"><span class="panel-section-dot"></span>Aportaciones a la comunidad · LinkedIn</div>
       <div class="li-grid">
         <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7440740082766086144-4VZm" target="_blank" rel="noopener noreferrer" class="li-card">
-          <img src="./img/p1.png" alt="No estás filtrando datos. Estás eligiendo qué historia quieres ver." class="li-card-bg" width="600" height="400">
+          <img loading="lazy" src="./img/p1.png" alt="No estás filtrando datos. Estás eligiendo qué historia quieres ver." class="li-card-bg" width="600" height="400">
           <div class="li-card-overlay"></div>
           <div class="li-card-top">
           </div>
@@ -794,7 +794,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
           </div>
         </a>
         <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7442540385882554368-y4go" target="_blank" rel="noopener noreferrer" class="li-card">
-          <img src="./img/p2.png" alt="El futuro de los dashboards no son más gráficos, son mejores interacciones." class="li-card-bg" width="600" height="400">
+          <img loading="lazy" src="./img/p2.png" alt="El futuro de los dashboards no son más gráficos, son mejores interacciones." class="li-card-bg" width="600" height="400">
           <div class="li-card-overlay"></div>
           <div class="li-card-top">
           </div>
@@ -805,7 +805,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
           </div>
         </a>
         <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7404201819641597954-wwos" target="_blank" rel="noopener noreferrer" class="li-card">
-          <img src="./img/p3.png" alt="Producto a producto: cómo los datos cuentan historias." class="li-card-bg" width="600" height="400">
+          <img loading="lazy" src="./img/p3.png" alt="Producto a producto: cómo los datos cuentan historias." class="li-card-bg" width="600" height="400">
           <div class="li-card-overlay"></div>
           <div class="li-card-top">
           </div>
@@ -816,7 +816,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
           </div>
         </a>
         <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7439647400132116480-1PFW" target="_blank" rel="noopener noreferrer" class="li-card">
-          <img src="./img/p4.png" alt="Si tienes que reconstruir la historia en tu cabeza, el dashboard falla." class="li-card-bg" width="600" height="400">
+          <img loading="lazy" src="./img/p4.png" alt="Si tienes que reconstruir la historia en tu cabeza, el dashboard falla." class="li-card-bg" width="600" height="400">
           <div class="li-card-overlay"></div>
           <div class="li-card-top">
           </div>
@@ -827,7 +827,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
           </div>
         </a>
         <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7437118505080020992-m7Em" target="_blank" rel="noopener noreferrer" class="li-card">
-          <img src="./img/p5.png" alt="Un gráfico puede ser correcto y aun así engañar." class="li-card-bg" width="600" height="400">
+          <img loading="lazy" src="./img/p5.png" alt="Un gráfico puede ser correcto y aun así engañar." class="li-card-bg" width="600" height="400">
           <div class="li-card-overlay"></div>
           <div class="li-card-top">
           </div>
@@ -838,7 +838,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
           </div>
         </a>
         <a href="https://www.linkedin.com/feed/update/urn:li:activity:7376214576889098240/" target="_blank" rel="noopener noreferrer" class="li-card">
-          <img src="./img/p6.png" alt="Variaciones entre columnas al alcance de un vistazo." class="li-card-bg" width="600" height="400">
+          <img loading="lazy" src="./img/p6.png" alt="Variaciones entre columnas al alcance de un vistazo." class="li-card-bg" width="600" height="400">
           <div class="li-card-overlay"></div>
           <div class="li-card-top">
           </div>
@@ -858,7 +858,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
       <div class="panel-section-header"><span class="panel-section-dot"></span>Gráficos nativos · Power BI</div>
       <div class="nat-viz-grid">
         <a href="https://app.powerbi.com/view?r=eyJrIjoiYWY3ZjRlNzItNzZlNC00ZjgwLWFjYTItMGM2NjhlYzQ3MjdjIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="nat-viz-card">
-          <img src="./img/pareto.png" alt="Gráfico de Pareto" class="nat-viz-bg" width="600" height="360" style="width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;">
+          <img loading="lazy" src="./img/pareto.png" alt="Gráfico de Pareto" class="nat-viz-bg" width="600" height="360" style="width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;">
           <div class="nat-viz-overlay"></div>
           <div class="nat-viz-content">
             <div class="nat-viz-title">Gráfico de Pareto</div>
@@ -869,7 +869,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
           </div>
         </a>
         <a href="https://app.powerbi.com/view?r=eyJrIjoiNjRlYTQzNWEtNzliNS00M2QxLWE1MWQtNGJiNjc0MmQ3Zjg2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="nat-viz-card">
-          <img src="./img/periodo.png" alt="Selección de periodos dinámico" class="nat-viz-bg" width="600" height="360" style="width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;">
+          <img loading="lazy" src="./img/periodo.png" alt="Selección de periodos dinámico" class="nat-viz-bg" width="600" height="360" style="width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;">
           <div class="nat-viz-overlay"></div>
           <div class="nat-viz-content">
             <div class="nat-viz-title">Selección de periodos dinámico</div>
@@ -880,7 +880,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
           </div>
         </a>
         <a href="https://app.powerbi.com/view?r=eyJrIjoiOGJjY2VjOGQtNWRkZi00N2VjLWIwNTktZDY3NjI2OTFjYWY0IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=ab8db569d0c613296a15" target="_blank" rel="noopener noreferrer" class="nat-viz-card">
-          <img src="./img/small.png" alt="Small Multiples bar charts" class="nat-viz-bg" width="600" height="360" style="width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;">
+          <img loading="lazy" src="./img/small.png" alt="Small Multiples bar charts" class="nat-viz-bg" width="600" height="360" style="width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;">
           <div class="nat-viz-overlay"></div>
           <div class="nat-viz-content">
             <div class="nat-viz-title">Small Multiples bar charts</div>
@@ -891,7 +891,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
           </div>
         </a>
         <a href="https://app.powerbi.com/view?r=eyJrIjoiYWJmYzZkZTktOTYzNS00NDFkLWJiYWMtY2ZlNzM2NmEzNjBkIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=808c33f3347a1aeb147d" target="_blank" rel="noopener noreferrer" class="nat-viz-card">
-          <img src="./img/temporal.png" alt="Perímetros temporales dinámicos" class="nat-viz-bg" width="600" height="360" style="width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;">
+          <img loading="lazy" src="./img/temporal.png" alt="Perímetros temporales dinámicos" class="nat-viz-bg" width="600" height="360" style="width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;">
           <div class="nat-viz-overlay"></div>
           <div class="nat-viz-content">
             <div class="nat-viz-title">Perímetros temporales dinámicos</div>
@@ -902,7 +902,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
           </div>
         </a>
         <a href="https://app.powerbi.com/view?r=eyJrIjoiMDQ1ZGQxM2UtMTk2Ni00NTBlLWJkMzItOGYyN2U4YjFhYTNmIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=19113f5bd05395d09644" target="_blank" rel="noopener noreferrer" class="nat-viz-card">
-          <img src="./img/delta.png" alt="Análisis visual de Delta" class="nat-viz-bg" width="600" height="360" style="width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;">
+          <img loading="lazy" src="./img/delta.png" alt="Análisis visual de Delta" class="nat-viz-bg" width="600" height="360" style="width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;">
           <div class="nat-viz-overlay"></div>
           <div class="nat-viz-content">
             <div class="nat-viz-title">Análisis visual de Delta</div>
@@ -913,7 +913,7 @@ footer{background:#111111;padding:0;border-top:.5px solid rgba(255,255,255,.1)}
           </div>
         </a>
         <a href="https://app.powerbi.com/view?r=eyJrIjoiODI3YmJiMWYtNWQyYy00NzIyLWFhZTUtNjQwNWY0Mzc0YmI5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=6ec6a3ff0e01c9a1a92f" target="_blank" rel="noopener noreferrer" class="nat-viz-card">
-          <img src="./img/agrupada.png" alt="Gráfico de columnas agrupadas" class="nat-viz-bg" width="600" height="360" style="width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;">
+          <img loading="lazy" src="./img/agrupada.png" alt="Gráfico de columnas agrupadas" class="nat-viz-bg" width="600" height="360" style="width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;">
           <div class="nat-viz-overlay"></div>
           <div class="nat-viz-content">
             <div class="nat-viz-title">Gráfico de columnas agrupadas</div>
@@ -1254,7 +1254,7 @@ document.querySelectorAll('.col-header').forEach(h=>{
       <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
     <div class="pc-overlay-imgs">
-      <div class="pcov-track" id="pcovtrack-0"><img src="./img/ibcs-1.png" alt="Informe de ventas con enfoque IBCS 1" class="pcov-photo  pcov-active" width="1200" height="720"><img src="./img/ibcs-2.png" alt="Informe de ventas con enfoque IBCS 2" class="pcov-photo" width="1200" height="720"><img src="./img/ibcs-3.png" alt="Informe de ventas con enfoque IBCS 3" class="pcov-photo" width="1200" height="720"></div>
+      <div class="pcov-track" id="pcovtrack-0"><img loading="lazy" src="./img/ibcs-1.png" alt="Informe de ventas con enfoque IBCS 1" class="pcov-photo  pcov-active" width="1200" height="720"><img loading="lazy" src="./img/ibcs-2.png" alt="Informe de ventas con enfoque IBCS 2" class="pcov-photo" width="1200" height="720"><img loading="lazy" src="./img/ibcs-3.png" alt="Informe de ventas con enfoque IBCS 3" class="pcov-photo" width="1200" height="720"></div>
       <button class="pc-arrow pc-arrow-prev" onclick="overlayPhotoNav(0,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
       <button class="pc-arrow pc-arrow-next" onclick="overlayPhotoNav(0,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
       <div class="pcov-dots"><button class="pcov-dot pcov-dot-active" onclick="overlayPhotoNav(0,0)"></button><button class="pcov-dot" onclick="overlayPhotoNav(0,1)"></button><button class="pcov-dot" onclick="overlayPhotoNav(0,2)"></button></div>
@@ -1290,7 +1290,7 @@ document.querySelectorAll('.col-header').forEach(h=>{
       <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
     <div class="pc-overlay-imgs">
-      <div class="pcov-track" id="pcovtrack-1"><img src="./img/kosta-1.png" alt="Kosta Cálida — Reporting para red de tiendas 1" class="pcov-photo  pcov-active" width="1200" height="720"><img src="./img/kosta-2.png" alt="Kosta Cálida — Reporting para red de tiendas 2" class="pcov-photo" width="1200" height="720"><img src="./img/kosta-3.png" alt="Kosta Cálida — Reporting para red de tiendas 3" class="pcov-photo" width="1200" height="720"></div>
+      <div class="pcov-track" id="pcovtrack-1"><img loading="lazy" src="./img/kosta-1.png" alt="Kosta Cálida — Reporting para red de tiendas 1" class="pcov-photo  pcov-active" width="1200" height="720"><img loading="lazy" src="./img/kosta-2.png" alt="Kosta Cálida — Reporting para red de tiendas 2" class="pcov-photo" width="1200" height="720"><img loading="lazy" src="./img/kosta-3.png" alt="Kosta Cálida — Reporting para red de tiendas 3" class="pcov-photo" width="1200" height="720"></div>
       <button class="pc-arrow pc-arrow-prev" onclick="overlayPhotoNav(1,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
       <button class="pc-arrow pc-arrow-next" onclick="overlayPhotoNav(1,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
       <div class="pcov-dots"><button class="pcov-dot pcov-dot-active" onclick="overlayPhotoNav(1,0)"></button><button class="pcov-dot" onclick="overlayPhotoNav(1,1)"></button><button class="pcov-dot" onclick="overlayPhotoNav(1,2)"></button></div>
@@ -1327,7 +1327,7 @@ document.querySelectorAll('.col-header').forEach(h=>{
       <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
     <div class="pc-overlay-imgs">
-      <div class="pcov-track" id="pcovtrack-2"><img src="./img/social-1.png" alt="Social Media Performance | 2025 vs 2024 1" class="pcov-photo  pcov-active" width="1200" height="720"><img src="./img/social-2.png" alt="Social Media Performance | 2025 vs 2024 2" class="pcov-photo" width="1200" height="720"><img src="./img/social-3.png" alt="Social Media Performance | 2025 vs 2024 3" class="pcov-photo" width="1200" height="720"></div>
+      <div class="pcov-track" id="pcovtrack-2"><img loading="lazy" src="./img/social-1.png" alt="Social Media Performance | 2025 vs 2024 1" class="pcov-photo  pcov-active" width="1200" height="720"><img loading="lazy" src="./img/social-2.png" alt="Social Media Performance | 2025 vs 2024 2" class="pcov-photo" width="1200" height="720"><img loading="lazy" src="./img/social-3.png" alt="Social Media Performance | 2025 vs 2024 3" class="pcov-photo" width="1200" height="720"></div>
       <button class="pc-arrow pc-arrow-prev" onclick="overlayPhotoNav(2,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
       <button class="pc-arrow pc-arrow-next" onclick="overlayPhotoNav(2,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
       <div class="pcov-dots"><button class="pcov-dot pcov-dot-active" onclick="overlayPhotoNav(2,0)"></button><button class="pcov-dot" onclick="overlayPhotoNav(2,1)"></button><button class="pcov-dot" onclick="overlayPhotoNav(2,2)"></button></div>
@@ -1364,7 +1364,7 @@ document.querySelectorAll('.col-header').forEach(h=>{
       <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
     <div class="pc-overlay-imgs">
-      <div class="pcov-track" id="pcovtrack-3"><img src="./img/financiero-1.png" alt="Informe Financiero Completo 1" class="pcov-photo  pcov-active" width="1200" height="720"><img src="./img/financiero-2.png" alt="Informe Financiero Completo 2" class="pcov-photo" width="1200" height="720"><img src="./img/financiero-3.png" alt="Informe Financiero Completo 3" class="pcov-photo" width="1200" height="720"></div>
+      <div class="pcov-track" id="pcovtrack-3"><img loading="lazy" src="./img/financiero-1.png" alt="Informe Financiero Completo 1" class="pcov-photo  pcov-active" width="1200" height="720"><img loading="lazy" src="./img/financiero-2.png" alt="Informe Financiero Completo 2" class="pcov-photo" width="1200" height="720"><img loading="lazy" src="./img/financiero-3.png" alt="Informe Financiero Completo 3" class="pcov-photo" width="1200" height="720"></div>
       <button class="pc-arrow pc-arrow-prev" onclick="overlayPhotoNav(3,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
       <button class="pc-arrow pc-arrow-next" onclick="overlayPhotoNav(3,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
       <div class="pcov-dots"><button class="pcov-dot pcov-dot-active" onclick="overlayPhotoNav(3,0)"></button><button class="pcov-dot" onclick="overlayPhotoNav(3,1)"></button><button class="pcov-dot" onclick="overlayPhotoNav(3,2)"></button></div>
@@ -1402,7 +1402,7 @@ document.querySelectorAll('.col-header').forEach(h=>{
       <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
     <div class="pc-overlay-imgs">
-      <div class="pcov-track" id="pcovtrack-4"><img src="./img/pyg-1.png" alt="Cuenta de Pérdidas y Ganancias 1" class="pcov-photo  pcov-active" width="1200" height="720"><img src="./img/pyg-2.png" alt="Cuenta de Pérdidas y Ganancias 2" class="pcov-photo" width="1200" height="720"><img src="./img/pyg-3.png" alt="Cuenta de Pérdidas y Ganancias 3" class="pcov-photo" width="1200" height="720"></div>
+      <div class="pcov-track" id="pcovtrack-4"><img loading="lazy" src="./img/pyg-1.png" alt="Cuenta de Pérdidas y Ganancias 1" class="pcov-photo  pcov-active" width="1200" height="720"><img loading="lazy" src="./img/pyg-2.png" alt="Cuenta de Pérdidas y Ganancias 2" class="pcov-photo" width="1200" height="720"><img loading="lazy" src="./img/pyg-3.png" alt="Cuenta de Pérdidas y Ganancias 3" class="pcov-photo" width="1200" height="720"></div>
       <button class="pc-arrow pc-arrow-prev" onclick="overlayPhotoNav(4,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
       <button class="pc-arrow pc-arrow-next" onclick="overlayPhotoNav(4,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
       <div class="pcov-dots"><button class="pcov-dot pcov-dot-active" onclick="overlayPhotoNav(4,0)"></button><button class="pcov-dot" onclick="overlayPhotoNav(4,1)"></button><button class="pcov-dot" onclick="overlayPhotoNav(4,2)"></button></div>
@@ -1439,7 +1439,7 @@ document.querySelectorAll('.col-header').forEach(h=>{
       <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
     <div class="pc-overlay-imgs">
-      <div class="pcov-track" id="pcovtrack-5"><img src="./img/airbnb-1.png" alt="Análisis del Mercado de Airbnb — País Vasco 1" class="pcov-photo  pcov-active" width="1200" height="720"><img src="./img/airbnb-2.png" alt="Análisis del Mercado de Airbnb — País Vasco 2" class="pcov-photo" width="1200" height="720"><img src="./img/airbnb-3.png" alt="Análisis del Mercado de Airbnb — País Vasco 3" class="pcov-photo" width="1200" height="720"></div>
+      <div class="pcov-track" id="pcovtrack-5"><img loading="lazy" src="./img/airbnb-1.png" alt="Análisis del Mercado de Airbnb — País Vasco 1" class="pcov-photo  pcov-active" width="1200" height="720"><img loading="lazy" src="./img/airbnb-2.png" alt="Análisis del Mercado de Airbnb — País Vasco 2" class="pcov-photo" width="1200" height="720"><img loading="lazy" src="./img/airbnb-3.png" alt="Análisis del Mercado de Airbnb — País Vasco 3" class="pcov-photo" width="1200" height="720"></div>
       <button class="pc-arrow pc-arrow-prev" onclick="overlayPhotoNav(5,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
       <button class="pc-arrow pc-arrow-next" onclick="overlayPhotoNav(5,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
       <div class="pcov-dots"><button class="pcov-dot pcov-dot-active" onclick="overlayPhotoNav(5,0)"></button><button class="pcov-dot" onclick="overlayPhotoNav(5,1)"></button><button class="pcov-dot" onclick="overlayPhotoNav(5,2)"></button></div>
@@ -1477,8 +1477,8 @@ document.querySelectorAll('.col-header').forEach(h=>{
     </button>
     <div class="pc-overlay-imgs">
       <div class="pcov-track" id="pcovtrack-6">
-        <img src="./img/rfm1.png" alt="Análisis RFM — Distribuidora B2B de Hostelería, vista 1" class="pcov-photo pcov-active" width="1200" height="720">
-        <img src="./img/rfm2.png" alt="Análisis RFM — Distribuidora B2B de Hostelería, vista 2" class="pcov-photo" width="1200" height="720">
+        <img loading="lazy" src="./img/rfm1.png" alt="Análisis RFM — Distribuidora B2B de Hostelería, vista 1" class="pcov-photo pcov-active" width="1200" height="720">
+        <img loading="lazy" src="./img/rfm2.png" alt="Análisis RFM — Distribuidora B2B de Hostelería, vista 2" class="pcov-photo" width="1200" height="720">
       </div>
       <button class="pc-arrow pc-arrow-prev" onclick="overlayPhotoNav(6,-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
       <button class="pc-arrow pc-arrow-next" onclick="overlayPhotoNav(6,1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>

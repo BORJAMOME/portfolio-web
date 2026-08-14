@@ -164,7 +164,7 @@ body {
 .nav-social { display: flex; align-items: center; gap: 4px; margin-left: 6px; }
 .nav-social a {
   display: flex; align-items: center; justify-content: center;
-  width: 32px; height: 32px; border-radius: 0;
+  width: 44px; height: 44px; border-radius: 0;
   color: var(--ink); opacity: 1;
   transition: opacity .2s var(--ease);
 }
@@ -172,7 +172,7 @@ body {
   .nav-social a:hover { opacity: .7; }
 }
 .nav-social a:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
-.nav-social svg { width: 16px; height: 16px; }
+.nav-social svg { width: 18px; height: 18px; }
 
 /* ─── GLOBAL FOCUS ─── */
 *:focus-visible {
