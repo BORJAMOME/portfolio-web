@@ -257,6 +257,52 @@ section { padding: 6rem 0; }
   }
   .rfm-table tbody td:first-child::before { display: none; }
 }
+
+/* ── Hero — apertura con estadística animada ── */
+.hero-stage { position: relative; overflow: hidden; }
+.hero-stat, .hero-main {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  text-align: center; padding: 4rem 2rem;
+}
+.hero-stat {
+  opacity: 1;
+  transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1);
+}
+.hero-stat.hero-out { opacity: 0; transform: translateY(-18px); pointer-events: none; }
+.hero-stat-number {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: 700;
+  font-size: clamp(5.5rem, 20vw, 11rem);
+  line-height: 1;
+  color: var(--co-brown);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.hero-stat-label {
+  margin-top: 1.2rem;
+  max-width: 420px;
+  font-size: .85rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--co-muted);
+  line-height: 1.6;
+}
+.hero-main {
+  opacity: 0;
+  transition: opacity .8s cubic-bezier(.16,1,.3,1);
+}
+.hero-main.hero-in { opacity: 1; }
+.hero-main h1, .hero-main p { opacity: 0; transform: translateY(14px); transition: opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1); }
+.hero-main.hero-in h1 { opacity: 1; transform: none; transition-delay: .05s; }
+.hero-main.hero-in p.hero-sub { opacity: 1; transform: none; transition-delay: .22s; }
+.hero-main.hero-in p.hero-scroll { opacity: 1; transform: none; transition-delay: .4s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-stat { display: none; }
+  .hero-main { opacity: 1; }
+  .hero-main h1, .hero-main p { opacity: 1; transform: none; transition: none; }
+}
 </style>
 </helmet>
 
@@ -269,10 +315,16 @@ section { padding: 6rem 0; }
 </nav>
 
 <!-- S1 · HERO -->
-<section data-screen-label="Hero" style="min-height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:4rem 2rem;">
-  <h1 class="brand-name reveal" style="font-size:clamp(3.2rem, 8vw, 6.5rem); letter-spacing:-0.02em; line-height:1.05; color:var(--co-brown); margin-bottom:1.5rem;">Casa Origen</h1>
-  <p class="reveal reveal-delay-1" style="font-family:Arial,sans-serif; font-size:clamp(1rem, 2.2vw, 1.35rem); color:var(--co-muted); max-width:600px; line-height:1.6;">Diseño e implementación de un Sistema de Business Intelligence en una PYME</p>
-  <p class="reveal reveal-delay-2" style="margin-top:3rem; font-size:.85rem; color:var(--co-muted); letter-spacing:.15em; text-transform:uppercase; animation:pulse-down 2s ease-in-out infinite;">scroll ↓</p>
+<section class="hero-stage" data-screen-label="Hero" style="min-height:100vh;">
+  <div class="hero-stat" id="heroStat">
+    <span class="hero-stat-number" id="heroStatNumber">0%</span>
+    <p class="hero-stat-label">de las decisiones en las PYMEs españolas se toman sin mirar un solo dato</p>
+  </div>
+  <div class="hero-main" id="heroMain">
+    <h1 class="brand-name" style="font-size:clamp(3.2rem, 8vw, 6.5rem); letter-spacing:-0.02em; line-height:1.05; color:var(--co-brown); margin-bottom:1.5rem;">Casa Origen</h1>
+    <p class="hero-sub" style="font-family:Arial,sans-serif; font-size:clamp(1rem, 2.2vw, 1.35rem); color:var(--co-muted); max-width:600px; line-height:1.6;">Esta es una de ellas — hasta que dejó de serlo.</p>
+    <p class="hero-scroll" style="margin-top:3rem; font-size:.85rem; color:var(--co-muted); letter-spacing:.15em; text-transform:uppercase; animation:pulse-down 2s ease-in-out infinite;">scroll ↓</p>
+  </div>
 </section>
 
 <!-- S2 · MADRID -->
@@ -854,6 +906,37 @@ class Component extends DCLogic {
   }
   renderVals() { return {}; }
 }
+</script>
+
+<script>
+(function () {
+  var statEl = document.getElementById('heroStat');
+  var numberEl = document.getElementById('heroStatNumber');
+  var mainEl = document.getElementById('heroMain');
+  if (!statEl || !numberEl || !mainEl) return;
+
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) { mainEl.classList.add('hero-in'); return; }
+
+  var target = 40;
+  var duration = 1300;
+  var start = performance.now();
+
+  function step(now) {
+    var progress = Math.min((now - start) / duration, 1);
+    var ease = 1 - Math.pow(1 - progress, 3);
+    numberEl.textContent = Math.round(target * ease) + '%';
+    if (progress < 1) {
+      requestAnimationFrame(step);
+    } else {
+      setTimeout(function () {
+        statEl.classList.add('hero-out');
+        mainEl.classList.add('hero-in');
+      }, 500);
+    }
+  }
+  requestAnimationFrame(step);
+})();
 </script>
 </body>
 </html>
