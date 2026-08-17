@@ -38,6 +38,11 @@
   --co-muted: #7a7a7a;
 }
 html { scroll-behavior: smooth; font-size: 16px; }
+/* support.js fuerza #dc-root/.sc-host a height:100% (1 pantalla) via FULL_PAGE_CSS.
+   Con overflow:visible el contenido real (mucho más alto) sigue viéndose al hacer
+   scroll, pero cualquier hermano posterior a #dc-root (el footer) se posiciona justo
+   tras esos 100vh, no tras el contenido real. Se corrige sin tocar el runtime. */
+#dc-root, #dc-root > .sc-host { height: auto !important; }
 body {
   font-family: Arial, Helvetica, sans-serif;
   background: var(--co-bg);
