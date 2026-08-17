@@ -194,6 +194,8 @@ section { padding: 6rem 0; }
 
 /* ── Hipótesis badge transitions ── */
 .hipotesis-row .h-badge {
+  color: var(--co-muted);
+  border: 1px solid #d5d0c9;
   transition: background .2s, color .2s, border-color .2s;
 }
 .hipotesis-row {
@@ -338,7 +340,7 @@ section { padding: 6rem 0; }
       </div>
       <div>
         <p class="reveal reveal-delay-1" style="font-size:.7rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--co-muted); margin-bottom:1.2rem;">El problema</p>
-        <div style="display:flex; gap:3rem; margin-bottom:2.5rem;">
+        <div class="kpi-madrid-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem 3rem; margin-bottom:2.5rem;">
           <div class="reveal reveal-delay-2" style="white-space:nowrap;">
             <span style="font-family:Georgia,serif; font-size:3.2rem; font-weight:700; color:var(--co-brown); line-height:1;">10%</span>
             <p style="font-size: 0.72rem; color: var(--co-muted); margin-top: .3rem">de PYMEs españolas usa BI</p>
@@ -418,31 +420,31 @@ section { padding: 6rem 0; }
         <span class="h-label" style="font-family:Georgia,serif; font-size:1.4rem; font-weight:700; color:var(--co-brown); min-width:60px;">H1</span>
         <span class="h-title" style="font-weight:700; color:var(--co-brown); min-width:260px;">Optimización de carta (ABC)</span>
         <span class="h-question" style="flex:1; color:var(--co-muted);">¿Qué productos debería retirar de la carta?</span>
-        <span class="h-badge" style="font-size:.75rem; font-weight:600; color:var(--co-muted); border:1px solid #d5d0c9; padding:.2rem .7rem; border-radius:4px; white-space:nowrap; margin-left:1rem;">D2</span>
+        <span class="h-badge" style="font-size:.75rem; font-weight:600; padding:.2rem .7rem; border-radius:4px; white-space:nowrap; margin-left:1rem;">D2</span>
       </div>
       <div class="reveal reveal-delay-2 hipotesis-row" style="display:flex; align-items:center; padding:1.3rem 0; border-bottom:1px solid #e8e4df;">
         <span class="h-label" style="font-family:Georgia,serif; font-size:1.4rem; font-weight:700; color:var(--co-brown); min-width:60px;">H2</span>
         <span class="h-title" style="font-weight:700; color:var(--co-brown); min-width:260px;">Cesta de la compra</span>
         <span class="h-question" style="flex:1; color:var(--co-muted);">¿Qué productos se compran juntos y cómo diseño combos rentables?</span>
-        <span class="h-badge" style="font-size:.75rem; font-weight:600; color:var(--co-muted); border:1px solid #d5d0c9; padding:.2rem .7rem; border-radius:4px; white-space:nowrap; margin-left:1rem;">D2 · ML</span>
+        <span class="h-badge" style="font-size:.75rem; font-weight:600; padding:.2rem .7rem; border-radius:4px; white-space:nowrap; margin-left:1rem;">D2 · ML</span>
       </div>
       <div class="reveal reveal-delay-3 hipotesis-row" style="display:flex; align-items:center; padding:1.3rem 0; border-bottom:1px solid #e8e4df;">
         <span class="h-label" style="font-family:Georgia,serif; font-size:1.4rem; font-weight:700; color:var(--co-brown); min-width:60px;">H3</span>
         <span class="h-title" style="font-weight:700; color:var(--co-brown); min-width:260px;">Anatomía del ticket medio</span>
         <span class="h-question" style="flex:1; color:var(--co-muted);">¿Qué hace que un cliente gaste más en cada visita?</span>
-        <span class="h-badge" style="font-size:.75rem; font-weight:600; color:var(--co-muted); border:1px solid #d5d0c9; padding:.2rem .7rem; border-radius:4px; white-space:nowrap; margin-left:1rem;">D1</span>
+        <span class="h-badge" style="font-size:.75rem; font-weight:600; padding:.2rem .7rem; border-radius:4px; white-space:nowrap; margin-left:1rem;">D1</span>
       </div>
       <div class="reveal reveal-delay-4 hipotesis-row" style="display:flex; align-items:center; padding:1.3rem 0; border-bottom:1px solid #e8e4df;">
         <span class="h-label" style="font-family:Georgia,serif; font-size:1.4rem; font-weight:700; color:var(--co-brown); min-width:60px;">H4</span>
         <span class="h-title" style="font-weight:700; color:var(--co-brown); min-width:260px;">Franjas deficitarias (RevPASH)</span>
         <span class="h-question" style="flex:1; color:var(--co-muted);">¿En qué horas del día pierdo dinero por estar abierto?</span>
-        <span class="h-badge" style="font-size:.75rem; font-weight:600; color:var(--co-muted); border:1px solid #d5d0c9; padding:.2rem .7rem; border-radius:4px; white-space:nowrap; margin-left:1rem;">D3</span>
+        <span class="h-badge" style="font-size:.75rem; font-weight:600; padding:.2rem .7rem; border-radius:4px; white-space:nowrap; margin-left:1rem;">D3</span>
       </div>
       <div class="reveal reveal-delay-5 hipotesis-row" style="display:flex; align-items:center; padding:1.3rem 0; border-bottom:1px solid #e8e4df;">
         <span class="h-label" style="font-family:Georgia,serif; font-size:1.4rem; font-weight:700; color:var(--co-brown); min-width:60px;">H5</span>
         <span class="h-title" style="font-weight:700; color:var(--co-brown); min-width:260px;">Valor de cliente (RFM)</span>
         <span class="h-question" style="flex:1; color:var(--co-muted);">¿Quiénes son mis mejores clientes y cómo evito perderlos?</span>
-        <span class="h-badge" style="font-size:.75rem; font-weight:600; color:var(--co-muted); border:1px solid #d5d0c9; padding:.2rem .7rem; border-radius:4px; white-space:nowrap; margin-left:1rem;">D4 · ML</span>
+        <span class="h-badge" style="font-size:.75rem; font-weight:600; padding:.2rem .7rem; border-radius:4px; white-space:nowrap; margin-left:1rem;">D4 · ML</span>
       </div>
     </div>
     <p class="reveal" style="font-size:.78rem; color:var(--co-muted); margin-top:1.5rem;">D1 Executive overview· D2 Product &amp; Menu Intelligence · D3 Operations &amp; Time Intelligence · D4 Customer &amp; Channel Analytics</p>
@@ -522,8 +524,8 @@ section { padding: 6rem 0; }
   <div class="co-wrap" style="text-align: center; position: relative">
     <p class="reveal" style="font-size:.75rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--co-green); margin-bottom:.5rem;">Modelo de datos</p>
     <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; margin-bottom:.8rem; font-family:Georgia,serif; color:var(--co-brown);">Modelo en estrella.</h2>
-    <p class="reveal" style="font-size:1.05rem; color:var(--co-text); max-width:700px; line-height:1.7; margin:0 auto 2rem;">1 tabla de hechos (ventas) + 6 dimensiones</p>
-    
+    <p class="reveal" style="font-size:1.05rem; color:var(--co-text); max-width:700px; line-height:1.7; margin:0 auto .5rem;">1 tabla de hechos (ventas) + 6 dimensiones</p>
+    <p class="reveal" style="font-size:.75rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#8A7E6F; margin-bottom:1.5rem; text-align:center;">TIEMPO · PRODUCTO · LOCAL · EMPLEADO · CANAL · CLIENTE</p>
     <picture><source srcset="./img/casa-origen/modelo-estrella.webp" type="image/webp"><img loading="lazy" src="./img/casa-origen/modelo-estrella.png" alt="Modelo en estrella" class="reveal" style="max-width:900px; margin:0 auto 1.5rem; border-radius:12px; box-shadow:0 8px 40px rgba(43,33,24,.08);"></picture><p class="reveal" style="font-size: 0.95rem; color: var(--co-text); max-width: 700px; line-height: 1.7; margin: 0 auto 2rem">+ 30 medidas DAX · tablas desconectadas para ML</p><div class="reveal" style="display:flex; flex-wrap:wrap; justify-content:center; gap:.8rem; margin-top:1.5rem;">
       <span style="border-radius: 6px; padding: .45rem 1rem; font-size: .82rem; font-weight: 600; color: #8a7e6f; border-width: 1px; border-style: solid; border-color: #e4dccf; background-color: #FBFBFB">Clasificación ABC</span>
       <span style="border-radius: 6px; padding: .45rem 1rem; font-size: .82rem; font-weight: 600; color: #8A7E6F; border-width: 1px; border-style: solid; border-color: #E4DCCF; background-color: #FBFBFB">RevPASH</span>
@@ -531,7 +533,7 @@ section { padding: 6rem 0; }
       <span style="border-radius: 6px; padding: .45rem 1rem; font-size: .82rem; font-weight: 600; color: #8A7E6F; border-width: 1px; border-style: solid; border-color: #E4DCCF; background-color: #FBFBFB">Clientes activos 90d</span>
       <span style="border-radius: 6px; padding: .45rem 1rem; font-size: .82rem; font-weight: 600; color: #8A7E6F; border-width: 1px; border-style: solid; border-color: #E4DCCF; background-color: #FBFBFB">Ticket medio</span>
     </div>
-  <p class="reveal" style="font-size:.75rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#8A7E6F; margin-top:.8rem; text-align:center;">TIEMPO · PRODUCTO · LOCAL · EMPLEADO · CANAL · CLIENTE</p></div>
+  </div>
 </section>
 
 <!-- S8 · DASHBOARD 01 -->
@@ -546,7 +548,7 @@ section { padding: 6rem 0; }
     </div>
     <div class="dash-layout reveal" style="display:grid; grid-template-columns:7fr 3fr; gap:2rem; align-items:start;">
       <picture><source srcset="./img/casa-origen/dashboard-01.webp" type="image/webp"><img loading="lazy" src="./img/casa-origen/dashboard-01.png" alt="Dashboard 01" style="width:100%; border-radius:12px; box-shadow:0 12px 48px rgba(43,33,24,.1);"></picture>
-      <div style="font-size:.85rem; line-height:1.55; color:var(--co-text); display:flex; flex-direction:column; gap:1rem;">
+      <div style="font-size:.95rem; line-height:1.6; color:var(--co-text); display:flex; flex-direction:column; gap:1rem;">
         <p>Crecimiento de <strong>+31,6%</strong> vs. año anterior, en facturación, tickets y unidades vendidas.</p>
         <p><strong>Estacionalidad:</strong> Diciembre 64,8K € vs. Agosto 39,3K €. Palanca: rediseñar oferta de verano.</p>
         <p>Ticket medio plano (8,69 €, −0,14%). El crecimiento viene de volumen, no de precio → carta premium y combos.</p>
@@ -566,7 +568,7 @@ section { padding: 6rem 0; }
     </div>
     <div class="dash-layout reveal" style="display:grid; grid-template-columns:7fr 3fr; gap:2rem; align-items:start;">
       <picture><source srcset="./img/casa-origen/dashboard-02.webp" type="image/webp"><img loading="lazy" src="./img/casa-origen/dashboard-02.png" alt="Dashboard 02" style="width:100%; border-radius:12px; box-shadow:0 12px 48px rgba(43,33,24,.1);"></picture>
-      <div style="font-size:.85rem; line-height:1.55; color:var(--co-text); display:flex; flex-direction:column; gap:1rem;">
+      <div style="font-size:.95rem; line-height:1.6; color:var(--co-text); display:flex; flex-direction:column; gap:1rem;">
         <p style="padding:.6rem .8rem; background:var(--co-cream); border-radius:6px;"><strong style="color:var(--co-green);">Hallazgo H1.</strong>&nbsp;Pareto claro. 13 productos (A) = 70% ventas · 14 productos (C) = 11% → simplificar carta.</p>
         <p><strong>Tosta Aguacate = producto ancla.</strong> 173K € facturación. Sostiene mediodía y aparece en el 60% de combos ML.</p>
         <p style="padding:.6rem .8rem; background:var(--co-cream); border-radius:6px;"><strong style="color:var(--co-green);">Hallazgo H2.&nbsp;</strong>Combo principal: <b>Kombucha + Tosta Aguacate (lift 3,5×)</b> → menú "Brunch Casa Origen".</p>
@@ -585,7 +587,7 @@ section { padding: 6rem 0; }
     </div>
     <div class="dash-layout reveal" style="display:grid; grid-template-columns:7fr 3fr; gap:2rem; align-items:start;">
       <picture><source srcset="./img/casa-origen/dashboard-03.webp" type="image/webp"><img loading="lazy" src="./img/casa-origen/dashboard-03.png" alt="Dashboard 03" style="width:100%; border-radius:12px; box-shadow:0 12px 48px rgba(43,33,24,.1);"></picture>
-      <div style="font-size:.85rem; line-height:1.55; color:var(--co-text); display:flex; flex-direction:column; gap:1rem;">
+      <div style="font-size:.95rem; line-height:1.6; color:var(--co-text); display:flex; flex-direction:column; gap:1rem;">
         <p>RevPASH global <strong>5,26 €/asiento-h</strong>, pero Apertura (2,28 €) y Tarde (2,01 €) no cubren el umbral 2,50 €.</p>
         <p style="padding:.6rem .8rem; background:var(--co-cream); border-radius:6px;"><strong style="color:var(--co-green);">Hallazgo H4</strong> — Apertura y Tarde rinden la mitad del umbral → cierre 15:30 en fines de semana.</p>
         <p>Fin de semana: sábado y domingo mañana en <strong>7,76 € / 8,28 €</strong> (2× media L-V) → refuerzo plantilla.</p>
@@ -606,7 +608,7 @@ section { padding: 6rem 0; }
     </div>
     <div class="dash-layout reveal" style="display:grid; grid-template-columns:7fr 3fr; gap:2rem; align-items:start;">
       <picture><source srcset="./img/casa-origen/dashboard-04.webp" type="image/webp"><img loading="lazy" src="./img/casa-origen/dashboard-04.png" alt="Dashboard 04" style="width:100%; border-radius:12px; box-shadow:0 12px 48px rgba(43,33,24,.1);"></picture>
-      <div style="font-size:.85rem; line-height:1.55; color:var(--co-text); display:flex; flex-direction:column; gap:1rem;">
+      <div style="font-size:.95rem; line-height:1.6; color:var(--co-text); display:flex; flex-direction:column; gap:1rem;">
         <p style="padding:.6rem .8rem; background:var(--co-cream); border-radius:6px;"><strong style="color:var(--co-green);">Hallazgo H5.&nbsp;</strong>Champions + Loyal (52,7%) generan el <strong>70,7% del revenue</strong>.</p>
         <p>Delivery aporta 20% facturación pero comisión 30% deja margen neto en <strong>43% vs 73% in-store</strong>.</p>
         <div style="border-radius:10px; padding:1.2rem 1.4rem; margin-top:.3rem; background-color:#F2F2EF;">
@@ -628,7 +630,7 @@ section { padding: 6rem 0; }
 
 <!-- S12 · IMPACTO -->
 <section data-screen-label="Impacto" style="min-height:60vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:4rem 2rem; background:var(--co-brown);">
-  <p class="reveal reveal-scale impacto-text" style="font-family:Georgia,serif; font-size:clamp(2.4rem, 6vw, 4.5rem); font-weight:700; line-height:1.15; max-width:1000px; white-space:nowrap;"><span style="color: #F4EFE6;">15% de clientes = </span><span style="color: var(--co-red);">30,8% del revenue.</span></p>
+  <p class="reveal reveal-scale impacto-text" style="font-family:Georgia,serif; font-size:clamp(2.4rem, 6vw, 4.5rem); font-weight:700; line-height:1.15; max-width:1000px; margin-left:auto; margin-right:auto; text-align:center;"><span style="color: #F4EFE6;">15% de clientes = </span><span style="color: var(--co-red);">30,8% del revenue.</span></p>
   <p class="reveal reveal-delay-1" style="font-size: clamp(1.05rem, 2vw, 1.3rem); color: #a09889; max-width: 727px; margin-top: 1.5rem; font-style: italic; line-height: 1.6">«Antes de este proyecto, la cafetería no sabía quién era ese 15%. Ahora sí.»</p>
 </section>
 
