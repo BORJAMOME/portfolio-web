@@ -274,6 +274,31 @@ section { padding: 6rem 0; }
   .hero-main { opacity: 1; }
   .hero-main h1, .hero-main p { opacity: 1; transform: none; transition: none; }
 }
+
+/* ── Footer ── */
+.co-foot-title {
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #8fae7a;
+  margin-bottom: 1rem;
+}
+.co-foot-link {
+  display: block;
+  font-size: .85rem;
+  color: #d8cfc2;
+  text-decoration: none;
+  margin-bottom: .65rem;
+  transition: color .2s;
+}
+.co-foot-link:hover { color: #fff; }
+@media (max-width: 760px) {
+  .co-foot-grid { grid-template-columns: 1fr 1fr !important; gap: 2rem 1.5rem !important; }
+}
+@media (max-width: 480px) {
+  .co-foot-grid { grid-template-columns: 1fr !important; }
+}
 </style>
 </helmet>
 
@@ -837,6 +862,42 @@ section { padding: 6rem 0; }
   </div>
 </section>
 </x-dc>
+
+<footer style="background:var(--co-brown); color:#d8cfc2; padding:4rem 2rem 2rem;">
+  <div class="co-wrap">
+    <div class="co-foot-grid" style="display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:2.5rem; padding-bottom:2.5rem; border-bottom:1px solid rgba(255,255,255,.12);">
+      <div>
+        <p style="font-family:Georgia,serif; font-size:1.3rem; font-weight:700; color:#fff; margin-bottom:.6rem;">Borja Mora.</p>
+        <p style="font-size:.85rem; line-height:1.6; color:#b8ac9c; max-width:260px;">Construyo espacios donde los datos calan.</p>
+        <p style="font-size:.8rem; color:#b8ac9c; margin-top:.9rem;">Madrid, España</p>
+        <p style="font-size:.8rem; color:#8fae7a; display:flex; align-items:center; gap:.4rem; margin-top:.3rem;"><span style="width:5px; height:5px; border-radius:50%; background:#8fae7a; display:inline-block; flex-shrink:0;"></span>Disponible para nuevas oportunidades</p>
+      </div>
+      <div>
+        <p class="co-foot-title">Navegación</p>
+        <a href="./index.html" class="co-foot-link">Inicio</a>
+        <a href="./sobre-mi.html" class="co-foot-link">Sobre mí</a>
+        <a href="./power-bi.html" class="co-foot-link">Power BI</a>
+        <a href="./analisis-datos.html" class="co-foot-link">Análisis</a>
+        <a href="./visualizacion-datos.html" class="co-foot-link">Visualización</a>
+        <a href="./descargas.html" class="co-foot-link">Descargas</a>
+      </div>
+      <div>
+        <p class="co-foot-title">Este proyecto</p>
+        <a href="https://app.powerbi.com/links/-sDd_7khMP?ctid=b8af2870-2d50-46ba-ab75-c78fa4736fb7&pbi_source=linkShare" target="_blank" rel="noopener" class="co-foot-link">Dashboard Power BI</a>
+        <a href="https://github.com/BORJAMOME/casa-origen-analytics" target="_blank" rel="noopener" class="co-foot-link">Código Machine Learning</a>
+      </div>
+      <div>
+        <p class="co-foot-title">Sígueme</p>
+        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener" class="co-foot-link">LinkedIn</a>
+        <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener" class="co-foot-link">GitHub</a>
+      </div>
+    </div>
+    <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:.8rem; padding-top:1.6rem; font-size:.78rem; color:#8f8475;">
+      <span>© 2026 Borja Mora Méndez · Todos los derechos reservados</span>
+      <span>Diseñado y construido por mí</span>
+    </div>
+  </div>
+</footer>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
   componentDidMount() {
