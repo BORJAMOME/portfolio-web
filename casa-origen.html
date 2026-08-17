@@ -837,10 +837,12 @@ class Component extends DCLogic {
   componentDidMount() {
     this.initReveal();
     this.initCounters();
+    this.initHeroStat();
   }
   componentDidUpdate() {
     this.initReveal();
     this.initCounters();
+    this.initHeroStat();
   }
   initReveal() {
     const root = this.rootEl || document;
@@ -904,39 +906,59 @@ class Component extends DCLogic {
     }
     requestAnimationFrame(step);
   }
+  initHeroStat() {
+    if (this._heroCompleted) return;
+    if (this._heroInterval) { clearInterval(this._heroInterval); this._heroInterval = null; }
+    if (this._heroDebounce) clearTimeout(this._heroDebounce);
+    const root = this.rootEl || document;
+    const statEl = root.querySelector('#heroStat');
+    const numberEl = root.querySelector('#heroStatNumber');
+    const mainEl = root.querySelector('#heroMain');
+    if (!statEl || !numberEl || !mainEl) return;
+    if (!this._heroFailsafe) {
+      this._heroFailsafe = setTimeout(() => {
+        if (this._heroCompleted) return;
+        this._heroCompleted = true;
+        const s = (this.rootEl || document).querySelector('#heroStat');
+        const m = (this.rootEl || document).querySelector('#heroMain');
+        if (s) s.classList.add('hero-out');
+        if (m) m.classList.add('hero-in');
+      }, 4000);
+    }
+    this._heroDebounce = setTimeout(() => {
+      if (this._heroCompleted) return;
+      const r = this.rootEl || document;
+      const st = r.querySelector('#heroStat');
+      const nu = r.querySelector('#heroStatNumber');
+      const ma = r.querySelector('#heroMain');
+      if (!st || !nu || !ma) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        this._heroCompleted = true;
+        clearTimeout(this._heroFailsafe);
+        ma.classList.add('hero-in');
+        return;
+      }
+      const target = 40, duration = 1300, start = Date.now();
+      this._heroInterval = setInterval(() => {
+        if (this._heroCompleted) { clearInterval(this._heroInterval); return; }
+        const progress = Math.min((Date.now() - start) / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 3);
+        nu.textContent = Math.round(target * ease) + '%';
+        if (progress >= 1) {
+          clearInterval(this._heroInterval);
+          this._heroInterval = null;
+          setTimeout(() => {
+            this._heroCompleted = true;
+            clearTimeout(this._heroFailsafe);
+            st.classList.add('hero-out');
+            ma.classList.add('hero-in');
+          }, 500);
+        }
+      }, 16);
+    }, 350);
+  }
   renderVals() { return {}; }
 }
-</script>
-
-<script>
-(function () {
-  var statEl = document.getElementById('heroStat');
-  var numberEl = document.getElementById('heroStatNumber');
-  var mainEl = document.getElementById('heroMain');
-  if (!statEl || !numberEl || !mainEl) return;
-
-  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduced) { mainEl.classList.add('hero-in'); return; }
-
-  var target = 40;
-  var duration = 1300;
-  var start = performance.now();
-
-  function step(now) {
-    var progress = Math.min((now - start) / duration, 1);
-    var ease = 1 - Math.pow(1 - progress, 3);
-    numberEl.textContent = Math.round(target * ease) + '%';
-    if (progress < 1) {
-      requestAnimationFrame(step);
-    } else {
-      setTimeout(function () {
-        statEl.classList.add('hero-out');
-        mainEl.classList.add('hero-in');
-      }, 500);
-    }
-  }
-  requestAnimationFrame(step);
-})();
 </script>
 </body>
 </html>
