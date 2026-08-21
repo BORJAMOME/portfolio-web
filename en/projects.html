@@ -379,7 +379,7 @@ footer{background:var(--off);border-top:.5px solid var(--gray);padding:24px clam
   display:flex;gap:6px;justify-content:center;
   padding:10px 0 14px;
 }
-.pcov-dot{width:6px;height:6px;border-radius:50%;background:#ccc;border:none;cursor:pointer;padding:0;transition:all .2s}
+.pcov-dot{width:6px;height:6px;border-radius:50%;background:#ccc;border:none;cursor:pointer;padding:12px;transition:all .2s;background-clip:content-box;box-sizing:content-box;min-height:44px;min-width:32px;display:flex;align-items:center;justify-content:center}
 .pcov-dot.pcov-dot-active{background:var(--purple);width:16px;border-radius:3px}
 .pc-overlay-copy{
   padding:28px 26px;display:flex;flex-direction:column;overflow-y:auto;max-height:80vh;
@@ -393,8 +393,8 @@ footer{background:var(--off);border-top:.5px solid var(--gray);padding:24px clam
 .pc-overlay-pill{font-size:9.5px;font-weight:600;background:var(--off);color:var(--ink);padding:2px 8px;border-radius:4px;border:.5px solid var(--gray)}
 .pc-overlay-foot{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:.5px solid var(--gray);margin-top:auto}
 .pc-overlay-close{
-  position:absolute;top:14px;right:14px;
-  width:32px;height:32px;border-radius:50%;
+  position:absolute;top:10px;right:10px;
+  width:44px;height:44px;border-radius:50%;
   background:var(--white);border:.5px solid var(--gray);
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;z-index:10;transition:background .2s;

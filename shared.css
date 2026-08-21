@@ -258,7 +258,7 @@ footer {
 }
 .foot-col-title {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; font-weight: 500;
+  font-size: 11px; font-weight: 500;
   color: rgba(255,255,255,.4);
   letter-spacing: .8px; text-transform: uppercase;
   margin-bottom: 12px;
@@ -269,6 +269,7 @@ footer {
   font-size: 15px; color: #ffffff;
   text-decoration: none; transition: color .2s;
   letter-spacing: -.3px; width: fit-content; font-weight: 400;
+  padding: 8px 0; min-height: 44px; display: inline-flex; align-items: center;
 }
 @media (hover: hover) and (pointer: fine) {
   .foot-col a:hover { color: var(--purple); transition: color .15s; }
@@ -281,15 +282,15 @@ footer {
 }
 .foot-copy {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; color: rgba(255,255,255,.5); letter-spacing: .3px;
+  font-size: 11px; color: rgba(255,255,255,.5); letter-spacing: .3px;
 }
 .foot-made {
   display: flex; align-items: center; gap: 8px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; color: rgba(255,255,255,.5); letter-spacing: .3px; flex-wrap: wrap;
+  font-size: 11px; color: rgba(255,255,255,.5); letter-spacing: .3px; flex-wrap: wrap;
 }
 .foot-tech {
-  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
   background: rgba(255,255,255,.08); padding: 2px 7px; border-radius: 4px;
   color: #ffffff; font-weight: 500; border: .5px solid rgba(255,255,255,.12);
 }
@@ -452,13 +453,13 @@ footer {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 30px;
-  padding: 0 10px;
+  min-height: 44px;
+  padding: 0 14px;
   background: none;
   border: 1.5px solid #111111;
   cursor: pointer;
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: .1em;
   text-transform: uppercase;
@@ -560,7 +561,7 @@ nav.nav-drawer-links {
   padding: 0 8px !important;
   text-decoration: none;
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: .1em;
   text-transform: uppercase;
@@ -583,16 +584,15 @@ nav.nav-drawer-links {
 }
 
 /* ─── RESPONSIVE MOBILE NAV ─── */
+@media (max-width: 875px) {
+  .nav-links, .nav-social { display: none !important; }
+  .nav-burger { display: flex; }
+}
 @media (max-width: 640px) {
   #nav, body > nav { height: 56px; padding: 0 clamp(1rem,3vw,1.5rem); }
   .logo { font-size: 15px; }
-  /* Ocultar nav-links, CTA y social icons en móvil */
-  .nav-links, .nav-social { display: none !important; }
-  /* Mostrar hamburger */
-  .nav-burger { display: flex; }
 }
-@media (min-width: 641px) {
-  /* Desktop: ocultar todo lo del drawer */
+@media (min-width: 876px) {
   .nav-burger { display: none !important; }
   .nav-drawer { display: none !important; }
 }
