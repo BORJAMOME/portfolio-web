@@ -275,7 +275,7 @@
   .proj-card:hover .pc-btn{background:#c6ff00;color:#111;border-color:#c6ff00}
   .proj-card:hover .pc-btn:hover{background:#fff;color:var(--ink);border-color:#fff}
 }
-.pc-read-more{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:none;border:0;cursor:pointer;padding:0;transition:color .2s}
+.pc-read-more{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:none;border:0;cursor:pointer;padding:12px 0;min-height:44px;transition:color .2s}
 .pc-read-more svg{stroke:currentColor;fill:none;stroke-width:2;width:11px;height:11px}
 @media (hover: hover) and (pointer: fine) {
   .pc-read-more:hover{color:var(--ink)}
@@ -313,7 +313,7 @@
 @media (hover: hover) and (pointer: fine) { .li-card:hover .li-card-title{color:#c6ff00} }
 .li-card-desc{font-size:12.5px;line-height:1.55;color:var(--muted);text-shadow:none;transition:color .12s}
 @media (hover: hover) and (pointer: fine) { .li-card:hover .li-card-desc{color:rgba(255,255,255,.75)} }
-.li-card-btn{margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);padding:0;background:transparent;border-radius:0;border:0;width:fit-content;transition:color .12s,gap .2s}
+.li-card-btn{margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);padding:12px 0;min-height:44px;background:transparent;border-radius:0;border:0;width:fit-content;transition:color .12s,gap .2s}
 .li-card-btn::after{content:"→";display:inline-block;transition:transform .2s}
 .li-card-btn svg{display:none}
 @media (hover: hover) and (pointer: fine) {
@@ -334,7 +334,7 @@
 .nat-viz-footer{position:relative;z-index:1;padding:0 22px 22px;display:flex;flex-direction:column;gap:10px;flex:1;justify-content:space-between}
 .nat-viz-desc{font-size:12.5px;color:var(--muted);line-height:1.55;text-shadow:none;transition:color .12s;margin:0}
 @media (hover: hover) and (pointer: fine) { .nat-viz-card:hover .nat-viz-desc{color:rgba(255,255,255,.75)} }
-.nat-viz-link{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);background:transparent;padding:0;border-radius:0;width:fit-content;transition:color .12s,gap .2s}
+.nat-viz-link{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);background:transparent;padding:12px 0;min-height:44px;border-radius:0;width:fit-content;transition:color .12s,gap .2s}
 .nat-viz-link::after{content:"→";display:inline-block;transition:transform .2s}
 .nat-viz-link svg{display:none}
 @media (hover: hover) and (pointer: fine) {
@@ -352,7 +352,7 @@
 @media (hover: hover) and (pointer: fine) { .dax-card:hover .dax-card-title{color:#c6ff00} }
 .dax-card-desc{font-size:13px;color:var(--muted);line-height:1.55;flex:1;margin-bottom:24px;transition:color .12s}
 @media (hover: hover) and (pointer: fine) { .dax-card:hover .dax-card-desc{color:rgba(255,255,255,.75)} }
-.dax-card-link{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);text-decoration:none;margin-top:auto;background:transparent;transition:gap .2s,color .12s}
+.dax-card-link{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);text-decoration:none;margin-top:auto;padding:12px 0;min-height:44px;background:transparent;transition:gap .2s,color .12s}
 .dax-card-link svg{stroke:currentColor;fill:none;stroke-width:2}
 @media (hover: hover) and (pointer: fine) {
   .dax-card-link:hover{gap:10px}
@@ -393,9 +393,9 @@
 .pcov-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;opacity:0;transition:opacity .3s ease;padding:20px;background:#ffffff}
 .pcov-photo.pcov-active{opacity:1}
 .pcov-dots{display:flex;gap:6px;justify-content:center;padding:12px 0 16px;background:#ffffff;border-top:1px solid var(--rule);flex-shrink:0}
-.pcov-dot{width:8px;height:8px;background:var(--gray);border:0;padding:8px;cursor:pointer;border-radius:0;transition:background .25s,width .25s;background-clip:content-box;box-sizing:content-box}
+.pcov-dot{width:8px;height:8px;background:var(--gray);border:0;padding:12px;cursor:pointer;border-radius:0;transition:background .25s,width .25s;background-clip:content-box;box-sizing:content-box;min-height:44px;min-width:32px;display:flex;align-items:center;justify-content:center}
 .pcov-dot.pcov-dot-active{background:var(--ink);width:24px;background-clip:content-box}
-.pc-overlay-imgs .pc-arrow{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;background:#ffffff;border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .18s,color .12s;z-index:2}
+.pc-overlay-imgs .pc-arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;background:#ffffff;border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .18s,color .12s;z-index:2}
 @media (hover: hover) and (pointer: fine) { .pc-overlay-imgs .pc-arrow:hover{background:var(--ink);color:#fff} }
 .pc-overlay-imgs .pc-arrow svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:square}
 .pc-arrow-prev{left:12px}
@@ -411,12 +411,12 @@
 .pc-overlay-long p{font-size:12.5px;color:var(--muted);line-height:1.68}
 .pc-overlay-long p strong{color:var(--ink);font-weight:600}
 .pc-overlay-pills{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:16px;flex-shrink:0}
-.pc-overlay-pill{font-family:'JetBrains Mono',monospace;background:transparent;color:var(--ink);padding:2px 8px;border:0.8px solid var(--ink);border-radius:999px;font-size:9px;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+.pc-overlay-pill{font-family:'JetBrains Mono',monospace;background:transparent;color:var(--ink);padding:2px 8px;border:0.8px solid var(--ink);border-radius:999px;font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
 .pc-overlay-pill::after{content:""}
 .pc-overlay-pills .pc-overlay-pill:last-child::after{content:""}
 .pc-overlay-foot{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--rule);flex-shrink:0;gap:12px}
 .pc-tech{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--mutedB);font-weight:500}
-.pc-overlay-close{position:absolute;top:14px;right:14px;width:32px;height:32px;background:#ffffff;border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;transition:background .18s,color .12s}
+.pc-overlay-close{position:absolute;top:10px;right:10px;width:44px;height:44px;background:#ffffff;border:1px solid var(--ink);border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;transition:background .18s,color .12s}
 @media (hover: hover) and (pointer: fine) { .pc-overlay-close:hover{background:var(--ink);color:#fff} }
 .pc-overlay-close svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:square}
 
