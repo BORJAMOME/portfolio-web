@@ -263,7 +263,7 @@
 }
 @keyframes pulse-gr { 0%,100%{opacity:1} 50%{opacity:.35} }
 .hero-social-proof { margin-bottom: 28px; margin-top: -16px; }
-.hero-social-proof .hero-meta-item { font-weight: 500; color: var(--muted); opacity: .65; font-size: 12px; }
+.hero-social-proof .hero-meta-item { font-weight: 500; color: var(--muted-light); font-size: 12px; }
 .hero-social-proof strong { color: var(--ink); font-weight: 700; }
 
 /* ── CHANGE 1 & 3: Headline all black, "Decisiones mejores" on one line ── */
@@ -584,7 +584,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 .star-box-credential {
   font-size: 13px;
   font-weight: 500;
-  color: #999;
+  color: var(--muted-light);
   letter-spacing: 0.3px;
   margin-top: 20px;
   margin-bottom: 28px;
@@ -608,7 +608,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   font-size: 13px;
   font-weight: 700;
   color: var(--white);
-  background: var(--purple);
+  background: var(--purple2);
   text-decoration: none;
   letter-spacing: .02em;
   padding: 12px 28px;
@@ -621,7 +621,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 }
 @media (hover: hover) and (pointer: fine) {
   .star-box-cta:hover {
-    background: var(--purple2);
+    background: var(--ink);
     transform: translateY(-1px);
   }
   .star-box-cta:hover .sfc-arrow {
@@ -686,8 +686,8 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   justify-content: center;
   gap: 12px;
   flex-wrap: wrap;
-  margin-top: 28px;   
-  margin-bottom: 40px;
+  margin-top: 28px;
+  margin-bottom: 4px;
 }
 .cta-final-btn-primary {
   display: inline-flex; align-items: center; gap: 9px;
@@ -715,6 +715,23 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
     border-color: #111111; transform: none;
   }
 }
+.cta-final-links {
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; flex-wrap: wrap;
+  margin-top: 16px; margin-bottom: 24px;
+}
+.cta-final-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--muted-light);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 500;
+  letter-spacing: .05em; text-transform: uppercase;
+  text-decoration: none;
+  padding: 8px 6px; min-height: 44px;
+  transition: color .18s;
+}
+.cta-final-link:hover { color: var(--ink); }
+.cta-final-links-sep { color: #cccccc; font-size: 11px; }
 .cta-final-pills {
   display: flex; align-items: center; justify-content: center;
   gap: 8px; flex-wrap: wrap;
@@ -919,7 +936,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 .dph-header .dph-hint {
   font-family: var(--mono);
   font-size: 11px;
-  color: #aaa;
+  color: var(--mutedB);
   display: block;
   margin-top: 10px;
 }
@@ -944,7 +961,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   color: #767676; width: 38px; flex-shrink: 0;
   transition: color .3s; letter-spacing: .02em;
 }
-.idx-row.open .idx-num { color: var(--purple); }
+.idx-row.open .idx-num { color: var(--purple2); }
 .idx-name {
   font-size: clamp(38px,6.6vw,82px); font-weight: 800; letter-spacing: -2.5px;
   line-height: .92; color: #d4d4da; text-transform: uppercase;
@@ -1700,7 +1717,7 @@ footer {
     <div class="proj-grid">
 
       <!-- ── CARD 0: IBCS Lollipop ── -->
-      <div class="proj-card sr">
+      <div class="proj-card sr" onclick="openIndexOverlay(0)">
         <div class="pc-visual">
           <picture>
             <source srcset="./img/ibcprincipalcard.webp" type="image/webp">
@@ -1716,13 +1733,13 @@ footer {
           <p class="pc-desc">En muchos equipos el análisis de ventas empieza y termina en el total. Construí un informe que aplica el estándar IBCS para integrar <strong>volumen, variación absoluta y porcentaje en un único visual</strong>, con tres tipos de gráfico distintos según el ángulo de lectura.</p>
           <div class="pc-foot">
             <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">IBCS</span></div>
-            <button class="pc-link" onclick="openIndexOverlay(0)" style="background:none;border:none;cursor:pointer;padding:0;">Ver →</button>
+            <button class="pc-link" onclick="event.stopPropagation();openIndexOverlay(0)" style="background:none;border:none;cursor:pointer;padding:0;">Ver →</button>
           </div>
         </div>
       </div>
 
       <!-- ── CARD 1: Balance ── -->
-      <div class="proj-card sr sr-d1">
+      <div class="proj-card sr sr-d1" onclick="openIndexOverlay(1)">
         <div class="pc-visual">
           <picture>
             <source srcset="./img/financieroprincipalcard.webp" type="image/webp">
@@ -1738,13 +1755,13 @@ footer {
           <p class="pc-desc">En la mayoría de empresas la información financiera está dispersa. Construí un sistema que conecta <strong>balance, PyG y cash flow</strong> en una sola lectura, con drill-down hasta el asiento contable que explica cada número.</p>
           <div class="pc-foot">
             <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">Modelado en estrella</span></div>
-            <button class="pc-link" onclick="openIndexOverlay(1)" style="background:none;border:none;cursor:pointer;padding:0;">Ver →</button>
+            <button class="pc-link" onclick="event.stopPropagation();openIndexOverlay(1)" style="background:none;border:none;cursor:pointer;padding:0;">Ver →</button>
           </div>
         </div>
       </div>
 
       <!-- ── CARD 2: RFM B2B ── -->
-      <div class="proj-card sr sr-d2">
+      <div class="proj-card sr sr-d2" onclick="openIndexOverlay(2)">
         <div class="pc-visual">
           <picture>
             <source srcset="./img/b2bprincipalcard.webp" type="image/webp">
@@ -1761,7 +1778,7 @@ footer {
           <p class="pc-desc">Una distribuidora de hostelería, 400 clientes y una caída de revenue que nadie sabía explicar. El análisis RFM identificó <strong>198.000€ en riesgo</strong> dentro del segmento que generaba la mitad del negocio.</p>
           <div class="pc-foot">
             <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">Marketing Analytics</span></div>
-            <button class="pc-link" onclick="openIndexOverlay(2)" style="background:none;border:none;cursor:pointer;padding:0;">Ver →</button>
+            <button class="pc-link" onclick="event.stopPropagation();openIndexOverlay(2)" style="background:none;border:none;cursor:pointer;padding:0;">Ver →</button>
           </div>
         </div>
       </div>
@@ -2163,12 +2180,17 @@ footer {
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
           Agendar llamada
         </a>
-        <a href="./sobre-mi.html#cv" class="cta-final-btn-secondary" onclick="gtag('event', 'clic_descargar_cv', { location: 'cta_final' });">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </div>
+
+      <!-- secondary actions — menor peso que los dos botones principales -->
+      <div class="cta-final-links">
+        <a href="./sobre-mi.html#cv" class="cta-final-link" onclick="gtag('event', 'clic_descargar_cv', { location: 'cta_final' });">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Descargar CV
         </a>
-        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="cta-final-btn-secondary" onclick="gtag('event', 'clic_linkedin', { location: 'cta_final' });">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        <span class="cta-final-links-sep" aria-hidden="true">·</span>
+        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="cta-final-link" onclick="gtag('event', 'clic_linkedin', { location: 'cta_final' });">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
           LinkedIn
         </a>
       </div>
