@@ -953,12 +953,6 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 /* ── ÍNDICE ── */
 .idx { border-bottom: 1px solid var(--ink); }
 .idx-row { border-top: 1px solid var(--ink); position: relative; }
-.idx-row::before {
-  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px;
-  background: #c6ff00; transform: scaleX(0); transform-origin: left;
-  transition: transform .45s cubic-bezier(.2,.8,.2,1);
-}
-.idx-row.open::before { transform: scaleX(1); }
 
 .idx-head {
   display: flex; align-items: center; gap: clamp(16px,3vw,40px);
@@ -1012,7 +1006,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   letter-spacing: -.5px; line-height: 1.15;
   color: var(--ink); margin: 0 0 14px;
 }
-.idx-d-title em { font-style: normal; color: var(--purple); }
+.idx-d-title em { font-style: normal; color: var(--ink); }
 .idx-d-body { font-size: 14px; color: var(--muted); line-height: 1.7; margin: 0; max-width: 460px; }
 .idx-d-side { display: flex; flex-direction: column; gap: 14px; }
 .idx-d-tagrow { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -1693,7 +1687,7 @@ footer {
             <div class="idx-detail">
               <div>
                 <h3 class="idx-d-title">Que alguien <em>actúe.</em></h3>
-                <p class="idx-d-body">Diseño el layout antes de tocar Power BI — con <a href="https://borjamome.github.io/powerbi-mockup/" target="_blank" rel="noopener noreferrer" style="color:var(--purple);text-decoration:underline">PBI Mockup Creator</a>, una herramienta que construí yo. Defino qué lidera la vista, qué acompaña y qué sobra. Aplico jerarquía visual, contexto y narrativa para que quien mire el dashboard tome una decisión sin necesitar que nadie se lo explique.</p>
+                <p class="idx-d-body">Diseño el layout antes de tocar Power BI — con <a href="https://borjamome.github.io/powerbi-mockup/" target="_blank" rel="noopener noreferrer" style="color:var(--ink);text-decoration:underline">PBI Mockup Creator</a>, una herramienta que construí yo. Defino qué lidera la vista, qué acompaña y qué sobra. Aplico jerarquía visual, contexto y narrativa para que quien mire el dashboard tome una decisión sin necesitar que nadie se lo explique.</p>
               </div>
               <div class="idx-d-side">
                 <div class="idx-d-tagrow"><span class="idx-chip">Data Storytelling</span><span class="idx-chip">UX/UI</span><span class="idx-chip">Layout</span></div>
