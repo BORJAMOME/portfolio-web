@@ -493,23 +493,32 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 .pc-link:hover { color: var(--purple); }
 .proj-more { display: flex; justify-content: center; align-items: center; margin-top: 40px; width: 100%; }
 
-/* ─── ML DARK CARDS ─── */
-.ml-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:#fff; border:.5px solid #111; border-top:.5px solid #111; }
-.card-c { background:#111; overflow:hidden; display:flex; flex-direction:column; padding:28px 24px 24px; }
-.cc-cat { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#7a7bff; margin-bottom:24px; }
-.cc-block { margin-bottom:22px; }
-.cc-label { font-size:11px; font-weight:700; color:#fff; margin-bottom:8px; letter-spacing:.02em; }
-.cc-text { font-size:12.5px; color:rgba(255,255,255,.75); line-height:1.7; letter-spacing:.01em; }
-.cc-result { margin-bottom:auto; padding-bottom:22px; }
-.cc-result .cc-label { margin-bottom:14px; }
-.cc-result-metric { display:flex; align-items:baseline; gap:10px; }
-.cc-result-num { font-family:'JetBrains Mono',monospace; font-size:28px; font-weight:700; color:#c6ff00; letter-spacing:-1px; line-height:1; }
-.cc-result-unit { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:600; color:#c6ff00; opacity:.8; text-transform:uppercase; letter-spacing:1px; }
-.cc-foot { display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:.5px solid rgba(255,255,255,.25); }
-.cc-pills { display:flex; gap:5px; flex-wrap:wrap; }
-.cc-pill { font-family:'JetBrains Mono',monospace; font-size:8.5px; font-weight:500; background:transparent; border:1px solid rgba(255,255,255,.35); color:rgba(255,255,255,.8); padding:4px 9px; border-radius:20px; letter-spacing:.4px; text-transform:uppercase; }
-.cc-link { font-size:11px; color:#fff; font-weight:700; text-decoration:none; letter-spacing:.05em; text-transform:uppercase; white-space:nowrap; padding:12px 4px; min-height:44px; min-width:44px; display:inline-flex; align-items:center; }
-.cc-link:hover { color:#c6ff00; }
+/* ─── ML CARDS — mismo sistema visual que .proj-card ─── */
+.ml-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0; align-items: stretch; border-left: 0.5px solid #111111; border-top: 0.5px solid #111111; }
+.card-c {
+  background: var(--white);
+  border: 0.5px solid #111111;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  padding: 20px 30px 28px;
+  transition: background .18s cubic-bezier(.4,0,.2,1), transform .16s ease-out;
+  cursor: pointer;
+}
+.card-c:active { transform: scale(.98); }
+.cc-cat { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--purple); margin-bottom: 16px; }
+.cc-block { margin-bottom: 16px; }
+.cc-label { font-size: 10px; font-weight: 700; color: var(--ink); margin-bottom: 6px; letter-spacing: .05em; text-transform: uppercase; }
+.cc-text { font-size: 13.5px; color: var(--muted); line-height: 1.7; }
+.cc-result { margin-bottom: auto; padding-bottom: 16px; }
+.cc-result .cc-label { margin-bottom: 10px; }
+.cc-result-metric { display: flex; align-items: baseline; gap: 10px; }
+.cc-result-num { font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 700; color: var(--purple); letter-spacing: -1px; line-height: 1; }
+.cc-result-unit { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; color: var(--purple); opacity: .8; text-transform: uppercase; letter-spacing: 1px; }
+.cc-foot { display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 0.5px solid #111111; }
+.cc-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.cc-pill { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 500; background: transparent; border: 1.5px solid #111111; color: var(--muted); padding: 6px 12px; border-radius: 20px; letter-spacing: .4px; text-transform: uppercase; transition: border-color .2s var(--ease), color .2s var(--ease); }
+.cc-link { font-size: 12px; color: var(--ink); font-weight: 700; text-decoration: none; letter-spacing: .05em; text-transform: uppercase; transition: color .18s; padding: 12px 4px; min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; }
+.cc-link:hover { color: var(--purple); }
 @media (max-width:900px) { .ml-grid { grid-template-columns:1fr; } }
 
 /* ─── PROYECTO ESTRELLA — box unificado ─── */
@@ -1105,6 +1114,34 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   .proj-card:hover .pc-visual img,
   .proj-card:hover .pc-visual canvas {
     transform: none;
+  }
+  .card-c:hover {
+    background: #111111;
+  }
+  .card-c:hover .cc-cat,
+  .card-c:hover .cc-label,
+  .card-c:hover .cc-text {
+    color: var(--white);
+  }
+  .card-c:hover .cc-cat {
+    color: #c6ff00;
+  }
+  .card-c:hover .cc-result-num,
+  .card-c:hover .cc-result-unit {
+    color: #c6ff00;
+  }
+  .card-c:hover .cc-link {
+    color: var(--white);
+  }
+  .card-c:hover .cc-link:hover {
+    color: #c6ff00;
+  }
+  .card-c:hover .cc-pill {
+    color: var(--white);
+    border-color: var(--white);
+  }
+  .card-c:hover .cc-foot {
+    border-top-color: rgba(255,255,255,.2);
   }
 }
 
@@ -1793,7 +1830,7 @@ footer {
     <div class="ml-grid">
 
       <!-- ── CARD ML-1: SARIMA Retail ── -->
-      <div class="card-c">
+      <div class="card-c" onclick="window.open('https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/04-series-temporales/arima/01-caso-retail','_blank','noopener,noreferrer')">
         <div class="cc-cat">Predicción de demanda · Retail</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
@@ -1809,12 +1846,12 @@ footer {
         </div>
         <div class="cc-foot">
           <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">SARIMA</span><span class="cc-pill">statsmodels</span></div>
-          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/04-series-temporales/arima/01-caso-retail" target="_blank" rel="noopener noreferrer">Ver →</a>
+          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/04-series-temporales/arima/01-caso-retail" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Ver →</a>
         </div>
       </div>
 
       <!-- ── CARD ML-2: K-Means Política ── -->
-      <div class="card-c">
+      <div class="card-c" onclick="window.open('https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/02-no-supervisado/clustering/kmeans/03-segmentacion-politica','_blank','noopener,noreferrer')">
         <div class="cc-cat">Segmentación de perfiles · Investigación</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
@@ -1830,12 +1867,12 @@ footer {
         </div>
         <div class="cc-foot">
           <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">K-Means</span><span class="cc-pill">scikit-learn</span></div>
-          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/02-no-supervisado/clustering/kmeans/03-segmentacion-politica" target="_blank" rel="noopener noreferrer">Ver →</a>
+          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/02-no-supervisado/clustering/kmeans/03-segmentacion-politica" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Ver →</a>
         </div>
       </div>
 
       <!-- ── CARD ML-3: XGBoost Gym ── -->
-      <div class="card-c">
+      <div class="card-c" onclick="window.open('https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/01-supervisado/clasificacion/03-xgboost','_blank','noopener,noreferrer')">
         <div class="cc-cat">Predicción de abandono · Fitness</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
@@ -1851,7 +1888,7 @@ footer {
         </div>
         <div class="cc-foot">
           <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">XGBoost</span><span class="cc-pill">scikit-learn</span></div>
-          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/01-supervisado/clasificacion/03-xgboost" target="_blank" rel="noopener noreferrer">Ver →</a>
+          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/01-supervisado/clasificacion/03-xgboost" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Ver →</a>
         </div>
       </div>
 
@@ -2164,10 +2201,10 @@ footer {
     <div class="cta-final-inner sr">
 
     <!-- headline -->
-<h2 class="cta-final-h">¿Tienes un proyecto?<br>Hablemos.</h2>
+<h2 class="cta-final-h">¿Buscas un Data Analyst?<br>Hablemos.</h2>
 
 <p class="cta-final-sub">
-  Busco incorporarme como Data Analyst, y también abierto a colaboraciones y proyectos freelance puntuales.
+  Disponible para incorporación inmediata. También abierto a colaboraciones y proyectos freelance puntuales.
 </p>
 
       <!-- actions -->
