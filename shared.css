@@ -119,6 +119,112 @@ body {
   border-radius: 99px;
 }
 
+/* ─── DROPDOWN "PROYECTOS" (desktop) ─── */
+.nav-dropdown {
+  position: relative;
+}
+.nav-dropdown-trigger {
+  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+  font-size: 11px; color: var(--muted);
+  text-decoration: none; padding: 6px 14px;
+  border-radius: 7px; font-weight: 500;
+  transition: color .2s, background .2s;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+  position: relative;
+  display: inline-flex; align-items: center; gap: 5px;
+  background: none; border: none; cursor: pointer;
+  line-height: inherit;
+}
+.nav-dropdown-trigger .dd-chevron {
+  width: 10px; height: 10px;
+  transition: transform .2s var(--ease);
+  flex-shrink: 0;
+}
+.nav-dropdown.open .dd-chevron {
+  transform: rotate(180deg);
+}
+@media (hover: hover) and (pointer: fine) {
+  .nav-dropdown-trigger:hover { color: var(--ink); background: var(--off); }
+}
+.nav-dropdown-trigger:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 2px;
+  background: var(--off);
+}
+.nav-dropdown-trigger.active {
+  color: var(--ink);
+  font-weight: 700;
+}
+.nav-dropdown-trigger.active::after {
+  content: '';
+  position: absolute;
+  bottom: 2px; left: 14px; right: 14px;
+  height: 1.5px;
+  background: var(--ink);
+  border-radius: 99px;
+}
+.nav-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  min-width: 180px;
+  background: #ffffff;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
+  padding: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s var(--ease), transform .2s var(--ease);
+  z-index: 200;
+  list-style: none;
+  margin: 0;
+}
+.nav-dropdown-menu::before {
+  content: '';
+  position: absolute;
+  top: -10px; left: 0; right: 0;
+  height: 10px;
+}
+.nav-dropdown.open .nav-dropdown-menu {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+.nav-dropdown-menu li {
+  margin: 0; padding: 0;
+}
+.nav-dropdown-menu a {
+  display: block;
+  padding: 9px 14px;
+  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+  font-size: 11px; font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+  border-radius: 5px;
+  transition: color .15s, background .15s;
+  white-space: nowrap;
+}
+@media (hover: hover) and (pointer: fine) {
+  .nav-dropdown-menu a:hover {
+    color: var(--ink);
+    background: var(--off);
+  }
+}
+.nav-dropdown-menu a:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: -2px;
+  background: var(--off);
+}
+.nav-dropdown-menu a.active {
+  color: var(--ink);
+  font-weight: 700;
+}
+
 .nav-cta {
   background: var(--ink) !important;
   color: #ffffff !important;
@@ -540,6 +646,76 @@ nav.nav-drawer-links {
 .nav-drawer-links a.active:hover {
   background: #dfe0ff !important;
 }
+
+/* ── Grupo "Proyectos" en drawer ── */
+.nav-drawer-group-label {
+  display: flex !important;
+  align-items: center;
+  width: 100%;
+  height: 52px !important;
+  min-height: 52px;
+  padding: 0 24px !important;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(17,17,17,.45) !important;
+  border-bottom: 1.5px solid #111111;
+  background: #fafafa;
+  box-sizing: border-box;
+}
+.nav-drawer-sublinks {
+  display: block !important;
+  position: static !important;
+  width: 100% !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #ffffff !important;
+  list-style: none;
+}
+.nav-drawer-sublinks a {
+  display: flex !important;
+  align-items: center;
+  width: 100%;
+  height: 64px !important;
+  min-height: 64px;
+  padding: 0 24px 0 44px !important;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #111111 !important;
+  text-decoration: none;
+  border-bottom: 1.5px solid #111111;
+  border-left: 3px solid var(--rule);
+  background: #ffffff;
+  transition: background .18s;
+  box-sizing: border-box;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+.nav-drawer-sublinks a:last-child {
+  border-bottom: 1.5px solid #111111;
+}
+.nav-drawer-sublinks a:hover {
+  background: #f5f5f5;
+}
+.nav-drawer-sublinks a.active {
+  background: var(--purple-light) !important;
+  color: var(--purple2) !important;
+  border-left-color: var(--purple);
+}
+.nav-drawer-sublinks a.active:hover {
+  background: #dfe0ff !important;
+}
+.nav-drawer-sublinks a::after,
+.nav-drawer-sublinks a.active::after {
+  content: none !important;
+  display: none !important;
+}
+
 /* Anular el ::after del .nav-links a.active que pone línea decorativa */
 .nav-drawer-links a::after,
 .nav-drawer-links a.active::after {
