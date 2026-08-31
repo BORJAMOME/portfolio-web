@@ -432,6 +432,8 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   letter-spacing: 1.4px; color: var(--purple); margin-bottom: 16px;
 }
 .s-tag::before { content:''; width:18px; height:1.5px; background:var(--purple); opacity:.45; }
+.s-tag-dark { color: #111111; font-size: 12px; }
+.s-tag-dark::before { background: #111111; opacity: .5; }
 
 .s-h {
   font-family: var(--font-serif);
@@ -1836,11 +1838,12 @@ footer {
 
     </div>
 
-    <!-- ── ML PROJECTS ROW ── -->
-    <div class="section-divider no-line" style="margin-top:64px;">
-      <span class="section-divider-dot" aria-hidden="true"></span>
-      <span class="section-divider-label">PYTHON · ANÁLISIS AVANZADO</span>
+    <div class="proj-more sr">
+      <a href="./power-bi.html" class="btn btn-outline">Ver todos los proyectos →</a>
     </div>
+
+    <!-- ── ML PROJECTS ROW ── -->
+    <div class="s-tag s-tag-dark" style="margin-top:64px;">PYTHON · ANÁLISIS AVANZADO</div>
     <div class="ml-grid">
 
       <!-- ── CARD ML-1: SARIMA Retail ── -->
