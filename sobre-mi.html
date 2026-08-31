@@ -16,9 +16,9 @@
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-<noscript><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet"></noscript>
 <!-- Shared styles: variables, nav, footer, botones, reset -->
 <link rel="stylesheet" href="./shared.css">
 <!-- Primary Meta Tags -->
@@ -212,7 +212,7 @@
   align-items: start;
 }
 .about-role {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
   font-size: 11px; font-weight: 500; letter-spacing: 0.8px;
   text-transform: uppercase; color: var(--muted);
   margin-bottom: 16px;
@@ -250,34 +250,9 @@
 .about-btns {
   display: flex; gap: 12px; margin-top: 0; flex-wrap: wrap;
 }
-.btn-li {
-  font-family: 'JetBrains Mono', monospace;
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  font-size: 12px; font-weight: 600;
-  background: #111; color: #ffffff;
-  padding: 11px 24px; border-radius: 0;
-  text-decoration: none; transition: background .2s, color .2s;
-  border: none; letter-spacing: .3px; text-transform: uppercase;
-}
-.btn-li svg { width: 14px; height: 14px; fill: #ffffff; }
-@media (hover: hover) and (pointer: fine) {
-  .btn-li:hover { background: #ffffff; color: #111; }
-  .btn-li:hover svg { fill: #111; }
-}
-.btn-cv {
-  font-family: 'JetBrains Mono', monospace;
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  font-size: 12px; font-weight: 600;
-  background: #111; color: #ffffff;
-  padding: 11px 24px; border-radius: 0;
-  text-decoration: none; transition: background .2s, color .2s;
-  border: none; letter-spacing: .3px; text-transform: uppercase;
-}
-.btn-cv svg { width: 14px; height: 14px; fill: #ffffff; }
-@media (hover: hover) and (pointer: fine) {
-  .btn-cv:hover { background: #ffffff; color: #111; }
-  .btn-cv:hover svg { fill: #111; }
-}
+/* .btn-li / .btn-cv retirados: LinkedIn y Descargar CV ahora usan
+   el sistema compartido .btn.btn-primary/.btn-outline de shared.css,
+   con el mismo tamaño base que en index.html (sin overrides de página). */
 
 /* ── PHOTO COLUMN (left) ── */
 .about-photo-col {
@@ -582,11 +557,6 @@
     gap: 8px !important;
   }
 
-  .btn-li, .btn-cv {
-    font-size: 10px !important;
-    padding: 9px 16px !important;
-  }
-
   .about-h1 {
     font-size: clamp(26px, 7vw, 36px) !important;
     line-height: 1.15 !important;
@@ -637,12 +607,13 @@
 
 /* Titular más contenido: misma copy, menor escala */
 .about-h1 {
+  font-family: var(--font-serif);
   font-size: clamp(30px, 3vw, 42px);
   line-height: 1.12;
   letter-spacing: -0.028em;
   max-width: 700px;
   margin: 0 0 24px;
-  font-weight: 400 !important;
+  font-weight: 500 !important;
 }
 
 /* El texto conserva exactamente los copys, pero sin negritas visuales */
@@ -656,7 +627,7 @@
 }
 
 .about-h1 em {
-  font-style: normal;
+  font-style: italic;
 }
 
 .about-copy {
@@ -744,13 +715,6 @@
   gap: 12px;
   margin: 0;
   flex-wrap: wrap;
-}
-
-/* Mantener botones, pero integrados en el lenguaje limpio del diseño */
-.btn-li,
-.btn-cv {
-  font-size: 11px;
-  padding: 10px 22px;
 }
 
 /* ═══════════════════════════════════════
@@ -889,12 +853,6 @@
   .about-btns {
     gap: 8px;
   }
-
-  .btn-li,
-  .btn-cv {
-    font-size: 10px !important;
-    padding: 9px 16px !important;
-  }
 }
 </style>
 
@@ -993,9 +951,14 @@
   <div class="nav-links">
     <a href="./index.html">Inicio</a>
     <a href="./sobre-mi.html" class="active" aria-current="page">Sobre mí</a>
-    <a href="./power-bi.html">Power BI</a>
-    <a href="./analisis-datos.html">Análisis</a>
-    <a href="./visualizacion-datos.html">Visualización</a>
+    <div class="nav-dropdown" id="navDropdown">
+      <button class="nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false">Proyectos <svg class="dd-chevron" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 3.5L5 6.5L7.5 3.5"/></svg></button>
+      <ul class="nav-dropdown-menu" role="menu">
+        <li role="none"><a href="./power-bi.html" role="menuitem">Power BI</a></li>
+        <li role="none"><a href="./analisis-datos.html" role="menuitem">Análisis</a></li>
+        <li role="none"><a href="./visualizacion-datos.html" role="menuitem">Visualización</a></li>
+      </ul>
+    </div>
     <a href="./descargas.html">Descargas</a>
     <a id="navEmailBtn" href="#" target="_blank" rel="noopener noreferrer" class="nav-cta btn" onclick="gtag('event', 'clic_email', { location: 'nav' });"><span class="cta-text-wrap"><span>Contacto</span><span>¿Hablamos?</span></span></a>
   </div>
@@ -1021,9 +984,12 @@
     <nav class="nav-drawer-links" aria-label="Navegación móvil">
       <a href="./index.html">Inicio</a>
       <a href="./sobre-mi.html" class="active" aria-current="page">Sobre mí</a>
-      <a href="./power-bi.html">Power BI</a>
-      <a href="./analisis-datos.html">Análisis</a>
-      <a href="./visualizacion-datos.html">Visualización</a>
+      <span class="nav-drawer-group-label">Proyectos</span>
+      <div class="nav-drawer-sublinks">
+        <a href="./power-bi.html">Power BI</a>
+        <a href="./analisis-datos.html">Análisis</a>
+        <a href="./visualizacion-datos.html">Visualización</a>
+      </div>
       <a href="./descargas.html">Descargas</a>
     </nav>
     <div class="nav-drawer-foot">
@@ -1048,6 +1014,57 @@
   var navEmail = document.getElementById('navEmailBtn');
   var drawerEmail = document.getElementById('drawerEmailBtn');
   if(navEmail && drawerEmail){ var obs = new MutationObserver(function(){ drawerEmail.href = navEmail.href; }); obs.observe(navEmail,{attributes:true,attributeFilter:['href']}); if(navEmail.href && navEmail.href !== '#') drawerEmail.href = navEmail.href; }
+})();
+</script>
+
+<script>
+/* ── NAV DROPDOWN ── */
+(function(){
+  var dd = document.getElementById('navDropdown');
+  if(!dd) return;
+  var trigger = dd.querySelector('.nav-dropdown-trigger');
+  var menu = dd.querySelector('.nav-dropdown-menu');
+  var items = menu.querySelectorAll('a[role="menuitem"]');
+  var openTimer, closeTimer;
+
+  function openDD(){
+    clearTimeout(closeTimer);
+    dd.classList.add('open');
+    trigger.setAttribute('aria-expanded','true');
+  }
+  function closeDD(){
+    dd.classList.remove('open');
+    trigger.setAttribute('aria-expanded','false');
+  }
+  function scheduleOpen(){ clearTimeout(closeTimer); openTimer = setTimeout(openDD, 120); }
+  function scheduleClose(){ clearTimeout(openTimer); closeTimer = setTimeout(closeDD, 250); }
+
+  dd.addEventListener('mouseenter', scheduleOpen);
+  dd.addEventListener('mouseleave', scheduleClose);
+
+  trigger.addEventListener('click', function(e){
+    e.preventDefault();
+    dd.classList.contains('open') ? closeDD() : openDD();
+  });
+
+  trigger.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' '){
+      e.preventDefault(); openDD();
+      if(items.length) items[0].focus();
+    }
+    if(e.key === 'Escape'){ closeDD(); trigger.focus(); }
+  });
+  menu.addEventListener('keydown', function(e){
+    var idx = Array.prototype.indexOf.call(items, document.activeElement);
+    if(e.key === 'ArrowDown'){ e.preventDefault(); if(idx < items.length-1) items[idx+1].focus(); }
+    if(e.key === 'ArrowUp'){ e.preventDefault(); if(idx > 0) items[idx-1].focus(); else { trigger.focus(); closeDD(); } }
+    if(e.key === 'Escape'){ closeDD(); trigger.focus(); }
+    if(e.key === 'Tab'){ closeDD(); }
+  });
+
+  document.addEventListener('click', function(e){
+    if(!dd.contains(e.target)) closeDD();
+  });
 })();
 </script>
 
@@ -1083,12 +1100,12 @@
         <div class="about-more">
           <h2>Más información sobre mí</h2>
           <div class="about-btns">
-            <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="btn-li">
-              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="btn btn-outline">
+              <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
               LinkedIn
             </a>
-            <a href="https://tally.so/r/6878EN" target="_blank" rel="noopener noreferrer" class="btn-cv">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <a href="https://tally.so/r/6878EN" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               Descargar CV
             </a>
           </div>
