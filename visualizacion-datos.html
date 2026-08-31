@@ -361,9 +361,14 @@
   <div class="nav-links">
     <a href="./index.html">Inicio</a>
     <a href="./sobre-mi.html">Sobre mí</a>
-    <a href="./power-bi.html">Power BI</a>
-    <a href="./analisis-datos.html">Análisis</a>
-    <a href="./visualizacion-datos.html" class="active" aria-current="page">Visualización</a>
+    <div class="nav-dropdown" id="navDropdown">
+      <button class="nav-dropdown-trigger active" aria-haspopup="true" aria-expanded="false">Proyectos <svg class="dd-chevron" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 3.5L5 6.5L7.5 3.5"/></svg></button>
+      <ul class="nav-dropdown-menu" role="menu">
+        <li role="none"><a href="./power-bi.html" role="menuitem">Power BI</a></li>
+        <li role="none"><a href="./analisis-datos.html" role="menuitem">Análisis</a></li>
+        <li role="none"><a href="./visualizacion-datos.html" role="menuitem" class="active">Visualización</a></li>
+      </ul>
+    </div>
     <a href="./descargas.html">Descargas</a>
     <a id="navEmailBtn" href="#" target="_blank" rel="noopener noreferrer" class="nav-cta btn" onclick="gtag('event', 'clic_email', { location: 'nav' });"><span class="cta-text-wrap"><span>Contacto</span><span>¿Hablamos?</span></span></a>
   </div>
@@ -386,12 +391,15 @@
       <span class="nav-drawer-brand">Borja Mora.</span>
       <button class="nav-drawer-close" id="navDrawerClose" aria-label="Cerrar menu">Cerrar ×</button>
     </div>
-    <nav class="nav-drawer-links" aria-label="Navegacion movil">
+    <nav class="nav-drawer-links" aria-label="Navegación móvil">
       <a href="./index.html">Inicio</a>
       <a href="./sobre-mi.html">Sobre mí</a>
-      <a href="./power-bi.html">Power BI</a>
-      <a href="./analisis-datos.html">Análisis</a>
-      <a href="./visualizacion-datos.html" class="active" aria-current="page">Visualización</a>
+      <span class="nav-drawer-group-label">Proyectos</span>
+      <div class="nav-drawer-sublinks">
+        <a href="./power-bi.html">Power BI</a>
+        <a href="./analisis-datos.html">Análisis</a>
+        <a href="./visualizacion-datos.html" class="active" aria-current="page">Visualización</a>
+      </div>
       <a href="./descargas.html">Descargas</a>
     </nav>
     <div class="nav-drawer-foot">
@@ -416,6 +424,57 @@
   var navEmail = document.getElementById('navEmailBtn');
   var drawerEmail = document.getElementById('drawerEmailBtn');
   if(navEmail && drawerEmail){ var obs = new MutationObserver(function(){ drawerEmail.href = navEmail.href; }); obs.observe(navEmail,{attributes:true,attributeFilter:['href']}); if(navEmail.href && navEmail.href !== '#') drawerEmail.href = navEmail.href; }
+})();
+</script>
+
+<script>
+/* ── NAV DROPDOWN ── */
+(function(){
+  var dd = document.getElementById('navDropdown');
+  if(!dd) return;
+  var trigger = dd.querySelector('.nav-dropdown-trigger');
+  var menu = dd.querySelector('.nav-dropdown-menu');
+  var items = menu.querySelectorAll('a[role="menuitem"]');
+  var openTimer, closeTimer;
+
+  function openDD(){
+    clearTimeout(closeTimer);
+    dd.classList.add('open');
+    trigger.setAttribute('aria-expanded','true');
+  }
+  function closeDD(){
+    dd.classList.remove('open');
+    trigger.setAttribute('aria-expanded','false');
+  }
+  function scheduleOpen(){ clearTimeout(closeTimer); openTimer = setTimeout(openDD, 120); }
+  function scheduleClose(){ clearTimeout(openTimer); closeTimer = setTimeout(closeDD, 250); }
+
+  dd.addEventListener('mouseenter', scheduleOpen);
+  dd.addEventListener('mouseleave', scheduleClose);
+
+  trigger.addEventListener('click', function(e){
+    e.preventDefault();
+    dd.classList.contains('open') ? closeDD() : openDD();
+  });
+
+  trigger.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' '){
+      e.preventDefault(); openDD();
+      if(items.length) items[0].focus();
+    }
+    if(e.key === 'Escape'){ closeDD(); trigger.focus(); }
+  });
+  menu.addEventListener('keydown', function(e){
+    var idx = Array.prototype.indexOf.call(items, document.activeElement);
+    if(e.key === 'ArrowDown'){ e.preventDefault(); if(idx < items.length-1) items[idx+1].focus(); }
+    if(e.key === 'ArrowUp'){ e.preventDefault(); if(idx > 0) items[idx-1].focus(); else { trigger.focus(); closeDD(); } }
+    if(e.key === 'Escape'){ closeDD(); trigger.focus(); }
+    if(e.key === 'Tab'){ closeDD(); }
+  });
+
+  document.addEventListener('click', function(e){
+    if(!dd.contains(e.target)) closeDD();
+  });
 })();
 </script>
 
