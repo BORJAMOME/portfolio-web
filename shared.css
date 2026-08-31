@@ -119,7 +119,7 @@ body {
   border-radius: 99px;
 }
 
-/* ─── DROPDOWN "PROYECTOS" (desktop) ─── */
+/* ─── DROPDOWN "PROYECTOS" (desktop) — minimalista, solo texto ─── */
 .nav-dropdown {
   position: relative;
 }
@@ -135,7 +135,6 @@ body {
   display: inline-flex; align-items: center; gap: 6px;
   background: none; border: none; cursor: pointer;
   line-height: inherit;
-  font-feature-settings: inherit;
 }
 .nav-dropdown-trigger .dd-chevron {
   width: 9px; height: 9px;
@@ -168,21 +167,21 @@ body {
   border-radius: 99px;
 }
 
-/* Panel — tarjeta editorial con icono + título serif + descripción */
+/* Panel — lista simple de texto, mismo patrón que el resto del nav */
 .nav-dropdown-menu {
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 8px);
   left: 0;
   transform: translateY(-6px);
-  width: 336px;
+  min-width: 176px;
   background: #ffffff;
   border: 1px solid var(--rule);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 2px 8px rgba(17,17,17,.04), 0 16px 40px rgba(17,17,17,.10);
-  padding: 10px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(17,17,17,.08);
+  padding: 6px;
   opacity: 0;
   pointer-events: none;
-  transition: opacity .22s var(--ease), transform .22s var(--ease);
+  transition: opacity .2s var(--ease), transform .2s var(--ease);
   z-index: 200;
   list-style: none;
   margin: 0;
@@ -191,8 +190,8 @@ body {
 .nav-dropdown-menu::before {
   content: '';
   position: absolute;
-  top: -10px; left: 0; right: 0;
-  height: 10px;
+  top: -8px; left: 0; right: 0;
+  height: 8px;
 }
 .nav-dropdown.open .nav-dropdown-menu {
   opacity: 1;
@@ -202,85 +201,33 @@ body {
 .nav-dropdown-menu li {
   margin: 0; padding: 0;
 }
-.nav-dropdown-menu li + li {
-  margin-top: 2px;
-}
-.dd-row {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  padding: 10px 12px;
-  border-radius: var(--radius-md);
+.nav-dropdown-menu a {
+  display: block;
+  padding: 9px 12px;
+  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+  font-size: 11px; font-weight: 500;
+  color: var(--muted);
   text-decoration: none;
-  transition: background .16s var(--ease);
+  letter-spacing: .3px;
+  text-transform: uppercase;
+  border-radius: 5px;
+  transition: color .15s, background .15s;
+  white-space: nowrap;
 }
 @media (hover: hover) and (pointer: fine) {
-  .dd-row:hover { background: var(--off); }
-  .dd-row:hover .dd-arrow { opacity: 1; transform: translateX(0); }
-  .dd-row:hover .dd-icon { color: var(--ink); }
+  .nav-dropdown-menu a:hover {
+    color: var(--ink);
+    background: var(--off);
+  }
 }
-.dd-row:focus-visible {
+.nav-dropdown-menu a:focus-visible {
   outline: 2px solid var(--purple);
   outline-offset: -2px;
   background: var(--off);
 }
-.dd-icon {
-  flex: 0 0 auto;
-  width: 36px; height: 36px;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: var(--radius-md);
-  background: var(--off);
-  color: var(--muted);
-  transition: color .16s var(--ease), background .16s var(--ease);
-}
-.dd-icon svg { width: 18px; height: 18px; }
-.dd-text {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-.dd-title {
-  display: block;
-  font-family: var(--font-serif);
-  font-size: 14.5px;
-  font-weight: 600;
+.nav-dropdown-menu a.active {
   color: var(--ink);
-  line-height: 1.25;
-  letter-spacing: -.005em;
-}
-.dd-desc {
-  display: block;
-  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
-  font-size: 11.5px;
-  font-weight: 400;
-  color: var(--muted);
-  line-height: 1.4;
-  margin-top: 2px;
-  letter-spacing: .1px;
-}
-.dd-arrow {
-  flex: 0 0 auto;
-  width: 14px; height: 14px;
-  color: var(--muted);
-  opacity: 0;
-  transform: translateX(-4px);
-  transition: opacity .18s var(--ease), transform .18s var(--ease);
-}
-/* Estado activo: sub-página actual */
-.dd-row.active {
-  background: var(--purple-light);
-}
-.dd-row.active .dd-icon {
-  background: #ffffff;
-  color: var(--purple2);
-}
-.dd-row.active .dd-title {
-  color: var(--purple2);
-}
-.dd-row.active .dd-arrow {
-  opacity: 1;
-  transform: translateX(0);
-  color: var(--purple2);
+  font-weight: 700;
 }
 
 .nav-cta {
@@ -705,7 +652,7 @@ nav.nav-drawer-links {
   background: #dfe0ff !important;
 }
 
-/* ── Grupo "Proyectos" en drawer ── */
+/* ── Grupo "Proyectos" en drawer — minimalista ── */
 .nav-drawer-group-label {
   display: flex !important;
   align-items: center;
@@ -735,11 +682,10 @@ nav.nav-drawer-links {
 .nav-drawer-sublinks a {
   display: flex !important;
   align-items: center;
-  gap: 14px;
   width: 100%;
-  height: 68px !important;
-  min-height: 68px;
-  padding: 0 24px 0 24px !important;
+  height: 60px !important;
+  min-height: 60px;
+  padding: 0 24px 0 36px !important;
   font-family: var(--mono);
   font-size: 12.5px;
   font-weight: 700;
@@ -752,16 +698,6 @@ nav.nav-drawer-links {
   transition: background .18s;
   box-sizing: border-box;
 }
-.nav-drawer-sublinks a .dd-icon {
-  flex: 0 0 auto;
-  width: 34px; height: 34px;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: var(--radius-md);
-  background: #ffffff;
-  border: 1.5px solid #111111;
-  color: #111111;
-}
-.nav-drawer-sublinks a .dd-icon svg { width: 16px; height: 16px; }
 .nav-drawer-sublinks a:last-child {
   border-bottom: 1.5px solid #111111;
 }
@@ -771,11 +707,6 @@ nav.nav-drawer-links {
 .nav-drawer-sublinks a.active {
   background: var(--purple-light) !important;
   color: var(--purple2) !important;
-}
-.nav-drawer-sublinks a.active .dd-icon {
-  background: var(--purple2);
-  border-color: var(--purple2);
-  color: #ffffff;
 }
 .nav-drawer-sublinks a.active:hover {
   background: #dfe0ff !important;
