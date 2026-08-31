@@ -491,7 +491,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 }
 .pc-pill + .pc-pill::before { content: ''; margin-right: 0; color: var(--muted); }
 .pc-link { font-size: 13.5px; color: var(--ink); font-weight: 600; text-decoration: none; letter-spacing: normal; text-transform: none; transition: color .18s; padding: 12px 4px; min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; }
-.pc-link:hover { color: var(--purple); }
+.pc-link:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 .proj-more { display: flex; justify-content: center; align-items: center; margin-top: 40px; width: 100%; }
 
 /* ─── ML CARDS — mismo sistema visual que .proj-card ─── */
@@ -520,7 +520,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 .cc-pills { display: flex; gap: 8px; flex-wrap: wrap; }
 .cc-pill { font-size: 11px; font-weight: 500; background: #eeeef1; border: 1px solid #e2e2e8; color: var(--ink); padding: 6px 13px; border-radius: var(--radius-pill); letter-spacing: 0; text-transform: none; transition: background .2s var(--ease), color .2s var(--ease); }
 .cc-link { font-size: 13.5px; color: var(--ink); font-weight: 600; text-decoration: none; letter-spacing: normal; text-transform: none; transition: color .18s; padding: 12px 4px; min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; }
-.cc-link:hover { color: var(--purple); }
+.cc-link:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 @media (max-width:900px) { .ml-grid { grid-template-columns:1fr; } }
 
 /* ─── PROYECTO ESTRELLA — box unificado ─── */
@@ -811,7 +811,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 }
 @media (hover: hover) and (pointer: fine) {
   .dot-nav-item:hover .dot-nav-dot {
-    background: #7a7bff;
+    background: #111111;
     opacity: .7;
   }
 }
@@ -1988,8 +1988,8 @@ footer {
       <style>
         /* ── STACK: HEADER ── */
         .skx-head{max-width:560px;margin-bottom:36px}
-        .skx-h{font-size:clamp(30px,4vw,46px);font-weight:700;color:var(--ink);letter-spacing:-1.4px;line-height:1.06;margin:0 0 12px}
-        .skx-h em{font-style:normal;color:var(--ink)}
+        .skx-h{font-family:var(--font-serif);font-size:clamp(30px,4vw,46px);font-weight:500;color:var(--ink);letter-spacing:-1.4px;line-height:1.06;margin:0 0 12px}
+        .skx-h em{font-style:italic;color:var(--ink)}
         .skx-sub{font-size:14px;color:var(--muted);line-height:1.65;margin:0}
 
         /* ── STACK: PIPELINE GRID ── */
