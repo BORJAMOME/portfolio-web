@@ -320,7 +320,6 @@ body{
   color:var(--ink);
   text-decoration:none;
   cursor:pointer;
-  will-change:opacity,transform;
 }
 
 /* Entrada inicial con stagger: 30ms por card */
@@ -505,14 +504,17 @@ body{
 /* ── Módulo "Próximamente" ── */
 .m-soon{
   cursor:default;
-  background:
+  background-color: var(--paper);
+  background-image:
     repeating-linear-gradient(
       135deg,
       transparent 0 14px,
       rgba(10,10,10,.04) 14px 15px
     );
 }
-.m-soon:hover{background:
+.m-soon:hover{
+  background-color: var(--paper);
+  background-image:
     repeating-linear-gradient(
       135deg,
       transparent 0 14px,
@@ -647,7 +649,7 @@ body{
   .m:hover .m-sub,
   .m:hover .m-desc,
   .m:hover .m-num{color:inherit}
-  .m-soon:hover{background:
+  .m-soon:hover{background-color:var(--paper);background-image:
     repeating-linear-gradient(135deg,transparent 0 14px,rgba(10,10,10,.04) 14px 15px)}
 }
 
