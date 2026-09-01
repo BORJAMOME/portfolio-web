@@ -1022,13 +1022,14 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 .idx-d-side { display: flex; flex-direction: column; gap: 14px; }
 .idx-d-tagrow { display: flex; flex-wrap: wrap; gap: 6px; }
 .idx-chip {
-  font-family: var(--mono); font-size: 10px; font-weight: 600;
-  letter-spacing: .4px; text-transform: uppercase; color: #1a1a1a;
-  background: #fff; border: 1px solid var(--ink); box-shadow: 0 2px 0 var(--ink);
-  padding: 6px 10px 5px; border-radius: 3px;
-  display: inline-flex; align-items: center; gap: 7px;
+  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0; text-transform: none; color: var(--ink);
+  background: #eeeef1; border: 1px solid #e2e2e8;
+  padding: 6px 13px; border-radius: var(--radius-pill);
+  display: inline-flex; align-items: center;
+  transition: background .2s var(--ease), color .2s var(--ease);
 }
-.idx-chip::before { content: ''; width: 4px; height: 4px; background: var(--purple); flex-shrink: 0; }
 .idx-d-note {
   font-family: var(--mono); font-size: 10px; color: #999;
   letter-spacing: .06em; padding-top: 14px; border-top: 1px solid #ececec;
