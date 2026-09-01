@@ -474,7 +474,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   display: block;
 }
 .pc-body { padding: 20px 30px 28px; flex: 1; display: flex; flex-direction: column; }
-.pc-cat { font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--purple); margin-bottom: 10px; }
+.pc-cat { font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
 .pc-name { font-size: 20px; font-weight: 700; color: var(--ink); margin-bottom: 10px; letter-spacing: -.4px; line-height: 1.25; }
 .pc-desc { font-size: 13.5px; color: var(--muted); line-height: 1.7; flex: 1; margin-bottom: 20px; }
 .pc-foot { display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 1px solid #e8e8ee; }
@@ -2744,11 +2744,6 @@ document.addEventListener('keydown', function(e){
       </div>
       <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(0,-1)" aria-label="Foto anterior"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
       <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(0,1)" aria-label="Foto siguiente"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
-      <div class="pcov-dots">
-        <button class="pcov-dot pcov-dot-active" onclick="indexOverlayPhotoNav(0,0)"></button>
-        <button class="pcov-dot" onclick="indexOverlayPhotoNav(0,1)"></button>
-        <button class="pcov-dot" onclick="indexOverlayPhotoNav(0,2)"></button>
-      </div>
     </div>
     <div class="pc-overlay-copy">
       <div class="pc-overlay-eyebrow"><span></span>Análisis de ventas · IBCS</div>
@@ -2798,11 +2793,6 @@ document.addEventListener('keydown', function(e){
       </div>
       <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(1,-1)" aria-label="Foto anterior"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
       <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(1,1)" aria-label="Foto siguiente"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
-      <div class="pcov-dots">
-        <button class="pcov-dot pcov-dot-active" onclick="indexOverlayPhotoNav(1,0)"></button>
-        <button class="pcov-dot" onclick="indexOverlayPhotoNav(1,1)"></button>
-        <button class="pcov-dot" onclick="indexOverlayPhotoNav(1,2)"></button>
-      </div>
     </div>
     <div class="pc-overlay-copy">
       <div class="pc-overlay-eyebrow"><span></span>Análisis financiero</div>
@@ -2852,10 +2842,6 @@ document.addEventListener('keydown', function(e){
       </div>
       <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(2,-1)" aria-label="Foto anterior"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
       <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(2,1)" aria-label="Foto siguiente"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
-      <div class="pcov-dots">
-        <button class="pcov-dot pcov-dot-active" onclick="indexOverlayPhotoNav(2,0)"></button>
-        <button class="pcov-dot" onclick="indexOverlayPhotoNav(2,1)"></button>
-      </div>
     </div>
     <div class="pc-overlay-copy">
       <div class="pc-overlay-eyebrow"><span></span>Customer analytics · B2B</div>
@@ -2906,11 +2892,6 @@ document.addEventListener('keydown', function(e){
       </div>
       <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(3,-1)" aria-label="Foto anterior"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
       <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(3,1)" aria-label="Foto siguiente"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
-      <div class="pcov-dots">
-        <button class="pcov-dot pcov-dot-active" onclick="indexOverlayPhotoNav(3,0)"></button>
-        <button class="pcov-dot" onclick="indexOverlayPhotoNav(3,1)"></button>
-        <button class="pcov-dot" onclick="indexOverlayPhotoNav(3,2)"></button>
-      </div>
     </div>
     <div class="pc-overlay-copy">
       <div class="pc-overlay-eyebrow"><span></span>Retail · Red de tiendas</div>
