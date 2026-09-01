@@ -1843,66 +1843,66 @@ footer {
     <div class="s-tag s-tag-dark" style="margin-top:64px;">PYTHON · ANÁLISIS AVANZADO</div>
     <div class="ml-grid">
 
-      <!-- ── CARD ML-1: SARIMA Retail ── -->
-      <div class="card-c" onclick="window.open('https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/04-series-temporales/arima/01-caso-retail','_blank','noopener,noreferrer')">
-        <div class="cc-cat">Predicción de demanda · Retail</div>
+      <!-- ── CARD ML-1: K-Means + t-SNE Retail ── -->
+      <div class="card-c" onclick="window.open('https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/02-no-supervisado/clustering/kmeans/04-segmentacion-retail-tsne','_blank','noopener,noreferrer')">
+        <div class="cc-cat">Segmentación de clientes · Electrónica</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
-          <div class="cc-text">Una cadena de supermercados perdía dinero cada semana: unas veces sobraba producto y acababa en la basura, otras faltaba y perdían ventas. El responsable de compras pedía basándose en su experiencia, pero no conseguía acertar.</div>
+          <div class="cc-text">Una cadena de electrónica trataba igual a todos sus clientes: las mismas ofertas, los mismos emails, el mismo descuento genérico. Marketing sabía que no todos compraban igual, pero con 6.000 clientes y 26 variables no había forma humana de separarlos a mano.</div>
         </div>
         <div class="cc-block">
           <div class="cc-label">La solución</div>
-          <div class="cc-text">Analicé cinco años de ventas semanales y entrené un modelo SARIMA que captura la tendencia y la estacionalidad oculta en los datos. Ahora el sistema predice la demanda de cada semana antes de hacer el pedido.</div>
+          <div class="cc-text">Seleccioné 9 variables de comportamiento (gasto, frecuencia, canal) y usé t-SNE para verificar que existían grupos reales. K-Means separó 4 perfiles — premium, medio-alto, digital joven y riesgo de abandono — con acciones de campaña para cada uno.</div>
         </div>
         <div class="cc-result">
           <div class="cc-label">El resultado</div>
-          <div class="cc-result-metric"><span class="cc-result-num">2,21%</span><span class="cc-result-unit">MAPE</span></div>
+          <div class="cc-result-metric"><span class="cc-result-num">96,8%</span><span class="cc-result-unit">acierto segmento premium</span></div>
         </div>
         <div class="cc-foot">
-          <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">SARIMA</span><span class="cc-pill">statsmodels</span></div>
-          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/04-series-temporales/arima/01-caso-retail" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Ver →</a>
+          <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">K-Means</span><span class="cc-pill">t-SNE</span></div>
+          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/02-no-supervisado/clustering/kmeans/04-segmentacion-retail-tsne" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Ver →</a>
         </div>
       </div>
 
-      <!-- ── CARD ML-2: K-Means Política ── -->
-      <div class="card-c" onclick="window.open('https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/02-no-supervisado/clustering/kmeans/03-segmentacion-politica','_blank','noopener,noreferrer')">
-        <div class="cc-cat">Segmentación de perfiles · Investigación</div>
+      <!-- ── CARD ML-2: SARIMA vs SARIMAX Retail ── -->
+      <div class="card-c" onclick="window.open('https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/04-series-temporales/arima/03-forecast-ventas-retail','_blank','noopener,noreferrer')">
+        <div class="cc-cat">Previsión de ventas · Retail</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
-          <div class="cc-text">Un equipo de investigación encuestó a 3.689 votantes con 9 preguntas sobre política, demografía y opinión. Cuando intentaron segmentarlos, el algoritmo agrupaba por edad y género — no por ideología. Los perfiles no tenían sentido.</div>
+          <div class="cc-text">El modelo de previsión de una cadena retail acertaba en semanas normales, pero cuando había una huelga, una promoción agresiva o un problema logístico, las predicciones se desviaban. El equipo intuía que el contexto importaba, pero no sabía cuánto ni cómo meterlo en la ecuación.</div>
         </div>
         <div class="cc-block">
           <div class="cc-label">La solución</div>
-          <div class="cc-text">Descarté las variables demográficas y entrené K-Means solo con las 4 preguntas de opinión real. Aparecieron tres perfiles ideológicos con posiciones claras sobre servicios públicos, fiscalidad y seguridad.</div>
+          <div class="cc-text">Construí dos modelos enfrentados sobre 156 semanas de ventas: un SARIMA puro contra un SARIMAX con cinco variables externas (promociones, huelgas, conflictos, logística). Validé con backtesting temporal y simulé más de diez escenarios futuros.</div>
         </div>
         <div class="cc-result">
           <div class="cc-label">El resultado</div>
-          <div class="cc-result-metric"><span class="cc-result-num">9→4</span><span class="cc-result-unit">variables</span></div>
+          <div class="cc-result-metric"><span class="cc-result-num">−31%</span><span class="cc-result-unit">error vs. solo histórico</span></div>
         </div>
         <div class="cc-foot">
-          <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">K-Means</span><span class="cc-pill">scikit-learn</span></div>
-          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/02-no-supervisado/clustering/kmeans/03-segmentacion-politica" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Ver →</a>
+          <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">SARIMAX</span><span class="cc-pill">statsmodels</span></div>
+          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/04-series-temporales/arima/03-forecast-ventas-retail" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Ver →</a>
         </div>
       </div>
 
-      <!-- ── CARD ML-3: XGBoost Gym ── -->
-      <div class="card-c" onclick="window.open('https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/01-supervisado/clasificacion/03-xgboost','_blank','noopener,noreferrer')">
-        <div class="cc-cat">Predicción de abandono · Fitness</div>
+      <!-- ── CARD ML-3: Segmentación Aerolínea ── -->
+      <div class="card-c" onclick="window.open('https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/01-supervisado/clasificacion/04-comparativa-modelos/04-segmentacion-aerolinea','_blank','noopener,noreferrer')">
+        <div class="cc-cat">Fidelización de pasajeros · Aerolínea</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
-          <div class="cc-text">Un gimnasio con 300 socios necesitaba saber quién estaba satisfecho y quién estaba a punto de irse. Lanzaban encuestas, pero las respuestas no revelaban un patrón claro ni permitían actuar a tiempo.</div>
+          <div class="cc-text">Una aerolínea gestionaba tres niveles de cliente — Básico, Frecuente, Premium — pero los asignaba con reglas rígidas que no capturaban el comportamiento real. Resultado: campañas de fidelización que llegaban a quien no las necesitaba y no llegaban a quien estaba a punto de irse.</div>
         </div>
         <div class="cc-block">
           <div class="cc-label">La solución</div>
-          <div class="cc-text">Entrené un modelo XGBoost con los datos de uso real de cada socio. El resultado fue directo: la frecuencia de asistencia mensual concentra el 80% de la predicción. Ni el precio ni las instalaciones pesaban tanto.</div>
+          <div class="cc-text">Comparé tres modelos (Regresión Logística, Random Forest, Gradient Boosting) sobre 21 variables de vuelo, gasto e incidencias, con validación cruzada. Establecí un baseline para confirmar que los modelos aportan y extraje las variables más relevantes para cada segmento.</div>
         </div>
         <div class="cc-result">
           <div class="cc-label">El resultado</div>
-          <div class="cc-result-metric"><span class="cc-result-num">9/10</span><span class="cc-result-unit">aciertos</span></div>
+          <div class="cc-result-metric"><span class="cc-result-num">×2</span><span class="cc-result-unit">vs. reglas anteriores</span></div>
         </div>
         <div class="cc-foot">
-          <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">XGBoost</span><span class="cc-pill">scikit-learn</span></div>
-          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/01-supervisado/clasificacion/03-xgboost" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Ver →</a>
+          <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">Gradient Boosting</span><span class="cc-pill">scikit-learn</span></div>
+          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/01-supervisado/clasificacion/04-comparativa-modelos/04-segmentacion-aerolinea" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Ver →</a>
         </div>
       </div>
 
