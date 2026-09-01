@@ -13,8 +13,8 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet">
 <!-- Shared styles: variables, nav, footer, botones, reset -->
 <link rel="stylesheet" href="./shared.css?v=20260831">
 
@@ -84,7 +84,8 @@
   --logo-purple:#7a7bff;
   --ease:cubic-bezier(0.16,1,0.3,1);
   --font:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;
-  --mono:'JetBrains Mono',monospace;
+  --font-serif:'Newsreader',Georgia,serif;
+  --mono:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -122,9 +123,10 @@ body{
   to{opacity:1;transform:translateY(0)}
 }
 .hero-h1{
+  font-family:var(--font-serif);
   font-size:clamp(44px,7vw,92px);
-  font-weight:600;
-  letter-spacing:-0.045em;
+  font-weight:500;
+  letter-spacing:-0.03em;
   line-height:1;
   color:var(--ink);
   white-space:nowrap;
@@ -142,7 +144,7 @@ body{
   height:clamp(70px,12vw,130px);
   margin:0 24px;
   background:#111111;
-  border-radius:0;
+  border-radius:var(--radius-md);
   vertical-align:middle;
   user-select:none;
   flex-shrink:0;
@@ -196,7 +198,7 @@ body{
   font-variant-numeric:tabular-nums;
   line-height:1;
 }
-.hero-stat-num span{color:var(--purple)}
+.hero-stat-num span{color:var(--ink)}
 .hero-stat-label{
   font-size:11px;
   font-weight:500;
@@ -364,7 +366,7 @@ body{
   letter-spacing:.02em;
   transition:color .12s var(--ease);
 }
-@media (hover: hover) and (pointer: fine) { .m:hover .m-num{color:#c6ff00} }
+@media (hover: hover) and (pointer: fine) { .m:hover .m-num{color:#ffffff} }
 
 .m-ext{
   display:inline-flex;align-items:center;justify-content:center;
@@ -377,9 +379,9 @@ body{
   will-change:transform;
 }
 @media (hover: hover) and (pointer: fine) {
-  .m:hover .m-ext{color:#c6ff00}
+  .m:hover .m-ext{color:#ffffff}
   .m-ext:hover,
-  .m:hover .m-ext:hover{color:#c6ff00; transform:scale(1.15) translate(2px,-2px)}
+  .m:hover .m-ext:hover{color:#ffffff; transform:scale(1.15) translate(2px,-2px)}
 }
 .m-ext svg{width:18px;height:18px;display:block;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:square}
 
@@ -479,9 +481,9 @@ body{
   will-change:transform;
 }
 @media (hover: hover) and (pointer: fine) {
-  .m:hover .m-dl{color:#c6ff00}
+  .m:hover .m-dl{color:#ffffff}
   .m-dl:hover,
-  .m:hover .m-dl:hover{color:#c6ff00}
+  .m:hover .m-dl:hover{color:#ffffff}
 }
 .m-dl svg{width:22px;height:22px;display:block;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:square}
 
@@ -557,7 +559,7 @@ body{
   display:inline-flex;align-items:center;justify-content:center;
   width:18px;height:18px;
   border-radius:50%;
-  background:var(--purple);
+  background:var(--ink);
   color:#fff;
   flex-shrink:0;
   position:relative;
@@ -575,7 +577,7 @@ body{
     background:#fff;
   }
   .m:hover .m-done::after{
-    border-color:var(--purple);
+    border-color:var(--ink);
   }
 }
 
@@ -600,13 +602,14 @@ body{
   font-weight:600;
   text-transform:uppercase;
   letter-spacing:.18em;
-  color:var(--purple);
+  color:var(--muted);
   margin-bottom:20px;
 }
 .cierre-copy h2{
+  font-family:var(--font-serif);
   font-size:clamp(28px,4vw,42px);
-  font-weight:600;
-  letter-spacing:-.035em;
+  font-weight:500;
+  letter-spacing:-.02em;
   line-height:1.1;
   color:var(--ink);
   margin-bottom:24px;
@@ -811,7 +814,7 @@ body{
 
   <!-- Hero -->
   <header class="hero" id="main-content">
-    <h1 class="hero-h1">Archivos .pbix<span class="dl-badge" aria-hidden="true"><svg viewBox="0 0 36 46" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="18" y1="2" x2="18" y2="36" stroke="#c6ff00" stroke-width="3" stroke-linecap="square"/><polyline points="6,26 18,40 30,26" stroke="#c6ff00" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter" fill="none"/></svg></span></h1>
+    <h1 class="hero-h1">Archivos .pbix<span class="dl-badge" aria-hidden="true"><svg viewBox="0 0 36 46" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="18" y1="2" x2="18" y2="36" stroke="#ffffff" stroke-width="3" stroke-linecap="square"/><polyline points="6,26 18,40 30,26" stroke="#ffffff" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter" fill="none"/></svg></span></h1>
     <p class="hero-sub">Proyectos desarrollados y compartidos en LinkedIn. Descarga el archivo, explora el modelo de datos y úsalo como referencia para tus propios desarrollos en Power BI.</p>
     <div class="hero-stats" aria-hidden="true">
       <div class="hero-stat">
