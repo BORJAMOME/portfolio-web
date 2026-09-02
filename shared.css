@@ -476,11 +476,10 @@ footer {
 
 /* ─── MOBILE DRAWER ─── */
 /*
-  Brutalismo editorial — drawer lateral derecho
-  - Panel blanco, borde negro izquierdo
-  - Header: "Borja Mora." + CERRAR ×
-  - 4 links de altura fija — activo en lima #c6ff00
-  - Footer: LINKEDIN | CONTACTAR
+  Editorial fullscreen — menú móvil
+  - Panel a pantalla completa, fondo var(--white) (#FBFBFB), tipografía negra grande
+  - Secciones separadas por líneas finas, acordeón en "Proyectos"
+  - Redes/contacto al pie, separadas del bloque principal
   CLAVE: usa !important en los puntos críticos para vencer cualquier
   estilo global de "nav" o "a" que herede de la página.
 */
@@ -507,91 +506,95 @@ footer {
   visibility: visible;
 }
 
-/* Backdrop */
+/* Backdrop — el panel es fullscreen, se mantiene por compatibilidad/click-fuera */
 .nav-drawer-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,.5);
-  opacity: 0;
-  transition: opacity .3s var(--ease);
-  cursor: pointer;
-}
-.nav-drawer.open .nav-drawer-backdrop {
-  opacity: 1;
+  background: transparent;
+  cursor: default;
 }
 
-/* Panel — entra desde la derecha */
+/* Panel — fullscreen editorial, fade + desplazamiento vertical ligero */
 .nav-drawer-panel {
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 300px;
-  max-width: 88vw;
-  background: #ffffff;
-  border-left: 1.5px solid #111111;
-  transform: translateX(100%);
-  transition: transform .38s var(--ease);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--white);
+  border: none;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity .32s var(--ease), transform .32s var(--ease);
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 .nav-drawer.open .nav-drawer-panel {
-  transform: translateX(0);
+  opacity: 1;
+  transform: translateY(0);
 }
 
-/* ── Header: "Borja Mora." + CERRAR × ── */
+/* ── Header: marca centrada + cierre amplio ── */
 .nav-drawer-head {
-  display: flex !important;
+  display: grid !important;
+  grid-template-columns: 52px 1fr 52px;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 20px !important;
-  height: 56px !important;
-  min-height: 56px;
-  max-height: 56px;
-  flex: 0 0 56px;
-  border-bottom: 1.5px solid #111111;
-  background: #ffffff !important;
+  padding: max(14px, env(safe-area-inset-top)) 12px 14px !important;
+  height: auto !important;
+  min-height: 0;
+  max-height: none;
+  flex: 0 0 auto;
+  border-bottom: none;
+  background: var(--white) !important;
   position: static !important;
   width: auto !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
 .nav-drawer-brand {
+  grid-column: 2;
+  justify-self: center;
   font-family: var(--font);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
-  color: #111111;
-  letter-spacing: -.3px;
+  color: var(--ink);
+  letter-spacing: -.02em;
 }
-/* Botón CERRAR × brutalista */
+/* Botón cerrar — grande, fácil de pulsar */
 .nav-drawer-close {
+  grid-column: 3;
+  justify-self: end;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 0 14px;
+  width: 48px;
+  height: 48px;
+  min-height: 48px;
+  padding: 0;
   background: none;
-  border: 1.5px solid #111111;
+  border: none;
   cursor: pointer;
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: #111111;
-  transition: background .18s, color .18s;
+  font-family: var(--font);
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--ink);
+  transition: opacity .18s;
   white-space: nowrap;
   border-radius: var(--radius-md);
   -webkit-appearance: none;
   appearance: none;
 }
 .nav-drawer-close:hover {
-  background: #111111;
-  color: #ffffff;
+  opacity: .55;
+}
+.nav-drawer-close:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  opacity: 1;
 }
 
-/* ── Links: el <nav class="nav-drawer-links"> se RESETEA ──
+/* ── Links principales: el <nav class="nav-drawer-links"> se RESETEA ──
    IMPORTANTE: vence el estilo global de "nav" que es position:fixed */
 .nav-drawer-links,
 nav.nav-drawer-links {
@@ -603,113 +606,193 @@ nav.nav-drawer-links {
   width: 100% !important;
   height: auto !important;
   flex: 1 1 auto !important;
-  display: block !important;
+  display: flex !important;
   flex-direction: column;
-  padding: 0 !important;
+  padding: clamp(6px, 2.5vh, 22px) 0 0 !important;
   margin: 0 !important;
-  background: #ffffff !important;
+  background: var(--white) !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   border: none !important;
   z-index: auto !important;
   justify-content: flex-start !important;
   align-items: stretch !important;
-  overflow: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
-/* Cada link: bloque de altura fija, sin flex:1 (rompía en iOS) */
+/* Cada sección principal: tipografía grande, línea fina, área táctil amplia */
 .nav-drawer-links a {
   display: flex !important;
   align-items: center;
   width: 100%;
-  height: 72px !important;
-  min-height: 72px;
-  padding: 0 24px !important;
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: #111111 !important;
+  min-height: 76px;
+  padding: 18px clamp(20px, 6vw, 32px) !important;
+  font-family: var(--font);
+  font-size: clamp(30px, 8.5vw, 42px);
+  font-weight: 600;
+  letter-spacing: -.02em;
+  text-transform: none;
+  color: var(--ink) !important;
   text-decoration: none;
-  border-bottom: 1.5px solid #111111;
-  background: #ffffff;
-  transition: background .18s;
+  border-bottom: 1px solid rgba(17,17,17,.12);
+  background: var(--white);
+  transition: opacity .18s;
   box-sizing: border-box;
-  border-radius: var(--radius-md);
+  border-radius: 0;
+  position: relative;
 }
-.nav-drawer-links a:last-child {
-  border-bottom: none;
+.nav-drawer-links a:first-child {
+  border-top: 1px solid rgba(17,17,17,.12);
 }
 .nav-drawer-links a:hover {
-  background: #f5f5f5;
+  background: var(--white);
+  opacity: .5;
 }
-/* Activo: fondo lima */
+.nav-drawer-links a:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: -2px;
+  opacity: 1;
+}
+/* Activo: peso + punto discreto, sin fondo de color */
 .nav-drawer-links a.active {
-  background: var(--purple-light) !important;
-  color: var(--purple2) !important;
+  background: var(--white) !important;
+  color: var(--ink) !important;
+  font-weight: 700;
 }
 .nav-drawer-links a.active:hover {
-  background: #dfe0ff !important;
+  background: var(--white) !important;
+}
+.nav-drawer-links a.active::after {
+  content: '' !important;
+  display: block !important;
+  position: absolute;
+  right: clamp(20px, 6vw, 32px);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ink);
 }
 
-/* ── Grupo "Proyectos" en drawer — minimalista ── */
-.nav-drawer-group-label {
+/* ── "Proyectos" — disparador de acordeón, misma jerarquía que las secciones ── */
+.nav-drawer-projects-trigger {
   display: flex !important;
   align-items: center;
+  justify-content: space-between;
   width: 100%;
-  height: 44px !important;
-  min-height: 44px;
-  padding: 0 24px !important;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: rgba(17,17,17,.4) !important;
-  background: #fafafa;
+  min-height: 76px;
+  padding: 18px clamp(20px, 6vw, 32px) !important;
+  font-family: var(--font);
+  font-size: clamp(30px, 8.5vw, 42px);
+  font-weight: 600;
+  letter-spacing: -.02em;
+  color: var(--ink);
+  text-decoration: none;
+  background: var(--white);
+  border: none;
+  border-bottom: 1px solid rgba(17,17,17,.12);
+  cursor: pointer;
+  text-align: left;
   box-sizing: border-box;
+  transition: opacity .18s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.nav-drawer-projects-trigger:hover {
+  opacity: .5;
+}
+.nav-drawer-projects-trigger:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: -2px;
+  opacity: 1;
+}
+/* Indicador +/− minimalista, alineado a la derecha */
+.nav-drawer-plus {
+  position: relative;
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  margin-left: 16px;
+}
+.nav-drawer-plus::before,
+.nav-drawer-plus::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background: var(--ink);
+  transition: transform .28s var(--ease), opacity .28s var(--ease);
+}
+.nav-drawer-plus::before {
+  width: 16px;
+  height: 1.5px;
+  transform: translate(-50%, -50%);
+}
+.nav-drawer-plus::after {
+  width: 1.5px;
+  height: 16px;
+  transform: translate(-50%, -50%);
+}
+.nav-drawer-projects-trigger[aria-expanded="true"] .nav-drawer-plus::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+  opacity: 0;
+}
+
+/* Panel del acordeón — animación de altura vía grid-template-rows (sin JS) */
+.nav-drawer-projects {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows .32s var(--ease);
+  background: var(--white);
+  border-bottom: 1px solid rgba(17,17,17,.12);
+}
+.nav-drawer-projects.is-open {
+  grid-template-rows: 1fr;
+}
+.nav-drawer-projects-inner {
+  overflow: hidden;
+  min-height: 0;
 }
 .nav-drawer-sublinks {
-  display: block !important;
-  position: static !important;
-  width: 100% !important;
-  height: auto !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  background: #fafafa !important;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 4px 0 16px;
+  margin: 0;
+  background: var(--white);
   list-style: none;
 }
+/* Subsecciones: jerarquía menor, sin tarjetas ni fondos */
 .nav-drawer-sublinks a {
-  display: flex !important;
+  display: flex;
   align-items: center;
   width: 100%;
-  height: 60px !important;
-  min-height: 60px;
-  padding: 0 24px 0 36px !important;
-  font-family: var(--mono);
-  font-size: 12.5px;
-  font-weight: 700;
-  letter-spacing: .05em;
-  text-transform: uppercase;
-  color: #111111 !important;
+  min-height: 52px;
+  padding: 10px clamp(20px, 6vw, 32px) 10px calc(clamp(20px, 6vw, 32px) + 14px) !important;
+  font-family: var(--font);
+  font-size: clamp(17px, 4.6vw, 20px);
+  font-weight: 500;
+  letter-spacing: -.01em;
+  text-transform: none;
+  color: var(--muted) !important;
   text-decoration: none;
-  border-bottom: 1.5px solid #111111;
-  background: #fafafa;
-  transition: background .18s;
+  border: none;
+  background: transparent;
+  transition: color .18s;
   box-sizing: border-box;
 }
-.nav-drawer-sublinks a:last-child {
-  border-bottom: 1.5px solid #111111;
-}
 .nav-drawer-sublinks a:hover {
-  background: #f0f0f0;
+  color: var(--ink) !important;
+}
+.nav-drawer-sublinks a:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  color: var(--ink) !important;
 }
 .nav-drawer-sublinks a.active {
-  background: var(--purple-light) !important;
-  color: var(--purple2) !important;
-}
-.nav-drawer-sublinks a.active:hover {
-  background: #dfe0ff !important;
+  color: var(--ink) !important;
+  font-weight: 700;
 }
 .nav-drawer-sublinks a::after,
 .nav-drawer-sublinks a.active::after {
@@ -717,48 +800,50 @@ nav.nav-drawer-links {
   display: none !important;
 }
 
-/* Anular el ::after del .nav-links a.active que pone línea decorativa */
-.nav-drawer-links a::after,
-.nav-drawer-links a.active::after {
-  content: none !important;
-  display: none !important;
-}
-
-/* ── Footer: LINKEDIN | CONTACTAR ── */
+/* ── Redes / contacto — separadas del bloque principal ── */
 .nav-drawer-foot {
-  flex: 0 0 56px;
-  height: 56px;
-  min-height: 56px;
-  max-height: 56px;
-  border-top: 1.5px solid #111111;
+  flex: 0 0 auto;
+  height: auto;
+  min-height: 0;
+  max-height: none;
   display: flex;
-  background: #ffffff;
+  flex-direction: column;
+  margin-top: 24px;
+  padding: 22px clamp(20px, 6vw, 32px) max(22px, env(safe-area-inset-bottom));
+  border-top: 1px solid rgba(17,17,17,.12);
+  background: var(--white);
 }
 .nav-drawer-foot-item {
-  flex: 1;
+  flex: none;
   display: flex !important;
   align-items: center;
-  justify-content: center;
-  height: 56px;
-  padding: 0 8px !important;
+  justify-content: flex-start;
+  width: 100%;
+  height: auto;
+  min-height: 48px;
+  padding: 10px 0 !important;
   text-decoration: none;
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: #111111 !important;
-  transition: background .18s;
-  border-right: 1.5px solid #111111;
-  border-radius: var(--radius-md);
-  box-sizing: border-box;
-  background: #ffffff;
-}
-.nav-drawer-foot-item:last-child {
+  font-family: var(--font);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -.01em;
+  text-transform: none;
+  color: var(--muted) !important;
+  transition: color .18s;
+  border: none;
   border-right: none;
+  border-radius: 0;
+  box-sizing: border-box;
+  background: transparent;
 }
 .nav-drawer-foot-item:hover {
-  background: #f5f5f5;
+  background: transparent;
+  color: var(--ink) !important;
+}
+.nav-drawer-foot-item:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  color: var(--ink) !important;
 }
 .nav-drawer-foot-item::after {
   content: none !important;

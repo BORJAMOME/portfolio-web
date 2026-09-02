@@ -343,22 +343,27 @@
   <div class="nav-drawer-panel">
     <div class="nav-drawer-head">
       <span class="nav-drawer-brand">Borja Mora.</span>
-      <button class="nav-drawer-close" id="navDrawerClose" aria-label="Cerrar menu">Cerrar ×</button>
+      <button class="nav-drawer-close" id="navDrawerClose" aria-label="Cerrar menu">×</button>
     </div>
     <nav class="nav-drawer-links" aria-label="Navegación móvil">
       <a href="./index.html">Inicio</a>
       <a href="./sobre-mi.html">Sobre mí</a>
-      <span class="nav-drawer-group-label">Proyectos</span>
-      <div class="nav-drawer-sublinks">
-        <a href="./power-bi.html">Power BI</a>
-        <a href="./analisis-datos.html">Análisis</a>
-        <a href="./visualizacion-datos.html" class="active" aria-current="page">Visualización</a>
+      <button class="nav-drawer-projects-trigger" id="navDrawerProjectsBtn" type="button" aria-expanded="false" aria-controls="navDrawerProjects">Proyectos<span class="nav-drawer-plus" aria-hidden="true"></span></button>
+      <div class="nav-drawer-projects" id="navDrawerProjects">
+        <div class="nav-drawer-projects-inner">
+          <div class="nav-drawer-sublinks">
+            <a href="./power-bi.html">Power BI</a>
+            <a href="./analisis-datos.html">Análisis</a>
+            <a href="./visualizacion-datos.html" class="active" aria-current="page">Visualización</a>
+          </div>
+        </div>
       </div>
       <a href="./descargas.html">Descargas</a>
     </nav>
     <div class="nav-drawer-foot">
       <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="nav-drawer-foot-item" onclick="gtag('event','clic_linkedin',{location:'drawer'});">LinkedIn</a>
-      <a id="drawerEmailBtn" href="#" target="_blank" rel="noopener noreferrer" class="nav-drawer-foot-item" onclick="gtag('event','clic_email',{location:'drawer'});">Contactar</a>
+      <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" class="nav-drawer-foot-item" onclick="gtag('event','clic_github',{location:'drawer'});">GitHub</a>
+      <a id="drawerEmailBtn" href="#" target="_blank" rel="noopener noreferrer" class="nav-drawer-foot-item" onclick="gtag('event','clic_email',{location:'drawer'});">Email</a>
     </div>
   </div>
 </div>
@@ -369,15 +374,22 @@
   var closeBtn = document.getElementById('navDrawerClose');
   var backdrop = document.getElementById('navBackdrop');
   if(!burger||!drawer) return;
-  function open(){ drawer.classList.add('open'); burger.setAttribute('aria-expanded','true'); burger.setAttribute('aria-label','Cerrar menu'); document.body.style.overflow='hidden'; document.body.style.position='fixed'; document.body.style.width='100%'; }
-  function close(){ drawer.classList.remove('open'); burger.setAttribute('aria-expanded','false'); burger.setAttribute('aria-label','Abrir menu'); document.body.style.overflow=''; document.body.style.position=''; document.body.style.width=''; }
+  function open(){ drawer.classList.add('open'); burger.setAttribute('aria-expanded','true'); burger.setAttribute('aria-label','Cerrar menu'); document.body.style.overflow='hidden'; document.body.style.position='fixed'; document.body.style.width='100%'; if(closeBtn) closeBtn.focus(); }
+  function close(){ drawer.classList.remove('open'); burger.setAttribute('aria-expanded','false'); burger.setAttribute('aria-label','Abrir menu'); document.body.style.overflow=''; document.body.style.position=''; document.body.style.width=''; burger.focus(); }
   burger.addEventListener('click', function(){ drawer.classList.contains('open') ? close() : open(); });
   if(closeBtn) closeBtn.addEventListener('click', close);
   if(backdrop) backdrop.addEventListener('click', close);
-  document.addEventListener('keydown', function(e){ if(e.key==='Escape') close(); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape' && drawer.classList.contains('open')) close(); });
   var navEmail = document.getElementById('navEmailBtn');
   var drawerEmail = document.getElementById('drawerEmailBtn');
   if(navEmail && drawerEmail){ var obs = new MutationObserver(function(){ drawerEmail.href = navEmail.href; }); obs.observe(navEmail,{attributes:true,attributeFilter:['href']}); if(navEmail.href && navEmail.href !== '#') drawerEmail.href = navEmail.href; }
+  var projBtn = document.getElementById('navDrawerProjectsBtn');
+  var projPanel = document.getElementById('navDrawerProjects');
+  if(projBtn && projPanel){
+    function setProjects(isOpen){ projBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false'); projPanel.classList.toggle('is-open', isOpen); }
+    projBtn.addEventListener('click', function(){ setProjects(projBtn.getAttribute('aria-expanded') !== 'true'); });
+    if(projPanel.querySelector('.nav-drawer-sublinks a.active')) setProjects(true);
+  }
 })();
 </script>
 
