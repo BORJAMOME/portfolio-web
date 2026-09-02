@@ -534,64 +534,69 @@ footer {
   transform: translateY(0);
 }
 
-/* ── Header: marca centrada + cierre amplio ── */
+/* ── Header: cierre a la izquierda (píldora) + marca centrada ── */
 .nav-drawer-head {
-  display: grid !important;
-  grid-template-columns: 52px 1fr 52px;
+  display: flex !important;
   align-items: center;
-  padding: max(14px, env(safe-area-inset-top)) 12px 14px !important;
+  justify-content: flex-start;
+  padding: max(14px, env(safe-area-inset-top)) clamp(16px, 5vw, 28px) 14px !important;
   height: auto !important;
   min-height: 0;
   max-height: none;
   flex: 0 0 auto;
   border-bottom: none;
   background: var(--white) !important;
-  position: static !important;
+  position: relative !important;
   width: auto !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
 .nav-drawer-brand {
-  grid-column: 2;
-  justify-self: center;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   font-family: var(--font);
   font-size: 15px;
   font-weight: 700;
   color: var(--ink);
   letter-spacing: -.02em;
+  pointer-events: none;
 }
-/* Botón cerrar — grande, fácil de pulsar */
+/* Botón cerrar — píldora grande, fácil de pulsar */
 .nav-drawer-close {
-  grid-column: 3;
-  justify-self: end;
-  display: inline-flex;
+  position: relative;
+  z-index: 1;
+  display: inline-flex !important;
   align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  min-height: 48px;
-  padding: 0;
-  background: none;
+  gap: 6px;
+  min-height: 44px;
+  padding: 9px 16px 9px 12px !important;
+  background: rgba(17,17,17,.05);
   border: none;
   cursor: pointer;
   font-family: var(--font);
-  font-size: 28px;
-  font-weight: 400;
+  font-size: 15px;
+  font-weight: 600;
   line-height: 1;
   color: var(--ink);
-  transition: opacity .18s;
+  transition: background .18s;
   white-space: nowrap;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-pill);
   -webkit-appearance: none;
   appearance: none;
 }
+.nav-drawer-close-x {
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1;
+}
 .nav-drawer-close:hover {
-  opacity: .55;
+  background: rgba(17,17,17,.09);
 }
 .nav-drawer-close:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 2px;
-  opacity: 1;
 }
 
 /* ── Links principales: el <nav class="nav-drawer-links"> se RESETEA ──
@@ -707,6 +712,15 @@ nav.nav-drawer-links {
   outline-offset: -2px;
   opacity: 1;
 }
+/* Contador "(+N)" junto al título de la sección expandible */
+.nav-drawer-count {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0;
+  margin-left: 8px;
+  vertical-align: middle;
+}
 /* Indicador +/− minimalista, alineado a la derecha */
 .nav-drawer-plus {
   position: relative;
@@ -755,23 +769,26 @@ nav.nav-drawer-links {
   min-height: 0;
 }
 .nav-drawer-sublinks {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 8px;
+  row-gap: 0;
   width: 100%;
-  padding: 4px 0 16px;
+  padding: 6px clamp(20px, 6vw, 32px) 18px !important;
   margin: 0;
   background: var(--white);
   list-style: none;
+  box-sizing: border-box;
 }
-/* Subsecciones: jerarquía menor, sin tarjetas ni fondos */
+/* Subsecciones: jerarquía menor, sin tarjetas ni fondos, en grid de 2 columnas */
 .nav-drawer-sublinks a {
   display: flex;
   align-items: center;
   width: 100%;
-  min-height: 52px;
-  padding: 10px clamp(20px, 6vw, 32px) 10px calc(clamp(20px, 6vw, 32px) + 14px) !important;
+  min-height: 48px;
+  padding: 8px 6px 8px 0 !important;
   font-family: var(--font);
-  font-size: clamp(17px, 4.6vw, 20px);
+  font-size: clamp(16px, 4.4vw, 19px);
   font-weight: 500;
   letter-spacing: -.01em;
   text-transform: none;
