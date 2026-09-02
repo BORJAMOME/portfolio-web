@@ -225,7 +225,7 @@
 .proj-cards-track-wrap{overflow:hidden;border:none;border-radius:0}
 .proj-cards-track{display:flex;gap:20px;padding:0;transition:transform .5s var(--ease)}
 
-.proj-card{flex:0 0 calc((100% - 40px) / 3);background:var(--white);border:1px solid #e8e8ee;border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:var(--ink);transition:background .18s cubic-bezier(.4,0,.2,1),transform .16s ease-out;box-shadow:none;position:relative;cursor:pointer}
+.proj-card{flex:0 0 calc((100% - 40px) / 3);background:#ffffff;border:1px solid #e8e8ee;border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:var(--ink);transition:background .18s cubic-bezier(.4,0,.2,1),transform .16s ease-out;box-shadow:none;position:relative;cursor:pointer}
 .proj-card:active{transform:scale(.98)}
 @media (hover: hover) and (pointer: fine) { .proj-card:hover{transform:translateY(-4px);box-shadow:0 1px 2px rgba(17,17,17,.04),0 20px 40px rgba(17,17,17,.09)} }
 
@@ -273,8 +273,8 @@
 
 /* LI cards */
 .li-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;border:none}
-.li-card{position:relative;overflow:hidden;text-decoration:none;display:flex;flex-direction:column;min-height:340px;background:var(--white)!important;border:1px solid #e8e8ee;border-radius:var(--radius-lg);transition:transform .2s var(--ease),box-shadow .2s var(--ease);color:var(--ink);box-shadow:none}
-@media (hover: hover) and (pointer: fine) { .li-card:hover{transform:translateY(-4px);box-shadow:0 1px 2px rgba(17,17,17,.04),0 20px 40px rgba(17,17,17,.09);background:var(--white)!important} }
+.li-card{position:relative;overflow:hidden;text-decoration:none;display:flex;flex-direction:column;min-height:340px;background:#ffffff!important;border:1px solid #e8e8ee;border-radius:var(--radius-lg);transition:transform .2s var(--ease),box-shadow .2s var(--ease);color:var(--ink);box-shadow:none}
+@media (hover: hover) and (pointer: fine) { .li-card:hover{transform:translateY(-4px);box-shadow:0 1px 2px rgba(17,17,17,.04),0 20px 40px rgba(17,17,17,.09);background:#ffffff!important} }
 .li-card-bg{position:relative!important;inset:auto!important;width:100%!important;height:200px!important;object-fit:cover;object-position:top;border-bottom:1px solid #e8e8ee;opacity:1!important;transition:transform .3s var(--ease);filter:none}
 @media (hover: hover) and (pointer: fine) { .li-card:hover .li-card-bg{transform:scale(1.03)} }
 .li-card-overlay{display:none}
@@ -295,7 +295,7 @@
 
 /* nat-viz */
 .nat-viz-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;border:none;width:100%}
-.nat-viz-card{position:relative;overflow:hidden;text-decoration:none;display:flex;flex-direction:column;min-height:300px;background:var(--white);border:1px solid #e8e8ee;border-radius:var(--radius-lg);transition:transform .2s var(--ease),box-shadow .2s var(--ease);color:var(--ink);box-shadow:none}
+.nat-viz-card{position:relative;overflow:hidden;text-decoration:none;display:flex;flex-direction:column;min-height:300px;background:#ffffff;border:1px solid #e8e8ee;border-radius:var(--radius-lg);transition:transform .2s var(--ease),box-shadow .2s var(--ease);color:var(--ink);box-shadow:none}
 @media (hover: hover) and (pointer: fine) { .nat-viz-card:hover{transform:translateY(-4px);box-shadow:0 1px 2px rgba(17,17,17,.04),0 20px 40px rgba(17,17,17,.09)} }
 .nat-viz-bg{position:relative!important;inset:auto!important;width:100%!important;height:180px!important;object-fit:cover;object-position:center;border-bottom:1px solid #e8e8ee;transition:transform .3s var(--ease)}
 @media (hover: hover) and (pointer: fine) { .nat-viz-card:hover .nat-viz-bg{transform:scale(1.03)} }
@@ -315,7 +315,7 @@
 
 /* DAX Lab */
 .dax-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;border:none}
-.dax-card{background:var(--white);border:1px solid #e8e8ee;border-radius:var(--radius-lg);padding:28px 26px 24px;display:flex;flex-direction:column;box-shadow:none;transition:transform .2s var(--ease),box-shadow .2s var(--ease);position:relative;overflow:hidden}
+.dax-card{background:#ffffff;border:1px solid #e8e8ee;border-radius:var(--radius-lg);padding:28px 26px 24px;display:flex;flex-direction:column;box-shadow:none;transition:transform .2s var(--ease),box-shadow .2s var(--ease);position:relative;overflow:hidden}
 @media (hover: hover) and (pointer: fine) { .dax-card:hover{transform:translateY(-4px);box-shadow:0 1px 2px rgba(17,17,17,.04),0 20px 40px rgba(17,17,17,.09)} }
 .dax-card-num{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;font-variant-numeric:tabular-nums}
 .dax-card-title{font-size:18px;font-weight:700;letter-spacing:-.3px;line-height:1.25;color:var(--ink);margin-bottom:12px}
@@ -423,7 +423,7 @@
 
 /* Touch — no sticky hover */
 @media(hover:none){
-  .proj-card:hover,.li-card:hover,.nat-viz-card:hover,.dax-card:hover{background:var(--white)!important;color:var(--ink)!important;transform:none!important;box-shadow:none!important}
+  .proj-card:hover,.li-card:hover,.nat-viz-card:hover,.dax-card:hover{background:#ffffff!important;color:var(--ink)!important;transform:none!important;box-shadow:none!important}
   .proj-card:hover *,.li-card:hover *,.nat-viz-card:hover *,.dax-card:hover *{color:inherit!important}
 }
 
