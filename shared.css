@@ -534,12 +534,12 @@ footer {
   transform: translateY(0);
 }
 
-/* ── Header: cierre a la izquierda (píldora) + marca centrada ── */
+/* ── Header: marca a la izquierda + cierre a la derecha ── */
 .nav-drawer-head {
   display: flex !important;
   align-items: center;
-  justify-content: flex-start;
-  padding: max(14px, env(safe-area-inset-top)) clamp(16px, 5vw, 28px) 14px !important;
+  justify-content: space-between;
+  padding: max(14px, env(safe-area-inset-top)) clamp(20px, 6vw, 32px) 14px !important;
   height: auto !important;
   min-height: 0;
   max-height: none;
@@ -552,16 +552,11 @@ footer {
   -webkit-backdrop-filter: none !important;
 }
 .nav-drawer-brand {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
   font-family: var(--font);
   font-size: 15px;
   font-weight: 700;
   color: var(--ink);
   letter-spacing: -.02em;
-  pointer-events: none;
 }
 /* Botón cerrar — píldora grande, fácil de pulsar */
 .nav-drawer-close {
@@ -870,7 +865,7 @@ nav.nav-drawer-links {
 /* ─── RESPONSIVE MOBILE NAV ─── */
 @media (max-width: 875px) {
   .nav-links, .nav-social { display: none !important; }
-  .nav-burger { display: flex; }
+  .nav-burger { display: flex; margin-left: auto; }
 }
 @media (max-width: 640px) {
   #nav, body > nav { height: 56px; padding: 0 clamp(1rem,3vw,1.5rem); }
