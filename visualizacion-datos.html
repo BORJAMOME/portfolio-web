@@ -234,9 +234,9 @@
 /* VIZ cards — mismo sistema visual que .nat-viz-card (power-bi.html) */
 .viz-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 .maps-grid{display:grid;grid-template-columns:1fr;gap:20px}
-.viz-card{position:relative;overflow:hidden;text-decoration:none;display:flex;flex-direction:column;min-height:300px;background:#fbfbfb;border:1px solid #e8e8ee;border-radius:var(--radius-lg);transition:transform .2s var(--ease),box-shadow .2s var(--ease);color:var(--ink);box-shadow:none}
+.viz-card{position:relative;overflow:hidden;text-decoration:none;display:flex;flex-direction:column;min-height:300px;background:#ffffff;border:1px solid #e8e8ee;border-radius:var(--radius-lg);transition:transform .2s var(--ease),box-shadow .2s var(--ease);color:var(--ink);box-shadow:none}
 @media (hover: hover) and (pointer: fine) { .viz-card:hover{transform:translateY(-4px);box-shadow:0 1px 2px rgba(17,17,17,.04),0 20px 40px rgba(17,17,17,.09)} }
-.maps-card{position:relative;overflow:hidden;text-decoration:none;display:flex;flex-direction:column;background:#fbfbfb;border:1px solid #e8e8ee;border-radius:var(--radius-lg);transition:transform .2s var(--ease),box-shadow .2s var(--ease);color:var(--ink);box-shadow:none}
+.maps-card{position:relative;overflow:hidden;text-decoration:none;display:flex;flex-direction:column;background:#ffffff;border:1px solid #e8e8ee;border-radius:var(--radius-lg);transition:transform .2s var(--ease),box-shadow .2s var(--ease);color:var(--ink);box-shadow:none}
 @media (hover: hover) and (pointer: fine) { .maps-card:hover{transform:translateY(-4px);box-shadow:0 1px 2px rgba(17,17,17,.04),0 20px 40px rgba(17,17,17,.09)} }
 .maps-card .viz-card-bg{height:420px!important;border-bottom:1px solid #e8e8ee!important}
 .maps-card .viz-card-content{display:none}
@@ -254,7 +254,7 @@
 .viz-card-link svg{display:none}
 .viz-card-link::after{content:"\2192";display:inline-block;transition:transform .2s}
 @media (hover: hover) and (pointer: fine) { .viz-card:hover .viz-card-link{gap:10px} }
-.viz-card-more{background:#fbfbfb;border:1px solid #e8e8ee;border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;color:var(--ink);min-height:300px;transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
+.viz-card-more{background:#ffffff;border:1px solid #e8e8ee;border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;color:var(--ink);min-height:300px;transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
 .viz-card-more div{color:inherit}
 .viz-card-more svg{stroke:currentColor}
 @media (hover: hover) and (pointer: fine) { .viz-card-more:hover{transform:translateY(-4px);box-shadow:0 1px 2px rgba(17,17,17,.04),0 20px 40px rgba(17,17,17,.09)} }
