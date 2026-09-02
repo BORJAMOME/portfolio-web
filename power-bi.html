@@ -218,8 +218,8 @@
 #powerbi{background:var(--white)!important;padding:64px 0 24px!important;border-top:0!important}
 .pbi-header{margin-bottom:0}
 #powerbi .col-header-left{display:flex;align-items:baseline;gap:18px;margin-bottom:14px}
-#powerbi .col-header-left .col-num{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.4px;color:var(--purple)}
-#powerbi .col-header-left .col-num::before{content:'';width:18px;height:1.5px;background:var(--purple);opacity:.45}
+#powerbi .col-header-left .col-num{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.4px;color:var(--ink)}
+#powerbi .col-header-left .col-num::before{content:'';width:18px;height:1.5px;background:var(--ink);opacity:.5}
 #powerbi .col-header-left .col-title{font-family:var(--font-serif);font-size:clamp(34px,4vw,52px);font-weight:500;letter-spacing:-1.5px;color:var(--ink);line-height:1.1}
 .pbi-desc{font-size:15px;color:var(--muted);line-height:1.7;max-width:480px;margin:0 0 40px 0}
 .pbi-bar,.pbi-title{display:none}
@@ -227,10 +227,10 @@
 /* PBI CARDS — carrusel editorial */
 .pbi-cards-wrap{max-width:1240px;margin:0 auto;padding:0 clamp(20px,4vw,48px);position:relative}
 .proj-cards-outer{position:relative;margin:0 68px}
-.proj-cards-track-wrap{overflow:hidden;border:none;border-radius:var(--radius-lg)}
-.proj-cards-track{display:flex;gap:0;padding:0;transition:transform .5s var(--ease)}
+.proj-cards-track-wrap{overflow:hidden;border:none;border-radius:0}
+.proj-cards-track{display:flex;gap:20px;padding:0;transition:transform .5s var(--ease)}
 
-.proj-card{flex:0 0 calc(100% / 3);background:var(--white);border:1px solid #e8e8ee;border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:var(--ink);transition:transform .2s var(--ease),box-shadow .2s var(--ease);box-shadow:none;position:relative}
+.proj-card{flex:0 0 calc((100% - 40px) / 3);background:var(--white);border:1px solid #e8e8ee;border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:var(--ink);transition:transform .2s var(--ease),box-shadow .2s var(--ease);box-shadow:none;position:relative}
 @media (hover: hover) and (pointer: fine) { .proj-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.08)} }
 
 .pc-photo-wrap{position:relative;height:200px;overflow:hidden;background:#f5f5f8;flex-shrink:0;border-bottom:1px solid #e8e8ee}
@@ -274,9 +274,10 @@
 .pco-dot.active{background:var(--purple);width:24px;background-clip:content-box}
 
 /* Panel section headers (community / native) */
-.panel-section-header{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.4px;color:var(--purple);margin:0 0 20px 0;padding-top:56px;border-top:none}
-.panel-section-header::before{content:"";width:18px;height:1.5px;background:var(--purple);opacity:.45}
+.panel-section-header{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.4px;color:var(--ink);margin:0 0 20px 0;padding-top:56px;border-top:none}
+.panel-section-header::before{content:"";width:18px;height:1.5px;background:var(--ink);opacity:.5}
 .panel-section-dot{display:none}
+.panel-section-num{font-variant-numeric:tabular-nums;margin-right:4px}
 
 /* LI cards */
 .li-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;border:none}
@@ -341,7 +342,7 @@
 .col-header{display:flex;align-items:center;justify-content:space-between;padding:36px 0;cursor:pointer;user-select:none;transition:opacity .15s}
 @media (hover: hover) and (pointer: fine) { .col-header:hover{opacity:.7} }
 .col-header .col-header-left{display:flex;align-items:baseline;gap:20px}
-.col-header .col-num{font-size:10px;font-weight:700;color:var(--purple);letter-spacing:1.2px;text-transform:uppercase;font-variant-numeric:tabular-nums}
+.col-header .col-num{font-size:12px;font-weight:700;color:var(--ink);letter-spacing:1.4px;text-transform:uppercase;font-variant-numeric:tabular-nums}
 .col-header .col-title{font-family:var(--font-serif);font-size:clamp(24px,3vw,36px);font-weight:500;letter-spacing:-1px;color:var(--ink);line-height:1.1}
 .col-desc{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-left:auto;margin-right:24px;display:none}
 @media(min-width:768px){.col-desc{display:block}}
@@ -398,7 +399,7 @@
 
 /* Responsive */
 @media(max-width:960px){
-  .proj-card{flex:0 0 calc(100% / 2)}
+  .proj-card{flex:0 0 calc((100% - 20px) / 2)}
   .li-grid,.nat-viz-grid{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:600px){
@@ -789,7 +790,7 @@
 <!-- ══ COMUNIDAD ══ -->
 <section id="comunidad" style="padding:0 0 56px;">
   <div class="c">
-      <div class="panel-section-header"><span class="panel-section-dot"></span>Aportaciones a la comunidad · LinkedIn</div>
+      <div class="panel-section-header"><span class="panel-section-num">03</span>Aportaciones a la comunidad · LinkedIn</div>
       <div class="li-grid">
         <a href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7440740082766086144-4VZm" target="_blank" rel="noopener noreferrer" class="li-card">
           <picture><source srcset="./img/p1.webp" type="image/webp"><img loading="lazy" src="./img/p1.png" alt="No estás filtrando datos. Estás eligiendo qué historia quieres ver." class="li-card-bg" width="600" height="400"></picture>
@@ -864,7 +865,7 @@
 <!-- ══ GRÁFICOS NATIVOS ══ -->
 <section id="nativos" style="padding:0 0 96px;">
   <div class="c">
-      <div class="panel-section-header"><span class="panel-section-dot"></span>Gráficos nativos · Power BI</div>
+      <div class="panel-section-header"><span class="panel-section-num">04</span>Gráficos nativos · Power BI</div>
       <div class="nat-viz-grid">
         <a href="https://app.powerbi.com/view?r=eyJrIjoiYWY3ZjRlNzItNzZlNC00ZjgwLWFjYTItMGM2NjhlYzQ3MjdjIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="nat-viz-card">
           <picture><source srcset="./img/pareto.webp" type="image/webp"><img loading="lazy" src="./img/pareto.png" alt="Gráfico de Pareto" class="nat-viz-bg" width="600" height="360" style="width:100%;height:100%;object-fit:cover;object-position:center;position:absolute;inset:0;"></picture>
@@ -1094,7 +1095,9 @@ document.querySelectorAll('.sec-nav a,.sec-nav button').forEach(a=>{
   // ── 3. Helpers ────────────────────────────────────────────────
   function slideW(){
     const c = track.querySelector('.proj-card');
-    return c ? c.offsetWidth : 0;
+    if(!c) return 0;
+    const gap = parseFloat(getComputedStyle(track).gap) || 0;
+    return c.offsetWidth + gap;
   }
 
   function moveTo(pos, animated){
