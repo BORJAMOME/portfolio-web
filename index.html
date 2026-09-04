@@ -290,9 +290,6 @@
   margin-bottom: 24px; font-weight: 400;
   opacity: 0; animation: fadeUp .8s .32s var(--ease) forwards;
 }
-/* Copy corto: solo existe visualmente ≤600px (ver media query) */
-.hero-sub-compact { display: none; }
-
 .hero-actions {
   display: flex; gap: 10px; flex-wrap: wrap;
   opacity: 0; animation: fadeUp .8s .62s var(--ease) forwards;
@@ -1032,7 +1029,8 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
    No afecta a desktop/tablet. Objetivos:
    1) el hero llena la primera pantalla (100svh) — nada de "Cómo trabajo"
       debe asomar antes de hacer scroll
-   2) subtítulo corto para llegar antes al contenido real
+   2) mismo copy que desktop, sin prueba social (LinkedIn/impresiones) —
+      solo disponibilidad + credencial, y un cierre amplio antes de los CTAs
    3) sin dashboard: el glow es la pieza "wow" en mobile, más intenso
       que en desktop porque aquí no compite con la tarjeta
    ═══════════════════════════════════════════════ */
@@ -1063,20 +1061,13 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
     animation-name: glow-relay-bleed-m;
   }
 
-  /* El relato en mobile: titular → promesa corta → credenciales → acción.
-     El orden visual sigue el orden real del DOM (misma secuencia para teclado/lector de pantalla).
-     Ritmo graduado en 3 niveles según lo que separan, no un valor repetido:
-     ajustado dentro de una misma familia de información, medio dentro de
-     una misma unidad de lectura, amplio al cambiar de categoría, y el más
-     amplio de todos antes de los botones — el cierre de la tarjeta. */
-  .hero-h1 { margin-bottom: 24px; }               /* medio: titular↔subtítulo, misma unidad de lectura */
-  .hero-sub { margin-bottom: 44px; }               /* amplio: subtítulo↔credenciales, cambia de categoría */
-  .hero-meta:not(.hero-social-proof) { margin-bottom: 6px; }  /* ajustado: credencial↔prueba social, misma familia */
-  .hero-social-proof { margin-top: 0; margin-bottom: 52px; }  /* el más amplio: cierre de la tarjeta antes de los CTAs */
-
-  /* 2) Subtítulo corto */
-  .hero-sub-full    { display: none; }
-  .hero-sub-compact { display: block; font-size: 16.5px; line-height: 1.6; }
+  /* El relato en mobile: titular → copy completo → credenciales → acción.
+     Sin prueba social (LinkedIn/impresiones) en mobile — solo disponibilidad
+     y credencial. El orden visual sigue el orden real del DOM. */
+  .hero-h1 { margin-bottom: 24px; }     /* medio: titular↔subtítulo, misma unidad de lectura */
+  .hero-sub { margin-bottom: 40px; }    /* amplio: subtítulo↔credenciales, cambia de categoría */
+  .hero-social-proof { display: none; } /* fuera en mobile: LinkedIn + impresiones */
+  .hero-meta:not(.hero-social-proof) { margin-bottom: 64px; } /* el más amplio: cierre de la tarjeta antes de los CTAs */
 }
 
 /* ─── CÓMO TRABAJO · ÍNDICE XXL ─── */
@@ -1538,13 +1529,9 @@ footer {
         Analizo datos.<br>Diseño cómo se leen.
       </h1>
 
-      <!-- Subtitle — versión completa (desktop/tablet) -->
-      <p class="hero-sub hero-sub-full">
+      <!-- Subtitle — mismo texto en todas las resoluciones -->
+      <p class="hero-sub">
         Soy Borja Mora, Data Analyst. Construyo dashboards en Power BI y analizo datos con Python y SQL. Me interesa entender qué hay detrás de los datos y encontrar la mejor forma de explicarlo. Aquí encontrarás una selección de proyectos en los que he trabajado desde diferentes perspectivas.
-      </p>
-      <!-- Subtitle — versión corta (solo mobile ≤600px, ver media query) -->
-      <p class="hero-sub hero-sub-compact">
-        Data Analyst. Construyo dashboards en Power BI y analizo datos con Python y SQL — pensados para leerse sin preguntar.
       </p>
 
 
