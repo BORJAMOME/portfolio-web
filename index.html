@@ -1064,10 +1064,15 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   }
 
   /* El relato en mobile: titular → promesa corta → credenciales → acción.
-     El orden visual sigue el orden real del DOM (misma secuencia para teclado/lector de pantalla). */
-  .hero-sub { margin-bottom: 18px; }
-  .hero-meta:not(.hero-social-proof) { margin-bottom: 8px; }
-  .hero-social-proof { margin-top: 0; margin-bottom: 22px; }
+     El orden visual sigue el orden real del DOM (misma secuencia para teclado/lector de pantalla).
+     Ritmo graduado en 3 niveles según lo que separan, no un valor repetido:
+     ajustado dentro de una misma familia de información, medio dentro de
+     una misma unidad de lectura, amplio al cambiar de categoría, y el más
+     amplio de todos antes de los botones — el cierre de la tarjeta. */
+  .hero-h1 { margin-bottom: 24px; }               /* medio: titular↔subtítulo, misma unidad de lectura */
+  .hero-sub { margin-bottom: 44px; }               /* amplio: subtítulo↔credenciales, cambia de categoría */
+  .hero-meta:not(.hero-social-proof) { margin-bottom: 6px; }  /* ajustado: credencial↔prueba social, misma familia */
+  .hero-social-proof { margin-top: 0; margin-bottom: 52px; }  /* el más amplio: cierre de la tarjeta antes de los CTAs */
 
   /* 2) Subtítulo corto */
   .hero-sub-full    { display: none; }
