@@ -3066,5 +3066,22 @@ document.addEventListener('keydown', function(e){
   </div>
 </div>
 
+<!-- ── Tracking de evidencia técnica (dashboards reales) ── -->
+<script>
+(function () {
+  function fire(name, params) { if (typeof gtag === 'function') gtag('event', name, params); }
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest('.pc-overlay-btn[href*="app.powerbi.com"]');
+    if (!el) return;
+    var copy = el.closest('.pc-overlay-copy');
+    var title = copy ? copy.querySelector('.pc-overlay-title') : null;
+    fire('ver_dashboard_powerbi', {
+      dashboard_name: title ? title.textContent.trim() : 'desconocido',
+      location: 'home_proyectos_destacados'
+    });
+  }, true);
+})();
+</script>
+
 </body>
 </html>

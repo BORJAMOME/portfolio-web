@@ -883,5 +883,35 @@ document.querySelectorAll('.sec-nav button').forEach(a=>{
   });
 })();
 </script>
+
+<!-- ── Tracking de evidencia técnica (apps y código) ── -->
+<script>
+(function () {
+  function fire(name, params) { if (typeof gtag === 'function') gtag('event', name, params); }
+  document.addEventListener('click', function (e) {
+    var el;
+    if (el = e.target.closest('.cc-link[href*="streamlit.app"]')) {
+      var card = el.closest('.card-c');
+      var cat = card ? card.querySelector('.cc-cat') : null;
+      fire('clic_app_streamlit', {
+        app_name: cat ? cat.textContent.trim() : 'desconocido',
+        location: 'analisis_datos'
+      });
+    } else if (el = e.target.closest('.cc-link[href*="github.com"]')) {
+      var card2 = el.closest('.card-c');
+      var cat2 = card2 ? card2.querySelector('.cc-cat') : null;
+      fire('clic_github_proyecto', {
+        repo_name: cat2 ? cat2.textContent.trim() : 'desconocido',
+        location: 'analisis_datos'
+      });
+    } else if (el = e.target.closest('a.ext-btn[href*="github.com"]')) {
+      fire('clic_github_proyecto', {
+        repo_name: el.textContent.trim(),
+        location: 'analisis_datos_ver_mas'
+      });
+    }
+  }, true);
+})();
+</script>
 </body>
 </html>

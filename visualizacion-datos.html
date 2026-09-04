@@ -765,5 +765,24 @@ document.querySelectorAll('.col-header').forEach(h=>{
   });
 })();
 </script>
+
+<!-- ── Tracking de evidencia técnica (piezas en Behance) ── -->
+<script>
+(function () {
+  function fire(name, params) { if (typeof gtag === 'function') gtag('event', name, params); }
+  document.addEventListener('click', function (e) {
+    var el;
+    if (el = e.target.closest('.viz-card-more[href*="behance.net"]')) {
+      fire('clic_behance', { piece_name: 'ver_mas_proyectos_perfil', location: 'visualizacion_datos' });
+    } else if (el = e.target.closest('.viz-card[href*="behance.net"], .maps-card[href*="behance.net"]')) {
+      var t = el.querySelector('.viz-card-title');
+      fire('clic_behance', {
+        piece_name: t ? t.textContent.trim() : 'desconocido',
+        location: 'visualizacion_datos'
+      });
+    }
+  }, true);
+})();
+</script>
 </body>
 </html>

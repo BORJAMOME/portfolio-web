@@ -1642,5 +1642,41 @@ document.querySelectorAll('.col-header').forEach(h=>{
   });
 })();
 </script>
+
+<!-- ── Tracking de evidencia técnica (dashboards y código) ── -->
+<script>
+(function () {
+  function fire(name, params) { if (typeof gtag === 'function') gtag('event', name, params); }
+  document.addEventListener('click', function (e) {
+    var el;
+    if (el = e.target.closest('.pc-btn[href*="app.powerbi.com"]')) {
+      var card = el.closest('.proj-card, .pc-overlay-copy');
+      var title = card ? card.querySelector('.pc-headline, .pc-overlay-title') : null;
+      fire('ver_dashboard_powerbi', {
+        dashboard_name: title ? title.textContent.trim() : 'desconocido',
+        location: 'power_bi_proyectos'
+      });
+    } else if (el = e.target.closest('.nat-viz-card[href*="app.powerbi.com"]')) {
+      var t = el.querySelector('.nat-viz-title');
+      fire('ver_dashboard_powerbi', {
+        dashboard_name: t ? t.textContent.trim() : 'desconocido',
+        location: 'power_bi_nativos'
+      });
+    } else if (el = e.target.closest('.dax-card-link[href*="github.com"]')) {
+      var dc = el.closest('.dax-card');
+      var dt = dc ? dc.querySelector('.dax-card-title') : null;
+      fire('clic_github_proyecto', {
+        repo_name: dt ? dt.textContent.trim() : 'desconocido',
+        location: 'power_bi_daxlab'
+      });
+    } else if (el = e.target.closest('a.ext-btn[href*="github.com"]')) {
+      fire('clic_github_proyecto', {
+        repo_name: el.textContent.trim(),
+        location: 'power_bi_daxlab_ver_mas'
+      });
+    }
+  }, true);
+})();
+</script>
 </body>
 </html>
