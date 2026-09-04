@@ -1674,6 +1674,13 @@ document.querySelectorAll('.col-header').forEach(h=>{
         repo_name: el.textContent.trim(),
         location: 'power_bi_daxlab_ver_mas'
       });
+    } else if (el = e.target.closest('.pc-read-more')) {
+      var pcard = el.closest('.proj-card');
+      var pt = pcard ? pcard.querySelector('.pc-headline') : null;
+      fire('clic_tarjeta_proyecto', {
+        project_id: pt ? pt.textContent.trim() : 'desconocido',
+        location: 'power_bi_proyectos'
+      });
     }
   }, true);
 })();

@@ -45,6 +45,50 @@
   })();
 </script>
 
+<!-- ── Cookie banner CSS (RGPD/LOPDGDD) ── -->
+<style>
+  #bm-cookie-banner {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(0);
+    z-index: 99999; width: min(540px, calc(100vw - 32px));
+    background: #0e0e0e; color: #f7f7fa;
+    border: 1px solid rgba(122,123,255,.3);
+    border-radius: 16px; padding: 16px 20px;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    box-shadow: 0 12px 48px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.04);
+    font-family: var(--font);
+    font-size: 13px; line-height: 1.55;
+    opacity: 0; pointer-events: none;
+    transition: opacity .3s ease, transform .35s var(--ease);
+  }
+  #bm-cookie-banner.bm-visible {
+    opacity: 1; pointer-events: auto;
+  }
+  #bm-cookie-banner.bm-hiding {
+    opacity: 0; transform: translateX(-50%) translateY(16px);
+  }
+  #bm-cookie-banner p { margin: 0; flex: 1; min-width: 200px; color: #b8b8cc; }
+  #bm-cookie-banner strong { color: #f7f7fa; font-weight: 600; }
+  #bm-cookie-banner a { color: #7a7bff; text-decoration: none; border-bottom: 1px solid rgba(122,123,255,.4); }
+  .bm-cb-btns { display: flex; gap: 8px; flex-shrink: 0; }
+  .bm-cb-btn {
+    cursor: pointer; border: none; border-radius: 9px;
+    padding: 9px 18px; font-size: 12px; font-weight: 700;
+    font-family: inherit; letter-spacing: .4px;
+    transition: opacity .15s, transform .12s;
+    text-transform: uppercase;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .bm-cb-btn:hover { opacity: .82; transform: translateY(-1px); }
+  }
+  .bm-cb-btn:active { transform: translateY(0); }
+  .bm-cb-accept { background: #7a7bff; color: #fff; }
+  .bm-cb-reject { background: rgba(255,255,255,.07); color: #b8b8cc; border: 1px solid rgba(255,255,255,.1); }
+  @media (max-width: 480px) {
+    #bm-cookie-banner { bottom: 16px; padding: 14px 16px; border-radius: 12px; }
+    .bm-cb-btns { width: 100%; justify-content: flex-end; }
+  }
+</style>
+
 <meta name="description" content="Descarga gratis archivos .pbix de Power BI: Gantt nativo, widgets, Input Slicer, Slope charts, Small Multiples y técnicas avanzadas de DAX y Data Storytelling.">
 <meta name="author" content="Borja Mora Méndez">
 <meta name="robots" content="index, follow, max-image-preview:large">
@@ -1299,6 +1343,60 @@ observeCierre();
   var url = 'https://mail.google.com/mail/u/0/?fs=1&to=' + e + '&su=' + su + '&body=' + body + '&tf=cm';
   var navBtn = document.getElementById('navEmailBtn');
   if (navBtn) navBtn.href = url;
+})();
+</script>
+
+<!-- ── Cookie banner HTML + lógica (RGPD/LOPDGDD) ── -->
+<div id="bm-cookie-banner" role="dialog" aria-live="polite" aria-label="Aviso de cookies">
+  <p><strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Política de privacidad</a>.</p>
+  <div class="bm-cb-btns">
+    <button class="bm-cb-btn bm-cb-reject" id="bm-cb-reject" aria-label="Rechazar cookies">Rechazar</button>
+    <button class="bm-cb-btn bm-cb-accept" id="bm-cb-accept" aria-label="Aceptar cookies">Aceptar</button>
+  </div>
+</div>
+<script>
+(function () {
+  var KEY = "bm_cookie_consent";
+  var banner = document.getElementById("bm-cookie-banner");
+  if (!banner) return;
+
+  function dismiss() {
+    banner.classList.remove("bm-visible");
+    banner.classList.add("bm-hiding");
+    setTimeout(function () {
+      banner.style.display = "none";
+    }, 380);
+  }
+
+  function grantAnalytics() {
+    if (typeof gtag === "function") {
+      gtag("consent", "update", { analytics_storage: "granted" });
+    }
+  }
+
+  /* Solo mostrar si no hay decisión previa */
+  if (!localStorage.getItem(KEY)) {
+    /* Pequeño delay para que la animación sea visible */
+    setTimeout(function () {
+      banner.classList.add("bm-visible");
+    }, 600);
+  } else if (localStorage.getItem(KEY) === "accepted") {
+    grantAnalytics();
+    banner.style.display = "none";
+  } else {
+    banner.style.display = "none";
+  }
+
+  document.getElementById("bm-cb-accept").addEventListener("click", function () {
+    localStorage.setItem(KEY, "accepted");
+    grantAnalytics();
+    dismiss();
+  });
+
+  document.getElementById("bm-cb-reject").addEventListener("click", function () {
+    localStorage.setItem(KEY, "rejected");
+    dismiss();
+  });
 })();
 </script>
 </body>

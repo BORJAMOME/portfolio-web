@@ -1984,7 +1984,7 @@ footer {
     <div class="ml-grid">
 
       <!-- ── CARD ML-1: K-Means + t-SNE Retail ── -->
-      <div class="card-c" onclick="window.open('https://segmentacion-retail.streamlit.app','_blank','noopener,noreferrer')">
+      <div class="card-c" onclick="gtag('event','clic_app_streamlit',{app_name:'Segmentación de clientes · Electrónica',location:'home_analisis',trigger:'card'});window.open('https://segmentacion-retail.streamlit.app','_blank','noopener,noreferrer')">
         <div class="cc-cat">Segmentación de clientes · Electrónica</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
@@ -2000,12 +2000,12 @@ footer {
         </div>
         <div class="cc-foot">
           <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">K-Means</span><span class="cc-pill">t-SNE</span></div>
-          <a class="cc-link" href="https://segmentacion-retail.streamlit.app" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Ver →</a>
+          <a class="cc-link" href="https://segmentacion-retail.streamlit.app" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();gtag('event','clic_app_streamlit',{app_name:'Segmentación de clientes · Electrónica',location:'home_analisis',trigger:'ver_link'});">Ver →</a>
         </div>
       </div>
 
       <!-- ── CARD ML-2: SARIMA vs SARIMAX Retail ── -->
-      <div class="card-c" onclick="window.open('https://forecast-ventas-retail-app-w5msdvcsbuxas94qjcdore.streamlit.app','_blank','noopener,noreferrer')">
+      <div class="card-c" onclick="gtag('event','clic_app_streamlit',{app_name:'Previsión de ventas · Retail',location:'home_analisis',trigger:'card'});window.open('https://forecast-ventas-retail-app-w5msdvcsbuxas94qjcdore.streamlit.app','_blank','noopener,noreferrer')">
         <div class="cc-cat">Previsión de ventas · Retail</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
@@ -2021,12 +2021,12 @@ footer {
         </div>
         <div class="cc-foot">
           <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">SARIMAX</span><span class="cc-pill">statsmodels</span></div>
-          <a class="cc-link" href="https://forecast-ventas-retail-app-w5msdvcsbuxas94qjcdore.streamlit.app" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Ver →</a>
+          <a class="cc-link" href="https://forecast-ventas-retail-app-w5msdvcsbuxas94qjcdore.streamlit.app" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();gtag('event','clic_app_streamlit',{app_name:'Previsión de ventas · Retail',location:'home_analisis',trigger:'ver_link'});">Ver →</a>
         </div>
       </div>
 
       <!-- ── CARD ML-3: Segmentación Aerolínea ── -->
-      <div class="card-c" onclick="window.open('https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/01-supervisado/clasificacion/04-comparativa-modelos/04-segmentacion-aerolinea','_blank','noopener,noreferrer')">
+      <div class="card-c" onclick="gtag('event','clic_github_proyecto',{repo_name:'Fidelización de pasajeros · Aerolínea',location:'home_analisis',trigger:'card'});window.open('https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/01-supervisado/clasificacion/04-comparativa-modelos/04-segmentacion-aerolinea','_blank','noopener,noreferrer')">
         <div class="cc-cat">Fidelización de pasajeros · Aerolínea</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
@@ -2042,7 +2042,7 @@ footer {
         </div>
         <div class="cc-foot">
           <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">Gradient Boosting</span><span class="cc-pill">scikit-learn</span></div>
-          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/01-supervisado/clasificacion/04-comparativa-modelos/04-segmentacion-aerolinea" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Ver →</a>
+          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/01-supervisado/clasificacion/04-comparativa-modelos/04-segmentacion-aerolinea" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();gtag('event','clic_github_proyecto',{repo_name:'Fidelización de pasajeros · Aerolínea',location:'home_analisis',trigger:'ver_link'});">Ver →</a>
         </div>
       </div>
 
@@ -3071,15 +3071,50 @@ document.addEventListener('keydown', function(e){
 (function () {
   function fire(name, params) { if (typeof gtag === 'function') gtag('event', name, params); }
   document.addEventListener('click', function (e) {
-    var el = e.target.closest('.pc-overlay-btn[href*="app.powerbi.com"]');
-    if (!el) return;
-    var copy = el.closest('.pc-overlay-copy');
-    var title = copy ? copy.querySelector('.pc-overlay-title') : null;
-    fire('ver_dashboard_powerbi', {
-      dashboard_name: title ? title.textContent.trim() : 'desconocido',
-      location: 'home_proyectos_destacados'
-    });
+    var el;
+    if (el = e.target.closest('.pc-overlay-btn[href*="app.powerbi.com"]')) {
+      var copy = el.closest('.pc-overlay-copy');
+      var title = copy ? copy.querySelector('.pc-overlay-title') : null;
+      fire('ver_dashboard_powerbi', {
+        dashboard_name: title ? title.textContent.trim() : 'desconocido',
+        location: 'home_proyectos_destacados'
+      });
+    } else if (el = e.target.closest('.proj-card[onclick]')) {
+      var name = el.querySelector('.pc-name');
+      fire('clic_tarjeta_proyecto', {
+        project_id: name ? name.textContent.trim() : 'desconocido',
+        location: 'home_proyectos_destacados'
+      });
+    }
   }, true);
+})();
+</script>
+
+<!-- ── Scroll depth (25/50/75/90/100%) ── -->
+<script>
+(function () {
+  var thresholds = [25, 50, 75, 90, 100];
+  var fired = {};
+  var ticking = false;
+  function check() {
+    ticking = false;
+    var doc = document.documentElement;
+    var fullHeight = Math.max(doc.scrollHeight, doc.offsetHeight, document.body.scrollHeight, document.body.offsetHeight);
+    var scrollable = fullHeight - window.innerHeight;
+    if (scrollable <= 0) return;
+    var pct = Math.round((window.scrollY / scrollable) * 100);
+    thresholds.forEach(function (t) {
+      if (pct >= t && !fired[t]) {
+        fired[t] = true;
+        if (typeof gtag === 'function') {
+          gtag('event', 'scroll_' + t, { percent_scrolled: t, location: 'home' });
+        }
+      }
+    });
+  }
+  window.addEventListener('scroll', function () {
+    if (!ticking) { window.requestAnimationFrame(check); ticking = true; }
+  }, { passive: true });
 })();
 </script>
 

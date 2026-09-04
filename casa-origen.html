@@ -1162,5 +1162,33 @@ class Component extends DCLogic {
   });
 })();
 </script>
+
+<!-- ── Scroll depth (25/50/75/90/100%) ── -->
+<script>
+(function () {
+  var thresholds = [25, 50, 75, 90, 100];
+  var fired = {};
+  var ticking = false;
+  function check() {
+    ticking = false;
+    var doc = document.documentElement;
+    var fullHeight = Math.max(doc.scrollHeight, doc.offsetHeight, document.body.scrollHeight, document.body.offsetHeight);
+    var scrollable = fullHeight - window.innerHeight;
+    if (scrollable <= 0) return;
+    var pct = Math.round((window.scrollY / scrollable) * 100);
+    thresholds.forEach(function (t) {
+      if (pct >= t && !fired[t]) {
+        fired[t] = true;
+        if (typeof gtag === 'function') {
+          gtag('event', 'scroll_' + t, { percent_scrolled: t, location: 'casa_origen' });
+        }
+      }
+    });
+  }
+  window.addEventListener('scroll', function () {
+    if (!ticking) { window.requestAnimationFrame(check); ticking = true; }
+  }, { passive: true });
+})();
+</script>
 </body>
 </html>
