@@ -211,8 +211,8 @@
   position: absolute; inset: 0;
   background:
     radial-gradient(ellipse 65% 55% at 50% 50%, rgba(122,123,255,.09) 0%, rgba(122,123,255,.03) 50%, transparent 75%),
-    linear-gradient(rgba(122,123,255,.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(122,123,255,.025) 1px, transparent 1px);
+    linear-gradient(rgba(122,123,255,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(122,123,255,.05) 1px, transparent 1px);
   background-size: 100% 100%, 28px 28px, 28px 28px;
   -webkit-mask-image: radial-gradient(ellipse 80% 75% at 50% 50%, black 30%, transparent 80%);
   mask-image: radial-gradient(ellipse 80% 75% at 50% 50%, black 30%, transparent 80%);
@@ -297,6 +297,78 @@
 .hero-actions {
   display: flex; gap: 10px; flex-wrap: wrap;
   opacity: 0; animation: fadeUp .8s .62s var(--ease) forwards;
+}
+
+/* ═══════════════════════════════════════════════
+   HERO GLOW — recorrido en relevo: core → rim → bleed.
+   Un solo gesto con dirección: la luz se enciende en el dashboard, un
+   filo la recoge y viaja un tramo corto por el borde de la tarjeta, y
+   se apaga derramándose hacia el copy — el mismo recorrido que sigue
+   la vista. Solo el filo se mueve de verdad (offset-path); el núcleo y
+   el halo "viajan" por crossfade de opacidad. Validado en preview.
+   ═══════════════════════════════════════════════ */
+.hero-glow { position:absolute; inset:0; z-index:0; overflow:visible; pointer-events:none; }
+.glow {
+  position:absolute; border-radius:50%;
+  opacity:0; will-change:opacity;
+  animation-timing-function: cubic-bezier(.45,0,.15,1);
+  animation-iteration-count: infinite;
+  animation-duration: 13s;
+}
+.glow-core {
+  width:620px; height:620px; top:6%; right:-10%;
+  background: radial-gradient(circle, rgba(122,123,255,.55) 0%, rgba(122,123,255,.22) 45%, transparent 72%);
+  filter: blur(70px);
+  animation-name: glow-relay-core;
+}
+.glow-bleed {
+  width:920px; height:520px; top:32%; left:-4%;
+  background: radial-gradient(ellipse, rgba(122,123,255,.4) 0%, rgba(122,123,255,.12) 50%, transparent 78%);
+  filter: blur(110px); transform:rotate(-8deg);
+  animation-name: glow-relay-bleed;
+}
+.glow-rim {
+  width:190px; height:190px; top:10%; right:8%;
+  background: radial-gradient(circle, rgba(157,158,255,.7) 0%, rgba(157,158,255,.25) 45%, transparent 68%);
+  filter: blur(26px);
+  offset-path: path("M0,0 Q70,-26 150,4");
+  offset-rotate: 0deg;
+  animation-name: glow-relay-rim, glow-rim-travel;
+}
+@keyframes glow-relay-core {
+  0%   { opacity:.46; }
+  12%  { opacity:.5;  }
+  30%  { opacity:.17; }
+  50%  { opacity:.05; }
+  85%  { opacity:.05; }
+  100% { opacity:.46; }
+}
+@keyframes glow-relay-rim {
+  0%   { opacity:0;   }
+  14%  { opacity:.08; }
+  22%  { opacity:.58; }
+  32%  { opacity:.3;  }
+  42%  { opacity:0;   }
+  100% { opacity:0;   }
+}
+@keyframes glow-rim-travel {
+  0%   { offset-distance:0%;   }
+  14%  { offset-distance:0%;   }
+  32%  { offset-distance:100%; }
+  42%  { offset-distance:100%; }
+  100% { offset-distance:0%;   }
+}
+@keyframes glow-relay-bleed {
+  0%   { opacity:.03; }
+  28%  { opacity:.04; }
+  45%  { opacity:.1;  }
+  58%  { opacity:.19; }
+  75%  { opacity:.11; }
+  92%  { opacity:.04; }
+  100% { opacity:.03; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glow { animation:none !important; opacity:.14 !important; offset-distance:0% !important; }
 }
 
 /* ─── HERO DASHBOARD ─── */
@@ -953,6 +1025,11 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   .hero-inner { grid-template-columns: 1fr; }
   .hero-right { display: none; }
 
+  /* Sin dashboard visible en mobile, el núcleo/filo no tienen "fuente" que iluminar:
+     se apagan y queda solo el halo, más pequeño y centrado sobre el copy. */
+  .glow-core, .glow-rim { display: none; }
+  .glow-bleed { width: 520px; height: 420px; top: -40px; left: -15%; }
+
   /* El relato en mobile: titular → promesa corta → prueba → credenciales → acción.
      El orden visual sigue el orden real del DOM (misma secuencia para teclado/lector de pantalla). */
   .hero-sub { margin-bottom: 18px; }
@@ -1456,6 +1533,11 @@ footer {
 <section class="hero" id="hero" tabindex="-1">
 <!-- main-content anchor for skip-link -->
 <span id="main-content" style="position:absolute"></span>
+  <div class="hero-glow" aria-hidden="true">
+    <span class="glow glow-bleed"></span>
+    <span class="glow glow-core"></span>
+    <span class="glow glow-rim"></span>
+  </div>
   <div class="hero-inner">
     <div class="hero-left">
 
