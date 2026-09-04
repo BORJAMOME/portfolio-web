@@ -290,9 +290,8 @@
   margin-bottom: 24px; font-weight: 400;
   opacity: 0; animation: fadeUp .8s .32s var(--ease) forwards;
 }
-/* Copy corto y tarjeta de dashboard compacta: solo existen visualmente ≤600px (ver media query) */
+/* Copy corto: solo existe visualmente ≤600px (ver media query) */
 .hero-sub-compact { display: none; }
-.hero-mobile-proof { display: none; }
 
 .hero-actions {
   display: flex; gap: 10px; flex-wrap: wrap;
@@ -366,6 +365,26 @@
   75%  { opacity:.11; }
   92%  { opacity:.04; }
   100% { opacity:.03; }
+}
+/* Variantes mobile — mismo ritmo del relevo (core enciende, bleed cierra),
+   picos más altos porque en mobile el glow no acompaña a una tarjeta: es
+   el protagonista. */
+@keyframes glow-relay-core-m {
+  0%   { opacity:.55; }
+  12%  { opacity:.62; }
+  30%  { opacity:.22; }
+  50%  { opacity:.08; }
+  85%  { opacity:.08; }
+  100% { opacity:.55; }
+}
+@keyframes glow-relay-bleed-m {
+  0%   { opacity:.07; }
+  28%  { opacity:.09; }
+  45%  { opacity:.2;  }
+  58%  { opacity:.34; }
+  75%  { opacity:.21; }
+  92%  { opacity:.09; }
+  100% { opacity:.07; }
 }
 @media (prefers-reduced-motion: reduce) {
   .glow { animation:none !important; opacity:.14 !important; offset-distance:0% !important; }
@@ -1013,7 +1032,8 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
    No afecta a desktop/tablet. Objetivos:
    1) altura por contenido, no min-height:100vh forzado
    2) subtítulo corto para llegar antes al contenido real
-   3) tarjeta de dashboard compacta — la prueba visual no desaparece, se adapta
+   3) sin dashboard: el glow es la pieza "wow" en mobile, más intenso
+      que en desktop porque aquí no compite con la tarjeta
    ═══════════════════════════════════════════════ */
 @media (max-width: 600px) {
 
@@ -1025,66 +1045,29 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   .hero-inner { grid-template-columns: 1fr; }
   .hero-right { display: none; }
 
-  /* Sin dashboard visible en mobile, el núcleo/filo no tienen "fuente" que iluminar:
-     se apagan y queda solo el halo, más pequeño y centrado sobre el copy. */
-  .glow-core, .glow-rim { display: none; }
-  .glow-bleed { width: 520px; height: 420px; top: -40px; left: -15%; }
+  /* 3) Sin dashboard que ilumine: el glow pasa a ser el elemento "wow" en
+     mobile, no un acompañamiento. Sin filo (no hay borde de tarjeta que
+     recorrer) — núcleo detrás del titular y halo hacia las credenciales/
+     CTAs, ambos más grandes e intensos que su versión desktop. */
+  .glow-rim { display: none; }
+  .glow-core {
+    width: 480px; height: 480px; top: -70px; right: -22%;
+    animation-name: glow-relay-core-m;
+  }
+  .glow-bleed {
+    width: 560px; height: 460px; top: 220px; left: -20%;
+    animation-name: glow-relay-bleed-m;
+  }
 
-  /* El relato en mobile: titular → promesa corta → prueba → credenciales → acción.
+  /* El relato en mobile: titular → promesa corta → credenciales → acción.
      El orden visual sigue el orden real del DOM (misma secuencia para teclado/lector de pantalla). */
   .hero-sub { margin-bottom: 18px; }
-  .hero-mobile-proof { margin-top: 0; }
   .hero-meta:not(.hero-social-proof) { margin-bottom: 8px; }
   .hero-social-proof { margin-top: 0; margin-bottom: 22px; }
 
   /* 2) Subtítulo corto */
   .hero-sub-full    { display: none; }
   .hero-sub-compact { display: block; font-size: 16.5px; line-height: 1.6; }
-
-  /* 3) Tarjeta de dashboard compacta */
-  .hero-mobile-proof {
-    display: block;
-    background: #fbfbfb;
-    border: .5px solid var(--gray);
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 0 0 1px rgba(122,123,255,.08), 0 10px 28px rgba(17,17,17,.09);
-    margin-bottom: 22px;
-    opacity: 0; transform: translateY(14px);
-    animation: fadeUp .7s .48s var(--ease) forwards;
-  }
-  .hmp-bar {
-    display: flex; align-items: center; gap: 5px;
-    padding: 10px 13px; border-bottom: .5px solid var(--gray);
-  }
-  .hmp-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .hmp-url {
-    margin-left: 6px; font-size: 11px; color: var(--muted-light); font-weight: 500;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .hmp-flag {
-    display: flex; align-items: center; justify-content: space-between; gap: 8px;
-    padding: 8px 13px; font-size: 9.5px; font-weight: 700; letter-spacing: .4px;
-    color: var(--muted); background: #ffffff; border-bottom: .5px solid var(--gray);
-  }
-  .hmp-live { display: inline-flex; align-items: center; gap: 5px; color: #28c840; font-weight: 700; flex-shrink: 0; }
-  .hmp-live-dot { width: 6px; height: 6px; border-radius: 50%; background: #28c840; animation: pulse-dot 1.8s ease-in-out infinite; }
-  .hmp-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--gray); }
-  .hmp-kpi { background: #ffffff; padding: 14px 14px 12px; display: flex; flex-direction: column; gap: 6px; }
-  .hmp-kpi-label { font-size: 9.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); }
-  .hmp-kpi-value { font-size: 22px; font-weight: 700; color: var(--ink); letter-spacing: -.5px; font-variant-numeric: tabular-nums; }
-  .hmp-kpi-delta { font-size: 11px; font-weight: 700; width: fit-content; padding: 2px 7px; border-radius: 5px; }
-  .hmp-kpi-delta.hmp-up { background: var(--green-light); color: var(--green); }
-  .hmp-regions { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 9px; background: #ffffff; }
-  .hmp-regions-label { font-size: 9.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); margin-bottom: 2px; }
-  .hmp-bar-row { display: flex; align-items: center; gap: 8px; }
-  .hmp-bar-name { font-size: 11px; font-weight: 600; color: var(--ink); width: 44px; flex-shrink: 0; }
-  .hmp-bar-track { flex: 1; height: 6px; background: #f0f0f5; border-radius: 99px; overflow: hidden; }
-  .hmp-bar-fill { display: block; height: 100%; width: 0; background: var(--purple); border-radius: 99px; transition: width 1s var(--ease) .85s; }
-  .hmp-bar-fill.hmp-down-fill { background: var(--red); }
-  .hmp-bar-val { font-size: 10.5px; font-weight: 700; width: 46px; text-align: right; flex-shrink: 0; }
-  .hmp-bar-val.hmp-up { color: var(--green); }
-  .hmp-bar-val.hmp-down { color: var(--red); }
 }
 
 /* ─── CÓMO TRABAJO · ÍNDICE XXL ─── */
@@ -1555,47 +1538,6 @@ footer {
         Data Analyst. Construyo dashboards en Power BI y analizo datos con Python y SQL — pensados para leerse sin preguntar.
       </p>
 
-      <!-- Tarjeta de dashboard compacta — SOLO mobile ≤600px. Mismos datos de la simulación del hero desktop. -->
-      <div class="hero-mobile-proof">
-        <div class="hmp-bar">
-          <span class="hmp-dot" style="background:#ff5f57"></span>
-          <span class="hmp-dot" style="background:#febc2e"></span>
-          <span class="hmp-dot" style="background:#28c840"></span>
-          <span class="hmp-url">borjamora.es/ventas-2025</span>
-        </div>
-        <div class="hmp-flag">
-          <span>SIMULACIÓN · DATOS FICTICIOS</span>
-          <span class="hmp-live"><span class="hmp-live-dot" aria-hidden="true"></span>EN VIVO</span>
-        </div>
-        <div class="hmp-kpis">
-          <div class="hmp-kpi">
-            <span class="hmp-kpi-label">Ventas acum.</span>
-            <span class="hmp-kpi-value">€2,84M</span>
-            <span class="hmp-kpi-delta hmp-up">▲ 12,4%</span>
-          </div>
-          <div class="hmp-kpi">
-            <span class="hmp-kpi-label">Margen bruto</span>
-            <span class="hmp-kpi-value">34,7%</span>
-            <span class="hmp-kpi-delta hmp-up">▲ 1,2pp</span>
-          </div>
-        </div>
-        <div class="hmp-regions">
-          <span class="hmp-regions-label">Ventas por región · var. interanual</span>
-          <div class="hmp-bar-row"><span class="hmp-bar-name">Norte</span><span class="hmp-bar-track"><span class="hmp-bar-fill" style="--w:97%"></span></span><span class="hmp-bar-val hmp-up">+19,4%</span></div>
-          <div class="hmp-bar-row"><span class="hmp-bar-name">Centro</span><span class="hmp-bar-track"><span class="hmp-bar-fill" style="--w:78%"></span></span><span class="hmp-bar-val hmp-up">+12,9%</span></div>
-          <div class="hmp-bar-row"><span class="hmp-bar-name">Sur</span><span class="hmp-bar-track"><span class="hmp-bar-fill hmp-down-fill" style="--w:56%"></span></span><span class="hmp-bar-val hmp-down">−2,1%</span></div>
-        </div>
-      </div>
-      <script>
-        /* Anima las barras de región de .hero-mobile-proof de 0 → su ancho real (--w). */
-        (function(){
-          var bars = document.querySelectorAll('.hmp-bar-fill');
-          if(!bars.length) return;
-          setTimeout(function(){
-            bars.forEach(function(b){ b.style.width = b.style.getPropertyValue('--w'); });
-          }, 550);
-        })();
-      </script>
 
       <!-- Línea única de credenciales: disponibilidad · cert · ubicación -->
       <div class="hero-meta" aria-label="Disponibilidad y credenciales">
