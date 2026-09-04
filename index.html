@@ -213,17 +213,44 @@
   pointer-events: none;
   z-index: 0;
 }
-/* ── Rejilla de cuadrados parpadeantes: sustituye a la rejilla estática de líneas ── */
+/* ── Rejilla de cuadrados parpadeantes: sustituye a la rejilla estática de líneas ──
+   Máscara concentrada en el centro-derecha (zona del dashboard): laterales,
+   esquinas y la franja superior quedan en blanco puro. El núcleo se sitúa
+   lejos de hero-left para que el botón "Cómo trabajo" (fondo transparente)
+   nunca reciba cuadrados detrás. */
 .hero-flicker {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   z-index: 0;
   pointer-events: none;
-  -webkit-mask-image: radial-gradient(ellipse 80% 75% at 50% 50%, black 30%, transparent 80%);
-  mask-image: radial-gradient(ellipse 80% 75% at 50% 50%, black 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 40% 34% at 50% 46%, black 0%, black 22%, transparent 65%);
+  mask-image: radial-gradient(ellipse 40% 34% at 50% 46%, black 0%, black 22%, transparent 65%);
+}
+/* El botón "Cómo trabajo" es transparente por diseño: le damos fondo sólido
+   para que nunca se le transparenten cuadrados detrás. */
+.hero-actions .btn-outline {
+  background: var(--white);
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-flicker { display: none; }
+}
+@media (max-width: 900px) {
+  /* En columna única el dashboard va debajo del texto: recentramos el núcleo */
+  .hero-flicker {
+    -webkit-mask-image: radial-gradient(ellipse 44% 22% at 50% 68%, black 0%, black 10%, transparent 62%);
+    mask-image: radial-gradient(ellipse 44% 22% at 50% 68%, black 0%, black 10%, transparent 62%);
+  }
+}
+
+/* ── Textura de grano: da profundidad y personalidad al fondo del hero ── */
+.hero-texture {
+  position: absolute; inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
 }
 .hero-inner {
   display: grid;
@@ -1536,6 +1563,7 @@ footer {
     <span class="glow glow-core"></span>
     <span class="glow glow-rim"></span>
   </div>
+  <div class="hero-texture" aria-hidden="true"></div>
   <div class="hero-inner">
     <div class="hero-left">
 
