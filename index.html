@@ -1030,16 +1030,20 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
    Sustituye el antiguo breakpoint de 480px: ahora todo el rango
    móvil (incluido iPhone SE) entra en el mismo bloque de abajo.
    No afecta a desktop/tablet. Objetivos:
-   1) altura por contenido, no min-height:100vh forzado
+   1) el hero llena la primera pantalla (100svh) — nada de "Cómo trabajo"
+      debe asomar antes de hacer scroll
    2) subtítulo corto para llegar antes al contenido real
    3) sin dashboard: el glow es la pieza "wow" en mobile, más intenso
       que en desktop porque aquí no compite con la tarjeta
    ═══════════════════════════════════════════════ */
 @media (max-width: 600px) {
 
-  /* 1) Altura por contenido — nada de min-height:100vh en mobile */
+  /* 1) La primera pantalla es solo el hero — nada de la siguiente sección
+     debe asomar antes de hacer scroll. 100svh (no 100vh) porque en un
+     móvil real la barra de direcciones/barra inferior recortan la parte
+     visible: svh usa esa altura "reducida" como mínimo garantizado. */
   .hero {
-    min-height: auto;
+    min-height: 100svh;
     padding: 84px clamp(1.25rem, 5vw, 1.75rem) 48px;
   }
   .hero-inner { grid-template-columns: 1fr; }
