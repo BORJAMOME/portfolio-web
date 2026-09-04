@@ -107,7 +107,7 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
-  gtag("config", "G-6PSDM6B5Z7", { anonymize_ip: true });
+  gtag("config", "G-6PSDM6B5Z7");
 
   /* 2. Leer consentimiento previo del usuario */
   (function(){
@@ -1531,8 +1531,8 @@ footer {
       </div>
 
       <div class="hero-actions">
-        <a href="./power-bi.html" class="btn btn-primary" data-arrow="right"><span>Ver proyectos</span><span class="btn-arrow">→</span></a>
-        <a href="#approach" class="btn btn-outline" data-arrow="down"><span>Cómo trabajo</span><span class="btn-arrow">↓</span></a>
+        <a href="./power-bi.html" class="btn btn-primary" data-arrow="right" onclick="gtag('event','hero_cta_proyectos',{location:'hero'});"><span>Ver proyectos</span><span class="btn-arrow">→</span></a>
+        <a href="#approach" class="btn btn-outline" data-arrow="down" onclick="gtag('event','hero_cta_como_trabajo',{location:'hero'});"><span>Cómo trabajo</span><span class="btn-arrow">↓</span></a>
       </div>
     </div>
 
@@ -2371,7 +2371,7 @@ footer {
 
       <!-- secondary actions — menor peso que los dos botones principales -->
       <div class="cta-final-links">
-        <a href="./sobre-mi.html#cv" class="cta-final-link" onclick="gtag('event', 'clic_descargar_cv', { location: 'cta_final' });">
+        <a href="./sobre-mi.html#cv" class="cta-final-link" onclick="gtag('event', 'clic_navegacion_cv', { location: 'cta_final' });">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Descargar CV
         </a>
