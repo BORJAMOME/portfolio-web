@@ -1042,7 +1042,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
      visible: svh usa esa altura "reducida" como mínimo garantizado. */
   .hero {
     min-height: 100svh;
-    padding: 84px clamp(1.25rem, 5vw, 1.75rem) 48px;
+    padding: 72px clamp(1.25rem, 5vw, 1.75rem) 36px;
   }
   .hero-inner { grid-template-columns: 1fr; }
   .hero-right { display: none; }
@@ -1064,10 +1064,18 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   /* El relato en mobile: titular → copy completo → credenciales → acción.
      Sin prueba social (LinkedIn/impresiones) en mobile — solo disponibilidad
      y credencial. El orden visual sigue el orden real del DOM. */
-  .hero-h1 { margin-bottom: 24px; }     /* medio: titular↔subtítulo, misma unidad de lectura */
+  .hero-h1 {
+    font-size: 40px;      /* un poco más grande que el mínimo del clamp (36px) */
+    margin-bottom: 32px;  /* más aire antes del copy */
+  }
   .hero-sub { margin-bottom: 40px; }    /* amplio: subtítulo↔credenciales, cambia de categoría */
   .hero-social-proof { display: none; } /* fuera en mobile: LinkedIn + impresiones */
-  .hero-meta:not(.hero-social-proof) { margin-bottom: 64px; } /* el más amplio: cierre de la tarjeta antes de los CTAs */
+  .hero-meta:not(.hero-social-proof) { margin-bottom: 56px; } /* el más amplio: cierre de la tarjeta antes de los CTAs */
+
+  /* Botones apilados a ancho completo — cada uno una barra horizontal,
+     no dos botones estrechos compitiendo por el mismo ancho. */
+  .hero-actions { flex-direction: column; gap: 12px; }
+  .hero-actions .btn { width: 100%; justify-content: center; }
 }
 
 /* ─── CÓMO TRABAJO · ÍNDICE XXL ─── */
