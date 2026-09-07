@@ -2715,6 +2715,41 @@ const chartOpts = {
   });
   hero.addEventListener('mouseleave', function(){ mouse = null; });
 
+  /* Táctil: arrastrar el dedo enciende el mismo foco que el ratón.
+     Sin preventDefault — no debe interferir con el scroll de la página. */
+  function setTouch(e){
+    if (!e.touches || !e.touches.length) return;
+    var r = canvas.getBoundingClientRect();
+    var t = e.touches[0];
+    mouse = { x: t.clientX - r.left, y: t.clientY - r.top };
+  }
+  hero.addEventListener('touchstart', setTouch, { passive: true });
+  hero.addEventListener('touchmove', setTouch, { passive: true });
+  hero.addEventListener('touchend', function(){ mouse = null; }, { passive: true });
+  hero.addEventListener('touchcancel', function(){ mouse = null; }, { passive: true });
+
+  /* En dispositivos sin hover (móvil/táctil) nadie descubre el foco por accidente:
+     un barrido único de bienvenida, poco después de la entrada del hero, lo insinúa. */
+  var isTouchDevice = window.matchMedia('(hover: none)').matches;
+  function runIntroSweep(){
+    if (!isTouchDevice || mouse) return;
+    var from = { x: 0.3, y: 0.7 }, to = { x: 0.66, y: 0.4 };
+    var duration = 1500, start = null;
+    function tick(now){
+      if (mouse && start !== null) return; /* el usuario ya está tocando: cede el control */
+      if (start === null) start = now;
+      var t = Math.min((now - start) / duration, 1);
+      var ease = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      mouse = {
+        x: (from.x + (to.x - from.x) * ease) * w,
+        y: (from.y + (to.y - from.y) * ease) * h
+      };
+      if (t < 1) requestAnimationFrame(tick);
+      else setTimeout(function(){ if (mouse) mouse = null; }, 300);
+    }
+    requestAnimationFrame(tick);
+  }
+
   var last = performance.now();
   var raf = null;
   function frame(now){
@@ -2758,6 +2793,7 @@ const chartOpts = {
 
   buildCells();
   raf = requestAnimationFrame(frame);
+  setTimeout(runIntroSweep, 900);
 
   var resizeTimer;
   window.addEventListener('resize', function(){
