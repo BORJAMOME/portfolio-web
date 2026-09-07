@@ -214,17 +214,14 @@
   z-index: 0;
 }
 /* ── Rejilla de cuadrados parpadeantes: sustituye a la rejilla estática de líneas ──
-   Máscara concentrada en el centro-derecha (zona del dashboard): laterales,
-   esquinas y la franja superior quedan en blanco puro. El núcleo se sitúa
-   lejos de hero-left para que el botón "Cómo trabajo" (fondo transparente)
-   nunca reciba cuadrados detrás. */
+   La concentración central (laterales/esquinas/botón en blanco) y el foco que
+   sigue al ratón se calculan ambos en JS por celda — por eso no hay máscara
+   CSS aquí: una máscara no puede combinarse con el radio de alcance del hover. */
 .hero-flicker {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   z-index: 0;
   pointer-events: none;
-  -webkit-mask-image: radial-gradient(ellipse 40% 34% at 50% 46%, black 0%, black 22%, transparent 65%);
-  mask-image: radial-gradient(ellipse 40% 34% at 50% 46%, black 0%, black 22%, transparent 65%);
 }
 /* El botón "Cómo trabajo" es transparente por diseño: le damos fondo sólido
    para que nunca se le transparenten cuadrados detrás. */
@@ -233,13 +230,6 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-flicker { display: none; }
-}
-@media (max-width: 900px) {
-  /* En columna única el dashboard va debajo del texto: recentramos el núcleo */
-  .hero-flicker {
-    -webkit-mask-image: radial-gradient(ellipse 44% 22% at 50% 68%, black 0%, black 10%, transparent 62%);
-    mask-image: radial-gradient(ellipse 44% 22% at 50% 68%, black 0%, black 10%, transparent 62%);
-  }
 }
 
 /* ── Textura de grano: da profundidad y personalidad al fondo del hero ── */
@@ -2665,7 +2655,8 @@ const chartOpts = {
 })();
 </script>
 <script>
-/* ── HERO FLICKER GRID — cuadrados que se encienden/apagan de forma orgánica ── */
+/* ── HERO FLICKER GRID — cuadrados que se encienden/apagan de forma orgánica,
+   más un foco morado que sigue al ratón (valores validados en prototipo). ── */
 (function(){
   var canvas = document.getElementById('heroFlicker');
   if (!canvas) return;
@@ -2673,54 +2664,95 @@ const chartOpts = {
 
   var ctx = canvas.getContext('2d');
   var dpr = Math.min(window.devicePixelRatio || 1, 2);
-  var cellSize = 44, maxOpacity = 0.12, speed = 1.5, squareRatio = 0.84;
+  var cellSize = 44, ambientMaxOpacity = 0.12, speed = 1.5, squareRatio = 0.84;
+  var squareSize = cellSize * squareRatio;
   var color = '122,123,255';
-  var cells = [], cols = 0, rows = 0, squareSize = cellSize * squareRatio;
+
+  /* Foco del ratón */
+  var hoverRadius = 100, hoverIntensity = 0.35, hoverReach = 0.30;
+
+  var cells = [], cols = 0, rows = 0, w = 0, h = 0;
   var hero = document.getElementById('hero');
+  var mouse = null;
+
+  function smoothstep(e0, e1, x){
+    var t = Math.min(Math.max((x - e0) / (e1 - e0), 0), 1);
+    return t * t * (3 - 2 * t);
+  }
+
+  /* Centro/radio de la concentración ambiental — se adapta al breakpoint porque
+     en columna única el dashboard baja debajo del texto. */
+  function getCenter(){
+    if (window.innerWidth <= 600) return { cx: 0.5, cy: 0.62, rf: 0.4 };
+    if (window.innerWidth <= 900) return { cx: 0.5, cy: 0.55, rf: 0.36 };
+    return { cx: 0.5, cy: 0.46, rf: 0.34 };
+  }
 
   function buildCells(){
-    var w = canvas.clientWidth, h = canvas.clientHeight;
+    w = canvas.clientWidth; h = canvas.clientHeight;
     if (!w || !h) return;
     canvas.width = Math.floor(w * dpr);
     canvas.height = Math.floor(h * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    squareSize = cellSize * squareRatio;
     cols = Math.ceil(w / cellSize) + 1;
     rows = Math.ceil(h / cellSize) + 1;
-    cells = new Array(cols * rows).fill(0).map(function(){
-      return {
-        value: Math.random() * maxOpacity,
-        target: Math.random() * maxOpacity,
-        nextChange: Math.random() * 2
-      };
-    });
+    var center = getCenter();
+    var cx = w * center.cx, cy = h * center.cy, radius = Math.max(w, h) * center.rf;
+    cells = new Array(cols * rows);
+    for (var r = 0; r < rows; r++){
+      for (var c = 0; c < cols; c++){
+        var px = c * cellSize + cellSize / 2, py = r * cellSize + cellSize / 2;
+        var dist = Math.sqrt(Math.pow((px - cx) / radius, 2) + Math.pow((py - cy) / radius, 2));
+        var ambientFalloff = 1 - smoothstep(0.15, 1, dist);
+        cells[r * cols + c] = { px: px, py: py, ambientFalloff: ambientFalloff, value: 0, target: 0, nextChange: Math.random() * 2 };
+      }
+    }
   }
+
+  hero.addEventListener('mousemove', function(e){
+    var r = canvas.getBoundingClientRect();
+    mouse = { x: e.clientX - r.left, y: e.clientY - r.top };
+  });
+  hero.addEventListener('mouseleave', function(){ mouse = null; });
 
   var last = performance.now();
   var raf = null;
   function frame(now){
     var dt = Math.min((now - last) / 1000, 0.1);
     last = now;
-    ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = '#7a7bff';
     for (var r = 0; r < rows; r++){
       for (var c = 0; c < cols; c++){
         var cell = cells[r * cols + c];
-        cell.nextChange -= dt * speed;
-        if (cell.nextChange <= 0){
-          cell.target = Math.random() * maxOpacity;
-          cell.nextChange = 0.6 + Math.random() * 2.2;
+        var ambientMax = ambientMaxOpacity * cell.ambientFalloff;
+
+        var hoverBoost = 0;
+        if (mouse){
+          var d = Math.hypot(cell.px - mouse.x, cell.py - mouse.y);
+          hoverBoost = 1 - smoothstep(0, hoverRadius, d);
+          hoverBoost *= Math.max(cell.ambientFalloff, hoverReach);
         }
-        cell.value += (cell.target - cell.value) * Math.min(dt * 2.2 * speed, 1);
+
+        if (hoverBoost > 0.02){
+          cell.target = hoverIntensity * hoverBoost;
+          cell.value += (cell.target - cell.value) * Math.min(dt * 8, 1);
+        } else {
+          cell.nextChange -= dt * speed;
+          if (cell.nextChange <= 0){
+            cell.target = Math.random() * ambientMax;
+            cell.nextChange = 0.6 + Math.random() * 2.2;
+          }
+          cell.value += (Math.min(cell.target, Math.max(ambientMax, cell.value)) - cell.value) * Math.min(dt * 2.2 * speed, 1);
+        }
+
         if (cell.value > 0.004){
-          ctx.fillStyle = 'rgba(' + color + ',' + cell.value + ')';
-          ctx.fillRect(
-            c * cellSize + (cellSize - squareSize) / 2,
-            r * cellSize + (cellSize - squareSize) / 2,
-            squareSize, squareSize
-          );
+          ctx.globalAlpha = cell.value;
+          ctx.fillRect(cell.px - squareSize / 2, cell.py - squareSize / 2, squareSize, squareSize);
         }
       }
     }
+    ctx.globalAlpha = 1;
     raf = requestAnimationFrame(frame);
   }
 
