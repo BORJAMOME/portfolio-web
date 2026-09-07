@@ -328,98 +328,6 @@
   opacity: 0; animation: fadeUp .8s .62s var(--ease) forwards;
 }
 
-/* ═══════════════════════════════════════════════
-   HERO GLOW — recorrido en relevo: core → rim → bleed.
-   Un solo gesto con dirección: la luz se enciende en el dashboard, un
-   filo la recoge y viaja un tramo corto por el borde de la tarjeta, y
-   se apaga derramándose hacia el copy — el mismo recorrido que sigue
-   la vista. Solo el filo se mueve de verdad (offset-path); el núcleo y
-   el halo "viajan" por crossfade de opacidad. Validado en preview.
-   ═══════════════════════════════════════════════ */
-.hero-glow { position:absolute; inset:0; z-index:0; overflow:visible; pointer-events:none; }
-.glow {
-  position:absolute; border-radius:50%;
-  opacity:0; will-change:opacity;
-  animation-timing-function: cubic-bezier(.45,0,.15,1);
-  animation-iteration-count: infinite;
-  animation-duration: 13s;
-}
-.glow-core {
-  width:620px; height:620px; top:6%; right:-10%;
-  background: radial-gradient(circle, rgba(122,123,255,.55) 0%, rgba(122,123,255,.22) 45%, transparent 72%);
-  filter: blur(70px);
-  animation-name: glow-relay-core;
-}
-.glow-bleed {
-  width:920px; height:520px; top:32%; left:-4%;
-  background: radial-gradient(ellipse, rgba(122,123,255,.4) 0%, rgba(122,123,255,.12) 50%, transparent 78%);
-  filter: blur(110px); transform:rotate(-8deg);
-  animation-name: glow-relay-bleed;
-}
-.glow-rim {
-  width:190px; height:190px; top:10%; right:8%;
-  background: radial-gradient(circle, rgba(157,158,255,.7) 0%, rgba(157,158,255,.25) 45%, transparent 68%);
-  filter: blur(26px);
-  offset-path: path("M0,0 Q70,-26 150,4");
-  offset-rotate: 0deg;
-  animation-name: glow-relay-rim, glow-rim-travel;
-}
-@keyframes glow-relay-core {
-  0%   { opacity:.46; }
-  12%  { opacity:.5;  }
-  30%  { opacity:.17; }
-  50%  { opacity:.05; }
-  85%  { opacity:.05; }
-  100% { opacity:.46; }
-}
-@keyframes glow-relay-rim {
-  0%   { opacity:0;   }
-  14%  { opacity:.08; }
-  22%  { opacity:.58; }
-  32%  { opacity:.3;  }
-  42%  { opacity:0;   }
-  100% { opacity:0;   }
-}
-@keyframes glow-rim-travel {
-  0%   { offset-distance:0%;   }
-  14%  { offset-distance:0%;   }
-  32%  { offset-distance:100%; }
-  42%  { offset-distance:100%; }
-  100% { offset-distance:0%;   }
-}
-@keyframes glow-relay-bleed {
-  0%   { opacity:.03; }
-  28%  { opacity:.04; }
-  45%  { opacity:.1;  }
-  58%  { opacity:.19; }
-  75%  { opacity:.11; }
-  92%  { opacity:.04; }
-  100% { opacity:.03; }
-}
-/* Variantes mobile — mismo ritmo del relevo (core enciende, bleed cierra),
-   picos más altos porque en mobile el glow no acompaña a una tarjeta: es
-   el protagonista. */
-@keyframes glow-relay-core-m {
-  0%   { opacity:.55; }
-  12%  { opacity:.62; }
-  30%  { opacity:.22; }
-  50%  { opacity:.08; }
-  85%  { opacity:.08; }
-  100% { opacity:.55; }
-}
-@keyframes glow-relay-bleed-m {
-  0%   { opacity:.07; }
-  28%  { opacity:.09; }
-  45%  { opacity:.2;  }
-  58%  { opacity:.34; }
-  75%  { opacity:.21; }
-  92%  { opacity:.09; }
-  100% { opacity:.07; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .glow { animation:none !important; opacity:.14 !important; offset-distance:0% !important; }
-}
-
 /* ─── HERO DASHBOARD ─── */
 .hero-right {
   position: relative;
@@ -1064,8 +972,8 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
       debe asomar antes de hacer scroll
    2) mismo copy que desktop, sin prueba social (LinkedIn/impresiones) —
       solo disponibilidad + credencial, y un cierre amplio antes de los CTAs
-   3) sin dashboard: el glow es la pieza "wow" en mobile, más intenso
-      que en desktop porque aquí no compite con la tarjeta
+   3) sin dashboard: la rejilla de cuadrados parpadeantes queda como único
+      fondo animado del hero
    ═══════════════════════════════════════════════ */
 @media (max-width: 600px) {
 
@@ -1079,20 +987,6 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   }
   .hero-inner { grid-template-columns: 1fr; }
   .hero-right { display: none; }
-
-  /* 3) Sin dashboard que ilumine: el glow pasa a ser el elemento "wow" en
-     mobile, no un acompañamiento. Sin filo (no hay borde de tarjeta que
-     recorrer) — núcleo detrás del titular y halo hacia las credenciales/
-     CTAs, ambos más grandes e intensos que su versión desktop. */
-  .glow-rim { display: none; }
-  .glow-core {
-    width: 480px; height: 480px; top: -70px; right: -22%;
-    animation-name: glow-relay-core-m;
-  }
-  .glow-bleed {
-    width: 560px; height: 460px; top: 220px; left: -20%;
-    animation-name: glow-relay-bleed-m;
-  }
 
   /* El relato en mobile: titular → copy completo → credenciales → acción.
      Sin prueba social (LinkedIn/impresiones) en mobile — solo disponibilidad
@@ -1558,11 +1452,6 @@ footer {
 <!-- main-content anchor for skip-link -->
 <span id="main-content" style="position:absolute"></span>
   <canvas class="hero-flicker" id="heroFlicker" aria-hidden="true"></canvas>
-  <div class="hero-glow" aria-hidden="true">
-    <span class="glow glow-bleed"></span>
-    <span class="glow glow-core"></span>
-    <span class="glow glow-rim"></span>
-  </div>
   <div class="hero-texture" aria-hidden="true"></div>
   <div class="hero-inner">
     <div class="hero-left">
