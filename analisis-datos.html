@@ -326,7 +326,7 @@
 <div class="progress-bar" id="progressBar"></div>
 
 <nav id="nav" aria-label="Navegación principal">
-  <a href="./index.html" class="logo" aria-label="Borja Mora — Inicio"><span id="logoText" class="done">Borja Mora</span><span class="logo-dot"></span></a>
+  <a href="./index.html" class="logo" aria-label="Borja Mora — Inicio"><span id="logoText" class="done">Borja Mora</span><span class="logo-mark"><svg class="logo-ring" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><circle class="logo-ring-bg" cx="9" cy="9" r="7.3" pathLength="1"/><circle class="logo-ring-fg" cx="9" cy="9" r="7.3" pathLength="1"/></svg><span class="logo-dot"></span></span></a>
   <div class="nav-links">
     <a href="./index.html">Inicio</a>
     <a href="./sobre-mi.html">Sobre mí</a>
@@ -773,7 +773,9 @@
 window.addEventListener('scroll',()=>{
   document.getElementById('nav').classList.toggle('scrolled',window.scrollY>10);
   const h=document.documentElement;
-  document.getElementById('progressBar').style.transform=`scaleX(${window.scrollY/(h.scrollHeight-h.clientHeight)})`;
+  const p=Math.min(1, Math.max(0, window.scrollY/(h.scrollHeight-h.clientHeight) || 0));
+  document.getElementById('progressBar').style.transform=`scaleX(${p})`;
+  h.style.setProperty('--logo-ring', p);
 });
 
 // SR observer

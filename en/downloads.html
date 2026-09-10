@@ -250,7 +250,7 @@ footer{
 
 <!-- ── NAV ── -->
 <nav id="nav">
-  <a href="../index.html" class="logo"><span id="logoText" class="done">Borja Mora</span><span class="logo-dot"></span></a>
+  <a href="../index.html" class="logo"><span id="logoText" class="done">Borja Mora</span><span class="logo-mark"><svg class="logo-ring" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><circle class="logo-ring-bg" cx="9" cy="9" r="7.3" pathLength="1"/><circle class="logo-ring-fg" cx="9" cy="9" r="7.3" pathLength="1"/></svg><span class="logo-dot"></span></span></a>
   <div class="nav-center">
       <a href="./index.html">Home</a>
       <a href="./projects.html">Projects</a>
@@ -542,6 +542,8 @@ footer{
 <script>
 window.addEventListener('scroll',()=>{
   document.getElementById('nav').classList.toggle('scrolled',window.scrollY>10);
+  const h=document.documentElement;
+  h.style.setProperty('--logo-ring', Math.min(1, Math.max(0, window.scrollY/(h.scrollHeight-h.clientHeight) || 0)));
 });
 </script>
 </body>

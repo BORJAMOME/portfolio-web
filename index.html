@@ -1263,7 +1263,7 @@ footer {
 
 <!-- ─── NAV ─── -->
 <nav id="nav" aria-label="Navegación principal">
-  <a href="./index.html" class="logo" aria-label="Borja Mora — Inicio"><span id="logoText" class="done">Borja Mora</span><span class="logo-dot"></span></a>
+  <a href="./index.html" class="logo" aria-label="Borja Mora — Inicio"><span id="logoText" class="done">Borja Mora</span><span class="logo-mark"><svg class="logo-ring" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><circle class="logo-ring-bg" cx="9" cy="9" r="7.3" pathLength="1"/><circle class="logo-ring-fg" cx="9" cy="9" r="7.3" pathLength="1"/></svg><span class="logo-dot"></span></span></a>
   <div class="nav-links">
     <a href="./index.html" class="active" aria-current="page">Inicio</a>
     <a href="./sobre-mi.html">Sobre mí</a>
@@ -2427,7 +2427,9 @@ window.addEventListener('scroll',()=> nav.classList.toggle('scrolled', scrollY >
 // ─── PROGRESS BAR ───
 const pb = document.getElementById('progressBar');
 window.addEventListener('scroll',()=>{
-  pb.style.transform = `scaleX(${scrollY/(document.body.scrollHeight-innerHeight)})`;
+  const p = Math.min(1, Math.max(0, scrollY/(document.body.scrollHeight-innerHeight) || 0));
+  pb.style.transform = `scaleX(${p})`;
+  document.documentElement.style.setProperty('--logo-ring', p);
 });
 
 // ─── SCROLL REVEAL ───
