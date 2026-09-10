@@ -1320,7 +1320,9 @@ const nav = document.getElementById('nav');
 window.addEventListener('scroll', () => {
   nav.classList.toggle('scrolled', scrollY > 40);
   const h = document.documentElement;
-  h.style.setProperty('--logo-ring', Math.min(1, Math.max(0, scrollY/(h.scrollHeight-h.clientHeight) || 0)));
+  const p = Math.min(1, Math.max(0, scrollY/(h.scrollHeight-h.clientHeight) || 0));
+  h.style.setProperty('--logo-ring', p);
+  document.querySelector('.logo-mark')?.classList.toggle('at-end', p >= 0.98);
 });
 
 // ─── TYPING EFFECT — desactivado ───
