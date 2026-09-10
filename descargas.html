@@ -678,7 +678,7 @@ body{
 
 <!-- ─────────── NAV ─────────── -->
 <nav id="nav" aria-label="Navegación principal">
-  <a href="./index.html" class="logo" aria-label="Borja Mora — Inicio"><span id="logoText" class="done">Borja Mora</span><span class="logo-dot"></span></a>
+  <a href="./index.html" class="logo" aria-label="Borja Mora — Inicio"><span id="logoText" class="done">Borja Mora</span><span class="logo-mark"><svg class="logo-ring" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><circle class="logo-ring-bg" cx="9" cy="9" r="7.3" pathLength="1"/><circle class="logo-ring-fg" cx="9" cy="9" r="7.3" pathLength="1"/></svg><span class="logo-dot"></span></span></a>
   <div class="nav-links">
     <a href="./index.html">Inicio</a>
     <a href="./sobre-mi.html">Sobre mí</a>
@@ -1317,7 +1317,11 @@ window.addEventListener('resize', ()=>{
 
 // ────────────── NAV SCROLL ──────────────
 const nav = document.getElementById('nav');
-window.addEventListener('scroll',()=> nav.classList.toggle('scrolled', scrollY > 40));
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', scrollY > 40);
+  const h = document.documentElement;
+  h.style.setProperty('--logo-ring', Math.min(1, Math.max(0, scrollY/(h.scrollHeight-h.clientHeight) || 0)));
+});
 
 // ─── TYPING EFFECT — desactivado ───
 
