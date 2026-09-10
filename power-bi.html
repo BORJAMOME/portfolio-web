@@ -1029,6 +1029,7 @@ window.addEventListener('scroll',()=>{
   const p=Math.min(1, Math.max(0, window.scrollY/(h.scrollHeight-h.clientHeight) || 0));
   document.getElementById('progressBar').style.transform=`scaleX(${p})`;
   h.style.setProperty('--logo-ring', p);
+  document.querySelector('.logo-mark')?.classList.toggle('at-end', p >= 0.98);
 });
 
 // SR observer

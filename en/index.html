@@ -2423,6 +2423,7 @@ window.addEventListener('scroll',()=>{
   const p = Math.min(1, Math.max(0, scrollY/(document.body.scrollHeight-innerHeight) || 0));
   pb.style.transform = `scaleX(${p})`;
   document.documentElement.style.setProperty('--logo-ring', p);
+  document.querySelector('.logo-mark')?.classList.toggle('at-end', p >= 0.98);
 });
 
 // ─── SCROLL REVEAL ───

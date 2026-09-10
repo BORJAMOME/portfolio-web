@@ -543,7 +543,9 @@ footer{
 window.addEventListener('scroll',()=>{
   document.getElementById('nav').classList.toggle('scrolled',window.scrollY>10);
   const h=document.documentElement;
-  h.style.setProperty('--logo-ring', Math.min(1, Math.max(0, window.scrollY/(h.scrollHeight-h.clientHeight) || 0)));
+  const p=Math.min(1, Math.max(0, window.scrollY/(h.scrollHeight-h.clientHeight) || 0));
+  h.style.setProperty('--logo-ring', p);
+  document.querySelector('.logo-mark')?.classList.toggle('at-end', p >= 0.98);
 });
 </script>
 </body>

@@ -85,21 +85,32 @@ body {
 .logo-ring {
   position: absolute; inset: 0; width: 18px; height: 18px;
   transform: rotate(-90deg); pointer-events: none;
+  transition: filter .5s var(--ease);
 }
-.logo-ring-bg, .logo-ring-fg { fill: none; stroke-width: 1.4; }
-.logo-ring-bg { stroke: var(--gray); }
+.logo-ring-bg, .logo-ring-fg { fill: none; stroke-width: 1.2; }
+.logo-ring-bg {
+  stroke: rgba(17,17,17,.12);
+  transition: opacity .3s var(--ease) .08s;
+}
 .logo-ring-fg {
   stroke: var(--ink); stroke-linecap: round;
   stroke-dasharray: 1;
   stroke-dashoffset: calc(1 - var(--logo-ring, 0));
-  transition: stroke-dashoffset .08s linear;
+  transition: stroke-dashoffset .06s linear;
 }
 .logo-dot {
   width: 7px; height: 7px; border-radius: 50%;
   background: var(--ink);
+  transition: transform .55s var(--ease-spring);
 }
+
+/* Al llegar al final del scroll, el anillo se cierra en un punto sólido */
+.logo-mark.at-end .logo-dot { transform: scale(2.3); }
+.logo-mark.at-end .logo-ring-bg { opacity: 0; }
+.logo-mark.at-end .logo-ring { filter: drop-shadow(0 0 3px rgba(17,17,17,.28)); }
+
 @media (prefers-reduced-motion: reduce) {
-  .logo-ring-fg { transition: none; }
+  .logo-ring-fg, .logo-dot, .logo-ring-bg, .logo-ring { transition: none; }
 }
 
 /* Typing cursor — desactivado */
