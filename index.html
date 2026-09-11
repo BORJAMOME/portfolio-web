@@ -442,6 +442,46 @@
 .dt tr.dt-total td { border-top: .5px solid #d8d8e2; border-bottom: none; padding-top: 5px; font-weight: 800; }
 .dr-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
 
+/* ── Barra de filtros (slicers) ── */
+.df-filters { display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-bottom: .5px solid var(--gray); background: #f7f7fa; position: relative; z-index: 5; }
+.df-filters-ic { font-size: 8px; color: var(--muted-light); margin-right: 2px; flex-shrink: 0; font-weight: 700; letter-spacing: .3px; text-transform: uppercase; }
+.df-filter { position: relative; display: inline-flex; align-items: center; gap: 4px; font-family: inherit; font-size: 8.5px; font-weight: 600; color: var(--ink); background: #fff; border: .5px solid #dcdce6; border-radius: 5px; padding: 3px 7px 3px 8px; cursor: pointer; transition: border-color .15s, box-shadow .15s, background .15s; }
+.df-filter:hover { border-color: #b9b9d4; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+.df-filter-lbl { color: var(--muted); font-weight: 600; }
+.df-filter-val { color: var(--ink); font-weight: 700; }
+.df-filter-arrow { font-size: 6px; color: var(--muted-light); margin-left: 1px; transition: transform .15s; }
+.df-filter.is-open .df-filter-arrow { transform: rotate(180deg); }
+.df-filter.is-active { background: var(--purple-light); border-color: rgba(122,123,255,.35); }
+.df-filter.is-active .df-filter-val { color: var(--purple); }
+.df-filter-menu { position: absolute; top: 100%; left: 0; margin-top: 4px; background: #fff; border: .5px solid #e0e0ea; border-radius: 7px; box-shadow: 0 6px 20px rgba(0,0,0,.14); padding: 4px; min-width: 104px; z-index: 20; max-height: 150px; overflow-y: auto; }
+.df-filter-opt { display: flex; align-items: center; font-size: 8.5px; font-weight: 600; color: var(--ink); padding: 4.5px 7px; border-radius: 4px; cursor: pointer; white-space: nowrap; }
+.df-filter-opt:hover { background: #f2f2f7; }
+.df-filter-opt.is-selected { color: var(--purple); background: var(--purple-light); }
+.df-filter-opt.is-reset { color: var(--muted); border-bottom: .5px solid #eee; margin-bottom: 2px; border-radius: 0; padding-bottom: 6px; }
+
+/* ── Estados de resaltado (highlight/dim) compartidos por dumbbell y tabla de canal ── */
+.db-row { transition: opacity .3s ease; }
+.db-line { transition: x1 .45s ease, x2 .45s ease, stroke .25s ease; }
+.db-dot-a, .db-dot-b { transition: cx .45s ease, r .3s ease, fill .25s ease; }
+.db-val { transition: x .45s ease, fill .25s ease; }
+.db-row.is-dim { opacity: .42; }
+.db-row.is-dim .db-line, .db-row.is-dim .db-dot-b { stroke: #d7d7e2 !important; fill: #d7d7e2 !important; }
+.db-row.is-dim .db-val { fill: #b9b9c6 !important; }
+.db-row.is-hl .db-line, .db-row.is-hl .db-dot-b { stroke: var(--purple) !important; fill: var(--purple) !important; }
+.db-row.is-hl .db-val { fill: var(--purple) !important; }
+
+.dt tr { transition: opacity .3s ease; }
+.dt tr.is-dim { opacity: .45; }
+.dt tr.is-dim td { color: #b9b9c6 !important; }
+.dt tr.is-dim .dt-bar { background: rgba(0,0,0,.05) !important; }
+.dt tr.is-dim .dt-chip { background: #eee !important; color: #b3b3bd !important; }
+.dt tr.is-hl td { color: var(--purple) !important; }
+.dt tr.is-hl .dt-bar { background: rgba(122,123,255,.34) !important; }
+.dt-bar { transition: transform .6s cubic-bezier(.22,1,.36,1); }
+.dt tbody tr:nth-child(1) .dt-bar { transition-delay: .02s; }
+.dt tbody tr:nth-child(2) .dt-bar { transition-delay: .08s; }
+.dt tbody tr:nth-child(3) .dt-bar { transition-delay: .14s; }
+
 /* ─── SECTION COMMONS ─── */
 /* Cada sección lleva la línea divisora pegada al borde superior (sin padding-top).
    El aire visual queda balanceado: divider→contenido ≈ contenido→borde inferior. */
@@ -1496,14 +1536,21 @@ footer {
           </span>
         </div>
 
+        <div class="df-filters" id="dfFilters">
+          <span class="df-filters-ic">⏷ Filtros</span>
+          <button type="button" class="df-filter" data-filter="mes"><span class="df-filter-lbl">Mes</span><span class="df-filter-val" data-role="value">Todos</span><span class="df-filter-arrow">▾</span></button>
+          <button type="button" class="df-filter" data-filter="region"><span class="df-filter-lbl">Región</span><span class="df-filter-val" data-role="value">Todas</span><span class="df-filter-arrow">▾</span></button>
+          <button type="button" class="df-filter" data-filter="canal"><span class="df-filter-lbl">Canal</span><span class="df-filter-val" data-role="value">Todos</span><span class="df-filter-arrow">▾</span></button>
+        </div>
+
         <div class="df-header" style="padding:11px 14px 7px">
           <div>
             <div class="df-title">Rendimiento de Ventas 2025</div>
-            <div style="font-size:8px;color:var(--muted);margin-top:1px">Ventas reales vs año anterior · Canal · Región</div>
+            <div style="font-size:8px;color:var(--muted);margin-top:1px">Ventas reales vs año anterior · Mes · Región · Canal</div>
           </div>
           <div style="display:flex;align-items:center;gap:5px">
-            <span class="df-period">Ene–Dic 2025</span>
-            <span style="font-size:8px;font-weight:600;background:#e8f5e7;color:#3c8a37;padding:2px 7px;border-radius:4px">▲ +12,4%</span>
+            <span class="df-period" id="dfPeriodLabel">Ene–Dic 2025</span>
+            <span id="dfPeriodBadge" style="font-size:8px;font-weight:600;background:#e8f5e7;color:#3c8a37;padding:2px 7px;border-radius:4px">▲ +12,4%</span>
           </div>
         </div>
 
@@ -1565,53 +1612,63 @@ footer {
               </div>
               <!-- SVG dumbbell — drawn directly, no canvas needed -->
               <svg id="heroDumbbell" width="100%" viewBox="0 0 150 90" preserveAspectRatio="xMidYMid meet" style="display:block;overflow:visible;width:100%;flex:1;min-height:0">
-                <!-- Grid lines -->
-                <line x1="40" y1="5" x2="40" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
-                <line x1="66.25" y1="5" x2="66.25" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
-                <line x1="92.5" y1="5" x2="92.5" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
-                <line x1="118.75" y1="5" x2="118.75" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
-                <line x1="145" y1="5" x2="145" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
+                <!-- Grid lines (recalculadas en JS según el rango de valores filtrado) -->
+                <line id="dbGridLine0" x1="40" y1="5" x2="40" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
+                <line id="dbGridLine1" x1="66.25" y1="5" x2="66.25" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
+                <line id="dbGridLine2" x1="92.5" y1="5" x2="92.5" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
+                <line id="dbGridLine3" x1="118.75" y1="5" x2="118.75" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
+                <line id="dbGridLine4" x1="145" y1="5" x2="145" y2="82" stroke="#f0f0f5" stroke-width=".7"/>
                 <!-- Axis labels -->
-                <text x="40" y="88" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="6" fill="#ccc">200K</text>
-                <text x="66.25" y="88" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="6" fill="#ccc">400K</text>
-                <text x="92.5" y="88" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="6" fill="#ccc">600K</text>
-                <text x="118.75" y="88" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="6" fill="#ccc">800K</text>
-                <text x="145" y="88" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="6" fill="#ccc">1,0M</text>
+                <text id="dbGridLabel0" x="40" y="88" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="6" fill="#ccc">200K</text>
+                <text id="dbGridLabel1" x="66.25" y="88" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="6" fill="#ccc">400K</text>
+                <text id="dbGridLabel2" x="92.5" y="88" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="6" fill="#ccc">600K</text>
+                <text id="dbGridLabel3" x="118.75" y="88" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="6" fill="#ccc">800K</text>
+                <text id="dbGridLabel4" x="145" y="88" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="6" fill="#ccc">1,0M</text>
 
-                <!-- Row 1: Norte — 775K→925K (+19,4%) -->
-                <text x="0" y="16" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Norte</text>
-                <line class="db-line" x1="40" y1="16" x2="40" y2="16" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round" data-x1="115.5" data-x2="135.2"/>
-                <circle class="db-dot-a" cx="40" cy="16" r="0" fill="#c8c8d8" data-cx="115.5"/>
-                <circle class="db-dot-b" cx="40" cy="16" r="0" fill="#7a7bff" data-cx="135.2"/>
-                <text class="db-val" x="40" y="11" font-family="'Plus Jakarta Sans',sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="125.3">—</text>
+                <!-- Row 1: Norte -->
+                <g class="db-row" data-region="norte">
+                  <text x="0" y="16" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Norte</text>
+                  <line class="db-line" x1="40" y1="16" x2="40" y2="16" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round"/>
+                  <circle class="db-dot-a" cx="40" cy="16" r="0" fill="#c8c8d8"/>
+                  <circle class="db-dot-b" cx="40" cy="16" r="0" fill="#7a7bff"/>
+                  <text class="db-val" x="40" y="11" font-family="'Plus Jakarta Sans',sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle">—</text>
+                </g>
 
-                <!-- Row 2: Centro — 642K→725K (+12,9%) -->
-                <text x="0" y="32" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Centro</text>
-                <line class="db-line" x1="40" y1="32" x2="40" y2="32" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round" data-x1="98" data-x2="108.9"/>
-                <circle class="db-dot-a" cx="40" cy="32" r="0" fill="#c8c8d8" data-cx="98"/>
-                <circle class="db-dot-b" cx="40" cy="32" r="0" fill="#7a7bff" data-cx="108.9"/>
-                <text class="db-val" x="40" y="27" font-family="'Plus Jakarta Sans',sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="103.5">—</text>
+                <!-- Row 2: Centro -->
+                <g class="db-row" data-region="centro">
+                  <text x="0" y="32" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Centro</text>
+                  <line class="db-line" x1="40" y1="32" x2="40" y2="32" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round"/>
+                  <circle class="db-dot-a" cx="40" cy="32" r="0" fill="#c8c8d8"/>
+                  <circle class="db-dot-b" cx="40" cy="32" r="0" fill="#7a7bff"/>
+                  <text class="db-val" x="40" y="27" font-family="'Plus Jakarta Sans',sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle">—</text>
+                </g>
 
-                <!-- Row 3: Sur — 526K→515K (−2,1%, caída) -->
-                <text x="0" y="48" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Sur</text>
-                <line class="db-line" x1="40" y1="48" x2="40" y2="48" stroke="#a3223e" stroke-width="1.5" stroke-linecap="round" data-x1="82.8" data-x2="81.3"/>
-                <circle class="db-dot-a" cx="40" cy="48" r="0" fill="#c8c8d8" data-cx="82.8"/>
-                <circle class="db-dot-b" cx="40" cy="48" r="0" fill="#d04060" data-cx="81.3"/>
-                <text class="db-val" x="40" y="43" font-family="'Plus Jakarta Sans',sans-serif" font-size="6.5" fill="#a3223e" font-weight="700" text-anchor="middle" data-cx="82.1">—</text>
+                <!-- Row 3: Sur -->
+                <g class="db-row" data-region="sur">
+                  <text x="0" y="48" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Sur</text>
+                  <line class="db-line" x1="40" y1="48" x2="40" y2="48" stroke="#a3223e" stroke-width="1.5" stroke-linecap="round"/>
+                  <circle class="db-dot-a" cx="40" cy="48" r="0" fill="#c8c8d8"/>
+                  <circle class="db-dot-b" cx="40" cy="48" r="0" fill="#d04060"/>
+                  <text class="db-val" x="40" y="43" font-family="'Plus Jakarta Sans',sans-serif" font-size="6.5" fill="#a3223e" font-weight="700" text-anchor="middle">—</text>
+                </g>
 
-                <!-- Row 4: Este — 343K→395K (+15,2%) -->
-                <text x="0" y="64" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Este</text>
-                <line class="db-line" x1="40" y1="64" x2="40" y2="64" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round" data-x1="58.8" data-x2="65.6"/>
-                <circle class="db-dot-a" cx="40" cy="64" r="0" fill="#c8c8d8" data-cx="58.8"/>
-                <circle class="db-dot-b" cx="40" cy="64" r="0" fill="#7a7bff" data-cx="65.6"/>
-                <text class="db-val" x="40" y="59" font-family="'Plus Jakarta Sans',sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="62.2">—</text>
+                <!-- Row 4: Este -->
+                <g class="db-row" data-region="este">
+                  <text x="0" y="64" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Este</text>
+                  <line class="db-line" x1="40" y1="64" x2="40" y2="64" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round"/>
+                  <circle class="db-dot-a" cx="40" cy="64" r="0" fill="#c8c8d8"/>
+                  <circle class="db-dot-b" cx="40" cy="64" r="0" fill="#7a7bff"/>
+                  <text class="db-val" x="40" y="59" font-family="'Plus Jakarta Sans',sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle">—</text>
+                </g>
 
-                <!-- Row 5: Oeste — 241K→280K (+16,2%) -->
-                <text x="0" y="80" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Oeste</text>
-                <line class="db-line" x1="40" y1="80" x2="40" y2="80" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round" data-x1="45.4" data-x2="50.5"/>
-                <circle class="db-dot-a" cx="40" cy="80" r="0" fill="#c8c8d8" data-cx="45.4"/>
-                <circle class="db-dot-b" cx="40" cy="80" r="0" fill="#7a7bff" data-cx="50.5"/>
-                <text class="db-val" x="40" y="75" font-family="'Plus Jakarta Sans',sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle" data-cx="48">—</text>
+                <!-- Row 5: Oeste -->
+                <g class="db-row" data-region="oeste">
+                  <text x="0" y="80" font-family="'Plus Jakarta Sans',sans-serif" font-size="7.5" fill="#555" font-weight="600" dominant-baseline="middle">Oeste</text>
+                  <line class="db-line" x1="40" y1="80" x2="40" y2="80" stroke="#3c8a37" stroke-width="1.5" stroke-linecap="round"/>
+                  <circle class="db-dot-a" cx="40" cy="80" r="0" fill="#c8c8d8"/>
+                  <circle class="db-dot-b" cx="40" cy="80" r="0" fill="#7a7bff"/>
+                  <text class="db-val" x="40" y="75" font-family="'Plus Jakarta Sans',sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle">—</text>
+                </g>
               </svg>
             </div>
 
@@ -1620,54 +1677,40 @@ footer {
           <!-- BOTTOM: tabla de detalle por zona -->
           <div class="df-ranking" style="padding:9px 12px 10px">
             <div class="dr-head" style="margin-bottom:6px">
-              <span class="dc-label" style="margin:0">Ventas por zona · detalle</span>
+              <span class="dc-label" style="margin:0">Ventas por canal · detalle</span>
               <span style="font-size:8px;color:var(--purple);font-weight:700">Ver informe →</span>
             </div>
             <table class="dt">
               <thead>
-                <tr><th>Zona</th><th>Ventas</th><th>% total</th><th>Var. AA</th><th>Objetivo</th></tr>
+                <tr><th>Canal</th><th>Ventas</th><th>% total</th><th>Var. AA</th><th>Objetivo</th></tr>
               </thead>
               <tbody>
-                <tr>
-                  <td><span class="dt-zone"><span class="dt-rk">01</span>Norte</span></td>
-                  <td class="dt-sales"><span class="dt-bar prd-bar" data-w="100" style="transition:transform 1s .9s ease"></span><span class="dt-v">€925K</span></td>
-                  <td>32,6%</td>
-                  <td><span class="dt-chip pos">▲ 19,4%</span></td>
-                  <td><span class="dt-obj ok">104%</span></td>
+                <tr data-canal="tienda">
+                  <td><span class="dt-zone"><span class="dt-rk">01</span>Tienda física</span></td>
+                  <td class="dt-sales"><span class="dt-bar prd-bar" data-role="bar"></span><span class="dt-v" data-role="value">—</span></td>
+                  <td data-role="pct">—</td>
+                  <td><span class="dt-chip" data-role="chip">—</span></td>
+                  <td><span class="dt-obj" data-role="obj">—</span></td>
                 </tr>
-                <tr>
-                  <td><span class="dt-zone"><span class="dt-rk">02</span>Centro</span></td>
-                  <td class="dt-sales"><span class="dt-bar prd-bar" data-w="78" style="transition:transform 1s 1s ease"></span><span class="dt-v">€725K</span></td>
-                  <td>25,5%</td>
-                  <td><span class="dt-chip pos">▲ 12,9%</span></td>
-                  <td><span class="dt-obj warn">99%</span></td>
+                <tr data-canal="online">
+                  <td><span class="dt-zone"><span class="dt-rk">02</span>Online</span></td>
+                  <td class="dt-sales"><span class="dt-bar prd-bar" data-role="bar"></span><span class="dt-v" data-role="value">—</span></td>
+                  <td data-role="pct">—</td>
+                  <td><span class="dt-chip" data-role="chip">—</span></td>
+                  <td><span class="dt-obj" data-role="obj">—</span></td>
                 </tr>
-                <tr>
-                  <td><span class="dt-zone"><span class="dt-rk">03</span>Sur</span></td>
-                  <td class="dt-sales"><span class="dt-bar prd-bar" data-w="56" style="background:rgba(163,34,62,.16);transition:transform 1s 1.1s ease"></span><span class="dt-v">€515K</span></td>
-                  <td>18,1%</td>
-                  <td><span class="dt-chip neg">▼ 2,1%</span></td>
-                  <td><span class="dt-obj bad">91%</span></td>
+                <tr data-canal="marketplace">
+                  <td><span class="dt-zone"><span class="dt-rk">03</span>Marketplace</span></td>
+                  <td class="dt-sales"><span class="dt-bar prd-bar" data-role="bar"></span><span class="dt-v" data-role="value">—</span></td>
+                  <td data-role="pct">—</td>
+                  <td><span class="dt-chip" data-role="chip">—</span></td>
+                  <td><span class="dt-obj" data-role="obj">—</span></td>
                 </tr>
-                <tr>
-                  <td><span class="dt-zone"><span class="dt-rk">04</span>Este</span></td>
-                  <td class="dt-sales"><span class="dt-bar prd-bar" data-w="43" style="transition:transform 1s 1.2s ease"></span><span class="dt-v">€395K</span></td>
-                  <td>13,9%</td>
-                  <td><span class="dt-chip pos">▲ 15,2%</span></td>
-                  <td><span class="dt-obj ok">103%</span></td>
-                </tr>
-                <tr>
-                  <td><span class="dt-zone"><span class="dt-rk">05</span>Oeste</span></td>
-                  <td class="dt-sales"><span class="dt-bar prd-bar" data-w="30" style="transition:transform 1s 1.3s ease"></span><span class="dt-v">€280K</span></td>
-                  <td>9,9%</td>
-                  <td><span class="dt-chip pos">▲ 16,2%</span></td>
-                  <td><span class="dt-obj ok">108%</span></td>
-                </tr>
-                <tr class="dt-total">
+                <tr class="dt-total" data-canal="total">
                   <td>Total</td>
-                  <td class="dt-sales"><span class="dt-v">€2,84M</span></td>
-                  <td>100%</td>
-                  <td><span class="dt-chip pos">▲ 12,4%</span></td>
+                  <td class="dt-sales"><span class="dt-v" data-role="value">—</span></td>
+                  <td data-role="pct">100%</td>
+                  <td><span class="dt-chip" data-role="chip">—</span></td>
                   <td><span class="dt-obj ok">101%</span></td>
                 </tr>
               </tbody>
@@ -2494,165 +2537,376 @@ const chartOpts = {
 </script>
 
 <script>
-/* ── HERO DASHBOARD v2: LOLLIPOP + DUMBBELL ── */
+/* ── HERO DASHBOARD v2: LOLLIPOP + DUMBBELL + FILTROS (cross-filter simulado) ──
+   Los 3 filtros (Mes, Región, Canal) comparten un mismo motor: cada uno tiene
+   un gráfico "propio" donde se resalta en morado/gris (Mes→lollipop,
+   Región→dumbbell, Canal→tabla), y en los otros dos gráficos recalcula los
+   valores (cross-filter), igual que un slicer real de Power BI. ── */
 (function(){
   if (typeof Chart === 'undefined') return;
-  var done = false;
-  function init() {
-    if(done) return; done = true;
 
-    /* KPIs */
-    var kpis = [
-      {id:'kv0', v:'€2,84M', b:'kg0', bv:'▲ +12,4%', pos:true,  t:60},
-      {id:'kv1', v:'48.236', b:'kg1', bv:'▲ +15,0%', pos:true,  t:110},
-      {id:'kv2', v:'€ 58,9', b:'kg2', bv:'▼ −2,3%',  pos:false, t:160},
-      {id:'kv3', v:'34,7%',  b:'kg3', bv:'▲ +1,2pp', pos:true,  t:210},
-    ];
-    kpis.forEach(function(k){
-      setTimeout(function(){
-        var el=document.getElementById(k.id); if(el) el.textContent=k.v;
-        var bg=document.getElementById(k.b);
-        if(bg){ bg.textContent=k.bv; if(!k.pos) bg.className='dk-neg'; else bg.className='dk-pos'; }
-      }, k.t);
+  var PURPLE = '#7a7bff';
+
+  /* ── Modelo de datos base (simulación, ver comentario "SIMULACIÓN · DATOS FICTICIOS") ── */
+  var MONTHS = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  var CY = [154,175,209,191,243,224,197,235,326,278,303,306];
+  var PY = [137,156,185,170,216,199,177,211,289,247,270,271];
+  var CY_TOTAL = CY.reduce(function(a,b){ return a+b; }, 0);
+  var PY_TOTAL = PY.reduce(function(a,b){ return a+b; }, 0);
+
+  var REGIONS = ['norte','centro','sur','este','oeste'];
+  var REGION_LABEL = { norte:'Norte', centro:'Centro', sur:'Sur', este:'Este', oeste:'Oeste' };
+  var REGION_CY = { norte:925, centro:725, sur:515, este:395, oeste:280 };
+  var REGION_PY = { norte:775, centro:642, sur:526, este:343, oeste:241 };
+  var REGION_CY_TOTAL = Object.keys(REGION_CY).reduce(function(a,r){ return a+REGION_CY[r]; }, 0);
+  var REGION_PY_TOTAL = Object.keys(REGION_PY).reduce(function(a,r){ return a+REGION_PY[r]; }, 0);
+  var REGION_SHARE_CY = {}, REGION_SHARE_PY = {};
+  REGIONS.forEach(function(r){
+    REGION_SHARE_CY[r] = REGION_CY[r] / REGION_CY_TOTAL;
+    REGION_SHARE_PY[r] = REGION_PY[r] / REGION_PY_TOTAL;
+  });
+
+  var CANALES = ['tienda','online','marketplace'];
+  var CANAL_LABEL = { tienda:'Tienda física', online:'Online', marketplace:'Marketplace' };
+  var CANAL_SHARE_CY = { tienda:.62, online:.28, marketplace:.10 };
+  var CANAL_SHARE_PY = { tienda:.66, online:.25, marketplace:.09 };
+  var TICKET = { tienda:66, online:48, marketplace:40 };
+  var MARGIN = { tienda:37, online:33, marketplace:27 };
+  var CANAL_OBJ = { tienda:102, online:99, marketplace:108 };
+
+  var state = { mes: null, region: null, canal: null };
+
+  /* ── Formateo (es-ES) ── */
+  function fmtCompact(v) { /* v en miles de € */
+    if (Math.abs(v) >= 1000) return (v/1000).toFixed(2).replace('.', ',') + 'M';
+    return Math.round(v) + 'K';
+  }
+  function fmtInt(n) { return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+  function fmtPct(v, decimals) {
+    decimals = decimals == null ? 1 : decimals;
+    return (v >= 0 ? '▲ +' : '▼ ') + Math.abs(v).toFixed(decimals).replace('.', ',') + '%';
+  }
+  function fmtPP(v) { return (v >= 0 ? '▲ +' : '▼ ') + Math.abs(v).toFixed(1).replace('.', ',') + 'pp'; }
+  function niceMax(v) {
+    if (v <= 0) return 100;
+    var exp = Math.pow(10, Math.floor(Math.log(v) / Math.LN10));
+    var f = v / exp;
+    var nf = f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10;
+    return nf * exp;
+  }
+
+  /* ── Motor de cross-filter: deriva todos los valores a partir del estado actual ── */
+  function computeMonthly() {
+    return MONTHS.map(function(_, i) {
+      var cy = CY[i], py = PY[i];
+      if (state.region) { cy *= REGION_SHARE_CY[state.region]; py *= REGION_SHARE_PY[state.region]; }
+      if (state.canal)  { cy *= CANAL_SHARE_CY[state.canal];  py *= CANAL_SHARE_PY[state.canal]; }
+      return { cy: cy, py: py };
+    });
+  }
+  function computeRegions() {
+    return REGIONS.map(function(r) {
+      var cy, py;
+      if (state.mes != null) { cy = CY[state.mes] * REGION_SHARE_CY[r]; py = PY[state.mes] * REGION_SHARE_PY[r]; }
+      else { cy = REGION_CY[r]; py = REGION_PY[r]; }
+      if (state.canal) { cy *= CANAL_SHARE_CY[state.canal]; py *= CANAL_SHARE_PY[state.canal]; }
+      return { key: r, cy: cy, py: py };
+    });
+  }
+  function computeCanales() {
+    return CANALES.map(function(c) {
+      var baseCY = state.mes != null ? CY[state.mes] : CY_TOTAL;
+      var basePY = state.mes != null ? PY[state.mes] : PY_TOTAL;
+      if (state.region) { baseCY *= REGION_SHARE_CY[state.region]; basePY *= REGION_SHARE_PY[state.region]; }
+      return { key: c, cy: baseCY * CANAL_SHARE_CY[c], py: basePY * CANAL_SHARE_PY[c] };
+    });
+  }
+  function computeTotals() {
+    var baseCY = state.mes != null ? CY[state.mes] : CY_TOTAL;
+    var basePY = state.mes != null ? PY[state.mes] : PY_TOTAL;
+    if (state.region) { baseCY *= REGION_SHARE_CY[state.region]; basePY *= REGION_SHARE_PY[state.region]; }
+    if (state.canal)  { baseCY *= CANAL_SHARE_CY[state.canal];  basePY *= CANAL_SHARE_PY[state.canal]; }
+    return { cy: baseCY, py: basePY };
+  }
+  function computeEconomics(canal, shareTable) {
+    if (canal) return { ticket: TICKET[canal], margin: MARGIN[canal] };
+    var ticket = 0, margin = 0;
+    CANALES.forEach(function(c) { ticket += shareTable[c] * TICKET[c]; margin += shareTable[c] * MARGIN[c]; });
+    return { ticket: ticket, margin: margin };
+  }
+
+  /* ── Chart.js: lollipop (Mes = gráfico "propio": resalta el mes seleccionado) ── */
+  var lollipopChart = null;
+  function initLollipop() {
+    var ctx = document.getElementById('heroLollipop');
+    if (!ctx) return;
+    lollipopChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: MONTHS,
+        datasets: [
+          { label:'PY', data: PY.slice(), backgroundColor:'transparent', borderColor:'#d0d0e0', borderWidth:1.5, borderRadius:0, borderSkipped:false, barThickness:1, order:2 },
+          { label:'CY', data: CY.slice(), backgroundColor:'transparent',
+            borderColor: function(c){ return (state.mes == null || c.dataIndex === state.mes) ? PURPLE : '#d7d7e2'; },
+            borderWidth:1.5, borderRadius:0, borderSkipped:false, barThickness:1, order:2 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend:{display:false}, tooltip:{enabled:false} },
+        layout: { padding: { top: 8, right: 4, bottom: 0, left: 0 } },
+        scales: {
+          x: { grid:{display:false}, ticks:{font:{family:'Plus Jakarta Sans',size:7.5}, color:'#767676'}, border:{display:false} },
+          y: { display:false, min:120, max:340 }
+        },
+        animation: { duration:500, easing:'easeOutQuart' }
+      },
+      plugins: [{
+        id: 'lollipopDots',
+        afterDraw: function(chart) {
+          var c2 = chart.ctx;
+          var meta0 = chart.getDatasetMeta(0); /* PY */
+          var meta1 = chart.getDatasetMeta(1); /* CY */
+          meta0.data.forEach(function(bar){
+            c2.beginPath(); c2.arc(bar.x, bar.y, 4.5, 0, Math.PI*2);
+            c2.strokeStyle = '#c0c0d4'; c2.lineWidth = 1.8; c2.fillStyle = '#fff';
+            c2.fill(); c2.stroke();
+          });
+          meta1.data.forEach(function(bar, i){
+            c2.beginPath(); c2.arc(bar.x, bar.y, 5, 0, Math.PI*2);
+            c2.fillStyle = (state.mes == null || i === state.mes) ? PURPLE : '#d7d7e2';
+            c2.fill();
+          });
+        }
+      }]
+    });
+  }
+  function renderLollipop(monthly) {
+    if (!lollipopChart) return;
+    var cyVals = monthly.map(function(m){ return m.cy; });
+    var pyVals = monthly.map(function(m){ return m.py; });
+    var all = cyVals.concat(pyVals);
+    var min = Math.min.apply(null, all), max = Math.max.apply(null, all);
+    var pad = (max - min) * 0.25 || max * 0.25 || 10;
+    lollipopChart.data.datasets[0].data = pyVals;
+    lollipopChart.data.datasets[1].data = cyVals;
+    lollipopChart.options.scales.y.min = Math.max(0, min - pad);
+    lollipopChart.options.scales.y.max = max + pad;
+    lollipopChart.update();
+  }
+
+  /* ── Dumbbell SVG (Región = gráfico "propio") ── */
+  var GRID_N = 5;
+  function val2x(v, tickStep, domainMax) { return 40 + (v - tickStep) / (domainMax - tickStep) * (145 - 40); }
+  function renderDumbbell(regionVals) {
+    var rawMax = 0;
+    regionVals.forEach(function(rv){ rawMax = Math.max(rawMax, rv.cy, rv.py); });
+    var domainMax = niceMax(rawMax * 1.18);
+    var tickStep = domainMax / GRID_N;
+
+    for (var i = 0; i < GRID_N; i++) {
+      var v = tickStep * (i + 1);
+      var x = val2x(v, tickStep, domainMax);
+      var line = document.getElementById('dbGridLine' + i);
+      var label = document.getElementById('dbGridLabel' + i);
+      if (line) { line.setAttribute('x1', x); line.setAttribute('x2', x); }
+      if (label) { label.setAttribute('x', x); label.textContent = fmtCompact(v); }
+    }
+
+    regionVals.forEach(function(rv) {
+      var g = document.querySelector('.db-row[data-region="' + rv.key + '"]');
+      if (!g) return;
+      var xA = val2x(rv.py, tickStep, domainMax);
+      var xB = val2x(rv.cy, tickStep, domainMax);
+      var growth = (rv.cy - rv.py) / rv.py * 100;
+      var line = g.querySelector('.db-line');
+      var dotA = g.querySelector('.db-dot-a');
+      var dotB = g.querySelector('.db-dot-b');
+      var val  = g.querySelector('.db-val');
+      if (line) { line.setAttribute('x1', xA); line.setAttribute('x2', xB); line.setAttribute('stroke', growth >= 0 ? '#3c8a37' : '#a3223e'); }
+      if (dotA) { dotA.setAttribute('cx', xA); dotA.setAttribute('r', 2.5); }
+      if (dotB) { dotB.setAttribute('cx', xB); dotB.setAttribute('r', 3.5); dotB.setAttribute('fill', growth >= 0 ? PURPLE : '#d04060'); }
+      if (val)  { val.setAttribute('x', (xA + xB) / 2); val.textContent = fmtPct(growth); val.setAttribute('fill', growth >= 0 ? PURPLE : '#a3223e'); }
+
+      g.classList.remove('is-hl', 'is-dim');
+      if (state.region) g.classList.add(state.region === rv.key ? 'is-hl' : 'is-dim');
+    });
+  }
+
+  /* ── Tabla de canal (Canal = gráfico "propio") ── */
+  function renderCanalTable(canalVals) {
+    var maxVal = 0;
+    canalVals.forEach(function(cv){ maxVal = Math.max(maxVal, cv.cy); });
+    var totalCY = canalVals.reduce(function(a,cv){ return a + cv.cy; }, 0);
+    var totalPY = canalVals.reduce(function(a,cv){ return a + cv.py; }, 0);
+
+    canalVals.forEach(function(cv) {
+      var tr = document.querySelector('tr[data-canal="' + cv.key + '"]');
+      if (!tr) return;
+      var growth = (cv.cy - cv.py) / cv.py * 100;
+      var pct = totalCY ? (cv.cy / totalCY * 100) : 0;
+      var bar = tr.querySelector('[data-role="bar"]');
+      var val = tr.querySelector('[data-role="value"]');
+      var pctEl = tr.querySelector('[data-role="pct"]');
+      var chip = tr.querySelector('[data-role="chip"]');
+      var obj = tr.querySelector('[data-role="obj"]');
+      if (bar) bar.style.transform = 'translateY(-50%) scaleX(' + (maxVal ? cv.cy / maxVal : 0) + ')';
+      if (val) val.textContent = '€' + fmtCompact(cv.cy);
+      if (pctEl) pctEl.textContent = pct.toFixed(1).replace('.', ',') + '%';
+      if (chip) { chip.textContent = fmtPct(growth); chip.className = 'dt-chip ' + (growth >= 0 ? 'pos' : 'neg'); }
+      if (obj) { var o = CANAL_OBJ[cv.key]; obj.textContent = o + '%'; obj.className = 'dt-obj ' + (o >= 100 ? 'ok' : o >= 95 ? 'warn' : 'bad'); }
+
+      tr.classList.remove('is-hl', 'is-dim');
+      if (state.canal) tr.classList.add(state.canal === cv.key ? 'is-hl' : 'is-dim');
     });
 
-    /* LOLLIPOP — CY vs PY, 6 meses via Chart.js scatter+line */
-    setTimeout(function(){
-      var ctx = document.getElementById('heroLollipop');
-      if(!ctx) return;
+    var totalRow = document.querySelector('tr[data-canal="total"]');
+    if (totalRow) {
+      var totalGrowth = (totalCY - totalPY) / totalPY * 100;
+      var tv = totalRow.querySelector('[data-role="value"]');
+      var tc = totalRow.querySelector('[data-role="chip"]');
+      if (tv) tv.textContent = '€' + fmtCompact(totalCY);
+      if (tc) { tc.textContent = fmtPct(totalGrowth); tc.className = 'dt-chip ' + (totalGrowth >= 0 ? 'pos' : 'neg'); }
+    }
+  }
 
-      var months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-      var cy = [154,175,209,191,243,224,197,235,326,278,303,306];
-      var py = [137,156,185,170,216,199,177,211,289,247,270,271];
+  /* ── KPIs + cabecera ── */
+  function setKPI(valId, badgeId, value, badgeText, positive) {
+    var v = document.getElementById(valId); if (v) v.textContent = value;
+    var b = document.getElementById(badgeId);
+    if (b) { b.textContent = badgeText; b.className = positive ? 'dk-pos' : 'dk-neg'; }
+  }
+  function renderKPIs() {
+    var totals = computeTotals();
+    var eco = computeEconomics(state.canal, CANAL_SHARE_CY);
+    var ecoPY = computeEconomics(state.canal, CANAL_SHARE_PY);
+    var ventasGrowth = (totals.cy - totals.py) / totals.py * 100;
+    var unidades = totals.cy * 1000 / eco.ticket;
+    var unidadesPY = totals.py * 1000 / ecoPY.ticket;
+    var unidadesGrowth = (unidades - unidadesPY) / unidadesPY * 100;
+    var ticketGrowth = (eco.ticket - ecoPY.ticket) / ecoPY.ticket * 100;
+    var marginGrowthPP = eco.margin - ecoPY.margin;
 
-      /* Build stick dataset: array of {x, y} pairs forming vertical lines */
-      /* We use a custom bar-of-width-0 trick with scatter overlay */
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: months,
-          datasets: [
-            /* PY ghost bars — very thin, light */
-            {
-              label:'PY',
-              data: py,
-              backgroundColor: 'transparent',
-              borderColor: '#d0d0e0',
-              borderWidth: 1.5,
-              borderRadius: 0,
-              borderSkipped: false,
-              barThickness: 1,
-              order: 2
-            },
-            /* CY filled bars — thin sticks */
-            {
-              label:'CY',
-              data: cy,
-              backgroundColor: 'transparent',
-              borderColor: '#7a7bff',
-              borderWidth: 1.5,
-              borderRadius: 0,
-              borderSkipped: false,
-              barThickness: 1,
-              order: 2
-            }
-          ]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: { legend:{display:false}, tooltip:{enabled:false} },
-          layout: { padding: { top: 8, right: 4, bottom: 0, left: 0 } },
-          scales: {
-            x: { grid:{display:false}, ticks:{font:{family:'Plus Jakarta Sans',size:7.5}, color:'#767676'}, border:{display:false} },
-            y: { display:false, min:120, max:340 }
-          },
-          animation: { duration:600, easing:'easeOutQuart' }
-        },
-        plugins: [{
-          id: 'lollipopDots',
-          afterDraw: function(chart) {
-            var ctx2 = chart.ctx;
-            var meta0 = chart.getDatasetMeta(0); /* PY */
-            var meta1 = chart.getDatasetMeta(1); /* CY */
-            meta0.data.forEach(function(bar, i){
-              var x = bar.x, y = bar.y;
-              ctx2.beginPath();
-              ctx2.arc(x, y, 4.5, 0, Math.PI*2);
-              ctx2.strokeStyle = '#c0c0d4';
-              ctx2.lineWidth = 1.8;
-              ctx2.fillStyle = '#fff';
-              ctx2.fill();
-              ctx2.stroke();
-            });
-            meta1.data.forEach(function(bar, i){
-              var x = bar.x, y = bar.y;
-              ctx2.beginPath();
-              ctx2.arc(x, y, 5, 0, Math.PI*2);
-              ctx2.fillStyle = '#7a7bff';
-              ctx2.fill();
-            });
-          }
-        }]
+    setKPI('kv0', 'kg0', '€' + fmtCompact(totals.cy), fmtPct(ventasGrowth), ventasGrowth >= 0);
+    setKPI('kv1', 'kg1', fmtInt(unidades), fmtPct(unidadesGrowth), unidadesGrowth >= 0);
+    setKPI('kv2', 'kg2', '€ ' + eco.ticket.toFixed(1).replace('.', ','), fmtPct(ticketGrowth), ticketGrowth >= 0);
+    setKPI('kv3', 'kg3', eco.margin.toFixed(1).replace('.', ',') + '%', fmtPP(marginGrowthPP), marginGrowthPP >= 0);
+  }
+  function renderHeader(totals) {
+    var periodEl = document.getElementById('dfPeriodLabel');
+    var badgeEl = document.getElementById('dfPeriodBadge');
+    if (periodEl) periodEl.textContent = state.mes != null ? MONTHS[state.mes] + ' 2025' : 'Ene–Dic 2025';
+    if (badgeEl) {
+      var g = (totals.cy - totals.py) / totals.py * 100;
+      badgeEl.textContent = fmtPct(g);
+      badgeEl.style.background = g >= 0 ? '#e8f5e7' : '#fbe9ec';
+      badgeEl.style.color = g >= 0 ? '#3c8a37' : '#a3223e';
+    }
+  }
+
+  function render() {
+    renderLollipop(computeMonthly());
+    renderDumbbell(computeRegions());
+    renderCanalTable(computeCanales());
+    renderKPIs();
+    renderHeader(computeTotals());
+  }
+
+  /* ── UI de filtros: dropdown por chip, clic para seleccionar/limpiar ── */
+  var FILTER_DEFS = {
+    mes:    { all: 'Todos', options: MONTHS.map(function(m, i){ return { value: i, label: m }; }) },
+    region: { all: 'Todas', options: REGIONS.map(function(r){ return { value: r, label: REGION_LABEL[r] }; }) },
+    canal:  { all: 'Todos', options: CANALES.map(function(c){ return { value: c, label: CANAL_LABEL[c] }; }) }
+  };
+
+  function closeAllMenus() {
+    document.querySelectorAll('.df-filter-menu').forEach(function(m){ m.hidden = true; });
+    document.querySelectorAll('.df-filter').forEach(function(b){ b.classList.remove('is-open'); });
+  }
+
+  function setFilter(key, value) {
+    state[key] = value;
+    closeAllMenus();
+    updateFilterChips();
+    render();
+  }
+
+  function updateFilterChips() {
+    Object.keys(FILTER_DEFS).forEach(function(key) {
+      var def = FILTER_DEFS[key];
+      var btn = document.querySelector('.df-filter[data-filter="' + key + '"]');
+      if (!btn) return;
+      var valEl = btn.querySelector('[data-role="value"]');
+      var current = state[key];
+      var label = def.all;
+      if (current !== null) {
+        var found = def.options.filter(function(o){ return o.value === current; })[0];
+        if (found) label = found.label;
+      }
+      if (valEl) valEl.textContent = label;
+      btn.classList.toggle('is-active', current !== null);
+
+      btn.querySelectorAll('.df-filter-opt').forEach(function(item) {
+        var v = item.dataset.value;
+        var match = current !== null && (key === 'mes' ? Number(v) === current : v === current);
+        item.classList.toggle('is-selected', !!match);
       });
-    }, 120);
+    });
+  }
 
-    /* DUMBBELL — SVG animation */
-    setTimeout(function(){
-      /* Animate connector lines */
-      var lines = document.querySelectorAll('#heroDumbbell .db-line');
-      lines.forEach(function(line, i){
-        setTimeout(function(){
-          var x1 = parseFloat(line.dataset.x1);
-          var x2 = parseFloat(line.dataset.x2);
-          line.setAttribute('x1', x1);
-          line.setAttribute('x2', x2);
-          line.style.transition = 'x1 .6s ease, x2 .6s ease';
-        }, i * 80);
+  function buildFilterUI() {
+    var bar = document.getElementById('dfFilters');
+    if (!bar) return;
+    bar.querySelectorAll('.df-filter').forEach(function(btn) {
+      var key = btn.dataset.filter;
+      var def = FILTER_DEFS[key];
+      if (!def) return;
+
+      var menu = document.createElement('div');
+      menu.className = 'df-filter-menu';
+      menu.hidden = true;
+
+      var reset = document.createElement('div');
+      reset.className = 'df-filter-opt is-reset';
+      reset.textContent = def.all;
+      reset.addEventListener('click', function(e){ e.stopPropagation(); setFilter(key, null); });
+      menu.appendChild(reset);
+
+      def.options.forEach(function(opt) {
+        var item = document.createElement('div');
+        item.className = 'df-filter-opt';
+        item.dataset.value = opt.value;
+        item.textContent = opt.label;
+        item.addEventListener('click', function(e){ e.stopPropagation(); setFilter(key, opt.value); });
+        menu.appendChild(item);
       });
 
-      /* Animate dots */
-      var dotsA = document.querySelectorAll('#heroDumbbell .db-dot-a');
-      var dotsB = document.querySelectorAll('#heroDumbbell .db-dot-b');
-      dotsA.forEach(function(dot, i){
-        setTimeout(function(){
-          dot.setAttribute('cx', dot.dataset.cx);
-          dot.setAttribute('r', '2.5');
-        }, i * 80 + 100);
+      btn.appendChild(menu);
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var isOpen = !menu.hidden;
+        closeAllMenus();
+        if (!isOpen) { menu.hidden = false; btn.classList.add('is-open'); }
       });
-      dotsB.forEach(function(dot, i){
-        setTimeout(function(){
-          dot.setAttribute('cx', dot.dataset.cx);
-          dot.setAttribute('r', '3.5');
-        }, i * 80 + 180);
-      });
+    });
 
-      /* Show value labels */
-      var vals = ['+19,4%','+12,9%','−2,1%','+15,2%','+16,2%'];
-      document.querySelectorAll('#heroDumbbell .db-val').forEach(function(el,i){
-        setTimeout(function(){
-          el.setAttribute('x', el.dataset.cx);
-          el.textContent = vals[i];
-        }, i * 80 + 300);
-      });
+    document.addEventListener('click', closeAllMenus);
+  }
 
-    }, 200);
-
-    /* Product bars */
-    setTimeout(function(){
-      document.querySelectorAll('.prd-bar').forEach(function(b){
-        var w = (b.dataset.w||0) / 100;
-        b.style.transform = 'translateY(-50%) scaleX(' + w + ')';
-      });
-    }, 280);
+  var started = false;
+  function start() {
+    if (started) return; started = true;
+    initLollipop();
+    buildFilterUI();
+    updateFilterChips();
+    /* pequeño retraso para que la primera pintura coincida con la entrada del resto del hero */
+    setTimeout(render, 150);
   }
 
   var frame = document.querySelector('.dashboard-frame');
-  // El dashboard está en el hero — visible al cargar. No tiene sentido esperar un IntersectionObserver.
-  // Arrancamos en cuanto Chart.js esté disponible y el DOM esté listo.
-  function start(){ if(!frame) return; init(); }
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', start);
-  } else {
+    document.addEventListener('DOMContentLoaded', function(){ if (frame) start(); });
+  } else if (frame) {
     start();
   }
 })();
