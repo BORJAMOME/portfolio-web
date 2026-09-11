@@ -443,8 +443,7 @@
 .dr-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
 
 /* ── Barra de filtros (slicers) ── */
-.df-filters { display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-bottom: .5px solid var(--gray); background: #f7f7fa; position: relative; z-index: 5; }
-.df-filters-ic { font-size: 8px; color: var(--muted-light); margin-right: 2px; flex-shrink: 0; font-weight: 700; letter-spacing: .3px; text-transform: uppercase; }
+.df-filters { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; justify-content: flex-end; flex-shrink: 0; position: relative; z-index: 5; }
 .df-filter { position: relative; display: inline-flex; align-items: center; gap: 4px; font-family: inherit; font-size: 8.5px; font-weight: 600; color: var(--ink); background: #fff; border: .5px solid #dcdce6; border-radius: 5px; padding: 3px 7px 3px 8px; cursor: pointer; transition: border-color .15s, box-shadow .15s, background .15s; }
 .df-filter:hover { border-color: #b9b9d4; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
 .df-filter-lbl { color: var(--muted); font-weight: 600; }
@@ -459,7 +458,7 @@
 .df-filter-opt.is-selected { color: var(--purple); background: var(--purple-light); }
 .df-filter-opt.is-reset { color: var(--muted); border-bottom: .5px solid #eee; margin-bottom: 2px; border-radius: 0; padding-bottom: 6px; }
 
-/* ── Estados de resaltado (highlight/dim) compartidos por dumbbell y tabla de canal ── */
+/* ── Estados de resaltado (highlight/dim) compartidos por dumbbell y tabla de producto ── */
 .db-row { transition: opacity .3s ease; }
 .db-line { transition: x1 .45s ease, x2 .45s ease, stroke .25s ease; }
 .db-dot-a, .db-dot-b { transition: cx .45s ease, r .3s ease, fill .25s ease; }
@@ -481,6 +480,7 @@
 .dt tbody tr:nth-child(1) .dt-bar { transition-delay: .02s; }
 .dt tbody tr:nth-child(2) .dt-bar { transition-delay: .08s; }
 .dt tbody tr:nth-child(3) .dt-bar { transition-delay: .14s; }
+.dt tbody tr:nth-child(4) .dt-bar { transition-delay: .2s; }
 
 /* ─── SECTION COMMONS ─── */
 /* Cada sección lleva la línea divisora pegada al borde superior (sin padding-top).
@@ -1536,21 +1536,15 @@ footer {
           </span>
         </div>
 
-        <div class="df-filters" id="dfFilters">
-          <span class="df-filters-ic">⏷ Filtros</span>
-          <button type="button" class="df-filter" data-filter="mes"><span class="df-filter-lbl">Mes</span><span class="df-filter-val" data-role="value">Todos</span><span class="df-filter-arrow">▾</span></button>
-          <button type="button" class="df-filter" data-filter="region"><span class="df-filter-lbl">Región</span><span class="df-filter-val" data-role="value">Todas</span><span class="df-filter-arrow">▾</span></button>
-          <button type="button" class="df-filter" data-filter="canal"><span class="df-filter-lbl">Canal</span><span class="df-filter-val" data-role="value">Todos</span><span class="df-filter-arrow">▾</span></button>
-        </div>
-
         <div class="df-header" style="padding:11px 14px 7px">
           <div>
             <div class="df-title">Rendimiento de Ventas 2025</div>
-            <div style="font-size:8px;color:var(--muted);margin-top:1px">Ventas reales vs año anterior · Mes · Región · Canal</div>
+            <div style="font-size:8px;color:var(--muted);margin-top:1px">Ventas reales vs año anterior · Mes · Región · Producto</div>
           </div>
-          <div style="display:flex;align-items:center;gap:5px">
-            <span class="df-period" id="dfPeriodLabel">Ene–Dic 2025</span>
-            <span id="dfPeriodBadge" style="font-size:8px;font-weight:600;background:#e8f5e7;color:#3c8a37;padding:2px 7px;border-radius:4px">▲ +12,4%</span>
+          <div class="df-filters" id="dfFilters">
+            <button type="button" class="df-filter" data-filter="mes"><span class="df-filter-lbl">Mes</span><span class="df-filter-val" data-role="value">Todos</span><span class="df-filter-arrow">▾</span></button>
+            <button type="button" class="df-filter" data-filter="region"><span class="df-filter-lbl">Región</span><span class="df-filter-val" data-role="value">Todas</span><span class="df-filter-arrow">▾</span></button>
+            <button type="button" class="df-filter" data-filter="producto"><span class="df-filter-lbl">Producto</span><span class="df-filter-val" data-role="value">Todos</span><span class="df-filter-arrow">▾</span></button>
           </div>
         </div>
 
@@ -1677,36 +1671,43 @@ footer {
           <!-- BOTTOM: tabla de detalle por zona -->
           <div class="df-ranking" style="padding:9px 12px 10px">
             <div class="dr-head" style="margin-bottom:6px">
-              <span class="dc-label" style="margin:0">Ventas por canal · detalle</span>
+              <span class="dc-label" style="margin:0">Ventas por producto · detalle</span>
               <span style="font-size:8px;color:var(--purple);font-weight:700">Ver informe →</span>
             </div>
             <table class="dt">
               <thead>
-                <tr><th>Canal</th><th>Ventas</th><th>% total</th><th>Var. AA</th><th>Objetivo</th></tr>
+                <tr><th>Producto</th><th>Ventas</th><th>% total</th><th>Var. AA</th><th>Objetivo</th></tr>
               </thead>
               <tbody>
-                <tr data-canal="tienda">
-                  <td><span class="dt-zone"><span class="dt-rk">01</span>Tienda física</span></td>
+                <tr data-producto="a">
+                  <td><span class="dt-zone"><span class="dt-rk">01</span>Producto A</span></td>
                   <td class="dt-sales"><span class="dt-bar prd-bar" data-role="bar"></span><span class="dt-v" data-role="value">—</span></td>
                   <td data-role="pct">—</td>
                   <td><span class="dt-chip" data-role="chip">—</span></td>
                   <td><span class="dt-obj" data-role="obj">—</span></td>
                 </tr>
-                <tr data-canal="online">
-                  <td><span class="dt-zone"><span class="dt-rk">02</span>Online</span></td>
+                <tr data-producto="b">
+                  <td><span class="dt-zone"><span class="dt-rk">02</span>Producto B</span></td>
                   <td class="dt-sales"><span class="dt-bar prd-bar" data-role="bar"></span><span class="dt-v" data-role="value">—</span></td>
                   <td data-role="pct">—</td>
                   <td><span class="dt-chip" data-role="chip">—</span></td>
                   <td><span class="dt-obj" data-role="obj">—</span></td>
                 </tr>
-                <tr data-canal="marketplace">
-                  <td><span class="dt-zone"><span class="dt-rk">03</span>Marketplace</span></td>
+                <tr data-producto="c">
+                  <td><span class="dt-zone"><span class="dt-rk">03</span>Producto C</span></td>
                   <td class="dt-sales"><span class="dt-bar prd-bar" data-role="bar"></span><span class="dt-v" data-role="value">—</span></td>
                   <td data-role="pct">—</td>
                   <td><span class="dt-chip" data-role="chip">—</span></td>
                   <td><span class="dt-obj" data-role="obj">—</span></td>
                 </tr>
-                <tr class="dt-total" data-canal="total">
+                <tr data-producto="d">
+                  <td><span class="dt-zone"><span class="dt-rk">04</span>Producto D</span></td>
+                  <td class="dt-sales"><span class="dt-bar prd-bar" data-role="bar"></span><span class="dt-v" data-role="value">—</span></td>
+                  <td data-role="pct">—</td>
+                  <td><span class="dt-chip" data-role="chip">—</span></td>
+                  <td><span class="dt-obj" data-role="obj">—</span></td>
+                </tr>
+                <tr class="dt-total" data-producto="total">
                   <td>Total</td>
                   <td class="dt-sales"><span class="dt-v" data-role="value">—</span></td>
                   <td data-role="pct">100%</td>
@@ -2538,10 +2539,10 @@ const chartOpts = {
 
 <script>
 /* ── HERO DASHBOARD v2: LOLLIPOP + DUMBBELL + FILTROS (cross-filter simulado) ──
-   Los 3 filtros (Mes, Región, Canal) comparten un mismo motor: cada uno tiene
-   un gráfico "propio" donde se resalta en morado/gris (Mes→lollipop,
-   Región→dumbbell, Canal→tabla), y en los otros dos gráficos recalcula los
-   valores (cross-filter), igual que un slicer real de Power BI. ── */
+   Los 3 filtros (Mes, Región, Producto) comparten un mismo motor: cada uno
+   tiene un gráfico "propio" donde se resalta en morado/gris (Mes→lollipop,
+   Región→dumbbell, Producto→tabla), y en los otros dos gráficos recalcula
+   los valores (cross-filter), igual que un slicer real de Power BI. ── */
 (function(){
   if (typeof Chart === 'undefined') return;
 
@@ -2566,15 +2567,15 @@ const chartOpts = {
     REGION_SHARE_PY[r] = REGION_PY[r] / REGION_PY_TOTAL;
   });
 
-  var CANALES = ['tienda','online','marketplace'];
-  var CANAL_LABEL = { tienda:'Tienda física', online:'Online', marketplace:'Marketplace' };
-  var CANAL_SHARE_CY = { tienda:.62, online:.28, marketplace:.10 };
-  var CANAL_SHARE_PY = { tienda:.66, online:.25, marketplace:.09 };
-  var TICKET = { tienda:66, online:48, marketplace:40 };
-  var MARGIN = { tienda:37, online:33, marketplace:27 };
-  var CANAL_OBJ = { tienda:102, online:99, marketplace:108 };
+  var PRODUCTOS = ['a','b','c','d'];
+  var PRODUCT_LABEL = { a:'Producto A', b:'Producto B', c:'Producto C', d:'Producto D' };
+  var PRODUCT_SHARE_CY = { a:.34, b:.28, c:.20, d:.18 };
+  var PRODUCT_SHARE_PY = { a:.29, b:.27, c:.25, d:.19 };
+  var TICKET = { a:72, b:55, c:63, d:38 };
+  var MARGIN = { a:39, b:35, c:29, d:31 };
+  var PRODUCT_OBJ = { a:112, b:101, c:88, d:97 };
 
-  var state = { mes: null, region: null, canal: null };
+  var state = { mes: null, region: null, producto: null };
 
   /* ── Formateo (es-ES) ── */
   function fmtCompact(v) { /* v en miles de € */
@@ -2599,8 +2600,8 @@ const chartOpts = {
   function computeMonthly() {
     return MONTHS.map(function(_, i) {
       var cy = CY[i], py = PY[i];
-      if (state.region) { cy *= REGION_SHARE_CY[state.region]; py *= REGION_SHARE_PY[state.region]; }
-      if (state.canal)  { cy *= CANAL_SHARE_CY[state.canal];  py *= CANAL_SHARE_PY[state.canal]; }
+      if (state.region)   { cy *= REGION_SHARE_CY[state.region];   py *= REGION_SHARE_PY[state.region]; }
+      if (state.producto) { cy *= PRODUCT_SHARE_CY[state.producto]; py *= PRODUCT_SHARE_PY[state.producto]; }
       return { cy: cy, py: py };
     });
   }
@@ -2609,29 +2610,29 @@ const chartOpts = {
       var cy, py;
       if (state.mes != null) { cy = CY[state.mes] * REGION_SHARE_CY[r]; py = PY[state.mes] * REGION_SHARE_PY[r]; }
       else { cy = REGION_CY[r]; py = REGION_PY[r]; }
-      if (state.canal) { cy *= CANAL_SHARE_CY[state.canal]; py *= CANAL_SHARE_PY[state.canal]; }
+      if (state.producto) { cy *= PRODUCT_SHARE_CY[state.producto]; py *= PRODUCT_SHARE_PY[state.producto]; }
       return { key: r, cy: cy, py: py };
     });
   }
-  function computeCanales() {
-    return CANALES.map(function(c) {
+  function computeProductos() {
+    return PRODUCTOS.map(function(p) {
       var baseCY = state.mes != null ? CY[state.mes] : CY_TOTAL;
       var basePY = state.mes != null ? PY[state.mes] : PY_TOTAL;
       if (state.region) { baseCY *= REGION_SHARE_CY[state.region]; basePY *= REGION_SHARE_PY[state.region]; }
-      return { key: c, cy: baseCY * CANAL_SHARE_CY[c], py: basePY * CANAL_SHARE_PY[c] };
+      return { key: p, cy: baseCY * PRODUCT_SHARE_CY[p], py: basePY * PRODUCT_SHARE_PY[p] };
     });
   }
   function computeTotals() {
     var baseCY = state.mes != null ? CY[state.mes] : CY_TOTAL;
     var basePY = state.mes != null ? PY[state.mes] : PY_TOTAL;
-    if (state.region) { baseCY *= REGION_SHARE_CY[state.region]; basePY *= REGION_SHARE_PY[state.region]; }
-    if (state.canal)  { baseCY *= CANAL_SHARE_CY[state.canal];  basePY *= CANAL_SHARE_PY[state.canal]; }
+    if (state.region)   { baseCY *= REGION_SHARE_CY[state.region];   basePY *= REGION_SHARE_PY[state.region]; }
+    if (state.producto) { baseCY *= PRODUCT_SHARE_CY[state.producto]; basePY *= PRODUCT_SHARE_PY[state.producto]; }
     return { cy: baseCY, py: basePY };
   }
-  function computeEconomics(canal, shareTable) {
-    if (canal) return { ticket: TICKET[canal], margin: MARGIN[canal] };
+  function computeEconomics(producto, shareTable) {
+    if (producto) return { ticket: TICKET[producto], margin: MARGIN[producto] };
     var ticket = 0, margin = 0;
-    CANALES.forEach(function(c) { ticket += shareTable[c] * TICKET[c]; margin += shareTable[c] * MARGIN[c]; });
+    PRODUCTOS.forEach(function(p) { ticket += shareTable[p] * TICKET[p]; margin += shareTable[p] * MARGIN[p]; });
     return { ticket: ticket, margin: margin };
   }
 
@@ -2733,34 +2734,34 @@ const chartOpts = {
     });
   }
 
-  /* ── Tabla de canal (Canal = gráfico "propio") ── */
-  function renderCanalTable(canalVals) {
+  /* ── Tabla de producto (Producto = gráfico "propio") ── */
+  function renderProductTable(productVals) {
     var maxVal = 0;
-    canalVals.forEach(function(cv){ maxVal = Math.max(maxVal, cv.cy); });
-    var totalCY = canalVals.reduce(function(a,cv){ return a + cv.cy; }, 0);
-    var totalPY = canalVals.reduce(function(a,cv){ return a + cv.py; }, 0);
+    productVals.forEach(function(pv){ maxVal = Math.max(maxVal, pv.cy); });
+    var totalCY = productVals.reduce(function(a,pv){ return a + pv.cy; }, 0);
+    var totalPY = productVals.reduce(function(a,pv){ return a + pv.py; }, 0);
 
-    canalVals.forEach(function(cv) {
-      var tr = document.querySelector('tr[data-canal="' + cv.key + '"]');
+    productVals.forEach(function(pv) {
+      var tr = document.querySelector('tr[data-producto="' + pv.key + '"]');
       if (!tr) return;
-      var growth = (cv.cy - cv.py) / cv.py * 100;
-      var pct = totalCY ? (cv.cy / totalCY * 100) : 0;
+      var growth = (pv.cy - pv.py) / pv.py * 100;
+      var pct = totalCY ? (pv.cy / totalCY * 100) : 0;
       var bar = tr.querySelector('[data-role="bar"]');
       var val = tr.querySelector('[data-role="value"]');
       var pctEl = tr.querySelector('[data-role="pct"]');
       var chip = tr.querySelector('[data-role="chip"]');
       var obj = tr.querySelector('[data-role="obj"]');
-      if (bar) bar.style.transform = 'translateY(-50%) scaleX(' + (maxVal ? cv.cy / maxVal : 0) + ')';
-      if (val) val.textContent = '€' + fmtCompact(cv.cy);
+      if (bar) bar.style.transform = 'translateY(-50%) scaleX(' + (maxVal ? pv.cy / maxVal : 0) + ')';
+      if (val) val.textContent = '€' + fmtCompact(pv.cy);
       if (pctEl) pctEl.textContent = pct.toFixed(1).replace('.', ',') + '%';
       if (chip) { chip.textContent = fmtPct(growth); chip.className = 'dt-chip ' + (growth >= 0 ? 'pos' : 'neg'); }
-      if (obj) { var o = CANAL_OBJ[cv.key]; obj.textContent = o + '%'; obj.className = 'dt-obj ' + (o >= 100 ? 'ok' : o >= 95 ? 'warn' : 'bad'); }
+      if (obj) { var o = PRODUCT_OBJ[pv.key]; obj.textContent = o + '%'; obj.className = 'dt-obj ' + (o >= 100 ? 'ok' : o >= 95 ? 'warn' : 'bad'); }
 
       tr.classList.remove('is-hl', 'is-dim');
-      if (state.canal) tr.classList.add(state.canal === cv.key ? 'is-hl' : 'is-dim');
+      if (state.producto) tr.classList.add(state.producto === pv.key ? 'is-hl' : 'is-dim');
     });
 
-    var totalRow = document.querySelector('tr[data-canal="total"]');
+    var totalRow = document.querySelector('tr[data-producto="total"]');
     if (totalRow) {
       var totalGrowth = (totalCY - totalPY) / totalPY * 100;
       var tv = totalRow.querySelector('[data-role="value"]');
@@ -2770,7 +2771,7 @@ const chartOpts = {
     }
   }
 
-  /* ── KPIs + cabecera ── */
+  /* ── KPIs ── */
   function setKPI(valId, badgeId, value, badgeText, positive) {
     var v = document.getElementById(valId); if (v) v.textContent = value;
     var b = document.getElementById(badgeId);
@@ -2778,8 +2779,8 @@ const chartOpts = {
   }
   function renderKPIs() {
     var totals = computeTotals();
-    var eco = computeEconomics(state.canal, CANAL_SHARE_CY);
-    var ecoPY = computeEconomics(state.canal, CANAL_SHARE_PY);
+    var eco = computeEconomics(state.producto, PRODUCT_SHARE_CY);
+    var ecoPY = computeEconomics(state.producto, PRODUCT_SHARE_PY);
     var ventasGrowth = (totals.cy - totals.py) / totals.py * 100;
     var unidades = totals.cy * 1000 / eco.ticket;
     var unidadesPY = totals.py * 1000 / ecoPY.ticket;
@@ -2792,31 +2793,19 @@ const chartOpts = {
     setKPI('kv2', 'kg2', '€ ' + eco.ticket.toFixed(1).replace('.', ','), fmtPct(ticketGrowth), ticketGrowth >= 0);
     setKPI('kv3', 'kg3', eco.margin.toFixed(1).replace('.', ',') + '%', fmtPP(marginGrowthPP), marginGrowthPP >= 0);
   }
-  function renderHeader(totals) {
-    var periodEl = document.getElementById('dfPeriodLabel');
-    var badgeEl = document.getElementById('dfPeriodBadge');
-    if (periodEl) periodEl.textContent = state.mes != null ? MONTHS[state.mes] + ' 2025' : 'Ene–Dic 2025';
-    if (badgeEl) {
-      var g = (totals.cy - totals.py) / totals.py * 100;
-      badgeEl.textContent = fmtPct(g);
-      badgeEl.style.background = g >= 0 ? '#e8f5e7' : '#fbe9ec';
-      badgeEl.style.color = g >= 0 ? '#3c8a37' : '#a3223e';
-    }
-  }
 
   function render() {
     renderLollipop(computeMonthly());
     renderDumbbell(computeRegions());
-    renderCanalTable(computeCanales());
+    renderProductTable(computeProductos());
     renderKPIs();
-    renderHeader(computeTotals());
   }
 
   /* ── UI de filtros: dropdown por chip, clic para seleccionar/limpiar ── */
   var FILTER_DEFS = {
-    mes:    { all: 'Todos', options: MONTHS.map(function(m, i){ return { value: i, label: m }; }) },
-    region: { all: 'Todas', options: REGIONS.map(function(r){ return { value: r, label: REGION_LABEL[r] }; }) },
-    canal:  { all: 'Todos', options: CANALES.map(function(c){ return { value: c, label: CANAL_LABEL[c] }; }) }
+    mes:      { all: 'Todos', options: MONTHS.map(function(m, i){ return { value: i, label: m }; }) },
+    region:   { all: 'Todas', options: REGIONS.map(function(r){ return { value: r, label: REGION_LABEL[r] }; }) },
+    producto: { all: 'Todos', options: PRODUCTOS.map(function(p){ return { value: p, label: PRODUCT_LABEL[p], chip: p.toUpperCase() }; }) }
   };
 
   function closeAllMenus() {
@@ -2841,7 +2830,7 @@ const chartOpts = {
       var label = def.all;
       if (current !== null) {
         var found = def.options.filter(function(o){ return o.value === current; })[0];
-        if (found) label = found.label;
+        if (found) label = found.chip || found.label;
       }
       if (valEl) valEl.textContent = label;
       btn.classList.toggle('is-active', current !== null);
