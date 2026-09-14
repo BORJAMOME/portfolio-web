@@ -378,8 +378,20 @@
 .pc-overlay-eyebrow{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-shrink:0}
 .pc-overlay-eyebrow::before{content:"";width:18px;height:1.5px;background:var(--ink);opacity:.45}
 .pc-overlay-eyebrow span{display:none}
-.pc-overlay-title{font-family:var(--font-serif);font-size:24px;font-weight:500;letter-spacing:-.5px;line-height:1.2;color:var(--ink);margin-bottom:18px;flex-shrink:0}
-.pc-overlay-long{display:flex;flex-direction:column;gap:11px;margin-bottom:16px;overflow-y:auto;flex:1;padding-right:6px;scrollbar-width:thin;scrollbar-color:#e2e2e8 transparent}
+.pc-overlay-title{font-family:var(--font-serif);font-size:24px;font-weight:500;letter-spacing:-.5px;line-height:1.2;color:var(--ink);margin-bottom:16px;flex-shrink:0}
+.pcov-stats{display:flex;gap:10px;margin-bottom:16px;flex-shrink:0;flex-wrap:wrap}
+.pcov-stat{flex:1;min-width:130px;background:#fafafa;border:1px solid #e8e8ee;border-radius:var(--radius-md);padding:10px 14px}
+.pcov-stat-value{font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;font-size:19px;font-weight:700;color:var(--ink);letter-spacing:-.4px;line-height:1.15}
+.pcov-stat-value.pos{color:var(--green)}
+.pcov-stat-value.neg{color:var(--red)}
+.pcov-stat-label{font-size:10.5px;color:var(--muted);line-height:1.4;margin-top:3px}
+.pcov-hook{font-size:14px;color:var(--ink);line-height:1.65;margin-bottom:16px;flex-shrink:0}
+.pcov-toggle{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--ink);background:#eeeef1;border:1px solid #e2e2e8;border-radius:var(--radius-pill);padding:8px 14px;cursor:pointer;margin-bottom:14px;flex-shrink:0;transition:background .15s;font-family:inherit}
+@media (hover: hover) and (pointer: fine) { .pcov-toggle:hover{background:#e2e2e8} }
+.pcov-toggle svg{transition:transform .2s var(--ease);flex-shrink:0}
+.pcov-toggle.is-open svg{transform:rotate(180deg)}
+.pc-overlay-long{display:none;flex-direction:column;gap:11px;margin-bottom:16px;overflow-y:auto;flex:1;padding-right:6px;scrollbar-width:thin;scrollbar-color:#e2e2e8 transparent}
+.pc-overlay-long.is-open{display:flex}
 .pc-overlay-long::-webkit-scrollbar{width:4px}
 .pc-overlay-long::-webkit-scrollbar-thumb{background:#e2e2e8;border-radius:2px}
 .pc-overlay-long p{font-size:13px;color:var(--muted);line-height:1.7}
@@ -388,7 +400,7 @@
 .pc-overlay-pill{font-size:11px;font-weight:500;background:#eeeef1;color:var(--ink);padding:5px 12px;border:1px solid #e2e2e8;border-radius:var(--radius-pill);letter-spacing:0;text-transform:none}
 .pc-overlay-pill::after{content:""}
 .pc-overlay-pills .pc-overlay-pill:last-child::after{content:""}
-.pc-overlay-foot{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid #e8e8ee;flex-shrink:0;gap:12px}
+.pc-overlay-foot{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid #e8e8ee;flex-shrink:0;gap:12px;margin-top:auto}
 .pc-tech{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);font-weight:500}
 .pc-overlay-close{position:absolute;top:12px;right:12px;width:40px;height:40px;background:rgba(255,255,255,.9);border:1px solid #e8e8ee;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;transition:background .18s,color .12s;backdrop-filter:blur(4px)}
 @media (hover: hover) and (pointer: fine) { .pc-overlay-close:hover{background:var(--ink);color:#fff} }
@@ -1298,6 +1310,17 @@ document.querySelectorAll('.col-header').forEach(h=>{
   });
 });
 
+// Overlay — toggle caso completo (delegado: los .pc-overlay viven más abajo en el DOM)
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.pcov-toggle');
+  if(!btn) return;
+  const body = document.getElementById(btn.dataset.target);
+  const open = body.classList.toggle('is-open');
+  btn.classList.toggle('is-open', open);
+  btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  btn.querySelector('.pcov-toggle-label').textContent = open ? 'Ocultar detalle técnico' : 'Ver caso completo';
+});
+
 
 </script>
 <div class="pc-overlay" id="pcoverlay-0" role="dialog" aria-modal="true" aria-labelledby="pcoverlay-0-title" aria-hidden="true" onclick="closeOverlayIfBg(event,0)">
@@ -1314,7 +1337,14 @@ document.querySelectorAll('.col-header').forEach(h=>{
     <div class="pc-overlay-copy">
       <div class="pc-overlay-eyebrow"><span></span>Análisis de ventas</div>
       <div class="pc-overlay-title" id="pcoverlay-0-title">Informe de ventas con enfoque IBCS</div>
-      <div class="pc-overlay-long">
+      <div class="pcov-stats">
+        <div class="pcov-stat"><div class="pcov-stat-value">3</div><div class="pcov-stat-label">Tipos de visual IBCS construidos</div></div>
+        <div class="pcov-stat"><div class="pcov-stat-value">5</div><div class="pcov-stat-label">Dimensiones del modelo de datos</div></div>
+      </div>
+      <p class="pcov-hook">Dos periodos pueden cerrar con el mismo número total y haber sido radicalmente distintos por dentro — sin variación integrada en el visual, esa diferencia no se ve.</p>
+      <div class="pc-overlay-pills"><span class="pc-overlay-pill">IBCS</span><span class="pc-overlay-pill">DAX</span><span class="pc-overlay-pill">Modelado en estrella</span><span class="pc-overlay-pill">Drill-down</span><span class="pc-overlay-pill">Variación absoluta y relativa</span><span class="pc-overlay-pill">Parámetros dinámicos</span><span class="pc-overlay-pill">Jerarquía visual</span><span class="pc-overlay-pill">Sales analytics</span><span class="pc-overlay-pill">YoY analysis</span></div>
+      <button class="pcov-toggle" data-target="pcovlong-0" aria-expanded="false"><span class="pcov-toggle-label">Ver caso completo</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="pc-overlay-long" id="pcovlong-0">
         <p><strong>El Problema</strong></p>
         <p>En muchos equipos comerciales el análisis de ventas empieza y termina en el total. Si la cifra sube, todo bien. El problema es que <strong>dos períodos pueden cerrar con el mismo número y haber sido radicalmente distintos por dentro</strong>: uno con crecimiento real, otro con caída compensada por una campaña puntual. Sin variación integrada en el visual, esa diferencia no se ve.</p>
         <p><strong>El Objetivo</strong></p>
@@ -1328,7 +1358,6 @@ document.querySelectorAll('.col-header').forEach(h=>{
         <p><strong>Qué Aprendí</strong></p>
         <p>Replicar el estándar IBCS en Power BI sin custom visuals obliga a entender bien <strong>cómo funciona el formateo condicional a nivel de medida</strong> y cómo construir variaciones que se comporten correctamente con cualquier combinación de filtros activa. La parte más exigente fue conseguir que los tres niveles del gráfico de columnas múltiples mantuvieran las proporciones correctas independientemente del rango de valores del filtro seleccionado. También aprendí que seguir un estándar visual no limita el análisis, lo hace más legible para cualquiera que lo reciba.</p>
       </div>
-      <div class="pc-overlay-pills"><span class="pc-overlay-pill">IBCS</span><span class="pc-overlay-pill">DAX</span><span class="pc-overlay-pill">Modelado en estrella</span><span class="pc-overlay-pill">Drill-down</span><span class="pc-overlay-pill">Variación absoluta y relativa</span><span class="pc-overlay-pill">Parámetros dinámicos</span><span class="pc-overlay-pill">Jerarquía visual</span><span class="pc-overlay-pill">Sales analytics</span><span class="pc-overlay-pill">YoY analysis</span></div>
       <div class="pc-overlay-foot">
         <a href="https://app.powerbi.com/view?r=eyJrIjoiYWFhNjA5YmQtNjEyYS00YTA3LWIxMzktYWQxOTYzMmZkYzIyIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
         <span class="pc-tech">Power BI · DAX</span>
@@ -1350,7 +1379,14 @@ document.querySelectorAll('.col-header').forEach(h=>{
     <div class="pc-overlay-copy">
       <div class="pc-overlay-eyebrow"><span></span>Retail · Red de tiendas</div>
       <div class="pc-overlay-title" id="pcoverlay-1-title">Kosta Cálida — Reporting para red de tiendas</div>
-      <div class="pc-overlay-long">
+      <div class="pcov-stats">
+        <div class="pcov-stat"><div class="pcov-stat-value neg">-47.700€</div><div class="pcov-stat-label">Desviación de Mahon vs presupuesto</div></div>
+        <div class="pcov-stat"><div class="pcov-stat-value pos">+37,58%</div><div class="pcov-stat-label">Margen · Bebidas y Refrescos</div></div>
+      </div>
+      <p class="pcov-hook">Mahon era la tienda con más ventas (277.000€), pero no la más rentable — el margen por categoría contaba una historia que el total ocultaba.</p>
+      <div class="pc-overlay-pills"><span class="pc-overlay-pill">Modelado en estrella</span><span class="pc-overlay-pill">Power Query</span><span class="pc-overlay-pill">DAX</span><span class="pc-overlay-pill">Ventas vs Objetivos</span><span class="pc-overlay-pill">Análisis de rentabilidad</span><span class="pc-overlay-pill">Drill-down</span><span class="pc-overlay-pill">YTD</span><span class="pc-overlay-pill">Jerarquía visual</span><span class="pc-overlay-pill">Retail analytics</span></div>
+      <button class="pcov-toggle" data-target="pcovlong-1" aria-expanded="false"><span class="pcov-toggle-label">Ver caso completo</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="pc-overlay-long" id="pcovlong-1">
         <p><strong>El Problema</strong></p>
         <p>La dirección tenía números delante pero no tenía contexto. Sabían la recaudación del día pero no podían decir qué categorías erosionaban el beneficio, qué tienda estaba por debajo de la media en margen o si estaban cumpliendo objetivos o solo superando el mes anterior. Cada departamento miraba su parte. <strong>No existía una fuente única que conectara ventas, rentabilidad y objetivos.</strong> Eso no es un problema de datos. Es un problema de estructura analítica.</p>
         <p><strong>El Objetivo</strong></p>
@@ -1365,7 +1401,6 @@ document.querySelectorAll('.col-header').forEach(h=>{
         <p><strong>Qué Aprendí</strong></p>
         <p>El drill-down hasta nivel de ticket fue la parte más exigente del modelo. Para que funcionara correctamente con cualquier combinación de filtros activa, las relaciones entre tablas tenían que estar diseñadas desde el principio con esa granularidad en mente. También aprendí que <strong>el orden importa</strong>: diseñar el modelo antes que los dashboards no es una preferencia metodológica, es lo que determina si el sistema aguanta o se rompe cuando alguien hace una pregunta que no estaba prevista.</p>
       </div>
-      <div class="pc-overlay-pills"><span class="pc-overlay-pill">Modelado en estrella</span><span class="pc-overlay-pill">Power Query</span><span class="pc-overlay-pill">DAX</span><span class="pc-overlay-pill">Ventas vs Objetivos</span><span class="pc-overlay-pill">Análisis de rentabilidad</span><span class="pc-overlay-pill">Drill-down</span><span class="pc-overlay-pill">YTD</span><span class="pc-overlay-pill">Jerarquía visual</span><span class="pc-overlay-pill">Retail analytics</span></div>
       <div class="pc-overlay-foot">
         <a href="https://app.powerbi.com/view?r=eyJrIjoiMzhlYjliYTAtMWUzMS00YzE1LTgyNGEtZmZmNDVhNjQ1ZDY3IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=03634c064fb23f65778f" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
         <span class="pc-tech">Power BI · DAX</span>
@@ -1387,7 +1422,14 @@ document.querySelectorAll('.col-header').forEach(h=>{
     <div class="pc-overlay-copy">
       <div class="pc-overlay-eyebrow"><span></span>Marketing analytics</div>
       <div class="pc-overlay-title" id="pcoverlay-2-title">Social Media Performance | 2025 vs 2024</div>
-      <div class="pc-overlay-long">
+      <div class="pcov-stats">
+        <div class="pcov-stat"><div class="pcov-stat-value pos">-26,3%</div><div class="pcov-stat-label">Gasto — mismo rendimiento, menos inversión</div></div>
+        <div class="pcov-stat"><div class="pcov-stat-value pos">0,21€</div><div class="pcov-stat-label">CPC (desde 0,25€)</div></div>
+      </div>
+      <p class="pcov-hook">Las impresiones cayeron un 12,8% respecto a 2024, pero el gasto cayó un 26,3% — la eficiencia mejoró aunque el volumen bajara.</p>
+      <div class="pc-overlay-pills"><span class="pc-overlay-pill">DAX interanual</span><span class="pc-overlay-pill">Tablas desconectadas</span><span class="pc-overlay-pill">CTR · CPC</span><span class="pc-overlay-pill">Modelado en estrella</span><span class="pc-overlay-pill">Sparklines</span><span class="pc-overlay-pill">Comparativa YoY</span><span class="pc-overlay-pill">Marketing analytics</span><span class="pc-overlay-pill">Eficiencia vs volumen</span></div>
+      <button class="pcov-toggle" data-target="pcovlong-2" aria-expanded="false"><span class="pcov-toggle-label">Ver caso completo</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="pc-overlay-long" id="pcovlong-2">
         <p><strong>El Problema</strong></p>
         <p>El problema habitual en los reportes de marketing es que se compara volumen sin mirar inversión, se analizan clics sin mirar CTR, se celebran conversiones sin analizar su coste. Los KPIs se revisan de forma aislada y eso genera lecturas que llevan a decisiones equivocadas. El reto no era añadir más métricas sino <strong>introducir contexto sin añadir ruido</strong>: obligar a que cada dato apareciera siempre junto a su referencia.</p>
         <p><strong>El Objetivo</strong></p>
@@ -1402,7 +1444,6 @@ document.querySelectorAll('.col-header').forEach(h=>{
         <p><strong>Qué Aprendí</strong></p>
         <p>La tabla desconectada para el selector de mes fue la decisión técnica que más impacto tuvo en la fiabilidad del modelo. Sin ella, al filtrar por un mes concreto las medidas interanuales devolvían resultados incorrectos porque el filtro afectaba tanto al año actual como al año anterior al mismo tiempo. También aprendí que <strong>nueve KPIs en una sola página solo funcionan si el diseño tiene una jerarquía clara</strong>. Sin ella, la densidad de información paraliza al usuario en lugar de orientarlo.</p>
       </div>
-      <div class="pc-overlay-pills"><span class="pc-overlay-pill">DAX interanual</span><span class="pc-overlay-pill">Tablas desconectadas</span><span class="pc-overlay-pill">CTR · CPC</span><span class="pc-overlay-pill">Modelado en estrella</span><span class="pc-overlay-pill">Sparklines</span><span class="pc-overlay-pill">Comparativa YoY</span><span class="pc-overlay-pill">Marketing analytics</span><span class="pc-overlay-pill">Eficiencia vs volumen</span></div>
       <div class="pc-overlay-foot">
         <a href="https://app.powerbi.com/view?r=eyJrIjoiMzNlYjcwN2YtNWE0Yy00NTk2LThlNmUtZjVmMThkZTQ0YzZjIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
         <span class="pc-tech">Power BI · DAX</span>
@@ -1424,7 +1465,14 @@ document.querySelectorAll('.col-header').forEach(h=>{
     <div class="pc-overlay-copy">
       <div class="pc-overlay-eyebrow"><span></span>Análisis financiero</div>
       <div class="pc-overlay-title" id="pcoverlay-3-title">Informe Financiero Completo</div>
-      <div class="pc-overlay-long">
+      <div class="pcov-stats">
+        <div class="pcov-stat"><div class="pcov-stat-value pos">678.208€</div><div class="pcov-stat-label">Free Cash Flow 2023</div></div>
+        <div class="pcov-stat"><div class="pcov-stat-value neg">-1.165.649€</div><div class="pcov-stat-label">Free Cash Flow año anterior</div></div>
+      </div>
+      <p class="pcov-hook">El Free Cash Flow pasó de -1,17M€ a 678.208€ en un año — el modelo muestra exactamente qué partidas explican la diferencia.</p>
+      <div class="pc-overlay-pills"><span class="pc-overlay-pill">Modelado contable en estrella</span><span class="pc-overlay-pill">DAX financiero</span><span class="pc-overlay-pill">Balance · PyG · Cash Flow</span><span class="pc-overlay-pill">EBITDA</span><span class="pc-overlay-pill">Análisis vertical y horizontal</span><span class="pc-overlay-pill">Desviación vs presupuesto</span><span class="pc-overlay-pill">Proyección a cierre</span><span class="pc-overlay-pill">Drill-through a asiento</span><span class="pc-overlay-pill">Financial analytics</span></div>
+      <button class="pcov-toggle" data-target="pcovlong-3" aria-expanded="false"><span class="pcov-toggle-label">Ver caso completo</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="pc-overlay-long" id="pcovlong-3">
         <p><strong>El Problema</strong></p>
         <p>Cuando cada área analiza su parte por separado, dirección necesita construir la visión completa manualmente cada vez. Ese proceso es lento, poco trazable y genera versiones distintas de la misma realidad. Sin un modelo que conectara los tres estados financieros de forma coherente, <strong>cualquier análisis era una foto parcial</strong>.</p>
         <p><strong>El Objetivo</strong></p>
@@ -1440,7 +1488,6 @@ document.querySelectorAll('.col-header').forEach(h=>{
         <p><strong>Qué Aprendí</strong></p>
         <p>Consolidar varias empresas en un único modelo añade una capa de complejidad que no existe en proyectos de una sola empresa. Las relaciones entre <code>FactDiario</code> y las dimensiones tienen que estar diseñadas para que los filtros por empresa no rompan la coherencia de los totales consolidados. La <strong>proyección a cierre</strong> fue la pieza técnica más exigente: para que funcione tiene que distinguir entre meses con datos reales y meses sin ellos, y la lógica de extrapolación tiene que ser coherente tanto en la tabla como en el gráfico de evolución temporal.</p>
       </div>
-      <div class="pc-overlay-pills"><span class="pc-overlay-pill">Modelado contable en estrella</span><span class="pc-overlay-pill">DAX financiero</span><span class="pc-overlay-pill">Balance · PyG · Cash Flow</span><span class="pc-overlay-pill">EBITDA</span><span class="pc-overlay-pill">Análisis vertical y horizontal</span><span class="pc-overlay-pill">Desviación vs presupuesto</span><span class="pc-overlay-pill">Proyección a cierre</span><span class="pc-overlay-pill">Drill-through a asiento</span><span class="pc-overlay-pill">Financial analytics</span></div>
       <div class="pc-overlay-foot">
         <a href="https://app.powerbi.com/view?r=eyJrIjoiNDgzZjBmY2MtMDhhMy00MGIzLTlmYmItODlkMmY2NDg3ZDdmIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=a961ceadc15fe4dcfcfb" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
         <span class="pc-tech">Power BI · DAX</span>
@@ -1462,7 +1509,14 @@ document.querySelectorAll('.col-header').forEach(h=>{
     <div class="pc-overlay-copy">
       <div class="pc-overlay-eyebrow"><span></span>Análisis financiero</div>
       <div class="pc-overlay-title" id="pcoverlay-4-title">Cuenta de Pérdidas y Ganancias</div>
-      <div class="pc-overlay-long">
+      <div class="pcov-stats">
+        <div class="pcov-stat"><div class="pcov-stat-value pos">6,78M€</div><div class="pcov-stat-label">Beneficio Neto Real 2021</div></div>
+        <div class="pcov-stat"><div class="pcov-stat-value pos">+92,1%</div><div class="pcov-stat-label">Desviación vs presupuestado (3,53M€)</div></div>
+      </div>
+      <p class="pcov-hook">En 2021 el beneficio neto real superó el presupuesto en un 92,1% — la cascada muestra que el driver fue el crecimiento de ingresos, no el recorte de costes.</p>
+      <div class="pc-overlay-pills"><span class="pc-overlay-pill">P&L en Power BI</span><span class="pc-overlay-pill">DAX financiero</span><span class="pc-overlay-pill">Subtotales inteligentes</span><span class="pc-overlay-pill">Real vs Presupuesto</span><span class="pc-overlay-pill">Waterfall chart</span><span class="pc-overlay-pill">Control de signos contables</span><span class="pc-overlay-pill">Modelado en estrella</span><span class="pc-overlay-pill">Financial analytics</span><span class="pc-overlay-pill">Jerarquía contable</span></div>
+      <button class="pcov-toggle" data-target="pcovlong-4" aria-expanded="false"><span class="pcov-toggle-label">Ver caso completo</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="pc-overlay-long" id="pcovlong-4">
         <p><strong>El Problema</strong></p>
         <p>Cuando los datos financieros llegan al BI sin estructura contable detrás, los problemas son predecibles: totales que no cuadran al cambiar el filtro, signos que se invierten según el contexto, subtotales que agregan lo que no deberían. En un informe que dirección usa para tomar decisiones, <strong>perder coherencia significa perder credibilidad</strong>.</p>
         <p><strong>El Objetivo</strong></p>
@@ -1477,7 +1531,6 @@ document.querySelectorAll('.col-header').forEach(h=>{
         <p><strong>Qué Aprendí</strong></p>
         <p>La parte más exigente no fue construir el visual sino garantizar que los <strong>signos contables fueran correctos en todo momento</strong>. Un ingreso y un coste tienen signos contables distintos que no coinciden con cómo Power BI agrega por defecto. Sin esa lógica resuelta en el modelo, el waterfall chart mostraba números correctos pero con la dirección equivocada. También aprendí que separar las medidas en carpetas temáticas desde el principio no es una preferencia estética: es una decisión que ahorra horas cuando el modelo crece.</p>
       </div>
-      <div class="pc-overlay-pills"><span class="pc-overlay-pill">P&L en Power BI</span><span class="pc-overlay-pill">DAX financiero</span><span class="pc-overlay-pill">Subtotales inteligentes</span><span class="pc-overlay-pill">Real vs Presupuesto</span><span class="pc-overlay-pill">Waterfall chart</span><span class="pc-overlay-pill">Control de signos contables</span><span class="pc-overlay-pill">Modelado en estrella</span><span class="pc-overlay-pill">Financial analytics</span><span class="pc-overlay-pill">Jerarquía contable</span></div>
       <div class="pc-overlay-foot">
         <a href="https://app.powerbi.com/view?r=eyJrIjoiM2Y3MzMxNTQtMGMzOS00ZDhlLTljYWYtMmU5N2E5ZTA3MjU2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=41273635f861390cd9fd" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
         <span class="pc-tech">Power BI · DAX</span>
@@ -1499,7 +1552,14 @@ document.querySelectorAll('.col-header').forEach(h=>{
     <div class="pc-overlay-copy">
       <div class="pc-overlay-eyebrow"><span></span>Análisis de mercado</div>
       <div class="pc-overlay-title" id="pcoverlay-5-title">Análisis del Mercado de Airbnb — País Vasco</div>
-      <div class="pc-overlay-long">
+      <div class="pcov-stats">
+        <div class="pcov-stat"><div class="pcov-stat-value">75%</div><div class="pcov-stat-label">Anfitriones con una sola propiedad</div></div>
+        <div class="pcov-stat"><div class="pcov-stat-value">211,78€</div><div class="pcov-stat-label">Precio medio alojamiento completo (vs 95,24€ habitación)</div></div>
+      </div>
+      <p class="pcov-hook">Un mismo precio puede parecer caro o barato según el contexto — el 75% de los anfitriones tiene una sola propiedad, pero 31 operadores profesionales concentran la oferta en las zonas de mayor demanda.</p>
+      <div class="pc-overlay-pills"><span class="pc-overlay-pill">Análisis territorial</span><span class="pc-overlay-pill">Mapas en Power BI</span><span class="pc-overlay-pill">Segmentación de mercado</span><span class="pc-overlay-pill">KPIs</span><span class="pc-overlay-pill">Análisis exploratorio</span><span class="pc-overlay-pill">DAX</span></div>
+      <button class="pcov-toggle" data-target="pcovlong-5" aria-expanded="false"><span class="pcov-toggle-label">Ver caso completo</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="pc-overlay-long" id="pcovlong-5">
         <p><strong>El Problema</strong></p>
         <p>La mayoría de análisis de mercado turístico trabajan con medias globales. Una media que mezcla San Sebastián en agosto con un municipio interior en enero, un alojamiento completo con una habitación privada, un anfitrión ocasional con uno que gestiona treinta propiedades. Un mismo precio puede parecer caro o barato según el contexto. <strong>Sin estructura, los datos no informan.</strong></p>
         <p><strong>El Objetivo</strong></p>
@@ -1514,7 +1574,6 @@ document.querySelectorAll('.col-header').forEach(h=>{
         <p><strong>Qué Aprendí</strong></p>
         <p>Trabajar con <strong>datos geoespaciales en Power BI</strong> tiene más complejidad de la que parece: la calidad del mapa depende directamente de la calidad de las coordenadas y de cómo está modelada la dimensión de localización. También aprendí que la <strong>segmentación de precio por rangos</strong> es una decisión de diseño tanto como técnica: los cortes tienen que tener sentido para el mercado concreto que estás analizando, no ser percentiles genéricos.</p>
       </div>
-      <div class="pc-overlay-pills"><span class="pc-overlay-pill">Análisis territorial</span><span class="pc-overlay-pill">Mapas en Power BI</span><span class="pc-overlay-pill">Segmentación de mercado</span><span class="pc-overlay-pill">KPIs</span><span class="pc-overlay-pill">Análisis exploratorio</span><span class="pc-overlay-pill">DAX</span></div>
       <div class="pc-overlay-foot">
         <a href="https://app.powerbi.com/view?r=eyJrIjoiOTA2ZDExNjktYzE4Ny00Y2UzLThmM2YtMjI5Y2FmNDg1MzM5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=9c4b9193b627b78a0e01" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
         <span class="pc-tech">Power BI · DAX</span>
@@ -1542,7 +1601,24 @@ document.querySelectorAll('.col-header').forEach(h=>{
     <div class="pc-overlay-copy">
       <div class="pc-overlay-eyebrow"><span></span>Customer analytics · B2B</div>
       <div class="pc-overlay-title" id="pcoverlay-6-title">Análisis RFM — Distribuidora B2B de Hostelería</div>
-      <div class="pc-overlay-long">
+      <div class="pcov-stats">
+        <div class="pcov-stat"><div class="pcov-stat-value neg">198.000€</div><div class="pcov-stat-label">Revenue en riesgo · clientes Loyal inactivos</div></div>
+        <div class="pcov-stat"><div class="pcov-stat-value pos">34</div><div class="pcov-stat-label">Clientes Champion (ticket medio 4.787€)</div></div>
+      </div>
+      <p class="pcov-hook">111 clientes Loyal generaban casi la mitad del revenue y llevaban meses sin comprar — 198.000€ en riesgo que sin segmentación no tenía ni nombre ni cifra.</p>
+      <div class="pc-overlay-pills">
+        <span class="pc-overlay-pill">RFM</span>
+        <span class="pc-overlay-pill">Segmentación de clientes</span>
+        <span class="pc-overlay-pill">DAX avanzado</span>
+        <span class="pc-overlay-pill">Esquema estrella</span>
+        <span class="pc-overlay-pill">Tabla HTML en DAX</span>
+        <span class="pc-overlay-pill">KPIs condicionales</span>
+        <span class="pc-overlay-pill">Percentiles dinámicos</span>
+        <span class="pc-overlay-pill">B2B analytics</span>
+        <span class="pc-overlay-pill">Customer analytics</span>
+      </div>
+      <button class="pcov-toggle" data-target="pcovlong-6" aria-expanded="false"><span class="pcov-toggle-label">Ver caso completo</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="pc-overlay-long" id="pcovlong-6">
         <p><strong>El Problema</strong></p>
         <p>El director comercial tenía los números y no los entendía. Revenue cayendo, cartera creciendo. La primera reacción fue buscar más ventas. Pero antes de eso había que confirmar si el problema estaba en la <strong>captación o en la retención</strong>. Sin una forma de ver el comportamiento real de cada cliente, esa pregunta no tiene respuesta.</p>
         <p><strong>El Objetivo</strong></p>
@@ -1556,17 +1632,6 @@ document.querySelectorAll('.col-header').forEach(h=>{
         <p><strong>Power BI</strong> para modelar los datos, calcular el RFM en DAX y construir el dashboard completo con filtros por zona, establecimiento, comercial y año. <strong>DAX</strong> para los tres scores, la asignación de segmento y la tabla de acciones comerciales. La tabla final se genera como <strong>HTML dentro de una medida</strong>, sin necesidad de visuals externos.</p>
         <p><strong>Qué Aprendí</strong></p>
         <p>La parte técnica no fue lo más difícil. Lo complicado fue decidir los cortes de segmentación: cuándo un cliente pasa de Loyal a At Risk no puede ser un número arbitrario, tiene que reflejar el comportamiento real del negocio. Usar <strong>percentiles dinámicos</strong> en lugar de umbrales fijos fue la decisión que más mejoró la calidad del modelo. Generar una <strong>tabla HTML desde DAX</strong> también tiene sus limitaciones en Power BI, y esas limitaciones obligan a pensar más en el diseño antes de escribir la primera línea de código.</p>
-      </div>
-      <div class="pc-overlay-pills">
-        <span class="pc-overlay-pill">RFM</span>
-        <span class="pc-overlay-pill">Segmentación de clientes</span>
-        <span class="pc-overlay-pill">DAX avanzado</span>
-        <span class="pc-overlay-pill">Esquema estrella</span>
-        <span class="pc-overlay-pill">Tabla HTML en DAX</span>
-        <span class="pc-overlay-pill">KPIs condicionales</span>
-        <span class="pc-overlay-pill">Percentiles dinámicos</span>
-        <span class="pc-overlay-pill">B2B analytics</span>
-        <span class="pc-overlay-pill">Customer analytics</span>
       </div>
       <div class="pc-overlay-foot">
         <a href="https://app.powerbi.com/view?r=eyJrIjoiNGQ1OWZhNmEtY2I3Ni00N2M5LTk1NWYtMTEwZTA3NWI3NmYwIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
