@@ -614,6 +614,13 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   border-radius: var(--radius-lg);
   background: var(--white);
   overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.06),
+    0 1px 1px -0.5px rgba(0,0,0,.06),
+    0 3px 3px -1.5px rgba(0,0,0,.06),
+    0 6px 6px -3px rgba(0,0,0,.06),
+    0 12px 12px -6px rgba(0,0,0,.06),
+    0 24px 24px -12px rgba(0,0,0,.06);
   transition: box-shadow .3s var(--ease);
 }
 @media (hover: hover) and (pointer: fine) {
