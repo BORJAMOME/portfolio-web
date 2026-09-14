@@ -765,24 +765,6 @@
    (Nombre/rol · Experiencia · Formación · Certificaciones)
    ═══════════════════════════════════════ */
 
-/* ── Línea de credenciales del hero (mismo patrón que index.html) ── */
-.hero-meta {
-  display: inline-flex; align-items: center; gap: 10px;
-  font-size: 13px; color: var(--muted); letter-spacing: .1px; flex-wrap: wrap;
-}
-.hero-meta-pulse {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: var(--green); box-shadow: 0 0 0 3px rgba(60,138,55,.18);
-  animation: pulse-gr 2s infinite; flex-shrink: 0;
-}
-@keyframes pulse-gr { 0%,100%{opacity:1} 50%{opacity:.35} }
-.hero-meta-status { font-weight: 600; color: var(--ink); }
-.hero-meta-item { font-weight: 500; color: var(--ink); opacity: .75; }
-.hero-meta-sep { color: var(--muted); opacity: .5; }
-.hero-social-proof { margin-top: 8px; }
-.hero-social-proof .hero-meta-item { font-weight: 500; color: var(--muted-light); font-size: 12px; }
-.hero-social-proof strong { color: var(--ink); font-weight: 700; }
-
 /* ── Cabecera nombre + rol (tipo CV) ── */
 .about-role-tag {
   display: inline-block;
@@ -814,6 +796,12 @@
 .res-date { font-size: 13px; color: var(--muted); padding-top: 3px; }
 .res-role { font-family: var(--font-serif); font-size: 17px; font-weight: 500; color: var(--ink); margin: 0 0 6px; line-height: 1.35; }
 .res-org { color: var(--purple); font-weight: 500; }
+.res-link {
+  color: inherit; text-decoration: underline;
+  text-decoration-color: rgba(17,17,17,.25); text-underline-offset: 2px;
+  transition: text-decoration-color .2s;
+}
+.res-link:hover { text-decoration-color: currentColor; }
 .res-desc { font-size: 13.5px; color: var(--muted-light); line-height: 1.7; max-width: 640px; margin: 0; }
 .res-desc + .res-desc { margin-top: 10px; }
 
@@ -978,15 +966,6 @@
           <p>Llegué hasta aquí después de siete años entre <strong>Madrid y Londres</strong>, trabajando en marketing, análisis y operaciones. Esa experiencia me aporta una perspectiva de negocio que hoy complemento con mi especialización en datos y visualización.</p>
         </div>
 
-        <div class="hero-meta" aria-label="Disponibilidad y credenciales">
-          <span class="hero-meta-pulse" aria-hidden="true"></span>
-          <span class="hero-meta-status">Disponible para incorporación inmediata</span>
-          <span class="hero-meta-sep" aria-hidden="true">·</span>
-          <span class="hero-meta-item">Microsoft PL-300</span>
-          <span class="hero-meta-sep" aria-hidden="true">·</span>
-          <span class="hero-meta-item">Madrid</span>
-        </div>
-
         <div class="about-btns" style="margin-top:26px;">
           <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="btn btn-outline" onclick="gtag('event','clic_linkedin',{location:'hero'});">
             <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
@@ -1024,7 +1003,7 @@
           <p class="res-role">Analista de Datos <span class="res-org">· Especialización intensiva</span></p>
           <p class="res-desc">Desde 2023 he centrado mi carrera en el análisis y la visualización de datos, combinando formación especializada con proyectos propios.</p>
           <p class="res-desc">He desarrollado un portfolio de <strong>24+ proyectos en Power BI, Python y SQL</strong>, trabajando desde la preparación y modelado de los datos hasta el análisis y la visualización. Entre ellos se encuentran proyectos de <strong>reporting financiero, análisis RFM y Business Intelligence end-to-end</strong>.</p>
-          <p class="res-desc">También desarrollé <strong>PBI Mockup Creator</strong>, una herramienta para diseñar layouts de Power BI aplicando principios de UX y Gestalt. En paralelo, comparto contenido sobre Power BI y Data Storytelling en LinkedIn, donde he alcanzado <strong>3.017 seguidores y 192K impresiones acumuladas</strong>.</p>
+          <p class="res-desc">También desarrollé <strong><a class="res-link" href="https://borjamome.github.io/powerbi-mockup/" target="_blank" rel="noopener noreferrer">PBI Mockup Creator</a></strong>, una herramienta para diseñar layouts de Power BI aplicando principios de UX y Gestalt. En paralelo, comparto contenido sobre Power BI y Data Storytelling en LinkedIn, donde he alcanzado <strong>3.017 seguidores y 192K impresiones acumuladas</strong>.</p>
         </div>
       </div>
       <div class="res-row">
@@ -1054,7 +1033,7 @@
       <div class="res-row">
         <div class="res-date">2026</div>
         <div>
-          <p class="res-role">Máster en UX/UI <span class="res-org">· Neoland</span> · En curso</p>
+          <p class="res-role"><a class="res-link" href="https://neoland.es/masters/ux-ui-design/" target="_blank" rel="noopener noreferrer">Máster en UX/UI</a> <span class="res-org">· Neoland</span> · En curso</p>
           <p class="res-desc">Una especialización que complementa mi formación en comunicación y me ayuda a profundizar en <strong>cómo diseñar experiencias digitales claras y fáciles de entender</strong>.</p>
           <p class="res-desc">En el ámbito de los datos, aplico esta perspectiva especialmente a la visualización y al diseño de dashboards, donde no solo importa qué información mostramos, sino también cómo la presentamos.</p>
         </div>
@@ -1062,30 +1041,30 @@
       <div class="res-row">
         <div class="res-date">2026</div>
         <div>
-          <p class="res-role">Bootcamp Data Analytics <span class="res-org">· Neoland</span></p>
+          <p class="res-role"><a class="res-link" href="https://neoland.es/bootcamps/data-analytics/" target="_blank" rel="noopener noreferrer">Bootcamp Data Analytics (360 horas)</a> <span class="res-org">· Neoland</span></p>
           <p class="res-desc">Formación intensiva como <strong>Data Analyst</strong> para reforzar mi perfil profesional y consolidar una base técnica sólida.</p>
-          <p class="res-desc">Durante el programa asenté conocimientos en <strong>SQL, Python y Machine Learning</strong>, además de trabajar con estadística, Big Data e IA aplicados al análisis de datos.</p>
+          <p class="res-desc">Durante el programa asenté conocimientos en <strong>SQL, Python, Machine Learning y análisis con LLMs.</strong>, además de trabajar con estadística, Big Data e IA aplicados al análisis de datos.</p>
           <p class="res-desc">Fue una etapa clave para consolidar los conocimientos técnicos que hoy aplico en mis proyectos de análisis y visualización.</p>
         </div>
       </div>
       <div class="res-row">
         <div class="res-date">2024</div>
         <div>
-          <p class="res-role">Especialización Power BI <span class="res-org">· Namasdata</span></p>
+          <p class="res-role">Especialización Power BI <span class="res-org">· <a class="res-link" href="https://www.namasdata.com/" target="_blank" rel="noopener noreferrer">Namasdata</a></span></p>
           <p class="res-desc">Formación especializada en <strong>Power BI, modelado de datos, DAX y visualización</strong>, con especial atención a la construcción de informes claros y bien estructurados.</p>
         </div>
       </div>
       <div class="res-row">
         <div class="res-date">2015 — 2016</div>
         <div>
-          <p class="res-role">Máster en Business Intelligence <span class="res-org">· MSMK</span></p>
+          <p class="res-role">Máster en Business Intelligence &amp; Big Data <span class="res-org">· <a class="res-link" href="https://msmk.university/#" target="_blank" rel="noopener noreferrer">MSMK</a></span></p>
           <p class="res-desc">Formación en Business Intelligence y análisis de datos aplicado al negocio.</p>
         </div>
       </div>
       <div class="res-row">
         <div class="res-date">2009 — 2014</div>
         <div>
-          <p class="res-role">Grado en Publicidad y RRPP <span class="res-org">· UCM</span></p>
+          <p class="res-role">Licenciatura en Publicidad y RRPP <span class="res-org">· UCM</span></p>
           <p class="res-desc">Mi primera formación profesional estuvo ligada a la comunicación.</p>
           <p class="res-desc">Con el tiempo, esa base terminó conectando con otra de mis inquietudes: <strong>cómo convertir información compleja en algo que las personas puedan entender y utilizar</strong>.</p>
         </div>
