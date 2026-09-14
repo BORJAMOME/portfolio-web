@@ -793,29 +793,13 @@
   margin: 14px 0 20px;
 }
 
-/* ── Divider de sección (mismo patrón que index.html #approach) ── */
-.section-divider {
-  display: flex; align-items: center; justify-content: flex-start;
-  gap: clamp(18px, 3vw, 30px); position: relative;
-  width: 100%; max-width: 1100px; margin: 0 auto clamp(40px, 5vw, 56px);
-}
-.section-divider::before {
-  content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-  width: 100vw; height: 1px; background: #ececf2; pointer-events: none;
-}
-.section-divider-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--ink); flex-shrink: 0; }
-.section-divider-label {
-  font-family: 'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;
-  font-size: 12.5px; font-weight: 600; color: var(--ink);
-  letter-spacing: .14em; text-transform: uppercase;
-}
 .about-resume { padding: 8px 0 72px; }
 .s-h {
   font-family: var(--font-serif);
   font-size: clamp(30px, 3.6vw, 44px); font-weight: 500;
   line-height: 1.1; letter-spacing: -1.2px; color: var(--ink); margin-bottom: 14px;
 }
-.about-resume .s-h { margin-bottom: 0; padding-top: 30px; }
+.about-resume .s-h { margin-bottom: 0; padding-top: 44px; }
 
 /* ── Grupos de filas: Experiencia / Formación / Certificaciones ── */
 .res-group { max-width: 1100px; margin: 0 auto; padding: 0 clamp(1.5rem, 5vw, 4rem); }
@@ -831,11 +815,7 @@
 .res-role { font-family: var(--font-serif); font-size: 17px; font-weight: 500; color: var(--ink); margin: 0 0 6px; line-height: 1.35; }
 .res-org { color: var(--purple); font-weight: 500; }
 .res-desc { font-size: 13.5px; color: var(--muted-light); line-height: 1.7; max-width: 640px; margin: 0; }
-.res-tag {
-  display: inline-block; margin-left: 9px; vertical-align: middle;
-  font-size: 10px; font-weight: 700; letter-spacing: .3px; text-transform: uppercase;
-  color: var(--purple); background: var(--purple-light); padding: 2px 8px; border-radius: var(--radius-pill);
-}
+.res-desc + .res-desc { margin-top: 10px; }
 
 @media (max-width: 700px) {
   .res-row { grid-template-columns: 1fr; gap: 5px; padding: 20px 0; }
@@ -993,8 +973,9 @@
         <span class="about-role-tag">Analista de Datos Junior · Especializado en Power BI</span>
 
         <div class="about-copy">
-          <p>Analizo datos y diseño cómo se leen. Preparo y modelo los datos con <strong>SQL, Python y Power Query</strong>, los analizo con <strong>DAX y Python</strong> para encontrar patrones que respondan a una pregunta de negocio, y los comunico en dashboards de <strong>Power BI</strong> pensados para entenderse a la primera, aplicando principios de UX/UI y Data Storytelling.</p>
-          <p>Llegué hasta aquí tras una etapa previa en marketing y operaciones — siete años entre Madrid y Londres — que hoy complementa mi visión analítica con una fuerte orientación de negocio.</p>
+          <p>Trabajo con datos de principio a fin: preparo y modelo la información con <strong>SQL y Power Query</strong>, la analizo con <strong>DAX y Python</strong> y la convierto en dashboards de <strong>Power BI</strong> que permiten entender qué está pasando y por qué.</p>
+          <p>Me interesa especialmente la parte que ocurre entre los datos y la persona que los utiliza. Por eso cuido tanto el análisis como la forma de presentarlo, aplicando principios de <strong>UX/UI y Data Storytelling</strong> para crear informes claros, útiles y fáciles de interpretar.</p>
+          <p>Llegué hasta aquí después de siete años entre <strong>Madrid y Londres</strong>, trabajando en marketing, análisis y operaciones. Esa experiencia me aporta una perspectiva de negocio que hoy complemento con mi especialización en datos y visualización.</p>
         </div>
 
         <div class="hero-meta" aria-label="Disponibilidad y credenciales">
@@ -1004,11 +985,6 @@
           <span class="hero-meta-item">Microsoft PL-300</span>
           <span class="hero-meta-sep" aria-hidden="true">·</span>
           <span class="hero-meta-item">Madrid</span>
-        </div>
-        <div class="hero-meta hero-social-proof" aria-label="Prueba social">
-          <span class="hero-meta-item"><strong>3.017</strong> seguidores en LinkedIn</span>
-          <span class="hero-meta-sep" aria-hidden="true">·</span>
-          <span class="hero-meta-item"><strong>192K</strong> impresiones acumuladas</span>
         </div>
 
         <div class="about-btns" style="margin-top:26px;">
@@ -1036,10 +1012,6 @@
 
 <!-- TRAYECTORIA: Experiencia · Formación · Certificaciones -->
 <section class="about-resume" aria-label="Trayectoria profesional">
-  <div class="section-divider sr">
-    <span class="section-divider-dot" aria-hidden="true"></span>
-    <span class="section-divider-label">Trayectoria</span>
-  </div>
 
   <!-- EXPERIENCIA -->
   <div class="res-group sr" id="experiencia">
@@ -1049,22 +1021,27 @@
       <div class="res-row">
         <div class="res-date">2023 — presente</div>
         <div>
-          <p class="res-role">Analista de Datos <span class="res-org">· Formación intensiva</span><span class="res-tag">Full-time</span></p>
-          <p class="res-desc">Dedicación completa a la especialización en análisis y visualización de datos: certificación Microsoft PL-300, bootcamp intensivo de Data Analytics y un portfolio de 24+ proyectos en Power BI, Python y SQL publicado en producción, incluyendo reporting financiero y análisis RFM. Creación de contenido sobre Power BI y Data Storytelling en LinkedIn (3.017 seguidores, 192K impresiones).</p>
+          <p class="res-role">Analista de Datos <span class="res-org">· Especialización intensiva</span></p>
+          <p class="res-desc">Desde 2023 he centrado mi carrera en el análisis y la visualización de datos, combinando formación especializada con proyectos propios.</p>
+          <p class="res-desc">He desarrollado un portfolio de <strong>24+ proyectos en Power BI, Python y SQL</strong>, trabajando desde la preparación y modelado de los datos hasta el análisis y la visualización. Entre ellos se encuentran proyectos de <strong>reporting financiero, análisis RFM y Business Intelligence end-to-end</strong>.</p>
+          <p class="res-desc">También desarrollé <strong>PBI Mockup Creator</strong>, una herramienta para diseñar layouts de Power BI aplicando principios de UX y Gestalt. En paralelo, comparto contenido sobre Power BI y Data Storytelling en LinkedIn, donde he alcanzado <strong>3.017 seguidores y 192K impresiones acumuladas</strong>.</p>
         </div>
       </div>
       <div class="res-row">
         <div class="res-date">Jun 2022 — Nov 2023</div>
         <div>
           <p class="res-role">Operations Manager <span class="res-org">· Negronis</span></p>
-          <p class="res-desc">Control del P&amp;L del negocio en Londres (UK), tomando decisiones operativas y estratégicas basadas en análisis de datos con Excel.</p>
+          <p class="res-desc">Gestión operativa de un negocio en Londres, con responsabilidad sobre el <strong>P&amp;L</strong> y seguimiento de resultados.</p>
+          <p class="res-desc">El análisis de datos formaba parte de las decisiones del día a día: revisar resultados, detectar desviaciones y decidir dónde actuar utilizando <strong>Excel</strong>.</p>
         </div>
       </div>
       <div class="res-row">
         <div class="res-date">Sep 2021 — Abr 2022</div>
         <div>
           <p class="res-role">Junior Analyst, Data &amp; Analytics <span class="res-org">· NTT DATA</span></p>
-          <p class="res-desc">Construcción de dashboards analíticos para el sector automoción en Londres (UK) con SQL, Python y Excel. Colaboración en un equipo multidisciplinar de consultoría analizando datasets de clientes, y automatización de extracción y limpieza de datos para reducir tiempos de reporting.</p>
+          <p class="res-desc">Mi primera experiencia directamente vinculada al análisis de datos.</p>
+          <p class="res-desc">Trabajé en proyectos del <strong>sector automoción</strong>, creando dashboards y análisis para equipos de ventas con <strong>SQL, Python y Excel</strong>.</p>
+          <p class="res-desc">También participé en el análisis de datasets de clientes y en la automatización de tareas de extracción y limpieza de datos, reduciendo el tiempo necesario para preparar el reporting.</p>
         </div>
       </div>
     </div>
@@ -1077,29 +1054,40 @@
       <div class="res-row">
         <div class="res-date">2026</div>
         <div>
-          <p class="res-role">Bootcamp Data Analytics <span class="res-org">· Neoland</span><span class="res-tag">Formación clave</span></p>
-          <p class="res-desc">Formación intensiva en Python, SQL, Machine Learning, Big Data e IA aplicados a Data Analytics — la base técnica de mi especialización actual.</p>
+          <p class="res-role">Máster en UX/UI <span class="res-org">· Neoland</span> · En curso</p>
+          <p class="res-desc">Una especialización que complementa mi formación en comunicación y me ayuda a profundizar en <strong>cómo diseñar experiencias digitales claras y fáciles de entender</strong>.</p>
+          <p class="res-desc">En el ámbito de los datos, aplico esta perspectiva especialmente a la visualización y al diseño de dashboards, donde no solo importa qué información mostramos, sino también cómo la presentamos.</p>
+        </div>
+      </div>
+      <div class="res-row">
+        <div class="res-date">2026</div>
+        <div>
+          <p class="res-role">Bootcamp Data Analytics <span class="res-org">· Neoland</span></p>
+          <p class="res-desc">Formación intensiva como <strong>Data Analyst</strong> para reforzar mi perfil profesional y consolidar una base técnica sólida.</p>
+          <p class="res-desc">Durante el programa asenté conocimientos en <strong>SQL, Python y Machine Learning</strong>, además de trabajar con estadística, Big Data e IA aplicados al análisis de datos.</p>
+          <p class="res-desc">Fue una etapa clave para consolidar los conocimientos técnicos que hoy aplico en mis proyectos de análisis y visualización.</p>
         </div>
       </div>
       <div class="res-row">
         <div class="res-date">2024</div>
         <div>
           <p class="res-role">Especialización Power BI <span class="res-org">· Namasdata</span></p>
-          <p class="res-desc">Formación especializada en Power BI: modelado de datos, DAX y buenas prácticas de visualización.</p>
+          <p class="res-desc">Formación especializada en <strong>Power BI, modelado de datos, DAX y visualización</strong>, con especial atención a la construcción de informes claros y bien estructurados.</p>
         </div>
       </div>
       <div class="res-row">
         <div class="res-date">2015 — 2016</div>
         <div>
           <p class="res-role">Máster en Business Intelligence <span class="res-org">· MSMK</span></p>
-          <p class="res-desc">Fundamentos de Business Intelligence y analítica de datos aplicada a negocio.</p>
+          <p class="res-desc">Formación en Business Intelligence y análisis de datos aplicado al negocio.</p>
         </div>
       </div>
       <div class="res-row">
         <div class="res-date">2009 — 2014</div>
         <div>
           <p class="res-role">Grado en Publicidad y RRPP <span class="res-org">· UCM</span></p>
-          <p class="res-desc">Base en comunicación y análisis de audiencias, origen de mi orientación hacia cómo se entienden los datos.</p>
+          <p class="res-desc">Mi primera formación profesional estuvo ligada a la comunicación.</p>
+          <p class="res-desc">Con el tiempo, esa base terminó conectando con otra de mis inquietudes: <strong>cómo convertir información compleja en algo que las personas puedan entender y utilizar</strong>.</p>
         </div>
       </div>
     </div>
@@ -1113,7 +1101,7 @@
         <div class="res-date">2025</div>
         <div>
           <p class="res-role">Microsoft Certified: Power BI Data Analyst Associate <span class="res-org">· PL-300</span></p>
-          <p class="res-desc">Certificación oficial de Microsoft en modelado de datos, DAX, Power Query y publicación en Power BI Service.</p>
+          <p class="res-desc">Certificación oficial de Microsoft que acredita conocimientos en <strong>preparación y modelado de datos, DAX, visualización y publicación de informes en Power BI</strong>.</p>
         </div>
       </div>
     </div>
