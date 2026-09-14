@@ -366,14 +366,14 @@
 .pcov-track{position:relative;flex:1;overflow:hidden;background:#fafafa}
 .pcov-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;opacity:0;transition:opacity .3s ease;padding:20px;background:#fafafa}
 .pcov-photo.pcov-active{opacity:1}
-.pcov-dots{display:flex;gap:8px;justify-content:center;padding:14px 0 18px;background:#fafafa;border-top:1px solid #e8e8ee;flex-shrink:0}
-.pcov-dot{width:8px;height:8px;background:#e2e2e8;border:0;padding:12px;cursor:pointer;border-radius:var(--radius-pill);transition:background .25s,width .25s;background-clip:content-box;box-sizing:content-box;min-height:44px;min-width:32px;display:flex;align-items:center;justify-content:center}
-.pcov-dot.pcov-dot-active{background:var(--ink);width:24px;background-clip:content-box}
-.pc-overlay-imgs .pc-arrow{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;background:rgba(255,255,255,.9);border:1px solid #e8e8ee;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .18s,color .12s;z-index:2;backdrop-filter:blur(4px)}
-@media (hover: hover) and (pointer: fine) { .pc-overlay-imgs .pc-arrow:hover{background:var(--ink);color:#fff} }
+.pcov-dots{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);display:flex;align-items:center;gap:5px;padding:7px 8px;background:rgba(255,255,255,.82);border:1px solid rgba(232,232,238,.9);border-radius:var(--radius-pill);backdrop-filter:blur(8px);box-shadow:0 6px 18px rgba(17,17,17,.08);z-index:2}
+.pcov-dot{width:5px;height:5px;background:#d5d5dd;border:0;padding:9px;cursor:pointer;border-radius:50%;transition:background .25s,width .25s;background-clip:content-box;box-sizing:content-box;min-height:32px;min-width:26px;display:flex;align-items:center;justify-content:center}
+.pcov-dot.pcov-dot-active{background:var(--ink);width:14px;background-clip:content-box}
+.pc-overlay-imgs .pc-arrow{position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;background:rgba(255,255,255,.82);border:1px solid rgba(232,232,238,.9);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .18s,color .12s,transform .18s,box-shadow .18s;z-index:2;backdrop-filter:blur(8px);box-shadow:0 6px 18px rgba(17,17,17,.08)}
+@media (hover: hover) and (pointer: fine) { .pc-overlay-imgs .pc-arrow:hover{background:var(--ink);color:#fff;border-color:var(--ink);transform:translateY(-50%) scale(1.07)} }
 .pc-overlay-imgs .pc-arrow svg{stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round}
-.pc-arrow-prev{left:12px}
-.pc-arrow-next{right:12px}
+.pc-arrow-prev{left:14px}
+.pc-arrow-next{right:14px}
 .pc-overlay-copy{padding:32px 36px 28px;display:flex;flex-direction:column;overflow:hidden;background:#ffffff}
 .pc-overlay-eyebrow{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-shrink:0}
 .pc-overlay-eyebrow::before{content:"";width:18px;height:1.5px;background:var(--ink);opacity:.45}
@@ -1423,7 +1423,7 @@ document.addEventListener('click', e => {
       <div class="pc-overlay-eyebrow"><span></span>Marketing analytics</div>
       <div class="pc-overlay-title" id="pcoverlay-2-title">Social Media Performance | 2025 vs 2024</div>
       <div class="pcov-stats">
-        <div class="pcov-stat"><div class="pcov-stat-value pos">-26,3%</div><div class="pcov-stat-label">Gasto — mismo rendimiento, menos inversión</div></div>
+        <div class="pcov-stat"><div class="pcov-stat-value pos">26,3%</div><div class="pcov-stat-label">Ahorro en gasto — mismo rendimiento</div></div>
         <div class="pcov-stat"><div class="pcov-stat-value pos">0,21€</div><div class="pcov-stat-label">CPC (desde 0,25€)</div></div>
       </div>
       <p class="pcov-hook">Las impresiones cayeron un 12,8% respecto a 2024, pero el gasto cayó un 26,3% — la eficiencia mejoró aunque el volumen bajara.</p>
