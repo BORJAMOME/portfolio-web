@@ -1286,26 +1286,39 @@ footer {
 .pcov-track{position:relative;flex:1;overflow:hidden;background:#ffffff}
 .pcov-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;opacity:0;transition:opacity .3s ease;padding:20px;background:#ffffff}
 .pcov-photo.pcov-active{opacity:1}
-.pcov-dots{display:flex;gap:6px;justify-content:center;padding:12px 0 16px;background:#ffffff;border-top:1px solid var(--rule);flex-shrink:0}
-.pcov-dot{width:8px;height:8px;background:var(--gray);border:0;padding:12px;cursor:pointer;border-radius:var(--radius-pill);transition:background .25s,width .25s;background-clip:content-box;box-sizing:content-box;min-height:44px;min-width:32px;display:flex;align-items:center;justify-content:center}
-.pcov-dot.pcov-dot-active{background:var(--ink);width:24px;background-clip:content-box}
-.pc-overlay-imgs .pc-arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;background:#ffffff;border:1px solid var(--ink);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .18s,color .12s;z-index:2}
-@media (hover: hover) and (pointer: fine) { .pc-overlay-imgs .pc-arrow:hover{background:var(--ink);color:#fff} }
-.pc-overlay-imgs .pc-arrow svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:square}
-.pc-overlay-imgs .pc-arrow-prev{left:10px}
-.pc-overlay-imgs .pc-arrow-next{right:10px}
+.pcov-dots{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);display:flex;align-items:center;gap:2px;padding:5px;background:rgba(255,255,255,.82);border:1px solid rgba(232,232,238,.9);border-radius:var(--radius-pill);backdrop-filter:blur(8px);box-shadow:0 6px 18px rgba(17,17,17,.08);z-index:2}
+.pcov-dot{width:24px;height:24px;padding:0;margin:0;background:transparent;border:0;cursor:pointer;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pcov-dot::before{content:"";width:6px;height:6px;border-radius:50%;background:#d5d5dd;transition:background .2s}
+.pcov-dot.pcov-dot-active::before{background:var(--ink)}
+.pc-overlay-imgs .pc-arrow{position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;background:rgba(255,255,255,.82);border:1px solid rgba(232,232,238,.9);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .18s,color .12s,transform .18s,box-shadow .18s;z-index:2;backdrop-filter:blur(8px);box-shadow:0 6px 18px rgba(17,17,17,.08)}
+@media (hover: hover) and (pointer: fine) { .pc-overlay-imgs .pc-arrow:hover{background:var(--ink);color:#fff;border-color:var(--ink);transform:translateY(-50%) scale(1.07)} }
+.pc-overlay-imgs .pc-arrow svg{stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round}
+.pc-overlay-imgs .pc-arrow-prev{left:14px}
+.pc-overlay-imgs .pc-arrow-next{right:14px}
 .pc-overlay-copy{padding:28px 32px 24px;display:flex;flex-direction:column;overflow:hidden;background:#ffffff}
 .pc-overlay-eyebrow{font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--mutedB);margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-shrink:0}
 .pc-overlay-eyebrow::before{content:"";width:24px;height:1px;background:var(--ink)}
 .pc-overlay-title{font-size:22px;font-weight:700;letter-spacing:-.022em;line-height:1.2;color:var(--ink);margin-bottom:18px;flex-shrink:0}
-.pc-overlay-long{display:flex;flex-direction:column;gap:11px;margin-bottom:16px;overflow-y:auto;flex:1;padding-right:6px;scrollbar-width:thin;scrollbar-color:var(--rule) transparent}
+.pcov-stats{display:flex;gap:10px;margin-bottom:16px;flex-shrink:0;flex-wrap:wrap}
+.pcov-stat{flex:1;min-width:130px;background:#fafafa;border:1px solid #e8e8ee;border-radius:var(--radius-md);padding:10px 14px}
+.pcov-stat-value{font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;font-size:19px;font-weight:700;color:var(--ink);letter-spacing:-.4px;line-height:1.15}
+.pcov-stat-value.pos{color:var(--green)}
+.pcov-stat-value.neg{color:var(--red)}
+.pcov-stat-label{font-size:10.5px;color:var(--muted);line-height:1.4;margin-top:3px}
+.pcov-hook{font-size:14px;color:var(--ink);line-height:1.65;margin-bottom:16px;flex-shrink:0}
+.pc-overlay-pills{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:16px;flex-shrink:0}
+.pc-overlay-pill{font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;background:transparent;color:var(--ink);padding:2px 8px;border:.8px solid var(--ink);border-radius:999px;font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+.pcov-toggle{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--ink);background:#eeeef1;border:1px solid #e2e2e8;border-radius:var(--radius-pill);padding:8px 14px;cursor:pointer;margin-bottom:14px;flex-shrink:0;transition:background .15s;font-family:inherit}
+@media (hover: hover) and (pointer: fine) { .pcov-toggle:hover{background:#e2e2e8} }
+.pcov-toggle svg{transition:transform .2s var(--ease);flex-shrink:0}
+.pcov-toggle.is-open svg{transform:rotate(180deg)}
+.pc-overlay-long{display:none;flex-direction:column;gap:11px;margin-bottom:16px;overflow-y:auto;flex:1;padding-right:6px;scrollbar-width:thin;scrollbar-color:var(--rule) transparent}
+.pc-overlay-long.is-open{display:flex}
 .pc-overlay-long::-webkit-scrollbar{width:4px}
 .pc-overlay-long::-webkit-scrollbar-thumb{background:var(--rule);border-radius:2px}
 .pc-overlay-long p{font-size:12.5px;color:var(--muted);line-height:1.68}
 .pc-overlay-long p strong{color:var(--ink);font-weight:600}
 .pc-overlay-long code{font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;font-size:11px;background:#f4f4f8;padding:1px 5px;border-radius:3px;color:var(--ink)}
-.pc-overlay-pills{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:16px;flex-shrink:0}
-.pc-overlay-pill{font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;background:transparent;color:var(--ink);padding:2px 8px;border:.8px solid var(--ink);border-radius:999px;font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
 .pc-overlay-foot{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--rule);flex-shrink:0;gap:12px}
 .pc-overlay-close{position:absolute;top:10px;right:10px;width:44px;height:44px;background:#ffffff;border:1px solid var(--ink);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;transition:background .18s,color .12s}
 @media (hover: hover) and (pointer: fine) { .pc-overlay-close:hover{background:var(--ink);color:#fff} }
@@ -3235,6 +3248,18 @@ function indexOverlayPhotoNav(idx, dir){
 document.addEventListener('keydown', function(e){
   if(e.key === 'Escape' && activeIndexOverlay !== null) closeIndexOverlay(activeIndexOverlay);
 });
+
+// Overlay — toggle caso completo (delegado: los .pc-overlay viven más abajo en el DOM)
+document.addEventListener('click', function(e){
+  var btn = e.target.closest('.pcov-toggle');
+  if(!btn) return;
+  var body = document.getElementById(btn.dataset.target);
+  if(!body) return;
+  var open = body.classList.toggle('is-open');
+  btn.classList.toggle('is-open', open);
+  btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  btn.querySelector('.pcov-toggle-label').textContent = open ? 'Ocultar detalle técnico' : 'Ver caso completo';
+});
 </script>
 
 <!-- OVERLAY 0: IBCS -->
@@ -3251,11 +3276,27 @@ document.addEventListener('keydown', function(e){
       </div>
       <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(0,-1)" aria-label="Foto anterior"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
       <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(0,1)" aria-label="Foto siguiente"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <div class="pcov-dots"><button class="pcov-dot pcov-dot-active" onclick="indexOverlayPhotoNav(0,0)"></button><button class="pcov-dot" onclick="indexOverlayPhotoNav(0,1)"></button><button class="pcov-dot" onclick="indexOverlayPhotoNav(0,2)"></button></div>
     </div>
     <div class="pc-overlay-copy">
       <div class="pc-overlay-eyebrow"><span></span>Análisis de ventas · IBCS</div>
       <div class="pc-overlay-title" id="idx-overlay-0-title">Informe de ventas con enfoque IBCS</div>
-      <div class="pc-overlay-long">
+      <div class="pcov-stats">
+        <div class="pcov-stat"><div class="pcov-stat-value">3</div><div class="pcov-stat-label">Tipos de visual IBCS construidos</div></div>
+        <div class="pcov-stat"><div class="pcov-stat-value">5</div><div class="pcov-stat-label">Dimensiones del modelo de datos</div></div>
+      </div>
+      <p class="pcov-hook">Dos periodos pueden cerrar con el mismo número total y haber sido radicalmente distintos por dentro — sin variación integrada en el visual, esa diferencia no se ve.</p>
+      <div class="pc-overlay-pills">
+        <span class="pc-overlay-pill">IBCS</span>
+        <span class="pc-overlay-pill">DAX</span>
+        <span class="pc-overlay-pill">Cálculos visuales</span>
+        <span class="pc-overlay-pill">Modelado en estrella</span>
+        <span class="pc-overlay-pill">Variación absoluta y relativa</span>
+        <span class="pc-overlay-pill">Sales analytics</span>
+        <span class="pc-overlay-pill">YoY analysis</span>
+      </div>
+      <button class="pcov-toggle" data-target="idx-pcovlong-0" aria-expanded="false"><span class="pcov-toggle-label">Ver caso completo</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="pc-overlay-long" id="idx-pcovlong-0">
         <p><strong>El Problema</strong></p>
         <p>En muchos equipos comerciales el análisis de ventas empieza y termina en el total. Si la cifra sube, todo bien. El problema es que <strong>dos períodos pueden cerrar con el mismo número y haber sido radicalmente distintos por dentro</strong>: uno con crecimiento real, otro con caída compensada por una campaña puntual. Sin variación integrada en el visual, esa diferencia no se ve.</p>
         <p><strong>El Objetivo</strong></p>
@@ -3268,15 +3309,6 @@ document.addEventListener('keydown', function(e){
         <p><strong>Power BI</strong> para el modelo, los tres tipos de visual IBCS y la navegación entre vistas. <strong>DAX y cálculos visuales</strong> en combinación para las variaciones CY vs SPLY y contra Target.</p>
         <p><strong>Qué Aprendí</strong></p>
         <p>Replicar el estándar IBCS en Power BI sin custom visuals obliga a entender bien <strong>cómo funciona el formateo condicional a nivel de medida</strong>. La parte más exigente fue conseguir que los tres niveles del gráfico de columnas múltiples mantuvieran las proporciones correctas independientemente del rango de valores del filtro seleccionado.</p>
-      </div>
-      <div class="pc-overlay-pills">
-        <span class="pc-overlay-pill">IBCS</span>
-        <span class="pc-overlay-pill">DAX</span>
-        <span class="pc-overlay-pill">Cálculos visuales</span>
-        <span class="pc-overlay-pill">Modelado en estrella</span>
-        <span class="pc-overlay-pill">Variación absoluta y relativa</span>
-        <span class="pc-overlay-pill">Sales analytics</span>
-        <span class="pc-overlay-pill">YoY analysis</span>
       </div>
       <div class="pc-overlay-foot">
         <a href="https://app.powerbi.com/view?r=eyJrIjoiYWFhNjA5YmQtNjEyYS00YTA3LWIxMzktYWQxOTYzMmZkYzIyIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="pc-overlay-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
@@ -3300,11 +3332,27 @@ document.addEventListener('keydown', function(e){
       </div>
       <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(1,-1)" aria-label="Foto anterior"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
       <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(1,1)" aria-label="Foto siguiente"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <div class="pcov-dots"><button class="pcov-dot pcov-dot-active" onclick="indexOverlayPhotoNav(1,0)"></button><button class="pcov-dot" onclick="indexOverlayPhotoNav(1,1)"></button><button class="pcov-dot" onclick="indexOverlayPhotoNav(1,2)"></button></div>
     </div>
     <div class="pc-overlay-copy">
       <div class="pc-overlay-eyebrow"><span></span>Análisis financiero</div>
       <div class="pc-overlay-title" id="idx-overlay-1-title">Informe Financiero Completo</div>
-      <div class="pc-overlay-long">
+      <div class="pcov-stats">
+        <div class="pcov-stat"><div class="pcov-stat-value pos">678.208€</div><div class="pcov-stat-label">Free Cash Flow 2023</div></div>
+        <div class="pcov-stat"><div class="pcov-stat-value neg">-1.165.649€</div><div class="pcov-stat-label">Free Cash Flow año anterior</div></div>
+      </div>
+      <p class="pcov-hook">El Free Cash Flow pasó de -1,17M€ a 678.208€ en un año — el modelo muestra exactamente qué partidas explican la diferencia.</p>
+      <div class="pc-overlay-pills">
+        <span class="pc-overlay-pill">Modelado contable en estrella</span>
+        <span class="pc-overlay-pill">DAX financiero</span>
+        <span class="pc-overlay-pill">Balance · PyG · Cash Flow</span>
+        <span class="pc-overlay-pill">EBITDA</span>
+        <span class="pc-overlay-pill">Proyección a cierre</span>
+        <span class="pc-overlay-pill">Drill-through a asiento</span>
+        <span class="pc-overlay-pill">Financial analytics</span>
+      </div>
+      <button class="pcov-toggle" data-target="idx-pcovlong-1" aria-expanded="false"><span class="pcov-toggle-label">Ver caso completo</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="pc-overlay-long" id="idx-pcovlong-1">
         <p><strong>El Problema</strong></p>
         <p>Cuando cada área analiza su parte por separado, dirección necesita construir la visión completa manualmente cada vez. Ese proceso es lento, poco trazable y genera versiones distintas de la misma realidad. Sin un modelo que conectara los tres estados financieros de forma coherente, <strong>cualquier análisis era una foto parcial</strong>.</p>
         <p><strong>El Objetivo</strong></p>
@@ -3318,15 +3366,6 @@ document.addEventListener('keydown', function(e){
         <p><strong>Power BI</strong> para el modelo completo, la navegación entre las seis áreas y el drill-through hasta el apunte contable de origen. <strong>DAX</strong> para ratios de solvencia y liquidez, EBITDA, variación interanual, desviación vs presupuesto y la lógica de proyección a cierre.</p>
         <p><strong>Qué Aprendí</strong></p>
         <p>Consolidar varias empresas en un único modelo añade una capa de complejidad que no existe en proyectos de una sola empresa. La <strong>proyección a cierre</strong> fue la pieza técnica más exigente: tiene que distinguir entre meses con datos reales y meses sin ellos, y ser coherente tanto en la tabla como en el gráfico de evolución temporal.</p>
-      </div>
-      <div class="pc-overlay-pills">
-        <span class="pc-overlay-pill">Modelado contable en estrella</span>
-        <span class="pc-overlay-pill">DAX financiero</span>
-        <span class="pc-overlay-pill">Balance · PyG · Cash Flow</span>
-        <span class="pc-overlay-pill">EBITDA</span>
-        <span class="pc-overlay-pill">Proyección a cierre</span>
-        <span class="pc-overlay-pill">Drill-through a asiento</span>
-        <span class="pc-overlay-pill">Financial analytics</span>
       </div>
       <div class="pc-overlay-foot">
         <a href="https://app.powerbi.com/view?r=eyJrIjoiNDgzZjBmY2MtMDhhMy00MGIzLTlmYmItODlkMmY2NDg3ZDdmIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=a961ceadc15fe4dcfcfb" target="_blank" rel="noopener noreferrer" class="pc-overlay-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
@@ -3349,11 +3388,28 @@ document.addEventListener('keydown', function(e){
       </div>
       <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(2,-1)" aria-label="Foto anterior"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
       <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(2,1)" aria-label="Foto siguiente"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <div class="pcov-dots"><button class="pcov-dot pcov-dot-active" onclick="indexOverlayPhotoNav(2,0)"></button><button class="pcov-dot" onclick="indexOverlayPhotoNav(2,1)"></button></div>
     </div>
     <div class="pc-overlay-copy">
       <div class="pc-overlay-eyebrow"><span></span>Customer analytics · B2B</div>
       <div class="pc-overlay-title" id="idx-overlay-2-title">Análisis RFM — Distribuidora B2B de Hostelería</div>
-      <div class="pc-overlay-long">
+      <div class="pcov-stats">
+        <div class="pcov-stat"><div class="pcov-stat-value neg">198.000€</div><div class="pcov-stat-label">Revenue en riesgo · clientes Loyal inactivos</div></div>
+        <div class="pcov-stat"><div class="pcov-stat-value pos">34</div><div class="pcov-stat-label">Clientes Champion (ticket medio 4.787€)</div></div>
+      </div>
+      <p class="pcov-hook">111 clientes Loyal generaban casi la mitad del revenue y llevaban meses sin comprar — 198.000€ en riesgo que sin segmentación no tenía ni nombre ni cifra.</p>
+      <div class="pc-overlay-pills">
+        <span class="pc-overlay-pill">RFM</span>
+        <span class="pc-overlay-pill">Segmentación de clientes</span>
+        <span class="pc-overlay-pill">DAX avanzado</span>
+        <span class="pc-overlay-pill">Esquema estrella</span>
+        <span class="pc-overlay-pill">Tabla HTML en DAX</span>
+        <span class="pc-overlay-pill">Percentiles dinámicos</span>
+        <span class="pc-overlay-pill">B2B analytics</span>
+        <span class="pc-overlay-pill">Customer analytics</span>
+      </div>
+      <button class="pcov-toggle" data-target="idx-pcovlong-2" aria-expanded="false"><span class="pcov-toggle-label">Ver caso completo</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="pc-overlay-long" id="idx-pcovlong-2">
         <p><strong>El Problema</strong></p>
         <p>El director comercial tenía los números y no los entendía. Revenue cayendo, cartera creciendo. La primera reacción fue buscar más ventas. Pero antes había que confirmar si el problema estaba en la <strong>captación o en la retención</strong>. Sin una forma de ver el comportamiento real de cada cliente, esa pregunta no tiene respuesta.</p>
         <p><strong>El Objetivo</strong></p>
@@ -3367,16 +3423,6 @@ document.addEventListener('keydown', function(e){
         <p><strong>Power BI</strong> para el modelo y el dashboard completo con filtros por zona, establecimiento, comercial y año. <strong>DAX</strong> para los tres scores, la asignación de segmento y la tabla de acciones comerciales generada como <strong>HTML dentro de una medida</strong>.</p>
         <p><strong>Qué Aprendí</strong></p>
         <p>Lo complicado fue decidir los cortes de segmentación: cuándo un cliente pasa de Loyal a At Risk no puede ser un número arbitrario. Usar <strong>percentiles dinámicos</strong> en lugar de umbrales fijos fue la decisión que más mejoró la calidad del modelo. Generar una <strong>tabla HTML desde DAX</strong> obliga a pensar más en el diseño antes de escribir la primera línea de código.</p>
-      </div>
-      <div class="pc-overlay-pills">
-        <span class="pc-overlay-pill">RFM</span>
-        <span class="pc-overlay-pill">Segmentación de clientes</span>
-        <span class="pc-overlay-pill">DAX avanzado</span>
-        <span class="pc-overlay-pill">Esquema estrella</span>
-        <span class="pc-overlay-pill">Tabla HTML en DAX</span>
-        <span class="pc-overlay-pill">Percentiles dinámicos</span>
-        <span class="pc-overlay-pill">B2B analytics</span>
-        <span class="pc-overlay-pill">Customer analytics</span>
       </div>
       <div class="pc-overlay-foot">
         <a href="https://app.powerbi.com/view?r=eyJrIjoiNGQ1OWZhNmEtY2I3Ni00N2M5LTk1NWYtMTEwZTA3NWI3NmYwIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="pc-overlay-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
@@ -3399,11 +3445,28 @@ document.addEventListener('keydown', function(e){
       </div>
       <button class="pc-arrow pc-arrow-prev" onclick="indexOverlayPhotoNav(3,-1)" aria-label="Foto anterior"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
       <button class="pc-arrow pc-arrow-next" onclick="indexOverlayPhotoNav(3,1)" aria-label="Foto siguiente"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <div class="pcov-dots"><button class="pcov-dot pcov-dot-active" onclick="indexOverlayPhotoNav(3,0)"></button><button class="pcov-dot" onclick="indexOverlayPhotoNav(3,1)"></button><button class="pcov-dot" onclick="indexOverlayPhotoNav(3,2)"></button></div>
     </div>
     <div class="pc-overlay-copy">
       <div class="pc-overlay-eyebrow"><span></span>Retail · Red de tiendas</div>
       <div class="pc-overlay-title" id="idx-overlay-3-title">Kosta Cálida — Reporting para red de tiendas</div>
-      <div class="pc-overlay-long">
+      <div class="pcov-stats">
+        <div class="pcov-stat"><div class="pcov-stat-value neg">-47.700€</div><div class="pcov-stat-label">Desviación de Mahon vs presupuesto</div></div>
+        <div class="pcov-stat"><div class="pcov-stat-value pos">+37,58%</div><div class="pcov-stat-label">Margen · Bebidas y Refrescos</div></div>
+      </div>
+      <p class="pcov-hook">Mahon era la tienda con más ventas (277.000€), pero no la más rentable — el margen por categoría contaba una historia que el total ocultaba.</p>
+      <div class="pc-overlay-pills">
+        <span class="pc-overlay-pill">Modelado en estrella</span>
+        <span class="pc-overlay-pill">Dos fact tables</span>
+        <span class="pc-overlay-pill">T_DISC desconectadas</span>
+        <span class="pc-overlay-pill">TopN dinámico</span>
+        <span class="pc-overlay-pill">Ventas vs Objetivos</span>
+        <span class="pc-overlay-pill">Drill-down a ticket</span>
+        <span class="pc-overlay-pill">YTD</span>
+        <span class="pc-overlay-pill">Retail analytics</span>
+      </div>
+      <button class="pcov-toggle" data-target="idx-pcovlong-3" aria-expanded="false"><span class="pcov-toggle-label">Ver caso completo</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="pc-overlay-long" id="idx-pcovlong-3">
         <p><strong>El Problema</strong></p>
         <p>Una cadena de tiendas con datos completos en el TPV pero sin capacidad de responder preguntas básicas de negocio: qué tienda rinde mejor, dónde se pierde margen, si los objetivos se cumplen o solo se supera el mes anterior. Los datos existían; <strong>el problema era que nadie los podía leer juntos</strong>.</p>
         <p><strong>El Objetivo</strong></p>
@@ -3417,16 +3480,6 @@ document.addEventListener('keydown', function(e){
         <p><strong>Power BI</strong> para el modelo completo y el dashboard con navegación entre las cuatro áreas. <strong>DAX</strong> para métricas de cumplimiento vs presupuesto, YTD, variación interanual, margen por producto y lógica de ranking dinámico con parámetros TopN. <strong>Power Query</strong> para la integración de las fuentes del TPV y los objetivos.</p>
         <p><strong>Qué Aprendí</strong></p>
         <p>Las tablas desconectadas T_DISC son imprescindibles cuando el mismo selector tiene que afectar a dos tablas de hechos sin crear ambigüedad en el modelo. Diseñar el modelo con esa separación desde el inicio evita tener que rehacer las relaciones cuando el negocio crece y añade nuevas tiendas o líneas de producto.</p>
-      </div>
-      <div class="pc-overlay-pills">
-        <span class="pc-overlay-pill">Modelado en estrella</span>
-        <span class="pc-overlay-pill">Dos fact tables</span>
-        <span class="pc-overlay-pill">T_DISC desconectadas</span>
-        <span class="pc-overlay-pill">TopN dinámico</span>
-        <span class="pc-overlay-pill">Ventas vs Objetivos</span>
-        <span class="pc-overlay-pill">Drill-down a ticket</span>
-        <span class="pc-overlay-pill">YTD</span>
-        <span class="pc-overlay-pill">Retail analytics</span>
       </div>
       <div class="pc-overlay-foot">
         <a href="https://app.powerbi.com/view?r=eyJrIjoiMzhlYjliYTAtMWUzMS00YzE1LTgyNGEtZmZmNDVhNjQ1ZDY3IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=03634c064fb23f65778f" target="_blank" rel="noopener noreferrer" class="pc-overlay-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
