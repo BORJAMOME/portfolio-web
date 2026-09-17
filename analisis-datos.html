@@ -261,13 +261,32 @@
 
 /* ─── ML CARDS — mismo sistema visual que .proj-card (index.html) ─── */
 .ml-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
-/* ML: 5 proyectos en una única fila horizontal con scroll nativo (mismo patrón que .sec-nav-inner en móvil).
-   Las cards mantienen tamaño y estilo intactos; solo cambia el contenedor. */
-#ml .ml-grid{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:8px 4px 32px;margin:-8px -4px -32px}
-#ml .ml-grid .card-c{flex:0 0 368px}
 .card-c{background:#ffffff;border:1px solid #e8e8ee;border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;padding:20px 30px 28px;box-shadow:0 0 0 1px rgba(0,0,0,.06),0 1px 1px -0.5px rgba(0,0,0,.06),0 3px 3px -1.5px rgba(0,0,0,.06),0 6px 6px -3px rgba(0,0,0,.06),0 12px 12px -6px rgba(0,0,0,.06),0 24px 24px -12px rgba(0,0,0,.06);transition:background .18s cubic-bezier(.4,0,.2,1),transform .16s ease-out}
 .card-c:active{transform:scale(.98)}
 @media (hover: hover) and (pointer: fine) { .card-c:hover{transform:translateY(-4px);box-shadow:0 1px 2px rgba(17,17,17,.04),0 20px 40px rgba(17,17,17,.09)} }
+
+/* ML: carrusel de 5 proyectos — mismo sistema que la sección Dashboards de power-bi.html (flechas + puntos) */
+.pbi-cards-wrap{position:relative;width:100vw;max-width:1640px;margin-left:50%;transform:translateX(-50%);padding:0 clamp(20px,4vw,48px);box-sizing:border-box}
+.proj-cards-outer{position:relative;margin:0 68px}
+.proj-cards-track-wrap{overflow:hidden;border:none;border-radius:0}
+.proj-cards-track{display:flex;gap:20px;padding:8px 0 12px;transition:transform .5s var(--ease)}
+.proj-cards-track .card-c{flex:0 0 calc((100% - 40px) / 3)}
+.pco-arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;background:var(--white);border:1px solid #e8e8ee;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;box-shadow:0 2px 8px rgba(0,0,0,.06);transition:background .18s,color .12s,box-shadow .18s;color:var(--ink)}
+@media (hover: hover) and (pointer: fine) { .pco-arrow:hover{background:var(--ink);color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.12)} }
+.pco-arrow svg{stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;width:16px;height:16px}
+.pco-prev{left:-60px}
+.pco-next{right:-60px}
+.pco-dots{display:flex;gap:8px;justify-content:center;margin-top:24px}
+.pco-dot{width:8px;height:8px;background:#e2e2e8;border:0;padding:10px;cursor:pointer;border-radius:var(--radius-pill);transition:background .25s,width .25s;background-clip:content-box;box-sizing:content-box}
+.pco-dot.active{background:var(--ink);width:24px;background-clip:content-box}
+@media(max-width:960px){
+  .proj-cards-track .card-c{flex:0 0 calc((100% - 20px) / 2)}
+}
+@media(max-width:600px){
+  .proj-cards-track .card-c{flex:0 0 100%}
+  .pco-arrow{display:none}
+  .proj-cards-outer{margin:0}
+}
 .cc-cat{font-size:20px;font-weight:700;letter-spacing:-.4px;text-transform:none;color:var(--ink);line-height:1.25;margin-bottom:16px}
 .cc-block{margin-bottom:16px}
 .cc-label{font-size:10px;font-weight:700;color:var(--ink);margin-bottom:6px;letter-spacing:.05em;text-transform:uppercase}
@@ -493,9 +512,15 @@
       </div>
       <p class="section-sub">Modelos predictivos y de clasificación aplicados a decisiones concretas de negocio. Cada proyecto parte de una pregunta concreta y termina con una métrica que mide si la respuesta funciona.</p>
     </div>
-    <div class="ml-grid">
+    <div class="pbi-cards-wrap">
+      <div class="proj-cards-outer sr" id="mlCardsOuter">
+        <button class="pco-arrow pco-prev" id="mlPrev" aria-label="Proyecto anterior">
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="proj-cards-track-wrap" role="region" aria-label="Proyectos de Machine Learning">
+          <div class="proj-cards-track" id="mlTrack" aria-live="polite" aria-atomic="false" aria-label="Proyecto 1 de 5">
       <!-- CARD ML-1: K-Means + t-SNE Retail -->
-      <div class="card-c">
+      <div class="card-c" id="mlcard-0">
         <div class="cc-cat">Segmentación de clientes · Electrónica</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
@@ -515,7 +540,7 @@
         </div>
       </div>
       <!-- CARD ML-2: SARIMA vs SARIMAX Retail -->
-      <div class="card-c">
+      <div class="card-c" id="mlcard-1">
         <div class="cc-cat">Previsión de ventas · Retail</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
@@ -535,7 +560,7 @@
         </div>
       </div>
       <!-- CARD ML-3: Segmentación Aerolínea -->
-      <div class="card-c">
+      <div class="card-c" id="mlcard-2">
         <div class="cc-cat">Fidelización de pasajeros · Aerolínea</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
@@ -555,7 +580,7 @@
         </div>
       </div>
       <!-- CARD ML-4: SARIMA Retail (sin variables externas) -->
-      <div class="card-c">
+      <div class="card-c" id="mlcard-3">
         <div class="cc-cat">Previsión de demanda · Retail</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
@@ -575,7 +600,7 @@
         </div>
       </div>
       <!-- CARD ML-5: Conjoint Vuelos -->
-      <div class="card-c">
+      <div class="card-c" id="mlcard-4">
         <div class="cc-cat">Preferencias de vuelo · Aerolínea</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
@@ -592,6 +617,19 @@
         <div class="cc-foot">
           <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">Conjoint</span><span class="cc-pill">statsmodels</span></div>
           <a class="cc-link" href="https://conjoint-vuelos.streamlit.app" target="_blank" rel="noopener noreferrer">Ver →</a>
+        </div>
+      </div>
+          </div>
+        </div>
+        <button class="pco-arrow pco-next" id="mlNext" aria-label="Proyecto siguiente">
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <div class="pco-dots" id="mlDots">
+          <button class="pco-dot active" data-idx="0" aria-label="Ir al proyecto 1"></button>
+          <button class="pco-dot" data-idx="1" aria-label="Ir al proyecto 2"></button>
+          <button class="pco-dot" data-idx="2" aria-label="Ir al proyecto 3"></button>
+          <button class="pco-dot" data-idx="3" aria-label="Ir al proyecto 4"></button>
+          <button class="pco-dot" data-idx="4" aria-label="Ir al proyecto 5"></button>
         </div>
       </div>
     </div>
@@ -858,6 +896,106 @@ document.querySelectorAll('.sec-nav button').forEach(a=>{
 (function(){
   document.querySelectorAll('.sec-nav button').forEach((btn,i)=>{
     if(i===0) btn.classList.add('active');
+  });
+})();
+
+// ── ML CARDS CAROUSEL — TRUE INFINITE (clone-based, mismo mecanismo que power-bi.html) ──
+(function(){
+  const track = document.getElementById('mlTrack');
+  if(!track) return;
+  const TOTAL = 5;
+  const CLONES = 3; // clones en cada extremo (= cards visibles simultáneamente en desktop)
+  const EASING = 'transform .5s cubic-bezier(0.16,1,0.3,1)';
+
+  const originals = Array.from(track.querySelectorAll('.card-c'));
+
+  for(let i = CLONES - 1; i >= 0; i--){
+    const c = originals[TOTAL - 1 - i].cloneNode(true);
+    c.setAttribute('aria-hidden','true');
+    c.removeAttribute('id');
+    track.insertBefore(c, track.firstChild);
+  }
+  for(let i = 0; i < CLONES; i++){
+    const c = originals[i].cloneNode(true);
+    c.setAttribute('aria-hidden','true');
+    c.removeAttribute('id');
+    track.appendChild(c);
+  }
+
+  let trackPos = CLONES;
+  let cur = 0;
+  let busy = false;
+
+  const dots = document.querySelectorAll('#mlDots .pco-dot');
+
+  function slideW(){
+    const c = track.querySelector('.card-c');
+    if(!c) return 0;
+    const gap = parseFloat(getComputedStyle(track).gap) || 0;
+    return c.offsetWidth + gap;
+  }
+
+  function moveTo(pos, animated){
+    track.style.transition = animated ? EASING : 'none';
+    track.style.transform = `translateX(-${pos * slideW()}px)`;
+  }
+
+  function syncDots(){
+    dots.forEach((d,i) => d.classList.toggle('active', i === cur));
+  }
+
+  function syncAria(){
+    const cat = originals[cur].querySelector('.cc-cat');
+    if(cat) track.setAttribute('aria-label',`Proyecto ${cur+1} de ${TOTAL}: ${cat.textContent}`);
+  }
+
+  moveTo(trackPos, false);
+  syncDots();
+
+  function step(dir){
+    if(busy) return;
+    busy = true;
+    trackPos += dir;
+    cur = ((cur + dir) % TOTAL + TOTAL) % TOTAL;
+    moveTo(trackPos, true);
+    syncDots();
+    syncAria();
+  }
+
+  function jumpTo(logicalIdx){
+    if(busy || logicalIdx === cur) return;
+    busy = true;
+    const diff = logicalIdx - cur;
+    trackPos += diff;
+    cur = logicalIdx;
+    moveTo(trackPos, true);
+    syncDots();
+    syncAria();
+  }
+
+  track.addEventListener('transitionend', () => {
+    if(trackPos >= TOTAL + CLONES){
+      trackPos -= TOTAL;
+      moveTo(trackPos, false);
+    }
+    else if(trackPos < CLONES){
+      trackPos += TOTAL;
+      moveTo(trackPos, false);
+    }
+    busy = false;
+  });
+
+  document.getElementById('mlPrev').onclick = () => step(-1);
+  document.getElementById('mlNext').onclick = () => step(+1);
+  dots.forEach(d => d.addEventListener('click', () => jumpTo(+d.dataset.idx)));
+
+  window.addEventListener('resize', () => moveTo(trackPos, false));
+
+  let tx = 0;
+  track.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, {passive:true});
+  track.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - tx;
+    if(Math.abs(dx) > 40) step(dx < 0 ? 1 : -1);
   });
 })();
 </script>
