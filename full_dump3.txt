@@ -1,0 +1,983 @@
+=== SLIDE 000 | sec=Portada isSec=False isCover=True ===
+  [eyebrow] Deck de repaso · Edición 2026
+  [title] Data Storytelling
+y diseño de dashboards
+  [lede] Lo esencial para tener claro antes de arrancar cualquier proyecto: cómo piensa el cerebro, cómo se dirige la mirada y cómo se convierte un dato en una decisión.
+  [who]  Borja Mora Méndez   Data Analyst · Power BI &amp; Data Storytelling 
+=== SLIDE 001 | sec=Cómo usar isSec=False isCover=False ===
+  [eyebrow] Cómo usar este deck
+  [title] Cuatro señales, en cada slide
+  [row]
+    col:
+      [card accent=False]
+        [p] Tu material
+        [p] Tu conocimiento recopilado, ordenado. Sin quitar ninguna idea.
+      [callout_pbi] label=▶ En Power BI
+        [p] Cómo aterrizar el concepto en la herramienta.
+    col:
+      [callout_src] label=＋ Ampliación
+        [p] Respaldo de las fuentes de referencia del campo.
+      [vs]
+        [✕ Evita] Lo que resta.
+        [✓ Haz] La alternativa que suma.
+  [tag] Navega con ← → · Pulsa I para el índice y saltar a cualquier bloque
+=== SLIDE 002 | sec=Mapa del recorrido isSec=False isCover=False ===
+  [eyebrow] Mapa del recorrido
+  [title] Los 10 bloques, de un vistazo
+  [p] De preparar el mensaje a contar la historia. Cada bloque alimenta al siguiente: contexto → percepción → diseño → narrativa.
+  [conceptmap] 00: Fundamentos (Por qué comunicar con datos) || 01: Entender el contexto (Audiencia, qué y gran idea) || 02: Cómo percibe el cerebro (Memoria, preatentivos, Gestalt) || 03: Reducir el ruido (Carga cognitiva, data-ink) || 04: Dirigir la atención (Contraste, color, jerarquía) || 05: Elegir el visual (El gráfico correcto) || 06: Componer (Layout, grid, espacio) || 07: El texto (Títulos y anotaciones) || 08: Construir la historia (Los tres actos) || 09: Juntar las piezas (El proceso completo)
+  [tag] Pulsa I para saltar a cualquier bloque.
+=== SLIDE 003 | sec=00 · Fundamentos isSec=True isCover=False ===
+  [eyebrow] Parte 00
+  [bignum] 00
+  [title] Fundamentos
+  [lede] Por qué comunicar con datos es un problema de significado, no de decoración.
+=== SLIDE 004 | sec=00 · Fundamentos isSec=False isCover=False ===
+  [title] Qué es Data Storytelling (y qué no es)
+  [lede] Es la disciplina de convertir datos en una narrativa que impulsa una decisión: dar significado y dirección a los números. No es decorar gráficos ni acumular métricas.
+  [vs]
+    [✕ No es] Muchos datos, muchos bullets, muchos gráficos. El lector recibe información pero no sabe qué hacer con ella.
+    [✓ Sí es] Idea + emoción. Una tensión que importa y un alivio que propone el análisis. Persuasión que se recuerda.
+  [p] Los humanos no deciden por datos: deciden por tensión y alivio.
+=== SLIDE 005 | sec=00 · Fundamentos isSec=False isCover=False ===
+  [title] Los tres pilares
+  [table] headers=['Pilar', 'Propósito', 'Componentes']
+    row: Datos | Evidencia | Números, tendencias, comparativas
+    row: Narrativa | Significado | Contexto, causalidad, implicaciones
+    row: Visuales | Claridad | Gráficos, diagramas, elementos destacados
+  [p] Si falta uno, la pieza cojea. Deben estar los tres.
+=== SLIDE 006 | sec=00 · Fundamentos isSec=False isCover=False ===
+  [title] La referencia de negocio: Dykes
+  [lede] Los tres pilares de la página anterior no son una síntesis libre: es la misma definición que usa la literatura de BI para separar el storytelling de datos de un simple informe.
+  [callout_pbi] label=＋ Ampliación · Brent Dykes
+    [p] En Effective Data Storytelling (Wiley, 2019), Dykes define el storytelling de datos exactamente como la intersección de datos + narrativa + visualización: si falta cualquiera, el resultado es un informe plano, una fábula sin base o una visualización sin foco. Es la referencia más orientada a negocio de esta lista — su checklist de narrative flow se aplica directamente al storyboard de un dashboard ejecutivo en Power BI.
+=== SLIDE 007 | sec=00 · Fundamentos isSec=False isCover=False ===
+  [title] Del mensaje exploratorio al explicativo
+  [lede] Un análisis exploratorio es para ti: ves qué pasa, nada se destaca, buscas patrones entre muchas variables. Un producto explicativo es para tu audiencia: cuentas una historia, destacas lo relevante y diriges la mirada hacia una conclusión concreta.
+  [figure] file=slide008_cap-1.png cap=El mismo dato, dos intenciones. Explicar es decidir qué callar para que una cosa se oiga.
+  [callout_pbi] label=▶ En Power BI
+    [p] Portada explicativa (KPI + un visual protagonista + titular que orienta). Detalle y drill-through exploratorios. No los mezcles en la misma vista.
+=== SLIDE 008 | sec=01 · Entender el contexto isSec=True isCover=False ===
+  [eyebrow] Parte 01
+  [bignum] 01
+  [title] Entender el contexto
+  [lede] El trabajo empieza antes de abrir la herramienta. Sin contexto, cualquier gráfico responde a una pregunta que nadie hizo.
+=== SLIDE 009 | sec=01 · Entender el contexto isSec=False isCover=False ===
+  [title] ¿Quién? ¿Qué? ¿Cómo? — la conversación entre audiencia, gráfico y acción
+  [row]
+    col:
+      [list]
+        - ¿Quién? — La audiencia (o tú, cuando aún exploras).
+        - ¿Qué? — Qué necesitas que sepa o haga. Y sugerir los siguientes pasos.
+        - ¿Cómo? — Con qué datos concretos lo vas a demostrar. Sin esta respuesta, el «qué» es una opinión sin evidencia.
+    col:
+      [figure] file=slide010_cap-2.png cap=Si el gráfico no lleva a una acción, sobra.
+=== SLIDE 010 | sec=01 · Entender el contexto isSec=False isCover=False ===
+  [title] Consultoría para el contexto · qué preguntar
+  [lede] Casi nunca tienes todo el contexto de partida. Cuando el encargo viene de un cliente, jefe o stakeholder, estas preguntas lo sacan a la luz.
+  [list]
+    - ¿Qué antecedentes son relevantes o esenciales?
+    - ¿Quién es la audiencia o quien decide? ¿Qué sabemos de ella?
+    - ¿Qué sesgos tiene esa audiencia — a favor o en contra del mensaje?
+    - ¿Qué datos disponibles fortalecen el caso? ¿Le son familiares o son nuevos?
+    - ¿Dónde están los riesgos — qué podría debilitar el caso?
+    - ¿Cómo se vería un resultado exitoso?
+  [callout_src] label=＋ Ampliación · Knaflic
+    [p] La última pregunta suele ser la más reveladora: si solo tuvieras una frase para decir a tu audiencia lo que necesita saber, ¿cuál sería? Esa restricción obliga a condensar todo el encargo en el mensaje que de verdad importa.
+=== SLIDE 011 | sec=01 · Entender el contexto isSec=False isCover=False ===
+  [title] La gran idea y la historia en 3 minutos
+  [row]
+    col:
+      [card accent=False]
+        [p] La gran idea
+        [p] Un punto de vista único, en una oración completa —sujeto, verbo y postura—. Tu tesis, no un título vago.
+    col:
+      [card accent=False]
+        [p] La historia en 3 min
+        [p] Si tuvieras 3 minutos sin pantalla, ¿qué dirías? Lo que sobreviva a esa versión hablada es tu narrativa.
+  [callout_src] label=＋ Ampliación · Knaflic
+    [p] Big Idea, 3-Minute Story y Storyboard (esbozar con post-its antes de tocar el software) son tres herramientas de Storytelling with Data. Si no puedes contarlo sin apoyo visual, aún no lo tienes claro.
+=== SLIDE 012 | sec=01 · Entender el contexto isSec=False isCover=False ===
+  [title] Diccionario · palabras por tipo de acción
+  [dchd] Títulos de análisis :: — describen lo que el gráfico permite hacer al lector
+  [chips] analizar, evaluar, identificar, comparar, entender, revisar, detectar, mostrar, evidenciar, revelar
+  [dchd] Títulos de acción :: — empujan hacia una decisión
+  [chips] priorizar, ajustar, optimizar, reducir, aumentar, corregir, mejorar, validar, decidir
+  [dchd] Guiar a la audiencia :: — invitan a recorrer el contenido
+  [chips] explorar, comprender, navegar, revisar, profundizar, descubrir
+  [dchd] Storytelling y énfasis visual :: — señalan dónde mirar
+  [chips] destacar, resaltar, revelar, indicar, exponer, subrayar
+  [dchd] Botones, filtros e interacciones :: — la microcopia de la interfaz
+  [chips] aplicar, limpiar, seleccionar, filtrar, expandir, contraer, ver más, resetear, actualizar
+=== SLIDE 013 | sec=01 · Entender el contexto isSec=False isCover=False ===
+  [title] Diccionario · palabras por campo (1/2)
+  [dchd] Data visualization :: — el vocabulario para nombrar lo que muestra un gráfico
+  [chips] tendencia, proporción, disminución, patrón, valle, impacto, desempeño, frecuencia, relación, intervalo, cambio, variación, comparación, desviación, anomalía, promedio, contribución, riesgo, probabilidad, segmentación, proyección, estabilidad, distribución, crecimiento, concentración, pico, rango, rendimiento, correlación, categoría, estimación
+  [dchd] Titulares / Insights :: — adjetivos que dan peso al hallazgo
+  [chips] clave, principal, evidente, inesperado, estable, relevante, crítico, dominante, inmediato, reciente, significativo, notable, consistente, sostenido, acumulado
+  [dchd] Comunicación de riesgo :: — cuando lo que está en juego es la incertidumbre
+  [chips] riesgo, severidad, intervalo, variabilidad, proporción, probabilidad, magnitud, certeza, evidencia, prevalencia, incidencia, exposición, incertidumbre, tasa
+=== SLIDE 014 | sec=01 · Entender el contexto isSec=False isCover=False ===
+  [title] Diccionario · palabras por campo (2/2)
+  [dchd] UX / UI :: — el idioma de la interfaz y la legibilidad
+  [chips] enfoque, claridad, destacado, alineado, contraste, legibilidad, agrupado, limpio, jerarquía, accesible, ordenado
+  [dchd] Neuromarketing / publicidad :: — para cuando quieres mover, no solo informar
+  [chips] clave, urgente, aceleración, caída, señal, esencial, oportunidad, impulso, punto de inflexión, fricción, principal, tendencia, saturación, gatillo, barrera
+  [dchd] Datos / BI :: — los tecnicismos que un público de negocio ya entiende
+  [chips] KPI, performance, outliers, variación neta, métrica, benchmark, forecast, delta, productividad, indicador, desviación, YoY / MoM, margen
+  [dchd] Storytelling con datos :: — las piezas del relato
+  [chips] contexto, impacto, explicación, conclusión, situación, causa, evolución, consecuencia, recomendación
+=== SLIDE 015 | sec=01 · Entender el contexto isSec=False isCover=False ===
+  [callout_pbi] label=▶ En Power BI · el título que orienta
+    [p] Estas palabras viven en el título dinámico de cada visual (medida DAX + «Título condicional»), en botones y marcadores, en tooltips y en segmentadores. Un título que afirma, no que describe:
+    [code] Titulo = "Las ventas de " & SELECTEDVALUE(Region[Nombre])
+  & " caen un " & FORMAT([Var% YoY],"0%") & " frente al año pasado"
+=== SLIDE 016 | sec=01 · Entender el contexto isSec=False isCover=False ===
+  [title] El marco académico: What-Why-How
+  [lede] No confundir con el ¿Quién? ¿Qué? ¿Cómo? de la Parte 01: este es el marco que separa la pregunta de negocio de la técnica visual, para no elegir el gráfico antes que el problema.
+  [row]
+    col:
+      [card accent=False]
+        [p] WHAT
+        [p] Los datos disponibles: tipo, estructura, granularidad.
+    col:
+      [card accent=False]
+        [p] WHY
+        [p] La tarea del usuario: comparar, localizar, ver tendencia, encontrar anomalías.
+    col:
+      [card accent=False]
+        [p] HOW
+        [p] La técnica de codificación visual elegida para resolver esa tarea.
+  [callout_src] label=＋ Ampliación · Tamara Munzner
+    [p] En Visualization Analysis and Design (2014), Munzner obliga a resolver why antes que how: si el gráfico se elige primero y se justifica después, el análisis empieza al revés.
+=== SLIDE 017 | sec=02 · Cómo percibe el cerebro isSec=True isCover=False ===
+  [eyebrow] Parte 02
+  [bignum] 02
+  [title] Cómo percibe
+el cerebro
+  [lede] Toda visualización depende de cómo el cerebro decide qué ver, qué ignorar y qué recordar.
+=== SLIDE 018 | sec=02 · Cómo percibe el cerebro isSec=False isCover=False ===
+  [title] Los tres tipos de memoria
+  [lede] Atraer y retener la atención del público es un problema de memoria. Trabajamos con tres almacenes encadenados, y cada uno impone una regla de diseño.
+  [table] headers=['Memoria', 'Qué hace', 'Qué te obliga a hacer']
+    row: Icónica | Detecta al instante color, forma, tamaño, orientación, movimiento. | Marcar lo importante antes de que el lector «lea».
+    row: Corto plazo | Retiene solo 3-4 elementos. Con 5 colores y 10 leyendas, abandona. | Agrupar, etiquetar y simplificar. Nunca superar su límite.
+    row: Largo plazo | Guarda patrones, reconocimiento y significado. | Anclar con imágenes, metáforas, conexión. Texto + imagen = más recuerdo.
+  [p] La consecuencia práctica: conectar texto e imagen multiplica la probabilidad de recuerdo. Un número solo se olvida; un número junto a la frase que explica por qué importa, se queda.
+  [callout_src] label=＋ Ampliación · Cowan (2001)
+    [p] El clásico «7±2» de Miller (1956) es una cifra divulgativa, no un límite real de capacidad. Nelson Cowan, en The Magical Number 4 in Short-Term Memory (2001), revisó la evidencia y fijó el límite en unos 4 elementos sin ayudas como repetición o agrupación. Es la cifra que justifica por qué un dashboard no debería superar 4-6 KPI visibles a la vez.
+=== SLIDE 019 | sec=02 · Cómo percibe el cerebro isSec=False isCover=False ===
+  [title] Preatentivos: lo que el cerebro ve en 200 ms
+  [figure] file=slide020_cap-3.png cap=Señales que el cerebro procesa antes de la atención consciente. La palanca nº1 para dirigir la mirada.
+  [vs]
+    [Cuantitativos («cuánto»)] longitud · posición · tamaño · grosor · intensidad
+    [Categóricos («de qué tipo»)] color · forma · patrón · orientación
+=== SLIDE 020 | sec=02 · Cómo percibe el cerebro isSec=False isCover=False ===
+  [title] El repertorio completo de atributos
+  [p] Señales que el cerebro detecta en 200 ms. En cada ejemplo, el elemento distinto salta solo:
+  [imageblock] file=slide021_cap-4.png cap=
+  [callout_src] label=＋ Ampliación · Ware · Cleveland & McGill · Few
+    [p] Colin Ware agrupa estas señales en 4 familias: color, forma (tamaño, longitud, orientación, curvatura, agrupación espacial…), movimiento y posición (incluida la profundidad simulada con difuminado). El ojo decodifica con más precisión la posición sobre una escala común, luego la longitud, luego el ángulo, y muy por detrás el área y el color — por eso una barra comunica mejor que un donut o una burbuja. «Agrupación» y «Difuminado» los añade Stephen Few en Now You See It.
+=== SLIDE 021 | sec=02 · Cómo percibe el cerebro isSec=False isCover=False ===
+  [title] El método: 3 pasos para dirigir la mirada
+  [p] ¿Para qué sirve todo esto? Para dos cosas: dirigir la atención y crear una jerarquía visual. Un gráfico sin estas señales obliga al cerebro a trabajar más; aumenta la carga cognitiva, baja la comprensión y el mensaje se diluye. El método para aplicarlo son tres pasos:
+  [steps]
+    1) Llévalo todo al gris. Parte de un lienzo sin énfasis. Nada destaca todavía.
+    2) Pregúntate qué es lo importante. Decide el único mensaje que debe sobrevivir.
+    3) Resáltalo con tamaño, color y grosor. Dos o tres atributos, no más, sobre ese elemento.
+  [callout_pbi] label=Aplicado a cada palanca
+    [p] Color — todo en gris y solo lo importante coloreado.   Tamaño — si algo importa, hazlo grande; la percepción del tamaño es inmediata y es señal de jerarquía.   Posición — leemos de arriba abajo e izquierda a derecha: fija el recorrido y el orden de prioridad.   Marcadores y etiquetas — solo las importantes.
+=== SLIDE 022 | sec=02 · Cómo percibe el cerebro isSec=False isCover=False ===
+  [title] Precisión perceptiva: qué tan bien se lee un valor
+  [p] Distinta pregunta de «qué atributo llama la atención»: ¿qué atributo permite leer un valor con exactitud? Cleveland & McGill (1984), popularizada por Alberto Cairo — nueve niveles, no ocho: dirección/pendiente y ángulo son escalones distintos:
+  [table] headers=['#', 'Atributo', 'Ejemplos de Cairo / en un gráfico']
+    row: 1 | Posición en escala común | Dot plot, barras, líneas, scatter
+    row: 2 | Posición en escalas no alineadas | Pequeños múltiplos
+    row: 3 | Longitud | Barras agrupadas desde base 0
+    row: 4 | Dirección / pendiente | Slopegraph, línea de tendencia
+    row: 5 | Ángulo | Pie/donut — ya notablemente peor
+    row: 6 | Área | Burbujas, treemap, isotype
+    row: 7 | Volumen | Cubos, esferas 3D — evítalos
+    row: 8 | Saturación e intensidad | Mapa de calor
+    row: 9 | Matiz (color puro) | Solo categorías, nunca cantidad
+=== SLIDE 023 | sec=02 · Cómo percibe el cerebro isSec=False isCover=False ===
+  [title] El ranking dentro del ranking: leer una proporción
+  [p] Franconeri et al. (2021) cuantifican la misma jerarquía con un experimento: estimar una proporción de 1:7 entre dos valores, codificada de 5 formas. Cada vez más ruidosa al bajar de nivel:
+  [table] headers=['#', 'Atributo', 'Qué ocurre al leer 1:7']
+    row: 1 | Posición | La más fiable — dos puntos, mismo eje.
+    row: 2 | Longitud | Casi tan fiable — barras, misma base.
+    row: 3 | Área | Ya se subestima (ver ilusión de burbujas).
+    row: 4 | Ángulo | Distorsionado por el color/tamaño adyacente.
+    row: 5 | Intensidad | La más ruidosa — cambia según el fondo.
+  [callout_src] label=＋ Ampliación · la jerarquía depende de la tarea
+    [p] Es la más precisa para leer un valor puntual o comparar dos, pero para el promedio, máximo o mínimo de un panel completo la ventaja de la posición desaparece: el ojo extrae esas estadísticas globales casi igual de rápido con posición, longitud, área, ángulo o intensidad, si las marcas comparten escala.
+=== SLIDE 024 | sec=02 · Cómo percibe el cerebro isSec=False isCover=False ===
+  [title] Ley de saliencia · el orden del cerebro
+  [table] headers=['#', 'Contraste', 'En dataviz']
+    row: 1 | Color | El más potente. Gris vs. color = palanca nº1.
+    row: 2 | Luminancia | Claro/oscuro; funciona sin color.
+    row: 3 | Tamaño | Señal fuerte de jerarquía.
+    row: 4 | Orientación | Un elemento inclinado entre rectos.
+    row: 5 | Movimiento | El más llamativo; rara vez apropiado.
+  [p] Reducido a la práctica del dato: el color es lo más potente (gris/color), el tamaño es un refuerzo fuerte y el grosor de línea, un tercer nivel. Dos principios cierran la idea: un elemento diferente entre muchos iguales se recuerda más, y el cerebro prefiere patrones simples. Cuantas menos comparaciones simultáneas exijas, más rápido se comprende lo visual.
+=== SLIDE 025 | sec=02 · Cómo percibe el cerebro isSec=False isCover=False ===
+  [title] Las leyes de la Gestalt
+  [p] La Gestalt describe cómo el cerebro agrupa lo que ve en conjuntos con sentido. En diseño de datos sirven para lo mismo que todo lo anterior: reducir la carga cognitiva, separar la señal del ruido, dirigir la mirada sin elementos extra y eliminar el caos visual. Las que necesitas dominar:
+  [row]
+    col:
+      [list]
+        - Proximidad — lo cercano se percibe como un todo.
+        - Semejanza — mismo color/forma = relacionados.
+        - Región común — un entorno compartido los agrupa.
+        - Cierre — la mente completa las formas que faltan.
+        - Continuidad — la vista sigue la ruta más simple.
+        - Conectividad — lo unido por una línea = un grupo.
+    col:
+      [figure] file=slide026_cap-5.png cap=El cerebro agrupa antes de que expliques nada.
+=== SLIDE 026 | sec=02 · Cómo percibe el cerebro isSec=False isCover=False ===
+  [title] Rápida para promedios, lenta para comparar
+  [lede] Una revisión reciente y muy citada —Franconeri, Padilla, Shah, Zacks & Hullman (2021)— añade un matiz operativo a todo lo anterior:
+  [vs]
+    [Vista potente: estadísticas globales] El ojo extrae en paralelo el máximo, el mínimo y la media de un panel completo, casi al instante.
+
+Solo si las marcas comparten escala y están alineadas.
+    [Vista lenta: comparar dos valores] Cada comparación individual cuesta cientos de milisegundos.
+
+La memoria de trabajo solo sostiene con fiabilidad unas 4 comparaciones simultáneas.
+  [callout_src] label=＋ Consecuencia práctica
+    [p] Un dashboard con 12 KPI en fila no se «compara»: se escanea a trozos. Dibuja el delta ya calculado, resalta la única comparación que importa y etiqueta el dato en vez de usar leyenda — las tres tácticas de la Parte 04.
+=== SLIDE 027 | sec=02 · Cómo percibe el cerebro isSec=False isCover=False ===
+  [title] Lo que hace el cerebro, en resumen
+  [steps]
+    1) Mira primero lo diferente.
+    2) Después, lo más grande.
+    3) Interpreta más rápido lo que está arriba a la izquierda.
+    4) Ignora lo que está en gris claro.
+    5) Forma categorías automáticamente.
+  [p] Diseñar es ponerte de acuerdo con estas cinco tendencias, no luchar contra ellas.
+=== SLIDE 028 | sec=02 · Cómo percibe el cerebro isSec=False isCover=False ===
+  [callout_pbi] label=▶ En Power BI · Gestalt aplicada
+    [list]
+      - Proximidad / región común: agrupa visuales con espacio en blanco (no líneas); un rectángulo de relleno muy suave hace de «entorno».
+      - Semejanza: reserva un color por categoría e igual en toda la página (tema JSON).
+      - Conectividad: una línea comunica una serie mejor que barras sueltas.
+      - Usa «Alinear» y la cuadrícula para que la proximidad sea intencionada.
+=== SLIDE 029 | sec=03 · Reducir el ruido isSec=True isCover=False ===
+  [eyebrow] Parte 03
+  [bignum] 03
+  [title] Reducir el ruido
+  [lede] Minimizar la información no útil y maximizar los datos frente al ruido. Cada elemento que no ayuda, resta.
+=== SLIDE 030 | sec=03 · Reducir el ruido isSec=False isCover=False ===
+  [title] Carga cognitiva · el objetivo
+  [lede] Minimizar la información no útil y maximizar los datos frente al ruido. Evitar el caos: todo elemento que no ayuda a comprender.
+  [steps]
+    1) Eliminar los elementos gráficos que no contienen datos.
+    2) Hacer las cosas obvias: mostrar solo lo importante.
+    3) Agrupar y jerarquizar.
+    4) Primero lo principal y luego el detalle, si se quiere profundizar.
+=== SLIDE 031 | sec=03 · Reducir el ruido isSec=False isCover=False ===
+  [title] Carga cognitiva · las 6 preguntas de control
+  [olist]
+    - ¿Transmite su idea principal en 30 segundos?
+    - ¿Puedo quitar algo sin perder el mensaje?
+    - ¿Hay más de 3 colores? ¿Es necesario?
+    - ¿La leyenda obliga a mirar fuera del gráfico?
+    - ¿Puedo incorporar las etiquetas dentro?
+    - ¿Necesita el detalle ahora, o va en un apéndice?
+  [callout_src] label=＋ Ampliación · Tufte
+    [p] Data-ink ratio: maximiza la tinta que es dato, borra la que no (bordes, sombras, 3D, cuadrículas gruesas = chartjunk). Matiz: conserva lo que guía (una línea de referencia, una etiqueta que orienta).
+=== SLIDE 032 | sec=03 · Reducir el ruido isSec=False isCover=False ===
+  [title] Supercategorías · domar los desgloses numerosos
+  [lede] 20 categorías demográficas son ruido. Agrupadas en 4 supercategorías son una historia.
+  [row]
+    col:
+      [card accent=False]
+        [dchd] El problema :: 
+        [p] Un desglose con muchas categorías sueltas (edad por década, 12 productos, 30 delegaciones) obliga al lector a construir su propio orden mental antes de poder comparar nada.
+    col:
+      [card accent=True]
+        [dchd] La técnica :: 
+        [p] Agrupa las categorías finas bajo 3-5 supercategorías con sentido de negocio (edad → generación; productos → líneas; delegaciones → regiones). El detalle sigue disponible, pero ya no es la primera lectura.
+  [callout_src] label=＋ Dónde aplicarlo
+    [p] Dashboards con muchas dimensiones: RR. HH. (puestos → departamentos), catálogo (SKU → familia), geografía (ciudad → región). El drill-down de Power BI hace de puente entre las dos capas.
+=== SLIDE 033 | sec=03 · Reducir el ruido isSec=False isCover=False ===
+  [title] Antes / después: mismos datos
+  [figure] file=slide034_cap-6.png cap=Sin bordes ni cuadrícula, en gris salvo el protagonista, con etiqueta directa: el mensaje aparece solo.
+  [vs]
+    [✕ Quita casi siempre] borde · gridlines · markers · escalas que exageran · colores saturados de más
+    [✓ Depura] 10.000 → 10 k · etiqueta directa (sin leyenda) · color coherente
+=== SLIDE 034 | sec=03 · Reducir el ruido isSec=False isCover=False ===
+  [title] El test del elemento
+  [table] headers=['Si el elemento…', 'Entonces…']
+    row: lo quitas y nada cambia | elimínalo
+    row: queda bonito pero no aporta | elimínalo
+    row: hace trabajar al usuario | elimínalo
+    row: compite con lo importante | rebájalo
+    row: lo quitas y debilita la historia | consérvalo
+    row: genera confusión | cámbialo
+  [p] No elimines el detalle cuando ES el significado (el símbolo € si la moneda importa).
+  [p] Dónde se esconde el ruido
+  [chips] bordes, fondos, logos grandes, decimales, categoría irrelevante, líneas gruesas, sombreado, grids, etiqueta duplicada
+=== SLIDE 035 | sec=03 · Reducir el ruido isSec=False isCover=False ===
+  [callout_pbi] label=▶ En Power BI · limpieza en el panel Formato
+    [list]
+      - Gridlines fuera: Ejes → Cuadrículas → desactivar (o transparencia 80–90%).
+      - Etiquetas directas: activa etiquetas de datos y quita la leyenda.
+      - Eje corto: Unidades de visualización → Miles/Millones (10.000 → 10 mil).
+      - Sin borde ni sombra: Efectos → desactivar; fondo transparente.
+      - Gris por defecto: color solo a la serie protagonista por regla. Un tema JSON lo hace de fábrica.
+=== SLIDE 036 | sec=04 · Dirigir la atención isSec=True isCover=False ===
+  [eyebrow] Parte 04
+  [bignum] 04
+  [title] Dirigir la atención
+  [lede] Limpio el ruido, el trabajo es guiar la mirada. Diseño + psicología + narrativa construyen jerarquía.
+=== SLIDE 037 | sec=04 · Dirigir la atención isSec=False isCover=False ===
+  [title] Pensar como un diseñador
+  [lede] Antes de tocar el color, define la intención. ¿Qué quieres que haga tu audiencia?
+  [list]
+    - ¿que compare?
+    - ¿que vea un patrón?
+    - ¿que detecte un riesgo?
+    - ¿que entienda una tendencia?
+    - ¿que tome una decisión?
+    - ¿que recuerde algo?
+  [callout_src] label=＋ Affordances
+    [p] El diseño debe sugerir cómo leer o interpretar el gráfico, sin que nadie tenga que explicarlo.
+=== SLIDE 038 | sec=04 · Dirigir la atención isSec=False isCover=False ===
+  [title] Destacar el 10 %
+  [row]
+    col:
+      [p] Solo puedes destacar un 10 % de la visualización. Si destacas más, dejas de destacar.
+      [p] Recursos: negrita, mayúsculas, color, tamaño, cursiva, subrayado. Usa 2-3 como mucho, sobre un elemento por gráfico.
+    col:
+      [card accent=False]
+        [p] Jerarquía de recursos
+        [list]
+          - Color = último recurso. Cuenta la historia, no decora.
+          - Tamaño = importancia.
+          - Mayúsculas breves = puntos clave.
+          - Nunca 3 tipografías.
+  [p] Affordances: el diseño debe sugerir cómo leer el gráfico, sin que nadie lo explique.
+=== SLIDE 039 | sec=04 · Dirigir la atención isSec=False isCover=False ===
+  [title] El contraste, con estrategia
+  [vs]
+    [La trampa] Si todo es importante, nada lo es.
+
+Si todo está en color, el color deja de significar algo.
+    [La salida] Para destacar algo solo hace falta que un elemento sea distinto:
+
+todo gris → una barra en color.
+  [p] La fórmula que se repite: 1 color de énfasis + 1 color base + neutros. Los CEOs no leen: saltan al color distinto.
+=== SLIDE 040 | sec=04 · Dirigir la atención isSec=False isCover=False ===
+  [title] Color · el tipo de dato manda
+  [table] headers=['Paleta', 'Cuándo', 'Ejemplo']
+    row: Categórica | Categorías sin orden. Colores distintos. | Norte · Sur · Este
+    row: Secuencial | Magnitud de menos a más. Un tono claro→oscuro. | 0 % → 100 %
+    row: Divergente | Desviación con dos direcciones desde un centro. | −20 ← 0 → +20
+  [callout_src] label=＋ Accesibilidad cromática · Franconeri et al. (2021)
+    [p] ~8 % de los hombres tiene daltonismo (casi siempre rojo-verde). No codifiques solo con color: refuerza con posición, etiqueta o forma. Test: en escala de grises, ¿se entiende? Alternativa segura de Knaflic para positivo/negativo: azul / naranja — misma lectura instantánea, sin depender de la distinción rojo-verde. Regla general de la literatura: doble-codifica siempre que puedas — color + forma, o color + patrón — y apóyate en paletas ya validadas como ColorBrewer en vez de improvisar la tuya. Un matiz más de Franconeri et al.: incluso con visión normal, rojo y verde en alta saturación se «funden» perceptualmente — su recomendación evidenciada para escalas divergentes es azul (positivo) / rojo (negativo). Este manual mantiene verde/rojo como convención de marca deliberada; resérvate azul/rojo como alternativa para informes de cara al cliente o de distribución pública.
+=== SLIDE 041 | sec=04 · Dirigir la atención isSec=False isCover=False ===
+  [title] Colores de marca · cuando el cliente impone la paleta
+  [row]
+    col:
+      [card accent=False]
+        [dchd] 1 · Reduce a 1-2 colores :: 
+        [p] De la paleta corporativa completa, elige solo el color de énfasis (y, si acaso, un secundario). El resto de la marca —logo, tipografía— vive en la portada, no en cada gráfico.
+    col:
+      [card accent=False]
+        [dchd] 2 · Todo lo demás, a gris :: 
+        [p] La regla de énfasis no cambia porque el color cambie: un color de marca + neutros. Si la marca «obliga» a usar 4 colores en un mismo gráfico, no es la marca — es el hábito.
+    col:
+      [card accent=True]
+        [dchd] 3 · Cuándo apartarte :: 
+        [p] Si el color de marca no da 3:1 de contraste sobre el fondo del dashboard, no lo uses para datos — solo para acentos decorativos. La legibilidad gana a la identidad.
+  [callout_src] label=＋ Ampliación · Knaflic
+    [p] Como consultor, esto se repite en cada cliente: la paleta de marca es un input, no una excusa para romper la disciplina de color por trabajo (énfasis + neutros).
+=== SLIDE 042 | sec=04 · Dirigir la atención isSec=False isCover=False ===
+  [title] Fondos oscuros · la lógica de contraste se invierte
+  [row]
+    col:
+      [figure] file=slide043_cap-7.png cap=
+      [p] Sobre negro, el gris destaca menos (se funde) y el azul claro salta más — misma jerarquía, paleta espejada.
+    col:
+      [list]
+        - El fondo blanco/crema no es una regla universal — es la elección de este manual para informes ejecutivos.
+        - En tema oscuro, colores que evitarías en fondo blanco (amarillo, cian) funcionan bien; los que brillaban en blanco (azul marino) se apagan.
+        - Power BI: tema oscuro nativo desde Configuración → Personalización, o un tema JSON propio con "background":"#1D2638".
+=== SLIDE 043 | sec=04 · Dirigir la atención isSec=False isCover=False ===
+  [title] Posición · patrón Z y F
+  [figure] file=slide044_cap-8.png cap=Coloca lo importante sobre la trayectoria del ojo. Alineación a la izquierda = lectura más rápida.
+  [row]
+    col:
+      [card accent=False]
+        [p] Patrón Z
+        [p] — pieza ligera. El ojo entra arriba a la izquierda, recorre en horizontal, baja en diagonal y vuelve a barrer. Título, ejes y leyendas arriba a la izquierda; el CTA donde acaba la Z.
+    col:
+      [card accent=False]
+        [p] Patrón F
+        [p] — dashboard denso. Barridos horizontales que decrecen al bajar. Lo esencial en la primera banda; el detalle, más abajo.
+  [p] La izquierda es la zona noble: insights clave, métrica clave, resumen, llamada a la acción.
+=== SLIDE 044 | sec=04 · Dirigir la atención isSec=False isCover=False ===
+  [title] ¿Qué estimula cada recurso?
+  [table] headers=['Recurso', 'Qué comunica al cerebro']
+    row: Color | esto es importante
+    row: Posición | este es el recorrido
+    row: Tamaño | esta es la prioridad
+    row: Limpieza | hay intención detrás
+    row: Agrupación | estas cosas se relacionan
+    row: Alineación | hay orden
+    row: Título | así debes interpretar
+    row: Ausencia de ruido | esto es profesional
+=== SLIDE 045 | sec=04 · Dirigir la atención isSec=False isCover=False ===
+  [title] Jerarquía visual · y el tema JSON
+  [row]
+    col:
+      [table] headers=['Nivel', 'Dónde']
+        row: Importante | Arriba-izquierda · grande, color
+        row: Secundario | Centro · medio, neutro
+        row: Complementario | Final · pequeño, gris
+    col:
+      [p] ▶ El tema JSON = tu jerarquía
+      [code] { "dataColors":
+  ["#4A628E","#e6e6e6",
+   "#bfbfbf","#1D2638",
+   "#6E7F5B","#C2412E"] }
+      [p] 2º color gris → lo secundario nace apagado. Morado solo por regla.
+=== SLIDE 046 | sec=04 · Dirigir la atención isSec=False isCover=False ===
+  [title] Ayudar a comparar: 3 tácticas con respaldo científico
+  [lede] Comparar dos valores tarda al cerebro cientos de milisegundos, y solo procesamos unas pocas comparaciones por segundo. Tres formas de quitarle ese trabajo al lector:
+  [steps]
+    1) Muestra el delta directamente. Añade una segunda vista con la diferencia ya calculada (actual vs. objetivo, este año vs. el pasado) en vez de obligar a restar mentalmente dos barras.
+    2) Resalta y anota la comparación que importa. Color + texto junto al dato, para que el lector no tenga que buscar con la vista de un lado a otro.
+    3) Agrupa con la señal correcta. Las líneas de conexión son la más potente, luego la proximidad, luego el color, luego la forma — en ese orden de prioridad.
+  [callout_src] label=＋ Ampliación · Franconeri, Padilla, Shah, Zacks & Hullman (2021)
+    [p] De The Science of Visual Data Communication: What Works (Psychological Science in the Public Interest): la posición es el canal más preciso para leer una proporción, seguida de longitud, área, ángulo e intensidad — en ese orden. Confirma por qué la barra (posición + longitud) gana casi siempre al donut (área) o al mapa de calor (intensidad).
+=== SLIDE 047 | sec=05 · Elegir el visual isSec=True isCover=False ===
+  [eyebrow] Parte 05
+  [bignum] 05
+  [title] Elegir el visual
+  [lede] El gráfico correcto es el que comunica la idea con el menor esfuerzo del lector. No el más vistoso.
+=== SLIDE 048 | sec=05 · Elegir el visual isSec=False isCover=False ===
+  [title] 2-3 cifras · texto simple, no gráfico
+  [kpis] −2,4 M€ = Abandono evitable / año | 73 % = Se va en los primeros 90 días | 4× = Más riesgo sin onboarding
+  [callout_src] label=＋ Ampliación · el «BAN» de Few
+    [p] Big-Ass Number: el número que responde la pregunta, enorme y arriba. Regla: un número, un contexto (vs. objetivo o vs. periodo). Un KPI sin comparación es un número huérfano.
+=== SLIDE 049 | sec=05 · Elegir el visual isSec=False isCover=False ===
+  [title] Los formatos base y cuándo usarlos
+  [row]
+    col:
+      [card accent=False]
+        [dchd] Tabla :: 
+        [p] Buena cuando quieres transmitir distintas unidades a la vez o el lector necesita valores exactos. No es buena en presentación —obliga a leer, no a ver—. Que se fusione con el fondo: destacan los datos, no la rejilla.
+    col:
+      [card accent=False]
+        [dchd] Líneas :: 
+        [p] Representan datos en el tiempo. La continuidad de la línea es justo lo que el cerebro necesita para leer una evolución (ley de conectividad).
+    col:
+      [card accent=True]
+        [dchd] Barras y columnas :: 
+        [p] Úsalas más que ninguna: familiares y fáciles de leer. Dos reglas de oro: siempre a base 0 (si no, exageras y engañas) y barras horizontales cuando los nombres son largos —leemos en Z, es más fácil recorrerlas—.
+=== SLIDE 050 | sec=05 · Elegir el visual isSec=False isCover=False ===
+  [title] Más formatos (1/2) · mapa de calor y cascada
+  [row]
+    col:
+      [card accent=False]
+        [figure] file=slide051_cap-9.png cap=
+        [p] Color en vez de cifra para hallar extremos al instante. Siempre con leyenda BAJO–ALTO.
+    col:
+      [card accent=False]
+        [figure] file=slide051_cap-10.png cap=
+        [p] Descompone un total en sus incrementos y decrementos hasta el resultado final.
+  [callout_src] label=＋ Ampliación · Knaflic
+    [p] Ambos son formatos base del libro, no «opciones avanzadas»: el mapa de calor sustituye a una tabla densa; la cascada, a una barra apilada cuando lo que importa es el camino del cambio, no solo el total.
+=== SLIDE 051 | sec=05 · Elegir el visual isSec=False isCover=False ===
+  [title] Más formatos (2/2) · slopegraph y áreas
+  [row]
+    col:
+      [card accent=False]
+        [figure] file=slide052_cap-11.png cap=
+        [p] Una línea entre dos momentos: sube o baja, de un vistazo. Colorea solo la que cuenta la historia.
+    col:
+      [card accent=False]
+        [figure] file=slide052_cap-12.png cap=
+        [p] La 2ª dimensión (área) compacta magnitudes muy dispares. Úsala con moderación: el ojo mide peor superficies que longitudes.
+=== SLIDE 052 | sec=05 · Elegir el visual isSec=False isCover=False ===
+  [title] Base 0 y orientación
+  [figure] file=slide053_cap-13.png cap=Dos decisiones de honestidad: orientación según la etiqueta y siempre base 0 en barras.
+  [row]
+    col:
+      [p] Tabla: distintas unidades / valores exactos. Se funde con el fondo.
+    col:
+      [p] Líneas: datos en el tiempo. Barras: lo más familiar, fáciles de leer.
+=== SLIDE 053 | sec=05 · Elegir el visual isSec=False isCover=False ===
+  [title] Ricitos de Oro y el eje que engaña
+  [row]
+    col:
+      [card accent=False]
+        [figure] file=slide054_cap-14.png cap=
+        [p] Más anchas que el hueco (el fondo no compite) sin llegar a comparar área en vez de longitud.
+    col:
+      [card accent=False]
+        [figure] file=slide054_cap-15.png cap=
+        [p] Mismo dato (35% → 39,6%), dos ejes: uno lo cuadruplica visualmente, el otro dice la verdad.
+  [callout_src] label=＋ Ampliación · Knaflic · Franconeri et al. (2021)
+    [p] El caso real de Fox News sobre la subida de impuestos: truncar el eje en 34 hizo que un aumento relativo del 13% pareciera un incremento del 460%. Barras siempre a base 0 — sin excepción. Y un matiz que suele sorprender: en estudios de laboratorio, el engaño persiste aunque el lector lea la cifra exacta y sepa que el eje está truncado — no basta con etiquetar el eje, hay que eliminar el truco.
+=== SLIDE 054 | sec=05 · Elegir el visual isSec=False isCover=False ===
+  [title] La ilusión de la barra apilada
+  [figure] file=slide055_cap-16.png cap=Solo el segmento que toca el eje se lee por posición (preciso). Los demás exigen comparar longitudes flotantes.
+  [p] Barra apilada: si el segmento intermedio es tu protagonista, sácalo de la pila (barras agrupadas o pequeños múltiplos) o ponlo pegado a la base. Líneas: si la brecha entre dos series es el mensaje, dibuja una tercera línea con esa diferencia ya calculada.
+=== SLIDE 055 | sec=05 · Elegir el visual isSec=False isCover=False ===
+  [title] Burbujas: el área está bien, pero el ojo lee el radio
+  [p] La más contraintuitiva: ocurre incluso con el gráfico bien construido. Si el área es proporcional al valor (lo correcto), el radio crece con la raíz cuadrada — un valor ×7 tiene un radio de solo ×2,65. Y el ojo juzga el círculo por su radio, no por su área.
+  [figure] file=slide056_cap-17.png cap=Un círculo correctamente codificado por área sigue subestimando proporciones grandes.
+=== SLIDE 056 | sec=05 · Elegir el visual isSec=False isCover=False ===
+  [title] Dos ilusiones más que hay que conocer
+  [row]
+    col:
+      [card accent=False]
+        [dchd] El ángulo también engaña :: 
+        [p] En un gráfico de sectores, dos porciones con la misma diferencia angular no se perciben igual si tienen distinto color o brillo — un sector oscuro «parece» más grande que uno claro con el ángulo idéntico. La misma cifra, leída de forma distinta según el color.
+    col:
+      [card accent=False]
+        [dchd] No pintes intensidad sobre intensidad :: 
+        [p] El valor percibido de un color depende del fondo que lo rodea (contraste simultáneo). Evita superponer un marcador codificado por color sobre un mapa de calor u otro fondo también codificado por color: ninguno de los dos se lee con fiabilidad.
+  [callout_src] label=＋ Ampliación · Franconeri et al. (2021)
+    [p] Junto a la ilusión de la barra apilada y el eje truncado, estas cinco son las distorsiones más comunes en dashboards de negocio — todas ocurren con gráficos técnicamente «correctos».
+=== SLIDE 057 | sec=05 · Elegir el visual isSec=False isCover=False ===
+  [title] Selección por objetivo
+  [row]
+    col:
+      [table] headers=['Mostrar…', 'Usa']
+        row: Tendencias | Líneas
+        row: Comparación | Columnas / barras
+        row: Proporciones | Barras apiladas
+        row: Distribución | Histograma · scatter
+    col:
+      [p] ＋ Visual Vocabulary (FT) · 9 familias
+      [chips] Desviación, Correlación, Ranking, Distribución, Cambio en el tiempo, Magnitud, Parte-todo, Espacial, Flujo
+      [p] El donut solo con 2-3 porciones muy distintas; para proporciones, casi siempre gana la barra.
+=== SLIDE 058 | sec=05 · Elegir el visual isSec=False isCover=False ===
+  [title] Visual Vocabulary (FT) · 9 familias y sus gráficos
+  [table] headers=['Familia', 'Cuándo', 'Gráficos típicos']
+    row: Desviación | Variación +/− respecto a una referencia | Barras/columnas divergentes, línea de superávit/déficit
+    row: Correlación | Relación entre dos o más variables | Dispersión, burbujas, conexión, gráfico de pendiente
+    row: Ranking | La posición importa más que el valor | Barras ordenadas, lollipop, slope, pirámide de población
+    row: Distribución | Qué valores hay y con qué frecuencia | Histograma, boxplot, violín, gráfico de abanico
+    row: Cambio en el tiempo | Énfasis en la tendencia | Líneas, áreas, velas, calendario, torrente/streamgraph
+    row: Magnitud | Comparar tamaños (números contados) | Columnas, barras, lollipop, Marimekko, isotype
+    row: Parte-todo | Cómo se descompone un entero | Barras apiladas, treemap, donut (cautela), cascada
+    row: Espacial | La ubicación geográfica es lo esencial | Coropletas, mapa de puntos, cartograma
+    row: Flujo | Movimiento entre estados | Sankey, cuerdas, aluvial, diagrama de red
+=== SLIDE 059 | sec=05 · Elegir el visual isSec=False isCover=False ===
+  [callout_pbi] label=▶ En Power BI
+    [list]
+      - BAN: Tarjeta + medida de variación con formato condicional (verde/rojo + icono).
+      - Base 0: Eje Y → Inicio = 0 (Power BI autoescala; fíjalo a mano).
+      - Parte-todo: barras apiladas mejor que donut; treemap con muchas categorías.
+      - Ranking: ordena por valor + «Top N» en el filtro.
+      - Tabla: quita cuadrícula vertical + formato condicional (barras de datos).
+=== SLIDE 060 | sec=06 · Componer como diseñador isSec=True isCover=False ===
+  [eyebrow] Parte 06
+  [bignum] 06
+  [title] Componer como
+diseñador
+  [lede] El layout es el esqueleto narrativo. Si el lector percibe desorden, abandona antes de leer un número.
+=== SLIDE 061 | sec=06 · Componer como diseñador isSec=False isCover=False ===
+  [title] Orden visual = esqueleto narrativo
+  [p] Si el lector percibe desorden, abandona.
+  [row]
+    col:
+      [list]
+        - Texto a la izquierda; en gráficos comparativos, al centro.
+        - El espacio es respiración, no hueco.
+        - Escalas de espaciado: 8 · 16 · 24 · 32 px.
+        - Título → la gran idea. Subtítulo → el insight.
+    col:
+      [list]
+        - Máximo 2 tipografías (título + cuerpo).
+        - Color: 1 primario + 1 énfasis + neutros.
+        - Espacio: 16 px entre bloques, 8 px entre líneas.
+        - Rejilla: #e6e6e6.
+=== SLIDE 062 | sec=06 · Componer como diseñador isSec=False isCover=False ===
+  [title] Sistema de layout
+  [row]
+    col:
+      [table] headers=[]
+        row: Margen | 24–32 px
+        row: Grid | 3 columnas
+        row: Gutter / bloques | 16 px / 24 px
+        row: Título / subtítulo | 18–26 / 14–16 px
+        row: Cuerpo / labels | 11–13 / 10–11 px
+        row: Escala espaciado | 8 · 16 · 24 · 32
+    col:
+      [figure] file=slide063_cap-18.png cap=La retícula invisible que hace que todo «cuadre».
+  [callout_src] label=＋ Sistema de 8 puntos
+    [p] Múltiplos de 8 imponen un ritmo consistente que «cuadra» sin que sepas por qué. Es la sensación de orden que buscas.
+=== SLIDE 063 | sec=06 · Componer como diseñador isSec=False isCover=False ===
+  [title] Consistencia entre informes: IBCS
+  [lede] El sistema de layout de la página anterior ordena un informe. IBCS va un paso más allá: ordena todos los informes de una organización con el mismo lenguaje visual.
+  [callout_pbi] label=＋ Ampliación · IBCS (International Business Communication Standards)
+    [p] IBCS define una notación semántica única para informes de negocio: el mismo color o forma significa siempre lo mismo en toda la organización (p. ej., gris = plan, azul = real). Existen add-ins IBCS-certificados para Power BI (Zebra BI); en 2026 IBCS se formalizó como norma ISO 24896. Aporta consistencia entre informes, más allá de la consistencia interna de un solo dashboard.
+=== SLIDE 064 | sec=06 · Componer como diseñador isSec=False isCover=False ===
+  [title] Alineación, espacio y ritmo
+  [row]
+    col:
+      [card accent=False]
+        [p] Alineación
+        [p] El ojo busca líneas rectas. Centrar rompe columnas. Izquierda = lectura más rápida, menos fatiga.
+    col:
+      [card accent=False]
+        [p] Espacio en blanco
+        [p] Estructura, respiración, énfasis. El ojo va hacia lo que contrasta, y el vacío contrasta.
+  [figure] file=slide065_cap-19.png cap=Ritmo narrativo: el giro aterriza sobre el silencio que lo precede.
+  [p] Número grande + espacio = autoridad. Un gráfico aislado > cinco amontonados. Márgenes como carriles de carretera (24–40 px): el espacio vertical mejora la memoria visual y reduce el tiempo de búsqueda.
+=== SLIDE 065 | sec=06 · Componer como diseñador isSec=False isCover=False ===
+  [title] Regiones por color · segmentadores con alcance limitado
+  [p] Cuando un segmentador filtra solo algunos visuales de la página, el lector no tiene forma de saberlo con solo mirar. Un fondo que envuelve al segmentador y a los visuales que sí filtra lo hace visible sin una palabra — aplicación directa de la Gestalt (Parte 02) al canvas.
+  [figure] file=slide066_cap-20.png cap=Izquierda: el segmentador «Región» filtra un solo visual, pero nada lo indica. Derecha: el fondo lila encierra el segmentador con los dos únicos visuales a los que afecta.
+  [callout_pbi] label=▶ En Power BI
+    [p] «Shape: rectángulo» con relleno muy suave (10-15% de opacidad), enviado detrás de los visuales («Orden→Enviar al fondo»). Agrupa el rectángulo con el segmentador y los visuales que encierra («Selección→Agrupar») para moverlos juntos. Reserva ese color solo para esto — si lo usas también para destacar datos, el ojo deja de distinguir «contenedor» de «información».
+=== SLIDE 066 | sec=06 · Componer como diseñador isSec=False isCover=False ===
+  [title] Checklist de orden visual
+  [chkgrid] Big idea legible en 3 segundos || Máximo 2 tipografías || Elementos alineados a un grid || Sin bordes ni sombras innecesarios || Espacios que respiran || Agrupamiento lógico (proximidad/fondo) || Visual principal en el punto de entrada || Texto de soporte < 25 % || Leyendas y labels resueltos || ¿Se entiende en 30 segundos? [HL]
+  [p] 3 reglas de estética: color · alineación · espacio en blanco.
+=== SLIDE 067 | sec=06 · Componer como diseñador isSec=False isCover=False ===
+  [callout_pbi] label=▶ En Power BI · el canvas
+    [list]
+      - Canvas: 1280 × 720 (16:9); súbelo para informes largos y usa scroll.
+      - Grid real: Ver → Mostrar cuadrícula + Ajustar; panel Selección + Alinear/Distribuir.
+      - Espaciado de 8: posiciones y tamaños múltiplos de 8 px.
+      - 2 tipografías en el tema (textClasses); Segoe UI de fábrica es segura.
+      - Márgenes 24–32 px al borde; 16–24 px entre visuales; agrupa con fondos suaves.
+      - Fondo: blanco o crema muy claro; evita imágenes de fondo que compiten con el dato.
+=== SLIDE 068 | sec=07 · El texto que acompaña isSec=True isCover=False ===
+  [eyebrow] Parte 07
+  [bignum] 07
+  [title] El texto que
+acompaña al dato
+  [lede] Un gráfico sin texto obliga a deducir. El texto bien puesto da la historia en bandeja.
+=== SLIDE 069 | sec=07 · El texto que acompaña isSec=False isCover=False ===
+  [title] El texto da la historia, no la adorna
+  [lede] El objetivo del texto es dar en bandeja la historia, no obligar a deducirla.
+  [row]
+    col:
+      [p] El texto útil…
+      [list]
+        - explica
+        - guía
+        - recomienda
+        - interpreta
+        - evita malentendidos
+    col:
+      [card accent=False]
+        [p] Base obligatoria
+        [p] Títulos claros · ejes · etiquetas · unidades legibles. Nunca falta.
+=== SLIDE 070 | sec=07 · El texto que acompaña isSec=False isCover=False ===
+  [title] El título orienta, no describe
+  [vs]
+    [✕ Describe] «Evolución de la tasa de abandono»
+«Ventas Q4 por canal»
+«Rendimiento de marketing»
+    [✓ Orienta] «El abandono se concentra en los primeros 90 días»
+«El canal online ya pesa más que la tienda»
+«El contenido rinde 4× la publicidad de pago»
+  [callout_src] label=＋ Fórmula del titular
+    [p] [número específico] + [impacto en el negocio] + [contexto accionable]. El texto útil explica, guía, recomienda, interpreta y evita malentendidos.
+=== SLIDE 071 | sec=07 · El texto que acompaña isSec=False isCover=False ===
+  [title] Anotaciones: el salto de nivel
+  [figure] file=slide072_cap-21.png cap=La anotación hace el trabajo que, si no, hace el lector. Señala el punto de inflexión.
+  [p] El cerebro recuerda historias, metáforas, eventos, causas y contrastes — no ejes. Un motivo más para anotar así: comparar dos valores es la tarea lenta del cerebro (Parte 02, Franconeri et al.). Una anotación pegada al punto que explica se lee sin ese salto; una leyenda o una nota al pie, no.
+=== SLIDE 072 | sec=07 · El texto que acompaña isSec=False isCover=False ===
+  [title] Cuando el texto lo escribe la IA
+  [lede] Copilot y el visual Smart Narrative ya escriben el texto que acompaña al dato por ti. La responsabilidad editorial de esta Parte 07 no desaparece: se traslada a la verificación.
+  [vs]
+    [✕ Riesgo] Resumen automático que da por hecha una relación, una causa o una cifra que la medida DAX no respalda — una alucinación con aspecto de insight.
+    [✓ Práctica] Trata todo texto generado por IA como borrador: verifícalo contra la medida original antes de publicarlo. La narrativa final la firma el analista, no el modelo.
+  [callout_pbi] label=▶ En Power BI · Narrativa generada por IA
+    [p] La IA no sustituye la «consultoría de contexto» de Knaflic (Parte 01) — la automatiza a medias. Sigue siendo tuya la decisión de qué destacar y qué callar.
+=== SLIDE 073 | sec=08 · Construir la historia isSec=True isCover=False ===
+  [eyebrow] Parte 08
+  [bignum] 08
+  [title] Construir la
+historia con datos
+  [lede] Todo lo anterior sirve una cosa: contar. Los humanos deciden por tensión y alivio.
+=== SLIDE 074 | sec=08 · Construir la historia isSec=False isCover=False ===
+  [title] La estructura en tres actos
+  [table] headers=['Acto', 'Qué contiene', 'La audiencia piensa…']
+    row: Planteamiento | Contexto, protagonista, problema | «¿Por qué debería escuchar?»
+    row: Nudo | Conflicto, tensión, giro, descubrimiento | «Me importa. ¿Qué hacemos?»
+    row: Desenlace | Solución, recomendación, acción | «¿Qué quieres que decida?»
+  [p] El error clásico: quedarse en el primer acto. Mucho dato, ninguna tensión.
+=== SLIDE 075 | sec=08 · Construir la historia isSec=False isCover=False ===
+  [title] Un arco alternativo: «lo que es» vs. «lo que podría ser»
+  [lede] Los tres actos sirven para explicar. Cuando el objetivo es empujar una decisión de inversión o cambio, hay una estructura más directa.
+  [row]
+    col:
+      [card accent=False]
+        [p] Lo que es
+        [p] La situación actual, con datos: dónde estamos y qué nos cuesta seguir así.
+    col:
+      [card accent=True]
+        [p] Lo que podría ser
+        [p] La visión, también con datos: qué cambia si se toma la decisión propuesta.
+  [callout_src] label=＋ Ampliación · Nancy Duarte
+    [p] En DataStory (2019), Duarte plantea este arco como alternativa al planteamiento-nudo-desenlace: más orientado a impulsar un cambio concreto que a describir una situación. Útil para el panel de Recomendación de un dashboard ejecutivo.
+=== SLIDE 076 | sec=08 · Construir la historia isSec=False isCover=False ===
+  [title] 4 preguntas · 7 reglas
+  [row]
+    col:
+      [card accent=False]
+        [dchd] 4 preguntas para la historia :: 
+        [olist]
+          - ¿Qué quiere tu protagonista?
+          - ¿Qué le impide lograrlo?
+          - ¿Qué fuerzas se oponen?
+          - ¿Qué camino propone tu análisis?
+    col:
+      [card accent=True]
+        [dchd] 7 reglas para contar :: 
+        [olist]
+          - El tema tiene que importar
+          - No pierdas el hilo (1 idea/slide)
+          - Simplifica
+          - Recorta sin piedad
+          - Sé tú mismo
+          - Di exactamente lo que quieres decir
+          - Ten compasión del lector: se cansa
+=== SLIDE 077 | sec=08 · Construir la historia isSec=False isCover=False ===
+  [title] El relato real, pieza a pieza
+  [row]
+    col:
+      [card accent=False]
+        [dchd] 1 · Planteamiento :: — 5 elementos
+        [list]
+          - Escenario — ¿dónde estamos?
+          - Protagonista — la audiencia
+          - Desequilibrio — el problema
+          - Equilibrio deseado — la meta
+          - Solución — la hipótesis
+    col:
+      [card accent=False]
+        [dchd] 2 · Nudo :: — tensión controlada
+        [p] Contexto histórico, comparativas, consecuencias de no actuar, descubrimiento clave, evidencias.
+      [card accent=True]
+        [dchd] 3 · Desenlace :: — el cierre
+        [p] Recomendación, acción concreta, riesgo si no actúas vs. beneficio si actúas, enlace emocional breve.
+=== SLIDE 078 | sec=08 · Construir la historia isSec=False isCover=False ===
+  [title] Adapta la historia a quien decide
+  [p] No cambia la verdad; cambia el énfasis y el nivel de detalle.
+  [table] headers=['Audiencia', 'Qué quiere saber', 'Cómo presentarlo']
+    row: Dirección / CEO | Impacto en el negocio y qué decisión se pide | Una slide: titular + 3 implicaciones
+    row: CFO / Financiero | ROI, costes y riesgos | Números con comparativas y rangos
+    row: Director de área | Qué deben hacer y cuándo | Plan de acción con responsables
+    row: Equipo técnico | Cómo funciona y qué hay detrás | Metodología y detalle del análisis
+  [callout_src] label=＋ Minto Pyramid
+    [p] La lógica horizontal/vertical viene del Minto Pyramid Principle, referencia clásica de consultoría para estructurar argumentos.
+=== SLIDE 079 | sec=08 · Construir la historia isSec=False isCover=False ===
+  [title] Verificar y lograr aceptación
+  [row]
+    col:
+      [p] 3 lógicas de verificación
+      [list]
+        - Horizontal — leyendo solo los títulos, ¿se entiende la historia?
+        - Vertical — dentro del gráfico, ¿todo lo apoya?
+        - Inversa — extrae titulares y compara con la historia inicial.
+    col:
+      [p] Lograr aceptación
+      [steps]
+        1) Verbaliza los beneficios
+        2) Antes / después (dopamina + mejora)
+        3) Ofrece 3 opciones (elige la tuya)
+        4) Consigue el apoyo de un influencer de la audiencia antes de la reunión
+  [callout_pbi] label=▶ En Power BI
+    [p] 3 actos = navegación: página Resumen → páginas de Análisis → panel Recomendación. Marcadores + botones conducen el recorrido; «antes/después» con dos marcadores sobre el mismo visual.
+=== SLIDE 080 | sec=08 · Construir la historia isSec=False isCover=False ===
+  [title] Bing, Bang, Bongo — la repetición que fija el mensaje
+  [lede] Nadie recuerda lo que oye una sola vez. La estructura más antigua de la persuasión es también la más simple.
+  [steps]
+    Bing) Anticipa — di de qué vas a hablar. «Hoy vais a ver por qué el abandono nos cuesta 2,4 M€.»
+    Bang) Cuéntalo — el cuerpo de la historia, con datos y estructura en 3 actos.
+    Bongo) Resume — di lo que acabas de contar. «Hemos visto que el onboarding reduce el riesgo 4×.»
+  [callout_src] label=＋ Dónde encaja
+    [p] En una presentación en vivo: portada → desarrollo → cierre. En un informe de Power BI: página de resumen ejecutivo al principio y al final, idéntica salvo por un titular que ya recoge la conclusión. Revelado paso a paso: en vez de mostrar todo el análisis de golpe, encadena marcadores que van iluminando una serie o categoría a la vez (el resto en gris) — la misma técnica que usa el periodismo de datos para guiar a audiencias con menos experiencia leyendo gráficos.
+=== SLIDE 081 | sec=09 · El proceso completo isSec=True isCover=False ===
+  [eyebrow] Parte 09
+  [bignum] 09
+  [title] Juntar todas
+las piezas
+  [lede] El resumen operativo de todo el deck. Sigue estos seis pasos, en orden, en cada proyecto.
+=== SLIDE 082 | sec=09 · El proceso completo isSec=False isCover=False ===
+  [title] El proceso en 6 pasos
+  [steps]
+    1) Contexto. Audiencia, qué, cómo y la gran idea.
+    2) Elegir el visual. Tendencia→líneas, comparación→columnas, proporción→apiladas, distribución→histograma.
+    3) Eliminar el caos. Bordes, grid, markers, saturación, labels redundantes.
+    4) Dirigir la atención. Color, posición, forma, grosor.
+    5) Pensar como diseñador. Alineación, espacio, títulos simples, texto útil.
+    6) Contar una historia. Planteamiento → nudo → desenlace.
+=== SLIDE 083 | sec=09 · El proceso completo isSec=False isCover=False ===
+  [eyebrow] La prueba de cierre
+  [p] Si lees los títulos de tus gráficos y entiendes la historia completa, has terminado.
+Si no, todavía no.
+  [tag] — La lógica horizontal, tu criterio final.
+=== SLIDE 084 | sec=10 · Galería de ejemplos isSec=True isCover=False ===
+  [eyebrow] Parte 10
+  [bignum] 10
+  [title] Galería:
+así se hace bien
+  [lede] Diez arreglos que aparecen en casi todos los proyectos, con el antes y el después. Y dos dashboards bien construidos.
+=== SLIDE 085 | sec=10 · Galería de ejemplos isSec=False isCover=False ===
+  [title] Los 10 arreglos más comunes
+  [p] Cada uno es un patrón real que rompe la lectura, con su versión corregida. Salta a cualquiera con I.
+  [conceptmap] 01: Tarta con muchas porciones → barras ordenadas () || 02: Eje truncado → base 0 () || 03: Barras 3D y efectos → planas () || 04: Líneas espagueti → destacar una () || 05: Doble eje Y → indexar a base 100 () || 06: Leyenda aparte → etiqueta directa () || 07: Arcoíris de colores → gris + 1 énfasis () || 08: Tabla densa → barras de datos () || 09: KPI suelto → KPI con contexto () || 10: Orden alfabético → orden por valor ()
+  [callout_src] label=＋ Ampliación · Alberto Cairo
+    [p] En How Charts Lie (2019), Cairo insiste en que estos diez arreglos casi nunca son trucos deliberados: son fallos de graficacia (alfabetización visual), tanto de quien los hace como de quien los lee sin cuidado. Las gráficas no mienten — quien las construye o interpreta a la ligera, sí.
+=== SLIDE 086 | sec=10 · Galería de ejemplos isSec=False isCover=False ===
+  [title] 01 · La tarta con demasiadas porciones
+  [ba]
+    [✕ Así no] 
+    [✓ Así sí] 
+  [p] El ojo no compara ángulos con precisión. Barras ordenadas se leen al instante y dejan destacar la porción que importa.
+=== SLIDE 087 | sec=10 · Galería de ejemplos isSec=False isCover=False ===
+  [title] 02 · El eje truncado que exagera
+  [ba]
+    [✕ Así no] 
+    [✓ Así sí] 
+  [p] Empezar el eje por encima de 0 infla diferencias mínimas. En barras, la base siempre es 0: la altura debe ser proporcional al dato.
+=== SLIDE 088 | sec=10 · Galería de ejemplos isSec=False isCover=False ===
+  [title] 03 · Barras 3D y efectos decorativos
+  [ba]
+    [✕ Así no] 
+    [✓ Así sí] 
+  [p] El 3D distorsiona la altura real y añade tinta sin dato (chartjunk). Barras planas: la longitud dice la verdad.
+=== SLIDE 089 | sec=10 · Galería de ejemplos isSec=False isCover=False ===
+  [title] 04 · El gráfico de líneas espagueti
+  [ba]
+    [✕ Así no] 
+    [✓ Así sí] 
+  [p] Seis líneas de colores obligan a rastrear cada una. Gris para el coro, color para la protagonista: la historia aparece sola.
+=== SLIDE 090 | sec=10 · Galería de ejemplos isSec=False isCover=False ===
+  [title] 04b · Alternativa: pequeños múltiplos
+  [row]
+    col:
+      [figure] file=slide091_cap-30.png cap=
+    col:
+      [list]
+        - Separa cada serie en su propio panel pequeño, misma escala en todos.
+        - El ojo compara formas, no colores entrelazados — funciona incluso con 10+ series.
+        - Combínalo con la técnica anterior: gris de fondo, color solo en el panel protagonista.
+  [callout_src] label=＋ Ampliación · Tufte
+    [p] Son los small multiples de Edward Tufte (Envisioning Information, 1990): «una serie de gráficos, misma escala, en la misma página, para que el ojo compare» — el mismo principio que sus sparklines más diminutos (Beautiful Evidence, 2006), pensados para leerse en línea con el texto.
+=== SLIDE 091 | sec=10 · Galería de ejemplos isSec=False isCover=False ===
+  [title] 05 · El doble eje Y que engaña
+  [ba]
+    [✕ Así no] 
+    [✓ Así sí] 
+  [p] Dos escalas dejan cruzar las líneas donde tú quieras: correlación falsa. Indexa ambas a 100 y compáralas en un solo eje.
+  [callout_src] label=＋ Otras 2 salidas · Knaflic
+    [p] Si indexar no encaja: etiqueta cada punto directamente con su valor real (sin ejes), o separa las dos series en gráficos apilados verticalmente compartiendo el eje horizontal — mismo mensaje, cero cruce inventado.
+=== SLIDE 092 | sec=10 · Galería de ejemplos isSec=False isCover=False ===
+  [title] 06 · La leyenda que obliga a mirar fuera
+  [ba]
+    [✕ Así no] 
+    [✓ Así sí] 
+  [p] Ir del gráfico a la leyenda y volver cuesta atención. Etiqueta cada serie al final de su línea: cero saltos de ojo.
+=== SLIDE 093 | sec=10 · Galería de ejemplos isSec=False isCover=False ===
+  [title] 07 · El arcoíris de colores
+  [ba]
+    [✕ Así no] 
+    [✓ Así sí] 
+  [p] Un color por barra hace que el color deje de significar. Todo en gris y solo la barra clave en color: el énfasis recupera sentido.
+=== SLIDE 094 | sec=10 · Galería de ejemplos isSec=False isCover=False ===
+  [title] 08 · La tabla densa de solo números
+  [ba]
+    [✕ Así no] 
+    [✓ Así sí] 
+  [p] Una rejilla de cifras obliga a leer fila por fila. Barras de datos (formato condicional) dan la forma de un vistazo sin perder el número exacto.
+=== SLIDE 095 | sec=10 · Galería de ejemplos isSec=False isCover=False ===
+  [title] 09 · El KPI sin contexto
+  [ba]
+    [✕ Así no] 
+    [✓ Así sí] 
+  [p] Un número solo no dice si es bueno o malo. Añade una comparación (vs. periodo/objetivo) y un sparkline: el dato ya tiene juicio.
+=== SLIDE 096 | sec=10 · Galería de ejemplos isSec=False isCover=False ===
+  [title] 10 · El orden alfabético en un ranking
+  [ba]
+    [✕ Así no] 
+    [✓ Así sí] 
+  [p] El orden alfabético esconde el ranking. Ordena por valor: la comparación es el mensaje, y el líder queda arriba.
+=== SLIDE 097 | sec=10 · Galería de ejemplos isSec=False isCover=False ===
+  [title] Un dashboard bien construido · ventas
+  [dashimg] file=slide098_cap-43.png cap=
+  [p] Qué lo hace correcto: titular que orienta arriba, KPIs con variación (no números huérfanos), un visual protagonista y el resto en gris, jerarquía en Z y un solo color de énfasis.
+=== SLIDE 098 | sec=10 · Galería de ejemplos isSec=False isCover=False ===
+  [title] Un dashboard bien construido · ejecutivo
+  [dashimg] file=slide099_cap-44.png cap=
+  [p] Qué lo hace correcto: una sola pantalla responde una pregunta, la anotación señala el punto de inflexión (día 14) y cada cifra lleva su contexto. La vista lleva de la métrica al porqué y a la acción.
+=== SLIDE 099 | sec=Apéndices · Checklist y fuentes isSec=True isCover=False ===
+  [eyebrow] Apéndices
+  [bignum] A
+  [title] Checklist rápido
+y fuentes
+  [lede] Lo que repasas antes de dar por terminado cualquier gráfico.
+=== SLIDE 100 | sec=Apéndices · Checklist y fuentes isSec=False isCover=False ===
+  [title] Checklist pre-publicación
+  [row]
+    col:
+      [p] Percepción y ruido
+      [list]
+        - Idea en 30 segundos
+        - ¿Puedo quitar algo?
+        - ≤ 3 colores
+        - Lo secundario en gris
+        - Base 0 en barras
+    col:
+      [p] Historia y texto
+      [list]
+        - Título que orienta
+        - Solo ~10 % destacado
+        - Anotación en el punto clave
+        - Unidades claras
+        - Lógica horizontal ✓
+    col:
+      [p] Composición y acceso
+      [list]
+        - Alineado a un grid
+        - ≤ 2 tipografías
+        - Espacio suficiente
+        - Test escala de grises
+        - Texto/color 4,5:1
+=== SLIDE 101 | sec=Apéndices · Checklist y fuentes isSec=False isCover=False ===
+  [title] Contraste WCAG 2.2 (AA)
+  [table] headers=['Elemento', 'Ratio mínimo']
+    row: Texto normal (< 24 px) | 4,5 : 1
+    row: Texto grande / componentes UI y gráficos | 3 : 1
+    row: Nivel AAA (texto normal) | 7 : 1
+  [vs]
+    [✕ Texto] Pale Slate #B9C5D6 sobre blanco ≈ 1,7:1 — vale para bordes y fondos, nunca para texto.
+    [✓ Texto] Baltic #4A628E (5,9:1) o #34507e (7,8:1). Sobre azul sólido, texto en blanco.
+=== SLIDE 102 | sec=Apéndices · Checklist y fuentes isSec=False isCover=False ===
+  [title] Bibliografía de cabecera
+  [row]
+    col:
+      [list]
+        - Knaflic — Storytelling with Data
+        - Tufte — Visual Display of Quant. Info · Envisioning Information
+        - Cairo — The Truthful/Functional Art · How Charts Lie
+        - Few — Information Dashboard Design
+        - Ware — Perception for Design
+    col:
+      [list]
+        - FT — Visual Vocabulary · WCAG 2.2
+        - Cleveland & McGill (1984) · Minto — Pyramid Principle
+        - Franconeri, Padilla, Shah, Zacks & Hullman (2021)
+        - Cowan (2001) — The Magical Number 4
+        - Munzner — Visualization Analysis and Design
+    col:
+      [list]
+        - Dykes — Effective Data Storytelling
+        - Duarte — DataStory
+        - Wexler, Shaffer & Cotgreave — The Big Book of Dashboards
+        - IBCS — International Business Communication Standards
+  [callout_src] label=■ Nota
+    [p] Cuerpo = conocimiento propio de Borja, ordenado, sin alterar. Recuadros Ampliación = respaldo de las fuentes. Recuadros En Power BI = aplicación práctica.

@@ -261,6 +261,10 @@
 
 /* ─── ML CARDS — mismo sistema visual que .proj-card (index.html) ─── */
 .ml-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
+/* ML: 5 proyectos en una única fila horizontal con scroll nativo (mismo patrón que .sec-nav-inner en móvil).
+   Las cards mantienen tamaño y estilo intactos; solo cambia el contenedor. */
+#ml .ml-grid{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:8px 4px 32px;margin:-8px -4px -32px}
+#ml .ml-grid .card-c{flex:0 0 368px}
 .card-c{background:#ffffff;border:1px solid #e8e8ee;border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;padding:20px 30px 28px;box-shadow:0 0 0 1px rgba(0,0,0,.06),0 1px 1px -0.5px rgba(0,0,0,.06),0 3px 3px -1.5px rgba(0,0,0,.06),0 6px 6px -3px rgba(0,0,0,.06),0 12px 12px -6px rgba(0,0,0,.06),0 24px 24px -12px rgba(0,0,0,.06);transition:background .18s cubic-bezier(.4,0,.2,1),transform .16s ease-out}
 .card-c:active{transform:scale(.98)}
 @media (hover: hover) and (pointer: fine) { .card-c:hover{transform:translateY(-4px);box-shadow:0 1px 2px rgba(17,17,17,.04),0 20px 40px rgba(17,17,17,.09)} }
@@ -548,6 +552,46 @@
         <div class="cc-foot">
           <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">Gradient Boosting</span><span class="cc-pill">scikit-learn</span></div>
           <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/01-supervisado/clasificacion/04-comparativa-modelos/04-segmentacion-aerolinea" target="_blank" rel="noopener noreferrer">Ver →</a>
+        </div>
+      </div>
+      <!-- CARD ML-4: SARIMA Retail (sin variables externas) -->
+      <div class="card-c">
+        <div class="cc-cat">Previsión de demanda · Retail</div>
+        <div class="cc-block">
+          <div class="cc-label">El problema</div>
+          <div class="cc-text">Una cadena retail planifica inventario y personal cada semana sin más referencia que repetir lo que se vendió el año anterior. Pedir de más llena el almacén de producto que nadie compra; pedir de menos vacía las estanterías justo cuando más se vende.</div>
+        </div>
+        <div class="cc-block">
+          <div class="cc-label">La solución</div>
+          <div class="cc-text">Entrené un modelo SARIMA(0,1,1)(0,1,1,52) sobre 208 semanas de histórico de ventas, sin depender de ninguna señal externa —ni promociones, ni festivos, ni eventos— y lo validé sobre 52 semanas nunca vistas por el modelo.</div>
+        </div>
+        <div class="cc-result">
+          <div class="cc-label">El resultado</div>
+          <div class="cc-result-metric"><span class="cc-result-num">2,21%</span><span class="cc-result-unit">error medio (MAPE)</span></div>
+        </div>
+        <div class="cc-foot">
+          <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">SARIMA</span><span class="cc-pill">statsmodels</span></div>
+          <a class="cc-link" href="https://sarima-ventas-retail.streamlit.app/" target="_blank" rel="noopener noreferrer">Ver →</a>
+        </div>
+      </div>
+      <!-- CARD ML-5: Conjoint Vuelos -->
+      <div class="card-c">
+        <div class="cc-cat">Preferencias de vuelo · Aerolínea</div>
+        <div class="cc-block">
+          <div class="cc-label">El problema</div>
+          <div class="cc-text">Una aerolínea diseña vuelos combinando precio, escalas, equipaje y flexibilidad, pero no sabe cuánto vale cada extra para el cliente, ni si ese extra vale lo mismo para todos los segmentos.</div>
+        </div>
+        <div class="cc-block">
+          <div class="cc-label">La solución</div>
+          <div class="cc-text">1.000 clientes valoraron 24 combinaciones de vuelo de un diseño ortogonal sobre 6 atributos. Con un análisis conjoint (regresión OLS) descompuse esas 24.000 valoraciones en el valor exacto que aporta cada atributo, global y por segmento de cliente.</div>
+        </div>
+        <div class="cc-result">
+          <div class="cc-label">El resultado</div>
+          <div class="cc-result-metric"><span class="cc-result-num">69%</span><span class="cc-result-unit">peso de precio y escalas en la decisión</span></div>
+        </div>
+        <div class="cc-foot">
+          <div class="cc-pills"><span class="cc-pill">Python</span><span class="cc-pill">Conjoint</span><span class="cc-pill">statsmodels</span></div>
+          <a class="cc-link" href="https://conjoint-vuelos.streamlit.app" target="_blank" rel="noopener noreferrer">Ver →</a>
         </div>
       </div>
     </div>

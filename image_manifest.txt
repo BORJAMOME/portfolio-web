@@ -1,0 +1,33 @@
+007 | figure     | slide008_cap-1.png | El mismo dato, dos intenciones. Explicar es decidir qué callar para que una cosa se oiga.
+019 | figure     | slide020_cap-3.png | Señales que el cerebro procesa antes de la atención consciente. La palanca nº1 para dirigir la mirada.
+020 | imageblock | slide021_cap-4.png | 
+033 | figure     | slide034_cap-6.png | Sin bordes ni cuadrícula, en gris salvo el protagonista, con etiqueta directa: el mensaje aparece solo.
+043 | figure     | slide044_cap-8.png | Coloca lo importante sobre la trayectoria del ojo. Alineación a la izquierda = lectura más rápida.
+052 | figure     | slide053_cap-13.png | Dos decisiones de honestidad: orientación según la etiqueta y siempre base 0 en barras.
+054 | figure     | slide055_cap-16.png | Solo el segmento que toca el eje se lee por posición (preciso). Los demás exigen comparar longitudes flotantes.
+055 | figure     | slide056_cap-17.png | Un círculo correctamente codificado por área sigue subestimando proporciones grandes.
+064 | figure     | slide065_cap-19.png | Ritmo narrativo: el giro aterriza sobre el silencio que lo precede.
+065 | figure     | slide066_cap-20.png | Izquierda: el segmentador «Región» filtra un solo visual, pero nada lo indica. Derecha: el fondo lila encierra el segmentador con los dos únicos visuales a los que afecta.
+071 | figure     | slide072_cap-21.png | La anotación hace el trabajo que, si no, hace el lector. Señala el punto de inflexión.
+086 | ba-✕ Así no | slide087_cap-22.png
+086 | ba-✓ Así sí | slide087_cap-23.png
+087 | ba-✕ Así no | slide088_cap-24.png
+087 | ba-✓ Así sí | slide088_cap-25.png
+088 | ba-✕ Así no | slide089_cap-26.png
+088 | ba-✓ Así sí | slide089_cap-27.png
+089 | ba-✕ Así no | slide090_cap-28.png
+089 | ba-✓ Así sí | slide090_cap-29.png
+091 | ba-✕ Así no | slide092_cap-31.png
+091 | ba-✓ Así sí | slide092_cap-32.png
+092 | ba-✕ Así no | slide093_cap-33.png
+092 | ba-✓ Así sí | slide093_cap-34.png
+093 | ba-✕ Así no | slide094_cap-35.png
+093 | ba-✓ Así sí | slide094_cap-36.png
+094 | ba-✕ Así no | slide095_cap-37.png
+094 | ba-✓ Así sí | slide095_cap-38.png
+095 | ba-✕ Así no | slide096_cap-39.png
+095 | ba-✓ Así sí | slide096_cap-40.png
+096 | ba-✕ Así no | slide097_cap-41.png
+096 | ba-✓ Así sí | slide097_cap-42.png
+097 | dashimg    | slide098_cap-43.png | 
+098 | dashimg    | slide099_cap-44.png | 
