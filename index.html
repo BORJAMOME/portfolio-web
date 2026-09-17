@@ -854,10 +854,17 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 .cta-pill-item svg { opacity: .6; transition: opacity .2s; }
 
 /* ─── CONTACT BAR — franja compacta de contacto ─── */
+.contact-bar-wrap {
+  position: relative;
+  width: 100vw; max-width: 1600px;
+  margin-left: 50%; transform: translateX(-50%);
+  padding: 0 clamp(20px, 4vw, 48px);
+  box-sizing: border-box;
+}
 .contact-bar {
   background: #f4f4f4;
   border-radius: 24px;
-  padding: 36px 44px;
+  padding: 40px clamp(44px, 5vw, 68px);
   display: flex; align-items: center; justify-content: space-between;
   gap: 28px; flex-wrap: wrap;
   text-align: left;
@@ -2412,7 +2419,7 @@ footer {
 
 <!-- ─── CTA FINAL ─── -->
 <section class="cta-final" id="cta">
-  <div class="c">
+  <div class="contact-bar-wrap">
     <div class="contact-bar sr">
       <div class="contact-bar-h">
         <span class="contact-bar-h-strong">¿Buscas un Data Analyst?</span>
