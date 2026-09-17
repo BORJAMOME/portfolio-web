@@ -360,10 +360,8 @@
    Solo en dispositivos con hover real: en touch el dashboard se ve siempre en color,
    ya que no hay forma de "pasar el ratón" para revelarlo. */
 @media (hover: hover) and (pointer: fine) {
-  .dashboard-frame { filter: grayscale(1); background: #e6e6e6; }
-  .dashboard-frame .df-titlebar { background: #e6e6e6; }
-  .dashboard-frame:hover { filter: grayscale(0); background: #fbfbfb; }
-  .dashboard-frame:hover .df-titlebar { background: #fbfbfb; }
+  .dashboard-frame { filter: grayscale(1); }
+  .dashboard-frame:hover { filter: grayscale(0); }
 }
 .df-dot { width: 9px; height: 9px; border-radius: 50%; }
 .df-omnibox {
