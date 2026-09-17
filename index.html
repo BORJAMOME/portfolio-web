@@ -751,7 +751,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   position: relative;
   overflow: hidden;
   text-align: center;
-  padding: clamp(72px, 8vw, 100px) 0 clamp(96px, 10vw, 120px);
+  padding: clamp(72px, 8vw, 100px) 0 clamp(140px, 16vw, 220px);
 }
 .cta-final::before {
   display: none;
@@ -887,12 +887,13 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   font-size: 12px; font-weight: 600;
   padding: 12px 20px; border-radius: 999px;
   text-decoration: none; white-space: nowrap;
-  display: inline-flex; align-items: center;
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 44px; box-sizing: border-box;
   transition: background .18s var(--ease), color .18s var(--ease), opacity .18s;
 }
 .contact-bar-btn-primary { background: var(--ink); color: #fff; border: 1px solid var(--ink); }
 .contact-bar-btn-outline { background: transparent; border: 1px solid var(--ink); color: var(--ink); }
-.contact-bar-btn-ghost { background: transparent; color: var(--muted); padding: 12px 8px; border: 1px solid transparent; }
+.contact-bar-btn-ghost { background: transparent; color: var(--muted); padding: 12px 14px; border: 1px solid transparent; }
 @media (hover: hover) and (pointer: fine) {
   .contact-bar-btn-primary:hover { opacity: .85; }
   .contact-bar-btn-outline:hover { background: var(--ink); color: #fff; }
