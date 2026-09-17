@@ -871,7 +871,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 }
 .contact-bar-h {
   font-family: var(--font-serif);
-  font-size: clamp(18px, 2vw, 23px);
+  font-size: clamp(21px, 2.5vw, 28px);
   font-weight: 500; line-height: 1.3; letter-spacing: -.4px;
   white-space: nowrap;
 }
@@ -891,8 +891,8 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 .contact-bar-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 .contact-bar-btn {
   font-family: var(--font);
-  font-size: 12px; font-weight: 600;
-  padding: 12px 20px; border-radius: 999px;
+  font-size: 14px; font-weight: 600;
+  padding: 13px 22px; border-radius: 999px;
   text-decoration: none; white-space: nowrap;
   display: inline-flex; align-items: center; justify-content: center;
   min-height: 44px; box-sizing: border-box;
@@ -900,7 +900,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 }
 .contact-bar-btn-primary { background: var(--ink); color: #fff; border: 1px solid var(--ink); }
 .contact-bar-btn-outline { background: transparent; border: 1px solid var(--ink); color: var(--ink); }
-.contact-bar-btn-ghost { background: transparent; color: var(--muted); padding: 12px 14px; border: 1px solid transparent; }
+.contact-bar-btn-ghost { background: transparent; color: var(--muted); padding: 13px 16px; border: 1px solid transparent; }
 @media (hover: hover) and (pointer: fine) {
   .contact-bar-btn-primary:hover { opacity: .85; }
   .contact-bar-btn-outline:hover { background: var(--ink); color: #fff; }
@@ -2422,8 +2422,8 @@ footer {
   <div class="contact-bar-wrap">
     <div class="contact-bar sr">
       <div class="contact-bar-h">
-        <span class="contact-bar-h-strong">¿Buscas un Data Analyst?</span>
-        <span class="contact-bar-h-muted">Hablemos.</span>
+        <span class="contact-bar-h-muted">¿Buscas un Data Analyst?</span>
+        <span class="contact-bar-h-strong">Hablemos.</span>
       </div>
       <a class="contact-bar-photo" href="./sobre-mi.html" aria-label="Ver más sobre Borja Mora" onclick="gtag('event','clic_foto_sobre_mi',{location:'cta_final'});">
         <picture><source srcset="./img/sobre-mi-inline.webp" type="image/webp"><img loading="lazy" src="./img/sobre-mi-inline.jpg" alt="Borja Mora Méndez" width="56" height="56"></picture>
@@ -2445,7 +2445,6 @@ footer {
     <div class="foot-grid">
       <div class="foot-col foot-col--brand">
         <div class="foot-brand-name">Borja Mora.</div>
-        <p class="foot-brand-desc" style="font-size: 13px">Construyo espacios donde los datos calan.</p>
         <p class="foot-brand-loc">Madrid, España</p>
       </div>
 
