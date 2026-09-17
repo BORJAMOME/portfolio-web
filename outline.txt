@@ -1,0 +1,103 @@
+000 | COVER | Portada                      | [eyebrow] Deck de repaso · Edición 2026  ||  [title] Data Storytelling / y diseño de dashboards  ||  [lede] Lo esencial para tener claro antes de arrancar cualquier proyecto: cómo piensa el cerebro, cómo se dirige la mirada y cómo se convierte un dato en una decisión.
+001 |       | Cómo usar                    | [eyebrow] Cómo usar este deck  ||  [title] Cuatro señales, en cada slide
+002 |       | Mapa del recorrido           | [eyebrow] Mapa del recorrido  ||  [title] Los 10 bloques, de un vistazo
+003 | SEC   | 00 · Fundamentos             | [eyebrow] Parte 00  ||  [title] Fundamentos  ||  [lede] Por qué comunicar con datos es un problema de significado, no de decoración.
+004 |       | 00 · Fundamentos             | [title] Qué es Data Storytelling (y qué no es)  ||  [lede] Es la disciplina de convertir datos en una narrativa que impulsa una decisión: dar significado y dirección a los números. No es decorar gráficos ni acumular métricas.
+005 |       | 00 · Fundamentos             | [title] Los tres pilares
+006 |       | 00 · Fundamentos             | [title] La referencia de negocio: Dykes  ||  [lede] Los tres pilares de la página anterior no son una síntesis libre: es la misma definición que usa la literatura de BI para separar el storytelling de datos de un simple informe.
+007 |       | 00 · Fundamentos             | [title] Del mensaje exploratorio al explicativo  ||  [lede] Un análisis exploratorio es para ti: ves qué pasa, nada se destaca, buscas patrones entre muchas variables. Un producto explicativo es para tu audiencia: cuentas una historia, destacas lo relevante y diriges la mirada hacia una conclusión concreta.
+008 | SEC   | 01 · Entender el contexto    | [eyebrow] Parte 01  ||  [title] Entender el contexto  ||  [lede] El trabajo empieza antes de abrir la herramienta. Sin contexto, cualquier gráfico responde a una pregunta que nadie hizo.
+009 |       | 01 · Entender el contexto    | [title] ¿Quién? ¿Qué? ¿Cómo? — la conversación entre audiencia, gráfico y acción
+010 |       | 01 · Entender el contexto    | [title] Consultoría para el contexto · qué preguntar  ||  [lede] Casi nunca tienes todo el contexto de partida. Cuando el encargo viene de un cliente, jefe o stakeholder, estas preguntas lo sacan a la luz.
+011 |       | 01 · Entender el contexto    | [title] La gran idea y la historia en 3 minutos
+012 |       | 01 · Entender el contexto    | [title] Diccionario · palabras por tipo de acción
+013 |       | 01 · Entender el contexto    | [title] Diccionario · palabras por campo (1/2)
+014 |       | 01 · Entender el contexto    | [title] Diccionario · palabras por campo (2/2)
+015 |       | 01 · Entender el contexto    | 
+016 |       | 01 · Entender el contexto    | [title] El marco académico: What-Why-How  ||  [lede] No confundir con el ¿Quién? ¿Qué? ¿Cómo? de la Parte 01: este es el marco que separa la pregunta de negocio de la técnica visual, para no elegir el gráfico antes que el problema.
+017 | SEC   | 02 · Cómo percibe el cerebro | [eyebrow] Parte 02  ||  [title] Cómo percibe / el cerebro  ||  [lede] Toda visualización depende de cómo el cerebro decide qué ver, qué ignorar y qué recordar.
+018 |       | 02 · Cómo percibe el cerebro | [title] Los tres tipos de memoria  ||  [lede] Atraer y retener la atención del público es un problema de memoria. Trabajamos con tres almacenes encadenados, y cada uno impone una regla de diseño.
+019 |       | 02 · Cómo percibe el cerebro | [title] Preatentivos: lo que el cerebro ve en 200 ms
+020 |       | 02 · Cómo percibe el cerebro | [title] El repertorio completo de atributos
+021 |       | 02 · Cómo percibe el cerebro | [title] El método: 3 pasos para dirigir la mirada
+022 |       | 02 · Cómo percibe el cerebro | [title] Precisión perceptiva: qué tan bien se lee un valor
+023 |       | 02 · Cómo percibe el cerebro | [title] El ranking dentro del ranking: leer una proporción
+024 |       | 02 · Cómo percibe el cerebro | [title] Ley de saliencia · el orden del cerebro
+025 |       | 02 · Cómo percibe el cerebro | [title] Las leyes de la Gestalt
+026 |       | 02 · Cómo percibe el cerebro | [title] Rápida para promedios, lenta para comparar  ||  [lede] Una revisión reciente y muy citada —Franconeri, Padilla, Shah, Zacks & Hullman (2021)— añade un matiz operativo a todo lo anterior:
+027 |       | 02 · Cómo percibe el cerebro | [title] Lo que hace el cerebro, en resumen
+028 |       | 02 · Cómo percibe el cerebro | 
+029 | SEC   | 03 · Reducir el ruido        | [eyebrow] Parte 03  ||  [title] Reducir el ruido  ||  [lede] Minimizar la información no útil y maximizar los datos frente al ruido. Cada elemento que no ayuda, resta.
+030 |       | 03 · Reducir el ruido        | [title] Carga cognitiva · el objetivo  ||  [lede] Minimizar la información no útil y maximizar los datos frente al ruido. Evitar el caos: todo elemento que no ayuda a comprender.
+031 |       | 03 · Reducir el ruido        | [title] Carga cognitiva · las 6 preguntas de control
+032 |       | 03 · Reducir el ruido        | [title] Supercategorías · domar los desgloses numerosos  ||  [lede] 20 categorías demográficas son ruido. Agrupadas en 4 supercategorías son una historia.
+033 |       | 03 · Reducir el ruido        | [title] Antes / después: mismos datos
+034 |       | 03 · Reducir el ruido        | [title] El test del elemento
+035 |       | 03 · Reducir el ruido        | 
+036 | SEC   | 04 · Dirigir la atención     | [eyebrow] Parte 04  ||  [title] Dirigir la atención  ||  [lede] Limpio el ruido, el trabajo es guiar la mirada. Diseño + psicología + narrativa construyen jerarquía.
+037 |       | 04 · Dirigir la atención     | [title] Pensar como un diseñador  ||  [lede] Antes de tocar el color, define la intención. ¿Qué quieres que haga tu audiencia?
+038 |       | 04 · Dirigir la atención     | [title] Destacar el 10 %
+039 |       | 04 · Dirigir la atención     | [title] El contraste, con estrategia
+040 |       | 04 · Dirigir la atención     | [title] Color · el tipo de dato manda
+041 |       | 04 · Dirigir la atención     | [title] Colores de marca · cuando el cliente impone la paleta
+042 |       | 04 · Dirigir la atención     | [title] Fondos oscuros · la lógica de contraste se invierte
+043 |       | 04 · Dirigir la atención     | [title] Posición · patrón Z y F
+044 |       | 04 · Dirigir la atención     | [title] ¿Qué estimula cada recurso?
+045 |       | 04 · Dirigir la atención     | [title] Jerarquía visual · y el tema JSON
+046 |       | 04 · Dirigir la atención     | [title] Ayudar a comparar: 3 tácticas con respaldo científico  ||  [lede] Comparar dos valores tarda al cerebro cientos de milisegundos, y solo procesamos unas pocas comparaciones por segundo. Tres formas de quitarle ese trabajo al lector:
+047 | SEC   | 05 · Elegir el visual        | [eyebrow] Parte 05  ||  [title] Elegir el visual  ||  [lede] El gráfico correcto es el que comunica la idea con el menor esfuerzo del lector. No el más vistoso.
+048 |       | 05 · Elegir el visual        | [title] 2-3 cifras · texto simple, no gráfico
+049 |       | 05 · Elegir el visual        | [title] Los formatos base y cuándo usarlos
+050 |       | 05 · Elegir el visual        | [title] Más formatos (1/2) · mapa de calor y cascada
+051 |       | 05 · Elegir el visual        | [title] Más formatos (2/2) · slopegraph y áreas
+052 |       | 05 · Elegir el visual        | [title] Base 0 y orientación
+053 |       | 05 · Elegir el visual        | [title] Ricitos de Oro y el eje que engaña
+054 |       | 05 · Elegir el visual        | [title] La ilusión de la barra apilada
+055 |       | 05 · Elegir el visual        | [title] Burbujas: el área está bien, pero el ojo lee el radio
+056 |       | 05 · Elegir el visual        | [title] Dos ilusiones más que hay que conocer
+057 |       | 05 · Elegir el visual        | [title] Selección por objetivo
+058 |       | 05 · Elegir el visual        | [title] Visual Vocabulary (FT) · 9 familias y sus gráficos
+059 |       | 05 · Elegir el visual        | 
+060 | SEC   | 06 · Componer como diseñador | [eyebrow] Parte 06  ||  [title] Componer como / diseñador  ||  [lede] El layout es el esqueleto narrativo. Si el lector percibe desorden, abandona antes de leer un número.
+061 |       | 06 · Componer como diseñador | [title] Orden visual = esqueleto narrativo
+062 |       | 06 · Componer como diseñador | [title] Sistema de layout
+063 |       | 06 · Componer como diseñador | [title] Consistencia entre informes: IBCS  ||  [lede] El sistema de layout de la página anterior ordena un informe. IBCS va un paso más allá: ordena todos los informes de una organización con el mismo lenguaje visual.
+064 |       | 06 · Componer como diseñador | [title] Alineación, espacio y ritmo
+065 |       | 06 · Componer como diseñador | [title] Regiones por color · segmentadores con alcance limitado
+066 |       | 06 · Componer como diseñador | [title] Checklist de orden visual
+067 |       | 06 · Componer como diseñador | 
+068 | SEC   | 07 · El texto que acompaña   | [eyebrow] Parte 07  ||  [title] El texto que / acompaña al dato  ||  [lede] Un gráfico sin texto obliga a deducir. El texto bien puesto da la historia en bandeja.
+069 |       | 07 · El texto que acompaña   | [title] El texto da la historia, no la adorna  ||  [lede] El objetivo del texto es dar en bandeja la historia, no obligar a deducirla.
+070 |       | 07 · El texto que acompaña   | [title] El título orienta, no describe
+071 |       | 07 · El texto que acompaña   | [title] Anotaciones: el salto de nivel
+072 |       | 07 · El texto que acompaña   | [title] Cuando el texto lo escribe la IA  ||  [lede] Copilot y el visual Smart Narrative ya escriben el texto que acompaña al dato por ti. La responsabilidad editorial de esta Parte 07 no desaparece: se traslada a la verificación.
+073 | SEC   | 08 · Construir la historia   | [eyebrow] Parte 08  ||  [title] Construir la / historia con datos  ||  [lede] Todo lo anterior sirve una cosa: contar. Los humanos deciden por tensión y alivio.
+074 |       | 08 · Construir la historia   | [title] La estructura en tres actos
+075 |       | 08 · Construir la historia   | [title] Un arco alternativo: «lo que es» vs. «lo que podría ser»  ||  [lede] Los tres actos sirven para explicar. Cuando el objetivo es empujar una decisión de inversión o cambio, hay una estructura más directa.
+076 |       | 08 · Construir la historia   | [title] 4 preguntas · 7 reglas
+077 |       | 08 · Construir la historia   | [title] El relato real, pieza a pieza
+078 |       | 08 · Construir la historia   | [title] Adapta la historia a quien decide
+079 |       | 08 · Construir la historia   | [title] Verificar y lograr aceptación
+080 |       | 08 · Construir la historia   | [title] Bing, Bang, Bongo — la repetición que fija el mensaje  ||  [lede] Nadie recuerda lo que oye una sola vez. La estructura más antigua de la persuasión es también la más simple.
+081 | SEC   | 09 · El proceso completo     | [eyebrow] Parte 09  ||  [title] Juntar todas / las piezas  ||  [lede] El resumen operativo de todo el deck. Sigue estos seis pasos, en orden, en cada proyecto.
+082 |       | 09 · El proceso completo     | [title] El proceso en 6 pasos
+083 |       | 09 · El proceso completo     | [eyebrow] La prueba de cierre
+084 | SEC   | 10 · Galería de ejemplos     | [eyebrow] Parte 10  ||  [title] Galería: / así se hace bien  ||  [lede] Diez arreglos que aparecen en casi todos los proyectos, con el antes y el después. Y dos dashboards bien construidos.
+085 |       | 10 · Galería de ejemplos     | [title] Los 10 arreglos más comunes
+086 |       | 10 · Galería de ejemplos     | [title] 01 · La tarta con demasiadas porciones
+087 |       | 10 · Galería de ejemplos     | [title] 02 · El eje truncado que exagera
+088 |       | 10 · Galería de ejemplos     | [title] 03 · Barras 3D y efectos decorativos
+089 |       | 10 · Galería de ejemplos     | [title] 04 · El gráfico de líneas espagueti
+090 |       | 10 · Galería de ejemplos     | [title] 04b · Alternativa: pequeños múltiplos
+091 |       | 10 · Galería de ejemplos     | [title] 05 · El doble eje Y que engaña
+092 |       | 10 · Galería de ejemplos     | [title] 06 · La leyenda que obliga a mirar fuera
+093 |       | 10 · Galería de ejemplos     | [title] 07 · El arcoíris de colores
+094 |       | 10 · Galería de ejemplos     | [title] 08 · La tabla densa de solo números
+095 |       | 10 · Galería de ejemplos     | [title] 09 · El KPI sin contexto
+096 |       | 10 · Galería de ejemplos     | [title] 10 · El orden alfabético en un ranking
+097 |       | 10 · Galería de ejemplos     | [title] Un dashboard bien construido · ventas
+098 |       | 10 · Galería de ejemplos     | [title] Un dashboard bien construido · ejecutivo
+099 | SEC   | Apéndices · Checklist y fuentes | [eyebrow] Apéndices  ||  [title] Checklist rápido / y fuentes  ||  [lede] Lo que repasas antes de dar por terminado cualquier gráfico.
+100 |       | Apéndices · Checklist y fuentes | [title] Checklist pre-publicación
+101 |       | Apéndices · Checklist y fuentes | [title] Contraste WCAG 2.2 (AA)
+102 |       | Apéndices · Checklist y fuentes | [title] Bibliografía de cabecera
