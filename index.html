@@ -1337,19 +1337,11 @@ footer {
   max-width: 1180px; margin: 0 auto;
   padding: 48px clamp(1.5rem,5vw,4rem) 40px;
 }
-.foot-pq-topbar {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 2px 14px;
-}
-.foot-pq-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--purple); flex-shrink: 0; display: inline-block; }
-.foot-pq-label { font-family: 'Consolas', 'SFMono-Regular', ui-monospace, Menlo, monospace; font-size: 11px; color: var(--muted); letter-spacing: .2px; }
-.foot-pq-count { font-family: 'Consolas', 'SFMono-Regular', ui-monospace, Menlo, monospace; font-size: 10px; color: var(--muted); }
-
 .foot-pq-scroll { overflow-x: auto; border-radius: 10px; box-shadow: 0 1px 2px rgba(17,17,17,.04); }
-.foot-pq-table { min-width: 640px; }
+.foot-pq-table { min-width: 960px; }
 
 .foot-pq-head, .foot-pq-row {
-  display: grid; grid-template-columns: 48px repeat(4, 1fr);
+  display: grid; grid-template-columns: 48px minmax(48px,1fr) minmax(48px,1fr) minmax(150px,1.6fr) minmax(150px,1.6fr) minmax(130px,1.4fr) minmax(130px,1.4fr) minmax(48px,1fr) minmax(48px,1fr);
 }
 .foot-pq-hcell {
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
@@ -1373,10 +1365,10 @@ footer {
   font-size: 13px; color: var(--ink); text-decoration: none; display: flex; align-items: center;
   outline: 1.5px solid transparent; outline-offset: -1px; transition: outline-color .1s ease, color .15s ease;
 }
-.foot-pq-cell.is-empty { color: rgba(17,17,17,.26); font-style: italic; }
+.foot-pq-cell.is-empty { color: rgba(17,17,17,.26); font-style: italic; justify-content: center; }
 @media (hover: hover) and (pointer: fine) {
   .foot-pq-cell:hover, .foot-pq-idx:hover { outline-color: var(--ink); position: relative; z-index: 2; }
-  a.foot-pq-cell:hover { color: var(--purple); }
+  a.foot-pq-cell:hover { color: var(--ink); }
 }
 
 .foot-pq-bottom {
@@ -1388,7 +1380,6 @@ footer {
 .foot-pq-made span:first-child { font-size: 11px; color: var(--muted); }
 .foot-pq-badge { font-size: 10px; font-weight: 600; color: var(--ink); background: rgba(17,17,17,.05); padding: 2px 7px; border-radius: 4px; }
 @media (max-width: 860px) {
-  .foot-pq-topbar { padding: 0 2px 10px; }
   .foot-pq-bottom { justify-content: flex-start; }
 }
 
@@ -2507,64 +2498,128 @@ footer {
 <footer style="margin: 0px">
   <div class="foot-inner">
 
-    <div class="foot-pq-topbar">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span class="foot-pq-dot"></span>
-        <span class="foot-pq-label">footer_borjamora</span>
-      </div>
-      <span class="foot-pq-count">6 filas · 4 columnas</span>
-    </div>
-
     <div class="foot-pq-scroll">
       <div class="foot-pq-table">
 
         <div class="foot-pq-head">
           <div class="foot-pq-hcell"><span class="foot-pq-harrow" style="font-size:11px;">&#8862;</span></div>
+          <div class="foot-pq-hcell"></div>
+          <div class="foot-pq-hcell"></div>
           <div class="foot-pq-hcell"><span class="foot-pq-htype">ABC</span><span class="foot-pq-hname">Perfil</span><span class="foot-pq-harrow">&#9662;</span></div>
           <div class="foot-pq-hcell"><span class="foot-pq-htype">ABC</span><span class="foot-pq-hname">Navegación</span><span class="foot-pq-harrow">&#9662;</span></div>
           <div class="foot-pq-hcell"><span class="foot-pq-htype">ABC</span><span class="foot-pq-hname">Trabajo</span><span class="foot-pq-harrow">&#9662;</span></div>
           <div class="foot-pq-hcell"><span class="foot-pq-htype">ABC</span><span class="foot-pq-hname">Sígueme</span><span class="foot-pq-harrow">&#9662;</span></div>
+          <div class="foot-pq-hcell"></div>
+          <div class="foot-pq-hcell"></div>
         </div>
 
         <div class="foot-pq-row">
           <div class="foot-pq-idx">1</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
           <div class="foot-pq-cell">Borja Mora.</div>
           <a class="foot-pq-cell" href="./index.html">Inicio</a>
           <a class="foot-pq-cell" href="./power-bi.html">Power BI</a>
           <a class="foot-pq-cell" href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_linkedin',{location:'footer'});">LinkedIn</a>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
         </div>
         <div class="foot-pq-row">
           <div class="foot-pq-idx">2</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
           <div class="foot-pq-cell">Data Analyst Junior</div>
           <a class="foot-pq-cell" href="./sobre-mi.html">Sobre mí</a>
           <a class="foot-pq-cell" href="./analisis-datos.html#ml">Machine Learning</a>
           <a class="foot-pq-cell" href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_github',{location:'footer'});">GitHub</a>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
         </div>
         <div class="foot-pq-row">
           <div class="foot-pq-idx">3</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
           <div class="foot-pq-cell">Madrid, España</div>
           <a class="foot-pq-cell" href="./power-bi.html">Power BI</a>
           <a class="foot-pq-cell" href="./analisis-datos.html#python">Python</a>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
           <div class="foot-pq-cell is-empty">—</div>
         </div>
         <div class="foot-pq-row">
           <div class="foot-pq-idx">4</div>
           <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
           <a class="foot-pq-cell" href="./analisis-datos.html">Análisis</a>
           <a class="foot-pq-cell" href="./analisis-datos.html#sql">SQL</a>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
           <div class="foot-pq-cell is-empty">—</div>
         </div>
         <div class="foot-pq-row">
           <div class="foot-pq-idx">5</div>
           <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
           <a class="foot-pq-cell" href="./visualizacion-datos.html">Visualización</a>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
           <div class="foot-pq-cell is-empty">—</div>
           <div class="foot-pq-cell is-empty">—</div>
         </div>
         <div class="foot-pq-row">
           <div class="foot-pq-idx">6</div>
           <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
           <a class="foot-pq-cell" href="./descargas.html">Descargas</a>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+        </div>
+        <div class="foot-pq-row">
+          <div class="foot-pq-idx">7</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+        </div>
+        <div class="foot-pq-row">
+          <div class="foot-pq-idx">8</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+        </div>
+        <div class="foot-pq-row">
+          <div class="foot-pq-idx">9</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+        </div>
+        <div class="foot-pq-row">
+          <div class="foot-pq-idx">10</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
           <div class="foot-pq-cell is-empty">—</div>
           <div class="foot-pq-cell is-empty">—</div>
         </div>
