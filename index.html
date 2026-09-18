@@ -1724,7 +1724,7 @@ footer {
               <div class="dc-label">Evolución por región · 2024 → 2025</div>
               <div style="display:flex;align-items:center;gap:10px;margin:3px 0 6px">
                 <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#ccc"><span style="width:7px;height:7px;border-radius:50%;background:#ccc;display:inline-block"></span>2024</span>
-                <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:var(--ink)"><span style="width:7px;height:7px;border-radius:50%;background:var(--ink);display:inline-block"></span>2025</span>
+                <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#7a7bff"><span style="width:7px;height:7px;border-radius:50%;background:#7a7bff;display:inline-block"></span>2025</span>
               </div>
               <!-- SVG dumbbell — drawn directly, no canvas needed -->
               <svg id="heroDumbbell" width="100%" viewBox="0 0 150 90" preserveAspectRatio="xMidYMid meet" style="display:block;overflow:visible;width:100%;flex:1;min-height:0">
@@ -2824,7 +2824,7 @@ const chartOpts = {
         } },
         layout: { padding: { top: 8, right: 4, bottom: 0, left: 0 } },
         scales: {
-          x: { grid:{display:false}, ticks:{font:{family:'Plus Jakarta Sans',size:7.5}, color:'#767676'}, border:{display:false} },
+          x: { grid:{display:false}, ticks:{font:{family:'Plus Jakarta Sans',size:7.5}, color:'#767676', maxRotation:0, minRotation:0, autoSkip:true, padding:4}, border:{display:false} },
           y: { display:false, min:120, max:340 }
         },
         animation: { duration:500, easing:'easeOutQuart' }
@@ -2888,8 +2888,8 @@ const chartOpts = {
       var xB = val2x(rv.cy, domainMax);
       var growth = (rv.cy - rv.py) / rv.py * 100;
       var positive = growth >= 0;
-      /* Positivo: punto en gris, línea (delta) en verde, cifra en negro. Negativo: todo en rojo. */
-      var dotColor  = positive ? '#9a9aae' : '#a3223e';
+      /* Positivo: punto 2025 en morado (color de marca), línea/delta en verde, cifra en negro. Negativo: todo en rojo. */
+      var dotColor  = positive ? PURPLE : '#a3223e';
       var lineColor = positive ? '#3c8a37' : '#a3223e';
       var valColor  = positive ? INK : '#a3223e';
       var line = g.querySelector('.db-line');
