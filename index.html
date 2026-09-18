@@ -2705,7 +2705,6 @@ const chartOpts = {
   if (typeof Chart === 'undefined') return;
 
   var PURPLE = '#7a7bff';
-  var INK = '#111111';
 
   /* ── Modelo de datos base (simulación, ver comentario "SIMULACIÓN · DATOS FICTICIOS") ── */
   var MONTHS = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
@@ -2853,6 +2852,10 @@ const chartOpts = {
             c2.fill();
           });
         }
+      }, {
+        /* Redibuja el eje X (solo tiene etiquetas, sin grid ni borde) por encima de tallos y puntos, para que el texto nunca quede tapado */
+        id: 'lollipopAxisOnTop',
+        afterDraw: function(chart) { chart.scales.x.draw(chart.chartArea); }
       }]
     });
   }
@@ -2877,11 +2880,10 @@ const chartOpts = {
   function renderDumbbell(regionVals) {
     var vals = [];
     regionVals.forEach(function(rv){ vals.push(rv.cy, rv.py); });
-    var rawMin = Math.min.apply(null, vals);
     var rawMax = Math.max.apply(null, vals);
-    var pad = (rawMax - rawMin) * 0.18 || rawMax * 0.18 || 10;
-    var domainMax = niceMax(rawMax + pad);
-    var domainMin = Math.max(0, rawMin - pad);
+    /* Mínimo fijo en 0; máximo recalculado en cada render según los valores filtrados visibles, con margen superior */
+    var domainMin = 0;
+    var domainMax = niceMax(rawMax * 1.18);
     var tickStep = (domainMax - domainMin) / GRID_N;
 
     for (var i = 0; i < GRID_N; i++) {
@@ -2900,10 +2902,10 @@ const chartOpts = {
       var xB = val2x(rv.cy, domainMin, domainMax);
       var growth = (rv.cy - rv.py) / rv.py * 100;
       var positive = growth >= 0;
-      /* Positivo: punto 2025 en morado (color de marca), línea/delta en verde, cifra en negro. Negativo: todo en rojo. */
-      var dotColor  = positive ? PURPLE : '#a3223e';
+      /* Punto 2025 siempre en morado (identidad del año, no cambia con el signo). Delta (línea + cifra): verde si positivo, rojo si negativo. */
+      var dotColor  = PURPLE;
       var lineColor = positive ? '#3c8a37' : '#a3223e';
-      var valColor  = positive ? INK : '#a3223e';
+      var valColor  = positive ? '#3c8a37' : '#a3223e';
       var line = g.querySelector('.db-line');
       var dotA = g.querySelector('.db-dot-a');
       var dotB = g.querySelector('.db-dot-b');
