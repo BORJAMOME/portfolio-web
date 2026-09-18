@@ -328,12 +328,13 @@
 .hero-annotation {
   display: none;
   position: absolute;
-  top: -30px;
+  top: -52px;
   /* Alinea con el borde derecho REAL del dashboard-frame (min(640px,110%) — misma fórmula que su width),
      no con el de .hero-right, que es más ancho porque se estira a toda la columna del grid. */
-  left: calc(min(640px, 110%) - 118px);
-  align-items: baseline;
-  gap: 3px;
+  left: calc(min(640px, 110%) - 92px);
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
   z-index: 2;
   pointer-events: none;
   opacity: 0;
@@ -346,14 +347,14 @@
   font-family: var(--font-serif);
   font-style: italic;
   font-weight: 400;
-  font-size: 13px;
+  font-size: 14px;
   letter-spacing: .1px;
-  color: rgba(17,17,17,.36);
+  color: rgba(17,17,17,.34);
   white-space: nowrap;
   line-height: 1;
   transform: rotate(-2deg);
 }
-.hero-annotation-arrow { color: rgba(17,17,17,.3); margin-top: 2px; flex-shrink: 0; }
+.hero-annotation-arrow { color: rgba(17,17,17,.28); flex-shrink: 0; }
 
 .hero-right {
   position: relative;
@@ -1066,7 +1067,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   }
   .hero-right .dashboard-frame { width: 100%; }
   /* El frame ahora ocupa el 100% de .hero-right (en vez de min(640px,110%)) — la anotación sigue esa misma fórmula */
-  .hero-annotation { left: calc(100% - 118px); }
+  .hero-annotation { left: calc(100% - 92px); }
 }
 @media (max-width:900px) {
   .proj-grid { grid-template-columns:1fr; }
@@ -1674,9 +1675,9 @@ footer {
     <div class="hero-right">
       <div class="hero-annotation" aria-hidden="true">
         <span class="hero-annotation-text">Pasa el ratón</span>
-        <svg class="hero-annotation-arrow" width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true">
-          <path d="M13 1.5C10.8 3.5 9 5.3 7.7 7.8C6.7 9.7 6 11.4 5.3 13.6" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
-          <path d="M9.2 12.6C7.8 13.2 6.6 13.5 5.3 13.6C5 12.1 4.7 10.6 4.1 9" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
+        <svg class="hero-annotation-arrow" width="17" height="24" viewBox="0 0 17 24" fill="none" aria-hidden="true">
+          <path d="M15 2C13 6 11 10 9.3 14C8.3 16.3 7.5 18.3 6.8 21" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/>
+          <path d="M11.3 18C9.6 19.1 8.1 19.9 6.8 21C6.9 19.1 6.8 17.2 6.3 15.2" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/>
         </svg>
       </div>
       <div class="dashboard-frame">
