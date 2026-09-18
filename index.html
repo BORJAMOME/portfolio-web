@@ -1082,7 +1082,6 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 }
 @media (max-width:900px) {
   .proj-grid { grid-template-columns:1fr; }
-  footer { flex-direction:column; text-align:center; }
 }
 
 /* ═══════════════════════════════════════════════
@@ -1375,11 +1374,39 @@ footer {
 .foot-pq-made span:first-child { font-size: 11px; color: var(--muted); }
 .foot-pq-badge { font-size: 10px; font-weight: 600; color: var(--ink); background: rgba(17,17,17,.05); padding: 2px 7px; border-radius: 4px; }
 
+.foot-pq-mobile { display: none; }
+
+/* ── Móvil: en vez de encoger la tabla, cada columna se convierte en su
+   propia mini-tabla apilada — misma identidad visual (índice, ABC, líneas),
+   pero con objetivos de toque grandes y sin scroll horizontal que esconda
+   navegación real. Las columnas/filas vacías desaparecen: en desktop
+   comunican "lienzo expandido"; en móvil solo restarían espacio. ── */
 @media (max-width: 860px) {
-  .foot-pq-scroll { overflow-x: auto; }
-  .foot-pq-grid { min-width: 760px; }
-  .foot-pq-info { grid-column: span 8; }
-  .foot-pq-info.foot-pq-made-cell { justify-content: flex-start; }
+  .foot-pq-scroll { display: none; }
+  .foot-pq-mobile { display: block; }
+
+  .foot-pq-msection { border-bottom: 1px solid rgba(17,17,17,.09); }
+  .foot-pq-mhead {
+    display: flex; align-items: center; gap: 7px;
+    padding: 10px 20px; background: rgba(17,17,17,.028);
+    border-bottom: 2px solid var(--purple);
+  }
+  .foot-pq-mrow {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 20px; min-height: 44px; box-sizing: border-box;
+    border-bottom: 1px solid rgba(17,17,17,.09);
+    text-decoration: none; color: var(--ink); font-size: 14px;
+    outline: 1.5px solid transparent; outline-offset: -1px;
+    transition: outline-color .1s ease, background .1s ease;
+  }
+  .foot-pq-msection .foot-pq-mrow:last-child { border-bottom: none; }
+  .foot-pq-midx {
+    font-family: 'Consolas', 'SFMono-Regular', ui-monospace, Menlo, monospace;
+    font-size: 11px; color: var(--muted); width: 16px; flex-shrink: 0; text-align: right;
+  }
+  a.foot-pq-mrow:active { background: rgba(17,17,17,.035); outline-color: var(--ink); }
+  .foot-pq-minfo { padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; }
+  .foot-pq-minfo .foot-pq-made { flex-wrap: wrap; }
 }
 
 /* ── Reduced motion ── */
@@ -2613,6 +2640,49 @@ footer {
           </div>
         </div>
 
+    </div>
+  </div>
+
+  <div class="foot-pq-mobile">
+    <div class="foot-pq-msection">
+      <div class="foot-pq-mhead"><span class="foot-pq-htype">ABC</span><span class="foot-pq-hname">Perfil</span></div>
+      <div class="foot-pq-mrow"><span class="foot-pq-midx">1</span><span>Borja Mora.</span></div>
+      <div class="foot-pq-mrow"><span class="foot-pq-midx">2</span><span>Data Analyst Junior</span></div>
+      <div class="foot-pq-mrow"><span class="foot-pq-midx">3</span><span>Madrid, España</span></div>
+    </div>
+
+    <div class="foot-pq-msection">
+      <div class="foot-pq-mhead"><span class="foot-pq-htype">ABC</span><span class="foot-pq-hname">Navegación</span></div>
+      <a class="foot-pq-mrow" href="./index.html"><span class="foot-pq-midx">1</span><span>Inicio</span></a>
+      <a class="foot-pq-mrow" href="./sobre-mi.html"><span class="foot-pq-midx">2</span><span>Sobre mí</span></a>
+      <a class="foot-pq-mrow" href="./power-bi.html"><span class="foot-pq-midx">3</span><span>Power BI</span></a>
+      <a class="foot-pq-mrow" href="./analisis-datos.html"><span class="foot-pq-midx">4</span><span>Análisis</span></a>
+      <a class="foot-pq-mrow" href="./visualizacion-datos.html"><span class="foot-pq-midx">5</span><span>Visualización</span></a>
+      <a class="foot-pq-mrow" href="./descargas.html"><span class="foot-pq-midx">6</span><span>Descargas</span></a>
+    </div>
+
+    <div class="foot-pq-msection">
+      <div class="foot-pq-mhead"><span class="foot-pq-htype">ABC</span><span class="foot-pq-hname">Trabajo</span></div>
+      <a class="foot-pq-mrow" href="./power-bi.html"><span class="foot-pq-midx">1</span><span>Power BI</span></a>
+      <a class="foot-pq-mrow" href="./analisis-datos.html#ml"><span class="foot-pq-midx">2</span><span>Machine Learning</span></a>
+      <a class="foot-pq-mrow" href="./analisis-datos.html#python"><span class="foot-pq-midx">3</span><span>Python</span></a>
+      <a class="foot-pq-mrow" href="./analisis-datos.html#sql"><span class="foot-pq-midx">4</span><span>SQL</span></a>
+    </div>
+
+    <div class="foot-pq-msection">
+      <div class="foot-pq-mhead"><span class="foot-pq-htype">ABC</span><span class="foot-pq-hname">Sígueme</span></div>
+      <a class="foot-pq-mrow" href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_linkedin',{location:'footer'});"><span class="foot-pq-midx">1</span><span>LinkedIn</span></a>
+      <a class="foot-pq-mrow" href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_github',{location:'footer'});"><span class="foot-pq-midx">2</span><span>GitHub</span></a>
+    </div>
+
+    <div class="foot-pq-msection foot-pq-minfo">
+      <span class="foot-pq-copy">© 2026 Borja Mora Méndez · Todos los derechos reservados</span>
+      <div class="foot-pq-made">
+        <span>Diseñado y construido por mí</span>
+        <span class="foot-pq-badge">HTML</span>
+        <span class="foot-pq-badge">CSS</span>
+        <span class="foot-pq-badge">JS</span>
+      </div>
     </div>
   </div>
 </footer>
