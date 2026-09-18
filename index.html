@@ -405,7 +405,7 @@
   background: #ffffff;
   border: .5px solid #e8e8ee;
   border-radius: 8px;
-  padding: 10px 11px 9px;
+  padding: 11px 12px;
   position: relative;
   overflow: hidden;
 }
@@ -420,12 +420,30 @@
 /* charts row */
 .df-card {
   background: #ffffff; border: .5px solid #e8e8ee;
-  border-radius: 8px; padding: 10px 12px;
+  border-radius: 8px; padding: 11px 12px;
+  position: relative;
 }
 .dc-label { font-size: 7.5px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .7px; margin-bottom: 1px; }
 
+/* Tooltip flotante del dumbbell (SVG dibujado a mano, sin tooltip nativo de Chart.js) */
+.db-tooltip {
+  position: absolute; pointer-events: none; z-index: 10;
+  background: #171717; color: #fff; font-size: 8.5px; font-weight: 600;
+  padding: 6px 9px; border-radius: 5px; white-space: nowrap;
+  opacity: 0; transform: translate(-50%,-100%); transition: opacity .12s ease;
+}
+.db-tooltip.is-visible { opacity: 1; }
+.db-tooltip b { font-weight: 800; }
+
+/* Iconos de cabecera de visual (filtro / más opciones), como en un informe Power BI real */
+.viz-actions { position: absolute; top: 7px; right: 8px; display: flex; gap: 5px; opacity: 0; transition: opacity .15s ease; }
+.viz-ic { width: 10px; height: 10px; color: #b3b3c2; flex-shrink: 0; }
+@media (hover: hover) and (pointer: fine) {
+  .df-card:hover .viz-actions, .dk:hover .viz-actions, .df-ranking:hover .viz-actions { opacity: 1; }
+}
+
 /* ranking */
-.df-ranking { background: #ffffff; border: .5px solid #e8e8ee; border-radius: 8px; padding: 10px 12px 11px; }
+.df-ranking { background: #ffffff; border: .5px solid #e8e8ee; border-radius: 8px; padding: 11px 12px; position: relative; }
 /* Tabla de detalle estilo informe BI */
 .dt { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
 .dt th {
@@ -494,6 +512,9 @@
 .dt tbody tr:nth-child(2) .dt-bar { transition-delay: .08s; }
 .dt tbody tr:nth-child(3) .dt-bar { transition-delay: .14s; }
 .dt tbody tr:nth-child(4) .dt-bar { transition-delay: .2s; }
+@media (hover: hover) and (pointer: fine) {
+  .dt tbody tr:not(.dt-total):not(.is-dim):hover { background: rgba(122,123,255,.045); }
+}
 
 /* ─── SECTION COMMONS ─── */
 /* Cada sección lleva la línea divisora pegada al borde superior (sin padding-top).
@@ -1627,14 +1648,15 @@ footer {
             <svg class="df-omnibox-refresh" viewBox="0 0 24 24" fill="none" stroke="#bcbcca" stroke-width="2.4" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>
           </div>
           <span style="margin-left:8px;font-size:8.5px;color:#9a9aae;font-weight:700;letter-spacing:.4px;display:inline-flex;align-items:center;gap:5px;flex-shrink:0">SIMULACIÓN · DATOS FICTICIOS
-            <span style="width:6px;height:6px;border-radius:50%;background:#28c840;flex-shrink:0;animation:pulse-dot 1.8s ease-in-out infinite"></span>EN VIVO
+            <span style="width:6px;height:6px;border-radius:50%;background:#7a7bff;flex-shrink:0;animation:pulse-dot 1.8s ease-in-out infinite"></span>INTERACTIVO — prueba los filtros
           </span>
         </div>
 
         <div class="df-header" style="padding:11px 14px 7px">
           <div>
             <div class="df-title">Rendimiento de Ventas 2025</div>
-            <div style="font-size:8px;color:var(--muted);margin-top:1px">Ventas reales vs año anterior · Mes · Región · Producto</div>
+            <div id="dfSubtitle" style="font-size:8px;color:var(--muted);margin-top:1px">Ventas reales vs año anterior · Mes · Región · Producto</div>
+            <div style="font-size:7px;color:var(--muted-light);margin-top:3px;display:flex;align-items:center;gap:4px"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>Última actualización: hace 4 min</div>
           </div>
           <div class="df-filters" id="dfFilters">
             <button type="button" class="df-filter" data-filter="mes"><span class="df-filter-lbl">Mes</span><span class="df-filter-val" data-role="value">Todos</span><span class="df-filter-arrow">▾</span></button>
@@ -1648,6 +1670,7 @@ footer {
           <!-- KPIs -->
           <div class="df-kpis" style="grid-template-columns:repeat(4,1fr)">
             <div class="dk">
+              <div class="viz-actions"><svg class="viz-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16l-6.5 7.5V19l-3 1.5v-8z"/></svg><svg class="viz-ic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></div>
               <div class="dk-label">Ventas acum.</div>
               <div class="dk-main"><div class="dk-value" id="kv0" style="font-size:17px">—</div>
                 <svg width="36" height="16" viewBox="0 0 36 16" fill="none" style="flex-shrink:0;opacity:.9"><polyline points="0,13 5,10 9,12 13,7 17,9 21,4 26,6 30,2 36,0" stroke="#3c8a37" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
@@ -1655,6 +1678,7 @@ footer {
               <span class="dk-pos" id="kg0">—</span><span class="dk-vs">vs año anterior</span>
             </div>
             <div class="dk">
+              <div class="viz-actions"><svg class="viz-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16l-6.5 7.5V19l-3 1.5v-8z"/></svg><svg class="viz-ic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></div>
               <div class="dk-label">Unidades</div>
               <div class="dk-main"><div class="dk-value" id="kv1" style="font-size:17px">—</div>
                 <svg width="36" height="16" viewBox="0 0 36 16" fill="none" style="flex-shrink:0;opacity:.7"><polyline points="0,14 5,11 9,13 13,8 17,11 21,5 26,8 30,3 36,1" stroke="#3c8a37" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
@@ -1662,6 +1686,7 @@ footer {
               <span class="dk-pos" id="kg1">—</span><span class="dk-vs">vs año anterior</span>
             </div>
             <div class="dk">
+              <div class="viz-actions"><svg class="viz-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16l-6.5 7.5V19l-3 1.5v-8z"/></svg><svg class="viz-ic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></div>
               <div class="dk-label">Ticket Medio</div>
               <div class="dk-main"><div class="dk-value" id="kv2" style="font-size:17px">—</div>
                 <svg width="36" height="16" viewBox="0 0 36 16" fill="none" style="flex-shrink:0;opacity:.7"><polyline points="0,7 5,10 9,8 13,12 17,10 21,13 26,11 30,14 36,13" stroke="#a3223e" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
@@ -1669,6 +1694,7 @@ footer {
               <span class="dk-neg" id="kg2">—</span><span class="dk-vs">vs año anterior</span>
             </div>
             <div class="dk">
+              <div class="viz-actions"><svg class="viz-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16l-6.5 7.5V19l-3 1.5v-8z"/></svg><svg class="viz-ic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></div>
               <div class="dk-label">Margen Bruto</div>
               <div class="dk-main"><div class="dk-value" id="kv3" style="font-size:17px">—</div>
                 <svg width="36" height="16" viewBox="0 0 36 16" fill="none" style="flex-shrink:0;opacity:.9"><polyline points="0,13 5,11 9,13 13,8 17,10 21,5 26,7 30,3 36,1" stroke="#3c8a37" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>
@@ -1681,7 +1707,8 @@ footer {
           <div style="display:grid;grid-template-columns:1.55fr 1fr;gap:6px">
 
             <!-- LOLLIPOP CY vs PY -->
-            <div class="df-card" style="padding:9px 11px 10px;display:flex;flex-direction:column">
+            <div class="df-card" style="display:flex;flex-direction:column">
+              <div class="viz-actions"><svg class="viz-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16l-6.5 7.5V19l-3 1.5v-8z"/></svg><svg class="viz-ic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></div>
               <div class="dc-label">Ventas mensuales · Año actual vs anterior</div>
               <div style="display:flex;align-items:center;gap:10px;margin:3px 0 6px">
                 <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#696969"><span style="width:8px;height:8px;border-radius:50%;background:#7a7bff;display:inline-block"></span>Actual 2025</span>
@@ -1693,11 +1720,12 @@ footer {
             </div>
 
             <!-- DUMBBELL: evolución por región 2024→2025 -->
-            <div class="df-card" style="padding:9px 11px 10px;display:flex;flex-direction:column">
+            <div class="df-card" style="display:flex;flex-direction:column">
+              <div class="viz-actions"><svg class="viz-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16l-6.5 7.5V19l-3 1.5v-8z"/></svg><svg class="viz-ic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></div>
               <div class="dc-label">Evolución por región · 2024 → 2025</div>
               <div style="display:flex;align-items:center;gap:10px;margin:3px 0 6px">
                 <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#ccc"><span style="width:7px;height:7px;border-radius:50%;background:#ccc;display:inline-block"></span>2024</span>
-                <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:#7a7bff"><span style="width:7px;height:7px;border-radius:50%;background:#7a7bff;display:inline-block"></span>2025</span>
+                <span style="display:flex;align-items:center;gap:4px;font-size:8px;color:var(--ink)"><span style="width:7px;height:7px;border-radius:50%;background:var(--ink);display:inline-block"></span>2025</span>
               </div>
               <!-- SVG dumbbell — drawn directly, no canvas needed -->
               <svg id="heroDumbbell" width="100%" viewBox="0 0 150 90" preserveAspectRatio="xMidYMid meet" style="display:block;overflow:visible;width:100%;flex:1;min-height:0">
@@ -1759,15 +1787,15 @@ footer {
                   <text class="db-val" x="40" y="75" font-family="'Plus Jakarta Sans',sans-serif" font-size="6.5" fill="#7a7bff" font-weight="700" text-anchor="middle">—</text>
                 </g>
               </svg>
+              <div class="db-tooltip" id="dbTooltip"></div>
             </div>
 
           </div>
 
           <!-- BOTTOM: tabla de detalle por zona -->
-          <div class="df-ranking" style="padding:9px 12px 10px">
+          <div class="df-ranking">
             <div class="dr-head" style="margin-bottom:6px">
               <span class="dc-label" style="margin:0">Ventas por producto · detalle</span>
-              <span style="font-size:8px;color:var(--purple);font-weight:700">Ver informe →</span>
             </div>
             <table class="dt">
               <thead>
@@ -2678,6 +2706,7 @@ const chartOpts = {
   if (typeof Chart === 'undefined') return;
 
   var PURPLE = '#7a7bff';
+  var INK = '#111111';
 
   /* ── Modelo de datos base (simulación, ver comentario "SIMULACIÓN · DATOS FICTICIOS") ── */
   var MONTHS = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
@@ -2785,7 +2814,22 @@ const chartOpts = {
       },
       options: {
         responsive: true, maintainAspectRatio: false,
-        plugins: { legend:{display:false}, tooltip:{enabled:false} },
+        interaction: { mode:'index', intersect:false },
+        plugins: { legend:{display:false}, tooltip:{
+          enabled: true, backgroundColor:'#171717', displayColors:false,
+          padding:{x:9,y:7}, cornerRadius:5, caretSize:4,
+          titleFont:{family:"'Plus Jakarta Sans'",size:9,weight:'700'},
+          titleMarginBottom:4,
+          bodyFont:{family:"'Plus Jakarta Sans'",size:8.5,weight:'600'},
+          bodySpacing:2,
+          callbacks: {
+            title: function(items){ return items.length ? items[0].label : ''; },
+            label: function(ctx){
+              var yr = ctx.dataset.label === 'CY' ? 'Actual 2025' : 'Anterior 2024';
+              return yr + ':  €' + fmtCompact(ctx.parsed.y);
+            }
+          }
+        } },
         layout: { padding: { top: 8, right: 4, bottom: 0, left: 0 } },
         scales: {
           x: { grid:{display:false}, ticks:{font:{family:'Plus Jakarta Sans',size:7.5}, color:'#767676'}, border:{display:false} },
@@ -2829,7 +2873,8 @@ const chartOpts = {
 
   /* ── Dumbbell SVG (Región = gráfico "propio") ── */
   var GRID_N = 5;
-  function val2x(v, tickStep, domainMax) { return 40 + (v - tickStep) / (domainMax - tickStep) * (145 - 40); }
+  /* Eje siempre arrancando en 0 (no en el primer tick), para no exagerar visualmente las diferencias entre regiones */
+  function val2x(v, domainMax) { return 40 + (v / domainMax) * (145 - 40); }
   function renderDumbbell(regionVals) {
     var rawMax = 0;
     regionVals.forEach(function(rv){ rawMax = Math.max(rawMax, rv.cy, rv.py); });
@@ -2838,7 +2883,7 @@ const chartOpts = {
 
     for (var i = 0; i < GRID_N; i++) {
       var v = tickStep * (i + 1);
-      var x = val2x(v, tickStep, domainMax);
+      var x = val2x(v, domainMax);
       var line = document.getElementById('dbGridLine' + i);
       var label = document.getElementById('dbGridLabel' + i);
       if (line) { line.setAttribute('x1', x); line.setAttribute('x2', x); }
@@ -2848,20 +2893,48 @@ const chartOpts = {
     regionVals.forEach(function(rv) {
       var g = document.querySelector('.db-row[data-region="' + rv.key + '"]');
       if (!g) return;
-      var xA = val2x(rv.py, tickStep, domainMax);
-      var xB = val2x(rv.cy, tickStep, domainMax);
+      var xA = val2x(rv.py, domainMax);
+      var xB = val2x(rv.cy, domainMax);
       var growth = (rv.cy - rv.py) / rv.py * 100;
+      var color = growth >= 0 ? INK : '#a3223e';
       var line = g.querySelector('.db-line');
       var dotA = g.querySelector('.db-dot-a');
       var dotB = g.querySelector('.db-dot-b');
       var val  = g.querySelector('.db-val');
-      if (line) { line.setAttribute('x1', xA); line.setAttribute('x2', xB); line.setAttribute('stroke', growth >= 0 ? '#3c8a37' : '#a3223e'); }
+      if (line) { line.setAttribute('x1', xA); line.setAttribute('x2', xB); line.setAttribute('stroke', color); }
       if (dotA) { dotA.setAttribute('cx', xA); dotA.setAttribute('r', 2.5); }
-      if (dotB) { dotB.setAttribute('cx', xB); dotB.setAttribute('r', 3.5); dotB.setAttribute('fill', growth >= 0 ? PURPLE : '#d04060'); }
-      if (val)  { val.setAttribute('x', (xA + xB) / 2); val.textContent = fmtPct(growth); val.setAttribute('fill', growth >= 0 ? PURPLE : '#a3223e'); }
+      if (dotB) { dotB.setAttribute('cx', xB); dotB.setAttribute('r', 3.5); dotB.setAttribute('fill', color); }
+      if (val)  { val.setAttribute('x', (xA + xB) / 2); val.textContent = fmtPct(growth); val.setAttribute('fill', color); }
 
       g.classList.remove('is-hl', 'is-dim');
       if (state.region) g.classList.add(state.region === rv.key ? 'is-hl' : 'is-dim');
+    });
+
+    lastRegionVals = regionVals;
+  }
+
+  /* ── Tooltip del dumbbell (SVG dibujado a mano, sin tooltip nativo) ── */
+  var lastRegionVals = null;
+  function initDumbbellTooltip() {
+    var tip = document.getElementById('dbTooltip');
+    var card = tip && tip.closest('.df-card');
+    if (!tip || !card) return;
+    document.querySelectorAll('.db-row').forEach(function(g){
+      g.style.cursor = 'default';
+      g.addEventListener('mouseenter', function(){
+        var rv = lastRegionVals && lastRegionVals.filter(function(r){ return r.key === g.dataset.region; })[0];
+        if (!rv) return;
+        var growth = (rv.cy - rv.py) / rv.py * 100;
+        tip.innerHTML = '<b>' + REGION_LABEL[rv.key] + '</b> · ' + fmtPct(growth) + '<br>' +
+          '2024: €' + fmtCompact(rv.py) + '  →  2025: €' + fmtCompact(rv.cy);
+        tip.classList.add('is-visible');
+      });
+      g.addEventListener('mousemove', function(e){
+        var r = card.getBoundingClientRect();
+        tip.style.left = (e.clientX - r.left) + 'px';
+        tip.style.top = (e.clientY - r.top - 10) + 'px';
+      });
+      g.addEventListener('mouseleave', function(){ tip.classList.remove('is-visible'); });
     });
   }
 
@@ -2925,11 +2998,25 @@ const chartOpts = {
     setKPI('kv3', 'kg3', eco.margin.toFixed(1).replace('.', ',') + '%', fmtPP(marginGrowthPP), marginGrowthPP >= 0);
   }
 
+  /* ── Subtítulo dinámico: refleja los filtros activos para reforzar el storytelling ── */
+  function updateSubtitle() {
+    var el = document.getElementById('dfSubtitle');
+    if (!el) return;
+    var parts = [];
+    if (state.mes != null) parts.push(MONTHS[state.mes] + ' 2025');
+    if (state.region) parts.push('región ' + REGION_LABEL[state.region]);
+    if (state.producto) parts.push(PRODUCT_LABEL[state.producto]);
+    el.textContent = parts.length
+      ? 'Ventas de ' + parts.join(' · ') + ' vs año anterior'
+      : 'Ventas reales vs año anterior · Mes · Región · Producto';
+  }
+
   function render() {
     renderLollipop(computeMonthly());
     renderDumbbell(computeRegions());
     renderProductTable(computeProductos());
     renderKPIs();
+    updateSubtitle();
   }
 
   /* ── UI de filtros: dropdown por chip, clic para seleccionar/limpiar ── */
@@ -3017,6 +3104,7 @@ const chartOpts = {
   function start() {
     if (started) return; started = true;
     initLollipop();
+    initDumbbellTooltip();
     buildFilterUI();
     updateFilterChips();
     /* pequeño retraso para que la primera pintura coincida con la entrada del resto del hero */
