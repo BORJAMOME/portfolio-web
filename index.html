@@ -1327,21 +1327,17 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 }
 
 
-/* ── FOOTER — tabla estilo Power Query ── */
+/* ── FOOTER — el footer ES la tabla de Power Query, sin contenedor interior ── */
 footer {
   background: #f4f4f4;
-  padding: 0;
+  padding: 0; margin: 0;
   border-top: .5px solid rgba(17,17,17,.08);
 }
-.foot-inner {
-  max-width: 1180px; margin: 0 auto;
-  padding: 48px clamp(1.5rem,5vw,4rem) 40px;
-}
-.foot-pq-scroll { overflow-x: auto; border-radius: 10px; box-shadow: 0 1px 2px rgba(17,17,17,.04); }
-.foot-pq-table { min-width: 960px; }
+.foot-pq-scroll { width: 100%; }
+.foot-pq-grid { width: 100%; }
 
 .foot-pq-head, .foot-pq-row {
-  display: grid; grid-template-columns: 48px minmax(48px,1fr) minmax(48px,1fr) minmax(150px,1.6fr) minmax(150px,1.6fr) minmax(130px,1.4fr) minmax(130px,1.4fr) minmax(48px,1fr) minmax(48px,1fr);
+  display: grid; grid-template-columns: 48px minmax(60px,1fr) minmax(60px,1fr) minmax(150px,1.6fr) minmax(150px,1.6fr) minmax(130px,1.4fr) minmax(130px,1.4fr) minmax(60px,1fr) minmax(60px,1fr);
 }
 .foot-pq-hcell {
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
@@ -1371,16 +1367,19 @@ footer {
   a.foot-pq-cell:hover { color: var(--ink); }
 }
 
-.foot-pq-bottom {
-  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
-  padding-top: 20px;
-}
+.foot-pq-info { grid-column: span 4; flex-wrap: wrap; }
+.foot-pq-info.foot-pq-copy-cell { justify-content: flex-start; }
+.foot-pq-info.foot-pq-made-cell { justify-content: flex-end; }
 .foot-pq-copy { font-family: 'Consolas', 'SFMono-Regular', ui-monospace, Menlo, monospace; font-size: 11px; color: var(--muted); }
 .foot-pq-made { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .foot-pq-made span:first-child { font-size: 11px; color: var(--muted); }
 .foot-pq-badge { font-size: 10px; font-weight: 600; color: var(--ink); background: rgba(17,17,17,.05); padding: 2px 7px; border-radius: 4px; }
+
 @media (max-width: 860px) {
-  .foot-pq-bottom { justify-content: flex-start; }
+  .foot-pq-scroll { overflow-x: auto; }
+  .foot-pq-grid { min-width: 760px; }
+  .foot-pq-info { grid-column: span 8; }
+  .foot-pq-info.foot-pq-made-cell { justify-content: flex-start; }
 }
 
 /* ── Reduced motion ── */
@@ -2494,12 +2493,10 @@ footer {
     </div>
   </div>
 </section>
-<!-- ─── FOOTER — profesional ─── -->
+<!-- ─── FOOTER — el footer ES la tabla de Power Query ─── -->
 <footer style="margin: 0px">
-  <div class="foot-inner">
-
-    <div class="foot-pq-scroll">
-      <div class="foot-pq-table">
+  <div class="foot-pq-scroll">
+    <div class="foot-pq-grid">
 
         <div class="foot-pq-head">
           <div class="foot-pq-hcell"><span class="foot-pq-harrow" style="font-size:11px;">&#8862;</span></div>
@@ -2603,40 +2600,20 @@ footer {
         </div>
         <div class="foot-pq-row">
           <div class="foot-pq-idx">9</div>
-          <div class="foot-pq-cell is-empty">—</div>
-          <div class="foot-pq-cell is-empty">—</div>
-          <div class="foot-pq-cell is-empty">—</div>
-          <div class="foot-pq-cell is-empty">—</div>
-          <div class="foot-pq-cell is-empty">—</div>
-          <div class="foot-pq-cell is-empty">—</div>
-          <div class="foot-pq-cell is-empty">—</div>
-          <div class="foot-pq-cell is-empty">—</div>
-        </div>
-        <div class="foot-pq-row">
-          <div class="foot-pq-idx">10</div>
-          <div class="foot-pq-cell is-empty">—</div>
-          <div class="foot-pq-cell is-empty">—</div>
-          <div class="foot-pq-cell is-empty">—</div>
-          <div class="foot-pq-cell is-empty">—</div>
-          <div class="foot-pq-cell is-empty">—</div>
-          <div class="foot-pq-cell is-empty">—</div>
-          <div class="foot-pq-cell is-empty">—</div>
-          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell foot-pq-info foot-pq-copy-cell">
+            <span class="foot-pq-copy">© 2026 Borja Mora Méndez · Todos los derechos reservados</span>
+          </div>
+          <div class="foot-pq-cell foot-pq-info foot-pq-made-cell">
+            <div class="foot-pq-made">
+              <span>Diseñado y construido por mí</span>
+              <span class="foot-pq-badge">HTML</span>
+              <span class="foot-pq-badge">CSS</span>
+              <span class="foot-pq-badge">JS</span>
+            </div>
+          </div>
         </div>
 
-      </div>
     </div>
-
-    <div class="foot-pq-bottom">
-      <div class="foot-pq-copy">© 2026 Borja Mora Méndez · Todos los derechos reservados</div>
-      <div class="foot-pq-made">
-        <span>Diseñado y construido por mí</span>
-        <span class="foot-pq-badge">HTML</span>
-        <span class="foot-pq-badge">CSS</span>
-        <span class="foot-pq-badge">JS</span>
-      </div>
-    </div>
-
   </div>
 </footer>
 
