@@ -2747,6 +2747,13 @@ const chartOpts = {
     return (v >= 0 ? '▲ +' : '▼ ') + Math.abs(v).toFixed(decimals).replace('.', ',') + '%';
   }
   function fmtPP(v) { return (v >= 0 ? '▲ +' : '▼ ') + Math.abs(v).toFixed(1).replace('.', ',') + 'pp'; }
+  function niceMax(v) {
+    if (v <= 0) return 100;
+    var exp = Math.pow(10, Math.floor(Math.log(v) / Math.LN10));
+    var f = v / exp;
+    var nf = f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10;
+    return nf * exp;
+  }
 
   /* ── Motor de cross-filter: deriva todos los valores a partir del estado actual ── */
   function computeMonthly() {
@@ -2865,16 +2872,21 @@ const chartOpts = {
 
   /* ── Dumbbell SVG (Región = gráfico "propio") ── */
   var GRID_N = 5;
-  /* Eje siempre arrancando en 0 (no en el primer tick), para no exagerar visualmente las diferencias entre regiones */
-  function val2x(v, domainMax) { return 40 + (v / domainMax) * (145 - 40); }
+  /* Dominio dinámico [domainMin, domainMax], recalculado en cada render a partir de los valores filtrados visibles */
+  function val2x(v, domainMin, domainMax) { return 40 + (v - domainMin) / (domainMax - domainMin) * (145 - 40); }
   function renderDumbbell(regionVals) {
-    /* Dominio fijo 0–1M: da contexto estable (el máximo real, Norte, ronda 925K) y evita que el eje "salte" al filtrar */
-    var domainMax = 1000;
-    var tickStep = domainMax / GRID_N;
+    var vals = [];
+    regionVals.forEach(function(rv){ vals.push(rv.cy, rv.py); });
+    var rawMin = Math.min.apply(null, vals);
+    var rawMax = Math.max.apply(null, vals);
+    var pad = (rawMax - rawMin) * 0.18 || rawMax * 0.18 || 10;
+    var domainMax = niceMax(rawMax + pad);
+    var domainMin = Math.max(0, rawMin - pad);
+    var tickStep = (domainMax - domainMin) / GRID_N;
 
     for (var i = 0; i < GRID_N; i++) {
-      var v = tickStep * (i + 1);
-      var x = val2x(v, domainMax);
+      var v = domainMin + tickStep * (i + 1);
+      var x = val2x(v, domainMin, domainMax);
       var line = document.getElementById('dbGridLine' + i);
       var label = document.getElementById('dbGridLabel' + i);
       if (line) { line.setAttribute('x1', x); line.setAttribute('x2', x); }
@@ -2884,8 +2896,8 @@ const chartOpts = {
     regionVals.forEach(function(rv) {
       var g = document.querySelector('.db-row[data-region="' + rv.key + '"]');
       if (!g) return;
-      var xA = val2x(rv.py, domainMax);
-      var xB = val2x(rv.cy, domainMax);
+      var xA = val2x(rv.py, domainMin, domainMax);
+      var xB = val2x(rv.cy, domainMin, domainMax);
       var growth = (rv.cy - rv.py) / rv.py * 100;
       var positive = growth >= 0;
       /* Positivo: punto 2025 en morado (color de marca), línea/delta en verde, cifra en negro. Negativo: todo en rojo. */
