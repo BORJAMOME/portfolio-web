@@ -321,6 +321,38 @@
 }
 
 /* ─── HERO DASHBOARD ─── */
+
+/* Anotación manuscrita: invita a pasar el ratón sobre el dashboard.
+   Señala una interacción que YA existe (ver filter:grayscale más abajo) — no crea ninguna nueva.
+   Oculta por defecto y revelada solo donde el hover real existe, para no ser una pista engañosa en touch. */
+.hero-annotation {
+  display: none;
+  position: absolute;
+  top: -28px;
+  left: 6px;
+  align-items: flex-start;
+  gap: 5px;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  animation: fadeUp 1s 1.4s var(--ease) forwards;
+}
+@media (hover: hover) and (pointer: fine) {
+  .hero-annotation { display: flex; }
+}
+.hero-annotation-text {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 14px;
+  letter-spacing: .1px;
+  color: rgba(17,17,17,.32);
+  white-space: nowrap;
+  line-height: 1;
+  transform: rotate(-2deg);
+}
+.hero-annotation-arrow { color: rgba(17,17,17,.26); margin-top: 11px; flex-shrink: 0; }
+
 .hero-right {
   position: relative;
   display: flex;
@@ -1636,6 +1668,13 @@ footer {
 
     <!-- ─── DASHBOARD WOW ─── -->
     <div class="hero-right">
+      <div class="hero-annotation" aria-hidden="true">
+        <span class="hero-annotation-text">Pasa el ratón</span>
+        <svg class="hero-annotation-arrow" width="42" height="30" viewBox="0 0 42 30" fill="none" aria-hidden="true">
+          <path d="M2 3C9 7 14 4.5 18 10C22.5 16 25 12.5 32 22" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          <path d="M25.5 20C28 20.5 30.5 22 32 22C33 20.5 33.5 18 34.5 15" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+      </div>
       <div class="dashboard-frame">
 
         <div class="df-titlebar">
