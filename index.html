@@ -1648,7 +1648,7 @@ footer {
             <svg class="df-omnibox-refresh" viewBox="0 0 24 24" fill="none" stroke="#bcbcca" stroke-width="2.4" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>
           </div>
           <span style="margin-left:8px;font-size:8.5px;color:#9a9aae;font-weight:700;letter-spacing:.4px;display:inline-flex;align-items:center;gap:5px;flex-shrink:0">SIMULACIÓN · DATOS FICTICIOS
-            <span style="width:6px;height:6px;border-radius:50%;background:#7a7bff;flex-shrink:0;animation:pulse-dot 1.8s ease-in-out infinite"></span>INTERACTIVO — prueba los filtros
+            <span style="width:6px;height:6px;border-radius:50%;background:#7a7bff;flex-shrink:0;animation:pulse-dot 1.8s ease-in-out infinite"></span>Interactivo
           </span>
         </div>
 
@@ -1656,7 +1656,6 @@ footer {
           <div>
             <div class="df-title">Rendimiento de Ventas 2025</div>
             <div id="dfSubtitle" style="font-size:8px;color:var(--muted);margin-top:1px">Ventas reales vs año anterior · Mes · Región · Producto</div>
-            <div style="font-size:7px;color:var(--muted-light);margin-top:3px;display:flex;align-items:center;gap:4px"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>Última actualización: hace 4 min</div>
           </div>
           <div class="df-filters" id="dfFilters">
             <button type="button" class="df-filter" data-filter="mes"><span class="df-filter-lbl">Mes</span><span class="df-filter-val" data-role="value">Todos</span><span class="df-filter-arrow">▾</span></button>
@@ -2748,13 +2747,6 @@ const chartOpts = {
     return (v >= 0 ? '▲ +' : '▼ ') + Math.abs(v).toFixed(decimals).replace('.', ',') + '%';
   }
   function fmtPP(v) { return (v >= 0 ? '▲ +' : '▼ ') + Math.abs(v).toFixed(1).replace('.', ',') + 'pp'; }
-  function niceMax(v) {
-    if (v <= 0) return 100;
-    var exp = Math.pow(10, Math.floor(Math.log(v) / Math.LN10));
-    var f = v / exp;
-    var nf = f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10;
-    return nf * exp;
-  }
 
   /* ── Motor de cross-filter: deriva todos los valores a partir del estado actual ── */
   function computeMonthly() {
@@ -2876,9 +2868,8 @@ const chartOpts = {
   /* Eje siempre arrancando en 0 (no en el primer tick), para no exagerar visualmente las diferencias entre regiones */
   function val2x(v, domainMax) { return 40 + (v / domainMax) * (145 - 40); }
   function renderDumbbell(regionVals) {
-    var rawMax = 0;
-    regionVals.forEach(function(rv){ rawMax = Math.max(rawMax, rv.cy, rv.py); });
-    var domainMax = niceMax(rawMax * 1.18);
+    /* Dominio fijo 0–1M: da contexto estable (el máximo real, Norte, ronda 925K) y evita que el eje "salte" al filtrar */
+    var domainMax = 1000;
     var tickStep = domainMax / GRID_N;
 
     for (var i = 0; i < GRID_N; i++) {
@@ -2896,15 +2887,19 @@ const chartOpts = {
       var xA = val2x(rv.py, domainMax);
       var xB = val2x(rv.cy, domainMax);
       var growth = (rv.cy - rv.py) / rv.py * 100;
-      var color = growth >= 0 ? INK : '#a3223e';
+      var positive = growth >= 0;
+      /* Positivo: punto en gris, línea (delta) en verde, cifra en negro. Negativo: todo en rojo. */
+      var dotColor  = positive ? '#9a9aae' : '#a3223e';
+      var lineColor = positive ? '#3c8a37' : '#a3223e';
+      var valColor  = positive ? INK : '#a3223e';
       var line = g.querySelector('.db-line');
       var dotA = g.querySelector('.db-dot-a');
       var dotB = g.querySelector('.db-dot-b');
       var val  = g.querySelector('.db-val');
-      if (line) { line.setAttribute('x1', xA); line.setAttribute('x2', xB); line.setAttribute('stroke', color); }
+      if (line) { line.setAttribute('x1', xA); line.setAttribute('x2', xB); line.setAttribute('stroke', lineColor); }
       if (dotA) { dotA.setAttribute('cx', xA); dotA.setAttribute('r', 2.5); }
-      if (dotB) { dotB.setAttribute('cx', xB); dotB.setAttribute('r', 3.5); dotB.setAttribute('fill', color); }
-      if (val)  { val.setAttribute('x', (xA + xB) / 2); val.textContent = fmtPct(growth); val.setAttribute('fill', color); }
+      if (dotB) { dotB.setAttribute('cx', xB); dotB.setAttribute('r', 3.5); dotB.setAttribute('fill', dotColor); }
+      if (val)  { val.setAttribute('x', (xA + xB) / 2); val.textContent = fmtPct(growth); val.setAttribute('fill', valColor); }
 
       g.classList.remove('is-hl', 'is-dim');
       if (state.region) g.classList.add(state.region === rv.key ? 'is-hl' : 'is-dim');
