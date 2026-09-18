@@ -1327,15 +1327,69 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 }
 
 
-/* ── FOOTER — redesign profesional ── */
+/* ── FOOTER — tabla estilo Power Query ── */
 footer {
-  background: #292524;
+  background: #f4f4f4;
   padding: 0;
-  border-top: .5px solid rgba(255,255,255,.1);
+  border-top: .5px solid rgba(17,17,17,.08);
 }
 .foot-inner {
   max-width: 1180px; margin: 0 auto;
-  padding: 64px clamp(1.5rem,5vw,4rem) 32px;
+  padding: 48px clamp(1.5rem,5vw,4rem) 40px;
+}
+.foot-pq-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2px 14px;
+}
+.foot-pq-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--purple); flex-shrink: 0; display: inline-block; }
+.foot-pq-label { font-family: 'Consolas', 'SFMono-Regular', ui-monospace, Menlo, monospace; font-size: 11px; color: var(--muted); letter-spacing: .2px; }
+.foot-pq-count { font-family: 'Consolas', 'SFMono-Regular', ui-monospace, Menlo, monospace; font-size: 10px; color: var(--muted); }
+
+.foot-pq-scroll { overflow-x: auto; border-radius: 10px; box-shadow: 0 1px 2px rgba(17,17,17,.04); }
+.foot-pq-table { min-width: 640px; }
+
+.foot-pq-head, .foot-pq-row {
+  display: grid; grid-template-columns: 48px repeat(4, 1fr);
+}
+.foot-pq-hcell {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 9px 14px; background: rgba(17,17,17,.028);
+  border-bottom: 2px solid var(--purple);
+  border-left: 1px solid rgba(17,17,17,.09);
+}
+.foot-pq-hcell:first-child { border-left: none; justify-content: center; }
+.foot-pq-htype { font-family: 'Consolas', 'SFMono-Regular', ui-monospace, Menlo, monospace; font-size: 10px; font-weight: 700; color: #444; letter-spacing: .2px; }
+.foot-pq-hname { font-size: 12.5px; font-weight: 600; color: var(--ink); white-space: nowrap; }
+.foot-pq-harrow { font-size: 8px; color: var(--muted); }
+
+.foot-pq-idx {
+  padding: 9px 12px; background: rgba(17,17,17,.018);
+  border-bottom: 1px solid rgba(17,17,17,.09);
+  font-family: 'Consolas', 'SFMono-Regular', ui-monospace, Menlo, monospace; font-size: 11px; color: var(--muted); text-align: right;
+  outline: 1.5px solid transparent; outline-offset: -1px; transition: outline-color .1s ease;
+}
+.foot-pq-cell {
+  padding: 9px 14px; border-bottom: 1px solid rgba(17,17,17,.09); border-left: 1px solid rgba(17,17,17,.09);
+  font-size: 13px; color: var(--ink); text-decoration: none; display: flex; align-items: center;
+  outline: 1.5px solid transparent; outline-offset: -1px; transition: outline-color .1s ease, color .15s ease;
+}
+.foot-pq-cell.is-empty { color: rgba(17,17,17,.26); font-style: italic; }
+@media (hover: hover) and (pointer: fine) {
+  .foot-pq-cell:hover, .foot-pq-idx:hover { outline-color: var(--ink); position: relative; z-index: 2; }
+  a.foot-pq-cell:hover { color: var(--purple); }
+}
+
+.foot-pq-bottom {
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+  padding-top: 20px;
+}
+.foot-pq-copy { font-family: 'Consolas', 'SFMono-Regular', ui-monospace, Menlo, monospace; font-size: 11px; color: var(--muted); }
+.foot-pq-made { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.foot-pq-made span:first-child { font-size: 11px; color: var(--muted); }
+.foot-pq-badge { font-size: 10px; font-weight: 600; color: var(--ink); background: rgba(17,17,17,.05); padding: 2px 7px; border-radius: 4px; }
+@media (max-width: 860px) {
+  .foot-pq-topbar { padding: 0 2px 10px; }
+  .foot-pq-bottom { justify-content: flex-start; }
 }
 
 /* ── Reduced motion ── */
@@ -2453,47 +2507,78 @@ footer {
 <footer style="margin: 0px">
   <div class="foot-inner">
 
-    <!-- TOP: CTA principal -->
-    <!-- MIDDLE: cuatro columnas -->
-    <div class="foot-grid">
-      <div class="foot-col foot-col--brand">
-        <div class="foot-brand-name">Borja Mora.</div>
-        <p class="foot-brand-loc">Madrid, España</p>
+    <div class="foot-pq-topbar">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="foot-pq-dot"></span>
+        <span class="foot-pq-label">footer_borjamora</span>
       </div>
+      <span class="foot-pq-count">6 filas · 4 columnas</span>
+    </div>
 
-      <div class="foot-col">
-        <div class="foot-col-title">Navegación</div>
-        <a href="./index.html">Inicio</a>
-        <a href="./sobre-mi.html">Sobre mí</a>
-        <a href="./power-bi.html">Power BI</a>
-        <a href="./analisis-datos.html">Análisis</a>
-        <a href="./visualizacion-datos.html">Visualización</a>
-        <a href="./descargas.html">Descargas</a>
-      </div>
+    <div class="foot-pq-scroll">
+      <div class="foot-pq-table">
 
-      <div class="foot-col">
-        <div class="foot-col-title">Trabajo</div>
-        <a href="./power-bi.html">Power BI</a>
-        <a href="./analisis-datos.html#ml">Machine Learning</a>
-        <a href="./analisis-datos.html#python">Python</a>
-        <a href="./analisis-datos.html#sql">SQL</a>
-      </div>
+        <div class="foot-pq-head">
+          <div class="foot-pq-hcell"><span class="foot-pq-harrow" style="font-size:11px;">&#8862;</span></div>
+          <div class="foot-pq-hcell"><span class="foot-pq-htype">ABC</span><span class="foot-pq-hname">Perfil</span><span class="foot-pq-harrow">&#9662;</span></div>
+          <div class="foot-pq-hcell"><span class="foot-pq-htype">ABC</span><span class="foot-pq-hname">Navegación</span><span class="foot-pq-harrow">&#9662;</span></div>
+          <div class="foot-pq-hcell"><span class="foot-pq-htype">ABC</span><span class="foot-pq-hname">Trabajo</span><span class="foot-pq-harrow">&#9662;</span></div>
+          <div class="foot-pq-hcell"><span class="foot-pq-htype">ABC</span><span class="foot-pq-hname">Sígueme</span><span class="foot-pq-harrow">&#9662;</span></div>
+        </div>
 
-      <div class="foot-col">
-        <div class="foot-col-title">Sígueme</div>
-        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_linkedin',{location:'footer'});">LinkedIn</a>
-        <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_github',{location:'footer'});">GitHub</a>
+        <div class="foot-pq-row">
+          <div class="foot-pq-idx">1</div>
+          <div class="foot-pq-cell">Borja Mora.</div>
+          <a class="foot-pq-cell" href="./index.html">Inicio</a>
+          <a class="foot-pq-cell" href="./power-bi.html">Power BI</a>
+          <a class="foot-pq-cell" href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_linkedin',{location:'footer'});">LinkedIn</a>
+        </div>
+        <div class="foot-pq-row">
+          <div class="foot-pq-idx">2</div>
+          <div class="foot-pq-cell">Data Analyst Junior</div>
+          <a class="foot-pq-cell" href="./sobre-mi.html">Sobre mí</a>
+          <a class="foot-pq-cell" href="./analisis-datos.html#ml">Machine Learning</a>
+          <a class="foot-pq-cell" href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_github',{location:'footer'});">GitHub</a>
+        </div>
+        <div class="foot-pq-row">
+          <div class="foot-pq-idx">3</div>
+          <div class="foot-pq-cell">Madrid, España</div>
+          <a class="foot-pq-cell" href="./power-bi.html">Power BI</a>
+          <a class="foot-pq-cell" href="./analisis-datos.html#python">Python</a>
+          <div class="foot-pq-cell is-empty">—</div>
+        </div>
+        <div class="foot-pq-row">
+          <div class="foot-pq-idx">4</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <a class="foot-pq-cell" href="./analisis-datos.html">Análisis</a>
+          <a class="foot-pq-cell" href="./analisis-datos.html#sql">SQL</a>
+          <div class="foot-pq-cell is-empty">—</div>
+        </div>
+        <div class="foot-pq-row">
+          <div class="foot-pq-idx">5</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <a class="foot-pq-cell" href="./visualizacion-datos.html">Visualización</a>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+        </div>
+        <div class="foot-pq-row">
+          <div class="foot-pq-idx">6</div>
+          <div class="foot-pq-cell is-empty">—</div>
+          <a class="foot-pq-cell" href="./descargas.html">Descargas</a>
+          <div class="foot-pq-cell is-empty">—</div>
+          <div class="foot-pq-cell is-empty">—</div>
+        </div>
+
       </div>
     </div>
 
-    <!-- BOTTOM: legal + colofón -->
-    <div class="foot-bottom">
-      <div class="foot-copy">© 2026 Borja Mora Méndez · Todos los derechos reservados</div>
-      <div class="foot-made">
+    <div class="foot-pq-bottom">
+      <div class="foot-pq-copy">© 2026 Borja Mora Méndez · Todos los derechos reservados</div>
+      <div class="foot-pq-made">
         <span>Diseñado y construido por mí</span>
-        <span class="foot-tech">HTML</span>
-        <span class="foot-tech">CSS</span>
-        <span class="foot-tech">JS</span>
+        <span class="foot-pq-badge">HTML</span>
+        <span class="foot-pq-badge">CSS</span>
+        <span class="foot-pq-badge">JS</span>
       </div>
     </div>
 
