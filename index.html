@@ -329,7 +329,9 @@
   display: none;
   position: absolute;
   top: -28px;
-  left: 6px;
+  /* Alinea con el borde derecho REAL del dashboard-frame (min(640px,110%) — misma fórmula que su width),
+     no con el de .hero-right, que es más ancho porque se estira a toda la columna del grid. */
+  left: calc(min(640px, 110%) - 139px);
   align-items: flex-start;
   gap: 5px;
   z-index: 2;
@@ -351,7 +353,7 @@
   line-height: 1;
   transform: rotate(-2deg);
 }
-.hero-annotation-arrow { color: rgba(17,17,17,.26); margin-top: 11px; flex-shrink: 0; }
+.hero-annotation-arrow { color: rgba(17,17,17,.26); margin-top: 11px; flex-shrink: 0; transform: scaleX(-1); }
 
 .hero-right {
   position: relative;
@@ -1063,6 +1065,8 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
     width: calc(100% + 32px);
   }
   .hero-right .dashboard-frame { width: 100%; }
+  /* El frame ahora ocupa el 100% de .hero-right (en vez de min(640px,110%)) — la anotación sigue esa misma fórmula */
+  .hero-annotation { left: calc(100% - 139px); }
 }
 @media (max-width:900px) {
   .proj-grid { grid-template-columns:1fr; }
