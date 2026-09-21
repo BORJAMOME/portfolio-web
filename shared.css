@@ -30,6 +30,8 @@
   --radius-pill:  999px;
   --ease:         cubic-bezier(0.16,1,0.3,1);
   --ease-spring:  cubic-bezier(.34,1.56,.64,1);
+  --espresso:     #2B2118; /* cierre oscuro cálido: sección Casa Origen + footer */
+  --cream:        #fbf8f3;
 }
 
 /* ─── RESET ─── */
@@ -372,72 +374,83 @@ body {
 
 /* ─── FOOTER ─── */
 footer {
-  background: #292524;
+  background: var(--espresso);
+  color: var(--cream);
   padding: 0;
-  border-top: .5px solid rgba(255,255,255,.1);
 }
 .foot-inner {
   max-width: 1180px; margin: 0 auto;
-  padding: 64px clamp(1.5rem,5vw,4rem) 32px;
+  padding: 72px clamp(1.5rem,5vw,4rem) 32px;
 }
 .foot-grid {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
   gap: 48px;
-  margin-bottom: 48px;
+  margin-bottom: 56px;
 }
-.foot-col { display: flex; flex-direction: column; gap: 10px; }
-.foot-col--brand { gap: 12px; }
+.foot-col { display: flex; flex-direction: column; gap: 2px; }
+.foot-col--brand { gap: 10px; }
 .foot-brand-name {
-  font-size: 14px; font-weight: 700;
-  color: #ffffff; letter-spacing: -.2px;
+  font-family: var(--font-serif);
+  font-size: 26px; font-weight: 500;
+  color: var(--cream); letter-spacing: -.6px; line-height: 1.1;
 }
 .foot-brand-desc {
-  font-size: 14px; color: rgba(255,255,255,.7);
+  font-size: 14px; color: rgba(251,248,243,.72);
   line-height: 1.5; margin: 0; max-width: 280px;
 }
 .foot-brand-loc {
   font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
-  font-size: 11px; color: rgba(255,255,255,.5);
+  font-size: 11px; color: rgba(251,248,243,.55);
   margin: 0; letter-spacing: .5px;
+}
+.foot-status {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 6px;
+  font-size: 12px; color: rgba(251,248,243,.8);
+}
+.foot-status::before {
+  content: '';
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #5ec25a; flex-shrink: 0;
 }
 .foot-col-title {
   font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
   font-size: 11px; font-weight: 500;
-  color: rgba(255,255,255,.4);
+  color: rgba(251,248,243,.55);
   letter-spacing: .8px; text-transform: uppercase;
   margin-bottom: 12px;
   display: flex; align-items: center; gap: 8px;
 }
 .foot-col-title::before { content: '—'; font-weight: 300; }
 .foot-col a {
-  font-size: 15px; color: #ffffff;
+  font-size: 15px; color: var(--cream);
   text-decoration: none; transition: color .2s;
   letter-spacing: -.3px; width: fit-content; font-weight: 400;
   padding: 8px 0; min-height: 44px; display: inline-flex; align-items: center;
 }
 @media (hover: hover) and (pointer: fine) {
-  .foot-col a:hover { color: #ffffff; opacity: .62; transition: color .15s, opacity .15s; }
+  .foot-col a:hover { color: var(--cream); opacity: .62; transition: color .15s, opacity .15s; }
 }
 .foot-bottom {
   display: flex; justify-content: space-between; align-items: center;
   padding-top: 24px;
-  border-top: .5px solid rgba(255,255,255,.1);
+  border-top: .5px solid rgba(251,248,243,.14);
   flex-wrap: wrap; gap: 12px;
 }
 .foot-copy {
   font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
-  font-size: 11px; color: rgba(255,255,255,.5); letter-spacing: .3px;
+  font-size: 11px; color: rgba(251,248,243,.55); letter-spacing: .3px;
 }
 .foot-made {
   display: flex; align-items: center; gap: 8px;
   font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
-  font-size: 11px; color: rgba(255,255,255,.5); letter-spacing: .3px; flex-wrap: wrap;
+  font-size: 11px; color: rgba(251,248,243,.55); letter-spacing: .3px; flex-wrap: wrap;
 }
 .foot-tech {
   font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; font-size: 11px;
-  background: rgba(255,255,255,.08); padding: 2px 7px; border-radius: 4px;
-  color: #ffffff; font-weight: 500; border: .5px solid rgba(255,255,255,.12);
+  background: rgba(251,248,243,.08); padding: 2px 7px; border-radius: 4px;
+  color: var(--cream); font-weight: 500; border: .5px solid rgba(251,248,243,.14);
 }
 
 /* ─── SCROLL REVEAL (compartido) ─── */
@@ -464,7 +477,7 @@ footer {
   .foot-bottom { flex-direction: column; align-items: flex-start; }
 }
 @media (max-width: 520px) {
-  .foot-grid { grid-template-columns: 1fr; gap: 28px; }
+  .foot-grid { grid-template-columns: 1fr 1fr; gap: 28px 20px; }
 }
 /* ─── HAMBURGER BUTTON ─── */
 .nav-burger {
