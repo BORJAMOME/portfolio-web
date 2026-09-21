@@ -1,0 +1,19 @@
+# Taller de Data Storytelling (proyecto en desarrollo): material de trabajo solo en local
+/deck.html
+/*.pptx
+/build_pptx.py
+/build_pptx_native.py
+/export_slides.py
+/extract_content.py
+/qa_export.py
+/content_slides.json
+/full_dump*.txt
+/raw_*.txt
+/image_manifest.txt
+/outline.txt
+/slides_png/
+/pptx_images/
+/qa_png/
+
+# Contexto de diseño del portfolio (solo local)
+/PRODUCT.md
