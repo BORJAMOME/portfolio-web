@@ -738,12 +738,24 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   line-height: .98;
   margin-bottom: 20px;
 }
+.star-box-stats {
+  font-family: var(--font-serif);
+  font-size: clamp(20px, 2.2vw, 28px);
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: -.5px;
+  line-height: 1.3;
+  margin-bottom: 20px;
+}
+.star-box-stats span { white-space: nowrap; }
 .star-box-lead {
   font-size: clamp(15px, 1.1vw, 17px);
   color: var(--muted);
   line-height: 1.6;
   max-width: 680px;
 }
+.star-box-lead strong { color: var(--ink); font-weight: 600; }
+.star-box-lead + .star-box-lead { margin-top: 14px; }
 .star-box-credential {
   font-size: 13px;
   font-weight: 500;
@@ -2226,10 +2238,16 @@ footer {
 
       <!-- Copy -->
       <div class="star-box-body">
-        <span class="star-box-tag">Sistema BI end-to-end</span>
+        <span class="star-box-tag">De los datos a las decisiones</span>
         <h2 class="star-box-title">Casa Origen</h2>
+        <p class="star-box-stats">
+          <span>179.112 tickets.</span> <span>1,57 M€ de facturación.</span> <span>1.200 clientes.</span> <span>37 productos.</span>
+        </p>
         <p class="star-box-lead">
-          Cafetería de especialidad. Dos locales en Madrid. 330.928 filas de datos reales que nadie usaba para decidir. Construí el sistema BI completo para responder las 5 preguntas que el dueño no podía.
+          Construí un sistema de Business Intelligence completo para descubrir qué estaba pasando detrás del negocio: <strong>qué productos retirar, qué combos crear, cuándo dejar de abrir y qué clientes recuperar.</strong>
+        </p>
+        <p class="star-box-lead">
+          SQL, modelado de datos, Power BI y Machine Learning conectados en un único sistema para pasar de la pregunta de negocio a una decisión concreta.
         </p>
         <p class="star-box-credential">
           Proyecto finalista · Bootcamp Data Analytics · Neoland · Julio 2026
