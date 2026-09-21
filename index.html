@@ -669,157 +669,161 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 .cc-link:hover { color: var(--ink); }
 @media (max-width:900px) { .ml-grid { grid-template-columns:1fr; } }
 
-/* ─── PROYECTO ESTRELLA — box unificado ─── */
+/* ─── PROYECTO ESTRELLA — "El ticket" ───
+   Paleta propia de Casa Origen (solo aquí): espresso + crema. */
 .star-section {
-  background: var(--white);
-  padding: 0 0 clamp(96px, 10vw, 120px);
+  --espresso: #2B2118;
+  --cream: #fbf8f3;
+  background: var(--espresso);
+  color: var(--cream);
+  padding: 0 0 clamp(88px, 9vw, 128px);
   overflow: hidden;
   position: relative;
 }
+.star-section > .section-divider::before { background: rgba(251,248,243,.22); }
+.star-section .section-divider-dot { background: var(--cream); }
+.star-section .section-divider-label { color: var(--cream); }
 
-/* STAR BOX */
-.star-box {
-  border: 1px solid #e8e8ee;
-  border-radius: var(--radius-lg);
-  background: var(--white);
-  overflow: hidden;
-  box-shadow:
-    0 0 0 1px rgba(0,0,0,.06),
-    0 1px 1px -0.5px rgba(0,0,0,.06),
-    0 3px 3px -1.5px rgba(0,0,0,.06),
-    0 6px 6px -3px rgba(0,0,0,.06),
-    0 12px 12px -6px rgba(0,0,0,.06),
-    0 24px 24px -12px rgba(0,0,0,.06);
-  transition: box-shadow .3s var(--ease);
-}
-@media (hover: hover) and (pointer: fine) {
-  .star-box:hover {
-    box-shadow: 0 12px 40px rgba(0,0,0,.06);
-  }
-}
-.star-box-img {
-  position: relative;
-  overflow: hidden;
-  background: #fafafa;
-  border-bottom: 1px solid #e8e8ee;
-}
-.star-box-img img {
-  width: 100%;
-  display: block;
-  object-fit: cover;
-  object-position: top left;
-  transition: transform .35s var(--ease);
-}
-.star-box-body {
-  padding: 40px 48px 44px;
+.star-section .c {
   display: flex;
   flex-direction: column;
-}
-.star-box-tag {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 1.2px; text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 16px;
-}
-.star-box-tag::before {
-  content: '';
-  display: inline-block;
-  width: 18px; height: 2px;
-  background: var(--muted);
-  border-radius: 2px;
-}
-.star-box-title {
-  font-family: var(--font-serif);
-  font-size: clamp(36px, 4.2vw, 56px);
-  font-weight: 500;
-  color: var(--ink);
-  letter-spacing: -1.6px;
-  line-height: .98;
-  margin-bottom: 20px;
-}
-.star-box-stats {
-  font-family: var(--font-serif);
-  font-size: clamp(20px, 2.2vw, 28px);
-  font-weight: 500;
-  color: var(--ink);
-  letter-spacing: -.5px;
-  line-height: 1.3;
-  margin-bottom: 20px;
-}
-.star-box-stats span { white-space: nowrap; }
-.star-box-lead {
-  font-size: clamp(15px, 1.1vw, 17px);
-  color: var(--muted);
-  line-height: 1.6;
-  max-width: 680px;
-}
-.star-box-lead strong { color: var(--ink); font-weight: 600; }
-.star-box-lead + .star-box-lead { margin-top: 14px; }
-.star-box-credential {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--muted-light);
-  letter-spacing: 0.3px;
-  margin-top: 20px;
-  margin-bottom: 28px;
-}
-.star-box-footer {
-  display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding-top: 20px;
-  border-top: 0.5px solid var(--ink);
 }
-.star-box-pills {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.star-box-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--ink);
-  background: transparent;
-  border: 1px solid #111111;
-  text-decoration: none;
-  letter-spacing: .02em;
-  padding: 12px 28px;
-  border-radius: var(--radius-md);
-  transition: background .2s var(--ease), color .2s var(--ease), transform .15s var(--ease);
-  white-space: nowrap;
-}
-.star-box-cta .sfc-arrow {
-  font-size: 15px;
-  transition: transform .2s var(--ease);
-}
-@media (hover: hover) and (pointer: fine) {
-  .star-box-cta:hover {
-    background: #111111;
-    color: #ffffff;
-    transform: translateY(-1px);
-  }
-  .star-box-cta:hover .sfc-arrow {
-    transform: translateX(3px);
-  }
-  .star-box:hover .star-box-img img {
-    transform: scale(1.04);
-  }
+.star-title {
+  font-family: var(--font-serif);
+  font-size: clamp(40px, 10vw, 76px);
+  font-weight: 500;
+  letter-spacing: -.026em;
+  line-height: 1;
+  color: var(--cream);
+  text-align: center;
+  margin: 0 0 clamp(40px, 5vw, 60px);
 }
 
-/* STAR BOX RESPONSIVE */
-@media (max-width: 768px) {
-  .star-box-body {
-    padding: 28px 24px 32px;
-  }
-  .star-box-footer {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
+/* Ticket: el wrapper rota y aplica la sombra (drop-shadow sigue el borde serrado;
+   un box-shadow quedaría recortado por el clip-path del ticket). */
+.star-ticket-wrap {
+  width: min(520px, 100%);
+  transform: rotate(-1.6deg);
+  transition: transform .4s var(--ease);
+  filter: drop-shadow(0 30px 40px rgba(0,0,0,.45));
+}
+@media (hover: hover) and (pointer: fine) {
+  .star-ticket-wrap:hover { transform: rotate(-.6deg) scale(1.02); }
+}
+/* "Impresión": se revela de arriba a abajo. Sin JS o con reduced-motion queda visible. */
+.star-ticket-print {
+  clip-path: inset(0 0 0% 0);
+  transition: clip-path 1.2s var(--ease);
+}
+.star-ticket-print.is-pending { clip-path: inset(0 0 100% 0); }
+
+.star-ticket {
+  padding: 40px 40px 34px;
+  background:
+    repeating-linear-gradient(0deg, rgba(180,168,148,.05) 0px, rgba(180,168,148,.05) 1px, transparent 1px, transparent 3px),
+    radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.5) 0%, transparent 55%),
+    radial-gradient(ellipse at 75% 80%, rgba(180,168,148,.12) 0%, transparent 60%),
+    var(--cream);
+  box-shadow: inset 0 0 30px rgba(180,168,148,.15);
+  color: var(--espresso);
+  font-family: 'Courier New', monospace;
+  clip-path: polygon(0% 0%,100% 0%,100% 98%,95% 100%,90% 98%,85% 100%,80% 98%,75% 100%,70% 98%,65% 100%,60% 98%,55% 100%,50% 98%,45% 100%,40% 98%,35% 100%,30% 98%,25% 100%,20% 98%,15% 100%,10% 98%,5% 100%,0% 98%);
+}
+:where(.star-ticket) p { margin: 0; }
+.tk-brand {
+  text-align: center;
+  font-family: var(--font-serif);
+  font-size: 24px; font-weight: 600;
+  letter-spacing: .5px; line-height: 1.3;
+}
+.tk-addr {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 12.5px; line-height: 1.7; letter-spacing: .3px;
+  color: #776c5d;
+}
+.tk-rule {
+  border: 0;
+  border-top: 1px dashed #b6ab98;
+  margin: 16px 0;
+}
+.tk-meta + .tk-rule { margin: 14px 0; }
+.tk-meta {
+  display: flex; justify-content: space-between; gap: 12px;
+  font-size: 10.5px; letter-spacing: .3px;
+  color: #5c5346;
+}
+.tk-kicker {
+  margin-bottom: 10px;
+  text-align: center;
+  font-size: 9.5px; letter-spacing: 1px;
+  color: #776c5d;
+}
+.tk-lines {
+  margin: 0;
+  font-size: 16px; line-height: 2.15;
+}
+.tk-lines > div { display: flex; justify-content: space-between; gap: 12px; }
+.tk-lines dt, .tk-lines dd { margin: 0; }
+.tk-lines dd { font-weight: 700; }
+.tk-stack {
+  text-align: center;
+  font-size: 9.5px; letter-spacing: .5px;
+  color: #776c5d;
+}
+.tk-thanks {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 10px; letter-spacing: 1px;
+  color: #5c5346;
+}
+.tk-barcode {
+  display: flex; justify-content: center; gap: 2px;
+  margin-top: 14px;
+}
+.tk-barcode span { display: block; height: 26px; background: var(--espresso); }
+
+.star-copy {
+  width: min(660px, 100%);
+  margin-top: clamp(56px, 7vw, 88px);
+  text-align: left;
+  text-wrap: pretty;
+}
+.star-copy p {
+  font-size: 17px;
+  line-height: 1.6;
+  color: rgba(251,248,243,.86);
+  margin: 0;
+}
+.star-copy p + p { margin-top: 14px; }
+.star-copy strong { color: var(--cream); font-weight: 600; }
+
+/* CTA: reutiliza el hover sweep de .btn con la paleta crema */
+.btn.star-cta {
+  margin-top: 44px;
+  padding: 14px 28px;
+  font-size: 12px; font-weight: 700;
+  background: var(--cream);
+  color: var(--espresso);
+  border: 1px solid var(--cream);
+}
+.btn.star-cta::before { background: var(--espresso); }
+@media (hover: hover) and (pointer: fine) {
+  .btn.star-cta:hover { color: var(--cream); }
+  .btn.star-cta[data-arrow="right"]:hover .btn-arrow { transform: translateX(4px); }
+}
+.star-credit {
+  margin: 40px 0 0;
+  text-align: center;
+  font-size: 12px; letter-spacing: .3px;
+  color: rgba(251,248,243,.5);
+}
+
+@media (max-width: 480px) {
+  .star-ticket { padding: 32px 24px 30px; }
+  .tk-lines { font-size: 14px; }
+  .tk-addr { font-size: 11.5px; }
 }
 
 /* ─── STACK SKILLS ─── */
@@ -2226,45 +2230,42 @@ footer {
   </div>
 
   <div class="c">
-    <div class="star-box sr">
+    <h2 class="star-title">Casa Origen</h2>
 
-      <!-- Dashboard image -->
-      <div class="star-box-img">
-        <picture>
-          <source srcset="./img/casa-origen-hero.webp" type="image/webp">
-          <img src="./img/casa-origen-hero.png" alt="Casa Origen — Dashboard ejecutivo en Power BI" loading="lazy">
-        </picture>
-      </div>
-
-      <!-- Copy -->
-      <div class="star-box-body">
-        <span class="star-box-tag">De los datos a las decisiones</span>
-        <h2 class="star-box-title">Casa Origen</h2>
-        <p class="star-box-stats">
-          <span>179.112 tickets.</span> <span>1,57 M€ de facturación.</span> <span>1.200 clientes.</span> <span>37 productos.</span>
-        </p>
-        <p class="star-box-lead">
-          Construí un sistema de Business Intelligence completo para descubrir qué estaba pasando detrás del negocio: <strong>qué productos retirar, qué combos crear, cuándo dejar de abrir y qué clientes recuperar.</strong>
-        </p>
-        <p class="star-box-lead">
-          SQL, modelado de datos, Power BI y Machine Learning conectados en un único sistema para pasar de la pregunta de negocio a una decisión concreta.
-        </p>
-        <p class="star-box-credential">
-          Proyecto finalista · Bootcamp Data Analytics · Neoland · Julio 2026
-        </p>
-
-        <div class="star-box-footer">
-          <div class="star-box-pills">
-            <span class="pc-pill">Python</span>
-            <span class="pc-pill">SQL</span>
-            <span class="pc-pill">Power BI</span>
-            <span class="pc-pill">Machine Learning</span>
+    <!-- Ticket de caja: las cifras del proyecto impresas -->
+    <div class="star-ticket-wrap">
+      <div class="star-ticket-print">
+        <div class="star-ticket">
+          <p class="tk-brand">CASA ORIGEN</p>
+          <p class="tk-addr">C/ ARGUMOSA 14 · 28012 LAVAPIÉS<br>C/ FUENCARRAL 61 · 28004 MALASAÑA<br>CIF B87654321 · MADRID</p>
+          <hr class="tk-rule">
+          <div class="tk-meta"><span>TICKET Nº 004521</span><span>20/12/25 · 09:41</span></div>
+          <hr class="tk-rule">
+          <p class="tk-kicker">RESUMEN DEL NEGOCIO · 2023–2025</p>
+          <dl class="tk-lines">
+            <div><dt>TICKETS EMITIDOS</dt><dd>179.112</dd></div>
+            <div><dt>FACTURACIÓN</dt><dd>1,57 M€</dd></div>
+            <div><dt>CLIENTES</dt><dd>1.200</dd></div>
+            <div><dt>PRODUCTOS EN CARTA</dt><dd>37</dd></div>
+          </dl>
+          <hr class="tk-rule">
+          <p class="tk-stack">SQL + POWER BI + MACHINE LEARNING</p>
+          <p class="tk-thanks">GRACIAS POR SU VISITA</p>
+          <div class="tk-barcode" aria-hidden="true">
+            <span style="width:2px"></span><span style="width:1px"></span><span style="width:3px"></span><span style="width:1px"></span><span style="width:2px"></span><span style="width:1px"></span><span style="width:1px"></span><span style="width:3px"></span><span style="width:2px"></span><span style="width:1px"></span><span style="width:2px"></span><span style="width:1px"></span><span style="width:3px"></span><span style="width:1px"></span><span style="width:2px"></span>
           </div>
-          <a href="./casa-origen.html" class="btn btn-outline" data-arrow="right">Ver caso completo <span class="btn-arrow">→</span></a>
         </div>
       </div>
-
     </div>
+
+    <div class="star-copy sr">
+      <p>Construí un sistema de Business Intelligence completo para una cafetería de especialidad, para descubrir qué estaba pasando detrás del negocio: <strong>qué productos retirar, qué combos crear, cuándo dejar de abrir y qué clientes recuperar.</strong></p>
+      <p>SQL, modelado de datos, Power BI y Machine Learning conectados en un único sistema para pasar de la pregunta de negocio a una decisión concreta.</p>
+    </div>
+
+    <a href="./casa-origen.html" class="btn star-cta" data-arrow="right">Ver caso completo <span class="btn-arrow">→</span></a>
+
+    <p class="star-credit">Proyecto finalista · Bootcamp Data Analytics · Neoland · Julio 2026 &nbsp;·&nbsp; Caso simulado · datos sintéticos</p>
   </div>
 </section>
 
@@ -2736,6 +2737,20 @@ const io = new IntersectionObserver((entries)=>{
   entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); } });
 },{ threshold:.1, rootMargin:'0px 0px -30px 0px' });
 document.querySelectorAll('.sr').forEach(el=>io.observe(el));
+
+// ─── TICKET "IMPRESIÓN" (proyecto estrella) ───
+// Una sola vez al entrar en viewport. Sin IntersectionObserver o con reduced-motion queda visible.
+(() => {
+  const wrap = document.querySelector('.star-ticket-wrap');
+  const print = wrap && wrap.querySelector('.star-ticket-print');
+  if (!print || !('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  print.classList.add('is-pending');
+  const tio = new IntersectionObserver((entries) => {
+    if (entries.some(e => e.isIntersecting)) { print.classList.remove('is-pending'); tio.disconnect(); }
+  }, { threshold: .3 });
+  tio.observe(wrap);
+})();
 
 
 // ─── CHART DEFAULTS ───
