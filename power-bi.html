@@ -644,7 +644,7 @@
     <p class="pc-short">En muchos equipos comerciales el análisis de ventas empieza y termina en el total. Si la cifra sube, todo bien. El problema es que <strong>dos períodos pueden cerrar con el mismo número y haber sido radicalmente distintos por dentro</strong>. Construí un informe que aplica el estándar IBCS para integrar <strong>volumen, variación absoluta y porcentaje en un único visual</strong>, con tres tipos de gráfico distintos según el ángulo de lectura.</p>
     <div class="pc-pills"><span class="pc-pill">IBCS</span><span class="pc-pill">DAX</span><span class="pc-pill">Modelado en estrella</span><span class="pc-pill">Drill-down</span><span class="pc-pill">Variación absoluta y relativa</span><span class="pc-pill">Parámetros dinámicos</span><span class="pc-pill">Jerarquía visual</span><span class="pc-pill">Sales analytics</span><span class="pc-pill">YoY analysis</span></div>
     <div class="pc-foot">
-      <a href="https://app.powerbi.com/view?r=eyJrIjoiYWFhNjA5YmQtNjEyYS00YTA3LWIxMzktYWQxOTYzMmZkYzIyIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+      <a href="./ibcs-ventas.html" class="pc-btn">Ver caso completo <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
       <button class="pc-read-more" onclick="openOverlay(0)">Leer más <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
     </div>
   </div>
@@ -1362,6 +1362,7 @@ document.addEventListener('click', e => {
         <p>Replicar el estándar IBCS en Power BI sin custom visuals obliga a entender bien <strong>cómo funciona el formateo condicional a nivel de medida</strong> y cómo construir variaciones que se comporten correctamente con cualquier combinación de filtros activa. La parte más exigente fue conseguir que los tres niveles del gráfico de columnas múltiples mantuvieran las proporciones correctas independientemente del rango de valores del filtro seleccionado. También aprendí que seguir un estándar visual no limita el análisis, lo hace más legible para cualquiera que lo reciba.</p>
       </div>
       <div class="pc-overlay-foot">
+        <a href="./ibcs-ventas.html" class="pc-btn">Ver caso completo <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
         <a href="https://app.powerbi.com/view?r=eyJrIjoiYWFhNjA5YmQtNjEyYS00YTA3LWIxMzktYWQxOTYzMmZkYzIyIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
         <span class="pc-tech">Power BI · DAX</span>
       </div>
