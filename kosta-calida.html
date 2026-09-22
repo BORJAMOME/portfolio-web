@@ -202,8 +202,18 @@ section { padding: 6rem 0; }
 }
 .kc-chain-arrow { color: #6f9f8a; font-size: 1.2rem; }
 
-/* ── Hero — líneas, tiendas y valores ── */
-.hero-simple { background: var(--kc-bg); padding: 8rem 2rem 5rem; text-align: center; }
+/* ── Hero — la estantería como fondo ── */
+.hero-simple {
+  position: relative; min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 6rem 2rem;
+  background-image:
+    linear-gradient(180deg, rgba(247,247,244,.92) 0%, rgba(247,247,244,.6) 30%, rgba(247,247,244,.6) 68%, rgba(247,247,244,.95) 100%),
+    url('./img/kosta-shelf.webp');
+  background-size: cover, cover;
+  background-position: center, center 20%;
+  background-repeat: no-repeat, no-repeat;
+}
 .hero-simple .hero-eyebrow {
   font-size: .75rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
   color: var(--kc-green); margin-bottom: .8rem;
@@ -216,12 +226,6 @@ section { padding: 6rem 0; }
   font-family: Arial, sans-serif; font-size: clamp(1rem, 1.8vw, 1.15rem); color: var(--kc-muted);
   max-width: 520px; margin: 0 auto;
 }
-.kc-hero-figure {
-  max-width: 420px; margin: 3rem auto 0; padding: .9rem;
-  background: #fff; border: 1px solid rgba(22,22,22,.08); border-radius: 10px;
-  box-shadow: 0 24px 64px rgba(22,22,22,.1);
-}
-@media (max-width: 560px) { .kc-hero-figure { max-width: 300px; padding: .6rem; } }
 
 /* ── Footer ── */
 .kc-foot-title { font-size: .7rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #8fd6b0; margin-bottom: 1rem; }
@@ -244,18 +248,11 @@ section { padding: 6rem 0; }
   </a>
 </nav>
 
-<!-- S1 · HERO — líneas, tiendas y valores -->
+<!-- S1 · HERO — la estantería como fondo -->
 <section class="hero-simple" data-screen-label="Hero">
   <p class="hero-eyebrow">Retail · Red de tiendas</p>
   <h1>Kosta Cálida</h1>
   <p class="hero-sub">Del TPV al modelo en estrella</p>
-
-  <figure class="kc-hero-figure reveal">
-    <picture>
-      <source srcset="./img/kosta-shelf.webp" type="image/webp">
-      <img loading="lazy" src="./img/kosta-shelf.webp" alt="Estanterías de una tienda de la red Kosta Cálida: aceites, calabaza, patata y cebolla ecológicas, con etiquetas de precio y cotas de la estructura" style="width:100%; display:block; border-radius:6px;">
-    </picture>
-  </figure>
 </section>
 
 <!-- S2 · EL PROBLEMA -->
