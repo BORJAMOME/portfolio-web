@@ -216,26 +216,12 @@ section { padding: 6rem 0; }
   font-family: Arial, sans-serif; font-size: clamp(1rem, 1.8vw, 1.15rem); color: var(--kc-muted);
   max-width: 520px; margin: 0 auto;
 }
-.kc-hero-chart { max-width: 540px; margin: 3rem auto 0; padding-top: 1.8rem; border-top: 1px solid rgba(22,22,22,.1); }
-.kc-hc-row { display: grid; grid-template-columns: 150px 1fr 92px; align-items: center; gap: 1rem; padding: .65rem 0; }
-.kc-hc-name { font-size: .88rem; color: var(--kc-text); text-align: left; }
-.kc-hc-axis { display: flex; align-items: center; height: 16px; }
-.kc-hc-half { flex: 1; display: flex; height: 4px; }
-.kc-hc-half-neg { justify-content: flex-end; }
-.kc-hc-half-pos { justify-content: flex-start; }
-.kc-hc-fill { height: 4px; border-radius: 2px; }
-.kc-hc-fill.kc-hc-neg { background: var(--kc-red); }
-.kc-hc-fill.kc-hc-pos { background: var(--kc-green); }
-.kc-hc-mid { width: 1px; height: 16px; background: rgba(22,22,22,.15); flex: 0 0 auto; }
-.kc-hc-value { font-family: Georgia, serif; font-size: .88rem; font-weight: 700; text-align: right; }
-.kc-hc-value.kc-hc-pos-text { color: var(--kc-green); }
-.kc-hc-value.kc-hc-neg-text { color: var(--kc-red); }
-.kc-hc-caption { margin-top: 1.2rem; font-size: .75rem; color: var(--kc-muted); letter-spacing: .03em; text-align: center; }
-@media (max-width: 560px) {
-  .kc-hc-row { grid-template-columns: 96px 1fr 76px; gap: .6rem; }
-  .kc-hc-name { font-size: .78rem; }
-  .kc-hc-value { font-size: .78rem; }
+.kc-hero-figure {
+  max-width: 420px; margin: 3rem auto 0; padding: .9rem;
+  background: #fff; border: 1px solid rgba(22,22,22,.08); border-radius: 10px;
+  box-shadow: 0 24px 64px rgba(22,22,22,.1);
 }
+@media (max-width: 560px) { .kc-hero-figure { max-width: 300px; padding: .6rem; } }
 
 /* ── Footer ── */
 .kc-foot-title { font-size: .7rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #8fd6b0; margin-bottom: 1rem; }
@@ -264,36 +250,12 @@ section { padding: 6rem 0; }
   <h1>Kosta Cálida</h1>
   <p class="hero-sub">Del TPV al modelo en estrella</p>
 
-  <div class="kc-hero-chart" aria-hidden="true">
-    <div class="kc-hc-row reveal">
-      <span class="kc-hc-name">Mahón</span>
-      <div class="kc-hc-axis">
-        <div class="kc-hc-half kc-hc-half-neg"><div class="kc-hc-fill kc-hc-neg" style="width:100%"></div></div>
-        <div class="kc-hc-mid"></div>
-        <div class="kc-hc-half kc-hc-half-pos"></div>
-      </div>
-      <span class="kc-hc-value kc-hc-neg-text">−47.700 €</span>
-    </div>
-    <div class="kc-hc-row reveal reveal-delay-1">
-      <span class="kc-hc-name">Sant Francesc Xavier</span>
-      <div class="kc-hc-axis">
-        <div class="kc-hc-half kc-hc-half-neg"></div>
-        <div class="kc-hc-mid"></div>
-        <div class="kc-hc-half kc-hc-half-pos"><div class="kc-hc-fill kc-hc-pos" style="width:13%"></div></div>
-      </div>
-      <span class="kc-hc-value kc-hc-pos-text">+6.000 €</span>
-    </div>
-    <div class="kc-hc-row reveal reveal-delay-2">
-      <span class="kc-hc-name">Ibiza (ciudad)</span>
-      <div class="kc-hc-axis">
-        <div class="kc-hc-half kc-hc-half-neg"></div>
-        <div class="kc-hc-mid"></div>
-        <div class="kc-hc-half kc-hc-half-pos"><div class="kc-hc-fill kc-hc-pos" style="width:10%"></div></div>
-      </div>
-      <span class="kc-hc-value kc-hc-pos-text">+4.600 €</span>
-    </div>
-    <p class="kc-hc-caption reveal reveal-delay-3">Desviación vs. presupuesto, por tienda</p>
-  </div>
+  <figure class="kc-hero-figure reveal">
+    <picture>
+      <source srcset="./img/kosta-shelf.webp" type="image/webp">
+      <img loading="lazy" src="./img/kosta-shelf.webp" alt="Estanterías de una tienda de la red Kosta Cálida: aceites, calabaza, patata y cebolla ecológicas, con etiquetas de precio y cotas de la estructura" style="width:100%; display:block; border-radius:6px;">
+    </picture>
+  </figure>
 </section>
 
 <!-- S2 · EL PROBLEMA -->
