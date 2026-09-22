@@ -740,7 +740,7 @@
     <p class="pc-short">Una distribuidora de hostelería, 400 clientes y una caída de revenue que nadie sabía explicar. El análisis <strong>RFM identificó 198.000€ en riesgo</strong> dentro del segmento que generaba la mitad del negocio. Construí un <strong>sistema de segmentación RFM que clasifica a cada cliente según cuándo compró, con qué frecuencia y cuánto</strong> y asigna una acción comercial concreta a cada grupo.</p>
     <div class="pc-pills"><span class="pc-pill">RFM</span><span class="pc-pill">Segmentación de clientes</span><span class="pc-pill">DAX avanzado</span><span class="pc-pill">Esquema estrella</span><span class="pc-pill">Tabla HTML en DAX</span><span class="pc-pill">KPIs condicionales</span><span class="pc-pill">B2B analytics</span><span class="pc-pill">Customer analytics</span></div>
     <div class="pc-foot">
-      <a href="https://app.powerbi.com/view?r=eyJrIjoiNGQ1OWZhNmEtY2I3Ni00N2M5LTk1NWYtMTEwZTA3NWI3NmYwIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+      <a href="./rfm-hosteleria.html" class="pc-btn">Ver caso completo <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
       <button class="pc-read-more" onclick="openOverlay(6)">Ver más <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
     </div>
   </div>
@@ -1636,6 +1636,7 @@ document.addEventListener('click', e => {
         <p>La parte técnica no fue lo más difícil. Lo complicado fue decidir los cortes de segmentación: cuándo un cliente pasa de Loyal a At Risk no puede ser un número arbitrario, tiene que reflejar el comportamiento real del negocio. Usar <strong>percentiles dinámicos</strong> en lugar de umbrales fijos fue la decisión que más mejoró la calidad del modelo. Generar una <strong>tabla HTML desde DAX</strong> también tiene sus limitaciones en Power BI, y esas limitaciones obligan a pensar más en el diseño antes de escribir la primera línea de código.</p>
       </div>
       <div class="pc-overlay-foot">
+        <a href="./rfm-hosteleria.html" class="pc-btn">Ver caso completo <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
         <a href="https://app.powerbi.com/view?r=eyJrIjoiNGQ1OWZhNmEtY2I3Ni00N2M5LTk1NWYtMTEwZTA3NWI3NmYwIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" rel="noopener noreferrer" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
         <span class="pc-tech">Power BI · DAX · M Language</span>
       </div>
