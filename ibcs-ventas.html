@@ -429,10 +429,19 @@ section { padding: 6rem 0; }
   <div class="ib-wrap">
     <p class="reveal" style="font-size:.75rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--ib-green); margin-bottom:.5rem;">Visualización en Power BI</p>
     <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; margin-bottom:2rem; max-width:900px;">Volumen y variación, en el mismo visual.</h2>
-    <div class="dash-layout-3 reveal reveal-delay-1" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1.2rem; margin-bottom:1.5rem;">
-      <picture><source srcset="./img/ibcs-1.webp" type="image/webp"><img loading="lazy" src="./img/ibcs-1.png" alt="Informe de ventas IBCS — vista 1" style="width:100%; border-radius:8px; border:1px solid var(--ib-grey-line);"></picture>
-      <picture><source srcset="./img/ibcs-2.webp" type="image/webp"><img loading="lazy" src="./img/ibcs-2.png" alt="Informe de ventas IBCS — vista 2" style="width:100%; border-radius:8px; border:1px solid var(--ib-grey-line);"></picture>
-      <picture><source srcset="./img/ibcs-3.webp" type="image/webp"><img loading="lazy" src="./img/ibcs-3.png" alt="Informe de ventas IBCS — vista 3" style="width:100%; border-radius:8px; border:1px solid var(--ib-grey-line);"></picture>
+    <div class="dash-layout-3 reveal reveal-delay-1" style="display:flex; flex-direction:column; gap:2.2rem; max-width:980px; margin:0 auto 1.5rem;">
+      <figure style="margin:0;">
+        <picture><source srcset="./img/ibcs-1.webp" type="image/webp"><img loading="lazy" src="./img/ibcs-1.png" alt="Informe de ventas IBCS — columnas con niveles múltiples" style="width:100%; border-radius:8px; border:1px solid var(--ib-grey-line);"></picture>
+        <figcaption style="margin-top:.8rem; font-size:.8rem; color:var(--ib-muted); text-align:center;"><strong style="color:var(--ib-ink);">01</strong> · Columnas con niveles múltiples</figcaption>
+      </figure>
+      <figure style="margin:0;">
+        <picture><source srcset="./img/ibcs-2.webp" type="image/webp"><img loading="lazy" src="./img/ibcs-2.png" alt="Informe de ventas IBCS — columnas con variación integrada" style="width:100%; border-radius:8px; border:1px solid var(--ib-grey-line);"></picture>
+        <figcaption style="margin-top:.8rem; font-size:.8rem; color:var(--ib-muted); text-align:center;"><strong style="color:var(--ib-ink);">02</strong> · Columnas con variación integrada</figcaption>
+      </figure>
+      <figure style="margin:0;">
+        <picture><source srcset="./img/ibcs-3.webp" type="image/webp"><img loading="lazy" src="./img/ibcs-3.png" alt="Informe de ventas IBCS — líneas de variación" style="width:100%; border-radius:8px; border:1px solid var(--ib-grey-line);"></picture>
+        <figcaption style="margin-top:.8rem; font-size:.8rem; color:var(--ib-muted); text-align:center;"><strong style="color:var(--ib-ink);">03</strong> · Líneas de variación</figcaption>
+      </figure>
     </div>
     <div class="reveal reveal-delay-2">
       <a href="https://app.powerbi.com/view?r=eyJrIjoiYWFhNjA5YmQtNjEyYS00YTA3LWIxMzktYWQxOTYzMmZkYzIyIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" class="ib-cta" target="_blank" rel="noopener" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Informe Ventas IBCS',location:'ibcs_ventas_dashboard'});">Ver dashboard interactivo</a>
