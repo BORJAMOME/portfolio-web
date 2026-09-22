@@ -18,7 +18,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet"></noscript>
 <!-- Shared styles: variables, nav, footer, botones, reset -->
-<link rel="stylesheet" href="./shared.css?v=20260921b">
+<link rel="stylesheet" href="./shared.css?v=20260922">
 <!-- Primary Meta Tags -->
 <meta name="description" content="Power BI · DAX · Python · SQL · UX/UI · Data Storytelling. Madrid o remoto.">
 <meta name="keywords" content="Borja Mora, Data Analyst Madrid, Power BI Developer, Microsoft PL-300, NTT Data, Business Intelligence, Data Storytelling, Python, SQL, UX UI, Neoland, Analytics Translator">
@@ -110,7 +110,7 @@
   #bm-cookie-banner {
     position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(0);
     z-index: 99999; width: min(540px, calc(100vw - 32px));
-    background: #0e0e0e; color: #f7f7fa;
+    background: var(--ink); color: #f7f7fa;
     border: 1px solid rgba(122,123,255,.3);
     border-radius: 16px; padding: 16px 20px;
     display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
@@ -242,11 +242,11 @@
 }
 .about-intro {
   font-family: var(--font);
-  font-size: 15px; color: #505050; line-height: 1.75;
+  font-size: 15px; color: var(--ink); line-height: 1.75;
   margin-bottom: 32px; max-width: 580px;
 }
 .about-intro strong {
-  color: #0a0a0a;
+  color: var(--ink);
   font-weight: 700;
   background: #ffffff;
   padding: 2px 6px;
@@ -275,19 +275,19 @@
 .about-copy p {
   font-family: var(--font);
   font-size: 15px;
-  color: #404040;
+  color: var(--ink);
   line-height: 1.8;
   margin-bottom: 16px;
 }
 .about-copy p:last-child { margin-bottom: 0; }
 .about-copy p strong {
-  color: #0a0a0a;
+  color: var(--ink);
   font-weight: 700;
   background-color: #ffffff;
   padding: 0 3px;
 }
 .about-copy .tl-link {
-  color: #0a0a0a;
+  color: var(--ink);
   text-decoration: underline;
   text-decoration-color: #ffffff;
   text-underline-offset: 4px;
@@ -295,7 +295,7 @@
   transition: color .25s, text-decoration-color .25s;
 }
 .about-copy .tl-link:hover {
-  text-decoration-color: #0a0a0a;
+  text-decoration-color: var(--ink);
 }
 .about-copy.kw-active p strong {
   background-color: #ffffff;
@@ -309,11 +309,11 @@
   object-fit: cover; object-position: top center;
   border-radius: 0; display: block;
   filter: grayscale(100%);
-  border: 1px solid #0a0a0a;
+  border: 1px solid var(--ink);
 }
 .about-cert {
   position: absolute; bottom: -16px; left: -16px; z-index: 2;
-  background: var(--white); border: 1px solid #0a0a0a;
+  background: var(--white); border: 1px solid var(--ink);
   border-radius: 0; padding: 8px 14px;
   box-shadow: none;
   display: flex; align-items: center; gap: 8px;
@@ -456,7 +456,7 @@
 .about-copy p {
   font-size: clamp(13px, .96vw, 15px);
   line-height: 1.55;
-  color: #404040;
+  color: var(--ink);
   margin: 0 0 12px;
   font-weight: 400;
 }

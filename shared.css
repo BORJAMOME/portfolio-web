@@ -17,9 +17,9 @@
   --off:          #f7f7fa;
   --gray:         #e5e5e5;
   --ink:          #111111;
-  --muted:        #5a5a5a;
-  --muted-light:  #696969; /* WCAG AA ≥ 4.5:1 sobre #fff (ratio 5.74:1) */
-  --mutedB:       #6e6e6e; /* WCAG AA ≥ 4.5:1 sobre #fff (ratio 4.88:1) */
+  --muted:        #5a5a5a; /* único gris de texto secundario — WCAG AA ≥ 6.8:1 sobre #fff */
+  --muted-light:  #5a5a5a; /* alias de --muted (antes #696969) — consolidado, no crear grises nuevos */
+  --mutedB:       #5a5a5a; /* alias de --muted (antes #6e6e6e) — consolidado, no crear grises nuevos */
   --li:           #0077b5;
   --logo-purple:  #7a7bff;
   --font:         'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
@@ -30,8 +30,8 @@
   --radius-pill:  999px;
   --ease:         cubic-bezier(0.16,1,0.3,1);
   --ease-spring:  cubic-bezier(.34,1.56,.64,1);
-  --espresso:     #2B2118; /* cierre oscuro cálido: sección Casa Origen + footer */
-  --cream:        #fbf8f3;
+  --espresso:     #2B2118; /* paleta invitada de Casa Origen — SOLO .star-section. No usar como negro general. */
+  --cream:        #fbf8f3; /* pareja de --espresso — mismo alcance restringido. */
 }
 
 /* ─── RESET ─── */
@@ -372,10 +372,12 @@ body {
   .btn-outline[data-arrow="right"]:hover .btn-arrow { transform: translateX(4px); }
 }
 
-/* ─── FOOTER ─── */
+/* ─── FOOTER ───
+   Negro estructural de marca (--ink), el mismo que nav, botones y filetes.
+   El espresso de Casa Origen NO se usa aquí — es paleta invitada de esa sección, no el negro del sitio. */
 footer {
-  background: var(--espresso);
-  color: var(--cream);
+  background: var(--ink);
+  color: #ffffff;
   padding: 0;
 }
 .foot-inner {
@@ -393,21 +395,21 @@ footer {
 .foot-brand-name {
   font-family: var(--font-serif);
   font-size: 26px; font-weight: 500;
-  color: var(--cream); letter-spacing: -.6px; line-height: 1.1;
+  color: #ffffff; letter-spacing: -.6px; line-height: 1.1;
 }
 .foot-brand-desc {
-  font-size: 14px; color: rgba(251,248,243,.72);
+  font-size: 14px; color: rgba(255,255,255,.72);
   line-height: 1.5; margin: 0; max-width: 280px;
 }
 .foot-brand-loc {
   font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
-  font-size: 11px; color: rgba(251,248,243,.55);
+  font-size: 11px; color: rgba(255,255,255,.55);
   margin: 0; letter-spacing: .5px;
 }
 .foot-status {
   display: flex; align-items: center; gap: 8px;
   margin-top: 6px;
-  font-size: 12px; color: rgba(251,248,243,.8);
+  font-size: 12px; color: rgba(255,255,255,.8);
 }
 .foot-status::before {
   content: '';
@@ -417,40 +419,40 @@ footer {
 .foot-col-title {
   font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
   font-size: 11px; font-weight: 500;
-  color: rgba(251,248,243,.55);
+  color: rgba(255,255,255,.55);
   letter-spacing: .8px; text-transform: uppercase;
   margin-bottom: 12px;
   display: flex; align-items: center; gap: 8px;
 }
 .foot-col-title::before { content: '—'; font-weight: 300; }
 .foot-col a {
-  font-size: 15px; color: var(--cream);
+  font-size: 15px; color: #ffffff;
   text-decoration: none; transition: color .2s;
   letter-spacing: -.3px; width: fit-content; font-weight: 400;
   padding: 8px 0; min-height: 44px; display: inline-flex; align-items: center;
 }
 @media (hover: hover) and (pointer: fine) {
-  .foot-col a:hover { color: var(--cream); opacity: .62; transition: color .15s, opacity .15s; }
+  .foot-col a:hover { color: #ffffff; opacity: .62; transition: color .15s, opacity .15s; }
 }
 .foot-bottom {
   display: flex; justify-content: space-between; align-items: center;
   padding-top: 24px;
-  border-top: .5px solid rgba(251,248,243,.14);
+  border-top: .5px solid rgba(255,255,255,.14);
   flex-wrap: wrap; gap: 12px;
 }
 .foot-copy {
   font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
-  font-size: 11px; color: rgba(251,248,243,.55); letter-spacing: .3px;
+  font-size: 11px; color: rgba(255,255,255,.55); letter-spacing: .3px;
 }
 .foot-made {
   display: flex; align-items: center; gap: 8px;
   font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
-  font-size: 11px; color: rgba(251,248,243,.55); letter-spacing: .3px; flex-wrap: wrap;
+  font-size: 11px; color: rgba(255,255,255,.55); letter-spacing: .3px; flex-wrap: wrap;
 }
 .foot-tech {
   font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; font-size: 11px;
-  background: rgba(251,248,243,.08); padding: 2px 7px; border-radius: 4px;
-  color: var(--cream); font-weight: 500; border: .5px solid rgba(251,248,243,.14);
+  background: rgba(255,255,255,.08); padding: 2px 7px; border-radius: 4px;
+  color: #ffffff; font-weight: 500; border: .5px solid rgba(255,255,255,.14);
 }
 
 /* ─── SCROLL REVEAL (compartido) ─── */
@@ -1000,7 +1002,7 @@ nav.nav-drawer-links {
   .tl-body p {
     font-size: 14px !important;
     line-height: 1.65 !important;
-    color: #404040 !important;
+    color: var(--muted) !important;
     margin-bottom: 14px !important;
   }
 
@@ -1015,7 +1017,7 @@ nav.nav-drawer-links {
 
   /* Links estilo original del sobre-mi */
   .tl-link {
-    color: #0a0a0a !important;
+    color: var(--ink) !important;
     text-decoration: underline !important;
     text-decoration-color: var(--purple) !important;
     text-underline-offset: 4px !important;
@@ -1026,12 +1028,12 @@ nav.nav-drawer-links {
   .tl-quote {
     margin: 16px 0 !important;
     padding: 12px 14px !important;
-    border-left: 2px solid #111111 !important;
+    border-left: 2px solid var(--ink) !important;
     border-top: none !important;
     border-right: none !important;
     border-bottom: none !important;
     font-style: italic !important;
-    color: #404040 !important;
+    color: var(--muted) !important;
     font-size: 14px !important;
     line-height: 1.65 !important;
     background: #f7f7fa !important;
