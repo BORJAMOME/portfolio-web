@@ -271,26 +271,29 @@ section { padding: 6rem 0; }
 <section class="hero-simple" data-screen-label="Hero">
   <p class="hero-eyebrow">Retail · Red de tiendas</p>
   <h1>Kosta Cálida</h1>
-  <p class="hero-sub">Del TPV al modelo en estrella</p>
+  <p class="hero-sub">Reporting para una red de tiendas</p>
 </section>
 
 <!-- S2 · EL PROBLEMA -->
 <section id="problema" data-screen-label="El problema">
   <div class="kc-wrap">
-    <p class="reveal kc-eyebrow">El problema</p>
+    <p class="reveal kc-eyebrow">01 · El punto de partida</p>
     <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; margin-bottom:1.5rem; max-width:900px;">La dirección tenía números delante, pero no contexto.</h2>
-    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--kc-text); max-width:760px; line-height:1.75; margin-bottom:1.2rem;">Sabían la recaudación del día, pero no podían decir qué categorías erosionaban el beneficio, qué tienda estaba por debajo de la media en margen o si estaban cumpliendo objetivos o solo superando el mes anterior.</p>
-    <p class="reveal reveal-delay-2" style="font-size:1.05rem; color:var(--kc-text); max-width:760px; line-height:1.75;">Cada departamento miraba su parte. <strong>No existía una fuente única que conectara ventas, rentabilidad y objetivos.</strong> Eso no es un problema de datos. Es un problema de estructura analítica.</p>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--kc-text); max-width:760px; line-height:1.75; margin-bottom:1.2rem;">Una red de tiendas puede acumular miles de tickets y tener muchos datos disponibles, pero eso no significa que la información sea fácil de utilizar. Los datos de ventas ya existían: el problema estaba en cómo utilizarlos.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; color:var(--kc-text); max-width:760px; line-height:1.75; margin-bottom:1.2rem;">Había información suficiente para conocer los resultados, pero no una estructura que permitiera analizar fácilmente qué había detrás de cada variación.</p>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; color:var(--kc-text); max-width:760px; line-height:1.75; margin-bottom:1.2rem;">En este proyecto partí de datos de TPV y construí un sistema de reporting en Power BI pensado para pasar de una visión general del negocio al detalle que explica cada resultado. Planteé el proyecto desde una pregunta sencilla: ¿qué tendría que poder responder una persona de dirección cuando detecta que algo ha cambiado?</p>
+    <p class="reveal reveal-delay-4" style="font-size:1.05rem; color:var(--kc-text); max-width:760px; line-height:1.75;"><strong>Mi objetivo era que una desviación en un KPI no terminara en una cifra, sino que pudiera seguirse hasta encontrar qué tienda, producto o ticket estaba detrás.</strong> A partir de ahí construí el modelo, las medidas y las páginas del informe para que el análisis pudiera avanzar desde el resumen hasta el detalle.</p>
   </div>
 </section>
 
 <!-- S3 · EL OBJETIVO -->
 <section id="objetivo" data-screen-label="El objetivo" style="background:var(--kc-mist);">
   <div class="kc-wrap">
-    <p class="reveal kc-eyebrow">El objetivo</p>
+    <p class="reveal kc-eyebrow">02 · El objetivo</p>
     <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; margin-bottom:1.5rem; max-width:900px;">De una desviación en un KPI al ticket que la explica.</h2>
-    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--kc-text); max-width:760px; line-height:1.75; margin-bottom:3rem;">Construir un sistema de reporting que permitiera pasar de una desviación en un KPI hasta el ticket concreto que la explica, con <strong>ventas, margen y objetivos conectados</strong> en el mismo modelo y sin necesidad de cruzar hojas de cálculo separadas.</p>
-    <div class="kpi-grid-3 reveal reveal-delay-2" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1.5rem;">
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--kc-text); max-width:760px; line-height:1.75; margin-bottom:1.2rem;">Un KPI puede decirme que las ventas han bajado, pero eso es solo el principio del análisis. Quería que el informe permitiera seguir esa desviación y entender dónde se produce: <strong>qué tienda está detrás, qué productos están influyendo y qué ha ocurrido a nivel de ticket.</strong></p>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; color:var(--kc-text); max-width:760px; line-height:1.75; margin-bottom:3rem;">Por eso planteé el reporting con diferentes niveles de detalle. La idea es sencilla: empezar con una señal y poder profundizar hasta encontrar el contexto que la explica.</p>
+    <div class="kpi-grid-3 reveal reveal-delay-3" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1.5rem;">
       <div style="text-align:center; padding:2rem 1rem;">
         <span class="kc-tnum" style="font-size:clamp(1.8rem, 3.5vw, 2.8rem); color:var(--kc-ink); font-weight:700; line-height:1;" data-count="12">0</span>
         <p style="font-size:.82rem; color:var(--kc-muted); margin-top:.4rem;">tablas en el modelo</p>
@@ -310,9 +313,9 @@ section { padding: 6rem 0; }
 <!-- S4 · EL MODELO -->
 <section id="modelo" data-screen-label="El modelo">
   <div class="kc-wrap">
-    <p class="reveal kc-eyebrow">El modelo</p>
+    <p class="reveal kc-eyebrow">03 · Modelo de datos</p>
     <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; margin-bottom:1.5rem; max-width:900px;">Esquema en estrella: dos hechos, tres dimensiones.</h2>
-    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--kc-text); max-width:800px; line-height:1.75; margin-bottom:2rem;">El error de fondo era el orden en que se había planteado el análisis: vistas parciales sobre datos sin modelar, en lugar de diseñar primero cómo debía funcionar el negocio como modelo. Empecé por ahí.</p>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--kc-text); max-width:800px; line-height:1.75; margin-bottom:2rem;">Para construir el modelo organicé los datos siguiendo un esquema en estrella. Separé los hechos principales de las dimensiones para mantener una estructura clara y facilitar tanto el análisis como el mantenimiento del modelo. Trabajé con dos tablas de hechos y tres dimensiones, conectadas para poder analizar las ventas desde diferentes perspectivas — esta estructura también me permitió construir las medidas de forma más ordenada y reutilizable.</p>
     <div class="grid-2col reveal reveal-delay-2" style="display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:start; margin-bottom:2.5rem;">
       <div>
         <p style="font-size:1rem; color:var(--kc-text); line-height:1.75; margin-bottom:1.1rem;"><strong>Esquema en estrella</strong> con dos tablas de hechos, <code style="background:var(--kc-mist); border:1px solid var(--kc-ash); padding:.1rem .4rem; border-radius:4px;">Ventas</code> y <code style="background:var(--kc-mist); border:1px solid var(--kc-ash); padding:.1rem .4rem; border-radius:4px;">Presupuestos</code>, conectadas a tres dimensiones —<code style="background:var(--kc-mist); border:1px solid var(--kc-ash); padding:.1rem .4rem; border-radius:4px;">Fecha</code>, <code style="background:var(--kc-mist); border:1px solid var(--kc-ash); padding:.1rem .4rem; border-radius:4px;">Productos</code> y <code style="background:var(--kc-mist); border:1px solid var(--kc-ash); padding:.1rem .4rem; border-radius:4px;">Tienda</code>— mediante cinco relaciones activas, todas 1→N con filtro en una única dirección.</p>
@@ -330,9 +333,9 @@ section { padding: 6rem 0; }
 <!-- S4b · LAS MEDIDAS DAX -->
 <section id="medidas" data-screen-label="Las medidas DAX" style="background:var(--kc-mist);">
   <div class="kc-wrap">
-    <p class="reveal kc-eyebrow">El lenguaje del modelo</p>
+    <p class="reveal kc-eyebrow">04 · DAX</p>
     <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; margin-bottom:1.5rem; max-width:900px;">92 medidas, organizadas como código.</h2>
-    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--kc-text); max-width:800px; line-height:1.75; margin-bottom:2.5rem;">Todas las medidas viven en una tabla contenedora sin columnas, agrupadas en carpetas por función — igual que se organiza un proyecto de código, no una hoja de cálculo. Así cualquier medida se encuentra por lo que hace, no por dónde se guardó.</p>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--kc-text); max-width:800px; line-height:1.75; margin-bottom:2.5rem;">A medida que el modelo crecía, también lo hacía el número de medidas necesarias para analizarlo. Llegué a 92 medidas DAX y decidí organizarlas siguiendo una estructura clara, agrupando la lógica para que fuera más fácil localizar, mantener y reutilizar cada cálculo — igual que se organiza un proyecto de código, no una hoja de cálculo.</p>
     <div class="views-grid-5 reveal reveal-delay-2" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:1rem;">
       <div style="padding:1.3rem 1.2rem;">
         <p style="font-size:.95rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">00. Básico</p>
@@ -367,16 +370,17 @@ section { padding: 6rem 0; }
         <p style="font-size:.78rem; color:#c9c9c4; line-height:1.5;">Deltas, colores hex dinámicos, puntos máx/mín y ranking Top N.</p>
       </div>
     </div>
-    <p class="reveal reveal-delay-3" style="font-size:.95rem; color:var(--kc-muted); max-width:800px; line-height:1.7; margin-top:1.6rem;">Las carpetas técnicas son las que más sorprenden: generan el color de cada barra, la posición de cada etiqueta y el ranking dinámico Top N, para construir gráficos a medida con DAX + SVG en vez de depender de visuales nativos.</p>
+    <p class="reveal reveal-delay-3" style="font-size:.95rem; color:var(--kc-muted); max-width:800px; line-height:1.7; margin-top:1.6rem;">No se trataba solo de conseguir que las medidas funcionaran. También quería que, si volvía al proyecto después de un tiempo, pudiera entender rápidamente dónde estaba cada cálculo y qué hacía.</p>
   </div>
 </section>
 
 <!-- S5 · CÓMO SE CONSTRUYÓ -->
 <section id="construccion" data-screen-label="Cómo se construyó">
   <div class="kc-wrap">
-    <p class="reveal kc-eyebrow">Proceso</p>
-    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; margin-bottom:2rem; max-width:900px;">Del TPV en bruto a un dashboard con drill-down.</h2>
-    <div class="steps-grid-6 reveal reveal-delay-1" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem;">
+    <p class="reveal kc-eyebrow">05 · Power BI</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; margin-bottom:1.5rem; max-width:900px;">Del TPV en bruto a un dashboard con drill-down.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--kc-text); max-width:800px; line-height:1.75; margin-bottom:2rem;">El siguiente paso fue llevar el modelo a Power BI y construir una navegación que permitiera pasar de lo general a lo particular. Partí de los datos de TPV y fui construyendo diferentes niveles de análisis para que el usuario pudiera profundizar cuando encontrara una variación relevante. El drill-down se convirtió así en una parte importante del informe: no solo mostrar el dato, sino permitir investigar qué hay detrás.</p>
+    <div class="steps-grid-6 reveal reveal-delay-2" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem;">
       <div style="padding:1.4rem 1.3rem;">
         <p class="kc-num-tag">01</p>
         <p style="font-size:1rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">Power Query</p>
@@ -414,9 +418,9 @@ section { padding: 6rem 0; }
 <!-- S6 · LAS 13 PÁGINAS -->
 <section id="vistas" data-screen-label="Las trece páginas" style="background:var(--kc-mist);">
   <div class="kc-wrap">
-    <p class="reveal kc-eyebrow">El dashboard</p>
+    <p class="reveal kc-eyebrow">06 · Usuarios</p>
     <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; margin-bottom:1rem; max-width:900px;">Trece páginas, cuatro roles distintos.</h2>
-    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--kc-text); max-width:800px; line-height:1.75; margin-bottom:2.5rem;">No son 13 páginas sueltas: cada una cumple un papel concreto dentro del mismo recorrido, desde la portada hasta el ticket individual.</p>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--kc-text); max-width:800px; line-height:1.75; margin-bottom:2.5rem;">No todas las personas necesitan consultar la información de la misma manera. Por eso estructuré las 13 páginas del informe teniendo en cuenta diferentes necesidades de análisis y perfiles de usuario. La información cambia según el nivel de detalle que necesita cada persona, pero el modelo y la lógica del análisis se mantienen conectados — así, el informe funciona como un sistema de reporting y no simplemente como una colección de dashboards independientes.</p>
     <div class="views-grid-5 reveal reveal-delay-2" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:1rem;">
       <div style="background:var(--kc-paper); padding:1.5rem 1.3rem;">
         <p class="kc-num-tag">1 página</p>
@@ -456,16 +460,16 @@ section { padding: 6rem 0; }
     <span class="kc-chain-arrow">→</span>
     <span class="kc-chain-node kc-chain-node-final">Ticket</span>
   </div>
-  <p class="reveal reveal-delay-2" style="font-size:clamp(1rem, 1.8vw, 1.15rem); color:#c9c9c4; max-width:700px; line-height:1.75; margin-bottom:1.2rem;">Seis páginas de drillthrough hacen ese salto posible: desde cualquier ranking se baja de nivel sin cambiar de herramienta ni cruzar hojas de cálculo, hasta el ticket y el producto exactos que explican la desviación.</p>
-  <p class="reveal reveal-delay-3" style="font-size:.88rem; color:#9a9a92; max-width:640px; line-height:1.6; font-style:italic;">Por ejemplo: una desviación de −47.700 € en Mahón se puede desglosar hasta la categoría y el ticket concretos que la originan.</p>
+  <p class="reveal reveal-delay-2" style="font-size:clamp(1rem, 1.8vw, 1.15rem); color:#c9c9c4; max-width:700px; line-height:1.75; margin-bottom:1.2rem;">Un responsable puede detectar una desviación en un indicador y empezar el análisis desde ahí. A partir de ese punto, puede profundizar en el informe para localizar dónde se produce la diferencia y terminar consultando el detalle necesario para entenderla.</p>
+  <p class="reveal reveal-delay-3" style="font-size:.9rem; color:#9a9a92; max-width:640px; line-height:1.6;">El objetivo es que el dato agregado no sea el final del análisis, sino el comienzo.</p>
 </section>
 
 <!-- S8 · DASHBOARD — imágenes en vertical -->
 <section id="dashboard" data-screen-label="Dashboard">
   <div class="kc-wrap">
-    <p class="reveal kc-eyebrow">Visualización en Power BI</p>
+    <p class="reveal kc-eyebrow">08 · Páginas del informe</p>
     <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; margin-bottom:.6rem; max-width:900px;">Dos de las trece páginas del informe.</h2>
-    <p class="reveal reveal-delay-1" style="font-size:1rem; color:var(--kc-muted); max-width:700px; line-height:1.7; margin-bottom:2rem;">El informe completo tiene 13 páginas conectadas al mismo modelo — estas dos, a modo de muestra: la portada y una de las vistas de comparación.</p>
+    <p class="reveal reveal-delay-1" style="font-size:1rem; color:var(--kc-muted); max-width:700px; line-height:1.7; margin-bottom:2rem;">Estas son dos ejemplos de cómo llevé el modelo y la lógica de análisis a Power BI. Cada página responde a una necesidad diferente, pero todas parten de la misma estructura de datos y mantienen una lógica común de navegación — el objetivo fue evitar dashboards aislados y construir un sistema en el que las diferentes vistas se complementaran entre sí.</p>
     <div class="dash-vertical reveal reveal-delay-1" style="display:flex; flex-direction:column; gap:2.2rem; max-width:980px; margin:0 auto 1.5rem;">
       <figure style="margin:0;">
         <picture><source srcset="./img/kosta-1.webp" type="image/webp"><img loading="lazy" src="./img/kosta-1.png" alt="Kosta Cálida — página Objetivos, portada del informe" style="width:100%; border-radius:8px;"></picture>
@@ -486,11 +490,12 @@ section { padding: 6rem 0; }
 <!-- S9 · UN EJEMPLO DE LECTURA (antes "hallazgos", ahora una nota breve) -->
 <section id="ejemplo" data-screen-label="Un ejemplo de lectura" style="background:var(--kc-mist); padding:4rem 0;">
   <div class="kc-wrap">
-    <p class="reveal kc-eyebrow">Un ejemplo de lectura</p>
+    <p class="reveal kc-eyebrow">09 · Qué permite hacer</p>
     <h3 class="reveal" style="font-family:var(--kc-sans); font-size:1.4rem; font-weight:700; letter-spacing:-0.02em; color:var(--kc-ink); margin-bottom:1rem; max-width:800px;">Qué permite ver el sistema, en un caso concreto.</h3>
-    <p class="reveal reveal-delay-1" style="font-size:.98rem; color:var(--kc-text); max-width:800px; line-height:1.75; margin-bottom:.9rem;">El año cerró en <strong class="kc-tnum">717.304 €</strong> frente a un presupuesto de <strong class="kc-tnum">776.000 €</strong>: una desviación de <strong class="kc-tnum">−58.700 € (−7,56 %)</strong>. La portada del informe reparte esa cifra por tienda: Mahón, la de más ventas de la red <strong class="kc-tnum">(277.000 €)</strong>, era también la que más arrastraba la desviación <strong class="kc-tnum">(−47.700 €)</strong>. Sant Francesc Xavier e Ibiza (ciudad), con menos volumen, eran las únicas dos en positivo <strong class="kc-tnum">(+6.000 € y +4.600 €)</strong>.</p>
-    <p class="reveal reveal-delay-2" style="font-size:.98rem; color:var(--kc-text); max-width:800px; line-height:1.75; margin-bottom:1rem;">Un patrón parecido aparecía por categoría: Bebidas y Refrescos lideraba en ventas y en margen <strong class="kc-tnum">(+37,58 %)</strong>, mientras Conveniencia y Tienda Express cerraba con <strong>margen negativo</strong> pese a un volumen similar.</p>
-    <p class="reveal reveal-delay-3" style="font-size:.85rem; color:var(--kc-muted); font-style:italic;">Son lecturas entre las muchas que permiten las 13 páginas del modelo — no el resumen del proyecto.</p>
+    <p class="reveal reveal-delay-1" style="font-size:.98rem; color:var(--kc-text); max-width:800px; line-height:1.75; margin-bottom:1rem;">La utilidad del informe aparece cuando se utiliza para responder preguntas concretas. Por ejemplo, si un KPI muestra una variación, puedo empezar viendo el resultado general, comparar tiendas o categorías y profundizar hasta encontrar qué está provocando el cambio.</p>
+    <p class="reveal reveal-delay-2" style="font-size:.98rem; color:var(--kc-text); max-width:800px; line-height:1.75; margin-bottom:.9rem;">El año cerró en <strong class="kc-tnum">717.304 €</strong> frente a un presupuesto de <strong class="kc-tnum">776.000 €</strong>: una desviación de <strong class="kc-tnum">−58.700 € (−7,56 %)</strong>. La portada del informe reparte esa cifra por tienda: Mahón, la de más ventas de la red <strong class="kc-tnum">(277.000 €)</strong>, era también la que más arrastraba la desviación <strong class="kc-tnum">(−47.700 €)</strong>. Sant Francesc Xavier e Ibiza (ciudad), con menos volumen, eran las únicas dos en positivo <strong class="kc-tnum">(+6.000 € y +4.600 €)</strong>.</p>
+    <p class="reveal reveal-delay-3" style="font-size:.98rem; color:var(--kc-text); max-width:800px; line-height:1.75; margin-bottom:1rem;">Un patrón parecido aparecía por categoría: Bebidas y Refrescos lideraba en ventas y en margen <strong class="kc-tnum">(+37,58 %)</strong>, mientras Conveniencia y Tienda Express cerraba con <strong>margen negativo</strong> pese a un volumen similar.</p>
+    <p class="reveal reveal-delay-4" style="font-size:.85rem; color:var(--kc-muted);">Para mí, esta es una de las partes más interesantes de Power BI: conectar diferentes niveles de información para que el usuario no tenga que empezar de cero cada vez que aparece una pregunta nueva.</p>
   </div>
 </section>
 
@@ -501,20 +506,20 @@ section { padding: 6rem 0; }
     <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; margin-bottom:2rem;">Stack técnico</h2>
     <div class="tools-grid-3 reveal reveal-delay-1" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:1.1rem; text-align:left;">
       <div style="padding:1.4rem 1.5rem;">
-        <p style="font-size:1.02rem; font-weight:700; color:var(--kc-ink); margin-bottom:.4rem;">Power Query</p>
-        <p style="font-size:.85rem; color:var(--kc-muted); line-height:1.55;">Transformación y limpieza de los datos del TPV antes del modelo.</p>
-      </div>
-      <div style="padding:1.4rem 1.5rem;">
         <p style="font-size:1.02rem; font-weight:700; color:var(--kc-ink); margin-bottom:.4rem;">Power BI</p>
-        <p style="font-size:.85rem; color:var(--kc-muted); line-height:1.55;">Modelo en estrella y las 13 páginas del informe, con drillthrough hasta nivel de ticket diario.</p>
+        <p style="font-size:.85rem; color:var(--kc-muted); line-height:1.55;">Modelo de datos, medidas, visualización y navegación.</p>
       </div>
       <div style="padding:1.4rem 1.5rem;">
         <p style="font-size:1.02rem; font-weight:700; color:var(--kc-ink); margin-bottom:.4rem;">DAX</p>
-        <p style="font-size:.85rem; color:var(--kc-muted); line-height:1.55;">92 medidas: ventas YTD, cumplimiento vs presupuesto, margen por categoría y producto, ticket medio entre tiendas.</p>
+        <p style="font-size:.85rem; color:var(--kc-muted); line-height:1.55;">Cálculos, KPIs y lógica de análisis.</p>
       </div>
       <div style="padding:1.4rem 1.5rem;">
-        <p style="font-size:1.02rem; font-weight:700; color:var(--kc-ink); margin-bottom:.4rem;">DAX + SVG</p>
-        <p style="font-size:.85rem; color:var(--kc-muted); line-height:1.55;">Gráficos a medida: colores dinámicos, deltas y ranking Top N generados por medida, sin visuales personalizados externos.</p>
+        <p style="font-size:1.02rem; font-weight:700; color:var(--kc-ink); margin-bottom:.4rem;">Power Query</p>
+        <p style="font-size:.85rem; color:var(--kc-muted); line-height:1.55;">Preparación y transformación de los datos.</p>
+      </div>
+      <div style="padding:1.4rem 1.5rem;">
+        <p style="font-size:1.02rem; font-weight:700; color:var(--kc-ink); margin-bottom:.4rem;">Modelo dimensional</p>
+        <p style="font-size:.85rem; color:var(--kc-muted); line-height:1.55;">Esquema en estrella y relaciones entre hechos y dimensiones.</p>
       </div>
     </div>
   </div>
@@ -523,24 +528,25 @@ section { padding: 6rem 0; }
 <!-- S11 · QUÉ APRENDÍ -->
 <section id="aprendizaje" data-screen-label="Qué aprendí" style="background:var(--kc-mist);">
   <div class="kc-wrap">
-    <p class="reveal kc-eyebrow">Qué aprendí</p>
+    <p class="reveal kc-eyebrow">10 · Conclusión</p>
     <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; margin-bottom:1.5rem; max-width:900px;">El orden importa.</h2>
-    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--kc-text); max-width:800px; line-height:1.75; margin-bottom:1.2rem;">El drill-down hasta nivel de ticket fue la parte más exigente del modelo. Para que funcionara correctamente con cualquier combinación de filtros activa, las relaciones entre tablas tenían que estar diseñadas desde el principio con esa granularidad en mente.</p>
-    <p style="font-size:1.15rem; font-weight:700; color:var(--kc-ink); max-width:800px; line-height:1.6; font-family:var(--kc-sans); letter-spacing:-0.01em;" class="reveal reveal-delay-2">También aprendí que el orden importa: diseñar el modelo antes que los dashboards no es una preferencia metodológica, es lo que determina si el sistema aguanta o se rompe cuando alguien hace una pregunta que no estaba prevista.</p>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--kc-text); max-width:800px; line-height:1.75; margin-bottom:1.2rem;">Trabajar en este proyecto me hizo prestar mucha más atención a lo que ocurre antes de construir un gráfico. Cuando los datos están bien estructurados, las medidas están organizadas y el modelo tiene una lógica clara, es mucho más fácil construir un informe que pueda crecer sin convertirse en un conjunto de elementos difíciles de mantener.</p>
+    <p style="font-size:1.15rem; font-weight:700; color:var(--kc-ink); max-width:800px; line-height:1.6; font-family:var(--kc-sans); letter-spacing:-0.01em;" class="reveal reveal-delay-2">También me ayudó a entender algo que considero importante en Power BI: un buen dashboard no termina cuando encontramos el KPI correcto. La parte interesante empieza cuando podemos preguntar qué hay detrás de ese KPI y tenemos un modelo preparado para encontrar la respuesta.</p>
   </div>
 </section>
 
 <!-- S12 · CTA -->
 <section data-screen-label="CTA" style="text-align:center; padding:6rem 2rem 8rem;">
   <div class="kc-wrap reveal">
-    <p class="reveal cta-closing" style="font-family:var(--kc-sans); font-weight:700; letter-spacing:-0.02em; font-size:clamp(1.6rem, 3.6vw, 2.4rem); line-height:1.35; color:var(--kc-ink); max-width:820px; margin:0 auto 3rem; text-wrap:balance;">De datos sueltos en el TPV a un modelo que aguanta cualquier pregunta.</p>
-    <div class="reveal reveal-delay-1" style="display:flex; flex-wrap:wrap; justify-content:center; gap:2.5rem;">
+    <p class="reveal cta-closing" style="font-family:var(--kc-sans); font-weight:700; letter-spacing:-0.02em; font-size:clamp(1.6rem, 3.6vw, 2.4rem); line-height:1.35; color:var(--kc-ink); max-width:820px; margin:0 auto 1.5rem; text-wrap:balance;">De datos sueltos en el TPV a un modelo que aguanta cualquier pregunta.</p>
+    <p class="reveal reveal-delay-1" style="font-size:1rem; color:var(--kc-muted); max-width:680px; margin:0 auto 3rem; line-height:1.75;">He pasado de trabajar con datos de ventas sin una estructura clara a construir un modelo de Power BI capaz de conectar los KPIs con el detalle que hay detrás. Ese recorrido —del dato al modelo, del modelo al informe y del informe a la pregunta— es precisamente la parte del proyecto que más me interesaba trabajar.</p>
+    <div class="reveal reveal-delay-2" style="display:flex; flex-wrap:wrap; justify-content:center; gap:2.5rem;">
       <div>
-        <a href="https://app.powerbi.com/view?r=eyJrIjoiMzhlYjliYTAtMWUzMS00YzE1LTgyNGEtZmZmNDVhNjQ1ZDY3IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=03634c064fb23f65778f" class="kc-cta" target="_blank" rel="noopener" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Kosta Calida',location:'kosta_calida_cta'});">Abrir dashboard en Power BI</a>
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiMzhlYjliYTAtMWUzMS00YzE1LTgyNGEtZmZmNDVhNjQ1ZDY3IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=03634c064fb23f65778f" class="kc-cta" target="_blank" rel="noopener" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Kosta Calida',location:'kosta_calida_cta'});">Ver el informe completo en Power BI</a>
         <p style="margin-top:1rem; font-size:.85rem; color:var(--kc-muted);">Dashboard interactivo publicado en Power BI Service</p>
       </div>
       <div>
-        <a href="./power-bi.html" class="kc-cta kc-cta-ghost">Ver el resto de proyectos</a>
+        <a href="./power-bi.html" class="kc-cta kc-cta-ghost">Ver el proyecto y el análisis</a>
         <p style="margin-top:1rem; font-size:.85rem; color:var(--kc-muted);">Portfolio completo de Power BI</p>
       </div>
     </div>
