@@ -319,34 +319,49 @@ section { padding: 5rem 0; }
   <p class="hero-scroll" style="font-family:var(--pg-body); font-size:.8rem; color:var(--pg-muted); letter-spacing:.1em; text-transform:uppercase; animation-name:pgFadeUp, pulse-down; animation-duration:.6s, 2s; animation-delay:.95s, 1.55s; animation-timing-function:cubic-bezier(.16,1,.3,1), ease-in-out; animation-iteration-count:1, infinite; animation-fill-mode:forwards, none;">scroll ↓</p>
 </section>
 
-<!-- S2 · EL PROBLEMA -->
-<section id="problema" data-screen-label="El problema">
+<!-- S2 · CONTEXTO -->
+<section id="problema" data-screen-label="Contexto">
   <div class="pg-wrap">
-    <p class="pg-tag reveal">El problema</p>
-    <h2 class="reveal" style="font-size:clamp(1.7rem, 4vw, 2.4rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">La PyG es el informe más importante y, curiosamente, uno de los que peor funciona en BI.</h2>
-    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--pg-text); max-width:760px; line-height:1.6; margin-bottom:1.2rem;">Cuando los datos financieros llegan al BI sin estructura contable detrás, los problemas son predecibles: totales que no cuadran al cambiar el filtro, signos que se invierten según el contexto, subtotales que agregan lo que no deberían.</p>
-    <p class="reveal reveal-delay-2" style="font-size:1.05rem; color:var(--pg-text); max-width:760px; line-height:1.6;">En un informe que dirección usa para tomar decisiones, <strong>perder coherencia significa perder credibilidad</strong>.</p>
+    <p class="pg-tag reveal">Contexto</p>
+    <h2 class="reveal" style="font-size:clamp(1.7rem, 4vw, 2.4rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Una PyG es uno de los informes más importantes para entender un negocio.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--pg-text); max-width:760px; line-height:1.6; margin-bottom:1.2rem;">Una Cuenta de Pérdidas y Ganancias (PyG) resume los ingresos, costes y gastos de una empresa durante un periodo y muestra cuál ha sido el resultado final.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; color:var(--pg-text); max-width:760px; line-height:1.6; margin-bottom:1.2rem;">En teoría, parece sencillo. En la práctica, una PyG puede tener muchas líneas, niveles y relaciones entre partidas.</p>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; color:var(--pg-text); max-width:760px; line-height:1.6;">Cuando la llevé a Power BI, mi reto no era simplemente conseguir que los números aparecieran en una tabla. Quería poder explorarlos <strong>sin perder la lógica financiera que hay detrás de cada cifra</strong>.</p>
+  </div>
+</section>
+
+<!-- S2b · QUÉ ES UNA PyG -->
+<section id="que-es-pyg" data-screen-label="¿Qué es una PyG?" style="background:var(--pg-cream);">
+  <div class="pg-wrap">
+    <p class="pg-tag reveal">¿Qué es una PyG?</p>
+    <h2 class="reveal" style="font-size:clamp(1.7rem, 4vw, 2.4rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Antes de entrar en Power BI: ¿qué es una Cuenta de Pérdidas y Ganancias?</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--pg-text); max-width:760px; line-height:1.6; margin-bottom:1.2rem;">Una <strong>Cuenta de Pérdidas y Ganancias (PyG)</strong> sirve para entender cómo ha funcionado económicamente un negocio durante un periodo. De forma simplificada:</p>
+    <p class="reveal reveal-delay-1" style="font-family:var(--pg-display); font-size:1.3rem; color:var(--pg-ink); max-width:760px; margin-bottom:1.2rem;">Ingresos − costes y gastos = resultado</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; color:var(--pg-text); max-width:760px; line-height:1.6; margin-bottom:1.2rem;">Pero una PyG real tiene muchas más líneas y niveles. El resultado final depende de todas las partidas que hay detrás.</p>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; color:var(--pg-text); max-width:760px; line-height:1.6; margin-bottom:1.2rem;">Por eso, cuando una cifra cambia, la pregunta interesante no es solo <strong>cuánto ha cambiado</strong>, sino también <strong>qué partidas explican ese cambio</strong>.</p>
+    <p class="reveal reveal-delay-4" style="font-size:1.05rem; color:var(--pg-text); max-width:760px; line-height:1.6;">Eso es precisamente lo que quería poder explorar con este proyecto.</p>
   </div>
 </section>
 
 <!-- S3 · EL OBJETIVO -->
 <section id="objetivo" data-screen-label="El objetivo" style="background:var(--pg-cream);">
   <div class="pg-wrap">
-    <p class="pg-tag reveal">El objetivo</p>
-    <h2 class="reveal" style="font-size:clamp(1.7rem, 4vw, 2.4rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Un P&amp;L que respondiera bien en cualquier escenario.</h2>
-    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--pg-text); max-width:760px; line-height:1.6; margin-bottom:3rem;">Construir un P&amp;L que funcionara con <strong>filtros cruzados por año, trimestre, departamento y organización</strong>, con Real vs Presupuesto comparables en el mismo informe, y con subtotales que cuadraran siempre sin depender de parches visuales.</p>
+    <p class="pg-tag reveal">Objetivo</p>
+    <h2 class="reveal" style="font-size:clamp(1.7rem, 4vw, 2.4rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Quería una PyG que pudiera explorar sin perder el contexto.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--pg-text); max-width:760px; line-height:1.6; margin-bottom:1rem;">Mi objetivo era construir un informe financiero que permitiera pasar de una visión general del resultado al detalle que lo explica. Para ello, trabajé con dos necesidades principales: consultar la PyG desde diferentes niveles de detalle, y entender qué partidas están detrás de cada resultado.</p>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--pg-text); max-width:760px; line-height:1.6; margin-bottom:3rem;">Así, el informe no se queda únicamente en mostrar una cifra: <strong>permite seguir el camino hasta entender de dónde viene</strong>.</p>
     <div class="kpi-grid-3 reveal reveal-delay-2" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1.2rem;">
       <div style="text-align:center; background:#fff; border-radius:20px; padding:2rem 1rem; border:1px solid var(--pg-mist);">
-        <span style="font-family:var(--pg-display); font-size:clamp(1.8rem, 3.5vw, 2.6rem); color:var(--pg-ink); font-weight:400; line-height:1;" data-count="6">0</span>
-        <p style="font-size:.82rem; color:var(--pg-muted); margin-top:.4rem;">dimensiones del modelo</p>
+        <span style="font-family:var(--pg-display); font-size:clamp(1.8rem, 3.5vw, 2.6rem); color:var(--pg-ink); font-weight:400; line-height:1;" data-count="3">0</span>
+        <p style="font-size:.82rem; color:var(--pg-muted); margin-top:.4rem;">niveles principales de análisis</p>
       </div>
       <div style="text-align:center; background:#fff; border-radius:20px; padding:2rem 1rem; border:1px solid var(--pg-mist);">
-        <span style="font-family:var(--pg-display); font-size:clamp(1.8rem, 3.5vw, 2.6rem); color:var(--pg-ink); font-weight:400; line-height:1;" data-count="4">0</span>
-        <p style="font-size:.82rem; color:var(--pg-muted); margin-top:.4rem;">años comparados (2020–2023)</p>
+        <span style="font-family:var(--pg-display); font-size:clamp(1.8rem, 3.5vw, 2.6rem); color:var(--pg-ink); font-weight:400; line-height:1;" data-count="2">0</span>
+        <p style="font-size:.82rem; color:var(--pg-muted); margin-top:.4rem;">perspectivas de lectura</p>
       </div>
       <div style="text-align:center; background:#fff; border-radius:20px; padding:2rem 1rem; border:1px solid var(--pg-mist);">
         <span style="font-family:var(--pg-display); font-size:clamp(1.8rem, 3.5vw, 2.6rem); color:var(--pg-green); font-weight:400; line-height:1;">+<span data-count="92.1" data-decimals="1">0</span>%</span>
-        <p style="font-size:.82rem; color:var(--pg-muted); margin-top:.4rem;">desviación vs presupuesto</p>
+        <p style="font-size:.82rem; color:var(--pg-muted); margin-top:.4rem;">variación frente al presupuesto</p>
       </div>
     </div>
   </div>
@@ -355,23 +370,22 @@ section { padding: 5rem 0; }
 <!-- S4 · MI ENFOQUE -->
 <section id="enfoque" data-screen-label="Mi enfoque">
   <div class="pg-wrap">
-    <p class="pg-tag reveal">Mi enfoque</p>
-    <h2 class="reveal" style="font-size:clamp(1.7rem, 4vw, 2.4rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Construí el modelo desde la lógica contable, no desde la visual.</h2>
-    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--pg-text); max-width:800px; line-height:1.6; margin-bottom:2rem;">Cada cuenta clasificada explícitamente como ingreso, coste o gasto, con <strong>reglas de signos definidas a nivel de modelo</strong> para que los totales cuadraran en cualquier nivel de filtro. Los subtotales responden cada uno a su estructura contable concreta, no a una agregación automática.</p>
-    <p class="reveal reveal-delay-2" style="font-family:var(--pg-display); font-size:1.15rem; color:var(--pg-ink); margin-bottom:.3rem;">Los tres subtotales</p>
-    <p class="reveal reveal-delay-2 pg-tag" style="margin-bottom:1.2rem;">cada uno con su propia lógica contable</p>
+    <p class="pg-tag reveal">Modelo</p>
+    <h2 class="reveal" style="font-size:clamp(1.7rem, 4vw, 2.4rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Construí el modelo desde la lógica contable, no desde la visualización.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--pg-text); max-width:800px; line-height:1.6; margin-bottom:1rem;">Antes de diseñar el dashboard, primero tuve que entender cómo estaba organizada la información financiera. Una PyG no es simplemente una lista de números: cada línea tiene un significado y forma parte de una estructura de ingresos, costes, gastos y resultados.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; color:var(--pg-text); max-width:800px; line-height:1.6; margin-bottom:2rem;">Por eso, primero organicé los datos siguiendo esa lógica y después construí las visualizaciones sobre el modelo.</p>
     <div class="kpi-grid-3 reveal reveal-delay-3" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1.2rem;">
       <div style="background:var(--pg-cream); border-radius:8px; padding:1.8rem 1.6rem;">
-        <p style="font-family:var(--pg-display); font-size:1.1rem; color:var(--pg-ink); margin-bottom:.4rem;">Margen Bruto</p>
-        <p style="font-size:.85rem; color:var(--pg-text); line-height:1.5;">Ingresos menos el coste directo asociado a producirlos.</p>
+        <p style="font-family:var(--pg-display); font-size:1.1rem; color:var(--pg-ink); margin-bottom:.4rem;">Lógica financiera</p>
+        <p style="font-size:.85rem; color:var(--pg-text); line-height:1.5;">La estructura del modelo sigue la forma en la que se interpreta una PyG.</p>
       </div>
       <div style="background:var(--pg-cream); border-radius:8px; padding:1.8rem 1.6rem;">
-        <p style="font-family:var(--pg-display); font-size:1.1rem; color:var(--pg-ink); margin-bottom:.4rem;">Beneficio Operativo</p>
-        <p style="font-size:.85rem; color:var(--pg-text); line-height:1.5;">Margen Bruto menos los gastos de estructura y operación.</p>
+        <p style="font-family:var(--pg-display); font-size:1.1rem; color:var(--pg-ink); margin-bottom:.4rem;">Flexibilidad</p>
+        <p style="font-size:.85rem; color:var(--pg-text); line-height:1.5;">El modelo permite analizar la información desde diferentes perspectivas.</p>
       </div>
       <div style="background:var(--pg-cream); border-radius:8px; padding:1.8rem 1.6rem;">
-        <p style="font-family:var(--pg-display); font-size:1.1rem; color:var(--pg-ink); margin-bottom:.4rem;">Beneficio Neto</p>
-        <p style="font-size:.85rem; color:var(--pg-text); line-height:1.5;">El resultado final, después de todas las partidas contables.</p>
+        <p style="font-family:var(--pg-display); font-size:1.1rem; color:var(--pg-ink); margin-bottom:.4rem;">Trazabilidad</p>
+        <p style="font-size:.85rem; color:var(--pg-text); line-height:1.5;">Puedo pasar del resultado a las partidas que ayudan a explicarlo.</p>
       </div>
     </div>
   </div>
@@ -384,9 +398,9 @@ section { padding: 5rem 0; }
     <h2 class="reveal" style="font-size:clamp(1.7rem, 4vw, 2.4rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Una tabla de hechos central y seis dimensiones.</h2>
     <div class="grid-2col reveal reveal-delay-1" style="display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:start;">
       <div>
-        <p style="font-size:1rem; color:var(--pg-text); line-height:1.6; margin-bottom:1.2rem;">El modelo vive sobre una tabla de hechos central <code style="background:var(--pg-fog); padding:.1rem .4rem; border-radius:4px;">PyG</code> con seis dimensiones: Calendario, Cuentas, Departamentos, Escenario, Organizaciones y Encabezados.</p>
-        <p style="font-size:1rem; color:var(--pg-text); line-height:1.6; margin-bottom:1.2rem;">Las medidas están organizadas en seis carpetas: Básico, Importe, Presupuesto, Real, Variación y Tiempo.</p>
-        <p style="font-size:1rem; color:var(--pg-text); line-height:1.6;">Sobre esa base construí la comparativa <strong>Real vs Presupuesto</strong> con variación absoluta, porcentaje de desviación y un <strong>waterfall chart</strong> que no solo muestra la diferencia sino que explica qué partidas la generan y en qué dirección.</p>
+        <p style="font-size:1rem; color:var(--pg-text); line-height:1.6; margin-bottom:1.2rem;">Para construir el análisis utilicé una tabla de hechos central relacionada con seis dimensiones: <code style="background:var(--pg-fog); padding:.1rem .4rem; border-radius:4px;">PyG</code> · Calendario, Cuentas, Departamentos, Escenario, Organizaciones y Encabezados.</p>
+        <p style="font-size:1rem; color:var(--pg-text); line-height:1.6; margin-bottom:1.2rem;">La tabla de hechos concentra los movimientos que quiero analizar, mientras que las dimensiones aportan el contexto necesario para poder filtrarlos y agruparlos.</p>
+        <p style="font-size:1rem; color:var(--pg-text); line-height:1.6;">Esta estructura me permite mantener la información organizada y analizar las partidas financieras desde diferentes perspectivas dentro de Power BI. La idea era sencilla: <strong>que el modelo facilitara el análisis en lugar de limitarlo</strong>.</p>
       </div>
       <div style="background:var(--pg-cream); border-radius:6px 0px 0px 0px; padding:2.6rem 2.2rem 2.2rem;">
         <p style="font-family:var(--pg-body); font-size:.72rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--pg-gold); margin-bottom:1rem;">Esquema</p>
@@ -409,9 +423,12 @@ section { padding: 5rem 0; }
 <!-- S6 · DASHBOARD -->
 <section id="dashboard" data-screen-label="Dashboard" style="background:var(--pg-cream);">
   <div class="pg-wrap">
-    <p class="pg-tag reveal">Visualización en Power BI</p>
-    <h2 class="reveal" style="font-size:clamp(1.7rem, 4vw, 2.4rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Dos vistas: la PyG expandible y el detalle con waterfall.</h2>
-    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--pg-text); max-width:800px; line-height:1.6; margin-bottom:2rem;">La primera es la <strong>PyG expandible</strong> con cuatro años de datos (2020–2023), Real y Presupuesto en columnas paralelas, con indicadores visuales de desviación por partida. La segunda es la <strong>vista de detalle</strong> con el Estado de Resultados Comparativo completo más dos waterfall charts.</p>
+    <p class="pg-tag reveal">Visualización</p>
+    <h2 class="reveal" style="font-size:clamp(1.7rem, 4vw, 2.4rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Dos formas de leer la misma información.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--pg-text); max-width:800px; line-height:1.6; margin-bottom:1rem;">Una PyG puede responder preguntas diferentes dependiendo de cómo se consulte. Por eso construí dos vistas complementarias.</p>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--pg-text); max-width:800px; line-height:1.6; margin-bottom:.8rem;"><strong>PyG expandible</strong> — una vista pensada para empezar con el resultado general y abrir progresivamente cada nivel hasta llegar al detalle. Me permite pasar de una cifra global a las partidas que la componen sin cambiar de contexto.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; color:var(--pg-text); max-width:800px; line-height:1.6; margin-bottom:1.2rem;"><strong>Detalle con waterfall</strong> — una vista orientada a entender cómo las diferentes partidas contribuyen al resultado final. El gráfico waterfall ayuda a ver qué conceptos aumentan o reducen el resultado hasta llegar a la cifra final.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; color:var(--pg-text); max-width:800px; line-height:1.6; margin-bottom:2rem;">No quería tener dos visualizaciones diferentes porque sí. Cada una responde a una pregunta: <strong>¿dónde estoy?</strong> y <strong>¿qué está explicando este resultado?</strong></p>
     <div class="dash-layout reveal reveal-delay-2" style="display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-bottom:1.2rem;">
       <picture><source srcset="./img/pyg-1.webp" type="image/webp"><img loading="lazy" src="./img/pyg-1.png" alt="Dashboard Cuenta de Pérdidas y Ganancias — vista 1" style="width:100%; border-radius:20px;"></picture>
       <picture><source srcset="./img/pyg-2.webp" type="image/webp"><img loading="lazy" src="./img/pyg-2.png" alt="Dashboard Cuenta de Pérdidas y Ganancias — vista 2" style="width:100%; border-radius:20px;"></picture>
@@ -428,67 +445,64 @@ section { padding: 5rem 0; }
 
 <!-- S7 · IMPACTO -->
 <section data-screen-label="Impacto" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:6rem 2rem; background:var(--pg-ink);">
-  <p class="reveal" style="font-family:var(--pg-display); font-size:clamp(1.5rem, 3.6vw, 2.2rem); line-height:1.2; color:#fff; max-width:760px; margin-bottom:2rem;">El total dice cuánto. La cascada dice por qué.</p>
-  <p class="reveal reveal-delay-1 impacto-text" style="font-family:var(--pg-display); font-size:clamp(2.1rem, 5.5vw, 3.8rem); line-height:1.05; max-width:1000px; margin-left:auto; margin-right:auto; text-align:center; margin-bottom:2rem;"><span style="color:#fff;">Beneficio Neto Real 6,78M€ — </span><span style="color:var(--pg-green);">+92,1% vs presupuesto.</span></p>
+  <p class="reveal" style="font-family:var(--pg-display); font-size:clamp(1.5rem, 3.6vw, 2.2rem); line-height:1.2; color:#fff; max-width:760px; margin-bottom:1.2rem;">El total dice cuánto. La cascada ayuda a entender por qué.</p>
+  <p class="reveal reveal-delay-1" style="font-size:clamp(1rem, 1.8vw, 1.15rem); color:#c7c7c7; line-height:1.6; max-width:640px; margin-bottom:1.4rem;">El resultado neto muestra el punto de llegada:</p>
+  <p class="reveal reveal-delay-1 impacto-text" style="font-family:var(--pg-display); font-size:clamp(2.1rem, 5.5vw, 3.8rem); line-height:1.05; max-width:1000px; margin-left:auto; margin-right:auto; text-align:center; margin-bottom:.6rem;"><span style="color:#fff;">Beneficio Neto Real 6,78M€</span></p>
+  <p class="reveal reveal-delay-2" style="font-family:var(--pg-display); font-size:clamp(1.3rem, 3vw, 1.8rem); color:var(--pg-green); margin-bottom:2rem;">+92,1% vs presupuesto</p>
   <div style="max-width:700px; display:flex; flex-direction:column; gap:1.1rem;">
-    <p class="reveal reveal-delay-2" style="font-size:clamp(1rem, 1.8vw, 1.15rem); color:#c7c7c7; line-height:1.6;">En 2021 el Beneficio Neto Real fue de 6,78 millones frente a 3,53 millones presupuestados, una desviación positiva del 92,1%.</p>
-    <p class="reveal reveal-delay-3" style="font-size:clamp(1rem, 1.8vw, 1.15rem); color:#c7c7c7; line-height:1.6;">La cascada muestra que el driver principal fue el <strong style="color:#fff;">crecimiento de ingresos, no la contención de costes</strong>.</p>
-    <p class="reveal reveal-delay-4" style="font-size:clamp(1rem, 1.8vw, 1.15rem); color:#c7c7c7; line-height:1.6;">Esa distinción no aparece en el total. Solo aparece cuando la cascada descompone de dónde viene la diferencia.</p>
+    <p class="reveal reveal-delay-2" style="font-size:clamp(1rem, 1.8vw, 1.15rem); color:#c7c7c7; line-height:1.6;">Pero esta cifra, por sí sola, no explica qué ha ocurrido. Para entenderla, necesito mirar las partidas que han contribuido a llegar hasta ese resultado.</p>
+    <p class="reveal reveal-delay-3" style="font-size:clamp(1rem, 1.8vw, 1.15rem); color:#c7c7c7; line-height:1.6;">Ahí es donde entra el waterfall: permite seguir visualmente cómo los diferentes conceptos van sumando o restando hasta llegar al resultado final.</p>
+    <p class="reveal reveal-delay-4" style="font-size:clamp(1rem, 1.8vw, 1.15rem); color:#c7c7c7; line-height:1.6;">Una cifra puede decirme <strong style="color:#fff;">cuánto</strong> ha ocurrido. El análisis tiene que ayudarme a entender <strong style="color:#fff;">por qué</strong>.</p>
   </div>
 </section>
 
 <!-- S8 · HALLAZGOS CLAVE -->
 <section id="hallazgos" data-screen-label="Hallazgos clave">
   <div class="pg-wrap">
-    <p class="pg-tag reveal">Hallazgos clave</p>
-    <h2 class="reveal" style="font-size:clamp(1.7rem, 4vw, 2.4rem); line-height:1.15; margin-bottom:2rem; max-width:900px;">Lo que dice el total y lo que dice la cascada.</h2>
+    <p class="pg-tag reveal">Comparación</p>
+    <h2 class="reveal" style="font-size:clamp(1.7rem, 4vw, 2.4rem); line-height:1.15; margin-bottom:2rem; max-width:900px;">El mismo resultado puede contar una historia diferente según cómo lo mires.</h2>
     <div class="pg-card-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
       <div class="reveal reveal-delay-1 pg-card" style="background:#fff; border:1px solid var(--pg-mist); border-radius:20px; padding:1.8rem 2rem;">
         <h3 style="font-family:var(--pg-display); font-size:1.25rem; color:var(--pg-ink); margin:0 0 1rem;">El total</h3>
-        <div style="display:flex; gap:2rem; margin-bottom:1.2rem;">
-          <div><span style="display:block; font-family:var(--pg-display); font-size:1.4rem; color:var(--pg-ink); line-height:1;">6,78M€</span><span style="font-size:.65rem; text-transform:uppercase; letter-spacing:.08em; color:var(--pg-muted);">beneficio neto real</span></div>
-          <div><span style="display:block; font-family:var(--pg-display); font-size:1.4rem; color:var(--pg-green); line-height:1;">+92,1%</span><span style="font-size:.65rem; text-transform:uppercase; letter-spacing:.08em; color:var(--pg-muted);">vs presupuesto</span></div>
-        </div>
-        <p style="font-size:.9rem; color:var(--pg-text); line-height:1.55;">La PyG expandible muestra el resultado de un vistazo, con cuatro años de Real y Presupuesto en columnas paralelas.</p>
+        <span style="display:block; font-family:var(--pg-display); font-size:1.6rem; color:var(--pg-ink); line-height:1; margin-bottom:1rem;">6,78M€</span>
+        <p style="font-size:.9rem; color:var(--pg-text); line-height:1.55; margin-bottom:.8rem;">El resultado final es positivo y se encuentra un <strong>92,1% por encima del presupuesto</strong>.</p>
+        <p style="font-size:.9rem; color:var(--pg-text); line-height:1.55;">Es la cifra que necesito para saber cuál ha sido el resultado.</p>
       </div>
       <div class="reveal reveal-delay-2 pg-card" style="background:var(--pg-cream); border-radius:6px 0px 0px 0px; padding:1.8rem 2rem;">
         <h3 style="font-family:var(--pg-display); font-size:1.25rem; color:var(--pg-ink); margin:0 0 1rem;">La cascada</h3>
-        <p style="font-size:.9rem; color:var(--pg-text); line-height:1.55; margin-bottom:.8rem;">El waterfall chart descompone esa desviación del 92,1% en las partidas que la generan.</p>
-        <p style="font-size:.9rem; color:var(--pg-text); line-height:1.55;">El driver principal fue el <strong>crecimiento de ingresos</strong>, no el recorte de costes — una lectura que el total por sí solo no puede dar.</p>
+        <p style="font-size:.9rem; color:var(--pg-text); line-height:1.55; margin-bottom:.8rem;">La cascada añade el contexto necesario para entender qué partidas han contribuido a llegar hasta ese resultado.</p>
+        <p style="font-size:.9rem; color:var(--pg-text); line-height:1.55;">Al combinar ambas vistas puedo pasar rápidamente de la cifra final al detalle que la explica.</p>
       </div>
     </div>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; color:var(--pg-text); max-width:800px; line-height:1.6; margin-top:2rem;"><strong>El total responde al «cuánto». El detalle ayuda a responder al «por qué».</strong></p>
   </div>
 </section>
 
 <!-- S9 · HERRAMIENTAS -->
 <section id="stack" data-screen-label="Herramientas">
   <div class="pg-wrap" style="text-align:center;">
-    <p class="pg-tag reveal">Herramientas</p>
-    <h2 class="reveal" style="font-size:clamp(1.7rem, 4vw, 2.4rem); line-height:1.15; margin-bottom:1.2rem;">Stack técnico</h2>
+    <p class="pg-tag reveal">Stack técnico</p>
+    <h2 class="reveal" style="font-size:clamp(1.7rem, 4vw, 2.4rem); line-height:1.15; margin-bottom:1.2rem;">Las herramientas que utilicé</h2>
     <div class="tools-grid-6 reveal reveal-delay-1" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1.1rem; text-align:left;">
       <div style="background:var(--pg-cream); border-radius:8px; padding:1.4rem 1.5rem;">
         <p style="font-family:var(--pg-display); font-size:1.05rem; color:var(--pg-ink); margin-bottom:.4rem;">Power BI</p>
-        <p style="font-size:.85rem; color:var(--pg-muted); line-height:1.5;">Modelo completo, las dos vistas del informe y la navegación entre ellas.</p>
+        <p style="font-size:.85rem; color:var(--pg-muted); line-height:1.5;">Para construir el modelo, las medidas y las visualizaciones del informe.</p>
       </div>
       <div style="background:var(--pg-cream); border-radius:8px; padding:1.4rem 1.5rem;">
         <p style="font-family:var(--pg-display); font-size:1.05rem; color:var(--pg-ink); margin-bottom:.4rem;">DAX</p>
-        <p style="font-size:.85rem; color:var(--pg-muted); line-height:1.5;">Subtotales con lógica contable, control de signos, variación Real vs Presupuesto y los cálculos de cascada.</p>
+        <p style="font-size:.85rem; color:var(--pg-muted); line-height:1.5;">Para crear los cálculos necesarios para analizar los resultados y compararlos con el presupuesto.</p>
       </div>
       <div style="background:var(--pg-cream); border-radius:8px; padding:1.4rem 1.5rem;">
-        <p style="font-family:var(--pg-display); font-size:1.05rem; color:var(--pg-ink); margin-bottom:.4rem;">Waterfall chart</p>
-        <p style="font-size:.85rem; color:var(--pg-muted); line-height:1.5;">Descompone la desviación Real vs Presupuesto en las partidas que la generan y en qué dirección.</p>
+        <p style="font-family:var(--pg-display); font-size:1.05rem; color:var(--pg-ink); margin-bottom:.4rem;">Power Query</p>
+        <p style="font-size:.85rem; color:var(--pg-muted); line-height:1.5;">Para preparar y transformar los datos antes de utilizarlos en el modelo.</p>
       </div>
       <div style="background:var(--pg-cream); border-radius:8px; padding:1.4rem 1.5rem;">
-        <p style="font-family:var(--pg-display); font-size:1.05rem; color:var(--pg-ink); margin-bottom:.4rem;">Control de signos contables</p>
-        <p style="font-size:.85rem; color:var(--pg-muted); line-height:1.5;">Reglas definidas a nivel de modelo para que ingresos, costes y gastos sumen en la dirección correcta.</p>
+        <p style="font-family:var(--pg-display); font-size:1.05rem; color:var(--pg-ink); margin-bottom:.4rem;">Modelado dimensional</p>
+        <p style="font-size:.85rem; color:var(--pg-muted); line-height:1.5;">Para organizar las relaciones entre la tabla de hechos y las dimensiones.</p>
       </div>
       <div style="background:var(--pg-cream); border-radius:8px; padding:1.4rem 1.5rem;">
-        <p style="font-family:var(--pg-display); font-size:1.05rem; color:var(--pg-ink); margin-bottom:.4rem;">Esquema en estrella</p>
-        <p style="font-size:.85rem; color:var(--pg-muted); line-height:1.5;">Tabla de hechos PyG con seis dimensiones: Calendario, Cuentas, Departamentos, Escenario, Organizaciones y Encabezados.</p>
-      </div>
-      <div style="background:var(--pg-cream); border-radius:8px; padding:1.4rem 1.5rem;">
-        <p style="font-family:var(--pg-display); font-size:1.05rem; color:var(--pg-ink); margin-bottom:.4rem;">Carpetas de medidas</p>
-        <p style="font-size:.85rem; color:var(--pg-muted); line-height:1.5;">Seis carpetas — Básico, Importe, Presupuesto, Real, Variación y Tiempo — para mantener el modelo ordenado.</p>
+        <p style="font-family:var(--pg-display); font-size:1.05rem; color:var(--pg-ink); margin-bottom:.4rem;">Visualización financiera</p>
+        <p style="font-size:.85rem; color:var(--pg-muted); line-height:1.5;">Para representar la PyG de forma que fuera posible pasar del resultado general al detalle.</p>
       </div>
     </div>
   </div>
@@ -497,25 +511,29 @@ section { padding: 5rem 0; }
 <!-- S10 · QUÉ APRENDÍ -->
 <section id="aprendizaje" data-screen-label="Qué aprendí">
   <div class="pg-wrap">
-    <p class="pg-tag reveal">Qué me llevo del proyecto</p>
-    <h2 class="reveal" style="font-size:clamp(1.7rem, 4vw, 2.4rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Lo difícil no fue el visual. Fue que los signos no fallaran nunca.</h2>
-    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--pg-text); max-width:800px; line-height:1.6; margin-bottom:1.2rem;">La parte más exigente no fue construir el visual sino garantizar que los <strong>signos contables fueran correctos en todo momento</strong>. Un ingreso y un coste tienen signos contables distintos que no coinciden con cómo Power BI agrega por defecto.</p>
-    <p class="reveal reveal-delay-2" style="font-size:1.05rem; color:var(--pg-text); max-width:800px; line-height:1.6; margin-bottom:1.2rem;">Sin esa lógica resuelta en el modelo, el waterfall chart mostraba números correctos pero con la dirección equivocada.</p>
-    <p class="reveal reveal-delay-3" style="font-size:1.05rem; color:var(--pg-text); max-width:800px; line-height:1.6;">También aprendí que separar las medidas en carpetas temáticas desde el principio no es una preferencia estética: es una decisión que <strong>ahorra horas cuando el modelo crece</strong>.</p>
+    <p class="pg-tag reveal">Reto</p>
+    <h2 class="reveal" style="font-size:clamp(1.7rem, 4vw, 2.4rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Lo difícil no fue solo el visual. Fue mantener el significado de cada cifra.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--pg-text); max-width:800px; line-height:1.6; margin-bottom:1.2rem;">En una PyG, el signo de una cantidad importa. Un ingreso y un gasto no se comportan igual dentro del cálculo del resultado. Si esa lógica no se mantiene correctamente, una cifra aparentemente correcta puede terminar contando una historia equivocada.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; color:var(--pg-text); max-width:800px; line-height:1.6; margin-bottom:1.2rem;">Por eso presté especial atención a cómo se trataban los signos en el modelo, en las medidas y finalmente en las visualizaciones.</p>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; color:var(--pg-text); max-width:800px; line-height:1.6;">Este fue uno de los aprendizajes más importantes del proyecto: <strong>en un informe financiero, que el número sea correcto no siempre es suficiente. También tiene que estar representado de la forma correcta</strong>.</p>
   </div>
 </section>
 
 <!-- S11 · CTA -->
 <section data-screen-label="CTA" style="text-align:center; padding:6rem 2rem 8rem; background:var(--pg-cream);">
   <div class="pg-wrap reveal">
-    <p class="reveal cta-closing" style="font-family:var(--pg-display); font-size:clamp(1.5rem, 3.6vw, 2.2rem); line-height:1.2; color:var(--pg-ink); max-width:820px; margin:0 auto 3rem; text-wrap:balance;">Un P&amp;L que cuadra en cualquier filtro — y que explica de dónde viene cada cifra.</p>
-    <div class="reveal reveal-delay-1" style="display:flex; flex-wrap:wrap; justify-content:center; gap:2rem;">
+    <p class="pg-tag reveal" style="margin-left:auto; margin-right:auto;">Cierre</p>
+    <p class="reveal reveal-delay-1 cta-closing" style="font-family:var(--pg-display); font-size:clamp(1.4rem, 3.2vw, 2rem); line-height:1.2; color:var(--pg-ink); max-width:820px; margin:0 auto 1.4rem; text-wrap:balance;">Una PyG que mantiene el contexto al cambiar el nivel de detalle.</p>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--pg-text); max-width:700px; margin:0 auto 1rem; line-height:1.6;">El objetivo final era conseguir que el usuario pudiera explorar la información sin perder de vista el resultado que estaba analizando. Desde el total de la PyG hasta el detalle de cada partida, cada nivel debía mantener la misma lógica.</p>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--pg-text); max-width:700px; margin:0 auto 2.6rem; line-height:1.6;">Este proyecto me ayudó a trabajar algo que considero especialmente importante en Power BI: <strong>no se trata solo de conseguir que un informe funcione, sino de conseguir que sus números tengan sentido cuando alguien los utiliza para entender un negocio.</strong></p>
+    <p class="reveal reveal-delay-2" style="font-family:var(--pg-display); font-size:1.3rem; color:var(--pg-ink); margin-bottom:1.6rem;">¿Quieres ver cómo construí el análisis?</p>
+    <div class="reveal reveal-delay-2" style="display:flex; flex-wrap:wrap; justify-content:center; gap:2rem;">
       <div>
-        <a href="https://app.powerbi.com/view?r=eyJrIjoiM2Y3MzMxNTQtMGMzOS00ZDhlLTljYWYtMmU5N2E5ZTA3MjU2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=41273635f861390cd9fd" class="pg-cta" target="_blank" rel="noopener" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Cuenta de Perdidas y Ganancias',location:'pyg_cta'});">Abrir dashboard en Power BI</a>
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiM2Y3MzMxNTQtMGMzOS00ZDhlLTljYWYtMmU5N2E5ZTA3MjU2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=41273635f861390cd9fd" class="pg-cta" target="_blank" rel="noopener" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Cuenta de Perdidas y Ganancias',location:'pyg_cta'});">Ver el dashboard</a>
         <p style="margin-top:1rem; font-size:.85rem; color:var(--pg-muted);">Dashboard interactivo publicado en Power BI Service</p>
       </div>
       <div>
-        <a href="./power-bi.html" class="pg-cta pg-cta-ghost">Ver el resto de proyectos</a>
+        <a href="./power-bi.html" class="pg-cta pg-cta-ghost">Ver otros proyectos</a>
         <p style="margin-top:1rem; font-size:.85rem; color:var(--pg-muted);">Portfolio completo de Power BI</p>
       </div>
     </div>
