@@ -5,10 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kosta Cálida — Reporting para red de tiendas | Borja Mora</title>
 <meta name="description" content="Sistema de reporting integral en Power BI para una cadena de tiendas: modelo en estrella, Power Query, DAX, tablas de desconexión y drill-down hasta nivel de ticket.">
-<meta name="theme-color" content="#161616">
+<meta name="theme-color" content="#1a1a1a">
 <link rel="canonical" href="https://borjamora.es/kosta-calida.html">
 <link rel="icon" type="image/svg+xml" href="./img/favicon.svg">
 <link rel="icon" href="./img/favicon.ico" type="image/x-icon">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 <!-- Open Graph -->
 <meta property="og:title" content="Kosta Cálida — Reporting para red de tiendas | Borja Mora">
 <meta property="og:description" content="Cómo construí un sistema de reporting para una cadena de tiendas: del TPV al modelo en estrella, de Power Query a DAX, hasta un dashboard con drill-down al ticket.">
@@ -103,35 +107,48 @@
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
-  --kc-ink: #161616;
-  --kc-green: #1f7a4c;
-  --kc-red: #c0392b;
-  --kc-bg: #f7f7f4;
-  --kc-panel: #ececE6;
-  --kc-sand: #f5efe3;
-  --kc-mint: #eaf3ec;
-  --kc-text: #262622;
-  --kc-muted: #6f6f68;
+  --kc-ink: #1a1a1a;
+  --kc-paper: #ffffff;
+  --kc-mist: #f7f7f7;
+  --kc-ash: #eaeaea;
+  --kc-smoke: #e1e1e1;
+  --kc-graphite: #838383;
+  --kc-steel: #989898;
+  --kc-slate: #6f6f6f;
+  --kc-marigold: #ffb84d;
+  --kc-buttercream: #ffe480;
+  --kc-cream: #fff6d4;
+  --kc-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --kc-bg: var(--kc-paper);
+  --kc-panel: var(--kc-mist);
+  --kc-text: var(--kc-ink);
+  --kc-muted: var(--kc-slate);
 }
 html { scroll-behavior: smooth; font-size: 16px; }
 #dc-root, #dc-root > .sc-host { height: auto !important; }
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--kc-sans);
   background: var(--kc-bg);
   color: var(--kc-text);
   line-height: 1.7;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  font-feature-settings: "ss01" on;
 }
 h1, h2, h3 {
-  font-family: Georgia, 'Times New Roman', serif;
+  font-family: var(--kc-sans);
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: var(--kc-ink);
 }
 img { max-width: 100%; height: auto; display: block; }
-a { color: var(--kc-green); text-decoration: none; }
-a:hover { text-decoration: underline; }
+a { color: var(--kc-slate); text-decoration: none; }
+a:hover { color: var(--kc-ink); text-decoration: underline; }
 .kc-wrap { max-width: 1400px; margin: 0 auto; padding: 0 3rem; }
 section { padding: 6rem 0; }
+.kc-eyebrow { font-size: .75rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--kc-graphite); margin-bottom: .5rem; }
+.kc-num-tag { font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--kc-graphite); margin-bottom: .5rem; }
+.kc-tnum { font-variant-numeric: tabular-nums; }
 .reveal {
   opacity: 0; transform: translateY(40px);
   transition: opacity 0.8s cubic-bezier(.16,1,.3,1), transform 0.8s cubic-bezier(.16,1,.3,1);
@@ -165,42 +182,44 @@ section { padding: 6rem 0; }
 .kc-cta {
   display: inline-block;
   background: var(--kc-ink);
-  color: #fff;
-  font-family: Georgia, serif;
-  font-size: 1.1rem;
+  color: var(--kc-paper);
+  font-family: var(--kc-sans);
+  font-size: 1rem;
   font-weight: 700;
   padding: 1rem 2.8rem;
-  border-radius: 8px;
+  border-radius: 4px;
   text-decoration: none;
-  transition: transform .25s cubic-bezier(.16,1,.3,1), box-shadow .25s cubic-bezier(.16,1,.3,1);
-  box-shadow: 0 4px 20px rgba(22,22,22,.25);
+  transition: transform .2s cubic-bezier(.16,1,.3,1), opacity .2s cubic-bezier(.16,1,.3,1);
 }
 @media (hover: hover) and (pointer: fine) {
-  .kc-cta:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(22,22,22,.4); text-decoration: none; }
+  .kc-cta:hover { transform: translateY(-2px); opacity: .88; text-decoration: none; }
 }
-.kc-cta:active { transform: translateY(-1px); }
-.kc-cta.kc-cta-ghost { background: transparent; color: var(--kc-ink); border: 1.5px solid var(--kc-ink); box-shadow: none; }
+.kc-cta:active { transform: translateY(0); }
+.kc-cta.kc-cta-ghost { background: transparent; color: var(--kc-ink); border: 1px solid var(--kc-ink); }
 
 /* ── Cards ── */
-.views-grid-5 > div, .steps-grid-6 > div { transition: transform .3s cubic-bezier(.16,1,.3,1), box-shadow .3s cubic-bezier(.16,1,.3,1); }
+.kpi-grid-3 > div, .views-grid-5 > div, .steps-grid-6 > div, .tools-grid-3 > div {
+  background: var(--kc-paper); border: 1px solid var(--kc-ash); border-radius: 8px;
+  transition: border-color .2s ease;
+}
 @media (hover: hover) and (pointer: fine) {
-  .views-grid-5 > div:hover, .steps-grid-6 > div:hover { transform: translateY(-4px); box-shadow: 0 8px 28px rgba(22,22,22,.1); }
+  .views-grid-5 > div:hover, .steps-grid-6 > div:hover, .tools-grid-3 > div:hover { border-color: var(--kc-ink); }
 }
 
 /* ── Dashboard images (vertical) ── */
-.dash-vertical img { transition: transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s cubic-bezier(.16,1,.3,1); }
+.dash-vertical img { border: 1px solid var(--kc-ash); transition: border-color .3s ease; }
 @media (hover: hover) and (pointer: fine) {
-  .dash-vertical img:hover { transform: scale(1.015); box-shadow: 0 16px 56px rgba(22,22,22,.14); }
+  .dash-vertical img:hover { border-color: var(--kc-ink); }
 }
 
 /* ── Drill-down chain ── */
 .kc-chain { display: flex; align-items: center; justify-content: center; gap: .6rem; flex-wrap: wrap; }
 .kc-chain-node {
-  background: #fff; border: 1px solid rgba(22,22,22,.12); border-radius: 8px;
-  padding: .9rem 1.3rem; font-size: .88rem; font-weight: 700; color: var(--kc-ink); white-space: nowrap;
-  box-shadow: 0 2px 10px rgba(22,22,22,.05);
+  background: transparent; border: 1px solid rgba(255,255,255,.22); border-radius: 4px;
+  padding: .9rem 1.3rem; font-size: .88rem; font-weight: 700; color: #fff; white-space: nowrap;
 }
-.kc-chain-arrow { color: #6f9f8a; font-size: 1.2rem; }
+.kc-chain-node.kc-chain-node-final { border-color: var(--kc-marigold); color: var(--kc-marigold); }
+.kc-chain-arrow { color: var(--kc-steel); font-size: 1.2rem; }
 
 /* ── Hero — la estantería como fondo ── */
 .hero-simple {
@@ -208,27 +227,27 @@ section { padding: 6rem 0; }
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   text-align: center; padding: 6rem 2rem;
   background-image:
-    linear-gradient(180deg, rgba(247,247,244,.92) 0%, rgba(247,247,244,.6) 30%, rgba(247,247,244,.6) 68%, rgba(247,247,244,.95) 100%),
+    linear-gradient(180deg, rgba(255,255,255,.94) 0%, rgba(255,255,255,.62) 30%, rgba(255,255,255,.62) 68%, rgba(255,255,255,.96) 100%),
     url('./img/kosta-shelf.webp');
   background-size: cover, cover;
   background-position: center, center 20%;
   background-repeat: no-repeat, no-repeat;
 }
 .hero-simple .hero-eyebrow {
-  font-size: .75rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
-  color: var(--kc-green); margin-bottom: .8rem;
+  font-size: .75rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--kc-graphite); margin-bottom: .8rem;
 }
 .hero-simple h1 {
-  font-size: clamp(2.2rem, 5.5vw, 3.6rem); letter-spacing: -0.02em; line-height: 1.05;
+  font-size: clamp(2.2rem, 5.5vw, 3.6rem); letter-spacing: -0.03em; line-height: 1.05;
   margin-bottom: .6rem;
 }
 .hero-simple .hero-sub {
-  font-family: Arial, sans-serif; font-size: clamp(1rem, 1.8vw, 1.15rem); color: var(--kc-muted);
+  font-family: var(--kc-sans); font-size: clamp(1rem, 1.8vw, 1.15rem); color: var(--kc-muted);
   max-width: 520px; margin: 0 auto;
 }
 
 /* ── Footer ── */
-.kc-foot-title { font-size: .7rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #8fd6b0; margin-bottom: 1rem; }
+.kc-foot-title { font-size: .7rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--kc-steel); margin-bottom: 1rem; }
 .kc-foot-link { display: block; font-size: .85rem; color: #c9c9c4; text-decoration: none; margin-bottom: .65rem; transition: color .2s; }
 .kc-foot-link:hover { color: #fff; }
 @media (max-width: 760px) {
@@ -241,8 +260,8 @@ section { padding: 6rem 0; }
 </helmet>
 
 <!-- NAV BACK -->
-<nav style="position:fixed; top:0; left:0; right:0; z-index:100; padding:1rem 2rem; display:flex; align-items:center; background:rgba(247,247,244,.85); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);">
-  <a href="./power-bi.html" style="display:inline-flex; align-items:center; gap:.5rem; font-family:Georgia,serif; font-size:.9rem; font-weight:700; color:var(--kc-ink); text-decoration:none; transition:opacity .2s;" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='1'">
+<nav style="position:fixed; top:0; left:0; right:0; z-index:100; padding:1rem 2rem; display:flex; align-items:center; background:rgba(255,255,255,.85); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border-bottom:1px solid var(--kc-ash);">
+  <a href="./power-bi.html" style="display:inline-flex; align-items:center; gap:.5rem; font-family:var(--kc-sans); font-size:.9rem; font-weight:700; color:var(--kc-ink); text-decoration:none; transition:opacity .2s;" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='1'">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
     Power BI
   </a>
@@ -258,7 +277,7 @@ section { padding: 6rem 0; }
 <!-- S2 · EL PROBLEMA -->
 <section id="problema" data-screen-label="El problema">
   <div class="kc-wrap">
-    <p class="reveal" style="font-size:.75rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--kc-green); margin-bottom:.5rem;">El problema</p>
+    <p class="reveal kc-eyebrow">El problema</p>
     <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; margin-bottom:1.5rem; max-width:900px;">La dirección tenía números delante, pero no contexto.</h2>
     <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--kc-text); max-width:760px; line-height:1.75; margin-bottom:1.2rem;">Sabían la recaudación del día, pero no podían decir qué categorías erosionaban el beneficio, qué tienda estaba por debajo de la media en margen o si estaban cumpliendo objetivos o solo superando el mes anterior.</p>
     <p class="reveal reveal-delay-2" style="font-size:1.05rem; color:var(--kc-text); max-width:760px; line-height:1.75;">Cada departamento miraba su parte. <strong>No existía una fuente única que conectara ventas, rentabilidad y objetivos.</strong> Eso no es un problema de datos. Es un problema de estructura analítica.</p>
@@ -266,22 +285,22 @@ section { padding: 6rem 0; }
 </section>
 
 <!-- S3 · EL OBJETIVO -->
-<section id="objetivo" data-screen-label="El objetivo" style="background:var(--kc-sand);">
+<section id="objetivo" data-screen-label="El objetivo" style="background:var(--kc-mist);">
   <div class="kc-wrap">
-    <p class="reveal" style="font-size:.75rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--kc-green); margin-bottom:.5rem;">El objetivo</p>
+    <p class="reveal kc-eyebrow">El objetivo</p>
     <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; margin-bottom:1.5rem; max-width:900px;">De una desviación en un KPI al ticket que la explica.</h2>
     <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--kc-text); max-width:760px; line-height:1.75; margin-bottom:3rem;">Construir un sistema de reporting que permitiera pasar de una desviación en un KPI hasta el ticket concreto que la explica, con <strong>ventas, margen y objetivos conectados</strong> en el mismo modelo y sin necesidad de cruzar hojas de cálculo separadas.</p>
     <div class="kpi-grid-3 reveal reveal-delay-2" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1.5rem;">
-      <div style="text-align:center; background:#fff; border-radius:12px; padding:2rem 1rem;">
-        <span style="font-family:Georgia,serif; font-size:clamp(1.8rem, 3.5vw, 2.8rem); color:var(--kc-ink); font-weight:700; line-height:1;" data-count="12">0</span>
+      <div style="text-align:center; padding:2rem 1rem;">
+        <span class="kc-tnum" style="font-size:clamp(1.8rem, 3.5vw, 2.8rem); color:var(--kc-ink); font-weight:700; line-height:1;" data-count="12">0</span>
         <p style="font-size:.82rem; color:var(--kc-muted); margin-top:.4rem;">tablas en el modelo</p>
       </div>
-      <div style="text-align:center; background:#fff; border-radius:12px; padding:2rem 1rem;">
-        <span style="font-family:Georgia,serif; font-size:clamp(1.8rem, 3.5vw, 2.8rem); color:var(--kc-ink); font-weight:700; line-height:1;" data-count="92">0</span>
+      <div style="text-align:center; padding:2rem 1rem;">
+        <span class="kc-tnum" style="font-size:clamp(1.8rem, 3.5vw, 2.8rem); color:var(--kc-ink); font-weight:700; line-height:1;" data-count="92">0</span>
         <p style="font-size:.82rem; color:var(--kc-muted); margin-top:.4rem;">medidas DAX organizadas en carpetas</p>
       </div>
-      <div style="text-align:center; background:#fff; border-radius:12px; padding:2rem 1rem;">
-        <span style="font-family:Georgia,serif; font-size:clamp(1.8rem, 3.5vw, 2.8rem); color:var(--kc-ink); font-weight:700; line-height:1;" data-count="13">0</span>
+      <div style="text-align:center; padding:2rem 1rem;">
+        <span class="kc-tnum" style="font-size:clamp(1.8rem, 3.5vw, 2.8rem); color:var(--kc-ink); font-weight:700; line-height:1;" data-count="13">0</span>
         <p style="font-size:.82rem; color:var(--kc-muted); margin-top:.4rem;">páginas en el informe</p>
       </div>
     </div>
@@ -291,60 +310,60 @@ section { padding: 6rem 0; }
 <!-- S4 · EL MODELO -->
 <section id="modelo" data-screen-label="El modelo">
   <div class="kc-wrap">
-    <p class="reveal" style="font-size:.75rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--kc-green); margin-bottom:.5rem;">El modelo</p>
+    <p class="reveal kc-eyebrow">El modelo</p>
     <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; margin-bottom:1.5rem; max-width:900px;">Esquema en estrella: dos hechos, tres dimensiones.</h2>
     <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--kc-text); max-width:800px; line-height:1.75; margin-bottom:2rem;">El error de fondo era el orden en que se había planteado el análisis: vistas parciales sobre datos sin modelar, en lugar de diseñar primero cómo debía funcionar el negocio como modelo. Empecé por ahí.</p>
     <div class="grid-2col reveal reveal-delay-2" style="display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:start; margin-bottom:2.5rem;">
       <div>
-        <p style="font-size:1rem; color:var(--kc-text); line-height:1.75; margin-bottom:1.1rem;"><strong>Esquema en estrella</strong> con dos tablas de hechos, <code style="background:#fff; padding:.1rem .4rem; border-radius:4px;">Ventas</code> y <code style="background:#fff; padding:.1rem .4rem; border-radius:4px;">Presupuestos</code>, conectadas a tres dimensiones —<code style="background:#fff; padding:.1rem .4rem; border-radius:4px;">Fecha</code>, <code style="background:#fff; padding:.1rem .4rem; border-radius:4px;">Productos</code> y <code style="background:#fff; padding:.1rem .4rem; border-radius:4px;">Tienda</code>— mediante cinco relaciones activas, todas 1→N con filtro en una única dirección.</p>
-        <p style="font-size:1rem; color:var(--kc-text); line-height:1.75;">La dimensión <code style="background:#fff; padding:.1rem .4rem; border-radius:4px;">Fecha</code> tiene 23 columnas y dos jerarquías. <code style="background:#fff; padding:.1rem .4rem; border-radius:4px;">Tienda</code> guarda dirección, código postal, m², empleados, alquiler, isla y población — suficiente para calcular una columna como <code style="background:#fff; padding:.1rem .4rem; border-radius:4px;">Tamaño_Tienda</code> sin salir del modelo. <code style="background:#fff; padding:.1rem .4rem; border-radius:4px;">Ventas</code> guarda ticket, fecha, tienda, cliente, producto, cantidad, importe de venta, importe de coste y un <code style="background:#fff; padding:.1rem .4rem; border-radius:4px;">Beneficio</code> calculado.</p>
+        <p style="font-size:1rem; color:var(--kc-text); line-height:1.75; margin-bottom:1.1rem;"><strong>Esquema en estrella</strong> con dos tablas de hechos, <code style="background:var(--kc-mist); border:1px solid var(--kc-ash); padding:.1rem .4rem; border-radius:4px;">Ventas</code> y <code style="background:var(--kc-mist); border:1px solid var(--kc-ash); padding:.1rem .4rem; border-radius:4px;">Presupuestos</code>, conectadas a tres dimensiones —<code style="background:var(--kc-mist); border:1px solid var(--kc-ash); padding:.1rem .4rem; border-radius:4px;">Fecha</code>, <code style="background:var(--kc-mist); border:1px solid var(--kc-ash); padding:.1rem .4rem; border-radius:4px;">Productos</code> y <code style="background:var(--kc-mist); border:1px solid var(--kc-ash); padding:.1rem .4rem; border-radius:4px;">Tienda</code>— mediante cinco relaciones activas, todas 1→N con filtro en una única dirección.</p>
+        <p style="font-size:1rem; color:var(--kc-text); line-height:1.75;">La dimensión <code style="background:var(--kc-mist); border:1px solid var(--kc-ash); padding:.1rem .4rem; border-radius:4px;">Fecha</code> tiene 23 columnas y dos jerarquías. <code style="background:var(--kc-mist); border:1px solid var(--kc-ash); padding:.1rem .4rem; border-radius:4px;">Tienda</code> guarda dirección, código postal, m², empleados, alquiler, isla y población — suficiente para calcular una columna como <code style="background:var(--kc-mist); border:1px solid var(--kc-ash); padding:.1rem .4rem; border-radius:4px;">Tamaño_Tienda</code> sin salir del modelo. <code style="background:var(--kc-mist); border:1px solid var(--kc-ash); padding:.1rem .4rem; border-radius:4px;">Ventas</code> guarda ticket, fecha, tienda, cliente, producto, cantidad, importe de venta, importe de coste y un <code style="background:var(--kc-mist); border:1px solid var(--kc-ash); padding:.1rem .4rem; border-radius:4px;">Beneficio</code> calculado.</p>
       </div>
       <figure style="margin:0;">
-        <picture><source srcset="./img/kosta-3.webp" type="image/webp"><img loading="lazy" src="./img/kosta-3.png" alt="Vista del modelo de datos de Kosta Cálida en Power BI Desktop" style="width:100%; border-radius:10px; border:1px solid #ddd;"></picture>
+        <picture><source srcset="./img/kosta-3.webp" type="image/webp"><img loading="lazy" src="./img/kosta-3.png" alt="Vista del modelo de datos de Kosta Cálida en Power BI Desktop" style="width:100%; border-radius:8px; border:1px solid var(--kc-ash);"></picture>
         <figcaption style="margin-top:.7rem; font-size:.78rem; color:var(--kc-muted); text-align:center;">El modelo real, en la vista de relaciones de Power BI Desktop</figcaption>
       </figure>
     </div>
-    <p style="font-size:1rem; color:var(--kc-text); max-width:800px; line-height:1.75;" class="reveal reveal-delay-3">Las otras siete tablas no guardan datos de negocio: <code style="background:#fff; padding:.1rem .4rem; border-radius:4px;">Medidas DAX</code> es una tabla contenedora sin columnas donde viven las 92 medidas; cuatro tablas <code style="background:#fff; padding:.1rem .4rem; border-radius:4px;">T_DISC</code> desconectadas alimentan selectores en cascada; y dos parámetros What-If controlan los selectores Top N. Nada de esto toca las relaciones del esquema — están ahí para servir al dashboard, no al revés.</p>
+    <p style="font-size:1rem; color:var(--kc-text); max-width:800px; line-height:1.75;" class="reveal reveal-delay-3">Las otras siete tablas no guardan datos de negocio: <code style="background:var(--kc-mist); border:1px solid var(--kc-ash); padding:.1rem .4rem; border-radius:4px;">Medidas DAX</code> es una tabla contenedora sin columnas donde viven las 92 medidas; cuatro tablas <code style="background:var(--kc-mist); border:1px solid var(--kc-ash); padding:.1rem .4rem; border-radius:4px;">T_DISC</code> desconectadas alimentan selectores en cascada; y dos parámetros What-If controlan los selectores Top N. Nada de esto toca las relaciones del esquema — están ahí para servir al dashboard, no al revés.</p>
   </div>
 </section>
 
 <!-- S4b · LAS MEDIDAS DAX -->
-<section id="medidas" data-screen-label="Las medidas DAX" style="background:var(--kc-mint);">
+<section id="medidas" data-screen-label="Las medidas DAX" style="background:var(--kc-mist);">
   <div class="kc-wrap">
-    <p class="reveal" style="font-size:.75rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--kc-green); margin-bottom:.5rem;">El lenguaje del modelo</p>
+    <p class="reveal kc-eyebrow">El lenguaje del modelo</p>
     <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; margin-bottom:1.5rem; max-width:900px;">92 medidas, organizadas como código.</h2>
     <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--kc-text); max-width:800px; line-height:1.75; margin-bottom:2.5rem;">Todas las medidas viven en una tabla contenedora sin columnas, agrupadas en carpetas por función — igual que se organiza un proyecto de código, no una hoja de cálculo. Así cualquier medida se encuentra por lo que hace, no por dónde se guardó.</p>
     <div class="views-grid-5 reveal reveal-delay-2" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:1rem;">
-      <div style="background:#fff; border-radius:10px; padding:1.3rem 1.2rem;">
-        <p style="font-family:Georgia,serif; font-size:.95rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">00. Básico</p>
+      <div style="padding:1.3rem 1.2rem;">
+        <p style="font-size:.95rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">00. Básico</p>
         <p style="font-size:.78rem; color:var(--kc-muted); line-height:1.5;">Nº Tickets, Ticket Medio, Cantidad Total, Máximo/Mínimo.</p>
       </div>
-      <div style="background:#fff; border-radius:10px; padding:1.3rem 1.2rem;">
-        <p style="font-family:Georgia,serif; font-size:.95rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">01. Acumulados</p>
+      <div style="padding:1.3rem 1.2rem;">
+        <p style="font-size:.95rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">01. Acumulados</p>
         <p style="font-size:.78rem; color:var(--kc-muted); line-height:1.5;">VentasYTD, VentasYTD Transcurridos, Dif YTD.</p>
       </div>
-      <div style="background:#fff; border-radius:10px; padding:1.3rem 1.2rem;">
-        <p style="font-family:Georgia,serif; font-size:.95rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">02. Anteriores</p>
+      <div style="padding:1.3rem 1.2rem;">
+        <p style="font-size:.95rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">02. Anteriores</p>
         <p style="font-size:.78rem; color:var(--kc-muted); line-height:1.5;">VentasAA, VentasMA, VentasDifMA / VentasDifMA%.</p>
       </div>
-      <div style="background:#fff; border-radius:10px; padding:1.3rem 1.2rem;">
-        <p style="font-family:Georgia,serif; font-size:.95rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">03. Beneficio</p>
+      <div style="padding:1.3rem 1.2rem;">
+        <p style="font-size:.95rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">03. Beneficio</p>
         <p style="font-size:.78rem; color:var(--kc-muted); line-height:1.5;">Beneficio, Beneficio%, CostesTotal.</p>
       </div>
-      <div style="background:#fff; border-radius:10px; padding:1.3rem 1.2rem;">
-        <p style="font-family:Georgia,serif; font-size:.95rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">04. Presupuestos</p>
+      <div style="padding:1.3rem 1.2rem;">
+        <p style="font-size:.95rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">04. Presupuestos</p>
         <p style="font-size:.78rem; color:var(--kc-muted); line-height:1.5;">PresupTotal, PresupYTD, VentasPresup%, VentasPresupDif.</p>
       </div>
-      <div style="background:#fff; border-radius:10px; padding:1.3rem 1.2rem;">
-        <p style="font-family:Georgia,serif; font-size:.95rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">05. Última Venta</p>
+      <div style="padding:1.3rem 1.2rem;">
+        <p style="font-size:.95rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">05. Última Venta</p>
         <p style="font-size:.78rem; color:var(--kc-muted); line-height:1.5;">DiasSinVenta, VentasUltimaFecha, VentasUltimoImporte.</p>
       </div>
-      <div style="background:#fff; border-radius:10px; padding:1.3rem 1.2rem;">
-        <p style="font-family:Georgia,serif; font-size:.95rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">06. Ventas</p>
+      <div style="padding:1.3rem 1.2rem;">
+        <p style="font-size:.95rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">06. Ventas</p>
         <p style="font-size:.78rem; color:var(--kc-muted); line-height:1.5;">VentasTotal, VentasMTD, VentasAVG, VentasRatioTienda/Producto.</p>
       </div>
-      <div style="background:var(--kc-ink); border-radius:10px; padding:1.3rem 1.2rem;">
-        <p style="font-family:Georgia,serif; font-size:.95rem; font-weight:700; color:#fff; margin-bottom:.5rem;">Gráfico / SVG</p>
+      <div style="background:var(--kc-ink); border-color:var(--kc-ink); padding:1.3rem 1.2rem;">
+        <p style="font-size:.95rem; font-weight:700; color:#fff; margin-bottom:.5rem;">Gráfico / SVG</p>
         <p style="font-size:.78rem; color:#c9c9c4; line-height:1.5;">Deltas, colores hex dinámicos, puntos máx/mín y ranking Top N.</p>
       </div>
     </div>
@@ -353,39 +372,39 @@ section { padding: 6rem 0; }
 </section>
 
 <!-- S5 · CÓMO SE CONSTRUYÓ -->
-<section id="construccion" data-screen-label="Cómo se construyó" style="background:var(--kc-panel);">
+<section id="construccion" data-screen-label="Cómo se construyó">
   <div class="kc-wrap">
-    <p class="reveal" style="font-size:.75rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--kc-green); margin-bottom:.5rem;">Proceso</p>
+    <p class="reveal kc-eyebrow">Proceso</p>
     <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; margin-bottom:2rem; max-width:900px;">Del TPV en bruto a un dashboard con drill-down.</h2>
     <div class="steps-grid-6 reveal reveal-delay-1" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem;">
-      <div style="background:#fff; border-radius:10px; padding:1.4rem 1.3rem;">
-        <p style="font-size:.65rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--kc-green); margin-bottom:.5rem;">01</p>
-        <p style="font-family:Georgia,serif; font-size:1rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">Power Query</p>
+      <div style="padding:1.4rem 1.3rem;">
+        <p class="kc-num-tag">01</p>
+        <p style="font-size:1rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">Power Query</p>
         <p style="font-size:.82rem; color:var(--kc-muted); line-height:1.5;">Transformar y estandarizar los datos brutos del TPV antes de que tocaran el modelo.</p>
       </div>
-      <div style="background:#fff; border-radius:10px; padding:1.4rem 1.3rem;">
-        <p style="font-size:.65rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--kc-green); margin-bottom:.5rem;">02</p>
-        <p style="font-family:Georgia,serif; font-size:1rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">Esquema en estrella</p>
+      <div style="padding:1.4rem 1.3rem;">
+        <p class="kc-num-tag">02</p>
+        <p style="font-size:1rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">Esquema en estrella</p>
         <p style="font-size:.82rem; color:var(--kc-muted); line-height:1.5;">Dos tablas de hechos y tres dimensiones, con cinco relaciones activas diseñadas antes que la primera página.</p>
       </div>
-      <div style="background:#fff; border-radius:10px; padding:1.4rem 1.3rem;">
-        <p style="font-size:.65rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--kc-green); margin-bottom:.5rem;">03</p>
-        <p style="font-family:Georgia,serif; font-size:1rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">92 medidas DAX</p>
+      <div style="padding:1.4rem 1.3rem;">
+        <p class="kc-num-tag">03</p>
+        <p style="font-size:1rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">92 medidas DAX</p>
         <p style="font-size:.82rem; color:var(--kc-muted); line-height:1.5;">Organizadas en carpetas: acumulados, comparativas anteriores, beneficio, presupuestos, última venta.</p>
       </div>
-      <div style="background:#fff; border-radius:10px; padding:1.4rem 1.3rem;">
-        <p style="font-size:.65rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--kc-green); margin-bottom:.5rem;">04</p>
-        <p style="font-family:Georgia,serif; font-size:1rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">4 tablas T_DISC</p>
+      <div style="padding:1.4rem 1.3rem;">
+        <p class="kc-num-tag">04</p>
+        <p style="font-size:1rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">4 tablas T_DISC</p>
         <p style="font-size:.82rem; color:var(--kc-muted); line-height:1.5;">Localización, Tienda, Categoría/Producto y Margen especial: desconectadas, para filtros en cascada sin tocar el esquema.</p>
       </div>
-      <div style="background:#fff; border-radius:10px; padding:1.4rem 1.3rem;">
-        <p style="font-size:.65rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--kc-green); margin-bottom:.5rem;">05</p>
-        <p style="font-family:Georgia,serif; font-size:1rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">2 parámetros What-If</p>
+      <div style="padding:1.4rem 1.3rem;">
+        <p class="kc-num-tag">05</p>
+        <p style="font-size:1rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">2 parámetros What-If</p>
         <p style="font-size:.82rem; color:var(--kc-muted); line-height:1.5;">TopN dinámico (Top1 a Top20) para los rankings de categoría y de producto.</p>
       </div>
-      <div style="background:#fff; border-radius:10px; padding:1.4rem 1.3rem;">
-        <p style="font-size:.65rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--kc-green); margin-bottom:.5rem;">06</p>
-        <p style="font-family:Georgia,serif; font-size:1rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">13 páginas</p>
+      <div style="padding:1.4rem 1.3rem;">
+        <p class="kc-num-tag">06</p>
+        <p style="font-size:1rem; font-weight:700; color:var(--kc-ink); margin-bottom:.5rem;">13 páginas</p>
         <p style="font-size:.82rem; color:var(--kc-muted); line-height:1.5;">Portada, ranking, evolución, comparativas, 6 drillthrough y 2 tooltips personalizados con SVG.</p>
       </div>
     </div>
@@ -393,30 +412,30 @@ section { padding: 6rem 0; }
 </section>
 
 <!-- S6 · LAS 13 PÁGINAS -->
-<section id="vistas" data-screen-label="Las trece páginas" style="background:var(--kc-sand);">
+<section id="vistas" data-screen-label="Las trece páginas" style="background:var(--kc-mist);">
   <div class="kc-wrap">
-    <p class="reveal" style="font-size:.75rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--kc-green); margin-bottom:.5rem;">El dashboard</p>
+    <p class="reveal kc-eyebrow">El dashboard</p>
     <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; margin-bottom:1rem; max-width:900px;">Trece páginas, cuatro roles distintos.</h2>
     <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--kc-text); max-width:800px; line-height:1.75; margin-bottom:2.5rem;">No son 13 páginas sueltas: cada una cumple un papel concreto dentro del mismo recorrido, desde la portada hasta el ticket individual.</p>
     <div class="views-grid-5 reveal reveal-delay-2" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:1rem;">
-      <div style="background:var(--kc-panel); border-radius:10px; padding:1.5rem 1.3rem;">
-        <p style="font-size:.65rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--kc-red); margin-bottom:.5rem;">1 página</p>
-        <p style="font-family:Georgia,serif; font-size:1.05rem; font-weight:700; color:var(--kc-ink); margin-bottom:.6rem;">Portada</p>
+      <div style="background:var(--kc-paper); padding:1.5rem 1.3rem;">
+        <p class="kc-num-tag">1 página</p>
+        <p style="font-size:1.05rem; font-weight:700; color:var(--kc-ink); margin-bottom:.6rem;">Portada</p>
         <p style="font-size:.8rem; color:var(--kc-muted); line-height:1.5;">Objetivos: cumplimiento anual con bullet chart, evolución YTD, ventas por tienda vs presupuesto y análisis mensual.</p>
       </div>
-      <div style="background:var(--kc-panel); border-radius:10px; padding:1.5rem 1.3rem;">
-        <p style="font-size:.65rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--kc-red); margin-bottom:.5rem;">4 páginas</p>
-        <p style="font-family:Georgia,serif; font-size:1.05rem; font-weight:700; color:var(--kc-ink); margin-bottom:.6rem;">Análisis principal</p>
+      <div style="background:var(--kc-paper); padding:1.5rem 1.3rem;">
+        <p class="kc-num-tag">4 páginas</p>
+        <p style="font-size:1.05rem; font-weight:700; color:var(--kc-ink); margin-bottom:.6rem;">Análisis principal</p>
         <p style="font-size:.8rem; color:var(--kc-muted); line-height:1.5;">Ranking Tiendas, Evolución por small multiples, Ticket Medio y Comparar KPIs entre cualquier par de tiendas.</p>
       </div>
-      <div style="background:var(--kc-panel); border-radius:10px; padding:1.5rem 1.3rem;">
-        <p style="font-size:.65rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--kc-red); margin-bottom:.5rem;">6 páginas</p>
-        <p style="font-family:Georgia,serif; font-size:1.05rem; font-weight:700; color:var(--kc-ink); margin-bottom:.6rem;">Drillthrough</p>
+      <div style="background:var(--kc-paper); padding:1.5rem 1.3rem;">
+        <p class="kc-num-tag">6 páginas</p>
+        <p style="font-size:1.05rem; font-weight:700; color:var(--kc-ink); margin-bottom:.6rem;">Drillthrough</p>
         <p style="font-size:.8rem; color:var(--kc-muted); line-height:1.5;">Navegación desde los rankings hacia el detalle: categoría/producto, margen%, producto, beneficio y ticket individual.</p>
       </div>
-      <div style="background:var(--kc-panel); border-radius:10px; padding:1.5rem 1.3rem;">
-        <p style="font-size:.65rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--kc-red); margin-bottom:.5rem;">2 páginas</p>
-        <p style="font-family:Georgia,serif; font-size:1.05rem; font-weight:700; color:var(--kc-ink); margin-bottom:.6rem;">Tooltips personalizados</p>
+      <div style="background:var(--kc-paper); padding:1.5rem 1.3rem;">
+        <p class="kc-num-tag">2 páginas</p>
+        <p style="font-size:1.05rem; font-weight:700; color:var(--kc-ink); margin-bottom:.6rem;">Tooltips personalizados</p>
         <p style="font-size:.8rem; color:var(--kc-muted); line-height:1.5;">Un treemap y un área mensual que aparecen al pasar el cursor sobre una tienda o una categoría.</p>
       </div>
     </div>
@@ -424,8 +443,8 @@ section { padding: 6rem 0; }
 </section>
 
 <!-- S7 · DEL KPI AL TICKET (arquitectura de drill-down) -->
-<section data-screen-label="Del KPI al ticket" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:6rem 2rem; background:var(--kc-mint);">
-  <p class="reveal" style="font-family:Georgia,serif; font-size:clamp(1.6rem, 3.6vw, 2.4rem); font-weight:700; line-height:1.3; color:var(--kc-ink); max-width:800px; margin-bottom:2.5rem;">De una desviación agregada al ticket que la explica.</p>
+<section data-screen-label="Del KPI al ticket" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:6rem 2rem; background:var(--kc-ink);">
+  <p class="reveal" style="font-size:clamp(1.6rem, 3.6vw, 2.4rem); font-weight:700; letter-spacing:-0.02em; line-height:1.3; color:#fff; max-width:800px; margin-bottom:2.5rem;">De una desviación agregada al ticket que la explica.</p>
   <div class="kc-chain reveal reveal-delay-1" style="margin-bottom:1.8rem;">
     <span class="kc-chain-node">KPI con desviación</span>
     <span class="kc-chain-arrow">→</span>
@@ -435,25 +454,25 @@ section { padding: 6rem 0; }
     <span class="kc-chain-arrow">→</span>
     <span class="kc-chain-node">Producto</span>
     <span class="kc-chain-arrow">→</span>
-    <span class="kc-chain-node" style="background:var(--kc-green); border-color:var(--kc-green); color:#fff;">Ticket</span>
+    <span class="kc-chain-node kc-chain-node-final">Ticket</span>
   </div>
-  <p class="reveal reveal-delay-2" style="font-size:clamp(1rem, 1.8vw, 1.15rem); color:var(--kc-text); max-width:700px; line-height:1.75; margin-bottom:1.2rem;">Seis páginas de drillthrough hacen ese salto posible: desde cualquier ranking se baja de nivel sin cambiar de herramienta ni cruzar hojas de cálculo, hasta el ticket y el producto exactos que explican la desviación.</p>
-  <p class="reveal reveal-delay-3" style="font-size:.88rem; color:var(--kc-muted); max-width:640px; line-height:1.6; font-style:italic;">Por ejemplo: una desviación de −47.700 € en Mahón se puede desglosar hasta la categoría y el ticket concretos que la originan.</p>
+  <p class="reveal reveal-delay-2" style="font-size:clamp(1rem, 1.8vw, 1.15rem); color:#c9c9c4; max-width:700px; line-height:1.75; margin-bottom:1.2rem;">Seis páginas de drillthrough hacen ese salto posible: desde cualquier ranking se baja de nivel sin cambiar de herramienta ni cruzar hojas de cálculo, hasta el ticket y el producto exactos que explican la desviación.</p>
+  <p class="reveal reveal-delay-3" style="font-size:.88rem; color:#9a9a92; max-width:640px; line-height:1.6; font-style:italic;">Por ejemplo: una desviación de −47.700 € en Mahón se puede desglosar hasta la categoría y el ticket concretos que la originan.</p>
 </section>
 
 <!-- S8 · DASHBOARD — imágenes en vertical -->
 <section id="dashboard" data-screen-label="Dashboard">
   <div class="kc-wrap">
-    <p class="reveal" style="font-size:.75rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--kc-green); margin-bottom:.5rem;">Visualización en Power BI</p>
+    <p class="reveal kc-eyebrow">Visualización en Power BI</p>
     <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; margin-bottom:.6rem; max-width:900px;">Dos de las trece páginas del informe.</h2>
     <p class="reveal reveal-delay-1" style="font-size:1rem; color:var(--kc-muted); max-width:700px; line-height:1.7; margin-bottom:2rem;">El informe completo tiene 13 páginas conectadas al mismo modelo — estas dos, a modo de muestra: la portada y una de las vistas de comparación.</p>
     <div class="dash-vertical reveal reveal-delay-1" style="display:flex; flex-direction:column; gap:2.2rem; max-width:980px; margin:0 auto 1.5rem;">
       <figure style="margin:0;">
-        <picture><source srcset="./img/kosta-1.webp" type="image/webp"><img loading="lazy" src="./img/kosta-1.png" alt="Kosta Cálida — página Objetivos, portada del informe" style="width:100%; border-radius:12px; box-shadow:0 12px 48px rgba(22,22,22,.12);"></picture>
+        <picture><source srcset="./img/kosta-1.webp" type="image/webp"><img loading="lazy" src="./img/kosta-1.png" alt="Kosta Cálida — página Objetivos, portada del informe" style="width:100%; border-radius:8px;"></picture>
         <figcaption style="margin-top:.8rem; font-size:.8rem; color:var(--kc-muted); text-align:center;">Objetivos — portada del informe</figcaption>
       </figure>
       <figure style="margin:0;">
-        <picture><source srcset="./img/kosta-2.webp" type="image/webp"><img loading="lazy" src="./img/kosta-2.png" alt="Kosta Cálida — página Comparar KPIs" style="width:100%; border-radius:12px; box-shadow:0 12px 48px rgba(22,22,22,.12);"></picture>
+        <picture><source srcset="./img/kosta-2.webp" type="image/webp"><img loading="lazy" src="./img/kosta-2.png" alt="Kosta Cálida — página Comparar KPIs" style="width:100%; border-radius:8px;"></picture>
         <figcaption style="margin-top:.8rem; font-size:.8rem; color:var(--kc-muted); text-align:center;">Comparar KPIs</figcaption>
       </figure>
     </div>
@@ -465,36 +484,36 @@ section { padding: 6rem 0; }
 </section>
 
 <!-- S9 · UN EJEMPLO DE LECTURA (antes "hallazgos", ahora una nota breve) -->
-<section id="ejemplo" data-screen-label="Un ejemplo de lectura" style="background:var(--kc-panel); padding:4rem 0;">
+<section id="ejemplo" data-screen-label="Un ejemplo de lectura" style="background:var(--kc-mist); padding:4rem 0;">
   <div class="kc-wrap">
-    <p class="reveal" style="font-size:.75rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--kc-green); margin-bottom:.5rem;">Un ejemplo de lectura</p>
-    <h3 class="reveal" style="font-family:Georgia,serif; font-size:1.4rem; font-weight:700; color:var(--kc-ink); margin-bottom:1rem; max-width:800px;">Qué permite ver el sistema, en un caso concreto.</h3>
-    <p class="reveal reveal-delay-1" style="font-size:.98rem; color:var(--kc-text); max-width:800px; line-height:1.75; margin-bottom:.9rem;">El año cerró en <strong>717.304 €</strong> frente a un presupuesto de <strong>776.000 €</strong>: una desviación de <strong style="color:var(--kc-red);">−58.700 € (−7,56 %)</strong>. La portada del informe reparte esa cifra por tienda: Mahón, la de más ventas de la red <strong>(277.000 €)</strong>, era también la que más arrastraba la desviación <strong style="color:var(--kc-red);">(−47.700 €)</strong>. Sant Francesc Xavier e Ibiza (ciudad), con menos volumen, eran las únicas dos en positivo <strong style="color:var(--kc-green);">(+6.000 € y +4.600 €)</strong>.</p>
-    <p class="reveal reveal-delay-2" style="font-size:.98rem; color:var(--kc-text); max-width:800px; line-height:1.75; margin-bottom:1rem;">Un patrón parecido aparecía por categoría: Bebidas y Refrescos lideraba en ventas y en margen <strong style="color:var(--kc-green);">(+37,58 %)</strong>, mientras Conveniencia y Tienda Express cerraba con <strong style="color:var(--kc-red);">margen negativo</strong> pese a un volumen similar.</p>
+    <p class="reveal kc-eyebrow">Un ejemplo de lectura</p>
+    <h3 class="reveal" style="font-family:var(--kc-sans); font-size:1.4rem; font-weight:700; letter-spacing:-0.02em; color:var(--kc-ink); margin-bottom:1rem; max-width:800px;">Qué permite ver el sistema, en un caso concreto.</h3>
+    <p class="reveal reveal-delay-1" style="font-size:.98rem; color:var(--kc-text); max-width:800px; line-height:1.75; margin-bottom:.9rem;">El año cerró en <strong class="kc-tnum">717.304 €</strong> frente a un presupuesto de <strong class="kc-tnum">776.000 €</strong>: una desviación de <strong class="kc-tnum">−58.700 € (−7,56 %)</strong>. La portada del informe reparte esa cifra por tienda: Mahón, la de más ventas de la red <strong class="kc-tnum">(277.000 €)</strong>, era también la que más arrastraba la desviación <strong class="kc-tnum">(−47.700 €)</strong>. Sant Francesc Xavier e Ibiza (ciudad), con menos volumen, eran las únicas dos en positivo <strong class="kc-tnum">(+6.000 € y +4.600 €)</strong>.</p>
+    <p class="reveal reveal-delay-2" style="font-size:.98rem; color:var(--kc-text); max-width:800px; line-height:1.75; margin-bottom:1rem;">Un patrón parecido aparecía por categoría: Bebidas y Refrescos lideraba en ventas y en margen <strong class="kc-tnum">(+37,58 %)</strong>, mientras Conveniencia y Tienda Express cerraba con <strong>margen negativo</strong> pese a un volumen similar.</p>
     <p class="reveal reveal-delay-3" style="font-size:.85rem; color:var(--kc-muted); font-style:italic;">Son lecturas entre las muchas que permiten las 13 páginas del modelo — no el resumen del proyecto.</p>
   </div>
 </section>
 
 <!-- S10 · HERRAMIENTAS -->
-<section id="stack" data-screen-label="Herramientas" style="background:var(--kc-sand);">
+<section id="stack" data-screen-label="Herramientas">
   <div class="kc-wrap" style="text-align:center;">
-    <p class="reveal" style="font-size:.75rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--kc-green); margin-bottom:.5rem;">Herramientas</p>
+    <p class="reveal kc-eyebrow">Herramientas</p>
     <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; margin-bottom:2rem;">Stack técnico</h2>
     <div class="tools-grid-3 reveal reveal-delay-1" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:1.1rem; text-align:left;">
-      <div style="background:var(--kc-panel); border-radius:10px; padding:1.4rem 1.5rem;">
-        <p style="font-family:Georgia,serif; font-size:1.02rem; font-weight:700; color:var(--kc-ink); margin-bottom:.4rem;">Power Query</p>
+      <div style="padding:1.4rem 1.5rem;">
+        <p style="font-size:1.02rem; font-weight:700; color:var(--kc-ink); margin-bottom:.4rem;">Power Query</p>
         <p style="font-size:.85rem; color:var(--kc-muted); line-height:1.55;">Transformación y limpieza de los datos del TPV antes del modelo.</p>
       </div>
-      <div style="background:var(--kc-panel); border-radius:10px; padding:1.4rem 1.5rem;">
-        <p style="font-family:Georgia,serif; font-size:1.02rem; font-weight:700; color:var(--kc-ink); margin-bottom:.4rem;">Power BI</p>
+      <div style="padding:1.4rem 1.5rem;">
+        <p style="font-size:1.02rem; font-weight:700; color:var(--kc-ink); margin-bottom:.4rem;">Power BI</p>
         <p style="font-size:.85rem; color:var(--kc-muted); line-height:1.55;">Modelo en estrella y las 13 páginas del informe, con drillthrough hasta nivel de ticket diario.</p>
       </div>
-      <div style="background:var(--kc-panel); border-radius:10px; padding:1.4rem 1.5rem;">
-        <p style="font-family:Georgia,serif; font-size:1.02rem; font-weight:700; color:var(--kc-ink); margin-bottom:.4rem;">DAX</p>
+      <div style="padding:1.4rem 1.5rem;">
+        <p style="font-size:1.02rem; font-weight:700; color:var(--kc-ink); margin-bottom:.4rem;">DAX</p>
         <p style="font-size:.85rem; color:var(--kc-muted); line-height:1.55;">92 medidas: ventas YTD, cumplimiento vs presupuesto, margen por categoría y producto, ticket medio entre tiendas.</p>
       </div>
-      <div style="background:var(--kc-panel); border-radius:10px; padding:1.4rem 1.5rem;">
-        <p style="font-family:Georgia,serif; font-size:1.02rem; font-weight:700; color:var(--kc-ink); margin-bottom:.4rem;">DAX + SVG</p>
+      <div style="padding:1.4rem 1.5rem;">
+        <p style="font-size:1.02rem; font-weight:700; color:var(--kc-ink); margin-bottom:.4rem;">DAX + SVG</p>
         <p style="font-size:.85rem; color:var(--kc-muted); line-height:1.55;">Gráficos a medida: colores dinámicos, deltas y ranking Top N generados por medida, sin visuales personalizados externos.</p>
       </div>
     </div>
@@ -502,19 +521,19 @@ section { padding: 6rem 0; }
 </section>
 
 <!-- S11 · QUÉ APRENDÍ -->
-<section id="aprendizaje" data-screen-label="Qué aprendí" style="background:var(--kc-mint);">
+<section id="aprendizaje" data-screen-label="Qué aprendí" style="background:var(--kc-mist);">
   <div class="kc-wrap">
-    <p class="reveal" style="font-size:.75rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--kc-green); margin-bottom:.5rem;">Qué aprendí</p>
+    <p class="reveal kc-eyebrow">Qué aprendí</p>
     <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.2; margin-bottom:1.5rem; max-width:900px;">El orden importa.</h2>
     <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--kc-text); max-width:800px; line-height:1.75; margin-bottom:1.2rem;">El drill-down hasta nivel de ticket fue la parte más exigente del modelo. Para que funcionara correctamente con cualquier combinación de filtros activa, las relaciones entre tablas tenían que estar diseñadas desde el principio con esa granularidad en mente.</p>
-    <p style="font-size:1.15rem; font-weight:700; color:var(--kc-ink); max-width:800px; line-height:1.6; font-family:Georgia,serif;" class="reveal reveal-delay-2">También aprendí que el orden importa: diseñar el modelo antes que los dashboards no es una preferencia metodológica, es lo que determina si el sistema aguanta o se rompe cuando alguien hace una pregunta que no estaba prevista.</p>
+    <p style="font-size:1.15rem; font-weight:700; color:var(--kc-ink); max-width:800px; line-height:1.6; font-family:var(--kc-sans); letter-spacing:-0.01em;" class="reveal reveal-delay-2">También aprendí que el orden importa: diseñar el modelo antes que los dashboards no es una preferencia metodológica, es lo que determina si el sistema aguanta o se rompe cuando alguien hace una pregunta que no estaba prevista.</p>
   </div>
 </section>
 
 <!-- S12 · CTA -->
 <section data-screen-label="CTA" style="text-align:center; padding:6rem 2rem 8rem;">
   <div class="kc-wrap reveal">
-    <p class="reveal cta-closing" style="font-family:Georgia,serif; font-size:clamp(1.6rem, 3.6vw, 2.4rem); line-height:1.35; color:var(--kc-ink); max-width:820px; margin:0 auto 3rem; text-wrap:balance;">De datos sueltos en el TPV a un modelo que aguanta cualquier pregunta.</p>
+    <p class="reveal cta-closing" style="font-family:var(--kc-sans); font-weight:700; letter-spacing:-0.02em; font-size:clamp(1.6rem, 3.6vw, 2.4rem); line-height:1.35; color:var(--kc-ink); max-width:820px; margin:0 auto 3rem; text-wrap:balance;">De datos sueltos en el TPV a un modelo que aguanta cualquier pregunta.</p>
     <div class="reveal reveal-delay-1" style="display:flex; flex-wrap:wrap; justify-content:center; gap:2.5rem;">
       <div>
         <a href="https://app.powerbi.com/view?r=eyJrIjoiMzhlYjliYTAtMWUzMS00YzE1LTgyNGEtZmZmNDVhNjQ1ZDY3IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=03634c064fb23f65778f" class="kc-cta" target="_blank" rel="noopener" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Kosta Calida',location:'kosta_calida_cta'});">Abrir dashboard en Power BI</a>
@@ -533,7 +552,7 @@ section { padding: 6rem 0; }
   <div class="kc-wrap">
     <div class="kc-foot-grid" style="display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:2.5rem; padding-bottom:2.5rem; border-bottom:1px solid rgba(255,255,255,.12);">
       <div>
-        <p style="font-family:Georgia,serif; font-size:1.3rem; font-weight:700; color:#fff; margin-bottom:.6rem;">Borja Mora.</p>
+        <p style="font-family:var(--kc-sans); font-size:1.3rem; font-weight:700; letter-spacing:-0.02em; color:#fff; margin-bottom:.6rem;">Borja Mora.</p>
         <p style="font-size:.8rem; color:#9a9a92; margin-top:.9rem;">Madrid, España</p>
       </div>
       <div>
