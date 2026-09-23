@@ -221,77 +221,29 @@ section { padding: 6rem 0; }
 .kc-chain-node.kc-chain-node-final { border-color: var(--kc-marigold); color: var(--kc-marigold); }
 .kc-chain-arrow { color: var(--kc-steel); font-size: 1.2rem; }
 
-/* ── Hero — hook editorial: del dato al contexto ── */
-.hero-hook {
+/* ── Hero — la estantería como fondo ── */
+.hero-simple {
   position: relative; min-height: 100vh;
-  display: flex; flex-direction: column; justify-content: center;
-  padding: 9rem 3rem 5rem;
-  background: var(--kc-paper);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 6rem 2rem;
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,.94) 0%, rgba(255,255,255,.62) 30%, rgba(255,255,255,.62) 68%, rgba(255,255,255,.96) 100%),
+    url('./img/kosta-shelf.webp');
+  background-size: cover, cover;
+  background-position: center, center 20%;
+  background-repeat: no-repeat, no-repeat;
 }
-.hero-hook-inner { max-width: 920px; }
-.hero-hook-identity {
-  display: flex; align-items: center; gap: .8rem; margin-bottom: 3.4rem;
-  opacity: 0; animation: hookFadeUp .6s cubic-bezier(.16,1,.3,1) .1s forwards;
+.hero-simple .hero-eyebrow {
+  font-size: .82rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--kc-graphite); margin-bottom: .9rem;
 }
-.hero-hook-mark { font-size: .95rem; font-weight: 700; letter-spacing: -0.01em; color: var(--kc-ink); }
-.hero-hook-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--kc-smoke); flex-shrink: 0; }
-.hero-hook-cat { font-size: .7rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--kc-graphite); }
-
-.hero-hook-tag {
-  display: block; font-size: .62rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
-  color: var(--kc-steel); margin-bottom: .55rem;
+.hero-simple h1 {
+  font-size: clamp(2.6rem, 6.5vw, 4.4rem); letter-spacing: -0.03em; line-height: 1.05;
+  margin-bottom: .7rem;
 }
-.hero-hook-line-1 {
-  font-size: clamp(1.25rem, 2.2vw, 1.6rem); font-weight: 600; color: var(--kc-slate);
-  letter-spacing: -0.01em; line-height: 1.3; margin-bottom: 1.8rem;
-  opacity: 0; animation: hookFadeUp .7s cubic-bezier(.16,1,.3,1) .3s forwards;
-}
-.hero-hook-line-2 {
-  font-size: clamp(2.3rem, 5.6vw, 4.2rem); font-weight: 800; color: var(--kc-ink);
-  letter-spacing: -0.03em; line-height: 1.08; margin-bottom: 2.4rem;
-  opacity: 0; animation: hookFadeUp .8s cubic-bezier(.16,1,.3,1) .5s forwards;
-}
-.hero-hook-line-2 .hero-hook-accent { color: var(--kc-marigold); }
-.hero-hook-sub {
-  font-size: 1.05rem; color: var(--kc-slate); max-width: 560px; line-height: 1.7; margin-bottom: 3.6rem;
-  opacity: 0; animation: hookFadeUp .7s cubic-bezier(.16,1,.3,1) .72s forwards;
-}
-@keyframes hookFadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
-
-.hh-chain {
-  display: flex; align-items: center; flex-wrap: wrap; gap: .5rem;
-  opacity: 0; animation: hookFadeUp .7s cubic-bezier(.16,1,.3,1) .92s forwards;
-}
-.hh-chain-node {
-  border: 1px solid var(--kc-ash); border-radius: 4px; padding: .55rem .95rem;
-  font-size: .85rem; font-weight: 700; color: var(--kc-ink); font-variant-numeric: tabular-nums; white-space: nowrap;
-}
-.hh-chain-node-final { background: var(--kc-ink); border-color: var(--kc-ink); color: var(--kc-paper); }
-.hh-chain-arrow { color: var(--kc-steel); font-size: 1rem; }
-
-.hero-hook-scroll {
-  position: absolute; left: 3rem; bottom: 2.2rem;
-  font-size: .75rem; color: var(--kc-graphite); letter-spacing: .16em; text-transform: uppercase;
-  opacity: 0; transform: translateY(14px);
-  animation-name: hookFadeUp, hookPulse;
-  animation-duration: .6s, 2s;
-  animation-delay: .1s, 1.6s;
-  animation-timing-function: cubic-bezier(.16,1,.3,1), ease-in-out;
-  animation-iteration-count: 1, infinite;
-  animation-fill-mode: forwards, none;
-}
-@keyframes hookPulse { 0%, 100% { opacity: .45; transform: translateY(0); } 50% { opacity: 1; transform: translateY(5px); } }
-
-@media (max-width: 640px) {
-  .hero-hook { padding: 7rem 1.2rem 4rem; }
-  .hh-chain { gap: .35rem; }
-  .hh-chain-node { padding: .45rem .7rem; font-size: .75rem; }
-  .hero-hook-scroll { left: 1.2rem; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero-hook-identity, .hero-hook-line-1, .hero-hook-line-2, .hero-hook-sub, .hh-chain, .hero-hook-scroll {
-    animation: none; opacity: 1; transform: none;
-  }
+.hero-simple .hero-sub {
+  font-family: var(--kc-sans); font-size: clamp(1.1rem, 2.1vw, 1.35rem); color: var(--kc-muted);
+  max-width: 560px; margin: 0 auto;
 }
 
 /* ── Footer ── */
@@ -315,32 +267,11 @@ section { padding: 6rem 0; }
   </a>
 </nav>
 
-<!-- S1 · HERO — el hook: del dato al contexto -->
-<section class="hero-hook" data-screen-label="Hero">
-  <div class="hero-hook-inner">
-    <div class="hero-hook-identity">
-      <span class="hero-hook-mark">Kosta Cálida</span>
-      <span class="hero-hook-dot"></span>
-      <span class="hero-hook-cat">Retail · Red de tiendas</span>
-    </div>
-
-    <p class="hero-hook-line-1"><span class="hero-hook-tag">El dato</span>El TPV sabía cuánto se vendía.</p>
-    <h1 class="hero-hook-line-2"><span class="hero-hook-tag">El contexto</span>La dirección necesitaba saber <span class="hero-hook-accent">por qué</span>.</h1>
-
-    <p class="hero-hook-sub">Los datos de venta ya existían. Lo que faltaba era una forma de seguirlos hasta encontrar la causa — de la cifra agregada al ticket concreto que la explica.</p>
-
-    <div class="hh-chain" aria-hidden="true">
-      <span class="hh-chain-node">€12.840</span>
-      <span class="hh-chain-arrow">→</span>
-      <span class="hh-chain-node">−7,4%</span>
-      <span class="hh-chain-arrow">→</span>
-      <span class="hh-chain-node">Tienda 03</span>
-      <span class="hh-chain-arrow">→</span>
-      <span class="hh-chain-node hh-chain-node-final">Ticket #18427</span>
-    </div>
-  </div>
-
-  <p class="hero-hook-scroll">Scroll ↓</p>
+<!-- S1 · HERO — la estantería como fondo -->
+<section class="hero-simple" data-screen-label="Hero">
+  <p class="hero-eyebrow">Retail · Red de tiendas</p>
+  <h1>Kosta Cálida</h1>
+  <p class="hero-sub">Reporting para una red de tiendas</p>
 </section>
 
 <!-- S2 · EL PROBLEMA -->
