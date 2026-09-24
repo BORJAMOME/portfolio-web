@@ -362,7 +362,7 @@ section { padding: 4rem 0; }
 <section id="que-es" data-screen-label="Qué es un informe financiero">
   <div class="if-wrap">
     <p class="if-tag reveal">Antes de empezar</p>
-    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.2rem; max-width:900px;">¿Qué es un informe financiero? (Explicado para cualquiera)</h2>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.2rem; max-width:900px;">¿Qué es un informe financiero?</h2>
     <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:2.4rem;">Si nunca has trabajado con contabilidad, puedes imaginarlo como tres preguntas distintas sobre una misma empresa.</p>
     <div class="kpi-grid-3 reveal reveal-delay-2" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1.2rem;">
       <div class="if-card" style="border:1px solid var(--if-border); padding:1.8rem 1.8rem;">
@@ -412,7 +412,8 @@ section { padding: 4rem 0; }
     <p class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.4rem;">Quería responder haciendo clic.</p>
     <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:.6rem;">Por eso todo el informe gira alrededor de una idea muy simple.</p>
     <p class="reveal reveal-delay-3" style="font-size:1.2rem; max-width:760px; line-height:1.5; margin-bottom:1.4rem;"><strong>Cada cifra debería poder recorrerse hasta encontrar el asiento que la originó.</strong></p>
-    <p class="reveal reveal-delay-4" style="font-size:1.05rem; max-width:760px; line-height:1.6;">Ese principio acabó condicionando prácticamente todas las decisiones del proyecto.</p>
+    <p class="reveal reveal-delay-4" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.2rem;">Ese principio acabó condicionando prácticamente todas las decisiones del proyecto.</p>
+    <p class="reveal reveal-delay-4" style="font-size:1.05rem; max-width:760px; line-height:1.6;">Hoy ese recorrido existe de verdad: desde el balance de comprobación — 187.730.234,71€ de Debe que cuadran exactamente con 187.730.234,71€ de Haber — puedo bajar a una subcuenta, de ahí a su libro mayor, y de ahí a un asiento concreto. Sin salir del informe.</p>
   </div>
 </section>
 
@@ -489,7 +490,8 @@ section { padding: 4rem 0; }
       <li>problemas de mapeo.</li>
     </ul>
     <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.2rem;">La tabla <strong>Cuentas sin clasificar</strong> se recalcula en cada actualización. Eso significa que el propio informe intenta detectar errores antes de que aparezcan como si fueran resultados reales.</p>
-    <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:760px; line-height:1.6;">Me parecía más útil construir esa protección dentro del modelo que confiar en revisiones manuales posteriores.</p>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.2rem;">Me parecía más útil construir esa protección dentro del modelo que confiar en revisiones manuales posteriores.</p>
+    <p class="reveal reveal-delay-4" style="font-size:1.05rem; max-width:760px; line-height:1.6;">Con los tres años de datos cargados, hoy ese checklist pasa limpio: cero asientos descuadrados, cero cuentas sin clasificar. Es la primera pantalla que miro antes de confiar en cualquier cifra del resto del informe.</p>
   </div>
 </section>
 
@@ -501,7 +503,8 @@ section { padding: 4rem 0; }
     <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.4rem;">Probablemente la medida que más tiempo me llevó fue la proyección de cierre.</p>
     <p class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:.3rem;">Hasta octubre uso datos reales.</p>
     <p class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.4rem;">A partir de ahí, utilizo presupuesto.</p>
-    <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.2rem;">Pero hacerlo sin romper gráficos ni tablas fue bastante más complicado. Existe una fecha de corte configurable en el modelo: a partir de ella, cada medida cambia automáticamente de datos reales a presupuesto, y la serie del gráfico mantiene continuidad visual en lugar de dejar un hueco entre lo real y lo proyectado.</p>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.2rem;">Pero hacerlo sin romper gráficos ni tablas fue bastante más complicado. Existe una fecha de corte configurable en el modelo — fijada en el <strong>31 de octubre de 2023</strong> — a partir de la cual cada medida cambia automáticamente de datos reales a presupuesto, y la serie del gráfico mantiene continuidad visual en lugar de dejar un hueco entre lo real y lo proyectado.</p>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.2rem;">El resultado, mes a mes: <strong>309.284,99€</strong> reales acumulados hasta el corte, frente a los <strong>173.511,68€</strong> que preveía el presupuesto original para todo el año. La proyección de cierre combinada queda en <strong>196.404,62€</strong> — ni la cifra real ni la presupuestada, sino la mejor estimación con la información disponible en cada momento.</p>
     <blockquote class="if-quote reveal reveal-delay-4">Ese fue probablemente el momento en el que más aprendí de DAX durante este proyecto.</blockquote>
   </div>
 </section>
@@ -510,16 +513,19 @@ section { padding: 4rem 0; }
 <section id="dashboard" data-screen-label="Lo que cuenta el dashboard">
   <div class="if-wrap">
     <p class="if-tag reveal">Lo que cuenta el dashboard</p>
-    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Seis áreas conectadas.</h2>
-    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.4rem;">Cada bloque responde a una pregunta distinta.</p>
-    <ul class="reveal reveal-delay-1" style="font-size:1rem; max-width:800px; line-height:1.9; margin-bottom:2.4rem; padding-left:1.3rem;">
-      <li><strong>Panel ejecutivo</strong> → entender la situación en segundos.</li>
-      <li><strong>Checklist</strong> → validar datos.</li>
-      <li><strong>Balance</strong> → evolución patrimonial.</li>
-      <li><strong>PyG</strong> → resultado del ejercicio.</li>
-      <li><strong>Cash Flow</strong> → movimientos de caja.</li>
-      <li><strong>Drill-through</strong> → llegar hasta el asiento contable.</li>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Trece páginas de contenido. Siete que solo aparecen si las necesitas.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:800px; line-height:1.6; margin-bottom:1.2rem;">El informe tiene 20 páginas en total. Se navega desde una cabecera fija con cinco accesos — <strong>Inicio · Checklist · Balance SyS · Balance · PyG · Cash Flow</strong> — pero cada bloque esconde su propio recorrido de detalle.</p>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:800px; line-height:1.6; margin-bottom:1.4rem;">Cada bloque responde a una pregunta distinta.</p>
+    <ul class="reveal reveal-delay-1" style="font-size:1rem; max-width:800px; line-height:1.9; margin-bottom:1.4rem; padding-left:1.3rem;">
+      <li><strong>Inicio</strong> → un panel con 12 KPIs que resume la situación en segundos.</li>
+      <li><strong>Checklist</strong> → ¿puedo confiar en los datos antes de analizarlos?</li>
+      <li><strong>Balance de sumas y saldos</strong> → su propio bloque de tres páginas: de la cuenta agregada al asiento individual (Balance SyS → Libro Mayor → Detalle Asiento).</li>
+      <li><strong>Balance</strong> → estructura patrimonial y su evolución, con una segunda página para el detalle mes a mes.</li>
+      <li><strong>PyG</strong> → cuatro vistas: evolución trimestral, comparativa interanual, desviación vs presupuesto y proyección de cierre.</li>
+      <li><strong>Cash Flow</strong> → de dónde viene y a dónde va la caja del grupo.</li>
     </ul>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:800px; line-height:1.6; margin-bottom:2.4rem;">Las 7 páginas restantes no aparecen en ningún menú: son páginas de tooltip, que Power BI muestra flotando cuando paso el ratón sobre un punto de los gráficos de evolución de Balance, PyG o Tesorería. En vez del tooltip básico, aparece una mini-página con el dato bien formateado y la misma identidad visual del resto del informe. La mayoría de informes usan una o dos páginas de este tipo; yo usé siete, una por cada gráfico que lo necesitaba.</p>
+    <p class="reveal reveal-delay-2" style="font-size:.92rem; color:var(--if-muted); max-width:800px; line-height:1.6; margin-bottom:2.4rem;">Estos son algunos de los 12 KPIs del panel de inicio:</p>
     <div class="kpi-grid-3 reveal reveal-delay-2" style="display:grid; grid-template-columns:repeat(5, 1fr); gap:0; border:1px solid var(--if-border); border-left:none; margin-bottom:2.5rem;">
       <div style="text-align:center; padding:1.4rem .8rem; border-left:1px solid var(--if-border);">
         <span style="display:block; font-family:var(--if-display); font-size:clamp(1.2rem, 2.2vw, 1.6rem); color:var(--if-cobalt); line-height:1;">342.142€</span>
@@ -575,7 +581,7 @@ section { padding: 4rem 0; }
     <div class="tools-grid-6 reveal reveal-delay-1" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:0; text-align:left; border:1px solid var(--if-border); border-left:none; border-bottom:none;">
       <div style="border-left:1px solid var(--if-border); border-bottom:1px solid var(--if-border); padding:1.4rem 1.5rem;">
         <p style="font-family:var(--if-display); font-size:1.2rem; color:var(--if-cobalt); margin-bottom:.4rem;">Power BI</p>
-        <p style="font-size:.85rem; color:var(--if-muted); line-height:1.5;">Modelo completo, la navegación entre las seis áreas del informe y el drill-through desde cualquier KPI hasta el apunte contable de origen.</p>
+        <p style="font-size:.85rem; color:var(--if-muted); line-height:1.5;">Modelo completo, la navegación entre las 20 páginas del informe (13 de contenido, 7 de tooltip) y el drill-through desde cualquier KPI hasta el apunte contable de origen.</p>
       </div>
       <div style="border-left:1px solid var(--if-border); border-bottom:1px solid var(--if-border); padding:1.4rem 1.5rem;">
         <p style="font-family:var(--if-display); font-size:1.2rem; color:var(--if-cobalt); margin-bottom:.4rem;">DAX</p>
