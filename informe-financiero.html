@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Informe Financiero Completo — Análisis Financiero | Borja Mora</title>
-<meta name="description" content="Sistema de análisis financiero integral en Power BI que conecta balance, PyG y cash flow, con drill-through desde cualquier KPI hasta el asiento contable de origen. Free Cash Flow 2023: 678.208€, frente a -1.165.649€ del año anterior.">
+<meta name="description" content="Cómo convertí 216.858 apuntes contables de tres empresas en un modelo de Power BI que conecta Balance, PyG y Cash Flow, con drill-through hasta el asiento de origen. Free Cash Flow 2023: 678.209€, frente a -1.165.650€ del año anterior.">
 <meta name="theme-color" content="#1658b3">
 <link rel="canonical" href="https://borjamora.es/informe-financiero.html">
 <link rel="icon" type="image/svg+xml" href="./img/favicon.svg">
 <link rel="icon" href="./img/favicon.ico" type="image/x-icon">
 <!-- Open Graph -->
 <meta property="og:title" content="Informe Financiero Completo — Análisis Financiero | Borja Mora">
-<meta property="og:description" content="Un sistema de análisis financiero en Power BI que conecta balance, PyG y cash flow. El Free Cash Flow pasó de -1,17M€ a 678.208€ en un año — el modelo muestra exactamente qué partidas explican la diferencia.">
+<meta property="og:description" content="Cómo convertí 216.858 apuntes contables de tres empresas en un modelo de Power BI que conecta Balance, PyG y Cash Flow. El Free Cash Flow pasó de -1,17M€ a 678.209€ en un año — el modelo muestra exactamente qué partidas explican la diferencia.">
 <meta property="og:image" content="https://borjamora.es/img/financiero-card.png">
 <meta property="og:url" content="https://borjamora.es/informe-financiero.html">
 <meta property="og:type" content="article">
@@ -19,7 +19,7 @@
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Informe Financiero Completo — Análisis Financiero | Borja Mora">
-<meta name="twitter:description" content="Balance, PyG y Cash Flow conectados en un único modelo, con drill-through hasta el asiento contable. Free Cash Flow 2023: 678.208€ (desde -1.165.649€ el año anterior).">
+<meta name="twitter:description" content="Balance, PyG y Cash Flow conectados en un único modelo, con drill-through hasta el asiento contable. Free Cash Flow 2023: 678.209€ (desde -1.165.650€ el año anterior).">
 <meta name="twitter:image" content="https://borjamora.es/img/financiero-card.png">
 
 <!-- Google Fonts: Antonio (sustituto de Baton Turbo) + Manrope (sustituto de Greycliff) — sistema Swwim -->
@@ -284,6 +284,14 @@ section { padding: 4rem 0; }
   .if-marquee-track { animation: none; }
 }
 
+/* ── Cita editorial ── */
+.if-quote {
+  border-left: 3px solid var(--if-cobalt); padding-left: 1.3rem; margin: 1.5rem 0;
+  font-family: var(--if-body); font-style: normal; font-size: 1.08rem; line-height: 1.6;
+  color: var(--if-carbon); max-width: 760px;
+}
+.if-quote.if-quote-onblue { border-left-color: var(--if-nude); color: #fff; }
+
 /* ── Footer ── */
 .if-foot-title {
   font-family: var(--if-body);
@@ -320,19 +328,19 @@ section { padding: 4rem 0; }
   </a>
 </nav>
 
-<!-- S1 · HERO — Free Cash Flow: de -1.165.649€ a 678.208€ -->
+<!-- S1 · HERO — Free Cash Flow: de -1.165.650€ a 678.209€ -->
 <section class="hero-stage" data-screen-label="Hero">
-  <p class="hero-eyebrow">Análisis financiero</p>
-  <h1 class="brand-name" style="font-size:clamp(2.6rem, 9vw, 7rem); text-transform:uppercase; line-height:.98; color:#fff; margin-bottom:1.4rem; max-width:1100px;">Informe Financiero Completo</h1>
-  <p class="hero-sub" style="font-family:var(--if-body); font-weight:400; font-size:clamp(1rem, 2vw, 1.25rem); color:rgba(255,255,255,.85); max-width:560px; line-height:1.56;">Balance, PyG y Cash Flow conectados en un único modelo</p>
+  <p class="hero-eyebrow">Power BI · Caso de estudio</p>
+  <h1 class="brand-name" style="font-size:clamp(1.9rem, 4.6vw, 3.6rem); text-transform:none; line-height:1.15; color:#fff; margin-bottom:1.4rem; max-width:920px;">Cómo convertí 216.858 apuntes contables en un informe financiero que cualquiera puede recorrer</h1>
+  <p class="hero-sub" style="font-family:var(--if-body); font-weight:400; font-size:clamp(1rem, 2vw, 1.25rem); color:rgba(255,255,255,.85); max-width:620px; line-height:1.56;">Tres empresas. Dos años de contabilidad. Un único modelo capaz de conectar Balance, Cuenta de Resultados y Cash Flow sin salir de Power BI.</p>
   <div class="hero-stat-row">
     <div class="hero-stat">
-      <div class="hero-stat-value" style="font-size:clamp(1.6rem, 3.4vw, 2.4rem); color:rgba(255,255,255,.6);">-1.165.649€</div>
+      <div class="hero-stat-value" style="font-size:clamp(1.6rem, 3.4vw, 2.4rem); color:rgba(255,255,255,.6);">-1.165.650€</div>
       <div class="hero-stat-label">Free Cash Flow año anterior</div>
     </div>
     <div class="hero-stat-arrow">→</div>
     <div class="hero-stat">
-      <div class="hero-stat-value" style="font-size:clamp(2rem, 4.2vw, 3rem); color:var(--if-nude);">678.208€</div>
+      <div class="hero-stat-value" style="font-size:clamp(2rem, 4.2vw, 3rem); color:var(--if-nude);">678.209€</div>
       <div class="hero-stat-label">Free Cash Flow 2023</div>
     </div>
   </div>
@@ -350,74 +358,101 @@ section { padding: 4rem 0; }
   </div>
 </div>
 
-<!-- S2 · EL PROBLEMA -->
-<section id="problema" data-screen-label="El problema">
+<!-- S2 · ¿QUÉ ES UN INFORME FINANCIERO? -->
+<section id="que-es" data-screen-label="Qué es un informe financiero">
   <div class="if-wrap">
-    <p class="if-tag reveal">El problema</p>
-    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Los datos existían. La visión completa, no.</h2>
-    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.2rem;">El grupo opera a través de tres sociedades distintas, con un diario contable que acumula más de 216.000 apuntes al año. Cuando cada empresa analiza su parte por separado, dirección necesita construir la visión consolidada manualmente cada vez. Ese proceso es lento, poco trazable y genera versiones distintas de la misma realidad.</p>
-    <p class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:760px; line-height:1.6;">Sin un modelo que conectara los tres estados financieros de forma coherente <strong>entre las tres empresas</strong>, cualquier análisis era una foto parcial.</p>
-  </div>
-</section>
-
-<!-- S3 · EL OBJETIVO -->
-<section id="objetivo" data-screen-label="El objetivo">
-  <div class="if-wrap">
-    <p class="if-tag reveal">El objetivo</p>
-    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Del KPI de dirección al asiento que lo explica.</h2>
-    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:3rem;">Diseñar una estructura contable que unificara <strong>balance, PyG y cash flow</strong>, mantuviera coherencia entre periodos y permitiera navegar desde un KPI de alto nivel hasta el asiento concreto que lo genera, sin salir del informe.</p>
-    <div class="kpi-grid-3 reveal reveal-delay-2" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:0; border:1px solid var(--if-border); border-left:none;">
-      <div style="text-align:center; padding:2rem 1rem; border-left:1px solid var(--if-border);">
-        <span style="font-family:var(--if-display); font-size:clamp(2rem, 3.5vw, 2.8rem); color:var(--if-cobalt); line-height:1;" data-count="2">0</span>
-        <p style="font-size:.82rem; color:var(--if-muted); margin-top:.4rem;">tablas de hechos</p>
+    <p class="if-tag reveal">Antes de empezar</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.2rem; max-width:900px;">¿Qué es un informe financiero? (Explicado para cualquiera)</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:2.4rem;">Si nunca has trabajado con contabilidad, puedes imaginarlo como tres preguntas distintas sobre una misma empresa.</p>
+    <div class="kpi-grid-3 reveal reveal-delay-2" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1.2rem;">
+      <div class="if-card" style="border:1px solid var(--if-border); padding:1.8rem 1.8rem;">
+        <p style="font-family:var(--if-display); font-size:1.4rem; color:var(--if-cobalt); margin-bottom:.2rem;">Balance</p>
+        <p style="font-size:.78rem; color:var(--if-muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:1.1rem;">Es una fotografía</p>
+        <blockquote class="if-quote" style="font-size:1rem; margin:0 0 1rem;">¿Qué tiene y qué debe la empresa hoy?</blockquote>
+        <p style="font-size:.88rem; line-height:1.55;">Aquí aparecen activos como la tesorería o las existencias, y también deudas y patrimonio.</p>
       </div>
-      <div style="text-align:center; padding:2rem 1rem; border-left:1px solid var(--if-border);">
-        <span style="font-family:var(--if-display); font-size:clamp(2rem, 3.5vw, 2.8rem); color:var(--if-cobalt); line-height:1;" data-count="9">0</span>
-        <p style="font-size:.82rem; color:var(--if-muted); margin-top:.4rem;">dimensiones conectadas</p>
+      <div class="if-card" style="border:1px solid var(--if-border); padding:1.8rem 1.8rem;">
+        <p style="font-family:var(--if-display); font-size:1.4rem; color:var(--if-cobalt); margin-bottom:.2rem;">Cuenta de Resultados (PyG)</p>
+        <p style="font-size:.78rem; color:var(--if-muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:1.1rem;">Es una película</p>
+        <blockquote class="if-quote" style="font-size:1rem; margin:0 0 1rem;">¿Cómo ha ganado o perdido dinero durante el año?</blockquote>
+        <p style="font-size:.88rem; line-height:1.55;">Aquí aparecen ingresos, gastos, EBITDA y beneficio.</p>
       </div>
-      <div style="text-align:center; padding:2rem 1rem; border-left:1px solid var(--if-border);">
-        <span style="font-family:var(--if-display); font-size:clamp(2rem, 3.5vw, 2.8rem); color:var(--if-cobalt); line-height:1;" data-count="6">0</span>
-        <p style="font-size:.82rem; color:var(--if-muted); margin-top:.4rem;">áreas de navegación</p>
+      <div class="if-card" style="border:1px solid var(--if-border); padding:1.8rem 1.8rem;">
+        <p style="font-family:var(--if-display); font-size:1.4rem; color:var(--if-cobalt); margin-bottom:.2rem;">Cash Flow</p>
+        <p style="font-size:.78rem; color:var(--if-muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:1.1rem;">Responde a otra pregunta</p>
+        <blockquote class="if-quote" style="font-size:1rem; margin:0 0 1rem;">¿Ha entrado o salido dinero de la caja?</blockquote>
+        <p style="font-size:.88rem; line-height:1.55;">Porque una empresa puede tener beneficios y aun así quedarse sin liquidez.</p>
       </div>
     </div>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-top:2.4rem;">El reto es que estas tres piezas deberían contar la misma historia. Y eso es precisamente lo que intenté construir.</p>
   </div>
 </section>
 
-<!-- S4 · MI ENFOQUE -->
-<section id="enfoque" data-screen-label="Mi enfoque">
+<!-- S3 · EL RETO -->
+<section id="problema" data-screen-label="El reto">
   <div class="if-wrap">
-    <p class="if-tag reveal">Mi enfoque</p>
-    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Empecé por el modelo, no por el visual.</h2>
-    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:800px; line-height:1.6; margin-bottom:1.2rem;"><strong>Dos tablas de hechos</strong>: <code style="background:#f5f5f5; padding:.1rem .4rem;">FactDiario</code> con los apuntes contables reales y <code style="background:#f5f5f5; padding:.1rem .4rem;">FactPresupuesto</code> con los datos presupuestados, conectadas a las mismas dimensiones de Calendario, Empresas, Orígenes, CuentasContables y Partners. Cuatro dimensiones adicionales para la jerarquía contable: dimPyG, dimBalance, dimCF y DimApuntes, cada una con su propia estructura de niveles.</p>
-    <p class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:800px; line-height:1.6; margin-bottom:1.2rem;">Una tabla <strong>TablaFechaCierre</strong> gestiona la proyección a cierre: permite extrapolar el resultado esperado a fin de año a partir de los datos reales disponibles hasta la fecha de corte, manteniendo la coherencia con el presupuesto original.</p>
-    <p class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:800px; line-height:1.6; margin-bottom:2rem;">El resultado: un modelo de <strong>19 tablas, 15 relaciones y 174 medidas DAX</strong> que consolida las tres empresas sobre 2.376 subcuentas contables distintas — con una sola tabla de hechos habría sido imposible mantener esa coherencia entre balance, PyG y cash flow.</p>
-    <div class="kpi-grid-3 reveal reveal-delay-3" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1.2rem;">
-      <div class="if-card" style="border:1px solid var(--if-border); padding:1.5rem 1.6rem;">
-        <p style="font-family:var(--if-display); font-size:1.3rem; color:var(--if-cobalt); margin-bottom:.4rem;">FactDiario</p>
-        <p style="font-size:.85rem; line-height:1.5;">Los apuntes contables reales, la base sobre la que se construye todo el informe.</p>
+    <p class="if-tag reveal">El reto</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Cuando cada empresa cuenta una historia distinta.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.2rem;">Los datos ya existían. Había tres empresas distintas, cada una con su propio diario contable, y entre todas acumulaban <strong>216.858 apuntes</strong> repartidos entre 2022 y 2023.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.2rem;">El problema aparecía cuando querías responder algo tan sencillo como:</p>
+    <blockquote class="if-quote reveal reveal-delay-2">¿Cómo está realmente el grupo?</blockquote>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.2rem;">Balance, PyG y Cash Flow podían consultarse por separado, pero no existía una visión consolidada que permitiera navegar entre ellos sin reconstruir el análisis manualmente.</p>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:760px; line-height:1.6;">Cuantas más versiones del mismo informe existen, más fácil es que dos personas lleguen a conclusiones diferentes usando datos supuestamente iguales. Mi objetivo fue evitar precisamente eso.</p>
+  </div>
+</section>
+
+<!-- S4 · LA IDEA QUE CAMBIÓ EL PROYECTO -->
+<section id="idea" data-screen-label="La idea que cambió el proyecto">
+  <div class="if-wrap">
+    <p class="if-tag reveal">La idea que cambió el proyecto</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Quería que cualquier KPI pudiera defenderse solo.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.2rem;">Mientras diseñaba el modelo me hice una pregunta.</p>
+    <blockquote class="if-quote reveal reveal-delay-1">¿Qué pasa si alguien me pregunta de dónde sale este número?</blockquote>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:.3rem;">No quería responder abriendo Excel.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.4rem;">Quería responder haciendo clic.</p>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:.6rem;">Por eso todo el informe gira alrededor de una idea muy simple.</p>
+    <p class="reveal reveal-delay-3" style="font-size:1.2rem; max-width:760px; line-height:1.5; margin-bottom:1.4rem;"><strong>Cada cifra debería poder recorrerse hasta encontrar el asiento que la originó.</strong></p>
+    <p class="reveal reveal-delay-4" style="font-size:1.05rem; max-width:760px; line-height:1.6;">Ese principio acabó condicionando prácticamente todas las decisiones del proyecto.</p>
+  </div>
+</section>
+
+<!-- S5 · CÓMO LO CONSTRUÍ -->
+<section id="enfoque" data-screen-label="Cómo lo construí">
+  <div class="if-wrap">
+    <p class="if-tag reveal">Cómo lo construí</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Empecé por el modelo, no por los gráficos.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:800px; line-height:1.6; margin-bottom:.3rem;">Muchos dashboards empiezan diseñando visuales.</p>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:800px; line-height:1.6; margin-bottom:1.4rem;">Yo hice justo lo contrario.</p>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:800px; line-height:1.6; margin-bottom:2.2rem;">Primero construí un modelo capaz de soportar tres estados financieros distintos sin duplicar lógica ni romper cálculos.</p>
+    <div class="kpi-grid-3 reveal reveal-delay-2" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:0; border:1px solid var(--if-border); border-left:none; margin-bottom:2.2rem;">
+      <div style="text-align:center; padding:2rem 1rem; border-left:1px solid var(--if-border);">
+        <span style="font-family:var(--if-display); font-size:clamp(2rem, 3.5vw, 2.8rem); color:var(--if-cobalt); line-height:1;" data-count="19">0</span>
+        <p style="font-size:.82rem; color:var(--if-muted); margin-top:.4rem;">tablas</p>
       </div>
-      <div class="if-card" style="border:1px solid var(--if-border); padding:1.5rem 1.6rem;">
-        <p style="font-family:var(--if-display); font-size:1.3rem; color:var(--if-cobalt); margin-bottom:.4rem;">FactPresupuesto</p>
-        <p style="font-size:.85rem; line-height:1.5;">Los datos presupuestados, comparables con lo real bajo las mismas dimensiones.</p>
+      <div style="text-align:center; padding:2rem 1rem; border-left:1px solid var(--if-border);">
+        <span style="font-family:var(--if-display); font-size:clamp(2rem, 3.5vw, 2.8rem); color:var(--if-cobalt); line-height:1;" data-count="15">0</span>
+        <p style="font-size:.82rem; color:var(--if-muted); margin-top:.4rem;">relaciones</p>
       </div>
-      <div class="if-card" style="border:1px solid var(--if-border); padding:1.5rem 1.6rem;">
-        <p style="font-family:var(--if-display); font-size:1.3rem; color:var(--if-cobalt); margin-bottom:.4rem;">TablaFechaCierre</p>
-        <p style="font-size:.85rem; line-height:1.5;">Gestiona la proyección a cierre, extrapolando el resultado esperado a fin de año.</p>
+      <div style="text-align:center; padding:2rem 1rem; border-left:1px solid var(--if-border);">
+        <span style="font-family:var(--if-display); font-size:clamp(2rem, 3.5vw, 2.8rem); color:var(--if-cobalt); line-height:1;" data-count="174">0</span>
+        <p style="font-size:.82rem; color:var(--if-muted); margin-top:.4rem;">medidas DAX</p>
       </div>
     </div>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:800px; line-height:1.6; margin-bottom:1.4rem;">En el centro están <strong>FactDiario</strong>, con los apuntes contables reales, y <strong>FactPresupuesto</strong>, con los datos presupuestados. Ambas se conectan a las mismas nueve dimensiones: Calendario, Empresas, Orígenes, CuentasContables, Partners, y las cuatro que dan forma a cada estado financiero — dimPyG, dimBalance, dimCF y DimApuntes.</p>
+    <blockquote class="if-quote reveal reveal-delay-4">La única relación bidireccional del modelo conecta FactDiario con DimApuntes. La dejé así porque era necesaria para calcular correctamente el Cash Flow filtrando por tipo de asiento. Todo lo demás mantiene un único sentido de filtro, para que el comportamiento del modelo sea más predecible.</blockquote>
   </div>
 </section>
 
-<!-- S5 · MODELO DE DATOS -->
-<section id="modelo" data-screen-label="Modelo de datos">
+<!-- S6 · UNA DECISIÓN QUE ME AHORRÓ MUCHOS PROBLEMAS -->
+<section id="modelo" data-screen-label="Una decisión que me ahorró muchos problemas">
   <div class="if-wrap">
-    <p class="if-tag reveal">Modelo de datos</p>
-    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Dos tablas de hechos, nueve dimensiones compartidas.</h2>
+    <p class="if-tag reveal">Una decisión que me ahorró muchos problemas</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Separar Real y Presupuesto.</h2>
     <div class="grid-2col reveal reveal-delay-1" style="display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:start;">
       <div>
-        <p style="font-size:1rem; line-height:1.6; margin-bottom:1.2rem;">El modelo consolida <strong>FactDiario</strong> (real) y <strong>FactPresupuesto</strong> (presupuestado) sobre las mismas cinco dimensiones compartidas, más cuatro dimensiones adicionales dedicadas a la jerarquía contable de cada estado financiero.</p>
-        <p style="font-size:1rem; line-height:1.6; margin-bottom:1.2rem;">Esta separación permite comparar Real vs Presupuesto en cualquier nivel sin romper la coherencia entre balance, PyG y cash flow.</p>
-        <p style="font-size:1rem; line-height:1.6;">De las 15 relaciones del modelo, solo una es bidireccional: la que conecta <strong>FactDiario</strong> con <strong>DimApuntes</strong>, necesaria para que el filtro por tipo de asiento se propague correctamente al calcular el cash flow. El resto son de un único sentido — bidireccionalidad puntual donde el cálculo lo exige, no por defecto en todo el modelo.</p>
+        <p style="font-size:1rem; line-height:1.6; margin-bottom:1.2rem;">Durante el desarrollo descubrí que intentar mezclar ambos escenarios en una única tabla complicaba mucho los cálculos. Al separarlos conseguí que cualquier comparación funcionara exactamente igual en todo el informe.</p>
+        <p style="font-size:1rem; line-height:1.6; margin-bottom:1.2rem;">FactDiario y FactPresupuesto comparten las mismas dimensiones, así que la desviación presupuestaria reutiliza el mismo contexto de filtro que cualquier otra medida — y la proyección de cierre, también. Sin duplicar lógica en ningún punto del modelo.</p>
+        <p style="font-size:1rem; line-height:1.6;">Esta separación es la que permite comparar Real vs Presupuesto en cualquier nivel, desde el total del grupo hasta una sola empresa, sin romper la coherencia entre balance, PyG y cash flow.</p>
       </div>
       <div style="border:1px solid var(--if-border); padding:2rem;">
         <p style="font-family:var(--if-body); font-size:.72rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--if-muted); margin-bottom:1rem;">Esquema</p>
@@ -440,13 +475,52 @@ section { padding: 4rem 0; }
   </div>
 </section>
 
-<!-- S6 · DASHBOARD -->
-<section id="dashboard" data-screen-label="Dashboard">
+<!-- S7 · EL PEQUEÑO DETALLE QUE HACE QUE EL INFORME SEA MÁS FIABLE -->
+<section id="checklist" data-screen-label="El checklist de validación">
   <div class="if-wrap">
-    <p class="if-tag reveal">Visualización en Power BI</p>
-    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Seis áreas, una sola navegación.</h2>
-    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:800px; line-height:1.6; margin-bottom:2rem;">El informe tiene seis áreas con navegación: <strong>panel de KPIs</strong> (EBITDA, ROE, ROA, Test Ácido, Solvencia y Free Cash Flow); <strong>checklist de validación</strong> que detecta asientos descuadrados y cuentas sin clasificar; <strong>balance de sumas y saldos</strong> con drill-through hasta el apunte individual; <strong>balance general</strong> con análisis vertical, horizontal y evolución temporal; <strong>PyG</strong> con tres vistas (evolución trimestral, comparativa vs presupuesto y proyección a cierre); y <strong>cash flow</strong> con flujos de explotación, inversión y financiación comparados con el año anterior.</p>
-    <div class="kpi-grid-3 reveal reveal-delay-1" style="display:grid; grid-template-columns:repeat(5, 1fr); gap:0; border:1px solid var(--if-border); border-left:none; margin-bottom:2.5rem;">
+    <p class="if-tag reveal">El pequeño detalle que hace que el informe sea más fiable</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">El checklist de validación.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:.3rem;">Hay una página que normalmente pasa desapercibida.</p>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.4rem;">Y, sin embargo, es una de mis favoritas.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1rem;">Antes de analizar resultados, el modelo comprueba automáticamente si existen:</p>
+    <ul class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:760px; line-height:1.9; margin-bottom:1.4rem; padding-left:1.3rem;">
+      <li>cuentas sin clasificar,</li>
+      <li>asientos descuadrados,</li>
+      <li>problemas de mapeo.</li>
+    </ul>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.2rem;">La tabla <strong>Cuentas sin clasificar</strong> se recalcula en cada actualización. Eso significa que el propio informe intenta detectar errores antes de que aparezcan como si fueran resultados reales.</p>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:760px; line-height:1.6;">Me parecía más útil construir esa protección dentro del modelo que confiar en revisiones manuales posteriores.</p>
+  </div>
+</section>
+
+<!-- S8 · LA PARTE MÁS DIFÍCIL -->
+<section id="proyeccion" data-screen-label="La parte más difícil">
+  <div class="if-wrap">
+    <p class="if-tag reveal">La parte más difícil</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Proyectar un cierre sin inventarme los datos.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.4rem;">Probablemente la medida que más tiempo me llevó fue la proyección de cierre.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:.3rem;">Hasta octubre uso datos reales.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.4rem;">A partir de ahí, utilizo presupuesto.</p>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.2rem;">Pero hacerlo sin romper gráficos ni tablas fue bastante más complicado. Existe una fecha de corte configurable en el modelo: a partir de ella, cada medida cambia automáticamente de datos reales a presupuesto, y la serie del gráfico mantiene continuidad visual en lugar de dejar un hueco entre lo real y lo proyectado.</p>
+    <blockquote class="if-quote reveal reveal-delay-4">Ese fue probablemente el momento en el que más aprendí de DAX durante este proyecto.</blockquote>
+  </div>
+</section>
+
+<!-- S9 · LO QUE CUENTA EL DASHBOARD -->
+<section id="dashboard" data-screen-label="Lo que cuenta el dashboard">
+  <div class="if-wrap">
+    <p class="if-tag reveal">Lo que cuenta el dashboard</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Seis áreas conectadas.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.4rem;">Cada bloque responde a una pregunta distinta.</p>
+    <ul class="reveal reveal-delay-1" style="font-size:1rem; max-width:800px; line-height:1.9; margin-bottom:2.4rem; padding-left:1.3rem;">
+      <li><strong>Panel ejecutivo</strong> → entender la situación en segundos.</li>
+      <li><strong>Checklist</strong> → validar datos.</li>
+      <li><strong>Balance</strong> → evolución patrimonial.</li>
+      <li><strong>PyG</strong> → resultado del ejercicio.</li>
+      <li><strong>Cash Flow</strong> → movimientos de caja.</li>
+      <li><strong>Drill-through</strong> → llegar hasta el asiento contable.</li>
+    </ul>
+    <div class="kpi-grid-3 reveal reveal-delay-2" style="display:grid; grid-template-columns:repeat(5, 1fr); gap:0; border:1px solid var(--if-border); border-left:none; margin-bottom:2.5rem;">
       <div style="text-align:center; padding:1.4rem .8rem; border-left:1px solid var(--if-border);">
         <span style="display:block; font-family:var(--if-display); font-size:clamp(1.2rem, 2.2vw, 1.6rem); color:var(--if-cobalt); line-height:1;">342.142€</span>
         <p style="font-size:.72rem; color:var(--if-muted); margin-top:.4rem; text-transform:uppercase; letter-spacing:.04em;">EBITDA 2023</p>
@@ -482,39 +556,18 @@ section { padding: 4rem 0; }
   </div>
 </section>
 
-<!-- S7 · IMPACTO -->
-<section data-screen-label="Impacto" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:5rem 2rem; background:var(--if-cobalt);">
-  <p class="reveal" style="font-family:var(--if-display); font-size:clamp(1.6rem, 3.6vw, 2.2rem); line-height:1.2; color:#fff; max-width:760px; margin-bottom:2rem; text-transform:uppercase;">De caja negativa a caja positiva en un año.</p>
-  <p class="reveal reveal-delay-1 impacto-text" style="font-family:var(--if-display); font-size:clamp(2rem, 5vw, 3.6rem); line-height:1.1; max-width:1000px; margin-left:auto; margin-right:auto; text-align:center; margin-bottom:2rem; text-transform:uppercase;"><span style="color:rgba(255,255,255,.55);">-1.165.649€ — </span><span style="color:var(--if-nude);">678.208€</span></p>
+<!-- S10 · EL DATO QUE MEJOR RESUME EL PROYECTO -->
+<section data-screen-label="El dato que mejor resume el proyecto" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:5rem 2rem; background:var(--if-cobalt);">
+  <p class="if-tag if-tag-onblue reveal">El dato que mejor resume el proyecto</p>
+  <p class="reveal" style="font-family:var(--if-display); font-size:clamp(1.6rem, 3.6vw, 2.2rem); line-height:1.2; color:#fff; max-width:760px; margin-bottom:2rem; text-transform:uppercase;">La caja cambió por completo de un año para otro.</p>
+  <p class="reveal reveal-delay-1 impacto-text" style="font-family:var(--if-display); font-size:clamp(2rem, 5vw, 3.6rem); line-height:1.1; max-width:1000px; margin-left:auto; margin-right:auto; text-align:center; margin-bottom:2rem; text-transform:uppercase;"><span style="color:rgba(255,255,255,.55);">-1.165.650€ — </span><span style="color:var(--if-nude);">678.209€</span></p>
   <div style="max-width:700px; display:flex; flex-direction:column; gap:1.1rem;">
-    <p class="reveal reveal-delay-2" style="font-size:clamp(1rem, 1.8vw, 1.15rem); color:rgba(255,255,255,.85); line-height:1.6;">El Free Cash Flow pasó de -1,17M€ a 678.208€ en un año.</p>
-    <p class="reveal reveal-delay-3" style="font-size:clamp(1rem, 1.8vw, 1.15rem); color:rgba(255,255,255,.85); line-height:1.6;">El modelo muestra exactamente <strong style="color:#fff;">qué partidas explican la diferencia</strong>, sin tener que reconstruir el análisis a mano cada vez.</p>
+    <blockquote class="if-quote if-quote-onblue reveal reveal-delay-2" style="text-align:left; font-size:clamp(1rem, 1.8vw, 1.15rem);">Lo importante no era quedarse con la cifra. Lo importante era poder explicar qué partidas construían ese resultado sin rehacer el análisis desde cero.</blockquote>
+    <blockquote class="if-quote if-quote-onblue reveal reveal-delay-3" style="text-align:left; font-size:clamp(1rem, 1.8vw, 1.15rem);">Ese cambio fue el momento en el que sentí que Balance, PyG y Cash Flow dejaban de ser tres informes distintos para convertirse en una única historia.</blockquote>
   </div>
 </section>
 
-<!-- S8 · HALLAZGOS CLAVE -->
-<section id="hallazgos" data-screen-label="Hallazgos clave">
-  <div class="if-wrap">
-    <p class="if-tag reveal">Hallazgos clave</p>
-    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:2rem; max-width:900px;">El checklist evita que un error contable llegue como si fuera un resultado real.</h2>
-    <div class="hallazgos-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
-      <div class="reveal reveal-delay-1 if-card" style="border:1px solid var(--if-border); padding:1.8rem 2rem;">
-        <h3 style="font-family:var(--if-display); font-size:1.5rem; color:var(--if-cobalt); margin:0 0 1rem;">El checklist de validación</h3>
-        <p style="font-size:.9rem; line-height:1.55;">En un modelo que consolida tres empresas con distintos orígenes de datos, tener una página dedicada a detectar <strong>asientos descuadrados y cuentas contables sin clasificar</strong> antes de navegar al análisis evita que un error contable llegue a una reunión de dirección como si fuera un resultado real. La propia tabla de cuentas sin clasificar se recalcula en cada actualización, comparando automáticamente el diario contable contra el diccionario de reclasificación.</p>
-      </div>
-      <div class="reveal reveal-delay-2 if-card" style="background:var(--if-cobalt); padding:1.8rem 2rem;">
-        <h3 style="font-family:var(--if-display); font-size:1.5rem; color:#fff; margin:0 0 1rem;">El resultado</h3>
-        <div style="display:flex; gap:2rem; margin-bottom:1.2rem;">
-          <div><span style="display:block; font-family:var(--if-display); font-size:1.6rem; color:var(--if-nude); line-height:1;">678.208€</span><span style="font-size:.65rem; text-transform:uppercase; letter-spacing:.08em; color:rgba(255,255,255,.7);">FCF 2023</span></div>
-          <div><span style="display:block; font-family:var(--if-display); font-size:1.6rem; color:rgba(255,255,255,.55); line-height:1;">-1.165.649€</span><span style="font-size:.65rem; text-transform:uppercase; letter-spacing:.08em; color:rgba(255,255,255,.7);">FCF año anterior</span></div>
-        </div>
-        <p style="font-size:.9rem; line-height:1.55; color:rgba(255,255,255,.9);">El modelo permite ver exactamente qué partidas explican esa diferencia, en lugar de quedarse solo con la cifra final.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- S9 · HERRAMIENTAS -->
+<!-- S11 · HERRAMIENTAS -->
 <section id="stack" data-screen-label="Herramientas">
   <div class="if-wrap" style="text-align:center;">
     <p class="if-tag reveal">Herramientas</p>
@@ -548,21 +601,30 @@ section { padding: 4rem 0; }
   </div>
 </section>
 
-<!-- S10 · QUÉ APRENDÍ -->
+<!-- S12 · QUÉ APRENDÍ -->
 <section id="aprendizaje" data-screen-label="Qué aprendí">
   <div class="if-wrap">
-    <p class="if-tag reveal">Qué me llevo del proyecto</p>
-    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Consolidar varias empresas añade una capa de complejidad propia.</h2>
-    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:800px; line-height:1.6; margin-bottom:1.2rem;">Consolidar varias empresas en un único modelo añade una capa de complejidad que no existe en proyectos de una sola empresa. Las relaciones entre <code style="background:#f5f5f5; padding:.1rem .4rem;">FactDiario</code> y las dimensiones tienen que estar diseñadas para que los filtros por empresa no rompan la coherencia de los totales consolidados.</p>
-    <p class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:800px; line-height:1.6;">La <strong>proyección a cierre</strong> fue la pieza técnica más exigente: para que funcione tiene que distinguir entre meses con datos reales y meses sin ellos, y la lógica de extrapolación tiene que ser coherente tanto en la tabla como en el gráfico de evolución temporal.</p>
+    <p class="if-tag reveal">Qué aprendí</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">El mejor dashboard empieza mucho antes del dashboard.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:.3rem;">Si tuviera que resumir el aprendizaje de este proyecto, no hablaría de las 174 medidas DAX.</p>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.4rem;">Hablaría del modelo.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:.3rem;">Aprendí que un buen dashboard no depende solo del diseño visual.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.4rem;">Depende de que cada cifra tenga sentido, pueda comprobarse y sea coherente cuando cambias de empresa, de periodo o de estado financiero.</p>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:760px; line-height:1.6;">Ese cambio de mentalidad es probablemente lo más valioso que me llevo de este proyecto.</p>
   </div>
 </section>
 
-<!-- S11 · CTA -->
-<section data-screen-label="CTA" style="text-align:center; padding:5rem 2rem 6rem; background:var(--if-cobalt);">
+<!-- S13 · CIERRE -->
+<section data-screen-label="Cierre" style="text-align:center; padding:5rem 2rem 6rem; background:var(--if-cobalt);">
   <div class="if-wrap reveal">
-    <p class="reveal cta-closing" style="font-family:var(--if-display); font-size:clamp(1.6rem, 3.6vw, 2.4rem); line-height:1.15; color:#fff; max-width:820px; margin:0 auto 3rem; text-wrap:balance; text-transform:uppercase;">De tres estados financieros dispersos a un modelo que conecta cada cifra con su origen.</p>
-    <div class="reveal reveal-delay-1" style="display:flex; flex-wrap:wrap; justify-content:center; gap:2rem;">
+    <p class="if-tag if-tag-onblue reveal">Cierre</p>
+    <p class="reveal cta-closing" style="font-family:var(--if-display); font-size:clamp(1.6rem, 3.6vw, 2.4rem); line-height:1.15; color:#fff; max-width:820px; margin:0 auto 1.6rem; text-wrap:balance; text-transform:uppercase;">De miles de movimientos contables a una única historia financiera.</p>
+    <div style="max-width:640px; margin:0 auto 3rem; display:flex; flex-direction:column; gap:.9rem;">
+      <p class="reveal reveal-delay-1" style="font-size:1.02rem; color:rgba(255,255,255,.85); line-height:1.6;">Este proyecto me permitió unir varias cosas que me interesan especialmente: modelado de datos, DAX, visualización y análisis de negocio.</p>
+      <p class="reveal reveal-delay-2" style="font-size:1.02rem; color:rgba(255,255,255,.85); line-height:1.6;">El resultado es un informe que intenta hacer algo muy sencillo de decir y bastante más difícil de construir.</p>
+      <p class="reveal reveal-delay-3" style="font-size:1.02rem; color:#fff; line-height:1.6; font-weight:500;">Que cualquier cifra pueda explicarse sin salir del dashboard.</p>
+    </div>
+    <div class="reveal reveal-delay-4" style="display:flex; flex-wrap:wrap; justify-content:center; gap:2rem;">
       <div>
         <a href="https://app.powerbi.com/view?r=eyJrIjoiNDgzZjBmY2MtMDhhMy00MGIzLTlmYmItODlkMmY2NDg3ZDdmIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=a961ceadc15fe4dcfcfb" class="if-cta if-cta-onblue" target="_blank" rel="noopener" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Informe Financiero Completo',location:'informe_financiero_cta'});">Abrir dashboard en Power BI</a>
         <p style="margin-top:1rem; font-size:.85rem; color:rgba(255,255,255,.75);">Dashboard interactivo publicado en Power BI Service</p>
