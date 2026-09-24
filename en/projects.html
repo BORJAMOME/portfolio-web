@@ -316,11 +316,12 @@ body{font-family:var(--font);background:var(--white);color:var(--ink);-webkit-fo
 
 footer{background:var(--off);border-top:.5px solid var(--gray);padding:24px clamp(1.5rem,5vw,4rem);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
 .foot-copy{font-size:12px;color:var(--muted)}
-.foot-links{display:flex;gap:20px}
+.foot-links{display:flex;gap:20px;flex-wrap:wrap}
 .foot-links a{font-size:12px;color:var(--muted);text-decoration:none;transition:color .2s}
 .foot-links a:hover{color:var(--ink)}
 
 @media(max-width:768px){
+  .foot-links a{min-height:44px;display:flex;align-items:center}
   .carousel-slide{grid-template-columns:1fr}
   .cs-img{min-height:220px}
   .dash-grid{grid-template-columns:1fr}

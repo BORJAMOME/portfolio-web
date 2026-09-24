@@ -1249,6 +1249,15 @@ footer {
   display: flex; align-items: center;
   justify-content: space-between; flex-wrap: wrap; gap: 12px;
 }
+@media (max-width: 640px) {
+  .foot-top { grid-template-columns: 1fr 1fr; gap: 32px 24px; }
+  .foot-brand { grid-column: 1 / -1; }
+  .foot-col a { min-height: 44px; display: flex; align-items: center; margin-bottom: 0; }
+}
+@media (max-width: 420px) {
+  .foot-top { grid-template-columns: 1fr; gap: 28px; }
+  .foot-brand-desc { max-width: none; }
+}
 .foot-copy {
   font-size: 11.5px; color: var(--muted); opacity: .7;
 }

@@ -481,6 +481,10 @@ footer {
 @media (max-width: 520px) {
   .foot-grid { grid-template-columns: 1fr 1fr; gap: 28px 20px; }
 }
+@media (max-width: 480px) {
+  .foot-grid { grid-template-columns: 1fr; gap: 28px; }
+  .foot-col--brand { margin-bottom: 0; }
+}
 /* ─── HAMBURGER BUTTON ─── */
 .nav-burger {
   display: none;
