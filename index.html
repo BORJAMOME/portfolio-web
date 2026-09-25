@@ -669,159 +669,341 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 .cc-link:hover { color: var(--ink); }
 @media (max-width:900px) { .ml-grid { grid-template-columns:1fr; } }
 
-/* ─── PROYECTO DE REFERENCIA — "El ticket" ───
-   Paleta espresso + crema (tokens --espresso / --cream en shared.css). */
-.star-section {
-  background: var(--espresso);
-  color: var(--cream);
-  padding: 0 0 clamp(88px, 9vw, 128px);
-  overflow: hidden;
+/* ─── PROYECTO ESTRELLA — "El ticket" (Casa Origen) ───
+   Paleta espresso invitada, propia de la sección (tokens --v4-*). */
+.star-v4 {
+  --v4-esp:       #2B2118;   /* marrón espresso · superficie */
+  --v4-esp-deep:  #1b130d;   /* ranura de la impresora */
+  --v4-cream:     #fbf8f3;   /* crema · texto y papel */
+  --v4-cream-2:   #d2c9bb;   /* crema apagada · texto secundario (9,6:1 sobre espresso) */
+  --v4-red:       #C2412E;   /* rojo · importes (4,8:1 sobre crema) */
+  --v4-sage:      #6E7F5B;   /* salvia · ticks (gráfico, ≥3:1) */
+  --v4-sage-lit:  #b3c297;   /* salvia clara · icono sobre espresso */
+  --v4-ink-2:     #6b5d4f;   /* tinta secundaria sobre papel (6:1) */
+  --v4-rule:      rgba(43,33,24,.34);
+
+  --v4-pad-t: clamp(80px, 9vw, 120px);
+  --v4-pad-b: clamp(72px, 8vw, 120px);
+  --v4-out:   clamp(36px, 4.4vw, 64px);   /* cuánto sobresale la fachada por encima de la banda */
+  --v4-tk-w:  clamp(330px, 38vw, 440px);  /* ancho del ticket en escritorio */
+
+  --v4-ease-print: cubic-bezier(.22,.8,.3,1);
+  --v4-ease-out:   var(--ease, cubic-bezier(0.16,1,0.3,1));
+
+  background: var(--white);
+  padding: 0 0 clamp(96px, 10vw, 120px);
   position: relative;
+  overflow-x: clip;
 }
-.star-section > .section-divider::before { background: rgba(251,248,243,.22); }
-.star-section .section-divider-dot { background: var(--cream); }
-.star-section .section-divider-label { color: var(--cream); }
+.star-v4 > .section-divider { width: calc(100% - 2 * clamp(1.5rem, 5vw, 4rem)); }
 
-.star-section .c {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.v4-sr {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
 }
-.star-title {
+
+/* ─── BANDA ─────────────────────────────────────────────────── */
+.v4-band {
+  position: relative;
+  background: var(--v4-esp);
+  color: var(--v4-cream);
+  padding: var(--v4-pad-t) 0 var(--v4-pad-b);
+}
+.v4-band::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 46% 60% at 24% 58%, rgba(251,248,243,.055), transparent 72%);
+}
+
+/* ─── REJILLA ───────────────────────────────────────────────── */
+.v4-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "art" "head" "stage" "body";
+}
+.v4-art   { grid-area: art; }
+.v4-head  { grid-area: head; }
+.v4-stage { grid-area: stage; }
+.v4-body  { grid-area: body; }
+
+@media (min-width: 860px) {
+  .v4-grid {
+    grid-template-columns: minmax(0, var(--v4-tk-w)) minmax(0, 1fr);
+    grid-template-rows: auto auto 1fr;
+    grid-template-areas:
+      "stage art"
+      "stage head"
+      "stage body";
+    column-gap: clamp(40px, 6vw, 88px);
+  }
+}
+
+/* ─── FACHADA (sobresale por arriba de la banda) ────────────── */
+.v4-art {
+  position: relative; z-index: 3;
+  margin: calc(-1 * (var(--v4-pad-t) + var(--v4-out))) 0 0;
+  aspect-ratio: 5 / 4;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #f5f2ec;
+  rotate: 1.1deg;
+  box-shadow:
+    0 0 0 1px rgba(43,33,24,.16),
+    0 1px 1px rgba(0,0,0,.22),
+    0 4px 6px rgba(0,0,0,.20),
+    0 14px 22px rgba(0,0,0,.24),
+    0 34px 60px rgba(0,0,0,.30);
+}
+.v4-art picture, .v4-art img { display: block; width: 100%; height: 100%; }
+.v4-art img {
+  object-fit: cover; object-position: 50% 44%;
+  transform: scale(1.07); transform-origin: 50% 46%;
+}
+
+/* ─── TÍTULO Y TEXTO ────────────────────────────────────────── */
+.v4-head { margin: 34px 0 30px; }
+.v4-title {
   font-family: var(--font-serif);
-  font-size: clamp(40px, 10vw, 76px);
   font-weight: 500;
-  letter-spacing: -.026em;
-  line-height: 1;
-  color: var(--cream);
-  text-align: center;
-  margin: 0 0 clamp(40px, 5vw, 60px);
+  font-size: clamp(3rem, 2.1rem + 4.4vw, 6rem);
+  line-height: .96;
+  letter-spacing: -0.03em;
+  color: var(--v4-cream);
+  text-wrap: balance;
 }
-
-/* Ticket: el wrapper rota y aplica la sombra (drop-shadow sigue el borde serrado;
-   un box-shadow quedaría recortado por el clip-path del ticket). */
-.star-ticket-wrap {
-  width: min(520px, 100%);
-  transform: rotate(-1.6deg);
-  transition: transform .4s var(--ease);
-  filter: drop-shadow(0 30px 40px rgba(0,0,0,.45));
-}
-@media (hover: hover) and (pointer: fine) {
-  .star-ticket-wrap:hover { transform: rotate(-.6deg) scale(1.02); }
-}
-/* "Impresión": se revela de arriba a abajo. Sin JS o con reduced-motion queda visible. */
-.star-ticket-print {
-  clip-path: inset(0 0 0% 0);
-  transition: clip-path 1.2s var(--ease);
-}
-.star-ticket-print.is-pending { clip-path: inset(0 0 100% 0); }
-
-.star-ticket {
-  padding: 40px 40px 34px;
-  background:
-    repeating-linear-gradient(0deg, rgba(180,168,148,.05) 0px, rgba(180,168,148,.05) 1px, transparent 1px, transparent 3px),
-    radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.5) 0%, transparent 55%),
-    radial-gradient(ellipse at 75% 80%, rgba(180,168,148,.12) 0%, transparent 60%),
-    var(--cream);
-  box-shadow: inset 0 0 30px rgba(180,168,148,.15);
-  color: var(--espresso);
-  font-family: 'Courier New', monospace;
-  clip-path: polygon(0% 0%,100% 0%,100% 98%,95% 100%,90% 98%,85% 100%,80% 98%,75% 100%,70% 98%,65% 100%,60% 98%,55% 100%,50% 98%,45% 100%,40% 98%,35% 100%,30% 98%,25% 100%,20% 98%,15% 100%,10% 98%,5% 100%,0% 98%);
-}
-:where(.star-ticket) p { margin: 0; }
-.tk-brand {
-  text-align: center;
-  font-family: var(--font-serif);
-  font-size: 24px; font-weight: 600;
-  letter-spacing: .5px; line-height: 1.3;
-}
-.tk-addr {
-  margin-top: 16px;
-  text-align: center;
-  font-size: 12.5px; line-height: 1.7; letter-spacing: .3px;
-  color: #776c5d;
-}
-.tk-rule {
-  border: 0;
-  border-top: 1px dashed #b6ab98;
-  margin: 16px 0;
-}
-.tk-meta + .tk-rule { margin: 14px 0; }
-.tk-meta {
-  display: flex; justify-content: space-between; gap: 12px;
-  font-size: 10.5px; letter-spacing: .3px;
-  color: #5c5346;
-}
-.tk-kicker {
-  margin-bottom: 10px;
-  text-align: center;
-  font-size: 9.5px; letter-spacing: 1px;
-  color: #776c5d;
-}
-.tk-lines {
-  margin: 0;
-  font-size: 16px; line-height: 2.15;
-}
-.tk-lines > div { display: flex; justify-content: space-between; gap: 12px; }
-.tk-lines dt, .tk-lines dd { margin: 0; }
-.tk-lines dd { font-weight: 700; }
-.tk-stack {
-  text-align: center;
-  font-size: 9.5px; letter-spacing: .5px;
-  color: #776c5d;
-}
-.tk-thanks {
-  margin-top: 12px;
-  text-align: center;
-  font-size: 10px; letter-spacing: 1px;
-  color: #5c5346;
-}
-.tk-barcode {
-  display: flex; justify-content: center; gap: 2px;
-  margin-top: 14px;
-}
-.tk-barcode span { display: block; height: 26px; background: var(--espresso); }
-
-.star-copy {
-  width: min(660px, 100%);
-  margin-top: clamp(56px, 7vw, 88px);
-  text-align: left;
+.v4-body { min-width: 0; }
+.v4-lead {
+  font-size: clamp(1.0625rem, 1rem + .5vw, 1.28rem);
+  line-height: 1.55;
+  color: var(--v4-cream);
+  max-width: 60ch;
   text-wrap: pretty;
 }
-.star-copy p {
-  font-size: 17px;
-  line-height: 1.6;
-  color: rgba(251,248,243,.86);
-  margin: 0;
+.v4-lead strong { font-weight: 700; }
+.v4-text {
+  margin-top: 16px;
+  font-size: clamp(1rem, .96rem + .24vw, 1.0625rem);
+  line-height: 1.65;
+  color: var(--v4-cream-2);
+  max-width: 62ch;
+  text-wrap: pretty;
 }
-.star-copy p + p { margin-top: 14px; }
-.star-copy strong { color: var(--cream); font-weight: 600; }
+.v4-foot {
+  margin-top: 34px; padding-top: 28px;
+  border-top: 1px solid rgba(251,248,243,.2);
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: 22px 32px;
+}
+.v4-cred {
+  flex: 1 1 250px; max-width: 36ch;
+  display: flex; align-items: flex-start; gap: 12px;
+  font-size: 14px; font-weight: 600; line-height: 1.5;
+  color: var(--v4-cream);
+}
+.v4-cred svg { flex: none; width: 24px; height: 24px; margin-top: 1px; color: var(--v4-sage-lit); }
 
-/* CTA: reutiliza el hover sweep de .btn con la paleta crema */
-.btn.star-cta {
-  margin-top: 44px;
-  padding: 14px 28px;
-  font-size: 12px; font-weight: 700;
-  background: var(--cream);
-  color: var(--espresso);
-  border: 1px solid var(--cream);
+/* CTA: botón crema · texto espresso · sweep morado del portfolio */
+.v4-cta.btn {
+  min-height: 48px; padding: 0 28px;
+  font-size: 12px; font-weight: 600; letter-spacing: .06em;
+  background: var(--v4-cream); color: var(--v4-esp);
+  border: 1px solid var(--v4-cream);
 }
-.btn.star-cta::before { background: var(--espresso); }
+.v4-cta.btn::before { background: var(--purple); }
+.v4-cta.btn:focus-visible { outline: 2px solid var(--purple); outline-offset: 4px; }
+.v4-cta.btn:focus-visible::before { transform: translateY(0); }
+.v4-cta.btn:focus-visible .btn-arrow { transform: translateX(4px); }
 @media (hover: hover) and (pointer: fine) {
-  .btn.star-cta:hover { color: var(--cream); }
-  .btn.star-cta[data-arrow="right"]:hover .btn-arrow { transform: translateX(4px); }
-}
-.star-credit {
-  margin: 40px 0 0;
-  text-align: center;
-  font-size: 12px; letter-spacing: .3px;
-  color: rgba(251,248,243,.5);
+  .v4-cta.btn:hover { color: var(--v4-esp); border-color: var(--purple); }
+  .v4-cta.btn[data-arrow="right"]:hover .btn-arrow { transform: translateX(4px); }
 }
 
-@media (max-width: 480px) {
-  .star-ticket { padding: 32px 24px 30px; }
-  .tk-lines { font-size: 14px; }
-  .tk-addr { font-size: 11.5px; }
+/* ─── ESCENA DE CAJA: pantalla + impresora + ticket ─────────── */
+.v4-stage {
+  position: relative; z-index: 1;
+  min-width: 0;
+  --v4-bleed: 3%;
+}
+@media (min-width: 860px) { .v4-stage { --v4-bleed: 6%; } }
+
+.v4-screen {
+  position: absolute; z-index: 0;
+  top: 0; left: calc(-1 * var(--v4-bleed)); width: calc(100% + 2 * var(--v4-bleed));
+  padding: 8px 8px 0;
+  background: var(--v4-esp-deep);
+  border-radius: 10px 10px 4px 4px;
+  rotate: 3deg;
+  box-shadow:
+    0 0 0 1px rgba(251,248,243,.10),
+    0 2px 3px rgba(0,0,0,.30),
+    0 12px 20px rgba(0,0,0,.28),
+    0 30px 50px rgba(0,0,0,.30);
+}
+.v4-screen picture, .v4-screen img { display: block; width: 100%; height: auto; }
+.v4-screen img { border-radius: 3px 3px 0 0; }
+
+.v4-printer {
+  position: relative; z-index: 1;
+  margin-top: 40%;
+  rotate: -1.5deg;
+}
+.v4-slot {
+  position: relative; z-index: 3;
+  height: 16px; margin: 0 -14px;
+  border-radius: 8px;
+  background: var(--v4-esp-deep);
+  box-shadow:
+    inset 0 1px 0 rgba(251,248,243,.14),
+    0 2px 3px rgba(0,0,0,.35),
+    0 8px 14px rgba(0,0,0,.30);
+}
+.v4-feed {
+  position: relative; z-index: 2;
+  margin-top: -8px;
+  clip-path: inset(0 -70px -160px -70px);
+}
+.v4-paper {
+  filter:
+    drop-shadow(0 1px 1px rgba(0,0,0,.22))
+    drop-shadow(0 6px 7px rgba(0,0,0,.20))
+    drop-shadow(0 22px 22px rgba(0,0,0,.26));
+}
+
+/* ─── EL TICKET ─────────────────────────────────────────────── */
+.v4-ticket {
+  --v4-tooth: 18px;
+  position: relative;
+  background-color: var(--v4-cream);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .17 0 0 0 0 .13 0 0 0 0 .09 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  color: var(--v4-esp);
+  padding: 34px clamp(22px, 7%, 32px) calc(var(--v4-tooth) / 2 + 34px);
+  font-family: var(--font);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  -webkit-mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / var(--v4-tooth) 100%;
+          mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / var(--v4-tooth) 100%;
+}
+
+.v4-tk-head {
+  text-align: center;
+  font-size: 13px; line-height: 1.45; color: var(--v4-ink-2);
+  text-wrap: balance;
+}
+.v4-tk-head b {
+  font-weight: 800; letter-spacing: .16em; color: var(--v4-esp);
+}
+.v4-rule       { height: 0; border-top: 1.5px dashed var(--v4-rule); margin: 18px 0; }
+.v4-rule-heavy { height: 0; border-top: 4px double var(--v4-rule); margin: 4px 0 0; }
+
+.v4-lines { margin: 0; }
+.v4-line, .v4-subtotal { display: flex; align-items: baseline; }
+.v4-line { padding: 9px 0; }
+.v4-line dt, .v4-subtotal .v4-st-l {
+  flex: 1 1 auto; min-width: 0;
+  display: flex; align-items: baseline;
+  font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--v4-esp);
+}
+.v4-line dt::after, .v4-subtotal .v4-st-l::after {
+  content: ""; flex: 1 1 auto; min-width: 16px;
+  margin: 0 10px 4px;
+  border-bottom: 2px dotted var(--v4-rule);
+}
+.v4-line dd {
+  margin: 0; flex: none;
+  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 1.85rem);
+  font-weight: 700; line-height: 1.15; letter-spacing: -.01em;
+  color: var(--v4-red);
+  text-align: right;
+}
+.v4-line dd small { font-size: .62em; font-weight: 700; letter-spacing: 0; margin-left: .12em; }
+
+.v4-subtotal { padding: 14px 0 0; }
+.v4-subtotal .v4-st-r {
+  flex: none; font-size: 15px; font-weight: 800; color: var(--v4-red);
+}
+
+.v4-foot-lines { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+.v4-foot-lines li {
+  display: flex; align-items: center; gap: 11px;
+  font-size: 14.5px; font-weight: 500; line-height: 1.35; color: var(--v4-esp);
+}
+.v4-tick { flex: none; width: 18px; height: 18px; color: var(--v4-sage); }
+.v4-tick rect { stroke: var(--v4-ink-2); opacity: .55; }
+.v4-tick path { stroke-dasharray: 1; stroke-dashoffset: 0; }
+
+.v4-note {
+  margin: 0; text-align: center;
+  font-size: 12px; font-weight: 500; letter-spacing: .02em; line-height: 1.4;
+  color: var(--v4-ink-2);
+}
+.v4-barcode {
+  height: 32px; margin: 18px auto 0; width: min(78%, 240px);
+  background: repeating-linear-gradient(90deg,
+    var(--v4-esp) 0 2px, transparent 2px 4px,
+    var(--v4-esp) 4px 5px, transparent 5px 8px,
+    var(--v4-esp) 8px 11px, transparent 11px 12px,
+    var(--v4-esp) 12px 13px, transparent 13px 17px,
+    var(--v4-esp) 17px 19px, transparent 19px 21px);
+  opacity: .82;
+}
+
+/* ─── MÓVIL / TABLET ESTRECHA ───────────────────────────────── */
+@media (max-width: 859.98px) {
+  .v4-head  { margin: 30px 0 34px; }
+  .v4-body  { margin-top: 48px; }
+  .v4-ticket { --v4-tooth: 16px; }
+  .v4-art   { max-width: 640px; }
+  .v4-stage { max-width: 520px; }
+  .v4-body  { max-width: 640px; }
+}
+@media (max-width: 420px) {
+  .v4-printer { rotate: -1.1deg; }
+  .v4-screen  { rotate: 2.2deg; }
+  .v4-art     { rotate: .8deg; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MOMENTO WOW · el ticket se imprime + la fachada asoma
+   ══════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: no-preference) {
+  .star-v4.v4-js .v4-paper  { translate: 0 calc(-100% - 100px); }
+  .star-v4.v4-js .v4-screen { opacity: 0; translate: 0 22px; }
+  .star-v4.v4-js .v4-art    { opacity: 0; translate: 0 64px; }
+  .star-v4.v4-js .v4-head,
+  .star-v4.v4-js .v4-body   { opacity: 0; translate: 0 18px; }
+  .star-v4.v4-js .v4-tick path { stroke-dashoffset: 1; }
+
+  .star-v4.v4-js.v4-in .v4-screen {
+    opacity: 1; translate: 0 0;
+    transition: opacity .7s var(--v4-ease-out), translate .9s var(--v4-ease-out);
+  }
+  .star-v4.v4-js.v4-in .v4-art {
+    opacity: 1; translate: 0 0;
+    transition: opacity .6s ease-out .3s, translate 1.4s var(--v4-ease-out) .3s;
+  }
+  .star-v4.v4-js.v4-in .v4-head {
+    opacity: 1; translate: 0 0;
+    transition: opacity .8s var(--v4-ease-out) .5s, translate .9s var(--v4-ease-out) .5s;
+  }
+  .star-v4.v4-js.v4-in .v4-body {
+    opacity: 1; translate: 0 0;
+    transition: opacity .8s var(--v4-ease-out) .65s, translate .9s var(--v4-ease-out) .65s;
+  }
+
+  .star-v4.v4-js.v4-print .v4-paper {
+    translate: 0 0;
+    transition: translate 1.6s var(--v4-ease-print);
+  }
+  .star-v4.v4-js.v4-print .v4-tick path {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset .45s ease-out calc(1.15s + var(--i, 0) * .14s);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .star-v4 *, .star-v4 *::before, .star-v4 *::after {
+    animation: none !important; transition-duration: .01ms !important; transition-delay: 0s !important;
+  }
 }
 
 /* ─── STACK SKILLS ─── */
@@ -2127,51 +2309,105 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 </section>
 
 
-<!-- ─── PROYECTO DE REFERENCIA — Casa Origen ─── -->
-<section class="star-section" id="star">
+<!-- ─── PROYECTO ESTRELLA — Casa Origen · «El ticket» ─── -->
+<section id="star" class="star-v4" aria-labelledby="v4-title">
+
   <div class="section-divider">
     <span class="section-divider-dot" aria-hidden="true"></span>
-    <span class="section-divider-label">PROYECTO DE REFERENCIA - End-to-End BI Project</span>
+    <span class="section-divider-label">PROYECTO ESTRELLA</span>
   </div>
 
-  <div class="c">
-    <h2 class="star-title">Casa Origen</h2>
+  <div class="v4-band">
+    <div class="c">
+      <div class="v4-grid">
 
-    <!-- Ticket de caja: las cifras del proyecto impresas -->
-    <div class="star-ticket-wrap">
-      <div class="star-ticket-print">
-        <div class="star-ticket">
-          <p class="tk-brand">CASA ORIGEN</p>
-          <p class="tk-addr">C/ ARGUMOSA 14 · 28012 LAVAPIÉS<br>C/ FUENCARRAL 61 · 28004 MALASAÑA<br>CIF B87654321 · MADRID</p>
-          <hr class="tk-rule">
-          <div class="tk-meta"><span>TICKET Nº 004521</span><span>20/12/25 · 09:41</span></div>
-          <hr class="tk-rule">
-          <p class="tk-kicker">RESUMEN DEL NEGOCIO · 2023–2025</p>
-          <dl class="tk-lines">
-            <div><dt>TICKETS EMITIDOS</dt><dd>179.112</dd></div>
-            <div><dt>FACTURACIÓN</dt><dd>1,57 M€</dd></div>
-            <div><dt>CLIENTES</dt><dd>1.200</dd></div>
-            <div><dt>PRODUCTOS EN CARTA</dt><dd>37</dd></div>
-          </dl>
-          <hr class="tk-rule">
-          <p class="tk-stack">SQL + POWER BI + MACHINE LEARNING</p>
-          <p class="tk-thanks">GRACIAS POR SU VISITA</p>
-          <div class="tk-barcode" aria-hidden="true">
-            <span style="width:2px"></span><span style="width:1px"></span><span style="width:3px"></span><span style="width:1px"></span><span style="width:2px"></span><span style="width:1px"></span><span style="width:1px"></span><span style="width:3px"></span><span style="width:2px"></span><span style="width:1px"></span><span style="width:2px"></span><span style="width:1px"></span><span style="width:3px"></span><span style="width:1px"></span><span style="width:2px"></span>
+        <!-- Título -->
+        <div class="v4-head">
+          <h2 class="v4-title" id="v4-title">Casa Origen</h2>
+        </div>
+
+        <!-- Escena de caja: pantalla del dashboard detrás + ticket que se imprime -->
+        <div class="v4-stage">
+          <div class="v4-screen">
+            <picture>
+              <source srcset="img/casa-origen/dashboard-01.webp" type="image/webp">
+              <img src="img/casa-origen/dashboard-01.png" width="1064" height="610" loading="lazy" decoding="async"
+                   alt="Vista previa del dashboard Executive Overview de Casa Origen en Power BI">
+            </picture>
+          </div>
+
+          <div class="v4-printer">
+            <div class="v4-slot" aria-hidden="true"></div>
+            <div class="v4-feed">
+              <div class="v4-paper">
+                <div class="v4-ticket" role="group" aria-label="Ticket de caja de Casa Origen">
+
+                  <p class="v4-tk-head"><b>CASA ORIGEN</b> · Lavapiés + Malasaña</p>
+                  <div class="v4-rule" aria-hidden="true"></div>
+
+                  <!-- Lectura para lectores de pantalla: el copy exacto -->
+                  <p class="v4-sr">179.112 tickets. 1,57 M€ de facturación. 1.200 clientes. 37 productos.</p>
+                  <dl class="v4-lines" aria-hidden="true">
+                    <div class="v4-line"><dt>tickets</dt><dd>179.112</dd></div>
+                    <div class="v4-line"><dt>facturación</dt><dd>1,57<small>M€</small></dd></div>
+                    <div class="v4-line"><dt>clientes</dt><dd>1.200</dd></div>
+                    <div class="v4-line"><dt>productos</dt><dd>37</dd></div>
+                  </dl>
+
+                  <div class="v4-rule-heavy" aria-hidden="true"></div>
+                  <div class="v4-subtotal" aria-hidden="true">
+                    <span class="v4-st-l">subtotal</span>
+                    <span class="v4-st-r">4 decisiones</span>
+                  </div>
+                  <div class="v4-rule" aria-hidden="true"></div>
+
+                  <ul class="v4-foot-lines">
+                    <li><svg class="v4-tick" style="--i:0" viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="2.5" width="15" height="15" rx="3.5" fill="none" stroke-width="1.5"/><path d="M6.2 10.3l2.7 2.7 5-5.7" pathLength="1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>qué productos retirar</li>
+                    <li><svg class="v4-tick" style="--i:1" viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="2.5" width="15" height="15" rx="3.5" fill="none" stroke-width="1.5"/><path d="M6.2 10.3l2.7 2.7 5-5.7" pathLength="1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>qué combos crear</li>
+                    <li><svg class="v4-tick" style="--i:2" viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="2.5" width="15" height="15" rx="3.5" fill="none" stroke-width="1.5"/><path d="M6.2 10.3l2.7 2.7 5-5.7" pathLength="1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>cuándo dejar de abrir</li>
+                    <li><svg class="v4-tick" style="--i:3" viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="2.5" width="15" height="15" rx="3.5" fill="none" stroke-width="1.5"/><path d="M6.2 10.3l2.7 2.7 5-5.7" pathLength="1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>qué clientes recuperar</li>
+                  </ul>
+
+                  <div class="v4-rule" aria-hidden="true"></div>
+                  <p class="v4-note">Caso simulado · datos sintéticos</p>
+                  <div class="v4-barcode" aria-hidden="true"></div>
+
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+
+        <!-- Ilustración de la fachada: sobresale por encima del borde de la banda -->
+        <div class="v4-art">
+          <picture>
+            <source srcset="img/casa-origen/local-1.webp" type="image/webp">
+            <img src="img/casa-origen/local-1.png" width="1402" height="1122" loading="lazy" decoding="async"
+                 alt="Ilustración en acuarela de la fachada roja de Casa Origen en Lavapiés">
+          </picture>
+        </div>
+
+        <!-- Copy, credencial y CTA -->
+        <div class="v4-body">
+          <p class="v4-lead">
+            Construí un sistema de Business Intelligence completo para descubrir qué estaba pasando detrás del negocio: <strong>qué productos retirar, qué combos crear, cuándo dejar de abrir y qué clientes recuperar.</strong>
+          </p>
+          <p class="v4-text">
+            SQL, modelado de datos, Power BI y Machine Learning conectados en un único sistema para pasar de la pregunta de negocio a una decisión concreta.
+          </p>
+          <div class="v4-foot">
+            <p class="v4-cred">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="5.2"/><path d="M8.6 13.4 7 21l5-2.7 5 2.7-1.6-7.6"/></svg>
+              <span>Proyecto finalista · Bootcamp Data Analytics · Neoland · Julio 2026</span>
+            </p>
+            <a class="btn v4-cta" href="./casa-origen.html" data-arrow="right">Ver caso completo <span class="btn-arrow">→</span></a>
+          </div>
+        </div>
+
       </div>
     </div>
-
-    <div class="star-copy sr">
-      <p>Construí un sistema de Business Intelligence completo para una cafetería de especialidad, para descubrir qué estaba pasando detrás del negocio: <strong>qué productos retirar, qué combos crear, cuándo dejar de abrir y qué clientes recuperar.</strong></p>
-      <p>SQL, modelado de datos, Power BI y Machine Learning conectados en un único sistema para pasar de la pregunta de negocio a una decisión concreta.</p>
-    </div>
-
-    <a href="./casa-origen.html" class="btn star-cta" data-arrow="right">Ver caso completo <span class="btn-arrow">→</span></a>
-
-    <p class="star-credit">Proyecto finalista · Bootcamp Data Analytics · Neoland · Julio 2026 &nbsp;·&nbsp; Caso simulado · datos sintéticos</p>
   </div>
+
 </section>
 
 
@@ -2523,18 +2759,29 @@ const io = new IntersectionObserver((entries)=>{
 },{ threshold:.1, rootMargin:'0px 0px -30px 0px' });
 document.querySelectorAll('.sr').forEach(el=>io.observe(el));
 
-// ─── TICKET "IMPRESIÓN" (proyecto de referencia) ───
-// Una sola vez al entrar en viewport. Sin IntersectionObserver o con reduced-motion queda visible.
-(() => {
-  const wrap = document.querySelector('.star-ticket-wrap');
-  const print = wrap && wrap.querySelector('.star-ticket-print');
-  if (!print || !('IntersectionObserver' in window)) return;
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  print.classList.add('is-pending');
-  const tio = new IntersectionObserver((entries) => {
-    if (entries.some(e => e.isIntersecting)) { print.classList.remove('is-pending'); tio.disconnect(); }
-  }, { threshold: .3 });
-  tio.observe(wrap);
+// ─── PROYECTO ESTRELLA "EL TICKET" (Casa Origen) ───
+// La banda asoma, la fachada entra y el ticket se imprime al llegar al viewport.
+(function () {
+  var s = document.getElementById('star');
+  if (!s) return;
+  var band = s.querySelector('.v4-band');
+  var stage = s.querySelector('.v4-stage');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce || !('IntersectionObserver' in window)) {
+    s.classList.add('v4-in', 'v4-print');
+    return;
+  }
+  s.classList.add('v4-js');
+  function watch(el, cls, opts) {
+    var io2 = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { s.classList.add(cls); io2.disconnect(); }
+      });
+    }, opts);
+    io2.observe(el);
+  }
+  watch(band, 'v4-in', { rootMargin: '0px 0px -12% 0px', threshold: 0 });
+  watch(stage, 'v4-print', { rootMargin: '0px 0px -12% 0px', threshold: 0.25 });
 })();
 
 
