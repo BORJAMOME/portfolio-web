@@ -199,24 +199,38 @@ section { padding: 7.5rem 0; }
 /* ── Dashboard images — como fotografías impresas ── */
 .dash-layout img { border-radius: 14px; border: 1px solid #E4E0D6; }
 
-/* ── Hero editorial — fondo blanco, mucho aire, sin overlays ── */
-.hero-editorial { padding: 10rem 0 3rem; background: var(--pv-bg); }
+/* ── Hero editorial — la ilustración del casco histórico como fondo ── */
+.hero-editorial {
+  position: relative; min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 7rem 2rem;
+  background-image:
+    linear-gradient(180deg, rgba(251,251,251,.92) 0%, rgba(251,251,251,.72) 32%, rgba(251,251,251,.76) 68%, rgba(251,251,251,.96) 100%),
+    url('./img/airbnb-hero-sketch.webp');
+  background-size: cover, cover;
+  background-position: center, center 28%;
+  background-repeat: no-repeat, no-repeat;
+}
 .pv-hero-title {
-  font-size: clamp(2.6rem, 7vw, 4.6rem);
-  line-height: 1.04;
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  line-height: 1.08;
   letter-spacing: -0.02em;
   font-weight: 500;
-  max-width: 920px;
-  margin-bottom: 1.6rem;
+  max-width: 800px;
+  margin: 0 auto 1.4rem;
+  text-align: center;
 }
 .pv-lead {
-  font-size: clamp(1.1rem, 2vw, 1.375rem);
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
   color: var(--pv-muted);
-  max-width: 640px;
+  max-width: 620px;
   line-height: 1.6;
+  margin: 0 auto;
+  text-align: center;
 }
+.hero-editorial .pv-eyebrow { margin-bottom: 1.4rem; }
 @media (max-width: 640px) {
-  .hero-editorial { padding: 7.5rem 0 2rem; }
+  .hero-editorial { padding: 6rem 1.4rem; min-height: 88vh; }
 }
 
 /* ── Footer ── */
@@ -256,17 +270,11 @@ section { padding: 7.5rem 0; }
   </a>
 </nav>
 
-<!-- S1 · HERO EDITORIAL — blanco, serif enorme, dashboard debajo, sin overlays -->
+<!-- S1 · HERO EDITORIAL — la ilustración del casco histórico como fondo, titular encima -->
 <section class="hero-editorial" data-screen-label="Hero">
-  <div class="pv-wrap">
-    <p class="reveal pv-eyebrow">Análisis de mercado · Airbnb</p>
-    <h1 class="reveal pv-hero-title">Un dashboard de Power BI para leer el mercado más allá del precio.</h1>
-    <p class="reveal reveal-delay-1 pv-lead">Analicé 6.030 anuncios de Airbnb en el País Vasco empezando por el territorio, no por el precio.</p>
-  </div>
-  <div class="reveal reveal-delay-2" style="margin-top:3.5rem;">
-    <img loading="lazy" src="./img/airbnb-hero-sketch.webp" alt="Ilustración editorial de una calle del casco histórico del País Vasco, con terrazas y balcones tradicionales" style="width:100%; display:block; max-height:760px; object-fit:cover;">
-    <p class="pv-wrap" style="margin-top:.9rem; font-size:.8rem; color:var(--pv-muted); text-align:center;">País Vasco — casco histórico, ilustración editorial.</p>
-  </div>
+  <p class="reveal pv-eyebrow">Análisis de mercado · Airbnb</p>
+  <h1 class="reveal pv-hero-title">Un dashboard de Power BI para leer el mercado más allá del precio.</h1>
+  <p class="reveal reveal-delay-1 pv-lead">Analicé 6.030 anuncios de Airbnb en el País Vasco empezando por el territorio, no por el precio.</p>
 </section>
 
 <!-- S2 · EL PROBLEMA -->
@@ -362,9 +370,15 @@ section { padding: 7.5rem 0; }
     <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.625rem); line-height:1.15; margin-bottom:1.5rem; max-width:820px;">Del resumen al mapa sin perder el filtro.</h2>
     <p class="reveal reveal-delay-1" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:.6rem;">Diseñé el dashboard para que cualquier persona pudiera empezar con una visión general y profundizar después en una zona concreta.</p>
     <p class="reveal reveal-delay-1" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:2.4rem;">Los filtros mantienen el contexto entre páginas, lo que permite pasar de un resumen ejecutivo a un mapa detallado sin romper el hilo del análisis.</p>
-    <div class="dash-layout reveal reveal-delay-2" style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.8rem;">
-      <picture><source srcset="./img/airbnb-1.webp" type="image/webp"><img loading="lazy" src="./img/airbnb-1.png" alt="Dashboard Airbnb País Vasco — página de Análisis"></picture>
-      <picture><source srcset="./img/airbnb-2.webp" type="image/webp"><img loading="lazy" src="./img/airbnb-2.png" alt="Dashboard Airbnb País Vasco — página de Mapa"></picture>
+    <div class="dash-layout reveal reveal-delay-2" style="display:flex; flex-direction:column; gap:2.2rem; margin-bottom:1.8rem;">
+      <figure style="margin:0;">
+        <picture><source srcset="./img/airbnb-1.webp" type="image/webp"><img loading="lazy" src="./img/airbnb-1.png" alt="Dashboard Airbnb País Vasco — página de Análisis" style="width:100%;"></picture>
+        <figcaption style="margin-top:.8rem; font-size:.8rem; color:var(--pv-muted); text-align:center;">Página de Análisis — KPIs y comparativas por zona, tipo de alojamiento y anfitrión.</figcaption>
+      </figure>
+      <figure style="margin:0;">
+        <picture><source srcset="./img/airbnb-2.webp" type="image/webp"><img loading="lazy" src="./img/airbnb-2.png" alt="Dashboard Airbnb País Vasco — página de Mapa" style="width:100%;"></picture>
+        <figcaption style="margin-top:.8rem; font-size:.8rem; color:var(--pv-muted); text-align:center;">Página de Mapa — distribución geográfica de los 6.030 anuncios por provincia.</figcaption>
+      </figure>
     </div>
     <div class="reveal reveal-delay-3">
       <a href="https://app.powerbi.com/view?r=eyJrIjoiOTA2ZDExNjktYzE4Ny00Y2UzLThmM2YtMjI5Y2FmNDg1MzM5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=9c4b9193b627b78a0e01" class="pv-cta" target="_blank" rel="noopener" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Airbnb Pais Vasco',location:'airbnb_pais_vasco_dashboard'});">Ver dashboard interactivo</a>
