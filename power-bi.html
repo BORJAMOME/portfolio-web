@@ -279,6 +279,7 @@
 /* LI cards */
 .li-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;border:none}
 .li-card{position:relative;overflow:hidden;text-decoration:none;display:flex;flex-direction:column;min-height:340px;background:#ffffff!important;border:1px solid #e8e8ee;border-radius:var(--radius-lg);transition:transform .2s var(--ease),box-shadow .2s var(--ease);color:var(--ink);box-shadow:0 0 0 1px rgba(0,0,0,.06),0 1px 1px -0.5px rgba(0,0,0,.06),0 3px 3px -1.5px rgba(0,0,0,.06),0 6px 6px -3px rgba(0,0,0,.06),0 12px 12px -6px rgba(0,0,0,.06),0 24px 24px -12px rgba(0,0,0,.06)}
+.li-card:active{transform:scale(.98)}
 @media (hover: hover) and (pointer: fine) { .li-card:hover{transform:translateY(-4px);box-shadow:0 1px 2px rgba(17,17,17,.04),0 20px 40px rgba(17,17,17,.09);background:#ffffff!important} }
 .li-card-bg{position:relative!important;inset:auto!important;width:100%!important;height:200px!important;object-fit:cover;object-position:top;border-bottom:1px solid #e8e8ee;opacity:1!important;transition:transform .3s var(--ease);filter:none}
 @media (hover: hover) and (pointer: fine) { .li-card:hover .li-card-bg{transform:scale(1.03)} }
@@ -301,6 +302,7 @@
 /* nat-viz */
 .nat-viz-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;border:none;width:100%}
 .nat-viz-card{position:relative;overflow:hidden;text-decoration:none;display:flex;flex-direction:column;min-height:300px;background:#ffffff;border:1px solid #e8e8ee;border-radius:var(--radius-lg);transition:transform .2s var(--ease),box-shadow .2s var(--ease);color:var(--ink);box-shadow:0 0 0 1px rgba(0,0,0,.06),0 1px 1px -0.5px rgba(0,0,0,.06),0 3px 3px -1.5px rgba(0,0,0,.06),0 6px 6px -3px rgba(0,0,0,.06),0 12px 12px -6px rgba(0,0,0,.06),0 24px 24px -12px rgba(0,0,0,.06)}
+.nat-viz-card:active{transform:scale(.98)}
 @media (hover: hover) and (pointer: fine) { .nat-viz-card:hover{transform:translateY(-4px);box-shadow:0 1px 2px rgba(17,17,17,.04),0 20px 40px rgba(17,17,17,.09)} }
 .nat-viz-bg{position:relative!important;inset:auto!important;width:100%!important;height:180px!important;object-fit:cover;object-position:center;border-bottom:1px solid #e8e8ee;transition:transform .3s var(--ease)}
 @media (hover: hover) and (pointer: fine) { .nat-viz-card:hover .nat-viz-bg{transform:scale(1.03)} }
@@ -321,7 +323,9 @@
 /* DAX Lab */
 .dax-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;border:none}
 .dax-card{background:#ffffff;border:1px solid #e8e8ee;border-radius:var(--radius-lg);padding:28px 26px 24px;display:flex;flex-direction:column;box-shadow:0 0 0 1px rgba(0,0,0,.06),0 1px 1px -0.5px rgba(0,0,0,.06),0 3px 3px -1.5px rgba(0,0,0,.06),0 6px 6px -3px rgba(0,0,0,.06),0 12px 12px -6px rgba(0,0,0,.06),0 24px 24px -12px rgba(0,0,0,.06);transition:transform .2s var(--ease),box-shadow .2s var(--ease);position:relative;overflow:hidden}
+.dax-card:active{transform:scale(.98)}
 @media (hover: hover) and (pointer: fine) { .dax-card:hover{transform:translateY(-4px);box-shadow:0 1px 2px rgba(17,17,17,.04),0 20px 40px rgba(17,17,17,.09)} }
+@media (hover: none){ .dax-card{cursor:pointer} }
 .dax-card-num{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;font-variant-numeric:tabular-nums}
 .dax-card-title{font-size:18px;font-weight:700;letter-spacing:-.3px;line-height:1.25;color:var(--ink);margin-bottom:12px}
 @media (hover: hover) and (pointer: fine) { .dax-card:hover .dax-card-title{color:var(--ink)} }
@@ -1752,6 +1756,40 @@ document.addEventListener('click', e => {
       });
     }
   }, true);
+})();
+</script>
+
+<!-- ── Tarjeta completa como área táctil en móvil (proj-card, dax-card) ── -->
+<script>
+(function () {
+  // Solo en dispositivos sin hover real (táctiles). Desktop conserva su comportamiento actual.
+  if (!window.matchMedia('(hover: none)').matches) return;
+
+  function makeCardTappable(card, linkSelector) {
+    var link = card.querySelector(linkSelector);
+    if (!link) return;
+    var moved = false, sx = 0, sy = 0;
+    card.addEventListener('touchstart', function (e) {
+      moved = false;
+      sx = e.touches[0].clientX;
+      sy = e.touches[0].clientY;
+    }, { passive: true });
+    card.addEventListener('touchmove', function (e) {
+      if (Math.abs(e.touches[0].clientX - sx) > 10 || Math.abs(e.touches[0].clientY - sy) > 10) {
+        moved = true;
+      }
+    }, { passive: true });
+    card.addEventListener('click', function (e) {
+      // El enlace/botón real ya gestiona su propia navegación (y su tracking).
+      if (e.target.closest('a, button')) return;
+      // Si hubo arrastre (swipe del carrusel), no es un tap de navegación.
+      if (moved) return;
+      link.click();
+    });
+  }
+
+  document.querySelectorAll('.proj-card').forEach(function (c) { makeCardTappable(c, '.pc-btn'); });
+  document.querySelectorAll('.dax-card').forEach(function (c) { makeCardTappable(c, '.dax-card-link'); });
 })();
 </script>
 </body>

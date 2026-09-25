@@ -1099,5 +1099,38 @@ document.querySelectorAll('.sec-nav button').forEach(a=>{
   }, true);
 })();
 </script>
+
+<!-- ── Tarjeta completa como área táctil en móvil (card-c) ── -->
+<script>
+(function () {
+  // Solo en dispositivos sin hover real (táctiles). Desktop conserva su comportamiento actual.
+  if (!window.matchMedia('(hover: none)').matches) return;
+
+  function makeCardTappable(card, linkSelector) {
+    var link = card.querySelector(linkSelector);
+    if (!link) return;
+    var moved = false, sx = 0, sy = 0;
+    card.addEventListener('touchstart', function (e) {
+      moved = false;
+      sx = e.touches[0].clientX;
+      sy = e.touches[0].clientY;
+    }, { passive: true });
+    card.addEventListener('touchmove', function (e) {
+      if (Math.abs(e.touches[0].clientX - sx) > 10 || Math.abs(e.touches[0].clientY - sy) > 10) {
+        moved = true;
+      }
+    }, { passive: true });
+    card.addEventListener('click', function (e) {
+      // El enlace/botón real ya gestiona su propia navegación (y su tracking).
+      if (e.target.closest('a, button')) return;
+      // Si hubo arrastre (swipe del carrusel), no es un tap de navegación.
+      if (moved) return;
+      link.click();
+    });
+  }
+
+  document.querySelectorAll('.card-c').forEach(function (c) { makeCardTappable(c, '.cc-link'); });
+})();
+</script>
 </body>
 </html>
