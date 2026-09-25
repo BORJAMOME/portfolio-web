@@ -261,7 +261,8 @@
 
 /* ─── ML CARDS — mismo sistema visual que .proj-card (index.html) ─── */
 .ml-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
-.card-c{background:#ffffff;border:1px solid #e8e8ee;border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;padding:20px 30px 28px;box-shadow:0 0 0 1px rgba(0,0,0,.06),0 1px 1px -0.5px rgba(0,0,0,.06),0 3px 3px -1.5px rgba(0,0,0,.06),0 6px 6px -3px rgba(0,0,0,.06),0 12px 12px -6px rgba(0,0,0,.06),0 24px 24px -12px rgba(0,0,0,.06);transition:background .18s cubic-bezier(.4,0,.2,1),transform .16s ease-out}
+.card-c{background:#ffffff;border:1px solid #e8e8ee;border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;padding:20px 30px 28px;box-shadow:0 0 0 1px rgba(0,0,0,.06),0 1px 1px -0.5px rgba(0,0,0,.06),0 3px 3px -1.5px rgba(0,0,0,.06),0 6px 6px -3px rgba(0,0,0,.06),0 12px 12px -6px rgba(0,0,0,.06),0 24px 24px -12px rgba(0,0,0,.06);transition:background .18s cubic-bezier(.4,0,.2,1),transform .16s ease-out;cursor:pointer}
+.card-c:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .card-c:active{transform:scale(.98)}
 @media (hover: hover) and (pointer: fine) { .card-c:hover{transform:translateY(-4px);box-shadow:0 1px 2px rgba(17,17,17,.04),0 20px 40px rgba(17,17,17,.09)} }
 
@@ -521,7 +522,7 @@
         <div class="proj-cards-track-wrap" role="region" aria-label="Proyectos de Machine Learning">
           <div class="proj-cards-track" id="mlTrack" aria-live="polite" aria-atomic="false" aria-label="Proyecto 1 de 5">
       <!-- CARD ML-1: K-Means + t-SNE Retail -->
-      <div class="card-c" id="mlcard-0">
+      <div class="card-c" id="mlcard-0" tabindex="0" onclick="window.open('https://segmentacion-retail.streamlit.app','_blank','noopener,noreferrer')" onkeydown="if(event.key==='Enter'){window.open('https://segmentacion-retail.streamlit.app','_blank','noopener,noreferrer')}">
         <div class="cc-cat">¿Todos tus clientes merecen la misma oferta?</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
@@ -537,11 +538,11 @@
         </div>
         <div class="cc-foot">
           <div class="cc-pills"><span class="cc-pill">K-Means</span><span class="cc-pill">t-SNE</span></div>
-          <a class="cc-link" href="https://segmentacion-retail.streamlit.app" target="_blank" rel="noopener noreferrer">Ver →</a>
+          <a class="cc-link" href="https://segmentacion-retail.streamlit.app" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Ver →</a>
         </div>
       </div>
       <!-- CARD ML-2: SARIMA vs SARIMAX Retail -->
-      <div class="card-c" id="mlcard-1">
+      <div class="card-c" id="mlcard-1" tabindex="0" onclick="window.open('https://forecast-ventas-retail-app-w5msdvcsbuxas94qjcdore.streamlit.app','_blank','noopener,noreferrer')" onkeydown="if(event.key==='Enter'){window.open('https://forecast-ventas-retail-app-w5msdvcsbuxas94qjcdore.streamlit.app','_blank','noopener,noreferrer')}">
         <div class="cc-cat">¿Qué pasa con las ventas cuando ocurre algo inesperado?</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
@@ -557,11 +558,11 @@
         </div>
         <div class="cc-foot">
           <div class="cc-pills"><span class="cc-pill">SARIMAX</span><span class="cc-pill">statsmodels</span></div>
-          <a class="cc-link" href="https://forecast-ventas-retail-app-w5msdvcsbuxas94qjcdore.streamlit.app" target="_blank" rel="noopener noreferrer">Ver →</a>
+          <a class="cc-link" href="https://forecast-ventas-retail-app-w5msdvcsbuxas94qjcdore.streamlit.app" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Ver →</a>
         </div>
       </div>
       <!-- CARD ML-3: Segmentación Aerolínea -->
-      <div class="card-c" id="mlcard-2">
+      <div class="card-c" id="mlcard-2" tabindex="0" onclick="window.open('https://comparativa-modelos-aerolinea.streamlit.app','_blank','noopener,noreferrer')" onkeydown="if(event.key==='Enter'){window.open('https://comparativa-modelos-aerolinea.streamlit.app','_blank','noopener,noreferrer')}">
         <div class="cc-cat">¿A quién estamos a punto de perder?</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
@@ -577,11 +578,11 @@
         </div>
         <div class="cc-foot">
           <div class="cc-pills"><span class="cc-pill">Gradient Boosting</span><span class="cc-pill">scikit-learn</span></div>
-          <a class="cc-link" href="https://comparativa-modelos-aerolinea.streamlit.app" target="_blank" rel="noopener noreferrer">Ver →</a>
+          <a class="cc-link" href="https://comparativa-modelos-aerolinea.streamlit.app" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Ver →</a>
         </div>
       </div>
       <!-- CARD ML-4: SARIMA Retail (sin variables externas) -->
-      <div class="card-c" id="mlcard-3">
+      <div class="card-c" id="mlcard-3" tabindex="0" onclick="window.open('https://sarima-ventas-retail.streamlit.app/','_blank','noopener,noreferrer')" onkeydown="if(event.key==='Enter'){window.open('https://sarima-ventas-retail.streamlit.app/','_blank','noopener,noreferrer')}">
         <div class="cc-cat">¿Cuánto venderemos la próxima semana?</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
@@ -597,11 +598,11 @@
         </div>
         <div class="cc-foot">
           <div class="cc-pills"><span class="cc-pill">SARIMA</span><span class="cc-pill">statsmodels</span></div>
-          <a class="cc-link" href="https://sarima-ventas-retail.streamlit.app/" target="_blank" rel="noopener noreferrer">Ver →</a>
+          <a class="cc-link" href="https://sarima-ventas-retail.streamlit.app/" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Ver →</a>
         </div>
       </div>
       <!-- CARD ML-5: Conjoint Vuelos -->
-      <div class="card-c" id="mlcard-4">
+      <div class="card-c" id="mlcard-4" tabindex="0" onclick="window.open('https://preferencias-vuelos.streamlit.app/','_blank','noopener,noreferrer')" onkeydown="if(event.key==='Enter'){window.open('https://preferencias-vuelos.streamlit.app/','_blank','noopener,noreferrer')}">
         <div class="cc-cat">¿Qué hace que un cliente elija un vuelo?</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
@@ -617,7 +618,7 @@
         </div>
         <div class="cc-foot">
           <div class="cc-pills"><span class="cc-pill">Conjoint</span><span class="cc-pill">statsmodels</span></div>
-          <a class="cc-link" href="https://preferencias-vuelos.streamlit.app/" target="_blank" rel="noopener noreferrer">Ver →</a>
+          <a class="cc-link" href="https://preferencias-vuelos.streamlit.app/" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Ver →</a>
         </div>
       </div>
           </div>
@@ -655,7 +656,7 @@
     </div>
     <div class="ml-grid">
       <!-- CARD PY-1: Ventas y Empleados -->
-      <div class="card-c">
+      <div class="card-c" tabindex="0" onclick="window.open('https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/02-Python/01-analisis-exploratorio/01-analisis-ventas-empleados','_blank','noopener,noreferrer')" onkeydown="if(event.key==='Enter'){window.open('https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/02-Python/01-analisis-exploratorio/01-analisis-ventas-empleados','_blank','noopener,noreferrer')}">
         <div class="cc-cat">EDA · Comercial</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
@@ -671,11 +672,11 @@
         </div>
         <div class="cc-foot">
           <div class="cc-pills"><span class="cc-pill">Pandas</span><span class="cc-pill">NumPy</span><span class="cc-pill">Seaborn</span></div>
-          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/02-Python/01-analisis-exploratorio/01-analisis-ventas-empleados" target="_blank" rel="noopener noreferrer">Ver →</a>
+          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/02-Python/01-analisis-exploratorio/01-analisis-ventas-empleados" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Ver →</a>
         </div>
       </div>
       <!-- CARD PY-2: Hábitos Estudiantes -->
-      <div class="card-c">
+      <div class="card-c" tabindex="0" onclick="window.open('https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/02-Python/01-analisis-exploratorio/02-habitos-rendimiento-estudiantes','_blank','noopener,noreferrer')" onkeydown="if(event.key==='Enter'){window.open('https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/02-Python/01-analisis-exploratorio/02-habitos-rendimiento-estudiantes','_blank','noopener,noreferrer')}">
         <div class="cc-cat">EDA · Educación</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
@@ -691,11 +692,11 @@
         </div>
         <div class="cc-foot">
           <div class="cc-pills"><span class="cc-pill">Pandas</span><span class="cc-pill">Matplotlib</span><span class="cc-pill">Seaborn</span></div>
-          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/02-Python/01-analisis-exploratorio/02-habitos-rendimiento-estudiantes" target="_blank" rel="noopener noreferrer">Ver →</a>
+          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/02-Python/01-analisis-exploratorio/02-habitos-rendimiento-estudiantes" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Ver →</a>
         </div>
       </div>
       <!-- CARD PY-3: Riesgo Salud Pacientes -->
-      <div class="card-c">
+      <div class="card-c" tabindex="0" onclick="window.open('https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/02-Python/01-analisis-exploratorio/03-riesgo-salud-pacientes','_blank','noopener,noreferrer')" onkeydown="if(event.key==='Enter'){window.open('https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/02-Python/01-analisis-exploratorio/03-riesgo-salud-pacientes','_blank','noopener,noreferrer')}">
         <div class="cc-cat">EDA · Salud</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
@@ -711,7 +712,7 @@
         </div>
         <div class="cc-foot">
           <div class="cc-pills"><span class="cc-pill">Pandas</span><span class="cc-pill">NumPy</span><span class="cc-pill">Matplotlib</span></div>
-          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/02-Python/01-analisis-exploratorio/03-riesgo-salud-pacientes" target="_blank" rel="noopener noreferrer">Ver →</a>
+          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/02-Python/01-analisis-exploratorio/03-riesgo-salud-pacientes" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Ver →</a>
         </div>
       </div>
     </div>
@@ -736,7 +737,7 @@
     </div>
     <div class="ml-grid">
       <!-- CARD SQL-1: Ventas Concesionarios -->
-      <div class="card-c">
+      <div class="card-c" tabindex="0" onclick="window.open('https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/01-SQL/01-analisis-ventas-concesionarios','_blank','noopener,noreferrer')" onkeydown="if(event.key==='Enter'){window.open('https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/01-SQL/01-analisis-ventas-concesionarios','_blank','noopener,noreferrer')}">
         <div class="cc-cat">Análisis de ventas · Automoción</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
@@ -752,11 +753,11 @@
         </div>
         <div class="cc-foot">
           <div class="cc-pills"><span class="cc-pill">T-SQL</span><span class="cc-pill">CTEs</span><span class="cc-pill">Subqueries</span></div>
-          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/01-SQL/01-analisis-ventas-concesionarios" target="_blank" rel="noopener noreferrer">Ver →</a>
+          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/01-SQL/01-analisis-ventas-concesionarios" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Ver →</a>
         </div>
       </div>
       <!-- CARD SQL-2: AdventureWorks Avanzado -->
-      <div class="card-c">
+      <div class="card-c" tabindex="0" onclick="window.open('https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/01-SQL/02-adventureworks-avanzado','_blank','noopener,noreferrer')" onkeydown="if(event.key==='Enter'){window.open('https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/01-SQL/02-adventureworks-avanzado','_blank','noopener,noreferrer')}">
         <div class="cc-cat">Window Functions · Fabricación</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
@@ -772,11 +773,11 @@
         </div>
         <div class="cc-foot">
           <div class="cc-pills"><span class="cc-pill">T-SQL</span><span class="cc-pill">Window Functions</span><span class="cc-pill">LAG/LEAD</span></div>
-          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/01-SQL/02-adventureworks-avanzado" target="_blank" rel="noopener noreferrer">Ver →</a>
+          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/01-SQL/02-adventureworks-avanzado" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Ver →</a>
         </div>
       </div>
       <!-- CARD SQL-3: Clientes Tienda -->
-      <div class="card-c">
+      <div class="card-c" tabindex="0" onclick="window.open('https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/01-SQL/03-analisis-clientes-tienda','_blank','noopener,noreferrer')" onkeydown="if(event.key==='Enter'){window.open('https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/01-SQL/03-analisis-clientes-tienda','_blank','noopener,noreferrer')}">
         <div class="cc-cat">Análisis de clientes · Retail</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
@@ -792,7 +793,7 @@
         </div>
         <div class="cc-foot">
           <div class="cc-pills"><span class="cc-pill">T-SQL</span><span class="cc-pill">CASE</span><span class="cc-pill">RANK</span></div>
-          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/01-SQL/03-analisis-clientes-tienda" target="_blank" rel="noopener noreferrer">Ver →</a>
+          <a class="cc-link" href="https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/01-SQL/03-analisis-clientes-tienda" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Ver →</a>
         </div>
       </div>
     </div>

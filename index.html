@@ -598,6 +598,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   cursor: pointer;
 }
 .proj-card:active { transform: scale(.98); }
+.proj-card:focus-visible, .card-c:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .pc-visual {
   display: flex; align-items: center; justify-content: center;
   background: #ffffff;
@@ -2162,7 +2163,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
     <div class="proj-grid">
 
       <!-- ── CARD 0: IBCS Lollipop ── -->
-      <div class="proj-card sr" onclick="location.href='./ibcs-ventas.html'">
+      <div class="proj-card sr" tabindex="0" onclick="location.href='./ibcs-ventas.html'" onkeydown="if(event.key==='Enter'){location.href='./ibcs-ventas.html'}">
         <div class="pc-visual">
           <picture>
             <source srcset="./img/ibcprincipalcard.webp" type="image/webp">
@@ -2184,7 +2185,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
       </div>
 
       <!-- ── CARD 1: Balance ── -->
-      <div class="proj-card sr sr-d1" onclick="location.href='./informe-financiero.html'">
+      <div class="proj-card sr sr-d1" tabindex="0" onclick="location.href='./informe-financiero.html'" onkeydown="if(event.key==='Enter'){location.href='./informe-financiero.html'}">
         <div class="pc-visual">
           <picture>
             <source srcset="./img/financieroprincipalcard.webp" type="image/webp">
@@ -2206,7 +2207,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
       </div>
 
       <!-- ── CARD 2: RFM B2B ── -->
-      <div class="proj-card sr sr-d2" onclick="location.href='./rfm-hosteleria.html'">
+      <div class="proj-card sr sr-d2" tabindex="0" onclick="location.href='./rfm-hosteleria.html'" onkeydown="if(event.key==='Enter'){location.href='./rfm-hosteleria.html'}">
         <div class="pc-visual">
           <picture>
             <source srcset="./img/b2bprincipalcard.webp" type="image/webp">
@@ -2239,7 +2240,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
     <div class="ml-grid">
 
       <!-- ── CARD ML-1: K-Means + t-SNE Retail ── -->
-      <div class="card-c" onclick="gtag('event','clic_app_streamlit',{app_name:'¿Todos tus clientes merecen la misma oferta?',location:'home_analisis',trigger:'card'});window.open('https://segmentacion-retail.streamlit.app','_blank','noopener,noreferrer')">
+      <div class="card-c" tabindex="0" onclick="gtag('event','clic_app_streamlit',{app_name:'¿Todos tus clientes merecen la misma oferta?',location:'home_analisis',trigger:'card'});window.open('https://segmentacion-retail.streamlit.app','_blank','noopener,noreferrer')" onkeydown="if(event.key==='Enter'){window.open('https://segmentacion-retail.streamlit.app','_blank','noopener,noreferrer')}">
         <div class="cc-cat">¿Todos tus clientes merecen la misma oferta?</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
@@ -2260,7 +2261,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
       </div>
 
       <!-- ── CARD ML-2: SARIMA vs SARIMAX Retail ── -->
-      <div class="card-c" onclick="gtag('event','clic_app_streamlit',{app_name:'¿Qué pasa con las ventas cuando ocurre algo inesperado?',location:'home_analisis',trigger:'card'});window.open('https://forecast-ventas-retail-app-w5msdvcsbuxas94qjcdore.streamlit.app','_blank','noopener,noreferrer')">
+      <div class="card-c" tabindex="0" onclick="gtag('event','clic_app_streamlit',{app_name:'¿Qué pasa con las ventas cuando ocurre algo inesperado?',location:'home_analisis',trigger:'card'});window.open('https://forecast-ventas-retail-app-w5msdvcsbuxas94qjcdore.streamlit.app','_blank','noopener,noreferrer')" onkeydown="if(event.key==='Enter'){window.open('https://forecast-ventas-retail-app-w5msdvcsbuxas94qjcdore.streamlit.app','_blank','noopener,noreferrer')}">
         <div class="cc-cat">¿Qué pasa con las ventas cuando ocurre algo inesperado?</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>
@@ -2281,7 +2282,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
       </div>
 
       <!-- ── CARD ML-3: Segmentación Aerolínea ── -->
-      <div class="card-c" onclick="gtag('event','clic_app_streamlit',{app_name:'¿A quién estamos a punto de perder?',location:'home_analisis',trigger:'card'});window.open('https://comparativa-modelos-aerolinea.streamlit.app','_blank','noopener,noreferrer')">
+      <div class="card-c" tabindex="0" onclick="gtag('event','clic_app_streamlit',{app_name:'¿A quién estamos a punto de perder?',location:'home_analisis',trigger:'card'});window.open('https://comparativa-modelos-aerolinea.streamlit.app','_blank','noopener,noreferrer')" onkeydown="if(event.key==='Enter'){window.open('https://comparativa-modelos-aerolinea.streamlit.app','_blank','noopener,noreferrer')}">
         <div class="cc-cat">¿A quién estamos a punto de perder?</div>
         <div class="cc-block">
           <div class="cc-label">El problema</div>

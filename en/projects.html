@@ -186,8 +186,10 @@ body{font-family:var(--font);background:var(--white);color:var(--ink);-webkit-fo
   background:var(--white);border:.5px solid #e4e4ec;border-radius:16px;
   overflow:hidden;display:flex;flex-direction:column;
   transition:box-shadow .3s,transform .3s;
+  cursor:pointer;
 }
 .proj-card:hover{box-shadow:0 12px 36px rgba(122,123,255,.12);transform:translateY(-3px)}
+.proj-card:focus-visible{outline:2px solid var(--ink,#111);outline-offset:2px}
 
 /* photo mini-carousel */
 .pc-photo-wrap{position:relative;height:220px;overflow:hidden;background:#f0f0f6;flex-shrink:0}
@@ -666,7 +668,7 @@ footer{background:var(--off);border-top:.5px solid var(--gray);padding:24px clam
         </button>
         <div class="proj-cards-track-wrap">
           <div class="proj-cards-track" id="pcoTrack">
-<div class="proj-card" id="pcard-0">
+<div class="proj-card" id="pcard-0" tabindex="0" onclick="window.open('https://app.powerbi.com/view?r=eyJrIjoiYWFhNjA5YmQtNjEyYS00YTA3LWIxMzktYWQxOTYzMmZkYzIyIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9','_blank','noopener,noreferrer')" onkeydown="if(event.key==='Enter'){window.open('https://app.powerbi.com/view?r=eyJrIjoiYWFhNjA5YmQtNjEyYS00YTA3LWIxMzktYWQxOTYzMmZkYzIyIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9','_blank','noopener,noreferrer')}">
   <div class="pc-photo-wrap">
     <picture><source srcset="../img/ibcs-card.webp" type="image/webp"><img loading="lazy" src="../img/ibcs-card.png" alt="IBCS Sales Report" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;"></picture>
     <div class="pc-badge"><span class="pc-num">01 / 06</span><span class="pc-cat">Ventas</span></div>
@@ -677,11 +679,11 @@ footer{background:var(--off);border-top:.5px solid var(--gray);padding:24px clam
     <p class="pc-short">En muchos equipos comerciales, el análisis de ventas empieza y termina en el total anual. Si la cifra sube, todo bien. El problema es que <strong>dos años pueden cerrar con el mismo número y haber sido radicalmente distintos por dentro</strong>. Diseñé un informe que integra <strong>volumen, variación absoluta y porcentaje en un único visual</strong> — para que el usuario vea de un vistazo cuánto vendió, cuánto cambió y si ese cambio importa.</p>
     <div class="pc-pills"><span class="pc-pill">IBCS</span><span class="pc-pill">DAX</span><span class="pc-pill">Star schema</span><span class="pc-pill">Drill-down</span><span class="pc-pill">Variación absoluta y relativa</span><span class="pc-pill">Parámetros dinámicos</span><span class="pc-pill">Visual hierarchy</span><span class="pc-pill">Sales analytics</span><span class="pc-pill">YoY analysis</span></div>
     <div class="pc-foot">
-      <a href="https://app.powerbi.com/view?r=eyJrIjoiYWFhNjA5YmQtNjEyYS00YTA3LWIxMzktYWQxOTYzMmZkYzIyIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+      <a href="https://app.powerbi.com/view?r=eyJrIjoiYWFhNjA5YmQtNjEyYS00YTA3LWIxMzktYWQxOTYzMmZkYzIyIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" class="pc-btn" onclick="event.stopPropagation()">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
     </div>
   </div>
 </div>
-<div class="proj-card" id="pcard-1">
+<div class="proj-card" id="pcard-1" tabindex="0" onclick="window.open('https://app.powerbi.com/view?r=eyJrIjoiMzhlYjliYTAtMWUzMS00YzE1LTgyNGEtZmZmNDVhNjQ1ZDY3IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=03634c064fb23f65778f','_blank','noopener,noreferrer')" onkeydown="if(event.key==='Enter'){window.open('https://app.powerbi.com/view?r=eyJrIjoiMzhlYjliYTAtMWUzMS00YzE1LTgyNGEtZmZmNDVhNjQ1ZDY3IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=03634c064fb23f65778f','_blank','noopener,noreferrer')}">
   <div class="pc-photo-wrap">
     <picture><source srcset="../img/kosta-CARD.webp" type="image/webp"><img loading="lazy" src="../img/kosta-CARD.png" alt="Kosta Cálida — Retail Network Reporting" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;"></picture>
     <div class="pc-badge"><span class="pc-num">02 / 06</span><span class="pc-cat">Retail</span></div>
@@ -692,11 +694,11 @@ footer{background:var(--off);border-top:.5px solid var(--gray);padding:24px clam
     <p class="pc-short">Una cadena de tiendas con <strong>datos completos en el TPV pero sin capacidad de responder preguntas básicas de negocio</strong>: qué tienda rinde mejor, dónde se pierde margen, si los objetivos se cumplen o solo se supera el mes anterior. Diseñé un <strong>sistema de reporting integral</strong> — desde el modelo de datos hasta el dashboard — que convirtió números dispersos en decisiones concretas.</p>
     <div class="pc-pills"><span class="pc-pill">Star schema</span><span class="pc-pill">Power Query</span><span class="pc-pill">DAX</span><span class="pc-pill">Sales vs Targets</span><span class="pc-pill">Profitability analysis</span><span class="pc-pill">Drill-down</span><span class="pc-pill">YTD</span><span class="pc-pill">Visual hierarchy</span><span class="pc-pill">Retail analytics</span></div>
     <div class="pc-foot">
-      <a href="https://app.powerbi.com/view?r=eyJrIjoiMzhlYjliYTAtMWUzMS00YzE1LTgyNGEtZmZmNDVhNjQ1ZDY3IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=03634c064fb23f65778f" target="_blank" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+      <a href="https://app.powerbi.com/view?r=eyJrIjoiMzhlYjliYTAtMWUzMS00YzE1LTgyNGEtZmZmNDVhNjQ1ZDY3IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=03634c064fb23f65778f" target="_blank" class="pc-btn" onclick="event.stopPropagation()">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
     </div>
   </div>
 </div>
-<div class="proj-card" id="pcard-2">
+<div class="proj-card" id="pcard-2" tabindex="0" onclick="window.open('https://app.powerbi.com/view?r=eyJrIjoiMzNlYjcwN2YtNWE0Yy00NTk2LThlNmUtZjVmMThkZTQ0YzZjIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9','_blank','noopener,noreferrer')" onkeydown="if(event.key==='Enter'){window.open('https://app.powerbi.com/view?r=eyJrIjoiMzNlYjcwN2YtNWE0Yy00NTk2LThlNmUtZjVmMThkZTQ0YzZjIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9','_blank','noopener,noreferrer')}">
   <div class="pc-photo-wrap">
     <picture><source srcset="../img/social-card.webp" type="image/webp"><img loading="lazy" src="../img/social-card.png" alt="Social Media Performance | 2025 vs 2024" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;"></picture>
     <div class="pc-badge"><span class="pc-num">03 / 06</span><span class="pc-cat">Marketing</span></div>
@@ -707,11 +709,11 @@ footer{background:var(--off);border-top:.5px solid var(--gray);padding:24px clam
     <p class="pc-short">Cuando los resultados de marketing caen de un año a otro, la conclusión rápida es que algo ha empeorado. Pero un <strong>–12% en impresiones se lee de forma completamente distinta si el gasto también cayó un –26%</strong>. Diseñé un dashboard de comparación interanual que no mide solo si hay más o menos volumen, sino si el negocio está siendo <strong>más o menos eficiente con lo que invierte</strong>.</p>
     <div class="pc-pills"><span class="pc-pill">DAX interanual</span><span class="pc-pill">Tablas desconectadas</span><span class="pc-pill">CTR · CPC</span><span class="pc-pill">Star schema</span><span class="pc-pill">Sparklines</span><span class="pc-pill">YoY comparison</span><span class="pc-pill">Marketing analytics</span><span class="pc-pill">Efficiency vs volume</span></div>
     <div class="pc-foot">
-      <a href="https://app.powerbi.com/view?r=eyJrIjoiMzNlYjcwN2YtNWE0Yy00NTk2LThlNmUtZjVmMThkZTQ0YzZjIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+      <a href="https://app.powerbi.com/view?r=eyJrIjoiMzNlYjcwN2YtNWE0Yy00NTk2LThlNmUtZjVmMThkZTQ0YzZjIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9" target="_blank" class="pc-btn" onclick="event.stopPropagation()">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
     </div>
   </div>
 </div>
-<div class="proj-card" id="pcard-3">
+<div class="proj-card" id="pcard-3" tabindex="0" onclick="window.open('https://app.powerbi.com/view?r=eyJrIjoiNDgzZjBmY2MtMDhhMy00MGIzLTlmYmItODlkMmY2NDg3ZDdmIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=a961ceadc15fe4dcfcfb','_blank','noopener,noreferrer')" onkeydown="if(event.key==='Enter'){window.open('https://app.powerbi.com/view?r=eyJrIjoiNDgzZjBmY2MtMDhhMy00MGIzLTlmYmItODlkMmY2NDg3ZDdmIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=a961ceadc15fe4dcfcfb','_blank','noopener,noreferrer')}">
   <div class="pc-photo-wrap">
     <picture><source srcset="../img/financiero-card.webp" type="image/webp"><img loading="lazy" src="../img/financiero-card.png" alt="Full Financial Report" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;"></picture>
     <div class="pc-badge"><span class="pc-num">04 / 06</span><span class="pc-cat">Financiero</span></div>
@@ -722,11 +724,11 @@ footer{background:var(--off);border-top:.5px solid var(--gray);padding:24px clam
     <p class="pc-short">En la mayoría de empresas, la información financiera existe: hay balances, cuenta de resultados, presupuestos, asientos contables. <strong>El problema no es que falten datos, sino que están dispersos</strong> y nadie en dirección puede ver el negocio completo en una sola lectura. Diseñé un sistema de análisis financiero integral que conecta <strong>balance, PyG y cash flow</strong> — y permite pasar de un KPI de dirección hasta el asiento contable que lo explica.</p>
     <div class="pc-pills"><span class="pc-pill">Modelado contable en estrella</span><span class="pc-pill">DAX financiero</span><span class="pc-pill">Balance · PyG · Cash Flow</span><span class="pc-pill">EBITDA</span><span class="pc-pill">Vertical and horizontal analysis</span><span class="pc-pill">Budget deviation</span><span class="pc-pill">Year-end projection</span><span class="pc-pill">Drill-through a asiento</span><span class="pc-pill">Financial analytics</span></div>
     <div class="pc-foot">
-      <a href="https://app.powerbi.com/view?r=eyJrIjoiNDgzZjBmY2MtMDhhMy00MGIzLTlmYmItODlkMmY2NDg3ZDdmIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=a961ceadc15fe4dcfcfb" target="_blank" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
+      <a href="https://app.powerbi.com/view?r=eyJrIjoiNDgzZjBmY2MtMDhhMy00MGIzLTlmYmItODlkMmY2NDg3ZDdmIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=a961ceadc15fe4dcfcfb" target="_blank" class="pc-btn" onclick="event.stopPropagation()">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>
     </div>
   </div>
 </div>
-<div class="proj-card" id="pcard-4">
+<div class="proj-card" id="pcard-4" tabindex="0" onclick="window.open('https://app.powerbi.com/view?r=eyJrIjoiM2Y3MzMxNTQtMGMzOS00ZDhlLTljYWYtMmU5N2E5ZTA3MjU2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=41273635f861390cd9fd','_blank','noopener,noreferrer')" onkeydown="if(event.key==='Enter'){window.open('https://app.powerbi.com/view?r=eyJrIjoiM2Y3MzMxNTQtMGMzOS00ZDhlLTljYWYtMmU5N2E5ZTA3MjU2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=41273635f861390cd9fd','_blank','noopener,noreferrer')}">
   <div class="pc-photo-wrap">
     <picture><source srcset="../img/pyg-card.webp" type="image/webp"><img loading="lazy" src="../img/pyg-card.png" alt="Profit & Loss Statement" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;"></picture>
     <div class="pc-badge"><span class="pc-num">05 / 06</span><span class="pc-cat">Financiero</span></div>
@@ -737,10 +739,10 @@ footer{background:var(--off);border-top:.5px solid var(--gray);padding:24px clam
     <p class="pc-short">La Profit & Loss Statement es el informe más importante de una empresa y, curiosamente, <strong>uno de los que peor funciona en herramientas de BI</strong>. El problema no es técnico: es que una PyG tiene <strong>subtotales con reglas propias, signos contables</strong> que no coinciden con la lógica analítica y totales que dejan de cuadrar en cuanto cambias el contexto. Construí un <strong>P&L en Power BI que es riguroso, dinámico</strong> y mantiene coherencia financiera en cualquier nivel de filtro.</p>
     <div class="pc-pills"><span class="pc-pill">P&L en Power BI</span><span class="pc-pill">DAX financiero</span><span class="pc-pill">Intelligent subtotals</span><span class="pc-pill">Real vs Presupuesto</span><span class="pc-pill">Waterfall chart</span><span class="pc-pill">Accounting sign control</span><span class="pc-pill">Star schema</span><span class="pc-pill">Financial analytics</span><span class="pc-pill">Accounting hierarchy</span></div>
     <div class="pc-foot">
-      <a href="https://app.powerbi.com/view?r=eyJrIjoiM2Y3MzMxNTQtMGMzOS00ZDhlLTljYWYtMmU5N2E5ZTA3MjU2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=41273635f861390cd9fd" target="_blank" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>    </div>
+      <a href="https://app.powerbi.com/view?r=eyJrIjoiM2Y3MzMxNTQtMGMzOS00ZDhlLTljYWYtMmU5N2E5ZTA3MjU2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=41273635f861390cd9fd" target="_blank" class="pc-btn" onclick="event.stopPropagation()">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>    </div>
   </div>
 </div>
-<div class="proj-card" id="pcard-5">
+<div class="proj-card" id="pcard-5" tabindex="0" onclick="window.open('https://app.powerbi.com/view?r=eyJrIjoiOTA2ZDExNjktYzE4Ny00Y2UzLThmM2YtMjI5Y2FmNDg1MzM5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=9c4b9193b627b78a0e01','_blank','noopener,noreferrer')" onkeydown="if(event.key==='Enter'){window.open('https://app.powerbi.com/view?r=eyJrIjoiOTA2ZDExNjktYzE4Ny00Y2UzLThmM2YtMjI5Y2FmNDg1MzM5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=9c4b9193b627b78a0e01','_blank','noopener,noreferrer')}">
   <div class="pc-photo-wrap">
     <picture><source srcset="../img/airbnb-card.webp" type="image/webp"><img loading="lazy" src="../img/airbnb-card.png" alt="Airbnb Market Analysis — Basque Country" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;"></picture>
     <div class="pc-badge"><span class="pc-num">06 / 06</span><span class="pc-cat">Mercado</span></div>
@@ -751,10 +753,10 @@ footer{background:var(--off);border-top:.5px solid var(--gray);padding:24px clam
     <p class="pc-short">"Airbnb en el País Vasco está carísimo" es una afirmación que se repite constantemente — y casi siempre se basa en una <strong>media general</strong>. El problema es que <strong>una media sin contexto puede ser tan engañosa como no tener datos</strong>. Diseñé un análisis del mercado turístico construido alrededor del territorio, no de un único número, para entender qué hay detrás del precio y dónde están las diferencias reales.</p>
     <div class="pc-pills"><span class="pc-pill">Análisis territorial</span><span class="pc-pill">Mapas en Power BI</span><span class="pc-pill">Market segmentation</span><span class="pc-pill">KPIs</span><span class="pc-pill">Exploratory analysis</span><span class="pc-pill">DAX</span></div>
     <div class="pc-foot">
-      <a href="https://app.powerbi.com/view?r=eyJrIjoiOTA2ZDExNjktYzE4Ny00Y2UzLThmM2YtMjI5Y2FmNDg1MzM5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=9c4b9193b627b78a0e01" target="_blank" class="pc-btn">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>    </div>
+      <a href="https://app.powerbi.com/view?r=eyJrIjoiOTA2ZDExNjktYzE4Ny00Y2UzLThmM2YtMjI5Y2FmNDg1MzM5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=9c4b9193b627b78a0e01" target="_blank" class="pc-btn" onclick="event.stopPropagation()">Ver dashboard <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a>    </div>
   </div>
 </div>
-          
+
           </div>
         </div>
         <button class="pco-arrow pco-next" id="pcoNext">
