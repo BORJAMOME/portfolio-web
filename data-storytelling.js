@@ -94,7 +94,7 @@
       var last = s.v[11] * 3.5;
       dls += '<span class="dl' + hero + '" style="top:' + py(last) + '%">' + s.n + '</span>';
     });
-    var yl = [300, 240, 180, 120, 60, 0].map(function (v) { return '<span><span class="n-l">' + v.toLocaleString('es-ES') + '.000 €</span><span class="n-s">' + v + ' k</span></span>'; }).join('');
+    var yl = [300, 240, 180, 120, 60, 0].map(function (v) { return '<span>' + v + ' k€</span>'; }).join('');
     return '<div class="lineplot"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">' + gl + paths + '</svg>' + dls +
       '<div class="yax">' + yl + '</div>' +
       '<div class="xax">' + ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'].map(function (m) { return '<span>' + m + '</span>'; }).join('') + '</div></div>';
@@ -124,11 +124,11 @@
       kpi('p-k2', 'Crecimiento', '+23,98 %', '+24 %', '▲ 304.120,00 € vs. Q4 2024', '+304 k€ vs. Q4 2024') +
       kpi('p-k3', 'Pedidos', '12.480', '12.480', '▲ 8,21 % vs. Q4 2024', '+8 % vs. Q4 2024') +
       kpi('p-k4', 'Ticket medio', '125,99 €', '126 €', '▲ 14,52 % vs. Q4 2024', '+15 % vs. Q4 2024') +
-      '<div class="pn p-bars"><div class="ph"><div class="tt"><span class="t-d">Crecimiento vs. Q4 2024 por canal (€)</span><span class="t-s">Online explica 221 k€ de los 304 k€ de crecimiento</span></div><span class="ico"></span></div><div class="pb"><div class="legend">' + legB + '</div>' +
+      '<div class="pn p-bars"><div class="ph"><div class="tt"><span class="t-d">Crecimiento vs. Q4 2024 por canal (€)</span><span class="t-s">Online explica 221 k€ de los 304 k€ de crecimiento</span></div></div><div class="pb"><div class="legend">' + legB + '</div>' +
       '<div class="bars"><div class="gridv minor"></div><div class="gridv"></div><div class="zero"></div>' + rows + '</div>' +
       '<div class="axis-x"><span>0 €</span><span>70.000 €</span><span>140.000 €</span><span>210.000 €</span><span>280.000 €</span></div></div></div>' +
-      '<div class="pn p-line"><div class="ph"><div class="tt"><span class="t-d">Ventas mensuales por canal (€)</span><span class="t-s">Online vende más que las tiendas desde abril</span></div><span class="ico"></span></div><div class="pb">' + lineSVG() + '<div class="legend">' + legL + '</div></div></div>' +
-      '<div class="pn p-donut"><div class="ph"><div class="tt"><span class="t-d">Ventas por categoría (%)</span><span class="t-s">Moda y hogar: 42 % de las ventas</span></div><span class="ico"></span></div><div class="pb"><div class="donut"><svg viewBox="0 0 42 42" aria-hidden="true">' + donut + '</svg></div><div class="legend">' + legD + '</div>' +
+      '<div class="pn p-line"><div class="ph"><div class="tt"><span class="t-d">Ventas mensuales por canal (€)</span><span class="t-s">Online vende más que las tiendas desde abril</span></div></div><div class="pb">' + lineSVG() + '<div class="legend">' + legL + '</div></div></div>' +
+      '<div class="pn p-donut"><div class="ph"><div class="tt"><span class="t-d">Ventas por categoría (%)</span><span class="t-s">Moda y hogar: 42 % de las ventas</span></div></div><div class="pb"><div class="donut"><svg viewBox="0 0 42 42" aria-hidden="true">' + donut + '</svg></div><div class="legend">' + legD + '</div>' +
       '<div class="donut-dl"><b>Moda</b> 24 % · <b>Hogar</b> 18 %<br>Electrónica 15 % · resto 43 %</div></div></div>' +
       '<div class="pn p-rec"><div class="pb"><span class="rk keep">Qué propongo</span><span class="rt keep">Mover un 15 % del presupuesto de captación a online en el Q1 y medir el efecto en 8 semanas.</span></div></div>' +
       '<svg class="annot-svg" viewBox="0 0 160 110" preserveAspectRatio="none" aria-hidden="true"><path class="a-def" pathLength="1" d="M56 60.5 L70 51.7"/><path class="a-pri" pathLength="1" d="M57.6 48.4 L83.2 35.8"/></svg>' +
@@ -137,7 +137,7 @@
       '<span class="kbd-n" style="left:2%;top:3%">1</span><span class="kbd-n" style="left:2.5%;top:17%">2</span><span class="kbd-n" style="left:61%;top:17%">3</span><span class="kbd-n" style="left:61%;top:38%">4</span><span class="kbd-n" style="left:81%;top:38%">5</span><span class="kbd-n" style="left:61%;top:52%">6</span><span class="kbd-n" style="left:61%;top:79%">7</span>' +
       '<div class="alt-cap"><code>alt</code> “Crecimiento del Q4 2025 frente al Q4 2024 por canal. Online aporta 221 k€ de los 304 k€ totales (73 %). Marketplace suma 38 k€ y tiendas 26 k€; outlet cae 2 k€.”</div>' +
       '<div class="contrast-chips"><span class="cchip"><i style="background:#111"></i><b>18,2:1</b><em>texto principal</em></span><span class="cchip"><i style="background:#5a5a5a"></i><b>6,7:1</b><em>texto secundario</em></span><span class="cchip"><i style="background:#2F6E2B"></i><b>6,0:1</b><em>verde en texto pequeño</em></span><span class="cchip"><i style="background:#3C8A37"></i><b>4,2:1</b><em>verde: barras y texto grande</em></span><span class="cchip"><i style="background:#BDBDBD"></i><b>1,8:1</b><em>gris: contexto, nunca texto</em></span></div>' +
-      '<span class="sim">SIMULACIÓN · DATOS FICTICIOS</span>';
+      '';
   }
 
   var DASH = {};
@@ -1161,4 +1161,17 @@
   }
 
   buildTask(); buildGuess(); buildDyn();
+
+  /* scroll cue: recede as soon as the reader actually starts moving, not only once it scrolls off-screen */
+  (function () {
+    var cue = document.querySelector('.scroll-cue'); if (!cue) return;
+    var shown = true;
+    function onScroll() {
+      var past = window.scrollY > 28;
+      if (past === !shown) return;
+      cue.classList.toggle('sc-hide', past);
+      shown = !past;
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+  })();
 })();

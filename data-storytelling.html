@@ -283,10 +283,10 @@
         <div class="step" data-flags=""><div class="st-in">
           <span class="st-tag">Informe de ventas · Q4 2025</span>
           <p class="st-copy">Este es un dashboard de ventas. Tómate un segundo. ¿Qué te está diciendo?</p>
-          <span class="scroll-cue"><i></i>Desliza para seguir</span>
+          <div class="scroll-cue"><span class="sc-track" aria-hidden="true"><span class="sc-dot"></span><span class="sc-chevron"></span></span><span class="sc-label">Desliza para seguir</span></div>
         </div></div>
         <div class="step" data-flags=""><div class="st-in"><p class="st-copy">Un dashboard puede estar lleno de datos y seguir sin contar nada.</p></div></div>
-        <div class="step" data-flags="hush"><div class="st-in"><p class="st-copy">El problema no siempre es la cantidad de datos. A veces es que todos intentan hablar al mismo tiempo.</p></div></div>
+        <div class="step" data-flags="hush"><div class="st-in"><p class="st-copy">El problema no siempre es tener demasiados datos. A veces es que todo intenta llamar la atención al mismo tiempo.</p></div></div>
         <div class="step" data-flags="flat lessgrid"><div class="st-in"><p class="st-copy">Primero quito lo que compite con el mensaje.</p></div></div>
         <div class="step" data-flags="flat lessgrid gray focus"><div class="st-in"><p class="st-copy">Después decido qué merece la atención.</p></div></div>
         <div class="step" data-flags="flat lessgrid gray focus dim zoom"><div class="st-in"><p class="st-copy">Y entonces aparece algo importante: <span class="ds-green">sé dónde mirar.</span></p></div></div>
@@ -318,7 +318,7 @@
     <p class="q"><b>y qué debería poder hacer después.</b></p>
     <p>Este manual reúne lo que he ido aprendiendo sobre Data Storytelling y cómo intento llevarlo a la práctica.</p>
     <p>No son reglas universales.</p>
-    <p>Algunas ideas vienen de la investigación sobre percepción y visualización; otras son heurísticas que me ayudan a diseñar; y otras forman parte de mi propia forma de trabajar.</p>
+    <p>Algunas ideas vienen de la investigación sobre percepción y visualización; otras son reglas prácticas que me ayudan a diseñar; y otras forman parte de mi propia forma de trabajar.</p>
   </div>
 </section>
 
@@ -484,12 +484,16 @@
 
   <!-- What / Why / How -->
   <div class="ds-c ds-sec--tight">
-    <div class="wwh rv-seq">
+    <p class="ds-kicker rv-up">El marco</p>
+    <p class="ds-h3 rv-up" data-delay="150" style="margin:12px 0 10px;max-width:26ch">Antes del gráfico, está la pregunta.</p>
+    <p class="ds-body ds-muted rv-up" data-delay="300" style="max-width:56ch">Primero entiendo qué tengo, después qué necesita hacer el lector y, por último, cómo voy a representarlo.</p>
+    <div class="wwh rv-seq" style="margin-top:40px">
       <div><span class="wk">WHAT</span><p class="wq">¿Qué tengo?</p><p class="wd">Tipo de dato, variables y granularidad.</p></div>
       <div><span class="wk">WHY</span><p class="wq">¿Qué necesita hacer el lector?</p><p class="wd">Comparar, localizar, detectar, entender…</p></div>
-      <div><span class="wk">HOW</span><p class="wq">¿Cómo lo voy a representar?</p><p class="wd">La codificación visual que mejor resuelve la tarea.</p></div>
+      <div><span class="wk">HOW</span><p class="wq">¿Cómo lo voy a representar?</p><p class="wd">La codificación visual que mejor resuelve esa tarea.</p></div>
     </div>
-    <p class="ds-quote rv" style="margin-top:56px">Primero la pregunta. <em>Después la representación.</em></p>
+    <p class="wwh-flow rv" data-delay="550">WHAT <span>→</span> WHY <span>→</span> HOW</p>
+    <p class="ds-quote rv" data-delay="750" style="margin-top:40px">Primero la pregunta. <em>Después la representación.</em></p>
   </div>
 </section>
 
@@ -1226,7 +1230,7 @@
     <details class="disc">
       <summary>Fuentes y lecturas</summary>
       <div class="disc-b">
-        <p style="margin-bottom:14px">Las he usado como respaldo conceptual, no como texto: todo lo que aparece aquí está escrito con mis palabras. Distingo en cada caso entre evidencia, heurística y criterio personal.</p>
+        <p style="margin-bottom:14px">Las he usado como respaldo conceptual, no como texto: todo lo que aparece aquí está escrito con mis palabras. Distingo en cada caso entre evidencia, regla práctica y criterio personal.</p>
         <ul class="refs" id="refsList"></ul>
         <p style="margin-top:16px" class="ds-muted">Todos los datos de esta página son sintéticos y se han creado para el ejemplo.</p>
       </div>
