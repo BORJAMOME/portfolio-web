@@ -14,9 +14,9 @@
   --g2: #DCDCDC;          /* gris secundario */
   --grid: #E8E8E8;        /* retícula y líneas */
   --muted: #5a5a5a;       /* texto secundario (AA 6,6:1) */
-  --green: #3C8A37;       /* énfasis: marcas y texto grande (4,2:1) */
-  --green-ink: #2F6E2B;   /* mismo verde, más oscuro, para texto pequeño (6,0:1) */
-  --green-wash: #EDF4EC;
+  --green: #6B5CA5;       /* énfasis: marcas y texto grande (5,5:1) */
+  --green-ink: #4A3E79;   /* mismo acento, más oscuro, para texto pequeño (9,0:1) */
+  --green-wash: #F0EEF6;
   --red: #a3223e;         /* solo para escalas divergentes */
   --serif: 'Newsreader', Georgia, serif;
   --sans: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;

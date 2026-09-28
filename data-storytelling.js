@@ -22,7 +22,7 @@
   function fmtEs(n, d) { return n.toLocaleString('es-ES', { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }); }
 
   var COL = {
-    g1: '#BDBDBD', g2: '#DCDCDC', grid: '#E8E8E8', ink: '#111111', gr: '#3C8A37', w: '#FFFFFF', wash: '#EDF4EC', bg: '#FBFBFB',
+    g1: '#BDBDBD', g2: '#DCDCDC', grid: '#E8E8E8', ink: '#111111', gr: '#6B5CA5', w: '#FFFFFF', wash: '#F0EEF6', bg: '#FBFBFB',
     c1: '#4472C4', c2: '#ED7D31', c3: '#A5A5A5', c4: '#FFC000', c5: '#70AD47', red: '#a3223e'
   };
 
@@ -136,7 +136,7 @@
       '</div>' +
       '<span class="kbd-n" style="left:2%;top:3%">1</span><span class="kbd-n" style="left:2.5%;top:17%">2</span><span class="kbd-n" style="left:61%;top:17%">3</span><span class="kbd-n" style="left:61%;top:38%">4</span><span class="kbd-n" style="left:81%;top:38%">5</span><span class="kbd-n" style="left:61%;top:52%">6</span><span class="kbd-n" style="left:61%;top:79%">7</span>' +
       '<div class="alt-cap"><code>alt</code> “Crecimiento del Q4 2025 frente al Q4 2024 por canal. Online aporta 221 k€ de los 304 k€ totales (73 %). Marketplace suma 38 k€ y tiendas 26 k€; outlet cae 2 k€.”</div>' +
-      '<div class="contrast-chips"><span class="cchip"><i style="background:#111"></i><b>18,2:1</b><em>texto principal</em></span><span class="cchip"><i style="background:#5a5a5a"></i><b>6,7:1</b><em>texto secundario</em></span><span class="cchip"><i style="background:#2F6E2B"></i><b>6,0:1</b><em>verde en texto pequeño</em></span><span class="cchip"><i style="background:#3C8A37"></i><b>4,2:1</b><em>verde: barras y texto grande</em></span><span class="cchip"><i style="background:#BDBDBD"></i><b>1,8:1</b><em>gris: contexto, nunca texto</em></span></div>' +
+      '<div class="contrast-chips"><span class="cchip"><i style="background:#111"></i><b>18,2:1</b><em>texto principal</em></span><span class="cchip"><i style="background:#5a5a5a"></i><b>6,7:1</b><em>texto secundario</em></span><span class="cchip"><i style="background:#4A3E79"></i><b>9,0:1</b><em>acento en texto pequeño</em></span><span class="cchip"><i style="background:#6B5CA5"></i><b>5,5:1</b><em>acento: barras y texto grande</em></span><span class="cchip"><i style="background:#BDBDBD"></i><b>1,8:1</b><em>gris: contexto, nunca texto</em></span></div>' +
       '';
   }
 
@@ -684,10 +684,10 @@
 
   /* 07 · Construir el lienzo */
   VIZ.canvas = function (viz) {
-    var mini = function (hero) { var h = [.8, .55, .45, .35, .25], s = ''; h.forEach(function (v, i) { s += '<i style="position:absolute;bottom:0;left:' + (i * 19 + 2) + '%;width:14%;height:' + (v * 100) + '%;background:' + (hero && i === 0 ? '#3C8A37' : '#DCDCDC') + '"></i>'; }); return '<div style="position:relative;flex:1;margin-top:.6em">' + s + '</div>'; };
+    var mini = function (hero) { var h = [.8, .55, .45, .35, .25], s = ''; h.forEach(function (v, i) { s += '<i style="position:absolute;bottom:0;left:' + (i * 19 + 2) + '%;width:14%;height:' + (v * 100) + '%;background:' + (hero && i === 0 ? '#6B5CA5' : '#DCDCDC') + '"></i>'; }); return '<div style="position:relative;flex:1;margin-top:.6em">' + s + '</div>'; };
     var BL = [
       '<span class="lb cap" style="position:static;opacity:1">Título</span><span style="font-family:Newsreader,serif;font-size:1.45em;line-height:1.1;margin-top:.15em">El canal online ya concentra el crecimiento</span>',
-      '<span class="lb cap" style="position:static;opacity:1">KPI</span><span style="font-family:Newsreader,serif;font-size:2.6em;line-height:1;margin-top:.2em;color:#2F6E2B">+24 %</span><span style="font-size:.9em;color:#5a5a5a">vs. Q4 2024</span>',
+      '<span class="lb cap" style="position:static;opacity:1">KPI</span><span style="font-family:Newsreader,serif;font-size:2.6em;line-height:1;margin-top:.2em;color:#4A3E79">+24 %</span><span style="font-size:.9em;color:#5a5a5a">vs. Q4 2024</span>',
       '<span class="lb cap" style="position:static;opacity:1">Visual principal</span>' + mini(true),
       '<span class="lb cap" style="position:static;opacity:1">Detalle</span>' + mini(false),
       '<span class="lb cap" style="position:static;opacity:1">Detalle</span>' + mini(false),
@@ -787,7 +787,7 @@
     var K = [['Clientes activos', '48.200'], ['Abandono anual', '18 %'], ['Coste anual', '2,4 M€']];
     var BLK = K.map(function (k) { return '<span class="lb cap" style="position:static;opacity:1">' + k[0] + '</span><span style="font-family:Newsreader,serif;font-size:2.3em;line-height:1.05">' + k[1] + '</span>'; });
     var BANDS = [['0–30 d', 24], ['31–60', 21], ['61–90', 16], ['91–180', 14], ['181–365', 13], ['> 1 año', 12]];
-    var blk = BLK.concat([null, null, null, null, null, null, '<span class="lb cap" style="position:static;opacity:1;color:#2F6E2B">Qué propongo</span><span style="font-family:Newsreader,serif;font-size:1.5em;line-height:1.2;margin-top:.4em">Rediseñar los primeros 90 días: llamada de bienvenida en la semana 2 y revisión en la semana 6.</span><span style="margin-top:.8em;font-size:1em;color:#5a5a5a">Potencial: unos 0,7 M€ al año si reducimos a la mitad las bajas tempranas. Lo mediremos en 8 semanas.</span>']);
+    var blk = BLK.concat([null, null, null, null, null, null, '<span class="lb cap" style="position:static;opacity:1;color:#4A3E79">Qué propongo</span><span style="font-family:Newsreader,serif;font-size:1.5em;line-height:1.2;margin-top:.4em">Rediseñar los primeros 90 días: llamada de bienvenida en la semana 2 y revisión en la semana 6.</span><span style="margin-top:.8em;font-size:1em;color:#5a5a5a">Potencial: unos 0,7 M€ al año si reducimos a la mitad las bajas tempranas. Lo mediremos en 8 semanas.</span>']);
     var st = Stage($('.stage', viz), 10, { blk: blk });
     return {
       set: function (k) {
@@ -1020,9 +1020,9 @@
 
   // pruebas de accesibilidad
   var AEXP = {
-    gs: 'En escala de grises, el protagonista sigue destacando: contraste de luminosidad (verde oscuro frente a gris claro), posición y etiqueta en negrita.',
-    nocolor: 'Sin el verde, la jerarquía la sostienen la posición, el tamaño, el peso de las etiquetas y la anotación. El mensaje sigue ahí.',
-    contrast: 'El verde de marca sobre este fondo da 4,2:1: suficiente para barras y texto grande, no para texto pequeño. Por eso las etiquetas pequeñas usan un verde más oscuro (6,0:1).',
+    gs: 'En escala de grises, el protagonista sigue destacando: contraste de luminosidad (el acento es mucho más oscuro que el gris claro), posición y etiqueta en negrita.',
+    nocolor: 'Sin el color de marca, la jerarquía la sostienen la posición, el tamaño, el peso de las etiquetas y la anotación. El mensaje sigue ahí.',
+    contrast: 'El color de marca sobre este fondo da 5,5:1: suficiente incluso para texto pequeño. Para las etiquetas más diminutas uso además una variante todavía más oscura (9,0:1), por margen de seguridad.',
     kbd: 'Un orden de tabulación que sigue la lectura: título, protagonista, KPI principal, contexto y recomendación. En Power BI se ajusta en el panel de selección.',
     alt: 'El texto alternativo describe la conclusión y las cifras clave, no el tipo de gráfico. “Gráfico de barras” no le sirve a nadie.'
   };
@@ -1043,7 +1043,7 @@
   function r(x, y, w, h, f, extra) { return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" fill="' + f + '"' + (extra || '') + '/>'; }
   function pl(pts, stroke, w, extra) { return '<polyline fill="none" stroke="' + stroke + '" stroke-width="' + (w || 2) + '" stroke-linejoin="round" points="' + pts.map(function (p) { return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' ') + '"' + (extra || '') + '/>'; }
   var OFF = ['#4472C4', '#ED7D31', '#A5A5A5', '#FFC000', '#5B9BD5', '#70AD47', '#264478', '#9E480E'];
-  var G1 = '#BDBDBD', G2 = '#DCDCDC', GR = '#3C8A37', INK = '#111';
+  var G1 = '#BDBDBD', G2 = '#DCDCDC', GR = '#6B5CA5', INK = '#111';
 
   function pie(vals, cx, cy, rad, cols) {
     var tot = vals.reduce(function (a, b) { return a + b; }, 0), a0 = -Math.PI / 2, s = '';
@@ -1080,7 +1080,7 @@
       function () { var V = [62, 48, 55, 40], N = ['Norte', 'Sur', 'Este', 'Oeste']; return svg(t(24, 26, 'Ventas por región, k€', 't-ttl') + V.map(function (v, i) { var h = v * 2.6, x = 60 + i * 80; return r(x, 210 - h, 52, h, i === 0 ? GR : G1) + t(x + 26, 204 - h, v, i === 0 ? 't-grn' : 'ink', 'middle') + t(x + 26, 228, N[i], '', 'middle'); }).join('') + '<line class="ax" x1="50" x2="380" y1="210" y2="210"/>', 'Las mismas barras en plano, con etiquetas'); }],
     ['04', 'Líneas espagueti → una protagonista', 'No necesito seis protagonistas.',
       function () { return svg(t(24, 26, 'Ventas por canal', 't-ttl') + lines(SP, OFF, 30, 320, 40, 210, 36) + SPN.map(function (n, i) { return r(330, 50 + i * 20, 9, 9, OFF[i]) + t(344, 58 + i * 20, n); }).join(''), 'Seis líneas de colores cruzadas'); },
-      function () { return svg(t(24, 26, 'App ya es el canal que más crece', 't-ttl') + lines(SP.filter(function (s, i) { return i !== 4; }), [G2], 30, 320, 40, 210, 36) + lines([SP[4]], [GR], 30, 320, 40, 210, 36, [3]) + t(328, 210 - 31 / 36 * 170 + 4, 'App', 't-grn'), 'Cinco líneas grises y una verde: App'); }],
+      function () { return svg(t(24, 26, 'App ya es el canal que más crece', 't-ttl') + lines(SP.filter(function (s, i) { return i !== 4; }), [G2], 30, 320, 40, 210, 36) + lines([SP[4]], [GR], 30, 320, 40, 210, 36, [3]) + t(328, 210 - 31 / 36 * 170 + 4, 'App', 't-grn'), 'Cinco líneas grises y una destacada: App'); }],
     ['04B', 'Líneas espagueti → pequeños múltiplos', 'A veces separar las series hace que compararlas sea más fácil que superponerlas.',
       function () { return svg(t(24, 26, 'Ventas por canal', 't-ttl') + lines(SP, OFF, 30, 320, 40, 210, 36) + SPN.map(function (n, i) { return r(330, 50 + i * 20, 9, 9, OFF[i]) + t(344, 58 + i * 20, n); }).join(''), 'Seis líneas de colores cruzadas'); },
       function () { return svg(SP.map(function (s, i) { var cx = 20 + (i % 3) * 126, cy = 20 + Math.floor(i / 3) * 110; return lines(SP.filter(function (x, j) { return j !== i; }), [G2], cx, cx + 110, cy + 20, cy + 90, 36, [1]) + lines([s], [i === 4 ? GR : INK], cx, cx + 110, cy + 20, cy + 90, 36, [2]) + t(cx, cy + 10, SPN[i], i === 4 ? 't-grn' : 'ink'); }).join(''), 'Seis paneles pequeños, uno por canal'); }],
@@ -1092,7 +1092,7 @@
       function () { return svg(t(24, 26, 'Ventas por canal', 't-ttl') + lines(SP.slice(0, 3), [INK, G1, G1], 30, 300, 50, 190, 36, [2.5, 2, 2]) + t(306, 190 - 35 / 36 * 140 + 4, 'Online', 'ink') + t(306, 121, 'Tiendas') + t(306, 97, 'Marketplace'), 'Tres líneas con la etiqueta al final de cada una'); }],
     ['07', 'Arcoíris → gris + énfasis', 'El color recupera significado cuando deja de estar en todas partes.',
       function () { var V = [38, 34, 31, 29, 25, 22, 18, 15], RB = ['#e6194b', '#f58231', '#ffe119', '#bfef45', '#3cb44b', '#42d4f4', '#4363d8', '#911eb4']; return svg(t(24, 26, 'Margen por familia, %', 't-ttl') + V.map(function (v, i) { var h = v * 4.5; return r(36 + i * 44, 210 - h, 32, h, RB[i]); }).join(''), 'Ocho barras de colores del arcoíris'); },
-      function () { var V = [38, 34, 31, 29, 25, 22, 18, 15]; return svg(t(24, 26, 'Solo Hogar mejora su margen este trimestre', 't-ttl') + V.map(function (v, i) { var h = v * 4.5; return r(36 + i * 44, 210 - h, 32, h, i === 3 ? GR : G1) + (i === 3 ? t(52 + i * 44, 202 - h, v + ' %', 't-grn', 'middle') : ''); }).join(''), 'Ocho barras grises y una verde'); }],
+      function () { var V = [38, 34, 31, 29, 25, 22, 18, 15]; return svg(t(24, 26, 'Solo Hogar mejora su margen este trimestre', 't-ttl') + V.map(function (v, i) { var h = v * 4.5; return r(36 + i * 44, 210 - h, 32, h, i === 3 ? GR : G1) + (i === 3 ? t(52 + i * 44, 202 - h, v + ' %', 't-grn', 'middle') : ''); }).join(''), 'Ocho barras grises y una destacada'); }],
     ['08', 'Tabla densa → barras de datos', 'La cifra mantiene la precisión. La forma ayuda a detectar el patrón.',
       function () { var D = [['Madrid', '412.300', '8,2 %'], ['Barcelona', '388.120', '6,9 %'], ['Valencia', '201.440', '4,1 %'], ['Sevilla', '176.900', '12,4 %'], ['Bilbao', '142.310', '3,3 %'], ['Málaga', '131.050', '9,8 %']]; return svg(t(24, 26, 'Tienda', 't-ttl') + t(230, 26, 'Ventas €', 't-ttl', 'end') + t(330, 26, 'Var.', 't-ttl', 'end') + D.map(function (d, i) { var y = 56 + i * 30; return '<line class="gr" x1="20" x2="380" y1="' + (y + 10) + '" y2="' + (y + 10) + '"/>' + t(24, y, d[0], 'ink') + t(230, y, d[1], '', 'end') + t(330, y, d[2], '', 'end'); }).join(''), 'Tabla con seis filas de cifras'); },
       function () { var D = [['Madrid', '412.300', 8.2], ['Barcelona', '388.120', 6.9], ['Valencia', '201.440', 4.1], ['Sevilla', '176.900', 12.4], ['Bilbao', '142.310', 3.3], ['Málaga', '131.050', 9.8]]; return svg(t(24, 26, 'Tienda', 't-ttl') + t(210, 26, 'Ventas €', 't-ttl', 'end') + t(240, 26, 'Var.', 't-ttl') + D.map(function (d, i) { var y = 56 + i * 30, w = d[2] / 12.4 * 100; return '<line class="gr" x1="20" x2="380" y1="' + (y + 10) + '" y2="' + (y + 10) + '"/>' + t(24, y, d[0], 'ink') + t(210, y, d[1], '', 'end') + r(240, y - 10, w, 12, i === 3 ? GR : G1) + t(246 + w, y, fmtEs(d[2], 1) + ' %', i === 3 ? 't-grn' : ''); }).join(''), 'La misma tabla con barras en la columna de variación; Sevilla destaca'); }],
