@@ -81,26 +81,29 @@
   var FINAL = 'flat lessgrid gray focus direct short dim prio story annot-on rec navs';
 
   function lineSVG() {
-    var ymax = 250, gl = '', paths = '', dls = '';
-    for (var g = 0; g <= 250; g += 25) {
-      var y = 100 - g / ymax * 100;
-      gl += '<line class="gl' + (g % 50 ? ' minor' : '') + '" x1="0" x2="100" y1="' + y + '" y2="' + y + '"/>';
-    }
+    // ymax leaves headroom above the tallest series so lines never touch the plot's top edge
+    var ymax = 300, YT = 4, YB = 2, gl = '', paths = '', dls = '';
+    function py(v) { return YT + (1 - v / ymax) * (100 - YT - YB); }
+    [0, 60, 120, 180, 240, 300].forEach(function (g) {
+      gl += '<line class="gl' + (g % 120 ? ' minor' : '') + '" x1="0" x2="100" y1="' + py(g) + '" y2="' + py(g) + '"/>';
+    });
     SERIES.slice(0, 4).forEach(function (s, i) {
-      var d = s.v.map(function (v, m) { return (m ? 'L' : 'M') + (m / 11 * 100).toFixed(2) + ' ' + (100 - v * 3.5 / ymax * 100).toFixed(2); }).join(' ');
+      var d = s.v.map(function (v, m) { return (m ? 'L' : 'M') + (m / 11 * 100).toFixed(2) + ' ' + py(v * 3.5).toFixed(2); }).join(' ');
       var hero = i === 0 ? ' hero' : '';
       paths += '<path class="ln' + hero + '" style="stroke:var(--dc' + (i + 1) + ')" d="' + d + '"/>';
       var last = s.v[11] * 3.5;
-      dls += '<span class="dl' + hero + '" style="top:' + (100 - last / ymax * 100) + '%">' + s.n + '</span>';
+      dls += '<span class="dl' + hero + '" style="top:' + py(last) + '%">' + s.n + '</span>';
     });
+    var yl = [300, 240, 180, 120, 60, 0].map(function (v) { return '<span><span class="n-l">' + v.toLocaleString('es-ES') + '.000 €</span><span class="n-s">' + v + ' k</span></span>'; }).join('');
     return '<div class="lineplot"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">' + gl + paths + '</svg>' + dls +
-      '<div class="yax"><span><span class="n-l">250.000 €</span><span class="n-s">250 k</span></span><span><span class="n-l">200.000 €</span><span class="n-s">200 k</span></span><span><span class="n-l">150.000 €</span><span class="n-s">150 k</span></span><span><span class="n-l">100.000 €</span><span class="n-s">100 k</span></span><span><span class="n-l">50.000 €</span><span class="n-s">50 k</span></span><span>0</span></div>' +
+      '<div class="yax">' + yl + '</div>' +
       '<div class="xax">' + ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'].map(function (m) { return '<span>' + m + '</span>'; }).join('') + '</div></div>';
   }
 
   function dashHTML() {
+    var BARMAX = 280; // axis max a bit above the largest bar so its label always has room to breathe
     var rows = GROWTH.map(function (b, i) {
-      var w = Math.abs(b.v) / 240 * 96, top = 2 + i * 16.2;
+      var w = Math.abs(b.v) / BARMAX * 96, top = 2 + i * 16.2;
       return '<div class="brow' + (b.hero ? ' hero' : '') + '" style="top:' + top + '%"><span class="bl">' + b.n + '</span>' +
         '<span class="bar' + (b.v < 0 ? ' neg' : '') + '" style="--c:var(--dc' + (i + 1) + ');width:' + w + '%"></span>' +
         '<span class="bv" style="left:calc(' + (b.v < 0 ? 1.5 : 1.5 + w) + '% + .5em)"><span class="n-l">' + b.l + '</span><span class="n-s">' + b.s + '</span></span></div>';
@@ -111,10 +114,10 @@
     var donut = CATS.map(function (c, i) { var s = '<circle cx="21" cy="21" r="15.915" pathLength="100" stroke-dasharray="' + c.v + ' ' + (100 - c.v) + '" stroke-dashoffset="' + (-off) + '" style="stroke:var(--dc' + (i + 1) + ')"/>'; off += c.v; return s; }).join('');
     var legD = CATS.map(function (c, i) { return '<span><i style="background:var(--dc' + (i + 1) + ')"></i>' + c.n + ' (' + c.v + ',00 %)</span>'; }).join('');
     function kpi(cls, l, vl, vs, sl, ss) {
-      return '<div class="pn kpi ' + cls + '"><div class="pb"><span class="kl">' + l + '</span><span class="kv"><span class="n-l">' + vl + '</span><span class="n-s">' + vs + '</span></span><span class="ks"><span class="n-l">' + sl + '</span><span class="n-s">' + ss + '</span></span></div><span class="kico"></span></div>';
+      return '<div class="pn kpi ' + cls + '"><div class="pb"><span class="kl">' + l + '</span><span class="kv"><span class="n-l">' + vl + '</span><span class="n-s">' + vs + '</span></span><span class="ks"><span class="n-l">' + sl + '</span><span class="n-s">' + ss + '</span></span></div></div>';
     }
     return '<div class="cam">' +
-      '<div class="pn p-head"><span class="brand"></span><div class="tt"><span class="t-d">Dashboard comercial · Informe de ventas Q4 2025</span><span class="t-c">Ventas Q4 por canal</span><span class="t-q">¿Qué canal explica el crecimiento del Q4?</span><span class="t-s">El canal online ya concentra la mayor parte del crecimiento</span></div>' +
+      '<div class="pn p-head"><span class="brand"></span><div class="tt"><span class="t-d">Dashboard comercial</span><span class="t-c">Ventas Q4 por canal</span><span class="t-q">¿Qué canal explica el crecimiento del Q4?</span><span class="t-s">El canal online ya concentra la mayor parte del crecimiento</span></div>' +
       '<div class="slicers"><span class="slc">Año: 2025</span><span class="slc">Trimestre: Q4</span><span class="slc">Región: Todas</span><span class="slc">Canal: Todos</span></div>' +
       '<div class="navtabs"><span class="on">Resumen</span><span>Análisis</span><span>Hallazgo</span><span>Recomendación</span></div></div>' +
       kpi('p-k1', 'Ventas Q4', '1.572.340,00 €', '1,57 M€', 'Q4 2024: 1.268.220,00 €', 'Q4 2024: 1,27 M€') +
@@ -123,7 +126,7 @@
       kpi('p-k4', 'Ticket medio', '125,99 €', '126 €', '▲ 14,52 % vs. Q4 2024', '+15 % vs. Q4 2024') +
       '<div class="pn p-bars"><div class="ph"><div class="tt"><span class="t-d">Crecimiento vs. Q4 2024 por canal (€)</span><span class="t-s">Online explica 221 k€ de los 304 k€ de crecimiento</span></div><span class="ico"></span></div><div class="pb"><div class="legend">' + legB + '</div>' +
       '<div class="bars"><div class="gridv minor"></div><div class="gridv"></div><div class="zero"></div>' + rows + '</div>' +
-      '<div class="axis-x"><span>0 €</span><span>60.000 €</span><span>120.000 €</span><span>180.000 €</span><span>240.000 €</span></div></div></div>' +
+      '<div class="axis-x"><span>0 €</span><span>70.000 €</span><span>140.000 €</span><span>210.000 €</span><span>280.000 €</span></div></div></div>' +
       '<div class="pn p-line"><div class="ph"><div class="tt"><span class="t-d">Ventas mensuales por canal (€)</span><span class="t-s">Online vende más que las tiendas desde abril</span></div><span class="ico"></span></div><div class="pb">' + lineSVG() + '<div class="legend">' + legL + '</div></div></div>' +
       '<div class="pn p-donut"><div class="ph"><div class="tt"><span class="t-d">Ventas por categoría (%)</span><span class="t-s">Moda y hogar: 42 % de las ventas</span></div><span class="ico"></span></div><div class="pb"><div class="donut"><svg viewBox="0 0 42 42" aria-hidden="true">' + donut + '</svg></div><div class="legend">' + legD + '</div>' +
       '<div class="donut-dl"><b>Moda</b> 24 % · <b>Hogar</b> 18 %<br>Electrónica 15 % · resto 43 %</div></div></div>' +
