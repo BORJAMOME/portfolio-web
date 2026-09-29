@@ -67,6 +67,7 @@
     segel: { k: 'Investigación', cite: 'Narrative Visualization: Telling Stories with Data', meta: 'Segel y Heer · 2010 · IEEE Transactions on Visualization and Computer Graphics', t: 'Describe el equilibrio entre una lectura guiada por el autor y una exploración libre, y los patrones que lo resuelven.', url: 'https://doi.org/10.1109/TVCG.2010.179' },
     ajani: { k: 'Investigación', cite: 'Declutter and Focus', meta: 'Ajani, Lee, Xiong, Knaflic, Kemper y Franconeri · 2021 · IEEE TVCG', t: 'Evaluación empírica: los gráficos limpios y con foco se perciben como más claros y profesionales, y su mensaje se recuerda mejor.', url: 'https://doi.org/10.1109/TVCG.2021.3068337' },
     hullman: { k: 'Investigación', cite: 'Visualization Rhetoric: Framing Effects in Narrative Visualization', meta: 'Hullman y Diakopoulos · 2011 · IEEE TVCG', t: 'Cómo las decisiones de diseño (encuadre, omisiones, anotaciones, forma de mostrar la incertidumbre) cambian la interpretación de los mismos datos.', url: 'https://doi.org/10.1109/TVCG.2011.255' },
+    nng: { k: 'Investigación', cite: 'F-Shaped Pattern of Reading on the Web: Misunderstood, But Still Relevant', meta: 'Kara Pernice · 2017 · Nielsen Norman Group', t: 'Estudios de eye-tracking sobre cómo se escanean las páginas con mucho texto, cuándo aparece el patrón en F y cómo evitar que lo importante quede fuera del recorrido.', url: 'https://www.nngroup.com/articles/f-shaped-pattern-reading-web-content/' },
     mslearn: { k: 'Fuente', cite: 'Diseño de informes de Power BI para accesibilidad', meta: 'Microsoft Learn · documentación de Power BI', t: 'Orden de tabulación, texto alternativo, contraste, no depender solo del color y navegación con teclado dentro de los informes.', url: 'https://learn.microsoft.com/es-es/power-bi/create-reports/desktop-accessibility-overview' },
     ibcs: { k: 'Fuente', cite: 'International Business Communication Standards (IBCS)', meta: 'IBCS Association', t: 'Estándar para informes de negocio organizado en siete reglas: SAY, UNIFY, CONDENSE, CHECK, EXPRESS, SIMPLIFY, STRUCTURE.', url: 'https://www.ibcs.com/' },
     swd: { k: 'Ver referencia', cite: 'Storytelling with Data', meta: 'Cole Nussbaumer Knaflic · 2015 · Wiley', t: 'La historia en tres minutos, la gran idea, la diferencia entre explorar y explicar y la estructura Bing, Bang, Bongo.', url: 'https://www.storytellingwithdata.com/books' }
@@ -791,6 +792,100 @@
   /* 07 · 8 puntos y espacio en blanco (toggles CSS) */
   VIZ.spc = function (viz) { var e = $('.spc', viz); return { set: function (k) { e.dataset.s = k; } }; };
   VIZ.ws = function (viz) { var e = $('.ws', viz); return { set: function (k) { e.dataset.s = k; } }; };
+
+  /* ═══ PLANOS DE DASHBOARD ═══
+     El mismo reparto que usa PBI Mockup Creator: un lienzo de 1280×720 con
+     márgenes, separación, header, filtros (arriba o en lateral), una fila de
+     KPIs, Zona A (mensaje) y Zona B (detalle), cada una con su peso en altura. */
+  function wfLayout(c) {
+    var W = 1280, H = 720, m = c.m || 24, g = c.g || 12, R = {}, y = m, x0 = m, x1 = W - m;
+    function put(k, x, yy, w, h) { R[k] = [x / W * 100, yy / H * 100, w / W * 100, h / H * 100]; }
+    if (c.hd) { put('hd', x0, y, x1 - x0, 52); y += 52 + g; }
+    if (c.f === 'top') { put('ft', x0, y, x1 - x0, 26); y += 26 + g; }
+    if (c.f === 'side') { put('sb', x0, y, 150, H - m - y); x0 += 150 + g; }
+    var rows = [['k', c.k, c.pk || 18], ['a', c.a, c.pa || 45], ['b', c.b, c.pb || 27]].filter(function (r) { return r[1] > 0; });
+    var avail = H - m - y - g * (rows.length - 1), tot = rows.reduce(function (s, r) { return s + r[2]; }, 0);
+    rows.forEach(function (r) {
+      var h = avail * r[2] / tot, n = r[1], w = (x1 - x0 - g * (n - 1)) / n;
+      for (var i = 0; i < n; i++) put(r[0] + (i + 1), x0 + i * (w + g), y, w, h);
+      y += h + g;
+    });
+    return R;
+  }
+  var WF_KEYS = ['hd', 'ft', 'sb', 'k1', 'k2', 'k3', 'k4', 'k5', 'k6', 'a1', 'a2', 'a3', 'b1', 'b2', 'b3'];
+  var WF = {
+    /* 02 · la audiencia cambia el plano */
+    aud: {
+      csuite: { m: 32, g: 16, hd: 1, k: 4, a: 1, b: 3, pa: 50, pb: 24, kl: ['Ingresos', 'EBITDA', 'Cuota', 'NPS'], l: { hd: 'Titular: la idea', a1: 'Tendencia frente a objetivo', b1: 'Puente P&L', b2: 'Por área', b3: 'Resumen' } },
+      com: { m: 20, g: 10, hd: 1, f: 'top', k: 4, a: 2, b: 2, kl: ['Ingresos', 'Unidades', 'Ticket medio', '% objetivo'], l: { hd: 'Ventas · semana 39', ft: 'Periodo · Canal · Región · Vendedor', a1: 'Evolución frente al año anterior', a2: 'Ventas frente a presupuesto', b1: 'Por región', b2: 'Ranking de productos' } },
+      ana: { m: 16, g: 8, hd: 1, f: 'side', k: 3, a: 2, b: 3, pa: 42, pb: 32, kl: ['Clientes', 'Churn', 'LTV'], l: { hd: 'Análisis de bajas', sb: 'Filtros', a1: 'Bajas por cohorte', a2: 'Distribución de antigüedad', b1: 'Relación uso–baja', b2: 'Por segmento', b3: 'Detalle' } },
+      cli: { m: 36, g: 18, hd: 1, k: 3, a: 1, b: 1, pa: 52, pb: 22, kl: ['Pedidos', 'A tiempo', 'Incidencias'], l: { hd: 'Tu servicio este trimestre', a1: 'Un mensaje principal', b1: 'Detalle, sin jerga' } }
+    },
+    /* 06 · recetas por área */
+    rcp: {
+      dir: { m: 32, g: 16, hd: 1, k: 4, a: 1, b: 3, pa: 50, pb: 24, kl: ['Ingresos', 'EBITDA', 'Cuota', 'NPS'], l: { hd: 'Dirección', a1: 'Línea · tendencia con objetivo', b1: 'Cascada · puente P&L', b2: 'Lollipop · por área', b3: 'Tabla · resumen' } },
+      com: { m: 20, g: 10, hd: 1, f: 'top', k: 4, a: 2, b: 2, kl: ['Ingresos', 'Unidades', 'Ticket medio', '% objetivo'], l: { hd: 'Comercial', ft: 'Filtros rápidos', a1: 'Línea · frente al año anterior', a2: 'Columnas · frente a presupuesto', b1: 'Barras · por región', b2: 'Barras · ranking de productos' } },
+      fin: { m: 24, g: 12, hd: 1, k: 4, a: 2, b: 2, kl: ['Ingresos', 'EBITDA', 'Margen neto', 'Cash flow'], l: { hd: 'Finanzas', a1: 'Cascada · de ingresos a EBITDA', a2: 'Columnas + línea · presupuesto y real', b1: 'Columnas · EBITDA por trimestre', b2: 'Tabla · por centro de coste' } },
+      per: { m: 20, g: 10, hd: 1, f: 'side', k: 3, a: 2, b: 2, kl: ['Plantilla', 'Rotación', 'Absentismo'], l: { hd: 'Personas', sb: 'Área · nivel', a1: 'Barras · plantilla por área', a2: 'Área · altas y bajas', b1: 'Barra 100 % · tipo de contrato', b2: 'Slope · rotación 2025 → 2026' } },
+      mkt: { m: 20, g: 10, hd: 1, f: 'top', k: 4, a: 2, b: 2, kl: ['Sesiones', 'Conversión', 'CAC', 'ROAS'], l: { hd: 'Marketing', ft: 'Canal · campaña', a1: 'Área · tráfico por fuente', a2: 'Embudo · de visita a cliente', b1: 'Barras · rendimiento por canal', b2: 'Línea · leads cualificados' } },
+      eco: { m: 20, g: 10, hd: 1, f: 'top', k: 4, a: 2, b: 2, kl: ['Pedidos', 'GMV', 'Conversión', 'Abandono'], l: { hd: 'E-commerce', ft: 'Dispositivo · fuente', a1: 'Embudo · checkout', a2: 'Área · GMV diario', b1: 'Barras · top productos', b2: 'Dispersión · precio y conversión' } }
+    },
+    /* 07 · jerarquía entre zonas */
+    hier: {
+      inv: { m: 24, g: 12, hd: 1, k: 4, a: 2, b: 2, pk: 16, pa: 26, pb: 50, kl: ['KPI', 'KPI', 'KPI', 'KPI'], l: { hd: 'Header · contexto', a1: 'Zona A · el mensaje', a2: 'Zona A', b1: 'Zona B · el detalle', b2: 'Zona B' } },
+      ok: { m: 24, g: 12, hd: 1, k: 4, a: 2, b: 2, pk: 18, pa: 45, pb: 27, kl: ['KPI', 'KPI', 'KPI', 'KPI'], l: { hd: 'Header · contexto', a1: 'Zona A · el mensaje', a2: 'Zona A', b1: 'Zona B · el detalle', b2: 'Zona B' } }
+    },
+    /* 07 · patrones de lectura: el plano no cambia, cambia la mirada */
+    rdp: (function () {
+      var base = { m: 24, g: 12, hd: 1, k: 4, a: 2, b: 2, kl: ['', '', '', ''], l: {} };
+      return { Z: base, F: base, L: base };
+    })()
+  };
+  /* recorridos de la mirada, en coordenadas del lienzo (0–100 × 0–56,25) */
+  var RDP = {
+    Z: { heat: [[3, 3, 46, 17, .5], [60, 3, 37, 15, .22], [52, 38, 45, 17, .5]], path: 'M8 6.5 L90 6.5 L10 49 L90 49', dots: [[8, 6.5, 1], [90, 6.5, 2], [10, 49, 3], [90, 49, 4]] },
+    F: { heat: [[2, 2, 96, 16, .5], [2, 15, 58, 12, .32], [2, 27, 26, 28, .16]], path: 'M6 6.5 L92 6.5 M6 18 L56 18 M6 6.5 L6 52', dots: [[6, 6.5, 1], [6, 18, 2], [6, 40, 3]] },
+    L: { heat: [[2, 2, 96, 10, .5], [2, 11, 96, 10, .34], [2, 21, 96, 18, .2], [2, 39, 96, 16, .09]], path: '', dots: [[4.5, 6.5, 1], [4.5, 16, 2], [4.5, 29, 3], [4.5, 46, 4]] }
+  };
+  VIZ.wf = function (viz) {
+    var set = viz.dataset.wf, box = $('.wf', viz), note = $('[data-tgl-note="' + viz.id + '"]'), els = {};
+    WF_KEYS.forEach(function (k) {
+      var d = document.createElement('div');
+      d.className = 'wfb wf-' + k.replace(/\d/, '') + (k === 'a1' ? ' wf-lead' : '');
+      d.innerHTML = '<span class="wl"></span>';
+      d.style.opacity = 0;
+      box.appendChild(d); els[k] = d;
+    });
+    var ov = null;
+    if (set === 'rdp') {
+      ov = document.createElement('div'); ov.className = 'wf-ov'; ov.setAttribute('aria-hidden', 'true');
+      ov.innerHTML = Object.keys(RDP).map(function (k) {
+        var r = RDP[k];
+        return '<div class="ovs" data-k="' + k + '">' +
+          r.heat.map(function (h) { return '<i class="heat" style="left:' + h[0] + '%;top:' + (h[1] / 56.25 * 100) + '%;width:' + h[2] + '%;height:' + (h[3] / 56.25 * 100) + '%;--a:' + h[4] + '"></i>'; }).join('') +
+          '<svg viewBox="0 0 100 56.25" preserveAspectRatio="none">' + (r.path ? '<path d="' + r.path + '" pathLength="1"/>' : '') + '</svg>' +
+          r.dots.map(function (p) { return '<b style="left:' + p[0] + '%;top:' + (p[1] / 56.25 * 100) + '%">' + p[2] + '</b>'; }).join('') + '</div>';
+      }).join('');
+      box.appendChild(ov);
+    }
+    return {
+      set: function (k) {
+        var c = WF[set][k]; if (!c) return;
+        var R = wfLayout(c), ki = 0;
+        box.dataset.s = k;
+        WF_KEYS.forEach(function (key) {
+          var e = els[key], r = R[key];
+          if (!r) { e.style.opacity = 0; return; }
+          e.style.left = r[0] + '%'; e.style.top = r[1] + '%'; e.style.width = r[2] + '%'; e.style.height = r[3] + '%';
+          e.style.opacity = 1;
+          var t = key.charAt(0) === 'k' && key !== 'k' ? (c.kl || [])[ki++] : (c.l || {})[key];
+          e.firstChild.textContent = t || '';
+        });
+        if (ov) $$('.ovs', ov).forEach(function (s) { s.classList.toggle('on', s.dataset.k === k); });
+        if (note) note.textContent = note.getAttribute('data-n-' + k) || '';
+      }
+    };
+  };
 
   /* 08 · Anotación */
   VIZ.annot = function (viz) {

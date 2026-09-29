@@ -18,7 +18,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet">
 <!-- Shared styles: variables, nav, footer, botones, reset -->
 <link rel="stylesheet" href="./shared.css?v=20260929">
-<link rel="stylesheet" href="./data-storytelling.css?v=20260929">
+<link rel="stylesheet" href="./data-storytelling.css?v=20260929c">
 <!-- Primary Meta Tags -->
 <meta name="description" content="Un manual interactivo sobre Data Storytelling y diseño de dashboards: percepción, reducción de ruido, atención, elección del visual, composición, texto y narrativa, demostrados sobre un dashboard que cambia mientras lees.">
 <meta name="keywords" content="data storytelling, diseño de dashboards, Power BI, visualización de datos, scrollytelling, UX, Borja Mora">
@@ -466,6 +466,31 @@
     </div>
   </div>
 
+  <!-- Audiencia → plano -->
+  <div class="ds-c ds-sec--tight">
+    <div class="split split--wide">
+      <div>
+        <p class="ds-kicker">Audiencia</p>
+        <p class="ds-h3" style="margin:12px 0 18px">La misma pregunta no se diseña igual para todos.</p>
+        <div class="ctl-row"><div class="seg" role="group" aria-label="Audiencia" data-tgl-for="aud">
+          <button type="button" data-s="csuite" aria-pressed="true">Dirección</button>
+          <button type="button" data-s="com" aria-pressed="false">Comercial</button>
+          <button type="button" data-s="ana" aria-pressed="false">Analistas</button>
+          <button type="button" data-s="cli" aria-pressed="false">Cliente externo</button>
+        </div></div>
+        <p class="ds-body" aria-live="polite" data-tgl-note="aud"
+          data-n-csuite="Dirección quiere el número y la tendencia. Sin filtros, márgenes amplios y un único visual protagonista. El detalle, abajo y pequeño."
+          data-n-com="El equipo comercial lo consulta cada día. Filtros rápidos arriba, una fila completa de KPIs y comparativas que se leen de un vistazo."
+          data-n-ana="Quien analiza acepta densidad si a cambio hay respuestas. Filtros en un lateral, más visuales y más detalle, pero la jerarquía se mantiene."
+          data-n-cli="Un cliente externo no conoce nuestras siglas. Una cabecera que da contexto, pocos KPIs, un solo mensaje y nada de jerga."></p>
+        <p class="ds-body ds-muted" style="margin-top:14px">Y una pregunta que suelo olvidar: <b>¿dónde lo va a mirar?</b> No es lo mismo un comité mensual en pantalla grande, donde alguien solo lee los dos primeros KPIs, que un móvil entre dos reuniones.</p>
+      </div>
+      <div class="tgl" id="aud" data-viz="wf" data-wf="aud" data-auto="csuite,com,ana,cli">
+        <div class="wf" role="img" aria-label="Plano de un dashboard que cambia según la audiencia: más aire y un visual dominante para dirección, filtros arriba para comercial, filtros laterales y más detalle para analistas, y un solo mensaje para un cliente externo."></div>
+      </div>
+    </div>
+  </div>
+
   <!-- Diccionario -->
   <div class="ds-c ds-sec--tight">
     <details class="dict">
@@ -701,6 +726,30 @@
       <div class="tgl" id="ten" data-viz="ten" data-auto="a,b"><div class="stage stage--wide" role="img" aria-label="Diez barras. Cuando todas destacan igual, ninguna destaca; cuando solo una lo hace, la mirada va directa a ella."></div></div>
     </div>
   </div>
+
+  <!-- Variaciones en KPIs -->
+  <div class="ds-c ds-sec--tight">
+    <p class="ds-kicker">Variaciones</p>
+    <p class="ds-h3" style="margin:12px 0 0;max-width:30ch">La flecha dice hacia dónde se mueve el número. El color dice si es una buena noticia.</p>
+    <div class="kpisem rv-seq">
+      <div class="good">
+        <span class="kl">Ventas Q4</span><span class="kv">1,57 M€</span><span class="kd">▲ +24 % vs. Q4 2024</span>
+        <svg viewBox="0 0 84 30" aria-hidden="true"><polyline points="2,24 14,22 26,23 38,18 50,16 62,12 74,9 82,5"/></svg>
+        <span class="why">Sube, y es bueno.</span>
+      </div>
+      <div class="good">
+        <span class="kl">Rotación de plantilla</span><span class="kv">12,4 %</span><span class="kd">▼ −1,8 pp vs. 2024</span>
+        <svg viewBox="0 0 84 30" aria-hidden="true"><polyline points="2,6 14,8 26,7 38,11 50,13 62,15 74,19 82,21"/></svg>
+        <span class="why">Baja, y también es bueno.</span>
+      </div>
+      <div class="bad">
+        <span class="kl">Coste por lead</span><span class="kv">12,80 €</span><span class="kd">▲ +6,1 % vs. Q3</span>
+        <svg viewBox="0 0 84 30" aria-hidden="true"><polyline points="2,20 14,21 26,18 38,19 50,15 62,14 74,12 82,10"/></svg>
+        <span class="why">Sube, y es malo.</span>
+      </div>
+    </div>
+    <p class="ds-body" style="margin-top:32px;max-width:62ch">Si el color siguiera al signo, alguien celebraría una rotación que sube. Por eso la dirección y el juicio van por separado, y la flecha sigue ahí cuando el color no se ve. Dos detalles más: cuando el KPI ya es un porcentaje, la variación va en puntos (pp), no en %; y el minigráfico va en gris, porque acompaña al número, no compite con él.</p>
+  </div>
 </section>
 
 <!-- ═══════════ 06 · ELEGIR EL VISUAL ═══════════ -->
@@ -745,6 +794,35 @@
         <span class="tk"></span>
       </div>
       <div><div class="stage stage--wide" role="img" aria-label="Los mismos puntos se transforman en línea, barras, ranking, histograma, dispersión o barra apilada según la tarea elegida."></div></div>
+    </div>
+  </div>
+
+  <!-- Recetas por área -->
+  <div class="ds-c ds-sec--tight">
+    <div class="split split--wide">
+      <div>
+        <p class="ds-kicker">Recetas por área</p>
+        <p class="ds-h3" style="margin:12px 0 18px">Una plantilla no sustituye a la pregunta. Pero evita empezar desde un lienzo en blanco.</p>
+        <div class="ctl-row"><div class="seg seg--grid" role="group" aria-label="Área" data-tgl-for="rcp">
+          <button type="button" data-s="dir" aria-pressed="true">Dirección</button>
+          <button type="button" data-s="com" aria-pressed="false">Comercial</button>
+          <button type="button" data-s="fin" aria-pressed="false">Finanzas</button>
+          <button type="button" data-s="per" aria-pressed="false">Personas</button>
+          <button type="button" data-s="mkt" aria-pressed="false">Marketing</button>
+          <button type="button" data-s="eco" aria-pressed="false">E-commerce</button>
+        </div></div>
+        <p class="ds-body" aria-live="polite" data-tgl-note="rcp"
+          data-n-dir="Un visual que manda: la tendencia con su objetivo. La cascada explica el resultado y el resto queda como consulta."
+          data-n-com="Tendencia y comparación con presupuesto arriba; región y producto abajo, ordenados para que el ranking se lea solo."
+          data-n-fin="La cascada es el visual natural del P&L: cuenta cómo se pasa de los ingresos al EBITDA. Sin filtros, porque es un informe de cierre."
+          data-n-per="Barras para comparar áreas, una barra 100 % para la composición y un slope para ver quién mejora y quién empeora entre dos años."
+          data-n-mkt="El embudo tiene sentido aquí porque las etapas son secuenciales. El tráfico, en área; los canales, en barras."
+          data-n-eco="Embudo de checkout, evolución del GMV y una dispersión para la pregunta que siempre aparece: ¿el precio frena la conversión?"></p>
+        <p class="ds-body ds-muted" style="margin-top:14px">Cada receta sigue siendo una hipótesis: si la pregunta de este cuadro de mando es otra, gana la pregunta.</p>
+      </div>
+      <div class="tgl" id="rcp" data-viz="wf" data-wf="rcp" data-auto="dir,com,fin">
+        <div class="wf" role="img" aria-label="Plano de dashboard con los KPIs y el tipo de visual recomendado para cada área: dirección, comercial, finanzas, personas, marketing y e-commerce."></div>
+      </div>
     </div>
   </div>
 
@@ -834,6 +912,77 @@
           <div class="wsb k w1"><span class="kv">1,57 M€</span><span class="kl">ventas Q4 · +24 %</span></div><div class="wsb w2"></div><div class="wsb w3"></div><div class="wsb w4"></div><div class="wsb w5"></div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Zonas y jerarquía -->
+  <div class="ds-c ds-sec--tight">
+    <div class="split split--wide">
+      <div>
+        <p class="ds-kicker">Zonas</p>
+        <p class="ds-h3" style="margin:12px 0 18px">Un dashboard se lee por capas: contexto, métricas, mensaje y detalle.</p>
+        <div class="ctl-row"><div class="seg" role="group" aria-label="Reparto del espacio" data-tgl-for="hier">
+          <button type="button" data-s="inv" aria-pressed="true">Jerarquía invertida</button>
+          <button type="button" data-s="ok" aria-pressed="false" class="g">Jerarquía clara</button>
+        </div></div>
+        <p class="ds-body" aria-live="polite" data-tgl-note="hier"
+          data-n-inv="La Zona B ocupa casi el doble que la A. El ojo llega al detalle antes que al mensaje, y la decisión se toma sobre el dato equivocado."
+          data-n-ok="Header, KPIs, Zona A y Zona B, en ese orden y con ese peso. Como punto de partida: la Zona A se lleva cerca de la mitad de la altura y la B, algo más de una cuarta parte."></p>
+        <p class="ds-body ds-muted" style="margin-top:14px">Lo que no cabe no desaparece: baja a un tooltip o a una página de drill-through, donde lo busca quien lo necesita.</p>
+      </div>
+      <div class="tgl" id="hier" data-viz="wf" data-wf="hier" data-auto="inv,ok">
+        <div class="wf" role="img" aria-label="Plano con header, KPIs, Zona A y Zona B. Primero la zona de detalle ocupa más que la principal; después la principal recupera el espacio."></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Patrones de lectura -->
+  <div class="ds-c ds-sec--tight">
+    <div class="split split--wide">
+      <div>
+        <p class="ds-kicker">Patrones de lectura</p>
+        <p class="ds-h3" style="margin:12px 0 18px">El plano no cambia. Cambia el recorrido que espero de la mirada.</p>
+        <div class="ctl-row"><div class="seg" role="group" aria-label="Patrón de lectura" data-tgl-for="rdp">
+          <button type="button" data-s="Z" aria-pressed="true">Z</button>
+          <button type="button" data-s="F" aria-pressed="false">F</button>
+          <button type="button" data-s="L" aria-pressed="false">Por capas</button>
+        </div></div>
+        <p class="ds-body" aria-live="polite" data-tgl-note="rdp"
+          data-n-Z="En Z, la mirada entra arriba a la izquierda, cruza, baja en diagonal y termina abajo a la derecha. Funciona con pocos elementos: la idea arriba y la acción al final del recorrido."
+          data-n-F="En F, la primera fila se lee entera, la segunda a medias y después solo se escanea el borde izquierdo. Se observó en páginas con mucho texto, y la conclusión me sirve igual: lo importante no puede esconderse a la derecha."
+          data-n-L="Por capas, cada fila recibe menos atención que la anterior. Encaja con rankings y comparativas: lo de arriba se lee; lo de abajo, se consulta."></p>
+        <p class="ds-body ds-muted" style="margin-top:14px">Son tendencias, no leyes. Un color o un tamaño fuerte rompe cualquier patrón; por eso primero coloco y después compruebo por dónde entra la mirada.</p>
+        <details class="src" data-src="nng"></details>
+      </div>
+      <div class="tgl" id="rdp" data-viz="wf" data-wf="rdp" data-auto="Z,F,L">
+        <div class="wf" role="img" aria-label="El mismo plano con tres recorridos de lectura superpuestos: en Z, en F y por capas horizontales que pierden atención de arriba abajo."></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Números de partida -->
+  <div class="ds-c ds-sec--tight">
+    <p class="ds-kicker">Números de partida</p>
+    <p class="ds-h3" style="margin:12px 0 10px;max-width:30ch">No hay números mágicos. Pero cuando reviso un layout, estos rangos me sirven para empezar.</p>
+    <p class="ds-body ds-muted" style="max-width:62ch">Son reglas prácticas de mi trabajo en Power BI, no evidencia científica. Y encajan con el sistema de 8: 24 px de margen y 16 px de separación cumplen todas.</p>
+    <ol class="thr rv-seq">
+      <li><span class="tv">20–32 px</span><span class="tw">Márgenes del lienzo</span><span class="ty">Por debajo de 16 px, el contenido se queda sin borde.</span></li>
+      <li><span class="tv">8–20 px</span><span class="tw">Separación entre bloques, siempre la misma</span><span class="ty">Si cambia, el ojo agrupa lo que no debe: es la proximidad trabajando en contra.</span></li>
+      <li><span class="tv">↑ = ↓ · ← = →</span><span class="tw">Márgenes simétricos</span><span class="ty">Una asimetría que nadie ha decidido se percibe como un error.</span></li>
+      <li><span class="tv">≤ 6</span><span class="tw">KPIs en una fila</span><span class="ty">Con más, la fila deja de leerse como un grupo y empieza a leerse como una tabla.</span></li>
+      <li><span class="tv">≤ 3</span><span class="tw">Visuales por zona</span><span class="ty">Con más, la zona deja de percibirse como una unidad.</span></li>
+      <li><span class="tv">A ≥ B</span><span class="tw">Altura de la Zona A frente a la B</span><span class="ty">El mensaje tiene que pesar más que el detalle.</span></li>
+      <li><span class="tv">20–40 %</span><span class="tw">Espacio libre del lienzo</span><span class="ty">Con menos, parece saturado aunque haya pocos datos. Con más, parece incompleto.</span></li>
+      <li><span class="tv">Tarjeta ≠ fondo</span><span class="tw">Contraste entre tarjeta y lienzo</span><span class="ty">Los datos tienen que despegarse del fondo sin esfuerzo. Si el contraste es bajo, un borde suave.</span></li>
+    </ol>
+
+    <div class="toolcard">
+      <div>
+        <p class="ds-kicker">Herramienta</p>
+        <p class="ds-h3">PBI Mockup Creator</p>
+        <p class="ds-body">Los planos de esta página salen de una herramienta que construí para diseñar un dashboard antes de abrir Power BI. Parte de la audiencia y de la decisión, propone el layout y comprueba estos rangos mientras mueves las piezas: proximidad, jerarquía, semejanza, espacio en blanco y figura-fondo.</p>
+      </div>
+      <a class="btn-ds ghost" href="https://borjamome.github.io/powerbi-mockup/" target="_blank" rel="noopener noreferrer" onclick="typeof gtag==='function'&&gtag('event','clic_pbi_mockup',{location:'data_storytelling'});">Abrir la herramienta <span class="arr" aria-hidden="true"><i>↗</i><i>↗</i></span></a>
     </div>
   </div>
 </section>
@@ -1372,7 +1521,7 @@ window.addEventListener('scroll',function(){
   });
 })();
 </script>
-<script src="./data-storytelling.js?v=20260929" defer></script>
+<script src="./data-storytelling.js?v=20260929c" defer></script>
 <!-- Motion: bibliotecas opcionales. Si un CDN falla, la pagina funciona igual (todo tiene fallback CSS). -->
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>

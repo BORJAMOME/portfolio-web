@@ -74,11 +74,11 @@
 }
 
 /* ─── SECCIONES ─── */
-.ds-sec { padding: clamp(80px, 12vh, 140px) 0; position: relative; }
-.ds-sec--tight { padding: clamp(48px, 8vh, 88px) 0; }
+.ds-sec { padding-block: clamp(80px, 12vh, 140px); position: relative; }
+.ds-sec--tight { padding-block: clamp(48px, 8vh, 88px); }
 .ds-rule { height: 1px; background: var(--grid); border: 0; margin: 0; }
 
-.ch-intro { padding: clamp(110px, 16vh, 180px) 0 clamp(40px, 6vh, 64px); }
+.ch-intro { padding-block: clamp(110px, 16vh, 180px) clamp(40px, 6vh, 64px); }
 .ch-num {
   font-family: var(--serif); font-size: clamp(64px, 9vw, 128px); line-height: .8;
   color: var(--g2); font-weight: 500; letter-spacing: -.04em; display: block;
@@ -973,7 +973,7 @@
 .mosaic-wrap[data-z="4"] .tile:nth-child(6) .flag { transition-delay: .6s; }
 .mosaic-wrap[data-z="4"] .tile:nth-child(7) .flag { transition-delay: .75s; }
 
-.finale { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; gap: 28px; padding: 120px 0; }
+.finale { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; gap: 28px; padding-block: 120px; }
 .finale .ds-h2 { max-width: 18ch; }
 .finale .sig { display: flex; flex-direction: column; gap: 10px; margin-top: 40px; padding-top: 28px; border-top: 1px solid var(--ink); }
 .finale .roles-line { font-size: 13px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
@@ -990,7 +990,7 @@
 @media (max-width: 760px) { .refs { columns: 1; } }
 
 /* hero title */
-.hero-title { padding: clamp(60px, 10vh, 120px) 0 clamp(40px, 8vh, 80px); }
+.hero-title { padding-block: clamp(60px, 10vh, 120px) clamp(40px, 8vh, 80px); }
 .hero-title .ds-lead { max-width: 30ch; margin-top: 26px; color: #333; }
 .hero-meta { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 30px; font-size: 13px; color: var(--muted); }
 .hero-meta b { color: var(--ink); font-weight: 600; }
@@ -1261,3 +1261,69 @@
 /* blueprint: cuando una pieza ocupa su caja, la etiqueta del plano se retira (no se transparenta bajo un panel atenuado) */
 .dash.b-head .bp-box[data-f="b-head"] .bp-lb, .dash.b-main .bp-box[data-f="b-main"] .bp-lb, .dash.b-main .bp-box[data-f="b-main"] .bp-dim,
 .dash.b-kpi .bp-box[data-f="b-kpi"] .bp-lb, .dash.b-sec .bp-box[data-f="b-sec"] .bp-lb, .dash.rec .bp-box[data-f="rec"] .bp-lb { opacity: 0; transition-delay: 0s; }
+
+/* ═══════════════════════════════════════════════
+   PLANOS DE DASHBOARD — lo que aporta PBI Mockup Creator
+   Lienzo 16:9, piezas posicionadas en % por data-storytelling.js (wfLayout)
+   ═══════════════════════════════════════════════ */
+.wf { container-type: inline-size; position: relative; aspect-ratio: 16 / 9; background: #F4F4F4; border: 1px solid var(--grid); overflow: hidden; }
+.wfb {
+  position: absolute; background: #fff; border: 1px solid var(--grid); overflow: hidden;
+  display: flex; align-items: flex-start; padding: max(4px, .7cqw) max(5px, .9cqw);
+  transition: left var(--dur-narr) var(--ease-io), top var(--dur-narr) var(--ease-io), width var(--dur-narr) var(--ease-io), height var(--dur-narr) var(--ease-io), opacity var(--dur-reveal) ease;
+}
+.wfb .wl { font-size: max(8px, 1.15cqw); line-height: 1.25; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.wf-hd { background: transparent; border-color: transparent; align-items: center; padding-left: 0; }
+.wf-hd .wl { font-family: var(--serif); font-size: max(11px, 2cqw); color: var(--ink); }
+.wf-ft { border: 1px dashed #C9C9C9; background: transparent; align-items: center; }
+.seg--grid { display: inline-grid; grid-template-columns: repeat(3, auto); border-radius: 22px; }
+.wf-sb { background: #EFEFEF; border-color: transparent; }
+.wf-k { flex-direction: column; justify-content: space-between; }
+.wf-k::after { content: ''; display: block; width: 46%; height: 26%; max-height: 18px; background: var(--g2); border-radius: 1px; }
+.wf-lead { border-color: var(--green); box-shadow: inset 3px 0 0 var(--green); }
+.wf-lead .wl { color: var(--green-ink); font-weight: 600; }
+.wf-b { background: #FDFDFD; }
+.wf-b .wl { opacity: .8; }
+[data-tgl-note="aud"], [data-tgl-note="rcp"], [data-tgl-note="hier"], [data-tgl-note="rdp"] { min-height: 6.4em; }
+
+/* patrones de lectura: calor + recorrido + orden */
+.wf-ov { position: absolute; inset: 0; pointer-events: none; }
+.wf-ov .ovs { position: absolute; inset: 0; opacity: 0; transition: opacity var(--dur-narr) ease; }
+.wf-ov .ovs.on { opacity: 1; }
+.wf-ov .heat { position: absolute; border-radius: 40%; background: radial-gradient(closest-side, rgba(var(--acc-rgb), var(--a)), rgba(var(--acc-rgb), 0)); transform: scale(1.18); }
+.wf-ov svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.wf-ov path { fill: none; stroke: var(--green); stroke-width: .28; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: .9; }
+.wf-ov .ovs.on path { stroke-dashoffset: 0; transition: stroke-dashoffset 1.4s var(--ease-io) .15s; }
+.wf-ov b { position: absolute; width: max(16px, 2.2cqw); height: max(16px, 2.2cqw); margin: calc(max(16px, 2.2cqw) / -2) 0 0 calc(max(16px, 2.2cqw) / -2); border-radius: 50%; background: var(--green); color: #fff; font: 700 max(9px, 1.1cqw)/1 var(--sans); display: grid; place-items: center; }
+.wf[data-s] .wfb .wl:empty { display: none; }
+
+/* 05 · variaciones: la flecha dice hacia dónde; el color, si es buena noticia */
+.kpisem { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 36px; }
+.kpisem > div { background: #fff; border: 1px solid var(--grid); padding: 20px 22px 18px; display: grid; grid-template-columns: 1fr auto; column-gap: 12px; align-items: end; }
+.kpisem .kl { grid-column: 1 / -1; font-size: 13px; color: var(--muted); }
+.kpisem .kv { font-family: var(--serif); font-size: clamp(30px, 3vw, 40px); line-height: 1.1; margin-top: 6px; }
+.kpisem .kd { font-size: 13px; font-weight: 600; margin-top: 4px; font-variant-numeric: tabular-nums; }
+.kpisem .good .kd { color: var(--green-ink); }
+.kpisem .bad .kd { color: var(--red); }
+.kpisem svg { width: 84px; height: 30px; grid-row: 2 / span 2; grid-column: 2; }
+.kpisem svg polyline { fill: none; stroke: var(--g1); stroke-width: 1.5; }
+.kpisem .why { grid-column: 1 / -1; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--grid); font-size: 13px; color: var(--muted); }
+@media (max-width: 760px) { .kpisem { grid-template-columns: 1fr; } }
+
+/* 07 · números de partida */
+.thr { list-style: none; margin: 40px 0 0; padding: 0; border-top: 1px solid var(--ink); }
+.thr li { display: grid; grid-template-columns: minmax(150px, 1.1fr) 1.4fr 2fr; gap: 24px; padding: 18px 0; border-bottom: 1px solid var(--grid); align-items: baseline; }
+.thr .tv { font-family: var(--serif); font-size: clamp(20px, 2vw, 26px); line-height: 1.15; color: var(--green-ink); font-variant-numeric: tabular-nums; }
+.thr .tw { font-weight: 600; font-size: 15px; }
+.thr .ty { font-size: 15px; color: var(--muted); line-height: 1.5; }
+@media (max-width: 760px) { .thr li { grid-template-columns: 1fr; gap: 4px; } }
+
+/* herramienta */
+.toolcard { display: grid; grid-template-columns: 1fr auto; gap: 28px 48px; align-items: center; margin-top: 64px; padding: clamp(24px, 3.4vw, 40px); background: #fff; border: 1px solid var(--grid); border-left: 3px solid var(--green); }
+.toolcard .ds-h3 { margin: 10px 0 12px; }
+.toolcard .ds-body { max-width: 60ch; margin: 0; }
+@media (max-width: 860px) { .toolcard { grid-template-columns: 1fr; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .wfb, .wf-ov .ovs, .wf-ov .ovs.on path { transition: none !important; }
+}
