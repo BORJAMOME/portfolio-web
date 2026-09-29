@@ -47,7 +47,9 @@ export function initNumbers() {
 
   // 1 · Hero: al llegar, los KPIs se componen mientras el dashboard entra.
   const hero = bus().DASH && bus().DASH.hero;
-  if (hero) kpiSpans(hero.el, '.n-l').forEach((s, i) => build(s, 700 + i * 90));
+  // (con portada delante, espera a que el dashboard entre en pantalla)
+  const heroIn = () => kpiSpans(hero.el, '.n-l').forEach((s, i) => build(s, 700 + i * 90));
+  if (hero) { if (bus().heroLive) heroIn(); else document.addEventListener('ds:herolive', heroIn, { once: true }); }
 
   // 2 · Cifras editoriales grandes (2,4 M€, 8,4 M€…): al entrar en pantalla.
   const io = new IntersectionObserver((es) => {

@@ -15,6 +15,15 @@
   if (!root) return;
   root.classList.remove('no-js');
 
+  /* Portada primero: el dashboard del hero hace su entrada cuando llega a pantalla */
+  (function () {
+    var hero = document.getElementById('hero'); if (!hero) return;
+    function live() { hero.classList.add('is-live'); (window.DSBus || (window.DSBus = { h: {}, state: {} })).heroLive = true; document.dispatchEvent(new Event('ds:herolive')); }
+    if (!('IntersectionObserver' in window)) return live();
+    var io = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { io.disconnect(); live(); } }, { rootMargin: '0px 0px -18% 0px' });
+    io.observe(hero.querySelector('.sc-visual') || hero);
+  })();
+
   function $(s, r) { return (r || document).querySelector(s); }
   function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
   function later(fn, ms) { return setTimeout(fn, RM.matches ? 0 : ms); }

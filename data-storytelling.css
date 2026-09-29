@@ -990,11 +990,7 @@
 @media (max-width: 760px) { .refs { columns: 1; } }
 
 /* hero title */
-.hero-title { padding-block: clamp(60px, 10vh, 120px) clamp(40px, 8vh, 80px); }
-.hero-title .ds-lead { max-width: 30ch; margin-top: 26px; color: #333; }
-.hero-meta { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 30px; font-size: 13px; color: var(--muted); }
-.hero-meta b { color: var(--ink); font-weight: 600; }
-.hero-top { padding-top: 96px; }
+.hero-top { padding-top: clamp(40px, 8vh, 88px); }
 .hero-top .ds-kicker { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
 .scroll-cue {
   display: inline-flex; align-items: center; gap: 14px; margin-top: 26px;
@@ -1411,3 +1407,110 @@
 .kc--xl .kc-g .kg-dot { right: 23px; top: calc(34px + (100% - 68px) * var(--f, .5)); }
 .ds-h3 a { color: inherit; text-decoration: underline; text-decoration-color: var(--green); text-decoration-thickness: 2px; text-underline-offset: 4px; }
 .ds-h3 a:hover { color: var(--green-ink); }
+
+/* ═══════════════════════════════════════════════
+   PORTADA — primera plana de periodismo de datos
+   Blanco y negro: tinta sobre papel. La ilustración es SVG estático
+   (trazo a mano generado una vez); en movimiento, se dibuja como a pluma.
+   ═══════════════════════════════════════════════ */
+.cover { --cv-ink: #111; min-height: 100svh; display: flex; align-items: stretch; padding: calc(64px + clamp(14px, 2.4vh, 28px)) 0 clamp(32px, 5vh, 56px); }
+.cover-in { display: flex; flex-direction: column; width: 100%; }
+.cv-mast {
+  display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  padding: 10px 0 9px; border-top: 3px solid var(--cv-ink); border-bottom: 1px solid var(--cv-ink);
+  box-shadow: 0 -6px 0 -5px var(--cv-ink);   /* el filete fino sobre el grueso, como en una cabecera de periódico */
+  font-size: 11.5px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--cv-ink);
+  font-variant-numeric: tabular-nums;
+}
+.cv-mast-c { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: .01em; text-transform: none; font-size: 15px; }
+.cv-grid { flex: 1; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(28px, 4vw, 72px); align-items: center; padding-top: clamp(28px, 5vh, 56px); }
+.cv-kick { font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 12px; }
+.cv-kick::before { content: ''; width: 28px; height: 1px; background: var(--cv-ink); }
+.cv-title {
+  font-family: var(--serif); font-weight: 500; color: var(--cv-ink);
+  font-size: clamp(50px, 6.6vw, 112px); line-height: .93; letter-spacing: -.032em;
+  margin: 22px 0 26px; text-wrap: balance;
+}
+.cv-title em { font-style: italic; font-weight: 400; }
+.cv-deck { font-family: var(--serif); font-size: clamp(19px, 1.6vw, 23px); line-height: 1.42; color: #2b2b2b; max-width: 34ch; padding-left: 16px; border-left: 1px solid var(--cv-ink); }
+.cv-by { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 26px; font-size: 13px; color: var(--muted); }
+.cv-by span { display: block; width: 100%; }
+.cv-by b { color: var(--cv-ink); font-weight: 600; }
+.cv-start {
+  display: inline-flex; align-items: center; gap: 10px; margin-top: 34px; padding-bottom: 4px;
+  font-size: 13px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--cv-ink); text-decoration: none;
+  border-bottom: 2px solid var(--cv-ink);
+}
+.cv-start span { display: inline-block; transition: transform var(--dur-ui) var(--ease-out); }
+.cv-start:hover span { transform: translateY(3px); }
+
+.cv-fig { margin: 0; position: relative; }
+.cv-fig figcaption { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--grid); font-family: var(--serif); font-style: italic; font-size: 15px; line-height: 1.45; color: var(--muted); max-width: 52ch; }
+.cv-fig figcaption b { font-family: var(--sans); font-style: normal; font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--cv-ink); margin-right: 8px; }
+
+/* ── la ilustración: solo tinta ── */
+.cv-ill { display: block; width: 100%; height: auto; color: var(--cv-ink); overflow: visible; }
+.cv-ill path { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+.cv-ill .k0 { stroke-width: 2.8; }
+.cv-ill .k1 { stroke-width: 1.9; }
+.cv-ill .k2 { stroke-width: 1.3; }
+.cv-ill .k3 { stroke-width: .8; opacity: .72; }
+.cv-ill .k4 { stroke-width: .75; opacity: .3; }
+.cv-ill .cv-dots circle { fill: currentColor; opacity: .82; }
+.cv-ill .cv-pt { fill: currentColor; }
+.cv-ill .cv-hand { font-family: 'Caveat', 'Segoe Print', 'Bradley Hand', cursive; font-weight: 500; font-size: 31px; fill: currentColor; }
+.cv-ill .cv-hand--s { font-size: 24px; }
+.cv-ill .cv-stain .k1 { stroke-width: 5; opacity: .07; }
+.cv-ill .cv-stain .k2 { stroke-width: 1; opacity: .16; }
+.cv-ill .cv-pencil { color: var(--cv-ink); }
+.cv-ill .cv-pencil path { stroke-width: 1.3; }
+.cv-ill .cv-pencil .k3 { stroke-width: .7; }
+
+/* ── a pluma: cada trazo se dibuja en su turno ── */
+@media (prefers-reduced-motion: no-preference) {
+  .cv-ill .cv-draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: cvDraw 1.1s cubic-bezier(.45, .05, .35, 1) forwards; }
+  .cv-ill .d1 { animation-delay: .15s; animation-duration: 1.3s; }
+  .cv-ill .d2 { animation-delay: .9s; }
+  .cv-ill .d3 { animation-delay: 1.35s; animation-duration: 1.6s; }
+  .cv-ill .d4 { animation-delay: 2.1s; animation-duration: 1.2s; }
+  .cv-ill .d4b { animation-delay: 2.2s; animation-duration: 1.2s; }
+  .cv-ill .d5 { animation-delay: 2.5s; animation-duration: .8s; }
+  .cv-ill .d6 { animation-delay: 3.2s; animation-duration: .9s; }
+  .cv-ill .d6b { animation-delay: 3.6s; animation-duration: .7s; }
+  .cv-ill .cv-fade, .cv-ill .cv-shadow, .cv-ill .cv-rules, .cv-ill .cv-dots, .cv-ill .cv-stain { opacity: 0; animation: cvFade .9s ease forwards; }
+  .cv-ill .cv-stain { animation-delay: .1s; }
+  .cv-ill .cv-rules { animation-delay: .5s; }
+  .cv-ill .cv-shadow { animation-delay: 1s; }
+  .cv-ill .f1 { animation-delay: .8s; }
+  .cv-ill .cv-dots { animation-delay: 1.25s; animation-duration: 1.4s; }
+  .cv-ill .f4 { animation-delay: 3.1s; }
+  .cv-ill .f5 { animation-delay: 2.9s; }
+  .cv-ill .f6 { animation-delay: 3.9s; }
+  .cv-ill .f7 { animation-delay: 4.3s; }
+  .cv-ill .cv-pencil { animation: cvPencil 1.1s cubic-bezier(.22, 1, .36, 1) 3.3s backwards; }
+  .cv-title, .cv-deck, .cv-by, .cv-start, .cv-kick, .cv-mast { animation: cvIn .9s var(--ease-out) backwards; }
+  .cv-mast { animation-delay: 0s; }
+  .cv-kick { animation-delay: .08s; }
+  .cv-title { animation-delay: .14s; }
+  .cv-deck { animation-delay: .3s; }
+  .cv-by { animation-delay: .42s; }
+  .cv-start { animation-delay: .54s; }
+}
+@keyframes cvDraw { to { stroke-dashoffset: 0; } }
+@keyframes cvFade { to { opacity: 1; } }
+@keyframes cvPencil { from { opacity: 0; translate: 60px -46px; } }
+@keyframes cvIn { from { opacity: 0; transform: translateY(14px); } }
+
+@media (max-width: 900px) {
+  .cover { min-height: 0; }
+  .cv-grid { grid-template-columns: 1fr; }
+  .cv-mast span:last-child { display: none; }
+}
+@media (max-width: 560px) {
+  .cv-mast { font-size: 10px; letter-spacing: .12em; }
+  .cv-mast-c { font-size: 13px; text-align: right; }
+}
+
+/* ── el dashboard del hero entra cuando se ve, no mientras se lee la portada ── */
+.ds:not(.no-js) .hero:not(.is-live) .dash-wrap { opacity: 0; animation: none; }
+.ds:not(.no-js) .hero:not(.is-live) .dash .cam > .pn { animation: none; }
