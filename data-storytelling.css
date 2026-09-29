@@ -1066,3 +1066,198 @@
 
 .stage .lb.ann2 { white-space: normal; color: var(--ink); font-family: var(--serif); font-size: clamp(14px, 2.4cqw, 20px); line-height: 1.3; }
 .stage .lb.ann2 b { color: var(--green-ink); font-weight: 600; }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   MOTION SYSTEM + MATERIALES (2026-09)
+   Regla: el movimiento solo existe si explica qué acaba de cambiar.
+   Todo lo de aquí degrada a estado final con prefers-reduced-motion
+   (bloque global con !important más arriba) y funciona sin JS
+   de terceros: GSAP/Lenis solo refinan, nunca son imprescindibles.
+   ═══════════════════════════════════════════════════════════════ */
+.ds {
+  /* duraciones del sistema */
+  --dur-micro: 150ms;   /* hover, press */
+  --dur-ui: 250ms;      /* interacción */
+  --dur-reveal: 450ms;  /* aparición de contenido */
+  --dur-narr: 700ms;    /* cambio de estado narrativo */
+  /* curvas: entrar desacelerando, salir acelerando (lo que se va, se va) */
+  --ease-in: cubic-bezier(.55, 0, 1, .45);
+  --acc-rgb: 107, 92, 165;
+  position: relative; isolation: isolate;
+}
+
+/* ─── PAPEL: grano procedural impreso (ds/materials/paper.js lo genera) ─── */
+.ds::before {
+  content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background-image: var(--paper, none); background-size: 200px 200px;
+}
+
+/* ─── BARRA DE PROGRESO EDITORIAL ─── */
+#progressBar {
+  height: 3px; background: #6B5CA5; transform-origin: 0 0;
+  transform: scaleX(var(--p, 0)) scaleY(var(--th, .67));
+  transition: transform .14s linear; box-shadow: 0 0 10px rgba(107, 92, 165, .2);
+}
+.ds-ticks { position: fixed; top: 0; left: 0; right: 0; height: 6px; z-index: 1002; pointer-events: none; }
+.ds-ticks i { position: absolute; top: 0; width: 1px; height: 6px; background: rgba(17, 17, 17, .16); transition: background .3s ease; }
+.ds-ticks i.past { background: rgba(107, 92, 165, .85); }
+
+/* ─── RAIL: la marca activa crece con el avance dentro del capítulo ─── */
+.ch-rail a { transition: color .25s ease, transform .35s var(--ease-out); }
+.ch-rail a[aria-current="step"] { transform: translateX(2px); }
+.ch-rail a[aria-current="step"]::before { width: 30px; transform-origin: 0 50%; transform: scaleX(calc(.4 + .6 * var(--cp, 0))); transition: transform .18s linear; }
+
+/* ─── BOTONES ─── */
+.btn-ds { transition: background var(--dur-ui) ease, color var(--dur-ui) ease, box-shadow var(--dur-ui) ease, transform var(--dur-ui) var(--ease-out); }
+.btn-ds:active { transform: scale(.98); }
+.btn-ds .arr { position: relative; display: inline-block; width: 1em; height: 1.2em; overflow: hidden; vertical-align: -.22em; }
+.btn-ds .arr i { position: absolute; inset: 0; font-style: normal; text-align: center; transition: transform var(--dur-ui) var(--ease-out); }
+.btn-ds .arr i + i { transform: translateX(-115%); }
+.btn-ds:hover .arr i:first-child, .btn-ds:focus-visible .arr i:first-child { transform: translateX(115%); }
+.btn-ds:hover .arr i + i, .btn-ds:focus-visible .arr i + i { transform: none; }
+.btn-ds .spin { display: inline-block; transition: transform .6s var(--ease-out); }
+.btn-ds:hover .spin, .btn-ds:focus-visible .spin { transform: rotate(-180deg); }
+
+/* enlaces de texto: subrayado tenue en reposo (se sigue viendo que es un enlace), trazo al pasar */
+.ds .src-b a, .ds .ibcs .it a, .ds .refs a {
+  text-decoration: none; padding-bottom: 1px;
+  background-image: linear-gradient(currentColor, currentColor), linear-gradient(var(--g1), var(--g1));
+  background-size: 0% 1px, 100% 1px; background-position: 0 100%, 0 100%; background-repeat: no-repeat;
+  transition: background-size var(--dur-ui) var(--ease-out);
+}
+.ds .src-b a:hover, .ds .ibcs .it a:hover, .ds .refs a:hover,
+.ds .src-b a:focus-visible, .ds .ibcs .it a:focus-visible, .ds .refs a:focus-visible { background-size: 100% 1px, 100% 1px; }
+
+/* tarjetas: una elevación mínima al señalar, nunca un salto */
+.ill, .pbinav button { transition: transform var(--dur-ui) var(--ease-out), box-shadow var(--dur-ui) ease, border-color var(--dur-ui) ease; }
+@media (hover: hover) and (pointer: fine) {
+  .ill:hover { transform: translateY(-3px); box-shadow: 0 16px 30px -24px rgba(17, 17, 17, .4); }
+  .pbinav button:hover { transform: translateY(-2px); }
+}
+.ds-gsap .rv-seq > * { transition: none !important; }
+
+/* ─── NÚMEROS QUE SE CONSTRUYEN (ds/motion/numbers.js parte cada cifra) ─── */
+.nb { display: inline-block; }
+.nbw.build .nb { animation: dsSlot .52s var(--ease-out) backwards; animation-delay: calc(var(--nb-base, 0ms) + var(--ci, 0) * 34ms); }
+@keyframes dsSlot { from { opacity: 0; transform: translateY(.42em); } }
+
+/* ─── HERO: el dashboard como objeto físico ─── */
+.hero .sc-visual { perspective: 1500px; }
+.hero .dash-wrap {
+  border-radius: 6px; transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform .9s var(--ease-out);
+  animation: dsEnter 1.25s var(--ease-out) .12s backwards;
+}
+/* la sombra es una capa propia: inclinar y respirar solo mueve/atenúa esa capa (compositor, sin repintar) */
+.hero .dash-wrap::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; border-radius: 6px; pointer-events: none;
+  box-shadow: 0 24px 56px -32px rgba(17, 17, 17, .34);
+  transform: translate(calc(var(--sx, 0) * 1px), calc(var(--sy, 0) * 1px));
+  transition: transform .9s var(--ease-out), opacity 1.2s ease;
+}
+@keyframes dsEnter { from { opacity: 0; transform: translateY(30px) rotateX(9deg) scale(.965); } }
+.hero .dash .cam > .pn { animation: dsPanel .8s var(--ease-out) backwards; animation-delay: calc(.5s + var(--pi, 0) * 70ms); }
+@keyframes dsPanel { from { opacity: 0; transform: translateY(.9em); } }
+.hero .dash-wrap.breathe::before { animation: dsBreathe 7.5s ease-in-out infinite; }
+@keyframes dsBreathe { 50% { opacity: .62; transform: translateY(5px) scale(1.012); } }
+.ds-glass { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 6px; pointer-events: none; mix-blend-mode: soft-light; opacity: 0; transition: opacity .7s ease; }
+.ds-glass.on { opacity: 1; }
+
+/* dashboards fuera del scroll: profundidad al señalar (ds/motion/depth.js) */
+.depth { transform: perspective(1200px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .6s var(--ease-out), box-shadow .6s var(--ease-out); }
+.depth.is-near { box-shadow: calc(var(--sx, 0) * 1px) calc(18px + var(--sy, 0) * 1px) 40px -28px rgba(17, 17, 17, .32); }
+.depth::after {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 9;
+  background: radial-gradient(520px circle at var(--mx, 50%) var(--my, 30%), rgba(255, 255, 255, .6), transparent 55%);
+  mix-blend-mode: soft-light; opacity: 0; transition: opacity .5s ease;
+}
+.depth.is-near::after { opacity: 1; }
+.exec.depth, .tchart.depth { position: relative; }
+
+/* ─── 04 · DESMONTAJE: lo que era ruido se separa, pierde opacidad y sale del lienzo ─── */
+.dash .ph { background: transparent; isolation: isolate; }
+.dash .ph::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; background: #2F4A7A; transform-origin: 50% 0;
+  transition: transform .6s var(--ease-in), opacity .5s ease .05s;
+}
+.dash.flat .ph::before { transform: translateY(-70%) scaleY(.25); opacity: 0; }
+.dash .p-head .brand { transition: opacity .45s ease, transform .6s var(--ease-in); }
+.dash.flat .p-head .brand { transform: translate(-.8em, -.6em) scale(.6) rotate(-8deg); }
+.dash .bars .gridv, .dash .axis-x, .dash .legend { transition: opacity .45s ease, transform .6s var(--ease-in); }
+.dash.lessgrid .gridv { transform: translateY(.9em); }
+.dash.lessgrid .axis-x { transform: translateY(1.3em); }
+.dash.direct .legend { transform: translateY(-.9em); }
+.dash.direct .p-donut .legend { transform: translate(.9em, -50%); }
+
+.sc-visual--stack { flex-direction: column; gap: 14px; }
+.noise-ledger { list-style: none; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; width: 100%; margin: 0; padding: 0; font-size: 12px; }
+.noise-ledger li { position: relative; padding: 4px 10px; border: 1px solid var(--grid); border-radius: 99px; color: var(--ink); background: #fff; transition: color .4s ease, border-color .4s ease, background .4s ease, transform .5s var(--ease-out); }
+.noise-ledger li[data-f]::after { content: ''; position: absolute; left: 9px; right: 9px; top: 52%; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .45s var(--ease-out) .12s; }
+.noise-ledger li.is-out { color: #8a8a8a; border-color: transparent; background: transparent; transform: translateY(-2px); }
+.noise-ledger li.is-out::after { transform: scaleX(1); }
+.noise-ledger .nl-count { border: 0; background: none; margin-left: auto; color: var(--green-ink); font-weight: 700; }
+@media (max-width: 860px) { .noise-ledger li[data-f] { display: none; } .noise-ledger { justify-content: flex-end; } }
+
+/* ─── 05 · LINTERNA NARRATIVA (canvas WebGL encima del dashboard) ─── */
+.ds-spot { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; border-radius: 6px; }
+
+/* ─── 03 · LABORATORIO: los cuadrados son botones mientras tiene sentido ─── */
+.lab-hint { margin: 12px 0 0; font-size: 13px; color: var(--muted); }
+.viz.lab-live .stage .mk { cursor: pointer; }
+.stage .mk:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+@media (hover: hover) and (pointer: fine) { .viz.lab-live .stage .mk:hover { outline: 1px solid var(--ink); outline-offset: 2px; } }
+
+/* gestalt: la región se dibuja y después se rellena */
+.stage .ov .rg.draw { stroke: var(--g1); fill-opacity: 0; transition: stroke-dashoffset .9s var(--ease-out), fill-opacity .6s ease .6s; }
+.stage .ov .rg.draw.on { fill-opacity: 1; }
+
+/* ─── 10 · BLUEPRINT: retícula → plano → cada pieza ocupa su caja ─── */
+.dash .bp { position: absolute; inset: 0; pointer-events: none; }
+.dash .bp-v, .dash .bp-h { position: absolute; background: rgba(17, 17, 17, .085); }
+.dash .bp-v { top: 0; bottom: 0; width: 1px; transform: scaleY(0); transform-origin: 50% 0; transition: transform .8s var(--ease-out) var(--d); }
+.dash .bp-h { left: 0; right: 0; height: 1px; transform: scaleX(0); transform-origin: 0 50%; transition: transform .8s var(--ease-out) var(--d); }
+.dash.bp-grid .bp-v, .dash.bp-grid .bp-h { transform: none; }
+.dash .bp-box { position: absolute; color: rgba(17, 17, 17, .42); }
+.dash .bp-box.hero { color: var(--green); }
+.dash .bp-box.note { color: rgba(17, 17, 17, .28); }
+.dash .bp-box .e { position: absolute; display: block; transition: transform .42s var(--ease-out); }
+.dash .bp-box .e.t, .dash .bp-box .e.b { left: 0; right: 0; height: 1px; background: repeating-linear-gradient(90deg, currentColor 0 5px, transparent 5px 9px); transform: scaleX(0); }
+.dash .bp-box .e.l, .dash .bp-box .e.r { top: 0; bottom: 0; width: 1px; background: repeating-linear-gradient(180deg, currentColor 0 5px, transparent 5px 9px); transform: scaleY(0); }
+.dash .bp-box .e.t { top: 0; transform-origin: 0 50%; transition-delay: var(--d); }
+.dash .bp-box .e.r { right: 0; transform-origin: 50% 0; transition-delay: calc(var(--d) + 110ms); }
+.dash .bp-box .e.b { bottom: 0; transform-origin: 100% 50%; transition-delay: calc(var(--d) + 220ms); }
+.dash .bp-box .e.l { left: 0; transform-origin: 50% 100%; transition-delay: calc(var(--d) + 330ms); }
+.dash.bp-wire .bp-box .e { transform: none; }
+.dash .bp-lb, .dash .bp-dim { position: absolute; top: .7em; font-size: .78em; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; opacity: 0; transition: opacity .4s ease calc(var(--d) + 420ms); white-space: nowrap; }
+.dash .bp-lb { left: .9em; }
+.dash .bp-dim { right: .9em; font-weight: 600; letter-spacing: .04em; text-transform: none; }
+.dash.bp-wire .bp-lb, .dash.bp-wire .bp-dim { opacity: 1; }
+.dash.nodonut .p-donut { opacity: 0 !important; }
+
+/* ─── TEST DEL ELEMENTO: un solo resaltado que viaja entre filas ─── */
+.etest-table { position: relative; }
+.etest-table .etable { position: relative; z-index: 1; }
+.etable-hl { position: absolute; left: 0; right: 0; top: 0; height: 0; z-index: 0; pointer-events: none; opacity: 0; background: var(--green-wash); box-shadow: inset 3px 0 0 var(--green); transition: transform .38s var(--ease-out), height .38s var(--ease-out), opacity .25s ease; }
+.etable.has-hl tr.hit td { background: transparent; }
+.etable.has-hl tr.hit td:first-child { box-shadow: none; }
+.everdict.swap { animation: dsSwap .42s var(--ease-out); }
+@keyframes dsSwap { from { opacity: 0; transform: translateY(6px); } }
+.etable td.stamp { animation: dsStamp .5s var(--ease-out); }
+@keyframes dsStamp { 35% { transform: scale(1.14); } }
+.etest .picks button { transition: border-color var(--dur-micro) ease, background var(--dur-ui) ease, color var(--dur-ui) ease, transform var(--dur-micro) ease; }
+.etest .picks button:active { transform: scale(.985); }
+
+@media (prefers-reduced-motion: reduce) {
+  #progressBar, .ds-ticks i { transition: none !important; }
+  .hero .dash-wrap, .depth { transform: none !important; }
+}
+
+/* el hero lleva cristal WebGL: el brillo CSS de .depth sería un segundo reflejo */
+.hero .depth::after { display: none; }
+.hero .depth.is-near { box-shadow: none; }
+.dash-wrap.depth { border-radius: 6px; }
+
+/* blueprint: cuando una pieza ocupa su caja, la etiqueta del plano se retira (no se transparenta bajo un panel atenuado) */
+.dash.b-head .bp-box[data-f="b-head"] .bp-lb, .dash.b-main .bp-box[data-f="b-main"] .bp-lb, .dash.b-main .bp-box[data-f="b-main"] .bp-dim,
+.dash.b-kpi .bp-box[data-f="b-kpi"] .bp-lb, .dash.b-sec .bp-box[data-f="b-sec"] .bp-lb, .dash.rec .bp-box[data-f="rec"] .bp-lb { opacity: 0; transition-delay: 0s; }

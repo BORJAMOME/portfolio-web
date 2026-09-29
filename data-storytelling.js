@@ -21,6 +21,13 @@
   function rng(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
   function fmtEs(n, d) { return n.toLocaleString('es-ES', { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }); }
 
+  /* Bus mínimo: los módulos de ds/ (motion, webgl) escuchan cambios de estado
+     sin acoplarse al motor. `state` guarda el último estado por visual, porque
+     los módulos cargan después y necesitan saber dónde está cada uno. */
+  var BUS = window.DSBus = window.DSBus || { h: {}, state: {} };
+  BUS.on = function (ev, fn) { (BUS.h[ev] = BUS.h[ev] || []).push(fn); };
+  BUS.emit = function (ev, d) { (BUS.h[ev] || []).forEach(function (fn) { try { fn(d); } catch (e) { console.error(e); } }); };
+
   var COL = {
     g1: '#BDBDBD', g2: '#DCDCDC', grid: '#E8E8E8', ink: '#111111', gr: '#6B5CA5', w: '#FFFFFF', wash: '#F0EEF6', bg: '#FBFBFB',
     c1: '#4472C4', c2: '#ED7D31', c3: '#A5A5A5', c4: '#FFC000', c5: '#70AD47', red: '#a3223e'
@@ -140,6 +147,31 @@
       '';
   }
 
+  /* Plano (blueprint) del capítulo 10: la retícula y las cajas del layout final,
+     dibujadas antes de que exista un solo dato. Coordenadas = layout .prio. */
+  var BP_BOXES = [
+    { x: 1.5, y: 2, w: 97, h: 12, lb: 'Título · la pregunta', f: 'b-head' },
+    { x: 1.5, y: 16, w: 57, h: 82, lb: 'Visual principal', dim: '57 % del ancho', hero: 1, f: 'b-main' },
+    { x: 60, y: 16, w: 38.5, h: 19, lb: 'KPI principal', f: 'b-kpi' },
+    { x: 60, y: 37, w: 19, h: 12, lb: 'KPI', f: 'b-kpi' },
+    { x: 80, y: 37, w: 18.5, h: 12, lb: 'KPI', f: 'b-kpi' },
+    { x: 60, y: 51, w: 38.5, h: 25, lb: 'Contexto', f: 'b-sec' },
+    { x: 60, y: 78, w: 38.5, h: 20, lb: 'Acción', f: 'rec' },
+    { x: 27, y: 44, w: 27, h: 11, lb: 'Anotación', note: 1, f: 'b-main' }
+  ];
+  function blueprintHTML() {
+    var h = '<div class="bp" aria-hidden="true"><div class="bp-grid">', c;
+    for (c = 1; c < 12; c++) h += '<i class="bp-v" style="left:' + (c * 100 / 12).toFixed(3) + '%;--d:' + (c * 32) + 'ms"></i>';
+    for (c = 1; c < 8; c++) h += '<i class="bp-h" style="top:' + (c * 12.5) + '%;--d:' + (c * 40) + 'ms"></i>';
+    h += '</div><div class="bp-wire">';
+    BP_BOXES.forEach(function (b, i) {
+      h += '<div class="bp-box' + (b.hero ? ' hero' : '') + (b.note ? ' note' : '') + '" data-f="' + b.f + '" style="left:' + b.x + '%;top:' + b.y + '%;width:' + b.w + '%;height:' + b.h + '%;--d:' + (i * 110) + 'ms">' +
+        '<i class="e t"></i><i class="e r"></i><i class="e b"></i><i class="e l"></i>' +
+        '<span class="bp-lb">' + b.lb + '</span>' + (b.dim ? '<span class="bp-dim">' + b.dim + '</span>' : '') + '</div>';
+    });
+    return h + '</div></div>';
+  }
+
   var DASH = {};
   function makeDash(host) {
     var name = host.dataset.dash;
@@ -149,10 +181,18 @@
     el.setAttribute('aria-label', 'Dashboard de ventas del Q4 2025 (datos ficticios). Conclusión: el canal online aporta 221 mil euros de los 304 mil de crecimiento, el 73 %.');
     el.innerHTML = dashHTML();
     wrap.appendChild(el); host.appendChild(wrap);
-    var api = { el: el, base: '', set: function (flags) { api.base = flags || ''; el.className = 'dash ' + api.base + (api.extra ? ' ' + api.extra : ''); }, extra: '' };
+    var api = { el: el, name: name, base: '', extra: '', set: function (flags) {
+      var prev = api.base;
+      api.base = flags || '';
+      el.className = 'dash ' + api.base + (api.extra ? ' ' + api.extra : '');
+      BUS.emit('dash', { name: name, flags: api.base, prev: prev, el: el, wrap: wrap });
+    } };
+    $$('.cam > .pn', el).forEach(function (p, i) { p.style.setProperty('--pi', i); });
+    if (name === 'c10') $('.cam', el).insertAdjacentHTML('afterbegin', blueprintHTML());
     var init = { hero: '', c04: '', c05: 'flat lessgrid gray direct short', c08: 'flat lessgrid gray direct short dim desc', c10: 'empty', final: FINAL, titles: FINAL, sales: FINAL, a11y: FINAL, val: FINAL + ' titles' };
     api.set(init[name] != null ? init[name] : FINAL);
     DASH[name] = api;
+    BUS.DASH = DASH;
     return api;
   }
   $$('[data-dash]').forEach(makeDash);
@@ -208,6 +248,7 @@
         m.style.borderRadius = s.r == null ? '0' : (typeof s.r === 'number' ? s.r + 'px' : s.r);
         m.style.boxShadow = s.bd || 'none';
         m.style.borderColor = s.bc ? (COL[s.bc] || s.bc) : 'transparent';
+        m.style.transitionDelay = s.dl ? s.dl + 'ms' : '';
       });
     }
     function labels(arr) {
@@ -233,6 +274,7 @@
         if (!e) { e = document.createElementNS(NS, 'path'); svg.appendChild(e); P[p.k] = e; e._on = false; }
         var wasOff = !e._on;
         if (e._d !== p.d || e._w !== SW) { e._d = p.d; e._w = SW; e.setAttribute('d', px(p.d)); }
+        e.style.transitionDelay = p.dl ? p.dl + 'ms' : '';
         if (p.draw) {
           e.setAttribute('pathLength', '1');
           if (wasOff) {
@@ -336,8 +378,27 @@
     var GROUPS = ['Ingresos', 'Rentabilidad', 'Clientes', 'Servicio'];
     var SHUF = [0, 2, 4, 6, 1, 3, 5, 7];
     function grid(i) { return { cx: .18 + (i % 5) * .16, cy: .18 + Math.floor(i / 5) * .21 }; }
-    return {
+    /* Laboratorio: en los estados preatentivos, tamaño y posición el lector
+       elige cuál de los 20 cuadrados es el protagonista y ve el principio con
+       su propia elección. Los cuadrados se vuelven botones solo mientras sirve. */
+    var cur = 'p1', LIVE = /^(p1|p2|p3|s1|o1|o2|o3)$/, hint = viz.querySelector('.lab-hint');
+    function pick(i) { if (!LIVE.test(cur) || i < 0) return; H = i; api.set(cur); }
+    st.el.addEventListener('click', function (e) { pick(st.marks.indexOf(e.target)); });
+    st.el.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var i = st.marks.indexOf(e.target); if (i < 0) return;
+      e.preventDefault(); pick(i);
+    });
+    var api = {
       set: function (k) {
+        cur = k;
+        var live = LIVE.test(k);
+        viz.classList.toggle('lab-live', live);
+        st.marks.forEach(function (m, i) {
+          if (live) { m.tabIndex = 0; m.setAttribute('role', 'button'); m.setAttribute('aria-label', 'Cuadrado ' + (i + 1) + (i === H ? ', protagonista' : '')); }
+          else { m.removeAttribute('tabindex'); m.removeAttribute('role'); m.removeAttribute('aria-label'); }
+        });
+        if (hint) hint.hidden = !live;
         var sp = [], lb = [], pt = [];
         for (var i = 0; i < 20; i++) {
           var g = grid(i), s = { cx: g.cx, cy: g.cy, s: .075, c: 'g1' };
@@ -383,6 +444,7 @@
         st.set(sp, lb, pt);
       }
     };
+    return api;
   };
 
   /* 03 · Comparación */
@@ -423,18 +485,23 @@
         var sp = [], pt = [];
         for (var i = 0; i < 20; i++) {
           var p = k === 'g1' ? rnd[i] : (k === 'g2' ? [CL[Math.floor(i / 5)][0] + OFF[i % 5][0], CL[Math.floor(i / 5)][1] + OFF[i % 5][1] * 1.3] : g(i));
-          var c = 'g1';
+          var c = 'g1', dl = 0;
           if (k === 'g3' && (i % 5 === 1 || i % 5 === 3)) c = 'ink';
-          sp.push({ cx: p[0], cy: p[1], s: .045, r: '50%', c: c });
+          if (k === 'g2') dl = Math.floor(i / 5) * 110 + (i % 5) * 30;   // cada grupo se reúne después del anterior
+          if (k === 'g3') dl = (i % 5) * 90;                              // el color recorre las columnas como una ola
+          sp.push({ cx: p[0], cy: p[1], s: .045, r: '50%', c: c, dl: dl });
         }
-        if (k === 'g4') { pt.push({ k: 'r1', d: rect(.13, .12, .74, .36), c: 'rg' }); pt.push({ k: 'r2', d: rect(.13, .52, .74, .36), c: 'rg' }); }
-        if (k === 'g5') {
+        if (k === 'g4') {   // la región se dibuja: primero el contorno, después el fondo
+          pt.push({ k: 'r1', d: rect(.13, .12, .74, .36), c: 'rg', draw: true });
+          pt.push({ k: 'r2', d: rect(.13, .52, .74, .36), c: 'rg', draw: true, dl: 260 });
+        }
+        if (k === 'g5') {   // las conexiones aparecen una a una
           for (var r = 0; r < 4; r++) {
             var a = g(r * 5), b = g(r * 5 + 1), c2 = g(r * 5 + 3), d = g(r * 5 + 4);
-            pt.push({ k: 'l' + r + 'a', d: poly([a, b]), c: 'p-ink', draw: true });
-            pt.push({ k: 'l' + r + 'b', d: poly([c2, d]), c: 'p-ink', draw: true });
+            pt.push({ k: 'l' + r + 'a', d: poly([a, b]), c: 'p-ink', draw: true, dl: r * 120 });
+            pt.push({ k: 'l' + r + 'b', d: poly([c2, d]), c: 'p-ink', draw: true, dl: r * 120 + 60 });
           }
-          pt.push({ k: 'lv', d: poly([g(2), g(17)]), c: 'p-ink', draw: true });
+          pt.push({ k: 'lv', d: poly([g(2), g(17)]), c: 'p-ink', draw: true, dl: 560 });
         }
         st.set(sp, [], pt);
       }
@@ -850,7 +917,16 @@
   /* dash dentro de un scrolly */
   VIZ.dash = function (viz) {
     var host = viz.dataset.dash ? viz : $('[data-dash]', viz), d = DASH[host.dataset.dash];
-    return { set: function (k, step) { d.set(step.dataset.flags); } };
+    var ledger = viz.parentNode.querySelector('.noise-ledger');
+    var items = ledger ? $$('li[data-f]', ledger) : [], count = ledger ? $('.nl-count', ledger) : null;
+    return { set: function (k, step) {
+      var flags = step.dataset.flags || '';
+      d.set(flags);
+      if (!ledger) return;
+      var out = 0, f = ' ' + flags + ' ';
+      items.forEach(function (li) { var on = f.indexOf(' ' + li.dataset.f + ' ') > -1; li.classList.toggle('is-out', on); if (on) out++; });
+      if (count) count.textContent = out ? out + ' de ' + items.length + ' fuera' : items.length + ' fuentes de ruido';
+    } };
   };
 
   /* ═══════════════════════════════════════════
@@ -865,6 +941,10 @@
       current = step;
       steps.forEach(function (s) { s.classList.toggle('is-active', s === step); });
       viz.set(step.dataset.s || '', step);
+      var dh = $('.sc-visual [data-dash]', sc), key = dh ? dh.dataset.dash : sc.dataset.viz;
+      var payload = { key: key, viz: sc.dataset.viz, s: step.dataset.s || '', flags: step.dataset.flags || '', step: step, scrolly: sc };
+      BUS.state[key] = payload;
+      BUS.emit('state', payload);
     }
     activate(steps[0]);
     var io = new IntersectionObserver(function (es) {

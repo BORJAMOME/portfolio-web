@@ -17,8 +17,8 @@
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet">
 <!-- Shared styles: variables, nav, footer, botones, reset -->
-<link rel="stylesheet" href="./shared.css?v=20260922">
-<link rel="stylesheet" href="./data-storytelling.css?v=20260928">
+<link rel="stylesheet" href="./shared.css?v=20260929">
+<link rel="stylesheet" href="./data-storytelling.css?v=20260929">
 <!-- Primary Meta Tags -->
 <meta name="description" content="Un manual interactivo sobre Data Storytelling y diseño de dashboards: percepción, reducción de ruido, atención, elección del visual, composición, texto y narrativa, demostrados sobre un dashboard que cambia mientras lees.">
 <meta name="keywords" content="data storytelling, diseño de dashboards, Power BI, visualización de datos, scrollytelling, UX, Borja Mora">
@@ -506,7 +506,7 @@
   </header>
   <div class="ds-c">
     <div class="scrolly" data-viz="lab">
-      <div class="sc-visual"><div class="viz"><div class="stage" role="img" aria-label="Laboratorio perceptivo: veinte cuadrados que cambian de color, tamaño, posición y agrupación."></div></div></div>
+      <div class="sc-visual"><div class="viz"><div class="stage" role="img" aria-label="Laboratorio perceptivo: veinte cuadrados que cambian de color, tamaño, posición y agrupación."></div><p class="lab-hint" hidden>Pruébalo: pulsa cualquier cuadrado y conviértelo en el protagonista.</p></div></div>
       <div class="sc-steps">
         <div class="step" data-s="p1"><div class="st-in"><span class="st-tag">Preatentivos</span><p class="st-copy">Todo está quieto.</p></div></div>
         <div class="step" data-s="p2"><div class="st-in"><p class="st-copy">Uno cambia.</p></div></div>
@@ -561,7 +561,17 @@
   </header>
   <div class="ds-c">
     <div class="scrolly" data-viz="dash">
-      <div class="sc-visual"><div class="viz" data-dash="c04"></div></div>
+      <div class="sc-visual sc-visual--stack"><div class="viz" data-dash="c04"></div>
+        <ol class="noise-ledger" aria-label="Ruido que sale del dashboard">
+          <li data-f="flat">Sombras y bordes</li>
+          <li data-f="flat">Cabeceras de color e iconos</li>
+          <li data-f="lessgrid">Retícula y ejes sobrantes</li>
+          <li data-f="gray">Diez colores sin significado</li>
+          <li data-f="direct">Leyendas lejos del dato</li>
+          <li data-f="short">Decimales innecesarios</li>
+          <li class="nl-count" aria-live="polite">6 fuentes de ruido</li>
+        </ol>
+      </div>
       <div class="sc-steps">
         <div class="step" data-flags=""><div class="st-in"><p class="st-copy">Así estaba.</p></div></div>
         <div class="step" data-flags="flat"><div class="st-in"><p class="st-copy">Primero, elimino lo que decora pero no ayuda a leer.</p><p class="st-sub">Sombras, bordes, cabeceras de color, iconos.</p></div></div>
@@ -638,11 +648,11 @@
       <div class="sc-visual"><div class="viz" data-dash="c05"></div></div>
       <div class="sc-steps">
         <div class="step" data-flags="flat lessgrid gray direct short"><div class="st-in"><p class="st-copy">Primero, no destaco nada.</p></div></div>
-        <div class="step" data-flags="flat lessgrid gray direct short select"><div class="st-in"><p class="st-copy">Después decido qué importa.</p></div></div>
-        <div class="step" data-flags="flat lessgrid gray direct short focus"><div class="st-in"><p class="st-copy">El color la hace visible.</p></div></div>
-        <div class="step" data-flags="flat lessgrid gray direct short focus kbig"><div class="st-in"><p class="st-copy">El tamaño puede reforzar la jerarquía.</p></div></div>
-        <div class="step" data-flags="flat lessgrid gray direct short focus prio dim"><div class="st-in"><p class="st-copy">La posición puede decirte dónde empezar.</p></div></div>
-        <div class="step" data-flags="flat lessgrid gray direct short focus prio dim annot-on"><div class="st-in"><p class="st-copy">Y una anotación puede explicar por qué merece la pena mirar.</p></div></div>
+        <div class="step" data-flags="flat lessgrid gray direct short select" data-spot="bar"><div class="st-in"><p class="st-copy">Después decido qué importa.</p></div></div>
+        <div class="step" data-flags="flat lessgrid gray direct short focus" data-spot="bar"><div class="st-in"><p class="st-copy">El color la hace visible.</p></div></div>
+        <div class="step" data-flags="flat lessgrid gray direct short focus kbig" data-spot="kpi"><div class="st-in"><p class="st-copy">El tamaño puede reforzar la jerarquía.</p></div></div>
+        <div class="step" data-flags="flat lessgrid gray direct short focus prio dim" data-spot="bars"><div class="st-in"><p class="st-copy">La posición puede decirte dónde empezar.</p></div></div>
+        <div class="step" data-flags="flat lessgrid gray direct short focus prio dim annot-on" data-spot="annot bar"><div class="st-in"><p class="st-copy">Y una anotación puede explicar por qué merece la pena mirar.</p></div></div>
       </div>
     </div>
   </div>
@@ -1064,14 +1074,16 @@
       <div class="sc-visual"><div class="viz" data-dash="c10"></div></div>
       <div class="sc-steps">
         <div class="step" data-flags="empty"><div class="st-in"><p class="st-copy">Un lienzo en blanco.</p></div></div>
-        <div class="step" data-flags="empty flat b-head q"><div class="st-in"><span class="st-tag">01</span><p class="st-copy">Empiezo por la pregunta.</p></div></div>
-        <div class="step" data-flags="empty flat b-head q b-main"><div class="st-in"><span class="st-tag">02</span><p class="st-copy">Elijo el visual que mejor resuelve la tarea.</p><p class="st-sub">La pregunta es “qué canal”: comparar. Barras.</p></div></div>
-        <div class="step" data-flags="empty flat b-head q b-main lessgrid gray direct short"><div class="st-in"><span class="st-tag">03</span><p class="st-copy">Quito lo que sobra.</p></div></div>
-        <div class="step" data-flags="empty flat b-head q b-main lessgrid gray direct short focus"><div class="st-in"><span class="st-tag">04</span><p class="st-copy">Decido qué merece atención.</p></div></div>
-        <div class="step" data-flags="empty flat b-head q b-main lessgrid gray direct short focus prio b-kpi b-sec dim"><div class="st-in"><span class="st-tag">05</span><p class="st-copy">Compongo la página.</p></div></div>
-        <div class="step" data-flags="empty flat b-head q b-main lessgrid gray direct short focus prio b-kpi b-sec dim story"><div class="st-in"><span class="st-tag">06</span><p class="st-copy">Escribo el título que explica la idea.</p></div></div>
-        <div class="step" data-flags="empty flat b-head q b-main lessgrid gray direct short focus prio b-kpi b-sec dim story annot-on"><div class="st-in"><span class="st-tag">07</span><p class="st-copy">Anoto lo que quiero que nadie tenga que descubrir por su cuenta.</p></div></div>
-        <div class="step" data-flags="empty flat b-head q b-main lessgrid gray direct short focus prio b-kpi b-sec dim story annot-on rec navs"><div class="st-in"><span class="st-tag">08</span><p class="st-copy">Y construyo el recorrido.</p></div></div>
+        <div class="step" data-flags="empty flat prio nodonut bp-grid"><div class="st-in"><span class="st-tag">Plano</span><p class="st-copy">Antes de dibujar nada, trazo la retícula.</p></div></div>
+        <div class="step" data-flags="empty flat prio nodonut bp-grid bp-wire"><div class="st-in"><span class="st-tag">Plano</span><p class="st-copy">Después, el plano: qué va en cada caja y cuánto espacio merece.</p><p class="st-sub">El visual principal se lleva más de la mitad del ancho. La acción tiene su caja reservada desde el principio.</p></div></div>
+        <div class="step" data-flags="empty flat prio nodonut bp-grid bp-wire b-head q"><div class="st-in"><span class="st-tag">01</span><p class="st-copy">Empiezo por la pregunta.</p></div></div>
+        <div class="step" data-flags="empty flat prio nodonut bp-grid bp-wire b-head q b-main"><div class="st-in"><span class="st-tag">02</span><p class="st-copy">Elijo el visual que mejor resuelve la tarea.</p><p class="st-sub">La pregunta es “qué canal”: comparar. Barras.</p></div></div>
+        <div class="step" data-flags="empty flat prio nodonut bp-grid bp-wire b-head q b-main lessgrid gray direct short"><div class="st-in"><span class="st-tag">03</span><p class="st-copy">Quito lo que sobra.</p></div></div>
+        <div class="step" data-flags="empty flat prio nodonut bp-grid bp-wire b-head q b-main lessgrid gray direct short focus"><div class="st-in"><span class="st-tag">04</span><p class="st-copy">Decido qué merece atención.</p></div></div>
+        <div class="step" data-flags="empty flat prio nodonut bp-wire b-head q b-main lessgrid gray direct short focus b-kpi b-sec dim"><div class="st-in"><span class="st-tag">05</span><p class="st-copy">Compongo la página.</p><p class="st-sub">Cada pieza ocupa la caja que le reservé en el plano.</p></div></div>
+        <div class="step" data-flags="empty flat prio nodonut b-head q b-main lessgrid gray direct short focus b-kpi b-sec dim story"><div class="st-in"><span class="st-tag">06</span><p class="st-copy">Escribo el título que explica la idea.</p><p class="st-sub">El plano desaparece. El orden se queda.</p></div></div>
+        <div class="step" data-flags="empty flat prio nodonut b-head q b-main lessgrid gray direct short focus b-kpi b-sec dim story annot-on"><div class="st-in"><span class="st-tag">07</span><p class="st-copy">Anoto lo que quiero que nadie tenga que descubrir por su cuenta.</p></div></div>
+        <div class="step" data-flags="empty flat prio nodonut b-head q b-main lessgrid gray direct short focus b-kpi b-sec dim story annot-on rec navs"><div class="st-in"><span class="st-tag">08</span><p class="st-copy">Y construyo el recorrido.</p></div></div>
       </div>
     </div>
   </div>
@@ -1084,7 +1096,7 @@
   <div class="ds-c ds-sec--tight">
     <div class="viz" data-dash="final"></div>
     <div class="replay-row">
-      <button type="button" class="btn-ds" id="replayBtn">Ver la transformación <span aria-hidden="true">↻</span></button>
+      <button type="button" class="btn-ds" id="replayBtn">Ver la transformación <span class="spin" aria-hidden="true">↻</span></button>
       <ol class="replay-log" id="replayLog" aria-label="Pasos de la transformación">
         <li>Dashboard cargado</li><li>Limpieza</li><li>Agrupación</li><li>Foco</li><li>Visual</li><li>Layout</li><li>Título</li><li>Anotación</li><li>Historia</li>
       </ol>
@@ -1220,8 +1232,8 @@
       <span class="motto">Datos claros. <em>Decisiones mejores.</em></span>
       <span class="name">Borja Mora</span>
       <div class="ctas">
-        <a class="btn-ds" id="dsMailBtn" href="#" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_email',{location:'data_storytelling'});">¿Hablamos?</a>
-        <a class="btn-ds ghost" href="./power-bi.html">Ver proyectos de Power BI</a>
+        <a class="btn-ds" id="dsMailBtn" href="#" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_email',{location:'data_storytelling'});">¿Hablamos? <span class="arr" aria-hidden="true"><i>→</i><i>→</i></span></a>
+        <a class="btn-ds ghost" href="./power-bi.html">Ver proyectos de Power BI <span class="arr" aria-hidden="true"><i>→</i><i>→</i></span></a>
       </div>
     </div>
   </div>
@@ -1292,7 +1304,7 @@ window.addEventListener('scroll',function(){
   document.getElementById('nav').classList.toggle('scrolled',window.scrollY>10);
   var h=document.documentElement;
   var p=Math.min(1,Math.max(0,window.scrollY/(h.scrollHeight-h.clientHeight)||0));
-  document.getElementById('progressBar').style.transform='scaleX('+p+')';
+  document.getElementById('progressBar').style.setProperty('--p',p);
   h.style.setProperty('--logo-ring',p);
   var lm=document.querySelector('.logo-mark'); if(lm) lm.classList.toggle('at-end',p>=0.98);
 },{passive:true});
@@ -1360,6 +1372,10 @@ window.addEventListener('scroll',function(){
   });
 })();
 </script>
-<script src="./data-storytelling.js?v=20260928" defer></script>
+<script src="./data-storytelling.js?v=20260929" defer></script>
+<!-- Motion: bibliotecas opcionales. Si un CDN falla, la pagina funciona igual (todo tiene fallback CSS). -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
+<script type="module" src="./ds/main.js?v=20260929"></script>
 </body>
 </html>

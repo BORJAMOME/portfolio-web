@@ -1060,3 +1060,15 @@ nav.nav-drawer-links {
 .sec-nav a,.sec-nav button{font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;font-size:12px;font-weight:500;color:var(--ink);background:#fff;border:1px solid var(--ink);border-radius:999px;padding:9px 18px;text-decoration:none;white-space:nowrap;cursor:pointer;letter-spacing:.02em;transition:background .15s var(--ease),color .15s var(--ease)}
 @media (hover: hover) and (pointer: fine) { .sec-nav a:hover,.sec-nav button:hover{background:#f2f2f2;color:var(--ink);border-color:var(--ink)} }
 .sec-nav a.active,.sec-nav button.active{background:var(--ink);color:#fff;border-color:var(--ink);font-weight:600}
+
+/* ─── VIEW TRANSITIONS entre páginas (opt-in; navegadores sin soporte navegan igual) ───
+   El nav permanece fijo mientras el contenido cambia: continuidad, no espectáculo. */
+@view-transition { navigation: auto; }
+#nav { view-transition-name: site-nav; }
+::view-transition-old(root) { animation: 200ms cubic-bezier(.55,0,1,.45) both vt-out; }
+::view-transition-new(root) { animation: 420ms cubic-bezier(.22,1,.36,1) both vt-in; }
+@keyframes vt-out { to { opacity: 0; } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(10px); } }
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+}
