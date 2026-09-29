@@ -68,6 +68,8 @@
     ajani: { k: 'Investigación', cite: 'Declutter and Focus', meta: 'Ajani, Lee, Xiong, Knaflic, Kemper y Franconeri · 2021 · IEEE TVCG', t: 'Evaluación empírica: los gráficos limpios y con foco se perciben como más claros y profesionales, y su mensaje se recuerda mejor.', url: 'https://doi.org/10.1109/TVCG.2021.3068337' },
     hullman: { k: 'Investigación', cite: 'Visualization Rhetoric: Framing Effects in Narrative Visualization', meta: 'Hullman y Diakopoulos · 2011 · IEEE TVCG', t: 'Cómo las decisiones de diseño (encuadre, omisiones, anotaciones, forma de mostrar la incertidumbre) cambian la interpretación de los mismos datos.', url: 'https://doi.org/10.1109/TVCG.2011.255' },
     nng: { k: 'Investigación', cite: 'F-Shaped Pattern of Reading on the Web: Misunderstood, But Still Relevant', meta: 'Kara Pernice · 2017 · Nielsen Norman Group', t: 'Estudios de eye-tracking sobre cómo se escanean las páginas con mucho texto, cuándo aparece el patrón en F y cómo evitar que lo importante quede fuera del recorrido.', url: 'https://www.nngroup.com/articles/f-shaped-pattern-reading-web-content/' },
+    tufte: { k: 'Ver referencia', cite: 'Sparkline theory and practice', meta: 'Edward Tufte · desarrollado en Beautiful Evidence · 2006 · Graphics Press', t: 'Gráficos intensos, simples y del tamaño de una palabra, pensados para dar contexto a un número sin ejes ni decoración.', url: 'https://www.edwardtufte.com/notebook/sparkline-theory-and-practice-edward-tufte/' },
+    pbicanvas: { k: 'Fuente', cite: 'Apply page size and settings in a Power BI report', meta: 'Microsoft Learn · documentación de Power BI', t: 'Tipos de lienzo (16:9 por defecto, 4:3, carta, tooltip y personalizado), tamaños disponibles y opciones de vista: ajustar a la página, al ancho o tamaño real.', url: 'https://learn.microsoft.com/es-es/power-bi/create-reports/power-bi-report-display-settings' },
     mslearn: { k: 'Fuente', cite: 'Diseño de informes de Power BI para accesibilidad', meta: 'Microsoft Learn · documentación de Power BI', t: 'Orden de tabulación, texto alternativo, contraste, no depender solo del color y navegación con teclado dentro de los informes.', url: 'https://learn.microsoft.com/es-es/power-bi/create-reports/desktop-accessibility-overview' },
     ibcs: { k: 'Fuente', cite: 'International Business Communication Standards (IBCS)', meta: 'IBCS Association', t: 'Estándar para informes de negocio organizado en siete reglas: SAY, UNIFY, CONDENSE, CHECK, EXPRESS, SIMPLIFY, STRUCTURE.', url: 'https://www.ibcs.com/' },
     swd: { k: 'Ver referencia', cite: 'Storytelling with Data', meta: 'Cole Nussbaumer Knaflic · 2015 · Wiley', t: 'La historia en tres minutos, la gran idea, la diferencia entre explorar y explicar y la estructura Bing, Bang, Bongo.', url: 'https://www.storytellingwithdata.com/books' }
@@ -797,20 +799,49 @@
      El mismo reparto que usa PBI Mockup Creator: un lienzo de 1280×720 con
      márgenes, separación, header, filtros (arriba o en lateral), una fila de
      KPIs, Zona A (mensaje) y Zona B (detalle), cada una con su peso en altura. */
+  /* c: m margen · g separación (o gs: [tras header, tras KPIs, tras Zona A]) · W×H lienzo
+     hd header · f 'top'|'side' filtros · k/a/b nº de piezas por fila · pk/pa/pb peso en altura */
   function wfLayout(c) {
-    var W = 1280, H = 720, m = c.m || 24, g = c.g || 12, R = {}, y = m, x0 = m, x1 = W - m;
-    function put(k, x, yy, w, h) { R[k] = [x / W * 100, yy / H * 100, w / W * 100, h / H * 100]; }
-    if (c.hd) { put('hd', x0, y, x1 - x0, 52); y += 52 + g; }
+    var W = c.W || 1280, H = c.H || 720, m = c.m == null ? 24 : c.m, g = c.g == null ? 12 : c.g, R = {}, y = m, x0 = m, x1 = W - m, used = 0;
+    var gs = c.gs || [g, g, g], hdH = c.hdH || 52;
+    function put(k, x, yy, w, h) { R[k] = [x / W * 100, yy / H * 100, w / W * 100, h / H * 100]; if (k !== 'hd') used += w * h; }
+    if (c.hd) { put('hd', x0, y, x1 - x0, hdH); y += hdH + gs[0]; }
     if (c.f === 'top') { put('ft', x0, y, x1 - x0, 26); y += 26 + g; }
     if (c.f === 'side') { put('sb', x0, y, 150, H - m - y); x0 += 150 + g; }
-    var rows = [['k', c.k, c.pk || 18], ['a', c.a, c.pa || 45], ['b', c.b, c.pb || 27]].filter(function (r) { return r[1] > 0; });
-    var avail = H - m - y - g * (rows.length - 1), tot = rows.reduce(function (s, r) { return s + r[2]; }, 0);
+    var rows = [['k', c.k, c.pk || 18, gs[1]], ['a', c.a, c.pa || 45, gs[2]], ['b', c.b, c.pb || 27, 0]].filter(function (r) { return r[1] > 0; });
+    var gsum = rows.slice(0, -1).reduce(function (s, r) { return s + r[3]; }, 0);
+    var avail = H - m - y - gsum, tot = rows.reduce(function (s, r) { return s + r[2]; }, 0);
     rows.forEach(function (r) {
       var h = avail * r[2] / tot, n = r[1], w = (x1 - x0 - g * (n - 1)) / n;
       for (var i = 0; i < n; i++) put(r[0] + (i + 1), x0 + i * (w + g), y, w, h);
-      y += h + g;
+      R['_' + r[0]] = h;
+      y += h + r[3];
     });
+    R._free = Math.round((1 - used / (W * H)) * 100);   // espacio negativo: lo que no es tarjeta ni filtro
     return R;
+  }
+  /* crea las piezas dentro de un .wf y devuelve apply(c) */
+  function wfMake(box) {
+    var els = {};
+    WF_KEYS.forEach(function (k) {
+      var d = document.createElement('div');
+      d.className = 'wfb wf-' + k.replace(/\d/, '') + (k === 'a1' ? ' wf-lead' : '');
+      d.innerHTML = '<span class="wl"></span>';
+      d.style.opacity = 0;
+      box.appendChild(d); els[k] = d;
+    });
+    return function (c) {
+      var R = wfLayout(c), ki = 0;
+      WF_KEYS.forEach(function (key) {
+        var e = els[key], r = R[key];
+        if (!r) { e.style.opacity = 0; return; }
+        e.style.left = r[0] + '%'; e.style.top = r[1] + '%'; e.style.width = r[2] + '%'; e.style.height = r[3] + '%';
+        e.style.opacity = 1;
+        var t = key.charAt(0) === 'k' ? (c.kl || [])[ki++] : (c.l || {})[key];
+        e.firstChild.textContent = t || '';
+      });
+      return R;
+    };
   }
   var WF_KEYS = ['hd', 'ft', 'sb', 'k1', 'k2', 'k3', 'k4', 'k5', 'k6', 'a1', 'a2', 'a3', 'b1', 'b2', 'b3'];
   var WF = {
@@ -848,14 +879,7 @@
     L: { heat: [[2, 2, 96, 10, .5], [2, 11, 96, 10, .34], [2, 21, 96, 18, .2], [2, 39, 96, 16, .09]], path: '', dots: [[4.5, 6.5, 1], [4.5, 16, 2], [4.5, 29, 3], [4.5, 46, 4]] }
   };
   VIZ.wf = function (viz) {
-    var set = viz.dataset.wf, box = $('.wf', viz), note = $('[data-tgl-note="' + viz.id + '"]'), els = {};
-    WF_KEYS.forEach(function (k) {
-      var d = document.createElement('div');
-      d.className = 'wfb wf-' + k.replace(/\d/, '') + (k === 'a1' ? ' wf-lead' : '');
-      d.innerHTML = '<span class="wl"></span>';
-      d.style.opacity = 0;
-      box.appendChild(d); els[k] = d;
-    });
+    var set = viz.dataset.wf, box = $('.wf', viz), note = $('[data-tgl-note="' + viz.id + '"]'), apply = wfMake(box);
     var ov = null;
     if (set === 'rdp') {
       ov = document.createElement('div'); ov.className = 'wf-ov'; ov.setAttribute('aria-hidden', 'true');
@@ -871,21 +895,290 @@
     return {
       set: function (k) {
         var c = WF[set][k]; if (!c) return;
-        var R = wfLayout(c), ki = 0;
         box.dataset.s = k;
-        WF_KEYS.forEach(function (key) {
-          var e = els[key], r = R[key];
-          if (!r) { e.style.opacity = 0; return; }
-          e.style.left = r[0] + '%'; e.style.top = r[1] + '%'; e.style.width = r[2] + '%'; e.style.height = r[3] + '%';
-          e.style.opacity = 1;
-          var t = key.charAt(0) === 'k' && key !== 'k' ? (c.kl || [])[ki++] : (c.l || {})[key];
-          e.firstChild.textContent = t || '';
-        });
+        apply(c);
         if (ov) $$('.ovs', ov).forEach(function (s) { s.classList.toggle('on', s.dataset.k === k); });
         if (note) note.textContent = note.getAttribute('data-n-' + k) || '';
       }
     };
   };
+
+  /* ═══ 06 · ANATOMÍA DE UN KPI ═══
+     La tarjeta de PBI Mockup Creator: etiqueta → valor → delta + referencia a la
+     izquierda; a la derecha, ~40 % del ancho, un minigráfico en gris (línea o columnas). */
+  function kpiSpark(s, up) {
+    var n = s.length, pts = s.map(function (v, i) { return [(i / (n - 1) * 100).toFixed(1), (38 - v * 34).toFixed(1)]; });
+    var line = pts.map(function (p) { return p.join(','); }).join(' '), last = pts[n - 1];
+    return '<svg class="kg-l" viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,40 ' + line + ' 100,40" fill="#EFEFEF"/><polyline points="' + line + '" fill="none" stroke="#9E9E9E" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>' +
+      '<i class="kg-dot" style="--f:' + (last[1] / 40).toFixed(3) + '"></i>';
+  }
+  function kpiCols(s) {
+    var n = s.length, w = 100 / n;
+    return '<svg class="kg-c" viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true">' + s.map(function (v, i) {
+      var h = 4 + v * 34;
+      return '<rect x="' + (i * w + w * .18).toFixed(1) + '" y="' + (40 - h).toFixed(1) + '" width="' + (w * .64).toFixed(1) + '" height="' + h.toFixed(1) + '" fill="' + (i === n - 1 ? '#8A8A8A' : '#DCDCDC') + '"/>';
+    }).join('') + '</svg>';
+  }
+  var KPIS = [
+    { l: 'Ventas Q4', v: '1,57 M€', d: '▲ +24,0 %', r: 'vs. Q4 2024', ok: 1, s: [.28, .34, .31, .42, .38, .5, .45, .55, .52, .65, .6, .72, .67, .8] },
+    { l: 'Margen bruto', v: '34,7 %', d: '▼ −1,2 pp', r: 'vs. objetivo', ok: 0, s: [.8, .76, .78, .7, .72, .66, .68, .6, .63, .56, .58, .5, .52, .46] },
+    { l: 'Rotación', v: '12,4 %', d: '▼ −1,8 pp', r: 'vs. año anterior', ok: 1, s: [.85, .78, .82, .7, .64, .72, .58, .5, .56, .44, .38, .46, .32, .26] },
+    { l: 'Coste por lead', v: '12,80 €', d: '▲ +6,1 %', r: 'vs. media 12 m', ok: 0, s: [.3, .38, .33, .42, .4, .48, .45, .55, .5, .6, .57, .66, .62, .72] }
+  ];
+  function kpiCard(d, xl) {
+    var n = function (i) { return xl ? '<i class="kn" aria-hidden="true">' + i + '</i>' : ''; };
+    return '<div class="kc ' + (d.ok ? 'good' : 'bad') + (xl ? ' kc--xl' : '') + '">' +
+      '<div class="kc-t"><span class="kc-l">' + d.l + n(1) + '</span><span class="kc-v">' + d.v + n(2) + '</span>' +
+      '<span class="kc-d"><b>' + d.d + '</b>' + n(3) + '<span>' + d.r + '</span>' + n(4) + '</span></div>' +
+      '<div class="kc-g">' + kpiSpark(d.s) + kpiCols(d.s) + n(5) + '</div></div>';
+  }
+  VIZ.kpi = function (viz) {
+    var big = $('.kan-card', viz), row = $('.kpi-row', viz), note = $('[data-tgl-note="' + viz.id + '"]');
+    big.insertAdjacentHTML('afterbegin', kpiCard(KPIS[0], 1));
+    row.innerHTML = KPIS.map(function (d) { return kpiCard(d); }).join('');
+    return { set: function (k) { viz.dataset.s = k; if (note) note.textContent = note.getAttribute('data-n-' + k) || ''; } };
+  };
+
+  /* ═══ 07 · LIENZOS DE POWER BI ═══
+     Todos a la misma escala: un tooltip se ve tan pequeño como es. */
+  var CNV = {
+    s169: { W: 1280, H: 720, m: 24, g: 12, hd: 1, k: 4, a: 2, b: 2, kl: ['KPI', 'KPI', 'KPI', 'KPI'], l: { hd: 'Dashboard', a1: 'Visual principal' } },
+    s43: { W: 1024, H: 768, m: 24, g: 12, hd: 1, k: 3, a: 2, b: 2, kl: ['KPI', 'KPI', 'KPI'], l: { hd: 'Informe 4:3', a1: 'Visual principal' } },
+    carta: { W: 816, H: 1056, m: 40, g: 16, hd: 1, hdH: 64, k: 3, a: 1, b: 2, pk: 12, pa: 44, pb: 44, kl: ['KPI', 'KPI', 'KPI'], l: { hd: 'Informe mensual', a1: 'Gráfico + comentario', b1: 'Tabla', b2: 'Notas' } },
+    tip: { W: 320, H: 240, m: 12, g: 8, hd: 1, hdH: 24, k: 2, a: 1, b: 0, pk: 34, pa: 66, kl: ['', ''], l: {} },
+    mob: { W: 400, H: 640, m: 16, g: 10, hd: 1, hdH: 40, k: 2, a: 1, b: 1, pk: 16, pa: 48, pb: 30, kl: ['KPI', 'KPI'], l: { hd: 'Ventas', a1: 'Un visual' } },
+    cus: { W: 1280, H: 1440, m: 24, g: 12, hd: 1, k: 4, a: 2, b: 3, pk: 9, pa: 42, pb: 45, kl: ['KPI', 'KPI', 'KPI', 'KPI'], l: { hd: 'Página con scroll', a1: 'Visual principal', b1: 'Detalle', b2: 'Detalle', b3: 'Detalle' } }
+  };
+  VIZ.cnv = function (viz) {
+    var st = $('.cnv', viz), box = $('.wf', st), dim = $('.cnv-dim', st), apply = wfMake(box), cur = 's169';
+    var note = $('[data-tgl-note="' + viz.id + '"]');
+    function size() {
+      var c = CNV[cur], s = Math.min(st.clientWidth * .9 / 1280, st.clientHeight * .86 / 1440);
+      box.style.width = Math.round(c.W * s) + 'px'; box.style.height = Math.round(c.H * s) + 'px';
+    }
+    if ('ResizeObserver' in window) new ResizeObserver(size).observe(st);
+    return { set: function (k) {
+      cur = k; var c = CNV[k]; apply(c); size();
+      dim.textContent = c.W + ' × ' + c.H + ' px';
+      if (note) note.textContent = note.getAttribute('data-n-' + k) || '';
+    } };
+  };
+
+  /* ═══ 07 · GESTALT APLICADA (panel Gestalt de PBI Mockup Creator) ═══ */
+  var GBASE = { m: 24, g: 12, hd: 1, k: 4, a: 2, b: 2, kl: ['KPI', 'KPI', 'KPI', 'KPI'], l: { hd: 'Header', a1: 'Zona A', a2: 'Zona A', b1: 'Zona B', b2: 'Zona B' } };
+  function gx(o) { var c = {}, k; for (k in GBASE) c[k] = GBASE[k]; for (k in o) c[k] = o[k]; return c; }
+  var GST = {
+    prox: { good: gx({}), bad: gx({ gs: [3, 30, 5] }), cg: 'Separación uniforme: 12 px', cb: 'Separaciones de 3, 30 y 5 px' },
+    jer: { good: gx({ pk: 18, pa: 45, pb: 27, l: { hd: 'Header', a1: '① Zona A · mensaje', a2: 'Zona A', b1: '② Zona B · detalle', b2: 'Zona B' } }), bad: gx({ pk: 16, pa: 26, pb: 50, l: { hd: 'Header', a1: '② Zona A · mensaje', a2: 'Zona A', b1: '① Zona B · detalle', b2: 'Zona B' } }), cg: 'Zona A 45 % · Zona B 27 %', cb: 'Zona A 26 % · Zona B 50 %' },
+    sem: { good: gx({}), bad: gx({ k: 4, a: 3, b: 3, pk: 33, pa: 33, pb: 33, kl: ['', '', '', ''], l: { hd: 'Header' } }), cls: 'wf--same', cg: 'KPIs y gráficos: dos familias', cb: 'Todo igual: no hay familias' },
+    cie: { good: gx({}), bad: gx({ m: 3, g: 3, hdH: 40 }), cg: 'free', cb: 'free' },
+    ff: { good: gx({}), bad: gx({}), cls: 'wf--nofig', cg: 'Tarjeta ≠ fondo', cb: 'Tarjeta = fondo, sin borde' }
+  };
+  VIZ.gst = function (viz) {
+    var boxes = $$('.gst-pair .wf', viz), caps = $$('.gst-pair figcaption em', viz), ap = boxes.map(wfMake);
+    var txt = $('.gst-txt', viz.parentNode);
+    return { set: function (k) {
+      var g = GST[k];
+      ['good', 'bad'].forEach(function (w, i) {
+        boxes[i].className = 'wf' + (w === 'bad' && g.cls ? ' ' + g.cls : '');
+        var R = ap[i](g[w]), cap = g[w === 'good' ? 'cg' : 'cb'];
+        caps[i].textContent = cap === 'free' ? 'Espacio libre: ' + R._free + ' %' : cap;
+      });
+      if (txt) $$('[data-g]', txt).forEach(function (p) { p.hidden = p.dataset.g !== k; });
+    } };
+  };
+
+  /* ═══ 07 · PROPORCIONES POR ZONAS ═══
+     Como en la herramienta: cada zona tiene un peso y el alto disponible
+     (quitando header, márgenes y separaciones) se reparte en proporción. */
+  (function () {
+    var host = $('#props'); if (!host) return;
+    var box = $('.wf', host), apply = wfMake(box), inputs = $$('input[type=range]', host), out = $('.prop-diag', host);
+    var cfg = { m: 24, g: 12, hd: 1, k: 4, a: 2, b: 2, kl: ['KPI', 'KPI', 'KPI', 'KPI'], l: { hd: 'Header', a1: 'Zona A · mensaje', a2: 'Zona A', b1: 'Zona B · detalle', b2: 'Zona B' } };
+    function render() {
+      var w = {}; inputs.forEach(function (i) { w[i.name] = +i.value; });
+      cfg.pk = w.k; cfg.pa = w.a; cfg.pb = w.b;
+      var R = apply(cfg), tot = w.k + w.a + w.b;
+      inputs.forEach(function (i) {
+        var pct = Math.round(w[i.name] / tot * 100), px = Math.round(R['_' + i.name] || 0);
+        $('[data-for="' + i.name + '"]', host).textContent = pct + ' % · ' + px + ' px';
+        i.style.setProperty('--v', ((i.value - i.min) / (i.max - i.min) * 100) + '%');
+      });
+      var A = R._a, B = R._b, K = R._k, msg, ok = false;
+      if (A < B * .85) msg = 'Jerarquía invertida: la Zona B (' + Math.round(B) + ' px) supera a la A (' + Math.round(A) + ' px). El detalle llega antes que el mensaje.';
+      else if (K > A * .6) msg = 'Los KPIs empiezan a competir con los gráficos. Una fila de tarjetas no necesita tanto alto.';
+      else if (B < 90) msg = 'La Zona B apenas cabe. Si el detalle no se puede leer, quizá su sitio sea un tooltip o una página de drill-through.';
+      else { msg = 'Reparto equilibrado: contexto, métricas, mensaje y detalle, en ese orden de peso.'; ok = true; }
+      out.textContent = msg; out.classList.toggle('ok', ok);
+    }
+    inputs.forEach(function (i) { i.addEventListener('input', render); });
+    $$('[data-preset]', host).forEach(function (b) {
+      b.addEventListener('click', function () {
+        var p = b.dataset.preset.split(',');
+        inputs.forEach(function (i, n) { i.value = p[n]; });
+        $$('[data-preset]', host).forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        render();
+      });
+    });
+    render();
+  })();
+
+  /* ═══ 06 · CATÁLOGO DE VISUALES ═══
+     Los visuales de PBI Mockup Creator, dibujados con la paleta del manual:
+     violeta para lo que importa, grises para el contexto. */
+  (function () {
+    var host = $('#vcat'); if (!host) return;
+    var A = '#6B5CA5', A2 = '#A59CC9', A3 = '#D2CEE4', G1 = '#BDBDBD', G2 = '#DCDCDC', G3 = '#8A8A8A', AX = '#D6D6D6', RED = '#a3223e';
+    function r(x, y, w, h, c, o) { return '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + Math.max(0, w).toFixed(1) + '" height="' + Math.max(0, h).toFixed(1) + '" fill="' + c + '"' + (o ? ' ' + o : '') + '/>'; }
+    function pl(pts, c, w, o) { return '<polyline points="' + pts.map(function (p) { return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' ') + '" fill="none" stroke="' + c + '" stroke-width="' + (w || 2) + '" stroke-linejoin="round" stroke-linecap="round"' + (o ? ' ' + o : '') + '/>'; }
+    function pg(pts, c, o) { return '<polygon points="' + pts.map(function (p) { return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' ') + '" fill="' + c + '"' + (o ? ' ' + o : '') + '/>'; }
+    function ci(x, y, rr, c, o) { return '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + rr + '" fill="' + c + '"' + (o ? ' ' + o : '') + '/>'; }
+    function ln(x1, y1, x2, y2, c, w, o) { return '<line x1="' + x1.toFixed(1) + '" y1="' + y1.toFixed(1) + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="' + c + '" stroke-width="' + (w || 1) + '"' + (o ? ' ' + o : '') + '/>'; }
+    var X0 = 14, X1 = 150, Y0 = 10, Y1 = 88, base = ln(X0, Y1, X1, Y1, AX);
+    var S3 = [A, A2, G2];
+    function hbars(rows) {   // rows: [[v, v, v…]] valores 0–1 acumulados por segmentos
+      return rows.map(function (seg, i) {
+        var y = 12 + i * 15, x = X0, out = '';
+        seg.forEach(function (v, j) { var w = v * (X1 - X0); out += r(x, y, w, 10, seg.length === 1 ? (i === 0 ? A : G1) : S3[j]); x += w; });
+        return out;
+      }).join('');
+    }
+    function vbars(cols, hl) {
+      var n = cols.length, bw = (X1 - X0) / n;
+      return base + cols.map(function (seg, i) {
+        var x = X0 + i * bw + bw * .2, y = Y1, out = '';
+        seg.forEach(function (v, j) { var h = v * (Y1 - Y0); y -= h; out += r(x, y, bw * .6, h, seg.length === 1 ? (i === hl ? A : G1) : S3[j]); });
+        return out;
+      }).join('');
+    }
+    function xy(vals) { var n = vals.length; return vals.map(function (v, i) { return [X0 + i / (n - 1) * (X1 - X0), Y1 - v * (Y1 - Y0)]; }); }
+    function areas(series, full) {
+      var n = series[0].length, acc = [], out = '', i, j;
+      for (i = 0; i < n; i++) acc.push(0);
+      var tot = acc.map(function (_, i) { return series.reduce(function (s, a) { return s + a[i]; }, 0); });
+      var polys = series.map(function (a, j) {
+        var lo = acc.slice(), hi = acc.map(function (v, i) { return v + (full ? a[i] / tot[i] : a[i]); });
+        acc = hi;
+        return pg(xy(hi).concat(xy(lo).reverse()), S3[j]);
+      });
+      return base + polys.join('');
+    }
+    var L1 = [.3, .34, .32, .4, .44, .42, .5, .55, .6, .58, .68, .76], L2 = [.26, .28, .3, .27, .3, .33, .31, .34, .33, .36, .35, .37];
+    var V = {
+      'bar': function () { return hbars([[.95], [.68], [.52], [.4], [.26]]); },
+      'bar-stacked': function () { return hbars([[.4, .3, .2], [.32, .2, .18], [.26, .2, .12], [.2, .14, .1], [.12, .1, .08]]); },
+      'bar-grouped': function () { var o = ''; [[.9, .72], [.62, .66], [.5, .38], [.3, .34]].forEach(function (p, i) { var y = 12 + i * 19; o += r(X0, y, p[0] * 136, 7, A) + r(X0, y + 8, p[1] * 136, 7, G1); }); return o; },
+      'bar-100': function () { return hbars([[.55, .3, .15], [.45, .35, .2], [.38, .32, .3], [.3, .4, .3], [.22, .38, .4]]); },
+      'column': function () { return vbars([[.42], [.55], [.48], [.62], [.58], [.9]], 5); },
+      'column-stacked': function () { return vbars([[.25, .15, .1], [.3, .18, .1], [.28, .2, .14], [.36, .2, .14], [.4, .22, .16], [.48, .24, .18]]); },
+      'column-grouped': function () { var o = base, bw = 136 / 5; [[.55, .6], [.62, .58], [.7, .64], [.66, .72], [.9, .76]].forEach(function (p, i) { var x = X0 + i * bw + bw * .12; o += r(x, Y1 - p[0] * 78, bw * .36, p[0] * 78, A) + r(x + bw * .38, Y1 - p[1] * 78, bw * .36, p[1] * 78, G1); }); return o; },
+      'column-100': function () { return vbars([[.6, .25, .15], [.55, .28, .17], [.5, .3, .2], [.46, .32, .22], [.4, .34, .26], [.36, .34, .3]].map(function (s) { return s.map(function (v) { return v * 1; }); })); },
+      'line': function () { return base + pl(xy(L2), G1, 1.6) + pl(xy(L1), A, 2.2) + ci(xy(L1)[11][0], xy(L1)[11][1], 2.6, A); },
+      'area': function () { var p = xy(L1); return base + pg(p.concat([[X1, Y1], [X0, Y1]]), A3) + pl(p, A, 2); },
+      'area-stacked': function () { return areas([[.2, .22, .24, .26, .3, .34], [.14, .16, .15, .18, .2, .22], [.1, .1, .12, .12, .14, .15]]); },
+      'area-100': function () { return areas([[.5, .48, .45, .42, .4, .36], [.3, .31, .32, .33, .34, .35], [.2, .21, .23, .25, .26, .29]], 1); },
+      'combo-stacked': function () { var o = vbars([[.3, .14], [.34, .16], [.32, .18], [.4, .18], [.44, .2], [.5, .22]]).replace(new RegExp(A, 'g'), G1).replace(new RegExp(A2, 'g'), G2); var bw = 136 / 6, pts = [.72, .66, .7, .62, .6, .54].map(function (v, i) { return [X0 + i * bw + bw * .5, Y1 - v * 78]; }); return o + pl(pts, A, 2) + pts.map(function (p) { return ci(p[0], p[1], 2.2, A); }).join(''); },
+      'combo-grouped': function () { var o = base, bw = 136 / 5; [[.5, .56], [.56, .54], [.6, .6], [.62, .68], [.7, .66]].forEach(function (p, i) { var x = X0 + i * bw + bw * .12; o += r(x, Y1 - p[0] * 78, bw * .36, p[0] * 78, G3) + r(x + bw * .38, Y1 - p[1] * 78, bw * .36, p[1] * 78, G2); }); var pts = [.8, .76, .84, .86, .92].map(function (v, i) { return [X0 + i * bw + bw * .5, Y1 - v * 78]; }); return o + pl(pts, A, 2) + pts.map(function (p) { return ci(p[0], p[1], 2.2, A); }).join(''); },
+      'ribbon': function () {
+        var D = [[.3, .22, .16], [.26, .3, .18], [.2, .34, .24], [.18, .3, .36]], C = [A, G1, G3], n = D.length, bw = 16, gap = (136 - bw * n) / (n - 1), pos = [];
+        D.forEach(function (col, i) { var order = [0, 1, 2].sort(function (a, b) { return col[a] - col[b]; }), y = Y1, p = []; order.forEach(function (s) { var h = col[s] * 110; p[s] = [y - h, y]; y -= h + 2; }); pos.push(p); });
+        var o = base;
+        for (var i = 0; i < n - 1; i++) for (var s = 0; s < 3; s++) { var xa = X0 + i * (bw + gap) + bw, xb = xa + gap; o += pg([[xa, pos[i][s][0]], [xb, pos[i + 1][s][0]], [xb, pos[i + 1][s][1]], [xa, pos[i][s][1]]], C[s], 'opacity=".28"'); }
+        pos.forEach(function (p, i) { for (var s = 0; s < 3; s++) o += r(X0 + i * (bw + gap), p[s][0], bw, p[s][1] - p[s][0], C[s]); });
+        return o;
+      },
+      'waterfall': function () {
+        var steps = [[.62, 't'], [.18, '+'], [-.1, '-'], [.12, '+'], [-.06, '-'], [0, 'e']], bw = 136 / 6, lvl = 0, o = base;
+        steps.forEach(function (s, i) {
+          var x = X0 + i * bw + bw * .16, w = bw * .68, a, b, c;
+          if (s[1] === 't') { a = 0; b = s[0]; c = G3; lvl = b; }
+          else if (s[1] === 'e') { a = 0; b = lvl; c = G3; }
+          else { a = lvl; b = lvl + s[0]; c = s[0] > 0 ? A : RED; lvl = b; }
+          var top = Math.max(a, b), bot = Math.min(a, b);
+          o += r(x, Y1 - top * 90, w, (top - bot) * 90, c);
+          if (i < steps.length - 1) o += ln(x + w, Y1 - lvl * 90, x + bw, Y1 - lvl * 90, G1, 1, 'stroke-dasharray="2 2"');
+        });
+        return o;
+      },
+      'funnel': function () { var o = ''; [1, .72, .5, .32, .18].forEach(function (v, i) { var w = v * 132; o += r(82 - w / 2, 10 + i * 16, w, 13, i === 0 ? A : (i === 4 ? A : A2), i === 0 || i === 4 ? '' : 'opacity="' + (1 - i * .15) + '"'); }); return o; },
+      'scatter': function () {
+        var P = [[.1, .18], [.16, .3], [.22, .24], [.28, .4], [.34, .34], [.4, .46], [.46, .42], [.5, .58], [.56, .5], [.62, .62], [.68, .6], [.74, .7], [.8, .66], [.86, .8], [.3, .78], [.2, .52], [.6, .36], [.9, .9]], o = base + ln(X0, Y1, X0, Y0, AX);
+        o += ln(X0 + 6, Y1 - 10, X1 - 4, Y0 + 8, G1, 1, 'stroke-dasharray="3 3"');
+        P.forEach(function (p, i) { o += ci(X0 + p[0] * 136, Y1 - p[1] * 78, 3, i === 14 ? A : G1, i === 14 ? '' : 'opacity=".9"'); });
+        return o;
+      },
+      'donut': function () {
+        var segs = [[.58, A], [.27, G1], [.15, G2]], acc = 0, C = 2 * Math.PI * 30, o = '';
+        segs.forEach(function (s) { o += '<circle cx="80" cy="50" r="30" fill="none" stroke="' + s[1] + '" stroke-width="13" stroke-dasharray="' + (s[0] * C - 1.5).toFixed(1) + ' ' + C.toFixed(1) + '" stroke-dashoffset="' + (-acc * C).toFixed(1) + '" transform="rotate(-90 80 50)"/>'; acc += s[0]; });
+        return o;
+      },
+      'treemap': function () { return r(X0, 8, 74, 82, A) + r(90, 8, 60, 44, G1) + r(90, 54, 34, 36, G2) + r(126, 54, 24, 20, '#CFCFCF') + r(126, 76, 24, 14, '#E6E6E6'); },
+      'table': function () {
+        var o = ln(X0, 18, X1, 18, G3, 1.2) + r(X0, 9, 40, 5, G3) + r(96, 9, 22, 5, G3) + r(126, 9, 24, 5, G3);
+        for (var i = 0; i < 5; i++) { var y = 26 + i * 13, hl = i === 1; o += r(X0, y, 30 + (i * 7) % 20, 5, hl ? A : G1) + r(100 - i % 2 * 4, y, 18 + i % 2 * 4, 5, hl ? A : G2) + r(130 - i % 3 * 2, y, 20 + i % 3 * 2, 5, hl ? A : G2) + ln(X0, y + 9, X1, y + 9, '#EFEFEF'); }
+        return o;
+      },
+      'matrix': function () {
+        var H = [[.2, .4, .6, .3], [.5, .9, .7, .4], [.3, .5, .4, .2], [.1, .3, .5, .6]], sc = ['#F0EEF6', '#CCC7E0', '#A59CC9', '#8175B3', '#695BA4'], o = '';
+        for (var c = 0; c < 4; c++) o += r(48 + c * 26, 10, 18, 5, G3);
+        H.forEach(function (row, i) { o += r(X0, 24 + i * 16, 26, 5, G1); row.forEach(function (v, c) { o += r(46 + c * 26, 20 + i * 16, 24, 14, sc[Math.min(4, Math.floor(v * 5))]); }); });
+        return o;
+      },
+      'lollypop': function () { var o = ln(X0, 8, X0, 92, AX); [.92, .74, .6, .5, .38, .26].forEach(function (v, i) { var y = 14 + i * 14, x = X0 + v * 132; o += ln(X0, y, x, y, i === 0 ? A : G1, 1.6) + ci(x, y, 4, i === 0 ? A : G1); }); return o; },
+      'dumbbell': function () { var o = ''; [[.3, .8], [.4, .62], [.5, .58], [.55, .46], [.35, .3]].forEach(function (p, i) { var y = 14 + i * 16, a = X0 + p[0] * 132, b = X0 + p[1] * 132; o += ln(a, y, b, y, G2, 3) + ci(a, y, 4, G1) + ci(b, y, 4, i === 0 ? A : G3); }); return o; },
+      'slope': function () { var o = ln(40, 8, 40, 92, AX) + ln(120, 8, 120, 92, AX); [[.3, .82], [.7, .6], [.6, .5], [.45, .4], [.2, .22]].forEach(function (p, i) { var c = i === 0 ? A : G1, y1 = 88 - p[0] * 76, y2 = 88 - p[1] * 76; o += ln(40, y1, 120, y2, c, i === 0 ? 2.2 : 1.4) + ci(40, y1, 3, c) + ci(120, y2, 3, c); }); return o; },
+      'drill': function () {
+        var o = r(8, 16, 62, 68, '#fff', 'stroke="' + G2 + '"') + r(96, 12, 58, 76, '#fff', 'stroke="' + A + '"');
+        [.8, .55, .4].forEach(function (v, i) { o += r(14, 26 + i * 14, v * 48, 8, i === 0 ? A : G1); });
+        o += r(102, 20, 30, 5, G3) + r(102, 32, 46, 20, A3) + r(102, 58, 46, 4, G2) + r(102, 66, 38, 4, G2) + r(102, 74, 42, 4, G2);
+        return o + pl([[72, 30], [92, 30]], A, 1.6) + pg([[92, 26], [96, 30], [92, 34]], A);
+      },
+      'tooltip': function () {
+        var o = base + vbars([[.35], [.5], [.42], [.66], [.48], [.4]], 3).replace(base, '');
+        o += r(76, 8, 64, 40, '#fff', 'stroke="' + A + '" rx="3"') + r(82, 14, 26, 4, G3) + r(82, 22, 34, 7, A) + pl([[82, 42], [92, 38], [102, 40], [112, 34], [132, 30]], G1, 1.4);
+        return o + pg([[88, 58], [88, 70], [92, 67], [95, 73], [97, 72], [94, 66], [99, 66]], '#111');
+      }
+    };
+    var CAT = [
+      ['Barras y columnas', [
+        ['bar', 'Barras', 'Comparar categorías y hacer rankings, sobre todo con nombres largos.'],
+        ['bar-stacked', 'Barras apiladas', 'Total por categoría y su composición. Solo el primer tramo se compara bien.'],
+        ['bar-grouped', 'Barras agrupadas', 'Dos o tres series por categoría: este año frente al anterior.'],
+        ['bar-100', 'Barras 100 %', 'Composición relativa: qué parte pesa cada tramo en cada categoría.'],
+        ['column', 'Columnas', 'Pocas categorías o periodos cortos; el periodo actual, destacado.'],
+        ['column-stacked', 'Columnas apiladas', 'Cómo evoluciona un total y su reparto.'],
+        ['column-grouped', 'Columnas agrupadas', 'Real frente a presupuesto, periodo a periodo.'],
+        ['column-100', 'Columnas 100 %', 'Cómo cambia el mix a lo largo del tiempo.']]],
+      ['Líneas y áreas', [
+        ['line', 'Líneas', 'Tendencia continua con muchas fechas. La serie importante, en color.'],
+        ['area', 'Área', 'Una sola serie con sensación de volumen acumulado.'],
+        ['area-stacked', 'Área apilada', 'Un total en el tiempo y su reparto, con pocas series.'],
+        ['area-100', 'Área 100 %', 'Evolución de la cuota de cada parte.'],
+        ['combo-stacked', 'Columnas apiladas + línea', 'Volumen y una tasa en el mismo eje de tiempo.'],
+        ['combo-grouped', 'Columnas agrupadas + línea', 'Real frente a objetivo, con un ratio encima (margen %).']]],
+      ['Otros gráficos', [
+        ['ribbon', 'Cintas', 'Cambios de posición en el ranking de un periodo a otro.'],
+        ['waterfall', 'Cascada', 'Cómo se pasa de un total a otro: P&L, puente de ventas.'],
+        ['funnel', 'Embudo', 'Etapas secuenciales y cuánto se pierde entre ellas.'],
+        ['scatter', 'Dispersión', 'Relación entre dos medidas y los casos que se salen.'],
+        ['donut', 'Anillos', 'Parte de un todo, solo con dos o tres categorías.'],
+        ['treemap', 'Mapa de árbol', 'Jerarquía y peso cuando hay muchas categorías.']]],
+      ['Análisis avanzado', [
+        ['table', 'Tabla', 'Consultar valores exactos. No para ver patrones.'],
+        ['matrix', 'Matriz', 'Cruzar dos dimensiones con subtotales; con color, un mapa de calor.'],
+        ['lollypop', 'Lollipop', 'Ranking con muchas categorías y menos tinta que la barra.'],
+        ['dumbbell', 'Dumbbell', 'La distancia entre dos momentos, categoría a categoría.'],
+        ['slope', 'Slope', 'Quién sube y quién baja entre dos periodos.']]],
+      ['Interacción', [
+        ['drill', 'Drill-through', 'Una página de detalle a la que se llega desde un dato concreto.'],
+        ['tooltip', 'Tooltip', 'Una mini-página que aparece al pasar el cursor: detalle bajo demanda.']]]
+    ];
+    host.innerHTML = CAT.map(function (g) {
+      return '<div class="vc-g"><p class="vc-h">' + g[0] + ' <span>' + g[1].length + '</span></p><ul class="vc-list">' + g[1].map(function (v) {
+        return '<li><svg viewBox="0 0 164 100" role="img" aria-label="' + v[1] + '">' + V[v[0]]() + '</svg><b>' + v[1] + '</b><span>' + v[2] + '</span></li>';
+      }).join('') + '</ul></div>';
+    }).join('');
+  })();
 
   /* 08 · Anotación */
   VIZ.annot = function (viz) {

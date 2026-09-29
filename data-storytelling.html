@@ -18,7 +18,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet">
 <!-- Shared styles: variables, nav, footer, botones, reset -->
 <link rel="stylesheet" href="./shared.css?v=20260929">
-<link rel="stylesheet" href="./data-storytelling.css?v=20260929c">
+<link rel="stylesheet" href="./data-storytelling.css?v=20260929d">
 <!-- Primary Meta Tags -->
 <meta name="description" content="Un manual interactivo sobre Data Storytelling y diseño de dashboards: percepción, reducción de ruido, atención, elección del visual, composición, texto y narrativa, demostrados sobre un dashboard que cambia mientras lees.">
 <meta name="keywords" content="data storytelling, diseño de dashboards, Power BI, visualización de datos, scrollytelling, UX, Borja Mora">
@@ -726,30 +726,6 @@
       <div class="tgl" id="ten" data-viz="ten" data-auto="a,b"><div class="stage stage--wide" role="img" aria-label="Diez barras. Cuando todas destacan igual, ninguna destaca; cuando solo una lo hace, la mirada va directa a ella."></div></div>
     </div>
   </div>
-
-  <!-- Variaciones en KPIs -->
-  <div class="ds-c ds-sec--tight">
-    <p class="ds-kicker">Variaciones</p>
-    <p class="ds-h3" style="margin:12px 0 0;max-width:30ch">La flecha dice hacia dónde se mueve el número. El color dice si es una buena noticia.</p>
-    <div class="kpisem rv-seq">
-      <div class="good">
-        <span class="kl">Ventas Q4</span><span class="kv">1,57 M€</span><span class="kd">▲ +24 % vs. Q4 2024</span>
-        <svg viewBox="0 0 84 30" aria-hidden="true"><polyline points="2,24 14,22 26,23 38,18 50,16 62,12 74,9 82,5"/></svg>
-        <span class="why">Sube, y es bueno.</span>
-      </div>
-      <div class="good">
-        <span class="kl">Rotación de plantilla</span><span class="kv">12,4 %</span><span class="kd">▼ −1,8 pp vs. 2024</span>
-        <svg viewBox="0 0 84 30" aria-hidden="true"><polyline points="2,6 14,8 26,7 38,11 50,13 62,15 74,19 82,21"/></svg>
-        <span class="why">Baja, y también es bueno.</span>
-      </div>
-      <div class="bad">
-        <span class="kl">Coste por lead</span><span class="kv">12,80 €</span><span class="kd">▲ +6,1 % vs. Q3</span>
-        <svg viewBox="0 0 84 30" aria-hidden="true"><polyline points="2,20 14,21 26,18 38,19 50,15 62,14 74,12 82,10"/></svg>
-        <span class="why">Sube, y es malo.</span>
-      </div>
-    </div>
-    <p class="ds-body" style="margin-top:32px;max-width:62ch">Si el color siguiera al signo, alguien celebraría una rotación que sube. Por eso la dirección y el juicio van por separado, y la flecha sigue ahí cuando el color no se ve. Dos detalles más: cuando el KPI ya es un porcentaje, la variación va en puntos (pp), no en %; y el minigráfico va en gris, porque acompaña al número, no compite con él.</p>
-  </div>
 </section>
 
 <!-- ═══════════ 06 · ELEGIR EL VISUAL ═══════════ -->
@@ -795,6 +771,47 @@
       </div>
       <div><div class="stage stage--wide" role="img" aria-label="Los mismos puntos se transforman en línea, barras, ranking, histograma, dispersión o barra apilada según la tarea elegida."></div></div>
     </div>
+  </div>
+
+  <!-- Anatomía de un KPI -->
+  <div class="ds-c ds-sec">
+    <p class="ds-kicker">Anatomía de un KPI</p>
+    <p class="ds-h3" style="margin:12px 0 18px;max-width:30ch">Una tarjeta KPI tiene que responder en un vistazo a tres preguntas: cuánto, hacia dónde y frente a qué.</p>
+    <div class="ctl-row"><div class="seg" role="group" aria-label="Tipo de tarjeta KPI" data-tgl-for="kpi">
+      <button type="button" data-s="none" aria-pressed="false">Sin gráfico</button>
+      <button type="button" data-s="spark" aria-pressed="true">Sparkline</button>
+      <button type="button" data-s="cols" aria-pressed="false">Columnas</button>
+    </div></div>
+    <p class="ds-body" aria-live="polite" data-tgl-note="kpi" style="max-width:62ch"
+      data-n-none="Sin gráfico, el número se queda solo. Lo uso cuando hay poco espacio, cuando la fila tiene muchos KPIs o cuando la tendencia no cambia la decisión."
+      data-n-spark="La sparkline es una línea del tamaño de una palabra: no se lee valor a valor, se lee la forma. Sirve para series continuas y responde a una pregunta: ¿el dato de hoy es un pico o lo normal?"
+      data-n-cols="Las columnas funcionan cuando cada periodo cuenta por separado: ventas por mes, pedidos por semana. La última, la del periodo actual, va un tono más oscura."></p>
+    <div class="tgl kan" id="kpi" data-viz="kpi" data-s="spark" data-auto="spark,cols,none">
+      <div class="kan-top">
+        <div class="kan-card" role="img" aria-label="Tarjeta KPI: etiqueta Ventas Q4, valor 1,57 millones de euros, variación de más 24 % frente al Q4 de 2024 y un minigráfico gris a la derecha."></div>
+        <ol class="kan-list">
+          <li><b>Etiqueta.</b> Qué se mide y de qué periodo. Pequeña, gris y en mayúsculas: nombra, no compite.</li>
+          <li><b>Valor.</b> Lo más grande de la tarjeta. Formato corto y con unidad: 1,57 M€, no 1.572.340,00 €.</li>
+          <li><b>Delta.</b> La flecha dice hacia dónde se mueve; el color, si es buena noticia. Nunca solo el color.</li>
+          <li><b>Referencia.</b> ¿Frente a qué? Año anterior, objetivo, media de 12 meses. Un delta sin referencia no significa nada.</li>
+          <li><b>Minigráfico.</b> Contexto, no protagonista: a la derecha, unos dos quintos del ancho, en gris y sin ejes.</li>
+        </ol>
+      </div>
+      <div class="kpi-row" role="img" aria-label="Cuatro tarjetas KPI. Ventas sube y es buena noticia. Margen bruto baja frente al objetivo y es mala. Rotación baja y es buena. Coste por lead sube y es malo."></div>
+    </div>
+    <div class="kan-foot">
+      <p class="ds-body">Fíjate en la fila: dos deltas bajan y dos suben, y el color no sigue al signo. Si lo siguiera, alguien celebraría una rotación que sube. Por eso separo dirección y juicio, y la flecha sigue ahí cuando el color no se ve.</p>
+      <p class="ds-body ds-muted">Dos detalles más: cuando el KPI ya es un porcentaje, la variación va en puntos (pp), no en %. Y la referencia es explícita, como pide IBCS: año anterior, plan o previsión, pero siempre dicho en la tarjeta.</p>
+    </div>
+    <details class="src" data-src="tufte"></details>
+  </div>
+
+  <!-- Catálogo de visuales -->
+  <div class="ds-c ds-sec--tight">
+    <p class="ds-kicker">Catálogo</p>
+    <p class="ds-h3" style="margin:12px 0 10px;max-width:30ch">Los visuales que uso en Power BI, y la pregunta que resuelve cada uno.</p>
+    <p class="ds-body ds-muted" style="max-width:62ch">Son los de PBI Mockup Creator, dibujados con la paleta de este manual: violeta para lo que importa, grises para el contexto y rojo solo cuando algo resta.</p>
+    <div class="vcat" id="vcat"></div>
   </div>
 
   <!-- Recetas por área -->
@@ -915,6 +932,37 @@
     </div>
   </div>
 
+  <!-- Lienzos -->
+  <div class="ds-c ds-sec--tight">
+    <div class="split split--wide">
+      <div>
+        <p class="ds-kicker">Lienzos</p>
+        <p class="ds-h3" style="margin:12px 0 18px">Antes de colocar nada, elijo dónde se va a leer.</p>
+        <div class="ctl-row"><div class="seg seg--grid" role="group" aria-label="Tipo de lienzo" data-tgl-for="cnv">
+          <button type="button" data-s="s169" aria-pressed="true">16:9</button>
+          <button type="button" data-s="s43" aria-pressed="false">4:3</button>
+          <button type="button" data-s="carta" aria-pressed="false">Carta</button>
+          <button type="button" data-s="tip" aria-pressed="false">Tooltip</button>
+          <button type="button" data-s="mob" aria-pressed="false">Móvil</button>
+          <button type="button" data-s="cus" aria-pressed="false">Personalizado</button>
+        </div></div>
+        <p class="ds-body" aria-live="polite" data-tgl-note="cnv"
+          data-n-s169="16:9 es el lienzo por defecto de Power BI (1280 × 720). Es el de los dashboards: encaja con monitores, portátiles y presentaciones. Si necesito un fondo más nítido, subo a 1920 × 1080 sin cambiar la proporción."
+          data-n-s43="4:3 es más alto en proporción: caben más filas y menos columnas. Lo reservo para pantallas o proyectores con ese formato, o para un informe que se lee más de arriba abajo que de lado a lado."
+          data-n-carta="Carta (816 × 1056) es un documento, no una pantalla. Lo uso cuando el informe se imprime o se exporta a PDF: lectura vertical, más texto, tablas y un comentario junto a cada gráfico."
+          data-n-tip="Tooltip (320 × 240) es una página que aparece al pasar el cursor sobre un dato. Cabe un KPI y un visual mínimo: el detalle llega solo cuando alguien lo pide."
+          data-n-mob="En Power BI, el móvil no es otro informe: es un diseño móvil del mismo, donde recolocas los visuales en una columna. En la herramienta lo simulo con 400 × 640. Pocos KPIs, uno por fila, y un visual por pantalla."
+          data-n-cus="Personalizado sirve para una pantalla concreta o para páginas con scroll: aquí, 1280 × 1440, dos pantallas de alto. Ojo: en el servicio, la vista por defecto ajusta la página entera a la ventana; para que se desplace hay que elegir «Ajustar al ancho»."></p>
+      </div>
+      <div class="tgl" id="cnv" data-viz="cnv" data-auto="s169,carta,tip">
+        <div class="cnv" role="img" aria-label="Los lienzos de Power BI dibujados a la misma escala: 16:9, 4:3, carta, tooltip, móvil y una página personalizada con scroll.">
+          <div class="wf"></div><span class="cnv-dim"></span>
+        </div>
+      </div>
+    </div>
+    <details class="src" data-src="pbicanvas"></details>
+  </div>
+
   <!-- Zonas y jerarquía -->
   <div class="ds-c ds-sec--tight">
     <div class="split split--wide">
@@ -933,6 +981,30 @@
       <div class="tgl" id="hier" data-viz="wf" data-wf="hier" data-auto="inv,ok">
         <div class="wf" role="img" aria-label="Plano con header, KPIs, Zona A y Zona B. Primero la zona de detalle ocupa más que la principal; después la principal recupera el espacio."></div>
       </div>
+    </div>
+  </div>
+
+  <!-- Proporciones por zonas -->
+  <div class="ds-c ds-sec--tight">
+    <div class="split split--wide" id="props">
+      <div>
+        <p class="ds-kicker">Proporciones</p>
+        <p class="ds-h3" style="margin:12px 0 14px">Cada zona tiene un peso. El alto se reparte en proporción.</p>
+        <p class="ds-body ds-muted" style="margin-bottom:22px">Primero resto lo fijo: margen, header y separaciones. Lo que queda se reparte entre KPIs, Zona A y Zona B según su peso. Mi punto de partida es 2 · 5 · 3: una fila de KPIs contenida, el mensaje con la mitad del espacio y el detalle con el resto.</p>
+        <div class="prop-ctl">
+          <label><span>KPIs</span><input type="range" name="k" min="1" max="8" value="2" aria-label="Peso de la fila de KPIs"><output data-for="k"></output></label>
+          <label><span>Zona A</span><input type="range" name="a" min="2" max="10" value="5" aria-label="Peso de la Zona A"><output data-for="a"></output></label>
+          <label><span>Zona B</span><input type="range" name="b" min="1" max="8" value="3" aria-label="Peso de la Zona B"><output data-for="b"></output></label>
+        </div>
+        <div class="seg prop-pre" role="group" aria-label="Repartos de ejemplo">
+          <button type="button" data-preset="2,5,3" aria-pressed="true">Equilibrado</button>
+          <button type="button" data-preset="2,7,2" aria-pressed="false">Mensaje dominante</button>
+          <button type="button" data-preset="2,4,4" aria-pressed="false">Operativo</button>
+          <button type="button" data-preset="2,3,6" aria-pressed="false">Invertido</button>
+        </div>
+        <p class="prop-diag" aria-live="polite"></p>
+      </div>
+      <div><div class="wf" role="img" aria-label="Plano de dashboard cuyas zonas cambian de alto según los pesos elegidos."></div></div>
     </div>
   </div>
 
@@ -956,6 +1028,35 @@
       </div>
       <div class="tgl" id="rdp" data-viz="wf" data-wf="rdp" data-auto="Z,F,L">
         <div class="wf" role="img" aria-label="El mismo plano con tres recorridos de lectura superpuestos: en Z, en F y por capas horizontales que pierden atención de arriba abajo."></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gestalt aplicada -->
+  <div class="ds-c ds-sec--tight">
+    <p class="ds-kicker">Gestalt aplicada al lienzo</p>
+    <p class="ds-h3" style="margin:12px 0 10px;max-width:30ch">En el <a href="#c03">capítulo 03</a> vimos cómo agrupa la mirada. Aquí, cómo se comprueba en un dashboard.</p>
+    <p class="ds-body ds-muted" style="max-width:62ch">Son los cinco principios que diagnostica PBI Mockup Creator mientras diseñas. Cada uno, bien y mal aplicado sobre el mismo plano.</p>
+    <div class="ctl-row" style="margin-top:22px"><div class="seg" role="group" aria-label="Principio de Gestalt" data-tgl-for="gst">
+      <button type="button" data-s="prox" aria-pressed="true">Proximidad</button>
+      <button type="button" data-s="jer" aria-pressed="false">Jerarquía visual</button>
+      <button type="button" data-s="sem" aria-pressed="false">Semejanza</button>
+      <button type="button" data-s="cie" aria-pressed="false">Cierre</button>
+      <button type="button" data-s="ff" aria-pressed="false">Figura-fondo</button>
+    </div></div>
+    <div class="gst">
+      <div class="gst-txt" aria-live="polite">
+        <div data-g="prox"><p class="gst-sub">Lo que está cerca se percibe como un grupo.</p><p><b>Qué es.</b> El cerebro agrupa lo que está más cerca, aunque no haya ninguna otra conexión visual.</p><p><b>En un dashboard.</b> La separación entre zonas decide qué bloques se leen como una unidad. Si cambia de un sitio a otro, el lector agrupa lo que no debe y la historia se rompe.</p><p class="gst-rule">Separación de 8 a 20 px, la misma en todo el lienzo. Por debajo de 8, todo parece un bloque; por encima de 28, piezas sueltas.</p></div>
+        <div data-g="jer" hidden><p class="gst-sub">Lo más grande y lo primero se lee antes.</p><p><b>Qué es.</b> No leemos todo con la misma atención: el tamaño, la posición y el peso visual crean un orden de lectura.</p><p><b>En un dashboard.</b> Si la Zona B ocupa más que la A, el ojo llega al detalle antes que al mensaje, y la decisión se toma sobre el dato equivocado.</p><p class="gst-rule">Recorrido: contexto → métricas → análisis. La Zona A, como mínimo el 85 % del alto de la B. Header siempre que lo lea dirección o alguien de fuera.</p></div>
+        <div data-g="sem" hidden><p class="gst-sub">Lo que se parece, se percibe como de la misma familia.</p><p><b>Qué es.</b> Misma forma, color, tamaño o textura hacen que dos elementos parezcan del mismo grupo, aunque estén separados.</p><p><b>En un dashboard.</b> Si KPIs y gráficos tienen el mismo aspecto, el ojo no distingue seguimiento de análisis. La semejanza es la gramática del dashboard: lo que juega el mismo papel, se ve igual.</p><p class="gst-rule">Hasta 6 KPIs por fila y hasta 3 visuales por zona. El mismo radio de esquina en todas las tarjetas.</p></div>
+        <div data-g="cie" hidden><p class="gst-sub">El ojo completa formas y necesita espacio para respirar.</p><p><b>Qué es.</b> Tendemos a completar formas incompletas y a leer el espacio en blanco como el borde de los objetos. El espacio negativo no está vacío: es estructura.</p><p><b>En un dashboard.</b> Márgenes y separaciones crean ese espacio. Si falta, el dashboard parece saturado aunque tenga pocos datos. Si sobra, parece incompleto.</p><p class="gst-rule">Entre un 20 y un 40 % del lienzo libre, y al menos 16 px de margen en los cuatro lados.</p></div>
+        <div data-g="ff" hidden><p class="gst-sub">El contenido tiene que despegarse del fondo sin esfuerzo.</p><p><b>Qué es.</b> Separamos automáticamente lo que vemos como objeto (la figura) de lo que vemos como fondo, continuo y sin límites.</p><p><b>En un dashboard.</b> Si las tarjetas tienen el mismo fondo que el lienzo, los datos desaparecen. El contraste entre tarjeta y lienzo, o un borde suave, es lo que hace visible cada pieza.</p><p class="gst-rule">Fondo del lienzo distinto del de las tarjetas. Si la diferencia es pequeña, un borde suave.</p></div>
+      </div>
+      <div class="tgl" id="gst" data-viz="gst" data-auto="prox,jer,sem,cie,ff">
+        <div class="gst-pairs">
+          <figure class="gst-pair"><div class="wf" role="img" aria-label="Plano bien aplicado"></div><figcaption><span class="ok">✓ Bien aplicado</span><em></em></figcaption></figure>
+          <figure class="gst-pair"><div class="wf" role="img" aria-label="Plano mal aplicado"></div><figcaption><span class="ko">✗ Mal aplicado</span><em></em></figcaption></figure>
+        </div>
       </div>
     </div>
   </div>
@@ -1521,7 +1622,7 @@ window.addEventListener('scroll',function(){
   });
 })();
 </script>
-<script src="./data-storytelling.js?v=20260929c" defer></script>
+<script src="./data-storytelling.js?v=20260929d" defer></script>
 <!-- Motion: bibliotecas opcionales. Si un CDN falla, la pagina funciona igual (todo tiene fallback CSS). -->
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
