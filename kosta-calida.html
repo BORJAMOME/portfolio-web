@@ -7,6 +7,10 @@
 <meta name="description" content="Reporting integral en Power BI para una cadena de tiendas: modelo en estrella, Power Query, DAX, tablas desconectadas y drill-down hasta el ticket.">
 <meta name="theme-color" content="#1a1a1a">
 <link rel="canonical" href="https://borjamora.es/kosta-calida.html">
+<link rel="alternate" hreflang="es" href="https://borjamora.es/kosta-calida.html">
+<link rel="alternate" hreflang="en" href="https://borjamora.es/en/kosta-calida.html">
+<link rel="alternate" hreflang="x-default" href="https://borjamora.es/kosta-calida.html">
+<script src="./lang.js"></script>
 <link rel="icon" type="image/svg+xml" href="./img/favicon.svg">
 <link rel="icon" href="./img/favicon.ico" type="image/x-icon">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -258,6 +262,16 @@ section { padding: 6rem 0; }
   .kc-foot-grid { grid-template-columns: 1fr !important; }
 }
 </style>
+<style>
+/* selector ES | EN: el mismo gesto que el del portfolio (shared.css), aquí autocontenido y con el color de esta barra */
+.ds-lang { --dsl: var(--kc-ink); position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 2px; }
+.ds-lang-a, .ds-lang-b { position: relative; padding: 6px 10px; border-radius: 7px; font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: .3px; text-transform: uppercase; color: var(--dsl); opacity: .62; text-decoration: none; transition: opacity .2s, background .2s; }
+.ds-lang-a { opacity: 1; font-weight: 700; cursor: default; }
+.ds-lang-a::after { content: ''; position: absolute; bottom: 2px; left: 10px; right: 10px; height: 1.5px; background: var(--dsl); border-radius: 99px; }
+@media (hover: hover) and (pointer: fine) { .ds-lang-b:hover { opacity: 1; background: color-mix(in srgb, var(--dsl) 8%, transparent); } }
+.ds-lang-b:focus-visible { opacity: 1; outline: 2px solid var(--dsl); outline-offset: 2px; }
+@media (max-width: 600px) { .ds-lang { left: auto; right: 1rem; transform: none; } }  /* en móvil, a la derecha: no roza el enlace de vuelta */
+</style>
 </helmet>
 
 <!-- NAV BACK -->
@@ -266,6 +280,10 @@ section { padding: 6rem 0; }
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
     Power BI
   </a>
+  <div class="ds-lang" role="group" aria-label="Idioma · Language">
+    <span class="ds-lang-a" aria-current="true" lang="es" title="Español">ES</span>
+    <a href="./en/kosta-calida.html" class="ds-lang-b" hreflang="en" lang="en" data-lang-to="en" title="Read in English" aria-label="Read in English">EN</a>
+  </div>
 </nav>
 
 <!-- S1 · HERO — la estantería como fondo -->

@@ -1,0 +1,158 @@
+{
+  "_": "Traducción al inglés británico de visualizacion-datos.html (→ en/data-visualisation.html). La usa tools/build-en.mjs.",
+  "units": {
+    "Saltar al contenido": "Skip to content",
+    "Navegación principal": "Main navigation",
+    "Borja Mora — Inicio": "Borja Mora — Home",
+    "Idioma · Language": "Language · Idioma",
+    "Inicio": "Home",
+    "Sobre mí": "About me",
+    "Proyectos": "Projects",
+    "Análisis": "Analysis",
+    "Visualización": "Visualisation",
+    "Descargas": "Downloads",
+    "Contacto": "Contact",
+    "¿Hablamos?": "Let’s talk",
+    "Abrir menu": "Open menu",
+    "Menu de navegacion": "Navigation menu",
+    "Cerrar menu": "Close menu",
+    "<span class=\"nav-drawer-close-x\" aria-hidden=\"true\">×</span>Cerrar": "<span class=\"nav-drawer-close-x\" aria-hidden=\"true\">×</span>Close",
+    "Navegación móvil": "Mobile navigation",
+    "Data Analyst Junior": "Junior Data Analyst",
+    "Madrid, España": "Madrid, Spain",
+    "Navegación del pie de página": "Footer navigation",
+    "Navegación": "Navigation",
+    "Trabajo": "Work",
+    "Sígueme": "Follow me",
+    "© 2026 Borja Mora Méndez · Todos los derechos reservados": "© 2026 Borja Mora Méndez · All rights reserved",
+    "Diseñado y construido por mí": "Designed and built by me",
+    "Aviso de cookies": "Cookie notice",
+    "<strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Política de privacidad</a>.": "<strong>Analytics cookies.</strong> I use Google Analytics to understand how this site is used. No advertising or third-party tracking. <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Privacy policy</a>.",
+    "Rechazar cookies": "Reject cookies",
+    "Rechazar": "Reject",
+    "Aceptar cookies": "Accept cookies",
+    "Aceptar": "Accept",
+    "Visualización de datos — Borja Mora": "Data visualisation — Borja Mora",
+    "Infografías editoriales, cartografía 3D y diseño de la información. Proyectos de visualización de datos donde el diseño es la herramienta analítica.": "Editorial infographics, 3D cartography and information design. Data visualisation projects where design is the analytical tool.",
+    "Visualización de datos — Infografías, mapas 3D y diseño de la información | Borja Mora": "Data visualisation — Infographics, 3D maps and information design | Borja Mora",
+    "Infografías editoriales, cartografía 3D y diseño de la información: proyectos donde entender el dato importa tanto como analizarlo.": "Editorial infographics, 3D cartography and information design: projects where understanding the data matters as much as analysing it.",
+    "Infografías editoriales, cartografía 3D y diseño de la información. Proyectos donde el diseño es la herramienta analítica.": "Editorial infographics, 3D cartography and information design. Projects where design is the analytical tool.",
+    "Visualización de datos": "Data visualisation",
+    "Infografías": "Infographics",
+    "Mapas": "Maps",
+    "Diseño de la información": "Information design",
+    "Infografías · Data Viz": "Infographics · Data viz",
+    "Infografías, mapas y visualizaciones que traducen datos complejos a lenguaje visual. No buscan embellecer el dato, sino ponerlo a prueba y explorar nuevas lecturas.": "Infographics, maps and visualisations that translate complex data into visual language. They don’t try to make the data pretty, but to put it to the test and find new readings.",
+    "El skyline oculto de Madrid": "Madrid’s hidden skyline",
+    "Exploración 3D de la altura de los edificios que revela patrones urbanos invisibles.": "A 3D exploration of building heights that reveals invisible urban patterns.",
+    "Ver proyecto": "View project",
+    "DANA en Valencia": "The DANA floods in Valencia",
+    "Visualización 3D del impacto real de la DANA y sus zonas más vulnerables.": "A 3D visualisation of the real impact of the DANA and its most vulnerable areas.",
+    "Mapa 3D": "3D map",
+    "Geología en tres dimensiones": "Geology in three dimensions",
+    "Recreación 3D del mapa geológico de España y Portugal.": "A 3D recreation of the geological map of Spain and Portugal.",
+    "Geología": "Geology",
+    "100 municipios, un índice y una pregunta incómoda": "100 municipalities, one index and an awkward question",
+    "Población, renta e índice de felicidad en los municipios más poblados de España.": "Population, income and a happiness index across Spain’s most populated municipalities.",
+    "Infografía": "Infographic",
+    "Datos": "Data",
+    "Redibujando el Metro desde el peatón": "Redrawing the Metro from the pedestrian’s view",
+    "Plano del Metro con distancias reales a pie entre estaciones.": "A Metro map with real walking distances between stations.",
+    "Cartografía": "Cartography",
+    "Ver más proyectos": "See more projects",
+    "Cartografía · 3D": "Cartography · 3D",
+    "Visualización cartográfica en 3D y exploración territorial de datos geográficos. Proyectos que transforman datos sobre el terreno en lecturas visuales y experiencias inmersivas.": "3D cartographic visualisation and territorial exploration of geographic data. Projects that turn data about the land into visual readings and immersive experiences.",
+    "Comunidades Autónomas en tres dimensiones": "Spain’s autonomous communities in three dimensions",
+    "Una colección de mapas 3D de las comunidades autónomas de España para visualizar y entender datos territoriales.": "A collection of 3D maps of Spain’s autonomous communities to visualise and understand territorial data.",
+    "Cartografía 3D": "3D cartography"
+  },
+  "keep": [
+    "Borja Mora",
+    "Español",
+    "ES",
+    "Read in English",
+    "EN",
+    "Power BI",
+    "LinkedIn",
+    "GitHub",
+    "Borja Mora.",
+    "Email",
+    "Portfolio",
+    "Machine Learning",
+    "Python",
+    "SQL",
+    "HTML",
+    "CSS",
+    "JS",
+    "Data Viz",
+    "GIS",
+    "QGIS",
+    "Blender"
+  ],
+  "js": {
+    "Cerrar menú": "Close menu",
+    "Abrir menú": "Open menu",
+    "Visualización de datos — Borja Mora": "Data visualisation — Borja Mora",
+    "Infografías editoriales, cartografía 3D y diseño de la información.": "Editorial infographics, 3D cartography and information design.",
+    "El skyline oculto de Madrid": "Madrid’s hidden skyline",
+    "Exploración 3D de la altura de los edificios que revela patrones urbanos invisibles.": "A 3D exploration of building heights that reveals invisible urban patterns.",
+    "3D, Data Viz, Madrid, edificios, urbanismo": "3D, Data Viz, Madrid, buildings, urban planning",
+    "DANA en Valencia": "The DANA floods in Valencia",
+    "Visualización 3D del impacto real de la DANA y sus zonas más vulnerables.": "A 3D visualisation of the real impact of the DANA and its most vulnerable areas.",
+    "Mapa 3D, GIS, DANA, Valencia": "3D map, GIS, DANA, Valencia",
+    "Geología en tres dimensiones": "Geology in three dimensions",
+    "Recreación 3D del mapa geológico de España y Portugal.": "A 3D recreation of the geological map of Spain and Portugal.",
+    "Geología, 3D, mapa geológico, España, Portugal": "Geology, 3D, geological map, Spain, Portugal",
+    "100 municipios, un índice y una pregunta incómoda": "100 municipalities, one index and an awkward question",
+    "Población, renta e índice de felicidad en los municipios más poblados de España.": "Population, income and a happiness index across Spain’s most populated municipalities.",
+    "Infografía, datos, felicidad, municipios, España": "Infographic, data, happiness, municipalities, Spain",
+    "Redibujando el Metro desde el peatón": "Redrawing the Metro from the pedestrian’s view",
+    "Plano del Metro con distancias reales a pie entre estaciones.": "A Metro map with real walking distances between stations.",
+    "Cartografía, metro, Madrid, distancias a pie": "Cartography, metro, Madrid, walking distances",
+    "Comunidades Autónomas en tres dimensiones": "Spain’s autonomous communities in three dimensions",
+    "Una colección de mapas 3D de las comunidades autónomas de España para visualizar y entender datos territoriales.": "A collection of 3D maps of Spain’s autonomous communities to visualise and understand territorial data.",
+    "Cartografía 3D, QGIS, Blender, comunidades autónomas": "3D cartography, QGIS, Blender, autonomous communities"
+  },
+  "raw": [
+    [
+      "<link rel=\"canonical\" href=\"https://borjamora.es/visualizacion-datos.html\">",
+      "<link rel=\"canonical\" href=\"https://borjamora.es/en/data-visualisation.html\">"
+    ],
+    [
+      "<meta property=\"og:locale\" content=\"es_ES\">",
+      "<meta property=\"og:locale\" content=\"en_GB\">\n<meta property=\"og:locale:alternate\" content=\"es_ES\">"
+    ],
+    [
+      "<meta property=\"og:url\" content=\"https://borjamora.es/visualizacion-datos.html\">",
+      "<meta property=\"og:url\" content=\"https://borjamora.es/en/data-visualisation.html\">"
+    ],
+    [
+      "<meta name=\"keywords\" content=\"visualización de datos, infografías, mapas 3D, cartografía, data viz, diseño de la información, Borja Mora\">",
+      "<meta name=\"keywords\" content=\"data visualisation, infographics, 3D maps, cartography, data viz, information design, Borja Mora\">"
+    ],
+    [
+      "https://borjamora.es/img/og-proyectos.png",
+      "https://borjamora.es/img/og-projects-en.png"
+    ],
+    [
+      "\"https://borjamora.es/visualizacion-datos.html#",
+      "\"https://borjamora.es/en/data-visualisation.html#"
+    ],
+    [
+      "\"url\": \"https://borjamora.es/visualizacion-datos.html\"",
+      "\"url\": \"https://borjamora.es/en/data-visualisation.html\""
+    ],
+    [
+      "\"inLanguage\": \"es-ES\"",
+      "\"inLanguage\": \"en-GB\""
+    ],
+    [
+      "encodeURIComponent('Oportunidad laboral')",
+      "encodeURIComponent('Job opportunity')"
+    ],
+    [
+      "encodeURIComponent('Hola, me gustaría hablar contigo sobre una posible oportunidad.')",
+      "encodeURIComponent('Hi, I would like to talk to you about a possible opportunity.')"
+    ]
+  ]
+}

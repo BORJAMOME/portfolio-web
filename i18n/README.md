@@ -8,7 +8,17 @@ española, que es siempre la fuente.
 | `index.html` | `en/index.html` | `i18n/index.en.json` |
 | `sobre-mi.html` | `en/about.html` | `i18n/sobre-mi.en.json` |
 | `descargas.html` | `en/downloads.html` | `i18n/descargas.en.json` |
+| `power-bi.html` | `en/projects.html` | `i18n/power-bi.en.json` |
+| `analisis-datos.html` | `en/data-analysis.html` | `i18n/analisis-datos.en.json` |
+| `visualizacion-datos.html` | `en/data-visualisation.html` | `i18n/visualizacion-datos.en.json` |
 | `casa-origen.html` | `en/casa-origen.html` | `i18n/casa-origen.en.json` |
+| `ibcs-ventas.html` | `en/ibcs-ventas.html` | `i18n/ibcs-ventas.en.json` |
+| `kosta-calida.html` | `en/kosta-calida.html` | `i18n/kosta-calida.en.json` |
+| `social-media.html` | `en/social-media.html` | `i18n/social-media.en.json` |
+| `informe-financiero.html` | `en/informe-financiero.html` | `i18n/informe-financiero.en.json` |
+| `perdidas-ganancias.html` | `en/perdidas-ganancias.html` | `i18n/perdidas-ganancias.en.json` |
+| `airbnb-pais-vasco.html` | `en/airbnb-pais-vasco.html` | `i18n/airbnb-pais-vasco.en.json` |
+| `rfm-hosteleria.html` | `en/rfm-hosteleria.html` | `i18n/rfm-hosteleria.en.json` |
 | `data-storytelling.html` | `en/data-storytelling.html` | `ds/i18n/en.page.json` + `ds/i18n/en.js` (textos del JS) |
 
 ## Cómo se usa

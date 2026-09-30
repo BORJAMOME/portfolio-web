@@ -1,33 +1,34 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Análisis del Mercado de Airbnb — País Vasco | Borja Mora</title>
-<meta name="description" content="Mercado de Airbnb en el País Vasco en Power BI: 6.030 anuncios y 213 localizaciones. Esquema en estrella, mapas y DAX con líneas de referencia dinámicas.">
+<title>Airbnb market analysis — Basque Country | Borja Mora</title>
+<meta name="description" content="The Airbnb market in the Basque Country in Power BI: 6,030 listings and 213 locations. Star schema, maps and DAX with dynamic reference lines.">
 <meta name="theme-color" content="#071412">
-<link rel="canonical" href="https://borjamora.es/airbnb-pais-vasco.html">
+<link rel="canonical" href="https://borjamora.es/en/airbnb-pais-vasco.html">
 <link rel="alternate" hreflang="es" href="https://borjamora.es/airbnb-pais-vasco.html">
 <link rel="alternate" hreflang="en" href="https://borjamora.es/en/airbnb-pais-vasco.html">
 <link rel="alternate" hreflang="x-default" href="https://borjamora.es/airbnb-pais-vasco.html">
-<script src="./lang.js"></script>
-<link rel="icon" type="image/svg+xml" href="./img/favicon.svg">
-<link rel="icon" href="./img/favicon.ico" type="image/x-icon">
+<script src="../lang.js"></script>
+<link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
+<link rel="icon" href="../img/favicon.ico" type="image/x-icon">
 <!-- Fonts — Playfair Display (editorial serif) · Inter (body) · JetBrains Mono (labels) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- Open Graph -->
-<meta property="og:title" content="Análisis del Mercado de Airbnb — País Vasco | Borja Mora">
-<meta property="og:description" content="6.030 anuncios, 213 localizaciones, 3 provincias. Un análisis territorial que empieza por el mapa y no por el precio — y que destapa que el 0,8% de los anfitriones controla el 15,2% de la oferta.">
+<meta property="og:title" content="Airbnb market analysis — Basque Country | Borja Mora">
+<meta property="og:description" content="6,030 listings, 213 locations, 3 provinces. A territorial analysis that starts with the map, not the price — and reveals that 0.8% of hosts control 15.2% of supply.">
 <meta property="og:image" content="https://borjamora.es/img/airbnb-card.png">
-<meta property="og:url" content="https://borjamora.es/airbnb-pais-vasco.html">
+<meta property="og:url" content="https://borjamora.es/en/airbnb-pais-vasco.html">
 <meta property="og:type" content="article">
-<meta property="og:locale" content="es_ES">
+<meta property="og:locale" content="en_GB">
+<meta property="og:locale:alternate" content="es_ES">
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Análisis del Mercado de Airbnb — País Vasco | Borja Mora">
-<meta name="twitter:description" content="Un análisis territorial del mercado de Airbnb en el País Vasco: 6.030 anuncios, 213 localizaciones, 3 provincias y un hallazgo — el 0,8% de los anfitriones controla el 15,2% de la oferta.">
+<meta name="twitter:title" content="Airbnb market analysis — Basque Country | Borja Mora">
+<meta name="twitter:description" content="A territorial analysis of the Airbnb market in the Basque Country: 6,030 listings, 213 locations, 3 provinces and one finding — 0.8% of hosts control 15.2% of supply.">
 <meta name="twitter:image" content="https://borjamora.es/img/airbnb-card.png">
 
 <!-- ── Cookie Consent + GA4 Consent Mode v2 (RGPD/LOPDGDD) ── -->
@@ -103,7 +104,7 @@
   }
 </style>
 
-<script src="./support.js"></script>
+<script src="../support.js"></script>
 </head>
 <body>
 <x-dc>
@@ -212,7 +213,7 @@ section { padding: 7.5rem 0; }
   text-align: center; padding: 7rem 2rem;
   background-image:
     linear-gradient(180deg, rgba(251,251,251,.92) 0%, rgba(251,251,251,.72) 32%, rgba(251,251,251,.76) 68%, rgba(251,251,251,.96) 100%),
-    url('./img/airbnb-hero-sketch.webp');
+    url('../img/airbnb-hero-sketch.webp');
   background-size: cover, cover;
   background-position: center, center 28%;
   background-repeat: no-repeat, no-repeat;
@@ -280,52 +281,52 @@ section { padding: 7.5rem 0; }
 
 <!-- NAV BACK -->
 <nav style="position:fixed; top:0; left:0; right:0; z-index:100; padding:1rem 2rem; display:flex; align-items:center; background:rgba(251,251,251,.85); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);">
-  <a href="./power-bi.html" style="display:inline-flex; align-items:center; gap:.5rem; font-family:var(--font-body); font-size:.9rem; font-weight:600; color:var(--pv-ink); text-decoration:none; transition:opacity .2s;" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='1'">
+  <a href="./projects.html" style="display:inline-flex; align-items:center; gap:.5rem; font-family:var(--font-body); font-size:.9rem; font-weight:600; color:var(--pv-ink); text-decoration:none; transition:opacity .2s;" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='1'">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
     Power BI
   </a>
-  <div class="ds-lang" role="group" aria-label="Idioma · Language">
-    <span class="ds-lang-a" aria-current="true" lang="es" title="Español">ES</span>
-    <a href="./en/airbnb-pais-vasco.html" class="ds-lang-b" hreflang="en" lang="en" data-lang-to="en" title="Read in English" aria-label="Read in English">EN</a>
+  <div class="ds-lang" role="group" aria-label="Language · Idioma">
+    <a href="../airbnb-pais-vasco.html" class="ds-lang-b" hreflang="es" lang="es" data-lang-to="es" title="Leer en español" aria-label="Leer en español">ES</a>
+    <span class="ds-lang-a" aria-current="true" lang="en" title="English">EN</span>
   </div>
 </nav>
 
 <!-- S1 · HERO EDITORIAL — la ilustración del casco histórico como fondo, titular encima -->
 <section class="hero-editorial" data-screen-label="Hero">
-  <p class="reveal pv-eyebrow">Análisis de mercado · Airbnb</p>
-  <h1 class="reveal pv-hero-title">Un dashboard de Power BI para leer el mercado más allá del precio.</h1>
-  <p class="reveal reveal-delay-1 pv-lead">Analicé 6.030 anuncios de Airbnb en el País Vasco empezando por el territorio, no por el precio.</p>
+  <p class="reveal pv-eyebrow">Market analysis · Airbnb</p>
+  <h1 class="reveal pv-hero-title">A Power BI dashboard to read the market beyond price.</h1>
+  <p class="reveal reveal-delay-1 pv-lead">I analysed 6,030 Airbnb listings in the Basque Country, starting with territory rather than price.</p>
 </section>
 
 <!-- S2 · EL PROBLEMA -->
 <section id="problema" data-screen-label="El problema">
   <div class="pv-wrap">
-    <p class="reveal pv-eyebrow">01 · El punto de partida</p>
-    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.625rem); line-height:1.15; margin-bottom:1.5rem; max-width:820px;">Entender un mercado antes de mirar el precio.</h2>
-    <p class="reveal reveal-delay-1" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:1.2rem;">Quise analizar cómo es realmente el mercado de Airbnb en el País Vasco utilizando datos públicos. En lugar de quedarme solo con el precio medio, exploré cómo cambia la oferta según el territorio, el tipo de alojamiento y el perfil de los anfitriones.</p>
-    <p class="reveal reveal-delay-2" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7;">Este proyecto reúne todo el proceso: limpieza de datos, modelado, análisis y un dashboard en Power BI pensado para responder preguntas reales.</p>
+    <p class="reveal pv-eyebrow">01 · The starting point</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.625rem); line-height:1.15; margin-bottom:1.5rem; max-width:820px;">Understanding a market before looking at price.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:1.2rem;">I wanted to analyse what the Airbnb market in the Basque Country is really like, using public data. Instead of stopping at the average price, I explored how supply changes with territory, type of accommodation and host profile.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7;">This project brings the whole process together: data cleaning, modelling, analysis and a Power BI dashboard designed to answer real questions.</p>
   </div>
 </section>
 
 <!-- S3 · EL OBJETIVO -->
 <section id="objetivo" data-screen-label="El objetivo" style="background:var(--pv-stone);">
   <div class="pv-wrap">
-    <p class="reveal pv-eyebrow">02 · El objetivo</p>
-    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.625rem); line-height:1.15; margin-bottom:1.5rem; max-width:820px;">Leer el mercado por territorio antes que por precio.</h2>
-    <p class="reveal reveal-delay-1" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:1.2rem;">Lo primero que hice fue entender el tamaño del mercado. Antes de calcular precios o tendencias, necesitaba saber cuántos alojamientos había, cuántos anfitriones participaban y cómo se repartía la oferta.</p>
-    <p class="reveal reveal-delay-2" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:3rem;">Esa visión inicial me permitió interpretar mejor todo el análisis posterior.</p>
+    <p class="reveal pv-eyebrow">02 · The goal</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.625rem); line-height:1.15; margin-bottom:1.5rem; max-width:820px;">Reading the market by territory before price.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:1.2rem;">The first thing I did was understand the size of the market. Before calculating prices or trends, I needed to know how many properties there were, how many hosts took part and how supply was spread.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:3rem;">That initial view helped me interpret the rest of the analysis better.</p>
     <div class="kpi-grid-3 reveal reveal-delay-3" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1.5rem;">
       <div style="text-align:center; background:#fff; border-radius:12px; padding:2rem 1rem;">
         <span style="font-family:var(--font-display); font-size:clamp(1.8rem, 3.5vw, 2.8rem); color:var(--pv-ink); font-weight:600; line-height:1;" data-count="6030" data-format="thousands">0</span>
-        <p style="font-size:.82rem; color:var(--pv-muted); margin-top:.4rem;">anuncios analizados</p>
+        <p style="font-size:.82rem; color:var(--pv-muted); margin-top:.4rem;">listings analysed</p>
       </div>
       <div style="text-align:center; background:#fff; border-radius:12px; padding:2rem 1rem;">
         <span style="font-family:var(--font-display); font-size:clamp(1.8rem, 3.5vw, 2.8rem); color:var(--pv-ink); font-weight:600; line-height:1;" data-count="213">0</span>
-        <p style="font-size:.82rem; color:var(--pv-muted); margin-top:.4rem;">localizaciones en 3 provincias</p>
+        <p style="font-size:.82rem; color:var(--pv-muted); margin-top:.4rem;">locations in 3 provinces</p>
       </div>
       <div style="text-align:center; background:#fff; border-radius:12px; padding:2rem 1rem;">
         <span style="font-family:var(--font-display); font-size:clamp(1.8rem, 3.5vw, 2.8rem); color:var(--pv-ink); font-weight:600; line-height:1;" data-count="3723" data-format="thousands">0</span>
-        <p style="font-size:.82rem; color:var(--pv-muted); margin-top:.4rem;">anfitriones distintos</p>
+        <p style="font-size:.82rem; color:var(--pv-muted); margin-top:.4rem;">different hosts</p>
       </div>
     </div>
   </div>
@@ -334,32 +335,32 @@ section { padding: 7.5rem 0; }
 <!-- S4 · MI ENFOQUE -->
 <section id="enfoque" data-screen-label="Mi enfoque">
   <div class="pv-wrap">
-    <p class="reveal pv-eyebrow">03 · Mi enfoque</p>
-    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.625rem); line-height:1.15; margin-bottom:1.5rem; max-width:820px;">El mercado turístico es espacial antes que estadístico.</h2>
-    <p class="reveal reveal-delay-1" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:1.2rem;">Cuando llevé los datos al mapa apareció una de las primeras diferencias importantes: la oferta no estaba distribuida de forma uniforme.</p>
-    <p class="reveal reveal-delay-2" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:1.2rem;">Había zonas con mucha concentración de alojamientos y otras donde la actividad era mucho más reducida. Ver esa distribución antes de entrar en los precios cambió la forma de interpretar el mercado.</p>
-    <p class="reveal reveal-delay-2" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:2rem;">Por eso decidí construir el análisis empezando por el territorio y no por la media.</p>
-    <p class="reveal reveal-delay-3" style="font-family:var(--font-display); font-size:1.2rem; font-weight:500; color:var(--pv-ink); margin-bottom:1.2rem;">Así resumí la distribución del mercado.</p>
+    <p class="reveal pv-eyebrow">03 · My approach</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.625rem); line-height:1.15; margin-bottom:1.5rem; max-width:820px;">The tourism market is spatial before it’s statistical.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:1.2rem;">When I put the data on the map, one of the first important differences appeared: supply wasn’t evenly distributed.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:1.2rem;">Some areas had a high concentration of properties, and others much less activity. Seeing that distribution before getting into prices changed the way I read the market.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:2rem;">That’s why I decided to build the analysis starting from territory, not from the average.</p>
+    <p class="reveal reveal-delay-3" style="font-family:var(--font-display); font-size:1.2rem; font-weight:500; color:var(--pv-ink); margin-bottom:1.2rem;">This is how I summarised the market’s distribution.</p>
     <div class="segment-grid-4 reveal reveal-delay-3" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:1rem;">
       <div style="background:var(--pv-stone); border-radius:12px; padding:1.3rem 1.4rem;">
-        <p style="font-family:var(--font-display); font-size:1rem; font-weight:600; color:var(--pv-ink); margin-bottom:.4rem;">Económico</p>
-        <p style="font-size:.82rem; color:var(--pv-muted); line-height:1.5; margin-bottom:.6rem;">Menos de 50€/noche</p>
-        <p style="font-family:var(--font-display); font-size:1.1rem; font-weight:600; color:var(--pv-ink);">6,67%</p>
+        <p style="font-family:var(--font-display); font-size:1rem; font-weight:600; color:var(--pv-ink); margin-bottom:.4rem;">Budget</p>
+        <p style="font-size:.82rem; color:var(--pv-muted); line-height:1.5; margin-bottom:.6rem;">Under €50/night</p>
+        <p style="font-family:var(--font-display); font-size:1.1rem; font-weight:600; color:var(--pv-ink);">6.67%</p>
       </div>
       <div style="background:var(--pv-stone); border-radius:12px; padding:1.3rem 1.4rem;">
-        <p style="font-family:var(--font-display); font-size:1rem; font-weight:600; color:var(--pv-ink); margin-bottom:.4rem;">Medio</p>
-        <p style="font-size:.82rem; color:var(--pv-muted); line-height:1.5; margin-bottom:.6rem;">50€ – 149€/noche</p>
-        <p style="font-family:var(--font-display); font-size:1.1rem; font-weight:600; color:var(--pv-slate);">54,73%</p>
+        <p style="font-family:var(--font-display); font-size:1rem; font-weight:600; color:var(--pv-ink); margin-bottom:.4rem;">Mid-range</p>
+        <p style="font-size:.82rem; color:var(--pv-muted); line-height:1.5; margin-bottom:.6rem;">€50 – €149/night</p>
+        <p style="font-family:var(--font-display); font-size:1.1rem; font-weight:600; color:var(--pv-slate);">54.73%</p>
       </div>
       <div style="background:var(--pv-stone); border-radius:12px; padding:1.3rem 1.4rem;">
-        <p style="font-family:var(--font-display); font-size:1rem; font-weight:600; color:var(--pv-ink); margin-bottom:.4rem;">Alto</p>
-        <p style="font-size:.82rem; color:var(--pv-muted); line-height:1.5; margin-bottom:.6rem;">150€ – 299€/noche</p>
-        <p style="font-family:var(--font-display); font-size:1.1rem; font-weight:600; color:var(--pv-terra-soft);">28,46%</p>
+        <p style="font-family:var(--font-display); font-size:1rem; font-weight:600; color:var(--pv-ink); margin-bottom:.4rem;">High</p>
+        <p style="font-size:.82rem; color:var(--pv-muted); line-height:1.5; margin-bottom:.6rem;">€150 – €299/night</p>
+        <p style="font-family:var(--font-display); font-size:1.1rem; font-weight:600; color:var(--pv-terra-soft);">28.46%</p>
       </div>
       <div style="background:var(--pv-stone); border-radius:12px; padding:1.3rem 1.4rem;">
-        <p style="font-family:var(--font-display); font-size:1rem; font-weight:600; color:var(--pv-ink); margin-bottom:.4rem;">Lujo</p>
-        <p style="font-size:.82rem; color:var(--pv-muted); line-height:1.5; margin-bottom:.6rem;">300€/noche o más</p>
-        <p style="font-family:var(--font-display); font-size:1.1rem; font-weight:600; color:var(--pv-terra);">10,15%</p>
+        <p style="font-family:var(--font-display); font-size:1rem; font-weight:600; color:var(--pv-ink); margin-bottom:.4rem;">Luxury</p>
+        <p style="font-size:.82rem; color:var(--pv-muted); line-height:1.5; margin-bottom:.6rem;">€300/night or more</p>
+        <p style="font-family:var(--font-display); font-size:1.1rem; font-weight:600; color:var(--pv-terra);">10.15%</p>
       </div>
     </div>
   </div>
@@ -368,16 +369,16 @@ section { padding: 7.5rem 0; }
 <!-- S5 · MODELO DE DATOS -->
 <section id="modelo" data-screen-label="Modelo de datos" style="background:var(--pv-stone);">
   <div class="pv-wrap">
-    <p class="reveal pv-eyebrow">04 · Modelo de datos</p>
-    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.625rem); line-height:1.15; margin-bottom:1.5rem; max-width:820px;">Construí un esquema en estrella para analizar el mercado con contexto.</h2>
+    <p class="reveal pv-eyebrow">04 · Data model</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.625rem); line-height:1.15; margin-bottom:1.5rem; max-width:820px;">I built a star schema to analyse the market in context.</h2>
     <div class="grid-2col reveal reveal-delay-1" style="display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:start;">
       <div>
-        <p style="font-size:1.0625rem; color:var(--pv-text); line-height:1.7; margin-bottom:1.2rem;">Después de limpiar los datos diseñé un modelo en estrella con Power BI, organizando la información en una tabla de hechos y varias dimensiones conectadas entre sí.</p>
-        <p style="font-size:1.0625rem; color:var(--pv-text); line-height:1.7;">Esta estructura hace que el análisis sea más consistente, facilita el cálculo de métricas en DAX y permite navegar entre territorio, alojamiento y tiempo sin perder el contexto de cada dato.</p>
+        <p style="font-size:1.0625rem; color:var(--pv-text); line-height:1.7; margin-bottom:1.2rem;">After cleaning the data, I designed a star schema in Power BI, organising the information into a fact table and several connected dimensions.</p>
+        <p style="font-size:1.0625rem; color:var(--pv-text); line-height:1.7;">This structure makes the analysis more consistent, makes calculating metrics in DAX easier and lets you move between territory, accommodation and time without losing the context of each figure.</p>
       </div>
       <figure style="margin:0;">
-        <picture><source srcset="./img/airbnb-3.webp" type="image/webp"><img width="1556" height="994" loading="lazy" src="./img/airbnb-3.png" alt="Vista de relaciones del modelo de Airbnb País Vasco en Power BI Desktop" style="width:100%; border-radius:14px; border:1px solid #E4E0D6; height:auto;"></picture>
-        <figcaption style="margin-top:.7rem; font-size:.78rem; color:var(--pv-muted); text-align:center;">Modelo del esquema en estrella utilizado en Power BI.</figcaption>
+        <picture><source srcset="../img/airbnb-3.webp" type="image/webp"><img width="1556" height="994" loading="lazy" src="../img/airbnb-3.png" alt="Relationship view of the Airbnb Basque Country model in Power BI Desktop" style="width:100%; border-radius:14px; border:1px solid #E4E0D6; height:auto;"></picture>
+        <figcaption style="margin-top:.7rem; font-size:.78rem; color:var(--pv-muted); text-align:center;">The star schema model used in Power BI.</figcaption>
       </figure>
     </div>
   </div>
@@ -386,59 +387,59 @@ section { padding: 7.5rem 0; }
 <!-- S6 · DASHBOARD -->
 <section id="dashboard" data-screen-label="Dashboard">
   <div class="pv-wrap">
-    <p class="reveal pv-eyebrow">Visualización en Power BI</p>
-    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.625rem); line-height:1.15; margin-bottom:1.5rem; max-width:820px;">Del resumen al mapa sin perder el filtro.</h2>
-    <p class="reveal reveal-delay-1" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:.6rem;">Diseñé el dashboard para que cualquier persona pudiera empezar con una visión general y profundizar después en una zona concreta.</p>
-    <p class="reveal reveal-delay-1" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:2.4rem;">Los filtros mantienen el contexto entre páginas, lo que permite pasar de un resumen ejecutivo a un mapa detallado sin romper el hilo del análisis.</p>
+    <p class="reveal pv-eyebrow">Visualisation in Power BI</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.625rem); line-height:1.15; margin-bottom:1.5rem; max-width:820px;">From the summary to the map without losing the filter.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:.6rem;">I designed the dashboard so anyone could start with an overview and then dig into a specific area.</p>
+    <p class="reveal reveal-delay-1" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:2.4rem;">Filters keep their context across pages, so you can move from an executive summary to a detailed map without losing the thread of the analysis.</p>
     <div class="dash-layout reveal reveal-delay-2" style="display:flex; flex-direction:column; gap:2.2rem; margin-bottom:1.8rem;">
       <figure style="margin:0;">
-        <picture><source srcset="./img/airbnb-1.webp" type="image/webp"><img width="2242" height="1258" loading="lazy" src="./img/airbnb-1.png" alt="Dashboard Airbnb País Vasco — página de Análisis" style="width:100%; height:auto;"></picture>
-        <figcaption style="margin-top:.8rem; font-size:.8rem; color:var(--pv-muted); text-align:center;">Página de Análisis — KPIs y comparativas por zona, tipo de alojamiento y anfitrión.</figcaption>
+        <picture><source srcset="../img/airbnb-1.webp" type="image/webp"><img width="2242" height="1258" loading="lazy" src="../img/airbnb-1.png" alt="Airbnb Basque Country dashboard — Analysis page" style="width:100%; height:auto;"></picture>
+        <figcaption style="margin-top:.8rem; font-size:.8rem; color:var(--pv-muted); text-align:center;">Analysis page — KPIs and comparisons by area, type of accommodation and host.</figcaption>
       </figure>
       <figure style="margin:0;">
-        <picture><source srcset="./img/airbnb-2.webp" type="image/webp"><img width="2244" height="1258" loading="lazy" src="./img/airbnb-2.png" alt="Dashboard Airbnb País Vasco — página de Mapa" style="width:100%; height:auto;"></picture>
-        <figcaption style="margin-top:.8rem; font-size:.8rem; color:var(--pv-muted); text-align:center;">Página de Mapa — distribución geográfica de los 6.030 anuncios por provincia.</figcaption>
+        <picture><source srcset="../img/airbnb-2.webp" type="image/webp"><img width="2244" height="1258" loading="lazy" src="../img/airbnb-2.png" alt="Airbnb Basque Country dashboard — Map page" style="width:100%; height:auto;"></picture>
+        <figcaption style="margin-top:.8rem; font-size:.8rem; color:var(--pv-muted); text-align:center;">Map page — geographical distribution of the 6,030 listings by province.</figcaption>
       </figure>
     </div>
     <div class="reveal reveal-delay-3">
-      <a href="https://app.powerbi.com/view?r=eyJrIjoiOTA2ZDExNjktYzE4Ny00Y2UzLThmM2YtMjI5Y2FmNDg1MzM5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=9c4b9193b627b78a0e01" class="pv-cta" target="_blank" rel="noopener" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Airbnb Pais Vasco',location:'airbnb_pais_vasco_dashboard'});">Ver dashboard interactivo</a>
-      <span style="margin-left:1rem; font-size:.85rem; color:var(--pv-muted);">Power BI · DAX · Mapas geoespaciales · Esquema en estrella</span>
+      <a href="https://app.powerbi.com/view?r=eyJrIjoiOTA2ZDExNjktYzE4Ny00Y2UzLThmM2YtMjI5Y2FmNDg1MzM5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=9c4b9193b627b78a0e01" class="pv-cta" target="_blank" rel="noopener" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Airbnb Pais Vasco',location:'airbnb_pais_vasco_dashboard'});">View the interactive dashboard</a>
+      <span style="margin-left:1rem; font-size:.85rem; color:var(--pv-muted);">Power BI · DAX · Geospatial maps · Star schema</span>
     </div>
   </div>
 </section>
 
 <!-- S7 · IMPACTO — panel oscuro (Deep Forest) que rompe el ritmo de lectura -->
 <section data-screen-label="Impacto" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:7rem 2rem; background:var(--pv-panel);">
-  <p class="reveal" style="font-family:var(--font-display); font-size:clamp(1.6rem, 3.6vw, 2.4rem); font-weight:500; line-height:1.3; color:#fff; max-width:760px; margin-bottom:2rem;">La señal que no aparecía en la media del mercado.</p>
-  <p class="reveal reveal-delay-1 impacto-text" style="font-family:var(--font-display); font-size:clamp(2rem, 5vw, 3.6rem); font-weight:600; line-height:1.15; max-width:1000px; margin-left:auto; margin-right:auto; text-align:center; margin-bottom:2rem;"><span style="color:#fff;">31 anfitriones (0,8%) — </span><span style="color:var(--pv-terra);">15,2% de toda la oferta.</span></p>
+  <p class="reveal" style="font-family:var(--font-display); font-size:clamp(1.6rem, 3.6vw, 2.4rem); font-weight:500; line-height:1.3; color:#fff; max-width:760px; margin-bottom:2rem;">The signal that didn’t show up in the market average.</p>
+  <p class="reveal reveal-delay-1 impacto-text" style="font-family:var(--font-display); font-size:clamp(2rem, 5vw, 3.6rem); font-weight:600; line-height:1.15; max-width:1000px; margin-left:auto; margin-right:auto; text-align:center; margin-bottom:2rem;"><span style="color:#fff;">31 hosts (0.8%) — </span><span style="color:var(--pv-terra);">15.2% of all supply.</span></p>
   <div style="max-width:680px; display:flex; flex-direction:column; gap:1.1rem;">
-    <p class="reveal reveal-delay-2" style="font-size:clamp(1rem, 1.8vw, 1.15rem); color:#D6D2C7; line-height:1.75;">La media del mercado escondía una concentración muy clara.</p>
-    <p class="reveal reveal-delay-3" style="font-size:clamp(1rem, 1.8vw, 1.15rem); color:#D6D2C7; line-height:1.75;">Al analizar la distribución de los anuncios descubrí que solo 31 anfitriones, que representan aproximadamente el 0,8% del total, gestionaban más del 15% de toda la oferta.</p>
-    <p class="reveal reveal-delay-4" style="font-size:clamp(1rem, 1.8vw, 1.15rem); color:#D6D2C7; line-height:1.75;">Ese dato cambió la lectura del mercado: no todos los anfitriones participan de la misma forma. <strong style="color:#fff;">Algunos gestionan un volumen muy superior al resto</strong>, algo que solo apareció al cruzar territorio, tipo de alojamiento y distribución de anuncios.</p>
+    <p class="reveal reveal-delay-2" style="font-size:clamp(1rem, 1.8vw, 1.15rem); color:#D6D2C7; line-height:1.75;">The market average was hiding a very clear concentration.</p>
+    <p class="reveal reveal-delay-3" style="font-size:clamp(1rem, 1.8vw, 1.15rem); color:#D6D2C7; line-height:1.75;">Analysing how listings were distributed, I found that just 31 hosts, around 0.8% of the total, managed more than 15% of all supply.</p>
+    <p class="reveal reveal-delay-4" style="font-size:clamp(1rem, 1.8vw, 1.15rem); color:#D6D2C7; line-height:1.75;">That figure changed how I read the market: not all hosts take part in the same way. <strong style="color:#fff;">Some manage far more than the rest</strong>, something that only appeared when crossing territory, type of accommodation and the distribution of listings.</p>
   </div>
 </section>
 
 <!-- S8 · HALLAZGOS CLAVE -->
 <section id="hallazgos" data-screen-label="Hallazgos clave">
   <div class="pv-wrap">
-    <p class="reveal pv-eyebrow">Hallazgos clave</p>
-    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.625rem); line-height:1.15; margin-bottom:2rem; max-width:820px;">Cuatro cosas que el precio medio no explica.</h2>
+    <p class="reveal pv-eyebrow">Key findings</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.625rem); line-height:1.15; margin-bottom:2rem; max-width:820px;">Four things the average price doesn’t explain.</h2>
     <div class="findings-grid-4" style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
       <div class="reveal reveal-delay-1 pv-card" style="background:var(--pv-stone); border-radius:16px; border-left:3px solid var(--pv-terra); padding:1.8rem 2rem;">
-        <h3 style="font-family:var(--font-display); font-size:1.2rem; font-weight:600; color:var(--pv-ink); margin:0 0 1rem;">Concentración geográfica</h3>
-        <p style="font-size:.9rem; color:var(--pv-text); line-height:1.6;">Al mapear los alojamientos comprobé que la actividad no estaba repartida por igual. Algunas zonas concentraban buena parte de la oferta mientras otras tenían una presencia mucho menor.</p>
+        <h3 style="font-family:var(--font-display); font-size:1.2rem; font-weight:600; color:var(--pv-ink); margin:0 0 1rem;">Geographical concentration</h3>
+        <p style="font-size:.9rem; color:var(--pv-text); line-height:1.6;">Mapping the properties, I saw that activity wasn’t spread evenly. Some areas concentrated a large share of supply, while others had a much smaller presence.</p>
       </div>
       <div class="reveal reveal-delay-2 pv-card" style="background:var(--pv-stone); border-radius:16px; border-left:3px solid var(--pv-slate); padding:1.8rem 2rem;">
-        <h3 style="font-family:var(--font-display); font-size:1.2rem; font-weight:600; color:var(--pv-ink); margin:0 0 1rem;">Profesionalización de la oferta</h3>
-        <p style="font-size:.9rem; color:var(--pv-text); line-height:1.6;">Al analizar los anfitriones apareció una diferencia importante entre quienes gestionan un único alojamiento y quienes administran varios anuncios.</p>
+        <h3 style="font-family:var(--font-display); font-size:1.2rem; font-weight:600; color:var(--pv-ink); margin:0 0 1rem;">Professionalisation of supply</h3>
+        <p style="font-size:.9rem; color:var(--pv-text); line-height:1.6;">Analysing the hosts revealed an important difference between those who manage a single property and those who run several listings.</p>
       </div>
       <div class="reveal reveal-delay-3 pv-card" style="background:var(--pv-stone); border-radius:16px; border-left:3px solid var(--pv-terra); padding:1.8rem 2rem;">
-        <h3 style="font-family:var(--font-display); font-size:1.2rem; font-weight:600; color:var(--pv-ink); margin:0 0 1rem;">Tipología dominante</h3>
-        <p style="font-size:.9rem; color:var(--pv-text); line-height:1.6;">La mayor parte de la oferta corresponde a viviendas completas, aunque la proporción cambia según el territorio.</p>
+        <h3 style="font-family:var(--font-display); font-size:1.2rem; font-weight:600; color:var(--pv-ink); margin:0 0 1rem;">Dominant type</h3>
+        <p style="font-size:.9rem; color:var(--pv-text); line-height:1.6;">Most of the supply is entire homes, although the proportion changes with the territory.</p>
       </div>
       <div class="reveal reveal-delay-4 pv-card" style="background:var(--pv-stone); border-radius:16px; border-left:3px solid var(--pv-slate); padding:1.8rem 2rem;">
-        <h3 style="font-family:var(--font-display); font-size:1.2rem; font-weight:600; color:var(--pv-ink); margin:0 0 1rem;">Nichos poco visibles</h3>
-        <p style="font-size:.9rem; color:var(--pv-text); line-height:1.6;">Al cruzar variables aparecieron segmentos pequeños que pasan desapercibidos cuando solo se observa el promedio del mercado.</p>
+        <h3 style="font-family:var(--font-display); font-size:1.2rem; font-weight:600; color:var(--pv-ink); margin:0 0 1rem;">Barely visible niches</h3>
+        <p style="font-size:.9rem; color:var(--pv-text); line-height:1.6;">Crossing variables revealed small segments that go unnoticed when you only look at the market average.</p>
       </div>
     </div>
   </div>
@@ -447,32 +448,32 @@ section { padding: 7.5rem 0; }
 <!-- S9 · HERRAMIENTAS -->
 <section id="stack" data-screen-label="Herramientas" style="background:var(--pv-stone);">
   <div class="pv-wrap" style="text-align:center;">
-    <p class="reveal pv-eyebrow">Herramientas</p>
-    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.625rem); line-height:1.15; margin-bottom:1.2rem;">Herramientas que utilicé.</h2>
+    <p class="reveal pv-eyebrow">Tools</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.625rem); line-height:1.15; margin-bottom:1.2rem;">Tools I used.</h2>
     <div class="tools-grid-6 reveal reveal-delay-1" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1.1rem; text-align:left;">
       <div style="background:#fff; border-radius:16px; padding:1.4rem 1.5rem;">
         <p style="font-family:var(--font-display); font-size:1.05rem; font-weight:600; color:var(--pv-ink); margin-bottom:.5rem;">Power BI</p>
-        <p style="font-size:.88rem; color:var(--pv-muted); line-height:1.55; font-style:italic; border-left:2px solid var(--pv-terra); padding-left:.7rem;">Modelado, visualización e interacción del dashboard.</p>
+        <p style="font-size:.88rem; color:var(--pv-muted); line-height:1.55; font-style:italic; border-left:2px solid var(--pv-terra); padding-left:.7rem;">Modelling, visualisation and dashboard interaction.</p>
       </div>
       <div style="background:#fff; border-radius:16px; padding:1.4rem 1.5rem;">
         <p style="font-family:var(--font-display); font-size:1.05rem; font-weight:600; color:var(--pv-ink); margin-bottom:.5rem;">DAX</p>
-        <p style="font-size:.88rem; color:var(--pv-muted); line-height:1.55; font-style:italic; border-left:2px solid var(--pv-terra); padding-left:.7rem;">Cálculo de métricas y medidas.</p>
+        <p style="font-size:.88rem; color:var(--pv-muted); line-height:1.55; font-style:italic; border-left:2px solid var(--pv-terra); padding-left:.7rem;">Calculating metrics and measures.</p>
       </div>
       <div style="background:#fff; border-radius:16px; padding:1.4rem 1.5rem;">
-        <p style="font-family:var(--font-display); font-size:1.05rem; font-weight:600; color:var(--pv-ink); margin-bottom:.5rem;">Esquema en estrella</p>
-        <p style="font-size:.88rem; color:var(--pv-muted); line-height:1.55; font-style:italic; border-left:2px solid var(--pv-terra); padding-left:.7rem;">Organización del modelo de datos.</p>
+        <p style="font-family:var(--font-display); font-size:1.05rem; font-weight:600; color:var(--pv-ink); margin-bottom:.5rem;">Star schema</p>
+        <p style="font-size:.88rem; color:var(--pv-muted); line-height:1.55; font-style:italic; border-left:2px solid var(--pv-terra); padding-left:.7rem;">Organising the data model.</p>
       </div>
       <div style="background:#fff; border-radius:16px; padding:1.4rem 1.5rem;">
         <p style="font-family:var(--font-display); font-size:1.05rem; font-weight:600; color:var(--pv-ink); margin-bottom:.5rem;">Power Query</p>
-        <p style="font-size:.88rem; color:var(--pv-muted); line-height:1.55; font-style:italic; border-left:2px solid var(--pv-terra); padding-left:.7rem;">Limpieza y transformación.</p>
+        <p style="font-size:.88rem; color:var(--pv-muted); line-height:1.55; font-style:italic; border-left:2px solid var(--pv-terra); padding-left:.7rem;">Cleaning and transformation.</p>
       </div>
       <div style="background:#fff; border-radius:16px; padding:1.4rem 1.5rem;">
-        <p style="font-family:var(--font-display); font-size:1.05rem; font-weight:600; color:var(--pv-ink); margin-bottom:.5rem;">Modelo dimensional</p>
-        <p style="font-size:.88rem; color:var(--pv-muted); line-height:1.55; font-style:italic; border-left:2px solid var(--pv-terra); padding-left:.7rem;">Relación entre hechos y dimensiones.</p>
+        <p style="font-family:var(--font-display); font-size:1.05rem; font-weight:600; color:var(--pv-ink); margin-bottom:.5rem;">Dimensional model</p>
+        <p style="font-size:.88rem; color:var(--pv-muted); line-height:1.55; font-style:italic; border-left:2px solid var(--pv-terra); padding-left:.7rem;">Relationships between facts and dimensions.</p>
       </div>
       <div style="background:#fff; border-radius:16px; padding:1.4rem 1.5rem;">
-        <p style="font-family:var(--font-display); font-size:1.05rem; font-weight:600; color:var(--pv-ink); margin-bottom:.5rem;">Visualización editorial</p>
-        <p style="font-size:.88rem; color:var(--pv-muted); line-height:1.55; font-style:italic; border-left:2px solid var(--pv-terra); padding-left:.7rem;">Diseño pensado para facilitar la lectura.</p>
+        <p style="font-family:var(--font-display); font-size:1.05rem; font-weight:600; color:var(--pv-ink); margin-bottom:.5rem;">Editorial visualisation</p>
+        <p style="font-size:.88rem; color:var(--pv-muted); line-height:1.55; font-style:italic; border-left:2px solid var(--pv-terra); padding-left:.7rem;">Design built to make reading easier.</p>
       </div>
     </div>
   </div>
@@ -481,29 +482,29 @@ section { padding: 7.5rem 0; }
 <!-- S10 · QUÉ APRENDÍ -->
 <section id="aprendizaje" data-screen-label="Qué aprendí">
   <div class="pv-wrap">
-    <p class="reveal pv-eyebrow">Qué me llevo del proyecto</p>
-    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.625rem); line-height:1.15; margin-bottom:1.5rem; max-width:820px;">El modelo encontró dos errores reales.</h2>
-    <p class="reveal reveal-delay-1" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:1.2rem;">Durante el proceso aparecieron dos problemas que podían cambiar la lectura del análisis si no se corregían.</p>
-    <p class="reveal reveal-delay-2" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:1.2rem;">El primero estaba relacionado con registros duplicados que inflaban algunas métricas.</p>
-    <p class="reveal reveal-delay-3" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:1.2rem;">El segundo surgió al revisar la relación entre anfitriones y anuncios, donde parte de la concentración del mercado quedaba oculta si solo se utilizaban agregaciones generales.</p>
-    <p class="reveal reveal-delay-4" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:.6rem;">Resolver ambos casos me obligó a validar el modelo antes de construir el dashboard.</p>
-    <p class="reveal reveal-delay-4" style="font-family:var(--font-display); font-size:1.2rem; font-weight:500; color:var(--pv-ink); max-width:680px; line-height:1.6;">Fue una buena lección: una visualización puede verse bien y, aun así, apoyarse en un cálculo incorrecto.</p>
+    <p class="reveal pv-eyebrow">What I take away from the project</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.625rem); line-height:1.15; margin-bottom:1.5rem; max-width:820px;">The model found two real errors.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:1.2rem;">During the process, two problems came up that could have changed the reading of the analysis if they hadn’t been fixed.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:1.2rem;">The first had to do with duplicate records that inflated some metrics.</p>
+    <p class="reveal reveal-delay-3" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:1.2rem;">The second appeared when reviewing the relationship between hosts and listings, where part of the market’s concentration stayed hidden if only general aggregations were used.</p>
+    <p class="reveal reveal-delay-4" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:.6rem;">Solving both forced me to validate the model before building the dashboard.</p>
+    <p class="reveal reveal-delay-4" style="font-family:var(--font-display); font-size:1.2rem; font-weight:500; color:var(--pv-ink); max-width:680px; line-height:1.6;">It was a good lesson: a visual can look good and still rest on a wrong calculation.</p>
   </div>
 </section>
 
 <!-- S11 · CTA -->
 <section data-screen-label="CTA" style="text-align:center; padding:7rem 2rem 8rem;">
   <div class="pv-wrap reveal">
-    <p class="reveal cta-closing" style="font-family:var(--font-display); font-size:clamp(1.6rem, 3.6vw, 2.4rem); font-weight:500; line-height:1.3; color:var(--pv-ink); max-width:820px; margin:0 auto 1.4rem; text-wrap:balance;">De un precio suelto a un mercado con estructura.</p>
-    <p class="reveal reveal-delay-1" style="font-size:1.0625rem; color:var(--pv-muted); max-width:600px; line-height:1.7; margin:0 auto 3rem;">Este proyecto resume cómo abordé un análisis completo: desde preparar los datos hasta construir un dashboard pensado para responder preguntas de negocio.</p>
+    <p class="reveal cta-closing" style="font-family:var(--font-display); font-size:clamp(1.6rem, 3.6vw, 2.4rem); font-weight:500; line-height:1.3; color:var(--pv-ink); max-width:820px; margin:0 auto 1.4rem; text-wrap:balance;">From a loose price to a market with structure.</p>
+    <p class="reveal reveal-delay-1" style="font-size:1.0625rem; color:var(--pv-muted); max-width:600px; line-height:1.7; margin:0 auto 3rem;">This project sums up how I approached a complete analysis: from preparing the data to building a dashboard designed to answer business questions.</p>
     <div class="reveal reveal-delay-2" style="display:flex; flex-wrap:wrap; justify-content:center; gap:2.5rem;">
       <div>
-        <a href="https://app.powerbi.com/view?r=eyJrIjoiOTA2ZDExNjktYzE4Ny00Y2UzLThmM2YtMjI5Y2FmNDg1MzM5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=9c4b9193b627b78a0e01" class="pv-cta" target="_blank" rel="noopener" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Airbnb Pais Vasco',location:'airbnb_pais_vasco_cta'});">Abrir dashboard en Power BI</a>
-        <p style="margin-top:1rem; font-size:.85rem; color:var(--pv-muted);">Dashboard interactivo publicado en Power BI Service</p>
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiOTA2ZDExNjktYzE4Ny00Y2UzLThmM2YtMjI5Y2FmNDg1MzM5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=9c4b9193b627b78a0e01" class="pv-cta" target="_blank" rel="noopener" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Airbnb Pais Vasco',location:'airbnb_pais_vasco_cta'});">Open the dashboard in Power BI</a>
+        <p style="margin-top:1rem; font-size:.85rem; color:var(--pv-muted);">Interactive dashboard published in the Power BI Service</p>
       </div>
       <div>
-        <a href="./power-bi.html" class="pv-cta pv-cta-ghost">Ver el resto de proyectos</a>
-        <p style="margin-top:1rem; font-size:.85rem; color:var(--pv-muted);">Portfolio completo de Power BI</p>
+        <a href="./projects.html" class="pv-cta pv-cta-ghost">See the rest of the projects</a>
+        <p style="margin-top:1rem; font-size:.85rem; color:var(--pv-muted);">Full Power BI portfolio</p>
       </div>
     </div>
   </div>
@@ -515,31 +516,31 @@ section { padding: 7.5rem 0; }
     <div class="pv-foot-grid" style="display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:2.5rem; padding-bottom:2.5rem; border-bottom:1px solid rgba(255,255,255,.12);">
       <div>
         <p style="font-family:var(--font-display); font-size:1.3rem; font-weight:600; color:#fff; margin-bottom:.6rem;">Borja Mora.</p>
-        <p style="font-size:.85rem; color:#8B9490; line-height:1.5;">Data Analyst Junior</p>
-        <p style="font-size:.8rem; color:#8B9490; margin-top:.9rem;">Madrid, España</p>
+        <p style="font-size:.85rem; color:#8B9490; line-height:1.5;">Junior Data Analyst</p>
+        <p style="font-size:.8rem; color:#8B9490; margin-top:.9rem;">Madrid, Spain</p>
       </div>
       <div>
-        <p class="pv-foot-title">Navegación</p>
-        <a href="./index.html" class="pv-foot-link">Inicio</a>
-        <a href="./sobre-mi.html" class="pv-foot-link">Sobre mí</a>
-        <a href="./power-bi.html" class="pv-foot-link">Power BI</a>
-        <a href="./analisis-datos.html" class="pv-foot-link">Análisis</a>
-        <a href="./visualizacion-datos.html" class="pv-foot-link">Visualización</a>
-        <a href="./descargas.html" class="pv-foot-link">Descargas</a>
+        <p class="pv-foot-title">Navigation</p>
+        <a href="./index.html" class="pv-foot-link">Home</a>
+        <a href="./about.html" class="pv-foot-link">About me</a>
+        <a href="./projects.html" class="pv-foot-link">Power BI</a>
+        <a href="./data-analysis.html" class="pv-foot-link">Analysis</a>
+        <a href="./data-visualisation.html" class="pv-foot-link">Visualisation</a>
+        <a href="./downloads.html" class="pv-foot-link">Downloads</a>
       </div>
       <div>
-        <p class="pv-foot-title">Este proyecto</p>
-        <a href="https://app.powerbi.com/view?r=eyJrIjoiOTA2ZDExNjktYzE4Ny00Y2UzLThmM2YtMjI5Y2FmNDg1MzM5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=9c4b9193b627b78a0e01" target="_blank" rel="noopener" class="pv-foot-link" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Airbnb Pais Vasco',location:'airbnb_pais_vasco_footer'});">Dashboard Power BI</a>
+        <p class="pv-foot-title">This project</p>
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiOTA2ZDExNjktYzE4Ny00Y2UzLThmM2YtMjI5Y2FmNDg1MzM5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=9c4b9193b627b78a0e01" target="_blank" rel="noopener" class="pv-foot-link" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Airbnb Pais Vasco',location:'airbnb_pais_vasco_footer'});">Power BI dashboard</a>
       </div>
       <div>
-        <p class="pv-foot-title">Sígueme</p>
+        <p class="pv-foot-title">Follow me</p>
         <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener" class="pv-foot-link" onclick="gtag('event','clic_linkedin',{location:'airbnb_pais_vasco_footer'});">LinkedIn</a>
         <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener" class="pv-foot-link" onclick="gtag('event','clic_github',{location:'airbnb_pais_vasco_footer'});">GitHub</a>
       </div>
     </div>
     <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:.8rem; padding-top:1.6rem; font-size:.78rem; color:#7A857F;">
-      <span>© 2026 Borja Mora Méndez · Todos los derechos reservados</span>
-      <span>Diseñado y construido por mí</span>
+      <span>© 2026 Borja Mora Méndez · All rights reserved</span>
+      <span>Designed and built by me</span>
     </div>
   </div>
 </footer>
@@ -589,9 +590,9 @@ class Component extends DCLogic {
     const format = el.dataset.format;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       el.textContent = format === 'thousands'
-        ? Math.round(target).toLocaleString('es-ES', { useGrouping: true })
+        ? Math.round(target).toLocaleString('en-GB', { useGrouping: true })
         : decimals > 0
-          ? target.toFixed(decimals).replace('.', ',')
+          ? target.toFixed(decimals)
           : Math.round(target);
       return;
     }
@@ -604,9 +605,9 @@ class Component extends DCLogic {
       const ease = 1 - Math.pow(1 - progress, 3);
       const current = target * ease;
       if (format === 'thousands') {
-        el.textContent = Math.round(current).toLocaleString('es-ES', { useGrouping: true });
+        el.textContent = Math.round(current).toLocaleString('en-GB', { useGrouping: true });
       } else if (decimals > 0) {
-        el.textContent = current.toFixed(decimals).replace('.', ',');
+        el.textContent = current.toFixed(decimals);
       } else {
         el.textContent = Math.round(current);
       }
@@ -620,11 +621,11 @@ class Component extends DCLogic {
 </script>
 
 <!-- ── Cookie banner HTML + lógica (RGPD/LOPDGDD) ── -->
-<div id="bm-cookie-banner" role="dialog" aria-live="polite" aria-label="Aviso de cookies">
-  <p><strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Política de privacidad</a>.</p>
+<div id="bm-cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie notice">
+  <p><strong>Analytics cookies.</strong> I use Google Analytics to understand how this site is used. No advertising or third-party tracking. <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Privacy policy</a>.</p>
   <div class="bm-cb-btns">
-    <button class="bm-cb-btn bm-cb-reject" id="bm-cb-reject" aria-label="Rechazar cookies">Rechazar</button>
-    <button class="bm-cb-btn bm-cb-accept" id="bm-cb-accept" aria-label="Aceptar cookies">Aceptar</button>
+    <button class="bm-cb-btn bm-cb-reject" id="bm-cb-reject" aria-label="Reject cookies">Reject</button>
+    <button class="bm-cb-btn bm-cb-accept" id="bm-cb-accept" aria-label="Accept cookies">Accept</button>
   </div>
 </div>
 <script>
