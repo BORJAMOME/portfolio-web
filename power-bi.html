@@ -1040,7 +1040,7 @@ window.addEventListener('scroll',()=>{
   const h=document.documentElement;
   const p=Math.min(1, Math.max(0, window.scrollY/(h.scrollHeight-h.clientHeight) || 0));
   document.getElementById('progressBar').style.transform=`scaleX(${p})`;
-  h.style.setProperty('--logo-ring', p);
+  (document.querySelector('.logo-mark')||{style:{setProperty:function(){}}}).style.setProperty('--logo-ring',p) /* en el logo, no en <html>: así no se recalculan los estilos de toda la página en cada scroll */;
   document.querySelector('.logo-mark')?.classList.toggle('at-end', p >= 0.98);
 });
 

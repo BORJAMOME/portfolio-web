@@ -98,7 +98,9 @@ function pick() {
 
 // escritorio: el lienzo entero; móvil: solo la franja del gráfico (las etiquetas van en lista debajo)
 const narrow = window.matchMedia('(max-width: 1023px)');
-const VB = { wide: '0 0 1280 800', narrow: '0 520 1280 206' };
+// DY: el lienzo crece por arriba y el gráfico baja DY u respecto al titular (en sync con --dy de manual.css)
+const DY = 56;
+const VB = { wide: `0 ${-DY} 1280 ${800 + DY}`, narrow: '0 520 1280 206' };
 
 export function initCover() {
   const sec = document.getElementById('portada');

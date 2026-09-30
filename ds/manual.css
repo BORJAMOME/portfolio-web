@@ -1439,8 +1439,9 @@
 .cover { position: relative; padding: 64px 0 0; overflow-x: clip; }
 .cvx {
   --u: calc(100cqw / 1280);
+  --dy: 56;   /* el gráfico entero (etiquetas, barras, escala) baja --dy u: aire entre titular y gráfico. En sync con DY de cover.js */
   position: relative; container-type: inline-size;
-  width: min(100%, 1280px, max(960px, (100svh - 80px) * 1.6)); aspect-ratio: 1280 / 800; margin: 0 auto;
+  width: min(100%, 1280px, max(960px, (100svh - 80px) * 1280 / 856)); aspect-ratio: 1280 / 856; margin: 0 auto;
   color: #111;
 }
 .cvx-ink { position: absolute; inset: 0; }
@@ -1466,12 +1467,12 @@
 
 .cvx-chart { position: absolute; inset: 0; pointer-events: none; }
 .cvx-svg { position: absolute; inset: 0; display: block; width: 100%; height: 100%; overflow: visible; }
-.cvx-ticks { position: absolute; left: 0; right: 0; top: calc(728 * var(--u)); }
+.cvx-ticks { position: absolute; left: 0; right: 0; top: calc((728 + var(--dy)) * var(--u)); }
 .cvx-ticks span { position: absolute; left: calc(var(--x) / 1280 * 100%); transform: translateX(-50%); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: max(9.5px, 10.5 * var(--u)); color: #333; line-height: 1.2; }
 
 .cvx-caps { list-style: none; margin: 0; padding: 0; }
 .cvx-caps li {
-  position: absolute; left: calc(var(--x) * var(--u)); top: calc((468 + var(--r) * 20) * var(--u));   /* en sync con rowY() de cover.js */
+  position: absolute; left: calc(var(--x) * var(--u)); top: calc((468 + var(--dy) + var(--r) * 20) * var(--u));   /* en sync con rowY() de cover.js */
   padding-left: calc(7 * var(--u)); display: flex; align-items: baseline; gap: calc(5 * var(--u)); white-space: nowrap; line-height: 1;
 }
 .cvx-n { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: max(9px, 10 * var(--u)); color: #333; }
@@ -1525,7 +1526,7 @@
   .cvx-deck { font-size: clamp(18px, 2.6vw, 21px); }
   .cvx-by { font-size: 13px; }
   .cvx-start { font-size: 11.5px; margin-top: 4px; }
-  .cvx-chart { order: 4; position: relative; margin: 40px calc(-1 * var(--g)) 0; }
+  .cvx-chart { order: 4; position: relative; margin: 56px calc(-1 * var(--g)) 0; }
   .cvx-svg { width: 100%; height: auto; aspect-ratio: 1280 / 206; }
   .cvx-ticks { position: relative; top: auto; height: 16px; margin-top: 6px; }
   .cvx-ticks span { top: 0; font-size: 10px; }
