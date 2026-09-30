@@ -75,12 +75,10 @@
     cowan: { k: 'Investigación', cite: 'The Magical Number 4 in Short-Term Memory', meta: 'Nelson Cowan · 2001 · Behavioral and Brain Sciences', t: 'La memoria a corto plazo retiene pocos bloques de información a la vez. El número exacto depende de la tarea: por eso lo trato como orientación, no como regla.', url: 'https://doi.org/10.1017/S0140525X01003922' },
     segel: { k: 'Investigación', cite: 'Narrative Visualization: Telling Stories with Data', meta: 'Segel y Heer · 2010 · IEEE Transactions on Visualization and Computer Graphics', t: 'Describe el equilibrio entre una lectura guiada por el autor y una exploración libre, y los patrones que lo resuelven.', url: 'https://doi.org/10.1109/TVCG.2010.179' },
     ajani: { k: 'Investigación', cite: 'Declutter and Focus', meta: 'Ajani, Lee, Xiong, Knaflic, Kemper y Franconeri · 2021 · IEEE TVCG', t: 'Evaluación empírica: los gráficos limpios y con foco se perciben como más claros y profesionales, y su mensaje se recuerda mejor.', url: 'https://doi.org/10.1109/TVCG.2021.3068337' },
-    hullman: { k: 'Investigación', cite: 'Visualization Rhetoric: Framing Effects in Narrative Visualization', meta: 'Hullman y Diakopoulos · 2011 · IEEE TVCG', t: 'Cómo las decisiones de diseño (encuadre, omisiones, anotaciones, forma de mostrar la incertidumbre) cambian la interpretación de los mismos datos.', url: 'https://doi.org/10.1109/TVCG.2011.255' },
     nng: { k: 'Investigación', cite: 'F-Shaped Pattern of Reading on the Web: Misunderstood, But Still Relevant', meta: 'Kara Pernice · 2017 · Nielsen Norman Group', t: 'Estudios de eye-tracking sobre cómo se escanean las páginas con mucho texto, cuándo aparece el patrón en F y cómo evitar que lo importante quede fuera del recorrido.', url: 'https://www.nngroup.com/articles/f-shaped-pattern-reading-web-content/' },
     tufte: { k: 'Ver referencia', cite: 'Sparkline theory and practice', meta: 'Edward Tufte · desarrollado en Beautiful Evidence · 2006 · Graphics Press', t: 'Gráficos intensos, simples y del tamaño de una palabra, pensados para dar contexto a un número sin ejes ni decoración.', url: 'https://www.edwardtufte.com/notebook/sparkline-theory-and-practice-edward-tufte/' },
     pbicanvas: { k: 'Fuente', cite: 'Apply page size and settings in a Power BI report', meta: 'Microsoft Learn · documentación de Power BI', t: 'Tipos de lienzo (16:9 por defecto, 4:3, carta, tooltip y personalizado), tamaños disponibles y opciones de vista: ajustar a la página, al ancho o tamaño real.', url: 'https://learn.microsoft.com/es-es/power-bi/create-reports/power-bi-report-display-settings' },
     mslearn: { k: 'Fuente', cite: 'Diseño de informes de Power BI para accesibilidad', meta: 'Microsoft Learn · documentación de Power BI', t: 'Orden de tabulación, texto alternativo, contraste, no depender solo del color y navegación con teclado dentro de los informes.', url: 'https://learn.microsoft.com/es-es/power-bi/create-reports/desktop-accessibility-overview' },
-    ibcs: { k: 'Fuente', cite: 'International Business Communication Standards (IBCS)', meta: 'IBCS Association', t: 'Estándar para informes de negocio organizado en siete reglas: SAY, UNIFY, CONDENSE, CHECK, EXPRESS, SIMPLIFY, STRUCTURE.', url: 'https://www.ibcs.com/' },
     swd: { k: 'Ver referencia', cite: 'Storytelling with Data', meta: 'Cole Nussbaumer Knaflic · 2015 · Wiley', t: 'La historia en tres minutos, la gran idea, la diferencia entre explorar y explicar y la estructura Bing, Bang, Bongo.', url: 'https://www.storytellingwithdata.com/books' }
   };
   $$('details.src[data-src]').forEach(function (d) {
@@ -763,46 +761,70 @@
 
   /* 07 · Construir el lienzo */
   VIZ.canvas = function (viz) {
-    var mini = function (hero) { var h = [.8, .55, .45, .35, .25], s = ''; h.forEach(function (v, i) { s += '<i style="position:absolute;bottom:0;left:' + (i * 19 + 2) + '%;width:14%;height:' + (v * 100) + '%;background:' + (hero && i === 0 ? '#6B5CA5' : '#DCDCDC') + '"></i>'; }); return '<div style="position:relative;flex:1;margin-top:.6em">' + s + '</div>'; };
+    /* Un informe de ventas de Power BI de los de siempre: título, dos segmentadores,
+       cuatro tarjetas KPI, líneas por mes (este año frente al anterior), barras por canal
+       y una tabla de detalle. Se construye pieza a pieza sobre una retícula de 12 columnas. */
+    var cap = function (t) { return '<span class="pb-cap">' + t + '</span>'; };
+    var kpi = function (l, v, d, hero) { return cap(l) + '<span class="pb-kv' + (hero ? ' hero' : '') + '">' + v + '</span><span class="pb-kd">▲ ' + d + '</span>'; };
+    var CY = [96, 102, 110, 104, 118, 124, 121, 130, 138, 142, 150, 163], PY = [88, 92, 95, 90, 97, 101, 99, 104, 108, 107, 112, 118];
+    var poly = function (a) { return a.map(function (v, i) { return (i / 11 * 100).toFixed(1) + ',' + (48 - (v - 80) / 90 * 44).toFixed(1); }).join(' '); };
     var BL = [
-      '<span class="lb cap" style="position:static;opacity:1">Título</span><span style="font-family:Newsreader,serif;font-size:1.45em;line-height:1.1;margin-top:.15em">El canal online ya concentra el crecimiento</span>',
-      '<span class="lb cap" style="position:static;opacity:1">KPI</span><span style="font-family:Newsreader,serif;font-size:2.6em;line-height:1;margin-top:.2em;color:#4A3E79">+24 %</span><span style="font-size:.9em;color:#5a5a5a">vs. Q4 2024</span>',
-      '<span class="lb cap" style="position:static;opacity:1">Visual principal</span>' + mini(true),
-      '<span class="lb cap" style="position:static;opacity:1">Detalle</span>' + mini(false),
-      '<span class="lb cap" style="position:static;opacity:1">Detalle</span>' + mini(false),
-      '<span class="lb cap" style="position:static;opacity:1">Segmentador</span><span style="font-size:.95em;margin-top:.2em">Canal: Todos ▾</span>'
+      '<span class="pb-t">Ventas 2025</span><span class="pb-s">El canal online explica el 73 % del crecimiento</span>',
+      cap('Año') + '<span class="pb-sl">2025 <b>▾</b></span>',
+      cap('Región') + '<span class="pb-sl">Todas <b>▾</b></span>',
+      kpi('Ventas', '1,57 M€', '+24 % vs 2024', true),
+      kpi('Margen', '38,2 %', '+1,1 pp vs 2024'),
+      kpi('Pedidos', '12.480', '+9 % vs 2024'),
+      kpi('Ticket medio', '126 €', '+14 % vs 2024'),
+      cap('Ventas por mes · 2025 vs 2024') + '<svg class="pb-ln" viewBox="0 0 100 50" preserveAspectRatio="none" aria-hidden="true"><polyline points="' + poly(PY) + '" class="py"/><polyline points="' + poly(CY) + '" class="cy"/></svg><span class="pb-lg"><i class="cy"></i>2025<i class="py"></i>2024</span>',
+      cap('Ventas por canal') + '<span class="pb-br">' + [['Online', 92, 1], ['Tiendas', 58], ['Marketplace', 34], ['Mayorista', 21]].map(function (b) { return '<span><em>' + b[0] + '</em><i style="width:' + b[1] + '%"' + (b[2] ? ' class="hero"' : '') + '></i></span>'; }).join('') + '</span>',
+      cap('Detalle por producto') + '<span class="pb-tb"><span class="th"><em>Producto</em><em>Ventas</em><em>vs 2024</em><em>Margen</em></span>' + [['Producto A', '612 k€', '+31 %', '41 %'], ['Producto B', '455 k€', '+19 %', '37 %'], ['Producto C', '318 k€', '+12 %', '35 %']].map(function (r) { return '<span>' + r.map(function (c) { return '<em>' + c + '</em>'; }).join('') + '</span>'; }).join('') + '</span>'
     ];
-    var st = Stage($('.stage', viz), 6, { blk: BL });
-    var M = .05, G = .02, CW = (.9 - 11 * G) / 12;
+    var st = Stage($('.stage', viz), BL.length, { blk: BL });
+    var M = .04, G = .016, CW = (1 - 2 * M - 11 * G) / 12;
     function cx(c) { return M + c * (CW + G); }
     function sw(n) { return n * CW + (n - 1) * G; }
     var gridP = [];
     for (var c = 0; c < 12; c++) gridP.push({ k: 'gc' + c, d: rect(cx(c), .03, CW, .94), c: 'rg' });
-    var MESSY = [{ x: .07, y: .06, w: .58, h: .1 }, { x: .08, y: .21, w: .24, h: .2 }, { x: .36, y: .19, w: .58, h: .43 }, { x: .06, y: .67, w: .3, h: .26 }, { x: .4, y: .69, w: .27, h: .24 }, { x: .71, y: .7, w: .23, h: .11 }];
-    var SNAP = [{ x: cx(0), y: .06, w: sw(8), h: .1 }, { x: cx(0), y: .2, w: sw(3), h: .2 }, { x: cx(3), y: .2, w: sw(9), h: .42 }, { x: cx(0), y: .68, w: sw(4), h: .26 }, { x: cx(4), y: .68, w: sw(4), h: .26 }, { x: cx(8), y: .68, w: sw(4), h: .1 }];
-    var DIST = [{ x: cx(0), y: .05, w: sw(8), h: .1 }, { x: cx(0), y: .19, w: sw(3), h: .44 }, { x: cx(3), y: .19, w: sw(9), h: .44 }, { x: cx(0), y: .67, w: sw(4), h: .28 }, { x: cx(4), y: .67, w: sw(4), h: .28 }, { x: cx(8), y: .67, w: sw(4), h: .12 }];
-    var SHOW = { k0: 0, k1: 0, k2: 1, k3: 2, k4: 3, k5: 5, k6: 6, k7: 6, k8: 6, k9: 6 };
+    // tres momentos del mismo informe: colocado a ojo · alineado a la retícula · con el mismo aire entre filas
+    var MESSY = [
+      { x: .06, y: .05, w: .5, h: .11 }, { x: .64, y: .07, w: .14, h: .08 }, { x: .81, y: .05, w: .14, h: .09 },
+      { x: .05, y: .2, w: .2, h: .15 }, { x: .28, y: .22, w: .21, h: .14 }, { x: .52, y: .19, w: .2, h: .16 }, { x: .75, y: .21, w: .21, h: .15 },
+      { x: .06, y: .41, w: .56, h: .28 }, { x: .66, y: .43, w: .29, h: .25 }, { x: .04, y: .73, w: .9, h: .22 }
+    ];
+    var row = function (y1, y2, y3, y4, hA, hB) { return [
+      { x: cx(0), y: y1, w: sw(8), h: .11 }, { x: cx(8), y: y1 + .015, w: sw(2), h: .08 }, { x: cx(10), y: y1 + .015, w: sw(2), h: .08 },
+      { x: cx(0), y: y2, w: sw(3), h: .15 }, { x: cx(3), y: y2, w: sw(3), h: .15 }, { x: cx(6), y: y2, w: sw(3), h: .15 }, { x: cx(9), y: y2, w: sw(3), h: .15 },
+      { x: cx(0), y: y3, w: sw(8), h: hA }, { x: cx(8), y: y3, w: sw(4), h: hA }, { x: cx(0), y: y4, w: sw(12), h: hB }
+    ]; };
+    var SNAP = row(.05, .19, .41, .74, .29, .21);   // alineado, pero con huecos desiguales entre filas
+    var DIST = row(.04, .2, .4, .75, .3, .21);      // la misma separación (4 %) entre todas las filas
+    // qué piezas se ven en cada paso (índices de BL)
+    var SHOW = { k0: [], k1: [], k2: [0], k3: [0, 3, 4, 5, 6], k4: [0, 3, 4, 5, 6, 7], k5: [0, 3, 4, 5, 6, 7, 8, 9] };
+    var ALL = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
     return {
       set: function (k) {
-        var n = SHOW[k], L = k === 'k7' ? SNAP : (k === 'k8' || k === 'k9') ? DIST : MESSY;
-        var sp = L.map(function (p, i) { return Object.assign({ c: 'w', bc: 'grid', o: i < n ? 1 : 0 }, p); });
+        var on = SHOW[k] || ALL, L = k === 'k7' ? SNAP : (k === 'k8' || k === 'k9') ? DIST : MESSY;
+        var sp = L.map(function (p, i) { return Object.assign({ c: 'w', bc: 'grid', o: on.indexOf(i) > -1 ? 1 : 0 }, p); });
         var pt = [];
         if (k !== 'k0' && k !== 'k9') pt = pt.concat(gridP);
-        if (n >= 6) {
-          var r = L[4], s = L[5];
-          pt.push({ k: 'reg', d: rect(r.x - .012, Math.min(r.y, s.y) - .015, s.x + s.w - r.x + .024, Math.max(r.y + r.h, s.y + s.h) - Math.min(r.y, s.y) + .03), c: 'rg rg-g' });
+        if (on.indexOf(1) > -1) {   // los segmentadores, agrupados: filtran todo el informe
+          var a = L[1], b = L[2];
+          pt.push({ k: 'reg', d: rect(a.x - .01, Math.min(a.y, b.y) - .012, b.x + b.w - a.x + .02, Math.max(a.y + a.h, b.y + b.h) - Math.min(a.y, b.y) + .024), c: 'rg rg-g' });
         }
         var lb = [];
-        if (k === 'k0') lb.push({ k: 'e', x: .5, y: .5, t: 'lienzo vacío', a: 'c', c: 'cap' });
-        if (k === 'k8') lb.push({ k: 'gut', x: .97, y: .17, t: '↕ mismo espacio entre filas', a: 'r', c: 'cap grn' });
+        if (k === 'k0') lb.push({ k: 'e', x: .5, y: .5, t: 'lienzo vacío · 16:9', a: 'c', c: 'cap' });
+        if (k === 'k6') lb.push({ k: 'flt', x: .96, y: .165, t: 'filtran todo el informe', a: 'r', c: 'cap grn' });
+        if (k === 'k8') lb.push({ k: 'gut', x: .96, y: .375, t: '↕ mismo espacio entre filas', a: 'r', c: 'cap grn' });
         st.set(sp, lb, pt);
       }
     };
   };
 
   /* 07 · 8 puntos y espacio en blanco (toggles CSS) */
-  VIZ.spc = function (viz) { var e = $('.spc', viz); return { set: function (k) { e.dataset.s = k; } }; };
-  VIZ.ws = function (viz) { var e = $('.ws', viz); return { set: function (k) { e.dataset.s = k; } }; };
+  function cssTgl(sel) { return function (viz) { var e = $(sel, viz), note = $('[data-tgl-note="' + viz.id + '"]'); return { set: function (k) { e.dataset.s = k; if (note) note.textContent = note.getAttribute('data-n-' + k) || ''; } }; }; }
+  VIZ.spc = cssTgl('.sp8');
+  VIZ.ws = cssTgl('.ws');
 
   /* ═══ PLANOS DE DASHBOARD ═══
      El mismo reparto que usa PBI Mockup Creator: un lienzo de 1280×720 con
@@ -974,10 +996,10 @@
   };
 
   /* ═══ 07 · GESTALT APLICADA (panel Gestalt de PBI Mockup Creator) ═══ */
-  var GBASE = { m: 24, g: 12, hd: 1, k: 4, a: 2, b: 2, kl: ['KPI', 'KPI', 'KPI', 'KPI'], l: { hd: 'Header', a1: 'Zona A', a2: 'Zona A', b1: 'Zona B', b2: 'Zona B' } };
+  var GBASE = { m: 24, g: 16, hd: 1, k: 4, a: 2, b: 2, kl: ['KPI', 'KPI', 'KPI', 'KPI'], l: { hd: 'Header', a1: 'Zona A', a2: 'Zona A', b1: 'Zona B', b2: 'Zona B' } };
   function gx(o) { var c = {}, k; for (k in GBASE) c[k] = GBASE[k]; for (k in o) c[k] = o[k]; return c; }
   var GST = {
-    prox: { good: gx({}), bad: gx({ gs: [3, 30, 5] }), cg: 'Separación uniforme: 12 px', cb: 'Separaciones de 3, 30 y 5 px' },
+    prox: { good: gx({}), bad: gx({ g: 3, gs: [16, 44, 3] }), cg: '16 px entre todos los bloques', cb: '3 px entre tarjetas, 44 bajo los KPIs y 3 entre zonas: A y B se funden' },
     jer: { good: gx({ pk: 18, pa: 45, pb: 27, l: { hd: 'Header', a1: '① Zona A · mensaje', a2: 'Zona A', b1: '② Zona B · detalle', b2: 'Zona B' } }), bad: gx({ pk: 16, pa: 26, pb: 50, l: { hd: 'Header', a1: '② Zona A · mensaje', a2: 'Zona A', b1: '① Zona B · detalle', b2: 'Zona B' } }), cg: 'Zona A 45 % · Zona B 27 %', cb: 'Zona A 26 % · Zona B 50 %' },
     sem: { good: gx({}), bad: gx({ k: 4, a: 3, b: 3, pk: 33, pa: 33, pb: 33, kl: ['', '', '', ''], l: { hd: 'Header' } }), cls: 'wf--same', cg: 'KPIs y gráficos: dos familias', cb: 'Todo igual: no hay familias' },
     cie: { good: gx({}), bad: gx({ m: 3, g: 3, hdH: 40 }), cg: 'free', cb: 'free' },

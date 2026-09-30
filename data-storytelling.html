@@ -18,7 +18,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- Shared styles: variables, nav, footer, botones, reset -->
 <link rel="stylesheet" href="./shared.css?v=20260929">
-<link rel="stylesheet" href="./data-storytelling.css?v=20260930h">
+<link rel="stylesheet" href="./data-storytelling.css?v=20260930n">
 <!-- Primary Meta Tags -->
 <meta name="description" content="Un manual interactivo sobre Data Storytelling y diseño de dashboards: percepción, reducción de ruido, atención, elección del visual, composición, texto y narrativa, demostrados sobre un dashboard que cambia mientras lees.">
 <meta name="keywords" content="data storytelling, diseño de dashboards, Power BI, visualización de datos, scrollytelling, UX, Borja Mora">
@@ -311,13 +311,13 @@
       <div class="sc-steps">
         <div class="step" data-flags=""><div class="st-in">
           <span class="st-tag">Informe de ventas · Q4 2025</span>
-          <p class="st-copy">Este es un dashboard de ventas. Tómate un segundo. ¿Qué te está diciendo?</p>
+          <p class="st-copy">Este es un dashboard de ventas.<br>Tómate un segundo.<br>¿Qué te está diciendo?</p>
           <div class="scroll-cue"><span class="sc-track" aria-hidden="true"><span class="sc-dot"></span><span class="sc-chevron"></span></span><span class="sc-label">Desliza para seguir</span></div>
         </div></div>
         <div class="step" data-flags=""><div class="st-in"><p class="st-copy">Un dashboard puede estar lleno de datos y seguir sin contar nada.</p></div></div>
-        <div class="step" data-flags="hush"><div class="st-in"><p class="st-copy">El problema no siempre es tener demasiados datos. A veces es que todo intenta llamar la atención al mismo tiempo.</p></div></div>
+        <div class="step" data-flags="hush"><div class="st-in"><p class="st-copy">El problema no siempre es tener demasiados datos. A veces, el problema es que todos quieren llamar la atención al mismo tiempo.</p></div></div>
         <div class="step" data-flags="flat lessgrid"><div class="st-in"><p class="st-copy">Primero quito lo que compite con el mensaje.</p></div></div>
-        <div class="step" data-flags="flat lessgrid gray focus"><div class="st-in"><p class="st-copy">Después decido qué merece la atención.</p></div></div>
+        <div class="step" data-flags="flat lessgrid gray focus"><div class="st-in"><p class="st-copy">Después decido qué merece realmente la atención.</p></div></div>
         <div class="step" data-flags="flat lessgrid gray focus dim zoom"><div class="st-in"><p class="st-copy">Y entonces aparece algo importante: <span class="ds-green">sé dónde mirar.</span></p></div></div>
         <div class="step step--pause" data-flags="flat lessgrid gray focus dim"><div class="st-in"><p class="st-copy">Un dashboard no está terminado cuando los datos están dentro.</p></div></div>
         <div class="step step--pause" data-flags="flat lessgrid gray focus dim direct short story annot-on"><div class="st-in"><p class="st-copy">Está terminado cuando se entiende.</p></div></div>
@@ -399,7 +399,7 @@
       <div>
         <p class="ds-kicker">Mi marco de trabajo</p>
         <h3 class="ds-h3" style="margin-top:12px">Tres capas que tienen que encajar</h3>
-        <p class="ds-body ds-muted" style="margin-top:14px">No es una ley científica. Es la forma en la que reviso un informe antes de darlo por bueno: si falla una capa, la historia cojea.</p>
+        <p class="ds-body ds-muted" style="margin-top:14px">No es una fórmula exacta. Es la forma en la que reviso un informe antes de darlo por terminado. Las tres capas tienen que funcionar juntas: si una falla, el informe pierde fuerza.</p>
       </div>
       <div class="layers rv-seq">
         <div class="layer"><span class="ln">DATOS</span><span class="lq">¿Qué puedo demostrar?</span></div>
@@ -494,7 +494,8 @@
     <div class="split split--wide">
       <div>
         <p class="ds-kicker">Audiencia</p>
-        <p class="ds-h3" style="margin:12px 0 18px">La misma pregunta no se diseña igual para todos.</p>
+        <p class="ds-h3" style="margin:12px 0 14px">La misma pregunta no se diseña igual para todos.</p>
+        <p class="ds-body" style="margin-bottom:18px">Antes de diseñar un informe, necesito saber quién lo va a utilizar y qué necesita entender.</p>
         <div class="ctl-row"><div class="seg" role="group" aria-label="Audiencia" data-tgl-for="aud">
           <button type="button" data-s="csuite" aria-pressed="true">Dirección</button>
           <button type="button" data-s="com" aria-pressed="false">Comercial</button>
@@ -505,8 +506,9 @@
           data-n-csuite="Dirección quiere el número y la tendencia. Sin filtros, márgenes amplios y un único visual protagonista. El detalle, abajo y pequeño."
           data-n-com="El equipo comercial lo consulta cada día. Filtros rápidos arriba, una fila completa de KPIs y comparativas que se leen de un vistazo."
           data-n-ana="Quien analiza acepta densidad si a cambio hay respuestas. Filtros en un lateral, más visuales y más detalle, pero la jerarquía se mantiene."
-          data-n-cli="Un cliente externo no conoce nuestras siglas. Una cabecera que da contexto, pocos KPIs, un solo mensaje y nada de jerga."></p>
-        <p class="ds-body ds-muted" style="margin-top:14px">Y una pregunta que suelo olvidar: <b>¿dónde lo va a mirar?</b> No es lo mismo un comité mensual en pantalla grande, donde alguien solo lee los dos primeros KPIs, que un móvil entre dos reuniones.</p>
+          data-n-cli="Un cliente externo, por ejemplo, no tiene por qué conocer nuestras siglas ni nuestro lenguaje interno. Necesita contexto, pocos KPIs, un mensaje claro y nada de jerga innecesaria."></p>
+        <p class="ds-body ds-muted" style="margin-top:14px">Y hay otra pregunta que a veces se me olvida: <b>¿dónde lo va a consultar?</b></p>
+        <p class="ds-body ds-muted" style="margin-top:10px">No es lo mismo un comité mensual frente a una pantalla grande, donde probablemente solo se lean los primeros KPIs, que consultar el informe desde el móvil entre dos reuniones.</p>
       </div>
       <div class="tgl" id="aud" data-viz="wf" data-wf="aud" data-auto="csuite,com,ana,cli">
         <div class="wf" role="img" aria-label="Plano de un dashboard que cambia según la audiencia: más aire y un visual dominante para dirección, filtros arriba para comercial, filtros laterales y más detalle para analistas, y un solo mensaje para un cliente externo."></div>
@@ -534,7 +536,7 @@
   <div class="ds-c ds-sec--tight">
     <p class="ds-kicker rv-up">El marco</p>
     <p class="ds-h3 rv-up" data-delay="150" style="margin:12px 0 10px;max-width:26ch">Antes del gráfico, está la pregunta.</p>
-    <p class="ds-body ds-muted rv-up" data-delay="300" style="max-width:56ch">Primero entiendo qué tengo, después qué necesita hacer el lector y, por último, cómo voy a representarlo.</p>
+    <p class="ds-body ds-muted rv-up" data-delay="300" style="max-width:56ch">Primero entiendo qué quiero responder. Después, qué necesita saber el lector. Y solo entonces decido cómo voy a representarlo.</p>
     <div class="wwh rv-seq" style="margin-top:40px">
       <div><span class="wk">WHAT</span><p class="wq">¿Qué tengo?</p><p class="wd">Tipo de dato, variables y granularidad.</p></div>
       <div><span class="wk">WHY</span><p class="wq">¿Qué necesita hacer el lector?</p><p class="wd">Comparar, localizar, detectar, entender…</p></div>
@@ -708,7 +710,7 @@
   <!-- Color -->
   <div class="ds-c ds-sec">
     <p class="ds-kicker">Color</p>
-    <p class="ds-h3" style="margin:12px 0 44px;max-width:28ch">No utilizo color porque me sobre espacio en la paleta. Lo utilizo cuando quiero que signifique algo.</p>
+    <p class="ds-h3" style="margin:12px 0 44px;max-width:28ch">No uso el color para decorar el informe. Lo uso cuando quiero destacar un dato, diferenciar algo o dirigir la atención.</p>
     <div class="scales">
       <div class="scale"><h4>Categórico</h4><p>Categorías distintas, sin orden. Pocas, y con tonos bien separados.</p><div class="sw"><i style="background:#3C8A37"></i><i style="background:#7a7bff"></i><i style="background:#c9822b"></i><i style="background:#5a5a5a"></i><i style="background:#BDBDBD"></i></div><div class="sx"><span>Online</span><span>Tiendas</span><span>Resto</span></div></div>
       <div class="scale"><h4>Secuencial</h4><p>De menos a más. Un solo tono que gana intensidad.</p><div class="sw"><i style="background:#F0EEF6"></i><i style="background:#CCC7E0"></i><i style="background:#A59CC9"></i><i style="background:#8175B3"></i><i style="background:#695BA4"></i><i style="background:#4C4176"></i><i style="background:#332B4F"></i></div><div class="sx"><span>Bajo</span><span>Alto</span></div></div>
@@ -874,18 +876,6 @@
     <p class="ds-quote rv" style="margin-top:80px">La visualización correcta no solo depende del dato. <em>Depende de la tarea.</em></p>
   </div>
 
-  <!-- Incertidumbre -->
-  <div class="ds-c ds-sec">
-    <p class="ds-kicker">Incertidumbre</p>
-    <p class="ds-h3" style="margin:12px 0 44px">No todos los números deberían parecer igual de seguros.</p>
-    <div class="unc rv-seq">
-      <div class="u1"><span class="ul">Dato observado</span><span class="ds-num">8,4 M€</span></div>
-      <div class="u2"><span class="ul">Estimación</span><span class="ds-num">8,4 M€<span class="est">estimados</span></span></div>
-      <div class="u3"><span class="ul">Rango</span><span class="ds-num">8,4 M€ <small>± 0,6 M€</small></span><div class="rng" aria-hidden="true"><div class="band"></div><div class="pt"></div><span style="left:20%">7,8</span><span style="left:80%">9,0</span></div></div>
-    </div>
-    <p class="ds-body" style="margin-top:36px;max-width:60ch">Un dato observado, una estimación y una previsión no significan lo mismo. El diseño debería ayudar a distinguirlos. Y no uso más precisión gráfica que la que tienen los datos: si el rango es de ±0,6 M€, un 8,43 M€ promete algo que no puedo cumplir.</p>
-    <details class="src" data-src="hullman"></details>
-  </div>
 </section>
 
 <!-- ═══════════ 07 · COMPONER ═══════════ -->
@@ -897,7 +887,7 @@
   </header>
   <div class="ds-c">
     <div class="scrolly" data-viz="canvas">
-      <div class="sc-visual"><div class="viz"><div class="stage" role="img" aria-label="Un lienzo vacío donde aparecen una retícula, un título, un KPI, un gráfico y elementos secundarios que se alinean y distribuyen."></div></div></div>
+      <div class="sc-visual"><div class="viz"><div class="stage stage--pbi" role="img" aria-label="Un lienzo de Power BI donde se construye, paso a paso, un informe de ventas: título, dos segmentadores, cuatro tarjetas KPI, un gráfico de líneas por mes, barras por canal y una tabla de detalle. Al final se alinea todo a una retícula de 12 columnas y se reparte el espacio."></div></div></div>
       <div class="sc-steps">
         <div class="step" data-s="k0"><div class="st-in"><p class="st-copy">Un lienzo vacío.</p></div></div>
         <div class="step" data-s="k1"><div class="st-in"><p class="st-copy">Primero creo una estructura.</p></div></div>
@@ -919,17 +909,20 @@
     <div class="split split--wide">
       <div>
         <p class="ds-kicker">Sistema de 8 puntos</p>
-        <p class="ds-num" style="font-size:clamp(40px,5vw,64px);margin:14px 0 18px">8 · 16 · 24 · 32</p>
+        <p class="ds-num" style="font-size:clamp(40px,5vw,64px);margin:14px 0 18px">8 · 16 · 24</p>
         <div class="ctl-row"><div class="seg" role="group" aria-label="Espaciado" data-tgl-for="spc">
           <button type="button" data-s="irr" aria-pressed="true">Irregular</button>
           <button type="button" data-s="sys" aria-pressed="false" class="g">Sistema de 8</button>
         </div></div>
-        <p class="ds-body">No existe un espaciado mágico. A mí me ayuda trabajar con un sistema que mantenga un ritmo constante.</p>
+        <p class="ds-body">No existe un espaciado mágico. A mí me ayuda trabajar con un sistema que mantenga un ritmo constante: todas las distancias son múltiplos de 8.</p>
+        <p class="ds-body ds-muted" style="margin-top:14px" aria-live="polite" data-tgl-note="spc"
+          data-n-irr="Cada distancia se decidió a ojo: 13, 7, 22, 5… Ninguna está mal por separado, pero juntas no tienen ritmo y las cifras no quedan a la misma altura."
+          data-n-sys="8 px entre textos que van juntos, 16 px de relleno dentro de la tarjeta y 16 px entre tarjetas. El margen del lienzo, 24. En Power BI lo aplico a la posición, el tamaño y el relleno de cada objeto."></p>
       </div>
       <div class="tgl" id="spc" data-viz="spc" data-auto="irr,sys">
-        <div class="spc" data-s="irr" aria-hidden="true">
-          <div class="card"><div class="blk t"></div><div class="row"><div class="blk k"></div><div class="blk k"></div><div class="blk k"></div></div><div class="row"><div class="blk v g"></div><div class="blk v"></div></div></div>
-          <div class="rul"><span class="irr"><i style="width:13px"></i>13</span><span class="irr"><i style="width:7px"></i>7</span><span class="irr"><i style="width:22px"></i>22</span><span class="irr"><i style="width:11px"></i>11</span><span class="irr"><i style="width:5px"></i>5</span><span class="sys"><i style="width:8px"></i>8</span><span class="sys"><i style="width:16px"></i>16</span><span class="sys"><i style="width:24px"></i>24</span><span class="sys"><i style="width:32px"></i>32</span></div>
+        <div class="sp8" data-s="irr" role="img" aria-label="Tres tarjetas KPI con sus distancias marcadas. Con espaciado irregular cada distancia es distinta; con el sistema de 8 son 8, 16 y 24 píxeles y las cifras quedan alineadas.">
+          <div class="sp8-row"><div class="sp8-card c1"><i class="sp pt"><b></b></i><span class="l">Ventas</span><i class="sp g1"><b></b></i><span class="v">1,57 M€</span><i class="sp g2"><b></b></i><span class="d">▲ +24 % vs 2024</span><i class="sp pb"><b></b></i></div><i class="sp gx gx1"><b></b></i><div class="sp8-card c2"><i class="sp pt"><b></b></i><span class="l">Margen</span><i class="sp g1"><b></b></i><span class="v">38,2 %</span><i class="sp g2"><b></b></i><span class="d">▲ +1,1 pp vs 2024</span><i class="sp pb"><b></b></i></div><i class="sp gx gx2"><b></b></i><div class="sp8-card c3"><i class="sp pt"><b></b></i><span class="l">Pedidos</span><i class="sp g1"><b></b></i><span class="v">12.480</span><i class="sp g2"><b></b></i><span class="d">▲ +9 % vs 2024</span><i class="sp pb"><b></b></i></div></div>
+          <p class="sp8-key"><span><i></i>distancia medida en px</span></p>
         </div>
       </div>
     </div>
@@ -941,15 +934,24 @@
       <div>
         <p class="ds-kicker">Espacio en blanco</p>
         <p class="ds-h3" style="margin:12px 0 18px">El espacio vacío no está vacío. Separa, agrupa y da énfasis.</p>
-        <div class="ctl-row"><div class="seg" role="group" aria-label="Densidad" data-tgl-for="ws">
-          <button type="button" data-s="c" aria-pressed="true">Comprimido</button>
-          <button type="button" data-s="s" aria-pressed="false">Separado</button>
-          <button type="button" data-s="e" aria-pressed="false" class="g">Con énfasis</button>
+        <div class="ctl-row"><div class="seg" role="group" aria-label="Uso del espacio" data-tgl-for="ws">
+          <button type="button" data-s="c" aria-pressed="true">Sin aire</button>
+          <button type="button" data-s="s" aria-pressed="false">Agrupa</button>
+          <button type="button" data-s="e" aria-pressed="false" class="g">Da énfasis</button>
         </div></div>
+        <p class="ds-body" aria-live="polite" data-tgl-note="ws"
+          data-n-c="Todo pegado: los márgenes y los huecos miden lo mismo, así que nada se agrupa y nada destaca. La vista no sabe por dónde empezar."
+          data-n-s="Con el mismo contenido, doy margen al lienzo y dejo más aire entre grupos que dentro de ellos. Sin una sola línea, se leen dos bloques: las cifras y los gráficos. Es la proximidad trabajando a favor."
+          data-n-e="Rodeo de aire la cifra que importa y reduzco lo demás. El espacio a su alrededor la convierte en protagonista sin necesidad de color ni de un tamaño exagerado."></p>
       </div>
       <div class="tgl" id="ws" data-viz="ws" data-auto="c,s,e">
-        <div class="ws" data-s="c" role="img" aria-label="Un dashboard comprimido que gana aire y termina con un número principal rodeado de espacio.">
-          <div class="wsb k w1"><span class="kv">1,57 M€</span><span class="kl">ventas Q4 · +24 %</span></div><div class="wsb w2"></div><div class="wsb w3"></div><div class="wsb w4"></div><div class="wsb w5"></div>
+        <div class="ws" data-s="c" role="img" aria-label="El mismo informe con tres usos del espacio: todo pegado; agrupado en cifras y gráficos con más aire entre grupos que dentro; y con la cifra principal rodeada de espacio.">
+          <div class="wsb k w1"><span class="kl">Ventas</span><span class="kv">1,57 M€</span><span class="kd">▲ +24 % vs 2024</span></div>
+          <div class="wsb k w2"><span class="kl">Margen</span><span class="kv">38,2 %</span></div>
+          <div class="wsb k w3"><span class="kl">Pedidos</span><span class="kv">12.480</span></div>
+          <div class="wsb c w4"><span class="kl">Ventas por mes</span><svg viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true"><polyline points="0,32 9,30 18,27 27,29 36,23 45,21 54,22 63,17 72,14 81,13 90,9 100,4"/></svg></div>
+          <div class="wsb c w5"><span class="kl">Por canal</span><span class="wb"><i style="width:92%" class="hero"></i><i style="width:58%"></i><i style="width:34%"></i><i style="width:21%"></i></span></div>
+          <span class="ws-tag t1">cifras</span><span class="ws-tag t2">gráficos</span><span class="ws-tag t3">el aire la señala</span>
         </div>
       </div>
     </div>
@@ -1069,7 +1071,7 @@
     </div></div>
     <div class="gst">
       <div class="gst-txt" aria-live="polite">
-        <div data-g="prox"><p class="gst-sub">Lo que está cerca se percibe como un grupo.</p><p><b>Qué es.</b> El cerebro agrupa lo que está más cerca, aunque no haya ninguna otra conexión visual.</p><p><b>En un dashboard.</b> La separación entre zonas decide qué bloques se leen como una unidad. Si cambia de un sitio a otro, el lector agrupa lo que no debe y la historia se rompe.</p><p class="gst-rule">Separación de 8 a 20 px, la misma en todo el lienzo. Por debajo de 8, todo parece un bloque; por encima de 28, piezas sueltas.</p></div>
+        <div data-g="prox"><p class="gst-sub">Lo que está cerca se percibe como un grupo.</p><p><b>Qué es.</b> El cerebro agrupa lo que está más cerca, aunque no haya ninguna otra conexión visual.</p><p><b>En un dashboard.</b> La separación entre zonas decide qué bloques se leen como una unidad. Si cambia de un sitio a otro, el lector agrupa lo que no debe y la historia se rompe.</p><p class="gst-rule">Entre bloques del mismo nivel, de 8 a 20 px y siempre la misma. Si quiero separar dos grupos, les doy más aire a propósito. Por debajo de 8, todo parece un bloque; por encima de 28, piezas sueltas.</p></div>
         <div data-g="jer" hidden><p class="gst-sub">Lo más grande y lo primero se lee antes.</p><p><b>Qué es.</b> No leemos todo con la misma atención: el tamaño, la posición y el peso visual crean un orden de lectura.</p><p><b>En un dashboard.</b> Si la Zona B ocupa más que la A, el ojo llega al detalle antes que al mensaje, y la decisión se toma sobre el dato equivocado.</p><p class="gst-rule">Recorrido: contexto → métricas → análisis. La Zona A, como mínimo el 85 % del alto de la B. Header siempre que lo lea dirección o alguien de fuera.</p></div>
         <div data-g="sem" hidden><p class="gst-sub">Lo que se parece, se percibe como de la misma familia.</p><p><b>Qué es.</b> Misma forma, color, tamaño o textura hacen que dos elementos parezcan del mismo grupo, aunque estén separados.</p><p><b>En un dashboard.</b> Si KPIs y gráficos tienen el mismo aspecto, el ojo no distingue seguimiento de análisis. La semejanza es la gramática del dashboard: lo que juega el mismo papel, se ve igual.</p><p class="gst-rule">Hasta 6 KPIs por fila y hasta 3 visuales por zona. El mismo radio de esquina en todas las tarjetas.</p></div>
         <div data-g="cie" hidden><p class="gst-sub">El ojo completa formas y necesita espacio para respirar.</p><p><b>Qué es.</b> Tendemos a completar formas incompletas y a leer el espacio en blanco como el borde de los objetos. El espacio negativo no está vacío: es estructura.</p><p><b>En un dashboard.</b> Márgenes y separaciones crean ese espacio. Si falta, el dashboard parece saturado aunque tenga pocos datos. Si sobra, parece incompleto.</p><p class="gst-rule">Entre un 20 y un 40 % del lienzo libre, y al menos 16 px de margen en los cuatro lados.</p></div>
@@ -1091,7 +1093,7 @@
     <p class="ds-body ds-muted" style="max-width:62ch">Son reglas prácticas de mi trabajo en Power BI, no evidencia científica. Y encajan con el sistema de 8: 24 px de margen y 16 px de separación cumplen todas.</p>
     <ol class="thr rv-seq">
       <li><span class="tv">20–32 px</span><span class="tw">Márgenes del lienzo</span><span class="ty">Por debajo de 16 px, el contenido se queda sin borde.</span></li>
-      <li><span class="tv">8–20 px</span><span class="tw">Separación entre bloques, siempre la misma</span><span class="ty">Si cambia, el ojo agrupa lo que no debe: es la proximidad trabajando en contra.</span></li>
+      <li><span class="tv">8–20 px</span><span class="tw">Separación entre bloques del mismo nivel, siempre la misma</span><span class="ty">Si cambia sin motivo, el ojo agrupa lo que no debe: es la proximidad trabajando en contra.</span></li>
       <li><span class="tv">↑ = ↓ · ← = →</span><span class="tw">Márgenes simétricos</span><span class="ty">Una asimetría que nadie ha decidido se percibe como un error.</span></li>
       <li><span class="tv">≤ 6</span><span class="tw">KPIs en una fila</span><span class="ty">Con más, la fila deja de leerse como un grupo y empieza a leerse como una tabla.</span></li>
       <li><span class="tv">≤ 3</span><span class="tw">Visuales por zona</span><span class="ty">Con más, la zona deja de percibirse como una unidad.</span></li>
@@ -1540,24 +1542,6 @@
   </div>
 </section>
 
-<section class="ds-sec" id="ibcs" aria-labelledby="ibcs-t" style="border-top:1px solid var(--grid)">
-  <div class="ds-c">
-    <p class="ds-kicker">IBCS</p>
-    <h2 class="ds-h3" id="ibcs-t" style="margin-top:12px;max-width:26ch">Muchas de estas ideas tienen otro idioma dentro del mundo del reporting.</h2>
-    <div class="ibcs" data-reveal="linked">
-      <div class="ir"><span class="iw">SAY</span><span class="il"></span><span class="it"><a href="#c08">títulos que dicen algo</a><small>cap. 08</small></span></div>
-      <div class="ir nl"><span class="iw">UNIFY</span><span class="il"></span><span class="it">el mismo significado, la misma forma<small>gris · negro · violeta</small></span></div>
-      <div class="ir"><span class="iw">CONDENSE</span><span class="il"></span><span class="it"><a href="#c04">reducir ruido, supercategorías</a><small>cap. 04</small></span></div>
-      <div class="ir nl"><span class="iw">CHECK</span><span class="il"></span><span class="it"><a href="#c09">validar antes de publicar</a><small>cap. 09</small></span></div>
-      <div class="ir"><span class="iw">EXPRESS</span><span class="il"></span><span class="it"><a href="#c06">elegir el visual</a><small>cap. 06</small></span></div>
-      <div class="ir"><span class="iw">SIMPLIFY</span><span class="il"></span><span class="it"><a href="#c04">limpieza</a><small>cap. 04</small></span></div>
-      <div class="ir"><span class="iw">STRUCTURE</span><span class="il"></span><span class="it"><a href="#c07">layout y jerarquía</a><small>cap. 07</small></span></div>
-    </div>
-    <p class="ds-body" style="margin-top:44px;max-width:62ch">IBCS recoge una filosofía muy cercana a muchas de las decisiones que he intentado explicar aquí: decir lo importante, unificar significados, condensar, comprobar, expresar, simplificar y estructurar.</p>
-    <details class="src" data-src="ibcs"></details>
-  </div>
-</section>
-
 <!-- ═══════════ CIERRE ═══════════ -->
 <section id="cierre" aria-label="Cierre">
   <div class="ds-c">
@@ -1578,12 +1562,7 @@
   </div>
 
   <div class="ds-c finale">
-    <p class="ds-h2 rv">No quería enseñarte cómo hacer Data Storytelling.</p>
-    <p class="ds-h2 rv" style="color:var(--green)" data-delay="1200">Quería que lo experimentaras.</p>
-    <div class="sig rv" data-delay="500">
-      <span class="roles-line">Data Analyst Junior · Power BI · Data Storytelling</span>
-      <span class="motto">Analizo datos. <em>Diseño cómo se leen.</em></span>
-      <span class="name">Borja Mora</span>
+    <div class="sig rv">
       <div class="ctas">
         <a class="btn-ds" id="dsMailBtn" href="#" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_email',{location:'data_storytelling'});">¿Hablamos? <span class="arr" aria-hidden="true"><i>→</i><i>→</i></span></a>
         <a class="btn-ds ghost" href="./power-bi.html">Ver proyectos de Power BI <span class="arr" aria-hidden="true"><i>→</i><i>→</i></span></a>
@@ -1725,7 +1704,7 @@ window.addEventListener('scroll',function(){
   });
 })();
 </script>
-<script src="./data-storytelling.js?v=20260930b" defer></script>
+<script src="./data-storytelling.js?v=20260930e" defer></script>
 <!-- Motion: bibliotecas opcionales. Si un CDN falla, la pagina funciona igual (todo tiene fallback CSS). -->
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
