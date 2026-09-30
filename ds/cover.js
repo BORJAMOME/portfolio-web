@@ -121,6 +121,7 @@ export function initCover() {
   const caps = sec.querySelectorAll('.cvx-caps li');
   caps.forEach((li, i) => { li.style.setProperty('--x', f(m.xs[i])); li.dataset.a = 'fade'; li.dataset.d = Math.round(m.delay(m.xs[i])); });
   sec.dataset.v = v;
+  const page = sec.closest('.ds'); if (page) page.dataset.cover = v;   // el papel de toda la página sigue a la portada
 
   const done = () => sec.classList.add('is-set');
   if (reduced()) return done();
