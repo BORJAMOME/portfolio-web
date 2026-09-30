@@ -39,15 +39,39 @@
   </url>
   <url>
     <loc>https://borjamora.es/analisis-datos.html</loc>
-    <lastmod>2026-08-13</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/analisis-datos.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/data-analysis.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borjamora.es/analisis-datos.html"/>
+  </url>
+  <url>
+    <loc>https://borjamora.es/en/data-analysis.html</loc>
+    <lastmod>2026-09-30</lastmod>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/analisis-datos.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/data-analysis.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borjamora.es/analisis-datos.html"/>
   </url>
   <url>
     <loc>https://borjamora.es/visualizacion-datos.html</loc>
-    <lastmod>2026-08-13</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/visualizacion-datos.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/data-visualisation.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borjamora.es/visualizacion-datos.html"/>
+  </url>
+  <url>
+    <loc>https://borjamora.es/en/data-visualisation.html</loc>
+    <lastmod>2026-09-30</lastmod>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/visualizacion-datos.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/data-visualisation.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borjamora.es/visualizacion-datos.html"/>
   </url>
   <url>
     <loc>https://borjamora.es/casa-origen.html</loc>

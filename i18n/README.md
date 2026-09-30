@@ -9,6 +9,8 @@ española, que es siempre la fuente.
 | `sobre-mi.html` | `en/about.html` | `i18n/sobre-mi.en.json` |
 | `descargas.html` | `en/downloads.html` | `i18n/descargas.en.json` |
 | `power-bi.html` | `en/projects.html` | `i18n/power-bi.en.json` |
+| `analisis-datos.html` | `en/data-analysis.html` | `i18n/analisis-datos.en.json` |
+| `visualizacion-datos.html` | `en/data-visualisation.html` | `i18n/visualizacion-datos.en.json` |
 | `casa-origen.html` | `en/casa-origen.html` | `i18n/casa-origen.en.json` |
 | `data-storytelling.html` | `en/data-storytelling.html` | `ds/i18n/en.page.json` + `ds/i18n/en.js` (textos del JS) |
 
