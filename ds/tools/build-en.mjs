@@ -96,14 +96,12 @@ let en = out
   .replace(/href="\.\.\/index\.html"/g, 'href="./index.html"')
   .replace(/href="\.\.\/descargas\.html"/g, 'href="./downloads.html"');
 // selector de idioma: en la versión inglesa, EN activo y ES como enlace
-const UK = '<svg width="20" height="14" viewBox="0 0 20 14" aria-hidden="true" focusable="false"><rect width="20" height="14" rx="2" fill="#012169"/><path d="M0 0L20 14M20 0L0 14" stroke="white" stroke-width="3"/><path d="M0 0L20 14M20 0L0 14" stroke="#C8102E" stroke-width="1.8"/><path d="M10 0V14M0 7H20" stroke="white" stroke-width="4.5"/><path d="M10 0V14M0 7H20" stroke="#C8102E" stroke-width="2.8"/></svg>';
-const ES_OFF = '<svg width="20" height="14" viewBox="0 0 20 14" aria-hidden="true" focusable="false"><rect width="20" height="14" rx="2" fill="#d0d0d0"/><rect y="3.5" width="20" height="7" fill="#b0b0b0"/></svg>';
-const TOGGLE = `<div class="lang-toggle ds-lang" role="group" aria-label="Language · Idioma">
-    <a href="../data-storytelling.html" class="lang-btn lang-other" hreflang="es" lang="es" data-lang-to="es" aria-label="Leer en español">${ES_OFF}<span class="lang-code">ES</span></a>
-    <span class="lang-btn lang-active" aria-current="true" lang="en">${UK}<span class="lang-code">EN</span></span>
+const TOGGLE = `<div class="ds-lang" role="group" aria-label="Language · Idioma">
+    <a href="../data-storytelling.html" class="ds-lang-b" hreflang="es" lang="es" data-lang-to="es" title="Leer en español" aria-label="Leer en español">ES</a>
+    <span class="ds-lang-a" aria-current="true" lang="en" title="English">EN</span>
   </div>`;
-if (!/<div class="lang-toggle ds-lang"[\s\S]*?<\/div>/.test(en)) console.warn('  · no encuentro el selector de idioma');
-en = en.replace(/<div class="lang-toggle ds-lang"[\s\S]*?<\/div>/, TOGGLE);
+if (!/<div class="ds-lang"[\s\S]*?<\/div>/.test(en)) console.warn('  · no encuentro el selector de idioma');
+en = en.replace(/<div class="ds-lang"[\s\S]*?<\/div>/, TOGGLE);
 // el diccionario de textos del JavaScript se carga antes que el motor
 en = en.replace(/<script src="\.\.\/ds\/manual\.js(\?v=[^"]*)?" defer><\/script>/, (m, v) => `<script src="../ds/i18n/en.js${v || ''}" defer></script>\n${m}`);
 
