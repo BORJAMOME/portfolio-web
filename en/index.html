@@ -1592,7 +1592,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   </div>
   <div class="nav-links">
     <a href="./index.html" class="active" aria-current="page">Home</a>
-    <a href="../sobre-mi.html">About me</a>
+    <a href="./about.html">About me</a>
     <div class="nav-dropdown" id="navDropdown">
       <button class="nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false">Projects <svg class="dd-chevron" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 3.5L5 6.5L7.5 3.5"/></svg></button>
       <ul class="nav-dropdown-menu" role="menu">
@@ -1626,7 +1626,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
     </div>
     <nav class="nav-drawer-links" aria-label="Mobile navigation">
       <a href="./index.html" class="active" aria-current="page">Home</a>
-      <a href="../sobre-mi.html">About me</a>
+      <a href="./about.html">About me</a>
       <button class="nav-drawer-projects-trigger" id="navDrawerProjectsBtn" type="button" aria-expanded="false" aria-controls="navDrawerProjects"><span>Projects<span class="nav-drawer-count" aria-hidden="true">(+3)</span></span><span class="nav-drawer-plus" aria-hidden="true"></span></button>
       <div class="nav-drawer-projects" id="navDrawerProjects">
         <div class="nav-drawer-projects-inner">
@@ -1657,14 +1657,14 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   function open(){
     drawer.classList.add('open');
     burger.setAttribute('aria-expanded','true');
-    burger.setAttribute('aria-label','Cerrar menú');
+    burger.setAttribute('aria-label','Close menu');
     document.body.style.overflow='hidden'; document.body.style.position='fixed'; document.body.style.width='100%';
     if(closeBtn) closeBtn.focus();
   }
   function close(){
     drawer.classList.remove('open');
     burger.setAttribute('aria-expanded','false');
-    burger.setAttribute('aria-label','Abrir menú');
+    burger.setAttribute('aria-label','Open menu');
     document.body.style.overflow=''; document.body.style.position=''; document.body.style.width='';
     burger.focus();
   }
@@ -2670,13 +2670,13 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
         <span class="contact-bar-h-muted">Looking for a Data Analyst?</span>
         <span class="contact-bar-h-strong">Let’s talk.</span>
       </div>
-      <a class="contact-bar-photo" href="../sobre-mi.html" aria-label="More about Borja Mora" onclick="gtag('event','clic_foto_sobre_mi',{location:'cta_final'});">
+      <a class="contact-bar-photo" href="./about.html" aria-label="More about Borja Mora" onclick="gtag('event','clic_foto_sobre_mi',{location:'cta_final'});">
         <picture><source srcset="../img/sobre-mi-inline.webp" type="image/webp"><img loading="lazy" src="../img/sobre-mi-inline.jpg" alt="Borja Mora Méndez" width="56" height="56"></picture>
       </a>
       <div class="contact-bar-actions">
         <a id="ctaEmailBtn" href="mailto:borja.mora.mendez@gmail.com?subject=Opportunity%20for%20Borja%20Mora%20%E2%80%94%20Data%20Analyst&body=Hi%20Borja%2C%0A%0AI%20would%20like%20to%20talk%20to%20you%20about%20an%20opportunity..." rel="noopener noreferrer" class="contact-bar-btn contact-bar-btn-primary" onclick="gtag('event', 'clic_email', { location: 'cta_final' });">Send a message</a>
         <a href="https://calendly.com/borja-mora-mendez/30min" target="_blank" rel="noopener noreferrer" class="contact-bar-btn contact-bar-btn-outline" onclick="gtag('event', 'clic_agendar', { location: 'cta_final' });">Book a call</a>
-        <a href="../sobre-mi.html#cv" class="contact-bar-btn contact-bar-btn-ghost" onclick="gtag('event', 'clic_navegacion_cv', { location: 'cta_final' });">Download CV</a>
+        <a href="./about.html#cv" class="contact-bar-btn contact-bar-btn-ghost" onclick="gtag('event', 'clic_navegacion_cv', { location: 'cta_final' });">Download CV</a>
       </div>
     </div>
   </div>
@@ -2694,7 +2694,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
       <nav class="foot-col" aria-label="Footer navigation">
         <p class="foot-col-title">Navigation</p>
         <a href="./index.html">Home</a>
-        <a href="../sobre-mi.html">About me</a>
+        <a href="./about.html">About me</a>
         <a href="../power-bi.html">Power BI</a>
         <a href="../analisis-datos.html">Analysis</a>
         <a href="../visualizacion-datos.html">Visualisation</a>

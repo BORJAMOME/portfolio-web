@@ -1,0 +1,160 @@
+{
+  "_": "Traducción al inglés británico de sobre-mi.html (→ en/about.html). La genera y comprueba tools/build-en.mjs.",
+  "units": {
+    "Sobre mí — Borja Mora Méndez": "About me — Borja Mora Méndez",
+    "Power BI · DAX · Python · SQL · UX/UI · Data Storytelling. Madrid o remoto.": "Power BI · DAX · Python · SQL · UX/UI · Data storytelling. Madrid or remote.",
+    "Sobre mí — Borja Mora, Data Analyst Junior · Power BI": "About me — Borja Mora, Junior Data Analyst · Power BI",
+    "Transformo datos complejos en dashboards claros que ayudan a entender qué está pasando y qué decisiones tomar.": "I turn complex data into clear dashboards that help people understand what’s happening and which decisions to make.",
+    "Borja Mora, Data Analyst Junior especializado en Power BI": "Borja Mora, Junior Data Analyst specialising in Power BI",
+    "Transformo datos complejos en dashboards claros. Modelado de datos, DAX y Data Storytelling.": "I turn complex data into clear dashboards. Data modelling, DAX and data storytelling.",
+    "Saltar al contenido": "Skip to content",
+    "Navegación principal": "Main navigation",
+    "Borja Mora — Inicio": "Borja Mora — Home",
+    "Idioma · Language": "Language · Idioma",
+    "Inicio": "Home",
+    "Sobre mí": "About me",
+    "Proyectos": "Projects",
+    "Análisis": "Analysis",
+    "Visualización": "Visualisation",
+    "Descargas": "Downloads",
+    "Contacto": "Contact",
+    "¿Hablamos?": "Let’s talk",
+    "Abrir menú": "Open menu",
+    "Menú de navegación": "Navigation menu",
+    "Cerrar menú": "Close menu",
+    "<span class=\"nav-drawer-close-x\" aria-hidden=\"true\">×</span>Cerrar": "<span class=\"nav-drawer-close-x\" aria-hidden=\"true\">×</span>Close",
+    "Navegación móvil": "Mobile navigation",
+    "Data Analyst Junior · Especializado en Power BI": "Junior Data Analyst · Power BI specialist",
+    "Trabajo con datos de principio a fin: preparo y modelo la información con <strong>SQL y Power Query</strong>, la analizo con <strong>DAX y Python</strong> y la convierto en dashboards de <strong>Power BI</strong> que permiten entender qué está pasando y por qué.": "I work with data from start to finish: I prepare and model the information with <strong>SQL and Power Query</strong>, analyse it with <strong>DAX and Python</strong> and turn it into <strong>Power BI</strong> dashboards that show what’s happening and why.",
+    "Me interesa especialmente la parte que ocurre entre los datos y la persona que los utiliza. Por eso cuido tanto el análisis como la forma de presentarlo, aplicando principios de <strong>UX/UI y Data Storytelling</strong> para crear informes claros, útiles y fáciles de interpretar.": "I’m especially interested in what happens between the data and the person using it. That’s why I care as much about the analysis as about how it’s presented, applying <strong>UX/UI and data storytelling</strong> principles to build reports that are clear, useful and easy to read.",
+    "Llegué hasta aquí después de siete años entre <strong>Madrid y Londres</strong>, trabajando en marketing, análisis y operaciones. Esa experiencia me aporta una perspectiva de negocio que hoy complemento con mi especialización en datos y visualización.": "I got here after seven years between <strong>Madrid and London</strong>, working in marketing, analysis and operations. That experience gives me a business perspective that I now combine with my specialism in data and visualisation.",
+    "Descargar CV\n          </a>": "Download CV </a>",
+    "Borja Mora Méndez, Data Analyst Junior especializado en Power BI": "Borja Mora Méndez, Junior Data Analyst specialising in Power BI",
+    "Trayectoria profesional": "Career history",
+    "Experiencia": "Experience",
+    "Roles y formación relacionados con datos": "Data-related roles and training",
+    "2023 — presente": "2023 — present",
+    "Analista de Datos <span class=\"res-org\">· Especialización intensiva</span>": "Data Analyst <span class=\"res-org\">· Intensive specialisation</span>",
+    "Desde 2023 he centrado mi carrera en el análisis y la visualización de datos, combinando formación especializada con proyectos propios.": "Since 2023 I’ve focused my career on data analysis and visualisation, combining specialist training with my own projects.",
+    "He desarrollado un portfolio de <strong>24+ proyectos en Power BI, Python y SQL</strong>, trabajando desde la preparación y modelado de los datos hasta el análisis y la visualización. Entre ellos se encuentran proyectos de <strong>reporting financiero, análisis RFM y Business Intelligence end-to-end</strong>.": "I’ve built a portfolio of <strong>24+ projects in Power BI, Python and SQL</strong>, covering everything from data preparation and modelling to analysis and visualisation. They include <strong>financial reporting, RFM analysis and end-to-end business intelligence</strong> projects.",
+    "También desarrollé <strong><a class=\"res-link\" href=\"https://borjamome.github.io/powerbi-mockup/\" target=\"_blank\" rel=\"noopener noreferrer\">PBI Mockup Creator</a></strong>, una herramienta para diseñar layouts de Power BI aplicando principios de UX y Gestalt. En paralelo, comparto contenido sobre Power BI y Data Storytelling en LinkedIn, donde he alcanzado <strong>3.017 seguidores y 192K impresiones acumuladas</strong>.": "I also built <strong><a class=\"res-link\" href=\"https://borjamome.github.io/powerbi-mockup/\" target=\"_blank\" rel=\"noopener noreferrer\">PBI Mockup Creator</a></strong>, a tool for designing Power BI layouts using UX and Gestalt principles. Alongside that, I share content on Power BI and data storytelling on LinkedIn, where I’ve reached <strong>3,017 followers and 192K cumulative impressions</strong>.",
+    "Jun 2022 — Nov 2023": "Jun 2022 — Nov 2023",
+    "Gestión operativa de un negocio en Londres, con responsabilidad sobre el <strong>P&amp;L</strong> y seguimiento de resultados.": "Running the operations of a business in London, with responsibility for the <strong>P&amp;L</strong> and tracking results.",
+    "El análisis de datos formaba parte de las decisiones del día a día: revisar resultados, detectar desviaciones y decidir dónde actuar utilizando <strong>Excel</strong>.": "Data analysis was part of day-to-day decisions: reviewing results, spotting variances and deciding where to act, using <strong>Excel</strong>.",
+    "Sep 2021 — Abr 2022": "Sep 2021 — Apr 2022",
+    "Mi primera experiencia directamente vinculada al análisis de datos.": "My first role directly linked to data analysis.",
+    "Trabajé en proyectos del <strong>sector automoción</strong>, creando dashboards y análisis para equipos de ventas con <strong>SQL, Python y Excel</strong>.": "I worked on <strong>automotive sector</strong> projects, building dashboards and analysis for sales teams with <strong>SQL, Python and Excel</strong>.",
+    "También participé en el análisis de datasets de clientes y en la automatización de tareas de extracción y limpieza de datos, reduciendo el tiempo necesario para preparar el reporting.": "I also took part in analysing customer datasets and automating data extraction and cleaning tasks, cutting the time needed to prepare the reporting.",
+    "Formación": "Education",
+    "<a class=\"res-link\" href=\"https://neoland.es/masters/ux-ui-design/\" target=\"_blank\" rel=\"noopener noreferrer\">Máster en UX/UI</a> <span class=\"res-org\">· Neoland</span> · En curso": "<a class=\"res-link\" href=\"https://neoland.es/masters/ux-ui-design/\" target=\"_blank\" rel=\"noopener noreferrer\">Master’s in UX/UI</a> <span class=\"res-org\">· Neoland</span> · In progress",
+    "Una especialización que complementa mi formación en comunicación y me ayuda a profundizar en <strong>cómo diseñar experiencias digitales claras y fáciles de entender</strong>.": "A specialisation that complements my background in communication and helps me go deeper into <strong>how to design digital experiences that are clear and easy to understand</strong>.",
+    "En el ámbito de los datos, aplico esta perspectiva especialmente a la visualización y al diseño de dashboards, donde no solo importa qué información mostramos, sino también cómo la presentamos.": "In data, I apply this perspective above all to visualisation and dashboard design, where what matters isn’t only what information we show, but also how we present it.",
+    "Bootcamp Data Analytics (360 horas)": "Data Analytics Bootcamp (360 hours)",
+    "Formación intensiva como <strong>Data Analyst</strong> para reforzar mi perfil profesional y consolidar una base técnica sólida.": "Intensive training as a <strong>Data Analyst</strong> to strengthen my professional profile and build a solid technical foundation.",
+    "Durante el programa asenté conocimientos en <strong>SQL, Python, Machine Learning y análisis con LLMs.</strong>, además de trabajar con estadística, Big Data e IA aplicados al análisis de datos.": "During the programme I consolidated my knowledge of <strong>SQL, Python, machine learning and analysis with LLMs</strong>, as well as working with statistics, big data and AI applied to data analysis.",
+    "Fue una etapa clave para consolidar los conocimientos técnicos que hoy aplico en mis proyectos de análisis y visualización.": "It was a key stage in consolidating the technical knowledge I now apply in my analysis and visualisation projects.",
+    "Especialización Power BI <span class=\"res-org\">· <a class=\"res-link\" href=\"https://www.namasdata.com/\" target=\"_blank\" rel=\"noopener noreferrer\">Namasdata</a></span>": "Power BI specialisation <span class=\"res-org\">· <a class=\"res-link\" href=\"https://www.namasdata.com/\" target=\"_blank\" rel=\"noopener noreferrer\">Namasdata</a></span>",
+    "Formación especializada en <strong>Power BI, modelado de datos, DAX y visualización</strong>, con especial atención a la construcción de informes claros y bien estructurados.": "Specialist training in <strong>Power BI, data modelling, DAX and visualisation</strong>, with a particular focus on building clear, well-structured reports.",
+    "Máster en Business Intelligence &amp; Big Data <span class=\"res-org\">· <a class=\"res-link\" href=\"https://msmk.university/#\" target=\"_blank\" rel=\"noopener noreferrer\">MSMK</a></span>": "Master’s in Business Intelligence &amp; Big Data <span class=\"res-org\">· <a class=\"res-link\" href=\"https://msmk.university/#\" target=\"_blank\" rel=\"noopener noreferrer\">MSMK</a></span>",
+    "Formación en Business Intelligence y análisis de datos aplicado al negocio.": "Training in business intelligence and data analysis applied to business.",
+    "Licenciatura en Publicidad y RRPP <span class=\"res-org\">· UCM</span>": "Degree in Advertising and Public Relations <span class=\"res-org\">· UCM</span>",
+    "Mi primera formación profesional estuvo ligada a la comunicación.": "My first professional training was in communication.",
+    "Con el tiempo, esa base terminó conectando con otra de mis inquietudes: <strong>cómo convertir información compleja en algo que las personas puedan entender y utilizar</strong>.": "Over time, that foundation connected with another of my interests: <strong>how to turn complex information into something people can understand and use</strong>.",
+    "Certificaciones": "Certifications",
+    "Certificación oficial de Microsoft que acredita conocimientos en <strong>preparación y modelado de datos, DAX, visualización y publicación de informes en Power BI</strong>.": "Official Microsoft certification covering <strong>data preparation and modelling, DAX, visualisation and publishing reports in Power BI</strong>.",
+    "Descargar CV\n        </a>": "Download CV </a>",
+    "Data Analyst Junior": "Junior Data Analyst",
+    "Madrid, España": "Madrid, Spain",
+    "Navegación del pie de página": "Footer navigation",
+    "Navegación": "Navigation",
+    "Trabajo": "Work",
+    "Sígueme": "Follow me",
+    "© 2026 Borja Mora Méndez · Todos los derechos reservados": "© 2026 Borja Mora Méndez · All rights reserved",
+    "Diseñado y construido por mí": "Designed and built by me",
+    "Aviso de cookies": "Cookie notice",
+    "<strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Política de privacidad</a>.": "<strong>Analytics cookies.</strong> I use Google Analytics to understand how this site is used. No advertising or third-party tracking. <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Privacy policy</a>.",
+    "Rechazar cookies": "Reject cookies",
+    "Rechazar": "Reject",
+    "Aceptar cookies": "Accept cookies",
+    "Aceptar": "Accept"
+  },
+  "keep": [
+    "Borja Mora",
+    "Español",
+    "ES",
+    "Read in English",
+    "EN",
+    "Power BI",
+    "LinkedIn",
+    "GitHub",
+    "Borja Mora.",
+    "Email",
+    "Borja Mora Méndez",
+    "LinkedIn\n          </a>",
+    "Operations Manager <span class=\"res-org\">· Negronis</span>",
+    "Junior Analyst, Data &amp; Analytics <span class=\"res-org\">· NTT DATA</span>",
+    "· Neoland",
+    "Microsoft Certified: Power BI Data Analyst Associate <span class=\"res-org\">· PL-300</span>",
+    "LinkedIn\n        </a>",
+    "Machine Learning",
+    "Python",
+    "SQL",
+    "HTML",
+    "CSS",
+    "JS"
+  ],
+  "raw": [
+    [
+      "<link rel=\"canonical\" href=\"https://borjamora.es/sobre-mi.html\">",
+      "<link rel=\"canonical\" href=\"https://borjamora.es/en/about.html\">"
+    ],
+    [
+      "<meta property=\"og:locale\" content=\"es_ES\">",
+      "<meta property=\"og:locale\" content=\"en_GB\">\n<meta property=\"og:locale:alternate\" content=\"es_ES\">"
+    ],
+    [
+      "<meta property=\"og:url\" content=\"https://borjamora.es/sobre-mi.html\">",
+      "<meta property=\"og:url\" content=\"https://borjamora.es/en/about.html\">"
+    ],
+    [
+      "https://borjamora.es/img/og-sobre-mi.png",
+      "https://borjamora.es/img/og-about-en.png"
+    ],
+    [
+      "\"url\": \"https://borjamora.es/sobre-mi.html\"",
+      "\"url\": \"https://borjamora.es/en/about.html\""
+    ],
+    [
+      "\"name\": \"Sobre mí — Borja Mora Méndez\"",
+      "\"name\": \"About me — Borja Mora Méndez\""
+    ],
+    [
+      "\"inLanguage\": \"es-ES\"",
+      "\"inLanguage\": \"en-GB\""
+    ],
+    [
+      "\"jobTitle\": \"Data Analyst Junior\"",
+      "\"jobTitle\": \"Junior Data Analyst\""
+    ],
+    [
+      "\"name\": \"Bootcamp Data Analytics — Neoland (Python, SQL, Estadística, Machine Learning)\"",
+      "\"name\": \"Data Analytics Bootcamp — Neoland (Python, SQL, Statistics, Machine Learning)\""
+    ],
+    [
+      "burger.setAttribute('aria-label','Cerrar menú')",
+      "burger.setAttribute('aria-label','Close menu')"
+    ],
+    [
+      "burger.setAttribute('aria-label','Abrir menú')",
+      "burger.setAttribute('aria-label','Open menu')"
+    ],
+    [
+      "encodeURIComponent('Oportunidad laboral')",
+      "encodeURIComponent('Job opportunity')"
+    ],
+    [
+      "encodeURIComponent('Hola, me gustaría hablar contigo sobre una posible oportunidad.')",
+      "encodeURIComponent('Hi, I would like to talk to you about a possible opportunity.')"
+    ]
+  ]
+}

@@ -6,6 +6,7 @@ española, que es siempre la fuente.
 | Página española (fuente) | Página inglesa (generada) | Diccionario |
 |---|---|---|
 | `index.html` | `en/index.html` | `i18n/index.en.json` |
+| `sobre-mi.html` | `en/about.html` | `i18n/sobre-mi.en.json` |
 | `data-storytelling.html` | `en/data-storytelling.html` | `ds/i18n/en.page.json` + `ds/i18n/en.js` (textos del JS) |
 
 ## Cómo se usa

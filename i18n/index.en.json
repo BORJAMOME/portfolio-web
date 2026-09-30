@@ -406,6 +406,14 @@
     [
       "https://borjamora.es/img/og-home.png",
       "https://borjamora.es/img/og-home-en.png"
+    ],
+    [
+      "burger.setAttribute('aria-label','Cerrar menú')",
+      "burger.setAttribute('aria-label','Close menu')"
+    ],
+    [
+      "burger.setAttribute('aria-label','Abrir menú')",
+      "burger.setAttribute('aria-label','Open menu')"
     ]
   ]
 }

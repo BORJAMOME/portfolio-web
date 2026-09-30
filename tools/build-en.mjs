@@ -5,7 +5,7 @@
    traducción (inglés británico) y escribe la página en en/.
 
      node tools/build-en.mjs                    → todas las páginas
-     node tools/build-en.mjs index              → solo una (index · data-storytelling)
+     node tools/build-en.mjs index              → solo una (index · sobre-mi · data-storytelling)
      node tools/build-en.mjs index --missing    → además guarda las frases sin traducir
 
    · Cada página tiene su diccionario (ver PAGES):
@@ -25,6 +25,7 @@ import { dirname, join } from 'node:path';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const PAGES = {
   index: { src: 'index.html', out: 'en/index.html', dict: 'i18n/index.en.json', missing: 'i18n/index.en.missing.json' },
+  'sobre-mi': { src: 'sobre-mi.html', out: 'en/about.html', dict: 'i18n/sobre-mi.en.json', missing: 'i18n/sobre-mi.en.missing.json' },
   'data-storytelling': {
     src: 'data-storytelling.html', out: 'en/data-storytelling.html', dict: 'ds/i18n/en.page.json', missing: 'ds/i18n/en.missing.json',
     // los textos que genera ds/manual.js se traducen con este diccionario, cargado antes
@@ -32,7 +33,7 @@ const PAGES = {
   }
 };
 // páginas que ya existen en inglés: sus enlaces apuntan a la versión inglesa
-const EN_EXISTS = { 'index.html': 'index.html', 'descargas.html': 'downloads.html', 'data-storytelling.html': 'data-storytelling.html' };
+const EN_EXISTS = { 'index.html': 'index.html', 'sobre-mi.html': 'about.html', 'descargas.html': 'downloads.html', 'data-storytelling.html': 'data-storytelling.html' };
 
 const INLINE = new Set(['a', 'b', 'strong', 'em', 'i', 'span', 'small', 'code', 'br', 'sup', 'sub', 'abbr', 'kbd', 'mark', 'cite', 'q', 'u', 's', 'time', 'wbr']);
 const ATTRS = ['aria-label', 'alt', 'title', 'placeholder', 'data-v'];
