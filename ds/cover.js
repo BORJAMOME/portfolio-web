@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════
    cover.js — portada: apertura de reportaje en blanco y negro
-   Dos variantes, elegidas al azar una vez por visita (sessionStorage):
+   Dos variantes que se alternan en cada carga (la primera, al azar):
    · 7b «semitono»: barras divergentes en trama de puntos; los 10
      capítulos son las barras negras sólidas.
    · 7d «rotativa»: serie temporal de 0′ a 20′ (señal cruda + media
@@ -86,10 +86,15 @@ const DEFS = '<defs>'
   + '<filter id="cvx-ink"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="1" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.8" xChannelSelector="R" yChannelSelector="G"/></filter>'
   + '</defs>';
 
+// Primera carga: al azar. Después, cada carga enseña la otra variante (así se ven las dos).
+// ?portada=7b|7d fuerza una concreta.
 function pick() {
-  try { const s = sessionStorage.getItem('portada-variante'); if (s === '7b' || s === '7d') return s; } catch (e) { /* sin almacenamiento: se sortea igual */ }
-  const p = Math.random() < 0.5 ? '7b' : '7d';
-  try { sessionStorage.setItem('portada-variante', p); } catch (e) { /* idem */ }
+  const q = new URLSearchParams(location.search).get('portada');
+  if (q === '7b' || q === '7d') return q;
+  let last = null;
+  try { last = localStorage.getItem('portada-variante'); } catch (e) { /* sin almacenamiento: se sortea */ }
+  const p = last === '7b' ? '7d' : last === '7d' ? '7b' : (Math.random() < 0.5 ? '7b' : '7d');
+  try { localStorage.setItem('portada-variante', p); } catch (e) { /* idem */ }
   return p;
 }
 
