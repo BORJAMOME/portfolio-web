@@ -8,6 +8,7 @@ española, que es siempre la fuente.
 | `index.html` | `en/index.html` | `i18n/index.en.json` |
 | `sobre-mi.html` | `en/about.html` | `i18n/sobre-mi.en.json` |
 | `descargas.html` | `en/downloads.html` | `i18n/descargas.en.json` |
+| `casa-origen.html` | `en/casa-origen.html` | `i18n/casa-origen.en.json` |
 | `data-storytelling.html` | `en/data-storytelling.html` | `ds/i18n/en.page.json` + `ds/i18n/en.js` (textos del JS) |
 
 ## Cómo se usa
@@ -30,3 +31,11 @@ El dashboard del hero de la home se queda en español (decisión de Borja).
 
 El selector ES | EN (`.ds-lang`, estilos en `shared.css`) se invierte solo en la versión inglesa.
 Las páginas que aún no existen en inglés enlazan a su versión española.
+
+## Recordar el idioma
+
+`lang.js` (en la raíz) se carga en el `<head>` de cada página que tiene las dos versiones. Guarda la
+elección del selector ES | EN y, si alguien eligió inglés, cualquier página con versión inglesa se abre
+directamente en inglés, aunque llegue por un enlace español (y al revés). Solo actúa tras una elección
+explícita: la primera visita y los buscadores ven la página que piden. Al añadir una página nueva con
+versión inglesa: enlaces `hreflang` + `<script src="./lang.js"></script>` + selector `.ds-lang`.
