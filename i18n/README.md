@@ -8,6 +8,7 @@ española, que es siempre la fuente.
 | `index.html` | `en/index.html` | `i18n/index.en.json` |
 | `sobre-mi.html` | `en/about.html` | `i18n/sobre-mi.en.json` |
 | `descargas.html` | `en/downloads.html` | `i18n/descargas.en.json` |
+| `power-bi.html` | `en/projects.html` | `i18n/power-bi.en.json` |
 | `casa-origen.html` | `en/casa-origen.html` | `i18n/casa-origen.en.json` |
 | `data-storytelling.html` | `en/data-storytelling.html` | `ds/i18n/en.page.json` + `ds/i18n/en.js` (textos del JS) |
 

@@ -5,7 +5,7 @@
    traducción (inglés británico) y escribe la página en en/.
 
      node tools/build-en.mjs                    → todas las páginas
-     node tools/build-en.mjs index              → solo una (index · sobre-mi · descargas · casa-origen · data-storytelling)
+     node tools/build-en.mjs index              → solo una (index · sobre-mi · descargas · power-bi · casa-origen · data-storytelling)
      node tools/build-en.mjs index --missing    → además guarda las frases sin traducir
 
    · Cada página tiene su diccionario (ver PAGES):
@@ -26,6 +26,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const PAGES = {
   index: { src: 'index.html', out: 'en/index.html', dict: 'i18n/index.en.json', missing: 'i18n/index.en.missing.json' },
   'casa-origen': { src: 'casa-origen.html', out: 'en/casa-origen.html', dict: 'i18n/casa-origen.en.json', missing: 'i18n/casa-origen.en.missing.json' },
+  'power-bi': { src: 'power-bi.html', out: 'en/projects.html', dict: 'i18n/power-bi.en.json', missing: 'i18n/power-bi.en.missing.json' },
   descargas: { src: 'descargas.html', out: 'en/downloads.html', dict: 'i18n/descargas.en.json', missing: 'i18n/descargas.en.missing.json' },
   'sobre-mi': { src: 'sobre-mi.html', out: 'en/about.html', dict: 'i18n/sobre-mi.en.json', missing: 'i18n/sobre-mi.en.missing.json' },
   'data-storytelling': {
@@ -35,7 +36,7 @@ const PAGES = {
   }
 };
 // páginas que ya existen en inglés: sus enlaces apuntan a la versión inglesa
-const EN_EXISTS = { 'index.html': 'index.html', 'sobre-mi.html': 'about.html', 'descargas.html': 'downloads.html', 'casa-origen.html': 'casa-origen.html', 'data-storytelling.html': 'data-storytelling.html' };
+const EN_EXISTS = { 'index.html': 'index.html', 'sobre-mi.html': 'about.html', 'descargas.html': 'downloads.html', 'casa-origen.html': 'casa-origen.html', 'power-bi.html': 'projects.html', 'data-storytelling.html': 'data-storytelling.html' };
 
 const INLINE = new Set(['a', 'b', 'strong', 'em', 'i', 'span', 'small', 'code', 'br', 'sup', 'sub', 'abbr', 'kbd', 'mark', 'cite', 'q', 'u', 's', 'time', 'wbr']);
 const ATTRS = ['aria-label', 'alt', 'title', 'placeholder', 'data-v'];
