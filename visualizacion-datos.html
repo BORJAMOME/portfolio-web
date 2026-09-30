@@ -17,7 +17,7 @@
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet">
 <!-- Shared styles: variables, nav, footer, botones, reset -->
-<link rel="stylesheet" href="./shared.css?v=20260930">
+<link rel="stylesheet" href="./shared.css?v=20260930c">
 <!-- Primary Meta Tags -->
 <meta name="description" content="Infografías editoriales, cartografía 3D y diseño de la información. Proyectos de visualización de datos donde el diseño es la herramienta analítica.">
 <meta name="keywords" content="visualización de datos, infografías, mapas 3D, cartografía, data viz, diseño de la información, Borja Mora">
@@ -137,6 +137,12 @@
     ad_personalization:   "denied",
     wait_for_update:      500
   });
+  /* Decisión guardada: se aplica antes de gtag("config") para que la primera página vista ya la respete */
+  try {
+    if (localStorage.getItem("bm_cookie_consent") === "accepted") {
+      gtag("consent", "update", { analytics_storage: "granted" });
+    }
+  } catch (e) {}
 </script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PSDM6B5Z7"></script>
@@ -145,14 +151,6 @@
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
   gtag("config", "G-6PSDM6B5Z7");
-
-  /* Leer consentimiento previo */
-  (function(){
-    var consent = localStorage.getItem("bm_cookie_consent");
-    if (consent === "accepted") {
-      gtag("consent", "update", { analytics_storage: "granted", ad_storage: "denied" });
-    }
-  })();
 </script>
 
 <!-- ── Cookie banner CSS (RGPD/LOPDGDD) ── -->
@@ -167,14 +165,14 @@
     box-shadow: 0 12px 48px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.04);
     font-family: var(--font);
     font-size: 13px; line-height: 1.55;
-    opacity: 0; pointer-events: none;
+    opacity: 0; pointer-events: none; visibility: hidden;
     transition: opacity .3s ease, transform .35s var(--ease);
   }
   #bm-cookie-banner.bm-visible {
-    opacity: 1; pointer-events: auto;
+    opacity: 1; pointer-events: auto; visibility: visible;
   }
   #bm-cookie-banner.bm-hiding {
-    opacity: 0; transform: translateX(-50%) translateY(16px);
+    visibility: visible; opacity: 0; transform: translateX(-50%) translateY(16px);
   }
   #bm-cookie-banner p { margin: 0; flex: 1; min-width: 200px; color: #b8b8cc; }
   #bm-cookie-banner strong { color: #f7f7fa; font-weight: 600; }
@@ -191,6 +189,8 @@
     .bm-cb-btn:hover { opacity: .82; transform: translateY(-1px); }
   }
   .bm-cb-btn:active { transform: translateY(0); }
+  .bm-cb-btn:focus-visible { outline: 2px solid #f7f7fa; outline-offset: 2px; }
+  .bm-cb-btn[aria-pressed="true"] { box-shadow: 0 0 0 2px #0b0b0f, 0 0 0 3px #b8b8cc; }
   .bm-cb-accept { background: #7a7bff; color: #fff; }
   .bm-cb-reject { background: rgba(255,255,255,.07); color: #b8b8cc; border: 1px solid rgba(255,255,255,.1); }
   @media (max-width: 480px) {
@@ -631,7 +631,10 @@
     </div>
 
     <div class="foot-bottom">
-      <p class="foot-copy">© 2026 Borja Mora Méndez · Todos los derechos reservados</p>
+      <div class="foot-legal-wrap">
+        <p class="foot-copy">© 2026 Borja Mora Méndez · Todos los derechos reservados</p>
+        <nav class="foot-legal" aria-label="Información legal"><a href="./privacidad.html">Privacidad</a><button type="button" data-cookie-prefs>Preferencias de cookies</button></nav>
+      </div>
       <div class="foot-made">
         <span>Diseñado y construido por mí</span>
         <span class="foot-tech">HTML</span>
@@ -726,57 +729,13 @@ document.querySelectorAll('.col-header').forEach(h=>{
 
 <!-- ── Cookie banner HTML + lógica (RGPD/LOPDGDD) ── -->
 <div id="bm-cookie-banner" role="dialog" aria-live="polite" aria-label="Aviso de cookies">
-  <p><strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Política de privacidad</a>.</p>
+  <p><strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. Puedes cambiar tu decisión cuando quieras. <a href="./privacidad.html">Política de privacidad y cookies</a>.</p>
   <div class="bm-cb-btns">
     <button class="bm-cb-btn bm-cb-reject" id="bm-cb-reject" aria-label="Rechazar cookies">Rechazar</button>
     <button class="bm-cb-btn bm-cb-accept" id="bm-cb-accept" aria-label="Aceptar cookies">Aceptar</button>
   </div>
 </div>
-<script>
-(function () {
-  var KEY = "bm_cookie_consent";
-  var banner = document.getElementById("bm-cookie-banner");
-  if (!banner) return;
-
-  function dismiss() {
-    banner.classList.remove("bm-visible");
-    banner.classList.add("bm-hiding");
-    setTimeout(function () {
-      banner.style.display = "none";
-    }, 380);
-  }
-
-  function grantAnalytics() {
-    if (typeof gtag === "function") {
-      gtag("consent", "update", { analytics_storage: "granted" });
-    }
-  }
-
-  /* Solo mostrar si no hay decision previa */
-  if (!localStorage.getItem(KEY)) {
-    /* Pequeño delay para que la animacion sea visible */
-    setTimeout(function () {
-      banner.classList.add("bm-visible");
-    }, 600);
-  } else if (localStorage.getItem(KEY) === "accepted") {
-    grantAnalytics();
-    banner.style.display = "none";
-  } else {
-    banner.style.display = "none";
-  }
-
-  document.getElementById("bm-cb-accept").addEventListener("click", function () {
-    localStorage.setItem(KEY, "accepted");
-    grantAnalytics();
-    dismiss();
-  });
-
-  document.getElementById("bm-cb-reject").addEventListener("click", function () {
-    localStorage.setItem(KEY, "rejected");
-    dismiss();
-  });
-})();
-</script>
+<script src="./consent.js" defer></script>
 
 <!-- ── Tracking de evidencia técnica (piezas en Behance) ── -->
 <script>

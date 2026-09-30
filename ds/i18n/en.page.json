@@ -199,7 +199,7 @@
     "© 2026 Borja Mora Méndez · Todos los derechos reservados": "© 2026 Borja Mora Méndez · All rights reserved",
     "Diseñado y construido por mí": "Designed and built by me",
     "Aviso de cookies": "Cookie notice",
-    "<strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Política de privacidad</a>.": "<strong>Analytics cookies.</strong> I use Google Analytics to understand how this site is used. No advertising or third-party tracking. <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Privacy policy</a>.",
+    "<strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. Puedes cambiar tu decisión cuando quieras. <a href=\"./privacidad.html\">Política de privacidad y cookies</a>.": "<strong>Analytics cookies.</strong> I use Google Analytics to understand how this site is used. No advertising or third-party tracking. You can change your mind at any time. <a href=\"./privacidad.html\">Privacy and cookie policy</a>.",
     "Rechazar cookies": "Reject cookies",
     "Rechazar": "Reject",
     "Aceptar cookies": "Accept cookies",
@@ -778,7 +778,10 @@
     "Ver proyectos de Power BI": "See Power BI projects",
     "Fuentes y lecturas": "Sources and further reading",
     "Las he usado como respaldo conceptual, no como texto: todo lo que aparece aquí está escrito con mis palabras. Distingo en cada caso entre evidencia, regla práctica y criterio personal.": "I’ve used them as conceptual support, not as text: everything here is written in my own words. In each case I distinguish between evidence, practical rule and personal judgement.",
-    "Todos los datos de esta página son sintéticos y se han creado para el ejemplo.": "All the data on this page is synthetic and was created for the example."
+    "Todos los datos de esta página son sintéticos y se han creado para el ejemplo.": "All the data on this page is synthetic and was created for the example.",
+    "Privacidad": "Privacy",
+    "Preferencias de cookies": "Cookie preferences",
+    "Información legal": "Legal information"
   },
   "keep": [
     "Borja Mora",

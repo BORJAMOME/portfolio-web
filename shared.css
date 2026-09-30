@@ -9,6 +9,7 @@
   --purple:       #7a7bff;
   --purple2:      #5a5be0;
   --purple-light: #ededff;
+  --purple-text:  var(--purple2);   /* morado para texto: #5a5be0 cumple AA sobre blanco y sobre --purple-light */
   --green:        #3c8a37;
   --green-light:  #e8f5e7;
   --red:          #a3223e;
@@ -444,6 +445,20 @@ footer {
   font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
   font-size: 11px; color: rgba(255,255,255,.55); letter-spacing: .3px;
 }
+/* Enlaces legales del pie: privacidad y preferencias de cookies (consent.js) */
+.foot-legal-wrap { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 18px; }
+.foot-legal { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 4px 16px; font-size: 11px; letter-spacing: .3px; }
+.foot-bottom .foot-legal { font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; color: rgba(255,255,255,.72); }
+.foot-legal a, .foot-legal button {
+  color: inherit; font: inherit; letter-spacing: inherit;
+  background: none; border: 0; padding: 4px 0; min-height: 24px; cursor: pointer;
+  text-decoration: underline; text-decoration-thickness: .5px; text-underline-offset: 3px;
+  transition: opacity .15s;
+}
+@media (hover: hover) and (pointer: fine) {
+  .foot-legal a:hover, .foot-legal button:hover { opacity: .7; }
+}
+.foot-legal a:focus-visible, .foot-legal button:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 2px; }
 .foot-made {
   display: flex; align-items: center; gap: 8px;
   font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;

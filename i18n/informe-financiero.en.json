@@ -24,7 +24,7 @@
     "© 2026 Borja Mora Méndez · Todos los derechos reservados": "© 2026 Borja Mora Méndez · All rights reserved",
     "Diseñado y construido por mí": "Designed and built by me",
     "Aviso de cookies": "Cookie notice",
-    "<strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Política de privacidad</a>.": "<strong>Analytics cookies.</strong> I use Google Analytics to understand how this site is used. No advertising or third-party tracking. <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Privacy policy</a>.",
+    "<strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. Puedes cambiar tu decisión cuando quieras. <a href=\"./privacidad.html\">Política de privacidad y cookies</a>.": "<strong>Analytics cookies.</strong> I use Google Analytics to understand how this site is used. No advertising or third-party tracking. You can change your mind at any time. <a href=\"./privacidad.html\">Privacy and cookie policy</a>.",
     "Rechazar cookies": "Reject cookies",
     "Rechazar": "Reject",
     "Aceptar cookies": "Accept cookies",
@@ -150,7 +150,11 @@
     "El resultado es un informe que intenta hacer algo muy sencillo de decir y bastante más difícil de construir.": "The result is a report that tries to do something very simple to say and much harder to build.",
     "Que cualquier cifra pueda explicarse sin salir del dashboard.": "Any figure can be explained without leaving the dashboard.",
     "Ver el resto de proyectos": "See the rest of the projects",
-    "Portfolio completo de Power BI": "Full Power BI portfolio"
+    "Portfolio completo de Power BI": "Full Power BI portfolio",
+    "Saltar al contenido": "Skip to content",
+    "Privacidad": "Privacy",
+    "Preferencias de cookies": "Cookie preferences",
+    "Información legal": "Legal information"
   },
   "keep": [
     "Español",
@@ -192,14 +196,6 @@
     [
       "<meta property=\"og:url\" content=\"https://borjamora.es/informe-financiero.html\">",
       "<meta property=\"og:url\" content=\"https://borjamora.es/en/informe-financiero.html\">"
-    ],
-    [
-      ".toLocaleString('es-ES')",
-      ".toLocaleString('en-GB')"
-    ],
-    [
-      ".toFixed(decimals).replace('.', ',')",
-      ".toFixed(decimals)"
     ],
     [
       ">6,94%<",

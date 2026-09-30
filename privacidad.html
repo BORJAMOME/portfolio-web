@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="./img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="./img/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="./img/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon.png">
+<link rel="shortcut icon" href="./img/favicon.ico">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111111">
+<title>Privacidad y cookies · Borja Mora Méndez</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet">
+<!-- Shared styles: variables, nav, footer, botones, reset -->
+<link rel="stylesheet" href="./shared.css?v=20260930c">
+
+<!-- ── Cookie Consent + GA4 Consent Mode v2 (RGPD/LOPDGDD) ── -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("consent", "default", {
+    analytics_storage:    "denied",
+    ad_storage:           "denied",
+    ad_user_data:         "denied",
+    ad_personalization:   "denied",
+    wait_for_update:      500
+  });
+  /* Decisión guardada: se aplica antes de gtag("config") para que la primera página vista ya la respete */
+  try {
+    if (localStorage.getItem("bm_cookie_consent") === "accepted") {
+      gtag("consent", "update", { analytics_storage: "granted" });
+    }
+  } catch (e) {}
+</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PSDM6B5Z7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-6PSDM6B5Z7");
+</script>
+
+<!-- ── Cookie banner CSS (RGPD/LOPDGDD) ── -->
+<style>
+  #bm-cookie-banner {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(0);
+    z-index: 99999; width: min(540px, calc(100vw - 32px));
+    background: var(--ink); color: #f7f7fa;
+    border: 1px solid rgba(122,123,255,.3);
+    border-radius: 16px; padding: 16px 20px;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    box-shadow: 0 12px 48px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.04);
+    font-family: var(--font);
+    font-size: 13px; line-height: 1.55;
+    opacity: 0; pointer-events: none; visibility: hidden;
+    transition: opacity .3s ease, transform .35s var(--ease);
+  }
+  #bm-cookie-banner.bm-visible {
+    opacity: 1; pointer-events: auto; visibility: visible;
+  }
+  #bm-cookie-banner.bm-hiding {
+    visibility: visible; opacity: 0; transform: translateX(-50%) translateY(16px);
+  }
+  #bm-cookie-banner p { margin: 0; flex: 1; min-width: 200px; color: #b8b8cc; }
+  #bm-cookie-banner strong { color: #f7f7fa; font-weight: 600; }
+  #bm-cookie-banner a { color: #7a7bff; text-decoration: none; border-bottom: 1px solid rgba(122,123,255,.4); }
+  .bm-cb-btns { display: flex; gap: 8px; flex-shrink: 0; }
+  .bm-cb-btn {
+    cursor: pointer; border: none; border-radius: 9px;
+    padding: 9px 18px; font-size: 12px; font-weight: 700;
+    font-family: inherit; letter-spacing: .4px;
+    transition: opacity .15s, transform .12s;
+    text-transform: uppercase;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .bm-cb-btn:hover { opacity: .82; transform: translateY(-1px); }
+  }
+  .bm-cb-btn:active { transform: translateY(0); }
+  .bm-cb-btn:focus-visible { outline: 2px solid #f7f7fa; outline-offset: 2px; }
+  .bm-cb-btn[aria-pressed="true"] { box-shadow: 0 0 0 2px #0b0b0f, 0 0 0 3px #b8b8cc; }
+  .bm-cb-accept { background: #7a7bff; color: #fff; }
+  .bm-cb-reject { background: rgba(255,255,255,.07); color: #b8b8cc; border: 1px solid rgba(255,255,255,.1); }
+  @media (max-width: 480px) {
+    #bm-cookie-banner { bottom: 16px; padding: 14px 16px; border-radius: 12px; }
+    .bm-cb-btns { width: 100%; justify-content: flex-end; }
+  }
+</style>
+
+<meta name="description" content="Qué datos trata borjamora.es, qué cookies usa (solo Google Analytics, y solo si aceptas) y cómo cambiar tu decisión o ejercer tus derechos.">
+<meta name="author" content="Borja Mora Méndez">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://borjamora.es/privacidad.html">
+<link rel="alternate" hreflang="es" href="https://borjamora.es/privacidad.html">
+<link rel="alternate" hreflang="en" href="https://borjamora.es/en/privacy.html">
+<link rel="alternate" hreflang="x-default" href="https://borjamora.es/privacidad.html">
+<script src="./lang.js"></script>
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:url" content="https://borjamora.es/privacidad.html">
+<meta property="og:title" content="Privacidad y cookies | Borja Mora">
+<meta property="og:description" content="Qué datos trata esta web, qué cookies usa y cómo cambiar tu decisión.">
+<meta property="og:image" content="https://borjamora.es/img/og-home.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Borja Mora · Data Analyst">
+<meta property="og:site_name" content="Borja Mora">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Privacidad y cookies | Borja Mora">
+<meta name="twitter:description" content="Qué datos trata esta web, qué cookies usa y cómo cambiar tu decisión.">
+<meta name="twitter:image" content="https://borjamora.es/img/og-home.png">
+
+
+<style>
+:root{
+  --ink:#111111;
+  --paper:#ffffff;
+  --muted:#5a5a5a;
+  --off:#f7f7fa;
+  --line:#e7e7ee;
+  --purple:#7a7bff;
+  --purple2:#5a5be0;
+  --purple-light:#ededff;
+  --green:#3c8a37;
+  --ease:cubic-bezier(0.16,1,0.3,1);
+  --font:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;
+  --font-serif:'Newsreader',Georgia,serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font); background:var(--paper); color:var(--ink);
+  line-height:1.6; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; overflow-x:hidden;
+}
+::selection{background:var(--purple);color:#fff}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.shell{max-width:1240px;margin:0 auto;padding:0 clamp(20px,4vw,48px)}
+
+/* ── Portada ── */
+.pv-hero{padding:132px 0 56px;border-bottom:1px solid var(--line)}
+.pv-eyebrow{font-size:12px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--purple2);margin-bottom:18px}
+.pv-h1{font-family:var(--font-serif);font-weight:500;font-size:clamp(40px,6vw,76px);line-height:1;letter-spacing:-2px;max-width:14ch}
+.pv-h1 em{font-style:italic;color:var(--purple2)}
+.pv-lede{margin-top:24px;max-width:60ch;font-size:clamp(16px,1.4vw,19px);color:#3d3d3d}
+.pv-meta{margin-top:28px;display:flex;flex-wrap:wrap;gap:8px 22px;font-size:13px;color:var(--muted)}
+.pv-meta b{color:var(--ink);font-weight:600}
+
+/* ── En corto ── */
+.pv-short{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin:48px 0 0}
+.pv-short li{list-style:none;background:var(--paper);padding:22px 22px 24px;display:flex;flex-direction:column;gap:10px}
+.pv-short-k{font-family:var(--font-serif);font-size:30px;line-height:1;color:var(--purple2)}
+.pv-short-t{font-weight:700;font-size:15px;letter-spacing:-.2px}
+.pv-short-d{font-size:14px;color:var(--muted);line-height:1.5}
+
+/* ── Cuerpo: índice fijo + texto ── */
+.pv-body{display:grid;grid-template-columns:220px minmax(0,1fr);gap:clamp(32px,6vw,96px);padding:64px 0 96px}
+.pv-toc{position:sticky;top:96px;align-self:start}
+.pv-toc-title{font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.pv-toc ol{list-style:none;counter-reset:toc;display:flex;flex-direction:column;gap:2px;border-left:1px solid var(--line)}
+.pv-toc li{counter-increment:toc}
+.pv-toc a{display:flex;gap:10px;padding:7px 0 7px 16px;margin-left:-1px;border-left:2px solid transparent;font-size:14px;color:var(--muted);text-decoration:none;transition:color .2s,border-color .2s}
+.pv-toc a::before{content:counter(toc,decimal-leading-zero);font-variant-numeric:tabular-nums;font-size:12px;color:#8a8a96;padding-top:1px}
+.pv-toc a:hover,.pv-toc a.is-current{color:var(--ink);border-left-color:var(--purple)}
+.pv-toc a:focus-visible{outline:2px solid var(--purple2);outline-offset:2px}
+
+.pv-text{max-width:720px}
+.pv-sec{padding-top:8px;scroll-margin-top:96px}
+.pv-sec + .pv-sec{margin-top:56px;padding-top:56px;border-top:1px solid var(--line)}
+.pv-sec h2{font-family:var(--font-serif);font-weight:500;font-size:clamp(26px,2.6vw,34px);letter-spacing:-.8px;line-height:1.15;margin-bottom:18px}
+.pv-sec h2 .n{display:block;font-family:var(--font);font-size:12px;font-weight:700;letter-spacing:1.4px;color:var(--purple2);margin-bottom:10px}
+.pv-sec h3{font-size:16px;font-weight:700;margin:28px 0 8px;letter-spacing:-.2px}
+.pv-sec p,.pv-sec li{font-size:16px;color:#333}
+.pv-sec p + p{margin-top:14px}
+.pv-sec ul + p,.pv-sec .pv-state + p,.pv-sec .pv-card + p{margin-top:18px}
+.pv-sec ul{margin:14px 0 0 0;padding-left:20px;display:flex;flex-direction:column;gap:8px}
+.pv-sec a{color:var(--purple2);text-underline-offset:3px;text-decoration-thickness:1px}
+.pv-sec a:hover{color:var(--ink)}
+.pv-sec strong{color:var(--ink)}
+.pv-note{margin-top:18px;padding:16px 18px;background:var(--off);border-radius:12px;font-size:14px !important;color:#444 !important}
+
+/* ── Ficha del responsable ── */
+.pv-card{margin-top:18px;border:1px solid var(--line);border-radius:14px;display:grid;grid-template-columns:max-content 1fr}
+.pv-card dt,.pv-card dd{padding:13px 18px;font-size:15px;border-top:1px solid var(--line)}
+.pv-card dt:first-of-type,.pv-card dt:first-of-type + dd{border-top:0}
+.pv-card dt{color:var(--muted);font-weight:500}
+.pv-card dd{color:var(--ink);font-weight:600;overflow-wrap:anywhere}
+
+/* ── Estado del consentimiento ── */
+.pv-state{margin-top:24px;background:var(--ink);color:#f7f7fa;border-radius:18px;padding:26px 26px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.pv-state-l{display:flex;align-items:center;gap:16px}
+.pv-state-dot{width:12px;height:12px;border-radius:50%;background:#8a8a96;box-shadow:0 0 0 6px rgba(255,255,255,.06);flex-shrink:0;transition:background .3s}
+.pv-state[data-state="accepted"] .pv-state-dot{background:#6fd36a}
+.pv-state[data-state="rejected"] .pv-state-dot{background:#ff8a7a}
+.pv-state .pv-state-k{font-size:12px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:#b8b8cc}
+.pv-state .pv-state-v{color:#f7f7fa;font-family:var(--font-serif);font-size:24px;line-height:1.2;margin-top:2px}
+.pv-state-btn{cursor:pointer;border:0;border-radius:999px;background:#7a7bff;color:#fff;font:700 13px/1 var(--font);letter-spacing:.3px;padding:14px 22px;min-height:44px;transition:transform .15s var(--ease),background .2s}
+.pv-state-btn:hover{background:#8d8eff;transform:translateY(-1px)}
+.pv-state-btn:focus-visible{outline:2px solid #fff;outline-offset:3px}
+
+/* ── Tabla de cookies ── */
+.pv-table-wrap{margin-top:18px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.pv-table{width:100%;border-collapse:collapse;font-size:14px}
+.pv-table th,.pv-table td{text-align:left;padding:13px 16px;vertical-align:top}
+.pv-table thead th{background:var(--off);font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted)}
+.pv-table tbody tr + tr td{border-top:1px solid var(--line)}
+.pv-table code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;background:var(--purple-light);color:#3c3dad;padding:2px 6px;border-radius:5px;white-space:nowrap}
+.pv-tag{display:inline-block;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:#f0f0f3;color:#444;white-space:nowrap}
+.pv-tag--c{background:var(--purple-light);color:#3c3dad}
+
+/* ── Derechos ── */
+.pv-rights{margin-top:18px !important;padding:0 !important;list-style:none;display:grid !important;grid-template-columns:repeat(2,1fr);gap:10px !important}
+.pv-rights li{border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:14px !important;line-height:1.45}
+.pv-rights b{display:block;font-size:15px;color:var(--ink);margin-bottom:2px}
+
+@media (max-width:980px){
+  .pv-short{grid-template-columns:repeat(2,1fr)}
+  .pv-body{grid-template-columns:1fr}
+  .pv-toc{position:static}
+  .pv-toc ol{flex-direction:row;flex-wrap:wrap;border-left:0;gap:6px}
+  .pv-toc a{border:1px solid var(--line);border-radius:999px;padding:6px 12px;margin:0}
+  .pv-toc a:hover,.pv-toc a.is-current{border-color:var(--purple)}
+}
+@media (max-width:640px){
+  .pv-hero{padding:112px 0 40px}
+  .pv-short{grid-template-columns:1fr}
+  .pv-rights{grid-template-columns:1fr}
+  .pv-card{grid-template-columns:1fr}
+  .pv-card dd{border-top:0;padding-top:0}
+  .pv-table thead{display:none}
+  .pv-table,.pv-table tbody,.pv-table tr,.pv-table td{display:block;width:100%}
+  .pv-table tbody tr + tr{border-top:1px solid var(--line)}
+  .pv-table tbody tr + tr td{border-top:0}
+  .pv-table td{padding:6px 16px}
+  .pv-table td:first-child{padding-top:16px}
+  .pv-table td:last-child{padding-bottom:16px}
+  .pv-table td[data-th]::before{content:attr(data-th);display:block;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+  .pv-state{padding:22px}
+}
+@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} *{transition:none !important} }
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Saltar al contenido</a>
+
+<!-- ─────────── NAV ─────────── -->
+<nav id="nav" aria-label="Navegación principal">
+  <a href="./index.html" class="logo" aria-label="Borja Mora — Inicio"><span id="logoText" class="done">Borja Mora</span><span class="logo-mark"><svg class="logo-ring" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><circle class="logo-ring-bg" cx="9" cy="9" r="7.3" pathLength="1"/><circle class="logo-ring-fg" cx="9" cy="9" r="7.3" pathLength="1"/></svg><span class="logo-dot"></span></span></a>
+  <div class="ds-lang" role="group" aria-label="Idioma · Language">
+    <span class="ds-lang-a" aria-current="true" lang="es" title="Español">ES</span>
+    <a href="./en/privacy.html" class="ds-lang-b" hreflang="en" lang="en" data-lang-to="en" title="Read in English" aria-label="Read in English">EN</a>
+  </div>
+  <div class="nav-links">
+    <a href="./index.html">Inicio</a>
+    <a href="./sobre-mi.html">Sobre mí</a>
+    <div class="nav-dropdown" id="navDropdown">
+      <button class="nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false">Proyectos <svg class="dd-chevron" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 3.5L5 6.5L7.5 3.5"/></svg></button>
+      <ul class="nav-dropdown-menu" role="menu">
+        <li role="none"><a href="./power-bi.html" role="menuitem">Power BI</a></li>
+        <li role="none"><a href="./analisis-datos.html" role="menuitem">Análisis</a></li>
+        <li role="none"><a href="./visualizacion-datos.html" role="menuitem">Visualización</a></li>
+      </ul>
+    </div>
+    <a href="./descargas.html">Descargas</a>
+    <a id="navEmailBtn" href="#" target="_blank" rel="noopener noreferrer" class="nav-cta btn" onclick="gtag('event', 'clic_email', { location: 'nav' });"><span class="cta-text-wrap"><span>Contacto</span><span>¿Hablamos?</span></span></a>
+  </div>
+  <div class="nav-social">
+    <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" onclick="gtag('event','clic_linkedin',{location:'nav'});"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+    <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" aria-label="GitHub" onclick="gtag('event','clic_github',{location:'nav'});"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+  </div>
+  <button class="nav-burger" id="navBurger" aria-label="Abrir menú" aria-expanded="false" aria-controls="navDrawer">
+    <span class="nav-burger-line"></span>
+    <span class="nav-burger-line"></span>
+    <span class="nav-burger-line"></span>
+  </button>
+</nav>
+
+<!-- ─── MOBILE DRAWER ─── -->
+<div class="nav-drawer" id="navDrawer" role="dialog" aria-modal="true" aria-label="Menú de navegación">
+  <div class="nav-drawer-backdrop" id="navBackdrop"></div>
+  <div class="nav-drawer-panel">
+    <div class="nav-drawer-head">
+      <span class="nav-drawer-brand">Borja Mora.</span>
+      <button class="nav-drawer-close" id="navDrawerClose" aria-label="Cerrar menú"><span class="nav-drawer-close-x" aria-hidden="true">×</span>Cerrar</button>
+    </div>
+    <nav class="nav-drawer-links" aria-label="Navegación móvil">
+      <a href="./index.html">Inicio</a>
+      <a href="./sobre-mi.html">Sobre mí</a>
+      <button class="nav-drawer-projects-trigger" id="navDrawerProjectsBtn" type="button" aria-expanded="false" aria-controls="navDrawerProjects"><span>Proyectos<span class="nav-drawer-count" aria-hidden="true">(+3)</span></span><span class="nav-drawer-plus" aria-hidden="true"></span></button>
+      <div class="nav-drawer-projects" id="navDrawerProjects">
+        <div class="nav-drawer-projects-inner">
+          <div class="nav-drawer-sublinks">
+            <a href="./power-bi.html">Power BI</a>
+            <a href="./analisis-datos.html">Análisis</a>
+            <a href="./visualizacion-datos.html">Visualización</a>
+          </div>
+        </div>
+      </div>
+      <a href="./descargas.html">Descargas</a>
+    </nav>
+    <div class="nav-drawer-foot">
+      <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="nav-drawer-foot-item" onclick="gtag('event','clic_linkedin',{location:'drawer'});">LinkedIn</a>
+      <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" class="nav-drawer-foot-item" onclick="gtag('event','clic_github',{location:'drawer'});">GitHub</a>
+      <a id="drawerEmailBtn" href="#" target="_blank" rel="noopener noreferrer" class="nav-drawer-foot-item" onclick="gtag('event','clic_email',{location:'drawer'});">Email</a>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var burger = document.getElementById('navBurger');
+  var drawer = document.getElementById('navDrawer');
+  var closeBtn = document.getElementById('navDrawerClose');
+  var backdrop = document.getElementById('navBackdrop');
+  if(!burger||!drawer) return;
+  function open(){ drawer.classList.add('open'); burger.setAttribute('aria-expanded','true'); burger.setAttribute('aria-label','Cerrar menú'); document.body.style.overflow='hidden'; document.body.style.position='fixed'; document.body.style.width='100%'; if(closeBtn) closeBtn.focus(); }
+  function close(){ drawer.classList.remove('open'); burger.setAttribute('aria-expanded','false'); burger.setAttribute('aria-label','Abrir menú'); document.body.style.overflow=''; document.body.style.position=''; document.body.style.width=''; burger.focus(); }
+  burger.addEventListener('click', function(){ drawer.classList.contains('open') ? close() : open(); });
+  if(closeBtn) closeBtn.addEventListener('click', close);
+  if(backdrop) backdrop.addEventListener('click', close);
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape' && drawer.classList.contains('open')) close(); });
+  var navEmail = document.getElementById('navEmailBtn');
+  var drawerEmail = document.getElementById('drawerEmailBtn');
+  if(navEmail && drawerEmail){ var obs = new MutationObserver(function(){ drawerEmail.href = navEmail.href; }); obs.observe(navEmail,{attributes:true,attributeFilter:['href']}); if(navEmail.href && navEmail.href !== '#') drawerEmail.href = navEmail.href; }
+  var projBtn = document.getElementById('navDrawerProjectsBtn');
+  var projPanel = document.getElementById('navDrawerProjects');
+  if(projBtn && projPanel){
+    function setProjects(isOpen){ projBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false'); projPanel.classList.toggle('is-open', isOpen); }
+    projBtn.addEventListener('click', function(){ setProjects(projBtn.getAttribute('aria-expanded') !== 'true'); });
+    if(projPanel.querySelector('.nav-drawer-sublinks a.active')) setProjects(true);
+  }
+})();
+</script>
+
+<script>
+/* ── NAV DROPDOWN ── */
+(function(){
+  var dd = document.getElementById('navDropdown');
+  if(!dd) return;
+  var trigger = dd.querySelector('.nav-dropdown-trigger');
+  var menu = dd.querySelector('.nav-dropdown-menu');
+  var items = menu.querySelectorAll('a[role="menuitem"]');
+  var openTimer, closeTimer;
+
+  function openDD(){
+    clearTimeout(closeTimer);
+    dd.classList.add('open');
+    trigger.setAttribute('aria-expanded','true');
+  }
+  function closeDD(){
+    dd.classList.remove('open');
+    trigger.setAttribute('aria-expanded','false');
+  }
+  function scheduleOpen(){ clearTimeout(closeTimer); openTimer = setTimeout(openDD, 120); }
+  function scheduleClose(){ clearTimeout(openTimer); closeTimer = setTimeout(closeDD, 250); }
+
+  dd.addEventListener('mouseenter', scheduleOpen);
+  dd.addEventListener('mouseleave', scheduleClose);
+
+  trigger.addEventListener('click', function(e){
+    e.preventDefault();
+    dd.classList.contains('open') ? closeDD() : openDD();
+  });
+
+  trigger.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' '){
+      e.preventDefault(); openDD();
+      if(items.length) items[0].focus();
+    }
+    if(e.key === 'Escape'){ closeDD(); trigger.focus(); }
+  });
+  menu.addEventListener('keydown', function(e){
+    var idx = Array.prototype.indexOf.call(items, document.activeElement);
+    if(e.key === 'ArrowDown'){ e.preventDefault(); if(idx < items.length-1) items[idx+1].focus(); }
+    if(e.key === 'ArrowUp'){ e.preventDefault(); if(idx > 0) items[idx-1].focus(); else { trigger.focus(); closeDD(); } }
+    if(e.key === 'Escape'){ closeDD(); trigger.focus(); }
+    if(e.key === 'Tab'){ closeDD(); }
+  });
+
+  document.addEventListener('click', function(e){
+    if(!dd.contains(e.target)) closeDD();
+  });
+})();
+</script>
+
+<!-- ─────────── PÁGINA ─────────── -->
+<main id="main-content">
+<div class="shell">
+
+  <header class="pv-hero">
+    <p class="pv-eyebrow">Información legal</p>
+    <h1 class="pv-h1">Privacidad y <em>cookies</em></h1>
+    <p class="pv-lede">Esta web es mi portfolio personal. No vende nada, no tiene publicidad y no pide registrarse. Aquí explico, sin letra pequeña, qué datos se tratan cuando la visitas y cómo puedes decidir sobre ellos.</p>
+    <div class="pv-meta">
+      <span>Última actualización: <b><time datetime="2026-09-30">30 de septiembre de 2026</time></b></span>
+      <span>Normativa: <b>RGPD y LOPDGDD</b></span>
+    </div>
+
+    <ul class="pv-short" aria-label="Resumen">
+      <li><span class="pv-short-k" aria-hidden="true">01</span><span class="pv-short-t">Solo analítica</span><span class="pv-short-d">Google Analytics 4, para saber qué páginas se visitan. Nada de publicidad.</span></li>
+      <li><span class="pv-short-k" aria-hidden="true">02</span><span class="pv-short-t">Solo si aceptas</span><span class="pv-short-d">Hasta que aceptes, no se guarda ninguna cookie de analítica.</span></li>
+      <li><span class="pv-short-k" aria-hidden="true">03</span><span class="pv-short-t">Reversible</span><span class="pv-short-d">Puedes cambiar tu decisión en cualquier momento desde el pie de cada página.</span></li>
+      <li><span class="pv-short-k" aria-hidden="true">04</span><span class="pv-short-t">Sin cesiones</span><span class="pv-short-d">No vendo ni comparto tus datos con nadie para otros fines.</span></li>
+    </ul>
+  </header>
+
+  <div class="pv-body">
+    <nav class="pv-toc" aria-label="Índice">
+      <p class="pv-toc-title">Índice</p>
+      <ol>
+        <li><a href="#responsable">Responsable</a></li>
+        <li><a href="#datos">Qué datos se tratan</a></li>
+        <li><a href="#cookies">Cookies</a></li>
+        <li><a href="#terceros">Terceros</a></li>
+        <li><a href="#conservacion">Conservación</a></li>
+        <li><a href="#derechos">Tus derechos</a></li>
+        <li><a href="#cambios">Cambios</a></li>
+      </ol>
+    </nav>
+
+    <div class="pv-text">
+
+      <section class="pv-sec" id="responsable" aria-labelledby="h-responsable">
+        <h2 id="h-responsable"><span class="n">01</span>Responsable</h2>
+        <p>El responsable del tratamiento de los datos de esta web es:</p>
+        <dl class="pv-card">
+          <dt>Titular</dt><dd>Borja Mora Méndez</dd>
+          <dt>Web</dt><dd>borjamora.es</dd>
+          <dt>Contacto</dt><dd><a href="mailto:borja.mora.mendez@gmail.com">borja.mora.mendez@gmail.com</a></dd>
+          <dt>Ubicación</dt><dd>Madrid, España</dd>
+        </dl>
+      </section>
+
+      <section class="pv-sec" id="datos" aria-labelledby="h-datos">
+        <h2 id="h-datos"><span class="n">02</span>Qué datos se tratan y para qué</h2>
+        <h3>Analítica de uso (solo con tu consentimiento)</h3>
+        <p>Si aceptas las cookies de analítica, Google Analytics 4 registra datos de navegación: páginas vistas, clics en enlaces y botones, tiempo en la página, tipo de dispositivo y navegador, y una ubicación aproximada (país o ciudad). Google Analytics 4 no guarda las direcciones IP completas.</p>
+        <p>Lo uso solo para una cosa: saber qué contenidos interesan y mejorar el portfolio. La base legal es tu <strong>consentimiento</strong> (art. 6.1.a RGPD y art. 22.2 LSSI), que puedes retirar cuando quieras.</p>
+        <p>Si no aceptas, Google Analytics funciona en modo sin cookies (Consent Mode): no guarda ni lee cookies en tu navegador y solo recibe avisos anónimos de que ha habido una visita, sin identificadores.</p>
+        <h3>Contacto</h3>
+        <p>Si me escribes por correo electrónico, trataré tu dirección y tu mensaje únicamente para responderte. La base legal es tu propia solicitud y el interés legítimo en contestarla.</p>
+        <h3>Solicitud del CV</h3>
+        <p>El botón «Descargar CV» abre un formulario de <a href="https://tally.so/help/privacy-policy" target="_blank" rel="noopener noreferrer">Tally</a>. Lo que escribas en él lo recibo yo y lo uso solo para enviarte el CV o responderte.</p>
+      </section>
+
+      <section class="pv-sec" id="cookies" aria-labelledby="h-cookies">
+        <h2 id="h-cookies"><span class="n">03</span>Cookies</h2>
+        <p>Una cookie es un pequeño archivo que la web guarda en tu navegador. Esta web solo usa estas:</p>
+        <div class="pv-table-wrap">
+          <table class="pv-table">
+            <caption class="sr-only">Cookies y almacenamiento que usa esta web</caption>
+            <thead><tr><th scope="col">Nombre</th><th scope="col">Tipo</th><th scope="col">Para qué</th><th scope="col">Duración</th></tr></thead>
+            <tbody>
+              <tr><td data-th="Nombre"><code>_ga</code></td><td data-th="Tipo"><span class="pv-tag pv-tag--c">Analítica · Google</span></td><td data-th="Para qué">Distinguir visitantes de forma anónima.</td><td data-th="Duración">2 años</td></tr>
+              <tr><td data-th="Nombre"><code>_ga_6PSDM6B5Z7</code></td><td data-th="Tipo"><span class="pv-tag pv-tag--c">Analítica · Google</span></td><td data-th="Para qué">Mantener el estado de la sesión.</td><td data-th="Duración">2 años</td></tr>
+              <tr><td data-th="Nombre"><code>bm_cookie_consent</code></td><td data-th="Tipo"><span class="pv-tag">Técnica · propia</span></td><td data-th="Para qué">Recordar si aceptaste o rechazaste la analítica (almacenamiento local, no es una cookie).</td><td data-th="Duración">Hasta que la borres</td></tr>
+              <tr><td data-th="Nombre"><code>bm_lang</code></td><td data-th="Tipo"><span class="pv-tag">Técnica · propia</span></td><td data-th="Para qué">Recordar el idioma que elegiste, español o inglés (almacenamiento local).</td><td data-th="Duración">Hasta que la borres</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="pv-note">Las dos últimas son técnicas: sirven para que la web funcione como elegiste y no requieren consentimiento. Las de Google solo se crean si aceptas.</p>
+
+        <h3>Tu elección ahora mismo</h3>
+        <div class="pv-state" id="pvState" data-state="none" aria-live="polite">
+          <div class="pv-state-l">
+            <span class="pv-state-dot" aria-hidden="true"></span>
+            <div>
+              <p class="pv-state-k">Cookies de analítica</p>
+              <p class="pv-state-v"><span data-state-label="accepted" hidden>Aceptadas</span><span data-state-label="rejected" hidden>Rechazadas</span><span data-state-label="none">Sin decidir</span></p>
+            </div>
+          </div>
+          <button type="button" class="pv-state-btn" data-cookie-prefs>Cambiar preferencias</button>
+        </div>
+        <p>Si las rechazas después de haberlas aceptado, retiro el consentimiento en Google Analytics y borro sus cookies de tu navegador. También puedes eliminarlas desde la configuración de tu navegador.</p>
+      </section>
+
+      <section class="pv-sec" id="terceros" aria-labelledby="h-terceros">
+        <h2 id="h-terceros"><span class="n">04</span>Terceros y transferencias</h2>
+        <p>Para funcionar, esta web se apoya en algunos servicios externos. Al cargar la página, tu navegador se conecta con ellos y, como en cualquier conexión en internet, reciben tu dirección IP:</p>
+        <ul>
+          <li><strong>GitHub Pages</strong> (GitHub, Inc.): aloja la web y puede registrar datos técnicos de acceso por seguridad. <a href="https://docs.github.com/es/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener noreferrer">Su privacidad</a>.</li>
+          <li><strong>Google Fonts</strong> (Google LLC): sirve las tipografías. <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Su privacidad</a>.</li>
+          <li><strong>Google Analytics</strong> (Google Ireland Ltd.): analítica, en las condiciones descritas arriba.</li>
+          <li><strong>jsDelivr y cdnjs</strong>: sirven algunas librerías de animación y gráficos en páginas concretas.</li>
+        </ul>
+        <p>Algunos de estos proveedores pueden tratar datos en Estados Unidos. Google y GitHub están adheridos al Marco de Privacidad de Datos UE-EE. UU., que la Comisión Europea reconoce como garantía adecuada.</p>
+        <p>Los enlaces a LinkedIn, GitHub, Behance, Power BI o Tally llevan a webs con sus propias políticas de privacidad. Esta web no incrusta sus botones ni sus rastreadores.</p>
+      </section>
+
+      <section class="pv-sec" id="conservacion" aria-labelledby="h-conservacion">
+        <h2 id="h-conservacion"><span class="n">05</span>Cuánto tiempo se conservan</h2>
+        <ul>
+          <li><strong>Analítica:</strong> los datos de Google Analytics se conservan durante el plazo configurado en la herramienta, como máximo 14 meses, y después se borran de forma automática.</li>
+          <li><strong>Correos:</strong> el tiempo necesario para atender tu mensaje y, como máximo, un año después del último contacto, salvo que me pidas borrarlos antes.</li>
+          <li><strong>Tu elección de cookies e idioma:</strong> se quedan en tu navegador hasta que borres sus datos.</li>
+        </ul>
+      </section>
+
+      <section class="pv-sec" id="derechos" aria-labelledby="h-derechos">
+        <h2 id="h-derechos"><span class="n">06</span>Tus derechos</h2>
+        <p>Puedes ejercer estos derechos escribiendo a <a href="mailto:borja.mora.mendez@gmail.com">borja.mora.mendez@gmail.com</a>. Te responderé en el plazo máximo de un mes.</p>
+        <ul class="pv-rights">
+          <li><b>Acceso</b>Saber qué datos tuyos trato.</li>
+          <li><b>Rectificación</b>Corregir datos inexactos.</li>
+          <li><b>Supresión</b>Pedir que los borre.</li>
+          <li><b>Oposición y limitación</b>Pedir que deje de usarlos o que los use menos.</li>
+          <li><b>Portabilidad</b>Recibirlos en un formato que puedas llevarte.</li>
+          <li><b>Retirar el consentimiento</b>En cualquier momento, sin que afecte a lo anterior.</li>
+        </ul>
+        <p>Si crees que no he tratado bien tus datos, puedes reclamar ante la <a href="https://www.aepd.es" target="_blank" rel="noopener noreferrer">Agencia Española de Protección de Datos</a>.</p>
+      </section>
+
+      <section class="pv-sec" id="cambios" aria-labelledby="h-cambios">
+        <h2 id="h-cambios"><span class="n">07</span>Cambios en esta política</h2>
+        <p>Si cambio algo relevante, por ejemplo si añado una herramienta nueva, actualizaré esta página y la fecha del principio. Si el cambio afecta a las cookies, volverás a ver el aviso para decidir de nuevo.</p>
+      </section>
+
+    </div>
+  </div>
+</div>
+</main>
+
+<script>
+/* ── Estado del consentimiento e índice activo ── */
+(function(){
+  var box = document.getElementById('pvState');
+  function paint(v){
+    if(!box) return;
+    var s = v === 'accepted' || v === 'rejected' ? v : 'none';
+    box.setAttribute('data-state', s);
+    box.querySelectorAll('[data-state-label]').forEach(function(el){ el.hidden = el.getAttribute('data-state-label') !== s; });
+  }
+  var cur = null;
+  try { cur = localStorage.getItem('bm_cookie_consent'); } catch(e) {}
+  paint(cur);
+  document.addEventListener('bm:consent', function(e){ paint(e.detail); });
+
+  var links = document.querySelectorAll('.pv-toc a');
+  if(!('IntersectionObserver' in window) || !links.length) return;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(!en.isIntersecting) return;
+      links.forEach(function(a){
+        var on = a.getAttribute('href') === '#' + en.target.id;
+        a.classList.toggle('is-current', on);
+        if(on) a.setAttribute('aria-current','true'); else a.removeAttribute('aria-current');
+      });
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+  document.querySelectorAll('.pv-sec').forEach(function(s){ io.observe(s); });
+})();
+</script>
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-grid">
+      <div class="foot-col foot-col--brand">
+        <p class="foot-brand-name">Borja Mora.</p>
+        <p class="foot-brand-desc">Data Analyst Junior</p>
+        <p class="foot-brand-loc">Madrid, España</p>
+      </div>
+
+      <nav class="foot-col" aria-label="Navegación del pie de página">
+        <p class="foot-col-title">Navegación</p>
+        <a href="./index.html">Inicio</a>
+        <a href="./sobre-mi.html">Sobre mí</a>
+        <a href="./power-bi.html">Power BI</a>
+        <a href="./analisis-datos.html">Análisis</a>
+        <a href="./visualizacion-datos.html">Visualización</a>
+        <a href="./descargas.html">Descargas</a>
+      </nav>
+
+      <div class="foot-col">
+        <p class="foot-col-title">Trabajo</p>
+        <a href="./power-bi.html">Power BI</a>
+        <a href="./analisis-datos.html#ml">Machine Learning</a>
+        <a href="./analisis-datos.html#python">Python</a>
+        <a href="./analisis-datos.html#sql">SQL</a>
+      </div>
+
+      <div class="foot-col">
+        <p class="foot-col-title">Sígueme</p>
+        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_linkedin',{location:'footer'});">LinkedIn</a>
+        <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_github',{location:'footer'});">GitHub</a>
+      </div>
+    </div>
+
+    <div class="foot-bottom">
+      <div class="foot-legal-wrap">
+        <p class="foot-copy">© 2026 Borja Mora Méndez · Todos los derechos reservados</p>
+        <nav class="foot-legal" aria-label="Información legal"><a href="./privacidad.html">Privacidad</a><button type="button" data-cookie-prefs>Preferencias de cookies</button></nav>
+      </div>
+      <div class="foot-made">
+        <span>Diseñado y construido por mí</span>
+        <span class="foot-tech">HTML</span>
+        <span class="foot-tech">CSS</span>
+        <span class="foot-tech">JS</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ────────────── EMAIL OBFUSCADO ──────────────
+(function(){
+  var su = encodeURIComponent('Hola Borja — Me gustaría hablar contigo');
+  var body = encodeURIComponent('Hola Borja,\n\nHe visto tu portfolio y me gustaría hablar contigo sobre...\n\n');
+  var e = atob('Ym9yamEubW9yYS5tZW5kZXpAZ21haWwuY29t');
+  var url = 'https://mail.google.com/mail/u/0/?fs=1&to=' + e + '&su=' + su + '&body=' + body + '&tf=cm';
+  var navBtn = document.getElementById('navEmailBtn');
+  if (navBtn) navBtn.href = url;
+})();
+</script>
+
+<!-- ── Cookie banner HTML + lógica (RGPD/LOPDGDD) ── -->
+<div id="bm-cookie-banner" role="dialog" aria-live="polite" aria-label="Aviso de cookies">
+  <p><strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. Puedes cambiar tu decisión cuando quieras. <a href="./privacidad.html">Política de privacidad y cookies</a>.</p>
+  <div class="bm-cb-btns">
+    <button class="bm-cb-btn bm-cb-reject" id="bm-cb-reject" aria-label="Rechazar cookies">Rechazar</button>
+    <button class="bm-cb-btn bm-cb-accept" id="bm-cb-accept" aria-label="Aceptar cookies">Aceptar</button>
+  </div>
+</div>
+<script src="./consent.js" defer></script>
+</body>
+</html>

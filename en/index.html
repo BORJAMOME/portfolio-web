@@ -19,7 +19,7 @@
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet">
 <!-- Shared styles: variables, nav, footer, botones, reset -->
-<link rel="stylesheet" href="../shared.css?v=20260930">
+<link rel="stylesheet" href="../shared.css?v=20260930c">
 <!-- Primary Meta Tags -->
 <meta name="description" content="Borja Mora — Junior Data Analyst specialising in Power BI, based in Madrid. PL-300 certified. I analyse data, design dashboards and make sure they get used to make decisions. SQL, Python, DAX, data storytelling.">
 <meta name="keywords" content="Data Analyst, Power BI Developer, Business Intelligence, DAX, Data Storytelling, Microsoft PL-300, Power BI España, dashboards Power BI, Borja Mora">
@@ -105,6 +105,12 @@
     ad_personalization:   "denied",
     wait_for_update:      500
   });
+  /* Decisión guardada: se aplica antes de gtag("config") para que la primera página vista ya la respete */
+  try {
+    if (localStorage.getItem("bm_cookie_consent") === "accepted") {
+      gtag("consent", "update", { analytics_storage: "granted" });
+    }
+  } catch (e) {}
 </script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PSDM6B5Z7"></script>
@@ -113,17 +119,6 @@
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
   gtag("config", "G-6PSDM6B5Z7");
-
-  /* 2. Leer consentimiento previo del usuario */
-  (function(){
-    var consent = localStorage.getItem("bm_cookie_consent");
-    if (consent === "accepted") {
-      gtag("consent", "update", {
-        analytics_storage: "granted",
-        ad_storage:        "denied"
-      });
-    }
-  })();
 </script>
 
 <!-- ── Cookie banner CSS (RGPD/LOPDGDD) ── -->
@@ -138,14 +133,14 @@
     box-shadow: 0 12px 48px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.04);
     font-family: var(--font);
     font-size: 13px; line-height: 1.55;
-    opacity: 0; pointer-events: none;
+    opacity: 0; pointer-events: none; visibility: hidden;
     transition: opacity .3s ease, transform .35s var(--ease);
   }
   #bm-cookie-banner.bm-visible {
-    opacity: 1; pointer-events: auto;
+    opacity: 1; pointer-events: auto; visibility: visible;
   }
   #bm-cookie-banner.bm-hiding {
-    opacity: 0; transform: translateX(-50%) translateY(16px);
+    visibility: visible; opacity: 0; transform: translateX(-50%) translateY(16px);
   }
   #bm-cookie-banner p { margin: 0; flex: 1; min-width: 200px; color: #b8b8cc; }
   #bm-cookie-banner strong { color: #f7f7fa; font-weight: 600; }
@@ -162,6 +157,8 @@
     .bm-cb-btn:hover { opacity: .82; transform: translateY(-1px); }
   }
   .bm-cb-btn:active { transform: translateY(0); }
+  .bm-cb-btn:focus-visible { outline: 2px solid #f7f7fa; outline-offset: 2px; }
+  .bm-cb-btn[aria-pressed="true"] { box-shadow: 0 0 0 2px #0b0b0f, 0 0 0 3px #b8b8cc; }
   .bm-cb-accept { background: #7a7bff; color: #fff; }
   .bm-cb-reject { background: rgba(255,255,255,.07); color: #b8b8cc; border: 1px solid rgba(255,255,255,.1); }
   @media (max-width: 480px) {
@@ -1348,23 +1345,23 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 }
 .idx-num {
   font-family: var(--mono); font-size: 13px; font-weight: 600;
-  color: #767676; width: 38px; flex-shrink: 0;
+  color: #717171; width: 38px; flex-shrink: 0;
   transition: color .3s; letter-spacing: .02em;
 }
 .idx-row.open .idx-num { color: var(--ink); }
 .idx-name {
   font-size: clamp(38px,6.6vw,82px); font-weight: 800; letter-spacing: -2.5px;
-  line-height: .92; color: #d4d4da; text-transform: uppercase;
+  line-height: .92; color: #8f8f9f; text-transform: uppercase;
   transition: color .35s var(--ease), transform .45s cubic-bezier(.2,.8,.2,1);
 }
-.idx-head:hover .idx-name { color: #9a9aa3; }
+.idx-head:hover .idx-name { color: #71717d; }
 .idx-row.open .idx-name { color: var(--ink); transform: translateX(6px); }
 .idx-meta {
   margin-left: auto; display: flex; align-items: center; gap: 18px; flex-shrink: 0;
 }
 .idx-tag {
   font-family: var(--mono); font-size: 10px; font-weight: 500;
-  letter-spacing: .1em; text-transform: uppercase; color: #aaa;
+  letter-spacing: .1em; text-transform: uppercase; color: #737373;
   display: none;
 }
 @media(min-width:760px){ .idx-tag { display: inline; } }
@@ -1407,7 +1404,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   transition: background .2s var(--ease), color .2s var(--ease);
 }
 .idx-d-note {
-  font-family: var(--mono); font-size: 10px; color: #999;
+  font-family: var(--mono); font-size: 10px; color: #737373;
   letter-spacing: .06em; padding-top: 14px; border-top: 1px solid #ececec;
 }
 @media(max-width:680px){ .idx-detail { grid-template-columns: 1fr; gap: 20px; } }
@@ -2718,7 +2715,10 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
     </div>
 
     <div class="foot-bottom">
-      <p class="foot-copy">© 2026 Borja Mora Méndez · All rights reserved</p>
+      <div class="foot-legal-wrap">
+        <p class="foot-copy">© 2026 Borja Mora Méndez · All rights reserved</p>
+        <nav class="foot-legal" aria-label="Legal information"><a href="./privacy.html">Privacy</a><button type="button" data-cookie-prefs>Cookie preferences</button></nav>
+      </div>
       <div class="foot-made">
         <span>Designed and built by me</span>
         <span class="foot-tech">HTML</span>
@@ -3289,57 +3289,13 @@ const chartOpts = {
 
 <!-- ── Cookie banner HTML + lógica (RGPD/LOPDGDD) ── -->
 <div id="bm-cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie notice">
-  <p><strong>Analytics cookies.</strong> I use Google Analytics to understand how this site is used. No advertising or third-party tracking. <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Privacy policy</a>.</p>
+  <p><strong>Analytics cookies.</strong> I use Google Analytics to understand how this site is used. No advertising or third-party tracking. You can change your mind at any time. <a href="./privacy.html">Privacy and cookie policy</a>.</p>
   <div class="bm-cb-btns">
     <button class="bm-cb-btn bm-cb-reject" id="bm-cb-reject" aria-label="Reject cookies">Reject</button>
     <button class="bm-cb-btn bm-cb-accept" id="bm-cb-accept" aria-label="Accept cookies">Accept</button>
   </div>
 </div>
-<script>
-(function () {
-  var KEY = "bm_cookie_consent";
-  var banner = document.getElementById("bm-cookie-banner");
-  if (!banner) return;
-
-  function dismiss() {
-    banner.classList.remove("bm-visible");
-    banner.classList.add("bm-hiding");
-    setTimeout(function () {
-      banner.style.display = "none";
-    }, 380);
-  }
-
-  function grantAnalytics() {
-    if (typeof gtag === "function") {
-      gtag("consent", "update", { analytics_storage: "granted" });
-    }
-  }
-
-  /* Solo mostrar si no hay decisión previa */
-  if (!localStorage.getItem(KEY)) {
-    /* Pequeño delay para que la animación sea visible */
-    setTimeout(function () {
-      banner.classList.add("bm-visible");
-    }, 600);
-  } else if (localStorage.getItem(KEY) === "accepted") {
-    grantAnalytics();
-    banner.style.display = "none";
-  } else {
-    banner.style.display = "none";
-  }
-
-  document.getElementById("bm-cb-accept").addEventListener("click", function () {
-    localStorage.setItem(KEY, "accepted");
-    grantAnalytics();
-    dismiss();
-  });
-
-  document.getElementById("bm-cb-reject").addEventListener("click", function () {
-    localStorage.setItem(KEY, "rejected");
-    dismiss();
-  });
-})();
-</script>
+<script src="../consent.js" defer></script>
 
 <!-- ── OVERLAYS PROYECTOS DESTACADOS ── -->
 <script>

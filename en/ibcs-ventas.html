@@ -42,6 +42,12 @@
     ad_personalization:   "denied",
     wait_for_update:      500
   });
+  /* Decisión guardada: se aplica antes de gtag("config") para que la primera página vista ya la respete */
+  try {
+    if (localStorage.getItem("bm_cookie_consent") === "accepted") {
+      gtag("consent", "update", { analytics_storage: "granted" });
+    }
+  } catch (e) {}
 </script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PSDM6B5Z7"></script>
@@ -50,14 +56,6 @@
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
   gtag("config", "G-6PSDM6B5Z7");
-
-  /* Leer consentimiento previo */
-  (function(){
-    var consent = localStorage.getItem("bm_cookie_consent");
-    if (consent === "accepted") {
-      gtag("consent", "update", { analytics_storage: "granted", ad_storage: "denied" });
-    }
-  })();
 </script>
 
 <!-- ── Cookie banner CSS (RGPD/LOPDGDD) — autocontenida, esta página no carga shared.css ── -->
@@ -72,14 +70,14 @@
     box-shadow: 0 12px 48px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.04);
     font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
     font-size: 13px; line-height: 1.55;
-    opacity: 0; pointer-events: none;
+    opacity: 0; pointer-events: none; visibility: hidden;
     transition: opacity .3s ease, transform .35s cubic-bezier(0.16,1,0.3,1);
   }
   #bm-cookie-banner.bm-visible {
-    opacity: 1; pointer-events: auto;
+    opacity: 1; pointer-events: auto; visibility: visible;
   }
   #bm-cookie-banner.bm-hiding {
-    opacity: 0; transform: translateX(-50%) translateY(16px);
+    visibility: visible; opacity: 0; transform: translateX(-50%) translateY(16px);
   }
   #bm-cookie-banner p { margin: 0; flex: 1; min-width: 200px; color: #b8b8cc; }
   #bm-cookie-banner strong { color: #f7f7fa; font-weight: 600; }
@@ -96,6 +94,8 @@
     .bm-cb-btn:hover { opacity: .82; transform: translateY(-1px); }
   }
   .bm-cb-btn:active { transform: translateY(0); }
+  .bm-cb-btn:focus-visible { outline: 2px solid #f7f7fa; outline-offset: 2px; }
+  .bm-cb-btn[aria-pressed="true"] { box-shadow: 0 0 0 2px #0b0b0f, 0 0 0 3px #b8b8cc; }
   .bm-cb-accept { background: #7a7bff; color: #fff; }
   .bm-cb-reject { background: rgba(255,255,255,.07); color: #b8b8cc; border: 1px solid rgba(255,255,255,.1); }
   @media (max-width: 480px) {
@@ -104,11 +104,6 @@
   }
 </style>
 
-<script src="../support.js"></script>
-</head>
-<body>
-<x-dc>
-<helmet>
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
@@ -130,7 +125,6 @@
   --ib-body: 'Atkinson Hyperlegible', Arial, sans-serif;
 }
 html { scroll-behavior: smooth; font-size: 16px; }
-#dc-root, #dc-root > .sc-host { height: auto !important; }
 body {
   font-family: var(--ib-body);
   background: var(--ib-bg);
@@ -311,15 +305,28 @@ section { padding: 6rem 0; }
 <style>
 /* selector ES | EN: el mismo gesto que el del portfolio (shared.css), aquí autocontenido y con el color de esta barra */
 .ds-lang { --dsl: var(--ib-ink); position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 2px; }
-.ds-lang-a, .ds-lang-b { position: relative; padding: 6px 10px; border-radius: 7px; font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: .3px; text-transform: uppercase; color: var(--dsl); opacity: .62; text-decoration: none; transition: opacity .2s, background .2s; }
+.ds-lang-a, .ds-lang-b { position: relative; padding: 6px 10px; border-radius: 7px; font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: .3px; text-transform: uppercase; color: var(--dsl); opacity: .76; text-decoration: none; transition: opacity .2s, background .2s; }
 .ds-lang-a { opacity: 1; font-weight: 700; cursor: default; }
 .ds-lang-a::after { content: ''; position: absolute; bottom: 2px; left: 10px; right: 10px; height: 1.5px; background: var(--dsl); border-radius: 99px; }
 @media (hover: hover) and (pointer: fine) { .ds-lang-b:hover { opacity: 1; background: color-mix(in srgb, var(--dsl) 8%, transparent); } }
 .ds-lang-b:focus-visible { opacity: 1; outline: 2px solid var(--dsl); outline-offset: 2px; }
 @media (max-width: 600px) { .ds-lang { left: auto; right: 1rem; transform: none; } }  /* en móvil, a la derecha: no roza el enlace de vuelta */
 </style>
-</helmet>
-
+<style>
+/* enlace «Saltar al contenido»: fuera de la vista hasta recibir el foco del teclado */
+.skip-link { position: absolute; left: -9999px; top: 8px; z-index: 9999; background: #111; color: #fff; padding: 8px 16px; border-radius: 4px; font: 600 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif; text-decoration: none; }
+.skip-link:focus { left: 8px; }
+/* pie: privacidad y preferencias de cookies (consent.js) */
+.foot-legal { display: inline-flex; flex-wrap: wrap; gap: 4px 16px; }
+.foot-legal a, .foot-legal button { color: inherit; font: inherit; background: none; border: 0; padding: 4px 0; min-height: 24px; cursor: pointer; text-decoration: underline; text-decoration-thickness: .5px; text-underline-offset: 3px; }
+.foot-legal a:focus-visible, .foot-legal button:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+/* con «reducir movimiento», el indicador de scroll deja de pulsar */
+@media (prefers-reduced-motion: reduce) { .hero-scroll { animation: none !important; opacity: 1 !important; transform: none !important; } }
+</style>
+<noscript><style>.reveal { opacity: 1 !important; transform: none !important; }</style></noscript>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to content</a>
 <!-- NAV BACK -->
 <nav style="position:fixed; top:0; left:0; right:0; z-index:100; padding:1rem 2rem; display:flex; align-items:center; background:rgba(250,249,241,.85); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border-bottom:1px solid var(--ib-grey-line);">
   <a href="./projects.html" style="display:inline-flex; align-items:center; gap:.5rem; font-family:var(--ib-body); font-size:.9rem; font-weight:700; color:var(--ib-ink); text-decoration:none; transition:opacity .2s;" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='1'">
@@ -331,6 +338,8 @@ section { padding: 6rem 0; }
     <span class="ds-lang-a" aria-current="true" lang="en" title="English">EN</span>
   </div>
 </nav>
+
+<main id="main-content">
 
 <!-- S1 · HERO — banda roja + tarjeta blanca con la comparativa de barras -->
 <section class="hero-stage" data-screen-label="Hero">
@@ -553,7 +562,7 @@ section { padding: 6rem 0; }
     </div>
   </div>
 </section>
-</x-dc>
+</main>
 
 <footer style="background:var(--ib-red-grad); color:rgba(255,255,255,.85); padding:4rem 2rem 2rem;">
   <div class="ib-wrap">
@@ -584,139 +593,22 @@ section { padding: 6rem 0; }
     </div>
     <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:.8rem; padding-top:1.6rem; font-size:.78rem; color:rgba(255,255,255,.55);">
       <span>© 2026 Borja Mora Méndez · All rights reserved</span>
+      <nav class="foot-legal" aria-label="Legal information"><a href="./privacy.html">Privacy</a><button type="button" data-cookie-prefs>Cookie preferences</button></nav>
       <span>Designed and built by me</span>
     </div>
   </div>
 </footer>
-<script type="text/x-dc" data-dc-script>
-class Component extends DCLogic {
-  componentDidMount() {
-    this.initReveal();
-    this.initCounters();
-  }
-  componentDidUpdate() {
-    this.initReveal();
-    this.initCounters();
-  }
-  initReveal() {
-    const root = this.rootEl || document;
-    const els = root.querySelectorAll('.reveal:not(.visible)');
-    if (!els.length) return;
-    if (!this._revealObs) {
-      this._revealObs = new IntersectionObserver((entries, obs) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            obs.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
-    }
-    els.forEach(el => this._revealObs.observe(el));
-  }
-  initCounters() {
-    const root = this.rootEl || document;
-    const els = root.querySelectorAll('[data-count]');
-    if (!els.length) return;
-    if (this._kpiObs) return;
-    this._kpiObs = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && !entry.target._animating) {
-          this.animateCounter(entry.target);
-        }
-      });
-    }, { threshold: 0.5 });
-    els.forEach(el => this._kpiObs.observe(el));
-  }
-  animateCounter(el) {
-    const target = parseFloat(el.dataset.count);
-    const decimals = parseInt(el.dataset.decimals) || 0;
-    const format = el.dataset.format;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      el.textContent = format === 'thousands'
-        ? Math.round(target).toLocaleString('en-GB')
-        : decimals > 0
-          ? target.toFixed(decimals)
-          : Math.round(target);
-      return;
-    }
-    const duration = 1400;
-    const start = performance.now();
-    el._animating = true;
-    function step(now) {
-      const elapsed = now - start;
-      const progress = Math.min(elapsed / duration, 1);
-      const ease = 1 - Math.pow(1 - progress, 3);
-      const current = target * ease;
-      if (format === 'thousands') {
-        el.textContent = Math.round(current).toLocaleString('en-GB');
-      } else if (decimals > 0) {
-        el.textContent = current.toFixed(decimals);
-      } else {
-        el.textContent = Math.round(current);
-      }
-      if (progress < 1) requestAnimationFrame(step);
-      else el._animating = false;
-    }
-    requestAnimationFrame(step);
-  }
-  renderVals() { return {}; }
-}
-</script>
+<script src="../case.js" data-duration="1400" defer></script>
 
 <!-- ── Cookie banner HTML + lógica (RGPD/LOPDGDD) ── -->
 <div id="bm-cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie notice">
-  <p><strong>Analytics cookies.</strong> I use Google Analytics to understand how this site is used. No advertising or third-party tracking. <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Privacy policy</a>.</p>
+  <p><strong>Analytics cookies.</strong> I use Google Analytics to understand how this site is used. No advertising or third-party tracking. You can change your mind at any time. <a href="./privacy.html">Privacy and cookie policy</a>.</p>
   <div class="bm-cb-btns">
     <button class="bm-cb-btn bm-cb-reject" id="bm-cb-reject" aria-label="Reject cookies">Reject</button>
     <button class="bm-cb-btn bm-cb-accept" id="bm-cb-accept" aria-label="Accept cookies">Accept</button>
   </div>
 </div>
-<script>
-(function () {
-  var KEY = "bm_cookie_consent";
-  var banner = document.getElementById("bm-cookie-banner");
-  if (!banner) return;
-
-  function dismiss() {
-    banner.classList.remove("bm-visible");
-    banner.classList.add("bm-hiding");
-    setTimeout(function () {
-      banner.style.display = "none";
-    }, 380);
-  }
-
-  function grantAnalytics() {
-    if (typeof gtag === "function") {
-      gtag("consent", "update", { analytics_storage: "granted" });
-    }
-  }
-
-  /* Solo mostrar si no hay decisión previa */
-  if (!localStorage.getItem(KEY)) {
-    /* Pequeño delay para que la animación sea visible */
-    setTimeout(function () {
-      banner.classList.add("bm-visible");
-    }, 600);
-  } else if (localStorage.getItem(KEY) === "accepted") {
-    grantAnalytics();
-    banner.style.display = "none";
-  } else {
-    banner.style.display = "none";
-  }
-
-  document.getElementById("bm-cb-accept").addEventListener("click", function () {
-    localStorage.setItem(KEY, "accepted");
-    grantAnalytics();
-    dismiss();
-  });
-
-  document.getElementById("bm-cb-reject").addEventListener("click", function () {
-    localStorage.setItem(KEY, "rejected");
-    dismiss();
-  });
-})();
-</script>
+<script src="../consent.js" defer></script>
 
 <!-- ── Scroll depth (25/50/75/90/100%) ── -->
 <script>
