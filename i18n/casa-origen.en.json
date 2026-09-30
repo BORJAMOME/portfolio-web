@@ -243,7 +243,14 @@
     "Read in English",
     "EN"
   ],
-  "js": {},
+  "js": {
+    "Casa Origen — Caso de Estudio BI": "Casa Origen — BI case study",
+    "Sistema de Business Intelligence completo para una cafetería de especialidad en Madrid: Power BI, DAX, SQL Server, Python y Machine Learning.": "A complete business intelligence system for a speciality coffee shop in Madrid: Power BI, DAX, SQL Server, Python and machine learning.",
+    "Caso de estudio": "Case study",
+    "es-ES": "en-GB",
+    "https://borjamora.es/casa-origen.html": "https://borjamora.es/en/casa-origen.html",
+    "https://borjamora.es/casa-origen.html#caso": "https://borjamora.es/en/casa-origen.html#caso"
+  },
   "raw": [
     [
       "<link rel=\"canonical\" href=\"https://borjamora.es/casa-origen.html\">",

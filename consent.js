@@ -10,7 +10,25 @@
      se puede cambiar en cualquier momento, igual de fácil que se dio.
    El consentimiento guardado se aplica en el <head>, antes de gtag("config"): este
    archivo no vuelve a concederlo al cargar.
+   Eventos de Analytics: los elementos con data-ga="nombre_evento" envían ese evento al
+   hacer clic; cada data-ga-<parámetro>="valor" se añade como parámetro
+   (p. ej. data-ga="clic_linkedin" data-ga-location="footer"). Un solo listener para
+   todo el sitio en lugar de cientos de onclick en línea.
    ═══════════════════════════════════════════════ */
+(function () {
+  // en fase de captura: llega aunque otro elemento detenga la propagación del clic
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest && e.target.closest('[data-ga]');
+    if (!el || typeof gtag !== 'function') return;
+    var params = {};
+    for (var i = 0; i < el.attributes.length; i++) {
+      var a = el.attributes[i];
+      if (a.name.indexOf('data-ga-') === 0) params[a.name.slice(8)] = a.value;
+    }
+    gtag('event', el.getAttribute('data-ga'), params);
+  }, true);
+})();
+
 (function () {
   var KEY = 'bm_cookie_consent';
   var banner = document.getElementById('bm-cookie-banner');

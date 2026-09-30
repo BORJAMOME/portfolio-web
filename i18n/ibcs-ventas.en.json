@@ -28,7 +28,7 @@
     "Aceptar cookies": "Accept cookies",
     "Aceptar": "Accept",
     "Informe de ventas con enfoque IBCS | Borja Mora": "Sales report with an IBCS approach | Borja Mora",
-    "Dashboard de ventas en Power BI con estándar IBCS: volumen, variación absoluta y porcentaje en un único visual. Modelo en estrella, DAX y cálculos visuales.": "A Power BI sales dashboard built to the IBCS standard: volume, absolute change and percentage change in a single visual. Star schema, DAX and visual calculations.",
+    "Dashboard de ventas en Power BI con estándar IBCS: volumen, variación absoluta y porcentual en un visual. Modelo en estrella, DAX y cálculos visuales.": "A Power BI sales dashboard built to the IBCS standard: volume, absolute and percentage change in one visual. Star schema, DAX and visual calculations.",
     "Dos períodos pueden cerrar con el mismo total y haber sido radicalmente distintos por dentro. Un informe de ventas en Power BI que aplica el estándar IBCS para integrar volumen y variación en un único visual.": "Two periods can close with the same total and have been radically different underneath. A Power BI sales report that applies the IBCS standard to bring volume and change into a single visual.",
     "Un informe de ventas en Power BI que aplica el estándar IBCS: volumen y variación integrados en un único visual.": "A Power BI sales report that applies the IBCS standard: volume and change brought together in a single visual.",
     "Power BI · volumen y variación en una sola lectura": "Power BI · volume and change in a single read",
@@ -133,7 +133,14 @@
     "↳ Dim_Calendario",
     "↳ IBCS-Selector-Medidas"
   ],
-  "js": {},
+  "js": {
+    "Informe de ventas con enfoque IBCS": "Sales report with an IBCS approach",
+    "Dashboard de ventas en Power BI con estándar IBCS: volumen, variación absoluta y porcentual en un visual. Modelo en estrella, DAX y cálculos visuales.": "A Power BI sales dashboard built to the IBCS standard: volume, absolute and percentage change in one visual. Star schema, DAX and visual calculations.",
+    "Caso de estudio": "Case study",
+    "es-ES": "en-GB",
+    "https://borjamora.es/ibcs-ventas.html": "https://borjamora.es/en/ibcs-ventas.html",
+    "https://borjamora.es/ibcs-ventas.html#caso": "https://borjamora.es/en/ibcs-ventas.html#caso"
+  },
   "raw": [
     [
       "<link rel=\"canonical\" href=\"https://borjamora.es/ibcs-ventas.html\">",

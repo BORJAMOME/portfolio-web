@@ -27,6 +27,12 @@ node tools/build-en.mjs            # regenera todas las páginas inglesas
 node tools/build-en.mjs --missing  # y además lista las frases nuevas sin traducir
 ```
 
+Si cambias un CSS o JS propio, actualiza sus versiones de caché (`?v=` con el hash del contenido) en todas las páginas:
+
+```bash
+node tools/version-assets.mjs
+```
+
 Las traducciones están en `i18n/` (ver `i18n/README.md`).
 
 ### Comprobaciones
@@ -36,13 +42,20 @@ Se ejecutan solas en cada pull request (`.github/workflows/checks.yml`) y tambi�
 ```bash
 node tools/build-en.mjs --check    # inglés al día y sin frases por traducir
 node tools/check-links.mjs         # enlaces, imágenes, anclas, sitemap y hreflang
+node tools/version-assets.mjs --check  # versiones de caché al día
 npm i --no-save playwright axe-core && npx playwright install chromium
 node tools/check-a11y.mjs          # accesibilidad WCAG 2.2 AA y errores de JavaScript
 ```
 
 ### Google Analytics
 
-GA4 con Consent Mode v2: nada se guarda en el navegador hasta que el visitante acepta. Eventos propios:
+GA4 con Consent Mode v2: nada se guarda en el navegador hasta que el visitante acepta. Los eventos se declaran en el HTML con atributos, sin JavaScript en línea (`consent.js` los envía):
+
+```html
+<a href="…" data-ga="clic_linkedin" data-ga-location="footer">LinkedIn</a>
+```
+
+Eventos propios:
 
 | Evento | Parámetros | Cuándo |
 | --- | --- | --- |

@@ -134,7 +134,14 @@
     "GitHub",
     "Power BI\n  </a>"
   ],
-  "js": {},
+  "js": {
+    "Análisis del Mercado de Airbnb — País Vasco": "Airbnb market analysis — Basque Country",
+    "Mercado de Airbnb en el País Vasco en Power BI: 6.030 anuncios y 213 localizaciones. Esquema en estrella, mapas y DAX con líneas de referencia dinámicas.": "The Airbnb market in the Basque Country in Power BI: 6,030 listings and 213 locations. Star schema, maps and DAX with dynamic reference lines.",
+    "Caso de estudio": "Case study",
+    "es-ES": "en-GB",
+    "https://borjamora.es/airbnb-pais-vasco.html": "https://borjamora.es/en/airbnb-pais-vasco.html",
+    "https://borjamora.es/airbnb-pais-vasco.html#caso": "https://borjamora.es/en/airbnb-pais-vasco.html#caso"
+  },
   "raw": [
     [
       "<link rel=\"canonical\" href=\"https://borjamora.es/airbnb-pais-vasco.html\">",

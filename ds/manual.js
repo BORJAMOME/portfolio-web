@@ -1749,7 +1749,7 @@
   var il = $('#illus');
   if (il) {
     il.innerHTML = ILL.map(function (c, i) {
-      return '<div class="ill"><h4>' + c[0] + '</h4><div class="ill-v" role="img" aria-label="' + c[1] + '">' + c[2]() + c[3]() + '</div><p>' + c[1] + '</p><div class="seg" role="group" aria-label="' + c[0] + '"><button type="button" aria-pressed="true" data-f="0">Engañoso</button><button type="button" aria-pressed="false" data-f="1" class="g">Honesto</button></div></div>';
+      return '<div class="ill"><h3>' + c[0] + '</h3><div class="ill-v" role="img" aria-label="' + c[1] + '">' + c[2]() + c[3]() + '</div><p>' + c[1] + '</p><div class="seg" role="group" aria-label="' + c[0] + '"><button type="button" aria-pressed="true" data-f="0">Engañoso</button><button type="button" aria-pressed="false" data-f="1" class="g">Honesto</button></div></div>';
     }).join('');
     $$('.ill', il).forEach(function (card) {
       var bs = $$('button', card);

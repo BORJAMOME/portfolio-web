@@ -21,6 +21,7 @@
    Sin dependencias: solo Node.
    ═══════════════════════════════════════════════ */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -133,7 +134,8 @@ function build(name, P, wantMissing) {
   const reT = /(<div class="ds-lang"[^>]*>)[\s\S]*?<\/div>/;
   if (!reT.test(en)) console.warn(`  · ${name}: no encuentro el selector de idioma`);
   en = en.replace(reT, (m, open) => open.replace(/aria-label="[^"]*"/, 'aria-label="Language · Idioma"') + INNER);
-  if (P.script) en = en.replace(P.script.before, (m, v) => `<script src="${P.script.src}${v || ''}" defer></script>\n${m}`);
+  // el diccionario JS lleva su propia versión de caché (hash del contenido, como tools/version-assets.mjs)
+  if (P.script) en = en.replace(P.script.before, (m) => `<script src="${P.script.src}?v=${createHash('sha256').update(readFileSync(join(ROOT, 'en', P.script.src))).digest('hex').slice(0, 10)}" defer></script>\n${m}`);
 
   // cadenas literales dentro de <script> (datos de tarjetas, JSON-LD…): "texto" o 'texto' exactos
   const JS = DICT.js || {}, jsUsed = new Set();

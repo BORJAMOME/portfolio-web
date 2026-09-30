@@ -190,7 +190,14 @@
     "ROE",
     "ROA"
   ],
-  "js": {},
+  "js": {
+    "Informe Financiero Completo — Análisis Financiero": "Complete financial report — Financial analysis",
+    "216.858 apuntes contables de tres empresas en un modelo Power BI que une Balance, PyG y Cash Flow, con drill-through hasta el asiento de origen.": "216,858 journal entries from three companies in a Power BI model that joins the balance sheet, P&L and cash flow, with drill-through down to the source entry.",
+    "Caso de estudio": "Case study",
+    "es-ES": "en-GB",
+    "https://borjamora.es/informe-financiero.html": "https://borjamora.es/en/informe-financiero.html",
+    "https://borjamora.es/informe-financiero.html#caso": "https://borjamora.es/en/informe-financiero.html#caso"
+  },
   "raw": [
     [
       "<link rel=\"canonical\" href=\"https://borjamora.es/informe-financiero.html\">",

@@ -171,7 +171,14 @@
     "DiasSinVenta, VentasUltimaFecha, VentasUltimoImporte.",
     "VentasTotal, VentasMTD, VentasAVG, VentasRatioTienda/Producto."
   ],
-  "js": {},
+  "js": {
+    "Kosta Cálida — Reporting para red de tiendas": "Kosta Cálida — Reporting for a store network",
+    "Reporting integral en Power BI para una cadena de tiendas: modelo en estrella, Power Query, DAX, tablas desconectadas y drill-down hasta el ticket.": "End-to-end Power BI reporting for a store chain: star schema, Power Query, DAX, disconnected tables and drill-down to the receipt.",
+    "Caso de estudio": "Case study",
+    "es-ES": "en-GB",
+    "https://borjamora.es/kosta-calida.html": "https://borjamora.es/en/kosta-calida.html",
+    "https://borjamora.es/kosta-calida.html#caso": "https://borjamora.es/en/kosta-calida.html#caso"
+  },
   "raw": [
     [
       "<link rel=\"canonical\" href=\"https://borjamora.es/kosta-calida.html\">",

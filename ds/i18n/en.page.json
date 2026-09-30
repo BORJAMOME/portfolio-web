@@ -2,7 +2,7 @@
   "_": "Traducción al inglés británico de data-storytelling.html. Clave = frase en español tal cual aparece en el HTML (con su marcado en línea). Lo genera y comprueba ds/tools/build-en.mjs.",
   "units": {
     "Data Storytelling y diseño de dashboards — Borja Mora": "Data Storytelling and Dashboard Design — Borja Mora",
-    "Un manual interactivo sobre Data Storytelling y diseño de dashboards: percepción, reducción de ruido, atención, elección del visual, composición, texto y narrativa, demostrados sobre un dashboard que cambia mientras lees.": "An interactive guide to data storytelling and dashboard design: perception, noise reduction, attention, choosing the visual, composition, text and narrative, shown on a dashboard that changes as you read.",
+    "Manual interactivo de Data Storytelling y diseño de dashboards: percepción, ruido, atención, visuales, composición y narrativa, sobre un dashboard vivo.": "An interactive guide to data storytelling and dashboard design: perception, noise, attention, visuals, composition and narrative, on a live dashboard.",
     "Data Storytelling y diseño de dashboards — un manual interactivo | Borja Mora": "Data Storytelling and Dashboard Design — an interactive guide | Borja Mora",
     "Un dashboard no se diseña para ser visto. Se diseña para ser entendido. Diez capítulos que lo demuestran mientras lo explican.": "A dashboard isn't designed to be seen. It's designed to be understood. Ten chapters that prove it while they explain it.",
     "Un manual interactivo: el mismo dashboard aprende a contar una historia mientras bajas.": "An interactive guide: the same dashboard learns to tell a story as you scroll.",

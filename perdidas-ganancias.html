@@ -10,7 +10,7 @@
 <link rel="alternate" hreflang="es" href="https://borjamora.es/perdidas-ganancias.html">
 <link rel="alternate" hreflang="en" href="https://borjamora.es/en/perdidas-ganancias.html">
 <link rel="alternate" hreflang="x-default" href="https://borjamora.es/perdidas-ganancias.html">
-<script src="./lang.js"></script>
+<script src="./lang.js?v=37dd6be74a"></script>
 <link rel="icon" type="image/svg+xml" href="./img/favicon.svg">
 <link rel="icon" href="./img/favicon.ico" type="image/x-icon">
 <!-- Open Graph -->
@@ -322,6 +322,32 @@ section { padding: 5rem 0; }
 @media (prefers-reduced-motion: reduce) { .hero-scroll { animation: none !important; opacity: 1 !important; transform: none !important; } }
 </style>
 <noscript><style>.reveal { opacity: 1 !important; transform: none !important; }</style></noscript>
+<!-- Datos estructurados: caso de estudio (schema.org CreativeWork) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CreativeWork",
+  "@id": "https://borjamora.es/perdidas-ganancias.html#caso",
+  "name": "Cuenta de Pérdidas y Ganancias — Análisis Financiero",
+  "description": "P&L en Power BI que cuadra con cualquier filtro: subtotales contables, control de signos y Real vs Presupuesto. Beneficio neto 2021: 6,78 M€, +92,1 %.",
+  "url": "https://borjamora.es/perdidas-ganancias.html",
+  "image": "https://borjamora.es/img/pyg-card.png",
+  "inLanguage": "es-ES",
+  "genre": "Caso de estudio",
+  "keywords": [
+    "Power BI",
+    "Profit and loss",
+    "Financial analysis",
+    "DAX"
+  ],
+  "author": {
+    "@type": "Person",
+    "@id": "https://borjamora.es/#person",
+    "name": "Borja Mora Méndez",
+    "url": "https://borjamora.es/"
+  }
+}
+</script>
 </head>
 <body>
 <a href="#main-content" class="skip-link">Saltar al contenido</a>
@@ -478,7 +504,7 @@ section { padding: 5rem 0; }
       <picture><source srcset="./img/pyg-3.webp" type="image/webp"><img width="1264" height="808" loading="lazy" src="./img/pyg-3.png" alt="Dashboard Cuenta de Pérdidas y Ganancias — vista 3" style="width:100%; border-radius:20px; height:auto;"></picture>
     </div>
     <div class="reveal reveal-delay-4">
-      <a href="https://app.powerbi.com/view?r=eyJrIjoiM2Y3MzMxNTQtMGMzOS00ZDhlLTljYWYtMmU5N2E5ZTA3MjU2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=41273635f861390cd9fd" class="pg-cta" target="_blank" rel="noopener" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Cuenta de Perdidas y Ganancias',location:'pyg_dashboard'});">Ver dashboard interactivo</a>
+      <a href="https://app.powerbi.com/view?r=eyJrIjoiM2Y3MzMxNTQtMGMzOS00ZDhlLTljYWYtMmU5N2E5ZTA3MjU2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=41273635f861390cd9fd" class="pg-cta" target="_blank" rel="noopener" data-ga="ver_dashboard_powerbi" data-ga-dashboard_name="Cuenta de Perdidas y Ganancias" data-ga-location="pyg_dashboard">Ver dashboard interactivo</a>
       <span style="margin-left:1rem; font-size:.85rem; color:var(--pg-muted);">Power BI · DAX · Waterfall chart · Real vs Presupuesto</span>
     </div>
   </div>
@@ -570,7 +596,7 @@ section { padding: 5rem 0; }
     <p class="reveal reveal-delay-2" style="font-family:var(--pg-display); font-size:1.3rem; color:var(--pg-ink); margin-bottom:1.6rem;">¿Quieres ver cómo construí el análisis?</p>
     <div class="reveal reveal-delay-2" style="display:flex; flex-wrap:wrap; justify-content:center; gap:2rem;">
       <div>
-        <a href="https://app.powerbi.com/view?r=eyJrIjoiM2Y3MzMxNTQtMGMzOS00ZDhlLTljYWYtMmU5N2E5ZTA3MjU2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=41273635f861390cd9fd" class="pg-cta" target="_blank" rel="noopener" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Cuenta de Perdidas y Ganancias',location:'pyg_cta'});">Ver el dashboard</a>
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiM2Y3MzMxNTQtMGMzOS00ZDhlLTljYWYtMmU5N2E5ZTA3MjU2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=41273635f861390cd9fd" class="pg-cta" target="_blank" rel="noopener" data-ga="ver_dashboard_powerbi" data-ga-dashboard_name="Cuenta de Perdidas y Ganancias" data-ga-location="pyg_cta">Ver el dashboard</a>
         <p style="margin-top:1rem; font-size:.85rem; color:var(--pg-muted);">Dashboard interactivo publicado en Power BI Service</p>
       </div>
       <div>
@@ -585,14 +611,14 @@ section { padding: 5rem 0; }
 <footer style="background:var(--pg-ink); color:#c7c7c7; padding:4rem 2rem 2rem;">
   <div class="pg-wrap">
     <div class="case-next">
-      <a class="case-next-main" href="./airbnb-pais-vasco.html" onclick="gtag('event','clic_siguiente_caso',{location:'perdidas_ganancias'});">
+      <a class="case-next-main" href="./airbnb-pais-vasco.html" data-ga="clic_siguiente_caso" data-ga-location="perdidas_ganancias">
         <span class="case-next-img"><picture><source srcset="./img/airbnb-card.webp" type="image/webp"><img src="./img/airbnb-card.png" alt="" width="168" height="105" loading="lazy" decoding="async"></picture></span>
         <span><span class="case-next-k">Siguiente caso</span><span class="case-next-t">Mercado de Airbnb en el País Vasco</span></span>
         <svg class="case-next-arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </a>
       <nav class="case-next-side" aria-label="Más">
         <a href="./power-bi.html">Todos los proyectos</a>
-        <a href="mailto:borja.mora.mendez@gmail.com" onclick="gtag('event','clic_email',{location:'perdidas_ganancias_footer'});">Escríbeme</a>
+        <a href="mailto:borja.mora.mendez@gmail.com" data-ga="clic_email" data-ga-location="perdidas_ganancias_footer">Escríbeme</a>
       </nav>
     </div>
     <div class="pg-foot-grid" style="display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:2.5rem; padding-bottom:2.5rem; border-bottom:1px solid rgba(255,255,255,.12);">
@@ -612,12 +638,12 @@ section { padding: 5rem 0; }
       </div>
       <div>
         <p class="pg-foot-title">Este proyecto</p>
-        <a href="https://app.powerbi.com/view?r=eyJrIjoiM2Y3MzMxNTQtMGMzOS00ZDhlLTljYWYtMmU5N2E5ZTA3MjU2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=41273635f861390cd9fd" target="_blank" rel="noopener" class="pg-foot-link" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Cuenta de Perdidas y Ganancias',location:'pyg_footer'});">Dashboard Power BI</a>
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiM2Y3MzMxNTQtMGMzOS00ZDhlLTljYWYtMmU5N2E5ZTA3MjU2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=41273635f861390cd9fd" target="_blank" rel="noopener" class="pg-foot-link" data-ga="ver_dashboard_powerbi" data-ga-dashboard_name="Cuenta de Perdidas y Ganancias" data-ga-location="pyg_footer">Dashboard Power BI</a>
       </div>
       <div>
         <p class="pg-foot-title">Sígueme</p>
-        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener" class="pg-foot-link" onclick="gtag('event','clic_linkedin',{location:'pyg_footer'});">LinkedIn</a>
-        <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener" class="pg-foot-link" onclick="gtag('event','clic_github',{location:'pyg_footer'});">GitHub</a>
+        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener" class="pg-foot-link" data-ga="clic_linkedin" data-ga-location="pyg_footer">LinkedIn</a>
+        <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener" class="pg-foot-link" data-ga="clic_github" data-ga-location="pyg_footer">GitHub</a>
       </div>
     </div>
     <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:.8rem; padding-top:1.6rem; font-size:.78rem; color:#8a8a8a;">
@@ -627,7 +653,7 @@ section { padding: 5rem 0; }
     </div>
   </div>
 </footer>
-<script src="./case.js" data-duration="1800" defer></script>
+<script src="./case.js?v=fdd490bc63" data-duration="1800" defer></script>
 
 <!-- ── Cookie banner HTML + lógica (RGPD/LOPDGDD) ── -->
 <div id="bm-cookie-banner" role="dialog" aria-live="polite" aria-label="Aviso de cookies">
@@ -637,7 +663,7 @@ section { padding: 5rem 0; }
     <button class="bm-cb-btn bm-cb-accept" id="bm-cb-accept" aria-label="Aceptar cookies">Aceptar</button>
   </div>
 </div>
-<script src="./consent.js" defer></script>
+<script src="./consent.js?v=26a27e3704" defer></script>
 
 <!-- ── Scroll depth (25/50/75/90/100%) ── -->
 <script>

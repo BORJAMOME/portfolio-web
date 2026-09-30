@@ -10,7 +10,7 @@
 <link rel="alternate" hreflang="es" href="https://borjamora.es/informe-financiero.html">
 <link rel="alternate" hreflang="en" href="https://borjamora.es/en/informe-financiero.html">
 <link rel="alternate" hreflang="x-default" href="https://borjamora.es/informe-financiero.html">
-<script src="../lang.js"></script>
+<script src="../lang.js?v=37dd6be74a"></script>
 <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
 <link rel="icon" href="../img/favicon.ico" type="image/x-icon">
 <!-- Open Graph -->
@@ -354,6 +354,32 @@ section { padding: 4rem 0; }
 @media (prefers-reduced-motion: reduce) { .hero-scroll { animation: none !important; opacity: 1 !important; transform: none !important; } }
 </style>
 <noscript><style>.reveal { opacity: 1 !important; transform: none !important; }</style></noscript>
+<!-- Datos estructurados: caso de estudio (schema.org CreativeWork) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CreativeWork",
+  "@id": "https://borjamora.es/en/informe-financiero.html#caso",
+  "name": "Complete financial report — Financial analysis",
+  "description": "216,858 journal entries from three companies in a Power BI model that joins the balance sheet, P&L and cash flow, with drill-through down to the source entry.",
+  "url": "https://borjamora.es/en/informe-financiero.html",
+  "image": "https://borjamora.es/img/financiero-card.png",
+  "inLanguage": "en-GB",
+  "genre": "Case study",
+  "keywords": [
+    "Power BI",
+    "Financial reporting",
+    "Cash flow",
+    "DAX"
+  ],
+  "author": {
+    "@type": "Person",
+    "@id": "https://borjamora.es/#person",
+    "name": "Borja Mora Méndez",
+    "url": "https://borjamora.es/"
+  }
+}
+</script>
 </head>
 <body>
 <a href="#main-content" class="skip-link">Skip to content</a>
@@ -597,7 +623,7 @@ section { padding: 4rem 0; }
       <picture class="reveal reveal-delay-4"><source srcset="../img/financiero-3.webp" type="image/webp"><img width="1260" height="660" loading="lazy" src="../img/financiero-3.png" alt="Complete financial report dashboard — view 3" style="width:100%; border:1px solid var(--if-border); height:auto;"></picture>
     </div>
     <div class="reveal reveal-delay-4">
-      <a href="https://app.powerbi.com/view?r=eyJrIjoiNDgzZjBmY2MtMDhhMy00MGIzLTlmYmItODlkMmY2NDg3ZDdmIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=a961ceadc15fe4dcfcfb" class="if-cta" target="_blank" rel="noopener" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Informe Financiero Completo',location:'informe_financiero_dashboard'});">View the interactive dashboard</a>
+      <a href="https://app.powerbi.com/view?r=eyJrIjoiNDgzZjBmY2MtMDhhMy00MGIzLTlmYmItODlkMmY2NDg3ZDdmIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=a961ceadc15fe4dcfcfb" class="if-cta" target="_blank" rel="noopener" data-ga="ver_dashboard_powerbi" data-ga-dashboard_name="Informe Financiero Completo" data-ga-location="informe_financiero_dashboard">View the interactive dashboard</a>
       <span style="margin-left:1rem; font-size:.85rem; color:var(--if-muted);">Power BI · DAX · Drill-through · Accounting modelling</span>
     </div>
   </div>
@@ -673,7 +699,7 @@ section { padding: 4rem 0; }
     </div>
     <div class="reveal reveal-delay-4" style="display:flex; flex-wrap:wrap; justify-content:center; gap:2rem;">
       <div>
-        <a href="https://app.powerbi.com/view?r=eyJrIjoiNDgzZjBmY2MtMDhhMy00MGIzLTlmYmItODlkMmY2NDg3ZDdmIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=a961ceadc15fe4dcfcfb" class="if-cta if-cta-onblue" target="_blank" rel="noopener" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Informe Financiero Completo',location:'informe_financiero_cta'});">Open the dashboard in Power BI</a>
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiNDgzZjBmY2MtMDhhMy00MGIzLTlmYmItODlkMmY2NDg3ZDdmIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=a961ceadc15fe4dcfcfb" class="if-cta if-cta-onblue" target="_blank" rel="noopener" data-ga="ver_dashboard_powerbi" data-ga-dashboard_name="Informe Financiero Completo" data-ga-location="informe_financiero_cta">Open the dashboard in Power BI</a>
         <p style="margin-top:1rem; font-size:.85rem; color:rgba(255,255,255,.92);">Interactive dashboard published in the Power BI Service</p>
       </div>
       <div>
@@ -688,14 +714,14 @@ section { padding: 4rem 0; }
 <footer style="background:var(--if-deep); color:rgba(255,255,255,.85); padding:4rem 2rem 2rem;">
   <div class="if-wrap">
     <div class="case-next">
-      <a class="case-next-main" href="./perdidas-ganancias.html" onclick="gtag('event','clic_siguiente_caso',{location:'informe_financiero'});">
+      <a class="case-next-main" href="./perdidas-ganancias.html" data-ga="clic_siguiente_caso" data-ga-location="informe_financiero">
         <span class="case-next-img"><picture><source srcset="../img/pyg-card.webp" type="image/webp"><img src="../img/pyg-card.png" alt="" width="168" height="105" loading="lazy" decoding="async"></picture></span>
         <span><span class="case-next-k">Next case</span><span class="case-next-t">Profit and loss statement</span></span>
         <svg class="case-next-arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </a>
       <nav class="case-next-side" aria-label="More">
         <a href="./projects.html">All projects</a>
-        <a href="mailto:borja.mora.mendez@gmail.com" onclick="gtag('event','clic_email',{location:'informe_financiero_footer'});">Email me</a>
+        <a href="mailto:borja.mora.mendez@gmail.com" data-ga="clic_email" data-ga-location="informe_financiero_footer">Email me</a>
       </nav>
     </div>
     <div class="if-foot-grid" style="display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:2.5rem; padding-bottom:2.5rem; border-bottom:1px solid rgba(255,255,255,.15);">
@@ -715,12 +741,12 @@ section { padding: 4rem 0; }
       </div>
       <div>
         <p class="if-foot-title">This project</p>
-        <a href="https://app.powerbi.com/view?r=eyJrIjoiNDgzZjBmY2MtMDhhMy00MGIzLTlmYmItODlkMmY2NDg3ZDdmIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=a961ceadc15fe4dcfcfb" target="_blank" rel="noopener" class="if-foot-link" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Informe Financiero Completo',location:'informe_financiero_footer'});">Power BI dashboard</a>
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiNDgzZjBmY2MtMDhhMy00MGIzLTlmYmItODlkMmY2NDg3ZDdmIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=a961ceadc15fe4dcfcfb" target="_blank" rel="noopener" class="if-foot-link" data-ga="ver_dashboard_powerbi" data-ga-dashboard_name="Informe Financiero Completo" data-ga-location="informe_financiero_footer">Power BI dashboard</a>
       </div>
       <div>
         <p class="if-foot-title">Follow me</p>
-        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener" class="if-foot-link" onclick="gtag('event','clic_linkedin',{location:'informe_financiero_footer'});">LinkedIn</a>
-        <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener" class="if-foot-link" onclick="gtag('event','clic_github',{location:'informe_financiero_footer'});">GitHub</a>
+        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener" class="if-foot-link" data-ga="clic_linkedin" data-ga-location="informe_financiero_footer">LinkedIn</a>
+        <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener" class="if-foot-link" data-ga="clic_github" data-ga-location="informe_financiero_footer">GitHub</a>
       </div>
     </div>
     <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:.8rem; padding-top:1.6rem; font-size:.78rem; color:rgba(255,255,255,.72);">
@@ -730,7 +756,7 @@ section { padding: 4rem 0; }
     </div>
   </div>
 </footer>
-<script src="../case.js" data-duration="1800" defer></script>
+<script src="../case.js?v=fdd490bc63" data-duration="1800" defer></script>
 
 <!-- ── Cookie banner HTML + lógica (RGPD/LOPDGDD) ── -->
 <div id="bm-cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie notice">
@@ -740,7 +766,7 @@ section { padding: 4rem 0; }
     <button class="bm-cb-btn bm-cb-accept" id="bm-cb-accept" aria-label="Accept cookies">Accept</button>
   </div>
 </div>
-<script src="../consent.js" defer></script>
+<script src="../consent.js?v=26a27e3704" defer></script>
 
 <!-- ── Scroll depth (25/50/75/90/100%) ── -->
 <script>

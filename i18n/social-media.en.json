@@ -29,7 +29,7 @@
     "Rechazar": "Reject",
     "Aceptar cookies": "Accept cookies",
     "Aceptar": "Accept",
-    "Social Media Performance 2025 vs 2024 — Marketing Analytics | Borja Mora": "Social Media Performance 2025 vs 2024 — Marketing analytics | Borja Mora",
+    "Social Media Performance 2025 vs 2024 | Borja Mora": "Social Media Performance 2025 vs 2024 | Borja Mora",
     "Redes sociales, 2025 vs 2024, en Power BI: las impresiones caen un 12,8 % y el gasto un 26,3 %. La eficiencia mejora aunque baje el volumen.": "Social media, 2025 vs 2024, in Power BI: impressions fall 12.8% and spend 26.3%. Efficiency improves even as volume drops.",
     "Un –12,8% en impresiones se lee de forma completamente distinta si el gasto cayó un –26,3%. Dashboard de eficiencia interanual en Power BI.": "−12.8% in impressions reads completely differently if spend fell by −26.3%. A year-on-year efficiency dashboard in Power BI.",
     "Comparativa interanual en Power BI: el gasto cayó un 26,3% mientras las impresiones solo cayeron un 12,8% — la eficiencia mejoró aunque el volumen bajara.": "Year-on-year comparison in Power BI: spend fell 26.3% while impressions fell only 12.8% — efficiency improved even though volume dropped.",
@@ -122,7 +122,8 @@
     "Todos los proyectos": "All projects",
     "Escríbeme": "Email me",
     "Informe financiero completo": "Full financial report",
-    "Más": "More"
+    "Más": "More",
+    "Social Media Performance 2025 vs 2024 — Marketing Analytics | Borja Mora": "Social Media Performance 2025 vs 2024 — Marketing analytics | Borja Mora"
   },
   "keep": [
     "Español",
@@ -148,7 +149,14 @@
     "↳ Target Audiencia",
     "↳ Boosted"
   ],
-  "js": {},
+  "js": {
+    "Social Media Performance 2025 vs 2024": "Social Media Performance 2025 vs 2024",
+    "Redes sociales, 2025 vs 2024, en Power BI: las impresiones caen un 12,8 % y el gasto un 26,3 %. La eficiencia mejora aunque baje el volumen.": "Social media, 2025 vs 2024, in Power BI: impressions fall 12.8% and spend 26.3%. Efficiency improves even as volume drops.",
+    "Caso de estudio": "Case study",
+    "es-ES": "en-GB",
+    "https://borjamora.es/social-media.html": "https://borjamora.es/en/social-media.html",
+    "https://borjamora.es/social-media.html#caso": "https://borjamora.es/en/social-media.html#caso"
+  },
   "raw": [
     [
       "<link rel=\"canonical\" href=\"https://borjamora.es/social-media.html\">",

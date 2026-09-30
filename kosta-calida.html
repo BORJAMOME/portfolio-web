@@ -10,7 +10,7 @@
 <link rel="alternate" hreflang="es" href="https://borjamora.es/kosta-calida.html">
 <link rel="alternate" hreflang="en" href="https://borjamora.es/en/kosta-calida.html">
 <link rel="alternate" hreflang="x-default" href="https://borjamora.es/kosta-calida.html">
-<script src="./lang.js"></script>
+<script src="./lang.js?v=37dd6be74a"></script>
 <link rel="icon" type="image/svg+xml" href="./img/favicon.svg">
 <link rel="icon" href="./img/favicon.ico" type="image/x-icon">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -300,6 +300,33 @@ section { padding: 6rem 0; }
 @media (prefers-reduced-motion: reduce) { .hero-scroll { animation: none !important; opacity: 1 !important; transform: none !important; } }
 </style>
 <noscript><style>.reveal { opacity: 1 !important; transform: none !important; }</style></noscript>
+<!-- Datos estructurados: caso de estudio (schema.org CreativeWork) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CreativeWork",
+  "@id": "https://borjamora.es/kosta-calida.html#caso",
+  "name": "Kosta Cálida — Reporting para red de tiendas",
+  "description": "Reporting integral en Power BI para una cadena de tiendas: modelo en estrella, Power Query, DAX, tablas desconectadas y drill-down hasta el ticket.",
+  "url": "https://borjamora.es/kosta-calida.html",
+  "image": "https://borjamora.es/img/kosta-CARD.png",
+  "inLanguage": "es-ES",
+  "genre": "Caso de estudio",
+  "keywords": [
+    "Power BI",
+    "DAX",
+    "Retail",
+    "Store reporting",
+    "Margin analysis"
+  ],
+  "author": {
+    "@type": "Person",
+    "@id": "https://borjamora.es/#person",
+    "name": "Borja Mora Méndez",
+    "url": "https://borjamora.es/"
+  }
+}
+</script>
 </head>
 <body>
 <a href="#main-content" class="skip-link">Saltar al contenido</a>
@@ -543,7 +570,7 @@ section { padding: 6rem 0; }
       </figure>
     </div>
     <div class="reveal reveal-delay-2">
-      <a href="https://app.powerbi.com/view?r=eyJrIjoiMzhlYjliYTAtMWUzMS00YzE1LTgyNGEtZmZmNDVhNjQ1ZDY3IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=03634c064fb23f65778f" class="kc-cta" target="_blank" rel="noopener" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Kosta Calida',location:'kosta_calida_dashboard'});">Ver dashboard interactivo</a>
+      <a href="https://app.powerbi.com/view?r=eyJrIjoiMzhlYjliYTAtMWUzMS00YzE1LTgyNGEtZmZmNDVhNjQ1ZDY3IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=03634c064fb23f65778f" class="kc-cta" target="_blank" rel="noopener" data-ga="ver_dashboard_powerbi" data-ga-dashboard_name="Kosta Calida" data-ga-location="kosta_calida_dashboard">Ver dashboard interactivo</a>
       <span style="margin-left:1rem; font-size:.85rem; color:var(--kc-muted);">Power Query · Power BI · DAX</span>
     </div>
   </div>
@@ -604,7 +631,7 @@ section { padding: 6rem 0; }
     <p class="reveal reveal-delay-1" style="font-size:1rem; color:var(--kc-muted); max-width:680px; margin:0 auto 3rem; line-height:1.75;">He pasado de trabajar con datos de ventas sin una estructura clara a construir un modelo de Power BI capaz de conectar los KPIs con el detalle que hay detrás. Ese recorrido, del dato al modelo, del modelo al informe y del informe a la pregunta, es precisamente la parte del proyecto que más me interesaba trabajar.</p>
     <div class="reveal reveal-delay-2" style="display:flex; flex-wrap:wrap; justify-content:center; gap:2.5rem;">
       <div>
-        <a href="https://app.powerbi.com/view?r=eyJrIjoiMzhlYjliYTAtMWUzMS00YzE1LTgyNGEtZmZmNDVhNjQ1ZDY3IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=03634c064fb23f65778f" class="kc-cta" target="_blank" rel="noopener" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Kosta Calida',location:'kosta_calida_cta'});">Ver el informe completo en Power BI</a>
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiMzhlYjliYTAtMWUzMS00YzE1LTgyNGEtZmZmNDVhNjQ1ZDY3IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=03634c064fb23f65778f" class="kc-cta" target="_blank" rel="noopener" data-ga="ver_dashboard_powerbi" data-ga-dashboard_name="Kosta Calida" data-ga-location="kosta_calida_cta">Ver el informe completo en Power BI</a>
         <p style="margin-top:1rem; font-size:.85rem; color:var(--kc-muted);">Dashboard interactivo publicado en Power BI Service</p>
       </div>
       <div>
@@ -619,14 +646,14 @@ section { padding: 6rem 0; }
 <footer style="background:var(--kc-ink); color:#c9c9c4; padding:4rem 2rem 2rem;">
   <div class="kc-wrap">
     <div class="case-next">
-      <a class="case-next-main" href="./social-media.html" onclick="gtag('event','clic_siguiente_caso',{location:'kosta_calida'});">
+      <a class="case-next-main" href="./social-media.html" data-ga="clic_siguiente_caso" data-ga-location="kosta_calida">
         <span class="case-next-img"><picture><source srcset="./img/social-card.webp" type="image/webp"><img src="./img/social-card.png" alt="" width="168" height="105" loading="lazy" decoding="async"></picture></span>
         <span><span class="case-next-k">Siguiente caso</span><span class="case-next-t">Social Media Performance</span></span>
         <svg class="case-next-arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </a>
       <nav class="case-next-side" aria-label="Más">
         <a href="./power-bi.html">Todos los proyectos</a>
-        <a href="mailto:borja.mora.mendez@gmail.com" onclick="gtag('event','clic_email',{location:'kosta_calida_footer'});">Escríbeme</a>
+        <a href="mailto:borja.mora.mendez@gmail.com" data-ga="clic_email" data-ga-location="kosta_calida_footer">Escríbeme</a>
       </nav>
     </div>
     <div class="kc-foot-grid" style="display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:2.5rem; padding-bottom:2.5rem; border-bottom:1px solid rgba(255,255,255,.12);">
@@ -646,12 +673,12 @@ section { padding: 6rem 0; }
       </div>
       <div>
         <p class="kc-foot-title">Este proyecto</p>
-        <a href="https://app.powerbi.com/view?r=eyJrIjoiMzhlYjliYTAtMWUzMS00YzE1LTgyNGEtZmZmNDVhNjQ1ZDY3IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=03634c064fb23f65778f" target="_blank" rel="noopener" class="kc-foot-link" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Kosta Calida',location:'kosta_calida_footer'});">Dashboard Power BI</a>
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiMzhlYjliYTAtMWUzMS00YzE1LTgyNGEtZmZmNDVhNjQ1ZDY3IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=03634c064fb23f65778f" target="_blank" rel="noopener" class="kc-foot-link" data-ga="ver_dashboard_powerbi" data-ga-dashboard_name="Kosta Calida" data-ga-location="kosta_calida_footer">Dashboard Power BI</a>
       </div>
       <div>
         <p class="kc-foot-title">Sígueme</p>
-        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener" class="kc-foot-link" onclick="gtag('event','clic_linkedin',{location:'kosta_calida_footer'});">LinkedIn</a>
-        <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener" class="kc-foot-link" onclick="gtag('event','clic_github',{location:'kosta_calida_footer'});">GitHub</a>
+        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener" class="kc-foot-link" data-ga="clic_linkedin" data-ga-location="kosta_calida_footer">LinkedIn</a>
+        <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener" class="kc-foot-link" data-ga="clic_github" data-ga-location="kosta_calida_footer">GitHub</a>
       </div>
     </div>
     <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:.8rem; padding-top:1.6rem; font-size:.78rem; color:#83837b;">
@@ -661,7 +688,7 @@ section { padding: 6rem 0; }
     </div>
   </div>
 </footer>
-<script src="./case.js" data-duration="1400" defer></script>
+<script src="./case.js?v=fdd490bc63" data-duration="1400" defer></script>
 
 <!-- ── Cookie banner HTML + lógica (RGPD/LOPDGDD) ── -->
 <div id="bm-cookie-banner" role="dialog" aria-live="polite" aria-label="Aviso de cookies">
@@ -671,7 +698,7 @@ section { padding: 6rem 0; }
     <button class="bm-cb-btn bm-cb-accept" id="bm-cb-accept" aria-label="Aceptar cookies">Aceptar</button>
   </div>
 </div>
-<script src="./consent.js" defer></script>
+<script src="./consent.js?v=26a27e3704" defer></script>
 
 <!-- ── Scroll depth (25/50/75/90/100%) ── -->
 <script>

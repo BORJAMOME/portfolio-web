@@ -38,7 +38,8 @@ function checkRef(page, raw, kind) {
   if (!u || isExternal(u) || isDynamic(u)) return;
   const [pathAndQuery, hash = ''] = u.split('#');
   const path = pathAndQuery.split('?')[0];
-  const target = path ? resolve(dirname(page), decodeURIComponent(path)) : page;
+  // rutas absolutas (/img/…): desde la raíz del sitio, como las usa 404.html
+  const target = path ? (path.startsWith('/') ? join(ROOT, decodeURIComponent(path)) : resolve(dirname(page), decodeURIComponent(path))) : page;
   if (path) {
     if (!existsSync(target)) return fail(page, `${kind} roto → ${u}`);
     if (statSync(target).isDirectory() && !existsSync(join(target, 'index.html'))) return fail(page, `${kind} a carpeta sin index → ${u}`);

@@ -150,7 +150,14 @@
     "↳ Organizaciones",
     "↳ Encabezados"
   ],
-  "js": {},
+  "js": {
+    "Cuenta de Pérdidas y Ganancias — Análisis Financiero": "Profit and loss account — Financial analysis",
+    "P&L en Power BI que cuadra con cualquier filtro: subtotales contables, control de signos y Real vs Presupuesto. Beneficio neto 2021: 6,78 M€, +92,1 %.": "A P&L in Power BI that adds up under any filter: accounting subtotals, sign control and actual vs budget. Net profit 2021: €6.78m, +92.1%.",
+    "Caso de estudio": "Case study",
+    "es-ES": "en-GB",
+    "https://borjamora.es/perdidas-ganancias.html": "https://borjamora.es/en/perdidas-ganancias.html",
+    "https://borjamora.es/perdidas-ganancias.html#caso": "https://borjamora.es/en/perdidas-ganancias.html#caso"
+  },
   "raw": [
     [
       "<link rel=\"canonical\" href=\"https://borjamora.es/perdidas-ganancias.html\">",

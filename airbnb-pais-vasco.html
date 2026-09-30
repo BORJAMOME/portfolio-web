@@ -10,7 +10,7 @@
 <link rel="alternate" hreflang="es" href="https://borjamora.es/airbnb-pais-vasco.html">
 <link rel="alternate" hreflang="en" href="https://borjamora.es/en/airbnb-pais-vasco.html">
 <link rel="alternate" hreflang="x-default" href="https://borjamora.es/airbnb-pais-vasco.html">
-<script src="./lang.js"></script>
+<script src="./lang.js?v=37dd6be74a"></script>
 <link rel="icon" type="image/svg+xml" href="./img/favicon.svg">
 <link rel="icon" href="./img/favicon.ico" type="image/x-icon">
 <!-- Fonts — Playfair Display (editorial serif) · Inter (body) · JetBrains Mono (labels) -->
@@ -308,6 +308,33 @@ section { padding: 7.5rem 0; }
 @media (prefers-reduced-motion: reduce) { .hero-scroll { animation: none !important; opacity: 1 !important; transform: none !important; } }
 </style>
 <noscript><style>.reveal { opacity: 1 !important; transform: none !important; }</style></noscript>
+<!-- Datos estructurados: caso de estudio (schema.org CreativeWork) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CreativeWork",
+  "@id": "https://borjamora.es/airbnb-pais-vasco.html#caso",
+  "name": "Análisis del Mercado de Airbnb — País Vasco",
+  "description": "Mercado de Airbnb en el País Vasco en Power BI: 6.030 anuncios y 213 localizaciones. Esquema en estrella, mapas y DAX con líneas de referencia dinámicas.",
+  "url": "https://borjamora.es/airbnb-pais-vasco.html",
+  "image": "https://borjamora.es/img/airbnb-card.png",
+  "inLanguage": "es-ES",
+  "genre": "Caso de estudio",
+  "keywords": [
+    "Power BI",
+    "Airbnb",
+    "Tourism",
+    "Market analysis",
+    "DAX"
+  ],
+  "author": {
+    "@type": "Person",
+    "@id": "https://borjamora.es/#person",
+    "name": "Borja Mora Méndez",
+    "url": "https://borjamora.es/"
+  }
+}
+</script>
 </head>
 <body>
 <a href="#main-content" class="skip-link">Saltar al contenido</a>
@@ -436,7 +463,7 @@ section { padding: 7.5rem 0; }
       </figure>
     </div>
     <div class="reveal reveal-delay-3">
-      <a href="https://app.powerbi.com/view?r=eyJrIjoiOTA2ZDExNjktYzE4Ny00Y2UzLThmM2YtMjI5Y2FmNDg1MzM5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=9c4b9193b627b78a0e01" class="pv-cta" target="_blank" rel="noopener" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Airbnb Pais Vasco',location:'airbnb_pais_vasco_dashboard'});">Ver dashboard interactivo</a>
+      <a href="https://app.powerbi.com/view?r=eyJrIjoiOTA2ZDExNjktYzE4Ny00Y2UzLThmM2YtMjI5Y2FmNDg1MzM5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=9c4b9193b627b78a0e01" class="pv-cta" target="_blank" rel="noopener" data-ga="ver_dashboard_powerbi" data-ga-dashboard_name="Airbnb Pais Vasco" data-ga-location="airbnb_pais_vasco_dashboard">Ver dashboard interactivo</a>
       <span style="margin-left:1rem; font-size:.85rem; color:var(--pv-muted);">Power BI · DAX · Mapas geoespaciales · Esquema en estrella</span>
     </div>
   </div>
@@ -533,7 +560,7 @@ section { padding: 7.5rem 0; }
     <p class="reveal reveal-delay-1" style="font-size:1.0625rem; color:var(--pv-muted); max-width:600px; line-height:1.7; margin:0 auto 3rem;">Este proyecto resume cómo abordé un análisis completo: desde preparar los datos hasta construir un dashboard pensado para responder preguntas de negocio.</p>
     <div class="reveal reveal-delay-2" style="display:flex; flex-wrap:wrap; justify-content:center; gap:2.5rem;">
       <div>
-        <a href="https://app.powerbi.com/view?r=eyJrIjoiOTA2ZDExNjktYzE4Ny00Y2UzLThmM2YtMjI5Y2FmNDg1MzM5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=9c4b9193b627b78a0e01" class="pv-cta" target="_blank" rel="noopener" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Airbnb Pais Vasco',location:'airbnb_pais_vasco_cta'});">Abrir dashboard en Power BI</a>
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiOTA2ZDExNjktYzE4Ny00Y2UzLThmM2YtMjI5Y2FmNDg1MzM5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=9c4b9193b627b78a0e01" class="pv-cta" target="_blank" rel="noopener" data-ga="ver_dashboard_powerbi" data-ga-dashboard_name="Airbnb Pais Vasco" data-ga-location="airbnb_pais_vasco_cta">Abrir dashboard en Power BI</a>
         <p style="margin-top:1rem; font-size:.85rem; color:var(--pv-muted);">Dashboard interactivo publicado en Power BI Service</p>
       </div>
       <div>
@@ -548,14 +575,14 @@ section { padding: 7.5rem 0; }
 <footer style="background:var(--pv-panel); color:#C7CBC9; padding:4rem 2rem 2rem;">
   <div class="pv-wrap">
     <div class="case-next">
-      <a class="case-next-main" href="./rfm-hosteleria.html" onclick="gtag('event','clic_siguiente_caso',{location:'airbnb_pais_vasco'});">
+      <a class="case-next-main" href="./rfm-hosteleria.html" data-ga="clic_siguiente_caso" data-ga-location="airbnb_pais_vasco">
         <span class="case-next-img"><picture><source srcset="./img/rfmcard.webp" type="image/webp"><img src="./img/rfmcard.png" alt="" width="168" height="105" loading="lazy" decoding="async"></picture></span>
         <span><span class="case-next-k">Siguiente caso</span><span class="case-next-t">Análisis RFM de hostelería</span></span>
         <svg class="case-next-arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </a>
       <nav class="case-next-side" aria-label="Más">
         <a href="./power-bi.html">Todos los proyectos</a>
-        <a href="mailto:borja.mora.mendez@gmail.com" onclick="gtag('event','clic_email',{location:'airbnb_pais_vasco_footer'});">Escríbeme</a>
+        <a href="mailto:borja.mora.mendez@gmail.com" data-ga="clic_email" data-ga-location="airbnb_pais_vasco_footer">Escríbeme</a>
       </nav>
     </div>
     <div class="pv-foot-grid" style="display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:2.5rem; padding-bottom:2.5rem; border-bottom:1px solid rgba(255,255,255,.12);">
@@ -575,12 +602,12 @@ section { padding: 7.5rem 0; }
       </div>
       <div>
         <p class="pv-foot-title">Este proyecto</p>
-        <a href="https://app.powerbi.com/view?r=eyJrIjoiOTA2ZDExNjktYzE4Ny00Y2UzLThmM2YtMjI5Y2FmNDg1MzM5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=9c4b9193b627b78a0e01" target="_blank" rel="noopener" class="pv-foot-link" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Airbnb Pais Vasco',location:'airbnb_pais_vasco_footer'});">Dashboard Power BI</a>
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiOTA2ZDExNjktYzE4Ny00Y2UzLThmM2YtMjI5Y2FmNDg1MzM5IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=9c4b9193b627b78a0e01" target="_blank" rel="noopener" class="pv-foot-link" data-ga="ver_dashboard_powerbi" data-ga-dashboard_name="Airbnb Pais Vasco" data-ga-location="airbnb_pais_vasco_footer">Dashboard Power BI</a>
       </div>
       <div>
         <p class="pv-foot-title">Sígueme</p>
-        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener" class="pv-foot-link" onclick="gtag('event','clic_linkedin',{location:'airbnb_pais_vasco_footer'});">LinkedIn</a>
-        <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener" class="pv-foot-link" onclick="gtag('event','clic_github',{location:'airbnb_pais_vasco_footer'});">GitHub</a>
+        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener" class="pv-foot-link" data-ga="clic_linkedin" data-ga-location="airbnb_pais_vasco_footer">LinkedIn</a>
+        <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener" class="pv-foot-link" data-ga="clic_github" data-ga-location="airbnb_pais_vasco_footer">GitHub</a>
       </div>
     </div>
     <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:.8rem; padding-top:1.6rem; font-size:.78rem; color:#7A857F;">
@@ -590,7 +617,7 @@ section { padding: 7.5rem 0; }
     </div>
   </div>
 </footer>
-<script src="./case.js" data-duration="1800" defer></script>
+<script src="./case.js?v=fdd490bc63" data-duration="1800" defer></script>
 
 <!-- ── Cookie banner HTML + lógica (RGPD/LOPDGDD) ── -->
 <div id="bm-cookie-banner" role="dialog" aria-live="polite" aria-label="Aviso de cookies">
@@ -600,7 +627,7 @@ section { padding: 7.5rem 0; }
     <button class="bm-cb-btn bm-cb-accept" id="bm-cb-accept" aria-label="Aceptar cookies">Aceptar</button>
   </div>
 </div>
-<script src="./consent.js" defer></script>
+<script src="./consent.js?v=26a27e3704" defer></script>
 
 <!-- ── Scroll depth (25/50/75/90/100%) ── -->
 <script>

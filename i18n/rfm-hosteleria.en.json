@@ -156,7 +156,14 @@
     "↳ Dim_TipoEstablecimiento",
     "Power Query / M"
   ],
-  "js": {},
+  "js": {
+    "Análisis RFM — Distribuidora B2B de Hostelería": "RFM analysis — B2B hospitality distributor",
+    "Segmentación RFM en Power BI para una distribuidora B2B de bebidas: esquema en estrella, DAX avanzado y más de 198.000 € de revenue en riesgo detectados.": "RFM segmentation in Power BI for a B2B drinks distributor: star schema, advanced DAX and more than €198,000 of revenue at risk identified.",
+    "Caso de estudio": "Case study",
+    "es-ES": "en-GB",
+    "https://borjamora.es/rfm-hosteleria.html": "https://borjamora.es/en/rfm-hosteleria.html",
+    "https://borjamora.es/rfm-hosteleria.html#caso": "https://borjamora.es/en/rfm-hosteleria.html#caso"
+  },
   "raw": [
     [
       "<link rel=\"canonical\" href=\"https://borjamora.es/rfm-hosteleria.html\">",
