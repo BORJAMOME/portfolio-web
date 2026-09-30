@@ -261,7 +261,7 @@
 .dash .p-k4    { left: 75%;  top: 16%; width: 23.5%;height: 14%; }
 .dash .p-bars  { left: 1.5%; top: 32%; width: 48%;  height: 66%; }
 .dash .p-line  { left: 51%;  top: 32%; width: 47.5%;height: 38%; }
-.dash .p-donut { left: 51%;  top: 72%; width: 47.5%;height: 26%; }
+.dash .p-tbl   { left: 51%;  top: 72%; width: 47.5%;height: 26%; }
 .dash .p-rec   { left: 51%;  top: 72%; width: 47.5%;height: 26%; opacity: 0; }
 
 /* KPI principal crece (05 · tamaño) */
@@ -277,7 +277,7 @@
 .dash.prio .p-k3    { left: 80%;  top: 37%; width: 18.5%; height: 12%; }
 .dash.prio .p-k4    { left: 80%;  top: 37%; width: 18.5%; height: 12%; opacity: 0; }
 .dash.prio .p-line  { left: 60%;  top: 51%; width: 38.5%; height: 25%; }
-.dash.prio .p-donut { left: 60%;  top: 78%; width: 38.5%; height: 20%; }
+.dash.prio .p-tbl   { left: 60%;  top: 78%; width: 38.5%; height: 20%; }
 .dash.prio .p-rec   { left: 60%;  top: 78%; width: 38.5%; height: 20%; }
 .dash.prio .cam { transform-origin: 30% 57%; }
 
@@ -339,13 +339,17 @@
 .dash .lineplot .dl { position: absolute; left: 100%; margin-left: .5em; font-size: .85em; font-weight: 700; white-space: nowrap; transform: translateY(-50%); opacity: 0; transition: opacity var(--t-mid), color var(--t-mid); }
 .dash .p-line .legend { position: absolute; left: 1em; right: 1em; bottom: .5em; }
 
-/* donut */
-.dash .donut { position: absolute; inset: .5em auto .5em 1em; aspect-ratio: 1; }
-.dash .donut svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-.dash .donut circle { fill: none; stroke-width: 7; transition: stroke var(--t-mid); }
-.dash .p-donut .legend { position: absolute; left: 40%; right: 1em; top: 50%; transform: translateY(-50%); display: grid; grid-template-columns: 1fr 1fr; gap: .25em .8em; }
-.dash .donut-dl { position: absolute; left: 40%; top: 50%; transform: translateY(-50%); font-size: .95em; line-height: 1.55; opacity: 0; transition: opacity var(--t-mid); color: #444; }
-.dash .donut-dl b { color: var(--ink); }
+/* matriz de detalle: la tabla de todo informe de ventas. Antes: estilo por defecto,
+   bandas, rejilla, barras de datos y formato condicional en verde. Después: limpia. */
+.dash .p-tbl .pb { padding-top: .1em; }
+.dash .mx { width: 100%; border-collapse: collapse; font-size: .8em; line-height: 1.25; font-variant-numeric: tabular-nums; }
+.dash .mx th, .dash .mx td { padding: .22em .5em; text-align: right; white-space: nowrap; border: 1px solid #D6DCE5; transition: background-color var(--t-mid), color var(--t-mid), border-color var(--t-mid); }
+.dash .mx th[scope="row"], .dash .mx thead th:first-child { text-align: left; font-weight: 600; }
+.dash .mx thead th { background: #4472C4; color: #fff; font-weight: 700; border-color: #4472C4; }
+.dash .mx tbody tr:nth-child(even) > * { background-color: #EEF3FA; }
+.dash .mx tfoot > tr > * { font-weight: 700; background: #DCE6F2; }
+.dash .mx td.db { background-image: linear-gradient(90deg, #9DC3E6 var(--w, 0%), transparent var(--w, 0%)); background-repeat: no-repeat; background-size: 100% 70%; background-position: 0 50%; }
+.dash .mx td.cf { background-color: #C6EFCE !important; color: #006100; font-weight: 600; }
 
 /* recomendación */
 .dash .p-rec .pb { display: flex; flex-direction: column; justify-content: center; gap: .3em; padding: .6em 1.2em; }
@@ -391,8 +395,13 @@
 /* gray: el color deja de ser ruido */
 .dash.gray .brow .bar, .dash.gray .legend i { background: var(--g1) !important; }
 .dash.gray .ln { stroke: var(--g1) !important; }
-.dash.gray .donut circle { stroke: var(--g2) !important; }
-.dash.gray .donut circle:nth-child(-n+2) { stroke: var(--g1) !important; }
+/* flat: fuera cabecera de color y bandas · lessgrid: fuera la rejilla · gray: fuera barras de datos y verde */
+.dash.flat .mx thead th { background: transparent; color: var(--ink); border-color: transparent transparent var(--ink); }
+.dash.flat .mx tbody tr:nth-child(even) > *, .dash.flat .mx tfoot > tr > * { background-color: transparent; }
+.dash.lessgrid .mx td, .dash.lessgrid .mx tbody th, .dash.lessgrid .mx tfoot th { border-color: transparent; border-bottom-color: var(--grid); }
+.dash.lessgrid .mx tfoot > tr > * { border-top: 1px solid var(--ink); border-bottom-color: transparent; }
+.dash.gray .mx td.db { background-image: none; }
+.dash.gray .mx td.cf { background-color: transparent !important; color: var(--ink); }
 /* focus: una cosa, un color */
 .dash.focus .brow.hero .bar { background: var(--focus) !important; }
 .dash.focus .brow.hero .bl, .dash.focus .brow.hero .bv { color: var(--green-ink); font-weight: 800; }
@@ -403,10 +412,9 @@
 /* direct: la etiqueta vive junto al dato */
 .dash.direct .legend { opacity: 0; }
 .dash.direct .dl { opacity: 1; }
-.dash.direct .donut-dl { opacity: 1; }
 .dash .dl { color: #777; }
 /* dim: lo secundario pesa menos */
-.dash.dim .p-donut, .dash.dim .p-k3, .dash.dim .p-k4, .dash.dim .slicers { opacity: .32; }
+.dash.dim .p-tbl, .dash.dim .p-k3, .dash.dim .p-k4, .dash.dim .slicers { opacity: .32; }
 .dash.dim .p-line { opacity: .55; }
 .dash.dim .brow:not(.hero) .bl, .dash.dim .brow:not(.hero) .bv { color: #767676; }
 /* zoom: movimiento de cámara hacia el protagonista */
@@ -418,7 +426,7 @@
 .dash.annot-on .annot-svg circle { opacity: 1; }
 /* recorrido y recomendación */
 .dash.rec .p-rec { opacity: 1; }
-.dash.rec .p-donut { opacity: 0; }
+.dash.rec .p-tbl { opacity: 0; }
 .dash.navs .navtabs { opacity: 1; }
 .dash.navs .slicers { opacity: 0; }
 /* construcción desde cero (cap. 10) */
@@ -426,10 +434,10 @@
 .dash.empty.b-head .p-head { opacity: 1; }
 .dash.empty.b-main .p-bars { opacity: 1; }
 .dash.empty.b-kpi .p-k1, .dash.empty.b-kpi .p-k2, .dash.empty.b-kpi .p-k3 { opacity: 1; }
-.dash.empty.b-sec .p-line, .dash.empty.b-sec .p-donut { opacity: 1; }
-.dash.empty.b-sec.dim .p-donut { opacity: .32; }
+.dash.empty.b-sec .p-line, .dash.empty.b-sec .p-tbl { opacity: 1; }
+.dash.empty.b-sec.dim .p-tbl { opacity: .32; }
 .dash.empty.b-sec.dim .p-line { opacity: .55; }
-.dash.empty.rec .p-donut { opacity: 0; }
+.dash.empty.rec .p-tbl { opacity: 0; }
 .dash.empty.rec .p-rec { opacity: 1; }
 .dash.empty .slicers { opacity: 0; }
 .dash.empty { background: #fff; outline: 1px dashed var(--g1); outline-offset: -1px; }
@@ -1198,7 +1206,6 @@
 .dash.lessgrid .gridv { transform: translateY(.9em); }
 .dash.lessgrid .axis-x { transform: translateY(1.3em); }
 .dash.direct .legend { transform: translateY(-.9em); }
-.dash.direct .p-donut .legend { transform: translate(.9em, -50%); }
 
 .sc-visual--stack { flex-direction: column; gap: 14px; }
 .noise-ledger { list-style: none; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; width: 100%; margin: 0; padding: 0; font-size: 12px; }
@@ -1243,7 +1250,7 @@
 .dash .bp-lb { left: .9em; }
 .dash .bp-dim { right: .9em; font-weight: 600; letter-spacing: .04em; text-transform: none; }
 .dash.bp-wire .bp-lb, .dash.bp-wire .bp-dim { opacity: 1; }
-.dash.nodonut .p-donut { opacity: 0 !important; }
+.dash.notbl .p-tbl { opacity: 0 !important; }
 
 /* ─── TEST DEL ELEMENTO: un solo resaltado que viaja entre filas ─── */
 .etest-table { position: relative; }
@@ -1587,3 +1594,16 @@
 .stage--pbi .pb-tb .th { color: var(--muted); font-weight: 700; border-top: 0; }
 .stage--pbi .pb-tb em { font-style: normal; white-space: nowrap; }
 .stage--pbi .pb-tb em + em { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* en la composición final la matriz es contexto (atenuada y más pequeña): versión compacta */
+.dash.prio .mx { font-size: .66em; line-height: 1.1; }
+.dash.prio .mx th, .dash.prio .mx td { padding: .12em .45em; }
+.dash.prio .mx tr > :nth-child(3) { display: none; }
+.dash.prio .p-tbl .ph { padding-bottom: 0; }
+/* dashboard pequeño (móvil): la matriz se queda con región, ventas y variación, sin cabecera */
+@container (max-width: 520px) {
+  .dash .mx { line-height: 1.05; }
+  .dash .mx th, .dash .mx td { padding: .1em .4em; }
+  .dash .mx thead, .dash .mx tr > :nth-child(3) { display: none; }
+  .dash.prio .mx tfoot { display: none; }
+}

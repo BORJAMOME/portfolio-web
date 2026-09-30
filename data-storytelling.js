@@ -46,9 +46,9 @@
   var MONTHS = ['E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
   var SERIES = [ // ventas mensuales por canal, k€ (últimos 12 meses)
     { n: 'Online', v: [36, 38, 41, 44, 47, 50, 52, 54, 57, 60, 63, 68] },
-    { n: 'Tiendas', v: [44, 41, 43, 42, 44, 40, 39, 38, 43, 45, 48, 53] },
-    { n: 'Marketplace', v: [14, 14, 15, 15, 15, 16, 16, 16, 16, 17, 18, 18] },
-    { n: 'Mayorista', v: [11, 10, 11, 11, 11, 10, 10, 10, 11, 11, 12, 12] },
+    { n: 'Tiendas', v: [44, 41, 43, 42, 44, 40, 39, 38, 43, 50, 51.2, 56.5] },
+    { n: 'Marketplace', v: [14, 14, 15, 15, 15, 16, 16, 16, 16, 16, 17, 17] },
+    { n: 'Mayorista', v: [11, 10, 11, 11, 11, 10, 10, 10, 10, 10.4, 10.4, 10.6] },
     { n: 'Franquicias', v: [5, 5, 6, 5, 6, 6, 5, 6, 6, 7, 7, 7] }
   ];
   var GROWTH = [ // crecimiento Q4 2025 vs Q4 2024 por canal
@@ -62,6 +62,13 @@
   var Q4 = [ // ventas Q4 por canal, k€
     { n: 'Online', a: 447, b: 668, hero: 1 }, { n: 'Tiendas', a: 526, b: 552 }, { n: 'Marketplace', a: 137, b: 175 },
     { n: 'Mayorista', a: 98, b: 110 }, { n: 'Franquicias', a: 37, b: 45 }, { n: 'Outlet', a: 24, b: 22 }
+  ];
+  var REGION = [ // ventas Q4 por región, €: suman exactamente 1.572.340 € y 1.268.220 € (los KPIs)
+    { n: 'Centro', b: 512480, a: 401350 },
+    { n: 'Norte', b: 368920, a: 301140 },
+    { n: 'Este', b: 301610, a: 246380 },
+    { n: 'Sur', b: 254730, a: 214870 },
+    { n: 'Oeste', b: 134600, a: 104480 }
   ];
   var CATS = [
     { n: 'Moda', v: 24 }, { n: 'Hogar', v: 18 }, { n: 'Electrónica', v: 15 }, { n: 'Belleza', v: 12 },
@@ -127,9 +134,14 @@
     }).join('');
     var legB = GROWTH.map(function (b, i) { return '<span><i style="background:var(--dc' + (i + 1) + ')"></i>' + b.n + '</span>'; }).join('');
     var legL = SERIES.slice(0, 4).map(function (s, i) { return '<span><i style="background:var(--dc' + (i + 1) + ')"></i>' + s.n + '</span>'; }).join('');
-    var off = 0;
-    var donut = CATS.map(function (c, i) { var s = '<circle cx="21" cy="21" r="15.915" pathLength="100" stroke-dasharray="' + c.v + ' ' + (100 - c.v) + '" stroke-dashoffset="' + (-off) + '" style="stroke:var(--dc' + (i + 1) + ')"/>'; off += c.v; return s; }).join('');
-    var legD = CATS.map(function (c, i) { return '<span><i style="background:var(--dc' + (i + 1) + ')"></i>' + c.n + ' (' + c.v + ',00 %)</span>'; }).join('');
+    var MX = 534000;   // escala de las barras de datos (un poco por encima de la región mayor)
+    var mxRows = REGION.map(function (r) {
+      var eur = function (v) { return v.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'; };
+      var vp = (r.b / r.a - 1) * 100;
+      return '<tr><th scope="row">' + r.n + '</th><td class="db" style="--w:' + (r.b / MX * 100).toFixed(1) + '%"><span class="n-l">' + eur(r.b) + '</span><span class="n-s">' + Math.round(r.b / 1000) + ' k€</span></td>' +
+        '<td><span class="n-l">' + eur(r.a) + '</span><span class="n-s">' + Math.round(r.a / 1000) + ' k€</span></td>' +
+        '<td class="cf"><span class="n-l">+' + vp.toFixed(2).replace('.', ',') + ' %</span><span class="n-s">+' + Math.round(vp) + ' %</span></td></tr>';
+    }).join('');
     function kpi(cls, l, vl, vs, sl, ss) {
       return '<div class="pn kpi ' + cls + '"><div class="pb"><span class="kl">' + l + '</span><span class="kv"><span class="n-l">' + vl + '</span><span class="n-s">' + vs + '</span></span><span class="ks"><span class="n-l">' + sl + '</span><span class="n-s">' + ss + '</span></span></div></div>';
     }
@@ -140,13 +152,14 @@
       kpi('p-k1', 'Ventas Q4', '1.572.340,00 €', '1,57 M€', 'Q4 2024: 1.268.220,00 €', 'Q4 2024: 1,27 M€') +
       kpi('p-k2', 'Crecimiento', '+23,98 %', '+24 %', '▲ 304.120,00 € vs. Q4 2024', '+304 k€ vs. Q4 2024') +
       kpi('p-k3', 'Pedidos', '12.480', '12.480', '▲ 8,21 % vs. Q4 2024', '+8 % vs. Q4 2024') +
-      kpi('p-k4', 'Ticket medio', '125,99 €', '126 €', '▲ 14,52 % vs. Q4 2024', '+15 % vs. Q4 2024') +
+      kpi('p-k4', 'Ticket medio', '125,99 €', '126 €', '▲ 14,57 % vs. Q4 2024', '+15 % vs. Q4 2024') +
       '<div class="pn p-bars"><div class="ph"><div class="tt"><span class="t-d">Crecimiento vs. Q4 2024 por canal (€)</span><span class="t-s">Online explica 221 k€ de los 304 k€ de crecimiento</span></div></div><div class="pb"><div class="legend">' + legB + '</div>' +
       '<div class="bars"><div class="gridv minor"></div><div class="gridv"></div><div class="zero"></div>' + rows + '</div>' +
       '<div class="axis-x"><span>0 €</span><span>70.000 €</span><span>140.000 €</span><span>210.000 €</span><span>280.000 €</span></div></div></div>' +
       '<div class="pn p-line"><div class="ph"><div class="tt"><span class="t-d">Ventas mensuales por canal (€)</span><span class="t-s">Online vende más que las tiendas desde abril</span></div></div><div class="pb">' + lineSVG() + '<div class="legend">' + legL + '</div></div></div>' +
-      '<div class="pn p-donut"><div class="ph"><div class="tt"><span class="t-d">Ventas por categoría (%)</span><span class="t-s">Moda y hogar: 42 % de las ventas</span></div></div><div class="pb"><div class="donut"><svg viewBox="0 0 42 42" aria-hidden="true">' + donut + '</svg></div><div class="legend">' + legD + '</div>' +
-      '<div class="donut-dl"><b>Moda</b> 24 % · <b>Hogar</b> 18 %<br>Electrónica 15 % · resto 43 %</div></div></div>' +
+      '<div class="pn p-tbl"><div class="ph"><div class="tt"><span class="t-d">Detalle por región (€)</span><span class="t-s">Todas las regiones crecen; Centro aporta un tercio de las ventas</span></div></div><div class="pb">' +
+      '<table class="mx"><thead><tr><th scope="col">Región</th><th scope="col">Ventas Q4</th><th scope="col">Q4 2024</th><th scope="col">Var. %</th></tr></thead><tbody>' + mxRows + '</tbody>' +
+      '<tfoot><tr><th scope="row">Total</th><td><span class="n-l">1.572.340,00 €</span><span class="n-s">1.572 k€</span></td><td><span class="n-l">1.268.220,00 €</span><span class="n-s">1.268 k€</span></td><td class="cf"><span class="n-l">+23,98 %</span><span class="n-s">+24 %</span></td></tr></tfoot></table></div></div>' +
       '<div class="pn p-rec"><div class="pb"><span class="rk keep">Qué propongo</span><span class="rt keep">Mover un 15 % del presupuesto de captación a online en el Q1 y medir el efecto en 8 semanas.</span></div></div>' +
       '<svg class="annot-svg" viewBox="0 0 160 110" preserveAspectRatio="none" aria-hidden="true"><path class="a-def" pathLength="1" d="M56 60.5 L70 51.7"/><path class="a-pri" pathLength="1" d="M57.6 48.4 L83.2 35.8"/></svg>' +
       '<div class="annot"><span class="ak">Anotación</span><b>Online aporta +221 k€:</b> el 73 % de todo el crecimiento del trimestre.</div>' +

@@ -18,7 +18,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- Shared styles: variables, nav, footer, botones, reset -->
 <link rel="stylesheet" href="./shared.css?v=20260929">
-<link rel="stylesheet" href="./data-storytelling.css?v=20260930n">
+<link rel="stylesheet" href="./data-storytelling.css?v=20260930q">
 <!-- Primary Meta Tags -->
 <meta name="description" content="Un manual interactivo sobre Data Storytelling y diseño de dashboards: percepción, reducción de ruido, atención, elección del visual, composición, texto y narrativa, demostrados sobre un dashboard que cambia mientras lees.">
 <meta name="keywords" content="data storytelling, diseño de dashboards, Power BI, visualización de datos, scrollytelling, UX, Borja Mora">
@@ -652,7 +652,7 @@
           <button type="button" aria-pressed="false" data-row="2" data-v="1.572.340,00 € obliga a contar dígitos. 1,57 M€ se lee de un vistazo.">Importes con dos decimales <span class="hint">precisión</span></button>
           <button type="button" aria-pressed="false" data-row="3" data-v="El contexto se queda, pero en gris: no puede ganar al protagonista.">Gráfico secundario a todo color <span class="hint">jerarquía</span></button>
           <button type="button" aria-pressed="false" data-row="4" data-v="Es la cifra que responde a la pregunta. Se queda, y junto al dato.">Etiqueta del dato principal <span class="hint">mensaje</span></button>
-          <button type="button" aria-pressed="false" data-row="5" data-v="Ocho tonos parecidos obligan a ir y volver. Mejor etiquetas directas o menos categorías.">Leyenda de ocho colores <span class="hint">confusión</span></button>
+          <button type="button" aria-pressed="false" data-row="5" data-v="Seis tonos parecidos obligan a ir y volver entre la leyenda y el gráfico. Mejor etiquetas directas o menos categorías.">Leyenda de seis colores <span class="hint">confusión</span></button>
         </div>
       </div>
       <div>
@@ -1349,16 +1349,16 @@
       <div class="sc-visual"><div class="viz" data-dash="c10"></div></div>
       <div class="sc-steps">
         <div class="step" data-flags="empty"><div class="st-in"><p class="st-copy">Un lienzo en blanco.</p></div></div>
-        <div class="step" data-flags="empty flat prio nodonut bp-grid"><div class="st-in"><span class="st-tag">Plano</span><p class="st-copy">Antes de dibujar nada, trazo la retícula.</p></div></div>
-        <div class="step" data-flags="empty flat prio nodonut bp-grid bp-wire"><div class="st-in"><span class="st-tag">Plano</span><p class="st-copy">Después, el plano: qué va en cada caja y cuánto espacio merece.</p><p class="st-sub">El visual principal se lleva más de la mitad del ancho. La acción tiene su caja reservada desde el principio.</p></div></div>
-        <div class="step" data-flags="empty flat prio nodonut bp-grid bp-wire b-head q"><div class="st-in"><span class="st-tag">01</span><p class="st-copy">Empiezo por la pregunta.</p></div></div>
-        <div class="step" data-flags="empty flat prio nodonut bp-grid bp-wire b-head q b-main"><div class="st-in"><span class="st-tag">02</span><p class="st-copy">Elijo el visual que mejor resuelve la tarea.</p><p class="st-sub">La pregunta es “qué canal”: comparar. Barras.</p></div></div>
-        <div class="step" data-flags="empty flat prio nodonut bp-grid bp-wire b-head q b-main lessgrid gray direct short"><div class="st-in"><span class="st-tag">03</span><p class="st-copy">Quito lo que sobra.</p></div></div>
-        <div class="step" data-flags="empty flat prio nodonut bp-grid bp-wire b-head q b-main lessgrid gray direct short focus"><div class="st-in"><span class="st-tag">04</span><p class="st-copy">Decido qué merece atención.</p></div></div>
-        <div class="step" data-flags="empty flat prio nodonut bp-wire b-head q b-main lessgrid gray direct short focus b-kpi b-sec dim"><div class="st-in"><span class="st-tag">05</span><p class="st-copy">Compongo la página.</p><p class="st-sub">Cada pieza ocupa la caja que le reservé en el plano.</p></div></div>
-        <div class="step" data-flags="empty flat prio nodonut b-head q b-main lessgrid gray direct short focus b-kpi b-sec dim story"><div class="st-in"><span class="st-tag">06</span><p class="st-copy">Escribo el título que explica la idea.</p><p class="st-sub">El plano desaparece. El orden se queda.</p></div></div>
-        <div class="step" data-flags="empty flat prio nodonut b-head q b-main lessgrid gray direct short focus b-kpi b-sec dim story annot-on"><div class="st-in"><span class="st-tag">07</span><p class="st-copy">Anoto lo que quiero que nadie tenga que descubrir por su cuenta.</p></div></div>
-        <div class="step" data-flags="empty flat prio nodonut b-head q b-main lessgrid gray direct short focus b-kpi b-sec dim story annot-on rec navs"><div class="st-in"><span class="st-tag">08</span><p class="st-copy">Y construyo el recorrido.</p></div></div>
+        <div class="step" data-flags="empty flat prio notbl bp-grid"><div class="st-in"><span class="st-tag">Plano</span><p class="st-copy">Antes de dibujar nada, trazo la retícula.</p></div></div>
+        <div class="step" data-flags="empty flat prio notbl bp-grid bp-wire"><div class="st-in"><span class="st-tag">Plano</span><p class="st-copy">Después, el plano: qué va en cada caja y cuánto espacio merece.</p><p class="st-sub">El visual principal se lleva más de la mitad del ancho. La acción tiene su caja reservada desde el principio.</p></div></div>
+        <div class="step" data-flags="empty flat prio notbl bp-grid bp-wire b-head q"><div class="st-in"><span class="st-tag">01</span><p class="st-copy">Empiezo por la pregunta.</p></div></div>
+        <div class="step" data-flags="empty flat prio notbl bp-grid bp-wire b-head q b-main"><div class="st-in"><span class="st-tag">02</span><p class="st-copy">Elijo el visual que mejor resuelve la tarea.</p><p class="st-sub">La pregunta es “qué canal”: comparar. Barras.</p></div></div>
+        <div class="step" data-flags="empty flat prio notbl bp-grid bp-wire b-head q b-main lessgrid gray direct short"><div class="st-in"><span class="st-tag">03</span><p class="st-copy">Quito lo que sobra.</p></div></div>
+        <div class="step" data-flags="empty flat prio notbl bp-grid bp-wire b-head q b-main lessgrid gray direct short focus"><div class="st-in"><span class="st-tag">04</span><p class="st-copy">Decido qué merece atención.</p></div></div>
+        <div class="step" data-flags="empty flat prio notbl bp-wire b-head q b-main lessgrid gray direct short focus b-kpi b-sec dim"><div class="st-in"><span class="st-tag">05</span><p class="st-copy">Compongo la página.</p><p class="st-sub">Cada pieza ocupa la caja que le reservé en el plano.</p></div></div>
+        <div class="step" data-flags="empty flat prio notbl b-head q b-main lessgrid gray direct short focus b-kpi b-sec dim story"><div class="st-in"><span class="st-tag">06</span><p class="st-copy">Escribo el título que explica la idea.</p><p class="st-sub">El plano desaparece. El orden se queda.</p></div></div>
+        <div class="step" data-flags="empty flat prio notbl b-head q b-main lessgrid gray direct short focus b-kpi b-sec dim story annot-on"><div class="st-in"><span class="st-tag">07</span><p class="st-copy">Anoto lo que quiero que nadie tenga que descubrir por su cuenta.</p></div></div>
+        <div class="step" data-flags="empty flat prio notbl b-head q b-main lessgrid gray direct short focus b-kpi b-sec dim story annot-on rec navs"><div class="st-in"><span class="st-tag">08</span><p class="st-copy">Y construyo el recorrido.</p></div></div>
       </div>
     </div>
   </div>
@@ -1704,7 +1704,7 @@ window.addEventListener('scroll',function(){
   });
 })();
 </script>
-<script src="./data-storytelling.js?v=20260930e" defer></script>
+<script src="./data-storytelling.js?v=20260930f" defer></script>
 <!-- Motion: bibliotecas opcionales. Si un CDN falla, la pagina funciona igual (todo tiene fallback CSS). -->
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
