@@ -4,7 +4,7 @@
    · 7b «semitono»: barras divergentes en trama de puntos; los 10
      capítulos son las barras negras sólidas.
    · 7d «rotativa»: serie temporal de 0′ a 20′ (señal cruda + media
-     móvil), área en semitono, tinta corrida y pliegue de papel prensa.
+     móvil) y área en semitono. Las dos comparten el mismo papel (grano).
    Todo es determinista (semillas fijas): la misma variante se ve igual
    siempre. El texto y los capítulos están en el HTML; aquí solo se genera
    el gráfico y se colocan las etiquetas sobre él.
@@ -82,8 +82,6 @@ function rotativa() {
 const DEFS = '<defs>'
   + '<pattern id="cvx-ht1" width="4.2" height="4.2" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><circle cx="2.1" cy="2.1" r="1.25" fill="#111"/></pattern>'
   + '<pattern id="cvx-ht2" width="4.2" height="4.2" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><circle cx="2.1" cy="2.1" r=".8" fill="#111"/></pattern>'
-  // tinta corrida (7d): se aplica por CSS a los textos y, al terminar la entrada, al gráfico
-  + '<filter id="cvx-ink"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="1" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.8" xChannelSelector="R" yChannelSelector="G"/></filter>'
   + '</defs>';
 
 // Primera carga: al azar. Después, cada carga enseña la otra variante (así se ven las dos).
@@ -121,7 +119,6 @@ export function initCover() {
   const caps = sec.querySelectorAll('.cvx-caps li');
   caps.forEach((li, i) => { li.style.setProperty('--x', f(m.xs[i])); li.dataset.a = 'fade'; li.dataset.d = Math.round(m.delay(m.xs[i])); });
   sec.dataset.v = v;
-  const page = sec.closest('.ds'); if (page) page.dataset.cover = v;   // el papel de toda la página sigue a la portada
 
   const done = () => sec.classList.add('is-set');
   if (reduced()) return done();
@@ -132,6 +129,5 @@ export function initCover() {
     else if (k === 'fade') el.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 450, delay: d, easing: 'ease-out', fill: 'backwards' });
     else if (k === 'draw') el.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: 3000, delay: d, easing: 'linear', fill: 'backwards' });
   });
-  // la tinta corrida del gráfico se aplica al final: filtrar mientras se anima costaría fotogramas
   setTimeout(done, T0 + m.end);
 }
