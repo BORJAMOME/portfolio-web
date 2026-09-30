@@ -1405,6 +1405,26 @@
     steps.forEach(function (s) { io.observe(s); });
   });
 
+  /* Las notas que cambian con cada estado reservan el alto de su versión más larga:
+     si no, al avanzar el autoplay la nota crece o encoge y empuja lo que hay debajo
+     (en móvil, el propio visual). Se mide con el ancho real y se recalcula al redimensionar. */
+  (function () {
+    var notes = $$('[data-tgl-note]'); if (!notes.length) return;
+    function fit() {
+      notes.forEach(function (n) {
+        var vals = Array.prototype.filter.call(n.attributes, function (a) { return a.name.indexOf('data-n-') === 0; }).map(function (a) { return a.value; });
+        if (!vals.length) return;
+        var keep = n.textContent, max = 0;
+        n.style.minHeight = '';
+        vals.forEach(function (v) { n.textContent = v; max = Math.max(max, n.offsetHeight); });
+        n.textContent = keep; n.style.minHeight = max + 'px';
+      });
+    }
+    fit();
+    var rt; addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(fit, 150); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  })();
+
   /* toggles con autoplay (una vez, al entrar en pantalla) */
   $$('.tgl[data-viz]').forEach(function (t) {
     var fn = VIZ[t.dataset.viz]; if (!fn) return;
