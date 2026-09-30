@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Complete financial report — Financial analysis | Borja Mora</title>
+<meta name="description" content="216,858 journal entries from three companies in a Power BI model that joins the balance sheet, P&L and cash flow, with drill-through down to the source entry.">
+<meta name="theme-color" content="#1658b3">
+<link rel="canonical" href="https://borjamora.es/en/informe-financiero.html">
+<link rel="alternate" hreflang="es" href="https://borjamora.es/informe-financiero.html">
+<link rel="alternate" hreflang="en" href="https://borjamora.es/en/informe-financiero.html">
+<link rel="alternate" hreflang="x-default" href="https://borjamora.es/informe-financiero.html">
+<script src="../lang.js"></script>
+<link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
+<link rel="icon" href="../img/favicon.ico" type="image/x-icon">
+<!-- Open Graph -->
+<meta property="og:title" content="Complete financial report — Financial analysis | Borja Mora">
+<meta property="og:description" content="How I turned 216,858 journal entries from three companies into a Power BI model that connects the balance sheet, P&L and cash flow. Free cash flow went from −€1.17m to €678,209 in one year — the model shows exactly which items explain the difference.">
+<meta property="og:image" content="https://borjamora.es/img/financiero-card.png">
+<meta property="og:url" content="https://borjamora.es/en/informe-financiero.html">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_GB">
+<meta property="og:locale:alternate" content="es_ES">
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Complete financial report — Financial analysis | Borja Mora">
+<meta name="twitter:description" content="Balance sheet, P&L and cash flow connected in a single model, with drill-through down to the journal entry. Free cash flow 2023: €678,209 (from −€1,165,650 the year before).">
+<meta name="twitter:image" content="https://borjamora.es/img/financiero-card.png">
+
+<!-- Google Fonts: Antonio (sustituto de Baton Turbo) + Manrope (sustituto de Greycliff) — sistema Swwim -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Antonio:wght@400&family=Manrope:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antonio:wght@400&family=Manrope:wght@400;500;700&display=swap">
+
+<!-- ── Cookie Consent + GA4 Consent Mode v2 (RGPD/LOPDGDD) ── -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("consent", "default", {
+    analytics_storage:    "denied",
+    ad_storage:           "denied",
+    ad_user_data:         "denied",
+    ad_personalization:   "denied",
+    wait_for_update:      500
+  });
+</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6PSDM6B5Z7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-6PSDM6B5Z7");
+
+  /* Leer consentimiento previo */
+  (function(){
+    var consent = localStorage.getItem("bm_cookie_consent");
+    if (consent === "accepted") {
+      gtag("consent", "update", { analytics_storage: "granted", ad_storage: "denied" });
+    }
+  })();
+</script>
+
+<!-- ── Cookie banner CSS (RGPD/LOPDGDD) — autocontenida, esta página no carga shared.css ── -->
+<style>
+  #bm-cookie-banner {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(0);
+    z-index: 99999; width: min(540px, calc(100vw - 32px));
+    background: #0e0e0e; color: #f7f7fa;
+    border: 1px solid rgba(122,123,255,.3);
+    border-radius: 16px; padding: 16px 20px;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    box-shadow: 0 12px 48px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.04);
+    font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+    font-size: 13px; line-height: 1.55;
+    opacity: 0; pointer-events: none;
+    transition: opacity .3s ease, transform .35s cubic-bezier(0.16,1,0.3,1);
+  }
+  #bm-cookie-banner.bm-visible {
+    opacity: 1; pointer-events: auto;
+  }
+  #bm-cookie-banner.bm-hiding {
+    opacity: 0; transform: translateX(-50%) translateY(16px);
+  }
+  #bm-cookie-banner p { margin: 0; flex: 1; min-width: 200px; color: #b8b8cc; }
+  #bm-cookie-banner strong { color: #f7f7fa; font-weight: 600; }
+  #bm-cookie-banner a { color: #7a7bff; text-decoration: none; border-bottom: 1px solid rgba(122,123,255,.4); }
+  .bm-cb-btns { display: flex; gap: 8px; flex-shrink: 0; }
+  .bm-cb-btn {
+    cursor: pointer; border: none; border-radius: 9px;
+    padding: 9px 18px; font-size: 12px; font-weight: 700;
+    font-family: inherit; letter-spacing: .4px;
+    transition: opacity .15s, transform .12s;
+    text-transform: uppercase;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .bm-cb-btn:hover { opacity: .82; transform: translateY(-1px); }
+  }
+  .bm-cb-btn:active { transform: translateY(0); }
+  .bm-cb-accept { background: #7a7bff; color: #fff; }
+  .bm-cb-reject { background: rgba(255,255,255,.07); color: #b8b8cc; border: 1px solid rgba(255,255,255,.1); }
+  @media (max-width: 480px) {
+    #bm-cookie-banner { bottom: 16px; padding: 14px 16px; border-radius: 12px; }
+    .bm-cb-btns { width: 100%; justify-content: flex-end; }
+  }
+</style>
+
+<script src="../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --if-cobalt: #1658b3;
+  --if-deep: #0d3c88;
+  --if-ripple: #015fee;
+  --if-abyssal: #01295f;
+  --if-white: #ffffff;
+  --if-border: #e5e7eb;
+  --if-carbon: #000000;
+  --if-nude: #eee1d9;
+  --if-muted: #5b6472;
+  --if-display: 'Antonio', 'Druk Wide', 'Oswald', sans-serif;
+  --if-body: 'Manrope', ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+html { scroll-behavior: smooth; font-size: 16px; }
+/* support.js fuerza #dc-root/.sc-host a height:100% (1 pantalla) via FULL_PAGE_CSS.
+   Con overflow:visible el contenido real (mucho más alto) sigue viéndose al hacer
+   scroll, pero cualquier hermano posterior a #dc-root (el footer) se posiciona justo
+   tras esos 100vh, no tras el contenido real. Se corrige sin tocar el runtime. */
+#dc-root, #dc-root > .sc-host { height: auto !important; }
+body {
+  font-family: var(--if-body);
+  font-weight: 400;
+  background: var(--if-white);
+  color: var(--if-carbon);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, .kpi-num, .brand-name {
+  font-family: var(--if-display);
+  font-weight: 400;
+  color: var(--if-carbon);
+}
+img { max-width: 100%; height: auto; display: block; }
+a { color: var(--if-cobalt); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.if-wrap { max-width: 1440px; margin: 0 auto; padding: 0 3rem; }
+section { padding: 4rem 0; }
+.reveal {
+  opacity: 0; transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(.16,1,.3,1), transform 0.8s cubic-bezier(.16,1,.3,1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: .12s; }
+.reveal-delay-2 { transition-delay: .24s; }
+.reveal-delay-3 { transition-delay: .36s; }
+.reveal-delay-4 { transition-delay: .48s; }
+@keyframes pulse-down {
+  0%, 100% { opacity: .4; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(6px); }
+}
+.if-tag {
+  display: inline-block; font-family: var(--if-body); font-weight: 500; font-size: .78rem;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--if-cobalt);
+  border: 1px solid var(--if-cobalt); padding: .35rem 1rem; border-radius: 9999px; margin-bottom: 1.2rem;
+}
+.if-tag.if-tag-onblue { color: #fff; border-color: rgba(255,255,255,.6); }
+@media (max-width: 900px) {
+  .if-wrap { padding: 0 1.5rem; }
+  .grid-2col, .dash-layout { grid-template-columns: 1fr !important; }
+  .kpi-grid-3 { grid-template-columns: repeat(2, 1fr) !important; }
+  .tools-grid-6 { grid-template-columns: repeat(2, 1fr) !important; }
+  .hallazgos-grid { grid-template-columns: 1fr !important; }
+  section { padding: 3rem 0; }
+  .if-card-grid { grid-template-columns: 1fr !important; gap: 1rem !important; }
+  .impacto-text { white-space: normal !important; font-size: clamp(1.8rem, 6vw, 3.2rem) !important; }
+  .hero-stat-row { flex-direction: column !important; align-items: flex-start !important; gap: 1.4rem !important; }
+}
+@media (max-width: 600px) {
+  .if-wrap { padding: 0 1.2rem; }
+  section { padding: 2.4rem 0; }
+  .kpi-grid-3, .tools-grid-6 { grid-template-columns: 1fr !important; }
+}
+
+/* ── Botones — pill 9999px, sin sombra (patrón Swwim: fondo blanco sobre azul, azul sobre blanco) ── */
+.if-cta {
+  display: inline-block;
+  background: var(--if-cobalt);
+  color: #fff;
+  font-family: var(--if-body);
+  font-weight: 500;
+  font-size: 1rem;
+  padding: .95rem 1.9rem;
+  border-radius: 9999px;
+  text-decoration: none;
+  transition: opacity .2s;
+}
+@media (hover: hover) and (pointer: fine) {
+  .if-cta:hover { opacity: .85; text-decoration: none; }
+}
+.if-cta.if-cta-ghost {
+  background: transparent;
+  color: var(--if-cobalt);
+  border: 1px solid var(--if-cobalt);
+}
+.if-cta.if-cta-onblue {
+  background: #fff;
+  color: var(--if-cobalt);
+}
+.if-cta.if-cta-onblue.if-cta-ghost {
+  background: transparent;
+  color: #fff;
+  border: 1px solid #fff;
+}
+
+/* ── Tarjetas — 0px radio, borde fino, sin sombra ── */
+.if-card { transition: border-color .2s; }
+.tools-grid-6 > div { transition: border-color .2s; }
+
+/* ── Imágenes del dashboard ── */
+.dash-layout img { transition: opacity .3s; }
+@media (hover: hover) and (pointer: fine) {
+  .dash-layout img:hover { opacity: .92; }
+}
+
+/* ── Hero — campo Cobalt de ancho completo ── */
+.hero-stage {
+  position: relative; overflow: hidden; background: var(--if-cobalt);
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 9rem 3rem 3rem; min-height: 100vh;
+}
+.hero-eyebrow {
+  font-family: var(--if-body); font-weight: 500; font-size: .85rem; letter-spacing: .1em; text-transform: uppercase;
+  color: #fff; margin-bottom: 1.6rem;
+  opacity: 0; animation: ifFadeUp .6s cubic-bezier(.16,1,.3,1) .1s forwards;
+}
+@keyframes ifFadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.hero-stage h1, .hero-stage p.hero-sub, .hero-stage .hero-stat-row, .hero-stage p.hero-scroll {
+  opacity: 0; transform: translateY(14px);
+  animation: ifFadeUp .6s cubic-bezier(.16,1,.3,1) forwards;
+}
+.hero-stage h1 { animation-delay: .2s; }
+.hero-stage p.hero-sub { animation-delay: .38s; }
+.hero-stage .hero-stat-row { animation-delay: .58s; margin-top: 3rem; }
+.hero-stage p.hero-scroll { animation-delay: .9s; margin-top: 3rem; }
+.hero-stat-row { display: flex; align-items: center; gap: 2.4rem; flex-wrap: wrap; }
+.hero-stat { text-align: left; }
+.hero-stat-value { font-family: var(--if-display); font-weight: 400; line-height: 1; }
+.hero-stat-label { font-family: var(--if-body); font-size: .85rem; color: rgba(255,255,255,.75); margin-top: .5rem; }
+.hero-stat-arrow { color: #fff; font-size: 1.6rem; }
+.hero-scroll {
+  display: inline-flex; align-items: center; gap: .6rem;
+  font-family: var(--if-body); font-size: .9rem; font-weight: 500; color: #fff;
+}
+.hero-scroll-circle {
+  width: 26px; height: 26px; border-radius: 9999px; border: 1px solid #fff;
+  display: inline-flex; align-items: center; justify-content: center; font-size: .8rem;
+  animation: pulse-down 2s ease-in-out 1.55s infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-eyebrow, .hero-stage h1, .hero-stage p.hero-sub, .hero-stage .hero-stat-row, .hero-stage p.hero-scroll {
+    animation: none; opacity: 1; transform: none;
+  }
+}
+@media (max-width: 640px) {
+  .hero-stage { padding: 7rem 1.2rem 2.4rem; }
+}
+
+/* ── Marquee — banda Deep Channel con texto en bucle ── */
+.if-marquee {
+  background: var(--if-deep); overflow: hidden; padding: 1.4rem 0;
+  white-space: nowrap;
+}
+.if-marquee-track {
+  display: inline-flex; gap: 2.5rem; animation: ifMarquee 22s linear infinite;
+}
+.if-marquee-track span {
+  font-family: var(--if-display); font-weight: 400; text-transform: uppercase;
+  font-size: clamp(1.4rem, 3.2vw, 2rem); color: #fff; display: inline-flex; align-items: center; gap: 2.5rem;
+}
+.if-marquee-track span::after { content: '•'; color: var(--if-ripple); }
+@keyframes ifMarquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  .if-marquee-track { animation: none; }
+}
+
+/* ── Cita editorial ── */
+.if-quote {
+  border-left: 3px solid var(--if-cobalt); padding-left: 1.3rem; margin: 1.5rem 0;
+  font-family: var(--if-body); font-style: normal; font-size: 1.08rem; line-height: 1.6;
+  color: var(--if-carbon); max-width: 760px;
+}
+.if-quote.if-quote-onblue { border-left-color: var(--if-nude); color: #fff; }
+
+/* ── Footer ── */
+.if-foot-title {
+  font-family: var(--if-body);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.6);
+  margin-bottom: 1rem;
+}
+.if-foot-link {
+  display: block;
+  font-size: .85rem;
+  color: rgba(255,255,255,.85);
+  text-decoration: none;
+  margin-bottom: .65rem;
+  transition: color .2s;
+}
+.if-foot-link:hover { color: #fff; text-decoration: underline; }
+@media (max-width: 760px) {
+  .if-foot-grid { grid-template-columns: 1fr 1fr !important; gap: 2rem 1.5rem !important; }
+  .if-foot-link { min-height: 44px; display: flex; align-items: center; }
+}
+@media (max-width: 480px) {
+  .if-foot-grid { grid-template-columns: 1fr !important; }
+}
+</style>
+<style>
+/* selector ES | EN: el mismo gesto que el del portfolio (shared.css), aquí autocontenido y con el color de esta barra */
+.ds-lang { --dsl: #fff; position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 2px; }
+.ds-lang-a, .ds-lang-b { position: relative; padding: 6px 10px; border-radius: 7px; font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: .3px; text-transform: uppercase; color: var(--dsl); opacity: .82; text-decoration: none; transition: opacity .2s, background .2s; }
+.ds-lang-a { opacity: 1; font-weight: 700; cursor: default; }
+.ds-lang-a::after { content: ''; position: absolute; bottom: 2px; left: 10px; right: 10px; height: 1.5px; background: var(--dsl); border-radius: 99px; }
+@media (hover: hover) and (pointer: fine) { .ds-lang-b:hover { opacity: 1; background: color-mix(in srgb, var(--dsl) 8%, transparent); } }
+.ds-lang-b:focus-visible { opacity: 1; outline: 2px solid var(--dsl); outline-offset: 2px; }
+@media (max-width: 600px) { .ds-lang { left: auto; right: 1rem; transform: none; } }  /* en móvil, a la derecha: no roza el enlace de vuelta */
+</style>
+</helmet>
+
+<!-- NAV BACK -->
+<nav style="position:fixed; top:0; left:0; right:0; z-index:100; padding:1rem 2rem; display:flex; align-items:center; background:rgba(22,88,179,.9); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);">
+  <a href="./projects.html" style="display:inline-flex; align-items:center; gap:.5rem; font-family:var(--if-body); font-weight:500; font-size:.9rem; color:#fff; text-decoration:none; transition:opacity .2s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+    Power BI
+  </a>
+  <div class="ds-lang" role="group" aria-label="Language · Idioma">
+    <a href="../informe-financiero.html" class="ds-lang-b" hreflang="es" lang="es" data-lang-to="es" title="Leer en español" aria-label="Leer en español">ES</a>
+    <span class="ds-lang-a" aria-current="true" lang="en" title="English">EN</span>
+  </div>
+</nav>
+
+<!-- S1 · HERO — Free Cash Flow: de -1.165.650€ a 678.209€ -->
+<section class="hero-stage" data-screen-label="Hero">
+  <p class="hero-eyebrow">Power BI · COMPLETE FINANCIAL PROJECT</p>
+  <h1 class="brand-name" style="font-size:clamp(1.9rem, 4.6vw, 3.6rem); text-transform:none; line-height:1.15; color:#fff; margin-bottom:1.4rem; max-width:920px;">How I turned 216,858 journal entries into a financial report anyone can explore</h1>
+  <p class="hero-sub" style="font-family:var(--if-body); font-weight:400; font-size:clamp(1rem, 2vw, 1.25rem); color:rgba(255,255,255,.85); max-width:620px; line-height:1.56;">Three companies. Two years of accounts. A single model that connects the balance sheet, income statement and cash flow without leaving Power BI.</p>
+  <div class="hero-stat-row">
+    <div class="hero-stat">
+      <div class="hero-stat-value" style="font-size:clamp(1.6rem, 3.4vw, 2.4rem); color:rgba(255,255,255,.6);">−€1,165,650</div>
+      <div class="hero-stat-label">Free cash flow previous year</div>
+    </div>
+    <div class="hero-stat-arrow">→</div>
+    <div class="hero-stat">
+      <div class="hero-stat-value" style="font-size:clamp(2rem, 4.2vw, 3rem); color:var(--if-nude);">€678,209</div>
+      <div class="hero-stat-label">Free cash flow 2023</div>
+    </div>
+  </div>
+  <p class="hero-scroll">
+    <span class="hero-scroll-circle">↓</span>
+    Discover the project
+  </p>
+</section>
+
+<!-- MARQUEE -->
+<div class="if-marquee" aria-hidden="true">
+  <div class="if-marquee-track">
+    <span>Balance sheet</span><span>P&L</span><span>Cash flow</span><span>Drill-through</span><span>EBITDA</span><span>DAX</span>
+    <span>Balance sheet</span><span>P&L</span><span>Cash flow</span><span>Drill-through</span><span>EBITDA</span><span>DAX</span>
+  </div>
+</div>
+
+<!-- S2 · ¿QUÉ ES UN INFORME FINANCIERO? -->
+<section id="que-es" data-screen-label="Qué es un informe financiero">
+  <div class="if-wrap">
+    <p class="if-tag reveal">Before we start</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.2rem; max-width:900px;">What is a financial report?</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:2.4rem;">If you’ve never worked with accounting, think of it as three different questions about the same company.</p>
+    <div class="kpi-grid-3 reveal reveal-delay-2" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1.2rem;">
+      <div class="if-card" style="border:1px solid var(--if-border); padding:1.8rem 1.8rem;">
+        <p style="font-family:var(--if-display); font-size:1.4rem; color:var(--if-cobalt); margin-bottom:.2rem;">Balance sheet</p>
+        <p style="font-size:.78rem; color:var(--if-muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:1.1rem;">It’s a snapshot</p>
+        <blockquote class="if-quote" style="font-size:1rem; margin:0 0 1rem;">What does the company own and owe today?</blockquote>
+        <p style="font-size:.88rem; line-height:1.55;">This is where assets such as cash or stock appear, along with debts and equity.</p>
+      </div>
+      <div class="if-card" style="border:1px solid var(--if-border); padding:1.8rem 1.8rem;">
+        <p style="font-family:var(--if-display); font-size:1.4rem; color:var(--if-cobalt); margin-bottom:.2rem;">Income statement (P&L)</p>
+        <p style="font-size:.78rem; color:var(--if-muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:1.1rem;">It’s a film</p>
+        <blockquote class="if-quote" style="font-size:1rem; margin:0 0 1rem;">How has it made or lost money during the year?</blockquote>
+        <p style="font-size:.88rem; line-height:1.55;">This is where revenue, expenses, EBITDA and profit appear.</p>
+      </div>
+      <div class="if-card" style="border:1px solid var(--if-border); padding:1.8rem 1.8rem;">
+        <p style="font-family:var(--if-display); font-size:1.4rem; color:var(--if-cobalt); margin-bottom:.2rem;">Cash flow</p>
+        <p style="font-size:.78rem; color:var(--if-muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:1.1rem;">It answers another question</p>
+        <blockquote class="if-quote" style="font-size:1rem; margin:0 0 1rem;">Has money come into or gone out of the till?</blockquote>
+        <p style="font-size:.88rem; line-height:1.55;">Because a company can make a profit and still run out of cash.</p>
+      </div>
+    </div>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-top:2.4rem;">The challenge is that these three pieces should tell the same story. And that’s exactly what I tried to build.</p>
+  </div>
+</section>
+
+<!-- S3 · EL RETO -->
+<section id="problema" data-screen-label="El reto">
+  <div class="if-wrap">
+    <p class="if-tag reveal">The challenge</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">When each company tells a different story.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.2rem;">The data already existed. There were three different companies, each with its own journal, and together they had built up <strong>216,858 entries</strong> across 2022 and 2023.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.2rem;">The problem came when you wanted to answer something as simple as:</p>
+    <blockquote class="if-quote reveal reveal-delay-2">How is the group really doing?</blockquote>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.2rem;">The balance sheet, P&L and cash flow could be viewed separately, but there was no consolidated view that let you move between them without rebuilding the analysis by hand.</p>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:760px; line-height:1.6;">The more versions of the same report there are, the easier it is for two people to reach different conclusions from supposedly identical data. My aim was to prevent exactly that.</p>
+  </div>
+</section>
+
+<!-- S4 · LA IDEA QUE CAMBIÓ EL PROYECTO -->
+<section id="idea" data-screen-label="La idea que cambió el proyecto">
+  <div class="if-wrap">
+    <p class="if-tag reveal">The idea that changed the project</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">I wanted every KPI to be able to stand on its own.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.2rem;">While designing the model, I asked myself a question.</p>
+    <blockquote class="if-quote reveal reveal-delay-1">What happens if someone asks me where this number comes from?</blockquote>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:.3rem;">I didn’t want to answer by opening Excel.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.4rem;">I wanted to answer with a click.</p>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:.6rem;">That’s why the whole report revolves around a very simple idea.</p>
+    <p class="reveal reveal-delay-3" style="font-size:1.2rem; max-width:760px; line-height:1.5; margin-bottom:1.4rem;"><strong>Every figure should be traceable down to the entry that created it.</strong></p>
+    <p class="reveal reveal-delay-4" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.2rem;">That principle ended up shaping almost every decision in the project.</p>
+    <p class="reveal reveal-delay-4" style="font-size:1.05rem; max-width:760px; line-height:1.6;">Today that path really exists: from the trial balance — €187,730,234.71 of debits matching exactly €187,730,234.71 of credits — I can drill down to a sub-account, from there to its general ledger, and from there to a specific entry. Without leaving the report.</p>
+  </div>
+</section>
+
+<!-- S5 · CÓMO LO CONSTRUÍ -->
+<section id="enfoque" data-screen-label="Cómo lo construí">
+  <div class="if-wrap">
+    <p class="if-tag reveal">How I built it</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">I started with the model, not the charts.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:800px; line-height:1.6; margin-bottom:.3rem;">Many dashboards start by designing visuals.</p>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:800px; line-height:1.6; margin-bottom:1.4rem;">I did exactly the opposite.</p>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:800px; line-height:1.6; margin-bottom:2.2rem;">First I built a model able to support three different financial statements without duplicating logic or breaking calculations.</p>
+    <div class="kpi-grid-3 reveal reveal-delay-2" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:0; border:1px solid var(--if-border); border-left:none; margin-bottom:2.2rem;">
+      <div style="text-align:center; padding:2rem 1rem; border-left:1px solid var(--if-border);">
+        <span style="font-family:var(--if-display); font-size:clamp(2rem, 3.5vw, 2.8rem); color:var(--if-cobalt); line-height:1;" data-count="19">0</span>
+        <p style="font-size:.82rem; color:var(--if-muted); margin-top:.4rem;">tables</p>
+      </div>
+      <div style="text-align:center; padding:2rem 1rem; border-left:1px solid var(--if-border);">
+        <span style="font-family:var(--if-display); font-size:clamp(2rem, 3.5vw, 2.8rem); color:var(--if-cobalt); line-height:1;" data-count="15">0</span>
+        <p style="font-size:.82rem; color:var(--if-muted); margin-top:.4rem;">relationships</p>
+      </div>
+      <div style="text-align:center; padding:2rem 1rem; border-left:1px solid var(--if-border);">
+        <span style="font-family:var(--if-display); font-size:clamp(2rem, 3.5vw, 2.8rem); color:var(--if-cobalt); line-height:1;" data-count="174">0</span>
+        <p style="font-size:.82rem; color:var(--if-muted); margin-top:.4rem;">DAX measures</p>
+      </div>
+    </div>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:800px; line-height:1.6; margin-bottom:1.4rem;">At the centre are <strong>FactDiario</strong>, with the actual journal entries, and <strong>FactPresupuesto</strong>, with the budget data. Both connect to the same nine dimensions: Calendar, Companies, Sources, Accounts, Partners, and the four that give shape to each financial statement — dimPyG, dimBalance, dimCF and DimApuntes.</p>
+    <blockquote class="if-quote reveal reveal-delay-4">The model’s only bidirectional relationship connects FactDiario with DimApuntes. I left it that way because it was needed to calculate cash flow correctly when filtering by entry type. Everything else keeps a single filter direction, so the model behaves more predictably.</blockquote>
+  </div>
+</section>
+
+<!-- S6 · UNA DECISIÓN QUE ME AHORRÓ MUCHOS PROBLEMAS -->
+<section id="modelo" data-screen-label="Una decisión que me ahorró muchos problemas">
+  <div class="if-wrap">
+    <p class="if-tag reveal">A decision that saved me a lot of trouble</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Keeping actual and budget separate.</h2>
+    <div class="grid-2col reveal reveal-delay-1" style="display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:start;">
+      <div>
+        <p style="font-size:1rem; line-height:1.6; margin-bottom:1.2rem;">During the build I found that trying to mix both scenarios in a single table made the calculations much more complicated. Separating them meant any comparison worked exactly the same way throughout the report.</p>
+        <p style="font-size:1rem; line-height:1.6; margin-bottom:1.2rem;">FactDiario and FactPresupuesto share the same dimensions, so the budget variance reuses the same filter context as any other measure — and so does the year-end projection. No duplicated logic anywhere in the model.</p>
+        <p style="font-size:1rem; line-height:1.6;">This separation is what makes it possible to compare actual vs budget at any level, from the group total down to a single company, without breaking consistency between the balance sheet, P&L and cash flow.</p>
+      </div>
+      <div style="border:1px solid var(--if-border); padding:2rem;">
+        <p style="font-family:var(--if-body); font-size:.72rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--if-muted); margin-bottom:1rem;">Schema</p>
+        <div style="display:flex; flex-direction:column; gap:.6rem; font-size:.88rem;">
+          <div style="background:var(--if-cobalt); color:#fff; padding:.7rem 1rem; font-family:var(--if-display); font-size:1.1rem;">FactDiario · FactPresupuesto</div>
+          <div style="padding-left:1rem; display:flex; flex-direction:column; gap:.4rem;">
+            <span>↳ Calendario</span>
+            <span>↳ Empresas</span>
+            <span>↳ Orígenes</span>
+            <span>↳ CuentasContables</span>
+            <span>↳ Partners</span>
+            <span>↳ dimPyG <em style="color:var(--if-cobalt); font-style:normal;">(hierarchy)</em></span>
+            <span>↳ dimBalance <em style="color:var(--if-cobalt); font-style:normal;">(hierarchy)</em></span>
+            <span>↳ dimCF <em style="color:var(--if-cobalt); font-style:normal;">(hierarchy)</em></span>
+            <span>↳ DimApuntes <em style="color:var(--if-cobalt); font-style:normal;">(hierarchy)</em></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S7 · EL PEQUEÑO DETALLE QUE HACE QUE EL INFORME SEA MÁS FIABLE -->
+<section id="checklist" data-screen-label="El checklist de validación">
+  <div class="if-wrap">
+    <p class="if-tag reveal">The small detail that makes the report more reliable</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">The validation checklist.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:.3rem;">There’s one page that usually goes unnoticed.</p>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.4rem;">And yet it’s one of my favourites.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1rem;">Before analysing results, the model automatically checks whether there are:</p>
+    <ul class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:760px; line-height:1.9; margin-bottom:1.4rem; padding-left:1.3rem;">
+      <li>unclassified accounts,</li>
+      <li>unbalanced entries,</li>
+      <li>mapping problems.</li>
+    </ul>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.2rem;">The <strong>Unclassified accounts</strong> table is recalculated on every refresh. That means the report itself tries to catch errors before they show up as if they were real results.</p>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.2rem;">It seemed more useful to build that safeguard into the model than to rely on manual reviews afterwards.</p>
+    <p class="reveal reveal-delay-4" style="font-size:1.05rem; max-width:760px; line-height:1.6;">With the three years of data loaded, the checklist now comes out clean: zero unbalanced entries, zero unclassified accounts. It’s the first screen I look at before trusting any figure in the rest of the report.</p>
+  </div>
+</section>
+
+<!-- S8 · LA PARTE MÁS DIFÍCIL -->
+<section id="proyeccion" data-screen-label="La parte más difícil">
+  <div class="if-wrap">
+    <p class="if-tag reveal">The hardest part</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Projecting a year end without inventing the data.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.4rem;">The measure that took me longest was probably the year-end projection.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:.3rem;">Up to October I use actual data.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.4rem;">From there on, I use the budget.</p>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.2rem;">But doing it without breaking charts or tables was far more complicated. There’s a configurable cut-off date in the model — set to <strong>31 October 2023</strong> — after which every measure automatically switches from actual data to budget, and the chart series stays visually continuous instead of leaving a gap between actual and projected.</p>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.2rem;">The result, month by month: <strong>€309,284.99</strong> of actuals accumulated up to the cut-off, against the <strong>€173,511.68</strong> the original budget expected for the whole year. The combined year-end projection comes to <strong>€196,404.62</strong> — neither the actual nor the budgeted figure, but the best estimate with the information available at each point.</p>
+    <blockquote class="if-quote reveal reveal-delay-4">That was probably when I learnt the most about DAX during this project.</blockquote>
+  </div>
+</section>
+
+<!-- S9 · LO QUE CUENTA EL DASHBOARD -->
+<section id="dashboard" data-screen-label="Lo que cuenta el dashboard">
+  <div class="if-wrap">
+    <p class="if-tag reveal">What the dashboard tells you</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Thirteen content pages. Seven that only appear when you need them.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:800px; line-height:1.6; margin-bottom:1.2rem;">The report has 20 pages in total. You navigate from a fixed header with five entry points — <strong>Home · Checklist · Trial balance · Balance sheet · P&L · Cash flow</strong> — but each block hides its own path into the detail.</p>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:800px; line-height:1.6; margin-bottom:1.4rem;">Each block answers a different question.</p>
+    <ul class="reveal reveal-delay-1" style="font-size:1rem; max-width:800px; line-height:1.9; margin-bottom:1.4rem; padding-left:1.3rem;">
+      <li><strong>Home</strong> → a panel with 12 KPIs that sums up the situation in seconds.</li>
+      <li><strong>Checklist</strong> → can I trust the data before analysing it?</li>
+      <li><strong>Trial balance</strong> → its own three-page block: from the aggregated account to the individual entry (Trial balance → General ledger → Entry detail).</li>
+      <li><strong>Balance sheet</strong> → financial structure and how it evolves, with a second page for the month-by-month detail.</li>
+      <li><strong>P&L</strong> → four views: quarterly trend, year-on-year comparison, variance against budget and year-end projection.</li>
+      <li><strong>Cash flow</strong> → where the group’s cash comes from and where it goes.</li>
+    </ul>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:800px; line-height:1.6; margin-bottom:2.4rem;">The other 7 pages don’t appear in any menu: they’re tooltip pages, which Power BI shows floating when I hover over a point on the balance sheet, P&L or treasury trend charts. Instead of the basic tooltip, a mini-page appears with the figure properly formatted and the same visual identity as the rest of the report. Most reports use one or two pages like this; I used seven, one for each chart that needed it.</p>
+    <p class="reveal reveal-delay-2" style="font-size:.92rem; color:var(--if-muted); max-width:800px; line-height:1.6; margin-bottom:2.4rem;">These are some of the 12 KPIs on the home panel:</p>
+    <div class="kpi-grid-3 reveal reveal-delay-2" style="display:grid; grid-template-columns:repeat(5, 1fr); gap:0; border:1px solid var(--if-border); border-left:none; margin-bottom:2.5rem;">
+      <div style="text-align:center; padding:1.4rem .8rem; border-left:1px solid var(--if-border);">
+        <span style="display:block; font-family:var(--if-display); font-size:clamp(1.2rem, 2.2vw, 1.6rem); color:var(--if-cobalt); line-height:1;">€342,142</span>
+        <p style="font-size:.72rem; color:var(--if-muted); margin-top:.4rem; text-transform:uppercase; letter-spacing:.04em;">EBITDA 2023</p>
+      </div>
+      <div style="text-align:center; padding:1.4rem .8rem; border-left:1px solid var(--if-border);">
+        <span style="display:block; font-family:var(--if-display); font-size:clamp(1.2rem, 2.2vw, 1.6rem); color:var(--if-cobalt); line-height:1;">12.70%</span>
+        <p style="font-size:.72rem; color:var(--if-muted); margin-top:.4rem; text-transform:uppercase; letter-spacing:.04em;">ROE</p>
+      </div>
+      <div style="text-align:center; padding:1.4rem .8rem; border-left:1px solid var(--if-border);">
+        <span style="display:block; font-family:var(--if-display); font-size:clamp(1.2rem, 2.2vw, 1.6rem); color:var(--if-cobalt); line-height:1;">6.94%</span>
+        <p style="font-size:.72rem; color:var(--if-muted); margin-top:.4rem; text-transform:uppercase; letter-spacing:.04em;">ROA</p>
+      </div>
+      <div style="text-align:center; padding:1.4rem .8rem; border-left:1px solid var(--if-border);">
+        <span style="display:block; font-family:var(--if-display); font-size:clamp(1.2rem, 2.2vw, 1.6rem); color:var(--if-cobalt); line-height:1;">2,07</span>
+        <p style="font-size:.72rem; color:var(--if-muted); margin-top:.4rem; text-transform:uppercase; letter-spacing:.04em;">Solvency</p>
+      </div>
+      <div style="text-align:center; padding:1.4rem .8rem; border-left:1px solid var(--if-border);">
+        <span style="display:block; font-family:var(--if-display); font-size:clamp(1.2rem, 2.2vw, 1.6rem); color:var(--if-cobalt); line-height:1;">1,88</span>
+        <p style="font-size:.72rem; color:var(--if-muted); margin-top:.4rem; text-transform:uppercase; letter-spacing:.04em;">Acid test</p>
+      </div>
+    </div>
+    <div class="dash-layout" style="display:flex; flex-direction:column; gap:1.75rem; margin-bottom:1.5rem;">
+      <picture class="reveal reveal-delay-2"><source srcset="../img/financiero-1.webp" type="image/webp"><img width="1261" height="690" loading="lazy" src="../img/financiero-1.png" alt="Complete financial report dashboard — view 1" style="width:100%; border:1px solid var(--if-border); height:auto;"></picture>
+      <picture class="reveal reveal-delay-3"><source srcset="../img/financiero-2.webp" type="image/webp"><img width="1260" height="693" loading="lazy" src="../img/financiero-2.png" alt="Complete financial report dashboard — view 2" style="width:100%; border:1px solid var(--if-border); height:auto;"></picture>
+      <picture class="reveal reveal-delay-4"><source srcset="../img/financiero-3.webp" type="image/webp"><img width="1260" height="660" loading="lazy" src="../img/financiero-3.png" alt="Complete financial report dashboard — view 3" style="width:100%; border:1px solid var(--if-border); height:auto;"></picture>
+    </div>
+    <div class="reveal reveal-delay-4">
+      <a href="https://app.powerbi.com/view?r=eyJrIjoiNDgzZjBmY2MtMDhhMy00MGIzLTlmYmItODlkMmY2NDg3ZDdmIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=a961ceadc15fe4dcfcfb" class="if-cta" target="_blank" rel="noopener" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Informe Financiero Completo',location:'informe_financiero_dashboard'});">View the interactive dashboard</a>
+      <span style="margin-left:1rem; font-size:.85rem; color:var(--if-muted);">Power BI · DAX · Drill-through · Accounting modelling</span>
+    </div>
+  </div>
+</section>
+
+<!-- S10 · EL DATO QUE MEJOR RESUME EL PROYECTO -->
+<section data-screen-label="El dato que mejor resume el proyecto" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:5rem 2rem; background:var(--if-cobalt);">
+  <p class="if-tag if-tag-onblue reveal">The figure that best sums up the project</p>
+  <p class="reveal" style="font-family:var(--if-display); font-size:clamp(1.6rem, 3.6vw, 2.2rem); line-height:1.2; color:#fff; max-width:760px; margin-bottom:2rem; text-transform:uppercase;">Cash changed completely from one year to the next.</p>
+  <p class="reveal reveal-delay-1 impacto-text" style="font-family:var(--if-display); font-size:clamp(2rem, 5vw, 3.6rem); line-height:1.1; max-width:1000px; margin-left:auto; margin-right:auto; text-align:center; margin-bottom:2rem; text-transform:uppercase;"><span style="color:rgba(255,255,255,.55);">−€1,165,650 — </span><span style="color:var(--if-nude);">€678,209</span></p>
+  <div style="max-width:700px; display:flex; flex-direction:column; gap:1.1rem;">
+    <blockquote class="if-quote if-quote-onblue reveal reveal-delay-2" style="text-align:left; font-size:clamp(1rem, 1.8vw, 1.15rem);">What mattered wasn’t the figure itself. What mattered was being able to explain which items made up that result without redoing the analysis from scratch.</blockquote>
+    <blockquote class="if-quote if-quote-onblue reveal reveal-delay-3" style="text-align:left; font-size:clamp(1rem, 1.8vw, 1.15rem);">That change was the moment I felt the balance sheet, P&L and cash flow stopped being three separate reports and became a single story.</blockquote>
+  </div>
+</section>
+
+<!-- S11 · HERRAMIENTAS -->
+<section id="stack" data-screen-label="Herramientas">
+  <div class="if-wrap" style="text-align:center;">
+    <p class="if-tag reveal">Tools</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.2rem;">Tech stack</h2>
+    <div class="tools-grid-6 reveal reveal-delay-1" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:0; text-align:left; border:1px solid var(--if-border); border-left:none; border-bottom:none;">
+      <div style="border-left:1px solid var(--if-border); border-bottom:1px solid var(--if-border); padding:1.4rem 1.5rem;">
+        <p style="font-family:var(--if-display); font-size:1.2rem; color:var(--if-cobalt); margin-bottom:.4rem;">Power BI</p>
+        <p style="font-size:.85rem; color:var(--if-muted); line-height:1.5;">The complete model, navigation across the report’s 20 pages (13 content pages, 7 tooltip pages) and drill-through from any KPI down to the source journal entry.</p>
+      </div>
+      <div style="border-left:1px solid var(--if-border); border-bottom:1px solid var(--if-border); padding:1.4rem 1.5rem;">
+        <p style="font-family:var(--if-display); font-size:1.2rem; color:var(--if-cobalt); margin-bottom:.4rem;">DAX</p>
+        <p style="font-size:.85rem; color:var(--if-muted); line-height:1.5;">Solvency and liquidity ratios, EBITDA calculations, year-on-year change, variance against budget and the year-end projection logic.</p>
+      </div>
+      <div style="border-left:1px solid var(--if-border); border-bottom:1px solid var(--if-border); padding:1.4rem 1.5rem;">
+        <p style="font-family:var(--if-display); font-size:1.2rem; color:var(--if-cobalt); margin-bottom:.4rem;">Accounting star schema</p>
+        <p style="font-size:.85rem; color:var(--if-muted); line-height:1.5;">19 tables and 15 relationships: FactDiario and FactPresupuesto connected to nine shared and hierarchy dimensions.</p>
+      </div>
+      <div style="border-left:1px solid var(--if-border); border-bottom:1px solid var(--if-border); padding:1.4rem 1.5rem;">
+        <p style="font-family:var(--if-display); font-size:1.2rem; color:var(--if-cobalt); margin-bottom:.4rem;">Drill-through</p>
+        <p style="font-size:.85rem; color:var(--if-muted); line-height:1.5;">Navigation from any high-level KPI down to the individual journal entry that creates it.</p>
+      </div>
+      <div style="border-left:1px solid var(--if-border); border-bottom:1px solid var(--if-border); padding:1.4rem 1.5rem;">
+        <p style="font-family:var(--if-display); font-size:1.2rem; color:var(--if-cobalt); margin-bottom:.4rem;">Validation checklist</p>
+        <p style="font-size:.85rem; color:var(--if-muted); line-height:1.5;">Catches unbalanced entries and unclassified accounts before they reach the analysis.</p>
+      </div>
+      <div style="border-left:1px solid var(--if-border); border-bottom:1px solid var(--if-border); padding:1.4rem 1.5rem;">
+        <p style="font-family:var(--if-display); font-size:1.2rem; color:var(--if-cobalt); margin-bottom:.4rem;">Year-end projection</p>
+        <p style="font-size:.85rem; color:var(--if-muted); line-height:1.5;">Extrapolates the expected result at year end, combining actual data up to the cut-off date.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S12 · QUÉ APRENDÍ -->
+<section id="aprendizaje" data-screen-label="Qué aprendí">
+  <div class="if-wrap">
+    <p class="if-tag reveal">What I learnt</p>
+    <h2 class="reveal" style="font-size:clamp(1.8rem, 4vw, 2.6rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">The best dashboard starts long before the dashboard.</h2>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:.3rem;">If I had to sum up what I learnt from this project, I wouldn’t talk about the 174 DAX measures.</p>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.4rem;">I’d talk about the model.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:.3rem;">I learnt that a good dashboard doesn’t depend only on visual design.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; max-width:760px; line-height:1.6; margin-bottom:1.4rem;">It depends on every figure making sense, being checkable and staying consistent when you change company, period or financial statement.</p>
+    <p class="reveal reveal-delay-3" style="font-size:1.05rem; max-width:760px; line-height:1.6;">That change of mindset is probably the most valuable thing I take away from this project.</p>
+  </div>
+</section>
+
+<!-- S13 · CIERRE -->
+<section data-screen-label="Cierre" style="text-align:center; padding:5rem 2rem 6rem; background:var(--if-cobalt);">
+  <div class="if-wrap reveal">
+    <p class="if-tag if-tag-onblue reveal">Wrapping up</p>
+    <p class="reveal cta-closing" style="font-family:var(--if-display); font-size:clamp(1.6rem, 3.6vw, 2.4rem); line-height:1.15; color:#fff; max-width:820px; margin:0 auto 1.6rem; text-wrap:balance; text-transform:uppercase;">From thousands of accounting movements to a single financial story.</p>
+    <div style="max-width:640px; margin:0 auto 3rem; display:flex; flex-direction:column; gap:.9rem;">
+      <p class="reveal reveal-delay-1" style="font-size:1.02rem; color:rgba(255,255,255,.85); line-height:1.6;">This project let me bring together several things I’m particularly interested in: data modelling, DAX, visualisation and business analysis.</p>
+      <p class="reveal reveal-delay-2" style="font-size:1.02rem; color:rgba(255,255,255,.85); line-height:1.6;">The result is a report that tries to do something very simple to say and much harder to build.</p>
+      <p class="reveal reveal-delay-3" style="font-size:1.02rem; color:#fff; line-height:1.6; font-weight:500;">Any figure can be explained without leaving the dashboard.</p>
+    </div>
+    <div class="reveal reveal-delay-4" style="display:flex; flex-wrap:wrap; justify-content:center; gap:2rem;">
+      <div>
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiNDgzZjBmY2MtMDhhMy00MGIzLTlmYmItODlkMmY2NDg3ZDdmIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=a961ceadc15fe4dcfcfb" class="if-cta if-cta-onblue" target="_blank" rel="noopener" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Informe Financiero Completo',location:'informe_financiero_cta'});">Open the dashboard in Power BI</a>
+        <p style="margin-top:1rem; font-size:.85rem; color:rgba(255,255,255,.75);">Interactive dashboard published in the Power BI Service</p>
+      </div>
+      <div>
+        <a href="./projects.html" class="if-cta if-cta-onblue if-cta-ghost">See the rest of the projects</a>
+        <p style="margin-top:1rem; font-size:.85rem; color:rgba(255,255,255,.75);">Full Power BI portfolio</p>
+      </div>
+    </div>
+  </div>
+</section>
+</x-dc>
+
+<footer style="background:var(--if-deep); color:rgba(255,255,255,.85); padding:4rem 2rem 2rem;">
+  <div class="if-wrap">
+    <div class="if-foot-grid" style="display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:2.5rem; padding-bottom:2.5rem; border-bottom:1px solid rgba(255,255,255,.15);">
+      <div>
+        <p style="font-family:var(--if-display); font-size:1.6rem; color:#fff; margin-bottom:.6rem;">Borja Mora.</p>
+        <p style="font-size:.85rem; color:rgba(255,255,255,.6); line-height:1.5;">Junior Data Analyst</p>
+        <p style="font-size:.8rem; color:rgba(255,255,255,.6); margin-top:.9rem;">Madrid, Spain</p>
+      </div>
+      <div>
+        <p class="if-foot-title">Navigation</p>
+        <a href="./index.html" class="if-foot-link">Home</a>
+        <a href="./about.html" class="if-foot-link">About me</a>
+        <a href="./projects.html" class="if-foot-link">Power BI</a>
+        <a href="./data-analysis.html" class="if-foot-link">Analysis</a>
+        <a href="./data-visualisation.html" class="if-foot-link">Visualisation</a>
+        <a href="./downloads.html" class="if-foot-link">Downloads</a>
+      </div>
+      <div>
+        <p class="if-foot-title">This project</p>
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiNDgzZjBmY2MtMDhhMy00MGIzLTlmYmItODlkMmY2NDg3ZDdmIiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=a961ceadc15fe4dcfcfb" target="_blank" rel="noopener" class="if-foot-link" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Informe Financiero Completo',location:'informe_financiero_footer'});">Power BI dashboard</a>
+      </div>
+      <div>
+        <p class="if-foot-title">Follow me</p>
+        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener" class="if-foot-link" onclick="gtag('event','clic_linkedin',{location:'informe_financiero_footer'});">LinkedIn</a>
+        <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener" class="if-foot-link" onclick="gtag('event','clic_github',{location:'informe_financiero_footer'});">GitHub</a>
+      </div>
+    </div>
+    <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:.8rem; padding-top:1.6rem; font-size:.78rem; color:rgba(255,255,255,.55);">
+      <span>© 2026 Borja Mora Méndez · All rights reserved</span>
+      <span>Designed and built by me</span>
+    </div>
+  </div>
+</footer>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() {
+    this.initReveal();
+    this.initCounters();
+  }
+  componentDidUpdate() {
+    this.initReveal();
+    this.initCounters();
+  }
+  initReveal() {
+    const root = this.rootEl || document;
+    const els = root.querySelectorAll('.reveal:not(.visible)');
+    if (!els.length) return;
+    if (!this._revealObs) {
+      this._revealObs = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+    }
+    els.forEach(el => this._revealObs.observe(el));
+  }
+  initCounters() {
+    const root = this.rootEl || document;
+    const els = root.querySelectorAll('[data-count]');
+    if (!els.length) return;
+    if (this._kpiObs) return;
+    this._kpiObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !entry.target._animating) {
+          this.animateCounter(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    els.forEach(el => this._kpiObs.observe(el));
+  }
+  animateCounter(el) {
+    const target = parseFloat(el.dataset.count);
+    const decimals = parseInt(el.dataset.decimals) || 0;
+    const format = el.dataset.format;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      el.textContent = format === 'thousands'
+        ? Math.round(target).toLocaleString('en-GB')
+        : decimals > 0
+          ? target.toFixed(decimals)
+          : Math.round(target);
+      return;
+    }
+    const duration = 1800;
+    const start = performance.now();
+    el._animating = true;
+    function step(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      const current = target * ease;
+      if (format === 'thousands') {
+        el.textContent = Math.round(current).toLocaleString('en-GB');
+      } else if (decimals > 0) {
+        el.textContent = current.toFixed(decimals);
+      } else {
+        el.textContent = Math.round(current);
+      }
+      if (progress < 1) requestAnimationFrame(step);
+      else el._animating = false;
+    }
+    requestAnimationFrame(step);
+  }
+  renderVals() { return {}; }
+}
+</script>
+
+<!-- ── Cookie banner HTML + lógica (RGPD/LOPDGDD) ── -->
+<div id="bm-cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie notice">
+  <p><strong>Analytics cookies.</strong> I use Google Analytics to understand how this site is used. No advertising or third-party tracking. <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Privacy policy</a>.</p>
+  <div class="bm-cb-btns">
+    <button class="bm-cb-btn bm-cb-reject" id="bm-cb-reject" aria-label="Reject cookies">Reject</button>
+    <button class="bm-cb-btn bm-cb-accept" id="bm-cb-accept" aria-label="Accept cookies">Accept</button>
+  </div>
+</div>
+<script>
+(function () {
+  var KEY = "bm_cookie_consent";
+  var banner = document.getElementById("bm-cookie-banner");
+  if (!banner) return;
+
+  function dismiss() {
+    banner.classList.remove("bm-visible");
+    banner.classList.add("bm-hiding");
+    setTimeout(function () {
+      banner.style.display = "none";
+    }, 380);
+  }
+
+  function grantAnalytics() {
+    if (typeof gtag === "function") {
+      gtag("consent", "update", { analytics_storage: "granted" });
+    }
+  }
+
+  /* Solo mostrar si no hay decisión previa */
+  if (!localStorage.getItem(KEY)) {
+    /* Pequeño delay para que la animación sea visible */
+    setTimeout(function () {
+      banner.classList.add("bm-visible");
+    }, 600);
+  } else if (localStorage.getItem(KEY) === "accepted") {
+    grantAnalytics();
+    banner.style.display = "none";
+  } else {
+    banner.style.display = "none";
+  }
+
+  document.getElementById("bm-cb-accept").addEventListener("click", function () {
+    localStorage.setItem(KEY, "accepted");
+    grantAnalytics();
+    dismiss();
+  });
+
+  document.getElementById("bm-cb-reject").addEventListener("click", function () {
+    localStorage.setItem(KEY, "rejected");
+    dismiss();
+  });
+})();
+</script>
+
+<!-- ── Scroll depth (25/50/75/90/100%) ── -->
+<script>
+(function () {
+  var thresholds = [25, 50, 75, 90, 100];
+  var fired = {};
+  var ticking = false;
+  function check() {
+    ticking = false;
+    var doc = document.documentElement;
+    var fullHeight = Math.max(doc.scrollHeight, doc.offsetHeight, document.body.scrollHeight, document.body.offsetHeight);
+    var scrollable = fullHeight - window.innerHeight;
+    if (scrollable <= 0) return;
+    var pct = Math.round((window.scrollY / scrollable) * 100);
+    thresholds.forEach(function (t) {
+      if (pct >= t && !fired[t]) {
+        fired[t] = true;
+        if (typeof gtag === 'function') {
+          gtag('event', 'scroll_' + t, { percent_scrolled: t, location: 'informe_financiero' });
+        }
+      }
+    });
+  }
+  window.addEventListener('scroll', function () {
+    if (!ticking) { window.requestAnimationFrame(check); ticking = true; }
+  }, { passive: true });
+})();
+</script>
+</body>
+</html>

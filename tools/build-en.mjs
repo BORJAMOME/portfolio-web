@@ -5,7 +5,7 @@
    traducción (inglés británico) y escribe la página en en/.
 
      node tools/build-en.mjs                    → todas las páginas
-     node tools/build-en.mjs index              → solo una (index · sobre-mi · descargas · casa-origen · data-storytelling)
+     node tools/build-en.mjs index              → solo una (index · sobre-mi · descargas · power-bi · analisis-datos · visualizacion-datos · casa-origen · ibcs-ventas · kosta-calida · social-media · informe-financiero · perdidas-ganancias · airbnb-pais-vasco · rfm-hosteleria · data-storytelling)
      node tools/build-en.mjs index --missing    → además guarda las frases sin traducir
 
    · Cada página tiene su diccionario (ver PAGES):
@@ -25,7 +25,17 @@ import { dirname, join } from 'node:path';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const PAGES = {
   index: { src: 'index.html', out: 'en/index.html', dict: 'i18n/index.en.json', missing: 'i18n/index.en.missing.json' },
+  'ibcs-ventas': { src: 'ibcs-ventas.html', out: 'en/ibcs-ventas.html', dict: 'i18n/ibcs-ventas.en.json', missing: 'i18n/ibcs-ventas.en.missing.json' },
+  'kosta-calida': { src: 'kosta-calida.html', out: 'en/kosta-calida.html', dict: 'i18n/kosta-calida.en.json', missing: 'i18n/kosta-calida.en.missing.json' },
+  'social-media': { src: 'social-media.html', out: 'en/social-media.html', dict: 'i18n/social-media.en.json', missing: 'i18n/social-media.en.missing.json' },
+  'informe-financiero': { src: 'informe-financiero.html', out: 'en/informe-financiero.html', dict: 'i18n/informe-financiero.en.json', missing: 'i18n/informe-financiero.en.missing.json' },
+  'perdidas-ganancias': { src: 'perdidas-ganancias.html', out: 'en/perdidas-ganancias.html', dict: 'i18n/perdidas-ganancias.en.json', missing: 'i18n/perdidas-ganancias.en.missing.json' },
+  'airbnb-pais-vasco': { src: 'airbnb-pais-vasco.html', out: 'en/airbnb-pais-vasco.html', dict: 'i18n/airbnb-pais-vasco.en.json', missing: 'i18n/airbnb-pais-vasco.en.missing.json' },
+  'rfm-hosteleria': { src: 'rfm-hosteleria.html', out: 'en/rfm-hosteleria.html', dict: 'i18n/rfm-hosteleria.en.json', missing: 'i18n/rfm-hosteleria.en.missing.json' },
   'casa-origen': { src: 'casa-origen.html', out: 'en/casa-origen.html', dict: 'i18n/casa-origen.en.json', missing: 'i18n/casa-origen.en.missing.json' },
+  'analisis-datos': { src: 'analisis-datos.html', out: 'en/data-analysis.html', dict: 'i18n/analisis-datos.en.json', missing: 'i18n/analisis-datos.en.missing.json' },
+  'visualizacion-datos': { src: 'visualizacion-datos.html', out: 'en/data-visualisation.html', dict: 'i18n/visualizacion-datos.en.json', missing: 'i18n/visualizacion-datos.en.missing.json' },
+  'power-bi': { src: 'power-bi.html', out: 'en/projects.html', dict: 'i18n/power-bi.en.json', missing: 'i18n/power-bi.en.missing.json' },
   descargas: { src: 'descargas.html', out: 'en/downloads.html', dict: 'i18n/descargas.en.json', missing: 'i18n/descargas.en.missing.json' },
   'sobre-mi': { src: 'sobre-mi.html', out: 'en/about.html', dict: 'i18n/sobre-mi.en.json', missing: 'i18n/sobre-mi.en.missing.json' },
   'data-storytelling': {
@@ -35,7 +45,7 @@ const PAGES = {
   }
 };
 // páginas que ya existen en inglés: sus enlaces apuntan a la versión inglesa
-const EN_EXISTS = { 'index.html': 'index.html', 'sobre-mi.html': 'about.html', 'descargas.html': 'downloads.html', 'casa-origen.html': 'casa-origen.html', 'data-storytelling.html': 'data-storytelling.html' };
+const EN_EXISTS = { 'index.html': 'index.html', 'sobre-mi.html': 'about.html', 'descargas.html': 'downloads.html', 'casa-origen.html': 'casa-origen.html', 'ibcs-ventas.html': 'ibcs-ventas.html', 'kosta-calida.html': 'kosta-calida.html', 'social-media.html': 'social-media.html', 'informe-financiero.html': 'informe-financiero.html', 'perdidas-ganancias.html': 'perdidas-ganancias.html', 'airbnb-pais-vasco.html': 'airbnb-pais-vasco.html', 'rfm-hosteleria.html': 'rfm-hosteleria.html', 'power-bi.html': 'projects.html', 'analisis-datos.html': 'data-analysis.html', 'visualizacion-datos.html': 'data-visualisation.html', 'data-storytelling.html': 'data-storytelling.html' };
 
 const INLINE = new Set(['a', 'b', 'strong', 'em', 'i', 'span', 'small', 'code', 'br', 'sup', 'sub', 'abbr', 'kbd', 'mark', 'cite', 'q', 'u', 's', 'time', 'wbr']);
 const ATTRS = ['aria-label', 'alt', 'title', 'placeholder', 'data-v'];
@@ -106,6 +116,8 @@ function build(name, P, wantMissing) {
   let en = out.replace('<html lang="es"', '<html lang="en"')
     .replace(/\s(href|src|poster)="([^"]*)"/g, (m, a, v) => ` ${a}="${rel(v)}"`)
     .replace(/\ssrcset="([^"]*)"/g, (m, v) => ` srcset="${v.split(',').map((p) => p.trim().replace(/^\S+/, rel)).join(', ')}"`)
+    // rutas dentro de CSS (fondos: url('./img/…')), en <style> y en style=""
+    .replace(/url\((['"]?)\.\/([^)'"]+)\1\)/g, (m, q, u) => `url(${q}${rel('./' + u)}${q})`)
     // rutas dentro de scripts (window.location = './x.html', etc.)
     .replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, (blk) => blk.replace(/(['"])\.\/([\w-]+\.html)/g, (m, q, f) => q + rel('./' + f)));
 
