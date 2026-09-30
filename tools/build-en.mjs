@@ -5,7 +5,7 @@
    traducción (inglés británico) y escribe la página en en/.
 
      node tools/build-en.mjs                    → todas las páginas
-     node tools/build-en.mjs index              → solo una (index · sobre-mi · data-storytelling)
+     node tools/build-en.mjs index              → solo una (index · sobre-mi · descargas · casa-origen · data-storytelling)
      node tools/build-en.mjs index --missing    → además guarda las frases sin traducir
 
    · Cada página tiene su diccionario (ver PAGES):
@@ -25,6 +25,8 @@ import { dirname, join } from 'node:path';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const PAGES = {
   index: { src: 'index.html', out: 'en/index.html', dict: 'i18n/index.en.json', missing: 'i18n/index.en.missing.json' },
+  'casa-origen': { src: 'casa-origen.html', out: 'en/casa-origen.html', dict: 'i18n/casa-origen.en.json', missing: 'i18n/casa-origen.en.missing.json' },
+  descargas: { src: 'descargas.html', out: 'en/downloads.html', dict: 'i18n/descargas.en.json', missing: 'i18n/descargas.en.missing.json' },
   'sobre-mi': { src: 'sobre-mi.html', out: 'en/about.html', dict: 'i18n/sobre-mi.en.json', missing: 'i18n/sobre-mi.en.missing.json' },
   'data-storytelling': {
     src: 'data-storytelling.html', out: 'en/data-storytelling.html', dict: 'ds/i18n/en.page.json', missing: 'ds/i18n/en.missing.json',
@@ -33,7 +35,7 @@ const PAGES = {
   }
 };
 // páginas que ya existen en inglés: sus enlaces apuntan a la versión inglesa
-const EN_EXISTS = { 'index.html': 'index.html', 'sobre-mi.html': 'about.html', 'descargas.html': 'downloads.html', 'data-storytelling.html': 'data-storytelling.html' };
+const EN_EXISTS = { 'index.html': 'index.html', 'sobre-mi.html': 'about.html', 'descargas.html': 'downloads.html', 'casa-origen.html': 'casa-origen.html', 'data-storytelling.html': 'data-storytelling.html' };
 
 const INLINE = new Set(['a', 'b', 'strong', 'em', 'i', 'span', 'small', 'code', 'br', 'sup', 'sub', 'abbr', 'kbd', 'mark', 'cite', 'q', 'u', 's', 'time', 'wbr']);
 const ATTRS = ['aria-label', 'alt', 'title', 'placeholder', 'data-v'];
@@ -108,13 +110,30 @@ function build(name, P, wantMissing) {
     .replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, (blk) => blk.replace(/(['"])\.\/([\w-]+\.html)/g, (m, q, f) => q + rel('./' + f)));
 
   // selector de idioma: EN activo y ES como enlace a la página española
-  const TOGGLE = `<div class="ds-lang" role="group" aria-label="Language · Idioma">
-    <a href="../${P.src === 'index.html' ? 'index.html' : P.src}" class="ds-lang-b" hreflang="es" lang="es" data-lang-to="es" title="Leer en español" aria-label="Leer en español">ES</a>
+  //  (se conserva la etiqueta de apertura de cada página: alguna lleva su propio estilo en línea)
+  const INNER = `
+    <a href="../${P.src}" class="ds-lang-b" hreflang="es" lang="es" data-lang-to="es" title="Leer en español" aria-label="Leer en español">ES</a>
     <span class="ds-lang-a" aria-current="true" lang="en" title="English">EN</span>
   </div>`;
-  if (!/<div class="ds-lang"[\s\S]*?<\/div>/.test(en)) console.warn(`  · ${name}: no encuentro el selector de idioma`);
-  en = en.replace(/<div class="ds-lang"[\s\S]*?<\/div>/, TOGGLE);
+  const reT = /(<div class="ds-lang"[^>]*>)[\s\S]*?<\/div>/;
+  if (!reT.test(en)) console.warn(`  · ${name}: no encuentro el selector de idioma`);
+  en = en.replace(reT, (m, open) => open.replace(/aria-label="[^"]*"/, 'aria-label="Language · Idioma"') + INNER);
   if (P.script) en = en.replace(P.script.before, (m, v) => `<script src="${P.script.src}${v || ''}" defer></script>\n${m}`);
+
+  // cadenas literales dentro de <script> (datos de tarjetas, JSON-LD…): "texto" o 'texto' exactos
+  const JS = DICT.js || {}, jsUsed = new Set();
+  if (Object.keys(JS).length) {
+    en = en.replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, (blk) => blk.replace(/"((?:[^"\\\n]|\\.)*)"|'((?:[^'\\\n]|\\.)*)'/g, (m, d, s) => {
+      const v = d != null ? d : s;
+      if (!Object.prototype.hasOwnProperty.call(JS, v)) return m;
+      jsUsed.add(v);
+      const t = JS[v];
+      // clave y valor se escriben como en el código fuente (un \n es «\n»): solo se escapa la comilla
+      return d != null ? '"' + t.replace(/(?<!\\)"/g, '\\"') + '"' : "'" + t.replace(/(?<!\\)'/g, "\\'") + "'";
+    }));
+    const unused = Object.keys(JS).filter((k) => !jsUsed.has(k));
+    if (unused.length) console.warn(`  · ${name}: ${unused.length} cadenas js sin uso:`, unused.slice(0, 3).map((u) => u.slice(0, 40)));
+  }
 
   for (const [a, b] of DICT.raw || []) {
     if (!en.includes(a)) console.warn(`  · ${name}: raw sin coincidencia:`, a.slice(0, 70));
