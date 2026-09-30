@@ -113,7 +113,7 @@
       var last = s.v[11] * 3.5;
       dls += '<span class="dl' + hero + '" style="top:' + py(last) + '%">' + s.n + '</span>';
     });
-    var yl = [300, 240, 180, 120, 60, 0].map(function (v) { return '<span>' + v + ' k€</span>'; }).join('');
+    var yl = [300, 240, 180, 120, 60, 0].map(function (v, i) { return '<span style="top:' + (4 + i * 18.8) + '%">' + v + ' k€</span>'; }).join('');   // 4 % + 18,8 % por tramo = la misma altura que sus líneas de rejilla
     return '<div class="lineplot"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">' + gl + paths + '</svg>' + dls +
       '<div class="yax">' + yl + '</div>' +
       '<div class="xax">' + ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'].map(function (m) { return '<span>' + m + '</span>'; }).join('') + '</div></div>';
@@ -1591,6 +1591,12 @@
       inp.addEventListener('input', function () { b.style.setProperty('--p', inp.value + '%'); });
     });
   }
+
+  // capturas de la sección «En la práctica»: misma persiana, la imagen se compara en grises y en color
+  $$('#prac .ba').forEach(function (b) {
+    var inp = $('input', b);
+    inp.addEventListener('input', function () { b.style.setProperty('--p', inp.value + '%'); });
+  });
 
   var ILL = [
     ['Base 0', 'Madrid y Barcelona venden casi lo mismo. El eje truncado dice otra cosa.',

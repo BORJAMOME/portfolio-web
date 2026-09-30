@@ -18,7 +18,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- Shared styles: variables, nav, footer, botones, reset -->
 <link rel="stylesheet" href="./shared.css?v=20260929">
-<link rel="stylesheet" href="./data-storytelling.css?v=20260930e">
+<link rel="stylesheet" href="./data-storytelling.css?v=20260930g">
 <!-- Primary Meta Tags -->
 <meta name="description" content="Un manual interactivo sobre Data Storytelling y diseño de dashboards: percepción, reducción de ruido, atención, elección del visual, composición, texto y narrativa, demostrados sobre un dashboard que cambia mientras lees.">
 <meta name="keywords" content="data storytelling, diseño de dashboards, Power BI, visualización de datos, scrollytelling, UX, Borja Mora">
@@ -1460,6 +1460,86 @@
 </section>
 
 <!-- ═══════════ IBCS ═══════════ -->
+<!-- ═══════════ EN LA PRÁCTICA ═══════════ -->
+<section class="ds-sec" id="practica" aria-labelledby="prac-t" style="border-top:1px solid var(--grid)">
+  <div class="ds-c">
+    <div class="gal-head">
+      <div><p class="ds-kicker">En la práctica</p><h2 class="ds-h2" id="prac-t" style="margin-top:12px">Seis visuales que ya he publicado</h2></div>
+      <p class="ds-lead" style="max-width:26ch">Lo que he contado aquí, aplicado a piezas reales de Power BI.</p>
+    </div>
+    <p class="ds-muted" style="margin-top:18px;font-size:14px;max-width:62ch">Son capturas de posts que he compartido en LinkedIn. Las he puesto en grises a propósito: si la historia se sigue leyendo sin color, el color está haciendo su trabajo y no otro. Arrastra la línea (o usa las flechas del teclado) para ver entrar el color.</p>
+    <div class="gal" id="prac">
+      <article class="gcase">
+        <div class="ba ba--img" style="--p:50%">
+          <div class="ba-l ba-before ba-gs"><picture><source srcset="./img/p1.webp" type="image/webp"><img loading="lazy" src="./img/p1.png" alt="" width="762" height="400"></picture></div>
+          <div class="ba-l ba-after"><picture><source srcset="./img/p1.webp" type="image/webp"><img loading="lazy" src="./img/p1.png" alt="Tabla «Rendimiento de clientes» con buscador, desviaciones en verde y rojo, variación interanual y ranking." width="762" height="400"></picture></div>
+          <div class="ba-line"></div><span class="ba-tag l">En grises</span><span class="ba-tag r">En color</span>
+          <input type="range" min="0" max="100" value="50" aria-label="Comparar en grises y en color: No estás filtrando datos. Estás eligiendo qué historia quieres ver.">
+        </div>
+        <h3><span class="gn">01</span>No estás filtrando datos. Estás eligiendo qué historia quieres ver.</h3>
+        <p>Una tabla de 150 clientes es un mar de números. Lo que la hace legible no es la tabla, es lo que la rodea: un buscador que filtra por cliente, sector, segmento o país, un subtítulo que dice cuántos clientes estoy viendo y el color reservado solo para las desviaciones (▲ verde, ▼ rojo). En grises, el resto se apaga y lo único que sigue llamando la atención son esas señales.</p>
+        <p class="pr-meta"><a href="#c05"><b>cap. 05</b> dirigir la atención</a><a href="#c06"><b>cap. 06</b> cuándo una tabla es la respuesta</a><a class="pr-post" href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7440740082766086144-4VZm" target="_blank" rel="noopener noreferrer">Ver el post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a></p>
+      </article>
+      <article class="gcase">
+        <div class="ba ba--img" style="--p:50%">
+          <div class="ba-l ba-before ba-gs"><picture><source srcset="./img/p2.webp" type="image/webp"><img loading="lazy" src="./img/p2.png" alt="" width="762" height="400"></picture></div>
+          <div class="ba-l ba-after"><picture><source srcset="./img/p2.webp" type="image/webp"><img loading="lazy" src="./img/p2.png" alt="Tarjeta KPI de ventas: 6,38 millones frente a 5,84 del año anterior, con un delta positivo y columnas mensuales." width="762" height="400"></picture></div>
+          <div class="ba-line"></div><span class="ba-tag l">En grises</span><span class="ba-tag r">En color</span>
+          <input type="range" min="0" max="100" value="50" aria-label="Comparar en grises y en color: El futuro de los dashboards no son más gráficos, son mejores interacciones.">
+        </div>
+        <h3><span class="gn">02</span>El futuro de los dashboards no son más gráficos, son mejores interacciones.</h3>
+        <p>Es el KPI del apartado de anatomía, con vida propia: la cifra grande, el año anterior al lado, el delta abajo (+9,17 % vs PY) y unas columnas donde un mes se separa del resto. Las dos cajas de la izquierda dejan cambiar la métrica y contra qué se compara, así que el usuario explora sin perderse. El delta es lo único con color: la comparación es lo que convierte un número en una noticia.</p>
+        <p class="pr-meta"><a href="#kpi"><b>cap. 06</b> anatomía de un KPI</a><a class="pr-post" href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7442540385882554368-y4go" target="_blank" rel="noopener noreferrer">Ver el post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a></p>
+      </article>
+      <article class="gcase">
+        <div class="ba ba--img" style="--p:50%">
+          <div class="ba-l ba-before ba-gs"><picture><source srcset="./img/p3.webp" type="image/webp"><img loading="lazy" src="./img/p3.png" alt="" width="762" height="400"></picture></div>
+          <div class="ba-l ba-after"><picture><source srcset="./img/p3.webp" type="image/webp"><img loading="lazy" src="./img/p3.png" alt="Gráfico de líneas de ventas por producto, comparando dos productos por año, con un zoom trimestral a la derecha." width="762" height="400"></picture></div>
+          <div class="ba-line"></div><span class="ba-tag l">En grises</span><span class="ba-tag r">En color</span>
+          <input type="range" min="0" max="100" value="50" aria-label="Comparar en grises y en color: Producto a producto: cómo los datos cuentan historias.">
+        </div>
+        <h3><span class="gn">03</span>Producto a producto: cómo los datos cuentan historias.</h3>
+        <p>Dos productos comparados año a año y, a la derecha, el zoom al año seleccionado por trimestres. Es la regla de ir de lo general a lo concreto resuelta en una sola pantalla: la vista anual dice quién gana, el detalle trimestral dice cuándo. Encima del gráfico, una frase que se reescribe con el año elegido para que nadie tenga que deducir la conclusión.</p>
+        <p class="pr-meta"><a href="#c07"><b>cap. 07</b> zonas y jerarquía</a><a href="#c08"><b>cap. 08</b> títulos que dicen algo</a><a class="pr-post" href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7404201819641597954-wwos" target="_blank" rel="noopener noreferrer">Ver el post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a></p>
+      </article>
+      <article class="gcase">
+        <div class="ba ba--img" style="--p:50%">
+          <div class="ba-l ba-before ba-gs"><picture><source srcset="./img/p4.webp" type="image/webp"><img loading="lazy" src="./img/p4.png" alt="" width="762" height="400"></picture></div>
+          <div class="ba-l ba-after"><picture><source srcset="./img/p4.webp" type="image/webp"><img loading="lazy" src="./img/p4.png" alt="Cuatro pequeños gráficos de líneas, uno por producto, cada uno con su variación en verde o rojo y su peso sobre el total." width="762" height="400"></picture></div>
+          <div class="ba-line"></div><span class="ba-tag l">En grises</span><span class="ba-tag r">En color</span>
+          <input type="range" min="0" max="100" value="50" aria-label="Comparar en grises y en color: Si tienes que reconstruir la historia en tu cabeza, el dashboard falla.">
+        </div>
+        <h3><span class="gn">04</span>Si tienes que reconstruir la historia en tu cabeza, el dashboard falla.</h3>
+        <p>Cuatro productos, cuatro miniaturas con la misma escala. Cada una lleva su propio delta (▲ o ▼), su peso sobre el total y solo dos puntos etiquetados: 2024 y 2025. Es un slope chart repetido en small multiples: el ojo compara pendientes sin leer ejes. En grises, la dirección la sigue contando la forma de la línea, no el color.</p>
+        <p class="pr-meta"><a href="#vcat"><b>cap. 06</b> catálogo de visuales</a><a href="#c03"><b>cap. 03</b> percepción y semejanza</a><a class="pr-post" href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7439647400132116480-1PFW" target="_blank" rel="noopener noreferrer">Ver el post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a></p>
+      </article>
+      <article class="gcase">
+        <div class="ba ba--img" style="--p:50%">
+          <div class="ba-l ba-before ba-gs"><picture><source srcset="./img/p5.webp" type="image/webp"><img loading="lazy" src="./img/p5.png" alt="" width="762" height="400"></picture></div>
+          <div class="ba-l ba-after"><picture><source srcset="./img/p5.webp" type="image/webp"><img loading="lazy" src="./img/p5.png" alt="Columnas de beneficios mensuales frente a un objetivo ajustable, con la media marcada y el título en forma de pregunta." width="762" height="400"></picture></div>
+          <div class="ba-line"></div><span class="ba-tag l">En grises</span><span class="ba-tag r">En color</span>
+          <input type="range" min="0" max="100" value="50" aria-label="Comparar en grises y en color: Un gráfico puede ser correcto y aun así engañar.">
+        </div>
+        <h3><span class="gn">05</span>Un gráfico puede ser correcto y aun así engañar.</h3>
+        <p>El título es la pregunta («¿Qué meses superaron el objetivo?») y la línea del objetivo se mueve con un control para que cada quien pruebe su umbral. El post va de un problema concreto: un valor extremo puede aplastar la escala y hacer que el resto parezca plano, y un zoom visual bien construido lo evita sin esconder el dato. Es el mismo criterio que la galería de «así se hace bien».</p>
+        <p class="pr-meta"><a href="#galeria"><b>galería</b> antes y después</a><a href="#c08"><b>cap. 08</b> la pregunta como título</a><a class="pr-post" href="https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7437118505080020992-m7Em" target="_blank" rel="noopener noreferrer">Ver el post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a></p>
+      </article>
+      <article class="gcase">
+        <div class="ba ba--img" style="--p:50%">
+          <div class="ba-l ba-before ba-gs"><picture><source srcset="./img/p6.webp" type="image/webp"><img loading="lazy" src="./img/p6.png" alt="" width="762" height="400"></picture></div>
+          <div class="ba-l ba-after"><picture><source srcset="./img/p6.webp" type="image/webp"><img loading="lazy" src="./img/p6.png" alt="Columnas de ventas anuales de 2010 a 2025 con el periodo seleccionado resaltado y la variación entre sus extremos." width="762" height="400"></picture></div>
+          <div class="ba-line"></div><span class="ba-tag l">En grises</span><span class="ba-tag r">En color</span>
+          <input type="range" min="0" max="100" value="50" aria-label="Comparar en grises y en color: Variaciones entre columnas al alcance de un vistazo.">
+        </div>
+        <h3><span class="gn">06</span>Variaciones entre columnas al alcance de un vistazo.</h3>
+        <p>Dieciséis años de columnas y solo el periodo elegido en violeta intenso; el resto queda en un tono pálido como contexto. Entre las columnas de los extremos aparece la variación (21,92 %), calculada para ese rango y no para otro. Es foco y contexto en su forma más simple: se ve todo, se lee una cosa.</p>
+        <p class="pr-meta"><a href="#c05"><b>cap. 05</b> dirigir la atención</a><a href="#c04"><b>cap. 04</b> reducir el ruido</a><a class="pr-post" href="https://www.linkedin.com/feed/update/urn:li:activity:7376214576889098240/" target="_blank" rel="noopener noreferrer">Ver el post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a></p>
+      </article>
+    </div>
+    <p class="ds-muted pr-foot">Los datos de estas capturas son de ejemplo. <a href="./power-bi.html#comunidad">Más publicaciones en la sección Comunidad del portfolio →</a></p>
+  </div>
+</section>
+
 <section class="ds-sec" id="ibcs" aria-labelledby="ibcs-t" style="border-top:1px solid var(--grid)">
   <div class="ds-c">
     <p class="ds-kicker">IBCS</p>
@@ -1645,7 +1725,7 @@ window.addEventListener('scroll',function(){
   });
 })();
 </script>
-<script src="./data-storytelling.js?v=20260929e" defer></script>
+<script src="./data-storytelling.js?v=20260930b" defer></script>
 <!-- Motion: bibliotecas opcionales. Si un CDN falla, la pagina funciona igual (todo tiene fallback CSS). -->
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
