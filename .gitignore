@@ -1,5 +1,5 @@
 # Contexto de diseño del portfolio (solo local)
 /PRODUCT.md
 
-# Manual: lista de frases pendientes de traducir (la genera ds/tools/build-en.mjs --missing)
-/ds/i18n/en.missing.json
+# Listas de frases pendientes de traducir (las genera tools/build-en.mjs --missing)
+*.missing.json

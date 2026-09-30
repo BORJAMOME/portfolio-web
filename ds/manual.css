@@ -1607,19 +1607,3 @@
   .dash .mx thead, .dash .mx tr > :nth-child(3) { display: none; }
   .dash.prio .mx tfoot { display: none; }
 }
-
-/* ═══ IDIOMA ═══
-   Dos siglas con el mismo gesto que el enlace activo del menú del portfolio (shared.css,
-   .nav-links a.active): mayúsculas de 11 px, el idioma activo en negrita y subrayado.
-   En blanco y negro, sin banderas. Centrado en el hueco libre del menú. */
-#nav .ds-lang { margin-inline: auto; flex: none; display: flex; align-items: center; gap: 2px; }
-#nav .ds-lang + .nav-links { margin-left: 0; }
-.ds-lang-a, .ds-lang-b {
-  position: relative; padding: 6px 10px; border-radius: 7px;
-  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: .3px; text-transform: uppercase;
-  color: var(--muted); text-decoration: none; transition: color .2s, background .2s;
-}
-.ds-lang-a { color: var(--ink); font-weight: 700; cursor: default; }
-.ds-lang-a::after { content: ''; position: absolute; bottom: 2px; left: 10px; right: 10px; height: 1.5px; background: var(--ink); border-radius: 99px; }
-@media (hover: hover) and (pointer: fine) { .ds-lang-b:hover { color: var(--ink); background: var(--off); } }
-.ds-lang-b:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; background: var(--off); }

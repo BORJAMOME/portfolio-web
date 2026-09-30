@@ -19,13 +19,16 @@
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet">
 <!-- Shared styles: variables, nav, footer, botones, reset -->
-<link rel="stylesheet" href="./shared.css?v=20260922">
+<link rel="stylesheet" href="./shared.css?v=20260930">
 <!-- Primary Meta Tags -->
 <meta name="description" content="Borja Mora — Data Analyst Junior especializado en Power BI, en Madrid. Certificado PL-300. Analizo datos, diseño dashboards y hago que se usen para decidir. SQL, Python, DAX, Data Storytelling.">
 <meta name="keywords" content="Data Analyst, Power BI Developer, Business Intelligence, DAX, Data Storytelling, Microsoft PL-300, Power BI España, dashboards Power BI, Borja Mora">
 <meta name="author" content="Borja Mora Méndez">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://borjamora.es/">
+<link rel="alternate" hreflang="es" href="https://borjamora.es/">
+<link rel="alternate" hreflang="en" href="https://borjamora.es/en/index.html">
+<link rel="alternate" hreflang="x-default" href="https://borjamora.es/">
 
 <!-- Open Graph / Facebook / LinkedIn -->
 <meta property="og:type" content="website">
@@ -1409,7 +1412,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 @media (max-width: 640px) {
   .dph-section { padding: 0 0 64px; }
   .dph-header { margin-bottom: 40px; }
-  .idx-name { letter-spacing: -1.5px; }
+  .idx-name { letter-spacing: -1.5px; font-size: clamp(30px, 8.4vw, 38px); min-width: 0; }   /* «COMMUNICATE» (versión inglesa) también cabe a 390 px */
 }
 
 /* ══════════════════════════════
@@ -1582,6 +1585,10 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 <!-- ─── NAV ─── -->
 <nav id="nav" aria-label="Navegación principal">
   <a href="./index.html" class="logo" aria-label="Borja Mora — Inicio"><span id="logoText" class="done">Borja Mora</span><span class="logo-mark"><svg class="logo-ring" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><circle class="logo-ring-bg" cx="9" cy="9" r="7.3" pathLength="1"/><circle class="logo-ring-fg" cx="9" cy="9" r="7.3" pathLength="1"/></svg><span class="logo-dot"></span></span></a>
+  <div class="ds-lang" role="group" aria-label="Idioma · Language">
+    <span class="ds-lang-a" aria-current="true" lang="es" title="Español">ES</span>
+    <a href="./en/index.html" class="ds-lang-b" hreflang="en" lang="en" data-lang-to="en" title="Read in English" aria-label="Read in English">EN</a>
+  </div>
   <div class="nav-links">
     <a href="./index.html" class="active" aria-current="page">Inicio</a>
     <a href="./sobre-mi.html">Sobre mí</a>
