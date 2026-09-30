@@ -27,7 +27,7 @@ function gauss(r) { let u = 0; while (!u) u = r(); return Math.sqrt(-2 * Math.lo
 // capítulos: x en el lienzo y filas escalonadas para que las etiquetas no pisen las líneas de corte
 const CX = Array.from({ length: 10 }, (_, i) => 84 + i * 116);
 const ROWS = [0, 1, 0, 0, 1, 2, 3, 0, 0, 1];
-const rowY = (i) => 436 + ROWS[i] * 22;
+const rowY = (i) => 468 + ROWS[i] * 20;   // 468/20: en sync con .cvx-caps li (manual.css)
 
 /* 7b · barras divergentes en semitono */
 function semitono() {

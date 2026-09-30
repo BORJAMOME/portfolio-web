@@ -34,7 +34,7 @@ import { initDepth } from './motion/depth.js';
 import { initHero } from './chapters/hero.js';
 import { initElementTest } from './chapters/element-test.js';
 import { initPaper } from './materials/paper.js';
-import { initCover } from './cover.js?v=20260930d';
+import { initCover } from './cover.js?v=20260930e';
 
 const safe = (name, fn) => { try { const r = fn(); if (r && r.catch) r.catch((e) => console.warn('[ds]', name, e)); } catch (e) { console.warn('[ds]', name, e); } };
 

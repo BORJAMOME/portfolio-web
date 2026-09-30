@@ -1445,16 +1445,16 @@
 }
 .cvx-ink { position: absolute; inset: 0; }
 .cvx-tag {
-  position: absolute; left: calc(64 * var(--u)); top: calc(48 * var(--u)); margin: 0;
+  position: absolute; left: calc(64 * var(--u)); top: calc(40 * var(--u)); margin: 0;
   font-size: max(10px, 11.5 * var(--u)); font-weight: 700; letter-spacing: .18em; text-transform: uppercase; line-height: 1.2;
   padding-bottom: calc(8 * var(--u)); border-bottom: 1px solid #111;
 }
 .cvx-title {
-  position: absolute; left: calc(60 * var(--u)); top: calc(92 * var(--u)); margin: 0;
+  position: absolute; left: calc(60 * var(--u)); top: calc(84 * var(--u)); margin: 0;
   font-family: var(--serif); font-weight: 500; font-size: calc(120 * var(--u)); line-height: .9; letter-spacing: -.036em; color: #111;
 }
 .cvx-title em { font-style: italic; font-weight: 400; }
-.cvx-side { position: absolute; left: calc(968 * var(--u)); top: calc(104 * var(--u)); width: calc(248 * var(--u)); display: flex; flex-direction: column; gap: calc(18 * var(--u)); }
+.cvx-side { position: absolute; left: calc(968 * var(--u)); top: calc(96 * var(--u)); width: calc(248 * var(--u)); display: flex; flex-direction: column; gap: calc(18 * var(--u)); }
 .cvx-deck { margin: 0; font-family: var(--serif); font-size: max(15px, 20 * var(--u)); line-height: 1.4; color: #111; text-wrap: pretty; }
 .cvx-by { margin: 0; font-size: max(11.5px, 12.5 * var(--u)); line-height: 1.5; color: #333; }
 .cvx-by b { color: #111; font-weight: 700; }
@@ -1471,7 +1471,7 @@
 
 .cvx-caps { list-style: none; margin: 0; padding: 0; }
 .cvx-caps li {
-  position: absolute; left: calc(var(--x) * var(--u)); top: calc((436 + var(--r) * 22) * var(--u));
+  position: absolute; left: calc(var(--x) * var(--u)); top: calc((468 + var(--r) * 20) * var(--u));   /* en sync con rowY() de cover.js */
   padding-left: calc(7 * var(--u)); display: flex; align-items: baseline; gap: calc(5 * var(--u)); white-space: nowrap; line-height: 1;
 }
 .cvx-n { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: max(9px, 10 * var(--u)); color: #333; }
