@@ -2,7 +2,7 @@
   "_": "Traducción al inglés británico de casa-origen.html (→ en/casa-origen.html). La usa tools/build-en.mjs.",
   "units": {
     "Casa Origen — Caso de Estudio BI | Borja Mora": "Casa Origen — BI case study | Borja Mora",
-    "Diseño e implementación de un sistema de Business Intelligence completo para una cafetería de especialidad en Madrid. Power BI, DAX, SQL Server, Python y Machine Learning.": "Design and build of a complete business intelligence system for a speciality coffee shop in Madrid. Power BI, DAX, SQL Server, Python and machine learning.",
+    "Sistema de Business Intelligence completo para una cafetería de especialidad en Madrid: Power BI, DAX, SQL Server, Python y Machine Learning.": "A complete business intelligence system for a speciality coffee shop in Madrid: Power BI, DAX, SQL Server, Python and machine learning.",
     "Sistema BI completo para PYME: 4 dashboards, 2 modelos ML, arquitectura Medallion. Power BI + DAX + SQL Server + Python.": "A complete BI system for a small business: 4 dashboards, 2 ML models, Medallion architecture. Power BI + DAX + SQL Server + Python.",
     "Sistema BI completo para PYME: 4 dashboards, 2 modelos ML, arquitectura Medallion.": "A complete BI system for a small business: 4 dashboards, 2 ML models, Medallion architecture.",
     "de las decisiones en las PYMEs españolas se toman sin mirar un solo dato": "of decisions in Spanish small businesses are made without looking at a single piece of data",
