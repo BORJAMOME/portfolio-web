@@ -407,6 +407,22 @@ footer {
   font-size: 11px; color: rgba(255,255,255,.55);
   margin: 0; letter-spacing: .5px;
 }
+/* email del pie con botón de copiar (contact.js) */
+.foot-copy-email {
+  display: inline-flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; margin-top: 4px; padding: 6px 0;
+  background: none; border: 0; cursor: pointer; text-align: left;
+  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; font-size: 13px; color: rgba(255,255,255,.88);
+}
+.foot-copy-email-act {
+  font-size: 11px; font-weight: 600; letter-spacing: .4px; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 999px; border: .5px solid rgba(255,255,255,.3); color: rgba(255,255,255,.8);
+  transition: background .2s, color .2s;
+}
+@media (hover: hover) and (pointer: fine) {
+  .foot-copy-email:hover .foot-copy-email-act { background: #fff; color: #111; }
+}
+.foot-copy-email.is-copied .foot-copy-email-act { background: #7a7bff; border-color: #7a7bff; color: #fff; }
+.foot-copy-email:focus-visible { outline: 2px solid #fff; outline-offset: 3px; border-radius: 4px; }
 .foot-status {
   display: flex; align-items: center; gap: 8px;
   margin-top: 6px;
@@ -486,6 +502,8 @@ footer {
   text-decoration: none; border-radius: 4px;
 }
 .skip-link:focus { left: 4px; }
+/* destino del enlace de salto: recibe el foco sin mostrar contorno */
+#main-content:focus { outline: none; }
 
 /* ─── RESPONSIVE FOOTER ─── */
 @media (max-width: 900px) {
