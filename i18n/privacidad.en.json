@@ -98,7 +98,6 @@
     "Recordar si aceptaste o rechazaste la analítica (almacenamiento local, no es una cookie).": "Remember whether you accepted or rejected analytics (local storage, not a cookie).",
     "Hasta que la borres": "Until you delete it",
     "Recordar el idioma que elegiste, español o inglés (almacenamiento local).": "Remember the language you chose, Spanish or English (local storage).",
-    "Las dos últimas son técnicas: sirven para que la web funcione como elegiste y no requieren consentimiento. Las de Google solo se crean si aceptas.": "The last two are technical: they make the site work the way you chose and don’t require consent. Google’s are only created if you accept.",
     "Tu elección ahora mismo": "Your current choice",
     "Cookies de analítica": "Analytics cookies",
     "Aceptadas": "Accepted",
@@ -129,7 +128,10 @@
     "Si crees que no he tratado bien tus datos, puedes reclamar ante la <a href=\"https://www.aepd.es\" target=\"_blank\" rel=\"noopener noreferrer\">Agencia Española de Protección de Datos</a>.": "If you think I haven’t handled your data properly, you can complain to the Spanish Data Protection Agency (<a href=\"https://www.aepd.es\" target=\"_blank\" rel=\"noopener noreferrer\">AEPD</a>).",
     "<span class=\"n\">07</span>Cambios en esta política": "<span class=\"n\">07</span>Changes to this policy",
     "Si cambio algo relevante, por ejemplo si añado una herramienta nueva, actualizaré esta página y la fecha del principio. Si el cambio afecta a las cookies, volverás a ver el aviso para decidir de nuevo.": "If I change anything relevant, such as adding a new tool, I’ll update this page and the date at the top. If the change affects cookies, you’ll see the notice again so you can decide afresh.",
-    "Copiar": "Copy"
+    "Copiar": "Copy",
+    "portada-variante": "portada-variante",
+    "Alternar entre las dos portadas del manual de Data Storytelling (almacenamiento local).": "Alternate between the two covers of the Data Storytelling guide (local storage).",
+    "Las tres últimas son técnicas: sirven para que la web funcione como elegiste y no requieren consentimiento. Las de Google solo se crean si aceptas.": "The last three are technical: they make the site work the way you chose and don’t require consent. Google’s are only created if you accept."
   },
   "keep": [
     "Borja Mora",

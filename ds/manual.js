@@ -485,6 +485,8 @@
         cur = k;
         var live = LIVE.test(k);
         viz.classList.toggle('lab-live', live);
+        // mientras los cuadrados son botones, el lienzo es un grupo (un role=img no puede contener controles)
+        st.el.setAttribute('role', live ? 'group' : 'img');
         st.marks.forEach(function (m, i) {
           if (live) { m.tabIndex = 0; m.setAttribute('role', 'button'); m.setAttribute('aria-label', 'Cuadrado ' + (i + 1) + (i === H ? ', protagonista' : '')); }
           else { m.removeAttribute('tabindex'); m.removeAttribute('role'); m.removeAttribute('aria-label'); }
@@ -1407,9 +1409,11 @@
     ];
     var html = T.map(function (t) {
       var inner = t[2].map(function (r) { return '<i class="' + (r[4] || '') + '" style="left:' + r[0] + '%;top:' + r[1] + '%;width:' + r[2] + '%;height:' + r[3] + '%"></i>'; }).join('');
-      return '<a class="tile ' + (t[5] || '') + '" href="#c' + t[0] + '" style="grid-area:' + t[3] + '" tabindex="-1"><span class="m-n">' + t[0] + '</span><span class="m-v">' + inner + '</span><span class="m-t">' + t[1] + '</span>' + (t[4] ? '<span class="flag">' + t[4] + '</span>' : '') + '</a>';
+      // piezas del mosaico: decorativas para lectores de pantalla (el conjunto es un role=img); con ratón llevan a su capítulo
+      return '<span class="tile ' + (t[5] || '') + '" data-go="#c' + t[0] + '" style="grid-area:' + t[3] + '"><span class="m-n">' + t[0] + '</span><span class="m-v">' + inner + '</span><span class="m-t">' + t[1] + '</span>' + (t[4] ? '<span class="flag">' + t[4] + '</span>' : '') + '</span>';
     }).join('');
     m.innerHTML = html + '<div class="tile main"><div class="viz" data-dash="mosaic"></div></div>';
+    m.addEventListener('click', function (e) { var t = e.target.closest('[data-go]'); if (t) location.hash = t.dataset.go; });
     makeDash($('[data-dash="mosaic"]', m)).set(FINAL);
   }
   buildMosaic();

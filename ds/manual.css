@@ -980,6 +980,7 @@
 .mosaic .tile .m-v i { position: absolute; background: var(--g2); }
 .mosaic .tile .m-v i.g { background: var(--green); }
 .mosaic .tile .m-v i.k { background: var(--ink); }
+.mosaic .tile[data-go] { cursor: pointer; }
 .mosaic .tile.main { grid-column: 2 / 4; grid-row: 2; padding: 0; border: 0; background: transparent; }
 .mosaic .tile.main .dash-wrap { height: 100%; }
 .mosaic .tile .flag {

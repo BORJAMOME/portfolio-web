@@ -7,6 +7,8 @@
      node tools/build-en.mjs                    → todas las páginas
      node tools/build-en.mjs index              → solo una (index · sobre-mi · descargas · power-bi · analisis-datos · visualizacion-datos · casa-origen · ibcs-ventas · kosta-calida · social-media · informe-financiero · perdidas-ganancias · airbnb-pais-vasco · rfm-hosteleria · data-storytelling · privacidad)
      node tools/build-en.mjs index --missing    → además guarda las frases sin traducir
+     node tools/build-en.mjs --check            → no escribe nada: falla si alguna página inglesa está
+                                                  desactualizada o le falta una traducción (lo usa la CI)
 
    · Cada página tiene su diccionario (ver PAGES):
        units  — { "frase en español (con su marcado en línea)": "English" }
@@ -18,7 +20,7 @@
    · El selector ES | EN (.ds-lang) se invierte solo: en inglés, EN activo y ES enlace.
    Sin dependencias: solo Node.
    ═══════════════════════════════════════════════ */
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -149,8 +151,15 @@ function build(name, P, wantMissing) {
   }
 
   for (const [a, b] of DICT.raw || []) {
-    if (!en.includes(a)) console.warn(`  · ${name}: raw sin coincidencia:`, a.slice(0, 70));
+    if (!en.includes(a)) { console.warn(`  · ${name}: raw sin coincidencia:`, a.slice(0, 70)); problems++; }
     en = en.split(a).join(b);
+  }
+  if (CHECK) {
+    const cur = existsSync(join(ROOT, P.out)) ? readFileSync(join(ROOT, P.out), 'utf8') : null;
+    const stale = cur !== en;
+    if (stale || missing.length) problems++;
+    console.log(`${stale || missing.length ? '✗' : '✓'} ${P.out}${stale ? ' · desactualizada: ejecuta node tools/build-en.mjs' : ''}${missing.length ? ` · ${missing.length} sin traducir: ${missing.slice(0, 3).map((m) => '«' + m.slice(0, 50) + '»').join(', ')}` : ''}`);
+    return;
   }
   writeFileSync(join(ROOT, P.out), en);
   console.log(`${P.out} · ${Object.keys(UNITS).length} frases en el diccionario · ${missing.length} sin traducir`);
@@ -161,5 +170,8 @@ function build(name, P, wantMissing) {
 }
 
 const args = process.argv.slice(2), only = args.filter((a) => !a.startsWith('--'));
+const CHECK = args.includes('--check');
+let problems = 0;
 const names = only.length ? only : Object.keys(PAGES);
 for (const n of names) { if (!PAGES[n]) { console.error('Página desconocida: ' + n); process.exit(1); } build(n, PAGES[n], args.includes('--missing')); }
+if (CHECK && problems) { console.error(`\n${problems} problema(s) en las páginas inglesas.`); process.exit(1); }
