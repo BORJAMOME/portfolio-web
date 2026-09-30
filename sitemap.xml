@@ -93,45 +93,129 @@
   </url>
   <url>
     <loc>https://borjamora.es/rfm-hosteleria.html</loc>
-    <lastmod>2026-09-22</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/rfm-hosteleria.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/rfm-hosteleria.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borjamora.es/rfm-hosteleria.html"/>
+  </url>
+  <url>
+    <loc>https://borjamora.es/en/rfm-hosteleria.html</loc>
+    <lastmod>2026-09-30</lastmod>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/rfm-hosteleria.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/rfm-hosteleria.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borjamora.es/rfm-hosteleria.html"/>
   </url>
   <url>
     <loc>https://borjamora.es/ibcs-ventas.html</loc>
-    <lastmod>2026-09-22</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/ibcs-ventas.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/ibcs-ventas.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borjamora.es/ibcs-ventas.html"/>
+  </url>
+  <url>
+    <loc>https://borjamora.es/en/ibcs-ventas.html</loc>
+    <lastmod>2026-09-30</lastmod>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/ibcs-ventas.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/ibcs-ventas.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borjamora.es/ibcs-ventas.html"/>
   </url>
   <url>
     <loc>https://borjamora.es/kosta-calida.html</loc>
-    <lastmod>2026-09-22</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/kosta-calida.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/kosta-calida.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borjamora.es/kosta-calida.html"/>
+  </url>
+  <url>
+    <loc>https://borjamora.es/en/kosta-calida.html</loc>
+    <lastmod>2026-09-30</lastmod>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/kosta-calida.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/kosta-calida.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borjamora.es/kosta-calida.html"/>
   </url>
   <url>
     <loc>https://borjamora.es/social-media.html</loc>
-    <lastmod>2026-09-23</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/social-media.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/social-media.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borjamora.es/social-media.html"/>
+  </url>
+  <url>
+    <loc>https://borjamora.es/en/social-media.html</loc>
+    <lastmod>2026-09-30</lastmod>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/social-media.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/social-media.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borjamora.es/social-media.html"/>
   </url>
   <url>
     <loc>https://borjamora.es/perdidas-ganancias.html</loc>
-    <lastmod>2026-09-23</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/perdidas-ganancias.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/perdidas-ganancias.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borjamora.es/perdidas-ganancias.html"/>
+  </url>
+  <url>
+    <loc>https://borjamora.es/en/perdidas-ganancias.html</loc>
+    <lastmod>2026-09-30</lastmod>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/perdidas-ganancias.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/perdidas-ganancias.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borjamora.es/perdidas-ganancias.html"/>
   </url>
   <url>
     <loc>https://borjamora.es/informe-financiero.html</loc>
-    <lastmod>2026-09-23</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/informe-financiero.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/informe-financiero.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borjamora.es/informe-financiero.html"/>
+  </url>
+  <url>
+    <loc>https://borjamora.es/en/informe-financiero.html</loc>
+    <lastmod>2026-09-30</lastmod>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/informe-financiero.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/informe-financiero.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borjamora.es/informe-financiero.html"/>
   </url>
   <url>
     <loc>https://borjamora.es/airbnb-pais-vasco.html</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/airbnb-pais-vasco.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/airbnb-pais-vasco.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borjamora.es/airbnb-pais-vasco.html"/>
+  </url>
+  <url>
+    <loc>https://borjamora.es/en/airbnb-pais-vasco.html</loc>
+    <lastmod>2026-09-30</lastmod>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/airbnb-pais-vasco.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/airbnb-pais-vasco.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borjamora.es/airbnb-pais-vasco.html"/>
   </url>
   <url>
     <loc>https://borjamora.es/descargas.html</loc>
