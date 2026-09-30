@@ -1,46 +1,47 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <!-- ─── FAVICON ─── -->
-<link rel="icon" type="image/svg+xml" href="./img/favicon.svg">
-<link rel="icon" type="image/png" sizes="32x32" href="./img/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="./img/favicon-16x16.png">
-<link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon.png">
-<link rel="shortcut icon" href="./img/favicon.ico">
+<link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../img/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="../img/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../img/apple-touch-icon.png">
+<link rel="shortcut icon" href="../img/favicon.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#111111">
-<title>Data Storytelling y diseño de dashboards — Borja Mora</title>
+<title>Data Storytelling and Dashboard Design — Borja Mora</title>
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- Shared styles: variables, nav, footer, botones, reset -->
-<link rel="stylesheet" href="./shared.css?v=20260929">
-<link rel="stylesheet" href="./ds/manual.css?v=20260930r">
+<link rel="stylesheet" href="../shared.css?v=20260929">
+<link rel="stylesheet" href="../ds/manual.css?v=20260930r">
 <!-- Primary Meta Tags -->
-<meta name="description" content="Un manual interactivo sobre Data Storytelling y diseño de dashboards: percepción, reducción de ruido, atención, elección del visual, composición, texto y narrativa, demostrados sobre un dashboard que cambia mientras lees.">
+<meta name="description" content="An interactive guide to data storytelling and dashboard design: perception, noise reduction, attention, choosing the visual, composition, text and narrative, shown on a dashboard that changes as you read.">
 <meta name="keywords" content="data storytelling, diseño de dashboards, Power BI, visualización de datos, scrollytelling, UX, Borja Mora">
 <meta name="author" content="Borja Mora Méndez">
-<meta name="robots" content="index, follow, max-image-preview:large">
-<link rel="canonical" href="https://borjamora.es/data-storytelling.html">
+<meta name="robots" content="noindex, follow"><!-- FASE 1: volver a «index, follow, max-image-preview:large» cuando el inglés esté completo -->
+<link rel="canonical" href="https://borjamora.es/en/data-storytelling.html">
 <link rel="alternate" hreflang="es" href="https://borjamora.es/data-storytelling.html">
 <link rel="alternate" hreflang="en" href="https://borjamora.es/en/data-storytelling.html">
 <link rel="alternate" hreflang="x-default" href="https://borjamora.es/data-storytelling.html">
 <meta property="og:type" content="article">
-<meta property="og:locale" content="es_ES">
-<meta property="og:url" content="https://borjamora.es/data-storytelling.html">
-<meta property="og:title" content="Data Storytelling y diseño de dashboards — un manual interactivo | Borja Mora">
-<meta property="og:description" content="Un dashboard no se diseña para ser visto. Se diseña para ser entendido. Diez capítulos que lo demuestran mientras lo explican.">
-<meta property="og:image" content="https://borjamora.es/ds/img/og-es.png">
+<meta property="og:locale" content="en_GB">
+<meta property="og:locale:alternate" content="es_ES">
+<meta property="og:url" content="https://borjamora.es/en/data-storytelling.html">
+<meta property="og:title" content="Data Storytelling and Dashboard Design — an interactive guide | Borja Mora">
+<meta property="og:description" content="A dashboard isn't designed to be seen. It's designed to be understood. Ten chapters that prove it while they explain it.">
+<meta property="og:image" content="https://borjamora.es/ds/img/og-en.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:site_name" content="Borja Mora">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Data Storytelling y diseño de dashboards — Borja Mora">
-<meta name="twitter:description" content="Un manual interactivo: el mismo dashboard aprende a contar una historia mientras bajas.">
-<meta name="twitter:image" content="https://borjamora.es/ds/img/og-es.png">
+<meta name="twitter:title" content="Data Storytelling and Dashboard Design — Borja Mora">
+<meta name="twitter:description" content="An interactive guide: the same dashboard learns to tell a story as you scroll.">
+<meta name="twitter:image" content="https://borjamora.es/ds/img/og-en.png">
 <style>
 .progress-bar{position:fixed;top:0;left:0;height:2px;width:100%;background:var(--ink);z-index:1001;transform-origin:left;transform:scaleX(0);transition:transform .1s linear}
 </style>
@@ -119,34 +120,34 @@
 </style>
 </head>
 <body>
-<a href="#main-content" class="skip-link" style="position:absolute;left:-9999px;top:4px;z-index:9999;background:var(--ink);color:#fff;padding:8px 16px;font-size:13px;font-weight:600;text-decoration:none;border-radius:4px;transition:left 0s" onfocus="this.style.left='4px'" onblur="this.style.left='-9999px'">Saltar al contenido</a>
+<a href="#main-content" class="skip-link" style="position:absolute;left:-9999px;top:4px;z-index:9999;background:var(--ink);color:#fff;padding:8px 16px;font-size:13px;font-weight:600;text-decoration:none;border-radius:4px;transition:left 0s" onfocus="this.style.left='4px'" onblur="this.style.left='-9999px'">Skip to content</a>
 <div class="progress-bar" id="progressBar"></div>
 
-<nav id="nav" aria-label="Navegacion principal">
-  <a href="./index.html" class="logo" aria-label="Borja Mora — Inicio"><span id="logoText" class="done">Borja Mora</span><span class="logo-mark"><svg class="logo-ring" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><circle class="logo-ring-bg" cx="9" cy="9" r="7.3" pathLength="1"/><circle class="logo-ring-fg" cx="9" cy="9" r="7.3" pathLength="1"/></svg><span class="logo-dot"></span></span></a>
-  <div class="lang-toggle ds-lang" role="group" aria-label="Idioma · Language">
-    <span class="lang-btn lang-active" aria-current="true" lang="es"><svg width="20" height="14" viewBox="0 0 20 14" aria-hidden="true" focusable="false"><rect width="20" height="14" rx="2" fill="#AA151B"/><rect y="3.5" width="20" height="7" fill="#F1BF00"/></svg><span class="lang-code">ES</span></span>
-    <a href="./en/data-storytelling.html" class="lang-btn lang-other" hreflang="en" lang="en" data-lang-to="en" aria-label="Read in English"><svg width="20" height="14" viewBox="0 0 20 14" aria-hidden="true" focusable="false"><rect width="20" height="14" rx="2" fill="#b0b0b0"/><path d="M0 0L20 14M20 0L0 14" stroke="#e4e4e4" stroke-width="3"/><path d="M10 0V14M0 7H20" stroke="#e4e4e4" stroke-width="4.5"/><path d="M10 0V14M0 7H20" stroke="#c4c4c4" stroke-width="2.8"/></svg><span class="lang-code">EN</span></a>
+<nav id="nav" aria-label="Main navigation">
+  <a href="./index.html" class="logo" aria-label="Borja Mora — Home"><span id="logoText" class="done">Borja Mora</span><span class="logo-mark"><svg class="logo-ring" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><circle class="logo-ring-bg" cx="9" cy="9" r="7.3" pathLength="1"/><circle class="logo-ring-fg" cx="9" cy="9" r="7.3" pathLength="1"/></svg><span class="logo-dot"></span></span></a>
+  <div class="lang-toggle ds-lang" role="group" aria-label="Language · Idioma">
+    <a href="../data-storytelling.html" class="lang-btn lang-other" hreflang="es" lang="es" data-lang-to="es" aria-label="Leer en español"><svg width="20" height="14" viewBox="0 0 20 14" aria-hidden="true" focusable="false"><rect width="20" height="14" rx="2" fill="#d0d0d0"/><rect y="3.5" width="20" height="7" fill="#b0b0b0"/></svg><span class="lang-code">ES</span></a>
+    <span class="lang-btn lang-active" aria-current="true" lang="en"><svg width="20" height="14" viewBox="0 0 20 14" aria-hidden="true" focusable="false"><rect width="20" height="14" rx="2" fill="#012169"/><path d="M0 0L20 14M20 0L0 14" stroke="white" stroke-width="3"/><path d="M0 0L20 14M20 0L0 14" stroke="#C8102E" stroke-width="1.8"/><path d="M10 0V14M0 7H20" stroke="white" stroke-width="4.5"/><path d="M10 0V14M0 7H20" stroke="#C8102E" stroke-width="2.8"/></svg><span class="lang-code">EN</span></span>
   </div>
   <div class="nav-links">
-    <a href="./index.html">Inicio</a>
-    <a href="./sobre-mi.html">Sobre mí</a>
+    <a href="./index.html">Home</a>
+    <a href="../sobre-mi.html">About me</a>
     <div class="nav-dropdown" id="navDropdown">
-      <button class="nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false">Proyectos <svg class="dd-chevron" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 3.5L5 6.5L7.5 3.5"/></svg></button>
+      <button class="nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false">Projects <svg class="dd-chevron" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 3.5L5 6.5L7.5 3.5"/></svg></button>
       <ul class="nav-dropdown-menu" role="menu">
-        <li role="none"><a href="./power-bi.html" role="menuitem">Power BI</a></li>
-        <li role="none"><a href="./analisis-datos.html" role="menuitem">Análisis</a></li>
-        <li role="none"><a href="./visualizacion-datos.html" role="menuitem">Visualización</a></li>
+        <li role="none"><a href="../power-bi.html" role="menuitem">Power BI</a></li>
+        <li role="none"><a href="../analisis-datos.html" role="menuitem">Analysis</a></li>
+        <li role="none"><a href="../visualizacion-datos.html" role="menuitem">Visualisation</a></li>
       </ul>
     </div>
-    <a href="./descargas.html">Descargas</a>
-    <a id="navEmailBtn" href="#" target="_blank" rel="noopener noreferrer" class="nav-cta btn" onclick="gtag('event', 'clic_email', { location: 'nav' });"><span class="cta-text-wrap"><span>Contacto</span><span>¿Hablamos?</span></span></a>
+    <a href="./downloads.html">Downloads</a>
+    <a id="navEmailBtn" href="#" target="_blank" rel="noopener noreferrer" class="nav-cta btn" onclick="gtag('event', 'clic_email', { location: 'nav' });"><span class="cta-text-wrap"><span>Contact</span><span>Let's talk</span></span></a>
   </div>
   <div class="nav-social">
     <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" onclick="gtag('event','clic_linkedin',{location:'nav'});"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
     <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" aria-label="GitHub" onclick="gtag('event','clic_github',{location:'nav'});"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
   </div>
-  <button class="nav-burger" id="navBurger" aria-label="Abrir menu" aria-expanded="false" aria-controls="navDrawer">
+  <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-expanded="false" aria-controls="navDrawer">
     <span class="nav-burger-line"></span>
     <span class="nav-burger-line"></span>
     <span class="nav-burger-line"></span>
@@ -154,27 +155,27 @@
 </nav>
 
 <!-- ─── MOBILE DRAWER ─── -->
-<div class="nav-drawer" id="navDrawer" role="dialog" aria-modal="true" aria-label="Menu de navegacion">
+<div class="nav-drawer" id="navDrawer" role="dialog" aria-modal="true" aria-label="Navigation menu">
   <div class="nav-drawer-backdrop" id="navBackdrop"></div>
   <div class="nav-drawer-panel">
     <div class="nav-drawer-head">
       <span class="nav-drawer-brand">Borja Mora.</span>
-      <button class="nav-drawer-close" id="navDrawerClose" aria-label="Cerrar menu"><span class="nav-drawer-close-x" aria-hidden="true">×</span>Cerrar</button>
+      <button class="nav-drawer-close" id="navDrawerClose" aria-label="Close menu"><span class="nav-drawer-close-x" aria-hidden="true">×</span>Close</button>
     </div>
-    <nav class="nav-drawer-links" aria-label="Navegación móvil">
-      <a href="./index.html">Inicio</a>
-      <a href="./sobre-mi.html">Sobre mí</a>
-      <button class="nav-drawer-projects-trigger" id="navDrawerProjectsBtn" type="button" aria-expanded="false" aria-controls="navDrawerProjects"><span>Proyectos<span class="nav-drawer-count" aria-hidden="true">(+3)</span></span><span class="nav-drawer-plus" aria-hidden="true"></span></button>
+    <nav class="nav-drawer-links" aria-label="Mobile navigation">
+      <a href="./index.html">Home</a>
+      <a href="../sobre-mi.html">About me</a>
+      <button class="nav-drawer-projects-trigger" id="navDrawerProjectsBtn" type="button" aria-expanded="false" aria-controls="navDrawerProjects"><span>Projects<span class="nav-drawer-count" aria-hidden="true">(+3)</span></span><span class="nav-drawer-plus" aria-hidden="true"></span></button>
       <div class="nav-drawer-projects" id="navDrawerProjects">
         <div class="nav-drawer-projects-inner">
           <div class="nav-drawer-sublinks">
-            <a href="./power-bi.html">Power BI</a>
-            <a href="./analisis-datos.html">Análisis</a>
-            <a href="./visualizacion-datos.html">Visualización</a>
+            <a href="../power-bi.html">Power BI</a>
+            <a href="../analisis-datos.html">Analysis</a>
+            <a href="../visualizacion-datos.html">Visualisation</a>
           </div>
         </div>
       </div>
-      <a href="./descargas.html">Descargas</a>
+      <a href="./downloads.html">Downloads</a>
     </nav>
     <div class="nav-drawer-foot">
       <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="nav-drawer-foot-item" onclick="gtag('event','clic_linkedin',{location:'drawer'});">LinkedIn</a>
@@ -263,18 +264,18 @@
 <main class="ds no-js" id="main-content">
 
 <!-- ═══ NAVEGACIÓN DE CAPÍTULOS ═══ -->
-<nav class="ch-rail" id="chRail" aria-label="Capítulos del manual">
+<nav class="ch-rail" id="chRail" aria-label="Chapters of the guide">
   <ol>
-    <li><a href="#c01"><span>01</span><span class="nm">Fundamentos</span></a></li>
-    <li><a href="#c02"><span>02</span><span class="nm">Contexto</span></a></li>
-    <li><a href="#c03"><span>03</span><span class="nm">Percepción</span></a></li>
-    <li><a href="#c04"><span>04</span><span class="nm">Reducir el ruido</span></a></li>
-    <li><a href="#c05"><span>05</span><span class="nm">Dirigir la atención</span></a></li>
-    <li><a href="#c06"><span>06</span><span class="nm">Elegir el visual</span></a></li>
-    <li><a href="#c07"><span>07</span><span class="nm">Componer</span></a></li>
-    <li><a href="#c08"><span>08</span><span class="nm">El texto</span></a></li>
-    <li><a href="#c09"><span>09</span><span class="nm">Construir la historia</span></a></li>
-    <li><a href="#c10"><span>10</span><span class="nm">Juntar las piezas</span></a></li>
+    <li><a href="#c01"><span>01</span><span class="nm">Foundations</span></a></li>
+    <li><a href="#c02"><span>02</span><span class="nm">Context</span></a></li>
+    <li><a href="#c03"><span>03</span><span class="nm">Perception</span></a></li>
+    <li><a href="#c04"><span>04</span><span class="nm">Reducing noise</span></a></li>
+    <li><a href="#c05"><span>05</span><span class="nm">Directing attention</span></a></li>
+    <li><a href="#c06"><span>06</span><span class="nm">Choosing the visual</span></a></li>
+    <li><a href="#c07"><span>07</span><span class="nm">Composition</span></a></li>
+    <li><a href="#c08"><span>08</span><span class="nm">The words</span></a></li>
+    <li><a href="#c09"><span>09</span><span class="nm">Building the story</span></a></li>
+    <li><a href="#c10"><span>10</span><span class="nm">Putting it together</span></a></li>
   </ol>
 </nav>
 
@@ -282,93 +283,93 @@
 <section class="cover" id="portada" aria-labelledby="cover-t">
   <div class="cvx">
     <div class="cvx-ink">
-      <p class="cvx-tag">Un manual interactivo</p>
-      <h1 class="cvx-title" id="cover-t">Data Storytelling<br> <em>y diseño de</em><br> dashboards</h1>
+      <p class="cvx-tag">An interactive guide</p>
+      <h1 class="cvx-title" id="cover-t">Data Storytelling<br> <em>and the design of</em><br> dashboards</h1>
       <div class="cvx-side">
-        <p class="cvx-deck">Lo que he aprendido sobre percepción, visualización, composición y narrativa para diseñar dashboards que se entiendan.</p>
-        <p class="cvx-by"><span>Por <b>Borja Mora</b></span><span>Data Analyst Junior · Power BI</span></p>
-        <a class="cvx-start" href="#hero">Empieza a leer <span aria-hidden="true">↓</span></a>
+        <p class="cvx-deck">What I've learnt about perception, visualisation, composition and narrative to design dashboards that people understand.</p>
+        <p class="cvx-by"><span>By <b>Borja Mora</b></span><span>Junior Data Analyst · Power BI</span></p>
+        <a class="cvx-start" href="#hero">Start reading <span aria-hidden="true">↓</span></a>
       </div>
     </div>
     <div class="cvx-chart"><div class="cvx-ticks" aria-hidden="true"><span style="--x:64">0′</span><span style="--x:352">5′</span><span style="--x:640">10′</span><span style="--x:928">15′</span><span style="--x:1216">20′</span></div></div>
-    <ol class="cvx-caps" aria-label="Los 10 capítulos del recorrido">
-      <li style="--x:84;--r:0"><span class="cvx-n">01 —</span> <span class="cvx-t">Fundamentos</span></li>
-      <li style="--x:200;--r:1"><span class="cvx-n">02 —</span> <span class="cvx-t">Contexto</span></li>
-      <li style="--x:316;--r:0"><span class="cvx-n">03 —</span> <span class="cvx-t">Percepción</span></li>
-      <li style="--x:432;--r:0"><span class="cvx-n">04 —</span> <span class="cvx-t">Reducir el ruido</span></li>
-      <li style="--x:548;--r:1"><span class="cvx-n">05 —</span> <span class="cvx-t">Dirigir la atención</span></li>
-      <li style="--x:664;--r:2"><span class="cvx-n">06 —</span> <span class="cvx-t">Elegir el visual</span></li>
-      <li style="--x:780;--r:3"><span class="cvx-n">07 —</span> <span class="cvx-t">Componer</span></li>
-      <li style="--x:896;--r:0"><span class="cvx-n">08 —</span> <span class="cvx-t">El texto</span></li>
-      <li style="--x:1012;--r:0"><span class="cvx-n">09 —</span> <span class="cvx-t">Construir la historia</span></li>
-      <li style="--x:1128;--r:1"><span class="cvx-n">10 —</span> <span class="cvx-t">Juntar las piezas</span></li>
+    <ol class="cvx-caps" aria-label="The 10 chapters of the journey">
+      <li style="--x:84;--r:0"><span class="cvx-n">01 —</span> <span class="cvx-t">Foundations</span></li>
+      <li style="--x:200;--r:1"><span class="cvx-n">02 —</span> <span class="cvx-t">Context</span></li>
+      <li style="--x:316;--r:0"><span class="cvx-n">03 —</span> <span class="cvx-t">Perception</span></li>
+      <li style="--x:432;--r:0"><span class="cvx-n">04 —</span> <span class="cvx-t">Reducing noise</span></li>
+      <li style="--x:548;--r:1"><span class="cvx-n">05 —</span> <span class="cvx-t">Directing attention</span></li>
+      <li style="--x:664;--r:2"><span class="cvx-n">06 —</span> <span class="cvx-t">Choosing the visual</span></li>
+      <li style="--x:780;--r:3"><span class="cvx-n">07 —</span> <span class="cvx-t">Composition</span></li>
+      <li style="--x:896;--r:0"><span class="cvx-n">08 —</span> <span class="cvx-t">The words</span></li>
+      <li style="--x:1012;--r:0"><span class="cvx-n">09 —</span> <span class="cvx-t">Building the story</span></li>
+      <li style="--x:1128;--r:1"><span class="cvx-n">10 —</span> <span class="cvx-t">Putting it together</span></li>
     </ol>
-    <p class="cvx-foot"><b>Recorrido</b> — escala: 10 capítulos · unos 20 minutos</p>
+    <p class="cvx-foot"><b>Journey</b> — scale: 10 chapters · about 20 minutes</p>
   </div>
 </section>
 
 <!-- ═══ HERO ═══ -->
-<section class="hero" id="hero" aria-label="Introducción: un dashboard que aprende">
+<section class="hero" id="hero" aria-label="Introduction: a dashboard that learns">
   <div class="ds-c hero-top">
-    <p class="ds-kicker"><span>Antes de empezar, <b>un dashboard</b></span></p>
+    <p class="ds-kicker"><span>Before we start, <b>a dashboard</b></span></p>
   </div>
   <div class="ds-c">
     <div class="scrolly" data-viz="dash">
       <div class="sc-visual"><div class="viz" data-dash="hero"></div></div>
       <div class="sc-steps">
         <div class="step" data-flags=""><div class="st-in">
-          <span class="st-tag">Informe de ventas · Q4 2025</span>
-          <p class="st-copy">Este es un dashboard de ventas.<br>Tómate un segundo.<br>¿Qué te está diciendo?</p>
-          <div class="scroll-cue"><span class="sc-track" aria-hidden="true"><span class="sc-dot"></span><span class="sc-chevron"></span></span><span class="sc-label">Desliza para seguir</span></div>
+          <span class="st-tag">Sales report · Q4 2025</span>
+          <p class="st-copy">This is a sales dashboard.<br>Take a second.<br>What is it telling you?</p>
+          <div class="scroll-cue"><span class="sc-track" aria-hidden="true"><span class="sc-dot"></span><span class="sc-chevron"></span></span><span class="sc-label">Scroll to continue</span></div>
         </div></div>
-        <div class="step" data-flags=""><div class="st-in"><p class="st-copy">Un dashboard puede estar lleno de datos y seguir sin contar nada.</p></div></div>
-        <div class="step" data-flags="hush"><div class="st-in"><p class="st-copy">El problema no siempre es tener demasiados datos. A veces, el problema es que todos quieren llamar la atención al mismo tiempo.</p></div></div>
-        <div class="step" data-flags="flat lessgrid"><div class="st-in"><p class="st-copy">Primero quito lo que compite con el mensaje.</p></div></div>
-        <div class="step" data-flags="flat lessgrid gray focus"><div class="st-in"><p class="st-copy">Después decido qué merece realmente la atención.</p></div></div>
-        <div class="step" data-flags="flat lessgrid gray focus dim zoom"><div class="st-in"><p class="st-copy">Y entonces aparece algo importante: <span class="ds-green">sé dónde mirar.</span></p></div></div>
-        <div class="step step--pause" data-flags="flat lessgrid gray focus dim"><div class="st-in"><p class="st-copy">Un dashboard no está terminado cuando los datos están dentro.</p></div></div>
-        <div class="step step--pause" data-flags="flat lessgrid gray focus dim direct short story annot-on"><div class="st-in"><p class="st-copy">Está terminado cuando se entiende.</p></div></div>
+        <div class="step" data-flags=""><div class="st-in"><p class="st-copy">A dashboard can be full of data and still say nothing.</p></div></div>
+        <div class="step" data-flags="hush"><div class="st-in"><p class="st-copy">The problem isn't always having too much data. Sometimes the problem is that everything wants attention at the same time.</p></div></div>
+        <div class="step" data-flags="flat lessgrid"><div class="st-in"><p class="st-copy">First, I remove whatever competes with the message.</p></div></div>
+        <div class="step" data-flags="flat lessgrid gray focus"><div class="st-in"><p class="st-copy">Then I decide what really deserves attention.</p></div></div>
+        <div class="step" data-flags="flat lessgrid gray focus dim zoom"><div class="st-in"><p class="st-copy">And then something important happens: <span class="ds-green">I know where to look.</span></p></div></div>
+        <div class="step step--pause" data-flags="flat lessgrid gray focus dim"><div class="st-in"><p class="st-copy">A dashboard isn't finished when the data is in.</p></div></div>
+        <div class="step step--pause" data-flags="flat lessgrid gray focus dim direct short story annot-on"><div class="st-in"><p class="st-copy">It's finished when it's understood.</p></div></div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ═══ INTRODUCCIÓN ═══ -->
-<section class="ds-sec intro" aria-label="Por qué escribo esto">
+<section class="ds-sec intro" aria-label="Why I'm writing this">
   <div class="ds-narrow ds-body">
-    <p>Al principio pensaba que un buen dashboard era, sobre todo, una cuestión de visuales.</p>
-    <p>Elegir bien los gráficos.</p>
-    <p>Ordenar los elementos.</p>
-    <p>Conseguir que todo tuviera buena pinta.</p>
-    <p>Con el tiempo he ido cambiando de idea.</p>
-    <p>Ahora, antes de abrir Power BI, intento responder otras preguntas:</p>
-    <p class="q"><b>quién va a mirar el informe,</b></p>
-    <p class="q"><b>qué necesita entender,</b></p>
-    <p class="q"><b>qué quiero que vea primero,</b></p>
-    <p class="q"><b>y qué debería poder hacer después.</b></p>
-    <p>Este manual reúne lo que he ido aprendiendo sobre Data Storytelling y cómo intento llevarlo a la práctica.</p>
-    <p>No son reglas universales.</p>
-    <p>Algunas ideas vienen de la investigación sobre percepción y visualización; otras son reglas prácticas que me ayudan a diseñar; y otras forman parte de mi propia forma de trabajar.</p>
+    <p>At first, I thought a good dashboard was mostly about the visuals.</p>
+    <p>Choosing the right charts.</p>
+    <p>Putting things in order.</p>
+    <p>Making everything look good.</p>
+    <p>Over time, I've changed my mind.</p>
+    <p>Now, before I open Power BI, I try to answer other questions:</p>
+    <p class="q"><b>who is going to look at the report,</b></p>
+    <p class="q"><b>what they need to understand,</b></p>
+    <p class="q"><b>what I want them to see first,</b></p>
+    <p class="q"><b>and what they should be able to do afterwards.</b></p>
+    <p>This guide brings together what I've learnt about data storytelling and how I try to put it into practice.</p>
+    <p>They aren't universal rules.</p>
+    <p>Some ideas come from research on perception and visualisation; others are rules of thumb that help me design; and others are simply part of how I work.</p>
   </div>
 </section>
 
 <!-- ═══ MAPA DEL RECORRIDO ═══ -->
 <section class="ds-sec" id="mapa" aria-labelledby="mapa-t">
   <div class="ds-c">
-    <p class="ds-kicker">El mapa</p>
-    <h2 class="ds-h2" id="mapa-t" style="margin-top:14px">De la pregunta a la historia</h2>
-    <p class="route-seq"><b>Contexto</b> → percepción → limpieza → atención → visual → composición → texto → narrativa → <b>acción</b></p>
+    <p class="ds-kicker">The map</p>
+    <h2 class="ds-h2" id="mapa-t" style="margin-top:14px">From the question to the story</h2>
+    <p class="route-seq"><b>Context</b> → perception → decluttering → attention → visual → composition → words → narrative → <b>action</b></p>
     <ol class="route rv-seq">
-      <li><a href="#c01"><span class="rn">01</span><span class="rt">Fundamentos</span><span class="rd">Por qué comunicar con datos es un problema de significado.</span></a></li>
-      <li><a href="#c02"><span class="rn">02</span><span class="rt">Contexto</span><span class="rd">Audiencia, pregunta y gran idea.</span></a></li>
-      <li><a href="#c03"><span class="rn">03</span><span class="rt">Percepción</span><span class="rd">Cómo vemos, agrupamos y comparamos.</span></a></li>
-      <li><a href="#c04"><span class="rn">04</span><span class="rt">Reducir el ruido</span><span class="rd">Qué quitar antes de añadir.</span></a></li>
-      <li><a href="#c05"><span class="rn">05</span><span class="rt">Dirigir la atención</span><span class="rd">Cómo hacer evidente lo importante.</span></a></li>
-      <li><a href="#c06"><span class="rn">06</span><span class="rt">Elegir el visual</span><span class="rd">La representación depende de la tarea.</span></a></li>
-      <li><a href="#c07"><span class="rn">07</span><span class="rt">Componer</span><span class="rd">Layout, grid, espacio y jerarquía.</span></a></li>
-      <li><a href="#c08"><span class="rn">08</span><span class="rt">El texto</span><span class="rd">Títulos y anotaciones que hacen parte del trabajo.</span></a></li>
-      <li><a href="#c09"><span class="rn">09</span><span class="rt">Construir la historia</span><span class="rd">Del dato aislado al relato.</span></a></li>
-      <li><a href="#c10"><span class="rn">10</span><span class="rt">Juntar las piezas</span><span class="rd">El proceso completo.</span></a></li>
+      <li><a href="#c01"><span class="rn">01</span><span class="rt">Foundations</span><span class="rd">Why communicating with data is a problem of meaning.</span></a></li>
+      <li><a href="#c02"><span class="rn">02</span><span class="rt">Context</span><span class="rd">Audience, question and big idea.</span></a></li>
+      <li><a href="#c03"><span class="rn">03</span><span class="rt">Perception</span><span class="rd">How we see, group and compare.</span></a></li>
+      <li><a href="#c04"><span class="rn">04</span><span class="rt">Reducing noise</span><span class="rd">What to take away before adding.</span></a></li>
+      <li><a href="#c05"><span class="rn">05</span><span class="rt">Directing attention</span><span class="rd">How to make what matters obvious.</span></a></li>
+      <li><a href="#c06"><span class="rn">06</span><span class="rt">Choosing the visual</span><span class="rd">The right chart depends on the task.</span></a></li>
+      <li><a href="#c07"><span class="rn">07</span><span class="rt">Composition</span><span class="rd">Layout, grid, space and hierarchy.</span></a></li>
+      <li><a href="#c08"><span class="rn">08</span><span class="rt">The words</span><span class="rd">Titles and annotations that do part of the work.</span></a></li>
+      <li><a href="#c09"><span class="rn">09</span><span class="rt">Building the story</span><span class="rd">From a single figure to a story.</span></a></li>
+      <li><a href="#c10"><span class="rn">10</span><span class="rt">Putting it together</span><span class="rd">The whole process.</span></a></li>
     </ol>
   </div>
 </section>
@@ -377,26 +378,26 @@
 <section class="chapter" id="c01" data-ch="01" aria-labelledby="c01-t">
   <header class="ch-intro ds-c">
     <span class="ch-num" aria-hidden="true">01</span>
-    <p class="ds-kicker ch-label">Capítulo 01 · <b>Fundamentos</b></p>
-    <h2 class="ds-h2 ch-hook" id="c01-t">Los datos pueden ser correctos y aun así no comunicar nada.</h2>
+    <p class="ds-kicker ch-label">Chapter 01 · <b>Foundations</b></p>
+    <h2 class="ds-h2 ch-hook" id="c01-t">Data can be correct and still communicate nothing.</h2>
   </header>
   <div class="ds-c">
     <div class="scrolly" data-viz="explore">
       <div class="sc-visual"><div class="viz">
-        <div class="mode-tag" aria-hidden="true"><span data-m="x" class="on">EXPLORAR</span><span data-m="e">EXPLICAR</span></div>
-        <div class="stage" role="img" aria-label="Los mismos 60 datos de ventas mensuales por canal, primero dispersos y después organizados en una línea temporal donde destaca el canal online."></div>
+        <div class="mode-tag" aria-hidden="true"><span data-m="x" class="on">EXPLORE</span><span data-m="e">EXPLAIN</span></div>
+        <div class="stage" role="img" aria-label="The same 60 monthly sales figures by channel, first scattered and then arranged on a timeline where the online channel stands out."></div>
       </div></div>
       <div class="sc-steps">
-        <div class="step" data-s="e1"><div class="st-in"><span class="st-tag">Explorar</span><p class="st-copy">Cuando exploro, todavía estoy buscando.</p><p class="st-sub">60 puntos: ventas mensuales de cinco canales. Todo tiene el mismo peso porque todavía no sé qué importa.</p></div></div>
-        <div class="step" data-s="e2"><div class="st-in"><p class="st-copy">Pruebo variables, busco patrones, sigo pistas.</p></div></div>
-        <div class="step" data-s="e3"><div class="st-in"><span class="st-tag">Explicar</span><p class="st-copy">Cuando explico, la pregunta ya es otra.</p></div></div>
-        <div class="step" data-s="e4"><div class="st-in"><p class="st-copy">Ahora tengo que decidir qué merece la atención de otra persona.</p></div></div>
-        <div class="step" data-s="e5"><div class="st-in"><p class="st-copy">Los datos no han cambiado. <span class="ds-green">La intención sí.</span></p></div></div>
+        <div class="step" data-s="e1"><div class="st-in"><span class="st-tag">Explore</span><p class="st-copy">When I explore, I'm still searching.</p><p class="st-sub">60 dots: monthly sales across five channels. Everything carries the same weight because I don't yet know what matters.</p></div></div>
+        <div class="step" data-s="e2"><div class="st-in"><p class="st-copy">I try variables, look for patterns, follow leads.</p></div></div>
+        <div class="step" data-s="e3"><div class="st-in"><span class="st-tag">Explain</span><p class="st-copy">When I explain, the question is a different one.</p></div></div>
+        <div class="step" data-s="e4"><div class="st-in"><p class="st-copy">Now I have to decide what deserves someone else's attention.</p></div></div>
+        <div class="step" data-s="e5"><div class="st-in"><p class="st-copy">The data hasn't changed. <span class="ds-green">The intention has.</span></p></div></div>
       </div>
     </div>
   </div>
   <div class="ds-c ds-pause">
-    <p class="ds-quote rv">Explorar me ayuda a descubrir. Explicar me obliga a decidir <em>qué merece la atención de otra persona.</em></p>
+    <p class="ds-quote rv">Exploring helps me discover. Explaining forces me to decide <em>what deserves someone else's attention.</em></p>
     <details class="src" data-src="segel"></details>
   </div>
 
@@ -404,15 +405,15 @@
   <div class="ds-c ds-sec--tight">
     <div class="split">
       <div>
-        <p class="ds-kicker">Mi marco de trabajo</p>
-        <h3 class="ds-h3" style="margin-top:12px">Tres capas que tienen que encajar</h3>
-        <p class="ds-body ds-muted" style="margin-top:14px">No es una fórmula exacta. Es la forma en la que reviso un informe antes de darlo por terminado. Las tres capas tienen que funcionar juntas: si una falla, el informe pierde fuerza.</p>
+        <p class="ds-kicker">My framework</p>
+        <h3 class="ds-h3" style="margin-top:12px">Three layers that have to fit together</h3>
+        <p class="ds-body ds-muted" style="margin-top:14px">It isn't an exact formula. It's how I review a report before I call it finished. The three layers have to work together: if one fails, the report loses its force.</p>
       </div>
       <div class="layers rv-seq">
-        <div class="layer"><span class="ln">DATOS</span><span class="lq">¿Qué puedo demostrar?</span></div>
-        <div class="layer"><span class="ln">NARRATIVA</span><span class="lq">¿Qué significa?</span></div>
-        <div class="layer"><span class="ln">VISUAL</span><span class="lq">¿Cómo se entiende?</span></div>
-        <p class="layers-sum">Datos + significado + <em>claridad.</em></p>
+        <div class="layer"><span class="ln">DATA</span><span class="lq">What can I prove?</span></div>
+        <div class="layer"><span class="ln">NARRATIVE</span><span class="lq">What does it mean?</span></div>
+        <div class="layer"><span class="ln">VISUAL</span><span class="lq">How is it understood?</span></div>
+        <p class="layers-sum">Data + meaning + <em>clarity.</em></p>
       </div>
     </div>
   </div>
@@ -422,36 +423,36 @@
 <section class="chapter" id="c02" data-ch="02" aria-labelledby="c02-t">
   <header class="ch-intro ds-c">
     <span class="ch-num" aria-hidden="true">02</span>
-    <p class="ds-kicker ch-label">Capítulo 02 · <b>Contexto</b></p>
-    <h2 class="ds-h2 ch-hook" id="c02-t">Antes de elegir un gráfico, intento averiguar qué problema estoy resolviendo.</h2>
+    <p class="ds-kicker ch-label">Chapter 02 · <b>Context</b></p>
+    <h2 class="ds-h2 ch-hook" id="c02-t">Before I choose a chart, I try to work out what problem I'm solving.</h2>
   </header>
   <div class="ds-c">
     <div class="scrolly" data-viz="brief">
       <div class="sc-visual"><div class="viz">
-        <div class="brief" data-s="0" role="img" aria-label="Una petición vaga se convierte en una pregunta: audiencia, pregunta, evidencia y acción.">
-          <div class="empty">Lienzo vacío</div>
-          <p class="bq">Necesitamos un dashboard de ventas.</p>
+        <div class="brief" data-s="0" role="img" aria-label="A vague request becomes a question: audience, question, evidence and action.">
+          <div class="empty">Blank canvas</div>
+          <p class="bq">We need a sales dashboard.</p>
           <div class="cols">
-            <div class="col col-1"><h4>¿Quién?</h4><span class="chip sel">Dirección</span><span class="chip">Comercial</span><span class="chip">Finanzas</span><span class="chip">Marketing</span><span class="chip">Analista</span></div>
-            <div class="col col-2"><h4>¿Qué?</h4><span class="chip">Comparar</span><span class="chip">Detectar</span><span class="chip">Explicar</span><span class="chip sel">Priorizar</span><span class="chip">Prever</span></div>
-            <div class="col col-3"><h4>¿Cómo?</h4><span class="chip sel">Ventas</span><span class="chip sel">Objetivo</span><span class="chip">Periodo</span><span class="chip sel">Canal</span><span class="chip">Región</span></div>
+            <div class="col col-1"><h4>Who?</h4><span class="chip sel">Leadership</span><span class="chip">Sales team</span><span class="chip">Finance</span><span class="chip">Marketing</span><span class="chip">Analyst</span></div>
+            <div class="col col-2"><h4>What?</h4><span class="chip">Compare</span><span class="chip">Detect</span><span class="chip">Explain</span><span class="chip sel">Prioritise</span><span class="chip">Forecast</span></div>
+            <div class="col col-3"><h4>How?</h4><span class="chip sel">Sales</span><span class="chip sel">Target</span><span class="chip">Period</span><span class="chip sel">Channel</span><span class="chip">Region</span></div>
           </div>
           <div class="flow">
-            <div class="fs"><span class="fk">AUDIENCIA</span><span class="fv">Dirección comercial</span></div>
-            <div class="fs"><span class="fk">PREGUNTA</span><span class="fv">¿En qué canal debería invertir el próximo trimestre?</span></div>
-            <div class="fs"><span class="fk">EVIDENCIA</span><span class="fv">Ventas frente a objetivo, por canal</span></div>
-            <div class="fs"><span class="fk">ACCIÓN</span><span class="fv">Reasignar presupuesto de captación</span></div>
+            <div class="fs"><span class="fk">AUDIENCE</span><span class="fv">Head of sales</span></div>
+            <div class="fs"><span class="fk">QUESTION</span><span class="fv">Which channel should we invest in next quarter?</span></div>
+            <div class="fs"><span class="fk">EVIDENCE</span><span class="fv">Sales against target, by channel</span></div>
+            <div class="fs"><span class="fk">ACTION</span><span class="fv">Reallocate the acquisition budget</span></div>
           </div>
         </div>
       </div></div>
       <div class="sc-steps">
-        <div class="step" data-s="0"><div class="st-in"><p class="st-copy">Empieza casi siempre igual.</p></div></div>
-        <div class="step" data-s="1"><div class="st-in"><p class="st-copy">“Necesitamos un dashboard de ventas.”</p></div></div>
-        <div class="step" data-s="2"><div class="st-in"><p class="st-copy">Bien. Pero todavía no es una pregunta.</p></div></div>
-        <div class="step" data-s="3"><div class="st-in"><span class="st-tag">¿Quién?</span><p class="st-copy">¿Quién va a leerlo?</p></div></div>
-        <div class="step" data-s="4"><div class="st-in"><span class="st-tag">¿Qué?</span><p class="st-copy">¿Qué necesita entender o decidir?</p></div></div>
-        <div class="step" data-s="5"><div class="st-in"><span class="st-tag">¿Cómo?</span><p class="st-copy">¿Qué datos puedo utilizar para demostrarlo?</p></div></div>
-        <div class="step step--pause" data-s="6"><div class="st-in"><p class="st-copy">La petición era un dashboard.</p><p class="st-copy" style="margin-top:1.2em">La pregunta real es otra.</p></div></div>
+        <div class="step" data-s="0"><div class="st-in"><p class="st-copy">It almost always starts the same way.</p></div></div>
+        <div class="step" data-s="1"><div class="st-in"><p class="st-copy">‘We need a sales dashboard.’</p></div></div>
+        <div class="step" data-s="2"><div class="st-in"><p class="st-copy">Fine. But it isn't a question yet.</p></div></div>
+        <div class="step" data-s="3"><div class="st-in"><span class="st-tag">Who?</span><p class="st-copy">Who is going to read it?</p></div></div>
+        <div class="step" data-s="4"><div class="st-in"><span class="st-tag">What?</span><p class="st-copy">What do they need to understand or decide?</p></div></div>
+        <div class="step" data-s="5"><div class="st-in"><span class="st-tag">How?</span><p class="st-copy">What data can I use to prove it?</p></div></div>
+        <div class="step step--pause" data-s="6"><div class="st-in"><p class="st-copy">The request was a dashboard.</p><p class="st-copy" style="margin-top:1.2em">The real question is something else.</p></div></div>
       </div>
     </div>
   </div>
@@ -460,17 +461,17 @@
   <div class="ds-c">
     <div class="scrolly scrolly--short" data-viz="tchart">
       <div class="sc-visual"><div class="viz">
-        <figure class="tchart" data-tchart role="img" aria-label="Gráfico de ventas por canal, Q4 2024 frente a Q4 2025. El título cambia de descriptivo a una frase que resume la idea.">
-          <div class="tct"><span class="a">Ventas Q4 por canal</span><span class="b">El canal online ya concentra la mayor parte del crecimiento.</span></div>
-          <p class="tcs">Ventas por canal, en miles de euros</p>
+        <figure class="tchart" data-tchart role="img" aria-label="Sales by channel, Q4 2024 against Q4 2025. The title changes from a description to a sentence that sums up the idea.">
+          <div class="tct"><span class="a">Q4 sales by channel</span><span class="b">Online now accounts for most of the growth.</span></div>
+          <p class="tcs">Sales by channel, in thousands of euros</p>
           <div class="gb"></div>
           <div class="tkey"><span><i style="background:var(--g2)"></i>Q4 2024</span><span><i style="background:var(--g1)"></i>Q4 2025</span></div>
         </figure>
       </div></div>
       <div class="sc-steps">
-        <div class="step" data-s="a"><div class="st-in"><span class="st-tag">La gran idea</span><p class="st-copy">Antes de diseñar, intento encontrar una frase.</p></div></div>
-        <div class="step" data-s="a"><div class="st-in"><span class="st-tag">Antes</span><p class="st-copy">Ventas Q4 por canal</p><p class="st-sub">Correcto. Pero le deja todo el trabajo a quien lo lee.</p></div></div>
-        <div class="step" data-s="b"><div class="st-in"><span class="st-tag"><b>Después</b></span><p class="st-copy">El canal online ya concentra la mayor parte del crecimiento.</p><p class="st-sub">El gráfico cambia muy poco. La interpretación cambia mucho.</p></div></div>
+        <div class="step" data-s="a"><div class="st-in"><span class="st-tag">The big idea</span><p class="st-copy">Before I design anything, I try to find one sentence.</p></div></div>
+        <div class="step" data-s="a"><div class="st-in"><span class="st-tag">Before</span><p class="st-copy">Q4 sales by channel</p><p class="st-sub">Correct. But it leaves all the work to the reader.</p></div></div>
+        <div class="step" data-s="b"><div class="st-in"><span class="st-tag"><b>After</b></span><p class="st-copy">Online now accounts for most of the growth.</p><p class="st-sub">The chart barely changes. The interpretation changes a lot.</p></div></div>
       </div>
     </div>
   </div>
@@ -479,18 +480,18 @@
   <div class="ds-c ds-sec">
     <div class="split">
       <div>
-        <div class="timer" data-timer><svg viewBox="0 0 100 100" aria-hidden="true"><circle class="tr-bg" cx="50" cy="50" r="46"/><circle class="tr-fg" cx="50" cy="50" r="46" pathLength="1"/></svg><span class="tv" aria-label="Tres minutos">3:00</span></div>
+        <div class="timer" data-timer><svg viewBox="0 0 100 100" aria-hidden="true"><circle class="tr-bg" cx="50" cy="50" r="46"/><circle class="tr-fg" cx="50" cy="50" r="46" pathLength="1"/></svg><span class="tv" aria-label="Three minutes">3:00</span></div>
       </div>
       <div>
-        <p class="ds-lead">Otra prueba que me funciona: imaginar que tengo tres minutos y ninguna pantalla.</p>
+        <p class="ds-lead">Another test that works for me: imagine I have three minutes and no screen.</p>
         <ul class="qlist rv-seq" style="margin-top:22px">
-          <li>¿Qué diría?</li>
-          <li>¿Qué está pasando?</li>
-          <li>¿Por qué importa?</li>
-          <li>¿Qué he descubierto?</li>
-          <li>¿Qué debería hacer alguien con esa información?</li>
+          <li>What would I say?</li>
+          <li>What's happening?</li>
+          <li>Why does it matter?</li>
+          <li>What have I found?</li>
+          <li>What should someone do with that information?</li>
         </ul>
-        <p class="ds-lead" style="margin-top:26px"><b>Lo que sobrevive a esos tres minutos probablemente merece estar en la historia.</b></p>
+        <p class="ds-lead" style="margin-top:26px"><b>Whatever survives those three minutes probably deserves a place in the story.</b></p>
         <details class="src" data-src="swd"></details>
       </div>
     </div>
@@ -500,25 +501,25 @@
   <div class="ds-c ds-sec--tight">
     <div class="split split--wide">
       <div>
-        <p class="ds-kicker">Audiencia</p>
-        <p class="ds-h3" style="margin:12px 0 14px">La misma pregunta no se diseña igual para todos.</p>
-        <p class="ds-body" style="margin-bottom:18px">Antes de diseñar un informe, necesito saber quién lo va a utilizar y qué necesita entender.</p>
-        <div class="ctl-row"><div class="seg" role="group" aria-label="Audiencia" data-tgl-for="aud">
-          <button type="button" data-s="csuite" aria-pressed="true">Dirección</button>
-          <button type="button" data-s="com" aria-pressed="false">Comercial</button>
-          <button type="button" data-s="ana" aria-pressed="false">Analistas</button>
-          <button type="button" data-s="cli" aria-pressed="false">Cliente externo</button>
+        <p class="ds-kicker">Audience</p>
+        <p class="ds-h3" style="margin:12px 0 14px">The same question isn't designed the same way for everyone.</p>
+        <p class="ds-body" style="margin-bottom:18px">Before I design a report, I need to know who is going to use it and what they need to understand.</p>
+        <div class="ctl-row"><div class="seg" role="group" aria-label="Audience" data-tgl-for="aud">
+          <button type="button" data-s="csuite" aria-pressed="true">Leadership</button>
+          <button type="button" data-s="com" aria-pressed="false">Sales team</button>
+          <button type="button" data-s="ana" aria-pressed="false">Analysts</button>
+          <button type="button" data-s="cli" aria-pressed="false">External client</button>
         </div></div>
         <p class="ds-body" aria-live="polite" data-tgl-note="aud"
-          data-n-csuite="Dirección quiere el número y la tendencia. Sin filtros, márgenes amplios y un único visual protagonista. El detalle, abajo y pequeño."
-          data-n-com="El equipo comercial lo consulta cada día. Filtros rápidos arriba, una fila completa de KPIs y comparativas que se leen de un vistazo."
-          data-n-ana="Quien analiza acepta densidad si a cambio hay respuestas. Filtros en un lateral, más visuales y más detalle, pero la jerarquía se mantiene."
-          data-n-cli="Un cliente externo, por ejemplo, no tiene por qué conocer nuestras siglas ni nuestro lenguaje interno. Necesita contexto, pocos KPIs, un mensaje claro y nada de jerga innecesaria."></p>
-        <p class="ds-body ds-muted" style="margin-top:14px">Y hay otra pregunta que a veces se me olvida: <b>¿dónde lo va a consultar?</b></p>
-        <p class="ds-body ds-muted" style="margin-top:10px">No es lo mismo un comité mensual frente a una pantalla grande, donde probablemente solo se lean los primeros KPIs, que consultar el informe desde el móvil entre dos reuniones.</p>
+          data-n-csuite="Leadership wants the number and the trend. No filters, generous margins and a single lead visual. The detail goes below, and small."
+          data-n-com="The sales team checks it every day. Quick filters at the top, a full row of KPIs and comparisons you can read at a glance."
+          data-n-ana="Analysts accept density if it gets them answers. Filters down the side, more visuals and more detail, but the hierarchy stays."
+          data-n-cli="An external client, for example, doesn't need to know our acronyms or our internal language. They need context, a few KPIs, a clear message and no unnecessary jargon."></p>
+        <p class="ds-body ds-muted" style="margin-top:14px">And there's another question I sometimes forget: <b>where will they look at it?</b></p>
+        <p class="ds-body ds-muted" style="margin-top:10px">A monthly committee in front of a big screen, where probably only the first KPIs get read, isn't the same as checking the report on a phone between two meetings.</p>
       </div>
       <div class="tgl" id="aud" data-viz="wf" data-wf="aud" data-auto="csuite,com,ana,cli">
-        <div class="wf" role="img" aria-label="Plano de un dashboard que cambia según la audiencia: más aire y un visual dominante para dirección, filtros arriba para comercial, filtros laterales y más detalle para analistas, y un solo mensaje para un cliente externo."></div>
+        <div class="wf" role="img" aria-label="Wireframe of a dashboard that changes with the audience: more space and one dominant visual for leadership, filters at the top for the sales team, side filters and more detail for analysts, and a single message for an external client."></div>
       </div>
     </div>
   </div>
@@ -526,14 +527,14 @@
   <!-- Diccionario -->
   <div class="ds-c ds-sec--tight">
     <details class="dict">
-      <summary>Diccionario visual: los verbos que uso para escribir títulos <span class="pm" aria-hidden="true"></span></summary>
-      <div class="tabs" role="tablist" aria-label="Categorías del diccionario">
-        <button role="tab" aria-selected="true" aria-controls="dw" data-w="0">Para analizar</button>
-        <button role="tab" aria-selected="false" aria-controls="dw" data-w="1" tabindex="-1">Para actuar</button>
-        <button role="tab" aria-selected="false" aria-controls="dw" data-w="2" tabindex="-1">Para describir datos</button>
-        <button role="tab" aria-selected="false" aria-controls="dw" data-w="3" tabindex="-1">Para contar</button>
-        <button role="tab" aria-selected="false" aria-controls="dw" data-w="4" tabindex="-1">Para incertidumbre</button>
-        <button role="tab" aria-selected="false" aria-controls="dw" data-w="5" tabindex="-1">Para interacción</button>
+      <summary>Visual dictionary: the verbs I use to write titles <span class="pm" aria-hidden="true"></span></summary>
+      <div class="tabs" role="tablist" aria-label="Dictionary categories">
+        <button role="tab" aria-selected="true" aria-controls="dw" data-w="0">To analyse</button>
+        <button role="tab" aria-selected="false" aria-controls="dw" data-w="1" tabindex="-1">To act</button>
+        <button role="tab" aria-selected="false" aria-controls="dw" data-w="2" tabindex="-1">To describe data</button>
+        <button role="tab" aria-selected="false" aria-controls="dw" data-w="3" tabindex="-1">To tell</button>
+        <button role="tab" aria-selected="false" aria-controls="dw" data-w="4" tabindex="-1">For uncertainty</button>
+        <button role="tab" aria-selected="false" aria-controls="dw" data-w="5" tabindex="-1">For interaction</button>
       </div>
       <div class="words" id="dw" role="tabpanel" aria-live="polite"></div>
     </details>
@@ -541,16 +542,16 @@
 
   <!-- What / Why / How -->
   <div class="ds-c ds-sec--tight">
-    <p class="ds-kicker rv-up">El marco</p>
-    <p class="ds-h3 rv-up" data-delay="150" style="margin:12px 0 10px;max-width:26ch">Antes del gráfico, está la pregunta.</p>
-    <p class="ds-body ds-muted rv-up" data-delay="300" style="max-width:56ch">Primero entiendo qué quiero responder. Después, qué necesita saber el lector. Y solo entonces decido cómo voy a representarlo.</p>
+    <p class="ds-kicker rv-up">The framework</p>
+    <p class="ds-h3 rv-up" data-delay="150" style="margin:12px 0 10px;max-width:26ch">Before the chart comes the question.</p>
+    <p class="ds-body ds-muted rv-up" data-delay="300" style="max-width:56ch">First I understand what I want to answer. Then, what the reader needs to know. And only then do I decide how to show it.</p>
     <div class="wwh rv-seq" style="margin-top:40px">
-      <div><span class="wk">WHAT</span><p class="wq">¿Qué tengo?</p><p class="wd">Tipo de dato, variables y granularidad.</p></div>
-      <div><span class="wk">WHY</span><p class="wq">¿Qué necesita hacer el lector?</p><p class="wd">Comparar, localizar, detectar, entender…</p></div>
-      <div><span class="wk">HOW</span><p class="wq">¿Cómo lo voy a representar?</p><p class="wd">La codificación visual que mejor resuelve esa tarea.</p></div>
+      <div><span class="wk">WHAT</span><p class="wq">What have I got?</p><p class="wd">Data type, variables and granularity.</p></div>
+      <div><span class="wk">WHY</span><p class="wq">What does the reader need to do?</p><p class="wd">Compare, locate, detect, understand…</p></div>
+      <div><span class="wk">HOW</span><p class="wq">How am I going to show it?</p><p class="wd">The visual encoding that best solves that task.</p></div>
     </div>
     <p class="wwh-flow rv" data-delay="550">WHAT <span>→</span> WHY <span>→</span> HOW</p>
-    <p class="ds-quote rv" data-delay="750" style="margin-top:40px">Primero la pregunta. <em>Después la representación.</em></p>
+    <p class="ds-quote rv" data-delay="750" style="margin-top:40px">The question first. <em>Then the chart.</em></p>
   </div>
 </section>
 
@@ -853,9 +854,9 @@
         <p class="ds-kicker">Recetas por área</p>
         <p class="ds-h3" style="margin:12px 0 18px">Una plantilla no sustituye a la pregunta. Pero evita empezar desde un lienzo en blanco.</p>
         <div class="ctl-row"><div class="seg seg--grid" role="group" aria-label="Área" data-tgl-for="rcp">
-          <button type="button" data-s="dir" aria-pressed="true">Dirección</button>
-          <button type="button" data-s="com" aria-pressed="false">Comercial</button>
-          <button type="button" data-s="fin" aria-pressed="false">Finanzas</button>
+          <button type="button" data-s="dir" aria-pressed="true">Leadership</button>
+          <button type="button" data-s="com" aria-pressed="false">Sales team</button>
+          <button type="button" data-s="fin" aria-pressed="false">Finance</button>
           <button type="button" data-s="per" aria-pressed="false">Personas</button>
           <button type="button" data-s="mkt" aria-pressed="false">Marketing</button>
           <button type="button" data-s="eco" aria-pressed="false">E-commerce</button>
@@ -928,7 +929,7 @@
       </div>
       <div class="tgl" id="spc" data-viz="spc" data-auto="irr,sys">
         <div class="sp8" data-s="irr" role="img" aria-label="Tres tarjetas KPI con sus distancias marcadas. Con espaciado irregular cada distancia es distinta; con el sistema de 8 son 8, 16 y 24 píxeles y las cifras quedan alineadas.">
-          <div class="sp8-row"><div class="sp8-card c1"><i class="sp pt"><b></b></i><span class="l">Ventas</span><i class="sp g1"><b></b></i><span class="v">1,57 M€</span><i class="sp g2"><b></b></i><span class="d">▲ +24 % vs 2024</span><i class="sp pb"><b></b></i></div><i class="sp gx gx1"><b></b></i><div class="sp8-card c2"><i class="sp pt"><b></b></i><span class="l">Margen</span><i class="sp g1"><b></b></i><span class="v">38,2 %</span><i class="sp g2"><b></b></i><span class="d">▲ +1,1 pp vs 2024</span><i class="sp pb"><b></b></i></div><i class="sp gx gx2"><b></b></i><div class="sp8-card c3"><i class="sp pt"><b></b></i><span class="l">Pedidos</span><i class="sp g1"><b></b></i><span class="v">12.480</span><i class="sp g2"><b></b></i><span class="d">▲ +9 % vs 2024</span><i class="sp pb"><b></b></i></div></div>
+          <div class="sp8-row"><div class="sp8-card c1"><i class="sp pt"><b></b></i><span class="l">Sales</span><i class="sp g1"><b></b></i><span class="v">1,57 M€</span><i class="sp g2"><b></b></i><span class="d">▲ +24 % vs 2024</span><i class="sp pb"><b></b></i></div><i class="sp gx gx1"><b></b></i><div class="sp8-card c2"><i class="sp pt"><b></b></i><span class="l">Margen</span><i class="sp g1"><b></b></i><span class="v">38,2 %</span><i class="sp g2"><b></b></i><span class="d">▲ +1,1 pp vs 2024</span><i class="sp pb"><b></b></i></div><i class="sp gx gx2"><b></b></i><div class="sp8-card c3"><i class="sp pt"><b></b></i><span class="l">Pedidos</span><i class="sp g1"><b></b></i><span class="v">12.480</span><i class="sp g2"><b></b></i><span class="d">▲ +9 % vs 2024</span><i class="sp pb"><b></b></i></div></div>
           <p class="sp8-key"><span><i></i>distancia medida en px</span></p>
         </div>
       </div>
@@ -953,7 +954,7 @@
       </div>
       <div class="tgl" id="ws" data-viz="ws" data-auto="c,s,e">
         <div class="ws" data-s="c" role="img" aria-label="El mismo informe con tres usos del espacio: todo pegado; agrupado en cifras y gráficos con más aire entre grupos que dentro; y con la cifra principal rodeada de espacio.">
-          <div class="wsb k w1"><span class="kl">Ventas</span><span class="kv">1,57 M€</span><span class="kd">▲ +24 % vs 2024</span></div>
+          <div class="wsb k w1"><span class="kl">Sales</span><span class="kv">1,57 M€</span><span class="kd">▲ +24 % vs 2024</span></div>
           <div class="wsb k w2"><span class="kl">Margen</span><span class="kv">38,2 %</span></div>
           <div class="wsb k w3"><span class="kl">Pedidos</span><span class="kv">12.480</span></div>
           <div class="wsb c w4"><span class="kl">Ventas por mes</span><svg viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true"><polyline points="0,32 9,30 18,27 27,29 36,23 45,21 54,22 63,17 72,14 81,13 90,9 100,4"/></svg></div>
@@ -1131,7 +1132,7 @@
     <div class="scrolly scrolly--short" data-viz="dash">
       <div class="sc-visual"><div class="viz" data-dash="c08"></div></div>
       <div class="sc-steps">
-        <div class="step" data-flags="flat lessgrid gray direct short dim desc"><div class="st-in"><span class="st-tag">Mismo gráfico</span><p class="st-copy">Ventas Q4 por canal</p></div></div>
+        <div class="step" data-flags="flat lessgrid gray direct short dim desc"><div class="st-in"><span class="st-tag">Mismo gráfico</span><p class="st-copy">Q4 sales by channel</p></div></div>
         <div class="step" data-flags="flat lessgrid gray direct short dim focus story"><div class="st-in"><span class="st-tag"><b>Diferente título</b></span><p class="st-copy">El canal online ya concentra la mayor parte del crecimiento</p><p class="st-sub">El gráfico casi no cambia. Cada panel pasa a decir lo que muestra.</p></div></div>
       </div>
     </div>
@@ -1191,7 +1192,7 @@
       </div>
       <div>
         <div class="tchart" id="dyn" style="min-height:280px">
-          <div class="ctl-row" style="margin-bottom:18px"><span class="ctl-cap">Región</span><div class="seg" role="group" aria-label="Filtro de región">
+          <div class="ctl-row" style="margin-bottom:18px"><span class="ctl-cap">Region</span><div class="seg" role="group" aria-label="Filtro de región">
             <button type="button" data-r="0" aria-pressed="true">Norte</button><button type="button" data-r="1" aria-pressed="false">Centro</button><button type="button" data-r="2" aria-pressed="false">Sur</button><button type="button" data-r="3" aria-pressed="false">Este</button>
           </div></div>
           <p class="dyn-t ds-h3" aria-live="polite" style="font-size:clamp(20px,2.2vw,28px);min-height:2.5em"></p>
@@ -1480,8 +1481,8 @@
     <div class="gal" id="prac">
       <article class="gcase">
         <div class="ba ba--img" style="--p:50%">
-          <div class="ba-l ba-before ba-gs"><picture><source srcset="./img/p1.webp" type="image/webp"><img loading="lazy" src="./img/p1.png" alt="" width="762" height="400"></picture></div>
-          <div class="ba-l ba-after"><picture><source srcset="./img/p1.webp" type="image/webp"><img loading="lazy" src="./img/p1.png" alt="Tabla «Rendimiento de clientes» con buscador, desviaciones en verde y rojo, variación interanual y ranking." width="762" height="400"></picture></div>
+          <div class="ba-l ba-before ba-gs"><picture><source srcset="../img/p1.webp" type="image/webp"><img loading="lazy" src="../img/p1.png" alt="" width="762" height="400"></picture></div>
+          <div class="ba-l ba-after"><picture><source srcset="../img/p1.webp" type="image/webp"><img loading="lazy" src="../img/p1.png" alt="Tabla «Rendimiento de clientes» con buscador, desviaciones en verde y rojo, variación interanual y ranking." width="762" height="400"></picture></div>
           <div class="ba-line"></div><span class="ba-tag l">En grises</span><span class="ba-tag r">En color</span>
           <input type="range" min="0" max="100" value="50" aria-label="Comparar en grises y en color: No estás filtrando datos. Estás eligiendo qué historia quieres ver.">
         </div>
@@ -1491,8 +1492,8 @@
       </article>
       <article class="gcase">
         <div class="ba ba--img" style="--p:50%">
-          <div class="ba-l ba-before ba-gs"><picture><source srcset="./img/p2.webp" type="image/webp"><img loading="lazy" src="./img/p2.png" alt="" width="762" height="400"></picture></div>
-          <div class="ba-l ba-after"><picture><source srcset="./img/p2.webp" type="image/webp"><img loading="lazy" src="./img/p2.png" alt="Tarjeta KPI de ventas: 6,38 millones frente a 5,84 del año anterior, con un delta positivo y columnas mensuales." width="762" height="400"></picture></div>
+          <div class="ba-l ba-before ba-gs"><picture><source srcset="../img/p2.webp" type="image/webp"><img loading="lazy" src="../img/p2.png" alt="" width="762" height="400"></picture></div>
+          <div class="ba-l ba-after"><picture><source srcset="../img/p2.webp" type="image/webp"><img loading="lazy" src="../img/p2.png" alt="Tarjeta KPI de ventas: 6,38 millones frente a 5,84 del año anterior, con un delta positivo y columnas mensuales." width="762" height="400"></picture></div>
           <div class="ba-line"></div><span class="ba-tag l">En grises</span><span class="ba-tag r">En color</span>
           <input type="range" min="0" max="100" value="50" aria-label="Comparar en grises y en color: El futuro de los dashboards no son más gráficos, son mejores interacciones.">
         </div>
@@ -1502,8 +1503,8 @@
       </article>
       <article class="gcase">
         <div class="ba ba--img" style="--p:50%">
-          <div class="ba-l ba-before ba-gs"><picture><source srcset="./img/p3.webp" type="image/webp"><img loading="lazy" src="./img/p3.png" alt="" width="762" height="400"></picture></div>
-          <div class="ba-l ba-after"><picture><source srcset="./img/p3.webp" type="image/webp"><img loading="lazy" src="./img/p3.png" alt="Gráfico de líneas de ventas por producto, comparando dos productos por año, con un zoom trimestral a la derecha." width="762" height="400"></picture></div>
+          <div class="ba-l ba-before ba-gs"><picture><source srcset="../img/p3.webp" type="image/webp"><img loading="lazy" src="../img/p3.png" alt="" width="762" height="400"></picture></div>
+          <div class="ba-l ba-after"><picture><source srcset="../img/p3.webp" type="image/webp"><img loading="lazy" src="../img/p3.png" alt="Gráfico de líneas de ventas por producto, comparando dos productos por año, con un zoom trimestral a la derecha." width="762" height="400"></picture></div>
           <div class="ba-line"></div><span class="ba-tag l">En grises</span><span class="ba-tag r">En color</span>
           <input type="range" min="0" max="100" value="50" aria-label="Comparar en grises y en color: Producto a producto: cómo los datos cuentan historias.">
         </div>
@@ -1513,8 +1514,8 @@
       </article>
       <article class="gcase">
         <div class="ba ba--img" style="--p:50%">
-          <div class="ba-l ba-before ba-gs"><picture><source srcset="./img/p4.webp" type="image/webp"><img loading="lazy" src="./img/p4.png" alt="" width="762" height="400"></picture></div>
-          <div class="ba-l ba-after"><picture><source srcset="./img/p4.webp" type="image/webp"><img loading="lazy" src="./img/p4.png" alt="Cuatro pequeños gráficos de líneas, uno por producto, cada uno con su variación en verde o rojo y su peso sobre el total." width="762" height="400"></picture></div>
+          <div class="ba-l ba-before ba-gs"><picture><source srcset="../img/p4.webp" type="image/webp"><img loading="lazy" src="../img/p4.png" alt="" width="762" height="400"></picture></div>
+          <div class="ba-l ba-after"><picture><source srcset="../img/p4.webp" type="image/webp"><img loading="lazy" src="../img/p4.png" alt="Cuatro pequeños gráficos de líneas, uno por producto, cada uno con su variación en verde o rojo y su peso sobre el total." width="762" height="400"></picture></div>
           <div class="ba-line"></div><span class="ba-tag l">En grises</span><span class="ba-tag r">En color</span>
           <input type="range" min="0" max="100" value="50" aria-label="Comparar en grises y en color: Si tienes que reconstruir la historia en tu cabeza, el dashboard falla.">
         </div>
@@ -1524,8 +1525,8 @@
       </article>
       <article class="gcase">
         <div class="ba ba--img" style="--p:50%">
-          <div class="ba-l ba-before ba-gs"><picture><source srcset="./img/p5.webp" type="image/webp"><img loading="lazy" src="./img/p5.png" alt="" width="762" height="400"></picture></div>
-          <div class="ba-l ba-after"><picture><source srcset="./img/p5.webp" type="image/webp"><img loading="lazy" src="./img/p5.png" alt="Columnas de beneficios mensuales frente a un objetivo ajustable, con la media marcada y el título en forma de pregunta." width="762" height="400"></picture></div>
+          <div class="ba-l ba-before ba-gs"><picture><source srcset="../img/p5.webp" type="image/webp"><img loading="lazy" src="../img/p5.png" alt="" width="762" height="400"></picture></div>
+          <div class="ba-l ba-after"><picture><source srcset="../img/p5.webp" type="image/webp"><img loading="lazy" src="../img/p5.png" alt="Columnas de beneficios mensuales frente a un objetivo ajustable, con la media marcada y el título en forma de pregunta." width="762" height="400"></picture></div>
           <div class="ba-line"></div><span class="ba-tag l">En grises</span><span class="ba-tag r">En color</span>
           <input type="range" min="0" max="100" value="50" aria-label="Comparar en grises y en color: Un gráfico puede ser correcto y aun así engañar.">
         </div>
@@ -1535,8 +1536,8 @@
       </article>
       <article class="gcase">
         <div class="ba ba--img" style="--p:50%">
-          <div class="ba-l ba-before ba-gs"><picture><source srcset="./img/p6.webp" type="image/webp"><img loading="lazy" src="./img/p6.png" alt="" width="762" height="400"></picture></div>
-          <div class="ba-l ba-after"><picture><source srcset="./img/p6.webp" type="image/webp"><img loading="lazy" src="./img/p6.png" alt="Columnas de ventas anuales de 2010 a 2025 con el periodo seleccionado resaltado y la variación entre sus extremos." width="762" height="400"></picture></div>
+          <div class="ba-l ba-before ba-gs"><picture><source srcset="../img/p6.webp" type="image/webp"><img loading="lazy" src="../img/p6.png" alt="" width="762" height="400"></picture></div>
+          <div class="ba-l ba-after"><picture><source srcset="../img/p6.webp" type="image/webp"><img loading="lazy" src="../img/p6.png" alt="Columnas de ventas anuales de 2010 a 2025 con el periodo seleccionado resaltado y la variación entre sus extremos." width="762" height="400"></picture></div>
           <div class="ba-line"></div><span class="ba-tag l">En grises</span><span class="ba-tag r">En color</span>
           <input type="range" min="0" max="100" value="50" aria-label="Comparar en grises y en color: Variaciones entre columnas al alcance de un vistazo.">
         </div>
@@ -1545,7 +1546,7 @@
         <p class="pr-meta"><a href="#c05"><b>cap. 05</b> dirigir la atención</a><a href="#c04"><b>cap. 04</b> reducir el ruido</a><a class="pr-post" href="https://www.linkedin.com/feed/update/urn:li:activity:7376214576889098240/" target="_blank" rel="noopener noreferrer">Ver el post <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></a></p>
       </article>
     </div>
-    <p class="ds-muted pr-foot">Los datos de estas capturas son de ejemplo. <a href="./power-bi.html#comunidad">Más publicaciones en la sección Comunidad del portfolio →</a></p>
+    <p class="ds-muted pr-foot">Los datos de estas capturas son de ejemplo. <a href="../power-bi.html#comunidad">Más publicaciones en la sección Comunidad del portfolio →</a></p>
   </div>
 </section>
 
@@ -1571,8 +1572,8 @@
   <div class="ds-c finale">
     <div class="sig rv">
       <div class="ctas">
-        <a class="btn-ds" id="dsMailBtn" href="#" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_email',{location:'data_storytelling'});">¿Hablamos? <span class="arr" aria-hidden="true"><i>→</i><i>→</i></span></a>
-        <a class="btn-ds ghost" href="./power-bi.html">Ver proyectos de Power BI <span class="arr" aria-hidden="true"><i>→</i><i>→</i></span></a>
+        <a class="btn-ds" id="dsMailBtn" href="#" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_email',{location:'data_storytelling'});">Let's talk <span class="arr" aria-hidden="true"><i>→</i><i>→</i></span></a>
+        <a class="btn-ds ghost" href="../power-bi.html">Ver proyectos de Power BI <span class="arr" aria-hidden="true"><i>→</i><i>→</i></span></a>
       </div>
     </div>
   </div>
@@ -1597,39 +1598,39 @@
     <div class="foot-grid">
       <div class="foot-col foot-col--brand">
         <p class="foot-brand-name">Borja Mora.</p>
-        <p class="foot-brand-desc">Data Analyst Junior</p>
-        <p class="foot-brand-loc">Madrid, España</p>
+        <p class="foot-brand-desc">Junior Data Analyst</p>
+        <p class="foot-brand-loc">Madrid, Spain</p>
       </div>
 
-      <nav class="foot-col" aria-label="Navegación del pie de página">
-        <p class="foot-col-title">Navegación</p>
-        <a href="./index.html">Inicio</a>
-        <a href="./sobre-mi.html">Sobre mí</a>
-        <a href="./power-bi.html">Power BI</a>
-        <a href="./analisis-datos.html">Análisis</a>
-        <a href="./visualizacion-datos.html">Visualización</a>
-        <a href="./descargas.html">Descargas</a>
+      <nav class="foot-col" aria-label="Footer navigation">
+        <p class="foot-col-title">Navigation</p>
+        <a href="./index.html">Home</a>
+        <a href="../sobre-mi.html">About me</a>
+        <a href="../power-bi.html">Power BI</a>
+        <a href="../analisis-datos.html">Analysis</a>
+        <a href="../visualizacion-datos.html">Visualisation</a>
+        <a href="./downloads.html">Downloads</a>
       </nav>
 
       <div class="foot-col">
-        <p class="foot-col-title">Trabajo</p>
-        <a href="./power-bi.html">Power BI</a>
-        <a href="./analisis-datos.html#ml">Machine Learning</a>
-        <a href="./analisis-datos.html#python">Python</a>
-        <a href="./analisis-datos.html#sql">SQL</a>
+        <p class="foot-col-title">Work</p>
+        <a href="../power-bi.html">Power BI</a>
+        <a href="../analisis-datos.html#ml">Machine Learning</a>
+        <a href="../analisis-datos.html#python">Python</a>
+        <a href="../analisis-datos.html#sql">SQL</a>
       </div>
 
       <div class="foot-col">
-        <p class="foot-col-title">Sígueme</p>
+        <p class="foot-col-title">Follow me</p>
         <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_linkedin',{location:'footer'});">LinkedIn</a>
         <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_github',{location:'footer'});">GitHub</a>
       </div>
     </div>
 
     <div class="foot-bottom">
-      <p class="foot-copy">© 2026 Borja Mora Méndez · Todos los derechos reservados</p>
+      <p class="foot-copy">© 2026 Borja Mora Méndez · All rights reserved</p>
       <div class="foot-made">
-        <span>Diseñado y construido por mí</span>
+        <span>Designed and built by me</span>
         <span class="foot-tech">HTML</span>
         <span class="foot-tech">CSS</span>
         <span class="foot-tech">JS</span>
@@ -1651,19 +1652,19 @@ window.addEventListener('scroll',function(){
 <script>
 (function(){
   var e = atob('Ym9yamEubW9yYS5tZW5kZXpAZ21haWwuY29t');
-  var su = encodeURIComponent('Oportunidad laboral');
-  var body = encodeURIComponent('Hola, me gustaría hablar contigo sobre una posible oportunidad.');
+  var su = encodeURIComponent('Job opportunity');
+  var body = encodeURIComponent('Hi, I would like to talk to you about a possible opportunity.');
   var url = 'https://mail.google.com/mail/u/0/?fs=1&to=' + e + '&su=' + su + '&body=' + body + '&tf=cm';
   var nav = document.getElementById('navEmailBtn');
   if (nav) nav.href = url;
 })();
 </script>
 <!-- ── Cookie banner HTML + lógica (RGPD/LOPDGDD) ── -->
-<div id="bm-cookie-banner" role="dialog" aria-live="polite" aria-label="Aviso de cookies">
-  <p><strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Política de privacidad</a>.</p>
+<div id="bm-cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie notice">
+  <p><strong>Analytics cookies.</strong> I use Google Analytics to understand how this site is used. No advertising or third-party tracking. <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Privacy policy</a>.</p>
   <div class="bm-cb-btns">
-    <button class="bm-cb-btn bm-cb-reject" id="bm-cb-reject" aria-label="Rechazar cookies">Rechazar</button>
-    <button class="bm-cb-btn bm-cb-accept" id="bm-cb-accept" aria-label="Aceptar cookies">Aceptar</button>
+    <button class="bm-cb-btn bm-cb-reject" id="bm-cb-reject" aria-label="Reject cookies">Reject</button>
+    <button class="bm-cb-btn bm-cb-accept" id="bm-cb-accept" aria-label="Accept cookies">Accept</button>
   </div>
 </div>
 <script>
@@ -1711,10 +1712,11 @@ window.addEventListener('scroll',function(){
   });
 })();
 </script>
-<script src="./ds/manual.js?v=20260930h" defer></script>
+<script src="../ds/i18n/en.js?v=20260930h" defer></script>
+<script src="../ds/manual.js?v=20260930h" defer></script>
 <!-- Motion: bibliotecas opcionales. Si un CDN falla, la pagina funciona igual (todo tiene fallback CSS). -->
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
-<script type="module" src="./ds/main.js?v=20260930d"></script>
+<script type="module" src="../ds/main.js?v=20260930d"></script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   data-storytelling.css — manual interactivo
+   ds/manual.css — manual interactivo (data-storytelling.html)
    Solo para data-storytelling.html. Todo va bajo .ds
    para no tocar shared.css ni el resto del portfolio.
 
@@ -1281,7 +1281,7 @@
 
 /* ═══════════════════════════════════════════════
    PLANOS DE DASHBOARD — lo que aporta PBI Mockup Creator
-   Lienzo 16:9, piezas posicionadas en % por data-storytelling.js (wfLayout)
+   Lienzo 16:9, piezas posicionadas en % por ds/manual.js (wfLayout)
    ═══════════════════════════════════════════════ */
 .wf { container-type: inline-size; position: relative; aspect-ratio: 16 / 9; background: #F4F4F4; border: 1px solid var(--grid); overflow: hidden; }
 .wfb {
@@ -1607,3 +1607,17 @@
   .dash .mx thead, .dash .mx tr > :nth-child(3) { display: none; }
   .dash.prio .mx tfoot { display: none; }
 }
+
+/* ═══ IDIOMA ═══
+   El mismo selector que usa el portfolio en en/index.html (.lang-toggle), centrado en el
+   hueco libre del menú: entre el logo y los enlaces (en móvil, entre el logo y el menú). */
+#nav .ds-lang { margin-inline: auto; flex: none; }
+#nav .ds-lang + .nav-links { margin-left: 0; }
+.lang-toggle { display: flex; align-items: center; background: var(--off); border: .5px solid var(--gray); border-radius: 8px; overflow: hidden; height: 32px; }
+.lang-btn { display: inline-flex; align-items: center; gap: 5px; padding: 0 10px; height: 100%; font-size: 11px; font-weight: 700; letter-spacing: .3px; color: var(--muted); text-decoration: none; transition: background .18s, color .18s; cursor: pointer; white-space: nowrap; }
+.lang-active { background: var(--white); color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,.08); border-radius: 7px; margin: 2px; padding: 0 8px; }
+.lang-other { color: var(--muted); }
+.lang-other:hover { background: rgba(0,0,0,.04); color: var(--ink); }
+.lang-other:focus-visible { outline: 2px solid var(--purple); outline-offset: -2px; border-radius: 7px; }
+.lang-code { font-size: 11px; font-weight: 700; }
+.lang-btn svg { flex-shrink: 0; border-radius: 2px; }

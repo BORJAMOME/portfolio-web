@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   data-storytelling.js — manual interactivo
+   ds/manual.js — manual interactivo (data-storytelling.html)
    Arquitectura: cada visual es una máquina de estados.
    El scroll (IntersectionObserver) solo elige el estado;
    CSS se encarga de la transición. Sin scroll-jacking,
@@ -28,7 +28,26 @@
   function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
   function later(fn, ms) { return setTimeout(fn, RM.matches ? 0 : ms); }
   function rng(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-  function fmtEs(n, d) { return n.toLocaleString('es-ES', { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }); }
+  function fmtEs(n, d) { return n.toLocaleString(LANG === 'en' ? 'en-GB' : 'es-ES', { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }); }
+
+  /* ═══ IDIOMA ═══
+     La página inglesa (en/data-storytelling.html) carga ds/i18n/en.js antes que este
+     archivo: window.DS_EN = { 'texto en español': 'English text', … }.
+     · T(s): traduce una cadena; si aún no hay traducción, deja el original.
+     · trHTML(html): traduce los nodos de texto de un HTML generado aquí (dashboards).
+     · eur()/keur(): cifras con el formato de cada idioma (1.572.340,00 € · €1,572,340.00). */
+  var LANG = document.documentElement.lang === 'en' ? 'en' : 'es';
+  var DICT = LANG === 'en' ? (window.DS_EN || {}) : {};
+  function T(s) { return typeof s === 'string' && Object.prototype.hasOwnProperty.call(DICT, s) ? DICT[s] : s; }
+  function trHTML(h) {
+    if (LANG !== 'en') return h;
+    return h.replace(/>([^<>]+)</g, function (m, t) { var k = t.trim(); if (!k || !Object.prototype.hasOwnProperty.call(DICT, k)) return m; return '>' + t.replace(k, DICT[k]) + '<'; })
+      .replace(/(aria-label|title)="([^"]+)"/g, function (m, a, t) { return Object.prototype.hasOwnProperty.call(DICT, t) ? a + '="' + DICT[t] + '"' : m; });
+  }
+  function eur(v, d) { var n = fmtEs(Math.abs(v), d == null ? 2 : d), sg = v < 0 ? '−' : ''; return LANG === 'en' ? sg + '€' + n : sg + n + ' €'; }
+  function keur(v) { return LANG === 'en' ? '€' + Math.round(v / 1000) + 'k' : Math.round(v / 1000) + ' k€'; }
+  function pctS(v, d) { var n = fmtEs(Math.abs(v), d || 0), sg = v < 0 ? '−' : '+'; return LANG === 'en' ? sg + n + '%' : sg + n + ' %'; }
+  window.DS_T = T;   // los módulos de ds/ (si algún día muestran texto) usan la misma función
 
   /* Bus mínimo: los módulos de ds/ (motion, webgl) escuchan cambios de estado
      sin acoplarse al motor. `state` guarda el último estado por visual, porque
@@ -84,18 +103,19 @@
     ajani: { k: 'Investigación', cite: 'Declutter and Focus', meta: 'Ajani, Lee, Xiong, Knaflic, Kemper y Franconeri · 2021 · IEEE TVCG', t: 'Evaluación empírica: los gráficos limpios y con foco se perciben como más claros y profesionales, y su mensaje se recuerda mejor.', url: 'https://doi.org/10.1109/TVCG.2021.3068337' },
     nng: { k: 'Investigación', cite: 'F-Shaped Pattern of Reading on the Web: Misunderstood, But Still Relevant', meta: 'Kara Pernice · 2017 · Nielsen Norman Group', t: 'Estudios de eye-tracking sobre cómo se escanean las páginas con mucho texto, cuándo aparece el patrón en F y cómo evitar que lo importante quede fuera del recorrido.', url: 'https://www.nngroup.com/articles/f-shaped-pattern-reading-web-content/' },
     tufte: { k: 'Ver referencia', cite: 'Sparkline theory and practice', meta: 'Edward Tufte · desarrollado en Beautiful Evidence · 2006 · Graphics Press', t: 'Gráficos intensos, simples y del tamaño de una palabra, pensados para dar contexto a un número sin ejes ni decoración.', url: 'https://www.edwardtufte.com/notebook/sparkline-theory-and-practice-edward-tufte/' },
-    pbicanvas: { k: 'Fuente', cite: 'Apply page size and settings in a Power BI report', meta: 'Microsoft Learn · documentación de Power BI', t: 'Tipos de lienzo (16:9 por defecto, 4:3, carta, tooltip y personalizado), tamaños disponibles y opciones de vista: ajustar a la página, al ancho o tamaño real.', url: 'https://learn.microsoft.com/es-es/power-bi/create-reports/power-bi-report-display-settings' },
-    mslearn: { k: 'Fuente', cite: 'Diseño de informes de Power BI para accesibilidad', meta: 'Microsoft Learn · documentación de Power BI', t: 'Orden de tabulación, texto alternativo, contraste, no depender solo del color y navegación con teclado dentro de los informes.', url: 'https://learn.microsoft.com/es-es/power-bi/create-reports/desktop-accessibility-overview' },
+    pbicanvas: { k: 'Fuente', cite: 'Apply page size and settings in a Power BI report', meta: 'Microsoft Learn · documentación de Power BI', t: 'Tipos de lienzo (16:9 por defecto, 4:3, carta, tooltip y personalizado), tamaños disponibles y opciones de vista: ajustar a la página, al ancho o tamaño real.', url: 'https://learn.microsoft.com/es-es/power-bi/create-reports/power-bi-report-display-settings', urlEn: 'https://learn.microsoft.com/en-gb/power-bi/create-reports/power-bi-report-display-settings' },
+    mslearn: { k: 'Fuente', cite: 'Diseño de informes de Power BI para accesibilidad', meta: 'Microsoft Learn · documentación de Power BI', t: 'Orden de tabulación, texto alternativo, contraste, no depender solo del color y navegación con teclado dentro de los informes.', url: 'https://learn.microsoft.com/es-es/power-bi/create-reports/desktop-accessibility-overview', urlEn: 'https://learn.microsoft.com/en-gb/power-bi/create-reports/desktop-accessibility-overview' },
     swd: { k: 'Ver referencia', cite: 'Storytelling with Data', meta: 'Cole Nussbaumer Knaflic · 2015 · Wiley', t: 'La historia en tres minutos, la gran idea, la diferencia entre explorar y explicar y la estructura Bing, Bang, Bongo.', url: 'https://www.storytellingwithdata.com/books' }
   };
   $$('details.src[data-src]').forEach(function (d) {
     var s = SRC[d.dataset.src]; if (!s) return;
-    d.innerHTML = '<summary>' + s.k + '</summary><div class="src-b"><span class="kind">' + (s.k === 'Investigación' ? 'Evidencia' : 'Referencia') + '</span><cite>' + s.cite + '</cite><span class="meta">' + s.meta + '</span>' + s.t + ' <a href="' + s.url + '" target="_blank" rel="noopener noreferrer">Abrir fuente ↗</a></div>';
+    d.innerHTML = '<summary>' + T(s.k) + '</summary><div class="src-b"><span class="kind">' + T(s.k === 'Investigación' ? 'Evidencia' : 'Referencia') + '</span><cite>' + T(s.cite) + '</cite><span class="meta">' + T(s.meta) + '</span>' + T(s.t) + ' <a href="' + (LANG === 'en' && s.urlEn ? s.urlEn : s.url) + '" target="_blank" rel="noopener noreferrer">' + T('Abrir fuente ↗') + '</a></div>';
   });
   var refs = $('#refsList');
   if (refs) Object.keys(SRC).forEach(function (k) {
     var s = SRC[k], li = document.createElement('li');
-    li.innerHTML = '<b>' + s.cite + '</b><br><span class="ds-muted">' + s.meta + '</span><br><a href="' + s.url + '" target="_blank" rel="noopener noreferrer">' + s.url.replace(/^https?:\/\//, '') + '</a>';
+    var u = LANG === 'en' && s.urlEn ? s.urlEn : s.url;
+    li.innerHTML = '<b>' + T(s.cite) + '</b><br><span class="ds-muted">' + T(s.meta) + '</span><br><a href="' + u + '" target="_blank" rel="noopener noreferrer">' + u.replace(/^https?:\/\//, '') + '</a>';
     refs.appendChild(li);
   });
 
@@ -136,11 +156,10 @@
     var legL = SERIES.slice(0, 4).map(function (s, i) { return '<span><i style="background:var(--dc' + (i + 1) + ')"></i>' + s.n + '</span>'; }).join('');
     var MX = 534000;   // escala de las barras de datos (un poco por encima de la región mayor)
     var mxRows = REGION.map(function (r) {
-      var eur = function (v) { return v.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'; };
       var vp = (r.b / r.a - 1) * 100;
-      return '<tr><th scope="row">' + r.n + '</th><td class="db" style="--w:' + (r.b / MX * 100).toFixed(1) + '%"><span class="n-l">' + eur(r.b) + '</span><span class="n-s">' + Math.round(r.b / 1000) + ' k€</span></td>' +
-        '<td><span class="n-l">' + eur(r.a) + '</span><span class="n-s">' + Math.round(r.a / 1000) + ' k€</span></td>' +
-        '<td class="cf"><span class="n-l">+' + vp.toFixed(2).replace('.', ',') + ' %</span><span class="n-s">+' + Math.round(vp) + ' %</span></td></tr>';
+      return '<tr><th scope="row">' + r.n + '</th><td class="db" style="--w:' + (r.b / MX * 100).toFixed(1) + '%"><span class="n-l">' + eur(r.b) + '</span><span class="n-s">' + keur(r.b) + '</span></td>' +
+        '<td><span class="n-l">' + eur(r.a) + '</span><span class="n-s">' + keur(r.a) + '</span></td>' +
+        '<td class="cf"><span class="n-l">' + pctS(vp, 2) + '</span><span class="n-s">' + pctS(vp, 0) + '</span></td></tr>';
     }).join('');
     function kpi(cls, l, vl, vs, sl, ss) {
       return '<div class="pn kpi ' + cls + '"><div class="pb"><span class="kl">' + l + '</span><span class="kv"><span class="n-l">' + vl + '</span><span class="n-s">' + vs + '</span></span><span class="ks"><span class="n-l">' + sl + '</span><span class="n-s">' + ss + '</span></span></div></div>';
@@ -201,8 +220,8 @@
     var wrap = document.createElement('div'); wrap.className = 'dash-wrap';
     var el = document.createElement('div');
     el.setAttribute('role', 'img');
-    el.setAttribute('aria-label', 'Dashboard de ventas del Q4 2025 (datos ficticios). Conclusión: el canal online aporta 221 mil euros de los 304 mil de crecimiento, el 73 %.');
-    el.innerHTML = dashHTML();
+    el.setAttribute('aria-label', T('Dashboard de ventas del Q4 2025 (datos ficticios). Conclusión: el canal online aporta 221 mil euros de los 304 mil de crecimiento, el 73 %.'));
+    el.innerHTML = trHTML(dashHTML());
     wrap.appendChild(el); host.appendChild(wrap);
     var api = { el: el, name: name, base: '', extra: '', set: function (flags) {
       var prev = api.base;
@@ -281,7 +300,8 @@
         var e = L[l.k], fresh = !e;
         if (fresh) { e = document.createElement('div'); el.appendChild(e); L[l.k] = e; }
         e.className = 'lb ' + (l.c || '') + (fresh ? ' off' : '');
-        if (e._t !== l.t) { e.innerHTML = l.t; e._t = l.t; }
+        var lt = typeof l.t === 'string' ? T(l.t) : l.t;
+        if (e._t !== lt) { e.innerHTML = lt; e._t = lt; }
         e.style.left = (l.x * 100) + '%'; e.style.top = (l.y * 100) + '%';
         e.style.transform = ANCH[l.a || 'l'];
         e.style.width = l.mw ? (l.mw * 100) + '%' : '';
@@ -383,7 +403,7 @@
   function buildTChart(fig) {
     var gb = $('.gb', fig), max = 700;
     gb.innerHTML = Q4.map(function (c) {
-      return '<span class="gl' + (c.hero ? ' hero' : '') + '">' + c.n + '</span><span class="gt' + (c.hero ? ' hero' : '') + '"><span class="b24" style="width:' + (c.a / max * 88) + '%"></span><span class="b25" style="width:' + (c.b / max * 88) + '%"><span>' + c.b + '</span></span></span>';
+      return '<span class="gl' + (c.hero ? ' hero' : '') + '">' + T(c.n) + '</span><span class="gt' + (c.hero ? ' hero' : '') + '"><span class="b24" style="width:' + (c.a / max * 88) + '%"></span><span class="b25" style="width:' + (c.b / max * 88) + '%"><span>' + c.b + '</span></span></span>';
     }).join('');
     $$('.gt.hero', gb).forEach(function (g) { g.classList.add('hero'); });
   }
@@ -882,7 +902,7 @@
         e.style.left = r[0] + '%'; e.style.top = r[1] + '%'; e.style.width = r[2] + '%'; e.style.height = r[3] + '%';
         e.style.opacity = 1;
         var t = key.charAt(0) === 'k' ? (c.kl || [])[ki++] : (c.l || {})[key];
-        e.firstChild.textContent = t || '';
+        e.firstChild.textContent = T(t) || '';
       });
       return R;
     };
@@ -1423,6 +1443,23 @@
     })(t0);
   }
 
+  /* ═══ IDIOMA: al cambiar de versión, seguir en la misma sección ═══ */
+  $$('[data-lang-to]').forEach(function (a) {
+    a.addEventListener('click', function () {
+      var here = '', mid = innerHeight * .4;
+      $$('main > section[id]').forEach(function (s) { if (s.getBoundingClientRect().top < mid) here = s.id; });
+      if (here) a.href = a.href.split('#')[0] + '#' + here;
+    });
+  });
+  // al llegar con #capítulo, el navegador salta antes de que los dashboards ocupen su sitio:
+  // se recoloca cuando la página ha terminado de cargar
+  if (/^#[\w-]+$/.test(location.hash)) addEventListener('load', function () {
+    setTimeout(function () {
+      var t = document.getElementById(location.hash.slice(1)); if (!t) return;
+      window.scrollTo({ top: t.getBoundingClientRect().top + scrollY - 64, behavior: 'instant' });
+    }, 80);
+  });
+
   /* ═══ NAVEGACIÓN DE CAPÍTULOS ═══ */
   var rail = $('#chRail'), links = rail ? $$('a', rail) : [], chapters = $$('.chapter');
   var cio = new IntersectionObserver(function (es) {
@@ -1458,7 +1495,7 @@
   var tabs = $$('.tabs [role="tab"]'), dw = $('#dw');
   function tab(i, focus) {
     tabs.forEach(function (t, j) { t.setAttribute('aria-selected', j === i ? 'true' : 'false'); t.tabIndex = j === i ? 0 : -1; });
-    dw.setAttribute('aria-labelledby', ''); dw.innerHTML = WORDS[i].split(' · ').map(function (w) { return '<span>' + w + '</span>'; }).join('');
+    dw.setAttribute('aria-labelledby', ''); dw.innerHTML = T(WORDS[i]).split(' · ').map(function (w) { return '<span>' + w + '</span>'; }).join('');
     if (focus) tabs[i].focus();
   }
   tabs.forEach(function (t, i) {
