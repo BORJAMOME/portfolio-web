@@ -1439,7 +1439,7 @@
 .cvx-deck { margin: 0; font-family: var(--serif); font-size: max(15px, 20 * var(--u)); line-height: 1.4; color: #111; text-wrap: pretty; }
 .cvx-by { margin: 0; font-size: max(11.5px, 12.5 * var(--u)); line-height: 1.5; color: #333; }
 .cvx-by b { color: #111; font-weight: 700; }
-.cvx-by span { white-space: nowrap; }
+.cvx-by span { display: block; white-space: nowrap; }   /* autor y rol, cada uno en su línea: sin «·» colgando */
 /* acceso discreto bajo la autoría (no forma parte del lienzo) */
 .cvx-start { align-self: flex-start; font-size: max(11px, 11.5 * var(--u)); font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #111; text-decoration: none; border-bottom: 1px solid #111; padding-bottom: 2px; }
 .cvx-start span { display: inline-block; transition: transform var(--dur-ui) var(--ease-out); }
