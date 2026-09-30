@@ -49,6 +49,54 @@
   function pctS(v, d) { var n = fmtEs(Math.abs(v), d || 0), sg = v < 0 ? '−' : '+'; return LANG === 'en' ? sg + n + '%' : sg + n + ' %'; }
   window.DS_T = T;   // los módulos de ds/ (si algún día muestran texto) usan la misma función
 
+  /* En inglés, además de T() y trHTML(), un observador traduce cualquier nodo de texto o
+     atributo (aria-label, title, alt) que el motor escriba después con innerHTML/textContent
+     y cuyo texto completo esté en el diccionario. Si no está, se queda como está. */
+  if (LANG === 'en') (function () {
+    var ATTRS = ['aria-label', 'title', 'alt'], has = Object.prototype.hasOwnProperty;
+    /* Cifras escritas en formato español dentro de los gráficos → formato británico:
+       1.572,40 € → €1,572.40 · 235 k€ → €235k · 1,2 M€ → €1.2m · 12,4 % → 12.4% · 131.050 → 131,050 */
+    function num(v) {
+      if (!/\d/.test(v)) return v;
+      return v
+        .replace(/([−+-]?)(\d{1,3}(?:\.\d{3})+|\d+)(?:,(\d+))?\s?(M€|k€|€)/g, function (m, sg, i, d, u) {
+          return sg + '€' + i.replace(/\./g, ',') + (d ? '.' + d : '') + (u === 'M€' ? 'm' : u === 'k€' ? 'k' : '');
+        })
+        .replace(/(\d),(\d+)\s?%/g, '$1.$2%')
+        .replace(/(\d)\s%/g, '$1%')
+        .replace(/(\d),(\d+)(?=\s?(pp|:1|\b))/g, function (m, a, b, u) { return u === 'pp' || u === ':1' ? a + '.' + b : m; })
+        .replace(/\b(\d{1,3})\.(\d{3})(?:\.(\d{3}))?\b(?![.,]\d)/g, function (m, a, b, c) { return a + ',' + b + (c ? ',' + c : ''); });
+    }
+    function trText(n) {
+      var v = n.nodeValue, k = v && v.trim(), out = v;
+      if (k && has.call(DICT, k) && DICT[k] !== k) out = v.replace(k, DICT[k]);
+      out = num(out);
+      if (out !== v) n.nodeValue = out;
+    }
+    function trAttrs(el) {
+      for (var i = 0; i < ATTRS.length; i++) {
+        var v = el.getAttribute(ATTRS[i]); if (!v) continue;
+        var out = num(has.call(DICT, v) ? DICT[v] : v);
+        if (out !== v) el.setAttribute(ATTRS[i], out);
+      }
+    }
+    function trTree(root) {
+      if (root.nodeType === 3) return trText(root);
+      if (root.nodeType !== 1 || /^(SCRIPT|STYLE)$/.test(root.nodeName)) return;
+      trAttrs(root);
+      var w = document.createTreeWalker(root, 5, null), n;   // 5 = elementos + texto
+      while ((n = w.nextNode())) { if (n.nodeType === 3) trText(n); else trAttrs(n); }
+    }
+    new MutationObserver(function (ms) {
+      ms.forEach(function (m) {
+        if (m.type === 'characterData') trText(m.target);
+        else if (m.type === 'attributes') trAttrs(m.target);
+        else for (var i = 0; i < m.addedNodes.length; i++) trTree(m.addedNodes[i]);
+      });
+    }).observe(document.documentElement, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ATTRS });
+    if (document.body) trTree(document.body); else document.addEventListener('DOMContentLoaded', function () { trTree(document.body); });
+  })();
+
   /* Bus mínimo: los módulos de ds/ (motion, webgl) escuchan cambios de estado
      sin acoplarse al motor. `state` guarda el último estado por visual, porque
      los módulos cargan después y necesitan saber dónde está cada uno. */
@@ -702,7 +750,7 @@
             sp[i] = { x: tx(40 + b * 20) + .004, y: Y1 - n * stp, w: (X1 - X0) / 9 - .008, h: stp - .008, c: b === mb ? 'gr' : 'g1' };
           });
           lb.push({ k: 'cap', x: X0, y: .03, t: 'Pedidos por tramo de ticket', a: 'lt', c: 'cap' });
-          lb.push({ k: 'mode', x: tx(50 + mb * 20), y: Y1 - top * stp - .02, t: 'lo más frecuente: ' + (40 + mb * 20) + '–' + (60 + mb * 20) + ' €', a: 'cb', c: 'grn' });
+          lb.push({ k: 'mode', x: tx(50 + mb * 20), y: Y1 - top * stp - .02, t: LANG === 'en' ? 'most common: €' + (40 + mb * 20) + '–' + (60 + mb * 20) : 'lo más frecuente: ' + (40 + mb * 20) + '–' + (60 + mb * 20) + ' €', a: 'cb', c: 'grn' });
           pt.push({ k: 'base', d: poly([[X0, Y1], [X1, Y1]]), c: 'p-grid' });
         } else {
           tick.forEach(function (v, i) { sp[i] = { cx: X0 + (units[i] - 1) / 7 * (X1 - X0), cy: Y1 - (v - 40) / 180 * (Y1 - Y0), s: .02, r: '50%', c: 'ink', o: .8 }; });
@@ -1046,7 +1094,7 @@
       ['good', 'bad'].forEach(function (w, i) {
         boxes[i].className = 'wf' + (w === 'bad' && g.cls ? ' ' + g.cls : '');
         var R = ap[i](g[w]), cap = g[w === 'good' ? 'cg' : 'cb'];
-        caps[i].textContent = cap === 'free' ? 'Espacio libre: ' + R._free + ' %' : cap;
+        caps[i].textContent = cap === 'free' ? (LANG === 'en' ? 'Free space: ' + R._free + '%' : 'Espacio libre: ' + R._free + ' %') : cap;
       });
       if (txt) $$('[data-g]', txt).forEach(function (p) { p.hidden = p.dataset.g !== k; });
     } };
@@ -1065,11 +1113,13 @@
       var R = apply(cfg), tot = w.k + w.a + w.b;
       inputs.forEach(function (i) {
         var pct = Math.round(w[i.name] / tot * 100), px = Math.round(R['_' + i.name] || 0);
-        $('[data-for="' + i.name + '"]', host).textContent = pct + ' % · ' + px + ' px';
+        $('[data-for="' + i.name + '"]', host).textContent = (LANG === 'en' ? pct + '%' : pct + ' %') + ' · ' + px + ' px';
         i.style.setProperty('--v', ((i.value - i.min) / (i.max - i.min) * 100) + '%');
       });
       var A = R._a, B = R._b, K = R._k, msg, ok = false;
-      if (A < B * .85) msg = 'Jerarquía invertida: la Zona B (' + Math.round(B) + ' px) supera a la A (' + Math.round(A) + ' px). El detalle llega antes que el mensaje.';
+      if (A < B * .85) msg = LANG === 'en'
+        ? 'Inverted hierarchy: Zone B (' + Math.round(B) + ' px) is taller than A (' + Math.round(A) + ' px). The detail arrives before the message.'
+        : 'Jerarquía invertida: la Zona B (' + Math.round(B) + ' px) supera a la A (' + Math.round(A) + ' px). El detalle llega antes que el mensaje.';
       else if (K > A * .6) msg = 'Los KPIs empiezan a competir con los gráficos. Una fila de tarjetas no necesita tanto alto.';
       else if (B < 90) msg = 'La Zona B apenas cabe. Si el detalle no se puede leer, quizá su sitio sea un tooltip o una página de drill-through.';
       else { msg = 'Reparto equilibrado: contexto, métricas, mensaje y detalle, en ese orden de peso.'; ok = true; }
@@ -1290,7 +1340,10 @@
     var R = [['el Norte', -6], ['el Centro', 4], ['el Sur', -11], ['el Este', 9]], t = $('.dyn-t', box), v = $('.dyn-v', box), b = $$('button', box);
     function draw(i) {
       var r = R[i], up = r[1] >= 0;
-      t.innerHTML = 'Las ventas d' + r[0].replace('el ', 'el ') + ' ' + (up ? 'crecen' : 'caen') + ' un <span style="color:' + (up ? 'var(--green-ink)' : 'var(--red)') + '">' + Math.abs(r[1]) + ' %</span> frente al año pasado';
+      var pc = '<span style="color:' + (up ? 'var(--green-ink)' : 'var(--red)') + '">' + Math.abs(r[1]) + (LANG === 'en' ? '%' : ' %') + '</span>';
+      t.innerHTML = LANG === 'en'
+        ? 'Sales in the ' + T(r[0].replace('el ', '')) + ' are ' + (up ? 'up ' : 'down ') + pc + ' on last year'
+        : 'Las ventas d' + r[0] + ' ' + (up ? 'crecen' : 'caen') + ' un ' + pc + ' frente al año pasado';
       v.innerHTML = R.map(function (x, j) {
         var w = Math.abs(x[1]) / 12 * 45;
         return '<div style="display:grid;grid-template-columns:70px 1fr;align-items:center;height:22px;font-size:13px;color:' + (i === j ? 'var(--ink)' : 'var(--muted)') + ';font-weight:' + (i === j ? 700 : 400) + '"><span>' + x[0].replace('el ', '') + '</span><span style="position:relative;height:12px"><i style="position:absolute;top:0;height:100%;left:' + (x[1] < 0 ? 50 - w : 50) + '%;width:' + w + '%;background:' + (i === j ? (x[1] < 0 ? 'var(--red)' : 'var(--green)') : 'var(--g2)') + ';transition:all .4s"></i><i style="position:absolute;left:50%;top:-4px;bottom:-4px;width:1px;background:#999"></i></span></div>';
@@ -1377,7 +1430,9 @@
       if (!ledger) return;
       var out = 0, f = ' ' + flags + ' ';
       items.forEach(function (li) { var on = f.indexOf(' ' + li.dataset.f + ' ') > -1; li.classList.toggle('is-out', on); if (on) out++; });
-      if (count) count.textContent = out ? out + ' de ' + items.length + ' fuera' : items.length + ' fuentes de ruido';
+      if (count) count.textContent = LANG === 'en'
+        ? (out ? out + ' of ' + items.length + ' out' : items.length + ' sources of noise')
+        : (out ? out + ' de ' + items.length + ' fuera' : items.length + ' fuentes de ruido');
     } };
   };
 

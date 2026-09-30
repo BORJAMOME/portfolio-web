@@ -252,8 +252,20 @@
   </url>
   <url>
     <loc>https://borjamora.es/data-storytelling.html</loc>
-    <lastmod>2026-09-28</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/data-storytelling.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/data-storytelling.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borjamora.es/data-storytelling.html"/>
+  </url>
+  <url>
+    <loc>https://borjamora.es/en/data-storytelling.html</loc>
+    <lastmod>2026-09-30</lastmod>
+    <priority>0.8</priority>
+    <changefreq>monthly</changefreq>
+    <xhtml:link rel="alternate" hreflang="es" href="https://borjamora.es/data-storytelling.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/data-storytelling.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borjamora.es/data-storytelling.html"/>
   </url>
 </urlset>
