@@ -286,4 +286,10 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://borjamora.es/en/privacy.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borjamora.es/privacidad.html"/>
   </url>
+  <url>
+    <loc>https://borjamora.es/ml/</loc>
+    <lastmod>2026-10-01</lastmod>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
 </urlset>
