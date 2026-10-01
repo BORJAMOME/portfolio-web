@@ -1,4 +1,4 @@
-# Manual ML para dummies
+# Manual de Machine Learning
 
 Se publica en **https://borjamora.es/ml/** (GitHub Pages, desde `main`).
 
