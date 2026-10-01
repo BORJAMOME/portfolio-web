@@ -20,7 +20,7 @@
     "© 2026 Borja Mora Méndez · Todos los derechos reservados": "© 2026 Borja Mora Méndez · All rights reserved",
     "Diseñado y construido por mí": "Designed and built by me",
     "Aviso de cookies": "Cookie notice",
-    "<strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Política de privacidad</a>.": "<strong>Analytics cookies.</strong> I use Google Analytics to understand how this site is used. No advertising or third-party tracking. <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Privacy policy</a>.",
+    "<strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. Puedes cambiar tu decisión cuando quieras. <a href=\"./privacidad.html\">Política de privacidad y cookies</a>.": "<strong>Analytics cookies.</strong> I use Google Analytics to understand how this site is used. No advertising or third-party tracking. You can change your mind at any time. <a href=\"./privacidad.html\">Privacy and cookie policy</a>.",
     "Rechazar cookies": "Reject cookies",
     "Rechazar": "Reject",
     "Aceptar cookies": "Accept cookies",
@@ -136,7 +136,18 @@
     "He pasado de trabajar con datos de ventas sin una estructura clara a construir un modelo de Power BI capaz de conectar los KPIs con el detalle que hay detrás. Ese recorrido, del dato al modelo, del modelo al informe y del informe a la pregunta, es precisamente la parte del proyecto que más me interesaba trabajar.": "I’ve gone from working with sales data that had no clear structure to building a Power BI model that connects the KPIs with the detail behind them. That journey — from data to model, from model to report and from report to question — is exactly the part of the project I most wanted to work on.",
     "Ver el informe completo en Power BI": "View the full report in Power BI",
     "Ver el proyecto y el análisis": "See the project and the analysis",
-    "Portfolio completo de Power BI": "Full Power BI portfolio"
+    "Portfolio completo de Power BI": "Full Power BI portfolio",
+    "Saltar al contenido": "Skip to content",
+    "Privacidad": "Privacy",
+    "Preferencias de cookies": "Cookie preferences",
+    "Información legal": "Legal information",
+    "Copiar": "Copy",
+    "borja.mora.mendez@gmail.com": "borja.mora.mendez@gmail.com",
+    "Siguiente caso": "Next case",
+    "Todos los proyectos": "All projects",
+    "Escríbeme": "Email me",
+    "Social Media Performance": "Social Media Performance",
+    "Más": "More"
   },
   "keep": [
     "Español",
@@ -160,7 +171,14 @@
     "DiasSinVenta, VentasUltimaFecha, VentasUltimoImporte.",
     "VentasTotal, VentasMTD, VentasAVG, VentasRatioTienda/Producto."
   ],
-  "js": {},
+  "js": {
+    "Kosta Cálida — Reporting para red de tiendas": "Kosta Cálida — Reporting for a store network",
+    "Reporting integral en Power BI para una cadena de tiendas: modelo en estrella, Power Query, DAX, tablas desconectadas y drill-down hasta el ticket.": "End-to-end Power BI reporting for a store chain: star schema, Power Query, DAX, disconnected tables and drill-down to the receipt.",
+    "Caso de estudio": "Case study",
+    "es-ES": "en-GB",
+    "https://borjamora.es/kosta-calida.html": "https://borjamora.es/en/kosta-calida.html",
+    "https://borjamora.es/kosta-calida.html#caso": "https://borjamora.es/en/kosta-calida.html#caso"
+  },
   "raw": [
     [
       "<link rel=\"canonical\" href=\"https://borjamora.es/kosta-calida.html\">",
@@ -173,14 +191,6 @@
     [
       "<meta property=\"og:url\" content=\"https://borjamora.es/kosta-calida.html\">",
       "<meta property=\"og:url\" content=\"https://borjamora.es/en/kosta-calida.html\">"
-    ],
-    [
-      ".toLocaleString('es-ES')",
-      ".toLocaleString('en-GB')"
-    ],
-    [
-      ".toFixed(decimals).replace('.', ',')",
-      ".toFixed(decimals)"
     ]
   ]
 }

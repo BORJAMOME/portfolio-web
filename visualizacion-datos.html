@@ -17,7 +17,7 @@
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet">
 <!-- Shared styles: variables, nav, footer, botones, reset -->
-<link rel="stylesheet" href="./shared.css?v=20260930">
+<link rel="stylesheet" href="./shared.css?v=85cf5305e2">
 <!-- Primary Meta Tags -->
 <meta name="description" content="Infografías editoriales, cartografía 3D y diseño de la información. Proyectos de visualización de datos donde el diseño es la herramienta analítica.">
 <meta name="keywords" content="visualización de datos, infografías, mapas 3D, cartografía, data viz, diseño de la información, Borja Mora">
@@ -27,7 +27,7 @@
 <link rel="alternate" hreflang="es" href="https://borjamora.es/visualizacion-datos.html">
 <link rel="alternate" hreflang="en" href="https://borjamora.es/en/data-visualisation.html">
 <link rel="alternate" hreflang="x-default" href="https://borjamora.es/visualizacion-datos.html">
-<script src="./lang.js"></script>
+<script src="./lang.js?v=37dd6be74a"></script>
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
@@ -137,6 +137,12 @@
     ad_personalization:   "denied",
     wait_for_update:      500
   });
+  /* Decisión guardada: se aplica antes de gtag("config") para que la primera página vista ya la respete */
+  try {
+    if (localStorage.getItem("bm_cookie_consent") === "accepted") {
+      gtag("consent", "update", { analytics_storage: "granted" });
+    }
+  } catch (e) {}
 </script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PSDM6B5Z7"></script>
@@ -144,15 +150,7 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
-  gtag("config", "G-6PSDM6B5Z7");
-
-  /* Leer consentimiento previo */
-  (function(){
-    var consent = localStorage.getItem("bm_cookie_consent");
-    if (consent === "accepted") {
-      gtag("consent", "update", { analytics_storage: "granted", ad_storage: "denied" });
-    }
-  })();
+  gtag("config", "G-6PSDM6B5Z7", { page_language: document.documentElement.lang || "es" });
 </script>
 
 <!-- ── Cookie banner CSS (RGPD/LOPDGDD) ── -->
@@ -167,14 +165,14 @@
     box-shadow: 0 12px 48px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.04);
     font-family: var(--font);
     font-size: 13px; line-height: 1.55;
-    opacity: 0; pointer-events: none;
+    opacity: 0; pointer-events: none; visibility: hidden;
     transition: opacity .3s ease, transform .35s var(--ease);
   }
   #bm-cookie-banner.bm-visible {
-    opacity: 1; pointer-events: auto;
+    opacity: 1; pointer-events: auto; visibility: visible;
   }
   #bm-cookie-banner.bm-hiding {
-    opacity: 0; transform: translateX(-50%) translateY(16px);
+    visibility: visible; opacity: 0; transform: translateX(-50%) translateY(16px);
   }
   #bm-cookie-banner p { margin: 0; flex: 1; min-width: 200px; color: #b8b8cc; }
   #bm-cookie-banner strong { color: #f7f7fa; font-weight: 600; }
@@ -191,6 +189,8 @@
     .bm-cb-btn:hover { opacity: .82; transform: translateY(-1px); }
   }
   .bm-cb-btn:active { transform: translateY(0); }
+  .bm-cb-btn:focus-visible { outline: 2px solid #f7f7fa; outline-offset: 2px; }
+  .bm-cb-btn[aria-pressed="true"] { box-shadow: 0 0 0 2px #0b0b0f, 0 0 0 3px #b8b8cc; }
   .bm-cb-accept { background: #7a7bff; color: #fff; }
   .bm-cb-reject { background: rgba(255,255,255,.07); color: #b8b8cc; border: 1px solid rgba(255,255,255,.1); }
   @media (max-width: 480px) {
@@ -338,11 +338,11 @@
       </ul>
     </div>
     <a href="./descargas.html">Descargas</a>
-    <a id="navEmailBtn" href="#" target="_blank" rel="noopener noreferrer" class="nav-cta btn" onclick="gtag('event', 'clic_email', { location: 'nav' });"><span class="cta-text-wrap"><span>Contacto</span><span>¿Hablamos?</span></span></a>
+    <a id="navEmailBtn" href="mailto:borja.mora.mendez@gmail.com" class="nav-cta btn" data-ga="clic_email" data-ga-location="nav"><span class="cta-text-wrap"><span>Contacto</span><span>¿Hablamos?</span></span></a>
   </div>
   <div class="nav-social">
-    <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" onclick="gtag('event','clic_linkedin',{location:'nav'});"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
-    <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" aria-label="GitHub" onclick="gtag('event','clic_github',{location:'nav'});"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+    <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" data-ga="clic_linkedin" data-ga-location="nav"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+    <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" aria-label="GitHub" data-ga="clic_github" data-ga-location="nav"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
   </div>
   <button class="nav-burger" id="navBurger" aria-label="Abrir menu" aria-expanded="false" aria-controls="navDrawer">
     <span class="nav-burger-line"></span>
@@ -375,9 +375,9 @@
       <a href="./descargas.html">Descargas</a>
     </nav>
     <div class="nav-drawer-foot">
-      <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="nav-drawer-foot-item" onclick="gtag('event','clic_linkedin',{location:'drawer'});">LinkedIn</a>
-      <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" class="nav-drawer-foot-item" onclick="gtag('event','clic_github',{location:'drawer'});">GitHub</a>
-      <a id="drawerEmailBtn" href="#" target="_blank" rel="noopener noreferrer" class="nav-drawer-foot-item" onclick="gtag('event','clic_email',{location:'drawer'});">Email</a>
+      <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="nav-drawer-foot-item" data-ga="clic_linkedin" data-ga-location="drawer">LinkedIn</a>
+      <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" class="nav-drawer-foot-item" data-ga="clic_github" data-ga-location="drawer">GitHub</a>
+      <a id="drawerEmailBtn" href="mailto:borja.mora.mendez@gmail.com" class="nav-drawer-foot-item" data-ga="clic_email" data-ga-location="drawer">Email</a>
     </div>
   </div>
 </div>
@@ -459,7 +459,8 @@
 </script>
 
 <!-- HERO -->
-<section class="proj-hero" id="main-content">
+<main id="main-content" tabindex="-1">
+<section class="proj-hero">
   <div class="c">
     <div class="sr">
       <div class="hero-tag">Portfolio</div>
@@ -486,7 +487,7 @@
       <div class="col-header" data-target="bodyDiseno">
         <div class="col-header-left">
           <span class="col-num">01</span>
-          <span class="col-title">Diseño de la información</span>
+          <h2 class="col-title">Diseño de la información</h2>
         </div>
         <span class="col-desc">Infografías · Data Viz</span>
         <div class="col-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
@@ -495,7 +496,7 @@
         <p style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:28px;max-width:600px;">Infografías, mapas y visualizaciones que traducen datos complejos a lenguaje visual. No buscan embellecer el dato, sino ponerlo a prueba y explorar nuevas lecturas.</p>
         <div class="viz-grid">
           <a href="https://www.behance.net/gallery/213119763/URBAN-ELEVATION-MAP" target="_blank" rel="noopener noreferrer" class="viz-card">
-            <picture><source srcset="./img/skyline.webp" type="image/webp"><img loading="lazy" src="./img/skyline.png" alt="El skyline oculto de Madrid" class="viz-card-bg" width="600" height="400"></picture>
+            <picture><source srcset="./img/skyline-m.webp 700w, ./img/skyline.webp 1200w" sizes="(max-width: 700px) 92vw, 420px" type="image/webp"><img loading="lazy" src="./img/skyline.png" alt="El skyline oculto de Madrid" class="viz-card-bg" width="600" height="400"></picture>
             <div class="viz-card-overlay"></div>
             <div class="viz-card-content">
               <div class="viz-card-title">El skyline oculto de Madrid</div>
@@ -569,7 +570,7 @@
       <div class="col-header" data-target="bodyMapas">
         <div class="col-header-left">
           <span class="col-num">02</span>
-          <span class="col-title">Mapas</span>
+          <h2 class="col-title">Mapas</h2>
         </div>
         <span class="col-desc">Cartografía · 3D</span>
         <div class="col-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
@@ -596,6 +597,8 @@
   </div>
 </div>
 
+</main>
+
 <footer>
   <div class="foot-inner">
     <div class="foot-grid">
@@ -603,6 +606,7 @@
         <p class="foot-brand-name">Borja Mora.</p>
         <p class="foot-brand-desc">Data Analyst Junior</p>
         <p class="foot-brand-loc">Madrid, España</p>
+        <button type="button" class="foot-copy-email" data-copy-email data-ga-location="footer"><span class="foot-copy-email-addr">borja.mora.mendez@gmail.com</span><span class="foot-copy-email-act" data-copy-label aria-live="polite">Copiar</span></button>
       </div>
 
       <nav class="foot-col" aria-label="Navegación del pie de página">
@@ -625,13 +629,16 @@
 
       <div class="foot-col">
         <p class="foot-col-title">Sígueme</p>
-        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_linkedin',{location:'footer'});">LinkedIn</a>
-        <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" onclick="gtag('event','clic_github',{location:'footer'});">GitHub</a>
+        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" data-ga="clic_linkedin" data-ga-location="footer">LinkedIn</a>
+        <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer" data-ga="clic_github" data-ga-location="footer">GitHub</a>
       </div>
     </div>
 
     <div class="foot-bottom">
-      <p class="foot-copy">© 2026 Borja Mora Méndez · Todos los derechos reservados</p>
+      <div class="foot-legal-wrap">
+        <p class="foot-copy">© 2026 Borja Mora Méndez · Todos los derechos reservados</p>
+        <nav class="foot-legal" aria-label="Información legal"><a href="./privacidad.html">Privacidad</a><button type="button" data-cookie-prefs>Preferencias de cookies</button></nav>
+      </div>
       <div class="foot-made">
         <span>Diseñado y construido por mí</span>
         <span class="foot-tech">HTML</span>
@@ -713,7 +720,7 @@ document.querySelectorAll('.col-header').forEach(h=>{
   var e = atob('Ym9yamEubW9yYS5tZW5kZXpAZ21haWwuY29t');
   var su = encodeURIComponent('Oportunidad laboral');
   var body = encodeURIComponent('Hola, me gustaría hablar contigo sobre una posible oportunidad.');
-  var url = 'https://mail.google.com/mail/u/0/?fs=1&to=' + e + '&su=' + su + '&body=' + body + '&tf=cm';
+  var url = 'mailto:' + e + '?subject=' + su + '&body=' + body;
   var nav = document.getElementById('navEmailBtn');
   if (nav) nav.href = url;
 })();
@@ -726,57 +733,14 @@ document.querySelectorAll('.col-header').forEach(h=>{
 
 <!-- ── Cookie banner HTML + lógica (RGPD/LOPDGDD) ── -->
 <div id="bm-cookie-banner" role="dialog" aria-live="polite" aria-label="Aviso de cookies">
-  <p><strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Política de privacidad</a>.</p>
+  <p><strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. Puedes cambiar tu decisión cuando quieras. <a href="./privacidad.html">Política de privacidad y cookies</a>.</p>
   <div class="bm-cb-btns">
     <button class="bm-cb-btn bm-cb-reject" id="bm-cb-reject" aria-label="Rechazar cookies">Rechazar</button>
     <button class="bm-cb-btn bm-cb-accept" id="bm-cb-accept" aria-label="Aceptar cookies">Aceptar</button>
   </div>
 </div>
-<script>
-(function () {
-  var KEY = "bm_cookie_consent";
-  var banner = document.getElementById("bm-cookie-banner");
-  if (!banner) return;
-
-  function dismiss() {
-    banner.classList.remove("bm-visible");
-    banner.classList.add("bm-hiding");
-    setTimeout(function () {
-      banner.style.display = "none";
-    }, 380);
-  }
-
-  function grantAnalytics() {
-    if (typeof gtag === "function") {
-      gtag("consent", "update", { analytics_storage: "granted" });
-    }
-  }
-
-  /* Solo mostrar si no hay decision previa */
-  if (!localStorage.getItem(KEY)) {
-    /* Pequeño delay para que la animacion sea visible */
-    setTimeout(function () {
-      banner.classList.add("bm-visible");
-    }, 600);
-  } else if (localStorage.getItem(KEY) === "accepted") {
-    grantAnalytics();
-    banner.style.display = "none";
-  } else {
-    banner.style.display = "none";
-  }
-
-  document.getElementById("bm-cb-accept").addEventListener("click", function () {
-    localStorage.setItem(KEY, "accepted");
-    grantAnalytics();
-    dismiss();
-  });
-
-  document.getElementById("bm-cb-reject").addEventListener("click", function () {
-    localStorage.setItem(KEY, "rejected");
-    dismiss();
-  });
-})();
-</script>
+<script src="./consent.js?v=26a27e3704" defer></script>
+<script src="./contact.js?v=451e00c590" defer></script>
 
 <!-- ── Tracking de evidencia técnica (piezas en Behance) ── -->
 <script>

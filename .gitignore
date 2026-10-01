@@ -3,3 +3,6 @@
 
 # Listas de frases pendientes de traducir (las genera tools/build-en.mjs --missing)
 *.missing.json
+
+# Dependencias de las comprobaciones (tools/check-a11y.mjs)
+node_modules/

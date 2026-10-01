@@ -186,12 +186,23 @@
     "© 2026 Borja Mora Méndez · Todos los derechos reservados": "© 2026 Borja Mora Méndez · All rights reserved",
     "Diseñado y construido por mí": "Designed and built by me",
     "Aviso de cookies": "Cookie notice",
-    "<strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Política de privacidad</a>.": "<strong>Analytics cookies.</strong> I use Google Analytics to understand how this site is used. No advertising or third-party tracking. <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Privacy policy</a>.",
+    "<strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. Puedes cambiar tu decisión cuando quieras. <a href=\"./privacidad.html\">Política de privacidad y cookies</a>.": "<strong>Analytics cookies.</strong> I use Google Analytics to understand how this site is used. No advertising or third-party tracking. You can change your mind at any time. <a href=\"./privacidad.html\">Privacy and cookie policy</a>.",
     "Rechazar cookies": "Reject cookies",
     "Rechazar": "Reject",
     "Aceptar cookies": "Accept cookies",
     "Aceptar": "Accept",
-    "Idioma · Language": "Language · Idioma"
+    "Idioma · Language": "Language · Idioma",
+    "Saltar al contenido": "Skip to content",
+    "Privacidad": "Privacy",
+    "Preferencias de cookies": "Cookie preferences",
+    "Información legal": "Legal information",
+    "Copiar": "Copy",
+    "borja.mora.mendez@gmail.com": "borja.mora.mendez@gmail.com",
+    "Siguiente caso": "Next case",
+    "Todos los proyectos": "All projects",
+    "Escríbeme": "Email me",
+    "Informe de ventas con enfoque IBCS": "IBCS-style sales report",
+    "Más": "More"
   },
   "keep": [
     "Portfolio\n  </a>",
@@ -232,7 +243,14 @@
     "Read in English",
     "EN"
   ],
-  "js": {},
+  "js": {
+    "Casa Origen — Caso de Estudio BI": "Casa Origen — BI case study",
+    "Sistema de Business Intelligence completo para una cafetería de especialidad en Madrid: Power BI, DAX, SQL Server, Python y Machine Learning.": "A complete business intelligence system for a speciality coffee shop in Madrid: Power BI, DAX, SQL Server, Python and machine learning.",
+    "Caso de estudio": "Case study",
+    "es-ES": "en-GB",
+    "https://borjamora.es/casa-origen.html": "https://borjamora.es/en/casa-origen.html",
+    "https://borjamora.es/casa-origen.html#caso": "https://borjamora.es/en/casa-origen.html#caso"
+  },
   "raw": [
     [
       "<link rel=\"canonical\" href=\"https://borjamora.es/casa-origen.html\">",
@@ -245,14 +263,6 @@
     [
       "<meta property=\"og:url\" content=\"https://borjamora.es/casa-origen.html\">",
       "<meta property=\"og:url\" content=\"https://borjamora.es/en/casa-origen.html\">"
-    ],
-    [
-      ".toLocaleString('es-ES')",
-      ".toLocaleString('en-GB')"
-    ],
-    [
-      ".toFixed(decimals).replace('.', ',')",
-      ".toFixed(decimals)"
     ],
     [
       "data-format=\"thousands\">3.146</span>",

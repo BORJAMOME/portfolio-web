@@ -5,8 +5,10 @@
    traducción (inglés británico) y escribe la página en en/.
 
      node tools/build-en.mjs                    → todas las páginas
-     node tools/build-en.mjs index              → solo una (index · sobre-mi · descargas · power-bi · analisis-datos · visualizacion-datos · casa-origen · ibcs-ventas · kosta-calida · social-media · informe-financiero · perdidas-ganancias · airbnb-pais-vasco · rfm-hosteleria · data-storytelling)
+     node tools/build-en.mjs index              → solo una (index · sobre-mi · descargas · power-bi · analisis-datos · visualizacion-datos · casa-origen · ibcs-ventas · kosta-calida · social-media · informe-financiero · perdidas-ganancias · airbnb-pais-vasco · rfm-hosteleria · data-storytelling · privacidad)
      node tools/build-en.mjs index --missing    → además guarda las frases sin traducir
+     node tools/build-en.mjs --check            → no escribe nada: falla si alguna página inglesa está
+                                                  desactualizada o le falta una traducción (lo usa la CI)
 
    · Cada página tiene su diccionario (ver PAGES):
        units  — { "frase en español (con su marcado en línea)": "English" }
@@ -18,7 +20,8 @@
    · El selector ES | EN (.ds-lang) se invierte solo: en inglés, EN activo y ES enlace.
    Sin dependencias: solo Node.
    ═══════════════════════════════════════════════ */
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -38,6 +41,7 @@ const PAGES = {
   'power-bi': { src: 'power-bi.html', out: 'en/projects.html', dict: 'i18n/power-bi.en.json', missing: 'i18n/power-bi.en.missing.json' },
   descargas: { src: 'descargas.html', out: 'en/downloads.html', dict: 'i18n/descargas.en.json', missing: 'i18n/descargas.en.missing.json' },
   'sobre-mi': { src: 'sobre-mi.html', out: 'en/about.html', dict: 'i18n/sobre-mi.en.json', missing: 'i18n/sobre-mi.en.missing.json' },
+  privacidad: { src: 'privacidad.html', out: 'en/privacy.html', dict: 'i18n/privacidad.en.json', missing: 'i18n/privacidad.en.missing.json' },
   'data-storytelling': {
     src: 'data-storytelling.html', out: 'en/data-storytelling.html', dict: 'ds/i18n/en.page.json', missing: 'ds/i18n/en.missing.json',
     // los textos que genera ds/manual.js se traducen con este diccionario, cargado antes
@@ -45,7 +49,7 @@ const PAGES = {
   }
 };
 // páginas que ya existen en inglés: sus enlaces apuntan a la versión inglesa
-const EN_EXISTS = { 'index.html': 'index.html', 'sobre-mi.html': 'about.html', 'descargas.html': 'downloads.html', 'casa-origen.html': 'casa-origen.html', 'ibcs-ventas.html': 'ibcs-ventas.html', 'kosta-calida.html': 'kosta-calida.html', 'social-media.html': 'social-media.html', 'informe-financiero.html': 'informe-financiero.html', 'perdidas-ganancias.html': 'perdidas-ganancias.html', 'airbnb-pais-vasco.html': 'airbnb-pais-vasco.html', 'rfm-hosteleria.html': 'rfm-hosteleria.html', 'power-bi.html': 'projects.html', 'analisis-datos.html': 'data-analysis.html', 'visualizacion-datos.html': 'data-visualisation.html', 'data-storytelling.html': 'data-storytelling.html' };
+const EN_EXISTS = { 'index.html': 'index.html', 'sobre-mi.html': 'about.html', 'descargas.html': 'downloads.html', 'casa-origen.html': 'casa-origen.html', 'ibcs-ventas.html': 'ibcs-ventas.html', 'kosta-calida.html': 'kosta-calida.html', 'social-media.html': 'social-media.html', 'informe-financiero.html': 'informe-financiero.html', 'perdidas-ganancias.html': 'perdidas-ganancias.html', 'airbnb-pais-vasco.html': 'airbnb-pais-vasco.html', 'rfm-hosteleria.html': 'rfm-hosteleria.html', 'power-bi.html': 'projects.html', 'analisis-datos.html': 'data-analysis.html', 'visualizacion-datos.html': 'data-visualisation.html', 'data-storytelling.html': 'data-storytelling.html', 'privacidad.html': 'privacy.html' };
 
 const INLINE = new Set(['a', 'b', 'strong', 'em', 'i', 'span', 'small', 'code', 'br', 'sup', 'sub', 'abbr', 'kbd', 'mark', 'cite', 'q', 'u', 's', 'time', 'wbr']);
 const ATTRS = ['aria-label', 'alt', 'title', 'placeholder', 'data-v'];
@@ -130,7 +134,8 @@ function build(name, P, wantMissing) {
   const reT = /(<div class="ds-lang"[^>]*>)[\s\S]*?<\/div>/;
   if (!reT.test(en)) console.warn(`  · ${name}: no encuentro el selector de idioma`);
   en = en.replace(reT, (m, open) => open.replace(/aria-label="[^"]*"/, 'aria-label="Language · Idioma"') + INNER);
-  if (P.script) en = en.replace(P.script.before, (m, v) => `<script src="${P.script.src}${v || ''}" defer></script>\n${m}`);
+  // el diccionario JS lleva su propia versión de caché (hash del contenido, como tools/version-assets.mjs)
+  if (P.script) en = en.replace(P.script.before, (m) => `<script src="${P.script.src}?v=${createHash('sha256').update(readFileSync(join(ROOT, 'en', P.script.src))).digest('hex').slice(0, 10)}" defer></script>\n${m}`);
 
   // cadenas literales dentro de <script> (datos de tarjetas, JSON-LD…): "texto" o 'texto' exactos
   const JS = DICT.js || {}, jsUsed = new Set();
@@ -148,8 +153,15 @@ function build(name, P, wantMissing) {
   }
 
   for (const [a, b] of DICT.raw || []) {
-    if (!en.includes(a)) console.warn(`  · ${name}: raw sin coincidencia:`, a.slice(0, 70));
+    if (!en.includes(a)) { console.warn(`  · ${name}: raw sin coincidencia:`, a.slice(0, 70)); problems++; }
     en = en.split(a).join(b);
+  }
+  if (CHECK) {
+    const cur = existsSync(join(ROOT, P.out)) ? readFileSync(join(ROOT, P.out), 'utf8') : null;
+    const stale = cur !== en;
+    if (stale || missing.length) problems++;
+    console.log(`${stale || missing.length ? '✗' : '✓'} ${P.out}${stale ? ' · desactualizada: ejecuta node tools/build-en.mjs' : ''}${missing.length ? ` · ${missing.length} sin traducir: ${missing.slice(0, 3).map((m) => '«' + m.slice(0, 50) + '»').join(', ')}` : ''}`);
+    return;
   }
   writeFileSync(join(ROOT, P.out), en);
   console.log(`${P.out} · ${Object.keys(UNITS).length} frases en el diccionario · ${missing.length} sin traducir`);
@@ -160,5 +172,8 @@ function build(name, P, wantMissing) {
 }
 
 const args = process.argv.slice(2), only = args.filter((a) => !a.startsWith('--'));
+const CHECK = args.includes('--check');
+let problems = 0;
 const names = only.length ? only : Object.keys(PAGES);
 for (const n of names) { if (!PAGES[n]) { console.error('Página desconocida: ' + n); process.exit(1); } build(n, PAGES[n], args.includes('--missing')); }
+if (CHECK && problems) { console.error(`\n${problems} problema(s) en las páginas inglesas.`); process.exit(1); }

@@ -555,7 +555,7 @@
 .brief .bq::after { content: '”'; color: var(--g1); }
 .brief .cols { position: absolute; left: 0; right: 0; top: 30%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 3%; }
 .brief .col { opacity: 0; transform: translateY(8px); transition: opacity .45s ease, transform .45s var(--ease-out); }
-.brief .col h4 { font-family: var(--serif); font-weight: 500; font-size: clamp(18px, 3.4cqw, 28px); margin-bottom: 10px; }
+.brief .col h3 { font-family: var(--serif); font-weight: 500; font-size: clamp(18px, 3.4cqw, 28px); margin-bottom: 10px; }
 .brief .chip { display: block; padding: 7px 10px; margin-bottom: 6px; border: 1px solid var(--grid); border-radius: 6px; font-size: clamp(11px, 2cqw, 14px); color: var(--muted); background: #fff; transition: all .4s ease; }
 .brief .chip.sel { border-color: var(--green); color: var(--green-ink); background: var(--green-wash); font-weight: 700; }
 .brief .flow { position: absolute; left: 0; right: 0; top: 30%; display: flex; flex-direction: column; gap: 0; opacity: 0; transition: opacity .5s ease .2s; pointer-events: none; }
@@ -712,7 +712,7 @@
 
 /* color: tres mini experiencias */
 .scales { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(20px, 3vw, 40px); }
-.scale h4 { font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 6px; }
+.scale h3 { font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 6px; }
 .scale p { font-size: 14px; color: var(--muted); line-height: 1.55; min-height: 3.2em; }
 .scale .sw { display: flex; height: 64px; margin: 16px 0 8px; gap: 3px; }
 .scale .sw i { flex: 1; transition: transform .35s var(--ease-out); transform-origin: bottom; }
@@ -752,7 +752,7 @@
 @media (max-width: 1100px) { .illus { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 600px) { .illus { grid-template-columns: 1fr; } }
 .ill { background: #fff; border: 1px solid var(--grid); padding: 18px; display: flex; flex-direction: column; gap: 10px; }
-.ill h4 { font-size: 15px; font-weight: 700; }
+.ill h3 { font-size: 15px; font-weight: 700; }
 .ill .ill-v { position: relative; aspect-ratio: 16 / 10; }
 .ill .ill-v svg { position: absolute; inset: 0; width: 100%; height: 100%; transition: opacity .45s ease; }
 .ill .ill-v .st-b { opacity: 0; }
@@ -980,6 +980,7 @@
 .mosaic .tile .m-v i { position: absolute; background: var(--g2); }
 .mosaic .tile .m-v i.g { background: var(--green); }
 .mosaic .tile .m-v i.k { background: var(--ink); }
+.mosaic .tile[data-go] { cursor: pointer; }
 .mosaic .tile.main { grid-column: 2 / 4; grid-row: 2; padding: 0; border: 0; background: transparent; }
 .mosaic .tile.main .dash-wrap { height: 100%; }
 .mosaic .tile .flag {
@@ -1607,3 +1608,6 @@
   .dash .mx thead, .dash .mx tr > :nth-child(3) { display: none; }
   .dash.prio .mx tfoot { display: none; }
 }
+
+/* texto accesible de las cifras que se componen carácter a carácter (motion/numbers.js) */
+.nb-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }

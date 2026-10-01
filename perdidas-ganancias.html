@@ -10,7 +10,7 @@
 <link rel="alternate" hreflang="es" href="https://borjamora.es/perdidas-ganancias.html">
 <link rel="alternate" hreflang="en" href="https://borjamora.es/en/perdidas-ganancias.html">
 <link rel="alternate" hreflang="x-default" href="https://borjamora.es/perdidas-ganancias.html">
-<script src="./lang.js"></script>
+<script src="./lang.js?v=37dd6be74a"></script>
 <link rel="icon" type="image/svg+xml" href="./img/favicon.svg">
 <link rel="icon" href="./img/favicon.ico" type="image/x-icon">
 <!-- Open Graph -->
@@ -43,6 +43,12 @@
     ad_personalization:   "denied",
     wait_for_update:      500
   });
+  /* Decisión guardada: se aplica antes de gtag("config") para que la primera página vista ya la respete */
+  try {
+    if (localStorage.getItem("bm_cookie_consent") === "accepted") {
+      gtag("consent", "update", { analytics_storage: "granted" });
+    }
+  } catch (e) {}
 </script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PSDM6B5Z7"></script>
@@ -50,15 +56,7 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
-  gtag("config", "G-6PSDM6B5Z7");
-
-  /* Leer consentimiento previo */
-  (function(){
-    var consent = localStorage.getItem("bm_cookie_consent");
-    if (consent === "accepted") {
-      gtag("consent", "update", { analytics_storage: "granted", ad_storage: "denied" });
-    }
-  })();
+  gtag("config", "G-6PSDM6B5Z7", { page_language: document.documentElement.lang || "es" });
 </script>
 
 <!-- ── Cookie banner CSS (RGPD/LOPDGDD) — autocontenida, esta página no carga shared.css ── -->
@@ -73,14 +71,14 @@
     box-shadow: 0 12px 48px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.04);
     font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
     font-size: 13px; line-height: 1.55;
-    opacity: 0; pointer-events: none;
+    opacity: 0; pointer-events: none; visibility: hidden;
     transition: opacity .3s ease, transform .35s cubic-bezier(0.16,1,0.3,1);
   }
   #bm-cookie-banner.bm-visible {
-    opacity: 1; pointer-events: auto;
+    opacity: 1; pointer-events: auto; visibility: visible;
   }
   #bm-cookie-banner.bm-hiding {
-    opacity: 0; transform: translateX(-50%) translateY(16px);
+    visibility: visible; opacity: 0; transform: translateX(-50%) translateY(16px);
   }
   #bm-cookie-banner p { margin: 0; flex: 1; min-width: 200px; color: #b8b8cc; }
   #bm-cookie-banner strong { color: #f7f7fa; font-weight: 600; }
@@ -97,6 +95,8 @@
     .bm-cb-btn:hover { opacity: .82; transform: translateY(-1px); }
   }
   .bm-cb-btn:active { transform: translateY(0); }
+  .bm-cb-btn:focus-visible { outline: 2px solid #f7f7fa; outline-offset: 2px; }
+  .bm-cb-btn[aria-pressed="true"] { box-shadow: 0 0 0 2px #0b0b0f, 0 0 0 3px #b8b8cc; }
   .bm-cb-accept { background: #7a7bff; color: #fff; }
   .bm-cb-reject { background: rgba(255,255,255,.07); color: #b8b8cc; border: 1px solid rgba(255,255,255,.1); }
   @media (max-width: 480px) {
@@ -105,21 +105,17 @@
   }
 </style>
 
-<script src="./support.js"></script>
-</head>
-<body>
-<x-dc>
-<helmet>
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
   --pg-ink: #202020;
   --pg-gold: #816729;
   --pg-green: #ff682c;
+  --pg-green-text: #ff5d1d;   /* naranja para cifras sobre blanco (AA texto grande) */
   --pg-cream: #efefef;
   --pg-bg: #ffffff;
   --pg-text: #4d4d4d;
-  --pg-muted: #828282;
+  --pg-muted: #676767;
   --pg-mist: #e8e8e8;
   --pg-ivory: #ebe6dd;
   --pg-fog: #f5f5f5;
@@ -127,11 +123,6 @@
   --pg-body: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
 html { scroll-behavior: smooth; font-size: 16px; }
-/* support.js fuerza #dc-root/.sc-host a height:100% (1 pantalla) via FULL_PAGE_CSS.
-   Con overflow:visible el contenido real (mucho más alto) sigue viéndose al hacer
-   scroll, pero cualquier hermano posterior a #dc-root (el footer) se posiciona justo
-   tras esos 100vh, no tras el contenido real. Se corrige sin tocar el runtime. */
-#dc-root, #dc-root > .sc-host { height: auto !important; }
 body {
   font-family: var(--pg-body);
   font-weight: 400;
@@ -254,7 +245,7 @@ section { padding: 5rem 0; }
 }
 .hero-stat-value { font-family: var(--pg-display); font-weight: 400; line-height: 1; letter-spacing: -0.02em; }
 .hero-stat-label { font-size: .78rem; color: var(--pg-muted); margin-top: .5rem; font-family: var(--pg-body); }
-.hero-stat-arrow { color: var(--pg-green); font-size: 1.4rem; align-self: center; }
+.hero-stat-arrow { color: var(--pg-green-text); font-size: 1.4rem; align-self: center; }
 @media (prefers-reduced-motion: reduce) {
   .hero-eyebrow, .hero-stage h1, .hero-stage p.hero-sub, .hero-stage .hero-stat-row, .hero-stage p.hero-scroll {
     animation: none; opacity: 1; transform: none;
@@ -271,7 +262,7 @@ section { padding: 5rem 0; }
   font-weight: 600;
   letter-spacing: .08em;
   text-transform: uppercase;
-  color: var(--pg-green);
+  color: var(--pg-green-text);
   margin-bottom: 1rem;
 }
 .pg-foot-link {
@@ -294,15 +285,72 @@ section { padding: 5rem 0; }
 <style>
 /* selector ES | EN: el mismo gesto que el del portfolio (shared.css), aquí autocontenido y con el color de esta barra */
 .ds-lang { --dsl: var(--pg-ink); position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 2px; }
-.ds-lang-a, .ds-lang-b { position: relative; padding: 6px 10px; border-radius: 7px; font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: .3px; text-transform: uppercase; color: var(--dsl); opacity: .62; text-decoration: none; transition: opacity .2s, background .2s; }
+.ds-lang-a, .ds-lang-b { position: relative; padding: 6px 10px; border-radius: 7px; font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: .3px; text-transform: uppercase; color: var(--dsl); opacity: .76; text-decoration: none; transition: opacity .2s, background .2s; }
 .ds-lang-a { opacity: 1; font-weight: 700; cursor: default; }
 .ds-lang-a::after { content: ''; position: absolute; bottom: 2px; left: 10px; right: 10px; height: 1.5px; background: var(--dsl); border-radius: 99px; }
 @media (hover: hover) and (pointer: fine) { .ds-lang-b:hover { opacity: 1; background: color-mix(in srgb, var(--dsl) 8%, transparent); } }
 .ds-lang-b:focus-visible { opacity: 1; outline: 2px solid var(--dsl); outline-offset: 2px; }
 @media (max-width: 600px) { .ds-lang { left: auto; right: 1rem; transform: none; } }  /* en móvil, a la derecha: no roza el enlace de vuelta */
 </style>
-</helmet>
-
+<style>
+/* enlace «Saltar al contenido»: fuera de la vista hasta recibir el foco del teclado */
+.skip-link { position: absolute; left: -9999px; top: 8px; z-index: 9999; background: #111; color: #fff; padding: 8px 16px; border-radius: 4px; font: 600 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif; text-decoration: none; }
+.skip-link:focus { left: 8px; }
+/* siguiente caso (pie): hereda los colores del pie de cada caso */
+.case-next { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.2rem 2rem; padding-bottom: 2.5rem; margin-bottom: 2.5rem; border-bottom: 1px solid color-mix(in srgb, currentColor 18%, transparent); }
+.case-next-main { display: flex; align-items: center; gap: 1.4rem; color: inherit; text-decoration: none; min-width: 0; flex: 1 1 420px; }
+.case-next-img { flex: 0 0 auto; width: 168px; aspect-ratio: 16 / 10; border-radius: 10px; overflow: hidden; background: color-mix(in srgb, currentColor 10%, transparent); }
+.case-next-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s cubic-bezier(.16,1,.3,1); }
+.case-next-k { display: block; font-size: .72rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; opacity: .75; margin-bottom: .45rem; }
+.case-next-t { display: block; font-size: clamp(1.25rem, 2.4vw, 1.75rem); line-height: 1.15; letter-spacing: -.02em; color: #fff; }
+.case-next-arrow { flex: 0 0 auto; width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform .3s cubic-bezier(.16,1,.3,1); }
+.case-next-side { display: flex; flex-wrap: wrap; gap: .6rem; }
+.case-next-side a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 1.1rem; border-radius: 999px; border: 1px solid color-mix(in srgb, currentColor 35%, transparent); color: inherit; font-size: .85rem; font-weight: 600; text-decoration: none; transition: background .2s, color .2s; }
+.case-next-main:focus-visible, .case-next-side a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-radius: 10px; }
+@media (hover: hover) and (pointer: fine) {
+  .case-next-main:hover .case-next-img img { transform: scale(1.05); }
+  .case-next-main:hover .case-next-arrow { transform: translateX(6px); }
+  .case-next-side a:hover { background: #fff; color: #111; border-color: #fff; }
+}
+@media (max-width: 560px) { .case-next-img { width: 112px; } .case-next-main { gap: 1rem; } .case-next-arrow { display: none; } }
+@media (prefers-reduced-motion: reduce) { .case-next-img img, .case-next-arrow { transition: none; } }
+/* pie: privacidad y preferencias de cookies (consent.js) */
+.foot-legal { display: inline-flex; flex-wrap: wrap; gap: 4px 16px; }
+.foot-legal a, .foot-legal button { color: inherit; font: inherit; background: none; border: 0; padding: 4px 0; min-height: 24px; cursor: pointer; text-decoration: underline; text-decoration-thickness: .5px; text-underline-offset: 3px; }
+.foot-legal a:focus-visible, .foot-legal button:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+/* con «reducir movimiento», el indicador de scroll deja de pulsar */
+@media (prefers-reduced-motion: reduce) { .hero-scroll { animation: none !important; opacity: 1 !important; transform: none !important; } }
+</style>
+<noscript><style>.reveal { opacity: 1 !important; transform: none !important; }</style></noscript>
+<!-- Datos estructurados: caso de estudio (schema.org CreativeWork) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CreativeWork",
+  "@id": "https://borjamora.es/perdidas-ganancias.html#caso",
+  "name": "Cuenta de Pérdidas y Ganancias — Análisis Financiero",
+  "description": "P&L en Power BI que cuadra con cualquier filtro: subtotales contables, control de signos y Real vs Presupuesto. Beneficio neto 2021: 6,78 M€, +92,1 %.",
+  "url": "https://borjamora.es/perdidas-ganancias.html",
+  "image": "https://borjamora.es/img/pyg-card.png",
+  "inLanguage": "es-ES",
+  "genre": "Caso de estudio",
+  "keywords": [
+    "Power BI",
+    "Profit and loss",
+    "Financial analysis",
+    "DAX"
+  ],
+  "author": {
+    "@type": "Person",
+    "@id": "https://borjamora.es/#person",
+    "name": "Borja Mora Méndez",
+    "url": "https://borjamora.es/"
+  }
+}
+</script>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Saltar al contenido</a>
 <!-- NAV BACK -->
 <nav style="position:fixed; top:0; left:0; right:0; z-index:100; padding:1rem 2rem; display:flex; align-items:center; background:rgba(255,255,255,.85); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);">
   <a href="./power-bi.html" style="display:inline-flex; align-items:center; gap:.5rem; font-family:var(--pg-display); font-weight:400; font-size:.9rem; color:var(--pg-ink); text-decoration:none; background:var(--pg-cream); padding:.5rem 1rem; border-radius:200px; transition:opacity .2s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
@@ -314,6 +362,8 @@ section { padding: 5rem 0; }
     <a href="./en/perdidas-ganancias.html" class="ds-lang-b" hreflang="en" lang="en" data-lang-to="en" title="Read in English" aria-label="Read in English">EN</a>
   </div>
 </nav>
+
+<main id="main-content">
 
 <!-- S1 · HERO — Real 6,78M€ frente a Presupuesto 3,53M€ -->
 <section class="hero-stage" data-screen-label="Hero">
@@ -331,7 +381,7 @@ section { padding: 5rem 0; }
       <div class="hero-stat-label">Beneficio Neto Real 2021</div>
     </div>
     <div class="hero-stat">
-      <div class="hero-stat-value" style="font-size:clamp(1.5rem, 3vw, 2.1rem); color:var(--pg-green);">+92,1%</div>
+      <div class="hero-stat-value" style="font-size:clamp(1.5rem, 3vw, 2.1rem); color:var(--pg-green-text);">+92,1%</div>
       <div class="hero-stat-label">desviación vs presupuesto</div>
     </div>
   </div>
@@ -379,7 +429,7 @@ section { padding: 5rem 0; }
         <p style="font-size:.82rem; color:var(--pg-muted); margin-top:.4rem;">perspectivas de lectura</p>
       </div>
       <div style="text-align:center; background:#fff; border-radius:20px; padding:2rem 1rem; border:1px solid var(--pg-mist);">
-        <span style="font-family:var(--pg-display); font-size:clamp(1.8rem, 3.5vw, 2.6rem); color:var(--pg-green); font-weight:400; line-height:1;">+<span data-count="92.1" data-decimals="1">0</span>%</span>
+        <span style="font-family:var(--pg-display); font-size:clamp(1.8rem, 3.5vw, 2.6rem); color:var(--pg-green-text); font-weight:400; line-height:1;">+<span data-count="92.1" data-decimals="1">0</span>%</span>
         <p style="font-size:.82rem; color:var(--pg-muted); margin-top:.4rem;">variación frente al presupuesto</p>
       </div>
     </div>
@@ -454,7 +504,7 @@ section { padding: 5rem 0; }
       <picture><source srcset="./img/pyg-3.webp" type="image/webp"><img width="1264" height="808" loading="lazy" src="./img/pyg-3.png" alt="Dashboard Cuenta de Pérdidas y Ganancias — vista 3" style="width:100%; border-radius:20px; height:auto;"></picture>
     </div>
     <div class="reveal reveal-delay-4">
-      <a href="https://app.powerbi.com/view?r=eyJrIjoiM2Y3MzMxNTQtMGMzOS00ZDhlLTljYWYtMmU5N2E5ZTA3MjU2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=41273635f861390cd9fd" class="pg-cta" target="_blank" rel="noopener" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Cuenta de Perdidas y Ganancias',location:'pyg_dashboard'});">Ver dashboard interactivo</a>
+      <a href="https://app.powerbi.com/view?r=eyJrIjoiM2Y3MzMxNTQtMGMzOS00ZDhlLTljYWYtMmU5N2E5ZTA3MjU2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=41273635f861390cd9fd" class="pg-cta" target="_blank" rel="noopener" data-ga="ver_dashboard_powerbi" data-ga-dashboard_name="Cuenta de Perdidas y Ganancias" data-ga-location="pyg_dashboard">Ver dashboard interactivo</a>
       <span style="margin-left:1rem; font-size:.85rem; color:var(--pg-muted);">Power BI · DAX · Waterfall chart · Real vs Presupuesto</span>
     </div>
   </div>
@@ -465,7 +515,7 @@ section { padding: 5rem 0; }
   <p class="reveal" style="font-family:var(--pg-display); font-size:clamp(1.5rem, 3.6vw, 2.2rem); line-height:1.2; color:#fff; max-width:760px; margin-bottom:1.2rem;">El total dice cuánto. La cascada ayuda a entender por qué.</p>
   <p class="reveal reveal-delay-1" style="font-size:clamp(1rem, 1.8vw, 1.15rem); color:#c7c7c7; line-height:1.6; max-width:640px; margin-bottom:1.4rem;">El resultado neto muestra el punto de llegada:</p>
   <p class="reveal reveal-delay-1 impacto-text" style="font-family:var(--pg-display); font-size:clamp(2.1rem, 5.5vw, 3.8rem); line-height:1.05; max-width:1000px; margin-left:auto; margin-right:auto; text-align:center; margin-bottom:.6rem;"><span style="color:#fff;">Beneficio Neto Real 6,78M€</span></p>
-  <p class="reveal reveal-delay-2" style="font-family:var(--pg-display); font-size:clamp(1.3rem, 3vw, 1.8rem); color:var(--pg-green); margin-bottom:2rem;">+92,1% vs presupuesto</p>
+  <p class="reveal reveal-delay-2" style="font-family:var(--pg-display); font-size:clamp(1.3rem, 3vw, 1.8rem); color:var(--pg-green-text); margin-bottom:2rem;">+92,1% vs presupuesto</p>
   <div style="max-width:700px; display:flex; flex-direction:column; gap:1.1rem;">
     <p class="reveal reveal-delay-2" style="font-size:clamp(1rem, 1.8vw, 1.15rem); color:#c7c7c7; line-height:1.6;">Pero esta cifra, por sí sola, no explica qué ha ocurrido. Para entenderla, necesito mirar las partidas que han contribuido a llegar hasta ese resultado.</p>
     <p class="reveal reveal-delay-3" style="font-size:clamp(1rem, 1.8vw, 1.15rem); color:#c7c7c7; line-height:1.6;">Ahí es donde entra el waterfall: permite seguir visualmente cómo los diferentes conceptos van sumando o restando hasta llegar al resultado final.</p>
@@ -546,7 +596,7 @@ section { padding: 5rem 0; }
     <p class="reveal reveal-delay-2" style="font-family:var(--pg-display); font-size:1.3rem; color:var(--pg-ink); margin-bottom:1.6rem;">¿Quieres ver cómo construí el análisis?</p>
     <div class="reveal reveal-delay-2" style="display:flex; flex-wrap:wrap; justify-content:center; gap:2rem;">
       <div>
-        <a href="https://app.powerbi.com/view?r=eyJrIjoiM2Y3MzMxNTQtMGMzOS00ZDhlLTljYWYtMmU5N2E5ZTA3MjU2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=41273635f861390cd9fd" class="pg-cta" target="_blank" rel="noopener" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Cuenta de Perdidas y Ganancias',location:'pyg_cta'});">Ver el dashboard</a>
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiM2Y3MzMxNTQtMGMzOS00ZDhlLTljYWYtMmU5N2E5ZTA3MjU2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=41273635f861390cd9fd" class="pg-cta" target="_blank" rel="noopener" data-ga="ver_dashboard_powerbi" data-ga-dashboard_name="Cuenta de Perdidas y Ganancias" data-ga-location="pyg_cta">Ver el dashboard</a>
         <p style="margin-top:1rem; font-size:.85rem; color:var(--pg-muted);">Dashboard interactivo publicado en Power BI Service</p>
       </div>
       <div>
@@ -556,10 +606,21 @@ section { padding: 5rem 0; }
     </div>
   </div>
 </section>
-</x-dc>
+</main>
 
 <footer style="background:var(--pg-ink); color:#c7c7c7; padding:4rem 2rem 2rem;">
   <div class="pg-wrap">
+    <div class="case-next">
+      <a class="case-next-main" href="./airbnb-pais-vasco.html" data-ga="clic_siguiente_caso" data-ga-location="perdidas_ganancias">
+        <span class="case-next-img"><picture><source srcset="./img/airbnb-card.webp" type="image/webp"><img src="./img/airbnb-card.png" alt="" width="168" height="105" loading="lazy" decoding="async"></picture></span>
+        <span><span class="case-next-k">Siguiente caso</span><span class="case-next-t">Mercado de Airbnb en el País Vasco</span></span>
+        <svg class="case-next-arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <nav class="case-next-side" aria-label="Más">
+        <a href="./power-bi.html">Todos los proyectos</a>
+        <a href="mailto:borja.mora.mendez@gmail.com" data-ga="clic_email" data-ga-location="perdidas_ganancias_footer">Escríbeme</a>
+      </nav>
+    </div>
     <div class="pg-foot-grid" style="display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:2.5rem; padding-bottom:2.5rem; border-bottom:1px solid rgba(255,255,255,.12);">
       <div>
         <p style="font-family:var(--pg-display); font-size:1.3rem; color:#fff; margin-bottom:.6rem;">Borja Mora.</p>
@@ -577,154 +638,37 @@ section { padding: 5rem 0; }
       </div>
       <div>
         <p class="pg-foot-title">Este proyecto</p>
-        <a href="https://app.powerbi.com/view?r=eyJrIjoiM2Y3MzMxNTQtMGMzOS00ZDhlLTljYWYtMmU5N2E5ZTA3MjU2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=41273635f861390cd9fd" target="_blank" rel="noopener" class="pg-foot-link" onclick="gtag('event','ver_dashboard_powerbi',{dashboard_name:'Cuenta de Perdidas y Ganancias',location:'pyg_footer'});">Dashboard Power BI</a>
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiM2Y3MzMxNTQtMGMzOS00ZDhlLTljYWYtMmU5N2E5ZTA3MjU2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=41273635f861390cd9fd" target="_blank" rel="noopener" class="pg-foot-link" data-ga="ver_dashboard_powerbi" data-ga-dashboard_name="Cuenta de Perdidas y Ganancias" data-ga-location="pyg_footer">Dashboard Power BI</a>
       </div>
       <div>
         <p class="pg-foot-title">Sígueme</p>
-        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener" class="pg-foot-link" onclick="gtag('event','clic_linkedin',{location:'pyg_footer'});">LinkedIn</a>
-        <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener" class="pg-foot-link" onclick="gtag('event','clic_github',{location:'pyg_footer'});">GitHub</a>
+        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener" class="pg-foot-link" data-ga="clic_linkedin" data-ga-location="pyg_footer">LinkedIn</a>
+        <a href="https://github.com/BORJAMOME" target="_blank" rel="noopener" class="pg-foot-link" data-ga="clic_github" data-ga-location="pyg_footer">GitHub</a>
       </div>
     </div>
     <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:.8rem; padding-top:1.6rem; font-size:.78rem; color:#8a8a8a;">
       <span>© 2026 Borja Mora Méndez · Todos los derechos reservados</span>
+      <nav class="foot-legal" aria-label="Información legal"><a href="./privacidad.html">Privacidad</a><button type="button" data-cookie-prefs>Preferencias de cookies</button></nav>
       <span>Diseñado y construido por mí</span>
     </div>
   </div>
 </footer>
-<script type="text/x-dc" data-dc-script>
-class Component extends DCLogic {
-  componentDidMount() {
-    this.initReveal();
-    this.initCounters();
-  }
-  componentDidUpdate() {
-    this.initReveal();
-    this.initCounters();
-  }
-  initReveal() {
-    const root = this.rootEl || document;
-    const els = root.querySelectorAll('.reveal:not(.visible)');
-    if (!els.length) return;
-    if (!this._revealObs) {
-      this._revealObs = new IntersectionObserver((entries, obs) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            obs.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
-    }
-    els.forEach(el => this._revealObs.observe(el));
-  }
-  initCounters() {
-    const root = this.rootEl || document;
-    const els = root.querySelectorAll('[data-count]');
-    if (!els.length) return;
-    if (this._kpiObs) return;
-    this._kpiObs = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && !entry.target._animating) {
-          this.animateCounter(entry.target);
-        }
-      });
-    }, { threshold: 0.5 });
-    els.forEach(el => this._kpiObs.observe(el));
-  }
-  animateCounter(el) {
-    const target = parseFloat(el.dataset.count);
-    const decimals = parseInt(el.dataset.decimals) || 0;
-    const format = el.dataset.format;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      el.textContent = format === 'thousands'
-        ? Math.round(target).toLocaleString('es-ES')
-        : decimals > 0
-          ? target.toFixed(decimals).replace('.', ',')
-          : Math.round(target);
-      return;
-    }
-    const duration = 1800;
-    const start = performance.now();
-    el._animating = true;
-    function step(now) {
-      const elapsed = now - start;
-      const progress = Math.min(elapsed / duration, 1);
-      const ease = 1 - Math.pow(1 - progress, 3);
-      const current = target * ease;
-      if (format === 'thousands') {
-        el.textContent = Math.round(current).toLocaleString('es-ES');
-      } else if (decimals > 0) {
-        el.textContent = current.toFixed(decimals).replace('.', ',');
-      } else {
-        el.textContent = Math.round(current);
-      }
-      if (progress < 1) requestAnimationFrame(step);
-      else el._animating = false;
-    }
-    requestAnimationFrame(step);
-  }
-  renderVals() { return {}; }
-}
-</script>
+<script src="./case.js?v=fdd490bc63" data-duration="1800" defer></script>
 
 <!-- ── Cookie banner HTML + lógica (RGPD/LOPDGDD) ── -->
 <div id="bm-cookie-banner" role="dialog" aria-live="polite" aria-label="Aviso de cookies">
-  <p><strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Política de privacidad</a>.</p>
+  <p><strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. Puedes cambiar tu decisión cuando quieras. <a href="./privacidad.html">Política de privacidad y cookies</a>.</p>
   <div class="bm-cb-btns">
     <button class="bm-cb-btn bm-cb-reject" id="bm-cb-reject" aria-label="Rechazar cookies">Rechazar</button>
     <button class="bm-cb-btn bm-cb-accept" id="bm-cb-accept" aria-label="Aceptar cookies">Aceptar</button>
   </div>
 </div>
-<script>
-(function () {
-  var KEY = "bm_cookie_consent";
-  var banner = document.getElementById("bm-cookie-banner");
-  if (!banner) return;
-
-  function dismiss() {
-    banner.classList.remove("bm-visible");
-    banner.classList.add("bm-hiding");
-    setTimeout(function () {
-      banner.style.display = "none";
-    }, 380);
-  }
-
-  function grantAnalytics() {
-    if (typeof gtag === "function") {
-      gtag("consent", "update", { analytics_storage: "granted" });
-    }
-  }
-
-  /* Solo mostrar si no hay decisión previa */
-  if (!localStorage.getItem(KEY)) {
-    /* Pequeño delay para que la animación sea visible */
-    setTimeout(function () {
-      banner.classList.add("bm-visible");
-    }, 600);
-  } else if (localStorage.getItem(KEY) === "accepted") {
-    grantAnalytics();
-    banner.style.display = "none";
-  } else {
-    banner.style.display = "none";
-  }
-
-  document.getElementById("bm-cb-accept").addEventListener("click", function () {
-    localStorage.setItem(KEY, "accepted");
-    grantAnalytics();
-    dismiss();
-  });
-
-  document.getElementById("bm-cb-reject").addEventListener("click", function () {
-    localStorage.setItem(KEY, "rejected");
-    dismiss();
-  });
-})();
-</script>
+<script src="./consent.js?v=26a27e3704" defer></script>
 
 <!-- ── Scroll depth (25/50/75/90/100%) ── -->
 <script>
 (function () {
-  var thresholds = [25, 50, 75, 90, 100];
+  var thresholds = [25, 50, 75, 100];   /* el 90 % ya lo mide GA4 (medición mejorada) */
   var fired = {};
   var ticking = false;
   function check() {
@@ -738,7 +682,7 @@ class Component extends DCLogic {
       if (pct >= t && !fired[t]) {
         fired[t] = true;
         if (typeof gtag === 'function') {
-          gtag('event', 'scroll_' + t, { percent_scrolled: t, location: 'perdidas_ganancias' });
+          gtag('event', 'scroll_depth', { percent: t, location: 'perdidas_ganancias' });
         }
       }
     });

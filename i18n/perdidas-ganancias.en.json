@@ -23,7 +23,7 @@
     "© 2026 Borja Mora Méndez · Todos los derechos reservados": "© 2026 Borja Mora Méndez · All rights reserved",
     "Diseñado y construido por mí": "Designed and built by me",
     "Aviso de cookies": "Cookie notice",
-    "<strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Política de privacidad</a>.": "<strong>Analytics cookies.</strong> I use Google Analytics to understand how this site is used. No advertising or third-party tracking. <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Privacy policy</a>.",
+    "<strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. Puedes cambiar tu decisión cuando quieras. <a href=\"./privacidad.html\">Política de privacidad y cookies</a>.": "<strong>Analytics cookies.</strong> I use Google Analytics to understand how this site is used. No advertising or third-party tracking. You can change your mind at any time. <a href=\"./privacidad.html\">Privacy and cookie policy</a>.",
     "Rechazar cookies": "Reject cookies",
     "Rechazar": "Reject",
     "Aceptar cookies": "Accept cookies",
@@ -116,7 +116,18 @@
     "¿Quieres ver cómo construí el análisis?": "Want to see how I built the analysis?",
     "Ver el dashboard": "View the dashboard",
     "Ver otros proyectos": "See other projects",
-    "Portfolio completo de Power BI": "Full Power BI portfolio"
+    "Portfolio completo de Power BI": "Full Power BI portfolio",
+    "Saltar al contenido": "Skip to content",
+    "Privacidad": "Privacy",
+    "Preferencias de cookies": "Cookie preferences",
+    "Información legal": "Legal information",
+    "Copiar": "Copy",
+    "borja.mora.mendez@gmail.com": "borja.mora.mendez@gmail.com",
+    "Siguiente caso": "Next case",
+    "Todos los proyectos": "All projects",
+    "Escríbeme": "Email me",
+    "Mercado de Airbnb en el País Vasco": "The Airbnb market in the Basque Country",
+    "Más": "More"
   },
   "keep": [
     "Español",
@@ -139,7 +150,14 @@
     "↳ Organizaciones",
     "↳ Encabezados"
   ],
-  "js": {},
+  "js": {
+    "Cuenta de Pérdidas y Ganancias — Análisis Financiero": "Profit and loss account — Financial analysis",
+    "P&L en Power BI que cuadra con cualquier filtro: subtotales contables, control de signos y Real vs Presupuesto. Beneficio neto 2021: 6,78 M€, +92,1 %.": "A P&L in Power BI that adds up under any filter: accounting subtotals, sign control and actual vs budget. Net profit 2021: €6.78m, +92.1%.",
+    "Caso de estudio": "Case study",
+    "es-ES": "en-GB",
+    "https://borjamora.es/perdidas-ganancias.html": "https://borjamora.es/en/perdidas-ganancias.html",
+    "https://borjamora.es/perdidas-ganancias.html#caso": "https://borjamora.es/en/perdidas-ganancias.html#caso"
+  },
   "raw": [
     [
       "<link rel=\"canonical\" href=\"https://borjamora.es/perdidas-ganancias.html\">",
@@ -152,14 +170,6 @@
     [
       "<meta property=\"og:url\" content=\"https://borjamora.es/perdidas-ganancias.html\">",
       "<meta property=\"og:url\" content=\"https://borjamora.es/en/perdidas-ganancias.html\">"
-    ],
-    [
-      ".toLocaleString('es-ES')",
-      ".toLocaleString('en-GB')"
-    ],
-    [
-      ".toFixed(decimals).replace('.', ',')",
-      ".toFixed(decimals)"
     ],
     [
       ">6,78M€<",

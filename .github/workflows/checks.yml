@@ -1,0 +1,49 @@
+# Comprobaciones automáticas en cada pull request y en cada push a main.
+# No publican nada: GitHub Pages sigue desplegando la rama main como hasta ahora.
+name: Comprobaciones
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contenido:
+    name: Traducciones y enlaces
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Páginas inglesas al día y sin frases por traducir
+        run: node tools/build-en.mjs --check
+      - name: Enlaces, recursos, anclas, sitemap y hreflang
+        run: node tools/check-links.mjs
+      - name: Versiones de caché (?v=) al día
+        run: node tools/version-assets.mjs --check
+
+  accesibilidad:
+    name: Accesibilidad (WCAG 2.2 AA) y errores JS
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Instalar Playwright y axe-core
+        run: |
+          npm i --no-save --no-package-lock playwright@1.56.1 axe-core@4.13.0
+          npx playwright install --with-deps chromium
+      - name: axe-core en todas las páginas
+        run: node tools/check-a11y.mjs

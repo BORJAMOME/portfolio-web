@@ -24,12 +24,12 @@
     "© 2026 Borja Mora Méndez · Todos los derechos reservados": "© 2026 Borja Mora Méndez · All rights reserved",
     "Diseñado y construido por mí": "Designed and built by me",
     "Aviso de cookies": "Cookie notice",
-    "<strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Política de privacidad</a>.": "<strong>Analytics cookies.</strong> I use Google Analytics to understand how this site is used. No advertising or third-party tracking. <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Privacy policy</a>.",
+    "<strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. Puedes cambiar tu decisión cuando quieras. <a href=\"./privacidad.html\">Política de privacidad y cookies</a>.": "<strong>Analytics cookies.</strong> I use Google Analytics to understand how this site is used. No advertising or third-party tracking. You can change your mind at any time. <a href=\"./privacidad.html\">Privacy and cookie policy</a>.",
     "Rechazar cookies": "Reject cookies",
     "Rechazar": "Reject",
     "Aceptar cookies": "Accept cookies",
     "Aceptar": "Accept",
-    "Social Media Performance 2025 vs 2024 — Marketing Analytics | Borja Mora": "Social Media Performance 2025 vs 2024 — Marketing analytics | Borja Mora",
+    "Social Media Performance 2025 vs 2024 | Borja Mora": "Social Media Performance 2025 vs 2024 | Borja Mora",
     "Redes sociales, 2025 vs 2024, en Power BI: las impresiones caen un 12,8 % y el gasto un 26,3 %. La eficiencia mejora aunque baje el volumen.": "Social media, 2025 vs 2024, in Power BI: impressions fall 12.8% and spend 26.3%. Efficiency improves even as volume drops.",
     "Un –12,8% en impresiones se lee de forma completamente distinta si el gasto cayó un –26,3%. Dashboard de eficiencia interanual en Power BI.": "−12.8% in impressions reads completely differently if spend fell by −26.3%. A year-on-year efficiency dashboard in Power BI.",
     "Comparativa interanual en Power BI: el gasto cayó un 26,3% mientras las impresiones solo cayeron un 12,8% — la eficiencia mejoró aunque el volumen bajara.": "Year-on-year comparison in Power BI: spend fell 26.3% while impressions fell only 12.8% — efficiency improved even though volume dropped.",
@@ -111,7 +111,19 @@
     "Al poner los indicadores en contexto pude diferenciar entre una caída en volumen y un cambio en eficiencia, y entender mejor qué podía estar detrás de los resultados.": "By putting the indicators in context I could tell a drop in volume apart from a change in efficiency, and better understand what might be behind the results.",
     "Para mí, esa es una de las partes más interesantes del trabajo de un Data Analyst: <strong>pasar de observar números a encontrar la pregunta que hay detrás de ellos.</strong>": "For me, that’s one of the most interesting parts of a data analyst’s work: <strong>moving from looking at numbers to finding the question behind them.</strong>",
     "Ver otros proyectos": "See other projects",
-    "Portfolio completo de Power BI": "Full Power BI portfolio"
+    "Portfolio completo de Power BI": "Full Power BI portfolio",
+    "Saltar al contenido": "Skip to content",
+    "Privacidad": "Privacy",
+    "Preferencias de cookies": "Cookie preferences",
+    "Información legal": "Legal information",
+    "Copiar": "Copy",
+    "borja.mora.mendez@gmail.com": "borja.mora.mendez@gmail.com",
+    "Siguiente caso": "Next case",
+    "Todos los proyectos": "All projects",
+    "Escríbeme": "Email me",
+    "Informe financiero completo": "Full financial report",
+    "Más": "More",
+    "Social Media Performance 2025 vs 2024 — Marketing Analytics | Borja Mora": "Social Media Performance 2025 vs 2024 — Marketing analytics | Borja Mora"
   },
   "keep": [
     "Español",
@@ -137,7 +149,14 @@
     "↳ Target Audiencia",
     "↳ Boosted"
   ],
-  "js": {},
+  "js": {
+    "Social Media Performance 2025 vs 2024": "Social Media Performance 2025 vs 2024",
+    "Redes sociales, 2025 vs 2024, en Power BI: las impresiones caen un 12,8 % y el gasto un 26,3 %. La eficiencia mejora aunque baje el volumen.": "Social media, 2025 vs 2024, in Power BI: impressions fall 12.8% and spend 26.3%. Efficiency improves even as volume drops.",
+    "Caso de estudio": "Case study",
+    "es-ES": "en-GB",
+    "https://borjamora.es/social-media.html": "https://borjamora.es/en/social-media.html",
+    "https://borjamora.es/social-media.html#caso": "https://borjamora.es/en/social-media.html#caso"
+  },
   "raw": [
     [
       "<link rel=\"canonical\" href=\"https://borjamora.es/social-media.html\">",
@@ -150,14 +169,6 @@
     [
       "<meta property=\"og:url\" content=\"https://borjamora.es/social-media.html\">",
       "<meta property=\"og:url\" content=\"https://borjamora.es/en/social-media.html\">"
-    ],
-    [
-      ".toLocaleString('es-ES')",
-      ".toLocaleString('en-GB')"
-    ],
-    [
-      ".toFixed(decimals).replace('.', ',')",
-      ".toFixed(decimals)"
     ],
     [
       ">−12,8%<",

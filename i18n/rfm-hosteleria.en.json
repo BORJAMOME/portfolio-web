@@ -27,7 +27,7 @@
     "© 2026 Borja Mora Méndez · Todos los derechos reservados": "© 2026 Borja Mora Méndez · All rights reserved",
     "Diseñado y construido por mí": "Designed and built by me",
     "Aviso de cookies": "Cookie notice",
-    "<strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Política de privacidad</a>.": "<strong>Analytics cookies.</strong> I use Google Analytics to understand how this site is used. No advertising or third-party tracking. <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Privacy policy</a>.",
+    "<strong>Cookies de analítica.</strong> Uso Google Analytics para entender cómo se usa esta web. Sin publicidad ni rastreo de terceros. Puedes cambiar tu decisión cuando quieras. <a href=\"./privacidad.html\">Política de privacidad y cookies</a>.": "<strong>Analytics cookies.</strong> I use Google Analytics to understand how this site is used. No advertising or third-party tracking. You can change your mind at any time. <a href=\"./privacidad.html\">Privacy and cookie policy</a>.",
     "Rechazar cookies": "Reject cookies",
     "Rechazar": "Reject",
     "Aceptar cookies": "Accept cookies",
@@ -112,7 +112,18 @@
     "Un buen análisis no solo tiene que decir qué está pasando. Tiene que ayudar a ver dónde mirar después.": "A good analysis doesn’t just have to say what’s happening. It has to help you see where to look next.",
     "De «las ventas están bajando» a saber exactamente dónde mirar.": "From «sales are falling» to knowing exactly where to look.",
     "Ver el resto de proyectos": "See the rest of the projects",
-    "Portfolio completo de Power BI": "Full Power BI portfolio"
+    "Portfolio completo de Power BI": "Full Power BI portfolio",
+    "Saltar al contenido": "Skip to content",
+    "Privacidad": "Privacy",
+    "Preferencias de cookies": "Cookie preferences",
+    "Información legal": "Legal information",
+    "Copiar": "Copy",
+    "borja.mora.mendez@gmail.com": "borja.mora.mendez@gmail.com",
+    "Siguiente caso": "Next case",
+    "Todos los proyectos": "All projects",
+    "Escríbeme": "Email me",
+    "Casa Origen": "Casa Origen",
+    "Más": "More"
   },
   "keep": [
     "Español",
@@ -145,7 +156,14 @@
     "↳ Dim_TipoEstablecimiento",
     "Power Query / M"
   ],
-  "js": {},
+  "js": {
+    "Análisis RFM — Distribuidora B2B de Hostelería": "RFM analysis — B2B hospitality distributor",
+    "Segmentación RFM en Power BI para una distribuidora B2B de bebidas: esquema en estrella, DAX avanzado y más de 198.000 € de revenue en riesgo detectados.": "RFM segmentation in Power BI for a B2B drinks distributor: star schema, advanced DAX and more than €198,000 of revenue at risk identified.",
+    "Caso de estudio": "Case study",
+    "es-ES": "en-GB",
+    "https://borjamora.es/rfm-hosteleria.html": "https://borjamora.es/en/rfm-hosteleria.html",
+    "https://borjamora.es/rfm-hosteleria.html#caso": "https://borjamora.es/en/rfm-hosteleria.html#caso"
+  },
   "raw": [
     [
       "<link rel=\"canonical\" href=\"https://borjamora.es/rfm-hosteleria.html\">",
@@ -158,14 +176,6 @@
     [
       "<meta property=\"og:url\" content=\"https://borjamora.es/rfm-hosteleria.html\">",
       "<meta property=\"og:url\" content=\"https://borjamora.es/en/rfm-hosteleria.html\">"
-    ],
-    [
-      ".toLocaleString('es-ES')",
-      ".toLocaleString('en-GB')"
-    ],
-    [
-      ".toFixed(decimals).replace('.', ',')",
-      ".toFixed(decimals)"
     ],
     [
       ">198.000 €<",

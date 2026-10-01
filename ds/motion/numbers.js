@@ -3,7 +3,9 @@
    Nada de contadores que suben de 0 a 1.572.340: eso inventa valores
    intermedios que nunca existieron. Aquí cada carácter de la cifra real
    encaja en su sitio, de izquierda a derecha, como tipos en una caja.
-   · El texto accesible no cambia (aria-label en el contenedor).
+   · El texto accesible no cambia: una copia oculta a la vista (.nb-sr) lo lee de una
+     vez; los caracteres animados van con aria-hidden. (Un aria-label en un <p> o un
+     <span> sin rol no es válido y algunos lectores de pantalla lo ignoran.)
    · Sin JS o con movimiento reducido: la cifra está ahí desde el principio.
    ═══════════════════════════════════════════════ */
 import { reduced, bus } from './env.js';
@@ -13,8 +15,13 @@ function split(el) {
   if (el.dataset.nbDone) return el;
   const text = el.textContent;
   if (!text.trim()) return el;
-  if (!el.closest('[role="img"]')) el.setAttribute('aria-label', text.trim());
   el.textContent = '';
+  if (!el.closest('[role="img"]')) {
+    const sr = document.createElement('span');
+    sr.className = 'nb-sr';
+    sr.textContent = text.trim();
+    el.appendChild(sr);
+  }
   let i = 0;
   for (const ch of text) {
     const s = document.createElement('span');
