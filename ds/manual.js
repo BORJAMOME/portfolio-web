@@ -180,7 +180,7 @@
       '<table class="mx"><thead><tr><th scope="col">Región</th><th scope="col">Ventas Q4</th><th scope="col">Q4 2024</th><th scope="col">Var. %</th></tr></thead><tbody>' + mxRows + '</tbody>' +
       '<tfoot><tr><th scope="row">Total</th><td><span class="n-l">1.572.340,00 €</span><span class="n-s">1.572 k€</span></td><td><span class="n-l">1.268.220,00 €</span><span class="n-s">1.268 k€</span></td><td class="cf"><span class="n-l">+23,98 %</span><span class="n-s">+24 %</span></td></tr></tfoot></table></div></div>' +
       '<div class="pn p-rec"><div class="pb"><span class="rk keep">Qué propongo</span><span class="rt keep">Mover un 15 % del presupuesto de captación a online en el Q1 y medir el efecto en 8 semanas.</span></div></div>' +
-      '<svg class="annot-svg" viewBox="0 0 160 110" preserveAspectRatio="none" aria-hidden="true"><path class="a-def" pathLength="1" d="M56 60.5 L70 51.7"/><path class="a-pri" pathLength="1" d="M57.6 48.4 L83.2 35.8"/></svg>' +
+      '<svg class="annot-svg" viewBox="0 0 160 110" preserveAspectRatio="none" aria-hidden="true"><path class="a-def" pathLength="1" d="M56 60.5 L70 51.7"/><path class="a-pri" pathLength="1" d="M57.6 48.4 L73.6 38.8"/></svg>' +
       '<div class="annot"><span class="ak">Anotación</span><b>Online aporta +221 k€:</b> el 73 % de todo el crecimiento del trimestre.</div>' +
       '</div>' +
       '<span class="kbd-n" style="left:2%;top:3%">1</span><span class="kbd-n" style="left:2.5%;top:17%">2</span><span class="kbd-n" style="left:61%;top:17%">3</span><span class="kbd-n" style="left:61%;top:38%">4</span><span class="kbd-n" style="left:81%;top:38%">5</span><span class="kbd-n" style="left:61%;top:52%">6</span><span class="kbd-n" style="left:61%;top:79%">7</span>' +
@@ -231,7 +231,7 @@
     } };
     $$('.cam > .pn', el).forEach(function (p, i) { p.style.setProperty('--pi', i); });
     if (name === 'c10') $('.cam', el).insertAdjacentHTML('afterbegin', blueprintHTML());
-    var init = { hero: '', c04: '', c05: 'flat lessgrid gray direct short', c08: 'flat lessgrid gray direct short dim desc', c10: 'empty', final: FINAL, titles: FINAL, sales: FINAL, a11y: FINAL, val: FINAL + ' titles' };
+    var init = { baStart: '', baEnd: FINAL, hero: '', c04: '', c05: 'flat lessgrid gray direct short', c08: 'flat lessgrid gray direct short dim desc', c10: 'empty', final: FINAL, titles: FINAL, sales: FINAL, a11y: FINAL, val: FINAL + ' titles' };
     api.set(init[name] != null ? init[name] : FINAL);
     DASH[name] = api;
     BUS.DASH = DASH;
@@ -1419,6 +1419,12 @@
         vals.forEach(function (v) { n.textContent = v; max = Math.max(max, n.offsetHeight); });
         n.textContent = keep; n.style.minHeight = max + 'px';
       });
+      // Gestalt aplicada: cinco textos de distinta longitud en el mismo hueco
+      $$('.gst-txt').forEach(function (box) {
+        var kids = $$('[data-g]', box), max = 0; box.style.minHeight = '';
+        kids.forEach(function (k) { var h = k.hidden; k.hidden = false; max = Math.max(max, k.offsetHeight); k.hidden = h; });
+        box.style.minHeight = max + 'px';
+      });
     }
     fit();
     var rt; addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(fit, 150); });
@@ -1685,7 +1691,28 @@
   }
 
   // capturas de la sección «En la práctica»: misma persiana, la imagen se compara en grises y en color
-  $$('#prac .ba').forEach(function (b) {
+  /* antes / después final: al entrar en pantalla, la persiana barre una vez de un extremo al otro */
+  (function () {
+    var box = $('#baFull .ba'); if (!box) return;
+    var inp = $('input', box), set = function (v) { inp.value = v; box.style.setProperty('--p', v + '%'); };
+    inp.addEventListener('input', function () { box.classList.add('touched'); set(+inp.value); });
+    if (RM.matches || !('IntersectionObserver' in window)) return;
+    var io = new IntersectionObserver(function (es) {
+      if (!es[0].isIntersecting) return; io.disconnect();
+      var t0 = null, from = 92, to = 50, dur = 1600;
+      set(from);
+      (function step(now) {
+        if (box.classList.contains('touched')) return;
+        if (t0 == null) t0 = now;
+        var k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+        set(Math.round((from + (to - from) * e) * 10) / 10);
+        if (k < 1) requestAnimationFrame(step);
+      })(performance.now());
+    }, { threshold: .55 });
+    io.observe(box);
+  })();
+
+  $('#prac .ba').forEach(function (b) {
     var inp = $('input', b);
     inp.addEventListener('input', function () { b.style.setProperty('--p', inp.value + '%'); });
   });

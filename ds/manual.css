@@ -1461,7 +1461,7 @@
 .cvx-by b { color: #111; font-weight: 700; }
 .cvx-by span { display: block; white-space: nowrap; }   /* autor y rol, cada uno en su línea: sin «·» colgando */
 /* acceso discreto bajo la autoría (no forma parte del lienzo) */
-.cvx-start { align-self: flex-start; font-size: max(11px, 11.5 * var(--u)); font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #111; text-decoration: none; border-bottom: 1px solid #111; padding-bottom: 2px; }
+.cvx-start { align-self: flex-start; font-size: max(11px, 11.5 * var(--u)); font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #111; text-decoration: none; border-bottom: 1px solid #111; padding-block: 5px; }   /* 24 px de alto mínimo para tocarlo */
 .cvx-start span { display: inline-block; transition: transform var(--dur-ui) var(--ease-out); }
 .cvx-start:hover span { transform: translateY(2px); }
 
@@ -1526,7 +1526,7 @@
   .cvx-deck { font-size: clamp(18px, 2.6vw, 21px); }
   .cvx-by { font-size: 13px; }
   .cvx-start { font-size: 11.5px; margin-top: 4px; }
-  .cvx-chart { order: 4; position: relative; margin: 56px calc(-1 * var(--g)) 0; }
+  .cvx-chart { order: 4; position: relative; margin: 56px calc(-1 * var(--g)) 0; min-height: calc(100vw * 206 / 1280 + 22px); }   /* reserva el alto del gráfico antes de que cover.js lo dibuje */
   .cvx-svg { width: 100%; height: auto; aspect-ratio: 1280 / 206; }
   .cvx-ticks { position: relative; top: auto; height: 16px; margin-top: 6px; }
   .cvx-ticks span { top: 0; font-size: 10px; }
@@ -1608,3 +1608,19 @@
   .dash .mx thead, .dash .mx tr > :nth-child(3) { display: none; }
   .dash.prio .mx tfoot { display: none; }
 }
+
+/* ═══ ANTES / DESPUÉS FINAL ═══ el dashboard del principio frente al del final, a todo el ancho */
+.bafull { padding-block: clamp(72px, 10vw, 128px) 24px; }
+.bafull-t { margin: 12px 0 14px; max-width: 22ch; }
+.bafull-d { max-width: 58ch; margin-bottom: clamp(28px, 4vw, 44px); }
+.ba.ba--dash { aspect-ratio: 16 / 11; border: 0; background: transparent; overflow: hidden; border-radius: 6px; box-shadow: 0 30px 80px -40px rgba(17,17,17,.35); }
+.ba--dash .ba-l .viz, .ba--dash .ba-l .dash-wrap { height: 100%; }
+.ba--dash .ba-l .dash { border-radius: 0; }
+.ba--dash .ba-tag { top: 14px; bottom: auto; font-size: 11px; padding: 5px 10px; }
+.ba--dash .ba-line { width: 2px; background: var(--ink); }
+.ba--dash .ba-line::after { width: 44px; height: 44px; font-size: 15px; box-shadow: 0 6px 18px rgba(0,0,0,.25); }
+.ba--dash .dash-wrap { animation: none !important; transform: none !important; }
+.bafull-k { list-style: none; margin: 28px 0 0; padding: 18px 0 0; border-top: 1px solid var(--ink); display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 18px 24px; font-size: 13.5px; line-height: 1.5; color: var(--muted); }
+.bafull-k b { display: block; color: var(--ink); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 4px; }
+@media (max-width: 900px) { .bafull-k { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 520px) { .bafull-k { grid-template-columns: 1fr; } .ba--dash .ba-tag { top: 8px; font-size: 9.5px; } }

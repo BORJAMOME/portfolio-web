@@ -1569,6 +1569,26 @@
     </div>
   </div>
 
+  <!-- Antes / después: el dashboard del principio frente al del final -->
+  <div class="ds-c bafull" id="baFull">
+    <p class="ds-kicker">El recorrido completo</p>
+    <h2 class="ds-h2 bafull-t">El mismo dashboard. Los mismos datos.</h2>
+    <p class="ds-body ds-muted bafull-d">A la izquierda, como empezó el manual. A la derecha, después de los diez capítulos. Arrastra la línea (o usa las flechas del teclado).</p>
+    <div class="ba ba--dash" style="--p:50%">
+      <div class="ba-l ba-before" aria-hidden="true"><div class="viz" data-dash="baStart"></div></div>
+      <div class="ba-l ba-after"><div class="viz" data-dash="baEnd"></div></div>
+      <div class="ba-line"></div><span class="ba-tag l">Al empezar</span><span class="ba-tag r">Al terminar</span>
+      <input type="range" min="0" max="100" value="50" aria-label="Comparar el dashboard del principio con el del final">
+    </div>
+    <ol class="bafull-k">
+      <li><b>Ruido</b> Sin sombras, rejilla ni colores que no significan nada.</li>
+      <li><b>Atención</b> Un solo color para lo que importa: online.</li>
+      <li><b>Composición</b> El protagonista ocupa el sitio donde empieza la lectura.</li>
+      <li><b>Texto</b> El título dice la conclusión, no el tema.</li>
+      <li><b>Acción</b> Termina en qué propongo hacer.</li>
+    </ol>
+  </div>
+
   <div class="ds-c finale">
     <div class="sig rv">
       <div class="ctas">
@@ -1712,7 +1732,7 @@ window.addEventListener('scroll',function(){
   });
 })();
 </script>
-<script src="./ds/manual.js?v=20260930h" defer></script>
+<script src="./ds/manual.js?v=20261001c" defer></script>
 <!-- Motion: bibliotecas opcionales. Si un CDN falla, la pagina funciona igual (todo tiene fallback CSS). -->
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
