@@ -543,6 +543,7 @@
 .layer { display: grid; grid-template-columns: 120px 1fr; align-items: baseline; padding: 22px 0; border-top: 1px solid var(--grid); }
 .layer .ln { font-size: 12px; font-weight: 800; letter-spacing: .14em; }
 .layer .lq { font-family: var(--serif); font-size: clamp(22px, 2.4vw, 30px); }
+.layer .le { grid-column: 2; margin-top: 6px; font-size: 14px; line-height: 1.5; color: var(--muted); }
 .layer:nth-child(3) .ln { color: var(--green-ink); }
 .layers-sum { font-family: var(--serif); font-size: clamp(26px, 3vw, 40px); padding-top: 22px; border-top: 1px solid var(--ink); }
 .layers-sum em { font-style: normal; color: var(--green); }
@@ -1611,3 +1612,76 @@
 
 /* texto accesible de las cifras que se componen carácter a carácter (motion/numbers.js) */
 .nb-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* ═══ 03 · PREATENTIVOS ═══ cuenta los 5: en gris hay que leerlos; en color, se ven */
+.digits { display: grid; gap: clamp(6px, 1vw, 12px); padding: clamp(20px, 3vw, 36px); border: 1px solid var(--grid); border-radius: 6px; background: #fff; font-variant-numeric: tabular-nums; }
+.digits .dr { display: grid; grid-template-columns: repeat(16, minmax(0, 1fr)); text-align: center; font-size: clamp(16px, 2vw, 26px); font-weight: 600; line-height: 1.2; color: #8a8a8a; }
+.digits i, .digits b { font-style: normal; font-weight: inherit; transition: color .35s ease; }
+.digits[data-s="b"] b { color: var(--green); font-weight: 800; }
+
+/* ═══ TABLA DE DEFINICIONES ═══ memoria (03) y jerarquía (05) */
+.dtab { width: 100%; margin-top: 36px; border-collapse: collapse; border-top: 1px solid var(--ink); }
+.dtab thead th { text-align: left; font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); padding: 14px 24px 12px 0; border-bottom: 1px solid var(--ink); }
+.dtab tbody th, .dtab td { text-align: left; vertical-align: baseline; padding: 20px 24px 20px 0; border-bottom: 1px solid var(--grid); }
+.dtab tbody th { font-family: var(--serif); font-weight: 500; font-size: clamp(20px, 2vw, 26px); line-height: 1.15; color: var(--green-ink); white-space: nowrap; }
+.dtab td { font-size: 15px; line-height: 1.55; color: var(--muted); }
+.dtab td:last-child { color: var(--ink); font-weight: 600; }
+.dtab:not(.dtab--2) th:first-child { width: 22%; }
+.dtab:not(.dtab--2) td { width: 39%; }
+.dtab--2 { margin-top: 0; }
+.dtab--2 tbody tr:not(.hl) th { color: var(--ink); }
+.dtab--2 tbody tr:last-child th { color: var(--muted); }
+@media (max-width: 640px) {
+  .dtab thead { display: none; }
+  .dtab tr, .dtab tbody th, .dtab td { display: block; width: auto !important; padding-right: 0; }
+  .dtab tbody tr { padding: 18px 0; border-bottom: 1px solid var(--grid); }
+  .dtab tbody th, .dtab td { padding: 0; border: 0; }
+  .dtab td { margin-top: 8px; }
+  .dtab:not(.dtab--2) td:last-child::before { content: '→ '; color: var(--green); }
+}
+
+/* ═══ 03 · EL MÉTODO ═══ tres pasos con su mini gráfico */
+.method { list-style: none; margin: 40px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 clamp(20px, 3vw, 40px); border-top: 1px solid var(--ink); }
+.method li { display: flex; flex-direction: column; padding-top: 24px; }
+.method .mn { font-family: var(--serif); font-size: 22px; color: var(--g1); margin-top: 22px; }
+.method b { font-size: 18px; line-height: 1.35; margin-top: 6px; }
+.method li > span:last-child { font-size: 15px; line-height: 1.55; color: var(--muted); margin-top: 8px; }
+.mini { display: flex; align-items: flex-end; gap: 8%; height: 96px; padding: 0 4%; border-bottom: 1px solid var(--g1); }
+.mini i { flex: 1; background: var(--g1); border-radius: 2px 2px 0 0; transition: background .4s ease, transform .4s ease; }
+.mini--2 i:nth-child(2) { background: transparent; outline: 2px dashed var(--ink); outline-offset: -2px; }
+.mini--3 i:nth-child(2) { background: var(--green); transform: scaleX(1.25); }
+.mini--3 i:not(:nth-child(2)) { background: var(--g2); }
+.method li:last-child .mn { color: var(--green); }
+@media (max-width: 760px) { .method { grid-template-columns: 1fr; } .method li + li { margin-top: 28px; border-top: 1px solid var(--grid); } }
+
+/* ═══ 03 · LO QUE HACE EL CEREBRO ═══ */
+.brain { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0 24px; border-top: 1px solid var(--ink); }
+.brain li { padding-top: 20px; font-family: var(--serif); font-size: clamp(18px, 1.7vw, 22px); line-height: 1.3; }
+.brain li span { display: block; font-size: 30px; line-height: 1; color: var(--green); margin-bottom: 14px; }
+@media (max-width: 900px) { .brain { grid-template-columns: 1fr; } .brain li { display: grid; grid-template-columns: 40px 1fr; align-items: baseline; padding: 16px 0; border-bottom: 1px solid var(--grid); } .brain li span { font-size: 24px; margin: 0; } }
+
+/* ═══ 05 · QUÉ ESTIMULA CADA RECURSO ═══ */
+.stim { list-style: none; margin: 36px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--ink); }
+.stim li { padding: 20px 20px 22px 0; border-bottom: 1px solid var(--grid); }
+.stim li:not(:nth-child(4n + 1)) { padding-left: 20px; border-left: 1px solid var(--grid); }
+.stim b { display: block; font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+.stim span { display: block; margin-top: 10px; font-family: var(--serif); font-size: clamp(18px, 1.7vw, 22px); line-height: 1.3; }
+.stim li:first-child b { color: var(--green-ink); }
+@media (max-width: 900px) { .stim { grid-template-columns: 1fr 1fr; } .stim li:not(:nth-child(4n + 1)) { padding-left: 0; border-left: 0; } .stim li:nth-child(2n) { padding-left: 20px; border-left: 1px solid var(--grid); } }
+@media (max-width: 420px) { .stim { grid-template-columns: 1fr; } .stim li:nth-child(2n) { padding-left: 0; border-left: 0; } }
+
+/* ═══ 05 · JERARQUÍA VISUAL ═══ el lienzo con los tres niveles */
+.hier { display: grid; grid-template-columns: 1.6fr 1fr 1fr; grid-template-rows: 1.5fr 1fr .45fr; gap: 10px; aspect-ratio: 16 / 11; padding: 14px; border: 1px solid var(--grid); border-radius: 6px; background: #fff; }
+.hier > div { border-radius: 4px; display: flex; padding: 12px; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.hier .h1 { grid-row: 1 / 3; background: var(--green); color: #fff; font-size: clamp(13px, 1.4vw, 16px); }
+.hier .h2 { grid-column: 2 / 4; background: var(--g2); color: var(--ink); align-items: center; justify-content: center; }
+.hier .h2.b { grid-column: 2 / 4; }
+.hier .h3 { grid-column: 1 / 4; background: var(--grid); color: var(--muted); font-size: 10.5px; align-items: center; }
+
+/* ═══ 07 · CHECKLIST DE ORDEN VISUAL ═══ */
+.check { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
+.check li { display: grid; grid-template-columns: 36px 1fr; align-items: baseline; padding: 18px 0; border-bottom: 1px solid var(--grid); font-size: 18px; font-weight: 600; line-height: 1.4; }
+.check li::before { content: '✓'; color: var(--green); font-weight: 800; font-size: 20px; }
+
+/* ═══ 09 · Bing / Bang / Bongo: el verbo de cada parte ═══ */
+.bbb .bv { display: block; margin-top: 6px; font-size: 20px; font-weight: 800; line-height: 1.2; }

@@ -472,7 +472,7 @@
     /* Laboratorio: en los estados preatentivos, tamaño y posición el lector
        elige cuál de los 20 cuadrados es el protagonista y ve el principio con
        su propia elección. Los cuadrados se vuelven botones solo mientras sirve. */
-    var cur = 'p1', LIVE = /^(p1|p2|p3|s1|o1|o2|o3)$/, hint = viz.querySelector('.lab-hint');
+    var cur = 's1', LIVE = /^(p1|p2|p3|s1|o1|o2|o3)$/, hint = viz.querySelector('.lab-hint');
     function pick(i) { if (!LIVE.test(cur) || i < 0) return; H = i; api.set(cur); }
     st.el.addEventListener('click', function (e) { pick(st.marks.indexOf(e.target)); });
     st.el.addEventListener('keydown', function (e) {
@@ -908,6 +908,7 @@
   function cssTgl(sel) { return function (viz) { var e = $(sel, viz), note = $('[data-tgl-note="' + viz.id + '"]'); return { set: function (k) { e.dataset.s = k; if (note) note.textContent = note.getAttribute('data-n-' + k) || ''; } }; }; }
   VIZ.spc = cssTgl('.sp8');
   VIZ.ws = cssTgl('.ws');
+  VIZ.pre5 = cssTgl('.digits');   /* 03 · preatentivos: los 5, en gris o en color */
 
   /* ═══ PLANOS DE DASHBOARD ═══
      El mismo reparto que usa PBI Mockup Creator: un lienzo de 1280×720 con
