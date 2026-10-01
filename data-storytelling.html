@@ -18,7 +18,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- Shared styles: variables, nav, footer, botones, reset -->
 <link rel="stylesheet" href="./shared.css?v=85cf5305e2">
-<link rel="stylesheet" href="./ds/manual.css?v=ba941a85aa">
+<link rel="stylesheet" href="./ds/manual.css?v=4956ee5ecf">
 <!-- Primary Meta Tags -->
 <meta name="description" content="Manual interactivo de Data Storytelling y diseño de dashboards: percepción, ruido, atención, visuales, composición y narrativa, sobre un dashboard vivo.">
 <meta name="keywords" content="data storytelling, diseño de dashboards, Power BI, visualización de datos, scrollytelling, UX, Borja Mora">
@@ -410,9 +410,9 @@
         <p class="ds-body ds-muted" style="margin-top:14px">No es una fórmula exacta. Es la forma en la que reviso un informe antes de darlo por terminado. Las tres capas tienen que funcionar juntas: si una falla, el informe pierde fuerza.</p>
       </div>
       <div class="layers rv-seq">
-        <div class="layer"><span class="ln">DATOS</span><span class="lq">¿Qué puedo demostrar?</span></div>
-        <div class="layer"><span class="ln">NARRATIVA</span><span class="lq">¿Qué significa?</span></div>
-        <div class="layer"><span class="ln">VISUAL</span><span class="lq">¿Cómo se entiende?</span></div>
+        <div class="layer"><span class="ln">DATOS</span><span class="lq">¿Qué puedo demostrar?</span><span class="le">Números, tendencias, comparativas</span></div>
+        <div class="layer"><span class="ln">NARRATIVA</span><span class="lq">¿Qué significa?</span><span class="le">Contexto, causalidad, implicaciones</span></div>
+        <div class="layer"><span class="ln">VISUAL</span><span class="lq">¿Cómo se entiende?</span><span class="le">Gráficos, diagramas, elementos destacados</span></div>
         <p class="layers-sum">Datos + significado + <em>claridad.</em></p>
       </div>
     </div>
@@ -562,14 +562,40 @@
     <p class="ds-kicker ch-label">Capítulo 03 · <b>Percepción</b></p>
     <h2 class="ds-h2 ch-hook" id="c03-t">Antes de leer un gráfico, ya estamos mirando.</h2>
   </header>
+
+  <!-- Preatentivos -->
+  <div class="ds-c ds-sec--tight">
+    <div class="split split--wide">
+      <div>
+        <p class="ds-kicker">Preatentivos</p>
+        <p class="ds-h3" style="margin:12px 0 14px">Señales que el cerebro procesa antes de la atención consciente.</p>
+        <p class="ds-body ds-muted" style="margin-bottom:22px">Son la palanca nº 1 para dirigir la mirada. Pruébalo: cuenta los 5.</p>
+        <div class="ctl-row"><div class="seg" role="group" aria-label="Estado de los números" data-tgl-for="pre5">
+          <button type="button" data-s="a" aria-pressed="true">Todo en gris</button>
+          <button type="button" data-s="b" aria-pressed="false" class="g">El 5, en color</button>
+        </div></div>
+        <p class="ds-body" aria-live="polite" data-tgl-note="pre5"
+          data-n-a="¿Cuántos 5 hay? Sin ninguna señal, tienes que leerlos uno a uno."
+          data-n-b="Hay 9. Ahora los ves todos a la vez, sin buscarlos: el color ha hecho el trabajo antes de que empezaras a leer."></p>
+      </div>
+      <div class="tgl" id="pre5" data-viz="pre5" data-auto="a">
+        <div class="digits" data-s="a" role="img" aria-label="Seis filas de números en gris. Al activar la señal, los nueve 5 se colorean.">
+          <span class="dr"><i>0</i><i>9</i><i>2</i><b>5</b><i>2</i><i>7</i><i>3</i><i>7</i><i>7</i><i>6</i><i>6</i><i>8</i><b>5</b><i>2</i><i>3</i><i>7</i></span>
+          <span class="dr"><i>6</i><i>0</i><i>6</i><i>4</i><i>9</i><i>8</i><i>1</i><b>5</b><i>9</i><i>6</i><i>6</i><i>9</i><i>9</i><i>3</i><i>3</i><i>8</i></span>
+          <span class="dr"><i>3</i><b>5</b><i>1</i><i>2</i><i>4</i><i>2</i><i>9</i><i>7</i><i>8</i><i>0</i><i>2</i><i>4</i><i>1</i><i>9</i><b>5</b><i>0</i></span>
+          <span class="dr"><i>3</i><i>3</i><i>6</i><i>9</i><i>1</i><i>4</i><i>2</i><i>3</i><i>4</i><b>5</b><i>3</i><i>6</i><i>2</i><i>9</i><i>4</i><i>8</i></span>
+          <span class="dr"><i>6</i><i>6</i><i>6</i><i>9</i><b>5</b><i>3</i><i>7</i><i>2</i><i>3</i><i>3</i><i>3</i><i>7</i><i>8</i><i>1</i><i>8</i><i>0</i></span>
+          <span class="dr"><b>5</b><i>4</i><i>1</i><i>0</i><i>9</i><i>2</i><i>6</i><i>1</i><i>4</i><i>1</i><i>9</i><b>5</b><i>8</i><i>8</i><i>8</i><i>9</i></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="ds-c">
     <div class="scrolly" data-viz="lab">
       <div class="sc-visual"><div class="viz"><div class="stage" role="img" aria-label="Laboratorio perceptivo: veinte cuadrados que cambian de color, tamaño, posición y agrupación."></div><p class="lab-hint" hidden>Pruébalo: pulsa cualquier cuadrado y conviértelo en el protagonista.</p></div></div>
       <div class="sc-steps">
-        <div class="step" data-s="p1"><div class="st-in"><span class="st-tag">Preatentivos</span><p class="st-copy">Todo está quieto.</p></div></div>
-        <div class="step" data-s="p2"><div class="st-in"><p class="st-copy">Uno cambia.</p></div></div>
-        <div class="step" data-s="p3"><div class="st-in"><p class="st-copy">Y sabes dónde mirar antes de empezar a analizar.</p><details class="src" data-src="franconeri"></details></div></div>
-        <div class="step" data-s="s1"><div class="st-in"><span class="st-tag">Tamaño</span><p class="st-copy">El tamaño también crea jerarquía.</p></div></div>
+        <div class="step" data-s="s1"><div class="st-in"><span class="st-tag">Tamaño</span><p class="st-copy">El tamaño también crea jerarquía.</p><details class="src" data-src="franconeri"></details></div></div>
         <div class="step" data-s="o1"><div class="st-in"><span class="st-tag">Posición</span><p class="st-copy">La posición también cuenta una historia.</p></div></div>
         <div class="step" data-s="o2"><div class="st-in"><p class="st-copy">Primero, orden: lo alineado se lee como un sistema.</p></div></div>
         <div class="step" data-s="o3"><div class="st-in"><p class="st-copy">Después, prioridad: el protagonista va donde empieza la lectura.</p><p class="st-sub">En una pantalla occidental suele ser arriba a la izquierda. Es una tendencia, no una ley: una señal fuerte puede atraer la mirada a cualquier sitio.</p></div></div>
@@ -578,6 +604,21 @@
         <div class="step" data-s="m3"><div class="st-in"><p class="st-copy">Simplifico. Y establezco prioridades.</p><p class="st-sub">La investigación habla de unos pocos “bloques” a la vez, con mucha variación según la tarea. Yo no lo uso como un número mágico: lo uso como recordatorio de que el lector no puede con todo.</p><details class="src" data-src="cowan"></details></div></div>
       </div>
     </div>
+  </div>
+
+  <!-- Tres memorias -->
+  <div class="ds-c ds-sec--tight">
+    <p class="ds-kicker">Memoria</p>
+    <p class="ds-h3" style="margin:12px 0 14px;max-width:26ch">Tres memorias, tres reglas de diseño</p>
+    <p class="ds-body ds-muted" style="max-width:62ch">Atraer y retener la atención del público es un problema de memoria. Trabajamos con tres almacenes encadenados, y cada uno impone una regla de diseño.</p>
+    <table class="dtab rv-seq">
+      <thead><tr><th scope="col">Memoria</th><th scope="col">Qué hace</th><th scope="col">Qué te obliga a hacer</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Icónica</th><td>Detecta al instante color, forma, tamaño, orientación y movimiento.</td><td>Marcar lo importante antes de que el lector «lea».</td></tr>
+        <tr><th scope="row">Corto plazo</th><td>Retiene solo 3–4 elementos. Con 5 colores y 10 leyendas, abandona.</td><td>Agrupar, etiquetar y simplificar. Nunca superar su límite.</td></tr>
+        <tr><th scope="row">Largo plazo</th><td>Guarda patrones, reconocimiento y significado.</td><td>Anclar con imágenes, metáforas y conexión. Texto + imagen = más recuerdo.</td></tr>
+      </tbody>
+    </table>
   </div>
 
   <!-- Comparación -->
@@ -606,6 +647,31 @@
       </div>
     </div>
     <div class="ds-pause"><p class="ds-quote rv">Una buena composición puede explicar una relación <em>antes de que aparezca una palabra.</em></p></div>
+  </div>
+
+  <!-- El método -->
+  <div class="ds-c ds-sec--tight">
+    <p class="ds-kicker">El método</p>
+    <p class="ds-h3" style="margin:12px 0 14px;max-width:26ch">Tres pasos para dirigir la mirada</p>
+    <p class="ds-body ds-muted" style="max-width:62ch">¿Para qué sirve todo esto? Para dos cosas: dirigir la atención y crear una jerarquía visual. Un gráfico sin estas señales obliga al cerebro a trabajar más: aumenta la carga cognitiva, baja la comprensión y el mensaje se diluye.</p>
+    <ol class="method rv-seq">
+      <li><div class="mini mini--1" aria-hidden="true"><i style="height:58%"></i><i style="height:82%"></i><i style="height:46%"></i><i style="height:70%"></i><i style="height:38%"></i></div><span class="mn">01</span><b>Llévalo todo al gris.</b><span>Parte de un lienzo sin énfasis. Nada destaca todavía.</span></li>
+      <li><div class="mini mini--2" aria-hidden="true"><i style="height:58%"></i><i style="height:82%"></i><i style="height:46%"></i><i style="height:70%"></i><i style="height:38%"></i></div><span class="mn">02</span><b>Pregúntate qué es lo importante.</b><span>Decide el único mensaje que debe sobrevivir.</span></li>
+      <li><div class="mini mini--3" aria-hidden="true"><i style="height:58%"></i><i style="height:82%"></i><i style="height:46%"></i><i style="height:70%"></i><i style="height:38%"></i></div><span class="mn">03</span><b>Resáltalo con tamaño, color y grosor.</b><span>Dos o tres atributos, no más, sobre ese elemento.</span></li>
+    </ol>
+  </div>
+
+  <!-- Resumen -->
+  <div class="ds-c ds-sec--tight">
+    <p class="ds-kicker">En resumen</p>
+    <p class="ds-h3" style="margin:12px 0 36px">Lo que hace el cerebro</p>
+    <ol class="brain rv-seq">
+      <li><span>1</span>Mira primero lo diferente.</li>
+      <li><span>2</span>Después, lo más grande.</li>
+      <li><span>3</span>Suele empezar a leer arriba a la izquierda.</li>
+      <li><span>4</span>Deja en segundo plano lo que está en gris claro.</li>
+      <li><span>5</span>Forma categorías automáticamente.</li>
+    </ol>
   </div>
 </section>
 
@@ -715,6 +781,23 @@
     </div>
   </div>
 
+  <!-- Qué estimula cada recurso -->
+  <div class="ds-c ds-sec--tight">
+    <p class="ds-kicker">Recursos visuales</p>
+    <p class="ds-h3" style="margin:12px 0 14px">¿Qué estimula cada recurso?</p>
+    <p class="ds-body ds-muted" style="max-width:62ch">Cada recurso le dice algo al cerebro del lector, lo quiera yo o no. Por eso no uso ninguno sin motivo.</p>
+    <ul class="stim rv-seq">
+      <li><b>Color</b><span>«esto es importante»</span></li>
+      <li><b>Posición</b><span>«este es el recorrido»</span></li>
+      <li><b>Tamaño</b><span>«esta es la prioridad»</span></li>
+      <li><b>Limpieza</b><span>«hay intención detrás»</span></li>
+      <li><b>Agrupación</b><span>«estas cosas se relacionan»</span></li>
+      <li><b>Alineación</b><span>«hay orden»</span></li>
+      <li><b>Título</b><span>«así debes interpretar»</span></li>
+      <li><b>Ausencia de ruido</b><span>«esto es profesional»</span></li>
+    </ul>
+  </div>
+
   <!-- Color -->
   <div class="ds-c ds-sec">
     <p class="ds-kicker">Color</p>
@@ -757,6 +840,30 @@
         <p class="ds-body">No porque exista un 10 % mágico.<br><b>Porque cuando todo destaca, el énfasis deja de funcionar.</b></p>
       </div>
       <div class="tgl" id="ten" data-viz="ten" data-auto="a,b"><div class="stage stage--wide" role="img" aria-label="Diez barras. Cuando todas destacan igual, ninguna destaca; cuando solo una lo hace, la mirada va directa a ella."></div></div>
+    </div>
+  </div>
+
+  <!-- Jerarquía visual -->
+  <div class="ds-c ds-sec--tight">
+    <div class="split split--wide">
+      <div>
+        <p class="ds-kicker">Jerarquía visual</p>
+        <p class="ds-h3" style="margin:12px 0 28px">Tres niveles. Cada uno, en su sitio.</p>
+        <table class="dtab dtab--2">
+          <thead><tr><th scope="col">Nivel</th><th scope="col">Dónde</th></tr></thead>
+          <tbody>
+            <tr class="hl"><th scope="row">Importante</th><td>Arriba a la izquierda · grande, en color</td></tr>
+            <tr><th scope="row">Secundario</th><td>Centro · tamaño medio, neutro</td></tr>
+            <tr><th scope="row">Complementario</th><td>Al final · pequeño, en gris</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="hier rv-seq" role="img" aria-label="Esquema de un lienzo: el bloque importante arriba a la izquierda, grande y en color; el secundario en el centro; el complementario abajo, pequeño y en gris.">
+        <div class="h1"><span>Importante</span></div>
+        <div class="h2"><span>Secundario</span></div>
+        <div class="h2 b"><span>Secundario</span></div>
+        <div class="h3"><span>Complementario</span></div>
+      </div>
     </div>
   </div>
 </section>
@@ -1094,6 +1201,24 @@
     </div>
   </div>
 
+  <!-- Checklist de orden visual -->
+  <div class="ds-c ds-sec--tight">
+    <div class="split">
+      <div>
+        <p class="ds-kicker">Checklist de orden visual</p>
+        <p class="ds-h3" style="margin:12px 0 14px">Antes de dar un layout por bueno, repaso cinco cosas.</p>
+        <p class="ds-body ds-muted">Si una falla, vuelvo al lienzo.</p>
+      </div>
+      <ul class="check rv-seq">
+        <li>Big idea legible en 3 segundos</li>
+        <li>Máximo 2 tipografías</li>
+        <li>Elementos alineados a un grid</li>
+        <li>Sin bordes ni sombras innecesarios</li>
+        <li>Espacios que respiran</li>
+      </ul>
+    </div>
+  </div>
+
   <!-- Números de partida -->
   <div class="ds-c ds-sec--tight">
     <p class="ds-kicker">Números de partida</p>
@@ -1308,9 +1433,9 @@
     <p class="ds-h3" style="margin-top:12px;max-width:26ch">La misma idea, al principio, durante y al final.</p>
     <div class="bbb rv-seq">
       <div class="track">
-        <div><span class="bk">BING</span><p class="bt">“Hoy vamos a ver por qué el abandono nos cuesta 2,4 M€.”</p><div class="dots"><i class="g"></i></div><span class="idea">la idea, anunciada</span></div>
-        <div><span class="bk">BANG</span><p class="bt">La historia: situación, datos, giro, recomendación.</p><div class="dots"><i></i><i></i><i></i><i class="g"></i><i></i><i></i><i></i><i></i></div><span class="idea">la idea, demostrada</span></div>
-        <div><span class="bk">BONGO</span><p class="bt">“Hemos visto que la mayor parte del riesgo se concentra antes de los 90 días.”</p><div class="dots"><i class="g"></i></div><span class="idea">la idea, recordada</span></div>
+        <div><span class="bk">BING</span><span class="bv">Anticipa</span><p class="bt">“Hoy vamos a ver por qué el abandono nos cuesta 2,4 M€.”</p><div class="dots"><i class="g"></i></div><span class="idea">la idea, anunciada</span></div>
+        <div><span class="bk">BANG</span><span class="bv">Cuéntalo</span><p class="bt">La historia: situación, datos, giro, recomendación.</p><div class="dots"><i></i><i></i><i></i><i class="g"></i><i></i><i></i><i></i><i></i></div><span class="idea">la idea, demostrada</span></div>
+        <div><span class="bk">BONGO</span><span class="bv">Resume</span><p class="bt">“Hemos visto que la mayor parte del riesgo se concentra antes de los 90 días.”</p><div class="dots"><i class="g"></i></div><span class="idea">la idea, recordada</span></div>
       </div>
     </div>
     <details class="src" data-src="swd"></details>
@@ -1673,7 +1798,7 @@ window.addEventListener('scroll',function(){
 </div>
 <script src="./consent.js?v=26a27e3704" defer></script>
 <script src="./contact.js?v=451e00c590" defer></script>
-<script src="./ds/manual.js?v=5a56f3d5cb" defer></script>
+<script src="./ds/manual.js?v=5fd92ff811" defer></script>
 <!-- Motion: bibliotecas opcionales. Si un CDN falla, la pagina funciona igual (todo tiene fallback CSS). -->
 <script src="./vendor/gsap-3.13.0.min.js" defer></script>
 <script src="./vendor/ScrollTrigger-3.13.0.min.js" defer></script>

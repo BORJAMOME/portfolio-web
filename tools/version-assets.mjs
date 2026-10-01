@@ -23,7 +23,8 @@ const pages = [
   ...readdirSync(join(ROOT, 'en')).filter((f) => f.endsWith('.html')).map((f) => join(ROOT, 'en', f)),
 ];
 const hashes = {};
-const hashOf = (file) => (hashes[file] ??= createHash('sha256').update(readFileSync(file)).digest('hex').slice(0, 10));
+// el hash ignora los finales de línea (CRLF en Windows, LF en Git/CI): mismo contenido, misma versión en cualquier equipo
+const hashOf = (file) => (hashes[file] ??= createHash('sha256').update(readFileSync(file, 'utf8').replace(/\r\n/g, '\n')).digest('hex').slice(0, 10));
 
 let changed = 0;
 for (const p of pages) {

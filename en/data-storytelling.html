@@ -18,7 +18,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- Shared styles: variables, nav, footer, botones, reset -->
 <link rel="stylesheet" href="../shared.css?v=85cf5305e2">
-<link rel="stylesheet" href="../ds/manual.css?v=ba941a85aa">
+<link rel="stylesheet" href="../ds/manual.css?v=4956ee5ecf">
 <!-- Primary Meta Tags -->
 <meta name="description" content="An interactive guide to data storytelling and dashboard design: perception, noise, attention, visuals, composition and narrative, on a live dashboard.">
 <meta name="keywords" content="data storytelling, diseño de dashboards, Power BI, visualización de datos, scrollytelling, UX, Borja Mora">
@@ -411,9 +411,9 @@
         <p class="ds-body ds-muted" style="margin-top:14px">It isn't an exact formula. It's how I review a report before I call it finished. The three layers have to work together: if one fails, the report loses its force.</p>
       </div>
       <div class="layers rv-seq">
-        <div class="layer"><span class="ln">DATA</span><span class="lq">What can I prove?</span></div>
-        <div class="layer"><span class="ln">NARRATIVE</span><span class="lq">What does it mean?</span></div>
-        <div class="layer"><span class="ln">VISUAL</span><span class="lq">How is it understood?</span></div>
+        <div class="layer"><span class="ln">DATA</span><span class="lq">What can I prove?</span><span class="le">Figures, trends, comparisons</span></div>
+        <div class="layer"><span class="ln">NARRATIVE</span><span class="lq">What does it mean?</span><span class="le">Context, causality, implications</span></div>
+        <div class="layer"><span class="ln">VISUAL</span><span class="lq">How is it understood?</span><span class="le">Charts, diagrams, highlighted elements</span></div>
         <p class="layers-sum">Data + meaning + <em>clarity.</em></p>
       </div>
     </div>
@@ -563,14 +563,40 @@
     <p class="ds-kicker ch-label">Chapter 03 · <b>Perception</b></p>
     <h2 class="ds-h2 ch-hook" id="c03-t">Before we read a chart, we’re already looking.</h2>
   </header>
+
+  <!-- Preatentivos -->
+  <div class="ds-c ds-sec--tight">
+    <div class="split split--wide">
+      <div>
+        <p class="ds-kicker">Pre-attentive attributes</p>
+        <p class="ds-h3" style="margin:12px 0 14px">Signals the brain processes before conscious attention.</p>
+        <p class="ds-body ds-muted" style="margin-bottom:22px">They’re the number one lever for directing the eye. Try it: count the 5s.</p>
+        <div class="ctl-row"><div class="seg" role="group" aria-label="State of the numbers" data-tgl-for="pre5">
+          <button type="button" data-s="a" aria-pressed="true">All grey</button>
+          <button type="button" data-s="b" aria-pressed="false" class="g">The 5s in colour</button>
+        </div></div>
+        <p class="ds-body" aria-live="polite" data-tgl-note="pre5"
+          data-n-a="How many 5s are there? With no signal, you have to read them one by one."
+          data-n-b="There are 9. Now you see them all at once, without searching: colour did the work before you started reading."></p>
+      </div>
+      <div class="tgl" id="pre5" data-viz="pre5" data-auto="a">
+        <div class="digits" data-s="a" role="img" aria-label="Six rows of grey numbers. With the signal on, the nine 5s turn colour.">
+          <span class="dr"><i>0</i><i>9</i><i>2</i><b>5</b><i>2</i><i>7</i><i>3</i><i>7</i><i>7</i><i>6</i><i>6</i><i>8</i><b>5</b><i>2</i><i>3</i><i>7</i></span>
+          <span class="dr"><i>6</i><i>0</i><i>6</i><i>4</i><i>9</i><i>8</i><i>1</i><b>5</b><i>9</i><i>6</i><i>6</i><i>9</i><i>9</i><i>3</i><i>3</i><i>8</i></span>
+          <span class="dr"><i>3</i><b>5</b><i>1</i><i>2</i><i>4</i><i>2</i><i>9</i><i>7</i><i>8</i><i>0</i><i>2</i><i>4</i><i>1</i><i>9</i><b>5</b><i>0</i></span>
+          <span class="dr"><i>3</i><i>3</i><i>6</i><i>9</i><i>1</i><i>4</i><i>2</i><i>3</i><i>4</i><b>5</b><i>3</i><i>6</i><i>2</i><i>9</i><i>4</i><i>8</i></span>
+          <span class="dr"><i>6</i><i>6</i><i>6</i><i>9</i><b>5</b><i>3</i><i>7</i><i>2</i><i>3</i><i>3</i><i>3</i><i>7</i><i>8</i><i>1</i><i>8</i><i>0</i></span>
+          <span class="dr"><b>5</b><i>4</i><i>1</i><i>0</i><i>9</i><i>2</i><i>6</i><i>1</i><i>4</i><i>1</i><i>9</i><b>5</b><i>8</i><i>8</i><i>8</i><i>9</i></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="ds-c">
     <div class="scrolly" data-viz="lab">
       <div class="sc-visual"><div class="viz"><div class="stage" role="img" aria-label="Perception lab: twenty squares that change colour, size, position and grouping."></div><p class="lab-hint" hidden>Try it: tap any square and make it the protagonist.</p></div></div>
       <div class="sc-steps">
-        <div class="step" data-s="p1"><div class="st-in"><span class="st-tag">Pre-attentive attributes</span><p class="st-copy">Everything is still.</p></div></div>
-        <div class="step" data-s="p2"><div class="st-in"><p class="st-copy">One changes.</p></div></div>
-        <div class="step" data-s="p3"><div class="st-in"><p class="st-copy">And you know where to look before you start analysing.</p><details class="src" data-src="franconeri"></details></div></div>
-        <div class="step" data-s="s1"><div class="st-in"><span class="st-tag">Size</span><p class="st-copy">Size creates hierarchy too.</p></div></div>
+        <div class="step" data-s="s1"><div class="st-in"><span class="st-tag">Size</span><p class="st-copy">Size creates hierarchy too.</p><details class="src" data-src="franconeri"></details></div></div>
         <div class="step" data-s="o1"><div class="st-in"><span class="st-tag">Position</span><p class="st-copy">Position tells a story too.</p></div></div>
         <div class="step" data-s="o2"><div class="st-in"><p class="st-copy">First, order: what’s aligned reads as a system.</p></div></div>
         <div class="step" data-s="o3"><div class="st-in"><p class="st-copy">Then, priority: the protagonist goes where reading starts.</p><p class="st-sub">On a Western screen that’s usually the top left. It’s a tendency, not a law: a strong signal can pull the eye anywhere.</p></div></div>
@@ -579,6 +605,21 @@
         <div class="step" data-s="m3"><div class="st-in"><p class="st-copy">I simplify. And I set priorities.</p><p class="st-sub">Research talks about a few “chunks” at a time, with a lot of variation depending on the task. I don’t use it as a magic number: I use it as a reminder that the reader can’t take in everything.</p><details class="src" data-src="cowan"></details></div></div>
       </div>
     </div>
+  </div>
+
+  <!-- Tres memorias -->
+  <div class="ds-c ds-sec--tight">
+    <p class="ds-kicker">Memory</p>
+    <p class="ds-h3" style="margin:12px 0 14px;max-width:26ch">Three memories, three design rules</p>
+    <p class="ds-body ds-muted" style="max-width:62ch">Catching and holding an audience’s attention is a memory problem. We work with three linked stores, and each one sets a design rule.</p>
+    <table class="dtab rv-seq">
+      <thead><tr><th scope="col">Memory</th><th scope="col">What it does</th><th scope="col">What it forces you to do</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Iconic</th><td>Instantly picks up colour, shape, size, orientation and movement.</td><td>Mark what matters before the reader «reads».</td></tr>
+        <tr><th scope="row">Short-term</th><td>Holds only 3–4 items. With 5 colours and 10 legends, it gives up.</td><td>Group, label and simplify. Never go past its limit.</td></tr>
+        <tr><th scope="row">Long-term</th><td>Stores patterns, recognition and meaning.</td><td>Anchor with images, metaphors and connection. Text + image = better recall.</td></tr>
+      </tbody>
+    </table>
   </div>
 
   <!-- Comparación -->
@@ -607,6 +648,31 @@
       </div>
     </div>
     <div class="ds-pause"><p class="ds-quote rv">A good composition can explain a relationship <em>before a single word appears.</em></p></div>
+  </div>
+
+  <!-- El método -->
+  <div class="ds-c ds-sec--tight">
+    <p class="ds-kicker">The method</p>
+    <p class="ds-h3" style="margin:12px 0 14px;max-width:26ch">Three steps to direct the eye</p>
+    <p class="ds-body ds-muted" style="max-width:62ch">What is all this for? Two things: directing attention and building a visual hierarchy. A chart without these signals makes the brain work harder: cognitive load goes up, understanding goes down and the message gets lost.</p>
+    <ol class="method rv-seq">
+      <li><div class="mini mini--1" aria-hidden="true"><i style="height:58%"></i><i style="height:82%"></i><i style="height:46%"></i><i style="height:70%"></i><i style="height:38%"></i></div><span class="mn">01</span><b>Take everything to grey.</b><span>Start from a canvas with no emphasis. Nothing stands out yet.</span></li>
+      <li><div class="mini mini--2" aria-hidden="true"><i style="height:58%"></i><i style="height:82%"></i><i style="height:46%"></i><i style="height:70%"></i><i style="height:38%"></i></div><span class="mn">02</span><b>Ask yourself what matters.</b><span>Decide the one message that has to survive.</span></li>
+      <li><div class="mini mini--3" aria-hidden="true"><i style="height:58%"></i><i style="height:82%"></i><i style="height:46%"></i><i style="height:70%"></i><i style="height:38%"></i></div><span class="mn">03</span><b>Highlight it with size, colour and weight.</b><span>Two or three attributes, no more, on that element.</span></li>
+    </ol>
+  </div>
+
+  <!-- Resumen -->
+  <div class="ds-c ds-sec--tight">
+    <p class="ds-kicker">In short</p>
+    <p class="ds-h3" style="margin:12px 0 36px">What the brain does</p>
+    <ol class="brain rv-seq">
+      <li><span>1</span>It looks at what’s different first.</li>
+      <li><span>2</span>Then at what’s biggest.</li>
+      <li><span>3</span>It tends to start reading at the top left.</li>
+      <li><span>4</span>It pushes whatever is in light grey into the background.</li>
+      <li><span>5</span>It forms categories automatically.</li>
+    </ol>
   </div>
 </section>
 
@@ -716,6 +782,23 @@
     </div>
   </div>
 
+  <!-- Qué estimula cada recurso -->
+  <div class="ds-c ds-sec--tight">
+    <p class="ds-kicker">Visual devices</p>
+    <p class="ds-h3" style="margin:12px 0 14px">What does each device trigger?</p>
+    <p class="ds-body ds-muted" style="max-width:62ch">Each device tells the reader’s brain something, whether I mean it to or not. That’s why I don’t use any of them without a reason.</p>
+    <ul class="stim rv-seq">
+      <li><b>Colour</b><span>«this matters»</span></li>
+      <li><b>Position</b><span>«this is the path»</span></li>
+      <li><b>Size</b><span>«this is the priority»</span></li>
+      <li><b>Clean-up</b><span>«there’s intent behind this»</span></li>
+      <li><b>Grouping</b><span>«these things belong together»</span></li>
+      <li><b>Alignment</b><span>«there is order»</span></li>
+      <li><b>Title</b><span>«this is how to read it»</span></li>
+      <li><b>No noise</b><span>«this is professional»</span></li>
+    </ul>
+  </div>
+
   <!-- Color -->
   <div class="ds-c ds-sec">
     <p class="ds-kicker">Colour</p>
@@ -758,6 +841,30 @@
         <p class="ds-body">Not because there’s a magic 10%.<br><b>Because when everything stands out, emphasis stops working.</b></p>
       </div>
       <div class="tgl" id="ten" data-viz="ten" data-auto="a,b"><div class="stage stage--wide" role="img" aria-label="Ten bars. When they all stand out equally, none does; when only one does, the eye goes straight to it."></div></div>
+    </div>
+  </div>
+
+  <!-- Jerarquía visual -->
+  <div class="ds-c ds-sec--tight">
+    <div class="split split--wide">
+      <div>
+        <p class="ds-kicker">Visual hierarchy</p>
+        <p class="ds-h3" style="margin:12px 0 28px">Three levels. Each in its place.</p>
+        <table class="dtab dtab--2">
+          <thead><tr><th scope="col">Level</th><th scope="col">Where</th></tr></thead>
+          <tbody>
+            <tr class="hl"><th scope="row">Important</th><td>Top left · large, in colour</td></tr>
+            <tr><th scope="row">Secondary</th><td>Centre · medium size, neutral</td></tr>
+            <tr><th scope="row">Supporting</th><td>At the end · small, in grey</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="hier rv-seq" role="img" aria-label="Sketch of a canvas: the important block top left, large and in colour; the secondary ones in the centre; the supporting one at the bottom, small and in grey.">
+        <div class="h1"><span>Important</span></div>
+        <div class="h2"><span>Secondary</span></div>
+        <div class="h2 b"><span>Secondary</span></div>
+        <div class="h3"><span>Supporting</span></div>
+      </div>
     </div>
   </div>
 </section>
@@ -1095,6 +1202,24 @@
     </div>
   </div>
 
+  <!-- Checklist de orden visual -->
+  <div class="ds-c ds-sec--tight">
+    <div class="split">
+      <div>
+        <p class="ds-kicker">Visual order checklist</p>
+        <p class="ds-h3" style="margin:12px 0 14px">Before I sign off a layout, I check five things.</p>
+        <p class="ds-body ds-muted">If one fails, I go back to the canvas.</p>
+      </div>
+      <ul class="check rv-seq">
+        <li>Big idea readable in 3 seconds</li>
+        <li>Two typefaces at most</li>
+        <li>Elements aligned to a grid</li>
+        <li>No unnecessary borders or shadows</li>
+        <li>Room to breathe</li>
+      </ul>
+    </div>
+  </div>
+
   <!-- Números de partida -->
   <div class="ds-c ds-sec--tight">
     <p class="ds-kicker">Starting numbers</p>
@@ -1309,9 +1434,9 @@
     <p class="ds-h3" style="margin-top:12px;max-width:26ch">The same idea, at the start, in the middle and at the end.</p>
     <div class="bbb rv-seq">
       <div class="track">
-        <div><span class="bk">BING</span><p class="bt">“Today we’ll see why churn costs us €2.4m.”</p><div class="dots"><i class="g"></i></div><span class="idea">the idea, announced</span></div>
-        <div><span class="bk">BANG</span><p class="bt">The story: situation, data, twist, recommendation.</p><div class="dots"><i></i><i></i><i></i><i class="g"></i><i></i><i></i><i></i><i></i></div><span class="idea">the idea, demonstrated</span></div>
-        <div><span class="bk">BONGO</span><p class="bt">“We’ve seen that most of the risk is concentrated before 90 days.”</p><div class="dots"><i class="g"></i></div><span class="idea">the idea, remembered</span></div>
+        <div><span class="bk">BING</span><span class="bv">Preview it</span><p class="bt">“Today we’ll see why churn costs us €2.4m.”</p><div class="dots"><i class="g"></i></div><span class="idea">the idea, announced</span></div>
+        <div><span class="bk">BANG</span><span class="bv">Tell it</span><p class="bt">The story: situation, data, twist, recommendation.</p><div class="dots"><i></i><i></i><i></i><i class="g"></i><i></i><i></i><i></i><i></i></div><span class="idea">the idea, demonstrated</span></div>
+        <div><span class="bk">BONGO</span><span class="bv">Sum it up</span><p class="bt">“We’ve seen that most of the risk is concentrated before 90 days.”</p><div class="dots"><i class="g"></i></div><span class="idea">the idea, remembered</span></div>
       </div>
     </div>
     <details class="src" data-src="swd"></details>
@@ -1675,7 +1800,7 @@ window.addEventListener('scroll',function(){
 <script src="../consent.js?v=26a27e3704" defer></script>
 <script src="../contact.js?v=451e00c590" defer></script>
 <script src="../ds/i18n/en.js?v=e6b312eff4" defer></script>
-<script src="../ds/manual.js?v=5a56f3d5cb" defer></script>
+<script src="../ds/manual.js?v=5fd92ff811" defer></script>
 <!-- Motion: bibliotecas opcionales. Si un CDN falla, la pagina funciona igual (todo tiene fallback CSS). -->
 <script src="../vendor/gsap-3.13.0.min.js" defer></script>
 <script src="../vendor/ScrollTrigger-3.13.0.min.js" defer></script>
