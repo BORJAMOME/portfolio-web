@@ -345,6 +345,14 @@ body{
 }
 .seg-counter b{font-weight:600;color:var(--ink)}
 
+/* Nota contextual: solo visible con el filtro Data Storytelling */
+.seg-note{
+  margin:-8px 0 28px;
+  font-size:14px;line-height:1.6;
+  color:var(--muted);
+}
+.seg-note a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+
 /* ───────────── GRID — mismo sistema visual que .dax-cards (power-bi.html) ───────────── */
 .grid-wrap{
   margin-bottom:96px;
@@ -857,6 +865,7 @@ body{
     </div>
     <div class="seg-counter"><b id="seg-visible">19</b> / 19 files</div>
   </div>
+  <p class="seg-note" id="seg-note" hidden>Want the thinking behind these files? It's all in my <a href="./data-storytelling.html" data-ga="clic_manual_storytelling" data-ga-location="descargas_filtro">Data Storytelling guide</a>.</p>
 
   <!-- Grid -->
   <h2 class="sr-only">Available files</h2>
@@ -1231,6 +1240,8 @@ function applyFilter(filter){
     const denom = filter==='all' ? ITEMS.length : ITEMS.filter(i=>i.cat===filter).length;
     counterEl.innerHTML = `<b id="seg-visible">${visible}</b> / ${denom} files`;
   }
+  const note = document.getElementById('seg-note');
+  if(note) note.hidden = filter!=='storytelling';
 }
 
 // ────────────── INIT ──────────────
