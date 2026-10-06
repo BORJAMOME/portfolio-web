@@ -6,3 +6,6 @@
 
 # Dependencias de las comprobaciones (tools/check-a11y.mjs)
 node_modules/
+
+# Carga inicial del Fichero (datos): se ejecuta a mano en Supabase, no se versiona
+supabase/fichero-datos.sql

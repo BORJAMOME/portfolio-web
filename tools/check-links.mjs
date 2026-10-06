@@ -44,7 +44,8 @@ function checkRef(page, raw, kind) {
     if (!existsSync(target)) return fail(page, `${kind} roto → ${u}`);
     if (statSync(target).isDirectory() && !existsSync(join(target, 'index.html'))) return fail(page, `${kind} a carpeta sin index → ${u}`);
   }
-  if (hash && /\.html$/.test(target) && ids[target] && !ids[target].has(decodeURIComponent(hash))) fail(page, `ancla inexistente → ${u}`);
+  // #/ruta: rutas internas de una app (area-privada.html), no anclas
+  if (hash && !hash.startsWith('/') && /\.html$/.test(target) && ids[target] && !ids[target].has(decodeURIComponent(hash))) fail(page, `ancla inexistente → ${u}`);
 }
 
 for (const p of pages) {

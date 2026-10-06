@@ -42,7 +42,8 @@
     view: $('ap-view'), drop: $('ap-drop'),
     dialog: $('ap-dialog'), dForm: $('ap-dialog-form'), dTitle: $('ap-dialog-title'),
     dText: $('ap-dialog-text'), dField: $('ap-dialog-field'), dInput: $('ap-dialog-input'),
-    dOk: $('ap-dialog-ok'), dCancel: $('ap-dialog-cancel')
+    dOk: $('ap-dialog-ok'), dCancel: $('ap-dialog-cancel'),
+    toolbar: $('ap-toolbar'), crumbsNav: $('ap-crumbs-nav'), tabFiles: $('ap-tab-files'), tabFichero: $('ap-tab-fichero')
   };
 
   /* ═══════════ SESIÓN ═══════════ */
@@ -364,6 +365,7 @@
   var renderSeq = 0;
 
   function parseRoute() {
+    if (/^#\/fichero\/?$/.test(location.hash)) return { kind: 'fichero' };
     var m = /^#\/(carpeta|nota|archivo|buscar)\/(.+)$/.exec(location.hash);
     if (!m) return { kind: 'root' };
     var arg = decodeURIComponent(m[2]);
@@ -378,8 +380,15 @@
     releaseBlobs();
     dirty = false;
     setStatus('Cargando…');
-    var job;
-    if (r.kind === 'root') job = renderFolder(null);
+    var job, inFichero = r.kind === 'fichero' && !!window.APFichero;
+    // pestañas: «Archivos y notas» (el drive) o «Fichero» (tabla de enlaces, area-privada-fichero.js)
+    els.toolbar.hidden = els.crumbsNav.hidden = inFichero;
+    els.tabFiles.removeAttribute('aria-current');
+    els.tabFichero.removeAttribute('aria-current');
+    (inFichero ? els.tabFichero : els.tabFiles).setAttribute('aria-current', 'page');
+    els.title.textContent = inFichero ? 'Fichero' : 'Mis recursos';
+    if (inFichero) job = window.APFichero.render({ api: api, h: h, ask: ask, setStatus: setStatus, fail: fail, view: els.view });
+    else if (r.kind === 'root') job = renderFolder(null);
     else if (r.kind === 'carpeta') job = renderFolder(r.id);
     else if (r.kind === 'search') job = renderSearch(r.q);
     else job = renderItem(r.kind, r.id);

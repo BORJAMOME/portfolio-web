@@ -59,7 +59,15 @@
     "Información legal": "Legal information",
     "Copiar": "Copy",
     "borja.mora.mendez@gmail.com": "borja.mora.mendez@gmail.com",
-    "Archivos disponibles": "Available files"
+    "Archivos disponibles": "Available files",
+    "Material propio": "My own material",
+    "Manual interactivo": "Interactive guide",
+    "Data Storytelling y diseño de dashboards": "Data storytelling and dashboard design",
+    "Cómo decidir qué lidera un dashboard, qué lo acompaña y qué sobra, con ejemplos que se pueden tocar.": "How to decide what leads a dashboard, what supports it and what has to go, with examples you can play with.",
+    "Abrir el manual": "Open the guide",
+    "Manual visual": "Visual guide",
+    "Modelos contados primero con la intuición y un ejemplo con números; la fórmula, al final.": "Models explained through intuition and a worked example first; the formula comes last.",
+    "Manuales": "Guides"
   },
   "keep": [
     "Borja Mora",

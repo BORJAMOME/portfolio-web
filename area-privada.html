@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./shared.css?v=85cf5305e2">
-<link rel="stylesheet" href="./css/area-privada.css?v=8fc27aee85">
+<link rel="stylesheet" href="./css/area-privada.css?v=3e983845ef">
 </head>
 <body>
 <a href="#main-content" class="skip-link">Saltar al contenido</a>
@@ -68,7 +68,12 @@
         </div>
       </div>
 
-      <div class="ap-toolbar">
+      <nav class="ap-tabs" aria-label="Secciones del área privada">
+        <a href="#/" id="ap-tab-files">Archivos y notas</a>
+        <a href="#/fichero" id="ap-tab-fichero">Fichero</a>
+      </nav>
+
+      <div class="ap-toolbar" id="ap-toolbar">
         <form class="ap-search" id="ap-search-form" role="search">
           <label class="sr-only" for="ap-search">Buscar en el área privada</label>
           <svg class="ap-search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
@@ -83,7 +88,7 @@
         </div>
       </div>
 
-      <nav class="ap-crumbs" aria-label="Ubicación"><ol id="ap-crumbs"></ol></nav>
+      <nav class="ap-crumbs" id="ap-crumbs-nav" aria-label="Ubicación"><ol id="ap-crumbs"></ol></nav>
       <p class="ap-status" id="ap-status" role="status" aria-live="polite"></p>
       <ul class="ap-uploads" id="ap-uploads" aria-label="Subidas en curso"></ul>
       <div class="ap-view" id="ap-view"></div>
@@ -118,6 +123,7 @@
   </div>
 </footer>
 
-<script src="./area-privada.js?v=359e6edb81" defer></script>
+<script src="./area-privada-fichero.js?v=59f84a6b85" defer></script>
+<script src="./area-privada.js?v=45e7ff2958" defer></script>
 </body>
 </html>
