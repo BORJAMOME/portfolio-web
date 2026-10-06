@@ -24,7 +24,9 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde D
 - `area-privada.js`: shell (sesión, `api`, rutas `#/…`, diálogo) y el drive (`#/archivos`). `supabase/area-privada.sql`: tablas y RLS.
 - **Pestañas en módulos** que se cargan al abrirlas: `area-privada-<nombre>.js` define `window.AP<Nombre> = { render(ctx) → Promise<paint> }`
   y se declara en el HTML como `<link rel="prefetch" data-ap-module="<nombre>">` (así `version-assets` le pone el `?v=`).
-  Para una pestaña nueva: el archivo, ese `<link>`, una entrada en `MODULES` y en el regex de `parseRoute`, y el enlace en `.ap-tabs`.
+  Para una pestaña nueva: el archivo, ese `<link>`, una entrada en `MODULES` (de ahí sale también la ruta) y el enlace en `.ap-tabs`.
+- **Configuración** (`#/configuracion`): listas de opciones en `public.ap_opciones` (`supabase/opciones.sql`), hoy temas y formatos del Fichero.
+  Renombrar/eliminar van por RPC y actualizan también los enlaces. Lista nueva: entrada en `GROUPS` de `area-privada-configuracion.js`.
 - **Hoy** (`#/`): próximos 7 días, entrevistas programadas y procesos parados. Solo lee.
 - **Calendario** (`#/calendario`): solo lectura. Google → iCal secreto → Edge Function `supabase/functions/calendario-sync`
   (pg_cron cada 15 min) → `public.calendar_events`. La página nunca habla con Google. Guía: `supabase/functions/calendario-sync/README.md`.

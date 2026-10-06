@@ -9,3 +9,6 @@ node_modules/
 
 # Carga inicial del Fichero (datos): se ejecuta a mano en Supabase, no se versiona
 supabase/fichero-datos.sql
+
+# Estado local de la CLI de Supabase (npx supabase …)
+supabase/.temp/

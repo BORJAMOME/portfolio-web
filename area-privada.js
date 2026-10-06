@@ -373,8 +373,10 @@
     hoy:         { global: 'APHoy',         title: 'Hoy' },
     calendario:  { global: 'APCalendario',  title: 'Calendario' },
     entrevistas: { global: 'APEntrevistas', title: 'Entrevistas' },
-    fichero:     { global: 'APFichero',     title: 'Fichero' }
+    fichero:     { global: 'APFichero',     title: 'Fichero' },
+    configuracion: { global: 'APConfiguracion', title: 'Configuración' }
   };
+  var MODULE_ROUTE = new RegExp('^#/(' + Object.keys(MODULES).join('|') + ')(?:/(.*))?$');
   var loading = {};
   function loadModule(name) {
     var g = MODULES[name].global;
@@ -395,7 +397,7 @@
   function parseRoute() {
     var hash = location.hash;
     if (!hash || hash === '#' || hash === '#/') return { kind: 'module', name: 'hoy', arg: '' };
-    var mod = /^#\/(hoy|calendario|entrevistas|fichero)(?:\/(.*))?$/.exec(hash);
+    var mod = MODULE_ROUTE.exec(hash);
     if (mod) return { kind: 'module', name: mod[1], arg: mod[2] ? decodeURIComponent(mod[2]) : '' };
     var m = /^#\/(carpeta|nota|archivo|buscar)\/(.+)$/.exec(hash);
     if (!m) return { kind: 'root' };
@@ -415,8 +417,11 @@
     // la barra del drive (buscar, + Carpeta, subir) y las migas solo tienen sentido en «Archivos y notas»
     els.toolbar.hidden = els.crumbsNav.hidden = isModule;
     [].forEach.call(els.tabs, function (a) {
-      if (a.getAttribute('data-tab') === tab) a.setAttribute('aria-current', 'page');
-      else a.removeAttribute('aria-current');
+      if (a.getAttribute('data-tab') !== tab) return a.removeAttribute('aria-current');
+      a.setAttribute('aria-current', 'page');
+      // en móvil la barra se desplaza en horizontal: que la pestaña activa quede a la vista (sin mover la página)
+      var bar = a.parentNode, r = a.getBoundingClientRect(), b = bar.getBoundingClientRect();
+      if (r.left < b.left || r.right > b.right) bar.scrollLeft += r.left - b.left - 16;
     });
     els.title.textContent = isModule ? MODULES[r.name].title : 'Archivos y notas';
     if (isModule) {

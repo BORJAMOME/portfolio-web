@@ -4,20 +4,24 @@
    tiene una Content-Security-Policy estricta.
    ═══════════════════════════════════════════════ */
 
+/* Layout común a todas las pestañas: el contenido ocupa casi todo el ancho de la pantalla,
+   con un margen lateral que crece con el viewport y un tope solo para monitores muy anchos.
+   Cabecera, contenido y pie usan los mismos tokens, así quedan alineados entre sí. */
+:root {
+  --ap-max: 1960px;
+  --ap-gutter: clamp(16px, 3vw, 56px);
+  --ap-inline: max(var(--ap-gutter), calc((100% - var(--ap-max)) / 2 + var(--ap-gutter)));
+  --ap-top-h: 56px;
+}
 body { background: var(--off); }
 [hidden] { display: none !important; }
 
 /* ─── CABECERA MÍNIMA ─── */
 .ap-top {
-  display: flex; align-items: center; justify-content: space-between; gap: 16px;
-  height: 64px; padding: 0 clamp(1rem, 5vw, 4rem);
+  display: flex; align-items: center; justify-content: flex-end;
+  height: var(--ap-top-h); padding-inline: var(--ap-inline);
   background: var(--white); border-bottom: 1px solid #e8e8ee;
 }
-.ap-brand {
-  font-family: var(--font-serif); font-size: 22px; font-weight: 500; letter-spacing: -.5px;
-  color: var(--ink); text-decoration: none;
-}
-.ap-brand span { color: var(--purple); }
 .ap-back {
   font-size: 13px; font-weight: 500; color: var(--ink); text-decoration: none;
   min-height: 44px; display: inline-flex; align-items: center; gap: 6px;
@@ -26,7 +30,7 @@ body { background: var(--off); }
 
 .skip-link:focus { position: absolute; left: 4px; top: 4px; z-index: 9999; background: var(--ink); color: #fff; padding: 8px 16px; font-size: 13px; font-weight: 600; text-decoration: none; border-radius: 4px; }
 
-main { min-height: calc(100vh - 64px - 90px); outline: none; }
+main { min-height: calc(100vh - var(--ap-top-h) - 90px); outline: none; }
 
 .ap-label {
   font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .18em;
@@ -37,7 +41,7 @@ main { min-height: calc(100vh - 64px - 90px); outline: none; }
 /* ─── ACCESO ─── */
 .ap-lock {
   display: grid; place-items: center;
-  min-height: calc(100vh - 64px - 90px);
+  min-height: calc(100vh - var(--ap-top-h) - 90px);
   padding: 48px 16px;
 }
 .ap-lock-card {
@@ -77,7 +81,7 @@ main { min-height: calc(100vh - 64px - 90px); outline: none; }
 .ap-login-btn:disabled { opacity: .55; cursor: progress; }
 
 /* ─── APP ─── */
-.ap-shell { max-width: 1180px; margin: 0 auto; padding: 48px clamp(1rem, 5vw, 4rem) 80px; }
+.ap-shell { padding: clamp(28px, 4vw, 48px) var(--ap-inline) 80px; }
 .ap-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px 24px; flex-wrap: wrap; margin-bottom: 28px; }
 .ap-app-title {
   font-family: var(--font-serif); font-weight: 500; font-size: clamp(30px, 4.4vw, 44px);
@@ -259,7 +263,7 @@ main { min-height: calc(100vh - 64px - 90px); outline: none; }
 @media (hover: hover) and (pointer: fine) { .btn-primary.btn-danger:hover { color: #fff; } }
 
 /* ─── PIE ─── */
-.ap-foot .foot-inner { padding-top: 28px; padding-bottom: 28px; }
+.ap-foot .foot-inner { max-width: none; padding: 28px var(--ap-inline); }
 .ap-foot .foot-bottom { border-top: 0; padding-top: 0; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -290,6 +294,8 @@ main { min-height: calc(100vh - 64px - 90px); outline: none; }
 
 .apf-wrap { overflow-x: auto; }
 .apf-table td { padding: 12px 16px; vertical-align: top; }
+/* el botón mide 44px de alto: sin padding superior su texto queda a la altura del título de la fila */
+.apf-table td.ap-col-act { padding-top: 0; }
 .apf-table th { white-space: nowrap; }
 .apf-sort {
   display: inline-flex; align-items: center; gap: 4px; border: 0; background: none; padding: 4px 0; margin: -4px 0;
@@ -523,3 +529,32 @@ main { min-height: calc(100vh - 64px - 90px); outline: none; }
 @media (max-width: 1100px) { .aph-grid { grid-template-columns: 1fr 1fr; } .aph-grid > :first-child { grid-column: 1 / -1; } }
 @media (max-width: 680px) { .aph-grid { grid-template-columns: 1fr; } }
 .ape-section .apf-wrap:focus-visible, .ape-table-region:focus-visible, .apf-wrap[tabindex]:focus-visible { outline: 2px solid var(--purple-text); outline-offset: 2px; }
+
+/* Fichero: acciones de la barra (Temas y formatos · + Añadir enlace) */
+.apf-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.apf-actions a.ap-tool { text-decoration: none; }
+
+/* ───────────── CONFIGURACIÓN (area-privada-configuracion.js) ───────────── */
+.apx-intro { max-width: 70ch; margin-bottom: 24px; }
+.apx-section + .apx-section { margin-top: 36px; }
+.apx-section-title { margin-bottom: 12px; }
+.apx-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 16px; align-items: start; }
+.apx-card { padding: 20px; background: var(--white); border: 1px solid #e8e8ee; border-radius: var(--radius-lg); }
+.apx-card-head { display: flex; align-items: baseline; gap: 10px; }
+.apx-card-head .ape-h3 { margin: 0; font-size: 20px; }
+.apx-count { font-size: 12px; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
+.apx-card > .ape-meta { margin: 4px 0 14px; }
+.apx-list { list-style: none; margin: 0 0 14px; padding: 0; border-top: 1px solid #f0f0f5; }
+.apx-item { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 4px 16px; align-items: center; min-height: 48px; border-bottom: 1px solid #f0f0f5; }
+.apx-name { font-size: 14px; font-weight: 600; color: var(--ink); overflow-wrap: anywhere; }
+.apx-uses { font-size: 12.5px; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.apx-act { display: flex; gap: 2px; }
+.apx-empty { font-size: 14px; color: var(--muted); padding: 12px 0 16px; }
+@media (max-width: 480px) {
+  .apx-item { grid-template-columns: minmax(0, 1fr) auto; padding: 8px 0; }
+  .apx-uses { grid-row: 2; }
+  .apx-act { grid-row: 1 / span 2; grid-column: 2; }
+}
+
+/* Escritorio grande: el panel lateral del calendario acompaña al ancho extra */
+@media (min-width: 1600px) { .apc-layout { grid-template-columns: minmax(0, 1fr) 380px; } .apc-grid td { height: 124px; } }

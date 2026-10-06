@@ -10,8 +10,9 @@
 window.APFichero = (function () {
   'use strict';
 
-  var TOPICS = ['Visualización', 'Ejemplos', 'Power BI', 'Datos abiertos', 'Gente'];
-  var TYPES = ['Artículo', 'Ejemplo', 'Guía', 'Catálogo', 'Herramienta', 'Portal de datos', 'Blog o canal', 'Portfolio', 'Perfil'];
+  // Temas y formatos disponibles: se gestionan en la pestaña «Configuración»
+  // (tabla public.ap_opciones, grupos fichero.tema y fichero.formato; ver supabase/opciones.sql).
+  var TOPICS = [], TYPES = [];
   var LANGS = { es: 'Español', en: 'Inglés' };
   var COLS = 'id,title,url,url_key,topics,type,tags,author,note,description,rating,lang,saved_at,updated_at';
 
@@ -51,6 +52,11 @@ window.APFichero = (function () {
   var JSON_REP = { 'Content-Type': 'application/json', Prefer: 'return=representation' };
   var data = {
     list: function () { return ctx.api('/rest/v1/links?select=' + COLS + '&order=saved_at.desc'); },
+    // si la tabla de opciones aún no existe, el Fichero sigue funcionando con los valores de los enlaces
+    options: function () {
+      return ctx.api('/rest/v1/ap_opciones?select=grupo,valor&grupo=in.(fichero.tema,fichero.formato)&order=posicion.asc,created_at.asc')
+        .catch(function (err) { if (err && err.auth) throw err; return []; });
+    },
     insert: function (o) { return ctx.api('/rest/v1/links?select=' + COLS, { method: 'POST', headers: JSON_REP, body: JSON.stringify(o) }).then(function (r) { return r[0]; }); },
     update: function (id, o) { return ctx.api('/rest/v1/links?id=eq.' + id + '&select=' + COLS, { method: 'PATCH', headers: JSON_REP, body: JSON.stringify(o) }).then(function (r) { return r[0]; }); },
     remove: function (id) { return ctx.api('/rest/v1/links?id=eq.' + id, { method: 'DELETE' }); }
@@ -60,8 +66,10 @@ window.APFichero = (function () {
   function render(c) {
     ctx = c;
     var h = ctx.h;
-    return data.list().then(function (list) {
-      rows = list || [];
+    return Promise.all([data.list(), data.options()]).then(function (res) {
+      rows = res[0] || [];
+      TOPICS = res[1].filter(function (o) { return o.grupo === 'fichero.tema'; }).map(function (o) { return o.valor; });
+      TYPES = res[1].filter(function (o) { return o.grupo === 'fichero.formato'; }).map(function (o) { return o.valor; });
       return function paint() {
         ctx.view.textContent = '';
         ui.q = h('input', { type: 'search', id: 'apf-q', placeholder: 'Título, sitio, etiqueta o nota', autocomplete: 'off', value: st.q, oninput: function () { st.q = this.value; drawRows(); } });
@@ -80,7 +88,10 @@ window.APFichero = (function () {
             h('label', { class: 'sr-only', for: 'apf-tema', text: 'Filtrar por tema' }), ui.tema,
             h('label', { class: 'sr-only', for: 'apf-formato', text: 'Filtrar por formato' }), ui.formato
           ]),
-          h('button', { type: 'button', class: 'ap-tool ap-tool--dark', onclick: function () { openForm(null); } }, [h('span', { 'aria-hidden': 'true', text: '+' }), ' Añadir enlace'])
+          h('div', { class: 'apf-actions' }, [
+            h('a', { class: 'ap-tool', href: '#/configuracion', text: 'Temas y formatos' }),
+            h('button', { type: 'button', class: 'ap-tool ap-tool--dark', onclick: function () { openForm(null); } }, [h('span', { 'aria-hidden': 'true', text: '+' }), ' Añadir enlace'])
+          ])
         ]));
         ctx.view.appendChild(ui.count);
         ctx.view.appendChild(h('div', { class: 'ap-table-wrap apf-wrap' }, [h('table', { class: 'ap-table apf-table' }, [
