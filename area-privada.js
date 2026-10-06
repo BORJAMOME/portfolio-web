@@ -46,6 +46,27 @@
     toolbar: $('ap-toolbar'), crumbsNav: $('ap-crumbs-nav'), tabs: document.querySelectorAll('.ap-tabs a[data-tab]')
   };
 
+  /* ═══════════ FECHA Y HORA (cabecera) ═══════════
+     Se actualiza al cambiar de minuto; no se anuncia a lectores de pantalla en cada cambio. */
+  var nowDate = $('ap-now-date'), nowTime = $('ap-now-time');
+  var clockDay = new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+  var clockTime = new Intl.DateTimeFormat('es-ES', { hour: '2-digit', minute: '2-digit' });
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+  function tick() {
+    var d = new Date();
+    nowDate.dateTime = d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+    nowDate.textContent = '';
+    nowDate.appendChild(document.createTextNode(clockDay.format(d)));
+    var y = document.createElement('span');
+    y.className = 'ap-now-date-y';
+    y.textContent = ' de ' + d.getFullYear();
+    nowDate.appendChild(y);
+    nowTime.dateTime = pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+    nowTime.textContent = clockTime.format(d);
+    setTimeout(tick, 60000 - (d.getSeconds() * 1000 + d.getMilliseconds()) + 50);
+  }
+  if (nowDate && nowTime) tick();
+
   /* ═══════════ SESIÓN ═══════════ */
   var session = null;
   function readSession() {

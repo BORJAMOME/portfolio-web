@@ -4,7 +4,7 @@
    Listas de opciones que usan las demás pestañas, guardadas en public.ap_opciones
    (supabase/opciones.sql). Hoy: temas y formatos del Fichero.
 
-   Para añadir una lista nueva: una entrada en GROUPS («source» es la tabla y las columnas
+   Para añadir una lista nueva: una entrada en GROUPS (fem: true si el nombre es femenino) («source» es la tabla y las columnas
    donde se usan sus valores, para contar los usos) y el caso correspondiente en
    ap_opcion_renombrar/ap_opcion_eliminar (supabase/opciones.sql), para que renombrar y
    eliminar actualicen también esos datos.
@@ -27,6 +27,11 @@ window.APConfiguracion = (function () {
       id: 'portfolio.tipo', section: 'Portfolio', title: 'Tipos', one: 'tipo', source: { table: 'portfolio', select: 'tipo' }, unit: ['elemento', 'elementos'],
       desc: 'Agrupan lo que hay en la pestaña Portfolio: manuales, proyectos, apps…',
       uses: function (rows, v) { return rows.filter(function (r) { return r.tipo === v; }).length; }
+    },
+    {
+      id: 'agenda.categoria', section: 'Calendario', title: 'Categorías', one: 'categoría', fem: true, source: { table: 'agenda', select: 'categoria' }, unit: ['elemento', 'elementos'],
+      desc: 'Dan color a tus eventos, bloques de foco y tareas. El color sigue el orden de la lista.',
+      uses: function (rows, v) { return rows.filter(function (r) { return r.categoria === v; }).length; }
     }
   ];
 
@@ -97,7 +102,7 @@ window.APConfiguracion = (function () {
             ])
           ]);
         }))
-        : h('p', { class: 'apx-empty', text: 'Todavía no hay ningún ' + g.one + '.' }),
+        : h('p', { class: 'apx-empty', text: 'Todavía no hay ' + (g.fem ? 'ninguna ' : 'ningún ') + g.one + '.' }),
       h('button', { type: 'button', class: 'ap-tool apx-add', onclick: function () { add(g, list); } }, [h('span', { 'aria-hidden': 'true', text: '+' }), ' Añadir ' + g.one])
     ]);
   }
@@ -110,7 +115,7 @@ window.APConfiguracion = (function () {
   function problem(g, v, exceptId) {
     if (!v) return 'Escribe un nombre.';
     if (v.length > 60) return 'Como mucho 60 caracteres.';
-    if (exists(g, v, exceptId)) return 'Ya hay un ' + g.one + ' con ese nombre.';
+    if (exists(g, v, exceptId)) return 'Ya hay ' + (g.fem ? 'una ' : 'un ') + g.one + ' con ese nombre.';
     return null;
   }
   function failSave(err) {
@@ -146,7 +151,7 @@ window.APConfiguracion = (function () {
 
   function remove(g, o, n) {
     ctx.ask({
-      title: '¿Eliminar este ' + g.one + '?',
+      title: '¿Eliminar ' + (g.fem ? 'esta ' : 'este ') + g.one + '?',
       text: '«' + o.valor + '» dejará de estar disponible.' + (n ? ' Se quitará de ' + plural(n, g.unit[0], g.unit[1]) + ', que no se borran.' : '') + ' No se puede deshacer.',
       ok: 'Eliminar', danger: true
     }).then(function (yes) {

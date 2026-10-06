@@ -20,7 +20,7 @@ window.APHoy = (function () {
   function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
   function pad(n) { return (n < 10 ? '0' : '') + n; }
   function key(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
-  function evDay(ev) { var s = new Date(ev.starts_at); return ev.all_day ? s.getUTCFullYear() + '-' + pad(s.getUTCMonth() + 1) + '-' + pad(s.getUTCDate()) : key(s); }
+  function evDay(ev) { var s = new Date(ev.starts_at); return ev.all_day && !ev.own ? s.getUTCFullYear() + '-' + pad(s.getUTCMonth() + 1) + '-' + pad(s.getUTCDate()) : key(s); }
 
   function render(ctx) {
     var h = ctx.h, now = new Date(), start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -30,14 +30,21 @@ window.APHoy = (function () {
       ctx.api('/rest/v1/calendar_events?select=uid,starts_at,ends_at,all_day,title,location&starts_at=lt.' + end.toISOString() +
         '&ends_at=gt.' + start.toISOString() + '&order=starts_at.asc&limit=200').catch(auth),
       ctx.api('/rest/v1/procesos?select=id,empresa,puesto,estado,fecha_aplicacion&estado=in.(activo,oferta)').catch(auth),
-      ctx.api('/rest/v1/entrevistas?select=id,proceso_id,fecha,fase,resultado,calendar_uid&order=fecha.asc').catch(auth)
+      ctx.api('/rest/v1/entrevistas?select=id,proceso_id,fecha,fase,resultado,calendar_uid&order=fecha.asc').catch(auth),
+      // agenda propia (supabase/agenda.sql): lo de esta semana y las tareas vencidas
+      ctx.api('/rest/v1/agenda?select=id,tipo,titulo,inicio,fin,todo_el_dia,hecho&inicio=gte.' + start.toISOString() + '&inicio=lt.' + end.toISOString() + '&order=inicio.asc').catch(auth),
+      ctx.api('/rest/v1/agenda?select=id&tipo=eq.tarea&hecho=eq.false&inicio=lt.' + start.toISOString()).catch(auth)
     ]).then(function (r) {
-      var evs = r[0], procs = r[1], ents = r[2];
+      var procs = r[1], ents = r[2], overdue = r[4] ? r[4].length : 0;
+      var own = (r[3] || []).filter(function (a) { return !(a.tipo === 'tarea' && a.hecho); }).map(function (a) {
+        return { own: true, tipo: a.tipo, starts_at: a.inicio, all_day: a.todo_el_dia, title: a.titulo };
+      });
+      var evs = r[0] || r[3] ? (r[0] || []).concat(own).sort(function (a, b) { return (b.all_day - a.all_day) || (a.starts_at < b.starts_at ? -1 : 1); }) : null;
       return function paint() {
         ctx.view.textContent = '';
         ctx.view.appendChild(h('p', { class: 'aph-date', text: cap(dayFmt.format(now)) }));
         ctx.view.appendChild(h('div', { class: 'aph-grid' }, [
-          card('Próximos 7 días', '#/calendario', 'Abrir el calendario', evs ? week(evs, ents || []) : setup('El calendario aún no está conectado.')),
+          card('Próximos 7 días', '#/calendario', 'Abrir el calendario', evs ? week(evs, ents || [], overdue) : setup('El calendario aún no está conectado.')),
           card('Entrevistas programadas', '#/entrevistas', 'Ver procesos', procs && ents ? upcoming(procs, ents) : setup('La tabla de entrevistas aún no está creada.')),
           card('Pendientes de seguimiento', '#/entrevistas', 'Ver procesos', procs && ents ? stale(procs, ents) : setup('La tabla de entrevistas aún no está creada.'))
         ]));
@@ -53,8 +60,9 @@ window.APHoy = (function () {
     function setup(text) { return h('p', { class: 'ape-meta', text: text }); }
     function empty(text) { return h('p', { class: 'aph-empty', text: text }); }
 
-    function week(evs, ents) {
-      if (!evs.length) return empty('Semana despejada.');
+    function week(evs, ents, overdue) {
+      var note = overdue ? h('p', { class: 'aph-note' }, [h('a', { href: '#/calendario', text: overdue === 1 ? 'Tienes 1 tarea vencida' : 'Tienes ' + overdue + ' tareas vencidas' }), ' en el calendario.']) : null;
+      if (!evs.length) return h('div', null, [empty('Semana despejada.'), note]);
       var linked = {};
       ents.forEach(function (e) { if (e.calendar_uid) linked[e.calendar_uid] = e.proceso_id; });
       var groups = {}, order = [];
@@ -71,14 +79,15 @@ window.APHoy = (function () {
         return h('div', { class: 'aph-day' }, [
           h('h3', { class: 'aph-day-t', text: label }),
           h('ul', { class: 'aph-list' }, groups[k].map(function (ev) {
-            var pid = linked[ev.uid + '|' + ev.starts_at];
-            return h('li', { class: pid ? 'is-interview' : null }, [
+            var pid = !ev.own && linked[ev.uid + '|' + ev.starts_at];
+            var tag = ev.tipo === 'tarea' ? 'Tarea · ' : ev.tipo === 'foco' ? 'Foco · ' : '';
+            return h('li', { class: pid ? 'is-interview' : ev.own ? 'is-own' : null }, [
               h('span', { class: 'aph-time', text: ev.all_day ? 'Todo el día' : timeFmt.format(new Date(ev.starts_at)) }),
-              pid ? h('a', { href: '#/entrevistas/' + pid, text: ev.title }) : h('span', { text: ev.title })
+              pid ? h('a', { href: '#/entrevistas/' + pid, text: ev.title }) : h('span', null, [tag ? h('span', { class: 'aph-tag', text: tag }) : null, ev.title])
             ]);
           }))
         ]);
-      }));
+      }).concat(note ? [note] : []));
     }
 
     function upcoming(procs, ents) {

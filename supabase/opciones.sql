@@ -8,6 +8,7 @@
 --   fichero.tema     → temas del Fichero    (links.topics, text[])
 --   fichero.formato  → formatos del Fichero (links.type, text)
 --   portfolio.tipo   → tipos de la pestaña Portfolio (portfolio.tipo, text; ver portfolio.sql)
+--   agenda.categoria → categorías del Calendario (agenda.categoria, text; ver agenda.sql)
 -- Un grupo nuevo no necesita cambiar la base: basta con insertar filas con ese grupo
 -- y enseñarlo en la página.
 --
@@ -62,6 +63,9 @@ begin
   elsif o.grupo = 'portfolio.tipo' then
     update public.portfolio set tipo = nuevo where tipo = o.valor;
     get diagnostics n = row_count;
+  elsif o.grupo = 'agenda.categoria' then
+    update public.agenda set categoria = nuevo where categoria = o.valor;
+    get diagnostics n = row_count;
   end if;
   return n;
 end $$;
@@ -84,6 +88,9 @@ begin
     get diagnostics n = row_count;
   elsif o.grupo = 'portfolio.tipo' then
     update public.portfolio set tipo = null where tipo = o.valor;
+    get diagnostics n = row_count;
+  elsif o.grupo = 'agenda.categoria' then
+    update public.agenda set categoria = null where categoria = o.valor;
     get diagnostics n = row_count;
   end if;
   delete from public.ap_opciones where id = p_id;

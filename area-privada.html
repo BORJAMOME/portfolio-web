@@ -16,21 +16,23 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./shared.css?v=85cf5305e2">
 <!-- Pestañas con archivo propio: area-privada.js las inyecta al abrirlas; el navegador las precarga en reposo -->
-<link rel="prefetch" as="script" href="./area-privada-hoy.js?v=7f9c065ef1" data-ap-module="hoy">
-<link rel="prefetch" as="script" href="./area-privada-calendario.js?v=da972afe04" data-ap-module="calendario">
+<link rel="prefetch" as="script" href="./area-privada-hoy.js?v=f9f91c0959" data-ap-module="hoy">
+<link rel="prefetch" as="script" href="./area-privada-calendario.js?v=7331319eb3" data-ap-module="calendario">
 <link rel="prefetch" as="script" href="./area-privada-entrevistas.js?v=914b748305" data-ap-module="entrevistas">
 <link rel="prefetch" as="script" href="./area-privada-portfolio.js?v=ad511c6f8d" data-ap-module="portfolio">
-<link rel="prefetch" as="script" href="./area-privada-configuracion.js?v=48940d6ab6" data-ap-module="configuracion">
+<link rel="prefetch" as="script" href="./area-privada-configuracion.js?v=03ec6282cb" data-ap-module="configuracion">
 <link rel="prefetch" as="script" href="./area-privada-fichero.js?v=093b424f7e" data-ap-module="fichero">
-<link rel="stylesheet" href="./css/area-privada.css?v=374f70a2f0">
+<link rel="stylesheet" href="./css/area-privada.css?v=b44e40286e">
 </head>
 <body>
 <a href="#main-content" class="skip-link">Saltar al contenido</a>
 
 <header class="ap-top">
+  <p class="ap-now"><time id="ap-now-date"></time><span class="ap-now-sep" aria-hidden="true">·</span><time id="ap-now-time" class="ap-now-time"></time></p>
+  <p class="ap-top-title">Área personal de trabajo</p>
   <a class="ap-back" href="./descargas.html"><span aria-hidden="true">←</span> Volver a Descargas</a>
 </header>
 
@@ -64,10 +66,7 @@
   <section class="ap-app" id="ap-app" aria-labelledby="ap-app-title" hidden>
     <div class="ap-shell">
       <div class="ap-head">
-        <div>
-          <p class="ap-label">Área privada</p>
-          <h1 class="ap-app-title" id="ap-app-title" tabindex="-1">Hoy</h1>
-        </div>
+        <h1 class="ap-app-title" id="ap-app-title" tabindex="-1">Hoy</h1>
         <div class="ap-head-actions">
           <span class="ap-user" id="ap-user"></span>
           <button type="button" class="btn btn-outline" id="ap-logout">Cerrar sesión</button>
@@ -126,14 +125,14 @@
 </dialog>
 
 <footer class="ap-foot">
-  <div class="foot-inner">
-    <div class="foot-bottom">
-      <p class="foot-copy">© 2026 Borja Mora Méndez · Área privada</p>
-      <nav class="foot-legal" aria-label="Información legal"><a href="./privacidad.html">Privacidad</a><a href="./descargas.html">Descargas</a></nav>
-    </div>
-  </div>
+  <nav class="ap-social" aria-label="Contacto">
+    <a class="ap-social-btn" href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9.75h4v11.25H3V9.75Zm6.5 0h3.83v1.54h.06c.53-1 1.84-2.06 3.79-2.06 4.05 0 4.8 2.67 4.8 6.13V21h-4v-5.02c0-1.2-.02-2.74-1.67-2.74-1.67 0-1.93 1.3-1.93 2.65V21h-4V9.75Z"/></svg>LinkedIn<span class="sr-only"> (abre en pestaña nueva)</span></a>
+    <a class="ap-social-btn" href="https://github.com/BORJAMOME" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.58 9.58 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg>GitHub<span class="sr-only"> (abre en pestaña nueva)</span></a>
+    <a class="ap-social-btn" href="mailto:borja.mora.mendez@gmail.com"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M3.5 6.5h17v11h-17z"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="m4 7 8 6 8-6"/></svg>Email</a>
+  </nav>
+  <p class="ap-foot-copy">© 2026 Borja Mora Méndez · <a href="./privacidad.html">Privacidad</a></p>
 </footer>
 
-<script src="./area-privada.js?v=dc5ad2ae57" defer></script>
+<script src="./area-privada.js?v=023166adf2" defer></script>
 </body>
 </html>
