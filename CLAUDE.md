@@ -21,7 +21,15 @@ En Windows, `build-en --check` puede marcar páginas como desactualizadas por lo
 
 ## Área privada (`area-privada.html`)
 Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde Descargas. Sin librerías: habla con la API de Supabase con `fetch`.
-- `area-privada.js`: sesión, drive (carpetas, notas en Markdown, archivos) y rutas `#/…`. `supabase/area-privada.sql`: tablas y RLS.
+- `area-privada.js`: shell (sesión, `api`, rutas `#/…`, diálogo) y el drive (`#/archivos`). `supabase/area-privada.sql`: tablas y RLS.
+- **Pestañas en módulos** que se cargan al abrirlas: `area-privada-<nombre>.js` define `window.AP<Nombre> = { render(ctx) → Promise<paint> }`
+  y se declara en el HTML como `<link rel="prefetch" data-ap-module="<nombre>">` (así `version-assets` le pone el `?v=`).
+  Para una pestaña nueva: el archivo, ese `<link>`, una entrada en `MODULES` y en el regex de `parseRoute`, y el enlace en `.ap-tabs`.
+- **Hoy** (`#/`): próximos 7 días, entrevistas programadas y procesos parados. Solo lee.
+- **Calendario** (`#/calendario`): solo lectura. Google → iCal secreto → Edge Function `supabase/functions/calendario-sync`
+  (pg_cron cada 15 min) → `public.calendar_events`. La página nunca habla con Google. Guía: `supabase/functions/calendario-sync/README.md`.
+- **Entrevistas** (`#/entrevistas`, `/analisis`, `/<uuid>`): tablas `procesos` y `entrevistas` (`supabase/entrevistas.sql`).
+  El análisis se calcula en la página con las dos tablas ya descargadas.
 - Pestaña **Fichero** (`#/fichero`): tabla de enlaces guardados, `area-privada-fichero.js`, tabla `public.links` (`supabase/fichero.sql`;
   carga inicial en `supabase/fichero-datos.sql`). Se añade, edita y borra desde la propia tabla; Supabase es la fuente de verdad.
 - Nada de lo que venga de la base se pinta como HTML sin escapar. La clave del JS es la pública; la `service_role` nunca va en el frontend.

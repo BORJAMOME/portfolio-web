@@ -43,7 +43,7 @@
     dialog: $('ap-dialog'), dForm: $('ap-dialog-form'), dTitle: $('ap-dialog-title'),
     dText: $('ap-dialog-text'), dField: $('ap-dialog-field'), dInput: $('ap-dialog-input'),
     dOk: $('ap-dialog-ok'), dCancel: $('ap-dialog-cancel'),
-    toolbar: $('ap-toolbar'), crumbsNav: $('ap-crumbs-nav'), tabFiles: $('ap-tab-files'), tabFichero: $('ap-tab-fichero')
+    toolbar: $('ap-toolbar'), crumbsNav: $('ap-crumbs-nav'), tabs: document.querySelectorAll('.ap-tabs a[data-tab]')
   };
 
   /* ═══════════ SESIÓN ═══════════ */
@@ -235,11 +235,12 @@
     var e = ext(item.title);
     return e ? e.toUpperCase() : 'Archivo';
   }
+  var DRIVE = '#/archivos';            // raíz del drive; #/ es la vista «Hoy»
   function route(kind, id) { return '#/' + kind + '/' + id; }
   function hrefFor(item) {
     return route(item.kind === 'folder' ? 'carpeta' : item.kind === 'note' ? 'nota' : 'archivo', item.id);
   }
-  function parentHref(item) { return item.parent_id ? route('carpeta', item.parent_id) : '#/'; }
+  function parentHref(item) { return item.parent_id ? route('carpeta', item.parent_id) : DRIVE; }
 
   function setStatus(msg, isError) {
     els.status.textContent = msg || '';
@@ -364,9 +365,39 @@
   var dirty = false;                  // nota con cambios sin guardar
   var renderSeq = 0;
 
+  /* Pestañas que viven en su propio archivo (area-privada-<nombre>.js). Cada archivo
+     define window[global] = { render(ctx) → Promise<paint> } y se carga la primera vez
+     que se abre su pestaña: la ruta del archivo (con su ?v=) está en un
+     <link rel="prefetch" data-ap-module="…"> de area-privada.html. */
+  var MODULES = {
+    hoy:         { global: 'APHoy',         title: 'Hoy' },
+    calendario:  { global: 'APCalendario',  title: 'Calendario' },
+    entrevistas: { global: 'APEntrevistas', title: 'Entrevistas' },
+    fichero:     { global: 'APFichero',     title: 'Fichero' }
+  };
+  var loading = {};
+  function loadModule(name) {
+    var g = MODULES[name].global;
+    if (window[g]) return Promise.resolve(window[g]);
+    if (!loading[name]) {
+      loading[name] = new Promise(function (resolve, reject) {
+        var link = document.querySelector('link[data-ap-module="' + name + '"]');
+        var s = document.createElement('script');
+        s.src = link ? link.href : './area-privada-' + name + '.js';
+        s.onload = function () { window[g] ? resolve(window[g]) : reject(new Error('Módulo vacío: ' + name)); };
+        s.onerror = function () { delete loading[name]; s.remove(); reject(new Error('No se ha podido cargar la sección. Revisa la conexión.')); };
+        document.head.appendChild(s);
+      });
+    }
+    return loading[name];
+  }
+
   function parseRoute() {
-    if (/^#\/fichero\/?$/.test(location.hash)) return { kind: 'fichero' };
-    var m = /^#\/(carpeta|nota|archivo|buscar)\/(.+)$/.exec(location.hash);
+    var hash = location.hash;
+    if (!hash || hash === '#' || hash === '#/') return { kind: 'module', name: 'hoy', arg: '' };
+    var mod = /^#\/(hoy|calendario|entrevistas|fichero)(?:\/(.*))?$/.exec(hash);
+    if (mod) return { kind: 'module', name: mod[1], arg: mod[2] ? decodeURIComponent(mod[2]) : '' };
+    var m = /^#\/(carpeta|nota|archivo|buscar)\/(.+)$/.exec(hash);
     if (!m) return { kind: 'root' };
     var arg = decodeURIComponent(m[2]);
     if (m[1] === 'buscar') return { kind: 'search', q: arg };
@@ -380,14 +411,22 @@
     releaseBlobs();
     dirty = false;
     setStatus('Cargando…');
-    var job, inFichero = r.kind === 'fichero' && !!window.APFichero;
-    // pestañas: «Archivos y notas» (el drive) o «Fichero» (tabla de enlaces, area-privada-fichero.js)
-    els.toolbar.hidden = els.crumbsNav.hidden = inFichero;
-    els.tabFiles.removeAttribute('aria-current');
-    els.tabFichero.removeAttribute('aria-current');
-    (inFichero ? els.tabFichero : els.tabFiles).setAttribute('aria-current', 'page');
-    els.title.textContent = inFichero ? 'Fichero' : 'Mis recursos';
-    if (inFichero) job = window.APFichero.render({ api: api, h: h, ask: ask, setStatus: setStatus, fail: fail, view: els.view });
+    var job, isModule = r.kind === 'module', tab = isModule ? r.name : 'archivos';
+    // la barra del drive (buscar, + Carpeta, subir) y las migas solo tienen sentido en «Archivos y notas»
+    els.toolbar.hidden = els.crumbsNav.hidden = isModule;
+    [].forEach.call(els.tabs, function (a) {
+      if (a.getAttribute('data-tab') === tab) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
+    });
+    els.title.textContent = isModule ? MODULES[r.name].title : 'Archivos y notas';
+    if (isModule) {
+      job = loadModule(r.name).then(function (mod) {
+        return mod.render({
+          api: api, h: h, ask: ask, setStatus: setStatus, fail: fail, view: els.view, arg: r.arg,
+          isCurrent: function () { return seq === renderSeq; }
+        });
+      });
+    }
     else if (r.kind === 'root') job = renderFolder(null);
     else if (r.kind === 'carpeta') job = renderFolder(r.id);
     else if (r.kind === 'search') job = renderSearch(r.q);
@@ -407,7 +446,7 @@
       els.crumbs.appendChild(h('li', null, [
         last && !linkLast
           ? h('span', { 'aria-current': 'page', text: c.title })
-          : h('a', { href: c.id ? route('carpeta', c.id) : '#/', text: c.title })
+          : h('a', { href: c.id ? route('carpeta', c.id) : DRIVE, text: c.title })
       ]));
     });
   }
@@ -453,7 +492,7 @@
   function renderFolder(id) {
     return Promise.all([db.list(id), id ? db.ancestors(id) : Promise.resolve([])]).then(function (res) {
       var items = sortItems(res[0] || []), chain = res[1] || [];
-      if (id && !chain.length) { location.replace('#/'); return function () {}; }   // no existe o no es accesible
+      if (id && !chain.length) { location.replace(DRIVE); return function () {}; }   // no existe o no es accesible
       return function () {
         current.folderId = id;
         crumbs(chain, false);
@@ -473,7 +512,7 @@
       return function () {
         current.folderId = null;
         els.crumbs.textContent = '';
-        els.crumbs.appendChild(h('li', null, [h('a', { href: '#/', text: 'Inicio' })]));
+        els.crumbs.appendChild(h('li', null, [h('a', { href: DRIVE, text: 'Inicio' })]));
         els.crumbs.appendChild(h('li', null, [h('span', { 'aria-current': 'page', text: 'Búsqueda: «' + q + '»' })]));
         els.view.textContent = '';
         els.view.appendChild(items && items.length
@@ -488,7 +527,7 @@
     return Promise.all([db.get(id), db.ancestors(id)]).then(function (res) {
       var item = res[0], chain = res[1] || [];
       var expected = kind === 'nota' ? 'note' : 'file';
-      if (!item || item.kind !== expected) { location.replace('#/'); return function () {}; }
+      if (!item || item.kind !== expected) { location.replace(DRIVE); return function () {}; }
       return function () {
         current.folderId = item.parent_id;
         crumbs(chain, false);
@@ -803,7 +842,7 @@
   els.searchForm.addEventListener('submit', function (e) {
     e.preventDefault();
     var q = els.search.value.trim();
-    location.hash = q ? '#/buscar/' + encodeURIComponent(q) : '#/';
+    location.hash = q ? '#/buscar/' + encodeURIComponent(q) : DRIVE;
   });
   window.addEventListener('hashchange', function () {
     if (!session) return;

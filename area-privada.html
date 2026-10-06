@@ -18,7 +18,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./shared.css?v=85cf5305e2">
-<link rel="stylesheet" href="./css/area-privada.css?v=3e983845ef">
+<!-- Pestañas con archivo propio: area-privada.js las inyecta al abrirlas; el navegador las precarga en reposo -->
+<link rel="prefetch" as="script" href="./area-privada-hoy.js?v=7f9c065ef1" data-ap-module="hoy">
+<link rel="prefetch" as="script" href="./area-privada-calendario.js?v=da972afe04" data-ap-module="calendario">
+<link rel="prefetch" as="script" href="./area-privada-entrevistas.js?v=74fe55e742" data-ap-module="entrevistas">
+<link rel="prefetch" as="script" href="./area-privada-fichero.js?v=59f84a6b85" data-ap-module="fichero">
+<link rel="stylesheet" href="./css/area-privada.css?v=05ec76a654">
 </head>
 <body>
 <a href="#main-content" class="skip-link">Saltar al contenido</a>
@@ -60,7 +65,7 @@
       <div class="ap-head">
         <div>
           <p class="ap-label">Área privada</p>
-          <h1 class="ap-app-title" id="ap-app-title" tabindex="-1">Mis recursos</h1>
+          <h1 class="ap-app-title" id="ap-app-title" tabindex="-1">Hoy</h1>
         </div>
         <div class="ap-head-actions">
           <span class="ap-user" id="ap-user"></span>
@@ -69,8 +74,11 @@
       </div>
 
       <nav class="ap-tabs" aria-label="Secciones del área privada">
-        <a href="#/" id="ap-tab-files">Archivos y notas</a>
-        <a href="#/fichero" id="ap-tab-fichero">Fichero</a>
+        <a href="#/" data-tab="hoy">Hoy</a>
+        <a href="#/calendario" data-tab="calendario">Calendario</a>
+        <a href="#/entrevistas" data-tab="entrevistas">Entrevistas</a>
+        <a href="#/archivos" data-tab="archivos">Archivos y notas</a>
+        <a href="#/fichero" data-tab="fichero">Fichero</a>
       </nav>
 
       <div class="ap-toolbar" id="ap-toolbar">
@@ -123,7 +131,6 @@
   </div>
 </footer>
 
-<script src="./area-privada-fichero.js?v=59f84a6b85" defer></script>
-<script src="./area-privada.js?v=45e7ff2958" defer></script>
+<script src="./area-privada.js?v=87bc85f29e" defer></script>
 </body>
 </html>
