@@ -295,6 +295,57 @@
     });
   }
 
+  /* ── Formularios de las pestañas (ctx.ui): campos con etiqueta y diálogo con validación ──
+     Usan las clases de formulario comunes (apf-field, apf-grid, apf-select). */
+  function field(id, labelText, el, opts) {
+    opts = opts || {};
+    el.id = id;
+    return h('div', { class: 'apf-field' + (opts.wide ? ' apf-wide' : '') }, [
+      h('label', { class: 'ap-field-label', for: id, text: labelText }), el,
+      opts.hint ? h('p', { class: 'apf-hint', text: opts.hint }) : null
+    ]);
+  }
+  function input(type, value, attrs) { return h('input', Object.assign({ type: type, value: value == null ? '' : value, autocomplete: 'off' }, attrs || {})); }
+  function select(options, value, empty) {
+    return h('select', { class: 'apf-select' }, (empty ? [h('option', { value: '', text: empty })] : []).concat(options.map(function (o) {
+      var v = Array.isArray(o) ? o[0] : o, l = Array.isArray(o) ? o[1] : o;
+      return h('option', { value: v, text: l, selected: v === value });
+    })));
+  }
+  function area(value, rows, max) { return h('textarea', { rows: String(rows), maxlength: String(max), text: value || '' }); }
+  /* Diálogo de formulario. fields: [nodos]; onSubmit(): Promise (rechaza con Error para mostrar mensaje) */
+  function formDialog(title, okText, fields, onSubmit, focusEl) {
+    var msg = h('p', { class: 'ap-msg', 'aria-live': 'assertive' });
+    var ok = h('button', { type: 'submit', class: 'btn btn-primary', text: okText });
+    var dlg;
+    var form = h('form', { method: 'dialog', novalidate: true, onsubmit: function (e) {
+      e.preventDefault();
+      ok.disabled = true;
+      msg.classList.remove('is-error');
+      msg.textContent = 'Guardando…';
+      Promise.resolve().then(onSubmit).then(function () { dlg.close(); }).catch(function (err) {
+        ok.disabled = false;
+        if (err && err.auth) { dlg.close(); return fail(err); }
+        msg.textContent = (err && err.message) || 'No se ha podido guardar.';
+        msg.classList.add('is-error');
+        if (err && err.field) err.field.focus();
+      });
+    } }, [
+      h('h2', { class: 'ap-dialog-title', id: 'ap-form-title', text: title }),
+      h('div', { class: 'apf-grid' }, fields),
+      msg,
+      h('div', { class: 'ap-dialog-actions' }, [
+        h('button', { type: 'button', class: 'btn btn-outline', text: 'Cancelar', onclick: function () { dlg.close(); } }), ok
+      ])
+    ]);
+    dlg = h('dialog', { class: 'ap-dialog apf-dialog', 'aria-labelledby': 'ap-form-title', onclose: function () { dlg.remove(); } }, [form]);
+    document.body.appendChild(dlg);
+    dlg.showModal();
+    if (focusEl) focusEl.focus();
+  }
+  function invalid(text, el) { var e = new Error(text); e.field = el; return e; }
+  var ui = { field: field, input: input, select: select, area: area, formDialog: formDialog, invalid: invalid };
+
   /* ═══════════ MARKDOWN (subconjunto seguro) ═══════════
      Primero se escapa TODO el HTML; después se da formato. Solo se permiten
      enlaces http(s) y mailto. Títulos: # → h3 (la página ya usa h1 y h2). */
@@ -373,6 +424,7 @@
     hoy:         { global: 'APHoy',         title: 'Hoy' },
     calendario:  { global: 'APCalendario',  title: 'Calendario' },
     entrevistas: { global: 'APEntrevistas', title: 'Entrevistas' },
+    portfolio:   { global: 'APPortfolio',   title: 'Portfolio' },
     fichero:     { global: 'APFichero',     title: 'Fichero' },
     configuracion: { global: 'APConfiguracion', title: 'Configuración' }
   };
@@ -427,7 +479,7 @@
     if (isModule) {
       job = loadModule(r.name).then(function (mod) {
         return mod.render({
-          api: api, h: h, ask: ask, setStatus: setStatus, fail: fail, view: els.view, arg: r.arg,
+          api: api, h: h, ui: ui, ask: ask, setStatus: setStatus, fail: fail, view: els.view, arg: r.arg,
           isCurrent: function () { return seq === renderSeq; }
         });
       });

@@ -4,35 +4,50 @@
    Listas de opciones que usan las demás pestañas, guardadas en public.ap_opciones
    (supabase/opciones.sql). Hoy: temas y formatos del Fichero.
 
-   Para añadir una lista nueva: una entrada en GROUPS (y, si sus valores se guardan
-   en otra tabla, el caso correspondiente en ap_opcion_renombrar/ap_opcion_eliminar
-   para que renombrar y eliminar actualicen también esos datos).
+   Para añadir una lista nueva: una entrada en GROUPS («source» es la tabla y las columnas
+   donde se usan sus valores, para contar los usos) y el caso correspondiente en
+   ap_opcion_renombrar/ap_opcion_eliminar (supabase/opciones.sql), para que renombrar y
+   eliminar actualicen también esos datos.
    ═══════════════════════════════════════════════ */
 window.APConfiguracion = (function () {
   'use strict';
 
   var GROUPS = [
     {
-      id: 'fichero.tema', section: 'Fichero', title: 'Temas', one: 'tema',
+      id: 'fichero.tema', section: 'Fichero', title: 'Temas', one: 'tema', source: { table: 'links', select: 'topics,type' }, unit: ['enlace', 'enlaces'],
       desc: 'Clasifican los enlaces del Fichero. Un enlace puede tener varios.',
       uses: function (links, v) { return links.filter(function (l) { return (l.topics || []).indexOf(v) > -1; }).length; }
     },
     {
-      id: 'fichero.formato', section: 'Fichero', title: 'Formatos', one: 'formato',
+      id: 'fichero.formato', section: 'Fichero', title: 'Formatos', one: 'formato', source: { table: 'links', select: 'topics,type' }, unit: ['enlace', 'enlaces'],
       desc: 'Qué tipo de recurso es cada enlace: artículo, guía, herramienta…',
       uses: function (links, v) { return links.filter(function (l) { return l.type === v; }).length; }
+    },
+    {
+      id: 'portfolio.tipo', section: 'Portfolio', title: 'Tipos', one: 'tipo', source: { table: 'portfolio', select: 'tipo' }, unit: ['elemento', 'elementos'],
+      desc: 'Agrupan lo que hay en la pestaña Portfolio: manuales, proyectos, apps…',
+      uses: function (rows, v) { return rows.filter(function (r) { return r.tipo === v; }).length; }
     }
   ];
 
-  var ctx = null, opts = [], links = [], flash = '';
+  var ctx = null, opts = [], data = {}, flash = '';   // data: filas de cada tabla de origen, para contar usos
   var JSON_HEADERS = { 'Content-Type': 'application/json' };
 
   function load() {
     var ids = GROUPS.map(function (g) { return g.id; }).join(',');
+    var sources = {};
+    GROUPS.forEach(function (g) { sources[g.source.table] = g.source.select; });
+    var tables = Object.keys(sources);
     return Promise.all([
-      ctx.api('/rest/v1/ap_opciones?select=id,grupo,valor,posicion&grupo=in.(' + ids + ')&order=posicion.asc,created_at.asc'),
-      ctx.api('/rest/v1/links?select=topics,type').catch(function (err) { if (err && err.auth) throw err; return []; })
-    ]).then(function (r) { opts = r[0] || []; links = r[1] || []; });
+      ctx.api('/rest/v1/ap_opciones?select=id,grupo,valor,posicion&grupo=in.(' + ids + ')&order=posicion.asc,created_at.asc')
+    ].concat(tables.map(function (t) {
+      // si una tabla de origen aún no existe, sus listas se ven igual (sin contar usos)
+      return ctx.api('/rest/v1/' + t + '?select=' + sources[t]).catch(function (err) { if (err && err.auth) throw err; return []; });
+    }))).then(function (r) {
+      opts = r[0] || [];
+      data = {};
+      tables.forEach(function (t, i) { data[t] = r[i + 1] || []; });
+    });
   }
 
   function render(c) {
@@ -72,10 +87,10 @@ window.APConfiguracion = (function () {
       h('p', { class: 'ape-meta', text: g.desc }),
       list.length
         ? h('ul', { class: 'apx-list', 'aria-label': g.title }, list.map(function (o) {
-          var n = g.uses(links, o.valor);
+          var n = g.uses(data[g.source.table] || [], o.valor);
           return h('li', { class: 'apx-item' }, [
             h('span', { class: 'apx-name', text: o.valor }),
-            h('span', { class: 'apx-uses', text: n ? plural(n, 'enlace', 'enlaces') : 'sin uso' }),
+            h('span', { class: 'apx-uses', text: n ? plural(n, g.unit[0], g.unit[1]) : 'sin uso' }),
             h('span', { class: 'apx-act' }, [
               h('button', { type: 'button', class: 'ap-link-btn', text: 'Editar', 'aria-label': 'Renombrar ' + g.one + ' «' + o.valor + '»', onclick: function () { rename(g, o); } }),
               h('button', { type: 'button', class: 'ap-link-btn ap-link-btn--danger', text: 'Eliminar', 'aria-label': 'Eliminar ' + g.one + ' «' + o.valor + '»', onclick: function () { remove(g, o, n); } })
@@ -123,7 +138,7 @@ window.APConfiguracion = (function () {
       if (p) return ctx.setStatus(p, true);
       return ctx.api('/rest/v1/rpc/ap_opcion_renombrar', { method: 'POST', headers: JSON_HEADERS, body: JSON.stringify({ p_id: o.id, p_nuevo: v }) })
         .then(function (n) {
-          flash = '«' + o.valor + '» ahora se llama «' + v + '»' + (n ? ' (' + plural(n, 'enlace actualizado', 'enlaces actualizados') + ').' : '.');
+          flash = '«' + o.valor + '» ahora se llama «' + v + '»' + (n ? ' (' + plural(n, g.unit[0], g.unit[1]) + (n === 1 ? ' actualizado).' : ' actualizados).') : '.');
           rerender();
         });
     }).catch(failSave);
@@ -132,7 +147,7 @@ window.APConfiguracion = (function () {
   function remove(g, o, n) {
     ctx.ask({
       title: '¿Eliminar este ' + g.one + '?',
-      text: '«' + o.valor + '» dejará de estar disponible.' + (n ? ' Se quitará de ' + plural(n, 'enlace', 'enlaces') + '; los enlaces no se borran.' : '') + ' No se puede deshacer.',
+      text: '«' + o.valor + '» dejará de estar disponible.' + (n ? ' Se quitará de ' + plural(n, g.unit[0], g.unit[1]) + ', que no se borran.' : '') + ' No se puede deshacer.',
       ok: 'Eliminar', danger: true
     }).then(function (yes) {
       if (!yes) return;

@@ -98,6 +98,7 @@ window.APEntrevistas = (function () {
   /* ── Entrada ── */
   function render(c) {
     ctx = c;
+    field = c.ui.field; input = c.ui.input; select = c.ui.select; area = c.ui.area; formDialog = c.ui.formDialog; invalid = c.ui.invalid;
     return load().then(function () {
       var paint = ctx.arg === 'analisis' ? paintAnalysis : UUID.test(ctx.arg) ? function () { paintDetail(ctx.arg); } : paintList;
       return function () { paint(); if (flash) { ctx.setStatus(flash); flash = ''; } };
@@ -296,60 +297,12 @@ window.APEntrevistas = (function () {
   }
 
   /* ═══════════ FORMULARIOS ═══════════ */
-  function field(id, labelText, el, opts) {
-    var h = ctx.h;
-    opts = opts || {};
-    el.id = id;
-    return h('div', { class: 'apf-field' + (opts.wide ? ' apf-wide' : '') }, [
-      h('label', { class: 'ap-field-label', for: id, text: labelText }), el,
-      opts.hint ? h('p', { class: 'apf-hint', text: opts.hint }) : null
-    ]);
-  }
-  function input(type, value, attrs) { return ctx.h('input', Object.assign({ type: type, value: value == null ? '' : value, autocomplete: 'off' }, attrs || {})); }
-  function select(options, value, empty) {
-    var h = ctx.h;
-    return h('select', { class: 'apf-select' }, (empty ? [h('option', { value: '', text: empty })] : []).concat(options.map(function (o) {
-      var v = Array.isArray(o) ? o[0] : o, l = Array.isArray(o) ? o[1] : o;
-      return h('option', { value: v, text: l, selected: v === value });
-    })));
-  }
-  function area(value, rows, max) { return ctx.h('textarea', { rows: String(rows), maxlength: String(max), text: value || '' }); }
+  // Formularios: helpers comunes del shell (ctx.ui en area-privada.js); se enlazan en render()
+  var field, input, select, area, formDialog, invalid;
   function scale(value) {
     return select([5, 4, 3, 2, 1].map(function (n) { return [String(n), '★'.repeat(n) + ' · ' + n]; }), value ? String(value) : '', 'Sin valorar');
   }
 
-  /* Diálogo de formulario. fields: [nodos]; onSubmit(): Promise (rechaza con Error para mostrar mensaje) */
-  function formDialog(title, okText, fields, onSubmit, focusEl) {
-    var h = ctx.h;
-    var msg = h('p', { class: 'ap-msg', 'aria-live': 'assertive' });
-    var ok = h('button', { type: 'submit', class: 'btn btn-primary', text: okText });
-    var dlg;
-    var form = h('form', { method: 'dialog', novalidate: true, onsubmit: function (e) {
-      e.preventDefault();
-      ok.disabled = true;
-      msg.classList.remove('is-error');
-      msg.textContent = 'Guardando…';
-      Promise.resolve().then(onSubmit).then(function () { dlg.close(); }).catch(function (err) {
-        ok.disabled = false;
-        if (err && err.auth) { dlg.close(); return ctx.fail(err); }
-        msg.textContent = (err && err.message) || 'No se ha podido guardar.';
-        msg.classList.add('is-error');
-        if (err && err.field) err.field.focus();
-      });
-    } }, [
-      h('h2', { class: 'ap-dialog-title', id: 'ape-dlg-title', text: title }),
-      h('div', { class: 'apf-grid' }, fields),
-      msg,
-      h('div', { class: 'ap-dialog-actions' }, [
-        h('button', { type: 'button', class: 'btn btn-outline', text: 'Cancelar', onclick: function () { dlg.close(); } }), ok
-      ])
-    ]);
-    dlg = h('dialog', { class: 'ap-dialog apf-dialog', 'aria-labelledby': 'ape-dlg-title', onclose: function () { dlg.remove(); } }, [form]);
-    document.body.appendChild(dlg);
-    dlg.showModal();
-    if (focusEl) focusEl.focus();
-  }
-  function invalid(text, el) { var e = new Error(text); e.field = el; return e; }
   function intOrNull(v) { v = String(v).replace(/[.\s€]/g, '').replace(',', '.'); return v === '' ? null : Math.round(+v); }
 
   function procesoForm(p) {

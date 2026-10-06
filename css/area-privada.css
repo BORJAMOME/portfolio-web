@@ -558,3 +558,26 @@ main { min-height: calc(100vh - var(--ap-top-h) - 90px); outline: none; }
 
 /* Escritorio grande: el panel lateral del calendario acompaña al ancho extra */
 @media (min-width: 1600px) { .apc-layout { grid-template-columns: minmax(0, 1fr) 380px; } .apc-grid td { height: 124px; } }
+
+/* ───────────── PORTFOLIO (area-privada-portfolio.js) ───────────── */
+.app-sections { display: grid; gap: 36px; margin-top: 8px; }
+.app-section-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; }
+.app-section-head .ape-h3 { margin: 0; font-size: 22px; }
+.app-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 14px; }
+.app-card { display: flex; flex-direction: column; gap: 8px; padding: 18px 20px 12px; background: var(--white); border: 1px solid #e8e8ee; border-radius: var(--radius-lg); min-width: 0; }
+.app-card.is-featured { border-color: #d6d6f5; }
+.app-card-top { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; min-height: 22px; }
+.app-card-top:empty { display: none; }
+.app-star { font-size: 12px; font-weight: 600; color: #8a5a00; }
+.app-title { font-size: 16px; font-weight: 600; line-height: 1.35; color: var(--ink); overflow-wrap: anywhere; }
+.app-title-link { color: inherit; text-decoration: none; }
+@media (hover: hover) and (pointer: fine) { .app-title-link:hover { text-decoration: underline; text-underline-offset: 3px; } }
+.app-card .apf-domain { margin-top: -6px; }
+.app-desc { font-size: 13.5px; line-height: 1.55; color: var(--muted); }
+.app-tags { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.app-note { font-size: 13px; line-height: 1.5; color: #6b4a00; background: #fff6e0; border-radius: var(--radius-md); padding: 8px 10px; overflow-wrap: anywhere; }
+.app-card-foot { margin-top: auto; padding-top: 8px; border-top: 1px solid #f0f0f5; display: flex; gap: 12px; align-items: flex-start; justify-content: space-between; }
+.app-links { flex: 1 1 auto; min-width: 0; display: flex; gap: 0 14px; flex-wrap: wrap; }   /* si no caben, pasan de línea los enlaces, no las acciones */
+.app-link { display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; font-weight: 600; color: var(--ink); text-decoration: underline; text-decoration-color: #c9c9d4; text-underline-offset: 3px; }
+.app-link--main { color: var(--purple-text); text-decoration-color: currentColor; }
+.app-act { flex: 0 0 auto; display: flex; gap: 2px; }
