@@ -19,8 +19,8 @@
   'use strict';
 
   /* ── Configuración: Supabase → Project Settings → API ── */
-  var SUPABASE_URL = 'https://TU-PROYECTO.supabase.co';
-  var SUPABASE_KEY = 'TU-CLAVE-PUBLICA';           // sb_publishable_… o la anon key
+  var SUPABASE_URL = 'https://rvizmzjkxunkbqomsvcv.supabase.co';
+  var SUPABASE_KEY = 'sb_publishable_rozvXk1dBTGMHmd1h7j6Zw_AW2mIWJv';           // sb_publishable_… o la anon key
   var OWNER_EMAIL = 'borja.mora.mendez@gmail.com'; // el usuario creado en Authentication → Users
   var BUCKET = 'recursos';
   var MAX_FILE = 50 * 1024 * 1024;                 // límite del plan gratuito
