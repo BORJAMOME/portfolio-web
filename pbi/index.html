@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Manual de Power BI</title>
+<meta name="description" content="Manual visual e interactivo de Power BI: del método BI7 y el modelo en estrella a Power Query, DAX, visualización, storytelling, Power BI Service y la certificación PL-300.">
+<meta name="author" content="Borja Mora Méndez">
+<link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>try{var t=localStorage.getItem("pbi_theme");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}</script>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+  <a class="skip-link" href="#main">Saltar al contenido</a>
+  <header class="appbar"><div class="appbar-in">
+    <a class="brand" href="#" aria-label="Ir al inicio del manual">Manual de Power BI</a>
+    <nav class="topnav" id="topnav" aria-label="Secciones del manual">
+      <a class="tnb" href="#" data-v="home">Inicio</a>
+      <a class="tnb" href="#metodo" data-v="metodo">Método BI7</a>
+      <a class="tnb" href="#temas" data-v="temas">Temas</a>
+      <a class="tnb" href="#dax" data-v="dax">Referencia DAX</a>
+      <a class="tnb" href="#pl300" data-v="pl300">PL-300</a>
+      <a class="tnb" href="#glosario" data-v="glosario">Glosario</a>
+    </nav>
+    <div class="appbar-r">
+      <button class="iconbtn" id="qkBtn" type="button" aria-label="Buscar un tema, una función DAX o un concepto"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><span class="qk-l">Buscar</span><kbd>Ctrl K</kbd></button>
+      <button class="iconbtn" id="themeBtn" type="button" aria-label="Cambiar entre tema claro y oscuro">Oscuro</button>
+    </div>
+  </div></header>
+
+  <main id="main" tabindex="-1">
+    <section id="view-home"></section>
+    <section id="view-metodo" class="hidden"></section>
+    <section id="view-temas" class="hidden"></section>
+    <section id="view-dax" class="hidden"></section>
+    <section id="view-pl300" class="hidden"></section>
+    <section id="view-glosario" class="hidden"></section>
+  </main>
+
+  <article id="detail" class="hidden" tabindex="-1"></article>
+
+  <footer class="foot">
+    <span>Manual de Power BI · Borja Mora Méndez · edición octubre de 2026</span>
+    <span>Construido a partir de mis apuntes de formación · <a href="/">borjamora.es</a> · <a href="/ml/">Manual de Machine Learning</a></span>
+  </footer>
+</div>
+<script src="content.js"></script>
+<script src="content-2.js"></script>
+<script src="viz.js"></script>
+<script src="app.js"></script>
+</body></html>

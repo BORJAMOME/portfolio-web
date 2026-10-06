@@ -1,0 +1,17 @@
+/* Banco de preguntas PL-300 · Repaso general (Alex Ayala) */
+var EXAM = window.EXAM || (window.EXAM = []);
+(function(){
+var S = "PL-300 · Repaso general";
+EXAM.push(
+{k:"Modelado", t:"relaciones", s:S, q:"En un modelo con relaciones bidireccionales, ¿qué pasos hay que hacer para que funcione correctamente?", a:"Entre Categoría y Solicitudes no debe haber doble dirección (relación 1:* unidireccional). Entre Países y Clientes el concepto clave es la cardinalidad: no puede darse varios a varios. También pueden preguntar qué tipo de modelo es (estrella o copo de nieve)."},
+{k:"Modelado", t:"relaciones", s:S, q:"Dada la relación entre Cliente y Ventas, ¿cuál es correcta? a) varios a varios entre Cliente y Ventas, b) 1:1 entre Cliente y Ventas, c) varios a uno entre Ventas y Cliente, d) uno a varios entre Cliente y Ventas.", a:"c) Varios a uno entre Ventas y Cliente. Varios a varios es imposible; 1:1 solo si casualmente cada cliente compró una vez. Atención al orden en que se nombran las tablas."},
+{k:"Perfil de datos", t:"transformar", s:S, q:"Una columna Región tiene 4 valores distintos y 2 únicos. Si construyes una matriz por Región, ¿cuántas filas verás?", a:"4. Distintos son todos los valores diferentes que hay; únicos, los que no se repiten."},
+{k:"Seguridad", t:"rls", s:S, q:"En Desktop, dos tablas con seguridad a nivel de fila. Debes crear una relación entre ellas y garantizar que los filtros cruzados bidireccionales aplican la seguridad.", a:"Activar en la relación la opción «Aplicar filtro de seguridad en ambas direcciones»."},
+{k:"DAX", t:"ti", s:S, q:"Quieres una medida que, al seleccionar marzo de 2022, devuelva las solicitudes de marzo de 2021. ¿Qué función usas?", a:"SAMEPERIODLASTYEAR dentro de CALCULATE. (En el apunte original el enunciado estaba al revés; SAMEPERIODLASTYEAR siempre mira un año hacia atrás.)"},
+{k:"Conexión", t:"obtener", s:S, q:"Base de datos local o en la nube que recibe registros continuamente. El informe detecta fraude con tarjetas y los datos deben estar en pantalla con no más de 5 minutos de retraso. ¿Qué haces? a) instrucción SQL, b) ajustar el tiempo de espera, c) modo Importar, d) modo DirectQuery.", a:"d) DirectQuery, con actualización automática de página (Formato de página) cada pocos minutos. Importar no sirve: el modelo se actualiza como mucho 8 veces al día con Pro y 48 con Premium."},
+{k:"Perfil de datos", t:"transformar", s:S, q:"En la distribución de valores de una columna, un valor aparece solo una vez. ¿Cómo se interpreta?", a:"Es un valor único (aparece una sola vez). En el ejemplo de clase la respuesta correcta era «19 valores únicos»: lee con cuidado si preguntan por distintos o únicos."},
+{k:"Perfil de datos", t:"transformar", s:S, q:"Con la distribución de ProductName, ¿Maxilaku es más frecuente que Chang, Konbu y Chai?", a:"Solo es más frecuente que Chai. Hay que leer la barra de distribución de valores de cada producto."},
+{k:"Power Query", t:"transformar", s:S, q:"Te dan un archivo exportado con filas de cabecera y fechas como texto, y una lista de acciones: eliminar 4 filas superiores, usar la primera fila como encabezado, poner fechas en formato fecha… Hay que elegir 4 y ordenarlas.", a:"Orden lógico: quitar filas superiores → usar la primera fila como encabezado → cambiar tipos (fecha) → filtrar o quitar filas de totales o vacías."},
+{k:"Informes", t:"interactividad", s:S, q:"Usas Power BI para crear facturas: deben exportarse a PDF y mostrarse maquetadas y estructuradas.", a:"Informes paginados (Power BI Report Builder)."}
+);
+})();
