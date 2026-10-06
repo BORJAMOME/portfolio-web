@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Área privada: fuera de buscadores, sin analítica y sin scripts en línea.
+     El HTML es público pero no contiene datos: todo llega de Supabase tras iniciar sesión. -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co; img-src 'self' data: blob:; frame-src blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="theme-color" content="#111111">
+<title>Área privada · Borja Mora Méndez</title>
+<link rel="icon" type="image/svg+xml" href="./img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="./img/favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./shared.css?v=85cf5305e2">
+<link rel="stylesheet" href="./css/area-privada.css?v=0">
+</head>
+<body>
+<a href="#main-content" class="skip-link">Saltar al contenido</a>
+
+<header class="ap-top">
+  <a class="ap-brand" href="./index.html" aria-label="Borja Mora — Inicio">Borja Mora<span aria-hidden="true">.</span></a>
+  <a class="ap-back" href="./descargas.html"><span aria-hidden="true">←</span> Volver a Descargas</a>
+</header>
+
+<main id="main-content" tabindex="-1">
+
+  <!-- ─────────── ACCESO ─────────── -->
+  <section class="ap-lock" id="ap-lock" aria-labelledby="ap-lock-title">
+    <div class="ap-lock-card">
+      <span class="ap-lock-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.2"/></svg>
+      </span>
+      <p class="ap-label">Acceso restringido</p>
+      <h1 class="ap-lock-title" id="ap-lock-title">Área privada</h1>
+      <p class="ap-lock-sub">Manuales, notas y recursos de trabajo. Introduce la contraseña para entrar.</p>
+
+      <form class="ap-login" id="ap-login" novalidate>
+        <!-- usuario fijo: solo para que el gestor de contraseñas reconozca el acceso -->
+        <input class="sr-only" type="email" name="username" autocomplete="username" value="borja.mora.mendez@gmail.com" tabindex="-1" aria-hidden="true" readonly>
+        <label class="ap-field-label" for="ap-pass">Contraseña</label>
+        <div class="ap-pass">
+          <input id="ap-pass" name="password" type="password" autocomplete="current-password" required aria-describedby="ap-login-msg">
+          <button type="button" class="ap-pass-toggle" id="ap-pass-toggle" aria-pressed="false" aria-controls="ap-pass">Mostrar</button>
+        </div>
+        <p class="ap-msg" id="ap-login-msg" aria-live="assertive"></p>
+        <button class="btn btn-primary ap-login-btn" id="ap-login-btn" type="submit" data-arrow="right">Entrar <span class="btn-arrow" aria-hidden="true">→</span></button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ─────────── CONTENIDO (solo con sesión) ─────────── -->
+  <section class="ap-app" id="ap-app" aria-labelledby="ap-app-title" hidden>
+    <div class="ap-shell">
+      <div class="ap-head">
+        <div>
+          <p class="ap-label">Área privada</p>
+          <h1 class="ap-app-title" id="ap-app-title" tabindex="-1">Mis recursos</h1>
+        </div>
+        <div class="ap-head-actions">
+          <span class="ap-user" id="ap-user"></span>
+          <button type="button" class="btn btn-outline" id="ap-logout">Cerrar sesión</button>
+        </div>
+      </div>
+
+      <div class="ap-toolbar">
+        <form class="ap-search" id="ap-search-form" role="search">
+          <label class="sr-only" for="ap-search">Buscar en el área privada</label>
+          <svg class="ap-search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
+          <input type="search" id="ap-search" placeholder="Buscar notas, archivos y carpetas" autocomplete="off">
+        </form>
+        <div class="ap-tools">
+          <button type="button" class="ap-tool" data-action="new-folder"><span aria-hidden="true">+</span> Carpeta</button>
+          <button type="button" class="ap-tool" data-action="new-note"><span aria-hidden="true">+</span> Nota</button>
+          <label class="ap-tool ap-tool--dark ap-upload"><span aria-hidden="true">↑</span> Subir archivos
+            <input type="file" id="ap-file" class="sr-only" multiple>
+          </label>
+        </div>
+      </div>
+
+      <nav class="ap-crumbs" aria-label="Ubicación"><ol id="ap-crumbs"></ol></nav>
+      <p class="ap-status" id="ap-status" role="status" aria-live="polite"></p>
+      <ul class="ap-uploads" id="ap-uploads" aria-label="Subidas en curso"></ul>
+      <div class="ap-view" id="ap-view"></div>
+    </div>
+    <div class="ap-drop" id="ap-drop" aria-hidden="true" hidden><p>Suelta los archivos para subirlos a esta carpeta</p></div>
+  </section>
+
+</main>
+
+<!-- Diálogo reutilizable: nombre de carpeta/nota, renombrar y confirmar borrados -->
+<dialog class="ap-dialog" id="ap-dialog" aria-labelledby="ap-dialog-title">
+  <form id="ap-dialog-form" method="dialog">
+    <h2 class="ap-dialog-title" id="ap-dialog-title"></h2>
+    <p class="ap-dialog-text" id="ap-dialog-text"></p>
+    <div class="ap-dialog-field" id="ap-dialog-field">
+      <label class="ap-field-label" for="ap-dialog-input">Nombre</label>
+      <input id="ap-dialog-input" maxlength="200" autocomplete="off">
+    </div>
+    <div class="ap-dialog-actions">
+      <button type="button" class="btn btn-outline" id="ap-dialog-cancel">Cancelar</button>
+      <button type="submit" class="btn btn-primary" id="ap-dialog-ok">Aceptar</button>
+    </div>
+  </form>
+</dialog>
+
+<footer class="ap-foot">
+  <div class="foot-inner">
+    <div class="foot-bottom">
+      <p class="foot-copy">© 2026 Borja Mora Méndez · Área privada</p>
+      <nav class="foot-legal" aria-label="Información legal"><a href="./privacidad.html">Privacidad</a><a href="./descargas.html">Descargas</a></nav>
+    </div>
+  </div>
+</footer>
+
+<script src="./area-privada.js?v=0" defer></script>
+</body>
+</html>
