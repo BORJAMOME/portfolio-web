@@ -802,6 +802,11 @@
     render();
   });
   window.addEventListener('beforeunload', function (e) { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
+  /* navegar dentro de la app con una nota a medias: pedir confirmación */
+  els.app.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#/"]');
+    if (a && dirty && !window.confirm('Hay cambios sin guardar. ¿Salir sin guardar?')) e.preventDefault();
+  }, true);
 
   /* Arrastrar y soltar archivos en cualquier parte de la app */
   var dragDepth = 0;
