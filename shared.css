@@ -99,6 +99,30 @@ body {
   .logo-dot { transition: none; }
 }
 
+/* Nombre letra a letra (split-name.js). Hereda tipografía del contenedor.
+   La máscara recorta con clip-path (no con overflow, que movería la línea base):
+   deja .5em arriba para que la letra suba sin cortarse y .25em abajo para la «j». */
+html.sn-pending [data-split-name] { visibility: hidden; }
+.sn { white-space: nowrap; }
+.sn-mask {
+  display: inline-block;
+  clip-path: inset(-.5em -.1em -.25em -.1em);
+}
+.sn-lift, .sn-enter { display: inline-block; will-change: transform; }
+.sn-lift { transition: transform .7s cubic-bezier(.34,1.45,.5,1); }
+.sn-lift.is-up { transition: transform .28s cubic-bezier(.2,.8,.2,1); }
+.sn-enter { transform: translateY(115%); }
+.sn-in .sn-enter {
+  transform: none;
+  transition-property: transform;
+  transition-duration: 1s;
+  transition-timing-function: cubic-bezier(.16,1,.3,1);
+}
+.sn-static .sn-enter { transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  .sn-enter, .sn-lift { transform: none !important; transition: none !important; }
+}
+
 /* Typing cursor — desactivado */
 
 .nav-links { display: flex; gap: 2px; align-items: center; margin-left: auto; }
