@@ -165,7 +165,7 @@ body{
 
 /* ───────────── HERO CON ENTRADA ORQUESTADA ───────────── */
 .hero{
-  padding:132px 0 64px;
+  padding:132px 0 56px; /* 60 px de nav fijo + 72 px */
   display:flex;
   flex-direction:column;
   align-items:flex-start;
@@ -227,12 +227,20 @@ body{
   from{opacity:0;transform:translateY(8px)}
   to{opacity:1;transform:translateY(0)}
 }
+/* Descripción y stats en la misma fila: texto a la izquierda, cifras abajo a la derecha */
+.hero-row{
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:48px;
+}
 .hero-stats{
   display:flex;
   align-items:center;
   gap:32px;
   flex-wrap:wrap;
-  padding-top:4px;
+  flex-shrink:0;
 }
 .hero-stat{
   display:flex;
@@ -268,7 +276,8 @@ body{
 }
 
 @media(max-width:820px){
-  .hero{padding:48px 0 48px;gap:20px}
+  .hero{padding:48px 0 40px;gap:20px}
+  .hero-row{flex-direction:column;align-items:flex-start;gap:20px}
   .hero-h1{white-space:normal;font-size:clamp(32px,8vw,48px);letter-spacing:-1px}
   .hero-stats{gap:20px}
   .hero-stat-sep{display:none}
@@ -279,55 +288,58 @@ body{
   .dl-badge{margin:0 8px;width:clamp(30px,4.5vw,38px);height:clamp(38px,6.5vw,48px)}
 }
 
-/* ───────────── SEGMENTADOR · PASTILLAS CON PILL INDICATOR ───────────── */
+/* ───────────── BARRA: BUSCADOR + FILTROS + CONTADOR ───────────── */
 .seg{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:8px 0 28px;
-  gap:24px;
-  flex-wrap:wrap;
+  display:flex;align-items:center;
+  gap:16px;
+  padding:16px 0 32px;
+  border-top:1px solid #e8e8ee;
+  flex-wrap:nowrap;
 }
-.seg-list{
+.seg-search{
   display:flex;align-items:center;gap:10px;
-  flex-wrap:wrap;
-  position:relative;
-  overflow-x:auto;
-  -webkit-overflow-scrolling:touch;
-  scrollbar-width:none;
+  flex:0 1 280px;min-width:200px;height:40px; /* 280 px; cede un poco si las pastillas no caben en la fila */
+  padding:0 16px;
+  border:1px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  color:var(--ink);
+  cursor:text;
 }
-.seg-list::-webkit-scrollbar{display:none}
-
-/* Pill indicator: se desliza suavemente bajo el botón activo */
-.seg-pill{
-  position:absolute;
-  bottom:-10px;
-  left:0;
-  width:1px;
-  height:2px;
-  background:var(--ink);
-  border-radius:1px;
-  transform-origin:left;
-  transition:transform .2s var(--ease);
-  pointer-events:none;
+.seg-search:focus-within{outline:2px solid var(--ink);outline-offset:2px}
+.seg-search svg{width:15px;height:15px;flex-shrink:0}
+.seg-search input{
+  flex:1;min-width:0;
+  border:0;outline:0;background:transparent;
+  font-family:inherit;font-size:13px;color:var(--ink);
+}
+.seg-search input::placeholder{color:var(--muted);opacity:1}
+.seg-search input::-webkit-search-cancel-button{cursor:pointer}
+.seg-sep{width:1px;height:24px;background:var(--gray);flex-shrink:0}
+.seg-list{
+  display:flex;align-items:center;gap:8px;
+  flex-wrap:wrap;
+  flex-shrink:0;
 }
 
 .seg-btn{
   font-family:var(--mono);
   background:#fff;
-  border:1px solid var(--ink);
+  border:1px solid #e2e2e8;
   border-radius:999px;
   cursor:pointer;
-  padding:9px 18px;
+  padding:9px 16px;
   font-size:13px;
   font-weight:500;
   color:var(--ink);
   letter-spacing:-.005em;
-  transition:background .15s var(--ease),color .15s var(--ease);
+  transition:background .15s var(--ease),color .15s var(--ease),border-color .15s var(--ease);
   white-space:nowrap;
   display:inline-flex;align-items:center;gap:8px;
-  position:relative;
 }
-@media (hover: hover) and (pointer: fine) { .seg-btn:hover{background:#f2f2f2} }
-.seg-btn.is-active{background:var(--ink);color:#fff}
+@media (hover: hover) and (pointer: fine) { .seg-btn:hover{border-color:var(--ink)} }
+.seg-btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.seg-btn.is-active{background:var(--ink);color:#fff;border-color:var(--ink)}
 .seg-btn .count{
   font-size:11px;
   font-variant-numeric:tabular-nums;
@@ -337,6 +349,7 @@ body{
 .seg-btn.is-active .count{opacity:.7}
 
 .seg-counter{
+  margin-left:auto;
   font-family:var(--mono);
   font-size:11px;font-weight:500;
   text-transform:uppercase;letter-spacing:.16em;
@@ -354,35 +367,34 @@ body{
 }
 .seg-note a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
 
-/* ───────────── GRID — mismo sistema visual que .dax-cards (power-bi.html) ───────────── */
+/* ───────────── GRID ───────────── */
 .grid-wrap{
   margin-bottom:96px;
 }
 .grid{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
+  grid-template-columns:repeat(3,minmax(0,1fr));
   gap:20px;
 }
 @media(max-width:960px){
-  .grid{grid-template-columns:repeat(2,1fr)}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:600px){
-  .grid{grid-template-columns:1fr}
+  .grid{grid-template-columns:minmax(0,1fr)}
 }
 
-/* ───────────── MÓDULO CON STAGGER ───────────── */
+/* ───────────── TARJETA «FICHA DE ARCHIVO» ─────────────
+   Cabecera tipo archivo (chip .PBIX, categoría, número grande) + cuerpo +
+   dos acciones reales (<a>): descargar y ver el post. La tarjeta no es clicable. */
 .m{
   position:relative;
   display:flex;flex-direction:column;
-  padding:24px 30px 28px;
-  min-height:300px;
   background:#ffffff;
   border:1px solid #e8e8ee;
-  border-radius:var(--radius-lg);
+  border-radius:10px;
+  overflow:hidden;
   color:var(--ink);
-  text-decoration:none;
-  cursor:pointer;
-  box-shadow:none;
+  transition:transform .2s var(--ease), box-shadow .2s var(--ease);
 }
 
 /* Entrada inicial con stagger: 30ms por card */
@@ -393,64 +405,59 @@ body{
 .m:not(.m-soon):not(.m-filler){
   animation:fadeUpCard .32s var(--ease) both;
 }
-
-/* Dinámico: se asigna desde JS con data-stagger */
 .m[data-stagger]{
   animation-delay:calc(var(--stagger-idx) * 30ms + 80ms);
 }
-
-/* Estados visuales */
-.m:focus-visible{
-  outline:2px solid var(--ink);
-  outline-offset:-2px;
-}
-.m{
-  transition:transform .2s var(--ease), box-shadow .2s var(--ease);
-}
 @media (hover: hover) and (pointer: fine) {
-  .m:hover{
+  .m:not(.m-soon):not(.m-filler):hover{
     transform:translateY(-4px);
     box-shadow:0 1px 2px rgba(17,17,17,.04),0 20px 40px rgba(17,17,17,.09);
   }
 }
 
-.m-head{
-  display:flex;align-items:flex-start;justify-content:space-between;
-  margin-bottom:24px;
+/* a) Cabecera de archivo: papel pautado */
+.m-file{
+  height:148px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  padding:18px 22px 14px;
+  background-color:var(--off);
+  background-image:repeating-linear-gradient(0deg, transparent 0 27px, rgba(17,17,17,.045) 27px 28px);
+  border-bottom:1px solid #e8e8ee;
+}
+.m-file-top{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.m-file-l{display:flex;align-items:center;gap:8px}
+.m-chip{
+  font-size:11px;font-weight:700;letter-spacing:.06em;
+  background:#fff;
+  border:1px solid #e2e2e8;
+  border-radius:6px;
+  padding:4px 8px;
+  line-height:1.2;
+}
+.m-cat{
+  font-size:11px;font-weight:500;
+  text-transform:uppercase;letter-spacing:.14em;
+  color:var(--muted);
+  text-align:right;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  min-width:0;
 }
 .m-num{
-  font-size:10px;
-  font-weight:700;
-  color:var(--muted);
+  font-family:var(--font-serif);
+  font-size:72px;font-weight:500;
+  letter-spacing:-2.5px;
+  line-height:.85;
+  color:var(--ink);
   font-variant-numeric:tabular-nums;
-  letter-spacing:1.2px;
-  text-transform:uppercase;
 }
 
-.m-ext{
-  display:inline-flex;align-items:center;justify-content:center;
-  width:44px;height:44px;
-  margin:-10px -10px 0 0;
-  color:var(--mutedB);
-  transition:color .15s var(--ease), transform .25s var(--ease);
-  text-decoration:none;
-  background:none;border:none;cursor:pointer;font-family:inherit;padding:0;
-  will-change:transform;
-}
-@media (hover: hover) and (pointer: fine) {
-  .m-ext:hover{color:var(--ink); transform:scale(1.15) translate(2px,-2px)}
-}
-.m-ext svg{width:18px;height:18px;display:block;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:square}
-
+/* b) Cuerpo */
 .m-body{
-  display:flex;
-  flex-direction:column;
-  gap:0;
-}
-.m-head-text{
-  display:flex;
-  flex-direction:column;
-  margin-bottom:18px;
+  flex:1;
+  display:flex;flex-direction:column;
+  padding:22px 26px 24px;
 }
 .m-title{
   font-size:18px;
@@ -460,72 +467,76 @@ body{
   color:var(--ink);
   text-wrap:balance;
   overflow-wrap:break-word;
-  word-break:normal;
-  hyphens:auto;
-  max-width:95%;
   margin:0;
 }
 .m-sub{
-  display:block;
   margin:4px 0 0;
   font-size:13.5px;
-  font-weight:400;
   line-height:1.4;
-  letter-spacing:-.005em;
   color:var(--muted);
 }
-
 .m-desc{
+  margin:14px 0 0;
   font-size:13px;
-  font-weight:400;
   line-height:1.65;
   color:var(--muted);
-  margin:0;
-}
-
-.m-foot{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:16px;
-  margin-top:auto;
-  padding-top:24px;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:3;
+  line-clamp:3;
+  overflow:hidden;
 }
 .m-tags{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
+  display:flex;flex-wrap:wrap;gap:6px;
+  margin-top:18px;
 }
 .m-tags span{
   font-size:11px;
   font-weight:500;
   background:#eeeef1;
   color:var(--ink);
-  padding:6px 13px;
+  padding:5px 11px;
   border:1px solid #e2e2e8;
-  border-radius:var(--radius-pill);
-}
-.m-tags span + span::before{
-  content:"";
-  display:none;
+  border-radius:999px;
 }
 
+/* c) Acciones */
+.m-actions{
+  display:flex;gap:8px;
+  margin-top:auto;
+  padding-top:22px;
+}
 .m-dl{
+  flex:1;
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  height:44px;
+  background:var(--ink);color:#fff;
+  border:1px solid var(--ink);
+  border-radius:8px;
+  font-size:11px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;
+  text-decoration:none;
+  transition:background .15s var(--ease), color .15s var(--ease);
+}
+.m-ext{
   display:inline-flex;align-items:center;justify-content:center;
-  width:44px;height:44px;
-  margin:0 -10px -6px 0;
+  width:44px;height:44px;flex-shrink:0;
+  border:1px solid #e2e2e8;
+  border-radius:8px;
   color:var(--ink);
-  flex-shrink:0;
-  transition:color .12s var(--ease), transform .2s var(--ease);
-  will-change:transform;
+  text-decoration:none;
+  transition:border-color .15s var(--ease);
 }
 @media (hover: hover) and (pointer: fine) {
-  .m-dl:hover{color:var(--muted)}
+  .m-dl:hover{background:#fff;color:var(--ink)}
+  .m-ext:hover{border-color:var(--ink)}
 }
-.m-dl svg{width:22px;height:22px;display:block;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:square}
+.m-dl:focus-visible,.m-ext:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.m-dl svg,.m-ext svg{width:15px;height:15px;display:block;flex-shrink:0}
 
-/* ── Stamp on click: spring bounce ── */
+/* ── Stamp al pulsar: rebote corto ── */
 @keyframes stamp{
   0%   {transform:scale(1)}
-  35%  {transform:scale(1.22)}
+  35%  {transform:scale(1.06)}
   100% {transform:scale(1)}
 }
 .m-dl.is-stamp,
@@ -538,18 +549,13 @@ body{
   display:none;
 }
 
-/* ── Módulo "Próximamente" ── */
-.m-soon{
-  cursor:default;
-  background-color:#ffffff;
-  background-image:
-    repeating-linear-gradient(
-      135deg,
-      transparent 0 14px,
-      rgba(10,10,10,.04) 14px 15px
-    );
-}
-.m-soon .m-desc{color:var(--mutedB)}
+/* ── Hueco de relleno de la última fila: invisible ── */
+.m-filler{border-color:transparent;background:transparent;visibility:hidden}
+
+/* ── Tarjeta «En desarrollo» ── */
+.m-soon .m-file{background-color:#fff}
+.m-soon .m-num,.m-soon .m-chip,.m-soon .m-title,.m-soon .m-sub{opacity:.4}
+.m-soon .m-desc{opacity:.6}
 .m-soon .m-cta-soon{
   font-size:13px;
   font-weight:600;
@@ -557,13 +563,13 @@ body{
   text-decoration:none;
   display:inline-flex;align-items:center;gap:8px;
   margin-top:auto;
-  padding-top:20px;
+  padding-top:22px;
 }
 .m-soon .m-cta-soon::after{
   content:"";display:inline-block;width:18px;height:1px;background:currentColor;
 }
 
-/* ── Estado vacío del filtro ── */
+/* ── Estado vacío del filtro / búsqueda ── */
 .empty{
   grid-column:1 / -1;
   padding:64px 32px;
@@ -593,6 +599,7 @@ body{
   border-bottom:1.5px solid #fff;
   transform:rotate(45deg) translate(-1px,-1px);
 }
+
 
 /* ───────────── SECCIÓN CIERRE CON SCROLL REVEAL ───────────── */
 @keyframes revealCierre{
@@ -654,9 +661,18 @@ body{
 /* ── pequeñas en móvil ── */
 @media(max-width:600px){
   .nav-links a:not(.nav-cta):not(.active){display:none}
-  .m{min-height:300px;padding:28px 24px 24px}
+  .m-body{padding:20px 22px 22px}
+  .m-file{height:132px;padding:16px 20px 12px}
+  .m-num{font-size:64px}
   .seg-btn{font-size:12.5px;padding:8px 14px}
   .hero-h1{letter-spacing:-.03em}
+}
+/* Barra en dos líneas cuando no cabe en una (≤1180 px): buscador + contador arriba, pastillas debajo */
+@media(max-width:1180px){
+  .seg{flex-wrap:wrap}
+  .seg-sep{display:none}
+  .seg-search{flex:1 1 200px}
+  .seg-list{order:3;width:100%}
 }
 
 /* ── Dispositivos sin hover (touch): evita estado "pegado" tras el tap ── */
@@ -672,6 +688,7 @@ body{
     animation-iteration-count:1 !important;
   }
   .m:not(.m-soon):not(.m-filler){ animation:none }
+  .m:hover{ transform:none !important }
   .cierre{ opacity:1; transform:translateY(0); }
   .cierre.in-view{ animation:none; }
   .hero-h1, .hero-sub, .hero-stat{ animation:none; opacity:1; transform:none; }
@@ -844,6 +861,7 @@ body{
   <!-- Hero -->
   <header class="hero">
     <h1 class="hero-h1">.pbix files<span class="dl-badge" aria-hidden="true"><svg viewBox="0 0 36 46" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="18" y1="2" x2="18" y2="36" stroke="#ffffff" stroke-width="3" stroke-linecap="square"/><polyline points="6,26 18,40 30,26" stroke="#ffffff" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter" fill="none"/></svg></span></h1>
+    <div class="hero-row">
     <p class="hero-sub">Projects I’ve built and shared on LinkedIn. Download the file, explore the data model and use it as a reference for your own Power BI work.</p>
     <div class="hero-stats" aria-hidden="true">
       <div class="hero-stat">
@@ -855,21 +873,25 @@ body{
         <div class="hero-stat-num"><span id="stat-cats">0</span></div>
         <div class="hero-stat-label">Categories</div>
       </div>
-
+    </div>
     </div>
   </header>
 
-  <!-- Segmentador -->
-  <div class="seg" role="group" aria-label="Filter by category">
-    <div class="seg-list">
-      <div class="seg-pill" id="seg-pill"></div>
+  <!-- Barra: buscador + filtros + contador -->
+  <div class="seg">
+    <label class="seg-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input type="search" id="seg-q" placeholder="Search: TopN, Gantt, KPI…" aria-label="Search files" autocomplete="off" spellcheck="false">
+    </label>
+    <span class="seg-sep" aria-hidden="true"></span>
+    <div class="seg-list" role="group" aria-label="Filter by category">
       <button class="seg-btn is-active" data-filter="all" aria-pressed="true">All<span class="count">19</span></button>
       <button class="seg-btn" data-filter="gestion" aria-pressed="false">Project management<span class="count">3</span></button>
-      <button class="seg-btn" data-filter="ventas" aria-pressed="false">Sales and commercial analysis<span class="count">6</span></button>
+      <button class="seg-btn" data-filter="ventas" aria-pressed="false">Sales and commercial analysis<span class="count">7</span></button>
       <button class="seg-btn" data-filter="storytelling" aria-pressed="false">Data storytelling<span class="count">5</span></button>
       <button class="seg-btn" data-filter="slicer" aria-pressed="false">Input Slicer<span class="count">4</span></button>
     </div>
-    <div class="seg-counter"><b id="seg-visible">19</b> / 19 files</div>
+    <div class="seg-counter" aria-live="polite"><b id="seg-visible">19</b> / <span id="seg-total">19</span></div>
   </div>
   <p class="seg-note" id="seg-note" hidden>Want the thinking behind these files? It's all in my <a href="./data-storytelling.html" data-ga="clic_manual_storytelling" data-ga-location="descargas_filtro">Data Storytelling guide</a>.</p>
 
@@ -1049,10 +1071,27 @@ const ITEMS = [
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7458166054264111104-Hov2"}
 ];
 
-const ICON_EXT = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"/><path d="M9 7h8v8"/></svg>';
-const ICON_DL  = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v13"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/></svg>';
+const ICON_DL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" aria-hidden="true"><path d="M12 4v13"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/></svg>';
+const ICON_LI = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>';
+
+// Textos de la interfaz generada (los traduce i18n/descargas.en.json → js)
+const T = {
+  dl: 'Download .pbix',
+  dlAria: 'Download',
+  li: 'View the LinkedIn post',
+  done: 'Already downloaded',
+  soonTitle: 'In progress',
+  soonSub: 'Coming soon',
+  soonDesc: 'Follow me on LinkedIn to be the first to download the next file.',
+  soonCta: 'Follow on LinkedIn',
+  emptyCat: 'No files in this category',
+  emptyQuery: 'No files for'
+};
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+// la etiqueta de cada categoría sale de su pastilla (así va traducida en la versión inglesa)
+const catLabel = cat => document.querySelector(`.seg-btn[data-filter="${cat}"]`)?.firstChild?.textContent.trim() || '';
+const norm = s => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 
 function tagsHtml(arr){
   return arr.map(t=>`<span>${esc(t)}</span>`).join("");
@@ -1060,104 +1099,73 @@ function tagsHtml(arr){
 
 function moduleHtml(it, idx){
   return `
-  <div class="m" data-cat="${it.cat}" data-href="${esc(it.dl)}" data-id="${esc(it.n)}" data-stagger tabindex="0" role="link" aria-label="Download ${esc(it.title)}" style="--stagger-idx:${idx}">
-    <div class="m-head">
-      <span class="m-num">Nº ${esc(it.n)}</span>
-      <button class="m-ext" data-href="${esc(it.li)}" aria-label="View the LinkedIn post">${ICON_EXT}</button>
+  <article class="m" data-cat="${it.cat}" data-id="${esc(it.n)}" data-stagger style="--stagger-idx:${idx}">
+    <div class="m-file">
+      <div class="m-file-top">
+        <div class="m-file-l"><span class="m-chip">.PBIX</span></div>
+        <span class="m-cat">${esc(catLabel(it.cat))}</span>
+      </div>
+      <span class="m-num" aria-hidden="true">${esc(it.n)}</span>
     </div>
     <div class="m-body">
-      <div class="m-head-text">
-        <h3 class="m-title">${esc(it.title)}</h3>
-        ${it.subtitle?`<p class="m-sub">${esc(it.subtitle)}</p>`:""}
-      </div>
+      <h3 class="m-title">${esc(it.title)}</h3>
+      ${it.subtitle?`<p class="m-sub">${esc(it.subtitle)}</p>`:""}
       <p class="m-desc">${esc(it.desc)}</p>
-    </div>
-    <div class="m-foot">
       <div class="m-tags">${tagsHtml(it.tags)}</div>
-      <span class="m-dl" aria-hidden="true">${ICON_DL}</span>
+      <div class="m-actions">
+        <a class="m-dl" href="../${esc(it.dl)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(T.dlAria)} ${esc(it.title)} (.pbix)">${esc(T.dl)}${ICON_DL}</a>
+        <a class="m-ext" href="../${esc(it.li)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(T.li)}" title="${esc(T.li)}">${ICON_LI}</a>
+      </div>
     </div>
-  </div>`;
+  </article>`;
 }
 
-function soonHtml(n, label){
+function soonHtml(n){
   return `
-  <div class="m m-soon" data-cat="soon" aria-hidden="true" inert>
-    <div class="m-head">
-      <span class="m-num">Nº ${n}</span>
+  <article class="m m-soon" data-cat="soon" aria-hidden="true" inert>
+    <div class="m-file">
+      <div class="m-file-top"><div class="m-file-l"><span class="m-chip">.PBIX</span></div></div>
+      <span class="m-num">${n}</span>
     </div>
     <div class="m-body">
-      <div class="m-head-text">
-        <h3 class="m-title" style="opacity:.4">In progress</h3>
-        <p class="m-sub" style="opacity:.4">Coming soon</p>
-      </div>
-      <p class="m-desc" style="opacity:.35">Follow me on LinkedIn to be the first to download the next file.</p>
+      <h3 class="m-title">${esc(T.soonTitle)}</h3>
+      <p class="m-sub">${esc(T.soonSub)}</p>
+      <p class="m-desc">${esc(T.soonDesc)}</p>
+      <a class="m-cta-soon" href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" tabindex="-1">${esc(T.soonCta)}</a>
     </div>
-    <div class="m-foot">
-      <a class="m-cta-soon" href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" tabindex="-1">Follow on LinkedIn</a>
-      <span></span>
-    </div>
-  </div>`;
+  </article>`;
 }
 
 function render(){
   const grid = document.getElementById('grid');
   let html = ITEMS.map((it, idx) => moduleHtml(it, idx)).join("");
-  
-  // rellenar la última fila si quedan huecos (máx 1 card "En desarrollo")
-  const total = ITEMS.length;
-  const cols = 3;
-  const remainder = total % cols;
-  if(remainder !== 0){
-    const next = String(total + 1).padStart(2,"0");
-    html += soonHtml(next);
+  // rellenar la última fila si quedan huecos (máx 1 card "In progress")
+  if(ITEMS.length % 3 !== 0){
+    html += soonHtml(String(ITEMS.length + 1).padStart(2,"0"));
   }
   grid.innerHTML = html;
 
-  // Helper: dispara evento GA4 de descarga
-  function trackDownload(card, trigger){
-    if(typeof gtag !== 'function') return;
-    const title = card.querySelector('.m-title')?.textContent?.trim() || '';
-    const cat   = card.dataset.cat || '';
-    gtag('event', 'descarga_pbix', {
-      file_id:       card.dataset.id,
-      file_title:    title,
-      file_category: cat,
-      trigger:       trigger   // 'card' | 'arrow'
-    });
-  }
-
-  // Card principal: click y Enter/Space abren la descarga
-  grid.querySelectorAll('.m[data-href]').forEach(card=>{
-    const openCard = e => {
-      if(e.target.closest('.m-ext,.m-dl')) return;
-      stamp(card.querySelector('.m-dl'));
-      markDownloaded(card.dataset.id);
-      trackDownload(card, 'card');
-      window.open(card.dataset.href,'_blank','noopener');
-    };
-    card.addEventListener('click', openCard);
-    card.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){e.preventDefault();openCard(e);} });
-  });
-
-  // Botón LinkedIn
-  grid.querySelectorAll('.m-ext[data-href]').forEach(el=>{
-    el.addEventListener('click', e => {
-      e.stopPropagation();
-      stamp(el);
-      window.open(el.dataset.href,'_blank','noopener');
-    });
-  });
-
-  // Stamp en el icono de descarga + abrir enlace
+  // Acciones reales (<a>): el enlace se abre solo; aquí solo stamp, badge y analítica
   grid.querySelectorAll('.m-dl').forEach(el=>{
-    el.addEventListener('click', e => {
-      e.stopPropagation();
+    el.addEventListener('click', ()=>{
+      const card = el.closest('.m');
       stamp(el);
-      const card = el.closest('.m[data-href]');
-      if(card){
-        markDownloaded(card.dataset.id);
-        trackDownload(card, 'arrow');
-        window.open(card.dataset.href,'_blank','noopener');
+      markDownloaded(card.dataset.id);
+      if(typeof gtag === 'function'){
+        gtag('event', 'descarga_pbix', {
+          file_id:       card.dataset.id,
+          file_title:    card.querySelector('.m-title')?.textContent?.trim() || '',
+          file_category: card.dataset.cat || '',
+          trigger:       'button'
+        });
+      }
+    });
+  });
+  grid.querySelectorAll('.m-ext').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      stamp(el);
+      if(typeof gtag === 'function'){
+        gtag('event', 'ver_post_linkedin', { file_id: el.closest('.m').dataset.id });
       }
     });
   });
@@ -1179,9 +1187,10 @@ function updateDownloadedBadge(id){
   if(!card.querySelector('.m-done')){
     const badge = document.createElement('span');
     badge.className = 'm-done';
-    badge.setAttribute('aria-label', 'Already downloaded');
-    badge.title = 'Already downloaded';
-    card.querySelector('.m-head').appendChild(badge);
+    badge.setAttribute('role', 'img');
+    badge.setAttribute('aria-label', T.done);
+    badge.title = T.done;
+    card.querySelector('.m-file-l').appendChild(badge);
   }
 }
 
@@ -1202,20 +1211,28 @@ function stamp(el){
   el.addEventListener('animationend', () => el.classList.remove('is-stamp'), {once:true});
 }
 
-function applyFilter(filter){
-  const grid = document.getElementById('grid');
-  const mods = grid.querySelectorAll('.m');
-  let visible = 0;
-  let total = 0;
+// ────────────── FILTRO + BÚSQUEDA ──────────────
+const params = new URLSearchParams(window.location.search);
+let activeFilter = params.get('cat') || 'all';
+let query = params.get('q') || '';
+if(!document.querySelector(`.seg-btn[data-filter="${activeFilter}"]`)) activeFilter = 'all';
 
-  mods.forEach(m=>{
+const HAY = {};
+ITEMS.forEach(it => { HAY[it.n] = norm([it.title, it.subtitle, it.desc, it.tags.join(' ')].join(' ')); });
+
+function applyFilters(){
+  const grid = document.getElementById('grid');
+  const q = norm(query.trim());
+  let visible = 0;
+
+  grid.querySelectorAll('.m').forEach(m=>{
     const cat = m.dataset.cat;
-    const show = cat==='soon' ? filter==='all' : (filter==='all' || cat===filter);
+    if(cat === 'filler') return;
+    const show = cat === 'soon'
+      ? activeFilter === 'all' && !q
+      : (activeFilter === 'all' || cat === activeFilter) && (!q || HAY[m.dataset.id].includes(q));
     m.classList.toggle('is-hidden', !show);
-    if(cat!=='soon' && cat!=='filler'){
-      if(filter==='all' || cat===filter) total++;
-    }
-    if(show && cat!=='soon') visible++;
+    if(show && cat !== 'soon') visible++;
   });
 
   grid.querySelectorAll('.m-filler,.m-empty').forEach(e=>e.remove());
@@ -1223,69 +1240,57 @@ function applyFilter(filter){
   const cols = window.matchMedia('(max-width:600px)').matches ? 1
              : window.matchMedia('(max-width:960px)').matches ? 2 : 3;
 
-  if(visible===0){
+  if(visible === 0){
     const empty = document.createElement('div');
-    empty.className='empty m-empty';
-    empty.textContent='No files in this category';
+    empty.className = 'empty m-empty';
+    empty.textContent = q ? `${T.emptyQuery} «${query.trim()}»` : T.emptyCat;
     grid.appendChild(empty);
   } else {
-    const visibleTotal = grid.querySelectorAll('.m:not(.is-hidden)').length;
-    const rem = visibleTotal % cols;
-    if(rem!==0 && cols>1){
-      for(let i=0;i<cols-rem;i++){
-        const div=document.createElement('div');
-        div.className='m m-filler';
-        div.style.cssText='cursor:default;pointer-events:none';
+    const rem = grid.querySelectorAll('.m:not(.is-hidden)').length % cols;
+    if(rem !== 0 && cols > 1){
+      for(let i = 0; i < cols - rem; i++){
+        const div = document.createElement('div');
+        div.className = 'm m-filler';
+        div.dataset.cat = 'filler';
         div.setAttribute('aria-hidden','true');
         grid.appendChild(div);
       }
     }
   }
 
-  document.getElementById('seg-visible').textContent=visible;
-  // Actualizar denominador dinámicamente según filtro
-  const counterEl = document.querySelector('.seg-counter');
-  if(counterEl){
-    const denom = filter==='all' ? ITEMS.length : ITEMS.filter(i=>i.cat===filter).length;
-    counterEl.innerHTML = `<b id="seg-visible">${visible}</b> / ${denom} files`;
-  }
+  document.getElementById('seg-visible').textContent = visible;
+  document.getElementById('seg-total').textContent =
+    activeFilter === 'all' ? ITEMS.length : ITEMS.filter(i => i.cat === activeFilter).length;
+
+  document.querySelectorAll('.seg-btn').forEach(b=>{
+    const on = b.dataset.filter === activeFilter;
+    b.classList.toggle('is-active', on);
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+
   const note = document.getElementById('seg-note');
-  if(note) note.hidden = filter!=='storytelling';
+  if(note) note.hidden = activeFilter !== 'storytelling';
+}
+
+// Estado en la URL: ?cat= y ?q= (sin parámetros cuando no hacen falta)
+function syncUrl(push){
+  const url = new URL(window.location);
+  if(activeFilter === 'all') url.searchParams.delete('cat'); else url.searchParams.set('cat', activeFilter);
+  if(query.trim()) url.searchParams.set('q', query.trim()); else url.searchParams.delete('q');
+  history[push ? 'pushState' : 'replaceState']({cat: activeFilter, q: query}, '', url);
 }
 
 // ────────────── INIT ──────────────
 render();
-(function(){
-  const params = new URLSearchParams(window.location.search);
-  const catParam = params.get('cat') || 'all';
-  const targetBtn = document.querySelector(`.seg-btn[data-filter="${catParam}"]`);
-  if(targetBtn && catParam !== 'all'){
-    document.querySelectorAll('.seg-btn').forEach(b=>{
-      b.classList.remove('is-active');
-      b.setAttribute('aria-pressed','false');
-    });
-    targetBtn.classList.add('is-active');
-    targetBtn.setAttribute('aria-pressed','true');
-  }
-  applyFilter(catParam);
-})();
+// contadores de las pastillas calculados desde ITEMS
+document.querySelectorAll('.seg-btn').forEach(b=>{
+  const c = b.querySelector('.count');
+  if(c) c.textContent = b.dataset.filter === 'all' ? ITEMS.length : ITEMS.filter(i => i.cat === b.dataset.filter).length;
+});
+const qInput = document.getElementById('seg-q');
+qInput.value = query;
+applyFilters();
 
-// ────────────── PILL INDICATOR ──────────────
-function updatePillIndicator(){
-  const activeBtn = document.querySelector('.seg-btn.is-active');
-  const pill = document.getElementById('seg-pill');
-  if(activeBtn){
-    const left = activeBtn.offsetLeft;
-    const width = activeBtn.offsetWidth;
-    pill.style.transform = 'translateX(' + left + 'px) scaleX(' + width + ')';
-  }
-}
-updatePillIndicator();
-window.addEventListener('resize', updatePillIndicator);
-// Recalcular tras carga completa de fuentes para evitar desplazamiento incorrecto
-if(document.fonts && document.fonts.ready){
-  document.fonts.ready.then(updatePillIndicator);
-}
 
 // ────────────── COUNT-UP CON INTERSECTION OBSERVER ──────────────
 function countUp(el, target, duration){
@@ -1317,35 +1322,36 @@ const cats = [...new Set(ITEMS.map(i=>i.cat))].length;
 countUp(document.getElementById('stat-files'), ITEMS.length, 900);
 countUp(document.getElementById('stat-cats'), cats, 900);
 
-// ────────────── SEGMENTADOR EVENTOS ──────────────
+// ────────────── FILTROS Y BUSCADOR: EVENTOS ──────────────
 document.querySelectorAll('.seg-btn').forEach(btn=>{
   btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.seg-btn').forEach(b=>{
-      b.classList.remove('is-active');
-      b.setAttribute('aria-pressed','false');
-    });
-    btn.classList.add('is-active');
-    btn.setAttribute('aria-pressed','true');
-    const f = btn.dataset.filter;
-    applyFilter(f);
-    updatePillIndicator();
-    /* ── Estado URL: ?cat=dax o quitar param si es "all" ── */
-    const url = new URL(window.location);
-    if(f === 'all'){ url.searchParams.delete('cat'); }
-    else           { url.searchParams.set('cat', f); }
-    history.pushState({cat: f}, '', url);
+    activeFilter = btn.dataset.filter;
+    applyFilters();
+    syncUrl(true);
   });
+});
+
+let _q;
+qInput.addEventListener('input', ()=>{
+  clearTimeout(_q);
+  _q = setTimeout(()=>{ query = qInput.value; applyFilters(); syncUrl(false); }, 120);
+});
+
+window.addEventListener('popstate', ()=>{
+  const p = new URLSearchParams(window.location.search);
+  activeFilter = p.get('cat') || 'all';
+  query = p.get('q') || '';
+  qInput.value = query;
+  applyFilters();
 });
 
 // ────────────── RE-FILL AL REDIMENSIONAR ──────────────
 let _t;
 window.addEventListener('resize', ()=>{
   clearTimeout(_t);
-  _t = setTimeout(()=>{
-    const active = document.querySelector('.seg-btn.is-active');
-    applyFilter(active ? active.dataset.filter : 'all');
-  }, 120);
+  _t = setTimeout(applyFilters, 120);
 });
+
 
 // ────────────── NAV SCROLL ──────────────
 const nav = document.getElementById('nav');

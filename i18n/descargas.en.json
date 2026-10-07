@@ -29,11 +29,12 @@
     "Archivos .pbix": ".pbix files",
     "Categorías": "Categories",
     "Filtrar por categoría": "Filter by category",
+    "Buscar: TopN, Gantt, KPI…": "Search: TopN, Gantt, KPI…",
+    "Buscar archivos": "Search files",
     "Todos<span class=\"count\">19</span>": "All<span class=\"count\">19</span>",
     "Gestión de proyectos<span class=\"count\">3</span>": "Project management<span class=\"count\">3</span>",
-    "Ventas y análisis comercial<span class=\"count\">6</span>": "Sales and commercial analysis<span class=\"count\">6</span>",
+    "Ventas y análisis comercial<span class=\"count\">7</span>": "Sales and commercial analysis<span class=\"count\">7</span>",
     "Data Storytelling<span class=\"count\">5</span>": "Data storytelling<span class=\"count\">5</span>",
-    "<b id=\"seg-visible\">19</b> / 19 archivos": "<b id=\"seg-visible\">19</b> / 19 files",
     "Por qué se comparten estos recursos": "Why these resources are shared",
     "Por qué lo comparto": "Why I share them",
     "¿Quieres el porqué detrás de estos archivos? Está en el <a href=\"./data-storytelling.html\" data-ga=\"clic_manual_storytelling\" data-ga-location=\"descargas_filtro\">manual de Data Storytelling</a>.": "Want the thinking behind these files? It's all in my <a href=\"./data-storytelling.html\" data-ga=\"clic_manual_storytelling\" data-ga-location=\"descargas_filtro\">Data Storytelling guide</a>.",
@@ -196,7 +197,15 @@
     "Hola Borja — Me gustaría hablar contigo": "Hi Borja — I’d like to talk to you",
     "Hola Borja,\\n\\nHe visto tu portfolio y me gustaría hablar contigo sobre...\\n\\n": "Hi Borja,\\n\\nI’ve seen your portfolio and I’d like to talk to you about...\\n\\n",
     "Cerrar menú": "Close menu",
-    "Abrir menú": "Open menu"
+    "Abrir menú": "Open menu",
+    "Descargar .pbix": "Download .pbix",
+    "Descargar": "Download",
+    "Ver post en LinkedIn": "View the LinkedIn post",
+    "En desarrollo": "In progress",
+    "Próxima publicación": "Coming soon",
+    "Sígueme en LinkedIn para ser el primero en descargar el siguiente archivo.": "Follow me on LinkedIn to be the first to download the next file.",
+    "Seguir en LinkedIn": "Follow on LinkedIn",
+    "Sin archivos para": "No files for"
   },
   "raw": [
     [
@@ -218,34 +227,6 @@
     [
       "\"@id\":\"https://borjamora.es/descargas.html#",
       "\"@id\":\"https://borjamora.es/en/downloads.html#"
-    ],
-    [
-      "aria-label=\"Descargar ${esc(it.title)}\"",
-      "aria-label=\"Download ${esc(it.title)}\""
-    ],
-    [
-      "aria-label=\"Ver post en LinkedIn\"",
-      "aria-label=\"View the LinkedIn post\""
-    ],
-    [
-      "style=\"opacity:.4\">En desarrollo</h3>",
-      "style=\"opacity:.4\">In progress</h3>"
-    ],
-    [
-      "style=\"opacity:.4\">Próxima publicación</p>",
-      "style=\"opacity:.4\">Coming soon</p>"
-    ],
-    [
-      "style=\"opacity:.35\">Sígueme en LinkedIn para ser el primero en descargar el siguiente archivo.</p>",
-      "style=\"opacity:.35\">Follow me on LinkedIn to be the first to download the next file.</p>"
-    ],
-    [
-      "tabindex=\"-1\">Seguir en LinkedIn</a>",
-      "tabindex=\"-1\">Follow on LinkedIn</a>"
-    ],
-    [
-      "/ ${denom} archivos`",
-      "/ ${denom} files`"
     ]
   ]
 }
