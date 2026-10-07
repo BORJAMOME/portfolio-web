@@ -9,7 +9,7 @@
 /* ─── RESPONSIVE BASE — MOBILE FIRST ─── */
 @media (max-width: 640px) {
   #nav { height: 56px; padding: 0 clamp(1rem, 3vw, 1.5rem); }
-  .logo { font-size: 15px; }
+  .logo { font-size: 16px; }
   .nav-links { gap: 2px; }
   .nav-links a { font-size: 12px; padding: 4px 10px; }
   .nav-cta { padding: 6px 20px !important; min-width: auto !important; font-size: 12px !important; }
