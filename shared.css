@@ -75,28 +75,15 @@ body {
 }
 
 .logo {
-  font-size: 17px; font-weight: 700;
+  font-size: 19px; font-weight: 700;
   color: var(--ink); text-decoration: none;
-  letter-spacing: -.3px;
+  letter-spacing: -.4px;
   display: inline-flex; align-items: baseline;
   white-space: nowrap;
 }
-/* Punto final de marca: punto tipográfico sólido a escala del copy
-   (≈ el punto de la Plus Jakarta 700), sentado en la línea base. */
-.logo-dot {
-  display: inline-block;
-  width: .3em; height: .3em;
-  margin-left: .12em;
-  border-radius: 50%;
-  background: var(--ink);
-  transform-origin: 50% 100%;
-  transition: transform .5s var(--ease-spring);
-}
-.logo:hover .logo-dot,
-.logo:focus-visible .logo-dot { transform: scale(1.4); }
-
-@media (prefers-reduced-motion: reduce) {
-  .logo-dot { transition: none; }
+/* Escritorio estrecho: el menú completo no deja sitio para el logo a 19 px */
+@media (min-width: 876px) and (max-width: 1100px) {
+  .logo { font-size: 17px; letter-spacing: -.3px; }
 }
 
 /* Nombre letra a letra (split-name.js). Hereda tipografía del contenedor.
@@ -953,7 +940,7 @@ nav.nav-drawer-links {
 }
 @media (max-width: 640px) {
   #nav, body > nav { height: 56px; padding: 0 clamp(1rem,3vw,1.5rem); }
-  .logo { font-size: 15px; }
+  .logo { font-size: 16px; }
 }
 @media (min-width: 876px) {
   .nav-burger { display: none !important; }
