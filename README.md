@@ -10,13 +10,16 @@ Es un sitio estático (HTML, CSS y JavaScript sin framework) publicado con GitHu
 
 | Qué | Dónde |
 | --- | --- |
-| Estilos comunes (variables, menú, pie) | `shared.css` · estilos de la home y de Power BI en `css/` |
+| Estilos comunes (variables, menú, pie) | `shared.css` · estilos de la home, de Power BI y del área privada en `css/` |
 | Aviso de cookies y preferencias (RGPD) | `consent.js` · política en `privacidad.html` |
 | Casos de estudio (apariciones y contadores) | `case.js` |
 | «Copiar email» | `contact.js` |
 | Selector de idioma | `lang.js` |
 | Librerías de terceros (Chart.js, GSAP) | `vendor/`, servidas desde el propio dominio |
-| Manual de Data Storytelling | `ds/` |
+| Manual de Data Storytelling | `ds/` (ver `ds/README.md`) |
+| Manual de Machine Learning | `ml/` (generado en otro repositorio, ver `ml/README.md`) |
+| Área privada (Supabase) | `area-privada.html` · `area-privada.js` · base de datos y seguridad en `supabase/area-privada.sql` |
+| Scripts de mantenimiento y comprobación | `tools/` (Node, sin dependencias salvo `check-a11y.mjs`) |
 
 ### Versión en inglés
 
@@ -37,13 +40,13 @@ Las traducciones están en `i18n/` (ver `i18n/README.md`).
 
 ### Comprobaciones
 
-Se ejecutan solas en cada pull request (`.github/workflows/checks.yml`) y también se pueden lanzar en local:
+Se ejecutan solas en cada pull request y en cada push a `main` (`.github/workflows/checks.yml`) y también se pueden lanzar en local:
 
 ```bash
 node tools/build-en.mjs --check    # inglés al día y sin frases por traducir
 node tools/check-links.mjs         # enlaces, imágenes, anclas, sitemap y hreflang
 node tools/version-assets.mjs --check  # versiones de caché al día
-npm i --no-save playwright axe-core && npx playwright install chromium
+npm i --no-save --no-package-lock playwright@1.56.1 axe-core@4.13.0 && npx playwright install chromium
 node tools/check-a11y.mjs          # accesibilidad WCAG 2.2 AA y errores de JavaScript
 ```
 
