@@ -220,7 +220,7 @@ body{
   from{opacity:0;transform:translateY(12px)}
   to{opacity:1;transform:translateY(0)}
 }
-.m:not(.m-soon){
+.m{
   animation:fadeUpCard .32s var(--ease) both;
 }
 .m[data-stagger]{
@@ -462,32 +462,6 @@ body{
   display:none;
 }
 
-/* ── Tarjeta «En desarrollo»: hueco troquelado de la próxima caja ── */
-.sb-ghost{
-  position:absolute;inset:0;
-  border:1.5px dashed rgba(17,17,17,.22);
-  border-radius:12px;
-  background:rgba(255,255,255,.35);
-  overflow:hidden;
-}
-.sb-ghost span{
-  position:absolute;right:6px;top:14px;
-  font-family:var(--font-serif);
-  font-size:190px;font-weight:600;letter-spacing:-9px;line-height:.8;
-  color:rgba(17,17,17,.07);
-}
-.m-soon .m-cta-soon{
-  font-size:13px;
-  font-weight:600;
-  color:var(--ink);
-  text-decoration:none;
-  display:inline-flex;align-items:center;gap:8px;
-  margin-top:auto;
-  padding-top:12px;
-}
-.m-soon .m-cta-soon::after{
-  content:"";display:inline-block;width:18px;height:1px;background:currentColor;
-}
 @media (prefers-reduced-motion:reduce){.m *{transition:none !important}}
 
 /* ── Estado vacío del filtro / búsqueda ── */
@@ -590,7 +564,7 @@ body{
     animation-duration:0ms !important;
     animation-iteration-count:1 !important;
   }
-  .m:not(.m-soon){ animation:none }
+  .m{ animation:none }
   .m:hover{ transform:none !important }
   .cierre{ opacity:1; transform:translateY(0); }
   .cierre.in-view{ animation:none; }
@@ -849,98 +823,98 @@ body{
 
 <script>
 const ITEMS = [
-  {n:"01", cat:"gestion", title:"Gantt nativo de Power BI", subtitle:"Sin scripts, solo DAX puro",
-    desc:"Barras por tarea, línea de «hoy» automática, segmentación dinámica y tooltips HTML. Toda la lógica en DAX puro: duración, solapamiento y progreso. Cero visuals externos.",
+  {n:"01", cat:"gestion", title:"Gantt nativo de Power BI", subtitle:"Cronograma de proyectos sin visuals externos",
+    desc:"Un diagrama de Gantt hecho solo con visuals nativos y DAX: una barra por tarea con su estado, una línea de «hoy» que se mueve sola, filtro por proyecto y tooltips con el detalle. De un vistazo ves qué está terminado, qué sigue activo y qué va con retraso. Sirve también para campañas, onboarding o planificación de entregas.",
     tags:["Gantt","DAX","Tooltips HTML"],
     dl:"https://drive.google.com/drive/folders/1D46f-JXAMrCYbSXHzCutN5nv7hSgEoYG?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-datavisualization-activity-7360648315782283264-NQ4T"},
-  {n:"02", cat:"gestion", title:"Control de presupuestos", subtitle:"Top N nativo · concentración real en segundos",
-    desc:"Detecta dónde se concentra la inversión antes de que sea tarde. Lógica Top N (1, 3 o 5 proyectos), narrativa automática con DAX y visualización del peso real de cada partida sin ruido.",
+  {n:"02", cat:"gestion", title:"Control de presupuestos", subtitle:"Top N de proyectos con narrativa automática",
+    desc:"Visual que muestra cuánto del presupuesto total se llevan los proyectos más grandes. Eliges ver el Top 1, 3 o 5 y un texto generado con DAX te explica el resultado. Útil para detectar a tiempo si la inversión depende de muy pocos proyectos.",
     tags:["Top N dinámico","Budget","DAX narrativo"],
     dl:"https://drive.google.com/drive/folders/10WcoChMOO1KDmNm0a2adNixgIDEyRLBg?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-salesanalytics-activity-7418539287245639680-0Ynp"},
-  {n:"03", cat:"gestion", title:"Control de presupuestos", subtitle:"Top N nativo · concentración real en segundos",
-    desc:"Analiza dónde se concentra realmente la inversión. Lógica Top N nativa (1, 3 o 5 proyectos), peso real de cada partida sin ruido y narrativa automática con DAX para interpretar la distribución.",
+  {n:"03", cat:"gestion", title:"Reparto del presupuesto", subtitle:"¿El presupuesto está concentrado o equilibrado?",
+    desc:"Widget que reparte la inversión entre proyectos y destaca los 1, 3 o 5 que más pesan, con una frase automática en DAX que dice si el presupuesto está concentrado o equilibrado. Sirve para detectar riesgos de dependencia antes de que crezcan y explicarlos sin hacer cuentas.",
     tags:["Top N dinámico","Budget","DAX narrativo"],
     dl:"https://drive.google.com/drive/folders/1qOBguC9N5qNSkoPBoLHJnOlaXqyPWgTy?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dashboarddesign-dataviz-activity-7374137020979339264-7kBX"},
-  {n:"04", cat:"ventas", title:"Comparador de períodos", subtitle:"Variación % entre dos momentos en un clic",
-    desc:"Selecciona dos años y ve la variación porcentual al instante. Resalta solo las columnas relevantes, atenúa el resto y añade etiquetas dinámicas que interpretan el cambio. Sin cálculo mental.",
+  {n:"04", cat:"ventas", title:"Comparador de períodos", subtitle:"Elige dos años y ve cuánto ha cambiado el negocio",
+    desc:"Gráfico de columnas en el que seleccionas dos años y aparece la variación % entre ellos. Solo se resaltan las dos columnas comparadas, el resto se atenúa, y una etiqueta explica si hubo crecimiento o caída. Nadie tiene que hacer cuentas para entender la evolución.",
     tags:["Variación %","Comparación temporal","DAX"],
     dl:"https://drive.google.com/drive/folders/1bev8QdZ-oc38V70oOrk4uaZU5DNbd5dk?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7376214576889098240-JzRp"},
-  {n:"05", cat:"ventas", title:"Dashboard financiero adaptativo", subtitle:"El usuario decide la pregunta, el visual se adapta",
-    desc:"Beneficio, unidades y margen % en un mismo visual. Filtra por año, mes o día sin perder contexto. Colores que reaccionan al rendimiento y matriz de calendario interactiva. El segmentador dirige, no solo filtra.",
+  {n:"05", cat:"ventas", title:"Dashboard financiero adaptativo", subtitle:"Beneficio, unidades y margen en un visual que tú diriges",
+    desc:"Dashboard en el que los segmentadores eligen qué analizar: beneficio, unidades vendidas o margen %, por año, mes o día. Los colores cambian según el beneficio y una matriz de calendario permite bajar al detalle diario. Pensado para no saturar el informe con demasiadas métricas a la vez.",
     tags:["Financiero","Segmentador","Calendario"],
     dl:"https://drive.google.com/drive/folders/1cBwC5p3a60n_xWjv5Vb0RzCfGdT6LChk?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7379158005759508480-DD9P"},
-  {n:"06", cat:"ventas", title:"Resaltar sin filtrar", subtitle:"Destaca lo que importa sin perder el contexto",
-    desc:"Resalta proyectos específicos sin eliminar el resto. Segmentadores que no rompen la visión completa y lectura financiera inmediata. Ves la parte y el todo a la vez.",
+  {n:"06", cat:"ventas", title:"Resaltar sin filtrar", subtitle:"Destaca unos proyectos sin perder de vista el resto",
+    desc:"Al seleccionar uno o varios proyectos, se resaltan en el gráfico pero los demás siguen visibles, así no pierdes el contexto del presupuesto total. En el ejemplo, un solo proyecto se lleva casi una cuarta parte del total y salta a la vista. Aplicable a cuota de mercado, clientes morosos o seguimiento de proyectos.",
     tags:["Resaltado","Contexto","TopN"],
     dl:"https://drive.google.com/drive/folders/15OMJxVmbvQuYkhMLEmd4QKVU7QTVY675?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7381750867634487296-8LRO"},
-  {n:"07", cat:"ventas", title:"Variación sobre barras", subtitle:"El cambio visible directamente sobre cada barra",
-    desc:"Variación porcentual vs. mes anterior sobre cada barra, colores automáticos según tipo de cambio e indicadores que destacan los saltos más fuertes. Sin tablas auxiliares ni cálculos externos.",
+  {n:"07", cat:"ventas", title:"Variación sobre barras", subtitle:"Ventas mensuales con la variación % encima de cada barra",
+    desc:"Gráfico de ventas por mes que muestra sobre cada barra cuánto ha cambiado respecto al mes anterior, con colores automáticos según suba o baje y aviso en los saltos más fuertes. Funciona con cualquier segmentador (zona, campaña, producto) y no necesita tablas auxiliares.",
     tags:["Variación %","Ventas","Anomalías"],
     dl:"https://drive.google.com/drive/folders/1CA-Q8laMoZiiB5OaNzTY3NHlZ8qJZV2e?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7391493455455264769-Q8Ya"},
-  {n:"08", cat:"ventas", title:"Beneficio vs. Objetivo", subtitle:"Cumplimiento mensual con contexto real",
-    desc:"Objetivo dinámico ajustable, colores automáticos por cumplimiento y porcentaje sobre cada barra. Línea de objetivo + promedio anual siempre visibles. El subtítulo se actualiza solo según los meses que alcanzan la meta.",
+  {n:"08", cat:"ventas", title:"Beneficio vs. Objetivo", subtitle:"Qué meses cumplen el objetivo y por cuánto",
+    desc:"Gráfico de beneficio mensual con un objetivo que puedes ajustar. Cada barra muestra su % de cumplimiento, los meses que llegan a la meta se colorean y siempre ves la línea de objetivo y la media anual. El subtítulo se reescribe solo con cuántos meses cumplen.",
     tags:["Objetivo dinámico","Cumplimiento","KPI financiero"],
     dl:"https://drive.google.com/drive/folders/18uECm3MAfE4Vh75ThBU6tHD84SRzb00Q?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7394778746525913088-iwtA"},
-  {n:"09", cat:"ventas", title:"Small multiples por producto", subtitle:"Cada producto contra su propio promedio",
-    desc:"Small multiples donde cada producto tiene su propio gráfico y su línea de promedio fija. Highlight dinámico por mes, etiqueta comparativa con diferencia en unidades y %. Sin comparaciones forzadas entre productos.",
+  {n:"09", cat:"ventas", title:"Small multiples por producto", subtitle:"Cada producto comparado con su propia media",
+    desc:"Un minigráfico por producto con la línea de su promedio, para saber si rinde por encima o por debajo de lo normal en lugar de compararlo con productos más grandes. Al elegir un mes se resalta en todos los gráficos y una etiqueta indica la diferencia en unidades y en %.",
     tags:["Small multiples","Promedio dinámico","Productos"],
     dl:"https://drive.google.com/drive/folders/1N1-Va0cOTAwu4jaAHjcvfedo7dfSqNK1?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7399477094331858945-K9HS"},
-  {n:"10", cat:"storytelling", title:"Comparativa entre productos", subtitle:"Anual + zoom trimestral automático",
-    desc:"Comparativa anual con highlight del periodo seleccionado y zoom trimestral automático que aparece al elegir un año. Etiqueta narrativa dinámica que resume lo que ocurre. Ves el resultado y cómo se construyó.",
+  {n:"10", cat:"storytelling", title:"Comparativa entre productos", subtitle:"Dos productos año a año, con zoom por trimestres",
+    desc:"Gráfico de líneas que compara dos productos por años. Al seleccionar un año, se resalta y aparece automáticamente su detalle por trimestres, con una etiqueta que resume qué pasó. Así ves cuándo uno supera al otro y cuándo cambia la tendencia.",
     tags:["Comparativa","Zoom trimestral","Narrativa"],
     dl:"https://drive.google.com/drive/folders/1Pwr_1y33M3iihwwj6kgq1atKhtBkvnMT?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7404201819641597954-wwos"},
-  {n:"11", cat:"storytelling", title:"Evolución con narrativa", subtitle:"El cambio entre periodos, explicado en el visual",
-    desc:"Tooltip dinámico que explica el cambio entre columnas, etiqueta automática del mejor año y parámetros dinámicos nativos. Storytelling visual sin ruido: entiendes la evolución sin leer una sola tabla.",
+  {n:"11", cat:"storytelling", title:"Evolución con narrativa", subtitle:"Columnas que explican cuánto cambió y cuál fue el mejor año",
+    desc:"Gráfico de evolución anual con un tooltip que explica la variación respecto al periodo anterior y una etiqueta automática en el mejor año. Usa parámetros nativos para cambiar lo que se analiza. Entiendes la evolución del negocio sin abrir ninguna tabla.",
     tags:["Tooltips dinámicos","Parámetros","Narrativa"],
     dl:"https://drive.google.com/drive/folders/1retbVvPTUQHYaqZQQT0Ci9cTT3cW56iY?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7421562966178889729-5y8L"},
-  {n:"12", cat:"ventas", title:"Dashboard de alertas comerciales", subtitle:"El dashboard que alerta, no solo informa",
-    desc:"Cumplimiento de objetivo visible por producto de un vistazo. Sin revisar tablas ni comparar cifras: ves qué productos cumplen, cuáles están por debajo y cuáles requieren acción inmediata.",
+  {n:"12", cat:"ventas", title:"Dashboard de alertas comerciales", subtitle:"Qué productos cumplen el objetivo y cuáles necesitan acción",
+    desc:"Dashboard que muestra el cumplimiento del objetivo de cada producto y lo clasifica: cumple, por debajo o requiere acción inmediata. En segundos sabes dónde actuar sin comparar cifras una a una. Útil para objetivos comerciales y control del catálogo.",
     tags:["Alertas","Cumplimiento","Comercial"],
     dl:"https://drive.google.com/drive/folders/1P-LXTowY4CFvLdhBCAut2Qgxsuw-bE6D?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7427045290324570112-v3s2"},
-  {n:"13", cat:"storytelling", title:"Comparador de periodos flexible", subtitle:"Tú eliges la referencia, el visual hace el resto",
-    desc:"Elige fecha de referencia, periodo (30, 90, 180, 365 días o acumulado) y métrica. Calcula automáticamente el rango comparado, muestra variación en € y % con color. Sin fechas raras ni suposiciones.",
+  {n:"13", cat:"storytelling", title:"Comparador de periodos flexible", subtitle:"Tú eliges la fecha de referencia y el periodo a comparar",
+    desc:"Eliges una fecha, un periodo (30, 90, 180 o 365 días, o lo que va de año) y una métrica. El visual calcula desde dónde empieza la comparación, resalta ese rango y muestra la variación en € y en %, en verde o rojo según el resultado.",
     tags:["Periodos dinámicos","Variación","Contexto"],
     dl:"https://drive.google.com/drive/folders/1GSQm1ZrgiwG_nFgdOocOp1eUf_3FgVR-?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-businessitelligence-activity-7430635213443035137-TJbj"},
-  {n:"14", cat:"storytelling", title:"TopN con puesto de honor", subtitle:"Reduce el ruido, enfoca la decisión",
-    desc:"TopN dinámico con RANKX que enfoca solo las barras que importan. El resto pasa a segundo plano. Menos análisis, más claridad: cuando el gráfico te obliga a mirar dos barras en lugar de diez, la decisión aparece sola.",
+  {n:"14", cat:"storytelling", title:"Top N para priorizar", subtitle:"Ventas por producto que destacan solo lo importante",
+    desc:"Gráfico de ventas por producto en el que eliges cuántos destacar (Top N con RANKX). Los del Top se quedan en primer plano y el resto pasa a segundo plano. Mirar dos barras en lugar de diez hace mucho más fácil decidir dónde actuar.",
     tags:["TopN","RANKX","Reducción de ruido"],
     dl:"https://drive.google.com/drive/folders/1mZj6EO8sKoNVlDjmYZtnXSVqbUDtb9jH?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7432461459080765440-Y9EH"},
-  {n:"15", cat:"storytelling", title:"Zoom visual sobre outliers", subtitle:"El gráfico que no miente",
-    desc:"Cuando un producto domina la escala, el resto parece igual aunque no lo sea. 4 medidas DAX y capas visuales generan un doble zoom: magnitud real del dato dominante y diferencias reales entre todos los demás. Sin visuals de pago.",
+  {n:"15", cat:"storytelling", title:"Zoom visual sobre outliers", subtitle:"Cuando un producto aplasta la escala del gráfico",
+    desc:"Si un producto vende mucho más que el resto, las demás barras parecen iguales aunque no lo sean. Este visual añade un zoom con 4 medidas DAX y capas de gráficos: ves la magnitud real del producto dominante y, a la vez, las diferencias entre los demás. Sin visuals de pago.",
     tags:["Outliers","Doble escala","DAX"],
     dl:"https://drive.google.com/drive/folders/1CVcug_-gF6urL1bz9dorhZIpV0t17bm-?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7437118505080020992-m7Em"},
-  {n:"16", cat:"slicer", title:"Slope Chart con small multiples", subtitle:"Evolución, variación, peso y ranking en un solo bloque",
-    desc:"Cada producto concentra su evolución, variación, peso y ranking en un único bloque visual. Cambia de unidades a ingresos con un clic y el ranking se transforma. Todo nativo, sin visuals externos.",
+  {n:"16", cat:"slicer", title:"Slope Chart con small multiples", subtitle:"Evolución, variación, peso y ranking de cada producto en un bloque",
+    desc:"Un minigráfico de pendiente por producto que reúne su evolución entre dos periodos, la variación, su % sobre el total y su puesto en el ranking. Con un clic cambias de unidades a ingresos y ves cómo cambia el ranking. Todo nativo.",
     tags:["Slope chart","Small multiples","DAX"],
     dl:"https://drive.google.com/drive/folders/1jUdeMz4ziWdyBJiKA48-JYqUdO_JqZp4?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7439647400132116480-1PFW"},
-  {n:"17", cat:"slicer", title:"Explorador de ventas por cliente", subtitle:"Top N · filtro por país · títulos que reaccionan",
-    desc:"Elige el Top N de clientes, filtra por país y el gráfico destaca automáticamente la selección. Títulos y subtítulos que cambian dinámicamente. Input Slicer que centraliza todas las decisiones en un solo sitio.",
+  {n:"17", cat:"slicer", title:"Explorador de ventas por cliente", subtitle:"Top N de clientes y país desde un único Input Slicer",
+    desc:"Gráfico de ventas por cliente controlado desde el nuevo Input Slicer de Power BI: eliges cuántos clientes destacar y de qué país, y el gráfico resalta la selección. Los títulos y subtítulos se reescriben solos según lo que elijas.",
     tags:["Top N dinámico","Títulos dinámicos","Input Slicer"],
     dl:"https://drive.google.com/drive/folders/1l5ewaopHRJJlwrhoGSZamUSy_TiMGhH-?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7442540385882554368-y4go"},
-  {n:"18", cat:"slicer", title:"KPI Card adaptativo", subtitle:"El usuario elige qué KPI ver, tú diseñas el sistema",
-    desc:"Ya no diseñas un KPI fijo. El usuario escribe su métrica (ventas, margen, ticket medio) y el modelo traduce, calcula y ajusta el formato solo. Todo nativo, sin código.",
+  {n:"18", cat:"slicer", title:"KPI Card adaptativo", subtitle:"Escribes el KPI que quieres ver y la tarjeta cambia",
+    desc:"Tarjeta KPI con un Input Slicer: escribes, por ejemplo, «ventas + yoy» o «margen + presupuesto» y la tarjeta muestra ese cálculo con el formato adecuado (€, % o número). Entiende sinónimos en español e inglés, como «sales» o «facturación». Funciona con ventas, margen, ticket medio y sus comparaciones.",
     tags:["Input Slicer","KPI dinámico","DAX"],
     dl:"https://drive.google.com/drive/folders/1OlNUFuw8OL0m9zDgYWBeUMXJFsN_FwlN?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-businessintelligence-activity-7452022964017008640-Z-VH"},
-  {n:"19", cat:"slicer", title:"Resaltar sin ocultar", subtitle:"Filtrar destruye contexto · resaltar lo mantiene",
-    desc:"Escribes España y los clientes españoles cobran vida — el resto no desaparece, se aparta. Sigues viendo el negocio completo. Input Slicer + DAX + Formato Condicional.",
+  {n:"19", cat:"slicer", title:"Resaltar sin ocultar", subtitle:"Busca clientes por país sin perder al resto de vista",
+    desc:"Tabla de clientes en la que escribes un país en un Input Slicer y sus clientes se resaltan con formato condicional, pero los demás siguen visibles. Así sabes si esos clientes pesan en el negocio o son anecdóticos. Construido con Input Slicer, DAX y formato condicional.",
     tags:["Input Slicer","Formato condicional","Contexto"],
     dl:"https://drive.google.com/drive/folders/1_uE5tEbIOsRybNqSrlTwXy4Zr31jvyH3?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7458166054264111104-Hov2"}
@@ -954,11 +928,7 @@ const T = {
   dl: 'Descargar .pbix',
   dlAria: 'Descargar',
   li: 'Ver post en LinkedIn',
-  done: 'Ya descargado',
-  soonTitle: 'En desarrollo',
-  soonSub: 'Próxima publicación',
-  soonDesc: 'Sígueme en LinkedIn para ser el primero en descargar el siguiente archivo.',
-  soonCta: 'Seguir en LinkedIn'
+  done: 'Ya descargado'
 };
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -1024,24 +994,10 @@ function moduleHtml(it, idx){
   </article>`;
 }
 
-function soonHtml(n){
-  return `
-  <article class="m m-soon" data-cat="soon" aria-hidden="true" inert>
-    <div class="sb-scene"><div class="sb-ghost"><span>${n}</span></div></div>
-    <div class="sb-floor"></div>
-    <div class="m-text">
-      <h3 class="m-title">${esc(T.soonTitle)}</h3>
-      <p class="m-sub">${esc(T.soonSub)}</p>
-      <p class="m-desc">${esc(T.soonDesc)}</p>
-      <a class="m-cta-soon" href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" tabindex="-1">${esc(T.soonCta)}</a>
-    </div>
-  </article>`;
-}
-
 // Inclinación 3D + brillo/foil que siguen al puntero (sin efecto con «reducir movimiento»)
 function bindTilt(grid){
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  grid.querySelectorAll('.m:not(.m-soon)').forEach(el=>{
+  grid.querySelectorAll('.m').forEach(el=>{
     el.addEventListener('pointermove', ev=>{
       const r = el.getBoundingClientRect(), x = (ev.clientX - r.left) / r.width, y = (ev.clientY - r.top) / r.height;
       el.style.setProperty('--ry', ((x - .5) * 16).toFixed(2) + 'deg');
@@ -1076,12 +1032,7 @@ function paintChrome(grid){
 
 function render(){
   const grid = document.getElementById('grid');
-  let html = ITEMS.map((it, idx) => moduleHtml(it, idx)).join("");
-  // rellenar la última fila si quedan huecos (máx 1 card "En desarrollo")
-  if(ITEMS.length % 4 !== 0){
-    html += soonHtml(String(ITEMS.length + 1).padStart(2,"0"));
-  }
-  grid.innerHTML = html;
+  grid.innerHTML = ITEMS.map((it, idx) => moduleHtml(it, idx)).join("");
 
   // Acciones reales (<a>): el enlace se abre solo; aquí solo stamp, badge y analítica
   grid.querySelectorAll('.m-dl').forEach(el=>{
