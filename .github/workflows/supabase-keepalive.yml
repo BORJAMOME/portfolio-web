@@ -1,0 +1,59 @@
+# Mantiene activo el proyecto de Supabase del área privada.
+# El plan gratuito pausa los proyectos tras 7 días sin actividad: esta Action hace una
+# consulta real a la base de datos dos veces por semana (lunes y jueves), así nunca
+# pasan más de 4 días sin uso aunque no entres en el área privada.
+#
+# Llama a public.keepalive() (supabase/keepalive.sql), que solo devuelve la hora del
+# servidor: no lee ni escribe datos. La URL y la clave son las PÚBLICAS que ya usa
+# area-privada.js; no hace falta ningún secreto.
+#
+# GitHub desactiva las tareas programadas de un repo público tras 60 días sin
+# actividad. El último paso vuelve a activar este workflow en cada ejecución para que
+# eso no ocurra. Si algo falla, el job termina en rojo y GitHub avisa por email.
+name: Supabase · mantener activo
+
+on:
+  schedule:
+    - cron: '17 7 * * 1,4'   # lunes y jueves, 07:17 UTC (09:17 en Madrid en verano)
+  workflow_dispatch:          # botón «Run workflow» para probarlo a mano
+
+permissions:
+  actions: write              # solo para reactivar este mismo workflow
+  contents: read
+
+concurrency:
+  group: supabase-keepalive
+  cancel-in-progress: false
+
+env:
+  SUPABASE_URL: https://rvizmzjkxunkbqomsvcv.supabase.co
+  SUPABASE_KEY: sb_publishable_rozvXk1dBTGMHmd1h7j6Zw_AW2mIWJv   # clave pública (publishable), no es secreta
+
+jobs:
+  latido:
+    name: Latido a la base de datos
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Llamar a public.keepalive()
+        run: |
+          for intento in 1 2 3; do
+            respuesta=$(curl -sS --max-time 30 -o cuerpo.txt -w '%{http_code}' -X POST \
+              "$SUPABASE_URL/rest/v1/rpc/keepalive" \
+              -H "apikey: $SUPABASE_KEY" -H 'Content-Type: application/json' -d '{}') || respuesta=000
+            if [ "$respuesta" = "200" ]; then
+              echo "Supabase activo. Hora del servidor: $(cat cuerpo.txt)"
+              echo "✅ Supabase respondió a las $(cat cuerpo.txt)" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            echo "Intento $intento: HTTP $respuesta · $(head -c 300 cuerpo.txt 2>/dev/null)"
+            sleep $((intento * 20))
+          done
+          echo "::error::Supabase no responde (HTTP $respuesta). Si el proyecto está pausado, reactívalo en supabase.com/dashboard; si es 404, ejecuta supabase/keepalive.sql."
+          exit 1
+
+      - name: Evitar que GitHub desactive esta tarea programada
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/supabase-keepalive.yml/enable"

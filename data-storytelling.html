@@ -1773,7 +1773,7 @@ window.addEventListener('scroll',function(){
   document.getElementById('nav').classList.toggle('scrolled',window.scrollY>10);
   var h=document.documentElement;
   var p=Math.min(1,Math.max(0,window.scrollY/(h.scrollHeight-h.clientHeight)||0));
-  document.getElementById('progressBar').style.setProperty('--p',p);
+  document.getElementById('progressBar').style.setProperty('--p',p);
 },{passive:true});
 </script>
 <script>

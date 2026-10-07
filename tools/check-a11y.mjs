@@ -41,7 +41,8 @@ const pages = process.argv.slice(2).length ? process.argv.slice(2) : all;
 const browser = await chromium.launch();
 let failed = 0;
 for (const p of pages) {
-  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
+  // bypassCSP: páginas con CSP estricta (area-privada.html) bloquean el axe inyectado; solo afecta a la prueba
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce', bypassCSP: true });
   await ctx.route(/googletagmanager|google-analytics|fonts\.(googleapis|gstatic)/, (r) => r.abort());
   await ctx.addInitScript(() => { try { localStorage.setItem('bm_cookie_consent', 'rejected'); } catch (e) {} });
   const page = await ctx.newPage();
