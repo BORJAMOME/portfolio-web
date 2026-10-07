@@ -1070,24 +1070,31 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 }
 .contact-bar-actions { flex-wrap: wrap; justify-content: center; }
 
-/* Escritorio: misma tarjeta a escala de pantalla grande — más aire interior,
-   titular protagonista, foto y botones algo mayores y en una sola fila. */
+/* Escritorio: la tarjeta compacta del móvil a mayor escala. Tarjeta estrecha
+   (640 px) para que el contenido la llene; las dos píldoras a la misma anchura
+   y «Descargar CV» centrado debajo como enlace terciario. Ritmo en 8 px:
+   titular → 32 → foto → 40 → acciones → 16 → CV. */
 @media (min-width: 861px) {
   .contact-bar {
-    max-width: 760px; margin: 0 auto;
-    padding: clamp(56px, 5.5vw, 72px) clamp(48px, 6vw, 88px);
+    max-width: 640px; margin: 0 auto;
+    padding: 64px 72px;
     border-radius: 28px;
     gap: 0;
   }
-  .contact-bar-h {
-    font-size: clamp(32px, 3vw, 42px);
-    line-height: 1.12; letter-spacing: -.8px;
+  .contact-bar-h { font-size: 40px; line-height: 1.1; letter-spacing: -1px; }
+  .contact-bar-photo { width: 72px; height: 72px; margin-top: 32px; }
+  .contact-bar-actions {
+    display: grid; grid-template-columns: repeat(2, minmax(200px, 1fr));
+    column-gap: 12px; row-gap: 16px; margin-top: 40px;
   }
-  .contact-bar-photo { width: 64px; height: 64px; margin-top: 28px; }
-  .contact-bar-actions { margin-top: 32px; gap: 12px; }
-  .contact-bar-btn { font-size: 15px; min-height: 48px; padding: 14px 26px; }
-  .contact-bar-btn-ghost { padding: 14px 18px; }
-  .contact-alt { margin-top: 24px; }
+  .contact-bar-btn { font-size: 15px; min-height: 52px; padding: 15px 28px; }
+  .contact-bar-btn-ghost {
+    grid-column: 1 / -1; justify-self: center;
+    min-height: 44px; padding: 10px 12px;
+    font-size: 14px; font-weight: 500;
+    text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px;
+  }
+  .contact-alt { margin-top: 32px; }
 }
 
 
