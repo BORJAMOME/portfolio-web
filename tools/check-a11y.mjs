@@ -52,15 +52,19 @@ for (const p of pages) {
   await page.waitForTimeout(800);
   const h = await page.evaluate(() => document.body.scrollHeight);
   for (let y = 0; y < h; y += 500) { await page.evaluate((y) => scrollTo(0, y), y); await page.waitForTimeout(40); }
-  // De vuelta arriba: el nav fijo es translúcido con desenfoque (axe no lo modela) y, si el
-  // análisis se hace al final de la página, mide su texto contra lo que haya debajo por azar.
-  await page.evaluate(() => scrollTo(0, 0));
   await page.waitForTimeout(1500);
   await page.addScriptTag({ content: AXE });
-  const violations = await page.evaluate(async () => {
-    const r = await axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] } });
+  // El nav fijo es translúcido con desenfoque (axe no lo modela): al final de la página mediría
+  // su texto contra lo que haya debajo por azar. Se analiza todo salvo el nav donde acaba el
+  // scroll, y el nav aparte, con la página arriba.
+  const run = (ctx) => page.evaluate(async (ctx) => {
+    const r = await axe.run(ctx, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] } });
     return r.violations.map((v) => `${v.id} ×${v.nodes.length} · ${v.help} · ${v.nodes[0].target.join(' ')}`);
-  });
+  }, ctx);
+  const violations = await run({ exclude: [['body > nav']] });
+  await page.evaluate(() => scrollTo(0, 0));
+  await page.waitForTimeout(300);
+  if (await page.$('body > nav')) violations.push(...await run({ include: [['body > nav']] }));
   const bad = violations.length + jsErrors.length;
   failed += bad ? 1 : 0;
   console.log(`${bad ? '✗' : '✓'} ${p}`);
