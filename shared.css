@@ -303,10 +303,12 @@ html.sn-pending [data-split-name] { visibility: hidden; }
 }
 
 /* ─── NAV SOCIAL ICONS ─── */
-.nav-social { display: flex; align-items: center; gap: 4px; margin-left: 6px; }
+/* Zona de clic de 36 × 44 px (sobra para el mínimo de 24 px de WCAG 2.2):
+   los iconos quedan a 18 px entre sí, su propio tamaño, y se leen como pareja. */
+.nav-social { display: flex; align-items: center; gap: 0; margin-left: 10px; }
 .nav-social a {
   display: flex; align-items: center; justify-content: center;
-  width: 44px; height: 44px; border-radius: var(--radius-md);
+  width: 36px; height: 44px; border-radius: var(--radius-md);
   color: var(--ink); opacity: 1;
   transition: opacity .2s var(--ease);
 }

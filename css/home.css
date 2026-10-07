@@ -894,7 +894,9 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   position: relative;
   overflow: hidden;
   text-align: center;
-  padding: clamp(280px, 32vw, 440px) 0;
+  /* Mismo ritmo que el cierre de las demás secciones (120 px en escritorio),
+     simétrico entre el stack y el footer; en móvil baja a 72 px. */
+  padding: clamp(72px, 10vw, 120px) 0;
 }
 .cta-final::before {
   display: none;
