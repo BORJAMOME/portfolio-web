@@ -17,7 +17,7 @@
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- Shared styles: variables, nav, footer, botones, reset -->
-<link rel="stylesheet" href="../shared.css?v=85cf5305e2">
+<link rel="stylesheet" href="../shared.css?v=6ec5e5386b">
 <link rel="stylesheet" href="../ds/manual.css?v=4956ee5ecf">
 <!-- Primary Meta Tags -->
 <meta name="description" content="An interactive guide to data storytelling and dashboard design: perception, noise, attention, visuals, composition and narrative, on a live dashboard.">
@@ -125,7 +125,7 @@
 <div class="progress-bar" id="progressBar"></div>
 
 <nav id="nav" aria-label="Main navigation">
-  <a href="./index.html" class="logo" aria-label="Borja Mora — Home"><span id="logoText" class="done">Borja Mora</span><span class="logo-mark"><svg class="logo-ring" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><circle class="logo-ring-bg" cx="9" cy="9" r="7.3" pathLength="1"/><circle class="logo-ring-fg" cx="9" cy="9" r="7.3" pathLength="1"/></svg><span class="logo-dot"></span></span></a>
+  <a href="./index.html" class="logo" aria-label="Borja Mora Méndez — Home"><span id="logoText" class="done">Borja Mora Méndez</span><span class="logo-dot" aria-hidden="true"></span></a>
   <div class="ds-lang" role="group" aria-label="Language · Idioma">
     <a href="../data-storytelling.html" class="ds-lang-b" hreflang="es" lang="es" data-lang-to="es" title="Leer en español" aria-label="Leer en español">ES</a>
     <span class="ds-lang-a" aria-current="true" lang="en" title="English">EN</span>
@@ -160,7 +160,7 @@
   <div class="nav-drawer-backdrop" id="navBackdrop"></div>
   <div class="nav-drawer-panel">
     <div class="nav-drawer-head">
-      <span class="nav-drawer-brand">Borja Mora.</span>
+      <span class="nav-drawer-brand">Borja Mora Méndez.</span>
       <button class="nav-drawer-close" id="navDrawerClose" aria-label="Close menu"><span class="nav-drawer-close-x" aria-hidden="true">×</span>Close</button>
     </div>
     <nav class="nav-drawer-links" aria-label="Mobile navigation">
@@ -1306,12 +1306,12 @@
           <summary>See DAX</summary>
           <div class="disc-b">
             <dl class="qph"><dt>What</dt><dd>A title that changes with the filter.</dd><dt>Why</dt><dd>A fixed title stops being true as soon as someone filters.</dd><dt>How</dt><dd>A text measure assigned to the visual’s title with conditional formatting (<i>fx</i>).</dd></dl>
-<pre class="code"><span class="f">Title</span> =
-<span class="s">"Sales in "</span>
-    &amp; <span class="k">SELECTEDVALUE</span>(Region[Name])
-    &amp; <span class="s">" are down "</span>
+<pre class="code"><span class="f">Titulo</span> =
+<span class="s">"Las ventas de "</span>
+    &amp; <span class="k">SELECTEDVALUE</span>(Region[Nombre])
+    &amp; <span class="s">" caen un "</span>
     &amp; <span class="k">FORMAT</span>([Var% YoY], <span class="s">"0%"</span>)
-    &amp; <span class="s">" on last year"</span></pre>
+    &amp; <span class="s">" frente al año pasado"</span></pre>
             <p style="margin-top:12px">In production I’d add a case for when the change is positive or when there isn’t a single region selected.</p>
           </div>
         </details>
@@ -1723,7 +1723,7 @@
   <div class="foot-inner">
     <div class="foot-grid">
       <div class="foot-col foot-col--brand">
-        <p class="foot-brand-name">Borja Mora.</p>
+        <p class="foot-brand-name">Borja Mora Méndez.</p>
         <p class="foot-brand-desc">Junior Data Analyst</p>
         <p class="foot-brand-loc">Madrid, Spain</p>
         <button type="button" class="foot-copy-email" data-copy-email data-ga-location="footer"><span class="foot-copy-email-addr">borja.mora.mendez@gmail.com</span><span class="foot-copy-email-act" data-copy-label aria-live="polite">Copy</span></button>
@@ -1774,9 +1774,7 @@ window.addEventListener('scroll',function(){
   document.getElementById('nav').classList.toggle('scrolled',window.scrollY>10);
   var h=document.documentElement;
   var p=Math.min(1,Math.max(0,window.scrollY/(h.scrollHeight-h.clientHeight)||0));
-  document.getElementById('progressBar').style.setProperty('--p',p);
-  h.style.setProperty('--logo-ring',p);
-  var lm=document.querySelector('.logo-mark'); if(lm) lm.classList.toggle('at-end',p>=0.98);
+  document.getElementById('progressBar').style.setProperty('--p',p);
 },{passive:true});
 </script>
 <script>

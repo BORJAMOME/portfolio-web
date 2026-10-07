@@ -18,7 +18,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet"></noscript>
 <!-- Shared styles: variables, nav, footer, botones, reset -->
-<link rel="stylesheet" href="../shared.css?v=85cf5305e2">
+<link rel="stylesheet" href="../shared.css?v=6ec5e5386b">
 <!-- Primary Meta Tags -->
 <meta name="description" content="Power BI · DAX · Python · SQL · UX/UI · Data storytelling. Madrid or remote.">
 <meta name="keywords" content="Borja Mora, Data Analyst Madrid, Power BI Developer, Microsoft PL-300, NTT Data, Business Intelligence, Data Storytelling, Python, SQL, UX UI, Neoland, Analytics Translator">
@@ -823,7 +823,7 @@
 
 <!-- NAV -->
 <nav id="nav" aria-label="Main navigation">
-  <a href="./index.html" class="logo" aria-label="Borja Mora — Home"><span id="logoText" class="done">Borja Mora</span><span class="logo-mark"><svg class="logo-ring" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><circle class="logo-ring-bg" cx="9" cy="9" r="7.3" pathLength="1"/><circle class="logo-ring-fg" cx="9" cy="9" r="7.3" pathLength="1"/></svg><span class="logo-dot"></span></span></a>
+  <a href="./index.html" class="logo" aria-label="Borja Mora Méndez — Home"><span id="logoText" class="done">Borja Mora Méndez</span><span class="logo-dot" aria-hidden="true"></span></a>
   <div class="ds-lang" role="group" aria-label="Language · Idioma">
     <a href="../sobre-mi.html" class="ds-lang-b" hreflang="es" lang="es" data-lang-to="es" title="Leer en español" aria-label="Leer en español">ES</a>
     <span class="ds-lang-a" aria-current="true" lang="en" title="English">EN</span>
@@ -858,7 +858,7 @@
   <div class="nav-drawer-backdrop" id="navBackdrop"></div>
   <div class="nav-drawer-panel">
     <div class="nav-drawer-head">
-      <span class="nav-drawer-brand">Borja Mora.</span>
+      <span class="nav-drawer-brand">Borja Mora Méndez.</span>
       <button class="nav-drawer-close" id="navDrawerClose" aria-label="Close menu"><span class="nav-drawer-close-x" aria-hidden="true">×</span>Close</button>
     </div>
     <nav class="nav-drawer-links" aria-label="Mobile navigation">
@@ -984,7 +984,8 @@
           </a>
           <a href="https://tally.so/r/6878EN" target="_blank" rel="noopener noreferrer" class="btn btn-primary" data-ga="clic_form_cv" data-ga-location="hero">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download CV </a>
+            Descargar CV
+          </a>
         </div>
       </div>
 
@@ -1109,7 +1110,8 @@
         </a>
         <a href="https://tally.so/r/6878EN" target="_blank" rel="noopener noreferrer" class="btn btn-primary" data-ga="clic_form_cv" data-ga-location="sobre_mi_final">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Download CV </a>
+          Descargar CV
+        </a>
       </div>
     </div>
   </div>
@@ -1122,7 +1124,7 @@
   <div class="foot-inner">
     <div class="foot-grid">
       <div class="foot-col foot-col--brand">
-        <p class="foot-brand-name">Borja Mora.</p>
+        <p class="foot-brand-name">Borja Mora Méndez.</p>
         <p class="foot-brand-desc">Junior Data Analyst</p>
         <p class="foot-brand-loc">Madrid, Spain</p>
         <button type="button" class="foot-copy-email" data-copy-email data-ga-location="footer"><span class="foot-copy-email-addr">borja.mora.mendez@gmail.com</span><span class="foot-copy-email-act" data-copy-label aria-live="polite">Copy</span></button>
@@ -1199,9 +1201,7 @@ const nav = document.getElementById('nav');
 window.addEventListener('scroll', () => {
   nav.classList.toggle('scrolled', scrollY > 40);
   const h = document.documentElement;
-  const p = Math.min(1, Math.max(0, scrollY/(h.scrollHeight-h.clientHeight) || 0));
-  h.style.setProperty('--logo-ring', p);
-  document.querySelector('.logo-mark')?.classList.toggle('at-end', p >= 0.98);
+  const p = Math.min(1, Math.max(0, scrollY/(h.scrollHeight-h.clientHeight) || 0));
 });
 
 // ─── TYPING EFFECT — desactivado ───

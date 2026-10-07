@@ -17,7 +17,7 @@
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet">
 <!-- Shared styles: variables, nav, footer, botones, reset -->
-<link rel="stylesheet" href="./shared.css?v=85cf5305e2">
+<link rel="stylesheet" href="./shared.css?v=6ec5e5386b">
 <!-- Primary Meta Tags -->
 <meta name="description" content="Infografías editoriales, cartografía 3D y diseño de la información. Proyectos de visualización de datos donde el diseño es la herramienta analítica.">
 <meta name="keywords" content="visualización de datos, infografías, mapas 3D, cartografía, data viz, diseño de la información, Borja Mora">
@@ -321,7 +321,7 @@
 <div class="progress-bar" id="progressBar"></div>
 
 <nav id="nav" aria-label="Navegación principal">
-  <a href="./index.html" class="logo" aria-label="Borja Mora — Inicio"><span id="logoText" class="done">Borja Mora</span><span class="logo-mark"><svg class="logo-ring" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><circle class="logo-ring-bg" cx="9" cy="9" r="7.3" pathLength="1"/><circle class="logo-ring-fg" cx="9" cy="9" r="7.3" pathLength="1"/></svg><span class="logo-dot"></span></span></a>
+  <a href="./index.html" class="logo" aria-label="Borja Mora Méndez — Inicio"><span id="logoText" class="done">Borja Mora Méndez</span><span class="logo-dot" aria-hidden="true"></span></a>
   <div class="ds-lang" role="group" aria-label="Idioma · Language">
     <span class="ds-lang-a" aria-current="true" lang="es" title="Español">ES</span>
     <a href="./en/data-visualisation.html" class="ds-lang-b" hreflang="en" lang="en" data-lang-to="en" title="Read in English" aria-label="Read in English">EN</a>
@@ -356,7 +356,7 @@
   <div class="nav-drawer-backdrop" id="navBackdrop"></div>
   <div class="nav-drawer-panel">
     <div class="nav-drawer-head">
-      <span class="nav-drawer-brand">Borja Mora.</span>
+      <span class="nav-drawer-brand">Borja Mora Méndez.</span>
       <button class="nav-drawer-close" id="navDrawerClose" aria-label="Cerrar menu"><span class="nav-drawer-close-x" aria-hidden="true">×</span>Cerrar</button>
     </div>
     <nav class="nav-drawer-links" aria-label="Navegación móvil">
@@ -603,7 +603,7 @@
   <div class="foot-inner">
     <div class="foot-grid">
       <div class="foot-col foot-col--brand">
-        <p class="foot-brand-name">Borja Mora.</p>
+        <p class="foot-brand-name">Borja Mora Méndez.</p>
         <p class="foot-brand-desc">Data Analyst Junior</p>
         <p class="foot-brand-loc">Madrid, España</p>
         <button type="button" class="foot-copy-email" data-copy-email data-ga-location="footer"><span class="foot-copy-email-addr">borja.mora.mendez@gmail.com</span><span class="foot-copy-email-act" data-copy-label aria-live="polite">Copiar</span></button>
@@ -655,9 +655,7 @@ window.addEventListener('scroll',()=>{
   document.getElementById('nav').classList.toggle('scrolled',window.scrollY>10);
   const h=document.documentElement;
   const p=Math.min(1, Math.max(0, window.scrollY/(h.scrollHeight-h.clientHeight) || 0));
-  document.getElementById('progressBar').style.transform=`scaleX(${p})`;
-  h.style.setProperty('--logo-ring', p);
-  document.querySelector('.logo-mark')?.classList.toggle('at-end', p >= 0.98);
+  document.getElementById('progressBar').style.transform=`scaleX(${p})`;
 });
 
 // SR observer

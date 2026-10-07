@@ -78,42 +78,25 @@ body {
   font-size: 17px; font-weight: 700;
   color: var(--ink); text-decoration: none;
   letter-spacing: -.3px;
-  display: flex; align-items: center; gap: 7px;
+  display: inline-flex; align-items: baseline;
+  white-space: nowrap;
 }
-.logo-mark {
-  position: relative; width: 18px; height: 18px;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-.logo-ring {
-  position: absolute; inset: 0; width: 18px; height: 18px;
-  transform: rotate(-90deg); pointer-events: none;
-  transition: filter .5s var(--ease);
-}
-.logo-ring-bg, .logo-ring-fg { fill: none; stroke-width: 1.2; }
-.logo-ring-bg {
-  stroke: rgba(17,17,17,.12);
-  transition: opacity .3s var(--ease) .08s;
-}
-.logo-ring-fg {
-  stroke: var(--ink); stroke-linecap: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: calc(1 - var(--logo-ring, 0));
-  transition: stroke-dashoffset .06s linear;
-}
+/* Punto final de marca: punto tipográfico sólido a escala del copy
+   (≈ el punto de la Plus Jakarta 700), sentado en la línea base. */
 .logo-dot {
-  width: 7px; height: 7px; border-radius: 50%;
+  display: inline-block;
+  width: .3em; height: .3em;
+  margin-left: .12em;
+  border-radius: 50%;
   background: var(--ink);
-  transition: transform .55s var(--ease-spring);
+  transform-origin: 50% 100%;
+  transition: transform .5s var(--ease-spring);
 }
-
-/* Al llegar al final del scroll, el anillo se cierra en un punto sólido */
-.logo-mark.at-end .logo-dot { transform: scale(2.3); }
-.logo-mark.at-end .logo-ring-bg { opacity: 0; }
-.logo-mark.at-end .logo-ring { filter: drop-shadow(0 0 3px rgba(17,17,17,.28)); }
+.logo:hover .logo-dot,
+.logo:focus-visible .logo-dot { transform: scale(1.4); }
 
 @media (prefers-reduced-motion: reduce) {
-  .logo-ring-fg, .logo-dot, .logo-ring-bg, .logo-ring { transition: none; }
+  .logo-dot { transition: none; }
 }
 
 /* Typing cursor — desactivado */
