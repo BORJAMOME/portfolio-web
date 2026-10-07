@@ -145,7 +145,8 @@
 html{scroll-behavior:smooth}
 body{
   font-family:var(--font);
-  background:var(--paper);
+  background:radial-gradient(1400px 900px at 50% 0,rgba(255,255,255,.9) 0%,rgba(255,255,255,0) 70%) no-repeat,linear-gradient(180deg,#eceef1 0%,#e3e5e9 40%,#dfe1e6 100%);
+  background-color:#e3e5e9;
   color:var(--ink);
   line-height:1.55;
   font-feature-settings:"tnum" 0;
@@ -157,7 +158,7 @@ body{
 
 /* ───────────── CONTAINERS ───────────── */
 .shell{
-  max-width:1240px;
+  max-width:1680px;
   margin:0 auto;
   padding:0 clamp(20px,4vw,48px);
 }
@@ -165,47 +166,6 @@ body{
 /* ───────────── HERO CON ENTRADA ORQUESTADA ───────────── */
 .hero{
   padding:132px 0 56px; /* 60 px de nav fijo + 72 px */
-  display:flex;
-  flex-direction:column;
-  align-items:flex-start;
-  gap:28px;
-}
-
-/* H1: entra primero, fade-up + fade-in */
-@keyframes heroH1{
-  from{opacity:0;transform:translateY(16px)}
-  to{opacity:1;transform:translateY(0)}
-}
-.hero-h1{
-  font-family:var(--font-serif);
-  font-size:clamp(36px,4.2vw,58px);
-  font-weight:500;
-  letter-spacing:-1.6px;
-  line-height:1.04;
-  color:var(--ink);
-  white-space:nowrap;
-  font-variant-numeric:tabular-nums;
-  font-feature-settings:"tnum" 1;
-  animation:heroH1 .4s var(--ease) .08s both;
-}
-
-.dl-badge{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:clamp(36px,5vw,48px);
-  height:clamp(46px,7.5vw,62px);
-  margin:0 16px;
-  background:var(--ink);
-  border-radius:var(--radius-md);
-  vertical-align:middle;
-  user-select:none;
-  flex-shrink:0;
-}
-.dl-badge svg{
-  width:clamp(15px,2.2vw,22px);
-  height:clamp(19px,2.8vw,28px);
-  display:block;
 }
 
 /* Subtexto: entra 140ms después */
@@ -221,171 +181,25 @@ body{
   animation:heroSub .4s var(--ease) .15s both;
 }
 
-/* Stats: entran staggered, 50ms cada una */
-@keyframes heroStat{
-  from{opacity:0;transform:translateY(8px)}
-  to{opacity:1;transform:translateY(0)}
-}
-/* Descripción y stats en la misma fila: texto a la izquierda, cifras abajo a la derecha */
-.hero-row{
-  width:100%;
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-end;
-  gap:48px;
-}
-.hero-stats{
-  display:flex;
-  align-items:center;
-  gap:32px;
-  flex-wrap:wrap;
-  flex-shrink:0;
-}
-.hero-stat{
-  display:flex;
-  flex-direction:column;
-  gap:2px;
-  animation:heroStat .35s var(--ease) both;
-}
-.hero-stat:nth-child(1){animation-delay:.22s}
-.hero-stat:nth-child(2){animation-delay:.245s}
-.hero-stat:nth-child(3){animation-delay:.27s}
-
-.hero-stat-num{
-  font-size:28px;
-  font-weight:700;
-  letter-spacing:-.04em;
-  color:var(--ink);
-  font-variant-numeric:tabular-nums;
-  line-height:1;
-}
-.hero-stat-num span{color:var(--ink)}
-.hero-stat-label{
-  font-size:11px;
-  font-weight:500;
-  text-transform:uppercase;
-  letter-spacing:.14em;
-  color:var(--mutedB);
-}
-.hero-stat-sep{
-  width:1px;
-  height:32px;
-  background:var(--gray);
-  flex-shrink:0;
-}
-
 @media(max-width:820px){
-  .hero{padding:48px 0 40px;gap:20px}
-  .hero-row{flex-direction:column;align-items:flex-start;gap:20px}
-  .hero-h1{white-space:normal;font-size:clamp(32px,8vw,48px);letter-spacing:-1px}
-  .hero-stats{gap:20px}
-  .hero-stat-sep{display:none}
-  .dl-badge{margin:0 12px}
+  .hero{padding:48px 0 40px}
 }
-@media(max-width:680px){
-  .hero-h1{white-space:normal}
-  .dl-badge{margin:0 8px;width:clamp(30px,4.5vw,38px);height:clamp(38px,6.5vw,48px)}
-}
-
-/* ───────────── BARRA: BUSCADOR + FILTROS + CONTADOR ───────────── */
-.seg{
-  display:flex;align-items:center;
-  gap:16px;
-  padding:16px 0 32px;
-  border-top:1px solid #e8e8ee;
-  flex-wrap:nowrap;
-}
-.seg-search{
-  display:flex;align-items:center;gap:10px;
-  flex:0 1 280px;min-width:200px;height:40px; /* 280 px; cede un poco si las pastillas no caben en la fila */
-  padding:0 16px;
-  border:1px solid var(--ink);
-  border-radius:999px;
-  background:#fff;
-  color:var(--ink);
-  cursor:text;
-}
-.seg-search:focus-within{outline:2px solid var(--ink);outline-offset:2px}
-.seg-search svg{width:15px;height:15px;flex-shrink:0}
-.seg-search input{
-  flex:1;min-width:0;
-  border:0;outline:0;background:transparent;
-  font-family:inherit;font-size:13px;color:var(--ink);
-}
-.seg-search input::placeholder{color:var(--muted);opacity:1}
-.seg-search input::-webkit-search-cancel-button{cursor:pointer}
-.seg-sep{width:1px;height:24px;background:var(--gray);flex-shrink:0}
-.seg-list{
-  display:flex;align-items:center;gap:8px;
-  flex-wrap:wrap;
-  flex-shrink:0;
-}
-
-.seg-btn{
-  font-family:var(--mono);
-  background:#fff;
-  border:1px solid #e2e2e8;
-  border-radius:999px;
-  cursor:pointer;
-  padding:9px 16px;
-  font-size:13px;
-  font-weight:500;
-  color:var(--ink);
-  letter-spacing:-.005em;
-  transition:background .15s var(--ease),color .15s var(--ease),border-color .15s var(--ease);
-  white-space:nowrap;
-  display:inline-flex;align-items:center;gap:8px;
-}
-@media (hover: hover) and (pointer: fine) { .seg-btn:hover{border-color:var(--ink)} }
-.seg-btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-.seg-btn.is-active{background:var(--ink);color:#fff;border-color:var(--ink)}
-.seg-btn .count{
-  font-size:11px;
-  font-variant-numeric:tabular-nums;
-  font-weight:500;
-  opacity:.55;
-}
-.seg-btn.is-active .count{opacity:.7}
-
-.seg-counter{
-  margin-left:auto;
-  font-family:var(--mono);
-  font-size:11px;font-weight:500;
-  text-transform:uppercase;letter-spacing:.16em;
-  color:var(--mutedB);
-  font-variant-numeric:tabular-nums;
-  white-space:nowrap;
-}
-.seg-counter b{font-weight:600;color:var(--ink)}
-
-/* Nota contextual: solo visible con el filtro Data Storytelling */
-.seg-note{
-  margin:-8px 0 28px;
-  font-size:14px;line-height:1.6;
-  color:var(--muted);
-}
-.seg-note a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
 
 /* ───────────── GRID · ESCENARIO STEELBOOK ───────────── */
 .grid-wrap{
   margin-bottom:96px;
 }
-/* Fondo de estudio: luz arriba y línea de suelo */
-.sb-stage{
-  position:relative;
-  border-radius:10px;
-  overflow:hidden;
-  background:radial-gradient(70% 60% at 50% 18%,rgba(255,255,255,.9) 0%,rgba(255,255,255,0) 70%),linear-gradient(180deg,#eceef1 0%,#dfe1e6 58%,#d3d6dc 58.3%,#e3e5e9 72%,#eef0f2 100%);
-  padding:84px 48px 56px;
-}
+/* Las cajas se dibujan a 244×342 y se escalan con --sb-z (zoom: escala también el hueco que ocupan) */
+.sb-stage{--sb-z:1.22;padding:24px 0 0}
+@media(max-width:1439px){.sb-stage{--sb-z:1.08}}
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(244px,1fr));
-  gap:56px 36px;
+  grid-template-columns:repeat(auto-fill,minmax(calc(244px * var(--sb-z)),1fr));
+  gap:64px 32px;
   justify-items:center;
 }
-@media(max-width:600px){
-  .sb-stage{padding:64px 16px 40px}
+@media(max-width:640px){
+  .sb-stage{--sb-z:1}
 }
 
 /* ───────────── TARJETA «STEELBOOK» ─────────────
@@ -397,7 +211,7 @@ body{
   --foil:repeating-linear-gradient(115deg,rgba(255,255,255,.4) 0 1px,rgba(255,255,255,0) 1px 4px),linear-gradient(110deg,#c9ced9 0%,#a8ecff 22%,#f3c6ff 38%,#ffffff 50%,#bfffe0 62%,#9fb6ff 78%,#d7dbe4 100%);
   position:relative;z-index:1;
   display:flex;flex-direction:column;align-items:center;
-  width:244px;
+  width:calc(244px * var(--sb-z,1));
   color:var(--ink);
 }
 
@@ -414,6 +228,7 @@ body{
 }
 
 /* a) Caja 3D: 244×342, grosor 18 px */
+.sb-scene,.sb-floor{zoom:var(--sb-z,1)}
 .sb-scene{
   perspective:1700px;
   width:244px;height:342px;
@@ -587,7 +402,7 @@ body{
   margin-top:8px;
 }
 .m-title{
-  font-size:15px;font-weight:700;letter-spacing:-.3px;line-height:1.25;
+  font-size:16px;font-weight:700;letter-spacing:-.3px;line-height:1.25;
   color:#111;
   margin:0;
   overflow-wrap:break-word;
@@ -599,7 +414,7 @@ body{
 }
 .m-desc{
   margin:6px 0 0;
-  font-size:12.5px;line-height:1.55;
+  font-size:13px;line-height:1.55;
   color:#3a3d45;
 }
 .m-actions{
@@ -767,18 +582,7 @@ body{
 /* ── pequeñas en móvil ── */
 @media(max-width:600px){
   .nav-links a:not(.nav-cta):not(.active){display:none}
-  .seg-btn{font-size:12.5px;padding:8px 14px}
-  .hero-h1{letter-spacing:-.03em}
 }
-/* Barra en dos líneas cuando no cabe en una (≤1180 px): buscador + contador arriba, pastillas debajo */
-@media(max-width:1180px){
-  .seg{flex-wrap:wrap}
-  .seg-sep{display:none}
-  .seg-search{flex:1 1 200px}
-  .seg-list{order:3;width:100%}
-}
-
-
 /* ── Respeta la preferencia de reducir movimiento ── */
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{
@@ -790,7 +594,7 @@ body{
   .m:hover{ transform:none !important }
   .cierre{ opacity:1; transform:translateY(0); }
   .cierre.in-view{ animation:none; }
-  .hero-h1, .hero-sub, .hero-stat{ animation:none; opacity:1; transform:none; }
+  .hero-sub{ animation:none; opacity:1; transform:none; }
 }
 
 </style>
@@ -959,40 +763,9 @@ body{
 
   <!-- Hero -->
   <header class="hero">
-    <h1 class="hero-h1">Archivos .pbix<span class="dl-badge" aria-hidden="true"><svg viewBox="0 0 36 46" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="18" y1="2" x2="18" y2="36" stroke="#ffffff" stroke-width="3" stroke-linecap="square"/><polyline points="6,26 18,40 30,26" stroke="#ffffff" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter" fill="none"/></svg></span></h1>
-    <div class="hero-row">
+    <h1 class="sr-only">Archivos .pbix</h1>
     <p class="hero-sub">Proyectos desarrollados y compartidos en LinkedIn. Descarga el archivo, explora el modelo de datos y úsalo como referencia para tus propios desarrollos en Power BI.</p>
-    <div class="hero-stats" aria-hidden="true">
-      <div class="hero-stat">
-        <div class="hero-stat-num"><span id="stat-files">0</span></div>
-        <div class="hero-stat-label">Archivos .pbix</div>
-      </div>
-      <div class="hero-stat-sep"></div>
-      <div class="hero-stat">
-        <div class="hero-stat-num"><span id="stat-cats">0</span></div>
-        <div class="hero-stat-label">Categorías</div>
-      </div>
-    </div>
-    </div>
   </header>
-
-  <!-- Barra: buscador + filtros + contador -->
-  <div class="seg">
-    <label class="seg-search">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-      <input type="search" id="seg-q" placeholder="Buscar: TopN, Gantt, KPI…" aria-label="Buscar archivos" autocomplete="off" spellcheck="false">
-    </label>
-    <span class="seg-sep" aria-hidden="true"></span>
-    <div class="seg-list" role="group" aria-label="Filtrar por categoría">
-      <button class="seg-btn is-active" data-filter="all" aria-pressed="true">Todos<span class="count">19</span></button>
-      <button class="seg-btn" data-filter="gestion" aria-pressed="false">Gestión de proyectos<span class="count">3</span></button>
-      <button class="seg-btn" data-filter="ventas" aria-pressed="false">Ventas y análisis comercial<span class="count">7</span></button>
-      <button class="seg-btn" data-filter="storytelling" aria-pressed="false">Data Storytelling<span class="count">5</span></button>
-      <button class="seg-btn" data-filter="slicer" aria-pressed="false">Input Slicer<span class="count">4</span></button>
-    </div>
-    <div class="seg-counter" aria-live="polite"><b id="seg-visible">19</b> / <span id="seg-total">19</span></div>
-  </div>
-  <p class="seg-note" id="seg-note" hidden>¿Quieres el porqué detrás de estos archivos? Está en el <a href="./data-storytelling.html" data-ga="clic_manual_storytelling" data-ga-location="descargas_filtro">manual de Data Storytelling</a>.</p>
 
   <!-- Grid -->
   <h2 class="sr-only">Archivos disponibles</h2>
@@ -1185,15 +958,18 @@ const T = {
   soonTitle: 'En desarrollo',
   soonSub: 'Próxima publicación',
   soonDesc: 'Sígueme en LinkedIn para ser el primero en descargar el siguiente archivo.',
-  soonCta: 'Seguir en LinkedIn',
-  emptyCat: 'Sin archivos en esta categoría',
-  emptyQuery: 'Sin archivos para'
+  soonCta: 'Seguir en LinkedIn'
 };
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-// la etiqueta de cada categoría sale de su pastilla (así va traducida en la versión inglesa)
-const catLabel = cat => document.querySelector(`.seg-btn[data-filter="${cat}"]`)?.firstChild?.textContent.trim() || '';
-const norm = s => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+// Etiquetas de categoría (las traduce i18n/descargas.en.json → js)
+const CATS = {
+  gestion: 'Gestión de proyectos',
+  ventas: 'Ventas y análisis comercial',
+  storytelling: 'Data Storytelling',
+  slicer: 'Input Slicer'
+};
+const catLabel = cat => CATS[cat] || '';
 
 function tagsHtml(arr){
   return arr.map(t=>`<span>${esc(t)}</span>`).join("");
@@ -1375,125 +1151,8 @@ function stamp(el){
   el.addEventListener('animationend', () => el.classList.remove('is-stamp'), {once:true});
 }
 
-// ────────────── FILTRO + BÚSQUEDA ──────────────
-const params = new URLSearchParams(window.location.search);
-let activeFilter = params.get('cat') || 'all';
-let query = params.get('q') || '';
-if(!document.querySelector(`.seg-btn[data-filter="${activeFilter}"]`)) activeFilter = 'all';
-
-const HAY = {};
-ITEMS.forEach(it => { HAY[it.n] = norm([it.title, it.subtitle, it.desc, it.tags.join(' ')].join(' ')); });
-
-function applyFilters(){
-  const grid = document.getElementById('grid');
-  const q = norm(query.trim());
-  let visible = 0;
-
-  grid.querySelectorAll('.m').forEach(m=>{
-    const cat = m.dataset.cat;
-    const show = cat === 'soon'
-      ? activeFilter === 'all' && !q
-      : (activeFilter === 'all' || cat === activeFilter) && (!q || HAY[m.dataset.id].includes(q));
-    m.classList.toggle('is-hidden', !show);
-    if(show && cat !== 'soon') visible++;
-  });
-
-  grid.querySelectorAll('.m-empty').forEach(e=>e.remove());
-
-  if(visible === 0){
-    const empty = document.createElement('div');
-    empty.className = 'empty m-empty';
-    empty.textContent = q ? `${T.emptyQuery} «${query.trim()}»` : T.emptyCat;
-    grid.appendChild(empty);
-  }
-
-  document.getElementById('seg-visible').textContent = visible;
-  document.getElementById('seg-total').textContent =
-    activeFilter === 'all' ? ITEMS.length : ITEMS.filter(i => i.cat === activeFilter).length;
-
-  document.querySelectorAll('.seg-btn').forEach(b=>{
-    const on = b.dataset.filter === activeFilter;
-    b.classList.toggle('is-active', on);
-    b.setAttribute('aria-pressed', on ? 'true' : 'false');
-  });
-
-  const note = document.getElementById('seg-note');
-  if(note) note.hidden = activeFilter !== 'storytelling';
-}
-
-// Estado en la URL: ?cat= y ?q= (sin parámetros cuando no hacen falta)
-function syncUrl(push){
-  const url = new URL(window.location);
-  if(activeFilter === 'all') url.searchParams.delete('cat'); else url.searchParams.set('cat', activeFilter);
-  if(query.trim()) url.searchParams.set('q', query.trim()); else url.searchParams.delete('q');
-  history[push ? 'pushState' : 'replaceState']({cat: activeFilter, q: query}, '', url);
-}
-
 // ────────────── INIT ──────────────
 render();
-// contadores de las pastillas calculados desde ITEMS
-document.querySelectorAll('.seg-btn').forEach(b=>{
-  const c = b.querySelector('.count');
-  if(c) c.textContent = b.dataset.filter === 'all' ? ITEMS.length : ITEMS.filter(i => i.cat === b.dataset.filter).length;
-});
-const qInput = document.getElementById('seg-q');
-qInput.value = query;
-applyFilters();
-
-
-// ────────────── COUNT-UP CON INTERSECTION OBSERVER ──────────────
-function countUp(el, target, duration){
-  let hasAnimated = false;
-  const startAnimation = () => {
-    if(hasAnimated) return;
-    hasAnimated = true;
-    const start = performance.now();
-    const update = now => {
-      const p = Math.min((now - start) / duration, 1);
-      const ease = 1 - Math.pow(1 - p, 3);
-      el.textContent = Math.round(ease * target);
-      if(p < 1) requestAnimationFrame(update);
-    };
-    requestAnimationFrame(update);
-  };
-  
-  const observer = new IntersectionObserver(([entry]) => {
-    if(entry.isIntersecting) {
-      startAnimation();
-      observer.unobserve(el);
-    }
-  }, { threshold: 0.5 });
-  
-  observer.observe(el);
-}
-
-const cats = [...new Set(ITEMS.map(i=>i.cat))].length;
-countUp(document.getElementById('stat-files'), ITEMS.length, 900);
-countUp(document.getElementById('stat-cats'), cats, 900);
-
-// ────────────── FILTROS Y BUSCADOR: EVENTOS ──────────────
-document.querySelectorAll('.seg-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    activeFilter = btn.dataset.filter;
-    applyFilters();
-    syncUrl(true);
-  });
-});
-
-let _q;
-qInput.addEventListener('input', ()=>{
-  clearTimeout(_q);
-  _q = setTimeout(()=>{ query = qInput.value; applyFilters(); syncUrl(false); }, 120);
-});
-
-window.addEventListener('popstate', ()=>{
-  const p = new URLSearchParams(window.location.search);
-  activeFilter = p.get('cat') || 'all';
-  query = p.get('q') || '';
-  qInput.value = query;
-  applyFilters();
-});
-
 
 // ────────────── NAV SCROLL ──────────────
 const nav = document.getElementById('nav');
