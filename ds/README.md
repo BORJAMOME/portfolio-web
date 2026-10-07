@@ -42,5 +42,5 @@ en el manual, al cambiar de idioma te deja en el mismo capítulo.
 
 ## Versiones de caché
 
-Al cambiar `manual.css` o `manual.js`, sube su `?v=` en `data-storytelling.html` y vuelve a
-generar la versión inglesa (copia las mismas versiones).
+Al cambiar `manual.css` o `manual.js`, ejecuta `node tools/version-assets.mjs`: actualiza su `?v=`
+(hash del contenido) en `data-storytelling.html` y en `en/data-storytelling.html` a la vez.

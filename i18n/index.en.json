@@ -8,7 +8,7 @@
     "Analizo datos, diseño cómo se leen y hago que alguien actúe con ellos. PL-300 · SQL · Python · DAX · Data Storytelling.": "I analyse data, design how it’s read and help someone act on it. PL-300 · SQL · Python · DAX · Data storytelling.",
     "Saltar al contenido": "Skip to content",
     "Navegación principal": "Main navigation",
-    "Borja Mora — Inicio": "Borja Mora — Home",
+    "Borja Mora Méndez — Inicio": "Borja Mora Méndez — Home",
     "Idioma · Language": "Language · Idioma",
     "Inicio": "Home",
     "Sobre mí": "About me",
@@ -52,8 +52,9 @@
     "Estadística": "Statistics",
     "Modelo → Métricas + patrones accionables": "Model → Metrics + actionable patterns",
     "Comunicar": "Communicate",
+    "Análisis de datos": "Data analysis",
     "Que alguien <em>actúe.</em>": "Someone <em>acts.</em>",
-    "Diseño el layout antes de tocar Power BI — con <a href=\"https://borjamome.github.io/powerbi-mockup/\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color:var(--ink);text-decoration:underline\">PBI Mockup Creator</a>, una herramienta que construí yo. Defino qué lidera la vista, qué acompaña y qué sobra. Aplico jerarquía visual, contexto y narrativa para que quien mire el dashboard tome una decisión sin necesitar que nadie se lo explique.": "I design the layout before I touch Power BI — with <a href=\"https://borjamome.github.io/powerbi-mockup/\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color:var(--ink);text-decoration:underline\">PBI Mockup Creator</a>, a tool I built myself. I decide what leads the view, what supports it and what goes. I use visual hierarchy, context and narrative so that whoever looks at the dashboard can make a decision without anyone having to explain it.",
+    "Diseño el layout antes de tocar Power BI — con <a href=\"https://borjamome.github.io/powerbi-mockup/\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color:var(--ink);text-decoration:underline\">PBI Mockup Creator</a>, una herramienta que construí yo. Defino qué lidera la vista, qué acompaña y qué sobra. Aplico jerarquía visual, contexto y narrativa para que quien mire el dashboard tome una decisión sin necesitar que nadie se lo explique. Lo cuento entero en el <a href=\"./data-storytelling.html\" style=\"color:var(--ink);text-decoration:underline\" data-ga=\"clic_manual_storytelling\" data-ga-location=\"home_comunicar\">manual de Data Storytelling</a>.": "I design the layout before I touch Power BI — with <a href=\"https://borjamome.github.io/powerbi-mockup/\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color:var(--ink);text-decoration:underline\">PBI Mockup Creator</a>, a tool I built myself. I decide what leads the view, what supports it and what goes. I use visual hierarchy, context and narrative so that whoever looks at the dashboard can make a decision without anyone having to explain it. I cover it in full in my <a href=\"./data-storytelling.html\" style=\"color:var(--ink);text-decoration:underline\" data-ga=\"clic_manual_storytelling\" data-ga-location=\"home_comunicar\">Data Storytelling guide</a>.",
     "Métricas → Decisión de negocio": "Metrics → Business decision",
     "MIS PROYECTOS DESTACADOS": "FEATURED PROJECTS",
     "Seis problemas reales.<br><em>Seis respuestas con datos.</em>": "Six real problems.<br><em>Six answers with data.</em>",
@@ -237,6 +238,8 @@
     "¿Prefieres escribir desde tu correo? <span class=\"contact-alt-mail\">borja.mora.mendez@gmail.com</span>": "Prefer to write from your own email? <span class=\"contact-alt-mail\">borja.mora.mendez@gmail.com</span>"
   },
   "keep": [
+    "Borja Mora Méndez",
+    "Borja Mora Méndez.",
     "Borja Mora",
     "Español",
     "ES",
