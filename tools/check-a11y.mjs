@@ -52,6 +52,9 @@ for (const p of pages) {
   await page.waitForTimeout(800);
   const h = await page.evaluate(() => document.body.scrollHeight);
   for (let y = 0; y < h; y += 500) { await page.evaluate((y) => scrollTo(0, y), y); await page.waitForTimeout(40); }
+  // De vuelta arriba: el nav fijo es translúcido con desenfoque (axe no lo modela) y, si el
+  // análisis se hace al final de la página, mide su texto contra lo que haya debajo por azar.
+  await page.evaluate(() => scrollTo(0, 0));
   await page.waitForTimeout(1500);
   await page.addScriptTag({ content: AXE });
   const violations = await page.evaluate(async () => {
