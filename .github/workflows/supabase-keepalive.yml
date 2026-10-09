@@ -52,8 +52,18 @@ jobs:
           echo "::error::Supabase no responde (HTTP $respuesta). Si el proyecto está pausado, reactívalo en supabase.com/dashboard; si es 404, ejecuta supabase/keepalive.sql."
           exit 1
 
+      # Paso de mantenimiento: si la API de GitHub falla (p. ej. un 502 puntual), se reintenta
+      # y, como mucho, queda un aviso. El job solo debe ponerse en rojo si Supabase no responde.
       - name: Evitar que GitHub desactive esta tarea programada
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/supabase-keepalive.yml/enable"
+        run: |
+          for intento in 1 2 3; do
+            if gh api -X PUT "repos/${{ github.repository }}/actions/workflows/supabase-keepalive.yml/enable" >/dev/null; then
+              echo "Tarea programada reactivada."
+              exit 0
+            fi
+            sleep $((intento * 15))
+          done
+          echo "::warning::La API de GitHub no respondió al reactivar la tarea. No afecta a Supabase; se reintentará en la próxima ejecución."
