@@ -92,6 +92,12 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borjamora.es/casa-origen.html"/>
   </url>
   <url>
+    <loc>https://borjamora.es/dashboard/casa-origen/</loc>
+    <lastmod>2026-10-09</lastmod>
+    <priority>0.8</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
     <loc>https://borjamora.es/rfm-hosteleria.html</loc>
     <lastmod>2026-09-30</lastmod>
     <priority>0.8</priority>
