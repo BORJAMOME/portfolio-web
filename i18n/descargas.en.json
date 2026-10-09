@@ -52,7 +52,26 @@
     "Información legal": "Legal information",
     "Copiar": "Copy",
     "borja.mora.mendez@gmail.com": "borja.mora.mendez@gmail.com",
-    "Archivos disponibles": "Available files"
+    "Archivos disponibles": "Available files",
+    "WEB APP": "WEB APP",
+    "Herramienta": "Tool",
+    "Gratis · navegador": "Free · browser",
+    "Diseña el dashboard antes de abrir Power BI.": "Design the dashboard before you open Power BI.",
+    "Tipo": "Type",
+    "Herramienta web": "Web tool",
+    "Cubre": "Covers",
+    "Proximidad · Jerarquía · Semejanza · Espacio en blanco · Figura-fondo": "Proximity · Hierarchy · Similarity · White space · Figure-ground",
+    "Herramienta web para diseñar el layout de un dashboard antes de abrir Power BI. Partes de la audiencia y de la decisión que tiene que tomar, la herramienta propone una distribución y comprueba los rangos mientras mueves las piezas. Sirve para acordar la estructura con negocio antes de construir nada.": "A web tool to design a dashboard’s layout before you open Power BI. You start from the audience and the decision they need to make; the tool proposes a layout and checks the ranges as you move the pieces. Useful for agreeing the structure with the business before you build anything.",
+    "Abrir la herramienta": "Open the tool",
+    "(se abre en una pestaña nueva)": "(opens in a new tab)",
+    "Data Storytelling y diseño de dashboards": "Data Storytelling and dashboard design",
+    "MANUAL": "GUIDE",
+    "Manual interactivo": "Interactive guide",
+    "Gratis · online": "Free · online",
+    "Manual interactivo sobre un dashboard vivo.": "An interactive guide built on a live dashboard.",
+    "Percepción · Ruido · Atención · Visuales · Composición · Narrativa": "Perception · Noise · Attention · Visuals · Composition · Narrative",
+    "Manual para diseñar dashboards que se entienden a la primera. Recorre percepción, ruido, atención, visuales, composición y narrativa, y cada idea se aplica sobre un dashboard que cambia mientras lees. Útil para revisar tus propios informes con criterio y justificar cada decisión de diseño.": "A guide to designing dashboards people understand at first glance. It covers perception, noise, attention, visuals, composition and narrative, and every idea is applied to a dashboard that changes as you read. Useful for reviewing your own reports with a clear method and backing every design decision.",
+    "Leer el manual": "Read the guide"
   },
   "keep": [
     "Borja Mora Méndez",
@@ -72,7 +91,12 @@
     "SQL",
     "HTML",
     "CSS",
-    "JS"
+    "JS",
+    "PBI Mockup Creator",
+    "MOCKUP · LAYOUT · POWER BI · MOCKUP · LAYOUT · POWER BI",
+    "borjamome.github.io/powerbi-mockup",
+    "DATA STORYTELLING · DASHBOARDS · DATA STORYTELLING · DASHBOARDS",
+    "Portfolio · Data Storytelling"
   ],
   "js": {
     "Gantt nativo de Power BI": "Native Power BI Gantt chart",
