@@ -168,6 +168,8 @@
     "Adelantar producto de mediodía a la mañana (Tosta Aguacate a las 10:30).": "Bring a midday product forward to the morning (Avocado toast at 10:30).",
     "Casa Origen ya no improvisa. <br class=\"cta-closing-br\">Esto es lo que se ve cuando decides con datos.": "Casa Origen doesn’t improvise any more. <br class=\"cta-closing-br\">This is what it looks like when you decide with data.",
     "Abrir dashboard en Power BI": "Open the dashboard in Power BI",
+    "Explorar el dashboard interactivo": "Explore the interactive dashboard",
+    "Con simulador de decisiones e historia guiada, en español e inglés": "With a decision simulator and a guided story, in English and Spanish",
     "Dashboard interactivo publicado en Power BI Service": "Interactive dashboard published in the Power BI Service",
     "Ver código de Machine Learning": "See the machine learning code",
     "Notebooks Python: segmentación RFM y cesta de la compra (FP-Growth)": "Python notebooks: RFM segmentation and market basket (FP-Growth)",
@@ -254,6 +256,7 @@
     "https://borjamora.es/casa-origen.html#caso": "https://borjamora.es/en/casa-origen.html#caso"
   },
   "raw": [
+    ["href=\"../dashboard/casa-origen/\"", "href=\"../dashboard/casa-origen/?lang=en\""],
     [
       "<link rel=\"canonical\" href=\"https://borjamora.es/casa-origen.html\">",
       "<link rel=\"canonical\" href=\"https://borjamora.es/en/casa-origen.html\">"
