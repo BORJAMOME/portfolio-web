@@ -1,11 +1,11 @@
 {
   "_": "Traducción al inglés británico de descargas.html (→ en/downloads.html). units = HTML; js = cadenas de los scripts (tarjetas, JSON-LD); raw = el resto. La usa tools/build-en.mjs.",
   "units": {
-    "Descargas · Borja Mora Méndez": "Downloads · Borja Mora Méndez",
+    "Laboratorio · Borja Mora Méndez": "Lab · Borja Mora Méndez",
     "Descarga gratis archivos .pbix de Power BI: Gantt nativo, widgets, Input Slicer, Slope charts, Small Multiples y técnicas avanzadas de DAX y Data Storytelling.": "Free Power BI .pbix files to download: native Gantt, widgets, Input Slicer, slope charts, small multiples and advanced DAX and data storytelling techniques.",
-    "Descargas Power BI — Archivos .pbix gratuitos | Borja Mora": "Power BI downloads — free .pbix files | Borja Mora",
+    "Laboratorio Power BI — Archivos .pbix gratuitos | Borja Mora": "Power BI lab — free .pbix files | Borja Mora",
     "Descarga gratis archivos .pbix de Power BI: Gantt nativo, Input Slicer, Slope charts, Small Multiples y técnicas avanzadas de DAX y Data Storytelling.": "Free Power BI .pbix files to download: native Gantt, Input Slicer, slope charts, small multiples and advanced DAX and data storytelling techniques.",
-    "Descargas Power BI — Archivos .pbix gratuitos de Borja Mora": "Power BI downloads — free .pbix files by Borja Mora",
+    "Laboratorio Power BI — Archivos .pbix gratuitos de Borja Mora": "Power BI lab — free .pbix files by Borja Mora",
     "19 archivos .pbix listos para descargar. DAX, storytelling y técnicas avanzadas de Power BI.": "19 .pbix files ready to download. DAX, storytelling and advanced Power BI techniques.",
     "Saltar al contenido": "Skip to content",
     "Navegación principal": "Main navigation",
@@ -16,7 +16,7 @@
     "Proyectos": "Projects",
     "Análisis": "Analysis",
     "Visualización": "Visualisation",
-    "Descargas": "Downloads",
+    "Laboratorio": "Lab",
     "Contacto": "Contact",
     "¿Hablamos?": "Let’s talk",
     "Abrir menú": "Open menu",
