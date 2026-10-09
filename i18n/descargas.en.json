@@ -71,7 +71,9 @@
     "Manual interactivo sobre un dashboard vivo.": "An interactive guide built on a live dashboard.",
     "Percepción · Ruido · Atención · Visuales · Composición · Narrativa": "Perception · Noise · Attention · Visuals · Composition · Narrative",
     "Manual para diseñar dashboards que se entienden a la primera. Recorre percepción, ruido, atención, visuales, composición y narrativa, y cada idea se aplica sobre un dashboard que cambia mientras lees. Útil para revisar tus propios informes con criterio y justificar cada decisión de diseño.": "A guide to designing dashboards people understand at first glance. It covers perception, noise, attention, visuals, composition and narrative, and every idea is applied to a dashboard that changes as you read. Useful for reviewing your own reports with a clear method and backing every design decision.",
-    "Leer el manual": "Read the guide"
+    "Leer el manual": "Read the guide",
+    "Un espacio para experimentar con datos, explorar nuevas visualizaciones, compartir conocimiento e ir un paso más allá.": "A space to experiment with data, explore new visualisations, share what I learn and go one step further.",
+    "Descárgalos, ábrelos y mira cómo están hechos por dentro.": "Download them, open them and see how they’re built inside."
   },
   "keep": [
     "Borja Mora Méndez",
