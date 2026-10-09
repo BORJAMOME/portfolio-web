@@ -202,6 +202,64 @@ body{
   .sb-stage{--sb-z:1}
 }
 
+/* ───────────── PROYECTOS · STEELBOOK (enlaces, no descargas) ─────────────
+   Carátula de acero con emblema hundido, pieza clave en foil, ficha mate y tira
+   holográfica. Valores copiados del handoff 8a. --ry --gx --gy los fija el puntero (JS). */
+.pj-stage{display:flex;flex-wrap:wrap;justify-content:center;gap:64px 140px;padding:24px 0 0;margin-bottom:96px}
+.pj-card{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;width:304px}
+.pj-scene{perspective:1700px;width:264px;height:370px;position:relative;-webkit-box-reflect:below 2px linear-gradient(transparent 84%,rgba(255,255,255,.2))}
+.pj-box{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(-5deg) rotateY(calc(22deg - var(--ry,0deg) * 2.4));transition:transform .6s cubic-bezier(0.16,1,0.3,1)}
+.pj-back,.pj-front{position:absolute;inset:0;border-radius:12px;background-image:url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22560%22%3E%3Cline%20x1%3D%220.0%22%20y1%3D%22515.6%22%20x2%3D%2244.5%22%20y2%3D%22503.8%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.37%22%20stroke-width%3D%220.51%22%2F%3E%3Cline%20x1%3D%22131.7%22%20y1%3D%22421.1%22%20x2%3D%22219.6%22%20y2%3D%22424.5%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.36%22%20stroke-width%3D%220.55%22%2F%3E%3Cline%20x1%3D%22326.7%22%20y1%3D%22135.5%22%20x2%3D%22379.4%22%20y2%3D%22145.5%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.36%22%20stroke-width%3D%220.32%22%2F%3E%3Cline%20x1%3D%22273.6%22%20y1%3D%22262.0%22%20x2%3D%22372.7%22%20y2%3D%22290.2%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.19%22%20stroke-width%3D%220.51%22%2F%3E%3Cline%20x1%3D%22369.3%22%20y1%3D%22385.6%22%20x2%3D%22447.0%22%20y2%3D%22391.0%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.42%22%20stroke-width%3D%220.66%22%2F%3E%3Cline%20x1%3D%22148.9%22%20y1%3D%22187.8%22%20x2%3D%22243.2%22%20y2%3D%22173.5%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.20%22%20stroke-width%3D%220.42%22%2F%3E%3Cline%20x1%3D%22171.4%22%20y1%3D%22165.1%22%20x2%3D%22275.6%22%20y2%3D%22170.5%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.37%22%20stroke-width%3D%220.65%22%2F%3E%3Cline%20x1%3D%2223.4%22%20y1%3D%22153.2%22%20x2%3D%2293.9%22%20y2%3D%22153.7%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.28%22%20stroke-width%3D%220.38%22%2F%3E%3Cline%20x1%3D%22363.6%22%20y1%3D%2230.7%22%20x2%3D%22416.0%22%20y2%3D%2223.3%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.35%22%20stroke-width%3D%220.67%22%2F%3E%3Cline%20x1%3D%22205.9%22%20y1%3D%2292.7%22%20x2%3D%22261.4%22%20y2%3D%2281.8%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.26%22%20stroke-width%3D%220.47%22%2F%3E%3Cline%20x1%3D%22133.0%22%20y1%3D%22297.7%22%20x2%3D%22206.1%22%20y2%3D%22279.8%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.42%22%20stroke-width%3D%220.48%22%2F%3E%3Cline%20x1%3D%22345.2%22%20y1%3D%22355.7%22%20x2%3D%22422.3%22%20y2%3D%22356.8%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.30%22%20stroke-width%3D%220.58%22%2F%3E%3Cline%20x1%3D%22375.8%22%20y1%3D%22222.2%22%20x2%3D%22457.5%22%20y2%3D%22203.6%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.33%22%20stroke-width%3D%220.44%22%2F%3E%3Cline%20x1%3D%22132.2%22%20y1%3D%22219.2%22%20x2%3D%22218.5%22%20y2%3D%22249.7%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.18%22%20stroke-width%3D%220.63%22%2F%3E%3Cline%20x1%3D%2231.1%22%20y1%3D%22227.8%22%20x2%3D%2262.5%22%20y2%3D%22215.3%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.45%22%20stroke-width%3D%220.39%22%2F%3E%3Cline%20x1%3D%22252.9%22%20y1%3D%2280.8%22%20x2%3D%22313.9%22%20y2%3D%2285.9%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.19%22%20stroke-width%3D%220.67%22%2F%3E%3Cline%20x1%3D%22353.8%22%20y1%3D%22498.7%22%20x2%3D%22446.9%22%20y2%3D%22534.5%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.38%22%20stroke-width%3D%220.41%22%2F%3E%3Cline%20x1%3D%224.2%22%20y1%3D%22139.0%22%20x2%3D%2228.4%22%20y2%3D%22127.4%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.34%22%20stroke-width%3D%220.39%22%2F%3E%3Cline%20x1%3D%22296.5%22%20y1%3D%22274.0%22%20x2%3D%22376.1%22%20y2%3D%22254.9%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.41%22%20stroke-width%3D%220.39%22%2F%3E%3Cline%20x1%3D%22149.6%22%20y1%3D%22500.8%22%20x2%3D%22180.2%22%20y2%3D%22500.5%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.15%22%20stroke-width%3D%220.67%22%2F%3E%3Cline%20x1%3D%22254.8%22%20y1%3D%22516.4%22%20x2%3D%22275.3%22%20y2%3D%22524.1%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.21%22%20stroke-width%3D%220.69%22%2F%3E%3Cline%20x1%3D%22226.1%22%20y1%3D%22380.5%22%20x2%3D%22268.7%22%20y2%3D%22369.6%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.21%22%20stroke-width%3D%220.53%22%2F%3E%3Cline%20x1%3D%2220.9%22%20y1%3D%22430.9%22%20x2%3D%22102.5%22%20y2%3D%22446.8%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.30%22%20stroke-width%3D%220.31%22%2F%3E%3Cline%20x1%3D%2244.1%22%20y1%3D%22514.7%22%20x2%3D%2275.4%22%20y2%3D%22520.0%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.42%22%20stroke-width%3D%220.31%22%2F%3E%3Cline%20x1%3D%22353.3%22%20y1%3D%22482.4%22%20x2%3D%22453.6%22%20y2%3D%22525.8%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.38%22%20stroke-width%3D%220.47%22%2F%3E%3Cline%20x1%3D%2299.3%22%20y1%3D%22407.5%22%20x2%3D%22198.3%22%20y2%3D%22398.4%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.22%22%20stroke-width%3D%220.46%22%2F%3E%3Cline%20x1%3D%22354.8%22%20y1%3D%22312.9%22%20x2%3D%22406.1%22%20y2%3D%22318.5%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.37%22%20stroke-width%3D%220.43%22%2F%3E%3Cline%20x1%3D%22290.1%22%20y1%3D%22236.7%22%20x2%3D%22327.4%22%20y2%3D%22230.4%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.45%22%20stroke-width%3D%220.70%22%2F%3E%3Cline%20x1%3D%22253.0%22%20y1%3D%22488.4%22%20x2%3D%22351.9%22%20y2%3D%22461.0%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.34%22%20stroke-width%3D%220.35%22%2F%3E%3Cline%20x1%3D%22199.0%22%20y1%3D%22312.1%22%20x2%3D%22281.3%22%20y2%3D%22347.1%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.29%22%20stroke-width%3D%220.37%22%2F%3E%3Cline%20x1%3D%22178.7%22%20y1%3D%2293.0%22%20x2%3D%22258.3%22%20y2%3D%2294.6%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.32%22%20stroke-width%3D%220.50%22%2F%3E%3Cline%20x1%3D%22302.9%22%20y1%3D%22203.0%22%20x2%3D%22382.6%22%20y2%3D%22166.7%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.24%22%20stroke-width%3D%220.52%22%2F%3E%3Cline%20x1%3D%2281.1%22%20y1%3D%22404.8%22%20x2%3D%22126.0%22%20y2%3D%22394.0%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.35%22%20stroke-width%3D%220.47%22%2F%3E%3Cline%20x1%3D%2230.1%22%20y1%3D%22432.8%22%20x2%3D%22117.7%22%20y2%3D%22467.2%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.42%22%20stroke-width%3D%220.57%22%2F%3E%3C%2Fsvg%3E'),url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%22300%22%3E%3Cfilter%20id%3D%22b%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.004%200.95%22%20numOctaves%3D%223%22%20seed%3D%224%22%20stitchTiles%3D%22stitch%22%2F%3E%3CfeColorMatrix%20values%3D%220%200%200%200%200.5%20%200%200%200%200%200.52%20%200%200%200%200%200.56%20%200%200%200%200.9%200%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23b)%22%2F%3E%3C%2Fsvg%3E'),linear-gradient(100deg,#f5f6f9 0%,#c8ccd4 16%,#9aa0ab 30%,#e9ebf0 44%,#b5bac4 58%,#868c98 76%,#d9dce3 100%);background-size:100% 100%,300px 300px,100% 100%;background-blend-mode:screen,soft-light,normal}
+.pj-back{transform:translateZ(-9px) rotateY(180deg)}
+.pj-front{transform:translateZ(9px);overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,255,255,.75),inset 2px 2px 3px rgba(255,255,255,.55),inset -2px -2px 5px rgba(0,0,0,.28),inset 0 0 14px rgba(0,0,0,.18)}
+.pj-foil{background-image:radial-gradient(60% 50% at var(--gx,40%) var(--gy,30%),rgba(255,255,255,.75),rgba(255,255,255,0) 60%),repeating-linear-gradient(62deg,rgba(255,255,255,0) 0 2px,rgba(255,255,255,.28) 2px 3px),repeating-linear-gradient(-58deg,rgba(255,255,255,0) 0 3px,rgba(60,70,110,.07) 3px 4px),url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%27200%27%3E%3Cfilter id=%27g%27%3E%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%270.9%27 numOctaves=%273%27 stitchTiles=%27stitch%27/%3E%3CfeColorMatrix type=%27saturate%27 values=%270%27/%3E%3C/filter%3E%3Crect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23g)%27/%3E%3C/svg%3E'),linear-gradient(110deg,#c9ced9 0%,#a8ecff 18%,#f3c6ff 34%,#ffffff 48%,#bfffe0 60%,#9fb6ff 76%,#ffd9f0 88%,#d7dbe4 100%),linear-gradient(20deg,#e8f6ff 0%,#f6e6ff 30%,#e9fff4 55%,#e6ecff 80%,#fff3fb 100%);background-size:100% 100%,auto,auto,140px 140px,260% 100%,100% 260%;background-position:0 0,0 0,0 0,0 0,var(--gx,50%) 0,0 var(--gy,50%);background-blend-mode:screen,overlay,normal,overlay,soft-light,normal;box-shadow:inset 0 0 0 .5px rgba(255,255,255,.9),inset 0 -1px 1px rgba(0,0,0,.18),0 1px 2px rgba(12,13,16,.35)}
+.pj-sunk{background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(255,255,255,.12));box-shadow:inset 1px 1px 2px rgba(0,0,0,.45),inset -1px -1px 1px rgba(255,255,255,.8)}
+.pj-spine{position:absolute;top:12px;left:-9px;width:18px;height:346px;transform:rotateY(-90deg);overflow:hidden;background:linear-gradient(90deg,rgb(217,219,224) 0%,rgb(209,212,217) 50%,rgb(217,219,224) 100%)}
+.pj-spine-in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:8px 0}
+.pj-spine-foil{width:10px;height:30px;border-radius:2px}
+.pj-spine-t{writing-mode:vertical-rl;transform:rotate(180deg);font-size:8px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#4a4d56;text-shadow:0 1px 0 rgba(255,255,255,.85),0 -1px 0 rgba(0,0,0,.18);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-height:270px}
+.pj-spine-a{font-size:8px;font-weight:800;color:#4a4d56;text-shadow:0 1px 0 rgba(255,255,255,.85),0 -1px 0 rgba(0,0,0,.18)}
+.pj-side-r{position:absolute;top:12px;left:255px;width:18px;height:346px;transform:rotateY(90deg);background:linear-gradient(90deg,rgb(138,143,153) 0%,rgb(146,150,160) 50%,rgb(138,143,153) 100%)}
+.pj-side-t{position:absolute;left:12px;top:-9px;width:240px;height:18px;transform:rotateX(90deg);background:linear-gradient(180deg,rgb(231,232,236),rgb(220,222,227))}
+.pj-side-b{position:absolute;left:12px;top:361px;width:240px;height:18px;transform:rotateX(-90deg);background:rgb(124,130,141)}
+.pj-slat{position:absolute;left:-9px;top:-1.97px;width:18px;height:3.94px;backface-visibility:hidden}
+.pj-chip{position:absolute;z-index:3;left:16px;top:16px;font-size:9.5px;font-weight:800;font-style:italic;letter-spacing:.1em;color:#0c0d10;padding:5px 11px;border-radius:999px;white-space:nowrap}
+.pj-emblem{position:absolute;left:24px;right:24px;top:52px;height:118px}
+.pj-layout{position:absolute;inset:0;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:22px 1fr 1fr;gap:6px}
+.pj-layout span{border-radius:5px}
+.pj-layout span:first-child{grid-column:1/-1;border-radius:4px}
+.pj-bars{position:absolute;inset:0;display:flex;align-items:flex-end;gap:10px;padding:0 6px;border-bottom:2px solid rgba(74,77,86,.4)}
+.pj-bars span{flex:1;border-radius:4px 4px 0 0}
+.pj-ficha{position:absolute;left:14px;right:14px;bottom:14px;height:166px;border-radius:7px;overflow:hidden;background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%27200%27%3E%3Cfilter id=%27g%27%3E%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%270.9%27 numOctaves=%273%27 stitchTiles=%27stitch%27/%3E%3CfeColorMatrix type=%27saturate%27 values=%270%27/%3E%3C/filter%3E%3Crect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23g)%27/%3E%3C/svg%3E'),radial-gradient(120% 90% at 85% 0%,rgba(122,123,255,.38),rgba(0,0,0,0) 55%),linear-gradient(180deg,#18191d,#0c0d0f);background-size:120px 120px,100% 100%,100% 100%;background-blend-mode:overlay,normal,normal;box-shadow:inset 0 1px 3px rgba(0,0,0,.7),inset 0 0 0 .5px rgba(0,0,0,.6),0 1px 0 rgba(255,255,255,.65),0 -1px 0 rgba(0,0,0,.2)}
+.pj-ink{position:absolute;inset:14px 26px 12px 14px;display:flex;flex-direction:column;gap:6px}
+.pj-ink-top{display:flex;justify-content:space-between;gap:8px}
+.pj-kicker{font-size:7px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#a3a7b1;white-space:nowrap}
+.pj-access{font-size:7px;font-weight:700;letter-spacing:.14em;color:#a3a7b1;white-space:nowrap}
+.pj-ltitle{font-family:'Newsreader',Georgia,serif;font-size:21px;font-weight:500;line-height:1.02;letter-spacing:-.4px;color:#fff;text-wrap:balance}
+.pj-lsub{font-size:8.5px;line-height:1.35;color:#b9bdc6}
+.pj-specs{margin-top:auto}
+.pj-spec{display:grid;grid-template-columns:48px minmax(0,1fr);gap:8px;padding:5px 0;border-top:1px solid rgba(255,255,255,.1)}
+.pj-spec-k{font-size:6.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#7f8591}
+.pj-spec-v{font-size:7.5px;font-weight:600;line-height:1.35;color:#e6e8ee}
+.pj-holo{position:absolute;right:8px;top:10px;bottom:10px;width:8px;border-radius:2px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.pj-holo span{writing-mode:vertical-rl;font-size:4px;font-weight:800;letter-spacing:.3em;color:rgba(12,13,16,.55);white-space:nowrap}
+.pj-sheen{position:absolute;inset:0;pointer-events:none;background:radial-gradient(22% 140% at var(--gx,35%) 50%,rgba(255,255,255,.55),rgba(255,255,255,0) 70%),radial-gradient(300px 220px at var(--gx,35%) var(--gy,25%),rgba(255,255,255,.25),rgba(255,255,255,0) 70%);mix-blend-mode:screen}
+.pj-floor{position:relative;width:264px;height:34px;margin-top:-10px;pointer-events:none}
+.pj-floor span:first-child{position:absolute;left:4%;right:0;top:4px;height:12px;border-radius:50%;background:rgba(12,13,16,.6);filter:blur(4px)}
+.pj-floor span:last-child{position:absolute;left:24%;right:-36%;top:8px;height:24px;border-radius:50%;background:rgba(12,13,16,.16);filter:blur(12px)}
+/* Texto: mismo estilo que las tarjetas .pbix (.m-title / .m-desc) */
+.pj-text{align-self:stretch;flex:1;display:flex;flex-direction:column;gap:4px;margin-top:8px}
+.pj-title{font-size:16px;font-weight:700;letter-spacing:-.3px;line-height:1.25;color:#111;margin:0;overflow-wrap:break-word}
+.pj-desc{margin:6px 0 0;font-size:13px;line-height:1.55;color:#3a3d45}
+.pj-actions{margin-top:auto;padding-top:14px;display:flex;flex-direction:column;gap:8px}
+.pj-link{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:46px;border-radius:8px;background:#111;color:#fff;border:1px solid #111;font-size:11px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;text-decoration:none}
+.pj-link:hover{background:#fff;color:#111}
+.pj-link:focus-visible{outline:2px solid #111;outline-offset:2px}
+.pj-link svg{width:14px;height:14px;display:block;flex-shrink:0}
+.pj-host{font-size:11px;color:#5a5a5a;text-align:center}
+@media(max-width:380px){.pj-card{zoom:.9}}
+@media (prefers-reduced-motion:reduce){.pj-card *{transition:none !important}}
+
 /* ───────────── TARJETA «STEELBOOK» ─────────────
    Caja 3D de acero cepillado (decorativa, aria-hidden) con número cromado y
    etiqueta holográfica + texto y dos acciones reales (<a>) debajo.
@@ -735,6 +793,96 @@ body{
     <h1 class="sr-only">Archivos .pbix</h1>
     <p class="hero-sub">Proyectos desarrollados y compartidos en LinkedIn. Descarga el archivo, explora el modelo de datos y úsalo como referencia para tus propios desarrollos en Power BI.</p>
   </header>
+
+  <!-- Proyectos (enlaces) -->
+  <h2 class="sr-only">Proyectos</h2>
+  <section class="pj-stage" aria-label="Proyectos">
+      <article class="pj-card">
+        <div class="pj-scene" aria-hidden="true">
+          <div class="pj-box">
+            <div class="pj-back"></div>
+            <div class="pj-spine"><div class="pj-spine-in"><span class="pj-spine-foil pj-foil"></span><span class="pj-spine-t">PBI Mockup Creator</span><span class="pj-spine-a">↗</span></div></div>
+            <div class="pj-side-r"></div>
+            <div class="pj-side-t"></div>
+            <div class="pj-side-b"></div>
+            <div class="pj-slat" style="transform:translate(0.10px,10.43px) rotateZ(7.50deg) rotateY(-90deg);background:rgb(224,226,230)"></div><div class="pj-slat" style="transform:translate(0.91px,7.41px) rotateZ(22.50deg) rotateY(-90deg);background:rgb(235,236,240)"></div><div class="pj-slat" style="transform:translate(2.48px,4.69px) rotateZ(37.50deg) rotateY(-90deg);background:rgb(242,243,246)"></div><div class="pj-slat" style="transform:translate(4.69px,2.48px) rotateZ(52.50deg) rotateY(-90deg);background:rgb(244,245,248)"></div><div class="pj-slat" style="transform:translate(7.41px,0.91px) rotateZ(67.50deg) rotateY(-90deg);background:rgb(242,243,246)"></div><div class="pj-slat" style="transform:translate(10.43px,0.10px) rotateZ(82.50deg) rotateY(-90deg);background:rgb(235,237,240)"></div><div class="pj-slat" style="transform:translate(253.57px,0.10px) rotateZ(97.50deg) rotateY(-90deg);background:rgb(225,227,231)"></div><div class="pj-slat" style="transform:translate(256.59px,0.91px) rotateZ(112.50deg) rotateY(-90deg);background:rgb(211,214,219)"></div><div class="pj-slat" style="transform:translate(259.31px,2.48px) rotateZ(127.50deg) rotateY(-90deg);background:rgb(195,198,205)"></div><div class="pj-slat" style="transform:translate(261.52px,4.69px) rotateZ(142.50deg) rotateY(-90deg);background:rgb(178,182,189)"></div><div class="pj-slat" style="transform:translate(263.09px,7.41px) rotateZ(157.50deg) rotateY(-90deg);background:rgb(161,165,174)"></div><div class="pj-slat" style="transform:translate(263.90px,10.43px) rotateZ(172.50deg) rotateY(-90deg);background:rgb(145,150,159)"></div><div class="pj-slat" style="transform:translate(263.90px,359.57px) rotateZ(187.50deg) rotateY(-90deg);background:rgb(131,136,147)"></div><div class="pj-slat" style="transform:translate(263.09px,362.59px) rotateZ(202.50deg) rotateY(-90deg);background:rgb(120,126,137)"></div><div class="pj-slat" style="transform:translate(261.52px,365.31px) rotateZ(217.50deg) rotateY(-90deg);background:rgb(113,119,131)"></div><div class="pj-slat" style="transform:translate(259.31px,367.52px) rotateZ(232.50deg) rotateY(-90deg);background:rgb(111,117,129)"></div><div class="pj-slat" style="transform:translate(256.59px,369.09px) rotateZ(247.50deg) rotateY(-90deg);background:rgb(113,119,131)"></div><div class="pj-slat" style="transform:translate(253.57px,369.90px) rotateZ(262.50deg) rotateY(-90deg);background:rgb(120,125,137)"></div><div class="pj-slat" style="transform:translate(10.43px,369.90px) rotateZ(277.50deg) rotateY(-90deg);background:rgb(130,135,146)"></div><div class="pj-slat" style="transform:translate(7.41px,369.09px) rotateZ(292.50deg) rotateY(-90deg);background:rgb(144,148,158)"></div><div class="pj-slat" style="transform:translate(4.69px,367.52px) rotateZ(307.50deg) rotateY(-90deg);background:rgb(160,164,172)"></div><div class="pj-slat" style="transform:translate(2.48px,365.31px) rotateZ(322.50deg) rotateY(-90deg);background:rgb(177,180,188)"></div><div class="pj-slat" style="transform:translate(0.91px,362.59px) rotateZ(337.50deg) rotateY(-90deg);background:rgb(194,197,203)"></div><div class="pj-slat" style="transform:translate(0.10px,359.57px) rotateZ(352.50deg) rotateY(-90deg);background:rgb(210,212,218)"></div>
+            <div class="pj-front">
+              <span class="pj-chip pj-foil">WEB APP</span>
+              <div class="pj-emblem"><div class="pj-layout"><span class="pj-sunk"></span><span class="pj-foil" style="grid-column:1/3;grid-row:2/4"></span><span class="pj-sunk" style="grid-column:3/5"></span><span class="pj-sunk" style="grid-column:3/4"></span><span class="pj-sunk" style="grid-column:4/5"></span></div></div>
+              <div class="pj-ficha">
+                <div class="pj-ink">
+                  <div class="pj-ink-top"><span class="pj-kicker">Herramienta</span><span class="pj-access">Gratis · navegador</span></div>
+                  <span class="pj-ltitle">PBI Mockup Creator</span>
+                  <span class="pj-lsub">Diseña el dashboard antes de abrir Power BI.</span>
+                  <div class="pj-specs"><div class="pj-spec"><span class="pj-spec-k">Tipo</span><span class="pj-spec-v">Herramienta web</span></div><div class="pj-spec"><span class="pj-spec-k">Cubre</span><span class="pj-spec-v">Proximidad · Jerarquía · Semejanza · Espacio en blanco · Figura-fondo</span></div></div>
+                </div>
+                <div class="pj-holo pj-foil"><span>MOCKUP · LAYOUT · POWER BI · MOCKUP · LAYOUT · POWER BI</span></div>
+              </div>
+              <div class="pj-sheen"></div>
+            </div>
+          </div>
+        </div>
+        <div class="pj-floor" aria-hidden="true"><span></span><span></span></div>
+        <div class="pj-text">
+          <h3 class="pj-title">PBI Mockup Creator</h3>
+          <p class="pj-desc">Herramienta web para diseñar el layout de un dashboard antes de abrir Power BI. Partes de la audiencia y de la decisión que tiene que tomar, la herramienta propone una distribución y comprueba los rangos mientras mueves las piezas. Sirve para acordar la estructura con negocio antes de construir nada.</p>
+          <div class="pj-actions">
+            <a class="pj-link" href="https://borjamome.github.io/powerbi-mockup/" target="_blank" rel="noopener noreferrer" data-ga="clic_pbi_mockup" data-ga-location="descargas_proyectos">Abrir la herramienta<span class="sr-only"> (se abre en una pestaña nueva)</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" aria-hidden="true"><path d="M7 17 17 7"></path><path d="M9 7h8v8"></path></svg></a>
+            <span class="pj-host">borjamome.github.io/powerbi-mockup</span>
+          </div>
+        </div>
+      </article>
+      <article class="pj-card">
+        <div class="pj-scene" aria-hidden="true">
+          <div class="pj-box">
+            <div class="pj-back"></div>
+            <div class="pj-spine"><div class="pj-spine-in"><span class="pj-spine-foil pj-foil"></span><span class="pj-spine-t">Data Storytelling y diseño de dashboards</span><span class="pj-spine-a">↗</span></div></div>
+            <div class="pj-side-r"></div>
+            <div class="pj-side-t"></div>
+            <div class="pj-side-b"></div>
+            <div class="pj-slat" style="transform:translate(0.10px,10.43px) rotateZ(7.50deg) rotateY(-90deg);background:rgb(224,226,230)"></div><div class="pj-slat" style="transform:translate(0.91px,7.41px) rotateZ(22.50deg) rotateY(-90deg);background:rgb(235,236,240)"></div><div class="pj-slat" style="transform:translate(2.48px,4.69px) rotateZ(37.50deg) rotateY(-90deg);background:rgb(242,243,246)"></div><div class="pj-slat" style="transform:translate(4.69px,2.48px) rotateZ(52.50deg) rotateY(-90deg);background:rgb(244,245,248)"></div><div class="pj-slat" style="transform:translate(7.41px,0.91px) rotateZ(67.50deg) rotateY(-90deg);background:rgb(242,243,246)"></div><div class="pj-slat" style="transform:translate(10.43px,0.10px) rotateZ(82.50deg) rotateY(-90deg);background:rgb(235,237,240)"></div><div class="pj-slat" style="transform:translate(253.57px,0.10px) rotateZ(97.50deg) rotateY(-90deg);background:rgb(225,227,231)"></div><div class="pj-slat" style="transform:translate(256.59px,0.91px) rotateZ(112.50deg) rotateY(-90deg);background:rgb(211,214,219)"></div><div class="pj-slat" style="transform:translate(259.31px,2.48px) rotateZ(127.50deg) rotateY(-90deg);background:rgb(195,198,205)"></div><div class="pj-slat" style="transform:translate(261.52px,4.69px) rotateZ(142.50deg) rotateY(-90deg);background:rgb(178,182,189)"></div><div class="pj-slat" style="transform:translate(263.09px,7.41px) rotateZ(157.50deg) rotateY(-90deg);background:rgb(161,165,174)"></div><div class="pj-slat" style="transform:translate(263.90px,10.43px) rotateZ(172.50deg) rotateY(-90deg);background:rgb(145,150,159)"></div><div class="pj-slat" style="transform:translate(263.90px,359.57px) rotateZ(187.50deg) rotateY(-90deg);background:rgb(131,136,147)"></div><div class="pj-slat" style="transform:translate(263.09px,362.59px) rotateZ(202.50deg) rotateY(-90deg);background:rgb(120,126,137)"></div><div class="pj-slat" style="transform:translate(261.52px,365.31px) rotateZ(217.50deg) rotateY(-90deg);background:rgb(113,119,131)"></div><div class="pj-slat" style="transform:translate(259.31px,367.52px) rotateZ(232.50deg) rotateY(-90deg);background:rgb(111,117,129)"></div><div class="pj-slat" style="transform:translate(256.59px,369.09px) rotateZ(247.50deg) rotateY(-90deg);background:rgb(113,119,131)"></div><div class="pj-slat" style="transform:translate(253.57px,369.90px) rotateZ(262.50deg) rotateY(-90deg);background:rgb(120,125,137)"></div><div class="pj-slat" style="transform:translate(10.43px,369.90px) rotateZ(277.50deg) rotateY(-90deg);background:rgb(130,135,146)"></div><div class="pj-slat" style="transform:translate(7.41px,369.09px) rotateZ(292.50deg) rotateY(-90deg);background:rgb(144,148,158)"></div><div class="pj-slat" style="transform:translate(4.69px,367.52px) rotateZ(307.50deg) rotateY(-90deg);background:rgb(160,164,172)"></div><div class="pj-slat" style="transform:translate(2.48px,365.31px) rotateZ(322.50deg) rotateY(-90deg);background:rgb(177,180,188)"></div><div class="pj-slat" style="transform:translate(0.91px,362.59px) rotateZ(337.50deg) rotateY(-90deg);background:rgb(194,197,203)"></div><div class="pj-slat" style="transform:translate(0.10px,359.57px) rotateZ(352.50deg) rotateY(-90deg);background:rgb(210,212,218)"></div>
+            <div class="pj-front">
+              <span class="pj-chip pj-foil">MANUAL</span>
+              <div class="pj-emblem"><div class="pj-bars"><span class="pj-sunk" style="height:34%"></span><span class="pj-sunk" style="height:48%"></span><span class="pj-sunk" style="height:40%"></span><span class="pj-foil" style="height:96%"></span><span class="pj-sunk" style="height:56%"></span></div></div>
+              <div class="pj-ficha">
+                <div class="pj-ink">
+                  <div class="pj-ink-top"><span class="pj-kicker">Manual interactivo</span><span class="pj-access">Gratis · online</span></div>
+                  <span class="pj-ltitle">Data Storytelling y diseño de dashboards</span>
+                  <span class="pj-lsub">Manual interactivo sobre un dashboard vivo.</span>
+                  <div class="pj-specs"><div class="pj-spec"><span class="pj-spec-k">Tipo</span><span class="pj-spec-v">Manual interactivo</span></div><div class="pj-spec"><span class="pj-spec-k">Cubre</span><span class="pj-spec-v">Percepción · Ruido · Atención · Visuales · Composición · Narrativa</span></div></div>
+                </div>
+                <div class="pj-holo pj-foil"><span>DATA STORYTELLING · DASHBOARDS · DATA STORYTELLING · DASHBOARDS</span></div>
+              </div>
+              <div class="pj-sheen"></div>
+            </div>
+          </div>
+        </div>
+        <div class="pj-floor" aria-hidden="true"><span></span><span></span></div>
+        <div class="pj-text">
+          <h3 class="pj-title">Data Storytelling y diseño de dashboards</h3>
+          <p class="pj-desc">Manual para diseñar dashboards que se entienden a la primera. Recorre percepción, ruido, atención, visuales, composición y narrativa, y cada idea se aplica sobre un dashboard que cambia mientras lees. Útil para revisar tus propios informes con criterio y justificar cada decisión de diseño.</p>
+          <div class="pj-actions">
+            <a class="pj-link" href="./data-storytelling.html" data-ga="clic_manual_storytelling" data-ga-location="descargas_proyectos">Leer el manual<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" aria-hidden="true"><path d="M7 17 17 7"></path><path d="M9 7h8v8"></path></svg></a>
+            <span class="pj-host">Portfolio · Data Storytelling</span>
+          </div>
+        </div>
+      </article>
+  </section>
+<script>
+// Proyectos steelbook: inclinación + foil que siguen al puntero (sin efecto con «reducir movimiento»)
+(function(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  document.querySelectorAll('.pj-card').forEach(function(el){
+    el.addEventListener('pointermove',function(ev){
+      var r=el.getBoundingClientRect(),x=(ev.clientX-r.left)/r.width,y=(ev.clientY-r.top)/r.height;
+      el.style.setProperty('--ry',((x-.5)*16).toFixed(2)+'deg');
+      el.style.setProperty('--gx',(x*100).toFixed(1)+'%');
+      el.style.setProperty('--gy',(y*100).toFixed(1)+'%');
+    });
+    el.addEventListener('pointerleave',function(){['--ry','--gx','--gy'].forEach(function(p){el.style.removeProperty(p);});});
+  });
+})();
+</script>
 
   <!-- Grid -->
   <h2 class="sr-only">Archivos disponibles</h2>
