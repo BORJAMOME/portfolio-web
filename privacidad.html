@@ -16,7 +16,7 @@
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet">
 <!-- Shared styles: variables, nav, footer, botones, reset -->
-<link rel="stylesheet" href="./shared.css?v=85cf5305e2">
+<link rel="stylesheet" href="./shared.css?v=b29bff2615">
 
 <!-- ── Cookie Consent + GA4 Consent Mode v2 (RGPD/LOPDGDD) ── -->
 <script>
@@ -99,6 +99,7 @@
 <link rel="alternate" hreflang="en" href="https://borjamora.es/en/privacy.html">
 <link rel="alternate" hreflang="x-default" href="https://borjamora.es/privacidad.html">
 <script src="./lang.js?v=37dd6be74a"></script>
+<script src="./split-name.js?v=202d1a348a"></script>
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
@@ -252,7 +253,7 @@ body{
 
 <!-- ─────────── NAV ─────────── -->
 <nav id="nav" aria-label="Navegación principal">
-  <a href="./index.html" class="logo" aria-label="Borja Mora — Inicio"><span id="logoText" class="done">Borja Mora</span><span class="logo-mark"><svg class="logo-ring" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><circle class="logo-ring-bg" cx="9" cy="9" r="7.3" pathLength="1"/><circle class="logo-ring-fg" cx="9" cy="9" r="7.3" pathLength="1"/></svg><span class="logo-dot"></span></span></a>
+  <a href="./index.html" class="logo" aria-label="Borja Mora Méndez — Inicio"><span id="logoText" class="done" data-split-name>Borja Mora Méndez</span></a>
   <div class="ds-lang" role="group" aria-label="Idioma · Language">
     <span class="ds-lang-a" aria-current="true" lang="es" title="Español">ES</span>
     <a href="./en/privacy.html" class="ds-lang-b" hreflang="en" lang="en" data-lang-to="en" title="Read in English" aria-label="Read in English">EN</a>
@@ -268,7 +269,7 @@ body{
         <li role="none"><a href="./visualizacion-datos.html" role="menuitem">Visualización</a></li>
       </ul>
     </div>
-    <a href="./descargas.html">Descargas</a>
+    <a data-lab-tube href="./descargas.html">Laboratorio</a>
     <a id="navEmailBtn" href="mailto:borja.mora.mendez@gmail.com" class="nav-cta btn" data-ga="clic_email" data-ga-location="nav"><span class="cta-text-wrap"><span>Contacto</span><span>¿Hablamos?</span></span></a>
   </div>
   <div class="nav-social">
@@ -287,7 +288,7 @@ body{
   <div class="nav-drawer-backdrop" id="navBackdrop"></div>
   <div class="nav-drawer-panel">
     <div class="nav-drawer-head">
-      <span class="nav-drawer-brand">Borja Mora.</span>
+      <span class="nav-drawer-brand">Borja Mora Méndez.</span>
       <button class="nav-drawer-close" id="navDrawerClose" aria-label="Cerrar menú"><span class="nav-drawer-close-x" aria-hidden="true">×</span>Cerrar</button>
     </div>
     <nav class="nav-drawer-links" aria-label="Navegación móvil">
@@ -303,7 +304,7 @@ body{
           </div>
         </div>
       </div>
-      <a href="./descargas.html">Descargas</a>
+      <a href="./descargas.html">Laboratorio</a>
     </nav>
     <div class="nav-drawer-foot">
       <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="nav-drawer-foot-item" data-ga="clic_linkedin" data-ga-location="drawer">LinkedIn</a>
@@ -562,7 +563,7 @@ body{
   <div class="foot-inner">
     <div class="foot-grid">
       <div class="foot-col foot-col--brand">
-        <p class="foot-brand-name">Borja Mora.</p>
+        <p class="foot-brand-name">Borja Mora Méndez.</p>
         <p class="foot-brand-desc">Data Analyst Junior</p>
         <p class="foot-brand-loc">Madrid, España</p>
         <button type="button" class="foot-copy-email" data-copy-email data-ga-location="footer"><span class="foot-copy-email-addr">borja.mora.mendez@gmail.com</span><span class="foot-copy-email-act" data-copy-label aria-live="polite">Copiar</span></button>
@@ -575,7 +576,7 @@ body{
         <a href="./power-bi.html">Power BI</a>
         <a href="./analisis-datos.html">Análisis</a>
         <a href="./visualizacion-datos.html">Visualización</a>
-        <a href="./descargas.html">Descargas</a>
+        <a href="./descargas.html">Laboratorio</a>
       </nav>
 
       <div class="foot-col">
@@ -629,6 +630,7 @@ body{
   </div>
 </div>
 <script src="./consent.js?v=26a27e3704" defer></script>
+<script src="./lab-tube.js?v=a5e7c0a4eb" defer></script>
 <script src="./contact.js?v=451e00c590" defer></script>
 </body>
 </html>

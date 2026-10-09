@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Probador de fondos — Borja Mora</title>
+<link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
+<style>
+/* Herramienta interna: prueba colores de fondo sobre el portfolio real.
+   Carga una página del sitio en un iframe (mismo origen) y sobrescribe
+   --white (fondo de página) y --off (fondo de secciones alternas). */
+:root {
+  --ink: #111; --muted: #5a5a5a; --line: #e4e4e4; --panel: #fff;
+  --font: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; }
+html, body { height: 100%; }
+body { font-family: var(--font); color: var(--ink); background: #ececec; display: grid; grid-template-columns: 340px 1fr; }
+aside { background: var(--panel); border-right: 1px solid var(--line); overflow-y: auto; padding: 24px 22px 32px; }
+h1 { font-size: 17px; font-weight: 700; letter-spacing: -.3px; }
+.sub { font-size: 12.5px; color: var(--muted); line-height: 1.5; margin: 6px 0 22px; }
+h2 { font-size: 10.5px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 22px 0 10px; }
+
+.current { display: flex; gap: 12px; align-items: center; padding: 12px; border: 1px solid var(--line); border-radius: 12px; }
+.current .chip { width: 52px; height: 52px; border-radius: 10px; border: 1px solid rgba(0,0,0,.08); flex: none; }
+.current .hex { font: 600 18px/1 ui-monospace, 'SFMono-Regular', Consolas, monospace; letter-spacing: .02em; }
+.current .name { font-size: 12px; color: var(--muted); margin-top: 5px; }
+.current button { margin-left: auto; }
+
+.family { margin-bottom: 14px; }
+.family-name { font-size: 12px; font-weight: 600; margin-bottom: 7px; display: flex; justify-content: space-between; }
+.family-name span { color: var(--muted); font-weight: 400; }
+.swatches { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.sw { aspect-ratio: 1; border-radius: 8px; border: 1px solid rgba(0,0,0,.09); cursor: pointer; position: relative; padding: 0; }
+.sw:hover { transform: translateY(-1px); box-shadow: 0 3px 8px rgba(0,0,0,.08); }
+.sw[aria-pressed="true"] { outline: 2px solid var(--ink); outline-offset: 2px; }
+.sw.ref::after { content: ''; position: absolute; top: 4px; right: 4px; width: 6px; height: 6px; border-radius: 50%; background: #7a7bff; }
+.sw:focus-visible { outline: 2px solid #7a7bff; outline-offset: 2px; }
+
+.slider { display: grid; grid-template-columns: 74px 1fr 38px; align-items: center; gap: 10px; font-size: 12px; margin: 8px 0; }
+.slider output { font-variant-numeric: tabular-nums; color: var(--muted); text-align: right; }
+input[type=range] { width: 100%; accent-color: var(--ink); }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+input[type=color] { width: 40px; height: 34px; border: 1px solid var(--line); border-radius: 8px; padding: 2px; background: #fff; }
+input[type=text] { font: 500 13px ui-monospace, Consolas, monospace; width: 100px; height: 34px; padding: 0 10px; border: 1px solid var(--line); border-radius: 8px; }
+button, select { font: 600 12px var(--font); height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--ink); background: #fff; color: var(--ink); cursor: pointer; }
+button.primary { background: var(--ink); color: #fff; }
+select { border-color: var(--line); border-radius: 8px; padding: 0 8px; }
+label.check { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; line-height: 1.4; margin: 8px 0; cursor: pointer; }
+label.check input { margin-top: 2px; accent-color: var(--ink); }
+
+.contrast { display: grid; grid-template-columns: 1fr auto auto; gap: 6px 10px; font-size: 12.5px; align-items: center; }
+.contrast b { font-variant-numeric: tabular-nums; }
+.tag { font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 99px; }
+.tag.ok { background: #e3f4e8; color: #1d6b35; }
+.tag.ko { background: #fbe4e4; color: #9b1c1c; }
+
+.compare { display: flex; gap: 6px; flex-wrap: wrap; }
+.compare button { height: 28px; padding: 0 10px 0 6px; display: inline-flex; gap: 6px; align-items: center; border-color: var(--line); font-weight: 500; font-family: ui-monospace, Consolas, monospace; }
+.compare i { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(0,0,0,.1); }
+
+main { display: grid; grid-template-rows: auto 1fr; min-width: 0; }
+.bar { display: flex; gap: 10px; align-items: center; padding: 10px 16px; background: #fff; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.bar .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px; }
+.bar .seg button { border: 0; height: 28px; }
+.bar .seg button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+.bar .spacer { flex: 1; }
+.bar small { color: var(--muted); font-size: 12px; }
+.stage { overflow: auto; display: flex; justify-content: center; padding: 16px; }
+iframe { border: 0; background: #fff; width: 100%; height: 100%; border-radius: 10px; box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 8px 30px rgba(0,0,0,.08); transition: width .3s; }
+.stage.mobile iframe { width: 390px; max-width: 100%; }
+.stage.tablet iframe { width: 820px; max-width: 100%; }
+
+@media (max-width: 860px) {
+  body { grid-template-columns: 1fr; grid-template-rows: auto 70vh; }
+  aside { border-right: 0; border-bottom: 1px solid var(--line); max-height: none; }
+}
+</style>
+</head>
+<body>
+<aside>
+  <h1>Probador de fondos</h1>
+  <p class="sub">Elige un color y se aplica al momento sobre el portfolio real. El punto morado marca tu referencia, <code>#f4f2ee</code>.</p>
+
+  <div class="current">
+    <div class="chip" id="chip"></div>
+    <div><div class="hex" id="hex">#F4F2EE</div><div class="name" id="name">Referencia</div></div>
+    <button type="button" id="copy">Copiar</button>
+  </div>
+
+  <h2>Paletas · de blanco a gris</h2>
+  <div id="families"></div>
+
+  <h2>Ajuste fino</h2>
+  <div class="slider"><span>Luminosidad</span><input type="range" id="l" min="86" max="100" step=".1"><output id="lo"></output></div>
+  <div class="slider"><span>Calidez</span><input type="range" id="w" min="-100" max="100" step="1"><output id="wo"></output></div>
+  <div class="slider"><span>Intensidad</span><input type="range" id="c" min="0" max="100" step="1"><output id="co"></output></div>
+  <div class="row" style="margin-top:10px">
+    <input type="color" id="picker" aria-label="Selector de color">
+    <input type="text" id="hexin" aria-label="Código hex" spellcheck="false">
+    <button type="button" id="save">Guardar para comparar</button>
+  </div>
+
+  <h2>Superficies</h2>
+  <label class="check"><input type="checkbox" id="adapt" checked> Adaptar también las secciones alternas y tarjetas (tono algo más oscuro que el fondo)</label>
+  <label class="check"><input type="checkbox" id="cards"> Tarjetas en blanco puro sobre el fondo (más contraste de capas)</label>
+
+  <h2>Legibilidad (WCAG)</h2>
+  <div class="contrast" id="contrast"></div>
+
+  <h2>Guardados</h2>
+  <div class="compare" id="compare"><small style="color:var(--muted);font-size:12px">Guarda colores para alternar entre ellos con un clic.</small></div>
+</aside>
+
+<main>
+  <div class="bar">
+    <select id="page" aria-label="Página">
+      <option value="../index.html">Inicio</option>
+      <option value="../sobre-mi.html">Sobre mí</option>
+      <option value="../power-bi.html">Power BI</option>
+      <option value="../analisis-datos.html">Análisis</option>
+      <option value="../descargas.html">Laboratorio</option>
+    </select>
+    <div class="seg" role="group" aria-label="Dispositivo">
+      <button type="button" data-dev="desktop" aria-pressed="true">Escritorio</button>
+      <button type="button" data-dev="tablet" aria-pressed="false">Tablet</button>
+      <button type="button" data-dev="mobile" aria-pressed="false">Móvil</button>
+    </div>
+    <span class="spacer"></span>
+    <button type="button" id="orig">Ver original (#FBFBFB)</button>
+  </div>
+  <div class="stage" id="stage"><iframe id="frame" title="Vista previa del portfolio" src="../index.html?lang=es"></iframe></div>
+</main>
+
+<script>
+(function () {
+  var REF = '#f4f2ee', ORIG = '#fbfbfb';
+  // Familias de blanco a gris claro, ordenadas de más claro a más oscuro
+  var FAMILIES = [
+    { name: 'Cálidos · papel', hint: 'como tu referencia', list: ['#fdfcfa', '#faf8f5', '#f7f5f1', '#f4f2ee', '#f0ede8', '#ebe7e0', '#e4dfd7'] },
+    { name: 'Piedra · greige', hint: 'cálido apagado', list: ['#fbfaf8', '#f7f6f3', '#f3f2ef', '#efeeea', '#eae8e4', '#e4e2dd', '#dcd9d3'] },
+    { name: 'Neutros', hint: 'sin tinte', list: ['#ffffff', '#fbfbfb', '#f7f7f7', '#f3f3f3', '#eeeeee', '#e8e8e8', '#e0e0e0'] },
+    { name: 'Fríos · niebla', hint: 'tinte azulado', list: ['#fbfcfd', '#f7f8fa', '#f3f5f7', '#eff1f4', '#eaedf0', '#e4e7eb', '#dce0e5'] },
+    { name: 'Lavanda', hint: 'guiño al morado de marca', list: ['#fcfcfe', '#f8f8fc', '#f4f4f9', '#f0f0f6', '#ebebf2', '#e5e5ee', '#dedee8'] }
+  ];
+  var $ = function (id) { return document.getElementById(id); };
+  // la vista previa no necesita el aviso de cookies: mismo origen, se marca como ya respondido solo si no hay respuesta
+  try { if (!localStorage.getItem('bm_cookie_consent')) localStorage.setItem('bm_cookie_consent', 'rejected'); } catch (e) {}
+  var frame = $('frame'), state = { hex: REF, saved: [] };
+  try { var s = JSON.parse(localStorage.getItem('bm_fondo') || '{}'); if (s.hex) state.hex = s.hex; if (s.saved) state.saved = s.saved; } catch (e) {}
+
+  /* ── color: hex ⇄ OKLCH (para que los deslizadores sean perceptuales) ── */
+  function hexToRgb(h) { h = h.replace('#', ''); if (h.length === 3) h = h.replace(/./g, '$&$&'); var n = parseInt(h, 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
+  function rgbToHex(r) { return '#' + r.map(function (v) { return Math.round(Math.min(255, Math.max(0, v))).toString(16).padStart(2, '0'); }).join(''); }
+  function lin(c) { c /= 255; return c <= .04045 ? c / 12.92 : Math.pow((c + .055) / 1.055, 2.4); }
+  function delin(c) { return 255 * (c <= .0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - .055); }
+  function toOklch(hex) {
+    var r = hexToRgb(hex).map(lin);
+    var l = Math.cbrt(.4122214708 * r[0] + .5363325363 * r[1] + .0514459929 * r[2]);
+    var m = Math.cbrt(.2119034982 * r[0] + .6806995451 * r[1] + .1073969566 * r[2]);
+    var s = Math.cbrt(.0883024619 * r[0] + .2817188376 * r[1] + .6299787005 * r[2]);
+    var L = .2104542553 * l + .7936177850 * m - .0040720468 * s;
+    var a = 1.9779984951 * l - 2.4285922050 * m + .4505937099 * s;
+    var b = .0259040371 * l + .7827717662 * m - .8086757660 * s;
+    return { L: L, C: Math.hypot(a, b), h: Math.atan2(b, a) };
+  }
+  function fromOklch(L, C, h) {
+    var a = C * Math.cos(h), b = C * Math.sin(h);
+    var l = Math.pow(L + .3963377774 * a + .2158037573 * b, 3);
+    var m = Math.pow(L - .1055613458 * a - .0638541728 * b, 3);
+    var s = Math.pow(L - .0894841775 * a - 1.2914855480 * b, 3);
+    return rgbToHex([4.0767416621 * l - 3.3077115913 * m + .2309699292 * s, -1.2684380046 * l + 2.6097574011 * m - .3413193965 * s, -.0041960863 * l - .7034186147 * m + 1.7076147010 * s].map(delin));
+  }
+  function lum(hex) { var r = hexToRgb(hex).map(lin); return .2126 * r[0] + .7152 * r[1] + .0722 * r[2]; }
+  function ratio(a, b) { var x = lum(a), y = lum(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); }
+  function shade(hex, dL) { var o = toOklch(hex); return fromOklch(Math.max(0, o.L - dL), o.C, o.h); }
+
+  // Calidez: -100 (frío, tono azul 250°) … +100 (cálido, tono 75°). Intensidad: croma 0 … 0.03
+  var WARM_H = 75 * Math.PI / 180, COOL_H = 250 * Math.PI / 180;
+  function fromSliders() {
+    var L = +$('l').value / 100, w = +$('w').value, C = (+$('c').value / 100) * .03;
+    var h = w >= 0 ? WARM_H : COOL_H;
+    return fromOklch(L, w === 0 ? 0 : C * Math.abs(w) / 100, h);
+  }
+  function toSliders(hex) {
+    var o = toOklch(hex), deg = (o.h * 180 / Math.PI + 360) % 360;
+    var warm = o.C < .0015 ? 0 : (deg > 150 && deg < 330 ? -1 : 1);
+    $('l').value = (o.L * 100).toFixed(1);
+    $('c').value = Math.min(100, Math.round(o.C / .03 * 100));
+    $('w').value = warm * 100;
+    outs();
+  }
+  function outs() { $('lo').textContent = (+$('l').value).toFixed(1); $('wo').textContent = $('w').value; $('co').textContent = $('c').value; }
+
+  /* ── aplicar al iframe ── */
+  function apply() {
+    var hex = state.hex, d;
+    try { d = frame.contentDocument; } catch (e) { return; }
+    if (!d || !d.documentElement) return;
+    var st = d.getElementById('__fondo');
+    if (!st) { st = d.createElement('style'); st.id = '__fondo'; (d.head || d.documentElement).appendChild(st); }
+    var off = $('adapt').checked ? shade(hex, .018) : '#f7f7fa';
+    var card = $('cards').checked ? '#ffffff' : ($('adapt').checked ? shade(hex, .025) : '#f4f4f4');
+    st.textContent =
+      ':root{--white:' + hex + ' !important;--off:' + off + ' !important}' +
+      'body,.hero,.cta-final,.dph-section,.proj-section{background-color:' + hex + ' !important}' +
+      '#nav.scrolled,body>nav.scrolled{background:' + hex + '8c !important}' +
+      '.contact-bar{background:' + card + ' !important}';
+  }
+  frame.addEventListener('load', function () {
+    try { frame.contentDocument.querySelectorAll('[class*="cookie"]').forEach(function (e) { if (getComputedStyle(e).position === 'fixed') e.remove(); }); } catch (e) {}
+    apply();
+  });
+
+  /* ── interfaz ── */
+  function nameOf(hex) {
+    if (hex === REF) return 'Tu referencia';
+    if (hex === ORIG) return 'Fondo actual del portfolio';
+    for (var i = 0; i < FAMILIES.length; i++) if (FAMILIES[i].list.indexOf(hex) > -1) return FAMILIES[i].name;
+    return 'Personalizado';
+  }
+  function contrast() {
+    var rows = [['Texto principal #111', '#111111', 4.5], ['Texto secundario #5a5a5a', '#5a5a5a', 4.5], ['Botón negro / fondo', '#111111', 3]];
+    $('contrast').innerHTML = rows.map(function (r) {
+      var v = ratio(r[1], state.hex), ok = v >= r[2];
+      return '<span>' + r[0] + '</span><b>' + v.toFixed(2) + ':1</b><span class="tag ' + (ok ? 'ok' : 'ko') + '">' + (ok ? 'AA' : 'NO') + '</span>';
+    }).join('');
+  }
+  function set(hex, fromSlider) {
+    hex = hex.toLowerCase(); state.hex = hex;
+    $('chip').style.background = hex; $('hex').textContent = hex.toUpperCase(); $('name').textContent = nameOf(hex);
+    $('picker').value = hex; $('hexin').value = hex.toUpperCase();
+    document.querySelectorAll('.sw').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.hex === hex ? 'true' : 'false'); });
+    if (!fromSlider) toSliders(hex);
+    contrast(); apply(); persist();
+  }
+  function persist() { try { localStorage.setItem('bm_fondo', JSON.stringify(state)); } catch (e) {} }
+  function renderSaved() {
+    if (!state.saved.length) return;
+    $('compare').innerHTML = '';
+    state.saved.forEach(function (h) {
+      var b = document.createElement('button'); b.type = 'button';
+      b.innerHTML = '<i style="background:' + h + '"></i>' + h.toUpperCase();
+      b.title = 'Clic: aplicar · Alt+clic: quitar';
+      b.addEventListener('click', function (e) {
+        if (e.altKey) { state.saved = state.saved.filter(function (x) { return x !== h; }); persist(); $('compare').innerHTML = ''; renderSaved(); return; }
+        set(h);
+      });
+      $('compare').appendChild(b);
+    });
+  }
+
+  FAMILIES.forEach(function (f) {
+    var wrap = document.createElement('div'); wrap.className = 'family';
+    wrap.innerHTML = '<div class="family-name">' + f.name + '<span>' + f.hint + '</span></div>';
+    var g = document.createElement('div'); g.className = 'swatches';
+    f.list.forEach(function (h) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'sw' + (h === REF ? ' ref' : '');
+      b.dataset.hex = h; b.style.background = h; b.title = h.toUpperCase(); b.setAttribute('aria-label', h);
+      b.addEventListener('click', function () { set(h); });
+      g.appendChild(b);
+    });
+    wrap.appendChild(g); $('families').appendChild(wrap);
+  });
+
+  ['l', 'w', 'c'].forEach(function (id) { $(id).addEventListener('input', function () { outs(); set(fromSliders(), true); }); });
+  $('picker').addEventListener('input', function () { set(this.value); });
+  $('hexin').addEventListener('change', function () { var v = this.value.trim(); if (!/^#/.test(v)) v = '#' + v; if (/^#[0-9a-f]{6}$/i.test(v)) set(v); });
+  $('adapt').addEventListener('change', apply); $('cards').addEventListener('change', apply);
+  $('save').addEventListener('click', function () { if (state.saved.indexOf(state.hex) < 0) { state.saved.push(state.hex); persist(); renderSaved(); } });
+  $('copy').addEventListener('click', function () { var b = this; navigator.clipboard.writeText(state.hex.toUpperCase()).then(function () { b.textContent = 'Copiado'; setTimeout(function () { b.textContent = 'Copiar'; }, 1200); }); });
+  $('orig').addEventListener('click', function () { set(ORIG); });
+  $('page').addEventListener('change', function () { frame.src = this.value + '?lang=es'; });
+  document.querySelectorAll('[data-dev]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.querySelectorAll('[data-dev]').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      $('stage').className = 'stage ' + b.dataset.dev;
+    });
+  });
+
+  renderSaved();
+  set(state.hex);
+})();
+</script>
+</body>
+</html>

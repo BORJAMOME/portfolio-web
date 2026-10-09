@@ -12,3 +12,13 @@ supabase/fichero-datos.sql
 
 # Estado local de la CLI de Supabase (npx supabase …)
 supabase/.temp/
+
+# Configuración local del editor y de Claude Code
+.vscode/
+.claude/
+
+# Archivos del sistema operativo y logs
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log

@@ -13,7 +13,7 @@
     "Sobre mí": "About me",
     "Análisis": "Analysis",
     "Visualización": "Visualisation",
-    "Descargas": "Downloads",
+    "Laboratorio": "Lab",
     "Este proyecto": "This project",
     "Dashboard Power BI": "Power BI dashboard",
     "Sígueme": "Follow me",
@@ -122,6 +122,8 @@
     "Más": "More"
   },
   "keep": [
+    "Borja Mora Méndez",
+    "Borja Mora Méndez.",
     "Español",
     "ES",
     "Read in English",

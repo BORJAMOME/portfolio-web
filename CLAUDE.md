@@ -20,7 +20,7 @@ node tools/check-a11y.mjs        # requiere: npm i --no-save playwright axe-core
 En Windows, `build-en --check` puede marcar páginas como desactualizadas por los finales de línea CRLF; en CI (Linux) no.
 
 ## Área privada (`area-privada.html`)
-Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde Descargas. Sin librerías: habla con la API de Supabase con `fetch`.
+Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde Laboratorio. Sin librerías: habla con la API de Supabase con `fetch`.
 - `area-privada.js`: shell (sesión, `api`, rutas `#/…`, diálogo) y el drive (`#/archivos`). `supabase/area-privada.sql`: tablas y RLS.
 - **Pestañas en módulos** que se cargan al abrirlas: `area-privada-<nombre>.js` define `window.AP<Nombre> = { render(ctx) → Promise<paint> }`
   y se declara en el HTML como `<link rel="prefetch" data-ap-module="<nombre>">` (así `version-assets` le pone el `?v=`).

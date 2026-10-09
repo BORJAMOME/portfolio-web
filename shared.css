@@ -75,45 +75,39 @@ body {
 }
 
 .logo {
-  font-size: 17px; font-weight: 700;
+  font-size: 19px; font-weight: 700;
   color: var(--ink); text-decoration: none;
-  letter-spacing: -.3px;
-  display: flex; align-items: center; gap: 7px;
+  letter-spacing: -.4px;
+  display: inline-flex; align-items: baseline;
+  white-space: nowrap;
 }
-.logo-mark {
-  position: relative; width: 18px; height: 18px;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-.logo-ring {
-  position: absolute; inset: 0; width: 18px; height: 18px;
-  transform: rotate(-90deg); pointer-events: none;
-  transition: filter .5s var(--ease);
-}
-.logo-ring-bg, .logo-ring-fg { fill: none; stroke-width: 1.2; }
-.logo-ring-bg {
-  stroke: rgba(17,17,17,.12);
-  transition: opacity .3s var(--ease) .08s;
-}
-.logo-ring-fg {
-  stroke: var(--ink); stroke-linecap: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: calc(1 - var(--logo-ring, 0));
-  transition: stroke-dashoffset .06s linear;
-}
-.logo-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: var(--ink);
-  transition: transform .55s var(--ease-spring);
+/* Escritorio estrecho: el menú completo no deja sitio para el logo a 19 px */
+@media (min-width: 876px) and (max-width: 1100px) {
+  .logo { font-size: 17px; letter-spacing: -.3px; }
 }
 
-/* Al llegar al final del scroll, el anillo se cierra en un punto sólido */
-.logo-mark.at-end .logo-dot { transform: scale(2.3); }
-.logo-mark.at-end .logo-ring-bg { opacity: 0; }
-.logo-mark.at-end .logo-ring { filter: drop-shadow(0 0 3px rgba(17,17,17,.28)); }
-
+/* Nombre letra a letra (split-name.js). Hereda tipografía del contenedor.
+   La máscara recorta con clip-path (no con overflow, que movería la línea base):
+   deja .5em arriba para que la letra suba sin cortarse y .25em abajo para la «j». */
+html.sn-pending [data-split-name] { visibility: hidden; }
+.sn { white-space: nowrap; }
+.sn-mask {
+  display: inline-block;
+  clip-path: inset(-.5em -.1em -.25em -.1em);
+}
+.sn-lift, .sn-enter { display: inline-block; will-change: transform; }
+.sn-lift { transition: transform .7s cubic-bezier(.34,1.45,.5,1); }
+.sn-lift.is-up { transition: transform .28s cubic-bezier(.2,.8,.2,1); }
+.sn-enter { transform: translateY(115%); }
+.sn-in .sn-enter {
+  transform: none;
+  transition-property: transform;
+  transition-duration: 1s;
+  transition-timing-function: cubic-bezier(.16,1,.3,1);
+}
+.sn-static .sn-enter { transition: none; }
 @media (prefers-reduced-motion: reduce) {
-  .logo-ring-fg, .logo-dot, .logo-ring-bg, .logo-ring { transition: none; }
+  .sn-enter, .sn-lift { transform: none !important; transition: none !important; }
 }
 
 /* Typing cursor — desactivado */
@@ -309,10 +303,12 @@ body {
 }
 
 /* ─── NAV SOCIAL ICONS ─── */
-.nav-social { display: flex; align-items: center; gap: 4px; margin-left: 6px; }
+/* Zona de clic de 36 × 44 px (sobra para el mínimo de 24 px de WCAG 2.2):
+   los iconos quedan a 18 px entre sí, su propio tamaño, y se leen como pareja. */
+.nav-social { display: flex; align-items: center; gap: 0; margin-left: 10px; }
 .nav-social a {
   display: flex; align-items: center; justify-content: center;
-  width: 44px; height: 44px; border-radius: var(--radius-md);
+  width: 36px; height: 44px; border-radius: var(--radius-md);
   color: var(--ink); opacity: 1;
   transition: opacity .2s var(--ease);
 }
@@ -946,7 +942,7 @@ nav.nav-drawer-links {
 }
 @media (max-width: 640px) {
   #nav, body > nav { height: 56px; padding: 0 clamp(1rem,3vw,1.5rem); }
-  .logo { font-size: 15px; }
+  .logo { font-size: 16px; }
 }
 @media (min-width: 876px) {
   .nav-burger { display: none !important; }

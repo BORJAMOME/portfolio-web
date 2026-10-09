@@ -17,7 +17,7 @@
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet">
 <!-- Shared styles: variables, nav, footer, botones, reset -->
-<link rel="stylesheet" href="../shared.css?v=85cf5305e2">
+<link rel="stylesheet" href="../shared.css?v=b29bff2615">
 <!-- Primary Meta Tags -->
 <meta name="description" content="Machine learning, exploratory analysis and advanced queries with Python and SQL. SARIMA, K-Means and XGBoost models applied to real data.">
 <meta name="keywords" content="Machine Learning, Python, SQL, SARIMA, K-Means, XGBoost, data analysis, Data Analyst, portfolio">
@@ -28,6 +28,7 @@
 <link rel="alternate" hreflang="en" href="https://borjamora.es/en/data-analysis.html">
 <link rel="alternate" hreflang="x-default" href="https://borjamora.es/analisis-datos.html">
 <script src="../lang.js?v=37dd6be74a"></script>
+<script src="../split-name.js?v=202d1a348a"></script>
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
@@ -346,7 +347,6 @@
 /* Prefers reduced motion */
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{transition-duration:0ms!important;animation-duration:0ms!important;animation-iteration-count:1!important}
-  .logo-dot{animation:none}
 }
 
 </style>
@@ -356,7 +356,7 @@
 <div class="progress-bar" id="progressBar"></div>
 
 <nav id="nav" aria-label="Main navigation">
-  <a href="./index.html" class="logo" aria-label="Borja Mora — Home"><span id="logoText" class="done">Borja Mora</span><span class="logo-mark"><svg class="logo-ring" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><circle class="logo-ring-bg" cx="9" cy="9" r="7.3" pathLength="1"/><circle class="logo-ring-fg" cx="9" cy="9" r="7.3" pathLength="1"/></svg><span class="logo-dot"></span></span></a>
+  <a href="./index.html" class="logo" aria-label="Borja Mora Méndez — Home"><span id="logoText" class="done" data-split-name>Borja Mora Méndez</span></a>
   <div class="ds-lang" role="group" aria-label="Language · Idioma">
     <a href="../analisis-datos.html" class="ds-lang-b" hreflang="es" lang="es" data-lang-to="es" title="Leer en español" aria-label="Leer en español">ES</a>
     <span class="ds-lang-a" aria-current="true" lang="en" title="English">EN</span>
@@ -372,7 +372,7 @@
         <li role="none"><a href="./data-visualisation.html" role="menuitem">Visualisation</a></li>
       </ul>
     </div>
-    <a href="./downloads.html">Downloads</a>
+    <a data-lab-tube href="./downloads.html">Lab</a>
     <a id="navEmailBtn" href="mailto:borja.mora.mendez@gmail.com" class="nav-cta btn" data-ga="clic_email" data-ga-location="nav"><span class="cta-text-wrap"><span>Contact</span><span>Let’s talk</span></span></a>
   </div>
   <div class="nav-social">
@@ -391,7 +391,7 @@
   <div class="nav-drawer-backdrop" id="navBackdrop"></div>
   <div class="nav-drawer-panel">
     <div class="nav-drawer-head">
-      <span class="nav-drawer-brand">Borja Mora.</span>
+      <span class="nav-drawer-brand">Borja Mora Méndez.</span>
       <button class="nav-drawer-close" id="navDrawerClose" aria-label="Close menu"><span class="nav-drawer-close-x" aria-hidden="true">×</span>Close</button>
     </div>
     <nav class="nav-drawer-links" aria-label="Mobile navigation">
@@ -407,7 +407,7 @@
           </div>
         </div>
       </div>
-      <a href="./downloads.html">Downloads</a>
+      <a href="./downloads.html">Lab</a>
     </nav>
     <div class="nav-drawer-foot">
       <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="nav-drawer-foot-item" data-ga="clic_linkedin" data-ga-location="drawer">LinkedIn</a>
@@ -822,7 +822,7 @@
   <div class="foot-inner">
     <div class="foot-grid">
       <div class="foot-col foot-col--brand">
-        <p class="foot-brand-name">Borja Mora.</p>
+        <p class="foot-brand-name">Borja Mora Méndez.</p>
         <p class="foot-brand-desc">Junior Data Analyst</p>
         <p class="foot-brand-loc">Madrid, Spain</p>
         <button type="button" class="foot-copy-email" data-copy-email data-ga-location="footer"><span class="foot-copy-email-addr">borja.mora.mendez@gmail.com</span><span class="foot-copy-email-act" data-copy-label aria-live="polite">Copy</span></button>
@@ -835,7 +835,7 @@
         <a href="./projects.html">Power BI</a>
         <a href="./data-analysis.html">Analysis</a>
         <a href="./data-visualisation.html">Visualisation</a>
-        <a href="./downloads.html">Downloads</a>
+        <a href="./downloads.html">Lab</a>
       </nav>
 
       <div class="foot-col">
@@ -875,8 +875,6 @@ window.addEventListener('scroll',()=>{
   const h=document.documentElement;
   const p=Math.min(1, Math.max(0, window.scrollY/(h.scrollHeight-h.clientHeight) || 0));
   document.getElementById('progressBar').style.transform=`scaleX(${p})`;
-  h.style.setProperty('--logo-ring', p);
-  document.querySelector('.logo-mark')?.classList.toggle('at-end', p >= 0.98);
 });
 
 // SR observer
@@ -1046,6 +1044,7 @@ document.querySelectorAll('.sec-nav button').forEach(a=>{
   </div>
 </div>
 <script src="../consent.js?v=26a27e3704" defer></script>
+<script src="../lab-tube.js?v=a5e7c0a4eb" defer></script>
 <script src="../contact.js?v=451e00c590" defer></script>
 
 <!-- ── Tracking de evidencia técnica (apps y código) ── -->

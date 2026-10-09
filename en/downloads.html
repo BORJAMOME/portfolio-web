@@ -9,14 +9,14 @@
 <link rel="shortcut icon" href="../img/favicon.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#111111">
-<title>Downloads · Borja Mora Méndez</title>
+<title>Lab · Borja Mora Méndez</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet">
 <!-- Shared styles: variables, nav, footer, botones, reset -->
-<link rel="stylesheet" href="../shared.css?v=85cf5305e2">
+<link rel="stylesheet" href="../shared.css?v=b29bff2615">
 
 <!-- ── Cookie Consent + GA4 Consent Mode v2 (RGPD/LOPDGDD) ── -->
 <script>
@@ -99,23 +99,24 @@
 <link rel="alternate" hreflang="en" href="https://borjamora.es/en/downloads.html">
 <link rel="alternate" hreflang="x-default" href="https://borjamora.es/descargas.html">
 <script src="../lang.js?v=37dd6be74a"></script>
+<script src="../split-name.js?v=202d1a348a"></script>
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:locale" content="en_GB">
 <meta property="og:locale:alternate" content="es_ES">
 <meta property="og:url" content="https://borjamora.es/en/downloads.html">
-<meta property="og:title" content="Power BI downloads — free .pbix files | Borja Mora">
+<meta property="og:title" content="Power BI lab — free .pbix files | Borja Mora">
 <meta property="og:description" content="Free Power BI .pbix files to download: native Gantt, Input Slicer, slope charts, small multiples and advanced DAX and data storytelling techniques.">
 <meta property="og:image" content="https://borjamora.es/img/og-downloads-en.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Power BI downloads — free .pbix files by Borja Mora">
+<meta property="og:image:alt" content="Power BI lab — free .pbix files by Borja Mora">
 <meta property="og:site_name" content="Borja Mora">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Power BI downloads — free .pbix files | Borja Mora">
+<meta name="twitter:title" content="Power BI lab — free .pbix files | Borja Mora">
 <meta name="twitter:description" content="19 .pbix files ready to download. DAX, storytelling and advanced Power BI techniques.">
 <meta name="twitter:image" content="https://borjamora.es/img/og-downloads-en.png">
 
@@ -145,7 +146,8 @@
 html{scroll-behavior:smooth}
 body{
   font-family:var(--font);
-  background:var(--paper);
+  background:radial-gradient(1400px 900px at 50% 0,rgba(255,255,255,.9) 0%,rgba(255,255,255,0) 70%) no-repeat,linear-gradient(180deg,#eceef1 0%,#e3e5e9 40%,#dfe1e6 100%);
+  background-color:#e3e5e9;
   color:var(--ink);
   line-height:1.55;
   font-feature-settings:"tnum" 0;
@@ -157,55 +159,14 @@ body{
 
 /* ───────────── CONTAINERS ───────────── */
 .shell{
-  max-width:1240px;
+  max-width:1680px;
   margin:0 auto;
   padding:0 clamp(20px,4vw,48px);
 }
 
 /* ───────────── HERO CON ENTRADA ORQUESTADA ───────────── */
 .hero{
-  padding:132px 0 64px;
-  display:flex;
-  flex-direction:column;
-  align-items:flex-start;
-  gap:28px;
-}
-
-/* H1: entra primero, fade-up + fade-in */
-@keyframes heroH1{
-  from{opacity:0;transform:translateY(16px)}
-  to{opacity:1;transform:translateY(0)}
-}
-.hero-h1{
-  font-family:var(--font-serif);
-  font-size:clamp(36px,4.2vw,58px);
-  font-weight:500;
-  letter-spacing:-1.6px;
-  line-height:1.04;
-  color:var(--ink);
-  white-space:nowrap;
-  font-variant-numeric:tabular-nums;
-  font-feature-settings:"tnum" 1;
-  animation:heroH1 .4s var(--ease) .08s both;
-}
-
-.dl-badge{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:clamp(36px,5vw,48px);
-  height:clamp(46px,7.5vw,62px);
-  margin:0 16px;
-  background:var(--ink);
-  border-radius:var(--radius-md);
-  vertical-align:middle;
-  user-select:none;
-  flex-shrink:0;
-}
-.dl-badge svg{
-  width:clamp(15px,2.2vw,22px);
-  height:clamp(19px,2.8vw,28px);
-  display:block;
+  padding:132px 0 56px; /* 60 px de nav fijo + 72 px */
 }
 
 /* Subtexto: entra 140ms después */
@@ -221,159 +182,108 @@ body{
   animation:heroSub .4s var(--ease) .15s both;
 }
 
-/* Stats: entran staggered, 50ms cada una */
-@keyframes heroStat{
-  from{opacity:0;transform:translateY(8px)}
-  to{opacity:1;transform:translateY(0)}
-}
-.hero-stats{
-  display:flex;
-  align-items:center;
-  gap:32px;
-  flex-wrap:wrap;
-  padding-top:4px;
-}
-.hero-stat{
-  display:flex;
-  flex-direction:column;
-  gap:2px;
-  animation:heroStat .35s var(--ease) both;
-}
-.hero-stat:nth-child(1){animation-delay:.22s}
-.hero-stat:nth-child(2){animation-delay:.245s}
-.hero-stat:nth-child(3){animation-delay:.27s}
-
-.hero-stat-num{
-  font-size:28px;
-  font-weight:700;
-  letter-spacing:-.04em;
-  color:var(--ink);
-  font-variant-numeric:tabular-nums;
-  line-height:1;
-}
-.hero-stat-num span{color:var(--ink)}
-.hero-stat-label{
-  font-size:11px;
-  font-weight:500;
-  text-transform:uppercase;
-  letter-spacing:.14em;
-  color:var(--mutedB);
-}
-.hero-stat-sep{
-  width:1px;
-  height:32px;
-  background:var(--gray);
-  flex-shrink:0;
-}
-
 @media(max-width:820px){
-  .hero{padding:48px 0 48px;gap:20px}
-  .hero-h1{white-space:normal;font-size:clamp(32px,8vw,48px);letter-spacing:-1px}
-  .hero-stats{gap:20px}
-  .hero-stat-sep{display:none}
-  .dl-badge{margin:0 12px}
-}
-@media(max-width:680px){
-  .hero-h1{white-space:normal}
-  .dl-badge{margin:0 8px;width:clamp(30px,4.5vw,38px);height:clamp(38px,6.5vw,48px)}
+  .hero{padding:48px 0 40px}
 }
 
-/* ───────────── SEGMENTADOR · PASTILLAS CON PILL INDICATOR ───────────── */
-.seg{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:8px 0 28px;
-  gap:24px;
-  flex-wrap:wrap;
+/* Titular de la rejilla de .pbix */
+.sb-head{margin-bottom:8px}
+.sb-head-label{
+  font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.18em;
+  color:var(--muted);margin-bottom:14px;
 }
-.seg-list{
-  display:flex;align-items:center;gap:10px;
-  flex-wrap:wrap;
-  position:relative;
-  overflow-x:auto;
-  -webkit-overflow-scrolling:touch;
-  scrollbar-width:none;
-}
-.seg-list::-webkit-scrollbar{display:none}
-
-/* Pill indicator: se desliza suavemente bajo el botón activo */
-.seg-pill{
-  position:absolute;
-  bottom:-10px;
-  left:0;
-  width:1px;
-  height:2px;
-  background:var(--ink);
-  border-radius:1px;
-  transform-origin:left;
-  transition:transform .2s var(--ease);
-  pointer-events:none;
+.sb-head-title{
+  font-family:var(--font-serif);
+  font-size:clamp(26px,3.4vw,38px);font-weight:500;letter-spacing:-1px;line-height:1.1;
+  color:var(--ink);text-wrap:balance;max-width:720px;
 }
 
-.seg-btn{
-  font-family:var(--mono);
-  background:#fff;
-  border:1px solid var(--ink);
-  border-radius:999px;
-  cursor:pointer;
-  padding:9px 18px;
-  font-size:13px;
-  font-weight:500;
-  color:var(--ink);
-  letter-spacing:-.005em;
-  transition:background .15s var(--ease),color .15s var(--ease);
-  white-space:nowrap;
-  display:inline-flex;align-items:center;gap:8px;
-  position:relative;
-}
-@media (hover: hover) and (pointer: fine) { .seg-btn:hover{background:#f2f2f2} }
-.seg-btn.is-active{background:var(--ink);color:#fff}
-.seg-btn .count{
-  font-size:11px;
-  font-variant-numeric:tabular-nums;
-  font-weight:500;
-  opacity:.55;
-}
-.seg-btn.is-active .count{opacity:.7}
-
-.seg-counter{
-  font-family:var(--mono);
-  font-size:11px;font-weight:500;
-  text-transform:uppercase;letter-spacing:.16em;
-  color:var(--mutedB);
-  font-variant-numeric:tabular-nums;
-  white-space:nowrap;
-}
-.seg-counter b{font-weight:600;color:var(--ink)}
-
-/* ───────────── GRID — mismo sistema visual que .dax-cards (power-bi.html) ───────────── */
+/* ───────────── GRID · ESCENARIO STEELBOOK ───────────── */
 .grid-wrap{
   margin-bottom:96px;
 }
+/* Las cajas se dibujan a 244×342 y se escalan con --sb-z (zoom: escala también el hueco que ocupan) */
+.sb-stage{--sb-z:1.22;padding:24px 0 0}
+@media(max-width:1439px){.sb-stage{--sb-z:1.08}}
 .grid{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:20px;
+  grid-template-columns:repeat(auto-fill,minmax(calc(244px * var(--sb-z)),1fr));
+  gap:64px 32px;
+  justify-items:center;
 }
-@media(max-width:960px){
-  .grid{grid-template-columns:repeat(2,1fr)}
-}
-@media(max-width:600px){
-  .grid{grid-template-columns:1fr}
+@media(max-width:640px){
+  .sb-stage{--sb-z:1}
 }
 
-/* ───────────── MÓDULO CON STAGGER ───────────── */
+/* ───────────── PROYECTOS · STEELBOOK (enlaces, no descargas) ─────────────
+   Carátula de acero con emblema hundido, pieza clave en foil, ficha mate y tira
+   holográfica. Valores copiados del handoff 8a. --ry --gx --gy los fija el puntero (JS). */
+.pj-stage{display:flex;flex-wrap:wrap;justify-content:center;gap:64px 140px;padding:24px 0 0;margin-bottom:96px}
+.pj-card{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;width:304px}
+.pj-scene{perspective:1700px;width:264px;height:370px;position:relative;-webkit-box-reflect:below 2px linear-gradient(transparent 84%,rgba(255,255,255,.2))}
+.pj-box{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(-5deg) rotateY(calc(22deg - var(--ry,0deg) * 2.4));transition:transform .6s cubic-bezier(0.16,1,0.3,1)}
+.pj-back,.pj-front{position:absolute;inset:0;border-radius:12px;background-image:url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22560%22%3E%3Cline%20x1%3D%220.0%22%20y1%3D%22515.6%22%20x2%3D%2244.5%22%20y2%3D%22503.8%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.37%22%20stroke-width%3D%220.51%22%2F%3E%3Cline%20x1%3D%22131.7%22%20y1%3D%22421.1%22%20x2%3D%22219.6%22%20y2%3D%22424.5%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.36%22%20stroke-width%3D%220.55%22%2F%3E%3Cline%20x1%3D%22326.7%22%20y1%3D%22135.5%22%20x2%3D%22379.4%22%20y2%3D%22145.5%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.36%22%20stroke-width%3D%220.32%22%2F%3E%3Cline%20x1%3D%22273.6%22%20y1%3D%22262.0%22%20x2%3D%22372.7%22%20y2%3D%22290.2%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.19%22%20stroke-width%3D%220.51%22%2F%3E%3Cline%20x1%3D%22369.3%22%20y1%3D%22385.6%22%20x2%3D%22447.0%22%20y2%3D%22391.0%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.42%22%20stroke-width%3D%220.66%22%2F%3E%3Cline%20x1%3D%22148.9%22%20y1%3D%22187.8%22%20x2%3D%22243.2%22%20y2%3D%22173.5%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.20%22%20stroke-width%3D%220.42%22%2F%3E%3Cline%20x1%3D%22171.4%22%20y1%3D%22165.1%22%20x2%3D%22275.6%22%20y2%3D%22170.5%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.37%22%20stroke-width%3D%220.65%22%2F%3E%3Cline%20x1%3D%2223.4%22%20y1%3D%22153.2%22%20x2%3D%2293.9%22%20y2%3D%22153.7%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.28%22%20stroke-width%3D%220.38%22%2F%3E%3Cline%20x1%3D%22363.6%22%20y1%3D%2230.7%22%20x2%3D%22416.0%22%20y2%3D%2223.3%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.35%22%20stroke-width%3D%220.67%22%2F%3E%3Cline%20x1%3D%22205.9%22%20y1%3D%2292.7%22%20x2%3D%22261.4%22%20y2%3D%2281.8%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.26%22%20stroke-width%3D%220.47%22%2F%3E%3Cline%20x1%3D%22133.0%22%20y1%3D%22297.7%22%20x2%3D%22206.1%22%20y2%3D%22279.8%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.42%22%20stroke-width%3D%220.48%22%2F%3E%3Cline%20x1%3D%22345.2%22%20y1%3D%22355.7%22%20x2%3D%22422.3%22%20y2%3D%22356.8%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.30%22%20stroke-width%3D%220.58%22%2F%3E%3Cline%20x1%3D%22375.8%22%20y1%3D%22222.2%22%20x2%3D%22457.5%22%20y2%3D%22203.6%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.33%22%20stroke-width%3D%220.44%22%2F%3E%3Cline%20x1%3D%22132.2%22%20y1%3D%22219.2%22%20x2%3D%22218.5%22%20y2%3D%22249.7%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.18%22%20stroke-width%3D%220.63%22%2F%3E%3Cline%20x1%3D%2231.1%22%20y1%3D%22227.8%22%20x2%3D%2262.5%22%20y2%3D%22215.3%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.45%22%20stroke-width%3D%220.39%22%2F%3E%3Cline%20x1%3D%22252.9%22%20y1%3D%2280.8%22%20x2%3D%22313.9%22%20y2%3D%2285.9%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.19%22%20stroke-width%3D%220.67%22%2F%3E%3Cline%20x1%3D%22353.8%22%20y1%3D%22498.7%22%20x2%3D%22446.9%22%20y2%3D%22534.5%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.38%22%20stroke-width%3D%220.41%22%2F%3E%3Cline%20x1%3D%224.2%22%20y1%3D%22139.0%22%20x2%3D%2228.4%22%20y2%3D%22127.4%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.34%22%20stroke-width%3D%220.39%22%2F%3E%3Cline%20x1%3D%22296.5%22%20y1%3D%22274.0%22%20x2%3D%22376.1%22%20y2%3D%22254.9%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.41%22%20stroke-width%3D%220.39%22%2F%3E%3Cline%20x1%3D%22149.6%22%20y1%3D%22500.8%22%20x2%3D%22180.2%22%20y2%3D%22500.5%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.15%22%20stroke-width%3D%220.67%22%2F%3E%3Cline%20x1%3D%22254.8%22%20y1%3D%22516.4%22%20x2%3D%22275.3%22%20y2%3D%22524.1%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.21%22%20stroke-width%3D%220.69%22%2F%3E%3Cline%20x1%3D%22226.1%22%20y1%3D%22380.5%22%20x2%3D%22268.7%22%20y2%3D%22369.6%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.21%22%20stroke-width%3D%220.53%22%2F%3E%3Cline%20x1%3D%2220.9%22%20y1%3D%22430.9%22%20x2%3D%22102.5%22%20y2%3D%22446.8%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.30%22%20stroke-width%3D%220.31%22%2F%3E%3Cline%20x1%3D%2244.1%22%20y1%3D%22514.7%22%20x2%3D%2275.4%22%20y2%3D%22520.0%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.42%22%20stroke-width%3D%220.31%22%2F%3E%3Cline%20x1%3D%22353.3%22%20y1%3D%22482.4%22%20x2%3D%22453.6%22%20y2%3D%22525.8%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.38%22%20stroke-width%3D%220.47%22%2F%3E%3Cline%20x1%3D%2299.3%22%20y1%3D%22407.5%22%20x2%3D%22198.3%22%20y2%3D%22398.4%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.22%22%20stroke-width%3D%220.46%22%2F%3E%3Cline%20x1%3D%22354.8%22%20y1%3D%22312.9%22%20x2%3D%22406.1%22%20y2%3D%22318.5%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.37%22%20stroke-width%3D%220.43%22%2F%3E%3Cline%20x1%3D%22290.1%22%20y1%3D%22236.7%22%20x2%3D%22327.4%22%20y2%3D%22230.4%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.45%22%20stroke-width%3D%220.70%22%2F%3E%3Cline%20x1%3D%22253.0%22%20y1%3D%22488.4%22%20x2%3D%22351.9%22%20y2%3D%22461.0%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.34%22%20stroke-width%3D%220.35%22%2F%3E%3Cline%20x1%3D%22199.0%22%20y1%3D%22312.1%22%20x2%3D%22281.3%22%20y2%3D%22347.1%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.29%22%20stroke-width%3D%220.37%22%2F%3E%3Cline%20x1%3D%22178.7%22%20y1%3D%2293.0%22%20x2%3D%22258.3%22%20y2%3D%2294.6%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.32%22%20stroke-width%3D%220.50%22%2F%3E%3Cline%20x1%3D%22302.9%22%20y1%3D%22203.0%22%20x2%3D%22382.6%22%20y2%3D%22166.7%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.24%22%20stroke-width%3D%220.52%22%2F%3E%3Cline%20x1%3D%2281.1%22%20y1%3D%22404.8%22%20x2%3D%22126.0%22%20y2%3D%22394.0%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.35%22%20stroke-width%3D%220.47%22%2F%3E%3Cline%20x1%3D%2230.1%22%20y1%3D%22432.8%22%20x2%3D%22117.7%22%20y2%3D%22467.2%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.42%22%20stroke-width%3D%220.57%22%2F%3E%3C%2Fsvg%3E'),url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%22300%22%3E%3Cfilter%20id%3D%22b%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.004%200.95%22%20numOctaves%3D%223%22%20seed%3D%224%22%20stitchTiles%3D%22stitch%22%2F%3E%3CfeColorMatrix%20values%3D%220%200%200%200%200.5%20%200%200%200%200%200.52%20%200%200%200%200%200.56%20%200%200%200%200.9%200%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23b)%22%2F%3E%3C%2Fsvg%3E'),linear-gradient(100deg,#f5f6f9 0%,#c8ccd4 16%,#9aa0ab 30%,#e9ebf0 44%,#b5bac4 58%,#868c98 76%,#d9dce3 100%);background-size:100% 100%,300px 300px,100% 100%;background-blend-mode:screen,soft-light,normal}
+.pj-back{transform:translateZ(-9px) rotateY(180deg)}
+.pj-front{transform:translateZ(9px);overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,255,255,.75),inset 2px 2px 3px rgba(255,255,255,.55),inset -2px -2px 5px rgba(0,0,0,.28),inset 0 0 14px rgba(0,0,0,.18)}
+.pj-foil{background-image:radial-gradient(60% 50% at var(--gx,40%) var(--gy,30%),rgba(255,255,255,.75),rgba(255,255,255,0) 60%),repeating-linear-gradient(62deg,rgba(255,255,255,0) 0 2px,rgba(255,255,255,.28) 2px 3px),repeating-linear-gradient(-58deg,rgba(255,255,255,0) 0 3px,rgba(60,70,110,.07) 3px 4px),url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%27200%27%3E%3Cfilter id=%27g%27%3E%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%270.9%27 numOctaves=%273%27 stitchTiles=%27stitch%27/%3E%3CfeColorMatrix type=%27saturate%27 values=%270%27/%3E%3C/filter%3E%3Crect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23g)%27/%3E%3C/svg%3E'),linear-gradient(110deg,#c9ced9 0%,#a8ecff 18%,#f3c6ff 34%,#ffffff 48%,#bfffe0 60%,#9fb6ff 76%,#ffd9f0 88%,#d7dbe4 100%),linear-gradient(20deg,#e8f6ff 0%,#f6e6ff 30%,#e9fff4 55%,#e6ecff 80%,#fff3fb 100%);background-size:100% 100%,auto,auto,140px 140px,260% 100%,100% 260%;background-position:0 0,0 0,0 0,0 0,var(--gx,50%) 0,0 var(--gy,50%);background-blend-mode:screen,overlay,normal,overlay,soft-light,normal;box-shadow:inset 0 0 0 .5px rgba(255,255,255,.9),inset 0 -1px 1px rgba(0,0,0,.18),0 1px 2px rgba(12,13,16,.35)}
+.pj-sunk{background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(255,255,255,.12));box-shadow:inset 1px 1px 2px rgba(0,0,0,.45),inset -1px -1px 1px rgba(255,255,255,.8)}
+.pj-spine{position:absolute;top:12px;left:-9px;width:18px;height:346px;transform:rotateY(-90deg);overflow:hidden;background:linear-gradient(90deg,rgb(217,219,224) 0%,rgb(209,212,217) 50%,rgb(217,219,224) 100%)}
+.pj-spine-in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:8px 0}
+.pj-spine-foil{width:10px;height:30px;border-radius:2px}
+.pj-spine-t{writing-mode:vertical-rl;transform:rotate(180deg);font-size:8px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#4a4d56;text-shadow:0 1px 0 rgba(255,255,255,.85),0 -1px 0 rgba(0,0,0,.18);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-height:270px}
+.pj-spine-a{font-size:8px;font-weight:800;color:#4a4d56;text-shadow:0 1px 0 rgba(255,255,255,.85),0 -1px 0 rgba(0,0,0,.18)}
+.pj-side-r{position:absolute;top:12px;left:255px;width:18px;height:346px;transform:rotateY(90deg);background:linear-gradient(90deg,rgb(138,143,153) 0%,rgb(146,150,160) 50%,rgb(138,143,153) 100%)}
+.pj-side-t{position:absolute;left:12px;top:-9px;width:240px;height:18px;transform:rotateX(90deg);background:linear-gradient(180deg,rgb(231,232,236),rgb(220,222,227))}
+.pj-side-b{position:absolute;left:12px;top:361px;width:240px;height:18px;transform:rotateX(-90deg);background:rgb(124,130,141)}
+.pj-slat{position:absolute;left:-9px;top:-1.97px;width:18px;height:3.94px;backface-visibility:hidden}
+.pj-chip{position:absolute;z-index:3;left:16px;top:16px;font-size:9.5px;font-weight:800;font-style:italic;letter-spacing:.1em;color:#0c0d10;padding:5px 11px;border-radius:999px;white-space:nowrap}
+.pj-emblem{position:absolute;left:24px;right:24px;top:52px;height:118px}
+.pj-layout{position:absolute;inset:0;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:22px 1fr 1fr;gap:6px}
+.pj-layout span{border-radius:5px}
+.pj-layout span:first-child{grid-column:1/-1;border-radius:4px}
+.pj-bars{position:absolute;inset:0;display:flex;align-items:flex-end;gap:10px;padding:0 6px;border-bottom:2px solid rgba(74,77,86,.4)}
+.pj-bars span{flex:1;border-radius:4px 4px 0 0}
+.pj-ficha{position:absolute;left:14px;right:14px;bottom:14px;height:166px;border-radius:7px;overflow:hidden;background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%27200%27%3E%3Cfilter id=%27g%27%3E%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%270.9%27 numOctaves=%273%27 stitchTiles=%27stitch%27/%3E%3CfeColorMatrix type=%27saturate%27 values=%270%27/%3E%3C/filter%3E%3Crect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23g)%27/%3E%3C/svg%3E'),radial-gradient(120% 90% at 85% 0%,rgba(122,123,255,.38),rgba(0,0,0,0) 55%),linear-gradient(180deg,#18191d,#0c0d0f);background-size:120px 120px,100% 100%,100% 100%;background-blend-mode:overlay,normal,normal;box-shadow:inset 0 1px 3px rgba(0,0,0,.7),inset 0 0 0 .5px rgba(0,0,0,.6),0 1px 0 rgba(255,255,255,.65),0 -1px 0 rgba(0,0,0,.2)}
+.pj-ink{position:absolute;inset:14px 26px 12px 14px;display:flex;flex-direction:column;gap:6px}
+.pj-ink-top{display:flex;justify-content:space-between;gap:8px}
+.pj-kicker{font-size:7px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#a3a7b1;white-space:nowrap}
+.pj-access{font-size:7px;font-weight:700;letter-spacing:.14em;color:#a3a7b1;white-space:nowrap}
+.pj-ltitle{font-family:'Newsreader',Georgia,serif;font-size:21px;font-weight:500;line-height:1.02;letter-spacing:-.4px;color:#fff;text-wrap:balance}
+.pj-lsub{font-size:8.5px;line-height:1.35;color:#b9bdc6}
+.pj-specs{margin-top:auto}
+.pj-spec{display:grid;grid-template-columns:48px minmax(0,1fr);gap:8px;padding:5px 0;border-top:1px solid rgba(255,255,255,.1)}
+.pj-spec-k{font-size:6.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#7f8591}
+.pj-spec-v{font-size:7.5px;font-weight:600;line-height:1.35;color:#e6e8ee}
+.pj-holo{position:absolute;right:8px;top:10px;bottom:10px;width:8px;border-radius:2px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.pj-holo span{writing-mode:vertical-rl;font-size:4px;font-weight:800;letter-spacing:.3em;color:rgba(12,13,16,.55);white-space:nowrap}
+.pj-sheen{position:absolute;inset:0;pointer-events:none;background:radial-gradient(22% 140% at var(--gx,35%) 50%,rgba(255,255,255,.55),rgba(255,255,255,0) 70%),radial-gradient(300px 220px at var(--gx,35%) var(--gy,25%),rgba(255,255,255,.25),rgba(255,255,255,0) 70%);mix-blend-mode:screen}
+.pj-floor{position:relative;width:264px;height:34px;margin-top:-10px;pointer-events:none}
+.pj-floor span:first-child{position:absolute;left:4%;right:0;top:4px;height:12px;border-radius:50%;background:rgba(12,13,16,.6);filter:blur(4px)}
+.pj-floor span:last-child{position:absolute;left:24%;right:-36%;top:8px;height:24px;border-radius:50%;background:rgba(12,13,16,.16);filter:blur(12px)}
+/* Texto: mismo estilo que las tarjetas .pbix (.m-title / .m-desc) */
+.pj-text{align-self:stretch;flex:1;display:flex;flex-direction:column;gap:4px;margin-top:8px}
+.pj-title{font-size:16px;font-weight:700;letter-spacing:-.3px;line-height:1.25;color:#111;margin:0;overflow-wrap:break-word}
+.pj-desc{margin:6px 0 0;font-size:13px;line-height:1.55;color:#3a3d45}
+.pj-actions{margin-top:auto;padding-top:14px;display:flex;flex-direction:column;gap:8px}
+.pj-link{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:46px;border-radius:8px;background:#111;color:#fff;border:1px solid #111;font-size:11px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;text-decoration:none}
+.pj-link:hover{background:#fff;color:#111}
+.pj-link:focus-visible{outline:2px solid #111;outline-offset:2px}
+.pj-link svg{width:14px;height:14px;display:block;flex-shrink:0}
+.pj-host{font-size:11px;color:#5a5a5a;text-align:center}
+@media(max-width:380px){.pj-card{zoom:.9}}
+@media (prefers-reduced-motion:reduce){.pj-card *{transition:none !important}}
+
+/* ───────────── TARJETA «STEELBOOK» ─────────────
+   Caja 3D de acero cepillado (decorativa, aria-hidden) con número cromado y
+   etiqueta holográfica + texto y dos acciones reales (<a>) debajo.
+   --rx --ry --gx --gy los fija el puntero (JS). */
 .m{
-  position:relative;
-  display:flex;flex-direction:column;
-  padding:24px 30px 28px;
-  min-height:300px;
-  background:#ffffff;
-  border:1px solid #e8e8ee;
-  border-radius:var(--radius-lg);
+  --steel:url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22560%22%3E%3Cline%20x1%3D%220.0%22%20y1%3D%22515.6%22%20x2%3D%2244.5%22%20y2%3D%22503.8%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.37%22%20stroke-width%3D%220.51%22%2F%3E%3Cline%20x1%3D%22131.7%22%20y1%3D%22421.1%22%20x2%3D%22219.6%22%20y2%3D%22424.5%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.36%22%20stroke-width%3D%220.55%22%2F%3E%3Cline%20x1%3D%22326.7%22%20y1%3D%22135.5%22%20x2%3D%22379.4%22%20y2%3D%22145.5%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.36%22%20stroke-width%3D%220.32%22%2F%3E%3Cline%20x1%3D%22273.6%22%20y1%3D%22262.0%22%20x2%3D%22372.7%22%20y2%3D%22290.2%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.19%22%20stroke-width%3D%220.51%22%2F%3E%3Cline%20x1%3D%22369.3%22%20y1%3D%22385.6%22%20x2%3D%22447.0%22%20y2%3D%22391.0%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.42%22%20stroke-width%3D%220.66%22%2F%3E%3Cline%20x1%3D%22148.9%22%20y1%3D%22187.8%22%20x2%3D%22243.2%22%20y2%3D%22173.5%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.20%22%20stroke-width%3D%220.42%22%2F%3E%3Cline%20x1%3D%22171.4%22%20y1%3D%22165.1%22%20x2%3D%22275.6%22%20y2%3D%22170.5%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.37%22%20stroke-width%3D%220.65%22%2F%3E%3Cline%20x1%3D%2223.4%22%20y1%3D%22153.2%22%20x2%3D%2293.9%22%20y2%3D%22153.7%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.28%22%20stroke-width%3D%220.38%22%2F%3E%3Cline%20x1%3D%22363.6%22%20y1%3D%2230.7%22%20x2%3D%22416.0%22%20y2%3D%2223.3%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.35%22%20stroke-width%3D%220.67%22%2F%3E%3Cline%20x1%3D%22205.9%22%20y1%3D%2292.7%22%20x2%3D%22261.4%22%20y2%3D%2281.8%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.26%22%20stroke-width%3D%220.47%22%2F%3E%3Cline%20x1%3D%22133.0%22%20y1%3D%22297.7%22%20x2%3D%22206.1%22%20y2%3D%22279.8%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.42%22%20stroke-width%3D%220.48%22%2F%3E%3Cline%20x1%3D%22345.2%22%20y1%3D%22355.7%22%20x2%3D%22422.3%22%20y2%3D%22356.8%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.30%22%20stroke-width%3D%220.58%22%2F%3E%3Cline%20x1%3D%22375.8%22%20y1%3D%22222.2%22%20x2%3D%22457.5%22%20y2%3D%22203.6%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.33%22%20stroke-width%3D%220.44%22%2F%3E%3Cline%20x1%3D%22132.2%22%20y1%3D%22219.2%22%20x2%3D%22218.5%22%20y2%3D%22249.7%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.18%22%20stroke-width%3D%220.63%22%2F%3E%3Cline%20x1%3D%2231.1%22%20y1%3D%22227.8%22%20x2%3D%2262.5%22%20y2%3D%22215.3%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.45%22%20stroke-width%3D%220.39%22%2F%3E%3Cline%20x1%3D%22252.9%22%20y1%3D%2280.8%22%20x2%3D%22313.9%22%20y2%3D%2285.9%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.19%22%20stroke-width%3D%220.67%22%2F%3E%3Cline%20x1%3D%22353.8%22%20y1%3D%22498.7%22%20x2%3D%22446.9%22%20y2%3D%22534.5%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.38%22%20stroke-width%3D%220.41%22%2F%3E%3Cline%20x1%3D%224.2%22%20y1%3D%22139.0%22%20x2%3D%2228.4%22%20y2%3D%22127.4%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.34%22%20stroke-width%3D%220.39%22%2F%3E%3Cline%20x1%3D%22296.5%22%20y1%3D%22274.0%22%20x2%3D%22376.1%22%20y2%3D%22254.9%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.41%22%20stroke-width%3D%220.39%22%2F%3E%3Cline%20x1%3D%22149.6%22%20y1%3D%22500.8%22%20x2%3D%22180.2%22%20y2%3D%22500.5%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.15%22%20stroke-width%3D%220.67%22%2F%3E%3Cline%20x1%3D%22254.8%22%20y1%3D%22516.4%22%20x2%3D%22275.3%22%20y2%3D%22524.1%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.21%22%20stroke-width%3D%220.69%22%2F%3E%3Cline%20x1%3D%22226.1%22%20y1%3D%22380.5%22%20x2%3D%22268.7%22%20y2%3D%22369.6%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.21%22%20stroke-width%3D%220.53%22%2F%3E%3Cline%20x1%3D%2220.9%22%20y1%3D%22430.9%22%20x2%3D%22102.5%22%20y2%3D%22446.8%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.30%22%20stroke-width%3D%220.31%22%2F%3E%3Cline%20x1%3D%2244.1%22%20y1%3D%22514.7%22%20x2%3D%2275.4%22%20y2%3D%22520.0%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.42%22%20stroke-width%3D%220.31%22%2F%3E%3Cline%20x1%3D%22353.3%22%20y1%3D%22482.4%22%20x2%3D%22453.6%22%20y2%3D%22525.8%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.38%22%20stroke-width%3D%220.47%22%2F%3E%3Cline%20x1%3D%2299.3%22%20y1%3D%22407.5%22%20x2%3D%22198.3%22%20y2%3D%22398.4%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.22%22%20stroke-width%3D%220.46%22%2F%3E%3Cline%20x1%3D%22354.8%22%20y1%3D%22312.9%22%20x2%3D%22406.1%22%20y2%3D%22318.5%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.37%22%20stroke-width%3D%220.43%22%2F%3E%3Cline%20x1%3D%22290.1%22%20y1%3D%22236.7%22%20x2%3D%22327.4%22%20y2%3D%22230.4%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.45%22%20stroke-width%3D%220.70%22%2F%3E%3Cline%20x1%3D%22253.0%22%20y1%3D%22488.4%22%20x2%3D%22351.9%22%20y2%3D%22461.0%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.34%22%20stroke-width%3D%220.35%22%2F%3E%3Cline%20x1%3D%22199.0%22%20y1%3D%22312.1%22%20x2%3D%22281.3%22%20y2%3D%22347.1%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.29%22%20stroke-width%3D%220.37%22%2F%3E%3Cline%20x1%3D%22178.7%22%20y1%3D%2293.0%22%20x2%3D%22258.3%22%20y2%3D%2294.6%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.32%22%20stroke-width%3D%220.50%22%2F%3E%3Cline%20x1%3D%22302.9%22%20y1%3D%22203.0%22%20x2%3D%22382.6%22%20y2%3D%22166.7%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.24%22%20stroke-width%3D%220.52%22%2F%3E%3Cline%20x1%3D%2281.1%22%20y1%3D%22404.8%22%20x2%3D%22126.0%22%20y2%3D%22394.0%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.35%22%20stroke-width%3D%220.47%22%2F%3E%3Cline%20x1%3D%2230.1%22%20y1%3D%22432.8%22%20x2%3D%22117.7%22%20y2%3D%22467.2%22%20stroke%3D%22white%22%20stroke-opacity%3D%220.42%22%20stroke-width%3D%220.57%22%2F%3E%3C%2Fsvg%3E'),url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%22300%22%3E%3Cfilter%20id%3D%22b%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.004%200.95%22%20numOctaves%3D%223%22%20seed%3D%224%22%20stitchTiles%3D%22stitch%22%2F%3E%3CfeColorMatrix%20values%3D%220%200%200%200%200.5%20%200%200%200%200%200.52%20%200%200%200%200%200.56%20%200%200%200%200.9%200%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url(%23b)%22%2F%3E%3C%2Fsvg%3E'),linear-gradient(100deg,#f5f6f9 0%,#c8ccd4 16%,#9aa0ab 30%,#e9ebf0 44%,#b5bac4 58%,#868c98 76%,#d9dce3 100%);
+  --foil:repeating-linear-gradient(115deg,rgba(255,255,255,.4) 0 1px,rgba(255,255,255,0) 1px 4px),linear-gradient(110deg,#c9ced9 0%,#a8ecff 22%,#f3c6ff 38%,#ffffff 50%,#bfffe0 62%,#9fb6ff 78%,#d7dbe4 100%);
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;align-items:center;
+  width:calc(244px * var(--sb-z,1));
   color:var(--ink);
-  text-decoration:none;
-  cursor:pointer;
-  box-shadow:none;
 }
 
 /* Entrada inicial con stagger: 30ms por card */
@@ -381,142 +291,231 @@ body{
   from{opacity:0;transform:translateY(12px)}
   to{opacity:1;transform:translateY(0)}
 }
-.m:not(.m-soon):not(.m-filler){
+.m{
   animation:fadeUpCard .32s var(--ease) both;
 }
-
-/* Dinámico: se asigna desde JS con data-stagger */
 .m[data-stagger]{
   animation-delay:calc(var(--stagger-idx) * 30ms + 80ms);
 }
 
-/* Estados visuales */
-.m:focus-visible{
-  outline:2px solid var(--ink);
-  outline-offset:-2px;
+/* a) Caja 3D: 244×342, grosor 18 px */
+.sb-scene,.sb-floor{zoom:var(--sb-z,1)}
+.sb-scene{
+  perspective:1700px;
+  width:244px;height:342px;
+  position:relative;
+  -webkit-box-reflect:below 2px linear-gradient(transparent 84%,rgba(255,255,255,.2));
 }
-.m{
-  transition:transform .2s var(--ease), box-shadow .2s var(--ease);
+.sb-box{
+  position:absolute;inset:0;
+  transform-style:preserve-3d;
+  transform:rotateX(-5deg) rotateY(calc(22deg - var(--ry,0deg) * 2.4));
+  transition:transform .6s cubic-bezier(0.16,1,0.3,1);
 }
-@media (hover: hover) and (pointer: fine) {
-  .m:hover{
-    transform:translateY(-4px);
-    box-shadow:0 1px 2px rgba(17,17,17,.04),0 20px 40px rgba(17,17,17,.09);
-  }
+.sb-box > *{position:absolute}
+.sb-back,.sb-front{
+  inset:0;
+  border-radius:12px;
+  background-image:var(--steel);
+  background-size:100% 100%,300px 300px,100% 100%;
+  background-blend-mode:screen,soft-light,normal;
+}
+.sb-back{transform:translateZ(-9px) rotateY(180deg)}
+.sb-front{
+  transform:translateZ(9px);
+  overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.75),inset 2px 2px 3px rgba(255,255,255,.55),inset -2px -2px 5px rgba(0,0,0,.28),inset 0 0 14px rgba(0,0,0,.18);
+}
+/* Cantos rectos (acortados 12 px por extremo) */
+.sb-spine{
+  top:12px;left:-9px;width:18px;height:318px;
+  transform:rotateY(-90deg);
+  overflow:hidden;
+  background:linear-gradient(90deg,rgb(217,219,224) 0%,rgb(209,212,217) 50%,rgb(217,219,224) 100%);
+}
+.sb-spine-in{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+  padding:8px 0;
+}
+.sb-spine-foil{
+  width:10px;height:30px;border-radius:2px;
+  background-image:var(--foil);
+  background-size:auto,240% 100%;
+  background-position:0 0,var(--gx,50%) 0;
+  box-shadow:inset 0 0 0 .5px rgba(255,255,255,.9),0 1px 1px rgba(0,0,0,.25);
+}
+.sb-spine-t,.sb-spine-n{
+  color:#4a4d56;
+  text-shadow:0 1px 0 rgba(255,255,255,.85),0 -1px 0 rgba(0,0,0,.18);
+}
+.sb-spine-t{
+  writing-mode:vertical-rl;transform:rotate(180deg);
+  font-size:8px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-height:240px;
+}
+.sb-spine-n{font-family:var(--font-serif);font-size:12px;font-weight:600}
+.sb-side-r{
+  top:12px;left:235px;width:18px;height:318px;
+  transform:rotateY(90deg);
+  background:linear-gradient(90deg,rgb(138,143,153) 0%,rgb(146,150,160) 50%,rgb(138,143,153) 100%);
+}
+.sb-side-t{
+  left:12px;top:-9px;width:220px;height:18px;
+  transform:rotateX(90deg);
+  background:linear-gradient(180deg,rgb(231,232,236),rgb(220,222,227));
+}
+.sb-side-b{
+  left:12px;top:333px;width:220px;height:18px;
+  transform:rotateX(-90deg);
+  background:rgb(124,130,141);
+}
+/* Esquinas redondeadas: 6 láminas (cuarto de cilindro) por esquina; transform y color en JS */
+.sb-slat{
+  left:-9px;top:-1.97px;width:18px;height:3.94px;
+  backface-visibility:hidden;
 }
 
-.m-head{
-  display:flex;align-items:flex-start;justify-content:space-between;
-  margin-bottom:24px;
-}
-.m-num{
-  font-size:10px;
-  font-weight:700;
-  color:var(--muted);
-  font-variant-numeric:tabular-nums;
-  letter-spacing:1.2px;
-  text-transform:uppercase;
+/* b) Número cromado en relieve (la textura líquida se pinta en canvas) */
+.sb-num{
+  right:-8px;top:14px;
+  font-family:var(--font-serif);
+  font-size:190px;font-weight:600;letter-spacing:-9px;line-height:.8;
+  padding:0 14px 8px 4px;
+  background-image:linear-gradient(172deg,rgba(255,255,255,.7) 0%,rgba(255,255,255,.18) 40%,rgba(255,255,255,0) 47%,rgba(0,0,0,.18) 49%,rgba(0,0,0,0) 62%),conic-gradient(from 200deg at 70% 60%,#f7f8fb,#c9ccd4,#2a2c33,#8a8e99,#ffffff,#4a4d56,#d9dce3,#0c0d10,#a3a7b1,#f7f8fb);
+  background-size:100% 100%,240% 240%;
+  background-position:0 0,var(--gx,60%) var(--gy,30%);
+  -webkit-background-clip:text;background-clip:text;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(255,255,255,.95);
+  filter:drop-shadow(-1px -1px 0 rgba(255,255,255,.95)) drop-shadow(1.5px 1.5px 0 rgba(0,0,0,.42)) drop-shadow(2px 4px 4px rgba(0,0,0,.22));
+  pointer-events:none;
 }
 
-.m-ext{
-  display:inline-flex;align-items:center;justify-content:center;
-  width:44px;height:44px;
-  margin:-10px -10px 0 0;
-  color:var(--mutedB);
-  transition:color .15s var(--ease), transform .25s var(--ease);
-  text-decoration:none;
-  background:none;border:none;cursor:pointer;font-family:inherit;padding:0;
-  will-change:transform;
+/* c) Etiqueta holográfica (foil) con troquel blanco de 2 px */
+.sb-label{
+  position:absolute;left:14px;right:34px;bottom:16px;height:178px;
+  border-radius:12px 12px 12px 3px;
+  padding:2px;
+  background:#f4f5f8;
+  box-shadow:0 1px 0 rgba(255,255,255,.9),0 3px 8px rgba(12,13,16,.3),0 0 0 .5px rgba(12,13,16,.25);
 }
-@media (hover: hover) and (pointer: fine) {
-  .m-ext:hover{color:var(--ink); transform:scale(1.15) translate(2px,-2px)}
+.sb-foil{
+  position:relative;height:100%;
+  border-radius:10px 10px 10px 2px;
+  overflow:hidden;
+  background-image:var(--foil);
+  background-size:auto,240% 100%;
+  background-position:0 0,var(--gx,50%) 0;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.7);
 }
-.m-ext svg{width:18px;height:18px;display:block;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:square}
+.sb-foil-glow{
+  position:absolute;inset:0;
+  background:radial-gradient(160px 120px at var(--gx,40%) var(--gy,30%),rgba(255,255,255,.55),rgba(255,255,255,0) 70%);
+}
+.sb-micro{
+  position:absolute;left:12px;right:12px;top:6px;
+  font-size:3.6px;font-weight:700;letter-spacing:.24em;
+  color:rgba(17,17,17,.55);
+  white-space:nowrap;overflow:hidden;
+}
+.sb-ink{
+  position:absolute;inset:16px 13px 11px;
+  display:flex;flex-direction:column;gap:6px;
+  color:#111;
+}
+.sb-ink-top{display:flex;justify-content:space-between;align-items:baseline}
+.sb-pbix{font-size:26px;font-weight:800;font-style:italic;letter-spacing:-.05em;line-height:.9}
+.sb-no{font-size:7px;font-weight:800;letter-spacing:.14em;white-space:nowrap;flex-shrink:0;font-variant-numeric:tabular-nums}
+.sb-rule{height:1.5px;background:#111}
+.sb-ltitle{font-family:var(--font-serif);font-size:18px;font-weight:600;line-height:1.02;letter-spacing:-.3px;text-wrap:balance}
+.sb-lsub{font-size:8px;font-weight:600;line-height:1.35;color:#1d1e23}
+.sb-ink-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
+.sb-meta{display:flex;flex-direction:column;gap:2px;min-width:0}
+.sb-meta span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-lcat{font-size:6.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.sb-ltags{font-size:6px;font-weight:600;letter-spacing:.06em}
+.sb-code{display:flex;flex-direction:column;align-items:center;gap:1px;flex-shrink:0}
+.sb-bars{
+  width:54px;height:16px;
+  background:repeating-linear-gradient(90deg,#111 0 1px,rgba(0,0,0,0) 1px 2px,#111 2px 4px,rgba(0,0,0,0) 4px 5px,#111 5px 6px,rgba(0,0,0,0) 6px 8px,#111 8px 9px,rgba(0,0,0,0) 9px 10px,#111 10px 13px,rgba(0,0,0,0) 13px 14px);
+}
+.sb-code-t{font-size:5px;font-weight:700;letter-spacing:.16em}
+/* Esquina despegada abajo-izquierda */
+.sb-peel{
+  position:absolute;left:14px;bottom:16px;width:20px;height:20px;
+  background:linear-gradient(225deg,#ffffff 0%,#d4d7de 45%,#9aa0ab 100%);
+  clip-path:polygon(0 0,100% 0,0 100%);
+  border-radius:3px 0 0 0;
+  filter:drop-shadow(1px 1px 1px rgba(0,0,0,.3));
+}
+/* Brillo anisótropo que sigue a --gx */
+.sb-sheen{
+  position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(22% 140% at var(--gx,35%) 50%,rgba(255,255,255,.55),rgba(255,255,255,0) 70%),radial-gradient(300px 220px at var(--gx,35%) var(--gy,25%),rgba(255,255,255,.25),rgba(255,255,255,0) 70%);
+  mix-blend-mode:screen;
+}
 
-.m-body{
-  display:flex;
-  flex-direction:column;
-  gap:0;
-}
-.m-head-text{
-  display:flex;
-  flex-direction:column;
-  margin-bottom:18px;
+/* d) Sombra de contacto en el suelo */
+.sb-floor{position:relative;width:244px;height:34px;margin-top:-10px;pointer-events:none}
+.sb-floor::before,.sb-floor::after{content:"";position:absolute;border-radius:50%;background:rgba(12,13,16,.6)}
+.sb-floor::before{left:4%;right:0;top:4px;height:12px;filter:blur(4px)}
+.sb-floor::after{left:24%;right:-36%;top:8px;height:24px;background:rgba(12,13,16,.16);filter:blur(12px)}
+
+/* Badge «ya descargado»: esquina superior derecha de la caja */
+.m-file-l{position:absolute;top:-9px;right:-9px;z-index:2;display:flex}
+
+/* e) Texto y acciones */
+.m-text{
+  align-self:stretch;
+  flex:1;
+  display:flex;flex-direction:column;gap:4px;
+  margin-top:8px;
 }
 .m-title{
-  font-size:18px;
-  font-weight:700;
-  line-height:1.25;
-  letter-spacing:-.3px;
-  color:var(--ink);
-  text-wrap:balance;
+  font-size:16px;font-weight:700;letter-spacing:-.3px;line-height:1.25;
+  color:#111;
+  margin:0;
   overflow-wrap:break-word;
-  word-break:normal;
-  hyphens:auto;
-  max-width:95%;
-  margin:0;
 }
-.m-sub{
-  display:block;
-  margin:4px 0 0;
-  font-size:13.5px;
-  font-weight:400;
-  line-height:1.4;
-  letter-spacing:-.005em;
-  color:var(--muted);
-}
-
 .m-desc{
-  font-size:13px;
-  font-weight:400;
-  line-height:1.65;
-  color:var(--muted);
-  margin:0;
+  margin:6px 0 0;
+  font-size:13px;line-height:1.55;
+  color:#3a3d45;
 }
-
-.m-foot{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:16px;
+.m-actions{
+  display:flex;gap:8px;
   margin-top:auto;
-  padding-top:24px;
+  padding-top:12px;
 }
-.m-tags{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-.m-tags span{
-  font-size:11px;
-  font-weight:500;
-  background:#eeeef1;
-  color:var(--ink);
-  padding:6px 13px;
-  border:1px solid #e2e2e8;
-  border-radius:var(--radius-pill);
-}
-.m-tags span + span::before{
-  content:"";
-  display:none;
-}
-
 .m-dl{
-  display:inline-flex;align-items:center;justify-content:center;
-  width:44px;height:44px;
-  margin:0 -10px -6px 0;
-  color:var(--ink);
-  flex-shrink:0;
-  transition:color .12s var(--ease), transform .2s var(--ease);
-  will-change:transform;
+  flex:1;
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  height:44px;
+  border-radius:8px;
+  background:#111;color:#fff;
+  border:1px solid #111;
+  font-size:11px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;
+  text-decoration:none;
 }
-@media (hover: hover) and (pointer: fine) {
-  .m-dl:hover{color:var(--muted)}
+.m-ext{
+  width:44px;height:44px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:8px;
+  border:1px solid rgba(17,17,17,.2);
+  background:rgba(255,255,255,.4);
+  color:#111;
+  text-decoration:none;
 }
-.m-dl svg{width:22px;height:22px;display:block;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:square}
+.m-dl:hover{background:#fff;color:#111}
+.m-ext:hover{border-color:#111}
+.m-dl:focus-visible,.m-ext:focus-visible{outline:2px solid #111;outline-offset:2px}
+.m-dl svg,.m-ext svg{width:15px;height:15px;display:block;flex-shrink:0}
 
-/* ── Stamp on click: spring bounce ── */
+/* ── Stamp al pulsar: rebote corto ── */
 @keyframes stamp{
   0%   {transform:scale(1)}
-  35%  {transform:scale(1.22)}
+  35%  {transform:scale(1.06)}
   100% {transform:scale(1)}
 }
 .m-dl.is-stamp,
@@ -529,32 +528,9 @@ body{
   display:none;
 }
 
-/* ── Módulo "Próximamente" ── */
-.m-soon{
-  cursor:default;
-  background-color:#ffffff;
-  background-image:
-    repeating-linear-gradient(
-      135deg,
-      transparent 0 14px,
-      rgba(10,10,10,.04) 14px 15px
-    );
-}
-.m-soon .m-desc{color:var(--mutedB)}
-.m-soon .m-cta-soon{
-  font-size:13px;
-  font-weight:600;
-  color:var(--ink);
-  text-decoration:none;
-  display:inline-flex;align-items:center;gap:8px;
-  margin-top:auto;
-  padding-top:20px;
-}
-.m-soon .m-cta-soon::after{
-  content:"";display:inline-block;width:18px;height:1px;background:currentColor;
-}
+@media (prefers-reduced-motion:reduce){.m *{transition:none !important}}
 
-/* ── Estado vacío del filtro ── */
+/* ── Estado vacío del filtro / búsqueda ── */
 .empty{
   grid-column:1 / -1;
   padding:64px 32px;
@@ -585,23 +561,6 @@ body{
   transform:rotate(45deg) translate(-1px,-1px);
 }
 
-/* ───────────── MATERIAL PROPIO (manuales) ───────────── */
-.material{border-top:1px solid #e8e8ee;padding:72px 0 8px}
-.material-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin-bottom:16px}
-.material h2{font-family:var(--font-serif);font-size:clamp(28px,4vw,42px);font-weight:500;letter-spacing:-1.2px;line-height:1.1;color:var(--ink);margin-bottom:32px}
-.material-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.mat-card{display:flex;flex-direction:column;gap:10px;padding:24px;border:1px solid #e8e8ee;border-radius:var(--radius-lg);background:#fff;color:var(--ink);text-decoration:none;transition:border-color .2s var(--ease),transform .2s var(--ease),box-shadow .2s var(--ease)}
-.mat-card:hover{border-color:var(--ink);transform:translateY(-2px);box-shadow:0 10px 28px rgba(17,17,17,.06)}
-.mat-card:focus-visible{outline:2px solid var(--purple-text);outline-offset:3px}
-.mat-meta{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--muted)}
-.mat-title{font-family:var(--font-serif);font-size:24px;font-weight:500;letter-spacing:-.4px;line-height:1.15}
-.mat-desc{font-size:14px;line-height:1.6;color:var(--muted)}
-.mat-go{margin-top:auto;padding-top:6px;font-size:14px;font-weight:600;color:var(--purple-text)}
-@media(max-width:820px){
-  .material{padding-top:56px}
-  .material-grid{grid-template-columns:1fr}
-}
-@media (prefers-reduced-motion: reduce){.mat-card,.mat-card:hover{transition:none;transform:none}}
 
 /* ───────────── SECCIÓN CIERRE CON SCROLL REVEAL ───────────── */
 @keyframes revealCierre{
@@ -610,7 +569,7 @@ body{
 }
 .cierre{
   border-top:1px solid #e8e8ee;
-  padding:80px 0 96px;
+  padding:40px 0 96px;
   opacity:0;
   transform:translateY(20px);
 }
@@ -618,43 +577,11 @@ body{
   animation:revealCierre .5s var(--ease) forwards;
 }
 
-.cierre-copy{}
-.cierre-copy .label{
-  font-size:11px;
-  font-weight:600;
-  text-transform:uppercase;
-  letter-spacing:.18em;
-  color:var(--muted);
-  margin-bottom:20px;
-}
-.cierre-copy h2{
-  font-family:var(--font-serif);
-  font-size:clamp(28px,4vw,42px);
-  font-weight:500;
-  letter-spacing:-1.2px;
-  line-height:1.1;
-  color:var(--ink);
-  margin-bottom:24px;
-  text-wrap:balance;
-}
-.cierre-copy p{
-  font-size:15px;
-  color:var(--muted);
-  line-height:1.7;
-  margin:0;
-}
-.cierre-copy p + p{
-  margin-top:12px;
-}
-.cierre-private{
-  margin-top:40px;
-  padding-top:28px;
-  border-top:1px solid #e8e8ee;
-}
+.cierre-private{}
 
 @media(max-width:820px){
   .cierre{
-    padding:56px 0 72px;
+    padding:32px 0 72px;
   }
 }
 
@@ -663,16 +590,7 @@ body{
 /* ── pequeñas en móvil ── */
 @media(max-width:600px){
   .nav-links a:not(.nav-cta):not(.active){display:none}
-  .m{min-height:300px;padding:28px 24px 24px}
-  .seg-btn{font-size:12.5px;padding:8px 14px}
-  .hero-h1{letter-spacing:-.03em}
 }
-
-/* ── Dispositivos sin hover (touch): evita estado "pegado" tras el tap ── */
-@media (hover:none){
-  .m:hover{transform:none;box-shadow:none}
-}
-
 /* ── Respeta la preferencia de reducir movimiento ── */
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{
@@ -680,10 +598,11 @@ body{
     animation-duration:0ms !important;
     animation-iteration-count:1 !important;
   }
-  .m:not(.m-soon):not(.m-filler){ animation:none }
+  .m{ animation:none }
+  .m:hover{ transform:none !important }
   .cierre{ opacity:1; transform:translateY(0); }
   .cierre.in-view{ animation:none; }
-  .hero-h1, .hero-sub, .hero-stat{ animation:none; opacity:1; transform:none; }
+  .hero-sub{ animation:none; opacity:1; transform:none; }
 }
 
 </style>
@@ -709,7 +628,7 @@ body{
 
 <!-- ─────────── NAV ─────────── -->
 <nav id="nav" aria-label="Main navigation">
-  <a href="./index.html" class="logo" aria-label="Borja Mora — Home"><span id="logoText" class="done">Borja Mora</span><span class="logo-mark"><svg class="logo-ring" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><circle class="logo-ring-bg" cx="9" cy="9" r="7.3" pathLength="1"/><circle class="logo-ring-fg" cx="9" cy="9" r="7.3" pathLength="1"/></svg><span class="logo-dot"></span></span></a>
+  <a href="./index.html" class="logo" aria-label="Borja Mora Méndez — Home"><span id="logoText" class="done" data-split-name>Borja Mora Méndez</span></a>
   <div class="ds-lang" role="group" aria-label="Language · Idioma">
     <a href="../descargas.html" class="ds-lang-b" hreflang="es" lang="es" data-lang-to="es" title="Leer en español" aria-label="Leer en español">ES</a>
     <span class="ds-lang-a" aria-current="true" lang="en" title="English">EN</span>
@@ -725,7 +644,7 @@ body{
         <li role="none"><a href="./data-visualisation.html" role="menuitem">Visualisation</a></li>
       </ul>
     </div>
-    <a href="./downloads.html" class="active" aria-current="page">Downloads</a>
+    <a data-lab-tube href="./downloads.html" class="active" aria-current="page">Lab</a>
     <a id="navEmailBtn" href="mailto:borja.mora.mendez@gmail.com" class="nav-cta btn" data-ga="clic_email" data-ga-location="nav"><span class="cta-text-wrap"><span>Contact</span><span>Let’s talk</span></span></a>
   </div>
   <div class="nav-social">
@@ -744,7 +663,7 @@ body{
   <div class="nav-drawer-backdrop" id="navBackdrop"></div>
   <div class="nav-drawer-panel">
     <div class="nav-drawer-head">
-      <span class="nav-drawer-brand">Borja Mora.</span>
+      <span class="nav-drawer-brand">Borja Mora Méndez.</span>
       <button class="nav-drawer-close" id="navDrawerClose" aria-label="Close menu"><span class="nav-drawer-close-x" aria-hidden="true">×</span>Close</button>
     </div>
     <nav class="nav-drawer-links" aria-label="Mobile navigation">
@@ -760,7 +679,7 @@ body{
           </div>
         </div>
       </div>
-      <a href="./downloads.html" class="active" aria-current="page">Downloads</a>
+      <a href="./downloads.html" class="active" aria-current="page">Lab</a>
     </nav>
     <div class="nav-drawer-foot">
       <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="nav-drawer-foot-item" data-ga="clic_linkedin" data-ga-location="drawer">LinkedIn</a>
@@ -852,74 +771,117 @@ body{
 
   <!-- Hero -->
   <header class="hero">
-    <h1 class="hero-h1">.pbix files<span class="dl-badge" aria-hidden="true"><svg viewBox="0 0 36 46" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="18" y1="2" x2="18" y2="36" stroke="#ffffff" stroke-width="3" stroke-linecap="square"/><polyline points="6,26 18,40 30,26" stroke="#ffffff" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter" fill="none"/></svg></span></h1>
-    <p class="hero-sub">Projects I’ve built and shared on LinkedIn. Download the file, explore the data model and use it as a reference for your own Power BI work.</p>
-    <div class="hero-stats" aria-hidden="true">
-      <div class="hero-stat">
-        <div class="hero-stat-num"><span id="stat-files">0</span></div>
-        <div class="hero-stat-label">.pbix files</div>
-      </div>
-      <div class="hero-stat-sep"></div>
-      <div class="hero-stat">
-        <div class="hero-stat-num"><span id="stat-cats">0</span></div>
-        <div class="hero-stat-label">Categories</div>
-      </div>
-
-    </div>
+    <h1 class="sr-only">.pbix files</h1>
+    <p class="hero-sub">A space to experiment with data, explore new visualisations, share what I learn and go one step further.</p>
   </header>
 
-  <!-- Segmentador -->
-  <div class="seg" role="group" aria-label="Filter by category">
-    <div class="seg-list">
-      <div class="seg-pill" id="seg-pill"></div>
-      <button class="seg-btn is-active" data-filter="all" aria-pressed="true">All<span class="count">19</span></button>
-      <button class="seg-btn" data-filter="gestion" aria-pressed="false">Project management<span class="count">3</span></button>
-      <button class="seg-btn" data-filter="ventas" aria-pressed="false">Sales and commercial analysis<span class="count">6</span></button>
-      <button class="seg-btn" data-filter="storytelling" aria-pressed="false">Data storytelling<span class="count">5</span></button>
-      <button class="seg-btn" data-filter="slicer" aria-pressed="false">Input Slicer<span class="count">4</span></button>
-    </div>
-    <div class="seg-counter"><b id="seg-visible">19</b> / 19 files</div>
-  </div>
+  <!-- Proyectos (enlaces) -->
+  <h2 class="sr-only">Projects</h2>
+  <section class="pj-stage" aria-label="Projects">
+      <article class="pj-card">
+        <div class="pj-scene" aria-hidden="true">
+          <div class="pj-box">
+            <div class="pj-back"></div>
+            <div class="pj-spine"><div class="pj-spine-in"><span class="pj-spine-foil pj-foil"></span><span class="pj-spine-t">PBI Mockup Creator</span><span class="pj-spine-a">↗</span></div></div>
+            <div class="pj-side-r"></div>
+            <div class="pj-side-t"></div>
+            <div class="pj-side-b"></div>
+            <div class="pj-slat" style="transform:translate(0.10px,10.43px) rotateZ(7.50deg) rotateY(-90deg);background:rgb(224,226,230)"></div><div class="pj-slat" style="transform:translate(0.91px,7.41px) rotateZ(22.50deg) rotateY(-90deg);background:rgb(235,236,240)"></div><div class="pj-slat" style="transform:translate(2.48px,4.69px) rotateZ(37.50deg) rotateY(-90deg);background:rgb(242,243,246)"></div><div class="pj-slat" style="transform:translate(4.69px,2.48px) rotateZ(52.50deg) rotateY(-90deg);background:rgb(244,245,248)"></div><div class="pj-slat" style="transform:translate(7.41px,0.91px) rotateZ(67.50deg) rotateY(-90deg);background:rgb(242,243,246)"></div><div class="pj-slat" style="transform:translate(10.43px,0.10px) rotateZ(82.50deg) rotateY(-90deg);background:rgb(235,237,240)"></div><div class="pj-slat" style="transform:translate(253.57px,0.10px) rotateZ(97.50deg) rotateY(-90deg);background:rgb(225,227,231)"></div><div class="pj-slat" style="transform:translate(256.59px,0.91px) rotateZ(112.50deg) rotateY(-90deg);background:rgb(211,214,219)"></div><div class="pj-slat" style="transform:translate(259.31px,2.48px) rotateZ(127.50deg) rotateY(-90deg);background:rgb(195,198,205)"></div><div class="pj-slat" style="transform:translate(261.52px,4.69px) rotateZ(142.50deg) rotateY(-90deg);background:rgb(178,182,189)"></div><div class="pj-slat" style="transform:translate(263.09px,7.41px) rotateZ(157.50deg) rotateY(-90deg);background:rgb(161,165,174)"></div><div class="pj-slat" style="transform:translate(263.90px,10.43px) rotateZ(172.50deg) rotateY(-90deg);background:rgb(145,150,159)"></div><div class="pj-slat" style="transform:translate(263.90px,359.57px) rotateZ(187.50deg) rotateY(-90deg);background:rgb(131,136,147)"></div><div class="pj-slat" style="transform:translate(263.09px,362.59px) rotateZ(202.50deg) rotateY(-90deg);background:rgb(120,126,137)"></div><div class="pj-slat" style="transform:translate(261.52px,365.31px) rotateZ(217.50deg) rotateY(-90deg);background:rgb(113,119,131)"></div><div class="pj-slat" style="transform:translate(259.31px,367.52px) rotateZ(232.50deg) rotateY(-90deg);background:rgb(111,117,129)"></div><div class="pj-slat" style="transform:translate(256.59px,369.09px) rotateZ(247.50deg) rotateY(-90deg);background:rgb(113,119,131)"></div><div class="pj-slat" style="transform:translate(253.57px,369.90px) rotateZ(262.50deg) rotateY(-90deg);background:rgb(120,125,137)"></div><div class="pj-slat" style="transform:translate(10.43px,369.90px) rotateZ(277.50deg) rotateY(-90deg);background:rgb(130,135,146)"></div><div class="pj-slat" style="transform:translate(7.41px,369.09px) rotateZ(292.50deg) rotateY(-90deg);background:rgb(144,148,158)"></div><div class="pj-slat" style="transform:translate(4.69px,367.52px) rotateZ(307.50deg) rotateY(-90deg);background:rgb(160,164,172)"></div><div class="pj-slat" style="transform:translate(2.48px,365.31px) rotateZ(322.50deg) rotateY(-90deg);background:rgb(177,180,188)"></div><div class="pj-slat" style="transform:translate(0.91px,362.59px) rotateZ(337.50deg) rotateY(-90deg);background:rgb(194,197,203)"></div><div class="pj-slat" style="transform:translate(0.10px,359.57px) rotateZ(352.50deg) rotateY(-90deg);background:rgb(210,212,218)"></div>
+            <div class="pj-front">
+              <span class="pj-chip pj-foil">WEB APP</span>
+              <div class="pj-emblem"><div class="pj-layout"><span class="pj-sunk"></span><span class="pj-foil" style="grid-column:1/3;grid-row:2/4"></span><span class="pj-sunk" style="grid-column:3/5"></span><span class="pj-sunk" style="grid-column:3/4"></span><span class="pj-sunk" style="grid-column:4/5"></span></div></div>
+              <div class="pj-ficha">
+                <div class="pj-ink">
+                  <div class="pj-ink-top"><span class="pj-kicker">Tool</span><span class="pj-access">Free · browser</span></div>
+                  <span class="pj-ltitle">PBI Mockup Creator</span>
+                  <span class="pj-lsub">Design the dashboard before you open Power BI.</span>
+                  <div class="pj-specs"><div class="pj-spec"><span class="pj-spec-k">Type</span><span class="pj-spec-v">Web tool</span></div><div class="pj-spec"><span class="pj-spec-k">Covers</span><span class="pj-spec-v">Proximity · Hierarchy · Similarity · White space · Figure-ground</span></div></div>
+                </div>
+                <div class="pj-holo pj-foil"><span>MOCKUP · LAYOUT · POWER BI · MOCKUP · LAYOUT · POWER BI</span></div>
+              </div>
+              <div class="pj-sheen"></div>
+            </div>
+          </div>
+        </div>
+        <div class="pj-floor" aria-hidden="true"><span></span><span></span></div>
+        <div class="pj-text">
+          <h3 class="pj-title">PBI Mockup Creator</h3>
+          <p class="pj-desc">A web tool to design a dashboard’s layout before you open Power BI. You start from the audience and the decision they need to make; the tool proposes a layout and checks the ranges as you move the pieces. Useful for agreeing the structure with the business before you build anything.</p>
+          <div class="pj-actions">
+            <a class="pj-link" href="https://borjamome.github.io/powerbi-mockup/" target="_blank" rel="noopener noreferrer" data-ga="clic_pbi_mockup" data-ga-location="descargas_proyectos">Open the tool<span class="sr-only"> (opens in a new tab)</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" aria-hidden="true"><path d="M7 17 17 7"></path><path d="M9 7h8v8"></path></svg></a>
+            <span class="pj-host">borjamome.github.io/powerbi-mockup</span>
+          </div>
+        </div>
+      </article>
+      <article class="pj-card">
+        <div class="pj-scene" aria-hidden="true">
+          <div class="pj-box">
+            <div class="pj-back"></div>
+            <div class="pj-spine"><div class="pj-spine-in"><span class="pj-spine-foil pj-foil"></span><span class="pj-spine-t">Data Storytelling and dashboard design</span><span class="pj-spine-a">↗</span></div></div>
+            <div class="pj-side-r"></div>
+            <div class="pj-side-t"></div>
+            <div class="pj-side-b"></div>
+            <div class="pj-slat" style="transform:translate(0.10px,10.43px) rotateZ(7.50deg) rotateY(-90deg);background:rgb(224,226,230)"></div><div class="pj-slat" style="transform:translate(0.91px,7.41px) rotateZ(22.50deg) rotateY(-90deg);background:rgb(235,236,240)"></div><div class="pj-slat" style="transform:translate(2.48px,4.69px) rotateZ(37.50deg) rotateY(-90deg);background:rgb(242,243,246)"></div><div class="pj-slat" style="transform:translate(4.69px,2.48px) rotateZ(52.50deg) rotateY(-90deg);background:rgb(244,245,248)"></div><div class="pj-slat" style="transform:translate(7.41px,0.91px) rotateZ(67.50deg) rotateY(-90deg);background:rgb(242,243,246)"></div><div class="pj-slat" style="transform:translate(10.43px,0.10px) rotateZ(82.50deg) rotateY(-90deg);background:rgb(235,237,240)"></div><div class="pj-slat" style="transform:translate(253.57px,0.10px) rotateZ(97.50deg) rotateY(-90deg);background:rgb(225,227,231)"></div><div class="pj-slat" style="transform:translate(256.59px,0.91px) rotateZ(112.50deg) rotateY(-90deg);background:rgb(211,214,219)"></div><div class="pj-slat" style="transform:translate(259.31px,2.48px) rotateZ(127.50deg) rotateY(-90deg);background:rgb(195,198,205)"></div><div class="pj-slat" style="transform:translate(261.52px,4.69px) rotateZ(142.50deg) rotateY(-90deg);background:rgb(178,182,189)"></div><div class="pj-slat" style="transform:translate(263.09px,7.41px) rotateZ(157.50deg) rotateY(-90deg);background:rgb(161,165,174)"></div><div class="pj-slat" style="transform:translate(263.90px,10.43px) rotateZ(172.50deg) rotateY(-90deg);background:rgb(145,150,159)"></div><div class="pj-slat" style="transform:translate(263.90px,359.57px) rotateZ(187.50deg) rotateY(-90deg);background:rgb(131,136,147)"></div><div class="pj-slat" style="transform:translate(263.09px,362.59px) rotateZ(202.50deg) rotateY(-90deg);background:rgb(120,126,137)"></div><div class="pj-slat" style="transform:translate(261.52px,365.31px) rotateZ(217.50deg) rotateY(-90deg);background:rgb(113,119,131)"></div><div class="pj-slat" style="transform:translate(259.31px,367.52px) rotateZ(232.50deg) rotateY(-90deg);background:rgb(111,117,129)"></div><div class="pj-slat" style="transform:translate(256.59px,369.09px) rotateZ(247.50deg) rotateY(-90deg);background:rgb(113,119,131)"></div><div class="pj-slat" style="transform:translate(253.57px,369.90px) rotateZ(262.50deg) rotateY(-90deg);background:rgb(120,125,137)"></div><div class="pj-slat" style="transform:translate(10.43px,369.90px) rotateZ(277.50deg) rotateY(-90deg);background:rgb(130,135,146)"></div><div class="pj-slat" style="transform:translate(7.41px,369.09px) rotateZ(292.50deg) rotateY(-90deg);background:rgb(144,148,158)"></div><div class="pj-slat" style="transform:translate(4.69px,367.52px) rotateZ(307.50deg) rotateY(-90deg);background:rgb(160,164,172)"></div><div class="pj-slat" style="transform:translate(2.48px,365.31px) rotateZ(322.50deg) rotateY(-90deg);background:rgb(177,180,188)"></div><div class="pj-slat" style="transform:translate(0.91px,362.59px) rotateZ(337.50deg) rotateY(-90deg);background:rgb(194,197,203)"></div><div class="pj-slat" style="transform:translate(0.10px,359.57px) rotateZ(352.50deg) rotateY(-90deg);background:rgb(210,212,218)"></div>
+            <div class="pj-front">
+              <span class="pj-chip pj-foil">GUIDE</span>
+              <div class="pj-emblem"><div class="pj-bars"><span class="pj-sunk" style="height:34%"></span><span class="pj-sunk" style="height:48%"></span><span class="pj-sunk" style="height:40%"></span><span class="pj-foil" style="height:96%"></span><span class="pj-sunk" style="height:56%"></span></div></div>
+              <div class="pj-ficha">
+                <div class="pj-ink">
+                  <div class="pj-ink-top"><span class="pj-kicker">Interactive guide</span><span class="pj-access">Free · online</span></div>
+                  <span class="pj-ltitle">Data Storytelling and dashboard design</span>
+                  <span class="pj-lsub">An interactive guide built on a live dashboard.</span>
+                  <div class="pj-specs"><div class="pj-spec"><span class="pj-spec-k">Type</span><span class="pj-spec-v">Interactive guide</span></div><div class="pj-spec"><span class="pj-spec-k">Covers</span><span class="pj-spec-v">Perception · Noise · Attention · Visuals · Composition · Narrative</span></div></div>
+                </div>
+                <div class="pj-holo pj-foil"><span>DATA STORYTELLING · DASHBOARDS · DATA STORYTELLING · DASHBOARDS</span></div>
+              </div>
+              <div class="pj-sheen"></div>
+            </div>
+          </div>
+        </div>
+        <div class="pj-floor" aria-hidden="true"><span></span><span></span></div>
+        <div class="pj-text">
+          <h3 class="pj-title">Data Storytelling and dashboard design</h3>
+          <p class="pj-desc">A guide to designing dashboards people understand at first glance. It covers perception, noise, attention, visuals, composition and narrative, and every idea is applied to a dashboard that changes as you read. Useful for reviewing your own reports with a clear method and backing every design decision.</p>
+          <div class="pj-actions">
+            <a class="pj-link" href="./data-storytelling.html" data-ga="clic_manual_storytelling" data-ga-location="descargas_proyectos">Read the guide<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" aria-hidden="true"><path d="M7 17 17 7"></path><path d="M9 7h8v8"></path></svg></a>
+            <span class="pj-host">Portfolio · Data Storytelling</span>
+          </div>
+        </div>
+      </article>
+  </section>
+<script>
+// Proyectos steelbook: inclinación + foil que siguen al puntero (sin efecto con «reducir movimiento»)
+(function(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  document.querySelectorAll('.pj-card').forEach(function(el){
+    el.addEventListener('pointermove',function(ev){
+      var r=el.getBoundingClientRect(),x=(ev.clientX-r.left)/r.width,y=(ev.clientY-r.top)/r.height;
+      el.style.setProperty('--ry',((x-.5)*16).toFixed(2)+'deg');
+      el.style.setProperty('--gx',(x*100).toFixed(1)+'%');
+      el.style.setProperty('--gy',(y*100).toFixed(1)+'%');
+    });
+    el.addEventListener('pointerleave',function(){['--ry','--gx','--gy'].forEach(function(p){el.style.removeProperty(p);});});
+  });
+})();
+</script>
 
   <!-- Grid -->
-  <h2 class="sr-only">Available files</h2>
+  <header class="sb-head">
+    <p class="sb-head-label">.pbix files</p>
+    <h2 class="sb-head-title">Download them, open them and see how they’re built inside.</h2>
+  </header>
   <div class="grid-wrap">
-    <div class="grid" id="grid"></div>
+    <section class="sb-stage" aria-label=".pbix files">
+      <div class="grid" id="grid"></div>
+    </section>
   </div>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><filter id="y2k-flow" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.018 0.05" numOctaves="2" seed="3" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="60" xChannelSelector="R" yChannelSelector="G"/></filter></defs></svg>
 
-</div>
-
-<!-- ─────────── MATERIAL PROPIO: manuales ─────────── -->
-<div class="shell">
-  <section class="material" aria-labelledby="material-h">
-    <p class="material-label">My own material</p>
-    <h2 id="material-h">Guides</h2>
-    <div class="material-grid">
-      <a class="mat-card" href="./data-storytelling.html" data-ga="clic_manual_storytelling" data-ga-location="descargas_material">
-        <span class="mat-meta">Interactive guide</span>
-        <span class="mat-title">Data storytelling and dashboard design</span>
-        <span class="mat-desc">How to decide what leads a dashboard, what supports it and what has to go, with examples you can play with.</span>
-        <span class="mat-go">Open the guide <span aria-hidden="true">→</span></span>
-      </a>
-      <a class="mat-card" href="../ml/" data-ga="clic_manual_ml" data-ga-location="descargas_material">
-        <span class="mat-meta">Visual guide</span>
-        <span class="mat-title">Machine Learning</span>
-        <span class="mat-desc">Models explained through intuition and a worked example first; the formula comes last.</span>
-        <span class="mat-go">Open the guide <span aria-hidden="true">→</span></span>
-      </a>
-    </div>
-  </section>
 </div>
 
 <!-- ─────────── SECCIÓN CIERRE ─────────── -->
 <div class="shell">
-  <section class="cierre" id="cierre-section" aria-label="Why these resources are shared">
-    <div class="cierre-copy">
-      <p class="label">Why I share them</p>
-      <h2>There’s no better way to learn DAX than to see how it works inside.</h2>
-      <p>Each file started with a business question that had no clear answer. What you’ll find aren’t exercises — they’re solutions that worked, with their modelling decisions, their DAX and their logic in plain sight. Download them, open them, break them.</p>
-      <p>If something doesn’t add up or you want to know how it’s built, get in touch. That’s what they’re for too.</p>
-    </div>
+  <section class="cierre" id="cierre-section" aria-label="Private area">
     <div class="cierre-private">
       <a href="../area-privada.html" class="btn btn-outline" data-arrow="right" data-ga="clic_area_privada" data-ga-location="descargas_cierre">Private area <span class="btn-arrow" aria-hidden="true">→</span></a>
     </div>
@@ -934,7 +896,7 @@ body{
   <div class="foot-inner">
     <div class="foot-grid">
       <div class="foot-col foot-col--brand">
-        <p class="foot-brand-name">Borja Mora.</p>
+        <p class="foot-brand-name">Borja Mora Méndez.</p>
         <p class="foot-brand-desc">Junior Data Analyst</p>
         <p class="foot-brand-loc">Madrid, Spain</p>
         <button type="button" class="foot-copy-email" data-copy-email data-ga-location="footer"><span class="foot-copy-email-addr">borja.mora.mendez@gmail.com</span><span class="foot-copy-email-act" data-copy-label aria-live="polite">Copy</span></button>
@@ -947,7 +909,7 @@ body{
         <a href="./projects.html">Power BI</a>
         <a href="./data-analysis.html">Analysis</a>
         <a href="./data-visualisation.html">Visualisation</a>
-        <a href="./downloads.html">Downloads</a>
+        <a href="./downloads.html">Lab</a>
       </nav>
 
       <div class="foot-col">
@@ -982,216 +944,243 @@ body{
 
 <script>
 const ITEMS = [
-  {n:"01", cat:"gestion", title:"Native Power BI Gantt chart", subtitle:"No scripts, pure DAX",
-    desc:"A bar per task, an automatic “today” line, dynamic slicing and HTML tooltips. All the logic in pure DAX: duration, overlap and progress. Zero external visuals.",
+  {n:"01", cat:"gestion", title:"Native Power BI Gantt chart", subtitle:"Project timeline with no external visuals",
+    desc:"A Gantt chart built only with native visuals and DAX: one bar per task with its status, a “today” line that moves on its own, a project filter and tooltips with the details. At a glance you see what’s done, what’s still active and what’s running late. It also works for campaigns, onboarding or delivery planning.",
     tags:["Gantt","DAX","HTML tooltips"],
     dl:"https://drive.google.com/drive/folders/1D46f-JXAMrCYbSXHzCutN5nv7hSgEoYG?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-datavisualization-activity-7360648315782283264-NQ4T"},
-  {n:"02", cat:"gestion", title:"Budget control", subtitle:"Native Top N · real concentration in seconds",
-    desc:"Spots where investment is concentrated before it’s too late. Top N logic (1, 3 or 5 projects), automatic DAX narrative and a clean view of the real weight of each line item.",
+  {n:"02", cat:"gestion", title:"Budget control", subtitle:"Top N projects with automatic narrative",
+    desc:"A visual that shows how much of the total budget goes to the biggest projects. You choose Top 1, 3 or 5 and a DAX-generated sentence explains the result. Useful for spotting early when investment depends on just a few projects.",
     tags:["Dynamic Top N","Budget","Narrative DAX"],
     dl:"https://drive.google.com/drive/folders/10WcoChMOO1KDmNm0a2adNixgIDEyRLBg?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-salesanalytics-activity-7418539287245639680-0Ynp"},
-  {n:"03", cat:"gestion", title:"Budget control", subtitle:"Native Top N · real concentration in seconds",
-    desc:"Analyses where investment is really concentrated. Native Top N logic (1, 3 or 5 projects), the real weight of each line item without noise, and automatic DAX narrative to interpret the distribution.",
+  {n:"03", cat:"gestion", title:"Budget distribution", subtitle:"Is the budget concentrated or balanced?",
+    desc:"A widget that splits investment across projects and highlights the 1, 3 or 5 that weigh the most, with an automatic DAX sentence saying whether the budget is concentrated or balanced. Use it to spot dependency risks before they grow and explain them without doing the maths.",
     tags:["Dynamic Top N","Budget","Narrative DAX"],
     dl:"https://drive.google.com/drive/folders/1qOBguC9N5qNSkoPBoLHJnOlaXqyPWgTy?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dashboarddesign-dataviz-activity-7374137020979339264-7kBX"},
-  {n:"04", cat:"ventas", title:"Period comparison", subtitle:"% change between two points in one click",
-    desc:"Pick two years and see the percentage change instantly. It highlights only the relevant columns, fades the rest and adds dynamic labels that interpret the change. No mental arithmetic.",
+  {n:"04", cat:"ventas", title:"Period comparison", subtitle:"Pick two years and see how much the business changed",
+    desc:"A column chart where you select two years and the % change between them appears. Only the two compared columns are highlighted, the rest fade out, and a label explains whether there was growth or a drop. Nobody has to do the maths to understand the trend.",
     tags:["% change","Time comparison","DAX"],
     dl:"https://drive.google.com/drive/folders/1bev8QdZ-oc38V70oOrk4uaZU5DNbd5dk?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7376214576889098240-JzRp"},
-  {n:"05", cat:"ventas", title:"Adaptive financial dashboard", subtitle:"The user picks the question, the visual adapts",
-    desc:"Profit, units and margin % in one visual. Filter by year, month or day without losing context. Colours that react to performance and an interactive calendar matrix. The slicer leads, it doesn’t just filter.",
+  {n:"05", cat:"ventas", title:"Adaptive financial dashboard", subtitle:"Profit, units and margin in one visual you steer",
+    desc:"A dashboard where the slicers choose what to analyse: profit, units sold or margin %, by year, month or day. Colours change with profit and a calendar matrix lets you drill down to daily detail. Designed so the report isn’t flooded with too many metrics at once.",
     tags:["Finance","Slicer","Calendar"],
     dl:"https://drive.google.com/drive/folders/1cBwC5p3a60n_xWjv5Vb0RzCfGdT6LChk?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7379158005759508480-DD9P"},
-  {n:"06", cat:"ventas", title:"Highlight without filtering", subtitle:"Highlight what matters without losing context",
-    desc:"Highlights specific projects without removing the rest. Slicers that don’t break the full picture, and an instant financial read. You see the part and the whole at once.",
+  {n:"06", cat:"ventas", title:"Highlight without filtering", subtitle:"Spotlight some projects without losing sight of the rest",
+    desc:"When you select one or more projects they’re highlighted in the chart, but the others stay visible, so you keep the context of the total budget. In the example, a single project takes almost a quarter of the total and it jumps out. Works for market share, late-paying customers or project tracking.",
     tags:["Highlighting","Context","TopN"],
     dl:"https://drive.google.com/drive/folders/15OMJxVmbvQuYkhMLEmd4QKVU7QTVY675?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7381750867634487296-8LRO"},
-  {n:"07", cat:"ventas", title:"Change on the bars", subtitle:"The change shown right on each bar",
-    desc:"Percentage change vs the previous month on each bar, automatic colours by type of change and markers that flag the biggest jumps. No helper tables or external calculations.",
+  {n:"07", cat:"ventas", title:"Change on the bars", subtitle:"Monthly sales with the % change above each bar",
+    desc:"A monthly sales chart that shows above each bar how much it changed from the previous month, with automatic colours for rises and falls and a flag on the biggest jumps. It works with any slicer (region, campaign, product) and needs no helper tables.",
     tags:["% change","Sales","Anomalies"],
     dl:"https://drive.google.com/drive/folders/1CA-Q8laMoZiiB5OaNzTY3NHlZ8qJZV2e?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7391493455455264769-Q8Ya"},
-  {n:"08", cat:"ventas", title:"Profit vs target", subtitle:"Monthly attainment with real context",
-    desc:"An adjustable dynamic target, automatic colours by attainment and a percentage on each bar. Target line + annual average always visible. The subtitle updates itself according to the months that hit the target.",
+  {n:"08", cat:"ventas", title:"Profit vs target", subtitle:"Which months hit the target, and by how much",
+    desc:"A monthly profit chart with a target you can adjust. Each bar shows its % of target, the months that reach it are coloured, and the target line and annual average are always visible. The subtitle rewrites itself with how many months hit the goal.",
     tags:["Dynamic target","Attainment","Financial KPI"],
     dl:"https://drive.google.com/drive/folders/18uECm3MAfE4Vh75ThBU6tHD84SRzb00Q?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7394778746525913088-iwtA"},
-  {n:"09", cat:"ventas", title:"Small multiples by product", subtitle:"Each product against its own average",
-    desc:"Small multiples where each product has its own chart and its own fixed average line. Dynamic highlight by month and a comparison label with the difference in units and %. No forced comparisons between products.",
+  {n:"09", cat:"ventas", title:"Small multiples by product", subtitle:"Each product compared with its own average",
+    desc:"One mini chart per product with a line for its average, so you know whether it’s above or below its usual level instead of comparing it with bigger products. Picking a month highlights it in every chart and a label shows the difference in units and %.",
     tags:["Small multiples","Dynamic average","Products"],
     dl:"https://drive.google.com/drive/folders/1N1-Va0cOTAwu4jaAHjcvfedo7dfSqNK1?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7399477094331858945-K9HS"},
-  {n:"10", cat:"storytelling", title:"Product comparison", subtitle:"Annual + automatic quarterly zoom",
-    desc:"An annual comparison that highlights the selected period, with an automatic quarterly zoom that appears when you pick a year. A dynamic narrative label sums up what’s happening. You see the result and how it was built.",
+  {n:"10", cat:"storytelling", title:"Product comparison", subtitle:"Two products year by year, with a quarterly zoom",
+    desc:"A line chart comparing two products by year. When you select a year it’s highlighted and its quarterly breakdown appears automatically, with a label summing up what happened. You see when one overtakes the other and when the trend changes.",
     tags:["Comparison","Quarterly zoom","Narrative"],
     dl:"https://drive.google.com/drive/folders/1Pwr_1y33M3iihwwj6kgq1atKhtBkvnMT?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7404201819641597954-wwos"},
-  {n:"11", cat:"storytelling", title:"Trend with narrative", subtitle:"The change between periods, explained in the visual",
-    desc:"A dynamic tooltip that explains the change between columns, an automatic label for the best year and native dynamic parameters. Visual storytelling without noise: you understand the trend without reading a single table.",
+  {n:"11", cat:"storytelling", title:"Trend with narrative", subtitle:"Columns that explain how much changed and which year was best",
+    desc:"A yearly trend chart with a tooltip that explains the change from the previous period and an automatic label on the best year. It uses native parameters to switch what’s analysed. You understand how the business evolved without opening a single table.",
     tags:["Dynamic tooltips","Parameters","Narrative"],
     dl:"https://drive.google.com/drive/folders/1retbVvPTUQHYaqZQQT0Ci9cTT3cW56iY?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7421562966178889729-5y8L"},
-  {n:"12", cat:"ventas", title:"Sales alerts dashboard", subtitle:"The dashboard that alerts, not just informs",
-    desc:"Target attainment by product at a glance. No scanning tables or comparing figures: you see which products are on target, which are below and which need action now.",
+  {n:"12", cat:"ventas", title:"Sales alerts dashboard", subtitle:"Which products hit target and which need action",
+    desc:"A dashboard that shows each product’s progress against target and classifies it: on target, below, or needs immediate action. In seconds you know where to act without comparing figures one by one. Useful for sales targets and catalogue control.",
     tags:["Alerts","Attainment","Sales"],
     dl:"https://drive.google.com/drive/folders/1P-LXTowY4CFvLdhBCAut2Qgxsuw-bE6D?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7427045290324570112-v3s2"},
-  {n:"13", cat:"storytelling", title:"Flexible period comparison", subtitle:"You choose the reference, the visual does the rest",
-    desc:"Choose a reference date, a period (30, 90, 180, 365 days or to date) and a metric. It works out the comparison range automatically and shows the change in € and % with colour. No odd dates or guesswork.",
+  {n:"13", cat:"storytelling", title:"Flexible period comparison", subtitle:"You choose the reference date and the period to compare",
+    desc:"Choose a date, a period (30, 90, 180 or 365 days, or year to date) and a metric. The visual works out where the comparison starts, highlights that range and shows the change in € and %, in green or red depending on the result.",
     tags:["Dynamic periods","Change","Context"],
     dl:"https://drive.google.com/drive/folders/1GSQm1ZrgiwG_nFgdOocOp1eUf_3FgVR-?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-businessitelligence-activity-7430635213443035137-TJbj"},
-  {n:"14", cat:"storytelling", title:"TopN with pride of place", subtitle:"Cut the noise, focus the decision",
-    desc:"Dynamic TopN with RANKX that focuses only on the bars that matter. The rest moves into the background. Less analysis, more clarity: when the chart makes you look at two bars instead of ten, the decision appears on its own.",
+  {n:"14", cat:"storytelling", title:"Top N to prioritise", subtitle:"Sales by product that highlight only what matters",
+    desc:"A sales-by-product chart where you choose how many to highlight (Top N with RANKX). The top ones stay in the foreground and the rest step back. Looking at two bars instead of ten makes it much easier to decide where to act.",
     tags:["TopN","RANKX","Noise reduction"],
     dl:"https://drive.google.com/drive/folders/1mZj6EO8sKoNVlDjmYZtnXSVqbUDtb9jH?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7432461459080765440-Y9EH"},
-  {n:"15", cat:"storytelling", title:"Visual zoom on outliers", subtitle:"The chart that doesn’t lie",
-    desc:"When one product dominates the scale, the rest look the same even when they aren’t. 4 DAX measures and visual layers create a double zoom: the real size of the dominant value and the real differences between all the others. No paid visuals.",
+  {n:"15", cat:"storytelling", title:"Visual zoom on outliers", subtitle:"When one product squashes the chart’s scale",
+    desc:"If one product sells far more than the rest, the other bars look the same even when they aren’t. This visual adds a zoom using 4 DAX measures and layered charts: you see the real size of the dominant product and, at the same time, the differences between all the others. No paid visuals.",
     tags:["Outliers","Dual scale","DAX"],
     dl:"https://drive.google.com/drive/folders/1CVcug_-gF6urL1bz9dorhZIpV0t17bm-?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7437118505080020992-m7Em"},
-  {n:"16", cat:"slicer", title:"Slope chart with small multiples", subtitle:"Trend, change, weight and ranking in one block",
-    desc:"Each product packs its trend, change, weight and ranking into a single visual block. Switch from units to revenue with one click and the ranking changes. All native, no external visuals.",
+  {n:"16", cat:"slicer", title:"Slope chart with small multiples", subtitle:"Trend, change, share and ranking for each product in one block",
+    desc:"One slope mini chart per product that brings together its trend between two periods, the change, its % of the total and its ranking position. One click switches from units to revenue and you see how the ranking changes. All native.",
     tags:["Slope chart","Small multiples","DAX"],
     dl:"https://drive.google.com/drive/folders/1jUdeMz4ziWdyBJiKA48-JYqUdO_JqZp4?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7439647400132116480-1PFW"},
-  {n:"17", cat:"slicer", title:"Sales explorer by customer", subtitle:"Top N · filter by country · titles that react",
-    desc:"Pick the Top N customers, filter by country and the chart highlights the selection automatically. Titles and subtitles that change dynamically. An Input Slicer that brings every decision into one place.",
+  {n:"17", cat:"slicer", title:"Sales explorer by customer", subtitle:"Top N customers and country from a single Input Slicer",
+    desc:"A sales-by-customer chart controlled from Power BI’s new Input Slicer: you choose how many customers to highlight and from which country, and the chart highlights your selection. Titles and subtitles rewrite themselves based on what you pick.",
     tags:["Dynamic Top N","Dynamic titles","Input Slicer"],
     dl:"https://drive.google.com/drive/folders/1l5ewaopHRJJlwrhoGSZamUSy_TiMGhH-?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7442540385882554368-y4go"},
-  {n:"18", cat:"slicer", title:"Adaptive KPI card", subtitle:"The user picks the KPI, you design the system",
-    desc:"You no longer design a fixed KPI. The user types their metric (sales, margin, average order) and the model translates, calculates and adjusts the format itself. All native, no code.",
+  {n:"18", cat:"slicer", title:"Adaptive KPI card", subtitle:"Type the KPI you want and the card changes",
+    desc:"A KPI card with an Input Slicer: you type, for example, “sales + yoy” or “margin + budget” and the card shows that calculation in the right format (€, % or number). It understands Spanish and English synonyms such as “revenue” or “facturación”. Works with sales, margin, average ticket and their comparisons.",
     tags:["Input Slicer","Dynamic KPI","DAX"],
     dl:"https://drive.google.com/drive/folders/1OlNUFuw8OL0m9zDgYWBeUMXJFsN_FwlN?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-businessintelligence-activity-7452022964017008640-Z-VH"},
-  {n:"19", cat:"slicer", title:"Highlight without hiding", subtitle:"Filtering destroys context · highlighting keeps it",
-    desc:"Type Spain and the Spanish customers come to life — the rest doesn’t disappear, it steps aside. You still see the whole business. Input Slicer + DAX + conditional formatting.",
+  {n:"19", cat:"slicer", title:"Highlight without hiding", subtitle:"Find customers by country without losing sight of the rest",
+    desc:"A customer table where you type a country into an Input Slicer and its customers are highlighted with conditional formatting, while the others stay visible. That way you know whether those customers matter to the business or are just anecdotal. Built with Input Slicer, DAX and conditional formatting.",
     tags:["Input Slicer","Conditional formatting","Context"],
     dl:"https://drive.google.com/drive/folders/1_uE5tEbIOsRybNqSrlTwXy4Zr31jvyH3?usp=drive_link",
     li:"https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7458166054264111104-Hov2"}
 ];
 
-const ICON_EXT = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"/><path d="M9 7h8v8"/></svg>';
-const ICON_DL  = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v13"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/></svg>';
+const ICON_DL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" aria-hidden="true"><path d="M12 4v13"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/></svg>';
+const ICON_LI = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>';
+
+// Textos de la interfaz generada (los traduce i18n/descargas.en.json → js)
+const T = {
+  dl: 'Download .pbix',
+  dlAria: 'Download',
+  li: 'View the LinkedIn post',
+  done: 'Already downloaded'
+};
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+// Etiquetas de categoría (las traduce i18n/descargas.en.json → js)
+const CATS = {
+  gestion: 'Project management',
+  ventas: 'Sales and commercial analysis',
+  storytelling: 'Data storytelling',
+  slicer: 'Input Slicer'
+};
+const catLabel = cat => CATS[cat] || '';
 
 function tagsHtml(arr){
   return arr.map(t=>`<span>${esc(t)}</span>`).join("");
 }
 
+// Esquinas redondeadas de la caja: 6 láminas por esquina (x, y, color según la luz); giro 7,5° + 15° cada una
+const SLATS = [[0.1,10.43,'#e0e2e6'],[0.91,7.41,'#ebecf0'],[2.48,4.69,'#f2f3f6'],[4.69,2.48,'#f4f5f8'],[7.41,0.91,'#f2f3f6'],[10.43,0.1,'#ebedf0'],[233.57,0.1,'#e1e3e7'],[236.59,0.91,'#d3d6db'],[239.31,2.48,'#c3c6cd'],[241.52,4.69,'#b2b6bd'],[243.09,7.41,'#a1a5ae'],[243.9,10.43,'#91969f'],[243.9,331.57,'#838893'],[243.09,334.59,'#787e89'],[241.52,337.31,'#717783'],[239.31,339.52,'#6f7581'],[236.59,341.09,'#717783'],[233.57,341.9,'#787d89'],[10.43,341.9,'#828792'],[7.41,341.09,'#90949e'],[4.69,339.52,'#a0a4ac'],[2.48,337.31,'#b1b4bc'],[0.91,334.59,'#c2c5cb'],[0.1,331.57,'#d2d4da']];
+const SLATS_HTML = SLATS.map(([x, y, c], i) =>
+  `<div class="sb-slat" style="transform:translate(${x}px,${y}px) rotateZ(${7.5 + i * 15}deg) rotateY(-90deg);background:${c}"></div>`).join('');
+
 function moduleHtml(it, idx){
+  const tagLine = it.tags.join(' · ');
   return `
-  <div class="m" data-cat="${it.cat}" data-href="${esc(it.dl)}" data-id="${esc(it.n)}" data-stagger tabindex="0" role="link" aria-label="Download ${esc(it.title)}" style="--stagger-idx:${idx}">
-    <div class="m-head">
-      <span class="m-num">Nº ${esc(it.n)}</span>
-      <button class="m-ext" data-href="${esc(it.li)}" aria-label="View the LinkedIn post">${ICON_EXT}</button>
-    </div>
-    <div class="m-body">
-      <div class="m-head-text">
-        <h3 class="m-title">${esc(it.title)}</h3>
-        ${it.subtitle?`<p class="m-sub">${esc(it.subtitle)}</p>`:""}
+  <article class="m" data-cat="${it.cat}" data-id="${esc(it.n)}" data-stagger style="--stagger-idx:${idx}">
+    <div class="sb-scene" aria-hidden="true">
+      <div class="sb-box">
+        <div class="sb-back"></div>
+        <div class="sb-spine"><div class="sb-spine-in"><span class="sb-spine-foil"></span><span class="sb-spine-t">${esc(it.title)}</span><span class="sb-spine-n">${esc(it.n)}</span></div></div>
+        <div class="sb-side-r"></div>
+        <div class="sb-side-t"></div>
+        <div class="sb-side-b"></div>
+        ${SLATS_HTML}
+        <div class="sb-front">
+          <span class="sb-num" data-chrome-num>${esc(it.n)}</span>
+          <div class="sb-label"><div class="sb-foil">
+            <div class="sb-foil-glow"></div>
+            <div class="sb-micro">POWER BI · DAX · DATA STORYTELLING · POWER BI · DAX · DATA STORYTELLING · POWER BI · DAX</div>
+            <div class="sb-ink">
+              <div class="sb-ink-top"><span class="sb-pbix">PBIX</span><span class="sb-no">Nº ${esc(it.n)} / ${ITEMS.length}</span></div>
+              <span class="sb-rule"></span>
+              <span class="sb-ltitle">${esc(it.title)}</span>
+              <span class="sb-lsub">${esc(it.subtitle)}</span>
+              <div class="sb-ink-foot"><div class="sb-meta"><span class="sb-lcat">${esc(catLabel(it.cat))}</span><span class="sb-ltags">${esc(tagLine)}</span></div><div class="sb-code"><span class="sb-bars"></span><span class="sb-code-t">PBIX-${esc(it.n)}</span></div></div>
+            </div>
+          </div></div>
+          <span class="sb-peel"></span>
+          <div class="sb-sheen"></div>
+        </div>
       </div>
+    </div>
+    <div class="m-file-l"></div>
+    <div class="sb-floor" aria-hidden="true"></div>
+    <div class="m-text">
+      <h3 class="m-title">${esc(it.title)}</h3>
       <p class="m-desc">${esc(it.desc)}</p>
+      <div class="m-actions">
+        <a class="m-dl" href="../${esc(it.dl)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(T.dlAria)} ${esc(it.title)} (.pbix)">${esc(T.dl)}${ICON_DL}</a>
+        <a class="m-ext" href="../${esc(it.li)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(T.li)}" title="${esc(T.li)}">${ICON_LI}</a>
+      </div>
     </div>
-    <div class="m-foot">
-      <div class="m-tags">${tagsHtml(it.tags)}</div>
-      <span class="m-dl" aria-hidden="true">${ICON_DL}</span>
-    </div>
-  </div>`;
+  </article>`;
 }
 
-function soonHtml(n, label){
-  return `
-  <div class="m m-soon" data-cat="soon" aria-hidden="true" inert>
-    <div class="m-head">
-      <span class="m-num">Nº ${n}</span>
-    </div>
-    <div class="m-body">
-      <div class="m-head-text">
-        <h3 class="m-title" style="opacity:.4">In progress</h3>
-        <p class="m-sub" style="opacity:.4">Coming soon</p>
-      </div>
-      <p class="m-desc" style="opacity:.35">Follow me on LinkedIn to be the first to download the next file.</p>
-    </div>
-    <div class="m-foot">
-      <a class="m-cta-soon" href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" tabindex="-1">Follow on LinkedIn</a>
-      <span></span>
-    </div>
-  </div>`;
+// Inclinación 3D + brillo/foil que siguen al puntero (sin efecto con «reducir movimiento»)
+function bindTilt(grid){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  grid.querySelectorAll('.m').forEach(el=>{
+    el.addEventListener('pointermove', ev=>{
+      const r = el.getBoundingClientRect(), x = (ev.clientX - r.left) / r.width, y = (ev.clientY - r.top) / r.height;
+      el.style.setProperty('--ry', ((x - .5) * 16).toFixed(2) + 'deg');
+      el.style.setProperty('--rx', ((.5 - y) * 12).toFixed(2) + 'deg');
+      el.style.setProperty('--gx', (x * 100).toFixed(1) + '%');
+      el.style.setProperty('--gy', (y * 100).toFixed(1) + '%');
+    });
+    el.addEventListener('pointerleave', ()=>{ ['--rx','--ry','--gx','--gy'].forEach(p => el.style.removeProperty(p)); });
+  });
+}
+
+// Textura de cromo líquido para los números (se genera una vez en canvas y se reutiliza)
+const SHEEN = 'linear-gradient(172deg,rgba(255,255,255,.7) 0%,rgba(255,255,255,.18) 40%,rgba(255,255,255,0) 47%,rgba(0,0,0,.18) 49%,rgba(0,0,0,0) 62%)';
+function liquidURL(){
+  const w = 600, h = 400, c = document.createElement('canvas'); c.width = w; c.height = h;
+  const ctx = c.getContext('2d'); if(!ctx || !ctx.createConicGradient) return null;
+  const g = ctx.createConicGradient(200 * Math.PI / 180, w * .7, h * .6);
+  const stops = ['#f7f8fb','#c9ccd4','#2a2c33','#8a8e99','#ffffff','#4a4d56','#d9dce3','#0c0d10','#a3a7b1','#f7f8fb'];
+  stops.forEach((col, i) => g.addColorStop(i / (stops.length - 1), col));
+  ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+  try{
+    const c2 = document.createElement('canvas'); c2.width = w; c2.height = h;
+    const x2 = c2.getContext('2d'); x2.filter = 'url(#y2k-flow)'; x2.drawImage(c, 0, 0);
+    if(x2.getImageData(w / 2, h / 2, 1, 1).data[3] > 0) return c2.toDataURL();
+  } catch(e){}
+  return c.toDataURL();
+}
+function paintChrome(grid){
+  const url = liquidURL();
+  if(url) grid.querySelectorAll('[data-chrome-num]').forEach(el => { el.style.backgroundImage = SHEEN + ', url(' + url + ')'; });
 }
 
 function render(){
   const grid = document.getElementById('grid');
-  let html = ITEMS.map((it, idx) => moduleHtml(it, idx)).join("");
-  
-  // rellenar la última fila si quedan huecos (máx 1 card "En desarrollo")
-  const total = ITEMS.length;
-  const cols = 3;
-  const remainder = total % cols;
-  if(remainder !== 0){
-    const next = String(total + 1).padStart(2,"0");
-    html += soonHtml(next);
-  }
-  grid.innerHTML = html;
+  grid.innerHTML = ITEMS.map((it, idx) => moduleHtml(it, idx)).join("");
 
-  // Helper: dispara evento GA4 de descarga
-  function trackDownload(card, trigger){
-    if(typeof gtag !== 'function') return;
-    const title = card.querySelector('.m-title')?.textContent?.trim() || '';
-    const cat   = card.dataset.cat || '';
-    gtag('event', 'descarga_pbix', {
-      file_id:       card.dataset.id,
-      file_title:    title,
-      file_category: cat,
-      trigger:       trigger   // 'card' | 'arrow'
-    });
-  }
-
-  // Card principal: click y Enter/Space abren la descarga
-  grid.querySelectorAll('.m[data-href]').forEach(card=>{
-    const openCard = e => {
-      if(e.target.closest('.m-ext,.m-dl')) return;
-      stamp(card.querySelector('.m-dl'));
-      markDownloaded(card.dataset.id);
-      trackDownload(card, 'card');
-      window.open(card.dataset.href,'_blank','noopener');
-    };
-    card.addEventListener('click', openCard);
-    card.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){e.preventDefault();openCard(e);} });
-  });
-
-  // Botón LinkedIn
-  grid.querySelectorAll('.m-ext[data-href]').forEach(el=>{
-    el.addEventListener('click', e => {
-      e.stopPropagation();
-      stamp(el);
-      window.open(el.dataset.href,'_blank','noopener');
-    });
-  });
-
-  // Stamp en el icono de descarga + abrir enlace
+  // Acciones reales (<a>): el enlace se abre solo; aquí solo stamp, badge y analítica
   grid.querySelectorAll('.m-dl').forEach(el=>{
-    el.addEventListener('click', e => {
-      e.stopPropagation();
+    el.addEventListener('click', ()=>{
+      const card = el.closest('.m');
       stamp(el);
-      const card = el.closest('.m[data-href]');
-      if(card){
-        markDownloaded(card.dataset.id);
-        trackDownload(card, 'arrow');
-        window.open(card.dataset.href,'_blank','noopener');
+      markDownloaded(card.dataset.id);
+      if(typeof gtag === 'function'){
+        gtag('event', 'descarga_pbix', {
+          file_id:       card.dataset.id,
+          file_title:    card.querySelector('.m-title')?.textContent?.trim() || '',
+          file_category: card.dataset.cat || '',
+          trigger:       'button'
+        });
+      }
+    });
+  });
+  grid.querySelectorAll('.m-ext').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      stamp(el);
+      if(typeof gtag === 'function'){
+        gtag('event', 'ver_post_linkedin', { file_id: el.closest('.m').dataset.id });
       }
     });
   });
 
+  bindTilt(grid);
+  paintChrome(grid);
   restoreDownloadedBadges();
 }
 
@@ -1209,9 +1198,10 @@ function updateDownloadedBadge(id){
   if(!card.querySelector('.m-done')){
     const badge = document.createElement('span');
     badge.className = 'm-done';
-    badge.setAttribute('aria-label', 'Already downloaded');
-    badge.title = 'Already downloaded';
-    card.querySelector('.m-head').appendChild(badge);
+    badge.setAttribute('role', 'img');
+    badge.setAttribute('aria-label', T.done);
+    badge.title = T.done;
+    card.querySelector('.m-file-l').appendChild(badge);
   }
 }
 
@@ -1232,148 +1222,8 @@ function stamp(el){
   el.addEventListener('animationend', () => el.classList.remove('is-stamp'), {once:true});
 }
 
-function applyFilter(filter){
-  const grid = document.getElementById('grid');
-  const mods = grid.querySelectorAll('.m');
-  let visible = 0;
-  let total = 0;
-
-  mods.forEach(m=>{
-    const cat = m.dataset.cat;
-    const show = cat==='soon' ? filter==='all' : (filter==='all' || cat===filter);
-    m.classList.toggle('is-hidden', !show);
-    if(cat!=='soon' && cat!=='filler'){
-      if(filter==='all' || cat===filter) total++;
-    }
-    if(show && cat!=='soon') visible++;
-  });
-
-  grid.querySelectorAll('.m-filler,.m-empty').forEach(e=>e.remove());
-
-  const cols = window.matchMedia('(max-width:600px)').matches ? 1
-             : window.matchMedia('(max-width:960px)').matches ? 2 : 3;
-
-  if(visible===0){
-    const empty = document.createElement('div');
-    empty.className='empty m-empty';
-    empty.textContent='No files in this category';
-    grid.appendChild(empty);
-  } else {
-    const visibleTotal = grid.querySelectorAll('.m:not(.is-hidden)').length;
-    const rem = visibleTotal % cols;
-    if(rem!==0 && cols>1){
-      for(let i=0;i<cols-rem;i++){
-        const div=document.createElement('div');
-        div.className='m m-filler';
-        div.style.cssText='cursor:default;pointer-events:none';
-        div.setAttribute('aria-hidden','true');
-        grid.appendChild(div);
-      }
-    }
-  }
-
-  document.getElementById('seg-visible').textContent=visible;
-  // Actualizar denominador dinámicamente según filtro
-  const counterEl = document.querySelector('.seg-counter');
-  if(counterEl){
-    const denom = filter==='all' ? ITEMS.length : ITEMS.filter(i=>i.cat===filter).length;
-    counterEl.innerHTML = `<b id="seg-visible">${visible}</b> / ${denom} files`;
-  }
-}
-
 // ────────────── INIT ──────────────
 render();
-(function(){
-  const params = new URLSearchParams(window.location.search);
-  const catParam = params.get('cat') || 'all';
-  const targetBtn = document.querySelector(`.seg-btn[data-filter="${catParam}"]`);
-  if(targetBtn && catParam !== 'all'){
-    document.querySelectorAll('.seg-btn').forEach(b=>{
-      b.classList.remove('is-active');
-      b.setAttribute('aria-pressed','false');
-    });
-    targetBtn.classList.add('is-active');
-    targetBtn.setAttribute('aria-pressed','true');
-  }
-  applyFilter(catParam);
-})();
-
-// ────────────── PILL INDICATOR ──────────────
-function updatePillIndicator(){
-  const activeBtn = document.querySelector('.seg-btn.is-active');
-  const pill = document.getElementById('seg-pill');
-  if(activeBtn){
-    const left = activeBtn.offsetLeft;
-    const width = activeBtn.offsetWidth;
-    pill.style.transform = 'translateX(' + left + 'px) scaleX(' + width + ')';
-  }
-}
-updatePillIndicator();
-window.addEventListener('resize', updatePillIndicator);
-// Recalcular tras carga completa de fuentes para evitar desplazamiento incorrecto
-if(document.fonts && document.fonts.ready){
-  document.fonts.ready.then(updatePillIndicator);
-}
-
-// ────────────── COUNT-UP CON INTERSECTION OBSERVER ──────────────
-function countUp(el, target, duration){
-  let hasAnimated = false;
-  const startAnimation = () => {
-    if(hasAnimated) return;
-    hasAnimated = true;
-    const start = performance.now();
-    const update = now => {
-      const p = Math.min((now - start) / duration, 1);
-      const ease = 1 - Math.pow(1 - p, 3);
-      el.textContent = Math.round(ease * target);
-      if(p < 1) requestAnimationFrame(update);
-    };
-    requestAnimationFrame(update);
-  };
-  
-  const observer = new IntersectionObserver(([entry]) => {
-    if(entry.isIntersecting) {
-      startAnimation();
-      observer.unobserve(el);
-    }
-  }, { threshold: 0.5 });
-  
-  observer.observe(el);
-}
-
-const cats = [...new Set(ITEMS.map(i=>i.cat))].length;
-countUp(document.getElementById('stat-files'), ITEMS.length, 900);
-countUp(document.getElementById('stat-cats'), cats, 900);
-
-// ────────────── SEGMENTADOR EVENTOS ──────────────
-document.querySelectorAll('.seg-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.seg-btn').forEach(b=>{
-      b.classList.remove('is-active');
-      b.setAttribute('aria-pressed','false');
-    });
-    btn.classList.add('is-active');
-    btn.setAttribute('aria-pressed','true');
-    const f = btn.dataset.filter;
-    applyFilter(f);
-    updatePillIndicator();
-    /* ── Estado URL: ?cat=dax o quitar param si es "all" ── */
-    const url = new URL(window.location);
-    if(f === 'all'){ url.searchParams.delete('cat'); }
-    else           { url.searchParams.set('cat', f); }
-    history.pushState({cat: f}, '', url);
-  });
-});
-
-// ────────────── RE-FILL AL REDIMENSIONAR ──────────────
-let _t;
-window.addEventListener('resize', ()=>{
-  clearTimeout(_t);
-  _t = setTimeout(()=>{
-    const active = document.querySelector('.seg-btn.is-active');
-    applyFilter(active ? active.dataset.filter : 'all');
-  }, 120);
-});
 
 // ────────────── NAV SCROLL ──────────────
 const nav = document.getElementById('nav');
@@ -1381,8 +1231,6 @@ window.addEventListener('scroll', () => {
   nav.classList.toggle('scrolled', scrollY > 40);
   const h = document.documentElement;
   const p = Math.min(1, Math.max(0, scrollY/(h.scrollHeight-h.clientHeight) || 0));
-  h.style.setProperty('--logo-ring', p);
-  document.querySelector('.logo-mark')?.classList.toggle('at-end', p >= 0.98);
 });
 
 // ─── TYPING EFFECT — desactivado ───
@@ -1421,6 +1269,7 @@ observeCierre();
   </div>
 </div>
 <script src="../consent.js?v=26a27e3704" defer></script>
+<script src="../lab-tube.js?v=a5e7c0a4eb" defer></script>
 <script src="../contact.js?v=451e00c590" defer></script>
 </body>
 </html>

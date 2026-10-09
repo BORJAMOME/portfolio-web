@@ -3,14 +3,14 @@
   "units": {
     "Saltar al contenido": "Skip to content",
     "Navegación principal": "Main navigation",
-    "Borja Mora — Inicio": "Borja Mora — Home",
+    "Borja Mora Méndez — Inicio": "Borja Mora Méndez — Home",
     "Idioma · Language": "Language · Idioma",
     "Inicio": "Home",
     "Sobre mí": "About me",
     "Proyectos": "Projects",
     "Análisis": "Analysis",
     "Visualización": "Visualisation",
-    "Descargas": "Downloads",
+    "Laboratorio": "Lab",
     "Contacto": "Contact",
     "¿Hablamos?": "Let’s talk",
     "Abrir menú": "Open menu",
@@ -134,6 +134,8 @@
     "Las tres últimas son técnicas: sirven para que la web funcione como elegiste y no requieren consentimiento. Las de Google solo se crean si aceptas.": "The last three are technical: they make the site work the way you chose and don’t require consent. Google’s are only created if you accept."
   },
   "keep": [
+    "Borja Mora Méndez",
+    "Borja Mora Méndez.",
     "Borja Mora",
     "Español",
     "ES",

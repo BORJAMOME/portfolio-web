@@ -3,14 +3,14 @@
   "units": {
     "Saltar al contenido": "Skip to content",
     "Navegación principal": "Main navigation",
-    "Borja Mora — Inicio": "Borja Mora — Home",
+    "Borja Mora Méndez — Inicio": "Borja Mora Méndez — Home",
     "Idioma · Language": "Language · Idioma",
     "Inicio": "Home",
     "Sobre mí": "About me",
     "Proyectos": "Projects",
     "Análisis": "Analysis",
     "Visualización": "Visualisation",
-    "Descargas": "Downloads",
+    "Laboratorio": "Lab",
     "Contacto": "Contact",
     "¿Hablamos?": "Let’s talk",
     "Abrir menú": "Open menu",
@@ -253,6 +253,8 @@
     "borja.mora.mendez@gmail.com": "borja.mora.mendez@gmail.com"
   },
   "keep": [
+    "Borja Mora Méndez",
+    "Borja Mora Méndez.",
     "Borja Mora",
     "Español",
     "ES",
