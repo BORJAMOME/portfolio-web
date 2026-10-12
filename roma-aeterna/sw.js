@@ -1,6 +1,6 @@
 // Roma Aeterna: caché de la app para jugar sin conexión.
 // Los archivos del juego no pasan por aquí: viven en IndexedDB.
-const VERSION = "ra-v4";
+const VERSION = "ra-v5";
 const SHELL = [
   "./", "index.html", "app.css", "app.js", "acceso.js", "augustus.js", "augustus.wasm", "augustus.data", "fflate.js", "extract-worker.js", "innoextract.js", "innoextract.wasm", "manifest.webmanifest",
   "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png",
