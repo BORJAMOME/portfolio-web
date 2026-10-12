@@ -157,20 +157,27 @@
 </main>
 
 <!-- Juego -->
+<div id="safeProbe" class="safe-probe" aria-hidden="true"></div>
 <div id="stage" hidden>
   <canvas id="canvas" tabindex="-1"></canvas>
 </div>
 
 <nav id="dock" hidden aria-label="Controles rápidos">
-  <button type="button" data-act="back" aria-label="Atrás (clic derecho)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span class="lbl">Atrás</span></button>
-  <button type="button" data-act="pause" aria-label="Pausa"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><span class="lbl">Pausa</span></button>
-  <button type="button" data-act="slower" aria-label="Más lento"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg><span class="lbl">Más lento</span></button>
-  <button type="button" data-act="faster" aria-label="Más rápido"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M12 5v14"/></svg><span class="lbl">Más rápido</span></button>
-  <button type="button" data-act="overlay" aria-label="Capas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5 9-5z"/><path d="m3 13 9 5 9-5"/></svg><span class="lbl">Capas</span></button>
-  <button type="button" data-act="rotate" aria-label="Girar mapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg><span class="lbl">Girar</span></button>
-  <button type="button" data-act="keyboard" aria-label="Teclado"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h.01M9.5 10h.01M13 10h.01M16.5 10h.01M7 14h10"/></svg><span class="lbl">Teclado</span></button>
+  <button type="button" data-act="back" aria-label="Atrás"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span class="lbl">Atrás</span></button>
+  <button type="button" data-act="pause" aria-label="Pausa"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><span class="lbl">Pausa</span></button>
+  <button type="button" data-act="zoomIn" aria-label="Acercar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2M11 8v6M8 11h6"/></svg><span class="lbl">Acercar</span></button>
+  <button type="button" data-act="zoomOut" aria-label="Alejar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2M8 11h6"/></svg><span class="lbl">Alejar</span></button>
+  <button type="button" data-act="more" aria-label="Más controles"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="12" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="19" cy="12" r="1.3" fill="currentColor"/></svg><span class="lbl">Más controles</span></button>
   <div class="sep"></div>
-  <button type="button" class="fold" data-act="fold" aria-label="Plegar controles"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg></button>
+  <button type="button" class="fold" data-act="fold" aria-label="Plegar controles"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></button>
+  <div class="more" id="dockMore" role="group" aria-label="Más controles">
+    <button type="button" data-act="slower" aria-label="Más lento"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 6 5 12l6 6M19 6l-6 6 6 6"/></svg><span class="lbl">Más lento</span></button>
+    <button type="button" data-act="faster" aria-label="Más rápido"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m13 6 6 6-6 6M5 6l6 6-6 6"/></svg><span class="lbl">Más rápido</span></button>
+    <button type="button" data-act="overlay" aria-label="Capas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5z"/><path d="m3 13 9 5 9-5"/></svg><span class="lbl">Capas</span></button>
+    <button type="button" data-act="rotate" aria-label="Girar mapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg><span class="lbl">Girar mapa</span></button>
+    <button type="button" data-act="save" aria-label="Guardar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></svg><span class="lbl">Guardar</span></button>
+    <button type="button" data-act="keyboard" aria-label="Teclado"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h.01M9.5 10h.01M13 10h.01M16.5 10h.01M7 14h10"/></svg><span class="lbl">Teclado</span></button>
+  </div>
 </nav>
 
 <button id="typeBtn" class="btn btn-primary" type="button" hidden>
@@ -182,9 +189,10 @@
 <div id="rotate" hidden>
   <div class="inner">
     <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" aria-hidden="true"><rect x="20" y="6" width="24" height="44" rx="5"/><path d="M29 44h6"/><path d="M50 52a14 14 0 0 1-12 6" stroke-linecap="round"/><path d="m40 54-2 4 4 1" stroke-linecap="round"/></svg>
-    <h2>Gira el iPhone</h2>
-    <p>Caesar III se juega en horizontal. Gíralo y la ciudad ocupará toda la pantalla.</p>
+    <h2 id="rotateTitle">Gira el iPhone</h2>
+    <p id="rotateText">Caesar III se juega en horizontal. Gíralo y la ciudad ocupará toda la pantalla.</p>
     <button class="linkish" type="button" id="rotateDismiss">Seguir en vertical</button>
+    <button class="linkish" type="button" id="rotateCancel" hidden>Volver al Foro</button>
   </div>
 </div>
 
@@ -266,8 +274,9 @@
       <div><dt>Pellizcar</dt><dd>Acercar o alejar la ciudad (zoom) con dos dedos.</dd></div>
       <div><dt>Segundo dedo</dt><dd>Mientras construyes, tocar con otro dedo cancela la construcción.</dd></div>
       <div><dt>Atrás</dt><dd>Equivale al clic derecho: cierra ventanas e informes, y cancela.</dd></div>
-      <div><dt>Pausa · − · +</dt><dd>Pausar y cambiar la velocidad del juego.</dd></div>
-      <div><dt>Capas · Girar</dt><dd>Alternar la capa de información y girar la vista de la ciudad.</dd></div>
+      <div><dt>Pausa</dt><dd>Detiene el tiempo para pensar con calma.</dd></div>
+      <div><dt>Lupa + · −</dt><dd>Acercar y alejar la ciudad con una mano (también puedes pellizcar).</dd></div>
+      <div><dt>Más (···)</dt><dd>Velocidad, capas de información, girar el mapa, guardar partida y teclado.</dd></div>
       <div><dt>Teclado</dt><dd>Para escribir el nombre de una partida al guardar. Aparece solo cuando hace falta.</dd></div>
     </dl>
     <p style="margin:0;color:var(--stone)">Para guardar, usa el menú del juego (Archivo → Guardar partida). Si no oyes nada, revisa el interruptor de silencio del iPhone.</p>

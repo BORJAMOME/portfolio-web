@@ -489,8 +489,30 @@ $("wipeYes").addEventListener("click", async () => {
    Juego
    =================================================================== */
 let started = false;
+let pendingStart = false;
+let box = null; // lienzo en horizontal (px CSS), fijo durante toda la partida
+
+const isLandscape = () => innerWidth > innerHeight;
+function safeInsets() {
+  const cs = getComputedStyle($("safeProbe"));
+  const n = (v) => parseFloat(v) || 0;
+  return { t: n(cs.paddingTop), r: n(cs.paddingRight), b: n(cs.paddingBottom), l: n(cs.paddingLeft) };
+}
+// El lienzo solo cambia de tamaño en horizontal. En vertical conserva el último tamaño
+// (queda tapado por el aviso de girar), así SDL nunca ve una pantalla más estrecha
+// que su mínimo de 640×480 lógicos, que es lo que deformaba la imagen.
+function fitStage() {
+  if (!isLandscape()) return false;
+  const i = safeInsets();
+  const w = Math.floor(innerWidth - i.l - i.r), h = Math.floor(innerHeight - i.t - i.b);
+  if (box && box.w === w && box.h === h) return false;
+  box = { w, h };
+  const c = $("canvas");
+  c.style.width = w + "px"; c.style.height = h + "px";
+  return true;
+}
 function computeScale() {
-  const W = Math.max(innerWidth, innerHeight), H = Math.min(innerWidth, innerHeight);
+  const W = box ? box.w : Math.max(innerWidth, innerHeight), H = box ? box.h : Math.min(innerWidth, innerHeight);
   const max = Math.floor(Math.min(W * 100 / 640, H * 100 / 480));
   const phone = H < 600;
   const pick = {
@@ -499,13 +521,46 @@ function computeScale() {
     medium: Math.round(max * .86),
     small: Math.round(max * .72),
   }[settings.ui] || max;
-  return Math.max(50, Math.min(500, pick));
+  return Math.max(50, Math.min(max, pick));
 }
 function capPixelRatio() {
   // SDL lee devicePixelRatio para dimensionar el lienzo; limitarlo ahorra batería
   const real = window.devicePixelRatio || 1, cap = Math.min(real, Number(settings.dpr) || 2);
   try { Object.defineProperty(window, "devicePixelRatio", { configurable: true, get: () => cap }); } catch {}
 }
+
+/* ---------- Vigilante de proporciones ----------
+   Si el búfer del lienzo y su tamaño en pantalla no tienen la misma proporción, la imagen
+   sale estirada y los toques no caen donde se dibuja (p. ej. el menú superior). Pasa cuando
+   iOS avisa del giro antes de recolocar la página, o si el juego pide otra resolución desde
+   Opciones. Un «resize» hace que SDL vuelva a medir el lienzo y el motor se reajuste. */
+let lastHeal = 0, healing = false;
+function canvasMismatch() {
+  const c = $("canvas"), r = c.getBoundingClientRect();
+  if (!c.width || !c.height || !r.width || !r.height) return false;
+  return Math.abs(c.width / c.height - r.width / r.height) > 0.01 || Math.abs(c.width - r.width * devicePixelRatio) > 3;
+}
+function heal(reason) {
+  if (!started || !isLandscape() || !canvasMismatch()) return;
+  const now = Date.now();
+  if (now - lastHeal < 400) return;
+  lastHeal = now;
+  const c = $("canvas"), r = c.getBoundingClientRect();
+  log("Reajuste de pantalla (" + reason + "): búfer " + c.width + "x" + c.height + ", pantalla " + Math.round(r.width) + "x" + Math.round(r.height));
+  healing = true;
+  try { window.dispatchEvent(new Event("resize")); } finally { healing = false; }
+}
+function onViewportChange() {
+  if (healing) return;
+  updateRotate();
+  if (pendingStart && isLandscape()) { afterLayout(() => { if (pendingStart && isLandscape()) launch(); }); return; }
+  if (!started) return;
+  fitStage();
+  [80, 300, 800, 1600].forEach((t) => setTimeout(() => heal("giro"), t));
+}
+// iOS dispara el evento antes de terminar de recolocar: espera dos fotogramas y un poco más
+function afterLayout(fn) { requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(fn, 220))); }
+
 let wakeLock = null;
 async function keepAwake() {
   try { if ("wakeLock" in navigator && document.visibilityState === "visible") wakeLock = await navigator.wakeLock.request("screen"); } catch {}
@@ -517,22 +572,35 @@ function resumeAudio() {
   } catch {}
 }
 function updateRotate() {
-  const portrait = innerHeight > innerWidth;
-  $("rotate").hidden = !(started && portrait && !ss.get("ra.portraitOk"));
+  const portrait = !isLandscape();
+  const waiting = pendingStart && portrait;
+  $("rotate").hidden = !(waiting || (started && portrait && !ss.get("ra.portraitOk")));
+  $("rotateTitle").textContent = waiting ? "Gira el iPhone para empezar" : "Gira el iPhone";
+  $("rotateText").textContent = waiting
+    ? "La partida arranca en cuanto pongas el móvil en horizontal."
+    : "Caesar III se juega en horizontal. Gíralo y la ciudad ocupará toda la pantalla.";
+  $("rotateDismiss").hidden = waiting;
+  $("rotateCancel").hidden = !waiting;
 }
 function startGame() {
   if (started) { location.reload(); return; }
   const s = gameStats();
   if (!s.valid) { show("vSetup"); return; }
-  started = true;
-  capPixelRatio();
   document.body.classList.add("playing");
   $("stage").hidden = false;
+  keepAwake();
+  if (!isLandscape()) { pendingStart = true; updateRotate(); return; }
+  launch();
+}
+function launch() {
+  pendingStart = false;
+  started = true;
+  capPixelRatio();
+  fitStage();
   $("dock").hidden = !settings.dock;
   updateRotate();
   const scale = computeScale();
-  log("Arrancando Augustus, escala", scale + "%", innerWidth + "x" + innerHeight, "dpr", devicePixelRatio);
-  keepAwake();
+  log("Arrancando Augustus, escala " + scale + "% · lienzo " + box.w + "x" + box.h + " · pantalla " + innerWidth + "x" + innerHeight + " · dpr " + devicePixelRatio);
   try {
     Module.callMain(["--windowed", "--display-scale", (scale / 100).toFixed(2), DATA]);
   } catch (e) {
@@ -540,13 +608,22 @@ function startGame() {
   }
   $("canvas").focus({ preventScroll: true });
   idleDock();
+  // el motor crea la ventana con su tamaño guardado: comprobamos enseguida y luego cada poco
+  [300, 900, 2000].forEach((t) => setTimeout(() => heal("arranque"), t));
+  setInterval(() => heal("vigilante"), 1000);
 }
 $("playBtn").addEventListener("click", startGame);
 $("retryBtn").addEventListener("click", () => location.reload());
 $("relockBtn").addEventListener("click", () => window.RA_ACCESS && window.RA_ACCESS.lock());
 $("canvas").addEventListener("contextmenu", (e) => e.preventDefault());
 $("rotateDismiss").addEventListener("click", () => { ss.set("ra.portraitOk", "1"); updateRotate(); });
-addEventListener("resize", updateRotate);
+$("rotateCancel").addEventListener("click", () => {
+  pendingStart = false; updateRotate();
+  document.body.classList.remove("playing"); $("stage").hidden = true;
+});
+addEventListener("resize", onViewportChange);
+addEventListener("orientationchange", () => afterLayout(onViewportChange));
+if (screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener("change", () => afterLayout(onViewportChange));
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") { if (started) keepAwake(); }
   else if (fsReady) persist();
@@ -569,6 +646,8 @@ const KEYS = {
   rotate: { key: "Home", code: "Home", keyCode: 36 },
   backspace: { key: "Backspace", code: "Backspace", keyCode: 8 },
   enter: { key: "Enter", code: "Enter", keyCode: 13 },
+  ctrl: { key: "Control", code: "ControlLeft", keyCode: 17 },
+  s: { key: "s", code: "KeyS", keyCode: 83 },
 };
 function keyEvent(type, k, charCode = 0) {
   const ev = new KeyboardEvent(type, { key: k.key, code: k.code, bubbles: true, cancelable: true });
@@ -577,6 +656,18 @@ function keyEvent(type, k, charCode = 0) {
   window.dispatchEvent(ev);
 }
 function tapKey(k) { keyEvent("keydown", k); setTimeout(() => keyEvent("keyup", k), 40); }
+// Ctrl+S: abre «Guardar partida» (SDL lleva la cuenta de los modificadores por sus propias teclas)
+function saveShortcut() {
+  keyEvent("keydown", KEYS.ctrl); keyEvent("keydown", KEYS.s);
+  setTimeout(() => { keyEvent("keyup", KEYS.s); keyEvent("keyup", KEYS.ctrl); }, 60);
+}
+// Zoom con la rueda del ratón, centrado en la pantalla (Augustus: rueda = zoom)
+function zoom(dir) {
+  const c = $("canvas"), r = c.getBoundingClientRect();
+  const x = r.left + r.width / 2, y = r.top + r.height / 2;
+  c.dispatchEvent(new MouseEvent("mousemove", { bubbles: true, clientX: x, clientY: y }));
+  c.dispatchEvent(new WheelEvent("wheel", { bubbles: true, cancelable: true, clientX: x, clientY: y, deltaY: dir > 0 ? -120 : 120, deltaMode: 0 }));
+}
 function typeChar(ch) {
   const code = ch.codePointAt(0);
   const k = { key: ch, code: "", keyCode: 0 };
@@ -597,9 +688,14 @@ $("dock").addEventListener("pointerdown", (e) => { e.stopPropagation(); idleDock
 $("dock").addEventListener("click", (e) => {
   const b = e.target.closest("button"); if (!b) return;
   const act = b.dataset.act;
+  if (act !== "more") $("dock").classList.remove("open");
   if (act === "back") rightClick();
   else if (act === "fold") $("dock").classList.toggle("folded");
+  else if (act === "more") $("dock").classList.toggle("open");
   else if (act === "keyboard") openKeyboard();
+  else if (act === "zoomIn") zoom(1);
+  else if (act === "zoomOut") zoom(-1);
+  else if (act === "save") saveShortcut();
   else if (KEYS[act]) tapKey(KEYS[act]);
   if (navigator.vibrate) try { navigator.vibrate(8); } catch {}
 });
