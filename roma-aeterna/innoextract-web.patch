@@ -1,0 +1,72 @@
+diff --git a/src/cli/extract.cpp b/src/cli/extract.cpp
+index 4989311..adbd052 100644
+--- a/src/cli/extract.cpp
++++ b/src/cli/extract.cpp
+@@ -29,6 +29,12 @@
+ #include <vector>
+ #include <limits>
+ 
++#include <cstdlib>
++
++#ifdef __EMSCRIPTEN__
++#include <emscripten.h>
++#endif
++
+ #include <boost/foreach.hpp>
+ #include <boost/noncopyable.hpp>
+ #include <boost/scoped_ptr.hpp>
+@@ -737,6 +743,30 @@ struct processed_entries {
+ 	
+ };
+ 
++// Web build: skip files whose lower-case path ends with one of the
++// comma-separated suffixes in the IE_SKIP environment variable
++static bool skipped_by_suffix(const std::string & internal_path) {
++	const char * env = std::getenv("IE_SKIP");
++	if(!env || !*env) {
++		return false;
++	}
++	std::string list(env);
++	size_t start = 0;
++	while(start <= list.size()) {
++		size_t end = list.find(',', start);
++		if(end == std::string::npos) {
++			end = list.size();
++		}
++		std::string suffix = list.substr(start, end - start);
++		if(!suffix.empty() && internal_path.size() >= suffix.size()
++		   && internal_path.compare(internal_path.size() - suffix.size(), suffix.size(), suffix) == 0) {
++			return true;
++		}
++		start = end + 1;
++	}
++	return false;
++}
++
+ processed_entries filter_entries(const extract_options & o, const setup::info & info) {
+ 	
+ 	processed_entries processed;
+@@ -824,7 +854,7 @@ processed_entries filter_entries(const extract_options & o, const setup::info &
+ 		
+ 		insert_dirs(processed.directories, includes, internal_path, path, path_included);
+ 		
+-		if(!path_included) {
++		if(!path_included || skipped_by_suffix(internal_path)) {
+ 			continue; // Ignore excluded file
+ 		}
+ 		
+@@ -1376,6 +1406,14 @@ void process_file(const fs::path & installer, const extract_options & o) {
+ 					}
+ 				}
+ 				
++#ifdef __EMSCRIPTEN__
++				// Hand the finished file to the page so it never piles up in memory
++				if(o.extract) {
++					output->close();
++					EM_ASM({ if (Module.onFileDone) Module.onFileDone(UTF8ToString($0)); }, output->path().string().c_str());
++				}
++#endif
++				
+ 				BOOST_FOREACH(file_output_location & other, outputs) {
+ 					if(other.first == output) {
+ 						other.first = NULL;
