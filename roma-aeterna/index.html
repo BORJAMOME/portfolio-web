@@ -164,21 +164,27 @@
 
 <nav id="dock" hidden aria-label="Controles rápidos">
   <button type="button" data-act="back" aria-label="Atrás"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span class="lbl">Atrás</span></button>
+  <button type="button" data-act="mando" aria-label="Mando"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span class="lbl">Mando</span></button>
   <button type="button" data-act="pause" aria-label="Pausa"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><span class="lbl">Pausa</span></button>
   <button type="button" data-act="zoomIn" aria-label="Acercar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2M11 8v6M8 11h6"/></svg><span class="lbl">Acercar</span></button>
   <button type="button" data-act="zoomOut" aria-label="Alejar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2M8 11h6"/></svg><span class="lbl">Alejar</span></button>
-  <button type="button" data-act="more" aria-label="Más controles"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="12" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="19" cy="12" r="1.3" fill="currentColor"/></svg><span class="lbl">Más controles</span></button>
   <div class="sep"></div>
   <button type="button" class="fold" data-act="fold" aria-label="Plegar controles"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></button>
-  <div class="more" id="dockMore" role="group" aria-label="Más controles">
-    <button type="button" data-act="slower" aria-label="Más lento"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 6 5 12l6 6M19 6l-6 6 6 6"/></svg><span class="lbl">Más lento</span></button>
-    <button type="button" data-act="faster" aria-label="Más rápido"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m13 6 6 6-6 6M5 6l6 6-6 6"/></svg><span class="lbl">Más rápido</span></button>
-    <button type="button" data-act="overlay" aria-label="Capas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5z"/><path d="m3 13 9 5 9-5"/></svg><span class="lbl">Capas</span></button>
-    <button type="button" data-act="rotate" aria-label="Girar mapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg><span class="lbl">Girar mapa</span></button>
-    <button type="button" data-act="save" aria-label="Guardar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></svg><span class="lbl">Guardar</span></button>
-    <button type="button" data-act="keyboard" aria-label="Teclado"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h.01M9.5 10h.01M13 10h.01M16.5 10h.01M7 14h10"/></svg><span class="lbl">Teclado</span></button>
-  </div>
 </nav>
+
+<div id="mando" class="mando" hidden role="dialog" aria-modal="true" aria-labelledby="mandoTitle">
+  <div class="mando-card">
+    <header><h2 id="mandoTitle">Centro de mando</h2><button class="x" type="button" data-mando-close aria-label="Cerrar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></header>
+    <div class="mando-grid">
+      <section><h3>Partida</h3><div class="cmds"><button type="button" data-cmd="Ctrl+S">Guardar</button><button type="button" data-cmd="Ctrl+O">Cargar</button><button type="button" data-cmd="P">Pausa</button><button type="button" data-cmd="PageDown">Más lento</button><button type="button" data-cmd="PageUp">Más rápido</button><button type="button" data-cmd="@keyboard">Teclado</button></div></section>
+      <section><h3>Consejeros</h3><div class="cmds"><button type="button" data-cmd="=">Jefe</button><button type="button" data-cmd="1">Trabajo</button><button type="button" data-cmd="2">Legión</button><button type="button" data-cmd="3">Emperador</button><button type="button" data-cmd="4">Valoraciones</button><button type="button" data-cmd="5">Comercio</button><button type="button" data-cmd="6">Población</button><button type="button" data-cmd="7">Salud</button><button type="button" data-cmd="8">Educación</button><button type="button" data-cmd="9">Ocio</button><button type="button" data-cmd="0">Religión</button><button type="button" data-cmd="-">Finanzas</button></div></section>
+      <section><h3>Capas del mapa</h3><div class="cmds"><button type="button" data-cmd="W">Agua</button><button type="button" data-cmd="F">Incendios</button><button type="button" data-cmd="D">Daños</button><button type="button" data-cmd="C">Crimen</button><button type="button" data-cmd="T">Problemas</button><button type="button" data-cmd="Space">Quitar o volver</button></div></section>
+      <section><h3>Mapa y obras</h3><div class="cmds"><button type="button" data-cmd="Home">Girar ⟲</button><button type="button" data-cmd="End">Girar ⟳</button><button type="button" data-cmd="R">Rotar edificio</button><button type="button" data-cmd="Q">Clonar edificio</button><button type="button" data-cmd="X">Abrir o cerrar edificio</button><button type="button" data-cmd="@sidebar">Plegar panel</button></div></section>
+      <section><h3>Marcadores</h3><div class="cmds"><button type="button" data-cmd="F1">Ir a 1</button><button type="button" data-cmd="F2">Ir a 2</button><button type="button" data-cmd="F3">Ir a 3</button><button type="button" data-cmd="F4">Ir a 4</button><button type="button" data-cmd="Ctrl+F1">Fijar 1</button><button type="button" data-cmd="Ctrl+F2">Fijar 2</button><button type="button" data-cmd="Ctrl+F3">Fijar 3</button><button type="button" data-cmd="Ctrl+F4">Fijar 4</button></div></section>
+    </div>
+    <p class="mando-tip">Para Archivo, Opciones y Ayuda toca la barra superior del juego: aparece una lupa y el botón se pulsa al soltar.</p>
+  </div>
+</div>
 
 <button id="typeBtn" class="btn btn-primary" type="button" hidden>
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h.01M9.5 10h.01M13 10h.01M16.5 10h.01M7 14h10"/></svg>
@@ -231,6 +237,10 @@
       <small>Vuelve a pedir la contraseña la próxima vez. Tus partidas no se borran.</small>
     </div>
     <div class="field">
+      <label class="switch" for="optPrecision"><span>Lupa de precisión en la barra y el panel</span><input id="optPrecision" type="checkbox"></label>
+      <small>Desactívala solo si prefieres el táctil original del juego.</small>
+    </div>
+    <div class="field">
       <label class="switch" for="optDock"><span>Mostrar controles rápidos</span><input id="optDock" type="checkbox"></label>
     </div>
     <div class="field">
@@ -269,15 +279,12 @@
     <div class="grabber"></div>
     <header><h3 id="hHelp">Cómo se juega</h3><button class="x" type="button" data-close aria-label="Cerrar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></header>
     <dl class="gestures">
-      <div><dt>Tocar</dt><dd>Clic: elegir edificios, abrir menús, colocar construcciones.</dd></div>
-      <div><dt>Arrastrar</dt><dd>Mover el mapa, o trazar calles y muros mientras construyes.</dd></div>
-      <div><dt>Pellizcar</dt><dd>Acercar o alejar la ciudad (zoom) con dos dedos.</dd></div>
-      <div><dt>Segundo dedo</dt><dd>Mientras construyes, tocar con otro dedo cancela la construcción.</dd></div>
-      <div><dt>Atrás</dt><dd>Equivale al clic derecho: cierra ventanas e informes, y cancela.</dd></div>
-      <div><dt>Pausa</dt><dd>Detiene el tiempo para pensar con calma.</dd></div>
-      <div><dt>Lupa + · −</dt><dd>Acercar y alejar la ciudad con una mano (también puedes pellizcar).</dd></div>
-      <div><dt>Más (···)</dt><dd>Velocidad, capas de información, girar el mapa, guardar partida y teclado.</dd></div>
-      <div><dt>Teclado</dt><dd>Para escribir el nombre de una partida al guardar. Aparece solo cuando hace falta.</dd></div>
+      <div><dt>Mapa</dt><dd>Toca para elegir, arrastra para moverte o trazar calles, pellizca para el zoom.</dd></div>
+      <div><dt>Barra y panel</dt><dd>Toca un botón de la barra superior o del panel derecho. Si mantienes el dedo, aparece una lupa: desliza hasta el botón y suelta para pulsarlo.</dd></div>
+      <div><dt>Ventanas</dt><dd>Consejeros, menús y diálogos funcionan igual, con la lupa.</dd></div>
+      <div><dt>Atrás</dt><dd>Equivale al clic derecho: cierra ventanas y cancela la obra en curso.</dd></div>
+      <div><dt>Mando</dt><dd>Botones grandes: guardar, cargar, consejeros, capas, girar el mapa, marcadores y más.</dd></div>
+      <div><dt>Lupa + · −</dt><dd>Acercar y alejar con una mano.</dd></div>
     </dl>
     <p style="margin:0;color:var(--stone)">Para guardar, usa el menú del juego (Archivo → Guardar partida). Si no oyes nada, revisa el interruptor de silencio del iPhone.</p>
     <details>
@@ -291,5 +298,6 @@
 <script src="fflate.js"></script>
 <script src="acceso.js"></script>
 <script src="app.js"></script>
+<script src="touch.js"></script>
 </body>
 </html>

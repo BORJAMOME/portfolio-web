@@ -476,6 +476,8 @@ function bindSeg(id, key) {
 bindSeg("segUi", "ui"); bindSeg("segDpr", "dpr");
 $("optVideos").checked = settings.videos;
 $("optVideos").addEventListener("change", (e) => { settings.videos = e.target.checked; store.set("videos", settings.videos); toast(settings.videos ? "Los vídeos se incluirán en la próxima importación" : "Los vídeos no se importarán"); });
+$("optPrecision").checked = store.get("precision", true) !== false;
+$("optPrecision").addEventListener("change", (e) => { try { localStorage.setItem("ra.precision", String(e.target.checked)); } catch {} });
 $("optDock").checked = settings.dock;
 $("optDock").addEventListener("change", (e) => { settings.dock = e.target.checked; store.set("dock", settings.dock); });
 $("reimportBtn").addEventListener("click", () => { closeSheets(); show("vSetup"); });
@@ -656,7 +658,26 @@ function keyEvent(type, k, charCode = 0) {
   window.dispatchEvent(ev);
 }
 function tapKey(k) { keyEvent("keydown", k); setTimeout(() => keyEvent("keyup", k), 40); }
-// Ctrl+S: abre «Guardar partida» (SDL lleva la cuenta de los modificadores por sus propias teclas)
+// Tecla por nombre: "W", "1", "-", "=", "Space", "Home", "F1", "PageUp"…
+function keyFor(name) {
+  const special = {
+    Space: [" ", "Space", 32], Home: ["Home", "Home", 36], End: ["End", "End", 35],
+    PageUp: ["PageUp", "PageUp", 33], PageDown: ["PageDown", "PageDown", 34],
+    "-": ["-", "Minus", 189], "=": ["=", "Equal", 187],
+  };
+  if (special[name]) { const [key, code, keyCode] = special[name]; return { key, code, keyCode }; }
+  if (/^F\d{1,2}$/.test(name)) return { key: name, code: name, keyCode: 111 + Number(name.slice(1)) };
+  if (/^\d$/.test(name)) return { key: name, code: "Digit" + name, keyCode: 48 + Number(name) };
+  return { key: name.toLowerCase(), code: "Key" + name.toUpperCase(), keyCode: name.toUpperCase().charCodeAt(0) };
+}
+// "Ctrl+S", "Ctrl+F1", "W"… (SDL lleva la cuenta de los modificadores por sus propias teclas)
+function sendCombo(combo) {
+  const parts = combo.split("+"), main = keyFor(parts.pop()), ctrl = parts.includes("Ctrl");
+  if (ctrl) keyEvent("keydown", KEYS.ctrl);
+  keyEvent("keydown", main);
+  setTimeout(() => { keyEvent("keyup", main); if (ctrl) keyEvent("keyup", KEYS.ctrl); }, 60);
+}
+// Ctrl+S: abre «Guardar partida»
 function saveShortcut() {
   keyEvent("keydown", KEYS.ctrl); keyEvent("keydown", KEYS.s);
   setTimeout(() => { keyEvent("keyup", KEYS.s); keyEvent("keyup", KEYS.ctrl); }, 60);
@@ -688,17 +709,31 @@ $("dock").addEventListener("pointerdown", (e) => { e.stopPropagation(); idleDock
 $("dock").addEventListener("click", (e) => {
   const b = e.target.closest("button"); if (!b) return;
   const act = b.dataset.act;
-  if (act !== "more") $("dock").classList.remove("open");
   if (act === "back") rightClick();
   else if (act === "fold") $("dock").classList.toggle("folded");
-  else if (act === "more") $("dock").classList.toggle("open");
-  else if (act === "keyboard") openKeyboard();
+  else if (act === "mando") openMando();
   else if (act === "zoomIn") zoom(1);
   else if (act === "zoomOut") zoom(-1);
-  else if (act === "save") saveShortcut();
   else if (KEYS[act]) tapKey(KEYS[act]);
-  if (navigator.vibrate) try { navigator.vibrate(8); } catch {}
 });
+
+/* ---------- Centro de mando ---------- */
+function openMando() { $("mando").hidden = false; }
+function closeMando() { $("mando").hidden = true; $("canvas").focus({ preventScroll: true }); }
+$("mando").addEventListener("click", (e) => {
+  if (e.target === $("mando") || e.target.closest("[data-mando-close]")) return closeMando();
+  const b = e.target.closest("button[data-cmd]"); if (!b) return;
+  const cmd = b.dataset.cmd;
+  closeMando();
+  // la orden llega al juego cuando el panel ya está cerrado
+  setTimeout(() => {
+    if (cmd === "@keyboard") openKeyboard();
+    else if (cmd === "@sidebar") { try { Module._ra_toggle_sidebar(); } catch (err) { log("panel:", err); } }
+    else sendCombo(cmd);
+  }, 80);
+});
+["touchstart", "touchmove", "touchend"].forEach((t) => $("mando").addEventListener(t, (e) => e.stopPropagation(), { passive: true }));
+
 
 /* ---------- Teclado del iPhone → texto del juego ---------- */
 const kbd = $("kbd"), SENTINEL = "  ";
