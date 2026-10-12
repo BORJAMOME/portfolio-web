@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 1762507..9f2e393 100644
+index 1762507..12898eb 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -875,7 +875,7 @@ function(GET_SDL_EXT_DIR result module)
@@ -16,10 +16,49 @@ index 1762507..9f2e393 100644
      set(CMAKE_EXECUTABLE_SUFFIX .html)
      set(EMSCRIPTEN_LINK_FLAGS
 -        "-lidbfs.js -s SINGLE_FILE=1 -s SINGLE_FILE_BINARY_ENCODE=0 --shell-file ${PROJECT_SOURCE_DIR}/res/shell.html --embed-file ${ASSETS_DIR}@/assets -s INITIAL_MEMORY=268435456 -s ALLOW_MEMORY_GROWTH=1 -s INVOKE_RUN=0 -s EXPORTED_FUNCTIONS=[\"_main\"] -s EXPORTED_RUNTIME_METHODS=[\"callMain\",\"FS\"] -s DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[\"$autoResumeAudioContext\"] --bind"
-+        "-lidbfs.js -O3 -s ENVIRONMENT=web --preload-file ${ASSETS_DIR}@/assets -s STACK_SIZE=5242880 -s INITIAL_MEMORY=134217728 -s ALLOW_MEMORY_GROWTH=1 -s INVOKE_RUN=0 -s EXPORTED_FUNCTIONS=[\"_main\"] -s EXPORTED_RUNTIME_METHODS=[\"callMain\",\"FS\",\"UTF8ToString\"] -s DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[\"$autoResumeAudioContext\"]"
++        "-lidbfs.js -O3 -s ENVIRONMENT=web --preload-file ${ASSETS_DIR}@/assets -s STACK_SIZE=5242880 -s INITIAL_MEMORY=134217728 -s ALLOW_MEMORY_GROWTH=1 -s INVOKE_RUN=0 -s EXPORTED_FUNCTIONS=[\"_main\",\"_ra_window_id\",\"_ra_is_city\",\"_ra_screen_w\",\"_ra_screen_h\",\"_ra_view\",\"_ra_constructing\",\"_ra_sidebar_collapsed\",\"_ra_toggle_sidebar\"] -s EXPORTED_RUNTIME_METHODS=[\"callMain\",\"FS\",\"UTF8ToString\"] -s DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[\"$autoResumeAudioContext\"]"
      )
      if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
          set(EMSCRIPTEN_LINK_FLAGS "${EMSCRIPTEN_LINK_FLAGS} -s ASSERTIONS=1")
+diff --git a/src/platform/SDL2/augustus.c b/src/platform/SDL2/augustus.c
+index bffc244..8ff6c70 100644
+--- a/src/platform/SDL2/augustus.c
++++ b/src/platform/SDL2/augustus.c
+@@ -149,6 +149,34 @@ static void platform_per_frame_callback(void)
+ }
+ #endif
+ 
++
++#ifdef __EMSCRIPTEN__
++#include "building/construction.h"
++#include "city/view.h"
++#include "graphics/screen.h"
++
++/* Puente para la capa táctil de la web: la página pregunta qué ventana hay abierta
++   y dónde está el mapa para decidir si un toque es de mapa o de interfaz. */
++EMSCRIPTEN_KEEPALIVE int ra_window_id(void) { return window_get_id(); }
++EMSCRIPTEN_KEEPALIVE int ra_is_city(void) { return window_is(WINDOW_CITY) || window_is(WINDOW_CITY_MILITARY); }
++EMSCRIPTEN_KEEPALIVE int ra_screen_w(void) { return screen_width(); }
++EMSCRIPTEN_KEEPALIVE int ra_screen_h(void) { return screen_height(); }
++EMSCRIPTEN_KEEPALIVE int ra_view(int which)
++{
++    int x, y, w, h;
++    city_view_get_viewport(&x, &y, &w, &h);
++    return which == 0 ? x : which == 1 ? y : which == 2 ? w : h;
++}
++EMSCRIPTEN_KEEPALIVE int ra_constructing(void) { return building_construction_type() != 0; }
++EMSCRIPTEN_KEEPALIVE int ra_sidebar_collapsed(void) { return city_view_is_sidebar_collapsed(); }
++EMSCRIPTEN_KEEPALIVE void ra_toggle_sidebar(void)
++{
++    if (window_is(WINDOW_CITY)) {
++        city_view_start_sidebar_toggle();
++    }
++}
++#endif
++
+ static void run_and_draw(void)
+ {
+     time_millis time_before_run = system_get_ticks();
 diff --git a/src/platform/SDL2/virtual_keyboard.c b/src/platform/SDL2/virtual_keyboard.c
 index 7263dd0..6289f96 100644
 --- a/src/platform/SDL2/virtual_keyboard.c
