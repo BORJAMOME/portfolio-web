@@ -244,6 +244,17 @@
       <label class="switch" for="optDock"><span>Mostrar controles rápidos</span><input id="optDock" type="checkbox"></label>
     </div>
     <div class="field">
+      <span class="lbl">Idioma del juego</span>
+      <small id="langState">Original de tu copia del juego</small>
+      <div class="row">
+        <button class="btn btn-ghost" type="button" id="langExportBtn">Exportar textos</button>
+        <label class="btn btn-ghost" for="langInput">Importar traducción</label>
+        <input id="langInput" type="file" hidden>
+      </div>
+      <button class="linkish" type="button" id="langRestoreBtn" hidden>Volver al idioma original</button>
+      <small>Exporta los textos (un ZIP de menos de 1 MB), envíaselos a Claude para traducirlos y carga aquí el ZIP traducido. Las voces siguen en inglés.</small>
+    </div>
+    <div class="field">
       <span class="lbl">Archivos del juego</span>
       <div class="row">
         <button class="btn btn-ghost" type="button" id="reimportBtn">Reimportar</button>

@@ -20,6 +20,30 @@ index 1762507..12898eb 100644
      )
      if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
          set(EMSCRIPTEN_LINK_FLAGS "${EMSCRIPTEN_LINK_FLAGS} -s ASSERTIONS=1")
+diff --git a/src/core/lang.c b/src/core/lang.c
+index 4fd63cb..36c5b86 100644
+--- a/src/core/lang.c
++++ b/src/core/lang.c
+@@ -13,16 +13,16 @@
+ #include <string.h>
+ 
+ #define MAX_TEXT_ENTRIES 1000
+-#define MAX_TEXT_DATA 200000
++#define MAX_TEXT_DATA 400000 // web: margen para traducciones (original 200000)
+ #define MIN_TEXT_SIZE (28 + MAX_TEXT_ENTRIES * 8)
+ #define MAX_TEXT_SIZE (MIN_TEXT_SIZE + MAX_TEXT_DATA)
+ 
+ #define MAX_MESSAGE_ENTRIES 400
+-#define MAX_MESSAGE_DATA 460000
++#define MAX_MESSAGE_DATA 800000 // web: margen para traducciones (original 460000)
+ #define MIN_MESSAGE_SIZE 32024
+ #define MAX_MESSAGE_SIZE (MIN_MESSAGE_SIZE + MAX_MESSAGE_DATA)
+ 
+-#define BUFFER_SIZE 400000
++#define BUFFER_SIZE 900000 // web: cabe el mayor archivo de idioma (original 400000)
+ 
+ #define FILE_TEXT_ENG "c3.eng"
+ #define FILE_MM_ENG "c3_mm.eng"
 diff --git a/src/platform/SDL2/augustus.c b/src/platform/SDL2/augustus.c
 index bffc244..8ff6c70 100644
 --- a/src/platform/SDL2/augustus.c
