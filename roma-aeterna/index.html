@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Roma Aeterna</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="description" content="Caesar III en tu iPhone, con el motor libre Augustus y tus propios archivos del juego.">
+<meta name="theme-color" content="#140c12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Roma Aeterna">
+<meta name="format-detection" content="telephone=no">
+<!-- Zona privada: fuera de buscadores. Scripts solo propios; el motor necesita compilar WebAssembly. -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://*.supabase.co; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<canvas id="mosaic" aria-hidden="true"></canvas>
+
+<main id="lock" class="lock" hidden>
+  <section class="panel lock-card" aria-labelledby="lockTitle">
+    <span class="lock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.2"/></svg></span>
+    <div class="eyebrow">Área privada</div>
+    <h1 id="lockTitle">Roma Aeterna</h1>
+    <p>Introduce la contraseña de tu área privada. Solo se pide una vez en cada dispositivo.</p>
+    <form id="lockForm" class="lock-form" novalidate>
+      <input class="sr-only" type="email" name="username" autocomplete="username" value="borja.mora.mendez@gmail.com" tabindex="-1" aria-hidden="true" readonly>
+      <label class="lbl" for="lockPass">Contraseña</label>
+      <input id="lockPass" class="lock-input" name="password" type="password" autocomplete="current-password" required aria-describedby="lockMsg">
+      <p class="lock-msg" id="lockMsg" aria-live="assertive"></p>
+      <button class="btn btn-primary btn-block" id="lockBtn" type="submit">Entrar</button>
+    </form>
+    <a class="back-link" href="../area-privada.html">← Volver al área privada</a>
+  </section>
+</main>
+
+<main id="launcher" hidden>
+  <div class="tabula">
+    <section class="crest" aria-labelledby="title">
+      <svg viewBox="0 0 120 120" role="img" aria-label="Corona de laurel">
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6e3b4"/><stop offset=".55" stop-color="#d9b46a"/><stop offset="1" stop-color="#9c7c44"/></linearGradient>
+        </defs>
+        <g fill="url(#g)">
+          <g id="branch">
+            <path d="M58 104 C34 98 18 80 16 52" fill="none" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/>
+            <ellipse cx="18" cy="56" rx="4.2" ry="9" transform="rotate(-8 18 56)"/>
+            <ellipse cx="11" cy="58" rx="3.6" ry="8" transform="rotate(-52 11 58)"/>
+            <ellipse cx="22" cy="72" rx="4.2" ry="9" transform="rotate(-30 22 72)"/>
+            <ellipse cx="14" cy="76" rx="3.6" ry="8" transform="rotate(-72 14 76)"/>
+            <ellipse cx="31" cy="86" rx="4.2" ry="9" transform="rotate(-50 31 86)"/>
+            <ellipse cx="24" cy="92" rx="3.6" ry="8" transform="rotate(-92 24 92)"/>
+            <ellipse cx="43" cy="97" rx="4.2" ry="9" transform="rotate(-68 43 97)"/>
+            <ellipse cx="38" cy="104" rx="3.4" ry="7.5" transform="rotate(-108 38 104)"/>
+            <ellipse cx="20" cy="40" rx="3.6" ry="8" transform="rotate(14 20 40)"/>
+          </g>
+          <use href="#branch" transform="translate(120 0) scale(-1 1)"/>
+        </g>
+        <text x="60" y="73" text-anchor="middle" font-family="Cinzel, Georgia, serif" font-weight="700" font-size="34" fill="url(#g)" letter-spacing="1">III</text>
+      </svg>
+      <div class="eyebrow">Caesar III · Motor Augustus</div>
+      <h1 id="title">Roma Aeterna</h1>
+      <p class="lede">Tu provincia de siempre, ahora en el iPhone. Funciona con <strong>tus archivos originales</strong> y se queda guardada en el dispositivo.</p>
+      <div class="auc" id="auc"></div>
+      <a class="back-link" href="../area-privada.html">← Área privada</a>
+    </section>
+
+    <section class="panel" id="panel" aria-live="polite">
+      <!-- Cargando -->
+      <div id="vLoading" class="loading">
+        <div class="spinner" aria-hidden="true"></div>
+        <div id="loadingText">Preparando el motor…</div>
+      </div>
+
+      <!-- Sin archivos -->
+      <div id="vSetup" hidden>
+        <div style="display:grid;gap:18px">
+          <h2>Funda tu provincia</h2>
+          <ol class="steps">
+            <li><span class="numeral">I</span><div><b>Consigue el juego</b><span>Caesar III de <a href="https://www.gog.com/game/caesar_3" target="_blank" rel="noopener">GOG</a>, <a href="https://store.steampowered.com/app/517790/Caesar_3/" target="_blank" rel="noopener">Steam</a> o tu CD de siempre.</span></div></li>
+            <li><span class="numeral">II</span><div><b>Descarga el instalador</b><span>En GOG, desde el iPhone: Biblioteca → Caesar 3 → instalador sin conexión para Windows (<span class="mono">.exe</span>). Se guarda en la app Archivos. Si además baja un <span class="mono">.bin</span>, guárdalo junto al <span class="mono">.exe</span>.</span></div></li>
+            <li><span class="numeral">III</span><div><b>Impórtalo aquí</b><span>Elige el <span class="mono">.exe</span> (y el <span class="mono">.bin</span>, si lo hay). La app lo desempaqueta en el propio iPhone una sola vez. También vale un ZIP de la carpeta del juego.</span></div></li>
+          </ol>
+          <div id="importErr" class="notice err" hidden></div>
+          <label class="btn btn-primary btn-block btn-xl" for="zipInput">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+            Importar instalador
+          </label>
+          <input id="zipInput" type="file" multiple hidden>
+          <div class="row" style="justify-content:space-between;align-items:center">
+            <label class="linkish" for="filesInput">Prefiero elegir los archivos sueltos</label>
+            <input id="filesInput" type="file" multiple hidden>
+            <label class="linkish" for="dirInput" id="dirLink" hidden>Elegir carpeta</label>
+            <input id="dirInput" type="file" webkitdirectory multiple hidden>
+            <button class="linkish" type="button" data-open="help">¿Cómo se juega?</button>
+          </div>
+          <div class="drop" id="drop" hidden>O arrastra aquí el instalador de GOG, el ZIP o la carpeta del juego</div>
+        </div>
+      </div>
+
+      <!-- Importando -->
+      <div id="vImport" class="loading" hidden>
+        <div class="spinner" aria-hidden="true"></div>
+        <div style="width:100%;display:grid;gap:10px">
+          <b id="impTitle" style="color:var(--marble);font-weight:700">Trasladando archivos al Foro…</b>
+          <div class="bar"><i id="impBar"></i></div>
+          <div class="mono" id="impText" style="font-size:14.5px">0 %</div>
+        </div>
+      </div>
+
+      <!-- Listo -->
+      <div id="vReady" hidden>
+        <div style="display:grid;gap:18px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+            <h2>Tu provincia te espera</h2>
+            <span class="seal">Archivos listos</span>
+          </div>
+          <dl class="ledger">
+            <div><dt>Archivos</dt><dd id="stFiles">—</dd></div>
+            <div><dt>Tamaño</dt><dd id="stSize">—</dd></div>
+            <div><dt>Partidas</dt><dd id="stSaves">—</dd></div>
+          </dl>
+          <div id="installHint" class="notice" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>
+            <div><b>Instálala para jugar a pantalla completa.</b> En Safari, pulsa Compartir y luego <b>Añadir a pantalla de inicio</b>. Así, además, iOS no borra tus partidas.</div>
+          </div>
+          <div id="runErr" class="notice err" hidden></div>
+          <button class="btn btn-primary btn-block btn-xl" id="playBtn" type="button">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>
+            Gobernar
+          </button>
+          <div class="row">
+            <button class="btn btn-ghost" type="button" data-open="saves">Partidas</button>
+            <button class="btn btn-ghost" type="button" data-open="settings">Ajustes</button>
+            <button class="btn btn-ghost" type="button" data-open="help">Ayuda</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error fatal -->
+      <div id="vFatal" hidden>
+        <div style="display:grid;gap:14px">
+          <h2>No se ha podido arrancar</h2>
+          <div class="notice err" id="fatalText"></div>
+          <button class="btn btn-ghost btn-block" type="button" id="retryBtn">Reintentar</button>
+        </div>
+      </div>
+      <div class="meander" aria-hidden="true"></div>
+    </section>
+  </div>
+</main>
+
+<!-- Juego -->
+<div id="stage" hidden>
+  <canvas id="canvas" tabindex="-1"></canvas>
+</div>
+
+<nav id="dock" hidden aria-label="Controles rápidos">
+  <button type="button" data-act="back" aria-label="Atrás (clic derecho)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span class="lbl">Atrás</span></button>
+  <button type="button" data-act="pause" aria-label="Pausa"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><span class="lbl">Pausa</span></button>
+  <button type="button" data-act="slower" aria-label="Más lento"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg><span class="lbl">Más lento</span></button>
+  <button type="button" data-act="faster" aria-label="Más rápido"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M12 5v14"/></svg><span class="lbl">Más rápido</span></button>
+  <button type="button" data-act="overlay" aria-label="Capas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5 9-5z"/><path d="m3 13 9 5 9-5"/></svg><span class="lbl">Capas</span></button>
+  <button type="button" data-act="rotate" aria-label="Girar mapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg><span class="lbl">Girar</span></button>
+  <button type="button" data-act="keyboard" aria-label="Teclado"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h.01M9.5 10h.01M13 10h.01M16.5 10h.01M7 14h10"/></svg><span class="lbl">Teclado</span></button>
+  <div class="sep"></div>
+  <button type="button" class="fold" data-act="fold" aria-label="Plegar controles"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg></button>
+</nav>
+
+<button id="typeBtn" class="btn btn-primary" type="button" hidden>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h.01M9.5 10h.01M13 10h.01M16.5 10h.01M7 14h10"/></svg>
+  Escribir
+</button>
+<input id="kbd" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" aria-label="Texto para el juego">
+
+<div id="rotate" hidden>
+  <div class="inner">
+    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" aria-hidden="true"><rect x="20" y="6" width="24" height="44" rx="5"/><path d="M29 44h6"/><path d="M50 52a14 14 0 0 1-12 6" stroke-linecap="round"/><path d="m40 54-2 4 4 1" stroke-linecap="round"/></svg>
+    <h2>Gira el iPhone</h2>
+    <p>Caesar III se juega en horizontal. Gíralo y la ciudad ocupará toda la pantalla.</p>
+    <button class="linkish" type="button" id="rotateDismiss">Seguir en vertical</button>
+  </div>
+</div>
+
+<div id="toast" role="status" hidden></div>
+
+<!-- Hoja: Ajustes -->
+<div class="scrim" id="sheet-settings" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="hSettings">
+    <div class="grabber"></div>
+    <header><h3 id="hSettings">Ajustes</h3><button class="x" type="button" data-close aria-label="Cerrar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></header>
+    <div class="field">
+      <span class="lbl">Tamaño de la interfaz</span>
+      <div class="seg" id="segUi" role="group" aria-label="Tamaño de la interfaz">
+        <button type="button" data-v="auto">Auto</button>
+        <button type="button" data-v="large">Grande</button>
+        <button type="button" data-v="medium">Media</button>
+        <button type="button" data-v="small">Compacta</button>
+      </div>
+      <small id="uiHint">Grande facilita tocar los botones; Compacta muestra más ciudad.</small>
+    </div>
+    <div class="field">
+      <span class="lbl">Nitidez</span>
+      <div class="seg" id="segDpr" role="group" aria-label="Nitidez">
+        <button type="button" data-v="2">Equilibrada</button>
+        <button type="button" data-v="3">Máxima</button>
+      </div>
+      <small>Equilibrada gasta menos batería y va más fluida en iPhone antiguos.</small>
+    </div>
+    <div class="field">
+      <label class="switch" for="optVideos"><span>Importar los vídeos de introducción</span><input id="optVideos" type="checkbox"></label>
+      <small>Ocupan bastante memoria. El juego funciona perfectamente sin ellos.</small>
+    </div>
+    <div class="field">
+      <span class="lbl">Acceso</span>
+      <div class="row"><button class="btn btn-ghost" type="button" id="relockBtn">Bloquear este dispositivo</button></div>
+      <small>Vuelve a pedir la contraseña la próxima vez. Tus partidas no se borran.</small>
+    </div>
+    <div class="field">
+      <label class="switch" for="optDock"><span>Mostrar controles rápidos</span><input id="optDock" type="checkbox"></label>
+    </div>
+    <div class="field">
+      <span class="lbl">Archivos del juego</span>
+      <div class="row">
+        <button class="btn btn-ghost" type="button" id="reimportBtn">Reimportar</button>
+        <button class="btn btn-ghost danger" type="button" id="wipeBtn">Borrar todo</button>
+      </div>
+      <div id="wipeConfirm" class="notice err" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+        <div style="display:grid;gap:10px"><span>Se borrarán los archivos del juego <b>y todas tus partidas</b> de este iPhone. Exporta antes tus partidas si quieres conservarlas.</span>
+          <div class="row"><button class="btn btn-primary" type="button" id="wipeYes">Sí, borrar</button><button class="btn btn-ghost" type="button" id="wipeNo">Cancelar</button></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Hoja: Partidas -->
+<div class="scrim" id="sheet-saves" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="hSaves">
+    <div class="grabber"></div>
+    <header><h3 id="hSaves">Partidas</h3><button class="x" type="button" data-close aria-label="Cerrar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></header>
+    <p style="margin:0;color:var(--stone)">Las partidas se guardan en el iPhone. Haz una copia en Archivos o iCloud de vez en cuando, o pásate partidas desde el PC (archivos <span class="mono">.sav</span>).</p>
+    <div id="saveList" class="ledger" style="grid-template-columns:1fr"></div>
+    <div class="row">
+      <button class="btn btn-primary" type="button" id="exportBtn">Exportar copia</button>
+      <label class="btn btn-ghost" for="savInput">Importar .sav</label>
+      <input id="savInput" type="file" multiple hidden>
+    </div>
+  </div>
+</div>
+
+<!-- Hoja: Ayuda -->
+<div class="scrim" id="sheet-help" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="hHelp">
+    <div class="grabber"></div>
+    <header><h3 id="hHelp">Cómo se juega</h3><button class="x" type="button" data-close aria-label="Cerrar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></header>
+    <dl class="gestures">
+      <div><dt>Tocar</dt><dd>Clic: elegir edificios, abrir menús, colocar construcciones.</dd></div>
+      <div><dt>Arrastrar</dt><dd>Mover el mapa, o trazar calles y muros mientras construyes.</dd></div>
+      <div><dt>Pellizcar</dt><dd>Acercar o alejar la ciudad (zoom) con dos dedos.</dd></div>
+      <div><dt>Segundo dedo</dt><dd>Mientras construyes, tocar con otro dedo cancela la construcción.</dd></div>
+      <div><dt>Atrás</dt><dd>Equivale al clic derecho: cierra ventanas e informes, y cancela.</dd></div>
+      <div><dt>Pausa · − · +</dt><dd>Pausar y cambiar la velocidad del juego.</dd></div>
+      <div><dt>Capas · Girar</dt><dd>Alternar la capa de información y girar la vista de la ciudad.</dd></div>
+      <div><dt>Teclado</dt><dd>Para escribir el nombre de una partida al guardar. Aparece solo cuando hace falta.</dd></div>
+    </dl>
+    <p style="margin:0;color:var(--stone)">Para guardar, usa el menú del juego (Archivo → Guardar partida). Si no oyes nada, revisa el interruptor de silencio del iPhone.</p>
+    <details>
+      <summary style="cursor:pointer;color:var(--gold)">Registro técnico</summary>
+      <pre class="log" id="log"></pre>
+    </details>
+    <p style="margin:0;color:var(--stone);font-size:14px">Motor: <a href="https://github.com/Keriew/augustus" target="_blank" rel="noopener" style="color:var(--gold)">Augustus</a> (AGPL), basado en Julius. Extractor del instalador: <a href="https://constexpr.org/innoextract/" target="_blank" rel="noopener" style="color:var(--gold)">innoextract</a> (zlib). Esta app no incluye ningún archivo del juego original; usa los tuyos.</p>
+  </div>
+</div>
+
+<script src="fflate.js"></script>
+<script src="acceso.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
