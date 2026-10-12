@@ -336,3 +336,7 @@ body.playing #launcher, body.playing #mosaic { display: none; }
   font: 500 14.5px/1.15 var(--body); text-align: center; }
 .cmds button:active { background: rgba(217,180,106,.25); }
 .mando-tip { margin: 0; color: var(--stone); font-size: 13.5px; }
+
+/* Atrás llama la atención cuando una ventana pide clic derecho */
+#dock button.pulse { animation: backpulse 1s ease-in-out 3; }
+@keyframes backpulse { 50% { background: rgba(217,180,106,.45); box-shadow: 0 0 0 4px rgba(217,180,106,.25); } }
