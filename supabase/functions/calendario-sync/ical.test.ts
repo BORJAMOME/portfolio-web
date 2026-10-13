@@ -88,3 +88,33 @@ Deno.test("día completo a medianoche UTC", () => {
 Deno.test("cancelados y fuera de ventana no entran", () => {
   assertEquals(by("cancelado@x").length + by("viejo@x").length, 0);
 });
+
+Deno.test("participantes, organizador, estado y enlace de videollamada", () => {
+  const ics = `BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+UID:invitacion@google.com
+DTSTART:20261021T080000Z
+DTEND:20261021T090000Z
+SUMMARY:Entrevista Data Analyst - Acme
+ORGANIZER;CN=Laura Gómez:mailto:Laura.Gomez@acme.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=ACCEPTED;CN=Laura Gómez:mailto:laura.gomez@acme.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;CN=borja.mora.mendez@gmail.com:mailto:borja.mora.mendez@gmail.com
+DESCRIPTION:Únete con Google Meet: https://meet.google.com/abc-defg-hij\\nGracias
+SEQUENCE:2
+LAST-MODIFIED:20261012T101500Z
+STATUS:CONFIRMED
+END:VEVENT
+END:VCALENDAR`;
+  const [r] = parse(ics, new Date("2026-10-01T00:00:00Z"), new Date("2026-12-01T00:00:00Z"));
+  assertEquals(r.organizer, { name: "Laura Gómez", email: "laura.gomez@acme.com" });
+  assertEquals(r.attendees.length, 2);
+  assertEquals(r.attendees[0], { name: "Laura Gómez", email: "laura.gomez@acme.com", partstat: "ACCEPTED", role: "REQ-PARTICIPANT" });
+  // si el CN es el propio correo no se repite como nombre
+  assertEquals(r.attendees[1].name, null);
+  assertEquals(r.attendees[1].partstat, "NEEDS-ACTION");
+  assertEquals(r.status, "CONFIRMED");
+  assertEquals(r.sequence, 2);
+  assertEquals(r.last_modified, "2026-10-12T10:15:00.000Z");
+  assertEquals(r.conference_url, "https://meet.google.com/abc-defg-hij");
+});

@@ -222,10 +222,13 @@
       else if (k.slice(0, 2) === 'on') el.addEventListener(k.slice(2), v);
       else el.setAttribute(k, v === true ? '' : v);
     });
-    [].concat(kids || []).forEach(function (c) {
-      if (c == null || c === false) return;
-      el.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
-    });
+    (function add(list) {               // admite listas anidadas (p. ej. el resultado de un map)
+      [].concat(list || []).forEach(function (c) {
+        if (c == null || c === false) return;
+        if (Array.isArray(c)) return add(c);
+        el.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
+      });
+    })(kids);
     return el;
   }
 
@@ -445,6 +448,8 @@
     hoy:         { global: 'APHoy',         title: 'Hoy' },
     calendario:  { global: 'APCalendario',  title: 'Calendario' },
     entrevistas: { global: 'APEntrevistas', title: 'Entrevistas' },
+    // sin pestaña propia: vive dentro de «Entrevistas» (tab) con su propio archivo
+    preparacion: { global: 'APPreparacion', title: 'Entrevistas', tab: 'entrevistas' },
     portfolio:   { global: 'APPortfolio',   title: 'Portfolio' },
     fichero:     { global: 'APFichero',     title: 'Fichero' },
     configuracion: { global: 'APConfiguracion', title: 'Configuración' }
@@ -486,7 +491,7 @@
     releaseBlobs();
     dirty = false;
     setStatus('Cargando…');
-    var job, isModule = r.kind === 'module', tab = isModule ? r.name : 'archivos';
+    var job, isModule = r.kind === 'module', tab = isModule ? (MODULES[r.name].tab || r.name) : 'archivos';
     // la barra del drive (buscar, + Carpeta, subir) y las migas solo tienen sentido en «Archivos y notas»
     els.toolbar.hidden = els.crumbsNav.hidden = isModule;
     [].forEach.call(els.tabs, function (a) {

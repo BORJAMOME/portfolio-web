@@ -110,7 +110,8 @@ window.APEntrevistas = (function () {
     var h = ctx.h;
     return h('nav', { class: 'ape-subnav', 'aria-label': 'Vistas de entrevistas' }, [
       h('a', { href: '#/entrevistas', 'aria-current': active === 'list' ? 'page' : null, text: 'Procesos' }),
-      h('a', { href: '#/entrevistas/analisis', 'aria-current': active === 'analysis' ? 'page' : null, text: 'Análisis' })
+      h('a', { href: '#/entrevistas/analisis', 'aria-current': active === 'analysis' ? 'page' : null, text: 'Análisis' }),
+      h('a', { href: '#/preparacion', text: 'Preparación' })   // area-privada-preparacion.js
     ]);
   }
 

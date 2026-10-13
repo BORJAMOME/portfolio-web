@@ -36,6 +36,11 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
   (pg_cron cada 15 min) → `public.calendar_events`. La página nunca habla con Google. Guía: `supabase/functions/calendario-sync/README.md`.
 - **Entrevistas** (`#/entrevistas`, `/analisis`, `/<uuid>`): tablas `procesos` y `entrevistas` (`supabase/entrevistas.sql`).
   El análisis se calcula en la página con las dos tablas ya descargadas.
+- **Preparación** (`#/preparacion`, `/<uuid>`): módulo `area-privada-preparacion.js` sin pestaña propia (`tab: 'entrevistas'` en `MODULES`).
+  Edge Function `supabase/functions/interview-intel` (pg_cron cada 10 min) detecta entrevistas en `calendar_events`, investiga
+  y escribe briefings en `ii_interviews`/`ii_runs`/`ii_reports` (`supabase/interview-intel.sql`). La web solo lee y llama a `ii_action()`.
+  Perfil profesional: nota «Perfil profesional · Interview Intelligence» (carga en `supabase/interview-intel-perfil.sql`, no versionado).
+  Pruebas: `deno test --allow-read supabase/functions/` y `node tools/check-briefing.mjs`. Guía: `supabase/functions/interview-intel/README.md`.
 - Pestaña **Fichero** (`#/fichero`): tabla de enlaces guardados, `area-privada-fichero.js`, tabla `public.links` (`supabase/fichero.sql`;
   carga inicial en `supabase/fichero-datos.sql`). Se añade, edita y borra desde la propia tabla; Supabase es la fuente de verdad.
 - **Supabase no se pausa**: `.github/workflows/supabase-keepalive.yml` llama a `public.keepalive()` (`supabase/keepalive.sql`) lunes y jueves

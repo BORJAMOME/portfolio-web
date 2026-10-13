@@ -28,7 +28,7 @@ window.APCalendario = (function () {
   var JSON_REP = { 'Content-Type': 'application/json', Prefer: 'return=representation' };
 
   var ctx = null, view = null, flash = '', q = '';
-  var data = { google: [], own: [], tasks: [], links: {}, syncs: [], cats: [], googleReady: true, ownReady: true };
+  var data = { google: [], own: [], tasks: [], links: {}, prep: {}, syncs: [], cats: [], googleReady: true, ownReady: true };
   var prefs = loadPrefs();
   var keysBound = false;
 
@@ -141,7 +141,9 @@ window.APCalendario = (function () {
       // todas las tareas pendientes (panel lateral), con o sin fecha
       api('/rest/v1/agenda?select=*&tipo=eq.tarea&hecho=eq.false&order=inicio.asc.nullslast,created_at.asc&limit=500').catch(soft()),
       api('/rest/v1/entrevistas?select=calendar_uid,proceso_id,fase,procesos(empresa)&calendar_uid=not.is.null').catch(soft()),
-      api('/rest/v1/ap_opciones?select=valor&grupo=eq.agenda.categoria&order=posicion.asc,created_at.asc').catch(soft())
+      api('/rest/v1/ap_opciones?select=valor&grupo=eq.agenda.categoria&order=posicion.asc,created_at.asc').catch(soft()),
+      // preparación automática (area-privada-preparacion.js): estado del briefing de cada entrevista detectada
+      api('/rest/v1/ii_interviews?select=id,calendar,event_uid,status,status_note,current_report_id,updated_at&status=neq.dismissed&starts_at=gte.' + addDays(from, -1).toISOString() + '&limit=500').catch(soft())
     ]).then(function (res) {
       data.google = res[0] || [];
       data.syncs = res[1] || [];
@@ -150,6 +152,8 @@ window.APCalendario = (function () {
       data.links = {};
       (res[4] || []).forEach(function (e) { data.links[e.calendar_uid] = e; });
       data.cats = (res[5] || []).map(function (o) { return o.valor; });
+      data.prep = {};
+      (res[6] || []).forEach(function (p) { data.prep[p.calendar + '|' + p.event_uid] = p; });
     });
   }
 
@@ -168,10 +172,12 @@ window.APCalendario = (function () {
       var s = new Date(e.starts_at), en = new Date(e.ends_at);
       if (e.all_day) { s = new Date(s.getUTCFullYear(), s.getUTCMonth(), s.getUTCDate()); en = new Date(en.getUTCFullYear(), en.getUTCMonth(), en.getUTCDate()); }
       var link = data.links[e.uid + '|' + e.starts_at] || null;
+      var prep = data.prep[e.calendar + '|' + e.uid] || null;
+      var isInterview = link || (prep && prep.status !== 'cancelled');
       out.push({
-        id: 'g:' + e.uid + '|' + e.starts_at, src: 'google', kind: link ? 'entrevista' : 'google', layer: 'g:' + e.calendar,
+        id: 'g:' + e.uid + '|' + e.starts_at, src: 'google', kind: isInterview ? 'entrevista' : 'google', layer: 'g:' + e.calendar, prep: prep,
         title: e.title, start: s, end: en > s ? en : new Date(s.getTime() + (e.all_day ? DAY : 30 * 6e4)), allDay: e.all_day,
-        color: link ? C_INTERVIEW : googleColor(e.calendar),
+        color: isInterview ? C_INTERVIEW : googleColor(e.calendar),
         location: e.location, description: e.description, url: e.url, calendar: e.calendar, link: link, raw: e, editable: false
       });
     });
@@ -731,7 +737,9 @@ window.APCalendario = (function () {
       if (it.start) actions.push(ext(gcalUrl(it), 'Añadir a Google Calendar'));
       actions.push(act('Eliminar', function () { remove(it); }, 'ap-tool--danger'));
     } else {
-      if (it.link) actions.push(h('a', { class: 'ap-tool ap-tool--dark', href: '#/entrevistas/' + it.link.proceso_id, onclick: close, text: 'Ver el proceso' }));
+      if (it.prep && it.prep.current_report_id) actions.push(h('a', { class: 'ap-tool ap-tool--dark', href: '#/preparacion/' + it.prep.id, onclick: close, text: 'Abrir briefing' }));
+      else if (it.prep) actions.push(h('a', { class: 'ap-tool', href: '#/preparacion', onclick: close, text: 'Ver preparación' }));
+      if (it.link) actions.push(h('a', { class: 'ap-tool' + (it.prep && it.prep.current_report_id ? '' : ' ap-tool--dark'), href: '#/entrevistas/' + it.link.proceso_id, onclick: close, text: 'Ver el proceso' }));
       if (!it.allDay) actions.push(act('Reservar 1 h para prepararlo', function () {
         var s = new Date(it.start.getTime() - 2 * 36e5);
         openForm({ tipo: 'foco', titulo: 'Preparar: ' + it.title, inicio: s.toISOString(), fin: new Date(s.getTime() + 36e5).toISOString(), todo_el_dia: false, categoria: data.cats[0] || null });
@@ -754,6 +762,7 @@ window.APCalendario = (function () {
       it.priority ? h('p', { class: 'ape-meta', text: 'Prioridad ' + { 1: 'alta', 2: 'media', 3: 'baja' }[it.priority] }) : null,
       it.location ? h('p', { class: 'apc-detail-row' }, [h('span', { class: 'ap-label', text: 'Lugar' }), it.location]) : null,
       it.url && it.src === 'own' ? h('p', { class: 'apc-detail-row' }, [h('span', { class: 'ap-label', text: 'Enlace' }), h('a', { href: it.url, target: '_blank', rel: 'noopener noreferrer', text: it.url.replace(/^https?:\/\//, '').slice(0, 60) })]) : null,
+      it.prep ? h('p', { class: 'apc-detail-row' }, [h('span', { class: 'ap-label', text: 'Briefing' }), prepLabel(it.prep)]) : null,
       it.description ? h('p', { class: 'apc-detail-desc', text: it.description.slice(0, 1200) }) : null,
       it.src === 'google' ? h('p', { class: 'apc-detail-note', text: 'Evento de Google Calendar: se edita en Google y llega aquí con la sincronización.' }) : null,
       h('div', { class: 'apc-detail-actions' }, actions)
@@ -763,6 +772,12 @@ window.APCalendario = (function () {
     var first = dlg.querySelector('.apc-detail-actions > *');
     (first || dlg.querySelector('.apc-close')).focus();
   }
+
+  /* Estado del briefing (mismas claves que ii_interviews.status; textos en area-privada-preparacion.js) */
+  var PREP = { detected: 'detectada, se preparará al acercarse', pending_review: 'posible entrevista: confírmala en Entrevistas → Preparación',
+    queued: 'en cola', researching: 'investigando', generating: 'redactando', ready: 'listo', needs_update: 'actualizándose (el evento cambió)',
+    cancelled: 'entrevista cancelada', failed: 'error: reinténtalo en Entrevistas → Preparación' };
+  function prepLabel(p) { return (PREP[p.status] || p.status) + ' · ' + fmt.short.format(new Date(p.updated_at)) + ' ' + fmt.time.format(new Date(p.updated_at)); }
 
   /* ═══════════ ESCRITURA ═══════════ */
   function create(row) { return ctx.api('/rest/v1/agenda?select=id', { method: 'POST', headers: JSON_REP, body: JSON.stringify(row) }).then(function (r) { return r[0]; }); }

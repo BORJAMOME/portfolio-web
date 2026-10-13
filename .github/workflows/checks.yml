@@ -47,3 +47,17 @@ jobs:
           npx playwright install --with-deps chromium
       - name: axe-core en todas las páginas
         run: node tools/check-a11y.mjs
+      - name: Briefing de entrevista (dos A4, móvil y axe-core)
+        run: node tools/check-briefing.mjs
+
+  funciones:
+    name: Edge Functions (Deno)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Pruebas de calendario-sync e interview-intel (sin red ni datos reales)
+        run: deno test --allow-read supabase/functions/

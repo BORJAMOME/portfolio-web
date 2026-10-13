@@ -9,7 +9,47 @@ const toDate = (t: ICAL.Time) => (t.isDate
   : new Date(t.toUnixTime() * 1000));
 const clip = (s: unknown, n: number) => (typeof s === "string" && s.trim() ? s.trim().slice(0, n) : null);
 
-export type Row = { uid: string; starts_at: string; ends_at: string; all_day: boolean; title: string; location: string | null; description: string | null; url: string | null };
+export type Person = { name: string | null; email: string | null; partstat?: string | null; role?: string | null };
+export type Row = {
+  uid: string; starts_at: string; ends_at: string; all_day: boolean; title: string;
+  location: string | null; description: string | null; url: string | null;
+  // para «Interview Intelligence»: quién convoca, quién asiste y si el evento ha cambiado
+  organizer: Person | null; attendees: Person[]; status: string | null;
+  sequence: number | null; last_modified: string | null; conference_url: string | null;
+};
+
+const MAX_ATTENDEES = 30;
+// enlaces de videollamada conocidos (en la descripción, el lugar o X-GOOGLE-CONFERENCE)
+const CONFERENCE = /https:\/\/(?:meet\.google\.com|teams\.microsoft\.com|teams\.live\.com|[\w-]+\.zoom\.us|zoom\.us|[\w-]+\.webex\.com)\/[^\s"<>]+/i;
+
+function person(p: ICAL.Property | null): Person | null {
+  if (!p) return null;
+  const v = String(p.getFirstValue() ?? "");
+  const email = /^mailto:/i.test(v) ? v.slice(7).trim().toLowerCase().slice(0, 320) : null;
+  const cn = p.getParameter("cn");
+  const name = typeof cn === "string" && cn.trim() && cn.trim().toLowerCase() !== email ? cn.trim().slice(0, 200) : null;
+  if (!email && !name) return null;
+  return { name, email };
+}
+function people(comp: ICAL.Component) {
+  const organizer = person(comp.getFirstProperty("organizer"));
+  const attendees: Person[] = [];
+  for (const a of comp.getAllProperties("attendee").slice(0, MAX_ATTENDEES)) {
+    const base = person(a);
+    if (!base) continue;
+    const ps = a.getParameter("partstat"), role = a.getParameter("role");
+    attendees.push({ ...base, partstat: typeof ps === "string" ? ps.toUpperCase() : null, role: typeof role === "string" ? role.toUpperCase() : null });
+  }
+  return { organizer, attendees };
+}
+function conference(comp: ICAL.Component, location: string | null, description: string | null) {
+  const x = comp.getFirstPropertyValue("x-google-conference");
+  for (const s of [typeof x === "string" ? x : null, location, description]) {
+    const m = s ? CONFERENCE.exec(s) : null;
+    if (m) return m[0].replace(/[).,;]+$/, "").slice(0, 1000);
+  }
+  return null;
+}
 
 export function parse(ics: string, winStart: Date, winEnd: Date): Row[] {
   const root = new ICAL.Component(ICAL.parse(ics));
@@ -30,15 +70,23 @@ export function parse(ics: string, winStart: Date, winEnd: Date): Row[] {
     if (String(comp.getFirstPropertyValue("status") ?? "").toUpperCase() === "CANCELLED") return;
     const s = toDate(start), en = end ? toDate(end) : new Date(s.getTime() + (start.isDate ? DAY : 0));
     if (en <= winStart || s >= winEnd) return;
+    const location = clip(e.location, 300), description = clip(e.description, 2000);
+    const lm = comp.getFirstPropertyValue("last-modified");
+    const seq = Number(comp.getFirstPropertyValue("sequence"));
     rows.push({
       uid: e.uid,
       starts_at: s.toISOString(),
       ends_at: (en > s ? en : new Date(s.getTime() + (start.isDate ? DAY : 0))).toISOString(),
       all_day: start.isDate,
       title: clip(e.summary, 300) ?? "(sin título)",
-      location: clip(e.location, 300),
-      description: clip(e.description, 2000),
+      location,
+      description,
       url: clip(comp.getFirstPropertyValue("url"), 1000),
+      ...people(comp),
+      status: clip(comp.getFirstPropertyValue("status"), 20)?.toUpperCase() ?? null,
+      sequence: Number.isFinite(seq) ? seq : null,
+      last_modified: lm instanceof ICAL.Time ? toDate(lm).toISOString() : null,
+      conference_url: conference(comp, location, description),
     });
   };
 

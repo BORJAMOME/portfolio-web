@@ -34,6 +34,15 @@ create table if not exists public.calendar_events (
 );
 create index if not exists calendar_events_range_idx on public.calendar_events (starts_at, ends_at);
 
+-- Campos añadidos para «Interview Intelligence» (supabase/interview-intel.sql). Solo añaden
+-- columnas: la página del calendario no las usa y sigue funcionando igual.
+alter table public.calendar_events add column if not exists organizer      jsonb;                         -- {name, email}
+alter table public.calendar_events add column if not exists attendees      jsonb not null default '[]';   -- [{name, email, partstat, role}]
+alter table public.calendar_events add column if not exists status         text;                          -- CONFIRMED | TENTATIVE
+alter table public.calendar_events add column if not exists sequence       integer;                       -- sube con cada cambio del organizador
+alter table public.calendar_events add column if not exists last_modified  timestamptz;
+alter table public.calendar_events add column if not exists conference_url text;
+
 -- Estado de la última sincronización (una fila por calendario)
 create table if not exists public.calendar_sync (
   calendar   text primary key,
@@ -62,15 +71,21 @@ declare n integer;
 begin
   delete from public.calendar_events
    where calendar = cal and starts_at < win_end and ends_at > win_start;
-  insert into public.calendar_events (uid, starts_at, ends_at, all_day, calendar, title, location, description, url)
+  insert into public.calendar_events (uid, starts_at, ends_at, all_day, calendar, title, location, description, url,
+                                      organizer, attendees, status, sequence, last_modified, conference_url)
   select r.uid, r.starts_at, r.ends_at, coalesce(r.all_day, false), cal,
-         coalesce(nullif(r.title, ''), '(sin título)'), r.location, r.description, r.url
+         coalesce(nullif(r.title, ''), '(sin título)'), r.location, r.description, r.url,
+         r.organizer, coalesce(r.attendees, '[]'::jsonb), r.status, r.sequence, r.last_modified, r.conference_url
     from jsonb_to_recordset(evs) as r(uid text, starts_at timestamptz, ends_at timestamptz, all_day boolean,
-                                       title text, location text, description text, url text)
+                                       title text, location text, description text, url text,
+                                       organizer jsonb, attendees jsonb, status text, sequence integer,
+                                       last_modified timestamptz, conference_url text)
   on conflict (uid, starts_at) do update set
     ends_at = excluded.ends_at, all_day = excluded.all_day, calendar = excluded.calendar,
     title = excluded.title, location = excluded.location, description = excluded.description,
-    url = excluded.url, synced_at = now();
+    url = excluded.url, organizer = excluded.organizer, attendees = excluded.attendees,
+    status = excluded.status, sequence = excluded.sequence, last_modified = excluded.last_modified,
+    conference_url = excluded.conference_url, synced_at = now();
   get diagnostics n = row_count;
   insert into public.calendar_sync (calendar, ran_at, ok, events, error) values (cal, now(), true, n, null)
   on conflict (calendar) do update set ran_at = now(), ok = true, events = n, error = null;

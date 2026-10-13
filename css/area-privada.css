@@ -801,3 +801,92 @@ main { min-height: calc(100vh - var(--ap-top-h) - 90px); outline: none; }
 .app-link--main { color: var(--purple-text); text-decoration-color: currentColor; }
 .app-act { flex: 0 0 auto; display: flex; gap: 2px; }
 .aph-tag { font-size: 12px; font-weight: 600; color: var(--muted); }
+
+/* ───────────── PREPARACIÓN DE ENTREVISTAS (area-privada-preparacion.js) ───────────── */
+.ape-badge.is-warn { background: var(--ap-support-soft); color: var(--ap-support-ink); }
+.apb-intro { display: flex; gap: 12px 20px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 18px; }
+.apb-intro .ape-meta { max-width: 70ch; }
+.apb-list { margin-bottom: 28px; }
+.apb-list > .ape-h3 { margin-bottom: 10px; }
+.apb-table .apb-c-when, .apb-table .apb-c-kind, .apb-table .apb-c-upd { color: var(--muted); white-space: nowrap; }
+.apb-c-st { min-width: 170px; }
+.apb-note, .apb-signals { display: block; margin-top: 6px; font-size: 12.5px; line-height: 1.45; color: var(--muted); max-width: 46ch; }
+.apb-c-act { white-space: nowrap; }
+.apb-past { margin-top: 8px; }
+.apb-past > summary, .apb-matrix > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--ink); list-style: none; }
+.apb-past > summary::-webkit-details-marker, .apb-matrix > summary::-webkit-details-marker { display: none; }
+.apb-past > summary::before, .apb-matrix > summary::before { content: '▸'; color: var(--muted); }
+.apb-past[open] > summary::before, .apb-matrix[open] > summary::before { content: '▾'; }
+.apb-bar { display: flex; gap: 10px 16px; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.apb-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* El briefing: una hoja, lectura rápida */
+.apb { max-width: 900px; background: var(--white); border: 1px solid var(--ap-line); border-radius: var(--radius-lg); padding: clamp(18px, 3vw, 36px); color: var(--text); font-size: 15px; line-height: 1.55; }
+.apb-head { border-bottom: 1px solid var(--ap-line); padding-bottom: 14px; margin-bottom: 14px; }
+.apb-title { margin: 2px 0 10px; }
+.apb-meta { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; font-size: 14px; }
+.apb-meta dt { color: var(--muted); font-weight: 600; }
+.apb-meta dd a, .apb-sources a { color: var(--purple-text); }
+.apb-alert { background: var(--ap-support-soft); color: var(--ap-support-ink); border-radius: var(--radius-md); padding: 8px 12px; font-size: 14px; margin-bottom: 10px; }
+.apb-warn { border-left: 3px solid var(--ap-support); padding: 4px 0 4px 12px; margin-bottom: 14px; font-size: 14px; }
+.apb-warn-t { font-weight: 600; color: var(--ap-support-ink); margin-bottom: 2px; }
+.apb-block { padding: 12px 0; border-bottom: 1px solid var(--ap-line-soft); }
+.apb-block > p + p, .apb-block > p + ul, .apb-block > ul + p { margin-top: 6px; }
+.apb-h { display: flex; align-items: center; gap: 10px; font-family: var(--font-serif); font-size: 20px; font-weight: 500; color: var(--ink); margin-bottom: 8px; letter-spacing: -.2px; }
+.apb-h--sm { font-size: 16px; }
+.apb-n { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--ink); color: #fff; font-family: var(--font); font-size: 12px; font-weight: 700; }
+.apb-ul { padding-left: 20px; }
+.apb-ul li + li { margin-top: 4px; }
+.apb-people li { list-style: none; margin-left: -20px; }
+.apb-sub { display: block; font-size: 14px; color: var(--muted); }
+.apb-k { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-top: 8px; }
+.apb-pair { font-size: 14.5px; }
+.apb-pair strong { color: var(--ink); }
+.apb-project { margin-top: 10px; padding-left: 12px; border-left: 2px solid var(--ap-line); }
+.apb-intro-box { background: var(--ap-surface-2); border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: 10px; }
+.apb-intro-box .apb-k { margin-top: 0; }
+.apb-qs { padding-left: 20px; }
+.apb-qs li + li { margin-top: 8px; }
+.apb-q { font-weight: 600; color: var(--ink); }
+.apb-guide { font-size: 14.5px; }
+.apb-tag { display: inline-block; font-size: 11.5px; font-weight: 600; color: var(--muted); border: 1px solid var(--ap-line-strong); border-radius: 999px; padding: 0 7px; vertical-align: 1px; }
+.apb-refs { white-space: nowrap; }
+.apb-ref { display: inline-block; min-width: 18px; margin-left: 3px; font-size: 11.5px; font-weight: 700; line-height: 18px; text-align: center; color: var(--purple-text); background: var(--purple-light); border-radius: 4px; text-decoration: none; vertical-align: 2px; }
+.apb-ref:focus-visible, .apb-past > summary:focus-visible, .apb-matrix > summary:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+.apb-reminder { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; }
+.apb-reminder dt { font-weight: 600; color: var(--ink); }
+.apb-sources { padding-top: 12px; font-size: 13px; }
+.apb-sources ol { padding-left: 22px; }
+.apb-src-meta { color: var(--muted); }
+.apb-matrix { margin-top: 10px; }
+.apb-versions, .apb-foot { margin-top: 10px; }
+@media (max-width: 560px) {
+  .apb { padding: 16px; font-size: 14.5px; }
+  .apb-meta, .apb-reminder { grid-template-columns: 1fr; }
+  .apb-meta dt, .apb-reminder dt { margin-top: 6px; }
+}
+
+/* Impresión / PDF: solo el briefing, dos A4 como máximo */
+@media print {
+  @page { size: A4; margin: 12mm 13mm; }
+  body { background: #fff; }
+  .ap-top, .ap-foot, .ap-head, .ap-tabs, .ap-toolbar, .ap-crumbs, .ap-status, .ap-uploads, .skip-link,
+  .apb-bar, .apb-matrix, .apb-versions, .apb-foot { display: none !important; }
+  .ap-shell, .ap-view, main { padding: 0 !important; margin: 0 !important; max-width: none !important; }
+  .apb { border: 0; padding: 0; max-width: none; font-size: 9.6pt; line-height: 1.38; color: #000; }
+  .apb-head { padding-bottom: 6pt; margin-bottom: 6pt; }
+  .apb-title { font-size: 16pt; margin: 0 0 4pt; }
+  .apb-meta { font-size: 8.8pt; gap: 1pt 10pt; }
+  .apb-block { padding: 5pt 0; break-inside: auto; }
+  .apb-h { font-size: 12.5pt; margin-bottom: 3pt; break-after: avoid; }
+  .apb-n { width: 15pt; height: 15pt; font-size: 8pt; }
+  .apb-qs li, .apb-project, .apb-people li { break-inside: avoid; }
+  .apb-qs li + li { margin-top: 3pt; }
+  .apb-pair, .apb-guide, .apb-sub { font-size: 9pt; }
+  .apb-intro-box { padding: 4pt 7pt; }
+  .apb-sources { font-size: 7.8pt; padding-top: 5pt; }
+  .apb-sources a { color: #000; }
+  .apb-ref { background: none; color: #000; font-size: 7pt; vertical-align: 3pt; min-width: 0; line-height: 1; }
+  .apb-alert, .apb-warn { font-size: 8.6pt; padding: 3pt 6pt; margin-bottom: 4pt; }
+  .ape-badge { min-height: 0; padding: 0 5pt; font-size: 7.6pt; border: 1px solid #999; background: none !important; color: #000 !important; }
+}

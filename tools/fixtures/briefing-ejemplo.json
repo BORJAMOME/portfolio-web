@@ -1,0 +1,90 @@
+{
+  "_nota": "Datos FICTICIOS para probar la maquetación del briefing (tools/check-briefing.mjs). La empresa, las personas y las fuentes no existen.",
+  "interview": {
+    "id": "0b6f6f9e-2d1c-4f7a-9a51-6c1f0a2b3c4d", "starts_at": "2026-10-21T08:00:00Z", "ends_at": "2026-10-21T09:00:00Z",
+    "title": "Entrevista técnica Analista Power BI - Logística Norte", "company": "Logística Norte", "role_title": "Analista Power BI",
+    "interview_kind": "tecnica", "classification": "interview", "confidence": 0.9, "signals": ["El título menciona: entrevista"],
+    "status": "ready", "status_note": null, "my_response": "ACCEPTED", "attempts": 0, "last_error": null, "next_attempt_at": null,
+    "current_report_id": "7a1d2c3b-4e5f-4a6b-8c9d-0e1f2a3b4c5d", "updated_at": "2026-10-14T09:12:00Z",
+    "conference_url": "https://teams.microsoft.com/l/meetup-join/ejemplo", "location": null, "entrevista_id": null,
+    "attendees": [{ "name": "Lucía Ferrer", "email": "lucia.ferrer@logisticanorte.example" }]
+  },
+  "report": {
+    "id": "7a1d2c3b-4e5f-4a6b-8c9d-0e1f2a3b4c5d", "interview_id": "0b6f6f9e-2d1c-4f7a-9a51-6c1f0a2b3c4d", "version": 2, "quality": "parcial",
+    "created_at": "2026-10-14T09:12:00Z", "word_count": 0, "model": "claude-opus-5-5",
+    "warnings": ["1 entrevistador sin verificar en fuentes públicas."],
+    "sources": [
+      { "id": 1, "url": "https://logisticanorte.example/quienes-somos", "title": "Quiénes somos — Logística Norte", "domain": "logisticanorte.example", "published": null, "type": "oficial" },
+      { "id": 2, "url": "https://logisticanorte.example/empleo/analista-power-bi", "title": "Oferta: Analista Power BI", "domain": "logisticanorte.example", "published": "2026-09-30", "type": "oferta" },
+      { "id": 3, "url": "https://diario-logistica.example/logistica-norte-abre-almacen-valencia", "title": "Logística Norte abre un almacén automatizado en Valencia", "domain": "diario-logistica.example", "published": "2026-08-12", "type": "prensa" },
+      { "id": 4, "url": "https://logisticanorte.example/blog/datos-en-tiempo-real", "title": "Hacia los datos en tiempo real en nuestra red", "domain": "logisticanorte.example", "published": "2026-06-03", "type": "empresa" },
+      { "id": 5, "url": "https://linkedin.example/in/lucia-ferrer-bi", "title": "Lucía Ferrer – Responsable de BI – Logística Norte", "domain": "linkedin.example", "published": null, "type": "perfil" },
+      { "id": 6, "url": "https://eventos-datos.example/2026/ponentes/lucia-ferrer", "title": "Ponentes 2026: Lucía Ferrer", "domain": "eventos-datos.example", "published": "2026-05-20", "type": "otro" }
+    ],
+    "content": {
+      "quality": "parcial",
+      "limitations": ["No se ha podido verificar el cargo de Javier Sanz en fuentes públicas."],
+      "interview_type": "Técnica con la responsable de BI y un analista del equipo",
+      "know": {
+        "context": "Logística Norte es un operador logístico con almacenes en el norte de España que da servicio de almacenaje y distribución a empresas de gran consumo. Busca un Analista Power BI para el equipo de BI de operaciones, que hoy reporta productividad de almacén, nivel de servicio y costes por cliente.",
+        "facts": [
+          { "text": "Abrió en agosto un almacén automatizado en Valencia, su primera sede fuera del norte.", "source_ids": [3] },
+          { "text": "Su blog describe el paso a datos casi en tiempo real para el seguimiento de la red.", "source_ids": [4] },
+          { "text": "La oferta pide Power BI, DAX, Power Query y SQL; valora Python y experiencia en logística.", "source_ids": [2] }
+        ],
+        "why_it_matters": "Con un almacén nuevo, comparar centros y explicar desviaciones de productividad y coste será el día a día. Es justo el patrón de una red de tiendas con presupuesto."
+      },
+      "people": [
+        { "name": "Lucía Ferrer", "title": "Responsable de BI", "role_in_interview": "Probablemente lleva la parte técnica: modelado, DAX y calidad del dato", "note": "Habló en 2026 sobre gobierno de datos en Power BI.", "verified": true, "source_ids": [5, 6] },
+        { "name": "Javier Sanz", "title": null, "role_in_interview": "Posible analista del equipo", "note": null, "verified": false, "source_ids": [] }
+      ],
+      "strategy": {
+        "highlight": [
+          "Experiencia laboral real con Power BI, Power Query y DAX en NTT DATA, incluido el control de calidad de los informes.",
+          "Visión de operaciones de Negronis: P&L, costes y planificación de personal, el mismo idioma que un almacén.",
+          "Diseño de modelos que permiten bajar del KPI al registro que lo explica."
+        ],
+        "projects": [
+          { "name": "Kosta Cálida", "why": "Red de tiendas con presupuesto: equivale a comparar almacenes y explicar desviaciones.", "highlight": "Del KPI con desviación al ticket que la explica; 13 páginas pensadas para perfiles distintos.", "decisions": "Estrella con dos hechos (ventas y presupuesto) y dimensiones compartidas; tablas desconectadas para filtros en cascada.", "follow_up": "¿Por qué dos tablas de hechos y no una?", "limitation": "Proyecto de portfolio; no es un cliente real." },
+          { "name": "Casa Origen", "why": "Demuestra SQL y calidad de datos antes del dashboard.", "highlight": "ETL Medallion en SQL Server con errores introducidos a propósito y su corrección en la capa Silver.", "decisions": "Separar limpieza (Silver) de modelo de negocio (Gold) para poder auditar cada cifra.", "follow_up": "¿Cómo detectabas duplicados y fechas incorrectas?", "limitation": "Datos sintéticos de un proyecto académico." }
+        ],
+        "review": ["CALCULATE y contexto de filtro", "Relaciones bidireccionales: cuándo sí", "Import frente a DirectQuery para datos casi en tiempo real", "RLS por centro"],
+        "gap": { "topic": "Datos en tiempo real y Power BI Service en producción", "honest_answer": "Lo conozco por la certificación PL-300 y por pruebas en DAX Lab, no por haberlo administrado. Explicaría cómo evaluaría DirectQuery o la actualización incremental y cómo lo aprendería con el equipo." }
+      },
+      "intro": "Soy Borja, Data Analyst Junior especializado en Power BI y con la certificación PL-300. Empecé en datos en NTT DATA, en Reino Unido, manteniendo dashboards en Power BI y revisando la calidad de los informes con el cliente. Después llevé la operación de un negocio en Londres, con responsabilidad sobre costes, ventas y turnos, y ahí vi lo útil que es un dato bien explicado para decidir. Desde 2024 me he especializado: he hecho proyectos de reporting con presupuesto y desviaciones, como Kosta Cálida, y un proyecto de extremo a extremo con SQL Server. Me atrae este puesto porque une operaciones y Power BI.",
+      "questions": [
+        { "q": "¿Cómo modelarías la productividad de varios almacenes frente a su objetivo?", "guide": "Estrella con hechos de actividad y de objetivo y dimensiones compartidas (centro, fecha, cliente). Apóyate en Kosta Cálida: desviación por tienda y drill-through al detalle.", "evidence": "demostrado" },
+        { "q": "Cuéntanos un problema de calidad de datos que hayas resuelto.", "guide": "NTT DATA: revisión de actualizaciones y ajustes con el cliente. Proyecto: capa Silver de Casa Origen con nulos, duplicados y fechas. Contexto → problema → acción → resultado → aprendizaje.", "evidence": "demostrado" },
+        { "q": "¿Qué diferencia hay entre contexto de fila y contexto de filtro? ¿Para qué usas CALCULATE?", "guide": "Explícalo con un ejemplo de almacén: unidades por pedido frente a unidades del centro filtrado. CALCULATE cambia el contexto de filtro.", "evidence": "demostrado" },
+        { "q": "Si un director dice que el informe no cuadra con su Excel, ¿qué haces?", "guide": "Reproducir su cifra, buscar la diferencia de definición o de filtro, documentarla y acordar la definición del KPI. Conecta con tu etapa en Negronis.", "evidence": "transferible" },
+        { "q": "¿Has trabajado con datos en tiempo real o DirectQuery?", "guide": "Respuesta honesta: solo formación. Explica cómo lo evaluarías (volumen, latencia, coste) y qué probarías primero.", "evidence": "brecha" }
+      ],
+      "ask": [
+        "¿Qué decisión o informe os gustaría tener resuelto en los tres primeros meses?",
+        "¿Cómo está organizado hoy el modelo semántico y quién lo mantiene?",
+        "¿Qué cambia en el reporting con la entrada del almacén de Valencia?"
+      ],
+      "reminder": {
+        "fit": "Power BI con experiencia laboral y mirada de operaciones: sé hablar con quien usa el informe.",
+        "example": "Kosta Cálida: del KPI con desviación al registro que la explica.",
+        "question": "Qué esperan resolver en los tres primeros meses.",
+        "technical": "CALCULATE, bidireccionales e Import frente a DirectQuery."
+      },
+      "matrix": [
+        { "requirement": "Power BI, DAX, Power Query", "class": "demostrado", "evidence": "NTT DATA y proyectos" },
+        { "requirement": "SQL", "class": "demostrado", "evidence": "Casa Origen (SQL Server)" },
+        { "requirement": "Python", "class": "formacion", "evidence": "Bootcamp y Casa Origen" },
+        { "requirement": "Experiencia en logística", "class": "transferible", "evidence": "Operaciones en Negronis" },
+        { "requirement": "Datos en tiempo real", "class": "brecha", "evidence": "Solo formación" }
+      ]
+    }
+  },
+  "versions": [
+    { "id": "7a1d2c3b-4e5f-4a6b-8c9d-0e1f2a3b4c5d", "version": 2, "quality": "parcial", "created_at": "2026-10-14T09:12:00Z", "word_count": 0 },
+    { "id": "11111111-2222-4333-8444-555555555555", "version": 1, "quality": "parcial", "created_at": "2026-10-13T18:40:00Z", "word_count": 0 }
+  ],
+  "runs": [
+    { "kind": "generate", "status": "ok", "started_at": "2026-10-14T09:11:00Z", "finished_at": "2026-10-14T09:12:00Z", "model": "claude-opus-5-5", "usage": { "usd": 0.11 } },
+    { "kind": "research", "status": "ok", "started_at": "2026-10-14T09:00:00Z", "finished_at": "2026-10-14T09:02:00Z", "model": "claude-opus-5-5", "usage": { "usd": 0.36 } }
+  ]
+}

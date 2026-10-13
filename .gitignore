@@ -10,6 +10,9 @@ node_modules/
 # Carga inicial del Fichero (datos): se ejecuta a mano en Supabase, no se versiona
 supabase/fichero-datos.sql
 
+# Perfil profesional para Interview Intelligence (datos personales): se ejecuta a mano en Supabase
+supabase/interview-intel-perfil.sql
+
 # Estado local de la CLI de Supabase (npx supabase …)
 supabase/.temp/
 
