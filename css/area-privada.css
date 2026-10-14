@@ -873,7 +873,7 @@ main { min-height: calc(100vh - var(--ap-top-h) - 90px); outline: none; }
   .ap-top, .ap-foot, .ap-head, .ap-tabs, .ap-toolbar, .ap-crumbs, .ap-status, .ap-uploads, .skip-link,
   .apb-bar, .apb-matrix, .apb-versions, .apb-foot { display: none !important; }
   .ap-shell, .ap-view, main { padding: 0 !important; margin: 0 !important; max-width: none !important; }
-  .apb { border: 0; padding: 0; max-width: none; font-size: 9.6pt; line-height: 1.38; color: #000; }
+  .apb { border: 0; padding: 0; max-width: none; font-size: 9.4pt; line-height: 1.35; color: #000; }
   .apb-head { padding-bottom: 6pt; margin-bottom: 6pt; }
   .apb-title { font-size: 16pt; margin: 0 0 4pt; }
   .apb-meta { font-size: 8.8pt; gap: 1pt 10pt; }

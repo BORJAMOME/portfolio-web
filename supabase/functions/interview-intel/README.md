@@ -71,7 +71,7 @@ en producción todavía.
 2. Ejecuta `supabase/interview-intel.sql` (sin los bloques comentados del final).
 3. Ejecuta `supabase/interview-intel-perfil.sql` (**no está en Git**: lo tienes solo en local).
    Crea la nota «Perfil profesional · Interview Intelligence» en *Archivos y notas*. Revísala
-   y completa la sección **PENDIENTE DE VERIFICAR** con tu CV (Boutike Digital, fechas…).
+   y completa la sección **PENDIENTE DE VERIFICAR** con tu CV (experiencias que no salen en el portfolio, fechas…).
    Mientras algo esté ahí, el informe no lo usa como hecho.
 
 ### 2. Volver a desplegar calendario-sync (ahora guarda participantes)
@@ -225,7 +225,7 @@ node tools/check-briefing.mjs
 
 La primera cubre detección (los 10 casos), investigación, generación, reintentos, idempotencia
 y seguridad, todo con datos ficticios y sin red. La segunda pinta el briefing con el código real y
-comprueba que cabe en dos A4 (también con 1.000 palabras, el máximo que acepta el servidor),
+comprueba que cabe en dos A4 (también con 900 palabras, el máximo que acepta el servidor),
 que no hay desplazamiento horizontal en móvil y que pasa axe-core.
 
 ## Límites conocidos

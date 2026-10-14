@@ -28,7 +28,7 @@ const PROFILE = `# Perfil
 ## Temas técnicos para repasar siempre
 CALCULATE; contexto de filtro; RLS
 ## PENDIENTE DE VERIFICAR
-- Boutike Digital.`;
+- Empresa Ejemplo S.L. (experiencia sin confirmar).`;
 
 const RSS = `<rss><channel>
 <item><title>Acme abre un almacén en Valencia - Diario Logístico</title><link>https://news.example/acme-valencia</link><pubDate>Tue, 08 Sep 2026 10:00:00 GMT</pubDate><source url="https://news.example">Diario Logístico</source></item>
@@ -96,12 +96,13 @@ Deno.test("briefing gratuito completo: web, oferta y noticias reales con fuente;
   const { report } = await prov.writeReport({ interview: i, research, profile: PROFILE, emails: [], link: null });
   const v = validateReport(report, research, PROFILE);
   assertEquals(v.errors, []);
-  assert(v.words <= 900, "palabras: " + v.words);
+  console.log("palabras del briefing gratuito:", v.words);
+  assert(v.words <= 850, "palabras: " + v.words);
   assertEquals(v.report.strategy.projects[0].name, "Kosta Cálida");
   assert(v.report.questions.some((q) => q.q.includes("Tableau") && q.evidence === "brecha"));
   assert(v.report.intro.includes("PL-300") || !PROFILE.includes("PL-300"));
   assert(!v.warnings.some((w) => w.startsWith("Cifra sin respaldo")), v.warnings.join(" | "));
-  assert(!JSON.stringify(v.report).includes("Boutike"), "lo pendiente de verificar no se usa");
+  assert(!JSON.stringify(v.report).includes("Empresa Ejemplo"), "lo pendiente de verificar no se usa");
 });
 
 Deno.test("briefing gratuito sin red ni dominio: parcial y honesto, sin inventar", async () => {

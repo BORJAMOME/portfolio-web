@@ -4,7 +4,7 @@
    Pinta el briefing con el código real (area-privada-preparacion.js + css/area-privada.css)
    sobre datos FICTICIOS (tools/fixtures/briefing-ejemplo.json), sin Supabase ni sesión, y:
      1. lo imprime a PDF A4 y cuenta páginas: el ejemplo y el peor caso que acepta la
-        validación del servidor (1.000 palabras) tienen que caber en 2
+        validación del servidor (900 palabras, WORDS_MAX) tienen que caber en 2
      2. a 375 px de ancho no hay desplazamiento horizontal
      3. axe-core: sin infracciones WCAG 2.2 AA en el briefing ni en la lista
      4. sin errores de JavaScript
@@ -119,7 +119,7 @@ async function axe(page, label) {
 
 const data = { ...fixture, list: [] };
 await pages(data, 'Ejemplo', pdfOut || (shots ? join(shots, 'briefing.pdf') : null));
-await pages(inflate(data, 1000), 'Peor caso aceptado', null);
+await pages(inflate(data, 900), 'Peor caso aceptado', null);   // = WORDS_MAX de report.ts
 
 const mobile = await open(data, data.interview.id, { width: 375, height: 812 });
 const overflow = await mobile.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);

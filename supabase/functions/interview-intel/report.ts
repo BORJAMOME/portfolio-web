@@ -13,9 +13,11 @@
 // ═══════════════════════════════════════════════
 import type { EvidenceClass, Report, Research } from "./types.ts";
 
-export const WORDS_TARGET = 800;
-export const WORDS_RETRY = 900;
-export const WORDS_MAX = 1000;
+// medido con tools/check-briefing.mjs: 1.000 palabras caben en dos A4 en Windows pero no en
+// Linux (otras fuentes de sistema); 900 deja margen en cualquier navegador
+export const WORDS_TARGET = 750;
+export const WORDS_RETRY = 850;
+export const WORDS_MAX = 900;
 
 const str = { type: "string" };
 const strArr = { type: "array", items: str };

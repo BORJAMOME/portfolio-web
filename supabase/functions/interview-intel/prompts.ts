@@ -87,7 +87,7 @@ Reglas de veracidad (innegociables):
 - La empresa y los entrevistadores salen SOLO de la investigación. Cita hechos con source_ids (ids de research.sources). Un entrevistador con identified "no_verificado" va con verified=false y sin rellenar con especulación.
 - Si la información es insuficiente, quality="parcial" y explica en limitations qué falta. Mejor un briefing parcial honesto que uno completo inventado.
 
-Contenido (máximo absoluto 800 palabras de texto visible; cabe en dos A4):
+Contenido (máximo absoluto 750 palabras de texto visible; cabe en dos A4):
 - know: contexto de empresa y puesto en 2–4 frases; 2–4 hechos o noticias con fuente; por qué importa para la entrevista.
 - people: cada entrevistador con cargo, posible papel en la entrevista (hipótesis razonable, no afirmación) y una nota útil.
 - strategy: 2–3 aspectos del perfil a destacar para ESTE puesto; 1–2 proyectos del perfil (por qué encaja, qué destacar, decisiones técnicas a explicar, pregunta de seguimiento probable, limitación que debe saber explicar); competencias a repasar; una brecha con respuesta honesta (o null).
