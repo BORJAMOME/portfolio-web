@@ -12,6 +12,8 @@ supabase/fichero-datos.sql
 
 # Perfil profesional para Interview Intelligence (datos personales): se ejecuta a mano en Supabase
 supabase/interview-intel-perfil.sql
+# Carga de procesos de selección sacada del correo (datos personales)
+supabase/procesos-2026-carga.sql
 
 # Estado local de la CLI de Supabase (npx supabase …)
 supabase/.temp/
