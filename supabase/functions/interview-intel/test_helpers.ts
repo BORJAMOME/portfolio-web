@@ -71,6 +71,6 @@ export class MemoryStore implements Store {
     this.reports.push({ ...structuredClone(rep), id, version });
     return Promise.resolve(id);
   }
-  aiCallsSince(iso: string) { return Promise.resolve(this.runs.filter((r) => r.started_at >= iso && r.model !== "mock").length); }
+  aiCallsSince(iso: string) { return Promise.resolve(this.runs.filter((r) => r.started_at >= iso && r.model !== "mock" && r.model !== "gratuito").length); }
   profile() { return Promise.resolve(this.profileText); }
 }

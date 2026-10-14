@@ -9,8 +9,9 @@
 // Cada «tick»: detect() (barato, sin IA) y advance() (un paso de una entrevista).
 //
 // Secretos (supabase secrets set …; ver README.md):
-//   II_AI_PROVIDER     off (por defecto: solo detecta, sin coste) | mock (simulado) | claude
-//   ANTHROPIC_API_KEY  clave de la API de Claude (solo con claude)
+//   II_AI_PROVIDER     free (por defecto: briefing automático sin IA y SIN COSTE, free.ts)
+//                      | off (solo detecta) | mock (simulado, para pruebas) | claude (de pago, opcional)
+//   ANTHROPIC_API_KEY  clave de la API de Claude (solo con claude; no hace falta en el modo gratuito)
 //   II_MODEL           modelo (por defecto claude-opus-5-5)
 //   II_OWN_EMAILS      tus direcciones, separadas por comas
 //   II_LEAD_DAYS       días antes de la entrevista en que empieza a prepararse (14)
@@ -22,6 +23,7 @@
 // SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY los pone Supabase automáticamente.
 // ═══════════════════════════════════════════════
 import { ClaudeProvider, MockProvider } from "./ai.ts";
+import { FreeProvider } from "./free.ts";
 import { GmailSource } from "./gmail.ts";
 import { type Caller, json, makeHandler, safeEqual } from "./handler.ts";
 import { advance, type AIProvider, type Config, detect } from "./pipeline.ts";
@@ -45,7 +47,8 @@ async function caller(req: Request): Promise<Caller | null> {
 }
 
 function provider(): AIProvider | null {
-  const p = env("II_AI_PROVIDER", "off");
+  const p = env("II_AI_PROVIDER", "free");
+  if (p === "free") return new FreeProvider();
   if (p === "claude") return env("ANTHROPIC_API_KEY") ? new ClaudeProvider(env("ANTHROPIC_API_KEY"), env("II_MODEL", "claude-opus-5-5")) : null;
   if (p === "mock") return new MockProvider();
   return null;

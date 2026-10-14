@@ -67,10 +67,10 @@ export class SupabaseStore implements Store {
     return r[0].id as string;
   }
   async aiCallsSince(iso: string) {
-    const r = await fetch(`${this.url}/rest/v1/ii_runs?select=id&started_at=gte.${encodeURIComponent(iso)}&model=neq.mock`, {
+    const r = await fetch(`${this.url}/rest/v1/ii_runs?select=id&started_at=gte.${encodeURIComponent(iso)}&model=not.in.(mock,gratuito)`, {
       method: "HEAD", headers: { apikey: this.key, Authorization: `Bearer ${this.key}`, Prefer: "count=exact" },
     });
-    // las ejecuciones aún sin modelo (en curso) también cuentan
+    // las de pago en curso aún no tienen modelo; las gratuitas no cuentan (index.ts las marca al terminar)
     const range = r.headers.get("content-range") ?? "*/0";
     const pending = await this.req(`/rest/v1/ii_runs?select=id&started_at=gte.${encodeURIComponent(iso)}&model=is.null`);
     return Number(range.split("/")[1] || 0) + (pending?.length ?? 0);

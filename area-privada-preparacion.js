@@ -107,7 +107,7 @@ window.APPreparacion = (function () {
       .then(function (r) {
         var d = r && r.detected;
         flash = d ? 'Comprobado: ' + d.created + ' nuevas, ' + d.updated + ' revisadas' + (d.cancelled ? ', ' + d.cancelled + ' canceladas' : '') + '.' : 'Comprobado.';
-        if (r && r.step && r.step.action === 'ai_disabled') flash += ' La investigación con IA está desactivada (II_AI_PROVIDER).';
+        if (r && r.step && r.step.action === 'ai_disabled') flash += ' La preparación de informes está desactivada (II_AI_PROVIDER=off).';
         if (r && r.paused) flash = 'La automatización está en pausa (II_PAUSED).';
         rerender();
       })
@@ -349,7 +349,7 @@ window.APPreparacion = (function () {
       var label = 'v' + v.version + ' (' + tFmt.format(new Date(v.created_at)) + ')';
       return [i ? ' · ' : '', v.id === rep.id ? h('strong', { text: label }) : h('a', { href: '#/preparacion/' + row.id + '/v' + v.version, text: label })];
     }))) : null;
-    var meta = h('p', { class: 'ape-meta apb-foot', text: [rep.word_count ? rep.word_count + ' palabras' : null, rep.model && rep.model !== 'mock' ? 'modelo ' + rep.model : rep.model === 'mock' ? 'SIMULADO' : null, cost ? 'coste estimado ' + money.format(cost) : null].filter(Boolean).join(' · ') });
+    var meta = h('p', { class: 'ape-meta apb-foot', text: [rep.word_count ? rep.word_count + ' palabras' : null, rep.model === 'gratuito' ? 'generado sin IA (gratis)' : rep.model === 'mock' ? 'SIMULADO' : rep.model ? 'modelo ' + rep.model : null, cost ? 'coste estimado ' + money.format(cost) : null].filter(Boolean).join(' · ') });
 
     return h('article', { class: 'apb', 'aria-labelledby': 'apb-title' }, [head].concat(notices, [b1, b2, b3, b4, b5, b6, sources, matrix, older, meta]));
   }
