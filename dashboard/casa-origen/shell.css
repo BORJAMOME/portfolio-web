@@ -12,8 +12,8 @@
   --cds-gap-xs: 6px; --cds-gap-sm: 10px; --cds-gap-md: 16px; --cds-gap-lg: 24px; --cds-gap-xl: 32px;
   --cds-font-size-caption: 12.5px; --cds-font-size-body: 14.5px; --cds-font-size-heading: 16px; --cds-font-size-title: 28px; --cds-font-weight-medium: 600;
   --cds-dur-slow: 300ms; --cds-ease-out: cubic-bezier(.2, .7, .2, 1);
-  --font-anthropic-sans: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
-  --font-anthropic-serif: 'Newsreader', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+  --font-serif: 'Newsreader', Georgia, serif;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
@@ -26,7 +26,7 @@
   }
 }
 * { box-sizing: border-box; }
-html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-family: var(--font-anthropic-sans); -webkit-font-smoothing: antialiased; }
+html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
 #dash-root { padding: 8px clamp(16px, 4vw, 40px) 64px; min-height: 80vh; }
 .dash-skeleton { color: transparent !important; background: linear-gradient(90deg, var(--color-border-line), var(--color-panel), var(--color-border-line)); background-size: 200% 100%; border-radius: 6px; }
 @media (prefers-reduced-motion: no-preference) { .dash-skeleton { animation: cx-shimmer 1.4s ease-in-out infinite; } }
