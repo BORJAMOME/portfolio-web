@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   area-privada.js — área privada (area-privada.html)
+   area-privada.js: área privada (area-privada.html)
    ─────────────────────────────────────────────────
    Drive personal con notas: carpetas, notas en Markdown y archivos.
    Habla directamente con la API de Supabase (Auth, PostgREST y Storage) con fetch:
@@ -221,7 +221,7 @@
   var dateFmt = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
   var dateTimeFmt = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
   function fmtSize(n) {
-    if (n == null) return '—';
+    if (n == null) return '–';
     if (n < 1024) return n + ' B';
     if (n < 1024 * 1024) return Math.round(n / 1024) + ' KB';
     return (n / 1024 / 1024).toLocaleString('es-ES', { maximumFractionDigits: 1 }) + ' MB';
@@ -417,7 +417,7 @@
         h('td', { class: 'ap-col-name' }, [h('a', { class: 'ap-name', href: hrefFor(it) }, [icon(it), h('span', { text: it.title })])]),
         h('td', { class: 'ap-col-type', text: typeLabel(it) }),
         h('td', { class: 'ap-col-date' }, [h('time', { datetime: it.updated_at, text: dateFmt.format(new Date(it.updated_at)) })]),
-        h('td', { class: 'ap-col-size', text: it.kind === 'file' ? fmtSize(it.size_bytes) : '—' }),
+        h('td', { class: 'ap-col-size', text: it.kind === 'file' ? fmtSize(it.size_bytes) : '–' }),
         h('td', { class: 'ap-col-act' }, [
           h('button', { type: 'button', class: 'ap-link-btn', 'aria-label': 'Renombrar «' + it.title + '»', text: 'Renombrar', onclick: function () { renameItem(it); } }),
           h('button', { type: 'button', class: 'ap-link-btn ap-link-btn--danger', 'aria-label': 'Eliminar «' + it.title + '»', text: 'Eliminar', onclick: function () { deleteItem(it); } })

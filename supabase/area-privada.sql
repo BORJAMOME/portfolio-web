@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════
--- supabase/area-privada.sql — base de datos del área privada (area-privada.html)
+-- supabase/area-privada.sql: base de datos del área privada (area-privada.html)
 -- ───────────────────────────────────────────────
 -- Se ejecuta UNA vez en Supabase → SQL Editor → New query → pegar → Run.
 -- Es idempotente en lo posible: se puede volver a ejecutar sin romper nada.

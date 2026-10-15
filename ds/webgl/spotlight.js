@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   spotlight.js — la linterna narrativa del capítulo 05
+   spotlight.js: la linterna narrativa del capítulo 05
    Cada frase dice qué mirar (data-spot en el paso); la linterna se
    desplaza hasta ahí y oscurece el resto. Mientras los paneles se
    recolocan (tamaño, posición), la luz los sigue: se mide cada frame

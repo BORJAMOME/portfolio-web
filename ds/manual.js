@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   ds/manual.js — manual interactivo (data-storytelling.html)
+   ds/manual.js: manual interactivo (data-storytelling.html)
    Arquitectura: cada visual es una máquina de estados.
    El scroll (IntersectionObserver) solo elige el estado;
    CSS se encarga de la transición. Sin scroll-jacking,
@@ -109,7 +109,7 @@
     c1: '#4472C4', c2: '#ED7D31', c3: '#A5A5A5', c4: '#FFC000', c5: '#70AD47', red: '#a3223e'
   };
 
-  /* ═══ DATOS SINTÉTICOS — un solo universo: un retailer, Q4 2025 ═══ */
+  /* ═══ DATOS SINTÉTICOS, un solo universo: un retailer, Q4 2025 ═══ */
   var MONTHS = ['E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
   var SERIES = [ // ventas mensuales por canal, k€ (últimos 12 meses)
     { n: 'Online', v: [36, 38, 41, 44, 47, 50, 52, 54, 57, 60, 63, 68] },

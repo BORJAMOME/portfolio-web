@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   ds/i18n/en.js — textos que genera ds/manual.js, en inglés británico
+   ds/i18n/en.js: textos que genera ds/manual.js, en inglés británico
    Solo lo carga en/data-storytelling.html (antes que manual.js).
    Clave: el texto en español tal cual lo escribe el JS · Valor: la traducción.
    Si falta una clave, se muestra el español: nada se rompe.

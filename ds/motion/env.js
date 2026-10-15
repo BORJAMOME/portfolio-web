@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   env.js — lo que todos los módulos necesitan saber
+   env.js, lo que todos los módulos necesitan saber
    antes de mover un solo píxel.
    ═══════════════════════════════════════════════ */
 

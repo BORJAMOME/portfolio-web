@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   depth.js — los dashboards como objetos, no como capturas
+   depth.js: los dashboards como objetos, no como capturas
    Al señalar uno, se inclina un par de grados hacia el cursor, su
    sombra se desplaza en sentido contrario y un brillo suave sigue la luz.
    Solo en dashboards que se leen quietos: los que están cambiando de

@@ -6,7 +6,7 @@
 /* ─── ESTILOS ESPECÍFICOS DE INDEX.HTML ─── */
 /* Variables, nav, footer y botones → shared.css  */
 
-/* ─── RESPONSIVE BASE — MOBILE FIRST ─── */
+/* ─── RESPONSIVE BASE: MOBILE FIRST ─── */
 @media (max-width: 640px) {
   #nav { height: 56px; padding: 0 clamp(1rem, 3vw, 1.5rem); }
   .logo { font-size: 15px; }
@@ -51,7 +51,7 @@
   z-index: 0;
 }
 /* ── Rejilla estática centrada: líneas finas que se difuminan hacia los bordes.
-   Sin animación — menos distracción para quien entra al portfolio. ── */
+   Sin animación: menos distracción para quien entra al portfolio. ── */
 .hero-grid {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
@@ -160,13 +160,13 @@
 /* ─── HERO DASHBOARD ─── */
 
 /* Anotación manuscrita: invita a pasar el ratón sobre el dashboard.
-   Señala una interacción que YA existe (ver filter:grayscale más abajo) — no crea ninguna nueva.
+   Señala una interacción que YA existe (ver filter:grayscale más abajo): no crea ninguna nueva.
    Oculta por defecto y revelada solo donde el hover real existe, para no ser una pista engañosa en touch. */
 .hero-annotation {
   display: none;
   position: absolute;
   top: -52px;
-  /* Alinea con el borde derecho REAL del dashboard-frame (min(640px,110%) — misma fórmula que su width),
+  /* Alinea con el borde derecho REAL del dashboard-frame (min(640px,110%): misma fórmula que su width),
      no con el de .hero-right, que es más ancho porque se estira a toda la columna del grid. */
   left: calc(min(640px, 110%) - 92px);
   flex-direction: column;
@@ -229,7 +229,7 @@
   transition: background .6s var(--ease);
 }
 
-/* Arranca en gris (fuera de paleta) y revela el color real al pasar el ratón —
+/* Arranca en gris (fuera de paleta) y revela el color real al pasar el ratón:
    demuestra por qué elegir bien el color importa en data storytelling.
    Solo en dispositivos con hover real: en touch el dashboard se ve siempre en color,
    ya que no hay forma de "pasar el ratón" para revelarlo. */
@@ -471,7 +471,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 .pc-link:hover { color: var(--ink); }
 .proj-more { display: flex; justify-content: center; align-items: center; margin-top: 40px; width: 100%; }
 
-/* ─── ML CARDS — mismo sistema visual que .proj-card ─── */
+/* ─── ML CARDS: mismo sistema visual que .proj-card ─── */
 .ml-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; align-items: stretch; }
 .card-c {
   background: var(--white);
@@ -507,7 +507,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 .cc-link:hover { color: var(--ink); }
 @media (max-width:900px) { .ml-grid { grid-template-columns:1fr; } }
 
-/* ─── PROYECTO ESTRELLA — "El ticket" (Casa Origen) ───
+/* ─── PROYECTO ESTRELLA: "El ticket" (Casa Origen) ───
    Paleta espresso invitada, propia de la sección (tokens --v4-*). */
 .star-v4 {
   --v4-esp:       #2B2118;   /* marrón espresso · superficie */
@@ -956,7 +956,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 }
 .cta-pill-item svg { opacity: .6; transition: opacity .2s; }
 
-/* ─── CONTACT BAR — franja compacta de contacto ─── */
+/* ─── CONTACT BAR: franja compacta de contacto ─── */
 .contact-alt {
   margin: 18px 0 0; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px 12px;
   font-size: 14px; color: #5a5a5a; text-align: center;
@@ -1090,7 +1090,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 
 /* ─── SCROLL REVEAL ─── */
 @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
-/* Contenido visible por defecto — accesible y SEO-friendly */
+/* Contenido visible por defecto: accesible y SEO-friendly */
 .sr { opacity:1; transform:translateY(0); }
 /* Animaciones solo como progressive enhancement */
 @media (prefers-reduced-motion: no-preference) {
@@ -1101,7 +1101,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   .sr-d3 { transition-delay:.24s; }
 }
 
-/* ── COM CARD HOVER — solo cuando ya es visible ── */
+/* ── COM CARD HOVER: solo cuando ya es visible ── */
 
 /* ─── RESPONSIVE ─── */
 @media (max-width:1050px) {
@@ -1115,7 +1115,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
     width: calc(100% + 32px);
   }
   .hero-right .dashboard-frame { width: 100%; }
-  /* El frame ahora ocupa el 100% de .hero-right (en vez de min(640px,110%)) — la anotación sigue esa misma fórmula */
+  /* El frame ahora ocupa el 100% de .hero-right (en vez de min(640px,110%)): la anotación sigue esa misma fórmula */
   .hero-annotation { left: calc(100% - 92px); }
 }
 @media (max-width:900px) {
@@ -1123,20 +1123,20 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 }
 
 /* ═══════════════════════════════════════════════
-   HERO MOBILE — rediseño dedicado (≤600px)
+   HERO MOBILE: rediseño dedicado (≤600px)
    Sustituye el antiguo breakpoint de 480px: ahora todo el rango
    móvil (incluido iPhone SE) entra en el mismo bloque de abajo.
    No afecta a desktop/tablet. Objetivos:
-   1) el hero llena la primera pantalla (100svh) — nada de "Cómo trabajo"
+   1) el hero llena la primera pantalla (100svh): nada de "Cómo trabajo"
       debe asomar antes de hacer scroll
-   2) mismo copy que desktop, sin prueba social (LinkedIn/impresiones) —
+   2) mismo copy que desktop, sin prueba social (LinkedIn/impresiones):
       solo disponibilidad + credencial, y un cierre amplio antes de los CTAs
    3) sin dashboard: la rejilla de cuadrados parpadeantes queda como único
       fondo animado del hero
    ═══════════════════════════════════════════════ */
 @media (max-width: 600px) {
 
-  /* 1) La primera pantalla es solo el hero — nada de la siguiente sección
+  /* 1) La primera pantalla es solo el hero: nada de la siguiente sección
      debe asomar antes de hacer scroll. 100svh (no 100vh) porque en un
      móvil real la barra de direcciones/barra inferior recortan la parte
      visible: svh usa esa altura "reducida" como mínimo garantizado. */
@@ -1148,7 +1148,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   .hero-right { display: none; }
 
   /* El relato en mobile: titular → copy completo → credenciales → acción.
-     Sin prueba social (LinkedIn/impresiones) en mobile — solo disponibilidad
+     Sin prueba social (LinkedIn/impresiones) en mobile: solo disponibilidad
      y credencial. El orden visual sigue el orden real del DOM. */
   .hero-h1 {
     font-size: 40px;      /* un poco más grande que el mínimo del clamp (36px) */
@@ -1158,7 +1158,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   .hero-social-proof { display: none; } /* fuera en mobile: LinkedIn + impresiones */
   .hero-meta:not(.hero-social-proof) { margin-bottom: 56px; } /* el más amplio: cierre de la tarjeta antes de los CTAs */
 
-  /* Botones apilados a ancho completo — cada uno una barra horizontal,
+  /* Botones apilados a ancho completo: cada uno una barra horizontal,
      no dos botones estrechos compitiendo por el mismo ancho. */
   .hero-actions { flex-direction: column; gap: 12px; }
   .hero-actions .btn { width: 100%; justify-content: center; }
@@ -1265,7 +1265,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 }
 
 /* ══════════════════════════════
-   1. PROGRESS BAR — visible & smooth
+   1. PROGRESS BAR: visible & smooth
 ══════════════════════════════ */
 .progress-bar {
   position: fixed;
@@ -1280,7 +1280,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 }
 
 /* ══════════════════════════════
-   2. GRAIN TEXTURE — hero only
+   2. GRAIN TEXTURE: hero only
 ══════════════════════════════ */
 .hero::after {
   content: '';
@@ -1296,7 +1296,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 .hero-inner { position: relative; z-index: 1; }
 
 /* ══════════════════════════════
-   3. PROJECT CARDS — image hover zoom + border glow
+   3. PROJECT CARDS: image hover zoom + border glow
 ══════════════════════════════ */
 .pc-visual {
   overflow: hidden;
@@ -1323,14 +1323,14 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 }
 
 /* ══════════════════════════════
-   5. BUTTONS — directional sweep (era MAGNETIC)
+   5. BUTTONS: directional sweep (era MAGNETIC)
 ══════════════════════════════ */
 /* Las transiciones principales viven en .btn. El sweep se hace v\u00eda ::before. */
 .btn-primary:hover { box-shadow: none; }
 
 
 /* ══════════════════════════════
-   NAV LINKS — purple underline on hover
+   NAV LINKS: purple underline on hover
 ══════════════════════════════ */
 .nav-links a:not(.nav-cta) {
   position: relative;

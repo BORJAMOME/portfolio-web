@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Profit and loss account — Financial analysis | Borja Mora</title>
+<title>Profit and loss account: Financial analysis | Borja Mora</title>
 <meta name="description" content="A P&L in Power BI that adds up under any filter: accounting subtotals, sign control and actual vs budget. Net profit 2021: €6.78m, +92.1%.">
 <meta name="theme-color" content="#efefef">
 <link rel="canonical" href="https://borjamora.es/en/perdidas-ganancias.html">
@@ -14,8 +14,8 @@
 <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
 <link rel="icon" href="../img/favicon.ico" type="image/x-icon">
 <!-- Open Graph -->
-<meta property="og:title" content="Profit and loss account — Financial analysis | Borja Mora">
-<meta property="og:description" content="A P&L in Power BI that adds up under any filter. In 2021, actual net profit beat the budget by 92.1% — the waterfall chart shows the driver was revenue growth, not cost cutting.">
+<meta property="og:title" content="Profit and loss account: Financial analysis | Borja Mora">
+<meta property="og:description" content="A P&L in Power BI that adds up under any filter. In 2021, actual net profit beat the budget by 92.1%: the waterfall chart shows the driver was revenue growth, not cost cutting.">
 <meta property="og:image" content="https://borjamora.es/img/pyg-card.png">
 <meta property="og:url" content="https://borjamora.es/en/perdidas-ganancias.html">
 <meta property="og:type" content="article">
@@ -23,11 +23,11 @@
 <meta property="og:locale:alternate" content="es_ES">
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Profit and loss account — Financial analysis | Borja Mora">
+<meta name="twitter:title" content="Profit and loss account: Financial analysis | Borja Mora">
 <meta name="twitter:description" content="A P&L in Power BI that adds up under any filter: subtotals with accounting logic, actual vs budget and a waterfall chart. Actual net profit 2021: €6.78m (+92.1% vs budget).">
 <meta name="twitter:image" content="https://borjamora.es/img/pyg-card.png">
 
-<!-- Google Fonts: Space Grotesk (sustituto de PolySans, peso 400) + Inter — sistema Ventriloc -->
+<!-- Google Fonts: Space Grotesk (sustituto de PolySans, peso 400) + Inter: sistema Ventriloc -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400&family=Inter:wght@400;500;600&display=swap">
@@ -60,7 +60,7 @@
   gtag("config", "G-6PSDM6B5Z7", { page_language: document.documentElement.lang || "es" });
 </script>
 
-<!-- ── Cookie banner CSS (RGPD/LOPDGDD) — autocontenida, esta página no carga shared.css ── -->
+<!-- ── Cookie banner CSS (RGPD/LOPDGDD): autocontenida, esta página no carga shared.css ── -->
 <style>
   #bm-cookie-banner {
     position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(0);
@@ -179,7 +179,7 @@ section { padding: 5rem 0; }
   .kpi-grid-3, .tools-grid-6 { grid-template-columns: 1fr !important; }
 }
 
-/* ── Buttons — Primary CTA (Graphite fill, 0px radius) / Ghost (outline, 0px radius) ── */
+/* ── Buttons: Primary CTA (Graphite fill, 0px radius) / Ghost (outline, 0px radius) ── */
 .pg-cta {
   display: inline-block;
   background: var(--pg-ink);
@@ -202,7 +202,7 @@ section { padding: 5rem 0; }
   border: 1px solid var(--pg-ink);
 }
 
-/* ── Cards — sin sombra, superficie hace el trabajo ── */
+/* ── Cards: sin sombra, superficie hace el trabajo ── */
 .pg-card { transition: transform .25s cubic-bezier(.16,1,.3,1); }
 @media (hover: hover) and (pointer: fine) {
   .pg-card:hover { transform: translateY(-2px); }
@@ -218,7 +218,7 @@ section { padding: 5rem 0; }
   .dash-layout img:hover { transform: scale(1.01); }
 }
 
-/* ── Hero — canvas blanco editorial, Real vs Presupuesto ── */
+/* ── Hero: canvas blanco editorial, Real vs Presupuesto ── */
 .hero-stage {
   position: relative; overflow: hidden; background: var(--pg-bg);
   display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -329,7 +329,7 @@ section { padding: 5rem 0; }
   "@context": "https://schema.org",
   "@type": "CreativeWork",
   "@id": "https://borjamora.es/en/perdidas-ganancias.html#caso",
-  "name": "Profit and loss account — Financial analysis",
+  "name": "Profit and loss account: Financial analysis",
   "description": "A P&L in Power BI that adds up under any filter: accounting subtotals, sign control and actual vs budget. Net profit 2021: €6.78m, +92.1%.",
   "url": "https://borjamora.es/en/perdidas-ganancias.html",
   "image": "https://borjamora.es/img/pyg-card.png",
@@ -366,7 +366,7 @@ section { padding: 5rem 0; }
 
 <main id="main-content">
 
-<!-- S1 · HERO — Real 6,78M€ frente a Presupuesto 3,53M€ -->
+<!-- S1 · HERO: Real 6,78M€ frente a Presupuesto 3,53M€ -->
 <section class="hero-stage" data-screen-label="Hero">
   <p class="hero-eyebrow">Financial analysis · P&amp;L</p>
   <h1 class="brand-name" style="font-size:clamp(2.4rem, 6vw, 4.2rem); line-height:.95; margin-bottom:1.4rem; max-width:900px;">Profit and loss account</h1>
@@ -496,13 +496,13 @@ section { padding: 5rem 0; }
     <p class="pg-tag reveal">Visualisation</p>
     <h2 class="reveal" style="font-size:clamp(1.7rem, 4vw, 2.4rem); line-height:1.15; margin-bottom:1.5rem; max-width:900px;">Two ways to read the same information.</h2>
     <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--pg-text); max-width:800px; line-height:1.6; margin-bottom:1rem;">A P&L can answer different questions depending on how you look at it. That’s why I built two complementary views.</p>
-    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--pg-text); max-width:800px; line-height:1.6; margin-bottom:.8rem;"><strong>Expandable P&L</strong> — a view designed to start from the overall result and gradually open each level down to the detail. It lets me go from a total figure to the items that make it up without changing context.</p>
-    <p class="reveal reveal-delay-2" style="font-size:1.05rem; color:var(--pg-text); max-width:800px; line-height:1.6; margin-bottom:1.2rem;"><strong>Detail with waterfall</strong> — a view focused on understanding how the different items contribute to the final result. The waterfall chart helps show which items increase or reduce the result on the way to the final figure.</p>
+    <p class="reveal reveal-delay-1" style="font-size:1.05rem; color:var(--pg-text); max-width:800px; line-height:1.6; margin-bottom:.8rem;"><strong>Expandable P&L</strong>: a view designed to start from the overall result and gradually open each level down to the detail. It lets me go from a total figure to the items that make it up without changing context.</p>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; color:var(--pg-text); max-width:800px; line-height:1.6; margin-bottom:1.2rem;"><strong>Detail with waterfall</strong>: a view focused on understanding how the different items contribute to the final result. The waterfall chart helps show which items increase or reduce the result on the way to the final figure.</p>
     <p class="reveal reveal-delay-2" style="font-size:1.05rem; color:var(--pg-text); max-width:800px; line-height:1.6; margin-bottom:2rem;">I didn’t want two different visuals just for the sake of it. Each one answers a question: <strong>where am I?</strong> and <strong>what is explaining this result?</strong></p>
     <div class="dash-layout reveal reveal-delay-2" style="display:flex; flex-direction:column; gap:1.5rem; margin-bottom:1.5rem;">
-      <picture><source srcset="../img/pyg-1.webp" type="image/webp"><img width="1258" height="689" loading="lazy" src="../img/pyg-1.png" alt="Profit and loss account dashboard — view 1" style="width:100%; border-radius:20px; height:auto;"></picture>
-      <picture><source srcset="../img/pyg-2.webp" type="image/webp"><img width="1249" height="682" loading="lazy" src="../img/pyg-2.png" alt="Profit and loss account dashboard — view 2" style="width:100%; border-radius:20px; height:auto;"></picture>
-      <picture><source srcset="../img/pyg-3.webp" type="image/webp"><img width="1264" height="808" loading="lazy" src="../img/pyg-3.png" alt="Profit and loss account dashboard — view 3" style="width:100%; border-radius:20px; height:auto;"></picture>
+      <picture><source srcset="../img/pyg-1.webp" type="image/webp"><img width="1258" height="689" loading="lazy" src="../img/pyg-1.png" alt="Profit and loss account dashboard: view 1" style="width:100%; border-radius:20px; height:auto;"></picture>
+      <picture><source srcset="../img/pyg-2.webp" type="image/webp"><img width="1249" height="682" loading="lazy" src="../img/pyg-2.png" alt="Profit and loss account dashboard: view 2" style="width:100%; border-radius:20px; height:auto;"></picture>
+      <picture><source srcset="../img/pyg-3.webp" type="image/webp"><img width="1264" height="808" loading="lazy" src="../img/pyg-3.png" alt="Profit and loss account dashboard: view 3" style="width:100%; border-radius:20px; height:auto;"></picture>
     </div>
     <div class="reveal reveal-delay-4">
       <a href="https://app.powerbi.com/view?r=eyJrIjoiM2Y3MzMxNTQtMGMzOS00ZDhlLTljYWYtMmU5N2E5ZTA3MjU2IiwidCI6ImI4YWYyODcwLTJkNTAtNDZiYS1hYjc1LWM3OGZhNDczNmZiNyJ9&pageName=41273635f861390cd9fd" class="pg-cta" target="_blank" rel="noopener" data-ga="ver_dashboard_powerbi" data-ga-dashboard_name="Cuenta de Perdidas y Ganancias" data-ga-location="pyg_dashboard">View the interactive dashboard</a>

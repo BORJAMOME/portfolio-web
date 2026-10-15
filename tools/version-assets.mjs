@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   tools/version-assets.mjs — versiones de caché automáticas
+   tools/version-assets.mjs: versiones de caché automáticas
    ─────────────────────────────────────────────────
      node tools/version-assets.mjs           → actualiza los ?v= de todas las páginas
      node tools/version-assets.mjs --check   → no escribe: falla si alguno está desactualizado (CI)
