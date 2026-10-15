@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════
-// ai.ts — proveedores de IA detrás de una interfaz (AIProvider en pipeline.ts)
+// ai.ts: proveedores de IA detrás de una interfaz (AIProvider en pipeline.ts)
 // ───────────────────────────────────────────────
 // ClaudeProvider  API de Claude (de pago, clave ANTHROPIC_API_KEY):
 //                 · investigación con las herramientas de servidor web_search y web_fetch
@@ -128,7 +128,7 @@ export class MockProvider implements AIProvider {
         facts: [{ text: `${company} publica su actividad en su web (SIMULADO).`, kind: "empresa", source_ids: [1] }], news: [], data_initiatives: [] },
       role: { title: i.role_title, available: false, level: null, responsibilities: [], must: ["Power BI", "SQL"], nice: [], tools: [], languages: [], location: null, mode: null, source_ids: [] },
       people: i.attendees.map((p) => ({ name: p.name ?? p.email ?? "?", current_title: null, identified: "no_verificado", source_ids: [] })),
-      sources: [{ id: 1, url: web, title: company + " — web oficial", published: null, type: "oficial" }],
+      sources: [{ id: 1, url: web, title: company + ": web oficial", published: null, type: "oficial" }],
       gaps: ["Investigación SIMULADA: no se ha consultado ninguna fuente real."],
     };
     const retrieved: Retrieved = new Map([[canonicalUrl(web)!, { url: web, title: company, page_age: null }]]);

@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   hero.js — el dashboard del hero como objeto físico
+   hero.js: el dashboard del hero como objeto físico
    · Entrada cinematográfica: CSS puro (data-storytelling.css, dsEnter),
      empieza en la primera pintura y no depende de ninguna librería.
    · Profundidad: se inclina hasta 3° hacia el cursor; nunca rota solo.

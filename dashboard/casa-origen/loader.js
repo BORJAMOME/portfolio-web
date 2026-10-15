@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   dashboard/casa-origen/loader.js — idioma y carga ordenada
+   dashboard/casa-origen/loader.js: idioma y carga ordenada
    ?lang=en abre la versión inglesa; sin parámetro, la española.
    Carga datos → motor → contenido → cálculos → página, en ese orden.
    Las versiones (?v=) las genera el script que construye esta carpeta.

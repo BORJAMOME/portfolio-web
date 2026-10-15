@@ -1,4 +1,4 @@
-# interview-intel — preparación automática de entrevistas
+# interview-intel: preparación automática de entrevistas
 
 Detecta las entrevistas de tu Google Calendar, investiga la empresa y a quién te entrevista con
 fuentes públicas, cruza la vacante con tu perfil real y deja un **briefing de dos páginas** en
@@ -21,7 +21,7 @@ Google Calendar ──iCal secreto──▶ calendario-sync (15 min) ──▶ c
       huellas de cambios                                  + API de Claude con búsqueda web
                                                        b) redactar y validar el informe ──▶ ii_reports
                                                                    │
-                                     area-privada.html (#/preparacion, Calendario) — solo lectura
+                                     area-privada.html (#/preparacion, Calendario): solo lectura
 ```
 
 ## Qué hace cada pieza

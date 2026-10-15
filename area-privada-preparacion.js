@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   area-privada-preparacion.js — «Preparación» dentro de la pestaña Entrevistas
+   area-privada-preparacion.js: «Preparación» dentro de la pestaña Entrevistas
    ─────────────────────────────────────────────────
    Rutas: #/preparacion          entrevistas detectadas en el calendario y estado del informe
           #/preparacion/<uuid>   briefing de una entrevista (imprimible en dos A4)
@@ -34,7 +34,7 @@ window.APPreparacion = (function () {
   var money = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
 
   function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
-  function badge(map, v) { var x = map[v] || [v || '—', '']; return h('span', { class: 'ape-badge ' + x[1], text: x[0] }); }
+  function badge(map, v) { var x = map[v] || [v || '–', '']; return h('span', { class: 'ape-badge ' + x[1], text: x[0] }); }
   function safeUrl(u) { return typeof u === 'string' && /^https?:\/\//i.test(u) ? u : null; }
   function ext(url, text, cls) {
     var u = safeUrl(url);
@@ -183,7 +183,7 @@ window.APPreparacion = (function () {
           h('span', { class: 'apf-domain', text: [r.role_title, r.company ? r.title : null].filter(Boolean).join(' · ') }),
           showSignals && r.signals && r.signals.length ? h('span', { class: 'apb-signals', text: 'Señales: ' + r.signals.slice(0, 3).join(' · ') }) : null
         ]),
-        h('td', { class: 'apb-c-kind', text: KIND[r.interview_kind] || '—' }),
+        h('td', { class: 'apb-c-kind', text: KIND[r.interview_kind] || '–' }),
         h('td', { class: 'apb-c-st' }, [
           badge(STATUS, r.status), rep ? [' ', badge(QUALITY, rep.quality)] : null,
           note ? h('span', { class: 'apb-note', text: note }) : null
@@ -269,7 +269,7 @@ window.APPreparacion = (function () {
 
     var head = h('header', { class: 'apb-head' }, [
       h('p', { class: 'ap-label', text: 'Briefing de entrevista' }),
-      h('h2', { class: 'ap-doc-title apb-title', id: 'apb-title', text: (row.company || 'Empresa sin identificar') + (row.role_title ? ' — ' + row.role_title : '') }),
+      h('h2', { class: 'ap-doc-title apb-title', id: 'apb-title', text: (row.company || 'Empresa sin identificar') + (row.role_title ? ' – ' + row.role_title : '') }),
       h('dl', { class: 'apb-meta' }, [
         h('dt', { text: 'Cuándo' }), h('dd', null, [h('time', { datetime: row.starts_at, text: cap(dFmt.format(new Date(row.starts_at))) })]),
         mode ? h('dt', { text: 'Modalidad' }) : null,
@@ -307,7 +307,7 @@ window.APPreparacion = (function () {
       s.highlight && s.highlight.length ? h('p', { class: 'apb-k', text: 'Destaca' }) : null, list(s.highlight || []),
       (s.projects || []).map(function (p) {
         return h('div', { class: 'apb-project' }, [
-          h('p', null, [h('strong', { text: p.name }), ' — ' + p.why]),
+          h('p', null, [h('strong', { text: p.name }), ' – ' + p.why]),
           pair('Qué destacar', p.highlight), pair('Decisiones a explicar', p.decisions),
           pair('Te pueden preguntar', p.follow_up), pair('Limitación honesta', p.limitation)
         ]);
@@ -324,10 +324,10 @@ window.APPreparacion = (function () {
     var b5 = block(5, 'Preguntas que debo hacer', [list(c.ask || [], true)]);
     var r = c.reminder || {};
     var b6 = block(6, 'Mi recordatorio final', [h('dl', { class: 'apb-reminder' }, [
-      h('dt', { text: 'Encaje' }), h('dd', { text: r.fit || '—' }),
-      h('dt', { text: 'Ejemplo' }), h('dd', { text: r.example || '—' }),
-      h('dt', { text: 'No olvides preguntar' }), h('dd', { text: r.question || '—' }),
-      h('dt', { text: 'Repasa' }), h('dd', { text: r.technical || '—' })
+      h('dt', { text: 'Encaje' }), h('dd', { text: r.fit || '–' }),
+      h('dt', { text: 'Ejemplo' }), h('dd', { text: r.example || '–' }),
+      h('dt', { text: 'No olvides preguntar' }), h('dd', { text: r.question || '–' }),
+      h('dt', { text: 'Repasa' }), h('dd', { text: r.technical || '–' })
     ])]);
 
     var sources = src.length ? h('section', { class: 'apb-sources', 'aria-labelledby': 'apb-src' }, [

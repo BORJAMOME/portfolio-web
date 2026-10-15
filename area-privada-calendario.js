@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   area-privada-calendario.js — pestaña «Calendario» del área privada
+   area-privada-calendario.js: pestaña «Calendario» del área privada
    ─────────────────────────────────────────────────
    Rutas: #/calendario                      semana actual (día en pantallas estrechas)
           #/calendario/<vista>/<AAAA-MM-DD>  vista = dia | semana | mes | agenda

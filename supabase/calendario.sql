@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════
--- supabase/calendario.sql — pestaña «Calendario» del área privada
+-- supabase/calendario.sql: pestaña «Calendario» del área privada
 -- ───────────────────────────────────────────────
 -- Requiere haber ejecutado antes supabase/area-privada.sql (usa public.is_member()).
 --

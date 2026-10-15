@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   roma-aeterna/acceso.js — puerta con la contraseña del área privada
+   roma-aeterna/acceso.js: puerta con la contraseña del área privada
    ─────────────────────────────────────────────────
    · Comprueba la contraseña contra Supabase Auth (el mismo usuario que area-privada.html).
    · Si es correcta, cierra al momento esa sesión (scope=local: solo esta, no las de otros

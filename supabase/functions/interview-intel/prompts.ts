@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════
-// prompts.ts — instrucciones para la investigación y para el informe
+// prompts.ts: instrucciones para la investigación y para el informe
 // ───────────────────────────────────────────────
 // Defensa frente a instrucciones maliciosas (correos, invitaciones y páginas web):
 //   · todo lo externo va dentro de <datos_no_confiables …>; las instrucciones dicen que es

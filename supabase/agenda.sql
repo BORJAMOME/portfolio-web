@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════
--- supabase/agenda.sql — elementos propios del Calendario (eventos, bloques de foco, tareas)
+-- supabase/agenda.sql: elementos propios del Calendario (eventos, bloques de foco, tareas)
 -- ───────────────────────────────────────────────
 -- Requiere area-privada.sql (is_member), entrevistas.sql (touch_updated_at) y opciones.sql
 -- (las categorías son el grupo «agenda.categoria» de public.ap_opciones y se gestionan

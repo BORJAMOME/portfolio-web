@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════
-// pipeline.ts — detección y procesamiento de entrevistas (sin E/S directa: todo por «deps»)
+// pipeline.ts, detección y procesamiento de entrevistas (sin E/S directa: todo por «deps»)
 // ───────────────────────────────────────────────
 // Cada llamada del cron hace dos cosas:
 //   1. detect(): recorre los eventos próximos de calendar_events y registra/actualiza las

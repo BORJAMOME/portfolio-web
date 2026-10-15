@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   dashboard/casa-origen/dash.js — motor mínimo del dashboard
+   dashboard/casa-origen/dash.js: motor mínimo del dashboard
    ─────────────────────────────────────────────────
    Sustituye al runtime de Claude Dashboards para que la página funcione
    como web estática: lee los datos de window.CO_DATA (data.js del idioma),

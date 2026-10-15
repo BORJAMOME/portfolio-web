@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════
-// free.ts — FreeProvider: briefing automático SIN IA y SIN COSTE (proveedor por defecto)
+// free.ts, FreeProvider: briefing automático SIN IA y SIN COSTE (proveedor por defecto)
 // ───────────────────────────────────────────────
 // Investigación (solo fuentes públicas gratuitas, sin claves):
 //   · web de la empresa (dominio del correo de quien convoca): título y descripción de la portada
@@ -175,7 +175,7 @@ export class FreeProvider implements AIProvider {
       const rss = await getText(this.fetchFn, `https://news.google.com/rss/search?q=${encodeURIComponent('"' + company + '"')}&hl=es&gl=ES&ceid=ES:es`);
       const items = rss ? parseNewsRss(rss.text, since).slice(0, 3) : [];
       for (const n of items) {
-        const id = add(n.url, n.title + (n.source ? " — " + n.source : ""), "prensa", n.date);
+        const id = add(n.url, n.title + (n.source ? " – " + n.source : ""), "prensa", n.date);
         news.push({ text: n.title, kind: "tercero", source_ids: [id], date: n.date, why: null });
       }
       if (!rss) gaps.push("No se pudieron consultar las noticias.");

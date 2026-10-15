@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════
-// supabase/functions/interview-intel — preparación automática de entrevistas
+// supabase/functions/interview-intel: preparación automática de entrevistas
 // ───────────────────────────────────────────────
 // Quién puede llamarla (se despliega con --no-verify-jwt; la comprobación la hace ella):
 //   · pg_cron, cada 10 min, con «Authorization: Bearer <CRON_SECRET>»

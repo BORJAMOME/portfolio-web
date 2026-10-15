@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════
--- supabase/procesos-correo.sql — procesos de selección que se rellenan solos desde Gmail
+-- supabase/procesos-correo.sql: procesos de selección que se rellenan solos desde Gmail
 -- ───────────────────────────────────────────────
 -- Requiere: area-privada.sql (is_member) y entrevistas.sql (procesos).
 -- Se ejecuta en Supabase → SQL Editor. Idempotente; solo AÑADE objetos.

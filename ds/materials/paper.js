@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   paper.js — grano de papel procedural
+   paper.js: grano de papel procedural
    Un azulejo de 200×200 generado una vez: ruido fino (fibra) + manchas
    de baja frecuencia (el papel nunca es uniforme). Se sirve como imagen
    estática y fija: coste de GPU ~0, nada se anima.

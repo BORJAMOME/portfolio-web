@@ -1,4 +1,4 @@
-// store.ts — Store (pipeline.ts) sobre la API REST de Supabase con la clave service_role.
+// store.ts: Store (pipeline.ts) sobre la API REST de Supabase con la clave service_role.
 // Solo se usa dentro de la Edge Function: la clave nunca sale del servidor.
 import type { Run, Store } from "./pipeline.ts";
 import type { CalendarEvent, Interview, LinkedProcess } from "./types.ts";
