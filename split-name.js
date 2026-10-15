@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   split-name.js — nombre letra a letra (logo de la cabecera)
+   split-name.js: nombre letra a letra (logo de la cabecera)
    ─────────────────────────────────────────────────
    Cualquier elemento con [data-split-name] se trocea en letras con tres capas:
      .sn-mask (recorta) > .sn-lift (sube con el cursor) > .sn-enter (entra desde abajo)

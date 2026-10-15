@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   consent.js — aviso de cookies y preferencias (RGPD / LOPDGDD)
+   consent.js: aviso de cookies y preferencias (RGPD / LOPDGDD)
    ─────────────────────────────────────────────────
    Un solo archivo para todas las páginas (antes, un script en línea repetido en cada una).
    · Muestra #bm-cookie-banner si todavía no hay decisión guardada.

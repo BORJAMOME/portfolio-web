@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   tools/check-links.mjs — enlaces y recursos internos
+   tools/check-links.mjs: enlaces y recursos internos
    ─────────────────────────────────────────────────
      node tools/check-links.mjs
 

@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   roma-aeterna/touch.js — capa táctil para jugar en el móvil
+   roma-aeterna/touch.js: capa táctil para jugar en el móvil
    ─────────────────────────────────────────────────
    Caesar III se diseñó para ratón: la barra superior mide 24 px y los botones del
    panel derecho, poco más. Con el dedo (unos 40 pt de contacto) es casi imposible

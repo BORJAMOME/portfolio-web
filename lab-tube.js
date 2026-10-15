@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   lab-tube.js — tubo de ensayo morado en el enlace «Laboratorio» (diseño 7d)
+   lab-tube.js: tubo de ensayo morado en el enlace «Laboratorio» (diseño 7d)
    ─────────────────────────────────────────────────
    · Al pasar el cursor (o enfocar con Tab) aparece el tubo junto a la palabra,
      se agita, brilla en morado, suelta neblina, destellos y burbujas.

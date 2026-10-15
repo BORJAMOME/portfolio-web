@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   area-privada-portfolio.js — pestaña «Portfolio» del área privada (#/portfolio)
+   area-privada-portfolio.js: pestaña «Portfolio» del área privada (#/portfolio)
    ─────────────────────────────────────────────────
    Inventario de todo lo construido para el portfolio: manuales, proyectos y gráficos
    de Power BI, apps de Streamlit, repositorios, visualizaciones…

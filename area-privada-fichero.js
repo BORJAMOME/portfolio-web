@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   area-privada-fichero.js — pestaña «Fichero» del área privada (#/fichero)
+   area-privada-fichero.js: pestaña «Fichero» del área privada (#/fichero)
    ─────────────────────────────────────────────────
    Tabla de enlaces guardados (tabla public.links de Supabase, ver
    supabase/fichero.sql): buscar, filtrar, ordenar, añadir, editar y eliminar.
@@ -178,14 +178,14 @@ window.APFichero = (function () {
           sub ? h('span', { class: 'apf-sub' + (r.note ? ' is-note' : ''), text: sub }) : null,
           h('span', { class: 'apf-meta-m', text: [(r.topics || []).join(', '), r.type].filter(Boolean).join(' · ') })
         ]),
-        h('td', { class: 'apf-c-tema', text: (r.topics || []).join(', ') || '—' }),
-        h('td', { class: 'apf-c-fmt', text: r.type || '—' }),
+        h('td', { class: 'apf-c-tema', text: (r.topics || []).join(', ') || '–' }),
+        h('td', { class: 'apf-c-fmt', text: r.type || '–' }),
         h('td', { class: 'apf-c-tags' }, (r.tags || []).length
           ? (r.tags || []).map(function (t) { return h('span', { class: 'apf-tag', text: t }); })
-          : [h('span', { class: 'apf-none', text: '—' })]),
+          : [h('span', { class: 'apf-none', text: '–' })]),
         h('td', { class: 'apf-c-rate' }, r.rating
           ? [h('span', { 'aria-hidden': 'true', text: '★'.repeat(r.rating) }), h('span', { class: 'sr-only', text: r.rating + ' de 5' })]
-          : [h('span', { class: 'apf-none', text: '—' })]),
+          : [h('span', { class: 'apf-none', text: '–' })]),
         h('td', { class: 'apf-c-date' }, [h('time', { datetime: r.saved_at, text: dateFmt.format(new Date(r.saved_at)) })]),
         h('td', { class: 'ap-col-act' }, [
           h('button', { type: 'button', class: 'ap-link-btn', 'aria-label': 'Editar «' + r.title + '»', text: 'Editar', onclick: function () { openForm(r); } }),

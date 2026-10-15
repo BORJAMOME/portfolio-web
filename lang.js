@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   lang.js — recuerda el idioma elegido (ES | EN)
+   lang.js: recuerda el idioma elegido (ES | EN)
    ─────────────────────────────────────────────────
    · Al pulsar el selector (.ds-lang, [data-lang-to]) se guarda la elección.
    · Al abrir una página que tiene versión en el otro idioma (<link rel="alternate"

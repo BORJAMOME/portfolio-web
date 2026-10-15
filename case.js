@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   case.js — comportamiento de los casos de estudio (Power BI y Casa Origen)
+   case.js: comportamiento de los casos de estudio (Power BI y Casa Origen)
    ─────────────────────────────────────────────────
    Sustituye al runtime anterior (support.js + React desde unpkg): el contenido de
    los casos es HTML estático y se ve aunque este archivo no llegue a cargarse.

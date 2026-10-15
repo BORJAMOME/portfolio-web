@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   area-privada-entrevistas.js — pestaña «Entrevistas» del área privada
+   area-privada-entrevistas.js: pestaña «Entrevistas» del área privada
    ─────────────────────────────────────────────────
    Rutas: #/entrevistas            lista de procesos (candidaturas)
           #/entrevistas/analisis   embudo, tasas por fase y fuente, calibración, preguntas
@@ -41,10 +41,10 @@ window.APEntrevistas = (function () {
   var num = new Intl.NumberFormat('es-ES', { maximumFractionDigits: 1 });
 
   /* ── Utilidades ── */
-  function label(list, v) { for (var i = 0; i < list.length; i++) if (list[i][0] === v) return list[i][1]; return v || '—'; }
+  function label(list, v) { for (var i = 0; i < list.length; i++) if (list[i][0] === v) return list[i][1]; return v || '–'; }
   function cls(list, v) { for (var i = 0; i < list.length; i++) if (list[i][0] === v) return list[i][2] || ''; return ''; }
   function norm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
-  function day(d) { return d ? dFmt.format(new Date(d.length === 10 ? d + 'T00:00:00' : d)) : '—'; }
+  function day(d) { return d ? dFmt.format(new Date(d.length === 10 ? d + 'T00:00:00' : d)) : '–'; }
   function pad(n) { return (n < 10 ? '0' : '') + n; }
   function localInput(iso) {      // ISO → valor de <input type="datetime-local">
     var d = iso ? new Date(iso) : new Date();
@@ -52,7 +52,7 @@ window.APEntrevistas = (function () {
   }
   function today() { return localInput().slice(0, 10); }
   function money(n) { return n == null ? '' : num.format(n / 1000) + ' k'; }
-  function stars(n) { return n ? '★'.repeat(n) + '☆'.repeat(5 - n) : '—'; }
+  function stars(n) { return n ? '★'.repeat(n) + '☆'.repeat(5 - n) : '–'; }
   function median(a) {
     if (!a.length) return null;
     a = a.slice().sort(function (x, y) { return x - y; });
@@ -202,7 +202,7 @@ window.APEntrevistas = (function () {
       ])]));
       return;
     }
-    var NIVELES = ['—', '1.ª entrevista', 'Técnica / caso', 'Final', 'Oferta'];
+    var NIVELES = ['–', '1.ª entrevista', 'Técnica / caso', 'Final', 'Oferta'];
     list.forEach(function (p) {
       var nx = nextOf(p.id), n = entsOf(p.id).length;
       ui.body.appendChild(h('tr', null, [
@@ -211,11 +211,11 @@ window.APEntrevistas = (function () {
           h('span', { class: 'apf-domain', text: p.puesto + (p.ubicacion ? ' · ' + p.ubicacion : '') }),
           h('span', { class: 'apf-meta-m', text: [label(ESTADOS, p.estado), day(p.fecha_aplicacion)].join(' · ') })
         ]),
-        h('td', { class: 'ape-c-src', text: p.fuente || '—' }),
+        h('td', { class: 'ape-c-src', text: p.fuente || '–' }),
         h('td', { class: 'ape-c-date' }, [h('time', { datetime: p.fecha_aplicacion, text: day(p.fecha_aplicacion) })]),
         h('td', { class: 'ape-c-st' }, [badge(ESTADOS, p.estado)]),
         h('td', { class: 'ape-c-fase', text: NIVELES[nivel(p)] + (n ? ' (' + n + ')' : '') }),
-        h('td', { class: 'ape-c-next' }, nx ? [h('time', { datetime: nx.fecha, text: dtFmt.format(new Date(nx.fecha)) })] : [h('span', { class: 'apf-none', text: '—' })]),
+        h('td', { class: 'ape-c-next' }, nx ? [h('time', { datetime: nx.fecha, text: dtFmt.format(new Date(nx.fecha)) })] : [h('span', { class: 'apf-none', text: '–' })]),
         h('td', { class: 'ap-col-act' }, [
           h('button', { type: 'button', class: 'ap-link-btn', 'aria-label': 'Editar el proceso de ' + p.empresa, text: 'Editar', onclick: function () { procesoForm(p); } })
         ])
@@ -229,7 +229,7 @@ window.APEntrevistas = (function () {
     ctx.view.textContent = '';
     if (!p) { location.replace('#/entrevistas'); return; }
     var list = entsOf(id);
-    var meta = [p.puesto, p.ubicacion, label(MODALIDADES, p.modalidad) !== '—' ? label(MODALIDADES, p.modalidad) : null, p.fuente,
+    var meta = [p.puesto, p.ubicacion, label(MODALIDADES, p.modalidad) !== '–' ? label(MODALIDADES, p.modalidad) : null, p.fuente,
       'aplicado el ' + day(p.fecha_aplicacion),
       p.salario_min || p.salario_max ? [money(p.salario_min), money(p.salario_max)].filter(Boolean).join('–') + ' €' : null].filter(Boolean);
     ctx.view.appendChild(h('a', { class: 'ap-backlink', href: '#/entrevistas' }, [h('span', { 'aria-hidden': 'true', text: '← ' }), 'Todos los procesos']));
@@ -429,7 +429,7 @@ window.APEntrevistas = (function () {
 
   function removeProceso(p) {
     var n = entsOf(p.id).length;
-    ctx.ask({ title: '¿Eliminar este proceso?', text: p.empresa + ' — ' + p.puesto + (n ? ' y sus ' + n + ' entrevistas' : '') + ' desaparecerán. No se puede deshacer.', ok: 'Eliminar', danger: true })
+    ctx.ask({ title: '¿Eliminar este proceso?', text: p.empresa + ' – ' + p.puesto + (n ? ' y sus ' + n + ' entrevistas' : '') + ' desaparecerán. No se puede deshacer.', ok: 'Eliminar', danger: true })
       .then(function (yes) {
         if (!yes) return;
         ctx.setStatus('Eliminando…');
@@ -471,7 +471,7 @@ window.APEntrevistas = (function () {
       kpi('Tasa de respuesta', pct.format(conEntrevista.length / procs.length), conEntrevista.length + ' con al menos una entrevista'),
       kpi('Entrevistas hechas', String(hechas.length), ents.length - hechas.length > 0 ? (ents.length - hechas.length) + ' programadas o canceladas' : 'ninguna pendiente'),
       kpi('Ofertas', String(ofertas.length), procs.length ? pct.format(ofertas.length / procs.length) + ' de las candidaturas' : ''),
-      kpi('Hasta la 1.ª entrevista', med == null ? '—' : num.format(med) + ' días', 'mediana desde la candidatura')
+      kpi('Hasta la 1.ª entrevista', med == null ? '–' : num.format(med) + ' días', 'mediana desde la candidatura')
     ]));
 
     // Embudo
@@ -485,7 +485,7 @@ window.APEntrevistas = (function () {
         h('span', { class: 'ape-funnel-label', text: STAGES[k] }),
         h('span', { class: 'ape-track' }, [bar]),
         h('span', { class: 'ape-funnel-n' }, [h('strong', { text: String(c) }),
-          k ? h('span', { text: ' · ' + (counts[k - 1] ? pct.format(c / counts[k - 1]) : '—') + ' del paso anterior' }) : null])
+          k ? h('span', { text: ' · ' + (counts[k - 1] ? pct.format(c / counts[k - 1]) : '–') + ' del paso anterior' }) : null])
       ]));
     });
     ctx.view.appendChild(section('Embudo', 'Hasta dónde llega cada candidatura. Un proceso cuenta en una fase si llegó a ella o más allá.', funnel));
@@ -497,8 +497,8 @@ window.APEntrevistas = (function () {
       var ok = l.filter(function (e) { return e.resultado === 'superada'; }).length;
       var ko = l.filter(function (e) { return e.resultado === 'no_superada'; }).length;
       var av = l.filter(function (e) { return e.autovaloracion; }).map(function (e) { return e.autovaloracion; });
-      return [fa[1], l.length, ok, ko, l.length - ok - ko, ok + ko ? pct.format(ok / (ok + ko)) : '—',
-        av.length ? num.format(av.reduce(function (a, b) { return a + b; }, 0) / av.length) + ' / 5' : '—'];
+      return [fa[1], l.length, ok, ko, l.length - ok - ko, ok + ko ? pct.format(ok / (ok + ko)) : '–',
+        av.length ? num.format(av.reduce(function (a, b) { return a + b; }, 0) / av.length) + ' / 5' : '–'];
     }).filter(Boolean);
     if (faseRows.length) ctx.view.appendChild(section('Por fase', 'Tasa de paso = superadas ÷ (superadas + no superadas). Las pendientes no cuentan.',
       table('Resultados por fase de entrevista', ['Fase', 'Entrevistas', 'Superadas', 'No superadas', 'Pendientes', 'Tasa de paso', 'Cómo creí que fue'], faseRows)));
@@ -560,9 +560,9 @@ window.APEntrevistas = (function () {
   }
   function table(caption, cols, rows) {
     var h = ctx.h;
-    // una columna es numérica si todos sus valores son números, porcentajes, «x / 5» o «—»
+    // una columna es numérica si todos sus valores son números, porcentajes, «x / 5» o «: »
     var isNum = cols.map(function (_, i) {
-      return i > 0 && rows.every(function (r) { return typeof r[i] === 'number' || /^(—|[\d.,]+\s?(%|\/ 5))$/.test(String(r[i])); });
+      return i > 0 && rows.every(function (r) { return typeof r[i] === 'number' || /^(–|[\d.,]+\s?(%|\/ 5))$/.test(String(r[i])); });
     });
     // tabindex + role: en móvil la tabla se desplaza en horizontal y tiene que poder recorrerse con el teclado
     return h('div', { class: 'ap-table-wrap apf-wrap', tabindex: '0', role: 'region', 'aria-label': caption }, [h('table', { class: 'ap-table apf-table ape-stats' }, [

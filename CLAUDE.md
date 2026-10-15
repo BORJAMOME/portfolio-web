@@ -1,4 +1,4 @@
-# CLAUDE.md — portfolio-web (borjamora.es)
+# CLAUDE.md: portfolio-web (borjamora.es)
 
 Sitio estático (HTML/CSS/JS sin framework ni build) publicado con GitHub Pages desde `main`.
 Contexto de producto y marca: `PRODUCT.md` (solo local). Mapa de archivos y comandos: `README.md`.

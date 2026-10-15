@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   ds/main.js — capa de motion y materiales de data-storytelling.html
+   ds/main.js: capa de motion y materiales de data-storytelling.html
    El motor narrativo (data-storytelling.js) ya funciona solo; esta capa
    lo refina. Cada módulo es independiente: si uno falla, los demás siguen
    y la página sigue siendo legible.

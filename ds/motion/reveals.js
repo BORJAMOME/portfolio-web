@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   reveals.js — entradas escalonadas con ScrollTrigger.batch
+   reveals.js: entradas escalonadas con ScrollTrigger.batch
    Cuando varios elementos entran juntos (una lista, una rejilla de
    tarjetas), aparecen en orden de lectura en vez de todos a la vez.
    Sin GSAP, el CSS (.rv-seq) hace la misma secuencia: esto solo la afina.

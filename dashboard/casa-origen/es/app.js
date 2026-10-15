@@ -110,13 +110,13 @@
     $$('[data-fmt]').forEach((e) => {
       if (e.dataset.wt) e.setAttribute('data-where', e.dataset.wt.replaceAll('{local}', local).replaceAll('{franja}', franja));
       const d = dash.data(e.dataset.source);
-      if (d.status !== 'ok') { e.textContent = '—'; e._v = null; if (d.status !== 'loading') e.classList.remove('dash-skeleton'); return; }
+      if (d.status !== 'ok') { e.textContent = '–'; e._v = null; if (d.status !== 'loading') e.classList.remove('dash-skeleton'); return; }
       const r = findRow(d.data, e.getAttribute('data-where'), e.dataset.row);
       const v = r ? r[e.dataset.field] : null;
       e.classList.remove('dash-skeleton');
       const f = FMT[e.dataset.fmt];
       const prev = e._v; e._v = v;
-      if (v == null) { e.textContent = '—'; }
+      if (v == null) { e.textContent = '–'; }
       else if (!RM && typeof v === 'number' && typeof prev === 'number' && prev !== v && NUMF.has(e.dataset.fmt)) countTo(e, prev, v, f);
       else if (e._anim == null || prev !== v) { e._anim = (e._anim || 0) + 1; e.textContent = f(v); }
       if (e.dataset.good) tone(e, v, e.dataset.fmt);
@@ -129,7 +129,7 @@
     if (p == null) return document.createTextNode('');
     if (typeof p === 'string') return document.createTextNode(p);
     if (p instanceof Node) return p;
-    const e = el('span', p.cls || null, '—');
+    const e = el('span', p.cls || null, '–');
     e.dataset.source = p.s; e.dataset.field = p.f; e.dataset.fmt = p.fmt;
     if (p.w != null) { if (p.w.startsWith('#')) e.dataset.row = p.w.slice(1); else e.dataset.wt = p.w; }
     return e;

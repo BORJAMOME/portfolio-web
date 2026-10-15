@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════
-// report.ts — esquema del informe y validación antes de guardarlo
+// report.ts: esquema del informe y validación antes de guardarlo
 // ───────────────────────────────────────────────
 // El modelo devuelve JSON con este esquema (structured outputs). Antes de guardar:
 //   · extensión: el informe visible tiene que caber en dos A4 (≈ 650–850 palabras;

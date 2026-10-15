@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   tools/check-briefing.mjs — el briefing de entrevista cabe en dos A4 y se lee bien en móvil
+   tools/check-briefing.mjs: el briefing de entrevista cabe en dos A4 y se lee bien en móvil
    ─────────────────────────────────────────────────
    Pinta el briefing con el código real (area-privada-preparacion.js + css/area-privada.css)
    sobre datos FICTICIOS (tools/fixtures/briefing-ejemplo.json), sin Supabase ni sesión, y:
@@ -114,7 +114,7 @@ async function axe(page, label) {
   const r = await page.evaluate(() => window.axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'] } }));
   const v = r.violations.filter((x) => x.impact === 'serious' || x.impact === 'critical');
   console.log(`${v.length ? '✗' : '✓'} axe-core ${label}: ${v.length} infracciones graves`);
-  v.forEach((x) => problems.push(`axe ${label}: ${x.id} — ${x.help} (${x.nodes.length})`));
+  v.forEach((x) => problems.push(`axe ${label}: ${x.id}: ${x.help} (${x.nodes.length})`));
 }
 
 const data = { ...fixture, list: [] };

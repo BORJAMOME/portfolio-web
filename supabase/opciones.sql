@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════
--- supabase/opciones.sql — listas configurables del área privada (pestaña «Configuración»)
+-- supabase/opciones.sql: listas configurables del área privada (pestaña «Configuración»)
 -- ───────────────────────────────────────────────
 -- Requiere area-privada.sql (is_member) y fichero.sql (public.links).
 -- Se ejecuta UNA vez en Supabase → SQL Editor. Es idempotente.

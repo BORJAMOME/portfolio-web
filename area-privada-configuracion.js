@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   area-privada-configuracion.js — pestaña «Configuración» (#/configuracion)
+   area-privada-configuracion.js: pestaña «Configuración» (#/configuracion)
    ─────────────────────────────────────────────────
    Listas de opciones que usan las demás pestañas, guardadas en public.ap_opciones
    (supabase/opciones.sql). Hoy: temas y formatos del Fichero.

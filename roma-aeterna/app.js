@@ -1,7 +1,7 @@
 "use strict";
-/* Roma Aeterna — lanzador de Caesar III (Augustus → WebAssembly) para iOS */
+/* Roma Aeterna: lanzador de Caesar III (Augustus → WebAssembly) para iOS */
 /* ===================================================================
-   Roma Aeterna — lanzador de Caesar III (Julius → WebAssembly) para iOS
+   Roma Aeterna: lanzador de Caesar III (Julius → WebAssembly) para iOS
    =================================================================== */
 const DATA = "/c3";
 const $ = (id) => document.getElementById(id);
@@ -274,7 +274,7 @@ async function sniff(f) {
 }
 async function importAny(files) {
   const kinds = await Promise.all(files.map(sniff));
-  lastPicked = files.map((f, i) => `• ${f.name} — ${fmtMB(f.size)} — ${kinds[i]}${f.type ? " (" + f.type + ")" : ""}`).join("\n");
+  lastPicked = files.map((f, i) => `• ${f.name}, ${fmtMB(f.size)}, ${kinds[i]}${f.type ? " (" + f.type + ")" : ""}`).join("\n");
   log("Elegidos:\n" + lastPicked);
   if (files.some((f) => f.size === 0)) return importError("Uno de los archivos está vacío (0 MB). Puede que la descarga no terminara: descárgalo de nuevo desde GOG.");
   const exeIdx = kinds.indexOf("exe");

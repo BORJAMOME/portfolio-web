@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   glass.js — superficie de cristal sobre el dashboard del hero
+   glass.js: superficie de cristal sobre el dashboard del hero
    Dibuja solo cuando la luz se mueve: sigue al cursor con inercia y,
    en cuanto llega a su sitio, el bucle se detiene. En reposo no hay
    ni un frame de GPU (la "respiración" del hero es la sombra, en CSS).

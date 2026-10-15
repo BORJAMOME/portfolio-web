@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   contact.js — «Copiar email»
+   contact.js: «Copiar email»
    ─────────────────────────────────────────────────
    Cualquier botón con [data-copy-email] copia la dirección al portapapeles y lo
    confirma durante 2 s. Complementa a los enlaces mailto:, para quien no tiene

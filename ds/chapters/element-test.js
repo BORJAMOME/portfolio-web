@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   element-test.js — el test del elemento como herramienta
+   element-test.js: el test del elemento como herramienta
    Un solo resaltado viaja de una fila a otra: se ve de qué pregunta
    viene la decisión, no solo que "algo se ha pintado". El veredicto
    se reemplaza con un pequeño relevo y la acción se sella.
