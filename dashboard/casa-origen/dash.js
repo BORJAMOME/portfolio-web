@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════
    dashboard/casa-origen/dash.js: motor mínimo del dashboard
    ─────────────────────────────────────────────────
-   Sustituye al runtime de Claude Dashboards para que la página funcione
+   Sustituye al runtime del entorno donde se diseñó el dashboard para que la página funcione
    como web estática: lee los datos de window.CO_DATA (data.js del idioma),
    ejecuta los cálculos (dash.calc) bajo demanda y avisa a la página
    (dash.onData) cuando cambian los filtros o el ancho.
