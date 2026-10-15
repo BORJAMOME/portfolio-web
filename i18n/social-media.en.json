@@ -32,7 +32,7 @@
     "Social Media Performance 2025 vs 2024 | Borja Mora": "Social Media Performance 2025 vs 2024 | Borja Mora",
     "Redes sociales, 2025 vs 2024, en Power BI: las impresiones caen un 12,8 % y el gasto un 26,3 %. La eficiencia mejora aunque baje el volumen.": "Social media, 2025 vs 2024, in Power BI: impressions fall 12.8% and spend 26.3%. Efficiency improves even as volume drops.",
     "Un –12,8% en impresiones se lee de forma completamente distinta si el gasto cayó un –26,3%. Dashboard de eficiencia interanual en Power BI.": "−12.8% in impressions reads completely differently if spend fell by −26.3%. A year-on-year efficiency dashboard in Power BI.",
-    "Comparativa interanual en Power BI: el gasto cayó un 26,3% mientras las impresiones solo cayeron un 12,8% — la eficiencia mejoró aunque el volumen bajara.": "Year-on-year comparison in Power BI: spend fell 26.3% while impressions fell only 12.8% — efficiency improved even though volume dropped.",
+    "Comparativa interanual en Power BI: el gasto cayó un 26,3% mientras las impresiones solo cayeron un 12,8%: la eficiencia mejoró aunque el volumen bajara.": "Year-on-year comparison in Power BI: spend fell 26.3% while impressions fell only 12.8%: efficiency improved even though volume dropped.",
     "2025 vs 2024 · comparativa interanual de marketing en Power BI": "2025 vs 2024 · year-on-year marketing comparison in Power BI",
     "Gasto €": "Spend €",
     "2,75 mil€": "€2.75k",
@@ -69,9 +69,9 @@
     "(impulsado / orgánico)": "(boosted / organic)",
     "Nueve KPIs para leer el rendimiento desde la misma perspectiva.": "Nine KPIs to read performance from the same perspective.",
     "Con el modelo preparado, reuní los principales indicadores en un mismo dashboard. La idea era que una persona pudiera pasar de una visión general a los detalles sin tener que cambiar de criterio entre métricas. El dashboard permite comparar los resultados con el periodo anterior y detectar rápidamente dónde se producen los principales cambios.": "With the model ready, I brought the main indicators together in a single dashboard. The idea was that someone could move from the overview to the detail without switching criteria between metrics. The dashboard compares results with the previous period and makes it quick to spot where the main changes happen.",
-    "Dashboard Social Media Performance — vista 1": "Social Media Performance dashboard — view 1",
-    "Dashboard Social Media Performance — vista 2": "Social Media Performance dashboard — view 2",
-    "Dashboard Social Media Performance — vista 3": "Social Media Performance dashboard — view 3",
+    "Dashboard Social Media Performance: vista 1": "Social Media Performance dashboard: view 1",
+    "Dashboard Social Media Performance: vista 2": "Social Media Performance dashboard: view 2",
+    "Dashboard Social Media Performance: vista 3": "Social Media Performance dashboard: view 3",
     "Ver el dashboard": "View the dashboard",
     "Power BI · DAX · Esquema en estrella · Sparklines": "Power BI · DAX · Star schema · Sparklines",
     "A primera vista, los resultados parecían peores. Al comparar dos cifras, la historia cambia.": "At first sight, the results looked worse. Compare two figures and the story changes.",
@@ -123,7 +123,7 @@
     "Escríbeme": "Email me",
     "Informe financiero completo": "Full financial report",
     "Más": "More",
-    "Social Media Performance 2025 vs 2024 — Marketing Analytics | Borja Mora": "Social Media Performance 2025 vs 2024 — Marketing analytics | Borja Mora"
+    "Social Media Performance 2025 vs 2024: Marketing Analytics | Borja Mora": "Social Media Performance 2025 vs 2024: Marketing analytics | Borja Mora"
   },
   "keep": [
     "Español",

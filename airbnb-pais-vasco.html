@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Análisis del Mercado de Airbnb — País Vasco | Borja Mora</title>
+<title>Análisis del Mercado de Airbnb: País Vasco | Borja Mora</title>
 <meta name="description" content="Mercado de Airbnb en el País Vasco en Power BI: 6.030 anuncios y 213 localizaciones. Esquema en estrella, mapas y DAX con líneas de referencia dinámicas.">
 <meta name="theme-color" content="#071412">
 <link rel="canonical" href="https://borjamora.es/airbnb-pais-vasco.html">
@@ -13,21 +13,21 @@
 <script src="./lang.js?v=37dd6be74a"></script>
 <link rel="icon" type="image/svg+xml" href="./img/favicon.svg">
 <link rel="icon" href="./img/favicon.ico" type="image/x-icon">
-<!-- Fonts — Playfair Display (editorial serif) · Inter (body) · JetBrains Mono (labels) -->
+<!-- Fonts: Playfair Display (editorial serif) · Inter (body) · JetBrains Mono (labels) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- Open Graph -->
-<meta property="og:title" content="Análisis del Mercado de Airbnb — País Vasco | Borja Mora">
-<meta property="og:description" content="6.030 anuncios, 213 localizaciones, 3 provincias. Un análisis territorial que empieza por el mapa y no por el precio — y que destapa que el 0,8% de los anfitriones controla el 15,2% de la oferta.">
+<meta property="og:title" content="Análisis del Mercado de Airbnb: País Vasco | Borja Mora">
+<meta property="og:description" content="6.030 anuncios, 213 localizaciones, 3 provincias. Un análisis territorial que empieza por el mapa y no por el precio, y que destapa que el 0,8% de los anfitriones controla el 15,2% de la oferta.">
 <meta property="og:image" content="https://borjamora.es/img/airbnb-card.png">
 <meta property="og:url" content="https://borjamora.es/airbnb-pais-vasco.html">
 <meta property="og:type" content="article">
 <meta property="og:locale" content="es_ES">
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Análisis del Mercado de Airbnb — País Vasco | Borja Mora">
-<meta name="twitter:description" content="Un análisis territorial del mercado de Airbnb en el País Vasco: 6.030 anuncios, 213 localizaciones, 3 provincias y un hallazgo — el 0,8% de los anfitriones controla el 15,2% de la oferta.">
+<meta name="twitter:title" content="Análisis del Mercado de Airbnb: País Vasco | Borja Mora">
+<meta name="twitter:description" content="Un análisis territorial del mercado de Airbnb en el País Vasco: 6.030 anuncios, 213 localizaciones, 3 provincias y un hallazgo: el 0,8% de los anfitriones controla el 15,2% de la oferta.">
 <meta name="twitter:image" content="https://borjamora.es/img/airbnb-card.png">
 
 <!-- ── Cookie Consent + GA4 Consent Mode v2 (RGPD/LOPDGDD) ── -->
@@ -57,7 +57,7 @@
   gtag("config", "G-6PSDM6B5Z7", { page_language: document.documentElement.lang || "es" });
 </script>
 
-<!-- ── Cookie banner CSS (RGPD/LOPDGDD) — autocontenida, esta página no carga shared.css ── -->
+<!-- ── Cookie banner CSS (RGPD/LOPDGDD): autocontenida, esta página no carga shared.css ── -->
 <style>
   #bm-cookie-banner {
     position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(0);
@@ -173,7 +173,7 @@ section { padding: 7.5rem 0; }
   .segment-grid-4, .tools-grid-6 { grid-template-columns: 1fr !important; }
 }
 
-/* ── CTA Button — editorial, sin sombras, radio completo ── */
+/* ── CTA Button: editorial, sin sombras, radio completo ── */
 .pv-cta {
   display: inline-block;
   background: var(--pv-panel);
@@ -196,14 +196,14 @@ section { padding: 7.5rem 0; }
   border: 1.5px solid var(--pv-ink);
 }
 
-/* ── Cards — superficies planas, sin sombra ── */
+/* ── Cards: superficies planas, sin sombra ── */
 .pv-card { transition: border-color .2s ease; }
 .segment-grid-4 > div, .tools-grid-6 > div { transition: border-color .2s ease; }
 
-/* ── Dashboard images — como fotografías impresas ── */
+/* ── Dashboard images, como fotografías impresas ── */
 .dash-layout img { border-radius: 14px; border: 1px solid #E4E0D6; }
 
-/* ── Hero editorial — la ilustración del casco histórico como fondo ── */
+/* ── Hero editorial: la ilustración del casco histórico como fondo ── */
 .hero-editorial {
   position: relative; min-height: 100vh;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -314,7 +314,7 @@ section { padding: 7.5rem 0; }
   "@context": "https://schema.org",
   "@type": "CreativeWork",
   "@id": "https://borjamora.es/airbnb-pais-vasco.html#caso",
-  "name": "Análisis del Mercado de Airbnb — País Vasco",
+  "name": "Análisis del Mercado de Airbnb: País Vasco",
   "description": "Mercado de Airbnb en el País Vasco en Power BI: 6.030 anuncios y 213 localizaciones. Esquema en estrella, mapas y DAX con líneas de referencia dinámicas.",
   "url": "https://borjamora.es/airbnb-pais-vasco.html",
   "image": "https://borjamora.es/img/airbnb-card.png",
@@ -352,7 +352,7 @@ section { padding: 7.5rem 0; }
 
 <main id="main-content">
 
-<!-- S1 · HERO EDITORIAL — la ilustración del casco histórico como fondo, titular encima -->
+<!-- S1 · HERO EDITORIAL: la ilustración del casco histórico como fondo, titular encima -->
 <section class="hero-editorial" data-screen-label="Hero">
   <p class="reveal pv-eyebrow">Análisis de mercado · Airbnb</p>
   <h1 class="reveal pv-hero-title">Un dashboard de Power BI para leer el mercado más allá del precio.</h1>
@@ -454,12 +454,12 @@ section { padding: 7.5rem 0; }
     <p class="reveal reveal-delay-1" style="font-size:1.125rem; color:var(--pv-text); max-width:680px; line-height:1.7; margin-bottom:2.4rem;">Los filtros mantienen el contexto entre páginas, lo que permite pasar de un resumen ejecutivo a un mapa detallado sin romper el hilo del análisis.</p>
     <div class="dash-layout reveal reveal-delay-2" style="display:flex; flex-direction:column; gap:2.2rem; margin-bottom:1.8rem;">
       <figure style="margin:0;">
-        <picture><source srcset="./img/airbnb-1.webp" type="image/webp"><img width="2242" height="1258" loading="lazy" src="./img/airbnb-1.png" alt="Dashboard Airbnb País Vasco — página de Análisis" style="width:100%; height:auto;"></picture>
-        <figcaption style="margin-top:.8rem; font-size:.8rem; color:var(--pv-muted); text-align:center;">Página de Análisis — KPIs y comparativas por zona, tipo de alojamiento y anfitrión.</figcaption>
+        <picture><source srcset="./img/airbnb-1.webp" type="image/webp"><img width="2242" height="1258" loading="lazy" src="./img/airbnb-1.png" alt="Dashboard Airbnb País Vasco: página de Análisis" style="width:100%; height:auto;"></picture>
+        <figcaption style="margin-top:.8rem; font-size:.8rem; color:var(--pv-muted); text-align:center;">Página de Análisis: KPIs y comparativas por zona, tipo de alojamiento y anfitrión.</figcaption>
       </figure>
       <figure style="margin:0;">
-        <picture><source srcset="./img/airbnb-2.webp" type="image/webp"><img width="2244" height="1258" loading="lazy" src="./img/airbnb-2.png" alt="Dashboard Airbnb País Vasco — página de Mapa" style="width:100%; height:auto;"></picture>
-        <figcaption style="margin-top:.8rem; font-size:.8rem; color:var(--pv-muted); text-align:center;">Página de Mapa — distribución geográfica de los 6.030 anuncios por provincia.</figcaption>
+        <picture><source srcset="./img/airbnb-2.webp" type="image/webp"><img width="2244" height="1258" loading="lazy" src="./img/airbnb-2.png" alt="Dashboard Airbnb País Vasco: página de Mapa" style="width:100%; height:auto;"></picture>
+        <figcaption style="margin-top:.8rem; font-size:.8rem; color:var(--pv-muted); text-align:center;">Página de Mapa: distribución geográfica de los 6.030 anuncios por provincia.</figcaption>
       </figure>
     </div>
     <div class="reveal reveal-delay-3">
@@ -469,10 +469,10 @@ section { padding: 7.5rem 0; }
   </div>
 </section>
 
-<!-- S7 · IMPACTO — panel oscuro (Deep Forest) que rompe el ritmo de lectura -->
+<!-- S7 · IMPACTO: panel oscuro (Deep Forest) que rompe el ritmo de lectura -->
 <section data-screen-label="Impacto" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:7rem 2rem; background:var(--pv-panel);">
   <p class="reveal" style="font-family:var(--font-display); font-size:clamp(1.6rem, 3.6vw, 2.4rem); font-weight:500; line-height:1.3; color:#fff; max-width:760px; margin-bottom:2rem;">La señal que no aparecía en la media del mercado.</p>
-  <p class="reveal reveal-delay-1 impacto-text" style="font-family:var(--font-display); font-size:clamp(2rem, 5vw, 3.6rem); font-weight:600; line-height:1.15; max-width:1000px; margin-left:auto; margin-right:auto; text-align:center; margin-bottom:2rem;"><span style="color:#fff;">31 anfitriones (0,8%) — </span><span style="color:var(--pv-terra);">15,2% de toda la oferta.</span></p>
+  <p class="reveal reveal-delay-1 impacto-text" style="font-family:var(--font-display); font-size:clamp(2rem, 5vw, 3.6rem); font-weight:600; line-height:1.15; max-width:1000px; margin-left:auto; margin-right:auto; text-align:center; margin-bottom:2rem;"><span style="color:#fff;">31 anfitriones (0,8%): </span><span style="color:var(--pv-terra);">15,2% de toda la oferta.</span></p>
   <div style="max-width:680px; display:flex; flex-direction:column; gap:1.1rem;">
     <p class="reveal reveal-delay-2" style="font-size:clamp(1rem, 1.8vw, 1.15rem); color:#D6D2C7; line-height:1.75;">La media del mercado escondía una concentración muy clara.</p>
     <p class="reveal reveal-delay-3" style="font-size:clamp(1rem, 1.8vw, 1.15rem); color:#D6D2C7; line-height:1.75;">Al analizar la distribución de los anuncios descubrí que solo 31 anfitriones, que representan aproximadamente el 0,8% del total, gestionaban más del 15% de toda la oferta.</p>

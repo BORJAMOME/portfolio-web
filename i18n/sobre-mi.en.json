@@ -1,15 +1,15 @@
 {
   "_": "Traducción al inglés británico de sobre-mi.html (→ en/about.html). La genera y comprueba tools/build-en.mjs.",
   "units": {
-    "Sobre mí — Borja Mora Méndez": "About me — Borja Mora Méndez",
+    "Sobre mí | Borja Mora Méndez": "About me | Borja Mora Méndez",
     "Power BI · DAX · Python · SQL · UX/UI · Data Storytelling. Madrid o remoto.": "Power BI · DAX · Python · SQL · UX/UI · Data storytelling. Madrid or remote.",
-    "Sobre mí — Borja Mora, Data Analyst Junior · Power BI": "About me — Borja Mora, Junior Data Analyst · Power BI",
+    "Sobre mí | Borja Mora, Data Analyst Junior · Power BI": "About me | Borja Mora, Junior Data Analyst · Power BI",
     "Transformo datos complejos en dashboards claros que ayudan a entender qué está pasando y qué decisiones tomar.": "I turn complex data into clear dashboards that help people understand what’s happening and which decisions to make.",
     "Borja Mora, Data Analyst Junior especializado en Power BI": "Borja Mora, Junior Data Analyst specialising in Power BI",
     "Transformo datos complejos en dashboards claros. Modelado de datos, DAX y Data Storytelling.": "I turn complex data into clear dashboards. Data modelling, DAX and data storytelling.",
     "Saltar al contenido": "Skip to content",
     "Navegación principal": "Main navigation",
-    "Borja Mora — Inicio": "Borja Mora — Home",
+    "Borja Mora | Inicio": "Borja Mora | Home",
     "Idioma · Language": "Language · Idioma",
     "Inicio": "Home",
     "Sobre mí": "About me",
@@ -70,7 +70,7 @@
     "Información legal": "Legal information",
     "Copiar": "Copy",
     "borja.mora.mendez@gmail.com": "borja.mora.mendez@gmail.com",
-    "2024 — presente": "2024 — present",
+    "2024–presente": "2024–present",
     "Data Analyst <span class=\"res-org\">· Especialización y proyectos</span>": "Data Analyst <span class=\"res-org\">· Specialisation and projects</span>",
     "Desde 2024 he continuado desarrollando mi perfil como Data Analyst, combinando formación especializada con proyectos propios de Business Intelligence, análisis y visualización de datos.": "Since 2024 I’ve continued to develop my profile as a Data Analyst, combining specialist training with my own business intelligence, analysis and data visualisation projects.",
     "He desarrollado <strong>+25 proyectos en Power BI, SQL y Python</strong>, trabajando desde la preparación y modelado de los datos hasta el análisis, la creación de KPIs y la visualización. Entre ellos se incluyen proyectos de <strong>Business Intelligence end-to-end, reporting financiero, análisis RFM y Machine Learning</strong>.": "I’ve built <strong>25+ projects in Power BI, SQL and Python</strong>, working from data preparation and modelling through to analysis, KPI design and visualisation. They include <strong>end-to-end business intelligence, financial reporting, RFM analysis and machine learning</strong> projects.",
@@ -128,8 +128,8 @@
       "\"url\": \"https://borjamora.es/en/about.html\""
     ],
     [
-      "\"name\": \"Sobre mí — Borja Mora Méndez\"",
-      "\"name\": \"About me — Borja Mora Méndez\""
+      "\"name\": \"Sobre mí | Borja Mora Méndez\"",
+      "\"name\": \"About me | Borja Mora Méndez\""
     ],
     [
       "\"inLanguage\": \"es-ES\"",
@@ -140,8 +140,8 @@
       "\"jobTitle\": \"Junior Data Analyst\""
     ],
     [
-      "\"name\": \"Bootcamp Data Analytics — Neoland (Python, SQL, Estadística, Machine Learning)\"",
-      "\"name\": \"Data Analytics Bootcamp — Neoland (Python, SQL, Statistics, Machine Learning)\""
+      "\"name\": \"Bootcamp Data Analytics: Neoland (Python, SQL, Estadística, Machine Learning)\"",
+      "\"name\": \"Data Analytics Bootcamp: Neoland (Python, SQL, Statistics, Machine Learning)\""
     ],
     [
       "burger.setAttribute('aria-label','Cerrar menú')",

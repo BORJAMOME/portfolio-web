@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   progress.js — orientación: barra de progreso + rail de capítulos
+   progress.js, orientación: barra de progreso + rail de capítulos
    · La barra marca dónde empieza cada capítulo (pequeñas muescas):
      no solo "cuánto llevo", también "en qué parte del libro estoy".
    · Se engrosa un poco mientras hay scroll y vuelve a su grosor en reposo.

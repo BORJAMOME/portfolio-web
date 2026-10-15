@@ -1,4 +1,4 @@
-# i18n/ — versiones en inglés del portfolio
+# i18n/: versiones en inglés del portfolio
 
 Las páginas en inglés (inglés británico) **no se editan a mano**: se generan desde la página
 española, que es siempre la fuente.

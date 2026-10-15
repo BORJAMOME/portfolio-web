@@ -1,4 +1,4 @@
-# ds/ — manual «Data Storytelling y diseño de dashboards»
+# ds/: manual «Data Storytelling y diseño de dashboards»
 
 Todo lo que usa el manual vive aquí. Las páginas se quedan donde están sus URL:
 

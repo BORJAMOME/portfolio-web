@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   tools/check-a11y.mjs — accesibilidad (WCAG 2.2 AA) y errores de JavaScript
+   tools/check-a11y.mjs: accesibilidad (WCAG 2.2 AA) y errores de JavaScript
    ─────────────────────────────────────────────────
      npm i --no-save playwright axe-core && npx playwright install chromium
      node tools/check-a11y.mjs              → todas las páginas

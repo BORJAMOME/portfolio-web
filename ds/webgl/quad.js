@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   quad.js — WebGL mínimo: un triángulo que cubre el canvas + un shader
+   quad.js, WebGL mínimo: un triángulo que cubre el canvas + un shader
    Por qué no Three.js: los dos materiales de esta página (cristal y
    linterna) son un único plano a pantalla completa. Three pesaría
    ~340 KB para dibujar un rectángulo; esto pesa ~2 KB y hace lo mismo.

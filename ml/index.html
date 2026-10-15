@@ -871,13 +871,13 @@ code{background:var(--card-2);color:var(--accent-ink)}
       <div class="tblhead">
         <div>
           <h2 class="th-title">Tabla comparativa</h2>
-          <p class="th-sub" style="margin-bottom:0">Los cuatro atributos de decisión, uno al lado del otro. <b>Pulsa cualquier cabecera para ordenar.</b> La tabla respeta el buscador y los filtros de arriba. Escala: <span class="sym s-f">●</span> muy favorable · <span class="sym s-m">◑</span> intermedio · <span class="sym s-p">○</span> poco favorable · <span class="sym s-na">—</span> no aplica.</p>
+          <p class="th-sub" style="margin-bottom:0">Los cuatro atributos de decisión, uno al lado del otro. <b>Pulsa cualquier cabecera para ordenar.</b> La tabla respeta el buscador y los filtros de arriba. Escala: <span class="sym s-f">●</span> muy favorable · <span class="sym s-m">◑</span> intermedio · <span class="sym s-p">○</span> poco favorable · <span class="sym s-na">–</span> no aplica.</p>
         </div>
       </div>
       <div class="tblwrap">
         <table><thead><tr id="thr"></tr></thead><tbody id="tbody"></tbody></table>
       </div>
-      <p class="note"><b>Nota de honestidad:</b> los valores marcados con <b>*</b> no vienen de la tabla del temario — son mi estimación razonada para modelos que las diapositivas no cubren (supervivencia, causalidad, SOM, LOF, recomendadores, topic modeling, series temporales, refuerzo y aceleradores). Trátalos como orientación, no como dato de clase.</p>
+      <p class="note"><b>Nota de honestidad:</b> los valores marcados con <b>*</b> no vienen de la tabla del temario: son mi estimación razonada para modelos que las diapositivas no cubren (supervivencia, causalidad, SOM, LOF, recomendadores, topic modeling, series temporales, refuerzo y aceleradores). Trátalos como orientación, no como dato de clase.</p>
     </section>
 
     <div class="stats" id="stats"></div>
@@ -893,7 +893,7 @@ code{background:var(--card-2);color:var(--accent-ink)}
 <script>
 /* ── core.js ── */
 /* ══════════════════════════════════════════════════════════════
-   GLOSARIO — [término, variantes que se detectan en el texto, definición]
+   GLOSARIO: [término, variantes que se detectan en el texto, definición]
    glossLink() subraya la primera aparición de cada término dentro
    de la vista de estudio y de Fundamentos; al pasar el ratón,
    enfocar con el teclado o tocar, aparece la definición.
@@ -1144,7 +1144,7 @@ function initTheme(){
 
 
 /* ══════════════════════════════════════════════════════════════
-   FUNDAMENTOS — los conceptos que sostienen a TODOS los modelos.
+   FUNDAMENTOS: los conceptos que sostienen a TODOS los modelos.
    Cada concepto: s = explicación sencilla · an = analogía ·
    ej = ejemplo con números · err = el error típico de junior ·
    cod = código mínimo (opcional) · lab = laboratorio · rel = modelos
@@ -1342,7 +1342,7 @@ var LECTURAS = [
 
 
 /* ══════════════════════════════════════════════════════════════
-   LABORATORIO VISUAL — motor común
+   LABORATORIO VISUAL: motor común
    Cada laboratorio: {id, ic, t, q, dim, intro, notice[], models[],
    build(stage, ctl, read, C) → función de limpieza}.
    Los 2D usan <canvas>; los 3D cargan three.js bajo demanda
@@ -1864,7 +1864,7 @@ LABS.push({id:"umbral", g:"fund", ic:"", dim:"2D", t:"El umbral y la matriz de c
        '<tr><th>Se va de verdad</th><td class="ok">' + TP + '<small>aciertos (TP)</small></td><td class="ko">' + FN + '<small>se escapan (FN)</small></td></tr>' +
        '<tr><th>Se queda de verdad</th><td class="ko">' + FP + '<small>falsas alarmas (FP)</small></td><td class="ok">' + TN + '<small>bien descartados (TN)</small></td></tr></table>' +
        '<div class="lmets"><span>Accuracy <b>' + pct(acc) + '</b></span><span>Precision <b>' + pct(P) + '</b></span><span>Recall <b>' + pct(R) + '</b></span><span>F1 <b>' + fmt(F1) + '</b></span>' +
-       '<span>«Decir siempre que no» <b>' + pct(1 - prev) + '</b> de accuracy</span><span>Falsas alarmas por acierto <b>' + (TP ? fmt(FP / TP, 1) : "—") + '</b></span></div>';
+       '<span>«Decir siempre que no» <b>' + pct(1 - prev) + '</b> de accuracy</span><span>Falsas alarmas por acierto <b>' + (TP ? fmt(FP / TP, 1) : "–") + '</b></span></div>';
    }
    var sl;
    function setThr(v){ thr = Math.max(0.01, Math.min(0.99, v)); sl.set(thr); draw(); }
@@ -2532,7 +2532,7 @@ LABS.push({id:"kmeans3d", g:"unsup", ic:"", dim:"3D", t:"K-Means paso a paso",
        paint();
      }
      function paint(){
-       read.innerHTML = '<span>Iteración <b>' + it + '</b></span><span>Próximo paso <b>' + (conv ? "—" : phase === "assign" ? "asignar" : "mover centros") + '</b></span><span>Inercia <b>' + (it ? fmt(inertia(), 1) : "—") + '</b></span>' +
+       read.innerHTML = '<span>Iteración <b>' + it + '</b></span><span>Próximo paso <b>' + (conv ? "–" : phase === "assign" ? "asignar" : "mover centros") + '</b></span><span>Inercia <b>' + (it ? fmt(inertia(), 1) : "–") + '</b></span>' +
          '<span class="ldiag">' + (conv ? "<b class='lgood'>Convergido</b>: ningún punto cambia de grupo. Prueba otra inicialización y compara la inercia." : "Cada «asignar» colorea; cada «mover» desplaza los centros a la media.") + '</span>';
      }
      ctlBtn(ctl, "Siguiente paso", function(){ clearInterval(timer); stepOnce(); }, true);
@@ -2606,7 +2606,7 @@ LABS.sort(function(a,b){ return ["sobreajuste","descenso","regul","umbral","plan
 <script>
 /* ── viz-a.js ── */
 /* ══════════════════════════════════════════════════════════════
-   VIZ · lote A — un visual propio por modelo (regresión y clasificación clásicas)
+   VIZ · lote A: un visual propio por modelo (regresión y clasificación clásicas)
    linsimple · ridge · lasso · elastic · poisson · quantile · bayesridge · svr · gbr
    logistica · lda · qda · nb · knn
    Todo se calcula de verdad con datos sintéticos deterministas (mulberry).
@@ -3387,7 +3387,7 @@ VIZ.push({id:"v-svr", model:"svr", g:"model", ic:"", dim:"2D",
      legend(ctx, [["predicción", C.c[0], "line"], ["tubo ±ε", C.c[0], "band"], ["vector de soporte", C.c[0], "o"], ["dentro del tubo (no cuenta)", C.muted, "o"]], box[0] + 10, box[1] + 18, C);
      var n = D.length;
      read.innerHTML = '<span>Vectores de soporte <b>' + nsv + ' de ' + n + '</b></span><span>Dentro del tubo <b>' + pct(inside / n, 0) + '</b></span>' +
-       '<span>Distancia media al tubo (los de fuera) <b>' + (nout ? fmt(dist / nout, 2) : "—") + ' MWh</b></span><span>ε <b>' + fmt(eps, 2) + '</b> · C <b>' + fmt(Math.pow(10, lc), Math.pow(10, lc) < 1 ? 2 : 0) + '</b></span>' +
+       '<span>Distancia media al tubo (los de fuera) <b>' + (nout ? fmt(dist / nout, 2) : "–") + ' MWh</b></span><span>ε <b>' + fmt(eps, 2) + '</b> · C <b>' + fmt(Math.pow(10, lc), Math.pow(10, lc) < 1 ? 2 : 0) + '</b></span>' +
        '<span class="ldiag">' + (kind === "lin" ? "Una recta no puede seguir la curva: muchos puntos quedan fuera del tubo y todos se convierten en vectores de soporte. Prueba el modo <b>curvo (RBF)</b>."
          : eps >= 1 ? "<b class='lwarn'>Tubo muy ancho:</b> casi todo cabe dentro y el modelo se relaja; pierde detalle."
          : nsv / n > 0.75 ? "Casi todos los puntos son vectores de soporte: el tubo es tan fino que <b>todo error cuenta</b>. Sube ε para un modelo más simple."
@@ -3876,7 +3876,7 @@ VIZ.push({id:"v-knn", model:"knn", g:"model", ic:"", dim:"2D",
 <script>
 /* ── viz-b.js ── */
 /* ══════════════════════════════════════════════════════════════
-   VIZ · lote B — un visual propio por modelo:
+   VIZ · lote B, un visual propio por modelo:
    rf, extratrees, xgboost, lightgbm, catboost, adaboost, svmlin,
    cox, uplift, propensity, automl, pyspark.
    Todo dentro de un IIFE: solo se exponen los VIZ.push.
@@ -4455,7 +4455,7 @@ VIZ.push({id:"v-xgboost", model:"xgboost", g:"model", ic:"", dim:"2D",
      T(ctx, "validación", lx, Math.min(A.sy(vaL[L]) - 8, b[1] + b[3] - 6), {s:11, w:"600", c:C.c[1], a:"right"});
      var tr = drawTree();
      var over = vaL[L] - vmin;
-     read.innerHTML = '<span>Mejor ronda <b>' + bestR + '</b></span><span>Parada temprana en <b>' + (stopR < R ? stopR : "—") + '</b></span>' +
+     read.innerHTML = '<span>Mejor ronda <b>' + bestR + '</b></span><span>Parada temprana en <b>' + (stopR < R ? stopR : "–") + '</b></span>' +
        '<span>Log-loss validación · mínimo <b>' + fmt(vmin, 3) + '</b> · a ' + L + ' rondas <b>' + fmt(vaL[L], 3) + '</b></span>' +
        '<span>Cortes podados <b>' + tr.pruned + ' de 3</b></span>' +
        '<span class="ldiag">' + (over > 0.02 ? "Seguir hasta " + L + " rondas empeora la validación <b class='lbad'>▼ " + fmt(over, 3) + "</b>: el modelo empieza a memorizar ruido. El early stopping te ahorra " + (R - bestR) + " árboles inútiles." :
@@ -5665,7 +5665,7 @@ VIZ.push({id:"v-pyspark", model:"pyspark", g:"model", ic:"", dim:"2D",
    var lastRead = "";
    function readout(){
      var html = '<span>Transformaciones en el plan <b>' + plan.length + '</b></span><span>Stages <b>' + (ran ? stats.stages : 1 + plan.filter(function(o){ return o === "group" || (o === "join" && !bcast); }).length) + '</b></span>' +
-       '<span>MB movidos en shuffle <b>' + (ran ? fmt(stats.mb, 1) : "—") + '</b></span><span>MB enviados por broadcast <b>' + (ran ? stats.bc : "—") + '</b></span><span>Tiempo simulado <b>' + (ran ? "≈ " + fmt(stats.secs, 1) + " s" : "—") + '</b></span>' +
+       '<span>MB movidos en shuffle <b>' + (ran ? fmt(stats.mb, 1) : "–") + '</b></span><span>MB enviados por broadcast <b>' + (ran ? stats.bc : "–") + '</b></span><span>Tiempo simulado <b>' + (ran ? "≈ " + fmt(stats.secs, 1) + " s" : "–") + '</b></span>' +
        '<span class="ldiag">' + (!ran ? "Mientras no lances una acción, Spark solo construye el plan (evaluación perezosa): ni lee el disco." :
          stats.mb > 100 ? "<b class='lbad'>Shuffle caro</b>: " + fmt(stats.mb, 0) + " MB cruzando la red. Con broadcast, la tabla pequeña viaja a cada ejecutor y los datos grandes se quedan donde están." :
          plan.indexOf("group") > -1 ? "El groupBy hace una <b>suma parcial</b> antes del shuffle, así que solo viajan unas pocas filas resumidas (" + fmt(stats.mb, 1) + " MB), no el DataFrame entero." :
@@ -5700,7 +5700,7 @@ VIZ.push({id:"v-pyspark", model:"pyspark", g:"model", ic:"", dim:"2D",
 <script>
 /* ── viz-c.js ── */
 /* ══════════════════════════════════════════════════════════════
-   VIZ · lote C — redes neuronales, modelos gráficos y refuerzo
+   VIZ · lote C: redes neuronales, modelos gráficos y refuerzo
    mlp · cnn · rnn · transformer · autoenc · rbm · som · bayesnet ·
    hmm · qlearning · sarsa · dqn · ppo
    ══════════════════════════════════════════════════════════════ */
@@ -5754,7 +5754,7 @@ function hatch(ctx, x, y, w, h, col, gap){
 }
 function fmtN(n){ return Math.round(n).toLocaleString("es-ES"); }
 
-/* ══ 1. MLP — PLAYGROUND ════════════════════════════════════════ */
+/* ══ 1. MLP: PLAYGROUND ════════════════════════════════════════ */
 VIZ.push({id:"v-mlp", model:"mlp", g:"model", ic:"", dim:"2D",
  t:"Playground de una red neuronal",
  q:"¿Por qué una red con capas ocultas separa lo que una recta no puede separar?",
@@ -5926,7 +5926,7 @@ VIZ.push({id:"v-mlp", model:"mlp", g:"model", ic:"", dim:"2D",
        ctx.strokeStyle = s[1]; ctx.lineWidth = 2; ctx.setLineDash(s[2]); ctx.beginPath();
        hist.forEach(function(h, i){ var X = Ax.sx(h.ep), Y = Ax.sy(Math.min(mx, h[s[0]])); i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); }); ctx.stroke(); ctx.setLineDash([]);
      });
-     tx(ctx, "— train", LB[0] + LB[2] - 96, LB[1] + 14, {s:11, w:600, c:C.c[0]});
+     tx(ctx, "– train", LB[0] + LB[2] - 96, LB[1] + 14, {s:11, w:600, c:C.c[0]});
      tx(ctx, "- - test", LB[0] + LB[2] - 46, LB[1] + 14, {s:11, w:600, c:C.c[1]});
      /* lectura */
      var h = hist[hist.length - 1] || {tr:NaN, te:NaN, acc:0, accTr:0}, msg;
@@ -5936,7 +5936,7 @@ VIZ.push({id:"v-mlp", model:"mlp", g:"model", ic:"", dim:"2D",
      else if(h.acc >= 0.95) msg = "<b>Separado.</b> Las neuronas ocultas trazan trozos de frontera y la salida los combina en una forma curva que encierra cada clase.";
      else if(h.acc >= 0.8) msg = "Va bien, pero la frontera aún no sigue la forma. Dale más épocas o más neuronas.";
      else msg = "La red no tiene forma suficiente para estos datos (o el ritmo de aprendizaje es poco adecuado). Prueba más neuronas, 2 capas u otra activación.";
-     read.innerHTML = '<span>Época <b>' + fmtN(ep) + '</b></span><span>Pérdida train <b>' + (isNaN(h.tr) ? "—" : fmt(h.tr, 3)) + '</b></span><span>Pérdida test <b>' + (isNaN(h.te) ? "—" : fmt(h.te, 3)) + '</b></span>' +
+     read.innerHTML = '<span>Época <b>' + fmtN(ep) + '</b></span><span>Pérdida train <b>' + (isNaN(h.tr) ? "–" : fmt(h.tr, 3)) + '</b></span><span>Pérdida test <b>' + (isNaN(h.te) ? "–" : fmt(h.te, 3)) + '</b></span>' +
        '<span>Accuracy test <b>' + pct(h.acc, 0) + '</b></span><span>Parámetros <b>' + net.W.reduce(function(s, w, i){ return s + w.length + net.b[i].length; }, 0) + '</b></span><span class="ldiag">' + msg + '</span>';
    }
    function reset(){ genData(); initNet(); record(); draw(); }
@@ -5957,7 +5957,7 @@ VIZ.push({id:"v-mlp", model:"mlp", g:"model", ic:"", dim:"2D",
    return function(){ stop(); };
  }});
 
-/* ══ 2. CNN — CONVOLUCIÓN ANIMADA ═══════════════════════════════ */
+/* ══ 2. CNN: CONVOLUCIÓN ANIMADA ═══════════════════════════════ */
 VIZ.push({id:"v-cnn", model:"cnn", g:"model", ic:"", dim:"2D",
  t:"Una convolución, celda a celda",
  q:"¿Qué hace exactamente un filtro de una red convolucional sobre una imagen?",
@@ -6071,7 +6071,7 @@ VIZ.push({id:"v-cnn", model:"cnn", g:"model", ic:"", dim:"2D",
    return function(){ stopIt(); };
  }});
 
-/* ══ 3. RNN frente a LSTM — MEMORIA ═════════════════════════════ */
+/* ══ 3. RNN frente a LSTM: MEMORIA ═════════════════════════════ */
 VIZ.push({id:"v-rnn", model:"rnn", g:"model", ic:"", dim:"2D",
  t:"La memoria de una RNN frente a una LSTM",
  q:"¿Por qué una red recurrente simple «olvida» lo que pasó hace muchos pasos y una LSTM no?",
@@ -6095,7 +6095,7 @@ VIZ.push({id:"v-rnn", model:"rnn", g:"model", ic:"", dim:"2D",
    function cx(t){ return X0 + t * (CW + GP); }
    function draw(){
      K.clear(); var S = series(), g = S[mode], col = mode === "rnn" ? C.c[1] : C.c[0];
-     tx(ctx, "Ventas semanales (miles de €) — entran una por paso", X0, 24, {s:13, w:700, c:C.ink});
+     tx(ctx, "Ventas semanales (miles de €): entran una por paso", X0, 24, {s:13, w:700, c:C.ink});
      for(var t = 0; t < 12; t++){
        var x = cx(t), y = 36, on = t < cur, a = on ? 1 : 0.35;
        ctx.globalAlpha = a;
@@ -6157,7 +6157,7 @@ VIZ.push({id:"v-rnn", model:"rnn", g:"model", ic:"", dim:"2D",
    return function(){ stopIt(); };
  }});
 
-/* ══ 4. TRANSFORMER — ATENCIÓN ══════════════════════════════════ */
+/* ══ 4. TRANSFORMER: ATENCIÓN ══════════════════════════════════ */
 VIZ.push({id:"v-transformer", model:"transformer", g:"model", ic:"", dim:"2D",
  t:"Atención: a quién mira cada palabra",
  q:"¿Cómo decide un transformer qué significa «banco» según la frase?",
@@ -6256,7 +6256,7 @@ VIZ.push({id:"v-transformer", model:"transformer", g:"model", ic:"", dim:"2D",
    return function(){};
  }});
 
-/* ══ 5. AUTOENCODER — ANOMALÍAS POR ERROR DE RECONSTRUCCIÓN ═════ */
+/* ══ 5. AUTOENCODER: ANOMALÍAS POR ERROR DE RECONSTRUCCIÓN ═════ */
 VIZ.push({id:"v-autoenc", model:"autoenc", g:"model", ic:"", dim:"2D",
  t:"Autoencoder: lo que no sabe reconstruir es raro",
  q:"¿Cómo detecta anomalías una red que solo aprende a copiar su entrada?",
@@ -6354,7 +6354,7 @@ VIZ.push({id:"v-autoenc", model:"autoenc", g:"model", ic:"", dim:"2D",
      errs.forEach(function(e, i){ var flag = e > thr; if(P[i][2]){ ma += e; if(flag) TP++; else FN++; } else { mn += e; if(flag) FP++; } });
      mn /= 170; ma /= 10; var prec = TP / Math.max(1, TP + FP), rec = TP / 10;
      read.innerHTML = '<span>Época <b>' + fmtN(ep) + '</b></span><span>Error medio normales <b>' + fmt(mn, 3) + '</b></span><span>Error medio anómalas <b>' + fmt(ma, 3) + '</b></span>' +
-       '<span>Marcadas <b>' + (TP + FP) + '</b></span><span>Precision <b>' + (TP + FP ? pct(prec, 0) : "—") + '</b></span><span>Recall <b>' + pct(rec, 0) + '</b> (' + TP + ' de 10)</span>' +
+       '<span>Marcadas <b>' + (TP + FP) + '</b></span><span>Precision <b>' + (TP + FP ? pct(prec, 0) : "–") + '</b></span><span>Recall <b>' + pct(rec, 0) + '</b> (' + TP + ' de 10)</span>' +
        '<span class="ldiag">' + (ep < 400 ? "Entrenando: la red aún está aprendiendo la forma de los datos…" :
          nb === 2 ? "Con <b>2 neuronas</b> en el cuello la red no necesita entender el patrón: copia cualquier punto, incluidas las anomalías (error medio de las ▲: " + fmt(ma, 3) + "). Sin cuello de botella el error ya no distingue lo raro." :
          "Las anómalas se reconstruyen " + fmt(ma / Math.max(1e-6, mn), 0) + " veces peor que las normales: el cuello de 1 neurona solo «sabe» dibujar la curva. " + (rec === 1 && prec === 1 ? "Con este umbral las cazas todas sin falsas alarmas." : rec < 1 ? "Con este umbral se te escapan " + FN + "." : "Con este umbral bloqueas también " + FP + " normales.")) + '</span>';
@@ -6375,7 +6375,7 @@ VIZ.push({id:"v-autoenc", model:"autoenc", g:"model", ic:"", dim:"2D",
    return function(){ stop(); };
  }});
 
-/* ══ 6. RBM — RECOMENDADOR DE PELÍCULAS ═════════════════════════ */
+/* ══ 6. RBM: RECOMENDADOR DE PELÍCULAS ═════════════════════════ */
 VIZ.push({id:"v-rbm", model:"rbm", g:"model", ic:"", dim:"2D",
  t:"Una RBM que recomienda películas",
  q:"¿Cómo «adivina» una máquina de Boltzmann restringida qué más te gustará?",
@@ -6475,7 +6475,7 @@ VIZ.push({id:"v-rbm", model:"rbm", g:"model", ic:"", dim:"2D",
    return function(){};
  }});
 
-/* ══ 7. SOM — MAPA AUTOORGANIZADO DE COLORES ════════════════════ */
+/* ══ 7. SOM: MAPA AUTOORGANIZADO DE COLORES ════════════════════ */
 VIZ.push({id:"v-som", model:"som", g:"model", ic:"", dim:"2D",
  t:"Un mapa autoorganizado de colores",
  q:"¿Cómo ordena un SOM datos de 3 dimensiones en un mapa plano?",
@@ -6553,7 +6553,7 @@ VIZ.push({id:"v-som", model:"som", g:"model", ic:"", dim:"2D",
    return function(){ stop(); };
  }});
 
-/* ══ 8. RED BAYESIANA — «EXPLAINING AWAY» ══════════════════════ */
+/* ══ 8. RED BAYESIANA: «EXPLAINING AWAY» ══════════════════════ */
 VIZ.push({id:"v-bayesnet", model:"bayesnet", g:"model", ic:"", dim:"2D",
  t:"Una red bayesiana que razona hacia atrás",
  q:"¿Cómo cambia lo que creemos sobre una causa cuando aparece otra explicación?",
@@ -6663,7 +6663,7 @@ VIZ.push({id:"v-bayesnet", model:"bayesnet", g:"model", ic:"", dim:"2D",
    return function(){ ro.disconnect(); };
  }});
 
-/* ══ 9. HMM — REGÍMENES DE MERCADO CON VITERBI ═════════════════ */
+/* ══ 9. HMM: REGÍMENES DE MERCADO CON VITERBI ═════════════════ */
 VIZ.push({id:"v-hmm", model:"hmm", g:"model", ic:"", dim:"2D",
  t:"Regímenes ocultos: calma y estrés",
  q:"¿Cómo separa un modelo oculto de Markov los periodos tranquilos de los de crisis?",
@@ -6735,7 +6735,7 @@ VIZ.push({id:"v-hmm", model:"hmm", g:"model", ic:"", dim:"2D",
    return function(){};
  }});
 
-/* ══ 10. Q-LEARNING — ROBOT DE ALMACÉN ══════════════════════════ */
+/* ══ 10. Q-LEARNING: ROBOT DE ALMACÉN ══════════════════════════ */
 VIZ.push({id:"v-qlearning", model:"qlearning", g:"model", ic:"", dim:"2D",
  t:"Q-Learning: un robot aprende el almacén",
  q:"¿Cómo aprende un agente la mejor ruta solo a base de premios y castigos?",
@@ -6815,10 +6815,10 @@ VIZ.push({id:"v-qlearning", model:"qlearning", g:"model", ic:"", dim:"2D",
        ctx.restore(); }
      ctx.strokeStyle = C.ink; ctx.setLineDash([4, 3]); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(RB[0], A.sy(-1)); ctx.lineTo(RB[0] + RB[2], A.sy(-1)); ctx.stroke(); ctx.setLineDash([]);
      tx(ctx, "óptimo (−1)", RB[0] + RB[2] - 4, A.sy(-1) - 5, {s:11, c:C.ink, a:"right"});
-     tx(ctx, "— media de 20", RB[0] + 8, RB[1] + RB[3] - 22, {s:11, w:600, c:C.c[0]}); tx(ctx, "— cada episodio", RB[0] + 8, RB[1] + RB[3] - 8, {s:11, c:C.muted});
+     tx(ctx, "– media de 20", RB[0] + 8, RB[1] + RB[3] - 22, {s:11, w:600, c:C.c[0]}); tx(ctx, "– cada episodio", RB[0] + 8, RB[1] + RB[3] - 8, {s:11, c:C.muted});
      /* lectura */
      var last = rewards.slice(-20), mean = last.length ? last.reduce(function(a, b){ return a + b; }, 0) / last.length : NaN;
-     read.innerHTML = '<span>Episodios <b>' + n + '</b></span><span>Recompensa media (últimos 20) <b>' + (isNaN(mean) ? "—" : fmt(mean, 1)) + '</b></span><span>Ruta aprendida <b>' + (rt.ok ? (rt.path.length - 1) + " pasos" : "aún no llega") + '</b></span><span>Casillas exploradas <b>' + vis.filter(Boolean).length + '</b></span>' +
+     read.innerHTML = '<span>Episodios <b>' + n + '</b></span><span>Recompensa media (últimos 20) <b>' + (isNaN(mean) ? "–" : fmt(mean, 1)) + '</b></span><span>Ruta aprendida <b>' + (rt.ok ? (rt.path.length - 1) + " pasos" : "aún no llega") + '</b></span><span>Casillas exploradas <b>' + vis.filter(Boolean).length + '</b></span>' +
        '<span class="ldiag">' + (n === 0 ? "El robot aún no sabe nada: todas las Q valen 0. Pulsa «1 episodio» para verle dar tumbos o para entrenar." :
          !rt.ok ? "Todavía no hay una ruta completa: el valor del se está propagando hacia atrás. Sigue entrenando." :
          rt.path.length - 1 <= 12 ? "La política voraz (seguir siempre la flecha) ya lleva al por una ruta mínima de " + (rt.path.length - 1) + " pasos esquivando las carretillas. " + (eps > 0.05 ? "La media no llega al óptimo porque con ε = " + fmt(eps, 2) + " el robot sigue explorando a veces." : "") :
@@ -6841,7 +6841,7 @@ VIZ.push({id:"v-qlearning", model:"qlearning", g:"model", ic:"", dim:"2D",
    return function(){ stopIt(); };
  }});
 
-/* ══ 11. SARSA frente a Q-LEARNING — EL ACANTILADO ═════════════ */
+/* ══ 11. SARSA frente a Q-LEARNING: EL ACANTILADO ═════════════ */
 VIZ.push({id:"v-sarsa", model:"sarsa", g:"model", ic:"", dim:"2D",
  t:"SARSA frente a Q-Learning en el acantilado",
  q:"¿Por qué SARSA aprende un camino más prudente que Q-Learning?",
@@ -6912,8 +6912,8 @@ VIZ.push({id:"v-sarsa", model:"sarsa", g:"model", ic:"", dim:"2D",
      /* lectura */
      function last(k){ var s = 0, n = 0; agents[k].forEach(function(ag){ ag.rw.slice(-50).forEach(function(v){ s += v; n++; }); }); return n ? s / n : NaN; }
      var mq = last("q"), ms = last("s"), lq = R.q && R.q.ok ? R.q.p.length - 1 : null, ls = R.s && R.s.ok ? R.s.p.length - 1 : null;
-     read.innerHTML = '<span>Episodios <b>' + ep + ' / ' + MAXE + '</b></span><span>Recompensa media (últimos 50) · Q-Learning <b>' + (isNaN(mq) ? "—" : fmt(mq, 1)) + '</b></span><span>· SARSA <b>' + (isNaN(ms) ? "—" : fmt(ms, 1)) + '</b></span>' +
-       '<span>Ruta Q-Learning <b>' + (lq ? lq + " pasos" : "—") + '</b></span><span>Ruta SARSA <b>' + (ls ? ls + " pasos" : "—") + '</b></span>' +
+     read.innerHTML = '<span>Episodios <b>' + ep + ' / ' + MAXE + '</b></span><span>Recompensa media (últimos 50) · Q-Learning <b>' + (isNaN(mq) ? "–" : fmt(mq, 1)) + '</b></span><span>· SARSA <b>' + (isNaN(ms) ? "–" : fmt(ms, 1)) + '</b></span>' +
+       '<span>Ruta Q-Learning <b>' + (lq ? lq + " pasos" : "–") + '</b></span><span>Ruta SARSA <b>' + (ls ? ls + " pasos" : "–") + '</b></span>' +
        '<span class="ldiag">' + (ep < 40 ? "Aprendiendo: al principio los dos caen mucho por el acantilado." :
          eps === 0 ? "Sin exploración (ε = 0) ninguno da pasos al azar: los dos convergen a rutas igual de buenas y cobran lo mismo." :
          "Q-Learning ha aprendido la ruta " + (lq && ls && lq < ls ? "más corta (" + lq + " pasos, por el borde)" : "por el borde") + ", pero con ε = " + fmt(eps, 2) + " cobra de media " + fmt(mq, 1) + " porque sus pasos al azar lo tiran al vacío. SARSA va por arriba" + (ls ? " (" + ls + " pasos)" : "") + " y cobra " + fmt(ms, 1) + ": aprende la política que mejor funciona <b>explorando</b>.") + '</span>';
@@ -6927,7 +6927,7 @@ VIZ.push({id:"v-sarsa", model:"sarsa", g:"model", ic:"", dim:"2D",
    return function(){ stop(); };
  }});
 
-/* ══ 12. DQN — TABLA FRENTE A RED, REPLAY BUFFER Y RED OBJETIVO ═ */
+/* ══ 12. DQN: TABLA FRENTE A RED, REPLAY BUFFER Y RED OBJETIVO ═ */
 VIZ.push({id:"v-dqn", model:"dqn", g:"model", ic:"", dim:"2D",
  t:"DQN: de la tabla a la función que generaliza",
  q:"¿Por qué una red neuronal sustituye a la tabla Q cuando los estados son continuos?",
@@ -7022,7 +7022,7 @@ VIZ.push({id:"v-dqn", model:"dqn", g:"model", ic:"", dim:"2D",
    return function(){ stop(); };
  }});
 
-/* ══ 13. PPO — EL OBJETIVO RECORTADO ═══════════════════════════ */
+/* ══ 13. PPO: EL OBJETIVO RECORTADO ═══════════════════════════ */
 VIZ.push({id:"v-ppo", model:"ppo", g:"model", ic:"", dim:"2D",
  t:"PPO: aprender sin dar saltos",
  q:"¿Para qué sirve el «recorte» del objetivo de PPO?",
@@ -7562,7 +7562,7 @@ VIZ.push({id:"v-jerarquico", model:"jerarquico", g:"model", ic:"", dim:"2D",
      var big = gaps.reduce(function(a, b){ return b[0] > a[0] ? b : a; }), kSug = n - 1 - big[1];
      var singles = g.ids.filter(function(v){ return v < n; }).length;
      read.innerHTML = '<span>Grupos ' + (step >= 0 ? "tras " + step + " fusiones" : "al corte") + ' <b>' + g.ids.length + '</b></span>' +
-       (step < 0 ? '<span>Altura del corte <b>' + fmt(cut, 2) + '</b></span>' : '<span>Última fusión <b>' + (step ? leavesOf(merges[step - 1].a).map(function(l){ return N[l]; }).join("") + " + " + leavesOf(merges[step - 1].b).map(function(l){ return N[l]; }).join("") + " a " + fmt(merges[step - 1].h, 2) : "—") + '</b></span>') +
+       (step < 0 ? '<span>Altura del corte <b>' + fmt(cut, 2) + '</b></span>' : '<span>Última fusión <b>' + (step ? leavesOf(merges[step - 1].a).map(function(l){ return N[l]; }).join("") + " + " + leavesOf(merges[step - 1].b).map(function(l){ return N[l]; }).join("") + " a " + fmt(merges[step - 1].h, 2) : "–") + '</b></span>') +
        '<span>Salto mayor <b>' + fmt(merges[big[1]].h, 2) + ' → ' + fmt(merges[big[1] + 1].h, 2) + '</b> (sugiere K = ' + kSug + ')</span>' +
        '<span class="ldiag">' + (singles ? "Hay <b>" + singles + " cliente" + (singles > 1 ? "s" : "") + " solo" + (singles > 1 ? "s" : "") + "</b> (en gris): a esa altura todavía no se ha unido a nadie. " : "") +
        (g.ids.length === kSug ? "<b class='lgood'>Estás cortando en el salto mayor</b>: los grupos de abajo son compactos y el siguiente paso uniría grupos lejanos." : "El salto más grande entre fusiones consecutivas sugiere <b>" + kSug + " grupos</b> con este enlace. Pulsa «Cortar en el salto mayor».") + '</span>';
@@ -7690,7 +7690,7 @@ VIZ.push({id:"v-gmm", model:"gmm", g:"model", ic:"", dim:"2D",
      }
      /* lectura */
      var p = 3 * (2 + 3) + 2, bic = -2 * LL + p * Math.log(n);
-     read.innerHTML = '<span>Iteración <b>' + it + '</b></span><span>Próximo paso <b>' + (conv ? "— (convergido)" : phase === "E" ? "E · repartir probabilidades" : "M · recolocar elipses") + '</b></span>' +
+     read.innerHTML = '<span>Iteración <b>' + it + '</b></span><span>Próximo paso <b>' + (conv ? "– (convergido)" : phase === "E" ? "E · repartir probabilidades" : "M · recolocar elipses") + '</b></span>' +
        '<span>Log-verosimilitud <b>' + fmt(LL, 1) + '</b></span><span>BIC <b>' + fmt(bic, 1) + '</b></span><span>Puntos dudosos (máx. &lt; 80%) <b>' + doubt + '</b></span>' +
        '<span class="ldiag">' + (conv ? "<b class='lgood'>Convergido</b>: la log-verosimilitud ya no sube. " : "") +
        (hard ? "En modo duro esos <b>" + doubt + " puntos dudosos</b> se pintan como si fueran seguros: se pierde la información de que están en tierra de nadie." :
@@ -7841,7 +7841,7 @@ VIZ.push({id:"v-tsne", model:"tsne", g:"model", ic:"", dim:"2D",
      var dist = function(a, b){ var sx2 = [0, 0], sy2 = [0, 0], c = [0, 0]; Y.forEach(function(p, q){ [a, b].forEach(function(g, k){ if(lab[q] === g){ sx2[k] += p[0]; sy2[k] += p[1]; c[k]++; } }); });
        return Math.hypot(sx2[0] / c[0] - sx2[1] / c[1], sy2[0] / c[0] - sy2[1] / c[1]); };
      var real = function(a, b){ var s2 = 0; for(var d = 0; d < D10; d++) s2 += (cen[a][d] - cen[b][d]) * (cen[a][d] - cen[b][d]); return Math.sqrt(s2); };
-     read.innerHTML = '<span>Iteración <b>' + it + ' / ' + MAXIT + '</b></span><span>KL (desajuste) <b>' + (it >= 10 ? fmt(KL, 3) : "—") + '</b></span><span>Perplexity <b>' + perp + '</b></span>' +
+     read.innerHTML = '<span>Iteración <b>' + it + ' / ' + MAXIT + '</b></span><span>KL (desajuste) <b>' + (it >= 10 ? fmt(KL, 3) : "–") + '</b></span><span>Perplexity <b>' + perp + '</b></span>' +
        '<span class="ldiag">' + (it < 250 ? "Fase de <b>exageración temprana</b>: las atracciones se multiplican por 12 para que los grupos se separen pronto. La KL, que mide cuánto se parecen las vecindades del mapa a las reales, irá bajando." :
        "En los datos reales, C está <b>" + fmt(real(2, 0) / real(0, 1), 1) + " veces</b> más lejos de A que B; en el mapa, <b>" + fmt(dist(2, 0) / Math.max(dist(0, 1), 1e-9), 1) + " veces</b>. Y el grupo C es " + fmt(realDisp[2] / realDisp[0], 1) + " veces más disperso que A, pero en el mapa solo lo parece " + fmt(mapDisp[2] / mapDisp[0], 1) + " veces. <b>Interpreta vecindades, no tamaños ni distancias entre grupos.</b>") + '</span>';
    }
@@ -8411,7 +8411,7 @@ VIZ.push({id:"v-reco", model:"reco", g:"model", ic:"", dim:"2D",
      }
      /* lectura */
      var rr = shown ? recs(sel) : [];
-     read.innerHTML = '<span>Iteración <b>' + it + ' / ' + MAXI + '</b></span><span>RMSE (celdas conocidas) <b>' + (hist.length ? fmt(hist[hist.length - 1], 3) : "—") + '</b></span><span>Usuario <b>' + US[sel] + '</b></span>' +
+     read.innerHTML = '<span>Iteración <b>' + it + ' / ' + MAXI + '</b></span><span>RMSE (celdas conocidas) <b>' + (hist.length ? fmt(hist[hist.length - 1], 3) : "–") + '</b></span><span>Usuario <b>' + US[sel] + '</b></span>' +
        '<span class="ldiag">' + (shown ? "Recomendaciones para <b>" + US[sel] + "</b>: " + rr.map(function(x, q){ var v = Math.max(1, Math.min(5, x[1])); return (q + 1) + ". <b>" + SE[x[0]] + "</b> (" + fmt(v, 1) + (v >= 3.5 ? " ✓ le encajará" : v < 3 ? " ✗ poco probable" : " · quizá") + ")"; }).join(" · ") +
          ". El RMSE dice que, en las notas que sí conocemos, el modelo se equivoca de media unas " + fmt(hist[hist.length - 1], 2) + " estrellas." : "Pulsa <b>Factorizar</b>: verás cómo los <b>?</b> se convierten en predicciones mientras el error baja.") + '</span>';
    }
@@ -9103,12 +9103,12 @@ VIZ.push({id:"v-prophet", model:"prophet", g:"model", ic:"", dim:"2D",
 <script>
 /* ── easy-0.js ── */
 /* ══════════════════════════════════════════════════════════════
-   CAPA DE EXPLICACIÓN SENCILLA — por modelo
+   CAPA DE EXPLICACIÓN SENCILLA: por modelo
      frase = el modelo en una frase, sin jerga
      pasos = cómo funciona, en 3-5 pasos que podrías hacer a mano
      ej    = un ejemplo pequeño con números (HTML: tabla .mini)
      rec   = lo que tienes que recordar (3 ideas)
-   CASOS — 3 casos reales de negocio por modelo:
+   CASOS, 3 casos reales de negocio por modelo:
      [icono, sector, problema, cómo ayuda el modelo, resultado / decisión]
    ══════════════════════════════════════════════════════════════ */
 var EASY = {}, CASOS = {};
@@ -10503,7 +10503,7 @@ function renderAudit(){
 var REPO = "https://github.com/BORJAMOME/Data-Analytics-Portfolio/blob/main/";
 
 /* Escala de los atributos: [texto, símbolo, puntuación]
-   símbolo: f=● muy favorable · m=◑ intermedio · p=○ poco favorable · na=— */
+   símbolo: f=● muy favorable · m=◑ intermedio · p=○ poco favorable · na=: */
 var SC = {
   max:["Máxima","f",5], muyalta:["Muy Alta","f",4], alta:["Alta","f",3],
   mediaalta:["Media-Alta","m",2.5], media:["Media","m",2],
@@ -10512,7 +10512,7 @@ var SC = {
 };
 
 /* La familia ya no se distingue por color (gobernanza de marca: el azul
-   es el único color de datos) — se distingue por icono + etiqueta, siempre
+   es el único color de datos): se distingue por icono + etiqueta, siempre
    los dos juntos para no depender nunca de un solo canal visual. */
 var FAM = {
   sup   : {l:"Supervisado",         ic:""},
@@ -10526,21 +10526,21 @@ var FAM = {
 };
 
 var SECS = [
-  {b:"num", ic:"", t:"Supervisado — Regresión",                       s:"Predecir un número continuo"},
-  {b:"cat", ic:"", t:"Supervisado — Clasificación",                   s:"Predecir una categoría o un sí/no"},
-  {b:"sup", ic:"", t:"Supervisado — Análisis de supervivencia",       s:"No si ocurre, sino cuándo ocurre"},
-  {b:"cau", ic:"", t:"Inferencia causal — Uplift",                    s:"Medir el efecto real de una acción"},
+  {b:"num", ic:"", t:"Supervisado: Regresión",                       s:"Predecir un número continuo"},
+  {b:"cat", ic:"", t:"Supervisado: Clasificación",                   s:"Predecir una categoría o un sí/no"},
+  {b:"sup", ic:"", t:"Supervisado: Análisis de supervivencia",       s:"No si ocurre, sino cuándo ocurre"},
+  {b:"cau", ic:"", t:"Inferencia causal: Uplift",                    s:"Medir el efecto real de una acción"},
   {b:"net", ic:"", t:"Deep Learning y redes neuronales",              s:"Patrones complejos y datos no estructurados"},
-  {b:"grp", ic:"", t:"No Supervisado — Clustering",                   s:"Agrupar casos parecidos"},
-  {b:"dim", ic:"", t:"No Supervisado — Reducción de dimensionalidad", s:"Resumir o visualizar muchas variables"},
-  {b:"ano", ic:"", t:"No Supervisado — Detección de anomalías",       s:"Encontrar lo raro"},
+  {b:"grp", ic:"", t:"No Supervisado: Clustering",                   s:"Agrupar casos parecidos"},
+  {b:"dim", ic:"", t:"No Supervisado: Reducción de dimensionalidad", s:"Resumir o visualizar muchas variables"},
+  {b:"ano", ic:"", t:"No Supervisado: Detección de anomalías",       s:"Encontrar lo raro"},
   {b:"aso", ic:"", t:"Reglas de asociación",                          s:"Qué se compra junto con qué"},
   {b:"rec", ic:"", t:"Sistemas de recomendación",                     s:"Qué ofrecer a cada cliente"},
-  {b:"txt", ic:"", t:"Texto — Topic modeling",                        s:"De qué hablan mis documentos"},
+  {b:"txt", ic:"", t:"Texto: Topic modeling",                        s:"De qué hablan mis documentos"},
   {b:"prb", ic:"", t:"Modelos probabilísticos",                       s:"Dependencias, secuencias y estados ocultos"},
   {b:"rl",  ic:"", t:"Aprendizaje por Refuerzo",                      s:"Un agente decide y aprende de la recompensa"},
-  {b:"fut", ic:"", t:"Series temporales — Forecasting",               s:"Prever la evolución en el tiempo"},
-  {b:"aut", ic:"", t:"Aceleradores — AutoML",                         s:"Prototipar un baseline muy rápido"}
+  {b:"fut", ic:"", t:"Series temporales: Forecasting",               s:"Prever la evolución en el tiempo"},
+  {b:"aut", ic:"", t:"Aceleradores: AutoML",                         s:"Prototipar un baseline muy rápido"}
 ];
 
 /* st: nb = notebook propio · std = estudiado sin notebook · pend = pendiente
@@ -10598,7 +10598,7 @@ var MODELS = [
 
 {id:"poisson",n:"Regresión de Poisson / GLM",f:"sup",b:"num",st:"pend",cx:2,
  q:"¿Predecir un conteo o una tasa de eventos?",
- e:"Una lineal cuya salida pasa por una exponencial, así que <b>nunca predice negativos</b> y asume que la varianza es igual a la media (crece con ella) — que es justo cómo se comportan muchos conteos.",
+ e:"Una lineal cuya salida pasa por una exponencial, así que <b>nunca predice negativos</b> y asume que la varianza es igual a la media (crece con ella), que es justo cómo se comportan muchos conteos.",
  ex:"Nº de pedidos por hora, visitas, incidencias, siniestros.",k:"Modela conteos con la distribución correcta.",
  m:"Deviance · MAE · Pseudo-R²",no:"La varianza es mucho mayor que la media (sobredispersión → Binomial Negativa).",
  biz:"Dimensionar turnos y stock → nivel de servicio.",
@@ -10779,7 +10779,7 @@ var MODELS = [
 /* ── SUPERVIVENCIA ───────────────────────────────────────────── */
 {id:"cox",n:"Supervivencia (Cox / Kaplan-Meier)",f:"sup",b:"sup",st:"pend",cx:4,est:1,
  q:"¿CUÁNDO ocurrirá el evento, no solo si ocurre?",
- e:"Modela el <b>tiempo hasta un evento</b> aprovechando también a los que todavía no lo han sufrido (datos censurados) — información que una clasificación normal tiraría a la basura. Cox devuelve un <i>hazard ratio</i>: cuánto acelera cada variable la llegada del evento.",
+ e:"Modela el <b>tiempo hasta un evento</b> aprovechando también a los que todavía no lo han sufrido (datos censurados): información que una clasificación normal tiraría a la basura. Cox devuelve un <i>hazard ratio</i>: cuánto acelera cada variable la llegada del evento.",
  ex:"Tiempo hasta que un cliente se da de baja o una máquina falla.",k:"Usa a los que aún no han fallado; devuelve curvas de riesgo.",
  m:"C-index · curvas de Kaplan-Meier · hazard ratio",no:"Solo te importa el sí/no y todos los casos están cerrados.",
  biz:"Cuándo actuar sobre cada cliente → timing de retención.",
@@ -10905,7 +10905,7 @@ var MODELS = [
 
 {id:"dbscan",n:"DBSCAN",f:"unsup",b:"grp",st:"pend",cx:3,
  q:"¿Grupos de forma irregular, y además quiero detectar el ruido?",
- e:"Agrupa por <b>densidad</b>: un punto pertenece a un cluster si tiene suficientes vecinos cerca. Lo que queda aislado se etiqueta como ruido — así que clusteriza y detecta outliers en la misma pasada.",
+ e:"Agrupa por <b>densidad</b>: un punto pertenece a un cluster si tiene suficientes vecinos cerca. Lo que queda aislado se etiqueta como ruido, así que clusteriza y detecta outliers en la misma pasada.",
  ex:"Zonas de densidad geográfica, rutas, patrones espaciales.",k:"No fijas K y devuelve una etiqueta «ruido» explícita.",
  m:"Silueta · nº de clusters · % de ruido",no:"Los grupos tienen densidades muy distintas entre sí (mira HDBSCAN).",
  biz:"Localizar zonas calientes → ubicación de recursos.",
@@ -11005,7 +11005,7 @@ var MODELS = [
 /* ── PROBABILÍSTICOS ─────────────────────────────────────────── */
 {id:"bayesnet",n:"Redes Bayesianas",f:"prob",b:"prb",st:"pend",cx:5,
  q:"¿Cómo se influyen mis variables entre sí?",
- e:"Un grafo donde cada nodo es una variable y cada flecha una dependencia probabilística. Permite <b>preguntar «¿y si…?»</b> propagando evidencia por la red — y, si el grafo es causal, razonar sobre intervenciones.",
+ e:"Un grafo donde cada nodo es una variable y cada flecha una dependencia probabilística. Permite <b>preguntar «¿y si…?»</b> propagando evidencia por la red, y, si el grafo es causal, razonar sobre intervenciones.",
  ex:"Diagnóstico de causas raíz en un proceso con muchos factores.",k:"Grafo explícito de dependencias; admite conocimiento experto.",
  m:"Log-verosimilitud · BIC · precisión de la inferencia",no:"Solo quieres predecir: un boosting es más preciso y más barato.",
  biz:"Entender la cadena de causas → dónde intervenir.",
@@ -11140,12 +11140,12 @@ var MODELS = [
 ];
 
 /* ══════════════════════════════════════════════════════════════
-   CONTENIDO DE ESTUDIO (nivel 3 — vista de detalle)
+   CONTENIDO DE ESTUDIO (nivel 3: vista de detalle)
    Completa los 3 escalones didácticos que faltaban en MODELS:
      fx  = cómo funciona por dentro (mecanismo / fórmula)
      cod = el mismo modelo en código, mínimo ejecutable
      rel = con qué se confunde y qué lo distingue  [id, distinción]
-     chk = autochequeo — de criterio, no de definición
+     chk = autochequeo: de criterio, no de definición
    Se fusiona dentro de MODELS antes de renderizar: la fuente
    única de verdad sigue siendo MODELS.
    ══════════════════════════════════════════════════════════════ */
@@ -11154,7 +11154,7 @@ var STUDY = {
 linsimple:{
  fx:"<code>ŷ = β₀ + β₁x</code>. Se estima por mínimos cuadrados: la recta que minimiza <code>Σ(yᵢ − ŷᵢ)²</code>. La solución sale cerrada: <code>β₁ = cov(x,y) / var(x)</code>.",
  cod:"from sklearn.linear_model import LinearRegression\n\nm = LinearRegression().fit(X[['gasto_ads']], y)\nprint(f'Por cada euro extra: {m.coef_[0]:.2f} € de ventas')",
- rel:[["linmult","La simple usa una variable; la múltiple, varias — y ahí aparece el «a igualdad de todo lo demás»."]],
+ rel:[["linmult","La simple usa una variable; la múltiple, varias, y ahí aparece el «a igualdad de todo lo demás»."]],
  chk:{q:"Añades una variable irrelevante y el R² sube de 0,62 a 0,64. ¿Qué está pasando?",
       a:"El R² <b>nunca baja</b> al añadir variables, aporten o no: siempre encuentra algo de ruido que ajustar. Por eso en múltiple se mira el <b>R² ajustado</b>, que sí penaliza meter variables inútiles."}},
 
@@ -11167,7 +11167,7 @@ linmult:{
       a:"<b>Multicolinealidad.</b> Con XᵀX casi singular los coeficientes se vuelven inestables y pueden cambiar de signo sin que el R² se resienta: el modelo predice bien pero los β dejan de ser interpretables. Solución: Ridge, o quitar una de las dos."}},
 
 ridge:{
- fx:"Minimiza <code>Σ(yᵢ − ŷᵢ)² + α·Σβⱼ²</code> — el término L2. Al subir α los coeficientes se encogen hacia cero, pero <b>nunca llegan a cero</b>.",
+ fx:"Minimiza <code>Σ(yᵢ − ŷᵢ)² + α·Σβⱼ²</code>: el término L2. Al subir α los coeficientes se encogen hacia cero, pero <b>nunca llegan a cero</b>.",
  cod:"import numpy as np\nfrom sklearn.linear_model import RidgeCV\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\n\nm = make_pipeline(StandardScaler(),\n                  RidgeCV(alphas=np.logspace(-3, 3, 50))).fit(X, y)",
  rel:[["lasso","L2 encoge todos los coeficientes; L1 puede anularlos. Ridge conserva, Lasso selecciona."],
       ["elastic","Elastic Net mezcla las dos penalizaciones."]],
@@ -11175,12 +11175,12 @@ ridge:{
       a:"Porque la penalización castiga el <b>tamaño</b> del coeficiente. Si una variable va en euros y otra en miles de euros, sus coeficientes tienen escalas distintas y la penalización golpea mucho más a una que a otra por un motivo puramente de unidades, no de importancia."}},
 
 lasso:{
- fx:"Minimiza <code>Σ(yᵢ − ŷᵢ)² + α·Σ|βⱼ|</code> — el término L1. El valor absoluto tiene un pico en cero, y ese pico es lo que permite que un coeficiente caiga <b>exactamente</b> a cero.",
+ fx:"Minimiza <code>Σ(yᵢ − ŷᵢ)² + α·Σ|βⱼ|</code>: el término L1. El valor absoluto tiene un pico en cero, y ese pico es lo que permite que un coeficiente caiga <b>exactamente</b> a cero.",
  cod:"from sklearn.linear_model import LassoCV\n\nm = LassoCV(cv=5, random_state=42).fit(X_scaled, y)\nprint('Variables retenidas:', (m.coef_ != 0).sum(), 'de', len(m.coef_))",
  rel:[["ridge","Ridge encoge, Lasso elimina."],
       ["elastic","Elastic Net evita que Lasso descarte de forma arbitraria grupos correlacionados."]],
  chk:{q:"Tienes 5 variables casi idénticas (el mismo fenómeno medido de 5 maneras). Lasso deja una y anula las otras 4. ¿Acierto o problema?",
-      a:"<b>Depende de para qué.</b> Como modelo predictivo, correcto: la información ya está dentro. Como lectura de negocio, engañoso: la superviviente no es «la importante», es <b>arbitraria</b> dentro del grupo — cambias la semilla y sale otra. Si vas a explicar drivers, Elastic Net."}},
+      a:"<b>Depende de para qué.</b> Como modelo predictivo, correcto: la información ya está dentro. Como lectura de negocio, engañoso: la superviviente no es «la importante», es <b>arbitraria</b> dentro del grupo: cambias la semilla y sale otra. Si vas a explicar drivers, Elastic Net."}},
 
 elastic:{
  fx:"<code>Σ(y−ŷ)² + α·[ρ·Σ|βⱼ| + ((1−ρ)/2)·Σβⱼ²]</code>, donde ρ es <code>l1_ratio</code>. Un mando entre selección (L1) y estabilidad (L2).",
@@ -11248,7 +11248,7 @@ logistica:{
       a:"<b>Probablemente inútil.</b> Predecir «no se va nadie» ya da 97%. Con clases desbalanceadas la accuracy engaña: mira <b>PR-AUC</b> y el <b>recall de la clase minoritaria</b>, que es la que te cuesta dinero."}},
 
 arbol:{
- fx:"En cada nodo elige el corte que más reduce la impureza — Gini <code>1 − Σpᵢ²</code> o entropía. Repite hasta un criterio de parada. Sin poda, memoriza.",
+ fx:"En cada nodo elige el corte que más reduce la impureza: Gini <code>1 − Σpᵢ²</code> o entropía. Repite hasta un criterio de parada. Sin poda, memoriza.",
  cod:"from sklearn.tree import DecisionTreeClassifier, export_text\n\nm = DecisionTreeClassifier(max_depth=4, min_samples_leaf=20).fit(X_tr, y_tr)\nprint(export_text(m, feature_names=list(X.columns)))",
  rel:[["rf","Un bosque son cientos de estos árboles promediados: gana precisión, pierde legibilidad."],
       ["adaboost","AdaBoost encadena árboles de profundidad 1 en vez de hacer uno grande."]],
@@ -11400,7 +11400,7 @@ rnn:{
       a:"El <b>gradiente desvanecido</b>. En una RNN simple el error apenas llega a los pasos lejanos tras multiplicarse muchas veces, así que no puede aprender dependencias largas. Las puertas crean un camino por el que el gradiente fluye sin degradarse."}},
 
 transformer:{
- fx:"Atención: <code>softmax(QKᵀ/√d)·V</code>. Cada elemento mira a <b>todos los demás a la vez</b> y decide a cuáles atender. Sin recurrencia, así que paraleliza — de ahí que escale.",
+ fx:"Atención: <code>softmax(QKᵀ/√d)·V</code>. Cada elemento mira a <b>todos los demás a la vez</b> y decide a cuáles atender. Sin recurrencia, así que paraleliza: de ahí que escale.",
  cod:"from transformers import pipeline\n\nclf = pipeline('sentiment-analysis',\n               model='nlptown/bert-base-multilingual-uncased-sentiment')\nclf('El pedido llegó tarde pero el producto es excelente')",
  rel:[["rnn","La RNN procesa en orden; el Transformer, todo a la vez."],
       ["cnn","Ambos dominan su terreno: CNN en visión clásica, Transformer en lenguaje."]],
@@ -11578,7 +11578,7 @@ sarimax:{
       a:"Que necesitas <b>la temperatura futura</b>. Si no la conoces, tendrías que predecirla primero y arrastras su error al modelo. Las exógenas solo sirven si son conocidas de antemano (calendario, precio que tú fijas) o muy fiables."}},
 
 prophet:{
- fx:"Descomposición aditiva: <code>y(t) = g(t) + s(t) + h(t) + εₜ</code> — tendencia por tramos con puntos de cambio, estacionalidad en series de Fourier y efecto de festivos.",
+ fx:"Descomposición aditiva: <code>y(t) = g(t) + s(t) + h(t) + εₜ</code>: tendencia por tramos con puntos de cambio, estacionalidad en series de Fourier y efecto de festivos.",
  cod:"from prophet import Prophet\n\nm = Prophet(yearly_seasonality=True, weekly_seasonality=True)\nm.add_country_holidays(country_name='ES')\nm.fit(df[['ds', 'y']])\nfuturo = m.make_future_dataframe(periods=90)",
  rel:[["sarima","Con series cortas o dinámica compleja, un SARIMA bien ajustado suele ganar."],
       ["hw","Ambos descomponen la serie; Prophet es más automático."]],
@@ -11643,15 +11643,15 @@ automl:{
 contentbased:{
  fx:"TF-IDF pondera cada palabra por <b>frecuencia en el documento × rareza en el catálogo</b> (penaliza las palabras comunes a todos). Con esos vectores, la similitud coseno mide el ángulo entre dos productos: 1 si son idénticos en contenido, 0 si no comparten nada.",
  cod:"from sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.metrics.pairwise import cosine_similarity\n\ntfidf = TfidfVectorizer(stop_words='english').fit_transform(df['sinopsis'])\nsim = cosine_similarity(tfidf)\nsimilares = sim[idx].argsort()[::-1][1:6]  # top 5, excluyendo el propio título",
- rel:[["reco","El colaborativo mira el comportamiento de otros usuarios; este mira solo la ficha del producto — por eso no sufre el arranque en frío de producto."],
+ rel:[["reco","El colaborativo mira el comportamiento de otros usuarios; este mira solo la ficha del producto, por eso no sufre el arranque en frío de producto."],
       ["topic","Topic Modeling agrupa documentos en temas latentes; aquí no hay temas, solo similitud directa entre pares de vectores."]],
  chk:{q:"Recomiendas 'Up' (Pixar, familiar) y el sistema sugiere 'Get Out' (terror) como similar. ¿Qué está pasando?",
-      a:"El contenido comparte <b>vocabulario</b> aunque no comparta tono — TF-IDF no entiende significado, solo cuenta palabras. Es la limitación típica de content-based con vocabulario reducido: la solución es pasar a embeddings semánticos."}}
+      a:"El contenido comparte <b>vocabulario</b> aunque no comparta tono: TF-IDF no entiende significado, solo cuenta palabras. Es la limitación típica de content-based con vocabulario reducido: la solución es pasar a embeddings semánticos."}}
 
 };
 
 /* ══════════════════════════════════════════════════════════════
-   CAPA PROFESIONAL — bloque 1 · REGRESIÓN
+   CAPA PROFESIONAL: bloque 1 · REGRESIÓN
      caso    = caso de negocio tipo, estructurado
      hp      = hiperparámetros que de verdad mueven la aguja
      trampas = fallos concretos de este modelo, no genéricos
@@ -11665,11 +11665,11 @@ linsimple:{
    sit:"Una cadena con 40 tiendas quiere saber si la inversión en radio local sigue teniendo retorno o está saturada.",
    datos:"104 semanas × tienda: inversión en radio (€) y ventas semanales (€).",
    target:"Ventas semanales de la tienda (€, continua).",
-   metrica:"RMSE en euros — que negocio entienda el error en su moneda — y R² como control.",
+   metrica:"RMSE en euros, que negocio entienda el error en su moneda, y R² como control.",
    decision:"Mantener, subir o cortar el presupuesto de radio por tienda.",
    impacto:"La pendiente ES la respuesta: si sale 3,2 €/€ invertido, cada euro se asocia a 3,20 € de ventas (ojo: ventas, no margen; con un 30% de margen son 0,96 € de beneficio, es decir, se pierde dinero). Mira el intervalo de confianza de la pendiente antes de concluir nada."},
  hp:[["fit_intercept","Déjalo en True salvo que sepas que y=0 cuando x=0. Forzar el paso por el origen sesga la pendiente."]],
- trampas:["Extrapolar fuera del rango observado: si nunca invertiste más de 5.000 €, el modelo no sabe qué pasa en 20.000 € — la saturación es justo lo que no ha visto.",
+ trampas:["Extrapolar fuera del rango observado: si nunca invertiste más de 5.000 €, el modelo no sabe qué pasa en 20.000 €: la saturación es justo lo que no ha visto.",
    "Confundir la pendiente con causalidad. Si subes radio en Navidad, estás midiendo Navidad, no radio.",
    "Un R² alto con residuos en forma de U significa que la relación es curva y la recta es la herramienta equivocada."],
  uso:"Sin preprocesado. Entrena en milisegundos y el modelo son dos números: cabe en una hoja de cálculo. Reentrenar cada trimestre basta.",
@@ -11712,7 +11712,7 @@ lasso:{
    sit:"Una planta registra 180 sensores por lote y quiere saber cuáles predicen realmente el defecto para poner alarmas solo en esos.",
    datos:"2.400 lotes × 180 variables de proceso (temperatura, presión, caudal, tiempos).",
    target:"Índice de defecto del lote (continuo).",
-   metrica:"RMSE y número de variables retenidas — el objetivo es un modelo corto.",
+   metrica:"RMSE y número de variables retenidas: el objetivo es un modelo corto.",
    decision:"Qué 8 sensores monitorizar en tiempo real en el panel de planta.",
    impacto:"Pasar de 180 señales a 8 accionables. El valor no es la predicción, es reducir el ruido operativo del turno."},
  hp:[["alpha","Controla cuántas variables sobreviven. Súbelo hasta que el modelo sea del tamaño que puede gestionar la operación."],
@@ -11730,7 +11730,7 @@ elastic:{
    target:"Pérdida esperada (€).",
    metrica:"RMSE y estabilidad del conjunto seleccionado entre trimestres.",
    decision:"Qué variables entran en el modelo regulatorio, que debe ser estable y auditable.",
-   impacto:"Lasso elegiría una variable de cada bloque y en el siguiente trimestre otra distinta — inaceptable para un modelo que se audita. Elastic Net conserva el bloque completo y no baila."},
+   impacto:"Lasso elegiría una variable de cada bloque y en el siguiente trimestre otra distinta: inaceptable para un modelo que se audita. Elastic Net conserva el bloque completo y no baila."},
  hp:[["l1_ratio","El mando principal. Cerca de 1 selecciona agresivamente; cerca de 0 conserva grupos. Pruébalo en rejilla, no lo fijes por intuición."],
    ["alpha","La fuerza total de la penalización, conjunta para las dos."]],
  trampas:["Fijar l1_ratio=0,5 «porque es el punto medio». No lo es: la respuesta es muy poco lineal y hay que buscarla.",
@@ -11805,7 +11805,7 @@ gp:{
 svr:{
  caso:{sector:"Química · Control de calidad",
    sit:"Predecir una propiedad del producto a partir del espectro infrarrojo, para no tener que hacer el ensayo destructivo.",
-   datos:"400 muestras × 900 longitudes de onda — muchísimas más columnas que filas.",
+   datos:"400 muestras × 900 longitudes de onda: muchísimas más columnas que filas.",
    target:"Concentración del principio activo (%).",
    metrica:"RMSE en validación cruzada y error máximo, que es el que marca si vale para liberar lote.",
    decision:"Liberar el lote sin ensayo destructivo o mandarlo al laboratorio.",
@@ -11824,7 +11824,7 @@ gbr:{
    sit:"Una comercializadora eléctrica necesita prever el consumo horario del día siguiente para comprar en el mercado diario.",
    datos:"3 años horarios: consumo, temperatura, hora, día de la semana, festivo, laborable.",
    target:"Consumo horario (MWh).",
-   metrica:"MAE en MWh, traducido a € de desvío — que es lo que se paga en el mercado.",
+   metrica:"MAE en MWh, traducido a € de desvío, que es lo que se paga en el mercado.",
    decision:"Volumen a comprar en el mercado diario por hora.",
    impacto:"El error se paga literalmente: cada MWh de desvío se liquida a precio de penalización. Bajar el MAE un 8% es margen directo, y aquí las no linealidades importan (la relación consumo-temperatura tiene forma de U)."},
  hp:[["n_estimators + learning_rate","Van juntos y son inversos. Baja el lr y sube los árboles hasta que la validación deje de mejorar."],
@@ -11838,7 +11838,7 @@ gbr:{
 
 };
 
-/* ══ CAPA PROFESIONAL — bloque 2 · CLASIFICACIÓN ══════════════ */
+/* ══ CAPA PROFESIONAL: bloque 2 · CLASIFICACIÓN ══════════════ */
 var PRO2 = {
 
 logistica:{
@@ -11883,7 +11883,7 @@ rf:{
    target:"Reingreso no programado en 30 días.",
    metrica:"ROC-AUC y recall en el decil superior; calibración, porque la probabilidad se usa para priorizar.",
    decision:"A qué pacientes asignar seguimiento telefónico al alta.",
-   impacto:"Random Forest es la elección típica del sector porque funciona sin apenas ajuste, tolera nulos y outliers clínicos, y el score OOB da una estimación honesta sin gastar datos en validación — algo valioso cuando cada historia clínica cuesta conseguirla."},
+   impacto:"Random Forest es la elección típica del sector porque funciona sin apenas ajuste, tolera nulos y outliers clínicos, y el score OOB da una estimación honesta sin gastar datos en validación: algo valioso cuando cada historia clínica cuesta conseguirla."},
  hp:[["n_estimators","Más siempre es mejor o igual, nunca peor: solo cuesta tiempo. 300-500 es razonable."],
    ["max_features","El que de verdad regula la diversidad. 'sqrt' en clasificación por defecto."],
    ["min_samples_leaf","Sube para reducir sobreajuste con datos ruidosos."],
@@ -11985,7 +11985,7 @@ adaboost:{
 svmlin:{
  caso:{sector:"Legal · Clasificación documental",
    sit:"Un despacho clasifica automáticamente contratos entrantes por tipo, a partir de su representación TF-IDF.",
-   datos:"12.000 documentos × 50.000 términos — matriz dispersa y altísima dimensión.",
+   datos:"12.000 documentos × 50.000 términos: matriz dispersa y altísima dimensión.",
    target:"Tipo de contrato (multiclase).",
    metrica:"F1 macro, porque hay clases raras que importan tanto como las frecuentes.",
    decision:"Enrutado automático al equipo especialista.",
@@ -12084,7 +12084,7 @@ qda:{
 
 };
 
-/* ══ CAPA PROFESIONAL — bloque 3 · SUPERVIVENCIA, CAUSAL, DEEP LEARNING ══ */
+/* ══ CAPA PROFESIONAL: bloque 3 · SUPERVIVENCIA, CAUSAL, DEEP LEARNING ══ */
 var PRO3 = {
 
 cox:{
@@ -12110,7 +12110,7 @@ uplift:{
    target:"Compra en 30 días, más el indicador de tratamiento.",
    metrica:"Curva de Qini y uplift acumulado en los primeros deciles.",
    decision:"A qué 600.000 clientes mandar el cupón el próximo trimestre.",
-   impacto:"El descubrimiento típico: un porcentaje relevante de los cupones va a gente que iba a comprar igualmente (margen regalado) y una parte pequeña va a «durmientes» a los que el cupón molesta y acelera su baja. Recortar el envío puede subir el beneficio incremental aunque baje la conversión total — y hay que saber explicar esa aparente contradicción."},
+   impacto:"El descubrimiento típico: un porcentaje relevante de los cupones va a gente que iba a comprar igualmente (margen regalado) y una parte pequeña va a «durmientes» a los que el cupón molesta y acelera su baja. Recortar el envío puede subir el beneficio incremental aunque baje la conversión total, y hay que saber explicar esa aparente contradicción."},
  hp:[["Meta-learner","T-learner (un modelo por grupo), S-learner (tratamiento como variable) o X-learner (mejor con grupos desbalanceados). La elección importa más que los hiperparámetros."],
    ["Modelo base","Normalmente LightGBM o XGBoost dentro del meta-learner."]],
  trampas:["Intentarlo con datos históricos sin aleatorizar y tratar el resultado como causal: si la campaña se mandó a quien ya iba a comprar, el modelo confunde selección con efecto. Sin experimento, necesitas el supuesto de «no confusión» y técnicas de la ficha de Propensity.",
@@ -12247,7 +12247,7 @@ som:{
 
 };
 
-/* ══ CAPA PROFESIONAL — bloque 4 · NO SUPERVISADO ══════════════ */
+/* ══ CAPA PROFESIONAL: bloque 4 · NO SUPERVISADO ══════════════ */
 var PRO4 = {
 
 kmeans:{
@@ -12417,7 +12417,7 @@ lof:{
    target:"No hay.",
    metrica:"Precisión en el top revisado por calidad.",
    decision:"Qué lotes bloquear para análisis.",
-   impacto:"Un método global marcaría como anómala toda la planta B por ser distinta. LOF compara cada lote con su propio vecindario, así que detecta lo raro *dentro* de cada régimen — que es la pregunta real."},
+   impacto:"Un método global marcaría como anómala toda la planta B por ser distinta. LOF compara cada lote con su propio vecindario, así que detecta lo raro *dentro* de cada régimen, que es la pregunta real."},
  hp:[["n_neighbors","El principal. 20 por defecto; súbelo con datos ruidosos."],
    ["contamination","Igual que en Isolation Forest: es una cuota."],
    ["novelty","True si quieres puntuar datos nuevos con predict(); False para detección sobre el propio conjunto."]],
@@ -12468,7 +12468,7 @@ reco:{
    sit:"Aumentar el consumo del catálogo largo, que hoy queda invisible frente a los 50 títulos más populares.",
    datos:"30 M de interacciones usuario-contenido, mayoritariamente implícitas (visto, abandonado, minuto de salida).",
    target:"Interacción futura.",
-   metrica:"Recall@k y NDCG, más cobertura de catálogo y diversidad — que son objetivos de negocio contrapuestos a la precisión pura.",
+   metrica:"Recall@k y NDCG, más cobertura de catálogo y diversidad, que son objetivos de negocio contrapuestos a la precisión pura.",
    decision:"Qué se muestra en la portada de cada usuario.",
    impacto:"Optimizar solo precisión hunde la diversidad: el sistema recomienda lo popular y refuerza la burbuja. El diseño real siempre equilibra relevancia, diversidad y novedad, y eso es una decisión de producto, no de métrica."},
  hp:[["n_factors","Número de factores latentes. Más captura matices y sobreajusta antes."],
@@ -12501,7 +12501,7 @@ topic:{
 
 };
 
-/* ══ CAPA PROFESIONAL — bloque 5 · PROBABILÍSTICO, SERIES, REFUERZO ══ */
+/* ══ CAPA PROFESIONAL: bloque 5 · PROBABILÍSTICO, SERIES, REFUERZO ══ */
 var PRO5 = {
 
 bayesnet:{
@@ -12512,7 +12512,7 @@ bayesnet:{
    metrica:"Verosimilitud y BIC del grafo; validación del grafo por los ingenieros de planta.",
    decision:"Dónde intervenir para reducir paradas.",
    impacto:"Un boosting diría «la humedad predice la parada». La red bayesiana permite preguntar al revés: dada una parada con esta materia prima, ¿cuál es la causa más probable? Y permite simular: si controlo la humedad, ¿cuánto bajan las paradas? Ningún modelo puramente predictivo responde eso."},
- hp:[["Estructura del grafo","La decisión central. Puede aprenderse de datos (hill climbing, PC) o imponerse con conocimiento experto — normalmente lo segundo funciona mejor."],
+ hp:[["Estructura del grafo","La decisión central. Puede aprenderse de datos (hill climbing, PC) o imponerse con conocimiento experto: normalmente lo segundo funciona mejor."],
    ["Estimador de parámetros","Máxima verosimilitud o bayesiano con priors; el bayesiano es más estable con pocos datos."],
    ["scoring","BIC o K2 para el aprendizaje de estructura."]],
  trampas:["Aprender la estructura solo de datos y presentarla como causal: la correlación no fija la dirección de las flechas. Hace falta conocimiento de dominio o intervención.",
@@ -12563,7 +12563,7 @@ sarima:{
    sit:"Un grupo hotelero dimensiona plantilla con 3 meses de antelación y la ocupación tiene un patrón anual muy marcado.",
    datos:"8 años de ocupación mensual por establecimiento.",
    target:"Ocupación mensual (%).",
-   metrica:"MAPE por temporada — el error en agosto y el error en febrero no cuestan lo mismo.",
+   metrica:"MAPE por temporada: el error en agosto y el error en febrero no cuestan lo mismo.",
    decision:"Contratación de temporada y calendario de cierres.",
    impacto:"En hostelería la estacionalidad no es ruido, es la señal principal. Un ARIMA sin componente estacional predice la media y falla justo en los picos, que es donde se gana o se pierde el año."},
  hp:[["P, D, Q, s","El bloque estacional. s es el número de periodos por ciclo: 12 mensual, 7 diario con patrón semanal."],
@@ -12689,7 +12689,7 @@ ppo:{
    sit:"Ajustar un modelo de lenguaje para que sus respuestas se ajusten al tono y las políticas de la compañía.",
    datos:"Preferencias humanas comparando pares de respuestas.",
    target:"Recompensa según el modelo de preferencias.",
-   metrica:"Recompensa media y divergencia KL respecto al modelo original — si se aleja demasiado, degenera.",
+   metrica:"Recompensa media y divergencia KL respecto al modelo original, si se aleja demasiado, degenera.",
    decision:"Qué versión del modelo se despliega.",
    impacto:"Fue el mecanismo del RLHF que hizo utilizables a los primeros asistentes conversacionales (2022-2023). Hoy, en LLMs, se sustituye a menudo por GRPO (una variante de PPO sin red crítica, popularizada por DeepSeek-R1) o por DPO. Fuera de los LLMs, PPO sigue siendo el algoritmo por defecto en robótica y control continuo por su estabilidad."},
  hp:[["clip_range","El corazón del método. 0,2 es el estándar; más alto desestabiliza."],
@@ -12725,7 +12725,7 @@ automl:{
 
 
 /* ══════════════════════════════════════════════════════════════
-   EN PALABRAS SENCILLAS — una analogía + un ejemplo con números
+   EN PALABRAS SENCILLAS: una analogía + un ejemplo con números
    por modelo. Es lo primero que se lee en la vista de estudio,
    antes de la idea técnica: primero intuición, luego mecanismo.
    ══════════════════════════════════════════════════════════════ */
@@ -12894,7 +12894,7 @@ var ST = {
   std : {l:"◐ Estudiado",    c:"std",  dot:"var(--navy-3)", txt:"Estudiado, sin notebook"},
   pend: {l:"○ Pendiente",    c:"pend", dot:"var(--navy-4)", txt:"Pendiente"}
 };
-var SYM = {f:"●",m:"◑",p:"○",na:"—"};
+var SYM = {f:"●",m:"◑",p:"○",na:"–"};
 var ALAB = ["Precisión","Velocidad","Alta dim.","Interpret."];
 var byId = {}; MODELS.forEach(function(m){byId[m.id]=m;});
 
@@ -12972,7 +12972,7 @@ document.getElementById("branches").innerHTML = SECS.map(function(s){
   return '<button class="branch" data-filter="'+s.b+'">'+s.s+'</button>';
 }).join("");
 
-/* ── filter buttons — familia y estado son dos dimensiones distintas,
+/* ── filter buttons: familia y estado son dos dimensiones distintas,
    así que se pintan en dos grupos separados en vez de una fila mixta ── */
 var FILTERS_FAM=[["all","Todos"],["sup","Supervisado"],["dl","Deep Learning"],["unsup","No Supervisado"],
               ["ts","Series"],["prob","Probabilístico"],["rl","Refuerzo"],["asoc","Asociación"],["tool","Acelerador"]];
@@ -13052,7 +13052,7 @@ function renderTable(list){
       '<td class="tf">'+m.cx+'/5</td>'+
       '<td>'+(m.nb.length
         ? m.nb.map(function(x){return '<a class="tlink" href="'+nbUrl(x)+'" target="_blank" rel="noopener">'+x[0]+'</a>';}).join('<br>')
-        : '<span class="tnone">—</span>')+'</td></tr>';
+        : '<span class="tnone">–</span>')+'</td></tr>';
   }).join("");
   [].forEach.call(document.querySelectorAll("thead th"),function(th){
     var isSorted = th.dataset.k===sortKey;
@@ -13331,7 +13331,7 @@ function renderHome(){
     SECS.map(function(s){
       var n = MODELS.filter(function(m){ return m.b === s.b; }).length;
       var firstM = MODELS.filter(function(m){ return m.b === s.b; }).sort(function(a,b){ return a.cx-b.cx; })[0];
-      return '<button class="fam" data-go="'+firstM.id+'"><span class="fn">'+s.s+'</span><span class="fc">'+s.t.replace(/^.*— /,"")+' · '+n+' modelos</span></button>';
+      return '<button class="fam" data-go="'+firstM.id+'"><span class="fn">'+s.s+'</span><span class="fc">'+s.t.replace(/^.*: /,"")+' · '+n+' modelos</span></button>';
     }).join("")+'</div>';
 
   h += '<footer class="sitefoot"><span>Manual de Machine Learning · Borja Mora Méndez · 2026</span><span>Notebooks: <a href="https://github.com/BORJAMOME/Data-Analytics-Portfolio" target="_blank" rel="noopener">BORJAMOME/Data-Analytics-Portfolio</a></span></footer>';
@@ -13613,9 +13613,9 @@ function renderDetail(id){
 
   b += '<nav class="dnav">'+
     (prev ? '<button class="dnavb" data-go="'+prev.id+'"><span class="l">← Anterior en la ruta</span><span class="n2">'+prev.n+'</span></button>'
-          : '<button class="dnavb" disabled><span class="l">← Anterior en la ruta</span><span class="n2">—</span></button>')+
+          : '<button class="dnavb" disabled><span class="l">← Anterior en la ruta</span><span class="n2">–</span></button>')+
     (next ? '<button class="dnavb next" data-go="'+next.id+'"><span class="l">Siguiente en la ruta →</span><span class="n2">'+next.n+'</span></button>'
-          : '<button class="dnavb next" disabled><span class="l">Siguiente en la ruta →</span><span class="n2">—</span></button>')+
+          : '<button class="dnavb next" disabled><span class="l">Siguiente en la ruta →</span><span class="n2">–</span></button>')+
     '</nav>';
 
   h += '<div class="study"><aside class="stoc" id="stoc" aria-label="Índice de la ficha"></aside><div class="smain">'+b+'</div></div>';
@@ -13771,7 +13771,7 @@ document.addEventListener("keydown", function(e){
 });
 
 /* ══════════════════════════════════════════════════════════════
-   WIZARD — árbol de decisión
+   WIZARD: árbol de decisión
    ══════════════════════════════════════════════════════════════ */
 (function(){
   var T={
@@ -13860,7 +13860,7 @@ document.addEventListener("keydown", function(e){
   var E={
     end_noml:{fam:"No uses Machine Learning",filter:null,ids:[],
       why:"Si una regla de negocio, una consulta SQL o un KPI estadístico responden a la pregunta, el ML solo añade coste, mantenimiento y opacidad. Empieza siempre por aquí: un modelo solo vale si mejora una decisión mejor que la alternativa más simple.",
-      extra:'<a href="'+REPO+'04-IA-BigData/01-agentes-ia/01-chatbot-reglas-restaurante/notebook.ipynb" target="_blank" rel="noopener">Ejemplo real: chatbot de reservas — motor de reglas, Nivel 0 sin IA ↗</a>'},
+      extra:'<a href="'+REPO+'04-IA-BigData/01-agentes-ia/01-chatbot-reglas-restaurante/notebook.ipynb" target="_blank" rel="noopener">Ejemplo real: chatbot de reservas: motor de reglas, Nivel 0 sin IA ↗</a>'},
     end_lin:{fam:"Regresión Lineal",filter:"num",ids:["linsimple","linmult"],
       why:"Relación lineal e interpretable: cada coeficiente es el impacto de una variable manteniendo el resto constante. Es el baseline obligatorio antes de cualquier cosa más compleja."},
     end_reg:{fam:"Regresión regularizada",filter:"num",ids:["ridge","lasso","elastic"],
@@ -13910,13 +13910,13 @@ document.addEventListener("keydown", function(e){
     end_tsne:{fam:"t-SNE / UMAP",filter:"dim",ids:["tsne","umap"],
       why:"Proyectan datos de muchas dimensiones a un mapa 2D para visualizar. UMAP es más rápido y respeta mejor la estructura global. t-SNE, solo para ver, nunca como features."},
     end_autoenc:{fam:"Autoencoders",filter:"ano",ids:["autoenc","rbm"],
-      why:"Aprenden a reconstruir su propia entrada pasando por un cuello de botella: sirven como PCA no lineal y como detector de anomalías vía error de reconstrucción. La RBM es su antecesora generativa — hoy casi solo tiene interés histórico."},
+      why:"Aprenden a reconstruir su propia entrada pasando por un cuello de botella: sirven como PCA no lineal y como detector de anomalías vía error de reconstrucción. La RBM es su antecesora generativa: hoy casi solo tiene interés histórico."},
     end_iforest:{fam:"Isolation Forest",filter:"ano",ids:["iforest"],
       why:"Aísla los casos raros con muy pocos cortes y escala muy bien: la opción por defecto para detección de anomalías global (fraude, transacciones)."},
     end_lof:{fam:"Local Outlier Factor (LOF)",filter:"ano",ids:["lof"],
       why:"Detecta anomalías respecto a la densidad de su vecindario local: ve outliers sutiles que un método global no capta."},
     end_apriori:{fam:"Apriori / Market Basket",filter:"aso",ids:["apriori"],
-      why:"Extrae reglas legibles 'si A → entonces B' con soporte, confianza y lift. El clásico del cross-selling en retail — y cuidado con la dirección de la regla: el lift es simétrico, la confianza no."},
+      why:"Extrae reglas legibles 'si A → entonces B' con soporte, confianza y lift. El clásico del cross-selling en retail, y cuidado con la dirección de la regla: el lift es simétrico, la confianza no."},
     end_reco:{fam:"Filtrado Colaborativo",filter:"rec",ids:["reco"],
       why:"Recomienda a cada cliente según lo que gustó a clientes parecidos ('quien compró esto también compró…'). Ojo al arranque en frío."},
     end_arima:{fam:"ARIMA",filter:"fut",ids:["arima"],
@@ -13939,7 +13939,7 @@ document.addEventListener("keydown", function(e){
       why:"Un grafo de dependencias probabilísticas entre variables. Permite preguntar '¿y si…?' propagando evidencia, algo que un modelo predictivo normal no puede hacer."},
     end_hmm:{fam:"Modelos Ocultos de Markov (HMM)",filter:"prb",ids:["hmm"],
       why:"Cuando hay estados que no observas directamente (régimen de mercado, fase de una máquina) y solo ves sus efectos: reconstruye la secuencia de estados más probable."},
-    end_automl:{fam:"AutoML — empieza por aquí",filter:"aut",ids:["automl"],
+    end_automl:{fam:"AutoML: empieza por aquí",filter:"aut",ids:["automl"],
       why:"Si aún no sabes qué familia encaja, AutoML te da en minutos el ranking de qué funciona sobre TUS datos. Trátalo como una brújula, no como el modelo final: después vuelve al árbol y profundiza en la familia que haya ganado."},
     end_bandit:{fam:"Multi-Armed Bandit",filter:"rl",ids:["bandit"],
       why:"El refuerzo en su versión más barata y más rentable: reparte el tráfico entre opciones y va desplazándolo solo hacia la que gana. Antes de montar un agente completo, comprueba si esto te resuelve el problema."},
