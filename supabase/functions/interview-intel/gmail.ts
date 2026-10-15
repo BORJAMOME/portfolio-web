@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════
-// gmail.ts — correos relacionados con una entrevista (OPCIONAL, solo lectura)
+// gmail.ts: correos relacionados con una entrevista (OPCIONAL, solo lectura)
 // ───────────────────────────────────────────────
 // Se activa si existen los secretos GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET y GMAIL_REFRESH_TOKEN
 // (permiso gmail.readonly; guía en README.md). Sin ellos el sistema funciona con el evento.

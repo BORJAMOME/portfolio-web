@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   buttons.js — imán ligero en las llamadas a la acción
+   buttons.js: imán ligero en las llamadas a la acción
    El botón se inclina unos píxeles hacia el cursor: confirma que
    "esto responde" antes del clic. Máximo 6 px, solo con ratón.
    La flecha deslizante y el subrayado son CSS puro (data-storytelling.css).

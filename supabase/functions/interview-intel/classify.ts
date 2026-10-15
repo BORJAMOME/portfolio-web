@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════
-// classify.ts — ¿este evento del calendario es una entrevista de trabajo?
+// classify.ts: ¿este evento del calendario es una entrevista de trabajo?
 // ───────────────────────────────────────────────
 // Reglas deterministas y explicables (cada señal queda en «signals»), sin IA ni coste:
 //   · entrevista enlazada a mano en la pestaña Entrevistas → segura

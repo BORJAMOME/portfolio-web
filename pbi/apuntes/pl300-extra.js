@@ -46,8 +46,8 @@ NOTES.push(
 <tr><td>Visualización y análisis de los datos</td><td>Igual</td><td>Sin cambios</td></tr>
 <tr><td>Implementar y mantener elementos</td><td>Administración y protección de Power BI</td><td>Secundaria</td></tr>
 <tr><td>Crear y administrar áreas de trabajo y recursos</td><td>Igual</td><td>Secundaria</td></tr>
-<tr><td>—</td><td>Protección y control de elementos de Power BI</td><td>Nuevo</td></tr>
-<tr><td>Administración de modelos semánticos</td><td>—</td><td>Eliminado</td></tr>
+<tr><td>–</td><td>Protección y control de elementos de Power BI</td><td>Nuevo</td></tr>
+<tr><td>Administración de modelos semánticos</td><td>–</td><td>Eliminado</td></tr>
 </tbody></table>
 `},
 {t:"pl300", s:"PL-300 · Grupo de Telegram (preparación)", h:`

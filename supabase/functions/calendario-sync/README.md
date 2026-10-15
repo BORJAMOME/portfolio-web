@@ -1,4 +1,4 @@
-# calendario-sync — Google Calendar → área privada
+# calendario-sync: Google Calendar → área privada
 
 Sincroniza tu Google Calendar con la tabla `public.calendar_events` cada 15 minutos.
 Es **solo lectura**: usa la dirección secreta iCal de cada calendario, así que no hace falta

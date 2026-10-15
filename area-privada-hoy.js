@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   area-privada-hoy.js — portada del área privada (#/)
+   area-privada-hoy.js: portada del área privada (#/)
    ─────────────────────────────────────────────────
    Tres bloques con lo que pide atención: los próximos 7 días del calendario,
    las entrevistas programadas y los procesos en curso que llevan tiempo sin

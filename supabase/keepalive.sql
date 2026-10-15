@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════
--- supabase/keepalive.sql — «latido» para que Supabase no pause el proyecto
+-- supabase/keepalive.sql: «latido» para que Supabase no pause el proyecto
 -- ───────────────────────────────────────────────
 -- Los proyectos del plan gratuito se pausan tras 7 días sin actividad. La Action
 -- .github/workflows/supabase-keepalive.yml llama a esta función dos veces por semana

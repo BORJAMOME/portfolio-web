@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════
-// research.ts — de la respuesta del modelo a una investigación verificada
+// research.ts: de la respuesta del modelo a una investigación verificada
 // ───────────────────────────────────────────────
 // El modelo devuelve un JSON con hechos, personas y fuentes. No nos fiamos de él:
 //   · una fuente solo se acepta si su URL está entre las que la búsqueda/lectura web

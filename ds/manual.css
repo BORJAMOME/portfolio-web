@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   ds/manual.css — manual interactivo (data-storytelling.html)
+   ds/manual.css: manual interactivo (data-storytelling.html)
    Solo para data-storytelling.html. Todo va bajo .ds
    para no tocar shared.css ni el resto del portfolio.
 
@@ -182,7 +182,7 @@
 .step .st-tag b { color: var(--green-ink); }
 .step--pause .st-copy { font-size: clamp(26px, 2.8vw, 40px); }
 
-/* Móvil: visual arriba, texto debajo — no es un desktop encogido */
+/* Móvil: visual arriba, texto debajo: no es un desktop encogido */
 @media (max-width: 860px) {
   .scrolly { display: block; }
   .sc-visual {
@@ -253,7 +253,7 @@
 .dash.q:not(.story) .tt .t-q { opacity: 1; transform: none; }
 .dash.desc:not(.story) .tt .t-c { opacity: 1; transform: none; }
 
-/* posiciones — layout base */
+/* posiciones: layout base */
 .dash .p-head  { left: 1.5%; top: 2%;  width: 97%;  height: 12%; }
 .dash .p-k1    { left: 1.5%; top: 16%; width: 23%;  height: 14%; }
 .dash .p-k2    { left: 26%;  top: 16%; width: 23%;  height: 14%; }
@@ -1282,7 +1282,7 @@
 .dash.b-kpi .bp-box[data-f="b-kpi"] .bp-lb, .dash.b-sec .bp-box[data-f="b-sec"] .bp-lb, .dash.rec .bp-box[data-f="rec"] .bp-lb { opacity: 0; transition-delay: 0s; }
 
 /* ═══════════════════════════════════════════════
-   PLANOS DE DASHBOARD — lo que aporta PBI Mockup Creator
+   PLANOS DE DASHBOARD, lo que aporta PBI Mockup Creator
    Lienzo 16:9, piezas posicionadas en % por ds/manual.js (wfLayout)
    ═══════════════════════════════════════════════ */
 .wf { container-type: inline-size; position: relative; aspect-ratio: 16 / 9; background: #F4F4F4; border: 1px solid var(--grid); overflow: hidden; }
@@ -1432,7 +1432,7 @@
 .ds-h3 a:hover { color: var(--green-ink); }
 
 /* ═══════════════════════════════════════════════
-   PORTADA — apertura de reportaje de data journalism, blanco y negro
+   PORTADA: apertura de reportaje de data journalism, blanco y negro
    Un lienzo de 1280×800 (el del diseño) que escala entero: todas las
    medidas son «px de lienzo» × --u. El gráfico lo genera ds/cover.js en
    una de dos variantes (data-v="7b" semitono · "7d" rotativa).

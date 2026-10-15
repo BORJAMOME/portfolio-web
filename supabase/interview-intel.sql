@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════
--- supabase/interview-intel.sql — «Interview Intelligence» (preparación de entrevistas)
+-- supabase/interview-intel.sql: «Interview Intelligence» (preparación de entrevistas)
 -- ───────────────────────────────────────────────
 -- Requiere: area-privada.sql (is_member), entrevistas.sql (procesos, entrevistas,
 -- touch_updated_at) y calendario.sql (calendar_events con las columnas de participantes).

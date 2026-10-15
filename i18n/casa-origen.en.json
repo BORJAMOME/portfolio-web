@@ -1,12 +1,12 @@
 {
   "_": "Traducción al inglés británico de casa-origen.html (→ en/casa-origen.html). La usa tools/build-en.mjs.",
   "units": {
-    "Casa Origen — Caso de Estudio BI | Borja Mora": "Casa Origen — BI case study | Borja Mora",
+    "Casa Origen: Caso de Estudio BI | Borja Mora": "Casa Origen: BI case study | Borja Mora",
     "Sistema de Business Intelligence completo para una cafetería de especialidad en Madrid: Power BI, DAX, SQL Server, Python y Machine Learning.": "A complete business intelligence system for a speciality coffee shop in Madrid: Power BI, DAX, SQL Server, Python and machine learning.",
     "Sistema BI completo para PYME: 4 dashboards, 2 modelos ML, arquitectura Medallion. Power BI + DAX + SQL Server + Python.": "A complete BI system for a small business: 4 dashboards, 2 ML models, Medallion architecture. Power BI + DAX + SQL Server + Python.",
     "Sistema BI completo para PYME: 4 dashboards, 2 modelos ML, arquitectura Medallion.": "A complete BI system for a small business: 4 dashboards, 2 ML models, Medallion architecture.",
     "de las decisiones en las PYMEs españolas se toman sin mirar un solo dato": "of decisions in Spanish small businesses are made without looking at a single piece of data",
-    "Esta es una de ellas — hasta que dejó de serlo.": "This is one of them — until it wasn’t.",
+    "Esta es una de ellas: hasta que dejó de serlo.": "This is one of them: until it wasn’t.",
     "Antecedentes y justificación": "Background and rationale",
     "Madrid, capital española del café.": "Madrid, Spain’s coffee capital.",
     "Mapa de Madrid": "Map of Madrid",
@@ -78,9 +78,9 @@
     "<strong>Tosta Aguacate = producto ancla.</strong> 173K € facturación. Sostiene mediodía y aparece en el 60% de combos ML.": "<strong>Avocado toast = anchor product.</strong> €173K revenue. It carries midday and appears in 60% of the ML combos.",
     "<strong style=\"color:var(--co-green);\">Hallazgo H2.&nbsp;</strong>Combo principal: <b>Kombucha + Tosta Aguacate (lift 3,5×)</b> → menú \"Brunch Casa Origen\".": "<strong style=\"color:var(--co-green);\">Finding H2.&nbsp;</strong>Main combo: <b>Kombucha + Avocado toast (lift 3.5×)</b> → \"Casa Origen Brunch\" menu.",
     "RevPASH global <strong>5,26 €/asiento-h</strong>, pero Apertura (2,28 €) y Tarde (2,01 €) no cubren el umbral 2,50 €.": "Overall RevPASH <strong>€5.26/seat-hour</strong>, but Opening (€2.28) and Afternoon (€2.01) don’t reach the €2.50 threshold.",
-    "<strong style=\"color:var(--co-green);\">Hallazgo H4</strong> — Apertura y Tarde rinden la mitad del umbral → cierre 15:30 en fines de semana.": "<strong style=\"color:var(--co-green);\">Finding H4</strong> — Opening and Afternoon earn half the threshold → close at 15:30 at weekends.",
+    "<strong style=\"color:var(--co-green);\">Hallazgo H4</strong>: Apertura y Tarde rinden la mitad del umbral → cierre 15:30 en fines de semana.": "<strong style=\"color:var(--co-green);\">Finding H4</strong>: Opening and Afternoon earn half the threshold → close at 15:30 at weekends.",
     "Fin de semana: sábado y domingo mañana en <strong>7,76 € / 8,28 €</strong> (2× media L-V) → refuerzo plantilla.": "Weekends: Saturday and Sunday morning at <strong>€7.76 / €8.28</strong> (2× the Mon–Fri average) → more staff.",
-    "<strong style=\"color:var(--co-green);\">Hallazgo H3</strong> — Ticket depende de franja (7,10 → 10,67 €), no del día. Mover consumo de tarde a mediodía.": "<strong style=\"color:var(--co-green);\">Finding H3</strong> — The ticket depends on the time slot (€7.10 → €10.67), not the day. Move afternoon spending to midday.",
+    "<strong style=\"color:var(--co-green);\">Hallazgo H3</strong>: Ticket depende de franja (7,10 → 10,67 €), no del día. Mover consumo de tarde a mediodía.": "<strong style=\"color:var(--co-green);\">Finding H3</strong>: The ticket depends on the time slot (€7.10 → €10.67), not the day. Move afternoon spending to midday.",
     "Se venden tostas y brunch (salados), los productos más caros de la carta.": "Toasts and brunch (savoury) sell, the most expensive items on the menu.",
     "<strong style=\"color:var(--co-green);\">Hallazgo H5.&nbsp;</strong>Champions + Loyal (52,7%) generan el <strong>70,7% del revenue</strong>.": "<strong style=\"color:var(--co-green);\">Finding H5.&nbsp;</strong>Champions + Loyal (52.7%) generate <strong>70.7% of revenue</strong>.",
     "Delivery aporta 20% facturación pero comisión 30% deja margen neto en <strong>43% vs 73% in-store</strong>.": "Delivery brings in 20% of revenue, but a 30% commission leaves net margin at <strong>43% vs 73% in-store</strong>.",
@@ -248,7 +248,7 @@
     "EN"
   ],
   "js": {
-    "Casa Origen — Caso de Estudio BI": "Casa Origen — BI case study",
+    "Casa Origen: Caso de Estudio BI": "Casa Origen: BI case study",
     "Sistema de Business Intelligence completo para una cafetería de especialidad en Madrid: Power BI, DAX, SQL Server, Python y Machine Learning.": "A complete business intelligence system for a speciality coffee shop in Madrid: Power BI, DAX, SQL Server, Python and machine learning.",
     "Caso de estudio": "Case study",
     "es-ES": "en-GB",

@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════
-// supabase/functions/calendario-sync — Google Calendar (iCal) → public.calendar_events
+// supabase/functions/calendario-sync: Google Calendar (iCal) → public.calendar_events
 // ───────────────────────────────────────────────
 // Lee la «dirección secreta en formato iCal» de uno o varios calendarios de Google,
 // expande los eventos recurrentes dentro de una ventana (−60 días … +365 días) y

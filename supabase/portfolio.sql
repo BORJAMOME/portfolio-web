@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════
--- supabase/portfolio.sql — pestaña «Portfolio» del área privada
+-- supabase/portfolio.sql: pestaña «Portfolio» del área privada
 -- ───────────────────────────────────────────────
 -- Inventario de todo lo construido para el portfolio: manuales, proyectos de Power BI,
 -- gráficos, apps de Streamlit, repositorios y visualizaciones.

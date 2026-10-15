@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   cover.js — portada: apertura de reportaje en blanco y negro
+   cover.js, portada: apertura de reportaje en blanco y negro
    Dos variantes que se alternan en cada carga (la primera, al azar):
    · 7b «semitono»: barras divergentes en trama de puntos; los 10
      capítulos son las barras negras sólidas.

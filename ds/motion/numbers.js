@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   numbers.js — las cifras se construyen, no se cuentan
+   numbers.js: las cifras se construyen, no se cuentan
    Nada de contadores que suben de 0 a 1.572.340: eso inventa valores
    intermedios que nunca existieron. Aquí cada carácter de la cifra real
    encaja en su sitio, de izquierda a derecha, como tipos en una caja.

@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════
--- supabase/fichero.sql — tabla del Fichero (pestaña «Fichero» del área privada)
+-- supabase/fichero.sql: tabla del Fichero (pestaña «Fichero» del área privada)
 -- ───────────────────────────────────────────────
 -- Requiere haber ejecutado antes supabase/area-privada.sql (usa public.is_member()).
 -- Se ejecuta UNA vez en Supabase → SQL Editor → New query → pegar → Run.

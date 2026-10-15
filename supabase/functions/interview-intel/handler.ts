@@ -1,4 +1,4 @@
-// handler.ts — validación HTTP de la función, separada de index.ts para poder probarla.
+// handler.ts: validación HTTP de la función, separada de index.ts para poder probarla.
 // Solo POST, cuerpo JSON de como mucho 2 KB, única acción «tick» y llamante autorizado.
 export const CORS = {
   "Access-Control-Allow-Origin": "https://borjamora.es",

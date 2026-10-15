@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════
--- supabase/entrevistas.sql — pestaña «Entrevistas» del área privada
+-- supabase/entrevistas.sql: pestaña «Entrevistas» del área privada
 -- ───────────────────────────────────────────────
 -- Requiere haber ejecutado antes supabase/area-privada.sql (usa public.is_member()).
 -- Se ejecuta UNA vez en Supabase → SQL Editor → New query → pegar → Run.

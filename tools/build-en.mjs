@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   tools/build-en.mjs — genera las versiones inglesas del portfolio
+   tools/build-en.mjs: genera las versiones inglesas del portfolio
    ─────────────────────────────────────────────────
    Fuente única: la página española. El script la lee, sustituye cada frase por su
    traducción (inglés británico) y escribe la página en en/.
@@ -11,9 +11,9 @@
                                                   desactualizada o le falta una traducción (lo usa la CI)
 
    · Cada página tiene su diccionario (ver PAGES):
-       units  — { "frase en español (con su marcado en línea)": "English" }
-       keep   — ["frases que no cambian"] (marcas, siglas, nombres)
-       raw    — [["texto literal", "reemplazo"]] para lo que no es una frase (scripts, URLs…)
+       units | { "frase en español (con su marcado en línea)": "English" }
+       keep | ["frases que no cambian"] (marcas, siglas, nombres)
+       raw | [["texto literal", "reemplazo"]] para lo que no es una frase (scripts, URLs…)
    · Una «frase» es un tramo de texto con su marcado en línea (<b>, <em>, <a>, <span>…)
      entre dos elementos de bloque. Si no está en el diccionario, se queda en español y
      aparece en el aviso: cualquier cambio en la versión española se detecta.
@@ -79,7 +79,7 @@ function build(name, P, wantMissing) {
   const src = readFileSync(join(ROOT, P.src), 'utf8');
   let out = '', run = [];
   /* Una frase = texto suelto + marcado en línea. Si el texto suelto (fuera de etiquetas) no
-     tiene palabras —p. ej. enlaces o chips seguidos—, cada texto interior se traduce aparte. */
+     tiene palabras, p. ej. enlaces o chips seguidos, cada texto interior se traduce aparte. */
   const flush = () => {
     if (!run.length) return;
     const txt = run.map((r) => r.t).join(''), lead = txt.match(/^\s*/)[0], trail = txt.match(/\s*$/)[0];

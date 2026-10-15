@@ -14,7 +14,7 @@
     "created_at": "2026-10-14T09:12:00Z", "word_count": 0, "model": "claude-opus-5-5",
     "warnings": ["1 entrevistador sin verificar en fuentes públicas."],
     "sources": [
-      { "id": 1, "url": "https://logisticanorte.example/quienes-somos", "title": "Quiénes somos — Logística Norte", "domain": "logisticanorte.example", "published": null, "type": "oficial" },
+      { "id": 1, "url": "https://logisticanorte.example/quienes-somos", "title": "Quiénes somos: Logística Norte", "domain": "logisticanorte.example", "published": null, "type": "oficial" },
       { "id": 2, "url": "https://logisticanorte.example/empleo/analista-power-bi", "title": "Oferta: Analista Power BI", "domain": "logisticanorte.example", "published": "2026-09-30", "type": "oferta" },
       { "id": 3, "url": "https://diario-logistica.example/logistica-norte-abre-almacen-valencia", "title": "Logística Norte abre un almacén automatizado en Valencia", "domain": "diario-logistica.example", "published": "2026-08-12", "type": "prensa" },
       { "id": 4, "url": "https://logisticanorte.example/blog/datos-en-tiempo-real", "title": "Hacia los datos en tiempo real en nuestra red", "domain": "logisticanorte.example", "published": "2026-06-03", "type": "empresa" },
