@@ -437,13 +437,84 @@ $("exportBtn").addEventListener("click", async () => {
   const zip = fflate.zipSync(files, { level: 6 });
   const stamp = new Date().toISOString().slice(0, 10);
   const name = `partidas-caesar3-${stamp}.zip`;
-  const blob = new Blob([zip], { type: "application/zip" });
-  const file = new File([blob], name, { type: "application/zip" });
+  await offerFile(new Blob([zip], { type: "application/zip" }), name);
+});
+// Entrega un archivo: hoja de compartir de iOS (Guardar en Archivos, AirDrop…) o descarga
+async function offerFile(blob, name) {
+  const file = new File([blob], name, { type: blob.type || "application/octet-stream" });
   try {
     if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: name }); return; }
   } catch (e) { if (e && e.name === "AbortError") return; }
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+
+/* ---------- Idioma del juego ----------
+   El texto del juego vive en dos archivos: c3.eng (menús, edificios, consejeros) y
+   c3_mm.eng (mensajes y misiones). Se exportan para traducirlos y se importan después;
+   los originales quedan en /c3/idioma-original para poder volver atrás. */
+const LANG_FILES = { "c3.eng": [28 + 1000 * 8, 28 + 1000 * 8 + 400000], "c3_mm.eng": [32024, 32024 + 800000] };
+const LANG_BACKUP = DATA + "/idioma-original";
+function rootFile(lower) {
+  try { const n = FS.readdir(DATA).find((x) => x.toLowerCase() === lower); return n ? DATA + "/" + n : null; } catch { return null; }
+}
+const hasLangBackup = () => FS.analyzePath(LANG_BACKUP).exists;
+function refreshLanguage() {
+  if (!fsReady) return;
+  const translated = hasLangBackup();
+  $("langState").textContent = translated ? "Traducción importada (el original en inglés está guardado)" : "Original de tu copia del juego";
+  $("langRestoreBtn").hidden = !translated;
+}
+$("langExportBtn").addEventListener("click", async () => {
+  const files = {};
+  for (const name of Object.keys(LANG_FILES)) {
+    // si ya hay traducción, se exporta el original guardado
+    const src = hasLangBackup() && FS.analyzePath(LANG_BACKUP + "/" + name).exists ? LANG_BACKUP + "/" + name : rootFile(name);
+    if (!src) return toast("No encuentro " + name + ". Reimporta el juego.");
+    files[name] = FS.readFile(src);
+  }
+  const zip = fflate.zipSync(files, { level: 9 });
+  log("Textos exportados:", Object.entries(files).map(([k, v]) => k + " " + fmtMB(v.length)).join(", "));
+  await offerFile(new Blob([zip], { type: "application/zip" }), "textos-caesar3.zip");
+});
+$("langInput").addEventListener("change", async (e) => {
+  const f = e.target.files[0]; e.target.value = "";
+  if (!f) return;
+  try {
+    const got = {};
+    if (/^PK/.test(String.fromCharCode(...new Uint8Array(await f.slice(0, 2).arrayBuffer())))) {
+      const unz = fflate.unzipSync(new Uint8Array(await f.arrayBuffer()));
+      for (const [k, v] of Object.entries(unz)) {
+        const base = k.split("/").pop().toLowerCase();
+        if (LANG_FILES[base]) got[base] = v;
+      }
+    }
+    for (const [name, [min, max]] of Object.entries(LANG_FILES)) {
+      const d = got[name];
+      if (!d) return toast("El ZIP debe contener c3.eng y c3_mm.eng");
+      if (d.length < min || d.length > max) return toast(name + " no tiene un tamaño válido (" + d.length + " bytes)");
+    }
+    if (!hasLangBackup()) {
+      mkdirp(LANG_BACKUP);
+      for (const name of Object.keys(LANG_FILES)) FS.writeFile(LANG_BACKUP + "/" + name, FS.readFile(rootFile(name)));
+    }
+    for (const name of Object.keys(LANG_FILES)) FS.writeFile(rootFile(name) || DATA + "/" + name, got[name]);
+    await persist(); refreshLanguage();
+    toast("Traducción instalada. Se verá en la próxima partida");
+  } catch (err) {
+    log("idioma:", err && err.stack || err);
+    toast("No se pudo leer ese archivo");
+  }
+});
+$("langRestoreBtn").addEventListener("click", async () => {
+  if (!hasLangBackup()) return;
+  for (const name of Object.keys(LANG_FILES)) {
+    const b = LANG_BACKUP + "/" + name;
+    if (FS.analyzePath(b).exists) FS.writeFile(rootFile(name) || DATA + "/" + name, FS.readFile(b));
+  }
+  rmrf(LANG_BACKUP); try { FS.rmdir(LANG_BACKUP); } catch {}
+  await persist(); refreshLanguage();
+  toast("Vuelves a tener el idioma original");
 });
 $("savInput").addEventListener("change", async (e) => {
   const list = [...e.target.files]; e.target.value = "";
@@ -459,7 +530,7 @@ $("savInput").addEventListener("change", async (e) => {
 });
 
 /* ---------- Hojas ---------- */
-function openSheet(name) { $("sheet-" + name).hidden = false; }
+function openSheet(name) { if (name === "settings") refreshLanguage(); $("sheet-" + name).hidden = false; }
 function closeSheets() { document.querySelectorAll(".scrim").forEach((s) => (s.hidden = true)); $("wipeConfirm").hidden = true; }
 document.addEventListener("click", (e) => {
   const o = e.target.closest("[data-open]"); if (o) { openSheet(o.dataset.open); return; }
