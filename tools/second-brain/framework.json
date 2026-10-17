@@ -1,0 +1,1704 @@
+{
+  "version": 1,
+  "nota": "Marco general de competencias de analista de datos. Es un punto de partida editable, NO un estudio de mercado ni una evaluación oficial. Cambiar este archivo no requiere tocar el motor ni el visor.",
+  "niveles": [
+    {
+      "id": "junior",
+      "label": "Data Analyst Junior",
+      "descripcion": "Ejecuta análisis y cuadros de mando con supervisión: limpia datos, consulta con SQL, construye informes y explica lo que hizo."
+    },
+    {
+      "id": "consolidado",
+      "label": "Junior consolidado",
+      "descripcion": "Trabaja con autonomía en un modelo completo: de la fuente al informe, justificando decisiones y cuidando la calidad."
+    },
+    {
+      "id": "mid",
+      "label": "Data Analyst Mid-Level",
+      "descripcion": "Define métricas con negocio, diseña modelos mantenibles, optimiza y automatiza, y comunica recomendaciones que cambian decisiones."
+    }
+  ],
+  "regiones": [
+    {
+      "id": "bi",
+      "label": "Business Intelligence y Power BI"
+    },
+    {
+      "id": "datos",
+      "label": "Ingeniería y preparación de datos"
+    },
+    {
+      "id": "analisis",
+      "label": "Análisis, estadística y machine learning"
+    },
+    {
+      "id": "visualizacion",
+      "label": "Visualización y comunicación de datos"
+    },
+    {
+      "id": "ux",
+      "label": "UX/UI y diseño (complementario)"
+    },
+    {
+      "id": "profesional",
+      "label": "Competencias profesionales"
+    },
+    {
+      "id": "practica",
+      "label": "Proyectos y experiencia demostrada"
+    },
+    {
+      "id": "objetivos",
+      "label": "Objetivos y oportunidades"
+    }
+  ],
+  "conceptos": [
+    {
+      "id": "powerbi",
+      "label": "Power BI",
+      "tipo": "tecnologia",
+      "region": "bi",
+      "naturaleza": "practica",
+      "terminos": [
+        "Power BI",
+        "PowerBI",
+        "pbix",
+        "pbip"
+      ],
+      "artefactos": [
+        "pbix",
+        "pbip"
+      ],
+      "resumen": "Plataforma de Microsoft para modelar datos y construir informes interactivos."
+    },
+    {
+      "id": "dax",
+      "label": "DAX",
+      "tipo": "tecnologia",
+      "region": "bi",
+      "naturaleza": "practica",
+      "terminos": [
+        "DAX"
+      ],
+      "codigo": {
+        "dax": [
+          "\\b(CALCULATE|SUMX|AVERAGEX|DIVIDE|SELECTEDVALUE|SWITCH|RELATED|VALUES|DISTINCTCOUNT)\\s*\\("
+        ],
+        "markdown": [
+          "\\b(CALCULATE|SUMX|DIVIDE|SELECTEDVALUE)\\s*\\("
+        ]
+      },
+      "resumen": "Lenguaje de fórmulas de Power BI para medidas, columnas calculadas y tablas.",
+      "artefactos": [
+        "pbix-measures",
+        "tmdl"
+      ]
+    },
+    {
+      "id": "dax-contexto",
+      "label": "Contexto de filtro en DAX",
+      "tipo": "tecnica",
+      "region": "bi",
+      "naturaleza": "practica",
+      "terminos": [
+        "contexto de filtro",
+        "filter context",
+        "row context",
+        "contexto de fila",
+        "transición de contexto",
+        "context transition"
+      ],
+      "codigo": {
+        "dax": [
+          "\\b(ALLSELECTED|ALLEXCEPT|REMOVEFILTERS|KEEPFILTERS|CALCULATETABLE)\\s*\\(",
+          "\\bFILTER\\s*\\(\\s*ALL"
+        ],
+        "markdown": [
+          "\\b(ALLSELECTED|ALLEXCEPT|REMOVEFILTERS|KEEPFILTERS)\\s*\\("
+        ]
+      },
+      "resumen": "Cómo DAX evalúa cada medida según filtros, segmentaciones y filas: la base de las medidas avanzadas."
+    },
+    {
+      "id": "time-intelligence",
+      "label": "Inteligencia de tiempo",
+      "tipo": "tecnica",
+      "region": "bi",
+      "naturaleza": "practica",
+      "terminos": [
+        "time intelligence",
+        "inteligencia de tiempo",
+        "inteligencia temporal",
+        "tabla de calendario",
+        "calendario maestro",
+        "date table"
+      ],
+      "codigo": {
+        "dax": [
+          "\\b(DATESYTD|TOTALYTD|SAMEPERIODLASTYEAR|DATEADD|PARALLELPERIOD|DATESINPERIOD|CALENDARAUTO)\\s*\\("
+        ],
+        "markdown": [
+          "\\b(DATESYTD|TOTALYTD|SAMEPERIODLASTYEAR|DATEADD)\\s*\\("
+        ]
+      },
+      "resumen": "Comparativas YTD, mes anterior o mismo periodo del año pasado sobre una tabla de fechas."
+    },
+    {
+      "id": "power-query",
+      "label": "Power Query",
+      "tipo": "tecnologia",
+      "region": "bi",
+      "naturaleza": "practica",
+      "terminos": [
+        "Power Query",
+        "lenguaje M"
+      ],
+      "codigo": {
+        "m": [
+          "\\bTable\\.\\w+\\(",
+          "\\blet\\b[\\s\\S]*\\bin\\b"
+        ]
+      },
+      "resumen": "Editor de transformación de datos de Power BI y Excel (lenguaje M)."
+    },
+    {
+      "id": "power-bi-service",
+      "label": "Power BI Service",
+      "tipo": "tecnologia",
+      "region": "bi",
+      "naturaleza": "practica",
+      "terminos": [
+        "Power BI Service",
+        "servicio de Power BI",
+        "área de trabajo",
+        "workspace",
+        "gateway",
+        "actualización programada",
+        "scheduled refresh",
+        "app de Power BI"
+      ],
+      "resumen": "Entorno en la nube donde se publican, comparten y refrescan los informes."
+    },
+    {
+      "id": "rls",
+      "label": "Seguridad a nivel de fila (RLS)",
+      "tipo": "tecnica",
+      "region": "bi",
+      "naturaleza": "practica",
+      "terminos": [
+        "RLS",
+        "row-level security",
+        "row level security",
+        "seguridad a nivel de fila"
+      ],
+      "resumen": "Restringe qué filas ve cada usuario en un informe o base de datos."
+    },
+    {
+      "id": "pbi-optimizacion",
+      "label": "Optimización de modelos",
+      "tipo": "tecnica",
+      "region": "bi",
+      "naturaleza": "practica",
+      "terminos": [
+        "DAX Studio",
+        "Performance Analyzer",
+        "VertiPaq",
+        "Tabular Editor",
+        "optimizar el modelo",
+        "optimización del modelo",
+        "rendimiento del informe"
+      ],
+      "resumen": "Medir y mejorar el rendimiento de un modelo semántico y sus medidas."
+    },
+    {
+      "id": "modelo-estrella",
+      "label": "Modelo en estrella",
+      "tipo": "concepto",
+      "region": "bi",
+      "naturaleza": "practica",
+      "terminos": [
+        "esquema en estrella",
+        "modelo en estrella",
+        "star schema",
+        "modelo dimensional",
+        "dimensional model",
+        "tabla de hechos",
+        "fact table",
+        "tabla de dimensión",
+        "dimension table",
+        "tablas de dimensiones",
+        "snowflake"
+      ],
+      "resumen": "Organización del modelo en tablas de hechos y dimensiones para consultas simples y rápidas.",
+      "codigo": {
+        "sql": [
+          "\\b(dim|fact)_\\w+",
+          "\\b(dimension|hechos)_\\w+"
+        ],
+        "python": [
+          "\\b(dim|fact)_\\w+\\s*="
+        ]
+      }
+    },
+    {
+      "id": "kpi",
+      "label": "KPI e indicadores",
+      "tipo": "concepto",
+      "region": "profesional",
+      "naturaleza": "explicativa",
+      "terminos": [
+        "KPI",
+        "KPIs",
+        "indicador clave",
+        "indicadores clave",
+        "cuadro de mando",
+        "scorecard"
+      ],
+      "resumen": "Métricas que miden el cumplimiento de un objetivo y sirven para seguirlo en el tiempo."
+    },
+    {
+      "id": "sql",
+      "label": "SQL",
+      "tipo": "tecnologia",
+      "region": "datos",
+      "naturaleza": "practica",
+      "terminos": [
+        "SQL",
+        "T-SQL",
+        "PostgreSQL",
+        "MySQL",
+        "SQL Server",
+        "SQLite"
+      ],
+      "codigo": {
+        "sql": [
+          "\\bSELECT\\b[\\s\\S]{0,400}?\\bFROM\\b",
+          "\\bCREATE\\s+TABLE\\b",
+          "\\bGROUP\\s+BY\\b"
+        ]
+      },
+      "resumen": "Lenguaje estándar para consultar y transformar datos en bases relacionales."
+    },
+    {
+      "id": "sql-joins",
+      "label": "Joins y modelado relacional en SQL",
+      "tipo": "tecnica",
+      "region": "datos",
+      "naturaleza": "practica",
+      "terminos": [
+        "JOIN",
+        "LEFT JOIN",
+        "INNER JOIN"
+      ],
+      "codigo": {
+        "sql": [
+          "\\b(INNER|LEFT|RIGHT|FULL|CROSS)?\\s*JOIN\\b"
+        ]
+      },
+      "resumen": "Combinar tablas por sus claves, entendiendo cuándo cambia el número de filas."
+    },
+    {
+      "id": "sql-window",
+      "label": "Funciones de ventana",
+      "tipo": "tecnica",
+      "region": "datos",
+      "naturaleza": "practica",
+      "terminos": [
+        "funciones de ventana",
+        "window functions",
+        "ROW_NUMBER",
+        "PARTITION BY"
+      ],
+      "codigo": {
+        "sql": [
+          "\\bOVER\\s*\\(",
+          "\\b(ROW_NUMBER|RANK|DENSE_RANK|LAG|LEAD|NTILE)\\s*\\("
+        ]
+      },
+      "resumen": "Cálculos sobre conjuntos de filas relacionadas (rankings, acumulados, comparativas con el periodo anterior)."
+    },
+    {
+      "id": "sql-cte",
+      "label": "CTE y consultas por capas",
+      "tipo": "tecnica",
+      "region": "datos",
+      "naturaleza": "practica",
+      "terminos": [
+        "CTE",
+        "CTEs",
+        "common table expression",
+        "subconsulta",
+        "subconsultas"
+      ],
+      "codigo": {
+        "sql": [
+          "\\bWITH\\s+\\w+\\s+AS\\s*\\(",
+          "\\)\\s*,\\s*\\w+\\s+AS\\s*\\("
+        ]
+      },
+      "resumen": "Descomponer una consulta compleja en pasos legibles y reutilizables."
+    },
+    {
+      "id": "sql-optimizacion",
+      "label": "Optimización de consultas",
+      "tipo": "tecnica",
+      "region": "datos",
+      "naturaleza": "practica",
+      "terminos": [
+        "EXPLAIN",
+        "plan de ejecución",
+        "execution plan",
+        "query plan",
+        "optimizar consultas",
+        "optimización de consultas"
+      ],
+      "codigo": {
+        "sql": [
+          "\\bEXPLAIN\\b",
+          "\\bCREATE\\s+(UNIQUE\\s+)?INDEX\\b"
+        ]
+      },
+      "resumen": "Leer planes de ejecución, crear índices y reescribir consultas para que escalen."
+    },
+    {
+      "id": "python",
+      "label": "Python",
+      "tipo": "tecnologia",
+      "region": "datos",
+      "naturaleza": "practica",
+      "terminos": [
+        "Python"
+      ],
+      "codigo": {
+        "python": [
+          "^\\s*(import|from)\\s+\\w+",
+          "^\\s*def\\s+\\w+\\("
+        ]
+      },
+      "resumen": "Lenguaje de propósito general muy usado para análisis, automatización y machine learning."
+    },
+    {
+      "id": "pandas",
+      "label": "pandas",
+      "tipo": "tecnologia",
+      "region": "datos",
+      "naturaleza": "practica",
+      "terminos": [
+        "pandas"
+      ],
+      "codigo": {
+        "python": [
+          "\\bimport\\s+pandas\\b",
+          "\\bfrom\\s+pandas\\b",
+          "\\bpd\\.(read_\\w+|DataFrame|merge|concat)\\b"
+        ]
+      },
+      "resumen": "Biblioteca de Python para manipular tablas de datos."
+    },
+    {
+      "id": "jupyter",
+      "label": "Jupyter Notebooks",
+      "tipo": "tecnologia",
+      "region": "datos",
+      "naturaleza": "practica",
+      "terminos": [
+        "Jupyter",
+        "notebook",
+        "notebooks"
+      ],
+      "artefactos": [
+        "ipynb"
+      ],
+      "resumen": "Documentos que mezclan código, resultados y explicación para análisis reproducibles."
+    },
+    {
+      "id": "etl",
+      "label": "ETL y pipelines",
+      "tipo": "concepto",
+      "region": "datos",
+      "naturaleza": "practica",
+      "terminos": [
+        "ETL",
+        "ELT",
+        "pipeline",
+        "pipelines",
+        "carga de datos",
+        "ingesta"
+      ],
+      "resumen": "Extraer, transformar y cargar datos desde su origen hasta un modelo analítico.",
+      "codigo": {
+        "python": [
+          "\\.(to_sql|to_parquet)\\s*\\("
+        ],
+        "sql": [
+          "\\bINSERT\\s+INTO\\b",
+          "\\bCREATE\\s+(OR\\s+REPLACE\\s+)?(TABLE|VIEW)\\s+\\S+\\s+AS\\b"
+        ]
+      }
+    },
+    {
+      "id": "data-quality",
+      "label": "Calidad y limpieza de datos",
+      "tipo": "concepto",
+      "region": "datos",
+      "naturaleza": "practica",
+      "terminos": [
+        "calidad de datos",
+        "data quality",
+        "limpieza de datos",
+        "data cleaning",
+        "valores nulos",
+        "valores perdidos",
+        "missing values",
+        "duplicados",
+        "outliers",
+        "valores atípicos",
+        "validación de datos"
+      ],
+      "codigo": {
+        "python": [
+          "\\.(dropna|fillna|drop_duplicates|isna|isnull)\\s*\\("
+        ],
+        "sql": [
+          "\\bIS\\s+(NOT\\s+)?NULL\\b",
+          "\\bCOALESCE\\s*\\("
+        ]
+      },
+      "resumen": "Detectar y tratar nulos, duplicados, tipos erróneos y valores atípicos antes de analizar."
+    },
+    {
+      "id": "modelado-datos",
+      "label": "Modelado de datos",
+      "tipo": "concepto",
+      "region": "datos",
+      "naturaleza": "practica",
+      "terminos": [
+        "modelado de datos",
+        "modelo de datos",
+        "data model",
+        "clave primaria",
+        "clave foránea",
+        "normalización",
+        "relación uno a varios",
+        "cardinalidad"
+      ],
+      "codigo": {
+        "sql": [
+          "\\bPRIMARY\\s+KEY\\b",
+          "\\bFOREIGN\\s+KEY\\b",
+          "\\bREFERENCES\\b"
+        ]
+      },
+      "resumen": "Diseñar tablas, claves y relaciones para que los datos se puedan analizar sin ambigüedad."
+    },
+    {
+      "id": "excel",
+      "label": "Excel",
+      "tipo": "tecnologia",
+      "region": "datos",
+      "naturaleza": "practica",
+      "terminos": [
+        "Excel",
+        "tabla dinámica",
+        "tablas dinámicas",
+        "pivot table",
+        "XLOOKUP",
+        "BUSCARX"
+      ],
+      "artefactos": [
+        "xlsx:explicativa"
+      ],
+      "resumen": "Hoja de cálculo para exploración rápida, tablas dinámicas y reporting operativo."
+    },
+    {
+      "id": "git",
+      "label": "Git y GitHub",
+      "tipo": "tecnologia",
+      "region": "profesional",
+      "naturaleza": "practica",
+      "terminos": [
+        "Git",
+        "GitHub",
+        "pull request",
+        "gitignore",
+        "control de versiones",
+        "version control"
+      ],
+      "artefactos": [
+        "gitignore",
+        "git-repo"
+      ],
+      "resumen": "Control de versiones y colaboración sobre el código y los documentos de un proyecto."
+    },
+    {
+      "id": "automatizacion",
+      "label": "Automatización",
+      "tipo": "tecnica",
+      "region": "profesional",
+      "naturaleza": "practica",
+      "terminos": [
+        "automatización",
+        "automatizar",
+        "GitHub Actions",
+        "cron",
+        "actualización automática",
+        "refresco programado"
+      ],
+      "resumen": "Programar y repetir sin intervención manual la carga, el cálculo o la publicación.",
+      "codigo": {
+        "yaml": [
+          "\\bcron:",
+          "\\bschedule:",
+          "\\bworkflow_dispatch\\b"
+        ]
+      },
+      "artefactos": [
+        "workflow"
+      ]
+    },
+    {
+      "id": "testing-calidad",
+      "label": "Pruebas y validación",
+      "tipo": "tecnica",
+      "region": "profesional",
+      "naturaleza": "practica",
+      "terminos": [
+        "pytest",
+        "unittest",
+        "tests unitarios",
+        "pruebas unitarias",
+        "test de calidad"
+      ],
+      "codigo": {
+        "python": [
+          "\\bimport\\s+pytest\\b",
+          "^\\s*def\\s+test_\\w+\\(",
+          "^\\s*assert\\s+"
+        ]
+      },
+      "resumen": "Comprobar con código que las transformaciones y los resultados siguen siendo correctos."
+    },
+    {
+      "id": "documentacion",
+      "label": "Documentación",
+      "tipo": "concepto",
+      "region": "profesional",
+      "naturaleza": "explicativa",
+      "artefactos": [
+        "readme:explicativa"
+      ],
+      "terminos": [
+        "README",
+        "documentación",
+        "diccionario de datos",
+        "data dictionary",
+        "docstring",
+        "guía de uso",
+        "metodología"
+      ],
+      "resumen": "Dejar por escrito qué hace un proyecto, de dónde salen los datos y cómo se reproduce."
+    },
+    {
+      "id": "negocio",
+      "label": "Interpretación del negocio",
+      "tipo": "competencia-blanda",
+      "region": "profesional",
+      "naturaleza": "explicativa",
+      "terminos": [
+        "pregunta de negocio",
+        "caso de negocio",
+        "objetivo de negocio",
+        "stakeholder",
+        "stakeholders",
+        "decisión de negocio",
+        "decisiones de negocio",
+        "impacto en el negocio",
+        "recomendación de negocio",
+        "recomendaciones de negocio"
+      ],
+      "resumen": "Traducir una necesidad de negocio en preguntas de datos y devolver conclusiones accionables."
+    },
+    {
+      "id": "decisiones",
+      "label": "Justificación de decisiones",
+      "tipo": "competencia-blanda",
+      "region": "profesional",
+      "naturaleza": "explicativa",
+      "terminos": [
+        "decisiones de diseño",
+        "decisiones de modelado",
+        "decisión de diseño",
+        "supuestos",
+        "limitaciones",
+        "trade-off",
+        "trade-offs",
+        "alternativas descartadas",
+        "por qué elegí",
+        "justificación"
+      ],
+      "resumen": "Explicar por qué se eligió un enfoque, qué supuestos tiene y qué limitaciones deja."
+    },
+    {
+      "id": "estadistica",
+      "label": "Estadística",
+      "tipo": "concepto",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "estadística",
+        "estadístico",
+        "estadísticos",
+        "test de hipótesis",
+        "contraste de hipótesis",
+        "p-valor",
+        "p-value",
+        "intervalo de confianza",
+        "regresión lineal",
+        "correlación",
+        "ANOVA",
+        "distribución normal",
+        "chi-cuadrado"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(scipy\\.stats|statsmodels)\\b",
+          "\\.(corr|describe)\\s*\\("
+        ]
+      },
+      "resumen": "Herramientas para describir datos y decidir cuánto se puede concluir de una muestra."
+    },
+    {
+      "id": "eda",
+      "label": "Análisis exploratorio (EDA)",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "EDA",
+        "análisis exploratorio",
+        "exploratory data analysis",
+        "exploración de datos"
+      ],
+      "codigo": {
+        "python": [
+          "\\.(describe|info|value_counts|nunique)\\s*\\("
+        ]
+      },
+      "resumen": "Primera lectura de los datos: distribuciones, relaciones y anomalías antes de modelar."
+    },
+    {
+      "id": "ml",
+      "label": "Machine learning",
+      "tipo": "concepto",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "machine learning",
+        "aprendizaje automático",
+        "modelo predictivo",
+        "modelos predictivos"
+      ],
+      "codigo": {
+        "python": [
+          "\\bfrom\\s+sklearn\\b",
+          "\\bimport\\s+(sklearn|xgboost|lightgbm)\\b",
+          "\\.fit\\s*\\(",
+          "\\.predict\\s*\\("
+        ]
+      },
+      "resumen": "Modelos que aprenden patrones de datos históricos para predecir o agrupar."
+    },
+    {
+      "id": "scikit-learn",
+      "label": "scikit-learn",
+      "tipo": "tecnologia",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "scikit-learn",
+        "sklearn"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(from|import)\\s+sklearn\\b"
+        ]
+      },
+      "resumen": "Biblioteca de Python para modelos clásicos de machine learning."
+    },
+    {
+      "id": "clasificacion-regresion",
+      "label": "Clasificación y regresión",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "clasificación",
+        "regresión logística",
+        "random forest",
+        "gradient boosting",
+        "XGBoost",
+        "árbol de decisión",
+        "árboles de decisión"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(LogisticRegression|RandomForest\\w*|GradientBoosting\\w*|XGB\\w*|LinearRegression|DecisionTree\\w*)\\b"
+        ]
+      },
+      "resumen": "Predecir una categoría o un valor numérico a partir de variables explicativas."
+    },
+    {
+      "id": "clustering",
+      "label": "Segmentación y clustering",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "clustering",
+        "KMeans",
+        "k-means",
+        "segmentación de clientes",
+        "RFM"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(KMeans|DBSCAN|AgglomerativeClustering)\\b"
+        ]
+      },
+      "resumen": "Agrupar clientes u observaciones parecidos sin etiquetas previas."
+    },
+    {
+      "id": "forecasting",
+      "label": "Series temporales y previsión",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "forecast",
+        "forecasting",
+        "series temporales",
+        "serie temporal",
+        "SARIMA",
+        "ARIMA",
+        "Prophet",
+        "previsión de ventas"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(SARIMAX|ARIMA|ExponentialSmoothing|Prophet)\\b"
+        ]
+      },
+      "resumen": "Prever valores futuros a partir de su historia, respetando el orden temporal."
+    },
+    {
+      "id": "model-eval",
+      "label": "Evaluación de modelos",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "validación cruzada",
+        "cross-validation",
+        "AUC",
+        "ROC",
+        "RMSE",
+        "MAE",
+        "F1",
+        "sobreajuste",
+        "overfitting",
+        "train/test",
+        "train test split"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(cross_val_score|train_test_split|classification_report|roc_auc_score|mean_squared_error|mean_absolute_error|GridSearchCV)\\b"
+        ]
+      },
+      "resumen": "Medir si un modelo generaliza: particiones, métricas adecuadas y control del sobreajuste."
+    },
+    {
+      "id": "feature-eng",
+      "label": "Ingeniería de variables",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "feature engineering",
+        "ingeniería de variables",
+        "ingeniería de características",
+        "one-hot",
+        "codificación de variables"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(OneHotEncoder|StandardScaler|MinMaxScaler|ColumnTransformer|get_dummies)\\b"
+        ]
+      },
+      "resumen": "Transformar y crear variables para que el modelo pueda aprovecharlas."
+    },
+    {
+      "id": "explicabilidad",
+      "label": "Explicabilidad de modelos",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "SHAP",
+        "explicabilidad",
+        "feature importance",
+        "importancia de variables",
+        "interpretabilidad"
+      ],
+      "codigo": {
+        "python": [
+          "\\bimport\\s+shap\\b",
+          "\\bpermutation_importance\\b"
+        ]
+      },
+      "resumen": "Entender y contar qué variables mueven las predicciones de un modelo."
+    },
+    {
+      "id": "analisis-conjunto",
+      "label": "Análisis conjunto (conjoint)",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "conjoint",
+        "análisis conjunto",
+        "utilidades parciales"
+      ],
+      "resumen": "Estimar qué atributos de un producto valoran más los clientes a partir de sus elecciones."
+    },
+    {
+      "id": "visualizacion-datos",
+      "label": "Visualización de datos",
+      "tipo": "concepto",
+      "region": "visualizacion",
+      "naturaleza": "practica",
+      "terminos": [
+        "visualización de datos",
+        "data visualization",
+        "dashboard",
+        "dashboards",
+        "gráfico",
+        "gráficos",
+        "matplotlib",
+        "seaborn",
+        "plotly",
+        "altair"
+      ],
+      "artefactos": [
+        "pbix"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(import|from)\\s+(matplotlib|seaborn|plotly|altair)\\b"
+        ]
+      },
+      "resumen": "Elegir y construir gráficos que respondan una pregunta concreta."
+    },
+    {
+      "id": "data-storytelling",
+      "label": "Data Storytelling",
+      "tipo": "concepto",
+      "region": "visualizacion",
+      "naturaleza": "explicativa",
+      "terminos": [
+        "data storytelling",
+        "storytelling con datos",
+        "narrativa de datos",
+        "historia con datos"
+      ],
+      "resumen": "Estructurar los datos como una narrativa con mensaje, contexto y llamada a la acción."
+    },
+    {
+      "id": "ibcs",
+      "label": "IBCS",
+      "tipo": "concepto",
+      "region": "visualizacion",
+      "naturaleza": "explicativa",
+      "terminos": [
+        "IBCS",
+        "Hichert",
+        "International Business Communication Standards"
+      ],
+      "resumen": "Estándares para notación y diseño uniformes en informes de negocio."
+    },
+    {
+      "id": "diseno-dashboard",
+      "label": "Diseño de dashboards",
+      "tipo": "tecnica",
+      "region": "visualizacion",
+      "naturaleza": "explicativa",
+      "terminos": [
+        "jerarquía visual",
+        "carga cognitiva",
+        "Gestalt",
+        "paleta de color",
+        "layout del informe",
+        "diseño de dashboards",
+        "diseño del dashboard",
+        "percepción visual"
+      ],
+      "resumen": "Organizar un informe para que lo importante se vea primero y se lea sin esfuerzo."
+    },
+    {
+      "id": "accesibilidad",
+      "label": "Accesibilidad",
+      "tipo": "concepto",
+      "region": "visualizacion",
+      "naturaleza": "explicativa",
+      "terminos": [
+        "accesibilidad",
+        "WCAG",
+        "contraste de color",
+        "daltonismo",
+        "lector de pantalla",
+        "accessibility"
+      ],
+      "resumen": "Diseñar para que cualquier persona pueda leer e interactuar con el informe."
+    },
+    {
+      "id": "streamlit",
+      "label": "Streamlit",
+      "tipo": "tecnologia",
+      "region": "visualizacion",
+      "naturaleza": "practica",
+      "terminos": [
+        "Streamlit"
+      ],
+      "codigo": {
+        "python": [
+          "\\bimport\\s+streamlit\\b"
+        ]
+      },
+      "resumen": "Framework de Python para publicar análisis como aplicaciones web interactivas."
+    },
+    {
+      "id": "ux-ui",
+      "label": "UX/UI",
+      "tipo": "concepto",
+      "region": "ux",
+      "naturaleza": "explicativa",
+      "terminos": [
+        "UX",
+        "UX/UI",
+        "UI/UX",
+        "usabilidad",
+        "experiencia de usuario",
+        "interfaz de usuario",
+        "heurísticas de usabilidad"
+      ],
+      "resumen": "Diseño de la experiencia y la interfaz a partir de cómo las personas usan el producto."
+    },
+    {
+      "id": "investigacion-usuarios",
+      "label": "Investigación de usuarios",
+      "tipo": "tecnica",
+      "region": "ux",
+      "naturaleza": "explicativa",
+      "terminos": [
+        "investigación de usuarios",
+        "user research",
+        "entrevistas a usuarios",
+        "test de usabilidad",
+        "journey map",
+        "design thinking",
+        "personas de usuario"
+      ],
+      "resumen": "Conocer necesidades y problemas reales con entrevistas, observación y pruebas."
+    },
+    {
+      "id": "arquitectura-informacion",
+      "label": "Arquitectura de la información",
+      "tipo": "tecnica",
+      "region": "ux",
+      "naturaleza": "explicativa",
+      "terminos": [
+        "arquitectura de la información",
+        "arquitectura de información",
+        "card sorting",
+        "information architecture",
+        "mapa del sitio"
+      ],
+      "resumen": "Organizar y nombrar el contenido para que se encuentre sin pensar."
+    },
+    {
+      "id": "figma",
+      "label": "Figma",
+      "tipo": "tecnologia",
+      "region": "ux",
+      "naturaleza": "explicativa",
+      "terminos": [
+        "Figma",
+        "wireframe",
+        "wireframes",
+        "prototipo"
+      ],
+      "resumen": "Herramienta de diseño de interfaces y prototipos."
+    }
+  ],
+  "relaciones": [
+    [
+      "powerbi",
+      "dax",
+      "usa",
+      "Los modelos de Power BI expresan sus cálculos con medidas DAX."
+    ],
+    [
+      "powerbi",
+      "power-query",
+      "usa",
+      "Power BI carga y transforma las fuentes con Power Query antes del modelo."
+    ],
+    [
+      "power-bi-service",
+      "powerbi",
+      "requiere",
+      "El servicio publica y refresca informes creados en Power BI."
+    ],
+    [
+      "rls",
+      "power-bi-service",
+      "parte-de",
+      "La seguridad por fila se configura sobre el modelo publicado en el servicio."
+    ],
+    [
+      "dax",
+      "dax-contexto",
+      "requiere",
+      "Escribir medidas fiables exige entender el contexto de filtro."
+    ],
+    [
+      "dax-contexto",
+      "time-intelligence",
+      "habilita",
+      "Las comparativas temporales funcionan modificando el contexto de filtro sobre una tabla de fechas."
+    ],
+    [
+      "dax",
+      "kpi",
+      "habilita",
+      "Las medidas DAX calculan los KPI que se muestran en el informe."
+    ],
+    [
+      "modelo-estrella",
+      "powerbi",
+      "mejora",
+      "Un modelo en estrella simplifica las relaciones y el rendimiento de los informes."
+    ],
+    [
+      "modelo-estrella",
+      "dax",
+      "mejora",
+      "Con hechos y dimensiones separados las medidas son más simples y predecibles."
+    ],
+    [
+      "pbi-optimizacion",
+      "dax",
+      "mejora",
+      "Medir el rendimiento permite reescribir medidas costosas."
+    ],
+    [
+      "modelo-estrella",
+      "modelado-datos",
+      "parte-de",
+      "El esquema en estrella es una forma concreta de modelado analítico."
+    ],
+    [
+      "power-query",
+      "etl",
+      "usa",
+      "Power Query implementa la parte de transformación de un ETL en el ecosistema Power BI."
+    ],
+    [
+      "sql",
+      "etl",
+      "usa",
+      "Las consultas SQL extraen y transforman datos en la mayoría de pipelines."
+    ],
+    [
+      "python",
+      "etl",
+      "usa",
+      "Python con pandas permite transformar y cargar datos cuando SQL no basta."
+    ],
+    [
+      "etl",
+      "data-quality",
+      "requiere",
+      "Un pipeline fiable valida y limpia los datos que mueve."
+    ],
+    [
+      "sql-joins",
+      "sql",
+      "parte-de",
+      "Los joins son la base de consultar varias tablas."
+    ],
+    [
+      "sql-window",
+      "sql",
+      "parte-de",
+      "Las funciones de ventana amplían SQL para análisis comparativo."
+    ],
+    [
+      "sql-cte",
+      "sql",
+      "parte-de",
+      "Las CTE organizan consultas largas en pasos."
+    ],
+    [
+      "sql-optimizacion",
+      "sql",
+      "mejora",
+      "Interpretar planes de ejecución hace que las consultas escalen."
+    ],
+    [
+      "modelado-datos",
+      "sql-joins",
+      "habilita",
+      "Unas claves bien definidas hacen que los joins devuelvan lo esperado."
+    ],
+    [
+      "pandas",
+      "python",
+      "parte-de",
+      "pandas es la biblioteca de tablas del ecosistema Python."
+    ],
+    [
+      "jupyter",
+      "python",
+      "usa",
+      "Los notebooks ejecutan código Python con su explicación."
+    ],
+    [
+      "pandas",
+      "eda",
+      "habilita",
+      "pandas es la herramienta habitual para explorar un conjunto de datos."
+    ],
+    [
+      "eda",
+      "estadistica",
+      "habilita",
+      "La exploración sugiere qué contrastes y modelos tiene sentido aplicar."
+    ],
+    [
+      "estadistica",
+      "ml",
+      "habilita",
+      "Los modelos se apoyan en supuestos estadísticos sobre los datos."
+    ],
+    [
+      "ml",
+      "scikit-learn",
+      "usa",
+      "scikit-learn ofrece los modelos clásicos y las utilidades de evaluación."
+    ],
+    [
+      "clasificacion-regresion",
+      "ml",
+      "parte-de",
+      "Son las dos grandes familias de aprendizaje supervisado."
+    ],
+    [
+      "clustering",
+      "ml",
+      "parte-de",
+      "El clustering es aprendizaje no supervisado."
+    ],
+    [
+      "forecasting",
+      "estadistica",
+      "usa",
+      "Los modelos de series temporales se basan en estadística de procesos en el tiempo."
+    ],
+    [
+      "feature-eng",
+      "ml",
+      "requiere",
+      "La calidad de las variables condiciona el resultado del modelo."
+    ],
+    [
+      "model-eval",
+      "ml",
+      "requiere",
+      "Sin evaluación no se sabe si un modelo generaliza."
+    ],
+    [
+      "explicabilidad",
+      "model-eval",
+      "mejora",
+      "Explicar un modelo permite detectar errores que una métrica no muestra."
+    ],
+    [
+      "streamlit",
+      "python",
+      "usa",
+      "Las apps de Streamlit se escriben en Python."
+    ],
+    [
+      "visualizacion-datos",
+      "data-storytelling",
+      "habilita",
+      "Un buen gráfico es la unidad con la que se construye una narrativa."
+    ],
+    [
+      "ibcs",
+      "visualizacion-datos",
+      "mejora",
+      "Una notación uniforme hace comparables los informes."
+    ],
+    [
+      "diseno-dashboard",
+      "visualizacion-datos",
+      "mejora",
+      "La jerarquía y la composición deciden si el gráfico se lee."
+    ],
+    [
+      "accesibilidad",
+      "diseno-dashboard",
+      "mejora",
+      "El contraste y las alternativas al color amplían quién puede usar el informe."
+    ],
+    [
+      "diseno-dashboard",
+      "powerbi",
+      "usa",
+      "El diseño se materializa en las páginas y visuales de Power BI."
+    ],
+    [
+      "kpi",
+      "negocio",
+      "requiere",
+      "Un KPI solo tiene sentido si responde a un objetivo de negocio."
+    ],
+    [
+      "negocio",
+      "decisiones",
+      "habilita",
+      "Entender el negocio permite justificar por qué se eligió cada enfoque."
+    ],
+    [
+      "documentacion",
+      "decisiones",
+      "habilita",
+      "Documentar es el soporte donde quedan registradas las decisiones."
+    ],
+    [
+      "git",
+      "documentacion",
+      "mejora",
+      "El control de versiones conserva el historial de cambios y su motivo."
+    ],
+    [
+      "automatizacion",
+      "etl",
+      "mejora",
+      "Automatizar evita errores manuales y mantiene los datos al día."
+    ],
+    [
+      "testing-calidad",
+      "etl",
+      "mejora",
+      "Las pruebas detectan roturas cuando cambian datos o transformaciones."
+    ],
+    [
+      "ux-ui",
+      "diseno-dashboard",
+      "habilita",
+      "Los principios de UX aplicados al dashboard mejoran su uso real."
+    ],
+    [
+      "investigacion-usuarios",
+      "ux-ui",
+      "parte-de",
+      "La investigación es la base empírica del diseño de experiencia."
+    ],
+    [
+      "arquitectura-informacion",
+      "ux-ui",
+      "parte-de",
+      "Organizar el contenido es parte central del diseño de experiencia."
+    ],
+    [
+      "figma",
+      "ux-ui",
+      "usa",
+      "Figma se usa para materializar wireframes y prototipos."
+    ],
+    [
+      "data-storytelling",
+      "negocio",
+      "habilita",
+      "Contar bien los datos es lo que traslada una recomendación a quien decide."
+    ]
+  ],
+  "competencias": [
+    {
+      "id": "preparacion-calidad",
+      "label": "Preparación, limpieza y calidad de datos",
+      "region": "datos",
+      "nucleo": [
+        "data-quality",
+        "etl"
+      ],
+      "opcionales": [
+        "pandas",
+        "power-query"
+      ],
+      "niveles": {
+        "junior": 3,
+        "consolidado": 3,
+        "mid": 3
+      },
+      "buscarEn": [
+        "practica"
+      ],
+      "esfuerzo": "medio",
+      "siguiente": "Documenta en un proyecto los problemas de calidad que encontraste (nulos, duplicados, tipos) y cómo los trataste, con una comprobación automática de cada regla.",
+      "resultado": "Un caso de calidad de datos que se puede explicar y reproducir."
+    },
+    {
+      "id": "sql-analitico",
+      "label": "SQL y consultas analíticas",
+      "region": "datos",
+      "nucleo": [
+        "sql",
+        "sql-joins",
+        "sql-window"
+      ],
+      "opcionales": [
+        "sql-cte",
+        "sql-optimizacion"
+      ],
+      "niveles": {
+        "junior": 3,
+        "consolidado": 3,
+        "mid": 3
+      },
+      "buscarEn": [
+        "practica"
+      ],
+      "esfuerzo": "medio",
+      "siguiente": "Resuelve un análisis con funciones de ventana y CTE sobre un dataset propio y compara el plan de ejecución antes y después de optimizarlo.",
+      "resultado": "Un proyecto SQL que demuestre consultas por capas y criterio de rendimiento."
+    },
+    {
+      "id": "python-analisis",
+      "label": "Python aplicado al análisis",
+      "region": "datos",
+      "nucleo": [
+        "python",
+        "pandas"
+      ],
+      "opcionales": [
+        "jupyter",
+        "eda"
+      ],
+      "niveles": {
+        "junior": 2,
+        "consolidado": 3,
+        "mid": 3
+      },
+      "buscarEn": [
+        "practica"
+      ],
+      "esfuerzo": "medio",
+      "siguiente": "Convierte un notebook en un script reproducible con funciones y datos de entrada definidos.",
+      "resultado": "Un análisis en Python que otra persona puede volver a ejecutar."
+    },
+    {
+      "id": "powerbi-dax",
+      "label": "Power BI, DAX y Power Query",
+      "region": "bi",
+      "nucleo": [
+        "powerbi",
+        "dax",
+        "power-query"
+      ],
+      "opcionales": [
+        "dax-contexto",
+        "time-intelligence",
+        "power-bi-service"
+      ],
+      "niveles": {
+        "junior": 3,
+        "consolidado": 3,
+        "mid": 3
+      },
+      "buscarEn": [
+        "practica"
+      ],
+      "esfuerzo": "medio",
+      "siguiente": "Publica un informe en Power BI Service con actualización programada y medidas de inteligencia de tiempo documentadas.",
+      "resultado": "Un informe completo, del dato al servicio, con medidas que se pueden justificar."
+    },
+    {
+      "id": "modelado",
+      "label": "Modelado de datos y medidas",
+      "region": "bi",
+      "nucleo": [
+        "modelo-estrella",
+        "modelado-datos"
+      ],
+      "opcionales": [
+        "dax",
+        "dax-contexto"
+      ],
+      "niveles": {
+        "junior": 2,
+        "consolidado": 3,
+        "mid": 3
+      },
+      "buscarEn": [
+        "practica"
+      ],
+      "esfuerzo": "medio",
+      "siguiente": "Redacta la decisión de modelado de un proyecto existente: qué son hechos y dimensiones, qué granularidad tiene cada tabla y por qué.",
+      "resultado": "Un modelo en estrella documentado, con granularidad y claves explicadas."
+    },
+    {
+      "id": "estadistica-eda",
+      "label": "Estadística y análisis exploratorio",
+      "region": "analisis",
+      "nucleo": [
+        "estadistica",
+        "eda"
+      ],
+      "opcionales": [
+        "pandas"
+      ],
+      "niveles": {
+        "junior": 2,
+        "consolidado": 3,
+        "mid": 3
+      },
+      "buscarEn": [
+        "practica",
+        "explicativa"
+      ],
+      "esfuerzo": "medio",
+      "siguiente": "Acompaña un análisis con un contraste de hipótesis o un intervalo de confianza e indica qué se puede y qué no se puede concluir.",
+      "resultado": "Un análisis que separa lo observado de lo inferido."
+    },
+    {
+      "id": "kpi-seguimiento",
+      "label": "Definición y seguimiento de KPI",
+      "region": "profesional",
+      "nucleo": [
+        "kpi"
+      ],
+      "opcionales": [
+        "dax",
+        "negocio"
+      ],
+      "niveles": {
+        "junior": 2,
+        "consolidado": 3,
+        "mid": 3
+      },
+      "buscarEn": [
+        "explicativa",
+        "practica"
+      ],
+      "esfuerzo": "bajo",
+      "siguiente": "Escribe la ficha de cada KPI de un proyecto: definición, fórmula, fuente, periodicidad y qué decisión informa.",
+      "resultado": "Un catálogo de KPI con definición inequívoca."
+    },
+    {
+      "id": "visualizacion-comunicacion",
+      "label": "Visualización y comunicación de resultados",
+      "region": "visualizacion",
+      "nucleo": [
+        "visualizacion-datos",
+        "data-storytelling"
+      ],
+      "opcionales": [
+        "ibcs",
+        "diseno-dashboard",
+        "accesibilidad"
+      ],
+      "niveles": {
+        "junior": 3,
+        "consolidado": 3,
+        "mid": 3
+      },
+      "buscarEn": [
+        "practica",
+        "explicativa"
+      ],
+      "esfuerzo": "bajo",
+      "siguiente": "Re-escribe un informe con un mensaje por página y una comprobación de accesibilidad de color y contraste.",
+      "resultado": "Un informe donde cada gráfico responde una pregunta y se puede leer sin ayuda."
+    },
+    {
+      "id": "negocio-interpretacion",
+      "label": "Interpretación del negocio",
+      "region": "profesional",
+      "nucleo": [
+        "negocio"
+      ],
+      "opcionales": [
+        "kpi",
+        "decisiones"
+      ],
+      "niveles": {
+        "junior": 1,
+        "consolidado": 2,
+        "mid": 3
+      },
+      "buscarEn": [
+        "explicativa",
+        "declarativa"
+      ],
+      "esfuerzo": "alto",
+      "siguiente": "Parte de una pregunta de negocio real (no del dataset) y termina con una recomendación y su impacto esperado.",
+      "resultado": "Un caso donde se ve la decisión que cambia el análisis."
+    },
+    {
+      "id": "automatizacion-fiabilidad",
+      "label": "Automatización, mantenimiento y fiabilidad",
+      "region": "profesional",
+      "nucleo": [
+        "automatizacion",
+        "testing-calidad"
+      ],
+      "opcionales": [
+        "rls",
+        "pbi-optimizacion"
+      ],
+      "niveles": {
+        "junior": 1,
+        "consolidado": 2,
+        "mid": 3
+      },
+      "buscarEn": [
+        "practica"
+      ],
+      "esfuerzo": "alto",
+      "siguiente": "Añade a un proyecto una comprobación automática y una ejecución programada, y deja constancia de qué pasa si falla.",
+      "resultado": "Un pipeline que avisa cuando algo se rompe."
+    },
+    {
+      "id": "documentacion-git",
+      "label": "Documentación, Git y colaboración",
+      "region": "profesional",
+      "nucleo": [
+        "git",
+        "documentacion"
+      ],
+      "opcionales": [],
+      "niveles": {
+        "junior": 2,
+        "consolidado": 3,
+        "mid": 3
+      },
+      "buscarEn": [
+        "practica",
+        "explicativa"
+      ],
+      "esfuerzo": "bajo",
+      "siguiente": "Homogeneiza los README de tus proyectos con el mismo esquema: problema, datos, método, resultados y limitaciones.",
+      "resultado": "Proyectos que se entienden en cinco minutos."
+    },
+    {
+      "id": "explicar-decisiones",
+      "label": "Explicar decisiones y justificar resultados",
+      "region": "profesional",
+      "nucleo": [
+        "decisiones"
+      ],
+      "opcionales": [
+        "documentacion",
+        "data-storytelling"
+      ],
+      "niveles": {
+        "junior": 1,
+        "consolidado": 3,
+        "mid": 3
+      },
+      "buscarEn": [
+        "explicativa"
+      ],
+      "esfuerzo": "bajo",
+      "siguiente": "Añade a cada proyecto una sección «Decisiones y limitaciones» con alternativas descartadas.",
+      "resultado": "Respuestas preparadas para «¿por qué lo hiciste así?» en una entrevista."
+    },
+    {
+      "id": "ml-aplicado",
+      "label": "Machine learning aplicado",
+      "region": "analisis",
+      "nucleo": [
+        "ml",
+        "model-eval"
+      ],
+      "opcionales": [
+        "scikit-learn",
+        "clasificacion-regresion",
+        "clustering",
+        "forecasting",
+        "feature-eng",
+        "explicabilidad"
+      ],
+      "niveles": {
+        "junior": 0,
+        "consolidado": 1,
+        "mid": 2
+      },
+      "buscarEn": [
+        "practica"
+      ],
+      "esfuerzo": "alto",
+      "siguiente": "Cierra un proyecto de modelado con validación honesta (partición temporal si hay tiempo) y una explicación de qué variables pesan.",
+      "resultado": "Un modelo evaluado y explicado, con el límite de lo que puede afirmar."
+    },
+    {
+      "id": "ux-complementario",
+      "label": "UX/UI y diseño de interfaces",
+      "region": "ux",
+      "nucleo": [
+        "ux-ui"
+      ],
+      "opcionales": [
+        "investigacion-usuarios",
+        "arquitectura-informacion",
+        "figma"
+      ],
+      "niveles": {
+        "junior": 0,
+        "consolidado": 1,
+        "mid": 1
+      },
+      "buscarEn": [
+        "explicativa",
+        "practica"
+      ],
+      "esfuerzo": "medio",
+      "siguiente": "Aplica un hallazgo de investigación de usuarios al rediseño de un dashboard y documenta el antes y el después.",
+      "resultado": "Un caso que une UX con análisis de datos."
+    },
+    {
+      "id": "excel-operativo",
+      "label": "Excel para análisis operativo",
+      "region": "datos",
+      "nucleo": [
+        "excel"
+      ],
+      "opcionales": [],
+      "niveles": {
+        "junior": 2,
+        "consolidado": 1,
+        "mid": 1
+      },
+      "buscarEn": [
+        "practica",
+        "declarativa"
+      ],
+      "esfuerzo": "bajo",
+      "siguiente": "Reproduce un análisis de Excel en SQL o Power Query y anota qué ganas y qué pierdes.",
+      "resultado": "Una comparativa que muestra criterio al elegir herramienta."
+    }
+  ]
+}

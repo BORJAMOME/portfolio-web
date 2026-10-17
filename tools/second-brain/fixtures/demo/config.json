@@ -1,0 +1,11 @@
+{
+  "_aviso": "DATOS FICTICIOS. Estas fuentes son inventadas y sirven para probar el motor y el visor. No describen a nadie.",
+  "fixedNow": "2026-01-15T10:00:00.000Z",
+  "targetLevel": "consolidado",
+  "sources": [
+    { "id": "demo-proyectos", "label": "Proyectos de ejemplo", "path": "./src", "kind": "proyectos", "projectDepth": 1, "exclude": ["manual-visualizacion", "habilidades"] },
+    { "id": "demo-manual", "label": "Manual de ejemplo", "path": "./src/manual-visualizacion", "kind": "manual" },
+    { "id": "demo-declarativo", "label": "Lista de habilidades de ejemplo", "path": "./src/habilidades", "kind": "declarativo" }
+  ],
+  "assessments": []
+}

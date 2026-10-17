@@ -31,6 +31,8 @@ jobs:
         run: node tools/check-links.mjs
       - name: Versiones de caché (?v=) al día
         run: node tools/version-assets.mjs --check
+      - name: Second Brain (motor, contrato y seguridad)
+        run: node --test tools/second-brain/second-brain.test.mjs
 
   accesibilidad:
     name: Accesibilidad (WCAG 2.2 AA) y errores JS
