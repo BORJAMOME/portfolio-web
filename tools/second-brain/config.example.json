@@ -1,0 +1,16 @@
+{
+  "_ayuda": "Copia este archivo a .second-brain/config.json (está fuera de Git). Solo se leen las carpetas que declares aquí.",
+  "targetLevel": "consolidado",
+  "maxProjects": 36,
+  "sources": [
+    { "id": "mis-proyectos", "label": "Mis proyectos", "path": "C:/ruta/a/mis-proyectos", "kind": "proyectos", "projectDepth": 1, "exclude": ["datos-privados"] },
+    { "id": "manuales", "label": "Mis manuales", "path": "C:/ruta/a/manuales", "kind": "manual" },
+    { "id": "cv", "label": "CV y habilidades", "path": "C:/ruta/a/cv", "kind": "declarativo" }
+  ],
+  "assessments": [],
+  "_ejemplo_assessments": [
+    { "_nota": "Una brecha SOLO es «confirmada» si la registras tú en «assessments», con motivo y origen. El motor nunca la deduce.",
+      "tipo": "competencia", "id": "sql-analitico", "estado": "brecha_confirmada",
+      "motivo": "Feedback de la entrevista del 2026-03-02: no supe explicar funciones de ventana.", "origen": "Feedback de entrevista", "fecha": "2026-03-02" }
+  ]
+}

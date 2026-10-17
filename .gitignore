@@ -27,3 +27,7 @@ supabase/.temp/
 Thumbs.db
 desktop.ini
 *.log
+
+# Second Brain: configuración, caché y snapshots locales (datos personales)
+.second-brain/
+tools/second-brain/fixtures/demo/.state/

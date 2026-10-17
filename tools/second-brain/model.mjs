@@ -1,0 +1,417 @@
+/* ═══════════════════════════════════════════════
+   tools/second-brain/model.mjs: del resultado del escaneo al snapshot
+   ─────────────────────────────────────────────────
+   Aquí viven las reglas de negocio de Second Brain. Están escritas para poder
+   explicarse en una frase cada una (ver tools/second-brain/README.md):
+
+   · Evidencia = archivos DISTINTOS, nunca líneas ni menciones repetidas.
+   · «respaldado»  → hay práctica detectable (código o artefactos) o, en conceptos
+                     explicativos, al menos dos documentos propios.
+   · «mencionado»  → solo aparece en prosa o en listas declarativas.
+   · «brecha_probable» → relevante para el objetivo, sin evidencia, y las fuentes
+                     que habría que mirar SÍ se han analizado. Siempre con motivo.
+   · «pendiente»   → sin evidencia, pero no se han analizado las fuentes donde estaría.
+   · «brecha_confirmada» → SOLO si el usuario la declara en `assessments`. Nunca se infiere.
+   ═══════════════════════════════════════════════ */
+import { slug } from './text.mjs';
+import { layout } from './layout.mjs';
+import { SCHEMA_VERSION } from '../../second-brain/contract.js';
+
+export const ENGINE_VERSION = '1.0.0';
+
+const TYPE_MAP = { tecnologia: 'tecnologia', concepto: 'concepto', tecnica: 'tecnica', 'competencia-blanda': 'concepto' };
+const CLS_LABEL = { practica: 'práctica', explicativa: 'documentación', declarativa: 'declarada' };
+const PBIX_AFFECTED = new Set(['dax', 'dax-contexto', 'time-intelligence', 'power-query', 'modelo-estrella']);
+
+/* Distancia al objetivo según el estado de la competencia (0 = nada que hacer, 1 = máxima).
+   Son los pesos de la metodología documentada en README; no son una medición. */
+const DISTANCE = { respaldado: 0.1, parcial: 0.4, documentado: 0.6, declarado: 0.7, pendiente: 0.5, brecha_probable: 0.9, brecha_confirmada: 1.0 };
+const CONF_WEIGHT = { alta: 1, media: 0.8, baja: 0.6 };
+
+const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+const round2 = (n) => Math.round(n * 100) / 100;
+
+function aggregate(files) {
+  const ev = new Map();
+  const get = (id) => {
+    if (!ev.has(id)) ev.set(id, { practica: new Map(), explicativa: new Map(), declarativa: new Map() });
+    return ev.get(id);
+  };
+  for (const f of files) {
+    for (const [id, h] of Object.entries(f.hits)) {
+      const e = get(id);
+      for (const cls of ['practica', 'explicativa', 'declarativa']) {
+        if (!h[cls]) continue;
+        const key = `${f.source}::${f.rel}`;
+        e[cls].set(key, { project: f.project, rel: f.rel, source: f.source, kind: f.kind });
+      }
+    }
+  }
+  return ev;
+}
+
+const projectsOf = (m) => new Set([...m.values()].map((v) => v.project));
+
+function conceptEvidence(c, e) {
+  const p = e ? e.practica.size : 0, x = e ? e.explicativa.size : 0, d = e ? e.declarativa.size : 0;
+  const prj = e ? projectsOf(c.naturaleza === 'practica' ? e.practica : new Map([...e.practica, ...e.explicativa])) : new Set();
+  // documentación dentro de proyectos vs. apuntes de estudio (fuentes «manual»): estos últimos
+  // muestran que se ha estudiado el tema, no que se haya aplicado
+  const xProj = e ? [...e.explicativa.values()].filter((v) => v.kind === 'proyectos').length : 0;
+  let state = null, why = null;
+  const docWhy = x > 0 && xProj === 0 && p === 0 ? 'estudio' : 'documentado';
+  if (c.naturaleza === 'practica') {
+    if (p >= 1) state = 'respaldado';
+    else if (x >= 1) { state = 'mencionado'; why = docWhy; }
+    else if (d >= 1) { state = 'mencionado'; why = 'declarado'; }
+  } else {
+    if (p + xProj >= 2) state = 'respaldado';
+    else if (p + x >= 1) { state = 'mencionado'; why = docWhy; }
+    else if (d >= 1) { state = 'mencionado'; why = 'declarado'; }
+  }
+  return { state, why, p, x, d, projects: prj.size };
+}
+
+/**
+ * @param {object} a
+ * @param {object} a.framework   framework.json
+ * @param {object} a.scan        resultado de scanSources
+ * @param {object} a.config      configuración (targetLevel, assessments, sources)
+ * @param {Date}   a.now
+ * @param {'real'|'demo'} a.mode
+ */
+export function buildSnapshot({ framework, scan, config, now = new Date(), mode = 'real' }) {
+  const level = framework.niveles.find((n) => n.id === (config.targetLevel || 'consolidado')) || framework.niveles[1];
+  const conceptById = new Map(framework.conceptos.map((c) => [c.id, c]));
+  const ev = aggregate(scan.files);
+  const assessments = Array.isArray(config.assessments) ? config.assessments : [];
+  const assessOf = (kind, id) => assessments.find((a) => a.tipo === kind && a.id === id && a.estado === 'brecha_confirmada' && a.motivo && a.origen);
+
+  /* ── Cobertura: qué clases de evidencia se han podido mirar ── */
+  const kinds = { practica: false, explicativa: false, declarativa: false };
+  for (const s of scan.coverage.sources) {
+    if (!s.supported) continue;
+    if (s.kind === 'proyectos') { kinds.practica = true; kinds.explicativa = true; }
+    else if (s.kind === 'manual') kinds.explicativa = true;
+    else if (s.kind === 'declarativo') kinds.declarativa = true;
+  }
+  let practicalFiles = 0;
+  for (const f of scan.files) if (Object.values(f.hits).some((h) => h.practica)) practicalFiles++;
+  const MIN_SCAN = 5;   // con menos archivos con práctica, la ausencia no es representativa
+  const coverageOk = (search) => search.every((k) => kinds[k]) && practicalFiles >= MIN_SCAN;
+  const missingKinds = (search) => search.filter((k) => !kinds[k]).map((k) => ({ practica: 'código o artefactos de proyectos', explicativa: 'documentación propia', declarativa: 'CV o lista de habilidades' }[k]));
+
+  /* ── Ámbito: conceptos con evidencia + conceptos de competencias relevantes para el objetivo ── */
+  const inScope = new Map();   // conceptId → { maxRel, core, search[] }
+  for (const k of framework.competencias) {
+    const rel = k.niveles[level.id] || 0;
+    if (rel < 2) continue;
+    for (const [list, core] of [[k.nucleo, true], [k.opcionales, false]]) {
+      for (const id of list) {
+        const cur = inScope.get(id) || { maxRel: 0, core: false, search: new Set() };
+        cur.maxRel = Math.max(cur.maxRel, rel); cur.core ||= core; k.buscarEn.forEach((s) => cur.search.add(s));
+        inScope.set(id, cur);
+      }
+    }
+  }
+
+  const nodes = [];
+  const nodeIdx = new Map();
+  const trace = {};
+  const addNode = (n) => { nodeIdx.set(n.id, n); nodes.push(n); return n; };
+  const refsOf = (id, order) => {
+    const e = ev.get(id);
+    if (!e) return [];
+    const out = [];
+    for (const cls of order) for (const v of e[cls].values()) { if (out.length < 10) out.push({ p: v.project, f: v.rel, c: cls }); }
+    return out;
+  };
+  const pbixNote = (scan.coverage.byExt.pbix || 0) > 0
+    ? 'El modelo de los .pbix no es legible (compresión de Microsoft): solo se ven las páginas y las referencias a medidas, no el código DAX.'
+    : null;
+
+  /* ── Nodos de concepto ── */
+  const cstate = new Map();   // conceptId → { state, ... }
+  for (const c of framework.conceptos) {
+    const info = conceptEvidence(c, ev.get(c.id));
+    const scope = inScope.get(c.id);
+    const assessed = assessOf('concepto', c.id);
+    if (!info.state && !scope && !assessed) continue;
+    let state = info.state, unc = [], motivo = null;
+    if (assessed) { state = 'brecha_confirmada'; }
+    else if (!state) {
+      const search = scope ? [...scope.search] : ['practica'];
+      if (coverageOk(search) && scope && scope.core) {
+        state = 'brecha_probable';
+        motivo = `Es parte del núcleo de una competencia con relevancia ${scope.maxRel}/3 para «${level.label}» y no aparece en ${plural(practicalFiles, 'archivo con práctica', 'archivos con práctica')} de las fuentes analizadas.`;
+        unc.push(motivo, 'Puede existir en proyectos o entornos que no están entre las fuentes configuradas.');
+      } else {
+        state = 'pendiente';
+        const miss = missingKinds(search);
+        unc.push(miss.length ? `No se ha podido comprobar: no hay fuentes de tipo ${miss.join(' ni ')}.` : 'Sin evidencia en las fuentes analizadas; no se interpreta como carencia.');
+      }
+    }
+    if (state === 'respaldado') unc.push('Indica que se ha trabajado con ello; no mide el nivel de dominio.');
+    if (state === 'mencionado') unc.push(info.why === 'declarado' ? 'Solo aparece en una fuente declarativa (lo que se afirma, no lo que se demuestra).'
+      : info.why === 'estudio' ? 'Aparece en material de estudio (manuales), pero no se detecta aplicado en ningún proyecto analizado.'
+      : 'Aparece en documentación, pero no hay práctica detectable en el código o los artefactos analizados.');
+    if (pbixNote && PBIX_AFFECTED.has(c.id)) unc.push(pbixNote);
+    const bits = [];
+    if (info.p) bits.push(`práctica en ${plural(info.p, 'archivo', 'archivos')}`);
+    if (info.x) bits.push(`documentación en ${plural(info.x, 'archivo', 'archivos')}`);
+    if (info.d) bits.push(`declarado en ${plural(info.d, 'fuente', 'fuentes')}`);
+    const evidenceLine = bits.length ? `Evidencia: ${bits.join('; ')}${info.projects ? `, en ${plural(info.projects, 'proyecto', 'proyectos')}` : ''}.` : 'Sin evidencia detectada en las fuentes analizadas.';
+    const node = addNode({
+      id: `c:${c.id}`, label: c.label, type: TYPE_MAP[c.tipo] || 'concepto', region: c.region, state,
+      summary: `${c.resumen} ${evidenceLine}`.slice(0, 600),
+      size: round2(Math.min(1, 0.3 + 0.1 * (scope ? scope.maxRel : 1) + Math.min(0.2, info.projects * 0.04))),
+      evidence: { practica: info.p, explicativa: info.x, declarativa: info.d, projects: info.projects, breadth: info.projects >= 3 ? 'amplia' : info.projects >= 1 ? 'puntual' : 'ninguna' },
+      uncertainty: unc, pos: [0, 0, 0],
+    });
+    if (assessed) node.assessment = { reason: assessed.motivo, source: assessed.origen, date: assessed.fecha || null };
+    cstate.set(c.id, { state, node });
+    trace[node.id] = refsOf(c.id, ['practica', 'explicativa', 'declarativa']);
+  }
+
+  /* ── Competencias, prioridad y recomendaciones ── */
+  const competencies = [];
+  const scored = [];
+  for (const k of framework.competencias) {
+    const rel = k.niveles[level.id] || 0;
+    const coreStates = k.nucleo.map((id) => (cstate.get(id) ? cstate.get(id).state : 'ausente'));
+    const members = [...k.nucleo, ...k.opcionales];
+    const assessed = assessOf('competencia', k.id);
+    const okCount = coreStates.filter((s) => s === 'respaldado').length;
+    const partial = okCount > 0 && okCount < coreStates.length;
+    const search = k.buscarEn;
+    let state, dist, conf, doc = 0;
+    // 'ausente' = concepto del núcleo que no entró en el grafo (competencia poco relevante para el objetivo)
+    if (assessed) { state = 'brecha_confirmada'; dist = DISTANCE.brecha_confirmada; conf = 'alta'; }
+    else if (okCount > 0) { state = 'respaldado'; dist = partial ? DISTANCE.parcial : DISTANCE.respaldado; conf = partial ? 'media' : 'alta'; }
+    else if (coreStates.includes('mencionado')) {
+      state = 'mencionado';
+      const docOnly = k.nucleo.some((id) => { const e = ev.get(id); return e && e.explicativa.size > 0; });
+      doc = docOnly ? 1 : 0;
+      dist = docOnly ? DISTANCE.documentado : DISTANCE.declarado; conf = 'media';
+    } else if (rel >= 2 && coverageOk(search)) { state = 'brecha_probable'; dist = DISTANCE.brecha_probable; conf = practicalFiles >= 20 ? 'media' : 'baja'; }
+    else { state = 'pendiente'; dist = DISTANCE.pendiente; conf = 'baja'; }
+
+    const unverified = [];
+    for (const id of members) {
+      const c = conceptById.get(id);
+      const st = cstate.get(id) ? cstate.get(id).state : (ev.get(id) ? 'mencionado' : 'sin_evidencia');
+      if (st !== 'respaldado') unverified.push(`${c.label}: ${st === 'sin_evidencia' ? 'sin evidencia en las fuentes analizadas' : st === 'mencionado' ? 'solo mencionado' : st.replace('_', ' ')}`);
+    }
+    const miss = missingKinds(search);
+    if (miss.length) unverified.push(`No analizado: ${miss.join(' ni ')}.`);
+    if (practicalFiles < MIN_SCAN) unverified.push('Muy pocas fuentes con práctica: la ausencia de evidencia no es representativa.');
+    if (pbixNote && k.id === 'powerbi-dax') unverified.push(pbixNote);
+
+    const priority = round2(rel * dist);
+    const rank = priority * CONF_WEIGHT[conf];
+    const compNode = addNode({
+      id: `k:${k.id}`, label: k.label, type: 'competencia', region: k.region, state,
+      summary: `Competencia del marco general. Relevancia para «${level.label}»: ${rel}/3. ${okCount ? `Núcleo respaldado: ${okCount} de ${coreStates.length}.` : 'Ningún concepto del núcleo está respaldado por evidencia.'}`.slice(0, 600),
+      size: 0.85, evidence: { practica: 0, explicativa: 0, declarativa: 0, projects: 0, breadth: 'ninguna' },
+      uncertainty: state === 'respaldado' ? ['Indica evidencia de trabajo; no equivale a una evaluación de nivel.'] : state === 'brecha_probable' ? [`Motivo: relevancia ${rel}/3 y sin evidencia en fuentes que sí se han analizado.`, 'Puede existir fuera de las fuentes configuradas.'] : state === 'pendiente' ? ['No se ha podido comprobar con las fuentes disponibles.'] : state === 'mencionado' ? ['Hay menciones, pero no práctica detectable.'] : [],
+      pos: [0, 0, 0],
+    });
+    if (assessed) compNode.assessment = { reason: assessed.motivo, source: assessed.origen, date: assessed.fecha || null };
+    competencies.push({
+      nodeId: compNode.id, id: k.id, state, partial, confidence: conf,
+      levels: { ...k.niveles }, relevance: rel, priority: { score: priority, rank: round2(rank) },
+      effort: k.esfuerzo, unverified, members: members.map((id) => `c:${id}`).filter((id) => nodeIdx.has(id)),
+    });
+    scored.push({ k, rel, state, partial, conf, priority, rank, dist, doc, compNode, coreStates, search });
+    trace[compNode.id] = k.nucleo.flatMap((id) => (trace[`c:${id}`] || []).slice(0, 3)).slice(0, 10);
+  }
+
+  // buckets: «ahora» = hasta 3 con prioridad ≥ 1.0 (ordenadas por prioridad × confianza)
+  const ordered = [...scored].sort((a, b) => b.rank - a.rank || a.k.label.localeCompare(b.k.label, 'es'));
+  let nowCount = 0;
+  const bucketOf = new Map();
+  for (const s of ordered) {
+    let b = 'todavia_no';
+    if (s.rel >= 2 && s.priority >= 1.0 && nowCount < 3) { b = 'ahora'; nowCount++; }
+    else if (s.rel >= 2 && s.priority >= 0.5) b = 'despues';
+    bucketOf.set(s.k.id, b);
+  }
+
+  const recommendations = [];
+  const deferred = [];
+  for (const s of ordered) {
+    const bucket = bucketOf.get(s.k.id);
+    if (bucket === 'todavia_no') {
+      deferred.push({ id: s.k.id, label: s.k.label, reason: s.rel < 2 ? `Relevancia ${s.rel}/3 para «${level.label}»: puede esperar.` : s.state === 'respaldado' ? 'Ya hay evidencia suficiente; no es prioridad ahora.' : 'Prioridad baja con la información disponible.' });
+      continue;
+    }
+    const gaps = s.k.nucleo.filter((id) => { const st = cstate.get(id); return !st || st.state !== 'respaldado'; }).map((id) => conceptById.get(id).label);
+    const verb = { respaldado: 'Completar', mencionado: 'Demostrar', brecha_probable: 'Demostrar', pendiente: 'Validar', brecha_confirmada: 'Cerrar la brecha de' }[s.state];
+    const why = s.state === 'brecha_probable'
+      ? `Es relevante para «${level.label}» (${s.rel}/3) y no hay práctica de ${gaps.join(', ')} en las fuentes analizadas.`
+      : s.state === 'mencionado' ? `Aparece mencionado (${gaps.join(', ')}), pero no hay práctica detectable que lo demuestre.`
+      : s.state === 'pendiente' ? `Es relevante para «${level.label}» (${s.rel}/3) y no se ha podido comprobar con las fuentes disponibles.`
+      : s.state === 'brecha_confirmada' ? 'Tú mismo/a has registrado esta brecha en la evaluación.'
+      : `Hay evidencia parcial; falta cubrir ${gaps.join(', ')}.`;
+    const evidence = s.state === 'brecha_probable' ? `Sin evidencia en ${plural(practicalFiles, 'archivo con práctica', 'archivos con práctica')} analizados. Podría existir fuera de las fuentes configuradas.`
+      : s.state === 'pendiente' ? `No analizado: ${missingKinds(s.search).join(' ni ') || 'sin fuentes suficientes'}.`
+      : s.state === 'mencionado' ? 'Solo menciones en documentación o listas declarativas.'
+      : s.state === 'brecha_confirmada' ? 'Evaluación explícita registrada en la configuración.'
+      : `Evidencia en ${s.k.nucleo.length - gaps.length} de ${s.k.nucleo.length} conceptos del núcleo.`;
+    const recId = `rec-${s.k.id}`;
+    const recNode = addNode({
+      id: `r:${s.k.id}`, label: `${verb}: ${s.k.label}`.slice(0, 118), type: 'recomendacion', region: 'objetivos', state: 'oportunidad',
+      summary: `${why} ${s.k.resultado}`.slice(0, 600), size: round2(0.5 + 0.12 * s.priority),
+      evidence: { practica: 0, explicativa: 0, declarativa: 0, projects: 0, breadth: 'ninguna' }, uncertainty: [`Confianza ${s.conf}. El esfuerzo es una estimación genérica del marco, no una medida.`], pos: [0, 0, 0],
+    });
+    recNode.recommendationId = recId;
+    s.compNode.recommendationId = recId;
+    recommendations.push({
+      id: recId, nodeId: recNode.id, targetId: s.compNode.id,
+      what: `${verb}: ${s.k.label}`, why, evidence, result: s.k.resultado, action: s.k.siguiente,
+      objective: `Avanzar hacia «${level.label}»`, confidence: s.conf, effort: `${s.k.esfuerzo} (estimación genérica del marco)`,
+      priority: { score: s.priority, bucket },
+    });
+  }
+
+  /* ── Proyectos ── */
+  const projFiles = new Map();
+  for (const f of scan.files) {
+    const o = projFiles.get(f.project) || { practical: 0, docs: 0, concepts: new Map() };
+    if (['md', 'txt', 'docx', 'html'].includes(f.ext)) o.docs++;
+    for (const [id, h] of Object.entries(f.hits)) if (h.practica) { o.concepts.set(id, (o.concepts.get(id) || 0) + 1); }
+    if (Object.values(f.hits).some((h) => h.practica)) o.practical++;
+    projFiles.set(f.project, o);
+  }
+  const sourceKind = new Map(scan.coverage.sources.map((s) => [s.id, s.kind]));
+  const projectNodes = [];
+  // se limita el número de proyectos dibujados (los de más práctica) para que el grafo siga siendo legible
+  const maxProjects = config.maxProjects || 36;
+  const candidates = [...scan.projects.entries()]
+    .map(([key, pj]) => ({ key, pj, pf: projFiles.get(key) }))
+    .filter(({ pj, pf }) => sourceKind.get(pj.source) === 'proyectos' && pf && pf.practical > 0 && !(pj.root && pf.practical < 3))
+    .sort((a, b) => b.pf.practical - a.pf.practical || a.key.localeCompare(b.key))
+    .slice(0, maxProjects);
+  for (const { key, pj, pf } of candidates) {
+    const n = addNode({
+      id: `p:${slug(key)}`, label: pj.label.slice(0, 118), type: 'proyecto', region: 'practica', state: 'respaldado',
+      summary: `Proyecto analizado: ${plural(pf.practical, 'archivo', 'archivos')} con evidencia práctica en ${plural(pf.concepts.size, 'concepto', 'conceptos')}.${pf.docs ? '' : ' No se ha encontrado documentación escrita en el proyecto.'}`,
+      size: round2(Math.min(0.75, 0.35 + pf.practical * 0.01)), evidence: { practica: pf.practical, explicativa: pf.docs, declarativa: 0, projects: 1, breadth: 'puntual' },
+      uncertainty: ['Un proyecto demuestra trabajo realizado; no mide su calidad ni el nivel de dominio.'], pos: [0, 0, 0],
+    });
+    projectNodes.push({ node: n, key, pf });
+  }
+  // recomendación de documentación: proyectos con práctica y sin ningún documento
+  const undocumented = projectNodes.filter((p) => p.pf.docs === 0 && p.pf.practical >= 3).sort((a, b) => b.pf.practical - a.pf.practical).slice(0, 3);
+  for (const p of undocumented) {
+    const id = `rec-doc-${slug(p.key)}`;
+    const recNode = addNode({
+      id: `r:doc-${slug(p.key)}`, label: `Documentar el proyecto ${p.node.label}`.slice(0, 118), type: 'recomendacion', region: 'objetivos', state: 'oportunidad',
+      summary: 'El proyecto tiene código, pero ningún documento que explique sus decisiones.', size: 0.55,
+      evidence: { practica: 0, explicativa: 0, declarativa: 0, projects: 0, breadth: 'ninguna' }, uncertainty: ['Puede haber documentación fuera de la carpeta analizada.'], pos: [0, 0, 0],
+    });
+    recNode.recommendationId = id;
+    p.node.recommendationId = id;
+    recommendations.push({
+      id, nodeId: recNode.id, targetId: p.node.id,
+      what: `Documentar el proyecto «${p.node.label}»`, why: 'Hay trabajo práctico, pero sin explicación escrita de las decisiones es difícil defenderlo en una entrevista.',
+      evidence: `${plural(p.pf.practical, 'archivo con práctica', 'archivos con práctica')} y ningún documento (md, docx, txt, html) en el proyecto.`,
+      result: 'Un proyecto que se entiende en cinco minutos.', action: 'Añade un README con problema, datos, método, decisiones, resultados y limitaciones.',
+      objective: `Avanzar hacia «${level.label}»`, confidence: 'media', effort: 'bajo (estimación genérica del marco)', priority: { score: 0.7, bucket: 'despues' },
+    });
+  }
+
+  /* ── Objetivos ── */
+  for (const lv of framework.niveles) {
+    const target = lv.id === level.id;
+    addNode({
+      id: `o:${lv.id}`, label: lv.label, type: 'objetivo', region: 'objetivos', state: 'neutral',
+      summary: `${lv.descripcion}${target ? ' Es el objetivo con el que se calcula la prioridad.' : ''} Son referencias orientativas: varían según empresa y sector.`.slice(0, 600),
+      size: target ? 1 : 0.7, evidence: { practica: 0, explicativa: 0, declarativa: 0, projects: 0, breadth: 'ninguna' }, uncertainty: ['Marco general, no un estudio de mercado ni una evaluación oficial.'], pos: [0, 0, 0],
+    });
+  }
+
+  /* ── Relaciones ── */
+  const edges = [];
+  const edgeKey = new Set();
+  const addEdge = (source, target, type, confidence, rationale, extra = {}) => {
+    const key = `${source}|${target}|${type}`;
+    if (edgeKey.has(key) || !nodeIdx.has(source) || !nodeIdx.has(target) || source === target) return;
+    edgeKey.add(key);
+    edges.push({ source, target, type, confidence, rationale: rationale.slice(0, 600), updatedAt: now.toISOString(), ...extra });
+  };
+  // coocurrencia práctica: solo como dato de apoyo, jamás para crear una relación
+  const coProjects = (a, b) => {
+    const ea = ev.get(a), eb = ev.get(b);
+    if (!ea || !eb) return 0;
+    const pa = projectsOf(ea.practica), pb = projectsOf(eb.practica);
+    let n = 0; for (const p of pa) if (pb.has(p)) n++;
+    return n;
+  };
+  for (const [a, b, type, why] of framework.relaciones) {
+    const na = cstate.get(a), nb = cstate.get(b);
+    if (!na || !nb) continue;
+    const both = na.state === 'respaldado' && nb.state === 'respaldado';
+    const one = na.state === 'respaldado' || nb.state === 'respaldado';
+    const co = coProjects(a, b);
+    addEdge(`c:${a}`, `c:${b}`, type, both ? 'alta' : one ? 'media' : 'baja', `${why}${co ? ` Aparecen juntos en la práctica de ${plural(co, 'proyecto', 'proyectos')}.` : ''}`, { evidenceCount: co });
+  }
+  for (const p of projectNodes) {
+    const top = [...p.pf.concepts.entries()].filter(([id]) => cstate.get(id) && cstate.get(id).state === 'respaldado')
+      .sort((x, y) => y[1] - x[1] || x[0].localeCompare(y[0])).slice(0, 6);
+    for (const [id, nFiles] of top) {
+      addEdge(p.node.id, `c:${id}`, 'demuestra', nFiles >= 2 ? 'alta' : 'media', `${plural(nFiles, 'archivo', 'archivos')} del proyecto contienen código o artefactos de ${conceptById.get(id).label}.`, { evidenceCount: nFiles });
+    }
+  }
+  for (const s of scored) {
+    for (const id of [...s.k.nucleo, ...s.k.opcionales]) addEdge(s.compNode.id, `c:${id}`, 'agrupa', 'alta', `En el marco, ${conceptById.get(id).label} forma parte de «${s.k.label}».`);
+    for (const lv of framework.niveles) {
+      const r = s.k.niveles[lv.id] || 0;
+      if (r >= 2) addEdge(`o:${lv.id}`, s.compNode.id, 'necesita', 'media', `Relevancia ${r}/3 para «${lv.label}» según el marco general.`);
+    }
+  }
+  for (const r of recommendations) {
+    addEdge(r.nodeId, r.targetId, 'recomienda', r.confidence, `${r.what}: ${r.why}`.slice(0, 600));
+  }
+
+  /* ── Regiones y distribución en el espacio ── */
+  const regions = framework.regiones.map((r, i) => ({ id: r.id, label: r.label, order: i, center: [0, 0, 0], count: 0 }));
+  layout(regions, nodes, edges);
+  for (const r of regions) r.count = nodes.filter((n) => n.region === r.id).length;
+
+  const byState = {};
+  for (const n of nodes) if (n.type !== 'proyecto' && n.type !== 'objetivo' && n.type !== 'recomendacion') byState[n.state] = (byState[n.state] || 0) + 1;
+
+  return {
+    schema: SCHEMA_VERSION, generatedAt: now.toISOString(), mode,
+    engine: { version: ENGINE_VERSION, frameworkVersion: framework.version },
+    meta: {
+      targetLevel: level.id, targetLabel: level.label, demo: mode === 'demo',
+      levels: framework.niveles.map((l) => ({ id: l.id, label: l.label, description: l.descripcion })),
+      basis: 'Marco general de competencias de analista de datos. No es un estudio de mercado: no se han consultado ofertas de empleo y no hay porcentajes de demanda.',
+      scoring: {
+        formula: 'prioridad = relevancia (0-3 según el nivel objetivo) × distancia al objetivo (0-1). Se ordena por prioridad × peso de confianza (alta 1, media 0,8, baja 0,6).',
+        distance: { 'respaldado completo': DISTANCE.respaldado, 'respaldado parcial': DISTANCE.parcial, 'documentado sin práctica': DISTANCE.documentado, 'solo declarado': DISTANCE.declarado, 'pendiente de validar': DISTANCE.pendiente, 'brecha probable': DISTANCE.brecha_probable, 'brecha confirmada': DISTANCE.brecha_confirmada },
+        buckets: 'ahora = hasta 3 con prioridad ≥ 1,0; después = prioridad ≥ 0,5; todavía no = el resto o relevancia < 2.',
+      },
+      limitations: [
+        'La evidencia indica que se ha trabajado con algo; no mide el nivel de dominio.',
+        'La ausencia de evidencia no se interpreta como desconocimiento: solo se marca «brecha probable» cuando se han analizado las fuentes donde estaría, y «brecha confirmada» solo si se registra expresamente.',
+        ...(pbixNote ? [pbixNote] : []),
+        ...Object.entries(scan.coverage.unsupported).map(([e, n]) => `${n} archivo(s) .${e} no se han podido leer en esta versión.`),
+      ],
+      deferred,
+    },
+    coverage: {
+      sources: scan.coverage.sources.map((s) => ({ id: s.id, label: s.label, kind: s.kind, files: s.files, supported: s.supported })),
+      byExt: scan.coverage.byExt, kinds, practicalFiles,
+      incremental: { reused: scan.coverage.reused, changed: scan.coverage.changed },
+    },
+    stats: {
+      nodes: nodes.length, edges: edges.length, concepts: nodes.filter((n) => ['tecnologia', 'concepto', 'tecnica'].includes(n.type)).length,
+      projects: projectNodes.length, recommendations: recommendations.length, byState,
+      priorities: recommendations.filter((r) => r.priority.bucket === 'ahora').length,
+    },
+    regions, nodes, edges, recommendations, competencies, trace,
+  };
+}
