@@ -295,6 +295,9 @@ await step('Hoy (vista de foco): elegir, capacidad y sugerencias con motivo', as
 await step('Táctil: solo el asa arrastra (eventos de puntero táctiles)', async () => {
   await goBoard(page);
   const t = (await titles(page, 'en_curso'))[0];
+  // el borde de la ventana activa el autoscroll: se coloca el tablero a media altura para que el destino no quede en esa zona
+  await page.evaluate(() => { const r = document.querySelector('.apk-board').getBoundingClientRect(); scrollBy(0, r.top - 300); });
+  await page.waitForTimeout(100);
   const dest = await (await page.$('.apk-col[data-estado="revision"] .apk-list')).boundingBox();
   const g = await (await page.$(cardSel(t) + ' .apk-grip')).boundingBox();
   const fire = (type, x, y, sel) => page.evaluate(([type, x, y, sel]) => {
