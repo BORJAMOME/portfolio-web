@@ -33,6 +33,8 @@ jobs:
         run: node tools/version-assets.mjs --check
       - name: Lógica del Centro de trabajo (Hoy)
         run: node tools/test-kanban.mjs
+      - name: Second Brain (motor, contrato y seguridad)
+        run: node --test tools/second-brain/second-brain.test.mjs
 
   accesibilidad:
     name: Accesibilidad (WCAG 2.2 AA) y errores JS

@@ -50,6 +50,12 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
   Pruebas: `deno test --allow-read supabase/functions/` y `node tools/check-briefing.mjs`. Guía: `supabase/functions/interview-intel/README.md`.
 - Pestaña **Fichero** (`#/fichero`): tabla de enlaces guardados, `area-privada-fichero.js`, tabla `public.links` (`supabase/fichero.sql`;
   carga inicial en `supabase/fichero-datos.sql`). Se añade, edita y borra desde la propia tabla; Supabase es la fuente de verdad.
+- **Second Brain** (`#/second-brain`, `#/second-brain/demo`): grafo 3D del conocimiento. La web solo DIBUJA un snapshot ya calculado
+  (`area-privada-second-brain.js`, `second-brain/viewer.js` con Three.js, `second-brain/contract.js` compartido con el motor, `css/second-brain.css`).
+  El motor corre en local (`tools/second-brain/`, sin dependencias) y publica en `public.sb_snapshots`/`sb_runs` (`supabase/second-brain.sql`, RLS).
+  Three.js va recortado en `vendor/three-<versión>-sb.min.js` (`tools/second-brain/build-three.mjs`). Config y snapshots reales: `.second-brain/` (no versionado).
+  Pruebas: `node --test tools/second-brain/second-brain.test.mjs` y `node tools/second-brain/e2e.mjs`. Guía y reglas de evidencia: `tools/second-brain/README.md`.
+  Cambiar `framework.json` o el motor → `node tools/second-brain/analyze.mjs --demo` (regenera el demo; hay un test que lo comprueba).
 - **Supabase no se pausa**: `.github/workflows/supabase-keepalive.yml` llama a `public.keepalive()` (`supabase/keepalive.sql`) lunes y jueves
   con la clave pública, y se reactiva a sí mismo para que GitHub no desactive la tarea tras 60 días sin actividad en el repo.
 - Nada de lo que venga de la base se pinta como HTML sin escapar. La clave del JS es la pública; la `service_role` nunca va en el frontend.

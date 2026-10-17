@@ -1,0 +1,4 @@
+Ingresos = SUM ( fact_pedidos[importe] )
+Ingresos AA = CALCULATE ( [Ingresos], SAMEPERIODLASTYEAR ( dim_fecha[fecha] ) )
+Variacion % = DIVIDE ( [Ingresos] - [Ingresos AA], [Ingresos AA] )
+Ingresos categoria = CALCULATE ( [Ingresos], ALLSELECTED ( dim_producto[categoria] ) )

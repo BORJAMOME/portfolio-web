@@ -453,6 +453,7 @@
     // sin pestaña propia: vive dentro de «Entrevistas» (tab) con su propio archivo
     preparacion: { global: 'APPreparacion', title: 'Entrevistas', tab: 'entrevistas' },
     portfolio:   { global: 'APPortfolio',   title: 'Portfolio' },
+    'second-brain': { global: 'APSecondBrain', title: 'Second Brain' },
     fichero:     { global: 'APFichero',     title: 'Fichero' },
     configuracion: { global: 'APConfiguracion', title: 'Configuración' }
   };
