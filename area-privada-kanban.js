@@ -906,6 +906,7 @@ window.APKanban = (function () {
         cancelAnimationFrame(raf);
         if (!active) return;
         lastDrag = Date.now();
+        if (commit) place();      // soltar antes del primer fotograma no debe perder el destino
         if (ghost) ghost.remove(); if (drop) drop.remove();
         el.classList.remove('is-src'); root.classList.remove('is-dragging');
         root.querySelectorAll('.apk-col.is-target').forEach(function (c) { c.classList.remove('is-target'); });

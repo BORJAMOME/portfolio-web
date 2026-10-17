@@ -277,7 +277,7 @@ await step('14. Teclado: Mayús+flechas mueve y reordena', async () => {
   await page.keyboard.press('Shift+ArrowRight');
   await page.waitForFunction((x) => [...document.querySelectorAll('.apk-col[data-estado="en_curso"] .apk-card-open')].some((e) => e.textContent === x), t);
   ok(await page.evaluate(() => document.activeElement.classList.contains('apk-card-open')), 'el foco se conserva en la tarjeta');
-  await page.waitForTimeout(100);
+  await page.waitForFunction(() => /posición/.test((document.querySelector('[role="status"].sr-only') || {}).textContent || ''), null, { timeout: 5000 }).catch(() => {});
   ok((await page.textContent('[role="status"].sr-only')).includes('posición'), 'sin anuncio para lector de pantalla');
   await page.keyboard.press('Shift+ArrowDown');
   await page.waitForFunction((x) => (document.querySelector('.apk-col[data-estado="en_curso"] .apk-card:nth-child(2) .apk-card-open') || {}).textContent === x, t);
@@ -315,7 +315,7 @@ await step('Táctil: solo el asa arrastra (eventos de puntero táctiles)', async
   await fire('pointerdown', g.x + 4, g.y + 4, '[data-id="' + tid + '"] .apk-grip');
   for (let i = 1; i <= 6; i++) await fire('pointermove', g.x + 4 + ((dest.x + 100 - g.x) * i) / 6, g.y + 4 + ((dest.y + 20 - g.y) * i) / 6);
   await page.waitForSelector('.apk-ghost');
-  await fire('pointerup', dest.x + 100, dest.y + 20);
+  await fire('pointerup', dest.x + 100, dest.y + 20);      // sin esperar un fotograma: el destino se recalcula al soltar
   await page.waitForTimeout(150);
   ok((await titles(page, 'revision')).includes(t), 'no llegó a En revisión');
   eq(db.kb_tarjetas.find((c) => c.titulo === t).estado, 'revision', 'servidor');
