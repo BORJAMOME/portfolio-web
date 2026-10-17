@@ -31,6 +31,8 @@ jobs:
         run: node tools/check-links.mjs
       - name: Versiones de caché (?v=) al día
         run: node tools/version-assets.mjs --check
+      - name: Lógica del Centro de trabajo (Hoy)
+        run: node tools/test-kanban.mjs
 
   accesibilidad:
     name: Accesibilidad (WCAG 2.2 AA) y errores JS
@@ -49,6 +51,8 @@ jobs:
         run: node tools/check-a11y.mjs
       - name: Briefing de entrevista (dos A4, móvil y axe-core)
         run: node tools/check-briefing.mjs
+      - name: Centro de trabajo (flujos de interfaz con Supabase simulado)
+        run: node tools/check-kanban.mjs
 
   funciones:
     name: Edge Functions (Deno)

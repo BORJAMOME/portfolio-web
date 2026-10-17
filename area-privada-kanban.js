@@ -1,0 +1,842 @@
+/* ═══════════════════════════════════════════════
+   area-privada-kanban.js: Centro de trabajo de «Hoy»
+   ─────────────────────────────────────────────────
+   Vistas: «Hoy» (foco del día), «Tablero» (Kanban) y «Archivo».
+   Datos: tablas kb_* de supabase/kanban.sql (Supabase es la fuente de verdad).
+   Lo monta area-privada-hoy.js encima de sus tarjetas de agenda.
+   Mover tarjetas: arrastrar (ratón, lápiz; en táctil, desde el asa ⠿),
+   Mayús + flechas con el teclado, o el botón «Mover a…» de cada tarjeta.
+   La lógica pura (orden, límites, sugerencias, filtros) vive en `logic` y se prueba
+   con tools/test-kanban.mjs sin navegador.
+   ═══════════════════════════════════════════════ */
+window.APKanban = (function () {
+  'use strict';
+
+  /* ═══════════ LÓGICA PURA ═══════════ */
+  var DAY = 864e5;
+  var ESTADOS = [
+    { id: 'ideas', label: 'Ideas', vacio: 'Captura aquí lo que aún estás explorando.' },
+    { id: 'pendiente', label: 'Pendiente', vacio: 'Trabajo definido que todavía no has decidido empezar.' },
+    { id: 'en_curso', label: 'En curso', vacio: 'Lo que haces ahora. Mejor poco y terminado.' },
+    { id: 'revision', label: 'En revisión', vacio: 'Pendiente de comprobar o de una decisión.' },
+    { id: 'hecho', label: 'Hecho', vacio: 'Lo que termines aparecerá aquí.' }
+  ];
+  var PRIO = { 1: 'Baja', 2: 'Normal', 3: 'Alta', 4: 'Urgente' };
+  var ESFUERZO = { 1: '≤ 1 h', 2: '½ día', 3: 'Varios días' };
+  var DEFAULTS = { wip: { en_curso: 3, revision: 3 }, capacidad: 3 };
+  var GAP = 1024, MIN_GAP = 1e-6;
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function dayKey(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function toDay(key) { var p = key.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  function daysUntil(key, now) {
+    var t = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    return Math.round((toDay(key) - t) / DAY);
+  }
+  function dueLabel(key, now) {
+    var d = daysUntil(key, now);
+    if (d < -1) return { text: 'Vencida hace ' + (-d) + ' días', tone: 'late', days: d };
+    if (d === -1) return { text: 'Venció ayer', tone: 'late', days: d };
+    if (d === 0) return { text: 'Vence hoy', tone: 'soon', days: d };
+    if (d === 1) return { text: 'Vence mañana', tone: 'soon', days: d };
+    return { text: 'Vence en ' + d + ' días', tone: d <= 7 ? 'soon' : 'far', days: d };
+  }
+
+  /* Posición de una tarjeta que se inserta en `index` de una columna ya ordenada (sin la tarjeta movida). */
+  function insertPosition(others, index) {
+    var prev = others[index - 1], next = others[index];
+    if (!prev && !next) return GAP;
+    if (!prev) return next.posicion - GAP;
+    if (!next) return prev.posicion + GAP;
+    return (prev.posicion + next.posicion) / 2;
+  }
+  function needsRenumber(others, index) {
+    var prev = others[index - 1], next = others[index];
+    return !!(prev && next && next.posicion - prev.posicion < MIN_GAP);
+  }
+  function byPos(a, b) { return (a.posicion - b.posicion) || (a.created_at < b.created_at ? -1 : 1); }
+  function column(cards, estado) {
+    return cards.filter(function (c) { return c.estado === estado && !c.archivada_en; }).sort(byPos);
+  }
+  /* Estado de un límite WIP. limit null/0 = sin límite. */
+  function wipState(count, limit) {
+    if (!limit) return { limit: 0, over: false, at: false };
+    return { limit: limit, over: count > limit, at: count === limit };
+  }
+
+  function norm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+  /* f: { q, proyecto ('' todos · 'none' sin proyecto · id), prioridad (0 = todas), bloqueadas (bool) } */
+  function filterCards(cards, f, subs) {
+    var q = norm(f.q);
+    return cards.filter(function (c) {
+      if (f.proyecto === 'none' && c.proyecto_id) return false;
+      if (f.proyecto && f.proyecto !== 'none' && c.proyecto_id !== f.proyecto) return false;
+      if (f.prioridad && c.prioridad !== f.prioridad) return false;
+      if (f.bloqueadas && !c.bloqueada) return false;
+      if (!q) return true;
+      var hay = [c.titulo, c.notas, c.siguiente_paso, c.bloqueo, (c.etiquetas || []).join(' ')];
+      ((subs && subs[c.id]) || []).forEach(function (s) { hay.push(s.titulo); });
+      return norm(hay.join(' ')).indexOf(q) !== -1;
+    });
+  }
+
+  /* Sugerencias de «qué toca». Heurística visible, no una verdad: cada punto lleva su motivo.
+     Pesos: prioridad 0-3 · vencimiento 0-3 · ya empezada +1,5 (acabar antes de empezar) ·
+     en revisión +1 · rápida +0,5 · -1 si ya hay tantas en curso como el límite. */
+  function suggest(cards, now, o) {
+    o = o || {};
+    var inCourse = cards.filter(function (c) { return c.estado === 'en_curso' && !c.archivada_en; }).length;
+    var limit = o.wipEnCurso || 0;
+    var today = dayKey(now);
+    return cards.filter(function (c) {
+      return !c.archivada_en && !c.bloqueada && c.estado !== 'hecho' && c.estado !== 'ideas' && c.hoy_fecha !== today;
+    }).map(function (c) {
+      var score = c.prioridad - 1, why = [];
+      if (c.prioridad >= 3) why.push('Prioridad ' + PRIO[c.prioridad].toLowerCase());
+      if (c.fecha_limite) {
+        var d = dueLabel(c.fecha_limite, now);
+        if (d.days < 0) { score += 3; why.push(d.text.toLowerCase()); }
+        else if (d.days <= 1) { score += 2; why.push(d.text.toLowerCase()); }
+        else if (d.days <= 7) { score += 1; why.push(d.text.toLowerCase()); }
+      }
+      if (c.estado === 'en_curso') { score += 1.5; why.push('ya empezada'); }
+      if (c.estado === 'revision') { score += 1; why.push('solo falta revisarla'); }
+      if (c.esfuerzo === 1) { score += 0.5; why.push('rápida'); }
+      if (c.estado === 'pendiente' && limit && inCourse >= limit) { score -= 1; why.push('ya tienes ' + inCourse + ' en curso'); }
+      return { card: c, score: score, why: why };
+    }).sort(function (a, b) { return (b.score - a.score) || byPos(a.card, b.card); });
+  }
+
+  function subProgress(list) {
+    var done = (list || []).filter(function (s) { return s.hecho; }).length;
+    return { done: done, total: (list || []).length };
+  }
+  function parseTags(s) {
+    var seen = {}, out = [];
+    String(s || '').split(',').forEach(function (t) {
+      t = t.trim().replace(/\s+/g, ' ').slice(0, 30);
+      if (t && !seen[t.toLowerCase()] && out.length < 8) { seen[t.toLowerCase()] = 1; out.push(t); }
+    });
+    return out;
+  }
+
+  var logic = {
+    ESTADOS: ESTADOS, PRIO: PRIO, DEFAULTS: DEFAULTS, dayKey: dayKey, daysUntil: daysUntil, dueLabel: dueLabel,
+    insertPosition: insertPosition, needsRenumber: needsRenumber, column: column, wipState: wipState,
+    filterCards: filterCards, suggest: suggest, subProgress: subProgress, parseTags: parseTags
+  };
+
+  /* ═══════════ INTERFAZ ═══════════ */
+  var dateFmt = new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+  var ESTADO_LABEL = {}; ESTADOS.forEach(function (e) { ESTADO_LABEL[e.id] = e.label; });
+  var JSON_H = { 'Content-Type': 'application/json' };
+  var REP = { 'Content-Type': 'application/json', Prefer: 'return=representation' };
+
+  function render(ctx) {
+    var h = ctx.h, api = ctx.api, ui = ctx.ui;
+    var now = new Date(), today = dayKey(now);
+    var st = {
+      cards: [], archived: null, projects: [], subs: {}, hist: {}, cfg: { wip: {}, capacidad: DEFAULTS.capacidad, resultado: '' },
+      view: pref('view') || 'hoy', filters: { q: '', proyecto: '', prioridad: 0, bloqueadas: false },
+      colTab: pref('col') || 'en_curso', hechoMas: false
+    };
+    var undo = [], root = h('section', { class: 'apk', 'aria-label': 'Centro de trabajo' });
+    var live = h('p', { class: 'sr-only', role: 'status', 'aria-live': 'polite' });
+    var toastBox = h('div', { class: 'apk-toast', role: 'status', 'aria-live': 'polite' });
+    var toastTimer = null, lastDrag = 0, keep = null;
+
+    function pref(k) { try { return localStorage.getItem('apk.' + k); } catch (e) { return null; } }
+    function setPref(k, v) { try { localStorage.setItem('apk.' + k, v); } catch (e) { /* sin almacenamiento */ } }
+    function auth(err) { if (err && err.auth) { ctx.fail(err); return true; } return false; }
+    function missing(err) { return err && (err.status === 404 || err.code === 'PGRST205' || err.code === '42P01'); }
+
+    /* ── Carga ── */
+    function load() {
+      return Promise.all([
+        api('/rest/v1/kb_tarjetas?select=*&archivada_en=is.null&order=posicion.asc&limit=1000'),
+        api('/rest/v1/kb_proyectos?select=*&order=created_at.asc'),
+        api('/rest/v1/kb_subtareas?select=*&order=posicion.asc&limit=5000'),
+        api('/rest/v1/kb_ajustes?select=clave,valor')
+      ]).then(function (r) {
+        st.cards = r[0] || [];
+        st.projects = r[1] || [];
+        st.subs = {};
+        (r[2] || []).forEach(function (s) { (st.subs[s.tarjeta_id] = st.subs[s.tarjeta_id] || []).push(s); });
+        var cfg = {};
+        (r[3] || []).forEach(function (a) { cfg[a.clave] = a.valor; });
+        st.cfg.wip = Object.assign({}, DEFAULTS.wip, cfg.wip || {});
+        st.cfg.capacidad = (cfg.capacidad && cfg.capacidad.hoy) || DEFAULTS.capacidad;
+        st.cfg.resultado = cfg.hoy_resultado && cfg.hoy_resultado.fecha === today ? cfg.hoy_resultado.texto : '';
+      });
+    }
+
+    /* ── Escrituras con reversión si fallan ── */
+    function say(msg, o) {
+      o = o || {};
+      live.textContent = '';
+      setTimeout(function () { live.textContent = msg; }, 20);
+      toastBox.textContent = '';
+      toastBox.classList.toggle('is-error', !!o.error);
+      toastBox.appendChild(h('span', { text: msg }));
+      if (o.undo) toastBox.appendChild(h('button', { type: 'button', class: 'apk-link', text: 'Deshacer', onclick: doUndo }));
+      toastBox.classList.add('is-on');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { toastBox.classList.remove('is-on'); }, o.error ? 7000 : 5000);
+    }
+    function failed(err, what, rollback) {
+      if (rollback) rollback();
+      if (auth(err)) return;
+      console.warn('[kanban]', err);
+      say('No se ha guardado' + (what ? ' (' + what + ')' : '') + ': ' + ((err && err.message) || 'error') + '. Se ha restaurado el estado anterior.', { error: true });
+      paint();
+    }
+    function patchCard(id, patch) {
+      return api('/rest/v1/kb_tarjetas?id=eq.' + id + '&select=*', { method: 'PATCH', headers: REP, body: JSON.stringify(patch) })
+        .then(function (r) {
+          if (!r || !r[0]) throw new Error('La tarjeta ya no existe');
+          var c = byId(id); if (c) Object.assign(c, r[0]);
+          return r[0];
+        });
+    }
+    function byId(id) { for (var i = 0; i < st.cards.length; i++) if (st.cards[i].id === id) return st.cards[i]; return null; }
+    function snapshot(c, keys) { var s = {}; keys.forEach(function (k) { s[k] = c[k]; }); return s; }
+
+    function pushUndo(label, fn) { undo.push({ label: label, fn: fn }); if (undo.length > 30) undo.shift(); }
+    function doUndo() {
+      var u = undo.pop();
+      if (!u) return say('No hay nada que deshacer.');
+      toastBox.classList.remove('is-on');
+      Promise.resolve(u.fn()).then(function () { say('Deshecho: ' + u.label + '.'); paint(); })
+        .catch(function (e) { failed(e, 'deshacer'); });
+    }
+
+    /* Mover (columna + posición). index = posición final en la columna destino. */
+    function move(card, estado, index, how) {
+      var prev = snapshot(card, ['estado', 'posicion', 'tipo', 'completada_en', 'hoy_fecha']);
+      var others = column(st.cards, estado).filter(function (c) { return c.id !== card.id; });
+      if (index == null || index > others.length) index = others.length;
+      if (prev.estado === estado && column(st.cards, estado).indexOf(card) === index) return Promise.resolve();
+      var renumber = needsRenumber(others, index);
+      var patch = { estado: estado, tipo: estado === 'ideas' ? 'idea' : 'tarea' };
+      if (estado === 'hecho' && card.hoy_fecha) patch.hoy_fecha = card.hoy_fecha;       // se conserva para «hecho hoy»
+      var limit = st.cfg.wip[estado], before = others.length;
+      Object.assign(card, patch);
+      if (renumber) {
+        others.splice(index, 0, card);
+        others.forEach(function (c, i) { c.posicion = (i + 1) * GAP; });
+      } else card.posicion = insertPosition(others, index);
+      if (estado === 'hecho' && prev.estado !== 'hecho') card.completada_en = new Date().toISOString();
+      if (estado !== 'hecho') card.completada_en = null;
+      var pos = card.posicion;
+      paint();
+      var w = limit && prev.estado !== estado ? wipState(before + 1, limit) : null;
+      say('«' + clip(card.titulo) + '» → ' + ESTADO_LABEL[estado] + (how === 'key' ? ', posición ' + (index + 1) + ' de ' + (before + 1) : '') +
+        (w && w.over ? '. ' + ESTADO_LABEL[estado] + ' supera su límite (' + (before + 1) + '/' + limit + ').' : '.'), { undo: true });
+      var writes = [patchCard(card.id, Object.assign({ posicion: pos }, patch))];
+      if (renumber) others.forEach(function (c) { if (c.id !== card.id) writes.push(patchCard(c.id, { posicion: c.posicion })); });
+      return Promise.all(writes).then(function () {
+        pushUndo('movimiento de «' + clip(card.titulo) + '»', function () {
+          Object.assign(card, prev); paint();
+          return patchCard(card.id, Object.assign({}, prev, { completada_en: undefined })).then(function () { return null; });
+        });
+      }).catch(function (err) { failed(err, 'movimiento', function () { Object.assign(card, prev); }); });
+    }
+    function clip(s) { return s.length > 40 ? s.slice(0, 39) + '…' : s; }
+
+    function create(titulo, estado, proyecto) {
+      var col = column(st.cards, estado), pos = col.length ? col[col.length - 1].posicion + GAP : GAP;
+      var row = { titulo: titulo, estado: estado, tipo: estado === 'ideas' ? 'idea' : 'tarea', posicion: pos, proyecto_id: proyecto || null };
+      return api('/rest/v1/kb_tarjetas?select=*', { method: 'POST', headers: REP, body: JSON.stringify(row) }).then(function (r) {
+        var c = r[0]; st.cards.push(c);
+        keep = c.id;
+        pushUndo('creación de «' + clip(c.titulo) + '»', function () {
+          st.cards = st.cards.filter(function (x) { return x.id !== c.id; });
+          return api('/rest/v1/kb_tarjetas?id=eq.' + c.id, { method: 'DELETE', headers: { Prefer: 'return=minimal' } });
+        });
+        paint();
+        say('Tarjeta creada en ' + ESTADO_LABEL[estado] + '.', { undo: true });
+        return c;
+      });
+    }
+
+    function archive(card, on) {
+      var prevA = card.archivada_en;
+      card.archivada_en = on ? new Date().toISOString() : null;
+      if (on) { st.cards = st.cards.filter(function (c) { return c.id !== card.id; }); if (st.archived) st.archived.unshift(card); }
+      else { st.cards.push(card); st.archived = (st.archived || []).filter(function (c) { return c.id !== card.id; }); }
+      paint();
+      say(on ? '«' + clip(card.titulo) + '» archivada.' : '«' + clip(card.titulo) + '» recuperada.', { undo: true });
+      return api('/rest/v1/kb_tarjetas?id=eq.' + card.id, { method: 'PATCH', headers: { Prefer: 'return=minimal', 'Content-Type': 'application/json' }, body: JSON.stringify({ archivada_en: card.archivada_en }) })
+        .then(function () {
+          pushUndo(on ? 'archivado' : 'recuperación', function () { return archive(card, !on); });
+        }).catch(function (err) {
+          failed(err, 'archivar', function () {
+            card.archivada_en = prevA;
+            if (on) { st.cards.push(card); st.archived = (st.archived || []).filter(function (c) { return c.id !== card.id; }); }
+            else { st.cards = st.cards.filter(function (c) { return c.id !== card.id; }); if (st.archived) st.archived.unshift(card); }
+          });
+        });
+    }
+
+    function remove(card) {
+      var subs = st.subs[card.id] || [];
+      st.cards = st.cards.filter(function (c) { return c.id !== card.id; });
+      if (st.archived) st.archived = st.archived.filter(function (c) { return c.id !== card.id; });
+      paint();
+      return api('/rest/v1/kb_tarjetas?id=eq.' + card.id, { method: 'DELETE', headers: { Prefer: 'return=minimal' } }).then(function () {
+        say('«' + clip(card.titulo) + '» eliminada.', { undo: true });
+        pushUndo('eliminación de «' + clip(card.titulo) + '»', function () {
+          var row = Object.assign({}, card);
+          return api('/rest/v1/kb_tarjetas', { method: 'POST', headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(row) })
+            .then(function () {
+              if (!subs.length) return null;
+              return api('/rest/v1/kb_subtareas', { method: 'POST', headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(subs) });
+            }).then(function () { (card.archivada_en ? (st.archived = st.archived || []) : st.cards).push(card); st.subs[card.id] = subs; });
+        });
+      }).catch(function (err) { failed(err, 'eliminar', function () { st.cards.push(card); }); });
+    }
+
+    function setHoy(card, on) {
+      var prev = card.hoy_fecha, value = on ? today : null;
+      if (on && todayList().length >= st.cfg.capacidad) say('Ya tienes ' + todayList().length + ' elegidas para hoy (tu capacidad es ' + st.cfg.capacidad + '). Se añade igualmente: decide qué quitas.');
+      card.hoy_fecha = value; paint();
+      return patchCard(card.id, { hoy_fecha: value }).catch(function (err) { failed(err, 'hoy', function () { card.hoy_fecha = prev; }); });
+    }
+    function todayList() { return st.cards.filter(function (c) { return c.hoy_fecha === today && c.estado !== 'hecho'; }).sort(byPos); }
+
+    function saveCfg(clave, valor) {
+      return api('/rest/v1/kb_ajustes?on_conflict=clave', { method: 'POST', headers: { 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify({ clave: clave, valor: valor, updated_at: new Date().toISOString() }) });
+    }
+
+    /* ── Pintado ── */
+    var scrollLeft = 0;
+    function paint() {
+      var board = root.querySelector('.apk-board'); if (board) scrollLeft = board.scrollLeft;
+      var focusId = keep || (document.activeElement && document.activeElement.closest && (document.activeElement.closest('[data-id]') || {}).getAttribute && document.activeElement.closest('[data-id]').getAttribute('data-id'));
+      var focusRole = document.activeElement && document.activeElement.getAttribute && document.activeElement.getAttribute('data-role');
+      root.textContent = '';
+      root.appendChild(header());
+      root.appendChild(st.view === 'hoy' ? viewHoy() : st.view === 'archivo' ? viewArchivo() : viewTablero());
+      root.appendChild(toastBox); root.appendChild(live);
+      board = root.querySelector('.apk-board'); if (board) board.scrollLeft = scrollLeft;
+      if (focusId) {
+        var el = root.querySelector('[data-id="' + focusId + '"] [data-role="' + (focusRole || 'open') + '"]') || root.querySelector('[data-id="' + focusId + '"] [data-role="open"]');
+        if (el) el.focus({ preventScroll: true });
+      }
+      keep = null;
+    }
+
+    function btn(text, cls, fn, attrs) { return h('button', Object.assign({ type: 'button', class: cls, onclick: fn }, attrs || {}), typeof text === 'string' ? [text] : text); }
+
+    function header() {
+      var cur = st.cards.filter(function (c) { return c.estado === 'en_curso'; }).length;
+      var doneToday = st.cards.filter(function (c) { return c.completada_en && dayKey(new Date(c.completada_en)) === today; }).length;
+      var blocked = st.cards.filter(function (c) { return c.bloqueada && c.estado !== 'hecho'; }).length;
+      var title = dateFmt.format(now); title = title.charAt(0).toUpperCase() + title.slice(1);
+      var parts = [cur + (cur === 1 ? ' en curso' : ' en curso'), doneToday + (doneToday === 1 ? ' terminada hoy' : ' terminadas hoy')];
+      if (blocked) parts.push(blocked + (blocked === 1 ? ' bloqueada' : ' bloqueadas'));
+      var tabs = [['hoy', 'Hoy'], ['tablero', 'Tablero'], ['archivo', 'Archivo']];
+      return h('header', { class: 'apk-head' }, [
+        h('div', { class: 'apk-head-main' }, [
+          h('p', { class: 'apk-kicker', text: 'Centro de trabajo' }),
+          h('h2', { class: 'apk-title', text: title }),
+          h('p', { class: 'apk-sub', text: parts.join(' · ') })
+        ]),
+        h('div', { class: 'apk-head-actions' }, [
+          h('div', { class: 'apk-seg', role: 'group', 'aria-label': 'Vista' }, tabs.map(function (t) {
+            return btn(t[1], 'apk-seg-btn', function () { st.view = t[0]; setPref('view', t[0]); if (t[0] === 'archivo') return loadArchived(); paint(); }, { 'aria-pressed': String(st.view === t[0]) });
+          })),
+          btn('Proyectos', 'apk-btn', projectsDialog),
+          btn('Ajustes', 'apk-btn', settingsDialog),
+          btn([h('span', { 'aria-hidden': 'true', text: '+ ' }), 'Nueva tarjeta'], 'apk-btn apk-btn--primary', function () { newDialog('pendiente'); }, { 'data-role': 'new' })
+        ])
+      ]);
+    }
+
+    /* ── Tarjeta ── */
+    function cardEl(c, o) {
+      o = o || {};
+      var sp = subProgress(st.subs[c.id]), proj = projOf(c);
+      var meta = [];
+      if (c.prioridad !== 2) meta.push(h('span', { class: 'apk-chip apk-prio', 'data-prio': c.prioridad, text: PRIO[c.prioridad] }));
+      if (c.fecha_limite && c.estado !== 'hecho') { var d = dueLabel(c.fecha_limite, now); meta.push(h('span', { class: 'apk-chip apk-due', 'data-tone': d.tone, text: d.text })); }
+      if (c.bloqueada) meta.push(h('span', { class: 'apk-chip apk-block', text: 'Bloqueada' }));
+      if (sp.total) meta.push(h('span', { class: 'apk-chip', text: sp.done + '/' + sp.total + ' pasos' }));
+      if (c.esfuerzo) meta.push(h('span', { class: 'apk-chip', text: ESFUERZO[c.esfuerzo] }));
+      (c.etiquetas || []).slice(0, 3).forEach(function (t) { meta.push(h('span', { class: 'apk-chip apk-tag', text: '#' + t })); });
+      var idx = ESTADOS.map(function (e) { return e.id; }).indexOf(c.estado), next = ESTADOS[idx + 1];
+      return h('li', { class: 'apk-card' + (c.bloqueada ? ' is-blocked' : '') + (c.estado === 'hecho' ? ' is-done' : ''), 'data-id': c.id, 'data-estado': c.estado }, [
+        h('div', { class: 'apk-card-top' }, [
+          h('span', { class: 'apk-grip', 'aria-hidden': 'true', text: '⠿' }),
+          proj ? h('span', { class: 'apk-proj', text: proj.titulo }) : h('span', { class: 'apk-proj apk-proj--none', text: c.tipo === 'idea' ? 'Idea' : 'Sin proyecto' }),
+          h('div', { class: 'apk-card-act' }, [
+            o.hoy ? btn(c.hoy_fecha === today ? 'Quitar de hoy' : 'Añadir a hoy', 'apk-mini', function () { setHoy(c, c.hoy_fecha !== today); }, { 'data-role': 'hoy' }) : null,
+            next && !o.noAdvance ? btn('› ' + next.label, 'apk-mini', function () { move(c, next.id, column(st.cards, next.id).length, 'btn'); }, { 'data-role': 'adv', 'aria-label': 'Mover «' + c.titulo + '» a ' + next.label }) : null
+          ])
+        ]),
+        h('button', { type: 'button', class: 'apk-card-open', 'data-role': 'open', 'aria-keyshortcuts': 'Shift+ArrowLeft Shift+ArrowRight Shift+ArrowUp Shift+ArrowDown',
+          'aria-describedby': 'apk-kbd-help', onclick: function () { if (Date.now() - lastDrag > 80) detailDialog(c); }, text: c.titulo }),
+        c.siguiente_paso && c.estado !== 'hecho' ? h('p', { class: 'apk-next' }, [h('span', { 'aria-hidden': 'true', text: '→ ' }), h('span', { class: 'sr-only', text: 'Siguiente paso: ' }), c.siguiente_paso]) : null,
+        c.bloqueada && c.bloqueo ? h('p', { class: 'apk-why-block', text: 'Bloqueo: ' + c.bloqueo }) : null,
+        meta.length ? h('div', { class: 'apk-meta' }, meta) : null
+      ]);
+    }
+    function projOf(c) { for (var i = 0; i < st.projects.length; i++) if (st.projects[i].id === c.proyecto_id) return st.projects[i]; return null; }
+
+    /* ── Tablero ── */
+    function viewTablero() {
+      var visible = filterCards(st.cards, st.filters, st.subs);
+      var filtered = !!(st.filters.q || st.filters.proyecto || st.filters.prioridad || st.filters.bloqueadas);
+      var cols = ESTADOS.map(function (e) { return colEl(e, column(visible, e.id), column(st.cards, e.id).length, filtered); });
+      var tabs = h('div', { class: 'apk-coltabs', role: 'group', 'aria-label': 'Columna visible (móvil)' }, ESTADOS.map(function (e) {
+        return btn(e.label + ' ' + column(visible, e.id).length, 'apk-coltab', function () { st.colTab = e.id; setPref('col', e.id); paint(); }, { 'aria-pressed': String(st.colTab === e.id) });
+      }));
+      return h('div', { class: 'apk-tablero', 'data-tab': st.colTab }, [
+        filtersEl(filtered), tabs,
+        h('p', { class: 'sr-only', id: 'apk-kbd-help', text: 'Mayús más flechas izquierda o derecha cambia la tarjeta de columna; Mayús más flechas arriba o abajo la reordena.' }),
+        h('div', { class: 'apk-board', tabindex: '-1' }, cols)
+      ]);
+    }
+
+    function filtersEl(filtered) {
+      var q = h('input', { type: 'search', class: 'apk-input', placeholder: 'Buscar en título, notas o etiquetas', 'aria-label': 'Buscar tarjetas', value: st.filters.q, autocomplete: 'off' });
+      q.addEventListener('input', function () {
+        st.filters.q = q.value; var pos = q.selectionStart;
+        paint(); var n = root.querySelector('.apk-filters input[type=search]'); if (n) { n.focus(); n.setSelectionRange(pos, pos); }
+      });
+      var proj = ui.select([['', 'Todos los proyectos'], ['none', 'Sin proyecto']].concat(st.projects.filter(function (p) { return p.estado !== 'archivado'; }).map(function (p) { return [p.id, p.titulo]; })), st.filters.proyecto);
+      proj.classList.add('apk-select'); proj.setAttribute('aria-label', 'Filtrar por proyecto');
+      proj.addEventListener('change', function () { st.filters.proyecto = proj.value; paint(); });
+      var pr = ui.select([['0', 'Cualquier prioridad'], ['4', 'Urgente'], ['3', 'Alta'], ['2', 'Normal'], ['1', 'Baja']], String(st.filters.prioridad));
+      pr.classList.add('apk-select'); pr.setAttribute('aria-label', 'Filtrar por prioridad');
+      pr.addEventListener('change', function () { st.filters.prioridad = +pr.value; paint(); });
+      return h('div', { class: 'apk-filters' }, [
+        q, proj, pr,
+        btn('Solo bloqueadas', 'apk-chipbtn', function () { st.filters.bloqueadas = !st.filters.bloqueadas; paint(); }, { 'aria-pressed': String(st.filters.bloqueadas) }),
+        filtered ? btn('Quitar filtros', 'apk-link', function () { st.filters = { q: '', proyecto: '', prioridad: 0, bloqueadas: false }; paint(); }) : null
+      ]);
+    }
+
+    function colEl(e, cards, total, filtered) {
+      var limit = st.cfg.wip[e.id], w = wipState(total, limit), shown = cards;
+      var hechoCut = e.id === 'hecho' && !st.hechoMas && cards.length > 10;
+      if (e.id === 'hecho') shown = cards.slice().sort(function (a, b) { return (b.completada_en || '') < (a.completada_en || '') ? -1 : 1; });
+      if (hechoCut) shown = shown.slice(0, 10);
+      var count = h('span', { class: 'apk-count' + (w.over ? ' is-over' : w.at ? ' is-at' : ''), text: String(total) + (limit ? ' / ' + limit : '') });
+      var list = h('ul', { class: 'apk-list', 'data-estado': e.id, 'aria-label': e.label }, shown.map(function (c) { return cardEl(c, { hoy: e.id !== 'hecho' && e.id !== 'ideas' }); }));
+      var empty = !shown.length ? h('p', { class: 'apk-empty', text: filtered && total ? 'Ninguna tarjeta coincide con los filtros.' : e.vacio }) : null;
+      return h('section', { class: 'apk-col', 'data-estado': e.id, 'aria-labelledby': 'apk-h-' + e.id }, [
+        h('header', { class: 'apk-col-head' }, [
+          h('h3', { class: 'apk-col-title', id: 'apk-h-' + e.id, text: e.label }), count,
+          e.id === 'hecho' && total ? btn('Archivar', 'apk-link', function () { archiveDone(); }, { title: 'Archiva las tarjetas hechas hace más de 7 días' }) : null
+        ]),
+        w.over ? h('p', { class: 'apk-wipwarn', role: 'note', text: 'Por encima del límite (' + total + ' de ' + limit + '). Puedes seguir, pero terminar antes de empezar suele ir más rápido.' }) : null,
+        list, empty,
+        hechoCut ? btn('Mostrar las ' + (cards.length - 10) + ' restantes', 'apk-link', function () { st.hechoMas = true; paint(); }) : null,
+        e.id !== 'hecho' ? addInline(e.id) : null
+      ]);
+    }
+
+    function addInline(estado) {
+      var open = btn([h('span', { 'aria-hidden': 'true', text: '+ ' }), 'Añadir tarjeta'], 'apk-add', function () {
+        var inp = h('input', { class: 'apk-input', type: 'text', maxlength: '200', placeholder: 'Título y Enter', 'aria-label': 'Título de la nueva tarjeta en ' + ESTADO_LABEL[estado], autocomplete: 'off' });
+        var form = h('form', { class: 'apk-add-form', onsubmit: function (ev) {
+          ev.preventDefault();
+          var t = inp.value.trim(); if (!t) return;
+          inp.disabled = true;
+          create(t, estado, st.filters.proyecto && st.filters.proyecto !== 'none' ? st.filters.proyecto : null).then(function () {
+            var again = root.querySelector('.apk-col[data-estado="' + estado + '"] .apk-add'); if (again) again.click();
+          }).catch(function (err) { inp.disabled = false; failed(err, 'crear'); });
+        } }, [inp]);
+        inp.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') { ev.preventDefault(); paint(); var b = root.querySelector('.apk-col[data-estado="' + estado + '"] .apk-add'); if (b) b.focus(); } });
+        open.replaceWith(form); inp.focus();
+      });
+      return open;
+    }
+
+    function archiveDone() {
+      var old = st.cards.filter(function (c) { return c.estado === 'hecho' && c.completada_en && (now - new Date(c.completada_en)) > 7 * DAY; });
+      if (!old.length) return say('No hay tarjetas hechas hace más de 7 días.');
+      ctx.ask({ title: 'Archivar ' + old.length + (old.length === 1 ? ' tarjeta hecha' : ' tarjetas hechas'), text: 'Se archivan las terminadas hace más de 7 días. Se conservan y se pueden recuperar en «Archivo».', ok: 'Archivar' }).then(function (ok) {
+        if (ok) old.forEach(function (c) { archive(c, true); });
+      });
+    }
+
+    /* ── Vista Hoy ── */
+    function viewHoy() {
+      var list = todayList(), cap = st.cfg.capacidad;
+      var doneToday = st.cards.filter(function (c) { return c.completada_en && dayKey(new Date(c.completada_en)) === today; });
+      var inCourse = column(st.cards, 'en_curso').filter(function (c) { return c.hoy_fecha !== today && !c.bloqueada; });
+      var blocked = st.cards.filter(function (c) { return c.bloqueada && c.estado !== 'hecho'; });
+      var sug = suggest(st.cards, now, { wipEnCurso: st.cfg.wip.en_curso }).slice(0, 5);
+      var main = h('div', { class: 'apk-main' }, [
+        h('p', { class: 'apk-label', text: 'Resultado principal de hoy' }),
+        st.cfg.resultado ? h('p', { class: 'apk-main-text', text: st.cfg.resultado }) : h('p', { class: 'apk-main-text is-empty', text: 'Si hoy solo consiguieras una cosa, ¿cuál sería?' }),
+        btn(st.cfg.resultado ? 'Cambiar' : 'Definirlo', 'apk-link', function () {
+          ctx.ask({ title: 'Resultado principal de hoy', text: 'Una frase: lo que quieres tener al acabar el día.', input: true, value: st.cfg.resultado, ok: 'Guardar' }).then(function (v) {
+            if (v == null) return;
+            var prev = st.cfg.resultado; st.cfg.resultado = v; paint();
+            saveCfg('hoy_resultado', { fecha: today, texto: v }).catch(function (err) { failed(err, 'resultado', function () { st.cfg.resultado = prev; }); });
+          });
+        })
+      ]);
+      return h('div', { class: 'apk-hoy' }, [
+        main,
+        h('div', { class: 'apk-hoy-grid' }, [
+          block('Elegidas para hoy', list.length + ' de ' + cap, list.length > cap ? 'Has elegido más de lo que cabe (' + cap + '). Decide qué quitas.' : '',
+            list.length ? list.map(function (c) { return cardEl(c, { hoy: true, noAdvance: false }); }) : null, 'Elige tarjetas desde «Siguientes pasos» o desde el tablero.'),
+          block('En curso', String(inCourse.length), '', inCourse.length ? inCourse.map(function (c) { return cardEl(c, { hoy: true }); }) : null, 'Nada más en curso fuera de lo elegido para hoy.'),
+          block('Bloqueos', String(blocked.length), '', blocked.length ? blocked.map(function (c) { return cardEl(c, { noAdvance: true }); }) : null, 'Sin bloqueos.'),
+          h('section', { class: 'apk-block apk-block--wide', 'aria-labelledby': 'apk-sug' }, [
+            h('header', { class: 'apk-block-head' }, [h('h3', { id: 'apk-sug', class: 'apk-block-title', text: 'Siguientes pasos sugeridos' })]),
+            h('p', { class: 'apk-hint', text: 'Sugerencias, no órdenes: puntúan prioridad, fecha límite y si ya está empezada. El motivo va debajo de cada una.' }),
+            sug.length ? h('ul', { class: 'apk-sug' }, sug.map(function (s) {
+              return h('li', { class: 'apk-sug-item', 'data-id': s.card.id }, [
+                h('div', null, [
+                  h('button', { type: 'button', class: 'apk-card-open', 'data-role': 'open', text: s.card.titulo, onclick: function () { detailDialog(s.card); } }),
+                  h('p', { class: 'apk-why', text: s.why.length ? 'Porque: ' + s.why.join(' · ') : 'Sin factores destacados: es el siguiente en su columna.' }),
+                  s.card.siguiente_paso ? h('p', { class: 'apk-next' }, [h('span', { 'aria-hidden': 'true', text: '→ ' }), s.card.siguiente_paso]) : null
+                ]),
+                btn('Añadir a hoy', 'apk-mini', function () { setHoy(s.card, true); }, { 'data-role': 'hoy', 'aria-label': 'Añadir «' + s.card.titulo + '» a hoy' })
+              ]);
+            })) : h('p', { class: 'apk-empty', text: 'No hay tarjetas pendientes que sugerir. Pasa una idea a «Pendiente» o crea una tarjeta.' })
+          ]),
+          block('Hecho hoy', String(doneToday.length), '', doneToday.length ? doneToday.map(function (c) { return cardEl(c, { noAdvance: true }); }) : null, 'Todavía nada terminado hoy.')
+        ])
+      ]);
+      function block(title, count, warn, items, emptyText) {
+        return h('section', { class: 'apk-block', 'aria-label': title }, [
+          h('header', { class: 'apk-block-head' }, [h('h3', { class: 'apk-block-title', text: title }), h('span', { class: 'apk-count', text: count })]),
+          warn ? h('p', { class: 'apk-wipwarn', role: 'note', text: warn }) : null,
+          items ? h('ul', { class: 'apk-list apk-list--flat' }, items) : h('p', { class: 'apk-empty', text: emptyText })
+        ]);
+      }
+    }
+
+    /* ── Archivo ── */
+    function loadArchived() {
+      paint();
+      return api('/rest/v1/kb_tarjetas?select=*&archivada_en=not.is.null&order=archivada_en.desc&limit=300').then(function (r) { st.archived = r || []; paint(); })
+        .catch(function (e) { failed(e, 'cargar el archivo'); });
+    }
+    function viewArchivo() {
+      if (!st.archived) return h('p', { class: 'apk-empty', text: 'Cargando…' });
+      return h('div', { class: 'apk-arch' }, [
+        h('p', { class: 'apk-hint', text: 'Las tarjetas archivadas conservan notas, pasos e historial. Recupéralas cuando las necesites.' }),
+        st.archived.length ? h('ul', { class: 'apk-list apk-list--flat' }, st.archived.map(function (c) {
+          return h('li', { class: 'apk-card', 'data-id': c.id }, [
+            h('button', { type: 'button', class: 'apk-card-open', 'data-role': 'open', text: c.titulo, onclick: function () { detailDialog(c); } }),
+            h('p', { class: 'apk-next', text: ESTADO_LABEL[c.estado] + ' · archivada el ' + new Date(c.archivada_en).toLocaleDateString('es-ES') }),
+            h('div', { class: 'apk-card-act apk-card-act--static' }, [btn('Recuperar', 'apk-mini', function () { archive(c, false); }, { 'data-role': 'rec' })])
+          ]);
+        })) : h('p', { class: 'apk-empty', text: 'No hay nada archivado.' })
+      ]);
+    }
+
+    /* ── Diálogos ── */
+    function selectEstado(v) { return ui.select(ESTADOS.map(function (e) { return [e.id, e.label]; }), v); }
+    function selectProy(v) { return ui.select(st.projects.filter(function (p) { return p.estado !== 'archivado' || p.id === v; }).map(function (p) { return [p.id, p.titulo]; }), v || '', 'Sin proyecto'); }
+
+    function newDialog(estado) {
+      var t = ui.input('text', '', { maxlength: '200', required: true });
+      var e = selectEstado(estado), p = selectProy(st.filters.proyecto && st.filters.proyecto !== 'none' ? st.filters.proyecto : '');
+      ui.formDialog('Nueva tarjeta', 'Crear', [
+        ui.field('apk-n-t', 'Título', t, { wide: true }), ui.field('apk-n-e', 'Estado inicial', e), ui.field('apk-n-p', 'Proyecto (opcional)', p)
+      ], function () {
+        var v = t.value.trim();
+        if (!v) throw ui.invalid('Escribe un título.', t);
+        return create(v, e.value, p.value || null);
+      }, t);
+    }
+
+    function detailDialog(c0) {
+      var c = c0, subs = (st.subs[c.id] || []).slice(), dlg, msg = h('p', { class: 'ap-msg', 'aria-live': 'assertive' });
+      var f = {
+        titulo: ui.input('text', c.titulo, { maxlength: '200' }), estado: selectEstado(c.estado), proyecto: selectProy(c.proyecto_id),
+        prioridad: ui.select([['4', 'Urgente'], ['3', 'Alta'], ['2', 'Normal'], ['1', 'Baja']], String(c.prioridad)),
+        fecha: ui.input('date', c.fecha_limite || ''),
+        esfuerzo: ui.select([['1', ESFUERZO[1]], ['2', ESFUERZO[2]], ['3', ESFUERZO[3]]], c.esfuerzo ? String(c.esfuerzo) : '', 'Sin estimar'),
+        tags: ui.input('text', (c.etiquetas || []).join(', '), { maxlength: '200' }),
+        bloqueada: h('input', { type: 'checkbox', checked: c.bloqueada }), bloqueo: ui.input('text', c.bloqueo || '', { maxlength: '300' }),
+        paso: ui.input('text', c.siguiente_paso || '', { maxlength: '300' }),
+        notas: ui.area(c.notas, 8, 8000), aprendizaje: ui.area(c.aprendizaje, 3, 2000)
+      };
+      var subList = h('ul', { class: 'apk-subs' });
+      var histBox = h('ul', { class: 'apk-hist' });
+      function drawSubs() {
+        subList.textContent = '';
+        subs.forEach(function (s) {
+          var cb = h('input', { type: 'checkbox', checked: s.hecho, 'aria-label': s.titulo });
+          cb.addEventListener('change', function () {
+            var prev = s.hecho; s.hecho = cb.checked;
+            api('/rest/v1/kb_subtareas?id=eq.' + s.id, { method: 'PATCH', headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify({ hecho: s.hecho }) })
+              .catch(function (err) { s.hecho = prev; cb.checked = prev; msg.textContent = 'No se ha guardado el paso: ' + err.message; msg.classList.add('is-error'); });
+          });
+          subList.appendChild(h('li', { class: 'apk-sub' }, [h('label', null, [cb, h('span', { text: s.titulo })]),
+            btn('Quitar', 'apk-link', function () {
+              api('/rest/v1/kb_subtareas?id=eq.' + s.id, { method: 'DELETE', headers: { Prefer: 'return=minimal' } }).then(function () {
+                subs = subs.filter(function (x) { return x.id !== s.id; }); st.subs[c.id] = subs; drawSubs();
+              }).catch(function (err) { msg.textContent = 'No se ha podido quitar: ' + err.message; msg.classList.add('is-error'); });
+            }, { 'aria-label': 'Quitar el paso «' + s.titulo + '»' })]));
+        });
+      }
+      var newSub = ui.input('text', '', { maxlength: '200', placeholder: 'Nuevo paso y Enter', 'aria-label': 'Nuevo paso' });
+      newSub.addEventListener('keydown', function (ev) {
+        if (ev.key !== 'Enter') return;
+        ev.preventDefault();
+        var t = newSub.value.trim(); if (!t) return;
+        var pos = subs.length ? subs[subs.length - 1].posicion + GAP : GAP;
+        api('/rest/v1/kb_subtareas?select=*', { method: 'POST', headers: REP, body: JSON.stringify({ tarjeta_id: c.id, titulo: t, posicion: pos }) }).then(function (r) {
+          subs.push(r[0]); st.subs[c.id] = subs; newSub.value = ''; drawSubs();
+        }).catch(function (err) { msg.textContent = 'No se ha podido añadir: ' + err.message; msg.classList.add('is-error'); });
+      });
+      drawSubs();
+      api('/rest/v1/kb_historial?select=tipo,de,a,created_at&tarjeta_id=eq.' + c.id + '&order=created_at.desc&limit=12').then(function (r) {
+        (r || []).forEach(function (e) {
+          var txt = e.tipo === 'creada' ? 'Creada en ' + ESTADO_LABEL[e.a] : e.tipo === 'estado' ? ESTADO_LABEL[e.de] + ' → ' + ESTADO_LABEL[e.a] : e.tipo === 'archivada' ? 'Archivada' : 'Recuperada';
+          histBox.appendChild(h('li', null, [h('time', { text: new Date(e.created_at).toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) }), ' · ' + txt]));
+        });
+        if (!histBox.firstChild) histBox.appendChild(h('li', { text: 'Sin cambios registrados.' }));
+      }).catch(function () { histBox.appendChild(h('li', { text: 'No se ha podido cargar el historial.' })); });
+
+      var dates = [h('span', { text: 'Creada ' + new Date(c.created_at).toLocaleDateString('es-ES') }), c.updated_at ? h('span', { text: 'Actualizada ' + new Date(c.updated_at).toLocaleDateString('es-ES') }) : null,
+        c.completada_en ? h('span', { text: 'Terminada ' + new Date(c.completada_en).toLocaleDateString('es-ES') }) : null];
+
+      var save = btn('Guardar', 'btn btn-primary', null, { type: 'submit' });
+      var actions = h('div', { class: 'ap-dialog-actions apk-dlg-actions' }, [
+        c.archivada_en ? btn('Recuperar', 'btn btn-outline', function () { dlg.close(); archive(c, false); }) : btn('Archivar', 'btn btn-outline', function () { dlg.close(); archive(c, true); }),
+        btn('Eliminar', 'btn btn-outline apk-danger', function () {
+          ctx.ask({ title: 'Eliminar «' + clip(c.titulo) + '»', text: 'Se borra con sus pasos e historial. Podrás deshacerlo unos segundos; si dudas, archívala.', ok: 'Eliminar', danger: true }).then(function (ok) { if (ok) { dlg.close(); remove(c); } });
+        }),
+        h('span', { class: 'apk-grow' }),
+        btn('Cerrar', 'btn btn-outline', function () { dlg.close(); }), save
+      ]);
+      var idea = c.tipo === 'idea' || c.estado === 'ideas' ? h('div', { class: 'apk-promote' }, [
+        h('p', { class: 'apk-hint', text: 'Es una idea. Cuando decidas trabajar en ella:' }),
+        btn('Convertir en tarea', 'apk-btn', function () { f.estado.value = 'pendiente'; save.click(); }),
+        btn('Convertir en proyecto', 'apk-btn', function () {
+          api('/rest/v1/kb_proyectos?select=*', { method: 'POST', headers: REP, body: JSON.stringify({ titulo: f.titulo.value.trim() || c.titulo, objetivo: (f.notas.value || '').slice(0, 1000) || null }) }).then(function (r) {
+            st.projects.push(r[0]); f.proyecto = selectProy(r[0].id); f.estado.value = 'pendiente';
+            var opt = h('option', { value: r[0].id, text: r[0].titulo }); var sel = dlg.querySelector('#apk-d-proy'); sel.appendChild(opt); sel.value = r[0].id;
+            save.click();
+          }).catch(function (err) { msg.textContent = err.message; msg.classList.add('is-error'); });
+        })
+      ]) : null;
+
+      var form = h('form', { method: 'dialog', novalidate: true, onsubmit: function (ev) {
+        ev.preventDefault();
+        var t = f.titulo.value.trim();
+        if (!t) { msg.textContent = 'Escribe un título.'; msg.classList.add('is-error'); return f.titulo.focus(); }
+        if (f.bloqueada.checked && !f.bloqueo.value.trim()) { msg.textContent = 'Indica qué bloquea la tarjeta.'; msg.classList.add('is-error'); return f.bloqueo.focus(); }
+        save.disabled = true; msg.classList.remove('is-error'); msg.textContent = 'Guardando…';
+        var patch = {
+          titulo: t, proyecto_id: f.proyecto.value || null, prioridad: +f.prioridad.value, fecha_limite: f.fecha.value || null,
+          esfuerzo: f.esfuerzo.value ? +f.esfuerzo.value : null, etiquetas: parseTags(f.tags.value),
+          bloqueada: f.bloqueada.checked, bloqueo: f.bloqueada.checked ? f.bloqueo.value.trim() : null,
+          siguiente_paso: f.paso.value.trim() || null, notas: f.notas.value.trim() || null, aprendizaje: f.aprendizaje.value.trim() || null
+        };
+        var prev = Object.assign({}, c), newEstado = f.estado.value, changedState = newEstado !== c.estado;
+        if (changedState) {
+          patch.estado = newEstado; patch.tipo = newEstado === 'ideas' ? 'idea' : 'tarea';
+          var col = column(st.cards, newEstado); patch.posicion = col.length ? col[col.length - 1].posicion + GAP : GAP;
+        }
+        patchCard(c.id, patch).then(function () {
+          if (c.archivada_en && st.archived) { var a = st.archived.indexOf(c0); if (a > -1) Object.assign(st.archived[a], c); }
+          pushUndo('edición de «' + clip(c.titulo) + '»', function () {
+            var back = {}; Object.keys(patch).forEach(function (k) { back[k] = prev[k]; });
+            return patchCard(c.id, back);
+          });
+          dlg.close(); paint();
+          say('Cambios guardados.', { undo: true });
+        }).catch(function (err) {
+          save.disabled = false;
+          if (err && err.auth) { dlg.close(); return auth(err); }
+          msg.textContent = 'No se ha guardado: ' + (err.message || 'error') + '. No se ha perdido nada de lo escrito.'; msg.classList.add('is-error');
+        });
+      } }, [
+        h('h2', { class: 'ap-dialog-title', id: 'apk-d-title', text: 'Tarjeta' }),
+        h('p', { class: 'apk-dates' }, dates),
+        idea,
+        h('div', { class: 'apf-grid' }, [
+          ui.field('apk-d-t', 'Título', f.titulo, { wide: true }),
+          ui.field('apk-d-e', 'Estado', f.estado),
+          ui.field('apk-d-proy', 'Proyecto', f.proyecto),
+          ui.field('apk-d-pr', 'Prioridad', f.prioridad), ui.field('apk-d-f', 'Fecha límite', f.fecha),
+          ui.field('apk-d-es', 'Esfuerzo', f.esfuerzo), ui.field('apk-d-tag', 'Etiquetas (separadas por comas)', f.tags),
+          ui.field('apk-d-p', 'Siguiente paso concreto', f.paso, { wide: true }),
+          h('div', { class: 'apf-field apf-wide apk-blockrow' }, [
+            h('label', { class: 'apk-check' }, [f.bloqueada, h('span', { text: 'Está bloqueada' })]),
+            h('label', { class: 'ap-field-label', for: 'apk-d-b', text: 'Qué la bloquea' }), (f.bloqueo.id = 'apk-d-b', f.bloqueo)
+          ]),
+          ui.field('apk-d-n', 'Notas (idea, problema, preguntas, decisiones, soluciones)', f.notas, { wide: true }),
+          c.estado === 'hecho' || c.estado === 'revision' ? ui.field('apk-d-a', 'Qué he aprendido', f.aprendizaje, { wide: true }) : null,
+          h('div', { class: 'apf-field apf-wide' }, [h('p', { class: 'ap-field-label', text: 'Pasos' }), subList, newSub]),
+          h('div', { class: 'apf-field apf-wide' }, [h('p', { class: 'ap-field-label', text: 'Historial' }), histBox])
+        ]),
+        msg, actions
+      ]);
+      dlg = h('dialog', { class: 'ap-dialog apf-dialog apk-dialog', 'aria-labelledby': 'apk-d-title', onclose: function () { dlg.remove(); if (root.isConnected) paint(); } }, [form]);   // repinta: los pasos se guardan al instante y la tarjeta cuenta
+      document.body.appendChild(dlg); dlg.showModal();
+    }
+
+    function projectsDialog() {
+      var dlg, box = h('div', { class: 'apk-proj-list' });
+      function draw() {
+        box.textContent = '';
+        if (!st.projects.length) box.appendChild(h('p', { class: 'apk-empty', text: 'Aún no hay proyectos. Un proyecto es un resultado que quieres conseguir; las tarjetas son sus tareas.' }));
+        st.projects.forEach(function (p) {
+          var n = st.cards.filter(function (c) { return c.proyecto_id === p.id; });
+          var done = n.filter(function (c) { return c.estado === 'hecho'; }).length;
+          box.appendChild(h('div', { class: 'apk-proj-row' }, [
+            h('div', null, [h('strong', { text: p.titulo }), h('p', { class: 'apk-hint', text: (p.objetivo ? p.objetivo + ' · ' : '') + p.estado + ' · ' + done + '/' + n.length + ' tareas hechas' })]),
+            h('div', { class: 'apk-proj-act' }, [
+              btn('Ver tarjetas', 'apk-link', function () { dlg.close(); st.filters.proyecto = p.id; st.view = 'tablero'; paint(); }),
+              btn('Editar', 'apk-link', function () { dlg.close(); projectForm(p); })
+            ])
+          ]));
+        });
+      }
+      draw();
+      dlg = h('dialog', { class: 'ap-dialog apf-dialog', 'aria-labelledby': 'apk-pl-t', onclose: function () { dlg.remove(); } }, [
+        h('h2', { class: 'ap-dialog-title', id: 'apk-pl-t', text: 'Proyectos' }), box,
+        h('div', { class: 'ap-dialog-actions' }, [btn('Cerrar', 'btn btn-outline', function () { dlg.close(); }), btn('Nuevo proyecto', 'btn btn-primary', function () { dlg.close(); projectForm(null); })])
+      ]);
+      document.body.appendChild(dlg); dlg.showModal();
+    }
+    function projectForm(p) {
+      var t = ui.input('text', p ? p.titulo : '', { maxlength: '160' }), o = ui.area(p ? p.objetivo : '', 3, 1000), d = ui.area(p ? p.descripcion : '', 4, 4000);
+      var e = ui.select([['activo', 'Activo'], ['pausado', 'Pausado'], ['hecho', 'Hecho'], ['archivado', 'Archivado']], p ? p.estado : 'activo');
+      var pr = ui.select([['4', 'Urgente'], ['3', 'Alta'], ['2', 'Normal'], ['1', 'Baja']], p ? String(p.prioridad) : '2');
+      var fo = ui.input('date', p && p.fecha_objetivo || '');
+      var fields = [ui.field('apk-p-t', 'Nombre', t, { wide: true }), ui.field('apk-p-o', 'Objetivo (el resultado que quiero)', o, { wide: true }), ui.field('apk-p-e', 'Estado', e), ui.field('apk-p-pr', 'Prioridad', pr), ui.field('apk-p-f', 'Fecha objetivo', fo), ui.field('apk-p-d', 'Descripción', d, { wide: true })];
+      ui.formDialog(p ? 'Editar proyecto' : 'Nuevo proyecto', 'Guardar', fields, function () {
+        var v = t.value.trim(); if (!v) throw ui.invalid('Escribe un nombre.', t);
+        var body = { titulo: v, objetivo: o.value.trim() || null, descripcion: d.value.trim() || null, estado: e.value, prioridad: +pr.value, fecha_objetivo: fo.value || null };
+        return (p ? api('/rest/v1/kb_proyectos?id=eq.' + p.id + '&select=*', { method: 'PATCH', headers: REP, body: JSON.stringify(body) })
+          : api('/rest/v1/kb_proyectos?select=*', { method: 'POST', headers: REP, body: JSON.stringify(body) })).then(function (r) {
+          if (p) Object.assign(p, r[0]); else st.projects.push(r[0]);
+          paint(); say('Proyecto guardado.');
+        });
+      }, t);
+    }
+
+    function settingsDialog() {
+      var a = ui.input('number', st.cfg.wip.en_curso || 0, { min: '0', max: '20' }), b = ui.input('number', st.cfg.wip.revision || 0, { min: '0', max: '20' }), c = ui.input('number', st.cfg.capacidad, { min: '1', max: '12' });
+      ui.formDialog('Ajustes del tablero', 'Guardar', [
+        ui.field('apk-s-a', 'Límite en «En curso» (0 = sin límite)', a, { hint: 'Valor inicial 3: pocas cosas a la vez. Avisa, no bloquea.' }),
+        ui.field('apk-s-b', 'Límite en «En revisión» (0 = sin límite)', b),
+        ui.field('apk-s-c', 'Capacidad diaria (tarjetas para hoy)', c, { hint: 'Cuántas cosas caben de verdad en un día.' })
+      ], function () {
+        var wip = { en_curso: Math.max(0, Math.min(20, +a.value || 0)), revision: Math.max(0, Math.min(20, +b.value || 0)) }, cap = Math.max(1, Math.min(12, +c.value || 1));
+        return Promise.all([saveCfg('wip', wip), saveCfg('capacidad', { hoy: cap })]).then(function () { st.cfg.wip = wip; st.cfg.capacidad = cap; paint(); say('Ajustes guardados.'); });
+      }, a);
+    }
+
+    /* ── Teclado: Mayús + flechas mueve la tarjeta enfocada; Ctrl/⌘+Z deshace ── */
+    root.addEventListener('keydown', function (ev) {
+      var li = ev.target.closest && ev.target.closest('.apk-card[data-id]');
+      if (!li || !ev.shiftKey || ev.altKey || ev.ctrlKey || ev.metaKey || ev.target.tagName === 'INPUT') return;
+      var dx = ev.key === 'ArrowRight' ? 1 : ev.key === 'ArrowLeft' ? -1 : 0, dy = ev.key === 'ArrowDown' ? 1 : ev.key === 'ArrowUp' ? -1 : 0;
+      if (!dx && !dy) return;
+      var c = byId(li.getAttribute('data-id')); if (!c || st.view !== 'tablero') return;
+      ev.preventDefault();
+      var ids = ESTADOS.map(function (e) { return e.id; }), i = ids.indexOf(c.estado);
+      keep = c.id;
+      if (dx) { var j = i + dx; if (j < 0 || j >= ids.length) return say('No hay más columnas en esa dirección.'); st.colTab = ids[j]; move(c, ids[j], 0, 'key'); }
+      else { var col = column(st.cards, c.estado), k = col.indexOf(c) + dy; if (k < 0 || k >= col.length) return say('Ya está en el extremo de la columna.'); move(c, c.estado, k, 'key'); }
+    });
+    function onDocKey(ev) {
+      if (!root.isConnected) return document.removeEventListener('keydown', onDocKey);
+      if ((ev.ctrlKey || ev.metaKey) && !ev.shiftKey && ev.key.toLowerCase() === 'z' && !/^(INPUT|TEXTAREA|SELECT)$/.test(ev.target.tagName) && !document.querySelector('dialog[open]')) { ev.preventDefault(); doUndo(); }
+    }
+    document.addEventListener('keydown', onDocKey);
+
+    /* ── Arrastrar y soltar (Pointer Events) ── */
+    root.addEventListener('pointerdown', function (ev) {
+      if (ev.button !== 0 || st.view !== 'tablero') return;
+      var el = ev.target.closest && ev.target.closest('.apk-card[data-id]'); if (!el) return;
+      if (ev.target.closest('input, select, textarea, a')) return;       // los botones sí arrastran: un clic sin mover sigue siendo un clic
+      if (ev.pointerType === 'touch' && !ev.target.closest('.apk-grip')) return;       // en táctil solo desde el asa: la tarjeta sigue desplazándose
+      startDrag(ev, el);
+    });
+    root.addEventListener('click', function (ev) { if (Date.now() - lastDrag < 80) { ev.stopPropagation(); ev.preventDefault(); } }, true);   // el clic que cierra un arrastre no activa nada
+    function startDrag(ev, el) {
+      var card = byId(el.getAttribute('data-id')), board = root.querySelector('.apk-board'), active = false, ghost, drop, tgt = null;
+      var sx = ev.clientX, sy = ev.clientY, px = sx, py = sy, rect, raf = 0, pid = ev.pointerId;
+      var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      function begin() {
+        active = true; rect = el.getBoundingClientRect();
+        ghost = el.cloneNode(true); ghost.classList.add('apk-ghost'); ghost.removeAttribute('data-id');
+        ghost.style.width = rect.width + 'px'; ghost.style.left = rect.left + 'px'; ghost.style.top = rect.top + 'px';
+        document.body.appendChild(ghost);
+        el.classList.add('is-src');
+        drop = h('li', { class: 'apk-drop', 'aria-hidden': 'true' });
+        root.classList.add('is-dragging');
+        raf = requestAnimationFrame(tick);
+      }
+      function place() {
+        var cols = [].slice.call(root.querySelectorAll('.apk-col')).filter(function (c) { return c.offsetParent !== null; }), best = null, bd = 1e9;
+        cols.forEach(function (c) { var r = c.getBoundingClientRect(), d = px < r.left ? r.left - px : px > r.right ? px - r.right : 0; if (d < bd) { bd = d; best = c; } });
+        if (!best) return;
+        var list = best.querySelector('.apk-list'), items = [].slice.call(list.children).filter(function (x) { return x !== el && x !== drop; }), idx = 0;
+        items.forEach(function (x) { var r = x.getBoundingClientRect(); if (py > r.top + r.height / 2) idx++; });
+        if (items[idx]) list.insertBefore(drop, items[idx]); else list.appendChild(drop);
+        tgt = { estado: list.getAttribute('data-estado'), index: idx };
+        root.querySelectorAll('.apk-col.is-target').forEach(function (c) { c.classList.remove('is-target'); });
+        best.classList.add('is-target');
+      }
+      function tick() {
+        if (!active) return;
+        ghost.style.transform = 'translate(' + (px - sx) + 'px,' + (py - sy) + 'px)';
+        var br = board.getBoundingClientRect(), edge = 70, spd = reduce ? 10 : 18;
+        if (px < br.left + edge) board.scrollLeft -= spd; else if (px > br.right - edge) board.scrollLeft += spd;
+        if (py < 80) window.scrollBy(0, -spd); else if (py > innerHeight - 80) window.scrollBy(0, spd);
+        place();
+        raf = requestAnimationFrame(tick);
+      }
+      function onMove(e) {
+        if (e.pointerId !== pid) return;
+        px = e.clientX; py = e.clientY;
+        if (!active && Math.hypot(px - sx, py - sy) > 6) begin();
+        if (active) e.preventDefault();
+      }
+      function end(commit) {
+        document.removeEventListener('pointermove', onMove); document.removeEventListener('pointerup', onUp);
+        document.removeEventListener('pointercancel', onCancel); document.removeEventListener('keydown', onKey, true);
+        cancelAnimationFrame(raf);
+        if (!active) return;
+        lastDrag = Date.now();
+        if (ghost) ghost.remove(); if (drop) drop.remove();
+        el.classList.remove('is-src'); root.classList.remove('is-dragging');
+        root.querySelectorAll('.apk-col.is-target').forEach(function (c) { c.classList.remove('is-target'); });
+        if (commit && tgt && card) { keep = card.id; st.colTab = tgt.estado; move(card, tgt.estado, tgt.index, 'drag'); }
+      }
+      function onUp(e) { if (e.pointerId === pid) end(true); }
+      function onCancel(e) { if (e.pointerId === pid) end(false); }
+      function onKey(e) { if (e.key === 'Escape' && active) { e.preventDefault(); e.stopPropagation(); end(false); say('Movimiento cancelado.'); } }
+      document.addEventListener('pointermove', onMove, { passive: false }); document.addEventListener('pointerup', onUp);
+      document.addEventListener('pointercancel', onCancel); document.addEventListener('keydown', onKey, true);
+    }
+
+    /* ── Arranque ── */
+    return load().then(function () {
+      return function paintFirst() {
+        ctx.view.appendChild(root);
+        paint();
+      };
+    }).catch(function (err) {
+      if (err && err.auth) throw err;
+      if (missing(err)) {
+        return function paintSetup() {
+          ctx.view.appendChild(h('section', { class: 'apk apk-setup', 'aria-label': 'Centro de trabajo' }, [
+            h('p', { class: 'apk-kicker', text: 'Centro de trabajo' }),
+            h('p', { text: 'Las tablas del tablero aún no existen en Supabase. Ejecuta supabase/kanban.sql en el SQL Editor (una vez, es idempotente) y recarga la página.' })
+          ]));
+        };
+      }
+      throw err;
+    });
+  }
+
+  return { render: render, logic: logic };
+})();

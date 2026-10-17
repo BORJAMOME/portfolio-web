@@ -446,6 +446,8 @@
      <link rel="prefetch" data-ap-module="…"> de area-privada.html. */
   var MODULES = {
     hoy:         { global: 'APHoy',         title: 'Hoy' },
+    // sin pestaña propia: lo monta «Hoy» (tab) encima de sus tarjetas
+    kanban:      { global: 'APKanban',      title: 'Hoy', tab: 'hoy' },
     calendario:  { global: 'APCalendario',  title: 'Calendario' },
     entrevistas: { global: 'APEntrevistas', title: 'Entrevistas' },
     // sin pestaña propia: vive dentro de «Entrevistas» (tab) con su propio archivo
@@ -505,7 +507,7 @@
     if (isModule) {
       job = loadModule(r.name).then(function (mod) {
         return mod.render({
-          api: api, h: h, ui: ui, ask: ask, setStatus: setStatus, fail: fail, view: els.view, arg: r.arg,
+          api: api, h: h, ui: ui, ask: ask, fail: fail, module: loadModule, setStatus: setStatus, fail: fail, view: els.view, arg: r.arg,
           isCurrent: function () { return seq === renderSeq; }
         });
       });

@@ -31,7 +31,14 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
 - Formularios de las pestañas: `ctx.ui` (field, input, select, area, formDialog, invalid) en `area-privada.js`; no los dupliques.
 - **Configuración** (`#/configuracion`): listas de opciones en `public.ap_opciones` (`supabase/opciones.sql`), hoy temas y formatos del Fichero.
   Renombrar/eliminar van por RPC y actualizan también los enlaces. Lista nueva: entrada en `GROUPS` de `area-privada-configuracion.js`.
-- **Hoy** (`#/`): próximos 7 días, entrevistas programadas y procesos parados. Solo lee.
+- **Hoy** (`#/`): arriba el **Centro de trabajo** (módulo `kanban`, ver abajo) y debajo «Agenda y seguimiento»: próximos 7 días,
+  entrevistas programadas y procesos parados (solo lee).
+- **Centro de trabajo** (en `#/`, sin ruta ni pestaña propias): `area-privada-kanban.js` (`window.APKanban`), lo monta `area-privada-hoy.js` con
+  `ctx.module('kanban')`. Vistas Hoy / Tablero / Archivo. Tablas `kb_proyectos`, `kb_tarjetas`, `kb_subtareas`, `kb_historial`, `kb_ajustes`
+  (`supabase/kanban.sql`; revertir con `kanban-rollback.sql`). El historial y `completada_en` los escribe un trigger. Orden por `posicion` (punto medio).
+  Arrastre con Pointer Events propios (sin biblioteca: CSP sin CDN y regla de no añadir dependencias); teclado con Mayús+flechas; en táctil, desde el asa.
+  Límites WIP y capacidad diaria en `kb_ajustes`; avisan, no bloquean. La lógica pura está en `APKanban.logic`.
+  Pruebas: `node tools/test-kanban.mjs` (lógica, sin dependencias) y `node tools/check-kanban.mjs` (interfaz con Playwright y un Supabase simulado en memoria; no toca la base real).
 - **Calendario** (`#/calendario`): solo lectura. Google → iCal secreto → Edge Function `supabase/functions/calendario-sync`
   (pg_cron cada 15 min) → `public.calendar_events`. La página nunca habla con Google. Guía: `supabase/functions/calendario-sync/README.md`.
 - **Entrevistas** (`#/entrevistas`, `/analisis`, `/<uuid>`): tablas `procesos` y `entrevistas` (`supabase/entrevistas.sql`).
