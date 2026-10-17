@@ -101,6 +101,17 @@ async function open(viewport) {
   await page.waitForSelector('.apk-head');
   return { ctx, page, errors };
 }
+// el tablero se repinta al cerrar un diálogo: se espera a que el elemento exista y tenga caja antes de medirlo
+async function bbox(sel) {
+  for (let i = 0; i < 60; i++) {
+    const el = await pagePtr.page.$(sel);
+    const b = el && await el.boundingBox().catch(() => null);
+    if (b) return b;
+    await pagePtr.page.waitForTimeout(50);
+  }
+  throw new Error('sin caja para ' + sel);
+}
+const pagePtr = {};
 const titles = (page, estado) => page.$$eval(`.apk-col[data-estado="${estado}"] .apk-card .apk-card-open`, (els) => els.map((e) => e.textContent));
 const goBoard = async (page) => { await page.click('.apk-seg-btn:has-text("Tablero")'); await page.waitForSelector('.apk-board'); };
 async function addInline(page, estado, text) {
@@ -111,7 +122,7 @@ async function addInline(page, estado, text) {
   await page.keyboard.press('Escape');
 }
 async function drag(page, fromSel, toX, toY) {
-  const b = await (await page.$(fromSel)).boundingBox();
+  const b = await bbox(fromSel);
   await page.mouse.move(b.x + b.width * 0.3, b.y + b.height / 2);
   await page.mouse.down();
   await page.mouse.move(b.x + b.width * 0.3 + 12, b.y + b.height / 2 + 12, { steps: 3 });
@@ -121,9 +132,10 @@ async function drag(page, fromSel, toX, toY) {
   await page.waitForTimeout(150);
 }
 const cardSel = (t) => `.apk-card:has(.apk-card-open:text-is("${t}"))`;
-const colCenter = async (page, estado, yOff) => { const b = await (await page.$(`.apk-col[data-estado="${estado}"] .apk-list`)).boundingBox(); return [b.x + b.width / 2, b.y + (yOff == null ? 20 : yOff)]; };
+const colCenter = async (page, estado, yOff) => { const b = await bbox(`.apk-col[data-estado="${estado}"] .apk-list`); return [b.x + b.width / 2, b.y + (yOff == null ? 20 : yOff)]; };
 
 const { page, ctx, errors } = await open();
+pagePtr.page = page;
 
 await step('Hoy: se ve el centro de trabajo y la agenda existente sigue ahí', async () => {
   ok(await page.isVisible('.apk-title'), 'sin cabecera del módulo');
@@ -179,7 +191,7 @@ await step('3. Arrastrar a otra columna (y persiste)', async () => {
   eq(db.kb_tarjetas.find((c) => c.titulo === 'Estudiar DAX avanzado').estado, 'en_curso', 'servidor');
 });
 await step('4. Reordenar dentro de la misma columna', async () => {
-  if (process.env.DBG) { const f0 = (await titles(page, 'en_curso'))[0]; const bb = await (await page.$(cardSel(f0))).boundingBox(); console.log('DBG', f0, JSON.stringify(bb), await page.evaluate(([x, y]) => { const e = document.elementFromPoint(x, y); return e.className + '|' + e.tagName + '|' + (e.closest('.apk-card') ? 'card' : 'nocard'); }, [bb.x + bb.width * 0.3, bb.y + bb.height / 2])); }
+  if (process.env.DBG) { const f0 = (await titles(page, 'en_curso'))[0]; const bb = await bbox(cardSel(f0)); console.log('DBG', f0, JSON.stringify(bb), await page.evaluate(([x, y]) => { const e = document.elementFromPoint(x, y); return e.className + '|' + e.tagName + '|' + (e.closest('.apk-card') ? 'card' : 'nocard'); }, [bb.x + bb.width * 0.3, bb.y + bb.height / 2])); }
   const first = (await titles(page, 'en_curso'))[0];
   const [x, y] = await colCenter(page, 'en_curso', 400);
   await drag(page, cardSel(first), x, y);
@@ -298,14 +310,14 @@ await step('Táctil: solo el asa arrastra (eventos de puntero táctiles)', async
   // el borde de la ventana activa el autoscroll: se coloca el tablero a media altura para que el destino no quede en esa zona
   await page.evaluate(() => { const r = document.querySelector('.apk-board').getBoundingClientRect(); scrollBy(0, r.top - 300); });
   await page.waitForTimeout(100);
-  const dest = await (await page.$('.apk-col[data-estado="revision"] .apk-list')).boundingBox();
-  const g = await (await page.$(cardSel(t) + ' .apk-grip')).boundingBox();
+  const dest = await bbox('.apk-col[data-estado="revision"] .apk-list');
+  const g = await bbox(cardSel(t) + ' .apk-grip');
   const fire = (type, x, y, sel) => page.evaluate(([type, x, y, sel]) => {
     const target = sel ? document.querySelector(sel) : document;
     target.dispatchEvent(new PointerEvent(type, { bubbles: true, cancelable: true, pointerId: 7, pointerType: 'touch', isPrimary: true, button: 0, clientX: x, clientY: y }));
   }, [type, x, y, sel]);
   // 1) tocar el cuerpo de la tarjeta no inicia arrastre
-  const body = await (await page.$(cardSel(t) + ' .apk-card-open')).boundingBox();
+  const body = await bbox(cardSel(t) + ' .apk-card-open');
   const tid = db.kb_tarjetas.find((c) => c.titulo === t).id;
   await fire('pointerdown', body.x + 5, body.y + 5, '[data-id="' + tid + '"] .apk-card-open');
   await fire('pointermove', body.x + 60, body.y + 80); await page.waitForTimeout(60);
@@ -355,7 +367,7 @@ await step('Regresión: con filtro activo, soltar entre dos visibles respeta el 
   [['A', 3, 1e6], ['H1', 2, 2e6], ['H2', 2, 3e6], ['B', 3, 4e6], ['C', 3, 5e6]].forEach(([t, pr, pos]) => { const id = uid(); ids[t] = id; db.kb_tarjetas.push({ id, titulo: 'F-' + t, estado: 'ideas', tipo: 'idea', posicion: pos, prioridad: pr, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), archivada_en: null, hoy_fecha: null, bloqueada: false, etiquetas: [] }); });
   await page.reload(); await page.waitForSelector('.apk-head'); await goBoard(page);
   await page.selectOption('.apk-filters select[aria-label="Filtrar por prioridad"]', '3');
-  const bBox = await (await page.$(cardSel('F-B'))).boundingBox();
+  const bBox = await bbox(cardSel('F-B'));
   await drag(page, cardSel('F-A'), bBox.x + bBox.width / 2, bBox.y + bBox.height - 4);
   const pos = (t) => db.kb_tarjetas.find((c) => c.titulo === t).posicion;
   ok(pos('F-A') > pos('F-B') && pos('F-A') < pos('F-C'), 'A debe quedar entre B y C: ' + [pos('F-B'), pos('F-A'), pos('F-C')]);
