@@ -31,7 +31,7 @@ const BASE = `http://localhost:${server.address().port}/area-privada.html`;
 let seq = 0;
 const uid = () => '00000000-0000-4000-8000-' + String(++seq).padStart(12, '0');
 const db = { kb_tarjetas: [], kb_proyectos: [], kb_subtareas: [], kb_historial: [], kb_ajustes: [{ clave: 'capacidad', valor: { hoy: 2 } }] };
-let failWrites = false, writes = 0;
+let failWrites = false, writeDelay = 0, writes = 0;
 const log = [];
 function matches(row, params) {
   for (const [k, v] of params) {
@@ -58,6 +58,7 @@ async function route(r) {
   if (method === 'GET') return json(200, rows.filter((x) => matches(x, params)));
   writes++;
   log.push(method + ' ' + t);
+  if (writeDelay) await new Promise((res) => setTimeout(res, writeDelay));
   if (failWrites) return json(500, { message: 'Fallo simulado de guardado' });
   const body = req.postData() ? JSON.parse(req.postData()) : null;
   if (method === 'POST') {
@@ -315,6 +316,74 @@ await step('Táctil: solo el asa arrastra (eventos de puntero táctiles)', async
   await page.waitForTimeout(150);
   ok((await titles(page, 'revision')).includes(t), 'no llegó a En revisión');
   eq(db.kb_tarjetas.find((c) => c.titulo === t).estado, 'revision', 'servidor');
+});
+await step('Regresión: editar una tarjeta archivada guarda y se ve al reabrir', async () => {
+  const c = db.kb_tarjetas.find((x) => x.titulo === 'Cuarta');
+  c.archivada_en = new Date().toISOString();
+  await page.reload(); await page.waitForSelector('.apk-head');
+  await page.click('.apk-seg-btn:has-text("Archivo")');
+  await page.waitForSelector('.apk-arch .apk-card');
+  await page.click('.apk-arch .apk-card-open');
+  await page.fill('#apk-d-t', 'Cuarta editada'); await page.fill('#apk-d-n', 'Notas nuevas');
+  await page.click('dialog[open] button[type="submit"]'); await page.waitForSelector('dialog[open]', { state: 'detached' });
+  await page.click('.apk-arch .apk-card-open');
+  eq(await page.inputValue('#apk-d-t'), 'Cuarta editada', 'el diálogo debe mostrar lo guardado');
+  eq(await page.inputValue('#apk-d-n'), 'Notas nuevas');
+  await page.click('dialog[open] button:has-text("Cerrar")');
+  c.archivada_en = null; c.titulo = 'Cuarta';
+});
+await step('Regresión: «Deshacer» deshace la última acción aunque el guardado vaya lento', async () => {
+  await page.reload(); await page.waitForSelector('.apk-head'); await goBoard(page);
+  const col = await titles(page, 'pendiente');
+  if (col.length < 2) { await addInline(page, 'pendiente', 'Lenta A'); await addInline(page, 'pendiente', 'Lenta B'); }
+  const [x, y] = (await titles(page, 'pendiente')).slice(-2);
+  writeDelay = 600;
+  await page.click(cardSel(x) + ' [data-role="adv"]'); await page.waitForTimeout(80);
+  await page.click(cardSel(y) + ' [data-role="adv"]'); await page.waitForTimeout(80);
+  await page.click('.apk-toast .apk-link:has-text("Deshacer")');
+  await page.waitForTimeout(1800); writeDelay = 0;
+  const estadoDe = (t) => db.kb_tarjetas.find((c) => c.titulo === t).estado;
+  eq(estadoDe(y), 'pendiente', 'la última acción (y) se deshace');
+  eq(estadoDe(x), 'en_curso', 'la anterior (x) no se toca');
+  ok((await titles(page, 'pendiente')).includes(y) && !(await titles(page, 'pendiente')).includes(x), 'la pantalla coincide con el servidor');
+});
+await step('Regresión: con filtro activo, soltar entre dos visibles respeta el orden real', async () => {
+  const ids = {};
+  [['A', 3, 1e6], ['H1', 2, 2e6], ['H2', 2, 3e6], ['B', 3, 4e6], ['C', 3, 5e6]].forEach(([t, pr, pos]) => { const id = uid(); ids[t] = id; db.kb_tarjetas.push({ id, titulo: 'F-' + t, estado: 'ideas', tipo: 'idea', posicion: pos, prioridad: pr, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), archivada_en: null, hoy_fecha: null, bloqueada: false, etiquetas: [] }); });
+  await page.reload(); await page.waitForSelector('.apk-head'); await goBoard(page);
+  await page.selectOption('.apk-filters select[aria-label="Filtrar por prioridad"]', '3');
+  const bBox = await (await page.$(cardSel('F-B'))).boundingBox();
+  await drag(page, cardSel('F-A'), bBox.x + bBox.width / 2, bBox.y + bBox.height - 4);
+  const pos = (t) => db.kb_tarjetas.find((c) => c.titulo === t).posicion;
+  ok(pos('F-A') > pos('F-B') && pos('F-A') < pos('F-C'), 'A debe quedar entre B y C: ' + [pos('F-B'), pos('F-A'), pos('F-C')]);
+  ok(pos('F-H1') < pos('F-B') && pos('F-H2') < pos('F-B'), 'las ocultas no se mueven de sitio');
+});
+await step('«Quedó de ayer»: lo no terminado se ofrece mantener o quitar', async () => {
+  const yest = new Date(Date.now() - 864e5); const k = yest.getFullYear() + '-' + String(yest.getMonth() + 1).padStart(2, '0') + '-' + String(yest.getDate()).padStart(2, '0');
+  const h1 = db.kb_tarjetas.find((c) => c.titulo === 'F-H1'); h1.hoy_fecha = k; h1.estado = 'pendiente';
+  await page.reload(); await page.waitForSelector('.apk-head');
+  await page.click('.apk-seg-btn:has-text("Hoy")');
+  ok(await page.isVisible('.apk-block:has-text("Quedó de ayer")'), 'sin bloque');
+  await page.click('.apk-block:has-text("Quedó de ayer") button:has-text("Quitar")');
+  await page.waitForTimeout(150);
+  eq(db.kb_tarjetas.find((c) => c.titulo === 'F-H1').hoy_fecha, null, 'hoy_fecha en servidor');
+});
+await step('Captura rápida desde Hoy crea una idea', async () => {
+  await page.fill('.apk-capture input', 'Idea desde captura'); await page.keyboard.press('Enter');
+  await page.waitForFunction(() => document.querySelector('.apk-toast')?.textContent.includes('Ideas'));
+  const c = db.kb_tarjetas.find((x) => x.titulo === 'Idea desde captura');
+  ok(c && c.estado === 'ideas' && c.tipo === 'idea', 'no se creó como idea');
+});
+await step('El aprendizaje se anota desde el aviso y se ve en la tarjeta de Hecho', async () => {
+  await goBoard(page);
+  const t = (await titles(page, 'pendiente'))[0] || (await titles(page, 'en_curso'))[0];
+  const est = db.kb_tarjetas.find((c) => c.titulo === t).estado;
+  await page.click(cardSel(t) + ' .apk-card-open'); await page.selectOption('#apk-d-e', 'hecho');
+  await page.click('dialog[open] button[type="submit"]'); await page.waitForSelector('dialog[open]', { state: 'detached' });
+  await page.click(cardSel(t) + ' .apk-card-open');
+  await page.fill('#apk-d-a', 'Aprendí a probar con datos simulados');
+  await page.click('dialog[open] button[type="submit"]'); await page.waitForSelector('dialog[open]', { state: 'detached' });
+  ok((await page.textContent(cardSel(t))).includes('Aprendí a probar'), 'la tarjeta no muestra el aprendizaje (' + est + ')');
 });
 await step('Sin errores de JavaScript', async () => { eq(errors, [], 'errores de consola'); });
 await step('Accesibilidad (axe, WCAG 2 A/AA) en Tablero y Hoy', async () => {
