@@ -152,7 +152,7 @@ window.APKanban = (function () {
       colTab: pref('col') || 'en_curso', hechoMas: false
     };
     var undo = [], root = h('section', { class: 'apk', 'aria-label': 'Centro de trabajo' });
-    var live = h('p', { class: 'sr-only', role: 'status', 'aria-live': 'polite' });
+    var live = h('p', { class: 'sr-only apk-live', role: 'status', 'aria-live': 'polite' });
     var toastBox = h('div', { class: 'apk-toast', role: 'status', 'aria-live': 'polite' });
     var toastTimer = null, lastDrag = 0, keep = null, fresh = null;
     var calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -906,6 +906,7 @@ window.APKanban = (function () {
         cancelAnimationFrame(raf);
         if (!active) return;
         lastDrag = Date.now();
+        if (commit) place();      // soltar antes del primer fotograma no debe perder el destino
         if (ghost) ghost.remove(); if (drop) drop.remove();
         el.classList.remove('is-src'); root.classList.remove('is-dragging');
         root.querySelectorAll('.apk-col.is-target').forEach(function (c) { c.classList.remove('is-target'); });
