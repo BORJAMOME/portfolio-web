@@ -31,6 +31,8 @@ jobs:
         run: node tools/check-links.mjs
       - name: Versiones de caché (?v=) al día
         run: node tools/version-assets.mjs --check
+      - name: Lógica del Centro de trabajo (Hoy)
+        run: node tools/test-kanban.mjs
       - name: Second Brain (motor, contrato y seguridad)
         run: node --test tools/second-brain/second-brain.test.mjs
 
@@ -51,6 +53,8 @@ jobs:
         run: node tools/check-a11y.mjs
       - name: Briefing de entrevista (dos A4, móvil y axe-core)
         run: node tools/check-briefing.mjs
+      - name: Centro de trabajo (flujos de interfaz con Supabase simulado)
+        run: node tools/check-kanban.mjs
 
   funciones:
     name: Edge Functions (Deno)
