@@ -145,6 +145,7 @@ window.APKanban = (function () {
   function render(ctx) {
     var h = ctx.h, api = ctx.api, ui = ctx.ui;
     var now = new Date(), today = dayKey(now);
+    function tick() { var n = new Date(), changed = dayKey(n) !== today; now = n; if (changed) { today = dayKey(n); st.cfg.resultado = ''; } return changed; }
     var st = {
       cards: [], archived: null, projects: [], subs: {}, hist: {}, cfg: { wip: {}, capacidad: DEFAULTS.capacidad, resultado: '' },
       view: pref('view') || 'hoy', filters: { q: '', proyecto: '', prioridad: 0, bloqueadas: false },
@@ -189,6 +190,7 @@ window.APKanban = (function () {
       toastBox.textContent = '';
       toastBox.classList.toggle('is-error', !!o.error);
       toastBox.appendChild(h('span', { text: msg }));
+      if (o.action) toastBox.appendChild(h('button', { type: 'button', class: 'apk-link', text: o.action.label, onclick: function () { toastBox.classList.remove('is-on'); o.action.fn(); } }));
       if (o.undo) toastBox.appendChild(h('button', { type: 'button', class: 'apk-link', text: 'Deshacer', onclick: doUndo }));
       toastBox.classList.add('is-on');
       clearTimeout(toastTimer);
@@ -198,21 +200,33 @@ window.APKanban = (function () {
       if (rollback) rollback();
       if (auth(err)) return;
       console.warn('[kanban]', err);
-      say('No se ha guardado' + (what ? ' (' + what + ')' : '') + ': ' + ((err && err.message) || 'error') + '. Se ha restaurado el estado anterior.', { error: true });
+      say('No se ha guardado' + (what ? ' (' + what + ')' : '') + ': ' + ((err && err.message) || 'error') + '. Se ha vuelto a cargar lo que sí está guardado.', { error: true });
       paint();
+      resync();
     }
-    function patchCard(id, patch) {
-      return api('/rest/v1/kb_tarjetas?id=eq.' + id + '&select=*', { method: 'PATCH', headers: REP, body: JSON.stringify(patch) })
-        .then(function (r) {
+    function resync() {
+      tick();
+      return load().then(function () { st.archived = null; return st.view === 'archivo' ? loadArchived() : paint(); }).catch(function () { /* sin red: se queda lo que hay */ });
+    }
+    var queue = {};
+    function patchCard(id, patch) {      // las escrituras de una misma tarjeta salen en orden: un fallo anterior no pisa a uno posterior
+      var run = function () {
+        return api('/rest/v1/kb_tarjetas?id=eq.' + id + '&select=*', { method: 'PATCH', headers: REP, body: JSON.stringify(patch) }).then(function (r) {
           if (!r || !r[0]) throw new Error('La tarjeta ya no existe');
-          var c = byId(id); if (c) Object.assign(c, r[0]);
+          var c = byAny(id); if (c) { c.updated_at = r[0].updated_at; c.completada_en = r[0].completada_en; }   // el estado optimista local manda
           return r[0];
         });
+      };
+      var p = (queue[id] || Promise.resolve()).then(run, run);
+      queue[id] = p.catch(function () { /* el siguiente no depende de este resultado */ });
+      return p;
     }
     function byId(id) { for (var i = 0; i < st.cards.length; i++) if (st.cards[i].id === id) return st.cards[i]; return null; }
+    function byAny(id) { var c = byId(id); if (c) return c; var a = st.archived || []; for (var i = 0; i < a.length; i++) if (a[i].id === id) return a[i]; return null; }
     function snapshot(c, keys) { var s = {}; keys.forEach(function (k) { s[k] = c[k]; }); return s; }
 
-    function pushUndo(label, fn) { undo.push({ label: label, fn: fn }); if (undo.length > 30) undo.shift(); }
+    function pushUndo(label, fn) { var e = { label: label, fn: fn }; undo.push(e); if (undo.length > 30) undo.shift(); return e; }
+    function dropUndo(e) { var i = undo.indexOf(e); if (i > -1) undo.splice(i, 1); }
     function doUndo() {
       var u = undo.pop();
       if (!u) return say('No hay nada que deshacer.');
@@ -222,9 +236,10 @@ window.APKanban = (function () {
     }
 
     /* Mover (columna + posición). index = posición final en la columna destino. */
-    function move(card, estado, index, how) {
+    function move(card, estado, index, how, beforeId) {
       var prev = snapshot(card, ['estado', 'posicion', 'tipo', 'completada_en', 'hoy_fecha']);
       var others = column(st.cards, estado).filter(function (c) { return c.id !== card.id; });
+      if (beforeId !== undefined) { index = beforeId ? others.map(function (c) { return c.id; }).indexOf(beforeId) : others.length; if (index < 0) index = others.length; }   // soltar entre dos visibles = entre esas dos reales
       if (index == null || index > others.length) index = others.length;
       if (prev.estado === estado && column(st.cards, estado).indexOf(card) === index) return Promise.resolve();
       var renumber = needsRenumber(others, index);
@@ -242,17 +257,17 @@ window.APKanban = (function () {
       paint();
       var w = limit && prev.estado !== estado ? wipState(before + 1, limit) : null;
       say('«' + clip(card.titulo) + '» → ' + ESTADO_LABEL[estado] + (how === 'key' ? ', posición ' + (index + 1) + ' de ' + (before + 1) : '') +
-        (w && w.over ? '. ' + ESTADO_LABEL[estado] + ' supera su límite (' + (before + 1) + '/' + limit + ').' : '.'), { undo: true });
+        (w && w.over ? '. ' + ESTADO_LABEL[estado] + ' supera su límite (' + (before + 1) + '/' + limit + ').' : '.'),
+        { undo: true, action: estado === 'hecho' && prev.estado !== 'hecho' ? { label: 'Anotar aprendizaje', fn: function () { detailDialog(card, 'aprendizaje'); } } : null });
+      var entry = pushUndo('movimiento de «' + clip(card.titulo) + '»', function () {
+        Object.assign(card, prev); paint();
+        return patchCard(card.id, { estado: prev.estado, tipo: prev.tipo, posicion: prev.posicion, hoy_fecha: prev.hoy_fecha }).then(function () { return null; });
+      });
       var writes = [patchCard(card.id, Object.assign({ posicion: pos }, patch))];
       if (renumber) others.forEach(function (c) { if (c.id !== card.id) writes.push(patchCard(c.id, { posicion: c.posicion })); });
-      return Promise.all(writes).then(function () {
-        pushUndo('movimiento de «' + clip(card.titulo) + '»', function () {
-          Object.assign(card, prev); paint();
-          return patchCard(card.id, Object.assign({}, prev, { completada_en: undefined })).then(function () { return null; });
-        });
-      }).catch(function (err) { failed(err, 'movimiento', function () { Object.assign(card, prev); }); });
+      return Promise.all(writes).catch(function (err) { dropUndo(entry); failed(err, 'movimiento', function () { Object.assign(card, prev); }); });
     }
-    function clip(s) { return s.length > 40 ? s.slice(0, 39) + '…' : s; }
+    function clip(s, n) { n = n || 40; return s.length > n ? s.slice(0, n - 1) + '…' : s; }
 
     function create(titulo, estado, proyecto) {
       var col = column(st.cards, estado), pos = col.length ? col[col.length - 1].posicion + GAP : GAP;
@@ -277,10 +292,10 @@ window.APKanban = (function () {
       else { st.cards.push(card); st.archived = (st.archived || []).filter(function (c) { return c.id !== card.id; }); }
       paint();
       say(on ? '«' + clip(card.titulo) + '» archivada.' : '«' + clip(card.titulo) + '» recuperada.', { undo: true });
+      var entry = pushUndo(on ? 'archivado' : 'recuperación', function () { return archive(card, !on); });
       return api('/rest/v1/kb_tarjetas?id=eq.' + card.id, { method: 'PATCH', headers: { Prefer: 'return=minimal', 'Content-Type': 'application/json' }, body: JSON.stringify({ archivada_en: card.archivada_en }) })
-        .then(function () {
-          pushUndo(on ? 'archivado' : 'recuperación', function () { return archive(card, !on); });
-        }).catch(function (err) {
+        .catch(function (err) {
+          dropUndo(entry);
           failed(err, 'archivar', function () {
             card.archivada_en = prevA;
             if (on) { st.cards.push(card); st.archived = (st.archived || []).filter(function (c) { return c.id !== card.id; }); }
@@ -304,10 +319,11 @@ window.APKanban = (function () {
               return api('/rest/v1/kb_subtareas', { method: 'POST', headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(subs) });
             }).then(function () { (card.archivada_en ? (st.archived = st.archived || []) : st.cards).push(card); st.subs[card.id] = subs; });
         });
-      }).catch(function (err) { failed(err, 'eliminar', function () { st.cards.push(card); }); });
+      }).catch(function (err) { failed(err, 'eliminar'); });
     }
 
     function setHoy(card, on) {
+      tick();
       var prev = card.hoy_fecha, value = on ? today : null;
       if (on && todayList().length >= st.cfg.capacidad) say('Ya tienes ' + todayList().length + ' elegidas para hoy (tu capacidad es ' + st.cfg.capacidad + '). Se añade igualmente: decide qué quitas.');
       card.hoy_fecha = value; paint();
@@ -322,6 +338,7 @@ window.APKanban = (function () {
     /* ── Pintado ── */
     var scrollLeft = 0;
     function paint() {
+      tick();
       var board = root.querySelector('.apk-board'); if (board) scrollLeft = board.scrollLeft;
       var before = {};
       [].forEach.call(root.querySelectorAll('.apk-card[data-id]'), function (el) { before[el.getAttribute('data-id')] = el.getBoundingClientRect(); });
@@ -391,9 +408,11 @@ window.APKanban = (function () {
       o = o || {};
       var sp = subProgress(st.subs[c.id]), proj = projOf(c);
       var meta = [];
-      if (c.prioridad !== 2) meta.push(h('span', { class: 'apk-chip apk-prio', 'data-prio': c.prioridad, text: PRIO[c.prioridad] }));
+      if (c.prioridad >= 3) meta.push(h('span', { class: 'apk-chip apk-prio', 'data-prio': c.prioridad, text: PRIO[c.prioridad] }));
       if (c.fecha_limite && c.estado !== 'hecho') { var d = dueLabel(c.fecha_limite, now); meta.push(h('span', { class: 'apk-chip apk-due', 'data-tone': d.tone, text: d.text })); }
       if (c.bloqueada) meta.push(h('span', { class: 'apk-chip apk-block', text: 'Bloqueada' }));
+      var still = (c.estado === 'en_curso' || c.estado === 'revision') && c.updated_at ? Math.floor((now - new Date(c.updated_at)) / DAY) : 0;
+      if (still >= 7) meta.push(h('span', { class: 'apk-chip apk-stale', text: 'Sin mover ' + still + ' d' }));
       if (sp.total) { var bar = h('span', { class: 'apk-bar', 'aria-hidden': 'true' }, [h('span', { class: 'apk-bar-fill' })]); bar.firstChild.style.width = Math.round(sp.done / sp.total * 100) + '%'; meta.push(h('span', { class: 'apk-chip apk-steps' }, [bar, sp.done + '/' + sp.total + ' pasos'])); }
       if (c.esfuerzo) meta.push(h('span', { class: 'apk-chip', text: ESFUERZO[c.esfuerzo] }));
       (c.etiquetas || []).slice(0, 3).forEach(function (t) { meta.push(h('span', { class: 'apk-chip apk-tag', text: '#' + t })); });
@@ -402,16 +421,25 @@ window.APKanban = (function () {
         h('div', { class: 'apk-card-top' }, [
           h('span', { class: 'apk-grip', 'aria-hidden': 'true' }, [icon('grip')]),
           proj ? h('span', { class: 'apk-proj' }, [(function () { var d = h('span', { class: 'apk-dot', 'aria-hidden': 'true' }); d.style.background = tone(proj.id); return d; })(), h('span', { class: 'apk-proj-t', text: proj.titulo })]) : null,
-          h('div', { class: 'apk-card-act' }, [
-            o.hoy ? btn(c.hoy_fecha === today ? 'Quitar de hoy' : 'Añadir a hoy', 'apk-mini', function () { setHoy(c, c.hoy_fecha !== today); }, { 'data-role': 'hoy' }) : null,
-            next && !o.noAdvance ? btn([next.label, icon('next')], 'apk-mini apk-adv', function () { move(c, next.id, column(st.cards, next.id).length, 'btn'); }, { 'data-role': 'adv', 'aria-label': 'Mover «' + c.titulo + '» a ' + next.label }) : null
-          ])
         ]),
         h('button', { type: 'button', class: 'apk-card-open', 'data-role': 'open', 'aria-keyshortcuts': 'Shift+ArrowLeft Shift+ArrowRight Shift+ArrowUp Shift+ArrowDown',
           'aria-describedby': 'apk-kbd-help', onclick: function () { if (Date.now() - lastDrag > 80) detailDialog(c); }, text: c.titulo }),
         c.siguiente_paso && c.estado !== 'hecho' ? h('p', { class: 'apk-next' }, [h('span', { class: 'sr-only', text: 'Siguiente paso: ' }), c.siguiente_paso]) : null,
         c.bloqueada && c.bloqueo ? h('p', { class: 'apk-why-block', text: 'Bloqueo: ' + c.bloqueo }) : null,
-        meta.length ? h('div', { class: 'apk-meta' }, meta) : null
+        c.estado === 'hecho' && c.aprendizaje ? h('p', { class: 'apk-learn' }, [h('strong', { text: 'Aprendido: ' }), clip(c.aprendizaje, 140)]) : null,
+        o.askNext && !c.siguiente_paso && c.estado !== 'hecho' ? h('p', { class: 'apk-next' }, [btn('Definir siguiente paso', 'apk-link', function () {
+          ctx.ask({ title: 'Siguiente paso de «' + clip(c.titulo) + '»', text: 'La acción concreta más pequeña que puedes hacer a continuación.', input: true, ok: 'Guardar' }).then(function (v) {
+            if (!v) return;
+            c.siguiente_paso = v.slice(0, 300); paint();
+            patchCard(c.id, { siguiente_paso: c.siguiente_paso }).catch(function (err) { failed(err, 'siguiente paso', function () { c.siguiente_paso = null; }); });
+          });
+        })]) : null,
+        meta.length ? h('div', { class: 'apk-meta' }, meta) : null,
+        h('div', { class: 'apk-card-act' }, [      // al final del DOM: el título es lo primero que alcanza el Tab; en pantalla va arriba a la derecha
+          o.hoy ? btn(c.hoy_fecha === today ? 'Quitar de hoy' : 'Añadir a hoy', 'apk-mini', function () { setHoy(c, c.hoy_fecha !== today); },
+            { 'data-role': 'hoy', 'aria-label': (c.hoy_fecha === today ? 'Quitar «' : 'Añadir «') + c.titulo + (c.hoy_fecha === today ? '» de hoy' : '» a hoy') }) : null,
+          next && !o.noAdvance ? btn([next.label, icon('next')], 'apk-mini apk-adv', function () { move(c, next.id, column(st.cards, next.id).length, 'btn'); }, { 'data-role': 'adv', 'aria-label': 'Mover «' + c.titulo + '» a ' + next.label }) : null
+        ])
       ]);
     }
     function projOf(c) { for (var i = 0; i < st.projects.length; i++) if (st.projects[i].id === c.proyecto_id) return st.projects[i]; return null; }
@@ -456,11 +484,13 @@ window.APKanban = (function () {
       if (e.id === 'hecho') shown = cards.slice().sort(function (a, b) { return (b.completada_en || '') < (a.completada_en || '') ? -1 : 1; });
       if (hechoCut) shown = shown.slice(0, 10);
       var count = h('span', { class: 'apk-count' + (w.over ? ' is-over' : w.at ? ' is-at' : ''), text: String(total) + (limit ? ' / ' + limit : '') });
+      var nb = column(st.cards, e.id).filter(function (c) { return c.bloqueada; }).length;
+      var note = nb ? h('span', { class: 'apk-count-note', text: '· ' + nb + (nb === 1 ? ' bloqueada' : ' bloqueadas') }) : null;
       var list = h('ul', { class: 'apk-list', 'data-estado': e.id, 'aria-label': e.label }, shown.map(function (c) { return cardEl(c, { hoy: e.id !== 'hecho' && e.id !== 'ideas' }); }));
       var empty = !shown.length ? h('p', { class: 'apk-empty', text: filtered && total ? 'Ninguna tarjeta coincide con los filtros.' : e.vacio }) : null;
       return h('section', { class: 'apk-col', 'data-estado': e.id, 'aria-labelledby': 'apk-h-' + e.id }, [
         h('header', { class: 'apk-col-head' }, [
-          h('h3', { class: 'apk-col-title', id: 'apk-h-' + e.id, text: e.label }), count,
+          h('h3', { class: 'apk-col-title', id: 'apk-h-' + e.id, text: e.label }), count, note,
           e.id === 'hecho' && total ? btn('Archivar', 'apk-link', function () { archiveDone(); }, { title: 'Archiva las tarjetas hechas hace más de 7 días' }) : null
         ]),
         w.over ? h('p', { class: 'apk-wipwarn', role: 'note', text: 'Por encima del límite (' + total + ' de ' + limit + '). Puedes seguir, pero terminar antes de empezar suele ir más rápido.' }) : null,
@@ -513,11 +543,33 @@ window.APKanban = (function () {
           });
         })
       ]);
+      var carry = st.cards.filter(function (c) { return c.hoy_fecha && c.hoy_fecha < today && c.estado !== 'hecho' && c.estado !== 'ideas'; }).sort(byPos);
+      var capInput = h('input', { class: 'apk-input', type: 'text', maxlength: '200', placeholder: 'Capturar una idea y Enter', 'aria-label': 'Capturar una idea', autocomplete: 'off' });
+      var capture = h('form', { class: 'apk-capture', onsubmit: function (ev) {
+        ev.preventDefault();
+        var t = capInput.value.trim(); if (!t) return;
+        capInput.disabled = true;
+        create(t, 'ideas', null).then(function () { var n = root.querySelector('.apk-capture input'); if (n) n.focus(); }).catch(function (err) { capInput.disabled = false; failed(err, 'capturar'); });
+      } }, [capInput]);
       return h('div', { class: 'apk-hoy' }, [
+        capture,
         main,
         h('div', { class: 'apk-hoy-grid' }, [
+          carry.length ? h('section', { class: 'apk-block apk-block--wide', 'aria-labelledby': 'apk-carry' }, [
+            h('header', { class: 'apk-block-head' }, [h('h3', { id: 'apk-carry', class: 'apk-block-title', text: 'Quedó de ayer' }), h('span', { class: 'apk-count', text: String(carry.length) })]),
+            h('p', { class: 'apk-hint', text: 'Elegidas para un día anterior y sin terminar. Decide si siguen hoy o salen del día.' }),
+            h('ul', { class: 'apk-sug' }, carry.map(function (c) {
+              return h('li', { class: 'apk-sug-item', 'data-id': c.id }, [
+                h('button', { type: 'button', class: 'apk-card-open', 'data-role': 'open', text: c.titulo, onclick: function () { detailDialog(c); } }),
+                h('div', { class: 'apk-proj-act' }, [
+                  btn('Mantener hoy', 'apk-mini', function () { setHoy(c, true); }, { 'data-role': 'hoy', 'aria-label': 'Mantener «' + c.titulo + '» hoy' }),
+                  btn('Quitar', 'apk-mini', function () { setHoy(c, false); }, { 'data-role': 'quit', 'aria-label': 'Quitar «' + c.titulo + '» del día' })
+                ])
+              ]);
+            }))
+          ]) : null,
           block('Elegidas para hoy', capacity(list.length, cap), list.length > cap ? 'Has elegido más de lo que cabe (' + cap + '). Decide qué quitas.' : '',
-            list.length ? list.map(function (c) { return cardEl(c, { hoy: true, noAdvance: false }); }) : null, 'Elige tarjetas desde «Siguientes pasos» o desde el tablero.'),
+            list.length ? list.map(function (c) { return cardEl(c, { hoy: true, askNext: true }); }) : null, 'Elige tarjetas desde «Siguientes pasos» o desde el tablero.'),
           block('En curso', String(inCourse.length), '', inCourse.length ? inCourse.map(function (c) { return cardEl(c, { hoy: true }); }) : null, 'Nada más en curso fuera de lo elegido para hoy.'),
           block('Bloqueos', String(blocked.length), '', blocked.length ? blocked.map(function (c) { return cardEl(c, { noAdvance: true }); }) : null, 'Sin bloqueos.'),
           h('section', { class: 'apk-block apk-block--wide', 'aria-labelledby': 'apk-sug' }, [
@@ -532,7 +584,7 @@ window.APKanban = (function () {
                 ]),
                 btn('Añadir a hoy', 'apk-mini', function () { setHoy(s.card, true); }, { 'data-role': 'hoy', 'aria-label': 'Añadir «' + s.card.titulo + '» a hoy' })
               ]);
-            })) : h('p', { class: 'apk-empty', text: 'No hay tarjetas pendientes que sugerir. Pasa una idea a «Pendiente» o crea una tarjeta.' })
+            })) : h('p', { class: 'apk-empty', text: list.length ? 'Todo lo accionable ya está en tu día.' : 'No hay tarjetas pendientes que sugerir. Pasa una idea a «Pendiente» o crea una tarjeta.' })
           ]),
           block('Hecho hoy', String(doneToday.length), '', doneToday.length ? doneToday.map(function (c) { return cardEl(c, { noAdvance: true }); }) : null, 'Todavía nada terminado hoy.')
         ])
@@ -586,7 +638,7 @@ window.APKanban = (function () {
       }, t);
     }
 
-    function detailDialog(c0) {
+    function detailDialog(c0, focusField) {
       var c = c0, subs = (st.subs[c.id] || []).slice(), dlg, msg = h('p', { class: 'ap-msg', 'aria-live': 'assertive' });
       var f = {
         titulo: ui.input('text', c.titulo, { maxlength: '200' }), estado: selectEstado(c.estado), proyecto: selectProy(c.proyecto_id),
@@ -623,9 +675,10 @@ window.APKanban = (function () {
         ev.preventDefault();
         var t = newSub.value.trim(); if (!t) return;
         var pos = subs.length ? subs[subs.length - 1].posicion + GAP : GAP;
+        newSub.disabled = true;      // evita duplicados con doble Enter
         api('/rest/v1/kb_subtareas?select=*', { method: 'POST', headers: REP, body: JSON.stringify({ tarjeta_id: c.id, titulo: t, posicion: pos }) }).then(function (r) {
-          subs.push(r[0]); st.subs[c.id] = subs; newSub.value = ''; drawSubs();
-        }).catch(function (err) { msg.textContent = 'No se ha podido añadir: ' + err.message; msg.classList.add('is-error'); });
+          subs.push(r[0]); st.subs[c.id] = subs; newSub.value = ''; drawSubs(); newSub.disabled = false; newSub.focus();
+        }).catch(function (err) { newSub.disabled = false; msg.textContent = 'No se ha podido añadir: ' + err.message; msg.classList.add('is-error'); });
       });
       drawSubs();
       api('/rest/v1/kb_historial?select=tipo,de,a,created_at&tarjeta_id=eq.' + c.id + '&order=created_at.desc&limit=12').then(function (r) {
@@ -677,11 +730,11 @@ window.APKanban = (function () {
           patch.estado = newEstado; patch.tipo = newEstado === 'ideas' ? 'idea' : 'tarea';
           var col = column(st.cards, newEstado); patch.posicion = col.length ? col[col.length - 1].posicion + GAP : GAP;
         }
-        patchCard(c.id, patch).then(function () {
-          if (c.archivada_en && st.archived) { var a = st.archived.indexOf(c0); if (a > -1) Object.assign(st.archived[a], c); }
+        patchCard(c.id, patch).then(function (row) {
+          Object.assign(c, row);     // c puede ser una tarjeta archivada que no está en st.cards
           pushUndo('edición de «' + clip(c.titulo) + '»', function () {
             var back = {}; Object.keys(patch).forEach(function (k) { back[k] = prev[k]; });
-            return patchCard(c.id, back);
+            return patchCard(c.id, back).then(function (row) { Object.assign(c, row); });
           });
           dlg.close(); paint();
           say('Cambios guardados.', { undo: true });
@@ -714,6 +767,7 @@ window.APKanban = (function () {
       ]);
       dlg = h('dialog', { class: 'ap-dialog apf-dialog apk-dialog', 'aria-labelledby': 'apk-d-title', onclose: function () { dlg.remove(); if (root.isConnected) paint(); } }, [form]);   // repinta: los pasos se guardan al instante y la tarjeta cuenta
       document.body.appendChild(dlg); dlg.showModal();
+      if (focusField === 'aprendizaje' && f.aprendizaje.isConnected && f.aprendizaje.id) f.aprendizaje.focus();
     }
 
     function projectsDialog() {
@@ -787,6 +841,11 @@ window.APKanban = (function () {
       if ((ev.ctrlKey || ev.metaKey) && !ev.shiftKey && ev.key.toLowerCase() === 'z' && !/^(INPUT|TEXTAREA|SELECT)$/.test(ev.target.tagName) && !document.querySelector('dialog[open]')) { ev.preventDefault(); doUndo(); }
     }
     document.addEventListener('keydown', onDocKey);
+    function onVisible() {
+      if (!root.isConnected) return document.removeEventListener('visibilitychange', onVisible);
+      if (!document.hidden && dayKey(new Date()) !== today) resync();      // cambió el día con la pestaña abierta
+    }
+    document.addEventListener('visibilitychange', onVisible);
 
     /* ── Arrastrar y soltar (Pointer Events) ── */
     root.addEventListener('pointerdown', function (ev) {
@@ -816,9 +875,13 @@ window.APKanban = (function () {
         cols.forEach(function (c) { var r = c.getBoundingClientRect(), d = px < r.left ? r.left - px : px > r.right ? px - r.right : 0; if (d < bd) { bd = d; best = c; } });
         if (!best) return;
         var list = best.querySelector('.apk-list'), items = [].slice.call(list.children).filter(function (x) { return x !== el && x !== drop; }), idx = 0;
-        items.forEach(function (x) { var r = x.getBoundingClientRect(); if (py > r.top + r.height / 2) idx++; });
+        var shift = drop.parentNode === list ? drop.offsetHeight + 8 : 0;      // el hueco empuja a las de debajo: se descuenta para que el cálculo no oscile
+        items.forEach(function (x) {
+          var r = x.getBoundingClientRect(), after = shift && (drop.compareDocumentPosition(x) & Node.DOCUMENT_POSITION_FOLLOWING);
+          if (py > r.top - (after ? shift : 0) + r.height / 2) idx++;
+        });
         if (items[idx]) list.insertBefore(drop, items[idx]); else list.appendChild(drop);
-        tgt = { estado: list.getAttribute('data-estado'), index: idx };
+        tgt = { estado: list.getAttribute('data-estado'), index: idx, beforeId: items[idx] ? items[idx].getAttribute('data-id') : null };
         root.querySelectorAll('.apk-col.is-target').forEach(function (c) { c.classList.remove('is-target'); });
         best.classList.add('is-target');
       }
@@ -846,7 +909,7 @@ window.APKanban = (function () {
         if (ghost) ghost.remove(); if (drop) drop.remove();
         el.classList.remove('is-src'); root.classList.remove('is-dragging');
         root.querySelectorAll('.apk-col.is-target').forEach(function (c) { c.classList.remove('is-target'); });
-        if (commit && tgt && card) { keep = card.id; st.colTab = tgt.estado; move(card, tgt.estado, tgt.index, 'drag'); }
+        if (commit && tgt && card) { keep = card.id; st.colTab = tgt.estado; move(card, tgt.estado, tgt.index, 'drag', tgt.beforeId); }
       }
       function onUp(e) { if (e.pointerId === pid) end(true); }
       function onCancel(e) { if (e.pointerId === pid) end(false); }
