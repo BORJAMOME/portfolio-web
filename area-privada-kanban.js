@@ -130,6 +130,16 @@ window.APKanban = (function () {
   var dateFmt = new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
   var ESTADO_LABEL = {}; ESTADOS.forEach(function (e) { ESTADO_LABEL[e.id] = e.label; });
   var JSON_H = { 'Content-Type': 'application/json' };
+  var SV = '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">';
+  var ICON = {
+    grip: '<svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true" focusable="false"><circle cx="5.5" cy="3.5" r="1.2"/><circle cx="10.5" cy="3.5" r="1.2"/><circle cx="5.5" cy="8" r="1.2"/><circle cx="10.5" cy="8" r="1.2"/><circle cx="5.5" cy="12.5" r="1.2"/><circle cx="10.5" cy="12.5" r="1.2"/></svg>',
+    next: SV + '<path d="M3 8h10M9 4l4 4-4 4"/></svg>',
+    plus: SV + '<path d="M8 3v10M3 8h10"/></svg>'
+  };
+  function icon(name) { return h2('span', { class: 'apk-ico', html: ICON[name] }); }
+  function h2(tag, attrs) { var e = document.createElement(tag); Object.keys(attrs).forEach(function (k) { if (k === 'html') e.innerHTML = attrs[k]; else e.setAttribute(k, attrs[k]); }); return e; }   // html: solo SVG propio de arriba
+  var PROJ_TONES = ['#273A5F', '#4A628E', '#2F7D5B', '#9A6414', '#6B5B95', '#3F7F8C'];
+  function tone(id) { var n = 0; for (var i = 0; i < id.length; i++) n = (n * 31 + id.charCodeAt(i)) >>> 0; return PROJ_TONES[n % PROJ_TONES.length]; }
   var REP = { 'Content-Type': 'application/json', Prefer: 'return=representation' };
 
   function render(ctx) {
@@ -143,7 +153,8 @@ window.APKanban = (function () {
     var undo = [], root = h('section', { class: 'apk', 'aria-label': 'Centro de trabajo' });
     var live = h('p', { class: 'sr-only', role: 'status', 'aria-live': 'polite' });
     var toastBox = h('div', { class: 'apk-toast', role: 'status', 'aria-live': 'polite' });
-    var toastTimer = null, lastDrag = 0, keep = null;
+    var toastTimer = null, lastDrag = 0, keep = null, fresh = null;
+    var calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     function pref(k) { try { return localStorage.getItem('apk.' + k); } catch (e) { return null; } }
     function setPref(k, v) { try { localStorage.setItem('apk.' + k, v); } catch (e) { /* sin almacenamiento */ } }
@@ -248,7 +259,7 @@ window.APKanban = (function () {
       var row = { titulo: titulo, estado: estado, tipo: estado === 'ideas' ? 'idea' : 'tarea', posicion: pos, proyecto_id: proyecto || null };
       return api('/rest/v1/kb_tarjetas?select=*', { method: 'POST', headers: REP, body: JSON.stringify(row) }).then(function (r) {
         var c = r[0]; st.cards.push(c);
-        keep = c.id;
+        keep = c.id; fresh = c.id;
         pushUndo('creación de «' + clip(c.titulo) + '»', function () {
           st.cards = st.cards.filter(function (x) { return x.id !== c.id; });
           return api('/rest/v1/kb_tarjetas?id=eq.' + c.id, { method: 'DELETE', headers: { Prefer: 'return=minimal' } });
@@ -312,6 +323,8 @@ window.APKanban = (function () {
     var scrollLeft = 0;
     function paint() {
       var board = root.querySelector('.apk-board'); if (board) scrollLeft = board.scrollLeft;
+      var before = {};
+      [].forEach.call(root.querySelectorAll('.apk-card[data-id]'), function (el) { before[el.getAttribute('data-id')] = el.getBoundingClientRect(); });
       var focusId = keep || (document.activeElement && document.activeElement.closest && (document.activeElement.closest('[data-id]') || {}).getAttribute && document.activeElement.closest('[data-id]').getAttribute('data-id'));
       var focusRole = document.activeElement && document.activeElement.getAttribute && document.activeElement.getAttribute('data-role');
       root.textContent = '';
@@ -319,6 +332,12 @@ window.APKanban = (function () {
       root.appendChild(st.view === 'hoy' ? viewHoy() : st.view === 'archivo' ? viewArchivo() : viewTablero());
       root.appendChild(toastBox); root.appendChild(live);
       board = root.querySelector('.apk-board'); if (board) board.scrollLeft = scrollLeft;
+      if (!calm) [].forEach.call(root.querySelectorAll('.apk-card[data-id]'), function (el) {     // FLIP: la tarjeta se desliza de donde estaba a donde queda
+        var a = before[el.getAttribute('data-id')], b = el.getBoundingClientRect();
+        if (!a || (Math.abs(a.left - b.left) < 2 && Math.abs(a.top - b.top) < 2) || !el.animate) return;
+        el.animate([{ transform: 'translate(' + (a.left - b.left) + 'px,' + (a.top - b.top) + 'px)' }, { transform: 'none' }], { duration: 280, easing: 'cubic-bezier(.16,1,.3,1)' });
+      });
+      fresh = null;
       if (focusId) {
         var el = root.querySelector('[data-id="' + focusId + '"] [data-role="' + (focusRole || 'open') + '"]') || root.querySelector('[data-id="' + focusId + '"] [data-role="open"]');
         if (el) el.focus({ preventScroll: true });
@@ -338,9 +357,9 @@ window.APKanban = (function () {
       var tabs = [['hoy', 'Hoy'], ['tablero', 'Tablero'], ['archivo', 'Archivo']];
       return h('header', { class: 'apk-head' }, [
         h('div', { class: 'apk-head-main' }, [
-          h('p', { class: 'apk-kicker', text: 'Centro de trabajo' }),
           h('h2', { class: 'apk-title', text: title }),
-          h('p', { class: 'apk-sub', text: parts.join(' · ') })
+          h('p', { class: 'apk-sub', text: parts.join(' · ') }),
+          flowBar()
         ]),
         h('div', { class: 'apk-head-actions' }, [
           h('div', { class: 'apk-seg', role: 'group', 'aria-label': 'Vista' }, tabs.map(function (t) {
@@ -348,9 +367,23 @@ window.APKanban = (function () {
           })),
           btn('Proyectos', 'apk-btn', projectsDialog),
           btn('Ajustes', 'apk-btn', settingsDialog),
-          btn([h('span', { 'aria-hidden': 'true', text: '+ ' }), 'Nueva tarjeta'], 'apk-btn apk-btn--primary', function () { newDialog('pendiente'); }, { 'data-role': 'new' })
+          btn([icon('plus'), 'Nueva tarjeta'], 'apk-btn apk-btn--primary', function () { newDialog('pendiente'); }, { 'data-role': 'new' })
         ])
       ]);
+    }
+
+    /* Barra de flujo: cuánto hay en cada estado (lo hecho, solo los últimos 7 días). Responde «qué avanza y dónde se acumula». */
+    function flowBar() {
+      var segs = ESTADOS.map(function (e) {
+        var n = e.id === 'hecho' ? st.cards.filter(function (c) { return c.estado === 'hecho' && c.completada_en && (now - new Date(c.completada_en)) <= 7 * DAY; }).length : column(st.cards, e.id).length;
+        return { e: e, n: n };
+      });
+      var total = segs.reduce(function (a, s) { return a + s.n; }, 0);
+      if (!total) return null;
+      var summary = segs.map(function (s) { return s.e.label + ' ' + s.n; }).join(', ') + (' (Hecho: últimos 7 días)');
+      return h('div', { class: 'apk-flow', role: 'img', 'aria-label': 'Reparto del trabajo: ' + summary }, segs.filter(function (s) { return s.n; }).map(function (s) {
+        var seg = h('span', { class: 'apk-flow-seg', 'data-estado': s.e.id, title: s.e.label + ': ' + s.n }); seg.style.flexGrow = String(s.n); return seg;
+      }));
     }
 
     /* ── Tarjeta ── */
@@ -361,22 +394,22 @@ window.APKanban = (function () {
       if (c.prioridad !== 2) meta.push(h('span', { class: 'apk-chip apk-prio', 'data-prio': c.prioridad, text: PRIO[c.prioridad] }));
       if (c.fecha_limite && c.estado !== 'hecho') { var d = dueLabel(c.fecha_limite, now); meta.push(h('span', { class: 'apk-chip apk-due', 'data-tone': d.tone, text: d.text })); }
       if (c.bloqueada) meta.push(h('span', { class: 'apk-chip apk-block', text: 'Bloqueada' }));
-      if (sp.total) meta.push(h('span', { class: 'apk-chip', text: sp.done + '/' + sp.total + ' pasos' }));
+      if (sp.total) { var bar = h('span', { class: 'apk-bar', 'aria-hidden': 'true' }, [h('span', { class: 'apk-bar-fill' })]); bar.firstChild.style.width = Math.round(sp.done / sp.total * 100) + '%'; meta.push(h('span', { class: 'apk-chip apk-steps' }, [bar, sp.done + '/' + sp.total + ' pasos'])); }
       if (c.esfuerzo) meta.push(h('span', { class: 'apk-chip', text: ESFUERZO[c.esfuerzo] }));
       (c.etiquetas || []).slice(0, 3).forEach(function (t) { meta.push(h('span', { class: 'apk-chip apk-tag', text: '#' + t })); });
       var idx = ESTADOS.map(function (e) { return e.id; }).indexOf(c.estado), next = ESTADOS[idx + 1];
-      return h('li', { class: 'apk-card' + (c.bloqueada ? ' is-blocked' : '') + (c.estado === 'hecho' ? ' is-done' : ''), 'data-id': c.id, 'data-estado': c.estado }, [
+      return h('li', { class: 'apk-card' + (c.bloqueada ? ' is-blocked' : '') + (c.estado === 'hecho' ? ' is-done' : '') + (fresh === c.id ? ' is-new' : ''), 'data-id': c.id, 'data-estado': c.estado }, [
         h('div', { class: 'apk-card-top' }, [
-          h('span', { class: 'apk-grip', 'aria-hidden': 'true', text: '⠿' }),
-          proj ? h('span', { class: 'apk-proj', text: proj.titulo }) : h('span', { class: 'apk-proj apk-proj--none', text: c.tipo === 'idea' ? 'Idea' : 'Sin proyecto' }),
+          h('span', { class: 'apk-grip', 'aria-hidden': 'true' }, [icon('grip')]),
+          proj ? h('span', { class: 'apk-proj' }, [(function () { var d = h('span', { class: 'apk-dot', 'aria-hidden': 'true' }); d.style.background = tone(proj.id); return d; })(), h('span', { class: 'apk-proj-t', text: proj.titulo })]) : null,
           h('div', { class: 'apk-card-act' }, [
             o.hoy ? btn(c.hoy_fecha === today ? 'Quitar de hoy' : 'Añadir a hoy', 'apk-mini', function () { setHoy(c, c.hoy_fecha !== today); }, { 'data-role': 'hoy' }) : null,
-            next && !o.noAdvance ? btn('› ' + next.label, 'apk-mini', function () { move(c, next.id, column(st.cards, next.id).length, 'btn'); }, { 'data-role': 'adv', 'aria-label': 'Mover «' + c.titulo + '» a ' + next.label }) : null
+            next && !o.noAdvance ? btn([next.label, icon('next')], 'apk-mini apk-adv', function () { move(c, next.id, column(st.cards, next.id).length, 'btn'); }, { 'data-role': 'adv', 'aria-label': 'Mover «' + c.titulo + '» a ' + next.label }) : null
           ])
         ]),
         h('button', { type: 'button', class: 'apk-card-open', 'data-role': 'open', 'aria-keyshortcuts': 'Shift+ArrowLeft Shift+ArrowRight Shift+ArrowUp Shift+ArrowDown',
           'aria-describedby': 'apk-kbd-help', onclick: function () { if (Date.now() - lastDrag > 80) detailDialog(c); }, text: c.titulo }),
-        c.siguiente_paso && c.estado !== 'hecho' ? h('p', { class: 'apk-next' }, [h('span', { 'aria-hidden': 'true', text: '→ ' }), h('span', { class: 'sr-only', text: 'Siguiente paso: ' }), c.siguiente_paso]) : null,
+        c.siguiente_paso && c.estado !== 'hecho' ? h('p', { class: 'apk-next' }, [h('span', { class: 'sr-only', text: 'Siguiente paso: ' }), c.siguiente_paso]) : null,
         c.bloqueada && c.bloqueo ? h('p', { class: 'apk-why-block', text: 'Bloqueo: ' + c.bloqueo }) : null,
         meta.length ? h('div', { class: 'apk-meta' }, meta) : null
       ]);
@@ -438,7 +471,7 @@ window.APKanban = (function () {
     }
 
     function addInline(estado) {
-      var open = btn([h('span', { 'aria-hidden': 'true', text: '+ ' }), 'Añadir tarjeta'], 'apk-add', function () {
+      var open = btn([icon('plus'), 'Añadir tarjeta'], 'apk-add', function () {
         var inp = h('input', { class: 'apk-input', type: 'text', maxlength: '200', placeholder: 'Título y Enter', 'aria-label': 'Título de la nueva tarjeta en ' + ESTADO_LABEL[estado], autocomplete: 'off' });
         var form = h('form', { class: 'apk-add-form', onsubmit: function (ev) {
           ev.preventDefault();
@@ -483,7 +516,7 @@ window.APKanban = (function () {
       return h('div', { class: 'apk-hoy' }, [
         main,
         h('div', { class: 'apk-hoy-grid' }, [
-          block('Elegidas para hoy', list.length + ' de ' + cap, list.length > cap ? 'Has elegido más de lo que cabe (' + cap + '). Decide qué quitas.' : '',
+          block('Elegidas para hoy', capacity(list.length, cap), list.length > cap ? 'Has elegido más de lo que cabe (' + cap + '). Decide qué quitas.' : '',
             list.length ? list.map(function (c) { return cardEl(c, { hoy: true, noAdvance: false }); }) : null, 'Elige tarjetas desde «Siguientes pasos» o desde el tablero.'),
           block('En curso', String(inCourse.length), '', inCourse.length ? inCourse.map(function (c) { return cardEl(c, { hoy: true }); }) : null, 'Nada más en curso fuera de lo elegido para hoy.'),
           block('Bloqueos', String(blocked.length), '', blocked.length ? blocked.map(function (c) { return cardEl(c, { noAdvance: true }); }) : null, 'Sin bloqueos.'),
@@ -495,7 +528,7 @@ window.APKanban = (function () {
                 h('div', null, [
                   h('button', { type: 'button', class: 'apk-card-open', 'data-role': 'open', text: s.card.titulo, onclick: function () { detailDialog(s.card); } }),
                   h('p', { class: 'apk-why', text: s.why.length ? 'Porque: ' + s.why.join(' · ') : 'Sin factores destacados: es el siguiente en su columna.' }),
-                  s.card.siguiente_paso ? h('p', { class: 'apk-next' }, [h('span', { 'aria-hidden': 'true', text: '→ ' }), s.card.siguiente_paso]) : null
+                  s.card.siguiente_paso ? h('p', { class: 'apk-next' }, [h('span', { class: 'sr-only', text: 'Siguiente paso: ' }), s.card.siguiente_paso]) : null
                 ]),
                 btn('Añadir a hoy', 'apk-mini', function () { setHoy(s.card, true); }, { 'data-role': 'hoy', 'aria-label': 'Añadir «' + s.card.titulo + '» a hoy' })
               ]);
@@ -504,9 +537,13 @@ window.APKanban = (function () {
           block('Hecho hoy', String(doneToday.length), '', doneToday.length ? doneToday.map(function (c) { return cardEl(c, { noAdvance: true }); }) : null, 'Todavía nada terminado hoy.')
         ])
       ]);
+      function capacity(n, cap) {
+        var dots = []; for (var i = 0; i < Math.max(n, cap); i++) dots.push(h('span', { class: 'apk-cap-dot' + (i < n ? ' is-on' : '') + (i >= cap ? ' is-over' : '') }));
+        return h('span', { class: 'apk-cap' }, [h('span', { class: 'apk-cap-dots', 'aria-hidden': 'true' }, dots), n + ' de ' + cap]);
+      }
       function block(title, count, warn, items, emptyText) {
         return h('section', { class: 'apk-block', 'aria-label': title }, [
-          h('header', { class: 'apk-block-head' }, [h('h3', { class: 'apk-block-title', text: title }), h('span', { class: 'apk-count', text: count })]),
+          h('header', { class: 'apk-block-head' }, [h('h3', { class: 'apk-block-title', text: title }), h('span', { class: 'apk-count' }, [count])]),
           warn ? h('p', { class: 'apk-wipwarn', role: 'note', text: warn }) : null,
           items ? h('ul', { class: 'apk-list apk-list--flat' }, items) : h('p', { class: 'apk-empty', text: emptyText })
         ]);
@@ -829,7 +866,6 @@ window.APKanban = (function () {
       if (missing(err)) {
         return function paintSetup() {
           ctx.view.appendChild(h('section', { class: 'apk apk-setup', 'aria-label': 'Centro de trabajo' }, [
-            h('p', { class: 'apk-kicker', text: 'Centro de trabajo' }),
             h('p', { text: 'Las tablas del tablero aún no existen en Supabase. Ejecuta supabase/kanban.sql en el SQL Editor (una vez, es idempotente) y recarga la página.' })
           ]));
         };
