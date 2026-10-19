@@ -13,6 +13,21 @@ import { join, relative, sep, parse, basename, extname } from 'node:path';
 import { extractFile, SUPPORTED, KNOWN_UNSUPPORTED } from './extract.mjs';
 import { detect } from './lexicon.mjs';
 
+/** Título (primer encabezado) y descripción (primer párrafo de prosa) de un README, como texto plano y acotado. */
+export function readmeMeta(md) {
+  const clean = (s) => s.replace(/!\[[^\]]*\]\([^)]*\)/g, '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/[*_`>#|]/g, '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+  const lines = md.replace(/\r/g, '').split('\n');
+  let title = null, desc = null, inCode = false;
+  for (const l of lines) {
+    if (/^```/.test(l)) { inCode = !inCode; continue; }
+    if (inCode) continue;
+    if (!title && /^#{1,2}\s+\S/.test(l)) { title = clean(l); continue; }
+    if (title && !desc && l.trim() && !/^(#|\||-{3,}|!\[|<|\[!\[)/.test(l.trim())) { const c = clean(l); if (c.length > 40) desc = c; }
+    if (title && desc) break;
+  }
+  return title ? { title: title.slice(0, 90), desc: desc ? desc.slice(0, 260) : null } : null;
+}
+
 export const DEFAULT_EXCLUDE = [
   'node_modules', '.git', '.venv', 'venv', 'env', '__pycache__', '.ipynb_checkpoints', '.idea', '.vscode', '.mypy_cache',
   '.pytest_cache', 'dist', 'build', '.next', '.cache', '.stubs', 'site-packages', '.second-brain',
@@ -65,7 +80,7 @@ export function scanSources(config, lexicon, cache, lexiconDigest) {
     let count = 0;
 
     const touchProject = (pj) => {
-      if (!projects.has(pj.key)) projects.set(pj.key, { key: pj.key, label: pj.label, source: src.id, root: pj.root, artifacts: new Set() });
+      if (!projects.has(pj.key)) projects.set(pj.key, { key: pj.key, label: pj.label, source: src.id, root: pj.root, artifacts: new Set(), readme: null });
       return projects.get(pj.key);
     };
 
@@ -125,7 +140,7 @@ export function scanSources(config, lexicon, cache, lexiconDigest) {
               const weak = detect(lexicon, [], artifacts);
               for (const [id, h] of Object.entries(weak)) { const o = (hits[id] ||= { practica: 0, explicativa: 0, declarativa: 0 }); if (h.practica || h.explicativa) o.explicativa = 1; }
             }
-            entry = { size: st.size, mtimeMs: st.mtimeMs, sha: digest, ext, hits, artifacts, note: r.note || null };
+            entry = { size: st.size, mtimeMs: st.mtimeMs, sha: digest, ext, hits, artifacts, note: r.note || null, readme: /^readme\.md$/i.test(basename(e.name)) ? readmeMeta(buf.toString('utf8')) : null };
             coverage.changed++;
           }
         }
@@ -134,6 +149,8 @@ export function scanSources(config, lexicon, cache, lexiconDigest) {
         const pj = touchProject(projectOf(src, parts));
         for (const a of entry.artifacts) pj.artifacts.add(a);
         files.push({ source: src.id, kind, rel: posix(rel), project: pj.key, ext, hits: entry.hits, artifacts: entry.artifacts, note: entry.note });
+        // el README más cercano a la raíz del proyecto le da título y descripción
+        if (entry.readme && (!pj.readme || rel.split(sep).length < pj.readme.depth)) { const p = projects.get(pj.key); if (p) p.readme = { ...entry.readme, depth: rel.split(sep).length }; }
       }
     };
     walk(root);
