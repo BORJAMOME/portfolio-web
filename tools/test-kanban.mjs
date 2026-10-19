@@ -111,3 +111,20 @@ test('subProgress: cuenta hechas y total', () => {
   eq({ ...L.subProgress([{ hecho: true }, { hecho: false }, { hecho: true }]) }, { done: 2, total: 3 });
   eq({ ...L.subProgress(undefined) }, { done: 0, total: 0 });
 });
+
+test('parseCapture: prioridad, proyecto, etiqueta, fechas y @hoy salen del título', () => {
+  const MON = new Date(2026, 9, 19, 10);      // lunes 19-oct-2026
+  const P = [{ id: 'p1', titulo: 'Portfolio 2026' }, { id: 'p2', titulo: 'Máster UX' }];
+  const r = (t) => JSON.parse(JSON.stringify(L.parseCapture(t, P, MON)));
+  eq(r('Preparar DAX mañana #portfolio !alta'), { titulo: 'Preparar DAX', prioridad: 3, fecha_limite: '2026-10-20', proyecto_id: 'p1', proyecto: 'Portfolio 2026', etiquetas: [], hoy: false });
+  eq(r('Revisar CV el viernes #cv').fecha_limite, '2026-10-23');
+  eq(r('Revisar CV el viernes #cv').etiquetas, ['cv']);
+  eq(r('Llamar a Ana 24/10 !urgente @hoy'), { titulo: 'Llamar a Ana', prioridad: 4, fecha_limite: '2026-10-24', proyecto_id: null, proyecto: null, etiquetas: [], hoy: true });
+  eq(r('Leer paper #master para el 3/1').titulo, 'Leer paper');
+  eq(r('Leer paper #master para el 3/1').fecha_limite, '2027-01-03');        // fecha ya pasada este año → el siguiente
+  eq(r('Entregar informe el lunes').fecha_limite, '2026-10-26');               // mismo día de la semana → la semana que viene
+  eq(r('Revisar la mañana del informe').fecha_limite, null);                   // «la mañana» no es una fecha
+  eq(r('Revisar la mañana del informe').titulo, 'Revisar la mañana del informe');
+  eq(r('31/02 imposible').fecha_limite, null);
+  eq(r('Idea suelta').titulo, 'Idea suelta');
+});

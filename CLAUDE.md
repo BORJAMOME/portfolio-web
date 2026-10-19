@@ -39,6 +39,10 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
   Arrastre con Pointer Events propios (sin biblioteca: CSP sin CDN y regla de no añadir dependencias); teclado con Mayús+flechas; en táctil, desde el asa.
   Límites WIP y capacidad diaria en `kb_ajustes`; avisan, no bloquean. La lógica pura está en `APKanban.logic`.
   Pruebas: `node tools/test-kanban.mjs` (lógica, sin dependencias) y `node tools/check-kanban.mjs` (interfaz con Playwright y un Supabase simulado en memoria; no toca la base real).
+  Color semántico por estado (`--st-<estado>` en `css/area-privada.css`), siempre con icono de progreso y texto. Iconos SVG propios en `ICON`.
+  Captura inteligente local (`logic.parseCapture`: #proyecto, !prioridad, fechas en español, @hoy). Paleta `Ctrl/⌘+K`.
+  IA opcional: Edge Function `supabase/functions/kanban-ia` (desglosar, siguiente paso, plan del día, texto → tarjetas). Solo propone:
+  la web enseña una revisión y guarda lo confirmado. `KB_AI_PROVIDER=off` por defecto (los botones de IA no aparecen). Guía: su `README.md`.
 - **Calendario** (`#/calendario`): solo lectura. Google → iCal secreto → Edge Function `supabase/functions/calendario-sync`
   (pg_cron cada 15 min) → `public.calendar_events`. La página nunca habla con Google. Guía: `supabase/functions/calendario-sync/README.md`.
 - **Entrevistas** (`#/entrevistas`, `/analisis`, `/<uuid>`): tablas `procesos` y `entrevistas` (`supabase/entrevistas.sql`).
