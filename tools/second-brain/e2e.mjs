@@ -162,6 +162,8 @@ try {
     await page.mouse.click(pos.x, pos.y);
     await page.waitForTimeout(900);
     check('el clic en un nodo muestra su panel contextual', (await page.locator('#sb-detail-h').textContent()) === 'DAX');
+    const ed = (await info(page)).edgesDrawn;
+    check('al seleccionar se dibujan sus relaciones como cintas y no las del resto', ed.focus > 0 && ed.context === 0, JSON.stringify(ed));
     check('el panel indica el estado de evidencia', /Respaldado/.test(await page.locator('#sb-detail .sb-badge').first().textContent()));
     check('el panel lista relaciones con su fundamento', (await page.locator('.sb-rels li').count()) > 2 && (await page.locator('.sb-why').first().textContent()).length > 15);
     check('el panel no contiene rutas de archivos ni enlaces a documentos', !/\.(py|sql|md|ipynb|pbix)\b/i.test(await page.locator('#sb-detail').textContent()));

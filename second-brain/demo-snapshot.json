@@ -3,7 +3,7 @@
  "generatedAt": "2026-01-15T10:00:00.000Z",
  "mode": "demo",
  "engine": {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "frameworkVersion": 2
  },
  "meta": {
@@ -142,9 +142,9 @@
    "label": "Business Intelligence y Power BI",
    "order": 0,
    "center": [
-    8.37,
-    64.63,
-    -3.92
+    7.85,
+    65.22,
+    -3.99
    ],
    "count": 13,
    "color": "#2f6db5",
@@ -155,9 +155,9 @@
    "label": "Ingeniería y preparación de datos",
    "order": 1,
    "center": [
-    -50.27,
-    36.58,
-    36.26
+    -50.19,
+    36.26,
+    36.09
    ],
    "count": 19,
    "color": "#14897c",
@@ -168,9 +168,9 @@
    "label": "Análisis, estadística y machine learning",
    "order": 2,
    "center": [
-    -0.89,
-    24.81,
-    -83.08
+    -0.42,
+    24.88,
+    -82.88
    ],
    "count": 10,
    "color": "#7a52b3",
@@ -181,9 +181,9 @@
    "label": "Visualización y comunicación de datos",
    "order": 3,
    "center": [
-    58.48,
-    8.3,
-    69.93
+    58.43,
+    8.32,
+    69.91
    ],
    "count": 6,
    "color": "#d0613f",
@@ -194,9 +194,9 @@
    "label": "UX/UI y desarrollo web (complementario)",
    "order": 4,
    "center": [
-    -105.83,
-    -12.97,
-    -20.93
+    -105.89,
+    -12.85,
+    -21.04
    ],
    "count": 1,
    "color": "#b8478f",
@@ -207,9 +207,9 @@
    "label": "Competencias profesionales",
    "order": 5,
    "center": [
-    66.21,
-    -26.74,
-    -33.89
+    66.32,
+    -26.82,
+    -33.76
    ],
    "count": 12,
    "color": "#5e7d2f",
@@ -220,9 +220,9 @@
    "label": "Dominios de negocio",
    "order": 6,
    "center": [
-    -2.9,
-    -47.34,
-    68.83
+    -2.98,
+    -47.33,
+    68.77
    ],
    "count": 5,
    "color": "#8a6a3c",
@@ -233,9 +233,9 @@
    "label": "Proyectos y experiencia demostrada",
    "order": 7,
    "center": [
-    -35.98,
-    -25.07,
-    -38.92
+    -36.05,
+    -25.33,
+    -39.08
    ],
    "count": 4,
    "color": "#273a5f",
@@ -246,9 +246,9 @@
    "label": "Objetivos y oportunidades",
    "order": 8,
    "center": [
-    -1.74,
-    -77.48,
-    0.82
+    -1.71,
+    -77.52,
+    0.93
    ],
    "count": 15,
    "color": "#1d2638",
@@ -277,9 +277,9 @@
     "Aparece en documentación, pero no hay práctica detectable en el código o los artefactos analizados."
    ],
    "pos": [
-    18.24,
-    68.45,
-    10.64
+    18.07,
+    68.89,
+    10.91
    ]
   },
   {
@@ -303,9 +303,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    22.9,
-    45.53,
-    -15.49
+    22.47,
+    46.22,
+    -16.2
    ]
   },
   {
@@ -329,9 +329,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -3.69,
-    57.32,
-    -29.29
+    -2.81,
+    59.55,
+    -30.2
    ]
   },
   {
@@ -355,9 +355,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -4.07,
-    49.35,
-    -6.06
+    -3.77,
+    51.29,
+    -5.27
    ]
   },
   {
@@ -382,9 +382,9 @@
     "Puede existir en proyectos o entornos que no están entre las fuentes configuradas."
    ],
    "pos": [
-    3.33,
-    70.68,
-    30.22
+    2.63,
+    71.21,
+    29.61
    ]
   },
   {
@@ -409,9 +409,9 @@
     "Puede existir en proyectos o entornos que no están entre las fuentes configuradas."
    ],
    "pos": [
-    -2.2,
-    85.45,
-    -18.13
+    -2.53,
+    83.64,
+    -15.45
    ]
   },
   {
@@ -435,9 +435,9 @@
     "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
    ],
    "pos": [
-    36.13,
-    71.3,
-    -9.54
+    36.48,
+    70.48,
+    -8.37
    ]
   },
   {
@@ -461,9 +461,9 @@
     "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
    ],
    "pos": [
-    22.7,
-    74.3,
-    -30.8
+    23.65,
+    75.86,
+    -29.84
    ]
   },
   {
@@ -487,9 +487,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -24.95,
-    66.1,
-    -12.07
+    -27.09,
+    64.61,
+    -14.2
    ]
   },
   {
@@ -513,9 +513,9 @@
     "Aparece en documentación, pero no hay práctica detectable en el código o los artefactos analizados."
    ],
    "pos": [
-    68.98,
-    -10.07,
-    -8.48
+    68.65,
+    -9.62,
+    -8.4
    ]
   },
   {
@@ -539,9 +539,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -46.6,
-    46.5,
-    40.84
+    -47.3,
+    47.48,
+    38.72
    ]
   },
   {
@@ -565,9 +565,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -61.29,
-    32.44,
-    52.64
+    -65.14,
+    31.12,
+    47.27
    ]
   },
   {
@@ -591,9 +591,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -66.74,
-    72.69,
-    34.34
+    -64.39,
+    73.78,
+    35.71
    ]
   },
   {
@@ -617,9 +617,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -75.91,
-    48.74,
-    36.05
+    -75.99,
+    49.74,
+    36.92
    ]
   },
   {
@@ -643,9 +643,9 @@
     "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
    ],
    "pos": [
-    -84.7,
-    31,
-    45.63
+    -86.62,
+    31.71,
+    45.6
    ]
   },
   {
@@ -669,9 +669,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -54.62,
-    21.67,
-    24.05
+    -49.45,
+    23.56,
+    25.32
    ]
   },
   {
@@ -695,9 +695,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -58.28,
-    19.98,
-    -7.24
+    -57.57,
+    20.25,
+    -6.6
    ]
   },
   {
@@ -721,9 +721,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -62.86,
-    10.73,
-    56.18
+    -61.27,
+    12.3,
+    57.18
    ]
   },
   {
@@ -747,9 +747,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -13.78,
-    28.27,
-    20.83
+    -13.08,
+    27.84,
+    20.78
    ]
   },
   {
@@ -773,9 +773,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -51.89,
-    3.14,
-    14.57
+    -53.47,
+    3.02,
+    15.54
    ]
   },
   {
@@ -799,9 +799,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -50.16,
-    56.9,
-    18.72
+    -66.58,
+    53.85,
+    11.57
    ]
   },
   {
@@ -825,9 +825,9 @@
     "Solo aparece en una fuente declarativa (lo que se afirma, no lo que se demuestra)."
    ],
    "pos": [
-    -57.18,
-    75.32,
-    62.25
+    -56.59,
+    74.98,
+    62.68
    ]
   },
   {
@@ -851,9 +851,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    63.66,
-    -49.96,
-    -60.3
+    65.82,
+    -50.4,
+    -59.5
    ]
   },
   {
@@ -878,9 +878,9 @@
     "Puede existir en proyectos o entornos que no están entre las fuentes configuradas."
    ],
    "pos": [
-    52.27,
-    4.3,
-    -23.03
+    52.01,
+    4.18,
+    -23.37
    ]
   },
   {
@@ -904,9 +904,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    44.89,
-    -10.96,
-    -48.4
+    43.77,
+    -13.03,
+    -48.47
    ]
   },
   {
@@ -930,9 +930,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    97.23,
-    -32.87,
-    -54.52
+    97.74,
+    -32.39,
+    -54.18
    ]
   },
   {
@@ -956,9 +956,9 @@
     "Aparece en documentación, pero no hay práctica detectable en el código o los artefactos analizados."
    ],
    "pos": [
-    51.06,
-    -29.74,
-    13.2
+    51.07,
+    -29.75,
+    13.27
    ]
   },
   {
@@ -982,9 +982,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    77.48,
-    -7.83,
-    -49.57
+    77.74,
+    -8.11,
+    -49.68
    ]
   },
   {
@@ -1008,9 +1008,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -18.87,
-    32.98,
-    -64.58
+    -15.72,
+    31.01,
+    -62.72
    ]
   },
   {
@@ -1034,9 +1034,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -31.82,
-    11.98,
-    -63.1
+    -31.94,
+    11.85,
+    -63.38
    ]
   },
   {
@@ -1060,9 +1060,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -8.48,
-    39.93,
-    -97.93
+    -8.11,
+    39.09,
+    -97.27
    ]
   },
   {
@@ -1086,9 +1086,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    14.33,
-    52.48,
-    -98.17
+    13.74,
+    53.55,
+    -98.09
    ]
   },
   {
@@ -1112,9 +1112,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -3.3,
-    2.3,
-    -92.25
+    -2.74,
+    3.31,
+    -91.36
    ]
   },
   {
@@ -1138,9 +1138,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    11.62,
-    30.03,
-    -83.51
+    12.52,
+    33.18,
+    -83.35
    ]
   },
   {
@@ -1164,9 +1164,9 @@
     "Aparece en material de estudio (manuales), pero no se detecta aplicado en ningún proyecto analizado."
    ],
    "pos": [
-    55.63,
-    6.28,
-    91.39
+    55.66,
+    6.2,
+    91.44
    ]
   },
   {
@@ -1190,9 +1190,9 @@
     "Aparece en material de estudio (manuales), pero no se detecta aplicado en ningún proyecto analizado."
    ],
    "pos": [
-    73.2,
-    -11.71,
-    56.71
+    73.3,
+    -11.5,
+    56.8
    ]
   },
   {
@@ -1216,9 +1216,9 @@
     "Aparece en material de estudio (manuales), pero no se detecta aplicado en ningún proyecto analizado."
    ],
    "pos": [
-    62.5,
-    5.64,
-    68.76
+    62.11,
+    5.73,
+    68.79
    ]
   },
   {
@@ -1242,9 +1242,9 @@
     "Aparece en documentación, pero no hay práctica detectable en el código o los artefactos analizados."
    ],
    "pos": [
-    45.82,
-    32.6,
-    60.91
+    45.68,
+    32.62,
+    61.04
    ]
   },
   {
@@ -1268,9 +1268,9 @@
     "Aparece en documentación, pero no hay práctica detectable en el código o los artefactos analizados."
    ],
    "pos": [
-    68.29,
-    27.92,
-    79.97
+    68.22,
+    27.93,
+    80.01
    ]
   },
   {
@@ -1294,9 +1294,9 @@
     "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
    ],
    "pos": [
-    12.07,
-    89.88,
-    -4.17
+    11.98,
+    91.66,
+    -5.18
    ]
   },
   {
@@ -1320,9 +1320,9 @@
     "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
    ],
    "pos": [
-    31.89,
-    58.74,
-    27
+    30.86,
+    58.5,
+    27.66
    ]
   },
   {
@@ -1346,9 +1346,9 @@
     "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
    ],
    "pos": [
-    -59.51,
-    48.42,
-    -5.87
+    -46.73,
+    47.36,
+    -0.71
    ]
   },
   {
@@ -1372,9 +1372,9 @@
     "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
    ],
    "pos": [
-    -30.37,
-    66.38,
-    51.17
+    -30.23,
+    65.34,
+    50.6
    ]
   },
   {
@@ -1398,9 +1398,9 @@
     "Aparece en documentación, pero no hay práctica detectable en el código o los artefactos analizados."
    ],
    "pos": [
-    -19.74,
-    19.6,
-    -98.8
+    -21.8,
+    20.37,
+    -99.21
    ]
   },
   {
@@ -1424,9 +1424,9 @@
     "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
    ],
    "pos": [
-    31.54,
-    31.85,
-    -73.52
+    32.88,
+    29.35,
+    -74.15
    ]
   },
   {
@@ -1450,9 +1450,9 @@
     "Aparece en documentación, pero no hay práctica detectable en el código o los artefactos analizados."
    ],
    "pos": [
-    -15.69,
-    -39.09,
-    65.63
+    -15.64,
+    -39.03,
+    65.77
    ]
   },
   {
@@ -1476,9 +1476,9 @@
     "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
    ],
    "pos": [
-    20.66,
-    -34.39,
-    56.34
+    20.51,
+    -34.31,
+    56.33
    ]
   },
   {
@@ -1502,9 +1502,9 @@
     "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
    ],
    "pos": [
-    2.03,
+    2.06,
     -58.86,
-    64.2
+    64.24
    ]
   },
   {
@@ -1528,9 +1528,9 @@
     "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
    ],
    "pos": [
-    4.39,
-    -40.58,
-    79.82
+    4.4,
+    -40.67,
+    79.91
    ]
   },
   {
@@ -1554,9 +1554,9 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    -28.1,
-    6.84,
-    36.77
+    -27.79,
+    6.58,
+    37.6
    ],
    "recommendationId": "rec-preparacion-calidad"
   },
@@ -1581,9 +1581,9 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    -36.4,
-    13.04,
-    57.3
+    -37.17,
+    12.82,
+    57.88
    ],
    "recommendationId": "rec-sql-analitico"
   },
@@ -1608,9 +1608,9 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    -35.29,
-    22.79,
-    12.57
+    -33.33,
+    18.07,
+    12.3
    ],
    "recommendationId": "rec-python-analisis"
   },
@@ -1635,9 +1635,9 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    7.82,
-    28.39,
-    -1.21
+    7.18,
+    30.33,
+    -2.18
    ],
    "recommendationId": "rec-powerbi-dax"
   },
@@ -1662,9 +1662,9 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    -11.31,
-    74.76,
-    7.97
+    -15.09,
+    75.65,
+    6.88
    ]
   },
   {
@@ -1688,9 +1688,9 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    -2.81,
-    9.52,
-    -54.71
+    -0.55,
+    9.31,
+    -54.82
    ],
    "recommendationId": "rec-estadistica-eda"
   },
@@ -1715,9 +1715,9 @@
     "Hay menciones, pero no práctica detectable."
    ],
    "pos": [
-    76.63,
-    -26.98,
-    -27.7
+    76.6,
+    -26.86,
+    -26.85
    ],
    "recommendationId": "rec-kpi-seguimiento"
   },
@@ -1742,9 +1742,9 @@
     "Hay menciones, pero no práctica detectable."
    ],
    "pos": [
-    45.46,
-    -10.92,
-    61.83
+    45.61,
+    -11.08,
+    61.38
    ],
    "recommendationId": "rec-visualizacion-comunicacion"
   },
@@ -1769,9 +1769,9 @@
     "Hay menciones, pero no práctica detectable."
    ],
    "pos": [
-    51.65,
-    -46.85,
-    -10.53
+    51.54,
+    -47.02,
+    -10.48
    ],
    "recommendationId": "rec-negocio-interpretacion"
   },
@@ -1796,9 +1796,9 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    56.25,
-    -27.55,
-    -38.02
+    57.5,
+    -26.56,
+    -38.08
    ],
    "recommendationId": "rec-automatizacion-fiabilidad"
   },
@@ -1823,9 +1823,9 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    73.15,
-    -30.77,
-    -71.72
+    72.36,
+    -30.88,
+    -72.08
    ]
   },
   {
@@ -1849,9 +1849,9 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    81.25,
-    -51.61,
-    -27.62
+    81.03,
+    -51.43,
+    -27.26
    ],
    "recommendationId": "rec-explicar-decisiones"
   },
@@ -1876,9 +1876,9 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    18.61,
-    17.43,
-    -104.2
+    17.56,
+    17.74,
+    -104.47
    ]
   },
   {
@@ -1902,9 +1902,9 @@
     "No se ha podido comprobar con las fuentes disponibles."
    ],
    "pos": [
-    -105.83,
-    -12.97,
-    -20.93
+    -105.89,
+    -12.85,
+    -21.04
    ]
   },
   {
@@ -1928,9 +1928,9 @@
     "Hay menciones, pero no práctica detectable."
    ],
    "pos": [
-    -61.1,
-    47.46,
-    74.81
+    -59.87,
+    46.65,
+    74
    ]
   },
   {
@@ -1954,9 +1954,9 @@
     "No se ha podido comprobar con las fuentes disponibles."
    ],
    "pos": [
-    -20.31,
-    42.63,
-    63.37
+    -21.06,
+    42.47,
+    63.41
    ]
   },
   {
@@ -1980,9 +1980,9 @@
     "Hay menciones, pero no práctica detectable."
    ],
    "pos": [
-    -25.89,
-    -63.77,
-    78.14
+    -26.21,
+    -63.78,
+    77.61
    ],
    "recommendationId": "rec-conocimiento-sectorial"
   },
@@ -2007,9 +2007,9 @@
     "Confianza media. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    15.75,
-    -84.03,
-    -8.98
+    13.68,
+    -83.72,
+    -5.83
    ],
    "recommendationId": "rec-kpi-seguimiento"
   },
@@ -2034,9 +2034,9 @@
     "Confianza media. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    34.41,
-    -79.56,
-    17.81
+    35.37,
+    -79.48,
+    16.1
    ],
    "recommendationId": "rec-visualizacion-comunicacion"
   },
@@ -2061,9 +2061,9 @@
     "Confianza media. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    -24.62,
-    -103.45,
-    21.14
+    -25.66,
+    -102.7,
+    18.5
    ],
    "recommendationId": "rec-conocimiento-sectorial"
   },
@@ -2088,9 +2088,9 @@
     "Confianza media. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    -0.82,
-    -102.53,
-    -20.25
+    0.29,
+    -104.84,
+    -16.78
    ],
    "recommendationId": "rec-negocio-interpretacion"
   },
@@ -2115,9 +2115,9 @@
     "Confianza media. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    -23.03,
-    -85.51,
-    -6.74
+    -30.04,
+    -71.18,
+    -12.11
    ],
    "recommendationId": "rec-powerbi-dax"
   },
@@ -2142,9 +2142,9 @@
     "Confianza alta. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    -17.91,
-    -60.75,
-    -9.62
+    -14.33,
+    -60.2,
+    -9.3
    ],
    "recommendationId": "rec-estadistica-eda"
   },
@@ -2169,9 +2169,9 @@
     "Confianza alta. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    27.75,
-    -103.21,
-    -15.24
+    27.41,
+    -102.36,
+    -14.67
    ],
    "recommendationId": "rec-explicar-decisiones"
   },
@@ -2196,9 +2196,9 @@
     "Confianza alta. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    -35.78,
-    -70.89,
-    16.36
+    -35.1,
+    -71.4,
+    17.42
    ],
    "recommendationId": "rec-preparacion-calidad"
   },
@@ -2223,9 +2223,9 @@
     "Confianza alta. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    -10.23,
-    -61.28,
-    20.39
+    -9.35,
+    -61.93,
+    20.5
    ],
    "recommendationId": "rec-python-analisis"
   },
@@ -2250,9 +2250,9 @@
     "Confianza alta. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    -9.15,
-    -84.33,
-    29.63
+    -10.28,
+    -85.08,
+    30.4
    ],
    "recommendationId": "rec-sql-analitico"
   },
@@ -2277,19 +2277,19 @@
     "Confianza media. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    17.89,
-    -96.84,
-    13.12
+    18.7,
+    -96,
+    15.08
    ],
    "recommendationId": "rec-automatizacion-fiabilidad"
   },
   {
-   "id": "p:demo-proyectos-churn-clientes",
+   "id": "p:demo-proyectos-churn-clientes-ttdwk2",
    "label": "Predicción de abandono (ficticio)",
    "type": "proyecto",
    "region": "practica",
    "area": "analisis",
-   "icon": "folder",
+   "icon": "notebook",
    "state": "respaldado",
    "summary": "Modelo de clasificación con regresión logística y random forest. Se evalúa con validación cruzada y AUC. Proyecto analizado: 3 archivos con evidencia práctica en 11 conceptos.",
    "size": 0.38,
@@ -2304,18 +2304,18 @@
     "Un proyecto demuestra trabajo realizado; no mide su calidad ni el nivel de dominio."
    ],
    "pos": [
-    -44.74,
-    -28.63,
-    -53.65
+    -41.92,
+    -27.46,
+    -53.07
    ]
   },
   {
-   "id": "p:demo-proyectos-scripts-sueltos",
+   "id": "p:demo-proyectos-scripts-sueltos-otd8mg",
    "label": "scripts-sueltos",
    "type": "proyecto",
    "region": "practica",
    "area": "datos",
-   "icon": "folder",
+   "icon": "notebook",
    "state": "respaldado",
    "summary": "Proyecto analizado: 3 archivos con evidencia práctica en 6 conceptos. No se ha encontrado documentación escrita en el proyecto.",
    "size": 0.38,
@@ -2330,19 +2330,19 @@
     "Un proyecto demuestra trabajo realizado; no mide su calidad ni el nivel de dominio."
    ],
    "pos": [
-    -38.07,
-    -29.32,
-    -32.75
+    -39.54,
+    -32.9,
+    -31.81
    ],
-   "recommendationId": "rec-doc-demo-proyectos-scripts-sueltos"
+   "recommendationId": "rec-doc-demo-proyectos-scripts-sueltos-otd8mg"
   },
   {
-   "id": "p:demo-proyectos-ventas-tienda-sql",
+   "id": "p:demo-proyectos-ventas-tienda-sql-14pdy3k",
    "label": "Ventas de una tienda ficticia (SQL)",
    "type": "proyecto",
    "region": "practica",
    "area": "datos",
-   "icon": "folder",
+   "icon": "database",
    "state": "respaldado",
    "summary": "Análisis de ventas por categoría y mes sobre una base de datos de ejemplo. Proyecto analizado: 3 archivos con evidencia práctica en 7 conceptos.",
    "size": 0.38,
@@ -2357,13 +2357,13 @@
     "Un proyecto demuestra trabajo realizado; no mide su calidad ni el nivel de dominio."
    ],
    "pos": [
-    -52.88,
-    -12.24,
-    -16.33
+    -55.27,
+    -11.82,
+    -18.64
    ]
   },
   {
-   "id": "p:demo-proyectos-informe-ventas-pbi",
+   "id": "p:demo-proyectos-informe-ventas-pbi-1huo4ns",
    "label": "Informe de ventas (Power BI)",
    "type": "proyecto",
    "region": "practica",
@@ -2383,13 +2383,13 @@
     "Un proyecto demuestra trabajo realizado; no mide su calidad ni el nivel de dominio."
    ],
    "pos": [
-    -8.23,
-    -30.11,
-    -52.96
+    -7.46,
+    -29.16,
+    -52.78
    ]
   },
   {
-   "id": "r:doc-demo-proyectos-scripts-sueltos",
+   "id": "r:doc-demo-proyectos-scripts-sueltos-otd8mg",
    "label": "Documentar el proyecto scripts-sueltos",
    "type": "recomendacion",
    "region": "objetivos",
@@ -2409,11 +2409,11 @@
     "Puede haber documentación fuera de la carpeta analizada."
    ],
    "pos": [
-    -25.82,
-    -78.48,
-    -28.78
+    -22.4,
+    -91.96,
+    -24.19
    ],
-   "recommendationId": "rec-doc-demo-proyectos-scripts-sueltos"
+   "recommendationId": "rec-doc-demo-proyectos-scripts-sueltos-otd8mg"
   },
   {
    "id": "o:junior",
@@ -2436,9 +2436,9 @@
     "Marco general, no un estudio de mercado ni una evaluación oficial."
    ],
    "pos": [
-    -0.97,
-    -41.4,
-    -6.44
+    -0.5,
+    -41.67,
+    -9.51
    ]
   },
   {
@@ -2462,9 +2462,9 @@
     "Marco general, no un estudio de mercado ni una evaluación oficial."
    ],
    "pos": [
-    11.09,
-    -61.33,
-    -18.63
+    11.77,
+    -62.83,
+    -19.4
    ]
   },
   {
@@ -2488,9 +2488,9 @@
     "Marco general, no un estudio de mercado ni una evaluación oficial."
    ],
    "pos": [
-    15.4,
-    -48.64,
-    8.53
+    14.73,
+    -47.45,
+    7.8
    ]
   }
  ],
@@ -3000,7 +3000,7 @@
    "evidenceCount": 0
   },
   {
-   "source": "p:demo-proyectos-churn-clientes",
+   "source": "p:demo-proyectos-churn-clientes-ttdwk2",
    "target": "c:python",
    "type": "demuestra",
    "confidence": "alta",
@@ -3009,7 +3009,7 @@
    "evidenceCount": 3
   },
   {
-   "source": "p:demo-proyectos-churn-clientes",
+   "source": "p:demo-proyectos-churn-clientes-ttdwk2",
    "target": "c:pandas",
    "type": "demuestra",
    "confidence": "alta",
@@ -3018,7 +3018,7 @@
    "evidenceCount": 2
   },
   {
-   "source": "p:demo-proyectos-churn-clientes",
+   "source": "p:demo-proyectos-churn-clientes-ttdwk2",
    "target": "c:clasificacion-regresion",
    "type": "demuestra",
    "confidence": "media",
@@ -3027,7 +3027,7 @@
    "evidenceCount": 1
   },
   {
-   "source": "p:demo-proyectos-churn-clientes",
+   "source": "p:demo-proyectos-churn-clientes-ttdwk2",
    "target": "c:data-quality",
    "type": "demuestra",
    "confidence": "media",
@@ -3036,7 +3036,7 @@
    "evidenceCount": 1
   },
   {
-   "source": "p:demo-proyectos-churn-clientes",
+   "source": "p:demo-proyectos-churn-clientes-ttdwk2",
    "target": "c:eda",
    "type": "demuestra",
    "confidence": "media",
@@ -3045,7 +3045,7 @@
    "evidenceCount": 1
   },
   {
-   "source": "p:demo-proyectos-churn-clientes",
+   "source": "p:demo-proyectos-churn-clientes-ttdwk2",
    "target": "c:estadistica",
    "type": "demuestra",
    "confidence": "media",
@@ -3054,7 +3054,7 @@
    "evidenceCount": 1
   },
   {
-   "source": "p:demo-proyectos-scripts-sueltos",
+   "source": "p:demo-proyectos-scripts-sueltos-otd8mg",
    "target": "c:pandas",
    "type": "demuestra",
    "confidence": "alta",
@@ -3063,7 +3063,7 @@
    "evidenceCount": 3
   },
   {
-   "source": "p:demo-proyectos-scripts-sueltos",
+   "source": "p:demo-proyectos-scripts-sueltos-otd8mg",
    "target": "c:python",
    "type": "demuestra",
    "confidence": "alta",
@@ -3072,7 +3072,7 @@
    "evidenceCount": 3
   },
   {
-   "source": "p:demo-proyectos-scripts-sueltos",
+   "source": "p:demo-proyectos-scripts-sueltos-otd8mg",
    "target": "c:data-quality",
    "type": "demuestra",
    "confidence": "media",
@@ -3081,7 +3081,7 @@
    "evidenceCount": 1
   },
   {
-   "source": "p:demo-proyectos-scripts-sueltos",
+   "source": "p:demo-proyectos-scripts-sueltos-otd8mg",
    "target": "c:eda",
    "type": "demuestra",
    "confidence": "media",
@@ -3090,7 +3090,7 @@
    "evidenceCount": 1
   },
   {
-   "source": "p:demo-proyectos-scripts-sueltos",
+   "source": "p:demo-proyectos-scripts-sueltos-otd8mg",
    "target": "c:estadistica",
    "type": "demuestra",
    "confidence": "media",
@@ -3099,7 +3099,7 @@
    "evidenceCount": 1
   },
   {
-   "source": "p:demo-proyectos-scripts-sueltos",
+   "source": "p:demo-proyectos-scripts-sueltos-otd8mg",
    "target": "c:etl",
    "type": "demuestra",
    "confidence": "media",
@@ -3108,7 +3108,7 @@
    "evidenceCount": 1
   },
   {
-   "source": "p:demo-proyectos-ventas-tienda-sql",
+   "source": "p:demo-proyectos-ventas-tienda-sql-14pdy3k",
    "target": "c:modelo-estrella",
    "type": "demuestra",
    "confidence": "alta",
@@ -3117,7 +3117,7 @@
    "evidenceCount": 3
   },
   {
-   "source": "p:demo-proyectos-ventas-tienda-sql",
+   "source": "p:demo-proyectos-ventas-tienda-sql-14pdy3k",
    "target": "c:sql",
    "type": "demuestra",
    "confidence": "alta",
@@ -3126,7 +3126,7 @@
    "evidenceCount": 3
   },
   {
-   "source": "p:demo-proyectos-ventas-tienda-sql",
+   "source": "p:demo-proyectos-ventas-tienda-sql-14pdy3k",
    "target": "c:data-quality",
    "type": "demuestra",
    "confidence": "media",
@@ -3135,7 +3135,7 @@
    "evidenceCount": 1
   },
   {
-   "source": "p:demo-proyectos-ventas-tienda-sql",
+   "source": "p:demo-proyectos-ventas-tienda-sql-14pdy3k",
    "target": "c:modelado-datos",
    "type": "demuestra",
    "confidence": "media",
@@ -3144,7 +3144,7 @@
    "evidenceCount": 1
   },
   {
-   "source": "p:demo-proyectos-ventas-tienda-sql",
+   "source": "p:demo-proyectos-ventas-tienda-sql-14pdy3k",
    "target": "c:sql-cte",
    "type": "demuestra",
    "confidence": "media",
@@ -3153,7 +3153,7 @@
    "evidenceCount": 1
   },
   {
-   "source": "p:demo-proyectos-ventas-tienda-sql",
+   "source": "p:demo-proyectos-ventas-tienda-sql-14pdy3k",
    "target": "c:sql-joins",
    "type": "demuestra",
    "confidence": "media",
@@ -3162,7 +3162,7 @@
    "evidenceCount": 1
   },
   {
-   "source": "p:demo-proyectos-informe-ventas-pbi",
+   "source": "p:demo-proyectos-informe-ventas-pbi-1huo4ns",
    "target": "c:dax",
    "type": "demuestra",
    "confidence": "media",
@@ -3171,7 +3171,7 @@
    "evidenceCount": 1
   },
   {
-   "source": "p:demo-proyectos-informe-ventas-pbi",
+   "source": "p:demo-proyectos-informe-ventas-pbi-1huo4ns",
    "target": "c:dax-contexto",
    "type": "demuestra",
    "confidence": "media",
@@ -3180,7 +3180,7 @@
    "evidenceCount": 1
   },
   {
-   "source": "p:demo-proyectos-informe-ventas-pbi",
+   "source": "p:demo-proyectos-informe-ventas-pbi-1huo4ns",
    "target": "c:git",
    "type": "demuestra",
    "confidence": "media",
@@ -3189,7 +3189,7 @@
    "evidenceCount": 1
   },
   {
-   "source": "p:demo-proyectos-informe-ventas-pbi",
+   "source": "p:demo-proyectos-informe-ventas-pbi-1huo4ns",
    "target": "c:time-intelligence",
    "type": "demuestra",
    "confidence": "media",
@@ -4134,8 +4134,8 @@
    "updatedAt": "2026-01-15T10:00:00.000Z"
   },
   {
-   "source": "r:doc-demo-proyectos-scripts-sueltos",
-   "target": "p:demo-proyectos-scripts-sueltos",
+   "source": "r:doc-demo-proyectos-scripts-sueltos-otd8mg",
+   "target": "p:demo-proyectos-scripts-sueltos-otd8mg",
    "type": "recomienda",
    "confidence": "media",
    "rationale": "Documentar el proyecto «scripts-sueltos»: Hay trabajo práctico, pero sin explicación escrita de las decisiones es difícil defenderlo en una entrevista.",
@@ -4331,9 +4331,9 @@
    }
   },
   {
-   "id": "rec-doc-demo-proyectos-scripts-sueltos",
-   "nodeId": "r:doc-demo-proyectos-scripts-sueltos",
-   "targetId": "p:demo-proyectos-scripts-sueltos",
+   "id": "rec-doc-demo-proyectos-scripts-sueltos-otd8mg",
+   "nodeId": "r:doc-demo-proyectos-scripts-sueltos-otd8mg",
+   "targetId": "p:demo-proyectos-scripts-sueltos-otd8mg",
    "what": "Documentar el proyecto «scripts-sueltos»",
    "why": "Hay trabajo práctico, pero sin explicación escrita de las decisiones es difícil defenderlo en una entrevista.",
    "evidence": "3 archivos con práctica y ningún documento (md, docx, txt, html) en el proyecto.",

@@ -25,13 +25,15 @@ export const PALETTE = {
   line: '#dce2eb', lineSoft: '#e9edf3', amber: '#d9952c', amberInk: '#8a5a12', green: '#2f7d5b', red: '#b3263f',
 };
 const AREA_FALLBACK = ['#2f6db5', '#14897c', '#7a52b3', '#d0613f', '#b8478f', '#5e7d2f', '#8a6a3c', '#273a5f', '#1d2638'];
-/* estilos de línea por familia de relación */
+/* Familias de relación: cuatro estilos que se distinguen de verdad (el tipo exacto va en el panel).
+   «demuestra» es la prueba y lleva el grosor máximo; «recomienda» es lo único discontinuo porque
+   todavía no existe; lo estructural es fino y tenue. */
 export const EDGE_STYLE = {
   tecnica: { types: ['usa', 'parte-de', 'requiere'], color: '#3a4f78', dash: null, label: 'Dependencia técnica' },
   mejora: { types: ['mejora', 'habilita'], color: '#2f7d5b', dash: null, label: 'Mejora o habilita' },
-  demuestra: { types: ['demuestra'], color: null, dash: [2.4, 1.6], label: 'Proyecto que lo demuestra' },
-  estructura: { types: ['agrupa', 'necesita'], color: '#8c9ab3', dash: [0.7, 1.3], label: 'Pertenece a / requerido por' },
-  recomienda: { types: ['recomienda'], color: '#d9952c', dash: [3, 1.6], label: 'Recomendación' },
+  demuestra: { types: ['demuestra'], color: null, dash: null, strong: true, label: 'Proyecto que lo demuestra (color del área)' },
+  estructura: { types: ['agrupa', 'necesita'], color: '#8c9ab3', dash: null, thin: true, label: 'Pertenece a / requerido por' },
+  recomienda: { types: ['recomienda'], color: '#d9952c', dash: [2.1, 1.3], label: 'Recomendación (aún por hacer)' },
 };
 const STYLE_OF = {};
 for (const [k, v] of Object.entries(EDGE_STYLE)) for (const t of v.types) STYLE_OF[t] = k;
@@ -40,8 +42,8 @@ const KNOWLEDGE = new Set(['tecnologia', 'concepto', 'tecnica']);
 const HUB = 18;
 const RIM = 96;
 const Y = { concepto: 0, competencia: 30, rec: 14, proyecto: 0, objetivo: 22 };
-const BELT = [110, 121];
-const LABEL_CAP = 46;
+const BELT = [110, 121, 132];        // cinturón de proyectos: hasta tres anillos
+const LABEL_CAP = 35;
 
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
@@ -171,20 +173,22 @@ float sdBox(vec2 p, float b, float rr) { vec2 q = abs(p) - vec2(b - rr); return 
 float band(float r, float a, float b, float aa) { return smoothstep(a - aa, a + aa, r) * (1.0 - smoothstep(b - aa, b + aa, r)); }
 void main() {
   float d;
-  if (vShape < 0.5) d = length(vP) - 1.0;
-  else if (vShape < 1.5) d = sdBox(vP, 0.9, 0.22);
-  else d = sdHex(vP, 0.94);
+  if (vShape < 0.5) d = length(vP) - 1.0;                                   // conocimiento / recomendación
+  else if (vShape < 1.5) d = sdBox(vP, 0.9, 0.22);                          // proyecto
+  else if (vShape < 2.5) d = sdHex(vP, 0.86) - 0.08;                        // competencia (hexágono redondeado)
+  else d = sdBox(vec2(vP.x + vP.y, vP.y - vP.x) * 0.7071, 0.8, 0.12);       // objetivo (rombo)
   float aa = max(fwidth(d), 0.0001) * 1.1;
   float inside = 1.0 - smoothstep(-aa, aa, d);
-  float rim = band(-d, 0.0, 0.14, aa) * inside;
+  float rimW = vStyle > 0.5 ? 0.10 : 0.12;
+  float rim = band(-d, 0.0, rimW, aa) * inside;
   float dashOn = 1.0;
-  if (vStyle > 0.5) { float ang = atan(vP.y, vP.x); dashOn = step(0.45, fract(ang / 6.2831853 * 16.0)); }
+  if (vStyle > 0.5) { float ang = atan(vP.y, vP.x); dashOn = step(0.42, fract(ang / 6.2831853 * 8.0)); }
   vec3 col = vFill;
   col = mix(col, vEdge, rim * dashOn);
-  vec2 iuv = vP * (vBrand > 0.0 ? 0.42 : 0.36) + 0.5;
+  vec2 iuv = vP * (vBrand > 0.0 ? 0.42 : vShape > 2.5 ? 0.56 : 0.36) + 0.5;
   float ia = 0.0;
   vec4 tx = vec4(0.0);
-  if (iuv.x > 0.0 && iuv.x < 1.0 && iuv.y > 0.0 && iuv.y < 1.0) {
+  if (vDim < 0.5 && iuv.x > 0.0 && iuv.x < 1.0 && iuv.y > 0.0 && iuv.y < 1.0) {
     float cx = mod(vIcon, uCols), cy = floor(vIcon / uCols);
     vec2 auv = (vec2(cx, cy) + vec2(iuv.x, 1.0 - iuv.y)) / uCols;
     auv.y = 1.0 - auv.y;
@@ -192,28 +196,66 @@ void main() {
     ia = tx.a;
   }
   if (vBrand > 0.0) {
-    // logotipo a color; por validar = en gris; mencionado = atenuado (vBrand < 1)
     vec3 lc = tx.rgb;
     if (vStyle > 0.5) lc = mix(vec3(dot(lc, vec3(0.299, 0.587, 0.114))), vec3(1.0), 0.35);
     col = mix(col, lc, ia * inside * vBrand);
   } else col = mix(col, vIconCol, ia * inside);
   float alpha = inside;
   float r = length(vP);
-  if (vRing.a > 0.5) {
+  if (vRing.a > 0.5 && vDim < 0.5) {
     float r1 = band(r, 1.16, 1.30, aa * 1.2);
     float r2 = vRing.a > 1.5 ? band(r, 1.40, 1.52, aa * 1.2) : 0.0;
     float m = max(r1, r2) * (1.0 - inside);
     col = mix(col, vRing.rgb, m); alpha = max(alpha, m);
   }
-  if (vSel > 0.5) {
-    float s = band(r, 1.14, 1.42, aa * 1.2) * (1.0 - inside);
-    col = mix(col, vec3(0.114, 0.149, 0.22), s); alpha = max(alpha, s);
+  if (vSel > 0.75) {
+    // seleccionado: hueco blanco + anillo tinta de 2 px
+    float gap = band(r, 1.0, 1.14, aa) * (1.0 - inside);
+    float ring = band(r, 1.14, 1.32, aa * 1.2) * (1.0 - inside);
+    col = mix(col, vec3(1.0), gap); col = mix(col, vec3(0.114, 0.149, 0.22), ring); alpha = max(alpha, max(gap, ring));
+  } else if (vSel > 0.25) {
+    float ring = band(r, 1.10, 1.20, aa * 1.2) * (1.0 - inside);
+    col = mix(col, vec3(0.114, 0.149, 0.22), ring); alpha = max(alpha, ring);
   }
   if (alpha < 0.02) discard;
-  col = mix(col, vec3(1.0), vDim * 0.82);
+  if (vDim > 0.5) { col = mix(col, vec3(0.796, 0.824, 0.863), 0.85); alpha *= 0.3; }
   float fog = smoothstep(uFogNear, uFogFar, vDepth);
   col = mix(col, vec3(1.0), fog * 0.75);
   gl_FragColor = vec4(col, alpha);
+}`;
+
+/* ═══════════ SHADER DE ARISTAS: cintas con anchura en píxeles ═══════════
+   Cada segmento es un quad que el vértice ensancha perpendicular a la tangente en pantalla.
+   Se estrecha del origen al destino (dirección) y su alfa crece de 0,35 a 1. Al seleccionar,
+   cada arista se traza del origen al destino (260 ms, escalonada) salvo con movimiento reducido. */
+const EDGE_VERT = `
+attribute vec3 aA; attribute vec3 aB; attribute float aEnd; attribute float aSide; attribute float aT; attribute float aW;
+attribute vec3 aCol; attribute float aAlpha; attribute float aDist; attribute float aDash; attribute float aTail; attribute float aDelay;
+uniform vec2 uRes;
+varying float vT; varying vec3 vCol; varying float vAlpha; varying float vDist; varying float vDash; varying float vTail; varying float vDelay;
+void main() {
+  vec4 ca = projectionMatrix * modelViewMatrix * vec4(aA, 1.0);
+  vec4 cb = projectionMatrix * modelViewMatrix * vec4(aB, 1.0);
+  vec4 c = aEnd > 0.5 ? cb : ca;
+  vec2 sa = ca.xy / ca.w * uRes * 0.5, sb = cb.xy / cb.w * uRes * 0.5;
+  vec2 d = sb - sa; float l = length(d);
+  vec2 dir = l > 0.0001 ? d / l : vec2(1.0, 0.0);
+  vec2 nrm = vec2(-dir.y, dir.x);
+  float w = aW * mix(0.6, 1.0, aT);
+  c.xy += nrm * aSide * w / uRes * c.w;
+  vT = aT; vCol = aCol; vAlpha = aAlpha; vDist = aDist; vDash = aDash; vTail = aTail; vDelay = aDelay;
+  gl_Position = c;
+}`;
+const EDGE_FRAG = `
+uniform float uTime; uniform float uAnim; uniform float uOpacity;
+varying float vT; varying vec3 vCol; varying float vAlpha; varying float vDist; varying float vDash; varying float vTail; varying float vDelay;
+void main() {
+  float p = 1.0;
+  if (uAnim > 0.5) { p = clamp((uTime - vDelay) / 260.0, 0.0, 1.0); p = 1.0 - pow(1.0 - p, 3.0); }
+  if (vT > p) discard;
+  if (vDash > 0.5 && mod(vDist, 3.4) > 2.1) discard;
+  vec3 col = (vTail > 0.5 && vT > 0.8) ? vec3(0.702, 0.149, 0.247) : vCol;
+  gl_FragColor = vec4(col, vAlpha * uOpacity * mix(0.35, 1.0, vT));
 }`;
 
 /* ═══════════ VISOR ═══════════ */
@@ -271,7 +313,7 @@ export function createViewer(container, T, options = {}) {
     return g;
   };
   const shadowGeo = circleGeo(1, 28);
-  const matShadow = new T.MeshBasicMaterial({ color: new T.Color(PALETTE.ink), transparent: true, opacity: 0.06, depthWrite: false });
+  const matShadow = new T.MeshBasicMaterial({ color: new T.Color(PALETTE.ink), transparent: true, opacity: 0.08, depthWrite: false });
 
   let nodesMesh = null, nodeGeo = null, attrs = null, shadows = null;
   let floorMesh = null, guides = null, stems = null, lineObjs = [];
@@ -279,8 +321,14 @@ export function createViewer(container, T, options = {}) {
   const WHITE = new T.Color('#ffffff');
 
   const radiusOf = (n) => {
-    const base = mode === 'mapa' ? 2.0 + n.size * 1.9 : 2.3 + n.size * 2.8;
-    return n.type === 'competencia' ? base * 1.15 : n.type === 'objetivo' ? base * 0.95 : base;
+    const ev = Math.min(1, Math.sqrt(((n.evidence && n.evidence.projects) || 0) / 10));
+    let rr;
+    if (n.type === 'objetivo') rr = n.size >= 1 ? 4.4 : 3.8;
+    else if (n.type === 'competencia') rr = 3.4 + (n.state === 'respaldado' ? 0.8 : 0.3);
+    else if (n.type === 'proyecto') rr = 1.9;
+    else if (n.type === 'recomendacion') rr = 2.0;
+    else rr = 2.2 + 1.0 * ev;
+    return mode === 'mapa' ? rr : rr * 1.15;
   };
   const isVisible = (id) => !visible || visible.has(id);
   const idx = (id) => data.index.get(id);
@@ -298,8 +346,8 @@ export function createViewer(container, T, options = {}) {
     if (o.isInstancedMesh) o.dispose();
   }
   function clearScene() {
-    [nodesMesh, shadows, floorMesh, guides, stems, ...lineObjs].forEach(disposeObj);
-    nodesMesh = shadows = floorMesh = guides = stems = null; lineObjs = []; nodeGeo = null; attrs = null;
+    [nodesMesh, shadows, floorMesh, guides, stems, ctxRibbon, focusRibbon, ...lineObjs].forEach(disposeObj);
+    nodesMesh = shadows = floorMesh = guides = stems = ctxRibbon = focusRibbon = null; lineObjs = []; nodeGeo = null; attrs = null;
   }
 
   /* ── Carga del snapshot ── */
@@ -332,28 +380,26 @@ export function createViewer(container, T, options = {}) {
     attrs = { aPos: mk('aPos', 3), aSize: mk('aSize', 1), aFill: mk('aFill', 3), aEdge: mk('aEdge', 3), aIconCol: mk('aIconCol', 3), aIcon: mk('aIcon', 1), aShape: mk('aShape', 1), aStyle: mk('aStyle', 1), aRing: mk('aRing', 4), aDim: mk('aDim', 1), aSel: mk('aSel', 1), aBrand: mk('aBrand', 1) };
     // aspecto fijo de cada nodo (color, icono, forma, estilo, anillos): se calcula una vez
     nodes.forEach((n, i) => {
-      const area = new T.Color(n.state === 'neutral' ? PALETTE.ink : areaColor(n.area || n.region));
+      const area = new T.Color(areaColor(n.area || n.region));
+      const NAVY = new T.Color(PALETTE.navy);
       let fill, edge, icon;
+      const open = n.state === 'pendiente' || n.state === 'brecha_probable' || n.state === 'brecha_confirmada';
       if (n.type === 'recomendacion') { fill = new T.Color(PALETTE.amber); edge = new T.Color(PALETTE.amberInk); icon = WHITE; }
-      else if (n.state === 'neutral') { fill = area; edge = area; icon = WHITE; }
+      else if (n.type === 'objetivo') { fill = new T.Color('#273a5f'); edge = fill; icon = WHITE; }
+      else if (n.type === 'proyecto') { fill = WHITE.clone(); edge = area; icon = NAVY; }
       else if (n.state === 'respaldado') { fill = area; edge = area.clone().multiplyScalar(0.72); icon = WHITE; }
-      else if (n.state === 'mencionado') { fill = area.clone().lerp(WHITE, 0.74); edge = area; icon = area; }
-      else { fill = WHITE.clone(); edge = area.clone().lerp(WHITE, 0.15); icon = area.clone().lerp(WHITE, 0.35); }
+      else if (n.state === 'mencionado') { fill = area.clone().lerp(WHITE, 0.84); edge = area; icon = area; }
+      else { fill = WHITE.clone(); edge = area.clone().lerp(WHITE, 0.3); icon = area.clone().lerp(WHITE, 0.45); }
+      // tecnologías con logotipo: ficha blanca, logotipo a color y borde del color del área
+      const logoCell = n.id.startsWith('c:') ? atlas.logo(n.id.slice(2)) : -1;
+      if (logoCell >= 0) { fill = WHITE.clone(); edge = open ? area.clone().lerp(WHITE, 0.3) : area; }
       attrs.aFill.setXYZ(i, fill.r, fill.g, fill.b);
       attrs.aEdge.setXYZ(i, edge.r, edge.g, edge.b);
       attrs.aIconCol.setXYZ(i, icon.r, icon.g, icon.b);
-      // tecnologías con logotipo: ficha blanca con el logotipo a color y el borde del color del área
-      const logoCell = n.id.startsWith('c:') ? atlas.logo(n.id.slice(2)) : -1;
-      if (logoCell >= 0) {
-        fill = WHITE.clone();
-        edge = n.state === 'respaldado' || n.state === 'mencionado' ? area : area.clone().lerp(WHITE, 0.15);
-        attrs.aFill.setXYZ(i, fill.r, fill.g, fill.b);
-        attrs.aEdge.setXYZ(i, edge.r, edge.g, edge.b);
-      }
       attrs.aBrand.setX(i, logoCell >= 0 ? (n.state === 'mencionado' ? 0.55 : 1) : 0);
       attrs.aIcon.setX(i, logoCell >= 0 ? logoCell : atlas.index(n.icon || ({ proyecto: 'folder', competencia: 'hexagon', objetivo: 'flag', recomendacion: 'bulb' }[n.type] || 'dot')));
-      attrs.aShape.setX(i, n.type === 'proyecto' ? 1 : n.type === 'competencia' ? 2 : 0);
-      attrs.aStyle.setX(i, n.state === 'pendiente' || n.state === 'brecha_probable' || n.state === 'brecha_confirmada' ? 1 : 0);
+      attrs.aShape.setX(i, n.type === 'proyecto' ? 1 : n.type === 'competencia' ? 2 : n.type === 'objetivo' ? 3 : 0);
+      attrs.aStyle.setX(i, open && n.type !== 'proyecto' ? 1 : 0);
       const gap = n.state === 'brecha_probable' || n.state === 'brecha_confirmada';
       const now = bucket.get(n.id) === 'ahora' && n.type !== 'recomendacion';
       const rc = new T.Color(gap ? PALETTE.red : PALETTE.amber);
@@ -393,7 +439,7 @@ export function createViewer(container, T, options = {}) {
       ring(s.a0, s.a1, bands.respaldado[1] + 2.5, bands.mencionado[1] + 2.5, base.clone().lerp(WHITE, TINT.mencionado));
       ring(s.a0, s.a1, bands.mencionado[1] + 2.5, RIM, base.clone().lerp(WHITE, TINT.otros));
       // franja del cinturón de proyectos con el color del área, muy suave
-      ring(s.a0, s.a1, BELT[0] - 6, BELT[1] + 7, base.clone().lerp(WHITE, 0.95));
+      ring(s.a0, s.a1, BELT[0] - 6, BELT[BELT.length - 1] + 7, base.clone().lerp(WHITE, 0.95));
     }
     const g = new T.BufferGeometry();
     g.setAttribute('position', new T.BufferAttribute(new Float32Array(pos), 3));
@@ -406,7 +452,7 @@ export function createViewer(container, T, options = {}) {
     const seg = (p, q, c) => { gp.push(...p, ...q); tmpC.set(c); gc.push(tmpC.r, tmpC.g, tmpC.b, tmpC.r, tmpC.g, tmpC.b); };
     const circle = (r, c, n = 200) => { for (let i = 0; i < n; i++) { const a0 = (i / n) * Math.PI * 2, a1 = ((i + 1) / n) * Math.PI * 2; seg([Math.cos(a0) * r, 0, Math.sin(a0) * r], [Math.cos(a1) * r, 0, Math.sin(a1) * r], c); } };
     circle(HUB, '#cfd6e2'); circle(bands.respaldado[1] + 2.5, '#b9c3d3'); circle(bands.mencionado[1] + 2.5, '#cfd6e2'); circle(RIM, '#b9c3d3');
-    circle(BELT[0] - 6, '#dce2eb'); circle(BELT[1] + 7, '#e9edf3');
+    circle(BELT[0] - 6, '#dce2eb'); circle(BELT[BELT.length - 1] + 7, '#e9edf3');
     for (const s of sectors) for (const ang of [s.a0, s.a1]) seg([Math.cos(ang) * HUB, 0, Math.sin(ang) * HUB], [Math.cos(ang) * RIM, 0, Math.sin(ang) * RIM], '#ffffff');
     const gg = new T.BufferGeometry();
     gg.setAttribute('position', new T.BufferAttribute(new Float32Array(gp), 3));
@@ -429,11 +475,11 @@ export function createViewer(container, T, options = {}) {
       const vis = isVisible(n.id);
       const c = centerOf(i);
       attrs.aPos.setXYZ(i, c[0], c[1], c[2]);
-      attrs.aSize.setX(i, vis ? radiusOf(n) * (n.id === selected ? 1.18 : 1) : 0);
+      attrs.aSize.setX(i, vis ? radiusOf(n) * (n.id === selected ? 1.18 : n.id === hovered ? 1.08 : 1) : 0);
       attrs.aDim.setX(i, fs && !fs.has(n.id) ? 1 : 0);
-      attrs.aSel.setX(i, n.id === selected ? 1 : 0);
-      const on = vis && mode === 'mapa';
-      const r = on ? radiusOf(n) * (onFloor(n) ? 1.0 : 1.12) : 0.0001;
+      attrs.aSel.setX(i, n.id === selected ? 1 : n.id === hovered ? 0.5 : 0);
+      const on = vis && mode === 'mapa' && !(fs && !fs.has(n.id));   // los atenuados no proyectan sombra
+      const r = on ? radiusOf(n) * 1.2 : 0.0001;
       tmpM.makeScale(r, 1, r).setPosition(P[i * 3], 0.03, P[i * 3 + 2]);
       shadows.setMatrixAt(i, tmpM);
     });
@@ -443,73 +489,132 @@ export function createViewer(container, T, options = {}) {
     if (guides) guides.visible = mode === 'mapa';
   }
 
-  /* ── Líneas: tallos, relaciones de contexto y relaciones en foco, con estilo por familia ── */
-  function arcPoints(p, q, curved) {
-    if (!curved) return [p, q];
+  /* ── Aristas: cintas instanciadas por segmento (ver EDGE_VERT) ── */
+  let ctxRibbon = null, focusRibbon = null, selStart = 0;
+  const CONF_W = { alta: 1, media: 0.6, baja: 0.3 };
+  function edgePoints(i, j, curved) {
+    const p = centerOf(i), q = centerOf(j);
     const d = Math.hypot(q[0] - p[0], q[1] - p[1], q[2] - p[2]);
-    const c = [(p[0] + q[0]) / 2, Math.max(p[1], q[1]) + 4 + d * 0.22, (p[2] + q[2]) / 2];
-    const out = [];
-    for (let s = 0; s <= 16; s++) {
-      const t = s / 16, u = 1 - t;
-      out.push([u * u * p[0] + 2 * u * t * c[0] + t * t * q[0], u * u * p[1] + 2 * u * t * c[1] + t * t * q[1], u * u * p[2] + 2 * u * t * c[2] + t * t * q[2]]);
-    }
-    return out;
+    const same = (data.nodes[i].area || data.nodes[i].region) === (data.nodes[j].area || data.nodes[j].region);
+    const N = 24, pts = [];
+    if (curved) {
+      const hgt = Math.min(0.12 * d, 8) * (same ? 0.5 : 1) + 0.6;
+      const c = [(p[0] + q[0]) / 2, Math.max(p[1], q[1]) + hgt, (p[2] + q[2]) / 2];
+      for (let k = 0; k <= N; k++) { const t = k / N, u = 1 - t; pts.push([u * u * p[0] + 2 * u * t * c[0] + t * t * q[0], u * u * p[1] + 2 * u * t * c[1] + t * t * q[1], u * u * p[2] + 2 * u * t * c[2] + t * t * q[2]]); }
+    } else for (let k = 0; k <= 12; k++) { const t = k / 12; pts.push([p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t, p[2] + (q[2] - p[2]) * t]); }
+    // la cinta empieza y termina fuera de los nodos: nunca pasa por debajo de un icono
+    const ra = radiusOf(data.nodes[i]) * 1.3 + 0.4, rb = radiusOf(data.nodes[j]) * 1.3 + 0.4;
+    const dd = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+    let a0 = 0, a1 = pts.length - 1;
+    while (a0 < a1 && dd(pts[a0], p) < ra) a0++;
+    while (a1 > a0 && dd(pts[a1], q) < rb) a1--;
+    return a1 - a0 >= 1 ? pts.slice(a0, a1 + 1) : null;
   }
-  function lineObj(buf, style, opacity, order) {
+  function ribbon(list, opacity, anim) {
+    let segs = 0;
+    for (const e of list) segs += e.pts.length - 1;
+    if (!segs) return null;
+    const V = segs * 4;
+    const A = new Float32Array(V * 3), B = new Float32Array(V * 3), END = new Float32Array(V), SIDE = new Float32Array(V), TT = new Float32Array(V);
+    const W = new Float32Array(V), COL = new Float32Array(V * 3), AL = new Float32Array(V), DIST = new Float32Array(V), DASH = new Float32Array(V), TAIL = new Float32Array(V), DEL = new Float32Array(V);
+    const idxArr = new Uint32Array(segs * 6);
+    let v = 0, q = 0;
+    for (const e of list) {
+      const n = e.pts.length - 1;
+      let dist = 0;
+      for (let k = 0; k < n; k++) {
+        const a = e.pts[k], b = e.pts[k + 1];
+        const len = Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2]);
+        for (let c = 0; c < 4; c++) {
+          const end = c >= 2 ? 1 : 0;
+          A.set(a, v * 3); B.set(b, v * 3); END[v] = end; SIDE[v] = c % 2 ? 1 : -1;
+          TT[v] = (k + end) / n; W[v] = e.w; COL[v * 3] = e.col.r; COL[v * 3 + 1] = e.col.g; COL[v * 3 + 2] = e.col.b;
+          AL[v] = e.alpha; DIST[v] = dist + (end ? len : 0); DASH[v] = e.dash ? 1 : 0; TAIL[v] = e.tail ? 1 : 0; DEL[v] = e.delay;
+          v++;
+        }
+        const o = v - 4;
+        idxArr.set([o, o + 1, o + 2, o + 2, o + 1, o + 3], q); q += 6;
+        dist += len;
+      }
+    }
+    const g = new T.BufferGeometry();
+    const at = (name, arr, n) => g.setAttribute(name, new T.BufferAttribute(arr, n));
+    at('position', A, 3); at('aA', A, 3); at('aB', B, 3); at('aEnd', END, 1); at('aSide', SIDE, 1); at('aT', TT, 1); at('aW', W, 1);
+    at('aCol', COL, 3); at('aAlpha', AL, 1); at('aDist', DIST, 1); at('aDash', DASH, 1); at('aTail', TAIL, 1); at('aDelay', DEL, 1);
+    g.setIndex(new T.BufferAttribute(idxArr, 1));
+    const mat = new T.ShaderMaterial({
+      vertexShader: EDGE_VERT, fragmentShader: EDGE_FRAG, transparent: true, depthWrite: false, side: T.DoubleSide,
+      uniforms: { uRes: { value: new T.Vector2(size.w, size.h) }, uTime: { value: 0 }, uAnim: { value: anim ? 1 : 0 }, uOpacity: { value: opacity } },
+    });
+    const mesh = new T.Mesh(g, mat);
+    mesh.frustumCulled = false; mesh.renderOrder = anim || opacity > 0.5 ? 5 : 3;
+    scene.add(mesh);
+    return mesh;
+  }
+  function lineObj(buf) {
     if (!buf.p.length) return null;
     const g = new T.BufferGeometry();
     g.setAttribute('position', new T.BufferAttribute(new Float32Array(buf.p), 3));
     g.setAttribute('color', new T.BufferAttribute(new Float32Array(buf.c), 3));
-    let mat;
-    if (style && style.dash) {
-      g.setAttribute('lineDistance', new T.BufferAttribute(new Float32Array(buf.d), 1));
-      mat = new T.LineDashedMaterial({ vertexColors: true, dashSize: style.dash[0], gapSize: style.dash[1], transparent: opacity < 1, opacity, depthWrite: false });
-    } else mat = new T.LineBasicMaterial({ vertexColors: true, transparent: opacity < 1, opacity, depthWrite: false });
-    const l = new T.LineSegments(g, mat);
-    l.frustumCulled = false; l.renderOrder = order;
+    const l = new T.LineSegments(g, new T.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.9, depthWrite: false }));
+    l.frustumCulled = false; l.renderOrder = 2;
     scene.add(l);
     return l;
   }
   function applyLines() {
     if (!data) return;
-    [stems, ...lineObjs].forEach(disposeObj);
-    stems = null; lineObjs = [];
+    [stems, ctxRibbon, focusRibbon, ...lineObjs].forEach(disposeObj);
+    stems = ctxRibbon = focusRibbon = null; lineObjs = [];
     if (morph) return;
     const curved = mode === 'mapa';
     if (mode === 'mapa') {
-      const s = { p: [], c: [] };
-      tmpC.set('#c9d1de');
-      const push = (p, q) => { s.p.push(...p, ...q); s.c.push(tmpC.r, tmpC.g, tmpC.b, tmpC.r, tmpC.g, tmpC.b); };
-      data.nodes.forEach((n, i) => { if (isVisible(n.id) && !onFloor(n) && n.type !== 'objetivo') { const p = pAt(i); push(p, [p[0], 0, p[2]]); } });
+      // tallos: todos en la vista lateral; en el resto, solo el del nodo seleccionado (y el eje de objetivos)
+      const st = { p: [], c: [] };
+      tmpC.set('#e3e7ee');
+      const push = (p, q) => { st.p.push(...p, ...q); st.c.push(tmpC.r, tmpC.g, tmpC.b, tmpC.r, tmpC.g, tmpC.b); };
+      data.nodes.forEach((n, i) => {
+        if (!isVisible(n.id) || onFloor(n) || n.type === 'objetivo') return;
+        if (preset !== 'lateral' && n.id !== selected) return;
+        const p = pAt(i); push(p, [p[0], 0, p[2]]);
+      });
       const top = data.nodes.filter((n) => n.type === 'objetivo' && isVisible(n.id)).reduce((mx, n) => Math.max(mx, P[idx(n.id) * 3 + 1]), 0);
       if (top) push([0, 0, 0], [0, top, 0]);
-      stems = lineObj(s, null, 1, 2);
+      stems = lineObj(st);
     }
-    const id = selected || hovered;
-    const inFocus = id ? new Set(data.adj.get(id).map((x) => x[1])) : new Set();
-    const groups = {};
-    const bufOf = (key, layer) => (groups[key + layer] ||= { key, layer, p: [], c: [], d: [] });
+    const focusId = selected || hovered;
+    const inFocus = focusId ? new Set(data.adj.get(focusId).map((x) => x[1])) : new Set();
+    const focusList = [], ctxList = [];
+    let order = 0;
     data.edges.forEach((e, i) => {
       if (!isVisible(e.source) || !isVisible(e.target)) return;
       const focus = inFocus.has(i);
       if (!focus && (edgeMode !== 'todas' || (edgeTypes && !edgeTypes.has(e.type)))) return;
+      const si = idx(e.source), ti = idx(e.target);
+      const pts = edgePoints(si, ti, curved);
+      if (!pts) return;
       const key = STYLE_OF[e.type] || 'tecnica';
-      const st = EDGE_STYLE[key];
-      tmpC.set(st.color || areaColor(data.nodes[idx(e.source)].area || data.nodes[idx(e.source)].region));
-      const buf = bufOf(key, focus ? 'f' : 'c');
-      const pts = arcPoints(centerOf(idx(e.source)), centerOf(idx(e.target)), curved);
-      let dist = 0;
-      for (let k = 1; k < pts.length; k++) {
-        const a = pts[k - 1], b = pts[k];
-        const len = Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2]);
-        buf.p.push(...a, ...b); buf.c.push(tmpC.r, tmpC.g, tmpC.b, tmpC.r, tmpC.g, tmpC.b); buf.d.push(dist, dist + len);
-        dist += len;
-      }
+      const stl = EDGE_STYLE[key];
+      const tgt = data.nodes[ti];
+      const col = new T.Color(stl.color || areaColor(tgt.area || tgt.region));
+      const w8 = CONF_W[e.confidence] || 0.6;
+      if (focus) {
+        const sel = !!selected;
+        focusList.push({
+          pts, col, dash: !!stl.dash, tail: tgt.state === 'brecha_probable' || tgt.state === 'brecha_confirmada',
+          w: stl.thin ? 1.4 : stl.strong ? 3 : 1.5 + 2 * w8,
+          alpha: stl.thin ? (sel ? 0.8 : 0.5) : sel ? 1 : 0.7,
+          delay: sel ? Math.min(order++ * 20, 200) : 0,
+        });
+      } else ctxList.push({ pts, col, dash: !!stl.dash, tail: false, w: 1, alpha: stl.thin ? 0.08 : 0.15, delay: 0 });
     });
-    for (const g of Object.values(groups)) {
-      const l = lineObj(g, EDGE_STYLE[g.key], g.layer === 'f' ? 0.95 : (id ? 0.12 : 0.4), g.layer === 'f' ? 5 : 3);
-      if (l) lineObjs.push(l);
+    // un nodo con muchas relaciones (p. ej. Power BI con 40+ proyectos) haría un abanico opaco:
+    // se adelgazan y aclaran las cintas en proporción
+    if (focusList.length > 20) {
+      const k = Math.max(0.5, Math.sqrt(20 / focusList.length));
+      for (const f of focusList) { f.w = Math.max(1, f.w * k); f.alpha *= 0.55 + 0.45 * k; }
     }
+    ctxRibbon = ribbon(ctxList, 1, false);
+    focusRibbon = ribbon(focusList, 1, !!selected && !reduced());
   }
 
   /* ── Cámara ── */
@@ -551,7 +656,7 @@ export function createViewer(container, T, options = {}) {
     if (mode === 'mapa' && !visible) {
       const pts = [];
       const lab = size.w < 700 ? 0 : 0.22;
-      for (let i = 0; i < 32; i++) { const a = (i / 32) * Math.PI * 2; pts.push([Math.cos(a) * (BELT[1] + 20) * (1 + lab * Math.abs(Math.cos(a))), 0, Math.sin(a) * (BELT[1] + 20)]); }
+      for (let i = 0; i < 32; i++) { const a = (i / 32) * Math.PI * 2; pts.push([Math.cos(a) * (BELT[BELT.length - 1] + 20) * (1 + lab * Math.abs(Math.cos(a))), 0, Math.sin(a) * (BELT[BELT.length - 1] + 20)]); }
       let top = Y.competencia + 8;
       data.nodes.forEach((n, i) => { top = Math.max(top, D[i * 3 + 1] + 6); });
       pts.push([0, top, 0]);
@@ -617,6 +722,12 @@ export function createViewer(container, T, options = {}) {
     placeCamera();
     nodeMat.uniforms.uFogNear.value = view.radius * 0.85;
     nodeMat.uniforms.uFogFar.value = view.radius * 2.8 + 120;
+    for (const rb of [ctxRibbon, focusRibbon]) if (rb) rb.material.uniforms.uRes.value.set(size.w, size.h);
+    if (focusRibbon && focusRibbon.material.uniforms.uAnim.value > 0.5) {
+      const tt = now - selStart;
+      focusRibbon.material.uniforms.uTime.value = tt;
+      if (tt < 480) moving = true;
+    }
     renderer.render(scene, camera);
     updateLabels();
     if (moving) requestRender();
@@ -641,51 +752,64 @@ export function createViewer(container, T, options = {}) {
     if (!data) return;
     const w = size.w, h = size.h, placed = [];
     let used = 0;
-    const place = (text, p, cls, off, force, color) => {
-      if (used >= LABEL_CAP + 16) return false;
-      const s = toScreen(p);
-      if (!s || s[0] < -40 || s[0] > w + 40 || s[1] < -20 || s[1] > h + 20) return false;
-      const big = /is-region|is-guide/.test(cls);
-      const bw = text.length * (big ? 7.4 : 6.7) + 12, bh = big ? 16 : 20;
-      const x = s[0] - bw / 2, y = s[1] + off;
-      if (!force && placed.some((r) => x < r[0] + r[2] && x + bw > r[0] && y < r[1] + r[3] && y + bh > r[1])) return false;
-      placed.push([x, y, bw, bh]);
+    const CW = { 'is-region': 7.6, 'is-guide': 7.2, 'is-n2': 7.4, 'is-sel': 7.6, 'is-hover': 7.2, 'is-n3': 6.6, 'is-proj': 6.4 };
+    const hit = (b) => placed.some((q) => b[0] < q[0] + q[2] + 4 && b[0] + b[2] + 4 > q[0] && b[1] < q[1] + q[3] + 4 && b[1] + b[3] + 4 > q[1]);
+    // anchor: r = a la derecha, l = a la izquierda, b = debajo, c = centrado
+    const put = (text, cls, x, y, anchor, force) => {
+      if (used >= LABEL_CAP + 12 || x < -60 || x > w + 60 || y < -20 || y > h + 20) return false;
+      const bw = text.length * (CW[cls] || 6.8) + 4, bh = /is-n2|is-sel/.test(cls) ? 17 : 15;
+      const bx = anchor === 'r' ? x : anchor === 'l' ? x - bw : x - bw / 2;
+      const by = anchor === 'b' ? y : y - bh / 2;
+      const box = [bx, by, bw, bh];
+      if (!force && hit(box)) return false;
+      placed.push(box);
       const el = labelEl(used++);
-      el.textContent = text; el.className = 'sb-label ' + cls; el.style.display = '';
-      el.style.color = '';
-      el.style.transform = `translate(${Math.round(s[0])}px, ${Math.round(s[1] + off)}px) translate(-50%, 0)`;
+      el.textContent = text; el.className = 'sb-label ' + cls; el.style.display = ''; el.style.color = '';
+      const tx = anchor === 'r' ? '0' : anchor === 'l' ? '-100%' : '-50%';
+      const ty = anchor === 'b' ? '0' : '-50%';
+      el.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px) translate(${tx}, ${ty})`;
       return true;
     };
-    const below = (i) => pxRadius(i) + 5;
-    for (const id of [selected, hovered]) {
-      if (id && isVisible(id)) { const i = idx(id); place(data.nodes[i].label, centerOf(i), id === selected ? 'is-sel' : 'is-hover', below(i), true); }
-    }
-    if (!morph && mode === 'mapa') {
-      for (const s of sectors) {
-        if (!data.nodes.some((n) => n.region === s.id && isVisible(n.id))) continue;
-        place(s.label, [Math.cos(s.ac) * (BELT[1] + 18), 0, Math.sin(s.ac) * (BELT[1] + 18)], 'is-region', -8, false, s.color);
-      }
-      if (view.phi > 0.25) {
-        const mid = (b) => (b[0] + b[1]) / 2;
-        place('Respaldado', [0, 0, mid(bands.respaldado)], 'is-guide', -8);
-        place('Mencionado', [0, 0, mid(bands.mencionado)], 'is-guide', -8);
-        place('Por validar', [0, 0, mid(bands.otros)], 'is-guide', -8);
-        place('Proyectos', [0, 0, (BELT[0] + BELT[1]) / 2], 'is-guide', -8);
-      }
-    } else if (!morph) {
-      for (const r of data.regions) if (r.count && data.nodes.some((n) => n.region === r.id && isVisible(n.id))) place(r.label, r.center, 'is-region', -46, false, r.color);
-    }
-    const focusId = selected || hovered;
-    const fs = focusId ? new Set(data.adj.get(focusId).map((x) => x[0])) : highlight;
-    const zoom = fitRadius / view.radius;
-    const minSize = zoom > 1.9 ? 0 : zoom > 1.25 ? 0.4 : 0.55;
-    const rank = (n) => (n.type === 'competencia' ? 3 : n.type === 'recomendacion' ? 2.5 : n.type === 'objetivo' ? 2.2 : 0) + n.size;
-    const cand = data.nodes.filter((n) => isVisible(n.id) && n.id !== selected && n.id !== hovered && (fs ? fs.has(n.id) : (n.size >= minSize || n.type === 'competencia')))
-      .sort((x, y) => rank(y) - rank(x));
-    for (const n of cand) {
-      if (used >= LABEL_CAP + 16) break;
+    const nodeLabel = (n, cls, force) => {
       const i = idx(n.id);
-      place(n.label, centerOf(i), n.type === 'recomendacion' ? 'is-rec' : n.type === 'competencia' ? 'is-comp' : n.type === 'proyecto' ? 'is-proj' : '', below(i), false, n.type === 'competencia' || n.type === 'proyecto' ? areaColor(n.area || n.region) : null);
+      const sc = toScreen(centerOf(i));
+      if (!sc) return false;
+      const rp = pxRadius(i);
+      return put(n.label, cls, sc[0] + rp + 6, sc[1], 'r', force) || put(n.label, cls, sc[0], sc[1] + rp + 3, 'b', force) || put(n.label, cls, sc[0] - rp - 6, sc[1], 'l', force);
+    };
+    const tier = (n) => (n.type === 'competencia' || n.type === 'objetivo' || n.type === 'recomendacion' ? 'is-n2' : n.type === 'proyecto' ? 'is-proj' : 'is-n3');
+    if (selected && isVisible(selected)) nodeLabel(data.nodes[idx(selected)], 'is-sel', true);
+    if (hovered && hovered !== selected && isVisible(hovered)) nodeLabel(data.nodes[idx(hovered)], 'is-hover', true);
+    if (selected) {
+      // con selección: solo el nodo y sus vecinos
+      const near = data.adj.get(selected).map((x) => data.nodes[idx(x[0])]).filter((n) => isVisible(n.id))
+        .sort((a, b) => (tier(a) === 'is-n2' ? 0 : 1) - (tier(b) === 'is-n2' ? 0 : 1) || b.size - a.size);
+      for (const n of near) nodeLabel(n, tier(n));
+    } else {
+      if (!morph && mode === 'mapa') {
+        for (const sct of sectors) {
+          if (!data.nodes.some((n) => n.region === sct.id && isVisible(n.id))) continue;
+          const sc = toScreen([Math.cos(sct.ac) * (BELT[BELT.length - 1] + 20), 0, Math.sin(sct.ac) * (BELT[BELT.length - 1] + 20)]);
+          if (sc) put(sct.label, 'is-region', sc[0], sc[1], 'c');
+        }
+        if (view.phi > 0.25) {
+          const mid = (b) => (b[0] + b[1]) / 2;
+          for (const [t, rr] of [['Respaldado', mid(bands.respaldado)], ['Mencionado', mid(bands.mencionado)], ['Por validar', mid(bands.otros)], ['Proyectos', BELT[1]]]) {
+            const sc = toScreen([0, 0, rr]); if (sc) put(t, 'is-guide', sc[0], sc[1], 'c');
+          }
+        }
+      } else if (!morph) {
+        for (const rg of data.regions) if (rg.count && data.nodes.some((n) => n.region === rg.id && isVisible(n.id))) { const sc = toScreen(rg.center); if (sc) put(rg.label, 'is-region', sc[0], sc[1] - 40, 'c'); }
+      }
+      const zoom = fitRadius / view.radius;
+      const hl = highlight;
+      const cand = data.nodes.filter((n) => isVisible(n.id) && n.id !== hovered).filter((n) => {
+        if (hl) return hl.has(n.id);
+        if (tier(n) === 'is-n2') return true;
+        if (n.type === 'proyecto') return zoom > 1.6;
+        return pxRadius(idx(n.id)) >= 7;
+      }).sort((a, b) => (tier(a) === 'is-n2' ? 0 : 1) - (tier(b) === 'is-n2' ? 0 : 1) || ((b.evidence && b.evidence.projects) || 0) - ((a.evidence && a.evidence.projects) || 0));
+      for (const n of cand) { if (used >= LABEL_CAP + 12) break; nodeLabel(n, tier(n)); }
     }
     for (let i = used; i < pool.length; i++) pool[i].style.display = 'none';
   }
@@ -709,6 +833,7 @@ export function createViewer(container, T, options = {}) {
     if (id && (!data || !data.index.has(id))) id = null;
     if (id === selected && !opts.force) return;
     selected = id;
+    selStart = performance.now();
     applyNodes(); applyLines();
     if (id && opts.focus !== false) focus(id);
     requestRender();
@@ -718,7 +843,8 @@ export function createViewer(container, T, options = {}) {
     if (!data || !data.index.has(id)) return;
     const b = boundsOf([id, ...data.adj.get(id).map((x) => x[0])]);
     const p = new T.Vector3(...pAt(idx(id)));
-    goTo({ theta: view.theta, phi: view.phi, radius: clamp(distanceFor(Math.max(b.r * 0.85, 30)), fitRadius * 0.5, fitRadius * 1.02), target: p.lerp(b.c, 0.45) });
+    // encuadra el nodo y TODOS sus vecinos (antes se centraba a medias y un vecino lejano quedaba fuera)
+    goTo({ theta: view.theta, phi: view.phi, radius: clamp(distanceFor(Math.max(b.r * 1.05, 45)), fitRadius * 0.55, fitRadius * 1.02), target: p.lerp(b.c, 0.8) });
   }
   function focusIds(ids) {
     if (!data || !ids.length) return;
@@ -735,7 +861,8 @@ export function createViewer(container, T, options = {}) {
     const id = pick(lastMove.x, lastMove.y);
     if (id !== hovered) {
       hovered = id; canvas.style.cursor = id ? 'pointer' : '';
-      if (!selected) { applyNodes(); applyLines(); }
+      applyNodes();
+      if (!selected) applyLines();
       requestRender();
     }
     cb.hover(id, lastMove.x, lastMove.y);
@@ -776,7 +903,7 @@ export function createViewer(container, T, options = {}) {
     if (pointers.size === 0) drag = null;
   };
   const onWheel = (e) => { e.preventDefault(); zoomBy(Math.exp(e.deltaY * 0.0011)); };
-  const onLeave = () => { lastMove = null; if (hovered) { hovered = null; canvas.style.cursor = ''; if (!selected) { applyNodes(); applyLines(); } requestRender(); } cb.hover(null); };
+  const onLeave = () => { lastMove = null; if (hovered) { hovered = null; canvas.style.cursor = ''; applyNodes(); if (!selected) applyLines(); requestRender(); } cb.hover(null); };
   const onKey = (e) => {
     const k = e.key;
     if (k === 'ArrowLeft') e.shiftKey ? panBy(40, 0) : nudge(-0.14, 0);
@@ -849,7 +976,7 @@ export function createViewer(container, T, options = {}) {
       morph = { t0: performance.now(), dur: 900, from: new Float32Array(P), to: L[m] };
       applyLines(); fit(); requestRender();
     },
-    setCamera(p, instant) { if (!PRESET[p]) return; preset = p; fit(!!instant); },
+    setCamera(p, instant) { if (!PRESET[p]) return; preset = p; applyLines(); fit(!!instant); },
     rotate: (dx, dy) => nudge(dx, dy),
     zoom: zoomBy,
     pan: panBy,
@@ -859,6 +986,7 @@ export function createViewer(container, T, options = {}) {
       labels: pool.filter((p) => p.style.display !== 'none').length, selected, hovered, layout: mode, preset,
       visible: data ? data.nodes.filter((n) => isVisible(n.id)).length : 0, frames: raf !== 0, frameCount: frames,
       highlighted: highlight ? highlight.size : 0,
+      edgesDrawn: { focus: focusRibbon ? focusRibbon.geometry.index.count / 6 : 0, context: ctxRibbon ? ctxRibbon.geometry.index.count / 6 : 0 },
     }),
     screenPos(id) {
       if (!data || !data.index.has(id)) return null;
