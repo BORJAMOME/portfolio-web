@@ -36,17 +36,20 @@
 .sb-canvas:active { cursor: grabbing; }
 
 .sb-labels { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+/* Etiquetas: texto negro sobre fondo transparente. Un halo blanco fino (no es un fondo)
+   mantiene la lectura cuando el texto pasa por encima de una línea o de un nodo. */
 .sb-label {
-  position: absolute; left: 0; top: 0; white-space: nowrap; font-size: 12px; line-height: 1.25; padding: 2px 6px; border-radius: 5px;
-  color: var(--sb-ink); background: rgba(255, 255, 255, .8); will-change: transform;
+  position: absolute; left: 0; top: 0; white-space: nowrap; font-size: 12px; line-height: 1.25; padding: 0;
+  color: #111; background: none; will-change: transform;
+  text-shadow: 0 0 2px #fff, 0 0 2px #fff, 0 0 4px #fff, 0 0 6px #fff;
 }
-.sb-label.is-comp { font-weight: 650; color: var(--sb-navy); background: rgba(255, 255, 255, .92); box-shadow: 0 0 0 1px var(--ap-line); }
-.sb-label.is-proj { color: var(--sb-navy-mid); font-size: 11.5px; }
-.sb-label.is-rec { color: var(--sb-amber-ink); font-weight: 600; background: #fdf6e8; box-shadow: 0 0 0 1px #ecd3a8; }
-.sb-label.is-region { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--sb-navy-mid); background: none; padding: 0; }
-.sb-label.is-guide { font-family: var(--font-serif); font-style: italic; font-size: 13px; color: var(--muted); background: none; padding: 0; }
-.sb-label.is-sel { color: #fff; background: var(--sb-navy); font-weight: 600; box-shadow: 0 6px 14px -6px rgba(29, 38, 56, .5); }
-.sb-label.is-hover { color: #fff; background: var(--sb-navy-mid); }
+.sb-label.is-comp { font-weight: 650; font-size: 12.5px; }
+.sb-label.is-proj { font-size: 11.5px; }
+.sb-label.is-rec { font-weight: 600; }
+.sb-label.is-region { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.sb-label.is-guide { font-family: var(--font-serif); font-style: italic; font-size: 13px; color: #3a3a3a; }
+.sb-label.is-sel { font-weight: 700; font-size: 13.5px; }
+.sb-label.is-hover { font-weight: 650; }
 
 /* barra superior flotante */
 .sb-bar { position: absolute; z-index: 6; inset: 14px 14px auto 14px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: flex-start; pointer-events: none; }
@@ -298,3 +301,19 @@
 .sb-node .sb-ichip { width: 20px; height: 20px; }
 .sb-node .sb-ichip .sb-ico { width: 12px; height: 12px; }
 .sb-node .sb-muted { padding-left: 28px; }
+
+/* ═══════════ v4: logotipos y tu información ═══════════ */
+.sb-ichip.is-logo { background: #fff; box-shadow: inset 0 0 0 1.5px var(--c); }
+.sb-ichip.is-logo.is-tint { opacity: .75; }
+.sb-ichip.is-logo.is-open { filter: grayscale(1); opacity: .7; }
+.sb-ichip.is-logo img { width: 64%; height: 64%; object-fit: contain; display: block; }
+.sb-btn--dark { background: #1d2638; border-color: #1d2638; color: #fff; }
+.sb-btn--dark:hover { background: #273a5f; border-color: #273a5f; }
+.sb-btn--sm { min-height: 34px; padding: 4px 12px; font-size: 13px; }
+.sb-user { background: #fbfaf7; border: 1px solid var(--ap-line); border-radius: 12px; padding: 12px 14px; }
+.sb-user-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.sb-user-note { white-space: pre-wrap; font-size: 14px; color: var(--text); border-left: 3px solid var(--ap-line-strong); padding-left: 10px; }
+.sb-user-links { list-style: none; display: grid; gap: 4px; font-size: 13.5px; }
+.sb-user-links a { color: var(--purple-text); overflow-wrap: anywhere; }
+.sb-tip-u { font-size: 12px; font-weight: 600; color: #6b4508; }
+.sb-multi { min-height: 150px; width: 100%; }
