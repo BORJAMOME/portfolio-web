@@ -150,22 +150,22 @@ export function mapLayout(snapshot) {
    los anillos de estado y el icono leído del atlas. */
 const VERT = `
 attribute vec3 aPos; attribute float aSize; attribute vec3 aFill; attribute vec3 aEdge; attribute vec3 aIconCol;
-attribute float aIcon; attribute float aShape; attribute float aStyle; attribute vec4 aRing; attribute float aDim; attribute float aSel;
+attribute float aIcon; attribute float aShape; attribute float aStyle; attribute vec4 aRing; attribute float aDim; attribute float aSel; attribute float aBrand;
 varying vec2 vP; varying vec3 vFill; varying vec3 vEdge; varying vec3 vIconCol; varying float vIcon; varying float vShape; varying float vStyle;
-varying vec4 vRing; varying float vDim; varying float vSel; varying float vDepth;
+varying vec4 vRing; varying float vDim; varying float vSel; varying float vDepth; varying float vBrand;
 void main() {
   vec4 mv = modelViewMatrix * vec4(aPos, 1.0);
   float ext = 1.62;
   mv.xy += position.xy * aSize * ext;
   vP = position.xy * ext;
-  vFill = aFill; vEdge = aEdge; vIconCol = aIconCol; vIcon = aIcon; vShape = aShape; vStyle = aStyle; vRing = aRing; vDim = aDim; vSel = aSel;
+  vFill = aFill; vEdge = aEdge; vIconCol = aIconCol; vIcon = aIcon; vShape = aShape; vStyle = aStyle; vRing = aRing; vDim = aDim; vSel = aSel; vBrand = aBrand;
   vDepth = -mv.z;
   gl_Position = projectionMatrix * mv;
 }`;
 const FRAG = `
 uniform sampler2D uAtlas; uniform float uCols; uniform float uFogNear; uniform float uFogFar;
 varying vec2 vP; varying vec3 vFill; varying vec3 vEdge; varying vec3 vIconCol; varying float vIcon; varying float vShape; varying float vStyle;
-varying vec4 vRing; varying float vDim; varying float vSel; varying float vDepth;
+varying vec4 vRing; varying float vDim; varying float vSel; varying float vDepth; varying float vBrand;
 float sdHex(vec2 p, float r) { const vec3 k = vec3(-0.866025404, 0.5, 0.577350269); p = abs(p.yx); p -= 2.0 * min(dot(k.xy, p), 0.0) * k.xy; p -= vec2(clamp(p.x, -k.z * r, k.z * r), r); return length(p) * sign(p.y); }
 float sdBox(vec2 p, float b, float rr) { vec2 q = abs(p) - vec2(b - rr); return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - rr; }
 float band(float r, float a, float b, float aa) { return smoothstep(a - aa, a + aa, r) * (1.0 - smoothstep(b - aa, b + aa, r)); }
@@ -181,15 +181,22 @@ void main() {
   if (vStyle > 0.5) { float ang = atan(vP.y, vP.x); dashOn = step(0.45, fract(ang / 6.2831853 * 16.0)); }
   vec3 col = vFill;
   col = mix(col, vEdge, rim * dashOn);
-  vec2 iuv = vP * 0.36 + 0.5;
+  vec2 iuv = vP * (vBrand > 0.0 ? 0.42 : 0.36) + 0.5;
   float ia = 0.0;
+  vec4 tx = vec4(0.0);
   if (iuv.x > 0.0 && iuv.x < 1.0 && iuv.y > 0.0 && iuv.y < 1.0) {
     float cx = mod(vIcon, uCols), cy = floor(vIcon / uCols);
     vec2 auv = (vec2(cx, cy) + vec2(iuv.x, 1.0 - iuv.y)) / uCols;
     auv.y = 1.0 - auv.y;
-    ia = texture2D(uAtlas, auv).a;
+    tx = texture2D(uAtlas, auv);
+    ia = tx.a;
   }
-  col = mix(col, vIconCol, ia * inside);
+  if (vBrand > 0.0) {
+    // logotipo a color; por validar = en gris; mencionado = atenuado (vBrand < 1)
+    vec3 lc = tx.rgb;
+    if (vStyle > 0.5) lc = mix(vec3(dot(lc, vec3(0.299, 0.587, 0.114))), vec3(1.0), 0.35);
+    col = mix(col, lc, ia * inside * vBrand);
+  } else col = mix(col, vIconCol, ia * inside);
   float alpha = inside;
   float r = length(vP);
   if (vRing.a > 0.5) {
@@ -244,11 +251,12 @@ export function createViewer(container, T, options = {}) {
   let sectors = [], bands = { respaldado: [20, 50], mencionado: [52, 70], otros: [72, 94] };
 
   /* ── Recursos compartidos ── */
-  const atlas = options.icons.buildAtlas(128);
+  const atlas = options.icons.buildAtlas(128, options.logos || null);
   const atlasTex = new T.CanvasTexture(atlas.canvas);
   atlasTex.colorSpace = T.NoColorSpace;
   atlasTex.minFilter = T.LinearMipmapLinearFilter;
   atlasTex.magFilter = T.LinearFilter;
+  atlas.ready.then(() => { if (!disposed) { atlasTex.needsUpdate = true; requestRender(); } });
   const nodeMat = new T.ShaderMaterial({
     vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: true,
     uniforms: { uAtlas: { value: atlasTex }, uCols: { value: atlas.cols }, uFogNear: { value: 200 }, uFogFar: { value: 700 } },
@@ -321,7 +329,7 @@ export function createViewer(container, T, options = {}) {
     nodeGeo.setAttribute('position', base.getAttribute('position'));
     nodeGeo.instanceCount = N;
     const mk = (name, n) => { const a = new T.InstancedBufferAttribute(new Float32Array(N * n), n); a.setUsage(T.DynamicDrawUsage); nodeGeo.setAttribute(name, a); return a; };
-    attrs = { aPos: mk('aPos', 3), aSize: mk('aSize', 1), aFill: mk('aFill', 3), aEdge: mk('aEdge', 3), aIconCol: mk('aIconCol', 3), aIcon: mk('aIcon', 1), aShape: mk('aShape', 1), aStyle: mk('aStyle', 1), aRing: mk('aRing', 4), aDim: mk('aDim', 1), aSel: mk('aSel', 1) };
+    attrs = { aPos: mk('aPos', 3), aSize: mk('aSize', 1), aFill: mk('aFill', 3), aEdge: mk('aEdge', 3), aIconCol: mk('aIconCol', 3), aIcon: mk('aIcon', 1), aShape: mk('aShape', 1), aStyle: mk('aStyle', 1), aRing: mk('aRing', 4), aDim: mk('aDim', 1), aSel: mk('aSel', 1), aBrand: mk('aBrand', 1) };
     // aspecto fijo de cada nodo (color, icono, forma, estilo, anillos): se calcula una vez
     nodes.forEach((n, i) => {
       const area = new T.Color(n.state === 'neutral' ? PALETTE.ink : areaColor(n.area || n.region));
@@ -334,7 +342,16 @@ export function createViewer(container, T, options = {}) {
       attrs.aFill.setXYZ(i, fill.r, fill.g, fill.b);
       attrs.aEdge.setXYZ(i, edge.r, edge.g, edge.b);
       attrs.aIconCol.setXYZ(i, icon.r, icon.g, icon.b);
-      attrs.aIcon.setX(i, atlas.index(n.icon || ({ proyecto: 'folder', competencia: 'hexagon', objetivo: 'flag', recomendacion: 'bulb' }[n.type] || 'dot')));
+      // tecnologías con logotipo: ficha blanca con el logotipo a color y el borde del color del área
+      const logoCell = n.id.startsWith('c:') ? atlas.logo(n.id.slice(2)) : -1;
+      if (logoCell >= 0) {
+        fill = WHITE.clone();
+        edge = n.state === 'respaldado' || n.state === 'mencionado' ? area : area.clone().lerp(WHITE, 0.15);
+        attrs.aFill.setXYZ(i, fill.r, fill.g, fill.b);
+        attrs.aEdge.setXYZ(i, edge.r, edge.g, edge.b);
+      }
+      attrs.aBrand.setX(i, logoCell >= 0 ? (n.state === 'mencionado' ? 0.55 : 1) : 0);
+      attrs.aIcon.setX(i, logoCell >= 0 ? logoCell : atlas.index(n.icon || ({ proyecto: 'folder', competencia: 'hexagon', objetivo: 'flag', recomendacion: 'bulb' }[n.type] || 'dot')));
       attrs.aShape.setX(i, n.type === 'proyecto' ? 1 : n.type === 'competencia' ? 2 : 0);
       attrs.aStyle.setX(i, n.state === 'pendiente' || n.state === 'brecha_probable' || n.state === 'brecha_confirmada' ? 1 : 0);
       const gap = n.state === 'brecha_probable' || n.state === 'brecha_confirmada';
@@ -635,7 +652,7 @@ export function createViewer(container, T, options = {}) {
       placed.push([x, y, bw, bh]);
       const el = labelEl(used++);
       el.textContent = text; el.className = 'sb-label ' + cls; el.style.display = '';
-      el.style.color = color || '';
+      el.style.color = '';
       el.style.transform = `translate(${Math.round(s[0])}px, ${Math.round(s[1] + off)}px) translate(-50%, 0)`;
       return true;
     };

@@ -309,13 +309,13 @@ test('publish: inicia sesión con la clave pública, escribe vía RLS y nunca su
 
 /* ─────────── SQL (comprobación estática; no sustituye a probarlo en Supabase) ─────────── */
 test('supabase/second-brain.sql activa RLS, cierra anon y todas las políticas exigen is_member()', () => {
-  const sql = readFileSync(join(ROOT, 'supabase', 'second-brain.sql'), 'utf8').replace(/--.*$/gm, '');
-  for (const t of ['sb_snapshots', 'sb_runs']) {
+  const sql = ['second-brain.sql', 'second-brain-notas.sql'].map((f) => readFileSync(join(ROOT, 'supabase', f), 'utf8')).join('\n').replace(/--.*$/gm, '');
+  for (const t of ['sb_snapshots', 'sb_runs', 'sb_notas']) {
     assert.match(sql, new RegExp(`alter table public\\.${t}\\s+enable row level security`));
     assert.match(sql, new RegExp(`revoke all on public\\.${t}\\s+from anon`));
   }
   const policies = sql.match(/create policy[\s\S]*?;/g) || [];
-  assert.ok(policies.length >= 6);
+  assert.ok(policies.length >= 10);
   for (const p of policies) {
     assert.match(p, /to authenticated/);
     assert.match(p, /public\.is_member\(\)/);
@@ -325,7 +325,7 @@ test('supabase/second-brain.sql activa RLS, cierra anon y todas las políticas e
 
 /* ─────────── Higiene del código del visor ─────────── */
 test('el código del navegador no usa innerHTML, eval ni credenciales de servidor', () => {
-  for (const f of ['area-privada-second-brain.js', 'second-brain/viewer.js', 'second-brain/contract.js']) {
+  for (const f of ['area-privada-second-brain.js', 'second-brain/viewer.js', 'second-brain/contract.js', 'second-brain/icons.js', 'second-brain/logos.js']) {
     const src = readFileSync(join(ROOT, f), 'utf8');
     assert.doesNotMatch(src, /innerHTML|outerHTML|insertAdjacentHTML|document\.write|\beval\(|new Function|service_role/, f);
     assert.doesNotMatch(src, /\bhtml\s*:/, `${f}: no debe pintar HTML con h({ html })`);

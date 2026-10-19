@@ -345,6 +345,85 @@ try {
   }
 
   /* ───────── Accesibilidad, móvil, rendimiento ───────── */
+  section('7b. Logotipos, etiquetas y tu información (notas, valoración y elementos propios)');
+  {
+    const posted = [];
+    const deleted = [];
+    const NOTES = [
+      { node_id: 'c:sql', es_propio: false, valoracion: 'domino', descripcion: 'Mi descripción de SQL.', nota: 'Nota privada.', enlaces: ['https://github.com/ejemplo/repo'], relacionados: [], updated_at: '2026-10-19T10:00:00Z' },
+      { node_id: 'c:pandas', es_propio: false, valoracion: 'brecha', nota: 'Me falta soltura con groupby.', enlaces: [], relacionados: [], updated_at: '2026-10-19T10:00:00Z' },
+      { node_id: 'u:dbt-core-ab12', es_propio: true, label: 'dbt Core', tipo: 'tecnologia', area: 'datos', descripcion: 'Transformaciones SQL versionadas.', valoracion: 'aprender', enlaces: [], relacionados: ['c:sql'], updated_at: '2026-10-19T10:00:00Z' },
+      { node_id: 'u:roto', es_propio: true, label: 'Área inexistente', tipo: 'concepto', area: 'no-existe', enlaces: [], relacionados: [] },
+    ];
+    const t7 = await open({ api: (u, m) => {
+      if (/sb_notas/.test(u)) {
+        if (m === 'POST') { posted.push(u); return { status: 201, body: {} }; }
+        if (m === 'DELETE') { deleted.push(u); return { status: 204, body: {} }; }
+        return { status: 200, body: NOTES };
+      }
+      return null;
+    } });
+    t7.page.on('request', (rq) => { if (/sb_notas/.test(rq.url()) && rq.method() === 'POST') posted.push(rq.postData()); });
+    await t7.page.goto(BASE + 'area-privada.html#/second-brain');
+    await waitGraph(t7.page);
+    const v = (fn) => t7.page.evaluate(fn);
+    check('las etiquetas del mapa no tienen fondo y el texto es negro', await v(() => {
+      const l = [...document.querySelectorAll('.sb-label')].find((x) => x.style.display !== 'none');
+      const cs = l && getComputedStyle(l);
+      return !!cs && cs.backgroundColor === 'rgba(0, 0, 0, 0)' && cs.color === 'rgb(17, 17, 17)';
+    }));
+    await v(() => document.querySelector('#sb-stage').__sbViewer.select('c:python'));
+    await t7.page.waitForTimeout(500);
+    check('la etiqueta seleccionada tampoco lleva fondo azul', await v(() => { const l = document.querySelector('.sb-label.is-sel'); return !!l && getComputedStyle(l).backgroundColor === 'rgba(0, 0, 0, 0)'; }));
+    check('las tecnologías con logotipo lo muestran en la interfaz (Python)', await t7.page.locator('#sb-detail .sb-ichip.is-logo img').count() === 1);
+    check('el logotipo se carga como imagen data: (sin red ni HTML inyectado)', /^data:image\/svg\+xml/.test(await t7.page.locator('#sb-detail .sb-ichip.is-logo img').getAttribute('src')));
+    check('un elemento añadido por ti aparece en el mapa', await v(() => document.querySelector('#sb-stage').__sbViewer.debugPositions()['u:dbt-core-ab12'] !== undefined));
+    check('un elemento propio con un área inexistente se descarta sin romper el mapa', await v(() => document.querySelector('#sb-stage').__sbViewer.debugPositions()['u:roto'] === undefined));
+    await v(() => document.querySelector('#sb-stage').__sbViewer.select('c:pandas'));
+    await t7.page.waitForTimeout(400);
+    const pd = await t7.page.locator('#sb-detail').textContent();
+    check('«Lo reconozco como brecha» la convierte en brecha confirmada con tu motivo', /Brecha confirmada/.test(pd) && /groupby/.test(pd));
+    await v(() => document.querySelector('#sb-stage').__sbViewer.select('c:sql'));
+    await t7.page.waitForTimeout(400);
+    const sd = await t7.page.locator('.sb-user').textContent();
+    check('«Tu información» muestra valoración, descripción, notas y enlaces', /Lo domino/.test(sd) && /Mi descripción de SQL/.test(sd) && /Nota privada/.test(sd) && /github\.com\/ejemplo/.test(sd));
+    check('los enlaces tuyos abren en pestaña nueva sin referer', (await t7.page.locator('.sb-user-links a').getAttribute('rel')) === 'noopener noreferrer');
+    // editar: validación de enlaces y guardado
+    await t7.page.locator('.sb-user .sb-btn').click();
+    await t7.page.locator('#sb-n-links').fill('javascript:alert(1)');
+    await t7.page.locator('dialog[open] button[type=submit]').click();
+    await t7.page.waitForTimeout(300);
+    check('un enlace que no es http(s) se rechaza', /no es válido/.test(await t7.page.locator('dialog[open] .ap-msg').textContent()));
+    await t7.page.locator('#sb-n-links').fill('https://borjamora.es');
+    await t7.page.locator('#sb-n-nota').fill('Nota actualizada');
+    const before = posted.length;
+    await t7.page.locator('dialog[open] button[type=submit]').click();
+    await t7.page.waitForTimeout(1200);
+    const body = posted.slice(before).find((x) => x && x.startsWith('{'));
+    check('guardar envía tu información a sb_notas (upsert por node_id)', !!body && /"node_id":"c:sql"/.test(body) && /Nota actualizada/.test(body) && posted.slice(before).some((x) => /on_conflict=node_id/.test(x)), String(body).slice(0, 160));
+    check('tras guardar se vuelve a mostrar el mismo elemento', (await t7.page.locator('#sb-detail-h').textContent()) === 'SQL');
+    // añadir un elemento nuevo
+    await t7.page.locator('.sb-btn', { hasText: '+ Añadir' }).click();
+    await t7.page.locator('#sb-n-label').fill('Looker Studio');
+    const b2 = posted.length;
+    await t7.page.locator('dialog[open] button[type=submit]').click();
+    await t7.page.waitForTimeout(1200);
+    const nb = posted.slice(b2).find((x) => x && x.startsWith('{'));
+    check('«+ Añadir» crea un elemento propio (es_propio, nombre, tipo y área)', !!nb && /"es_propio":true/.test(nb) && /Looker Studio/.test(nb) && /"node_id":"u:looker-studio-/.test(nb), String(nb).slice(0, 160));
+    await t7.ctx.close();
+
+    // sin la tabla: se explica qué ejecutar y no se pierde nada
+    const t8 = await open({ api: (u) => (/sb_notas/.test(u) ? { status: 404, body: { code: 'PGRST205' } } : null) });
+    await t8.page.goto(BASE + 'area-privada.html#/second-brain');
+    await waitGraph(t8.page);
+    check('sin la tabla de notas el mapa funciona igual', (await info(t8.page)).visible > 0);
+    await t8.page.evaluate(() => document.querySelector('#sb-stage').__sbViewer.select('c:sql'));
+    await t8.page.waitForTimeout(400);
+    await t8.page.locator('.sb-user .sb-btn').click();
+    check('al editar sin la tabla se indica el SQL que hay que ejecutar', /second-brain-notas\.sql/.test(await t8.page.locator('dialog[open]').textContent()));
+    await t8.ctx.close();
+  }
+
   section('8. Accesibilidad (axe), móvil y rendimiento');
   {
     const t = await open({ reducedMotion: true });

@@ -101,10 +101,13 @@ export function iconSvg(id) {
   return svg;
 }
 
-/* Atlas de iconos blancos sobre transparente: devuelve { canvas, index(id) → celda, cols }. */
-export function buildAtlas(cell = 128) {
+/* Atlas: glifos blancos sobre transparente y, si se pasan, logotipos a color.
+   Devuelve { canvas, cols, index(id), logo(key) → celda | -1, ready: Promise } (los logotipos
+   se decodifican como imágenes data:, así que llegan un instante después). */
+export function buildAtlas(cell = 128, logos = null) {
   const ids = Object.keys(ICONS);
-  const cols = Math.ceil(Math.sqrt(ids.length));
+  const logoIds = logos ? Object.keys(logos.LOGOS) : [];
+  const cols = Math.ceil(Math.sqrt(ids.length + logoIds.length));
   const canvas = document.createElement('canvas');
   canvas.width = canvas.height = cols * cell;
   const ctx = canvas.getContext('2d');
@@ -122,5 +125,18 @@ export function buildAtlas(cell = 128) {
     ctx.restore();
   });
   const at = new Map(ids.map((id, i) => [id, i]));
-  return { canvas, cols, index: (id) => (at.has(id) ? at.get(id) : at.get('dot')) };
+  const logoAt = new Map(logoIds.map((id, i) => [id, ids.length + i]));
+  const ready = Promise.all(logoIds.map((id) => new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const k = logoAt.get(id), x = (k % cols) * cell, y = Math.floor(k / cols) * cell;
+      const box = cell * 0.78, ratio = img.naturalWidth && img.naturalHeight ? img.naturalWidth / img.naturalHeight : 1;
+      const w = ratio >= 1 ? box : box * ratio, hh = ratio >= 1 ? box / ratio : box;
+      ctx.drawImage(img, x + (cell - w) / 2, y + (cell - hh) / 2, w, hh);
+      resolve();
+    };
+    img.onerror = () => resolve();
+    img.src = logos.logoUrl(id);
+  })));
+  return { canvas, cols, ready, index: (id) => (at.has(id) ? at.get(id) : at.get('dot')), logo: (key) => (logoAt.has(key) ? logoAt.get(key) : -1) };
 }

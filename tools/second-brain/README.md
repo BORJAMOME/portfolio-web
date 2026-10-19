@@ -93,6 +93,17 @@ discontinua del color del área (proyecto que lo demuestra), punteada gris (pert
 El suelo pinta cada área con su gama, más intensa en el anillo de lo respaldado. Al pasar el ratón aparece un tooltip con área, evidencia y descripción.
 Todos los nodos se dibujan en **una sola llamada** con un shader instanciado y un atlas de iconos; la selección se resuelve en espacio de pantalla.
 
+**Logotipos.** Las tecnologías con marca (Power BI, Python, SQL Server, pandas, NumPy, Jupyter, GitHub, Excel, scikit-learn,
+Streamlit, Figma, HTML5, TensorFlow, Hugging Face, Spark, Azure, GitHub Actions) muestran su logotipo a color sobre una ficha blanca con el borde del color del área
+(`second-brain/logos.js`, generado con `tools/second-brain/build-logos.cjs` a partir de SVG Logos y Simple Icons, CC0, y vscode-icons, MIT).
+Lo que no tiene marca (DAX, Data Storytelling, IBCS…) usa los iconos propios de `icons.js`. Las etiquetas del mapa son texto negro sin fondo.
+
+**Tu información.** Desde el detalle de cualquier elemento («Añadir tu información» / «Editar») puedes guardar tu valoración (lo domino, lo estoy practicando,
+quiero aprenderlo, lo reconozco como brecha), una descripción propia, notas, enlaces que lo demuestren y relaciones con otros elementos.
+Con «+ Añadir» creas elementos que el análisis no ha detectado. Se guarda en `public.sb_notas` (`supabase/second-brain-notas.sql`, RLS de miembro),
+nunca se mezcla con lo que calcula el motor y siempre se muestra como «añadido por ti». «Lo reconozco como brecha» es la única vía, junto a
+`assessments` en la configuración, por la que algo pasa a «brecha confirmada».
+
 **Preguntas.** Bajo el mapa, «Pregunta a tu Second Brain» responde, calculando sobre el snapshot (sin IA ni red): qué está mejor demostrado,
 qué falta para el objetivo, qué separa de Mid-Level, qué hacer ahora, qué solo está mencionado, dónde hay brechas, qué proyectos demuestran más
 y qué conceptos conectan más áreas. También acepta un tema libre («DAX», «retail»…). Cada respuesta resalta sus elementos en el mapa.

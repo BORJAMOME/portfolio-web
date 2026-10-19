@@ -50,6 +50,8 @@ window.APSecondBrain = (function () {
   const reducedMotion = () => !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
 
   let ctx = null, h = null;
+  let demoNotes = [];          // en la demostración los cambios viven solo en memoria
+  let pendingSelect = null;    // tras guardar, se vuelve a seleccionar lo que estabas editando
   let viewer = null, cleanups = [];
   let S = null;
 
@@ -72,8 +74,9 @@ window.APSecondBrain = (function () {
       import(assetUrl('sb-contract', './second-brain/contract.js')),
       import(assetUrl('sb-viewer', './second-brain/viewer.js')),
       import(assetUrl('sb-icons', './second-brain/icons.js')),
+      import(assetUrl('sb-logos', './second-brain/logos.js')),
       import(new URL(THREE_URL, document.baseURI).href),
-    ]).then((m) => ({ contract: m[0], viewer: m[1], icons: m[2], THREE: m[3] }));
+    ]).then((m) => ({ contract: m[0], viewer: m[1], icons: m[2], logos: m[3], THREE: m[4] }));
   }
   function isMissingTable(err) {
     return !!err && (err.status === 404 || err.code === 'PGRST205' || err.code === '42P01' || err.code === 'PGRST200');
@@ -86,21 +89,26 @@ window.APSecondBrain = (function () {
       }).then((g) => {
         const v = engine.contract.validateSnapshot(g);
         if (!v.ok) throw new Error('Los datos de demostración no son válidos: ' + v.errors[0]);
-        return { snapshot: g, fallback: false, run: null, demo: true };
+        return { snapshot: g, fallback: false, run: null, demo: true, notes: demoNotes, notesMissing: false };
       });
     }
     return Promise.all([
       ctx.api('/rest/v1/sb_snapshots?select=id,generated_at,created_at,engine_version,graph&mode=eq.real&order=generated_at.desc&limit=3'),
       ctx.api('/rest/v1/sb_runs?select=id,started_at,finished_at,status,message&order=started_at.desc&limit=1')
         .catch((e) => { if (e && e.auth) throw e; return []; }),
+      // tu información (supabase/second-brain-notas.sql); si la tabla aún no existe, el mapa funciona igual
+      ctx.api('/rest/v1/sb_notas?select=node_id,es_propio,label,tipo,area,descripcion,nota,valoracion,enlaces,relacionados,updated_at&order=updated_at.asc')
+        .catch((e) => { if (e && e.auth) throw e; return isMissingTable(e) ? { missing: true } : { error: true }; }),
     ]).then((res) => {
       const rows = res[0] || [];
       const run = (res[1] || [])[0] || null;
+      const notes = Array.isArray(res[2]) ? res[2] : [];
+      const notesMissing = !!(res[2] && res[2].missing);
       if (!rows.length) return { snapshot: null, run };
       let invalid = null;
       for (let i = 0; i < rows.length; i++) {
         const v = engine.contract.validateSnapshot(rows[i].graph);
-        if (v.ok) return { snapshot: rows[i].graph, fallback: i > 0, invalidFirst: invalid, run, demo: false };
+        if (v.ok) return { snapshot: rows[i].graph, fallback: i > 0, invalidFirst: invalid, run, demo: false, notes, notesMissing };
         if (!invalid) invalid = v.errors[0];
       }
       throw new Error('Los últimos análisis guardados no cumplen el contrato de datos (' + invalid + '). Vuelve a ejecutar el análisis.');
@@ -152,10 +160,51 @@ window.APSecondBrain = (function () {
   function demoLink() { return h('a', { class: 'ap-tool', href: '#/second-brain/demo', text: 'Ver con datos de demostración (ficticios)' }); }
 
   /* ═══════════ PINTADO PRINCIPAL ═══════════ */
+  /* Tu información sobre el mapa: elementos propios, valoraciones y relaciones. Todo queda
+     marcado como «añadido por ti» y se valida con el mismo contrato que el snapshot. */
+  const VALORACION = { domino: 'Lo domino', practicando: 'Lo estoy practicando', aprender: 'Quiero aprenderlo', brecha: 'Lo reconozco como brecha' };
+  const TIPO_ICON = { tecnologia: 'cube', concepto: 'dot', tecnica: 'wrench', proyecto: 'folder', competencia: 'hexagon' };
+  function mergeNotes(engine, g0, notes) {
+    if (!notes || !notes.length) return { g: g0, ok: true };
+    const g = JSON.parse(JSON.stringify(g0));
+    const byId = new Map(g.nodes.map((n) => [n.id, n]));
+    const region = new Map(g.regions.map((x) => [x.id, x]));
+    notes.forEach((nt, k) => {
+      let n = byId.get(nt.node_id);
+      if (!n && nt.es_propio && region.has(nt.area) && TIPO_ICON[nt.tipo]) {
+        const c = (nt.tipo === 'proyecto' ? region.get('practica') : region.get(nt.area)) || region.get(nt.area);
+        const j = ((k * 37) % 17) - 8;
+        n = {
+          id: nt.node_id, label: String(nt.label).slice(0, 118), type: nt.tipo, region: nt.tipo === 'proyecto' && region.has('practica') ? 'practica' : nt.area, area: nt.area,
+          icon: TIPO_ICON[nt.tipo], state: nt.valoracion === 'aprender' ? 'pendiente' : 'mencionado',
+          summary: (nt.descripcion || 'Elemento añadido por ti.').slice(0, 600), size: 0.5,
+          evidence: { practica: 0, explicativa: 0, declarativa: 1, projects: 0, breadth: 'ninguna' },
+          uncertainty: ['Añadido por ti: el análisis no lo ha detectado en tus fuentes.'], pos: [c.center[0] + j, c.center[1] + j / 2, c.center[2] - j],
+        };
+        g.nodes.push(n); byId.set(n.id, n);
+      }
+      if (!n) return;
+      n.user = { propio: !!nt.es_propio, nota: nt.nota || '', descripcion: nt.descripcion || '', valoracion: nt.valoracion || '', enlaces: (nt.enlaces || []).filter((u) => /^https?:\/\//i.test(u)), relacionados: nt.relacionados || [], updated: nt.updated_at || null };
+      if (nt.valoracion === 'brecha') {
+        n.state = 'brecha_confirmada';
+        n.assessment = { reason: (nt.nota || 'Registrada por ti como brecha.').slice(0, 600), source: 'Tu valoración en Second Brain', date: nt.updated_at || null };
+      }
+      (nt.relacionados || []).forEach((rid) => {
+        if (byId.has(rid) && rid !== n.id && !g.edges.some((e) => e.source === n.id && e.target === rid && e.type === 'usa')) {
+          g.edges.push({ source: n.id, target: rid, type: 'usa', confidence: 'baja', rationale: 'Relación añadida por ti.' });
+        }
+      });
+    });
+    g.stats = Object.assign({}, g.stats, { nodes: g.nodes.length, edges: g.edges.length });
+    const v = engine.contract.validateSnapshot(g);
+    return v.ok ? { g, ok: true } : { g: g0, ok: false, error: v.errors[0] };
+  }
+
   function paint(engine, data) {
     if (!data.snapshot) return message('empty', data.run)();
     ctx.view.textContent = '';
-    const g = data.snapshot;
+    const merged = mergeNotes(engine, data.snapshot, data.notes);
+    const g = merged.g;
     const nodeById = new Map(g.nodes.map((n) => [n.id, n]));
     const adj = new Map(g.nodes.map((n) => [n.id, []]));
     g.edges.forEach((e) => { adj.get(e.source).push({ e, other: e.target, out: true }); adj.get(e.target).push({ e, other: e.source, out: false }); });
@@ -168,7 +217,8 @@ window.APSecondBrain = (function () {
       compOf: new Map(g.competencies.map((k) => [k.nodeId, k])),
       f: { states: new Set(Object.keys(STATE)), types: new Set(Object.keys(TYPE)), regions: new Set(g.regions.map((r) => r.id)), priority: '', edges: new Set(Object.keys(EDGE).filter((k) => EDGE_DEFAULT_OFF.indexOf(k) < 0)), edgeMode: 'foco' },
       // en pantallas estrechas y verticales el disco se lee mejor desde arriba
-      icons: engine.icons, edgeStyle: engine.viewer.EDGE_STYLE, highlight: null,
+      icons: engine.icons, logos: engine.logos, edgeStyle: engine.viewer.EDGE_STYLE, highlight: null,
+      notesMissing: !!data.notesMissing, notesError: merged.ok ? null : merged.error, notes: data.notes || [],
       areaColor: new Map(g.regions.map((r) => [r.id, r.color || '#273a5f'])),
       layout: 'mapa', camera: window.matchMedia && matchMedia('(max-width: 700px)').matches ? 'cenital' : '3d', els: {}, visible: null,
     };
@@ -196,6 +246,7 @@ window.APSecondBrain = (function () {
     try {
       viewer = engine.viewer.createViewer(S.els.stage, engine.THREE, {
         icons: engine.icons,
+        logos: engine.logos,
         onSelect: (id) => selectNode(id, 'viewer'),
         onHover: (id, x, y) => showTip(id, x, y),
         onDetached: () => dispose(),
@@ -212,6 +263,9 @@ window.APSecondBrain = (function () {
     }
     applyFilters(true);
     renderDetail();
+    if (pendingSelect && S.nodeById.has(pendingSelect)) { const id = pendingSelect; pendingSelect = null; selectNode(id, 'panel'); }
+    pendingSelect = null;
+    if (S.notesError) ctx.setStatus('Parte de tu información no se ha podido aplicar: ' + S.notesError, true);
   }
 
   function stageMessage(text) {
@@ -286,6 +340,7 @@ window.APSecondBrain = (function () {
         seg('Punto de vista', [['3d', 'Perspectiva'], ['cenital', 'Cenital'], ['lateral', 'Lateral']], S.camera, (v) => { S.camera = v; if (viewer) viewer.setCamera(v); }, 'sb-seg--cam'),
         e.filters,
         h('button', { type: 'button', class: 'sb-btn', text: 'Restablecer', title: 'Quita filtros y selección y vuelve a la vista general', onclick: resetAll }),
+        h('button', { type: 'button', class: 'sb-btn sb-btn--dark', text: '+ Añadir', title: 'Añade un concepto, técnica o proyecto que el análisis no ha detectado', onclick: () => editNote(null) }),
       ]),
     ]);
   }
@@ -298,7 +353,9 @@ window.APSecondBrain = (function () {
     const shape = n.type === 'proyecto' ? ' is-square' : n.type === 'competencia' ? ' is-hex' : '';
     const el = h('span', { class: 'sb-ichip ' + cls + shape + (big ? ' is-big' : ''), 'aria-hidden': 'true' });
     el.style.setProperty('--c', color);                 // CSSOM: permitido por la CSP
-    el.appendChild(S.icons.iconSvg(n.icon || 'dot'));
+    const logo = n.id.indexOf('c:') === 0 && S.logos ? S.logos.logoUrl(n.id.slice(2)) : null;
+    if (logo) { el.classList.add('is-logo'); el.appendChild(h('img', { src: logo, alt: '' })); }
+    else el.appendChild(S.icons.iconSvg(n.icon || 'dot'));
     if (n.state === 'brecha_probable' || n.state === 'brecha_confirmada') el.classList.add('is-gap');
     return el;
   }
@@ -350,13 +407,14 @@ window.APSecondBrain = (function () {
     const n = id && S.nodeById.get(id);
     if (!n) { tip.hidden = true; return; }
     const st = STATE[n.state] || STATE.neutral;
-    const sum = n.summary.replace(/^Competencia del marco general.s*/, '');
+    const sum = (n.user && n.user.descripcion) || n.summary.replace(/^Competencia del marco general\.\s*/, '');
     const first = sum.length > 190 ? sum.slice(0, sum.lastIndexOf(' ', 186)) + '…' : sum;
     tip.textContent = '';
     tip.append(
       h('div', { class: 'sb-tip-h' }, [chip(n), h('div', null, [h('strong', { text: n.label }), h('span', { class: 'sb-muted', text: TYPE[n.type][0] + ' · ' + regionLabel(areaOf(n)) })])]),
       h('p', { class: 'sb-tip-st' }, [h('span', { class: 'sb-sw ' + (n.type === 'recomendacion' ? 'is-rec' : st.cls.indexOf('is-navy') > -1 ? 'is-solid' : n.state === 'mencionado' ? 'is-tint' : 'is-open'), 'aria-hidden': 'true' }), st.short + (n.evidence && n.evidence.projects ? ' · ' + plural(n.evidence.projects, 'proyecto', 'proyectos') : '')]),
       h('p', { class: 'sb-tip-d', text: first }),
+      n.user ? h('p', { class: 'sb-tip-u', text: n.user.propio ? 'Añadido por ti' : 'Con información tuya' + (n.user.valoracion ? ' · ' + VALORACION[n.user.valoracion] : '') }) : '',
       h('p', { class: 'sb-tip-f', text: plural(S.adj.get(n.id).length, 'relación', 'relaciones') + ' · clic para ver el detalle' }),
     );
     tip.hidden = false;
@@ -366,6 +424,114 @@ window.APSecondBrain = (function () {
     if (left + tw > box.width - 8) left = x - box.left - tw - 16;
     if (top + tip.offsetHeight > box.height - 8) top = y - box.top - tip.offsetHeight - 12;
     tip.style.transform = 'translate(' + Math.max(8, Math.round(left)) + 'px,' + Math.max(8, Math.round(top + S.els.stage.offsetTop)) + 'px)';
+  }
+
+  /* ═══════════ TU INFORMACIÓN: notas, valoración y elementos propios ═══════════ */
+  function userBlock(n) {
+    const u = n.user;
+    const box = h('section', { class: 'sb-block sb-user', 'aria-labelledby': 'sb-user-h' }, [
+      h('div', { class: 'sb-user-top' }, [
+        h('h3', { class: 'sb-h3', id: 'sb-user-h', text: u && u.propio ? 'Añadido por ti' : 'Tu información' }),
+        h('button', { type: 'button', class: 'sb-btn sb-btn--sm', text: u ? 'Editar' : 'Añadir tu información', onclick: () => editNote(n) }),
+      ]),
+    ]);
+    if (!u) {
+      box.appendChild(h('p', { class: 'sb-muted', text: 'Puedes valorar este elemento, añadir una descripción propia, notas, enlaces que lo demuestren o relacionarlo con otros. Lo verás siempre separado de lo que calcula el análisis.' }));
+      return box;
+    }
+    const dl = h('dl', { class: 'sb-dl' });
+    if (u.valoracion) dl.append(...dt('Tu valoración', VALORACION[u.valoracion]));
+    if (u.descripcion) dl.append(...dt('Tu descripción', u.descripcion));
+    if (u.relacionados.length) dl.append(...dt('Relacionado por ti con', u.relacionados.map((id) => (S.nodeById.get(id) || { label: id }).label).join(', ')));
+    if (u.updated) dl.append(...dt('Actualizado', fmtDate.format(new Date(u.updated))));
+    box.appendChild(dl);
+    if (u.nota) box.appendChild(h('p', { class: 'sb-user-note', text: u.nota }));
+    if (u.enlaces.length) {
+      box.appendChild(h('ul', { class: 'sb-user-links' }, u.enlaces.map((url) => h('li', null, [
+        h('a', { href: url, target: '_blank', rel: 'noopener noreferrer', text: url.replace(/^https?:\/\/(www\.)?/, '').slice(0, 70) }, []),
+      ]))));
+    }
+    return box;
+  }
+
+  function saveNote(row) {
+    if (S.demo) {
+      const i = demoNotes.findIndex((x) => x.node_id === row.node_id);
+      const rec = Object.assign({ updated_at: new Date().toISOString() }, i >= 0 ? demoNotes[i] : {}, row);
+      if (i >= 0) demoNotes[i] = rec; else demoNotes.push(rec);
+      return Promise.resolve();
+    }
+    if (S.notesMissing) return Promise.reject(new Error('Para guardar tu información, ejecuta una vez supabase/second-brain-notas.sql en el SQL Editor de Supabase.'));
+    return ctx.api('/rest/v1/sb_notas?on_conflict=node_id', { method: 'POST', headers: { 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify(row) });
+  }
+  function deleteNote(id) {
+    if (S.demo) { demoNotes = demoNotes.filter((x) => x.node_id !== id); return Promise.resolve(); }
+    return ctx.api('/rest/v1/sb_notas?node_id=eq.' + encodeURIComponent(id), { method: 'DELETE' });
+  }
+  function reloadAfter(id, msg) {
+    pendingSelect = id;
+    ctx.setStatus(msg + (S.demo ? ' (demostración: no se guarda al salir).' : ''));
+    window.dispatchEvent(new HashChangeEvent('hashchange'));
+  }
+
+  /* n = nodo existente (o propio) que se edita; null = elemento nuevo */
+  function editNote(n) {
+    const u = ctx.ui;
+    const isNew = !n;
+    const cur = (n && n.user) || {};
+    const areas = S.g.regions.filter((x) => ['practica', 'objetivos'].indexOf(x.id) < 0);
+    const f = {
+      label: isNew || cur.propio ? u.input('text', n ? n.label : '', { required: true, maxlength: '120' }) : null,
+      tipo: isNew || cur.propio ? u.select([['tecnologia', 'Tecnología'], ['concepto', 'Concepto'], ['tecnica', 'Técnica'], ['proyecto', 'Proyecto'], ['competencia', 'Competencia']], n ? n.type : 'concepto') : null,
+      area: isNew || cur.propio ? u.select(areas.map((x) => [x.id, x.label]), n ? (n.area || n.region) : (areas[0] && areas[0].id)) : null,
+      val: u.select(Object.keys(VALORACION).map((k) => [k, VALORACION[k]]), cur.valoracion || '', 'Sin valorar'),
+      desc: u.area(cur.descripcion || '', 3, 1200),
+      nota: u.area(cur.nota || '', 4, 4000),
+      links: u.area((cur.enlaces || []).join('\n'), 3, 2000),
+      rel: h('select', { multiple: true, size: '7', class: 'apf-select sb-multi' }, S.g.nodes.filter((x) => (!n || x.id !== n.id) && x.type !== 'recomendacion' && x.type !== 'objetivo').slice().sort((a, b) => Object.keys(TYPE).indexOf(a.type) - Object.keys(TYPE).indexOf(b.type) || a.label.localeCompare(b.label, 'es')).map((x) => h('option', { value: x.id, text: x.label + ' · ' + TYPE[x.type][0], selected: (cur.relacionados || []).indexOf(x.id) > -1 }))),
+    };
+    const fields = [];
+    if (f.label) fields.push(u.field('sb-n-label', 'Nombre', f.label, { wide: true }), u.field('sb-n-tipo', 'Tipo', f.tipo), u.field('sb-n-area', 'Área', f.area));
+    fields.push(
+      u.field('sb-n-val', 'Tu valoración', f.val, { hint: '«Lo reconozco como brecha» la marca como brecha confirmada en el mapa (con tus notas como motivo).' }),
+      u.field('sb-n-desc', 'Tu descripción', f.desc, { wide: true, hint: 'Se muestra antes que la descripción del análisis.' }),
+      u.field('sb-n-nota', 'Notas', f.nota, { wide: true }),
+      u.field('sb-n-links', 'Enlaces que lo demuestran', f.links, { wide: true, hint: 'Uno por línea: repositorio, informe publicado, certificado… (http o https).' }),
+      u.field('sb-n-rel', 'Relacionado con', f.rel, { wide: true, hint: 'Ctrl/⌘ + clic para elegir varios (máximo 10).' }),
+    );
+    if (S.demo) fields.unshift(h('p', { class: 'sb-banner is-demo apf-wide', text: 'Modo demostración: los cambios se ven, pero no se guardan.' }));
+    else if (S.notesMissing) fields.unshift(h('p', { class: 'sb-banner is-warn apf-wide', text: 'Aún no se puede guardar: ejecuta una vez supabase/second-brain-notas.sql en Supabase.' }));
+    const title = isNew ? 'Añadir un elemento propio' : (cur.propio ? 'Editar «' + n.label + '»' : 'Tu información sobre «' + n.label + '»');
+    u.formDialog(title, 'Guardar', fields, () => {
+      const links = f.links.value.split(/\n+/).map((x) => x.trim()).filter(Boolean);
+      const bad = links.find((x) => !/^https?:\/\/\S+$/i.test(x));
+      if (bad) throw u.invalid('Este enlace no es válido (tiene que empezar por http:// o https://): ' + bad.slice(0, 60), f.links);
+      if (links.length > 10) throw u.invalid('Como máximo 10 enlaces.', f.links);
+      const rel = [].filter.call(f.rel.options, (o) => o.selected).map((o) => o.value);
+      if (rel.length > 10) throw u.invalid('Como máximo 10 relaciones.', f.rel);
+      const row = {
+        node_id: n ? n.id : 'u:' + norm(f.label.value).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 50) + '-' + Date.now().toString(36).slice(-4),
+        es_propio: isNew || !!cur.propio,
+        valoracion: f.val.value || null, descripcion: f.desc.value.trim() || null, nota: f.nota.value.trim() || null,
+        enlaces: links, relacionados: rel,
+      };
+      if (f.label) {
+        if (!f.label.value.trim()) throw u.invalid('Ponle un nombre.', f.label);
+        Object.assign(row, { label: f.label.value.trim().slice(0, 120), tipo: f.tipo.value, area: f.area.value });
+      }
+      return saveNote(row).then(() => reloadAfter(row.node_id, isNew ? 'Añadido: «' + row.label + '».' : 'Guardado.'));
+    }, f.label || f.val);
+    // eliminar: tu información (o el elemento entero si es propio)
+    if (!isNew && n.user) {
+      const dlg = document.querySelector('dialog[open]');
+      const actions = dlg && dlg.querySelector('.ap-dialog-actions, .apf-actions, form > div:last-child');
+      const del = h('button', { type: 'button', class: 'ap-link-btn ap-link-btn--danger', text: cur.propio ? 'Eliminar este elemento' : 'Borrar tu información', onclick: () => {
+        ctx.ask({ title: cur.propio ? '¿Eliminar el elemento?' : '¿Borrar tu información?', text: cur.propio ? '«' + n.label + '» desaparecerá del mapa. No se puede deshacer.' : 'Se borran tu valoración, descripción, notas, enlaces y relaciones de «' + n.label + '». El análisis no cambia.', ok: 'Eliminar', danger: true })
+          .then((yes) => { if (!yes) return; if (dlg) dlg.close(); return deleteNote(n.id).then(() => reloadAfter(cur.propio ? null : n.id, 'Eliminado.')); })
+          .catch(ctx.fail);
+      } });
+      if (actions) actions.insertBefore(del, actions.firstChild);
+    }
   }
 
   /* ═══════════ PREGUNTAS: el mapa responde ═══════════
@@ -688,6 +854,7 @@ window.APSecondBrain = (function () {
     const rel = relationsBlock(n); if (rel) right.appendChild(rel);
     const rec = n.recommendationId && S.recById.get(n.recommendationId);
     if (rec) right.appendChild(h('section', { class: 'sb-block', 'aria-labelledby': 'sb-recd-h' }, [h('h3', { class: 'sb-h3', id: 'sb-recd-h', text: 'Recomendación asociada' }), recCard(rec, true)]));
+    right.insertBefore(userBlock(n), right.firstChild);
     cols.append(left, right);
     box.appendChild(cols);
   }
@@ -835,7 +1002,7 @@ window.APSecondBrain = (function () {
         h('ul', { class: 'sb-nodelist' }, ns.map((n) => h('li', null, [
           h('button', { type: 'button', class: 'sb-node' + (S.selected === n.id ? ' is-on' : ''), 'data-id': n.id, 'aria-current': S.selected === n.id ? 'true' : null, onclick: () => selectNode(n.id, 'list') }, [
             chip(n),
-            h('span', { class: 'sb-node-t', text: n.label }),
+            h('span', { class: 'sb-node-t', text: n.label + (n.user && n.user.propio ? ' ✎' : '') }),
             h('span', { class: 'sb-muted', text: TYPE[n.type][0] + ' · ' + (STATE[n.state] || STATE.neutral).short }),
           ]),
         ]))),
