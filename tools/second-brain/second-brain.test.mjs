@@ -184,7 +184,7 @@ test('la prioridad sigue la fórmula documentada: relevancia × distancia', () =
   const s = analyzeDemo().r.snapshot;
   const dist = s.meta.scoring.distance;
   for (const c of s.competencies) {
-    const key = c.state === 'respaldado' ? (c.partial ? 'respaldado parcial' : 'respaldado completo')
+    const key = c.state === 'respaldado' ? (c.partial ? 'respaldado parcial' : c.extendable ? 'respaldado ampliable' : 'respaldado completo')
       : c.state === 'brecha_probable' ? 'brecha probable' : c.state === 'pendiente' ? 'pendiente de validar'
       : c.state === 'brecha_confirmada' ? 'brecha confirmada' : null;
     if (!key) continue;   // «mencionado» tiene dos distancias (documentado/declarado)

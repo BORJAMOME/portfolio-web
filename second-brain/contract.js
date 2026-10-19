@@ -24,6 +24,7 @@ export const MODES = ['real', 'demo'];
 export const LIMITS = { nodes: 1500, edges: 6000, recommendations: 200, text: 600, label: 120 };
 
 const ID = /^[a-z0-9][a-z0-9:_.-]{0,79}$/;
+const ICON = /^[a-z0-9-]{1,40}$/;
 const isStr = (v, max) => typeof v === 'string' && v.length > 0 && v.length <= max;
 const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
 const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
@@ -56,6 +57,8 @@ export function validateSnapshot(s) {
     if (regionIds.has(r.id)) err(`Región duplicada: ${r.id}`);
     regionIds.add(r.id);
     if (!Array.isArray(r.center) || r.center.length !== 3 || !r.center.every(isNum)) err(`Región ${r.id}: centro inválido.`);
+    if (r.color != null && !/^#[0-9a-f]{6}$/i.test(r.color)) err(`Región ${r.id}: color inválido.`);
+    if (r.icon != null && !ICON.test(r.icon)) err(`Región ${r.id}: icono inválido.`);
   });
 
   const nodeIds = new Set();
@@ -72,6 +75,8 @@ export function validateSnapshot(s) {
     if (typeof n.summary !== 'string' || n.summary.length > LIMITS.text) err(`Nodo ${n.id}: resumen inválido.`);
     if (!Array.isArray(n.pos) || n.pos.length !== 3 || !n.pos.every((v) => isNum(v) && Math.abs(v) < 1000)) err(`Nodo ${n.id}: posición inválida.`);
     if (!isNum(n.size) || n.size < 0 || n.size > 1) err(`Nodo ${n.id}: tamaño fuera de 0..1.`);
+    if (n.icon != null && !ICON.test(n.icon)) err(`Nodo ${n.id}: icono inválido.`);
+    if (n.area != null && !regionIds.has(n.area)) err(`Nodo ${n.id}: área inexistente «${n.area}».`);
     if (!Array.isArray(n.uncertainty) || n.uncertainty.some((u) => typeof u !== 'string' || u.length > LIMITS.text)) err(`Nodo ${n.id}: incertidumbres inválidas.`);
     // Una brecha confirmada exige una evaluación explícita. La ausencia de documentos nunca basta.
     if (n.state === 'brecha_confirmada' && !(isObj(n.assessment) && isStr(n.assessment.reason, LIMITS.text) && isStr(n.assessment.source, 120))) {
