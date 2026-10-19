@@ -31,6 +31,8 @@ window.APEntrevistas = (function () {
   var ECOLS = 'id,proceso_id,fecha,fase,formato,duracion_min,entrevistadores,preparacion,autovaloracion,resultado,preguntas,bien,mejorar,feedback,calendar_uid';
 
   var ctx = null, procs = [], ents = [];
+  // correos de Gmail que las reglas no han podido aplicar solas (supabase/procesos-correo.sql); null = sin instalar
+  var correos = null, ultimaSync = null;
   var flash = '';   // aviso para después de redibujar (el shell limpia el estado al pintar)
   function notify(msg) { flash = msg; }
   var st = { q: '', estado: '', sort: 'fecha_aplicacion', dir: -1 };
@@ -85,9 +87,15 @@ window.APEntrevistas = (function () {
   function load() {
     return Promise.all([
       ctx.api('/rest/v1/procesos?select=' + PCOLS + '&order=fecha_aplicacion.desc'),
-      ctx.api('/rest/v1/entrevistas?select=' + ECOLS + '&order=fecha.asc')
-    ]).then(function (r) { procs = r[0] || []; ents = r[1] || []; });
+      ctx.api('/rest/v1/entrevistas?select=' + ECOLS + '&order=fecha.asc'),
+      ctx.api('/rest/v1/procesos_correo?select=id,direccion,remitente,destinatario,asunto,extracto,recibido_at,tipo,empresa,puesto,senales&estado=eq.por_revisar&order=recibido_at.desc&limit=50').catch(soft),
+      ctx.api('/rest/v1/procesos_correo?select=created_at&order=created_at.desc&limit=1').catch(soft)
+    ]).then(function (r) {
+      procs = r[0] || []; ents = r[1] || [];
+      correos = r[2]; ultimaSync = r[3] && r[3][0] ? r[3][0].created_at : null;
+    });
   }
+  function soft(err) { if (err && err.auth) throw err; return null; }
   function save(table, cols, id, row) {
     return id
       ? ctx.api('/rest/v1/' + table + '?id=eq.' + id + '&select=' + cols, { method: 'PATCH', headers: JSON_REP, body: JSON.stringify(row) }).then(function (r) { return r[0]; })
@@ -137,7 +145,9 @@ window.APEntrevistas = (function () {
       h('div', { class: 'apf-filters' }, [h('label', { class: 'sr-only', for: 'ape-estado', text: 'Filtrar por estado' }), ui.estado]),
       h('button', { type: 'button', class: 'ap-tool ap-tool--dark', onclick: function () { procesoForm(null); } }, [h('span', { 'aria-hidden': 'true', text: '+' }), ' Nuevo proceso'])
     ]));
+    if (correos && correos.length) ctx.view.appendChild(correosPanel());
     ctx.view.appendChild(ui.count);
+    if (ultimaSync) ctx.view.appendChild(h('p', { class: 'ape-meta ape-sync', text: 'Gmail revisado por última vez: ' + dtFmt.format(new Date(ultimaSync)) + '. Los procesos se crean y actualizan solos; lo dudoso queda por revisar aquí.' }));
     ctx.view.appendChild(h('div', { class: 'ap-table-wrap apf-wrap', tabindex: '0', role: 'region', 'aria-label': 'Procesos de selección' }, [h('table', { class: 'ap-table apf-table ape-table' }, [
       h('caption', { class: 'sr-only', text: 'Procesos de selección' }), h('thead', null, [ui.head]), ui.body
     ])]));
@@ -221,6 +231,53 @@ window.APEntrevistas = (function () {
         ])
       ]));
     });
+  }
+
+  /* ═══════════ CORREOS POR REVISAR (Gmail → procesos) ═══════════ */
+  var TIPOS_CORREO = [['candidatura', 'Candidatura enviada'], ['acuse', 'Acuse de recibo'], ['entrevista', 'Entrevista'], ['prueba', 'Prueba o test'], ['rechazo', 'Rechazo'], ['oferta', 'Oferta']];
+  function correosPanel() {
+    var h = ctx.h;
+    return h('section', { class: 'ape-mail', 'aria-labelledby': 'ape-mail-t' }, [
+      h('h3', { class: 'ape-h3', id: 'ape-mail-t', text: 'Correos por revisar (' + correos.length + ')' }),
+      h('p', { class: 'ape-meta', text: 'Las reglas no estaban seguras de la empresa o del tipo. Revísalos: «Aplicar» crea o actualiza el proceso.' }),
+      h('ul', { class: 'ape-mail-list' }, correos.map(function (m) {
+        var quien = m.direccion === 'enviado' ? 'Para ' + (m.destinatario || '?') : m.remitente || '?';
+        return h('li', { class: 'ape-mail-item' }, [
+          h('div', { class: 'ape-mail-main' }, [
+            h('p', { class: 'ape-mail-subj', text: m.asunto || '(sin asunto)' }),
+            h('p', { class: 'ape-meta', text: dtFmt.format(new Date(m.recibido_at)) + ' · ' + quien }),
+            h('p', { class: 'ape-meta', text: 'Detectado: ' + label(TIPOS_CORREO, m.tipo) + (m.empresa ? ' · ' + m.empresa : ' · empresa sin identificar') + (m.puesto ? ' · ' + m.puesto : '') }),
+            m.extracto ? h('p', { class: 'ape-mail-ext', text: m.extracto.slice(0, 280) + (m.extracto.length > 280 ? '…' : '') }) : null
+          ]),
+          h('div', { class: 'ape-card-act' }, [
+            h('button', { type: 'button', class: 'ap-tool ap-tool--dark', text: 'Revisar y aplicar', 'aria-label': 'Revisar y aplicar: ' + (m.asunto || 'correo'), onclick: function () { correoForm(m); } }),
+            h('button', { type: 'button', class: 'ap-link-btn', text: 'Descartar', 'aria-label': 'Descartar: ' + (m.asunto || 'correo'), onclick: function () { descartarCorreo(m); } })
+          ])
+        ]);
+      }))
+    ]);
+  }
+  function correoForm(m) {
+    var f = {
+      empresa: input('text', m.empresa, { required: true, maxlength: '160' }),
+      puesto: input('text', m.puesto, { maxlength: '200', placeholder: 'Si no lo sabes, déjalo vacío' }),
+      tipo: select(TIPOS_CORREO, m.tipo)
+    };
+    formDialog('Aplicar correo', 'Aplicar', [
+      field('ape-m-emp', 'Empresa', f.empresa, { wide: true, hint: 'Si ya tienes un proceso de esta empresa, se actualiza ese; si no, se crea.' }),
+      field('ape-m-pue', 'Puesto', f.puesto, { wide: true }),
+      field('ape-m-tip', 'Qué dice el correo', f.tipo, { wide: true })
+    ], function () {
+      var emp = f.empresa.value.trim();
+      if (!emp) throw invalid('Escribe la empresa.', f.empresa);
+      return ctx.api('/rest/v1/rpc/pc_aplicar', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ target: m.id, empresa_in: emp, puesto_in: f.puesto.value.trim() || null, tipo_in: f.tipo.value }) })
+        .then(function () { notify('Correo aplicado al proceso de ' + emp + '.'); rerender(); });
+    }, f.empresa);
+  }
+  function descartarCorreo(m) {
+    ctx.api('/rest/v1/rpc/pc_descartar', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ target: m.id }) })
+      .then(function () { notify('Correo descartado.'); rerender(); }).catch(ctx.fail);
   }
 
   /* ═══════════ DETALLE DE UN PROCESO ═══════════ */
