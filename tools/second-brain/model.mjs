@@ -17,7 +17,7 @@ import { slug } from './text.mjs';
 import { layout } from './layout.mjs';
 import { SCHEMA_VERSION } from '../../second-brain/contract.js';
 
-export const ENGINE_VERSION = '1.0.0';
+export const ENGINE_VERSION = '1.1.0';
 
 const TYPE_MAP = { tecnologia: 'tecnologia', concepto: 'concepto', tecnica: 'tecnica', 'competencia-blanda': 'concepto' };
 const CLS_LABEL = { practica: 'práctica', explicativa: 'documentación', declarativa: 'declarada' };
@@ -25,7 +25,7 @@ const PBIX_AFFECTED = new Set(['dax', 'dax-contexto', 'time-intelligence', 'powe
 
 /* Distancia al objetivo según el estado de la competencia (0 = nada que hacer, 1 = máxima).
    Son los pesos de la metodología documentada en README; no son una medición. */
-const DISTANCE = { respaldado: 0.1, parcial: 0.4, documentado: 0.6, declarado: 0.7, pendiente: 0.5, brecha_probable: 0.9, brecha_confirmada: 1.0 };
+const DISTANCE = { respaldado: 0.1, ampliable: 0.25, parcial: 0.4, documentado: 0.6, declarado: 0.7, pendiente: 0.5, brecha_probable: 0.9, brecha_confirmada: 1.0 };
 const CONF_WEIGHT = { alta: 1, media: 0.8, baja: 0.6 };
 
 const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
@@ -162,7 +162,7 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
     if (info.d) bits.push(`declarado en ${plural(info.d, 'fuente', 'fuentes')}`);
     const evidenceLine = bits.length ? `Evidencia: ${bits.join('; ')}${info.projects ? `, en ${plural(info.projects, 'proyecto', 'proyectos')}` : ''}.` : 'Sin evidencia detectada en las fuentes analizadas.';
     const node = addNode({
-      id: `c:${c.id}`, label: c.label, type: TYPE_MAP[c.tipo] || 'concepto', region: c.region, state,
+      id: `c:${c.id}`, label: c.label, type: TYPE_MAP[c.tipo] || 'concepto', region: c.region, area: c.region, icon: c.icono || 'dot', state,
       summary: `${c.resumen} ${evidenceLine}`.slice(0, 600),
       size: round2(Math.min(1, 0.3 + 0.1 * (scope ? scope.maxRel : 1) + Math.min(0.2, info.projects * 0.04))),
       evidence: { practica: info.p, explicativa: info.x, declarativa: info.d, projects: info.projects, breadth: info.projects >= 3 ? 'amplia' : info.projects >= 1 ? 'puntual' : 'ninguna' },
@@ -183,11 +183,14 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
     const assessed = assessOf('competencia', k.id);
     const okCount = coreStates.filter((s) => s === 'respaldado').length;
     const partial = okCount > 0 && okCount < coreStates.length;
+    // núcleo completo, pero con facetas opcionales que solo están mencionadas o sin evidencia: hay recorrido
+    const optionalGaps = k.opcionales.filter((id) => { const st = cstate.get(id); return st && st.state !== 'respaldado'; });
+    const extendable = okCount === coreStates.length && okCount > 0 && optionalGaps.length > 0;
     const search = k.buscarEn;
     let state, dist, conf, doc = 0;
     // 'ausente' = concepto del núcleo que no entró en el grafo (competencia poco relevante para el objetivo)
     if (assessed) { state = 'brecha_confirmada'; dist = DISTANCE.brecha_confirmada; conf = 'alta'; }
-    else if (okCount > 0) { state = 'respaldado'; dist = partial ? DISTANCE.parcial : DISTANCE.respaldado; conf = partial ? 'media' : 'alta'; }
+    else if (okCount > 0) { state = 'respaldado'; dist = partial ? DISTANCE.parcial : extendable ? DISTANCE.ampliable : DISTANCE.respaldado; conf = partial ? 'media' : 'alta'; }
     else if (coreStates.includes('mencionado')) {
       state = 'mencionado';
       const docOnly = k.nucleo.some((id) => { const e = ev.get(id); return e && e.explicativa.size > 0; });
@@ -210,7 +213,7 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
     const priority = round2(rel * dist);
     const rank = priority * CONF_WEIGHT[conf];
     const compNode = addNode({
-      id: `k:${k.id}`, label: k.label, type: 'competencia', region: k.region, state,
+      id: `k:${k.id}`, label: k.label, type: 'competencia', region: k.region, area: k.region, icon: k.icono || 'hexagon', state,
       summary: `Competencia del marco general. Relevancia para «${level.label}»: ${rel}/3. ${okCount ? `Núcleo respaldado: ${okCount} de ${coreStates.length}.` : 'Ningún concepto del núcleo está respaldado por evidencia.'}`.slice(0, 600),
       size: 0.85, evidence: { practica: 0, explicativa: 0, declarativa: 0, projects: 0, breadth: 'ninguna' },
       uncertainty: state === 'respaldado' ? ['Indica evidencia de trabajo; no equivale a una evaluación de nivel.'] : state === 'brecha_probable' ? [`Motivo: relevancia ${rel}/3 y sin evidencia en fuentes que sí se han analizado.`, 'Puede existir fuera de las fuentes configuradas.'] : state === 'pendiente' ? ['No se ha podido comprobar con las fuentes disponibles.'] : state === 'mencionado' ? ['Hay menciones, pero no práctica detectable.'] : [],
@@ -218,11 +221,11 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
     });
     if (assessed) compNode.assessment = { reason: assessed.motivo, source: assessed.origen, date: assessed.fecha || null };
     competencies.push({
-      nodeId: compNode.id, id: k.id, state, partial, confidence: conf,
+      nodeId: compNode.id, id: k.id, state, partial, extendable, confidence: conf,
       levels: { ...k.niveles }, relevance: rel, priority: { score: priority, rank: round2(rank) },
       effort: k.esfuerzo, unverified, members: members.map((id) => `c:${id}`).filter((id) => nodeIdx.has(id)),
     });
-    scored.push({ k, rel, state, partial, conf, priority, rank, dist, doc, compNode, coreStates, search });
+    scored.push({ k, rel, state, partial, extendable, optionalGaps, conf, priority, rank, dist, doc, compNode, coreStates, search });
     trace[compNode.id] = k.nucleo.flatMap((id) => (trace[`c:${id}`] || []).slice(0, 3)).slice(0, 10);
   }
 
@@ -234,6 +237,7 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
     let b = 'todavia_no';
     if (s.rel >= 2 && s.priority >= 1.0 && nowCount < 3) { b = 'ahora'; nowCount++; }
     else if (s.rel >= 2 && s.priority >= 0.5) b = 'despues';
+    else if (s.rel >= 2 && s.extendable) b = 'despues';          // núcleo demostrado: ampliar, sin urgencia
     bucketOf.set(s.k.id, b);
   }
 
@@ -252,15 +256,17 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
       : s.state === 'mencionado' ? `Aparece mencionado (${gaps.join(', ')}), pero no hay práctica detectable que lo demuestre.`
       : s.state === 'pendiente' ? `Es relevante para «${level.label}» (${s.rel}/3) y no se ha podido comprobar con las fuentes disponibles.`
       : s.state === 'brecha_confirmada' ? 'Tú mismo/a has registrado esta brecha en la evaluación.'
+      : s.extendable && !gaps.length ? `El núcleo está respaldado; faltan por demostrar ${s.optionalGaps.map((id) => conceptById.get(id).label).join(', ')}.`
       : `Hay evidencia parcial; falta cubrir ${gaps.join(', ')}.`;
     const evidence = s.state === 'brecha_probable' ? `Sin evidencia en ${plural(practicalFiles, 'archivo con práctica', 'archivos con práctica')} analizados. Podría existir fuera de las fuentes configuradas.`
       : s.state === 'pendiente' ? `No analizado: ${missingKinds(s.search).join(' ni ') || 'sin fuentes suficientes'}.`
       : s.state === 'mencionado' ? 'Solo menciones en documentación o listas declarativas.'
       : s.state === 'brecha_confirmada' ? 'Evaluación explícita registrada en la configuración.'
+      : s.extendable && !gaps.length ? `Núcleo completo; ${plural(s.optionalGaps.length, 'faceta opcional solo mencionada', 'facetas opcionales solo mencionadas')} o sin práctica detectable.`
       : `Evidencia en ${s.k.nucleo.length - gaps.length} de ${s.k.nucleo.length} conceptos del núcleo.`;
     const recId = `rec-${s.k.id}`;
     const recNode = addNode({
-      id: `r:${s.k.id}`, label: `${verb}: ${s.k.label}`.slice(0, 118), type: 'recomendacion', region: 'objetivos', state: 'oportunidad',
+      id: `r:${s.k.id}`, label: `${verb}: ${s.k.label}`.slice(0, 118), type: 'recomendacion', region: 'objetivos', area: s.k.region, icon: 'bulb', state: 'oportunidad',
       summary: `${why} ${s.k.resultado}`.slice(0, 600), size: round2(0.5 + 0.12 * s.priority),
       evidence: { practica: 0, explicativa: 0, declarativa: 0, projects: 0, breadth: 'ninguna' }, uncertainty: [`Confianza ${s.conf}. El esfuerzo es una estimación genérica del marco, no una medida.`], pos: [0, 0, 0],
     });
@@ -292,10 +298,18 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
     .filter(({ pj, pf }) => sourceKind.get(pj.source) === 'proyectos' && pf && pf.practical > 0 && !(pj.root && pf.practical < 3))
     .sort((a, b) => b.pf.practical - a.pf.practical || a.key.localeCompare(b.key))
     .slice(0, maxProjects);
+  const GENERIC = new Set(['python', 'pandas', 'jupyter', 'git', 'documentacion', 'data-quality', 'numpy-scipy', 'visualizacion-datos', 'eda']);
+  const regionOfConcept = new Map(framework.conceptos.map((c) => [c.id, c.region]));
   for (const { key, pj, pf } of candidates) {
+    // área principal: la región que más conceptos con práctica acumula en el proyecto
+    const votes = {};
+    for (const [id, nf] of pf.concepts) { const r = regionOfConcept.get(id); if (r) votes[r] = (votes[r] || 0) + nf * (GENERIC.has(id) ? 0.15 : 1); }
+    const area = Object.entries(votes).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0];
+    const title = pj.readme && pj.readme.title && pj.readme.title.length >= 4 ? pj.readme.title : pj.label;
+    const desc = pj.readme && pj.readme.desc ? ` ${pj.readme.desc}` : '';
     const n = addNode({
-      id: `p:${slug(key)}`, label: pj.label.slice(0, 118), type: 'proyecto', region: 'practica', state: 'respaldado',
-      summary: `Proyecto analizado: ${plural(pf.practical, 'archivo', 'archivos')} con evidencia práctica en ${plural(pf.concepts.size, 'concepto', 'conceptos')}.${pf.docs ? '' : ' No se ha encontrado documentación escrita en el proyecto.'}`,
+      id: `p:${slug(key)}`, label: title.slice(0, 118), type: 'proyecto', region: 'practica', area: area ? area[0] : 'practica', icon: 'folder', state: 'respaldado',
+      summary: `${desc.trim() ? desc.trim().replace(/([^.!?])$/, '$1.') + ' ' : ''}Proyecto analizado: ${plural(pf.practical, 'archivo', 'archivos')} con evidencia práctica en ${plural(pf.concepts.size, 'concepto', 'conceptos')}.${pf.docs ? '' : ' No se ha encontrado documentación escrita en el proyecto.'}`.slice(0, 600),
       size: round2(Math.min(0.75, 0.35 + pf.practical * 0.01)), evidence: { practica: pf.practical, explicativa: pf.docs, declarativa: 0, projects: 1, breadth: 'puntual' },
       uncertainty: ['Un proyecto demuestra trabajo realizado; no mide su calidad ni el nivel de dominio.'], pos: [0, 0, 0],
     });
@@ -306,7 +320,7 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
   for (const p of undocumented) {
     const id = `rec-doc-${slug(p.key)}`;
     const recNode = addNode({
-      id: `r:doc-${slug(p.key)}`, label: `Documentar el proyecto ${p.node.label}`.slice(0, 118), type: 'recomendacion', region: 'objetivos', state: 'oportunidad',
+      id: `r:doc-${slug(p.key)}`, label: `Documentar el proyecto ${p.node.label}`.slice(0, 118), type: 'recomendacion', region: 'objetivos', area: p.node.area, icon: 'doc', state: 'oportunidad',
       summary: 'El proyecto tiene código, pero ningún documento que explique sus decisiones.', size: 0.55,
       evidence: { practica: 0, explicativa: 0, declarativa: 0, projects: 0, breadth: 'ninguna' }, uncertainty: ['Puede haber documentación fuera de la carpeta analizada.'], pos: [0, 0, 0],
     });
@@ -325,7 +339,7 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
   for (const lv of framework.niveles) {
     const target = lv.id === level.id;
     addNode({
-      id: `o:${lv.id}`, label: lv.label, type: 'objetivo', region: 'objetivos', state: 'neutral',
+      id: `o:${lv.id}`, label: lv.label, type: 'objetivo', region: 'objetivos', area: 'objetivos', icon: 'flag', state: 'neutral',
       summary: `${lv.descripcion}${target ? ' Es el objetivo con el que se calcula la prioridad.' : ''} Son referencias orientativas: varían según empresa y sector.`.slice(0, 600),
       size: target ? 1 : 0.7, evidence: { practica: 0, explicativa: 0, declarativa: 0, projects: 0, breadth: 'ninguna' }, uncertainty: ['Marco general, no un estudio de mercado ni una evaluación oficial.'], pos: [0, 0, 0],
     });
@@ -375,7 +389,7 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
   }
 
   /* ── Regiones y distribución en el espacio ── */
-  const regions = framework.regiones.map((r, i) => ({ id: r.id, label: r.label, order: i, center: [0, 0, 0], count: 0 }));
+  const regions = framework.regiones.map((r, i) => ({ id: r.id, label: r.label, order: i, center: [0, 0, 0], count: 0, color: r.color || null, icon: r.icono || null }));
   layout(regions, nodes, edges);
   for (const r of regions) r.count = nodes.filter((n) => n.region === r.id).length;
 
@@ -391,8 +405,8 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
       basis: 'Marco general de competencias de analista de datos. No es un estudio de mercado: no se han consultado ofertas de empleo y no hay porcentajes de demanda.',
       scoring: {
         formula: 'prioridad = relevancia (0-3 según el nivel objetivo) × distancia al objetivo (0-1). Se ordena por prioridad × peso de confianza (alta 1, media 0,8, baja 0,6).',
-        distance: { 'respaldado completo': DISTANCE.respaldado, 'respaldado parcial': DISTANCE.parcial, 'documentado sin práctica': DISTANCE.documentado, 'solo declarado': DISTANCE.declarado, 'pendiente de validar': DISTANCE.pendiente, 'brecha probable': DISTANCE.brecha_probable, 'brecha confirmada': DISTANCE.brecha_confirmada },
-        buckets: 'ahora = hasta 3 con prioridad ≥ 1,0; después = prioridad ≥ 0,5; todavía no = el resto o relevancia < 2.',
+        distance: { 'respaldado completo': DISTANCE.respaldado, 'respaldado ampliable': DISTANCE.ampliable, 'respaldado parcial': DISTANCE.parcial, 'documentado sin práctica': DISTANCE.documentado, 'solo declarado': DISTANCE.declarado, 'pendiente de validar': DISTANCE.pendiente, 'brecha probable': DISTANCE.brecha_probable, 'brecha confirmada': DISTANCE.brecha_confirmada },
+        buckets: 'ahora = hasta 3 con prioridad ≥ 1,0; después = prioridad ≥ 0,5 o núcleo respaldado con facetas opcionales sin práctica; todavía no = el resto o relevancia < 2.',
       },
       limitations: [
         'La evidencia indica que se ha trabajado con algo; no mide el nivel de dominio.',

@@ -70,13 +70,33 @@ No hay conectores a GitHub, LinkedIn ni ofertas de empleo: solo carpetas locales
   - `oportunidad`: acción posible; no implica carencia.
 - **Relaciones**: salen de `relaciones` en `framework.json` (cada una con su fundamento) y de «proyecto → concepto» con práctica detectada.
   La coocurrencia solo añade un dato de apoyo («aparecen juntos en N proyectos»), nunca crea una relación. Tope de 6 por proyecto.
-- **Prioridad** = relevancia (0-3 para el nivel objetivo) × distancia al objetivo (respaldado 0,1 · parcial 0,4 · documentado 0,6 · declarado 0,7 · pendiente 0,5 · brecha probable 0,9 · confirmada 1,0).
+- **Prioridad** = relevancia (0-3 para el nivel objetivo) × distancia al objetivo (respaldado 0,1 · ampliable 0,25, núcleo completo pero con facetas opcionales sin práctica · parcial 0,4 · documentado 0,6 · declarado 0,7 · pendiente 0,5 · brecha probable 0,9 · confirmada 1,0).
   Se ordena por prioridad × peso de confianza (alta 1 · media 0,8 · baja 0,6). *Ahora* = hasta 3 con prioridad ≥ 1,0; *Después* ≥ 0,5; *Todavía no* = el resto o relevancia < 2.
   El esfuerzo (bajo/medio/alto) es una estimación genérica del marco, no una medida.
 - **Marco**: `framework.json` (niveles Junior / consolidado / Mid, competencias, conceptos, relaciones). Es un marco general editable,
   **no un estudio de mercado**: no se consultan ofertas ni se calculan porcentajes de demanda. Cambiarlo no requiere tocar el motor ni el visor.
 
 ## Visor
+
+**Lenguaje visual (v3).** Cada elemento se lee por cinco canales que no se pisan:
+
+| Canal | Significa |
+|---|---|
+| Color | Área de conocimiento (el mismo en el suelo, la ficha, las etiquetas y la leyenda; definido en `framework.json → regiones[].color`) |
+| Icono | Qué es: Power BI, SQL, Python, proyecto, competencia… (`second-brain/icons.js`, iconos de trazo propios, sin logotipos de marca) |
+| Relleno | Evidencia: sólido = respaldado · claro = mencionado · contorno discontinuo = por validar |
+| Anillo | Rojo = brecha · ámbar = prioridad ahora · tinta = seleccionado |
+| Forma | Círculo = conocimiento · hexágono = competencia · cuadrado = proyecto · ámbar = recomendación |
+
+Las líneas cambian según la familia de relación: continua navy (dependencia técnica), continua verde (mejora o habilita),
+discontinua del color del área (proyecto que lo demuestra), punteada gris (pertenece a / requerido por) y discontinua ámbar (recomendación).
+El suelo pinta cada área con su gama, más intensa en el anillo de lo respaldado. Al pasar el ratón aparece un tooltip con área, evidencia y descripción.
+Todos los nodos se dibujan en **una sola llamada** con un shader instanciado y un atlas de iconos; la selección se resuelve en espacio de pantalla.
+
+**Preguntas.** Bajo el mapa, «Pregunta a tu Second Brain» responde, calculando sobre el snapshot (sin IA ni red): qué está mejor demostrado,
+qué falta para el objetivo, qué separa de Mid-Level, qué hacer ahora, qué solo está mencionado, dónde hay brechas, qué proyectos demuestran más
+y qué conceptos conectan más áreas. También acepta un tema libre («DAX», «retail»…). Cada respuesta resalta sus elementos en el mapa.
+
 
 Dos distribuciones del mismo snapshot, con transición animada entre ellas:
 

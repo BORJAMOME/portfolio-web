@@ -18,7 +18,7 @@
 window.APSecondBrain = (function () {
   'use strict';
 
-  const THREE_URL = './vendor/three-0.186.1-sb.min.js';
+  const THREE_URL = './vendor/three-0.186.1-sb2.min.js';
   const DEMO_URL = './second-brain/demo-snapshot.json';
   const STALE_DAYS = 14;
 
@@ -71,8 +71,9 @@ window.APSecondBrain = (function () {
     return Promise.all([
       import(assetUrl('sb-contract', './second-brain/contract.js')),
       import(assetUrl('sb-viewer', './second-brain/viewer.js')),
+      import(assetUrl('sb-icons', './second-brain/icons.js')),
       import(new URL(THREE_URL, document.baseURI).href),
-    ]).then((m) => ({ contract: m[0], viewer: m[1], THREE: m[2] }));
+    ]).then((m) => ({ contract: m[0], viewer: m[1], icons: m[2], THREE: m[3] }));
   }
   function isMissingTable(err) {
     return !!err && (err.status === 404 || err.code === 'PGRST205' || err.code === '42P01' || err.code === 'PGRST200');
@@ -167,6 +168,8 @@ window.APSecondBrain = (function () {
       compOf: new Map(g.competencies.map((k) => [k.nodeId, k])),
       f: { states: new Set(Object.keys(STATE)), types: new Set(Object.keys(TYPE)), regions: new Set(g.regions.map((r) => r.id)), priority: '', edges: new Set(Object.keys(EDGE).filter((k) => EDGE_DEFAULT_OFF.indexOf(k) < 0)), edgeMode: 'foco' },
       // en pantallas estrechas y verticales el disco se lee mejor desde arriba
+      icons: engine.icons, edgeStyle: engine.viewer.EDGE_STYLE, highlight: null,
+      areaColor: new Map(g.regions.map((r) => [r.id, r.color || '#273a5f'])),
       layout: 'mapa', camera: window.matchMedia && matchMedia('(max-width: 700px)').matches ? 'cenital' : '3d', els: {}, visible: null,
     };
     on(window, 'hashchange', () => { if (!/^#\/second-brain/.test(location.hash)) dispose(); });
@@ -184,6 +187,7 @@ window.APSecondBrain = (function () {
     const root = h('section', { class: 'sb', 'aria-label': 'Second Brain' }, [
       headerEl(data),
       stageEl(),
+      askCard(),
       h('div', { class: 'sb-below' }, [detailCard(), recsCard()]),
       listCard(),
     ]);
@@ -191,7 +195,9 @@ window.APSecondBrain = (function () {
 
     try {
       viewer = engine.viewer.createViewer(S.els.stage, engine.THREE, {
+        icons: engine.icons,
         onSelect: (id) => selectNode(id, 'viewer'),
+        onHover: (id, x, y) => showTip(id, x, y),
         onDetached: () => dispose(),
         onContextLost: () => stageMessage('El navegador ha perdido el contexto gráfico. Recarga la sección para recuperar el mapa 3D.'),
       });
@@ -250,8 +256,9 @@ window.APSecondBrain = (function () {
       h('button', { type: 'button', class: 'ap-tool', text: 'Restablecer filtros', onclick: resetAll }),
     ]);
     e.chip = h('div', { class: 'sb-chip', hidden: true, role: 'status', 'aria-live': 'polite' });
+    e.tip = h('div', { class: 'sb-tip', hidden: true, 'aria-hidden': 'true' });
     return h('div', { class: 'sb-stage-card' }, [
-      toolbarEl(), e.stage, e.stageMsg, e.empty, e.chip, legendEl(), navEl(),
+      toolbarEl(), e.stage, e.stageMsg, e.empty, e.chip, e.tip, legendEl(), navEl(),
     ]);
   }
 
@@ -283,30 +290,187 @@ window.APSecondBrain = (function () {
     ]);
   }
 
+  /* Ficha de color + icono de un nodo o un área (la misma gramática que el mapa) */
+  function areaOf(n) { return n.area || n.region; }
+  function chip(n, big) {
+    const color = n.type === 'recomendacion' ? '#d9952c' : n.state === 'neutral' ? '#1d2638' : S.areaColor.get(areaOf(n)) || '#273a5f';
+    const cls = n.type === 'recomendacion' || n.state === 'respaldado' || n.state === 'neutral' ? 'is-solid' : n.state === 'mencionado' ? 'is-tint' : 'is-open';
+    const shape = n.type === 'proyecto' ? ' is-square' : n.type === 'competencia' ? ' is-hex' : '';
+    const el = h('span', { class: 'sb-ichip ' + cls + shape + (big ? ' is-big' : ''), 'aria-hidden': 'true' });
+    el.style.setProperty('--c', color);                 // CSSOM: permitido por la CSP
+    el.appendChild(S.icons.iconSvg(n.icon || 'dot'));
+    if (n.state === 'brecha_probable' || n.state === 'brecha_confirmada') el.classList.add('is-gap');
+    return el;
+  }
+  function areaChip(r) {
+    const el = h('span', { class: 'sb-ichip is-solid', 'aria-hidden': 'true' });
+    el.style.setProperty('--c', r.color || '#273a5f');
+    el.appendChild(S.icons.iconSvg(r.icon || 'dot'));
+    return el;
+  }
+  function lineSample(style) {
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('viewBox', '0 0 34 8'); svg.setAttribute('class', 'sb-line'); svg.setAttribute('aria-hidden', 'true');
+    const l = document.createElementNS(ns, 'line');
+    l.setAttribute('x1', '1'); l.setAttribute('y1', '4'); l.setAttribute('x2', '33'); l.setAttribute('y2', '4');
+    l.setAttribute('stroke', style.color || '#2f6db5'); l.setAttribute('stroke-width', '2'); l.setAttribute('stroke-linecap', 'round');
+    if (style.dash) l.setAttribute('stroke-dasharray', style.dash[0] * 2 + ' ' + style.dash[1] * 2);
+    svg.appendChild(l);
+    return svg;
+  }
+
   function legendEl() {
     const small = window.matchMedia && matchMedia('(max-width: 900px)').matches;
+    const areas = S.g.regions.filter((r) => S.g.nodes.some((n) => n.region === r.id || n.area === r.id));
+    const sw = (cls, label) => h('li', null, [h('span', { class: 'sb-sw ' + cls, 'aria-hidden': 'true' }), label]);
     return h('details', { class: 'sb-legend', open: small ? null : true }, [
       h('summary', { text: 'Cómo leer el mapa' }),
-      h('ul', { class: 'sb-read' }, [
-        h('li', null, [h('strong', { text: 'Sector: ' }), 'área de conocimiento.']),
-        h('li', null, [h('strong', { text: 'Del centro al borde: ' }), 'de respaldado a por validar.']),
-        h('li', null, [h('strong', { text: 'Altura: ' }), 'competencias arriba; pines ámbar sobre lo que recomiendan; objetivos en el eje.']),
-        h('li', null, [h('strong', { text: 'Anillo exterior: ' }), 'proyectos, junto al área que demuestran.']),
-      ]),
-      h('ul', { class: 'sb-keyc' }, [
-        h('li', null, [h('span', { class: 'sb-dot is-navy', 'aria-hidden': 'true' }), 'Respaldado']),
-        h('li', null, [h('span', { class: 'sb-dot is-steel', 'aria-hidden': 'true' }), 'Mencionado']),
-        h('li', null, [h('span', { class: 'sb-dot is-mist', 'aria-hidden': 'true' }), 'Por validar']),
-        h('li', null, [h('span', { class: 'sb-dot is-amber', 'aria-hidden': 'true' }), 'Recomendación']),
-        h('li', null, [h('span', { class: 'sb-ring is-red', 'aria-hidden': 'true' }), 'Brecha probable']),
-        h('li', null, [h('span', { class: 'sb-ring is-amber', 'aria-hidden': 'true' }), 'Prioridad ahora']),
+      h('p', { class: 'sb-leg-h', text: 'Color = área' }),
+      h('ul', { class: 'sb-leg-areas' }, areas.map((r) => h('li', null, [areaChip(r), h('span', { text: r.label })]))),
+      h('p', { class: 'sb-leg-h', text: 'Relleno = evidencia' }),
+      h('ul', { class: 'sb-leg-ev' }, [
+        sw('is-solid', 'Respaldado'), sw('is-tint', 'Mencionado'), sw('is-open', 'Por validar'),
+        sw('is-gap', 'Brecha'), sw('is-now', 'Prioridad ahora'), sw('is-rec', 'Recomendación'),
       ]),
       h('details', { class: 'sb-legend-more' }, [
-        h('summary', { text: 'Formas y controles' }),
-        h('ul', { class: 'sb-shapes' }, Object.keys(TYPE).map((k) => h('li', null, [h('span', { 'aria-hidden': 'true', text: TYPE[k][1] + ' ' }), TYPE[k][0]]))),
+        h('summary', { text: 'Relaciones, formas y controles' }),
+        h('ul', { class: 'sb-leg-lines' }, Object.values(S.edgeStyle).map((st) => h('li', null, [lineSample(st), st.label]))),
+        h('ul', { class: 'sb-leg-ev' }, [sw('is-solid', 'Círculo: conocimiento'), sw('is-solid is-hex', 'Hexágono: competencia'), sw('is-solid is-square', 'Cuadrado: proyecto'), sw('is-rec', 'Ámbar: recomendación')]),
+        h('p', { class: 'sb-read', text: 'Del centro al borde: de respaldado a por validar. Arriba: competencias y recomendaciones. Anillo exterior: proyectos. Eje central: objetivos.' }),
         h('p', { class: 'sb-keys', id: 'sb-keys', text: 'Arrastra para girar (en cenital, para desplazar) · rueda o pellizco: zoom · con el mapa enfocado: flechas giran, Mayús + flechas desplazan, + / − acercan, 0 vista general, Esc quita la selección.' }),
       ]),
     ]);
+  }
+
+  /* ── Tooltip al pasar el ratón: qué es, de qué área, su evidencia y una frase ── */
+  function showTip(id, x, y) {
+    if (!S) return;
+    const tip = S.els.tip;
+    const n = id && S.nodeById.get(id);
+    if (!n) { tip.hidden = true; return; }
+    const st = STATE[n.state] || STATE.neutral;
+    const sum = n.summary.replace(/^Competencia del marco general.s*/, '');
+    const first = sum.length > 190 ? sum.slice(0, sum.lastIndexOf(' ', 186)) + '…' : sum;
+    tip.textContent = '';
+    tip.append(
+      h('div', { class: 'sb-tip-h' }, [chip(n), h('div', null, [h('strong', { text: n.label }), h('span', { class: 'sb-muted', text: TYPE[n.type][0] + ' · ' + regionLabel(areaOf(n)) })])]),
+      h('p', { class: 'sb-tip-st' }, [h('span', { class: 'sb-sw ' + (n.type === 'recomendacion' ? 'is-rec' : st.cls.indexOf('is-navy') > -1 ? 'is-solid' : n.state === 'mencionado' ? 'is-tint' : 'is-open'), 'aria-hidden': 'true' }), st.short + (n.evidence && n.evidence.projects ? ' · ' + plural(n.evidence.projects, 'proyecto', 'proyectos') : '')]),
+      h('p', { class: 'sb-tip-d', text: first }),
+      h('p', { class: 'sb-tip-f', text: plural(S.adj.get(n.id).length, 'relación', 'relaciones') + ' · clic para ver el detalle' }),
+    );
+    tip.hidden = false;
+    const box = S.els.stage.getBoundingClientRect();
+    const tw = Math.min(320, box.width - 24);
+    let left = x - box.left + 16, top = y - box.top + 16;
+    if (left + tw > box.width - 8) left = x - box.left - tw - 16;
+    if (top + tip.offsetHeight > box.height - 8) top = y - box.top - tip.offsetHeight - 12;
+    tip.style.transform = 'translate(' + Math.max(8, Math.round(left)) + 'px,' + Math.max(8, Math.round(top + S.els.stage.offsetTop)) + 'px)';
+  }
+
+  /* ═══════════ PREGUNTAS: el mapa responde ═══════════
+     Respuestas calculadas sobre el snapshot (sin IA ni red). Cada respuesta resalta
+     sus elementos en el mapa y se puede recorrer con clic. */
+  function knowledge() { return S.g.nodes.filter((n) => ['tecnologia', 'concepto', 'tecnica'].indexOf(n.type) > -1); }
+  function questions() {
+    const g = S.g, t = g.meta.targetLevel, tl = g.meta.targetLabel;
+    const compNode = (k) => S.nodeById.get(k.nodeId);
+    const incomplete = (k) => k.state !== 'respaldado' || k.partial || k.extendable;
+    const areasOf = (id) => new Set(S.adj.get(id).filter((a) => a.e.type !== 'agrupa' && a.e.type !== 'necesita').map((a) => areaOf(S.nodeById.get(a.other))));
+    return [
+      { id: 'fuerte', q: '¿Qué tengo mejor demostrado?', run: () => {
+        const ns = knowledge().filter((n) => n.state === 'respaldado').sort((a, b) => b.evidence.projects - a.evidence.projects || b.evidence.practica - a.evidence.practica).slice(0, 12);
+        return { text: knowledge().filter((n) => n.state === 'respaldado').length + ' conceptos tienen evidencia; estos aparecen en más proyectos.', items: ns.map((n) => [n, plural(n.evidence.projects, 'proyecto', 'proyectos') + ' · ' + plural(n.evidence.practica, 'archivo con práctica', 'archivos con práctica')]) };
+      } },
+      { id: 'falta', q: '¿Qué me falta para «' + tl + '»?', run: () => {
+        const ks = g.competencies.filter((k) => k.levels[t] >= 2 && incomplete(k)).sort((a, b) => b.priority.score - a.priority.score);
+        return { text: ks.length ? ks.length + ' competencias relevantes para «' + tl + '» tienen aspectos sin demostrar.' : 'Todas las competencias relevantes para «' + tl + '» tienen su núcleo respaldado.', items: ks.map((k) => [compNode(k), (k.unverified.filter((u) => !/^No analizado|pbix|Muy pocas/.test(u)).slice(0, 2).join(' · ') || STATE[k.state].short)]) };
+      } },
+      { id: 'mid', q: '¿Qué me separa de Mid-Level?', run: () => {
+        const ks = g.competencies.filter((k) => (k.levels.mid || 0) >= 2 && (incomplete(k) || (k.levels.mid > (k.levels[t] || 0) && k.state !== 'respaldado'))).sort((a, b) => (b.levels.mid - (b.levels[t] || 0)) - (a.levels.mid - (a.levels[t] || 0)) || b.priority.score - a.priority.score);
+        return { text: 'Competencias que pesan más en Mid-Level y aún no están completas en tus fuentes.', items: ks.map((k) => [compNode(k), 'Mid ' + k.levels.mid + '/3 · ' + (LEVELS[t] || t) + ' ' + (k.levels[t] || 0) + '/3 · ' + STATE[k.state].short + (k.partial ? ' (parcial)' : k.extendable ? ' (ampliable)' : '')]) };
+      } },
+      { id: 'ahora', q: '¿Qué hago ahora?', run: () => {
+        const rs = g.recommendations.filter((x) => x.priority.bucket !== 'todavia_no').sort((a, b) => (a.priority.bucket === 'ahora' ? 0 : 1) - (b.priority.bucket === 'ahora' ? 0 : 1) || b.priority.score - a.priority.score);
+        return { text: rs.length ? 'En orden de prioridad. La acción concreta está en cada recomendación.' : 'No hay recomendaciones con la información disponible.', items: rs.map((x) => [S.nodeById.get(x.nodeId), BUCKET[x.priority.bucket] + ' · ' + x.action]) };
+      } },
+      { id: 'mencionado', q: '¿Qué solo está mencionado?', run: () => {
+        const ns = knowledge().filter((n) => n.state === 'mencionado');
+        return { text: ns.length + ' conceptos aparecen en documentos o listas pero sin práctica detectable: son lo más fácil de convertir en evidencia.', items: ns.map((n) => [n, n.uncertainty[0] || '']) };
+      } },
+      { id: 'brechas', q: '¿Dónde hay brechas o dudas?', run: () => {
+        const ns = S.g.nodes.filter((n) => ['brecha_probable', 'brecha_confirmada', 'pendiente'].indexOf(n.state) > -1);
+        return { text: ns.length ? ns.length + ' elementos sin evidencia. «Brecha probable» solo se marca si se analizaron las fuentes donde estaría.' : 'No hay brechas ni elementos pendientes con las fuentes actuales.', items: ns.map((n) => [n, STATE[n.state].short + ' · ' + (n.uncertainty[0] || '')]) };
+      } },
+      { id: 'proyectos', q: '¿Qué proyectos demuestran más?', run: () => {
+        const ps = S.g.nodes.filter((n) => n.type === 'proyecto').map((n) => [n, S.adj.get(n.id).filter((a) => a.e.type === 'demuestra').length]).sort((a, b) => b[1] - a[1] || b[0].evidence.practica - a[0].evidence.practica).slice(0, 12);
+        return { text: 'Los proyectos con práctica en más conceptos distintos (útiles para tu CV y tus entrevistas).', items: ps.map(([n, k]) => [n, 'demuestra ' + plural(k, 'concepto', 'conceptos') + ' · ' + regionLabel(areaOf(n))]) };
+      } },
+      { id: 'puentes', q: '¿Qué conecta más áreas?', run: () => {
+        const ns = knowledge().map((n) => [n, areasOf(n.id).size]).filter((x) => x[1] > 1).sort((a, b) => b[1] - a[1] || b[0].evidence.projects - a[0].evidence.projects).slice(0, 10);
+        return { text: 'Conceptos que unen áreas distintas: son buenos ejes para un proyecto integrador.', items: ns.map(([n, k]) => [n, 'conecta ' + k + ' áreas']) };
+      } },
+    ];
+  }
+  function askCard() {
+    const e = S.els;
+    e.askOut = h('div', { class: 'sb-ask-out', 'aria-live': 'polite' });
+    e.askInput = h('input', { type: 'search', id: 'sb-ask-q', placeholder: 'O escribe un tema: «DAX», «retail», «machine learning»…', autocomplete: 'off', onkeydown: (ev) => { if (ev.key === 'Enter') { ev.preventDefault(); askFree(ev.currentTarget.value); } } });
+    return h('section', { class: 'sb-card sb-ask', 'aria-labelledby': 'sb-ask-h' }, [
+      h('div', { class: 'sb-ask-top' }, [
+        h('div', null, [h('p', { class: 'sb-eyebrow', text: 'Pregunta a tu Second Brain' }), h('h2', { class: 'sb-h sb-h--sm', id: 'sb-ask-h', text: 'Respuestas calculadas sobre tu mapa' })]),
+        h('div', { class: 'sb-ask-free' }, [h('label', { class: 'sr-only', for: 'sb-ask-q', text: 'Preguntar por un tema' }), e.askInput, h('button', { type: 'button', class: 'sb-btn', text: 'Preguntar', onclick: () => askFree(e.askInput.value) })]),
+      ]),
+      h('div', { class: 'sb-qs', role: 'group', 'aria-label': 'Preguntas frecuentes' }, questions().map((q) => h('button', { type: 'button', class: 'sb-q', 'data-q': q.id, 'aria-pressed': 'false', text: q.q, onclick: (ev) => runQuestion(q, ev.currentTarget) }))),
+      e.askOut,
+    ]);
+  }
+  function renderAnswer(title, res) {
+    const out = S.els.askOut;
+    out.textContent = '';
+    const ids = new Set(res.items.map((x) => x[0].id));
+    S.highlight = ids;
+    if (viewer) { viewer.setHighlight(ids); if (ids.size) viewer.focusIds([...ids]); }
+    out.append(
+      h('div', { class: 'sb-ans-h' }, [
+        h('p', null, [h('strong', { text: title + ' ' }), res.text]),
+        h('button', { type: 'button', class: 'ap-link-btn', text: 'Quitar resaltado', onclick: clearAnswer }),
+      ]),
+      res.items.length ? h('ol', { class: 'sb-ans' }, res.items.map(([n, meta]) => h('li', null, [
+        h('button', { type: 'button', class: 'sb-ans-i', onclick: () => selectNode(n.id, 'ask') }, [chip(n), h('span', { class: 'sb-ans-t' }, [h('strong', { text: n.label }), h('span', { class: 'sb-muted', text: meta })])]),
+      ]))) : h('p', { class: 'sb-muted', text: 'Nada que mostrar.' }),
+    );
+  }
+  function runQuestion(q, btn) {
+    S.els.askOut.parentNode.querySelectorAll('.sb-q').forEach((b) => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
+    renderAnswer(q.q, q.run());
+  }
+  function askFree(text) {
+    const q = norm(text).trim();
+    if (!q) return;
+    S.els.askOut.parentNode.querySelectorAll('.sb-q').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+    const words = q.split(/\s+/).filter((w) => w.length > 2);
+    const region = S.g.regions.find((r) => words.some((w) => norm(r.label).indexOf(w) > -1));
+    const direct = S.g.nodes.filter((n) => { const hay = norm(n.label + ' ' + n.summary); return words.length && words.every((w) => hay.indexOf(w) > -1); });
+    let items;
+    if (direct.length) {
+      const seed = new Set(direct.map((n) => n.id));
+      direct.forEach((n) => S.adj.get(n.id).forEach((a) => { if (a.e.type !== 'necesita') seed.add(a.other); }));
+      items = [...seed].map((id) => S.nodeById.get(id)).sort((a, b) => (direct.indexOf(b) > -1) - (direct.indexOf(a) > -1) || b.size - a.size).slice(0, 16)
+        .map((n) => [n, (direct.indexOf(n) > -1 ? 'coincide · ' : 'relacionado · ') + TYPE[n.type][0] + ' · ' + (STATE[n.state] || STATE.neutral).short]);
+      renderAnswer('«' + text.trim() + '»:', { text: direct.length + ' coincidencias y lo que se relaciona con ellas.', items });
+    } else if (region) {
+      const ns = S.g.nodes.filter((n) => (n.region === region.id || n.area === region.id) && n.type !== 'recomendacion');
+      const cnt = (st) => ns.filter((n) => n.state === st).length;
+      items = ns.sort((a, b) => (a.state === 'respaldado' ? 0 : 1) - (b.state === 'respaldado' ? 0 : 1) || b.size - a.size).map((n) => [n, TYPE[n.type][0] + ' · ' + (STATE[n.state] || STATE.neutral).short]);
+      renderAnswer(region.label + ':', { text: cnt('respaldado') + ' respaldados, ' + cnt('mencionado') + ' mencionados y ' + (cnt('pendiente') + cnt('brecha_probable') + cnt('brecha_confirmada')) + ' por validar.', items });
+    } else renderAnswer('«' + text.trim() + '»:', { text: 'No aparece en tu mapa. Puede que no esté en el marco o en las fuentes analizadas.', items: [] });
+  }
+  function clearAnswer() {
+    S.highlight = null;
+    S.els.askOut.textContent = '';
+    S.els.askOut.parentNode.querySelectorAll('.sb-q').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+    if (viewer) { viewer.setHighlight(null); viewer.reset(); }
   }
 
   function navEl() {
@@ -395,6 +559,7 @@ window.APSecondBrain = (function () {
     S.els.filters.querySelector('#sb-edgemode').value = 'foco';
     S.els.filters.open = false;
     S.els.search.value = ''; closeResults();
+    if (S.highlight) { S.highlight = null; S.els.askOut.textContent = ''; if (viewer) viewer.setHighlight(null); }
     selectNode(null, 'reset');
     applyFilters();
     if (viewer) viewer.reset();
@@ -412,7 +577,7 @@ window.APSecondBrain = (function () {
     if (!hits.length) list.appendChild(h('li', { class: 'sb-noresult', role: 'option', 'aria-disabled': 'true', text: 'Sin resultados' }));
     hits.forEach((n, i) => list.appendChild(h('li', { role: 'option', id: 'sb-r-' + i, 'aria-selected': 'false' }, [
       h('button', { type: 'button', tabindex: '-1', onclick: () => pickResult(n.id) }, [
-        h('span', { class: 'sb-dot ' + (STATE[n.state] || STATE.neutral).cls, 'aria-hidden': 'true' }), h('span', { class: 'sb-r-t', text: n.label }), h('span', { class: 'sb-muted', text: TYPE[n.type][0] }),
+        chip(n), h('span', { class: 'sb-r-t', text: n.label }), h('span', { class: 'sb-muted', text: TYPE[n.type][0] }),
       ]),
     ])));
     list.hidden = false; S.els.search.setAttribute('aria-expanded', 'true');
@@ -446,7 +611,7 @@ window.APSecondBrain = (function () {
     renderChip();
     renderDetail();
     S.els.list.querySelectorAll('.sb-node').forEach((b) => { const onIt = b.getAttribute('data-id') === S.selected; b.classList.toggle('is-on', onIt); onIt ? b.setAttribute('aria-current', 'true') : b.removeAttribute('aria-current'); });
-    if (id && (origin === 'list' || origin === 'panel')) S.els.detail.scrollIntoView({ block: 'nearest', behavior: reducedMotion() ? 'auto' : 'smooth' });
+    if (id && (origin === 'list' || origin === 'panel' || origin === 'ask')) S.els.detail.scrollIntoView({ block: 'nearest', behavior: reducedMotion() ? 'auto' : 'smooth' });
     if (id && origin === 'rec') S.els.stage.scrollIntoView({ block: 'center', behavior: reducedMotion() ? 'auto' : 'smooth' });
   }
   function renderChip() {
@@ -494,8 +659,8 @@ window.APSecondBrain = (function () {
     box.append(
       h('div', { class: 'sb-detail-head' }, [
         h('div', null, [
-          h('p', { class: 'sb-eyebrow' }, [h('span', { 'aria-hidden': 'true', text: TYPE[n.type][1] + ' ' }), TYPE[n.type][0] + ' · ' + regionLabel(n.region)]),
-          h('h2', { class: 'sb-h', id: 'sb-detail-h', text: n.label }),
+          h('p', { class: 'sb-eyebrow', text: TYPE[n.type][0] + ' · ' + regionLabel(areaOf(n)) }),
+          h('h2', { class: 'sb-h sb-h--icon', id: 'sb-detail-h' }, [chip(n, true), h('span', { text: n.label })]),
         ]),
         h('button', { type: 'button', class: 'ap-link-btn sb-nowrap', text: 'Quitar selección', onclick: () => selectNode(null, 'panel') }),
       ]),
@@ -669,7 +834,7 @@ window.APSecondBrain = (function () {
         h('h3', { class: 'sb-h3', text: r.label + ' (' + ns.length + ')' }),
         h('ul', { class: 'sb-nodelist' }, ns.map((n) => h('li', null, [
           h('button', { type: 'button', class: 'sb-node' + (S.selected === n.id ? ' is-on' : ''), 'data-id': n.id, 'aria-current': S.selected === n.id ? 'true' : null, onclick: () => selectNode(n.id, 'list') }, [
-            h('span', { class: 'sb-dot ' + (STATE[n.state] || STATE.neutral).cls, 'aria-hidden': 'true' }),
+            chip(n),
             h('span', { class: 'sb-node-t', text: n.label }),
             h('span', { class: 'sb-muted', text: TYPE[n.type][0] + ' · ' + (STATE[n.state] || STATE.neutral).short }),
           ]),
