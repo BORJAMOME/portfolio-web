@@ -338,3 +338,63 @@ test('el demo versionado coincide con lo que genera el motor (no se ha quedado d
   const committed = JSON.parse(readFileSync(join(ROOT, 'second-brain', 'demo-snapshot.json'), 'utf8'));
   assert.deepEqual(JSON.parse(JSON.stringify(r.snapshot)), committed, 'ejecuta: node tools/second-brain/analyze.mjs --demo');
 });
+
+/* ─────────── v5: catálogo publicado y proyectos automáticos ─────────── */
+test('catálogo: lee casos de estudio, laboratorio .pbix e inventario sin duplicados ni ejecutar nada', async () => {
+  const { readCatalog, parseSqlRow } = await import('./catalog.mjs');
+  assert.deepEqual(parseSqlRow("  ('Ventas ''24', 'Gráfico Power BI', 'publicado', null, null, 'https://x.test/a', 'Desc', array['Power BI', 'DAX']::text[], true, 3),"),
+    ["Ventas '24", 'Gráfico Power BI', 'publicado', null, null, 'https://x.test/a', 'Desc', ['Power BI', 'DAX'], true, 3]);
+  const dir = tmp();
+  const ld = { '@context': 'https://schema.org', '@type': 'CreativeWork', genre: 'Caso de estudio', name: 'Casa Origen', description: 'Informe de ventas', keywords: ['Power BI', 'DAX'], url: 'https://borjamora.es/casa-origen.html' };
+  writeFileSync(join(dir, 'casa-origen.html'), `<script type="application/ld+json">${JSON.stringify(ld)}</script><a href="https://app.powerbi.com/view?r=abc">informe</a>`);
+  writeFileSync(join(dir, 'descargas.html'), '<script>const ITEMS = [{ n:"01", cat:"Gráficos", title:"Top N para priorizar", subtitle:"Ranking", desc:"Medida TOPN", tags:["TOPN","Ranking"] }];</script>');
+  mkdirSync(join(dir, 'supabase'));
+  writeFileSync(join(dir, 'supabase', 'portfolio.sql'), [
+    "insert into public.portfolio values",
+    "  ('Casa Origen', 'Proyecto Power BI', 'publicado', null, null, 'https://borjamora.es/casa-origen.html', 'Duplicado del caso', array['Power Query']::text[], true, 1),",
+    "  ('Mapa de calor', 'Visualización', 'publicado', 'https://behance.net/x', null, null, 'Pieza', array['Illustrator']::text[], true, 2),",
+    "  ('Una idea', 'Gráfico Power BI', 'idea', null, null, null, 'No publicada', array[]::text[], false, 3);",
+  ].join('\n'));
+  const c = readCatalog(dir);
+  assert.deepEqual(c.map((e) => e.group).sort(), ['Caso de estudio', 'Laboratorio Power BI (.pbix)', 'Visualización']);
+  const caso = c.find((e) => e.title === 'Casa Origen');
+  assert.equal(caso.url, 'https://app.powerbi.com/view?r=abc');
+  assert.ok(caso.techs.includes('Power Query'), 'el duplicado del inventario aporta sus tecnologías');
+  assert.ok(!c.some((e) => e.title === 'Una idea'), 'las ideas no publicadas no cuentan');
+});
+
+test('projectDepth «auto»: cada carpeta con README es un proyecto y el catálogo crea proyectos con enlace', () => {
+  const dir = tmp();
+  const src = join(dir, 'src');
+  mkdirSync(join(src, 'ml', 'churn'), { recursive: true });
+  mkdirSync(join(src, 'eda', 'ventas', 'notebooks'), { recursive: true });
+  writeFileSync(join(src, 'ml', 'churn', 'README.md'), '# Predicción de churn\n\nModelo de clasificación con scikit-learn y pandas.\n');
+  writeFileSync(join(src, 'ml', 'churn', 'train.py'), 'import pandas as pd\nfrom sklearn.linear_model import LogisticRegression\n');
+  writeFileSync(join(src, 'eda', 'ventas', 'README.md'), '# EDA de ventas\n\nAnálisis exploratorio con pandas.\n');
+  writeFileSync(join(src, 'eda', 'ventas', 'notebooks', 'a.py'), 'import pandas as pd\ndf = pd.read_csv("x.csv")\n');
+  const web = join(dir, 'web'); mkdirSync(web);
+  writeFileSync(join(web, 'descargas.html'), '<script>const ITEMS = [{ n:"01", cat:"Gráficos", title:"Gantt nativo de Power BI", subtitle:"Planificación", desc:"Matriz con formato condicional", tags:["DAX"] }];</script>');
+  const cfg = join(dir, 'c.json');
+  writeFileSync(cfg, JSON.stringify({ sources: [{ id: 'dap', path: src, kind: 'proyectos', projectDepth: 'auto' }, { id: 'cat', path: web, kind: 'catalogo' }] }));
+  const r = runAnalysis({ configPath: cfg, full: true, stateDir: tmp() });
+  assert.equal(r.ok, true, JSON.stringify(r.errors));
+  const projects = r.snapshot.nodes.filter((n) => n.type === 'proyecto');
+  const labels = projects.map((n) => n.label);
+  assert.ok(labels.includes('Predicción de churn') && labels.includes('EDA de ventas'), labels.join(' | '));
+  const gantt = projects.find((n) => n.label === 'Gantt nativo de Power BI');
+  assert.ok(gantt, 'el .pbix del laboratorio aparece como proyecto');
+  assert.equal(gantt.icon, 'dashboard');
+  assert.equal(gantt.link, 'https://borjamora.es/descargas.html');
+  assert.ok(r.snapshot.edges.some((e) => e.source === gantt.id && e.target === 'c:powerbi' && e.type === 'demuestra'), 'demuestra Power BI');
+});
+
+test('contrato: el enlace de un nodo solo admite https', () => {
+  const s = JSON.parse(readFileSync(join(ROOT, 'second-brain', 'demo-snapshot.json'), 'utf8'));
+  const p = s.nodes.find((n) => n.type === 'proyecto');
+  p.link = 'https://borjamora.es/x.html';
+  assert.equal(validateSnapshot(s).ok, true);
+  for (const bad of ['javascript:alert(1)', 'http://borjamora.es', 'https://a b.es', 'https://x.es/"><img']) {
+    p.link = bad;
+    assert.equal(validateSnapshot(s).ok, false, bad);
+  }
+});

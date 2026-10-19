@@ -13,11 +13,13 @@
    · «pendiente»   → sin evidencia, pero no se han analizado las fuentes donde estaría.
    · «brecha_confirmada» → SOLO si el usuario la declara en `assessments`. Nunca se infiere.
    ═══════════════════════════════════════════════ */
-import { slug } from './text.mjs';
+import { slug, hash32 } from './text.mjs';
+// identificador estable y único para rutas largas: prefijo legible + hash de la ruta completa
+const keyId = (k) => slug(k).slice(0, 50) + '-' + hash32(k).toString(36);
 import { layout } from './layout.mjs';
 import { SCHEMA_VERSION } from '../../second-brain/contract.js';
 
-export const ENGINE_VERSION = '1.1.0';
+export const ENGINE_VERSION = '1.2.0';
 
 const TYPE_MAP = { tecnologia: 'tecnologia', concepto: 'concepto', tecnica: 'tecnica', 'competencia-blanda': 'concepto' };
 const CLS_LABEL = { practica: 'práctica', explicativa: 'documentación', declarativa: 'declarada' };
@@ -292,13 +294,25 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
   const sourceKind = new Map(scan.coverage.sources.map((s) => [s.id, s.kind]));
   const projectNodes = [];
   // se limita el número de proyectos dibujados (los de más práctica) para que el grafo siga siendo legible
-  const maxProjects = config.maxProjects || 36;
+  const maxProjects = config.maxProjects || 160;
   const candidates = [...scan.projects.entries()]
     .map(([key, pj]) => ({ key, pj, pf: projFiles.get(key) }))
-    .filter(({ pj, pf }) => sourceKind.get(pj.source) === 'proyectos' && pf && pf.practical > 0 && !(pj.root && pf.practical < 3))
+    .filter(({ pj, pf }) => ['proyectos', 'catalogo'].includes(sourceKind.get(pj.source)) && pf && pf.practical > 0 && !(pj.root && pf.practical < 3))
     .sort((a, b) => b.pf.practical - a.pf.practical || a.key.localeCompare(b.key))
     .slice(0, maxProjects);
   const GENERIC = new Set(['python', 'pandas', 'jupyter', 'git', 'documentacion', 'data-quality', 'numpy-scipy', 'visualizacion-datos', 'eda']);
+  // glifo del proyecto según su naturaleza: informe de BI, notebook, app, SQL, manual, web o visualización
+  const projectIcon = (pj, pf) => {
+    const has = (id) => pf.concepts.has(id);
+    if (pj.group === 'Manual' || /manual|gu[ií]a/i.test(pj.label)) return 'notebook-book';
+    if (pj.group === 'Visualización') return 'chart';
+    if (pj.artifacts.has('pbix') || has('powerbi')) return 'dashboard';
+    if (has('streamlit')) return 'app';
+    if (has('sql') && !has('python')) return 'database';
+    if (has('jupyter') || has('python')) return 'notebook';
+    if (has('desarrollo-web')) return 'code';
+    return 'folder';
+  };
   const regionOfConcept = new Map(framework.conceptos.map((c) => [c.id, c.region]));
   for (const { key, pj, pf } of candidates) {
     // área principal: la región que más conceptos con práctica acumula en el proyecto
@@ -308,19 +322,21 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
     const title = pj.readme && pj.readme.title && pj.readme.title.length >= 4 ? pj.readme.title : pj.label;
     const desc = pj.readme && pj.readme.desc ? ` ${pj.readme.desc}` : '';
     const n = addNode({
-      id: `p:${slug(key)}`, label: title.slice(0, 118), type: 'proyecto', region: 'practica', area: area ? area[0] : 'practica', icon: 'folder', state: 'respaldado',
+      id: `p:${keyId(key)}`, label: title.slice(0, 118), type: 'proyecto', region: 'practica', area: area ? area[0] : 'practica', icon: projectIcon(pj, pf), state: 'respaldado',
       summary: `${desc.trim() ? desc.trim().replace(/([^.!?])$/, '$1.') + ' ' : ''}Proyecto analizado: ${plural(pf.practical, 'archivo', 'archivos')} con evidencia práctica en ${plural(pf.concepts.size, 'concepto', 'conceptos')}.${pf.docs ? '' : ' No se ha encontrado documentación escrita en el proyecto.'}`.slice(0, 600),
       size: round2(Math.min(0.75, 0.35 + pf.practical * 0.01)), evidence: { practica: pf.practical, explicativa: pf.docs, declarativa: 0, projects: 1, breadth: 'puntual' },
       uncertainty: ['Un proyecto demuestra trabajo realizado; no mide su calidad ni el nivel de dominio.'], pos: [0, 0, 0],
     });
+    if (pj.link && /^https:\/\//.test(pj.link)) n.link = pj.link;
+    if (pj.group) n.group = pj.group;
     projectNodes.push({ node: n, key, pf });
   }
   // recomendación de documentación: proyectos con práctica y sin ningún documento
   const undocumented = projectNodes.filter((p) => p.pf.docs === 0 && p.pf.practical >= 3).sort((a, b) => b.pf.practical - a.pf.practical).slice(0, 3);
   for (const p of undocumented) {
-    const id = `rec-doc-${slug(p.key)}`;
+    const id = `rec-doc-${keyId(p.key)}`;
     const recNode = addNode({
-      id: `r:doc-${slug(p.key)}`, label: `Documentar el proyecto ${p.node.label}`.slice(0, 118), type: 'recomendacion', region: 'objetivos', area: p.node.area, icon: 'doc', state: 'oportunidad',
+      id: `r:doc-${keyId(p.key)}`, label: `Documentar el proyecto ${p.node.label}`.slice(0, 118), type: 'recomendacion', region: 'objetivos', area: p.node.area, icon: 'doc', state: 'oportunidad',
       summary: 'El proyecto tiene código, pero ningún documento que explique sus decisiones.', size: 0.55,
       evidence: { practica: 0, explicativa: 0, declarativa: 0, projects: 0, breadth: 'ninguna' }, uncertainty: ['Puede haber documentación fuera de la carpeta analizada.'], pos: [0, 0, 0],
     });
