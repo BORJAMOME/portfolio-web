@@ -82,6 +82,8 @@ export const ICONS = {
   bed: 'M3 19V6M3 15h18v4M21 15v-3a3 3 0 0 0-3-3h-7v6M7 12.5a1.5 1.5 0 1 0 0-.01',
   // Tipos
   folder: 'M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z',
+  dashboard: 'M3 4h18v16H3zM3 9h18M8 9v11M11 17v-3M14 17v-5M17 17v-2',
+  'notebook-book': 'M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM4 19V5M8 7h7M8 10h5',
   hexagon: 'M12 3l8 4.5v9L12 21l-8-4.5v-9z',
   flag: 'M5 21V4M5 4h12l-2.5 4L17 12H5',
   bulb: 'M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9V16h7v-2.1A6 6 0 0 0 12 3z',

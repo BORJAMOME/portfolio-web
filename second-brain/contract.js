@@ -77,6 +77,9 @@ export function validateSnapshot(s) {
     if (!isNum(n.size) || n.size < 0 || n.size > 1) err(`Nodo ${n.id}: tamaño fuera de 0..1.`);
     if (n.icon != null && !ICON.test(n.icon)) err(`Nodo ${n.id}: icono inválido.`);
     if (n.area != null && !regionIds.has(n.area)) err(`Nodo ${n.id}: área inexistente «${n.area}».`);
+    // enlace a lo publicado: solo https y sin espacios (el visor lo pinta como <a> con textContent)
+    if (n.link != null && !(isStr(n.link, 500) && /^https:\/\/[^\s"'<>]+$/.test(n.link))) err(`Nodo ${n.id}: enlace inválido (solo https).`);
+    if (n.group != null && !isStr(n.group, LIMITS.label)) err(`Nodo ${n.id}: grupo inválido.`);
     if (!Array.isArray(n.uncertainty) || n.uncertainty.some((u) => typeof u !== 'string' || u.length > LIMITS.text)) err(`Nodo ${n.id}: incertidumbres inválidas.`);
     // Una brecha confirmada exige una evaluación explícita. La ausencia de documentos nunca basta.
     if (n.state === 'brecha_confirmada' && !(isObj(n.assessment) && isStr(n.assessment.reason, LIMITS.text) && isStr(n.assessment.source, 120))) {

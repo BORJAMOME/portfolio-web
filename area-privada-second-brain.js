@@ -348,9 +348,9 @@ window.APSecondBrain = (function () {
   /* Ficha de color + icono de un nodo o un área (la misma gramática que el mapa) */
   function areaOf(n) { return n.area || n.region; }
   function chip(n, big) {
-    const color = n.type === 'recomendacion' ? '#d9952c' : n.state === 'neutral' ? '#1d2638' : S.areaColor.get(areaOf(n)) || '#273a5f';
-    const cls = n.type === 'recomendacion' || n.state === 'respaldado' || n.state === 'neutral' ? 'is-solid' : n.state === 'mencionado' ? 'is-tint' : 'is-open';
-    const shape = n.type === 'proyecto' ? ' is-square' : n.type === 'competencia' ? ' is-hex' : '';
+    const color = n.type === 'recomendacion' ? '#d9952c' : n.type === 'objetivo' ? '#273a5f' : S.areaColor.get(areaOf(n)) || '#273a5f';
+    const cls = n.type === 'proyecto' ? 'is-card' : n.type === 'recomendacion' || n.type === 'objetivo' || n.state === 'respaldado' || n.state === 'neutral' ? 'is-solid' : n.state === 'mencionado' ? 'is-tint' : 'is-open';
+    const shape = n.type === 'proyecto' ? ' is-square' : n.type === 'competencia' ? ' is-hex' : n.type === 'objetivo' ? ' is-diamond' : '';
     const el = h('span', { class: 'sb-ichip ' + cls + shape + (big ? ' is-big' : ''), 'aria-hidden': 'true' });
     el.style.setProperty('--c', color);                 // CSSOM: permitido por la CSP
     const logo = n.id.indexOf('c:') === 0 && S.logos ? S.logos.logoUrl(n.id.slice(2)) : null;
@@ -371,7 +371,8 @@ window.APSecondBrain = (function () {
     svg.setAttribute('viewBox', '0 0 34 8'); svg.setAttribute('class', 'sb-line'); svg.setAttribute('aria-hidden', 'true');
     const l = document.createElementNS(ns, 'line');
     l.setAttribute('x1', '1'); l.setAttribute('y1', '4'); l.setAttribute('x2', '33'); l.setAttribute('y2', '4');
-    l.setAttribute('stroke', style.color || '#2f6db5'); l.setAttribute('stroke-width', '2'); l.setAttribute('stroke-linecap', 'round');
+    l.setAttribute('stroke', style.color || '#2f6db5'); l.setAttribute('stroke-width', style.strong ? '3.5' : style.thin ? '1.2' : '2.2'); l.setAttribute('stroke-linecap', 'round');
+    if (style.thin) l.setAttribute('stroke-opacity', '0.7');
     if (style.dash) l.setAttribute('stroke-dasharray', style.dash[0] * 2 + ' ' + style.dash[1] * 2);
     svg.appendChild(l);
     return svg;
@@ -393,7 +394,7 @@ window.APSecondBrain = (function () {
       h('details', { class: 'sb-legend-more' }, [
         h('summary', { text: 'Relaciones, formas y controles' }),
         h('ul', { class: 'sb-leg-lines' }, Object.values(S.edgeStyle).map((st) => h('li', null, [lineSample(st), st.label]))),
-        h('ul', { class: 'sb-leg-ev' }, [sw('is-solid', 'Círculo: conocimiento'), sw('is-solid is-hex', 'Hexágono: competencia'), sw('is-solid is-square', 'Cuadrado: proyecto'), sw('is-rec', 'Ámbar: recomendación')]),
+        h('ul', { class: 'sb-leg-ev' }, [sw('is-solid', 'Círculo: conocimiento'), sw('is-solid is-hex', 'Hexágono: competencia'), sw('is-solid is-square', 'Ficha blanca: proyecto'), sw('is-solid is-diamond', 'Rombo: objetivo'), sw('is-rec', 'Ámbar: recomendación')]),
         h('p', { class: 'sb-read', text: 'Del centro al borde: de respaldado a por validar. Arriba: competencias y recomendaciones. Anillo exterior: proyectos. Eje central: objetivos.' }),
         h('p', { class: 'sb-keys', id: 'sb-keys', text: 'Arrastra para girar (en cenital, para desplazar) · rueda o pellizco: zoom · con el mapa enfocado: flechas giran, Mayús + flechas desplazan, + / − acercan, 0 vista general, Esc quita la selección.' }),
       ]),
@@ -833,6 +834,13 @@ window.APSecondBrain = (function () {
       h('p', null, [stateBadge(n.state)]),
       h('p', { class: 'sb-lead', text: n.summary }),
     );
+    if (n.type === 'proyecto' && (n.group || n.link)) {
+      box.append(h('p', { class: 'sb-muted' }, [
+        n.group ? n.group : '',
+        n.group && n.link ? ' · ' : '',
+        n.link && /^https:\/\//.test(n.link) ? h('a', { href: n.link, target: '_blank', rel: 'noopener noreferrer', text: 'Ver lo publicado ↗' }) : '',
+      ]));
+    }
     const cols = h('div', { class: 'sb-detail-cols' });
     const left = h('div'), right = h('div');
     if (['tecnologia', 'concepto', 'tecnica', 'proyecto'].indexOf(n.type) > -1) {

@@ -57,6 +57,8 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
 - **Second Brain** (`#/second-brain`, `#/second-brain/demo`): grafo 3D del conocimiento. La web solo DIBUJA un snapshot ya calculado
   (`area-privada-second-brain.js`, `second-brain/viewer.js` con Three.js, `second-brain/contract.js` compartido con el motor, `css/second-brain.css`).
   El motor corre en local (`tools/second-brain/`, sin dependencias) y publica en `public.sb_snapshots`/`sb_runs` (`supabase/second-brain.sql`, RLS).
+  Fuentes: carpetas locales (`projectDepth` N o `"auto"` = carpeta con README) y el catálogo publicado del propio portfolio (`kind: "catalogo"`, `catalog.mjs`:
+  casos de estudio, `descargas.html` y `supabase/portfolio.sql`). Notas del usuario en `sb_notas` (`supabase/second-brain-notas.sql`).
   Three.js va recortado en `vendor/three-<versión>-sb.min.js` (`tools/second-brain/build-three.mjs`). Config y snapshots reales: `.second-brain/` (no versionado).
   Pruebas: `node --test tools/second-brain/second-brain.test.mjs` y `node tools/second-brain/e2e.mjs`. Guía y reglas de evidencia: `tools/second-brain/README.md`.
   Cambiar `framework.json` o el motor → `node tools/second-brain/analyze.mjs --demo` (regenera el demo; hay un test que lo comprueba).

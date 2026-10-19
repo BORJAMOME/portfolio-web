@@ -12,6 +12,8 @@ import { createHash } from 'node:crypto';
 import { join, relative, sep, parse, basename, extname } from 'node:path';
 import { extractFile, SUPPORTED, KNOWN_UNSUPPORTED } from './extract.mjs';
 import { detect } from './lexicon.mjs';
+import { readCatalog } from './catalog.mjs';
+import { slug } from './text.mjs';
 
 /** Título (primer encabezado) y descripción (primer párrafo de prosa) de un README, como texto plano y acotado. */
 export function readmeMeta(md) {
@@ -45,7 +47,16 @@ export function assertSafeSource(src) {
   return real;
 }
 
-function projectOf(src, relParts) {
+function projectOf(src, relParts, readmeDirs) {
+  if (src.projectDepth === 'auto') {
+    // «auto»: el proyecto es la carpeta con README más cercana por encima del archivo
+    const dirs = relParts.slice(0, -1);
+    for (let k = dirs.length; k >= 1; k--) {
+      const cand = posix(join(...dirs.slice(0, k)));
+      if (readmeDirs && readmeDirs.has(cand)) return { key: `${src.id}/${cand}`, label: dirs[k - 1], root: false };
+    }
+    return { key: `${src.id}/.`, label: src.label || src.id, root: true };
+  }
   const depth = Number.isInteger(src.projectDepth) ? src.projectDepth : 0;
   if (depth === 0) return { key: src.id, label: src.label || src.id, root: false };
   // relParts incluye el nombre del archivo: solo es proyecto si hay al menos `depth` carpetas por encima
@@ -79,6 +90,39 @@ export function scanSources(config, lexicon, cache, lexiconDigest) {
     coverage.sources.push(cov);
     let count = 0;
 
+    // ── fuente «catalogo»: proyectos publicados en el portfolio (casos, laboratorio .pbix, inventario) ──
+    if (kind === 'catalogo') {
+      const entries = readCatalog(root);
+      for (const e of entries) {
+        const key = `${src.id}/${slug(e.title)}`;
+        projects.set(key, { key, label: e.title, source: src.id, root: false, artifacts: new Set(e.pbix ? ['pbix'] : []), readme: { title: e.title, desc: e.desc, depth: 0 }, link: e.url, group: e.group });
+        // texto descriptivo (documentación) + tecnologías que el propio portfolio declara para un artefacto
+        // publicado (informe o .pbix): se cuentan como práctica porque el artefacto existe y es público
+        const text = [e.title, e.desc, e.group].join('. ');
+        const hits = detect(lexicon, [{ cls: 'explicativa', lang: 'markdown', text }], e.pbix ? ['pbix'] : []);
+        // una visualización publicada (Behance) es práctica de visualización de datos aunque sus etiquetas sean temáticas
+        const techText = e.techs.concat(e.group === 'Visualización' ? ['visualización de datos'] : []).join('. ');
+        const tech = detect(lexicon, [{ cls: 'declarativa', lang: 'markdown', text: techText }], []);
+        for (const id of Object.keys(tech)) (hits[id] ||= { practica: 0, explicativa: 0, declarativa: 0 }).practica = 1;
+        files.push({ source: src.id, kind: 'proyectos', rel: 'catalogo/' + slug(e.title), project: key, ext: 'catalogo', hits, artifacts: e.pbix ? ['pbix'] : [], note: null });
+        cov.files++; cov.supported++; coverage.processed++;
+      }
+      coverage.byExt.catalogo = (coverage.byExt.catalogo || 0) + entries.length;
+      continue;
+    }
+    const readmeDirs = new Set();
+    if (src.projectDepth === 'auto') {
+      const collect = (dir) => {
+        let es; try { es = readdirSync(dir, { withFileTypes: true }); } catch { return; }
+        for (const e of es) {
+          if (e.isSymbolicLink()) continue;
+          if (e.isDirectory()) { if (!exclude.has(e.name) && !e.name.startsWith('.')) collect(join(dir, e.name)); }
+          else if (/^readme\.md$/i.test(e.name) && dir !== root) readmeDirs.add(posix(relative(root, dir)));
+        }
+      };
+      collect(root);
+    }
+
     const touchProject = (pj) => {
       if (!projects.has(pj.key)) projects.set(pj.key, { key: pj.key, label: pj.label, source: src.id, root: pj.root, artifacts: new Set(), readme: null });
       return projects.get(pj.key);
@@ -94,7 +138,7 @@ export function scanSources(config, lexicon, cache, lexiconDigest) {
         const rel = relative(root, abs);
         const parts = rel.split(sep);
         if (e.isDirectory()) {
-          if (e.name === '.git') { touchProject(projectOf(src, parts.slice(0, -1).concat('x'))).artifacts.add('git-repo'); continue; }
+          if (e.name === '.git') { touchProject(projectOf(src, parts.slice(0, -1).concat('x'), readmeDirs)).artifacts.add('git-repo'); continue; }
           if (exclude.has(e.name)) continue;
           if (e.name.startsWith('.') && e.name !== '.github') continue;
           walk(abs);
@@ -146,7 +190,7 @@ export function scanSources(config, lexicon, cache, lexiconDigest) {
         }
         nextCache.files[key] = entry;
         coverage.processed++;
-        const pj = touchProject(projectOf(src, parts));
+        const pj = touchProject(projectOf(src, parts, readmeDirs));
         for (const a of entry.artifacts) pj.artifacts.add(a);
         files.push({ source: src.id, kind, rel: posix(rel), project: pj.key, ext, hits: entry.hits, artifacts: entry.artifacts, note: entry.note });
         // el README más cercano a la raíz del proyecto le da título y descripción

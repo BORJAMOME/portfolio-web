@@ -56,6 +56,16 @@ profesional se puede **respaldar con evidencias**, qué está **mencionado o pen
 
 No hay conectores a GitHub, LinkedIn ni ofertas de empleo: solo carpetas locales. No se analiza ningún repositorio remoto.
 
+**Proyectos de una fuente.** `projectDepth: N` toma como proyecto la carpeta de nivel N; `projectDepth: "auto"` toma la carpeta con
+`README.md` más cercana por encima de cada archivo (útil en repositorios con muchos casos, como `DAP` o `DAX-LAB/Proyectos`).
+
+**Catálogo publicado** (`kind: "catalogo"`, con la ruta de `portfolio-web`). Muchos proyectos de Power BI no tienen repositorio: existen como informe
+publicado o `.pbix` descargable. `catalog.mjs` los lee, sin ejecutar nada, de tres sitios: los casos de estudio (JSON-LD `CreativeWork` con
+genre «Caso de estudio»), el laboratorio (`ITEMS` de `descargas.html`) y el inventario `supabase/portfolio.sql` (gráficos de Power BI,
+visualizaciones y manuales publicados; las ideas y lo archivado no cuentan). Cada entrada es un proyecto con su enlace (solo https) y su grupo.
+Las tecnologías que el propio portfolio declara para un artefacto **publicado** cuentan como práctica, porque el artefacto existe y es público;
+el título y la descripción cuentan como documentación. Se quitan duplicados por título (y por página entre casos de estudio).
+
 ## Cómo se decide (reglas explicables)
 
 - **Evidencia = archivos distintos**, nunca líneas ni menciones. El volumen no indica dominio.
@@ -78,7 +88,7 @@ No hay conectores a GitHub, LinkedIn ni ofertas de empleo: solo carpetas locales
 
 ## Visor
 
-**Lenguaje visual (v3).** Cada elemento se lee por cinco canales que no se pisan:
+**Lenguaje visual (v5).** Cada elemento se lee por cinco canales que no se pisan:
 
 | Canal | Significa |
 |---|---|
@@ -86,10 +96,19 @@ No hay conectores a GitHub, LinkedIn ni ofertas de empleo: solo carpetas locales
 | Icono | Qué es: Power BI, SQL, Python, proyecto, competencia… (`second-brain/icons.js`, iconos de trazo propios, sin logotipos de marca) |
 | Relleno | Evidencia: sólido = respaldado · claro = mencionado · contorno discontinuo = por validar |
 | Anillo | Rojo = brecha · ámbar = prioridad ahora · tinta = seleccionado |
-| Forma | Círculo = conocimiento · hexágono = competencia · cuadrado = proyecto · ámbar = recomendación |
+| Forma | Círculo = conocimiento · hexágono = competencia · ficha blanca con glifo de su tipo (informe, notebook, app, SQL, manual, web, gráfico) = proyecto · rombo navy = objetivo · ámbar = recomendación |
+| Tamaño | Objetivo > competencia > concepto (crece con la raíz de su número de proyectos) > proyecto |
 
-Las líneas cambian según la familia de relación: continua navy (dependencia técnica), continua verde (mejora o habilita),
-discontinua del color del área (proyecto que lo demuestra), punteada gris (pertenece a / requerido por) y discontinua ámbar (recomendación).
+Las relaciones son **cintas** con anchura en píxeles (no líneas de 1 px): se estrechan del origen al destino y ganan opacidad hacia él, así que
+se lee la dirección sin flechas; empiezan y terminan fuera de los nodos y el arco es bajo (más bajo dentro de una misma área).
+Familias: continua navy (dependencia técnica), continua verde (mejora o habilita), la más gruesa y del color del área (proyecto que lo demuestra),
+fina y gris (pertenece a / requerido por) y **la única discontinua**, ámbar (recomendación: aún no existe). La anchura depende de la confianza;
+si el destino es una brecha, el último tramo es rojo. Al seleccionar, las cintas se trazan del origen al destino (260 ms, escalonadas; sin animación
+con «reducir movimiento»). Un nodo con muchas relaciones (Power BI con 40+ proyectos) adelgaza y aclara su abanico.
+Hover: ligero aumento y anillo fino; selección: anillo tinta con hueco blanco. Lo que no está en foco se desatura, pierde el icono y la sombra.
+Etiquetas por niveles: competencias y objetivos siempre; conceptos solo si su ficha es legible en pantalla; proyectos al acercarse, al pasar
+por encima o como vecinos de la selección. Se colocan a la derecha, debajo o a la izquierda del nodo, la primera que no choque.
+Los tallos al suelo solo se dibujan en la vista lateral o para el nodo seleccionado.
 El suelo pinta cada área con su gama, más intensa en el anillo de lo respaldado. Al pasar el ratón aparece un tooltip con área, evidencia y descripción.
 Todos los nodos se dibujan en **una sola llamada** con un shader instanciado y un atlas de iconos; la selección se resuelve en espacio de pantalla.
 
@@ -114,7 +133,7 @@ Dos distribuciones del mismo snapshot, con transición animada entre ellas:
 - **Mapa** (por defecto). La posición tiene significado y se lee sin leyenda: **sector** = área de conocimiento;
   **del centro al borde** = respaldado → mencionado → por validar (el grosor de cada anillo es proporcional a cuántos elementos tiene);
   **altura** = competencias por encima del plano, pines ámbar sobre lo que recomiendan y objetivos en el eje central;
-  **cinturón exterior** = proyectos, junto al área que demuestran. Se calcula en el visor a partir de región, estado y tipo (representación, no análisis).
+  **cinturón exterior** (hasta tres anillos) = proyectos, junto al área que demuestran. Se calcula en el visor a partir de región, estado y tipo (representación, no análisis).
 - **Red**: las posiciones de fuerzas que calcula el motor (`layout.mjs`), para seguir conexiones.
 
 Puntos de vista: Perspectiva, Cenital (arrastrar desplaza, como un mapa; es la vista inicial en móvil) y Lateral (muestra las capas).
