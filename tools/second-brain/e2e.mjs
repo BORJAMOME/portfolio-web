@@ -127,13 +127,32 @@ try {
     check('el snapshot "real" no se rotula como demostración', !/FICTICIOS/.test(await page.locator('.sb-status').textContent()));
     const i0 = await info(page);
     check('todos los nodos son visibles', i0.visible === REAL.nodes.length, `${i0.visible}/${REAL.nodes.length}`);
-    check('llamadas de dibujo acotadas (≤ 14)', i0.drawCalls <= 14, String(i0.drawCalls));
+    check('llamadas de dibujo acotadas (≤ 20)', i0.drawCalls <= 20, String(i0.drawCalls));
     await page.waitForTimeout(900);
     const f1 = (await info(page)).frameCount;
     await page.waitForTimeout(800);
     const f2 = (await info(page)).frameCount;
     check('en reposo no se dibuja ningún fotograma (dibujo bajo demanda)', f2 - f1 <= 1, `${f1} → ${f2} fotogramas en 0,8 s`);
-    check('hay etiquetas visibles (≤ 40) y no se solapan en exceso', i0.labels > 0 && i0.labels <= 40, String(i0.labels));
+    check('hay etiquetas visibles y acotadas (≤ 62)', i0.labels > 0 && i0.labels <= 62, String(i0.labels));
+    const stageBox = await page.locator('.sb-stage-card').boundingBox();
+    const mainBox = await page.locator('#ap-view').boundingBox();
+    check('el mapa ocupa todo el ancho del área de trabajo', stageBox.width >= mainBox.width - 2, `${stageBox.width} de ${mainBox.width}`);
+    const detBox = await page.locator('#sb-detail').boundingBox();
+    check('el detalle y las recomendaciones van debajo del mapa', detBox.y > stageBox.y + stageBox.height - 1);
+    check('el fondo del mapa es blanco', await page.evaluate(() => getComputedStyle(document.querySelector('.sb-stage-card')).backgroundColor === 'rgb(255, 255, 255)'));
+    check('la vista inicial es «Mapa» en perspectiva', (await info(page)).layout === 'mapa' && (await info(page)).preset === '3d');
+    // semántica del mapa: lo respaldado más cerca del centro que lo pendiente; competencias por encima; proyectos fuera del disco
+    const geo = await page.evaluate(() => {
+      const v = document.querySelector('#sb-stage').__sbViewer;
+      return v.debugPositions();
+    });
+    const rad = (p) => Math.hypot(p[0], p[2]);
+    const avg = (a) => a.reduce((s, x) => s + x, 0) / Math.max(1, a.length);
+    const byState = (st) => REAL.nodes.filter((n) => ['tecnologia', 'concepto', 'tecnica'].includes(n.type) && n.state === st).map((n) => rad(geo[n.id]));
+    check('mapa: lo respaldado está más cerca del centro que lo pendiente o en brecha', avg(byState('respaldado')) < avg([...byState('pendiente'), ...byState('brecha_probable')]));
+    check('mapa: las competencias flotan por encima del plano de conceptos', REAL.nodes.filter((n) => n.type === 'competencia').every((n) => geo[n.id][1] > 10));
+    check('mapa: los proyectos forman el cinturón exterior', REAL.nodes.filter((n) => n.type === 'proyecto').every((n) => rad(geo[n.id]) > 100));
+    check('mapa: cada concepto está dentro del sector de su área', await page.evaluate(() => document.querySelector('#sb-stage').__sbViewer.debugSectorsOk()));
     if (SHOTS) await page.screenshot({ path: join(SHOTS, '01-vista-general.png') });
 
     section('3. Interacción sin red: seleccionar, filtrar, buscar, enfocar');
@@ -142,15 +161,15 @@ try {
     const pos = await page.evaluate(() => document.querySelector('#sb-stage').__sbViewer.screenPos('c:dax'));
     await page.mouse.click(pos.x, pos.y);
     await page.waitForTimeout(900);
-    check('el clic en un nodo muestra su panel contextual', (await page.locator('#sb-detail-title').textContent()) === 'DAX');
-    check('el panel indica el estado de evidencia', /Respaldado/.test(await page.locator('#sb-p-detalle .sb-badge').first().textContent()));
+    check('el clic en un nodo muestra su panel contextual', (await page.locator('#sb-detail-h').textContent()) === 'DAX');
+    check('el panel indica el estado de evidencia', /Respaldado/.test(await page.locator('#sb-detail .sb-badge').first().textContent()));
     check('el panel lista relaciones con su fundamento', (await page.locator('.sb-rels li').count()) > 2 && (await page.locator('.sb-why').first().textContent()).length > 15);
-    check('el panel no contiene rutas de archivos ni enlaces a documentos', !/\.(py|sql|md|ipynb|pbix)\b/i.test(await page.locator('#sb-p-detalle').textContent()));
+    check('el panel no contiene rutas de archivos ni enlaces a documentos', !/\.(py|sql|md|ipynb|pbix)\b/i.test(await page.locator('#sb-detail').textContent()));
     check('el nodo seleccionado queda registrado en el visor', (await info(page)).selected === 'c:dax');
     // brecha probable: debe explicarse y no llamarse "confirmada"
     await page.evaluate(() => document.querySelector('#sb-stage').__sbViewer.select('c:power-query'));
     await page.waitForTimeout(300);
-    const gap = await page.locator('#sb-p-detalle').textContent();
+    const gap = await page.locator('#sb-detail').textContent();
     check('una brecha probable muestra su motivo y la salvedad', /Brecha probable/.test(gap) && /no están entre las fuentes/.test(gap) && !/Brecha confirmada/.test(gap));
     // filtros
     await page.locator('.sb-filters > summary').click();
@@ -177,7 +196,7 @@ try {
     check('la búsqueda ofrece resultados', (await page.locator('#sb-results [role=option] button').count()) >= 1);
     await page.locator('#sb-search').press('Enter');
     await page.waitForTimeout(900);
-    check('Enter en la búsqueda selecciona y enfoca el concepto', /ventana/i.test(await page.locator('#sb-detail-title').textContent()));
+    check('Enter en la búsqueda selecciona y enfoca el concepto', /ventana/i.test(await page.locator('#sb-detail-h').textContent()));
     // relaciones
     await page.locator('.sb-filters > summary').click();
     await page.locator('#sb-f-edge-agrupa').check();
@@ -187,15 +206,28 @@ try {
     if (SHOTS) await page.screenshot({ path: join(SHOTS, '02-seleccion.png') });
 
     section('4. Recomendaciones y lista accesible');
-    await page.getByRole('tab', { name: 'Recomendaciones' }).click();
-    const recText = await page.locator('#sb-p-recomendaciones').textContent();
+    await page.locator('.sb-recs details.sb-rec').evaluateAll((ds) => ds.forEach((d) => { d.open = true; }));
+    const recText = await page.locator('.sb-recs').textContent();
     check('se agrupan en Ahora / Después / Todavía no', /Ahora \(\d+\)/.test(recText) && /Después \(\d+\)/.test(recText) && /Todavía no \(\d+\)/.test(recText));
     check('cada recomendación muestra por qué, evidencia, resultado y acción', ['Por qué', 'Evidencia o requisito', 'Resultado que se busca', 'Acción concreta', 'Confianza', 'Esfuerzo'].every((t) => recText.includes(t)));
     check('se explica cómo se calcula la prioridad', /relevancia/.test(recText) && /Cómo se calcula la prioridad/.test(recText));
-    await page.getByRole('tab', { name: 'Lista' }).click();
+    await page.locator('.sb-all > summary').click();
     check('la lista accesible contiene todos los elementos por región', (await page.locator('.sb-node').count()) === REAL.nodes.length, String(await page.locator('.sb-node').count()));
-    await page.locator('#sb-p-lista details[open] .sb-node').first().click();
-    check('elegir en la lista selecciona el nodo y vuelve al detalle', (await page.locator('#sb-p-detalle').isVisible()) && (await page.locator('#sb-detail-title').count()) === 1);
+    await page.locator('.sb-all .sb-node').first().click();
+    check('elegir en la lista selecciona el nodo y muestra su detalle', (await page.locator('#sb-detail .sb-badge').count()) === 1);
+
+    section('4b. Vistas: Mapa / Red y puntos de vista');
+    await page.getByRole('button', { name: 'Red', exact: true }).click();
+    await page.waitForTimeout(1300);
+    check('«Red» cambia a la distribución de fuerzas del motor', (await info(page)).layout === 'red');
+    const redPos = await page.evaluate(() => document.querySelector('#sb-stage').__sbViewer.debugPositions());
+    check('en «Red» las posiciones son las del snapshot', REAL.nodes.every((n) => Math.hypot(redPos[n.id][0] - n.pos[0], redPos[n.id][1] - n.pos[1], redPos[n.id][2] - n.pos[2]) < 0.01));
+    await page.getByRole('button', { name: 'Mapa', exact: true }).click();
+    await page.getByRole('button', { name: 'Cenital' }).click();
+    await page.waitForTimeout(1300);
+    check('«Cenital» mira el mapa desde arriba', (await info(page)).preset === 'cenital' && (await info(page)).layout === 'mapa');
+    await page.getByRole('button', { name: 'Perspectiva' }).click();
+    await page.waitForTimeout(900);
 
     section('5. Teclado');
     await page.locator('#sb-stage').focus();
@@ -297,14 +329,17 @@ try {
     await m.page.goto(BASE + 'area-privada.html#/second-brain');
     await waitGraph(m.page);
     check('móvil: sin desplazamiento horizontal', await m.page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
-    check('móvil: el panel está plegado y hay un botón para abrirlo', (await m.page.locator('.sb-panel-toggle').isVisible()) && !(await m.page.locator('#sb-side').isVisible()));
+    check('móvil: arranca en vista cenital (el disco cabe mejor en vertical)', (await m.page.evaluate(() => document.querySelector('#sb-stage').__sbViewer.info().preset)) === 'cenital');
     check('móvil: el grafo ocupa el ancho disponible', (await m.page.locator('#sb-stage').boundingBox()).width > 340);
     await m.page.locator('#sb-stage').scrollIntoViewIfNeeded();
     await m.page.waitForTimeout(300);
     const mp = await m.page.evaluate(() => document.querySelector('#sb-stage').__sbViewer.screenPos('c:sql'));
     await m.page.mouse.click(mp.x, mp.y);
     await m.page.waitForTimeout(800);
-    check('móvil: al seleccionar se abre el panel inferior', await m.page.locator('#sb-side').isVisible());
+    check('móvil: al seleccionar aparece el aviso con acceso al detalle', await m.page.locator('.sb-chip').isVisible());
+    await m.page.locator('.sb-chip-go').click();
+    await m.page.waitForTimeout(700);
+    check('móvil: «Ver detalle» lleva al panel de detalle', await m.page.evaluate(() => { const r = document.querySelector('#sb-detail').getBoundingClientRect(); return r.top < window.innerHeight && r.bottom > 0; }));
     if (SHOTS) await m.page.screenshot({ path: join(SHOTS, '04-movil.png') });
     await m.ctx.close();
 
@@ -322,7 +357,7 @@ try {
       return { frame, filt, info: v.info() };
     });
     console.log(`    (1200 nodos / 3000 relaciones, renderizado por software: carga ${loadMs} ms · fotograma ${perf.frame.toFixed(1)} ms · filtrar ${perf.filt.toFixed(1)} ms · ${perf.info.drawCalls} llamadas · ${perf.info.labels} etiquetas)`);
-    check('grande: llamadas de dibujo constantes (≤ 14) y etiquetas acotadas (≤ 40)', perf.info.drawCalls <= 14 && perf.info.labels <= 40, JSON.stringify(perf.info));
+    check('grande: llamadas de dibujo constantes (≤ 20) y etiquetas acotadas (≤ 62)', perf.info.drawCalls <= 20 && perf.info.labels <= 62, JSON.stringify(perf.info));
     check('grande: filtrar tarda menos de 400 ms', perf.filt < 400, perf.filt.toFixed(1));
     if (SHOTS) await b.page.screenshot({ path: join(SHOTS, '05-grande.png') });
     await b.ctx.close();

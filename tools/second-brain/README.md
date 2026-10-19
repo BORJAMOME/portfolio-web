@@ -78,6 +78,19 @@ No hay conectores a GitHub, LinkedIn ni ofertas de empleo: solo carpetas locales
 
 ## Visor
 
+Dos distribuciones del mismo snapshot, con transición animada entre ellas:
+
+- **Mapa** (por defecto). La posición tiene significado y se lee sin leyenda: **sector** = área de conocimiento;
+  **del centro al borde** = respaldado → mencionado → por validar (el grosor de cada anillo es proporcional a cuántos elementos tiene);
+  **altura** = competencias por encima del plano, pines ámbar sobre lo que recomiendan y objetivos en el eje central;
+  **cinturón exterior** = proyectos, junto al área que demuestran. Se calcula en el visor a partir de región, estado y tipo (representación, no análisis).
+- **Red**: las posiciones de fuerzas que calcula el motor (`layout.mjs`), para seguir conexiones.
+
+Puntos de vista: Perspectiva, Cenital (arrastrar desplaza, como un mapa; es la vista inicial en móvil) y Lateral (muestra las capas).
+Las relaciones solo se dibujan para el elemento señalado (al pasar por encima o seleccionarlo), con arcos; el resto se atenúa.
+Paleta del área privada sobre fondo blanco: navy (respaldado), acero (mencionado), gris claro (por validar), ámbar (recomendaciones),
+anillo rojo (brecha, como las desviaciones negativas de IBCS) y verde para las relaciones de mejora.
+
 Rotar, zoom, desplazar (ratón, táctil y teclado), seleccionar, centrar, vista general, búsqueda, filtros por estado, tipo, región, prioridad y tipo de relación,
 panel contextual (significado, evidencia, incertidumbres, relaciones con su fundamento, recomendación), pestañas Recomendaciones y Lista (alternativa accesible al 3D).
 Colores: **azul** respaldado · **gris** pendiente/mencionado · **ámbar** recomendación u oportunidad; el resto se distingue por forma y anillo.
