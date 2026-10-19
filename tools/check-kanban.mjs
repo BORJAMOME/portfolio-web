@@ -31,7 +31,7 @@ const BASE = `http://localhost:${server.address().port}/area-privada.html`;
 let seq = 0;
 const uid = () => '00000000-0000-4000-8000-' + String(++seq).padStart(12, '0');
 const db = { kb_tarjetas: [], kb_proyectos: [], kb_subtareas: [], kb_historial: [], kb_ajustes: [{ clave: 'capacidad', valor: { hoy: 2 } }] };
-let failWrites = false, writeDelay = 0, writes = 0;
+let failWrites = false, writeDelay = 0, writes = 0, iaOn = false, iaCalls = 0;
 const log = [];
 function matches(row, params) {
   for (const [k, v] of params) {
@@ -51,6 +51,16 @@ function trigger(row, old) {            // lo que hace supabase/kanban.sql en el
 async function route(r) {
   const req = r.request(), url = new URL(req.url()), m = /\/rest\/v1\/(\w+)/.exec(url.pathname), cors = { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': '*' };
   if (req.method() === 'OPTIONS') return r.fulfill({ status: 204, headers: cors });
+  if (/\/functions\/v1\/kanban-ia/.test(url.pathname)) {      // kanban-ia simulada (como KB_AI_PROVIDER=mock)
+    const b = JSON.parse(req.postData() || '{}'), send = (body) => r.fulfill({ status: 200, headers: cors, contentType: 'application/json', body: JSON.stringify(body) });
+    if (!iaOn) return send({ enabled: false, provider: 'off', remaining: 0 });
+    if (b.action === 'estado') return send({ enabled: true, provider: 'mock', remaining: 30 });
+    iaCalls++;
+    if (b.action === 'desglosar') return send({ pasos: ['Paso uno', 'Paso dos', 'Paso tres'], remaining: 29 });
+    if (b.action === 'siguiente_paso') return send({ siguiente_paso: 'Abrir el PBIX y anotar el primer cambio', motivo: 'Es lo más pequeño.', remaining: 29 });
+    if (b.action === 'plan_dia') return send({ resumen: 'Acaba lo empezado antes de abrir frentes nuevos.', elegidas: (b.cards || []).slice(0, b.capacidad).map((c) => ({ id: c.id, motivo: 'Motivo simulado' })), remaining: 29 });
+    if (b.action === 'capturar') return send({ tarjetas: [{ titulo: 'Tarea IA uno', estado: 'pendiente', prioridad: 3, fecha_limite: null, proyecto_id: null, siguiente_paso: 'Empezar' }, { titulo: 'Idea IA dos', estado: 'ideas', prioridad: 2, fecha_limite: null, proyecto_id: null, siguiente_paso: null }], remaining: 29 });
+  }
   if (!m) return r.fulfill({ status: 200, headers: cors, contentType: 'application/json', body: '{}' });
   const t = m[1], json = (status, body) => r.fulfill({ status, headers: cors, contentType: 'application/json', body: JSON.stringify(body) });
   if (!(t in db)) return json(200, []);
@@ -400,6 +410,87 @@ await step('El aprendizaje se anota desde el aviso y se ve en la tarjeta de Hech
   await page.fill('#apk-d-a', 'Aprendí a probar con datos simulados');
   await page.click('dialog[open] button[type="submit"]'); await page.waitForSelector('dialog[open]', { state: 'detached' });
   ok((await page.textContent(cardSel(t))).includes('Aprendí a probar'), 'la tarjeta no muestra el aprendizaje (' + est + ')');
+});
+await step('IA apagada: no aparece ningún botón de IA', async () => {
+  eq((await page.$$('[data-role^="ia-"]')).length, 0, 'botones de IA visibles sin IA');
+});
+await step('Paleta Ctrl+K: buscar abre la tarjeta y un texto nuevo se crea con captura inteligente', async () => {
+  await goBoard(page);
+  await page.keyboard.press('Control+k');
+  await page.waitForSelector('dialog.apk-pal[open]');
+  await page.keyboard.type('Publicar');
+  await page.waitForSelector('.apk-pal-item[aria-selected="true"]:has-text("Publicar proyecto")');
+  if (process.env.SHOTS) await page.screenshot({ path: join(process.env.SHOTS, 'paleta.png') });
+  await page.keyboard.press('Enter');
+  await page.waitForSelector('#apk-d-t');
+  eq(await page.inputValue('#apk-d-t'), 'Publicar proyecto', 'abre la tarjeta buscada');
+  await page.click('dialog[open] button:has-text("Cerrar")');
+  await page.keyboard.press('Control+k');
+  await page.waitForSelector('dialog.apk-pal[open]');
+  await page.keyboard.type('Tarea paleta mañana !alta');
+  await page.keyboard.press('Enter');
+  await page.waitForFunction(() => [...document.querySelectorAll('.apk-card-open')].some((e) => e.textContent === 'Tarea paleta'));
+  const c = db.kb_tarjetas.find((x) => x.titulo === 'Tarea paleta');
+  const t = new Date(); t.setDate(t.getDate() + 1);
+  const k = t.getFullYear() + '-' + String(t.getMonth() + 1).padStart(2, '0') + '-' + String(t.getDate()).padStart(2, '0');
+  ok(c && c.prioridad === 3 && c.estado === 'pendiente' && c.fecha_limite === k, 'campos detectados: ' + JSON.stringify(c));
+});
+await step('IA activa: el plan del día pasa por revisión y solo elige lo confirmado', async () => {
+  iaOn = true;
+  db.kb_ajustes.find((a) => a.clave === 'capacidad').valor = { hoy: 12 };
+  await page.reload(); await page.waitForSelector('.apk-head');
+  await page.click('.apk-seg-btn:has-text("Hoy")');
+  await page.waitForSelector('[data-role="ia-plan"]');
+  const before = db.kb_tarjetas.filter((c) => c.hoy_fecha).length;
+  await page.click('[data-role="ia-plan"]');
+  await page.waitForSelector('dialog.apk-review[open]');
+  ok((await page.textContent('.apk-review')).includes('Acaba lo empezado'), 'sin resumen');
+  if (process.env.SHOTS) await page.screenshot({ path: join(process.env.SHOTS, 'ia-plan.png') });
+  await page.addScriptTag({ content: AXE });
+  const v = await page.evaluate(async () => (await axe.run('.apk-review', { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'] } })).violations.map((x) => x.id));
+  eq(v, [], 'axe en la revisión de IA');
+  const boxes = await page.$$('.apk-review .apk-rv-item input[type="checkbox"]');
+  ok(boxes.length >= 2, 'propuestas insuficientes: ' + boxes.length);
+  await boxes[1].uncheck();
+  await page.click('[data-role="rv-ok"]');
+  await page.waitForSelector('dialog.apk-review', { state: 'detached' });
+  await page.waitForTimeout(200);
+  eq(db.kb_tarjetas.filter((c) => c.hoy_fecha).length - before, boxes.length - 1, 'se eligen solo las marcadas');
+});
+await step('IA activa: desglosar en pasos (editables) y proponer siguiente paso sin guardar solo', async () => {
+  await goBoard(page);
+  const target = db.kb_tarjetas.find((c) => c.titulo === 'Tercera');
+  await page.click(cardSel('Tercera') + ' .apk-card-open');
+  await page.click('[data-role="ia-desglosar"]');
+  await page.waitForSelector('dialog.apk-review[open]');
+  await page.fill('.apk-review .apk-rv-item:nth-child(1) input[type="text"]', 'Paso uno editado');
+  await page.uncheck('.apk-review .apk-rv-item:nth-child(2) input[type="checkbox"]');
+  await page.click('[data-role="rv-ok"]');
+  await page.waitForSelector('dialog.apk-review', { state: 'detached' });
+  await page.waitForSelector('dialog[open] .apk-sub:has-text("Paso uno editado")');
+  const subs = db.kb_subtareas.filter((x) => x.tarjeta_id === target.id).map((x) => x.titulo);
+  ok(subs.includes('Paso uno editado') && subs.includes('Paso tres') && !subs.includes('Paso dos'), 'pasos guardados: ' + subs);
+  const prevNext = target.siguiente_paso;
+  await page.click('[data-role="ia-next"]');
+  await page.waitForFunction(() => document.querySelector('#apk-d-p').value.includes('PBIX'));
+  eq(db.kb_tarjetas.find((c) => c.id === target.id).siguiente_paso, prevNext, 'no se guarda sin pulsar Guardar');
+  await page.click('dialog[open] button:has-text("Cerrar")');
+});
+await step('IA activa: texto libre → tarjetas propuestas → se crean al confirmar', async () => {
+  await page.click('.apk-seg-btn:has-text("Hoy")');
+  await page.fill('.apk-capture input', 'Notas de la reunión: hacer tarea uno y pensar idea dos');
+  await page.click('[data-role="ia-capturar"]');
+  await page.waitForSelector('#apk-ia-txt');
+  ok((await page.inputValue('#apk-ia-txt')).includes('Notas de la reunión'), 'el texto pasa al formulario');
+  await page.click('dialog[open] button[type="submit"]');
+  await page.waitForSelector('dialog.apk-review[open]');
+  await page.click('[data-role="rv-ok"]');
+  await page.waitForSelector('dialog.apk-review', { state: 'detached' });
+  await page.waitForTimeout(250);
+  const a = db.kb_tarjetas.find((c) => c.titulo === 'Tarea IA uno'), b = db.kb_tarjetas.find((c) => c.titulo === 'Idea IA dos');
+  ok(a && a.prioridad === 3 && a.estado === 'pendiente' && a.siguiente_paso === 'Empezar', 'tarjeta 1: ' + JSON.stringify(a));
+  ok(b && b.estado === 'ideas', 'tarjeta 2');
+  if (process.env.SHOTS) { await page.waitForTimeout(200); await page.screenshot({ path: join(process.env.SHOTS, 'hoy-ia.png'), fullPage: true }); }
 });
 await step('Sin errores de JavaScript', async () => { eq(errors, [], 'errores de consola'); });
 await step('Accesibilidad (axe, WCAG 2 A/AA) en Tablero y Hoy', async () => {
