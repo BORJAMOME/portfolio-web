@@ -67,6 +67,7 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
   Jerarquía: `padre` y `rutas` en `framework.json` → `second-brain/taxonomy.js` (lógica pura) y `tools/second-brain/TAXONOMIA.md` (se genera con `--doc`); un proyecto = una entidad (`identity.mjs`).
   Calidad visual del mapa: `SIZE`/`nodeRadius`, atlas normalizado (`icons.js`), separación y etiquetas (`viewer.js`); medir con `viewer.debugMetrics()` (E2E sección 4f).
   Color = familia tecnológica (`framework.json → familias`, campo `family` de cada nodo); las áreas son los sectores del suelo.
+  Exploración (v9): núcleo `n:nucleo` y áreas `a:<región>` son nodos derivados; la vista por defecto es «Por áreas» y desplegar/contraer es solo visibilidad (`buildExplore` en `taxonomy.js`, posiciones fijas). Las aristas `conecta` entre áreas resumen relaciones reales (`evidenceCount`), no son relaciones nuevas.
   Pruebas: `node --test tools/second-brain/second-brain.test.mjs` y `node tools/second-brain/e2e.mjs`. Guía y reglas de evidencia: `tools/second-brain/README.md`.
   Cambiar `framework.json` o el motor → `node tools/second-brain/analyze.mjs --demo` (regenera el demo; hay un test que lo comprueba).
 - **Supabase no se pausa**: `.github/workflows/supabase-keepalive.yml` llama a `public.keepalive()` (`supabase/keepalive.sql`) lunes y jueves

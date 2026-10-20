@@ -22,8 +22,10 @@
 
 /* Escala de tamaños (unidades del mundo): una jerarquía y no valores sueltos.
    objetivo > competencia > concepto (crece con la raíz de sus proyectos) > proyecto. */
-export const SIZE = { objetivo: 5.4, objetivoSec: 4.6, competencia: 3.5, competenciaRespaldada: 4.2, conceptoMin: 2.3, conceptoMax: 3.3, proyecto: 1.9, recomendacion: 2.0 };
+export const SIZE = { objetivo: 5.4, objetivoSec: 4.6, competencia: 3.5, competenciaRespaldada: 4.2, conceptoMin: 2.3, conceptoMax: 3.3, proyecto: 1.9, recomendacion: 2.0, area: 5.0, nucleo: 7.2 };
 export function nodeRadius(n) {
+  if (n.type === 'nucleo') return SIZE.nucleo;
+  if (n.type === 'area') return SIZE.area;
   const ev = Math.min(1, Math.sqrt(((n.evidence && n.evidence.projects) || 0) / 10));
   if (n.type === 'objetivo') return n.size >= 1 ? SIZE.objetivo : SIZE.objetivoSec;
   if (n.type === 'competencia') return n.state === 'respaldado' ? SIZE.competenciaRespaldada : SIZE.competencia;
@@ -44,6 +46,7 @@ export const EDGE_STYLE = {
   mejora: { types: ['mejora', 'habilita'], color: '#2f7d5b', dash: null, label: 'Mejora o habilita' },
   demuestra: { types: ['demuestra'], color: null, dash: null, strong: true, label: 'Proyecto que lo demuestra (color del área)' },
   estructura: { types: ['agrupa', 'necesita'], color: '#8c9ab3', dash: null, thin: true, label: 'Pertenece a / requerido por' },
+  agregada: { types: ['conecta'], color: '#8c9ab3', dash: null, label: 'Relaciones entre áreas (recuento de las reales)' },
   recomienda: { types: ['recomienda'], color: '#d9952c', dash: [2.1, 1.3], label: 'Recomendación (aún por hacer)' },
 };
 const STYLE_OF = {};
@@ -197,7 +200,10 @@ function mapLayout(snapshot) {
   }
   const order = ((snapshot.meta && snapshot.meta.levels) || []).map((l) => 'o:' + l.id);
   // los objetivos suben por el eje, pero algo desplazados para que no se tapen entre sí vistos desde arriba
-  nodes.filter((n) => n.type === 'objetivo').forEach((n) => { const k = Math.max(0, order.indexOf(n.id)); pos.set(n.id, [Math.cos(k * 2.4) * 6, Y.objetivo + k * 9.5, Math.sin(k * 2.4) * 6]); });
+  nodes.filter((n) => n.type === 'objetivo').forEach((n) => { const k = Math.max(0, order.indexOf(n.id)); pos.set(n.id, [Math.cos(k * 2.4) * 17, Y.objetivo + k * 9.5, Math.sin(k * 2.4) * 17]); });
+  // núcleo en el centro y cada área en el borde exterior de su cuña, donde las posiciones de sus conocimientos no cambian al desplegarla
+  nodes.filter((n) => n.type === 'nucleo').forEach((n) => pos.set(n.id, [0, 0, 0]));
+  nodes.filter((n) => n.type === 'area').forEach((n) => { const sc = sectors.find((x) => x.id === n.region); if (sc) pos.set(n.id, at(sc.ac, RIM - 2, 6)); });
   const recTarget = new Map(snapshot.recommendations.map((r) => [r.nodeId, r.targetId]));
   const stack = new Map();
   nodes.filter((n) => n.type === 'recomendacion').forEach((n) => {
@@ -242,7 +248,8 @@ void main() {
   if (vShape < 0.5) d = length(vP) - 1.0;                                   // conocimiento / recomendación
   else if (vShape < 1.5) d = sdBox(vP, 0.9, 0.22);                          // proyecto
   else if (vShape < 2.5) d = sdHex(vP, 0.86) - 0.08;                        // competencia (hexágono redondeado)
-  else d = sdBox(vec2(vP.x + vP.y, vP.y - vP.x) * 0.7071, 0.8, 0.12);       // objetivo (rombo)
+  else if (vShape < 3.5) d = sdBox(vec2(vP.x + vP.y, vP.y - vP.x) * 0.7071, 0.8, 0.12);   // objetivo (rombo)
+  else d = length(vP) - 1.0;                                                // área y núcleo (círculo con anillo interior)
   float aa = max(fwidth(d), 0.0001) * 1.1;
   float inside = 1.0 - smoothstep(-aa, aa, d);
   float rimW = vStyle > 0.5 ? 0.10 : 0.12;
@@ -251,8 +258,9 @@ void main() {
   if (vStyle > 0.5) { float ang = atan(vP.y, vP.x); dashOn = step(0.42, fract(ang / 6.2831853 * 8.0)); }
   vec3 col = vFill;
   col = mix(col, vEdge, rim * dashOn);
+  if (vShape > 3.5) col = mix(col, vec3(1.0), band(length(vP), 0.8, 0.88, aa) * inside * 0.85);   // anillo interior blanco: se distingue de un conocimiento
   // el atlas ya viene normalizado (glifo = 60 % de la celda): el glifo ocupa ~55 % del diámetro del nodo, menos en formas con menos espacio útil
-  float isc = vShape > 2.5 ? 0.66 : vShape > 1.5 ? 0.6 : 0.54;
+  float isc = vShape > 3.5 ? 0.56 : vShape > 2.5 ? 0.66 : vShape > 1.5 ? 0.6 : 0.54;
   vec2 iuv = vP * isc + 0.5;
   float iconFade = smoothstep(5.5, 8.5, vPx);                             // con el nodo pequeño el glifo no se lee: se omite y queda una forma limpia
   float ia = 0.0;
@@ -332,7 +340,7 @@ export function createViewer(container, T, options = {}) {
   const reduced = () => !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
   const ac = new AbortController();
   const { signal } = ac;
-  const cb = { select: options.onSelect || (() => {}), hover: options.onHover || (() => {}), lost: options.onContextLost || (() => {}) };
+  const cb = { activate: options.onActivate || (() => {}), edge: options.onEdge || (() => {}), select: options.onSelect || (() => {}), hover: options.onHover || (() => {}), lost: options.onContextLost || (() => {}) };
 
   const renderer = new T.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
@@ -463,7 +471,9 @@ export function createViewer(container, T, options = {}) {
       const NAVY = RAW(PALETTE.navy);
       let fill, edge, icon;
       const open = n.state === 'pendiente' || n.state === 'brecha_probable' || n.state === 'brecha_confirmada';
-      if (n.type === 'recomendacion') { fill = RAW(PALETTE.amber); edge = RAW(PALETTE.amberInk); icon = WHITE; }
+      if (n.type === 'nucleo') { fill = RAW('#273a5f'); edge = fill; icon = WHITE; }
+      else if (n.type === 'area') { fill = fm.base.clone(); edge = fm.base.clone().multiplyScalar(fm.light ? 0.8 : 0.7); icon = fm.light ? NAVY : WHITE; }
+      else if (n.type === 'recomendacion') { fill = RAW(PALETTE.amber); edge = RAW(PALETTE.amberInk); icon = WHITE; }
       else if (n.type === 'objetivo') { fill = RAW('#273a5f'); edge = fill; icon = WHITE; }
       else if (n.type === 'proyecto') { fill = fm.base.clone().lerp(WHITE, 0.9); edge = area; icon = fm.ink; }
       else if (n.state === 'respaldado') { fill = fm.base.clone(); edge = fm.base.clone().multiplyScalar(fm.light ? 0.8 : 0.72); icon = fm.light ? NAVY : WHITE; }
@@ -477,14 +487,16 @@ export function createViewer(container, T, options = {}) {
       attrs.aIconCol.setXYZ(i, icon.r, icon.g, icon.b);
       attrs.aBrand.setX(i, logoCell >= 0 ? (n.state === 'mencionado' ? 0.55 : 1) : 0);
       attrs.aIcon.setX(i, logoCell >= 0 ? logoCell : atlas.index(n.icon || ({ proyecto: 'folder', competencia: 'hexagon', objetivo: 'flag', recomendacion: 'bulb' }[n.type] || 'dot')));
-      attrs.aShape.setX(i, n.type === 'proyecto' ? 1 : n.type === 'competencia' ? 2 : n.type === 'objetivo' ? 3 : 0);
+      attrs.aShape.setX(i, n.type === 'proyecto' ? 1 : n.type === 'competencia' ? 2 : n.type === 'objetivo' ? 3 : n.type === 'area' ? 4 : n.type === 'nucleo' ? 5 : 0);
       attrs.aStyle.setX(i, open && n.type !== 'proyecto' ? 1 : 0);
       const gap = n.state === 'brecha_probable' || n.state === 'brecha_confirmada';
       const now = bucket.get(n.id) === 'ahora' && n.type !== 'recomendacion';
       const rc = RAW(gap ? PALETTE.red : PALETTE.amber);
       attrs.aRing.setXYZW(i, rc.r, rc.g, rc.b, gap ? (n.state === 'brecha_confirmada' ? 2 : 1) : now ? 1 : 0);
+      ringBase[i] = [rc.r, rc.g, rc.b, gap ? (n.state === 'brecha_confirmada' ? 2 : 1) : now ? 1 : 0];
     });
     nodesMesh = new T.Mesh(nodeGeo, nodeMat);
+    appearT.clear();
     nodesMesh.frustumCulled = false; nodesMesh.renderOrder = 10;
     scene.add(nodesMesh);
 
@@ -554,7 +566,12 @@ export function createViewer(container, T, options = {}) {
       const vis = isVisible(n.id);
       const c = centerOf(i);
       attrs.aPos.setXYZ(i, c[0], c[1], c[2]);
-      attrs.aSize.setX(i, vis ? radiusOf(n) * (n.id === selected ? 1.18 : n.id === hovered ? 1.08 : 1) : 0);
+      const t0 = appearT.get(n.id);
+      let grow = 1;
+      if (t0 !== undefined) { const u = Math.min(1, (performance.now() - t0) / 300); grow = Math.max(0.001, easeBack(u)); if (u >= 1) appearT.delete(n.id); }
+      attrs.aSize.setX(i, vis ? radiusOf(n) * grow * (n.id === selected ? 1.18 : n.id === hovered ? 1.08 : 1) : 0);
+      const rb = ringBase[i];
+      if (rb) { if (rb[3] === 0 && expandable.has(n.id)) attrs.aRing.setXYZW(i, 0.55, 0.6, 0.7, 1); else attrs.aRing.setXYZW(i, rb[0], rb[1], rb[2], rb[3]); }
       attrs.aDim.setX(i, fs && !fs.has(n.id) ? 1 : 0);
       attrs.aSel.setX(i, n.id === selected ? 1 : n.id === hovered ? 0.5 : 0);
       const on = vis && mode === 'mapa' && !(fs && !fs.has(n.id));   // los atenuados no proyectan sombra
@@ -562,7 +579,7 @@ export function createViewer(container, T, options = {}) {
       tmpM.makeScale(r, 1, r).setPosition(P[i * 3], 0.03, P[i * 3 + 2]);
       shadows.setMatrixAt(i, tmpM);
     });
-    for (const k of ['aPos', 'aSize', 'aDim', 'aSel']) attrs[k].needsUpdate = true;
+    for (const k of ['aPos', 'aSize', 'aDim', 'aSel', 'aRing']) attrs[k].needsUpdate = true;
     shadows.instanceMatrix.needsUpdate = true;
     if (floorMesh) floorMesh.visible = mode === 'mapa';
     if (guides) guides.visible = mode === 'mapa';
@@ -666,31 +683,38 @@ export function createViewer(container, T, options = {}) {
     let order = 0;
     data.edges.forEach((e, i) => {
       if (!isVisible(e.source) || !isVisible(e.target)) return;
-      const focus = inFocus.has(i);
-      if (!focus && (edgeMode !== 'todas' || (edgeTypes && !edgeTypes.has(e.type)))) return;
+      const focus = inFocus.has(i) || i === selectedEdge;
+      const ov = overviewEdges && e.overview && !selected && !hovered;      // relaciones de orientación en la vista general
+      if (!focus && !ov && (edgeMode !== 'todas' || (edgeTypes && !edgeTypes.has(e.type)))) return;
       const si = idx(e.source), ti = idx(e.target);
       const pts = edgePoints(si, ti, curved);
       if (!pts) return;
       const key = STYLE_OF[e.type] || 'tecnica';
       const stl = EDGE_STYLE[key];
       const tgt = data.nodes[ti];
-      const col = stl.color ? RAW(stl.color) : edgeOf(famOf(tgt));
+      let col = stl.color ? RAW(stl.color) : edgeOf(famOf(tgt));
+      if (e.overview && e.type === 'agrupa') col = edgeOf(famOf(tgt));         // núcleo → área: el color del área
       const w8 = CONF_W[e.confidence] || 0.6;
-      if (focus) {
+      if (i === selectedEdge) {
+        focusList.push({ pts, col, dash: false, tail: false, w: 4.2, alpha: 1, delay: 0, ei: i });
+      } else if (focus) {
         const sel = !!selected;
         focusList.push({
           pts, col, dash: !!stl.dash, tail: tgt.state === 'brecha_probable' || tgt.state === 'brecha_confirmada',
           w: stl.thin ? 1.4 : stl.strong ? 3 : 1.5 + 2 * w8,
           alpha: stl.thin ? (sel ? 0.8 : 0.5) : sel ? 1 : 0.7,
-          delay: sel ? Math.min(order++ * 20, 200) : 0,
+          delay: sel ? Math.min(order++ * 20, 200) : 0, ei: i,
         });
-      } else ctxList.push({ pts, col, dash: !!stl.dash, tail: false, w: 1, alpha: stl.thin ? 0.08 : 0.15, delay: 0 });
+      } else if (ov) {
+        ctxList.push({ pts, col, dash: false, tail: false, w: e.type === 'conecta' ? 1.2 + Math.min(2.4, (e.evidenceCount || 1) * 0.45) : 2.4, alpha: e.type === 'conecta' ? 0.42 : 0.6, delay: 0, ei: i });
+      } else ctxList.push({ pts, col, dash: !!stl.dash, tail: false, w: 1, alpha: stl.thin ? 0.08 : 0.15, delay: 0, ei: i });
     });
+    edgeItems = focusList.concat(ctxList);
     // un nodo con muchas relaciones (p. ej. Power BI con 40+ proyectos) haría un abanico opaco:
     // se adelgazan y aclaran las cintas en proporción
     if (focusList.length > 20) {
       const k = Math.max(0.5, Math.sqrt(20 / focusList.length));
-      for (const f of focusList) { f.w = Math.max(1, f.w * k); f.alpha *= 0.55 + 0.45 * k; }
+      for (const f of focusList) { if (f.ei === selectedEdge) continue; f.w = Math.max(1, f.w * k); f.alpha *= 0.55 + 0.45 * k; }
     }
     ctxRibbon = ribbon(ctxList, 1, false);
     focusRibbon = ribbon(focusList, 1, !!selected && !reduced());
@@ -732,7 +756,7 @@ export function createViewer(container, T, options = {}) {
   let preset = '3d';
   function fitPoints() {
     const D = L[mode];
-    if (mode === 'mapa' && !visible) {
+    if (mode === 'mapa' && (!visible || fitAll)) {
       const pts = [];
       const lab = size.w < 700 ? 0 : 0.12;
       for (let i = 0; i < 32; i++) { const a = (i / 32) * Math.PI * 2; pts.push([Math.cos(a) * (BELT[BELT.length - 1] + 15) * (1 + lab * Math.abs(Math.cos(a))), 0, Math.sin(a) * (BELT[BELT.length - 1] + 15)]); }
@@ -743,6 +767,11 @@ export function createViewer(container, T, options = {}) {
     }
     return data.nodes.filter((n) => isVisible(n.id)).map((n) => { const i = idx(n.id); return [D[i * 3], D[i * 3 + 1], D[i * 3 + 2]]; });
   }
+  /* exploración: lo expandible lleva un anillo gris, lo que se despliega aparece con una pequeña transición y
+     las relaciones de orientación (núcleo ↔ área, área ↔ área) se dibujan en la vista general */
+  let expandable = new Set(), labelExtra = new Map(), overviewEdges = false, fitAll = false, selectedEdge = -1, edgeItems = [];
+  const appearT = new Map(), ringBase = [];
+  const easeBack = (t) => { const c1 = 1.5, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
   let uiRects = [];                                          // rectángulos de los controles superpuestos (leyenda, barra, mandos), en px del lienzo
   let insets = { top: 92, bottom: 0, left: 0, right: 0 };   // zonas ocupadas por los controles superpuestos (px)
   function fitDistance(pts, target, theta, phi) {
@@ -770,7 +799,7 @@ export function createViewer(container, T, options = {}) {
     const p = PRESET[preset];
     const pts = fitPoints();
     const c = new T.Vector3();
-    if (mode === 'mapa' && !visible) c.set(0, preset === 'lateral' ? 14 : 4, 0);
+    if (mode === 'mapa' && (!visible || fitAll)) c.set(0, preset === 'lateral' ? 14 : 4, 0);
     else { pts.forEach((q) => c.add(tmpV.set(q[0], q[1], q[2]))); c.multiplyScalar(1 / Math.max(1, pts.length)); }
     const f = fitDistance(pts, c, p.theta, p.phi);
     fitRadius = f.d;
@@ -810,6 +839,7 @@ export function createViewer(container, T, options = {}) {
       focusRibbon.material.uniforms.uTime.value = tt;
       if (tt < 480) moving = true;
     }
+    if (appearT.size) { applyNodes(); moving = true; }
     renderer.render(scene, camera);
     updateLabels();
     if (moving) requestRender();
@@ -834,7 +864,7 @@ export function createViewer(container, T, options = {}) {
     if (!data) return;
     const w = size.w, h = size.h, placed = [];
     let used = 0;
-    const CW = { 'is-region': 7.6, 'is-guide': 7.2, 'is-n2': 7.4, 'is-sel': 7.6, 'is-hover': 7.2, 'is-n3': 6.6, 'is-proj': 6.4 };
+    const CW = { 'is-n1': 8.2, 'is-region': 7.6, 'is-guide': 7.2, 'is-n2': 7.4, 'is-sel': 7.6, 'is-hover': 7.2, 'is-n3': 6.6, 'is-proj': 6.4 };
     const hit = (b) => placed.some((q) => b[0] < q[0] + q[2] + 4 && b[0] + b[2] + 4 > q[0] && b[1] < q[1] + q[3] + 4 && b[1] + b[3] + 4 > q[1]);
     // anchor: r = a la derecha, l = a la izquierda, b = debajo, c = centrado
     // círculos de pantalla de los nodos visibles: una etiqueta no puede tapar a otro nodo
@@ -846,11 +876,11 @@ export function createViewer(container, T, options = {}) {
       const cx = Math.max(b[0], Math.min(d.x, b[0] + b[2])), cy = Math.max(b[1], Math.min(d.y, b[1] + b[3]));
       return (d.x - cx) ** 2 + (d.y - cy) ** 2 < d.r * d.r;
     });
-    const MAXLEN = { 'is-n2': 66, 'is-sel': 60, 'is-hover': 60, 'is-region': 40, 'is-guide': 20 };
+    const MAXLEN = { 'is-n1': 80, 'is-n2': 66, 'is-sel': 60, 'is-hover': 60, 'is-region': 40, 'is-guide': 20 };
     const short = (t, cls) => { const m = MAXLEN[cls] || 30; return t.length > m ? t.slice(0, m - 1) + '…' : t; };
     // los nombres largos se parten en dos líneas por palabras (hasta ~22 caracteres cada una)
     const wrap = (t, cls) => {
-      if (!/is-n2|is-sel|is-hover/.test(cls) || t.length <= 24) return t;
+      if (!/is-n1|is-n2|is-sel|is-hover/.test(cls) || t.length <= 24) return t;
       const out = [''];
       for (const wd of t.split(' ')) {
         const cur = out[out.length - 1];
@@ -862,7 +892,7 @@ export function createViewer(container, T, options = {}) {
       if (used >= LABEL_CAP + 12 || x < -60 || x > w + 60 || y < -20 || y > h + 20) return false;
       text = wrap(short(text, cls), cls);
       const lines = text.split('\n');
-      const bw = Math.max(...lines.map((l) => l.length)) * (CW[cls] || 6.8) + 4, bh = (/is-n2|is-sel/.test(cls) ? 17 : 15) * (1 + (lines.length - 1) * 0.82);
+      const bw = Math.max(...lines.map((l) => l.length)) * (CW[cls] || 6.8) + 4, bh = (/is-n1|is-n2|is-sel/.test(cls) ? 17 : 15) * (1 + (lines.length - 1) * 0.82);
       if (anchor === 'c') {                                                         // sin recortes en los bordes ni bajo la barra superior
         x = Math.min(Math.max(x, bw / 2 + 6), w - bw / 2 - 6);
         if (cls === 'is-region' || cls === 'is-guide') y = Math.min(Math.max(y, insets.top + bh / 2 + 4), h - bh / 2 - 6);
@@ -881,6 +911,7 @@ export function createViewer(container, T, options = {}) {
     };
     const nodeLabel = (n, cls, force) => {
       const i = idx(n.id);
+      const text = n.label + (labelExtra.get(n.id) || '');
       const sc = toScreen(centerOf(i));
       if (!sc) return false;
       const rp = pxRadius(i);
@@ -891,23 +922,25 @@ export function createViewer(container, T, options = {}) {
         for (const [ux, uy] of DIRS) {
           const d = rp + 7 + extra;
           const ax = ux > 0.3 ? 'r' : ux < -0.3 ? 'l' : uy > 0 ? 'b' : 't';
-          if (put(n.label, cls, sc[0] + ux * d, sc[1] + uy * (ax === 'b' || ax === 't' ? d - 2 : d * 0.55), ax, force, id)) return true;
+          if (put(text, cls, sc[0] + ux * d, sc[1] + uy * (ax === 'b' || ax === 't' ? d - 2 : d * 0.55), ax, force, id)) return true;
         }
       }
       return false;
     };
-    const tier = (n) => (n.type === 'competencia' || n.type === 'objetivo' || n.type === 'recomendacion' ? 'is-n2' : n.type === 'proyecto' ? 'is-proj' : 'is-n3');
+    const tier = (n) => (n.type === 'nucleo' || n.type === 'area' ? 'is-n1' : n.type === 'competencia' || n.type === 'objetivo' || n.type === 'recomendacion' ? 'is-n2' : n.type === 'proyecto' ? 'is-proj' : 'is-n3');
+    const rank = (n) => { const t = tier(n); return t === 'is-n1' ? (n.type === 'nucleo' ? 0 : 1) : t === 'is-n2' ? 2 : 3; };
     if (selected && isVisible(selected)) nodeLabel(data.nodes[idx(selected)], 'is-sel', true);
     if (hovered && hovered !== selected && isVisible(hovered)) nodeLabel(data.nodes[idx(hovered)], 'is-hover', true);
     if (selected) {
       // con selección: solo el nodo y sus vecinos
       const near = data.adj.get(selected).map((x) => data.nodes[idx(x[0])]).filter((n) => isVisible(n.id))
-        .sort((a, b) => (tier(a) === 'is-n2' ? 0 : 1) - (tier(b) === 'is-n2' ? 0 : 1) || b.size - a.size);
+        .sort((a, b) => rank(a) - rank(b) || b.size - a.size);
       for (const n of near) nodeLabel(n, tier(n));
     } else {
       if (!morph && mode === 'mapa') {
         for (const sct of sectors) {
           if (!data.nodes.some((n) => n.region === sct.id && isVisible(n.id))) continue;
+          if (data.nodes.some((n) => n.type === 'area' && n.region === sct.id && isVisible(n.id))) continue;   // el área ya lleva su nombre
           const sc = toScreen([Math.cos(sct.ac) * (BELT[BELT.length - 1] + 20), 0, Math.sin(sct.ac) * (BELT[BELT.length - 1] + 20)]);
           if (!sc) continue;
           let ok = false;
@@ -927,13 +960,35 @@ export function createViewer(container, T, options = {}) {
       const hl = highlight;
       const cand = data.nodes.filter((n) => isVisible(n.id) && n.id !== hovered).filter((n) => {
         if (hl) return hl.has(n.id);
-        if (tier(n) === 'is-n2') return true;
+        if (tier(n) === 'is-n2' || tier(n) === 'is-n1') return true;
         if (n.type === 'proyecto') return zoom > 1.6;
         return pxRadius(idx(n.id)) >= 7;
-      }).sort((a, b) => (tier(a) === 'is-n2' ? 0 : 1) - (tier(b) === 'is-n2' ? 0 : 1) || ((b.evidence && b.evidence.projects) || 0) - ((a.evidence && a.evidence.projects) || 0));
+      }).sort((a, b) => rank(a) - rank(b) || ((b.evidence && b.evidence.projects) || 0) - ((a.evidence && a.evidence.projects) || 0));
       for (const n of cand) { if (used >= LABEL_CAP + 12) break; nodeLabel(n, tier(n)); }
     }
     for (let i = used; i < pool.length; i++) pool[i].style.display = 'none';
+  }
+
+  /* Arista bajo el puntero: la más cercana a las cintas que se están dibujando (solo se pueden elegir las visibles) */
+  function pickEdge(x, y) {
+    const r = canvas.getBoundingClientRect();
+    const px = x - r.left, py = y - r.top;
+    let best = -1, bd = 7;
+    for (const it of edgeItems) {
+      let prev = null;
+      for (const p of it.pts) {
+        const sc = toScreen(p);
+        if (!sc) { prev = null; continue; }
+        if (prev) {
+          const dx = sc[0] - prev[0], dy = sc[1] - prev[1], L2 = dx * dx + dy * dy || 1;
+          const t = Math.max(0, Math.min(1, ((px - prev[0]) * dx + (py - prev[1]) * dy) / L2));
+          const d = Math.hypot(px - (prev[0] + dx * t), py - (prev[1] + dy * t));
+          if (d < bd) { bd = d; best = it.ei; }
+        }
+        prev = sc;
+      }
+    }
+    return best;
   }
 
   /* ── Selección en espacio de pantalla: el nodo más cercano a la cámara bajo el puntero ── */
@@ -953,6 +1008,7 @@ export function createViewer(container, T, options = {}) {
   }
   function select(id, opts = {}) {
     if (id && (!data || !data.index.has(id))) id = null;
+    if (id && selectedEdge >= 0) { selectedEdge = -1; cb.edge(-1); }
     if (id === selected && !opts.force) return;
     selected = id;
     selStart = performance.now();
@@ -1021,7 +1077,12 @@ export function createViewer(container, T, options = {}) {
   const onUp = (e) => {
     pointers.delete(e.pointerId);
     if (pointers.size < 2) pinch = 0;
-    if (drag && drag.moved < 5 && pointers.size === 0) select(pick(e.clientX, e.clientY));
+    if (drag && drag.moved < 5 && pointers.size === 0) {
+      const id = pick(e.clientX, e.clientY);
+      const ei = id ? -1 : pickEdge(e.clientX, e.clientY);
+      if (ei >= 0) { selectedEdge = ei; select(null, { silent: true }); applyLines(); requestRender(); cb.edge(ei); }
+      else { if (selectedEdge >= 0) { selectedEdge = -1; applyLines(); } select(id); }
+    }
     if (pointers.size === 0) drag = null;
   };
   const onWheel = (e) => { e.preventDefault(); zoomBy(Math.exp(e.deltaY * 0.0011)); };
@@ -1035,7 +1096,8 @@ export function createViewer(container, T, options = {}) {
     else if (k === '+' || k === '=') zoomBy(0.8);
     else if (k === '-' || k === '_') zoomBy(1.25);
     else if (k === '0' || k === 'Home') fit();
-    else if (k === 'Escape') select(null);
+    else if (k === 'Escape') { if (selectedEdge >= 0) { selectedEdge = -1; applyLines(); requestRender(); cb.edge(-1); } select(null); }
+    else if (k === 'Enter' && selected) cb.activate(selected);
     else return;
     e.preventDefault();
   };
@@ -1044,6 +1106,7 @@ export function createViewer(container, T, options = {}) {
   canvas.addEventListener('pointerup', onUp, { signal });
   canvas.addEventListener('pointercancel', onUp, { signal });
   canvas.addEventListener('pointerleave', onLeave, { signal });
+  canvas.addEventListener('dblclick', (e) => { const id = pick(e.clientX, e.clientY); if (id) cb.activate(id); }, { signal });
   canvas.addEventListener('wheel', onWheel, { passive: false, signal });
   canvas.addEventListener('contextmenu', (e) => e.preventDefault(), { signal });
   container.addEventListener('keydown', onKey, { signal });
@@ -1083,9 +1146,23 @@ export function createViewer(container, T, options = {}) {
     focusRegion(rid) { if (data) focusIds(data.nodes.filter((n) => n.region === rid).map((n) => n.id)); },
     reset: () => { highlight = null; applyNodes(); applyLines(); fit(); },
     refit: (instant) => fit(!!instant),
+    setExplore(o) {
+      if (o.badges) labelExtra = o.badges instanceof Map ? o.badges : new Map(Object.entries(o.badges));
+      if (o.expandable) expandable = o.expandable instanceof Set ? o.expandable : new Set(o.expandable);
+      if (o.overview !== undefined) overviewEdges = !!o.overview;
+      applyNodes(); applyLines(); requestRender();
+    },
+    selectEdge(i) { selectedEdge = i; applyLines(); requestRender(); },
     /* zonas que tapan los controles superpuestos: el encuadre deja los nodos fuera de ellas */
     setInsets(i, refit) { uiRects = Array.isArray(i.rects) ? i.rects.slice(0, 12) : []; insets = { top: Math.max(0, i.top || 0), bottom: Math.max(0, i.bottom || 0), left: Math.max(0, i.left || 0), right: Math.max(0, i.right || 0) }; if (refit && data && !selected) fit(true); },
     setFilter(f) {
+      if (data && !reduced()) {
+        const before = new Set(data.nodes.filter((n) => isVisible(n.id)).map((n) => n.id));
+        const next = f.visible || null;
+        const t = performance.now();
+        for (const n of data.nodes) if ((!next || next.has(n.id)) && !before.has(n.id)) appearT.set(n.id, t);
+      }
+      if (f.fitAll !== undefined) fitAll = !!f.fitAll;
       visible = f.visible || null;
       if (f.edgeTypes) edgeTypes = f.edgeTypes;
       if (f.edgeMode) edgeMode = f.edgeMode;
@@ -1110,7 +1187,7 @@ export function createViewer(container, T, options = {}) {
       geometries: renderer.info.memory.geometries, textures: renderer.info.memory.textures,
       labels: pool.filter((p) => p.style.display !== 'none').length, selected, hovered, layout: mode, preset,
       visible: data ? data.nodes.filter((n) => isVisible(n.id)).length : 0, frames: raf !== 0, frameCount: frames,
-      highlighted: highlight ? highlight.size : 0,
+      highlighted: highlight ? highlight.size : 0, selectedEdge,
       edgesDrawn: { focus: focusRibbon ? focusRibbon.geometry.index.count / 6 : 0, context: ctxRibbon ? ctxRibbon.geometry.index.count / 6 : 0 },
     }),
         screenPos(id) {
@@ -1130,6 +1207,8 @@ export function createViewer(container, T, options = {}) {
         const s = toScreen(centerOf(i));
         if (s) out.nodes.push({ id: n.id, type: n.type, x: s[0], y: s[1], r: pxRadius(i), z: s[2] });
       });
+      out.edges = [];
+      for (const it of edgeItems) { const p = toScreen(it.pts[Math.floor(it.pts.length / 2)]); if (p) out.edges.push({ ei: it.ei, x: p[0], y: p[1] }); }
       const cr = canvas.getBoundingClientRect();
       pool.forEach((p) => {
         if (p.style.display === 'none') return;

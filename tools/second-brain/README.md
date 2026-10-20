@@ -196,6 +196,22 @@ Rendimiento: dibujo bajo demanda (0 fotogramas en reposo), un `InstancedMesh` po
 resolución ≤ 2× y recursos liberados al salir de la sección o cerrar sesión. Three.js se carga solo al abrir la pestaña
 (`vendor/three-0.186.1-sb.min.js`, paquete recortado: `node tools/second-brain/build-three.mjs`).
 
+### Exploración progresiva (v9, motor 1.5.0)
+
+La vista inicial es un **mapa de orientación**: un núcleo («Mi conocimiento profesional») y las áreas del marco como comunidades. Todo lo demás se despliega bajo demanda.
+
+- **Qué es derivado y qué no.** El núcleo (`n:nucleo`) y las áreas (`a:<región>`, solo con conocimientos o competencias) son nodos calculados con cifras de los datos reales (`areaStats`).
+  Las relaciones `agrupa` (núcleo → área → raíces) son estructura; las `conecta` entre áreas **resumen el recuento** de relaciones reales entre sus conceptos
+  (`evidenceCount`, con su desglose en el fundamento). No se crea ningún concepto ni relación semántica nueva.
+- **Desplegar y contraer** (doble clic, Intro sobre el elemento seleccionado, o el botón del panel): área → raíces y competencias; concepto → hijos y proyectos que lo aplican.
+  Es solo visibilidad: **las posiciones no cambian**, así que no hay reorganización caótica ni duplicados. «Vista global» y «Restablecer» vuelven al mapa de orientación.
+  Cualquier elemento es alcanzable (`expandPathFor`); buscarlo o elegirlo en la lista despliega su camino.
+- **Nivel de detalle**: «Por áreas» (por defecto) o «Todo» (se recuerda en `localStorage`). Con filtros activos se muestra lo que casa, sin plegar.
+- **Relaciones seleccionables**: clic en una arista (tolerancia 7 px) o en las de la vista general; el panel muestra los dos elementos, tipo, lectura, confianza y fundamento;
+  en una relación entre áreas lista las relaciones reales que resume.
+- **Decisión de biblioteca**: se mantiene Three.js propio + una capa de estado de exploración. Sigma.js/Cytoscape.js/Reagraph/Gephi no aportan nada que justifique reescribir el visor
+  (la CSP `script-src 'self'` y la regla de no añadir dependencias, y el motor 3D ya cubre rendimiento bajo demanda). *No se han medido benchmarks propios de las alternativas.*
+
 ## Seguridad y privacidad
 
 - Autenticación y permisos: los de la web (Supabase Auth + `public.is_member()`). RLS activada, sin acceso `anon`.

@@ -19,7 +19,7 @@ const keyId = (k) => slug(k).slice(0, 50) + '-' + hash32(k).toString(36);
 import { layout } from './layout.mjs';
 import { SCHEMA_VERSION } from '../../second-brain/contract.js';
 
-export const ENGINE_VERSION = '1.4.0';
+export const ENGINE_VERSION = '1.5.0';
 
 const TYPE_MAP = { tecnologia: 'tecnologia', concepto: 'concepto', tecnica: 'tecnica', 'competencia-blanda': 'concepto' };
 const CLS_LABEL = { practica: 'práctica', explicativa: 'documentación', declarativa: 'declarada' };
@@ -484,6 +484,68 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
   }
   for (const r of recommendations) {
     addEdge(r.nodeId, r.targetId, 'recomienda', r.confidence, `${r.what}: ${r.why}`.slice(0, 600));
+  }
+
+  /* ── Núcleo y áreas: el mapa de orientación ──
+     Todo sale de datos que ya existen: las áreas son las regiones del marco que tienen conocimientos, el núcleo es su conjunto
+     y las relaciones entre áreas son el recuento de las relaciones reales entre sus conceptos. Nada se inventa. */
+  const isKnow = (n) => n.stage !== undefined && n.type !== 'proyecto';
+  const projectsOfNodes = (ids) => { const out = new Set(); for (const e of edges) if (e.type === 'demuestra' && ids.has(e.target)) out.add(e.source); return out; };
+  const areaNodes = [];
+  for (const r of framework.regiones) {
+    const know = nodes.filter((n) => n.region === r.id && isKnow(n));
+    if (!know.length && !nodes.some((n) => n.region === r.id && n.type === 'competencia')) continue;
+    const ids = new Set(know.map((n) => n.id));
+    const doneStages = ['aplicado', 'reforzado', 'evaluado', 'dominio'];
+    const aplicado = know.filter((n) => doneStages.includes(n.stage)).length;
+    const documentado = know.filter((n) => ['identificado', 'estudiado'].includes(n.stage)).length;
+    const competencias = nodes.filter((n) => n.region === r.id && n.type === 'competencia').length;
+    const projects = projectsOfNodes(ids).size;
+    const a = addNode({
+      id: `a:${r.id}`, label: r.label, type: 'area', region: r.id, area: r.id, family: r.familia || null, icon: r.icono || 'dot', state: 'neutral', depth: 0,
+      summary: `Área de conocimiento con ${plural(know.length, 'conocimiento', 'conocimientos')} (${aplicado} con práctica, ${documentado} solo documentados sin práctica), ${plural(competencias, 'competencia', 'competencias')} y ${plural(projects, 'proyecto', 'proyectos')} que la aplican.`,
+      size: 0.9, evidence: { practica: aplicado, explicativa: documentado, declarativa: 0, projects, breadth: projects >= 3 ? 'amplia' : projects >= 1 ? 'puntual' : 'ninguna' },
+      uncertainty: ['Cuenta cobertura y aplicación de sus conocimientos; no mide el dominio del área.'], pos: [0, 0, 0],
+      areaStats: { nodes: know.length, aplicado, documentado, sinEvidencia: know.length - aplicado - documentado, competencias, projects },
+    });
+    areaNodes.push({ node: a, region: r.id, ids });
+  }
+  if (areaNodes.length) {
+    const total = areaNodes.reduce((s, a) => ({ nodes: s.nodes + a.node.areaStats.nodes, aplicado: s.aplicado + a.node.areaStats.aplicado, documentado: s.documentado + a.node.areaStats.documentado, competencias: s.competencias + a.node.areaStats.competencias }), { nodes: 0, aplicado: 0, documentado: 0, competencias: 0 });
+    const core = addNode({
+      id: 'n:nucleo', label: 'Mi conocimiento profesional', type: 'nucleo', region: 'objetivos', area: 'objetivos', icon: 'brain', state: 'neutral', depth: 0,
+      summary: `Conjunto de lo que aparece en tus materiales: ${plural(total.nodes, 'conocimiento', 'conocimientos')} repartidos en ${plural(areaNodes.length, 'área', 'áreas')}, ${plural(total.competencias, 'competencia', 'competencias')} y ${plural(projectNodes.length, 'proyecto', 'proyectos')}. Es el centro del mapa: las áreas salen de tu marco de competencias.`,
+      size: 1, evidence: { practica: total.aplicado, explicativa: total.documentado, declarativa: 0, projects: projectNodes.length, breadth: 'amplia' },
+      uncertainty: ['Es un resumen de lo documentado en las fuentes analizadas, no una evaluación de tu nivel.'], pos: [0, 0, 0],
+      areaStats: { nodes: total.nodes, aplicado: total.aplicado, documentado: total.documentado, sinEvidencia: total.nodes - total.aplicado - total.documentado, competencias: total.competencias, projects: projectNodes.length },
+    });
+    for (const a of areaNodes) {
+      addEdge(core.id, a.node.id, 'agrupa', 'alta', `«${a.node.label}» es una de las áreas de tu conocimiento profesional (${plural(a.node.areaStats.nodes, 'conocimiento', 'conocimientos')}).`, { overview: true });
+      // el área agrupa sus conocimientos de primer nivel (los que no cuelgan de otro) y sus competencias
+      for (const n of nodes) {
+        if (n.region !== a.region) continue;
+        if ((isKnow(n) && !n.parent) || n.type === 'competencia') addEdge(a.node.id, n.id, 'agrupa', 'alta', `«${n.label}» pertenece al área «${a.node.label}» en el marco.`);
+      }
+    }
+    // relaciones entre áreas: recuento de las relaciones reales entre sus conceptos (no se crean, se resumen)
+    const regionOf = new Map();
+    for (const a of areaNodes) for (const id of a.ids) regionOf.set(id, a.region);
+    const pairs = new Map();
+    for (const e of edges) {
+      if (['agrupa', 'demuestra', 'necesita', 'recomienda', 'conecta'].includes(e.type)) continue;
+      const ra = regionOf.get(e.source), rb = regionOf.get(e.target);
+      if (!ra || !rb || ra === rb) continue;
+      const key = ra < rb ? `${ra}|${rb}` : `${rb}|${ra}`;
+      const o = pairs.get(key) || { n: 0, types: {} };
+      o.n++; o.types[e.type] = (o.types[e.type] || 0) + 1;
+      pairs.set(key, o);
+    }
+    for (const [key, o] of [...pairs].sort((x, y) => x[0].localeCompare(y[0]))) {
+      const [ra, rb] = key.split('|');
+      const A = areaNodes.find((x) => x.region === ra).node, B = areaNodes.find((x) => x.region === rb).node;
+      const breakdown = Object.entries(o.types).sort((x, y) => y[1] - x[1] || x[0].localeCompare(y[0])).slice(0, 3).map(([t, k]) => `${t} (${k})`).join(', ');
+      addEdge(A.id, B.id, 'conecta', o.n >= 3 ? 'alta' : 'media', `${plural(o.n, 'relación', 'relaciones')} entre conceptos de «${A.label}» y de «${B.label}»: ${breakdown}.`, { evidenceCount: o.n, overview: true });
+    }
   }
 
   /* ── Regiones y distribución en el espacio ── */

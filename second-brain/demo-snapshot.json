@@ -3,7 +3,7 @@
  "generatedAt": "2026-01-15T10:00:00.000Z",
  "mode": "demo",
  "engine": {
-  "version": "1.4.0",
+  "version": "1.5.0",
   "frameworkVersion": 4
  },
  "meta": {
@@ -123,8 +123,8 @@
   }
  },
  "stats": {
-  "nodes": 95,
-  "edges": 229,
+  "nodes": 103,
+  "edges": 291,
   "concepts": 59,
   "projects": 4,
   "recommendations": 12,
@@ -132,7 +132,8 @@
    "respaldado": 43,
    "brecha_probable": 3,
    "pendiente": 13,
-   "mencionado": 17
+   "mencionado": 17,
+   "neutral": 8
   },
   "taxonomy": {
    "roots": 29,
@@ -161,11 +162,11 @@
    "label": "Business Intelligence y Power BI",
    "order": 0,
    "center": [
-    12.09,
-    63.3,
-    0.62
+    12.51,
+    64.22,
+    0.53
    ],
-   "count": 13,
+   "count": 14,
    "color": "#F5C84C",
    "icon": "powerbi",
    "family": "bi"
@@ -175,11 +176,11 @@
    "label": "Ingeniería y preparación de datos",
    "order": 1,
    "center": [
-    -49.45,
-    34.87,
-    41.24
+    -49.87,
+    35.83,
+    40.21
    ],
-   "count": 23,
+   "count": 24,
    "color": "#168A83",
    "icon": "database",
    "family": "ingenieria"
@@ -189,11 +190,11 @@
    "label": "Análisis, estadística y machine learning",
    "order": 2,
    "center": [
-    1.26,
-    21.39,
-    -82.16
+    1.94,
+    21.93,
+    -83.15
    ],
-   "count": 16,
+   "count": 17,
    "color": "#8B5CF6",
    "icon": "brain",
    "family": "ml"
@@ -203,11 +204,11 @@
    "label": "Visualización y comunicación de datos",
    "order": 3,
    "center": [
-    61.15,
-    4.51,
-    73.6
+    61.3,
+    4.03,
+    72.39
    ],
-   "count": 6,
+   "count": 7,
    "color": "#D96C45",
    "icon": "chart",
    "family": "storytelling"
@@ -217,11 +218,11 @@
    "label": "UX/UI y desarrollo web (complementario)",
    "order": 4,
    "center": [
-    -105.32,
-    -18.5,
-    -18.88
+    -102.58,
+    -20.48,
+    -17.92
    ],
-   "count": 1,
+   "count": 2,
    "color": "#D95D9E",
    "icon": "cursor",
    "family": "ux"
@@ -231,11 +232,11 @@
    "label": "Competencias profesionales",
    "order": 5,
    "center": [
-    68.97,
-    -31.6,
-    -29.59
+    69.22,
+    -30.29,
+    -28.84
    ],
-   "count": 12,
+   "count": 13,
    "color": "#64748B",
    "icon": "briefcase",
    "family": "negocio"
@@ -245,11 +246,11 @@
    "label": "Dominios de negocio",
    "order": 6,
    "center": [
-    -0.66,
-    -52.4,
-    72.52
+    -1.22,
+    -52.24,
+    73.36
    ],
-   "count": 5,
+   "count": 6,
    "color": "#8493A8",
    "icon": "store",
    "family": "negocio"
@@ -259,9 +260,9 @@
    "label": "Proyectos y experiencia demostrada",
    "order": 7,
    "center": [
-    -29.44,
-    -25.52,
-    -34.43
+    -29.01,
+    -23.46,
+    -35.72
    ],
    "count": 4,
    "color": "#273a5f",
@@ -273,11 +274,11 @@
    "label": "Objetivos y oportunidades",
    "order": 8,
    "center": [
-    -0.54,
-    -82.15,
-    4.36
+    -0.72,
+    -82.36,
+    3
    ],
-   "count": 15,
+   "count": 16,
    "color": "#1d2638",
    "icon": "flag",
    "family": null
@@ -290,7 +291,7 @@
    "color": "#F5C84C",
    "ink": "#8A6500",
    "icon": "powerbi",
-   "count": 15
+   "count": 16
   },
   {
    "id": "sql",
@@ -314,7 +315,7 @@
    "color": "#8B5CF6",
    "ink": "#6535D6",
    "icon": "brain",
-   "count": 15
+   "count": 16
   },
   {
    "id": "storytelling",
@@ -322,7 +323,7 @@
    "color": "#D96C45",
    "ink": "#B04E2B",
    "icon": "chart",
-   "count": 6
+   "count": 7
   },
   {
    "id": "ux",
@@ -330,7 +331,7 @@
    "color": "#D95D9E",
    "ink": "#B03A7C",
    "icon": "cursor",
-   "count": 2
+   "count": 3
   },
   {
    "id": "ingenieria",
@@ -338,7 +339,7 @@
    "color": "#168A83",
    "ink": "#0F6A64",
    "icon": "transform",
-   "count": 15
+   "count": 16
   },
   {
    "id": "negocio",
@@ -346,7 +347,7 @@
    "color": "#64748B",
    "ink": "#475569",
    "icon": "briefcase",
-   "count": 16
+   "count": 18
   }
  ],
  "nodes": [
@@ -377,9 +378,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    18.93,
-    67.57,
-    10.79
+    20.28,
+    69.83,
+    9.24
    ],
    "stage": "reforzado",
    "depth": 0,
@@ -417,9 +418,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    25.63,
-    44.14,
-    -9.92
+    26.11,
+    46.58,
+    -11.8
    ],
    "stage": "aplicado",
    "depth": 1,
@@ -457,9 +458,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    0.24,
-    57.04,
-    -24.28
+    0.76,
+    61.12,
+    -26.79
    ],
    "stage": "aplicado",
    "depth": 2,
@@ -491,9 +492,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -2.89,
-    45.42,
-    -3.81
+    -3.69,
+    49.13,
+    -7.81
    ],
    "stage": "aplicado",
    "depth": 2,
@@ -523,9 +524,9 @@
     "Puede existir en proyectos o entornos que no están entre las fuentes configuradas."
    ],
    "pos": [
-    10.41,
-    67.47,
-    35.37
+    6.86,
+    75.85,
+    31.18
    ],
    "stage": "sin_evidencia",
    "depth": 1,
@@ -555,9 +556,9 @@
     "Puede existir en proyectos o entornos que no están entre las fuentes configuradas."
    ],
    "pos": [
-    1.74,
-    84.23,
-    -14.35
+    1.02,
+    86.98,
+    -15.54
    ],
    "stage": "sin_evidencia",
    "depth": 1,
@@ -593,9 +594,9 @@
     "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
    ],
    "pos": [
-    41,
-    68.93,
-    -4.8
+    41.59,
+    71.02,
+    -6.49
    ],
    "stage": "sin_evidencia",
    "depth": 2,
@@ -624,9 +625,9 @@
     "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
    ],
    "pos": [
-    26.71,
-    74.06,
-    -22.99
+    27.46,
+    75.95,
+    -24.78
    ],
    "stage": "sin_evidencia",
    "depth": 1,
@@ -658,9 +659,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -19.99,
-    69.14,
-    -4.72
+    -20.38,
+    72.27,
+    -4.35
    ],
    "stage": "aplicado",
    "depth": 1,
@@ -691,9 +692,9 @@
     "Aparece en documentación, pero no hay práctica detectable en el código o los artefactos analizados."
    ],
    "pos": [
-    71.92,
-    -14.64,
-    -4.09
+    77.62,
+    -14.46,
+    -4.12
    ],
    "stage": "estudiado",
    "depth": 0
@@ -724,9 +725,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -54.02,
-    37.73,
-    43.94
+    -55.59,
+    39.64,
+    45.81
    ],
    "stage": "aplicado",
    "depth": 0,
@@ -763,9 +764,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -67.3,
-    15.2,
-    50.07
+    -70.72,
+    15.75,
+    50.57
    ],
    "stage": "aplicado",
    "depth": 1,
@@ -796,9 +797,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -78.81,
-    40.26,
-    24.1
+    -79.96,
+    43.3,
+    24.19
    ],
    "stage": "aplicado",
    "depth": 1,
@@ -829,9 +830,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -71.3,
-    52.63,
-    50.26
+    -71.95,
+    57.3,
+    49.85
    ],
    "stage": "aplicado",
    "depth": 1,
@@ -860,9 +861,9 @@
     "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
    ],
    "pos": [
-    -85.69,
-    27.76,
-    45.95
+    -87.53,
+    31.17,
+    45.08
    ],
    "stage": "sin_evidencia",
    "depth": 1,
@@ -894,9 +895,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -33.46,
-    33.12,
-    37.03
+    -41.59,
+    32.82,
+    30.76
    ],
    "stage": "reforzado",
    "depth": 0,
@@ -934,9 +935,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -46.98,
-    14.77,
-    -0.04
+    -47.64,
+    17.2,
+    -6.6
    ],
    "stage": "reforzado",
    "depth": 1,
@@ -967,9 +968,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -33.51,
-    23.13,
-    69.31
+    -40,
+    23.76,
+    66.19
    ],
    "stage": "aplicado",
    "depth": 1,
@@ -1000,9 +1001,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -8.71,
-    24.97,
-    25.68
+    -12.06,
+    26.93,
+    20.6
    ],
    "stage": "aplicado",
    "depth": 0
@@ -1033,9 +1034,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -51.48,
-    3.38,
-    32.1
+    -55.56,
+    6.3,
+    31.45
    ],
    "stage": "reforzado",
    "depth": 0
@@ -1065,9 +1066,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -46.97,
-    57.45,
-    24.38
+    -47.66,
+    58.27,
+    24.4
    ],
    "stage": "aplicado",
    "depth": 0
@@ -1095,9 +1096,9 @@
     "Solo aparece en una fuente declarativa (lo que se afirma, no lo que se demuestra)."
    ],
    "pos": [
-    -59.41,
-    75.95,
-    64.53
+    -56.92,
+    70.95,
+    71.37
    ],
    "stage": "identificado",
    "depth": 0
@@ -1127,9 +1128,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    65.96,
-    -54.66,
-    -55.24
+    88.95,
+    -41.29,
+    -36.45
    ],
    "stage": "aplicado",
    "depth": 0
@@ -1158,9 +1159,9 @@
     "Puede existir en proyectos o entornos que no están entre las fuentes configuradas."
    ],
    "pos": [
-    57.1,
-    1.84,
-    -18.19
+    61.25,
+    5.79,
+    -22.45
    ],
    "stage": "sin_evidencia",
    "depth": 0
@@ -1190,9 +1191,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    42.15,
-    -21.1,
-    -44.38
+    42.71,
+    -21.76,
+    -47.43
    ],
    "stage": "aplicado",
    "depth": 0
@@ -1222,9 +1223,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    100.56,
-    -37.47,
-    -50.26
+    103.69,
+    -31.54,
+    -52.54
    ],
    "stage": "estudiado",
    "depth": 0
@@ -1254,9 +1255,9 @@
     "Aparece en documentación, pero no hay práctica detectable en el código o los artefactos analizados."
    ],
    "pos": [
-    53.77,
-    -34.79,
-    17.25
+    54.16,
+    -36.29,
+    16.06
    ],
    "stage": "estudiado",
    "depth": 0
@@ -1286,9 +1287,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    81.87,
-    -12.38,
-    -44.63
+    80.33,
+    -12.54,
+    -48
    ],
    "stage": "estudiado",
    "depth": 0
@@ -1319,9 +1320,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    2.4,
-    18.43,
-    -51.48
+    -9.72,
+    30.27,
+    -55.3
    ],
    "stage": "reforzado",
    "depth": 0
@@ -1352,9 +1353,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -29.43,
-    4.07,
-    -55.91
+    -34.95,
+    9.55,
+    -61.96
    ],
    "stage": "reforzado",
    "depth": 0
@@ -1385,9 +1386,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -9.2,
-    31.36,
-    -84.75
+    -12.07,
+    30.66,
+    -88.18
    ],
    "stage": "reforzado",
    "depth": 0,
@@ -1424,9 +1425,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -3.72,
-    7.05,
-    -97.22
+    -15.91,
+    3.41,
+    -91.04
    ],
    "stage": "aplicado",
    "depth": 0
@@ -1457,9 +1458,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    11.26,
-    -6.17,
-    -94.49
+    6.33,
+    -2.63,
+    -104.51
    ],
    "stage": "aplicado",
    "depth": 1,
@@ -1498,9 +1499,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    7.47,
-    13.66,
-    -74.53
+    12.32,
+    28.95,
+    -74.9
    ],
    "stage": "aplicado",
    "depth": 1,
@@ -1538,9 +1539,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -32.45,
-    38.18,
-    -69.37
+    -34.47,
+    39.84,
+    -72.28
    ],
    "stage": "aplicado",
    "depth": 1,
@@ -1578,9 +1579,9 @@
     "Aparece en material de estudio (manuales), pero no se detecta aplicado en ningún proyecto analizado."
    ],
    "pos": [
-    58.19,
-    2.91,
-    95.27
+    64.86,
+    1.39,
+    93.98
    ],
    "stage": "estudiado",
    "depth": 0
@@ -1610,9 +1611,9 @@
     "Aparece en material de estudio (manuales), pero no se detecta aplicado en ningún proyecto analizado."
    ],
    "pos": [
-    75.89,
-    -15.48,
-    60.6
+    77.89,
+    -18.04,
+    61.96
    ],
    "stage": "estudiado",
    "depth": 0
@@ -1642,9 +1643,9 @@
     "Aparece en material de estudio (manuales), pero no se detecta aplicado en ningún proyecto analizado."
    ],
    "pos": [
-    64.15,
-    1.5,
-    72.76
+    70.69,
+    3.99,
+    69.09
    ],
    "stage": "estudiado",
    "depth": 0
@@ -1674,9 +1675,9 @@
     "Aparece en documentación, pero no hay práctica detectable en el código o los artefactos analizados."
    ],
    "pos": [
-    49.07,
-    29.7,
-    64.03
+    51.32,
+    32.81,
+    64.33
    ],
    "stage": "estudiado",
    "depth": 0
@@ -1706,9 +1707,9 @@
     "Aparece en documentación, pero no hay práctica detectable en el código o los artefactos analizados."
    ],
    "pos": [
-    71.43,
-    23.88,
-    83.49
+    69.68,
+    24.94,
+    86.08
    ],
    "stage": "estudiado",
    "depth": 0
@@ -1736,9 +1737,9 @@
     "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
    ],
    "pos": [
-    14.3,
-    90.26,
-    0.68
+    13.86,
+    92.84,
+    -1.53
    ],
    "stage": "sin_evidencia",
    "depth": 2,
@@ -1767,9 +1768,9 @@
     "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
    ],
    "pos": [
-    35.64,
-    56.81,
-    28.96
+    32.14,
+    65.28,
+    33.98
    ],
    "stage": "sin_evidencia",
    "depth": 1,
@@ -1798,9 +1799,9 @@
     "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
    ],
    "pos": [
-    -44.37,
-    40.27,
-    5.28
+    -49.95,
+    43.34,
+    2.34
    ],
    "stage": "sin_evidencia",
    "depth": 1,
@@ -1829,9 +1830,9 @@
     "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
    ],
    "pos": [
-    -29.69,
-    68.16,
-    49.17
+    -30.72,
+    69.05,
+    47.3
    ],
    "stage": "sin_evidencia",
    "depth": 0
@@ -1861,9 +1862,9 @@
     "Aparece en documentación, pero no hay práctica detectable en el código o los artefactos analizados."
    ],
    "pos": [
-    5.63,
-    59.51,
-    -84.66
+    2.96,
+    60.45,
+    -87.53
    ],
    "stage": "estudiado",
    "depth": 1,
@@ -1899,9 +1900,9 @@
     "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
    ],
    "pos": [
-    38.12,
-    30.62,
-    -65.34
+    37.71,
+    30.95,
+    -67.79
    ],
    "stage": "sin_evidencia",
    "depth": 0
@@ -1931,9 +1932,9 @@
     "Aparece en documentación, pero no hay práctica detectable en el código o los artefactos analizados."
    ],
    "pos": [
-    -12.96,
-    -44.18,
-    69.97
+    -18.2,
+    -51.73,
+    68.75
    ],
    "stage": "estudiado",
    "depth": 0
@@ -1961,9 +1962,9 @@
     "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
    ],
    "pos": [
-    23.16,
-    -39.22,
-    60.3
+    26.19,
+    -41.21,
+    61
    ],
    "stage": "sin_evidencia",
    "depth": 0
@@ -1991,9 +1992,9 @@
     "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
    ],
    "pos": [
-    4.01,
-    -63.86,
-    67.55
+    6.45,
+    -66.09,
+    68.66
    ],
    "stage": "sin_evidencia",
    "depth": 0
@@ -2021,9 +2022,9 @@
     "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
    ],
    "pos": [
-    7.12,
-    -46.14,
-    83.79
+    -1.52,
+    -37.98,
+    69
    ],
    "stage": "sin_evidencia",
    "depth": 0
@@ -2054,9 +2055,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    31.63,
-    12.31,
-    -85.31
+    34.57,
+    15.9,
+    -97.85
    ],
    "stage": "aplicado",
    "depth": 2,
@@ -2094,9 +2095,9 @@
     "Aparece en documentación, pero no hay práctica detectable en el código o los artefactos analizados."
    ],
    "pos": [
-    -13.7,
-    12.69,
-    -114.69
+    -16.6,
+    16.3,
+    -114.36
    ],
    "stage": "estudiado",
    "depth": 2,
@@ -2135,9 +2136,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    17.39,
-    39.3,
-    -87.67
+    18.53,
+    43.14,
+    -96.16
    ],
    "stage": "aplicado",
    "depth": 3,
@@ -2168,9 +2169,9 @@
     "Aparece en documentación, pero no hay práctica detectable en el código o los artefactos analizados."
    ],
    "pos": [
-    10.99,
-    36.06,
-    -113.35
+    13.57,
+    33.56,
+    -119.19
    ],
    "stage": "estudiado",
    "depth": 3,
@@ -2202,9 +2203,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -25.57,
-    7.43,
-    -87.05
+    19.94,
+    -2,
+    -81.14
    ],
    "stage": "aplicado",
    "depth": 2,
@@ -2235,9 +2236,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -66.24,
-    34.29,
-    -9.72
+    -68.39,
+    36.89,
+    -12.06
    ],
    "stage": "aplicado",
    "depth": 2,
@@ -2268,9 +2269,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -41.7,
-    45.21,
-    70.04
+    -42.2,
+    46.86,
+    71.45
    ],
    "stage": "aplicado",
    "depth": 1,
@@ -2301,9 +2302,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -66.51,
-    68.33,
-    28.53
+    -65.43,
+    72.02,
+    30.19
    ],
    "stage": "aplicado",
    "depth": 1,
@@ -2334,9 +2335,9 @@
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -59.79,
-    28.44,
-    75.1
+    -60.38,
+    27.83,
+    77.78
    ],
    "stage": "aplicado",
    "depth": 1,
@@ -2364,9 +2365,9 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    -21.07,
-    4.44,
-    44.35
+    -24.33,
+    2.17,
+    38.79
    ],
    "recommendationId": "rec-preparacion-calidad"
   },
@@ -2392,9 +2393,9 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    -44.51,
-    -3.5,
-    56.99
+    -43.98,
+    -2.09,
+    54.76
    ],
    "recommendationId": "rec-sql-analitico"
   },
@@ -2420,9 +2421,9 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    -29.63,
-    11.49,
-    21.07
+    -33.65,
+    10.78,
+    18.77
    ],
    "recommendationId": "rec-python-analisis"
   },
@@ -2448,9 +2449,9 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    11.63,
-    26.85,
-    2.79
+    7.73,
+    28.77,
+    -2.19
    ],
    "recommendationId": "rec-powerbi-dax"
   },
@@ -2476,9 +2477,9 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    -6.15,
-    71.04,
-    14.37
+    -5.02,
+    67.28,
+    12.64
    ]
   },
   {
@@ -2503,9 +2504,9 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    -15.52,
-    16.4,
-    -46.23
+    -12.78,
+    4.97,
+    -53.06
    ],
    "recommendationId": "rec-estadistica-eda"
   },
@@ -2531,9 +2532,9 @@
     "Hay menciones, pero no práctica detectable."
    ],
    "pos": [
-    78.37,
-    -33,
-    -22.72
+    72.7,
+    -28.66,
+    -25.66
    ],
    "recommendationId": "rec-kpi-seguimiento"
   },
@@ -2559,9 +2560,9 @@
     "Hay menciones, pero no práctica detectable."
    ],
    "pos": [
-    48.14,
-    -15.45,
-    65.42
+    53.48,
+    -18.14,
+    60.16
    ],
    "recommendationId": "rec-visualizacion-comunicacion"
   },
@@ -2587,9 +2588,9 @@
     "Hay menciones, pero no práctica detectable."
    ],
    "pos": [
-    53.92,
-    -51.8,
-    -6.84
+    54.2,
+    -53.82,
+    -8.5
    ],
    "recommendationId": "rec-negocio-interpretacion"
   },
@@ -2615,9 +2616,9 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    60.87,
-    -27.52,
-    -34.33
+    60,
+    -33.92,
+    -41.21
    ],
    "recommendationId": "rec-automatizacion-fiabilidad"
   },
@@ -2643,9 +2644,9 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    77.68,
-    -37.23,
-    -67.59
+    75.58,
+    -44.74,
+    -64.74
    ]
   },
   {
@@ -2670,9 +2671,9 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    83.49,
-    -56.51,
-    -24.06
+    77.31,
+    -61.58,
+    -30.38
    ],
    "recommendationId": "rec-explicar-decisiones"
   },
@@ -2698,9 +2699,9 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    24.87,
-    21.27,
-    -102.46
+    11.69,
+    20.29,
+    -97.61
    ]
   },
   {
@@ -2725,9 +2726,9 @@
     "No se ha podido comprobar con las fuentes disponibles."
    ],
    "pos": [
-    -105.32,
-    -18.5,
-    -18.88
+    -112.42,
+    -11.6,
+    -17.33
    ]
   },
   {
@@ -2752,9 +2753,9 @@
     "Hay menciones, pero no práctica detectable."
    ],
    "pos": [
-    -79.49,
-    43.62,
-    71.81
+    -78.05,
+    41.83,
+    69.81
    ]
   },
   {
@@ -2779,9 +2780,9 @@
     "No se ha podido comprobar con las fuentes disponibles."
    ],
    "pos": [
-    -16.79,
-    54.8,
-    68.58
+    -16.51,
+    57.08,
+    66.77
    ]
   },
   {
@@ -2806,9 +2807,9 @@
     "Hay menciones, pero no práctica detectable."
    ],
    "pos": [
-    -24.65,
-    -68.6,
-    80.99
+    -23.61,
+    -71.56,
+    82.89
    ],
    "recommendationId": "rec-conocimiento-sectorial"
   },
@@ -2834,9 +2835,9 @@
     "Confianza media. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    14.78,
-    -88.85,
-    -2.46
+    15.66,
+    -90.25,
+    -1.13
    ],
    "recommendationId": "rec-kpi-seguimiento"
   },
@@ -2862,9 +2863,9 @@
     "Confianza media. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    37.09,
-    -83.9,
-    19.59
+    39.75,
+    -87.14,
+    12.52
    ],
    "recommendationId": "rec-visualizacion-comunicacion"
   },
@@ -2890,9 +2891,9 @@
     "Confianza media. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    -25.37,
-    -107.2,
-    21.16
+    -25.11,
+    -109.31,
+    29.24
    ],
    "recommendationId": "rec-conocimiento-sectorial"
   },
@@ -2918,9 +2919,9 @@
     "Confianza media. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    2.13,
-    -108.43,
-    -15.25
+    -1.35,
+    -112.65,
+    -16.5
    ],
    "recommendationId": "rec-negocio-interpretacion"
   },
@@ -2946,9 +2947,9 @@
     "Confianza media. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    -28.36,
-    -75.7,
-    -11.06
+    -29.7,
+    -78.01,
+    -11.22
    ],
    "recommendationId": "rec-powerbi-dax"
   },
@@ -2974,9 +2975,9 @@
     "Confianza alta. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    -18.42,
-    -61.5,
-    -4.09
+    -3.64,
+    -67.94,
+    -6.59
    ],
    "recommendationId": "rec-estadistica-eda"
   },
@@ -3002,9 +3003,9 @@
     "Confianza alta. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    29.18,
-    -107.07,
-    -11.37
+    25.42,
+    -112.17,
+    -10.05
    ],
    "recommendationId": "rec-explicar-decisiones"
   },
@@ -3030,9 +3031,9 @@
     "Confianza alta. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    -32.52,
-    -75.28,
-    21.33
+    -35.05,
+    -77.14,
+    17.3
    ],
    "recommendationId": "rec-preparacion-calidad"
   },
@@ -3058,9 +3059,9 @@
     "Confianza alta. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    -5.64,
-    -68.35,
-    24.37
+    -6.03,
+    -73.89,
+    26.95
    ],
    "recommendationId": "rec-python-analisis"
   },
@@ -3086,9 +3087,9 @@
     "Confianza alta. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    -9.64,
-    -92.07,
-    32.48
+    -12.83,
+    -95,
+    19.29
    ],
    "recommendationId": "rec-sql-analitico"
   },
@@ -3114,9 +3115,9 @@
     "Confianza media. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    20.66,
-    -100.4,
-    18.19
+    23.62,
+    -100.61,
+    20.06
    ],
    "recommendationId": "rec-automatizacion-fiabilidad"
   },
@@ -3151,9 +3152,9 @@
     "Un proyecto demuestra trabajo realizado; no mide su calidad ni el nivel de dominio."
    ],
    "pos": [
-    -14.12,
-    -28.25,
-    -69.08
+    -13.19,
+    -27.08,
+    -72.08
    ],
    "parent": "c:random-forest",
    "depth": 4
@@ -3188,9 +3189,9 @@
     "Un proyecto demuestra trabajo realizado; no mide su calidad ni el nivel de dominio."
    ],
    "pos": [
-    -39.68,
-    -30.95,
-    -26.31
+    -41.26,
+    -29,
+    -29.8
    ],
    "parent": "c:imputacion-valores",
    "depth": 3,
@@ -3227,9 +3228,9 @@
     "Un proyecto demuestra trabajo realizado; no mide su calidad ni el nivel de dominio."
    ],
    "pos": [
-    -55.12,
-    -7.27,
-    1.47
+    -55.91,
+    -5.52,
+    2.44
    ],
    "parent": "c:modelo-estrella",
    "depth": 2
@@ -3263,9 +3264,9 @@
     "Un proyecto demuestra trabajo realizado; no mide su calidad ni el nivel de dominio."
    ],
    "pos": [
-    -8.84,
-    -35.61,
-    -43.82
+    -5.69,
+    -32.23,
+    -43.44
    ],
    "parent": "c:dax-contexto",
    "depth": 3
@@ -3292,9 +3293,9 @@
     "Puede haber documentación fuera de la carpeta analizada."
    ],
    "pos": [
-    -22.11,
-    -96.52,
-    -19.38
+    -12.65,
+    -92.93,
+    -23.56
    ],
    "recommendationId": "rec-doc-demo-proyectos-scripts-sueltos-otd8mg"
   },
@@ -3319,9 +3320,9 @@
     "Marco general, no un estudio de mercado ni una evaluación oficial."
    ],
    "pos": [
-    0.03,
-    -48.48,
-    -4.84
+    -16.36,
+    -54.69,
+    -14.73
    ]
   },
   {
@@ -3345,9 +3346,9 @@
     "Marco general, no un estudio de mercado ni una evaluación oficial."
    ],
    "pos": [
-    13.54,
-    -67.45,
-    -14.64
+    15.22,
+    -68.6,
+    -19.23
    ]
   },
   {
@@ -3371,10 +3372,297 @@
     "Marco general, no un estudio de mercado ni una evaluación oficial."
    ],
    "pos": [
-    16.62,
-    -51.03,
-    11.41
+    17.5,
+    -53.32,
+    7.71
    ]
+  },
+  {
+   "id": "a:bi",
+   "label": "Business Intelligence y Power BI",
+   "type": "area",
+   "region": "bi",
+   "area": "bi",
+   "family": "bi",
+   "icon": "powerbi",
+   "state": "neutral",
+   "depth": 0,
+   "summary": "Área de conocimiento con 11 conocimientos (5 con práctica, 0 solo documentados sin práctica), 2 competencias y 2 proyectos que la aplican.",
+   "size": 0.9,
+   "evidence": {
+    "practica": 5,
+    "explicativa": 0,
+    "declarativa": 0,
+    "projects": 2,
+    "breadth": "puntual"
+   },
+   "uncertainty": [
+    "Cuenta cobertura y aplicación de sus conocimientos; no mide el dominio del área."
+   ],
+   "pos": [
+    26.35,
+    36.25,
+    21.63
+   ],
+   "areaStats": {
+    "nodes": 11,
+    "aplicado": 5,
+    "documentado": 0,
+    "sinEvidencia": 6,
+    "competencias": 2,
+    "projects": 2
+   }
+  },
+  {
+   "id": "a:datos",
+   "label": "Ingeniería y preparación de datos",
+   "type": "area",
+   "region": "datos",
+   "area": "datos",
+   "family": "ingenieria",
+   "icon": "database",
+   "state": "neutral",
+   "depth": 0,
+   "summary": "Área de conocimiento con 18 conocimientos (14 con práctica, 1 solo documentados sin práctica), 5 competencias y 3 proyectos que la aplican.",
+   "size": 0.9,
+   "evidence": {
+    "practica": 14,
+    "explicativa": 1,
+    "declarativa": 0,
+    "projects": 3,
+    "breadth": "amplia"
+   },
+   "uncertainty": [
+    "Cuenta cobertura y aplicación de sus conocimientos; no mide el dominio del área."
+   ],
+   "pos": [
+    -16.17,
+    30.67,
+    45.48
+   ],
+   "areaStats": {
+    "nodes": 18,
+    "aplicado": 14,
+    "documentado": 1,
+    "sinEvidencia": 3,
+    "competencias": 5,
+    "projects": 3
+   }
+  },
+  {
+   "id": "a:analisis",
+   "label": "Análisis, estadística y machine learning",
+   "type": "area",
+   "region": "analisis",
+   "area": "analisis",
+   "family": "ml",
+   "icon": "brain",
+   "state": "neutral",
+   "depth": 0,
+   "summary": "Área de conocimiento con 14 conocimientos (10 con práctica, 3 solo documentados sin práctica), 2 competencias y 2 proyectos que la aplican.",
+   "size": 0.9,
+   "evidence": {
+    "practica": 10,
+    "explicativa": 3,
+    "declarativa": 0,
+    "projects": 2,
+    "breadth": "puntual"
+   },
+   "uncertainty": [
+    "Cuenta cobertura y aplicación de sus conocimientos; no mide el dominio del área."
+   ],
+   "pos": [
+    11.82,
+    9.14,
+    -50.74
+   ],
+   "areaStats": {
+    "nodes": 14,
+    "aplicado": 10,
+    "documentado": 3,
+    "sinEvidencia": 1,
+    "competencias": 2,
+    "projects": 2
+   }
+  },
+  {
+   "id": "a:visualizacion",
+   "label": "Visualización y comunicación de datos",
+   "type": "area",
+   "region": "visualizacion",
+   "area": "visualizacion",
+   "family": "storytelling",
+   "icon": "chart",
+   "state": "neutral",
+   "depth": 0,
+   "summary": "Área de conocimiento con 5 conocimientos (0 con práctica, 5 solo documentados sin práctica), 1 competencia y 0 proyectos que la aplican.",
+   "size": 0.9,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 5,
+    "declarativa": 0,
+    "projects": 0,
+    "breadth": "ninguna"
+   },
+   "uncertainty": [
+    "Cuenta cobertura y aplicación de sus conocimientos; no mide el dominio del área."
+   ],
+   "pos": [
+    41.19,
+    1.26,
+    71.1
+   ],
+   "areaStats": {
+    "nodes": 5,
+    "aplicado": 0,
+    "documentado": 5,
+    "sinEvidencia": 0,
+    "competencias": 1,
+    "projects": 0
+   }
+  },
+  {
+   "id": "a:ux",
+   "label": "UX/UI y desarrollo web (complementario)",
+   "type": "area",
+   "region": "ux",
+   "area": "ux",
+   "family": "ux",
+   "icon": "cursor",
+   "state": "neutral",
+   "depth": 0,
+   "summary": "Área de conocimiento con 0 conocimientos (0 con práctica, 0 solo documentados sin práctica), 1 competencia y 0 proyectos que la aplican.",
+   "size": 0.9,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 0,
+    "declarativa": 0,
+    "projects": 0,
+    "breadth": "ninguna"
+   },
+   "uncertainty": [
+    "Cuenta cobertura y aplicación de sus conocimientos; no mide el dominio del área."
+   ],
+   "pos": [
+    -92.74,
+    -29.37,
+    -18.51
+   ],
+   "areaStats": {
+    "nodes": 0,
+    "aplicado": 0,
+    "documentado": 0,
+    "sinEvidencia": 0,
+    "competencias": 1,
+    "projects": 0
+   }
+  },
+  {
+   "id": "a:profesional",
+   "label": "Competencias profesionales",
+   "type": "area",
+   "region": "profesional",
+   "area": "profesional",
+   "family": "negocio",
+   "icon": "briefcase",
+   "state": "neutral",
+   "depth": 0,
+   "summary": "Área de conocimiento con 7 conocimientos (2 con práctica, 4 solo documentados sin práctica), 5 competencias y 2 proyectos que la aplican.",
+   "size": 0.9,
+   "evidence": {
+    "practica": 2,
+    "explicativa": 4,
+    "declarativa": 0,
+    "projects": 2,
+    "breadth": "puntual"
+   },
+   "uncertainty": [
+    "Cuenta cobertura y aplicación de sus conocimientos; no mide el dominio del área."
+   ],
+   "pos": [
+    51.34,
+    -19.02,
+    -9.56
+   ],
+   "areaStats": {
+    "nodes": 7,
+    "aplicado": 2,
+    "documentado": 4,
+    "sinEvidencia": 1,
+    "competencias": 5,
+    "projects": 2
+   }
+  },
+  {
+   "id": "a:negocio",
+   "label": "Dominios de negocio",
+   "type": "area",
+   "region": "negocio",
+   "area": "negocio",
+   "family": "negocio",
+   "icon": "store",
+   "state": "neutral",
+   "depth": 0,
+   "summary": "Área de conocimiento con 4 conocimientos (0 con práctica, 1 solo documentados sin práctica), 1 competencia y 0 proyectos que la aplican.",
+   "size": 0.9,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 1,
+    "declarativa": 0,
+    "projects": 0,
+    "breadth": "ninguna"
+   },
+   "uncertainty": [
+    "Cuenta cobertura y aplicación de sus conocimientos; no mide el dominio del área."
+   ],
+   "pos": [
+    3.34,
+    -44.88,
+    89.89
+   ],
+   "areaStats": {
+    "nodes": 4,
+    "aplicado": 0,
+    "documentado": 1,
+    "sinEvidencia": 3,
+    "competencias": 1,
+    "projects": 0
+   }
+  },
+  {
+   "id": "n:nucleo",
+   "label": "Mi conocimiento profesional",
+   "type": "nucleo",
+   "region": "objetivos",
+   "area": "objetivos",
+   "icon": "brain",
+   "state": "neutral",
+   "depth": 0,
+   "summary": "Conjunto de lo que aparece en tus materiales: 59 conocimientos repartidos en 7 áreas, 17 competencias y 4 proyectos. Es el centro del mapa: las áreas salen de tu marco de competencias.",
+   "size": 1,
+   "evidence": {
+    "practica": 31,
+    "explicativa": 14,
+    "declarativa": 0,
+    "projects": 4,
+    "breadth": "amplia"
+   },
+   "uncertainty": [
+    "Es un resumen de lo documentado en las fuentes analizadas, no una evaluación de tu nivel."
+   ],
+   "pos": [
+    -5.93,
+    -44.18,
+    17.94
+   ],
+   "areaStats": {
+    "nodes": 59,
+    "aplicado": 31,
+    "documentado": 14,
+    "sinEvidencia": 14,
+    "competencias": 17,
+    "projects": 4
+   }
   }
  ],
  "edges": [
@@ -5298,6 +5586,527 @@
    "confidence": "media",
    "rationale": "Documentar el proyecto «scripts-sueltos»: Hay trabajo práctico, pero sin explicación escrita de las decisiones es difícil defenderlo en una entrevista.",
    "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "n:nucleo",
+   "target": "a:bi",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Business Intelligence y Power BI» es una de las áreas de tu conocimiento profesional (11 conocimientos).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "overview": true
+  },
+  {
+   "source": "a:bi",
+   "target": "c:powerbi",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Power BI» pertenece al área «Business Intelligence y Power BI» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:bi",
+   "target": "k:powerbi-dax",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Power BI, DAX y Power Query» pertenece al área «Business Intelligence y Power BI» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:bi",
+   "target": "k:modelado",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Modelado de datos y medidas» pertenece al área «Business Intelligence y Power BI» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "n:nucleo",
+   "target": "a:datos",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Ingeniería y preparación de datos» es una de las áreas de tu conocimiento profesional (18 conocimientos).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "overview": true
+  },
+  {
+   "source": "a:datos",
+   "target": "c:sql",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«SQL» pertenece al área «Ingeniería y preparación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:datos",
+   "target": "c:python",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Python» pertenece al área «Ingeniería y preparación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:datos",
+   "target": "c:etl",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«ETL y pipelines» pertenece al área «Ingeniería y preparación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:datos",
+   "target": "c:data-quality",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Calidad y limpieza de datos» pertenece al área «Ingeniería y preparación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:datos",
+   "target": "c:modelado-datos",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Modelado de datos» pertenece al área «Ingeniería y preparación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:datos",
+   "target": "c:excel",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Excel» pertenece al área «Ingeniería y preparación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:datos",
+   "target": "c:apis-datos",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«APIs y datos web» pertenece al área «Ingeniería y preparación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:datos",
+   "target": "k:preparacion-calidad",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Preparación, limpieza y calidad de datos» pertenece al área «Ingeniería y preparación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:datos",
+   "target": "k:sql-analitico",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«SQL y consultas analíticas» pertenece al área «Ingeniería y preparación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:datos",
+   "target": "k:python-analisis",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Python aplicado al análisis» pertenece al área «Ingeniería y preparación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:datos",
+   "target": "k:excel-operativo",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Excel para análisis operativo» pertenece al área «Ingeniería y preparación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:datos",
+   "target": "k:plataformas-datos",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Plataformas de datos (cloud y big data)» pertenece al área «Ingeniería y preparación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "n:nucleo",
+   "target": "a:analisis",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Análisis, estadística y machine learning» es una de las áreas de tu conocimiento profesional (14 conocimientos).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "overview": true
+  },
+  {
+   "source": "a:analisis",
+   "target": "c:estadistica",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Estadística» pertenece al área «Análisis, estadística y machine learning» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:analisis",
+   "target": "c:eda",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Análisis exploratorio (EDA)» pertenece al área «Análisis, estadística y machine learning» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:analisis",
+   "target": "c:ml",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Machine learning» pertenece al área «Análisis, estadística y machine learning» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:analisis",
+   "target": "c:scikit-learn",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«scikit-learn» pertenece al área «Análisis, estadística y machine learning» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:analisis",
+   "target": "c:experimentacion",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Experimentación (tests A/B)» pertenece al área «Análisis, estadística y machine learning» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:analisis",
+   "target": "k:estadistica-eda",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Estadística y análisis exploratorio» pertenece al área «Análisis, estadística y machine learning» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:analisis",
+   "target": "k:ml-aplicado",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Machine learning aplicado» pertenece al área «Análisis, estadística y machine learning» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "n:nucleo",
+   "target": "a:visualizacion",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Visualización y comunicación de datos» es una de las áreas de tu conocimiento profesional (5 conocimientos).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "overview": true
+  },
+  {
+   "source": "a:visualizacion",
+   "target": "c:visualizacion-datos",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Visualización de datos» pertenece al área «Visualización y comunicación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:visualizacion",
+   "target": "c:data-storytelling",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Data Storytelling» pertenece al área «Visualización y comunicación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:visualizacion",
+   "target": "c:ibcs",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«IBCS» pertenece al área «Visualización y comunicación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:visualizacion",
+   "target": "c:diseno-dashboard",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Diseño de dashboards» pertenece al área «Visualización y comunicación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:visualizacion",
+   "target": "c:accesibilidad",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Accesibilidad» pertenece al área «Visualización y comunicación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:visualizacion",
+   "target": "k:visualizacion-comunicacion",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Visualización y comunicación de resultados» pertenece al área «Visualización y comunicación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "n:nucleo",
+   "target": "a:ux",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«UX/UI y desarrollo web (complementario)» es una de las áreas de tu conocimiento profesional (0 conocimientos).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "overview": true
+  },
+  {
+   "source": "a:ux",
+   "target": "k:ux-complementario",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«UX/UI, diseño de interfaces y web» pertenece al área «UX/UI y desarrollo web (complementario)» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "n:nucleo",
+   "target": "a:profesional",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Competencias profesionales» es una de las áreas de tu conocimiento profesional (7 conocimientos).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "overview": true
+  },
+  {
+   "source": "a:profesional",
+   "target": "c:kpi",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«KPI e indicadores» pertenece al área «Competencias profesionales» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:profesional",
+   "target": "c:git",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Git y GitHub» pertenece al área «Competencias profesionales» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:profesional",
+   "target": "c:automatizacion",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Automatización» pertenece al área «Competencias profesionales» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:profesional",
+   "target": "c:testing-calidad",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Pruebas y validación» pertenece al área «Competencias profesionales» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:profesional",
+   "target": "c:documentacion",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Documentación» pertenece al área «Competencias profesionales» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:profesional",
+   "target": "c:negocio",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Interpretación del negocio» pertenece al área «Competencias profesionales» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:profesional",
+   "target": "c:decisiones",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Justificación de decisiones» pertenece al área «Competencias profesionales» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:profesional",
+   "target": "k:kpi-seguimiento",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Definición y seguimiento de KPI» pertenece al área «Competencias profesionales» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:profesional",
+   "target": "k:negocio-interpretacion",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Interpretación del negocio» pertenece al área «Competencias profesionales» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:profesional",
+   "target": "k:automatizacion-fiabilidad",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Automatización, mantenimiento y fiabilidad» pertenece al área «Competencias profesionales» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:profesional",
+   "target": "k:documentacion-git",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Documentación, Git y colaboración» pertenece al área «Competencias profesionales» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:profesional",
+   "target": "k:explicar-decisiones",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Explicar decisiones y justificar resultados» pertenece al área «Competencias profesionales» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "n:nucleo",
+   "target": "a:negocio",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Dominios de negocio» es una de las áreas de tu conocimiento profesional (4 conocimientos).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "overview": true
+  },
+  {
+   "source": "a:negocio",
+   "target": "c:retail-ventas",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Retail y ventas» pertenece al área «Dominios de negocio» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:negocio",
+   "target": "c:finanzas",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Finanzas y control de gestión» pertenece al área «Dominios de negocio» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:negocio",
+   "target": "c:marketing-clientes",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Marketing y clientes» pertenece al área «Dominios de negocio» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:negocio",
+   "target": "c:turismo-hosteleria",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Turismo y hostelería» pertenece al área «Dominios de negocio» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:negocio",
+   "target": "k:conocimiento-sectorial",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Conocimiento de sectores de negocio» pertenece al área «Dominios de negocio» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:analisis",
+   "target": "a:datos",
+   "type": "conecta",
+   "confidence": "alta",
+   "rationale": "3 relaciones entre conceptos de «Análisis, estadística y machine learning» y de «Ingeniería y preparación de datos»: habilita (1), parte-de (1), usa (1).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 3,
+   "overview": true
+  },
+  {
+   "source": "a:analisis",
+   "target": "a:profesional",
+   "type": "conecta",
+   "confidence": "media",
+   "rationale": "1 relación entre conceptos de «Análisis, estadística y machine learning» y de «Competencias profesionales»: habilita (1).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1,
+   "overview": true
+  },
+  {
+   "source": "a:bi",
+   "target": "a:datos",
+   "type": "conecta",
+   "confidence": "media",
+   "rationale": "2 relaciones entre conceptos de «Business Intelligence y Power BI» y de «Ingeniería y preparación de datos»: parte-de (1), usa (1).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 2,
+   "overview": true
+  },
+  {
+   "source": "a:bi",
+   "target": "a:profesional",
+   "type": "conecta",
+   "confidence": "media",
+   "rationale": "1 relación entre conceptos de «Business Intelligence y Power BI» y de «Competencias profesionales»: habilita (1).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1,
+   "overview": true
+  },
+  {
+   "source": "a:bi",
+   "target": "a:visualizacion",
+   "type": "conecta",
+   "confidence": "media",
+   "rationale": "2 relaciones entre conceptos de «Business Intelligence y Power BI» y de «Visualización y comunicación de datos»: mejora (1), usa (1).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 2,
+   "overview": true
+  },
+  {
+   "source": "a:datos",
+   "target": "a:profesional",
+   "type": "conecta",
+   "confidence": "media",
+   "rationale": "2 relaciones entre conceptos de «Ingeniería y preparación de datos» y de «Competencias profesionales»: mejora (2).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 2,
+   "overview": true
+  },
+  {
+   "source": "a:negocio",
+   "target": "a:profesional",
+   "type": "conecta",
+   "confidence": "alta",
+   "rationale": "5 relaciones entre conceptos de «Dominios de negocio» y de «Competencias profesionales»: habilita (5).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 5,
+   "overview": true
+  },
+  {
+   "source": "a:negocio",
+   "target": "a:visualizacion",
+   "type": "conecta",
+   "confidence": "media",
+   "rationale": "1 relación entre conceptos de «Dominios de negocio» y de «Visualización y comunicación de datos»: mejora (1).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1,
+   "overview": true
+  },
+  {
+   "source": "a:profesional",
+   "target": "a:visualizacion",
+   "type": "conecta",
+   "confidence": "media",
+   "rationale": "1 relación entre conceptos de «Competencias profesionales» y de «Visualización y comunicación de datos»: habilita (1).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1,
+   "overview": true
   }
  ],
  "recommendations": [

@@ -71,6 +71,7 @@ const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--ena
 /* Abre una página con Supabase simulado. api: (url, method) → { status, body } | undefined */
 async function open(opts = {}) {
   const ctx = await browser.newContext({ viewport: opts.viewport || { width: 1440, height: 900 }, reducedMotion: opts.reducedMotion ? 'reduce' : 'no-preference', deviceScaleFactor: 1 });
+  await ctx.addInitScript((m) => { try { localStorage.setItem('sb-detail', m); } catch (x) { /* sin almacenamiento */ } }, opts.detail || 'completo');
   if (opts.session !== false) {
     await ctx.addInitScript(() => sessionStorage.setItem('bm_ap_session', JSON.stringify({ access_token: 'tok', refresh_token: 'ref', expires_at: Math.floor(Date.now() / 1000) + 3600, email: 'owner@example.test' })));
   }
@@ -436,6 +437,94 @@ try {
     await ctx.close();
   }
 
+  /* ───────── Exploración progresiva ───────── */
+  section('6b. v9: núcleo, áreas, desplegar y contraer, relaciones entre áreas');
+  {
+    const t = await open({ detail: 'progresivo' });
+    const pg = t.page;
+    await pg.goto(BASE + 'area-privada.html#/second-brain');
+    await waitGraph(pg);
+    const areas = REAL.nodes.filter((n) => n.type === 'area'), core = REAL.nodes.find((n) => n.type === 'nucleo');
+    const I = () => info(pg);
+    check('hay un núcleo y áreas en los datos', !!core && areas.length >= 2, String(areas.length));
+    check('la vista inicial muestra solo el núcleo y las áreas (mapa de orientación)', (await I()).visible === 1 + areas.length, String((await I()).visible));
+    check('el contador explica que es una vista por áreas', /por áreas/.test(await pg.locator('.sb-count').textContent()));
+    const ids = await pg.evaluate(() => Object.keys(document.querySelector('#sb-stage').__sbViewer.debugPositions()));
+    check('ningún elemento está duplicado en el visor', new Set(ids).size === REAL.nodes.length && ids.length === REAL.nodes.length);
+    const mm = await pg.evaluate(() => document.querySelector('#sb-stage').__sbViewer.debugMetrics());
+    check('en la vista general se dibujan las relaciones núcleo ↔ área y entre áreas', mm.edges.length >= areas.length, String(mm.edges.length));
+    const flat = mm.labels.map((l) => l.t.split('\n').join(' '));
+    check('los nombres de núcleo y áreas se ven (con su insignia «+N»)', flat.some((t) => /Mi conocimiento profesional/.test(t)) && flat.filter((t) => /· \+\d+/.test(t)).length >= areas.length - 1, JSON.stringify(flat));
+    const pos0 = await pg.evaluate(() => document.querySelector('#sb-stage').__sbViewer.debugPositions());
+    const big = areas.slice().sort((a, b) => b.areaStats.nodes - a.areaStats.nodes)[0];
+    await pg.evaluate((id) => document.querySelector('#sb-stage').__sbViewer.select(id), big.id);
+    await pg.locator('#sb-stage').focus();
+    await pg.keyboard.press('Enter');
+    await pg.waitForTimeout(900);
+    const open1 = (await I()).visible;
+    check('Intro sobre un área la despliega y aparecen sus conocimientos', open1 > 1 + areas.length, String(open1));
+    const pos1 = await pg.evaluate(() => document.querySelector('#sb-stage').__sbViewer.debugPositions());
+    check('desplegar no mueve ningún nodo: las posiciones son estables', Object.keys(pos0).every((k) => pos1[k] && Math.hypot(pos1[k][0] - pos0[k][0], pos1[k][1] - pos0[k][1], pos1[k][2] - pos0[k][2]) < 0.001));
+    check('el detalle del área ofrece su resumen, la cobertura y el botón de contraer', /En este área/.test(await pg.locator('#sb-detail').textContent()) && (await pg.locator('#sb-detail .sb-btn', { hasText: 'Contraer en el mapa' }).count()) === 1);
+    check('el estado de lectura anuncia el cambio', /desplegado/.test((await pg.locator('#ap-status, .ap-status, [role=status]').allTextContents()).join(' ')));
+    await pg.keyboard.press('Enter');
+    await pg.waitForTimeout(600);
+    check('Intro otra vez la contrae y los datos siguen en el modelo', (await I()).visible === 1 + areas.length && (await pg.evaluate(() => Object.keys(document.querySelector('#sb-stage').__sbViewer.debugPositions()).length)) === REAL.nodes.length);
+    // doble clic con el ratón
+    const sp = await pg.evaluate((id) => document.querySelector('#sb-stage').__sbViewer.screenPos(id), big.id);
+    await pg.mouse.dblclick(sp.x, sp.y);
+    await pg.waitForTimeout(900);
+    check('el doble clic también despliega', (await I()).visible > 1 + areas.length);
+    // un nodo sin nada que mostrar lo dice
+    const leaf = REAL.nodes.find((n) => n.stage && !REAL.nodes.some((x) => x.parent === n.id) && !REAL.edges.some((ed) => ed.type === 'demuestra' && ed.target === n.id));
+    if (leaf) {
+      await pg.evaluate((id) => document.querySelector('#sb-stage').__sbViewer.select(id, { silent: false }), leaf.id).catch(() => {});
+    }
+    // buscar algo que está oculto lo despliega hasta mostrarlo
+    await pg.locator('.sb-btn', { hasText: 'Vista global' }).click();
+    await pg.waitForTimeout(700);
+    check('«Vista global» contrae todo', (await I()).visible === 1 + areas.length);
+    const deep = REAL.nodes.find((n) => n.stage && n.depth >= 2) || REAL.nodes.find((n) => n.stage && n.parent);
+    await pg.locator('#sb-search').fill(deep.label.slice(0, 12));
+    await pg.waitForTimeout(400);
+    await pg.locator('#sb-results li button').first().click();
+    await pg.waitForTimeout(900);
+    const vi = await I();
+    check('elegir un resultado oculto despliega su camino y lo selecciona', vi.visible > 1 + areas.length && !!vi.selected, JSON.stringify([vi.visible, vi.selected]));
+    const seenSel = await pg.evaluate(() => document.querySelector('#sb-stage').__sbViewer.debugPositions());
+    check('el elemento elegido está en el mapa sin duplicarse', Object.keys(seenSel).filter((k) => k === vi.selected).length === 1);
+    await pg.locator('.sb-seg--mode button[data-v="completo"]').click();
+    await pg.waitForTimeout(700);
+    check('«Todo» muestra todos los elementos a la vez', (await I()).visible === REAL.nodes.length);
+    await pg.locator('.sb-seg--mode button[data-v="progresivo"]').click();
+    await pg.waitForTimeout(500);
+    await pg.locator('.sb-btn', { hasText: 'Restablecer' }).click();
+    await pg.waitForTimeout(700);
+    check('«Restablecer» vuelve al mapa de orientación', (await I()).visible === 1 + areas.length);
+    // relación entre áreas
+    const m2 = await pg.evaluate(() => document.querySelector('#sb-stage').__sbViewer.debugMetrics());
+    const conn = m2.edges.find((x) => REAL.edges[x.ei] && REAL.edges[x.ei].type === 'conecta');
+    const sb = await pg.locator('#sb-stage').boundingBox();
+    if (conn) {
+      await pg.mouse.click(sb.x + conn.x, sb.y + conn.y);
+      await pg.waitForTimeout(700);
+      check('un clic sobre una relación la selecciona', (await I()).selectedEdge === conn.ei, JSON.stringify(await I()));
+      const txt = await pg.locator('#sb-detail').textContent();
+      check('el detalle muestra los dos elementos, el tipo y su fundamento (sin inventar nada)', /Relación · /.test(txt) && /Tipo/.test(txt) && txt.includes(REAL.edges[conn.ei].rationale.slice(0, 20)));
+      check('una relación entre áreas lista las relaciones reales que resume', (await pg.locator('#sb-detail .sb-rels li').count()) >= 3);
+      await pg.locator('#sb-stage').focus();
+      await pg.keyboard.press('Escape');
+      await pg.waitForTimeout(300);
+      check('Esc quita la selección de la relación', (await I()).selectedEdge === -1);
+    } else check('hay una relación entre áreas dibujada que se puede seleccionar', false);
+    // accesibilidad en la vista por áreas
+    await pg.evaluate(AXE);
+    const axeRes = await pg.evaluate(async () => (await axe.run(document.querySelector('.sb'), { runOnly: ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'] })).violations.map((v) => ({ id: v.id, n: v.nodes.length, t: v.nodes[0].target.join(' ') })));
+    check('axe: sin infracciones en la vista por áreas', axeRes.length === 0, JSON.stringify(axeRes));
+    check('sin errores de JavaScript en la exploración', t.errors.length === 0, t.errors.join(' | '));
+    await t.ctx.close();
+  }
+
   /* ───────── Estados ───────── */
   section('7. Estados: sin tabla, vacío, error, parcial, demostración');
   {
@@ -509,10 +598,12 @@ try {
     await t7.page.goto(BASE + 'area-privada.html#/second-brain');
     await waitGraph(t7.page);
     const v = (fn) => t7.page.evaluate(fn);
-    check('las etiquetas del mapa no tienen fondo y el texto es negro', await v(() => {
-      const l = [...document.querySelectorAll('.sb-label')].find((x) => x.style.display !== 'none');
-      const cs = l && getComputedStyle(l);
-      return !!cs && cs.backgroundColor === 'rgba(0, 0, 0, 0)' && cs.color === 'rgb(17, 17, 17)';
+    check('las etiquetas del mapa no tienen fondo y el texto es oscuro', await v(() => {
+      const ls = [...document.querySelectorAll('.sb-label')].filter((x) => x.style.display !== 'none');
+      return ls.length > 0 && ls.every((l) => {
+        const cs = getComputedStyle(l), c = cs.color.match(/\d+/g).map(Number);
+        return cs.backgroundColor === 'rgba(0, 0, 0, 0)' && Math.max(c[0], c[1], c[2]) < 90;
+      });
     }));
     await v(() => document.querySelector('#sb-stage').__sbViewer.select('c:python'));
     await t7.page.waitForTimeout(500);
