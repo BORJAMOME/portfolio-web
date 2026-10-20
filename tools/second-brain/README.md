@@ -115,6 +115,21 @@ que se usa en bordes, líneas y texto cuando el relleno es claro (el amarillo de
 Desde la leyenda, un clic aísla una familia (otro clic la quita). Los shaders propios escriben el color sin conversión a sRGB, por lo que el visor guarda estos colores «crudos»
 (si no, el mapa sale más oscuro que la leyenda).
 
+**Geometría y calidad visual (v8).** Se midió en el navegador con el análisis real antes de tocar nada (`viewer.debugMetrics()`): 33 de 47 etiquetas tapaban algún nodo,
+29 nodos quedaban bajo la barra o la leyenda, los logotipos pesaban el doble que los iconos de trazo y varios iconos estaban descentrados hasta un 6 % de su celda. Las causas y su arreglo:
+- **Atlas de glifos normalizado** (`icons.js`): cada glifo se recorta a su caja real, se centra por esa caja y se escala al mismo lado óptico (60 % de la celda en iconos, 56 % en logotipos, que son rellenos y pesan más);
+  los iconos de trazo mantienen el mismo grosor en píxeles. El shader dibuja el glifo al ~55 % del diámetro del nodo y lo omite cuando el nodo mide menos de ~6 px (queda una forma limpia en vez de una mancha).
+- **Escala de tamaños única** (`SIZE` y `nodeRadius` en `viewer.js`): objetivo > competencia > concepto (crece con la raíz de sus proyectos) > proyecto.
+- **Separación con los radios reales**: el reparto de conceptos por sector ya no es solo áureo; se relaja hasta que no se pisen, dentro de su cuña y su anillo, con la z comprimida (la perspectiva la acorta) y teniendo en cuenta
+  dónde se ven las competencias elevadas. Los objetivos se apilan en el disco central, algo desplazados.
+- **Etiquetas**: no tapan nodos ajenos ni otras etiquetas ni los controles superpuestos; se prueban ocho direcciones a tres distancias, los nombres largos se parten en hasta tres líneas, nada se sale del lienzo y las que no caben
+  aparecen al acercar o al señalar (el tooltip y la lista siguen mostrando todo). Los nombres de área se desplazan a un hueco libre y, en pantallas anchas, se fuerzan si no hay ninguno.
+- **Encuadre con zonas seguras**: la barra, las vistas rápidas y los filtros activos se miden (`setInsets`) y el mapa se encaja por debajo.
+- **Leyenda**: cerrada por defecto, con la clave de color en una tira; se recuerda tu preferencia.
+Pruebas de geometría en `e2e.mjs` (sección 4f): sin solapes de etiquetas, ninguna sobre un nodo, ningún nodo bajo los controles, jerarquía de tamaños y centrado/tamaño de los glifos del atlas.
+Límites conocidos: la vista Lateral apila nodos por altura y se solapan por diseño; en el resumen hay menos etiquetas que antes (el resto aparece con zoom o al señalar); los iconos de las fichas HTML
+(leyenda, detalle) no pasan por la normalización del atlas (desvío ≤ 1 px); las mediciones se hicieron con renderizado por software, no con una GPU real.
+
 **Explorar (v7).** Bajo el mapa, «Qué conoces y dónde lo has aplicado» muestra el árbol (expandir, contraer, «Aislar» una rama con sus proyectos) y «Qué hay en cada área» la cobertura por área.
 Las vistas rápidas (Python, Machine Learning, Power BI, IA y Big Data, SQL, pendiente de práctica, sin proyecto asociado, proyectos sin documentar…) se calculan con los datos y solo aparecen si tienen elementos.
 Los filtros se combinan (familia, etapa, tipo de evidencia, estado, tipo, área, prioridad, rama), se ven como etiquetas con su aspa y pueden ocultar o solo atenuar lo que no coincide.

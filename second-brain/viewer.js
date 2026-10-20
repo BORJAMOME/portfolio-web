@@ -20,6 +20,17 @@
    ═══════════════════════════════════════════════ */
 // el atlas de iconos llega por options.icons (second-brain/icons.js, cargado con su ?v= por la pestaña)
 
+/* Escala de tamaños (unidades del mundo): una jerarquía y no valores sueltos.
+   objetivo > competencia > concepto (crece con la raíz de sus proyectos) > proyecto. */
+export const SIZE = { objetivo: 5.4, objetivoSec: 4.6, competencia: 3.5, competenciaRespaldada: 4.2, conceptoMin: 2.3, conceptoMax: 3.3, proyecto: 1.9, recomendacion: 2.0 };
+export function nodeRadius(n) {
+  const ev = Math.min(1, Math.sqrt(((n.evidence && n.evidence.projects) || 0) / 10));
+  if (n.type === 'objetivo') return n.size >= 1 ? SIZE.objetivo : SIZE.objetivoSec;
+  if (n.type === 'competencia') return n.state === 'respaldado' ? SIZE.competenciaRespaldada : SIZE.competencia;
+  if (n.type === 'proyecto') return SIZE.proyecto;
+  if (n.type === 'recomendacion') return SIZE.recomendacion;
+  return SIZE.conceptoMin + (SIZE.conceptoMax - SIZE.conceptoMin) * ev;
+}
 export const PALETTE = {
   bg: '#ffffff', ink: '#1d2638', navy: '#273a5f', steel: '#8c9ab3', mist: '#c6cfdd', unclassified: '#9aa5b5', unclassifiedInk: '#5b6678',
   line: '#dce2eb', lineSoft: '#e9edf3', amber: '#d9952c', amberInk: '#8a5a12', green: '#2f7d5b', red: '#b3263f',
@@ -39,9 +50,11 @@ const STYLE_OF = {};
 for (const [k, v] of Object.entries(EDGE_STYLE)) for (const t of v.types) STYLE_OF[t] = k;
 
 const KNOWLEDGE = new Set(['tecnologia', 'concepto', 'tecnica']);
-const HUB = 18;
+const HUB = 30;      // disco central libre: ahí se apilan los objetivos (también su posición aparente en perspectiva)
 const RIM = 96;
-const Y = { concepto: 0, competencia: 30, rec: 14, proyecto: 0, objetivo: 22 };
+const Y = { concepto: 0, competencia: 30, rec: 12, proyecto: 0, objetivo: 8 };
+// desplazamiento sobre el suelo, por unidad de altura, con el que se ve un nodo elevado en la perspectiva por defecto (theta -0,42; phi 0,8)
+const PARALLAX = { x: -Math.sin(-0.42) * Math.tan(0.8), z: -Math.cos(-0.42) * Math.tan(0.8) };
 const BELT = [110, 121, 132];        // cinturón de proyectos: hasta tres anillos
 const LABEL_CAP = 35;
 
@@ -49,7 +62,35 @@ const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 /* ═══════════ DISTRIBUCIÓN «MAPA» ═══════════ */
-export function mapLayout(snapshot) {
+export /** Separa los nodos de un mismo sector y anillo. La z se comprime (la perspectiva por defecto acorta esa dirección). */
+function relax(items, fixed, iters = 110) {
+  const Z = 0.74, TAU = Math.PI * 2;
+  for (let it = 0; it < iters; it++) {
+    for (let i = 0; i < items.length; i++) {
+      const a = items[i];
+      for (let j = 0; j < items.length + fixed.length; j++) {
+        if (j === i) continue;
+        const b = j < items.length ? items[j] : fixed[j - items.length];
+        const dx = a.x - b.x, dz = (a.z - b.z) / Z;
+        const d = Math.hypot(dx, dz) || 0.001;
+        const min = (a.r + b.r) * 1.4 + 2.5;
+        if (d >= min) continue;
+        const k = ((min - d) * (j < items.length ? 0.5 : 1)) / d;
+        a.x += dx * k; a.z += dz * k * Z;
+      }
+      const rad = Math.max(0.001, Math.hypot(a.x, a.z));
+      const rr = Math.min(Math.max(rad, a.r0 + a.r), a.r1 - a.r);
+      let da = Math.atan2(a.z, a.x) - a.a0;
+      da -= Math.round(da / TAU) * TAU;
+      if (da < -Math.PI / 2) da += TAU;
+      const pad = Math.min((a.a1 - a.a0) / 2.2, (a.r * 1.05) / Math.max(rr, 1));
+      const ang = a.a0 + Math.min(Math.max(da, pad), a.a1 - a.a0 - pad);
+      a.x = Math.cos(ang) * rr; a.z = Math.sin(ang) * rr;
+    }
+  }
+}
+
+function mapLayout(snapshot) {
   const nodes = snapshot.nodes;
   const pos = new Map();
   const knowRegions = snapshot.regions.filter((r) => nodes.some((n) => n.region === r.id && (KNOWLEDGE.has(n.type) || n.type === 'competencia')));
@@ -111,8 +152,29 @@ export function mapLayout(snapshot) {
     for (const key of ['respaldado', 'mencionado', 'otros']) {
       const [r0, r1] = BAND[key];
       spread(own.filter(inBand(key)).sort(byEvidence), s.a0 + pad, s.a1 - pad, r0 + 2, r1 - 2, Y.concepto);
-      fill(comps.filter(inBand(key)), s.a0 + pad, s.a1 - pad, (r0 + r1) / 2 - 5, (r0 + r1) / 2 + 5, Y.competencia, 13);
+      fill(comps.filter(inBand(key)), s.a0 + pad, s.a1 - pad, (r0 + r1) / 2 - 5, (r0 + r1) / 2 + 5, Y.competencia, 15);
     }
+  }
+  // el reparto áureo no conoce el tamaño de los nodos: se relajan hasta que no se pisen, dentro de su cuña y su anillo
+  for (const s of sectors) {
+    const comps = nodes.filter((n) => n.region === s.id && n.type === 'competencia').map((n) => { const p = pos.get(n.id); const [r0, r1] = BAND[keyOf(n)]; return { id: n.id, x: p[0], z: p[2], r: nodeRadius(n) * 1.1, a0: s.a0, a1: s.a1, r0, r1 }; });
+    relax(comps, [], 90);
+    for (const it of comps) pos.set(it.id, [it.x, pos.get(it.id)[1], it.z]);
+  }
+  for (const s of sectors) {
+    const items = [], fixed = [];
+    for (const n of nodes) {
+      if (n.region !== s.id) continue;
+      const p = pos.get(n.id);
+      if (!p) continue;
+      if (n.type === 'competencia') {
+        fixed.push({ x: p[0], z: p[2], r: nodeRadius(n) });
+        fixed.push({ x: p[0] + Y.competencia * PARALLAX.x, z: p[2] + Y.competencia * PARALLAX.z, r: nodeRadius(n) * 0.9 });
+      }
+      else if (KNOWLEDGE.has(n.type)) { const [r0, r1] = BAND[keyOf(n)]; items.push({ id: n.id, x: p[0], z: p[2], r: nodeRadius(n), a0: s.a0, a1: s.a1, r0, r1 }); }
+    }
+    relax(items, fixed);
+    for (const it of items) pos.set(it.id, [it.x, pos.get(it.id)[1], it.z]);
   }
   const angleOf = (p) => Math.atan2(p[2], p[0]);
   const projects = nodes.filter((n) => n.type === 'proyecto');
@@ -134,13 +196,15 @@ export function mapLayout(snapshot) {
     pos.set(p.n.id, at(ang, BELT[k], Y.proyecto));
   }
   const order = ((snapshot.meta && snapshot.meta.levels) || []).map((l) => 'o:' + l.id);
-  nodes.filter((n) => n.type === 'objetivo').forEach((n) => { pos.set(n.id, [0, Y.objetivo + Math.max(0, order.indexOf(n.id)) * 14, 0]); });
+  // los objetivos suben por el eje, pero algo desplazados para que no se tapen entre sí vistos desde arriba
+  nodes.filter((n) => n.type === 'objetivo').forEach((n) => { const k = Math.max(0, order.indexOf(n.id)); pos.set(n.id, [Math.cos(k * 2.4) * 6, Y.objetivo + k * 9.5, Math.sin(k * 2.4) * 6]); });
   const recTarget = new Map(snapshot.recommendations.map((r) => [r.nodeId, r.targetId]));
   const stack = new Map();
   nodes.filter((n) => n.type === 'recomendacion').forEach((n) => {
     const tid = recTarget.get(n.id), t = pos.get(tid), k = stack.get(tid) || 0;
     stack.set(tid, k + 1);
-    pos.set(n.id, t ? [t[0], Math.max(t[1], 0) + Y.rec + k * 9, t[2]] : [0, Y.competencia + 20, 0]);
+    const hyp = t ? Math.max(1, Math.hypot(t[0], t[2])) : 1;
+    pos.set(n.id, t ? [t[0] + (t[0] / hyp) * 9.5, Math.max(t[1], 0) + Y.rec + k * 9, t[2] + (t[2] / hyp) * 9.5] : [0, Y.competencia + 20, 0]);
   });
   nodes.forEach((n, i) => { if (!pos.has(n.id)) pos.set(n.id, at((i / nodes.length) * Math.PI * 2, RIM - 2, 0)); });
   return { pos, sectors, bands: BAND };
@@ -154,7 +218,8 @@ const VERT = `
 attribute vec3 aPos; attribute float aSize; attribute vec3 aFill; attribute vec3 aEdge; attribute vec3 aIconCol;
 attribute float aIcon; attribute float aShape; attribute float aStyle; attribute vec4 aRing; attribute float aDim; attribute float aSel; attribute float aBrand;
 varying vec2 vP; varying vec3 vFill; varying vec3 vEdge; varying vec3 vIconCol; varying float vIcon; varying float vShape; varying float vStyle;
-varying vec4 vRing; varying float vDim; varying float vSel; varying float vDepth; varying float vBrand;
+varying vec4 vRing; varying float vDim; varying float vSel; varying float vDepth; varying float vBrand; varying float vPx;
+uniform float uResY;
 void main() {
   vec4 mv = modelViewMatrix * vec4(aPos, 1.0);
   float ext = 1.62;
@@ -163,11 +228,12 @@ void main() {
   vFill = aFill; vEdge = aEdge; vIconCol = aIconCol; vIcon = aIcon; vShape = aShape; vStyle = aStyle; vRing = aRing; vDim = aDim; vSel = aSel; vBrand = aBrand;
   vDepth = -mv.z;
   gl_Position = projectionMatrix * mv;
+  vPx = aSize * projectionMatrix[1][1] * uResY * 0.5 / gl_Position.w;   // radio del nodo en píxeles
 }`;
 const FRAG = `
 uniform sampler2D uAtlas; uniform float uCols; uniform float uFogNear; uniform float uFogFar;
 varying vec2 vP; varying vec3 vFill; varying vec3 vEdge; varying vec3 vIconCol; varying float vIcon; varying float vShape; varying float vStyle;
-varying vec4 vRing; varying float vDim; varying float vSel; varying float vDepth; varying float vBrand;
+varying vec4 vRing; varying float vDim; varying float vSel; varying float vDepth; varying float vBrand; varying float vPx;
 float sdHex(vec2 p, float r) { const vec3 k = vec3(-0.866025404, 0.5, 0.577350269); p = abs(p.yx); p -= 2.0 * min(dot(k.xy, p), 0.0) * k.xy; p -= vec2(clamp(p.x, -k.z * r, k.z * r), r); return length(p) * sign(p.y); }
 float sdBox(vec2 p, float b, float rr) { vec2 q = abs(p) - vec2(b - rr); return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - rr; }
 float band(float r, float a, float b, float aa) { return smoothstep(a - aa, a + aa, r) * (1.0 - smoothstep(b - aa, b + aa, r)); }
@@ -185,7 +251,10 @@ void main() {
   if (vStyle > 0.5) { float ang = atan(vP.y, vP.x); dashOn = step(0.42, fract(ang / 6.2831853 * 8.0)); }
   vec3 col = vFill;
   col = mix(col, vEdge, rim * dashOn);
-  vec2 iuv = vP * (vBrand > 0.0 ? 0.42 : vShape > 2.5 ? 0.56 : 0.36) + 0.5;
+  // el atlas ya viene normalizado (glifo = 60 % de la celda): el glifo ocupa ~55 % del diámetro del nodo, menos en formas con menos espacio útil
+  float isc = vShape > 2.5 ? 0.66 : vShape > 1.5 ? 0.6 : 0.54;
+  vec2 iuv = vP * isc + 0.5;
+  float iconFade = smoothstep(5.5, 8.5, vPx);                             // con el nodo pequeño el glifo no se lee: se omite y queda una forma limpia
   float ia = 0.0;
   vec4 tx = vec4(0.0);
   if (vDim < 0.5 && iuv.x > 0.0 && iuv.x < 1.0 && iuv.y > 0.0 && iuv.y < 1.0) {
@@ -193,7 +262,7 @@ void main() {
     vec2 auv = (vec2(cx, cy) + vec2(iuv.x, 1.0 - iuv.y)) / uCols;
     auv.y = 1.0 - auv.y;
     tx = texture2D(uAtlas, auv);
-    ia = tx.a;
+    ia = tx.a * iconFade;
   }
   if (vBrand > 0.0) {
     vec3 lc = tx.rgb;
@@ -301,7 +370,7 @@ export function createViewer(container, T, options = {}) {
   atlas.ready.then(() => { if (!disposed) { atlasTex.needsUpdate = true; requestRender(); } });
   const nodeMat = new T.ShaderMaterial({
     vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: true,
-    uniforms: { uAtlas: { value: atlasTex }, uCols: { value: atlas.cols }, uFogNear: { value: 200 }, uFogFar: { value: 700 } },
+    uniforms: { uAtlas: { value: atlasTex }, uCols: { value: atlas.cols }, uFogNear: { value: 200 }, uFogFar: { value: 700 }, uResY: { value: 800 } },
   });
   const circleGeo = (r, seg) => {
     const v = [0, 0, 0], ix = [];
@@ -324,13 +393,7 @@ export function createViewer(container, T, options = {}) {
   const RAW = (hex) => { const n = parseInt(hex.slice(1), 16); return new T.Color().setRGB(((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255); };
 
   const radiusOf = (n) => {
-    const ev = Math.min(1, Math.sqrt(((n.evidence && n.evidence.projects) || 0) / 10));
-    let rr;
-    if (n.type === 'objetivo') rr = n.size >= 1 ? 4.4 : 3.8;
-    else if (n.type === 'competencia') rr = 3.4 + (n.state === 'respaldado' ? 0.8 : 0.3);
-    else if (n.type === 'proyecto') rr = 1.9;
-    else if (n.type === 'recomendacion') rr = 2.0;
-    else rr = 2.2 + 1.0 * ev;
+    const rr = nodeRadius(n);
     return mode === 'mapa' ? rr : rr * 1.15;
   };
   const isVisible = (id) => !visible || visible.has(id);
@@ -671,8 +734,8 @@ export function createViewer(container, T, options = {}) {
     const D = L[mode];
     if (mode === 'mapa' && !visible) {
       const pts = [];
-      const lab = size.w < 700 ? 0 : 0.22;
-      for (let i = 0; i < 32; i++) { const a = (i / 32) * Math.PI * 2; pts.push([Math.cos(a) * (BELT[BELT.length - 1] + 20) * (1 + lab * Math.abs(Math.cos(a))), 0, Math.sin(a) * (BELT[BELT.length - 1] + 20)]); }
+      const lab = size.w < 700 ? 0 : 0.12;
+      for (let i = 0; i < 32; i++) { const a = (i / 32) * Math.PI * 2; pts.push([Math.cos(a) * (BELT[BELT.length - 1] + 15) * (1 + lab * Math.abs(Math.cos(a))), 0, Math.sin(a) * (BELT[BELT.length - 1] + 15)]); }
       let top = Y.competencia + 8;
       data.nodes.forEach((n, i) => { top = Math.max(top, D[i * 3 + 1] + 6); });
       pts.push([0, top, 0]);
@@ -680,10 +743,13 @@ export function createViewer(container, T, options = {}) {
     }
     return data.nodes.filter((n) => isVisible(n.id)).map((n) => { const i = idx(n.id); return [D[i * 3], D[i * 3 + 1], D[i * 3 + 2]]; });
   }
+  let uiRects = [];                                          // rectángulos de los controles superpuestos (leyenda, barra, mandos), en px del lienzo
+  let insets = { top: 92, bottom: 0, left: 0, right: 0 };   // zonas ocupadas por los controles superpuestos (px)
   function fitDistance(pts, target, theta, phi) {
     const saved = { theta: view.theta, phi: view.phi, radius: view.radius, target: view.target.clone() };
     view.theta = theta; view.phi = phi; view.target.copy(target); view.radius = 300;
-    const topRoom = 1 - Math.min(0.32, 92 / Math.max(200, size.h));
+    const xl = -0.96 + (2 * insets.left) / Math.max(200, size.w), xr = 0.96 - (2 * insets.right) / Math.max(200, size.w);
+    const yt = 0.96 - (2 * insets.top) / Math.max(200, size.h), yb = -0.96 + (2 * insets.bottom) / Math.max(200, size.h);
     const right = new T.Vector3(), up = new T.Vector3();
     for (let k = 0; k < 8; k++) {
       placeCamera();
@@ -691,8 +757,8 @@ export function createViewer(container, T, options = {}) {
       for (const p of pts) { tmpV.set(p[0], p[1], p[2]).project(camera); x0 = Math.min(x0, tmpV.x); x1 = Math.max(x1, tmpV.x); y0 = Math.min(y0, tmpV.y); y1 = Math.max(y1, tmpV.y); }
       const halfH = view.radius * Math.tan((camera.fov * Math.PI) / 360), halfW = halfH * camera.aspect;
       right.set(1, 0, 0).applyQuaternion(camera.quaternion); up.set(0, 1, 0).applyQuaternion(camera.quaternion);
-      view.target.addScaledVector(right, ((x0 + x1) / 2) * halfW * 0.9).addScaledVector(up, ((y0 + y1) / 2 - (topRoom - 0.95) / 2) * halfH * 0.9);
-      view.radius = clamp(view.radius * Math.max((x1 - x0) / 1.9, (y1 - y0) / (topRoom + 0.95), 0.05), 20, 2400);
+      view.target.addScaledVector(right, ((x0 + x1) / 2 - (xl + xr) / 2) * halfW * 0.9).addScaledVector(up, ((y0 + y1) / 2 - (yt + yb) / 2) * halfH * 0.9);
+      view.radius = clamp(view.radius * Math.max((x1 - x0) / (xr - xl), (y1 - y0) / (yt - yb), 0.05), 20, 2400);
     }
     const out = { d: view.radius, target: view.target.clone() };
     Object.assign(view, { theta: saved.theta, phi: saved.phi, radius: saved.radius }); view.target.copy(saved.target);
@@ -771,19 +837,45 @@ export function createViewer(container, T, options = {}) {
     const CW = { 'is-region': 7.6, 'is-guide': 7.2, 'is-n2': 7.4, 'is-sel': 7.6, 'is-hover': 7.2, 'is-n3': 6.6, 'is-proj': 6.4 };
     const hit = (b) => placed.some((q) => b[0] < q[0] + q[2] + 4 && b[0] + b[2] + 4 > q[0] && b[1] < q[1] + q[3] + 4 && b[1] + b[3] + 4 > q[1]);
     // anchor: r = a la derecha, l = a la izquierda, b = debajo, c = centrado
-    const put = (text, cls, x, y, anchor, force) => {
+    // círculos de pantalla de los nodos visibles: una etiqueta no puede tapar a otro nodo
+    const discs = [];
+    data.nodes.forEach((n, i) => { if (!isVisible(n.id)) return; const s = toScreen(centerOf(i)); if (s && s[0] > -40 && s[0] < w + 40 && s[1] > -40 && s[1] < h + 40) discs.push({ id: n.id, x: s[0], y: s[1], r: pxRadius(i) * 1.05 + 1.5 }); });
+    const hitsUi = (b) => uiRects.some((u) => b[0] < u.x + u.w + 4 && b[0] + b[2] > u.x - 4 && b[1] < u.y + u.h + 4 && b[1] + b[3] > u.y - 4);
+    const hitsNode = (b, selfId) => discs.some((d) => {
+      if (d.id === selfId) return false;
+      const cx = Math.max(b[0], Math.min(d.x, b[0] + b[2])), cy = Math.max(b[1], Math.min(d.y, b[1] + b[3]));
+      return (d.x - cx) ** 2 + (d.y - cy) ** 2 < d.r * d.r;
+    });
+    const MAXLEN = { 'is-n2': 66, 'is-sel': 60, 'is-hover': 60, 'is-region': 40, 'is-guide': 20 };
+    const short = (t, cls) => { const m = MAXLEN[cls] || 30; return t.length > m ? t.slice(0, m - 1) + '…' : t; };
+    // los nombres largos se parten en dos líneas por palabras (hasta ~22 caracteres cada una)
+    const wrap = (t, cls) => {
+      if (!/is-n2|is-sel|is-hover/.test(cls) || t.length <= 24) return t;
+      const out = [''];
+      for (const wd of t.split(' ')) {
+        const cur = out[out.length - 1];
+        if (!cur || (cur + ' ' + wd).length <= 24) out[out.length - 1] = (cur ? cur + ' ' : '') + wd;
+        else out.push(wd);
+      }
+      return out.slice(0, 3).join('\n');
+    };    const put = (text, cls, x, y, anchor, force, selfId) => {
       if (used >= LABEL_CAP + 12 || x < -60 || x > w + 60 || y < -20 || y > h + 20) return false;
-      const bw = text.length * (CW[cls] || 6.8) + 4, bh = /is-n2|is-sel/.test(cls) ? 17 : 15;
-      if (anchor === 'c') x = Math.min(Math.max(x, bw / 2 + 6), w - bw / 2 - 6);   // sin recortes en los bordes
+      text = wrap(short(text, cls), cls);
+      const lines = text.split('\n');
+      const bw = Math.max(...lines.map((l) => l.length)) * (CW[cls] || 6.8) + 4, bh = (/is-n2|is-sel/.test(cls) ? 17 : 15) * (1 + (lines.length - 1) * 0.82);
+      if (anchor === 'c') {                                                         // sin recortes en los bordes ni bajo la barra superior
+        x = Math.min(Math.max(x, bw / 2 + 6), w - bw / 2 - 6);
+        if (cls === 'is-region' || cls === 'is-guide') y = Math.min(Math.max(y, insets.top + bh / 2 + 4), h - bh / 2 - 6);
+      }
       const bx = anchor === 'r' ? x : anchor === 'l' ? x - bw : x - bw / 2;
-      const by = anchor === 'b' ? y : y - bh / 2;
+      const by = anchor === 'b' ? y : anchor === 't' ? y - bh : y - bh / 2;
       const box = [bx, by, bw, bh];
-      if (!force && hit(box)) return false;
+      if (!force && (hit(box) || hitsNode(box, selfId) || hitsUi(box) || by < 2 || by + bh > h - 2 || bx < 2 || bx + bw > w - 2)) return false;
       placed.push(box);
       const el = labelEl(used++);
       el.textContent = text; el.className = 'sb-label ' + cls; el.style.display = ''; el.style.color = '';
       const tx = anchor === 'r' ? '0' : anchor === 'l' ? '-100%' : '-50%';
-      const ty = anchor === 'b' ? '0' : '-50%';
+      const ty = anchor === 'b' ? '0' : anchor === 't' ? '-100%' : '-50%';
       el.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px) translate(${tx}, ${ty})`;
       return true;
     };
@@ -792,7 +884,17 @@ export function createViewer(container, T, options = {}) {
       const sc = toScreen(centerOf(i));
       if (!sc) return false;
       const rp = pxRadius(i);
-      return put(n.label, cls, sc[0] + rp + 6, sc[1], 'r', force) || put(n.label, cls, sc[0], sc[1] + rp + 3, 'b', force) || put(n.label, cls, sc[0] - rp - 6, sc[1], 'l', force);
+      // a la derecha, a la izquierda, debajo o encima: la primera posición libre; si no hay ninguna, solo las importantes se colocan igualmente
+      const id = n.id;
+      const DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1], [0.75, -0.66], [0.75, 0.66], [-0.75, -0.66], [-0.75, 0.66]];
+      for (const extra of [0, 14, 30]) {
+        for (const [ux, uy] of DIRS) {
+          const d = rp + 7 + extra;
+          const ax = ux > 0.3 ? 'r' : ux < -0.3 ? 'l' : uy > 0 ? 'b' : 't';
+          if (put(n.label, cls, sc[0] + ux * d, sc[1] + uy * (ax === 'b' || ax === 't' ? d - 2 : d * 0.55), ax, force, id)) return true;
+        }
+      }
+      return false;
     };
     const tier = (n) => (n.type === 'competencia' || n.type === 'objetivo' || n.type === 'recomendacion' ? 'is-n2' : n.type === 'proyecto' ? 'is-proj' : 'is-n3');
     if (selected && isVisible(selected)) nodeLabel(data.nodes[idx(selected)], 'is-sel', true);
@@ -807,7 +909,10 @@ export function createViewer(container, T, options = {}) {
         for (const sct of sectors) {
           if (!data.nodes.some((n) => n.region === sct.id && isVisible(n.id))) continue;
           const sc = toScreen([Math.cos(sct.ac) * (BELT[BELT.length - 1] + 20), 0, Math.sin(sct.ac) * (BELT[BELT.length - 1] + 20)]);
-          if (sc) put(sct.label, 'is-region', sc[0], sc[1], 'c');
+          if (!sc) continue;
+          let ok = false;
+          for (const [dx, dy] of [[0, 0], [0, -18], [0, 18], [90, 0], [-90, 0], [150, -14], [-150, -14], [150, 14], [-150, 14]]) { if (put(sct.label, 'is-region', sc[0] + dx, sc[1] + dy, 'c')) { ok = true; break; } }
+          if (!ok && w >= 700) put(sct.label, 'is-region', sc[0], sc[1], 'c', true);   // en pantallas estrechas no se fuerzan: taparían el mapa
         }
         if (view.phi > 0.25) {
           const mid = (b) => (b[0] + b[1]) / 2;
@@ -963,6 +1068,7 @@ export function createViewer(container, T, options = {}) {
     const was = size.w;
     size = { w: Math.max(1, Math.round(r.width)), h: Math.max(1, Math.round(r.height)) };
     renderer.setSize(size.w, size.h, false);
+    nodeMat.uniforms.uResY.value = size.h;
     canvas.style.width = '100%'; canvas.style.height = '100%';
     camera.aspect = size.w / size.h; camera.updateProjectionMatrix();
     if (data && was > 1 && Math.abs(was - size.w) > 40 && !selected) fit(true);
@@ -977,6 +1083,8 @@ export function createViewer(container, T, options = {}) {
     focusRegion(rid) { if (data) focusIds(data.nodes.filter((n) => n.region === rid).map((n) => n.id)); },
     reset: () => { highlight = null; applyNodes(); applyLines(); fit(); },
     refit: (instant) => fit(!!instant),
+    /* zonas que tapan los controles superpuestos: el encuadre deja los nodos fuera de ellas */
+    setInsets(i, refit) { uiRects = Array.isArray(i.rects) ? i.rects.slice(0, 12) : []; insets = { top: Math.max(0, i.top || 0), bottom: Math.max(0, i.bottom || 0), left: Math.max(0, i.left || 0), right: Math.max(0, i.right || 0) }; if (refit && data && !selected) fit(true); },
     setFilter(f) {
       visible = f.visible || null;
       if (f.edgeTypes) edgeTypes = f.edgeTypes;
@@ -1011,6 +1119,24 @@ export function createViewer(container, T, options = {}) {
       const s = toScreen(centerOf(idx(id)));
       const r = canvas.getBoundingClientRect();
       return s ? { x: r.left + s[0], y: r.top + s[1] } : null;
+    },
+    /* Diagnóstico (solo lectura): posición y radio en píxeles de cada nodo visible y rectángulo de cada etiqueta.
+       Sirve a las pruebas de geometría (solapes de nodos y etiquetas, nodos bajo los controles). */
+    debugMetrics() {
+      const out = { size: { w: size.w, h: size.h }, nodes: [], labels: [] };
+      if (!data) return out;
+      data.nodes.forEach((n, i) => {
+        if (!isVisible(n.id)) return;
+        const s = toScreen(centerOf(i));
+        if (s) out.nodes.push({ id: n.id, type: n.type, x: s[0], y: s[1], r: pxRadius(i), z: s[2] });
+      });
+      const cr = canvas.getBoundingClientRect();
+      pool.forEach((p) => {
+        if (p.style.display === 'none') return;
+        const r = p.getBoundingClientRect();
+        out.labels.push({ t: p.textContent, cls: p.className.replace('sb-label ', ''), x: r.left - cr.left, y: r.top - cr.top, w: r.width, h: r.height });
+      });
+      return out;
     },
     debugPositions() {
       const out = {};

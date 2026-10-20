@@ -263,7 +263,16 @@ window.APSecondBrain = (function () {
         onDetached: () => dispose(),
         onContextLost: () => stageMessage('El navegador ha perdido el contexto gráfico. Recarga la sección para recuperar el mapa 3D.'),
       });
+      viewer.setInsets(insetsNow(), false);
       viewer.setData(g);
+      // la barra superior cambia de altura (vistas rápidas, filtros activos): el encuadre deja los nodos fuera de ella
+      const bar = S.els.stage.parentNode.querySelector('.sb-bar');
+      if (bar && window.ResizeObserver) {
+        let last = insetsNow().top;
+        const ro = new ResizeObserver(() => { const t = insetsNow().top; if (Math.abs(t - last) > 3 && viewer) { last = t; viewer.setInsets(insetsNow(), true); } });
+        ro.observe(bar);
+        cleanups.push(() => ro.disconnect());
+      }
       if (S.camera !== '3d') viewer.setCamera(S.camera, true);
       const stage = S.els.stage;
       stage.__sbViewer = viewer;                       // acceso para pruebas y diagnóstico; se suelta al salir
@@ -277,6 +286,22 @@ window.APSecondBrain = (function () {
     if (pendingSelect && S.nodeById.has(pendingSelect)) { const id = pendingSelect; pendingSelect = null; selectNode(id, 'panel'); }
     pendingSelect = null;
     if (S.notesError) ctx.setStatus('Parte de tu información no se ha podido aplicar: ' + S.notesError, true);
+  }
+
+  /* Zona superior que tapan los controles superpuestos (barra, vistas rápidas, filtros activos), en píxeles del lienzo */
+  function insetsNow() {
+    const st = S.els.stage.getBoundingClientRect();
+    const bar = S.els.stage.parentNode.querySelector('.sb-bar');
+    const top = bar ? Math.max(0, bar.getBoundingClientRect().bottom - st.top) + 10 : 92;
+    // mandos, leyenda y barra: las etiquetas del mapa no se colocan debajo de ellos
+    const rects = [];
+    for (const sel of ['.sb-bar', '.sb-legend', '.sb-nav']) {
+      const el = S.els.stage.parentNode.querySelector(sel);
+      if (!el || el.hidden || getComputedStyle(el).position !== 'absolute') continue;
+      const r = el.getBoundingClientRect();
+      rects.push({ x: r.left - st.left, y: r.top - st.top, w: r.width, h: r.height });
+    }
+    return { top: Math.round(top), bottom: 0, left: 0, right: 0, rects };
   }
 
   function stageMessage(text) {
@@ -439,8 +464,11 @@ window.APSecondBrain = (function () {
     const famList = fams.length
       ? h('ul', { class: 'sb-leg-fams' }, fams.map((x) => famBtn(x.key, famChip(x.f), x.f.label, x.n)).concat(none ? [famBtn('_none', (() => { const e = h('span', { class: 'sb-ichip is-solid', 'aria-hidden': 'true' }); setPaint(e, paintOf(NEUTRAL.color, NEUTRAL.ink, '')); e.appendChild(S.icons.iconSvg('dot')); return e; })(), 'Sin clasificar', none)] : []))
       : h('ul', { class: 'sb-leg-areas' }, areas.map((r) => h('li', null, [areaChip(r), h('span', { text: r.label })])));
-    return h('details', { class: 'sb-legend', open: small ? null : true }, [
-      h('summary', { text: 'Cómo leer el mapa' }),
+    let stored = null;
+    try { stored = localStorage.getItem('sb-legend-open'); } catch (e) { /* sin almacenamiento: se queda cerrada */ }
+    const dots = h('span', { class: 'sb-leg-dots', 'aria-hidden': 'true' }, (S.g.families || []).map((f) => { const d = h('span', { title: f.label }); d.style.background = f.color; return d; }));
+    const det = h('details', { class: 'sb-legend', open: !small && stored === '1' ? true : null }, [
+      h('summary', null, [h('span', { text: 'Cómo leer el mapa' }), dots]),
       h('p', { class: 'sb-leg-h', text: fams.length ? 'Color = familia tecnológica · clic para aislarla' : 'Color = área' }),
       famList,
       h('details', { class: 'sb-legend-more' }, [
@@ -460,6 +488,8 @@ window.APSecondBrain = (function () {
         h('p', { class: 'sb-keys', id: 'sb-keys', text: 'Arrastra para girar (en cenital, para desplazar) · rueda o pellizco: zoom · con el mapa enfocado: flechas giran, Mayús + flechas desplazan, + / − acercan, 0 vista general, Esc quita la selección.' }),
       ]),
     ]);
+    det.addEventListener('toggle', () => { try { localStorage.setItem('sb-legend-open', det.open ? '1' : '0'); } catch (e) { /* sin almacenamiento */ } if (viewer) viewer.setInsets(insetsNow(), false); });
+    return det;
   }
   /* Aislar una familia desde la leyenda: marca solo esa en los filtros; otro clic sobre la misma vuelve a todas */
   function soloFamily(key) {

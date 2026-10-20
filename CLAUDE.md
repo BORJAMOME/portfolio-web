@@ -65,6 +65,7 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
   casos de estudio, `descargas.html` y `supabase/portfolio.sql`). Notas del usuario en `sb_notas` (`supabase/second-brain-notas.sql`).
   Three.js va recortado en `vendor/three-<versión>-sb.min.js` (`tools/second-brain/build-three.mjs`). Config y snapshots reales: `.second-brain/` (no versionado).
   Jerarquía: `padre` y `rutas` en `framework.json` → `second-brain/taxonomy.js` (lógica pura) y `tools/second-brain/TAXONOMIA.md` (se genera con `--doc`); un proyecto = una entidad (`identity.mjs`).
+  Calidad visual del mapa: `SIZE`/`nodeRadius`, atlas normalizado (`icons.js`), separación y etiquetas (`viewer.js`); medir con `viewer.debugMetrics()` (E2E sección 4f).
   Color = familia tecnológica (`framework.json → familias`, campo `family` de cada nodo); las áreas son los sectores del suelo.
   Pruebas: `node --test tools/second-brain/second-brain.test.mjs` y `node tools/second-brain/e2e.mjs`. Guía y reglas de evidencia: `tools/second-brain/README.md`.
   Cambiar `framework.json` o el motor → `node tools/second-brain/analyze.mjs --demo` (regenera el demo; hay un test que lo comprueba).
