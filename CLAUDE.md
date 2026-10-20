@@ -64,6 +64,7 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
   Fuentes: carpetas locales (`projectDepth` N o `"auto"` = carpeta con README) y el catálogo publicado del propio portfolio (`kind: "catalogo"`, `catalog.mjs`:
   casos de estudio, `descargas.html` y `supabase/portfolio.sql`). Notas del usuario en `sb_notas` (`supabase/second-brain-notas.sql`).
   Three.js va recortado en `vendor/three-<versión>-sb.min.js` (`tools/second-brain/build-three.mjs`). Config y snapshots reales: `.second-brain/` (no versionado).
+  Color = familia tecnológica (`framework.json → familias`, campo `family` de cada nodo); las áreas son los sectores del suelo.
   Pruebas: `node --test tools/second-brain/second-brain.test.mjs` y `node tools/second-brain/e2e.mjs`. Guía y reglas de evidencia: `tools/second-brain/README.md`.
   Cambiar `framework.json` o el motor → `node tools/second-brain/analyze.mjs --demo` (regenera el demo; hay un test que lo comprueba).
 - **Supabase no se pausa**: `.github/workflows/supabase-keepalive.yml` llama a `public.keepalive()` (`supabase/keepalive.sql`) lunes y jueves
