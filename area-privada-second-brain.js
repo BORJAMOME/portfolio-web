@@ -33,11 +33,11 @@ window.APSecondBrain = (function () {
   };
   const TYPE = {
     tecnologia: ['Tecnología', '●'], concepto: ['Concepto', '⬢'], tecnica: ['Técnica', '◆'], competencia: ['Competencia', '⬟'],
-    proyecto: ['Proyecto', '■'], objetivo: ['Objetivo', '◯'], recomendacion: ['Recomendación', '▼'],
+    proyecto: ['Proyecto', '■'], objetivo: ['Objetivo', '◯'], recomendacion: ['Recomendación', '▼'], area: ['Área', '◎'], nucleo: ['Núcleo', '◉'],
   };
   const EDGE = {
     usa: ['Usa', 'usa'], 'parte-de': ['Parte de', 'es parte de'], requiere: ['Requiere', 'requiere'], mejora: ['Mejora', 'mejora'],
-    habilita: ['Habilita', 'habilita'], demuestra: ['Demuestra (proyecto → concepto)', 'demuestra'], agrupa: ['Agrupa (competencia → concepto)', 'agrupa'],
+    conecta: ['Conecta áreas (recuento)', 'conecta con'], habilita: ['Habilita', 'habilita'], demuestra: ['Demuestra (proyecto → concepto)', 'demuestra'], agrupa: ['Agrupa (competencia → concepto)', 'agrupa'],
     necesita: ['Necesita (objetivo → competencia)', 'necesita'], recomienda: ['Recomienda', 'recomienda'],
   };
   const EDGE_DEFAULT_OFF = ['agrupa', 'necesita'];
@@ -230,6 +230,12 @@ window.APSecondBrain = (function () {
     };
     S.taxApi = engine.taxonomy;
     S.tax = S.taxApi.buildTaxonomy(g);
+    S.expl = S.taxApi.buildExplore(g, S.tax);
+    S.expanded = new Set();
+    S.mode = 'progresivo';
+    try { const m = localStorage.getItem('sb-detail'); if (m === 'completo' || m === 'progresivo') S.mode = m; } catch (e) { /* sin almacenamiento: por áreas */ }
+    if (!S.expl.core) S.mode = 'completo';                  // un snapshot antiguo sin núcleo ni áreas se explora entero
+    S.selEdge = -1;
     S.dim = false;
     resetFilterState();
     on(window, 'hashchange', () => { if (!/^#\/second-brain/.test(location.hash)) dispose(); });
@@ -259,6 +265,8 @@ window.APSecondBrain = (function () {
         icons: engine.icons,
         logos: engine.logos,
         onSelect: (id) => selectNode(id, 'viewer'),
+        onActivate: (id) => toggleExpand(id),
+        onEdge: (i) => selectEdge(i),
         onHover: (id, x, y) => showTip(id, x, y),
         onDetached: () => dispose(),
         onContextLost: () => stageMessage('El navegador ha perdido el contexto gráfico. Recarga la sección para recuperar el mapa 3D.'),
@@ -329,7 +337,7 @@ window.APSecondBrain = (function () {
         ]),
         h('p', { class: 'sb-muted sb-kpi-note', text: (() => {
           const by = (t) => g.nodes.filter((n) => t.indexOf(n.type) > -1).length;
-          return plural(g.nodes.length, 'elemento', 'elementos') + ' en el mapa = ' + by(['tecnologia', 'concepto', 'tecnica']) + ' conceptos + ' + by(['competencia']) + ' competencias + ' + by(['proyecto']) + ' proyectos + ' + by(['objetivo', 'recomendacion']) + ' objetivos y recomendaciones.';
+          return plural(g.nodes.length, 'elemento', 'elementos') + ' en el mapa = ' + by(['tecnologia', 'concepto', 'tecnica']) + ' conceptos + ' + by(['competencia']) + ' competencias + ' + by(['proyecto']) + ' proyectos + ' + by(['objetivo', 'recomendacion']) + ' objetivos y recomendaciones' + (by(['area', 'nucleo']) ? ' + ' + by(['area', 'nucleo']) + ' áreas y núcleo.' : '.');
         })() }),
       ]),
     ]);
@@ -380,6 +388,8 @@ window.APSecondBrain = (function () {
       h('div', { class: 'sb-bar-r' }, [
         seg('Distribución', [['mapa', 'Mapa', 'Posición con significado: área, solidez de la evidencia y tipo'], ['red', 'Red', 'Red de relaciones calculada por el motor']], S.layout, (v) => { S.layout = v; if (viewer) viewer.setLayout(v); }),
         seg('Punto de vista', [['3d', 'Perspectiva'], ['cenital', 'Cenital'], ['lateral', 'Lateral']], S.camera, (v) => { S.camera = v; if (viewer) viewer.setCamera(v); }, 'sb-seg--cam'),
+        S.expl.core ? seg('Nivel de detalle', [['progresivo', 'Por áreas', 'Empieza por el núcleo y las áreas y se despliega al explorar (doble clic o Intro)'], ['completo', 'Todo', 'Todos los elementos a la vez']], S.mode, (v) => setMode(v), 'sb-seg--mode') : '',
+        S.expl.core ? h('button', { type: 'button', class: 'sb-btn', text: 'Vista global', title: 'Contrae todo lo desplegado y vuelve a la vista general', onclick: collapseAll }) : '',
         e.filters,
         h('button', { type: 'button', class: 'sb-btn', text: 'Restablecer', title: 'Quita filtros y selección y vuelve a la vista general', onclick: resetAll }),
         h('button', { type: 'button', class: 'sb-btn sb-btn--dark', text: '+ Añadir', title: 'Añade un concepto, técnica o proyecto que el análisis no ha detectado', onclick: () => editNote(null) }),
@@ -397,12 +407,13 @@ window.APSecondBrain = (function () {
   const lumHex = (x) => { const [r, g, b] = hexRgb(x).map(lin); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
   const mixHex = (a, b, t) => { const A = hexRgb(a), B = hexRgb(b); return '#' + A.map((v, i) => Math.round((v + (B[i] - v) * t) * 255).toString(16).padStart(2, '0')).join(''); };
   const NEUTRAL = { color: '#9aa5b5', ink: '#5b6678' };
+  const isRef = (n) => n.type === 'objetivo' || n.type === 'nucleo';        // referencias del marco: no son una tecnología, no llevan familia
   function paintOf(color, ink, label) {
     const light = lumHex(color) > 0.42;
     return { color, ink, label, light, edge: light ? mixHex(color, ink, 0.6) : color, fg: light ? '#273a5f' : '#ffffff' };
   }
   function famInfo(n) {
-    if (n.type === 'objetivo') return paintOf('#273a5f', '#273a5f', 'Objetivo');
+    if (isRef(n)) return paintOf('#273a5f', '#273a5f', n.type === 'nucleo' ? 'Núcleo' : 'Objetivo');
     if (!S.famMap.size) { const c = S.areaColor.get(areaOf(n)) || '#273a5f'; return paintOf(c, c, regionLabel(areaOf(n))); }
     const f = n.family && S.famMap.get(n.family);
     return f ? paintOf(f.color, f.ink || f.color, f.label) : paintOf(NEUTRAL.color, NEUTRAL.ink, 'Sin clasificar');
@@ -420,12 +431,12 @@ window.APSecondBrain = (function () {
     el.appendChild(S.icons.iconSvg(f.icon || 'dot'));
     return el;
   }
-  const famKey = (n) => (n.type === 'objetivo' ? '_obj' : n.family || '_none');
+  const famKey = (n) => (isRef(n) ? '_obj' : n.family || '_none');
 
   /* Ficha de color + icono de un nodo o un área (la misma gramática que el mapa) */
   function chip(n, big) {
     const p = n.type === 'recomendacion' ? paintOf('#d9952c', '#8a5a00', 'Recomendación') : famInfo(n);
-    const cls = n.type === 'proyecto' ? 'is-card' : n.type === 'recomendacion' || n.type === 'objetivo' || n.state === 'respaldado' || n.state === 'neutral' ? 'is-solid' : n.state === 'mencionado' ? 'is-tint' : 'is-open';
+    const cls = n.type === 'proyecto' ? 'is-card' : n.type === 'recomendacion' || isRef(n) || n.type === 'area' || n.state === 'respaldado' || n.state === 'neutral' ? 'is-solid' : n.state === 'mencionado' ? 'is-tint' : 'is-open';
     const shape = n.type === 'proyecto' ? ' is-square' : n.type === 'competencia' ? ' is-hex' : n.type === 'objetivo' ? ' is-diamond' : '';
     const el = h('span', { class: 'sb-ichip ' + cls + shape + (big ? ' is-big' : ''), 'aria-hidden': 'true' });
     setPaint(el, p);                                    // CSSOM: permitido por la CSP
@@ -459,7 +470,7 @@ window.APSecondBrain = (function () {
     const areas = S.g.regions.filter((r) => S.g.nodes.some((n) => n.region === r.id || n.area === r.id));
     const sw = (cls, label) => h('li', null, [h('span', { class: 'sb-sw ' + cls, 'aria-hidden': 'true' }), label]);
     const fams = (S.g.families || []).map((f) => ({ key: f.id, f, n: S.g.nodes.filter((x) => x.family === f.id).length }));
-    const none = S.g.nodes.filter((x) => x.type !== 'objetivo' && !x.family).length;
+    const none = S.g.nodes.filter((x) => !isRef(x) && !x.family).length;
     const famBtn = (key, chipEl, label, n) => h('li', null, [h('button', { type: 'button', class: 'sb-fam', 'data-fam': key, 'aria-pressed': 'false', title: 'Mostrar solo esta familia (otro clic la quita)', onclick: () => soloFamily(key) }, [chipEl, h('span', { class: 'sb-fam-t', text: label }), h('span', { class: 'sb-muted', text: String(n) })])]);
     const famList = fams.length
       ? h('ul', { class: 'sb-leg-fams' }, fams.map((x) => famBtn(x.key, famChip(x.f), x.f.label, x.n)).concat(none ? [famBtn('_none', (() => { const e = h('span', { class: 'sb-ichip is-solid', 'aria-hidden': 'true' }); setPaint(e, paintOf(NEUTRAL.color, NEUTRAL.ink, '')); e.appendChild(S.icons.iconSvg('dot')); return e; })(), 'Sin clasificar', none)] : []))
@@ -479,13 +490,13 @@ window.APSecondBrain = (function () {
           sw('is-gap', 'Brecha'), sw('is-now', 'Prioridad ahora'), sw('is-rec', 'Recomendación'),
         ]),
         h('p', { class: 'sb-leg-h', text: 'Forma = tipo de elemento' }),
-        h('ul', { class: 'sb-leg-ev' }, [sw('is-solid', 'Círculo: conocimiento'), sw('is-solid is-hex', 'Hexágono: competencia'), sw('is-solid is-square', 'Ficha: proyecto'), sw('is-solid is-diamond', 'Rombo: objetivo')]),
+        h('ul', { class: 'sb-leg-ev' }, [sw('is-solid is-ring', 'Círculo con anillo: núcleo y áreas'), sw('is-expand', 'Anillo gris: se puede desplegar'), sw('is-solid', 'Círculo: conocimiento'), sw('is-solid is-hex', 'Hexágono: competencia'), sw('is-solid is-square', 'Ficha: proyecto'), sw('is-solid is-diamond', 'Rombo: objetivo')]),
         h('p', { class: 'sb-leg-h', text: 'Relaciones' }),
         h('ul', { class: 'sb-leg-lines' }, Object.values(S.edgeStyle).map((st) => h('li', null, [lineSample(st), st.label]))),
         fams.length ? h('p', { class: 'sb-leg-h', text: 'Sectores del suelo = áreas' }) : '',
         fams.length ? h('ul', { class: 'sb-leg-areas' }, areas.map((r) => h('li', null, [areaChip(r), h('span', { text: r.label })]))) : '',
         h('p', { class: 'sb-read', text: 'Del centro al borde: de respaldado a por validar. Arriba: competencias y recomendaciones. Anillo exterior: proyectos. Eje central: objetivos.' }),
-        h('p', { class: 'sb-keys', id: 'sb-keys', text: 'Arrastra para girar (en cenital, para desplazar) · rueda o pellizco: zoom · con el mapa enfocado: flechas giran, Mayús + flechas desplazan, + / − acercan, 0 vista general, Esc quita la selección.' }),
+        h('p', { class: 'sb-keys', id: 'sb-keys', text: 'Arrastra para girar (en cenital, para desplazar) · rueda o pellizco: zoom · doble clic o Intro: despliega o contrae · con el mapa enfocado: flechas giran, Mayús + flechas desplazan, + / − acercan, 0 vista general, Esc quita la selección.' }),
       ]),
     ]);
     det.addEventListener('toggle', () => { try { localStorage.setItem('sb-legend-open', det.open ? '1' : '0'); } catch (e) { /* sin almacenamiento */ } if (viewer) viewer.setInsets(insetsNow(), false); });
@@ -777,7 +788,7 @@ window.APSecondBrain = (function () {
     relFs.insertBefore(h('label', { class: 'sb-select-label', for: 'sb-edgemode' }, ['Mostrar relaciones', h('select', { id: 'sb-edgemode', onchange: (ev) => { f.edgeMode = ev.currentTarget.value; applyFilters(); } }, [
       h('option', { value: 'foco', text: 'Solo del elemento señalado (recomendado)' }), h('option', { value: 'todas', text: 'Todas las de los tipos marcados' }),
     ])]), relFs.children[1]);
-    const famFs = (S.g.families || []).length ? checkGroup('Familia tecnológica', (S.g.families || []).map((x) => ({ key: x.id, label: x.label, color: x.color })).concat(S.g.nodes.some((x) => x.type !== 'objetivo' && !x.family) ? [{ key: '_none', label: 'Sin clasificar', color: NEUTRAL.color }] : []), f.families, 'fam') : null;
+    const famFs = (S.g.families || []).length ? checkGroup('Familia tecnológica', (S.g.families || []).map((x) => ({ key: x.id, label: x.label, color: x.color })).concat(S.g.nodes.some((x) => !isRef(x) && !x.family) ? [{ key: '_none', label: 'Sin clasificar', color: NEUTRAL.color }] : []), f.families, 'fam') : null;
     if (famFs) famFs.classList.add('is-fams');
     if (famFs) famFs.querySelectorAll('.sb-fdot').forEach((d, i) => { const x = (S.g.families || [])[i]; const p = x ? paintOf(x.color, x.ink || x.color, '') : paintOf(NEUTRAL.color, NEUTRAL.ink, ''); setPaint(d, p); });
     return h('div', { class: 'sb-filter-grid' }, [
@@ -805,8 +816,9 @@ window.APSecondBrain = (function () {
 
   function matchesFilters(n) {
     const f = S.f;
+    if (S.expSet && !S.expSet.has(n.id)) return false;
     if (!f.states.has(n.state) || !f.types.has(n.type) || !f.regions.has(n.region)) return false;
-    if (n.type !== 'objetivo' && (S.g.families || []).length && !f.families.has(n.family || '_none')) return false;
+    if (!isRef(n) && (S.g.families || []).length && !f.families.has(n.family || '_none')) return false;
     if (S.branchSet && !S.branchSet.has(n.id)) return false;
     if (S.viewSet && !S.viewSet.has(n.id)) return false;
     // etapa y tipo de evidencia solo hablan de conocimiento y proyectos: al acotarlos, el resto se oculta
@@ -837,10 +849,12 @@ window.APSecondBrain = (function () {
   }
   function updateCount() {
     const total = S.g.nodes.length, n = S.visible.size;
-    S.els.count.textContent = n === total ? plural(total, 'elemento', 'elementos') : n + ' de ' + plural(total, 'elemento', 'elementos') + ' (filtrado)';
+    S.els.count.textContent = S.expSet ? n + ' de ' + plural(total, 'elemento', 'elementos') + ' a la vista (por áreas)' : n === total ? plural(total, 'elemento', 'elementos') : n + ' de ' + plural(total, 'elemento', 'elementos') + ' (filtrado)';
   }
-  function applyFilters(initial) {
+  function exploring() { return S.mode === 'progresivo' && !!S.expl.core && activeFilters() === 0; }
+  function applyFilters(initial, keepCamera) {
     if (!S) return;
+    S.expSet = exploring() ? S.expl.visibleSet(S.expanded) : null;
     S.branchSet = S.f.branch ? S.tax.branchSet(S.f.branch) : null;
     S.viewSet = S.f.view && S.views.has(S.f.view) ? S.taxApi.viewSet(S.g, S.tax, S.views.get(S.f.view)) : null;
     const vis = new Set(S.g.nodes.filter(matchesFilters).map((n) => n.id));
@@ -855,9 +869,10 @@ window.APSecondBrain = (function () {
     if (S.selected && !vis.has(S.selected)) selectNode(null, 'filter');
     if (viewer) {
       const narrowed = vis.size < total;
-      viewer.setFilter({ visible: narrowed && !S.dim ? vis : null, edgeTypes: S.f.edges, edgeMode: S.f.edgeMode });
+      viewer.setFilter({ visible: narrowed && !S.dim ? vis : null, edgeTypes: S.f.edges, edgeMode: S.f.edgeMode, fitAll: !!S.expSet });
+      syncExploreViewer();
       if (!S.highlight && !S.searchHl) viewer.setHighlight(narrowed && S.dim ? vis : null);
-      if (vis.size > 0) viewer.refit(initial === true);
+      if (vis.size > 0 && !keepCamera) viewer.refit(initial === true);
     }
     renderList();
     renderActive();
@@ -884,6 +899,7 @@ window.APSecondBrain = (function () {
     S.els.filters.open = false;
     S.els.search.value = ''; closeResults();
     if (S.highlight) { S.highlight = null; S.els.askOut.textContent = ''; if (viewer) viewer.setHighlight(null); }
+    S.expanded = new Set();
     selectNode(null, 'reset');
     applyFilters();
     if (viewer) viewer.reset();
@@ -928,6 +944,7 @@ window.APSecondBrain = (function () {
   function pickResult(id) {
     closeResults();
     clearSearchHighlight();
+    if (!S.visible.has(id) && S.expSet) revealNode(id);
     if (!S.visible.has(id)) { const n = S.nodeById.get(id); resetAll(); ctx.setStatus('Se han quitado los filtros para mostrar «' + (n ? n.label : '') + '».'); }
     selectNode(id, 'search');
   }
@@ -936,6 +953,8 @@ window.APSecondBrain = (function () {
   // origin: 'viewer' (clic en el mapa), 'search', 'list', 'panel', 'rec', 'filter', 'reset'
   function selectNode(id, origin) {
     if (!S) return;
+    if (S.selEdge >= 0) { S.selEdge = -1; if (viewer) viewer.selectEdge(-1); }
+    if (id && S.expSet && !S.expSet.has(id)) revealNode(id);       // elegirlo en la lista, la búsqueda o el árbol lo despliega en el mapa
     S.selected = id || null;
     if (origin !== 'viewer' && viewer) viewer.select(S.selected, { silent: true });
     renderChip();
@@ -975,6 +994,7 @@ window.APSecondBrain = (function () {
   function renderDetail() {
     const box = S.els.detail;
     box.textContent = '';
+    if (S.selEdge >= 0) { renderEdgeDetail(box); return; }
     const n = S.selected && S.nodeById.get(S.selected);
     if (!n) {
       box.append(
@@ -995,7 +1015,7 @@ window.APSecondBrain = (function () {
         ]),
         h('button', { type: 'button', class: 'ap-link-btn sb-nowrap', text: 'Quitar selección', onclick: () => selectNode(null, 'panel') }),
       ]),
-      h('p', { class: 'sb-badges' }, [stateBadge(n.state)].concat(n.type === 'objetivo' ? [] : [famPill(n)]).concat((n.families || []).filter((f) => f !== n.family && S.famMap.has(f)).map((f) => famPill({ type: 'x', family: f })))),
+      h('p', { class: 'sb-badges' }, [stateBadge(n.state)].concat(isRef(n) ? [] : [famPill(n)]).concat((n.families || []).filter((f) => f !== n.family && S.famMap.has(f)).map((f) => famPill({ type: 'x', family: f })))),
       crumbEl(n),
       h('p', { class: 'sb-lead', text: n.summary }),
     );
@@ -1020,6 +1040,7 @@ window.APSecondBrain = (function () {
         ]),
       ]));
     }
+    { const ex = exploreBlock(n); if (ex) left.appendChild(ex); }
     { const stg = stageBlock(n); if (stg) left.appendChild(stg); }
     { const br = branchBlock(n); if (br) left.appendChild(br); }
     if (comp) left.appendChild(competencyBlock(comp));
@@ -1170,8 +1191,8 @@ window.APSecondBrain = (function () {
     const key = S.listGroup;
     if (key === 'area') return S.g.regions.map((r) => ({ id: r.id, label: r.label, paint: paintOf(r.color || '#273a5f', r.color || '#273a5f', ''), of: (n) => n.region === r.id }));
     if (key === 'tipo') return Object.keys(TYPE).map((t) => ({ id: t, label: TYPE[t][0] + 's', paint: paintOf('#273a5f', '#273a5f', ''), of: (n) => n.type === t }));
-    const fams = (S.g.families || []).map((f) => ({ id: f.id, label: f.label, paint: paintOf(f.color, f.ink || f.color, ''), of: (n) => n.type !== 'objetivo' && n.family === f.id }));
-    return fams.concat([{ id: '_none', label: 'Sin clasificar', paint: paintOf(NEUTRAL.color, NEUTRAL.ink, ''), of: (n) => n.type !== 'objetivo' && !n.family }, { id: '_obj', label: 'Objetivos', paint: paintOf('#273a5f', '#273a5f', ''), of: (n) => n.type === 'objetivo' }]);
+    const fams = (S.g.families || []).map((f) => ({ id: f.id, label: f.label, paint: paintOf(f.color, f.ink || f.color, ''), of: (n) => !isRef(n) && n.family === f.id }));
+    return fams.concat([{ id: '_none', label: 'Sin clasificar', paint: paintOf(NEUTRAL.color, NEUTRAL.ink, ''), of: (n) => !isRef(n) && !n.family }, { id: '_obj', label: 'Objetivos', paint: paintOf('#273a5f', '#273a5f', ''), of: (n) => isRef(n) }]);
   }
   function listControls() {
     const box = S.els.list;
@@ -1495,6 +1516,119 @@ window.APSecondBrain = (function () {
   function syncIso() {
     if (!S.els.treeBody) return;
     S.els.treeBody.querySelectorAll('.sb-tn-iso').forEach((b) => { const on = b.getAttribute('data-iso') === S.f.branch; b.classList.toggle('is-on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.textContent = on ? 'Aislada ✓' : 'Aislar'; });
+  }
+
+
+  /* ═══════════ v9: EXPLORACIÓN PROGRESIVA (núcleo → áreas → conocimientos → proyectos) ═══════════
+     Expandir o contraer solo cambia qué se ve: las posiciones son fijas, nada se borra y nada se duplica.
+     La lógica (qué cuelga de qué, qué hay que abrir para ver algo) está en second-brain/taxonomy.js. */
+  function hiddenBelow(id) {
+    let k = 0;
+    for (const d of S.expl.descendantsAll(id)) if (!S.visible.has(d)) k++;
+    return k;
+  }
+  /* insignias «· +N» en lo que se puede desplegar y anillo gris en el visor */
+  function syncExploreViewer() {
+    if (!viewer) return;
+    const badges = new Map(), expandable = new Set();
+    if (S.expSet) {
+      for (const n of S.g.nodes) {
+        if (!S.visible.has(n.id) || !S.expl.isExpandable(n.id) || S.expanded.has(n.id)) continue;
+        expandable.add(n.id);
+        const k = hiddenBelow(n.id);
+        if (k) badges.set(n.id, ' · +' + k);
+      }
+    }
+    viewer.setExplore({ badges, expandable, overview: true });
+  }
+  function toggleExpand(id) {
+    if (!S || !S.expSet) { if (S && S.mode === 'completo') ctx.setStatus('Estás en «Todo»: pasa a «Por áreas» para desplegar y contraer.'); return; }
+    const n = S.nodeById.get(id);
+    if (!n) return;
+    if (!S.expl.isExpandable(id)) { ctx.setStatus('«' + n.label + '» no tiene nada más que mostrar.'); return; }
+    const opening = !S.expanded.has(id);
+    opening ? S.expanded.add(id) : S.expanded.delete(id);
+    applyFilters(false, true);
+    if (viewer) {
+      const kids = S.expl.childrenOf(id).filter((x) => S.visible.has(x));
+      if (opening && kids.length) viewer.focusIds([id].concat(kids));
+    }
+    ctx.setStatus(opening ? '«' + n.label + '» desplegado: ' + plural(S.expl.childrenOf(id).length, 'elemento', 'elementos') + '.' : '«' + n.label + '» contraído. Sigue en el modelo; solo deja de verse.');
+    if (S.selected === id) renderDetail();
+  }
+  function revealNode(id) {
+    for (const x of S.expl.expandPathFor(id)) S.expanded.add(x);
+    applyFilters(false, true);
+  }
+  function collapseAll() {
+    S.expanded = new Set();
+    if (S.mode === 'completo') S.mode = 'progresivo', saveMode();
+    syncModeUi();
+    selectNode(null, 'reset');
+    applyFilters();
+    if (viewer) viewer.reset();
+  }
+  function saveMode() { try { localStorage.setItem('sb-detail', S.mode); } catch (e) { /* sin almacenamiento */ } }
+  function syncModeUi() {
+    const seg = S.els.stage.parentNode.querySelector('.sb-seg--mode');
+    if (seg) seg.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', b.getAttribute('data-v') === S.mode ? 'true' : 'false'));
+  }
+  function setMode(v) {
+    S.mode = v; saveMode();
+    applyFilters();
+    ctx.setStatus(v === 'progresivo' ? 'Vista por áreas: se muestran el núcleo y las áreas; despliega con doble clic o Intro.' : 'Vista completa: todos los elementos a la vez.');
+  }
+
+  /* bloque del detalle: resumen del área o del núcleo y botón de desplegar */
+  function exploreBlock(n) {
+    const expandable = S.expl.isExpandable(n.id);
+    const st = n.areaStats;
+    if (!expandable && !st) return null;
+    const parts = [h('h3', { class: 'sb-h3', id: 'sb-exp-h', text: n.type === 'area' || n.type === 'nucleo' ? 'En este ' + (n.type === 'area' ? 'área' : 'núcleo') : 'Explorar en el mapa' })];
+    if (st) {
+      parts.push(h('p', { text: plural(st.nodes, 'conocimiento', 'conocimientos') + ': ' + st.aplicado + ' con práctica' + (st.documentado ? ', ' + st.documentado + ' solo documentados' : '') + (st.sinEvidencia ? ', ' + st.sinEvidencia + ' sin evidencia' : '') + '. ' + plural(st.competencias, 'competencia', 'competencias') + ' y ' + plural(st.projects, 'proyecto', 'proyectos') + '.' }), stackBar(st.aplicado, st.documentado, st.sinEvidencia), h('p', { class: 'sb-muted', text: 'Cobertura y aplicación de lo que aparece en tus materiales; no mide el dominio.' }));
+    }
+    if (expandable) {
+      const kids = S.expl.childrenOf(n.id);
+      const open = S.expanded.has(n.id);
+      if (S.mode === 'progresivo') parts.push(h('p', null, [h('button', { type: 'button', class: 'sb-btn sb-btn--dark', text: open ? 'Contraer en el mapa' : 'Desplegar en el mapa (' + kids.length + ')', onclick: () => toggleExpand(n.id) })]));
+      if (n.type === 'area' || n.type === 'nucleo') parts.push(h('ul', { class: 'sb-rels' }, kids.slice(0, 14).map((id) => { const k = S.nodeById.get(id); return k ? relBtn(k, (stageOf(k.stage) || {}).short || '') : ''; })), kids.length > 14 ? h('p', { class: 'sb-muted', text: 'Se muestran 14 de ' + kids.length + '; el resto está en el árbol de «Explorar».' }) : '');
+    } else if (n.type !== 'area' && n.type !== 'nucleo') return null;
+    return h('section', { class: 'sb-block', 'aria-labelledby': 'sb-exp-h' }, parts);
+  }
+
+  /* relación seleccionada en el mapa: los dos elementos, su tipo y su fundamento (solo lo que registra el modelo) */
+  function selectEdge(i) {
+    if (!S) return;
+    S.selEdge = i;
+    if (i >= 0) { S.selected = null; renderChip(); S.els.list.querySelectorAll('.sb-node').forEach((b) => { b.classList.remove('is-on'); b.removeAttribute('aria-current'); }); }
+    renderDetail();
+    if (i >= 0) S.els.detail.scrollIntoView({ block: 'nearest', behavior: reducedMotion() ? 'auto' : 'smooth' });
+  }
+  function renderEdgeDetail(box) {
+    const e = S.g.edges[S.selEdge];
+    const a = e && S.nodeById.get(e.source), b = e && S.nodeById.get(e.target);
+    if (!a || !b) { box.append(h('p', { class: 'sb-muted', text: 'Relación no disponible.' })); return; }
+    const t = EDGE[e.type] || [e.type, e.type];
+    box.append(
+      h('div', { class: 'sb-detail-head' }, [
+        h('div', null, [h('p', { class: 'sb-eyebrow', text: 'Relación · ' + t[0] }), h('h2', { class: 'sb-h', id: 'sb-detail-h', text: a.label + ' → ' + b.label })]),
+        h('button', { type: 'button', class: 'ap-link-btn sb-nowrap', text: 'Quitar selección', onclick: () => { if (viewer) viewer.selectEdge(-1); selectEdge(-1); } }),
+      ]),
+      h('ul', { class: 'sb-rels' }, [relBtn(a, TYPE[a.type][0]), relBtn(b, TYPE[b.type][0])]),
+      h('dl', { class: 'sb-dl' }, [].concat(dt('Tipo', t[0]), dt('Lectura', a.label + ' ' + t[1] + ' ' + b.label), dt('Confianza', e.confidence), e.evidenceCount ? dt(e.type === 'conecta' ? 'Relaciones resumidas' : 'Archivos', String(e.evidenceCount)) : [])),
+      h('p', { class: 'sb-lead', text: e.rationale }),
+    );
+    if (e.type === 'conecta') {
+      const A = a.area, B = b.area;
+      const real = S.g.edges.filter((x) => !['agrupa', 'demuestra', 'necesita', 'recomienda', 'conecta'].includes(x.type)).map((x) => ({ x, s: S.nodeById.get(x.source), t: S.nodeById.get(x.target) }))
+        .filter((o) => o.s && o.t && ((o.s.area === A && o.t.area === B) || (o.s.area === B && o.t.area === A)) && o.s.stage !== undefined && o.t.stage !== undefined);
+      box.append(h('section', { class: 'sb-block', 'aria-labelledby': 'sb-real-h' }, [
+        h('h3', { class: 'sb-h3', id: 'sb-real-h', text: 'Las relaciones que resume (' + real.length + ')' }),
+        h('ul', { class: 'sb-rels' }, real.slice(0, 12).map((o) => h('li', null, [h('button', { type: 'button', class: 'sb-rel', onclick: () => { if (viewer) viewer.selectEdge(-1); selectNode(o.s.id, 'panel'); } }, [h('span', { class: 'sb-rel-k', text: (EDGE[o.x.type] || [o.x.type])[0] }), chip(o.s), h('span', { class: 'sb-rel-t', text: o.s.label + ' → ' + o.t.label })]), h('span', { class: 'sb-why', text: o.x.rationale })]))),
+        real.length > 12 ? h('p', { class: 'sb-muted', text: 'Se muestran 12 de ' + real.length + '.' }) : '',
+      ]));
+    }
   }
 
   return { render: render };

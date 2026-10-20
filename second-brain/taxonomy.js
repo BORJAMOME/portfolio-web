@@ -158,3 +158,106 @@ export function summary(g, tax) {
     },
   };
 }
+
+/* ═══════════ Exploración progresiva ═══════════
+   El mapa arranca como orientación (núcleo + áreas) y cada elemento se despliega al explorarlo.
+   Todo es visibilidad: las posiciones no cambian, así que expandir nunca reorganiza el mapa y contraer no borra nada. */
+const OBJ_TYPES = new Set(['objetivo', 'recomendacion']);
+
+export function buildExplore(g, tax) {
+  const byId = tax.byId;
+  const core = g.nodes.find((n) => n.type === 'nucleo') || null;
+  const areas = g.nodes.filter((n) => n.type === 'area');
+  const areaOf = (n) => areas.find((a) => a.id === 'a:' + n.area) || null;
+  // «agrupa» desde un área: sus conocimientos de primer nivel y sus competencias
+  const groupTargets = new Map();
+  for (const e of g.edges) if (e.type === 'agrupa' && e.source.startsWith('a:')) { if (!groupTargets.has(e.source)) groupTargets.set(e.source, []); groupTargets.get(e.source).push(e.target); }
+  const projByLead = new Map();
+  for (const n of g.nodes) if (n.type === 'proyecto' && n.parent) { if (!projByLead.has(n.parent)) projByLead.set(n.parent, []); projByLead.get(n.parent).push(n.id); }
+  // proyectos sin técnica principal ni relación «demuestra»: cuelgan de su área
+  const demonstrating = new Set(g.edges.filter((e) => e.type === 'demuestra').map((e) => e.source));
+  const loose = new Map();
+  for (const n of g.nodes) if (n.type === 'proyecto' && !n.parent && !demonstrating.has(n.id)) { const k = 'a:' + n.area; if (!loose.has(k)) loose.set(k, []); loose.get(k).push(n.id); }
+  const cmp = (a, b) => a.label.localeCompare(b.label, 'es');
+
+  /** Elementos que se muestran al expandir `id` (sin duplicados). */
+  const memo = new Map();
+  function childrenOf(id) {
+    if (memo.has(id)) return memo.get(id);
+    const n = byId.get(id);
+    let ids = [];
+    if (!n) ids = [];
+    else if (n.type === 'nucleo') ids = areas.map((a) => a.id);
+    else if (n.type === 'area') ids = [...(groupTargets.get(id) || []), ...(loose.get(id) || [])].filter((x) => byId.has(x));
+    else if (n.stage !== undefined && n.type !== 'proyecto') {
+      const kids = (tax.kids.get(id) || []).map((k) => k.id);
+      const mine = projByLead.get(id) || [];
+      // una hoja muestra los proyectos que la aplican; una rama, sus hijos y los proyectos que cuelgan de ella
+      const apply = kids.length ? [] : [...(tax.appliers.get(id) || [])];
+      ids = [...kids, ...mine, ...apply];
+    }
+    const out = [...new Set(ids)].filter((x) => x !== id).map((x) => byId.get(x)).filter(Boolean).sort(cmp).map((x) => x.id);
+    memo.set(id, out);
+    return out;
+  }
+  const isExpandable = (id) => childrenOf(id).length > 0 && id !== (core && core.id);
+
+  const allMemo = new Map();
+  /** Todo lo que cuelga de `id`, a cualquier profundidad. */
+  function descendantsAll(id, seen = new Set()) {
+    if (allMemo.has(id)) return allMemo.get(id);
+    const out = new Set();
+    for (const c of childrenOf(id)) { if (seen.has(c)) continue; out.add(c); for (const d of descendantsAll(c, new Set([...seen, id]))) out.add(d); }
+    allMemo.set(id, out);
+    return out;
+  }
+
+  /**
+   * Conjunto visible con los ids expandidos. Siempre: el núcleo y las áreas. Objetivos y recomendaciones aparecen
+   * cuando lo hace su competencia (o el elemento al que apuntan).
+   */
+  function visibleSet(expanded) {
+    const vis = new Set();
+    if (core) vis.add(core.id);
+    for (const a of areas) vis.add(a.id);
+    const queue = [...vis];
+    const done = new Set();
+    while (queue.length) {
+      const id = queue.shift();
+      if (done.has(id)) continue;
+      done.add(id);
+      if (id !== (core && core.id) && !expanded.has(id)) continue;
+      for (const c of childrenOf(id)) { if (!vis.has(c)) vis.add(c); queue.push(c); }
+    }
+    for (const e of g.edges) {
+      if (e.type === 'necesita' && vis.has(e.target) && byId.get(e.source) && byId.get(e.source).type === 'objetivo') vis.add(e.source);
+      if (e.type === 'recomienda' && vis.has(e.target)) vis.add(e.source);
+    }
+    // si ya no se ve ninguna competencia, tampoco sus objetivos
+    for (const n of g.nodes) if (n.type === 'objetivo' && !g.edges.some((e) => e.type === 'necesita' && e.source === n.id && vis.has(e.target))) vis.delete(n.id);
+    return vis;
+  }
+
+  /** Ids que hay que expandir para que `id` sea visible (en orden: del área hacia abajo). */
+  function expandPathFor(id, depth = 0) {
+    const n = byId.get(id);
+    if (!n || n.type === 'nucleo' || n.type === 'area') return [];
+    if (OBJ_TYPES.has(n.type)) {
+      if (depth > 1) return [];
+      const e = g.edges.find((x) => (x.source === id && (x.type === 'recomienda' || x.type === 'necesita')));
+      return e ? [...expandPathFor(e.target, depth + 1), e.target].filter((x) => { const m = byId.get(x); return m && m.type !== 'nucleo'; }) : [];
+    }
+    const chain = tax.pathOf(id).filter((x) => x.id !== id).map((x) => x.id);
+    // el área es la de la raíz de su cadena (un concepto puede colgar de una raíz de otra área)
+    const rootNode = chain.length ? byId.get(chain[0]) : n;
+    const a = areaOf(rootNode || n);
+    if (n.type === 'proyecto' && !n.parent) {
+      // sin técnica principal: cuelga de alguna técnica que lo aplica
+      const via = g.edges.find((e) => e.type === 'demuestra' && e.source === id);
+      return via ? [...expandPathFor(via.target, depth + 1), via.target] : (a ? [a.id] : []);
+    }
+    return [...(a ? [a.id] : []), ...chain];
+  }
+
+  return { core, areas, childrenOf, isExpandable, descendantsAll, visibleSet, expandPathFor };
+}

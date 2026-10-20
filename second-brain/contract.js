@@ -15,8 +15,8 @@ export const SCHEMA_VERSION = 1;
 /* Estado de evidencia. «oportunidad» es una acción posible (no implica carencia);
    «neutral» es para nodos que no son conocimiento (objetivos, proyectos). */
 export const STATES = ['respaldado', 'mencionado', 'pendiente', 'brecha_probable', 'brecha_confirmada', 'oportunidad', 'neutral'];
-export const NODE_TYPES = ['tecnologia', 'concepto', 'tecnica', 'competencia', 'proyecto', 'objetivo', 'recomendacion'];
-export const EDGE_TYPES = ['usa', 'parte-de', 'requiere', 'mejora', 'habilita', 'demuestra', 'agrupa', 'necesita', 'recomienda'];
+export const NODE_TYPES = ['tecnologia', 'concepto', 'tecnica', 'competencia', 'proyecto', 'objetivo', 'recomendacion', 'area', 'nucleo'];
+export const EDGE_TYPES = ['usa', 'parte-de', 'requiere', 'mejora', 'habilita', 'demuestra', 'agrupa', 'necesita', 'recomienda', 'conecta'];
 export const CONFIDENCE = ['alta', 'media', 'baja'];
 /* Etapas de conocimiento (evidencia, no nota de dominio): «evaluado» y «dominio» solo con evaluación explícita. */
 export const STAGES = ['sin_evidencia', 'identificado', 'estudiado', 'aplicado', 'reforzado', 'evaluado', 'dominio'];
@@ -107,6 +107,8 @@ export function validateSnapshot(s) {
     if (n.depth != null && !(Number.isInteger(n.depth) && n.depth >= 0 && n.depth <= 12)) err(`Nodo ${n.id}: profundidad inválida.`);
     if (n.parent != null && !isStr(n.parent, 80)) err(`Nodo ${n.id}: padre inválido.`);
     if (n.branch != null && !(isObj(n.branch) && ['children', 'leaves', 'aplicado', 'documentado', 'sinEvidencia'].every((k) => Number.isInteger(n.branch[k]) && n.branch[k] >= 0))) err(`Nodo ${n.id}: cobertura de rama inválida.`);
+    if (n.areaStats != null && !(isObj(n.areaStats) && ['nodes', 'aplicado', 'documentado', 'sinEvidencia', 'competencias', 'projects'].every((k) => Number.isInteger(n.areaStats[k]) && n.areaStats[k] >= 0))) err(`Nodo ${n.id}: estadísticas de área inválidas.`);
+    if ((n.type === 'area' || n.type === 'nucleo') && !isObj(n.areaStats)) err(`Nodo ${n.id}: un área o el núcleo necesitan areaStats.`);
     if (n.noReadme != null && typeof n.noReadme !== 'boolean') err(`Nodo ${n.id}: noReadme debe ser booleano.`);
     for (const k of ['docOnly', 'merged']) {
       if (n[k] != null && (!Array.isArray(n[k]) || n[k].length > 10 || n[k].some((x) => !isStr(x, LIMITS.label)))) err(`Nodo ${n.id}: «${k}» inválido.`);
@@ -146,6 +148,7 @@ export function validateSnapshot(s) {
     if (!EDGE_TYPES.includes(e.type)) err(`Relación ${i}: tipo desconocido «${e.type}».`);
     if (!CONFIDENCE.includes(e.confidence)) err(`Relación ${i}: confianza inválida.`);
     if (!isStr(e.rationale, LIMITS.text)) err(`Relación ${i}: sin fundamento (rationale).`);
+    if (e.overview != null && typeof e.overview !== 'boolean') err(`Relación ${i}: overview debe ser booleano.`);
     const key = `${e.source}|${e.target}|${e.type}`;
     if (edgeKeys.has(key)) err(`Relación duplicada: ${key}`);
     edgeKeys.add(key);

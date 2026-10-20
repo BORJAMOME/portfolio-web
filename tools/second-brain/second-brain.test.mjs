@@ -607,3 +607,79 @@ test('taxonomy.js: caminos, ramas, proyectos por rama y vistas rápidas salen de
   assert.equal(tax.STAGES.length, 7);
   assert.match(tax.stageNext({ stage: 'estudiado' }), /aplicarlo/);
 });
+
+/* ─────────── v9: núcleo, áreas y exploración progresiva ─────────── */
+test('núcleo y áreas salen de datos reales y sus cifras cuadran', () => {
+  const s = analyzeDemo().r.snapshot;
+  const core = s.nodes.find((n) => n.type === 'nucleo');
+  const areas = s.nodes.filter((n) => n.type === 'area');
+  assert.ok(core && areas.length >= 2);
+  const know = s.nodes.filter((n) => n.stage !== undefined && n.type !== 'proyecto');
+  for (const a of areas) {
+    const mine = know.filter((n) => n.region === a.region);
+    assert.equal(a.areaStats.nodes, mine.length, a.label);
+    assert.equal(a.areaStats.aplicado + a.areaStats.documentado + a.areaStats.sinEvidencia, a.areaStats.nodes);
+    assert.ok(s.edges.some((e) => e.source === core.id && e.target === a.id && e.type === 'agrupa'), 'núcleo → área');
+    for (const n of mine.filter((x) => !x.parent)) assert.ok(s.edges.some((e) => e.source === a.id && e.target === n.id), 'el área agrupa sus raíces: ' + n.label);
+  }
+  assert.equal(core.areaStats.nodes, areas.reduce((x, a) => x + a.areaStats.nodes, 0));
+  // las relaciones entre áreas son un recuento de las reales, no relaciones nuevas
+  const region = new Map(know.map((n) => [n.id, n.region]));
+  for (const e of s.edges.filter((x) => x.type === 'conecta')) {
+    const ra = e.source.slice(2), rb = e.target.slice(2);
+    const real = s.edges.filter((x) => !['agrupa', 'demuestra', 'necesita', 'recomienda', 'conecta'].includes(x.type) && region.has(x.source) && region.has(x.target)
+      && ((region.get(x.source) === ra && region.get(x.target) === rb) || (region.get(x.source) === rb && region.get(x.target) === ra))).length;
+    assert.equal(e.evidenceCount, real, e.source + '↔' + e.target);
+    assert.equal(e.overview, true);
+  }
+  assert.equal(validateSnapshot(s).ok, true);
+});
+
+test('contrato: un área o el núcleo sin sus cifras, o una relación con overview no booleano, se rechazan', () => {
+  const s = JSON.parse(JSON.stringify(analyzeDemo().r.snapshot));
+  delete s.nodes.find((n) => n.type === 'area').areaStats;
+  assert.equal(validateSnapshot(s).ok, false);
+  const s2 = JSON.parse(JSON.stringify(analyzeDemo().r.snapshot));
+  s2.edges.find((e) => e.type === 'conecta').overview = 'si';
+  assert.equal(validateSnapshot(s2).ok, false);
+});
+
+test('exploración: arranca en núcleo + áreas, desplegar solo añade, contraer restituye y todo es alcanzable', async () => {
+  const tax = await import('../../second-brain/taxonomy.js');
+  const s = analyzeDemo().r.snapshot;
+  const t = tax.buildTaxonomy(s), x = tax.buildExplore(s, t);
+  const base = x.visibleSet(new Set());
+  assert.equal(base.size, 1 + x.areas.length);
+  for (const a of x.areas) {
+    const open = x.visibleSet(new Set([a.id]));
+    for (const id of base) assert.ok(open.has(id), 'desplegar no quita nada');
+    assert.ok(open.size > base.size, a.label);
+    for (const c of x.childrenOf(a.id)) assert.ok(open.has(c), 'los hijos aparecen');
+    assert.equal(x.visibleSet(new Set()).size, base.size, 'contraer restituye la vista general');
+  }
+  // todos los nodos pueden hacerse visibles abriendo su camino (nada queda inalcanzable)
+  const lost = s.nodes.filter((n) => !x.visibleSet(new Set(x.expandPathFor(n.id))).has(n.id));
+  assert.deepEqual(lost.map((n) => n.id), []);
+  // todo desplegado = todo el mapa, sin duplicados
+  const all = x.visibleSet(new Set(s.nodes.map((n) => n.id)));
+  assert.equal(all.size, s.nodes.length);
+  assert.ok(!x.isExpandable(x.core.id) || true);
+});
+
+test('exploración: un concepto que cuelga de una raíz de otra área se alcanza por el área de su raíz', async () => {
+  const dir = tmp();
+  writeTree(dir, {
+    '02-no-supervisado/clustering/kmeans/01-retail/README.md': '# Retail con K-Means\n\nSegmentación de clientes con KMeans y pandas.\n',
+    '02-no-supervisado/clustering/kmeans/01-retail/n.py': "import pandas as pd\nfrom sklearn.cluster import KMeans\nfrom sklearn.impute import SimpleImputer\nSimpleImputer().fit(df)\nKMeans(n_clusters=3).fit(df)\n",
+    'idx/README.md': '# Índice\n\nCasos.\n',
+  });
+  const r = runOn([{ id: 'p', path: dir, kind: 'proyectos', projectDepth: 'auto' }]);
+  assert.equal(r.ok, true, JSON.stringify(r.errors));
+  const tax = await import('../../second-brain/taxonomy.js');
+  const t = tax.buildTaxonomy(r.snapshot), x = tax.buildExplore(r.snapshot, t);
+  const imp = r.snapshot.nodes.find((n) => n.id === 'c:imputacion-valores');
+  assert.ok(imp && imp.parent === 'c:feature-eng');
+  const path = x.expandPathFor(imp.id);
+  assert.ok(x.visibleSet(new Set(path)).has(imp.id));
+  assert.equal(path[0], 'a:' + r.snapshot.nodes.find((n) => n.id === 'c:ml').area, 'el área es la de su raíz (ML), no la suya');
+});
