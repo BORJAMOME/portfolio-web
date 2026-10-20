@@ -52,6 +52,10 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
   y escribe briefings en `ii_interviews`/`ii_runs`/`ii_reports` (`supabase/interview-intel.sql`). La web solo lee y llama a `ii_action()`.
   Perfil profesional: nota «Perfil profesional · Interview Intelligence» (carga en `supabase/interview-intel-perfil.sql`, no versionado).
   Pruebas: `deno test --allow-read supabase/functions/` y `node tools/check-briefing.mjs`. Guía: `supabase/functions/interview-intel/README.md`.
+- **Procesos desde Gmail** (en `#/entrevistas`, panel «Correos por revisar»): Apps Script en la cuenta de Google (`tools/gmail-procesos/`,
+  solo lectura) → Edge Function `supabase/functions/procesos-sync` (reglas sin IA en `classify.ts`) → `public.procesos_correo`;
+  `pc_aplicar()` crea o actualiza `procesos` (`supabase/procesos-correo.sql`). Nunca pisa lo escrito a mano ni reabre un proceso cerrado.
+  Guía: `tools/gmail-procesos/README.md`.
 - Pestaña **Fichero** (`#/fichero`): tabla de enlaces guardados, `area-privada-fichero.js`, tabla `public.links` (`supabase/fichero.sql`;
   carga inicial en `supabase/fichero-datos.sql`). Se añade, edita y borra desde la propia tabla; Supabase es la fuente de verdad.
 - **Second Brain** (`#/second-brain`, `#/second-brain/demo`): grafo 3D del conocimiento. La web solo DIBUJA un snapshot ya calculado

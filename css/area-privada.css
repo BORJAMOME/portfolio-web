@@ -452,6 +452,16 @@ main { min-height: calc(100vh - var(--ap-top-h) - 90px); outline: none; }
 .ape-card-head { display: flex; gap: 12px; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; }
 .ape-card-title { font-weight: 600; font-size: 16px; color: var(--ink); margin-bottom: 2px; }
 .ape-card-act { display: flex; gap: 4px; }
+/* Correos de Gmail por revisar (lista de procesos) */
+.ape-mail { margin: 4px 0 18px; padding: 16px 18px; background: var(--ap-support-soft); border: 1px solid var(--ap-line); border-radius: var(--radius-lg); }
+.ape-mail .ape-h3 { font-size: 19px; }
+.ape-mail-list { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 10px; }
+.ape-mail-item { display: flex; gap: 12px 20px; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; padding: 12px 14px; background: var(--white); border: 1px solid var(--ap-line); border-radius: var(--radius-md); }
+.ape-mail-main { flex: 1 1 320px; min-width: 0; }
+.ape-mail-subj { font-weight: 600; color: var(--ink); overflow-wrap: anywhere; }
+.ape-mail-ext { margin-top: 6px; font-size: 13px; line-height: 1.5; color: var(--text); overflow-wrap: anywhere; }
+.ape-mail-item .ape-card-act { align-items: center; flex-wrap: wrap; }
+.ape-sync { margin: -4px 0 8px; }
 .ape-cal { color: var(--purple-text); font-weight: 600; }
 .ape-scores { display: grid; grid-template-columns: auto 1fr; gap: 2px 14px; margin: 12px 0 0; font-size: 13px; }
 .ape-scores dt { color: var(--muted); }
