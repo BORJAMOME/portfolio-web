@@ -18,6 +18,9 @@ export const STATES = ['respaldado', 'mencionado', 'pendiente', 'brecha_probable
 export const NODE_TYPES = ['tecnologia', 'concepto', 'tecnica', 'competencia', 'proyecto', 'objetivo', 'recomendacion'];
 export const EDGE_TYPES = ['usa', 'parte-de', 'requiere', 'mejora', 'habilita', 'demuestra', 'agrupa', 'necesita', 'recomienda'];
 export const CONFIDENCE = ['alta', 'media', 'baja'];
+/* Etapas de conocimiento (evidencia, no nota de dominio): «evaluado» y «dominio» solo con evaluación explícita. */
+export const STAGES = ['sin_evidencia', 'identificado', 'estudiado', 'aplicado', 'reforzado', 'evaluado', 'dominio'];
+export const SOURCE_KINDS = ['repositorio', 'portfolio', 'manual', 'informe'];
 export const BUCKETS = ['ahora', 'despues', 'todavia_no'];
 export const MODES = ['real', 'demo'];
 
@@ -96,6 +99,23 @@ export function validateSnapshot(s) {
     if (n.families != null && (!Array.isArray(n.families) || n.families.length > 6 || n.families.some((f) => !familyIds.has(f)))) err(`Nodo ${n.id}: familias inválidas.`);
     if (n.link != null && !(isStr(n.link, 500) && /^https:\/\/[^\s"'<>]+$/.test(n.link))) err(`Nodo ${n.id}: enlace inválido (solo https).`);
     if (n.group != null && !isStr(n.group, LIMITS.label)) err(`Nodo ${n.id}: grupo inválido.`);
+    // taxonomía: etapa de conocimiento, profundidad, cobertura de la rama, fuentes y calidad del proyecto
+    if (n.stage != null && !STAGES.includes(n.stage)) err(`Nodo ${n.id}: etapa desconocida «${n.stage}».`);
+    if (['evaluado', 'dominio'].includes(n.stage) && !(isObj(n.stageNote) && isStr(n.stageNote.reason, LIMITS.text) && isStr(n.stageNote.source, 120))) {
+      err(`Nodo ${n.id}: la etapa «${n.stage}» solo se admite con una evaluación explícita (stageNote.reason y stageNote.source).`);
+    }
+    if (n.depth != null && !(Number.isInteger(n.depth) && n.depth >= 0 && n.depth <= 12)) err(`Nodo ${n.id}: profundidad inválida.`);
+    if (n.parent != null && !isStr(n.parent, 80)) err(`Nodo ${n.id}: padre inválido.`);
+    if (n.branch != null && !(isObj(n.branch) && ['children', 'leaves', 'aplicado', 'documentado', 'sinEvidencia'].every((k) => Number.isInteger(n.branch[k]) && n.branch[k] >= 0))) err(`Nodo ${n.id}: cobertura de rama inválida.`);
+    if (n.noReadme != null && typeof n.noReadme !== 'boolean') err(`Nodo ${n.id}: noReadme debe ser booleano.`);
+    for (const k of ['docOnly', 'merged']) {
+      if (n[k] != null && (!Array.isArray(n[k]) || n[k].length > 10 || n[k].some((x) => !isStr(x, LIMITS.label)))) err(`Nodo ${n.id}: «${k}» inválido.`);
+    }
+    if (n.sources != null) {
+      if (!Array.isArray(n.sources) || n.sources.length > 10) err(`Nodo ${n.id}: fuentes inválidas.`);
+      else n.sources.forEach((f) => { if (!(isObj(f) && SOURCE_KINDS.includes(f.kind) && isStr(f.label, LIMITS.label) && isStr(f.url, 500) && /^https:\/\/[^\s"'<>]+$/.test(f.url))) err(`Nodo ${n.id}: fuente inválida (solo https).`); });
+    }
+    if (n.evidence && n.evidence.kinds != null && !(isObj(n.evidence.kinds) && Object.entries(n.evidence.kinds).every(([k, v]) => isStr(k, 20) && Number.isInteger(v) && v >= 0))) err(`Nodo ${n.id}: tipos de evidencia inválidos.`);
     if (!Array.isArray(n.uncertainty) || n.uncertainty.some((u) => typeof u !== 'string' || u.length > LIMITS.text)) err(`Nodo ${n.id}: incertidumbres inválidas.`);
     // Una brecha confirmada exige una evaluación explícita. La ausencia de documentos nunca basta.
     if (n.state === 'brecha_confirmada' && !(isObj(n.assessment) && isStr(n.assessment.reason, LIMITS.text) && isStr(n.assessment.source, 120))) {
@@ -103,6 +123,18 @@ export function validateSnapshot(s) {
     }
     if (n.state === 'brecha_probable' && !(Array.isArray(n.uncertainty) && n.uncertainty.length)) {
       err(`Nodo ${n.id}: «brecha_probable» debe indicar su motivo en uncertainty.`);
+    }
+  });
+
+  // la jerarquía debe ser coherente: el padre existe y no hay ciclos
+  s.nodes.forEach((n) => {
+    if (n.parent == null) return;
+    if (!nodeIds.has(n.parent)) return err(`Nodo ${n.id}: el padre «${n.parent}» no existe.`);
+    const seen = new Set([n.id]);
+    for (let p = n.parent, guard = 0; p && guard < 20; guard++) {
+      if (seen.has(p)) { err(`Nodo ${n.id}: la jerarquía tiene un ciclo.`); break; }
+      seen.add(p);
+      p = (nodeById.get(p) || {}).parent;
     }
   });
 

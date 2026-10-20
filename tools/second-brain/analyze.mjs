@@ -20,6 +20,7 @@ import { fileURLToPath } from 'node:url';
 import { compileLexicon } from './lexicon.mjs';
 import { scanSources } from './scan.mjs';
 import { buildSnapshot, ENGINE_VERSION } from './model.mjs';
+import { mergeIdentities } from './identity.mjs';
 import { validateSnapshot } from '../../second-brain/contract.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -58,6 +59,7 @@ export function runAnalysis({ configPath, full = false, now = new Date(), mode =
     const cachePath = join(stateDir, 'cache.json');
     const cache = full ? null : readJson(cachePath, null);
     const scan = scanSources(config, lexicon, cache, digest);
+    scan.identity = mergeIdentities(scan);       // un proyecto, una entidad, con todas sus fuentes
     const snapshot = buildSnapshot({ framework, scan, config, now, mode });
     const v = validateSnapshot(snapshot);
     if (!v.ok) {

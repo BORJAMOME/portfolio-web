@@ -11,7 +11,7 @@ import { readdirSync, statSync, readFileSync, realpathSync, existsSync } from 'n
 import { createHash } from 'node:crypto';
 import { join, relative, sep, parse, basename, extname } from 'node:path';
 import { extractFile, SUPPORTED, KNOWN_UNSUPPORTED } from './extract.mjs';
-import { detect } from './lexicon.mjs';
+import { detect, detectRoute } from './lexicon.mjs';
 import { readCatalog } from './catalog.mjs';
 import { slug } from './text.mjs';
 
@@ -27,7 +27,10 @@ export function readmeMeta(md) {
     if (title && !desc && l.trim() && !/^(#|\||-{3,}|!\[|<|\[!\[)/.test(l.trim())) { const c = clean(l); if (c.length > 40) desc = c; }
     if (title && desc) break;
   }
-  return title ? { title: title.slice(0, 90), desc: desc ? desc.slice(0, 260) : null } : null;
+  // enlaces de GitHub normalizados a «owner/repo» o «owner/repo/ruta» en minúsculas
+  const links = [...new Set([...md.matchAll(/https:\/\/github\.com\/([\w.-]+\/[\w.-]+)(\/tree\/[\w.-]+\/[^\s)<>"'\]]*)?/g)]
+    .map((m) => { let p = m[1].replace(/\.git$/, ''); if (m[2]) { try { p += decodeURIComponent(m[2].replace(/^\/tree\/[\w.-]+/, '')); } catch { /* ruta rara: se ignora */ } } return p.replace(/\/+$/, '').toLowerCase(); }))].slice(0, 40);
+  return title ? { title: title.slice(0, 90), desc: desc ? desc.slice(0, 260) : null, links } : null;
 }
 
 export const DEFAULT_EXCLUDE = [
@@ -47,24 +50,48 @@ export function assertSafeSource(src) {
   return real;
 }
 
-function projectOf(src, relParts, readmeDirs) {
+/** «03-prediccion-impagos» → «prediccion impagos» (solo cuando una carpeta sin README es el nombre del proyecto). */
+const prettify = (name) => name.replace(/^\d+[-_ ]+/, '').replace(/[-_]+/g, ' ').trim() || name;
+
+function projectOf(src, relParts, readmeDirs, containerDirs) {
   if (src.projectDepth === 'auto') {
     // «auto»: el proyecto es la carpeta con README más cercana por encima del archivo
     const dirs = relParts.slice(0, -1);
     for (let k = dirs.length; k >= 1; k--) {
       const cand = posix(join(...dirs.slice(0, k)));
-      if (readmeDirs && readmeDirs.has(cand)) return { key: `${src.id}/${cand}`, label: dirs[k - 1], root: false };
+      if (readmeDirs && readmeDirs.has(cand)) {
+        const container = !!(containerDirs && containerDirs.has(cand));
+        // un README que es el índice de otros proyectos no es dueño del código de una subcarpeta sin README:
+        // esa subcarpeta es un proyecto sin documentar (antes se le atribuía al índice y se mezclaban)
+        if (container && k < dirs.length) {
+          const own = posix(join(...dirs));
+          return { key: `${src.id}/${own}`, label: prettify(dirs[dirs.length - 1]), root: false, noReadme: true, dir: own };
+        }
+        return { key: `${src.id}/${cand}`, label: dirs[k - 1], root: false, container, dir: cand };
+      }
     }
-    return { key: `${src.id}/.`, label: src.label || src.id, root: true };
+    return { key: `${src.id}/.`, label: src.label || src.id, root: true, container: !!(readmeDirs && readmeDirs.size), dir: '' };
   }
   const depth = Number.isInteger(src.projectDepth) ? src.projectDepth : 0;
-  if (depth === 0) return { key: src.id, label: src.label || src.id, root: false };
+  if (depth === 0) return { key: src.id, label: src.label || src.id, root: false, dir: '' };
   // relParts incluye el nombre del archivo: solo es proyecto si hay al menos `depth` carpetas por encima
   if (relParts.length - 1 >= depth) {
     const dirs = relParts.slice(0, depth);
-    return { key: `${src.id}/${posix(join(...dirs))}`, label: dirs[dirs.length - 1], root: false };
+    return { key: `${src.id}/${posix(join(...dirs))}`, label: dirs[dirs.length - 1], root: false, dir: posix(join(...dirs)) };
   }
-  return { key: `${src.id}/.`, label: src.label || src.id, root: true };
+  return { key: `${src.id}/.`, label: src.label || src.id, root: true, dir: '' };
+}
+
+/** Repositorio de GitHub de una fuente: el declarado en la configuración o el «origin» de su .git/config (solo se lee el slug, nunca credenciales). */
+function repoOf(src, root) {
+  const clean = (s) => String(s).replace(/^https:\/\/github\.com\//, '').replace(/\.git$/, '').replace(/\/$/, '');
+  if (src.repo) return { slug: clean(src.repo), branch: src.branch || 'main' };
+  try {
+    const cfg = readFileSync(join(root, '.git', 'config'), 'utf8');
+    const m = /url\s*=\s*(?:https:\/\/(?:[^@\s\/]+@)?github\.com\/|git@github\.com:)([\w.-]+\/[\w.-]+?)(?:\.git)?\s*$/im.exec(cfg);
+    if (m) return { slug: m[1], branch: src.branch || 'main' };
+  } catch { /* no es un repositorio local o no es de GitHub */ }
+  return null;
 }
 
 /**
@@ -95,7 +122,7 @@ export function scanSources(config, lexicon, cache, lexiconDigest) {
       const entries = readCatalog(root);
       for (const e of entries) {
         const key = `${src.id}/${slug(e.title)}`;
-        projects.set(key, { key, label: e.title, source: src.id, root: false, artifacts: new Set(e.pbix ? ['pbix'] : []), readme: { title: e.title, desc: e.desc, depth: 0 }, link: e.url, group: e.group });
+        projects.set(key, { key, label: e.title, source: src.id, root: false, artifacts: new Set(e.pbix ? ['pbix'] : []), readme: { title: e.title, desc: e.desc, depth: 0, links: [] }, link: e.url, group: e.group, kind: 'catalogo', noReadme: false, container: false, dir: '', repo: null, catalog: { repo: e.repo || null, page: e.page || null, url: e.url || null } });
         // texto descriptivo (documentación) + tecnologías que el propio portfolio declara para un artefacto
         // publicado (informe o .pbix): se cuentan como práctica porque el artefacto existe y es público
         const text = [e.title, e.desc, e.group].join('. ');
@@ -122,9 +149,12 @@ export function scanSources(config, lexicon, cache, lexiconDigest) {
       };
       collect(root);
     }
+    // un README «contenedor» es el índice de otros proyectos (tiene README más abajo)
+    const containerDirs = new Set([...readmeDirs].filter((d) => [...readmeDirs].some((o) => o.startsWith(d + '/'))));
+    const srcRepo = repoOf(src, root);
 
     const touchProject = (pj) => {
-      if (!projects.has(pj.key)) projects.set(pj.key, { key: pj.key, label: pj.label, source: src.id, root: pj.root, artifacts: new Set(), readme: null });
+      if (!projects.has(pj.key)) projects.set(pj.key, { key: pj.key, label: pj.label, source: src.id, root: pj.root, artifacts: new Set(), readme: null, noReadme: !!pj.noReadme, container: !!pj.container, dir: pj.dir || '', repo: srcRepo, kind });
       return projects.get(pj.key);
     };
 
@@ -138,7 +168,7 @@ export function scanSources(config, lexicon, cache, lexiconDigest) {
         const rel = relative(root, abs);
         const parts = rel.split(sep);
         if (e.isDirectory()) {
-          if (e.name === '.git') { touchProject(projectOf(src, parts.slice(0, -1).concat('x'), readmeDirs)).artifacts.add('git-repo'); continue; }
+          if (e.name === '.git') { touchProject(projectOf(src, parts.slice(0, -1).concat('x'), readmeDirs, containerDirs)).artifacts.add('git-repo'); continue; }
           if (exclude.has(e.name)) continue;
           if (e.name.startsWith('.') && e.name !== '.github') continue;
           walk(abs);
@@ -184,13 +214,16 @@ export function scanSources(config, lexicon, cache, lexiconDigest) {
               const weak = detect(lexicon, [], artifacts);
               for (const [id, h] of Object.entries(weak)) { const o = (hits[id] ||= { practica: 0, explicativa: 0, declarativa: 0 }); if (h.practica || h.explicativa) o.explicativa = 1; }
             }
+            if (kind !== 'declarativo') {
+              for (const [id] of Object.entries(detectRoute(lexicon, posix(rel)))) { const o = (hits[id] ||= { practica: 0, explicativa: 0, declarativa: 0 }); o.explicativa = 1; o.ruta = 1; }
+            }
             entry = { size: st.size, mtimeMs: st.mtimeMs, sha: digest, ext, hits, artifacts, note: r.note || null, readme: /^readme\.md$/i.test(basename(e.name)) ? readmeMeta(buf.toString('utf8')) : null };
             coverage.changed++;
           }
         }
         nextCache.files[key] = entry;
         coverage.processed++;
-        const pj = touchProject(projectOf(src, parts, readmeDirs));
+        const pj = touchProject(projectOf(src, parts, readmeDirs, containerDirs));
         for (const a of entry.artifacts) pj.artifacts.add(a);
         files.push({ source: src.id, kind, rel: posix(rel), project: pj.key, ext, hits: entry.hits, artifacts: entry.artifacts, note: entry.note });
         // el README más cercano a la raíz del proyecto le da título y descripción

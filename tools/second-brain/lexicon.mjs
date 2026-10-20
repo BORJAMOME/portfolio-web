@@ -28,7 +28,10 @@ export function compileLexicon(framework) {
       const [name, cls] = a.split(':');
       return { name, cls: cls || 'practica' };
     });
-    return { id: c.id, strict: mk(strict, 'u'), loose: mk(loose, 'iu'), code, artifacts };
+    // «rutas»: nombres de carpeta con los que el autor organiza un tema (kmeans, random-forest…). Solo cuentan como
+    // documentación (la carpeta dice de qué va el proyecto; el código dice si de verdad lo usa).
+    const route = mk((c.rutas || []).map((t) => escapeRe(fold(t)).replace(/\\? /g, '\\s+')), 'iu');
+    return { id: c.id, strict: mk(strict, 'u'), loose: mk(loose, 'iu'), code, artifacts, route };
   });
 }
 
@@ -56,5 +59,16 @@ export function detect(lexicon, segments, artifacts) {
     // 3) artefactos
     for (const a of c.artifacts) if (artifacts.includes(a.name)) mark(c.id, a.cls);
   }
+  return out;
+}
+
+/** Texto de una ruta relativa como palabras sueltas (sin números de orden ni separadores): «02-no-supervisado/kmeans» → «no supervisado kmeans». */
+export const pathWords = (rel) => fold(String(rel).replace(/\.[a-z0-9]+$/i, '')).replace(/(^|\/)\d+[-_ ]+/g, '$1').replace(/[-_/.]+/g, ' ').replace(/\s+/g, ' ').trim();
+
+/** Conceptos que la ruta de un archivo declara como tema (solo los que tienen «rutas» en el marco). */
+export function detectRoute(lexicon, rel) {
+  const text = pathWords(rel), out = {};
+  if (!text) return out;
+  for (const c of lexicon) if (c.route && c.route.test(text)) out[c.id] = { practica: 0, explicativa: 1, declarativa: 0 };
   return out;
 }

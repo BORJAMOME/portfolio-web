@@ -212,12 +212,12 @@ test('el resultado es determinista', () => {
   assert.deepEqual(a, b);
 });
 
-test('el grafo no se llena de relaciones: sin coocurrencia como causa y con tope por proyecto', () => {
+test('el grafo no se llena de relaciones: sin coocurrencia como causa y con tope por proyecto (10, las técnicas más específicas primero)', () => {
   const s = analyzeDemo().r.snapshot;
   assert.ok(s.edges.every((e) => e.rationale.length > 10));
   const perProject = {};
   for (const e of s.edges.filter((x) => x.type === 'demuestra')) perProject[e.source] = (perProject[e.source] || 0) + 1;
-  assert.ok(Object.values(perProject).every((n) => n <= 6));
+  assert.ok(Object.values(perProject).every((n) => n <= 10));
 });
 
 /* ─────────── Seguridad: las fuentes son datos ─────────── */
