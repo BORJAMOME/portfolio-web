@@ -59,6 +59,25 @@ No hay conectores a GitHub, LinkedIn ni ofertas de empleo: solo carpetas locales
 **Proyectos de una fuente.** `projectDepth: N` toma como proyecto la carpeta de nivel N; `projectDepth: "auto"` toma la carpeta con
 `README.md` más cercana por encima de cada archivo (útil en repositorios con muchos casos, como `DAP` o `DAX-LAB/Proyectos`).
 
+**Taxonomía jerárquica (v7).** Área → disciplina → subdisciplina → técnica → proyecto. Sale de cómo organizas tus carpetas y de lo que el código confirma:
+cada concepto de `framework.json` puede tener un `padre` y unas `rutas` (los nombres de carpeta con los que lo organizas). La carpeta declara el tema y solo cuenta como documentación;
+el código lo confirma o no. Si una carpeta `random-forest/` no tiene `RandomForest*` en su código, el proyecto lo muestra como «la carpeta lo declara, el código no lo confirma».
+La estructura completa está en [TAXONOMIA.md](TAXONOMIA.md) (se genera con `node tools/second-brain/analyze.mjs --doc` y un test comprueba que está al día).
+
+**Un proyecto, una entidad (`identity.mjs`).** La carpeta del portfolio, el repositorio de su app y la página publicada son el mismo proyecto si sus README se enlazan de forma
+explícita (o el catálogo declara el repositorio). No se une por parecido de nombre; un README que enlaza a varios proyectos es un índice y no identifica a ninguno; los títulos repetidos
+sin vínculo se avisan como «posible duplicado». Cada proyecto guarda todas sus fuentes (enlaces https al repositorio, la carpeta, la página, el informe). El repositorio de una fuente
+se toma de su `.git/config` (solo el nombre) o de `repo: "owner/nombre"` en la configuración.
+Una carpeta con README que es índice de otras carpetas con README no se queda con el código de una subcarpeta sin README: esa subcarpeta es un proyecto sin documentar.
+
+**Etapas de conocimiento.** Identificado → estudiado o documentado → aplicado → reforzado (≥ 2 proyectos) → evaluado → dominio. Las cuatro primeras salen de la clase de evidencia;
+«evaluado» y «dominio» solo existen si las registras tú (`assessments` con `estado: "evaluado" | "dominio"`, `motivo` y `origen`, o «Lo domino» en la ficha). No es una nota de dominio.
+Cada rama indica cuántas de sus técnicas tienen práctica, cuántas solo documentación y cuántas ninguna evidencia (cobertura, no dominio).
+
+**Inventario.** Cada análisis escribe en `.second-brain/inventario.json` (local, no se versiona): fuentes inspeccionadas con su repositorio y sus archivos, proyectos con sus fuentes, lo unificado,
+los índices ignorados, los posibles duplicados, lo que falta por revisar y las fuentes que no se han podido mirar (`inaccesibles` en la configuración: repositorios sin clon local).
+`.second-brain/taxonomia-real.md` es el árbol con tus datos: etapa, proyectos y ejemplos por técnica.
+
 **Catálogo publicado** (`kind: "catalogo"`, con la ruta de `portfolio-web`). Muchos proyectos de Power BI no tienen repositorio: existen como informe
 publicado o `.pbix` descargable. `catalog.mjs` los lee, sin ejecutar nada, de tres sitios: los casos de estudio (JSON-LD `CreativeWork` con
 genre «Caso de estudio»), el laboratorio (`ITEMS` de `descargas.html`) y el inventario `supabase/portfolio.sql` (gráficos de Power BI,
@@ -95,6 +114,11 @@ que se usa en bordes, líneas y texto cuando el relleno es claro (el amarillo de
 (un test lo comprueba). El verde de Python se ha oscurecido de #39A96B a #36A265 por esa regla. Un snapshot antiguo sin familias se sigue dibujando por áreas.
 Desde la leyenda, un clic aísla una familia (otro clic la quita). Los shaders propios escriben el color sin conversión a sRGB, por lo que el visor guarda estos colores «crudos»
 (si no, el mapa sale más oscuro que la leyenda).
+
+**Explorar (v7).** Bajo el mapa, «Qué conoces y dónde lo has aplicado» muestra el árbol (expandir, contraer, «Aislar» una rama con sus proyectos) y «Qué hay en cada área» la cobertura por área.
+Las vistas rápidas (Python, Machine Learning, Power BI, IA y Big Data, SQL, pendiente de práctica, sin proyecto asociado, proyectos sin documentar…) se calculan con los datos y solo aparecen si tienen elementos.
+Los filtros se combinan (familia, etapa, tipo de evidencia, estado, tipo, área, prioridad, rama), se ven como etiquetas con su aspa y pueden ocultar o solo atenuar lo que no coincide.
+La ficha muestra la ruta en la jerarquía, la etapa con su escalera, la cobertura de la rama, los proyectos que lo aplican (o las técnicas que aplica un proyecto), las fuentes y las discrepancias.
 
 **Lenguaje visual (v5).** Cada elemento se lee por cinco canales que no se pisan:
 

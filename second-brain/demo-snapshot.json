@@ -151,6 +151,8 @@
   "docOnly": 0,
   "unclassified": [],
   "merged": [],
+  "notInspected": [],
+  "candidates": [],
   "indexes": []
  },
  "regions": [

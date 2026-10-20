@@ -75,8 +75,9 @@ window.APSecondBrain = (function () {
       import(assetUrl('sb-viewer', './second-brain/viewer.js')),
       import(assetUrl('sb-icons', './second-brain/icons.js')),
       import(assetUrl('sb-logos', './second-brain/logos.js')),
+      import(assetUrl('sb-taxonomy', './second-brain/taxonomy.js')),
       import(new URL(THREE_URL, document.baseURI).href),
-    ]).then((m) => ({ contract: m[0], viewer: m[1], icons: m[2], logos: m[3], THREE: m[4] }));
+    ]).then((m) => ({ contract: m[0], viewer: m[1], icons: m[2], logos: m[3], taxonomy: m[4], THREE: m[5] }));
   }
   function isMissingTable(err) {
     return !!err && (err.status === 404 || err.code === 'PGRST205' || err.code === '42P01' || err.code === 'PGRST200');
@@ -176,7 +177,7 @@ window.APSecondBrain = (function () {
         const j = ((k * 37) % 17) - 8;
         n = {
           id: nt.node_id, label: String(nt.label).slice(0, 118), type: nt.tipo, region: nt.tipo === 'proyecto' && region.has('practica') ? 'practica' : nt.area, area: nt.area, family: (region.get(nt.area) || {}).family || null,
-          icon: TIPO_ICON[nt.tipo], state: nt.valoracion === 'aprender' ? 'pendiente' : 'mencionado',
+          icon: TIPO_ICON[nt.tipo], state: nt.valoracion === 'aprender' ? 'pendiente' : 'mencionado', ...(nt.tipo === 'proyecto' ? {} : { stage: 'identificado', depth: 0 }),
           summary: (nt.descripcion || 'Elemento añadido por ti.').slice(0, 600), size: 0.5,
           evidence: { practica: 0, explicativa: 0, declarativa: 1, projects: 0, breadth: 'ninguna' },
           uncertainty: ['Añadido por ti: el análisis no lo ha detectado en tus fuentes.'], pos: [c.center[0] + j, c.center[1] + j / 2, c.center[2] - j],
@@ -185,6 +186,10 @@ window.APSecondBrain = (function () {
       }
       if (!n) return;
       n.user = { propio: !!nt.es_propio, nota: nt.nota || '', descripcion: nt.descripcion || '', valoracion: nt.valoracion || '', enlaces: (nt.enlaces || []).filter((u) => /^https?:\/\//i.test(u)), relacionados: nt.relacionados || [], updated: nt.updated_at || null };
+      if (nt.valoracion === 'domino' && n.stage !== undefined) {
+        n.stage = 'dominio';
+        n.stageNote = { reason: (nt.nota || 'Dominio confirmado por ti.').slice(0, 600), source: 'Tu valoración en Second Brain', date: nt.updated_at || null };
+      }
       if (nt.valoracion === 'brecha') {
         n.state = 'brecha_confirmada';
         n.assessment = { reason: (nt.nota || 'Registrada por ti como brecha.').slice(0, 600), source: 'Tu valoración en Second Brain', date: nt.updated_at || null };
@@ -223,6 +228,10 @@ window.APSecondBrain = (function () {
       famMap: new Map((g.families || []).map((f) => [f.id, f])), listGroup: 'familia', listQ: '', listOpen: new Set(),
       layout: 'mapa', camera: window.matchMedia && matchMedia('(max-width: 700px)').matches ? 'cenital' : '3d', els: {}, visible: null,
     };
+    S.taxApi = engine.taxonomy;
+    S.tax = S.taxApi.buildTaxonomy(g);
+    S.dim = false;
+    resetFilterState();
     on(window, 'hashchange', () => { if (!/^#\/second-brain/.test(location.hash)) dispose(); });
     on(window, 'pagehide', dispose);
     // el desplegable de filtros se cierra al pulsar fuera o con Esc (devuelve el foco a su botón)
@@ -238,6 +247,7 @@ window.APSecondBrain = (function () {
     const root = h('section', { class: 'sb', 'aria-label': 'Second Brain' }, [
       headerEl(data),
       stageEl(),
+      exploreEl(),
       askCard(),
       h('div', { class: 'sb-below' }, [detailCard(), recsCard()]),
       listCard(),
@@ -336,6 +346,7 @@ window.APSecondBrain = (function () {
     e.count = h('p', { class: 'sb-count', role: 'status', 'aria-live': 'polite' });
     e.filterBtn = h('summary', { class: 'sb-btn', text: 'Filtros' });
     e.filters = h('details', { class: 'sb-filters' }, [e.filterBtn, filtersEl()]);
+    e.active = h('div', { class: 'sb-active', hidden: true });
     return h('div', { class: 'sb-bar' }, [
       h('div', { class: 'sb-bar-l' }, [
         h('div', { class: 'sb-search' }, [h('label', { class: 'sr-only', for: 'sb-search', text: 'Buscar en el mapa' }), e.search, e.results]),
@@ -348,6 +359,8 @@ window.APSecondBrain = (function () {
         h('button', { type: 'button', class: 'sb-btn', text: 'Restablecer', title: 'Quita filtros y selección y vuelve a la vista general', onclick: resetAll }),
         h('button', { type: 'button', class: 'sb-btn sb-btn--dark', text: '+ Añadir', title: 'Añade un concepto, técnica o proyecto que el análisis no ha detectado', onclick: () => editNote(null) }),
       ]),
+      quickEl(),
+      e.active,
     ]);
   }
 
@@ -713,13 +726,14 @@ window.APSecondBrain = (function () {
   }
 
   /* ── Filtros ── */
+  const FILTER_KEY = { state: 'states', type: 'types', region: 'regions', fam: 'families', stage: 'stages', kind: 'kinds', edge: 'edges' };
   function checkGroup(title, items, set, name) {   // item: { key, label, color? }
     return h('fieldset', { class: 'sb-fs' }, [
       h('legend', { text: title }),
       items.map((it) => {
         const id = 'sb-f-' + name + '-' + it.key;
         return h('label', { class: 'sb-check', for: id }, [
-          h('input', { type: 'checkbox', id, checked: set.has(it.key), onchange: (ev) => { ev.currentTarget.checked ? set.add(it.key) : set.delete(it.key); if (name === 'fam') syncFamilyUi(); applyFilters(); } }),
+          h('input', { type: 'checkbox', id, checked: set.has(it.key), onchange: (ev) => { const cur = S.f[FILTER_KEY[name]] || set; ev.currentTarget.checked ? cur.add(it.key) : cur.delete(it.key); if (name === 'fam') syncFamilyUi(); applyFilters(); } }),
           it.color ? h('span', { class: 'sb-fdot', 'aria-hidden': 'true' }) : '',
           h('span', { text: it.label }),
         ]);
@@ -738,6 +752,9 @@ window.APSecondBrain = (function () {
     if (famFs) famFs.querySelectorAll('.sb-fdot').forEach((d, i) => { const x = (S.g.families || [])[i]; const p = x ? paintOf(x.color, x.ink || x.color, '') : paintOf(NEUTRAL.color, NEUTRAL.ink, ''); setPaint(d, p); });
     return h('div', { class: 'sb-filter-grid' }, [
       famFs || '',
+      checkGroup('Etapa de conocimiento', S.taxApi.STAGES.map((x) => ({ key: x.id, label: x.label })), f.stages, 'stage'),
+      checkGroup('Tipo de evidencia', Object.keys(KINDS).map((k) => ({ key: k, label: KINDS[k] })), f.kinds, 'kind'),
+      h('label', { class: 'sb-check sb-dim', for: 'sb-dim' }, [h('input', { type: 'checkbox', id: 'sb-dim', checked: S.dim, onchange: (ev) => { S.dim = ev.currentTarget.checked; applyFilters(); } }), h('span', { text: 'Atenuar lo que no coincide en vez de ocultarlo (conserva el contexto del mapa)' })]),
       h('p', { class: 'sb-muted sb-filter-note' }, 'Lo que filtras se oculta del mapa y sus relaciones no se dibujan. Nada se borra: «Restablecer» lo devuelve todo.'),
       checkGroup('Estado de evidencia', Object.keys(STATE).map((k) => ({ key: k, label: STATE[k].short })), f.states, 'state'),
       checkGroup('Tipo', Object.keys(TYPE).map((k) => ({ key: k, label: TYPE[k][1] + ' ' + TYPE[k][0] })), f.types, 'type'),
@@ -760,6 +777,14 @@ window.APSecondBrain = (function () {
     const f = S.f;
     if (!f.states.has(n.state) || !f.types.has(n.type) || !f.regions.has(n.region)) return false;
     if (n.type !== 'objetivo' && (S.g.families || []).length && !f.families.has(n.family || '_none')) return false;
+    if (S.branchSet && !S.branchSet.has(n.id)) return false;
+    if (S.viewSet && !S.viewSet.has(n.id)) return false;
+    // etapa y tipo de evidencia solo hablan de conocimiento y proyectos: al acotarlos, el resto se oculta
+    if (f.stages.size < S.taxApi.STAGES.length && !(n.stage && f.stages.has(n.stage))) return false;
+    if (f.kinds.size < Object.keys(KINDS).length) {
+      const k = n.evidence && n.evidence.kinds;
+      if (!k || !Object.keys(k).some((x) => f.kinds.has(x))) return false;
+    }
     if (f.priority) {
       const b = S.bucketOf.get(n.id);
       if (f.priority === 'ahora' && b !== 'ahora') return false;
@@ -774,6 +799,10 @@ window.APSecondBrain = (function () {
     if (f.regions.size < S.g.regions.length) k++;
     if (f.families.size < (S.g.families || []).length + 1) k++;
     if (f.priority) k++;
+    if (f.stages.size < S.taxApi.STAGES.length) k++;
+    if (f.kinds.size < Object.keys(KINDS).length) k++;
+    if (f.branch) k++;
+    if (f.view) k++;
     return k;
   }
   function updateCount() {
@@ -782,6 +811,8 @@ window.APSecondBrain = (function () {
   }
   function applyFilters(initial) {
     if (!S) return;
+    S.branchSet = S.f.branch ? S.tax.branchSet(S.f.branch) : null;
+    S.viewSet = S.f.view && S.views.has(S.f.view) ? S.taxApi.viewSet(S.g, S.tax, S.views.get(S.f.view)) : null;
     const vis = new Set(S.g.nodes.filter(matchesFilters).map((n) => n.id));
     S.visible = vis;
     const total = S.g.nodes.length;
@@ -793,10 +824,15 @@ window.APSecondBrain = (function () {
     S.els.empty.hidden = vis.size > 0;
     if (S.selected && !vis.has(S.selected)) selectNode(null, 'filter');
     if (viewer) {
-      viewer.setFilter({ visible: vis.size === total ? null : vis, edgeTypes: S.f.edges, edgeMode: S.f.edgeMode });
+      const narrowed = vis.size < total;
+      viewer.setFilter({ visible: narrowed && !S.dim ? vis : null, edgeTypes: S.f.edges, edgeMode: S.f.edgeMode });
+      if (!S.highlight && !S.searchHl) viewer.setHighlight(narrowed && S.dim ? vis : null);
       if (vis.size > 0) viewer.refit(initial === true);
     }
     renderList();
+    renderActive();
+    renderQuick();
+    syncIso();
   }
   function resetAll() {
     if (!S) return;
@@ -809,6 +845,10 @@ window.APSecondBrain = (function () {
       if (m) c.checked = m[1] === 'edge' ? f.edges.has(m[2]) : true;
     });
     syncFamilyUi();
+    resetFilterState();
+    S.dim = false;
+    const dimBox = S.els.filters.querySelector('#sb-dim'); if (dimBox) dimBox.checked = false;
+    syncFilterUi();
     S.els.filters.querySelector('#sb-prio').value = '';
     S.els.filters.querySelector('#sb-edgemode').value = 'foco';
     S.els.filters.open = false;
@@ -853,7 +893,7 @@ window.APSecondBrain = (function () {
       if (S.hits && S.hits.length) pickResult(S.hits[Math.max(0, S.hitIdx)]);
     } else if (ev.key === 'Escape') closeResults();
   }
-  function clearSearchHighlight() { S.searchHl = null; if (viewer && !S.highlight) viewer.setHighlight(null); if (S.visible) updateCount(); }
+  function clearSearchHighlight() { S.searchHl = null; if (viewer && !S.highlight) viewer.setHighlight(S.dim && S.visible && S.visible.size < S.g.nodes.length ? S.visible : null); if (S.visible) updateCount(); }
   function closeResults() { S.els.results.hidden = true; S.els.search.setAttribute('aria-expanded', 'false'); S.els.search.removeAttribute('aria-activedescendant'); S.hits = []; }
   function pickResult(id) {
     closeResults();
@@ -870,6 +910,7 @@ window.APSecondBrain = (function () {
     if (origin !== 'viewer' && viewer) viewer.select(S.selected, { silent: true });
     renderChip();
     renderDetail();
+    syncTree(S.selected, origin);
     S.els.list.querySelectorAll('.sb-node').forEach((b) => { const onIt = b.getAttribute('data-id') === S.selected; b.classList.toggle('is-on', onIt); onIt ? b.setAttribute('aria-current', 'true') : b.removeAttribute('aria-current'); });
     if (id && (origin === 'list' || origin === 'panel' || origin === 'ask')) S.els.detail.scrollIntoView({ block: 'nearest', behavior: reducedMotion() ? 'auto' : 'smooth' });
     if (id && origin === 'rec') S.els.stage.scrollIntoView({ block: 'center', behavior: reducedMotion() ? 'auto' : 'smooth' });
@@ -925,6 +966,7 @@ window.APSecondBrain = (function () {
         h('button', { type: 'button', class: 'ap-link-btn sb-nowrap', text: 'Quitar selección', onclick: () => selectNode(null, 'panel') }),
       ]),
       h('p', { class: 'sb-badges' }, [stateBadge(n.state)].concat(n.type === 'objetivo' ? [] : [famPill(n)]).concat((n.families || []).filter((f) => f !== n.family && S.famMap.has(f)).map((f) => famPill({ type: 'x', family: f })))),
+      crumbEl(n),
       h('p', { class: 'sb-lead', text: n.summary }),
     );
     if (n.type === 'proyecto' && (n.group || n.link)) {
@@ -948,10 +990,14 @@ window.APSecondBrain = (function () {
         ]),
       ]));
     }
+    { const stg = stageBlock(n); if (stg) left.appendChild(stg); }
+    { const br = branchBlock(n); if (br) left.appendChild(br); }
     if (comp) left.appendChild(competencyBlock(comp));
     if (n.uncertainty.length) left.appendChild(h('section', { class: 'sb-block', 'aria-labelledby': 'sb-unc-h' }, [h('h3', { class: 'sb-h3', id: 'sb-unc-h', text: 'Incertidumbres' }), h('ul', { class: 'sb-list' }, n.uncertainty.map((u) => h('li', { text: u })))]));
     if (n.assessment) left.appendChild(h('p', { class: 'sb-banner is-warn' }, [h('strong', { text: 'Evaluación registrada: ' }), n.assessment.reason + ' (' + n.assessment.source + ')']));
     const imp = importanceBlock(n); if (imp) right.appendChild(imp);
+    { const ap = appliesBlock(n); if (ap) right.appendChild(ap); }
+    { const so = sourcesBlock(n); if (so) right.appendChild(so); }
     const rel = relationsBlock(n); if (rel) right.appendChild(rel);
     const rec = n.recommendationId && S.recById.get(n.recommendationId);
     if (rec) right.appendChild(h('section', { class: 'sb-block', 'aria-labelledby': 'sb-recd-h' }, [h('h3', { class: 'sb-h3', id: 'sb-recd-h', text: 'Recomendación asociada' }), recCard(rec, true)]));
@@ -1145,6 +1191,280 @@ window.APSecondBrain = (function () {
       body.appendChild(det);
     });
     if (!shown) body.appendChild(h('p', { class: 'sb-muted', text: q ? 'Ningún elemento coincide con «' + S.listQ + '».' : 'Ningún elemento cumple los filtros actuales.' }));
+  }
+
+  /* ═══════════ v7: JERARQUÍA DEL CONOCIMIENTO, VISTAS RÁPIDAS Y COBERTURA ═══════════
+     Toda la lógica (árbol, ramas, vistas, resumen) vive en second-brain/taxonomy.js y es pura; aquí solo se pinta. */
+  const KINDS = { notebook: 'Notebook', script: 'Script de Python', sql: 'SQL', modelo: 'Modelo (DAX, Power Query)', informe: 'Informe (.pbix)', publicado: 'Publicado en el portfolio', documento: 'Documento (README, manual)', otro: 'Otro' };
+  const stageOf = (id) => S.taxApi.STAGE_BY_ID.get(id);
+  const plus = (n, one, many) => plural(n, one, many);
+
+  function stagePill(n) {
+    const st = stageOf(n.stage);
+    if (!st) return '';
+    return h('span', { class: 'sb-stg is-' + n.stage, title: st.hint }, [h('span', { class: 'sb-stg-d', 'aria-hidden': 'true' }), st.short]);
+  }
+  const countProjects = (n) => S.tax.projectsOf(n.id, true).length;
+
+  /* ── Explorador: el árbol ── */
+  function exploreEl() {
+    return h('div', { class: 'sb-explore' }, [treeCard(), summaryCard()]);
+  }
+  function treeCard() {
+    const withKids = S.tax.roots.filter((r) => (S.tax.kids.get(r.id) || []).length);
+    S.treeOpen = new Set(withKids.map((r) => r.id));
+    S.els.treeBody = h('div', { class: 'sb-tree' });
+    const card = h('section', { class: 'sb-card sb-treecard', 'aria-labelledby': 'sb-tree-h' }, [
+      h('p', { class: 'sb-eyebrow', text: 'Explorar' }),
+      h('h2', { class: 'sb-h sb-h--sm', id: 'sb-tree-h', text: 'Qué conoces y dónde lo has aplicado' }),
+      h('p', { class: 'sb-muted', text: 'Área → disciplina → técnica → proyectos. La estructura sale de cómo organizas tus carpetas. «Aislar» deja en el mapa solo esa rama y los proyectos que la aplican.' }),
+      h('div', { class: 'sb-tree-ctl' }, [
+        h('button', { type: 'button', class: 'sb-btn', text: 'Expandir todo', onclick: () => { S.treeOpen = new Set(S.tax.tree.filter((n) => (S.tax.kids.get(n.id) || []).length).map((n) => n.id).concat('_otros')); renderTree(); } }),
+        h('button', { type: 'button', class: 'sb-btn', text: 'Contraer todo', onclick: () => { S.treeOpen = new Set(); renderTree(); } }),
+      ]),
+      S.els.treeBody,
+    ]);
+    renderTree();
+    return card;
+  }
+  function treeRow(n) {
+    const kids = S.tax.kids.get(n.id) || [];
+    const open = S.treeOpen.has(n.id);
+    const sel = S.selected === n.id, iso = S.f.branch === n.id;
+    const np = countProjects(n);
+    const bits = [stageOf(n.stage) ? stageOf(n.stage).short : ''];
+    if (n.branch) bits.push(n.branch.aplicado + '/' + n.branch.leaves + ' con práctica');
+    if (np) bits.push(plus(np, 'proyecto', 'proyectos'));
+    const li = h('li', { class: 'sb-tn' });
+    li.appendChild(h('div', { class: 'sb-tn-row' }, [
+      kids.length
+        ? h('button', { type: 'button', class: 'sb-tn-tog', 'data-tog': n.id, 'aria-expanded': open ? 'true' : 'false', 'aria-label': (open ? 'Contraer ' : 'Expandir ') + n.label, text: open ? '▾' : '▸', onclick: () => { open ? S.treeOpen.delete(n.id) : S.treeOpen.add(n.id); renderTree(n.id); } })
+        : h('span', { class: 'sb-tn-sp', 'aria-hidden': 'true' }),
+      h('button', { type: 'button', class: 'sb-tn-main' + (sel ? ' is-on' : ''), 'data-id': n.id, 'aria-current': sel ? 'true' : null, onclick: () => selectNode(n.id, 'tree') }, [
+        chip(n), h('span', { class: 'sb-tn-b' }, [h('span', { class: 'sb-tn-t', text: n.label }), h('span', { class: 'sb-muted', text: bits.filter(Boolean).join(' · ') })]),
+      ]),
+      (kids.length || np) ? h('button', { type: 'button', class: 'sb-tn-iso' + (iso ? ' is-on' : ''), 'data-iso': n.id, 'aria-pressed': iso ? 'true' : 'false', title: 'Mostrar en el mapa solo esta rama y los proyectos que la aplican', 'aria-label': 'Aislar la rama ' + n.label, text: iso ? 'Aislada ✓' : 'Aislar', onclick: () => isolateBranch(n.id) }) : '',
+    ]));
+    if (kids.length && open) li.appendChild(h('ul', { class: 'sb-tn-kids' }, kids.map(treeRow)));
+    return li;
+  }
+  function renderTree(focusTog) {
+    const body = S.els.treeBody;
+    body.textContent = '';
+    const withKids = S.tax.roots.filter((r) => (S.tax.kids.get(r.id) || []).length);
+    const single = S.tax.roots.filter((r) => !(S.tax.kids.get(r.id) || []).length);
+    body.appendChild(h('ul', { class: 'sb-tn-roots' }, withKids.map(treeRow)));
+    if (single.length) {
+      const open = S.treeOpen.has('_otros');
+      body.appendChild(h('div', { class: 'sb-tn-other' }, [
+        h('button', { type: 'button', class: 'sb-tn-tog', 'data-tog': '_otros', 'aria-expanded': open ? 'true' : 'false', text: (open ? '▾ ' : '▸ ') + 'Otros conceptos sueltos (' + single.length + ')', onclick: () => { open ? S.treeOpen.delete('_otros') : S.treeOpen.add('_otros'); renderTree('_otros'); } }),
+        open ? h('ul', { class: 'sb-tn-roots' }, single.map(treeRow)) : '',
+      ]));
+    }
+    if (focusTog) { const b = body.querySelector('[data-tog="' + focusTog + '"]'); if (b) b.focus(); }
+  }
+  /* al seleccionar desde el mapa o la lista, el árbol abre el camino y marca el elemento sin robar el foco */
+  function syncTree(id, origin) {
+    if (!S.els.treeBody) return;
+    let needs = false;
+    if (id && origin !== 'tree') for (const a of S.tax.pathOf(id)) { if (a.id !== id && !S.treeOpen.has(a.id) && (S.tax.kids.get(a.id) || []).length) { S.treeOpen.add(a.id); needs = true; } }
+    if (needs) renderTree();
+    S.els.treeBody.querySelectorAll('.sb-tn-main').forEach((b) => { const on = b.getAttribute('data-id') === id; b.classList.toggle('is-on', on); on ? b.setAttribute('aria-current', 'true') : b.removeAttribute('aria-current'); });
+  }
+  function isolateBranch(id) {
+    S.f.branch = S.f.branch === id ? null : id;
+    S.f.view = null; S.quick = S.f.branch && S.views.has('branch:' + id) ? 'branch:' + id : null;
+    applyFilters();
+  }
+
+  /* ── Cobertura por área y calidad de la clasificación ── */
+  function stackBar(a, b, c) {
+    const total = Math.max(1, a + b + c);
+    const el = h('span', { class: 'sb-stack', 'aria-hidden': 'true' });
+    [['is-ap', a], ['is-doc', b], ['is-none', c]].forEach(([cls, v]) => { if (!v) return; const s = h('span', { class: cls }); s.style.width = (v / total * 100) + '%'; el.appendChild(s); });
+    return el;
+  }
+  function summaryCard() {
+    const sm = S.taxApi.summary(S.g, S.tax);
+    S.sum = sm;
+    const q = sm.quality;
+    const qrow = (n, text, viewId) => (n > 0 ? h('li', null, [h('strong', { text: String(n) }), ' ' + text + ' ', S.views.has(viewId) ? h('button', { type: 'button', class: 'ap-link-btn', text: 'Ver', onclick: () => applyView(S.views.get(viewId)) }) : '']) : '');
+    return h('section', { class: 'sb-card sb-sumcard', 'aria-labelledby': 'sb-sum-h' }, [
+      h('p', { class: 'sb-eyebrow', text: 'Cobertura' }),
+      h('h2', { class: 'sb-h sb-h--sm', id: 'sb-sum-h', text: 'Qué hay en cada área' }),
+      h('p', { class: 'sb-muted', text: 'Cuenta técnicas (hojas del árbol): con práctica detectada, solo documentadas o sin evidencia. Mide cobertura y aplicación, no dominio: una técnica con cinco proyectos no se sabe mejor que una con uno bien evaluado.' }),
+      h('ul', { class: 'sb-cov' }, sm.areas.map((a) => h('li', null, [
+        h('button', { type: 'button', class: 'ap-link-btn sb-cov-n', text: a.node.label, title: 'Aislar esta área en el mapa', onclick: () => isolateBranch(a.node.id) }),
+        stackBar(a.aplicado, a.documentado, a.sinEvidencia),
+        h('span', { class: 'sb-muted', text: a.aplicado + ' con práctica' + (a.documentado ? ' · ' + a.documentado + ' documentadas' : '') + (a.sinEvidencia ? ' · ' + a.sinEvidencia + ' sin evidencia' : '') + ' · ' + plus(a.projects, 'proyecto', 'proyectos') }),
+      ]))),
+      sm.others.nodes ? h('p', { class: 'sb-muted', text: 'Además, ' + plus(sm.others.nodes, 'concepto suelto', 'conceptos sueltos') + ' sin ramas propias (' + sm.others.aplicado + ' con práctica, ' + sm.others.documentado + ' documentados).' }) : '',
+      h('ul', { class: 'sb-leg-ev sb-cov-key' }, [h('li', null, [h('span', { class: 'sb-key is-ap', 'aria-hidden': 'true' }), 'Con práctica']), h('li', null, [h('span', { class: 'sb-key is-doc', 'aria-hidden': 'true' }), 'Solo documentada']), h('li', null, [h('span', { class: 'sb-key is-none', 'aria-hidden': 'true' }), 'Sin evidencia'])]),
+      h('h3', { class: 'sb-h3', text: 'Calidad de la clasificación' }),
+      h('ul', { class: 'sb-qual' }, [
+        h('li', null, [h('strong', { text: String(q.projects) }), ' proyectos, cada uno como una sola entidad con todas sus fuentes.']),
+        qrow(q.merged, q.merged === 1 ? 'proyecto unificado desde varias fuentes (carpeta del portfolio, repositorio, página publicada).' : 'proyectos unificados desde varias fuentes (carpeta del portfolio, repositorio, página publicada).'),
+        S.g.quality && S.g.quality.candidates && S.g.quality.candidates.length ? h('li', null, [h('strong', { text: String(S.g.quality.candidates.length) }), ' posible duplicado sin vínculo explícito (no se ha unido): ' + S.g.quality.candidates.map((c) => c.title).join(' · ') + '.']) : '',
+        S.g.quality && S.g.quality.notInspected && S.g.quality.notInspected.length ? h('li', null, [h('strong', { text: String(S.g.quality.notInspected.length) }), ' fuente(s) sin inspeccionar: ' + S.g.quality.notInspected.map((c) => c.label).join(', ') + '. Lo que hay en ellas no está en el mapa.']) : '',
+        qrow(q.indexes, q.indexes === 1 ? 'índice ignorado (README que enlaza a otros proyectos).' : 'índices ignorados (README que enlazan a otros proyectos).'),
+        qrow(q.noReadme, q.noReadme === 1 ? 'proyecto sin documentación escrita.' : 'proyectos sin documentación escrita.', 'sin-documentar'),
+        qrow(q.docOnly, 'proyectos donde la carpeta declara una técnica que el código no confirma.', 'discrepancias'),
+        qrow(q.unclassified, 'proyectos sin clasificar.', 'sin-clasificar'),
+        q.docOnly === 0 && q.unclassified === 0 ? h('li', { class: 'sb-muted', text: 'Sin discrepancias entre carpetas y código ni proyectos sin clasificar.' }) : '',
+      ]),
+    ]);
+  }
+
+  /* ── Vistas rápidas y filtros activos ── */
+  function quickEl() {
+    S.views = new Map(S.taxApi.quickViews(S.g, S.tax).map((v) => [v.id, v]));
+    S.quick = null;
+    S.els.quick = h('div', { class: 'sb-quick', role: 'group', 'aria-label': 'Vistas rápidas' });
+    renderQuick();
+    return S.els.quick;
+  }
+  function renderQuick() {
+    const box = S.els.quick;
+    box.textContent = '';
+    const on = (id) => (S.quick || 'todo') === id;
+    const btn = (id, label, hint, fn) => h('button', { type: 'button', class: 'sb-q-chip', 'aria-pressed': on(id) ? 'true' : 'false', title: hint, onclick: fn }, label);
+    box.appendChild(btn('todo', 'Todo', 'Quita los filtros y muestra todo el conocimiento', () => applyView(null)));
+    for (const v of S.views.values()) box.appendChild(btn(v.id, v.label + ' (' + v.count + ')', v.hint, () => applyView(v)));
+  }
+  function applyView(v) {
+    const f = S.f;
+    resetFilterState();
+    if (v) { if (v.branch) f.branch = v.branch; else if (v.stages) f.stages = new Set(v.stages); else f.view = v.id; }
+    S.quick = v ? v.id : null;
+    syncFilterUi();
+    applyFilters();
+  }
+  function activeList() {
+    const f = S.f, out = [];
+    const tot = (set, all) => set.size < all;
+    if (f.branch) out.push(['Rama: ' + (S.nodeById.get(f.branch) || {}).label, () => { f.branch = null; S.quick = null; }]);
+    if (f.view && S.views.has(f.view)) out.push(['Vista: ' + S.views.get(f.view).label, () => { f.view = null; S.quick = null; }]);
+    if (tot(f.stages, S.taxApi.STAGES.length)) out.push(['Etapa: ' + [...f.stages].map((x) => (stageOf(x) || {}).short).join(', '), () => { f.stages = new Set(S.taxApi.STAGES.map((x) => x.id)); S.quick = null; }]);
+    if (tot(f.families, (S.g.families || []).length + 1)) out.push(['Familia: ' + [...f.families].map((x) => (S.famMap.get(x) || { label: 'Sin clasificar' }).label).slice(0, 3).join(', '), () => { f.families = new Set((S.g.families || []).map((x) => x.id).concat('_none')); }]);
+    if (tot(f.kinds, Object.keys(KINDS).length)) out.push(['Evidencia: ' + [...f.kinds].map((x) => KINDS[x]).slice(0, 3).join(', '), () => { f.kinds = new Set(Object.keys(KINDS)); }]);
+    if (tot(f.states, Object.keys(STATE).length)) out.push(['Estado: ' + [...f.states].map((x) => STATE[x].short).slice(0, 3).join(', '), () => { f.states = new Set(Object.keys(STATE)); }]);
+    if (tot(f.types, Object.keys(TYPE).length)) out.push(['Tipo: ' + [...f.types].map((x) => TYPE[x][0]).slice(0, 3).join(', '), () => { f.types = new Set(Object.keys(TYPE)); }]);
+    if (tot(f.regions, S.g.regions.length)) out.push(['Áreas: ' + f.regions.size + ' de ' + S.g.regions.length, () => { f.regions = new Set(S.g.regions.map((r) => r.id)); }]);
+    if (f.priority) out.push(['Prioridad: ' + (f.priority === 'ahora' ? 'ahora' : 'con recomendación'), () => { f.priority = ''; }]);
+    return out;
+  }
+  function renderActive() {
+    const box = S.els.active;
+    const list = activeList();
+    box.textContent = '';
+    box.hidden = !list.length;
+    if (!list.length) return;
+    box.appendChild(h('span', { class: 'sb-muted', text: 'Filtros activos:' }));
+    list.forEach(([text, clear]) => box.appendChild(h('span', { class: 'sb-fchip' }, [text, h('button', { type: 'button', 'aria-label': 'Quitar el filtro «' + text + '»', text: '×', onclick: () => { clear(); syncFilterUi(); applyFilters(); } })])));
+    box.appendChild(h('button', { type: 'button', class: 'ap-link-btn', text: 'Quitar todos', onclick: () => { resetFilterState(); syncFilterUi(); applyFilters(); } }));
+    box.appendChild(h('span', { class: 'sb-muted sb-fmode', text: S.dim ? 'Lo que no coincide se atenúa.' : 'Lo que no coincide se oculta (sus relaciones no se dibujan).' }));
+  }
+  function resetFilterState() {
+    const f = S.f;
+    f.states = new Set(Object.keys(STATE)); f.types = new Set(Object.keys(TYPE)); f.regions = new Set(S.g.regions.map((r) => r.id));
+    f.families = new Set((S.g.families || []).map((x) => x.id).concat('_none'));
+    f.stages = new Set(S.taxApi.STAGES.map((x) => x.id)); f.kinds = new Set(Object.keys(KINDS));
+    f.branch = null; f.view = null; f.priority = '';
+    S.quick = null;
+  }
+  /* sincroniza las casillas de los filtros con el estado (tras una vista rápida o al quitar un filtro) */
+  function syncFilterUi() {
+    const f = S.f;
+    const sets = { state: f.states, type: f.types, region: f.regions, fam: f.families, stage: f.stages, kind: f.kinds };
+    S.els.filters.querySelectorAll('input[type=checkbox]').forEach((c) => {
+      const m = /^sb-f-(\w+)-(.+)$/.exec(c.id);
+      if (m && sets[m[1]]) c.checked = sets[m[1]].has(m[2]);
+    });
+    const prio = S.els.filters.querySelector('#sb-prio'); if (prio) prio.value = f.priority;
+    renderQuick();
+  }
+
+  /* ── Detalle: ruta, etapa, rama, proyectos que lo aplican, técnicas, fuentes ── */
+  function crumbEl(n) {
+    const path = S.tax.pathOf(n.id);
+    if (path.length < 2) return '';
+    return h('nav', { class: 'sb-crumb', 'aria-label': 'Ruta en la jerarquía' }, [h('ol', null, path.map((p, i) => h('li', null, [
+      i === path.length - 1 ? h('span', { 'aria-current': 'page', text: p.label }) : h('button', { type: 'button', class: 'ap-link-btn', text: p.label, onclick: () => selectNode(p.id, 'panel') }),
+    ])))]);
+  }
+  function stageBlock(n) {
+    const st = stageOf(n.stage);
+    if (!st) return null;
+    const ladder = S.taxApi.STAGES.filter((s) => s.id !== 'sin_evidencia');
+    const cur = st.order;
+    return h('section', { class: 'sb-block', 'aria-labelledby': 'sb-stage-h' }, [
+      h('h3', { class: 'sb-h3', id: 'sb-stage-h', text: 'Etapa de conocimiento' }),
+      h('p', null, [stagePill(n), ' ', h('span', { class: 'sb-muted', text: st.hint })]),
+      h('ol', { class: 'sb-steps', 'aria-label': 'Etapas' }, ladder.map((s) => h('li', { class: stageOf(s.id).order < cur ? 'is-done' : stageOf(s.id).order === cur ? 'is-now' : '', 'aria-current': stageOf(s.id).order === cur ? 'step' : null }, [s.short]))),
+      h('p', { class: 'sb-muted', text: S.taxApi.stageNext(n) }),
+      n.stageNote ? h('p', { class: 'sb-banner' }, [h('strong', { text: 'Registrado por ti: ' }), n.stageNote.reason + ' (' + n.stageNote.source + ')']) : '',
+      h('p', { class: 'sb-muted', text: 'Es una etapa de evidencia, no una nota: ni el número de proyectos ni la antigüedad miden el dominio.' }),
+    ]);
+  }
+  function relBtn(o, extra) {
+    return h('li', null, [h('button', { type: 'button', class: 'sb-rel', onclick: () => selectNode(o.id, 'panel') }, [chip(o), h('span', { class: 'sb-rel-t', text: o.label }), extra ? h('span', { class: 'sb-muted', text: extra }) : ''])]);
+  }
+  function branchBlock(n) {
+    const kids = S.tax.kids.get(n.id) || [];
+    if (!kids.length || !n.branch) return null;
+    const b = n.branch;
+    return h('section', { class: 'sb-block', 'aria-labelledby': 'sb-branch-h' }, [
+      h('h3', { class: 'sb-h3', id: 'sb-branch-h', text: 'Esta rama' }),
+      h('p', { text: b.aplicado + ' de ' + plus(b.leaves, 'técnica', 'técnicas') + ' con práctica detectada' + (b.documentado ? ', ' + b.documentado + ' solo documentadas' : '') + (b.sinEvidencia ? ', ' + b.sinEvidencia + ' sin evidencia' : '') + '.' }),
+      stackBar(b.aplicado, b.documentado, b.sinEvidencia),
+      h('ul', { class: 'sb-rels' }, kids.map((k) => relBtn(k, (stageOf(k.stage) || {}).short + (countProjects(k) ? ' · ' + plus(countProjects(k), 'proyecto', 'proyectos') : '')))),
+      h('p', null, [h('button', { type: 'button', class: 'sb-btn', text: S.f.branch === n.id ? 'Quitar el aislamiento' : 'Aislar esta rama en el mapa', onclick: () => isolateBranch(n.id) })]),
+      h('p', { class: 'sb-muted', text: 'Cobertura de técnicas, no dominio de la disciplina.' }),
+    ]);
+  }
+  function appliesBlock(n) {
+    if (n.type === 'proyecto') {
+      const all = S.tax.techniques.get(n.id) || [];
+      const covered = new Set();
+      all.forEach((t) => S.tax.pathOf(t.node.id).forEach((a) => { if (a.id !== t.node.id) covered.add(a.id); }));
+      const list = all.filter((t) => !covered.has(t.node.id));
+      if (!list.length && !(n.docOnly && n.docOnly.length)) return null;
+      return h('section', { class: 'sb-block', 'aria-labelledby': 'sb-tech-h' }, [
+        h('h3', { class: 'sb-h3', id: 'sb-tech-h', text: 'Técnicas y conceptos que aplica' }),
+        list.length ? h('ul', { class: 'sb-rels' }, list.map((t) => relBtn(t.node, plus(t.edge.evidenceCount || 1, 'archivo', 'archivos') + ' · confirmado por código'))) : '',
+        n.docOnly && n.docOnly.length ? h('p', { class: 'sb-banner is-warn' }, [h('strong', { text: 'La carpeta lo declara, el código no lo confirma: ' }), n.docOnly.join(', ') + '. Puede estar en otro archivo o la carpeta puede estar desactualizada.']) : '',
+      ]);
+    }
+    if (n.stage === undefined) return null;
+    const projects = S.tax.projectsOf(n.id, true);
+    const kinds = Object.entries((n.evidence && n.evidence.kinds) || {}).filter(([, v]) => v > 0);
+    if (!projects.length && !kinds.length) return null;
+    const direct = S.tax.appliers.get(n.id) || new Set();
+    const shown = projects.slice(0, 12);
+    return h('section', { class: 'sb-block', 'aria-labelledby': 'sb-proj-h' }, [
+      h('h3', { class: 'sb-h3', id: 'sb-proj-h', text: projects.length ? 'Proyectos que lo aplican (' + projects.length + ')' : 'Evidencia' }),
+      kinds.length ? h('p', { class: 'sb-muted', text: 'Tipo de evidencia: ' + kinds.map(([k, v]) => v + ' ' + (KINDS[k] || k).toLowerCase()).join(' · ') + '.' }) : '',
+      projects.length ? h('ul', { class: 'sb-rels' }, shown.map((p) => relBtn(p, direct.has(p.id) ? '' : 'en una técnica de esta rama'))) : '',
+      projects.length > shown.length ? h('p', null, [h('button', { type: 'button', class: 'sb-btn', text: 'Ver los ' + projects.length + ' en el mapa', onclick: () => isolateBranch(n.id) })]) : '',
+    ]);
+  }
+  function sourcesBlock(n) {
+    if (n.type !== 'proyecto') return null;
+    const src = n.sources || [];
+    if (!src.length && !n.noReadme && !(n.merged && n.merged.length)) return null;
+    const kinds = Object.entries((n.evidence && n.evidence.kinds) || {}).filter(([, v]) => v > 0);
+    return h('section', { class: 'sb-block', 'aria-labelledby': 'sb-src-h' }, [
+      h('h3', { class: 'sb-h3', id: 'sb-src-h', text: 'Fuentes' }),
+      src.length ? h('ul', { class: 'sb-srcs' }, src.map((s) => h('li', null, [h('span', { class: 'sb-muted', text: s.kind + ' · ' }), h('a', { href: s.url, target: '_blank', rel: 'noopener noreferrer', text: s.label + ' ↗' })]))) : '',
+      n.merged && n.merged.length ? h('p', { class: 'sb-muted', text: 'Unificado con: ' + n.merged.join(' · ').replace(/[.?!]+$/, '') + '.' }) : '',
+      kinds.length ? h('p', { class: 'sb-muted', text: 'Evidencia práctica: ' + kinds.map(([k, v]) => v + ' ' + (KINDS[k] || k).toLowerCase()).join(' · ') + '.' }) : '',
+      n.noReadme ? h('p', { class: 'sb-banner is-warn', text: 'No se ha encontrado un README ni otra documentación escrita en este proyecto.' }) : '',
+    ]);
+  }
+
+  function syncIso() {
+    if (!S.els.treeBody) return;
+    S.els.treeBody.querySelectorAll('.sb-tn-iso').forEach((b) => { const on = b.getAttribute('data-iso') === S.f.branch; b.classList.toggle('is-on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.textContent = on ? 'Aislada ✓' : 'Aislar'; });
   }
 
   return { render: render };

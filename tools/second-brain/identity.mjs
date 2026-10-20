@@ -28,7 +28,8 @@ export function sourcesOf(pj) {
   const add = (kind, label, url) => { if (url && /^https:\/\//.test(url) && !out.some((x) => x.url === url)) out.push({ kind, label: String(label).slice(0, 110), url: String(url).slice(0, 500) }); };
   if (pj.repo && !pj.container) {
     const base = `https://github.com/${pj.repo.slug}`;
-    add('repositorio', pj.dir ? `${pj.repo.slug.split('/')[1]} › ${pj.dir}` : pj.repo.slug, pj.dir ? `${base}/tree/${pj.repo.branch}/${pj.dir.split('/').map(encodeURIComponent).join('/')}` : base);
+    const segs = pj.dir ? pj.dir.split('/') : [];
+    add('repositorio', pj.dir ? `${pj.repo.slug.split('/')[1]} › ${segs.length > 2 ? '…/' + segs.slice(-2).join('/') : pj.dir}` : pj.repo.slug, pj.dir ? `${base}/tree/${pj.repo.branch}/${pj.dir.split('/').map(encodeURIComponent).join('/')}` : base);
   }
   if (pj.catalog) {
     if (pj.catalog.repo) add('repositorio', pj.catalog.repo, `https://github.com/BORJAMOME/${pj.catalog.repo}`);
@@ -99,6 +100,10 @@ export function mergeIdentities(scan) {
   for (const f of scan.files) if (remap.has(f.project)) f.project = remap.get(f.project);
   for (const pj of projects.values()) if (!pj.sources) pj.sources = sourcesOf(pj);
 
+  const norm = (t) => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+  const byTitle = new Map();
+  for (const p of projects.values()) { if (p.container) continue; const t = norm((p.readme && p.readme.title) || p.label); if (!t) continue; if (!byTitle.has(t)) byTitle.set(t, []); byTitle.get(t).push(p); }
+  const candidates = [...byTitle.values()].filter((l) => l.length > 1).map((l) => ({ title: (l[0].readme && l[0].readme.title) || l[0].label, sources: l.map((p) => p.source) }));
   const indexes = [...projects.values()].filter((p) => p.container).map((p) => ({ key: p.key, label: (p.readme && p.readme.title) || p.label })).concat(asIndex);
-  return { merges, indexes };
+  return { merges, indexes, candidates };
 }

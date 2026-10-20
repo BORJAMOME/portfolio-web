@@ -532,6 +532,8 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
       docOnly: projectNodes.filter((p) => p.node.docOnly).length,
       unclassified: projectNodes.filter((p) => !p.node.family).map((p) => ({ id: p.node.id, label: p.node.label })).slice(0, 40),
       merged: (scan.identity ? scan.identity.merges : []).map((m) => ({ title: String(m.title).slice(0, 110), from: m.from.map((x) => String(x.label).slice(0, 110)), why: m.reasons.slice(0, 2).map((x) => String(x).slice(0, 200)) })).slice(0, 40),
+      notInspected: (Array.isArray(config.inaccesibles) ? config.inaccesibles : []).filter((x) => x && x.repo).map((x) => ({ label: String(x.repo).slice(0, 110), why: String(x.motivo || 'Sin clon local ni acceso desde el motor.').slice(0, 300) })).slice(0, 20),
+      candidates: (scan.identity ? scan.identity.candidates : []).map((c) => ({ title: String(c.title).slice(0, 110) })).slice(0, 20),
       indexes: (scan.identity ? scan.identity.indexes : []).map((x) => String(x.label).slice(0, 110)).slice(0, 20),
     },
     regions, families, nodes, edges, recommendations, competencies, trace,
