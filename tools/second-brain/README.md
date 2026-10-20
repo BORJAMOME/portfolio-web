@@ -88,11 +88,19 @@ el título y la descripción cuentan como documentación. Se quitan duplicados p
 
 ## Visor
 
+**Familias de color (v6).** Cada concepto y competencia declara su `familia` en `framework.json`; un proyecto toma como principal la familia
+con más práctica (mismo voto que el área, con peso reducido para lo genérico como Python o Git) y guarda hasta cuatro `families` para mostrarlas como etiquetas sin duplicarlo.
+Lo que no encaja se queda como «Sin clasificar» en gris, y los objetivos van en navy. Cada familia lleva un color de relleno y una *tinta* más oscura
+que se usa en bordes, líneas y texto cuando el relleno es claro (el amarillo de Power BI, ratio 1,6:1 con el blanco); las tintas superan 4,5:1 y el glifo sobre el relleno 3:1
+(un test lo comprueba). El verde de Python se ha oscurecido de #39A96B a #36A265 por esa regla. Un snapshot antiguo sin familias se sigue dibujando por áreas.
+Desde la leyenda, un clic aísla una familia (otro clic la quita). Los shaders propios escriben el color sin conversión a sRGB, por lo que el visor guarda estos colores «crudos»
+(si no, el mapa sale más oscuro que la leyenda).
+
 **Lenguaje visual (v5).** Cada elemento se lee por cinco canales que no se pisan:
 
 | Canal | Significa |
 |---|---|
-| Color | Área de conocimiento (el mismo en el suelo, la ficha, las etiquetas y la leyenda; definido en `framework.json → regiones[].color`) |
+| Color | **Familia tecnológica** del elemento (Power BI, SQL, Python, ML e IA, Data Storytelling, UX/UI, Ingeniería, Negocio). Definida en `framework.json → familias[]` y la misma en el mapa, las fichas, la leyenda, los filtros, los resultados y la lista. El suelo pinta cada sector con el color de la familia principal de su área |
 | Icono | Qué es: Power BI, SQL, Python, proyecto, competencia… (`second-brain/icons.js`, iconos de trazo propios, sin logotipos de marca) |
 | Relleno | Evidencia: sólido = respaldado · claro = mencionado · contorno discontinuo = por validar |
 | Anillo | Rojo = brecha · ámbar = prioridad ahora · tinta = seleccionado |
@@ -106,6 +114,7 @@ fina y gris (pertenece a / requerido por) y **la única discontinua**, ámbar (r
 si el destino es una brecha, el último tramo es rojo. Al seleccionar, las cintas se trazan del origen al destino (260 ms, escalonadas; sin animación
 con «reducir movimiento»). Un nodo con muchas relaciones (Power BI con 40+ proyectos) adelgaza y aclara su abanico.
 Hover: ligero aumento y anillo fino; selección: anillo tinta con hueco blanco. Lo que no está en foco se desatura, pierde el icono y la sombra.
+La búsqueda ilumina en el mapa todas las coincidencias y las cuenta; la lista de abajo se agrupa por familia, área o tipo en grupos plegables con contador y buscador propio.
 Etiquetas por niveles: competencias y objetivos siempre; conceptos solo si su ficha es legible en pantalla; proyectos al acercarse, al pasar
 por encima o como vecinos de la selección. Se colocan a la derecha, debajo o a la izquierda del nodo, la primera que no choque.
 Los tallos al suelo solo se dibujan en la vista lateral o para el nodo seleccionado.

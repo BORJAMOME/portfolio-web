@@ -398,3 +398,45 @@ test('contrato: el enlace de un nodo solo admite https', () => {
     assert.equal(validateSnapshot(s).ok, false, bad);
   }
 });
+
+/* ─────────── v6: familias tecnológicas y color semántico ─────────── */
+test('familias: cada concepto y competencia tiene familia y todas son conocidas', () => {
+  const fw = loadFramework().framework;
+  const ids = new Set(fw.familias.map((f) => f.id));
+  assert.equal(ids.size, 8);
+  for (const c of [...fw.conceptos, ...fw.competencias]) assert.ok(ids.has(c.familia), `${c.id}: familia «${c.familia}»`);
+  for (const r of fw.regiones) if (r.familia) assert.ok(ids.has(r.familia), `región ${r.id}`);
+});
+
+test('familias: la tinta de cada color supera 4,5:1 sobre blanco y el glifo sobre el relleno 3:1', () => {
+  const lin = (v) => { v /= 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+  const L = (h) => { const n = parseInt(h.slice(1), 16); return 0.2126 * lin((n >> 16) & 255) + 0.7152 * lin((n >> 8) & 255) + 0.0722 * lin(n & 255); };
+  const ratio = (a, b) => (Math.max(L(a), L(b)) + 0.05) / (Math.min(L(a), L(b)) + 0.05);
+  for (const f of loadFramework().framework.familias) {
+    assert.ok(ratio(f.ink, '#ffffff') >= 4.5, `${f.id}: tinta ${ratio(f.ink, '#ffffff').toFixed(2)}`);
+    const glyph = L(f.color) > 0.42 ? '#273a5f' : '#ffffff';   // misma regla que el visor
+    assert.ok(ratio(f.color, glyph) >= 3, `${f.id}: glifo ${ratio(f.color, glyph).toFixed(2)}`);
+  }
+});
+
+test('familias: el snapshot las incluye, los proyectos tienen una principal y el contrato rechaza las desconocidas', () => {
+  const { r } = analyzeDemo();
+  const s = r.snapshot;
+  assert.equal(s.families.length, 8);
+  assert.ok(s.nodes.filter((n) => n.type !== 'objetivo').every((n) => n.family == null || s.families.some((f) => f.id === n.family)));
+  const pj = s.nodes.filter((n) => n.type === 'proyecto');
+  assert.ok(pj.length > 0 && pj.every((n) => Array.isArray(n.families) && (n.families.length === 0 || n.families[0] === n.family)));
+  assert.equal(s.families.reduce((a, f) => a + f.count, 0), s.nodes.filter((n) => n.family).length);
+  s.nodes[0].family = 'inventada';
+  assert.equal(validateSnapshot(s).ok, false);
+  s.nodes[0].family = null;
+  s.families[0].color = 'amarillo';
+  assert.equal(validateSnapshot(s).ok, false);
+});
+
+test('familias: un snapshot antiguo sin familias sigue siendo válido (se colorea por áreas)', () => {
+  const { r } = analyzeDemo();
+  const s = JSON.parse(JSON.stringify(r.snapshot));
+  delete s.families; s.nodes.forEach((n) => { delete n.family; delete n.families; });
+  assert.equal(validateSnapshot(s).ok, true);
+});

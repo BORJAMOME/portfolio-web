@@ -21,7 +21,7 @@
 // el atlas de iconos llega por options.icons (second-brain/icons.js, cargado con su ?v= por la pestaña)
 
 export const PALETTE = {
-  bg: '#ffffff', ink: '#1d2638', navy: '#273a5f', steel: '#8c9ab3', mist: '#c6cfdd',
+  bg: '#ffffff', ink: '#1d2638', navy: '#273a5f', steel: '#8c9ab3', mist: '#c6cfdd', unclassified: '#9aa5b5', unclassifiedInk: '#5b6678',
   line: '#dce2eb', lineSoft: '#e9edf3', amber: '#d9952c', amberInk: '#8a5a12', green: '#2f7d5b', red: '#b3263f',
 };
 const AREA_FALLBACK = ['#2f6db5', '#14897c', '#7a52b3', '#d0613f', '#b8478f', '#5e7d2f', '#8a6a3c', '#273a5f', '#1d2638'];
@@ -319,6 +319,9 @@ export function createViewer(container, T, options = {}) {
   let floorMesh = null, guides = null, stems = null, lineObjs = [];
   const tmpM = new T.Matrix4(), tmpV = new T.Vector3(), tmpC = new T.Color(), tmpC2 = new T.Color();
   const WHITE = new T.Color('#ffffff');
+  /* Los shaders propios (nodos y cintas) escriben el color tal cual, sin la conversión a sRGB que three aplica a sus
+     materiales. Por eso estos colores se guardan «crudos» (los mismos números que el hex): así el mapa coincide con la leyenda. */
+  const RAW = (hex) => { const n = parseInt(hex.slice(1), 16); return new T.Color().setRGB(((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255); };
 
   const radiusOf = (n) => {
     const ev = Math.min(1, Math.sqrt(((n.evidence && n.evidence.projects) || 0) / 10));
@@ -337,6 +340,18 @@ export function createViewer(container, T, options = {}) {
   const liftOf = (n) => (mode === 'mapa' && onFloor(n) ? radiusOf(n) * 0.95 : 0);
   const centerOf = (i) => { const p = pAt(i); p[1] += liftOf(data.nodes[i]); return p; };
   const areaColor = (id) => data.areaColor.get(id) || PALETTE.navy;
+  /* Color de un nodo: su familia tecnológica (snapshot.families). Sin familia, gris neutro; un snapshot
+     antiguo sin familias se sigue dibujando por áreas. Los colores claros (amarillo) usan su «tinta»
+     más oscura en bordes, líneas y glifos para mantener el contraste sobre blanco. */
+  const lin = (v) => (v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
+  const lum = (c) => 0.2126 * lin(c.r) + 0.7152 * lin(c.g) + 0.0722 * lin(c.b);
+  function famOf(n) {
+    if (!data.families.length) { const a = RAW(areaColor(n.area || n.region)); return { base: a, ink: a, light: false }; }
+    const f = n.family && data.famMap.get(n.family);
+    const base = RAW(f ? f.color : PALETTE.unclassified), ink = RAW(f ? f.ink || f.color : PALETTE.unclassifiedInk);
+    return { base, ink, light: lum(base) > 0.42 };
+  }
+  const edgeOf = (fm) => (fm.light ? fm.base.clone().lerp(fm.ink, 0.6) : fm.base.clone());
 
   function disposeObj(o) {
     if (!o) return;
@@ -360,7 +375,8 @@ export function createViewer(container, T, options = {}) {
     const bucket = new Map();
     for (const r of snapshot.recommendations) { bucket.set(r.targetId, r.priority.bucket); bucket.set(r.nodeId, r.priority.bucket); }
     const areaColorMap = new Map(snapshot.regions.map((r, i) => [r.id, r.color || AREA_FALLBACK[i % AREA_FALLBACK.length]]));
-    data = { nodes, edges: snapshot.edges, regions: snapshot.regions, index, adj, bucket, areaColor: areaColorMap };
+    const famMap = new Map((snapshot.families || []).map((f) => [f.id, f]));
+    data = { nodes, edges: snapshot.edges, regions: snapshot.regions, families: snapshot.families || [], famMap, index, adj, bucket, areaColor: areaColorMap };
 
     const m = mapLayout(snapshot);
     sectors = m.sectors; bands = m.bands;
@@ -380,16 +396,16 @@ export function createViewer(container, T, options = {}) {
     attrs = { aPos: mk('aPos', 3), aSize: mk('aSize', 1), aFill: mk('aFill', 3), aEdge: mk('aEdge', 3), aIconCol: mk('aIconCol', 3), aIcon: mk('aIcon', 1), aShape: mk('aShape', 1), aStyle: mk('aStyle', 1), aRing: mk('aRing', 4), aDim: mk('aDim', 1), aSel: mk('aSel', 1), aBrand: mk('aBrand', 1) };
     // aspecto fijo de cada nodo (color, icono, forma, estilo, anillos): se calcula una vez
     nodes.forEach((n, i) => {
-      const area = new T.Color(areaColor(n.area || n.region));
-      const NAVY = new T.Color(PALETTE.navy);
+      const fm = famOf(n), area = edgeOf(fm);
+      const NAVY = RAW(PALETTE.navy);
       let fill, edge, icon;
       const open = n.state === 'pendiente' || n.state === 'brecha_probable' || n.state === 'brecha_confirmada';
-      if (n.type === 'recomendacion') { fill = new T.Color(PALETTE.amber); edge = new T.Color(PALETTE.amberInk); icon = WHITE; }
-      else if (n.type === 'objetivo') { fill = new T.Color('#273a5f'); edge = fill; icon = WHITE; }
-      else if (n.type === 'proyecto') { fill = WHITE.clone(); edge = area; icon = NAVY; }
-      else if (n.state === 'respaldado') { fill = area; edge = area.clone().multiplyScalar(0.72); icon = WHITE; }
-      else if (n.state === 'mencionado') { fill = area.clone().lerp(WHITE, 0.84); edge = area; icon = area; }
-      else { fill = WHITE.clone(); edge = area.clone().lerp(WHITE, 0.3); icon = area.clone().lerp(WHITE, 0.45); }
+      if (n.type === 'recomendacion') { fill = RAW(PALETTE.amber); edge = RAW(PALETTE.amberInk); icon = WHITE; }
+      else if (n.type === 'objetivo') { fill = RAW('#273a5f'); edge = fill; icon = WHITE; }
+      else if (n.type === 'proyecto') { fill = fm.base.clone().lerp(WHITE, 0.9); edge = area; icon = fm.ink; }
+      else if (n.state === 'respaldado') { fill = fm.base.clone(); edge = fm.base.clone().multiplyScalar(fm.light ? 0.8 : 0.72); icon = fm.light ? NAVY : WHITE; }
+      else if (n.state === 'mencionado') { fill = fm.base.clone().lerp(WHITE, 0.84); edge = area; icon = fm.ink; }
+      else { fill = WHITE.clone(); edge = area.clone().lerp(WHITE, 0.3); icon = fm.ink.clone().lerp(WHITE, 0.35); }
       // tecnologías con logotipo: ficha blanca, logotipo a color y borde del color del área
       const logoCell = n.id.startsWith('c:') ? atlas.logo(n.id.slice(2)) : -1;
       if (logoCell >= 0) { fill = WHITE.clone(); edge = open ? area.clone().lerp(WHITE, 0.3) : area; }
@@ -402,7 +418,7 @@ export function createViewer(container, T, options = {}) {
       attrs.aStyle.setX(i, open && n.type !== 'proyecto' ? 1 : 0);
       const gap = n.state === 'brecha_probable' || n.state === 'brecha_confirmada';
       const now = bucket.get(n.id) === 'ahora' && n.type !== 'recomendacion';
-      const rc = new T.Color(gap ? PALETTE.red : PALETTE.amber);
+      const rc = RAW(gap ? PALETTE.red : PALETTE.amber);
       attrs.aRing.setXYZW(i, rc.r, rc.g, rc.b, gap ? (n.state === 'brecha_confirmada' ? 2 : 1) : now ? 1 : 0);
     });
     nodesMesh = new T.Mesh(nodeGeo, nodeMat);
@@ -595,7 +611,7 @@ export function createViewer(container, T, options = {}) {
       const key = STYLE_OF[e.type] || 'tecnica';
       const stl = EDGE_STYLE[key];
       const tgt = data.nodes[ti];
-      const col = new T.Color(stl.color || areaColor(tgt.area || tgt.region));
+      const col = stl.color ? RAW(stl.color) : edgeOf(famOf(tgt));
       const w8 = CONF_W[e.confidence] || 0.6;
       if (focus) {
         const sel = !!selected;
@@ -758,6 +774,7 @@ export function createViewer(container, T, options = {}) {
     const put = (text, cls, x, y, anchor, force) => {
       if (used >= LABEL_CAP + 12 || x < -60 || x > w + 60 || y < -20 || y > h + 20) return false;
       const bw = text.length * (CW[cls] || 6.8) + 4, bh = /is-n2|is-sel/.test(cls) ? 17 : 15;
+      if (anchor === 'c') x = Math.min(Math.max(x, bw / 2 + 6), w - bw / 2 - 6);   // sin recortes en los bordes
       const bx = anchor === 'r' ? x : anchor === 'l' ? x - bw : x - bw / 2;
       const by = anchor === 'b' ? y : y - bh / 2;
       const box = [bx, by, bw, bh];
@@ -988,7 +1005,7 @@ export function createViewer(container, T, options = {}) {
       highlighted: highlight ? highlight.size : 0,
       edgesDrawn: { focus: focusRibbon ? focusRibbon.geometry.index.count / 6 : 0, context: ctxRibbon ? ctxRibbon.geometry.index.count / 6 : 0 },
     }),
-    screenPos(id) {
+        screenPos(id) {
       if (!data || !data.index.has(id)) return null;
       camera.updateMatrixWorld();
       const s = toScreen(centerOf(idx(id)));

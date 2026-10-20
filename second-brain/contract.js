@@ -61,6 +61,20 @@ export function validateSnapshot(s) {
     if (r.icon != null && !ICON.test(r.icon)) err(`Región ${r.id}: icono inválido.`);
   });
 
+  // familias tecnológicas (opcionales: un snapshot antiguo sin ellas se sigue dibujando por áreas)
+  const familyIds = new Set();
+  if (s.families != null) {
+    if (!Array.isArray(s.families)) err('families debe ser una lista.');
+    else s.families.forEach((f, i) => {
+      if (!isObj(f) || !ID.test(f.id || '') || !isStr(f.label, LIMITS.label)) return err(`Familia ${i} inválida.`);
+      if (familyIds.has(f.id)) err(`Familia duplicada: ${f.id}`);
+      familyIds.add(f.id);
+      if (!/^#[0-9a-f]{6}$/i.test(f.color || '')) err(`Familia ${f.id}: color inválido.`);
+      if (f.ink != null && !/^#[0-9a-f]{6}$/i.test(f.ink)) err(`Familia ${f.id}: tinta inválida.`);
+      if (f.icon != null && !ICON.test(f.icon)) err(`Familia ${f.id}: icono inválido.`);
+    });
+  }
+
   const nodeIds = new Set();
   const nodeById = new Map();
   s.nodes.forEach((n, i) => {
@@ -78,6 +92,8 @@ export function validateSnapshot(s) {
     if (n.icon != null && !ICON.test(n.icon)) err(`Nodo ${n.id}: icono inválido.`);
     if (n.area != null && !regionIds.has(n.area)) err(`Nodo ${n.id}: área inexistente «${n.area}».`);
     // enlace a lo publicado: solo https y sin espacios (el visor lo pinta como <a> con textContent)
+    if (n.family != null && !familyIds.has(n.family)) err(`Nodo ${n.id}: familia inexistente «${n.family}».`);
+    if (n.families != null && (!Array.isArray(n.families) || n.families.length > 6 || n.families.some((f) => !familyIds.has(f)))) err(`Nodo ${n.id}: familias inválidas.`);
     if (n.link != null && !(isStr(n.link, 500) && /^https:\/\/[^\s"'<>]+$/.test(n.link))) err(`Nodo ${n.id}: enlace inválido (solo https).`);
     if (n.group != null && !isStr(n.group, LIMITS.label)) err(`Nodo ${n.id}: grupo inválido.`);
     if (!Array.isArray(n.uncertainty) || n.uncertainty.some((u) => typeof u !== 'string' || u.length > LIMITS.text)) err(`Nodo ${n.id}: incertidumbres inválidas.`);

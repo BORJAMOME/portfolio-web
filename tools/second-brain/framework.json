@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "nota": "Marco general de competencias de analista de datos. Es un punto de partida editable, NO un estudio de mercado ni una evaluación oficial. Cambiar este archivo no requiere tocar el motor ni el visor.",
   "niveles": [
     {
@@ -22,44 +22,51 @@
     {
       "id": "bi",
       "label": "Business Intelligence y Power BI",
-      "color": "#2f6db5",
-      "icono": "powerbi"
+      "color": "#F5C84C",
+      "icono": "powerbi",
+      "familia": "bi"
     },
     {
       "id": "datos",
       "label": "Ingeniería y preparación de datos",
-      "color": "#14897c",
-      "icono": "database"
+      "color": "#168A83",
+      "icono": "database",
+      "familia": "ingenieria"
     },
     {
       "id": "analisis",
       "label": "Análisis, estadística y machine learning",
-      "color": "#7a52b3",
-      "icono": "brain"
+      "color": "#8B5CF6",
+      "icono": "brain",
+      "familia": "ml"
     },
     {
       "id": "visualizacion",
       "label": "Visualización y comunicación de datos",
-      "color": "#d0613f",
-      "icono": "chart"
+      "color": "#D96C45",
+      "icono": "chart",
+      "familia": "storytelling"
     },
     {
       "id": "ux",
       "label": "UX/UI y desarrollo web (complementario)",
-      "color": "#b8478f",
-      "icono": "cursor"
+      "color": "#D95D9E",
+      "icono": "cursor",
+      "familia": "ux"
     },
     {
       "id": "profesional",
       "label": "Competencias profesionales",
-      "color": "#5e7d2f",
-      "icono": "briefcase"
+      "color": "#64748B",
+      "icono": "briefcase",
+      "familia": "negocio"
     },
     {
       "id": "negocio",
       "label": "Dominios de negocio",
-      "color": "#8a6a3c",
-      "icono": "store"
+      "color": "#8493A8",
+      "icono": "store",
+      "familia": "negocio"
     },
     {
       "id": "practica",
@@ -92,7 +99,8 @@
         "pbip"
       ],
       "resumen": "Plataforma de Microsoft para modelar datos y construir informes interactivos.",
-      "icono": "powerbi"
+      "icono": "powerbi",
+      "familia": "bi"
     },
     {
       "id": "dax",
@@ -116,7 +124,8 @@
         "pbix-measures",
         "tmdl"
       ],
-      "icono": "fx"
+      "icono": "fx",
+      "familia": "bi"
     },
     {
       "id": "dax-contexto",
@@ -142,7 +151,8 @@
         ]
       },
       "resumen": "Cómo DAX evalúa cada medida según filtros, segmentaciones y filas: la base de las medidas avanzadas.",
-      "icono": "filter"
+      "icono": "filter",
+      "familia": "bi"
     },
     {
       "id": "time-intelligence",
@@ -167,7 +177,8 @@
         ]
       },
       "resumen": "Comparativas YTD, mes anterior o mismo periodo del año pasado sobre una tabla de fechas.",
-      "icono": "calendar"
+      "icono": "calendar",
+      "familia": "bi"
     },
     {
       "id": "power-query",
@@ -186,7 +197,8 @@
         ]
       },
       "resumen": "Editor de transformación de datos de Power BI y Excel (lenguaje M).",
-      "icono": "transform"
+      "icono": "transform",
+      "familia": "bi"
     },
     {
       "id": "power-bi-service",
@@ -205,7 +217,8 @@
         "app de Power BI"
       ],
       "resumen": "Entorno en la nube donde se publican, comparten y refrescan los informes.",
-      "icono": "cloud"
+      "icono": "cloud",
+      "familia": "bi"
     },
     {
       "id": "rls",
@@ -220,7 +233,8 @@
         "seguridad a nivel de fila"
       ],
       "resumen": "Restringe qué filas ve cada usuario en un informe o base de datos.",
-      "icono": "lock"
+      "icono": "lock",
+      "familia": "bi"
     },
     {
       "id": "pbi-optimizacion",
@@ -238,7 +252,8 @@
         "rendimiento del informe"
       ],
       "resumen": "Medir y mejorar el rendimiento de un modelo semántico y sus medidas.",
-      "icono": "gauge"
+      "icono": "gauge",
+      "familia": "bi"
     },
     {
       "id": "modelo-estrella",
@@ -271,7 +286,8 @@
           "\\b(dim|fact)_\\w+\\s*="
         ]
       },
-      "icono": "star-schema"
+      "icono": "star-schema",
+      "familia": "bi"
     },
     {
       "id": "kpi",
@@ -288,7 +304,8 @@
         "scorecard"
       ],
       "resumen": "Métricas que miden el cumplimiento de un objetivo y sirven para seguirlo en el tiempo.",
-      "icono": "target"
+      "icono": "target",
+      "familia": "negocio"
     },
     {
       "id": "sql",
@@ -312,7 +329,8 @@
         ]
       },
       "resumen": "Lenguaje estándar para consultar y transformar datos en bases relacionales.",
-      "icono": "database"
+      "icono": "database",
+      "familia": "sql"
     },
     {
       "id": "sql-joins",
@@ -331,7 +349,8 @@
         ]
       },
       "resumen": "Combinar tablas por sus claves, entendiendo cuándo cambia el número de filas.",
-      "icono": "venn"
+      "icono": "venn",
+      "familia": "sql"
     },
     {
       "id": "sql-window",
@@ -352,7 +371,8 @@
         ]
       },
       "resumen": "Cálculos sobre conjuntos de filas relacionadas (rankings, acumulados, comparativas con el periodo anterior).",
-      "icono": "window"
+      "icono": "window",
+      "familia": "sql"
     },
     {
       "id": "sql-cte",
@@ -374,7 +394,8 @@
         ]
       },
       "resumen": "Descomponer una consulta compleja en pasos legibles y reutilizables.",
-      "icono": "layers"
+      "icono": "layers",
+      "familia": "sql"
     },
     {
       "id": "sql-optimizacion",
@@ -397,7 +418,8 @@
         ]
       },
       "resumen": "Leer planes de ejecución, crear índices y reescribir consultas para que escalen.",
-      "icono": "gauge"
+      "icono": "gauge",
+      "familia": "sql"
     },
     {
       "id": "python",
@@ -415,7 +437,8 @@
         ]
       },
       "resumen": "Lenguaje de propósito general muy usado para análisis, automatización y machine learning.",
-      "icono": "braces"
+      "icono": "braces",
+      "familia": "python"
     },
     {
       "id": "pandas",
@@ -434,7 +457,8 @@
         ]
       },
       "resumen": "Biblioteca de Python para manipular tablas de datos.",
-      "icono": "table"
+      "icono": "table",
+      "familia": "python"
     },
     {
       "id": "jupyter",
@@ -451,7 +475,8 @@
         "ipynb"
       ],
       "resumen": "Documentos que mezclan código, resultados y explicación para análisis reproducibles.",
-      "icono": "notebook"
+      "icono": "notebook",
+      "familia": "python"
     },
     {
       "id": "etl",
@@ -477,7 +502,8 @@
           "\\bCREATE\\s+(OR\\s+REPLACE\\s+)?(TABLE|VIEW)\\s+\\S+\\s+AS\\b"
         ]
       },
-      "icono": "pipeline"
+      "icono": "pipeline",
+      "familia": "ingenieria"
     },
     {
       "id": "data-quality",
@@ -508,7 +534,8 @@
         ]
       },
       "resumen": "Detectar y tratar nulos, duplicados, tipos erróneos y valores atípicos antes de analizar.",
-      "icono": "shield-check"
+      "icono": "shield-check",
+      "familia": "ingenieria"
     },
     {
       "id": "modelado-datos",
@@ -534,7 +561,8 @@
         ]
       },
       "resumen": "Diseñar tablas, claves y relaciones para que los datos se puedan analizar sin ambigüedad.",
-      "icono": "entities"
+      "icono": "entities",
+      "familia": "ingenieria"
     },
     {
       "id": "excel",
@@ -554,7 +582,8 @@
         "xlsx:explicativa"
       ],
       "resumen": "Hoja de cálculo para exploración rápida, tablas dinámicas y reporting operativo.",
-      "icono": "grid"
+      "icono": "grid",
+      "familia": "ingenieria"
     },
     {
       "id": "git",
@@ -575,7 +604,8 @@
         "git-repo"
       ],
       "resumen": "Control de versiones y colaboración sobre el código y los documentos de un proyecto.",
-      "icono": "branch"
+      "icono": "branch",
+      "familia": "ingenieria"
     },
     {
       "id": "automatizacion",
@@ -602,7 +632,8 @@
       "artefactos": [
         "workflow"
       ],
-      "icono": "cycle"
+      "icono": "cycle",
+      "familia": "ingenieria"
     },
     {
       "id": "testing-calidad",
@@ -625,7 +656,8 @@
         ]
       },
       "resumen": "Comprobar con código que las transformaciones y los resultados siguen siendo correctos.",
-      "icono": "checklist"
+      "icono": "checklist",
+      "familia": "ingenieria"
     },
     {
       "id": "documentacion",
@@ -646,7 +678,8 @@
         "metodología"
       ],
       "resumen": "Dejar por escrito qué hace un proyecto, de dónde salen los datos y cómo se reproduce.",
-      "icono": "doc"
+      "icono": "doc",
+      "familia": "negocio"
     },
     {
       "id": "negocio",
@@ -667,7 +700,8 @@
         "recomendaciones de negocio"
       ],
       "resumen": "Traducir una necesidad de negocio en preguntas de datos y devolver conclusiones accionables.",
-      "icono": "briefcase"
+      "icono": "briefcase",
+      "familia": "negocio"
     },
     {
       "id": "decisiones",
@@ -688,7 +722,8 @@
         "justificación"
       ],
       "resumen": "Explicar por qué se eligió un enfoque, qué supuestos tiene y qué limitaciones deja.",
-      "icono": "compass"
+      "icono": "compass",
+      "familia": "negocio"
     },
     {
       "id": "estadistica",
@@ -719,7 +754,8 @@
         ]
       },
       "resumen": "Herramientas para describir datos y decidir cuánto se puede concluir de una muestra.",
-      "icono": "bell"
+      "icono": "bell",
+      "familia": "python"
     },
     {
       "id": "eda",
@@ -739,7 +775,8 @@
         ]
       },
       "resumen": "Primera lectura de los datos: distribuciones, relaciones y anomalías antes de modelar.",
-      "icono": "search-chart"
+      "icono": "search-chart",
+      "familia": "python"
     },
     {
       "id": "ml",
@@ -762,7 +799,8 @@
         ]
       },
       "resumen": "Modelos que aprenden patrones de datos históricos para predecir o agrupar.",
-      "icono": "brain"
+      "icono": "brain",
+      "familia": "ml"
     },
     {
       "id": "scikit-learn",
@@ -780,7 +818,8 @@
         ]
       },
       "resumen": "Biblioteca de Python para modelos clásicos de machine learning.",
-      "icono": "nodes"
+      "icono": "nodes",
+      "familia": "ml"
     },
     {
       "id": "clasificacion-regresion",
@@ -803,7 +842,8 @@
         ]
       },
       "resumen": "Predecir una categoría o un valor numérico a partir de variables explicativas.",
-      "icono": "tree"
+      "icono": "tree",
+      "familia": "ml"
     },
     {
       "id": "clustering",
@@ -824,7 +864,8 @@
         ]
       },
       "resumen": "Agrupar clientes u observaciones parecidos sin etiquetas previas.",
-      "icono": "clusters"
+      "icono": "clusters",
+      "familia": "ml"
     },
     {
       "id": "forecasting",
@@ -848,7 +889,8 @@
         ]
       },
       "resumen": "Prever valores futuros a partir de su historia, respetando el orden temporal.",
-      "icono": "trend"
+      "icono": "trend",
+      "familia": "ml"
     },
     {
       "id": "model-eval",
@@ -875,7 +917,8 @@
         ]
       },
       "resumen": "Medir si un modelo generaliza: particiones, métricas adecuadas y control del sobreajuste.",
-      "icono": "ruler"
+      "icono": "ruler",
+      "familia": "ml"
     },
     {
       "id": "feature-eng",
@@ -896,7 +939,8 @@
         ]
       },
       "resumen": "Transformar y crear variables para que el modelo pueda aprovecharlas.",
-      "icono": "wrench"
+      "icono": "wrench",
+      "familia": "ml"
     },
     {
       "id": "explicabilidad",
@@ -918,7 +962,8 @@
         ]
       },
       "resumen": "Entender y contar qué variables mueven las predicciones de un modelo.",
-      "icono": "eye"
+      "icono": "eye",
+      "familia": "ml"
     },
     {
       "id": "analisis-conjunto",
@@ -932,7 +977,8 @@
         "utilidades parciales"
       ],
       "resumen": "Estimar qué atributos de un producto valoran más los clientes a partir de sus elecciones.",
-      "icono": "sliders"
+      "icono": "sliders",
+      "familia": "ml"
     },
     {
       "id": "visualizacion-datos",
@@ -961,7 +1007,8 @@
         ]
       },
       "resumen": "Elegir y construir gráficos que respondan una pregunta concreta.",
-      "icono": "chart"
+      "icono": "chart",
+      "familia": "storytelling"
     },
     {
       "id": "data-storytelling",
@@ -976,7 +1023,8 @@
         "historia con datos"
       ],
       "resumen": "Estructurar los datos como una narrativa con mensaje, contexto y llamada a la acción.",
-      "icono": "story"
+      "icono": "story",
+      "familia": "storytelling"
     },
     {
       "id": "ibcs",
@@ -990,7 +1038,8 @@
         "International Business Communication Standards"
       ],
       "resumen": "Estándares para notación y diseño uniformes en informes de negocio.",
-      "icono": "bars-baseline"
+      "icono": "bars-baseline",
+      "familia": "storytelling"
     },
     {
       "id": "diseno-dashboard",
@@ -1009,7 +1058,8 @@
         "percepción visual"
       ],
       "resumen": "Organizar un informe para que lo importante se vea primero y se lea sin esfuerzo.",
-      "icono": "layout"
+      "icono": "layout",
+      "familia": "storytelling"
     },
     {
       "id": "accesibilidad",
@@ -1026,7 +1076,8 @@
         "accessibility"
       ],
       "resumen": "Diseñar para que cualquier persona pueda leer e interactuar con el informe.",
-      "icono": "a11y"
+      "icono": "a11y",
+      "familia": "ux"
     },
     {
       "id": "streamlit",
@@ -1043,7 +1094,8 @@
         ]
       },
       "resumen": "Framework de Python para publicar análisis como aplicaciones web interactivas.",
-      "icono": "app"
+      "icono": "app",
+      "familia": "python"
     },
     {
       "id": "ux-ui",
@@ -1061,7 +1113,8 @@
         "heurísticas de usabilidad"
       ],
       "resumen": "Diseño de la experiencia y la interfaz a partir de cómo las personas usan el producto.",
-      "icono": "cursor"
+      "icono": "cursor",
+      "familia": "ux"
     },
     {
       "id": "investigacion-usuarios",
@@ -1079,7 +1132,8 @@
         "personas de usuario"
       ],
       "resumen": "Conocer necesidades y problemas reales con entrevistas, observación y pruebas.",
-      "icono": "user-search"
+      "icono": "user-search",
+      "familia": "ux"
     },
     {
       "id": "arquitectura-informacion",
@@ -1095,7 +1149,8 @@
         "mapa del sitio"
       ],
       "resumen": "Organizar y nombrar el contenido para que se encuentre sin pensar.",
-      "icono": "sitemap"
+      "icono": "sitemap",
+      "familia": "ux"
     },
     {
       "id": "figma",
@@ -1110,7 +1165,8 @@
         "prototipo"
       ],
       "resumen": "Herramienta de diseño de interfaces y prototipos.",
-      "icono": "pen"
+      "icono": "pen",
+      "familia": "ux"
     },
     {
       "id": "dax-avanzado",
@@ -1138,7 +1194,8 @@
           "\\b(TREATAS|USERELATIONSHIP|LOOKUPVALUE|HASONEVALUE|ISINSCOPE|RANKX|TOPN|WINDOW|OFFSET)\\s*\\("
         ]
       },
-      "resumen": "Relaciones virtuales, rankings, funciones de ventana y tablas en memoria para resolver casos que las medidas básicas no cubren."
+      "resumen": "Relaciones virtuales, rankings, funciones de ventana y tablas en memoria para resolver casos que las medidas básicas no cubren.",
+      "familia": "bi"
     },
     {
       "id": "pbi-diseno-dinamico",
@@ -1161,7 +1218,8 @@
         "bookmarks",
         "tooltip page"
       ],
-      "resumen": "Parámetros de campo, formato condicional, grupos de cálculo y títulos dinámicos para informes que se adaptan a la pregunta."
+      "resumen": "Parámetros de campo, formato condicional, grupos de cálculo y títulos dinámicos para informes que se adaptan a la pregunta.",
+      "familia": "bi"
     },
     {
       "id": "numpy-scipy",
@@ -1180,7 +1238,8 @@
           "\\b(import|from)\\s+(numpy|scipy|statsmodels)\\b"
         ]
       },
-      "resumen": "Cálculo numérico y estadístico en Python: arrays, álgebra lineal, contrastes y modelos estadísticos."
+      "resumen": "Cálculo numérico y estadístico en Python: arrays, álgebra lineal, contrastes y modelos estadísticos.",
+      "familia": "python"
     },
     {
       "id": "apis-datos",
@@ -1206,7 +1265,8 @@
           "\\bfetch\\s*\\("
         ]
       },
-      "resumen": "Obtener datos de servicios web y APIs y convertirlos en tablas analizables."
+      "resumen": "Obtener datos de servicios web y APIs y convertirlos en tablas analizables.",
+      "familia": "ingenieria"
     },
     {
       "id": "big-data",
@@ -1229,7 +1289,8 @@
           "\\bSparkSession\\b"
         ]
       },
-      "resumen": "Procesar volúmenes que no caben en una máquina repartiendo el cálculo entre varias."
+      "resumen": "Procesar volúmenes que no caben en una máquina repartiendo el cálculo entre varias.",
+      "familia": "ingenieria"
     },
     {
       "id": "cloud-datos",
@@ -1248,7 +1309,8 @@
         "Supabase",
         "PostgreSQL en la nube"
       ],
-      "resumen": "Servicios en la nube para almacenar, transformar y servir datos (Azure, Fabric, AWS, GCP, Supabase…)."
+      "resumen": "Servicios en la nube para almacenar, transformar y servir datos (Azure, Fabric, AWS, GCP, Supabase…).",
+      "familia": "ingenieria"
     },
     {
       "id": "reduccion-dimensionalidad",
@@ -1269,7 +1331,8 @@
           "\\b(PCA|TSNE|UMAP)\\s*\\("
         ]
       },
-      "resumen": "Resumir muchas variables en pocas dimensiones para visualizar, agrupar o quitar ruido."
+      "resumen": "Resumir muchas variables en pocas dimensiones para visualizar, agrupar o quitar ruido.",
+      "familia": "ml"
     },
     {
       "id": "deep-learning",
@@ -1294,7 +1357,8 @@
           "\\b(import|from)\\s+(tensorflow|keras|torch|ultralytics)\\b"
         ]
       },
-      "resumen": "Redes neuronales profundas para imágenes, secuencias o datos no estructurados."
+      "resumen": "Redes neuronales profundas para imágenes, secuencias o datos no estructurados.",
+      "familia": "ml"
     },
     {
       "id": "ia-generativa",
@@ -1320,7 +1384,8 @@
           "\\b(import|from)\\s+(transformers|langchain|openai|anthropic|sentence_transformers)\\b"
         ]
       },
-      "resumen": "Modelos de lenguaje, recuperación aumentada (RAG) y agentes que usan herramientas."
+      "resumen": "Modelos de lenguaje, recuperación aumentada (RAG) y agentes que usan herramientas.",
+      "familia": "ml"
     },
     {
       "id": "recomendadores",
@@ -1336,7 +1401,8 @@
         "recommender",
         "basado en contenido"
       ],
-      "resumen": "Sugerir productos o contenidos a partir de comportamiento similar o de características."
+      "resumen": "Sugerir productos o contenidos a partir de comportamiento similar o de características.",
+      "familia": "ml"
     },
     {
       "id": "experimentacion",
@@ -1353,7 +1419,8 @@
         "grupo de control",
         "tamaño muestral"
       ],
-      "resumen": "Diseñar y analizar experimentos para medir el efecto real de un cambio."
+      "resumen": "Diseñar y analizar experimentos para medir el efecto real de un cambio.",
+      "familia": "ml"
     },
     {
       "id": "desarrollo-web",
@@ -1379,7 +1446,8 @@
       "artefactos": [
         "webpage"
       ],
-      "resumen": "Construir páginas e interfaces web propias, incluidas visualizaciones a medida."
+      "resumen": "Construir páginas e interfaces web propias, incluidas visualizaciones a medida.",
+      "familia": "ux"
     },
     {
       "id": "retail-ventas",
@@ -1399,7 +1467,8 @@
         "concesionario",
         "concesionarios"
       ],
-      "resumen": "Conocimiento del negocio minorista: ventas, ticket, demanda, surtido y tiendas."
+      "resumen": "Conocimiento del negocio minorista: ventas, ticket, demanda, surtido y tiendas.",
+      "familia": "negocio"
     },
     {
       "id": "finanzas",
@@ -1420,7 +1489,8 @@
         "control de gestión",
         "informe financiero"
       ],
-      "resumen": "Cuenta de resultados, presupuesto frente a real, márgenes y control de gestión."
+      "resumen": "Cuenta de resultados, presupuesto frente a real, márgenes y control de gestión.",
+      "familia": "negocio"
     },
     {
       "id": "marketing-clientes",
@@ -1442,7 +1512,8 @@
         "conversión",
         "redes sociales"
       ],
-      "resumen": "Clientes, campañas, fidelización, abandono y valor del cliente."
+      "resumen": "Clientes, campañas, fidelización, abandono y valor del cliente.",
+      "familia": "negocio"
     },
     {
       "id": "turismo-hosteleria",
@@ -1463,7 +1534,8 @@
         "restaurante",
         "restaurantes"
       ],
-      "resumen": "Negocios de viajes, alojamiento y restauración: reservas, ocupación, precios y demanda."
+      "resumen": "Negocios de viajes, alojamiento y restauración: reservas, ocupación, precios y demanda.",
+      "familia": "negocio"
     }
   ],
   "relaciones": [
@@ -1948,7 +2020,8 @@
       "esfuerzo": "medio",
       "siguiente": "Documenta en un proyecto los problemas de calidad que encontraste (nulos, duplicados, tipos) y cómo los trataste, con una comprobación automática de cada regla.",
       "resultado": "Un caso de calidad de datos que se puede explicar y reproducir.",
-      "icono": "shield-check"
+      "icono": "shield-check",
+      "familia": "ingenieria"
     },
     {
       "id": "sql-analitico",
@@ -1974,7 +2047,8 @@
       "esfuerzo": "medio",
       "siguiente": "Resuelve un análisis con funciones de ventana y CTE sobre un dataset propio y compara el plan de ejecución antes y después de optimizarlo.",
       "resultado": "Un proyecto SQL que demuestre consultas por capas y criterio de rendimiento.",
-      "icono": "database"
+      "icono": "database",
+      "familia": "sql"
     },
     {
       "id": "python-analisis",
@@ -2001,7 +2075,8 @@
       "esfuerzo": "medio",
       "siguiente": "Convierte un notebook en un script reproducible con funciones y datos de entrada definidos.",
       "resultado": "Un análisis en Python que otra persona puede volver a ejecutar.",
-      "icono": "braces"
+      "icono": "braces",
+      "familia": "python"
     },
     {
       "id": "powerbi-dax",
@@ -2030,7 +2105,8 @@
       "esfuerzo": "medio",
       "siguiente": "Publica un informe en Power BI Service con actualización programada y medidas de inteligencia de tiempo documentadas.",
       "resultado": "Un informe completo, del dato al servicio, con medidas que se pueden justificar.",
-      "icono": "powerbi"
+      "icono": "powerbi",
+      "familia": "bi"
     },
     {
       "id": "modelado",
@@ -2055,7 +2131,8 @@
       "esfuerzo": "medio",
       "siguiente": "Redacta la decisión de modelado de un proyecto existente: qué son hechos y dimensiones, qué granularidad tiene cada tabla y por qué.",
       "resultado": "Un modelo en estrella documentado, con granularidad y claves explicadas.",
-      "icono": "star-schema"
+      "icono": "star-schema",
+      "familia": "bi"
     },
     {
       "id": "estadistica-eda",
@@ -2082,7 +2159,8 @@
       "esfuerzo": "medio",
       "siguiente": "Acompaña un análisis con un contraste de hipótesis o un intervalo de confianza e indica qué se puede y qué no se puede concluir.",
       "resultado": "Un análisis que separa lo observado de lo inferido.",
-      "icono": "bell"
+      "icono": "bell",
+      "familia": "python"
     },
     {
       "id": "kpi-seguimiento",
@@ -2107,7 +2185,8 @@
       "esfuerzo": "bajo",
       "siguiente": "Escribe la ficha de cada KPI de un proyecto: definición, fórmula, fuente, periodicidad y qué decisión informa.",
       "resultado": "Un catálogo de KPI con definición inequívoca.",
-      "icono": "target"
+      "icono": "target",
+      "familia": "negocio"
     },
     {
       "id": "visualizacion-comunicacion",
@@ -2134,7 +2213,8 @@
       "esfuerzo": "bajo",
       "siguiente": "Re-escribe un informe con un mensaje por página y una comprobación de accesibilidad de color y contraste.",
       "resultado": "Un informe donde cada gráfico responde una pregunta y se puede leer sin ayuda.",
-      "icono": "chart"
+      "icono": "chart",
+      "familia": "storytelling"
     },
     {
       "id": "negocio-interpretacion",
@@ -2163,7 +2243,8 @@
       "esfuerzo": "alto",
       "siguiente": "Parte de una pregunta de negocio real (no del dataset) y termina con una recomendación y su impacto esperado.",
       "resultado": "Un caso donde se ve la decisión que cambia el análisis.",
-      "icono": "briefcase"
+      "icono": "briefcase",
+      "familia": "negocio"
     },
     {
       "id": "automatizacion-fiabilidad",
@@ -2188,7 +2269,8 @@
       "esfuerzo": "alto",
       "siguiente": "Añade a un proyecto una comprobación automática y una ejecución programada, y deja constancia de qué pasa si falla.",
       "resultado": "Un pipeline que avisa cuando algo se rompe.",
-      "icono": "cycle"
+      "icono": "cycle",
+      "familia": "ingenieria"
     },
     {
       "id": "documentacion-git",
@@ -2211,7 +2293,8 @@
       "esfuerzo": "bajo",
       "siguiente": "Homogeneiza los README de tus proyectos con el mismo esquema: problema, datos, método, resultados y limitaciones.",
       "resultado": "Proyectos que se entienden en cinco minutos.",
-      "icono": "doc"
+      "icono": "doc",
+      "familia": "ingenieria"
     },
     {
       "id": "explicar-decisiones",
@@ -2235,7 +2318,8 @@
       "esfuerzo": "bajo",
       "siguiente": "Añade a cada proyecto una sección «Decisiones y limitaciones» con alternativas descartadas.",
       "resultado": "Respuestas preparadas para «¿por qué lo hiciste así?» en una entrevista.",
-      "icono": "compass"
+      "icono": "compass",
+      "familia": "negocio"
     },
     {
       "id": "ml-aplicado",
@@ -2268,7 +2352,8 @@
       "esfuerzo": "alto",
       "siguiente": "Cierra un proyecto de modelado con validación honesta (partición temporal si hay tiempo) y una explicación de qué variables pesan.",
       "resultado": "Un modelo evaluado y explicado, con el límite de lo que puede afirmar.",
-      "icono": "brain"
+      "icono": "brain",
+      "familia": "ml"
     },
     {
       "id": "ux-complementario",
@@ -2295,7 +2380,8 @@
       "esfuerzo": "medio",
       "siguiente": "Aplica un hallazgo de investigación de usuarios al rediseño de un dashboard y documenta el antes y el después.",
       "resultado": "Un caso que une UX con análisis de datos.",
-      "icono": "cursor"
+      "icono": "cursor",
+      "familia": "ux"
     },
     {
       "id": "excel-operativo",
@@ -2317,7 +2403,8 @@
       "esfuerzo": "bajo",
       "siguiente": "Reproduce un análisis de Excel en SQL o Power Query y anota qué ganas y qué pierdes.",
       "resultado": "Una comparativa que muestra criterio al elegir herramienta.",
-      "icono": "grid"
+      "icono": "grid",
+      "familia": "ingenieria"
     },
     {
       "id": "plataformas-datos",
@@ -2342,7 +2429,8 @@
       "esfuerzo": "alto",
       "siguiente": "Lleva un proyecto existente a una plataforma en la nube (Fabric, Azure o Supabase) con carga programada y documenta el coste y los permisos.",
       "resultado": "Un pipeline en la nube que se actualiza solo y se puede explicar.",
-      "icono": "cloud"
+      "icono": "cloud",
+      "familia": "ingenieria"
     },
     {
       "id": "conocimiento-sectorial",
@@ -2367,7 +2455,66 @@
       "esfuerzo": "medio",
       "siguiente": "Elige el sector al que te presentas y reescribe un proyecto con su vocabulario y sus KPI (por ejemplo, margen por categoría y rotación en retail).",
       "resultado": "Un caso que habla el idioma del sector al que aplicas.",
-      "icono": "store"
+      "icono": "store",
+      "familia": "negocio"
+    }
+  ],
+  "familias": [
+    {
+      "id": "bi",
+      "label": "Power BI y Business Intelligence",
+      "color": "#F5C84C",
+      "ink": "#8A6500",
+      "icono": "powerbi"
+    },
+    {
+      "id": "sql",
+      "label": "SQL y bases de datos",
+      "color": "#4C8BF5",
+      "ink": "#1F5BC4",
+      "icono": "database"
+    },
+    {
+      "id": "python",
+      "label": "Python y análisis de datos",
+      "color": "#36A265",
+      "ink": "#1E7A48",
+      "icono": "notebook"
+    },
+    {
+      "id": "ml",
+      "label": "Machine Learning e IA",
+      "color": "#8B5CF6",
+      "ink": "#6535D6",
+      "icono": "brain"
+    },
+    {
+      "id": "storytelling",
+      "label": "Data Storytelling y visualización",
+      "color": "#D96C45",
+      "ink": "#B04E2B",
+      "icono": "chart"
+    },
+    {
+      "id": "ux",
+      "label": "UX/UI y diseño",
+      "color": "#D95D9E",
+      "ink": "#B03A7C",
+      "icono": "cursor"
+    },
+    {
+      "id": "ingenieria",
+      "label": "Ingeniería y preparación de datos",
+      "color": "#168A83",
+      "ink": "#0F6A64",
+      "icono": "transform"
+    },
+    {
+      "id": "negocio",
+      "label": "Negocio y competencias transversales",
+      "color": "#64748B",
+      "ink": "#475569",
+      "icono": "briefcase"
     }
   ]
 }

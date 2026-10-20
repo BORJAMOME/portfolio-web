@@ -19,7 +19,7 @@ const keyId = (k) => slug(k).slice(0, 50) + '-' + hash32(k).toString(36);
 import { layout } from './layout.mjs';
 import { SCHEMA_VERSION } from '../../second-brain/contract.js';
 
-export const ENGINE_VERSION = '1.2.0';
+export const ENGINE_VERSION = '1.3.0';
 
 const TYPE_MAP = { tecnologia: 'tecnologia', concepto: 'concepto', tecnica: 'tecnica', 'competencia-blanda': 'concepto' };
 const CLS_LABEL = { practica: 'práctica', explicativa: 'documentación', declarativa: 'declarada' };
@@ -164,7 +164,7 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
     if (info.d) bits.push(`declarado en ${plural(info.d, 'fuente', 'fuentes')}`);
     const evidenceLine = bits.length ? `Evidencia: ${bits.join('; ')}${info.projects ? `, en ${plural(info.projects, 'proyecto', 'proyectos')}` : ''}.` : 'Sin evidencia detectada en las fuentes analizadas.';
     const node = addNode({
-      id: `c:${c.id}`, label: c.label, type: TYPE_MAP[c.tipo] || 'concepto', region: c.region, area: c.region, icon: c.icono || 'dot', state,
+      id: `c:${c.id}`, label: c.label, type: TYPE_MAP[c.tipo] || 'concepto', region: c.region, area: c.region, family: c.familia || null, icon: c.icono || 'dot', state,
       summary: `${c.resumen} ${evidenceLine}`.slice(0, 600),
       size: round2(Math.min(1, 0.3 + 0.1 * (scope ? scope.maxRel : 1) + Math.min(0.2, info.projects * 0.04))),
       evidence: { practica: info.p, explicativa: info.x, declarativa: info.d, projects: info.projects, breadth: info.projects >= 3 ? 'amplia' : info.projects >= 1 ? 'puntual' : 'ninguna' },
@@ -215,7 +215,7 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
     const priority = round2(rel * dist);
     const rank = priority * CONF_WEIGHT[conf];
     const compNode = addNode({
-      id: `k:${k.id}`, label: k.label, type: 'competencia', region: k.region, area: k.region, icon: k.icono || 'hexagon', state,
+      id: `k:${k.id}`, label: k.label, type: 'competencia', region: k.region, area: k.region, family: k.familia || null, icon: k.icono || 'hexagon', state,
       summary: `Competencia del marco general. Relevancia para «${level.label}»: ${rel}/3. ${okCount ? `Núcleo respaldado: ${okCount} de ${coreStates.length}.` : 'Ningún concepto del núcleo está respaldado por evidencia.'}`.slice(0, 600),
       size: 0.85, evidence: { practica: 0, explicativa: 0, declarativa: 0, projects: 0, breadth: 'ninguna' },
       uncertainty: state === 'respaldado' ? ['Indica evidencia de trabajo; no equivale a una evaluación de nivel.'] : state === 'brecha_probable' ? [`Motivo: relevancia ${rel}/3 y sin evidencia en fuentes que sí se han analizado.`, 'Puede existir fuera de las fuentes configuradas.'] : state === 'pendiente' ? ['No se ha podido comprobar con las fuentes disponibles.'] : state === 'mencionado' ? ['Hay menciones, pero no práctica detectable.'] : [],
@@ -268,7 +268,7 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
       : `Evidencia en ${s.k.nucleo.length - gaps.length} de ${s.k.nucleo.length} conceptos del núcleo.`;
     const recId = `rec-${s.k.id}`;
     const recNode = addNode({
-      id: `r:${s.k.id}`, label: `${verb}: ${s.k.label}`.slice(0, 118), type: 'recomendacion', region: 'objetivos', area: s.k.region, icon: 'bulb', state: 'oportunidad',
+      id: `r:${s.k.id}`, label: `${verb}: ${s.k.label}`.slice(0, 118), type: 'recomendacion', region: 'objetivos', area: s.k.region, family: s.k.familia || null, icon: 'bulb', state: 'oportunidad',
       summary: `${why} ${s.k.resultado}`.slice(0, 600), size: round2(0.5 + 0.12 * s.priority),
       evidence: { practica: 0, explicativa: 0, declarativa: 0, projects: 0, breadth: 'ninguna' }, uncertainty: [`Confianza ${s.conf}. El esfuerzo es una estimación genérica del marco, no una medida.`], pos: [0, 0, 0],
     });
@@ -314,15 +314,20 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
     return 'folder';
   };
   const regionOfConcept = new Map(framework.conceptos.map((c) => [c.id, c.region]));
+  const familyOfConcept = new Map(framework.conceptos.map((c) => [c.id, c.familia]));
   for (const { key, pj, pf } of candidates) {
     // área principal: la región que más conceptos con práctica acumula en el proyecto
     const votes = {};
     for (const [id, nf] of pf.concepts) { const r = regionOfConcept.get(id); if (r) votes[r] = (votes[r] || 0) + nf * (GENERIC.has(id) ? 0.15 : 1); }
     const area = Object.entries(votes).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0];
+    // familia principal (color) y secundarias (chips): mismo voto, sin duplicar el proyecto
+    const fv = {};
+    for (const [id, nf] of pf.concepts) { const f = familyOfConcept.get(id); if (f) fv[f] = (fv[f] || 0) + nf * (GENERIC.has(id) ? 0.15 : 1); }
+    const famRank = Object.entries(fv).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map((x) => x[0]);
     const title = pj.readme && pj.readme.title && pj.readme.title.length >= 4 ? pj.readme.title : pj.label;
     const desc = pj.readme && pj.readme.desc ? ` ${pj.readme.desc}` : '';
     const n = addNode({
-      id: `p:${keyId(key)}`, label: title.slice(0, 118), type: 'proyecto', region: 'practica', area: area ? area[0] : 'practica', icon: projectIcon(pj, pf), state: 'respaldado',
+      id: `p:${keyId(key)}`, label: title.slice(0, 118), type: 'proyecto', region: 'practica', area: area ? area[0] : 'practica', family: famRank[0] || null, families: famRank.slice(0, 4), icon: projectIcon(pj, pf), state: 'respaldado',
       summary: `${desc.trim() ? desc.trim().replace(/([^.!?])$/, '$1.') + ' ' : ''}Proyecto analizado: ${plural(pf.practical, 'archivo', 'archivos')} con evidencia práctica en ${plural(pf.concepts.size, 'concepto', 'conceptos')}.${pf.docs ? '' : ' No se ha encontrado documentación escrita en el proyecto.'}`.slice(0, 600),
       size: round2(Math.min(0.75, 0.35 + pf.practical * 0.01)), evidence: { practica: pf.practical, explicativa: pf.docs, declarativa: 0, projects: 1, breadth: 'puntual' },
       uncertainty: ['Un proyecto demuestra trabajo realizado; no mide su calidad ni el nivel de dominio.'], pos: [0, 0, 0],
@@ -336,7 +341,7 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
   for (const p of undocumented) {
     const id = `rec-doc-${keyId(p.key)}`;
     const recNode = addNode({
-      id: `r:doc-${keyId(p.key)}`, label: `Documentar el proyecto ${p.node.label}`.slice(0, 118), type: 'recomendacion', region: 'objetivos', area: p.node.area, icon: 'doc', state: 'oportunidad',
+      id: `r:doc-${keyId(p.key)}`, label: `Documentar el proyecto ${p.node.label}`.slice(0, 118), type: 'recomendacion', region: 'objetivos', area: p.node.area, family: p.node.family || null, icon: 'doc', state: 'oportunidad',
       summary: 'El proyecto tiene código, pero ningún documento que explique sus decisiones.', size: 0.55,
       evidence: { practica: 0, explicativa: 0, declarativa: 0, projects: 0, breadth: 'ninguna' }, uncertainty: ['Puede haber documentación fuera de la carpeta analizada.'], pos: [0, 0, 0],
     });
@@ -405,9 +410,11 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
   }
 
   /* ── Regiones y distribución en el espacio ── */
-  const regions = framework.regiones.map((r, i) => ({ id: r.id, label: r.label, order: i, center: [0, 0, 0], count: 0, color: r.color || null, icon: r.icono || null }));
+  const families = framework.familias.map((f) => ({ id: f.id, label: f.label, color: f.color, ink: f.ink, icon: f.icono || null, count: 0 }));
+  const regions = framework.regiones.map((r, i) => ({ id: r.id, label: r.label, order: i, center: [0, 0, 0], count: 0, color: r.color || null, icon: r.icono || null, family: r.familia || null }));
   layout(regions, nodes, edges);
   for (const r of regions) r.count = nodes.filter((n) => n.region === r.id).length;
+  for (const f of families) f.count = nodes.filter((n) => n.family === f.id).length;
 
   const byState = {};
   for (const n of nodes) if (n.type !== 'proyecto' && n.type !== 'objetivo' && n.type !== 'recomendacion') byState[n.state] = (byState[n.state] || 0) + 1;
@@ -442,6 +449,6 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
       projects: projectNodes.length, recommendations: recommendations.length, byState,
       priorities: recommendations.filter((r) => r.priority.bucket === 'ahora').length,
     },
-    regions, nodes, edges, recommendations, competencies, trace,
+    regions, families, nodes, edges, recommendations, competencies, trace,
   };
 }

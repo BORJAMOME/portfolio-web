@@ -175,7 +175,7 @@ window.APSecondBrain = (function () {
         const c = (nt.tipo === 'proyecto' ? region.get('practica') : region.get(nt.area)) || region.get(nt.area);
         const j = ((k * 37) % 17) - 8;
         n = {
-          id: nt.node_id, label: String(nt.label).slice(0, 118), type: nt.tipo, region: nt.tipo === 'proyecto' && region.has('practica') ? 'practica' : nt.area, area: nt.area,
+          id: nt.node_id, label: String(nt.label).slice(0, 118), type: nt.tipo, region: nt.tipo === 'proyecto' && region.has('practica') ? 'practica' : nt.area, area: nt.area, family: (region.get(nt.area) || {}).family || null,
           icon: TIPO_ICON[nt.tipo], state: nt.valoracion === 'aprender' ? 'pendiente' : 'mencionado',
           summary: (nt.descripcion || 'Elemento añadido por ti.').slice(0, 600), size: 0.5,
           evidence: { practica: 0, explicativa: 0, declarativa: 1, projects: 0, breadth: 'ninguna' },
@@ -215,11 +215,12 @@ window.APSecondBrain = (function () {
       g, nodeById, adj, bucketOf, demo: data.demo, selected: null,
       recById: new Map(g.recommendations.map((r) => [r.id, r])),
       compOf: new Map(g.competencies.map((k) => [k.nodeId, k])),
-      f: { states: new Set(Object.keys(STATE)), types: new Set(Object.keys(TYPE)), regions: new Set(g.regions.map((r) => r.id)), priority: '', edges: new Set(Object.keys(EDGE).filter((k) => EDGE_DEFAULT_OFF.indexOf(k) < 0)), edgeMode: 'foco' },
+      f: { states: new Set(Object.keys(STATE)), types: new Set(Object.keys(TYPE)), regions: new Set(g.regions.map((r) => r.id)), families: new Set((g.families || []).map((f) => f.id).concat('_none')), priority: '', edges: new Set(Object.keys(EDGE).filter((k) => EDGE_DEFAULT_OFF.indexOf(k) < 0)), edgeMode: 'foco' },
       // en pantallas estrechas y verticales el disco se lee mejor desde arriba
       icons: engine.icons, logos: engine.logos, edgeStyle: engine.viewer.EDGE_STYLE, highlight: null,
       notesMissing: !!data.notesMissing, notesError: merged.ok ? null : merged.error, notes: data.notes || [],
       areaColor: new Map(g.regions.map((r) => [r.id, r.color || '#273a5f'])),
+      famMap: new Map((g.families || []).map((f) => [f.id, f])), listGroup: 'familia', listQ: '', listOpen: new Set(),
       layout: 'mapa', camera: window.matchMedia && matchMedia('(max-width: 700px)').matches ? 'cenital' : '3d', els: {}, visible: null,
     };
     on(window, 'hashchange', () => { if (!/^#\/second-brain/.test(location.hash)) dispose(); });
@@ -291,6 +292,10 @@ window.APSecondBrain = (function () {
           kpi(st.concepts, 'conceptos'), kpi(st.edges, 'relaciones'), kpi(st.projects, 'proyectos'),
           kpi(g.regions.filter((r) => r.count > 0).length, 'áreas'), kpi(st.priorities, 'prioridades'),
         ]),
+        h('p', { class: 'sb-muted sb-kpi-note', text: (() => {
+          const by = (t) => g.nodes.filter((n) => t.indexOf(n.type) > -1).length;
+          return plural(g.nodes.length, 'elemento', 'elementos') + ' en el mapa = ' + by(['tecnologia', 'concepto', 'tecnica']) + ' conceptos + ' + by(['competencia']) + ' competencias + ' + by(['proyecto']) + ' proyectos + ' + by(['objetivo', 'recomendacion']) + ' objetivos y recomendaciones.';
+        })() }),
       ]),
     ]);
     if (data.demo) head.appendChild(h('p', { class: 'sb-banner is-demo', role: 'note' }, [h('strong', { text: 'Estos datos son inventados. ' }), 'Sirven para probar la interfaz y no describen tu conocimiento real. ', h('a', { href: '#/second-brain', text: 'Volver al análisis real' })]));
@@ -329,7 +334,8 @@ window.APSecondBrain = (function () {
     e.search = h('input', { type: 'search', id: 'sb-search', placeholder: 'Buscar un concepto, competencia o proyecto', autocomplete: 'off', role: 'combobox', 'aria-expanded': 'false', 'aria-controls': 'sb-results', 'aria-autocomplete': 'list', oninput: onSearch, onkeydown: onSearchKey });
     e.results = h('ul', { class: 'sb-results', id: 'sb-results', role: 'listbox', 'aria-label': 'Resultados', hidden: true });
     e.count = h('p', { class: 'sb-count', role: 'status', 'aria-live': 'polite' });
-    e.filters = h('details', { class: 'sb-filters' }, [h('summary', { class: 'sb-btn', text: 'Filtros' }), filtersEl()]);
+    e.filterBtn = h('summary', { class: 'sb-btn', text: 'Filtros' });
+    e.filters = h('details', { class: 'sb-filters' }, [e.filterBtn, filtersEl()]);
     return h('div', { class: 'sb-bar' }, [
       h('div', { class: 'sb-bar-l' }, [
         h('div', { class: 'sb-search' }, [h('label', { class: 'sr-only', for: 'sb-search', text: 'Buscar en el mapa' }), e.search, e.results]),
@@ -345,14 +351,46 @@ window.APSecondBrain = (function () {
     ]);
   }
 
-  /* Ficha de color + icono de un nodo o un área (la misma gramática que el mapa) */
+  /* Color = familia tecnológica (snapshot.families). Sin familia: gris neutro («Sin clasificar»). Un snapshot antiguo
+     sin familias se colorea por área. Los tonos claros (amarillo) usan su «tinta» oscura en bordes y texto. */
   function areaOf(n) { return n.area || n.region; }
+  const hexRgb = (x) => [1, 3, 5].map((i) => parseInt(x.slice(i, i + 2), 16) / 255);
+  const lin = (v) => (v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
+  const lumHex = (x) => { const [r, g, b] = hexRgb(x).map(lin); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+  const mixHex = (a, b, t) => { const A = hexRgb(a), B = hexRgb(b); return '#' + A.map((v, i) => Math.round((v + (B[i] - v) * t) * 255).toString(16).padStart(2, '0')).join(''); };
+  const NEUTRAL = { color: '#9aa5b5', ink: '#5b6678' };
+  function paintOf(color, ink, label) {
+    const light = lumHex(color) > 0.42;
+    return { color, ink, label, light, edge: light ? mixHex(color, ink, 0.6) : color, fg: light ? '#273a5f' : '#ffffff' };
+  }
+  function famInfo(n) {
+    if (n.type === 'objetivo') return paintOf('#273a5f', '#273a5f', 'Objetivo');
+    if (!S.famMap.size) { const c = S.areaColor.get(areaOf(n)) || '#273a5f'; return paintOf(c, c, regionLabel(areaOf(n))); }
+    const f = n.family && S.famMap.get(n.family);
+    return f ? paintOf(f.color, f.ink || f.color, f.label) : paintOf(NEUTRAL.color, NEUTRAL.ink, 'Sin clasificar');
+  }
+  function setPaint(el, p) { el.style.setProperty('--c', p.color); el.style.setProperty('--ink', p.ink); el.style.setProperty('--fg', p.fg); el.style.setProperty('--edge', p.edge); }
+  function famPill(n) {
+    const p = famInfo(n);
+    const el = h('span', { class: 'sb-fampill', text: p.label });
+    setPaint(el, p);
+    return el;
+  }
+  function famChip(f) {
+    const el = h('span', { class: 'sb-ichip is-solid', 'aria-hidden': 'true' });
+    setPaint(el, paintOf(f.color, f.ink || f.color, f.label));
+    el.appendChild(S.icons.iconSvg(f.icon || 'dot'));
+    return el;
+  }
+  const famKey = (n) => (n.type === 'objetivo' ? '_obj' : n.family || '_none');
+
+  /* Ficha de color + icono de un nodo o un área (la misma gramática que el mapa) */
   function chip(n, big) {
-    const color = n.type === 'recomendacion' ? '#d9952c' : n.type === 'objetivo' ? '#273a5f' : S.areaColor.get(areaOf(n)) || '#273a5f';
+    const p = n.type === 'recomendacion' ? paintOf('#d9952c', '#8a5a00', 'Recomendación') : famInfo(n);
     const cls = n.type === 'proyecto' ? 'is-card' : n.type === 'recomendacion' || n.type === 'objetivo' || n.state === 'respaldado' || n.state === 'neutral' ? 'is-solid' : n.state === 'mencionado' ? 'is-tint' : 'is-open';
     const shape = n.type === 'proyecto' ? ' is-square' : n.type === 'competencia' ? ' is-hex' : n.type === 'objetivo' ? ' is-diamond' : '';
     const el = h('span', { class: 'sb-ichip ' + cls + shape + (big ? ' is-big' : ''), 'aria-hidden': 'true' });
-    el.style.setProperty('--c', color);                 // CSSOM: permitido por la CSP
+    setPaint(el, p);                                    // CSSOM: permitido por la CSP
     const logo = n.id.indexOf('c:') === 0 && S.logos ? S.logos.logoUrl(n.id.slice(2)) : null;
     if (logo) { el.classList.add('is-logo'); el.appendChild(h('img', { src: logo, alt: '' })); }
     else el.appendChild(S.icons.iconSvg(n.icon || 'dot'));
@@ -382,23 +420,46 @@ window.APSecondBrain = (function () {
     const small = window.matchMedia && matchMedia('(max-width: 900px)').matches;
     const areas = S.g.regions.filter((r) => S.g.nodes.some((n) => n.region === r.id || n.area === r.id));
     const sw = (cls, label) => h('li', null, [h('span', { class: 'sb-sw ' + cls, 'aria-hidden': 'true' }), label]);
+    const fams = (S.g.families || []).map((f) => ({ key: f.id, f, n: S.g.nodes.filter((x) => x.family === f.id).length }));
+    const none = S.g.nodes.filter((x) => x.type !== 'objetivo' && !x.family).length;
+    const famBtn = (key, chipEl, label, n) => h('li', null, [h('button', { type: 'button', class: 'sb-fam', 'data-fam': key, 'aria-pressed': 'false', title: 'Mostrar solo esta familia (otro clic la quita)', onclick: () => soloFamily(key) }, [chipEl, h('span', { class: 'sb-fam-t', text: label }), h('span', { class: 'sb-muted', text: String(n) })])]);
+    const famList = fams.length
+      ? h('ul', { class: 'sb-leg-fams' }, fams.map((x) => famBtn(x.key, famChip(x.f), x.f.label, x.n)).concat(none ? [famBtn('_none', (() => { const e = h('span', { class: 'sb-ichip is-solid', 'aria-hidden': 'true' }); setPaint(e, paintOf(NEUTRAL.color, NEUTRAL.ink, '')); e.appendChild(S.icons.iconSvg('dot')); return e; })(), 'Sin clasificar', none)] : []))
+      : h('ul', { class: 'sb-leg-areas' }, areas.map((r) => h('li', null, [areaChip(r), h('span', { text: r.label })])));
     return h('details', { class: 'sb-legend', open: small ? null : true }, [
       h('summary', { text: 'Cómo leer el mapa' }),
-      h('p', { class: 'sb-leg-h', text: 'Color = área' }),
-      h('ul', { class: 'sb-leg-areas' }, areas.map((r) => h('li', null, [areaChip(r), h('span', { text: r.label })]))),
-      h('p', { class: 'sb-leg-h', text: 'Relleno = evidencia' }),
-      h('ul', { class: 'sb-leg-ev' }, [
-        sw('is-solid', 'Respaldado'), sw('is-tint', 'Mencionado'), sw('is-open', 'Por validar'),
-        sw('is-gap', 'Brecha'), sw('is-now', 'Prioridad ahora'), sw('is-rec', 'Recomendación'),
-      ]),
+      h('p', { class: 'sb-leg-h', text: fams.length ? 'Color = familia tecnológica · clic para aislarla' : 'Color = área' }),
+      famList,
       h('details', { class: 'sb-legend-more' }, [
-        h('summary', { text: 'Relaciones, formas y controles' }),
+        h('summary', { text: 'Relleno, formas, relaciones y áreas' }),
+        h('p', { class: 'sb-leg-h', text: 'Relleno = evidencia' }),
+        h('ul', { class: 'sb-leg-ev' }, [
+          sw('is-solid', 'Respaldado'), sw('is-tint', 'Mencionado'), sw('is-open', 'Por validar'),
+          sw('is-gap', 'Brecha'), sw('is-now', 'Prioridad ahora'), sw('is-rec', 'Recomendación'),
+        ]),
+        h('p', { class: 'sb-leg-h', text: 'Forma = tipo de elemento' }),
+        h('ul', { class: 'sb-leg-ev' }, [sw('is-solid', 'Círculo: conocimiento'), sw('is-solid is-hex', 'Hexágono: competencia'), sw('is-solid is-square', 'Ficha: proyecto'), sw('is-solid is-diamond', 'Rombo: objetivo')]),
+        h('p', { class: 'sb-leg-h', text: 'Relaciones' }),
         h('ul', { class: 'sb-leg-lines' }, Object.values(S.edgeStyle).map((st) => h('li', null, [lineSample(st), st.label]))),
-        h('ul', { class: 'sb-leg-ev' }, [sw('is-solid', 'Círculo: conocimiento'), sw('is-solid is-hex', 'Hexágono: competencia'), sw('is-solid is-square', 'Ficha blanca: proyecto'), sw('is-solid is-diamond', 'Rombo: objetivo'), sw('is-rec', 'Ámbar: recomendación')]),
+        fams.length ? h('p', { class: 'sb-leg-h', text: 'Sectores del suelo = áreas' }) : '',
+        fams.length ? h('ul', { class: 'sb-leg-areas' }, areas.map((r) => h('li', null, [areaChip(r), h('span', { text: r.label })]))) : '',
         h('p', { class: 'sb-read', text: 'Del centro al borde: de respaldado a por validar. Arriba: competencias y recomendaciones. Anillo exterior: proyectos. Eje central: objetivos.' }),
         h('p', { class: 'sb-keys', id: 'sb-keys', text: 'Arrastra para girar (en cenital, para desplazar) · rueda o pellizco: zoom · con el mapa enfocado: flechas giran, Mayús + flechas desplazan, + / − acercan, 0 vista general, Esc quita la selección.' }),
       ]),
     ]);
+  }
+  /* Aislar una familia desde la leyenda: marca solo esa en los filtros; otro clic sobre la misma vuelve a todas */
+  function soloFamily(key) {
+    const all = (S.g.families || []).map((f) => f.id).concat('_none');
+    const only = S.f.families.size === 1 && S.f.families.has(key);
+    S.f.families = new Set(only ? all : [key]);
+    syncFamilyUi();
+    applyFilters();
+  }
+  function syncFamilyUi() {
+    S.els.filters.querySelectorAll('input[id^="sb-f-fam-"]').forEach((c) => { c.checked = S.f.families.has(c.id.slice('sb-f-fam-'.length)); });
+    const solo = S.f.families.size === 1 ? [...S.f.families][0] : null;
+    document.querySelectorAll('.sb-fam').forEach((b) => b.setAttribute('aria-pressed', b.getAttribute('data-fam') === solo ? 'true' : 'false'));
   }
 
   /* ── Tooltip al pasar el ratón: qué es, de qué área, su evidencia y una frase ── */
@@ -412,7 +473,7 @@ window.APSecondBrain = (function () {
     const first = sum.length > 190 ? sum.slice(0, sum.lastIndexOf(' ', 186)) + '…' : sum;
     tip.textContent = '';
     tip.append(
-      h('div', { class: 'sb-tip-h' }, [chip(n), h('div', null, [h('strong', { text: n.label }), h('span', { class: 'sb-muted', text: TYPE[n.type][0] + ' · ' + regionLabel(areaOf(n)) })])]),
+      h('div', { class: 'sb-tip-h' }, [chip(n), h('div', null, [h('strong', { text: n.label }), h('span', { class: 'sb-muted', text: TYPE[n.type][0] + ' · ' + famInfo(n).label })])]),
       h('p', { class: 'sb-tip-st' }, [h('span', { class: 'sb-sw ' + (n.type === 'recomendacion' ? 'is-rec' : st.cls.indexOf('is-navy') > -1 ? 'is-solid' : n.state === 'mencionado' ? 'is-tint' : 'is-open'), 'aria-hidden': 'true' }), st.short + (n.evidence && n.evidence.projects ? ' · ' + plural(n.evidence.projects, 'proyecto', 'proyectos') : '')]),
       h('p', { class: 'sb-tip-d', text: first }),
       n.user ? h('p', { class: 'sb-tip-u', text: n.user.propio ? 'Añadido por ti' : 'Con información tuya' + (n.user.valoracion ? ' · ' + VALORACION[n.user.valoracion] : '') }) : '',
@@ -652,13 +713,14 @@ window.APSecondBrain = (function () {
   }
 
   /* ── Filtros ── */
-  function checkGroup(title, items, set, name) {
+  function checkGroup(title, items, set, name) {   // item: { key, label, color? }
     return h('fieldset', { class: 'sb-fs' }, [
       h('legend', { text: title }),
       items.map((it) => {
         const id = 'sb-f-' + name + '-' + it.key;
         return h('label', { class: 'sb-check', for: id }, [
-          h('input', { type: 'checkbox', id, checked: set.has(it.key), onchange: (ev) => { ev.currentTarget.checked ? set.add(it.key) : set.delete(it.key); applyFilters(); } }),
+          h('input', { type: 'checkbox', id, checked: set.has(it.key), onchange: (ev) => { ev.currentTarget.checked ? set.add(it.key) : set.delete(it.key); if (name === 'fam') syncFamilyUi(); applyFilters(); } }),
+          it.color ? h('span', { class: 'sb-fdot', 'aria-hidden': 'true' }) : '',
           h('span', { text: it.label }),
         ]);
       }),
@@ -671,7 +733,12 @@ window.APSecondBrain = (function () {
     relFs.insertBefore(h('label', { class: 'sb-select-label', for: 'sb-edgemode' }, ['Mostrar relaciones', h('select', { id: 'sb-edgemode', onchange: (ev) => { f.edgeMode = ev.currentTarget.value; applyFilters(); } }, [
       h('option', { value: 'foco', text: 'Solo del elemento señalado (recomendado)' }), h('option', { value: 'todas', text: 'Todas las de los tipos marcados' }),
     ])]), relFs.children[1]);
+    const famFs = (S.g.families || []).length ? checkGroup('Familia tecnológica', (S.g.families || []).map((x) => ({ key: x.id, label: x.label, color: x.color })).concat(S.g.nodes.some((x) => x.type !== 'objetivo' && !x.family) ? [{ key: '_none', label: 'Sin clasificar', color: NEUTRAL.color }] : []), f.families, 'fam') : null;
+    if (famFs) famFs.classList.add('is-fams');
+    if (famFs) famFs.querySelectorAll('.sb-fdot').forEach((d, i) => { const x = (S.g.families || [])[i]; const p = x ? paintOf(x.color, x.ink || x.color, '') : paintOf(NEUTRAL.color, NEUTRAL.ink, ''); setPaint(d, p); });
     return h('div', { class: 'sb-filter-grid' }, [
+      famFs || '',
+      h('p', { class: 'sb-muted sb-filter-note' }, 'Lo que filtras se oculta del mapa y sus relaciones no se dibujan. Nada se borra: «Restablecer» lo devuelve todo.'),
       checkGroup('Estado de evidencia', Object.keys(STATE).map((k) => ({ key: k, label: STATE[k].short })), f.states, 'state'),
       checkGroup('Tipo', Object.keys(TYPE).map((k) => ({ key: k, label: TYPE[k][1] + ' ' + TYPE[k][0] })), f.types, 'type'),
       (() => {
@@ -692,6 +759,7 @@ window.APSecondBrain = (function () {
   function matchesFilters(n) {
     const f = S.f;
     if (!f.states.has(n.state) || !f.types.has(n.type) || !f.regions.has(n.region)) return false;
+    if (n.type !== 'objetivo' && (S.g.families || []).length && !f.families.has(n.family || '_none')) return false;
     if (f.priority) {
       const b = S.bucketOf.get(n.id);
       if (f.priority === 'ahora' && b !== 'ahora') return false;
@@ -699,12 +767,29 @@ window.APSecondBrain = (function () {
     }
     return true;
   }
+  function activeFilters() {
+    const f = S.f; let k = 0;
+    if (f.states.size < Object.keys(STATE).length) k++;
+    if (f.types.size < Object.keys(TYPE).length) k++;
+    if (f.regions.size < S.g.regions.length) k++;
+    if (f.families.size < (S.g.families || []).length + 1) k++;
+    if (f.priority) k++;
+    return k;
+  }
+  function updateCount() {
+    const total = S.g.nodes.length, n = S.visible.size;
+    S.els.count.textContent = n === total ? plural(total, 'elemento', 'elementos') : n + ' de ' + plural(total, 'elemento', 'elementos') + ' (filtrado)';
+  }
   function applyFilters(initial) {
     if (!S) return;
     const vis = new Set(S.g.nodes.filter(matchesFilters).map((n) => n.id));
     S.visible = vis;
     const total = S.g.nodes.length;
-    S.els.count.textContent = vis.size === total ? plural(total, 'elemento', 'elementos') : vis.size + ' de ' + plural(total, 'elemento', 'elementos');
+    updateCount();
+    const nAct = activeFilters();
+    S.els.filterBtn.textContent = nAct ? 'Filtros (' + nAct + ')' : 'Filtros';
+    S.els.filterBtn.classList.toggle('is-active', nAct > 0);
+    syncFamilyUi();
     S.els.empty.hidden = vis.size > 0;
     if (S.selected && !vis.has(S.selected)) selectNode(null, 'filter');
     if (viewer) {
@@ -717,11 +802,13 @@ window.APSecondBrain = (function () {
     if (!S) return;
     const f = S.f;
     f.states = new Set(Object.keys(STATE)); f.types = new Set(Object.keys(TYPE)); f.regions = new Set(S.g.regions.map((r) => r.id));
+    f.families = new Set((S.g.families || []).map((x) => x.id).concat('_none'));
     f.priority = ''; f.edgeMode = 'foco'; f.edges = new Set(Object.keys(EDGE).filter((k) => EDGE_DEFAULT_OFF.indexOf(k) < 0));
     S.els.filters.querySelectorAll('input[type=checkbox]').forEach((c) => {
       const m = /^sb-f-(\w+)-(.+)$/.exec(c.id);
       if (m) c.checked = m[1] === 'edge' ? f.edges.has(m[2]) : true;
     });
+    syncFamilyUi();
     S.els.filters.querySelector('#sb-prio').value = '';
     S.els.filters.querySelector('#sb-edgemode').value = 'foco';
     S.els.filters.open = false;
@@ -737,14 +824,18 @@ window.APSecondBrain = (function () {
     const q = norm(S.els.search.value).trim();
     const list = S.els.results;
     list.textContent = '';
-    if (!q) return closeResults();
+    if (!q) { closeResults(); clearSearchHighlight(); return; }
     const words = q.split(/\s+/);
-    const hits = S.g.nodes.filter((n) => { const hay = norm(n.label + ' ' + n.summary); return words.every((w) => hay.indexOf(w) > -1); })
-      .sort((a, b) => (norm(a.label).indexOf(q) === 0 ? 0 : 1) - (norm(b.label).indexOf(q) === 0 ? 0 : 1) || b.size - a.size).slice(0, 8);
-    if (!hits.length) list.appendChild(h('li', { class: 'sb-noresult', role: 'option', 'aria-disabled': 'true', text: 'Sin resultados' }));
+    const all = S.g.nodes.filter((n) => { const hay = norm(n.label + ' ' + n.summary + ' ' + famInfo(n).label); return words.every((w) => hay.indexOf(w) > -1); })
+      .sort((a, b) => (norm(a.label).indexOf(q) === 0 ? 0 : 1) - (norm(b.label).indexOf(q) === 0 ? 0 : 1) || b.size - a.size);
+    const hits = all.slice(0, 8);
+    S.searchHl = all.length && all.length <= 80 ? new Set(all.map((n) => n.id)) : null;
+    if (viewer && !S.highlight) viewer.setHighlight(S.searchHl);
+    S.els.count.textContent = all.length ? plural(all.length, 'coincidencia', 'coincidencias') + (all.length > 8 ? ' (se listan 8)' : '') : 'Sin coincidencias';
+    if (!hits.length) list.appendChild(h('li', { class: 'sb-noresult', role: 'option', 'aria-disabled': 'true', text: 'Sin resultados. Prueba con otra palabra o con el nombre de una tecnología.' }));
     hits.forEach((n, i) => list.appendChild(h('li', { role: 'option', id: 'sb-r-' + i, 'aria-selected': 'false' }, [
       h('button', { type: 'button', tabindex: '-1', onclick: () => pickResult(n.id) }, [
-        chip(n), h('span', { class: 'sb-r-t', text: n.label }), h('span', { class: 'sb-muted', text: TYPE[n.type][0] }),
+        chip(n), h('span', { class: 'sb-r-b' }, [h('span', { class: 'sb-r-t', text: n.label }), h('span', { class: 'sb-muted', text: TYPE[n.type][0] + ' · ' + famInfo(n).label })]),
       ]),
     ])));
     list.hidden = false; S.els.search.setAttribute('aria-expanded', 'true');
@@ -762,9 +853,11 @@ window.APSecondBrain = (function () {
       if (S.hits && S.hits.length) pickResult(S.hits[Math.max(0, S.hitIdx)]);
     } else if (ev.key === 'Escape') closeResults();
   }
+  function clearSearchHighlight() { S.searchHl = null; if (viewer && !S.highlight) viewer.setHighlight(null); if (S.visible) updateCount(); }
   function closeResults() { S.els.results.hidden = true; S.els.search.setAttribute('aria-expanded', 'false'); S.els.search.removeAttribute('aria-activedescendant'); S.hits = []; }
   function pickResult(id) {
     closeResults();
+    clearSearchHighlight();
     if (!S.visible.has(id)) { const n = S.nodeById.get(id); resetAll(); ctx.setStatus('Se han quitado los filtros para mostrar «' + (n ? n.label : '') + '».'); }
     selectNode(id, 'search');
   }
@@ -831,7 +924,7 @@ window.APSecondBrain = (function () {
         ]),
         h('button', { type: 'button', class: 'ap-link-btn sb-nowrap', text: 'Quitar selección', onclick: () => selectNode(null, 'panel') }),
       ]),
-      h('p', null, [stateBadge(n.state)]),
+      h('p', { class: 'sb-badges' }, [stateBadge(n.state)].concat(n.type === 'objetivo' ? [] : [famPill(n)]).concat((n.families || []).filter((f) => f !== n.family && S.famMap.has(f)).map((f) => famPill({ type: 'x', family: f })))),
       h('p', { class: 'sb-lead', text: n.summary }),
     );
     if (n.type === 'proyecto' && (n.group || n.link)) {
@@ -930,7 +1023,7 @@ window.APSecondBrain = (function () {
         return h('li', null, [
           h('button', { type: 'button', class: 'sb-rel', onclick: () => selectNode(o.id, 'panel') }, [
             h('span', { class: 'sb-rel-k', text: a.out ? EDGE[a.e.type][1] + ' →' : '← ' + EDGE[a.e.type][1] }),
-            h('span', { class: 'sb-dot ' + (STATE[o.state] || STATE.neutral).cls, 'aria-hidden': 'true' }),
+            chip(o),
             h('span', { class: 'sb-rel-t', text: o.label }),
           ]),
           h('span', { class: 'sb-why', text: a.e.rationale + ' (confianza ' + a.e.confidence + ')' }),
@@ -992,31 +1085,66 @@ window.APSecondBrain = (function () {
   function listCard() {
     S.els.list = h('div', { class: 'sb-list-body' });
     return h('details', { class: 'sb-card sb-all' }, [
-      h('summary', null, [h('span', { class: 'sb-eyebrow', text: 'Alternativa al mapa' }), h('span', { class: 'sb-h sb-h--sm', text: 'Todos los elementos, por área' })]),
+      h('summary', null, [h('span', { class: 'sb-eyebrow', text: 'Alternativa al mapa' }), h('span', { class: 'sb-h sb-h--sm', text: 'Todos los elementos, agrupados' })]),
       S.els.list,
     ]);
   }
+  /* Lista completa: agrupada por familia, área o tipo; cada grupo se pliega y tiene su contador. Respeta los filtros. */
+  function listGroups() {
+    const key = S.listGroup;
+    if (key === 'area') return S.g.regions.map((r) => ({ id: r.id, label: r.label, paint: paintOf(r.color || '#273a5f', r.color || '#273a5f', ''), of: (n) => n.region === r.id }));
+    if (key === 'tipo') return Object.keys(TYPE).map((t) => ({ id: t, label: TYPE[t][0] + 's', paint: paintOf('#273a5f', '#273a5f', ''), of: (n) => n.type === t }));
+    const fams = (S.g.families || []).map((f) => ({ id: f.id, label: f.label, paint: paintOf(f.color, f.ink || f.color, ''), of: (n) => n.type !== 'objetivo' && n.family === f.id }));
+    return fams.concat([{ id: '_none', label: 'Sin clasificar', paint: paintOf(NEUTRAL.color, NEUTRAL.ink, ''), of: (n) => n.type !== 'objetivo' && !n.family }, { id: '_obj', label: 'Objetivos', paint: paintOf('#273a5f', '#273a5f', ''), of: (n) => n.type === 'objetivo' }]);
+  }
+  function listControls() {
+    const box = S.els.list;
+    S.els.listBody = h('div', { class: 'sb-list-groups' });
+    const sel = h('select', { id: 'sb-list-by', onchange: (ev) => { S.listGroup = ev.currentTarget.value; S.listOpen = new Set(); renderList(); } }, [
+      (S.g.families || []).length ? h('option', { value: 'familia', text: 'Familia tecnológica' }) : '', h('option', { value: 'area', text: 'Área' }), h('option', { value: 'tipo', text: 'Tipo' }),
+    ]);
+    if (!(S.g.families || []).length) { S.listGroup = 'area'; }
+    sel.value = S.listGroup;
+    const all = (open) => { S.listOpen = new Set(open ? listGroups().map((g) => g.id) : []); renderList(); };
+    box.append(
+      h('div', { class: 'sb-list-ctl' }, [
+        h('label', { class: 'sb-select-label', for: 'sb-list-by' }, ['Agrupar por', sel]),
+        h('label', { class: 'sb-select-label', for: 'sb-list-q' }, ['Buscar en la lista', h('input', { type: 'search', id: 'sb-list-q', placeholder: 'Nombre o palabra', autocomplete: 'off', oninput: (ev) => { S.listQ = ev.currentTarget.value; renderList(); } })]),
+        h('button', { type: 'button', class: 'sb-btn', text: 'Expandir todo', onclick: () => all(true) }),
+        h('button', { type: 'button', class: 'sb-btn', text: 'Contraer todo', onclick: () => all(false) }),
+      ]),
+      S.els.listBody,
+    );
+  }
   function renderList() {
     if (!S) return;
-    const box = S.els.list;
-    box.textContent = '';
-    box.appendChild(h('p', { class: 'sb-muted', text: 'La misma información que el mapa, ordenada por área. Respeta los filtros.' }));
-    const grid = h('div', { class: 'sb-list-grid' });
-    S.g.regions.forEach((r) => {
-      const ns = S.g.nodes.filter((n) => n.region === r.id && S.visible.has(n.id)).sort((a, b) => a.label.localeCompare(b.label, 'es'));
+    if (!S.els.listBody) listControls();
+    const body = S.els.listBody;
+    body.textContent = '';
+    const q = norm(S.listQ).trim();
+    let shown = 0;
+    listGroups().forEach((gr) => {
+      const ns = S.g.nodes.filter((n) => gr.of(n) && S.visible.has(n.id) && (!q || norm(n.label).indexOf(q) > -1)).sort((a, b) => a.label.localeCompare(b.label, 'es'));
       if (!ns.length) return;
-      grid.appendChild(h('section', { class: 'sb-list-col', 'aria-label': r.label }, [
-        h('h3', { class: 'sb-h3', text: r.label + ' (' + ns.length + ')' }),
+      shown += ns.length;
+      const open = !!q || S.listOpen.has(gr.id) || (S.selected && ns.some((n) => n.id === S.selected));
+      const det = h('details', { class: 'sb-grp', open: open ? true : null, 'data-g': gr.id }, [
+        h('summary', null, [h('span', { class: 'sb-gdot', 'aria-hidden': 'true' }), h('span', { class: 'sb-gname', text: gr.label }), h('span', { class: 'sb-gcount', text: String(ns.length) })]),
         h('ul', { class: 'sb-nodelist' }, ns.map((n) => h('li', null, [
           h('button', { type: 'button', class: 'sb-node' + (S.selected === n.id ? ' is-on' : ''), 'data-id': n.id, 'aria-current': S.selected === n.id ? 'true' : null, onclick: () => selectNode(n.id, 'list') }, [
             chip(n),
-            h('span', { class: 'sb-node-t', text: n.label + (n.user && n.user.propio ? ' ✎' : '') }),
-            h('span', { class: 'sb-muted', text: TYPE[n.type][0] + ' · ' + (STATE[n.state] || STATE.neutral).short }),
+            h('span', { class: 'sb-node-b' }, [
+              h('span', { class: 'sb-node-t', text: n.label + (n.user && n.user.propio ? ' ✎' : '') }),
+              h('span', { class: 'sb-muted', text: TYPE[n.type][0] + ' · ' + (STATE[n.state] || STATE.neutral).short }),
+            ]),
           ]),
         ]))),
-      ]));
+      ]);
+      setPaint(det.querySelector('.sb-gdot'), gr.paint);
+      det.addEventListener('toggle', () => { det.open ? S.listOpen.add(gr.id) : S.listOpen.delete(gr.id); });
+      body.appendChild(det);
     });
-    box.appendChild(grid);
+    if (!shown) body.appendChild(h('p', { class: 'sb-muted', text: q ? 'Ningún elemento coincide con «' + S.listQ + '».' : 'Ningún elemento cumple los filtros actuales.' }));
   }
 
   return { render: render };
