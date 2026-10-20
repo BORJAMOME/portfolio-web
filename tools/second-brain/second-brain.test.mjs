@@ -212,12 +212,12 @@ test('el resultado es determinista', () => {
   assert.deepEqual(a, b);
 });
 
-test('el grafo no se llena de relaciones: sin coocurrencia como causa y con tope por proyecto', () => {
+test('el grafo no se llena de relaciones: sin coocurrencia como causa y con tope por proyecto (10, las técnicas más específicas primero)', () => {
   const s = analyzeDemo().r.snapshot;
   assert.ok(s.edges.every((e) => e.rationale.length > 10));
   const perProject = {};
   for (const e of s.edges.filter((x) => x.type === 'demuestra')) perProject[e.source] = (perProject[e.source] || 0) + 1;
-  assert.ok(Object.values(perProject).every((n) => n <= 6));
+  assert.ok(Object.values(perProject).every((n) => n <= 10));
 });
 
 /* ─────────── Seguridad: las fuentes son datos ─────────── */
@@ -325,7 +325,7 @@ test('supabase/second-brain.sql activa RLS, cierra anon y todas las políticas e
 
 /* ─────────── Higiene del código del visor ─────────── */
 test('el código del navegador no usa innerHTML, eval ni credenciales de servidor', () => {
-  for (const f of ['area-privada-second-brain.js', 'second-brain/viewer.js', 'second-brain/contract.js', 'second-brain/icons.js', 'second-brain/logos.js']) {
+  for (const f of ['area-privada-second-brain.js', 'second-brain/viewer.js', 'second-brain/contract.js', 'second-brain/icons.js', 'second-brain/logos.js', 'second-brain/taxonomy.js']) {
     const src = readFileSync(join(ROOT, f), 'utf8');
     assert.doesNotMatch(src, /innerHTML|outerHTML|insertAdjacentHTML|document\.write|\beval\(|new Function|service_role/, f);
     assert.doesNotMatch(src, /\bhtml\s*:/, `${f}: no debe pintar HTML con h({ html })`);
@@ -439,4 +439,171 @@ test('familias: un snapshot antiguo sin familias sigue siendo válido (se colore
   const s = JSON.parse(JSON.stringify(r.snapshot));
   delete s.families; s.nodes.forEach((n) => { delete n.family; delete n.families; });
   assert.equal(validateSnapshot(s).ok, true);
+});
+
+/* ─────────── v7: taxonomía jerárquica, identidad de proyecto y etapas ─────────── */
+const writeTree = (base, files) => { for (const [rel, text] of Object.entries(files)) { const p = join(base, rel); mkdirSync(dirname(p), { recursive: true }); writeFileSync(p, text); } };
+const runOn = (sources, extra = {}) => {
+  const dir = tmp(); const cfg = join(dir, 'c.json');
+  writeFileSync(cfg, JSON.stringify({ sources, ...extra }));
+  return runAnalysis({ configPath: cfg, full: true, stateDir: tmp() });
+};
+const SK = "import pandas as pd\nfrom sklearn.cluster import KMeans\nKMeans(n_clusters=3).fit(df)\n";
+
+test('rutas: el nombre de la carpeta declara el tema, pero solo como documentación', async () => {
+  const { pathWords, detectRoute } = await import('./lexicon.mjs');
+  assert.equal(pathWords('03-Machine-Learning/02-no-supervisado/kmeans/04-segmentacion/nb.ipynb'), 'Machine Learning no supervisado kmeans segmentacion nb');
+  const lx = compileLexicon(loadFramework().framework);
+  const hits = detectRoute(lx, '03-ML/02-no-supervisado/clustering/kmeans/01-retail/notebook.ipynb');
+  assert.ok(hits.kmeans && hits.clustering, Object.keys(hits).join(','));
+  for (const h of Object.values(hits)) assert.deepEqual(h, { practica: 0, explicativa: 1, declarativa: 0 });
+});
+
+test('statsmodels con fórmulas (smf.ols, sm.Logit) se detecta como regresión lineal y logística', () => {
+  const lx = compileLexicon(loadFramework().framework);
+  const d = detect(lx, [{ cls: 'practica', lang: 'python', text: 'import statsmodels.formula.api as smf\nm = smf.ols(f, df).fit()\nimport statsmodels.api as sm\nsm.Logit(y, X).fit()' }], []);
+  assert.equal(d['regresion-lineal'].practica, 1);
+  assert.equal(d['regresion-logistica'].practica, 1);
+});
+
+test('proyectos «auto»: un README índice no se queda con el código de una subcarpeta sin README', () => {
+  const dir = tmp();
+  writeTree(dir, {
+    'idx/README.md': '# Índice de casos\n\nIndice de todos los casos prácticos del curso, cada uno en su carpeta.\n',
+    'idx/a/README.md': '# Caso A\n\nUn caso completo de segmentación con KMeans y pandas sobre clientes.\n',
+    'idx/a/n.py': SK,
+    'idx/02-sin-docs/n.py': SK,
+  });
+  const r = runOn([{ id: 'p', path: dir, kind: 'proyectos', projectDepth: 'auto' }]);
+  assert.equal(r.ok, true, JSON.stringify(r.errors));
+  const labels = r.snapshot.nodes.filter((n) => n.type === 'proyecto').map((n) => n.label).sort();
+  assert.deepEqual(labels, ['Caso A', 'sin docs']);
+  const sin = r.snapshot.nodes.find((n) => n.label === 'sin docs');
+  assert.equal(sin.noReadme, true);
+  assert.ok(r.snapshot.quality.noReadme.some((x) => x.label === 'sin docs'));
+});
+
+test('identidad: la carpeta del portfolio y el repositorio de su app son UN proyecto si sus README se enlazan', () => {
+  const dir = tmp();
+  writeTree(dir, {
+    'dap/README.md': '# Portfolio\n\nTodos los casos.\n',
+    'dap/ml/caso-uno/README.md': '# Caso uno: segmentación\n\nSegmentación con KMeans. La app: [app](https://github.com/ow/uno-app).\n',
+    'dap/ml/caso-uno/n.py': SK,
+    'dap/ml/caso-dos/README.md': '# Caso dos\n\nOtro caso distinto con KMeans y pandas, sin ninguna app.\n',
+    'dap/ml/caso-dos/n.py': SK,
+    'uno-app/README.md': '# ¿Cuántos tipos de cliente hay?\n\nVersión interactiva. [Notebook](https://github.com/ow/dap/tree/main/ml/caso-uno).\n',
+    'uno-app/app.py': 'import streamlit as st\nimport pandas as pd\n',
+    'home/README.md': '# Home\n\nTodos mis trabajos: [uno](https://github.com/ow/uno-app) y [dos](https://github.com/ow/dap/tree/main/ml/caso-dos).\n',
+    'home/x.py': 'import pandas as pd\n',
+  });
+  const r = runOn([
+    { id: 'dap', path: join(dir, 'dap'), kind: 'proyectos', projectDepth: 'auto', repo: 'ow/dap' },
+    { id: 'app', path: join(dir, 'uno-app'), kind: 'proyectos', projectDepth: 0, repo: 'ow/uno-app' },
+    { id: 'home', path: join(dir, 'home'), kind: 'proyectos', projectDepth: 0, repo: 'ow/home' },
+  ]);
+  assert.equal(r.ok, true, JSON.stringify(r.errors));
+  const P = r.snapshot.nodes.filter((n) => n.type === 'proyecto');
+  const uno = P.filter((n) => /Caso uno/.test(n.label));
+  assert.equal(uno.length, 1, P.map((n) => n.label).join(' | '));
+  assert.ok(!P.some((n) => /tipos de cliente/.test(n.label)), 'la app no queda como proyecto aparte');
+  assert.deepEqual(uno[0].sources.map((s) => s.url), ['https://github.com/ow/dap/tree/main/ml/caso-uno', 'https://github.com/ow/uno-app']);
+  assert.ok(P.some((n) => /Caso dos/.test(n.label)), 'el caso sin app sigue existiendo');
+  assert.ok(P.some((n) => n.label === 'Home'), 'un README que enlaza a varios proyectos no se une a ninguno');
+  assert.equal(r.snapshot.quality.merged.length, 1);
+});
+
+test('jerarquía: la evidencia sube a las ramas y cada proyecto cuelga de la técnica que carpeta y código confirman', () => {
+  const dir = tmp();
+  writeTree(dir, {
+    '02-no-supervisado/clustering/kmeans/01-retail/README.md': '# Retail con K-Means\n\nSegmentación de clientes con KMeans y pandas.\n',
+    '02-no-supervisado/clustering/kmeans/01-retail/n.py': SK,
+    '02-no-supervisado/clustering/kmeans/02-otro/README.md': '# Otro con K-Means\n\nOtra segmentación de clientes con KMeans y pandas.\n',
+    '02-no-supervisado/clustering/kmeans/02-otro/n.py': SK,
+    'idx/README.md': '# Índice\n\nCasos.\n',
+  });
+  const r = runOn([{ id: 'p', path: dir, kind: 'proyectos', projectDepth: 'auto' }]);
+  assert.equal(r.ok, true, JSON.stringify(r.errors));
+  const s = r.snapshot, N = (id) => s.nodes.find((n) => n.id === id);
+  assert.equal(N('c:kmeans').parent, 'c:clustering');
+  assert.equal(N('c:clustering').parent, 'c:ml-no-supervisado');
+  assert.equal(N('c:ml-no-supervisado').parent, 'c:ml');
+  assert.equal(N('c:ml').parent, undefined);
+  assert.equal(N('c:kmeans').stage, 'reforzado');                       // 2 proyectos
+  assert.equal(N('c:ml-no-supervisado').branch.aplicado, 1);
+  assert.ok(N('c:ml-no-supervisado').branch.leaves >= 4 && N('c:ml-no-supervisado').branch.sinEvidencia >= 3, 'las ramas sin evidencia cuentan como sin evidencia, no se esconden');
+  for (const p of s.nodes.filter((n) => n.type === 'proyecto')) assert.equal(p.parent, 'c:kmeans', p.label);
+  assert.ok(s.edges.some((e) => e.source === 'c:kmeans' && e.target === 'c:clustering' && e.type === 'parte-de'));
+});
+
+test('discrepancias: lo que declara la carpeta y el código no confirma se avisa (docOnly)', () => {
+  const dir = tmp();
+  writeTree(dir, {
+    'clasificacion/random-forest/01-caso/README.md': '# Caso de clasificación\n\nPredecimos abandono de clientes con un modelo sencillo y pandas.\n',
+    'clasificacion/random-forest/01-caso/n.py': "import pandas as pd\nfrom sklearn.linear_model import LogisticRegression\nLogisticRegression().fit(X, y)\n",
+    'idx/README.md': '# Índice\n\nCasos.\n',
+  });
+  const r = runOn([{ id: 'p', path: dir, kind: 'proyectos', projectDepth: 'auto' }]);
+  assert.equal(r.ok, true, JSON.stringify(r.errors));
+  const p = r.snapshot.nodes.find((n) => n.type === 'proyecto');
+  assert.deepEqual(p.docOnly, ['Random Forest']);
+  assert.ok(r.snapshot.edges.some((e) => e.source === p.id && e.target === 'c:regresion-logistica'));
+  assert.ok(!r.snapshot.edges.some((e) => e.source === p.id && e.target === 'c:random-forest'), 'sin código no hay «demuestra»');
+});
+
+test('etapas: «evaluado» y «dominio» solo existen si las registras con motivo y origen', () => {
+  const dir = tmp();
+  writeTree(dir, { 'a/README.md': '# A\n\nUn caso con KMeans y pandas para segmentar clientes.\n', 'a/n.py': SK });
+  const base = [{ id: 'p', path: dir, kind: 'proyectos', projectDepth: 1 }];
+  assert.equal(runOn(base).snapshot.nodes.find((n) => n.id === 'c:kmeans').stage, 'aplicado');
+  const ok = runOn(base, { assessments: [{ tipo: 'concepto', id: 'kmeans', estado: 'evaluado', motivo: 'Examen resuelto', origen: 'Curso de ML' }] });
+  const n = ok.snapshot.nodes.find((x) => x.id === 'c:kmeans');
+  assert.equal(n.stage, 'evaluado');
+  assert.equal(n.stageNote.source, 'Curso de ML');
+  const sin = runOn(base, { assessments: [{ tipo: 'concepto', id: 'kmeans', estado: 'dominio' }] });
+  assert.equal(sin.snapshot.nodes.find((x) => x.id === 'c:kmeans').stage, 'aplicado', 'sin motivo ni origen se ignora');
+  const bad = JSON.parse(JSON.stringify(ok.snapshot));
+  delete bad.nodes.find((x) => x.id === 'c:kmeans').stageNote;
+  assert.equal(validateSnapshot(bad).ok, false);
+});
+
+test('TAXONOMIA.md está al día con framework.json (regenera con --doc)', async () => {
+  const { taxonomyDoc } = await import('./inventory.mjs');
+  const doc = readFileSync(join(HERE, 'TAXONOMIA.md'), 'utf8').replace(/\r\n/g, '\n');
+  assert.equal(doc, taxonomyDoc(loadFramework().framework), 'ejecuta: node tools/second-brain/analyze.mjs --doc');
+});
+
+test('contrato: la jerarquía no admite padres inexistentes, ciclos ni fuentes que no sean https', () => {
+  const base = analyzeDemo().r.snapshot;
+  const k = (s) => JSON.parse(JSON.stringify(s));
+  let s = k(base); s.nodes.find((n) => n.parent).parent = 'c:no-existe';
+  assert.equal(validateSnapshot(s).ok, false);
+  s = k(base);
+  const child = s.nodes.find((n) => n.parent && n.type !== 'proyecto');
+  const parent = s.nodes.find((n) => n.id === child.parent);
+  parent.parent = child.id;
+  assert.ok(validateSnapshot(s).errors.some((e) => /ciclo/.test(e)));
+  s = k(base);
+  const pj = s.nodes.find((n) => n.type === 'proyecto');
+  pj.sources = [{ kind: 'repositorio', label: 'x', url: 'javascript:alert(1)' }];
+  assert.equal(validateSnapshot(s).ok, false);
+  pj.sources = [{ kind: 'repositorio', label: 'x', url: 'https://github.com/ow/x' }];
+  assert.equal(validateSnapshot(s).ok, true);
+});
+
+test('taxonomy.js: caminos, ramas, proyectos por rama y vistas rápidas salen de los datos (sin inventar)', async () => {
+  const tax = await import('../../second-brain/taxonomy.js');
+  const s = analyzeDemo().r.snapshot;
+  const t = tax.buildTaxonomy(s);
+  assert.ok(t.roots.length > 0 && t.roots.every((r) => !r.parent));
+  for (const n of t.tree) { const path = t.pathOf(n.id); assert.equal(path[path.length - 1].id, n.id); assert.ok(path.length <= 12); }
+  const ml = t.byId.get('c:ml');
+  const set = t.branchSet(ml.id);
+  assert.ok(set.has(ml.id) && [...t.descendants(ml.id)].every((d) => set.has(d)));
+  for (const p of t.projectsOf(ml.id)) assert.ok(set.has(p.id) && p.type === 'proyecto');
+  const views = tax.quickViews(s, t);
+  assert.ok(views.every((v) => v.count > 0), 'solo se ofrecen vistas con elementos');
+  const sm = tax.summary(s, t);
+  for (const a of sm.areas) assert.equal(a.aplicado + a.documentado + a.sinEvidencia, a.leaves);
+  assert.equal(tax.STAGES.length, 7);
+  assert.match(tax.stageNext({ stage: 'estudiado' }), /aplicarlo/);
 });

@@ -19,7 +19,7 @@ const keyId = (k) => slug(k).slice(0, 50) + '-' + hash32(k).toString(36);
 import { layout } from './layout.mjs';
 import { SCHEMA_VERSION } from '../../second-brain/contract.js';
 
-export const ENGINE_VERSION = '1.3.0';
+export const ENGINE_VERSION = '1.4.0';
 
 const TYPE_MAP = { tecnologia: 'tecnologia', concepto: 'concepto', tecnica: 'tecnica', 'competencia-blanda': 'concepto' };
 const CLS_LABEL = { practica: 'práctica', explicativa: 'documentación', declarativa: 'declarada' };
@@ -45,7 +45,7 @@ function aggregate(files) {
       for (const cls of ['practica', 'explicativa', 'declarativa']) {
         if (!h[cls]) continue;
         const key = `${f.source}::${f.rel}`;
-        e[cls].set(key, { project: f.project, rel: f.rel, source: f.source, kind: f.kind });
+        e[cls].set(key, { project: f.project, rel: f.rel, source: f.source, kind: f.kind, ext: f.ext });
       }
     }
   }
@@ -88,6 +88,33 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
   const ev = aggregate(scan.files);
   const assessments = Array.isArray(config.assessments) ? config.assessments : [];
   const assessOf = (kind, id) => assessments.find((a) => a.tipo === kind && a.id === id && a.estado === 'brecha_confirmada' && a.motivo && a.origen);
+  // etapas por encima de «aplicado»: solo existen si las registras tú con motivo y origen (nunca se deducen)
+  const stageAssessOf = (kind, id) => assessments.find((a) => a.tipo === kind && a.id === id && ['evaluado', 'dominio'].includes(a.estado) && a.motivo && a.origen);
+
+  /* ── Jerarquía del marco: cada concepto puede tener un «padre». La evidencia de las ramas sube a sus ancestros
+     (un área o una disciplina está respaldada si lo está alguna de sus técnicas), y la cobertura de cada rama se
+     cuenta aparte para no confundir «tiene una técnica trabajada» con «la domina entera». ── */
+  const padreOf = new Map(framework.conceptos.filter((c) => c.padre).map((c) => [c.id, c.padre]));
+  const kidsOf = new Map();
+  for (const [id, p] of padreOf) { if (!kidsOf.has(p)) kidsOf.set(p, []); kidsOf.get(p).push(id); }
+  const ancestorsOf = (id) => { const out = []; let p = padreOf.get(id); while (p) { out.push(p); p = padreOf.get(p); } return out; };
+  const depthOf = (id) => ancestorsOf(id).length;
+  const leavesOf = (id) => { const k = kidsOf.get(id); return k ? k.flatMap(leavesOf) : [id]; };
+  for (const [id, e] of [...ev]) {
+    for (const a of ancestorsOf(id)) {
+      if (!ev.has(a)) ev.set(a, { practica: new Map(), explicativa: new Map(), declarativa: new Map() });
+      const t = ev.get(a);
+      for (const cls of ['practica', 'explicativa', 'declarativa']) for (const [k, v] of e[cls]) t[cls].set(k, v);
+    }
+  }
+  const EXT_KIND = { ipynb: 'notebook', py: 'script', sql: 'sql', dax: 'modelo', tmdl: 'modelo', pq: 'modelo', m: 'modelo', pbix: 'informe', pbip: 'informe', md: 'documento', docx: 'documento', txt: 'documento', html: 'documento', catalogo: 'publicado' };
+  const kindsOf = (e) => {
+    const seen = new Map();
+    if (e) for (const cls of ['practica', 'explicativa']) for (const [k, v] of e[cls]) seen.set(k, EXT_KIND[v.ext] || 'otro');
+    const out = {};
+    for (const k of seen.values()) out[k] = (out[k] || 0) + 1;
+    return out;
+  };
 
   /* ── Cobertura: qué clases de evidencia se han podido mirar ── */
   const kinds = { practica: false, explicativa: false, declarativa: false };
@@ -171,8 +198,30 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
       uncertainty: unc, pos: [0, 0, 0],
     });
     if (assessed) node.assessment = { reason: assessed.motivo, source: assessed.origen, date: assessed.fecha || null };
+    // etapa de conocimiento: qué clase de evidencia hay, sin convertirla en una nota de dominio
+    const sa = stageAssessOf('concepto', c.id);
+    node.stage = sa ? sa.estado
+      : info.p >= 1 && info.projects >= 2 ? 'reforzado'
+      : info.p >= 1 ? 'aplicado'
+      : info.x >= 1 ? 'estudiado'
+      : info.d >= 1 ? 'identificado' : 'sin_evidencia';
+    if (sa) node.stageNote = { reason: sa.motivo, source: sa.origen, date: sa.fecha || null };
+    node.depth = depthOf(c.id);
+    node.evidence.kinds = kindsOf(ev.get(c.id));
     cstate.set(c.id, { state, node });
     trace[node.id] = refsOf(c.id, ['practica', 'explicativa', 'declarativa']);
+  }
+  // jerarquía: padre dentro del grafo y cobertura de cada rama (hojas con práctica / solo documentadas / sin evidencia)
+  for (const c of framework.conceptos) {
+    const st = cstate.get(c.id);
+    if (!st) continue;
+    if (c.padre && cstate.has(c.padre)) st.node.parent = `c:${c.padre}`;
+    if (kidsOf.has(c.id)) {
+      const leaves = leavesOf(c.id);
+      let aplicado = 0, documentado = 0;
+      for (const l of leaves) { const s = cstate.get(l); if (!s) continue; if (s.state === 'respaldado') aplicado++; else if (s.state === 'mencionado') documentado++; }
+      st.node.branch = { children: kidsOf.get(c.id).length, leaves: leaves.length, aplicado, documentado, sinEvidencia: leaves.length - aplicado - documentado };
+    }
   }
 
   /* ── Competencias, prioridad y recomendaciones ── */
@@ -285,9 +334,15 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
   /* ── Proyectos ── */
   const projFiles = new Map();
   for (const f of scan.files) {
-    const o = projFiles.get(f.project) || { practical: 0, docs: 0, concepts: new Map() };
+    const o = projFiles.get(f.project) || { practical: 0, docs: 0, concepts: new Map(), documented: new Set(), routes: new Set(), kinds: {} };
     if (['md', 'txt', 'docx', 'html'].includes(f.ext)) o.docs++;
-    for (const [id, h] of Object.entries(f.hits)) if (h.practica) { o.concepts.set(id, (o.concepts.get(id) || 0) + 1); }
+    const kind = EXT_KIND[f.ext];
+    if (kind && kind !== 'documento' && Object.values(f.hits).some((h) => h.practica)) o.kinds[kind] = (o.kinds[kind] || 0) + 1;
+    for (const [id, h] of Object.entries(f.hits)) {
+      if (h.practica) o.concepts.set(id, (o.concepts.get(id) || 0) + 1);
+      if (h.ruta) o.routes.add(id);                       // el nombre de la carpeta declara este tema
+      if (h.ruta && !h.practica) o.documented.add(id);   // lo dice la carpeta; el código de este archivo no lo confirma
+    }
     if (Object.values(f.hits).some((h) => h.practica)) o.practical++;
     projFiles.set(f.project, o);
   }
@@ -297,7 +352,7 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
   const maxProjects = config.maxProjects || 160;
   const candidates = [...scan.projects.entries()]
     .map(([key, pj]) => ({ key, pj, pf: projFiles.get(key) }))
-    .filter(({ pj, pf }) => ['proyectos', 'catalogo'].includes(sourceKind.get(pj.source)) && pf && pf.practical > 0 && !(pj.root && pf.practical < 3))
+    .filter(({ pj, pf }) => ['proyectos', 'catalogo'].includes(sourceKind.get(pj.source)) && pf && pf.practical > 0 && !pj.container && !(pj.root && pf.practical < 3))
     .sort((a, b) => b.pf.practical - a.pf.practical || a.key.localeCompare(b.key))
     .slice(0, maxProjects);
   const GENERIC = new Set(['python', 'pandas', 'jupyter', 'git', 'documentacion', 'data-quality', 'numpy-scipy', 'visualizacion-datos', 'eda']);
@@ -324,6 +379,17 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
     const fv = {};
     for (const [id, nf] of pf.concepts) { const f = familyOfConcept.get(id); if (f) fv[f] = (fv[f] || 0) + nf * (GENERIC.has(id) ? 0.15 : 1); }
     const famRank = Object.entries(fv).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map((x) => x[0]);
+    // técnicas demostradas: las más específicas (hojas de la jerarquía) primero y lo genérico al final
+    const ranked = [...pf.concepts.entries()].filter(([id]) => cstate.get(id) && cstate.get(id).state === 'respaldado')
+      .sort((x, y) => (GENERIC.has(x[0]) ? 1 : 0) - (GENERIC.has(y[0]) ? 1 : 0) || depthOf(y[0]) - depthOf(x[0]) || y[1] - x[1] || x[0].localeCompare(y[0]))
+      .slice(0, 10);
+    // posición en el árbol: el tema más específico que la carpeta declara Y el código confirma; si no, la técnica más específica con práctica
+    const byRoute = ranked.filter(([id]) => pf.routes.has(id)).sort((x, y) => depthOf(y[0]) - depthOf(x[0]) || y[1] - x[1] || x[0].localeCompare(y[0]))[0];
+    const lead = byRoute || ranked.find(([id]) => !GENERIC.has(id) && depthOf(id) >= 1) || ranked.find(([id]) => !GENERIC.has(id)) || ranked[0];
+    // técnicas que la carpeta o la documentación declaran, pero que el código del proyecto no confirma
+    const isManual = pj.group === 'Manual' || /manual|gu[ií]a/i.test(pj.label);
+    const docOnly = isManual ? [] : [...pf.documented].filter((id) => !pf.concepts.has(id) && !kidsOf.has(id) && cstate.has(id) && !GENERIC.has(id) && conceptById.get(id).naturaleza === 'practica')
+      .map((id) => conceptById.get(id).label).sort((a, b) => a.localeCompare(b, 'es')).slice(0, 6);
     const title = pj.readme && pj.readme.title && pj.readme.title.length >= 4 ? pj.readme.title : pj.label;
     const desc = pj.readme && pj.readme.desc ? ` ${pj.readme.desc}` : '';
     const n = addNode({
@@ -334,7 +400,14 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
     });
     if (pj.link && /^https:\/\//.test(pj.link)) n.link = pj.link;
     if (pj.group) n.group = pj.group;
-    projectNodes.push({ node: n, key, pf });
+    if (lead) n.parent = `c:${lead[0]}`;
+    n.depth = lead ? depthOf(lead[0]) + 1 : 0;
+    n.evidence.kinds = pf.kinds;
+    if (pj.sources && pj.sources.length) n.sources = pj.sources.slice(0, 8);
+    if (pj.noReadme || (pj.kind !== 'catalogo' && pf.docs === 0)) n.noReadme = true;
+    if (pj.merged && pj.merged.length) n.merged = pj.merged.map((m) => m.label).slice(0, 6);
+    if (docOnly.length) n.docOnly = docOnly;
+    projectNodes.push({ node: n, key, pf, ranked });
   }
   // recomendación de documentación: proyectos con práctica y sin ningún documento
   const undocumented = projectNodes.filter((p) => p.pf.docs === 0 && p.pf.practical >= 3).sort((a, b) => b.pf.practical - a.pf.practical).slice(0, 3);
@@ -391,10 +464,14 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
     const co = coProjects(a, b);
     addEdge(`c:${a}`, `c:${b}`, type, both ? 'alta' : one ? 'media' : 'baja', `${why}${co ? ` Aparecen juntos en la práctica de ${plural(co, 'proyecto', 'proyectos')}.` : ''}`, { evidenceCount: co });
   }
+  for (const c of framework.conceptos) {
+    if (!c.padre) continue;
+    const a = cstate.get(c.id), b = cstate.get(c.padre);
+    if (!a || !b) continue;
+    addEdge(`c:${c.id}`, `c:${c.padre}`, 'parte-de', a.state === 'respaldado' ? 'alta' : 'media', `En la jerarquía del marco, «${c.label}» es una rama de «${conceptById.get(c.padre).label}».`);
+  }
   for (const p of projectNodes) {
-    const top = [...p.pf.concepts.entries()].filter(([id]) => cstate.get(id) && cstate.get(id).state === 'respaldado')
-      .sort((x, y) => y[1] - x[1] || x[0].localeCompare(y[0])).slice(0, 6);
-    for (const [id, nFiles] of top) {
+    for (const [id, nFiles] of p.ranked) {
       addEdge(p.node.id, `c:${id}`, 'demuestra', nFiles >= 2 ? 'alta' : 'media', `${plural(nFiles, 'archivo', 'archivos')} del proyecto contienen código o artefactos de ${conceptById.get(id).label}.`, { evidenceCount: nFiles });
     }
   }
@@ -447,7 +524,17 @@ export function buildSnapshot({ framework, scan, config, now = new Date(), mode 
     stats: {
       nodes: nodes.length, edges: edges.length, concepts: nodes.filter((n) => ['tecnologia', 'concepto', 'tecnica'].includes(n.type)).length,
       projects: projectNodes.length, recommendations: recommendations.length, byState,
+      taxonomy: { roots: nodes.filter((n) => n.type !== 'proyecto' && n.depth === 0 && n.stage).length, maxDepth: nodes.reduce((m, n) => Math.max(m, n.depth || 0), 0), branches: nodes.filter((n) => n.branch).length },
       priorities: recommendations.filter((r) => r.priority.bucket === 'ahora').length,
+    },
+    quality: {
+      noReadme: projectNodes.filter((p) => p.node.noReadme).map((p) => ({ id: p.node.id, label: p.node.label })).slice(0, 40),
+      docOnly: projectNodes.filter((p) => p.node.docOnly).length,
+      unclassified: projectNodes.filter((p) => !p.node.family).map((p) => ({ id: p.node.id, label: p.node.label })).slice(0, 40),
+      merged: (scan.identity ? scan.identity.merges : []).map((m) => ({ title: String(m.title).slice(0, 110), from: m.from.map((x) => String(x.label).slice(0, 110)), why: m.reasons.slice(0, 2).map((x) => String(x).slice(0, 200)) })).slice(0, 40),
+      notInspected: (Array.isArray(config.inaccesibles) ? config.inaccesibles : []).filter((x) => x && x.repo).map((x) => ({ label: String(x.repo).slice(0, 110), why: String(x.motivo || 'Sin clon local ni acceso desde el motor.').slice(0, 300) })).slice(0, 20),
+      candidates: (scan.identity ? scan.identity.candidates : []).map((c) => ({ title: String(c.title).slice(0, 110) })).slice(0, 20),
+      indexes: (scan.identity ? scan.identity.indexes : []).map((x) => String(x.label).slice(0, 110)).slice(0, 20),
     },
     regions, families, nodes, edges, recommendations, competencies, trace,
   };

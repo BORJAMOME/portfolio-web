@@ -20,6 +20,9 @@ import { fileURLToPath } from 'node:url';
 import { compileLexicon } from './lexicon.mjs';
 import { scanSources } from './scan.mjs';
 import { buildSnapshot, ENGINE_VERSION } from './model.mjs';
+import { mergeIdentities } from './identity.mjs';
+import { buildInventory, taxonomyDoc, realReport } from './inventory.mjs';
+import { buildTaxonomy } from '../../second-brain/taxonomy.js';
 import { validateSnapshot } from '../../second-brain/contract.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -58,6 +61,7 @@ export function runAnalysis({ configPath, full = false, now = new Date(), mode =
     const cachePath = join(stateDir, 'cache.json');
     const cache = full ? null : readJson(cachePath, null);
     const scan = scanSources(config, lexicon, cache, digest);
+    scan.identity = mergeIdentities(scan);       // un proyecto, una entidad, con todas sus fuentes
     const snapshot = buildSnapshot({ framework, scan, config, now, mode });
     const v = validateSnapshot(snapshot);
     if (!v.ok) {
@@ -66,7 +70,7 @@ export function runAnalysis({ configPath, full = false, now = new Date(), mode =
     }
     run.status = 'ok';
     run.stats = { ...snapshot.stats, files: scan.coverage.processed, reused: scan.coverage.reused, changed: scan.coverage.changed };
-    return { ok: true, snapshot, cache: scan.cache, warnings: v.warnings, run: finish(run) };
+    return { ok: true, snapshot, cache: scan.cache, inventory: buildInventory({ scan, snapshot, config, now }), warnings: v.warnings, run: finish(run) };
   } catch (e) {
     run.message = String(e && e.message ? e.message : e).slice(0, 400);   // sin contenido de archivos
     return { ok: false, errors: [run.message], run: finish(run) };
@@ -79,6 +83,11 @@ async function main() {
   const argv = process.argv.slice(2);
   const flag = (n) => argv.includes(n);
   const opt = (n) => { const i = argv.indexOf(n); return i >= 0 ? argv[i + 1] : null; };
+  if (flag('--doc')) {
+    writeFileSync(join(HERE, 'TAXONOMIA.md'), taxonomyDoc(loadFramework().framework));
+    console.log('✓ tools/second-brain/TAXONOMIA.md regenerado desde framework.json');
+    return;
+  }
   const demo = flag('--demo');
   const stateDir = join(ROOT, '.second-brain');
   const configPath = resolve(opt('--config') || (demo ? join(HERE, 'fixtures', 'demo', 'config.json') : join(stateDir, 'config.json')));
@@ -106,10 +115,11 @@ async function main() {
   if (!flag('--dry')) {
     // los datos de demostración van pretty-printed para que el diff del repositorio sea legible
     if (demo) { mkdirSync(dirname(out), { recursive: true }); writeFileSync(out, JSON.stringify(res.snapshot, null, 1) + '\n'); }
-    else { writeJsonAtomic(out, res.snapshot); writeJsonAtomic(join(stateDir, 'cache.json'), res.cache); writeJsonAtomic(join(stateDir, 'last-run.json'), res.run); }
+    else { writeJsonAtomic(out, res.snapshot); writeJsonAtomic(join(stateDir, 'cache.json'), res.cache); writeJsonAtomic(join(stateDir, 'inventario.json'), res.inventory); writeFileSync(join(stateDir, 'taxonomia-real.md'), realReport(res.snapshot, buildTaxonomy(res.snapshot))); writeJsonAtomic(join(stateDir, 'last-run.json'), res.run); }
   }
   const s = res.snapshot.stats, c = res.snapshot.coverage;
   console.log(`✓ ${demo ? 'Demo' : 'Análisis'} (motor ${ENGINE_VERSION}): ${s.nodes} nodos · ${s.edges} relaciones · ${s.recommendations} recomendaciones (${s.priorities} prioritarias)`);
+  if (!demo) { const q = res.snapshot.quality; console.log(`  Inventario: ${res.inventory.resumen.fuentes} fuentes · ${res.inventory.resumen.proyectos} proyectos · ${q.merged.length} unificados · ${q.noReadme.length} sin README · ${res.inventory.resumen.noInspeccionadas} fuente(s) sin inspeccionar → .second-brain/inventario.json`); }
   console.log(`  ${c.incremental.changed} archivo(s) procesados · ${c.incremental.reused} reutilizados de la caché`);
   console.log(`  → ${flag('--dry') ? '(--dry: no se ha escrito nada)' : out}`);
   if (flag('--publish') && !demo) await publishRun(res.run, res.snapshot);
