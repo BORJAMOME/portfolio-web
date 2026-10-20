@@ -247,10 +247,13 @@ window.APKanban = (function () {
     }
 
     /* ── Escrituras con reversión si fallan ── */
+    var saySeq = 0;
     function say(msg, o) {
       o = o || {};
+      var n = ++saySeq;
       live.textContent = '';
-      setTimeout(function () { live.textContent = msg; }, 20);
+      // solo escribe el último mensaje: uno antiguo que llega tarde no pisa a uno nuevo
+      setTimeout(function () { if (n === saySeq) live.textContent = msg; }, 20);
       toastBox.textContent = '';
       toastBox.classList.toggle('is-error', !!o.error);
       toastBox.appendChild(h('span', { text: msg }));
@@ -295,8 +298,11 @@ window.APKanban = (function () {
       var u = undo.pop();
       if (!u) return say('No hay nada que deshacer.');
       toastBox.classList.remove('is-on');
-      Promise.resolve(u.fn()).then(function () { say('Deshecho: ' + u.label + '.'); paint(); })
-        .catch(function (e) { failed(e, 'deshacer'); });
+      // se anuncia al deshacer (como al mover), no cuando responde el servidor: si se anunciase
+      // después, podría pisar el aviso de una acción posterior. Si falla, failed() avisa del error.
+      var p = Promise.resolve(u.fn());
+      say('Deshecho: ' + u.label + '.');
+      p.then(function () { paint(); }).catch(function (e) { failed(e, 'deshacer'); });
     }
 
     /* Mover (columna + posición). index = posición final en la columna destino. */
