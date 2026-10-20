@@ -106,6 +106,17 @@ export function iconSvg(id) {
 /* Atlas: glifos blancos sobre transparente y, si se pasan, logotipos a color.
    Devuelve { canvas, cols, index(id), logo(key) → celda | -1, ready: Promise } (los logotipos
    se decodifican como imágenes data:, así que llegan un instante después). */
+/* Normalización óptica: cada glifo se recorta a su caja real, se escala para ocupar el mismo lado (ICON_BOX de la celda)
+   y se centra por su caja, no por su rejilla de dibujo. Los iconos de trazo conservan el mismo grosor en píxeles y los
+   logotipos (que son rellenos y pesan el doble) ocupan un lado algo menor para que ambos se perciban del mismo tamaño. */
+export const ICON_BOX = 0.6, LOGO_BOX = 0.56;
+const alphaBox = (ctx, w, h) => {
+  const d = ctx.getImageData(0, 0, w, h).data;
+  let x0 = w, y0 = h, x1 = -1, y1 = -1;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (d[(y * w + x) * 4 + 3] > 24) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+  return x1 < 0 ? null : { x: x0, y: y0, w: x1 - x0 + 1, h: y1 - y0 + 1 };
+};
+
 export function buildAtlas(cell = 128, logos = null) {
   const ids = Object.keys(ICONS);
   const logoIds = logos ? Object.keys(logos.LOGOS) : [];
@@ -116,14 +127,29 @@ export function buildAtlas(cell = 128, logos = null) {
   ctx.strokeStyle = '#fff';
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
+  const scratch = document.createElement('canvas');
+  scratch.width = scratch.height = cell * 2;
+  const sc = scratch.getContext('2d', { willReadFrequently: true });
+  sc.strokeStyle = '#fff'; sc.lineCap = 'round'; sc.lineJoin = 'round';
+  const nominal = (cell * 0.72) / 24, strokePx = 2.1 * nominal;
   ids.forEach((id, i) => {
     const x = (i % cols) * cell, y = Math.floor(i / cols) * cell;
+    const path = new Path2D(ICONS[id]);
+    // 1) se dibuja a escala nominal en un lienzo auxiliar para medir su caja real
+    sc.clearRect(0, 0, cell * 2, cell * 2);
+    sc.save(); sc.translate(cell * 0.14, cell * 0.14); sc.scale(nominal, nominal); sc.lineWidth = 2.1; sc.stroke(path); sc.restore();
+    const b = alphaBox(sc, cell * 2, cell * 2);
+    if (!b) return;
+    const ux = (b.x + b.w / 2 - cell * 0.14) / nominal, uy = (b.y + b.h / 2 - cell * 0.14) / nominal;   // centro de la caja en unidades del icono
+    const big = Math.max(b.w, b.h);
+    const f = big < cell * 0.3 ? 1 : Math.min(1.6, Math.max(0.8, (ICON_BOX * cell) / big));           // los puntos y marcas diminutas no se agrandan
+    const k = nominal * f;
+    // 2) se dibuja centrado y escalado, con el mismo grosor de trazo en píxeles
     ctx.save();
-    ctx.translate(x + cell * 0.14, y + cell * 0.14);
-    const s = (cell * 0.72) / 24;
-    ctx.scale(s, s);
-    ctx.lineWidth = 2.1;
-    ctx.stroke(new Path2D(ICONS[id]));
+    ctx.translate(x + cell / 2 - ux * k, y + cell / 2 - uy * k);
+    ctx.scale(k, k);
+    ctx.lineWidth = strokePx / k;
+    ctx.stroke(path);
     ctx.restore();
   });
   const at = new Map(ids.map((id, i) => [id, i]));
@@ -132,9 +158,16 @@ export function buildAtlas(cell = 128, logos = null) {
     const img = new Image();
     img.onload = () => {
       const k = logoAt.get(id), x = (k % cols) * cell, y = Math.floor(k / cols) * cell;
-      const box = cell * 0.78, ratio = img.naturalWidth && img.naturalHeight ? img.naturalWidth / img.naturalHeight : 1;
-      const w = ratio >= 1 ? box : box * ratio, hh = ratio >= 1 ? box / ratio : box;
-      ctx.drawImage(img, x + (cell - w) / 2, y + (cell - hh) / 2, w, hh);
+      const S = cell * 2, ratio = img.naturalWidth && img.naturalHeight ? img.naturalWidth / img.naturalHeight : 1;
+      const w = ratio >= 1 ? S : S * ratio, hh = ratio >= 1 ? S / ratio : S;
+      sc.clearRect(0, 0, S, S);
+      sc.drawImage(img, (S - w) / 2, (S - hh) / 2, w, hh);
+      const b = alphaBox(sc, S, S);
+      if (b) {
+        const m = (LOGO_BOX * cell) / Math.max(b.w, b.h);
+        const dw = b.w * m, dh = b.h * m;
+        ctx.drawImage(scratch, b.x, b.y, b.w, b.h, x + (cell - dw) / 2, y + (cell - dh) / 2, dw, dh);
+      }
       resolve();
     };
     img.onerror = () => resolve();

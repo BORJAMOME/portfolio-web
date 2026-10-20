@@ -232,6 +232,7 @@ try {
     await page.waitForTimeout(900);
 
     section('4c. Lenguaje visual v3: color por área, iconos, tooltip y preguntas');
+    await page.evaluate(() => { document.querySelector('.sb-legend').open = true; });      // la leyenda arranca cerrada
     await page.keyboard.press('Escape');
     await page.evaluate(() => document.querySelector('#sb-stage').__sbViewer.reset());
     await page.waitForTimeout(900);
@@ -362,6 +363,49 @@ try {
     await page.waitForTimeout(600);
     check('«Restablecer» quita también etapa, vista y modo atenuar', (await info(page)).visible === allVisible && (await info(page)).highlighted === 0 && !(await page.locator('#sb-dim').isChecked()));
     check('la cobertura por área suma técnicas con práctica, documentadas y sin evidencia, y avisa de que no mide dominio', (await page.locator('.sb-cov li').count()) >= 1 && /no dominio/.test(await page.locator('.sb-sumcard').textContent()));
+
+    section('4f. v8: geometría del grafo (iconos normalizados, nodos, etiquetas y controles)');
+    await page.evaluate(() => { document.querySelector('.sb-legend').open = false; document.querySelector('#sb-stage').__sbViewer.reset(); });
+    await page.waitForTimeout(1000);
+    const gm8 = await page.evaluate(() => {
+      const v = document.querySelector('#sb-stage').__sbViewer, m = v.debugMetrics();
+      const st = document.querySelector('#sb-stage').getBoundingClientRect();
+      const ui = ['.sb-bar', '.sb-legend', '.sb-nav'].map((q) => document.querySelector(q)).filter((e) => e && !e.hidden && getComputedStyle(e).position === 'absolute').map((e) => { const r = e.getBoundingClientRect(); return { x: r.left - st.left, y: r.top - st.top, w: r.width, h: r.height }; });
+      const inter = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+      let ll = 0; const L = m.labels.filter((l) => !/is-region|is-guide/.test(l.cls));
+      for (let i = 0; i < m.labels.length; i++) for (let j = i + 1; j < m.labels.length; j++) if (inter(m.labels[i], m.labels[j])) ll++;
+      let ln = 0;
+      for (const l of L) for (const n of m.nodes) { const cx = Math.max(l.x, Math.min(n.x, l.x + l.w)), cy = Math.max(l.y, Math.min(n.y, l.y + l.h)); if (Math.hypot(n.x - cx, n.y - cy) < n.r * 0.8) { ln++; break; } }
+      const under = m.nodes.filter((n) => ui.some((u) => n.x > u.x && n.x < u.x + u.w && n.y > u.y && n.y < u.y + u.h)).length;
+      const small = m.nodes.filter((n) => n.type === 'proyecto').map((n) => n.r);
+      const concept = m.nodes.filter((n) => ['tecnologia', 'tecnica', 'concepto'].includes(n.type)).map((n) => n.r);
+      const med = (a) => [...a].sort((x, y) => x - y)[Math.floor(a.length / 2)];
+      const comp = m.nodes.filter((n) => n.type === 'competencia').map((n) => n.r), obj = m.nodes.filter((n) => n.type === 'objetivo').map((n) => n.r);
+      return { labels: m.labels.length, ll, ln, under, hierarchy: [med(obj), med(comp), med(concept), med(small)], labelsOutside: m.labels.filter((l) => l.x < 0 || l.y < 0 || l.x + l.w > m.size.w || l.y + l.h > m.size.h).length };
+    });
+    check('las etiquetas no se solapan entre sí', gm8.ll === 0, JSON.stringify(gm8));
+    check('ninguna etiqueta de elemento tapa a otro nodo', gm8.ln === 0, JSON.stringify(gm8));
+    check('ningún nodo queda bajo la barra superior ni los mandos tras el encuadre', gm8.under === 0, JSON.stringify(gm8));
+    check('ninguna etiqueta se sale del lienzo', gm8.labelsOutside === 0, JSON.stringify(gm8));
+    check('la jerarquía de tamaño se mantiene: objetivo > competencia > concepto > proyecto', gm8.hierarchy[0] > gm8.hierarchy[1] && gm8.hierarchy[1] > gm8.hierarchy[2] && gm8.hierarchy[2] > gm8.hierarchy[3], JSON.stringify(gm8.hierarchy));
+    const atlas = await page.evaluate(async (base) => {
+      const icons = await import(base + 'second-brain/icons.js'), logos = await import(base + 'second-brain/logos.js');
+      const cell = 128, at = icons.buildAtlas(cell, logos); await at.ready;
+      const ctx = at.canvas.getContext('2d'), ids = Object.keys(icons.ICONS), lids = Object.keys(logos.LOGOS), rows = [];
+      const probe = (k, kind) => {
+        const x0 = (k % at.cols) * cell, y0 = Math.floor(k / at.cols) * cell, d = ctx.getImageData(x0, y0, cell, cell).data;
+        let a = cell, b = cell, c = -1, e = -1;
+        for (let y = 0; y < cell; y++) for (let x = 0; x < cell; x++) if (d[(y * cell + x) * 4 + 3] > 24) { if (x < a) a = x; if (x > c) c = x; if (y < b) b = y; if (y > e) e = y; }
+        if (c < 0) return;
+        rows.push({ kind, w: (c - a + 1) / cell, h: (e - b + 1) / cell, dx: ((a + c + 1) / 2 - cell / 2) / cell, dy: ((b + e + 1) / 2 - cell / 2) / cell });
+      };
+      ids.forEach((id, i) => probe(i, 'icono')); lids.forEach((id, i) => probe(ids.length + i, 'logo'));
+      return rows;
+    }, BASE);
+    const big = atlas.filter((x) => x.kind === 'icono' && Math.max(x.w, x.h) > 0.3);
+    check('los iconos y logotipos quedan centrados en su celda (≤ 1,2 % de desvío)', atlas.every((x) => Math.abs(x.dx) <= 0.012 && Math.abs(x.dy) <= 0.012), JSON.stringify(atlas.filter((x) => Math.abs(x.dx) > 0.012 || Math.abs(x.dy) > 0.012).slice(0, 4)));
+    check('los iconos de trazo ocupan todos el mismo lado óptico (55–62 % de la celda)', big.every((x) => Math.max(x.w, x.h) >= 0.55 && Math.max(x.w, x.h) <= 0.62), JSON.stringify(big.map((x) => Math.max(x.w, x.h).toFixed(2)).slice(0, 8)));
+    check('los logotipos ocupan como mucho el lado óptico asignado (≤ 57 %) y ninguno se deforma al encajar', atlas.filter((x) => x.kind === 'logo').every((x) => Math.max(x.w, x.h) <= 0.57));
 
     section('5. Teclado');
     await page.locator('#sb-stage').focus();

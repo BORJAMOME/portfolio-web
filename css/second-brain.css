@@ -39,7 +39,7 @@
 /* Etiquetas: texto negro sobre fondo transparente. Un halo blanco fino (no es un fondo)
    mantiene la lectura cuando el texto pasa por encima de una línea o de un nodo. */
 .sb-label {
-  position: absolute; left: 0; top: 0; white-space: nowrap; font-size: 12px; line-height: 1.25; padding: 0;
+  position: absolute; left: 0; top: 0; white-space: pre; text-align: left; font-size: 12px; line-height: 1.25; padding: 0;
   color: #111; background: none; will-change: transform;
   text-shadow: 0 0 2px #fff, 0 0 2px #fff, 0 0 4px #fff, 0 0 6px #fff;
 }
@@ -365,6 +365,11 @@
 .sb-fs.is-fams { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0 18px; }
 .sb-fs.is-fams legend { grid-column: 1 / -1; }
 .sb-fs.is-fams .sb-check { align-items: center; }
+
+.sb-legend summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.sb-leg-dots { display: inline-flex; gap: 3px; }
+.sb-leg-dots span { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 0 1px rgba(29, 38, 56, .18); }
+.sb-legend:not([open]) { width: auto; padding: 8px 12px; }
 
 /* ═══ v7: jerarquía, vistas rápidas, cobertura y etapas ═══ */
 /* vistas rápidas y filtros activos, justo debajo de la barra del mapa */
