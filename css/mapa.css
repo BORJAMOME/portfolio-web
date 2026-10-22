@@ -246,3 +246,9 @@
 .mp.has-q .mp-label:not(.is-hit) { color: var(--muted); }
 .mp.has-q .mp-label:not(.is-hit)::before { opacity: .3; }
 .mp-label.is-hit { background: var(--ap-support-soft); color: var(--ink); box-shadow: inset 0 0 0 1px #d9b66a; }
+
+/* Las notas de la última columna visible se abren hacia la izquierda: a la derecha se saldrían del lienzo */
+@media (min-width: 1360px) {
+  .mp-col:last-child .mp-note, .mp-col.is-last .mp-note { left: auto; right: calc(100% + 16px); text-align: right; }
+  .mp-col:last-child .mp-note::before, .mp-col.is-last .mp-note::before { left: auto; right: -16px; transform-origin: right center; transform: rotate(36deg); }
+}

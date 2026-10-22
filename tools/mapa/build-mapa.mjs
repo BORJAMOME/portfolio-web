@@ -94,7 +94,7 @@ const pageNode = (k) => {
   const p = P[k];
   const c = A.caso[k];
   return {
-    id: p.id, tipo: p.tipo, etiqueta: p.etiqueta, nota: cut(p.desc, 200) || undefined, href: p.href, archivo: p.archivo,
+    id: p.id, tipo: p.tipo, etiqueta: p.etiqueta, nota: [cut(p.desc, 200), p.conteo].filter(Boolean).join(' · ') || undefined, href: p.href, archivo: p.archivo,
     ...(c && c.techs.length ? { tec: c.techs } : {}),
   };
 };

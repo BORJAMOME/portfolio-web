@@ -1,12 +1,12 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "45f1afd",
+ "huella": "b37bb4a",
  "recuento": {
   "paginas": 20,
   "proyectos": 34,
   "recursos": 46,
   "perfil": 9,
-  "capitulos": 10,
+  "capitulos": 16,
   "plataformas": 11,
   "pestanas": 10,
   "tablas": 29,
@@ -473,9 +473,60 @@ export default {
          "id": "p:ml",
          "tipo": "manual",
          "etiqueta": "Manual de Machine Learning",
-         "nota": "Manual visual e interactivo de Machine Learning para analistas de datos: 63 modelos explicados en sencillo, con ejemplos de negocio, visualizaciones 2D/3D y laboratorios.",
+         "nota": "Manual visual e interactivo de Machine Learning para analistas de datos: 63 modelos explicados en sencillo, con ejemplos de negocio, visualizaciones 2D/3D y laboratorios. · 63 modelos explicados",
          "href": "./ml/",
          "archivo": "ml/",
+         "hijos": [
+          {
+           "id": "g:ml:secciones-del-manual",
+           "tipo": "grupo",
+           "etiqueta": "secciones del manual/",
+           "hijos": [
+            {
+             "id": "e:sec-estudia-en-el-orden-correcto",
+             "tipo": "capitulo",
+             "etiqueta": "Estudia en el orden correcto",
+             "href": "./ml/",
+             "familia": "manual"
+            },
+            {
+             "id": "e:sec-encuentra-tu-modelo-respondiendo-preguntas",
+             "tipo": "capitulo",
+             "etiqueta": "Encuentra tu modelo respondiendo preguntas",
+             "href": "./ml/",
+             "familia": "manual"
+            },
+            {
+             "id": "e:sec-los-63-modelos-de-un-vistazo",
+             "tipo": "capitulo",
+             "etiqueta": "Los 63 modelos, de un vistazo",
+             "href": "./ml/",
+             "familia": "manual"
+            },
+            {
+             "id": "e:sec-tabla-comparativa",
+             "tipo": "capitulo",
+             "etiqueta": "Tabla comparativa",
+             "href": "./ml/",
+             "familia": "manual"
+            },
+            {
+             "id": "e:sec-lo-que-necesitas-antes-de-los-modelos",
+             "tipo": "capitulo",
+             "etiqueta": "Lo que necesitas antes de los modelos",
+             "href": "./ml/",
+             "familia": "manual"
+            },
+            {
+             "id": "e:sec-que-se-reviso-que-se-corrigio-y-que-viene-despues",
+             "tipo": "capitulo",
+             "etiqueta": "Qué se revisó, qué se corrigió y qué viene después",
+             "href": "./ml/",
+             "familia": "manual"
+            }
+           ]
+          }
+         ],
          "familia": "manual"
         }
        ]
@@ -1366,7 +1417,7 @@ export default {
        "id": "p:pbi",
        "tipo": "manual",
        "etiqueta": "Manual de Power BI",
-       "nota": "Manual visual e interactivo de Power BI: del método BI7 y el modelo en estrella a Power Query, DAX, visualización, storytelling, Power BI Service y la certificación PL-300.",
+       "nota": "Manual visual e interactivo de Power BI: del método BI7 y el modelo en estrella a Power Query, DAX, visualización, storytelling, Power BI Service y la certificación PL-300. · 33 archivos de apuntes",
        "href": "./pbi/",
        "archivo": "pbi/",
        "familia": "manual"

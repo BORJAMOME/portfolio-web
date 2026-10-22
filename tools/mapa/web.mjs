@@ -252,6 +252,17 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
       addEntity({ prefijo: 'cap-', tipo: 'capitulo', etiqueta: `${m[1].slice(1)} · ${cut(name, 48)}`, urls: [], url: '', hrefInterno: `./${ds.key}#${m[1]}`, techs: [], grupo: 'capítulos del manual', pagina: ds.key, orden: Number(m[1].slice(1)) });
     }
   }
+  // 3h · manuales en carpeta (ml/, pbi/): sus secciones fijas y cuánto contienen
+  for (const page of Object.values(P)) {
+    if (page.tipo !== 'manual' || !page.dir) continue;
+    const modelos = /(\d+) modelos/.exec(page.desc);
+    const apuntes = entries(`${page.dir}/apuntes`).filter((e) => e.isFile()).length;
+    page.conteo = [modelos ? `${modelos[1]} modelos explicados` : '', apuntes ? `${apuntes} archivos de apuntes` : ''].filter(Boolean).join(' · ');
+    // los títulos que el HTML escribe a mano (los que arma el JavaScript llevan comillas o «+» y se descartan)
+    [...page.raw.matchAll(/<h2 class="th-title"[^>]*>([^<]+)</g)].map((m) => text(m[1])).filter((t) => t && !/['+]/.test(t)).forEach((t, i) => {
+      addEntity({ prefijo: 'sec-', tipo: 'capitulo', etiqueta: t, urls: [], url: '', hrefInterno: page.href, techs: [], grupo: 'secciones del manual', pagina: page.key, orden: i });
+    });
+  }
   // los casos de estudio también se reconocen por la URL de su informe
   for (const c of Object.values(caso)) {
     const k = canon(c.url);
