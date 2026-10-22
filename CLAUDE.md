@@ -87,6 +87,11 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
   Exploración (v9): núcleo `n:nucleo` y áreas `a:<región>` son nodos derivados; la vista por defecto es «Por áreas» y desplegar/contraer es solo visibilidad (`buildExplore` en `taxonomy.js`, posiciones fijas). Las aristas `conecta` entre áreas resumen relaciones reales (`evidenceCount`), no son relaciones nuevas.
   Pruebas: `node --test tools/second-brain/second-brain.test.mjs` y `node tools/second-brain/e2e.mjs`. Guía y reglas de evidencia: `tools/second-brain/README.md`.
   Cambiar `framework.json` o el motor → `node tools/second-brain/analyze.mjs --demo` (regenera el demo; hay un test que lo comprueba).
+- **Mapa** (`#/mapa`): árbol de toda la estructura (páginas públicas, pestañas, tablas y funciones de Supabase, herramientas y CI) con flechas punteadas entre elementos.
+  Solo dibuja `mapa/estructura.js`, que **se genera** leyendo el repositorio: `node tools/mapa/build-mapa.mjs` y después `node tools/version-assets.mjs` (CI falla con `--check` si queda desactualizado).
+  Agrupaciones, etiquetas y textos a mano en `tools/mapa/mapa.config.json`; lo que no encaja sale en «sin clasificar/». Una pestaña, tabla, página o herramienta nueva aparece sola al regenerar.
+  Relaciones = lo que cada archivo menciona (tablas por `/rest/v1/…`, `ctx.module(…)`, enlaces, `tools/…` en los workflows); no se declaran a mano. Las débiles (`debil` en la config) solo se ven al seleccionar.
+  Módulo `area-privada-mapa.js`, estilos `css/mapa.css` (prefijo `mp-`). El SVG de flechas es decorativo: lo mismo se lee en el panel de detalle.
 - **Supabase no se pausa**: `.github/workflows/supabase-keepalive.yml` llama a `public.keepalive()` (`supabase/keepalive.sql`) lunes y jueves
   con la clave pública, y se reactiva a sí mismo para que GitHub no desactive la tarea tras 60 días sin actividad en el repo.
 - Nada de lo que venga de la base se pinta como HTML sin escapar. La clave del JS es la pública; la `service_role` nunca va en el frontend.
