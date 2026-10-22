@@ -133,13 +133,14 @@ async function step(name, fn) {
 const eq = (a, b, msg) => { if (JSON.stringify(a) !== JSON.stringify(b)) throw new Error((msg || 'distinto') + ': esperado ' + JSON.stringify(b) + ', recibido ' + JSON.stringify(a)); };
 const ok = (c, msg) => { if (!c) throw new Error(msg); };
 
-async function open(viewport, hash) {
-  const ctx = await browser.newContext({ viewport: viewport || { width: 1440, height: 1000 }, bypassCSP: true, hasTouch: !!(viewport && viewport.width < 600), reducedMotion: 'reduce' });
+async function open(viewport, hash, realCsp) {
+  const ctx = await browser.newContext({ viewport: viewport || { width: 1440, height: 1000 }, bypassCSP: !realCsp, hasTouch: !!(viewport && viewport.width < 600), reducedMotion: 'reduce' });
   await ctx.route(/googletagmanager|google-analytics|fonts\.(googleapis|gstatic)/, (r) => r.abort());
   await ctx.route(/supabase\.co/, route);
   await ctx.addInitScript(() => {
     try { sessionStorage.setItem('bm_ap_session', JSON.stringify({ access_token: 'x', refresh_token: 'y', expires_at: Math.floor(Date.now() / 1000) + 3600, email: 'borja.mora.mendez@gmail.com' })); localStorage.setItem('bm_cookie_consent', 'rejected'); } catch (e) { /* noop */ }
   });
+  await ctx.addInitScript(() => { document.addEventListener('securitypolicyviolation', (e) => { (window.__csp = window.__csp || []).push(e.violatedDirective + ' ' + e.blockedURI); }); });
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
@@ -560,6 +561,25 @@ await step('19. Móvil: sin desbordamiento horizontal y el panel cabe en pantall
   ok(b.x >= 0 && b.x + b.width <= 391, 'panel fuera de pantalla: ' + JSON.stringify(b));
   eq(m.errors, []);
   await m.ctx.close();
+});
+await step('CSP real: sin violaciones y la barra de progreso se pinta (no usa estilos en línea)', async () => {
+  const c = await open(null, '#/studio', true);
+  pagePtr.page = c.page;
+  await c.page.click('[data-role="new-project"]');
+  await c.page.fill('#aps-n-title', 'Proyecto CSP');
+  await c.page.click('dialog[open] button[type="submit"]');
+  await c.page.waitForSelector('.aps-panel');
+  await c.page.click('.aps-panel .aps-link:has-text("Cerrar")');
+  await view(c.page, 'Tablero');
+  await c.page.selectOption('.aps-filters .aps-select', { label: 'Proyecto CSP' });
+  await capture(c.page, 'Tarea CSP');
+  await drag(c.page, cardSel('Tarea CSP'), ...(await listPoint('done')));
+  await view(c.page, 'Resumen');
+  const info = await c.page.$eval('.aps-project:has-text("Proyecto CSP") .aps-bar span', (e) => ({ inline: e.style.width, computed: getComputedStyle(e).width, parent: e.parentNode.getBoundingClientRect().width, count: e.closest('.aps-project').querySelector('.aps-project-count').textContent }));
+  ok(parseFloat(info.computed) > 50, 'la barra de progreso no se pinta: ' + JSON.stringify(info));
+  eq(await c.page.evaluate(() => window.__csp || []), [], 'violaciones de CSP');
+  eq(c.errors, []);
+  await c.ctx.close();
 });
 await step('20. Hoy sigue funcionando (Centro de trabajo intacto)', async () => {
   const h = await open(null, '#/');

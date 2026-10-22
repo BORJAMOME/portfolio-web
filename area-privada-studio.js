@@ -594,13 +594,15 @@ window.APStudio = (function () {
     }
     function projectCard(p) {
       var pr = progress(st.tasks, p.id);
+      var fill = h('span');
+      fill.style.width = pr.pct + '%';       // CSSOM, no el atributo style: la CSP (style-src 'self') bloquea los estilos en línea
       return h('li', { class: 'aps-project', 'data-id': p.id }, [
         h('div', { class: 'aps-project-top' }, [
           btn(p.title, 'aps-project-title', function (e) { openPanel('project', p.id, '[data-id="' + p.id + '"] [data-role="open"]'); }, { 'data-role': 'open' }),
           p.priority >= 3 ? chip(PRIO[p.priority], 'aps-chip--prio') : null
         ]),
         h('p', { class: 'aps-project-meta', text: 'Fase: ' + STAGE_LABEL[p.stage] + (p.target_date ? ' · objetivo ' + p.target_date : '') }),
-        h('div', { class: 'aps-bar', role: 'img', 'aria-label': pr.done + ' de ' + pr.total + ' tareas hechas' }, [h('span', { style: 'width:' + pr.pct + '%' })]),
+        h('div', { class: 'aps-bar', role: 'img', 'aria-label': pr.done + ' de ' + pr.total + ' tareas hechas' }, [fill]),
         h('p', { class: 'aps-project-count', text: pr.total ? pr.done + ' de ' + pr.total + ' tareas hechas' : 'Sin tareas todavía' }),
         h('p', { class: p.next_action ? 'aps-next' : 'aps-next is-empty', text: p.next_action ? 'Siguiente: ' + p.next_action : 'Sin siguiente acción definida' })
       ]);
