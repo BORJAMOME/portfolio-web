@@ -559,7 +559,8 @@ const newProject = async (page, name) => {
   await page.click('[data-role="new-project"]');
   await page.fill('#aps-n-title', name);
   await page.click('dialog[open] button[type="submit"]');
-  await page.waitForSelector('.aps-panel #aps-p-title');
+  // el panel de otro proyecto puede seguir abierto: se espera al del proyecto nuevo, no a «cualquier panel»
+  await page.waitForFunction((n) => { const t = document.querySelector('.aps-panel #aps-p-title'); return t && t.value === n; }, name);
 };
 await step('R-1. Hoja de ruta sin proyectos activos: lo explica', async () => {
   await view(page, 'Hoja de ruta');
@@ -745,7 +746,7 @@ await step('18. Sin errores de consola en toda la sesión', async () => { eq(err
 await ctx.close();
 
 await step('19. Móvil: sin desbordamiento horizontal y el panel cabe en pantalla', async () => {
-  const m = await open({ width: 390, height: 800 });
+  const m = await open({ width: 320, height: 700 });
   pagePtr.page = m.page;
   await view(m.page, 'Tablero');
   const ov = await m.page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
@@ -861,7 +862,7 @@ await step('R-13. Accesibilidad (axe): hoja de ruta y panel de proyecto con hito
   await a.ctx.close();
 });
 await step('R-14. Móvil: la hoja de ruta no desborda la página (la línea de tiempo se desplaza dentro de su caja)', async () => {
-  const m = await open({ width: 390, height: 800 });
+  const m = await open({ width: 320, height: 700 });
   pagePtr.page = m.page;
   await view(m.page, 'Hoja de ruta');
   await m.page.waitForSelector('.aps-road');

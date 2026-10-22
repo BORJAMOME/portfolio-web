@@ -1187,6 +1187,11 @@ main { min-height: calc(100vh - var(--ap-top-h) - 90px); outline: none; }
 .aps-seg { display: inline-flex; border: 1px solid var(--ap-line-strong); border-radius: 999px; background: var(--white); padding: 2px; }
 .aps-seg-btn { font: inherit; font-size: 13px; font-weight: 600; color: var(--ink); background: transparent; border: 0; border-radius: 999px; padding: 8px 14px; min-height: 36px; cursor: pointer; }
 .aps-seg-btn[aria-pressed="true"] { background: var(--purple); color: #fff; }
+.aps-head-actions { min-width: 0; max-width: 100%; }
+.aps-seg { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.aps-seg::-webkit-scrollbar { display: none; }
+.aps-seg-btn { flex: none; white-space: nowrap; }
+@media (max-width: 700px) { .aps-head-actions { width: 100%; } .aps-seg { flex: 1 1 100%; } }
 .aps-btn { font: inherit; font-size: 13px; font-weight: 600; color: var(--ink); background: var(--white); border: 1px solid var(--ap-line-strong); border-radius: 999px; padding: 8px 16px; min-height: 40px; cursor: pointer; }
 .aps-btn--primary { background: var(--ink); border-color: var(--ink); color: #fff; }
 .aps-link { font: inherit; font-size: 13px; font-weight: 600; color: var(--purple-text); background: none; border: 0; padding: 4px 2px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
