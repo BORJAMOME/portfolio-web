@@ -377,7 +377,6 @@ const body = {
   columnas, relaciones, sinExplicar, ignorados,
   tipos: cfg.tipos, verbos: cfg.relaciones,
   familias: cfg.familias,
-  secciones: cfg.secciones,
 };
 const huella = createHash('sha1').update(JSON.stringify(body)).digest('hex').slice(0, 7);
 const data = { huella, recuento, ...body };
