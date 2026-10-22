@@ -37,7 +37,9 @@ export function canon(raw) {
   if (!/^https?:$/.test(u.protocol)) return null;
   const host = u.hostname.replace(/^www\./, '').toLowerCase();
   if (host === 'app.powerbi.com') return `powerbi:${u.searchParams.get('r') || u.pathname}`;
-  return host + u.pathname.replace(/\/+$/, '').toLowerCase();
+  const path = u.pathname.replace(/\/+$/, '');
+  const keep = ['v', 'id'].filter((k) => u.searchParams.has(k)).map((k) => `${k}=${u.searchParams.get(k)}`).join('&');
+  return host + (host === 'github.com' ? path.toLowerCase() : path) + (keep ? `?${keep}` : '');
 }
 const reportKey = (raw) => { try { return new URL(raw).searchParams.get('r') || null; } catch { return null; } };
 
@@ -46,7 +48,15 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
   const platformOf = (host) => W.plataformas.find((p) => p.dominios.some((d) => host === d || host.endsWith('.' + d)));
   const hostOf = (raw) => { try { return new URL(raw).hostname.replace(/^www\./, '').toLowerCase(); } catch { return ''; } };
   // repositorio de GitHub: «nombre» si es propio, «propietario/nombre» si es de otra persona
-  const repoOf = (url) => { const m = /github\.com\/([^/]+)\/([^/?#]+)/i.exec(url || ''); return m ? (/^borjamome$/i.test(m[1]) ? m[2] : `${m[1]}/${m[2]}`) : null; };
+  const RESERVADOS = new Set(['features', 'orgs', 'sponsors', 'site-policy', 'settings', 'marketplace', 'topics', 'about', 'pricing', 'login', 'es', 'en', 'collections', 'explore', 'apps', 'enterprise']);
+  const repoOf = (url) => {
+    let u; try { u = new URL(url); } catch { return null; }
+    if (!/^https?:$/.test(u.protocol) || u.hostname.replace(/^www\./, '') !== 'github.com') return null;
+    const [owner, repoRaw] = u.pathname.split('/').filter(Boolean);
+    if (!owner || !repoRaw || RESERVADOS.has(owner.toLowerCase())) return null;
+    const repo = repoRaw.replace(/\.git$/, '');
+    return /^borjamome$/i.test(owner) ? repo : `${owner}/${repo}`;
+  };
 
   /* ═══ 1 · Páginas ═══ */
   const skip = new Set(W.excluir);
@@ -65,7 +75,9 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
     return out;
   };
   const P = {};                                         // clave → página
-  for (const key of [...keys, ...dirs]) {
+  const all = [...keys, ...dirs];
+  const rank = (k) => { const i = W.prioridad.indexOf(k); return i < 0 ? 1e6 : i; };
+  for (const key of all.sort((a, b) => rank(a) - rank(b) || (a < b ? -1 : 1))) {
     const file = key.endsWith('.html') ? key : `${key}/index.html`;
     const raw = read(file);
     const ld = parseLd(raw);
@@ -84,6 +96,10 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
     };
   }
   const pageList = Object.keys(P);
+  const avisos = [];
+  for (const [campo, lista] of [['raiz', W.raiz], ['prioridad', W.prioridad], ['tipos', Object.keys(W.tipos)], ['etiquetas', Object.keys(W.etiquetas)]]) {
+    for (const k of lista) if (!P[k]) avisos.push(`mapa.config.json · web.${campo}: «${k}» no es ninguna página ni carpeta (¿se renombró o se borró?)`);
+  }
   const casos = readCatalog(ROOT).filter((c) => c.group === 'Caso de estudio' && P[c.file]);
   const caso = Object.fromEntries(casos.map((c) => [c.file, c]));
 
@@ -122,8 +138,10 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
   function addEntity(e) {
     const dupe = e.urls.map((u) => urlTo.get(u)).find((x) => x && E[x.id]);
     if (dupe) { const t = E[dupe.id]; t.techs = uniq([...t.techs, ...e.techs]); e.urls.forEach((u) => !t.urls.includes(u) && t.urls.push(u)); return t; }
-    let id = `e:${e.prefijo}${slug(e.etiqueta)}`.slice(0, 80), n = 2;
-    while (E[id]) id = `${id.replace(/-\d+$/, '')}-${n++}`;
+    let base = `e:${e.prefijo}${slug(e.etiqueta)}`;
+    if (base.length > 80) base = base.slice(0, 80).replace(/-[^-]*$/, '');
+    let id = base, n = 2;
+    while (E[id]) id = `${base}~${n++}`;
     E[id] = { ...e, id, dueña: e.pagina };
     e.urls.forEach((u) => urlTo.set(u, { id }));
     E[id].pos = (() => { const q = e.url ? pageMain(e.pagina).indexOf(e.url) : -1; return q >= 0 ? q : 1e9 + order.length; })();
@@ -153,7 +171,8 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
     // 3b · «<!-- CARD ML-1: título -->»: la tarjeta lleva su primer enlace externo
     const cards = [...page.raw.matchAll(/<!--\s*CARD\s+([A-Z]+)-?(\d+)\s*:\s*([^>]*?)\s*-->/g)];
     cards.forEach((m, i) => {
-      const block = page.raw.slice(m.index, cards[i + 1] ? cards[i + 1].index : m.index + 6000);
+      const raw = page.raw.slice(m.index, cards[i + 1] ? cards[i + 1].index : m.index + 6000);
+      const block = raw.split(/<\/section>/)[0];
       const url = (/href="(https?:\/\/[^"]+)"/.exec(block) || [, ''])[1];
       if (!url) return;
       const kind = m[1];
@@ -224,6 +243,7 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
   /* ═══ 4 · Relaciones entre páginas y proyectos ═══ */
   const showsPage = {};                                 // entidad/página → claves de página que la enseñan (además de su dueña)
   const sinExplicar = {};
+  const ignorados = {};                                 // dominio → nº de enlaces ignorados a propósito
   const content = Object.values(P).filter((p) => !W.chrome.includes(p.key));   // la política de privacidad enlaza a GitHub por motivos legales, no enseña nada
   for (const page of content) {
     for (const a of anchors(page)) {
@@ -231,10 +251,10 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
       if (!k) continue;
       const hit = urlTo.get(k) || urlTo.get(`powerbi:${reportKey(a.href)}`);
       if (hit && !(hit.id.startsWith('e:') && E[hit.id].dueña === page.key)) (showsPage[hit.id] ??= []).push(page.key);
-      else if (!hit) {
+      else if (!hit && /^https?:/.test(a.href)) {
         const host = hostOf(a.href);
         const hp = `${host}${new URL(a.href).pathname}`.replace(/\/$/, '').toLowerCase();
-        if (W.ignorarDominios.some((d) => host === d || host.endsWith('.' + d) || hp.startsWith(d))) continue;
+        if (W.ignorarDominios.some((d) => host === d || host.endsWith('.' + d) || hp.startsWith(d))) { ignorados[host] = (ignorados[host] || 0) + 1; continue; }
         if (host === 'github.com' && repoOf(a.href)) continue;                      // tiene nodo propio en «Dónde vive»
         if (/^github\.com$/.test(host) && /^\/[^/]+\/?$/.test(new URL(a.href).pathname)) continue;     // el perfil
         if (/linkedin\.com\/in\//.test(a.href)) continue;
@@ -269,5 +289,5 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
     if (c) derive.push({ de: id, a: P[c.file].id });
   }
 
-  return { P, E, order, internal, siguiente, showsPage, caso, repos, plat, lives, derive, sinExplicar, parseLd, pageList, anchors, resolve };
+  return { P, E, order, internal, siguiente, showsPage, caso, repos, plat, lives, derive, sinExplicar, ignorados, avisos, parseLd, pageList, anchors, resolve };
 }

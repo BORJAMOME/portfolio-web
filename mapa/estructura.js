@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "35173f5",
+ "huella": "15c0370",
  "recuento": {
   "paginas": 20,
   "proyectos": 34,
@@ -750,9 +750,18 @@ export default {
      "nota": "Manual interactivo de Data Storytelling y diseño de dashboards: percepción, ruido, atención, visuales, composición y narrativa, sobre un dashboard vivo.",
      "href": "./data-storytelling.html",
      "archivo": "data-storytelling.html",
+     "familia": "manual"
+    },
+    {
+     "id": "p:descargas",
+     "tipo": "pagina",
+     "etiqueta": "Laboratorio",
+     "nota": "Descarga gratis archivos .pbix de Power BI: Gantt nativo, widgets, Input Slicer, Slope charts, Small Multiples y técnicas avanzadas de DAX y Data Storytelling.",
+     "href": "./descargas.html",
+     "archivo": "descargas.html",
      "hijos": [
       {
-       "id": "g:data-storytelling.html:herramientas-externas",
+       "id": "g:descargas.html:herramientas-externas",
        "tipo": "grupo",
        "etiqueta": "herramientas externas/",
        "hijos": [
@@ -765,18 +774,7 @@ export default {
          "familia": "app"
         }
        ]
-      }
-     ],
-     "familia": "manual"
-    },
-    {
-     "id": "p:descargas",
-     "tipo": "pagina",
-     "etiqueta": "Laboratorio",
-     "nota": "Descarga gratis archivos .pbix de Power BI: Gantt nativo, widgets, Input Slicer, Slope charts, Small Multiples y técnicas avanzadas de DAX y Data Storytelling.",
-     "href": "./descargas.html",
-     "archivo": "descargas.html",
-     "hijos": [
+      },
       {
        "id": "g:descargas.html:archivos-pbix-gestion",
        "tipo": "grupo",
@@ -2611,6 +2609,12 @@ export default {
   },
   {
    "de": "p:data-storytelling",
+   "a": "e:app-pbi-mockup-creator",
+   "tipo": "muestra",
+   "detalle": []
+  },
+  {
+   "de": "p:data-storytelling",
    "a": "e:post-el-futuro-de-los-dashboards-no-son-mas-graficos-son-mejores-interacc",
    "tipo": "muestra",
    "detalle": []
@@ -2655,12 +2659,6 @@ export default {
    "de": "p:descargas",
    "a": "col:privada",
    "tipo": "enlaza",
-   "detalle": []
-  },
-  {
-   "de": "p:descargas",
-   "a": "e:app-pbi-mockup-creator",
-   "tipo": "muestra",
    "detalle": []
   },
   {
@@ -3131,6 +3129,44 @@ export default {
   }
  ],
  "sinExplicar": [],
+ "ignorados": [
+  {
+   "dominio": "behance.net",
+   "n": 1
+  },
+  {
+   "dominio": "calendly.com",
+   "n": 1
+  },
+  {
+   "dominio": "constexpr.org",
+   "n": 1
+  },
+  {
+   "dominio": "gog.com",
+   "n": 1
+  },
+  {
+   "dominio": "msmk.university",
+   "n": 1
+  },
+  {
+   "dominio": "namasdata.com",
+   "n": 1
+  },
+  {
+   "dominio": "neoland.es",
+   "n": 2
+  },
+  {
+   "dominio": "store.steampowered.com",
+   "n": 1
+  },
+  {
+   "dominio": "tally.so",
+   "n": 3
+  }
+ ],
  "tipos": {
   "pagina": "Página",
   "caso": "Caso de estudio",

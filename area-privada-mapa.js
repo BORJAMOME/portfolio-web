@@ -219,7 +219,7 @@ window.APMapa = (function () {
           h('summary', { text: miss.length + (miss.length === 1 ? ' enlace del contenido que el mapa no sabe clasificar' : ' enlaces del contenido que el mapa no sabe clasificar') }),
           h('ul', null, miss.map(function (m) { return h('li', null, [h('code', { text: m.url }), ' · ' + m.paginas.join(', ')]); }))
         ])
-        : h('p', { class: 'mp-legend-line', text: 'Todos los enlaces del contenido están clasificados.' })
+        : h('p', { class: 'mp-legend-line', text: 'Todos los enlaces del contenido están clasificados' + ((data.ignorados || []).length ? '; se ignoran a propósito los de ' + data.ignorados.map(function (d) { return d.dominio; }).join(', ') + '.' : '.') })
     ]);
   }
 

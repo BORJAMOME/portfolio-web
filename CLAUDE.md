@@ -84,6 +84,7 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
 - **Mapa** (`#/mapa`): árbol de toda la estructura (páginas públicas, pestañas, tablas y funciones de Supabase, herramientas y CI) con flechas punteadas entre elementos.
   Solo dibuja `mapa/estructura.js`, que **se genera** leyendo el repositorio: `node tools/mapa/build-mapa.mjs` y después `node tools/version-assets.mjs` (CI falla con `--check` si queda desactualizado).
   Agrupaciones, etiquetas y textos a mano en `tools/mapa/mapa.config.json`; lo que no encaja sale en «sin clasificar/». Una pestaña, tabla, página o herramienta nueva aparece sola al regenerar.
+  `--check` falla también si hay un enlace del contenido sin clasificar (resuélvelo en la config o añádelo a `web.revisados`), una clave de la config sin página, o area-privada.html / MODULES cambian de formato. Solo ve lo que git conoce (rastreado o añadido): un archivo suelto no cambia el mapa.
   Relaciones = lo que cada archivo menciona (tablas por `/rest/v1/…`, `ctx.module(…)`, enlaces, `tools/…` en los workflows); no se declaran a mano. Las débiles (`debil` en la config) solo se ven al seleccionar.
   Módulo `area-privada-mapa.js`, estilos `css/mapa.css` (prefijo `mp-`). El SVG de flechas es decorativo: lo mismo se lee en el panel de detalle.
 - **Supabase no se pausa**: `.github/workflows/supabase-keepalive.yml` llama a `public.keepalive()` (`supabase/keepalive.sql`) lunes y jueves
