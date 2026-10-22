@@ -19,6 +19,16 @@ window.APMapa = (function () {
   var ctx = null, data = null;
   var byId, parentOf, colOf, subtree, labels, edges, root, canvas, svg, detail, famCount;
   var pinned = null, hover = null, famFilter = null, raf = 0;
+  var collapsed = {}, lists = {}, toggles = {};
+  var view = 'todo', query = '', colEls = [], qCount = null;
+  // Vistas por pregunta: qué columnas se enseñan
+  var VIEWS = [
+    { id: 'todo', nombre: 'Todo', cols: [0, 1, 2, 3, 4] },
+    { id: 'sitio', nombre: '¿Qué publico y dónde vive?', cols: [0, 1] },
+    { id: 'privada', nombre: '¿Qué hay en el área privada y qué datos usa?', cols: [2, 3] },
+    { id: 'build', nombre: '¿Qué lo genera y lo comprueba?', cols: [2, 3, 4] }
+  ];
+  function fold(s) { return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }   // grupos plegados, su <ul> y su botón
 
   /* ── Datos ── */
   function assetUrl() {
@@ -38,6 +48,25 @@ window.APMapa = (function () {
       })(col, null);
     });
   }
+  function foldable(n) { return !!(n.hijos && n.hijos.length) && (n.tipo === 'esquema' || (n.tipo === 'grupo' && colOf[n.id] === 0)); }
+  function initCollapsed() {
+    collapsed = {};
+    Object.keys(byId).forEach(function (id) { if (foldable(byId[id])) collapsed[id] = true; });
+  }
+  // el elemento (o su antecesor plegado más alto) que se ve de verdad
+  function shown(id) {
+    var out = id;
+    for (var cur = parentOf[id]; cur; cur = parentOf[cur]) if (collapsed[cur]) out = cur;
+    return out;
+  }
+  function setFold(id, folded) {
+    collapsed[id] = folded;
+    if (lists[id]) lists[id].hidden = folded;
+    if (toggles[id]) { toggles[id].setAttribute('aria-expanded', folded ? 'false' : 'true'); toggles[id].textContent = folded ? '▸' : '▾'; }
+    schedule();
+  }
+  // abrir los grupos que esconden un elemento (al seleccionarlo desde el panel)
+  function reveal(id) { for (var cur = parentOf[id]; cur; cur = parentOf[cur]) if (collapsed[cur]) setFold(cur, false); }
   function color(fam) { return (data.familias[fam] || {}).color || '#44546F'; }
 
   function render(c) {
@@ -48,11 +77,12 @@ window.APMapa = (function () {
   /* ── Pintado ── */
   function paint() {
     var h = ctx.h;
-    labels = {}; edges = []; pinned = null; hover = null; famFilter = null;
+    labels = {}; edges = []; pinned = null; hover = null; famFilter = null; lists = {}; toggles = {}; view = 'todo'; query = ''; colEls = [];
+    initCollapsed();
     ctx.view.textContent = '';
 
     var r = data.recuento;
-    var ver = ['v' + data.huella, r.paginas + ' páginas', r.proyectos + ' proyectos', r.plataformas + ' plataformas y repos', r.pestanas + ' pestañas', r.tablas + ' tablas', r.funciones + ' funciones', r.herramientas + ' herramientas', r.relaciones + ' relaciones'].join(' · ');
+    var ver = ['v' + data.huella, r.paginas + ' páginas', r.proyectos + ' proyectos', r.recursos + ' recursos', r.plataformas + ' plataformas y repos', r.pestanas + ' pestañas', r.tablas + ' tablas', r.funciones + ' funciones', r.herramientas + ' herramientas', r.relaciones + ' relaciones'].join(' · ');
 
     svg = svgEl('svg', { class: 'mp-edges', 'aria-hidden': 'true', focusable: 'false' });
     svg.appendChild(marker('mp-arrow', '#6f7a8f'));
@@ -78,6 +108,8 @@ window.APMapa = (function () {
 
     root = h('section', { class: 'mp', 'aria-labelledby': 'mp-title' }, [
       h('p', { class: 'ape-meta', text: 'Pulsa un elemento para ver con qué se relaciona, o un tipo de la leyenda para resaltarlo. El menú que repiten todas las páginas no se dibuja: solo los enlaces del contenido.' }),
+      bar(),
+      orphans(),
       legend(),
       canvas,
       foot(),
@@ -87,7 +119,7 @@ window.APMapa = (function () {
 
     data.relaciones.forEach(function (rel) {
       var weak = !!(data.verbos[rel.tipo] || {}).debil;
-      var p = svgEl('path', { class: 'mp-edge' + (weak ? ' is-weak' : ''), 'marker-end': 'url(#mp-arrow)' });
+      var p = svgEl('path', { class: 'mp-edge mp-edge--' + rel.tipo + (weak ? ' is-weak' : ''), 'marker-end': 'url(#mp-arrow)' });
       svg.appendChild(p);
       edges.push({ rel: rel, el: p });
     });
@@ -108,20 +140,33 @@ window.APMapa = (function () {
   function column(col) {
     var h = ctx.h;
     var btn = labelButton(col);
-    return h('div', { class: 'mp-col' }, [
+    var el = h('div', { class: 'mp-col' }, [
       h('h3', { class: 'mp-colhead' }, [h('span', { class: 'mp-lab' }, [btn, h('span', { class: 'mp-note', text: col.nota })])]),
       h('ul', { class: 'mp-tree' }, (col.hijos || []).map(node))
     ]);
+    colEls.push(el);
+    return el;
   }
 
   function node(n) {
     var h = ctx.h;
     // la nota va sobre la propia rama solo en los grupos; en el resto se lee en el panel de detalle
     var inline = n.nota && n.tipo === 'grupo';
-    var kids = n.hijos && n.hijos.length ? h('ul', null, n.hijos.map(node)) : null;
+    var kids = n.hijos && n.hijos.length ? h('ul', { hidden: !!collapsed[n.id] }, n.hijos.map(node)) : null;
+    var tog = null;
+    if (kids && foldable(n)) {
+      lists[n.id] = kids;
+      tog = h('button', {
+        type: 'button', class: 'mp-tog', 'aria-expanded': collapsed[n.id] ? 'false' : 'true', 'aria-label': 'Mostrar u ocultar el contenido de ' + n.etiqueta,
+        text: collapsed[n.id] ? '▸' : '▾', onclick: function () { setFold(n.id, !collapsed[n.id]); }
+      });
+      toggles[n.id] = tog;
+    }
     return h('li', { class: 'mp-node' + (inline ? ' mp-node--note' : '') }, [
       h('div', { class: 'mp-row' }, [
-        h('span', { class: 'mp-lab' }, [labelButton(n), inline ? h('span', { class: 'mp-note mp-note--sub', text: n.nota }) : null])
+        tog,
+        h('span', { class: 'mp-lab' }, [labelButton(n), inline ? h('span', { class: 'mp-note mp-note--sub', text: n.nota }) : null]),
+        tog ? h('span', { class: 'mp-count', text: String(n.hijos.length) }) : null
       ]),
       kids
     ]);
@@ -143,6 +188,66 @@ window.APMapa = (function () {
     return b;
   }
 
+  /* Barra: búsqueda y vistas por pregunta */
+  function bar() {
+    var h = ctx.h;
+    qCount = h('span', { class: 'mp-q-n', 'aria-live': 'polite' });
+    var input = h('input', {
+      type: 'search', class: 'mp-q', placeholder: 'Buscar un proyecto, página, tabla o tecnología', 'aria-label': 'Buscar en el mapa', autocomplete: 'off',
+      oninput: function (e) { query = e.target.value; applySearch(); },
+      onkeydown: function (e) {
+        if (e.key === 'Enter') { var first = root.querySelector('.mp-label.is-hit'); if (first) { e.preventDefault(); select(first.getAttribute('data-id')); } }
+        if (e.key === 'Escape' && query) { e.stopPropagation(); e.target.value = ''; query = ''; applySearch(); }
+      }
+    });
+    return h('div', { class: 'mp-bar' }, [
+      h('label', { class: 'mp-search' }, [h('span', { class: 'sr-only', text: 'Buscar en el mapa' }), input, qCount]),
+      h('div', { class: 'mp-views', role: 'group', 'aria-label': 'Vistas' }, VIEWS.map(function (v) {
+        return h('button', { type: 'button', class: 'mp-view', 'data-view': v.id, 'aria-pressed': v.id === view ? 'true' : 'false', text: v.nombre, onclick: function () { setView(v.id); } });
+      }))
+    ]);
+  }
+
+  /* Páginas que ninguna otra página pública enlaza: el hallazgo más útil de un vistazo */
+  function orphans() {
+    var h = ctx.h, g = byId['g:web:huerfanas'];
+    if (!g || !g.hijos || !g.hijos.length) return null;
+    return h('p', { class: 'mp-orphans' }, [
+      h('strong', { text: 'Sin enlaces desde el sitio público: ' }),
+      g.hijos.map(function (n) { return h('button', { type: 'button', class: 'mp-chip', text: n.etiqueta, onclick: function () { select(n.id); } }); })
+    ]);
+  }
+
+  function colHidden(id) { return colEls[colOf[id]] && colEls[colOf[id]].hidden; }
+  function setView(id) {
+    view = id;
+    var def = VIEWS.filter(function (v) { return v.id === id; })[0] || VIEWS[0];
+    var visible = colEls.filter(function (c, i) { c.hidden = def.cols.indexOf(i) < 0; return !c.hidden; });
+    visible.forEach(function (c, i) { c.classList.toggle('is-last', i === visible.length - 1); });
+    canvas.querySelector('.mp-cols').style.setProperty('--cols', String(visible.length));
+    [].forEach.call(root.querySelectorAll('.mp-view'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-view') === id ? 'true' : 'false'); });
+    if (pinned && colHidden(pinned)) select(null);
+    schedule();
+  }
+
+  /* Búsqueda: resalta lo que coincide y abre los grupos que lo esconden */
+  function applySearch() {
+    var q = fold(query).trim();
+    var hits = [];
+    if (q.length >= 2) Object.keys(byId).forEach(function (id) {
+      var n = byId[id];
+      if (n.tipo === 'columna') return;
+      if (fold([n.etiqueta, (n.tec || []).join(' '), n.archivo || '', n.nota || ''].join(' ')).indexOf(q) >= 0) hits.push(id);
+    });
+    root.classList.toggle('has-q', q.length >= 2);
+    Object.keys(labels).forEach(function (id) { labels[id].classList.toggle('is-hit', hits.indexOf(id) >= 0); });
+    if (hits.length && hits.length <= 60) hits.forEach(function (id) { reveal(id); });
+    qCount.textContent = q.length < 2 ? '' : hits.length ? hits.length + (hits.length === 1 ? ' resultado' : ' resultados') + ' · Intro para abrir el primero' : 'Sin resultados';
+    // si lo encontrado está en una columna oculta, se vuelve a la vista completa
+    if (hits.length && view !== 'todo' && hits.every(function (id) { return colHidden(id); })) setView('todo');
+    schedule();
+  }
+
   /* Leyenda: cada tipo con su color y su forma; pulsarla resalta todos los de ese tipo */
   function legend() {
     var h = ctx.h;
@@ -157,6 +262,11 @@ window.APMapa = (function () {
         b.style.setProperty('--fam', def.color);
         return b;
       }),
+      h('button', { type: 'button', class: 'mp-fold', text: 'Desplegar todo', onclick: function (e) {
+        var open = e.target.getAttribute('data-open') !== '1';
+        Object.keys(lists).forEach(function (id) { setFold(id, !open); });
+        e.target.setAttribute('data-open', open ? '1' : '0'); e.target.textContent = open ? 'Plegar todo' : 'Desplegar todo';
+      } }),
       h('label', { class: 'mp-all' }, [
         h('input', { type: 'checkbox', onchange: function (e) { root.classList.toggle('show-all', e.target.checked); } }),
         'Dibujar todas las relaciones'
@@ -182,7 +292,7 @@ window.APMapa = (function () {
           h('summary', { text: miss.length + (miss.length === 1 ? ' enlace del contenido que el mapa no sabe clasificar' : ' enlaces del contenido que el mapa no sabe clasificar') }),
           h('ul', null, miss.map(function (m) { return h('li', null, [h('code', { text: m.url }), ' · ' + m.paginas.join(', ')]); }))
         ])
-        : h('p', { class: 'mp-legend-line', text: 'Todos los enlaces del contenido están clasificados.' })
+        : h('p', { class: 'mp-legend-line', text: 'Todos los enlaces del contenido están clasificados' + ((data.ignorados || []).length ? '; se ignoran a propósito los de ' + data.ignorados.map(function (d) { return d.dominio; }).join(', ') + '.' : '.') })
     ]);
   }
 
@@ -209,12 +319,19 @@ window.APMapa = (function () {
     var cb = canvas.getBoundingClientRect();
     svg.setAttribute('viewBox', '0 0 ' + Math.round(cb.width) + ' ' + Math.round(cb.height));
     if (!window.matchMedia(WIDE).matches) return;
+    var drawn = {};
     edges.forEach(function (e) {
-      var a = labels[e.rel.de], b = labels[e.rel.a];
-      if (!a || !b) return;
+      var ia = shown(e.rel.de), ib = shown(e.rel.a);
+      var a = labels[ia], b = labels[ib];
+      var key = ia + '|' + ib, active = e.el.classList.contains('is-on');
+      // dos relaciones que acaban en el mismo par de elementos visibles se dibujan una vez; si ambos extremos son el mismo grupo, ninguna
+      var oculta = colHidden(ia) || colHidden(ib);
+      e.el.classList.toggle('is-folded', oculta || !a || !b || ia === ib || (!active && !!drawn[key]));
+      if (oculta || !a || !b || ia === ib) return;
+      if (!active) drawn[key] = true;
       var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
       var ay = ra.top + ra.height / 2 - cb.top, by = rb.top + rb.height / 2 - cb.top;
-      var ca = colOf[e.rel.de], cbi = colOf[e.rel.a], d;
+      var ca = colOf[ia], cbi = colOf[ib], d;
       if (ca === cbi) {                                      // misma columna: bucle por el lado derecho
         var sx = ra.right - cb.left + 3, ex = rb.right - cb.left + 6;
         var bulge = 30 + Math.min(70, Math.abs(by - ay) * 0.12);
@@ -252,8 +369,11 @@ window.APMapa = (function () {
 
   function select(id) {
     pinned = id;
+    if (id && colHidden(id)) setView('todo');
+    if (id) reveal(id);
     refresh();
     paintDetail();
+    schedule();
   }
 
   function refresh() {
@@ -277,6 +397,7 @@ window.APMapa = (function () {
       b.classList.toggle('is-fam', !!famFilter && b.getAttribute('data-fam') === famFilter);
       b.setAttribute('aria-pressed', k === pinned ? 'true' : 'false');
     });
+    schedule();
     [].forEach.call(root.querySelectorAll('.mp-key'), function (k) { k.setAttribute('aria-pressed', k.getAttribute('data-fam') === famFilter ? 'true' : 'false'); });
   }
 

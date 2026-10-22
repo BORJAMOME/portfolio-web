@@ -1,15 +1,18 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "a0a6dc7",
+ "huella": "b37bb4a",
  "recuento": {
   "paginas": 20,
-  "proyectos": 63,
+  "proyectos": 34,
+  "recursos": 46,
+  "perfil": 9,
+  "capitulos": 16,
   "plataformas": 11,
   "pestanas": 10,
   "tablas": 29,
   "funciones": 4,
   "herramientas": 14,
-  "relaciones": 157,
+  "relaciones": 175,
   "sinExplicar": 0
  },
  "columnas": [
@@ -80,6 +83,92 @@ export default {
      "nota": "Power BI · DAX · Python · SQL · UX/UI · Data Storytelling. Madrid o remoto.",
      "href": "./sobre-mi.html",
      "archivo": "sobre-mi.html",
+     "hijos": [
+      {
+       "id": "g:sobre-mi.html:roles-y-formacion-relacionados-con-datos",
+       "tipo": "grupo",
+       "etiqueta": "roles y formación relacionados con datos/",
+       "hijos": [
+        {
+         "id": "e:perfil-data-analyst-especializacion-y-proyectos",
+         "tipo": "perfil",
+         "etiqueta": "Data Analyst · Especialización y proyectos",
+         "nota": "2024–presente",
+         "familia": "perfil"
+        },
+        {
+         "id": "e:perfil-operations-executive-negronis-uk",
+         "tipo": "perfil",
+         "etiqueta": "Operations Executive · Negronis (UK)",
+         "nota": "2022–2023",
+         "familia": "perfil"
+        },
+        {
+         "id": "e:perfil-junior-data-analyst-ntt-data-uk",
+         "tipo": "perfil",
+         "etiqueta": "Junior Data Analyst · NTT DATA (UK)",
+         "nota": "2021–2022",
+         "familia": "perfil"
+        }
+       ]
+      },
+      {
+       "id": "g:sobre-mi.html:formacion",
+       "tipo": "grupo",
+       "etiqueta": "formación/",
+       "hijos": [
+        {
+         "id": "e:perfil-master-en-ux-ui-neoland-en-curso",
+         "tipo": "perfil",
+         "etiqueta": "Máster en UX/UI · Neoland · En curso",
+         "nota": "2026",
+         "familia": "perfil"
+        },
+        {
+         "id": "e:perfil-bootcamp-data-analytics-360-horas-neoland",
+         "tipo": "perfil",
+         "etiqueta": "Bootcamp Data Analytics (360 horas) · Neoland",
+         "nota": "2026",
+         "familia": "perfil"
+        },
+        {
+         "id": "e:perfil-especializacion-power-bi-namasdata",
+         "tipo": "perfil",
+         "etiqueta": "Especialización Power BI · Namasdata",
+         "nota": "2024",
+         "familia": "perfil"
+        },
+        {
+         "id": "e:perfil-master-en-business-intelligence-big-data-msmk",
+         "tipo": "perfil",
+         "etiqueta": "Máster en Business Intelligence & Big Data · MSMK",
+         "nota": "2015–2016",
+         "familia": "perfil"
+        },
+        {
+         "id": "e:perfil-licenciatura-en-publicidad-y-rrpp-ucm",
+         "tipo": "perfil",
+         "etiqueta": "Licenciatura en Publicidad y RRPP · UCM",
+         "nota": "2009–2014",
+         "familia": "perfil"
+        }
+       ]
+      },
+      {
+       "id": "g:sobre-mi.html:certificaciones",
+       "tipo": "grupo",
+       "etiqueta": "certificaciones/",
+       "hijos": [
+        {
+         "id": "e:perfil-microsoft-certified-power-bi-data-analyst-associate-pl-300",
+         "tipo": "perfil",
+         "etiqueta": "Microsoft Certified: Power BI Data Analyst Associate · PL-300",
+         "nota": "2025",
+         "familia": "perfil"
+        }
+       ]
+      }
+     ],
      "familia": "pagina"
     },
     {
@@ -384,9 +473,60 @@ export default {
          "id": "p:ml",
          "tipo": "manual",
          "etiqueta": "Manual de Machine Learning",
-         "nota": "Manual visual e interactivo de Machine Learning para analistas de datos: 63 modelos explicados en sencillo, con ejemplos de negocio, visualizaciones 2D/3D y laboratorios.",
+         "nota": "Manual visual e interactivo de Machine Learning para analistas de datos: 63 modelos explicados en sencillo, con ejemplos de negocio, visualizaciones 2D/3D y laboratorios. · 63 modelos explicados",
          "href": "./ml/",
          "archivo": "ml/",
+         "hijos": [
+          {
+           "id": "g:ml:secciones-del-manual",
+           "tipo": "grupo",
+           "etiqueta": "secciones del manual/",
+           "hijos": [
+            {
+             "id": "e:sec-estudia-en-el-orden-correcto",
+             "tipo": "capitulo",
+             "etiqueta": "Estudia en el orden correcto",
+             "href": "./ml/",
+             "familia": "manual"
+            },
+            {
+             "id": "e:sec-encuentra-tu-modelo-respondiendo-preguntas",
+             "tipo": "capitulo",
+             "etiqueta": "Encuentra tu modelo respondiendo preguntas",
+             "href": "./ml/",
+             "familia": "manual"
+            },
+            {
+             "id": "e:sec-los-63-modelos-de-un-vistazo",
+             "tipo": "capitulo",
+             "etiqueta": "Los 63 modelos, de un vistazo",
+             "href": "./ml/",
+             "familia": "manual"
+            },
+            {
+             "id": "e:sec-tabla-comparativa",
+             "tipo": "capitulo",
+             "etiqueta": "Tabla comparativa",
+             "href": "./ml/",
+             "familia": "manual"
+            },
+            {
+             "id": "e:sec-lo-que-necesitas-antes-de-los-modelos",
+             "tipo": "capitulo",
+             "etiqueta": "Lo que necesitas antes de los modelos",
+             "href": "./ml/",
+             "familia": "manual"
+            },
+            {
+             "id": "e:sec-que-se-reviso-que-se-corrigio-y-que-viene-despues",
+             "tipo": "capitulo",
+             "etiqueta": "Qué se revisó, qué se corrigió y qué viene después",
+             "href": "./ml/",
+             "familia": "manual"
+            }
+           ]
+          }
+         ],
          "familia": "manual"
         }
        ]
@@ -477,7 +617,7 @@ export default {
           "análisis exploratorio",
           "ventas"
          ],
-         "archivo": "tree/main/02-Python/01-analisis-exploratorio/01-analisis-ventas-empleados",
+         "archivo": "02-Python/01-analisis-exploratorio/01-analisis-ventas-empleados",
          "familia": "proyecto"
         },
         {
@@ -494,7 +634,7 @@ export default {
           "educación",
           "análisis exploratorio"
          ],
-         "archivo": "tree/main/02-Python/01-analisis-exploratorio/02-habitos-rendimiento-estudiantes",
+         "archivo": "02-Python/01-analisis-exploratorio/02-habitos-rendimiento-estudiantes",
          "familia": "proyecto"
         },
         {
@@ -511,7 +651,7 @@ export default {
           "salud",
           "riesgo cardiovascular"
          ],
-         "archivo": "tree/main/02-Python/01-analisis-exploratorio/03-riesgo-salud-pacientes",
+         "archivo": "02-Python/01-analisis-exploratorio/03-riesgo-salud-pacientes",
          "familia": "proyecto"
         }
        ]
@@ -535,7 +675,7 @@ export default {
           "PERCENTILE_CONT",
           "ventas"
          ],
-         "archivo": "tree/main/01-SQL/01-analisis-ventas-concesionarios",
+         "archivo": "01-SQL/01-analisis-ventas-concesionarios",
          "familia": "proyecto"
         },
         {
@@ -553,7 +693,7 @@ export default {
           "LEAD",
           "LAG/LEAD"
          ],
-         "archivo": "tree/main/01-SQL/02-adventureworks-avanzado",
+         "archivo": "01-SQL/02-adventureworks-avanzado",
          "familia": "proyecto"
         },
         {
@@ -570,7 +710,7 @@ export default {
           "Window Functions",
           "análisis de clientes"
          ],
-         "archivo": "tree/main/01-SQL/03-analisis-clientes-tienda",
+         "archivo": "01-SQL/03-analisis-clientes-tienda",
          "familia": "proyecto"
         }
        ]
@@ -594,7 +734,8 @@ export default {
           "retail",
           "series temporales"
          ],
-         "archivo": "tree/main/03-Machine-Learning/04-series-temporales/arima/01-caso-retail",
+         "archivo": "03-Machine-Learning/04-series-temporales/arima/01-caso-retail",
+         "nota": "Solo figura en los datos estructurados (JSON-LD) de la página; no hay tarjeta visible.",
          "familia": "proyecto"
         },
         {
@@ -610,7 +751,8 @@ export default {
           "clustering",
           "ciencia política"
          ],
-         "archivo": "tree/main/03-Machine-Learning/02-no-supervisado/clustering/kmeans/03-segmentacion-politica",
+         "archivo": "03-Machine-Learning/02-no-supervisado/clustering/kmeans/03-segmentacion-politica",
+         "nota": "Solo figura en los datos estructurados (JSON-LD) de la página; no hay tarjeta visible.",
          "familia": "proyecto"
         },
         {
@@ -626,7 +768,8 @@ export default {
           "clasificación",
           "fitness"
          ],
-         "archivo": "tree/main/03-Machine-Learning/01-supervisado/clasificacion/03-xgboost",
+         "archivo": "03-Machine-Learning/01-supervisado/clasificacion/03-xgboost",
+         "nota": "Solo figura en los datos estructurados (JSON-LD) de la página; no hay tarjeta visible.",
          "familia": "proyecto"
         }
        ]
@@ -748,17 +891,79 @@ export default {
      "archivo": "data-storytelling.html",
      "hijos": [
       {
-       "id": "g:data-storytelling.html:herramientas-externas",
+       "id": "g:data-storytelling.html:capitulos-del-manual",
        "tipo": "grupo",
-       "etiqueta": "herramientas externas/",
+       "etiqueta": "capítulos del manual/",
        "hijos": [
         {
-         "id": "e:app-pbi-mockup-creator",
-         "tipo": "app",
-         "etiqueta": "PBI Mockup Creator",
-         "href": "https://borjamome.github.io/powerbi-mockup/",
-         "externo": true,
-         "familia": "app"
+         "id": "e:cap-01-fundamentos",
+         "tipo": "capitulo",
+         "etiqueta": "01 · Fundamentos",
+         "href": "./data-storytelling.html#c01",
+         "familia": "manual"
+        },
+        {
+         "id": "e:cap-02-contexto",
+         "tipo": "capitulo",
+         "etiqueta": "02 · Contexto",
+         "href": "./data-storytelling.html#c02",
+         "familia": "manual"
+        },
+        {
+         "id": "e:cap-03-percepcion",
+         "tipo": "capitulo",
+         "etiqueta": "03 · Percepción",
+         "href": "./data-storytelling.html#c03",
+         "familia": "manual"
+        },
+        {
+         "id": "e:cap-04-reducir-el-ruido",
+         "tipo": "capitulo",
+         "etiqueta": "04 · Reducir el ruido",
+         "href": "./data-storytelling.html#c04",
+         "familia": "manual"
+        },
+        {
+         "id": "e:cap-05-dirigir-la-atencion",
+         "tipo": "capitulo",
+         "etiqueta": "05 · Dirigir la atención",
+         "href": "./data-storytelling.html#c05",
+         "familia": "manual"
+        },
+        {
+         "id": "e:cap-06-elegir-el-visual",
+         "tipo": "capitulo",
+         "etiqueta": "06 · Elegir el visual",
+         "href": "./data-storytelling.html#c06",
+         "familia": "manual"
+        },
+        {
+         "id": "e:cap-07-componer-como-disenador",
+         "tipo": "capitulo",
+         "etiqueta": "07 · Componer como diseñador",
+         "href": "./data-storytelling.html#c07",
+         "familia": "manual"
+        },
+        {
+         "id": "e:cap-08-el-texto",
+         "tipo": "capitulo",
+         "etiqueta": "08 · El texto",
+         "href": "./data-storytelling.html#c08",
+         "familia": "manual"
+        },
+        {
+         "id": "e:cap-09-construir-la-historia",
+         "tipo": "capitulo",
+         "etiqueta": "09 · Construir la historia",
+         "href": "./data-storytelling.html#c09",
+         "familia": "manual"
+        },
+        {
+         "id": "e:cap-10-juntar-las-piezas",
+         "tipo": "capitulo",
+         "etiqueta": "10 · Juntar las piezas",
+         "href": "./data-storytelling.html#c10",
+         "familia": "manual"
         }
        ]
       }
@@ -773,6 +978,21 @@ export default {
      "href": "./descargas.html",
      "archivo": "descargas.html",
      "hijos": [
+      {
+       "id": "g:descargas.html:herramientas-externas",
+       "tipo": "grupo",
+       "etiqueta": "herramientas externas/",
+       "hijos": [
+        {
+         "id": "e:app-pbi-mockup-creator",
+         "tipo": "app",
+         "etiqueta": "PBI Mockup Creator",
+         "href": "https://borjamome.github.io/powerbi-mockup/",
+         "externo": true,
+         "familia": "app"
+        }
+       ]
+      },
       {
        "id": "g:descargas.html:archivos-pbix-gestion",
        "tipo": "grupo",
@@ -1047,6 +1267,133 @@ export default {
          "familia": "lab"
         }
        ]
+      },
+      {
+       "id": "g:descargas.html:posts-de-linkedin-de-cada-archivo",
+       "tipo": "grupo",
+       "etiqueta": "posts de LinkedIn de cada archivo/",
+       "hijos": [
+        {
+         "id": "e:post-gantt-nativo-de-power-bi-post",
+         "tipo": "post",
+         "etiqueta": "Gantt nativo de Power BI (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-datavisualization-activity-7360648315782283264-NQ4T",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-control-de-presupuestos-post",
+         "tipo": "post",
+         "etiqueta": "Control de presupuestos (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-salesanalytics-activity-7418539287245639680-0Ynp",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-reparto-del-presupuesto-post",
+         "tipo": "post",
+         "etiqueta": "Reparto del presupuesto (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dashboarddesign-dataviz-activity-7374137020979339264-7kBX",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-comparador-de-periodos-post",
+         "tipo": "post",
+         "etiqueta": "Comparador de períodos (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7376214576889098240-JzRp",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-dashboard-financiero-adaptativo-post",
+         "tipo": "post",
+         "etiqueta": "Dashboard financiero adaptativo (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7379158005759508480-DD9P",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-resaltar-sin-filtrar-post",
+         "tipo": "post",
+         "etiqueta": "Resaltar sin filtrar (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7381750867634487296-8LRO",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-variacion-sobre-barras-post",
+         "tipo": "post",
+         "etiqueta": "Variación sobre barras (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7391493455455264769-Q8Ya",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-beneficio-vs-objetivo-post",
+         "tipo": "post",
+         "etiqueta": "Beneficio vs. Objetivo (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7394778746525913088-iwtA",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-small-multiples-por-producto-post",
+         "tipo": "post",
+         "etiqueta": "Small multiples por producto (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7399477094331858945-K9HS",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-evolucion-con-narrativa-post",
+         "tipo": "post",
+         "etiqueta": "Evolución con narrativa (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7421562966178889729-5y8L",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-dashboard-de-alertas-comerciales-post",
+         "tipo": "post",
+         "etiqueta": "Dashboard de alertas comerciales (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7427045290324570112-v3s2",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-comparador-de-periodos-flexible-post",
+         "tipo": "post",
+         "etiqueta": "Comparador de periodos flexible (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-businessitelligence-activity-7430635213443035137-TJbj",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-top-n-para-priorizar-post",
+         "tipo": "post",
+         "etiqueta": "Top N para priorizar (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7432461459080765440-Y9EH",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-kpi-card-adaptativo-post",
+         "tipo": "post",
+         "etiqueta": "KPI Card adaptativo (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-businessintelligence-activity-7452022964017008640-Z-VH",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-resaltar-sin-ocultar-post",
+         "tipo": "post",
+         "etiqueta": "Resaltar sin ocultar (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7458166054264111104-Hov2",
+         "externo": true,
+         "familia": "post"
+        }
+       ]
       }
      ],
      "familia": "pagina"
@@ -1064,13 +1411,13 @@ export default {
      "id": "g:web:huerfanas",
      "tipo": "grupo",
      "etiqueta": "sin enlaces desde el sitio/",
-     "nota": "ninguna página las enlaza",
+     "nota": "ninguna página pública las enlaza",
      "hijos": [
       {
        "id": "p:pbi",
        "tipo": "manual",
        "etiqueta": "Manual de Power BI",
-       "nota": "Manual visual e interactivo de Power BI: del método BI7 y el modelo en estrella a Power Query, DAX, visualización, storytelling, Power BI Service y la certificación PL-300.",
+       "nota": "Manual visual e interactivo de Power BI: del método BI7 y el modelo en estrella a Power Query, DAX, visualización, storytelling, Power BI Service y la certificación PL-300. · 33 archivos de apuntes",
        "href": "./pbi/",
        "archivo": "pbi/",
        "familia": "manual"
@@ -1133,7 +1480,7 @@ export default {
        "id": "z:gh:keriew-augustus",
        "tipo": "repo",
        "etiqueta": "Keriew/augustus",
-       "href": "https://github.com/BORJAMOME/Keriew/augustus",
+       "href": "https://github.com/Keriew/augustus",
        "externo": true
       },
       {
@@ -1171,7 +1518,7 @@ export default {
      "id": "z:linkedin",
      "tipo": "plataforma",
      "etiqueta": "LinkedIn",
-     "nota": "6 elementos",
+     "nota": "21 elementos",
      "familia": "plataforma"
     },
     {
@@ -1228,7 +1575,7 @@ export default {
      "id": "t:calendario",
      "tipo": "pestana",
      "etiqueta": "Calendario",
-     "nota": "solo lectura, desde Google",
+     "nota": "Google en solo lectura + agenda propia",
      "href": "#/calendario",
      "archivo": "area-privada-calendario.js",
      "familia": "privada"
@@ -1802,6 +2149,24 @@ export default {
  ],
  "relaciones": [
   {
+   "de": "col:privada",
+   "a": "p:descargas",
+   "tipo": "enlaza",
+   "detalle": []
+  },
+  {
+   "de": "col:privada",
+   "a": "p:privacidad",
+   "tipo": "enlaza",
+   "detalle": []
+  },
+  {
+   "de": "col:privada",
+   "a": "p:roma-aeterna",
+   "tipo": "enlaza",
+   "detalle": []
+  },
+  {
    "de": "e:100-municipios-un-indice-y-una-pregunta-incomoda",
    "a": "z:behance",
    "tipo": "aloja",
@@ -1812,7 +2177,7 @@ export default {
    "a": "z:gh:data-analytics-portfolio",
    "tipo": "aloja",
    "detalle": [
-    "tree/main/01-SQL/02-adventureworks-avanzado"
+    "01-SQL/02-adventureworks-avanzado"
    ]
   },
   {
@@ -1820,7 +2185,7 @@ export default {
    "a": "z:gh:data-analytics-portfolio",
    "tipo": "aloja",
    "detalle": [
-    "tree/main/01-SQL/03-analisis-clientes-tienda"
+    "01-SQL/03-analisis-clientes-tienda"
    ]
   },
   {
@@ -1828,7 +2193,7 @@ export default {
    "a": "z:gh:data-analytics-portfolio",
    "tipo": "aloja",
    "detalle": [
-    "tree/main/01-SQL/01-analisis-ventas-concesionarios"
+    "01-SQL/01-analisis-ventas-concesionarios"
    ]
   },
   {
@@ -1956,7 +2321,7 @@ export default {
    "a": "z:gh:data-analytics-portfolio",
    "tipo": "aloja",
    "detalle": [
-    "tree/main/02-Python/01-analisis-exploratorio/02-habitos-rendimiento-estudiantes"
+    "02-Python/01-analisis-exploratorio/02-habitos-rendimiento-estudiantes"
    ]
   },
   {
@@ -1964,7 +2329,7 @@ export default {
    "a": "z:gh:data-analytics-portfolio",
    "tipo": "aloja",
    "detalle": [
-    "tree/main/03-Machine-Learning/02-no-supervisado/clustering/kmeans/03-segmentacion-politica"
+    "03-Machine-Learning/02-no-supervisado/clustering/kmeans/03-segmentacion-politica"
    ]
   },
   {
@@ -2082,7 +2447,61 @@ export default {
    "detalle": []
   },
   {
+   "de": "e:post-beneficio-vs-objetivo-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
+   "de": "e:post-comparador-de-periodos-flexible-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
+   "de": "e:post-comparador-de-periodos-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
+   "de": "e:post-control-de-presupuestos-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
+   "de": "e:post-dashboard-de-alertas-comerciales-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
+   "de": "e:post-dashboard-financiero-adaptativo-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
    "de": "e:post-el-futuro-de-los-dashboards-no-son-mas-graficos-son-mejores-interacc",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
+   "de": "e:post-evolucion-con-narrativa-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
+   "de": "e:post-gantt-nativo-de-power-bi-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
+   "de": "e:post-kpi-card-adaptativo-post",
    "a": "z:linkedin",
    "tipo": "aloja",
    "detalle": []
@@ -2100,13 +2519,49 @@ export default {
    "detalle": []
   },
   {
+   "de": "e:post-reparto-del-presupuesto-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
+   "de": "e:post-resaltar-sin-filtrar-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
+   "de": "e:post-resaltar-sin-ocultar-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
    "de": "e:post-si-tienes-que-reconstruir-la-historia-en-tu-cabeza-el-dashboard-fall",
    "a": "z:linkedin",
    "tipo": "aloja",
    "detalle": []
   },
   {
+   "de": "e:post-small-multiples-por-producto-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
+   "de": "e:post-top-n-para-priorizar-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
    "de": "e:post-un-grafico-puede-ser-correcto-y-aun-asi-enganar",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
+   "de": "e:post-variacion-sobre-barras-post",
    "a": "z:linkedin",
    "tipo": "aloja",
    "detalle": []
@@ -2128,7 +2583,7 @@ export default {
    "a": "z:gh:data-analytics-portfolio",
    "tipo": "aloja",
    "detalle": [
-    "tree/main/02-Python/01-analisis-exploratorio/01-analisis-ventas-empleados"
+    "02-Python/01-analisis-exploratorio/01-analisis-ventas-empleados"
    ]
   },
   {
@@ -2136,7 +2591,7 @@ export default {
    "a": "z:gh:data-analytics-portfolio",
    "tipo": "aloja",
    "detalle": [
-    "tree/main/02-Python/01-analisis-exploratorio/03-riesgo-salud-pacientes"
+    "02-Python/01-analisis-exploratorio/03-riesgo-salud-pacientes"
    ]
   },
   {
@@ -2144,7 +2599,7 @@ export default {
    "a": "z:gh:data-analytics-portfolio",
    "tipo": "aloja",
    "detalle": [
-    "tree/main/03-Machine-Learning/04-series-temporales/arima/01-caso-retail"
+    "03-Machine-Learning/04-series-temporales/arima/01-caso-retail"
    ]
   },
   {
@@ -2152,7 +2607,7 @@ export default {
    "a": "z:gh:data-analytics-portfolio",
    "tipo": "aloja",
    "detalle": [
-    "tree/main/03-Machine-Learning/01-supervisado/clasificacion/03-xgboost"
+    "03-Machine-Learning/01-supervisado/clasificacion/03-xgboost"
    ]
   },
   {
@@ -2345,7 +2800,7 @@ export default {
   {
    "de": "p:analisis-datos",
    "a": "z:gh:data-analytics-portfolio",
-   "tipo": "muestra",
+   "tipo": "enlaza",
    "detalle": []
   },
   {
@@ -2369,6 +2824,12 @@ export default {
    "detalle": [
     "informe publicado"
    ]
+  },
+  {
+   "de": "p:data-storytelling",
+   "a": "e:app-pbi-mockup-creator",
+   "tipo": "muestra",
+   "detalle": []
   },
   {
    "de": "p:data-storytelling",
@@ -2416,12 +2877,6 @@ export default {
    "de": "p:descargas",
    "a": "col:privada",
    "tipo": "enlaza",
-   "detalle": []
-  },
-  {
-   "de": "p:descargas",
-   "a": "e:app-pbi-mockup-creator",
-   "tipo": "muestra",
    "detalle": []
   },
   {
@@ -2547,7 +3002,7 @@ export default {
   {
    "de": "p:ml",
    "a": "z:gh:data-analytics-portfolio",
-   "tipo": "muestra",
+   "tipo": "enlaza",
    "detalle": []
   },
   {
@@ -2567,7 +3022,7 @@ export default {
   {
    "de": "p:power-bi",
    "a": "z:gh:dax-lab",
-   "tipo": "muestra",
+   "tipo": "enlaza",
    "detalle": []
   },
   {
@@ -2593,7 +3048,7 @@ export default {
   {
    "de": "p:roma-aeterna",
    "a": "z:gh:keriew-augustus",
-   "tipo": "muestra",
+   "tipo": "enlaza",
    "detalle": []
   },
   {
@@ -2892,6 +3347,44 @@ export default {
   }
  ],
  "sinExplicar": [],
+ "ignorados": [
+  {
+   "dominio": "behance.net",
+   "n": 1
+  },
+  {
+   "dominio": "calendly.com",
+   "n": 1
+  },
+  {
+   "dominio": "constexpr.org",
+   "n": 1
+  },
+  {
+   "dominio": "gog.com",
+   "n": 1
+  },
+  {
+   "dominio": "msmk.university",
+   "n": 1
+  },
+  {
+   "dominio": "namasdata.com",
+   "n": 1
+  },
+  {
+   "dominio": "neoland.es",
+   "n": 2
+  },
+  {
+   "dominio": "store.steampowered.com",
+   "n": 1
+  },
+  {
+   "dominio": "tally.so",
+   "n": 3
+  }
+ ],
  "tipos": {
   "pagina": "Página",
   "caso": "Caso de estudio",
@@ -2913,7 +3406,9 @@ export default {
   "herramienta": "Herramienta",
   "workflow": "Workflow",
   "grupo": "Grupo",
-  "columna": "Bloque"
+  "columna": "Bloque",
+  "perfil": "Perfil profesional",
+  "capitulo": "Capítulo del manual"
  },
  "verbos": {
   "enlaza": {
@@ -2954,7 +3449,7 @@ export default {
   },
   "usa": {
    "verbo": "usa",
-   "debil": true
+   "debil": false
   },
   "verifica": {
    "verbo": "comprueba",
@@ -3030,6 +3525,11 @@ export default {
    "nombre": "Herramienta y CI",
    "color": "#6B7280",
    "forma": "rombo"
+  },
+  "perfil": {
+   "nombre": "Perfil profesional",
+   "color": "#8B5A2B",
+   "forma": "circulo"
   }
  }
 };

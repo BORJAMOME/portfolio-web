@@ -37,7 +37,9 @@ export function canon(raw) {
   if (!/^https?:$/.test(u.protocol)) return null;
   const host = u.hostname.replace(/^www\./, '').toLowerCase();
   if (host === 'app.powerbi.com') return `powerbi:${u.searchParams.get('r') || u.pathname}`;
-  return host + u.pathname.replace(/\/+$/, '').toLowerCase();
+  const path = u.pathname.replace(/\/+$/, '');
+  const keep = ['v', 'id'].filter((k) => u.searchParams.has(k)).map((k) => `${k}=${u.searchParams.get(k)}`).join('&');
+  return host + (host === 'github.com' ? path.toLowerCase() : path) + (keep ? `?${keep}` : '');
 }
 const reportKey = (raw) => { try { return new URL(raw).searchParams.get('r') || null; } catch { return null; } };
 
@@ -46,7 +48,15 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
   const platformOf = (host) => W.plataformas.find((p) => p.dominios.some((d) => host === d || host.endsWith('.' + d)));
   const hostOf = (raw) => { try { return new URL(raw).hostname.replace(/^www\./, '').toLowerCase(); } catch { return ''; } };
   // repositorio de GitHub: «nombre» si es propio, «propietario/nombre» si es de otra persona
-  const repoOf = (url) => { const m = /github\.com\/([^/]+)\/([^/?#]+)/i.exec(url || ''); return m ? (/^borjamome$/i.test(m[1]) ? m[2] : `${m[1]}/${m[2]}`) : null; };
+  const RESERVADOS = new Set(['features', 'orgs', 'sponsors', 'site-policy', 'settings', 'marketplace', 'topics', 'about', 'pricing', 'login', 'es', 'en', 'collections', 'explore', 'apps', 'enterprise']);
+  const repoOf = (url) => {
+    let u; try { u = new URL(url); } catch { return null; }
+    if (!/^https?:$/.test(u.protocol) || u.hostname.replace(/^www\./, '') !== 'github.com') return null;
+    const [owner, repoRaw] = u.pathname.split('/').filter(Boolean);
+    if (!owner || !repoRaw || RESERVADOS.has(owner.toLowerCase())) return null;
+    const repo = repoRaw.replace(/\.git$/, '');
+    return /^borjamome$/i.test(owner) ? repo : `${owner}/${repo}`;
+  };
 
   /* ═══ 1 · Páginas ═══ */
   const skip = new Set(W.excluir);
@@ -65,7 +75,9 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
     return out;
   };
   const P = {};                                         // clave → página
-  for (const key of [...keys, ...dirs]) {
+  const all = [...keys, ...dirs];
+  const rank = (k) => { const i = W.prioridad.indexOf(k); return i < 0 ? 1e6 : i; };
+  for (const key of all.sort((a, b) => rank(a) - rank(b) || (a < b ? -1 : 1))) {
     const file = key.endsWith('.html') ? key : `${key}/index.html`;
     const raw = read(file);
     const ld = parseLd(raw);
@@ -84,6 +96,10 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
     };
   }
   const pageList = Object.keys(P);
+  const avisos = [];
+  for (const [campo, lista] of [['raiz', W.raiz], ['prioridad', W.prioridad], ['tipos', Object.keys(W.tipos)], ['etiquetas', Object.keys(W.etiquetas)]]) {
+    for (const k of lista) if (!P[k]) avisos.push(`mapa.config.json · web.${campo}: «${k}» no es ninguna página ni carpeta (¿se renombró o se borró?)`);
+  }
   const casos = readCatalog(ROOT).filter((c) => c.group === 'Caso de estudio' && P[c.file]);
   const caso = Object.fromEntries(casos.map((c) => [c.file, c]));
 
@@ -101,7 +117,11 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
     if (P[path.replace(/\/index\.html$/, '')]) return path.replace(/\/index\.html$/, '');
     return null;
   }
-  const anchors = (page) => [...page.main.matchAll(/<a\b([^>]*?)href="([^"]+)"([^>]*)>([\s\S]*?)<\/a>/g)].map((m) => ({ href: m[2], attrs: m[1] + m[3], label: text(m[4]), at: m.index }));
+  const anchors = (page) => [
+    ...[...page.main.matchAll(/<a\b([^>]*?)href="([^"]+)"([^>]*)>([\s\S]*?)<\/a>/g)].map((m) => ({ href: m[2].replace(/&amp;/g, '&'), attrs: m[1] + m[3], label: text(m[4]), at: m.index })),
+    // tarjetas enteras clicables: onclick="location.href='…'" o window.open('…') (la portada enseña así sus proyectos)
+    ...[...page.main.matchAll(/onclick="(?:location\.href\s*=\s*|window\.open\()'([^']+)'/g)].map((m) => ({ href: m[1], attrs: 'onclick', label: '', at: m.index })),
+  ];
   const internal = {};                                   // clave → claves enlazadas desde el contenido, en orden de lectura
   const siguiente = {};
   for (const page of Object.values(P)) {
@@ -118,8 +138,10 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
   function addEntity(e) {
     const dupe = e.urls.map((u) => urlTo.get(u)).find((x) => x && E[x.id]);
     if (dupe) { const t = E[dupe.id]; t.techs = uniq([...t.techs, ...e.techs]); e.urls.forEach((u) => !t.urls.includes(u) && t.urls.push(u)); return t; }
-    let id = `e:${e.prefijo}${slug(e.etiqueta)}`.slice(0, 80), n = 2;
-    while (E[id]) id = `${id.replace(/-\d+$/, '')}-${n++}`;
+    let base = `e:${e.prefijo}${slug(e.etiqueta)}`;
+    if (base.length > 80) base = base.slice(0, 80).replace(/-[^-]*$/, '');
+    let id = base, n = 2;
+    while (E[id]) id = `${base}~${n++}`;
     E[id] = { ...e, id, dueña: e.pagina };
     e.urls.forEach((u) => urlTo.set(u, { id }));
     E[id].pos = (() => { const q = e.url ? pageMain(e.pagina).indexOf(e.url) : -1; return q >= 0 ? q : 1e9 + order.length; })();
@@ -137,20 +159,20 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
       if (!id.includes(`${page.file}#`) && !id.includes(`${page.key}#`)) continue;
       const anchor = id.split('#')[1];
       if (!/CreativeWork/.test([].concat(o['@type']).join()) || anchor === 'caso' || !o.name) continue;     // los DataDownload del laboratorio salen de ITEMS (3d), completos
-      const asCase = caseByTitle(o.name);
-      if (asCase) { (asCase.muestra ??= []).push(page.key); continue; }   // el listado enseña un caso que ya tiene su página
+      if (caseByTitle(o.name)) continue;      // el listado enseña un caso que ya tiene su página: lo cubren los enlaces internos
       const url = o.url ? String(o.url) : '';
       const host = hostOf(url);
-      const gh = /^github\.com$/.test(host) ? url.split('/').slice(5).join('/') : '';
+      const gh = /^github\.com$/.test(host) ? url.split('/').slice(7).join('/') : '';
       const tipo = host.endsWith('behance.net') ? 'visual' : host === 'github.com' ? 'proyecto' : 'proyecto';
       const grupo = tipo === 'visual' ? W.grupos.visual
         : /\/01-SQL\//i.test(url) ? 'SQL' : /\/02-Python\//i.test(url) ? 'Python' : /\/03-Machine/i.test(url) ? W.grupos.ml : W.grupos.proyecto;
-      addEntity({ prefijo: '', tipo, etiqueta: String(o.name), urls: [canon(url)].filter(Boolean), url, techs: kwOf(o.keywords), grupo, pagina: page.key, ruta: gh });
+      addEntity({ prefijo: '', tipo, etiqueta: String(o.name), urls: [canon(url)].filter(Boolean), url, techs: kwOf(o.keywords), grupo, pagina: page.key, ruta: gh, soloDatos: !!url && !page.main.includes(url) });
     }
     // 3b · «<!-- CARD ML-1: título -->»: la tarjeta lleva su primer enlace externo
     const cards = [...page.raw.matchAll(/<!--\s*CARD\s+([A-Z]+)-?(\d+)\s*:\s*([^>]*?)\s*-->/g)];
     cards.forEach((m, i) => {
-      const block = page.raw.slice(m.index, cards[i + 1] ? cards[i + 1].index : m.index + 6000);
+      const raw = page.raw.slice(m.index, cards[i + 1] ? cards[i + 1].index : m.index + 6000);
+      const block = raw.split(/<\/section>/)[0];
       const url = (/href="(https?:\/\/[^"]+)"/.exec(block) || [, ''])[1];
       if (!url) return;
       const kind = m[1];
@@ -159,7 +181,7 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
       addEntity({
         prefijo: isApp ? 'app-' : '', tipo: isApp ? 'app' : 'proyecto', etiqueta: m[3].trim(), urls: [canon(url)].filter(Boolean), url, techs: pills,
         grupo: isApp ? W.grupos.app : ({ ML: W.grupos.ml, PY: 'Python', SQL: 'SQL' }[kind] || W.grupos.proyecto), pagina: page.key,
-        ruta: /github\.com/.test(url) ? url.split('/').slice(5).join('/') : '',
+        ruta: /github\.com/.test(url) ? url.split('/').slice(7).join('/') : '',
       });
     });
     // 3c · tarjetas de gráficos nativos y de posts (componentes propios de power-bi.html)
@@ -187,17 +209,21 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
       addEntity({ prefijo: 'carpeta-', tipo: 'proyecto', etiqueta: parts[parts.length - 1], urls: [canon(a.href)], url: a.href, techs: [parts[0]], grupo: m[1].replace(/-/g, ' '), pagina: page.key, ruta: decodeURIComponent(m[2]) });
     }
   }
-  // 3d · descargas.html: array ITEMS (.pbix del laboratorio)
+  // 3d · descargas.html: array ITEMS (.pbix del laboratorio y el post de LinkedIn de cada uno)
   const dl = P['descargas.html'];
   if (dl) {
     const from = dl.raw.indexOf('const ITEMS = [');
-    const catNames = W.etiquetasLab;
-    for (const m of dl.raw.slice(from).matchAll(/\{n:"(\d+)",\s*cat:"(\w+)",\s*title:"([^"]+)"[\s\S]*?tags:\[([^\]]*)\][\s\S]*?dl:"([^"]*)"/g)) {
-      addEntity({
-        prefijo: 'lab-', tipo: 'lab', etiqueta: m[3], urls: [canon(m[5])].filter(Boolean), url: m[5], techs: [...m[4].matchAll(/"([^"]+)"/g)].map((x) => x[1]),
-        grupo: `${W.grupos.lab} · ${catNames[m[2]] || m[2]}`, pagina: dl.key, orden: Number(m[1]),
-      });
+    if (from < 0) throw new Error('descargas.html: no encuentro «const ITEMS = [»; el mapa perdería los archivos del laboratorio');
+    const blocks = dl.raw.slice(from).split(/\{n:"/).slice(1).filter((x) => /^\d+",\s*cat:/.test(x));
+    for (const blk of blocks) {
+      const f = (re) => (re.exec(blk) || [, ''])[1];
+      const n = Number(blk.slice(0, blk.indexOf('"')));
+      const title = f(/title:"([^"]+)"/), cat = f(/cat:"(\w+)"/), dlUrl = f(/dl:"([^"]*)"/), liUrl = f(/li:"([^"]*)"/);
+      const tags = [...f(/tags:\[([^\]]*)\]/).matchAll(/"([^"]+)"/g)].map((x) => x[1]);
+      addEntity({ prefijo: 'lab-', tipo: 'lab', etiqueta: title, urls: [canon(dlUrl)].filter(Boolean), url: dlUrl, techs: tags, grupo: `${W.grupos.lab} · ${W.etiquetasLab[cat] || cat}`, pagina: dl.key, orden: n });
+      if (liUrl) addEntity({ prefijo: 'post-', tipo: 'post', etiqueta: cut(`${title} (post)`, 70), urls: [canon(liUrl)].filter(Boolean), url: liUrl, techs: [], grupo: W.grupos.postLab, pagina: dl.key, orden: 100 + n });
     }
+    if (!blocks.length) throw new Error('descargas.html: ITEMS sin elementos reconocibles');
   }
   // 3e · herramientas externas propias (borjamome.github.io): una app más
   for (const page of Object.values(P)) {
@@ -205,6 +231,37 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
       if (hostOf(a.href) !== 'borjamome.github.io') continue;
       addEntity({ prefijo: 'app-', tipo: 'app', etiqueta: W.etiquetasUrl[canon(a.href)] || W.etiquetasUrl[canon(a.href).replace(/\/[^/]*$/, '')] || a.label.replace(/[↗→]/g, '').trim() || 'Herramienta externa', urls: [canon(a.href)], url: a.href, techs: [], grupo: W.grupos.herramienta, pagina: page.key });
     }
+  }
+  // 3f · sobre-mi.html: experiencia, formación y certificaciones (.res-group > .res-row)
+  const sm = P['sobre-mi.html'];
+  if (sm) {
+    sm.raw.split(/class="res-group(?=[ "])/).slice(1).forEach((g, gi) => {
+      const label = text((/res-group-label"[^>]*>([^<]+)</.exec(g) || [, gi === 0 ? 'Experiencia' : 'Perfil'])[1]).toLowerCase();
+      g.split('class="res-row"').slice(1).forEach((r, ri) => {
+        const role = text((/class="res-role"[^>]*>([\s\S]*?)<\/p>/.exec(r) || [, ''])[1]);
+        const fecha = text((/class="res-date"[^>]*>([\s\S]*?)<\//.exec(r) || [, ''])[1]);
+        if (role) addEntity({ prefijo: 'perfil-', tipo: 'perfil', etiqueta: role, urls: [], url: '', techs: [], grupo: label, pagina: sm.key, orden: gi * 100 + ri, fecha });
+      });
+    });
+  }
+  // 3g · data-storytelling.html: los capítulos del manual (<section class="chapter" id="c01">)
+  const ds = P['data-storytelling.html'];
+  if (ds) {
+    for (const m of ds.raw.matchAll(/<section[^>]*class="chapter"[^>]*id="(c\d+)"[^>]*>([\s\S]*?)(?=<section[^>]*class="chapter"|$)/g)) {
+      const name = text((/<b>([^<]+)<\/b>/.exec(m[2]) || [, ''])[1]) || text((/<h2[^>]*>([\s\S]*?)<\/h2>/.exec(m[2]) || [, ''])[1]);
+      addEntity({ prefijo: 'cap-', tipo: 'capitulo', etiqueta: `${m[1].slice(1)} · ${cut(name, 48)}`, urls: [], url: '', hrefInterno: `./${ds.key}#${m[1]}`, techs: [], grupo: 'capítulos del manual', pagina: ds.key, orden: Number(m[1].slice(1)) });
+    }
+  }
+  // 3h · manuales en carpeta (ml/, pbi/): sus secciones fijas y cuánto contienen
+  for (const page of Object.values(P)) {
+    if (page.tipo !== 'manual' || !page.dir) continue;
+    const modelos = /(\d+) modelos/.exec(page.desc);
+    const apuntes = entries(`${page.dir}/apuntes`).filter((e) => e.isFile()).length;
+    page.conteo = [modelos ? `${modelos[1]} modelos explicados` : '', apuntes ? `${apuntes} archivos de apuntes` : ''].filter(Boolean).join(' · ');
+    // los títulos que el HTML escribe a mano (los que arma el JavaScript llevan comillas o «+» y se descartan)
+    [...page.raw.matchAll(/<h2 class="th-title"[^>]*>([^<]+)</g)].map((m) => text(m[1])).filter((t) => t && !/['+]/.test(t)).forEach((t, i) => {
+      addEntity({ prefijo: 'sec-', tipo: 'capitulo', etiqueta: t, urls: [], url: '', hrefInterno: page.href, techs: [], grupo: 'secciones del manual', pagina: page.key, orden: i });
+    });
   }
   // los casos de estudio también se reconocen por la URL de su informe
   for (const c of Object.values(caso)) {
@@ -217,6 +274,7 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
   /* ═══ 4 · Relaciones entre páginas y proyectos ═══ */
   const showsPage = {};                                 // entidad/página → claves de página que la enseñan (además de su dueña)
   const sinExplicar = {};
+  const ignorados = {};                                 // dominio → nº de enlaces ignorados a propósito
   const content = Object.values(P).filter((p) => !W.chrome.includes(p.key));   // la política de privacidad enlaza a GitHub por motivos legales, no enseña nada
   for (const page of content) {
     for (const a of anchors(page)) {
@@ -224,10 +282,10 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
       if (!k) continue;
       const hit = urlTo.get(k) || urlTo.get(`powerbi:${reportKey(a.href)}`);
       if (hit && !(hit.id.startsWith('e:') && E[hit.id].dueña === page.key)) (showsPage[hit.id] ??= []).push(page.key);
-      else if (!hit) {
+      else if (!hit && /^https?:/.test(a.href)) {
         const host = hostOf(a.href);
         const hp = `${host}${new URL(a.href).pathname}`.replace(/\/$/, '').toLowerCase();
-        if (W.ignorarDominios.some((d) => host === d || host.endsWith('.' + d) || hp.startsWith(d))) continue;
+        if (W.ignorarDominios.some((d) => host === d || host.endsWith('.' + d) || hp.startsWith(d))) { ignorados[host] = (ignorados[host] || 0) + 1; continue; }
         if (host === 'github.com' && repoOf(a.href)) continue;                      // tiene nodo propio en «Dónde vive»
         if (/^github\.com$/.test(host) && /^\/[^/]+\/?$/.test(new URL(a.href).pathname)) continue;     // el perfil
         if (/linkedin\.com\/in\//.test(a.href)) continue;
@@ -253,7 +311,7 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
     if (c.repo) lived(P[c.file].id, `https://github.com/BORJAMOME/${c.repo}`, 'código y modelo');
   }
   // repos enlazados desde el contenido sin ser un proyecto concreto (p. ej. DAX-LAB en power-bi.html)
-  for (const page of content) for (const a of anchors(page)) { const r = repoOf(a.href); if (r) { (repos[r] ??= new Set()); if (!lives.some((l) => l.a === `z:gh:${slug(r)}` && l.de === page.id)) lives.push({ de: page.id, a: `z:gh:${slug(r)}`, detalle: 'enlaza al repositorio', muestra: true }); } }
+  for (const page of content) for (const a of anchors(page)) { const r = repoOf(a.href); if (r) { (repos[r] ??= new Set()); if (!lives.some((l) => l.a === `z:gh:${slug(r)}` && l.de === page.id)) lives.push({ de: page.id, a: `z:gh:${slug(r)}`, detalle: 'enlaza al repositorio', enlaza: true }); } }
   // un gráfico comparte informe con el caso del que sale
   const derive = [];
   for (const id of order.filter((x) => E[x].tipo === 'grafico')) {
@@ -262,5 +320,5 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
     if (c) derive.push({ de: id, a: P[c.file].id });
   }
 
-  return { P, E, order, internal, siguiente, showsPage, caso, repos, plat, lives, derive, sinExplicar, parseLd, pageList, anchors, resolve };
+  return { P, E, order, internal, siguiente, showsPage, caso, repos, plat, lives, derive, sinExplicar, ignorados, avisos, parseLd, pageList, anchors, resolve };
 }

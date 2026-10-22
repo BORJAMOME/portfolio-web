@@ -20,6 +20,7 @@
    ═══════════════════════════════════════════════ */
 import { readFileSync, readdirSync, existsSync, writeFileSync, mkdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { analyzeWeb } from './web.mjs';
@@ -32,7 +33,12 @@ const AS_JSON = process.argv.includes('--json');
 // mismo contenido, mismo resultado en Windows (CRLF) y en CI (LF)
 const read = (p) => readFileSync(join(ROOT, p), 'utf8').replace(/\r\n/g, '\n');
 const exists = (p) => existsSync(join(ROOT, p));
-const entries = (p) => (exists(p) ? readdirSync(join(ROOT, p), { withFileTypes: true }) : []);
+// Un archivo suelto sin añadir a git (un borrador, un arnés de pruebas) no debe cambiar el mapa ni romper --check:
+// se ve lo que git conoce (rastreado o ya añadido); sin git, el árbol de trabajo.
+let tracked = null;
+try { tracked = new Set(execFileSync('git', ['ls-files', '-z'], { cwd: ROOT, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }).split('\0').filter(Boolean)); } catch { /* sin git: se usa el disco */ }
+const known = (rel, isDir) => !tracked || (isDir ? [...tracked].some((f) => f.startsWith(rel + '/')) : tracked.has(rel));
+const entries = (p) => (exists(p) ? readdirSync(join(ROOT, p), { withFileTypes: true }).filter((e) => known(p === '.' ? e.name : `${p}/${e.name}`, e.isDirectory())) : []);
 const byName = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 const cfg = JSON.parse(read('tools/mapa/mapa.config.json'));
 const uniq = (list) => [...new Set(list)];
@@ -40,7 +46,9 @@ const slug = (s) => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCa
 const cut = (s, n) => (s.length > n ? s.slice(0, n - 1).trimEnd() + '…' : s);
 
 /* ── Lectura de código: qué menciona cada archivo ── */
-const CODE = /\.(m?js|cjs|ts|yml|yaml)$/;
+const TOOL_EXT = 'm?js|cjs|ts|py|sh|gs';
+const TOOL_FILE = new RegExp(`\\.(${TOOL_EXT})$`);
+const CODE = /\.(m?js|cjs|ts|py|sh|gs|yml|yaml)$/;
 const isTest = (f) => /(^|[./_-])(test|tests|e2e)([./_-]|$)|test_helpers|\.test\./.test(f);
 function codeFiles(path, { skipTests = false } = {}) {
   const out = [];
@@ -58,7 +66,7 @@ const textOf = (files) => files.map(read).join('\n');
 const grab = (text, re) => [...text.matchAll(re)].map((m) => m[1]);
 
 /* Familia (color y forma en la leyenda) de cada tipo de nodo */
-const FAMILIA = { pestana: 'privada', modulo: 'privada', esquema: 'dato', tabla: 'dato', funcion: 'dato', herramienta: 'herramienta', workflow: 'herramienta' };
+const FAMILIA = { capitulo: 'manual', pestana: 'privada', modulo: 'privada', esquema: 'dato', tabla: 'dato', funcion: 'dato', herramienta: 'herramienta', workflow: 'herramienta' };
 const withFamily = (n) => {
   if (n.tipo !== 'grupo' && n.tipo !== 'columna') n.familia = cfg.familias[n.tipo] ? n.tipo : (FAMILIA[n.tipo] || (n.tipo === 'carpeta' ? 'pagina' : undefined));
   (n.hijos || []).forEach(withFamily);
@@ -86,13 +94,13 @@ const pageNode = (k) => {
   const p = P[k];
   const c = A.caso[k];
   return {
-    id: p.id, tipo: p.tipo, etiqueta: p.etiqueta, nota: cut(p.desc, 200) || undefined, href: p.href, archivo: p.archivo,
+    id: p.id, tipo: p.tipo, etiqueta: p.etiqueta, nota: [cut(p.desc, 200), p.conteo].filter(Boolean).join(' · ') || undefined, href: p.href, archivo: p.archivo,
     ...(c && c.techs.length ? { tec: c.techs } : {}),
   };
 };
 const entityNode = (id) => {
   const e = E[id];
-  return { id, tipo: e.tipo, etiqueta: e.etiqueta, href: e.url || undefined, externo: e.url ? true : undefined, ...(e.techs.length ? { tec: e.techs } : {}), ...(e.ruta ? { archivo: e.ruta } : {}) };
+  return { id, tipo: e.tipo, etiqueta: e.etiqueta, href: e.url || e.hrefInterno || undefined, externo: e.url ? true : undefined, ...(e.techs.length ? { tec: e.techs } : {}), ...(e.ruta ? { archivo: e.ruta } : {}), ...(e.fecha ? { nota: e.fecha } : {}), ...(e.soloDatos ? { nota: 'Solo figura en los datos estructurados (JSON-LD) de la página; no hay tarjeta visible.' } : {}) };
 };
 
 function childrenOf(key) {
@@ -134,7 +142,7 @@ const viveTree = W.plataformas.filter((p) => A.plat[p.id] || (p.id === 'github' 
   const n = { id: `z:${p.id}`, tipo: 'plataforma', etiqueta: p.etiqueta };
   const members = A.plat[p.id] ? A.plat[p.id].size : 0;
   if (p.id === 'github') {
-    n.hijos = repoNames.map((r) => ({ id: `z:gh:${slug(r)}`, tipo: 'repo', etiqueta: r, href: `https://github.com/BORJAMOME/${r}`, externo: true }));
+    n.hijos = repoNames.map((r) => ({ id: `z:gh:${slug(r)}`, tipo: 'repo', etiqueta: r, href: `https://github.com/${r.includes('/') ? r : `BORJAMOME/${r}`}`, externo: true }));
   } else if (members) n.nota = `${members} ${members === 1 ? 'elemento' : 'elementos'}`;
   return n;
 });
@@ -146,6 +154,11 @@ const tabs = [...apHtml.matchAll(/<a href="#\/([^"]*)" data-tab="([^"]+)">([^<]+
 const modulesBlock = (/var MODULES = \{([\s\S]*?)\n  \};/.exec(apJs) || [, ''])[1];
 const modules = [...modulesBlock.matchAll(/(?:'([\w-]+)'|(\w+)):\s*\{\s*global:\s*'(\w+)',\s*title:\s*'([^']+)'(?:,\s*tab:\s*'([\w-]+)')?/g)]
   .map((m) => ({ name: m[1] || m[2], global: m[3], title: m[4], tab: m[5] || (m[1] || m[2]) }));
+// El mapa depende del formato de area-privada.html y de MODULES (CLAUDE.md lo documenta): si cambia, que falle con una pista.
+if (!tabs.length) throw new Error('area-privada.html: no encuentro ninguna pestaña (<a href="#/…" data-tab="…">); ¿cambió el formato del menú?');
+if (!modules.length) throw new Error('area-privada.js: no encuentro MODULES (var MODULES = { … }); ¿cambió el formato?');
+for (const m of grab(apHtml, /data-ap-module="([\w-]+)"/g)) if (!modules.some((x) => x.name === m)) throw new Error(`area-privada.html declara data-ap-module="${m}" pero MODULES no lo tiene`);
+for (const m of modules) if (!apHtml.includes(`data-ap-module="${m.name}"`)) throw new Error(`MODULES tiene «${m.name}» pero area-privada.html no declara su <link data-ap-module>`);
 const moduleFile = (name) => (exists(`area-privada-${name}.js`) ? `area-privada-${name}.js` : null);
 // las pestañas sin módulo (Archivos y notas) viven en el shell
 const fileOfTab = (tab) => moduleFile(tab) || 'area-privada.js';
@@ -175,8 +188,8 @@ const tableOwner = {};   // tabla → archivo sql
 const rpcOwner = {};     // función SQL → archivo sql
 const sqlGroups = [];
 for (const f of sqlFiles) {
-  const sql = read(`supabase/${f}`);
-  const tablesIn = uniq(grab(sql, /create\s+table\s+(?:if\s+not\s+exists\s+)?(?:public\.)?"?([a-z_]\w*)"?/gi));
+  const sql = read(`supabase/${f}`).replace(/\/\*[\s\S]*?\*\//g, '').replace(/--[^\n]*/g, '');
+  const tablesIn = uniq(grab(sql, /create\s+table\s+(?:if\s+not\s+exists\s+)?(?:\w+\.)?"?([a-z_]\w*)"?/gi));
   for (const fn of grab(sql, /create\s+(?:or\s+replace\s+)?function\s+(?:public\.)?"?([a-z_]\w*)"?/gi)) rpcOwner[fn] = f;
   if (!tablesIn.length) continue;
   for (const t of tablesIn) tableOwner[t] = f;
@@ -194,9 +207,9 @@ const fnGroup = fnDirs.length ? [{
 const groupOfFile = (f) => `d:${f.replace(/\.sql$/, '')}`;
 
 /* ═══════════ 4 · HERRAMIENTAS ═══════════ */
-const toolEntries = entries('tools').filter((e) => !cfg.herramientas.excluir.includes(e.name) && (e.isDirectory() || /\.(m?js|cjs)$/.test(e.name)));
+const toolEntries = entries('tools').filter((e) => !cfg.herramientas.excluir.includes(e.name) && (e.isDirectory() || TOOL_FILE.test(e.name)));
 const toolNodes = toolEntries.map((e) => {
-  const sl = e.name.replace(/\.(m?js|cjs)$/, '');
+  const sl = e.name.replace(TOOL_FILE, '');
   return { e, slug: sl, node: { id: `h:${sl}`, tipo: 'herramienta', etiqueta: e.isDirectory() ? `${e.name}/` : e.name, archivo: `tools/${e.name}${e.isDirectory() ? '/' : ''}` } };
 });
 const toolGroups = cfg.herramientas.grupos.map((g) => ({ ...g, hijos: [] }));
@@ -228,9 +241,11 @@ const ids = new Set();
 
 /* ═══════════ 6 · RELACIONES ═══════════ */
 const rel = new Map();
+const descartadas = [];
 const pairs = new Set();
 function link(de, a, tipo, detalle) {
-  if (!de || !a || de === a || !ids.has(de) || !ids.has(a)) return;
+  if (!de || !a || de === a) return;
+  if (!ids.has(de) || !ids.has(a)) { descartadas.push(`${de} → ${a} (${tipo})`); return; }
   const key = `${de}|${a}|${tipo}`;
   const r = rel.get(key) || { de, a, tipo, detalle: [] };
   if (detalle) r.detalle = uniq([...r.detalle, ...[].concat(detalle).filter(Boolean)]).sort(byName);
@@ -249,7 +264,7 @@ function scan(text) {
     modules: uniq(grab(text, /\bmodule\(\s*['"]([\w-]+)['"]/g)),
     modFiles: uniq(grab(text, /area-privada-([\w-]+)\.js/g)),
     pages: uniq(grab(text, /([\w-]+\.html)\b/g)).filter((p) => pageFilesAll.includes(p)),
-    tools: uniq([...text.matchAll(/tools\/([\w.-]+?)(?:\.(?:m?js|cjs)|\/|\s|["'`)]|$)/g)].map((m) => m[1])),
+    tools: uniq([...text.matchAll(new RegExp(`tools\\/([\\w.-]+?)(?:\\.(?:${TOOL_EXT})|\\/|\\s|["'\`)]|$)`, 'g'))].map((m) => m[1])),
   };
 }
 function dataLinks(from, s) {
@@ -269,7 +284,7 @@ for (const [target, from] of Object.entries(A.showsPage)) {
     link(P[k].id, target, 'muestra');
   }
 }
-for (const [id, k] of Object.entries(A.lives.filter((l) => l.muestra).reduce((m, l) => ({ ...m, [l.de]: l.a }), {}))) link(id, k, 'muestra');
+for (const l of A.lives.filter((x) => x.enlaza)) link(l.de, l.a, 'enlaza');
 for (const k of pageKeys) {
   for (const c of A.internal[k]) {
     if (c === 'area-privada.html') { link(P[k].id, 'col:privada', 'enlaza'); continue; }
@@ -278,8 +293,10 @@ for (const k of pageKeys) {
   }
   if (A.siguiente[k] && P[A.siguiente[k]]) link(P[k].id, P[A.siguiente[k]].id, 'siguiente');
 }
-for (const l of A.lives.filter((x) => !x.muestra)) link(l.de, l.a, 'aloja', l.detalle);
+for (const l of A.lives.filter((x) => !x.enlaza)) link(l.de, l.a, 'aloja', l.detalle);
 for (const d of A.derive) link(d.de, d.a, 'deriva');
+// el área privada enlaza a páginas públicas (Caesar III → roma-aeterna/)
+for (const k of pageKeys) if (apHtml.includes(`href="./${k}"`) || apHtml.includes(`href="./${k}/"`)) link('col:privada', P[k].id, 'enlaza');
 // las páginas públicas que apuntan al área privada (también desde carpetas: roma-aeterna)
 for (const k of pageKeys) if (A.internal[k].includes('area-privada.html')) link(P[k].id, 'col:privada', 'enlaza');
 
@@ -321,7 +338,7 @@ for (const t of toolNodes) {
 }
 for (const w of workflows) {
   for (const name of scan(read(`.github/workflows/${w}`)).tools) {
-    link(`w:${w.replace(/\.ya?ml$/, '')}`, toolBySlug[name.replace(/\.(m?js|cjs)$/, '')], 'ejecuta');
+    link(`w:${w.replace(/\.ya?ml$/, '')}`, toolBySlug[name.replace(TOOL_FILE, '')], 'ejecuta');
   }
 }
 
@@ -329,10 +346,14 @@ const relaciones = [...rel.values()].sort((a, b) => byName(a.de + a.a + a.tipo, 
 
 /* ═══════════ 7 · SALIDA ═══════════ */
 const count = (type) => { let n = 0; (function walk(l) { for (const x of l) { if (x.tipo === type) n++; walk(x.hijos || []); } })(columnas); return n; };
-const sinExplicar = Object.entries(A.sinExplicar).map(([url, p]) => ({ url, paginas: uniq(p).sort(byName) })).sort((a, b) => byName(a.url, b.url));
+const revisados = new Set(cfg.web.revisados || []);   // enlaces que se han mirado y se dejan sin clasificar a propósito
+const sinExplicar = Object.entries(A.sinExplicar).filter(([url]) => !revisados.has(url)).map(([url, p]) => ({ url, paginas: uniq(p).sort(byName) })).sort((a, b) => byName(a.url, b.url));
 const recuento = {
   paginas: pageKeys.length,
-  proyectos: Object.keys(E).length + count('caso'),
+  proyectos: count('caso') + count('app') + count('proyecto') + count('visual'),
+  recursos: count('lab') + count('grafico') + count('post'),
+  perfil: count('perfil'),
+  capitulos: count('capitulo'),
   plataformas: count('plataforma') + count('repo'),
   pestanas: count('pestana'),
   tablas: count('tabla'),
@@ -341,8 +362,9 @@ const recuento = {
   relaciones: relaciones.length,
   sinExplicar: sinExplicar.length,
 };
+const ignorados = Object.entries(A.ignorados).map(([dominio, n]) => ({ dominio, n })).sort((a, b) => byName(a.dominio, b.dominio));
 const body = {
-  columnas, relaciones, sinExplicar,
+  columnas, relaciones, sinExplicar, ignorados,
   tipos: cfg.tipos, verbos: cfg.relaciones,
   familias: cfg.familias,
 };
@@ -353,9 +375,16 @@ if (AS_JSON) { console.log(JSON.stringify(data, null, 1)); process.exit(0); }
 
 const resumen = `${recuento.paginas} páginas, ${recuento.proyectos} proyectos, ${recuento.pestanas} pestañas, ${recuento.tablas} tablas, ${recuento.relaciones} relaciones`;
 if (sinExplicar.length) console.warn(`⚠ ${sinExplicar.length} enlaces del contenido que el mapa no reconoce (campo sinExplicar):\n` + sinExplicar.slice(0, 12).map((x) => `   ${x.url}  ← ${x.paginas.join(', ')}`).join('\n'));
+const avisos = [...A.avisos, ...(descartadas.length ? [`${descartadas.length} relaciones descartadas por apuntar a un nodo que no existe: ${descartadas.slice(0, 4).join('; ')}`] : [])];
+for (const a of avisos) console.warn('⚠ ' + a);
 const source = `/* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */\nexport default ${JSON.stringify(data, null, 1)};\n`;
 const current = exists(OUT) ? read(OUT) : null;
 if (CHECK) {
+  const fallos = [...sinExplicar.map((m) => `enlace sin clasificar: ${m.url} (${m.paginas.join(', ')})`), ...avisos];
+  if (fallos.length) {
+    console.error(`✗ El mapa necesita atención:\n${fallos.map((f) => '   · ' + f).join('\n')}\n\nClasifícalo en tools/mapa/mapa.config.json (grupos, tipos, etiquetas) o añade la URL a web.revisados si es a propósito.`);
+    process.exit(1);
+  }
   if (current !== source) {
     console.error(`✗ ${OUT} está desactualizado: la estructura del repositorio ha cambiado.\n\nEjecuta: node tools/mapa/build-mapa.mjs && node tools/version-assets.mjs`);
     process.exit(1);
