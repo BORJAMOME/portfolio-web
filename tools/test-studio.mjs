@@ -15,7 +15,7 @@ import { dirname, join } from 'node:path';
 
 const eq = legacy.deepEqual;     // el código se evalúa en otro contexto de vm: los prototipos difieren
 const src = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'area-privada-studio.js'), 'utf8');
-const sandbox = { window: {}, Intl };
+const sandbox = { window: {}, Intl, URL };
 vm.createContext(sandbox);
 vm.runInContext(src, sandbox);
 const L = sandbox.window.APStudio.logic;
@@ -112,4 +112,55 @@ test('Los estados y fases coinciden con los del esquema SQL', () => {
   const listIn = (col) => new RegExp(col + '[^\\n]*check \\(' + col + ' in \\(([^)]*)\\)').exec(sql)[1].split(',').map((s) => s.trim().replace(/'/g, ''));
   eq(L.STATUSES.map((s) => s.id), listIn('board_status'));
   eq(L.STAGES.map((s) => s.id), listIn('stage'));
+});
+
+/* ── Hito 2: ideas, notas y entregables ── */
+const idea = (o) => Object.assign({ id: Math.random().toString(36).slice(2), title: 'I', body: null, topic: null, status: 'new', kind: null, project_id: null, created_at: '2026-10-01' }, o);
+
+test('safeUrl: solo http y https; lo demás no se convierte en enlace', () => {
+  assert.equal(L.safeUrl('https://github.com/BORJAMOME/x'), 'https://github.com/BORJAMOME/x');
+  assert.equal(L.safeUrl('http://localhost:8000/a'), 'http://localhost:8000/a');
+  for (const bad of ['javascript:alert(1)', 'data:text/html,<b>x</b>', 'ftp://x.es', 'github.com/x', '', null, undefined, 'vbscript:x']) assert.equal(L.safeUrl(bad), null, String(bad));
+});
+
+test('filterIdeas: por defecto solo nuevas y explorando, más recientes primero', () => {
+  const a = idea({ id: 'a', created_at: '2026-10-01' }), b = idea({ id: 'b', status: 'exploring', created_at: '2026-10-03' }),
+    c = idea({ id: 'c', status: 'converted' }), d = idea({ id: 'd', status: 'discarded' });
+  eq(L.filterIdeas([a, b, c, d], { q: '' }).map((x) => x.id), ['b', 'a']);
+  eq(L.filterIdeas([a, b, c, d], { q: '', show: 'todas' }).length, 4);
+  eq(L.filterIdeas([a, b, c, d], { q: '', show: 'discarded' }).map((x) => x.id), ['d']);
+});
+
+test('filterIdeas: busca sin tildes en título, descripción y grupo', () => {
+  const a = idea({ id: 'a', title: 'Análisis de ventas' }), b = idea({ id: 'b', body: 'Usar SARIMA' }), c = idea({ id: 'c', topic: 'Previsión' });
+  eq(L.filterIdeas([a, b, c], { q: 'analisis' }).map((x) => x.id), ['a']);
+  eq(L.filterIdeas([a, b, c], { q: 'sarima' }).map((x) => x.id), ['b']);
+  eq(L.filterIdeas([a, b, c], { q: 'prevision' }).map((x) => x.id), ['c']);
+});
+
+test('groupIdeas: grupos por orden alfabético y «sin grupo» al final', () => {
+  const g = L.groupIdeas([idea({ id: '1' }), idea({ id: '2', topic: 'Zeta' }), idea({ id: '3', topic: 'álgebra' }), idea({ id: '4', topic: 'Zeta' })]);
+  eq(g.map((x) => x.topic), ['álgebra', 'Zeta', '']);
+  eq(g[1].ideas.map((x) => x.id), ['2', '4']);
+});
+
+test('activityText: ideas', () => {
+  assert.equal(L.activityText({ kind: 'idea_created', label: 'Mapa' }), 'Idea capturada: «Mapa»');
+  assert.equal(L.activityText({ kind: 'idea_converted', label: 'Mapa' }), 'Idea convertida en proyecto: «Mapa»');
+});
+
+test('Los valores de ideas, notas y entregables coinciden con studio-ideas.sql', () => {
+  const sql = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'supabase', 'studio-ideas.sql'), 'utf8');
+  const listIn = (table, col) => {
+    const from = sql.indexOf('create table if not exists public.' + table), block = sql.slice(from, sql.indexOf(');', from));
+    return new RegExp(col + '[^\\n]*check \\(' + col + ' in \\(([^)]*)\\)').exec(block)[1].split(',').map((s) => s.trim().replace(/'/g, ''));
+  };
+  eq(L.IDEA_STATUSES.map((s) => s[0]), listIn('ps_ideas', 'status'));
+  eq(L.KINDS.map((s) => s[0]), listIn('ps_ideas', 'kind'));
+  eq(L.NOTE_KINDS.map((s) => s[0]), listIn('ps_notes', 'kind'));
+  eq(L.DELIV_KINDS.map((s) => s[0]), listIn('ps_deliverables', 'kind'));
+  eq(L.DSTATUS.map((s) => s[0]), listIn('ps_deliverables', 'status'));
+  // los tipos de proyecto del hito 1 siguen siendo los mismos
+  const base = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'supabase', 'studio.sql'), 'utf8');
+  eq(L.KINDS.map((s) => s[0]), /kind[^\n]*check \(kind in \(([^)]*)\)/.exec(base)[1].split(',').map((s) => s.trim().replace(/'/g, '')));
 });
