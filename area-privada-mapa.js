@@ -19,7 +19,16 @@ window.APMapa = (function () {
   var ctx = null, data = null;
   var byId, parentOf, colOf, subtree, labels, edges, root, canvas, svg, detail, famCount;
   var pinned = null, hover = null, famFilter = null, raf = 0;
-  var collapsed = {}, lists = {}, toggles = {};   // grupos plegados, su <ul> y su botón
+  var collapsed = {}, lists = {}, toggles = {};
+  var view = 'todo', query = '', colEls = [], qCount = null;
+  // Vistas por pregunta: qué columnas se enseñan
+  var VIEWS = [
+    { id: 'todo', nombre: 'Todo', cols: [0, 1, 2, 3, 4] },
+    { id: 'sitio', nombre: '¿Qué publico y dónde vive?', cols: [0, 1] },
+    { id: 'privada', nombre: '¿Qué hay en el área privada y qué datos usa?', cols: [2, 3] },
+    { id: 'build', nombre: '¿Qué lo genera y lo comprueba?', cols: [2, 3, 4] }
+  ];
+  function fold(s) { return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }   // grupos plegados, su <ul> y su botón
 
   /* ── Datos ── */
   function assetUrl() {
@@ -68,7 +77,7 @@ window.APMapa = (function () {
   /* ── Pintado ── */
   function paint() {
     var h = ctx.h;
-    labels = {}; edges = []; pinned = null; hover = null; famFilter = null; lists = {}; toggles = {};
+    labels = {}; edges = []; pinned = null; hover = null; famFilter = null; lists = {}; toggles = {}; view = 'todo'; query = ''; colEls = [];
     initCollapsed();
     ctx.view.textContent = '';
 
@@ -99,6 +108,8 @@ window.APMapa = (function () {
 
     root = h('section', { class: 'mp', 'aria-labelledby': 'mp-title' }, [
       h('p', { class: 'ape-meta', text: 'Pulsa un elemento para ver con qué se relaciona, o un tipo de la leyenda para resaltarlo. El menú que repiten todas las páginas no se dibuja: solo los enlaces del contenido.' }),
+      bar(),
+      orphans(),
       legend(),
       canvas,
       foot(),
@@ -129,10 +140,12 @@ window.APMapa = (function () {
   function column(col) {
     var h = ctx.h;
     var btn = labelButton(col);
-    return h('div', { class: 'mp-col' }, [
+    var el = h('div', { class: 'mp-col' }, [
       h('h3', { class: 'mp-colhead' }, [h('span', { class: 'mp-lab' }, [btn, h('span', { class: 'mp-note', text: col.nota })])]),
       h('ul', { class: 'mp-tree' }, (col.hijos || []).map(node))
     ]);
+    colEls.push(el);
+    return el;
   }
 
   function node(n) {
@@ -173,6 +186,66 @@ window.APMapa = (function () {
     if (n.familia) b.style.setProperty('--fam', color(n.familia));
     labels[n.id] = b;
     return b;
+  }
+
+  /* Barra: búsqueda y vistas por pregunta */
+  function bar() {
+    var h = ctx.h;
+    qCount = h('span', { class: 'mp-q-n', 'aria-live': 'polite' });
+    var input = h('input', {
+      type: 'search', class: 'mp-q', placeholder: 'Buscar un proyecto, página, tabla o tecnología', 'aria-label': 'Buscar en el mapa', autocomplete: 'off',
+      oninput: function (e) { query = e.target.value; applySearch(); },
+      onkeydown: function (e) {
+        if (e.key === 'Enter') { var first = root.querySelector('.mp-label.is-hit'); if (first) { e.preventDefault(); select(first.getAttribute('data-id')); } }
+        if (e.key === 'Escape' && query) { e.stopPropagation(); e.target.value = ''; query = ''; applySearch(); }
+      }
+    });
+    return h('div', { class: 'mp-bar' }, [
+      h('label', { class: 'mp-search' }, [h('span', { class: 'sr-only', text: 'Buscar en el mapa' }), input, qCount]),
+      h('div', { class: 'mp-views', role: 'group', 'aria-label': 'Vistas' }, VIEWS.map(function (v) {
+        return h('button', { type: 'button', class: 'mp-view', 'data-view': v.id, 'aria-pressed': v.id === view ? 'true' : 'false', text: v.nombre, onclick: function () { setView(v.id); } });
+      }))
+    ]);
+  }
+
+  /* Páginas que ninguna otra página pública enlaza: el hallazgo más útil de un vistazo */
+  function orphans() {
+    var h = ctx.h, g = byId['g:web:huerfanas'];
+    if (!g || !g.hijos || !g.hijos.length) return null;
+    return h('p', { class: 'mp-orphans' }, [
+      h('strong', { text: 'Sin enlaces desde el sitio público: ' }),
+      g.hijos.map(function (n) { return h('button', { type: 'button', class: 'mp-chip', text: n.etiqueta, onclick: function () { select(n.id); } }); })
+    ]);
+  }
+
+  function colHidden(id) { return colEls[colOf[id]] && colEls[colOf[id]].hidden; }
+  function setView(id) {
+    view = id;
+    var def = VIEWS.filter(function (v) { return v.id === id; })[0] || VIEWS[0];
+    var visible = colEls.filter(function (c, i) { c.hidden = def.cols.indexOf(i) < 0; return !c.hidden; });
+    visible.forEach(function (c, i) { c.classList.toggle('is-last', i === visible.length - 1); });
+    canvas.querySelector('.mp-cols').style.setProperty('--cols', String(visible.length));
+    [].forEach.call(root.querySelectorAll('.mp-view'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-view') === id ? 'true' : 'false'); });
+    if (pinned && colHidden(pinned)) select(null);
+    schedule();
+  }
+
+  /* Búsqueda: resalta lo que coincide y abre los grupos que lo esconden */
+  function applySearch() {
+    var q = fold(query).trim();
+    var hits = [];
+    if (q.length >= 2) Object.keys(byId).forEach(function (id) {
+      var n = byId[id];
+      if (n.tipo === 'columna') return;
+      if (fold([n.etiqueta, (n.tec || []).join(' '), n.archivo || '', n.nota || ''].join(' ')).indexOf(q) >= 0) hits.push(id);
+    });
+    root.classList.toggle('has-q', q.length >= 2);
+    Object.keys(labels).forEach(function (id) { labels[id].classList.toggle('is-hit', hits.indexOf(id) >= 0); });
+    if (hits.length && hits.length <= 60) hits.forEach(function (id) { reveal(id); });
+    qCount.textContent = q.length < 2 ? '' : hits.length ? hits.length + (hits.length === 1 ? ' resultado' : ' resultados') + ' · Intro para abrir el primero' : 'Sin resultados';
+    // si lo encontrado está en una columna oculta, se vuelve a la vista completa
+    if (hits.length && view !== 'todo' && hits.every(function (id) { return colHidden(id); })) setView('todo');
+    schedule();
   }
 
   /* Leyenda: cada tipo con su color y su forma; pulsarla resalta todos los de ese tipo */
@@ -252,8 +325,9 @@ window.APMapa = (function () {
       var a = labels[ia], b = labels[ib];
       var key = ia + '|' + ib, active = e.el.classList.contains('is-on');
       // dos relaciones que acaban en el mismo par de elementos visibles se dibujan una vez; si ambos extremos son el mismo grupo, ninguna
-      e.el.classList.toggle('is-folded', !a || !b || ia === ib || (!active && !!drawn[key]));
-      if (!a || !b || ia === ib) return;
+      var oculta = colHidden(ia) || colHidden(ib);
+      e.el.classList.toggle('is-folded', oculta || !a || !b || ia === ib || (!active && !!drawn[key]));
+      if (oculta || !a || !b || ia === ib) return;
       if (!active) drawn[key] = true;
       var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
       var ay = ra.top + ra.height / 2 - cb.top, by = rb.top + rb.height / 2 - cb.top;
@@ -295,6 +369,7 @@ window.APMapa = (function () {
 
   function select(id) {
     pinned = id;
+    if (id && colHidden(id)) setView('todo');
     if (id) reveal(id);
     refresh();
     paintDetail();

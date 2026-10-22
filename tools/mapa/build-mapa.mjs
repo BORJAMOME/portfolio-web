@@ -66,7 +66,7 @@ const textOf = (files) => files.map(read).join('\n');
 const grab = (text, re) => [...text.matchAll(re)].map((m) => m[1]);
 
 /* Familia (color y forma en la leyenda) de cada tipo de nodo */
-const FAMILIA = { pestana: 'privada', modulo: 'privada', esquema: 'dato', tabla: 'dato', funcion: 'dato', herramienta: 'herramienta', workflow: 'herramienta' };
+const FAMILIA = { capitulo: 'manual', pestana: 'privada', modulo: 'privada', esquema: 'dato', tabla: 'dato', funcion: 'dato', herramienta: 'herramienta', workflow: 'herramienta' };
 const withFamily = (n) => {
   if (n.tipo !== 'grupo' && n.tipo !== 'columna') n.familia = cfg.familias[n.tipo] ? n.tipo : (FAMILIA[n.tipo] || (n.tipo === 'carpeta' ? 'pagina' : undefined));
   (n.hijos || []).forEach(withFamily);
@@ -100,7 +100,7 @@ const pageNode = (k) => {
 };
 const entityNode = (id) => {
   const e = E[id];
-  return { id, tipo: e.tipo, etiqueta: e.etiqueta, href: e.url || undefined, externo: e.url ? true : undefined, ...(e.techs.length ? { tec: e.techs } : {}), ...(e.ruta ? { archivo: e.ruta } : {}), ...(e.soloDatos ? { nota: 'Solo figura en los datos estructurados (JSON-LD) de la página; no hay tarjeta visible.' } : {}) };
+  return { id, tipo: e.tipo, etiqueta: e.etiqueta, href: e.url || e.hrefInterno || undefined, externo: e.url ? true : undefined, ...(e.techs.length ? { tec: e.techs } : {}), ...(e.ruta ? { archivo: e.ruta } : {}), ...(e.fecha ? { nota: e.fecha } : {}), ...(e.soloDatos ? { nota: 'Solo figura en los datos estructurados (JSON-LD) de la página; no hay tarjeta visible.' } : {}) };
 };
 
 function childrenOf(key) {
@@ -352,6 +352,8 @@ const recuento = {
   paginas: pageKeys.length,
   proyectos: count('caso') + count('app') + count('proyecto') + count('visual'),
   recursos: count('lab') + count('grafico') + count('post'),
+  perfil: count('perfil'),
+  capitulos: count('capitulo'),
   plataformas: count('plataforma') + count('repo'),
   pestanas: count('pestana'),
   tablas: count('tabla'),

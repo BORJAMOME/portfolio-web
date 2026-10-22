@@ -1,10 +1,12 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "15c0370",
+ "huella": "45f1afd",
  "recuento": {
   "paginas": 20,
   "proyectos": 34,
   "recursos": 46,
+  "perfil": 9,
+  "capitulos": 10,
   "plataformas": 11,
   "pestanas": 10,
   "tablas": 29,
@@ -81,6 +83,92 @@ export default {
      "nota": "Power BI · DAX · Python · SQL · UX/UI · Data Storytelling. Madrid o remoto.",
      "href": "./sobre-mi.html",
      "archivo": "sobre-mi.html",
+     "hijos": [
+      {
+       "id": "g:sobre-mi.html:roles-y-formacion-relacionados-con-datos",
+       "tipo": "grupo",
+       "etiqueta": "roles y formación relacionados con datos/",
+       "hijos": [
+        {
+         "id": "e:perfil-data-analyst-especializacion-y-proyectos",
+         "tipo": "perfil",
+         "etiqueta": "Data Analyst · Especialización y proyectos",
+         "nota": "2024–presente",
+         "familia": "perfil"
+        },
+        {
+         "id": "e:perfil-operations-executive-negronis-uk",
+         "tipo": "perfil",
+         "etiqueta": "Operations Executive · Negronis (UK)",
+         "nota": "2022–2023",
+         "familia": "perfil"
+        },
+        {
+         "id": "e:perfil-junior-data-analyst-ntt-data-uk",
+         "tipo": "perfil",
+         "etiqueta": "Junior Data Analyst · NTT DATA (UK)",
+         "nota": "2021–2022",
+         "familia": "perfil"
+        }
+       ]
+      },
+      {
+       "id": "g:sobre-mi.html:formacion",
+       "tipo": "grupo",
+       "etiqueta": "formación/",
+       "hijos": [
+        {
+         "id": "e:perfil-master-en-ux-ui-neoland-en-curso",
+         "tipo": "perfil",
+         "etiqueta": "Máster en UX/UI · Neoland · En curso",
+         "nota": "2026",
+         "familia": "perfil"
+        },
+        {
+         "id": "e:perfil-bootcamp-data-analytics-360-horas-neoland",
+         "tipo": "perfil",
+         "etiqueta": "Bootcamp Data Analytics (360 horas) · Neoland",
+         "nota": "2026",
+         "familia": "perfil"
+        },
+        {
+         "id": "e:perfil-especializacion-power-bi-namasdata",
+         "tipo": "perfil",
+         "etiqueta": "Especialización Power BI · Namasdata",
+         "nota": "2024",
+         "familia": "perfil"
+        },
+        {
+         "id": "e:perfil-master-en-business-intelligence-big-data-msmk",
+         "tipo": "perfil",
+         "etiqueta": "Máster en Business Intelligence & Big Data · MSMK",
+         "nota": "2015–2016",
+         "familia": "perfil"
+        },
+        {
+         "id": "e:perfil-licenciatura-en-publicidad-y-rrpp-ucm",
+         "tipo": "perfil",
+         "etiqueta": "Licenciatura en Publicidad y RRPP · UCM",
+         "nota": "2009–2014",
+         "familia": "perfil"
+        }
+       ]
+      },
+      {
+       "id": "g:sobre-mi.html:certificaciones",
+       "tipo": "grupo",
+       "etiqueta": "certificaciones/",
+       "hijos": [
+        {
+         "id": "e:perfil-microsoft-certified-power-bi-data-analyst-associate-pl-300",
+         "tipo": "perfil",
+         "etiqueta": "Microsoft Certified: Power BI Data Analyst Associate · PL-300",
+         "nota": "2025",
+         "familia": "perfil"
+        }
+       ]
+      }
+     ],
      "familia": "pagina"
     },
     {
@@ -750,6 +838,85 @@ export default {
      "nota": "Manual interactivo de Data Storytelling y diseño de dashboards: percepción, ruido, atención, visuales, composición y narrativa, sobre un dashboard vivo.",
      "href": "./data-storytelling.html",
      "archivo": "data-storytelling.html",
+     "hijos": [
+      {
+       "id": "g:data-storytelling.html:capitulos-del-manual",
+       "tipo": "grupo",
+       "etiqueta": "capítulos del manual/",
+       "hijos": [
+        {
+         "id": "e:cap-01-fundamentos",
+         "tipo": "capitulo",
+         "etiqueta": "01 · Fundamentos",
+         "href": "./data-storytelling.html#c01",
+         "familia": "manual"
+        },
+        {
+         "id": "e:cap-02-contexto",
+         "tipo": "capitulo",
+         "etiqueta": "02 · Contexto",
+         "href": "./data-storytelling.html#c02",
+         "familia": "manual"
+        },
+        {
+         "id": "e:cap-03-percepcion",
+         "tipo": "capitulo",
+         "etiqueta": "03 · Percepción",
+         "href": "./data-storytelling.html#c03",
+         "familia": "manual"
+        },
+        {
+         "id": "e:cap-04-reducir-el-ruido",
+         "tipo": "capitulo",
+         "etiqueta": "04 · Reducir el ruido",
+         "href": "./data-storytelling.html#c04",
+         "familia": "manual"
+        },
+        {
+         "id": "e:cap-05-dirigir-la-atencion",
+         "tipo": "capitulo",
+         "etiqueta": "05 · Dirigir la atención",
+         "href": "./data-storytelling.html#c05",
+         "familia": "manual"
+        },
+        {
+         "id": "e:cap-06-elegir-el-visual",
+         "tipo": "capitulo",
+         "etiqueta": "06 · Elegir el visual",
+         "href": "./data-storytelling.html#c06",
+         "familia": "manual"
+        },
+        {
+         "id": "e:cap-07-componer-como-disenador",
+         "tipo": "capitulo",
+         "etiqueta": "07 · Componer como diseñador",
+         "href": "./data-storytelling.html#c07",
+         "familia": "manual"
+        },
+        {
+         "id": "e:cap-08-el-texto",
+         "tipo": "capitulo",
+         "etiqueta": "08 · El texto",
+         "href": "./data-storytelling.html#c08",
+         "familia": "manual"
+        },
+        {
+         "id": "e:cap-09-construir-la-historia",
+         "tipo": "capitulo",
+         "etiqueta": "09 · Construir la historia",
+         "href": "./data-storytelling.html#c09",
+         "familia": "manual"
+        },
+        {
+         "id": "e:cap-10-juntar-las-piezas",
+         "tipo": "capitulo",
+         "etiqueta": "10 · Juntar las piezas",
+         "href": "./data-storytelling.html#c10",
+         "familia": "manual"
+        }
+       ]
+      }
+     ],
      "familia": "manual"
     },
     {
@@ -3188,7 +3355,9 @@ export default {
   "herramienta": "Herramienta",
   "workflow": "Workflow",
   "grupo": "Grupo",
-  "columna": "Bloque"
+  "columna": "Bloque",
+  "perfil": "Perfil profesional",
+  "capitulo": "Capítulo del manual"
  },
  "verbos": {
   "enlaza": {
@@ -3305,6 +3474,11 @@ export default {
    "nombre": "Herramienta y CI",
    "color": "#6B7280",
    "forma": "rombo"
+  },
+  "perfil": {
+   "nombre": "Perfil profesional",
+   "color": "#8B5A2B",
+   "forma": "circulo"
   }
  }
 };

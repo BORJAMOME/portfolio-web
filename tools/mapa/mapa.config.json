@@ -268,7 +268,9 @@
     "herramienta": "Herramienta",
     "workflow": "Workflow",
     "grupo": "Grupo",
-    "columna": "Bloque"
+    "columna": "Bloque",
+    "perfil": "Perfil profesional",
+    "capitulo": "Capítulo del manual"
   },
   "relaciones": {
     "enlaza": {
@@ -385,6 +387,11 @@
       "nombre": "Herramienta y CI",
       "color": "#6B7280",
       "forma": "rombo"
+    },
+    "perfil": {
+      "nombre": "Perfil profesional",
+      "color": "#8B5A2B",
+      "forma": "circulo"
     }
   }
 }

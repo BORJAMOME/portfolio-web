@@ -232,6 +232,26 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
       addEntity({ prefijo: 'app-', tipo: 'app', etiqueta: W.etiquetasUrl[canon(a.href)] || W.etiquetasUrl[canon(a.href).replace(/\/[^/]*$/, '')] || a.label.replace(/[↗→]/g, '').trim() || 'Herramienta externa', urls: [canon(a.href)], url: a.href, techs: [], grupo: W.grupos.herramienta, pagina: page.key });
     }
   }
+  // 3f · sobre-mi.html: experiencia, formación y certificaciones (.res-group > .res-row)
+  const sm = P['sobre-mi.html'];
+  if (sm) {
+    sm.raw.split(/class="res-group(?=[ "])/).slice(1).forEach((g, gi) => {
+      const label = text((/res-group-label"[^>]*>([^<]+)</.exec(g) || [, gi === 0 ? 'Experiencia' : 'Perfil'])[1]).toLowerCase();
+      g.split('class="res-row"').slice(1).forEach((r, ri) => {
+        const role = text((/class="res-role"[^>]*>([\s\S]*?)<\/p>/.exec(r) || [, ''])[1]);
+        const fecha = text((/class="res-date"[^>]*>([\s\S]*?)<\//.exec(r) || [, ''])[1]);
+        if (role) addEntity({ prefijo: 'perfil-', tipo: 'perfil', etiqueta: role, urls: [], url: '', techs: [], grupo: label, pagina: sm.key, orden: gi * 100 + ri, fecha });
+      });
+    });
+  }
+  // 3g · data-storytelling.html: los capítulos del manual (<section class="chapter" id="c01">)
+  const ds = P['data-storytelling.html'];
+  if (ds) {
+    for (const m of ds.raw.matchAll(/<section[^>]*class="chapter"[^>]*id="(c\d+)"[^>]*>([\s\S]*?)(?=<section[^>]*class="chapter"|$)/g)) {
+      const name = text((/<b>([^<]+)<\/b>/.exec(m[2]) || [, ''])[1]) || text((/<h2[^>]*>([\s\S]*?)<\/h2>/.exec(m[2]) || [, ''])[1]);
+      addEntity({ prefijo: 'cap-', tipo: 'capitulo', etiqueta: `${m[1].slice(1)} · ${cut(name, 48)}`, urls: [], url: '', hrefInterno: `./${ds.key}#${m[1]}`, techs: [], grupo: 'capítulos del manual', pagina: ds.key, orden: Number(m[1].slice(1)) });
+    }
+  }
   // los casos de estudio también se reconocen por la URL de su informe
   for (const c of Object.values(caso)) {
     const k = canon(c.url);
