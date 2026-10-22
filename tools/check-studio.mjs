@@ -31,8 +31,8 @@ const BASE = `http://localhost:${server.address().port}/area-privada.html`;
 /* ── PostgREST en memoria ── */
 let seq = 0;
 const uid = () => '00000000-0000-4000-8000-' + String(++seq).padStart(12, '0');
-const db = { ps_projects: [], ps_tasks: [], ps_settings: [], ps_activity: [], ps_ideas: [], ps_notes: [], ps_deliverables: [] };
-let failWrites = false, extMissing = false;      // extMissing: aún no se ha ejecutado studio-ideas.sql
+const db = { ps_projects: [], ps_tasks: [], ps_settings: [], ps_activity: [], ps_ideas: [], ps_notes: [], ps_deliverables: [], ps_milestones: [], ps_links: [] };
+let failWrites = false, extMissing = false, roadMissing = false;      // extMissing / roadMissing: aún no se han ejecutado studio-ideas.sql / studio-roadmap.sql
 const log = [];
 function matches(row, params) {
   for (const [k, v] of params) {
@@ -54,6 +54,19 @@ function trigger(t, row, old) {          // lo que hacen los triggers de supabas
     if (row.board_status !== old.board_status) { row.completed_at = row.board_status === 'done' ? now : null; if (!row.parent_id) act(row.project_id, row.id, 'task_status', row.title, old.board_status, row.board_status); }
     if (row.archived_at !== old.archived_at && !row.parent_id) act(row.project_id, row.id, row.archived_at ? 'task_archived' : 'task_restored', row.title);
     row.updated_at = now;
+  } else if (t === 'ps_milestones') {
+    if (!old) { if (row.status === 'done') row.done_at = now; return; }
+    if (row.status !== old.status) row.done_at = row.status === 'done' ? now : null;
+    row.updated_at = now;
+  } else if (t === 'ps_links') {            // ps_links_before + índices únicos + checks de studio-roadmap.sql
+    const tables = { project: db.ps_projects, milestone: db.ps_milestones, idea: db.ps_ideas };
+    if (!tables[row.kind] || !tables[row.kind].some((x) => x.id === row.from_id) || !tables[row.kind].some((x) => x.id === row.to_id)) throw new Error('Uno de los elementos enlazados no existe');
+    if (row.rel === 'depends_on') {
+      const seen = new Set(), stack = [row.to_id];
+      while (stack.length) { const c = stack.pop(); if (c === row.from_id) throw new Error('La dependencia crearía un ciclo'); if (seen.has(c)) continue; seen.add(c); db.ps_links.forEach((l) => { if (l.rel === 'depends_on' && l.from_id === c) stack.push(l.to_id); }); }
+      if (row.kind === 'idea') throw new Error('violates check constraint');
+    }
+    if (db.ps_links.some((l) => l.rel === row.rel && ((l.from_id === row.from_id && l.to_id === row.to_id) || (row.rel === 'relates_to' && l.from_id === row.to_id && l.to_id === row.from_id)))) throw new Error('duplicate key value violates unique constraint');
   } else if (t === 'ps_ideas') {
     if (!old) return act(row.project_id, null, 'idea_created', row.title);
     if (row.status === 'converted' && old.status !== 'converted') act(row.project_id, null, 'idea_converted', row.title);
@@ -70,6 +83,8 @@ const DEFAULT_ROW = {
   ps_ideas: { body: null, kind: null, topic: null, status: 'new', project_id: null },
   ps_notes: { kind: 'note', body: null, url: null },
   ps_deliverables: { kind: 'other', url: null, status: 'planned' },
+  ps_milestones: { target_date: null, status: 'pending', done_at: null },
+  ps_links: {},
   ps_tasks: { board_status: 'inbox', position: 0, priority: 2, due_date: null, blocked: false, blocked_reason: null, next_step: null, notes: null, archived_at: null, completed_at: null, parent_id: null, project_id: null }
 };
 async function route(r) {
@@ -90,6 +105,7 @@ async function route(r) {
     return json(200, p);
   }
   if (extMissing && ['ps_ideas', 'ps_notes', 'ps_deliverables'].includes(t)) return json(404, { code: 'PGRST205', message: 'Could not find the table' });
+  if (roadMissing && ['ps_milestones', 'ps_links'].includes(t)) return json(404, { code: 'PGRST205', message: 'Could not find the table' });
   if (!(t in db)) return json(200, []);
   const method = req.method(), rows = db[t], params = [...url.searchParams.entries()];
   if (method === 'GET') return json(200, rows.filter((x) => matches(x, params)));
@@ -102,7 +118,7 @@ async function route(r) {
         const prior = t === 'ps_settings' ? rows.find((x) => x.key === b.key) : null;
         if (prior) { Object.assign(prior, b); return prior; }
         const row = Object.assign({ id: uid(), created_at: new Date().toISOString(), updated_at: new Date().toISOString() }, DEFAULT_ROW[t] || {}, b);
-        rows.push(row); trigger(t, row, null); return row;
+        trigger(t, row, null); rows.push(row); return row;       // como un trigger BEFORE: si rechaza, la fila no se guarda
       });
       return json(201, out);
     }
@@ -116,7 +132,11 @@ async function route(r) {
         db.ps_tasks = db.ps_tasks.filter((x) => !ids.has(x.project_id));
         db.ps_notes = db.ps_notes.filter((x) => !ids.has(x.project_id)); db.ps_deliverables = db.ps_deliverables.filter((x) => !ids.has(x.project_id));
         db.ps_ideas.forEach((x) => { if (ids.has(x.project_id)) x.project_id = null; });       // on delete set null
+        db.ps_milestones.filter((x) => ids.has(x.project_id)).forEach((x) => ids.add(x.id));  // hitos en cascada: sus enlaces también se limpian
+        db.ps_milestones = db.ps_milestones.filter((x) => !ids.has(x.project_id));
+        db.ps_links = db.ps_links.filter((l) => !ids.has(l.from_id) && !ids.has(l.to_id));
       }
+      if (t === 'ps_milestones' || t === 'ps_ideas') { const ids = new Set(hit.map((x) => x.id)); db.ps_links = db.ps_links.filter((l) => !ids.has(l.from_id) && !ids.has(l.to_id)); }   // ps_links_cleanup
       return json(204, null);
     }
   } catch (e) { return json(400, { message: e.message }); }
@@ -530,6 +550,181 @@ await step('H2-10. Error al convertir: se avisa y la idea no cambia', async () =
   eq(db.ps_ideas.find((i) => i.title === 'Cuadro de mando de RRHH').status, 'new');
   eq(db.ps_projects.length, 0);
 });
+const pad2 = (n) => (n < 10 ? '0' : '') + n;
+const day = (n) => { const d = new Date(Date.now() + n * 864e5); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); };
+const openSec = async (page, name) => { const d = await page.$(`.aps-sec:has(.aps-sec-sum:has-text("${name}"))`); if ((await d.getAttribute('open')) === null) await page.click(`.aps-sec-sum:has-text("${name}")`); };
+const mrow = (title) => '.aps-ms-row[data-id="' + db.ps_milestones.find((m) => m.title === title).id + '"]';       // por id: el título de un hito también aparece en los chips de otros
+const markerLeft = (page, label) => page.$eval(`.aps-ms[aria-label^="${label}"]`, (e) => parseFloat(e.style.left));
+const newProject = async (page, name) => {
+  await page.click('[data-role="new-project"]');
+  await page.fill('#aps-n-title', name);
+  await page.click('dialog[open] button[type="submit"]');
+  await page.waitForSelector('.aps-panel #aps-p-title');
+};
+await step('R-1. Hoja de ruta sin proyectos activos: lo explica', async () => {
+  await view(page, 'Hoja de ruta');
+  ok((await page.textContent('.aps-main')).includes('No hay proyectos activos'), 'sin mensaje');
+});
+await step('R-2. Sin fechas pide ponerlas; con la fecha objetivo del proyecto aparece la línea de tiempo con «hoy»', async () => {
+  await newProject(page, 'Plan A');
+  await page.click('.aps-panel .aps-link:has-text("Cerrar")');
+  await view(page, 'Hoja de ruta');
+  ok((await page.textContent('.aps-empty-state')).includes('Pon fecha a lo que importa'), 'sin estado vacío');
+  await view(page, 'Resumen');
+  await page.click('.aps-project:has-text("Plan A") .aps-project-title');
+  await page.fill('#aps-p-target', day(60));
+  await page.click('.aps-panel button[type="submit"]');
+  await page.waitForTimeout(300);
+  await view(page, 'Hoja de ruta');
+  eq(await page.$$eval('.aps-ms--target', (e) => e.length), 1);
+  ok((await page.$$('.aps-road-today')).length >= 1, 'sin línea de hoy');
+  eq(db.ps_projects.find((p) => p.title === 'Plan A').target_date, day(60));
+});
+await step('R-3. Hitos: se crean desde el panel del proyecto y se colocan por fecha en la línea de tiempo', async () => {
+  await page.click('.aps-road-label .aps-row-title:has-text("Plan A")');
+  await page.waitForSelector('.aps-panel #aps-p-title');
+  await openSec(page, 'Hitos');
+  for (const [t, d] of [['Datos listos', day(20)], ['Informe', day(40)], ['Sin fecha', '']]) {
+    await page.click('[data-role="add-ms"]');
+    await page.fill('#aps-m-title', t); if (d) await page.fill('#aps-m-date', d);
+    await page.click('dialog[open] button[type="submit"]');
+    await page.waitForFunction((x) => [...document.querySelectorAll('.aps-panel .aps-ms-row .aps-row-title')].some((e) => e.textContent === x), t);
+  }
+  eq(db.ps_milestones.length, 3);
+  eq(db.ps_milestones.every((m) => m.project_id === db.ps_projects[0].id), true);
+  ok((await page.textContent('.aps-panel')).includes('0/3'), 'contador de hitos');
+  await view(page, 'Hoja de ruta');
+  eq(await page.$$eval('.aps-ms', (e) => e.length), 3, 'dos hitos con fecha y la bandera del objetivo');
+  const [a, b, c] = [await markerLeft(page, 'Hito «Datos listos'), await markerLeft(page, 'Hito «Informe'), await markerLeft(page, 'Fecha objetivo')];
+  ok(a > 0 && a < b && b < c && c <= 100, `orden de marcadores: ${a} < ${b} < ${c}`);
+  ok((await page.textContent(`${mrow('Sin fecha')}`)).includes('Sin fecha'), 'el hito sin fecha va a la lista');
+  await shot(page, 'hoja-de-ruta');
+});
+await step('R-4. Marcar un hito como hecho: el marcador cambia, la base guarda done_at y «Próximos hitos» lo omite', async () => {
+  await page.check(`${mrow('Datos listos')} input[type="checkbox"]`);
+  await page.waitForTimeout(300);
+  const m = db.ps_milestones.find((x) => x.title === 'Datos listos');
+  eq([m.status, !!m.done_at], ['done', true]);
+  eq(await page.$$eval('.aps-ms--done', (e) => e.length), 1);
+  await view(page, 'Resumen');
+  const up = await page.textContent('[aria-labelledby="aps-h-up"]');
+  ok(up.includes('Informe') && !up.includes('Datos listos'), 'próximos hitos: ' + up);
+  ok((await page.textContent('.aps-project:has-text("Plan A")')).includes('Próximo hito: Informe'), 'tarjeta del proyecto');
+});
+await step('R-5. Dependencia entre hitos con fechas incoherentes: avisa; rechaza ciclos y duplicados', async () => {
+  await view(page, 'Hoja de ruta');
+  await page.click(`${mrow('Datos listos')} .aps-link:has-text("Relación")`);
+  await page.selectOption('#aps-l-rel', 'depends_on');
+  await page.selectOption('#aps-l-to', { label: 'Informe (Plan A)' });
+  await page.click('dialog[open] button[type="submit"]');
+  await page.waitForSelector('.aps-wipwarn');
+  eq([db.ps_links.length, db.ps_links[0].rel, db.ps_links[0].kind], [1, 'depends_on', 'milestone']);
+  ok((await page.textContent('.aps-wipwarn')).includes('1 dependencia con fechas incoherentes'), 'banner');
+  ok((await page.textContent(`${mrow('Datos listos')} .aps-rel`)).includes('prevista 20 días después'), 'chip de la dependencia');
+  ok((await page.textContent(`${mrow('Informe')} .aps-rel`)).includes('Lo necesita'), 'se ve también desde el otro hito');
+  await page.click(`${mrow('Informe')} .aps-link:has-text("Relación")`);         // Informe depende de Datos listos: ciclo
+  await page.selectOption('#aps-l-rel', 'depends_on');
+  await page.selectOption('#aps-l-to', { label: 'Datos listos (Plan A)' });
+  await page.click('dialog[open] button[type="submit"]');
+  ok((await page.textContent('dialog[open] .ap-msg')).includes('ciclo'), 'debía rechazar el ciclo');
+  await page.click('dialog[open] button:has-text("Cancelar")');
+  await page.click(`${mrow('Datos listos')} .aps-link:has-text("Relación")`);     // duplicado
+  await page.selectOption('#aps-l-rel', 'depends_on');
+  await page.selectOption('#aps-l-to', { label: 'Informe (Plan A)' });
+  await page.click('dialog[open] button[type="submit"]');
+  ok((await page.textContent('dialog[open] .ap-msg')).includes('ya existe'), 'debía rechazar el duplicado');
+  await page.click('dialog[open] button:has-text("Cancelar")');
+  eq(db.ps_links.length, 1);
+});
+await step('R-6. Quitar la relación con la ×: desaparece el aviso y la base queda limpia', async () => {
+  await page.click(`${mrow('Datos listos')} .aps-rel-x`);
+  await page.waitForTimeout(300);
+  eq(db.ps_links.length, 0);
+  eq(await page.$$eval('.aps-wipwarn', (e) => e.length), 0);
+});
+await step('R-7. Relaciones entre proyectos: dependencia y relación conviven; la lista y el aviso las reflejan', async () => {
+  await newProject(page, 'Plan B');
+  await page.fill('#aps-p-target', day(90));
+  await page.click('.aps-panel button[type="submit"]');
+  await page.waitForTimeout(300);
+  await page.click('.aps-panel .aps-link:has-text("Cerrar")');
+  await view(page, 'Resumen');
+  await page.click('.aps-project:has-text("Plan A") .aps-project-title');
+  await openSec(page, 'Relaciones del proyecto');
+  for (const rel of ['depends_on', 'relates_to']) {
+    await page.click('[data-role="add-rel"]');
+    await page.selectOption('#aps-l-rel', rel);
+    await page.selectOption('#aps-l-to', { label: 'Plan B' });
+    await page.click('dialog[open] button[type="submit"]');
+    await page.waitForFunction((n) => document.querySelectorAll('.aps-panel .aps-rel').length === n, rel === 'depends_on' ? 1 : 2);
+  }
+  eq(db.ps_links.map((l) => [l.kind, l.rel]), [['project', 'depends_on'], ['project', 'relates_to']]);
+  await view(page, 'Hoja de ruta');
+  const txt = await page.textContent('[aria-labelledby="aps-h-pl"]');
+  ok(txt.includes('«Plan A» depende de «Plan B»') && txt.includes('«Plan A» se relaciona con «Plan B»'), 'lista: ' + txt);
+  ok((await page.textContent('.aps-wipwarn')).includes('30 días'), 'Plan A (+60) depende de Plan B (+90): 30 días');
+  await page.click('.aps-road-label .aps-row-title:has-text("Plan B")');
+  await page.waitForSelector('.aps-panel #aps-p-title');
+  await openSec(page, 'Relaciones del proyecto');
+  ok((await page.textContent('.aps-panel')).includes('Lo necesita «Plan A»'), 'visible desde Plan B');
+});
+await step('R-8. Relaciones entre ideas: simétricas y sin «depende de»', async () => {
+  await view(page, 'Ideas');
+  await page.click('.aps-idea .aps-row-title:text-is("Mapa de calor de ventas")');
+  await openSec(page, 'Relaciones con otras ideas');
+  await page.click('[data-role="add-rel"]');
+  eq(await page.$$eval('#aps-l-rel option', (o) => o.map((x) => x.value)), ['relates_to'], 'las ideas solo admiten relates_to');
+  await page.selectOption('#aps-l-to', { label: 'Cuadro de mando de RRHH' });
+  await page.click('dialog[open] button[type="submit"]');
+  await page.waitForSelector('.aps-panel .aps-rel');
+  eq(db.ps_links.filter((l) => l.kind === 'idea').length, 1);
+  await page.click('.aps-idea .aps-row-title:text-is("Cuadro de mando de RRHH")');
+  await openSec(page, 'Relaciones con otras ideas');
+  ok((await page.textContent('.aps-panel .aps-rel')).includes('Mapa de calor de ventas'), 'simetría');
+  await page.click('[data-role="add-rel"]');                                                  // la inversa ya existe
+  await page.selectOption('#aps-l-to', { label: 'Mapa de calor de ventas' });
+  await page.click('dialog[open] button[type="submit"]');
+  ok((await page.textContent('dialog[open] .ap-msg')).includes('ya existe'), 'relación inversa duplicada');
+  await page.click('dialog[open] button:has-text("Cancelar")');
+});
+await step('R-9. Borrar un hito limpia sus relaciones; deshacer lo recupera; borrar el proyecto se lleva hitos y relaciones', async () => {
+  await view(page, 'Hoja de ruta');
+  await page.click(`${mrow('Datos listos')} .aps-link:has-text("Relación")`);
+  await page.selectOption('#aps-l-to', { label: 'Informe (Plan A)' });
+  await page.selectOption('#aps-l-rel', 'relates_to');
+  await page.click('dialog[open] button[type="submit"]');
+  await page.waitForFunction(() => document.querySelectorAll('.aps-ms-row .aps-rel').length >= 2);
+  const before = db.ps_links.length;
+  await page.click(`${mrow('Informe')} .aps-link--danger`);
+  await page.waitForTimeout(300);
+  eq(db.ps_milestones.some((m) => m.title === 'Informe'), false);
+  eq(db.ps_links.length, before - 1, 'su relación debía borrarse');
+  await undoClick(page);
+  eq(db.ps_milestones.some((m) => m.title === 'Informe'), true, 'deshacer no recuperó el hito');
+  await view(page, 'Resumen');
+  await page.click('.aps-project:has-text("Plan A") .aps-project-title');
+  await page.click('.aps-panel .aps-link:has-text("Eliminar proyecto")');
+  await page.click('dialog[open] button[type="submit"]');
+  await page.waitForTimeout(300);
+  eq(db.ps_milestones.length, 0, 'hitos en cascada');
+  eq(db.ps_links.filter((l) => l.kind !== 'idea').length, 0, 'relaciones de proyectos e hitos');
+  eq(db.ps_links.filter((l) => l.kind === 'idea').length, 1, 'la relación entre ideas no depende de proyectos');
+});
+await step('R-10. Persistencia: tras recargar siguen los hitos y las relaciones', async () => {
+  await view(page, 'Hoja de ruta');
+  await newProject(page, 'Plan C');
+  await page.fill('#aps-p-target', day(45));
+  await page.click('.aps-panel button[type="submit"]');
+  await openSec(page, 'Hitos');
+  await page.click('[data-role="add-ms"]');
+  await page.fill('#aps-m-title', 'Primer corte'); await page.fill('#aps-m-date', day(25));
+  await page.click('dialog[open] button[type="submit"]');
+  await page.waitForSelector('.aps-panel .aps-ms-row');
+  await page.reload(); await page.waitForSelector('.aps-head');
+  await view(page, 'Hoja de ruta');
+  await page.waitForSelector('.aps-ms');
+  ok((await page.textContent(`${mrow('Primer corte')}`)).includes('Plan C'), 'el hito no persistió');
+});
 await step('17. Accesibilidad (axe): sin fallos serios en Resumen, Tablero y panel', async () => {
   await page.click('[data-role="new-project"]');
   await page.fill('#aps-n-title', 'Proyecto axe');
@@ -540,7 +735,7 @@ await step('17. Accesibilidad (axe): sin fallos serios en Resumen, Tablero y pan
   await capture(page, 'Tarea axe');
   await page.click(cardSel('Tarea axe') + ' .aps-card-open');
   await page.addScriptTag({ content: AXE });
-  for (const v of ['Tablero', 'Resumen', 'Ideas', 'Archivo']) {
+  for (const v of ['Tablero', 'Resumen', 'Ideas', 'Hoja de ruta', 'Archivo']) {
     await view(page, v);
     const bad = await page.evaluate(async () => (await axe.run('.aps', { resultTypes: ['violations'] })).violations.filter((x) => ['serious', 'critical'].includes(x.impact)).map((x) => x.id + ' (' + x.nodes.length + ')'));
     eq(bad, [], 'axe en ' + v);
@@ -620,6 +815,61 @@ await step('H2-12. Sin studio-ideas.sql: el Studio sigue funcionando y avisa dó
   eq(a.errors, []);
   await a.ctx.close();
   extMissing = false;
+});
+
+await step('R-11. CSP real: la hoja de ruta se pinta sin estilos en línea (posiciones y anchos por CSSOM)', async () => {
+  const c = await open(null, '#/studio', true);
+  pagePtr.page = c.page;
+  await view(c.page, 'Hoja de ruta');
+  await c.page.waitForSelector('.aps-ms');
+  const lefts = await c.page.$$eval('.aps-ms', (es) => es.map((e) => parseFloat(getComputedStyle(e).left)));
+  ok(lefts.length >= 2 && lefts.every((x) => x > 0), 'marcadores sin posición: ' + JSON.stringify(lefts));
+  const widths = await c.page.$$eval('.aps-road-month', (es) => es.map((e) => parseFloat(getComputedStyle(e).width)));
+  ok(widths.length >= 3 && widths.every((x) => x > 20), 'meses sin ancho: ' + JSON.stringify(widths));
+  eq(await c.page.evaluate(() => window.__csp || []), [], 'violaciones de CSP');
+  eq(c.errors, []);
+  await c.ctx.close();
+});
+await step('R-12. Sin studio-roadmap.sql: el resto del Studio funciona y avisa dónde falta', async () => {
+  roadMissing = true;
+  const a = await open();
+  pagePtr.page = a.page;
+  await view(a.page, 'Hoja de ruta');
+  ok((await a.page.textContent('.aps-setup')).includes('studio-roadmap.sql'), 'sin aviso en la hoja de ruta');
+  await view(a.page, 'Tablero');
+  ok(await a.page.isVisible('.aps-board'), 'el tablero debería funcionar');
+  await view(a.page, 'Resumen');
+  await a.page.click('.aps-project-title');
+  ok((await a.page.textContent('.aps-panel')).includes('studio-roadmap.sql'), 'sin aviso en el panel de proyecto');
+  eq(a.errors, []);
+  await a.ctx.close();
+  roadMissing = false;
+});
+await step('R-13. Accesibilidad (axe): hoja de ruta y panel de proyecto con hitos y relaciones abiertos', async () => {
+  const a = await open();
+  pagePtr.page = a.page;
+  await a.page.addScriptTag({ content: AXE });
+  const scan = () => a.page.evaluate(async () => (await axe.run('.aps', { resultTypes: ['violations'] })).violations.filter((x) => ['serious', 'critical'].includes(x.impact)).map((x) => x.id + ' (' + x.nodes.length + ')'));
+  await view(a.page, 'Hoja de ruta');
+  await a.page.waitForSelector('.aps-ms');
+  eq(await scan(), [], 'axe en la hoja de ruta');
+  await a.page.click('.aps-road-label .aps-row-title');
+  await a.page.waitForSelector('.aps-panel #aps-p-title');
+  await openSec(a.page, 'Hitos'); await openSec(a.page, 'Relaciones del proyecto');
+  eq(await scan(), [], 'axe con el panel de proyecto');
+  eq(a.errors, []);
+  await a.ctx.close();
+});
+await step('R-14. Móvil: la hoja de ruta no desborda la página (la línea de tiempo se desplaza dentro de su caja)', async () => {
+  const m = await open({ width: 390, height: 800 });
+  pagePtr.page = m.page;
+  await view(m.page, 'Hoja de ruta');
+  await m.page.waitForSelector('.aps-road');
+  const o = await m.page.evaluate(() => ({ page: document.documentElement.scrollWidth - innerWidth, inner: document.querySelector('.aps-road').scrollWidth - document.querySelector('.aps-road').clientWidth }));
+  ok(o.page <= 1, 'desborda la página ' + o.page + ' px');
+  ok(o.inner > 0, 'la línea de tiempo debería desplazarse por dentro');
+  eq(m.errors, []);
+  await m.ctx.close();
 });
 
 await browser.close();

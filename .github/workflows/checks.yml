@@ -49,7 +49,7 @@ jobs:
           node-version: 22
       - name: Instalar Playwright y axe-core
         run: |
-          npm i --no-save --no-package-lock playwright@1.56.1 axe-core@4.13.0
+          npm i --no-save --no-package-lock playwright@1.56.1 axe-core@4.13.0 @electric-sql/pglite@0.5.11
           npx playwright install --with-deps chromium
       - name: axe-core en todas las páginas
         run: node tools/check-a11y.mjs
@@ -57,6 +57,8 @@ jobs:
         run: node tools/check-briefing.mjs
       - name: Centro de trabajo (flujos de interfaz con Supabase simulado)
         run: node tools/check-kanban.mjs
+      - name: SQL del Studio contra un Postgres real (PGlite)
+        run: node tools/test-studio-sql.mjs
       - name: Studio de proyectos (flujos de interfaz con Supabase simulado)
         run: node tools/check-studio.mjs
 

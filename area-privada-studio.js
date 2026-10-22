@@ -168,7 +168,79 @@ window.APStudio = (function () {
     return order.map(function (k) { return { topic: k, ideas: map[k] }; });
   }
 
+  /* Hoja de ruta (hito 3): hitos con fecha y relaciones entre proyectos, hitos e ideas. */
+  var MONTHS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+  var MS_STATUS = [['pending', 'Pendiente'], ['done', 'Hecho']];
+  var REL = [['depends_on', 'Depende de'], ['relates_to', 'Se relaciona con']];
+  var REL_KINDS = { project: ['depends_on', 'relates_to'], milestone: ['depends_on', 'relates_to'], idea: ['relates_to'] };
+  function fmtDay(key, now) {
+    var d = toDay(key);
+    return d.getDate() + ' ' + MONTHS[d.getMonth()] + (d.getFullYear() !== now.getFullYear() ? ' ' + d.getFullYear() : '');
+  }
+  /* Rango de la línea de tiempo: de principios del primer mes a finales del último (hoy siempre dentro), mínimo tres meses. */
+  function timelineRange(keys, now) {
+    var ds = keys.filter(Boolean).map(toDay); ds.push(new Date(now.getFullYear(), now.getMonth(), now.getDate()));
+    var min = new Date(Math.min.apply(null, ds)), max = new Date(Math.max.apply(null, ds));
+    var start = new Date(min.getFullYear(), min.getMonth(), 1), end = new Date(max.getFullYear(), max.getMonth() + 1, 1);
+    function span() { return (end.getFullYear() * 12 + end.getMonth()) - (start.getFullYear() * 12 + start.getMonth()); }
+    while (span() < 3) end = new Date(end.getFullYear(), end.getMonth() + 1, 1);
+    var total = end - start, months = [];
+    for (var m = new Date(start); m < end; m = new Date(m.getFullYear(), m.getMonth() + 1, 1)) {
+      var next = new Date(m.getFullYear(), m.getMonth() + 1, 1);
+      months.push({ key: m.getFullYear() + '-' + pad(m.getMonth() + 1), label: MONTHS[m.getMonth()] + (m.getMonth() === 0 || !months.length ? ' ' + m.getFullYear() : ''), left: (m - start) / total * 100, width: (next - m) / total * 100 });
+    }
+    return { start: start, end: end, total: total, months: months };
+  }
+  function pctOf(key, range) { return Math.max(0, Math.min(100, (toDay(key) - range.start) / range.total * 100)); }
+  /* Relaciones de un elemento: depends_on saliente («depende de») y entrante («lo necesitan»), y relates_to en cualquier sentido. */
+  function relationsOf(links, id) {
+    var out = [];
+    links.forEach(function (l) {
+      if (l.from_id === id) out.push({ link: l, otherId: l.to_id, label: l.rel === 'depends_on' ? 'Depende de' : 'Se relaciona con', dir: 'out' });
+      else if (l.to_id === id) out.push({ link: l, otherId: l.from_id, label: l.rel === 'depends_on' ? 'Lo necesita' : 'Se relaciona con', dir: 'in' });
+    });
+    return out;
+  }
+  /* ¿Añadir «from depende de to» crearía un ciclo (o un autoenlace)? Misma regla que el trigger de la base. */
+  function wouldCycle(links, from, to) {
+    if (from === to) return true;
+    var seen = {}, stack = [to];
+    while (stack.length) {
+      var cur = stack.pop();
+      if (cur === from) return true;
+      if (seen[cur]) continue;
+      seen[cur] = true;
+      links.forEach(function (l) { if (l.rel === 'depends_on' && l.from_id === cur) stack.push(l.to_id); });
+    }
+    return false;
+  }
+  function linkExists(links, rel, a, b) {
+    return links.some(function (l) {
+      return l.rel === rel && (l.from_id === a && l.to_id === b || (rel === 'relates_to' && l.from_id === b && l.to_id === a));
+    });
+  }
+  /* Dependencias incoherentes: A depende de B, pero B está prevista DESPUÉS de A. dateOf(id) devuelve 'YYYY-MM-DD' o null. */
+  function dependencyIssues(links, dateOf) {
+    var out = [];
+    links.forEach(function (l) {
+      if (l.rel !== 'depends_on') return;
+      var a = dateOf(l.from_id), b = dateOf(l.to_id);
+      if (a && b && b > a) out.push({ link: l, from: l.from_id, to: l.to_id, days: Math.round((toDay(b) - toDay(a)) / DAY) });
+    });
+    return out;
+  }
+  /* Hitos ordenados por fecha (los que no tienen fecha, al final). */
+  function sortMilestones(list) {
+    return list.slice().sort(function (a, b) {
+      var x = a.target_date || '9999', y = b.target_date || '9999';
+      return x < y ? -1 : x > y ? 1 : a.title.localeCompare(b.title, 'es');
+    });
+  }
+
   var logic = {
+    MONTHS: MONTHS, MS_STATUS: MS_STATUS, REL: REL, REL_KINDS: REL_KINDS,
+    fmtDay: fmtDay, timelineRange: timelineRange, pctOf: pctOf, relationsOf: relationsOf, wouldCycle: wouldCycle, linkExists: linkExists,
+    dependencyIssues: dependencyIssues, sortMilestones: sortMilestones,
     IDEA_STATUSES: IDEA_STATUSES, NOTE_KINDS: NOTE_KINDS, DELIV_KINDS: DELIV_KINDS, DSTATUS: DSTATUS, KINDS: KINDS,
     safeUrl: safeUrl, filterIdeas: filterIdeas, groupIdeas: groupIdeas,
     STATUSES: STATUSES, STAGES: STAGES, DEFAULTS: DEFAULTS,
@@ -179,6 +251,7 @@ window.APStudio = (function () {
 
   /* ═══════════ INTERFAZ ═══════════ */
   var REP = { 'Content-Type': 'application/json', Prefer: 'return=representation' };
+  var FEMININE = { Idea: 1, Nota: 1, 'Relación': 1 };       // concordancia de los avisos «… creada / creado»
   var DT = typeof Intl !== 'undefined' ? new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : null;
 
   function render(ctx) {
@@ -187,6 +260,7 @@ window.APStudio = (function () {
     var st = {
       tasks: [], archived: null, projects: [], cfg: { wip: Object.assign({}, DEFAULTS.wip) }, activity: [],
       ideas: [], notes: [], deliverables: [], ext: false,       // ext: existen las tablas de ideas, notas y entregables (studio-ideas.sql)
+      milestones: [], links: [], road: false,                   // road: existen las de hitos y relaciones (studio-roadmap.sql)
       view: pref('view') || 'resumen', filters: { q: '', project: '', blocked: false }, ideaFilter: { q: '', show: 'activas' }, panel: null, doneMore: false
     };
     var undo = [], keep = null, lastDrag = 0, toastTimer = null, saySeq = 0, returnFocus = null, actTimer = null;
@@ -222,6 +296,14 @@ window.APStudio = (function () {
           api('/rest/v1/ps_deliverables?select=*&order=created_at.asc&limit=1000')
         ]).then(function (e) { st.ideas = e[0] || []; st.notes = e[1] || []; st.deliverables = e[2] || []; st.ext = true; }, function (err) {
           if (missing(err)) { st.ext = false; st.ideas = []; st.notes = []; st.deliverables = []; return; }     // aún sin studio-ideas.sql: el resto del Studio funciona
+          throw err;
+        });
+      }).then(function () {
+        return Promise.all([
+          api('/rest/v1/ps_milestones?select=*&order=target_date.asc&limit=2000'),
+          api('/rest/v1/ps_links?select=*&limit=5000')
+        ]).then(function (e) { st.milestones = e[0] || []; st.links = e[1] || []; st.road = true; }, function (err) {
+          if (missing(err)) { st.road = false; st.milestones = []; st.links = []; return; }     // aún sin studio-roadmap.sql
           throw err;
         });
       });
@@ -449,6 +531,10 @@ window.APStudio = (function () {
         st.tasks = st.tasks.filter(function (t) { return t.project_id !== p.id; });
         st.notes = st.notes.filter(function (x) { return x.project_id !== p.id; });
         st.deliverables = st.deliverables.filter(function (x) { return x.project_id !== p.id; });
+        var gone = {}; gone[p.id] = 1;
+        st.milestones.forEach(function (x) { if (x.project_id === p.id) gone[x.id] = 1; });
+        st.milestones = st.milestones.filter(function (x) { return x.project_id !== p.id; });
+        st.links = st.links.filter(function (l) { return !gone[l.from_id] && !gone[l.to_id]; });      // la base borra sus relaciones
         st.ideas.forEach(function (i) { if (i.project_id === p.id) i.project_id = null; });      // las ideas sobreviven (set null en la base)
         if (st.filters.project === p.id) st.filters.project = '';
         st.panel = null; undo.length = 0;
@@ -461,7 +547,7 @@ window.APStudio = (function () {
     function addRow(table, key, row, label) {
       return api('/rest/v1/' + table + '?select=*', { method: 'POST', headers: REP, body: JSON.stringify(row) }).then(function (r) {
         var o = r[0]; st[key].push(o); keep = o.id;
-        say(label + ' creada.', { undo: true });
+        say(label + (FEMININE[label] ? ' creada.' : ' creado.'), { undo: true });
         pushUndo('crear ' + label.toLowerCase(), function () { st[key] = st[key].filter(function (x) { return x.id !== o.id; }); if (st.panel && st.panel.id === o.id) st.panel = null; paint(); return api('/rest/v1/' + table + '?id=eq.' + o.id, { method: 'DELETE' }); });
         paint(); refreshActivity();
         return o;
@@ -476,8 +562,9 @@ window.APStudio = (function () {
     function delRow(table, key, o, label) {
       var row = Object.assign({}, o);
       st[key] = st[key].filter(function (x) { return x.id !== o.id; });
+      if (key === 'ideas' || key === 'milestones') st.links = st.links.filter(function (l) { return l.from_id !== o.id && l.to_id !== o.id; });     // la base borra sus relaciones
       if (st.panel && st.panel.id === o.id) st.panel = null;
-      say(label + ' eliminada.', { undo: true });
+      say(label + (FEMININE[label] ? ' eliminada.' : ' eliminado.'), { undo: true });
       paint();
       var entry = pushUndo('eliminar ' + label.toLowerCase(), function () {
         return api('/rest/v1/' + table + '?select=*', { method: 'POST', headers: REP, body: JSON.stringify([row]) }).then(function (r) { st[key].push(r[0]); paint(); });
@@ -514,7 +601,7 @@ window.APStudio = (function () {
       var inPanel = ae && ae.closest && ae.closest('.aps-panel');
       root.textContent = '';
       root.appendChild(header());
-      var main = h('div', { class: 'aps-main' }, [st.view === 'tablero' ? viewTablero() : st.view === 'archivo' ? viewArchivo() : st.view === 'ideas' ? viewIdeas() : viewResumen()]);
+      var main = h('div', { class: 'aps-main' }, [st.view === 'tablero' ? viewTablero() : st.view === 'archivo' ? viewArchivo() : st.view === 'ideas' ? viewIdeas() : st.view === 'ruta' ? viewRuta() : viewResumen()]);
       root.appendChild(h('div', { class: 'aps-layout' + (st.panel ? ' has-panel' : '') }, [main, st.panel ? panelEl() : null]));
       root.appendChild(toastBox); root.appendChild(live);
       board = root.querySelector('.aps-board'); if (board) board.scrollLeft = scrollLeft;
@@ -535,7 +622,7 @@ window.APStudio = (function () {
           h('p', { class: 'aps-sub', text: active + (active === 1 ? ' proyecto activo' : ' proyectos activos') + ' · ' + open + (open === 1 ? ' tarea abierta' : ' tareas abiertas') })
         ]),
         h('div', { class: 'aps-head-actions' }, [
-          h('div', { class: 'aps-seg', role: 'group', 'aria-label': 'Vista' }, [['resumen', 'Resumen'], ['ideas', 'Ideas'], ['tablero', 'Tablero'], ['archivo', 'Archivo']].map(function (v) {
+          h('div', { class: 'aps-seg', role: 'group', 'aria-label': 'Vista' }, [['resumen', 'Resumen'], ['ideas', 'Ideas'], ['tablero', 'Tablero'], ['ruta', 'Hoja de ruta'], ['archivo', 'Archivo']].map(function (v) {
             return btn(v[1], 'aps-seg-btn', function () { st.view = v[0]; setPref('view', v[0]); paint(); if (v[0] === 'archivo' && !st.archived) loadArchived(); }, { 'aria-pressed': st.view === v[0] ? 'true' : 'false' });
           })),
           btn('Nuevo proyecto', 'aps-btn aps-btn--primary', projectDialog, { 'data-role': 'new-project' })
@@ -579,6 +666,11 @@ window.APStudio = (function () {
           h('h3', { class: 'aps-block-title', id: 'aps-h-blk', text: 'Bloqueado' }),
           blocked.length ? h('ul', { class: 'aps-rows' }, blocked.map(function (t) { return taskRow(t, t.blocked_reason || 'Sin motivo anotado'); })) : h('p', { class: 'aps-empty', text: 'Nada bloqueado.' })
         ]),
+        st.road && upcoming().length ? h('section', { class: 'aps-block aps-block--wide', 'aria-labelledby': 'aps-h-up' }, [
+          h('h3', { class: 'aps-block-title', id: 'aps-h-up', text: 'Próximos hitos' }),
+          h('ul', { class: 'aps-rows' }, upcoming().slice(0, 5).map(function (m) { return msRow(m, true); })),
+          btn('Ver la hoja de ruta', 'aps-link', function () { st.view = 'ruta'; setPref('view', 'ruta'); paint(); })
+        ]) : null,
         st.ext && st.ideas.length ? h('section', { class: 'aps-block aps-block--wide', 'aria-labelledby': 'aps-h-idea' }, [
           h('h3', { class: 'aps-block-title', id: 'aps-h-idea', text: 'Ideas recientes' }),
           h('ul', { class: 'aps-rows' }, filterIdeas(st.ideas, { q: '', show: 'activas' }).slice(0, 5).map(function (i) { return ideaRow(i); })),
@@ -592,6 +684,11 @@ window.APStudio = (function () {
         ])
       ]);
     }
+    /* Hitos pendientes con fecha de proyectos activos, por orden de fecha. */
+    function upcoming() {
+      var ids = {}; st.projects.forEach(function (p) { if (p.status === 'active') ids[p.id] = 1; });
+      return sortMilestones(st.milestones.filter(function (m) { return m.status === 'pending' && m.target_date && ids[m.project_id]; }));
+    }
     function projectCard(p) {
       var pr = progress(st.tasks, p.id);
       var fill = h('span');
@@ -604,7 +701,8 @@ window.APStudio = (function () {
         h('p', { class: 'aps-project-meta', text: 'Fase: ' + STAGE_LABEL[p.stage] + (p.target_date ? ' · objetivo ' + p.target_date : '') }),
         h('div', { class: 'aps-bar', role: 'img', 'aria-label': pr.done + ' de ' + pr.total + ' tareas hechas' }, [fill]),
         h('p', { class: 'aps-project-count', text: pr.total ? pr.done + ' de ' + pr.total + ' tareas hechas' : 'Sin tareas todavía' }),
-        h('p', { class: p.next_action ? 'aps-next' : 'aps-next is-empty', text: p.next_action ? 'Siguiente: ' + p.next_action : 'Sin siguiente acción definida' })
+        h('p', { class: p.next_action ? 'aps-next' : 'aps-next is-empty', text: p.next_action ? 'Siguiente: ' + p.next_action : 'Sin siguiente acción definida' }),
+        (function () { var nm = upcoming().filter(function (m) { return m.project_id === p.id; })[0]; return nm ? h('p', { class: 'aps-project-meta', text: 'Próximo hito: ' + nm.title + ' · ' + fmtDay(nm.target_date, now) }) : null; })()
       ]);
     }
     function taskRow(t, extra) {
@@ -654,6 +752,139 @@ window.APStudio = (function () {
           ]);
         }) : h('p', { class: 'aps-empty', text: st.ideas.length ? 'Ninguna idea con estos filtros.' : 'Aún no hay ideas. Captura la primera arriba: basta una frase.' })
       ]);
+    }
+
+    /* Hoja de ruta: hitos con fecha y relaciones */
+    function msOf(id) { for (var i = 0; i < st.milestones.length; i++) if (st.milestones[i].id === id) return st.milestones[i]; return null; }
+    function ideaOf(id) { for (var i = 0; i < st.ideas.length; i++) if (st.ideas[i].id === id) return st.ideas[i]; return null; }
+    function nameOf(kind, id) { var e = kind === 'project' ? projectById(id) : kind === 'milestone' ? msOf(id) : ideaOf(id); return e ? e.title : '(eliminado)'; }
+    function dateOfId(id) { var m = msOf(id); if (m) return m.target_date; var p = projectById(id); return p ? p.target_date : null; }
+    function issueMap() { var map = {}; dependencyIssues(st.links, dateOfId).forEach(function (i) { map[i.link.id] = i; }); return map; }
+    function at(el, left, width) { el.style.left = left + '%'; if (width != null) el.style.width = width + '%'; return el; }     // CSSOM: la CSP bloquea el atributo style
+
+    /* Chips de relaciones de un elemento, con su botón para quitarlas y el aviso si las fechas no cuadran. */
+    function relChips(kind, id) {
+      var issues = issueMap();
+      return relationsOf(st.links.filter(function (l) { return l.kind === kind; }), id).map(function (r) {
+        var name = nameOf(kind, r.otherId), is = issues[r.link.id];
+        return h('span', { class: 'aps-rel' + (is ? ' is-issue' : '') }, [
+          h('span', { text: r.label + ' «' + clip(name, 26) + '»' + (is && r.dir === 'out' ? ' · prevista ' + is.days + (is.days === 1 ? ' día' : ' días') + ' después' : '') + (is && r.dir === 'in' ? ' · prevista antes' : '') }),
+          btn('×', 'aps-rel-x', function () { delRow('ps_links', 'links', r.link, 'Relación'); }, { 'aria-label': 'Quitar la relación «' + r.label + ' ' + name + '»' })
+        ]);
+      });
+    }
+    function linkDialog(kind, ent) {
+      var cands = (kind === 'project' ? st.projects : kind === 'milestone' ? st.milestones : st.ideas).filter(function (x) { return x.id !== ent.id; });
+      if (!cands.length) { say('No hay otros elementos con los que relacionarlo.'); return; }
+      var label = function (x) { return kind === 'milestone' ? x.title + ' (' + nameOf('project', x.project_id) + ')' : x.title; };
+      var rel = ui.select(REL.filter(function (r) { return REL_KINDS[kind].indexOf(r[0]) > -1; }), REL_KINDS[kind][0]);
+      var target = ui.select(cands.map(function (x) { return [x.id, label(x)]; }), '', 'Elige…');
+      ui.formDialog('Nueva relación', 'Añadir', [
+        ui.field('aps-l-rel', 'Tipo de relación', rel), ui.field('aps-l-to', '«' + clip(ent.title, 30) + '» con', target, { wide: true, hint: rel.value === 'depends_on' ? '' : 'Una relación es simétrica: se ve desde los dos elementos.' })
+      ], function () {
+        if (!target.value) throw ui.invalid('Elige un elemento.', target);
+        if (linkExists(st.links, rel.value, ent.id, target.value)) throw ui.invalid('Esa relación ya existe.', target);
+        if (rel.value === 'depends_on' && wouldCycle(st.links, ent.id, target.value)) throw ui.invalid('Esa dependencia crearía un ciclo: el otro elemento ya depende de este.', target);
+        return addRow('ps_links', 'links', { kind: kind, from_id: ent.id, to_id: target.value, rel: rel.value }, 'Relación');
+      }, rel);
+    }
+    function milestoneDialog(project, m) {
+      var title = ui.input('text', m ? m.title : '', { maxlength: '200', required: 'true' });
+      var date = ui.input('date', m && m.target_date || '');
+      var status = ui.select(MS_STATUS, m ? m.status : 'pending');
+      ui.formDialog(m ? 'Editar hito' : 'Nuevo hito', m ? 'Guardar' : 'Añadir', [
+        ui.field('aps-m-title', 'Hito', title, { wide: true }), ui.field('aps-m-date', 'Fecha objetivo', date, { hint: 'Sin fecha no aparece en la línea de tiempo.' }), ui.field('aps-m-status', 'Estado', status)
+      ], function () {
+        var t = title.value.trim();
+        if (!t) throw ui.invalid('Escribe el nombre del hito.', title);
+        var vals = { title: t, target_date: date.value || null, status: status.value };
+        if (!m) return addRow('ps_milestones', 'milestones', Object.assign({ project_id: project.id }, vals), 'Hito');
+        return editRow('ps_milestones', m, vals, 'edición del hito').then(function (ok) { if (!ok) throw new Error('No se ha podido guardar el hito.'); });
+      }, title);
+    }
+    function msDone(m) { return editRow('ps_milestones', m, { status: m.status === 'done' ? 'pending' : 'done' }, 'estado del hito'); }
+    function msRow(m, withProject) {
+      var cb = h('input', { type: 'checkbox', 'aria-label': 'Hito «' + m.title + '» hecho' }); cb.checked = m.status === 'done';
+      cb.addEventListener('change', function () { msDone(m); });
+      var d = m.target_date && m.status !== 'done' ? dueLabel(m.target_date, now) : null;
+      return h('li', { class: 'aps-row aps-ms-row' + (m.status === 'done' ? ' is-done' : ''), 'data-id': m.id }, [
+        h('div', { class: 'aps-ms-main' }, [
+          cb,
+          h('div', { class: 'aps-idea-main' }, [
+            btn(m.title, 'aps-row-title', function () { milestoneDialog(projectById(m.project_id), m); }, { 'data-role': 'open', 'aria-label': 'Editar el hito «' + m.title + '»' }),
+            h('div', { class: 'aps-rels' }, relChips('milestone', m.id))
+          ])
+        ]),
+        h('span', { class: 'aps-row-meta' }, [
+          withProject ? chip(clip(nameOf('project', m.project_id), 24), 'aps-chip--proj', nameOf('project', m.project_id)) : null,
+          chip(m.target_date ? fmtDay(m.target_date, now) : 'Sin fecha'), d ? chip(d.text, 'aps-chip--' + d.tone) : null,
+          btn('Relación', 'aps-link', function () { linkDialog('milestone', m); }, { 'aria-label': 'Añadir una relación al hito «' + m.title + '»' }),
+          btn('Quitar', 'aps-link aps-link--danger', function () { delRow('ps_milestones', 'milestones', m, 'Hito'); }, { 'aria-label': 'Quitar el hito «' + m.title + '»' })
+        ])
+      ]);
+    }
+
+    function viewRuta() {
+      if (!st.road) return h('p', { class: 'aps-setup', text: 'Las tablas de hitos y relaciones aún no existen. Ejecuta supabase/studio-roadmap.sql en el SQL Editor (una vez, es idempotente) y recarga la página.' });
+      var active = st.projects.filter(function (p) { return p.status === 'active'; });
+      if (!active.length) return h('p', { class: 'aps-empty', text: 'No hay proyectos activos. Crea uno para planificar su hoja de ruta.' });
+      var ids = {}; active.forEach(function (p) { ids[p.id] = 1; });
+      var ms = sortMilestones(st.milestones.filter(function (m) { return ids[m.project_id]; }));
+      var keys = []; active.forEach(function (p) { keys.push(p.target_date); }); ms.forEach(function (m) { keys.push(m.target_date); });
+      var issues = dependencyIssues(st.links, dateOfId);
+      var blocks = [];
+      if (issues.length) {
+        blocks.push(h('div', { class: 'aps-wipwarn', role: 'note' }, [
+          h('strong', { text: issues.length + (issues.length === 1 ? ' dependencia con fechas incoherentes' : ' dependencias con fechas incoherentes') }),
+          h('ul', { class: 'aps-issues' }, issues.map(function (i) {
+            var k = msOf(i.from) ? 'milestone' : 'project';
+            return h('li', { text: '«' + nameOf(k, i.from) + '» depende de «' + nameOf(k, i.to) + '», que está prevista ' + i.days + (i.days === 1 ? ' día' : ' días') + ' después.' });
+          }))
+        ]));
+      }
+      if (!keys.filter(Boolean).length) {
+        blocks.push(h('div', { class: 'aps-empty-state' }, [
+          h('h3', { text: 'Pon fecha a lo que importa' }),
+          h('p', { text: 'La línea de tiempo se dibuja con las fechas objetivo de tus proyectos y con sus hitos. Abre un proyecto y añade una fecha o un primer hito.' }),
+          btn('Ver proyectos', 'aps-btn', function () { st.view = 'resumen'; setPref('view', 'resumen'); paint(); })
+        ]));
+      } else {
+        var range = timelineRange(keys, now), today = pctOf(dayKey(now), range);
+        var inner = h('div', { class: 'aps-road-inner' });
+        inner.style.setProperty('--months', String(range.months.length));
+        var head = h('div', { class: 'aps-road-row aps-road-head' }, [h('div', { class: 'aps-road-label' }), h('div', { class: 'aps-road-track' }, range.months.map(function (m) {
+          return at(h('span', { class: 'aps-road-month', text: m.label }), m.left, m.width);
+        }))]);
+        inner.appendChild(head);
+        active.slice().sort(function (a, b) { var x = a.target_date || '9999', y = b.target_date || '9999'; return x < y ? -1 : x > y ? 1 : 0; }).forEach(function (p) {
+          var track = h('div', { class: 'aps-road-track' }, [at(h('span', { class: 'aps-road-today', 'aria-hidden': 'true' }), today)]);
+          ms.filter(function (m) { return m.project_id === p.id && m.target_date; }).forEach(function (m) {
+            track.appendChild(at(btn('', 'aps-ms aps-ms--' + m.status, function () { milestoneDialog(p, m); }, { 'aria-label': 'Hito «' + m.title + '», ' + fmtDay(m.target_date, now) + (m.status === 'done' ? ', hecho' : ', pendiente'), title: m.title + ' · ' + fmtDay(m.target_date, now) }), pctOf(m.target_date, range)));
+          });
+          if (p.target_date) track.appendChild(at(btn('', 'aps-ms aps-ms--target', function () { openPanel('project', p.id, null); }, { 'aria-label': 'Fecha objetivo de «' + p.title + '», ' + fmtDay(p.target_date, now), title: 'Objetivo · ' + fmtDay(p.target_date, now) }), pctOf(p.target_date, range)));
+          inner.appendChild(h('div', { class: 'aps-road-row', 'data-id': p.id }, [
+            h('div', { class: 'aps-road-label' }, [btn(clip(p.title, 28), 'aps-row-title', function () { openPanel('project', p.id, '.aps-main [data-id="' + p.id + '"] [data-role="open"]'); }, { 'data-role': 'open', title: p.title })]), track
+          ]));
+        });
+        blocks.push(h('div', { class: 'aps-road', role: 'group', 'aria-label': 'Línea de tiempo de proyectos e hitos' }, [inner]));
+        blocks.push(h('p', { class: 'aps-legend' }, [h('span', { class: 'aps-legend-ms', 'aria-hidden': 'true' }), ' Hito  ', h('span', { class: 'aps-legend-ms is-done', 'aria-hidden': 'true' }), ' Hito hecho  ', h('span', { class: 'aps-legend-flag', 'aria-hidden': 'true' }), ' Fecha objetivo del proyecto  ', h('span', { class: 'aps-legend-today', 'aria-hidden': 'true' }), ' Hoy']));
+      }
+      blocks.push(h('section', { class: 'aps-block', 'aria-labelledby': 'aps-h-ms' }, [
+        h('h3', { class: 'aps-block-title', id: 'aps-h-ms', text: 'Hitos' }),
+        ms.length ? h('ul', { class: 'aps-rows' }, ms.map(function (m) { return msRow(m, true); })) : h('p', { class: 'aps-empty', text: 'Aún no hay hitos. Añádelos desde el panel de cada proyecto.' })
+      ]));
+      var plinks = st.links.filter(function (l) { return l.kind === 'project'; }), pis = issueMap();
+      blocks.push(h('section', { class: 'aps-block', 'aria-labelledby': 'aps-h-pl' }, [
+        h('h3', { class: 'aps-block-title', id: 'aps-h-pl', text: 'Relaciones entre proyectos' }),
+        plinks.length ? h('ul', { class: 'aps-rows' }, plinks.map(function (l) {
+          var a = nameOf('project', l.from_id), b = nameOf('project', l.to_id), is = pis[l.id];
+          return h('li', { class: 'aps-row' }, [
+            h('span', { class: 'aps-rel-text', text: '«' + a + '» ' + (l.rel === 'depends_on' ? 'depende de' : 'se relaciona con') + ' «' + b + '»' + (is ? ' · prevista ' + is.days + ' días después' : '') }),
+            btn('Quitar', 'aps-link aps-link--danger', function () { delRow('ps_links', 'links', l, 'Relación'); }, { 'aria-label': 'Quitar la relación entre «' + a + '» y «' + b + '»' })
+          ]);
+        })) : h('p', { class: 'aps-empty', text: 'Sin relaciones. Añádelas desde el panel de un proyecto.' })
+      ]));
+      return h('div', { class: 'aps-roadmap' }, blocks);
     }
 
     /* Tablero */
@@ -873,7 +1104,7 @@ window.APStudio = (function () {
           ctx.ask({ title: 'Eliminar «' + clip(i.title) + '»', text: 'Podrás deshacerlo unos segundos. Si dudas, márcala como descartada.', ok: 'Eliminar', danger: true }).then(function (ok) { if (ok) delRow('ps_ideas', 'ideas', i, 'Idea'); });
         })
       ]);
-      return panelShell('Idea', h('div', null, [form, foot]), 'aps-panel-i');
+      return panelShell('Idea', h('div', null, [form, relationsSection('idea', i, 'Relaciones con otras ideas'), foot]), 'aps-panel-i');
     }
 
     /* Secciones desplegables del proyecto (divulgación progresiva): solo se abre lo que se necesita. */
@@ -920,6 +1151,24 @@ window.APStudio = (function () {
       ]);
       det.addEventListener('toggle', function () { setPref(key, det.open ? '1' : '0'); });
       return det;
+    }
+    function milestonesSection(p) {
+      var list = sortMilestones(st.milestones.filter(function (m) { return m.project_id === p.id; })), done = list.filter(function (m) { return m.status === 'done'; }).length;
+      return section('ms', 'Hitos', list.length ? done + '/' + list.length : 0, list.length > 0, h('div', null, [
+        !st.road ? h('p', { class: 'aps-setup', text: 'Ejecuta supabase/studio-roadmap.sql para activar los hitos y la hoja de ruta.' }) : [
+          list.length ? h('ul', { class: 'aps-rows' }, list.map(function (m) { return msRow(m, false); })) : h('p', { class: 'aps-empty', text: 'Sin hitos. Un hito es un punto con fecha que marca un avance claro.' }),
+          btn('+ Añadir hito', 'aps-link', function () { milestoneDialog(p); }, { 'data-role': 'add-ms' })
+        ]
+      ]));
+    }
+    function relationsSection(kind, ent, title) {
+      var chips = st.road ? relChips(kind, ent.id) : [];
+      return section('rel-' + kind, title, chips.length, chips.length > 0, h('div', null, [
+        !st.road ? h('p', { class: 'aps-setup', text: 'Ejecuta supabase/studio-roadmap.sql para activar las relaciones.' }) : [
+          chips.length ? h('div', { class: 'aps-rels' }, chips) : h('p', { class: 'aps-empty', text: kind === 'idea' ? 'Sin relaciones. Conecta ideas que se parecen o se complementan.' : 'Sin relaciones. Indica de qué depende este proyecto o con qué se relaciona.' }),
+          btn('+ Añadir relación', 'aps-link', function () { linkDialog(kind, ent); }, { 'data-role': 'add-rel' })
+        ]
+      ]));
     }
     function notesSection(p) {
       var list = noteOf(p.id);
@@ -989,8 +1238,10 @@ window.APStudio = (function () {
         ui.field('aps-p-status', 'Estado', status),
         ui.field('aps-p-prio', 'Prioridad', prio),
         ui.field('aps-p-target', 'Fecha objetivo', target),
-        ui.field('aps-p-kind', 'Tipo', kind),
-        ui.field('aps-p-scope', 'Alcance', scope, { wide: true }),
+        h('details', { class: 'aps-more apf-wide', open: p.kind || p.scope ? '' : null }, [
+          h('summary', { class: 'aps-sec-sum', text: 'Más detalles: tipo y alcance' }),
+          h('div', { class: 'aps-form' }, [ui.field('aps-p-kind', 'Tipo', kind), ui.field('aps-p-scope', 'Alcance', scope, { wide: true })])
+        ]),
         msg,
         h('div', { class: 'aps-panel-actions' }, [h('button', { type: 'submit', class: 'aps-btn aps-btn--primary', text: 'Guardar' })])
       ]);
@@ -1007,7 +1258,7 @@ window.APStudio = (function () {
       var foot = h('div', { class: 'aps-panel-foot' }, [
         btn('Eliminar proyecto', 'aps-link aps-link--danger', function () { removeProject(p); })
       ]);
-      return panelShell('Proyecto', h('div', null, [form, list, notesSection(p), delivSection(p), foot]), 'aps-panel-p');
+      return panelShell('Proyecto', h('div', null, [form, list, milestonesSection(p), relationsSection('project', p, 'Relaciones del proyecto'), notesSection(p), delivSection(p), foot]), 'aps-panel-p');
     }
 
     /* Diálogos */

@@ -164,3 +164,76 @@ test('Los valores de ideas, notas y entregables coinciden con studio-ideas.sql',
   const base = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'supabase', 'studio.sql'), 'utf8');
   eq(L.KINDS.map((s) => s[0]), /kind[^\n]*check \(kind in \(([^)]*)\)/.exec(base)[1].split(',').map((s) => s.trim().replace(/'/g, '')));
 });
+
+/* ── Hito 3: hoja de ruta y relaciones ── */
+const link = (rel, from, to, kind = 'milestone') => ({ id: rel + from + to, rel, from_id: from, to_id: to, kind });
+
+test('fmtDay: sin año en el año actual y con año en otro', () => {
+  assert.equal(L.fmtDay('2026-11-05', NOW), '5 nov');
+  assert.equal(L.fmtDay('2027-01-15', NOW), '15 ene 2027');
+});
+
+test('timelineRange: abarca de principio del primer mes a fin del último, incluye hoy y mide al menos tres meses', () => {
+  const r = L.timelineRange(['2026-11-10', '2027-01-20', null], NOW);
+  eq([r.start.getFullYear(), r.start.getMonth(), r.start.getDate()], [2026, 9, 1]);        // hoy (22-oct) manda: octubre
+  eq(r.months.map((m) => m.key), ['2026-10', '2026-11', '2026-12', '2027-01']);
+  assert.ok(Math.abs(r.months.reduce((s, m) => s + m.width, 0) - 100) < 1e-9, 'los meses suman 100 %');
+  assert.ok(Math.abs(r.months[1].left - r.months[0].width) < 1e-9, 'los meses son contiguos');
+  eq(L.timelineRange([], NOW).months.length, 3, 'mínimo tres meses sin fechas');
+  assert.ok(r.months[0].label.includes('2026') && !r.months[1].label.includes('2026') && r.months[3].label.includes('2027'), 'año solo al principio y en enero');
+});
+
+test('pctOf: proporcional al rango y acotado a 0-100', () => {
+  const r = L.timelineRange(['2026-10-01', '2026-12-31'], NOW);
+  assert.equal(L.pctOf('2026-10-01', r), 0);
+  assert.ok(L.pctOf('2026-11-16', r) > 40 && L.pctOf('2026-11-16', r) < 60);
+  assert.equal(L.pctOf('2020-01-01', r), 0);
+  assert.equal(L.pctOf('2030-01-01', r), 100);
+});
+
+test('relationsOf: dirección y etiqueta de dependencias y relaciones', () => {
+  const links = [link('depends_on', 'a', 'b'), link('depends_on', 'c', 'a'), link('relates_to', 'a', 'd'), link('relates_to', 'e', 'a'), link('depends_on', 'x', 'y')];
+  eq(L.relationsOf(links, 'a').map((r) => [r.label, r.otherId, r.dir]), [['Depende de', 'b', 'out'], ['Lo necesita', 'c', 'in'], ['Se relaciona con', 'd', 'out'], ['Se relaciona con', 'e', 'in']]);
+  eq(L.relationsOf(links, 'z'), []);
+});
+
+test('wouldCycle: autoenlace, ciclo directo e indirecto; las relaciones simples no cuentan', () => {
+  const links = [link('depends_on', 'b', 'a'), link('depends_on', 'c', 'b'), link('relates_to', 'a', 'z')];
+  assert.equal(L.wouldCycle(links, 'a', 'a'), true);
+  assert.equal(L.wouldCycle(links, 'a', 'b'), true, 'b ya depende de a');
+  assert.equal(L.wouldCycle(links, 'a', 'c'), true, 'c depende de b que depende de a');
+  assert.equal(L.wouldCycle(links, 'c', 'a'), false, 'c→a es coherente con c→b→a');
+  assert.equal(L.wouldCycle(links, 'z', 'a'), false, 'relates_to no genera ciclos');
+  assert.equal(L.wouldCycle([], 'a', 'b'), false);
+});
+
+test('linkExists: depends_on tiene sentido, relates_to es simétrico', () => {
+  const links = [link('depends_on', 'a', 'b'), link('relates_to', 'c', 'd')];
+  assert.equal(L.linkExists(links, 'depends_on', 'a', 'b'), true);
+  assert.equal(L.linkExists(links, 'depends_on', 'b', 'a'), false);
+  assert.equal(L.linkExists(links, 'relates_to', 'd', 'c'), true);
+  assert.equal(L.linkExists(links, 'relates_to', 'a', 'b'), false, 'una dependencia no es una relación');
+});
+
+test('dependencyIssues: avisa si lo que se necesita está previsto después; ignora fechas que faltan', () => {
+  const dates = { a: '2026-11-01', b: '2026-12-01', c: '2026-10-15', d: null };
+  const links = [link('depends_on', 'a', 'b'), link('depends_on', 'a', 'c'), link('depends_on', 'a', 'd'), link('relates_to', 'a', 'b')];
+  const is = L.dependencyIssues(links, (id) => dates[id]);
+  eq(is.map((i) => [i.from, i.to, i.days]), [['a', 'b', 30]]);
+});
+
+test('sortMilestones: por fecha, los que no tienen fecha al final y empate por título', () => {
+  const ms = [{ title: 'Z', target_date: null }, { title: 'B', target_date: '2026-11-02' }, { title: 'A', target_date: '2026-11-02' }, { title: 'C', target_date: '2026-10-30' }];
+  eq(L.sortMilestones(ms).map((m) => m.title), ['C', 'A', 'B', 'Z']);
+});
+
+test('Los valores de hitos y relaciones coinciden con studio-roadmap.sql', () => {
+  const sql = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'supabase', 'studio-roadmap.sql'), 'utf8');
+  const block = (t) => { const f = sql.indexOf('create table if not exists public.' + t); return sql.slice(f, sql.indexOf(');', f)); };
+  const list = (b, col) => new RegExp(col + '[^\\n]*check \\(' + col + ' in \\(([^)]*)\\)').exec(b)[1].split(',').map((s) => s.trim().replace(/'/g, ''));
+  eq(L.MS_STATUS.map((s) => s[0]), list(block('ps_milestones'), 'status'));
+  eq(L.REL.map((s) => s[0]), list(block('ps_links'), 'rel'));
+  eq(Object.keys(L.REL_KINDS), list(block('ps_links'), 'kind'));
+  // las ideas no tienen dependencias (lo exige el check de la base)
+  assert.ok(!L.REL_KINDS.idea.includes('depends_on') && /rel <> 'depends_on' or kind in \('project', 'milestone'\)/.test(sql));
+});

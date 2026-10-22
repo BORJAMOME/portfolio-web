@@ -52,7 +52,13 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
   `ps_convert_idea()` la convierte en proyecto de forma atómica), **notas e investigación** (`ps_notes`: nota, investigación, hipótesis, decisión, referencia) y **entregables**
   (`ps_deliverables`) como secciones desplegables del panel de proyecto. Los enlaces solo se pintan si son http(s) (`logic.safeUrl`; la base lo exige también con un `check`).
   Sin ejecutar `studio-ideas.sql` el resto del Studio funciona y esas secciones avisan dónde falta.
-  Pendiente por hitos: hoja de ruta (hitos y dependencias, relaciones entre ideas), lienzo (coordenadas en tabla aparte) y revisión/cierre.
+  Hito 3 (`supabase/studio-roadmap.sql`, revertir con `studio-roadmap-rollback.sql`): **hoja de ruta** (`ps_milestones`: hitos con fecha y estado; vista «Hoja de ruta» con línea de tiempo y lista)
+  y **relaciones** (`ps_links`: `depends_on` y `relates_to` entre dos elementos del mismo tipo: proyectos, hitos o ideas; las ideas solo admiten `relates_to`).
+  Al no haber claves foráneas (apunta a varias tablas), los triggers comprueban que existen los extremos, impiden duplicados y ciclos, y limpian los enlaces al borrar un extremo.
+  La interfaz avisa si algo depende de algo previsto DESPUÉS (`logic.dependencyIssues`). Posiciones y anchos de la línea de tiempo por CSSOM (`el.style`): **nunca `setAttribute('style')`**, la CSP lo bloquea
+  (`check-studio` tiene un paso con la CSP real, sin `bypassCSP`, que cuenta `securitypolicyviolation`). Las dependencias entre tareas no están en este hito.
+  `node tools/test-studio-sql.mjs` ejecuta los tres SQL contra un Postgres real (PGlite, solo en la CI y en local con `npm i --no-save @electric-sql/pglite`): idempotencia, triggers, restricciones, RPC, RLS de `anon`, cascadas y rollbacks.
+  Pendiente por hitos: lienzo (coordenadas en tabla aparte) y revisión/cierre del proyecto.
   Pruebas: `node tools/test-studio.mjs` (lógica) y `node tools/check-studio.mjs` (interfaz con Playwright y Supabase simulado; no toca la base real).
 - **Calendario** (`#/calendario`): solo lectura. Google → iCal secreto → Edge Function `supabase/functions/calendario-sync`
   (pg_cron cada 15 min) → `public.calendar_events`. La página nunca habla con Google. Guía: `supabase/functions/calendario-sync/README.md`.
