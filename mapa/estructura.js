@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "b113acf",
+ "huella": "37df682",
  "recuento": {
   "paginas": 19,
   "proyectos": 40,
@@ -1730,7 +1730,7 @@ export default {
    "id": "col:datos",
    "tipo": "columna",
    "etiqueta": "Datos y servicios",
-   "nota": "tablas y funciones en Supabase",
+   "nota": "tablas y funciones",
    "hijos": [
     {
      "id": "d:agenda",
@@ -2074,7 +2074,7 @@ export default {
    "id": "col:herramientas",
    "tipo": "columna",
    "etiqueta": "Herramientas",
-   "nota": "generan y comprueban el sitio",
+   "nota": "generan y comprueban",
    "hijos": [
     {
      "id": "g:tools:generadores",
@@ -3505,7 +3505,7 @@ export default {
   },
   "igual": {
    "verbo": "es el mismo que",
-   "debil": true
+   "debil": false
   }
  },
  "familias": {
@@ -3578,36 +3578,6 @@ export default {
    "nombre": "Perfil profesional",
    "color": "#8B5A2B",
    "forma": "circulo"
-  }
- },
- "secciones": {
-  "p:index": {
-   "color": "#273A5F",
-   "tinta": "#273A5F"
-  },
-  "p:sobre-mi": {
-   "color": "#0F8B6D",
-   "tinta": "#0B6E55"
-  },
-  "p:power-bi": {
-   "color": "#1D6FD8",
-   "tinta": "#1558B0"
-  },
-  "p:analisis-datos": {
-   "color": "#7048E8",
-   "tinta": "#5B34C9"
-  },
-  "p:visualizacion-datos": {
-   "color": "#D6336C",
-   "tinta": "#B0204F"
-  },
-  "p:descargas": {
-   "color": "#A06A00",
-   "tinta": "#7D5200"
-  },
-  "p:privacidad": {
-   "color": "#586278",
-   "tinta": "#586278"
   }
  }
 };

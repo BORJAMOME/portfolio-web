@@ -14,11 +14,11 @@
     },
     "datos": {
       "titulo": "Datos y servicios",
-      "nota": "tablas y funciones en Supabase"
+      "nota": "tablas y funciones"
     },
     "herramientas": {
       "titulo": "Herramientas",
-      "nota": "generan y comprueban el sitio"
+      "nota": "generan y comprueban"
     }
   },
   "web": {
@@ -326,7 +326,7 @@
     },
     "igual": {
       "verbo": "es el mismo que",
-      "debil": true
+      "debil": false
     }
   },
   "familias": {
@@ -399,36 +399,6 @@
       "nombre": "Perfil profesional",
       "color": "#8B5A2B",
       "forma": "circulo"
-    }
-  },
-  "secciones": {
-    "p:index": {
-      "color": "#273A5F",
-      "tinta": "#273A5F"
-    },
-    "p:sobre-mi": {
-      "color": "#0F8B6D",
-      "tinta": "#0B6E55"
-    },
-    "p:power-bi": {
-      "color": "#1D6FD8",
-      "tinta": "#1558B0"
-    },
-    "p:analisis-datos": {
-      "color": "#7048E8",
-      "tinta": "#5B34C9"
-    },
-    "p:visualizacion-datos": {
-      "color": "#D6336C",
-      "tinta": "#B0204F"
-    },
-    "p:descargas": {
-      "color": "#A06A00",
-      "tinta": "#7D5200"
-    },
-    "p:privacidad": {
-      "color": "#586278",
-      "tinta": "#586278"
     }
   }
 }
