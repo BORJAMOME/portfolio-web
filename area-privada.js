@@ -455,6 +455,7 @@
     preparacion: { global: 'APPreparacion', title: 'Entrevistas', tab: 'entrevistas' },
     portfolio:   { global: 'APPortfolio',   title: 'Portfolio' },
     'second-brain': { global: 'APSecondBrain', title: 'Second Brain' },
+    mapa:        { global: 'APMapa',        title: 'Mapa' },
     fichero:     { global: 'APFichero',     title: 'Fichero' },
     configuracion: { global: 'APConfiguracion', title: 'Configuración' }
   };

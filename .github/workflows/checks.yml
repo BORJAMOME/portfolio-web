@@ -29,6 +29,8 @@ jobs:
         run: node tools/build-en.mjs --check
       - name: Enlaces, recursos, anclas, sitemap y hreflang
         run: node tools/check-links.mjs
+      - name: Mapa de estructura (pestaña Mapa) al día
+        run: node tools/mapa/build-mapa.mjs --check
       - name: Versiones de caché (?v=) al día
         run: node tools/version-assets.mjs --check
       - name: Lógica del Centro de trabajo (Hoy)
