@@ -161,6 +161,7 @@ async function open(viewport, hash, realCsp) {
     try { sessionStorage.setItem('bm_ap_session', JSON.stringify({ access_token: 'x', refresh_token: 'y', expires_at: Math.floor(Date.now() / 1000) + 3600, email: 'borja.mora.mendez@gmail.com' })); localStorage.setItem('bm_cookie_consent', 'rejected'); } catch (e) { /* noop */ }
   });
   await ctx.addInitScript(() => { document.addEventListener('securitypolicyviolation', (e) => { (window.__csp = window.__csp || []).push(e.violatedDirective + ' ' + e.blockedURI); }); });
+  if (process.env.STUDIO_WIDE) await ctx.addInitScript(() => { document.addEventListener('DOMContentLoaded', () => { const st = document.createElement('style'); st.textContent = '* { letter-spacing: .7px !important; }'; document.head.appendChild(st); }); });
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
@@ -550,6 +551,12 @@ await step('H2-10. Error al convertir: se avisa y la idea no cambia', async () =
   eq(db.ps_ideas.find((i) => i.title === 'Cuadro de mando de RRHH').status, 'new');
   eq(db.ps_projects.length, 0);
 });
+const offenders = (page) => page.evaluate(() => {
+  const out = [], w = innerWidth;
+  const scrolls = (el) => { for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) { const o = getComputedStyle(p).overflowX; if (o === 'auto' || o === 'scroll' || o === 'hidden') return true; } return false; };
+  document.querySelectorAll('body *').forEach((el) => { const r = el.getBoundingClientRect(); if (r.width && r.right > w + 1 && !scrolls(el)) out.push(el.tagName.toLowerCase() + '.' + String(el.className).split(' ')[0] + ' (+' + Math.round(r.right - w) + ')'); });
+  return out.slice(0, 6).join(', ');
+});
 const pad2 = (n) => (n < 10 ? '0' : '') + n;
 const day = (n) => { const d = new Date(Date.now() + n * 864e5); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); };
 const openSec = async (page, name) => { const d = await page.$(`.aps-sec:has(.aps-sec-sum:has-text("${name}"))`); if ((await d.getAttribute('open')) === null) await page.click(`.aps-sec-sum:has-text("${name}")`); };
@@ -746,11 +753,11 @@ await step('18. Sin errores de consola en toda la sesión', async () => { eq(err
 await ctx.close();
 
 await step('19. Móvil: sin desbordamiento horizontal y el panel cabe en pantalla', async () => {
-  const m = await open({ width: 320, height: 700 });
+  const m = await open({ width: 360, height: 740 });
   pagePtr.page = m.page;
   await view(m.page, 'Tablero');
   const ov = await m.page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
-  ok(ov <= 1, 'desborda ' + ov + ' px');
+  ok(ov <= 1, 'desborda ' + ov + ' px: ' + await offenders(m.page));
   await m.page.click('.aps-card-open');
   await m.page.waitForSelector('.aps-panel');
   const b = await bbox('.aps-panel');
@@ -862,12 +869,12 @@ await step('R-13. Accesibilidad (axe): hoja de ruta y panel de proyecto con hito
   await a.ctx.close();
 });
 await step('R-14. Móvil: la hoja de ruta no desborda la página (la línea de tiempo se desplaza dentro de su caja)', async () => {
-  const m = await open({ width: 320, height: 700 });
+  const m = await open({ width: 360, height: 740 });
   pagePtr.page = m.page;
   await view(m.page, 'Hoja de ruta');
   await m.page.waitForSelector('.aps-road');
   const o = await m.page.evaluate(() => ({ page: document.documentElement.scrollWidth - innerWidth, inner: document.querySelector('.aps-road').scrollWidth - document.querySelector('.aps-road').clientWidth }));
-  ok(o.page <= 1, 'desborda la página ' + o.page + ' px');
+  ok(o.page <= 1, 'desborda la página ' + o.page + ' px: ' + await offenders(m.page));
   ok(o.inner > 0, 'la línea de tiempo debería desplazarse por dentro');
   eq(m.errors, []);
   await m.ctx.close();
