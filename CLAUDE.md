@@ -43,6 +43,13 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
   Captura inteligente local (`logic.parseCapture`: #proyecto, !prioridad, fechas en español, @hoy). Paleta `Ctrl/⌘+K`.
   IA opcional: Edge Function `supabase/functions/kanban-ia` (desglosar, siguiente paso, plan del día, texto → tarjetas). Solo propone:
   la web enseña una revisión y guarda lo confirmado. `KB_AI_PROVIDER=off` por defecto (los botones de IA no aparecen). Guía: su `README.md`.
+- **Studio** (`#/studio`): proyectos y tareas con varias vistas sobre el mismo estado (Resumen, Tablero, Archivo; panel lateral contextual). Módulo
+  `area-privada-studio.js` (`window.APStudio`, lógica pura en `.logic`), CSS con prefijo `aps-` al final de `css/area-privada.css` (reutiliza los tokens y los `--st-*` del Centro de trabajo).
+  Tablas propias `ps_projects`, `ps_tasks` (con `parent_id` = subtarea de un solo nivel), `ps_settings` (límites WIP) y `ps_activity` (la escribe un trigger)
+  en `supabase/studio.sql` (revertir con `studio-rollback.sql`). **Independiente del Centro de trabajo**: no lee ni escribe `kb_*`. La fase del proyecto (`stage`) y su estado (`status`)
+  son cosas distintas; un proyecto que no está activo oculta sus tareas del tablero. Arrastre con Pointer Events propios, Mayús+flechas, deshacer (botón y Ctrl/⌘+Z).
+  Pendiente por hitos: ideas, notas, hitos y hoja de ruta, lienzo (coordenadas en tabla aparte), entregables, relaciones y revisión.
+  Pruebas: `node tools/test-studio.mjs` (lógica) y `node tools/check-studio.mjs` (interfaz con Playwright y Supabase simulado; no toca la base real).
 - **Calendario** (`#/calendario`): solo lectura. Google → iCal secreto → Edge Function `supabase/functions/calendario-sync`
   (pg_cron cada 15 min) → `public.calendar_events`. La página nunca habla con Google. Guía: `supabase/functions/calendario-sync/README.md`.
 - **Entrevistas** (`#/entrevistas`, `/analisis`, `/<uuid>`): tablas `procesos` y `entrevistas` (`supabase/entrevistas.sql`).
