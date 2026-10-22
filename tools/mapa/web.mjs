@@ -161,6 +161,7 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
       if (!/CreativeWork/.test([].concat(o['@type']).join()) || anchor === 'caso' || !o.name) continue;     // los DataDownload del laboratorio salen de ITEMS (3d), completos
       if (caseByTitle(o.name)) continue;      // el listado enseña un caso que ya tiene su página: lo cubren los enlaces internos
       const url = o.url ? String(o.url) : '';
+      if (W.omitirUrls.some((frag) => url.includes(frag))) continue;
       const host = hostOf(url);
       const gh = /^github\.com$/.test(host) ? url.split('/').slice(7).join('/') : '';
       const tipo = host.endsWith('behance.net') ? 'visual' : host === 'github.com' ? 'proyecto' : 'proyecto';
@@ -176,6 +177,7 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
       const url = (/href="(https?:\/\/[^"]+)"/.exec(block) || [, ''])[1];
       if (!url) return;
       const kind = m[1];
+      if (W.omitirUrls.some((frag) => url.includes(frag))) return;
       const pills = [...block.matchAll(/class="cc-pill"[^>]*>([^<]+)</g)].map((x) => text(x[1]));
       const isApp = /streamlit\.app$/.test(hostOf(url));
       addEntity({
@@ -220,8 +222,8 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
       const n = Number(blk.slice(0, blk.indexOf('"')));
       const title = f(/title:"([^"]+)"/), cat = f(/cat:"(\w+)"/), dlUrl = f(/dl:"([^"]*)"/), liUrl = f(/li:"([^"]*)"/);
       const tags = [...f(/tags:\[([^\]]*)\]/).matchAll(/"([^"]+)"/g)].map((x) => x[1]);
-      addEntity({ prefijo: 'lab-', tipo: 'lab', etiqueta: title, urls: [canon(dlUrl)].filter(Boolean), url: dlUrl, techs: tags, grupo: `${W.grupos.lab} · ${W.etiquetasLab[cat] || cat}`, pagina: dl.key, orden: n });
-      if (liUrl) addEntity({ prefijo: 'post-', tipo: 'post', etiqueta: cut(`${title} (post)`, 70), urls: [canon(liUrl)].filter(Boolean), url: liUrl, techs: [], grupo: W.grupos.postLab, pagina: dl.key, orden: 100 + n });
+      addEntity({ prefijo: 'lab-', tipo: 'lab', etiqueta: title, urls: [canon(dlUrl)].filter(Boolean), url: dlUrl, techs: tags, grupo: W.grupos.lab, techs: [...tags, W.etiquetasLab[cat] || cat], pagina: dl.key, orden: n });
+      if (liUrl) addEntity({ prefijo: 'post-', tipo: 'post', etiqueta: cut(`${title} (post)`, 70), urls: [canon(liUrl)].filter(Boolean), url: liUrl, techs: [], grupo: W.grupos.lab, pagina: dl.key, orden: 100 + n });
     }
     if (!blocks.length) throw new Error('descargas.html: ITEMS sin elementos reconocibles');
   }
@@ -281,6 +283,7 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
       const k = canon(a.href);
       if (!k) continue;
       const hit = urlTo.get(k) || urlTo.get(`powerbi:${reportKey(a.href)}`);
+      if (hit && hit.id === page.id) continue;                    // una página enlaza su propio informe: no es una referencia
       if (hit && !(hit.id.startsWith('e:') && E[hit.id].dueña === page.key)) (showsPage[hit.id] ??= []).push(page.key);
       else if (!hit && /^https?:/.test(a.href)) {
         const host = hostOf(a.href);

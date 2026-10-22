@@ -38,7 +38,8 @@
       "supabase",
       "tools",
       "ds",
-      "mapa"
+      "mapa",
+      "ml"
     ],
     "etiquetas": {
       "index.html": "Inicio",
@@ -49,7 +50,6 @@
     },
     "tipos": {
       "data-storytelling.html": "manual",
-      "ml": "manual",
       "pbi": "manual",
       "roma-aeterna": "app",
       "dashboard/casa-origen": "app"
@@ -60,7 +60,6 @@
       "power-bi.html",
       "analisis-datos.html",
       "visualizacion-datos.html",
-      "data-storytelling.html",
       "descargas.html",
       "privacidad.html"
     ],
@@ -75,7 +74,7 @@
       "privacidad.html"
     ],
     "grupos": {
-      "app": "Machine Learning · apps de Streamlit",
+      "app": "Machine Learning",
       "proyecto": "proyectos de código",
       "visual": "visualizaciones (Behance)",
       "grafico": "gráficos nativos",
@@ -173,7 +172,11 @@
     "etiquetasUrl": {
       "borjamome.github.io/powerbi-mockup": "PBI Mockup Creator"
     },
-    "revisados": []
+    "revisados": [],
+    "omitirUrls": [
+      "/03-Machine-Learning/"
+    ],
+    "referencias": "proyectos que muestra/"
   },
   "privada": {
     "etiquetas": {
@@ -249,7 +252,7 @@
   },
   "tipos": {
     "pagina": "Página",
-    "caso": "Caso de estudio",
+    "caso": "Dashboard",
     "manual": "Manual",
     "app": "App interactiva",
     "proyecto": "Proyecto de código",
@@ -320,6 +323,10 @@
     "ejecuta": {
       "verbo": "ejecuta",
       "debil": true
+    },
+    "igual": {
+      "verbo": "es el mismo que",
+      "debil": true
     }
   },
   "familias": {
@@ -329,7 +336,7 @@
       "forma": "cuadrado"
     },
     "caso": {
-      "nombre": "Caso de estudio",
+      "nombre": "Dashboard",
       "color": "#1D6FD8",
       "forma": "circulo"
     },
@@ -392,6 +399,36 @@
       "nombre": "Perfil profesional",
       "color": "#8B5A2B",
       "forma": "circulo"
+    }
+  },
+  "secciones": {
+    "p:index": {
+      "color": "#273A5F",
+      "tinta": "#273A5F"
+    },
+    "p:sobre-mi": {
+      "color": "#0F8B6D",
+      "tinta": "#0B6E55"
+    },
+    "p:power-bi": {
+      "color": "#1D6FD8",
+      "tinta": "#1558B0"
+    },
+    "p:analisis-datos": {
+      "color": "#7048E8",
+      "tinta": "#5B34C9"
+    },
+    "p:visualizacion-datos": {
+      "color": "#D6336C",
+      "tinta": "#B0204F"
+    },
+    "p:descargas": {
+      "color": "#A06A00",
+      "tinta": "#7D5200"
+    },
+    "p:privacidad": {
+      "color": "#586278",
+      "tinta": "#586278"
     }
   }
 }
