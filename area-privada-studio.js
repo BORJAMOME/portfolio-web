@@ -130,11 +130,47 @@ window.APStudio = (function () {
       case 'project_created': return 'Proyecto creado: ' + l;
       case 'project_stage': return l + ', fase: ' + (STAGE_LABEL[a.from_value] || a.from_value) + ' → ' + (STAGE_LABEL[a.to_value] || a.to_value);
       case 'project_status': return l + ': ' + (PSTATUS_LABEL[a.from_value] || a.from_value) + ' → ' + (PSTATUS_LABEL[a.to_value] || a.to_value);
+      case 'idea_created': return 'Idea capturada: ' + l;
+      case 'idea_converted': return 'Idea convertida en proyecto: ' + l;
       default: return l;
     }
   }
 
+  /* Ideas (Idea Lab), notas e investigación y entregables (hito 2). */
+  var IDEA_STATUSES = [['new', 'Nueva'], ['exploring', 'Explorando'], ['converted', 'Convertida'], ['discarded', 'Descartada']];
+  var IDEA_LABEL = {}; IDEA_STATUSES.forEach(function (s) { IDEA_LABEL[s[0]] = s[1]; });
+  var KIND_LABEL = {}; KINDS.forEach(function (k) { KIND_LABEL[k[0]] = k[1]; });
+  var NOTE_KINDS = [['note', 'Nota'], ['research', 'Investigación'], ['hypothesis', 'Hipótesis'], ['decision', 'Decisión'], ['reference', 'Referencia']];
+  var NOTE_LABEL = {}; NOTE_KINDS.forEach(function (k) { NOTE_LABEL[k[0]] = k[1]; });
+  var DELIV_KINDS = [['repo', 'Repositorio'], ['document', 'Documento'], ['dashboard', 'Dashboard'], ['app', 'Aplicación'], ['other', 'Otro']];
+  var DELIV_LABEL = {}; DELIV_KINDS.forEach(function (k) { DELIV_LABEL[k[0]] = k[1]; });
+  var DSTATUS = [['planned', 'Prevista'], ['in_progress', 'En curso'], ['delivered', 'Entregada']];
+  var DSTATUS_LABEL = {}; DSTATUS.forEach(function (k) { DSTATUS_LABEL[k[0]] = k[1]; });
+
+  /* Solo http(s): lo que llega de la base no se convierte en enlace si es otra cosa (javascript:, data:…). */
+  function safeUrl(u) {
+    if (!u) return null;
+    try { var p = new URL(String(u)); return p.protocol === 'http:' || p.protocol === 'https:' ? p.href : null; } catch (e) { return null; }
+  }
+  /* f: { q, show: 'activas' (nuevas y explorando) | 'todas' | un estado }. Más recientes primero. */
+  function filterIdeas(ideas, f) {
+    var q = norm(f.q), show = f.show || 'activas';
+    return ideas.filter(function (i) {
+      if (show === 'activas' ? (i.status === 'converted' || i.status === 'discarded') : show !== 'todas' && i.status !== show) return false;
+      return !q || norm([i.title, i.body, i.topic].join(' ')).indexOf(q) !== -1;
+    }).sort(function (a, b) { return a.created_at < b.created_at ? 1 : a.created_at > b.created_at ? -1 : 0; });
+  }
+  /* Grupos por `topic` (los grupos con nombre por orden alfabético; «Sin grupo» al final). */
+  function groupIdeas(ideas) {
+    var map = {}, order = [];
+    ideas.forEach(function (i) { var k = i.topic || ''; if (!map[k]) { map[k] = []; order.push(k); } map[k].push(i); });
+    order.sort(function (a, b) { return a === '' ? 1 : b === '' ? -1 : a.localeCompare(b, 'es', { sensitivity: 'base' }); });
+    return order.map(function (k) { return { topic: k, ideas: map[k] }; });
+  }
+
   var logic = {
+    IDEA_STATUSES: IDEA_STATUSES, NOTE_KINDS: NOTE_KINDS, DELIV_KINDS: DELIV_KINDS, DSTATUS: DSTATUS, KINDS: KINDS,
+    safeUrl: safeUrl, filterIdeas: filterIdeas, groupIdeas: groupIdeas,
     STATUSES: STATUSES, STAGES: STAGES, DEFAULTS: DEFAULTS,
     dayKey: dayKey, daysUntil: daysUntil, dueLabel: dueLabel,
     insertPosition: insertPosition, needsRenumber: needsRenumber, boardTasks: boardTasks, column: column, wipState: wipState,
@@ -150,7 +186,8 @@ window.APStudio = (function () {
     var now = new Date();
     var st = {
       tasks: [], archived: null, projects: [], cfg: { wip: Object.assign({}, DEFAULTS.wip) }, activity: [],
-      view: pref('view') || 'resumen', filters: { q: '', project: '', blocked: false }, panel: null, doneMore: false
+      ideas: [], notes: [], deliverables: [], ext: false,       // ext: existen las tablas de ideas, notas y entregables (studio-ideas.sql)
+      view: pref('view') || 'resumen', filters: { q: '', project: '', blocked: false }, ideaFilter: { q: '', show: 'activas' }, panel: null, doneMore: false
     };
     var undo = [], keep = null, lastDrag = 0, toastTimer = null, saySeq = 0, returnFocus = null, actTimer = null;
     var root = h('section', { class: 'aps', 'aria-label': 'Studio de proyectos' });
@@ -178,6 +215,15 @@ window.APStudio = (function () {
         (r[2] || []).forEach(function (a) { cfg[a.key] = a.value; });
         st.cfg.wip = Object.assign({}, DEFAULTS.wip, cfg.wip || {});
         st.activity = recent(r[3]);
+      }).then(function () {
+        return Promise.all([
+          api('/rest/v1/ps_ideas?select=*&order=created_at.desc&limit=1000'),
+          api('/rest/v1/ps_notes?select=*&order=created_at.desc&limit=2000'),
+          api('/rest/v1/ps_deliverables?select=*&order=created_at.asc&limit=1000')
+        ]).then(function (e) { st.ideas = e[0] || []; st.notes = e[1] || []; st.deliverables = e[2] || []; st.ext = true; }, function (err) {
+          if (missing(err)) { st.ext = false; st.ideas = []; st.notes = []; st.deliverables = []; return; }     // aún sin studio-ideas.sql: el resto del Studio funciona
+          throw err;
+        });
       });
     }
     function recent(list) { return (list || []).sort(function (a, b) { return a.created_at < b.created_at ? 1 : -1; }).slice(0, 12); }
@@ -401,6 +447,9 @@ window.APStudio = (function () {
         if (!ok) return;
         st.projects = st.projects.filter(function (x) { return x.id !== p.id; });
         st.tasks = st.tasks.filter(function (t) { return t.project_id !== p.id; });
+        st.notes = st.notes.filter(function (x) { return x.project_id !== p.id; });
+        st.deliverables = st.deliverables.filter(function (x) { return x.project_id !== p.id; });
+        st.ideas.forEach(function (i) { if (i.project_id === p.id) i.project_id = null; });      // las ideas sobreviven (set null en la base)
         if (st.filters.project === p.id) st.filters.project = '';
         st.panel = null; undo.length = 0;
         say('Proyecto «' + clip(p.title) + '» eliminado.');
@@ -408,6 +457,44 @@ window.APStudio = (function () {
         return api('/rest/v1/ps_projects?id=eq.' + p.id, { method: 'DELETE' }).catch(function (err) { failed(err, 'eliminar proyecto'); });
       });
     }
+    /* ── Ideas, notas y entregables: mismas reglas (escritura en orden, deshacer, reversión si falla) ── */
+    function addRow(table, key, row, label) {
+      return api('/rest/v1/' + table + '?select=*', { method: 'POST', headers: REP, body: JSON.stringify(row) }).then(function (r) {
+        var o = r[0]; st[key].push(o); keep = o.id;
+        say(label + ' creada.', { undo: true });
+        pushUndo('crear ' + label.toLowerCase(), function () { st[key] = st[key].filter(function (x) { return x.id !== o.id; }); if (st.panel && st.panel.id === o.id) st.panel = null; paint(); return api('/rest/v1/' + table + '?id=eq.' + o.id, { method: 'DELETE' }); });
+        paint(); refreshActivity();
+        return o;
+      });
+    }
+    function editRow(table, o, patch, label) {
+      var keys = Object.keys(patch), prev = snapshot(o, keys);
+      Object.assign(o, patch); keep = o.id; paint();
+      var entry = pushUndo(label || 'edición', function () { Object.assign(o, prev); keep = o.id; paint(); return patchRow(table, o.id, prev); });
+      return patchRow(table, o.id, patch).then(function () { return true; }, function (err) { dropUndo(entry); failed(err, 'edición', function () { Object.assign(o, prev); }); return false; });
+    }
+    function delRow(table, key, o, label) {
+      var row = Object.assign({}, o);
+      st[key] = st[key].filter(function (x) { return x.id !== o.id; });
+      if (st.panel && st.panel.id === o.id) st.panel = null;
+      say(label + ' eliminada.', { undo: true });
+      paint();
+      var entry = pushUndo('eliminar ' + label.toLowerCase(), function () {
+        return api('/rest/v1/' + table + '?select=*', { method: 'POST', headers: REP, body: JSON.stringify([row]) }).then(function (r) { st[key].push(r[0]); paint(); });
+      });
+      return api('/rest/v1/' + table + '?id=eq.' + o.id, { method: 'DELETE' }).catch(function (err) { dropUndo(entry); failed(err, 'eliminar'); });
+    }
+    function convertIdea(idea) {
+      return api('/rest/v1/rpc/ps_convert_idea', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ p_idea: idea.id }) }).then(function (r) {
+        var p = Array.isArray(r) ? r[0] : r;
+        st.projects.push(p); idea.status = 'converted'; idea.project_id = p.id; st.panel = { type: 'project', id: p.id };
+        say('Idea convertida en proyecto. Se ha copiado su descripción como objetivo.');
+        paint(); refreshActivity();
+      }).catch(function (err) { failed(err, 'convertir'); });
+    }
+    function noteOf(project) { return st.notes.filter(function (n) { return n.project_id === project; }).sort(function (a, b) { return a.created_at < b.created_at ? 1 : -1; }); }
+    function delivOf(project) { return st.deliverables.filter(function (d) { return d.project_id === project; }); }
+
     function saveWip(wip) {
       return api('/rest/v1/ps_settings?on_conflict=key', { method: 'POST', headers: { 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify({ key: 'wip', value: wip, updated_at: new Date().toISOString() }) });
     }
@@ -427,7 +514,7 @@ window.APStudio = (function () {
       var inPanel = ae && ae.closest && ae.closest('.aps-panel');
       root.textContent = '';
       root.appendChild(header());
-      var main = h('div', { class: 'aps-main' }, [st.view === 'tablero' ? viewTablero() : st.view === 'archivo' ? viewArchivo() : viewResumen()]);
+      var main = h('div', { class: 'aps-main' }, [st.view === 'tablero' ? viewTablero() : st.view === 'archivo' ? viewArchivo() : st.view === 'ideas' ? viewIdeas() : viewResumen()]);
       root.appendChild(h('div', { class: 'aps-layout' + (st.panel ? ' has-panel' : '') }, [main, st.panel ? panelEl() : null]));
       root.appendChild(toastBox); root.appendChild(live);
       board = root.querySelector('.aps-board'); if (board) board.scrollLeft = scrollLeft;
@@ -448,7 +535,7 @@ window.APStudio = (function () {
           h('p', { class: 'aps-sub', text: active + (active === 1 ? ' proyecto activo' : ' proyectos activos') + ' · ' + open + (open === 1 ? ' tarea abierta' : ' tareas abiertas') })
         ]),
         h('div', { class: 'aps-head-actions' }, [
-          h('div', { class: 'aps-seg', role: 'group', 'aria-label': 'Vista' }, [['resumen', 'Resumen'], ['tablero', 'Tablero'], ['archivo', 'Archivo']].map(function (v) {
+          h('div', { class: 'aps-seg', role: 'group', 'aria-label': 'Vista' }, [['resumen', 'Resumen'], ['ideas', 'Ideas'], ['tablero', 'Tablero'], ['archivo', 'Archivo']].map(function (v) {
             return btn(v[1], 'aps-seg-btn', function () { st.view = v[0]; setPref('view', v[0]); paint(); if (v[0] === 'archivo' && !st.archived) loadArchived(); }, { 'aria-pressed': st.view === v[0] ? 'true' : 'false' });
           })),
           btn('Nuevo proyecto', 'aps-btn aps-btn--primary', projectDialog, { 'data-role': 'new-project' })
@@ -492,6 +579,11 @@ window.APStudio = (function () {
           h('h3', { class: 'aps-block-title', id: 'aps-h-blk', text: 'Bloqueado' }),
           blocked.length ? h('ul', { class: 'aps-rows' }, blocked.map(function (t) { return taskRow(t, t.blocked_reason || 'Sin motivo anotado'); })) : h('p', { class: 'aps-empty', text: 'Nada bloqueado.' })
         ]),
+        st.ext && st.ideas.length ? h('section', { class: 'aps-block aps-block--wide', 'aria-labelledby': 'aps-h-idea' }, [
+          h('h3', { class: 'aps-block-title', id: 'aps-h-idea', text: 'Ideas recientes' }),
+          h('ul', { class: 'aps-rows' }, filterIdeas(st.ideas, { q: '', show: 'activas' }).slice(0, 5).map(function (i) { return ideaRow(i); })),
+          btn('Ver todas las ideas', 'aps-link', function () { st.view = 'ideas'; setPref('view', 'ideas'); paint(); })
+        ]) : null,
         h('section', { class: 'aps-block aps-block--wide', 'aria-labelledby': 'aps-h-act' }, [
           h('h3', { class: 'aps-block-title', id: 'aps-h-act', text: 'Actividad reciente' }),
           st.activity.length ? h('ul', { class: 'aps-activity' }, st.activity.map(function (a) {
@@ -518,6 +610,47 @@ window.APStudio = (function () {
       return h('li', { class: 'aps-row', 'data-id': t.id, 'data-status': t.board_status }, [
         btn(t.title, 'aps-row-title', function () { openPanel('task', t.id, '.aps-main [data-id="' + t.id + '"] [data-role="open"]'); }, { 'data-role': 'open' }),
         h('span', { class: 'aps-row-meta' }, [chip(STATUS_LABEL[t.board_status], 'aps-chip--st'), projChip(t), d ? chip(d.text, 'aps-chip--' + d.tone) : null, extra ? h('span', { class: 'aps-row-note', text: extra }) : null])
+      ]);
+    }
+
+    /* Idea Lab */
+    function ideaRow(i) {
+      var p = i.project_id && projectById(i.project_id);
+      return h('li', { class: 'aps-row aps-idea', 'data-id': i.id }, [
+        h('div', { class: 'aps-idea-main' }, [
+          btn(i.title, 'aps-row-title', function () { openPanel('idea', i.id, '.aps-main [data-id="' + i.id + '"] [data-role="open"]'); }, { 'data-role': 'open' }),
+          i.body ? h('p', { class: 'aps-idea-body', text: clip(i.body, 140) }) : null
+        ]),
+        h('span', { class: 'aps-row-meta' }, [chip(IDEA_LABEL[i.status], 'aps-chip--idea-' + i.status), i.kind ? chip(KIND_LABEL[i.kind]) : null, p ? chip(clip(p.title, 24), 'aps-chip--proj', p.title) : null])
+      ]);
+    }
+    function viewIdeas() {
+      if (!st.ext) return h('p', { class: 'aps-setup', text: 'Las tablas de ideas, notas y entregables aún no existen. Ejecuta supabase/studio-ideas.sql en el SQL Editor (una vez, es idempotente) y recarga la página.' });
+      var f = st.ideaFilter, list = filterIdeas(st.ideas, f), groups = groupIdeas(list);
+      var q = h('input', { class: 'aps-input', type: 'search', placeholder: 'Buscar ideas', 'aria-label': 'Buscar ideas', value: f.q, 'data-role': 'search' });
+      q.addEventListener('input', function () { f.q = q.value; paint(); var n = root.querySelector('[data-role="search"]'); if (n) { n.focus(); n.setSelectionRange(f.q.length, f.q.length); } });
+      var show = ui.select([['activas', 'Nuevas y explorando'], ['todas', 'Todas']].concat(IDEA_STATUSES), f.show);
+      show.className = 'aps-select'; show.setAttribute('aria-label', 'Mostrar ideas');
+      show.addEventListener('change', function () { f.show = show.value; paint(); });
+      return h('div', null, [
+        h('form', { class: 'aps-capture', onsubmit: function (e) {
+          e.preventDefault();
+          var input = e.target.elements.t, v = input.value.trim();
+          if (!v) return;
+          input.value = '';
+          addRow('ps_ideas', 'ideas', { title: v.slice(0, 200) }, 'Idea').then(function () { var i = root.querySelector('.aps-capture input'); if (i) i.focus(); }).catch(function (err) { failed(err, 'crear idea'); });
+        } }, [
+          h('label', { class: 'sr-only', for: 'aps-idea-cap', text: 'Capturar una idea' }),
+          h('input', { id: 'aps-idea-cap', name: 't', class: 'aps-input', type: 'text', maxlength: '200', autocomplete: 'off', placeholder: 'Capturar una idea y pulsar Intro; la estructuras después', 'data-role': 'capture' })
+        ]),
+        h('div', { class: 'aps-filters' }, [q, show]),
+        groups.length ? groups.map(function (g, n) {
+          var id = 'aps-g-' + n;
+          return h('section', { class: 'aps-block aps-idea-group', 'aria-labelledby': id }, [
+            h('h3', { class: 'aps-block-title', id: id, text: g.topic || 'Sin grupo' }),
+            h('ul', { class: 'aps-rows' }, g.ideas.map(ideaRow))
+          ]);
+        }) : h('p', { class: 'aps-empty', text: st.ideas.length ? 'Ninguna idea con estos filtros.' : 'Aún no hay ideas. Captura la primera arriba: basta una frase.' })
       ]);
     }
 
@@ -627,6 +760,7 @@ window.APStudio = (function () {
     function panelEl() {
       var p = st.panel;
       if (p.type === 'project') { var pr = projectById(p.id); if (pr) return projectPanel(pr); }
+      else if (p.type === 'idea') { var id = st.ideas.filter(function (x) { return x.id === p.id; })[0]; if (id) return ideaPanel(id); }
       else { var t = taskById(p.id); if (t) return taskPanel(t); }
       st.panel = null; return null;
     }
@@ -701,6 +835,128 @@ window.APStudio = (function () {
       ]);
       return panelShell('Tarea', h('div', null, [form, steps, foot]), 'aps-panel-t');
     }
+    function ideaPanel(i) {
+      var title = ui.input('text', i.title, { maxlength: '200', required: 'true' });
+      var body = ui.area(i.body || '', 5, 4000);
+      var kind = ui.select(KINDS, i.kind || '', 'Sin clasificar');
+      var topic = ui.input('text', i.topic || '', { maxlength: '60', list: 'aps-topics' });
+      var topics = h('datalist', { id: 'aps-topics' }, Object.keys(st.ideas.reduce(function (m, x) { if (x.topic) m[x.topic] = 1; return m; }, {})).map(function (t) { return h('option', { value: t }); }));
+      var statusSel = ui.select(IDEA_STATUSES.filter(function (s) { return s[0] !== 'converted' || i.status === 'converted'; }), i.status);
+      var proj = ui.select(st.projects.filter(function (p) { return p.status === 'active' || p.id === i.project_id; }).map(function (p) { return [p.id, p.title]; }), i.project_id || '', 'Sin proyecto');
+      var msg = h('p', { class: 'aps-panel-msg', role: 'alert' });
+      var linked = i.project_id && projectById(i.project_id);
+      var form = h('form', { class: 'aps-form', novalidate: true, onsubmit: function (e) {
+        e.preventDefault();
+        var v = title.value.trim();
+        if (!v) { msg.textContent = 'El título no puede estar vacío.'; title.focus(); return; }
+        msg.textContent = '';
+        var vals = { title: v, body: body.value.trim() || null, kind: kind.value || null, topic: topic.value.trim() || null, status: statusSel.value, project_id: proj.value || null }, patch = {};
+        Object.keys(vals).forEach(function (k) { if (vals[k] !== (i[k] == null ? null : i[k])) patch[k] = vals[k]; });
+        if (!Object.keys(patch).length) { say('Sin cambios.'); return; }
+        editRow('ps_ideas', i, patch, 'edición de la idea').then(function (ok) { if (ok) say('Cambios guardados.', { undo: true }); });
+      } }, [
+        ui.field('aps-i-title', 'Idea', title, { wide: true }),
+        ui.field('aps-i-body', 'Descripción', body, { wide: true, hint: 'Al convertirla en proyecto, esta descripción pasa a ser su objetivo.' }),
+        ui.field('aps-i-kind', 'Tipo', kind),
+        ui.field('aps-i-status', 'Estado', statusSel),
+        ui.field('aps-i-topic', 'Grupo', topic, { hint: 'Escribe un nombre para agrupar ideas parecidas.' }),
+        ui.field('aps-i-proj', 'Conectada al proyecto', proj),
+        topics, msg,
+        h('div', { class: 'aps-panel-actions' }, [h('button', { type: 'submit', class: 'aps-btn aps-btn--primary', text: 'Guardar' })])
+      ]);
+      var foot = h('div', { class: 'aps-panel-foot' }, [
+        i.status !== 'converted' ? btn('Convertir en proyecto', 'aps-link', function () { convertIdea(i); }) : null,
+        linked ? btn('Abrir el proyecto', 'aps-link', function () { openPanel('project', linked.id, null); }) : null,
+        btn('Eliminar', 'aps-link aps-link--danger', function () {
+          ctx.ask({ title: 'Eliminar «' + clip(i.title) + '»', text: 'Podrás deshacerlo unos segundos. Si dudas, márcala como descartada.', ok: 'Eliminar', danger: true }).then(function (ok) { if (ok) delRow('ps_ideas', 'ideas', i, 'Idea'); });
+        })
+      ]);
+      return panelShell('Idea', h('div', null, [form, foot]), 'aps-panel-i');
+    }
+
+    /* Secciones desplegables del proyecto (divulgación progresiva): solo se abre lo que se necesita. */
+    function noteDialog(project, note) {
+      var kind = ui.select(NOTE_KINDS, note ? note.kind : 'note');
+      var title = ui.input('text', note ? note.title : '', { maxlength: '200', required: 'true' });
+      var url = ui.input('url', note && note.url || '', { maxlength: '500', placeholder: 'https://' });
+      var body = ui.area(note ? note.body || '' : '', 6, 8000);
+      ui.formDialog(note ? 'Editar nota' : 'Nueva nota', note ? 'Guardar' : 'Añadir', [
+        ui.field('aps-nt-kind', 'Tipo', kind), ui.field('aps-nt-title', 'Título', title),
+        ui.field('aps-nt-url', 'Enlace (opcional)', url, { wide: true, hint: 'Útil para referencias y fuentes. Solo http o https.' }),
+        ui.field('aps-nt-body', 'Contenido', body, { wide: true })
+      ], function () {
+        var t = title.value.trim(), u = url.value.trim();
+        if (!t) throw ui.invalid('Escribe un título.', title);
+        if (u && !safeUrl(u)) throw ui.invalid('El enlace debe empezar por http:// o https://.', url);
+        var vals = { kind: kind.value, title: t, url: u ? safeUrl(u) : null, body: body.value.trim() || null };
+        if (!note) return addRow('ps_notes', 'notes', Object.assign({ project_id: project.id }, vals), 'Nota');
+        return editRow('ps_notes', note, vals, 'edición de la nota').then(function (ok) { if (!ok) throw new Error('No se ha podido guardar la nota.'); });
+      }, title);
+    }
+    function delivDialog(project, d) {
+      var kind = ui.select(DELIV_KINDS, d ? d.kind : 'other');
+      var status = ui.select(DSTATUS, d ? d.status : 'planned');
+      var title = ui.input('text', d ? d.title : '', { maxlength: '200', required: 'true' });
+      var url = ui.input('url', d && d.url || '', { maxlength: '500', placeholder: 'https://' });
+      ui.formDialog(d ? 'Editar entregable' : 'Nuevo entregable', d ? 'Guardar' : 'Añadir', [
+        ui.field('aps-dl-kind', 'Tipo', kind), ui.field('aps-dl-status', 'Estado', status),
+        ui.field('aps-dl-title', 'Nombre', title, { wide: true }),
+        ui.field('aps-dl-url', 'Enlace (opcional)', url, { wide: true, hint: 'Repositorio, documento, dashboard o aplicación. Solo http o https.' })
+      ], function () {
+        var t = title.value.trim(), u = url.value.trim();
+        if (!t) throw ui.invalid('Escribe un nombre.', title);
+        if (u && !safeUrl(u)) throw ui.invalid('El enlace debe empezar por http:// o https://.', url);
+        var vals = { kind: kind.value, status: status.value, title: t, url: u ? safeUrl(u) : null };
+        if (!d) return addRow('ps_deliverables', 'deliverables', Object.assign({ project_id: project.id }, vals), 'Entregable');
+        return editRow('ps_deliverables', d, vals, 'edición del entregable').then(function (ok) { if (!ok) throw new Error('No se ha podido guardar el entregable.'); });
+      }, title);
+    }
+    function section(id, title, count, open, body) {
+      var key = 'sec.' + id;
+      var det = h('details', { class: 'aps-sec', open: (pref(key) == null ? open : pref(key) === '1') ? '' : null }, [
+        h('summary', { class: 'aps-sec-sum' }, [h('span', { text: title }), h('span', { class: 'aps-count', text: String(count) })]), body
+      ]);
+      det.addEventListener('toggle', function () { setPref(key, det.open ? '1' : '0'); });
+      return det;
+    }
+    function notesSection(p) {
+      var list = noteOf(p.id);
+      return section('notes', 'Notas e investigación', list.length, list.length > 0, h('div', null, [
+        !st.ext ? h('p', { class: 'aps-setup', text: 'Ejecuta supabase/studio-ideas.sql para activar las notas.' }) : [
+          list.length ? h('ul', { class: 'aps-rows' }, list.map(function (n) {
+            var u = safeUrl(n.url);
+            return h('li', { class: 'aps-row aps-note', 'data-id': n.id }, [
+              h('div', { class: 'aps-idea-main' }, [
+                btn(n.title, 'aps-row-title', function () { noteDialog(p, n); }, { 'data-role': 'open', 'aria-label': 'Editar la nota «' + n.title + '»' }),
+                n.body ? h('p', { class: 'aps-idea-body', text: clip(n.body, 160) }) : null,
+                u ? h('a', { class: 'aps-ext', href: u, target: '_blank', rel: 'noopener noreferrer', text: clip(u.replace(/^https?:\/\//, ''), 50) }) : null
+              ]),
+              h('span', { class: 'aps-row-meta' }, [chip(NOTE_LABEL[n.kind]), btn('Quitar', 'aps-link aps-link--danger', function () { delRow('ps_notes', 'notes', n, 'Nota'); }, { 'aria-label': 'Quitar la nota «' + n.title + '»' })])
+            ]);
+          })) : h('p', { class: 'aps-empty', text: 'Sin notas. Guarda aquí referencias, hipótesis y decisiones.' }),
+          btn('+ Añadir nota', 'aps-link', function () { noteDialog(p); }, { 'data-role': 'add-note' })
+        ]
+      ]));
+    }
+    function delivSection(p) {
+      var list = delivOf(p.id), done = list.filter(function (d) { return d.status === 'delivered'; }).length;
+      return section('deliv', 'Entregables', list.length ? done + '/' + list.length : 0, list.length > 0, h('div', null, [
+        !st.ext ? h('p', { class: 'aps-setup', text: 'Ejecuta supabase/studio-ideas.sql para activar los entregables.' }) : [
+          list.length ? h('ul', { class: 'aps-rows' }, list.map(function (d) {
+            var u = safeUrl(d.url);
+            return h('li', { class: 'aps-row', 'data-id': d.id }, [
+              h('div', { class: 'aps-idea-main' }, [
+                btn(d.title, 'aps-row-title', function () { delivDialog(p, d); }, { 'data-role': 'open', 'aria-label': 'Editar el entregable «' + d.title + '»' }),
+                u ? h('a', { class: 'aps-ext', href: u, target: '_blank', rel: 'noopener noreferrer', text: clip(u.replace(/^https?:\/\//, ''), 50) }) : null
+              ]),
+              h('span', { class: 'aps-row-meta' }, [chip(DELIV_LABEL[d.kind]), chip(DSTATUS_LABEL[d.status], d.status === 'delivered' ? 'aps-chip--done' : ''), btn('Quitar', 'aps-link aps-link--danger', function () { delRow('ps_deliverables', 'deliverables', d, 'Entregable'); }, { 'aria-label': 'Quitar el entregable «' + d.title + '»' })])
+            ]);
+          })) : h('p', { class: 'aps-empty', text: 'Sin entregables. Añade el repositorio, el documento o el dashboard cuando existan.' }),
+          btn('+ Añadir entregable', 'aps-link', function () { delivDialog(p); }, { 'data-role': 'add-deliv' })
+        ]
+      ]));
+    }
+
     function projectPanel(p) {
       var title = ui.input('text', p.title, { maxlength: '160', required: 'true' });
       var kind = ui.select(KINDS, p.kind || '', 'Sin tipo');
@@ -749,7 +1005,7 @@ window.APStudio = (function () {
       var foot = h('div', { class: 'aps-panel-foot' }, [
         btn('Eliminar proyecto', 'aps-link aps-link--danger', function () { removeProject(p); })
       ]);
-      return panelShell('Proyecto', h('div', null, [form, list, foot]), 'aps-panel-p');
+      return panelShell('Proyecto', h('div', null, [form, list, notesSection(p), delivSection(p), foot]), 'aps-panel-p');
     }
 
     /* Diálogos */
