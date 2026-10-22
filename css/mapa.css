@@ -38,7 +38,7 @@
 .mp-stem::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; border-left: 1px solid var(--mp-line); }
 
 /* ─── NOTAS CON LÍNEA GUÍA ─── */
-.mp-lab { position: relative; display: inline-block; max-width: 100%; }
+.mp-lab { position: relative; display: inline-block; width: max-content; max-width: calc(100% + 5px); min-width: 0; margin-left: -5px; }
 .mp-note {
   position: absolute; left: calc(100% + 16px); bottom: calc(100% - 7px);
   width: max-content; max-width: min(210px, 52vw);
@@ -54,8 +54,8 @@
 .mp-note--sub { font-weight: 500; }
 
 /* ─── COLUMNAS Y BUS ─── */
-.mp-cols { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: start; }
-.mp-col { position: relative; min-width: 0; padding: 62px 22px 0 0; }
+.mp-cols { position: relative; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: start; }
+.mp-col { position: relative; min-width: 0; padding: 62px 18px 0 0; }
 .mp-col::before { content: ''; position: absolute; left: 14px; top: 0; width: 100%; border-top: 1px solid var(--mp-line); }
 .mp-col:last-child::before { display: none; }
 .mp-col::after { content: ''; position: absolute; left: 14px; top: 0; height: 56px; border-left: 1px solid var(--mp-line); }
@@ -65,22 +65,23 @@
 /* ─── ÁRBOL ─── */
 .mp-tree, .mp-tree ul { list-style: none; margin: 0; padding: 0; }
 .mp-tree { margin: 8px 0 0 6px; }
-.mp-tree ul { margin-left: 6px; }
-.mp-node { --mp-top: 0px; position: relative; padding: var(--mp-top) 0 0 22px; }
+.mp-tree ul { margin-left: 4px; }
+.mp-node { --mp-top: 0px; position: relative; padding: var(--mp-top) 0 0 20px; }
 .mp-node--note { --mp-top: 24px; }
 .mp-node::before {                         /* tronco: baja por toda la fila */
   content: ''; position: absolute; left: 0; top: 0; bottom: 0; border-left: 1px solid var(--mp-line);
 }
 .mp-node:last-child::before { bottom: auto; height: calc(var(--mp-top) + var(--mp-mid)); }
 .mp-node::after {                          /* codo hacia la etiqueta */
-  content: ''; position: absolute; left: 0; top: calc(var(--mp-top) + var(--mp-mid)); width: 15px; border-top: 1px solid var(--mp-line);
+  content: ''; position: absolute; left: 0; top: calc(var(--mp-top) + var(--mp-mid)); width: 13px; border-top: 1px solid var(--mp-line);
 }
 .mp-row { min-height: var(--mp-row); display: flex; align-items: center; }
 
 .mp-label {
-  appearance: none; background: none; border: 0; margin: 0; padding: 1px 5px; margin-left: -5px;
+  display: inline-block; max-width: 100%;
+  appearance: none; background: none; border: 0; margin: 0; padding: 1px 5px;
   font: inherit; font-size: 13.5px; line-height: 1.35; color: var(--ink); text-align: left;
-  border-radius: 5px; cursor: pointer; overflow-wrap: anywhere;
+  border-radius: 5px; cursor: pointer; overflow-wrap: break-word; min-width: 0;
   transition: background-color .12s, color .12s, opacity .12s;
 }
 .mp-node > .mp-row .mp-label.mp-t-grupo,
@@ -89,12 +90,29 @@
 @media (hover: hover) and (pointer: fine) { .mp-label:hover { background: var(--ap-hover); text-decoration: underline; text-underline-offset: 3px; } }
 .mp-label:focus-visible { outline: 2px solid var(--purple-text); outline-offset: 1px; }
 
+/* Marca de tipo: el color dice la familia y la forma la repite (el color solo no basta). */
+.mp-label[data-fam] { padding-left: 22px; text-indent: -17px; }
+.mp-label[data-fam]::before { display: inline-block; margin-right: 7px; vertical-align: -1px; text-indent: 0; }
+.mp-label[data-fam]::before, .mp-key::before, .mp-dot {
+  content: ''; flex: none; width: 10px; height: 10px; background: var(--fam, #44546F);
+}
+.mp-label[data-shape="circulo"]::before, .mp-key[data-shape="circulo"]::before, .mp-dot[data-shape="circulo"] { border-radius: 50%; }
+.mp-label[data-shape="cuadrado"]::before, .mp-key[data-shape="cuadrado"]::before, .mp-dot[data-shape="cuadrado"] { border-radius: 1.5px; }
+.mp-label[data-shape="rombo"]::before, .mp-key[data-shape="rombo"]::before, .mp-dot[data-shape="rombo"] { clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
+.mp-label[data-shape="triangulo"]::before, .mp-key[data-shape="triangulo"]::before, .mp-dot[data-shape="triangulo"] { clip-path: polygon(50% 4%, 100% 94%, 0 94%); }
+.mp-label[data-shape="hexagono"]::before, .mp-key[data-shape="hexagono"]::before, .mp-dot[data-shape="hexagono"] { clip-path: polygon(25% 4%, 75% 4%, 100% 50%, 75% 96%, 25% 96%, 0 50%); }
+.mp-dot { display: inline-block; margin-right: 8px; vertical-align: -1px; }
+
 /* estados de selección */
 .mp.has-active .mp-label { opacity: .5; }
 .mp.has-active .mp-label.is-rel,
 .mp.has-active .mp-label.is-active { opacity: 1; }
 .mp-label.is-rel { background: var(--purple-light); color: var(--purple); }
 .mp-label.is-active { background: var(--purple); color: #fff; }
+.mp-label.is-active::before { box-shadow: 0 0 0 2px #fff; }
+/* resaltar un tipo desde la leyenda */
+.mp.has-fam .mp-label { opacity: .32; }
+.mp.has-fam .mp-label.is-fam { opacity: 1; background: color-mix(in srgb, var(--fam) 13%, white); font-weight: 600; }
 
 /* ─── FLECHAS ─── */
 .mp-edges { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
@@ -105,18 +123,31 @@
 .mp-edge.is-weak { display: none; }                      /* comprobaciones y workflows: solo al seleccionar */
 .mp.show-all .mp-edge.is-weak { display: inline; opacity: .55; }
 .mp.has-active .mp-edge, .mp.has-active.show-all .mp-edge.is-weak { opacity: .1; }
-.mp.has-active .mp-edge.is-on { display: inline; opacity: 1; stroke: var(--purple-text); stroke-width: 1.7; }
+.mp.has-active .mp-edge.is-on { display: inline; opacity: 1; stroke: var(--ec, var(--purple-text)); stroke-width: 1.8; }
 .mp-arrow-path { fill: none; stroke: var(--mp-edge); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
 .mp-arrow-path--on { stroke: var(--purple-text); }
 
 /* ─── LEYENDA Y DETALLE ─── */
-.mp-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 22px; margin: 14px 2px 0; font-size: 12px; color: var(--muted); }
-.mp-legend span { display: inline-flex; align-items: center; gap: 8px; }
-.mp-legend svg { width: 34px; height: 10px; flex: none; }
-.mp-all { display: inline-flex; align-items: center; gap: 8px; min-height: 28px; cursor: pointer; }
+.mp-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 12px 0 14px; font-size: 12.5px; color: var(--text); }
+.mp-key {
+  display: inline-flex; align-items: center; gap: 7px; min-height: 30px; padding: 3px 11px 3px 10px; cursor: pointer;
+  font: inherit; font-size: 12.5px; color: var(--ink); background: var(--white); border: 1px solid var(--ap-line); border-radius: 999px;
+}
+.mp-key-n { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 11.5px; }
+.mp-key[aria-pressed="true"] { border-color: var(--fam); background: color-mix(in srgb, var(--fam) 12%, white); font-weight: 600; }
+.mp-key:focus-visible { outline: 2px solid var(--purple-text); outline-offset: 2px; }
+@media (hover: hover) and (pointer: fine) { .mp-key:hover { border-color: var(--fam); } }
+.mp-foot { margin: 14px 2px 0; font-size: 12px; color: var(--muted); }
+.mp-legend-line { display: flex; align-items: center; gap: 8px; margin: 0 0 6px; }
+.mp-legend-line svg { width: 34px; height: 10px; flex: none; }
+.mp-miss { margin: 6px 0 0; }
+.mp-miss summary { cursor: pointer; }
+.mp-miss ul { margin: 6px 0 0; padding-left: 18px; }
+.mp-miss code { font-family: var(--font-mono); font-size: 11.5px; }
+.mp-all { display: inline-flex; align-items: center; gap: 8px; min-height: 30px; margin-left: auto; cursor: pointer; font-size: 12.5px; }
 .mp-all input { width: 16px; height: 16px; margin: 0; accent-color: var(--purple); }
 .mp-all input:focus-visible { outline: 2px solid var(--purple-text); outline-offset: 2px; }
-@media (max-width: 1179px) { .mp-all { display: none; } }
+@media (max-width: 1359px) { .mp-all { display: none; } }
 .mp-detail {
   position: sticky; bottom: 12px; z-index: 5; margin-top: 14px;
   background: var(--white); border: 1px solid var(--ap-line-strong); border-radius: var(--radius-md);
@@ -131,9 +162,15 @@
 .mp-d-actions { margin-left: auto; display: flex; gap: 14px; align-items: center; }
 .mp-d-link, .mp-d-close { font: inherit; font-size: 13px; font-weight: 600; color: var(--purple-text); background: none; border: 0; padding: 4px 2px; min-height: 28px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 .mp-d-link:focus-visible, .mp-d-close:focus-visible { outline: 2px solid var(--purple-text); outline-offset: 2px; border-radius: 3px; }
-.mp-d-rels { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 4px 28px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.mp-d-tec { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 5px; }
+.mp-d-tec li { font-size: 11.5px; color: var(--text); background: var(--ap-surface-2); border: 1px solid var(--ap-line); border-radius: 999px; padding: 1px 9px; }
+.mp-d-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 4px 36px; margin-top: 10px; max-height: 38vh; overflow: auto; }
+.mp-d-h { margin: 0 0 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); }
+.mp-d-more { margin: 4px 0 0; font-size: 12px; color: var(--muted); }
+.mp-d-rels { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
 .mp-d-rels li { font-size: 13px; line-height: 1.4; }
 .mp-d-verb { color: var(--muted); }
+.mp-d-n { font-variant-numeric: tabular-nums; color: var(--muted); font-weight: 600; }
 .mp-d-rel { font: inherit; font-weight: 600; color: var(--ink); background: none; border: 0; padding: 0; cursor: pointer; text-align: left; text-decoration: underline; text-decoration-color: var(--ap-line-strong); text-underline-offset: 3px; }
 .mp-d-rel:focus-visible { outline: 2px solid var(--purple-text); outline-offset: 2px; border-radius: 3px; }
 @media (hover: hover) and (pointer: fine) { .mp-d-rel:hover { text-decoration-color: var(--purple-text); } }
@@ -143,8 +180,10 @@
 /* ─── ADAPTACIÓN ─── */
 /* Sin espacio para 4 columnas: dos y luego una. Sin bus, sin notas flotantes y sin flechas
    (se leen en el panel de detalle). */
-@media (max-width: 1179px) {
-  .mp-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; row-gap: 8px; }
+@media (max-width: 1359px) {
+  .mp-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 24px; row-gap: 8px; }
+}
+@media (max-width: 1359px) {
   .mp-col { padding: 22px 0 0; }
   .mp-col::before, .mp-col::after, .mp-stem { display: none; }
   .mp-edges { display: none; }
@@ -160,7 +199,10 @@
   .mp-row .mp-lab { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 0 10px; }
   .mp-row .mp-note { display: inline; }
 }
-@media (max-width: 759px) {
+@media (max-width: 999px) {
+  .mp-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 639px) {
   .mp-cols { grid-template-columns: minmax(0, 1fr); }
   .mp-detail { bottom: 8px; }
 }
