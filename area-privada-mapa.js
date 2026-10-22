@@ -19,6 +19,7 @@ window.APMapa = (function () {
   var ctx = null, data = null;
   var byId, parentOf, colOf, subtree, labels, edges, root, canvas, svg, detail, famCount;
   var pinned = null, hover = null, famFilter = null, raf = 0;
+  var collapsed = {}, lists = {}, toggles = {};   // grupos plegados, su <ul> y su botón
 
   /* ── Datos ── */
   function assetUrl() {
@@ -38,6 +39,25 @@ window.APMapa = (function () {
       })(col, null);
     });
   }
+  function foldable(n) { return !!(n.hijos && n.hijos.length) && (n.tipo === 'esquema' || (n.tipo === 'grupo' && colOf[n.id] === 0)); }
+  function initCollapsed() {
+    collapsed = {};
+    Object.keys(byId).forEach(function (id) { if (foldable(byId[id])) collapsed[id] = true; });
+  }
+  // el elemento (o su antecesor plegado más alto) que se ve de verdad
+  function shown(id) {
+    var out = id;
+    for (var cur = parentOf[id]; cur; cur = parentOf[cur]) if (collapsed[cur]) out = cur;
+    return out;
+  }
+  function setFold(id, folded) {
+    collapsed[id] = folded;
+    if (lists[id]) lists[id].hidden = folded;
+    if (toggles[id]) { toggles[id].setAttribute('aria-expanded', folded ? 'false' : 'true'); toggles[id].textContent = folded ? '▸' : '▾'; }
+    schedule();
+  }
+  // abrir los grupos que esconden un elemento (al seleccionarlo desde el panel)
+  function reveal(id) { for (var cur = parentOf[id]; cur; cur = parentOf[cur]) if (collapsed[cur]) setFold(cur, false); }
   function color(fam) { return (data.familias[fam] || {}).color || '#44546F'; }
 
   function render(c) {
@@ -48,11 +68,12 @@ window.APMapa = (function () {
   /* ── Pintado ── */
   function paint() {
     var h = ctx.h;
-    labels = {}; edges = []; pinned = null; hover = null; famFilter = null;
+    labels = {}; edges = []; pinned = null; hover = null; famFilter = null; lists = {}; toggles = {};
+    initCollapsed();
     ctx.view.textContent = '';
 
     var r = data.recuento;
-    var ver = ['v' + data.huella, r.paginas + ' páginas', r.proyectos + ' proyectos', r.plataformas + ' plataformas y repos', r.pestanas + ' pestañas', r.tablas + ' tablas', r.funciones + ' funciones', r.herramientas + ' herramientas', r.relaciones + ' relaciones'].join(' · ');
+    var ver = ['v' + data.huella, r.paginas + ' páginas', r.proyectos + ' proyectos', r.recursos + ' recursos', r.plataformas + ' plataformas y repos', r.pestanas + ' pestañas', r.tablas + ' tablas', r.funciones + ' funciones', r.herramientas + ' herramientas', r.relaciones + ' relaciones'].join(' · ');
 
     svg = svgEl('svg', { class: 'mp-edges', 'aria-hidden': 'true', focusable: 'false' });
     svg.appendChild(marker('mp-arrow', '#6f7a8f'));
@@ -87,7 +108,7 @@ window.APMapa = (function () {
 
     data.relaciones.forEach(function (rel) {
       var weak = !!(data.verbos[rel.tipo] || {}).debil;
-      var p = svgEl('path', { class: 'mp-edge' + (weak ? ' is-weak' : ''), 'marker-end': 'url(#mp-arrow)' });
+      var p = svgEl('path', { class: 'mp-edge mp-edge--' + rel.tipo + (weak ? ' is-weak' : ''), 'marker-end': 'url(#mp-arrow)' });
       svg.appendChild(p);
       edges.push({ rel: rel, el: p });
     });
@@ -118,10 +139,21 @@ window.APMapa = (function () {
     var h = ctx.h;
     // la nota va sobre la propia rama solo en los grupos; en el resto se lee en el panel de detalle
     var inline = n.nota && n.tipo === 'grupo';
-    var kids = n.hijos && n.hijos.length ? h('ul', null, n.hijos.map(node)) : null;
+    var kids = n.hijos && n.hijos.length ? h('ul', { hidden: !!collapsed[n.id] }, n.hijos.map(node)) : null;
+    var tog = null;
+    if (kids && foldable(n)) {
+      lists[n.id] = kids;
+      tog = h('button', {
+        type: 'button', class: 'mp-tog', 'aria-expanded': collapsed[n.id] ? 'false' : 'true', 'aria-label': 'Mostrar u ocultar el contenido de ' + n.etiqueta,
+        text: collapsed[n.id] ? '▸' : '▾', onclick: function () { setFold(n.id, !collapsed[n.id]); }
+      });
+      toggles[n.id] = tog;
+    }
     return h('li', { class: 'mp-node' + (inline ? ' mp-node--note' : '') }, [
       h('div', { class: 'mp-row' }, [
-        h('span', { class: 'mp-lab' }, [labelButton(n), inline ? h('span', { class: 'mp-note mp-note--sub', text: n.nota }) : null])
+        tog,
+        h('span', { class: 'mp-lab' }, [labelButton(n), inline ? h('span', { class: 'mp-note mp-note--sub', text: n.nota }) : null]),
+        tog ? h('span', { class: 'mp-count', text: String(n.hijos.length) }) : null
       ]),
       kids
     ]);
@@ -157,6 +189,11 @@ window.APMapa = (function () {
         b.style.setProperty('--fam', def.color);
         return b;
       }),
+      h('button', { type: 'button', class: 'mp-fold', text: 'Desplegar todo', onclick: function (e) {
+        var open = e.target.getAttribute('data-open') !== '1';
+        Object.keys(lists).forEach(function (id) { setFold(id, !open); });
+        e.target.setAttribute('data-open', open ? '1' : '0'); e.target.textContent = open ? 'Plegar todo' : 'Desplegar todo';
+      } }),
       h('label', { class: 'mp-all' }, [
         h('input', { type: 'checkbox', onchange: function (e) { root.classList.toggle('show-all', e.target.checked); } }),
         'Dibujar todas las relaciones'
@@ -209,12 +246,18 @@ window.APMapa = (function () {
     var cb = canvas.getBoundingClientRect();
     svg.setAttribute('viewBox', '0 0 ' + Math.round(cb.width) + ' ' + Math.round(cb.height));
     if (!window.matchMedia(WIDE).matches) return;
+    var drawn = {};
     edges.forEach(function (e) {
-      var a = labels[e.rel.de], b = labels[e.rel.a];
-      if (!a || !b) return;
+      var ia = shown(e.rel.de), ib = shown(e.rel.a);
+      var a = labels[ia], b = labels[ib];
+      var key = ia + '|' + ib, active = e.el.classList.contains('is-on');
+      // dos relaciones que acaban en el mismo par de elementos visibles se dibujan una vez; si ambos extremos son el mismo grupo, ninguna
+      e.el.classList.toggle('is-folded', !a || !b || ia === ib || (!active && !!drawn[key]));
+      if (!a || !b || ia === ib) return;
+      if (!active) drawn[key] = true;
       var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
       var ay = ra.top + ra.height / 2 - cb.top, by = rb.top + rb.height / 2 - cb.top;
-      var ca = colOf[e.rel.de], cbi = colOf[e.rel.a], d;
+      var ca = colOf[ia], cbi = colOf[ib], d;
       if (ca === cbi) {                                      // misma columna: bucle por el lado derecho
         var sx = ra.right - cb.left + 3, ex = rb.right - cb.left + 6;
         var bulge = 30 + Math.min(70, Math.abs(by - ay) * 0.12);
@@ -252,8 +295,10 @@ window.APMapa = (function () {
 
   function select(id) {
     pinned = id;
+    if (id) reveal(id);
     refresh();
     paintDetail();
+    schedule();
   }
 
   function refresh() {
@@ -277,6 +322,7 @@ window.APMapa = (function () {
       b.classList.toggle('is-fam', !!famFilter && b.getAttribute('data-fam') === famFilter);
       b.setAttribute('aria-pressed', k === pinned ? 'true' : 'false');
     });
+    schedule();
     [].forEach.call(root.querySelectorAll('.mp-key'), function (k) { k.setAttribute('aria-pressed', k.getAttribute('data-fam') === famFilter ? 'true' : 'false'); });
   }
 

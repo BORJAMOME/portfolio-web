@@ -82,7 +82,8 @@
       "post": "comunidad (LinkedIn)",
       "lab": "archivos .pbix",
       "herramienta": "herramientas externas",
-      "ml": "Machine Learning · código"
+      "ml": "Machine Learning · código",
+      "postLab": "posts de LinkedIn de cada archivo"
     },
     "etiquetasLab": {
       "gestion": "gestión",
@@ -164,7 +165,7 @@
     },
     "huerfanas": {
       "etiqueta": "sin enlaces desde el sitio/",
-      "nota": "ninguna página las enlaza"
+      "nota": "ninguna página pública las enlaza"
     },
     "chrome": [
       "privacidad.html"
@@ -181,7 +182,7 @@
     "notas": {
       "hoy": "agenda y seguimiento",
       "studio": "proyectos, ideas y entregables",
-      "calendario": "solo lectura, desde Google",
+      "calendario": "Google en solo lectura + agenda propia",
       "entrevistas": "procesos y análisis",
       "portfolio": "inventario de lo publicado",
       "second-brain": "grafo 3D del conocimiento",
@@ -307,7 +308,7 @@
     },
     "usa": {
       "verbo": "usa",
-      "debil": true
+      "debil": false
     },
     "verifica": {
       "verbo": "comprueba",

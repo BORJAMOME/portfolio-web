@@ -1,15 +1,16 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "a0a6dc7",
+ "huella": "35173f5",
  "recuento": {
   "paginas": 20,
-  "proyectos": 63,
+  "proyectos": 34,
+  "recursos": 46,
   "plataformas": 11,
   "pestanas": 10,
   "tablas": 29,
   "funciones": 4,
   "herramientas": 14,
-  "relaciones": 157,
+  "relaciones": 175,
   "sinExplicar": 0
  },
  "columnas": [
@@ -477,7 +478,7 @@ export default {
           "análisis exploratorio",
           "ventas"
          ],
-         "archivo": "tree/main/02-Python/01-analisis-exploratorio/01-analisis-ventas-empleados",
+         "archivo": "02-Python/01-analisis-exploratorio/01-analisis-ventas-empleados",
          "familia": "proyecto"
         },
         {
@@ -494,7 +495,7 @@ export default {
           "educación",
           "análisis exploratorio"
          ],
-         "archivo": "tree/main/02-Python/01-analisis-exploratorio/02-habitos-rendimiento-estudiantes",
+         "archivo": "02-Python/01-analisis-exploratorio/02-habitos-rendimiento-estudiantes",
          "familia": "proyecto"
         },
         {
@@ -511,7 +512,7 @@ export default {
           "salud",
           "riesgo cardiovascular"
          ],
-         "archivo": "tree/main/02-Python/01-analisis-exploratorio/03-riesgo-salud-pacientes",
+         "archivo": "02-Python/01-analisis-exploratorio/03-riesgo-salud-pacientes",
          "familia": "proyecto"
         }
        ]
@@ -535,7 +536,7 @@ export default {
           "PERCENTILE_CONT",
           "ventas"
          ],
-         "archivo": "tree/main/01-SQL/01-analisis-ventas-concesionarios",
+         "archivo": "01-SQL/01-analisis-ventas-concesionarios",
          "familia": "proyecto"
         },
         {
@@ -553,7 +554,7 @@ export default {
           "LEAD",
           "LAG/LEAD"
          ],
-         "archivo": "tree/main/01-SQL/02-adventureworks-avanzado",
+         "archivo": "01-SQL/02-adventureworks-avanzado",
          "familia": "proyecto"
         },
         {
@@ -570,7 +571,7 @@ export default {
           "Window Functions",
           "análisis de clientes"
          ],
-         "archivo": "tree/main/01-SQL/03-analisis-clientes-tienda",
+         "archivo": "01-SQL/03-analisis-clientes-tienda",
          "familia": "proyecto"
         }
        ]
@@ -594,7 +595,8 @@ export default {
           "retail",
           "series temporales"
          ],
-         "archivo": "tree/main/03-Machine-Learning/04-series-temporales/arima/01-caso-retail",
+         "archivo": "03-Machine-Learning/04-series-temporales/arima/01-caso-retail",
+         "nota": "Solo figura en los datos estructurados (JSON-LD) de la página; no hay tarjeta visible.",
          "familia": "proyecto"
         },
         {
@@ -610,7 +612,8 @@ export default {
           "clustering",
           "ciencia política"
          ],
-         "archivo": "tree/main/03-Machine-Learning/02-no-supervisado/clustering/kmeans/03-segmentacion-politica",
+         "archivo": "03-Machine-Learning/02-no-supervisado/clustering/kmeans/03-segmentacion-politica",
+         "nota": "Solo figura en los datos estructurados (JSON-LD) de la página; no hay tarjeta visible.",
          "familia": "proyecto"
         },
         {
@@ -626,7 +629,8 @@ export default {
           "clasificación",
           "fitness"
          ],
-         "archivo": "tree/main/03-Machine-Learning/01-supervisado/clasificacion/03-xgboost",
+         "archivo": "03-Machine-Learning/01-supervisado/clasificacion/03-xgboost",
+         "nota": "Solo figura en los datos estructurados (JSON-LD) de la página; no hay tarjeta visible.",
          "familia": "proyecto"
         }
        ]
@@ -1047,6 +1051,133 @@ export default {
          "familia": "lab"
         }
        ]
+      },
+      {
+       "id": "g:descargas.html:posts-de-linkedin-de-cada-archivo",
+       "tipo": "grupo",
+       "etiqueta": "posts de LinkedIn de cada archivo/",
+       "hijos": [
+        {
+         "id": "e:post-gantt-nativo-de-power-bi-post",
+         "tipo": "post",
+         "etiqueta": "Gantt nativo de Power BI (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-datavisualization-activity-7360648315782283264-NQ4T",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-control-de-presupuestos-post",
+         "tipo": "post",
+         "etiqueta": "Control de presupuestos (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-salesanalytics-activity-7418539287245639680-0Ynp",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-reparto-del-presupuesto-post",
+         "tipo": "post",
+         "etiqueta": "Reparto del presupuesto (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dashboarddesign-dataviz-activity-7374137020979339264-7kBX",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-comparador-de-periodos-post",
+         "tipo": "post",
+         "etiqueta": "Comparador de períodos (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7376214576889098240-JzRp",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-dashboard-financiero-adaptativo-post",
+         "tipo": "post",
+         "etiqueta": "Dashboard financiero adaptativo (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7379158005759508480-DD9P",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-resaltar-sin-filtrar-post",
+         "tipo": "post",
+         "etiqueta": "Resaltar sin filtrar (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7381750867634487296-8LRO",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-variacion-sobre-barras-post",
+         "tipo": "post",
+         "etiqueta": "Variación sobre barras (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7391493455455264769-Q8Ya",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-beneficio-vs-objetivo-post",
+         "tipo": "post",
+         "etiqueta": "Beneficio vs. Objetivo (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7394778746525913088-iwtA",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-small-multiples-por-producto-post",
+         "tipo": "post",
+         "etiqueta": "Small multiples por producto (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7399477094331858945-K9HS",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-evolucion-con-narrativa-post",
+         "tipo": "post",
+         "etiqueta": "Evolución con narrativa (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7421562966178889729-5y8L",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-dashboard-de-alertas-comerciales-post",
+         "tipo": "post",
+         "etiqueta": "Dashboard de alertas comerciales (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7427045290324570112-v3s2",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-comparador-de-periodos-flexible-post",
+         "tipo": "post",
+         "etiqueta": "Comparador de periodos flexible (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-businessitelligence-activity-7430635213443035137-TJbj",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-top-n-para-priorizar-post",
+         "tipo": "post",
+         "etiqueta": "Top N para priorizar (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7432461459080765440-Y9EH",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-kpi-card-adaptativo-post",
+         "tipo": "post",
+         "etiqueta": "KPI Card adaptativo (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-businessintelligence-activity-7452022964017008640-Z-VH",
+         "externo": true,
+         "familia": "post"
+        },
+        {
+         "id": "e:post-resaltar-sin-ocultar-post",
+         "tipo": "post",
+         "etiqueta": "Resaltar sin ocultar (post)",
+         "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7458166054264111104-Hov2",
+         "externo": true,
+         "familia": "post"
+        }
+       ]
       }
      ],
      "familia": "pagina"
@@ -1064,7 +1195,7 @@ export default {
      "id": "g:web:huerfanas",
      "tipo": "grupo",
      "etiqueta": "sin enlaces desde el sitio/",
-     "nota": "ninguna página las enlaza",
+     "nota": "ninguna página pública las enlaza",
      "hijos": [
       {
        "id": "p:pbi",
@@ -1133,7 +1264,7 @@ export default {
        "id": "z:gh:keriew-augustus",
        "tipo": "repo",
        "etiqueta": "Keriew/augustus",
-       "href": "https://github.com/BORJAMOME/Keriew/augustus",
+       "href": "https://github.com/Keriew/augustus",
        "externo": true
       },
       {
@@ -1171,7 +1302,7 @@ export default {
      "id": "z:linkedin",
      "tipo": "plataforma",
      "etiqueta": "LinkedIn",
-     "nota": "6 elementos",
+     "nota": "21 elementos",
      "familia": "plataforma"
     },
     {
@@ -1228,7 +1359,7 @@ export default {
      "id": "t:calendario",
      "tipo": "pestana",
      "etiqueta": "Calendario",
-     "nota": "solo lectura, desde Google",
+     "nota": "Google en solo lectura + agenda propia",
      "href": "#/calendario",
      "archivo": "area-privada-calendario.js",
      "familia": "privada"
@@ -1802,6 +1933,24 @@ export default {
  ],
  "relaciones": [
   {
+   "de": "col:privada",
+   "a": "p:descargas",
+   "tipo": "enlaza",
+   "detalle": []
+  },
+  {
+   "de": "col:privada",
+   "a": "p:privacidad",
+   "tipo": "enlaza",
+   "detalle": []
+  },
+  {
+   "de": "col:privada",
+   "a": "p:roma-aeterna",
+   "tipo": "enlaza",
+   "detalle": []
+  },
+  {
    "de": "e:100-municipios-un-indice-y-una-pregunta-incomoda",
    "a": "z:behance",
    "tipo": "aloja",
@@ -1812,7 +1961,7 @@ export default {
    "a": "z:gh:data-analytics-portfolio",
    "tipo": "aloja",
    "detalle": [
-    "tree/main/01-SQL/02-adventureworks-avanzado"
+    "01-SQL/02-adventureworks-avanzado"
    ]
   },
   {
@@ -1820,7 +1969,7 @@ export default {
    "a": "z:gh:data-analytics-portfolio",
    "tipo": "aloja",
    "detalle": [
-    "tree/main/01-SQL/03-analisis-clientes-tienda"
+    "01-SQL/03-analisis-clientes-tienda"
    ]
   },
   {
@@ -1828,7 +1977,7 @@ export default {
    "a": "z:gh:data-analytics-portfolio",
    "tipo": "aloja",
    "detalle": [
-    "tree/main/01-SQL/01-analisis-ventas-concesionarios"
+    "01-SQL/01-analisis-ventas-concesionarios"
    ]
   },
   {
@@ -1956,7 +2105,7 @@ export default {
    "a": "z:gh:data-analytics-portfolio",
    "tipo": "aloja",
    "detalle": [
-    "tree/main/02-Python/01-analisis-exploratorio/02-habitos-rendimiento-estudiantes"
+    "02-Python/01-analisis-exploratorio/02-habitos-rendimiento-estudiantes"
    ]
   },
   {
@@ -1964,7 +2113,7 @@ export default {
    "a": "z:gh:data-analytics-portfolio",
    "tipo": "aloja",
    "detalle": [
-    "tree/main/03-Machine-Learning/02-no-supervisado/clustering/kmeans/03-segmentacion-politica"
+    "03-Machine-Learning/02-no-supervisado/clustering/kmeans/03-segmentacion-politica"
    ]
   },
   {
@@ -2082,7 +2231,61 @@ export default {
    "detalle": []
   },
   {
+   "de": "e:post-beneficio-vs-objetivo-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
+   "de": "e:post-comparador-de-periodos-flexible-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
+   "de": "e:post-comparador-de-periodos-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
+   "de": "e:post-control-de-presupuestos-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
+   "de": "e:post-dashboard-de-alertas-comerciales-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
+   "de": "e:post-dashboard-financiero-adaptativo-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
    "de": "e:post-el-futuro-de-los-dashboards-no-son-mas-graficos-son-mejores-interacc",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
+   "de": "e:post-evolucion-con-narrativa-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
+   "de": "e:post-gantt-nativo-de-power-bi-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
+   "de": "e:post-kpi-card-adaptativo-post",
    "a": "z:linkedin",
    "tipo": "aloja",
    "detalle": []
@@ -2100,13 +2303,49 @@ export default {
    "detalle": []
   },
   {
+   "de": "e:post-reparto-del-presupuesto-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
+   "de": "e:post-resaltar-sin-filtrar-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
+   "de": "e:post-resaltar-sin-ocultar-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
    "de": "e:post-si-tienes-que-reconstruir-la-historia-en-tu-cabeza-el-dashboard-fall",
    "a": "z:linkedin",
    "tipo": "aloja",
    "detalle": []
   },
   {
+   "de": "e:post-small-multiples-por-producto-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
+   "de": "e:post-top-n-para-priorizar-post",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
    "de": "e:post-un-grafico-puede-ser-correcto-y-aun-asi-enganar",
+   "a": "z:linkedin",
+   "tipo": "aloja",
+   "detalle": []
+  },
+  {
+   "de": "e:post-variacion-sobre-barras-post",
    "a": "z:linkedin",
    "tipo": "aloja",
    "detalle": []
@@ -2128,7 +2367,7 @@ export default {
    "a": "z:gh:data-analytics-portfolio",
    "tipo": "aloja",
    "detalle": [
-    "tree/main/02-Python/01-analisis-exploratorio/01-analisis-ventas-empleados"
+    "02-Python/01-analisis-exploratorio/01-analisis-ventas-empleados"
    ]
   },
   {
@@ -2136,7 +2375,7 @@ export default {
    "a": "z:gh:data-analytics-portfolio",
    "tipo": "aloja",
    "detalle": [
-    "tree/main/02-Python/01-analisis-exploratorio/03-riesgo-salud-pacientes"
+    "02-Python/01-analisis-exploratorio/03-riesgo-salud-pacientes"
    ]
   },
   {
@@ -2144,7 +2383,7 @@ export default {
    "a": "z:gh:data-analytics-portfolio",
    "tipo": "aloja",
    "detalle": [
-    "tree/main/03-Machine-Learning/04-series-temporales/arima/01-caso-retail"
+    "03-Machine-Learning/04-series-temporales/arima/01-caso-retail"
    ]
   },
   {
@@ -2152,7 +2391,7 @@ export default {
    "a": "z:gh:data-analytics-portfolio",
    "tipo": "aloja",
    "detalle": [
-    "tree/main/03-Machine-Learning/01-supervisado/clasificacion/03-xgboost"
+    "03-Machine-Learning/01-supervisado/clasificacion/03-xgboost"
    ]
   },
   {
@@ -2345,7 +2584,7 @@ export default {
   {
    "de": "p:analisis-datos",
    "a": "z:gh:data-analytics-portfolio",
-   "tipo": "muestra",
+   "tipo": "enlaza",
    "detalle": []
   },
   {
@@ -2547,7 +2786,7 @@ export default {
   {
    "de": "p:ml",
    "a": "z:gh:data-analytics-portfolio",
-   "tipo": "muestra",
+   "tipo": "enlaza",
    "detalle": []
   },
   {
@@ -2567,7 +2806,7 @@ export default {
   {
    "de": "p:power-bi",
    "a": "z:gh:dax-lab",
-   "tipo": "muestra",
+   "tipo": "enlaza",
    "detalle": []
   },
   {
@@ -2593,7 +2832,7 @@ export default {
   {
    "de": "p:roma-aeterna",
    "a": "z:gh:keriew-augustus",
-   "tipo": "muestra",
+   "tipo": "enlaza",
    "detalle": []
   },
   {
@@ -2954,7 +3193,7 @@ export default {
   },
   "usa": {
    "verbo": "usa",
-   "debil": true
+   "debil": false
   },
   "verifica": {
    "verbo": "comprueba",

@@ -101,7 +101,11 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
     if (P[path.replace(/\/index\.html$/, '')]) return path.replace(/\/index\.html$/, '');
     return null;
   }
-  const anchors = (page) => [...page.main.matchAll(/<a\b([^>]*?)href="([^"]+)"([^>]*)>([\s\S]*?)<\/a>/g)].map((m) => ({ href: m[2], attrs: m[1] + m[3], label: text(m[4]), at: m.index }));
+  const anchors = (page) => [
+    ...[...page.main.matchAll(/<a\b([^>]*?)href="([^"]+)"([^>]*)>([\s\S]*?)<\/a>/g)].map((m) => ({ href: m[2].replace(/&amp;/g, '&'), attrs: m[1] + m[3], label: text(m[4]), at: m.index })),
+    // tarjetas enteras clicables: onclick="location.href='…'" o window.open('…') (la portada enseña así sus proyectos)
+    ...[...page.main.matchAll(/onclick="(?:location\.href\s*=\s*|window\.open\()'([^']+)'/g)].map((m) => ({ href: m[1], attrs: 'onclick', label: '', at: m.index })),
+  ];
   const internal = {};                                   // clave → claves enlazadas desde el contenido, en orden de lectura
   const siguiente = {};
   for (const page of Object.values(P)) {
@@ -137,15 +141,14 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
       if (!id.includes(`${page.file}#`) && !id.includes(`${page.key}#`)) continue;
       const anchor = id.split('#')[1];
       if (!/CreativeWork/.test([].concat(o['@type']).join()) || anchor === 'caso' || !o.name) continue;     // los DataDownload del laboratorio salen de ITEMS (3d), completos
-      const asCase = caseByTitle(o.name);
-      if (asCase) { (asCase.muestra ??= []).push(page.key); continue; }   // el listado enseña un caso que ya tiene su página
+      if (caseByTitle(o.name)) continue;      // el listado enseña un caso que ya tiene su página: lo cubren los enlaces internos
       const url = o.url ? String(o.url) : '';
       const host = hostOf(url);
-      const gh = /^github\.com$/.test(host) ? url.split('/').slice(5).join('/') : '';
+      const gh = /^github\.com$/.test(host) ? url.split('/').slice(7).join('/') : '';
       const tipo = host.endsWith('behance.net') ? 'visual' : host === 'github.com' ? 'proyecto' : 'proyecto';
       const grupo = tipo === 'visual' ? W.grupos.visual
         : /\/01-SQL\//i.test(url) ? 'SQL' : /\/02-Python\//i.test(url) ? 'Python' : /\/03-Machine/i.test(url) ? W.grupos.ml : W.grupos.proyecto;
-      addEntity({ prefijo: '', tipo, etiqueta: String(o.name), urls: [canon(url)].filter(Boolean), url, techs: kwOf(o.keywords), grupo, pagina: page.key, ruta: gh });
+      addEntity({ prefijo: '', tipo, etiqueta: String(o.name), urls: [canon(url)].filter(Boolean), url, techs: kwOf(o.keywords), grupo, pagina: page.key, ruta: gh, soloDatos: !!url && !page.main.includes(url) });
     }
     // 3b · «<!-- CARD ML-1: título -->»: la tarjeta lleva su primer enlace externo
     const cards = [...page.raw.matchAll(/<!--\s*CARD\s+([A-Z]+)-?(\d+)\s*:\s*([^>]*?)\s*-->/g)];
@@ -159,7 +162,7 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
       addEntity({
         prefijo: isApp ? 'app-' : '', tipo: isApp ? 'app' : 'proyecto', etiqueta: m[3].trim(), urls: [canon(url)].filter(Boolean), url, techs: pills,
         grupo: isApp ? W.grupos.app : ({ ML: W.grupos.ml, PY: 'Python', SQL: 'SQL' }[kind] || W.grupos.proyecto), pagina: page.key,
-        ruta: /github\.com/.test(url) ? url.split('/').slice(5).join('/') : '',
+        ruta: /github\.com/.test(url) ? url.split('/').slice(7).join('/') : '',
       });
     });
     // 3c · tarjetas de gráficos nativos y de posts (componentes propios de power-bi.html)
@@ -187,17 +190,21 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
       addEntity({ prefijo: 'carpeta-', tipo: 'proyecto', etiqueta: parts[parts.length - 1], urls: [canon(a.href)], url: a.href, techs: [parts[0]], grupo: m[1].replace(/-/g, ' '), pagina: page.key, ruta: decodeURIComponent(m[2]) });
     }
   }
-  // 3d · descargas.html: array ITEMS (.pbix del laboratorio)
+  // 3d · descargas.html: array ITEMS (.pbix del laboratorio y el post de LinkedIn de cada uno)
   const dl = P['descargas.html'];
   if (dl) {
     const from = dl.raw.indexOf('const ITEMS = [');
-    const catNames = W.etiquetasLab;
-    for (const m of dl.raw.slice(from).matchAll(/\{n:"(\d+)",\s*cat:"(\w+)",\s*title:"([^"]+)"[\s\S]*?tags:\[([^\]]*)\][\s\S]*?dl:"([^"]*)"/g)) {
-      addEntity({
-        prefijo: 'lab-', tipo: 'lab', etiqueta: m[3], urls: [canon(m[5])].filter(Boolean), url: m[5], techs: [...m[4].matchAll(/"([^"]+)"/g)].map((x) => x[1]),
-        grupo: `${W.grupos.lab} · ${catNames[m[2]] || m[2]}`, pagina: dl.key, orden: Number(m[1]),
-      });
+    if (from < 0) throw new Error('descargas.html: no encuentro «const ITEMS = [»; el mapa perdería los archivos del laboratorio');
+    const blocks = dl.raw.slice(from).split(/\{n:"/).slice(1).filter((x) => /^\d+",\s*cat:/.test(x));
+    for (const blk of blocks) {
+      const f = (re) => (re.exec(blk) || [, ''])[1];
+      const n = Number(blk.slice(0, blk.indexOf('"')));
+      const title = f(/title:"([^"]+)"/), cat = f(/cat:"(\w+)"/), dlUrl = f(/dl:"([^"]*)"/), liUrl = f(/li:"([^"]*)"/);
+      const tags = [...f(/tags:\[([^\]]*)\]/).matchAll(/"([^"]+)"/g)].map((x) => x[1]);
+      addEntity({ prefijo: 'lab-', tipo: 'lab', etiqueta: title, urls: [canon(dlUrl)].filter(Boolean), url: dlUrl, techs: tags, grupo: `${W.grupos.lab} · ${W.etiquetasLab[cat] || cat}`, pagina: dl.key, orden: n });
+      if (liUrl) addEntity({ prefijo: 'post-', tipo: 'post', etiqueta: cut(`${title} (post)`, 70), urls: [canon(liUrl)].filter(Boolean), url: liUrl, techs: [], grupo: W.grupos.postLab, pagina: dl.key, orden: 100 + n });
     }
+    if (!blocks.length) throw new Error('descargas.html: ITEMS sin elementos reconocibles');
   }
   // 3e · herramientas externas propias (borjamome.github.io): una app más
   for (const page of Object.values(P)) {
@@ -253,7 +260,7 @@ export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
     if (c.repo) lived(P[c.file].id, `https://github.com/BORJAMOME/${c.repo}`, 'código y modelo');
   }
   // repos enlazados desde el contenido sin ser un proyecto concreto (p. ej. DAX-LAB en power-bi.html)
-  for (const page of content) for (const a of anchors(page)) { const r = repoOf(a.href); if (r) { (repos[r] ??= new Set()); if (!lives.some((l) => l.a === `z:gh:${slug(r)}` && l.de === page.id)) lives.push({ de: page.id, a: `z:gh:${slug(r)}`, detalle: 'enlaza al repositorio', muestra: true }); } }
+  for (const page of content) for (const a of anchors(page)) { const r = repoOf(a.href); if (r) { (repos[r] ??= new Set()); if (!lives.some((l) => l.a === `z:gh:${slug(r)}` && l.de === page.id)) lives.push({ de: page.id, a: `z:gh:${slug(r)}`, detalle: 'enlaza al repositorio', enlaza: true }); } }
   // un gráfico comparte informe con el caso del que sale
   const derive = [];
   for (const id of order.filter((x) => E[x].tipo === 'grafico')) {

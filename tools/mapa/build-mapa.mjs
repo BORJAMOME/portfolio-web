@@ -92,7 +92,7 @@ const pageNode = (k) => {
 };
 const entityNode = (id) => {
   const e = E[id];
-  return { id, tipo: e.tipo, etiqueta: e.etiqueta, href: e.url || undefined, externo: e.url ? true : undefined, ...(e.techs.length ? { tec: e.techs } : {}), ...(e.ruta ? { archivo: e.ruta } : {}) };
+  return { id, tipo: e.tipo, etiqueta: e.etiqueta, href: e.url || undefined, externo: e.url ? true : undefined, ...(e.techs.length ? { tec: e.techs } : {}), ...(e.ruta ? { archivo: e.ruta } : {}), ...(e.soloDatos ? { nota: 'Solo figura en los datos estructurados (JSON-LD) de la página; no hay tarjeta visible.' } : {}) };
 };
 
 function childrenOf(key) {
@@ -134,7 +134,7 @@ const viveTree = W.plataformas.filter((p) => A.plat[p.id] || (p.id === 'github' 
   const n = { id: `z:${p.id}`, tipo: 'plataforma', etiqueta: p.etiqueta };
   const members = A.plat[p.id] ? A.plat[p.id].size : 0;
   if (p.id === 'github') {
-    n.hijos = repoNames.map((r) => ({ id: `z:gh:${slug(r)}`, tipo: 'repo', etiqueta: r, href: `https://github.com/BORJAMOME/${r}`, externo: true }));
+    n.hijos = repoNames.map((r) => ({ id: `z:gh:${slug(r)}`, tipo: 'repo', etiqueta: r, href: `https://github.com/${r.includes('/') ? r : `BORJAMOME/${r}`}`, externo: true }));
   } else if (members) n.nota = `${members} ${members === 1 ? 'elemento' : 'elementos'}`;
   return n;
 });
@@ -269,7 +269,7 @@ for (const [target, from] of Object.entries(A.showsPage)) {
     link(P[k].id, target, 'muestra');
   }
 }
-for (const [id, k] of Object.entries(A.lives.filter((l) => l.muestra).reduce((m, l) => ({ ...m, [l.de]: l.a }), {}))) link(id, k, 'muestra');
+for (const l of A.lives.filter((x) => x.enlaza)) link(l.de, l.a, 'enlaza');
 for (const k of pageKeys) {
   for (const c of A.internal[k]) {
     if (c === 'area-privada.html') { link(P[k].id, 'col:privada', 'enlaza'); continue; }
@@ -278,8 +278,10 @@ for (const k of pageKeys) {
   }
   if (A.siguiente[k] && P[A.siguiente[k]]) link(P[k].id, P[A.siguiente[k]].id, 'siguiente');
 }
-for (const l of A.lives.filter((x) => !x.muestra)) link(l.de, l.a, 'aloja', l.detalle);
+for (const l of A.lives.filter((x) => !x.enlaza)) link(l.de, l.a, 'aloja', l.detalle);
 for (const d of A.derive) link(d.de, d.a, 'deriva');
+// el área privada enlaza a páginas públicas (Caesar III → roma-aeterna/)
+for (const k of pageKeys) if (apHtml.includes(`href="./${k}"`) || apHtml.includes(`href="./${k}/"`)) link('col:privada', P[k].id, 'enlaza');
 // las páginas públicas que apuntan al área privada (también desde carpetas: roma-aeterna)
 for (const k of pageKeys) if (A.internal[k].includes('area-privada.html')) link(P[k].id, 'col:privada', 'enlaza');
 
@@ -332,7 +334,8 @@ const count = (type) => { let n = 0; (function walk(l) { for (const x of l) { if
 const sinExplicar = Object.entries(A.sinExplicar).map(([url, p]) => ({ url, paginas: uniq(p).sort(byName) })).sort((a, b) => byName(a.url, b.url));
 const recuento = {
   paginas: pageKeys.length,
-  proyectos: Object.keys(E).length + count('caso'),
+  proyectos: count('caso') + count('app') + count('proyecto') + count('visual'),
+  recursos: count('lab') + count('grafico') + count('post'),
   plataformas: count('plataforma') + count('repo'),
   pestanas: count('pestana'),
   tablas: count('tabla'),
