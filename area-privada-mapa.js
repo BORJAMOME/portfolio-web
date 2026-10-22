@@ -20,14 +20,9 @@ window.APMapa = (function () {
   var byId, parentOf, colOf, subtree, labels, edges, root, canvas, svg, detail, famCount;
   var pinned = null, hover = null, famFilter = null, raf = 0;
   var collapsed = {}, lists = {}, toggles = {};
-  var view = 'todo', query = '', colEls = [], qCount = null;
-  // Vistas por pregunta: qué columnas se enseñan
-  var VIEWS = [
-    { id: 'todo', nombre: 'Todo', cols: [0, 1, 2, 3, 4] },
-    { id: 'sitio', nombre: '¿Qué publico y dónde vive?', cols: [0, 1] },
-    { id: 'privada', nombre: '¿Qué hay en el área privada y qué datos usa?', cols: [2, 3] },
-    { id: 'build', nombre: '¿Qué lo genera y lo comprueba?', cols: [2, 3, 4] }
-  ];
+  var query = '', qCount = null;
+  var mode = 'web', siteEl = null, sysEl = null, railSvg = null, railBox = null, rootPill = null, portEls = [], tabEls = {};
+  var openCards = {}, bodies = {}, toggleBtns = {}, cardEls = {}, moreOf = {}, rootBodyOpen = false;
   function fold(s) { return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }   // grupos plegados, su <ul> y su botón
 
   /* ── Datos ── */
@@ -40,7 +35,7 @@ window.APMapa = (function () {
     data.columnas.forEach(function (col, ci) {
       (function walk(n, parent) {
         byId[n.id] = n; parentOf[n.id] = parent; colOf[n.id] = ci;
-        if (n.familia) famCount[n.familia] = (famCount[n.familia] || 0) + 1;
+        if (n.familia && ci > 0) famCount[n.familia] = (famCount[n.familia] || 0) + 1;     // la leyenda del sistema no cuenta la web
         var ids = [n.id];
         (n.hijos || []).forEach(function (c) { ids = ids.concat(walk(c, n.id)); });
         subtree[n.id] = ids;
@@ -66,7 +61,10 @@ window.APMapa = (function () {
     schedule();
   }
   // abrir los grupos que esconden un elemento (al seleccionarlo desde el panel)
-  function reveal(id) { for (var cur = parentOf[id]; cur; cur = parentOf[cur]) if (collapsed[cur]) setFold(cur, false); }
+  function reveal(id) {
+    if (colOf[id] === 0) return openFor(id);
+    for (var cur = parentOf[id]; cur; cur = parentOf[cur]) if (collapsed[cur]) setFold(cur, false);
+  }
   function color(fam) { return (data.familias[fam] || {}).color || '#44546F'; }
 
   function render(c) {
@@ -77,7 +75,7 @@ window.APMapa = (function () {
   /* ── Pintado ── */
   function paint() {
     var h = ctx.h;
-    labels = {}; edges = []; pinned = null; hover = null; famFilter = null; lists = {}; toggles = {}; view = 'todo'; query = ''; colEls = [];
+    labels = {}; edges = []; pinned = null; hover = null; famFilter = null; lists = {}; toggles = {}; query = '';
     initCollapsed();
     ctx.view.textContent = '';
 
@@ -88,6 +86,7 @@ window.APMapa = (function () {
     svg.appendChild(marker('mp-arrow', '#6f7a8f'));
     Object.keys(data.familias).forEach(function (f) { svg.appendChild(marker('mp-arrow-' + f, color(f))); });
 
+    openCards = {}; bodies = {}; toggleBtns = {}; cardEls = {}; moreOf = {}; rootBodyOpen = false; portEls = []; tabEls = {}; mode = 'web'; alojaDe = null;
     canvas = h('div', { class: 'mp-canvas' }, [
       h('header', { class: 'mp-head' }, [
         h('h2', { class: 'mp-title', id: 'mp-title' }, [
@@ -100,21 +99,21 @@ window.APMapa = (function () {
         h('p', { class: 'mp-ver', text: ver })
       ]),
       h('div', { class: 'mp-stem', 'aria-hidden': 'true' }),
-      h('div', { class: 'mp-cols' }, data.columnas.map(column)),
+      h('div', { class: 'mp-cols' }, data.columnas.slice(1).map(column)),
       svg
     ]);
+    canvas.querySelector('.mp-cols').style.setProperty('--cols', '4');
 
     detail = h('section', { class: 'mp-detail', 'aria-live': 'polite', 'aria-label': 'Detalle del elemento seleccionado', hidden: true });
 
-    root = h('section', { class: 'mp', 'aria-labelledby': 'mp-title' }, [
-      h('p', { class: 'ape-meta', text: 'Pulsa un elemento para ver con qué se relaciona, o un tipo de la leyenda para resaltarlo. El menú que repiten todas las páginas no se dibuja: solo los enlaces del contenido.' }),
-      bar(),
-      orphans(),
+    siteEl = site();
+    sysEl = h('div', { class: 'mp-sys', hidden: true }, [
+      h('p', { class: 'ape-meta', text: 'Cómo funciona por dentro: dónde vive cada cosa, el área privada, los datos y las herramientas. Pulsa un elemento para ver con qué se relaciona. El menú que repiten todas las páginas no se dibuja.' }),
       legend(),
       canvas,
-      foot(),
-      detail
+      foot()
     ]);
+    root = h('section', { class: 'mp is-web', 'aria-labelledby': 'mp-title' }, [hero(), siteEl, sysEl, detail]);
     ctx.view.appendChild(root);
 
     data.relaciones.forEach(function (rel) {
@@ -124,6 +123,7 @@ window.APMapa = (function () {
       edges.push({ rel: rel, el: p });
     });
 
+    if (window.ResizeObserver) new ResizeObserver(schedule).observe(siteEl);
     root.addEventListener('keydown', function (e) { if (e.key === 'Escape' && (pinned || famFilter)) { e.stopPropagation(); famFilter = null; select(null); } });
     // Las flechas dependen de la posición real de cada etiqueta: se recalculan al cambiar el tamaño o cargar la fuente
     if (window.ResizeObserver) new ResizeObserver(schedule).observe(canvas);
@@ -140,12 +140,10 @@ window.APMapa = (function () {
   function column(col) {
     var h = ctx.h;
     var btn = labelButton(col);
-    var el = h('div', { class: 'mp-col' }, [
+    return h('div', { class: 'mp-col' }, [
       h('h3', { class: 'mp-colhead' }, [h('span', { class: 'mp-lab' }, [btn, h('span', { class: 'mp-note', text: col.nota })])]),
       h('ul', { class: 'mp-tree' }, (col.hijos || []).map(node))
     ]);
-    colEls.push(el);
-    return el;
   }
 
   function node(n) {
@@ -201,33 +199,267 @@ window.APMapa = (function () {
       }
     });
     return h('div', { class: 'mp-bar' }, [
-      h('label', { class: 'mp-search' }, [h('span', { class: 'sr-only', text: 'Buscar en el mapa' }), input, qCount]),
-      h('div', { class: 'mp-views', role: 'group', 'aria-label': 'Vistas' }, VIEWS.map(function (v) {
-        return h('button', { type: 'button', class: 'mp-view', 'data-view': v.id, 'aria-pressed': v.id === view ? 'true' : 'false', text: v.nombre, onclick: function () { setView(v.id); } });
-      }))
+      h('label', { class: 'mp-search' }, [h('span', { class: 'sr-only', text: 'Buscar en el mapa' }), input, qCount])
     ]);
   }
 
-  /* Páginas que ninguna otra página pública enlaza: el hallazgo más útil de un vistazo */
-  function orphans() {
-    var h = ctx.h, g = byId['g:web:huerfanas'];
-    if (!g || !g.hijos || !g.hijos.length) return null;
-    return h('p', { class: 'mp-orphans' }, [
-      h('strong', { text: 'Sin enlaces desde el sitio público: ' }),
-      g.hijos.map(function (n) { return h('button', { type: 'button', class: 'mp-chip', text: n.etiqueta, onclick: function () { select(n.id); } }); })
+  /* ═══════════ VISTA «PORTFOLIO WEB»: mapa del sitio por secciones ═══════════ */
+  var PL = {
+    caso: ['dashboard', 'dashboards'], app: ['app', 'apps'], proyecto: ['proyecto de código', 'proyectos de código'], visual: ['visualización', 'visualizaciones'],
+    lab: ['archivo .pbix', 'archivos .pbix'], grafico: ['gráfico nativo', 'gráficos nativos'], post: ['post', 'posts'], manual: ['manual', 'manuales'],
+    capitulo: ['capítulo', 'capítulos'], perfil: ['punto de perfil', 'puntos de perfil']
+  };
+  var ORDEN = ['caso', 'app', 'proyecto', 'visual', 'lab', 'manual', 'capitulo', 'perfil', 'grafico', 'post'];
+  var MONO = { GitHub: 'GH', 'Streamlit Cloud': 'ST', 'Power BI Service': 'PB', Behance: 'BE', LinkedIn: 'LI', 'Google Drive': 'GD', 'GitHub Pages': 'GP' };
+  var alojaDe = null;
+  function plural(t, n) { var p = PL[t] || [t, t]; return n === 1 ? p[0] : p[1]; }
+  function sec(id) { return (data.secciones || {})[id] || { color: '#586278', tinta: '#586278' }; }
+  function domId(id) { return 'mp-' + String(id).replace(/[^a-z0-9]+/gi, '-'); }
+  function webNodes() { return (data.columnas[0].hijos || []); }
+  function sections() { return webNodes().filter(function (n) { return n.tipo === 'pagina' || n.tipo === 'manual' || n.tipo === 'app'; }); }
+
+  // Elementos únicos por tipo: ni los grupos ni las referencias (repeticiones de algo que vive en otra sección) cuentan
+  function counts(list) {
+    var c = {};
+    (function walk(l) {
+      l.forEach(function (k) {
+        if (k.ref) return;
+        if (k.tipo !== 'grupo') c[k.tipo] = (c[k.tipo] || 0) + 1;
+        walk(k.hijos || []);
+      });
+    })(list);
+    return c;
+  }
+  function platforms(n) {
+    if (!alojaDe) { alojaDe = {}; data.relaciones.forEach(function (r) { if (r.tipo === 'aloja') (alojaDe[r.de] = alojaDe[r.de] || []).push(r.a); }); }
+    var by = {};
+    (function walk(l) {
+      l.forEach(function (k) {
+        if (k.ref) return;
+        (alojaDe[k.id] || []).forEach(function (a) {
+          var t = byId[a], name = t ? (t.tipo === 'repo' ? 'GitHub' : t.etiqueta) : null;
+          if (name) (by[name] = by[name] || {})[k.id] = 1;
+        });
+        walk(k.hijos || []);
+      });
+    })(n.hijos || []);
+    return Object.keys(by).map(function (k) { return { n: k, c: Object.keys(by[k]).length }; }).sort(function (x, y) { return y.c - x.c; });
+  }
+  function dot(t) {
+    var d = ctx.h('span', { class: 'mp-dot', 'data-shape': (data.familias[t] || {}).forma || 'circulo', 'aria-hidden': 'true' });
+    d.style.setProperty('--fam', '#3A4255');
+    return d;
+  }
+
+  /* Cabecera: qué es, cuánto hay (cifras que filtran) y cómo cambiar de vista */
+  function hero() {
+    var h = ctx.h, tot = {}, paginas = webNodes().filter(function (n) { return n.tipo === 'pagina'; }).length;
+    sections().forEach(function (n) { var c = counts(n.hijos || []); Object.keys(c).forEach(function (t) { tot[t] = (tot[t] || 0) + c[t]; }); });
+    var figs = [h('li', null, h('span', { class: 'mp-fig mp-fig--static' }, [h('b', { text: String(paginas) }), h('span', { text: 'páginas del menú' })]))];
+    ['caso', 'app', 'proyecto', 'visual', 'lab', 'manual'].forEach(function (t) {
+      if (!tot[t]) return;
+      figs.push(h('li', null, h('button', { type: 'button', class: 'mp-fig', 'data-fam': t, 'aria-pressed': 'false', onclick: function () { famFilter = famFilter === t ? null : t; refresh(); } }, [
+        dot(t), h('b', { text: String(tot[t]) }), h('span', { text: plural(t, tot[t]) + (t === 'manual' && tot.capitulo ? ' · ' + tot.capitulo + ' capítulos' : '') })
+      ])));
+    });
+    var r = data.recuento;
+    var tabs = h('div', { class: 'mp-tabs', role: 'group', 'aria-label': 'Vista' }, [['web', 'Portfolio web'], ['sys', 'Sistema']].map(function (v) {
+      var b = h('button', { type: 'button', class: 'mp-tab', 'aria-pressed': v[0] === 'web' ? 'true' : 'false', text: v[1], onclick: function () { setMode(v[0]); } });
+      tabEls[v[0]] = b;
+      return b;
+    }));
+    return h('header', { class: 'mp-hero' }, [
+      h('div', { class: 'mp-eyebrow' }, [h('span', { text: 'Área privada · Mapa · Portfolio web' }), h('span', { text: 'v' + data.huella + ' · generado desde el repositorio' })]),
+      h('h2', { class: 'mp-h1', id: 'mp-title', text: 'Cómo está formado mi portfolio web' }),
+      h('p', { class: 'mp-sub', text: 'Cada tarjeta es una sección del menú, con lo que enseña y dónde vive. Pulsa una cifra para ver dónde está ese tipo de contenido.' }),
+      h('ul', { class: 'mp-figs', 'aria-label': 'Cifras del portfolio' }, figs),
+      h('div', { class: 'mp-tools' }, [tabs, bar()])
     ]);
   }
 
-  function colHidden(id) { return colEls[colOf[id]] && colEls[colOf[id]].hidden; }
-  function setView(id) {
-    view = id;
-    var def = VIEWS.filter(function (v) { return v.id === id; })[0] || VIEWS[0];
-    var visible = colEls.filter(function (c, i) { c.hidden = def.cols.indexOf(i) < 0; return !c.hidden; });
-    visible.forEach(function (c, i) { c.classList.toggle('is-last', i === visible.length - 1); });
-    canvas.querySelector('.mp-cols').style.setProperty('--cols', String(visible.length));
-    [].forEach.call(root.querySelectorAll('.mp-view'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-view') === id ? 'true' : 'false'); });
-    if (pinned && colHidden(pinned)) select(null);
+  /* Mapa del sitio: raíz «Inicio», bus, un puerto por sección, tarjetas y la banda de lo que no cuelga del menú */
+  function site() {
+    var h = ctx.h;
+    var ports = [], cards = [];
+    var all = sections();
+    var index = all.filter(function (n) { return n.id === 'p:index'; })[0];
+    var priv = byId['p:privacidad'];
+    var body = all.filter(function (n) { return n.id !== 'p:index' && n.id !== 'p:privacidad'; });
+    body.forEach(function (n, i) {
+      ports.push(port(n, i));
+      cards.push(card(n, i));
+    });
+    if (priv) ports.push(port(priv, body.length));
+    railBox = h('div', { class: 'mp-rail-box' }, [
+      railSvg = svgEl('svg', { class: 'mp-rail-svg', 'aria-hidden': 'true', focusable: 'false' }),
+      index ? rootBlock(index) : null,
+      h('div', { class: 'mp-ports', role: 'list', 'aria-label': 'Secciones del menú' }, ports)
+    ]);
+    return h('div', { class: 'mp-site' }, [railBox, h('div', { class: 'mp-grid' }, cards), band()]);
+  }
+
+  function rootBlock(n) {
+    var h = ctx.h;
+    // lo que destaca la portada: sus proyectos propios y las referencias a los de otras secciones
+    var c = {};
+    (function walk(l) { l.forEach(function (k) { if (k.tipo !== 'grupo') c[k.tipo] = (c[k.tipo] || 0) + 1; walk(k.hijos || []); }); })(n.hijos || []);
+    var partes = ORDEN.filter(function (t) { return c[t]; }).map(function (t) { return c[t] + ' ' + plural(t, c[t]); });
+    var sc = sec(n.id);
+    var pill = labelButton(n);
+    pill.classList.add('mp-root');
+    pill.textContent = 'Inicio · portada';
+    pill.style.setProperty('--pg-ink', sc.tinta);
+    rootPill = pill;
+    var rb = h('div', { class: 'mp-rootbody', id: domId(n.id), hidden: true }, rowsOf(n.hijos || []));
+    bodies[n.id] = rb;
+    var tg = h('button', { type: 'button', class: 'mp-toggle mp-toggle--root', 'aria-expanded': 'false', 'aria-controls': domId(n.id), text: 'Ver qué destaca', onclick: function () { setCard(n.id, !openCards[n.id]); } });
+    toggleBtns[n.id] = tg;
+    return h('div', { class: 'mp-root-wrap' }, [pill, h('p', { class: 'mp-root-sub', text: partes.length ? 'destaca ' + partes.join(' · ') : 'portada del sitio' }), tg, rb]);
+  }
+
+  function port(n, i) {
+    var h = ctx.h, sc = sec(n.id);
+    var b = h('button', {
+      type: 'button', class: 'mp-port', role: 'listitem', 'data-sec': n.id,
+      onclick: function () {
+        if (cardEls[n.id]) { setCard(n.id, true); cardEls[n.id].scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        select(n.id);
+      }
+    }, [h('span', { class: 'mp-port-n', text: String(i + 1).padStart(2, '0') }), n.etiqueta]);
+    b.style.setProperty('--pg-ink', sc.tinta);
+    portEls.push(b);
+    return b;
+  }
+
+  function card(n, i) {
+    var h = ctx.h, sc = sec(n.id), cnt = counts(n.hijos || []);
+    var total = Object.keys(cnt).reduce(function (a, k) { return a + cnt[k]; }, 0);
+    var pills = ORDEN.filter(function (t) { return cnt[t]; }).map(function (t) {
+      return h('li', { class: 'mp-pill', 'data-fam': t }, [dot(t), h('b', { text: String(cnt[t]) }), h('span', { text: plural(t, cnt[t]) })]);
+    });
+    var plats = platforms(n).slice(0, 5).map(function (p) {
+      return h('li', { class: 'mp-plat' }, [h('span', { class: 'mp-mono', 'aria-hidden': 'true', text: MONO[p.n] || p.n.slice(0, 2).toUpperCase() }), p.n + ' ' + p.c]);
+    });
+    var name = labelButton(n);
+    name.classList.add('mp-card-name');
+    var tg = h('button', {
+      type: 'button', class: 'mp-toggle', 'aria-expanded': 'false', 'aria-controls': domId(n.id), text: 'Ver contenido (' + total + ')',
+      onclick: function () { setCard(n.id, !openCards[n.id]); }
+    });
+    toggleBtns[n.id] = tg;
+    var bodyEl = h('div', { class: 'mp-body', id: domId(n.id), hidden: true }, rowsOf(n.hijos || []));
+    bodies[n.id] = bodyEl;
+    var el = h('article', { class: 'mp-card' + (n.id === 'p:descargas' ? ' mp-card--wide' : ''), id: 'sec-' + domId(n.id), 'data-sec': n.id }, [
+      h('div', { class: 'mp-card-head' }, [
+        h('span', { class: 'mp-num', 'aria-hidden': 'true', text: String(i + 1).padStart(2, '0') }),
+        name,
+        n.href ? h('a', { class: 'mp-open', href: n.href, target: '_blank', rel: 'noopener', 'aria-label': 'Abrir ' + n.etiqueta + ' en una pestaña nueva', text: (n.archivo || 'abrir') + ' ↗' }) : null
+      ]),
+      n.nota ? h('p', { class: 'mp-note-line', text: n.nota }) : null,
+      pills.length ? h('ul', { class: 'mp-pills', 'aria-label': 'Contenido de ' + n.etiqueta }, pills) : h('p', { class: 'mp-empty', text: 'Sin elementos propios.' }),
+      plats.length ? h('ul', { class: 'mp-plats', 'aria-label': 'Dónde vive' }, plats) : null,
+      total ? tg : null,
+      bodyEl
+    ]);
+    el.style.setProperty('--pg', sc.color);
+    el.style.setProperty('--pg-ink', sc.tinta);
+    cardEls[n.id] = el;
+    return el;
+  }
+
+  // Filas del contenido de una sección: grupos con su recuento y elementos; las referencias llevan ↗ y apuntan al original
+  function rowsOf(list) {
+    var h = ctx.h, out = [];
+    list.forEach(function (k) {
+      if (k.tipo === 'grupo') {
+        out.push(h('div', { class: 'mp-grp' }, [
+          h('h4', { class: 'mp-grp-h' }, [k.etiqueta.replace(/\/$/, ''), h('span', { class: 'mp-grp-n', text: String((k.hijos || []).length) })]),
+          limited(k.hijos || [])
+        ]));
+      } else out.push(h('ul', { class: 'mp-items' }, [h('li', null, item(k))]));
+    });
+    return out;
+  }
+  function limited(items) {
+    var h = ctx.h, CAP = 8, extra = [];
+    var ul = h('ul', { class: 'mp-items' });
+    items.forEach(function (k, i) {
+      var li = h('li', null, item(k));
+      if (i >= CAP) { li.hidden = true; extra.push({ li: li, id: k.id }); }
+      ul.appendChild(li);
+    });
+    if (!extra.length) return ul;
+    var more = h('button', { type: 'button', class: 'mp-more', text: 'Ver los ' + items.length });
+    function expand() { extra.forEach(function (x) { x.li.hidden = false; }); more.hidden = true; }
+    more.addEventListener('click', expand);
+    extra.forEach(function (x) { moreOf[x.id] = expand; });
+    return h('div', null, [ul, more]);
+  }
+  function item(k) {
+    var h = ctx.h, b = labelButton(k);
+    b.classList.add('mp-item');
+    if (k.ref) { b.classList.add('is-ref'); b.setAttribute('title', 'También aparece aquí; vive en su sección'); }
+    var kids = (k.hijos || []).length ? h('div', { class: 'mp-sub' }, rowsOf(k.hijos)) : null;
+    return [b, kids];
+  }
+
+  /* Lo que no cuelga del menú (o solo del pie), con borde discontinuo */
+  function band() {
+    var h = ctx.h, g = byId['g:web:huerfanas'], priv = byId['p:privacidad'], en = byId['x:en'];
+    var chips = [];
+    if (g) (g.hijos || []).forEach(function (n) { var b = labelButton(n); b.classList.add('mp-chipx', 'is-orphan'); chips.push(h('li', null, [b, h('span', { class: 'mp-chipx-note', text: 'sin enlace desde el menú' })])); });
+    if (priv) { var p = labelButton(priv); p.classList.add('mp-chipx'); chips.push(h('li', null, [p, h('span', { class: 'mp-chipx-note', text: 'pie de página' })])); }
+    return h('section', { class: 'mp-band', 'aria-label': 'Fuera de la navegación' }, [
+      h('h3', { class: 'mp-band-h', text: 'Fuera del menú' }),
+      h('ul', { class: 'mp-chips' }, chips),
+      en ? h('p', { class: 'mp-band-foot', text: 'Versión en inglés de cada página: ' + en.etiqueta + ' (' + en.archivo + ')' }) : null
+    ]);
+  }
+
+  function setCard(id, open) {
+    openCards[id] = open;
+    if (bodies[id]) bodies[id].hidden = !open;
+    if (toggleBtns[id]) {
+      toggleBtns[id].setAttribute('aria-expanded', open ? 'true' : 'false');
+      var t = toggleBtns[id].textContent;
+      toggleBtns[id].textContent = toggleBtns[id].classList.contains('mp-toggle--root') ? (open ? 'Ocultar' : 'Ver qué destaca') : t.replace(/^(Ver|Ocultar)/, open ? 'Ocultar' : 'Ver');
+    }
     schedule();
+  }
+  // abrir lo que esconde un elemento de la web: su sección y, si hace falta, el «Ver los N» de su lista
+  function openFor(id) {
+    for (var cur = id; cur; cur = parentOf[cur]) if (bodies[cur] && cur !== id) { setCard(cur, true); break; }
+    if (moreOf[id]) moreOf[id]();
+  }
+
+  function setMode(m) {
+    mode = m;
+    root.classList.toggle('is-web', m === 'web');
+    root.classList.toggle('is-sys', m === 'sys');
+    siteEl.hidden = m !== 'web';
+    sysEl.hidden = m !== 'sys';
+    Object.keys(tabEls).forEach(function (k) { tabEls[k].setAttribute('aria-pressed', k === m ? 'true' : 'false'); });
+    if (pinned && (colOf[pinned] === 0 ? 'web' : 'sys') !== m) { pinned = null; paintDetail(); refresh(); }
+    schedule();
+  }
+
+  // El bus: del «Inicio» baja un tallo, un raíl horizontal y una bajante a cada puerto de sección
+  function drawRail() {
+    if (!railSvg || !railSvg.isConnected || !rootPill || !portEls.length) return;
+    var box = railBox.getBoundingClientRect();
+    while (railSvg.firstChild) railSvg.removeChild(railSvg.firstChild);
+    railSvg.setAttribute('viewBox', '0 0 ' + Math.round(box.width) + ' ' + Math.round(box.height));
+    if (box.width < 1000) return;
+    var rp = rootPill.getBoundingClientRect(), x0 = rp.left + rp.width / 2 - box.left;
+    var tops = portEls.map(function (p) { var r = p.getBoundingClientRect(); return { x: r.left + r.width / 2 - box.left, y: r.top - box.top }; });
+    var yPort = Math.min.apply(null, tops.map(function (t) { return t.y; }));
+    var yRail = yPort - 16;
+    var rootBottom = ((document.querySelector('.mp-root-wrap') || rootPill).getBoundingClientRect().bottom - box.top) + 2;
+    var xs = tops.map(function (t) { return t.x; }).concat([x0]);
+    var d = 'M' + x0 + ' ' + rootBottom + ' V' + yRail + ' M' + Math.min.apply(null, xs) + ' ' + yRail + ' H' + Math.max.apply(null, xs);
+    tops.forEach(function (t) { d += ' M' + t.x + ' ' + yRail + ' V' + (t.y - 2); });
+    railSvg.appendChild(svgEl('path', { class: 'mp-rail-path', d: d }));
+    tops.forEach(function (t) { railSvg.appendChild(svgEl('circle', { class: 'mp-rail-dot', cx: String(t.x), cy: String(yRail), r: '3.5' })); });
   }
 
   /* Búsqueda: resalta lo que coincide y abre los grupos que lo esconden */
@@ -241,10 +473,9 @@ window.APMapa = (function () {
     });
     root.classList.toggle('has-q', q.length >= 2);
     Object.keys(labels).forEach(function (id) { labels[id].classList.toggle('is-hit', hits.indexOf(id) >= 0); });
+    if (hits.length && !hits.some(function (id) { return (colOf[id] === 0 ? 'web' : 'sys') === mode; })) setMode(colOf[hits[0]] === 0 ? 'web' : 'sys');
     if (hits.length && hits.length <= 60) hits.forEach(function (id) { reveal(id); });
     qCount.textContent = q.length < 2 ? '' : hits.length ? hits.length + (hits.length === 1 ? ' resultado' : ' resultados') + ' · Intro para abrir el primero' : 'Sin resultados';
-    // si lo encontrado está en una columna oculta, se vuelve a la vista completa
-    if (hits.length && view !== 'todo' && hits.every(function (id) { return colHidden(id); })) setView('todo');
     schedule();
   }
 
@@ -316,6 +547,7 @@ window.APMapa = (function () {
   // Una flecha sale por el lado de la etiqueta que mira a la columna de destino y entra por el lado que mira a la de origen.
   function draw() {
     if (!canvas || !canvas.isConnected) return;
+    if (mode === 'web') return drawRail();
     var cb = canvas.getBoundingClientRect();
     svg.setAttribute('viewBox', '0 0 ' + Math.round(cb.width) + ' ' + Math.round(cb.height));
     if (!window.matchMedia(WIDE).matches) return;
@@ -325,9 +557,9 @@ window.APMapa = (function () {
       var a = labels[ia], b = labels[ib];
       var key = ia + '|' + ib, active = e.el.classList.contains('is-on');
       // dos relaciones que acaban en el mismo par de elementos visibles se dibujan una vez; si ambos extremos son el mismo grupo, ninguna
-      var oculta = colHidden(ia) || colHidden(ib);
-      e.el.classList.toggle('is-folded', oculta || !a || !b || ia === ib || (!active && !!drawn[key]));
-      if (oculta || !a || !b || ia === ib) return;
+      var web = colOf[ia] === 0 || colOf[ib] === 0;       // las relaciones de la web se leen en el panel; el lienzo del sistema no las dibuja
+      e.el.classList.toggle('is-folded', web || !a || !b || ia === ib || (!active && !!drawn[key]));
+      if (web || !a || !b || ia === ib) return;
       if (!active) drawn[key] = true;
       var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
       var ay = ra.top + ra.height / 2 - cb.top, by = rb.top + rb.height / 2 - cb.top;
@@ -368,8 +600,8 @@ window.APMapa = (function () {
   function originColor(rel) { var n = byId[rel.de]; return n && n.familia ? color(n.familia) : null; }
 
   function select(id) {
+    if (id) { var m = colOf[id] === 0 ? 'web' : 'sys'; if (m !== mode) setMode(m); }
     pinned = id;
-    if (id && colHidden(id)) setView('todo');
     if (id) reveal(id);
     refresh();
     paintDetail();
@@ -398,6 +630,12 @@ window.APMapa = (function () {
       b.setAttribute('aria-pressed', k === pinned ? 'true' : 'false');
     });
     schedule();
+    [].forEach.call(root.querySelectorAll('.mp-pill, .mp-fig[data-fam]'), function (p) {
+      var on = !!famFilter && p.getAttribute('data-fam') === famFilter;
+      p.classList.toggle('is-fam', on);
+      p.classList.toggle('is-dim', !!famFilter && !on);
+      if (p.tagName === 'BUTTON') p.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
     [].forEach.call(root.querySelectorAll('.mp-key'), function (k) { k.setAttribute('aria-pressed', k.getAttribute('data-fam') === famFilter ? 'true' : 'false'); });
   }
 

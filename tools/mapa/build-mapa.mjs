@@ -103,20 +103,37 @@ const entityNode = (id) => {
   return { id, tipo: e.tipo, etiqueta: e.etiqueta, href: e.url || e.hrefInterno || undefined, externo: e.url ? true : undefined, ...(e.techs.length ? { tec: e.techs } : {}), ...(e.ruta ? { archivo: e.ruta } : {}), ...(e.fecha ? { nota: e.fecha } : {}), ...(e.soloDatos ? { nota: 'Solo figura en los datos estructurados (JSON-LD) de la página; no hay tarjeta visible.' } : {}) };
 };
 
+// Referencias: un proyecto que una página enseña pero que cuelga de otra (la portada enseña casos y apps) aparece también bajo ella
+const refsOf = {};
+const refNodes = [];
+for (const [target, from] of Object.entries(A.showsPage)) {
+  for (const k of uniq(from)) {
+    const tPage = Object.values(P).find((p) => p.id === target);
+    if (tPage && parent[tPage.key] === k) continue;                       // ya cuelga de ella en el árbol
+    if (E[target] && E[target].dueña === k) continue;
+    const base = tPage ? pageNode(tPage.key) : E[target] ? entityNode(target) : null;
+    if (!base) continue;
+    const node = { ...base, id: `r:${P[k].key}:${target}`, ref: target };
+    delete node.hijos; delete node.nota;
+    (refsOf[k] ??= []).push(node);
+    refNodes.push({ id: node.id, target });
+  }
+}
 function childrenOf(key) {
-  const pages = A.internal[key].filter((c) => parent[c] === key);
+  const pages = uniq([...A.internal[key].filter((c) => parent[c] === key), ...Object.keys(parent).filter((c) => parent[c] === key)]);
   const groups = [], direct = [];
   const bucket = (label, node) => { let g = groups.find((x) => x.etiqueta === label); if (!g) groups.push((g = { id: `g:${key}:${slug(label)}`, tipo: 'grupo', etiqueta: label, hijos: [] })); g.hijos.push(node); };
   for (const c of pages) {
     const node = { ...pageNode(c), hijos: childrenOf(c) };
     if (!node.hijos.length) delete node.hijos;
-    if (P[c].tipo === 'caso') bucket('casos de estudio/', node);
+    if (P[c].tipo === 'caso') bucket('dashboards/', node);
     else if (P[c].tipo === 'manual') bucket('manuales/', node);
     else if (P[c].tipo === 'app') bucket('apps/', node);
     else direct.push(node);
   }
   const own = Object.values(E).filter((e) => e.dueña === key).sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0) || a.pos - b.pos || A.order.indexOf(a.id) - A.order.indexOf(b.id));
   for (const e of own) bucket(`${e.grupo}/`, entityNode(e.id));
+  for (const r of refsOf[key] || []) bucket(W.referencias, r);
   return [...direct, ...groups];
 }
 
@@ -276,14 +293,7 @@ function dataLinks(from, s) {
 
 /* 6a · Web: qué enseña cada página y cómo se enlazan */
 // una página enseña un proyecto ajeno (misma URL de informe, de app, de repositorio…)
-for (const [target, from] of Object.entries(A.showsPage)) {
-  for (const k of uniq(from)) {
-    const tPage = Object.values(P).find((p) => p.id === target);
-    if (tPage && parent[tPage.key] === k) continue;                       // ya cuelga de ella en el árbol
-    if (E[target] && E[target].dueña === k) continue;
-    link(P[k].id, target, 'muestra');
-  }
-}
+for (const r of refNodes) link(r.id, r.target, 'igual');
 for (const l of A.lives.filter((x) => x.enlaza)) link(l.de, l.a, 'enlaza');
 for (const k of pageKeys) {
   for (const c of A.internal[k]) {
@@ -367,6 +377,7 @@ const body = {
   columnas, relaciones, sinExplicar, ignorados,
   tipos: cfg.tipos, verbos: cfg.relaciones,
   familias: cfg.familias,
+  secciones: cfg.secciones,
 };
 const huella = createHash('sha1').update(JSON.stringify(body)).digest('hex').slice(0, 7);
 const data = { huella, recuento, ...body };

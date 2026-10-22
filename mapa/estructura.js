@@ -1,18 +1,18 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "b37bb4a",
+ "huella": "b113acf",
  "recuento": {
-  "paginas": 20,
-  "proyectos": 34,
-  "recursos": 46,
+  "paginas": 19,
+  "proyectos": 40,
+  "recursos": 52,
   "perfil": 9,
-  "capitulos": 16,
+  "capitulos": 10,
   "plataformas": 11,
   "pestanas": 10,
   "tablas": 29,
   "funciones": 4,
   "herramientas": 14,
-  "relaciones": 175,
+  "relaciones": 173,
   "sinExplicar": 0
  },
  "columnas": [
@@ -31,9 +31,9 @@ export default {
      "archivo": "index.html",
      "hijos": [
       {
-       "id": "g:index.html:casos-de-estudio",
+       "id": "g:index.html:dashboards",
        "tipo": "grupo",
-       "etiqueta": "casos de estudio/",
+       "etiqueta": "dashboards/",
        "hijos": [
         {
          "id": "p:casa-origen",
@@ -70,6 +70,126 @@ export default {
           }
          ],
          "familia": "caso"
+        }
+       ]
+      },
+      {
+       "id": "g:index.html:proyectos-que-muestra",
+       "tipo": "grupo",
+       "etiqueta": "proyectos que muestra/",
+       "hijos": [
+        {
+         "id": "r:index.html:p:ibcs-ventas",
+         "tipo": "caso",
+         "etiqueta": "Informe de ventas con enfoque IBCS",
+         "href": "./ibcs-ventas.html",
+         "archivo": "ibcs-ventas.html",
+         "tec": [
+          "Power BI",
+          "IBCS",
+          "DAX",
+          "Visual calculations",
+          "Sales reporting"
+         ],
+         "ref": "p:ibcs-ventas",
+         "familia": "caso"
+        },
+        {
+         "id": "r:index.html:p:kosta-calida",
+         "tipo": "caso",
+         "etiqueta": "Kosta Cálida",
+         "href": "./kosta-calida.html",
+         "archivo": "kosta-calida.html",
+         "tec": [
+          "Power BI",
+          "DAX",
+          "Retail",
+          "Store reporting",
+          "Margin analysis",
+          "Power Query"
+         ],
+         "ref": "p:kosta-calida",
+         "familia": "caso"
+        },
+        {
+         "id": "r:index.html:p:informe-financiero",
+         "tipo": "caso",
+         "etiqueta": "Informe Financiero Completo",
+         "href": "./informe-financiero.html",
+         "archivo": "informe-financiero.html",
+         "tec": [
+          "Power BI",
+          "Financial reporting",
+          "Cash flow",
+          "DAX",
+          "Finanzas"
+         ],
+         "ref": "p:informe-financiero",
+         "familia": "caso"
+        },
+        {
+         "id": "r:index.html:p:rfm-hosteleria",
+         "tipo": "caso",
+         "etiqueta": "Análisis RFM",
+         "href": "./rfm-hosteleria.html",
+         "archivo": "rfm-hosteleria.html",
+         "tec": [
+          "Power BI",
+          "RFM",
+          "Customer analytics",
+          "B2B",
+          "DAX"
+         ],
+         "ref": "p:rfm-hosteleria",
+         "familia": "caso"
+        },
+        {
+         "id": "r:index.html:e:app-pbi-mockup-creator",
+         "tipo": "app",
+         "etiqueta": "PBI Mockup Creator",
+         "href": "https://borjamome.github.io/powerbi-mockup/",
+         "externo": true,
+         "ref": "e:app-pbi-mockup-creator",
+         "familia": "app"
+        },
+        {
+         "id": "r:index.html:e:app-k-means-t-sne-retail",
+         "tipo": "app",
+         "etiqueta": "K-Means + t-SNE Retail",
+         "href": "https://segmentacion-retail.streamlit.app",
+         "externo": true,
+         "tec": [
+          "K-Means",
+          "t-SNE"
+         ],
+         "ref": "e:app-k-means-t-sne-retail",
+         "familia": "app"
+        },
+        {
+         "id": "r:index.html:e:app-sarima-vs-sarimax-retail",
+         "tipo": "app",
+         "etiqueta": "SARIMA vs SARIMAX Retail",
+         "href": "https://forecast-ventas-retail-app-w5msdvcsbuxas94qjcdore.streamlit.app",
+         "externo": true,
+         "tec": [
+          "SARIMAX",
+          "statsmodels"
+         ],
+         "ref": "e:app-sarima-vs-sarimax-retail",
+         "familia": "app"
+        },
+        {
+         "id": "r:index.html:e:app-segmentacion-aerolinea",
+         "tipo": "app",
+         "etiqueta": "Segmentación Aerolínea",
+         "href": "https://comparativa-modelos-aerolinea.streamlit.app",
+         "externo": true,
+         "tec": [
+          "Gradient Boosting",
+          "scikit-learn"
+         ],
+         "ref": "e:app-segmentacion-aerolinea",
+         "familia": "app"
         }
        ]
       }
@@ -180,9 +300,9 @@ export default {
      "archivo": "power-bi.html",
      "hijos": [
       {
-       "id": "g:power-bi.html:casos-de-estudio",
+       "id": "g:power-bi.html:dashboards",
        "tipo": "grupo",
-       "etiqueta": "casos de estudio/",
+       "etiqueta": "dashboards/",
        "hijos": [
         {
          "id": "p:ibcs-ventas",
@@ -465,76 +585,9 @@ export default {
      "archivo": "analisis-datos.html",
      "hijos": [
       {
-       "id": "g:analisis-datos.html:manuales",
+       "id": "g:analisis-datos.html:machine-learning",
        "tipo": "grupo",
-       "etiqueta": "manuales/",
-       "hijos": [
-        {
-         "id": "p:ml",
-         "tipo": "manual",
-         "etiqueta": "Manual de Machine Learning",
-         "nota": "Manual visual e interactivo de Machine Learning para analistas de datos: 63 modelos explicados en sencillo, con ejemplos de negocio, visualizaciones 2D/3D y laboratorios. · 63 modelos explicados",
-         "href": "./ml/",
-         "archivo": "ml/",
-         "hijos": [
-          {
-           "id": "g:ml:secciones-del-manual",
-           "tipo": "grupo",
-           "etiqueta": "secciones del manual/",
-           "hijos": [
-            {
-             "id": "e:sec-estudia-en-el-orden-correcto",
-             "tipo": "capitulo",
-             "etiqueta": "Estudia en el orden correcto",
-             "href": "./ml/",
-             "familia": "manual"
-            },
-            {
-             "id": "e:sec-encuentra-tu-modelo-respondiendo-preguntas",
-             "tipo": "capitulo",
-             "etiqueta": "Encuentra tu modelo respondiendo preguntas",
-             "href": "./ml/",
-             "familia": "manual"
-            },
-            {
-             "id": "e:sec-los-63-modelos-de-un-vistazo",
-             "tipo": "capitulo",
-             "etiqueta": "Los 63 modelos, de un vistazo",
-             "href": "./ml/",
-             "familia": "manual"
-            },
-            {
-             "id": "e:sec-tabla-comparativa",
-             "tipo": "capitulo",
-             "etiqueta": "Tabla comparativa",
-             "href": "./ml/",
-             "familia": "manual"
-            },
-            {
-             "id": "e:sec-lo-que-necesitas-antes-de-los-modelos",
-             "tipo": "capitulo",
-             "etiqueta": "Lo que necesitas antes de los modelos",
-             "href": "./ml/",
-             "familia": "manual"
-            },
-            {
-             "id": "e:sec-que-se-reviso-que-se-corrigio-y-que-viene-despues",
-             "tipo": "capitulo",
-             "etiqueta": "Qué se revisó, qué se corrigió y qué viene después",
-             "href": "./ml/",
-             "familia": "manual"
-            }
-           ]
-          }
-         ],
-         "familia": "manual"
-        }
-       ]
-      },
-      {
-       "id": "g:analisis-datos.html:machine-learning-apps-de-streamlit",
-       "tipo": "grupo",
-       "etiqueta": "Machine Learning · apps de Streamlit/",
+       "etiqueta": "Machine Learning/",
        "hijos": [
         {
          "id": "e:app-k-means-t-sne-retail",
@@ -714,65 +767,6 @@ export default {
          "familia": "proyecto"
         }
        ]
-      },
-      {
-       "id": "g:analisis-datos.html:machine-learning-codigo",
-       "tipo": "grupo",
-       "etiqueta": "Machine Learning · código/",
-       "hijos": [
-        {
-         "id": "e:sarima-retail-prediccion-de-demanda-semanal",
-         "tipo": "proyecto",
-         "etiqueta": "SARIMA Retail: Predicción de demanda semanal",
-         "href": "https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/04-series-temporales/arima/01-caso-retail",
-         "externo": true,
-         "tec": [
-          "Python",
-          "SARIMA",
-          "statsmodels",
-          "forecasting",
-          "retail",
-          "series temporales"
-         ],
-         "archivo": "03-Machine-Learning/04-series-temporales/arima/01-caso-retail",
-         "nota": "Solo figura en los datos estructurados (JSON-LD) de la página; no hay tarjeta visible.",
-         "familia": "proyecto"
-        },
-        {
-         "id": "e:k-means-segmentacion-ideologica-de-votantes",
-         "tipo": "proyecto",
-         "etiqueta": "K-Means: Segmentación ideológica de votantes",
-         "href": "https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/02-no-supervisado/clustering/kmeans/03-segmentacion-politica",
-         "externo": true,
-         "tec": [
-          "Python",
-          "K-Means",
-          "scikit-learn",
-          "clustering",
-          "ciencia política"
-         ],
-         "archivo": "03-Machine-Learning/02-no-supervisado/clustering/kmeans/03-segmentacion-politica",
-         "nota": "Solo figura en los datos estructurados (JSON-LD) de la página; no hay tarjeta visible.",
-         "familia": "proyecto"
-        },
-        {
-         "id": "e:xgboost-prediccion-de-satisfaccion-en-gimnasio",
-         "tipo": "proyecto",
-         "etiqueta": "XGBoost: Predicción de satisfacción en gimnasio",
-         "href": "https://github.com/BORJAMOME/Data-Analytics-Portfolio/tree/main/03-Machine-Learning/01-supervisado/clasificacion/03-xgboost",
-         "externo": true,
-         "tec": [
-          "Python",
-          "XGBoost",
-          "scikit-learn",
-          "clasificación",
-          "fitness"
-         ],
-         "archivo": "03-Machine-Learning/01-supervisado/clasificacion/03-xgboost",
-         "nota": "Solo figura en los datos estructurados (JSON-LD) de la página; no hay tarjeta visible.",
-         "familia": "proyecto"
-        }
-       ]
       }
      ],
      "familia": "pagina"
@@ -883,94 +877,6 @@ export default {
      "familia": "pagina"
     },
     {
-     "id": "p:data-storytelling",
-     "tipo": "manual",
-     "etiqueta": "Data Storytelling",
-     "nota": "Manual interactivo de Data Storytelling y diseño de dashboards: percepción, ruido, atención, visuales, composición y narrativa, sobre un dashboard vivo.",
-     "href": "./data-storytelling.html",
-     "archivo": "data-storytelling.html",
-     "hijos": [
-      {
-       "id": "g:data-storytelling.html:capitulos-del-manual",
-       "tipo": "grupo",
-       "etiqueta": "capítulos del manual/",
-       "hijos": [
-        {
-         "id": "e:cap-01-fundamentos",
-         "tipo": "capitulo",
-         "etiqueta": "01 · Fundamentos",
-         "href": "./data-storytelling.html#c01",
-         "familia": "manual"
-        },
-        {
-         "id": "e:cap-02-contexto",
-         "tipo": "capitulo",
-         "etiqueta": "02 · Contexto",
-         "href": "./data-storytelling.html#c02",
-         "familia": "manual"
-        },
-        {
-         "id": "e:cap-03-percepcion",
-         "tipo": "capitulo",
-         "etiqueta": "03 · Percepción",
-         "href": "./data-storytelling.html#c03",
-         "familia": "manual"
-        },
-        {
-         "id": "e:cap-04-reducir-el-ruido",
-         "tipo": "capitulo",
-         "etiqueta": "04 · Reducir el ruido",
-         "href": "./data-storytelling.html#c04",
-         "familia": "manual"
-        },
-        {
-         "id": "e:cap-05-dirigir-la-atencion",
-         "tipo": "capitulo",
-         "etiqueta": "05 · Dirigir la atención",
-         "href": "./data-storytelling.html#c05",
-         "familia": "manual"
-        },
-        {
-         "id": "e:cap-06-elegir-el-visual",
-         "tipo": "capitulo",
-         "etiqueta": "06 · Elegir el visual",
-         "href": "./data-storytelling.html#c06",
-         "familia": "manual"
-        },
-        {
-         "id": "e:cap-07-componer-como-disenador",
-         "tipo": "capitulo",
-         "etiqueta": "07 · Componer como diseñador",
-         "href": "./data-storytelling.html#c07",
-         "familia": "manual"
-        },
-        {
-         "id": "e:cap-08-el-texto",
-         "tipo": "capitulo",
-         "etiqueta": "08 · El texto",
-         "href": "./data-storytelling.html#c08",
-         "familia": "manual"
-        },
-        {
-         "id": "e:cap-09-construir-la-historia",
-         "tipo": "capitulo",
-         "etiqueta": "09 · Construir la historia",
-         "href": "./data-storytelling.html#c09",
-         "familia": "manual"
-        },
-        {
-         "id": "e:cap-10-juntar-las-piezas",
-         "tipo": "capitulo",
-         "etiqueta": "10 · Juntar las piezas",
-         "href": "./data-storytelling.html#c10",
-         "familia": "manual"
-        }
-       ]
-      }
-     ],
-     "familia": "manual"
-    },
-    {
      "id": "p:descargas",
      "tipo": "pagina",
      "etiqueta": "Laboratorio",
@@ -978,6 +884,171 @@ export default {
      "href": "./descargas.html",
      "archivo": "descargas.html",
      "hijos": [
+      {
+       "id": "g:descargas.html:manuales",
+       "tipo": "grupo",
+       "etiqueta": "manuales/",
+       "hijos": [
+        {
+         "id": "p:data-storytelling",
+         "tipo": "manual",
+         "etiqueta": "Data Storytelling",
+         "nota": "Manual interactivo de Data Storytelling y diseño de dashboards: percepción, ruido, atención, visuales, composición y narrativa, sobre un dashboard vivo.",
+         "href": "./data-storytelling.html",
+         "archivo": "data-storytelling.html",
+         "hijos": [
+          {
+           "id": "g:data-storytelling.html:capitulos-del-manual",
+           "tipo": "grupo",
+           "etiqueta": "capítulos del manual/",
+           "hijos": [
+            {
+             "id": "e:cap-01-fundamentos",
+             "tipo": "capitulo",
+             "etiqueta": "01 · Fundamentos",
+             "href": "./data-storytelling.html#c01",
+             "familia": "manual"
+            },
+            {
+             "id": "e:cap-02-contexto",
+             "tipo": "capitulo",
+             "etiqueta": "02 · Contexto",
+             "href": "./data-storytelling.html#c02",
+             "familia": "manual"
+            },
+            {
+             "id": "e:cap-03-percepcion",
+             "tipo": "capitulo",
+             "etiqueta": "03 · Percepción",
+             "href": "./data-storytelling.html#c03",
+             "familia": "manual"
+            },
+            {
+             "id": "e:cap-04-reducir-el-ruido",
+             "tipo": "capitulo",
+             "etiqueta": "04 · Reducir el ruido",
+             "href": "./data-storytelling.html#c04",
+             "familia": "manual"
+            },
+            {
+             "id": "e:cap-05-dirigir-la-atencion",
+             "tipo": "capitulo",
+             "etiqueta": "05 · Dirigir la atención",
+             "href": "./data-storytelling.html#c05",
+             "familia": "manual"
+            },
+            {
+             "id": "e:cap-06-elegir-el-visual",
+             "tipo": "capitulo",
+             "etiqueta": "06 · Elegir el visual",
+             "href": "./data-storytelling.html#c06",
+             "familia": "manual"
+            },
+            {
+             "id": "e:cap-07-componer-como-disenador",
+             "tipo": "capitulo",
+             "etiqueta": "07 · Componer como diseñador",
+             "href": "./data-storytelling.html#c07",
+             "familia": "manual"
+            },
+            {
+             "id": "e:cap-08-el-texto",
+             "tipo": "capitulo",
+             "etiqueta": "08 · El texto",
+             "href": "./data-storytelling.html#c08",
+             "familia": "manual"
+            },
+            {
+             "id": "e:cap-09-construir-la-historia",
+             "tipo": "capitulo",
+             "etiqueta": "09 · Construir la historia",
+             "href": "./data-storytelling.html#c09",
+             "familia": "manual"
+            },
+            {
+             "id": "e:cap-10-juntar-las-piezas",
+             "tipo": "capitulo",
+             "etiqueta": "10 · Juntar las piezas",
+             "href": "./data-storytelling.html#c10",
+             "familia": "manual"
+            }
+           ]
+          },
+          {
+           "id": "g:data-storytelling.html:proyectos-que-muestra",
+           "tipo": "grupo",
+           "etiqueta": "proyectos que muestra/",
+           "hijos": [
+            {
+             "id": "r:data-storytelling.html:e:app-pbi-mockup-creator",
+             "tipo": "app",
+             "etiqueta": "PBI Mockup Creator",
+             "href": "https://borjamome.github.io/powerbi-mockup/",
+             "externo": true,
+             "ref": "e:app-pbi-mockup-creator",
+             "familia": "app"
+            },
+            {
+             "id": "r:data-storytelling.html:e:post-no-estas-filtrando-datos-estas-eligiendo-que-historia-quieres-ver",
+             "tipo": "post",
+             "etiqueta": "No estás filtrando datos. Estás eligiendo qué historia quieres ver.",
+             "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7440740082766086144-4VZm",
+             "externo": true,
+             "ref": "e:post-no-estas-filtrando-datos-estas-eligiendo-que-historia-quieres-ver",
+             "familia": "post"
+            },
+            {
+             "id": "r:data-storytelling.html:e:post-el-futuro-de-los-dashboards-no-son-mas-graficos-son-mejores-interacc",
+             "tipo": "post",
+             "etiqueta": "El futuro de los dashboards no son más gráficos, son mejores interacc…",
+             "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7442540385882554368-y4go",
+             "externo": true,
+             "ref": "e:post-el-futuro-de-los-dashboards-no-son-mas-graficos-son-mejores-interacc",
+             "familia": "post"
+            },
+            {
+             "id": "r:data-storytelling.html:e:post-producto-a-producto-como-los-datos-cuentan-historias",
+             "tipo": "post",
+             "etiqueta": "Producto a producto: cómo los datos cuentan historias.",
+             "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7404201819641597954-wwos",
+             "externo": true,
+             "ref": "e:post-producto-a-producto-como-los-datos-cuentan-historias",
+             "familia": "post"
+            },
+            {
+             "id": "r:data-storytelling.html:e:post-si-tienes-que-reconstruir-la-historia-en-tu-cabeza-el-dashboard-fall",
+             "tipo": "post",
+             "etiqueta": "Si tienes que reconstruir la historia en tu cabeza, el dashboard fall…",
+             "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7439647400132116480-1PFW",
+             "externo": true,
+             "ref": "e:post-si-tienes-que-reconstruir-la-historia-en-tu-cabeza-el-dashboard-fall",
+             "familia": "post"
+            },
+            {
+             "id": "r:data-storytelling.html:e:post-un-grafico-puede-ser-correcto-y-aun-asi-enganar",
+             "tipo": "post",
+             "etiqueta": "Un gráfico puede ser correcto y aun así engañar.",
+             "href": "https://www.linkedin.com/posts/borjamoramendez_powerbi-dax-dataviz-activity-7437118505080020992-m7Em",
+             "externo": true,
+             "ref": "e:post-un-grafico-puede-ser-correcto-y-aun-asi-enganar",
+             "familia": "post"
+            },
+            {
+             "id": "r:data-storytelling.html:e:post-variaciones-entre-columnas-al-alcance-de-un-vistazo",
+             "tipo": "post",
+             "etiqueta": "Variaciones entre columnas al alcance de un vistazo.",
+             "href": "https://www.linkedin.com/feed/update/urn:li:activity:7376214576889098240/",
+             "externo": true,
+             "ref": "e:post-variaciones-entre-columnas-al-alcance-de-un-vistazo",
+             "familia": "post"
+            }
+           ]
+          }
+         ],
+         "familia": "manual"
+        }
+       ]
+      },
       {
        "id": "g:descargas.html:herramientas-externas",
        "tipo": "grupo",
@@ -994,9 +1065,9 @@ export default {
        ]
       },
       {
-       "id": "g:descargas.html:archivos-pbix-gestion",
+       "id": "g:descargas.html:archivos-pbix",
        "tipo": "grupo",
-       "etiqueta": "archivos .pbix · gestión/",
+       "etiqueta": "archivos .pbix/",
        "hijos": [
         {
          "id": "e:lab-gantt-nativo-de-power-bi",
@@ -1007,7 +1078,8 @@ export default {
          "tec": [
           "Gantt",
           "DAX",
-          "Tooltips HTML"
+          "Tooltips HTML",
+          "gestión"
          ],
          "familia": "lab"
         },
@@ -1020,7 +1092,8 @@ export default {
          "tec": [
           "Top N dinámico",
           "Budget",
-          "DAX narrativo"
+          "DAX narrativo",
+          "gestión"
          ],
          "familia": "lab"
         },
@@ -1033,17 +1106,11 @@ export default {
          "tec": [
           "Top N dinámico",
           "Budget",
-          "DAX narrativo"
+          "DAX narrativo",
+          "gestión"
          ],
          "familia": "lab"
-        }
-       ]
-      },
-      {
-       "id": "g:descargas.html:archivos-pbix-ventas",
-       "tipo": "grupo",
-       "etiqueta": "archivos .pbix · ventas/",
-       "hijos": [
+        },
         {
          "id": "e:lab-comparador-de-periodos",
          "tipo": "lab",
@@ -1053,7 +1120,8 @@ export default {
          "tec": [
           "Variación %",
           "Comparación temporal",
-          "DAX"
+          "DAX",
+          "ventas"
          ],
          "familia": "lab"
         },
@@ -1066,7 +1134,8 @@ export default {
          "tec": [
           "Financiero",
           "Segmentador",
-          "Calendario"
+          "Calendario",
+          "ventas"
          ],
          "familia": "lab"
         },
@@ -1079,7 +1148,8 @@ export default {
          "tec": [
           "Resaltado",
           "Contexto",
-          "TopN"
+          "TopN",
+          "ventas"
          ],
          "familia": "lab"
         },
@@ -1092,7 +1162,8 @@ export default {
          "tec": [
           "Variación %",
           "Ventas",
-          "Anomalías"
+          "Anomalías",
+          "ventas"
          ],
          "familia": "lab"
         },
@@ -1105,7 +1176,8 @@ export default {
          "tec": [
           "Objetivo dinámico",
           "Cumplimiento",
-          "KPI financiero"
+          "KPI financiero",
+          "ventas"
          ],
          "familia": "lab"
         },
@@ -1118,30 +1190,11 @@ export default {
          "tec": [
           "Small multiples",
           "Promedio dinámico",
-          "Productos"
+          "Productos",
+          "ventas"
          ],
          "familia": "lab"
         },
-        {
-         "id": "e:lab-dashboard-de-alertas-comerciales",
-         "tipo": "lab",
-         "etiqueta": "Dashboard de alertas comerciales",
-         "href": "https://drive.google.com/drive/folders/1P-LXTowY4CFvLdhBCAut2Qgxsuw-bE6D?usp=drive_link",
-         "externo": true,
-         "tec": [
-          "Alertas",
-          "Cumplimiento",
-          "Comercial"
-         ],
-         "familia": "lab"
-        }
-       ]
-      },
-      {
-       "id": "g:descargas.html:archivos-pbix-storytelling",
-       "tipo": "grupo",
-       "etiqueta": "archivos .pbix · storytelling/",
-       "hijos": [
         {
          "id": "e:lab-comparativa-entre-productos",
          "tipo": "lab",
@@ -1151,7 +1204,8 @@ export default {
          "tec": [
           "Comparativa",
           "Zoom trimestral",
-          "Narrativa"
+          "Narrativa",
+          "storytelling"
          ],
          "familia": "lab"
         },
@@ -1164,7 +1218,22 @@ export default {
          "tec": [
           "Tooltips dinámicos",
           "Parámetros",
-          "Narrativa"
+          "Narrativa",
+          "storytelling"
+         ],
+         "familia": "lab"
+        },
+        {
+         "id": "e:lab-dashboard-de-alertas-comerciales",
+         "tipo": "lab",
+         "etiqueta": "Dashboard de alertas comerciales",
+         "href": "https://drive.google.com/drive/folders/1P-LXTowY4CFvLdhBCAut2Qgxsuw-bE6D?usp=drive_link",
+         "externo": true,
+         "tec": [
+          "Alertas",
+          "Cumplimiento",
+          "Comercial",
+          "ventas"
          ],
          "familia": "lab"
         },
@@ -1177,7 +1246,8 @@ export default {
          "tec": [
           "Periodos dinámicos",
           "Variación",
-          "Contexto"
+          "Contexto",
+          "storytelling"
          ],
          "familia": "lab"
         },
@@ -1190,7 +1260,8 @@ export default {
          "tec": [
           "TopN",
           "RANKX",
-          "Reducción de ruido"
+          "Reducción de ruido",
+          "storytelling"
          ],
          "familia": "lab"
         },
@@ -1203,17 +1274,11 @@ export default {
          "tec": [
           "Outliers",
           "Doble escala",
-          "DAX"
+          "DAX",
+          "storytelling"
          ],
          "familia": "lab"
-        }
-       ]
-      },
-      {
-       "id": "g:descargas.html:archivos-pbix-slicers",
-       "tipo": "grupo",
-       "etiqueta": "archivos .pbix · slicers/",
-       "hijos": [
+        },
         {
          "id": "e:lab-slope-chart-con-small-multiples",
          "tipo": "lab",
@@ -1223,7 +1288,8 @@ export default {
          "tec": [
           "Slope chart",
           "Small multiples",
-          "DAX"
+          "DAX",
+          "slicers"
          ],
          "familia": "lab"
         },
@@ -1236,7 +1302,8 @@ export default {
          "tec": [
           "Top N dinámico",
           "Títulos dinámicos",
-          "Input Slicer"
+          "Input Slicer",
+          "slicers"
          ],
          "familia": "lab"
         },
@@ -1249,7 +1316,8 @@ export default {
          "tec": [
           "Input Slicer",
           "KPI dinámico",
-          "DAX"
+          "DAX",
+          "slicers"
          ],
          "familia": "lab"
         },
@@ -1262,17 +1330,11 @@ export default {
          "tec": [
           "Input Slicer",
           "Formato condicional",
-          "Contexto"
+          "Contexto",
+          "slicers"
          ],
          "familia": "lab"
-        }
-       ]
-      },
-      {
-       "id": "g:descargas.html:posts-de-linkedin-de-cada-archivo",
-       "tipo": "grupo",
-       "etiqueta": "posts de LinkedIn de cada archivo/",
-       "hijos": [
+        },
         {
          "id": "e:post-gantt-nativo-de-power-bi-post",
          "tipo": "post",
@@ -2325,14 +2387,6 @@ export default {
    ]
   },
   {
-   "de": "e:k-means-segmentacion-ideologica-de-votantes",
-   "a": "z:gh:data-analytics-portfolio",
-   "tipo": "aloja",
-   "detalle": [
-    "03-Machine-Learning/02-no-supervisado/clustering/kmeans/03-segmentacion-politica"
-   ]
-  },
-  {
    "de": "e:lab-beneficio-vs-objetivo",
    "a": "z:drive",
    "tipo": "aloja",
@@ -2595,22 +2649,6 @@ export default {
    ]
   },
   {
-   "de": "e:sarima-retail-prediccion-de-demanda-semanal",
-   "a": "z:gh:data-analytics-portfolio",
-   "tipo": "aloja",
-   "detalle": [
-    "03-Machine-Learning/04-series-temporales/arima/01-caso-retail"
-   ]
-  },
-  {
-   "de": "e:xgboost-prediccion-de-satisfaccion-en-gimnasio",
-   "a": "z:gh:data-analytics-portfolio",
-   "tipo": "aloja",
-   "detalle": [
-    "03-Machine-Learning/01-supervisado/clasificacion/03-xgboost"
-   ]
-  },
-  {
    "de": "f:calendario-sync",
    "a": "d:area-privada",
    "tipo": "usa",
@@ -2827,48 +2865,6 @@ export default {
   },
   {
    "de": "p:data-storytelling",
-   "a": "e:app-pbi-mockup-creator",
-   "tipo": "muestra",
-   "detalle": []
-  },
-  {
-   "de": "p:data-storytelling",
-   "a": "e:post-el-futuro-de-los-dashboards-no-son-mas-graficos-son-mejores-interacc",
-   "tipo": "muestra",
-   "detalle": []
-  },
-  {
-   "de": "p:data-storytelling",
-   "a": "e:post-no-estas-filtrando-datos-estas-eligiendo-que-historia-quieres-ver",
-   "tipo": "muestra",
-   "detalle": []
-  },
-  {
-   "de": "p:data-storytelling",
-   "a": "e:post-producto-a-producto-como-los-datos-cuentan-historias",
-   "tipo": "muestra",
-   "detalle": []
-  },
-  {
-   "de": "p:data-storytelling",
-   "a": "e:post-si-tienes-que-reconstruir-la-historia-en-tu-cabeza-el-dashboard-fall",
-   "tipo": "muestra",
-   "detalle": []
-  },
-  {
-   "de": "p:data-storytelling",
-   "a": "e:post-un-grafico-puede-ser-correcto-y-aun-asi-enganar",
-   "tipo": "muestra",
-   "detalle": []
-  },
-  {
-   "de": "p:data-storytelling",
-   "a": "e:post-variaciones-entre-columnas-al-alcance-de-un-vistazo",
-   "tipo": "muestra",
-   "detalle": []
-  },
-  {
-   "de": "p:data-storytelling",
    "a": "p:power-bi",
    "tipo": "enlaza",
    "detalle": []
@@ -2876,12 +2872,6 @@ export default {
   {
    "de": "p:descargas",
    "a": "col:privada",
-   "tipo": "enlaza",
-   "detalle": []
-  },
-  {
-   "de": "p:descargas",
-   "a": "p:data-storytelling",
    "tipo": "enlaza",
    "detalle": []
   },
@@ -2901,30 +2891,6 @@ export default {
   },
   {
    "de": "p:index",
-   "a": "e:app-k-means-t-sne-retail",
-   "tipo": "muestra",
-   "detalle": []
-  },
-  {
-   "de": "p:index",
-   "a": "e:app-pbi-mockup-creator",
-   "tipo": "muestra",
-   "detalle": []
-  },
-  {
-   "de": "p:index",
-   "a": "e:app-sarima-vs-sarimax-retail",
-   "tipo": "muestra",
-   "detalle": []
-  },
-  {
-   "de": "p:index",
-   "a": "e:app-segmentacion-aerolinea",
-   "tipo": "muestra",
-   "detalle": []
-  },
-  {
-   "de": "p:index",
    "a": "p:analisis-datos",
    "tipo": "enlaza",
    "detalle": []
@@ -2938,19 +2904,13 @@ export default {
   {
    "de": "p:index",
    "a": "p:ibcs-ventas",
-   "tipo": "muestra",
+   "tipo": "enlaza",
    "detalle": []
   },
   {
    "de": "p:index",
    "a": "p:informe-financiero",
-   "tipo": "muestra",
-   "detalle": []
-  },
-  {
-   "de": "p:index",
-   "a": "p:kosta-calida",
-   "tipo": "muestra",
+   "tipo": "enlaza",
    "detalle": []
   },
   {
@@ -2962,7 +2922,7 @@ export default {
   {
    "de": "p:index",
    "a": "p:rfm-hosteleria",
-   "tipo": "muestra",
+   "tipo": "enlaza",
    "detalle": []
   },
   {
@@ -2998,12 +2958,6 @@ export default {
    "detalle": [
     "informe publicado"
    ]
-  },
-  {
-   "de": "p:ml",
-   "a": "z:gh:data-analytics-portfolio",
-   "tipo": "enlaza",
-   "detalle": []
   },
   {
    "de": "p:perdidas-ganancias",
@@ -3064,6 +3018,96 @@ export default {
    "detalle": [
     "informe publicado"
    ]
+  },
+  {
+   "de": "r:data-storytelling.html:e:app-pbi-mockup-creator",
+   "a": "e:app-pbi-mockup-creator",
+   "tipo": "igual",
+   "detalle": []
+  },
+  {
+   "de": "r:data-storytelling.html:e:post-el-futuro-de-los-dashboards-no-son-mas-graficos-son-mejores-interacc",
+   "a": "e:post-el-futuro-de-los-dashboards-no-son-mas-graficos-son-mejores-interacc",
+   "tipo": "igual",
+   "detalle": []
+  },
+  {
+   "de": "r:data-storytelling.html:e:post-no-estas-filtrando-datos-estas-eligiendo-que-historia-quieres-ver",
+   "a": "e:post-no-estas-filtrando-datos-estas-eligiendo-que-historia-quieres-ver",
+   "tipo": "igual",
+   "detalle": []
+  },
+  {
+   "de": "r:data-storytelling.html:e:post-producto-a-producto-como-los-datos-cuentan-historias",
+   "a": "e:post-producto-a-producto-como-los-datos-cuentan-historias",
+   "tipo": "igual",
+   "detalle": []
+  },
+  {
+   "de": "r:data-storytelling.html:e:post-si-tienes-que-reconstruir-la-historia-en-tu-cabeza-el-dashboard-fall",
+   "a": "e:post-si-tienes-que-reconstruir-la-historia-en-tu-cabeza-el-dashboard-fall",
+   "tipo": "igual",
+   "detalle": []
+  },
+  {
+   "de": "r:data-storytelling.html:e:post-un-grafico-puede-ser-correcto-y-aun-asi-enganar",
+   "a": "e:post-un-grafico-puede-ser-correcto-y-aun-asi-enganar",
+   "tipo": "igual",
+   "detalle": []
+  },
+  {
+   "de": "r:data-storytelling.html:e:post-variaciones-entre-columnas-al-alcance-de-un-vistazo",
+   "a": "e:post-variaciones-entre-columnas-al-alcance-de-un-vistazo",
+   "tipo": "igual",
+   "detalle": []
+  },
+  {
+   "de": "r:index.html:e:app-k-means-t-sne-retail",
+   "a": "e:app-k-means-t-sne-retail",
+   "tipo": "igual",
+   "detalle": []
+  },
+  {
+   "de": "r:index.html:e:app-pbi-mockup-creator",
+   "a": "e:app-pbi-mockup-creator",
+   "tipo": "igual",
+   "detalle": []
+  },
+  {
+   "de": "r:index.html:e:app-sarima-vs-sarimax-retail",
+   "a": "e:app-sarima-vs-sarimax-retail",
+   "tipo": "igual",
+   "detalle": []
+  },
+  {
+   "de": "r:index.html:e:app-segmentacion-aerolinea",
+   "a": "e:app-segmentacion-aerolinea",
+   "tipo": "igual",
+   "detalle": []
+  },
+  {
+   "de": "r:index.html:p:ibcs-ventas",
+   "a": "p:ibcs-ventas",
+   "tipo": "igual",
+   "detalle": []
+  },
+  {
+   "de": "r:index.html:p:informe-financiero",
+   "a": "p:informe-financiero",
+   "tipo": "igual",
+   "detalle": []
+  },
+  {
+   "de": "r:index.html:p:kosta-calida",
+   "a": "p:kosta-calida",
+   "tipo": "igual",
+   "detalle": []
+  },
+  {
+   "de": "r:index.html:p:rfm-hosteleria",
+   "a": "p:rfm-hosteleria",
+   "tipo": "igual",
+   "detalle": []
   },
   {
    "de": "t:archivos",
@@ -3387,7 +3431,7 @@ export default {
  ],
  "tipos": {
   "pagina": "Página",
-  "caso": "Caso de estudio",
+  "caso": "Dashboard",
   "manual": "Manual",
   "app": "App interactiva",
   "proyecto": "Proyecto de código",
@@ -3458,6 +3502,10 @@ export default {
   "ejecuta": {
    "verbo": "ejecuta",
    "debil": true
+  },
+  "igual": {
+   "verbo": "es el mismo que",
+   "debil": true
   }
  },
  "familias": {
@@ -3467,7 +3515,7 @@ export default {
    "forma": "cuadrado"
   },
   "caso": {
-   "nombre": "Caso de estudio",
+   "nombre": "Dashboard",
    "color": "#1D6FD8",
    "forma": "circulo"
   },
@@ -3530,6 +3578,36 @@ export default {
    "nombre": "Perfil profesional",
    "color": "#8B5A2B",
    "forma": "circulo"
+  }
+ },
+ "secciones": {
+  "p:index": {
+   "color": "#273A5F",
+   "tinta": "#273A5F"
+  },
+  "p:sobre-mi": {
+   "color": "#0F8B6D",
+   "tinta": "#0B6E55"
+  },
+  "p:power-bi": {
+   "color": "#1D6FD8",
+   "tinta": "#1558B0"
+  },
+  "p:analisis-datos": {
+   "color": "#7048E8",
+   "tinta": "#5B34C9"
+  },
+  "p:visualizacion-datos": {
+   "color": "#D6336C",
+   "tinta": "#B0204F"
+  },
+  "p:descargas": {
+   "color": "#A06A00",
+   "tinta": "#7D5200"
+  },
+  "p:privacidad": {
+   "color": "#586278",
+   "tinta": "#586278"
   }
  }
 };
