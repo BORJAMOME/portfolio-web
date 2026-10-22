@@ -1,27 +1,183 @@
 {
   "columnas": {
-    "web":          { "titulo": "Portfolio web",      "nota": "lo que ve cualquier visitante" },
-    "privada":      { "titulo": "Área privada",       "nota": "con contraseña real (Supabase Auth)" },
-    "datos":        { "titulo": "Datos y servicios",  "nota": "tablas y funciones en Supabase" },
-    "herramientas": { "titulo": "Herramientas",       "nota": "generan y comprueban el sitio" }
+    "web": {
+      "titulo": "Portfolio web",
+      "nota": "páginas y proyectos que enseñan"
+    },
+    "vive": {
+      "titulo": "Dónde vive",
+      "nota": "plataformas y repositorios"
+    },
+    "privada": {
+      "titulo": "Área privada",
+      "nota": "con contraseña real (Supabase Auth)"
+    },
+    "datos": {
+      "titulo": "Datos y servicios",
+      "nota": "tablas y funciones en Supabase"
+    },
+    "herramientas": {
+      "titulo": "Herramientas",
+      "nota": "generan y comprueban el sitio"
+    }
   },
-
   "web": {
-    "excluir": ["404.html", "area-privada.html", "proyectos.html"],
-    "ignorarCarpetas": ["node_modules", "en", "vendor", "img", "css", "i18n", "second-brain", "supabase", "tools", "ds", "mapa"],
-    "etiquetas": { "index.html": "Inicio", "descargas.html": "Laboratorio", "dashboard/casa-origen": "Dashboard Casa Origen" },
-    "grupos": [
-      { "id": "perfil",      "etiqueta": "perfil/",      "nota": "entrada y datos legales", "paginas": ["index.html", "sobre-mi.html", "privacidad.html"] },
-      { "id": "tematicas",   "etiqueta": "temas/",       "nota": "páginas por área de trabajo", "paginas": ["analisis-datos.html", "power-bi.html", "visualizacion-datos.html", "data-storytelling.html"] },
-      { "id": "casos",       "etiqueta": "casos/",       "nota": "plantilla común case.js", "usaScript": "case.js" },
-      { "id": "manuales",    "etiqueta": "manuales/",    "nota": "cada manual con su propio sistema", "carpetas": ["ml", "pbi"] },
-      { "id": "laboratorio", "etiqueta": "laboratorio/", "nota": "enlaza con el área privada", "paginas": ["descargas.html"], "carpetas": ["roma-aeterna", "dashboard/casa-origen"] }
+    "excluir": [
+      "404.html",
+      "area-privada.html",
+      "proyectos.html"
     ],
-    "ingles": { "etiqueta": "en/", "nota": "versión inglesa generada, no se edita" }
+    "ignorarCarpetas": [
+      "node_modules",
+      "en",
+      "vendor",
+      "img",
+      "css",
+      "i18n",
+      "second-brain",
+      "supabase",
+      "tools",
+      "ds",
+      "mapa"
+    ],
+    "etiquetas": {
+      "index.html": "Inicio",
+      "descargas.html": "Laboratorio",
+      "dashboard/casa-origen": "Dashboard Casa Origen",
+      "roma-aeterna": "Roma Aeterna (Caesar III)",
+      "data-storytelling.html": "Data Storytelling"
+    },
+    "tipos": {
+      "data-storytelling.html": "manual",
+      "ml": "manual",
+      "pbi": "manual",
+      "roma-aeterna": "app",
+      "dashboard/casa-origen": "app"
+    },
+    "raiz": [
+      "index.html",
+      "sobre-mi.html",
+      "power-bi.html",
+      "analisis-datos.html",
+      "visualizacion-datos.html",
+      "data-storytelling.html",
+      "descargas.html",
+      "privacidad.html"
+    ],
+    "prioridad": [
+      "power-bi.html",
+      "analisis-datos.html",
+      "visualizacion-datos.html",
+      "descargas.html",
+      "data-storytelling.html",
+      "sobre-mi.html",
+      "index.html",
+      "privacidad.html"
+    ],
+    "grupos": {
+      "app": "Machine Learning · apps de Streamlit",
+      "proyecto": "proyectos de código",
+      "visual": "visualizaciones (Behance)",
+      "grafico": "gráficos nativos",
+      "post": "comunidad (LinkedIn)",
+      "lab": "archivos .pbix",
+      "herramienta": "herramientas externas",
+      "ml": "Machine Learning · código"
+    },
+    "etiquetasLab": {
+      "gestion": "gestión",
+      "ventas": "ventas",
+      "storytelling": "storytelling",
+      "slicer": "slicers"
+    },
+    "plataformas": [
+      {
+        "id": "github",
+        "etiqueta": "GitHub",
+        "dominios": [
+          "github.com"
+        ]
+      },
+      {
+        "id": "streamlit",
+        "etiqueta": "Streamlit Cloud",
+        "dominios": [
+          "streamlit.app"
+        ]
+      },
+      {
+        "id": "powerbi",
+        "etiqueta": "Power BI Service",
+        "dominios": [
+          "powerbi.com"
+        ]
+      },
+      {
+        "id": "behance",
+        "etiqueta": "Behance",
+        "dominios": [
+          "behance.net"
+        ]
+      },
+      {
+        "id": "linkedin",
+        "etiqueta": "LinkedIn",
+        "dominios": [
+          "linkedin.com"
+        ]
+      },
+      {
+        "id": "drive",
+        "etiqueta": "Google Drive",
+        "dominios": [
+          "drive.google.com"
+        ]
+      },
+      {
+        "id": "ghpages",
+        "etiqueta": "GitHub Pages",
+        "dominios": [
+          "borjamome.github.io"
+        ]
+      }
+    ],
+    "ignorarDominios": [
+      "calendly.com",
+      "tally.so",
+      "fonts.googleapis.com",
+      "fonts.gstatic.com",
+      "docs.github.com",
+      "policies.google.com",
+      "aepd.es",
+      "neoland.es",
+      "namasdata.com",
+      "msmk.university",
+      "borjamora.es",
+      "gog.com",
+      "store.steampowered.com",
+      "constexpr.org",
+      "behance.net/borjamm2"
+    ],
+    "ingles": {
+      "etiqueta": "en/",
+      "nota": "versión inglesa generada, no se edita"
+    },
+    "huerfanas": {
+      "etiqueta": "sin enlaces desde el sitio/",
+      "nota": "ninguna página las enlaza"
+    },
+    "chrome": [
+      "privacidad.html"
+    ],
+    "etiquetasUrl": {
+      "borjamome.github.io/powerbi-mockup": "PBI Mockup Creator"
+    }
   },
-
   "privada": {
-    "etiquetas": { "kanban": "Centro de trabajo", "preparacion": "Preparación" },
+    "etiquetas": {
+      "kanban": "Centro de trabajo",
+      "preparacion": "Preparación"
+    },
     "notas": {
       "hoy": "agenda y seguimiento",
       "studio": "proyectos, ideas y entregables",
@@ -37,40 +193,196 @@
       "preparacion": "briefings automáticos"
     },
     "extras": [
-      { "tab": "second-brain", "id": "visor", "etiqueta": "Visor 3D", "ruta": "second-brain/" }
+      {
+        "tab": "second-brain",
+        "id": "visor",
+        "etiqueta": "Visor 3D",
+        "ruta": "second-brain/"
+      }
     ]
   },
-
   "datos": {
-    "ignorarSql": ["rollback", "keepalive"],
+    "ignorarSql": [
+      "rollback",
+      "keepalive"
+    ],
     "notaFunciones": "se ejecutan en Supabase, no en el navegador",
     "etiquetaFunciones": "functions/"
   },
-
   "herramientas": {
-    "excluir": ["fixtures", "fondo.html"],
-    "grupos": [
-      { "id": "generadores",   "etiqueta": "generadores/",   "nota": "producen archivos del sitio", "patron": "^(build|version)-", "carpetas": ["mapa"] },
-      { "id": "comprobaciones", "etiqueta": "comprobaciones/", "nota": "fallan si algo se rompe", "patron": "^(check|test)-" },
-      { "id": "motores",       "etiqueta": "motores locales/", "nota": "corren en tu equipo, no en la web", "carpetas": ["second-brain", "gmail-procesos"] }
+    "excluir": [
+      "fixtures",
+      "fondo.html"
     ],
-    "workflows": { "etiqueta": "CI/", "nota": "GitHub Actions en cada PR" }
+    "grupos": [
+      {
+        "id": "generadores",
+        "etiqueta": "generadores/",
+        "nota": "producen archivos del sitio",
+        "patron": "^(build|version)-",
+        "carpetas": [
+          "mapa"
+        ]
+      },
+      {
+        "id": "comprobaciones",
+        "etiqueta": "comprobaciones/",
+        "nota": "fallan si algo se rompe",
+        "patron": "^(check|test)-"
+      },
+      {
+        "id": "motores",
+        "etiqueta": "motores locales/",
+        "nota": "corren en tu equipo, no en la web",
+        "carpetas": [
+          "second-brain",
+          "gmail-procesos"
+        ]
+      }
+    ],
+    "workflows": {
+      "etiqueta": "CI/",
+      "nota": "GitHub Actions en cada PR"
+    }
   },
-
   "tipos": {
-    "pagina": "Página", "carpeta": "Carpeta", "pestana": "Pestaña", "modulo": "Módulo", "tabla": "Tabla",
-    "esquema": "Esquema SQL", "funcion": "Edge Function", "herramienta": "Herramienta", "workflow": "Workflow",
-    "grupo": "Grupo", "columna": "Bloque"
+    "pagina": "Página",
+    "caso": "Caso de estudio",
+    "manual": "Manual",
+    "app": "App interactiva",
+    "proyecto": "Proyecto de código",
+    "visual": "Visualización",
+    "lab": "Archivo .pbix",
+    "grafico": "Gráfico nativo",
+    "post": "Post de LinkedIn",
+    "plataforma": "Plataforma",
+    "repo": "Repositorio",
+    "carpeta": "Carpeta",
+    "pestana": "Pestaña",
+    "modulo": "Módulo",
+    "tabla": "Tabla",
+    "esquema": "Esquema SQL",
+    "funcion": "Edge Function",
+    "herramienta": "Herramienta",
+    "workflow": "Workflow",
+    "grupo": "Grupo",
+    "columna": "Bloque"
   },
-
   "relaciones": {
-    "usa":      { "verbo": "usa",        "debil": true },
-    "compone":  { "verbo": "monta",      "debil": false },
-    "enlaza":   { "verbo": "enlaza a",   "debil": false },
-    "genera":   { "verbo": "genera",     "debil": false },
-    "alimenta": { "verbo": "alimenta a", "debil": false },
-    "lee":      { "verbo": "lee",        "debil": false },
-    "verifica": { "verbo": "comprueba",  "debil": true },
-    "ejecuta":  { "verbo": "ejecuta",    "debil": true }
+    "enlaza": {
+      "verbo": "enlaza a",
+      "debil": false
+    },
+    "muestra": {
+      "verbo": "enseña",
+      "debil": false
+    },
+    "compone": {
+      "verbo": "monta",
+      "debil": false
+    },
+    "genera": {
+      "verbo": "genera",
+      "debil": false
+    },
+    "alimenta": {
+      "verbo": "alimenta a",
+      "debil": false
+    },
+    "lee": {
+      "verbo": "lee",
+      "debil": false
+    },
+    "siguiente": {
+      "verbo": "sigue con",
+      "debil": true
+    },
+    "aloja": {
+      "verbo": "vive en",
+      "debil": true
+    },
+    "deriva": {
+      "verbo": "sale del caso",
+      "debil": true
+    },
+    "usa": {
+      "verbo": "usa",
+      "debil": true
+    },
+    "verifica": {
+      "verbo": "comprueba",
+      "debil": true
+    },
+    "ejecuta": {
+      "verbo": "ejecuta",
+      "debil": true
+    }
+  },
+  "familias": {
+    "pagina": {
+      "nombre": "Página del sitio",
+      "color": "#44546F",
+      "forma": "cuadrado"
+    },
+    "caso": {
+      "nombre": "Caso de estudio",
+      "color": "#1D6FD8",
+      "forma": "circulo"
+    },
+    "manual": {
+      "nombre": "Manual",
+      "color": "#0F8B6D",
+      "forma": "rombo"
+    },
+    "app": {
+      "nombre": "App interactiva",
+      "color": "#E8590C",
+      "forma": "triangulo"
+    },
+    "proyecto": {
+      "nombre": "Proyecto de código",
+      "color": "#7048E8",
+      "forma": "hexagono"
+    },
+    "visual": {
+      "nombre": "Visualización",
+      "color": "#D6336C",
+      "forma": "circulo"
+    },
+    "lab": {
+      "nombre": "Archivo .pbix",
+      "color": "#A06A00",
+      "forma": "cuadrado"
+    },
+    "grafico": {
+      "nombre": "Gráfico nativo",
+      "color": "#0B7285",
+      "forma": "triangulo"
+    },
+    "post": {
+      "nombre": "Post de LinkedIn",
+      "color": "#66801A",
+      "forma": "rombo"
+    },
+    "plataforma": {
+      "nombre": "Plataforma / repositorio",
+      "color": "#343A40",
+      "forma": "hexagono"
+    },
+    "privada": {
+      "nombre": "Área privada",
+      "color": "#3F51B5",
+      "forma": "circulo"
+    },
+    "dato": {
+      "nombre": "Datos y funciones",
+      "color": "#2B8A3E",
+      "forma": "cuadrado"
+    },
+    "herramienta": {
+      "nombre": "Herramienta y CI",
+      "color": "#6B7280",
+      "forma": "rombo"
+    }
   }
 }
