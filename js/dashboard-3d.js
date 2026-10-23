@@ -46,7 +46,7 @@
 
   function build() {
     var r = parseFloat(getComputedStyle(frame).borderTopLeftRadius) || 10;
-    var i, t, lay;
+    var i, t, g, lay;
 
     edge = el('df3d-edge');
     edge.setAttribute('aria-hidden', 'true');
@@ -60,7 +60,8 @@
       t = (i + 1) / LAYERS;
       lay = el('df3d-layer');
       lay.style.setProperty('--t', t.toFixed(3));
-      lay.style.background = 'rgba(' + Math.round(lerp(150, 232, t)) + ',' + Math.round(lerp(158, 236, t)) + ',' + Math.round(lerp(196, 252, t)) + ',' + lerp(.22, .17, t).toFixed(3) + ')';
+      g = Math.round(lerp(150, 236, t));   /* gris neutro: el canto no lleva tinte */
+      lay.style.background = 'rgba(' + g + ',' + g + ',' + g + ',' + lerp(.22, .17, t).toFixed(3) + ')';
       edge.appendChild(lay);
     }
     frame.insertBefore(edge, frame.firstChild);
