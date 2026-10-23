@@ -5,8 +5,18 @@
    Solo cambia la opacidad de los parches [data-lamp-dark] y de las capas
    [data-lamp-halo|glow|core]. Corre solo con el pie a la vista y no arranca
    con prefers-reduced-motion: la luz se queda encendida y quieta.
+   La luz espera a que cargue la imagen (lazy) para no verse sola sobre el negro.
    ═══════════════════════════════════════════════ */
 (function () {
+  [].forEach.call(document.querySelectorAll('[data-lamp-root] .foot-art'), function (art) {
+    var img = art.querySelector('.foot-art-img');
+    if (!img || img.complete) return;
+    art.classList.add('is-loading');
+    var ready = function () { art.classList.remove('is-loading'); };
+    img.addEventListener('load', ready, { once: true });
+    img.addEventListener('error', ready, { once: true });
+  });
+
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var roots = [].slice.call(document.querySelectorAll('[data-lamp-root]'));
   if (!roots.length) return;
