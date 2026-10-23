@@ -312,6 +312,8 @@
 .hero-right.df3d-on:not(.df3d-ready) .df3d-edge { visibility: hidden; }  /* hasta el primer fotograma del script */
 /* placa opaca con el mismo fondo del marco, por encima de las láminas y por debajo del contenido (ver dashboard-3d.js) */
 .df3d-plate { position: absolute; inset: 0; border-radius: inherit; background: inherit; pointer-events: none; }
+/* la placa es absoluta y taparía lo que no lo es: titlebar y body ya pintan encima por su filter; la cabecera no */
+.hero-right.df3d-on .df-header { position: relative; }
 .df3d-layer {
   position: absolute; inset: -.5px; border-radius: var(--r);
   transform: translate3d(calc(var(--ex, 10px) * var(--t)), calc(var(--ey, 12px) * var(--t)), calc(var(--t) * -14px - 1px));
