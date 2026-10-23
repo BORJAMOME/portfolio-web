@@ -278,6 +278,49 @@
   .dashboard-frame { filter: grayscale(1); }
   .dashboard-frame:hover { filter: grayscale(0); }
 }
+
+/* ─── DASHBOARD 3D (js/dashboard-3d.js) ───
+   Solo con .df3d-on, que el script pone en escritorio con hover real y sin prefers-reduced-motion:
+   en móvil o con movimiento reducido el marco queda como antes. El interior sigue plano. */
+.hero-right.df3d-on { perspective: 1500px; }
+.hero-right.df3d-on .dashboard-frame {
+  transform-style: preserve-3d;
+  will-change: transform;
+  overflow: visible;   /* overflow:hidden aplana el 3D: las esquinas redondeadas las llevan titlebar y body */
+  filter: none;        /* un filter también aplana: el gris del hover pasa a los hijos (abajo) */
+}
+.hero-right.df3d-on .df-titlebar { border-radius: 9.5px 9.5px 0 0; }
+.hero-right.df3d-on .df-body { border-radius: 0 0 9.5px 9.5px; }
+@media (hover: hover) and (pointer: fine) {
+  .hero-right.df3d-on .df-titlebar,
+  .hero-right.df3d-on .df-body { filter: grayscale(1); transition: filter .6s var(--ease), background .6s var(--ease); }
+  .hero-right.df3d-on .dashboard-frame:hover > .df-titlebar,
+  .hero-right.df3d-on .dashboard-frame:hover > .df-body { filter: grayscale(0); }
+}
+/* grosor de aluminio: láminas para las esquinas + cuatro caras (la luz viene de arriba a la izquierda) */
+.df3d-edge { position: absolute; inset: 0; transform-style: preserve-3d; pointer-events: none; }
+.df3d-layer { position: absolute; inset: -.5px; border-radius: var(--r); border: 1px solid rgba(90,90,160,.18); }
+.df3d-face { position: absolute; }
+.df3d-face--r { top: var(--r); bottom: var(--r); left: 100%; width: 20px; transform-origin: left center; transform: rotateY(90deg); background: linear-gradient(to right, #c4c4cc, #878793); }
+.df3d-face--l { top: var(--r); bottom: var(--r); right: 100%; width: 20px; transform-origin: right center; transform: rotateY(-90deg); background: linear-gradient(to left, #ececf0, #bcbcc5); }
+.df3d-face--t { left: var(--r); right: var(--r); bottom: 100%; height: 20px; transform-origin: center bottom; transform: rotateX(90deg); background: linear-gradient(to top, #fafafc, #cfcfd6); }
+.df3d-face--b { left: var(--r); right: var(--r); top: 100%; height: 20px; transform-origin: center top; transform: rotateX(-90deg); background: linear-gradient(to bottom, #acacb6, #74747f); }
+/* sombra proyectada: hermana del marco, centrada detrás; el script la mueve en sentido contrario a la inclinación */
+.df3d-shadow {
+  position: absolute; left: calc(min(640px, 110%) / 2); top: 50%;
+  width: 560px; height: 420px; margin: -210px 0 0 -280px;
+  background: rgba(50,50,140,.42); filter: blur(36px); border-radius: 24px;
+  pointer-events: none; will-change: transform, opacity;
+}
+@media (max-width: 1050px) { .df3d-shadow { left: 50%; } }
+/* brillo que sigue al cursor (--gx y --gy los pone el script) */
+.df3d-glare {
+  position: absolute; inset: 0; border-radius: 10px; pointer-events: none;
+  transform: translateZ(50px); mix-blend-mode: soft-light;
+  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 50%), rgba(255,255,255,.85), transparent 55%);
+  opacity: 0; transition: opacity .4s;
+}
+.df3d-glare.is-on { opacity: .95; }
 .df-dot { width: 9px; height: 9px; border-radius: 50%; }
 .df-omnibox {
   flex: 1 1 auto; min-width: 0;
