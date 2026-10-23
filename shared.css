@@ -378,6 +378,7 @@ footer {
   padding: 0;
 }
 .foot-inner {
+  position: relative; /* por encima de .foot-art */
   max-width: 1180px; margin: 0 auto;
   padding: 72px clamp(1.5rem,5vw,4rem) 32px;
 }
@@ -385,8 +386,38 @@ footer {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
   gap: 48px;
-  margin-bottom: 56px;
+  margin-bottom: 96px; /* deja ver la azotea bajo las columnas */
 }
+
+/* Azotea del pie: imagen detrás del contenido, anclada abajo a la derecha y fundida con el negro.
+   Solo se mueve la luz de la puerta (footer-lamp.js). Las posiciones de luz y parches son % del
+   encuadre de img/azotea.*: si cambia el recorte de la imagen, hay que recalcularlas. */
+footer[data-lamp-root] { position: relative; overflow: hidden; }
+.foot-art {
+  position: absolute; right: 0; bottom: 0; height: 100%;
+  aspect-ratio: 417 / 466; pointer-events: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 55%);
+          mask-image: linear-gradient(90deg, transparent 0, #000 55%);
+}
+.foot-art-fade {
+  position: absolute; inset: 0;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 38%);
+          mask-image: linear-gradient(180deg, transparent 0, #000 38%);
+}
+.foot-art-img, .foot-lamp-off img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  filter: grayscale(1) brightness(.85) contrast(1.1); /* monocromo */
+}
+/* parches de «luz apagada»: la misma imagen desplazada en X tapa la luz sin dejar sombra */
+.foot-lamp-off { position: absolute; inset: 0; overflow: hidden; opacity: 0; }
+.foot-lamp-off img { transform: translateX(var(--shift)); }
+.foot-lamp-halo, .foot-lamp-glow, .foot-lamp-core {
+  position: absolute; inset: 0; mix-blend-mode: screen; opacity: 1;
+}
+.foot-lamp-halo { background: radial-gradient(ellipse 36% 28% at 52% 62%, rgba(255,255,255,.13) 0, transparent 100%); }
+.foot-lamp-glow { background: radial-gradient(ellipse 16% 14% at 51.2% 58%, rgba(255,255,255,.30) 0, transparent 100%); }
+.foot-lamp-core { background: radial-gradient(ellipse 4.5% 5% at 50.8% 57.5%, rgba(255,255,255,.75) 0, transparent 100%); }
 .foot-col { display: flex; flex-direction: column; gap: 2px; }
 .foot-col--brand { gap: 10px; }
 .foot-brand-name {
@@ -440,17 +471,17 @@ footer {
 .foot-bottom {
   display: flex; justify-content: space-between; align-items: center;
   padding-top: 24px;
-  border-top: .5px solid rgba(255,255,255,.14);
+  border-top: .5px solid rgba(255,255,255,.22);
   flex-wrap: wrap; gap: 12px;
 }
 .foot-copy {
   font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
-  font-size: 11px; color: rgba(255,255,255,.55); letter-spacing: .3px;
+  font-size: 11px; color: rgba(255,255,255,.7); letter-spacing: .3px;
 }
 /* Enlaces legales del pie: privacidad y preferencias de cookies (consent.js) */
 .foot-legal-wrap { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 18px; }
 .foot-legal { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 4px 16px; font-size: 11px; letter-spacing: .3px; }
-.foot-bottom .foot-legal { font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; color: rgba(255,255,255,.72); }
+.foot-bottom .foot-legal { font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; color: rgba(255,255,255,.8); }
 .foot-legal a, .foot-legal button {
   color: inherit; font: inherit; letter-spacing: inherit;
   background: none; border: 0; padding: 4px 0; min-height: 24px; cursor: pointer;
@@ -464,7 +495,7 @@ footer {
 .foot-made {
   display: flex; align-items: center; gap: 8px;
   font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
-  font-size: 11px; color: rgba(255,255,255,.55); letter-spacing: .3px; flex-wrap: wrap;
+  font-size: 11px; color: rgba(255,255,255,.7); letter-spacing: .3px; flex-wrap: wrap;
 }
 .foot-tech {
   font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; font-size: 11px;
@@ -502,6 +533,24 @@ footer {
   .foot-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
   .foot-col--brand { grid-column: 1 / -1; margin-bottom: 8px; }
   .foot-bottom { flex-direction: column; align-items: flex-start; }
+}
+/* la azotea pasa a ancho completo, debajo de los enlaces. Mismo corte que la rejilla a 2 columnas:
+   con el pie más alto, la imagen al 100 % de altura taparía los enlaces */
+@media (max-width: 900px) {
+  .foot-art {
+    left: auto; right: 0; height: auto; width: min(100%, 480px); /* en tablet no crece hasta tapar las columnas */
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 40%);
+            mask-image: linear-gradient(180deg, transparent 0, #000 40%);
+  }
+  .foot-art-fade {
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 35%);
+            mask-image: linear-gradient(90deg, transparent 0, #000 35%);
+    opacity: .8;
+  }
+  .foot-grid { margin-bottom: 200px; }
+}
+@media (max-width: 480px) {
+  .foot-art-fade { -webkit-mask-image: none; mask-image: none; } /* ya ocupa todo el ancho: sin borde que fundir */
 }
 @media (max-width: 520px) {
   .foot-grid { grid-template-columns: 1fr 1fr; gap: 28px 20px; }
