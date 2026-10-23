@@ -17,20 +17,28 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./shared.css?v=b29bff2615">
+<link rel="stylesheet" href="./shared.css?v=7f31d1e0dd">
 <!-- Pestañas con archivo propio: area-privada.js las inyecta al abrirlas; el navegador las precarga en reposo -->
-<link rel="prefetch" as="script" href="./area-privada-hoy.js?v=f9f91c0959" data-ap-module="hoy">
-<link rel="prefetch" as="script" href="./area-privada-calendario.js?v=13a6656687" data-ap-module="calendario">
-<link rel="prefetch" as="script" href="./area-privada-entrevistas.js?v=8e55f71ff9" data-ap-module="entrevistas">
-<link rel="prefetch" as="script" href="./area-privada-preparacion.js?v=ea01c4a2df" data-ap-module="preparacion">
-<link rel="prefetch" as="script" href="./area-privada-portfolio.js?v=ad511c6f8d" data-ap-module="portfolio">
-<link rel="prefetch" as="script" href="./area-privada-configuracion.js?v=03ec6282cb" data-ap-module="configuracion">
-<link rel="prefetch" as="script" href="./area-privada-second-brain.js?v=3b55d758b5" data-ap-module="second-brain">
-<link rel="prefetch" as="script" href="./second-brain/contract.js?v=a0cb9b53f4" data-ap-asset="sb-contract">
-<link rel="prefetch" as="script" href="./second-brain/viewer.js?v=4965408d67" data-ap-asset="sb-viewer">
-<link rel="prefetch" as="script" href="./area-privada-fichero.js?v=093b424f7e" data-ap-module="fichero">
-<link rel="stylesheet" href="./css/second-brain.css?v=fb74f24b68">
-<link rel="stylesheet" href="./css/area-privada.css?v=a7538e45c6">
+<link rel="prefetch" as="script" href="./area-privada-hoy.js?v=4950d5f1b7" data-ap-module="hoy">
+<link rel="prefetch" as="script" href="./area-privada-studio.js?v=a88c21e6b6" data-ap-module="studio">
+<link rel="prefetch" as="script" href="./area-privada-kanban.js?v=ab3301bf21" data-ap-module="kanban">
+<link rel="prefetch" as="script" href="./area-privada-calendario.js?v=2e9cb28a18" data-ap-module="calendario">
+<link rel="prefetch" as="script" href="./area-privada-entrevistas.js?v=bdaabb17fe" data-ap-module="entrevistas">
+<link rel="prefetch" as="script" href="./area-privada-preparacion.js?v=e043ec3be5" data-ap-module="preparacion">
+<link rel="prefetch" as="script" href="./area-privada-portfolio.js?v=d76394854f" data-ap-module="portfolio">
+<link rel="prefetch" as="script" href="./area-privada-configuracion.js?v=593345fdf0" data-ap-module="configuracion">
+<link rel="prefetch" as="script" href="./area-privada-second-brain.js?v=a06ab230d4" data-ap-module="second-brain">
+<link rel="prefetch" as="script" href="./second-brain/contract.js?v=987b693f81" data-ap-asset="sb-contract">
+<link rel="prefetch" as="script" href="./second-brain/icons.js?v=02fcb2a408" data-ap-asset="sb-icons">
+<link rel="prefetch" as="script" href="./second-brain/logos.js?v=a03b37bb58" data-ap-asset="sb-logos">
+<link rel="prefetch" as="script" href="./second-brain/taxonomy.js?v=2b6da440e0" data-ap-asset="sb-taxonomy">
+<link rel="prefetch" as="script" href="./second-brain/viewer.js?v=6c0aa3a1e3" data-ap-asset="sb-viewer">
+<link rel="prefetch" as="script" href="./area-privada-fichero.js?v=5834b6b4aa" data-ap-module="fichero">
+<link rel="prefetch" as="script" href="./area-privada-mapa.js?v=d3db579c96" data-ap-module="mapa">
+<link rel="prefetch" as="script" href="./mapa/estructura.js?v=fd78e00a71" data-ap-asset="mapa-datos">
+<link rel="stylesheet" href="./css/second-brain.css?v=2f3f8407a3">
+<link rel="stylesheet" href="./css/mapa.css?v=9a1505f87b">
+<link rel="stylesheet" href="./css/area-privada.css?v=bfd1bc7e1b">
 </head>
 <body>
 <a href="#main-content" class="skip-link">Saltar al contenido</a>
@@ -81,10 +89,12 @@
 
       <nav class="ap-tabs" aria-label="Secciones del área privada">
         <a href="#/" data-tab="hoy">Hoy</a>
+        <a href="#/studio" data-tab="studio">Studio</a>
         <a href="#/calendario" data-tab="calendario">Calendario</a>
         <a href="#/entrevistas" data-tab="entrevistas">Entrevistas</a>
         <a href="#/portfolio" data-tab="portfolio">Portfolio</a>
         <a href="#/second-brain" data-tab="second-brain">Second Brain</a>
+        <a href="#/mapa" data-tab="mapa">Mapa</a>
         <a href="#/archivos" data-tab="archivos">Archivos y notas</a>
         <a href="#/fichero" data-tab="fichero">Fichero</a>
         <a href="#/configuracion" data-tab="configuracion">Configuración</a>
@@ -140,6 +150,6 @@
   <p class="ap-foot-copy">© 2026 Borja Mora Méndez · <a href="./privacidad.html">Privacidad</a></p>
 </footer>
 
-<script src="./area-privada.js?v=0b69b6ab26" defer></script>
+<script src="./area-privada.js?v=f5b99fbb1c" defer></script>
 </body>
 </html>

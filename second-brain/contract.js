@@ -15,15 +15,19 @@ export const SCHEMA_VERSION = 1;
 /* Estado de evidencia. «oportunidad» es una acción posible (no implica carencia);
    «neutral» es para nodos que no son conocimiento (objetivos, proyectos). */
 export const STATES = ['respaldado', 'mencionado', 'pendiente', 'brecha_probable', 'brecha_confirmada', 'oportunidad', 'neutral'];
-export const NODE_TYPES = ['tecnologia', 'concepto', 'tecnica', 'competencia', 'proyecto', 'objetivo', 'recomendacion'];
-export const EDGE_TYPES = ['usa', 'parte-de', 'requiere', 'mejora', 'habilita', 'demuestra', 'agrupa', 'necesita', 'recomienda'];
+export const NODE_TYPES = ['tecnologia', 'concepto', 'tecnica', 'competencia', 'proyecto', 'objetivo', 'recomendacion', 'area', 'nucleo'];
+export const EDGE_TYPES = ['usa', 'parte-de', 'requiere', 'mejora', 'habilita', 'demuestra', 'agrupa', 'necesita', 'recomienda', 'conecta'];
 export const CONFIDENCE = ['alta', 'media', 'baja'];
+/* Etapas de conocimiento (evidencia, no nota de dominio): «evaluado» y «dominio» solo con evaluación explícita. */
+export const STAGES = ['sin_evidencia', 'identificado', 'estudiado', 'aplicado', 'reforzado', 'evaluado', 'dominio'];
+export const SOURCE_KINDS = ['repositorio', 'portfolio', 'manual', 'informe'];
 export const BUCKETS = ['ahora', 'despues', 'todavia_no'];
 export const MODES = ['real', 'demo'];
 
 export const LIMITS = { nodes: 1500, edges: 6000, recommendations: 200, text: 600, label: 120 };
 
 const ID = /^[a-z0-9][a-z0-9:_.-]{0,79}$/;
+const ICON = /^[a-z0-9-]{1,40}$/;
 const isStr = (v, max) => typeof v === 'string' && v.length > 0 && v.length <= max;
 const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
 const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
@@ -56,7 +60,23 @@ export function validateSnapshot(s) {
     if (regionIds.has(r.id)) err(`Región duplicada: ${r.id}`);
     regionIds.add(r.id);
     if (!Array.isArray(r.center) || r.center.length !== 3 || !r.center.every(isNum)) err(`Región ${r.id}: centro inválido.`);
+    if (r.color != null && !/^#[0-9a-f]{6}$/i.test(r.color)) err(`Región ${r.id}: color inválido.`);
+    if (r.icon != null && !ICON.test(r.icon)) err(`Región ${r.id}: icono inválido.`);
   });
+
+  // familias tecnológicas (opcionales: un snapshot antiguo sin ellas se sigue dibujando por áreas)
+  const familyIds = new Set();
+  if (s.families != null) {
+    if (!Array.isArray(s.families)) err('families debe ser una lista.');
+    else s.families.forEach((f, i) => {
+      if (!isObj(f) || !ID.test(f.id || '') || !isStr(f.label, LIMITS.label)) return err(`Familia ${i} inválida.`);
+      if (familyIds.has(f.id)) err(`Familia duplicada: ${f.id}`);
+      familyIds.add(f.id);
+      if (!/^#[0-9a-f]{6}$/i.test(f.color || '')) err(`Familia ${f.id}: color inválido.`);
+      if (f.ink != null && !/^#[0-9a-f]{6}$/i.test(f.ink)) err(`Familia ${f.id}: tinta inválida.`);
+      if (f.icon != null && !ICON.test(f.icon)) err(`Familia ${f.id}: icono inválido.`);
+    });
+  }
 
   const nodeIds = new Set();
   const nodeById = new Map();
@@ -72,6 +92,32 @@ export function validateSnapshot(s) {
     if (typeof n.summary !== 'string' || n.summary.length > LIMITS.text) err(`Nodo ${n.id}: resumen inválido.`);
     if (!Array.isArray(n.pos) || n.pos.length !== 3 || !n.pos.every((v) => isNum(v) && Math.abs(v) < 1000)) err(`Nodo ${n.id}: posición inválida.`);
     if (!isNum(n.size) || n.size < 0 || n.size > 1) err(`Nodo ${n.id}: tamaño fuera de 0..1.`);
+    if (n.icon != null && !ICON.test(n.icon)) err(`Nodo ${n.id}: icono inválido.`);
+    if (n.area != null && !regionIds.has(n.area)) err(`Nodo ${n.id}: área inexistente «${n.area}».`);
+    // enlace a lo publicado: solo https y sin espacios (el visor lo pinta como <a> con textContent)
+    if (n.family != null && !familyIds.has(n.family)) err(`Nodo ${n.id}: familia inexistente «${n.family}».`);
+    if (n.families != null && (!Array.isArray(n.families) || n.families.length > 6 || n.families.some((f) => !familyIds.has(f)))) err(`Nodo ${n.id}: familias inválidas.`);
+    if (n.link != null && !(isStr(n.link, 500) && /^https:\/\/[^\s"'<>]+$/.test(n.link))) err(`Nodo ${n.id}: enlace inválido (solo https).`);
+    if (n.group != null && !isStr(n.group, LIMITS.label)) err(`Nodo ${n.id}: grupo inválido.`);
+    // taxonomía: etapa de conocimiento, profundidad, cobertura de la rama, fuentes y calidad del proyecto
+    if (n.stage != null && !STAGES.includes(n.stage)) err(`Nodo ${n.id}: etapa desconocida «${n.stage}».`);
+    if (['evaluado', 'dominio'].includes(n.stage) && !(isObj(n.stageNote) && isStr(n.stageNote.reason, LIMITS.text) && isStr(n.stageNote.source, 120))) {
+      err(`Nodo ${n.id}: la etapa «${n.stage}» solo se admite con una evaluación explícita (stageNote.reason y stageNote.source).`);
+    }
+    if (n.depth != null && !(Number.isInteger(n.depth) && n.depth >= 0 && n.depth <= 12)) err(`Nodo ${n.id}: profundidad inválida.`);
+    if (n.parent != null && !isStr(n.parent, 80)) err(`Nodo ${n.id}: padre inválido.`);
+    if (n.branch != null && !(isObj(n.branch) && ['children', 'leaves', 'aplicado', 'documentado', 'sinEvidencia'].every((k) => Number.isInteger(n.branch[k]) && n.branch[k] >= 0))) err(`Nodo ${n.id}: cobertura de rama inválida.`);
+    if (n.areaStats != null && !(isObj(n.areaStats) && ['nodes', 'aplicado', 'documentado', 'sinEvidencia', 'competencias', 'projects'].every((k) => Number.isInteger(n.areaStats[k]) && n.areaStats[k] >= 0))) err(`Nodo ${n.id}: estadísticas de área inválidas.`);
+    if ((n.type === 'area' || n.type === 'nucleo') && !isObj(n.areaStats)) err(`Nodo ${n.id}: un área o el núcleo necesitan areaStats.`);
+    if (n.noReadme != null && typeof n.noReadme !== 'boolean') err(`Nodo ${n.id}: noReadme debe ser booleano.`);
+    for (const k of ['docOnly', 'merged']) {
+      if (n[k] != null && (!Array.isArray(n[k]) || n[k].length > 10 || n[k].some((x) => !isStr(x, LIMITS.label)))) err(`Nodo ${n.id}: «${k}» inválido.`);
+    }
+    if (n.sources != null) {
+      if (!Array.isArray(n.sources) || n.sources.length > 10) err(`Nodo ${n.id}: fuentes inválidas.`);
+      else n.sources.forEach((f) => { if (!(isObj(f) && SOURCE_KINDS.includes(f.kind) && isStr(f.label, LIMITS.label) && isStr(f.url, 500) && /^https:\/\/[^\s"'<>]+$/.test(f.url))) err(`Nodo ${n.id}: fuente inválida (solo https).`); });
+    }
+    if (n.evidence && n.evidence.kinds != null && !(isObj(n.evidence.kinds) && Object.entries(n.evidence.kinds).every(([k, v]) => isStr(k, 20) && Number.isInteger(v) && v >= 0))) err(`Nodo ${n.id}: tipos de evidencia inválidos.`);
     if (!Array.isArray(n.uncertainty) || n.uncertainty.some((u) => typeof u !== 'string' || u.length > LIMITS.text)) err(`Nodo ${n.id}: incertidumbres inválidas.`);
     // Una brecha confirmada exige una evaluación explícita. La ausencia de documentos nunca basta.
     if (n.state === 'brecha_confirmada' && !(isObj(n.assessment) && isStr(n.assessment.reason, LIMITS.text) && isStr(n.assessment.source, 120))) {
@@ -79,6 +125,18 @@ export function validateSnapshot(s) {
     }
     if (n.state === 'brecha_probable' && !(Array.isArray(n.uncertainty) && n.uncertainty.length)) {
       err(`Nodo ${n.id}: «brecha_probable» debe indicar su motivo en uncertainty.`);
+    }
+  });
+
+  // la jerarquía debe ser coherente: el padre existe y no hay ciclos
+  s.nodes.forEach((n) => {
+    if (n.parent == null) return;
+    if (!nodeIds.has(n.parent)) return err(`Nodo ${n.id}: el padre «${n.parent}» no existe.`);
+    const seen = new Set([n.id]);
+    for (let p = n.parent, guard = 0; p && guard < 20; guard++) {
+      if (seen.has(p)) { err(`Nodo ${n.id}: la jerarquía tiene un ciclo.`); break; }
+      seen.add(p);
+      p = (nodeById.get(p) || {}).parent;
     }
   });
 
@@ -90,6 +148,7 @@ export function validateSnapshot(s) {
     if (!EDGE_TYPES.includes(e.type)) err(`Relación ${i}: tipo desconocido «${e.type}».`);
     if (!CONFIDENCE.includes(e.confidence)) err(`Relación ${i}: confianza inválida.`);
     if (!isStr(e.rationale, LIMITS.text)) err(`Relación ${i}: sin fundamento (rationale).`);
+    if (e.overview != null && typeof e.overview !== 'boolean') err(`Relación ${i}: overview debe ser booleano.`);
     const key = `${e.source}|${e.target}|${e.type}`;
     if (edgeKeys.has(key)) err(`Relación duplicada: ${key}`);
     edgeKeys.add(key);

@@ -1,0 +1,327 @@
+/* ═══════════════════════════════════════════════
+   tools/mapa/web.mjs: análisis del portfolio web público (lo usa build-mapa.mjs)
+   ─────────────────────────────────────────────────
+   Responde a «qué páginas hay, qué proyectos enseña cada una y cómo se relacionan» leyendo
+   solo el HTML publicado, sin ejecutar nada:
+
+     páginas ........ *.html de la raíz y carpetas con index.html
+     enlaces ........ solo los del contenido (se quitan <nav>, <header> y <footer>, que repiten
+                      el menú en todas las páginas), más los «siguiente caso» del pie
+     proyectos ...... JSON-LD de cada página (CreativeWork / DataDownload), comentarios
+                      «<!-- CARD ML-1: título -->», tarjetas de gráficos y de posts de Power BI,
+                      array ITEMS de descargas.html y los casos de estudio (JSON-LD + catalog.mjs)
+     dónde viven .... el dominio de cada enlace (GitHub, Streamlit, Power BI Service, Behance…)
+
+   Las relaciones salen de coincidencias de URL y de enlaces reales: nada se declara a mano.
+   Lo que se enlaza y no se reconoce queda en `sinExplicar` (se imprime y se muestra en la pestaña).
+   Sin dependencias: solo Node.
+   ═══════════════════════════════════════════════ */
+import { readCatalog } from '../second-brain/catalog.mjs';
+
+const uniq = (l) => [...new Set(l)];
+const slug = (s) => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const fold = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+const text = (s) => s.replace(/<[^>]+>/g, ' ').replace(/&amp;/g, '&').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
+const cut = (s, n) => (s.length > n ? s.slice(0, n - 1).trimEnd() + '…' : s);
+
+/* El contenido de una página sin lo que se repite en todas (menú, cabecera, pie) */
+const mainOf = (raw) => raw
+  .replace(/<head[\s\S]*?<\/head>/i, '').replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<style[\s\S]*?<\/style>/gi, '')
+  .replace(/<!--[\s\S]*?-->/g, '').replace(/<(nav|header|footer)\b[\s\S]*?<\/\1>/gi, '');
+
+/* URL → clave comparable: sin protocolo, www, barra final ni parámetros de seguimiento.
+   Los informes de Power BI se distinguen por su parámetro r (o por el id de /links/…). */
+export function canon(raw) {
+  let u;
+  try { u = new URL(raw); } catch { return null; }
+  if (!/^https?:$/.test(u.protocol)) return null;
+  const host = u.hostname.replace(/^www\./, '').toLowerCase();
+  if (host === 'app.powerbi.com') return `powerbi:${u.searchParams.get('r') || u.pathname}`;
+  const path = u.pathname.replace(/\/+$/, '');
+  const keep = ['v', 'id'].filter((k) => u.searchParams.has(k)).map((k) => `${k}=${u.searchParams.get(k)}`).join('&');
+  return host + (host === 'github.com' ? path.toLowerCase() : path) + (keep ? `?${keep}` : '');
+}
+const reportKey = (raw) => { try { return new URL(raw).searchParams.get('r') || null; } catch { return null; } };
+
+export function analyzeWeb({ ROOT, read, exists, entries, cfg }) {
+  const W = cfg.web;
+  const platformOf = (host) => W.plataformas.find((p) => p.dominios.some((d) => host === d || host.endsWith('.' + d)));
+  const hostOf = (raw) => { try { return new URL(raw).hostname.replace(/^www\./, '').toLowerCase(); } catch { return ''; } };
+  // repositorio de GitHub: «nombre» si es propio, «propietario/nombre» si es de otra persona
+  const RESERVADOS = new Set(['features', 'orgs', 'sponsors', 'site-policy', 'settings', 'marketplace', 'topics', 'about', 'pricing', 'login', 'es', 'en', 'collections', 'explore', 'apps', 'enterprise']);
+  const repoOf = (url) => {
+    let u; try { u = new URL(url); } catch { return null; }
+    if (!/^https?:$/.test(u.protocol) || u.hostname.replace(/^www\./, '') !== 'github.com') return null;
+    const [owner, repoRaw] = u.pathname.split('/').filter(Boolean);
+    if (!owner || !repoRaw || RESERVADOS.has(owner.toLowerCase())) return null;
+    const repo = repoRaw.replace(/\.git$/, '');
+    return /^borjamome$/i.test(owner) ? repo : `${owner}/${repo}`;
+  };
+
+  /* ═══ 1 · Páginas ═══ */
+  const skip = new Set(W.excluir);
+  const keys = entries('.').filter((e) => e.isFile() && e.name.endsWith('.html') && !skip.has(e.name)).map((e) => e.name).sort();
+  const dirs = [];
+  for (const e of entries('.').filter((x) => x.isDirectory() && !x.name.startsWith('.') && !W.ignorarCarpetas.includes(x.name))) {
+    if (exists(`${e.name}/index.html`)) dirs.push(e.name);
+    else for (const s of entries(e.name).filter((x) => x.isDirectory())) if (exists(`${e.name}/${s.name}/index.html`)) dirs.push(`${e.name}/${s.name}`);
+  }
+  dirs.sort();
+  const parseLd = (raw) => {
+    const out = [];
+    for (const m of raw.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
+      try { (function walk(o) { if (Array.isArray(o)) o.forEach(walk); else if (o && typeof o === 'object') { out.push(o); walk(o['@graph']); } })(JSON.parse(m[1])); } catch { /* bloque ilegible: se ignora */ }
+    }
+    return out;
+  };
+  const P = {};                                         // clave → página
+  const all = [...keys, ...dirs];
+  const rank = (k) => { const i = W.prioridad.indexOf(k); return i < 0 ? 1e6 : i; };
+  for (const key of all.sort((a, b) => rank(a) - rank(b) || (a < b ? -1 : 1))) {
+    const file = key.endsWith('.html') ? key : `${key}/index.html`;
+    const raw = read(file);
+    const ld = parseLd(raw);
+    const title = (/<title>([^<]*)<\/title>/.exec(raw) || [, ''])[1].trim();
+    const own = ld.find((o) => /CreativeWork/.test([].concat(o['@type']).join()) && o.genre);
+    const tipo = (W.tipos[key]) || (own && /caso de estudio/i.test(own.genre) ? 'caso' : 'pagina');
+    P[key] = {
+      key, file, dir: key.endsWith('.html') ? '' : key, raw, ld, tipo,
+      main: mainOf(raw),
+      id: `p:${key.replace(/\.html$/, '')}`,
+      etiqueta: W.etiquetas[key] || title.split(/\s[|·]\s/)[0].split(':')[0].trim(),
+      titulo: title,
+      desc: (/<meta name="description" content="([^"]*)"/.exec(raw) || [, ''])[1],
+      href: key.endsWith('.html') ? `./${key}` : `./${key}/`,
+      archivo: key.endsWith('.html') ? key : `${key}/`,
+    };
+  }
+  const pageList = Object.keys(P);
+  const avisos = [];
+  for (const [campo, lista] of [['raiz', W.raiz], ['prioridad', W.prioridad], ['tipos', Object.keys(W.tipos)], ['etiquetas', Object.keys(W.etiquetas)]]) {
+    for (const k of lista) if (!P[k]) avisos.push(`mapa.config.json · web.${campo}: «${k}» no es ninguna página ni carpeta (¿se renombró o se borró?)`);
+  }
+  const casos = readCatalog(ROOT).filter((c) => c.group === 'Caso de estudio' && P[c.file]);
+  const caso = Object.fromEntries(casos.map((c) => [c.file, c]));
+
+  /* ═══ 2 · Enlaces ═══ */
+  // href relativo → clave de página (o 'area-privada.html')
+  function resolve(from, href) {
+    if (!/^(\.{1,2}\/|\/(?!\/))/.test(href)) return null;
+    const base = from.dir ? from.dir.split('/') : [];
+    const parts = href.replace(/[?#].*$/, '').startsWith('/') ? [] : base;
+    const out = [...parts];
+    for (const seg of href.replace(/[?#].*$/, '').split('/')) { if (seg === '..') out.pop(); else if (seg && seg !== '.') out.push(seg); }
+    const path = out.join('/');
+    if (path === 'area-privada.html') return path;
+    if (P[path]) return path;
+    if (P[path.replace(/\/index\.html$/, '')]) return path.replace(/\/index\.html$/, '');
+    return null;
+  }
+  const anchors = (page) => [
+    ...[...page.main.matchAll(/<a\b([^>]*?)href="([^"]+)"([^>]*)>([\s\S]*?)<\/a>/g)].map((m) => ({ href: m[2].replace(/&amp;/g, '&'), attrs: m[1] + m[3], label: text(m[4]), at: m.index })),
+    // tarjetas enteras clicables: onclick="location.href='…'" o window.open('…') (la portada enseña así sus proyectos)
+    ...[...page.main.matchAll(/onclick="(?:location\.href\s*=\s*|window\.open\()'([^']+)'/g)].map((m) => ({ href: m[1], attrs: 'onclick', label: '', at: m.index })),
+  ];
+  const internal = {};                                   // clave → claves enlazadas desde el contenido, en orden de lectura
+  const siguiente = {};
+  for (const page of Object.values(P)) {
+    internal[page.key] = uniq(anchors(page).map((a) => resolve(page, a.href)).filter((k) => k && k !== page.key && !W.chrome.includes(k)));
+    // el «siguiente caso» vive en el pie: es una relación editorial, no el menú
+    const nx = /class="case-next-main"[^>]*href="([^"]+)"|href="([^"]+)"[^>]*class="case-next-main"/.exec(page.raw);
+    if (nx) siguiente[page.key] = resolve(page, nx[1] || nx[2]);
+  }
+
+  /* ═══ 3 · Proyectos que enseña cada página ═══ */
+  const E = {};                                         // id → entidad
+  const urlTo = new Map();                              // clave de URL → { id } (página o entidad)
+  const order = [];                                     // orden de aparición global
+  function addEntity(e) {
+    const dupe = e.urls.map((u) => urlTo.get(u)).find((x) => x && E[x.id]);
+    if (dupe) { const t = E[dupe.id]; t.techs = uniq([...t.techs, ...e.techs]); e.urls.forEach((u) => !t.urls.includes(u) && t.urls.push(u)); return t; }
+    let base = `e:${e.prefijo}${slug(e.etiqueta)}`;
+    if (base.length > 80) base = base.slice(0, 80).replace(/-[^-]*$/, '');
+    let id = base, n = 2;
+    while (E[id]) id = `${base}~${n++}`;
+    E[id] = { ...e, id, dueña: e.pagina };
+    e.urls.forEach((u) => urlTo.set(u, { id }));
+    E[id].pos = (() => { const q = e.url ? pageMain(e.pagina).indexOf(e.url) : -1; return q >= 0 ? q : 1e9 + order.length; })();
+    order.push(id);
+    return E[id];
+  }
+  const pageMain = (key) => (P[key] ? P[key].main : '');
+  const kwOf = (s) => String(s || '').split(',').map((x) => x.trim()).filter(Boolean);
+  const caseByTitle = (name) => Object.values(P).find((p) => p.tipo === 'caso' && (fold(p.etiqueta).includes(fold(name)) || fold(name).includes(fold(p.etiqueta)) || fold(p.titulo).startsWith(fold(name))));
+
+  for (const page of Object.values(P)) {
+    // 3a · JSON-LD: cada CreativeWork/DataDownload con ancla propia es un elemento que la página enseña
+    for (const o of page.ld) {
+      const id = String(o['@id'] || '');
+      if (!id.includes(`${page.file}#`) && !id.includes(`${page.key}#`)) continue;
+      const anchor = id.split('#')[1];
+      if (!/CreativeWork/.test([].concat(o['@type']).join()) || anchor === 'caso' || !o.name) continue;     // los DataDownload del laboratorio salen de ITEMS (3d), completos
+      if (caseByTitle(o.name)) continue;      // el listado enseña un caso que ya tiene su página: lo cubren los enlaces internos
+      const url = o.url ? String(o.url) : '';
+      if (W.omitirUrls.some((frag) => url.includes(frag))) continue;
+      const host = hostOf(url);
+      const gh = /^github\.com$/.test(host) ? url.split('/').slice(7).join('/') : '';
+      const tipo = host.endsWith('behance.net') ? 'visual' : host === 'github.com' ? 'proyecto' : 'proyecto';
+      const grupo = tipo === 'visual' ? W.grupos.visual
+        : /\/01-SQL\//i.test(url) ? 'SQL' : /\/02-Python\//i.test(url) ? 'Python' : /\/03-Machine/i.test(url) ? W.grupos.ml : W.grupos.proyecto;
+      addEntity({ prefijo: '', tipo, etiqueta: String(o.name), urls: [canon(url)].filter(Boolean), url, techs: kwOf(o.keywords), grupo, pagina: page.key, ruta: gh, soloDatos: !!url && !page.main.includes(url) });
+    }
+    // 3b · «<!-- CARD ML-1: título -->»: la tarjeta lleva su primer enlace externo
+    const cards = [...page.raw.matchAll(/<!--\s*CARD\s+([A-Z]+)-?(\d+)\s*:\s*([^>]*?)\s*-->/g)];
+    cards.forEach((m, i) => {
+      const raw = page.raw.slice(m.index, cards[i + 1] ? cards[i + 1].index : m.index + 6000);
+      const block = raw.split(/<\/section>/)[0];
+      const url = (/href="(https?:\/\/[^"]+)"/.exec(block) || [, ''])[1];
+      if (!url) return;
+      const kind = m[1];
+      if (W.omitirUrls.some((frag) => url.includes(frag))) return;
+      const pills = [...block.matchAll(/class="cc-pill"[^>]*>([^<]+)</g)].map((x) => text(x[1]));
+      const isApp = /streamlit\.app$/.test(hostOf(url));
+      addEntity({
+        prefijo: isApp ? 'app-' : '', tipo: isApp ? 'app' : 'proyecto', etiqueta: m[3].trim(), urls: [canon(url)].filter(Boolean), url, techs: pills,
+        grupo: isApp ? W.grupos.app : ({ ML: W.grupos.ml, PY: 'Python', SQL: 'SQL' }[kind] || W.grupos.proyecto), pagina: page.key,
+        ruta: /github\.com/.test(url) ? url.split('/').slice(7).join('/') : '',
+      });
+    });
+    // 3c · tarjetas de gráficos nativos y de posts (componentes propios de power-bi.html)
+    const viz = [...page.raw.matchAll(/class="nat-viz-title"[^>]*>([^<]+)</g)];
+    viz.forEach((m, i) => {
+      // la tarjeta entera es un enlace: su href está justo ANTES del título (si no, justo después)
+      const before = page.raw.slice(viz[i - 1] ? viz[i - 1].index + 40 : Math.max(0, m.index - 2500), m.index);
+      const after = page.raw.slice(m.index, viz[i + 1] ? viz[i + 1].index : m.index + 2500);
+      const re = /href="(https:\/\/app\.powerbi\.com[^"]+)"/g;
+      const url = ([...before.matchAll(re)].pop() || re.exec(after) || [, ''])[1];
+      addEntity({ prefijo: 'grafico-', tipo: 'grafico', etiqueta: text(m[1]), urls: [canon(url)].filter(Boolean), url, techs: [], grupo: W.grupos.grafico, pagina: page.key });
+    });
+    for (const m of page.raw.matchAll(/<a\b[^>]*href="(https:\/\/www\.linkedin\.com\/(?:posts|feed\/update)[^"]+)"[^>]*>([\s\S]*?)<\/a>/g)) {
+      const t = (/class="li-card-title"[^>]*>([\s\S]*?)<\//.exec(m[2]) || [, ''])[1];
+      if (!t) continue;
+      addEntity({ prefijo: 'post-', tipo: 'post', etiqueta: cut(text(t), 70), urls: [canon(m[1])].filter(Boolean), url: m[1], techs: [], grupo: W.grupos.post, pagina: page.key });
+    }
+  }
+  // 3c-bis · carpetas de un repositorio propio enlazadas con ruta (≥ 2 niveles): un proyecto más, con el nombre de la carpeta
+  for (const page of Object.values(P)) {
+    for (const a of anchors(page)) {
+      const m = /^https:\/\/github\.com\/BORJAMOME\/([^/]+)\/tree\/[^/]+\/(.+?)\/?$/i.exec(a.href);
+      if (!m || m[2].split('/').length < 2 || urlTo.has(canon(a.href))) continue;
+      const parts = decodeURIComponent(m[2]).split('/');
+      addEntity({ prefijo: 'carpeta-', tipo: 'proyecto', etiqueta: parts[parts.length - 1], urls: [canon(a.href)], url: a.href, techs: [parts[0]], grupo: m[1].replace(/-/g, ' '), pagina: page.key, ruta: decodeURIComponent(m[2]) });
+    }
+  }
+  // 3d · descargas.html: array ITEMS (.pbix del laboratorio y el post de LinkedIn de cada uno)
+  const dl = P['descargas.html'];
+  if (dl) {
+    const from = dl.raw.indexOf('const ITEMS = [');
+    if (from < 0) throw new Error('descargas.html: no encuentro «const ITEMS = [»; el mapa perdería los archivos del laboratorio');
+    const blocks = dl.raw.slice(from).split(/\{n:"/).slice(1).filter((x) => /^\d+",\s*cat:/.test(x));
+    for (const blk of blocks) {
+      const f = (re) => (re.exec(blk) || [, ''])[1];
+      const n = Number(blk.slice(0, blk.indexOf('"')));
+      const title = f(/title:"([^"]+)"/), cat = f(/cat:"(\w+)"/), dlUrl = f(/dl:"([^"]*)"/), liUrl = f(/li:"([^"]*)"/);
+      const tags = [...f(/tags:\[([^\]]*)\]/).matchAll(/"([^"]+)"/g)].map((x) => x[1]);
+      addEntity({ prefijo: 'lab-', tipo: 'lab', etiqueta: title, urls: [canon(dlUrl)].filter(Boolean), url: dlUrl, techs: tags, grupo: W.grupos.lab, techs: [...tags, W.etiquetasLab[cat] || cat], pagina: dl.key, orden: n });
+      if (liUrl) addEntity({ prefijo: 'post-', tipo: 'post', etiqueta: cut(`${title} (post)`, 70), urls: [canon(liUrl)].filter(Boolean), url: liUrl, techs: [], grupo: W.grupos.lab, pagina: dl.key, orden: 100 + n });
+    }
+    if (!blocks.length) throw new Error('descargas.html: ITEMS sin elementos reconocibles');
+  }
+  // 3e · herramientas externas propias (borjamome.github.io): una app más
+  for (const page of Object.values(P)) {
+    for (const a of anchors(page)) {
+      if (hostOf(a.href) !== 'borjamome.github.io') continue;
+      addEntity({ prefijo: 'app-', tipo: 'app', etiqueta: W.etiquetasUrl[canon(a.href)] || W.etiquetasUrl[canon(a.href).replace(/\/[^/]*$/, '')] || a.label.replace(/[↗→]/g, '').trim() || 'Herramienta externa', urls: [canon(a.href)], url: a.href, techs: [], grupo: W.grupos.herramienta, pagina: page.key });
+    }
+  }
+  // 3f · sobre-mi.html: experiencia, formación y certificaciones (.res-group > .res-row)
+  const sm = P['sobre-mi.html'];
+  if (sm) {
+    sm.raw.split(/class="res-group(?=[ "])/).slice(1).forEach((g, gi) => {
+      const label = text((/res-group-label"[^>]*>([^<]+)</.exec(g) || [, gi === 0 ? 'Experiencia' : 'Perfil'])[1]).toLowerCase();
+      g.split('class="res-row"').slice(1).forEach((r, ri) => {
+        const role = text((/class="res-role"[^>]*>([\s\S]*?)<\/p>/.exec(r) || [, ''])[1]);
+        const fecha = text((/class="res-date"[^>]*>([\s\S]*?)<\//.exec(r) || [, ''])[1]);
+        if (role) addEntity({ prefijo: 'perfil-', tipo: 'perfil', etiqueta: role, urls: [], url: '', techs: [], grupo: label, pagina: sm.key, orden: gi * 100 + ri, fecha });
+      });
+    });
+  }
+  // 3g · data-storytelling.html: los capítulos del manual (<section class="chapter" id="c01">)
+  const ds = P['data-storytelling.html'];
+  if (ds) {
+    for (const m of ds.raw.matchAll(/<section[^>]*class="chapter"[^>]*id="(c\d+)"[^>]*>([\s\S]*?)(?=<section[^>]*class="chapter"|$)/g)) {
+      const name = text((/<b>([^<]+)<\/b>/.exec(m[2]) || [, ''])[1]) || text((/<h2[^>]*>([\s\S]*?)<\/h2>/.exec(m[2]) || [, ''])[1]);
+      addEntity({ prefijo: 'cap-', tipo: 'capitulo', etiqueta: `${m[1].slice(1)} · ${cut(name, 48)}`, urls: [], url: '', hrefInterno: `./${ds.key}#${m[1]}`, techs: [], grupo: 'capítulos del manual', pagina: ds.key, orden: Number(m[1].slice(1)) });
+    }
+  }
+  // 3h · manuales en carpeta (ml/, pbi/): sus secciones fijas y cuánto contienen
+  for (const page of Object.values(P)) {
+    if (page.tipo !== 'manual' || !page.dir) continue;
+    const modelos = /(\d+) modelos/.exec(page.desc);
+    const apuntes = entries(`${page.dir}/apuntes`).filter((e) => e.isFile()).length;
+    page.conteo = [modelos ? `${modelos[1]} modelos explicados` : '', apuntes ? `${apuntes} archivos de apuntes` : ''].filter(Boolean).join(' · ');
+    // los títulos que el HTML escribe a mano (los que arma el JavaScript llevan comillas o «+» y se descartan)
+    [...page.raw.matchAll(/<h2 class="th-title"[^>]*>([^<]+)</g)].map((m) => text(m[1])).filter((t) => t && !/['+]/.test(t)).forEach((t, i) => {
+      addEntity({ prefijo: 'sec-', tipo: 'capitulo', etiqueta: t, urls: [], url: '', hrefInterno: page.href, techs: [], grupo: 'secciones del manual', pagina: page.key, orden: i });
+    });
+  }
+  // los casos de estudio también se reconocen por la URL de su informe
+  for (const c of Object.values(caso)) {
+    const k = canon(c.url);
+    if (k) urlTo.set(k, { id: P[c.file].id, page: c.file });
+    const r = reportKey(c.url);
+    if (r) urlTo.set(`powerbi:${r}`, { id: P[c.file].id, page: c.file });
+  }
+
+  /* ═══ 4 · Relaciones entre páginas y proyectos ═══ */
+  const showsPage = {};                                 // entidad/página → claves de página que la enseñan (además de su dueña)
+  const sinExplicar = {};
+  const ignorados = {};                                 // dominio → nº de enlaces ignorados a propósito
+  const content = Object.values(P).filter((p) => !W.chrome.includes(p.key));   // la política de privacidad enlaza a GitHub por motivos legales, no enseña nada
+  for (const page of content) {
+    for (const a of anchors(page)) {
+      const k = canon(a.href);
+      if (!k) continue;
+      const hit = urlTo.get(k) || urlTo.get(`powerbi:${reportKey(a.href)}`);
+      if (hit && hit.id === page.id) continue;                    // una página enlaza su propio informe: no es una referencia
+      if (hit && !(hit.id.startsWith('e:') && E[hit.id].dueña === page.key)) (showsPage[hit.id] ??= []).push(page.key);
+      else if (!hit && /^https?:/.test(a.href)) {
+        const host = hostOf(a.href);
+        const hp = `${host}${new URL(a.href).pathname}`.replace(/\/$/, '').toLowerCase();
+        if (W.ignorarDominios.some((d) => host === d || host.endsWith('.' + d) || hp.startsWith(d))) { ignorados[host] = (ignorados[host] || 0) + 1; continue; }
+        if (host === 'github.com' && repoOf(a.href)) continue;                      // tiene nodo propio en «Dónde vive»
+        if (/^github\.com$/.test(host) && /^\/[^/]+\/?$/.test(new URL(a.href).pathname)) continue;     // el perfil
+        if (/linkedin\.com\/in\//.test(a.href)) continue;
+        (sinExplicar[`${host}${new URL(a.href).pathname}`.replace(/\/$/, '')] ??= []).push(page.key);
+      }
+    }
+  }
+
+  /* ═══ 5 · Dónde vive cada cosa ═══ */
+  const repos = {};                                     // repo → { entidades }
+  const plat = {};                                      // plataforma → { entidades }
+  const lives = [];                                     // { de, a, detalle }
+  function lived(deId, url, extra = '') {
+    const host = hostOf(url);
+    const r = repoOf(url);
+    if (r) { (repos[r] ??= new Set()).add(deId); lives.push({ de: deId, a: `z:gh:${slug(r)}`, detalle: extra }); return; }
+    const p = platformOf(host);
+    if (p) { (plat[p.id] ??= new Set()).add(deId); lives.push({ de: deId, a: `z:${p.id}`, detalle: extra }); }
+  }
+  for (const id of order) { const e = E[id]; lived(id, e.url, e.ruta || ''); }
+  for (const c of Object.values(caso)) {
+    lived(P[c.file].id, c.url, 'informe publicado');
+    if (c.repo) lived(P[c.file].id, `https://github.com/BORJAMOME/${c.repo}`, 'código y modelo');
+  }
+  // repos enlazados desde el contenido sin ser un proyecto concreto (p. ej. DAX-LAB en power-bi.html)
+  for (const page of content) for (const a of anchors(page)) { const r = repoOf(a.href); if (r) { (repos[r] ??= new Set()); if (!lives.some((l) => l.a === `z:gh:${slug(r)}` && l.de === page.id)) lives.push({ de: page.id, a: `z:gh:${slug(r)}`, detalle: 'enlaza al repositorio', enlaza: true }); } }
+  // un gráfico comparte informe con el caso del que sale
+  const derive = [];
+  for (const id of order.filter((x) => E[x].tipo === 'grafico')) {
+    const r = reportKey(E[id].url);
+    const c = r && Object.values(caso).find((x) => reportKey(x.url) === r);
+    if (c) derive.push({ de: id, a: P[c.file].id });
+  }
+
+  return { P, E, order, internal, siguiente, showsPage, caso, repos, plat, lives, derive, sinExplicar, ignorados, avisos, parseLd, pageList, anchors, resolve };
+}

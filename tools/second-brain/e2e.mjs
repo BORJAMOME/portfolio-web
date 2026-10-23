@@ -71,6 +71,7 @@ const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--ena
 /* Abre una página con Supabase simulado. api: (url, method) → { status, body } | undefined */
 async function open(opts = {}) {
   const ctx = await browser.newContext({ viewport: opts.viewport || { width: 1440, height: 900 }, reducedMotion: opts.reducedMotion ? 'reduce' : 'no-preference', deviceScaleFactor: 1 });
+  await ctx.addInitScript((m) => { try { localStorage.setItem('sb-detail', m); } catch (x) { /* sin almacenamiento */ } }, opts.detail || 'completo');
   if (opts.session !== false) {
     await ctx.addInitScript(() => sessionStorage.setItem('bm_ap_session', JSON.stringify({ access_token: 'tok', refresh_token: 'ref', expires_at: Math.floor(Date.now() / 1000) + 3600, email: 'owner@example.test' })));
   }
@@ -127,13 +128,32 @@ try {
     check('el snapshot "real" no se rotula como demostración', !/FICTICIOS/.test(await page.locator('.sb-status').textContent()));
     const i0 = await info(page);
     check('todos los nodos son visibles', i0.visible === REAL.nodes.length, `${i0.visible}/${REAL.nodes.length}`);
-    check('llamadas de dibujo acotadas (≤ 14)', i0.drawCalls <= 14, String(i0.drawCalls));
+    check('llamadas de dibujo acotadas (≤ 20)', i0.drawCalls <= 20, String(i0.drawCalls));
     await page.waitForTimeout(900);
     const f1 = (await info(page)).frameCount;
     await page.waitForTimeout(800);
     const f2 = (await info(page)).frameCount;
     check('en reposo no se dibuja ningún fotograma (dibujo bajo demanda)', f2 - f1 <= 1, `${f1} → ${f2} fotogramas en 0,8 s`);
-    check('hay etiquetas visibles (≤ 40) y no se solapan en exceso', i0.labels > 0 && i0.labels <= 40, String(i0.labels));
+    check('hay etiquetas visibles y acotadas (≤ 62)', i0.labels > 0 && i0.labels <= 62, String(i0.labels));
+    const stageBox = await page.locator('.sb-stage-card').boundingBox();
+    const mainBox = await page.locator('#ap-view').boundingBox();
+    check('el mapa ocupa todo el ancho del área de trabajo', stageBox.width >= mainBox.width - 2, `${stageBox.width} de ${mainBox.width}`);
+    const detBox = await page.locator('#sb-detail').boundingBox();
+    check('el detalle y las recomendaciones van debajo del mapa', detBox.y > stageBox.y + stageBox.height - 1);
+    check('el fondo del mapa es blanco', await page.evaluate(() => getComputedStyle(document.querySelector('.sb-stage-card')).backgroundColor === 'rgb(255, 255, 255)'));
+    check('la vista inicial es «Mapa» en perspectiva', (await info(page)).layout === 'mapa' && (await info(page)).preset === '3d');
+    // semántica del mapa: lo respaldado más cerca del centro que lo pendiente; competencias por encima; proyectos fuera del disco
+    const geo = await page.evaluate(() => {
+      const v = document.querySelector('#sb-stage').__sbViewer;
+      return v.debugPositions();
+    });
+    const rad = (p) => Math.hypot(p[0], p[2]);
+    const avg = (a) => a.reduce((s, x) => s + x, 0) / Math.max(1, a.length);
+    const byState = (st) => REAL.nodes.filter((n) => ['tecnologia', 'concepto', 'tecnica'].includes(n.type) && n.state === st).map((n) => rad(geo[n.id]));
+    check('mapa: lo respaldado está más cerca del centro que lo pendiente o en brecha', avg(byState('respaldado')) < avg([...byState('pendiente'), ...byState('brecha_probable')]));
+    check('mapa: las competencias flotan por encima del plano de conceptos', REAL.nodes.filter((n) => n.type === 'competencia').every((n) => geo[n.id][1] > 10));
+    check('mapa: los proyectos forman el cinturón exterior', REAL.nodes.filter((n) => n.type === 'proyecto').every((n) => rad(geo[n.id]) > 100));
+    check('mapa: cada concepto está dentro del sector de su área', await page.evaluate(() => document.querySelector('#sb-stage').__sbViewer.debugSectorsOk()));
     if (SHOTS) await page.screenshot({ path: join(SHOTS, '01-vista-general.png') });
 
     section('3. Interacción sin red: seleccionar, filtrar, buscar, enfocar');
@@ -142,15 +162,17 @@ try {
     const pos = await page.evaluate(() => document.querySelector('#sb-stage').__sbViewer.screenPos('c:dax'));
     await page.mouse.click(pos.x, pos.y);
     await page.waitForTimeout(900);
-    check('el clic en un nodo muestra su panel contextual', (await page.locator('#sb-detail-title').textContent()) === 'DAX');
-    check('el panel indica el estado de evidencia', /Respaldado/.test(await page.locator('#sb-p-detalle .sb-badge').first().textContent()));
+    check('el clic en un nodo muestra su panel contextual', (await page.locator('#sb-detail-h').textContent()) === 'DAX');
+    const ed = (await info(page)).edgesDrawn;
+    check('al seleccionar se dibujan sus relaciones como cintas y no las del resto', ed.focus > 0 && ed.context === 0, JSON.stringify(ed));
+    check('el panel indica el estado de evidencia', /Respaldado/.test(await page.locator('#sb-detail .sb-badge').first().textContent()));
     check('el panel lista relaciones con su fundamento', (await page.locator('.sb-rels li').count()) > 2 && (await page.locator('.sb-why').first().textContent()).length > 15);
-    check('el panel no contiene rutas de archivos ni enlaces a documentos', !/\.(py|sql|md|ipynb|pbix)\b/i.test(await page.locator('#sb-p-detalle').textContent()));
+    check('el panel no contiene rutas de archivos ni enlaces a documentos', !/\.(py|sql|md|ipynb|pbix)\b/i.test(await page.locator('#sb-detail').textContent()));
     check('el nodo seleccionado queda registrado en el visor', (await info(page)).selected === 'c:dax');
     // brecha probable: debe explicarse y no llamarse "confirmada"
     await page.evaluate(() => document.querySelector('#sb-stage').__sbViewer.select('c:power-query'));
     await page.waitForTimeout(300);
-    const gap = await page.locator('#sb-p-detalle').textContent();
+    const gap = await page.locator('#sb-detail').textContent();
     check('una brecha probable muestra su motivo y la salvedad', /Brecha probable/.test(gap) && /no están entre las fuentes/.test(gap) && !/Brecha confirmada/.test(gap));
     // filtros
     await page.locator('.sb-filters > summary').click();
@@ -177,7 +199,7 @@ try {
     check('la búsqueda ofrece resultados', (await page.locator('#sb-results [role=option] button').count()) >= 1);
     await page.locator('#sb-search').press('Enter');
     await page.waitForTimeout(900);
-    check('Enter en la búsqueda selecciona y enfoca el concepto', /ventana/i.test(await page.locator('#sb-detail-title').textContent()));
+    check('Enter en la búsqueda selecciona y enfoca el concepto', /ventana/i.test(await page.locator('#sb-detail-h').textContent()));
     // relaciones
     await page.locator('.sb-filters > summary').click();
     await page.locator('#sb-f-edge-agrupa').check();
@@ -187,15 +209,204 @@ try {
     if (SHOTS) await page.screenshot({ path: join(SHOTS, '02-seleccion.png') });
 
     section('4. Recomendaciones y lista accesible');
-    await page.getByRole('tab', { name: 'Recomendaciones' }).click();
-    const recText = await page.locator('#sb-p-recomendaciones').textContent();
+    await page.locator('.sb-recs details.sb-rec').evaluateAll((ds) => ds.forEach((d) => { d.open = true; }));
+    const recText = await page.locator('.sb-recs').textContent();
     check('se agrupan en Ahora / Después / Todavía no', /Ahora \(\d+\)/.test(recText) && /Después \(\d+\)/.test(recText) && /Todavía no \(\d+\)/.test(recText));
     check('cada recomendación muestra por qué, evidencia, resultado y acción', ['Por qué', 'Evidencia o requisito', 'Resultado que se busca', 'Acción concreta', 'Confianza', 'Esfuerzo'].every((t) => recText.includes(t)));
     check('se explica cómo se calcula la prioridad', /relevancia/.test(recText) && /Cómo se calcula la prioridad/.test(recText));
-    await page.getByRole('tab', { name: 'Lista' }).click();
+    await page.locator('.sb-all > summary').click();
     check('la lista accesible contiene todos los elementos por región', (await page.locator('.sb-node').count()) === REAL.nodes.length, String(await page.locator('.sb-node').count()));
-    await page.locator('#sb-p-lista details[open] .sb-node').first().click();
-    check('elegir en la lista selecciona el nodo y vuelve al detalle', (await page.locator('#sb-p-detalle').isVisible()) && (await page.locator('#sb-detail-title').count()) === 1);
+    await page.locator('.sb-all .sb-node').first().click();
+    check('elegir en la lista selecciona el nodo y muestra su detalle', (await page.locator('#sb-detail .sb-badge').count()) === 1);
+
+    section('4b. Vistas: Mapa / Red y puntos de vista');
+    await page.getByRole('button', { name: 'Red', exact: true }).click();
+    await page.waitForTimeout(1300);
+    check('«Red» cambia a la distribución de fuerzas del motor', (await info(page)).layout === 'red');
+    const redPos = await page.evaluate(() => document.querySelector('#sb-stage').__sbViewer.debugPositions());
+    check('en «Red» las posiciones son las del snapshot', REAL.nodes.every((n) => Math.hypot(redPos[n.id][0] - n.pos[0], redPos[n.id][1] - n.pos[1], redPos[n.id][2] - n.pos[2]) < 0.01));
+    await page.getByRole('button', { name: 'Mapa', exact: true }).click();
+    await page.getByRole('button', { name: 'Cenital' }).click();
+    await page.waitForTimeout(1300);
+    check('«Cenital» mira el mapa desde arriba', (await info(page)).preset === 'cenital' && (await info(page)).layout === 'mapa');
+    await page.getByRole('button', { name: 'Perspectiva' }).click();
+    await page.waitForTimeout(900);
+
+    section('4c. Lenguaje visual v3: color por área, iconos, tooltip y preguntas');
+    await page.evaluate(() => { document.querySelector('.sb-legend').open = true; });      // la leyenda arranca cerrada
+    await page.keyboard.press('Escape');
+    await page.evaluate(() => document.querySelector('#sb-stage').__sbViewer.reset());
+    await page.waitForTimeout(900);
+    const legendAreas = await page.locator('.sb-leg-areas li').count();
+    check('la leyenda lista las áreas con su color e icono', legendAreas >= 5 && (await page.locator('.sb-leg-areas .sb-ichip svg').count()) === legendAreas);
+    const chipColor = await page.locator('.sb-leg-areas .sb-ichip').first().evaluate((e) => getComputedStyle(e).backgroundColor);
+    check('las fichas de área usan el color del snapshot', chipColor !== 'rgba(0, 0, 0, 0)' && chipColor !== 'rgb(255, 255, 255)', chipColor);
+    const hp = await page.evaluate(() => document.querySelector('#sb-stage').__sbViewer.screenPos('c:sql'));
+    await page.mouse.move(hp.x, hp.y);
+    await page.waitForTimeout(500);
+    const tipVisible = await page.locator('.sb-tip').isVisible();
+    const tipText = tipVisible ? await page.locator('.sb-tip').textContent() : '';
+    check('al pasar el ratón aparece un tooltip con nombre, área, evidencia y descripción', tipVisible && /SQL/.test(tipText) && /relaci/.test(tipText) && tipText.length > 60, tipText.slice(0, 120));
+    await page.mouse.move(5, 5);
+    await page.waitForTimeout(300);
+    check('el tooltip desaparece al salir del nodo', !(await page.locator('.sb-tip').isVisible()));
+    const dc = (await info(page)).drawCalls;
+    check('todos los nodos se dibujan en una sola llamada (shader instanciado): ≤ 16 en total', dc <= 16, String(dc));
+    const before4c = net.length;
+    await page.locator('.sb-q', { hasText: 'mejor demostrado' }).click();
+    await page.waitForTimeout(900);
+    const ansItems = await page.locator('.sb-ans-i').count();
+    check('«¿Qué tengo mejor demostrado?» responde con elementos del mapa', ansItems > 0);
+    check('la respuesta resalta esos elementos en el mapa', (await info(page)).highlighted === ansItems, String((await info(page)).highlighted));
+    await page.locator('#sb-ask-q').fill('sql');
+    await page.locator('#sb-ask-q').press('Enter');
+    await page.waitForTimeout(700);
+    check('una pregunta libre por tema devuelve coincidencias y relacionados', /coincide/.test(await page.locator('.sb-ask-out').textContent()));
+    await page.locator('.sb-ans-i').first().click();
+    await page.waitForTimeout(700);
+    check('elegir un resultado abre su detalle', (await page.locator('#sb-detail .sb-badge').count()) === 1);
+    await page.locator('.sb-ask-out .ap-link-btn', { hasText: 'Quitar resaltado' }).click();
+    check('«Quitar resaltado» devuelve el mapa completo', (await info(page)).highlighted === 0);
+    check('las preguntas se responden sin peticiones de red', net.length === before4c);
+
+    section('4d. v6: color por familia tecnológica, filtro, búsqueda y lista agrupada');
+    await page.evaluate(() => document.querySelector('#sb-stage').__sbViewer.reset());
+    const famBtns = await page.locator('.sb-fam').count();
+    check('la leyenda lista las familias tecnológicas (con contador) y «sin clasificar» solo si existe', famBtns >= 8 && famBtns <= 9, String(famBtns));
+    check('la familia Power BI usa el amarillo de la paleta (#F5C84C)', (await page.locator('.sb-fam[data-fam="bi"] .sb-ichip').evaluate((e) => getComputedStyle(e).backgroundColor)) === 'rgb(245, 200, 76)');
+    const totalEls = (await info(page)).visible;
+    await page.locator('.sb-fam[data-fam="python"]').click();
+    await page.waitForTimeout(500);
+    const soloInfo = await info(page);
+    check('aislar una familia desde la leyenda filtra el mapa y lo indica', soloInfo.visible < totalEls && /filtrado/.test(await page.locator('.sb-count').textContent()) && (await page.locator('.sb-filters summary').textContent()) === 'Filtros (1)', `${soloInfo.visible}/${totalEls}`);
+    check('la familia aislada queda marcada en la leyenda y en los filtros', (await page.locator('.sb-fam[data-fam="python"]').getAttribute('aria-pressed')) === 'true' && (await page.locator('#sb-f-fam-python').isChecked()) && !(await page.locator('#sb-f-fam-bi').isChecked()));
+    await page.locator('.sb-fam[data-fam="python"]').click();
+    await page.waitForTimeout(500);
+    check('otro clic sobre la misma familia devuelve todos los elementos', (await info(page)).visible === totalEls && (await page.locator('.sb-filters summary').textContent()) === 'Filtros');
+    await page.locator('#sb-search').fill('dax');
+    await page.waitForTimeout(500);
+    check('buscar resalta todas las coincidencias en el mapa y las cuenta', (await info(page)).highlighted > 3 && /coincidencias/.test(await page.locator('.sb-count').textContent()));
+    check('cada resultado indica su tipo y su familia', /Tecnología · Power BI/.test(await page.locator('#sb-results li').first().textContent()));
+    await page.locator('#sb-search').fill('');
+    await page.waitForTimeout(300);
+    check('vaciar la búsqueda quita el resaltado y restablece el contador', (await info(page)).highlighted === 0 && /elementos$/.test((await page.locator('.sb-count').textContent()).trim()));
+    await page.locator('#sb-search').fill('zzzqqq');
+    await page.waitForTimeout(300);
+    check('sin coincidencias se explica y no se deja el mapa atenuado', /Sin resultados/.test(await page.locator('#sb-results').textContent()) && (await info(page)).highlighted === 0);
+    await page.locator('#sb-search').fill('');
+    await page.evaluate(() => { document.querySelector('.sb-all').open = true; });
+    const groups = await page.locator('.sb-grp').count();
+    check('la lista se agrupa por familia, en grupos plegables con contador', groups >= 8 && (await page.locator('.sb-grp > summary .sb-gcount').count()) === groups, String(groups));
+    await page.locator('.sb-grp > summary').first().click();
+    check('un grupo se despliega y muestra sus elementos', (await page.locator('.sb-grp[open] .sb-node').count()) > 0);
+    await page.locator('#sb-list-q').fill('dax');
+    check('buscar dentro de la lista abre los grupos con coincidencias', (await page.locator('.sb-grp[open] .sb-node').count()) > 0 && (await page.locator('.sb-grp[open] .sb-node').count()) < totalEls);
+    await page.locator('#sb-list-q').fill('');
+    await page.locator('#sb-list-by').selectOption('area');
+    check('se puede agrupar por área o por tipo', (await page.locator('.sb-grp').count()) >= 5);
+    await page.locator('#sb-list-by').selectOption('familia');
+    await page.evaluate(() => document.querySelector('#sb-stage').__sbViewer.select('c:dax'));
+    await page.waitForTimeout(500);
+    check('el detalle muestra la familia con su color', /Power BI y Business Intelligence/.test(await page.locator('#sb-detail .sb-fampill').first().textContent()));
+    check('las cifras de la cabecera se explican (65 + 17 + 120 + 6 = 208 con datos reales)', /elementos? en el mapa = /.test(await page.locator('.sb-kpi-note').textContent()));
+    await page.evaluate(() => document.querySelector('#sb-stage').__sbViewer.select(null));
+
+    section('4e. v7: jerarquía del conocimiento, vistas rápidas, etapas y cobertura');
+    await page.evaluate(() => document.querySelector('#sb-stage').__sbViewer.reset());
+    const rootBtns = await page.locator('.sb-tn-roots > .sb-tn > .sb-tn-row .sb-tn-main').count();
+    check('el explorador lista las áreas con jerarquía (árbol con botones, no solo el mapa)', rootBtns >= 1, String(rootBtns));
+    const firstRoot = page.locator('.sb-tn-roots > .sb-tn').first();
+    const tog = firstRoot.locator('> .sb-tn-row .sb-tn-tog');
+    const wasOpen = (await tog.getAttribute('aria-expanded')) === 'true';
+    await tog.click();
+    check('expandir y contraer una rama cambia aria-expanded y el foco vuelve al botón', (await page.locator('.sb-tn-roots > .sb-tn').first().locator('> .sb-tn-row .sb-tn-tog').getAttribute('aria-expanded')) === String(!wasOpen));
+    await page.locator('.sb-tree-ctl button', { hasText: 'Expandir todo' }).click();
+    const deepId = await page.evaluate(() => { const b = [...document.querySelectorAll('.sb-tn-kids .sb-tn-main')].find((x) => x.closest('.sb-tn-kids').parentElement.closest('.sb-tn-kids')); return b ? b.getAttribute('data-id') : null; });
+    check('hay al menos una técnica en un tercer nivel (área → disciplina → técnica)', !!deepId);
+    await page.locator('.sb-tn-main[data-id="' + deepId + '"]').click();
+    await page.waitForTimeout(400);
+    check('elegir un elemento del árbol abre su detalle con la ruta (migas) hasta la raíz', (await page.locator('#sb-detail .sb-crumb li').count()) >= 3);
+    check('el detalle de un conocimiento muestra su etapa con la escalera y qué falta para la siguiente', (await page.locator('#sb-detail .sb-steps li').count()) === 6 && (await page.locator('#sb-detail .sb-stg').count()) >= 1);
+    check('la etapa no depende del color: el texto y la posición indican dónde está', /Aplicado|Reforzado|Estudiado|Identificado|Evaluado|Dominio/.test(await page.locator('#sb-detail .sb-steps li.is-now').textContent()));
+    const quickN = await page.locator('.sb-q-chip').count();
+    check('las vistas rápidas empiezan por «Todo» y solo ofrecen las que tienen elementos', quickN >= 2 && /Todo/.test(await page.locator('.sb-q-chip').first().textContent()) && (await page.locator('.sb-q-chip[aria-pressed="true"]').count()) === 1);
+    const allVisible = (await info(page)).visible;
+    await page.locator('.sb-q-chip').nth(1).click();
+    await page.waitForTimeout(700);
+    check('una vista rápida filtra el mapa, lo indica y muestra el filtro activo con su aspa', (await info(page)).visible < allVisible && (await page.locator('.sb-fchip').count()) >= 1 && /filtrado/.test(await page.locator('.sb-count').textContent()));
+    await page.locator('.sb-fchip button').first().click();
+    await page.waitForTimeout(500);
+    check('quitar el filtro desde su aspa devuelve todos los elementos', (await info(page)).visible === allVisible && (await page.locator('.sb-fchip').count()) === 0);
+    await page.locator('.sb-tn-main[data-id="' + deepId + '"]').locator('xpath=ancestor::li[contains(@class,"sb-tn")][1]').locator('.sb-tn-iso').first().click();
+    await page.waitForTimeout(600);
+    check('«Aislar» deja solo esa rama (y su camino y proyectos) y queda marcada', (await info(page)).visible < allVisible && (await page.locator('.sb-tn-iso[aria-pressed="true"]').count()) === 1);
+    await page.locator('.sb-q-chip').first().click();
+    await page.waitForTimeout(500);
+    check('«Todo» quita el aislamiento', (await info(page)).visible === allVisible && (await page.locator('.sb-tn-iso[aria-pressed="true"]').count()) === 0);
+    await page.locator('.sb-filters summary').click();
+    const nStage = await page.locator('input[id^="sb-f-stage-"]').count();
+    check('los filtros incluyen etapa de conocimiento y tipo de evidencia', nStage === 7 && (await page.locator('input[id^="sb-f-kind-"]').count()) >= 5);
+    await page.locator('#sb-f-stage-aplicado').uncheck();
+    await page.locator('#sb-f-stage-reforzado').uncheck();
+    await page.waitForTimeout(500);
+    const byStage = await info(page);
+    check('filtrar por etapa deja solo el conocimiento de las etapas marcadas', byStage.visible < allVisible && /Etapa:/.test(await page.locator('.sb-fchip').first().textContent()), String(byStage.visible));
+    await page.locator('.sb-filters summary').click();       // el panel abierto tapa la barra de filtros activos
+    await page.locator('.sb-active .ap-link-btn', { hasText: 'Quitar todos' }).click();
+    await page.waitForTimeout(400);
+    await page.locator('.sb-filters summary').click();
+    await page.locator('#sb-dim').check();
+    await page.locator('#sb-f-fam-' + ((REAL.families || [])[0] || {}).id).uncheck();
+    await page.waitForTimeout(700);
+    const dim = await info(page);
+    check('en modo atenuar los filtros no ocultan: todos siguen en el mapa y los que coinciden se resaltan', dim.visible === allVisible && dim.highlighted > 0 && dim.highlighted < allVisible, JSON.stringify([dim.visible, dim.highlighted]));
+    await page.locator('.sb-btn', { hasText: 'Restablecer' }).click();
+    await page.waitForTimeout(600);
+    check('«Restablecer» quita también etapa, vista y modo atenuar', (await info(page)).visible === allVisible && (await info(page)).highlighted === 0 && !(await page.locator('#sb-dim').isChecked()));
+    check('la cobertura por área suma técnicas con práctica, documentadas y sin evidencia, y avisa de que no mide dominio', (await page.locator('.sb-cov li').count()) >= 1 && /no dominio/.test(await page.locator('.sb-sumcard').textContent()));
+
+    section('4f. v8: geometría del grafo (iconos normalizados, nodos, etiquetas y controles)');
+    await page.evaluate(() => { document.querySelector('.sb-legend').open = false; document.querySelector('#sb-stage').__sbViewer.reset(); });
+    await page.waitForTimeout(1000);
+    const gm8 = await page.evaluate(() => {
+      const v = document.querySelector('#sb-stage').__sbViewer, m = v.debugMetrics();
+      const st = document.querySelector('#sb-stage').getBoundingClientRect();
+      const ui = ['.sb-bar', '.sb-legend', '.sb-nav'].map((q) => document.querySelector(q)).filter((e) => e && !e.hidden && getComputedStyle(e).position === 'absolute').map((e) => { const r = e.getBoundingClientRect(); return { x: r.left - st.left, y: r.top - st.top, w: r.width, h: r.height }; });
+      const inter = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+      let ll = 0; const L = m.labels.filter((l) => !/is-region|is-guide/.test(l.cls));
+      for (let i = 0; i < m.labels.length; i++) for (let j = i + 1; j < m.labels.length; j++) if (inter(m.labels[i], m.labels[j])) ll++;
+      let ln = 0;
+      for (const l of L) for (const n of m.nodes) { const cx = Math.max(l.x, Math.min(n.x, l.x + l.w)), cy = Math.max(l.y, Math.min(n.y, l.y + l.h)); if (Math.hypot(n.x - cx, n.y - cy) < n.r * 0.8) { ln++; break; } }
+      const under = m.nodes.filter((n) => ui.some((u) => n.x > u.x && n.x < u.x + u.w && n.y > u.y && n.y < u.y + u.h)).length;
+      const small = m.nodes.filter((n) => n.type === 'proyecto').map((n) => n.r);
+      const concept = m.nodes.filter((n) => ['tecnologia', 'tecnica', 'concepto'].includes(n.type)).map((n) => n.r);
+      const med = (a) => [...a].sort((x, y) => x - y)[Math.floor(a.length / 2)];
+      const comp = m.nodes.filter((n) => n.type === 'competencia').map((n) => n.r), obj = m.nodes.filter((n) => n.type === 'objetivo').map((n) => n.r);
+      return { labels: m.labels.length, ll, ln, under, hierarchy: [med(obj), med(comp), med(concept), med(small)], labelsOutside: m.labels.filter((l) => l.x < 0 || l.y < 0 || l.x + l.w > m.size.w || l.y + l.h > m.size.h).length };
+    });
+    check('las etiquetas no se solapan entre sí', gm8.ll === 0, JSON.stringify(gm8));
+    check('ninguna etiqueta de elemento tapa a otro nodo', gm8.ln === 0, JSON.stringify(gm8));
+    check('ningún nodo queda bajo la barra superior ni los mandos tras el encuadre', gm8.under === 0, JSON.stringify(gm8));
+    check('ninguna etiqueta se sale del lienzo', gm8.labelsOutside === 0, JSON.stringify(gm8));
+    check('la jerarquía de tamaño se mantiene: objetivo > competencia > concepto > proyecto', gm8.hierarchy[0] > gm8.hierarchy[1] && gm8.hierarchy[1] > gm8.hierarchy[2] && gm8.hierarchy[2] > gm8.hierarchy[3], JSON.stringify(gm8.hierarchy));
+    const atlas = await page.evaluate(async (base) => {
+      const icons = await import(base + 'second-brain/icons.js'), logos = await import(base + 'second-brain/logos.js');
+      const cell = 128, at = icons.buildAtlas(cell, logos); await at.ready;
+      const ctx = at.canvas.getContext('2d'), ids = Object.keys(icons.ICONS), lids = Object.keys(logos.LOGOS), rows = [];
+      const probe = (k, kind) => {
+        const x0 = (k % at.cols) * cell, y0 = Math.floor(k / at.cols) * cell, d = ctx.getImageData(x0, y0, cell, cell).data;
+        let a = cell, b = cell, c = -1, e = -1;
+        for (let y = 0; y < cell; y++) for (let x = 0; x < cell; x++) if (d[(y * cell + x) * 4 + 3] > 24) { if (x < a) a = x; if (x > c) c = x; if (y < b) b = y; if (y > e) e = y; }
+        if (c < 0) return;
+        rows.push({ kind, w: (c - a + 1) / cell, h: (e - b + 1) / cell, dx: ((a + c + 1) / 2 - cell / 2) / cell, dy: ((b + e + 1) / 2 - cell / 2) / cell });
+      };
+      ids.forEach((id, i) => probe(i, 'icono')); lids.forEach((id, i) => probe(ids.length + i, 'logo'));
+      return rows;
+    }, BASE);
+    const big = atlas.filter((x) => x.kind === 'icono' && Math.max(x.w, x.h) > 0.3);
+    check('los iconos y logotipos quedan centrados en su celda (≤ 1,2 % de desvío)', atlas.every((x) => Math.abs(x.dx) <= 0.012 && Math.abs(x.dy) <= 0.012), JSON.stringify(atlas.filter((x) => Math.abs(x.dx) > 0.012 || Math.abs(x.dy) > 0.012).slice(0, 4)));
+    check('los iconos de trazo ocupan todos el mismo lado óptico (55–62 % de la celda)', big.every((x) => Math.max(x.w, x.h) >= 0.55 && Math.max(x.w, x.h) <= 0.62), JSON.stringify(big.map((x) => Math.max(x.w, x.h).toFixed(2)).slice(0, 8)));
+    check('los logotipos ocupan como mucho el lado óptico asignado (≤ 57 %) y ninguno se deforma al encajar', atlas.filter((x) => x.kind === 'logo').every((x) => Math.max(x.w, x.h) <= 0.57));
 
     section('5. Teclado');
     await page.locator('#sb-stage').focus();
@@ -224,6 +435,94 @@ try {
     check('al cerrar sesión se libera el visor', (await page.locator('.sb-canvas').count()) === 0 && (await page.locator('#ap-lock').isVisible()));
     check('sin errores de JavaScript en todo el recorrido', errors.length === 0, errors.join(' | '));
     await ctx.close();
+  }
+
+  /* ───────── Exploración progresiva ───────── */
+  section('6b. v9: núcleo, áreas, desplegar y contraer, relaciones entre áreas');
+  {
+    const t = await open({ detail: 'progresivo' });
+    const pg = t.page;
+    await pg.goto(BASE + 'area-privada.html#/second-brain');
+    await waitGraph(pg);
+    const areas = REAL.nodes.filter((n) => n.type === 'area'), core = REAL.nodes.find((n) => n.type === 'nucleo');
+    const I = () => info(pg);
+    check('hay un núcleo y áreas en los datos', !!core && areas.length >= 2, String(areas.length));
+    check('la vista inicial muestra solo el núcleo y las áreas (mapa de orientación)', (await I()).visible === 1 + areas.length, String((await I()).visible));
+    check('el contador explica que es una vista por áreas', /por áreas/.test(await pg.locator('.sb-count').textContent()));
+    const ids = await pg.evaluate(() => Object.keys(document.querySelector('#sb-stage').__sbViewer.debugPositions()));
+    check('ningún elemento está duplicado en el visor', new Set(ids).size === REAL.nodes.length && ids.length === REAL.nodes.length);
+    const mm = await pg.evaluate(() => document.querySelector('#sb-stage').__sbViewer.debugMetrics());
+    check('en la vista general se dibujan las relaciones núcleo ↔ área y entre áreas', mm.edges.length >= areas.length, String(mm.edges.length));
+    const flat = mm.labels.map((l) => l.t.split('\n').join(' '));
+    check('los nombres de núcleo y áreas se ven (con su insignia «+N»)', flat.some((t) => /Mi conocimiento profesional/.test(t)) && flat.filter((t) => /· \+\d+/.test(t)).length >= areas.length - 1, JSON.stringify(flat));
+    const pos0 = await pg.evaluate(() => document.querySelector('#sb-stage').__sbViewer.debugPositions());
+    const big = areas.slice().sort((a, b) => b.areaStats.nodes - a.areaStats.nodes)[0];
+    await pg.evaluate((id) => document.querySelector('#sb-stage').__sbViewer.select(id), big.id);
+    await pg.locator('#sb-stage').focus();
+    await pg.keyboard.press('Enter');
+    await pg.waitForTimeout(900);
+    const open1 = (await I()).visible;
+    check('Intro sobre un área la despliega y aparecen sus conocimientos', open1 > 1 + areas.length, String(open1));
+    const pos1 = await pg.evaluate(() => document.querySelector('#sb-stage').__sbViewer.debugPositions());
+    check('desplegar no mueve ningún nodo: las posiciones son estables', Object.keys(pos0).every((k) => pos1[k] && Math.hypot(pos1[k][0] - pos0[k][0], pos1[k][1] - pos0[k][1], pos1[k][2] - pos0[k][2]) < 0.001));
+    check('el detalle del área ofrece su resumen, la cobertura y el botón de contraer', /En este área/.test(await pg.locator('#sb-detail').textContent()) && (await pg.locator('#sb-detail .sb-btn', { hasText: 'Contraer en el mapa' }).count()) === 1);
+    check('el estado de lectura anuncia el cambio', /desplegado/.test((await pg.locator('#ap-status, .ap-status, [role=status]').allTextContents()).join(' ')));
+    await pg.keyboard.press('Enter');
+    await pg.waitForTimeout(600);
+    check('Intro otra vez la contrae y los datos siguen en el modelo', (await I()).visible === 1 + areas.length && (await pg.evaluate(() => Object.keys(document.querySelector('#sb-stage').__sbViewer.debugPositions()).length)) === REAL.nodes.length);
+    // doble clic con el ratón
+    const sp = await pg.evaluate((id) => document.querySelector('#sb-stage').__sbViewer.screenPos(id), big.id);
+    await pg.mouse.dblclick(sp.x, sp.y);
+    await pg.waitForTimeout(900);
+    check('el doble clic también despliega', (await I()).visible > 1 + areas.length);
+    // un nodo sin nada que mostrar lo dice
+    const leaf = REAL.nodes.find((n) => n.stage && !REAL.nodes.some((x) => x.parent === n.id) && !REAL.edges.some((ed) => ed.type === 'demuestra' && ed.target === n.id));
+    if (leaf) {
+      await pg.evaluate((id) => document.querySelector('#sb-stage').__sbViewer.select(id, { silent: false }), leaf.id).catch(() => {});
+    }
+    // buscar algo que está oculto lo despliega hasta mostrarlo
+    await pg.locator('.sb-btn', { hasText: 'Vista global' }).click();
+    await pg.waitForTimeout(700);
+    check('«Vista global» contrae todo', (await I()).visible === 1 + areas.length);
+    const deep = REAL.nodes.find((n) => n.stage && n.depth >= 2) || REAL.nodes.find((n) => n.stage && n.parent);
+    await pg.locator('#sb-search').fill(deep.label.slice(0, 12));
+    await pg.waitForTimeout(400);
+    await pg.locator('#sb-results li button').first().click();
+    await pg.waitForTimeout(900);
+    const vi = await I();
+    check('elegir un resultado oculto despliega su camino y lo selecciona', vi.visible > 1 + areas.length && !!vi.selected, JSON.stringify([vi.visible, vi.selected]));
+    const seenSel = await pg.evaluate(() => document.querySelector('#sb-stage').__sbViewer.debugPositions());
+    check('el elemento elegido está en el mapa sin duplicarse', Object.keys(seenSel).filter((k) => k === vi.selected).length === 1);
+    await pg.locator('.sb-seg--mode button[data-v="completo"]').click();
+    await pg.waitForTimeout(700);
+    check('«Todo» muestra todos los elementos a la vez', (await I()).visible === REAL.nodes.length);
+    await pg.locator('.sb-seg--mode button[data-v="progresivo"]').click();
+    await pg.waitForTimeout(500);
+    await pg.locator('.sb-btn', { hasText: 'Restablecer' }).click();
+    await pg.waitForTimeout(700);
+    check('«Restablecer» vuelve al mapa de orientación', (await I()).visible === 1 + areas.length);
+    // relación entre áreas
+    const m2 = await pg.evaluate(() => document.querySelector('#sb-stage').__sbViewer.debugMetrics());
+    const conn = m2.edges.find((x) => REAL.edges[x.ei] && REAL.edges[x.ei].type === 'conecta');
+    const sb = await pg.locator('#sb-stage').boundingBox();
+    if (conn) {
+      await pg.mouse.click(sb.x + conn.x, sb.y + conn.y);
+      await pg.waitForTimeout(700);
+      check('un clic sobre una relación la selecciona', (await I()).selectedEdge === conn.ei, JSON.stringify(await I()));
+      const txt = await pg.locator('#sb-detail').textContent();
+      check('el detalle muestra los dos elementos, el tipo y su fundamento (sin inventar nada)', /Relación · /.test(txt) && /Tipo/.test(txt) && txt.includes(REAL.edges[conn.ei].rationale.slice(0, 20)));
+      check('una relación entre áreas lista las relaciones reales que resume', (await pg.locator('#sb-detail .sb-rels li').count()) >= 3);
+      await pg.locator('#sb-stage').focus();
+      await pg.keyboard.press('Escape');
+      await pg.waitForTimeout(300);
+      check('Esc quita la selección de la relación', (await I()).selectedEdge === -1);
+    } else check('hay una relación entre áreas dibujada que se puede seleccionar', false);
+    // accesibilidad en la vista por áreas
+    await pg.evaluate(AXE);
+    const axeRes = await pg.evaluate(async () => (await axe.run(document.querySelector('.sb'), { runOnly: ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'] })).violations.map((v) => ({ id: v.id, n: v.nodes.length, t: v.nodes[0].target.join(' ') })));
+    check('axe: sin infracciones en la vista por áreas', axeRes.length === 0, JSON.stringify(axeRes));
+    check('sin errores de JavaScript en la exploración', t.errors.length === 0, t.errors.join(' | '));
+    await t.ctx.close();
   }
 
   /* ───────── Estados ───────── */
@@ -277,6 +576,87 @@ try {
   }
 
   /* ───────── Accesibilidad, móvil, rendimiento ───────── */
+  section('7b. Logotipos, etiquetas y tu información (notas, valoración y elementos propios)');
+  {
+    const posted = [];
+    const deleted = [];
+    const NOTES = [
+      { node_id: 'c:sql', es_propio: false, valoracion: 'domino', descripcion: 'Mi descripción de SQL.', nota: 'Nota privada.', enlaces: ['https://github.com/ejemplo/repo'], relacionados: [], updated_at: '2026-10-19T10:00:00Z' },
+      { node_id: 'c:pandas', es_propio: false, valoracion: 'brecha', nota: 'Me falta soltura con groupby.', enlaces: [], relacionados: [], updated_at: '2026-10-19T10:00:00Z' },
+      { node_id: 'u:dbt-core-ab12', es_propio: true, label: 'dbt Core', tipo: 'tecnologia', area: 'datos', descripcion: 'Transformaciones SQL versionadas.', valoracion: 'aprender', enlaces: [], relacionados: ['c:sql'], updated_at: '2026-10-19T10:00:00Z' },
+      { node_id: 'u:roto', es_propio: true, label: 'Área inexistente', tipo: 'concepto', area: 'no-existe', enlaces: [], relacionados: [] },
+    ];
+    const t7 = await open({ api: (u, m) => {
+      if (/sb_notas/.test(u)) {
+        if (m === 'POST') { posted.push(u); return { status: 201, body: {} }; }
+        if (m === 'DELETE') { deleted.push(u); return { status: 204, body: {} }; }
+        return { status: 200, body: NOTES };
+      }
+      return null;
+    } });
+    t7.page.on('request', (rq) => { if (/sb_notas/.test(rq.url()) && rq.method() === 'POST') posted.push(rq.postData()); });
+    await t7.page.goto(BASE + 'area-privada.html#/second-brain');
+    await waitGraph(t7.page);
+    const v = (fn) => t7.page.evaluate(fn);
+    check('las etiquetas del mapa no tienen fondo y el texto es oscuro', await v(() => {
+      const ls = [...document.querySelectorAll('.sb-label')].filter((x) => x.style.display !== 'none');
+      return ls.length > 0 && ls.every((l) => {
+        const cs = getComputedStyle(l), c = cs.color.match(/\d+/g).map(Number);
+        return cs.backgroundColor === 'rgba(0, 0, 0, 0)' && Math.max(c[0], c[1], c[2]) < 90;
+      });
+    }));
+    await v(() => document.querySelector('#sb-stage').__sbViewer.select('c:python'));
+    await t7.page.waitForTimeout(500);
+    check('la etiqueta seleccionada tampoco lleva fondo azul', await v(() => { const l = document.querySelector('.sb-label.is-sel'); return !!l && getComputedStyle(l).backgroundColor === 'rgba(0, 0, 0, 0)'; }));
+    check('las tecnologías con logotipo lo muestran en la interfaz (Python)', await t7.page.locator('#sb-detail .sb-h--icon .sb-ichip.is-logo img').count() === 1);
+    check('el logotipo se carga como imagen data: (sin red ni HTML inyectado)', /^data:image\/svg\+xml/.test(await t7.page.locator('#sb-detail .sb-h--icon .sb-ichip.is-logo img').getAttribute('src')));
+    check('un elemento añadido por ti aparece en el mapa', await v(() => document.querySelector('#sb-stage').__sbViewer.debugPositions()['u:dbt-core-ab12'] !== undefined));
+    check('un elemento propio con un área inexistente se descarta sin romper el mapa', await v(() => document.querySelector('#sb-stage').__sbViewer.debugPositions()['u:roto'] === undefined));
+    await v(() => document.querySelector('#sb-stage').__sbViewer.select('c:pandas'));
+    await t7.page.waitForTimeout(400);
+    const pd = await t7.page.locator('#sb-detail').textContent();
+    check('«Lo reconozco como brecha» la convierte en brecha confirmada con tu motivo', /Brecha confirmada/.test(pd) && /groupby/.test(pd));
+    await v(() => document.querySelector('#sb-stage').__sbViewer.select('c:sql'));
+    await t7.page.waitForTimeout(400);
+    const sd = await t7.page.locator('.sb-user').textContent();
+    check('«Tu información» muestra valoración, descripción, notas y enlaces', /Lo domino/.test(sd) && /Mi descripción de SQL/.test(sd) && /Nota privada/.test(sd) && /github\.com\/ejemplo/.test(sd));
+    check('los enlaces tuyos abren en pestaña nueva sin referer', (await t7.page.locator('.sb-user-links a').getAttribute('rel')) === 'noopener noreferrer');
+    // editar: validación de enlaces y guardado
+    await t7.page.locator('.sb-user .sb-btn').click();
+    await t7.page.locator('#sb-n-links').fill('javascript:alert(1)');
+    await t7.page.locator('dialog[open] button[type=submit]').click();
+    await t7.page.waitForTimeout(300);
+    check('un enlace que no es http(s) se rechaza', /no es válido/.test(await t7.page.locator('dialog[open] .ap-msg').textContent()));
+    await t7.page.locator('#sb-n-links').fill('https://borjamora.es');
+    await t7.page.locator('#sb-n-nota').fill('Nota actualizada');
+    const before = posted.length;
+    await t7.page.locator('dialog[open] button[type=submit]').click();
+    await t7.page.waitForTimeout(1200);
+    const body = posted.slice(before).find((x) => x && x.startsWith('{'));
+    check('guardar envía tu información a sb_notas (upsert por node_id)', !!body && /"node_id":"c:sql"/.test(body) && /Nota actualizada/.test(body) && posted.slice(before).some((x) => /on_conflict=node_id/.test(x)), String(body).slice(0, 160));
+    check('tras guardar se vuelve a mostrar el mismo elemento', (await t7.page.locator('#sb-detail-h').textContent()) === 'SQL');
+    // añadir un elemento nuevo
+    await t7.page.locator('.sb-btn', { hasText: '+ Añadir' }).click();
+    await t7.page.locator('#sb-n-label').fill('Looker Studio');
+    const b2 = posted.length;
+    await t7.page.locator('dialog[open] button[type=submit]').click();
+    await t7.page.waitForTimeout(1200);
+    const nb = posted.slice(b2).find((x) => x && x.startsWith('{'));
+    check('«+ Añadir» crea un elemento propio (es_propio, nombre, tipo y área)', !!nb && /"es_propio":true/.test(nb) && /Looker Studio/.test(nb) && /"node_id":"u:looker-studio-/.test(nb), String(nb).slice(0, 160));
+    await t7.ctx.close();
+
+    // sin la tabla: se explica qué ejecutar y no se pierde nada
+    const t8 = await open({ api: (u) => (/sb_notas/.test(u) ? { status: 404, body: { code: 'PGRST205' } } : null) });
+    await t8.page.goto(BASE + 'area-privada.html#/second-brain');
+    await waitGraph(t8.page);
+    check('sin la tabla de notas el mapa funciona igual', (await info(t8.page)).visible > 0);
+    await t8.page.evaluate(() => document.querySelector('#sb-stage').__sbViewer.select('c:sql'));
+    await t8.page.waitForTimeout(400);
+    await t8.page.locator('.sb-user .sb-btn').click();
+    check('al editar sin la tabla se indica el SQL que hay que ejecutar', /second-brain-notas\.sql/.test(await t8.page.locator('dialog[open]').textContent()));
+    await t8.ctx.close();
+  }
+
   section('8. Accesibilidad (axe), móvil y rendimiento');
   {
     const t = await open({ reducedMotion: true });
@@ -297,14 +677,17 @@ try {
     await m.page.goto(BASE + 'area-privada.html#/second-brain');
     await waitGraph(m.page);
     check('móvil: sin desplazamiento horizontal', await m.page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
-    check('móvil: el panel está plegado y hay un botón para abrirlo', (await m.page.locator('.sb-panel-toggle').isVisible()) && !(await m.page.locator('#sb-side').isVisible()));
+    check('móvil: arranca en vista cenital (el disco cabe mejor en vertical)', (await m.page.evaluate(() => document.querySelector('#sb-stage').__sbViewer.info().preset)) === 'cenital');
     check('móvil: el grafo ocupa el ancho disponible', (await m.page.locator('#sb-stage').boundingBox()).width > 340);
     await m.page.locator('#sb-stage').scrollIntoViewIfNeeded();
     await m.page.waitForTimeout(300);
     const mp = await m.page.evaluate(() => document.querySelector('#sb-stage').__sbViewer.screenPos('c:sql'));
     await m.page.mouse.click(mp.x, mp.y);
     await m.page.waitForTimeout(800);
-    check('móvil: al seleccionar se abre el panel inferior', await m.page.locator('#sb-side').isVisible());
+    check('móvil: al seleccionar aparece el aviso con acceso al detalle', await m.page.locator('.sb-chip').isVisible());
+    await m.page.locator('.sb-chip-go').click();
+    await m.page.waitForTimeout(700);
+    check('móvil: «Ver detalle» lleva al panel de detalle', await m.page.evaluate(() => { const r = document.querySelector('#sb-detail').getBoundingClientRect(); return r.top < window.innerHeight && r.bottom > 0; }));
     if (SHOTS) await m.page.screenshot({ path: join(SHOTS, '04-movil.png') });
     await m.ctx.close();
 
@@ -322,7 +705,7 @@ try {
       return { frame, filt, info: v.info() };
     });
     console.log(`    (1200 nodos / 3000 relaciones, renderizado por software: carga ${loadMs} ms · fotograma ${perf.frame.toFixed(1)} ms · filtrar ${perf.filt.toFixed(1)} ms · ${perf.info.drawCalls} llamadas · ${perf.info.labels} etiquetas)`);
-    check('grande: llamadas de dibujo constantes (≤ 14) y etiquetas acotadas (≤ 40)', perf.info.drawCalls <= 14 && perf.info.labels <= 40, JSON.stringify(perf.info));
+    check('grande: llamadas de dibujo constantes (≤ 20) y etiquetas acotadas (≤ 62)', perf.info.drawCalls <= 20 && perf.info.labels <= 62, JSON.stringify(perf.info));
     check('grande: filtrar tarda menos de 400 ms', perf.filt < 400, perf.filt.toFixed(1));
     if (SHOTS) await b.page.screenshot({ path: join(SHOTS, '05-grande.png') });
     await b.ctx.close();

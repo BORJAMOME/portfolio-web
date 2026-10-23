@@ -26,6 +26,12 @@ window.APHoy = (function () {
     var h = ctx.h, now = new Date(), start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     var end = new Date(start.getTime() + 7 * DAY);
     var auth = function (err) { if (err && err.auth) throw err; return null; };
+    // Centro de trabajo (tablero Kanban): módulo propio; si falla, la agenda de abajo sigue funcionando
+    var box = h('div', { class: 'aph-kb' });
+    var kb = ctx.module('kanban').then(function (m) { return m.render(Object.assign({}, ctx, { view: box })); }).catch(function (err) {
+      if (err && err.auth) throw err;
+      return function () { box.appendChild(h('p', { class: 'ape-meta', text: 'El centro de trabajo no se ha podido cargar: ' + ((err && err.message) || 'error') })); };
+    });
     return Promise.all([
       ctx.api('/rest/v1/calendar_events?select=uid,starts_at,ends_at,all_day,title,location&starts_at=lt.' + end.toISOString() +
         '&ends_at=gt.' + start.toISOString() + '&order=starts_at.asc&limit=200').catch(auth),
@@ -33,7 +39,8 @@ window.APHoy = (function () {
       ctx.api('/rest/v1/entrevistas?select=id,proceso_id,fecha,fase,resultado,calendar_uid&order=fecha.asc').catch(auth),
       // agenda propia (supabase/agenda.sql): lo de esta semana y las tareas vencidas
       ctx.api('/rest/v1/agenda?select=id,tipo,titulo,inicio,fin,todo_el_dia,hecho&inicio=gte.' + start.toISOString() + '&inicio=lt.' + end.toISOString() + '&order=inicio.asc').catch(auth),
-      ctx.api('/rest/v1/agenda?select=id&tipo=eq.tarea&hecho=eq.false&inicio=lt.' + start.toISOString()).catch(auth)
+      ctx.api('/rest/v1/agenda?select=id&tipo=eq.tarea&hecho=eq.false&inicio=lt.' + start.toISOString()).catch(auth),
+      kb
     ]).then(function (r) {
       var procs = r[1], ents = r[2], overdue = r[4] ? r[4].length : 0;
       var own = (r[3] || []).filter(function (a) { return !(a.tipo === 'tarea' && a.hecho); }).map(function (a) {
@@ -42,7 +49,9 @@ window.APHoy = (function () {
       var evs = r[0] || r[3] ? (r[0] || []).concat(own).sort(function (a, b) { return (b.all_day - a.all_day) || (a.starts_at < b.starts_at ? -1 : 1); }) : null;
       return function paint() {
         ctx.view.textContent = '';
-        ctx.view.appendChild(h('p', { class: 'aph-date', text: cap(dayFmt.format(now)) }));
+        r[5]();
+        ctx.view.appendChild(box);
+        ctx.view.appendChild(h('h2', { class: 'aph-section-t', text: 'Agenda y seguimiento' }));
         ctx.view.appendChild(h('div', { class: 'aph-grid' }, [
           card('Próximos 7 días', '#/calendario', 'Abrir el calendario', evs ? week(evs, ents || [], overdue) : setup('El calendario aún no está conectado.')),
           card('Entrevistas programadas', '#/entrevistas', 'Ver procesos', procs && ents ? upcoming(procs, ents) : setup('La tabla de entrevistas aún no está creada.')),

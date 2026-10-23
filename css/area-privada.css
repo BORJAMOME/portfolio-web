@@ -452,6 +452,16 @@ main { min-height: calc(100vh - var(--ap-top-h) - 90px); outline: none; }
 .ape-card-head { display: flex; gap: 12px; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; }
 .ape-card-title { font-weight: 600; font-size: 16px; color: var(--ink); margin-bottom: 2px; }
 .ape-card-act { display: flex; gap: 4px; }
+/* Correos de Gmail por revisar (lista de procesos) */
+.ape-mail { margin: 4px 0 18px; padding: 16px 18px; background: var(--ap-support-soft); border: 1px solid var(--ap-line); border-radius: var(--radius-lg); }
+.ape-mail .ape-h3 { font-size: 19px; }
+.ape-mail-list { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 10px; }
+.ape-mail-item { display: flex; gap: 12px 20px; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; padding: 12px 14px; background: var(--white); border: 1px solid var(--ap-line); border-radius: var(--radius-md); }
+.ape-mail-main { flex: 1 1 320px; min-width: 0; }
+.ape-mail-subj { font-weight: 600; color: var(--ink); overflow-wrap: anywhere; }
+.ape-mail-ext { margin-top: 6px; font-size: 13px; line-height: 1.5; color: var(--text); overflow-wrap: anywhere; }
+.ape-mail-item .ape-card-act { align-items: center; flex-wrap: wrap; }
+.ape-sync { margin: -4px 0 8px; }
 .ape-cal { color: var(--purple-text); font-weight: 600; }
 .ape-scores { display: grid; grid-template-columns: auto 1fr; gap: 2px 14px; margin: 12px 0 0; font-size: 13px; }
 .ape-scores dt { color: var(--muted); }
@@ -890,3 +900,431 @@ main { min-height: calc(100vh - var(--ap-top-h) - 90px); outline: none; }
   .apb-alert, .apb-warn { font-size: 8.6pt; padding: 3pt 6pt; margin-bottom: 4pt; }
   .ape-badge { min-height: 0; padding: 0 5pt; font-size: 7.6pt; border: 1px solid #999; background: none !important; color: #000 !important; }
 }
+
+
+/* ═══════════════════════════════════════════════
+   CENTRO DE TRABAJO (area-privada-kanban.js) · prefijo apk-
+   ═══════════════════════════════════════════════ */
+.apk { margin-bottom: 40px; }
+.apk-head { display: flex; flex-wrap: wrap; gap: 16px 24px; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; }
+.apk-title { font-family: var(--font-serif); font-weight: 500; font-size: clamp(26px, 3vw, 34px); letter-spacing: -.5px; line-height: 1.15; color: var(--ink); }
+.apk-sub { font-size: 14px; color: var(--muted); margin-top: 6px; }
+.apk-head-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.apk-seg { display: inline-flex; border: 1px solid var(--ap-line-strong); border-radius: 999px; background: var(--white); padding: 2px; }
+.apk-seg-btn { font: inherit; font-size: 13px; font-weight: 600; color: var(--ink); background: transparent; border: 0; border-radius: 999px; padding: 8px 14px; min-height: 36px; cursor: pointer; }
+.apk-seg-btn[aria-pressed="true"] { background: var(--purple); color: #fff; }
+.apk-btn { font: inherit; font-size: 13px; font-weight: 600; color: var(--ink); background: var(--white); border: 1px solid var(--ap-line-strong); border-radius: 999px; padding: 8px 16px; min-height: 40px; cursor: pointer; }
+.apk-btn--primary { background: var(--ink); border-color: var(--ink); color: #fff; }
+.apk-link { font: inherit; font-size: 13px; font-weight: 600; color: var(--purple-text); background: none; border: 0; padding: 4px 2px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.apk button:focus-visible, .apk input:focus-visible, .apk select:focus-visible, .apk-dialog button:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+@media (hover: hover) and (pointer: fine) {
+  .apk-btn:hover, .apk-seg-btn:hover:not([aria-pressed="true"]) { background: var(--ap-hover); }
+  .apk-btn--primary:hover { background: var(--purple); }
+}
+
+.apk-filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 16px; }
+.apk-input, .apk-select { font: inherit; font-size: 14px; color: var(--ink); background: var(--white); border: 1px solid var(--ap-line-strong); border-radius: var(--radius-md); padding: 9px 12px; min-height: 40px; }
+.apk-input { min-width: 220px; flex: 1 1 220px; max-width: 360px; }
+.apk-chipbtn { font: inherit; font-size: 13px; font-weight: 600; color: var(--ink); background: var(--white); border: 1px solid var(--ap-line-strong); border-radius: 999px; padding: 8px 14px; min-height: 40px; cursor: pointer; }
+.apk-chipbtn[aria-pressed="true"] { background: var(--red-light); border-color: var(--red); color: var(--red-ink); }
+
+.apk-board { display: grid; grid-template-columns: repeat(5, minmax(248px, 1fr)); gap: 14px; overflow-x: auto; padding-bottom: 12px; align-items: start; scroll-snap-type: x proximity; }
+.apk-col { background: var(--ap-surface-2); border: 1px solid var(--ap-line); border-radius: var(--radius-lg); padding: 12px; min-width: 0; scroll-snap-align: start; transition: border-color .15s, background-color .15s; }
+.apk-col.is-target { border-color: var(--purple-text); background: var(--purple-light); }
+.apk-col-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+.apk-col-title, .apk-block-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--ink); }
+.apk-col-head .apk-link { margin-left: auto; }
+.apk-count { font-family: var(--font-mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.apk-count.is-at { color: var(--ap-support-ink); font-weight: 600; }
+.apk-count.is-over { color: var(--red-ink); font-weight: 600; }
+.apk-wipwarn { font-size: 12.5px; line-height: 1.45; color: var(--ap-support-ink); background: var(--ap-support-soft); border-radius: 8px; padding: 8px 10px; margin-bottom: 10px; }
+.apk-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; min-height: 8px; }
+.apk-empty { font-size: 13px; line-height: 1.5; color: var(--muted); padding: 6px 2px 10px; }
+.apk-hint { font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 10px; }
+
+.apk-card { position: relative; background: var(--white); border: 1px solid var(--ap-line); border-radius: var(--radius-md); padding: 10px 12px 10px; display: grid; gap: 6px; cursor: grab; touch-action: pan-y pan-x; box-shadow: 0 1px 2px rgba(29, 38, 56, .05); }
+.apk-card.is-new { animation: apk-in .32s cubic-bezier(.16, 1, .3, 1); }
+.apk-card.is-blocked { border-color: var(--red); background: linear-gradient(var(--red), var(--red)) top / 100% 3px no-repeat, var(--white); }
+.apk-chip.apk-stale { color: var(--ap-support-ink); border-color: var(--ap-support); }
+.apk-count-note { font-size: 12px; color: var(--red-ink); }
+.apk-learn { font-size: 13px; line-height: 1.45; color: var(--ink); }
+.apk-capture { margin-bottom: 14px; }
+.apk-capture .apk-input { width: 100%; max-width: 520px; }
+.apk-card.is-done .apk-card-open { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--ap-line-strong); }
+.apk-card.is-src { opacity: .35; }
+@keyframes apk-in { from { opacity: .01; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+.apk-card-top { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.apk-grip { display: inline-flex; color: var(--muted); padding: 6px 4px; margin: -6px 0 -6px -6px; touch-action: none; cursor: grab; user-select: none; }
+.apk-ico { display: inline-flex; vertical-align: middle; }
+.apk-proj { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+.apk-proj-t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.apk-dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.apk-adv { display: inline-flex; align-items: center; gap: 5px; }
+.apk-btn .apk-ico, .apk-add .apk-ico { margin-right: 6px; }
+.apk-add { display: flex; align-items: center; justify-content: center; }
+.apk-proj { font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--purple-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.apk-proj--none { color: var(--muted); font-weight: 500; }
+.apk-card-open { font: inherit; font-size: 15px; font-weight: 600; line-height: 1.35; color: var(--ink); background: none; border: 0; padding: 2px 0; text-align: left; cursor: pointer; overflow-wrap: anywhere; }
+.apk-next, .apk-why-block, .apk-why { font-size: 13px; line-height: 1.45; color: var(--muted); overflow-wrap: anywhere; }
+.apk-why-block { color: var(--red-ink); }
+.apk-meta { display: flex; flex-wrap: wrap; gap: 4px 6px; }
+.apk-chip { font-size: 12px; line-height: 1; color: var(--muted); border: 1px solid var(--ap-line); border-radius: 999px; padding: 4px 8px; }
+.apk-prio[data-prio="4"] { color: var(--red-ink); border-color: var(--red); font-weight: 600; }
+.apk-prio[data-prio="3"] { color: var(--ap-support-ink); border-color: var(--ap-support); font-weight: 600; }
+.apk-due[data-tone="late"] { color: var(--red-ink); border-color: var(--red); }
+.apk-due[data-tone="soon"] { color: var(--ap-support-ink); border-color: var(--ap-support); }
+.apk-chip.apk-block { color: var(--red-ink); background: var(--red-light); border-color: var(--red-light); font-weight: 600; }
+.apk-card-act { position: absolute; top: 6px; right: 6px; display: flex; gap: 2px; }
+.apk-card-act--static { position: static; justify-content: flex-end; }
+.apk-card-top .apk-proj { max-width: calc(100% - 150px); }
+.apk-mini { font: inherit; font-size: 12px; font-weight: 600; color: var(--purple-text); background: none; border: 0; border-radius: 6px; padding: 8px 6px; min-height: 32px; margin: -8px 0; cursor: pointer; white-space: nowrap; }
+@media (hover: hover) and (pointer: fine) {
+  .apk-mini:hover { background: var(--purple-light); }
+  .apk-card:hover { border-color: var(--ap-line-strong); }
+  .apk-card-act:not(.apk-card-act--static) { opacity: 0; transition: opacity .12s; }
+  .apk-card:hover .apk-card-act, .apk-card:focus-within .apk-card-act { opacity: 1; }
+}
+.apk-add { font: inherit; font-size: 13px; font-weight: 600; color: var(--muted); background: none; border: 1px dashed var(--muted); border-radius: var(--radius-md); width: 100%; padding: 10px; min-height: 40px; margin-top: 8px; cursor: pointer; }
+.apk-add-form { margin-top: 8px; }
+.apk-add-form .apk-input { width: 100%; max-width: none; }
+.apk-drop { height: 56px; border: 2px dashed var(--purple-text); border-radius: var(--radius-md); background: rgba(74, 98, 142, .08); }
+.apk-ghost { position: fixed; z-index: 10000; margin: 0; pointer-events: none; box-shadow: 0 12px 28px var(--ap-shadow); cursor: grabbing; animation: none; }
+.apk.is-dragging, .apk.is-dragging * { user-select: none; cursor: grabbing !important; }
+.apk-coltabs { display: none; }
+
+.apk-toast { position: fixed; left: 50%; bottom: 20px; transform: translate(-50%, 12px); opacity: 0; pointer-events: none; z-index: 9000; display: flex; gap: 14px; align-items: center; max-width: min(560px, calc(100vw - 32px)); background: var(--ink); color: #fff; border-radius: 12px; padding: 12px 16px; font-size: 14px; line-height: 1.4; transition: opacity .2s, transform .2s; }
+.apk-toast.is-on { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+.apk-toast.is-error { background: var(--red-ink); }
+.apk-toast .apk-link { color: #fff; }
+
+/* Barra de flujo y detalles de tarjeta */
+.apk-flow { display: flex; gap: 3px; height: 8px; width: min(420px, 100%); margin-top: 12px; }
+.apk-flow-seg { flex-basis: 0; min-width: 8px; border-radius: 4px; background: var(--ap-line-strong); transition: flex-grow .4s cubic-bezier(.16, 1, .3, 1); }
+.apk-steps { display: inline-flex; align-items: center; gap: 6px; }
+.apk-bar { width: 28px; height: 4px; border-radius: 2px; background: var(--ap-line); overflow: hidden; }
+.apk-bar-fill { display: block; height: 100%; background: var(--green); border-radius: 2px; }
+.apk-cap { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.apk-cap-dots { display: inline-flex; gap: 4px; }
+.apk-cap-dot { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid var(--muted); }
+.apk-cap-dot.is-on { background: var(--purple); border-color: var(--purple); }
+.apk-cap-dot.is-over { background: var(--red); border-color: var(--red); }
+
+/* Vista Hoy */
+.apk-main { background: var(--white); border: 1px solid var(--ap-line); border-radius: var(--radius-lg); padding: 18px 20px; margin-bottom: 16px; }
+.apk-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin-bottom: 6px; }
+.apk-main-text { font-family: var(--font-serif); font-size: clamp(20px, 2.4vw, 26px); letter-spacing: -.3px; line-height: 1.25; color: var(--ink); margin-bottom: 6px; }
+.apk-main-text.is-empty { color: var(--muted); font-style: italic; }
+.apk-hoy-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: start; }
+.apk-hoy-grid > .apk-block { background: var(--ap-surface-2); border: 1px solid var(--ap-line); border-radius: var(--radius-lg); padding: 14px; }
+.apk-hoy-grid > .apk-block--wide { grid-column: 1 / -1; background: var(--white); }
+.apk-block-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+.apk-sug { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.apk-sug-item { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--ap-line-soft); }
+.apk-sug-item:first-child { border-top: 0; }
+
+/* Diálogos */
+.apk-dialog { width: min(720px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow-y: auto; }
+.apk-dates { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--muted); margin-bottom: 14px; }
+.apk-promote { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: var(--ap-surface-2); border-radius: var(--radius-md); padding: 10px 12px; margin-bottom: 14px; }
+.apk-promote .apk-hint { margin: 0 8px 0 0; }
+.apk-check { display: flex; gap: 8px; align-items: center; font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+.apk-subs, .apk-hist { list-style: none; margin: 0 0 8px; padding: 0; display: grid; gap: 4px; font-size: 14px; }
+.apk-hist { font-size: 13px; color: var(--muted); }
+.apk-sub { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+.apk-sub label { display: flex; gap: 8px; align-items: center; }
+.apk-dlg-actions { align-items: center; }
+.apk-grow { flex: 1 1 auto; }
+.apk-danger { color: var(--red-ink) !important; border-color: var(--red) !important; }
+.apk-proj-row { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--ap-line-soft); }
+.apk-proj-act { display: flex; gap: 10px; flex-shrink: 0; }
+.apk-setup { padding: 18px 20px; background: var(--white); border: 1px solid var(--ap-line); border-radius: var(--radius-lg); font-size: 14px; color: var(--muted); }
+
+/* Hoy: la agenda que ya existía pasa a ser secundaria */
+.aph-section-t { font-family: var(--font-serif); font-weight: 500; font-size: 22px; letter-spacing: -.3px; color: var(--ink); margin: 8px 0 14px; }
+
+@media (max-width: 1100px) { .apk-hoy-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 900px) {
+  .apk-hoy-grid { grid-template-columns: 1fr; }
+  .apk-coltabs { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 12px; padding-bottom: 2px; }
+  .apk-coltab { flex: 0 0 auto; font: inherit; font-size: 13px; font-weight: 600; color: var(--ink); background: var(--white); border: 1px solid var(--ap-line-strong); border-radius: 999px; padding: 8px 14px; min-height: 40px; cursor: pointer; white-space: nowrap; }
+  .apk-coltab { display: inline-flex; align-items: center; gap: 6px; }
+  .apk-coltab[aria-pressed="true"] { background: var(--st-soft); border-color: var(--st); color: var(--ink); box-shadow: inset 0 0 0 1px var(--st); }
+  .apk-board { display: block; overflow: visible; }
+  .apk-board .apk-col { display: none; }
+  .apk-tablero[data-tab="ideas"] .apk-col[data-estado="ideas"], .apk-tablero[data-tab="pendiente"] .apk-col[data-estado="pendiente"],
+  .apk-tablero[data-tab="en_curso"] .apk-col[data-estado="en_curso"], .apk-tablero[data-tab="revision"] .apk-col[data-estado="revision"],
+  .apk-tablero[data-tab="hecho"] .apk-col[data-estado="hecho"] { display: block; }
+
+  .apk-input { max-width: none; }
+}
+@media (pointer: coarse) {
+  .apk-grip { padding: 12px 10px; margin: -12px 0 -12px -10px; }
+  .apk-mini, .apk-seg-btn, .apk-coltab, .apk-btn, .apk-chipbtn { min-height: 44px; }
+  .apk-card-open { padding: 10px 0; }
+  .apk-card-act { top: 2px; right: 2px; }
+}
+@media (prefers-reduced-motion: reduce) { .apk-card, .apk-toast, .apk-col, .apk-flow-seg { animation: none; transition: none; } }
+
+/* ═══ Centro de trabajo v2: color semántico por estado (siempre con forma y texto), iconos, paleta e IA ═══
+   Contraste de cada color de estado ≥ 4,2:1 sobre el fondo y ≥ 4,3:1 sobre su tinte (WCAG 1.4.11 pide 3:1). */
+.apk, .apk-dialog, .apk-pal, .apk-review, .aps {
+  --st-ideas: #7652B0;     --st-ideas-soft: #F5F2FA;
+  --st-pendiente: #5A6E8F; --st-pendiente-soft: #F2F4F8;
+  --st-en_curso: #1F5FD1;  --st-en_curso-soft: #EEF3FD;
+  --st-revision: #A8620A;  --st-revision-soft: #FAF4EC;
+  --st-hecho: #2B7A57;     --st-hecho-soft: #EEF6F2;
+  --st-bloq: #B0273F;      --ia: #6A4FB0;
+}
+[data-estado="ideas"] { --st: var(--st-ideas); --st-soft: var(--st-ideas-soft); }
+[data-estado="pendiente"] { --st: var(--st-pendiente); --st-soft: var(--st-pendiente-soft); }
+[data-estado="en_curso"] { --st: var(--st-en_curso); --st-soft: var(--st-en_curso-soft); }
+[data-estado="revision"] { --st: var(--st-revision); --st-soft: var(--st-revision-soft); }
+[data-estado="hecho"] { --st: var(--st-hecho); --st-soft: var(--st-hecho-soft); }
+
+.apk-st { display: inline-flex; flex: none; color: var(--st, var(--muted)); }
+.apk-st svg, .apk-ico svg { display: block; }
+.apk-type { display: inline-flex; color: var(--st-ideas); }
+.apk-col { background: var(--st-soft); border-color: color-mix(in srgb, var(--st) 24%, var(--ap-line)); }
+.apk-col-head { align-items: center; }
+.apk-col-head .apk-st svg { width: 16px; height: 16px; }
+.apk-col.is-target { background: color-mix(in srgb, var(--st) 12%, #fff); border-color: var(--st); }
+.apk-card { border-color: color-mix(in srgb, var(--st) 22%, var(--ap-line)); transition: transform .16s cubic-bezier(.16, 1, .3, 1), box-shadow .16s, border-color .16s; }
+.apk-card.is-blocked { border-color: var(--st-bloq); }
+.apk-drop { border-color: var(--st, var(--purple-text)); background: color-mix(in srgb, var(--st, #4A628E) 8%, transparent); }
+@media (hover: hover) and (pointer: fine) {
+  .apk-card:hover { transform: translateY(-1px); box-shadow: 0 8px 18px -10px rgba(29, 38, 56, .35); border-color: color-mix(in srgb, var(--st) 45%, var(--ap-line)); }
+}
+.apk-chip { display: inline-flex; align-items: center; gap: 5px; }
+.apk-chip .apk-ico svg { width: 12px; height: 12px; }
+.apk-chip[data-estado] { color: var(--ink); border-color: color-mix(in srgb, var(--st) 40%, var(--ap-line)); background: var(--st-soft); }
+.apk-chip[data-estado] .apk-st svg { width: 12px; height: 12px; }
+.apk-chip.apk-today { color: var(--st-en_curso); border-color: color-mix(in srgb, var(--st-en_curso) 40%, var(--ap-line)); }
+.apk-next { display: flex; gap: 6px; align-items: baseline; }
+.apk-next .apk-ico { flex: none; color: var(--st, var(--muted)); transform: translateY(2px); }
+.apk-learn { display: flex; gap: 6px; align-items: baseline; }
+.apk-learn .apk-ico { color: var(--st-hecho); transform: translateY(2px); }
+
+/* Leyenda de la barra de flujo */
+.apk-flowbox { margin-top: 12px; }
+.apk-flowbox .apk-flow { margin-top: 0; }
+.apk-flow-seg { background: var(--st); }
+.apk-flow-legend { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--muted); }
+.apk-flow-legend li { display: inline-flex; align-items: center; gap: 5px; }
+.apk-flow-legend strong { color: var(--ink); font-family: var(--font-mono); font-weight: 500; font-variant-numeric: tabular-nums; }
+.apk-flow-legend .apk-st svg { width: 12px; height: 12px; }
+
+/* Buscar / paleta */
+.apk-btn { display: inline-flex; align-items: center; gap: 6px; }
+.apk-btn .apk-ico { margin-right: 0 !important; }
+.apk-kbd { font-family: var(--font-mono); font-size: 11px; color: var(--muted); border: 1px solid var(--ap-line); border-radius: 5px; padding: 1px 5px; }
+.apk-btn--ia { color: var(--ia); border-color: color-mix(in srgb, var(--ia) 40%, var(--ap-line)); background: color-mix(in srgb, var(--ia) 6%, #fff); }
+.apk-btn--ia.is-busy { opacity: .7; cursor: progress; }
+.apk-btn--ia.is-busy .apk-ico { animation: apk-spin 1.1s linear infinite; }
+@keyframes apk-spin { to { transform: rotate(360deg); } }
+.apk-push { margin-left: auto; }
+.apk-ia-row { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+.apk-ia-break { margin-top: 8px; }
+.apk-pal { width: min(620px, calc(100vw - 24px)); padding: 0; overflow: hidden; margin-top: 12vh; }
+.apk-pal-box { display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--ap-line); color: var(--muted); }
+.apk-pal-box .apk-ico svg { width: 18px; height: 18px; }
+.apk-pal-input { flex: 1; font: inherit; font-size: 17px; border: 0; outline: none; background: none; color: var(--ink); min-height: 32px; }
+.apk-pal-list { list-style: none; margin: 0; padding: 6px; max-height: min(52vh, 420px); overflow-y: auto; }
+.apk-pal-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 14.5px; color: var(--ink); min-height: 44px; }
+.apk-pal-item[aria-selected="true"] { background: var(--purple-light); }
+.apk-pal-ico { display: inline-flex; color: var(--muted); }
+.apk-pal-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.apk-pal-kind { font-size: 12px; color: var(--muted); }
+.apk-pal-hint { margin: 0; padding: 10px 18px; border-top: 1px solid var(--ap-line); font-size: 12px; color: var(--muted); background: var(--ap-surface-2); }
+
+/* Captura inteligente */
+.apk-capture { margin-bottom: 16px; max-width: 760px; }
+.apk-capture-row { display: flex; align-items: center; gap: 10px; background: var(--white); border: 1px solid var(--ap-line-strong); border-radius: var(--radius-lg); padding: 6px 6px 6px 14px; }
+.apk-capture-row:focus-within { border-color: var(--purple); box-shadow: 0 0 0 3px var(--ap-ring); }
+.apk-capture-ico { display: inline-flex; color: var(--st-ideas); }
+.apk-capture .apk-input { border: 0; padding: 8px 0; min-width: 0; max-width: none; flex: 1; box-shadow: none; outline: none; }
+.apk-cap-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; min-height: 0; }
+.apk-cap-help { margin: 6px 0 0; font-size: 12px; }
+
+/* Revisión de propuestas de IA */
+.apk-rv-title { display: flex; align-items: center; gap: 8px; }
+.apk-rv-title .apk-ico { color: var(--ia); }
+.apk-rv-title .apk-ico svg { width: 20px; height: 20px; }
+.apk-rv-intro { font-size: 15px; line-height: 1.5; color: var(--ink); background: color-mix(in srgb, var(--ia) 6%, #fff); border-radius: var(--radius-md); padding: 10px 12px; margin-bottom: 12px; }
+.apk-rv-list { list-style: none; margin: 0 0 8px; padding: 0; display: grid; gap: 8px; }
+.apk-rv-item { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; padding: 10px 12px; border: 1px solid var(--ap-line); border-radius: var(--radius-md); }
+.apk-rv-item input[type="checkbox"] { width: 18px; height: 18px; margin-top: 10px; accent-color: var(--ia); }
+.apk-rv-body { display: grid; gap: 6px; min-width: 0; }
+.apk-rv-body .apk-input { max-width: none; width: 100%; }
+.apk-rv-body .apk-hint { margin: 0; }
+.apk-rv-t { font-weight: 600; color: var(--ink); padding-top: 8px; }
+.apk-rv-note { margin-top: 4px; }
+
+/* Movimiento: cambio de vista nativo y un único momento al terminar */
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .22s; animation-timing-function: cubic-bezier(.16, 1, .3, 1); }
+.apk-card.is-justdone { animation: apk-done .8s cubic-bezier(.16, 1, .3, 1); }
+.apk-card.is-justdone .apk-card-top .apk-st { animation: apk-pop .5s cubic-bezier(.16, 1, .3, 1); }
+@keyframes apk-done { 0% { box-shadow: 0 0 0 0 rgba(43, 122, 87, .5); } 100% { box-shadow: 0 0 0 16px rgba(43, 122, 87, 0); } }
+@keyframes apk-pop { 0% { transform: scale(.3) rotate(-25deg); } 100% { transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+  .apk-card.is-justdone, .apk-card.is-justdone .apk-st, .apk-btn--ia.is-busy .apk-ico { animation: none; }
+  .apk-card:hover { transform: none; }
+}
+.apk-block-title { display: inline-flex; align-items: center; gap: 7px; }
+.apk-block-title .apk-ico { color: var(--muted); }
+.apk-block-title .apk-st svg, .apk-block-title .apk-ico svg { width: 15px; height: 15px; }
+
+
+/* ═══════════════════════════════════════════════
+   STUDIO DE PROYECTOS (area-privada-studio.js) · prefijo aps-
+   Mismos tokens que el resto del área privada; los colores de estado reutilizan --st-* del Centro de trabajo.
+   ═══════════════════════════════════════════════ */
+.aps { margin-bottom: 40px; }
+.aps-head { display: flex; flex-wrap: wrap; gap: 16px 24px; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; }
+.aps-title { font-family: var(--font-serif); font-weight: 500; font-size: clamp(26px, 3vw, 34px); letter-spacing: -.5px; line-height: 1.15; color: var(--ink); }
+.aps-sub { font-size: 14px; color: var(--muted); margin-top: 6px; }
+.aps-head-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.aps-seg { display: inline-flex; border: 1px solid var(--ap-line-strong); border-radius: 999px; background: var(--white); padding: 2px; }
+.aps-seg-btn { font: inherit; font-size: 13px; font-weight: 600; color: var(--ink); background: transparent; border: 0; border-radius: 999px; padding: 8px 14px; min-height: 36px; cursor: pointer; }
+.aps-seg-btn[aria-pressed="true"] { background: var(--purple); color: #fff; }
+.aps-btn { font: inherit; font-size: 13px; font-weight: 600; color: var(--ink); background: var(--white); border: 1px solid var(--ap-line-strong); border-radius: 999px; padding: 8px 16px; min-height: 40px; cursor: pointer; }
+.aps-btn--primary { background: var(--ink); border-color: var(--ink); color: #fff; }
+.aps-link { font: inherit; font-size: 13px; font-weight: 600; color: var(--purple-text); background: none; border: 0; padding: 4px 2px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.aps-link--danger { color: var(--red-ink); }
+.aps button:focus-visible, .aps input:focus-visible, .aps select:focus-visible, .aps textarea:focus-visible, .aps .aps-panel-title:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+@media (hover: hover) and (pointer: fine) {
+  .aps-btn:hover, .aps-seg-btn:hover:not([aria-pressed="true"]) { background: var(--ap-hover); }
+  .aps-btn--primary:hover { background: var(--purple); }
+}
+
+.aps-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; align-items: start; }
+.aps-layout.has-panel { grid-template-columns: minmax(0, 1fr) minmax(320px, 380px); }
+.aps-main { min-width: 0; }
+
+.aps-input, .aps-select { font: inherit; font-size: 14px; color: var(--ink); background: var(--white); border: 1px solid var(--ap-line-strong); border-radius: var(--radius-md); padding: 9px 12px; min-height: 40px; }
+.aps-capture { margin-bottom: 12px; }
+.aps-capture .aps-input { width: 100%; max-width: 520px; }
+.aps-filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 16px; }
+.aps-filters .aps-input { min-width: 200px; flex: 1 1 200px; max-width: 320px; }
+.aps-filters-end { margin-left: auto; }
+.aps-chipbtn { font: inherit; font-size: 13px; font-weight: 600; color: var(--ink); background: var(--white); border: 1px solid var(--ap-line-strong); border-radius: 999px; padding: 8px 14px; min-height: 40px; cursor: pointer; }
+.aps-chipbtn[aria-pressed="true"] { background: var(--red-light); border-color: var(--red); color: var(--red-ink); }
+
+/* Tablero */
+.aps-board { display: grid; grid-template-columns: repeat(5, minmax(232px, 1fr)); gap: 14px; overflow-x: auto; padding-bottom: 12px; align-items: start; scroll-snap-type: x proximity; }
+.aps-col { background: var(--ap-surface-2); border: 1px solid var(--ap-line); border-top: 3px solid var(--st, var(--ap-line)); border-radius: var(--radius-lg); padding: 12px; min-width: 0; scroll-snap-align: start; transition: border-color .15s, background-color .15s; }
+.aps-col.is-target { border-color: var(--st); background: var(--st-soft, var(--purple-light)); }
+[data-status="inbox"] { --st: var(--st-ideas); --st-soft: var(--st-ideas-soft); }
+[data-status="ready"] { --st: var(--st-pendiente); --st-soft: var(--st-pendiente-soft); }
+[data-status="in_progress"] { --st: var(--st-en_curso); --st-soft: var(--st-en_curso-soft); }
+[data-status="review"] { --st: var(--st-revision); --st-soft: var(--st-revision-soft); }
+[data-status="done"] { --st: var(--st-hecho); --st-soft: var(--st-hecho-soft); }
+.aps-col-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+.aps-col-title, .aps-block-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--ink); }
+.aps-count { margin-left: auto; font-family: var(--font-mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.aps-count.is-at { color: var(--ap-support-ink); font-weight: 600; }
+.aps-count.is-over { color: var(--red-ink); font-weight: 600; }
+.aps-wipwarn { font-size: 12.5px; line-height: 1.45; color: var(--ap-support-ink); background: var(--ap-support-soft); border-radius: 8px; padding: 8px 10px; margin-bottom: 10px; }
+.aps-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; min-height: 8px; }
+.aps-empty { font-size: 13px; line-height: 1.5; color: var(--muted); padding: 6px 2px 10px; }
+.aps-hint { font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 10px; }
+.aps-card { position: relative; background: var(--white); border: 1px solid var(--ap-line); border-left: 3px solid var(--st); border-radius: var(--radius-md); padding: 10px 12px; display: grid; gap: 6px; cursor: grab; touch-action: pan-y pan-x; box-shadow: 0 1px 2px rgba(29, 38, 56, .05); }
+.aps-card.is-blocked { border-color: var(--red); border-left-color: var(--red); }
+.aps-card.is-done .aps-card-open { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--ap-line-strong); }
+.aps-card.is-src { opacity: .35; }
+.aps-card-top { display: flex; align-items: flex-start; gap: 6px; min-width: 0; }
+.aps-grip { display: inline-flex; color: var(--muted); padding: 6px 4px; margin: -6px 0 -6px -6px; touch-action: none; cursor: grab; user-select: none; }
+.aps-card-open { font: inherit; font-size: 15px; font-weight: 600; line-height: 1.35; color: var(--ink); background: none; border: 0; padding: 2px 0; text-align: left; cursor: pointer; overflow-wrap: anywhere; flex: 1; }
+.aps-card-meta, .aps-row-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.aps-chip { display: inline-flex; align-items: center; font-size: 12px; line-height: 1; color: var(--muted); border: 1px solid var(--ap-line); border-radius: 999px; padding: 4px 8px; }
+.aps-chip--proj { color: var(--ink); background: var(--purple-light); border-color: var(--purple-light); }
+.aps-chip--prio { color: var(--ap-support-ink); border-color: var(--ap-support); font-weight: 600; }
+.aps-chip--blocked { color: var(--red-ink); background: var(--red-light); border-color: var(--red-light); font-weight: 600; }
+.aps-chip--late { color: var(--red-ink); border-color: var(--red); font-weight: 600; }
+.aps-chip--soon { color: var(--ap-support-ink); border-color: var(--ap-support); }
+.aps-chip--st { color: var(--ink); border-color: color-mix(in srgb, var(--st) 40%, var(--ap-line)); background: var(--st-soft); }
+.aps-add { font: inherit; font-size: 13px; font-weight: 600; color: var(--muted); background: none; border: 1px dashed var(--muted); border-radius: var(--radius-md); width: 100%; padding: 10px; min-height: 40px; margin-top: 8px; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; }
+.aps-add-form { margin-top: 8px; }
+.aps-add-form .aps-input { width: 100%; }
+.aps-drop { height: 56px; border: 2px dashed var(--st, var(--purple-text)); border-radius: var(--radius-md); background: color-mix(in srgb, var(--st, #4A628E) 8%, transparent); }
+.aps-ghost { position: fixed; z-index: 10000; margin: 0; pointer-events: none; box-shadow: 0 12px 28px var(--ap-shadow); cursor: grabbing; list-style: none; }
+.aps.is-dragging { user-select: none; cursor: grabbing; }
+
+/* Resumen */
+.aps-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.aps-block { background: var(--white); border: 1px solid var(--ap-line); border-radius: var(--radius-lg); padding: 16px 18px; min-width: 0; }
+.aps-block--wide { grid-column: 1 / -1; }
+.aps-block-title { margin-bottom: 12px; }
+.aps-projects { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.aps-project { border: 1px solid var(--ap-line); border-radius: var(--radius-md); padding: 12px 14px; display: grid; gap: 6px; background: var(--white); }
+.aps-project-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.aps-project-title, .aps-row-title { font: inherit; font-size: 15px; font-weight: 600; line-height: 1.35; color: var(--ink); background: none; border: 0; padding: 2px 0; text-align: left; cursor: pointer; overflow-wrap: anywhere; }
+.aps-row-title.is-static { cursor: default; }
+.aps-project-meta, .aps-project-count { font-size: 13px; color: var(--muted); }
+.aps-bar { height: 6px; border-radius: 3px; background: var(--ap-line); overflow: hidden; }
+.aps-bar span { display: block; height: 100%; background: var(--st-hecho); }
+.aps-next { font-size: 13.5px; color: var(--ink); line-height: 1.45; }
+.aps-next.is-empty { color: var(--muted); font-style: italic; }
+.aps-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.aps-row { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--ap-line-soft); }
+.aps-row:last-child { border-bottom: 0; }
+.aps-row-note { font-size: 12.5px; color: var(--red-ink); }
+.aps-activity { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 14px; color: var(--text); }
+.aps-activity li { display: flex; justify-content: space-between; gap: 16px; padding: 4px 0; border-bottom: 1px solid var(--ap-line-soft); }
+.aps-activity time { font-family: var(--font-mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
+.aps-empty-state { background: var(--white); border: 1px dashed var(--ap-line-strong); border-radius: var(--radius-lg); padding: 32px 24px; max-width: 560px; }
+.aps-empty-state h3 { font-family: var(--font-serif); font-weight: 500; font-size: 22px; color: var(--ink); margin-bottom: 8px; }
+.aps-empty-state p { color: var(--muted); font-size: 14.5px; line-height: 1.55; margin-bottom: 16px; }
+.aps-setup { background: var(--ap-support-soft); color: var(--ap-support-ink); border-radius: var(--radius-md); padding: 14px 16px; font-size: 14px; }
+
+/* Panel lateral */
+.aps-panel { background: var(--white); border: 1px solid var(--ap-line); border-radius: var(--radius-lg); padding: 16px 18px; position: sticky; top: calc(var(--ap-top-h) + 12px); max-height: calc(100vh - var(--ap-top-h) - 24px); overflow-y: auto; box-shadow: 0 8px 24px var(--ap-shadow); }
+.aps-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.aps-panel-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--ink); }
+.aps-form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; }
+.aps-form .apf-wide, .aps-form .aps-panel-msg, .aps-form .aps-panel-actions { grid-column: 1 / -1; }
+.aps-check label { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--ink); }
+.aps-check input { width: 18px; height: 18px; min-height: 0; padding: 0; }
+.aps-panel-msg { font-size: 13px; color: var(--red-ink); min-height: 0; }
+.aps-panel-actions { display: flex; gap: 8px; }
+.aps-steps { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--ap-line); }
+.aps-sub-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+.aps-step-list { list-style: none; margin: 0 0 8px; padding: 0; display: grid; gap: 4px; }
+.aps-step-list li { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.aps-step-list li span { flex: 1; overflow-wrap: anywhere; }
+.aps-step-list li.is-done span { color: var(--muted); text-decoration: line-through; }
+.aps-step-list input { width: 18px; height: 18px; }
+.aps-steps .aps-input { width: 100%; }
+.aps-panel-foot { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--ap-line); }
+
+.aps-toast { position: fixed; left: 50%; bottom: 20px; transform: translate(-50%, 12px); opacity: 0; pointer-events: none; z-index: 9000; display: flex; gap: 14px; align-items: center; max-width: min(560px, calc(100vw - 32px)); background: var(--ink); color: #fff; border-radius: 12px; padding: 12px 16px; font-size: 14px; line-height: 1.4; transition: opacity .2s, transform .2s; }
+.aps-toast.is-on { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+.aps-toast.is-error { background: var(--red-ink); }
+.aps-toast .aps-link { color: #fff; }
+
+@media (max-width: 1100px) {
+  .aps-layout.has-panel { grid-template-columns: minmax(0, 1fr); }
+  .aps-panel { position: fixed; inset: auto 0 0 0; top: auto; max-height: 82vh; border-radius: var(--radius-lg) var(--radius-lg) 0 0; z-index: 8000; }
+}
+@media (max-width: 700px) {
+  .aps-grid { grid-template-columns: minmax(0, 1fr); }
+  .aps-board { grid-template-columns: repeat(5, 82%); }
+  .aps-form { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) { .aps-col, .aps-toast { transition: none; } }
+
+/* Studio (hito 2): Idea Lab, notas y entregables */
+.aps-idea-main { flex: 1 1 260px; min-width: 0; display: grid; gap: 2px; }
+.aps-idea-body { font-size: 13px; line-height: 1.45; color: var(--muted); overflow-wrap: anywhere; }
+.aps-idea-group { margin-bottom: 14px; }
+.aps-chip--idea-new { color: var(--ink); border-color: color-mix(in srgb, var(--st-ideas) 40%, var(--ap-line)); background: var(--st-ideas-soft); }
+.aps-chip--idea-exploring { color: var(--ink); border-color: color-mix(in srgb, var(--st-en_curso) 40%, var(--ap-line)); background: var(--st-en_curso-soft); }
+.aps-chip--idea-converted, .aps-chip--done { color: var(--ink); border-color: color-mix(in srgb, var(--st-hecho) 40%, var(--ap-line)); background: var(--st-hecho-soft); }
+.aps-chip--idea-discarded { text-decoration: line-through; }
+.aps-sec { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--ap-line); }
+.aps-sec-sum { display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; font-size: 13px; font-weight: 700; color: var(--ink); padding: 4px 0; list-style-position: inside; }
+.aps-sec-sum:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+.aps-sec[open] > .aps-sec-sum { margin-bottom: 8px; }
+.aps-ext { font-size: 12.5px; color: var(--purple-text); overflow-wrap: anywhere; text-decoration: underline; text-underline-offset: 2px; }
+.aps-note + .aps-note, .aps-panel .aps-row { border-bottom-color: var(--ap-line-soft); }
+.aps-panel .aps-idea-main { flex-basis: 180px; }

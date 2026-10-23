@@ -110,14 +110,29 @@
     loupe.hidden = false; aim.hidden = false;
     drawLoupe(g.cx, g.cy);
   }
+  // Doble toque = clic derecho (como el táctil original): cierra ventanas e informes,
+  // «Right click to exit» al acabar una misión, cancela obras…
+  let lastTap = { t: 0, x: -99, y: -99 };
+  function rightClickAt(cx, cy) {
+    const o = { bubbles: true, cancelable: true, clientX: cx, clientY: cy, screenX: cx, screenY: cy, button: 2, view: window };
+    canvas.dispatchEvent(new MouseEvent("mousedown", Object.assign({ buttons: 2 }, o)));
+    setTimeout(() => canvas.dispatchEvent(new MouseEvent("mouseup", Object.assign({ buttons: 0 }, o))), 45);
+  }
   function end(cancel) {
     if (!g) return;
     clearTimeout(g.timer);
     if (!cancel) {
-      mouse("mousemove", g.cx, g.cy, 0);
-      mouse("mousedown", g.cx, g.cy, 1);
+      const now = performance.now(), quick = !g.held && now - g.start < 300;
       const { cx, cy } = g;
-      setTimeout(() => mouse("mouseup", cx, cy, 0), 45);
+      if (quick && now - lastTap.t < 380 && Math.hypot(cx - lastTap.x, cy - lastTap.y) < 34) {
+        rightClickAt(cx, cy);
+        lastTap = { t: 0, x: -99, y: -99 };
+      } else {
+        mouse("mousemove", cx, cy, 0);
+        mouse("mousedown", cx, cy, 1);
+        setTimeout(() => mouse("mouseup", cx, cy, 0), 45);
+        lastTap = quick ? { t: now, x: cx, y: cy } : { t: 0, x: -99, y: -99 };
+      }
     }
     loupe.hidden = true; aim.hidden = true;
     g = null;
@@ -174,5 +189,18 @@
     requestAnimationFrame(tick);
   })();
 
-  window.RA_TOUCH = { classify, engine };
+  /* Al abrirse una ventana fuera de la ciudad (informes, fin de misión…), el botón Atrás
+     brilla un momento: es el «clic derecho» que piden esas pantallas */
+  let wasCity = null;
+  setInterval(() => {
+    const M = engine(); if (!M) return;
+    const city = !!M._ra_is_city();
+    if (wasCity === true && !city) {
+      const b = document.querySelector('#dock [data-act="back"]');
+      if (b) { b.classList.remove("pulse"); void b.offsetWidth; b.classList.add("pulse"); }
+    }
+    wasCity = city;
+  }, 400);
+
+  window.RA_TOUCH = { classify, engine, rightClickAt };
 })();

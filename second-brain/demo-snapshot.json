@@ -3,8 +3,8 @@
  "generatedAt": "2026-01-15T10:00:00.000Z",
  "mode": "demo",
  "engine": {
-  "version": "1.0.0",
-  "frameworkVersion": 1
+  "version": "1.5.0",
+  "frameworkVersion": 4
  },
  "meta": {
   "targetLevel": "consolidado",
@@ -32,6 +32,7 @@
    "formula": "prioridad = relevancia (0-3 según el nivel objetivo) × distancia al objetivo (0-1). Se ordena por prioridad × peso de confianza (alta 1, media 0,8, baja 0,6).",
    "distance": {
     "respaldado completo": 0.1,
+    "respaldado ampliable": 0.25,
     "respaldado parcial": 0.4,
     "documentado sin práctica": 0.6,
     "solo declarado": 0.7,
@@ -39,7 +40,7 @@
     "brecha probable": 0.9,
     "brecha confirmada": 1
    },
-   "buckets": "ahora = hasta 3 con prioridad ≥ 1,0; después = prioridad ≥ 0,5; todavía no = el resto o relevancia < 2."
+   "buckets": "ahora = hasta 3 con prioridad ≥ 1,0; después = prioridad ≥ 0,5 o núcleo respaldado con facetas opcionales sin práctica; todavía no = el resto o relevancia < 2."
   },
   "limitations": [
    "La evidencia indica que se ha trabajado con algo; no mide el nivel de dominio.",
@@ -57,38 +58,18 @@
     "reason": "Ya hay evidencia suficiente; no es prioridad ahora."
    },
    {
-    "id": "estadistica-eda",
-    "label": "Estadística y análisis exploratorio",
-    "reason": "Ya hay evidencia suficiente; no es prioridad ahora."
-   },
-   {
-    "id": "explicar-decisiones",
-    "label": "Explicar decisiones y justificar resultados",
-    "reason": "Ya hay evidencia suficiente; no es prioridad ahora."
-   },
-   {
     "id": "modelado",
     "label": "Modelado de datos y medidas",
     "reason": "Ya hay evidencia suficiente; no es prioridad ahora."
    },
    {
-    "id": "preparacion-calidad",
-    "label": "Preparación, limpieza y calidad de datos",
-    "reason": "Ya hay evidencia suficiente; no es prioridad ahora."
-   },
-   {
-    "id": "python-analisis",
-    "label": "Python aplicado al análisis",
-    "reason": "Ya hay evidencia suficiente; no es prioridad ahora."
-   },
-   {
-    "id": "sql-analitico",
-    "label": "SQL y consultas analíticas",
-    "reason": "Ya hay evidencia suficiente; no es prioridad ahora."
+    "id": "plataformas-datos",
+    "label": "Plataformas de datos (cloud y big data)",
+    "reason": "Relevancia 1/3 para «Junior consolidado»: puede esperar."
    },
    {
     "id": "ux-complementario",
-    "label": "UX/UI y diseño de interfaces",
+    "label": "UX/UI, diseño de interfaces y web",
     "reason": "Relevancia 1/3 para «Junior consolidado»: puede esperar."
    },
    {
@@ -142,18 +123,38 @@
   }
  },
  "stats": {
-  "nodes": 67,
-  "edges": 154,
-  "concepts": 39,
+  "nodes": 103,
+  "edges": 291,
+  "concepts": 59,
   "projects": 4,
-  "recommendations": 6,
+  "recommendations": 12,
   "byState": {
-   "mencionado": 13,
-   "respaldado": 34,
-   "brecha_probable": 2,
-   "pendiente": 5
+   "respaldado": 43,
+   "brecha_probable": 3,
+   "pendiente": 13,
+   "mencionado": 17,
+   "neutral": 8
+  },
+  "taxonomy": {
+   "roots": 29,
+   "maxDepth": 4,
+   "branches": 12
   },
   "priorities": 3
+ },
+ "quality": {
+  "noReadme": [
+   {
+    "id": "p:demo-proyectos-scripts-sueltos-otd8mg",
+    "label": "scripts-sueltos"
+   }
+  ],
+  "docOnly": 0,
+  "unclassified": [],
+  "merged": [],
+  "notInspected": [],
+  "candidates": [],
+  "indexes": []
  },
  "regions": [
   {
@@ -161,88 +162,192 @@
    "label": "Business Intelligence y Power BI",
    "order": 0,
    "center": [
-    3.89,
-    57.32,
-    -3.48
+    12.51,
+    64.22,
+    0.53
    ],
-   "count": 11
+   "count": 14,
+   "color": "#F5C84C",
+   "icon": "powerbi",
+   "family": "bi"
   },
   {
    "id": "datos",
    "label": "Ingeniería y preparación de datos",
    "order": 1,
    "center": [
-    -52.98,
-    34.47,
-    40.67
+    -49.87,
+    35.83,
+    40.21
    ],
-   "count": 16
+   "count": 24,
+   "color": "#168A83",
+   "icon": "database",
+   "family": "ingenieria"
   },
   {
    "id": "analisis",
    "label": "Análisis, estadística y machine learning",
    "order": 2,
    "center": [
-    -5.24,
-    15.66,
-    -79.48
+    1.94,
+    21.93,
+    -83.15
    ],
-   "count": 8
+   "count": 17,
+   "color": "#8B5CF6",
+   "icon": "brain",
+   "family": "ml"
   },
   {
    "id": "visualizacion",
    "label": "Visualización y comunicación de datos",
    "order": 3,
    "center": [
-    55.53,
-    -1.89,
-    65.79
+    61.3,
+    4.03,
+    72.39
    ],
-   "count": 6
+   "count": 7,
+   "color": "#D96C45",
+   "icon": "chart",
+   "family": "storytelling"
   },
   {
    "id": "ux",
-   "label": "UX/UI y diseño (complementario)",
+   "label": "UX/UI y desarrollo web (complementario)",
    "order": 4,
    "center": [
-    -99.91,
-    -24.42,
-    -23.04
+    -102.58,
+    -20.48,
+    -17.92
    ],
-   "count": 1
+   "count": 2,
+   "color": "#D95D9E",
+   "icon": "cursor",
+   "family": "ux"
   },
   {
    "id": "profesional",
    "label": "Competencias profesionales",
    "order": 5,
    "center": [
-    61.91,
-    -38.48,
-    -39.19
+    69.22,
+    -30.29,
+    -28.84
    ],
-   "count": 12
+   "count": 13,
+   "color": "#64748B",
+   "icon": "briefcase",
+   "family": "negocio"
+  },
+  {
+   "id": "negocio",
+   "label": "Dominios de negocio",
+   "order": 6,
+   "center": [
+    -1.22,
+    -52.24,
+    73.36
+   ],
+   "count": 6,
+   "color": "#8493A8",
+   "icon": "store",
+   "family": "negocio"
   },
   {
    "id": "practica",
    "label": "Proyectos y experiencia demostrada",
-   "order": 6,
+   "order": 7,
    "center": [
-    -23.62,
-    -30.74,
-    38.49
+    -29.01,
+    -23.46,
+    -35.72
    ],
-   "count": 4
+   "count": 4,
+   "color": "#273a5f",
+   "icon": "folder",
+   "family": null
   },
   {
    "id": "objetivos",
    "label": "Objetivos y oportunidades",
-   "order": 7,
+   "order": 8,
    "center": [
-    -3.87,
-    -76.3,
-    -3.55
+    -0.72,
+    -82.36,
+    3
    ],
-   "count": 9
+   "count": 16,
+   "color": "#1d2638",
+   "icon": "flag",
+   "family": null
+  }
+ ],
+ "families": [
+  {
+   "id": "bi",
+   "label": "Power BI y Business Intelligence",
+   "color": "#F5C84C",
+   "ink": "#8A6500",
+   "icon": "powerbi",
+   "count": 16
+  },
+  {
+   "id": "sql",
+   "label": "SQL y bases de datos",
+   "color": "#4C8BF5",
+   "ink": "#1F5BC4",
+   "icon": "database",
+   "count": 11
+  },
+  {
+   "id": "python",
+   "label": "Python y análisis de datos",
+   "color": "#36A265",
+   "ink": "#1E7A48",
+   "icon": "notebook",
+   "count": 12
+  },
+  {
+   "id": "ml",
+   "label": "Machine Learning e IA",
+   "color": "#8B5CF6",
+   "ink": "#6535D6",
+   "icon": "brain",
+   "count": 16
+  },
+  {
+   "id": "storytelling",
+   "label": "Data Storytelling y visualización",
+   "color": "#D96C45",
+   "ink": "#B04E2B",
+   "icon": "chart",
+   "count": 7
+  },
+  {
+   "id": "ux",
+   "label": "UX/UI y diseño",
+   "color": "#D95D9E",
+   "ink": "#B03A7C",
+   "icon": "cursor",
+   "count": 3
+  },
+  {
+   "id": "ingenieria",
+   "label": "Ingeniería y preparación de datos",
+   "color": "#168A83",
+   "ink": "#0F6A64",
+   "icon": "transform",
+   "count": 16
+  },
+  {
+   "id": "negocio",
+   "label": "Negocio y competencias transversales",
+   "color": "#64748B",
+   "ink": "#475569",
+   "icon": "briefcase",
+   "count": 18
   }
  ],
  "nodes": [
@@ -251,30 +356,50 @@
    "label": "Power BI",
    "type": "tecnologia",
    "region": "bi",
-   "state": "mencionado",
-   "summary": "Plataforma de Microsoft para modelar datos y construir informes interactivos. Evidencia: documentación en 1 archivo; declarado en 1 fuente.",
-   "size": 0.6,
+   "area": "bi",
+   "family": "bi",
+   "icon": "powerbi",
+   "state": "respaldado",
+   "summary": "Plataforma de Microsoft para modelar datos y construir informes interactivos. Evidencia: práctica en 4 archivos; documentación en 2 archivos; declarado en 1 fuente, en 2 proyectos.",
+   "size": 0.68,
    "evidence": {
-    "practica": 0,
-    "explicativa": 1,
+    "practica": 4,
+    "explicativa": 2,
     "declarativa": 1,
-    "projects": 0,
-    "breadth": "ninguna"
+    "projects": 2,
+    "breadth": "puntual",
+    "kinds": {
+     "modelo": 1,
+     "sql": 3,
+     "documento": 2
+    }
    },
    "uncertainty": [
-    "Aparece en documentación, pero no hay práctica detectable en el código o los artefactos analizados."
+    "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    20.47,
-    63.61,
-    6.47
-   ]
+    20.28,
+    69.83,
+    9.24
+   ],
+   "stage": "reforzado",
+   "depth": 0,
+   "branch": {
+    "children": 6,
+    "leaves": 8,
+    "aplicado": 3,
+    "documentado": 0,
+    "sinEvidencia": 5
+   }
   },
   {
    "id": "c:dax",
    "label": "DAX",
    "type": "tecnologia",
    "region": "bi",
+   "area": "bi",
+   "family": "bi",
+   "icon": "fx",
    "state": "respaldado",
    "summary": "Lenguaje de fórmulas de Power BI para medidas, columnas calculadas y tablas. Evidencia: práctica en 1 archivo; documentación en 1 archivo, en 1 proyecto.",
    "size": 0.64,
@@ -283,22 +408,39 @@
     "explicativa": 1,
     "declarativa": 0,
     "projects": 1,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "modelo": 1,
+     "documento": 1
+    }
    },
    "uncertainty": [
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    24.65,
-    36.04,
-    -8.07
-   ]
+    26.11,
+    46.58,
+    -11.8
+   ],
+   "stage": "aplicado",
+   "depth": 1,
+   "parent": "c:powerbi",
+   "branch": {
+    "children": 3,
+    "leaves": 3,
+    "aplicado": 2,
+    "documentado": 0,
+    "sinEvidencia": 1
+   }
   },
   {
    "id": "c:dax-contexto",
    "label": "Contexto de filtro en DAX",
    "type": "tecnica",
    "region": "bi",
+   "area": "bi",
+   "family": "bi",
+   "icon": "filter",
    "state": "respaldado",
    "summary": "Cómo DAX evalúa cada medida según filtros, segmentaciones y filas: la base de las medidas avanzadas. Evidencia: práctica en 1 archivo, en 1 proyecto.",
    "size": 0.64,
@@ -307,22 +449,31 @@
     "explicativa": 0,
     "declarativa": 0,
     "projects": 1,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "modelo": 1
+    }
    },
    "uncertainty": [
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -3.13,
-    47.69,
-    -9.64
-   ]
+    0.76,
+    61.12,
+    -26.79
+   ],
+   "stage": "aplicado",
+   "depth": 2,
+   "parent": "c:dax"
   },
   {
    "id": "c:time-intelligence",
    "label": "Inteligencia de tiempo",
    "type": "tecnica",
    "region": "bi",
+   "area": "bi",
+   "family": "bi",
+   "icon": "calendar",
    "state": "respaldado",
    "summary": "Comparativas YTD, mes anterior o mismo periodo del año pasado sobre una tabla de fechas. Evidencia: práctica en 1 archivo; documentación en 1 archivo, en 1 proyecto.",
    "size": 0.64,
@@ -331,22 +482,32 @@
     "explicativa": 1,
     "declarativa": 0,
     "projects": 1,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "modelo": 1,
+     "documento": 1
+    }
    },
    "uncertainty": [
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    11.69,
-    41.61,
-    18.82
-   ]
+    -3.69,
+    49.13,
+    -7.81
+   ],
+   "stage": "aplicado",
+   "depth": 2,
+   "parent": "c:dax"
   },
   {
    "id": "c:power-query",
    "label": "Power Query",
    "type": "tecnologia",
    "region": "bi",
+   "area": "bi",
+   "family": "bi",
+   "icon": "transform",
    "state": "brecha_probable",
    "summary": "Editor de transformación de datos de Power BI y Excel (lenguaje M). Sin evidencia detectada en las fuentes analizadas.",
    "size": 0.6,
@@ -355,24 +516,31 @@
     "explicativa": 0,
     "declarativa": 0,
     "projects": 0,
-    "breadth": "ninguna"
+    "breadth": "ninguna",
+    "kinds": {}
    },
    "uncertainty": [
     "Es parte del núcleo de una competencia con relevancia 3/3 para «Junior consolidado» y no aparece en 11 archivos con práctica de las fuentes analizadas.",
     "Puede existir en proyectos o entornos que no están entre las fuentes configuradas."
    ],
    "pos": [
-    5.29,
-    69.93,
-    23.44
-   ]
+    6.86,
+    75.85,
+    31.18
+   ],
+   "stage": "sin_evidencia",
+   "depth": 1,
+   "parent": "c:powerbi"
   },
   {
    "id": "c:power-bi-service",
    "label": "Power BI Service",
    "type": "tecnologia",
    "region": "bi",
-   "state": "pendiente",
+   "area": "bi",
+   "family": "bi",
+   "icon": "cloud",
+   "state": "brecha_probable",
    "summary": "Entorno en la nube donde se publican, comparten y refrescan los informes. Sin evidencia detectada en las fuentes analizadas.",
    "size": 0.6,
    "evidence": {
@@ -380,22 +548,37 @@
     "explicativa": 0,
     "declarativa": 0,
     "projects": 0,
-    "breadth": "ninguna"
+    "breadth": "ninguna",
+    "kinds": {}
    },
    "uncertainty": [
-    "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
+    "Es parte del núcleo de una competencia con relevancia 3/3 para «Junior consolidado» y no aparece en 11 archivos con práctica de las fuentes analizadas.",
+    "Puede existir en proyectos o entornos que no están entre las fuentes configuradas."
    ],
    "pos": [
-    -8.6,
-    82.11,
-    -18.57
-   ]
+    1.02,
+    86.98,
+    -15.54
+   ],
+   "stage": "sin_evidencia",
+   "depth": 1,
+   "parent": "c:powerbi",
+   "branch": {
+    "children": 1,
+    "leaves": 1,
+    "aplicado": 0,
+    "documentado": 0,
+    "sinEvidencia": 1
+   }
   },
   {
    "id": "c:rls",
    "label": "Seguridad a nivel de fila (RLS)",
    "type": "tecnica",
    "region": "bi",
+   "area": "bi",
+   "family": "bi",
+   "icon": "lock",
    "state": "pendiente",
    "summary": "Restringe qué filas ve cada usuario en un informe o base de datos. Sin evidencia detectada en las fuentes analizadas.",
    "size": 0.5,
@@ -404,22 +587,29 @@
     "explicativa": 0,
     "declarativa": 0,
     "projects": 0,
-    "breadth": "ninguna"
+    "breadth": "ninguna",
+    "kinds": {}
    },
    "uncertainty": [
     "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
    ],
    "pos": [
-    17.77,
-    81.77,
-    -14.21
-   ]
+    41.59,
+    71.02,
+    -6.49
+   ],
+   "stage": "sin_evidencia",
+   "depth": 2,
+   "parent": "c:power-bi-service"
   },
   {
    "id": "c:pbi-optimizacion",
    "label": "Optimización de modelos",
    "type": "tecnica",
    "region": "bi",
+   "area": "bi",
+   "family": "bi",
+   "icon": "gauge",
    "state": "pendiente",
    "summary": "Medir y mejorar el rendimiento de un modelo semántico y sus medidas. Sin evidencia detectada en las fuentes analizadas.",
    "size": 0.5,
@@ -428,22 +618,29 @@
     "explicativa": 0,
     "declarativa": 0,
     "projects": 0,
-    "breadth": "ninguna"
+    "breadth": "ninguna",
+    "kinds": {}
    },
    "uncertainty": [
     "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
    ],
    "pos": [
-    17.23,
-    60.69,
-    -30.2
-   ]
+    27.46,
+    75.95,
+    -24.78
+   ],
+   "stage": "sin_evidencia",
+   "depth": 1,
+   "parent": "c:powerbi"
   },
   {
    "id": "c:modelo-estrella",
    "label": "Modelo en estrella",
    "type": "concepto",
    "region": "bi",
+   "area": "bi",
+   "family": "bi",
+   "icon": "star-schema",
    "state": "respaldado",
    "summary": "Organización del modelo en tablas de hechos y dimensiones para consultas simples y rápidas. Evidencia: práctica en 3 archivos; documentación en 1 archivo, en 1 proyecto.",
    "size": 0.64,
@@ -452,22 +649,32 @@
     "explicativa": 1,
     "declarativa": 0,
     "projects": 1,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "sql": 3,
+     "documento": 1
+    }
    },
    "uncertainty": [
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -14.9,
-    62.48,
-    16.15
-   ]
+    -20.38,
+    72.27,
+    -4.35
+   ],
+   "stage": "aplicado",
+   "depth": 1,
+   "parent": "c:powerbi"
   },
   {
    "id": "c:kpi",
    "label": "KPI e indicadores",
    "type": "concepto",
    "region": "profesional",
+   "area": "profesional",
+   "family": "negocio",
+   "icon": "target",
    "state": "mencionado",
    "summary": "Métricas que miden el cumplimiento de un objetivo y sirven para seguirlo en el tiempo. Evidencia: documentación en 1 archivo, en 1 proyecto.",
    "size": 0.64,
@@ -476,46 +683,70 @@
     "explicativa": 1,
     "declarativa": 0,
     "projects": 1,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "documento": 1
+    }
    },
    "uncertainty": [
     "Aparece en documentación, pero no hay práctica detectable en el código o los artefactos analizados."
    ],
    "pos": [
-    72.39,
-    -9.71,
-    -39.51
-   ]
+    77.62,
+    -14.46,
+    -4.12
+   ],
+   "stage": "estudiado",
+   "depth": 0
   },
   {
    "id": "c:sql",
    "label": "SQL",
    "type": "tecnologia",
    "region": "datos",
+   "area": "datos",
+   "family": "sql",
+   "icon": "database",
    "state": "respaldado",
-   "summary": "Lenguaje estándar para consultar y transformar datos en bases relacionales. Evidencia: práctica en 3 archivos; documentación en 1 archivo; declarado en 1 fuente, en 1 proyecto.",
+   "summary": "Lenguaje estándar para consultar y transformar datos en bases relacionales. Evidencia: práctica en 3 archivos; documentación en 3 archivos; declarado en 1 fuente, en 1 proyecto.",
    "size": 0.64,
    "evidence": {
     "practica": 3,
-    "explicativa": 1,
+    "explicativa": 3,
     "declarativa": 1,
     "projects": 1,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "sql": 3,
+     "documento": 1
+    }
    },
    "uncertainty": [
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -47.57,
-    51.4,
-    50.77
-   ]
+    -55.59,
+    39.64,
+    45.81
+   ],
+   "stage": "aplicado",
+   "depth": 0,
+   "branch": {
+    "children": 7,
+    "leaves": 7,
+    "aplicado": 6,
+    "documentado": 0,
+    "sinEvidencia": 1
+   }
   },
   {
    "id": "c:sql-joins",
    "label": "Joins y modelado relacional en SQL",
    "type": "tecnica",
    "region": "datos",
+   "area": "datos",
+   "family": "sql",
+   "icon": "venn",
    "state": "respaldado",
    "summary": "Combinar tablas por sus claves, entendiendo cuándo cambia el número de filas. Evidencia: práctica en 1 archivo; documentación en 1 archivo, en 1 proyecto.",
    "size": 0.64,
@@ -524,22 +755,31 @@
     "explicativa": 1,
     "declarativa": 0,
     "projects": 1,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "sql": 1
+    }
    },
    "uncertainty": [
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -58.47,
-    26.13,
-    70.17
-   ]
+    -70.72,
+    15.75,
+    50.57
+   ],
+   "stage": "aplicado",
+   "depth": 1,
+   "parent": "c:sql"
   },
   {
    "id": "c:sql-window",
    "label": "Funciones de ventana",
    "type": "tecnica",
    "region": "datos",
+   "area": "datos",
+   "family": "sql",
+   "icon": "window",
    "state": "respaldado",
    "summary": "Cálculos sobre conjuntos de filas relacionadas (rankings, acumulados, comparativas con el periodo anterior). Evidencia: práctica en 1 archivo; documentación en 1 archivo, en 1 proyecto.",
    "size": 0.64,
@@ -548,22 +788,31 @@
     "explicativa": 1,
     "declarativa": 0,
     "projects": 1,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "sql": 1
+    }
    },
    "uncertainty": [
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -69.23,
-    64.85,
-    29.3
-   ]
+    -79.96,
+    43.3,
+    24.19
+   ],
+   "stage": "aplicado",
+   "depth": 1,
+   "parent": "c:sql"
   },
   {
    "id": "c:sql-cte",
    "label": "CTE y consultas por capas",
    "type": "tecnica",
    "region": "datos",
+   "area": "datos",
+   "family": "sql",
+   "icon": "layers",
    "state": "respaldado",
    "summary": "Descomponer una consulta compleja en pasos legibles y reutilizables. Evidencia: práctica en 1 archivo, en 1 proyecto.",
    "size": 0.64,
@@ -572,22 +821,31 @@
     "explicativa": 0,
     "declarativa": 0,
     "projects": 1,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "sql": 1
+    }
    },
    "uncertainty": [
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -45.96,
-    50.74,
-    76.14
-   ]
+    -71.95,
+    57.3,
+    49.85
+   ],
+   "stage": "aplicado",
+   "depth": 1,
+   "parent": "c:sql"
   },
   {
    "id": "c:sql-optimizacion",
    "label": "Optimización de consultas",
    "type": "tecnica",
    "region": "datos",
+   "area": "datos",
+   "family": "sql",
+   "icon": "gauge",
    "state": "pendiente",
    "summary": "Leer planes de ejecución, crear índices y reescribir consultas para que escalen. Sin evidencia detectada en las fuentes analizadas.",
    "size": 0.6,
@@ -596,46 +854,69 @@
     "explicativa": 0,
     "declarativa": 0,
     "projects": 0,
-    "breadth": "ninguna"
+    "breadth": "ninguna",
+    "kinds": {}
    },
    "uncertainty": [
     "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
    ],
    "pos": [
-    -81.42,
-    34.93,
-    34.63
-   ]
+    -87.53,
+    31.17,
+    45.08
+   ],
+   "stage": "sin_evidencia",
+   "depth": 1,
+   "parent": "c:sql"
   },
   {
    "id": "c:python",
    "label": "Python",
    "type": "tecnologia",
    "region": "datos",
+   "area": "datos",
+   "family": "python",
+   "icon": "braces",
    "state": "respaldado",
-   "summary": "Lenguaje de propósito general muy usado para análisis, automatización y machine learning. Evidencia: práctica en 6 archivos; declarado en 1 fuente, en 2 proyectos.",
+   "summary": "Lenguaje de propósito general muy usado para análisis, automatización y machine learning. Evidencia: práctica en 6 archivos; documentación en 5 archivos; declarado en 1 fuente, en 2 proyectos.",
    "size": 0.68,
    "evidence": {
     "practica": 6,
-    "explicativa": 0,
+    "explicativa": 5,
     "declarativa": 1,
     "projects": 2,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "notebook": 1,
+     "script": 5
+    }
    },
    "uncertainty": [
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -47.17,
-    12.58,
-    47.12
-   ]
+    -41.59,
+    32.82,
+    30.76
+   ],
+   "stage": "reforzado",
+   "depth": 0,
+   "branch": {
+    "children": 3,
+    "leaves": 3,
+    "aplicado": 2,
+    "documentado": 0,
+    "sinEvidencia": 1
+   }
   },
   {
    "id": "c:pandas",
    "label": "pandas",
    "type": "tecnologia",
    "region": "datos",
+   "area": "datos",
+   "family": "python",
+   "icon": "table",
    "state": "respaldado",
    "summary": "Biblioteca de Python para manipular tablas de datos. Evidencia: práctica en 5 archivos; documentación en 5 archivos, en 2 proyectos.",
    "size": 0.68,
@@ -644,22 +925,32 @@
     "explicativa": 5,
     "declarativa": 0,
     "projects": 2,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "notebook": 1,
+     "script": 4
+    }
    },
    "uncertainty": [
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -55,
-    8.88,
-    8.7
-   ]
+    -47.64,
+    17.2,
+    -6.6
+   ],
+   "stage": "reforzado",
+   "depth": 1,
+   "parent": "c:python"
   },
   {
    "id": "c:jupyter",
    "label": "Jupyter Notebooks",
    "type": "tecnologia",
    "region": "datos",
+   "area": "datos",
+   "family": "python",
+   "icon": "notebook",
    "state": "respaldado",
    "summary": "Documentos que mezclan código, resultados y explicación para análisis reproducibles. Evidencia: práctica en 1 archivo, en 1 proyecto.",
    "size": 0.64,
@@ -668,22 +959,31 @@
     "explicativa": 0,
     "declarativa": 0,
     "projects": 1,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "notebook": 1
+    }
    },
    "uncertainty": [
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -29.76,
-    43.64,
-    42.19
-   ]
+    -40,
+    23.76,
+    66.19
+   ],
+   "stage": "aplicado",
+   "depth": 1,
+   "parent": "c:python"
   },
   {
    "id": "c:etl",
    "label": "ETL y pipelines",
    "type": "concepto",
    "region": "datos",
+   "area": "datos",
+   "family": "ingenieria",
+   "icon": "pipeline",
    "state": "respaldado",
    "summary": "Extraer, transformar y cargar datos desde su origen hasta un modelo analítico. Evidencia: práctica en 1 archivo, en 1 proyecto.",
    "size": 0.64,
@@ -692,22 +992,30 @@
     "explicativa": 0,
     "declarativa": 0,
     "projects": 1,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "script": 1
+    }
    },
    "uncertainty": [
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -16.95,
-    15.92,
-    25.09
-   ]
+    -12.06,
+    26.93,
+    20.6
+   ],
+   "stage": "aplicado",
+   "depth": 0
   },
   {
    "id": "c:data-quality",
    "label": "Calidad y limpieza de datos",
    "type": "concepto",
    "region": "datos",
+   "area": "datos",
+   "family": "ingenieria",
+   "icon": "shield-check",
    "state": "respaldado",
    "summary": "Detectar y tratar nulos, duplicados, tipos erróneos y valores atípicos antes de analizar. Evidencia: práctica en 3 archivos, en 3 proyectos.",
    "size": 0.72,
@@ -716,22 +1024,31 @@
     "explicativa": 0,
     "declarativa": 0,
     "projects": 3,
-    "breadth": "amplia"
+    "breadth": "amplia",
+    "kinds": {
+     "script": 2,
+     "sql": 1
+    }
    },
    "uncertainty": [
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -53.12,
-    0.86,
-    34.18
-   ]
+    -55.56,
+    6.3,
+    31.45
+   ],
+   "stage": "reforzado",
+   "depth": 0
   },
   {
    "id": "c:modelado-datos",
    "label": "Modelado de datos",
    "type": "concepto",
    "region": "datos",
+   "area": "datos",
+   "family": "ingenieria",
+   "icon": "entities",
    "state": "respaldado",
    "summary": "Diseñar tablas, claves y relaciones para que los datos se puedan analizar sin ambigüedad. Evidencia: práctica en 1 archivo, en 1 proyecto.",
    "size": 0.64,
@@ -740,22 +1057,30 @@
     "explicativa": 0,
     "declarativa": 0,
     "projects": 1,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "sql": 1
+    }
    },
    "uncertainty": [
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -54.59,
-    40.79,
-    34.68
-   ]
+    -47.66,
+    58.27,
+    24.4
+   ],
+   "stage": "aplicado",
+   "depth": 0
   },
   {
    "id": "c:excel",
    "label": "Excel",
    "type": "tecnologia",
    "region": "datos",
+   "area": "datos",
+   "family": "ingenieria",
+   "icon": "grid",
    "state": "mencionado",
    "summary": "Hoja de cálculo para exploración rápida, tablas dinámicas y reporting operativo. Evidencia: declarado en 1 fuente.",
    "size": 0.4,
@@ -764,22 +1089,28 @@
     "explicativa": 0,
     "declarativa": 1,
     "projects": 0,
-    "breadth": "ninguna"
+    "breadth": "ninguna",
+    "kinds": {}
    },
    "uncertainty": [
     "Solo aparece en una fuente declarativa (lo que se afirma, no lo que se demuestra)."
    ],
    "pos": [
-    -70.14,
-    68.27,
-    55.6
-   ]
+    -56.92,
+    70.95,
+    71.37
+   ],
+   "stage": "identificado",
+   "depth": 0
   },
   {
    "id": "c:git",
    "label": "Git y GitHub",
    "type": "tecnologia",
    "region": "profesional",
+   "area": "profesional",
+   "family": "ingenieria",
+   "icon": "branch",
    "state": "respaldado",
    "summary": "Control de versiones y colaboración sobre el código y los documentos de un proyecto. Evidencia: práctica en 1 archivo; declarado en 1 fuente, en 1 proyecto.",
    "size": 0.64,
@@ -788,22 +1119,30 @@
     "explicativa": 0,
     "declarativa": 1,
     "projects": 1,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "otro": 1
+    }
    },
    "uncertainty": [
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    58.8,
-    -61.25,
-    -21.41
-   ]
+    88.95,
+    -41.29,
+    -36.45
+   ],
+   "stage": "aplicado",
+   "depth": 0
   },
   {
    "id": "c:automatizacion",
    "label": "Automatización",
    "type": "tecnica",
    "region": "profesional",
+   "area": "profesional",
+   "family": "ingenieria",
+   "icon": "cycle",
    "state": "brecha_probable",
    "summary": "Programar y repetir sin intervención manual la carga, el cálculo o la publicación. Sin evidencia detectada en las fuentes analizadas.",
    "size": 0.5,
@@ -812,23 +1151,29 @@
     "explicativa": 0,
     "declarativa": 0,
     "projects": 0,
-    "breadth": "ninguna"
+    "breadth": "ninguna",
+    "kinds": {}
    },
    "uncertainty": [
     "Es parte del núcleo de una competencia con relevancia 2/3 para «Junior consolidado» y no aparece en 11 archivos con práctica de las fuentes analizadas.",
     "Puede existir en proyectos o entornos que no están entre las fuentes configuradas."
    ],
    "pos": [
-    47.66,
-    -13.57,
-    -20.57
-   ]
+    61.25,
+    5.79,
+    -22.45
+   ],
+   "stage": "sin_evidencia",
+   "depth": 0
   },
   {
    "id": "c:testing-calidad",
    "label": "Pruebas y validación",
    "type": "tecnica",
    "region": "profesional",
+   "area": "profesional",
+   "family": "ingenieria",
+   "icon": "checklist",
    "state": "respaldado",
    "summary": "Comprobar con código que las transformaciones y los resultados siguen siendo correctos. Evidencia: práctica en 1 archivo; documentación en 1 archivo, en 1 proyecto.",
    "size": 0.54,
@@ -837,22 +1182,30 @@
     "explicativa": 1,
     "declarativa": 0,
     "projects": 1,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "script": 1
+    }
    },
    "uncertainty": [
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    30.32,
-    -35.61,
-    -33.91
-   ]
+    42.71,
+    -21.76,
+    -47.43
+   ],
+   "stage": "aplicado",
+   "depth": 0
   },
   {
    "id": "c:documentacion",
    "label": "Documentación",
    "type": "concepto",
    "region": "profesional",
+   "area": "profesional",
+   "family": "negocio",
+   "icon": "doc",
    "state": "respaldado",
    "summary": "Dejar por escrito qué hace un proyecto, de dónde salen los datos y cómo se reproduce. Evidencia: documentación en 3 archivos, en 3 proyectos.",
    "size": 0.72,
@@ -861,22 +1214,30 @@
     "explicativa": 3,
     "declarativa": 0,
     "projects": 3,
-    "breadth": "amplia"
+    "breadth": "amplia",
+    "kinds": {
+     "documento": 3
+    }
    },
    "uncertainty": [
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    84.29,
-    -58.8,
-    -47.78
-   ]
+    103.69,
+    -31.54,
+    -52.54
+   ],
+   "stage": "estudiado",
+   "depth": 0
   },
   {
    "id": "c:negocio",
    "label": "Interpretación del negocio",
    "type": "concepto",
    "region": "profesional",
+   "area": "profesional",
+   "family": "negocio",
+   "icon": "briefcase",
    "state": "mencionado",
    "summary": "Traducir una necesidad de negocio en preguntas de datos y devolver conclusiones accionables. Evidencia: documentación en 1 archivo, en 1 proyecto.",
    "size": 0.64,
@@ -885,22 +1246,30 @@
     "explicativa": 1,
     "declarativa": 0,
     "projects": 1,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "documento": 1
+    }
    },
    "uncertainty": [
     "Aparece en documentación, pero no hay práctica detectable en el código o los artefactos analizados."
    ],
    "pos": [
-    89.03,
-    -31.69,
-    -24.85
-   ]
+    54.16,
+    -36.29,
+    16.06
+   ],
+   "stage": "estudiado",
+   "depth": 0
   },
   {
    "id": "c:decisiones",
    "label": "Justificación de decisiones",
    "type": "concepto",
    "region": "profesional",
+   "area": "profesional",
+   "family": "negocio",
+   "icon": "compass",
    "state": "respaldado",
    "summary": "Explicar por qué se eligió un enfoque, qué supuestos tiene y qué limitaciones deja. Evidencia: documentación en 2 archivos, en 2 proyectos.",
    "size": 0.68,
@@ -909,22 +1278,30 @@
     "explicativa": 2,
     "declarativa": 0,
     "projects": 2,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "documento": 2
+    }
    },
    "uncertainty": [
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    82.74,
-    -35.17,
-    -61.31
-   ]
+    80.33,
+    -12.54,
+    -48
+   ],
+   "stage": "estudiado",
+   "depth": 0
   },
   {
    "id": "c:estadistica",
    "label": "Estadística",
    "type": "concepto",
    "region": "analisis",
+   "area": "analisis",
+   "family": "python",
+   "icon": "bell",
    "state": "respaldado",
    "summary": "Herramientas para describir datos y decidir cuánto se puede concluir de una muestra. Evidencia: práctica en 2 archivos, en 2 proyectos.",
    "size": 0.68,
@@ -933,22 +1310,31 @@
     "explicativa": 0,
     "declarativa": 0,
     "projects": 2,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "notebook": 1,
+     "script": 1
+    }
    },
    "uncertainty": [
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -8.39,
-    1.21,
-    -57.17
-   ]
+    -9.72,
+    30.27,
+    -55.3
+   ],
+   "stage": "reforzado",
+   "depth": 0
   },
   {
    "id": "c:eda",
    "label": "Análisis exploratorio (EDA)",
    "type": "tecnica",
    "region": "analisis",
+   "area": "analisis",
+   "family": "python",
+   "icon": "search-chart",
    "state": "respaldado",
    "summary": "Primera lectura de los datos: distribuciones, relaciones y anomalías antes de modelar. Evidencia: práctica en 2 archivos; documentación en 1 archivo, en 2 proyectos.",
    "size": 0.68,
@@ -957,46 +1343,71 @@
     "explicativa": 1,
     "declarativa": 0,
     "projects": 2,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "notebook": 1,
+     "script": 1
+    }
    },
    "uncertainty": [
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -30.54,
-    5.21,
-    -44.58
-   ]
+    -34.95,
+    9.55,
+    -61.96
+   ],
+   "stage": "reforzado",
+   "depth": 0
   },
   {
    "id": "c:ml",
    "label": "Machine learning",
    "type": "concepto",
    "region": "analisis",
+   "area": "analisis",
+   "family": "ml",
+   "icon": "brain",
    "state": "respaldado",
-   "summary": "Modelos que aprenden patrones de datos históricos para predecir o agrupar. Evidencia: práctica en 1 archivo, en 1 proyecto.",
-   "size": 0.44,
+   "summary": "Modelos que aprenden patrones de datos históricos para predecir o agrupar. Evidencia: práctica en 2 archivos; documentación en 1 archivo, en 2 proyectos.",
+   "size": 0.48,
    "evidence": {
-    "practica": 1,
-    "explicativa": 0,
+    "practica": 2,
+    "explicativa": 1,
     "declarativa": 0,
-    "projects": 1,
-    "breadth": "puntual"
+    "projects": 2,
+    "breadth": "puntual",
+    "kinds": {
+     "script": 2,
+     "documento": 1
+    }
    },
    "uncertainty": [
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -13.06,
-    17.22,
-    -96.5
-   ]
+    -12.07,
+    30.66,
+    -88.18
+   ],
+   "stage": "reforzado",
+   "depth": 0,
+   "branch": {
+    "children": 9,
+    "leaves": 28,
+    "aplicado": 3,
+    "documentado": 1,
+    "sinEvidencia": 24
+   }
   },
   {
    "id": "c:scikit-learn",
    "label": "scikit-learn",
    "type": "tecnologia",
    "region": "analisis",
+   "area": "analisis",
+   "family": "ml",
+   "icon": "nodes",
    "state": "respaldado",
    "summary": "Biblioteca de Python para modelos clásicos de machine learning. Evidencia: práctica en 1 archivo; documentación en 1 archivo, en 1 proyecto.",
    "size": 0.44,
@@ -1005,46 +1416,71 @@
     "explicativa": 1,
     "declarativa": 0,
     "projects": 1,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "script": 1
+    }
    },
    "uncertainty": [
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    0.22,
-    38.6,
-    -102.23
-   ]
+    -15.91,
+    3.41,
+    -91.04
+   ],
+   "stage": "aplicado",
+   "depth": 0
   },
   {
    "id": "c:clasificacion-regresion",
-   "label": "Clasificación y regresión",
+   "label": "Aprendizaje supervisado",
    "type": "tecnica",
    "region": "analisis",
+   "area": "analisis",
+   "family": "ml",
+   "icon": "tree",
    "state": "respaldado",
-   "summary": "Predecir una categoría o un valor numérico a partir de variables explicativas. Evidencia: práctica en 1 archivo; documentación en 1 archivo, en 1 proyecto.",
+   "summary": "Aprender de ejemplos con respuesta conocida para predecir una categoría (clasificación) o un valor numérico (regresión). Evidencia: práctica en 1 archivo; documentación en 1 archivo, en 1 proyecto.",
    "size": 0.44,
    "evidence": {
     "practica": 1,
     "explicativa": 1,
     "declarativa": 0,
     "projects": 1,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "script": 1,
+     "documento": 1
+    }
    },
    "uncertainty": [
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    -7.22,
-    -4.66,
-    -80.68
-   ]
+    6.33,
+    -2.63,
+    -104.51
+   ],
+   "stage": "aplicado",
+   "depth": 1,
+   "parent": "c:ml",
+   "branch": {
+    "children": 2,
+    "leaves": 9,
+    "aplicado": 1,
+    "documentado": 1,
+    "sinEvidencia": 7
+   }
   },
   {
    "id": "c:model-eval",
    "label": "Evaluación de modelos",
    "type": "tecnica",
    "region": "analisis",
+   "area": "analisis",
+   "family": "ml",
+   "icon": "ruler",
    "state": "respaldado",
    "summary": "Medir si un modelo generaliza: particiones, métricas adecuadas y control del sobreajuste. Evidencia: práctica en 1 archivo; documentación en 1 archivo, en 1 proyecto.",
    "size": 0.44,
@@ -1053,22 +1489,79 @@
     "explicativa": 1,
     "declarativa": 0,
     "projects": 1,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "script": 1,
+     "documento": 1
+    }
    },
    "uncertainty": [
     "Indica que se ha trabajado con ello; no mide el nivel de dominio."
    ],
    "pos": [
-    17.71,
-    32.65,
-    -85.24
-   ]
+    12.32,
+    28.95,
+    -74.9
+   ],
+   "stage": "aplicado",
+   "depth": 1,
+   "parent": "c:ml",
+   "branch": {
+    "children": 5,
+    "leaves": 5,
+    "aplicado": 1,
+    "documentado": 0,
+    "sinEvidencia": 4
+   }
+  },
+  {
+   "id": "c:feature-eng",
+   "label": "Ingeniería de variables",
+   "type": "tecnica",
+   "region": "analisis",
+   "area": "analisis",
+   "family": "ml",
+   "icon": "wrench",
+   "state": "respaldado",
+   "summary": "Transformar y crear variables para que el modelo pueda aprovecharlas. Evidencia: práctica en 1 archivo, en 1 proyecto.",
+   "size": 0.44,
+   "evidence": {
+    "practica": 1,
+    "explicativa": 0,
+    "declarativa": 0,
+    "projects": 1,
+    "breadth": "puntual",
+    "kinds": {
+     "script": 1
+    }
+   },
+   "uncertainty": [
+    "Indica que se ha trabajado con ello; no mide el nivel de dominio."
+   ],
+   "pos": [
+    -34.47,
+    39.84,
+    -72.28
+   ],
+   "stage": "aplicado",
+   "depth": 1,
+   "parent": "c:ml",
+   "branch": {
+    "children": 3,
+    "leaves": 3,
+    "aplicado": 1,
+    "documentado": 0,
+    "sinEvidencia": 2
+   }
   },
   {
    "id": "c:visualizacion-datos",
    "label": "Visualización de datos",
    "type": "concepto",
    "region": "visualizacion",
+   "area": "visualizacion",
+   "family": "storytelling",
+   "icon": "chart",
    "state": "mencionado",
    "summary": "Elegir y construir gráficos que respondan una pregunta concreta. Evidencia: documentación en 1 archivo.",
    "size": 0.6,
@@ -1077,22 +1570,30 @@
     "explicativa": 1,
     "declarativa": 0,
     "projects": 0,
-    "breadth": "ninguna"
+    "breadth": "ninguna",
+    "kinds": {
+     "documento": 1
+    }
    },
    "uncertainty": [
     "Aparece en material de estudio (manuales), pero no se detecta aplicado en ningún proyecto analizado."
    ],
    "pos": [
-    51.75,
-    -8.82,
-    82.85
-   ]
+    64.86,
+    1.39,
+    93.98
+   ],
+   "stage": "estudiado",
+   "depth": 0
   },
   {
    "id": "c:data-storytelling",
    "label": "Data Storytelling",
    "type": "concepto",
    "region": "visualizacion",
+   "area": "visualizacion",
+   "family": "storytelling",
+   "icon": "story",
    "state": "mencionado",
    "summary": "Estructurar los datos como una narrativa con mensaje, contexto y llamada a la acción. Evidencia: documentación en 1 archivo, en 1 proyecto.",
    "size": 0.64,
@@ -1101,22 +1602,30 @@
     "explicativa": 1,
     "declarativa": 0,
     "projects": 1,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "documento": 1
+    }
    },
    "uncertainty": [
     "Aparece en material de estudio (manuales), pero no se detecta aplicado en ningún proyecto analizado."
    ],
    "pos": [
-    68.31,
-    -14.77,
-    44.75
-   ]
+    77.89,
+    -18.04,
+    61.96
+   ],
+   "stage": "estudiado",
+   "depth": 0
   },
   {
    "id": "c:ibcs",
    "label": "IBCS",
    "type": "concepto",
    "region": "visualizacion",
+   "area": "visualizacion",
+   "family": "storytelling",
+   "icon": "bars-baseline",
    "state": "mencionado",
    "summary": "Estándares para notación y diseño uniformes en informes de negocio. Evidencia: documentación en 1 archivo, en 1 proyecto.",
    "size": 0.64,
@@ -1125,22 +1634,30 @@
     "explicativa": 1,
     "declarativa": 0,
     "projects": 1,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "documento": 1
+    }
    },
    "uncertainty": [
     "Aparece en material de estudio (manuales), pero no se detecta aplicado en ningún proyecto analizado."
    ],
    "pos": [
-    72.24,
-    1.05,
-    67.98
-   ]
+    70.69,
+    3.99,
+    69.09
+   ],
+   "stage": "estudiado",
+   "depth": 0
   },
   {
    "id": "c:diseno-dashboard",
    "label": "Diseño de dashboards",
    "type": "tecnica",
    "region": "visualizacion",
+   "area": "visualizacion",
+   "family": "storytelling",
+   "icon": "layout",
    "state": "mencionado",
    "summary": "Organizar un informe para que lo importante se vea primero y se lea sin esfuerzo. Evidencia: documentación en 2 archivos, en 2 proyectos.",
    "size": 0.68,
@@ -1149,22 +1666,30 @@
     "explicativa": 2,
     "declarativa": 0,
     "projects": 2,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "documento": 2
+    }
    },
    "uncertainty": [
     "Aparece en documentación, pero no hay práctica detectable en el código o los artefactos analizados."
    ],
    "pos": [
-    42,
-    18.54,
-    58.01
-   ]
+    51.32,
+    32.81,
+    64.33
+   ],
+   "stage": "estudiado",
+   "depth": 0
   },
   {
    "id": "c:accesibilidad",
    "label": "Accesibilidad",
    "type": "concepto",
    "region": "visualizacion",
+   "area": "visualizacion",
+   "family": "ux",
+   "icon": "a11y",
    "state": "mencionado",
    "summary": "Diseñar para que cualquier persona pueda leer e interactuar con el informe. Evidencia: documentación en 2 archivos, en 2 proyectos.",
    "size": 0.68,
@@ -1173,22 +1698,659 @@
     "explicativa": 2,
     "declarativa": 0,
     "projects": 2,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "documento": 2
+    }
    },
    "uncertainty": [
     "Aparece en documentación, pero no hay práctica detectable en el código o los artefactos analizados."
    ],
    "pos": [
-    57.26,
-    16.96,
-    81.56
-   ]
+    69.68,
+    24.94,
+    86.08
+   ],
+   "stage": "estudiado",
+   "depth": 0
+  },
+  {
+   "id": "c:dax-avanzado",
+   "label": "Funciones DAX avanzadas",
+   "type": "tecnica",
+   "region": "bi",
+   "area": "bi",
+   "family": "bi",
+   "icon": "fx-plus",
+   "state": "pendiente",
+   "summary": "Relaciones virtuales, rankings, funciones de ventana y tablas en memoria para resolver casos que las medidas básicas no cubren. Sin evidencia detectada en las fuentes analizadas.",
+   "size": 0.6,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 0,
+    "declarativa": 0,
+    "projects": 0,
+    "breadth": "ninguna",
+    "kinds": {}
+   },
+   "uncertainty": [
+    "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
+   ],
+   "pos": [
+    13.86,
+    92.84,
+    -1.53
+   ],
+   "stage": "sin_evidencia",
+   "depth": 2,
+   "parent": "c:dax"
+  },
+  {
+   "id": "c:pbi-diseno-dinamico",
+   "label": "Interactividad en Power BI",
+   "type": "tecnica",
+   "region": "bi",
+   "area": "bi",
+   "family": "bi",
+   "icon": "toggle",
+   "state": "pendiente",
+   "summary": "Parámetros de campo, formato condicional, grupos de cálculo y títulos dinámicos para informes que se adaptan a la pregunta. Sin evidencia detectada en las fuentes analizadas.",
+   "size": 0.6,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 0,
+    "declarativa": 0,
+    "projects": 0,
+    "breadth": "ninguna",
+    "kinds": {}
+   },
+   "uncertainty": [
+    "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
+   ],
+   "pos": [
+    32.14,
+    65.28,
+    33.98
+   ],
+   "stage": "sin_evidencia",
+   "depth": 1,
+   "parent": "c:powerbi"
+  },
+  {
+   "id": "c:numpy-scipy",
+   "label": "NumPy y SciPy",
+   "type": "tecnologia",
+   "region": "datos",
+   "area": "datos",
+   "family": "python",
+   "icon": "cube",
+   "state": "pendiente",
+   "summary": "Cálculo numérico y estadístico en Python: arrays, álgebra lineal, contrastes y modelos estadísticos. Sin evidencia detectada en las fuentes analizadas.",
+   "size": 0.6,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 0,
+    "declarativa": 0,
+    "projects": 0,
+    "breadth": "ninguna",
+    "kinds": {}
+   },
+   "uncertainty": [
+    "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
+   ],
+   "pos": [
+    -49.95,
+    43.34,
+    2.34
+   ],
+   "stage": "sin_evidencia",
+   "depth": 1,
+   "parent": "c:python"
+  },
+  {
+   "id": "c:apis-datos",
+   "label": "APIs y datos web",
+   "type": "tecnica",
+   "region": "datos",
+   "area": "datos",
+   "family": "ingenieria",
+   "icon": "plug",
+   "state": "pendiente",
+   "summary": "Obtener datos de servicios web y APIs y convertirlos en tablas analizables. Sin evidencia detectada en las fuentes analizadas.",
+   "size": 0.6,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 0,
+    "declarativa": 0,
+    "projects": 0,
+    "breadth": "ninguna",
+    "kinds": {}
+   },
+   "uncertainty": [
+    "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
+   ],
+   "pos": [
+    -30.72,
+    69.05,
+    47.3
+   ],
+   "stage": "sin_evidencia",
+   "depth": 0
+  },
+  {
+   "id": "c:deep-learning",
+   "label": "Redes neuronales y deep learning",
+   "type": "concepto",
+   "region": "analisis",
+   "area": "analisis",
+   "family": "ml",
+   "icon": "network",
+   "state": "mencionado",
+   "summary": "Redes neuronales profundas para imágenes, secuencias o datos no estructurados. Evidencia: documentación en 1 archivo.",
+   "size": 0.4,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 1,
+    "declarativa": 0,
+    "projects": 0,
+    "breadth": "ninguna",
+    "kinds": {
+     "documento": 1
+    }
+   },
+   "uncertainty": [
+    "Aparece en documentación, pero no hay práctica detectable en el código o los artefactos analizados."
+   ],
+   "pos": [
+    2.96,
+    60.45,
+    -87.53
+   ],
+   "stage": "estudiado",
+   "depth": 1,
+   "parent": "c:ml",
+   "branch": {
+    "children": 2,
+    "leaves": 2,
+    "aplicado": 0,
+    "documentado": 0,
+    "sinEvidencia": 2
+   }
+  },
+  {
+   "id": "c:experimentacion",
+   "label": "Experimentación (tests A/B)",
+   "type": "tecnica",
+   "region": "analisis",
+   "area": "analisis",
+   "family": "ml",
+   "icon": "ab",
+   "state": "pendiente",
+   "summary": "Diseñar y analizar experimentos para medir el efecto real de un cambio. Sin evidencia detectada en las fuentes analizadas.",
+   "size": 0.6,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 0,
+    "declarativa": 0,
+    "projects": 0,
+    "breadth": "ninguna",
+    "kinds": {}
+   },
+   "uncertainty": [
+    "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
+   ],
+   "pos": [
+    37.71,
+    30.95,
+    -67.79
+   ],
+   "stage": "sin_evidencia",
+   "depth": 0
+  },
+  {
+   "id": "c:retail-ventas",
+   "label": "Retail y ventas",
+   "type": "concepto",
+   "region": "negocio",
+   "area": "negocio",
+   "family": "negocio",
+   "icon": "cart",
+   "state": "mencionado",
+   "summary": "Conocimiento del negocio minorista: ventas, ticket, demanda, surtido y tiendas. Evidencia: documentación en 1 archivo, en 1 proyecto.",
+   "size": 0.54,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 1,
+    "declarativa": 0,
+    "projects": 1,
+    "breadth": "puntual",
+    "kinds": {
+     "documento": 1
+    }
+   },
+   "uncertainty": [
+    "Aparece en documentación, pero no hay práctica detectable en el código o los artefactos analizados."
+   ],
+   "pos": [
+    -18.2,
+    -51.73,
+    68.75
+   ],
+   "stage": "estudiado",
+   "depth": 0
+  },
+  {
+   "id": "c:finanzas",
+   "label": "Finanzas y control de gestión",
+   "type": "concepto",
+   "region": "negocio",
+   "area": "negocio",
+   "family": "negocio",
+   "icon": "coin",
+   "state": "pendiente",
+   "summary": "Cuenta de resultados, presupuesto frente a real, márgenes y control de gestión. Sin evidencia detectada en las fuentes analizadas.",
+   "size": 0.5,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 0,
+    "declarativa": 0,
+    "projects": 0,
+    "breadth": "ninguna",
+    "kinds": {}
+   },
+   "uncertainty": [
+    "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
+   ],
+   "pos": [
+    26.19,
+    -41.21,
+    61
+   ],
+   "stage": "sin_evidencia",
+   "depth": 0
+  },
+  {
+   "id": "c:marketing-clientes",
+   "label": "Marketing y clientes",
+   "type": "concepto",
+   "region": "negocio",
+   "area": "negocio",
+   "family": "negocio",
+   "icon": "megaphone",
+   "state": "pendiente",
+   "summary": "Clientes, campañas, fidelización, abandono y valor del cliente. Sin evidencia detectada en las fuentes analizadas.",
+   "size": 0.5,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 0,
+    "declarativa": 0,
+    "projects": 0,
+    "breadth": "ninguna",
+    "kinds": {}
+   },
+   "uncertainty": [
+    "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
+   ],
+   "pos": [
+    6.45,
+    -66.09,
+    68.66
+   ],
+   "stage": "sin_evidencia",
+   "depth": 0
+  },
+  {
+   "id": "c:turismo-hosteleria",
+   "label": "Turismo y hostelería",
+   "type": "concepto",
+   "region": "negocio",
+   "area": "negocio",
+   "family": "negocio",
+   "icon": "bed",
+   "state": "pendiente",
+   "summary": "Negocios de viajes, alojamiento y restauración: reservas, ocupación, precios y demanda. Sin evidencia detectada en las fuentes analizadas.",
+   "size": 0.5,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 0,
+    "declarativa": 0,
+    "projects": 0,
+    "breadth": "ninguna",
+    "kinds": {}
+   },
+   "uncertainty": [
+    "Sin evidencia en las fuentes analizadas; no se interpreta como carencia."
+   ],
+   "pos": [
+    -1.52,
+    -37.98,
+    69
+   ],
+   "stage": "sin_evidencia",
+   "depth": 0
+  },
+  {
+   "id": "c:clasificacion",
+   "label": "Clasificación",
+   "type": "tecnica",
+   "region": "analisis",
+   "area": "analisis",
+   "family": "ml",
+   "icon": "tree",
+   "state": "respaldado",
+   "summary": "Predecir a qué categoría pertenece cada caso (churn sí/no, segmento de cliente, admitido o no). Evidencia: práctica en 1 archivo; documentación en 1 archivo, en 1 proyecto.",
+   "size": 0.44,
+   "evidence": {
+    "practica": 1,
+    "explicativa": 1,
+    "declarativa": 0,
+    "projects": 1,
+    "breadth": "puntual",
+    "kinds": {
+     "script": 1,
+     "documento": 1
+    }
+   },
+   "uncertainty": [
+    "Indica que se ha trabajado con ello; no mide el nivel de dominio."
+   ],
+   "pos": [
+    34.57,
+    15.9,
+    -97.85
+   ],
+   "stage": "aplicado",
+   "depth": 2,
+   "parent": "c:clasificacion-regresion",
+   "branch": {
+    "children": 6,
+    "leaves": 6,
+    "aplicado": 1,
+    "documentado": 1,
+    "sinEvidencia": 4
+   }
+  },
+  {
+   "id": "c:regresion",
+   "label": "Regresión",
+   "type": "tecnica",
+   "region": "analisis",
+   "area": "analisis",
+   "family": "ml",
+   "icon": "trend",
+   "state": "mencionado",
+   "summary": "Predecir un valor numérico (precio, ventas, tiempo) a partir de variables explicativas. Evidencia: documentación en 1 archivo.",
+   "size": 0.4,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 1,
+    "declarativa": 0,
+    "projects": 0,
+    "breadth": "ninguna",
+    "kinds": {
+     "documento": 1
+    }
+   },
+   "uncertainty": [
+    "Aparece en documentación, pero no hay práctica detectable en el código o los artefactos analizados."
+   ],
+   "pos": [
+    -16.6,
+    16.3,
+    -114.36
+   ],
+   "stage": "estudiado",
+   "depth": 2,
+   "parent": "c:clasificacion-regresion",
+   "branch": {
+    "children": 3,
+    "leaves": 3,
+    "aplicado": 0,
+    "documentado": 0,
+    "sinEvidencia": 3
+   }
+  },
+  {
+   "id": "c:random-forest",
+   "label": "Random Forest",
+   "type": "tecnica",
+   "region": "analisis",
+   "area": "analisis",
+   "family": "ml",
+   "icon": "tree",
+   "state": "respaldado",
+   "summary": "Conjunto de muchos árboles de decisión que votan; más robusto que un árbol solo. Evidencia: práctica en 1 archivo; documentación en 1 archivo, en 1 proyecto.",
+   "size": 0.44,
+   "evidence": {
+    "practica": 1,
+    "explicativa": 1,
+    "declarativa": 0,
+    "projects": 1,
+    "breadth": "puntual",
+    "kinds": {
+     "script": 1,
+     "documento": 1
+    }
+   },
+   "uncertainty": [
+    "Indica que se ha trabajado con ello; no mide el nivel de dominio."
+   ],
+   "pos": [
+    18.53,
+    43.14,
+    -96.16
+   ],
+   "stage": "aplicado",
+   "depth": 3,
+   "parent": "c:clasificacion"
+  },
+  {
+   "id": "c:regresion-logistica",
+   "label": "Regresión logística",
+   "type": "tecnica",
+   "region": "analisis",
+   "area": "analisis",
+   "family": "ml",
+   "icon": "trend",
+   "state": "mencionado",
+   "summary": "Estima la probabilidad de una categoría y permite interpretar el efecto de cada variable. Evidencia: documentación en 1 archivo.",
+   "size": 0.4,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 1,
+    "declarativa": 0,
+    "projects": 0,
+    "breadth": "ninguna",
+    "kinds": {
+     "documento": 1
+    }
+   },
+   "uncertainty": [
+    "Aparece en documentación, pero no hay práctica detectable en el código o los artefactos analizados."
+   ],
+   "pos": [
+    13.57,
+    33.56,
+    -119.19
+   ],
+   "stage": "estudiado",
+   "depth": 3,
+   "parent": "c:clasificacion"
+  },
+  {
+   "id": "c:validacion-cruzada",
+   "label": "Separación y validación cruzada",
+   "type": "tecnica",
+   "region": "analisis",
+   "area": "analisis",
+   "family": "ml",
+   "icon": "ruler",
+   "state": "respaldado",
+   "summary": "Separar datos de entrenamiento y prueba y repetir la evaluación para no engañarse. Evidencia: práctica en 1 archivo; documentación en 1 archivo, en 1 proyecto.",
+   "size": 0.44,
+   "evidence": {
+    "practica": 1,
+    "explicativa": 1,
+    "declarativa": 0,
+    "projects": 1,
+    "breadth": "puntual",
+    "kinds": {
+     "script": 1,
+     "documento": 1
+    }
+   },
+   "uncertainty": [
+    "Indica que se ha trabajado con ello; no mide el nivel de dominio."
+   ],
+   "pos": [
+    19.94,
+    -2,
+    -81.14
+   ],
+   "stage": "aplicado",
+   "depth": 2,
+   "parent": "c:model-eval"
+  },
+  {
+   "id": "c:imputacion-valores",
+   "label": "Tratamiento de valores ausentes",
+   "type": "tecnica",
+   "region": "datos",
+   "area": "datos",
+   "family": "ml",
+   "icon": "wrench",
+   "state": "respaldado",
+   "summary": "Decidir qué hacer con los datos que faltan: eliminar, imputar o marcar. Evidencia: práctica en 1 archivo, en 1 proyecto.",
+   "size": 0.44,
+   "evidence": {
+    "practica": 1,
+    "explicativa": 0,
+    "declarativa": 0,
+    "projects": 1,
+    "breadth": "puntual",
+    "kinds": {
+     "script": 1
+    }
+   },
+   "uncertainty": [
+    "Indica que se ha trabajado con ello; no mide el nivel de dominio."
+   ],
+   "pos": [
+    -68.39,
+    36.89,
+    -12.06
+   ],
+   "stage": "aplicado",
+   "depth": 2,
+   "parent": "c:feature-eng"
+  },
+  {
+   "id": "c:sql-subconsultas",
+   "label": "Subconsultas",
+   "type": "tecnica",
+   "region": "datos",
+   "area": "datos",
+   "family": "sql",
+   "icon": "layers",
+   "state": "respaldado",
+   "summary": "Consultas dentro de consultas, incluidas las correlacionadas. Evidencia: práctica en 1 archivo, en 1 proyecto.",
+   "size": 0.44,
+   "evidence": {
+    "practica": 1,
+    "explicativa": 0,
+    "declarativa": 0,
+    "projects": 1,
+    "breadth": "puntual",
+    "kinds": {
+     "sql": 1
+    }
+   },
+   "uncertainty": [
+    "Indica que se ha trabajado con ello; no mide el nivel de dominio."
+   ],
+   "pos": [
+    -42.2,
+    46.86,
+    71.45
+   ],
+   "stage": "aplicado",
+   "depth": 1,
+   "parent": "c:sql"
+  },
+  {
+   "id": "c:sql-agregaciones",
+   "label": "Agregaciones y agrupaciones",
+   "type": "tecnica",
+   "region": "datos",
+   "area": "datos",
+   "family": "sql",
+   "icon": "table",
+   "state": "respaldado",
+   "summary": "Resumir filas con GROUP BY, HAVING y funciones de agregado. Evidencia: práctica en 1 archivo; documentación en 1 archivo, en 1 proyecto.",
+   "size": 0.44,
+   "evidence": {
+    "practica": 1,
+    "explicativa": 1,
+    "declarativa": 0,
+    "projects": 1,
+    "breadth": "puntual",
+    "kinds": {
+     "sql": 1
+    }
+   },
+   "uncertainty": [
+    "Indica que se ha trabajado con ello; no mide el nivel de dominio."
+   ],
+   "pos": [
+    -65.43,
+    72.02,
+    30.19
+   ],
+   "stage": "aplicado",
+   "depth": 1,
+   "parent": "c:sql"
+  },
+  {
+   "id": "c:sql-ddl",
+   "label": "Creación de tablas y vistas (DDL)",
+   "type": "tecnica",
+   "region": "datos",
+   "area": "datos",
+   "family": "sql",
+   "icon": "database",
+   "state": "respaldado",
+   "summary": "Definir la estructura: tablas, claves y vistas. Evidencia: práctica en 1 archivo; documentación en 1 archivo, en 1 proyecto.",
+   "size": 0.44,
+   "evidence": {
+    "practica": 1,
+    "explicativa": 1,
+    "declarativa": 0,
+    "projects": 1,
+    "breadth": "puntual",
+    "kinds": {
+     "sql": 1
+    }
+   },
+   "uncertainty": [
+    "Indica que se ha trabajado con ello; no mide el nivel de dominio."
+   ],
+   "pos": [
+    -60.38,
+    27.83,
+    77.78
+   ],
+   "stage": "aplicado",
+   "depth": 1,
+   "parent": "c:sql"
   },
   {
    "id": "k:preparacion-calidad",
    "label": "Preparación, limpieza y calidad de datos",
    "type": "competencia",
    "region": "datos",
+   "area": "datos",
+   "family": "ingenieria",
+   "icon": "shield-check",
    "state": "respaldado",
    "summary": "Competencia del marco general. Relevancia para «Junior consolidado»: 3/3. Núcleo respaldado: 2 de 2.",
    "size": 0.85,
@@ -1203,16 +2365,20 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    -41.05,
-    34.31,
-    15.02
-   ]
+    -24.33,
+    2.17,
+    38.79
+   ],
+   "recommendationId": "rec-preparacion-calidad"
   },
   {
    "id": "k:sql-analitico",
    "label": "SQL y consultas analíticas",
    "type": "competencia",
    "region": "datos",
+   "area": "datos",
+   "family": "sql",
+   "icon": "database",
    "state": "respaldado",
    "summary": "Competencia del marco general. Relevancia para «Junior consolidado»: 3/3. Núcleo respaldado: 3 de 3.",
    "size": 0.85,
@@ -1227,16 +2393,20 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    -30.41,
-    30.3,
-    61.88
-   ]
+    -43.98,
+    -2.09,
+    54.76
+   ],
+   "recommendationId": "rec-sql-analitico"
   },
   {
    "id": "k:python-analisis",
    "label": "Python aplicado al análisis",
    "type": "competencia",
    "region": "datos",
+   "area": "datos",
+   "family": "python",
+   "icon": "braces",
    "state": "respaldado",
    "summary": "Competencia del marco general. Relevancia para «Junior consolidado»: 3/3. Núcleo respaldado: 2 de 2.",
    "size": 0.85,
@@ -1251,18 +2421,22 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    -65.21,
-    33.7,
-    6.88
-   ]
+    -33.65,
+    10.78,
+    18.77
+   ],
+   "recommendationId": "rec-python-analisis"
   },
   {
    "id": "k:powerbi-dax",
    "label": "Power BI, DAX y Power Query",
    "type": "competencia",
    "region": "bi",
+   "area": "bi",
+   "family": "bi",
+   "icon": "powerbi",
    "state": "respaldado",
-   "summary": "Competencia del marco general. Relevancia para «Junior consolidado»: 3/3. Núcleo respaldado: 1 de 3.",
+   "summary": "Competencia del marco general. Relevancia para «Junior consolidado»: 3/3. Núcleo respaldado: 2 de 4.",
    "size": 0.85,
    "evidence": {
     "practica": 0,
@@ -1275,9 +2449,9 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    -3.22,
-    23.83,
-    -9.78
+    7.73,
+    28.77,
+    -2.19
    ],
    "recommendationId": "rec-powerbi-dax"
   },
@@ -1286,6 +2460,9 @@
    "label": "Modelado de datos y medidas",
    "type": "competencia",
    "region": "bi",
+   "area": "bi",
+   "family": "bi",
+   "icon": "star-schema",
    "state": "respaldado",
    "summary": "Competencia del marco general. Relevancia para «Junior consolidado»: 3/3. Núcleo respaldado: 2 de 2.",
    "size": 0.85,
@@ -1300,9 +2477,9 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    -24.49,
-    60.72,
-    -12.68
+    -5.02,
+    67.28,
+    12.64
    ]
   },
   {
@@ -1310,6 +2487,9 @@
    "label": "Estadística y análisis exploratorio",
    "type": "competencia",
    "region": "analisis",
+   "area": "analisis",
+   "family": "python",
+   "icon": "bell",
    "state": "respaldado",
    "summary": "Competencia del marco general. Relevancia para «Junior consolidado»: 3/3. Núcleo respaldado: 2 de 2.",
    "size": 0.85,
@@ -1324,16 +2504,20 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    -15.66,
-    25.85,
-    -69.61
-   ]
+    -12.78,
+    4.97,
+    -53.06
+   ],
+   "recommendationId": "rec-estadistica-eda"
   },
   {
    "id": "k:kpi-seguimiento",
    "label": "Definición y seguimiento de KPI",
    "type": "competencia",
    "region": "profesional",
+   "area": "profesional",
+   "family": "negocio",
+   "icon": "target",
    "state": "mencionado",
    "summary": "Competencia del marco general. Relevancia para «Junior consolidado»: 3/3. Ningún concepto del núcleo está respaldado por evidencia.",
    "size": 0.85,
@@ -1348,9 +2532,9 @@
     "Hay menciones, pero no práctica detectable."
    ],
    "pos": [
-    54.8,
-    -40.74,
-    -39.67
+    72.7,
+    -28.66,
+    -25.66
    ],
    "recommendationId": "rec-kpi-seguimiento"
   },
@@ -1359,6 +2543,9 @@
    "label": "Visualización y comunicación de resultados",
    "type": "competencia",
    "region": "visualizacion",
+   "area": "visualizacion",
+   "family": "storytelling",
+   "icon": "chart",
    "state": "mencionado",
    "summary": "Competencia del marco general. Relevancia para «Junior consolidado»: 3/3. Ningún concepto del núcleo está respaldado por evidencia.",
    "size": 0.85,
@@ -1373,9 +2560,9 @@
     "Hay menciones, pero no práctica detectable."
    ],
    "pos": [
-    41.61,
-    -24.32,
-    59.61
+    53.48,
+    -18.14,
+    60.16
    ],
    "recommendationId": "rec-visualizacion-comunicacion"
   },
@@ -1384,6 +2571,9 @@
    "label": "Interpretación del negocio",
    "type": "competencia",
    "region": "profesional",
+   "area": "profesional",
+   "family": "negocio",
+   "icon": "briefcase",
    "state": "mencionado",
    "summary": "Competencia del marco general. Relevancia para «Junior consolidado»: 2/3. Ningún concepto del núcleo está respaldado por evidencia.",
    "size": 0.85,
@@ -1398,9 +2588,9 @@
     "Hay menciones, pero no práctica detectable."
    ],
    "pos": [
-    54.29,
-    -67.13,
-    -48.37
+    54.2,
+    -53.82,
+    -8.5
    ],
    "recommendationId": "rec-negocio-interpretacion"
   },
@@ -1409,6 +2599,9 @@
    "label": "Automatización, mantenimiento y fiabilidad",
    "type": "competencia",
    "region": "profesional",
+   "area": "profesional",
+   "family": "ingenieria",
+   "icon": "cycle",
    "state": "respaldado",
    "summary": "Competencia del marco general. Relevancia para «Junior consolidado»: 2/3. Núcleo respaldado: 1 de 2.",
    "size": 0.85,
@@ -1423,9 +2616,9 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    43.25,
-    -17.72,
-    -47.91
+    60,
+    -33.92,
+    -41.21
    ],
    "recommendationId": "rec-automatizacion-fiabilidad"
   },
@@ -1434,6 +2627,9 @@
    "label": "Documentación, Git y colaboración",
    "type": "competencia",
    "region": "profesional",
+   "area": "profesional",
+   "family": "ingenieria",
+   "icon": "doc",
    "state": "respaldado",
    "summary": "Competencia del marco general. Relevancia para «Junior consolidado»: 3/3. Núcleo respaldado: 2 de 2.",
    "size": 0.85,
@@ -1448,9 +2644,9 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    53.66,
-    -49.06,
-    -67.85
+    75.58,
+    -44.74,
+    -64.74
    ]
   },
   {
@@ -1458,6 +2654,9 @@
    "label": "Explicar decisiones y justificar resultados",
    "type": "competencia",
    "region": "profesional",
+   "area": "profesional",
+   "family": "negocio",
+   "icon": "compass",
    "state": "respaldado",
    "summary": "Competencia del marco general. Relevancia para «Junior consolidado»: 3/3. Núcleo respaldado: 1 de 1.",
    "size": 0.85,
@@ -1472,16 +2671,20 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    71.69,
-    -41.32,
-    -17.12
-   ]
+    77.31,
+    -61.58,
+    -30.38
+   ],
+   "recommendationId": "rec-explicar-decisiones"
   },
   {
    "id": "k:ml-aplicado",
    "label": "Machine learning aplicado",
    "type": "competencia",
    "region": "analisis",
+   "area": "analisis",
+   "family": "ml",
+   "icon": "brain",
    "state": "respaldado",
    "summary": "Competencia del marco general. Relevancia para «Junior consolidado»: 1/3. Núcleo respaldado: 2 de 2.",
    "size": 0.85,
@@ -1496,16 +2699,19 @@
     "Indica evidencia de trabajo; no equivale a una evaluación de nivel."
    ],
    "pos": [
-    15.03,
-    9.17,
-    -99.8
+    11.69,
+    20.29,
+    -97.61
    ]
   },
   {
    "id": "k:ux-complementario",
-   "label": "UX/UI y diseño de interfaces",
+   "label": "UX/UI, diseño de interfaces y web",
    "type": "competencia",
    "region": "ux",
+   "area": "ux",
+   "family": "ux",
+   "icon": "cursor",
    "state": "pendiente",
    "summary": "Competencia del marco general. Relevancia para «Junior consolidado»: 1/3. Ningún concepto del núcleo está respaldado por evidencia.",
    "size": 0.85,
@@ -1520,9 +2726,9 @@
     "No se ha podido comprobar con las fuentes disponibles."
    ],
    "pos": [
-    -99.91,
-    -24.42,
-    -23.04
+    -112.42,
+    -11.6,
+    -17.33
    ]
   },
   {
@@ -1530,6 +2736,9 @@
    "label": "Excel para análisis operativo",
    "type": "competencia",
    "region": "datos",
+   "area": "datos",
+   "family": "ingenieria",
+   "icon": "grid",
    "state": "mencionado",
    "summary": "Competencia del marco general. Relevancia para «Junior consolidado»: 1/3. Ningún concepto del núcleo está respaldado por evidencia.",
    "size": 0.85,
@@ -1544,16 +2753,74 @@
     "Hay menciones, pero no práctica detectable."
    ],
    "pos": [
-    -81.71,
-    34.18,
-    58.31
+    -78.05,
+    41.83,
+    69.81
    ]
+  },
+  {
+   "id": "k:plataformas-datos",
+   "label": "Plataformas de datos (cloud y big data)",
+   "type": "competencia",
+   "region": "datos",
+   "area": "datos",
+   "family": "ingenieria",
+   "icon": "cloud",
+   "state": "pendiente",
+   "summary": "Competencia del marco general. Relevancia para «Junior consolidado»: 1/3. Ningún concepto del núcleo está respaldado por evidencia.",
+   "size": 0.85,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 0,
+    "declarativa": 0,
+    "projects": 0,
+    "breadth": "ninguna"
+   },
+   "uncertainty": [
+    "No se ha podido comprobar con las fuentes disponibles."
+   ],
+   "pos": [
+    -16.51,
+    57.08,
+    66.77
+   ]
+  },
+  {
+   "id": "k:conocimiento-sectorial",
+   "label": "Conocimiento de sectores de negocio",
+   "type": "competencia",
+   "region": "negocio",
+   "area": "negocio",
+   "family": "negocio",
+   "icon": "store",
+   "state": "mencionado",
+   "summary": "Competencia del marco general. Relevancia para «Junior consolidado»: 2/3. Ningún concepto del núcleo está respaldado por evidencia.",
+   "size": 0.85,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 0,
+    "declarativa": 0,
+    "projects": 0,
+    "breadth": "ninguna"
+   },
+   "uncertainty": [
+    "Hay menciones, pero no práctica detectable."
+   ],
+   "pos": [
+    -23.61,
+    -71.56,
+    82.89
+   ],
+   "recommendationId": "rec-conocimiento-sectorial"
   },
   {
    "id": "r:kpi-seguimiento",
    "label": "Demostrar: Definición y seguimiento de KPI",
    "type": "recomendacion",
    "region": "objetivos",
+   "area": "profesional",
+   "family": "negocio",
+   "icon": "bulb",
    "state": "oportunidad",
    "summary": "Aparece mencionado (KPI e indicadores), pero no hay práctica detectable que lo demuestre. Un catálogo de KPI con definición inequívoca.",
    "size": 0.72,
@@ -1568,9 +2835,9 @@
     "Confianza media. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    0.49,
-    -94.76,
-    -3.87
+    15.66,
+    -90.25,
+    -1.13
    ],
    "recommendationId": "rec-kpi-seguimiento"
   },
@@ -1579,6 +2846,9 @@
    "label": "Demostrar: Visualización y comunicación de resultados",
    "type": "recomendacion",
    "region": "objetivos",
+   "area": "visualizacion",
+   "family": "storytelling",
+   "icon": "bulb",
    "state": "oportunidad",
    "summary": "Aparece mencionado (Visualización de datos, Data Storytelling), pero no hay práctica detectable que lo demuestre. Un informe donde cada gráfico responde una pregunta y se puede leer sin ayuda.",
    "size": 0.72,
@@ -1593,17 +2863,48 @@
     "Confianza media. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    19.41,
-    -93.78,
-    17.31
+    39.75,
+    -87.14,
+    12.52
    ],
    "recommendationId": "rec-visualizacion-comunicacion"
+  },
+  {
+   "id": "r:conocimiento-sectorial",
+   "label": "Demostrar: Conocimiento de sectores de negocio",
+   "type": "recomendacion",
+   "region": "objetivos",
+   "area": "negocio",
+   "family": "negocio",
+   "icon": "bulb",
+   "state": "oportunidad",
+   "summary": "Aparece mencionado (Retail y ventas), pero no hay práctica detectable que lo demuestre. Un caso que habla el idioma del sector al que aplicas.",
+   "size": 0.64,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 0,
+    "declarativa": 0,
+    "projects": 0,
+    "breadth": "ninguna"
+   },
+   "uncertainty": [
+    "Confianza media. El esfuerzo es una estimación genérica del marco, no una medida."
+   ],
+   "pos": [
+    -25.11,
+    -109.31,
+    29.24
+   ],
+   "recommendationId": "rec-conocimiento-sectorial"
   },
   {
    "id": "r:negocio-interpretacion",
    "label": "Demostrar: Interpretación del negocio",
    "type": "recomendacion",
    "region": "objetivos",
+   "area": "profesional",
+   "family": "negocio",
+   "icon": "bulb",
    "state": "oportunidad",
    "summary": "Aparece mencionado (Interpretación del negocio), pero no hay práctica detectable que lo demuestre. Un caso donde se ve la decisión que cambia el análisis.",
    "size": 0.64,
@@ -1618,9 +2919,9 @@
     "Confianza media. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    -0.03,
-    -99.73,
-    -25.69
+    -1.35,
+    -112.65,
+    -16.5
    ],
    "recommendationId": "rec-negocio-interpretacion"
   },
@@ -1629,8 +2930,11 @@
    "label": "Completar: Power BI, DAX y Power Query",
    "type": "recomendacion",
    "region": "objetivos",
+   "area": "bi",
+   "family": "bi",
+   "icon": "bulb",
    "state": "oportunidad",
-   "summary": "Hay evidencia parcial; falta cubrir Power BI, Power Query. Un informe completo, del dato al servicio, con medidas que se pueden justificar.",
+   "summary": "Hay evidencia parcial; falta cubrir Power Query, Power BI Service. Un informe completo, del dato al servicio, con medidas que se pueden justificar.",
    "size": 0.64,
    "evidence": {
     "practica": 0,
@@ -1643,17 +2947,160 @@
     "Confianza media. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    -27.69,
-    -75.11,
-    -12.32
+    -29.7,
+    -78.01,
+    -11.22
    ],
    "recommendationId": "rec-powerbi-dax"
+  },
+  {
+   "id": "r:estadistica-eda",
+   "label": "Completar: Estadística y análisis exploratorio",
+   "type": "recomendacion",
+   "region": "objetivos",
+   "area": "analisis",
+   "family": "python",
+   "icon": "bulb",
+   "state": "oportunidad",
+   "summary": "El núcleo está respaldado; faltan por demostrar Experimentación (tests A/B), NumPy y SciPy. Un análisis que separa lo observado de lo inferido.",
+   "size": 0.59,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 0,
+    "declarativa": 0,
+    "projects": 0,
+    "breadth": "ninguna"
+   },
+   "uncertainty": [
+    "Confianza alta. El esfuerzo es una estimación genérica del marco, no una medida."
+   ],
+   "pos": [
+    -3.64,
+    -67.94,
+    -6.59
+   ],
+   "recommendationId": "rec-estadistica-eda"
+  },
+  {
+   "id": "r:explicar-decisiones",
+   "label": "Completar: Explicar decisiones y justificar resultados",
+   "type": "recomendacion",
+   "region": "objetivos",
+   "area": "profesional",
+   "family": "negocio",
+   "icon": "bulb",
+   "state": "oportunidad",
+   "summary": "El núcleo está respaldado; faltan por demostrar Data Storytelling. Respuestas preparadas para «¿por qué lo hiciste así?» en una entrevista.",
+   "size": 0.59,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 0,
+    "declarativa": 0,
+    "projects": 0,
+    "breadth": "ninguna"
+   },
+   "uncertainty": [
+    "Confianza alta. El esfuerzo es una estimación genérica del marco, no una medida."
+   ],
+   "pos": [
+    25.42,
+    -112.17,
+    -10.05
+   ],
+   "recommendationId": "rec-explicar-decisiones"
+  },
+  {
+   "id": "r:preparacion-calidad",
+   "label": "Completar: Preparación, limpieza y calidad de datos",
+   "type": "recomendacion",
+   "region": "objetivos",
+   "area": "datos",
+   "family": "ingenieria",
+   "icon": "bulb",
+   "state": "oportunidad",
+   "summary": "El núcleo está respaldado; faltan por demostrar Power Query. Un caso de calidad de datos que se puede explicar y reproducir.",
+   "size": 0.59,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 0,
+    "declarativa": 0,
+    "projects": 0,
+    "breadth": "ninguna"
+   },
+   "uncertainty": [
+    "Confianza alta. El esfuerzo es una estimación genérica del marco, no una medida."
+   ],
+   "pos": [
+    -35.05,
+    -77.14,
+    17.3
+   ],
+   "recommendationId": "rec-preparacion-calidad"
+  },
+  {
+   "id": "r:python-analisis",
+   "label": "Completar: Python aplicado al análisis",
+   "type": "recomendacion",
+   "region": "objetivos",
+   "area": "datos",
+   "family": "python",
+   "icon": "bulb",
+   "state": "oportunidad",
+   "summary": "El núcleo está respaldado; faltan por demostrar NumPy y SciPy, APIs y datos web. Un análisis en Python que otra persona puede volver a ejecutar.",
+   "size": 0.59,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 0,
+    "declarativa": 0,
+    "projects": 0,
+    "breadth": "ninguna"
+   },
+   "uncertainty": [
+    "Confianza alta. El esfuerzo es una estimación genérica del marco, no una medida."
+   ],
+   "pos": [
+    -6.03,
+    -73.89,
+    26.95
+   ],
+   "recommendationId": "rec-python-analisis"
+  },
+  {
+   "id": "r:sql-analitico",
+   "label": "Completar: SQL y consultas analíticas",
+   "type": "recomendacion",
+   "region": "objetivos",
+   "area": "datos",
+   "family": "sql",
+   "icon": "bulb",
+   "state": "oportunidad",
+   "summary": "El núcleo está respaldado; faltan por demostrar Optimización de consultas. Un proyecto SQL que demuestre consultas por capas y criterio de rendimiento.",
+   "size": 0.59,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 0,
+    "declarativa": 0,
+    "projects": 0,
+    "breadth": "ninguna"
+   },
+   "uncertainty": [
+    "Confianza alta. El esfuerzo es una estimación genérica del marco, no una medida."
+   ],
+   "pos": [
+    -12.83,
+    -95,
+    19.29
+   ],
+   "recommendationId": "rec-sql-analitico"
   },
   {
    "id": "r:automatizacion-fiabilidad",
    "label": "Completar: Automatización, mantenimiento y fiabilidad",
    "type": "recomendacion",
    "region": "objetivos",
+   "area": "profesional",
+   "family": "ingenieria",
+   "icon": "bulb",
    "state": "oportunidad",
    "summary": "Hay evidencia parcial; falta cubrir Automatización. Un pipeline que avisa cuando algo se rompe.",
    "size": 0.6,
@@ -1668,114 +3115,170 @@
     "Confianza media. El esfuerzo es una estimación genérica del marco, no una medida."
    ],
    "pos": [
-    11.72,
-    -74.14,
-    8.48
+    23.62,
+    -100.61,
+    20.06
    ],
    "recommendationId": "rec-automatizacion-fiabilidad"
   },
   {
-   "id": "p:demo-proyectos-churn-clientes",
-   "label": "churn-clientes",
+   "id": "p:demo-proyectos-churn-clientes-ttdwk2",
+   "label": "Predicción de abandono (ficticio)",
    "type": "proyecto",
    "region": "practica",
+   "area": "analisis",
+   "family": "ml",
+   "families": [
+    "ml",
+    "python",
+    "ingenieria"
+   ],
+   "icon": "notebook",
    "state": "respaldado",
-   "summary": "Proyecto analizado: 3 archivos con evidencia práctica en 11 conceptos.",
+   "summary": "Modelo de clasificación con regresión logística y random forest. Se evalúa con validación cruzada y AUC. Proyecto analizado: 3 archivos con evidencia práctica en 14 conceptos.",
    "size": 0.38,
    "evidence": {
     "practica": 3,
     "explicativa": 1,
     "declarativa": 0,
     "projects": 1,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "notebook": 1,
+     "script": 2
+    }
    },
    "uncertainty": [
     "Un proyecto demuestra trabajo realizado; no mide su calidad ni el nivel de dominio."
    ],
    "pos": [
-    -34.07,
-    -33.05,
-    14.13
-   ]
+    -13.19,
+    -27.08,
+    -72.08
+   ],
+   "parent": "c:random-forest",
+   "depth": 4
   },
   {
-   "id": "p:demo-proyectos-scripts-sueltos",
+   "id": "p:demo-proyectos-scripts-sueltos-otd8mg",
    "label": "scripts-sueltos",
    "type": "proyecto",
    "region": "practica",
+   "area": "datos",
+   "family": "python",
+   "families": [
+    "python",
+    "ingenieria",
+    "ml"
+   ],
+   "icon": "notebook",
    "state": "respaldado",
-   "summary": "Proyecto analizado: 3 archivos con evidencia práctica en 6 conceptos. No se ha encontrado documentación escrita en el proyecto.",
+   "summary": "Proyecto analizado: 3 archivos con evidencia práctica en 7 conceptos. No se ha encontrado documentación escrita en el proyecto.",
    "size": 0.38,
    "evidence": {
     "practica": 3,
     "explicativa": 0,
     "declarativa": 0,
     "projects": 1,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "script": 3
+    }
    },
    "uncertainty": [
     "Un proyecto demuestra trabajo realizado; no mide su calidad ni el nivel de dominio."
    ],
    "pos": [
-    -30.62,
-    -39.84,
-    35.84
+    -41.26,
+    -29,
+    -29.8
    ],
-   "recommendationId": "rec-doc-demo-proyectos-scripts-sueltos"
+   "parent": "c:imputacion-valores",
+   "depth": 3,
+   "noReadme": true,
+   "recommendationId": "rec-doc-demo-proyectos-scripts-sueltos-otd8mg"
   },
   {
-   "id": "p:demo-proyectos-ventas-tienda-sql",
-   "label": "ventas-tienda-sql",
+   "id": "p:demo-proyectos-ventas-tienda-sql-14pdy3k",
+   "label": "Ventas de una tienda ficticia (SQL)",
    "type": "proyecto",
    "region": "practica",
+   "area": "datos",
+   "family": "sql",
+   "families": [
+    "sql",
+    "bi",
+    "ingenieria"
+   ],
+   "icon": "database",
    "state": "respaldado",
-   "summary": "Proyecto analizado: 3 archivos con evidencia práctica en 7 conceptos.",
+   "summary": "Análisis de ventas por categoría y mes sobre una base de datos de ejemplo. Proyecto analizado: 3 archivos con evidencia práctica en 10 conceptos.",
    "size": 0.38,
    "evidence": {
     "practica": 3,
     "explicativa": 1,
     "declarativa": 0,
     "projects": 1,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "sql": 3
+    }
    },
    "uncertainty": [
     "Un proyecto demuestra trabajo realizado; no mide su calidad ni el nivel de dominio."
    ],
    "pos": [
-    -32.67,
-    -17.7,
-    64.7
-   ]
+    -55.91,
+    -5.52,
+    2.44
+   ],
+   "parent": "c:modelo-estrella",
+   "depth": 2
   },
   {
-   "id": "p:demo-proyectos-informe-ventas-pbi",
-   "label": "informe-ventas-pbi",
+   "id": "p:demo-proyectos-informe-ventas-pbi-1huo4ns",
+   "label": "Informe de ventas (Power BI)",
    "type": "proyecto",
    "region": "practica",
+   "area": "bi",
+   "family": "bi",
+   "families": [
+    "bi",
+    "ingenieria"
+   ],
+   "icon": "folder",
    "state": "respaldado",
-   "summary": "Proyecto analizado: 2 archivos con evidencia práctica en 4 conceptos.",
+   "summary": "Informe con medidas DAX y una tabla de calendario para comparar contra el mismo periodo del año anterior. Proyecto analizado: 2 archivos con evidencia práctica en 4 conceptos.",
    "size": 0.37,
    "evidence": {
     "practica": 2,
     "explicativa": 1,
     "declarativa": 0,
     "projects": 1,
-    "breadth": "puntual"
+    "breadth": "puntual",
+    "kinds": {
+     "modelo": 1
+    }
    },
    "uncertainty": [
     "Un proyecto demuestra trabajo realizado; no mide su calidad ni el nivel de dominio."
    ],
    "pos": [
-    2.89,
-    -32.39,
-    39.28
-   ]
+    -5.69,
+    -32.23,
+    -43.44
+   ],
+   "parent": "c:dax-contexto",
+   "depth": 3
   },
   {
-   "id": "r:doc-demo-proyectos-scripts-sueltos",
+   "id": "r:doc-demo-proyectos-scripts-sueltos-otd8mg",
    "label": "Documentar el proyecto scripts-sueltos",
    "type": "recomendacion",
    "region": "objetivos",
+   "area": "datos",
+   "family": "python",
+   "icon": "doc",
    "state": "oportunidad",
    "summary": "El proyecto tiene código, pero ningún documento que explique sus decisiones.",
    "size": 0.55,
@@ -1790,17 +3293,19 @@
     "Puede haber documentación fuera de la carpeta analizada."
    ],
    "pos": [
-    -23,
-    -87.41,
-    17.39
+    -12.65,
+    -92.93,
+    -23.56
    ],
-   "recommendationId": "rec-doc-demo-proyectos-scripts-sueltos"
+   "recommendationId": "rec-doc-demo-proyectos-scripts-sueltos-otd8mg"
   },
   {
    "id": "o:junior",
    "label": "Data Analyst Junior",
    "type": "objetivo",
    "region": "objetivos",
+   "area": "objetivos",
+   "icon": "flag",
    "state": "neutral",
    "summary": "Ejecuta análisis y cuadros de mando con supervisión: limpia datos, consulta con SQL, construye informes y explica lo que hizo. Son referencias orientativas: varían según empresa y sector.",
    "size": 0.7,
@@ -1815,9 +3320,9 @@
     "Marco general, no un estudio de mercado ni una evaluación oficial."
    ],
    "pos": [
-    -19.45,
-    -49.37,
-    -6.43
+    -16.36,
+    -54.69,
+    -14.73
    ]
   },
   {
@@ -1825,6 +3330,8 @@
    "label": "Junior consolidado",
    "type": "objetivo",
    "region": "objetivos",
+   "area": "objetivos",
+   "icon": "flag",
    "state": "neutral",
    "summary": "Trabaja con autonomía en un modelo completo: de la fuente al informe, justificando decisiones y cuidando la calidad. Es el objetivo con el que se calcula la prioridad. Son referencias orientativas: varían según empresa y sector.",
    "size": 1,
@@ -1839,9 +3346,9 @@
     "Marco general, no un estudio de mercado ni una evaluación oficial."
    ],
    "pos": [
-    -3.45,
-    -61.97,
-    -23.04
+    15.22,
+    -68.6,
+    -19.23
    ]
   },
   {
@@ -1849,6 +3356,8 @@
    "label": "Data Analyst Mid-Level",
    "type": "objetivo",
    "region": "objetivos",
+   "area": "objetivos",
+   "icon": "flag",
    "state": "neutral",
    "summary": "Define métricas con negocio, diseña modelos mantenibles, optimiza y automatiza, y comunica recomendaciones que cambian decisiones. Son referencias orientativas: varían según empresa y sector.",
    "size": 0.7,
@@ -1863,10 +3372,297 @@
     "Marco general, no un estudio de mercado ni una evaluación oficial."
    ],
    "pos": [
-    7.2,
-    -50.42,
-    -3.8
+    17.5,
+    -53.32,
+    7.71
    ]
+  },
+  {
+   "id": "a:bi",
+   "label": "Business Intelligence y Power BI",
+   "type": "area",
+   "region": "bi",
+   "area": "bi",
+   "family": "bi",
+   "icon": "powerbi",
+   "state": "neutral",
+   "depth": 0,
+   "summary": "Área de conocimiento con 11 conocimientos (5 con práctica, 0 solo documentados sin práctica), 2 competencias y 2 proyectos que la aplican.",
+   "size": 0.9,
+   "evidence": {
+    "practica": 5,
+    "explicativa": 0,
+    "declarativa": 0,
+    "projects": 2,
+    "breadth": "puntual"
+   },
+   "uncertainty": [
+    "Cuenta cobertura y aplicación de sus conocimientos; no mide el dominio del área."
+   ],
+   "pos": [
+    26.35,
+    36.25,
+    21.63
+   ],
+   "areaStats": {
+    "nodes": 11,
+    "aplicado": 5,
+    "documentado": 0,
+    "sinEvidencia": 6,
+    "competencias": 2,
+    "projects": 2
+   }
+  },
+  {
+   "id": "a:datos",
+   "label": "Ingeniería y preparación de datos",
+   "type": "area",
+   "region": "datos",
+   "area": "datos",
+   "family": "ingenieria",
+   "icon": "database",
+   "state": "neutral",
+   "depth": 0,
+   "summary": "Área de conocimiento con 18 conocimientos (14 con práctica, 1 solo documentados sin práctica), 5 competencias y 3 proyectos que la aplican.",
+   "size": 0.9,
+   "evidence": {
+    "practica": 14,
+    "explicativa": 1,
+    "declarativa": 0,
+    "projects": 3,
+    "breadth": "amplia"
+   },
+   "uncertainty": [
+    "Cuenta cobertura y aplicación de sus conocimientos; no mide el dominio del área."
+   ],
+   "pos": [
+    -16.17,
+    30.67,
+    45.48
+   ],
+   "areaStats": {
+    "nodes": 18,
+    "aplicado": 14,
+    "documentado": 1,
+    "sinEvidencia": 3,
+    "competencias": 5,
+    "projects": 3
+   }
+  },
+  {
+   "id": "a:analisis",
+   "label": "Análisis, estadística y machine learning",
+   "type": "area",
+   "region": "analisis",
+   "area": "analisis",
+   "family": "ml",
+   "icon": "brain",
+   "state": "neutral",
+   "depth": 0,
+   "summary": "Área de conocimiento con 14 conocimientos (10 con práctica, 3 solo documentados sin práctica), 2 competencias y 2 proyectos que la aplican.",
+   "size": 0.9,
+   "evidence": {
+    "practica": 10,
+    "explicativa": 3,
+    "declarativa": 0,
+    "projects": 2,
+    "breadth": "puntual"
+   },
+   "uncertainty": [
+    "Cuenta cobertura y aplicación de sus conocimientos; no mide el dominio del área."
+   ],
+   "pos": [
+    11.82,
+    9.14,
+    -50.74
+   ],
+   "areaStats": {
+    "nodes": 14,
+    "aplicado": 10,
+    "documentado": 3,
+    "sinEvidencia": 1,
+    "competencias": 2,
+    "projects": 2
+   }
+  },
+  {
+   "id": "a:visualizacion",
+   "label": "Visualización y comunicación de datos",
+   "type": "area",
+   "region": "visualizacion",
+   "area": "visualizacion",
+   "family": "storytelling",
+   "icon": "chart",
+   "state": "neutral",
+   "depth": 0,
+   "summary": "Área de conocimiento con 5 conocimientos (0 con práctica, 5 solo documentados sin práctica), 1 competencia y 0 proyectos que la aplican.",
+   "size": 0.9,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 5,
+    "declarativa": 0,
+    "projects": 0,
+    "breadth": "ninguna"
+   },
+   "uncertainty": [
+    "Cuenta cobertura y aplicación de sus conocimientos; no mide el dominio del área."
+   ],
+   "pos": [
+    41.19,
+    1.26,
+    71.1
+   ],
+   "areaStats": {
+    "nodes": 5,
+    "aplicado": 0,
+    "documentado": 5,
+    "sinEvidencia": 0,
+    "competencias": 1,
+    "projects": 0
+   }
+  },
+  {
+   "id": "a:ux",
+   "label": "UX/UI y desarrollo web (complementario)",
+   "type": "area",
+   "region": "ux",
+   "area": "ux",
+   "family": "ux",
+   "icon": "cursor",
+   "state": "neutral",
+   "depth": 0,
+   "summary": "Área de conocimiento con 0 conocimientos (0 con práctica, 0 solo documentados sin práctica), 1 competencia y 0 proyectos que la aplican.",
+   "size": 0.9,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 0,
+    "declarativa": 0,
+    "projects": 0,
+    "breadth": "ninguna"
+   },
+   "uncertainty": [
+    "Cuenta cobertura y aplicación de sus conocimientos; no mide el dominio del área."
+   ],
+   "pos": [
+    -92.74,
+    -29.37,
+    -18.51
+   ],
+   "areaStats": {
+    "nodes": 0,
+    "aplicado": 0,
+    "documentado": 0,
+    "sinEvidencia": 0,
+    "competencias": 1,
+    "projects": 0
+   }
+  },
+  {
+   "id": "a:profesional",
+   "label": "Competencias profesionales",
+   "type": "area",
+   "region": "profesional",
+   "area": "profesional",
+   "family": "negocio",
+   "icon": "briefcase",
+   "state": "neutral",
+   "depth": 0,
+   "summary": "Área de conocimiento con 7 conocimientos (2 con práctica, 4 solo documentados sin práctica), 5 competencias y 2 proyectos que la aplican.",
+   "size": 0.9,
+   "evidence": {
+    "practica": 2,
+    "explicativa": 4,
+    "declarativa": 0,
+    "projects": 2,
+    "breadth": "puntual"
+   },
+   "uncertainty": [
+    "Cuenta cobertura y aplicación de sus conocimientos; no mide el dominio del área."
+   ],
+   "pos": [
+    51.34,
+    -19.02,
+    -9.56
+   ],
+   "areaStats": {
+    "nodes": 7,
+    "aplicado": 2,
+    "documentado": 4,
+    "sinEvidencia": 1,
+    "competencias": 5,
+    "projects": 2
+   }
+  },
+  {
+   "id": "a:negocio",
+   "label": "Dominios de negocio",
+   "type": "area",
+   "region": "negocio",
+   "area": "negocio",
+   "family": "negocio",
+   "icon": "store",
+   "state": "neutral",
+   "depth": 0,
+   "summary": "Área de conocimiento con 4 conocimientos (0 con práctica, 1 solo documentados sin práctica), 1 competencia y 0 proyectos que la aplican.",
+   "size": 0.9,
+   "evidence": {
+    "practica": 0,
+    "explicativa": 1,
+    "declarativa": 0,
+    "projects": 0,
+    "breadth": "ninguna"
+   },
+   "uncertainty": [
+    "Cuenta cobertura y aplicación de sus conocimientos; no mide el dominio del área."
+   ],
+   "pos": [
+    3.34,
+    -44.88,
+    89.89
+   ],
+   "areaStats": {
+    "nodes": 4,
+    "aplicado": 0,
+    "documentado": 1,
+    "sinEvidencia": 3,
+    "competencias": 1,
+    "projects": 0
+   }
+  },
+  {
+   "id": "n:nucleo",
+   "label": "Mi conocimiento profesional",
+   "type": "nucleo",
+   "region": "objetivos",
+   "area": "objetivos",
+   "icon": "brain",
+   "state": "neutral",
+   "depth": 0,
+   "summary": "Conjunto de lo que aparece en tus materiales: 59 conocimientos repartidos en 7 áreas, 17 competencias y 4 proyectos. Es el centro del mapa: las áreas salen de tu marco de competencias.",
+   "size": 1,
+   "evidence": {
+    "practica": 31,
+    "explicativa": 14,
+    "declarativa": 0,
+    "projects": 4,
+    "breadth": "amplia"
+   },
+   "uncertainty": [
+    "Es un resumen de lo documentado en las fuentes analizadas, no una evaluación de tu nivel."
+   ],
+   "pos": [
+    -5.93,
+    -44.18,
+    17.94
+   ],
+   "areaStats": {
+    "nodes": 59,
+    "aplicado": 31,
+    "documentado": 14,
+    "sinEvidencia": 14,
+    "competencias": 17,
+    "projects": 4
+   }
   }
  ],
  "edges": [
@@ -1874,16 +3670,16 @@
    "source": "c:powerbi",
    "target": "c:dax",
    "type": "usa",
-   "confidence": "media",
-   "rationale": "Los modelos de Power BI expresan sus cálculos con medidas DAX.",
+   "confidence": "alta",
+   "rationale": "Los modelos de Power BI expresan sus cálculos con medidas DAX. Aparecen juntos en la práctica de 1 proyecto.",
    "updatedAt": "2026-01-15T10:00:00.000Z",
-   "evidenceCount": 0
+   "evidenceCount": 1
   },
   {
    "source": "c:powerbi",
    "target": "c:power-query",
    "type": "usa",
-   "confidence": "baja",
+   "confidence": "media",
    "rationale": "Power BI carga y transforma las fuentes con Power Query antes del modelo.",
    "updatedAt": "2026-01-15T10:00:00.000Z",
    "evidenceCount": 0
@@ -1892,7 +3688,7 @@
    "source": "c:power-bi-service",
    "target": "c:powerbi",
    "type": "requiere",
-   "confidence": "baja",
+   "confidence": "media",
    "rationale": "El servicio publica y refresca informes creados en Power BI.",
    "updatedAt": "2026-01-15T10:00:00.000Z",
    "evidenceCount": 0
@@ -1937,10 +3733,10 @@
    "source": "c:modelo-estrella",
    "target": "c:powerbi",
    "type": "mejora",
-   "confidence": "media",
-   "rationale": "Un modelo en estrella simplifica las relaciones y el rendimiento de los informes.",
+   "confidence": "alta",
+   "rationale": "Un modelo en estrella simplifica las relaciones y el rendimiento de los informes. Aparecen juntos en la práctica de 1 proyecto.",
    "updatedAt": "2026-01-15T10:00:00.000Z",
-   "evidenceCount": 0
+   "evidenceCount": 1
   },
   {
    "source": "c:modelo-estrella",
@@ -2091,9 +3887,9 @@
    "target": "c:ml",
    "type": "habilita",
    "confidence": "alta",
-   "rationale": "Los modelos se apoyan en supuestos estadísticos sobre los datos. Aparecen juntos en la práctica de 1 proyecto.",
+   "rationale": "Los modelos se apoyan en supuestos estadísticos sobre los datos. Aparecen juntos en la práctica de 2 proyectos.",
    "updatedAt": "2026-01-15T10:00:00.000Z",
-   "evidenceCount": 1
+   "evidenceCount": 2
   },
   {
    "source": "c:ml",
@@ -2110,6 +3906,15 @@
    "type": "parte-de",
    "confidence": "alta",
    "rationale": "Son las dos grandes familias de aprendizaje supervisado. Aparecen juntos en la práctica de 1 proyecto.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1
+  },
+  {
+   "source": "c:feature-eng",
+   "target": "c:ml",
+   "type": "requiere",
+   "confidence": "alta",
+   "rationale": "La calidad de las variables condiciona el resultado del modelo. Aparecen juntos en la práctica de 1 proyecto.",
    "updatedAt": "2026-01-15T10:00:00.000Z",
    "evidenceCount": 1
   },
@@ -2162,7 +3967,7 @@
    "source": "c:diseno-dashboard",
    "target": "c:powerbi",
    "type": "usa",
-   "confidence": "baja",
+   "confidence": "media",
    "rationale": "El diseño se materializa en las páginas y visuales de Power BI.",
    "updatedAt": "2026-01-15T10:00:00.000Z",
    "evidenceCount": 0
@@ -2231,16 +4036,409 @@
    "evidenceCount": 0
   },
   {
-   "source": "p:demo-proyectos-churn-clientes",
-   "target": "c:python",
-   "type": "demuestra",
-   "confidence": "alta",
-   "rationale": "3 archivos del proyecto contienen código o artefactos de Python.",
+   "source": "c:dax-avanzado",
+   "target": "c:dax",
+   "type": "parte-de",
+   "confidence": "media",
+   "rationale": "Son funciones del propio lenguaje DAX para casos avanzados.",
    "updatedAt": "2026-01-15T10:00:00.000Z",
-   "evidenceCount": 3
+   "evidenceCount": 0
   },
   {
-   "source": "p:demo-proyectos-churn-clientes",
+   "source": "c:dax-avanzado",
+   "target": "c:dax-contexto",
+   "type": "requiere",
+   "confidence": "media",
+   "rationale": "TREATAS, WINDOW o RANKX solo se usan bien entendiendo cómo modifican el contexto de filtro.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 0
+  },
+  {
+   "source": "c:pbi-diseno-dinamico",
+   "target": "c:diseno-dashboard",
+   "type": "mejora",
+   "confidence": "baja",
+   "rationale": "Parámetros de campo y formato condicional permiten informes que se adaptan sin duplicar páginas.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 0
+  },
+  {
+   "source": "c:pbi-diseno-dinamico",
+   "target": "c:powerbi",
+   "type": "parte-de",
+   "confidence": "media",
+   "rationale": "Son funcionalidades de Power BI Desktop.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 0
+  },
+  {
+   "source": "c:numpy-scipy",
+   "target": "c:pandas",
+   "type": "habilita",
+   "confidence": "media",
+   "rationale": "pandas se apoya en NumPy; SciPy y statsmodels añaden los contrastes estadísticos.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 0
+  },
+  {
+   "source": "c:numpy-scipy",
+   "target": "c:estadistica",
+   "type": "usa",
+   "confidence": "media",
+   "rationale": "Los contrastes y modelos estadísticos en Python se calculan con SciPy y statsmodels.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 0
+  },
+  {
+   "source": "c:apis-datos",
+   "target": "c:etl",
+   "type": "habilita",
+   "confidence": "media",
+   "rationale": "Una API es una fuente más del pipeline de datos.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 0
+  },
+  {
+   "source": "c:deep-learning",
+   "target": "c:ml",
+   "type": "parte-de",
+   "confidence": "media",
+   "rationale": "Las redes neuronales profundas son una familia de modelos de machine learning.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 0
+  },
+  {
+   "source": "c:experimentacion",
+   "target": "c:estadistica",
+   "type": "usa",
+   "confidence": "media",
+   "rationale": "Un test A/B se decide con un contraste de hipótesis y un tamaño muestral adecuado.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 0
+  },
+  {
+   "source": "c:experimentacion",
+   "target": "c:decisiones",
+   "type": "habilita",
+   "confidence": "media",
+   "rationale": "Un experimento bien diseñado convierte una opinión en una decisión respaldada.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 0
+  },
+  {
+   "source": "c:retail-ventas",
+   "target": "c:negocio",
+   "type": "habilita",
+   "confidence": "baja",
+   "rationale": "Conocer el sector permite formular preguntas de negocio relevantes.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 0
+  },
+  {
+   "source": "c:finanzas",
+   "target": "c:negocio",
+   "type": "habilita",
+   "confidence": "baja",
+   "rationale": "Entender la cuenta de resultados permite traducir datos en impacto económico.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 0
+  },
+  {
+   "source": "c:marketing-clientes",
+   "target": "c:negocio",
+   "type": "habilita",
+   "confidence": "baja",
+   "rationale": "El vocabulario de clientes y campañas orienta los análisis a decisiones comerciales.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 0
+  },
+  {
+   "source": "c:turismo-hosteleria",
+   "target": "c:negocio",
+   "type": "habilita",
+   "confidence": "baja",
+   "rationale": "Conocer reservas, ocupación y precios orienta el análisis en viajes y hostelería.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 0
+  },
+  {
+   "source": "c:finanzas",
+   "target": "c:kpi",
+   "type": "habilita",
+   "confidence": "baja",
+   "rationale": "Margen, presupuesto y desviaciones son KPI financieros habituales.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 0
+  },
+  {
+   "source": "c:ibcs",
+   "target": "c:finanzas",
+   "type": "mejora",
+   "confidence": "baja",
+   "rationale": "IBCS nace en el reporting financiero: variaciones frente a presupuesto y año anterior.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 0
+  },
+  {
+   "source": "c:sql-subconsultas",
+   "target": "c:sql-cte",
+   "type": "mejora",
+   "confidence": "alta",
+   "rationale": "Las CTE suelen hacer más legibles las subconsultas anidadas. Aparecen juntos en la práctica de 1 proyecto.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1
+  },
+  {
+   "source": "c:dax",
+   "target": "c:powerbi",
+   "type": "parte-de",
+   "confidence": "alta",
+   "rationale": "En la jerarquía del marco, «DAX» es una rama de «Power BI».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "c:dax-contexto",
+   "target": "c:dax",
+   "type": "parte-de",
+   "confidence": "alta",
+   "rationale": "En la jerarquía del marco, «Contexto de filtro en DAX» es una rama de «DAX».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "c:time-intelligence",
+   "target": "c:dax",
+   "type": "parte-de",
+   "confidence": "alta",
+   "rationale": "En la jerarquía del marco, «Inteligencia de tiempo» es una rama de «DAX».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "c:power-query",
+   "target": "c:powerbi",
+   "type": "parte-de",
+   "confidence": "media",
+   "rationale": "En la jerarquía del marco, «Power Query» es una rama de «Power BI».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "c:power-bi-service",
+   "target": "c:powerbi",
+   "type": "parte-de",
+   "confidence": "media",
+   "rationale": "En la jerarquía del marco, «Power BI Service» es una rama de «Power BI».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "c:pbi-optimizacion",
+   "target": "c:powerbi",
+   "type": "parte-de",
+   "confidence": "media",
+   "rationale": "En la jerarquía del marco, «Optimización de modelos» es una rama de «Power BI».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "c:modelo-estrella",
+   "target": "c:powerbi",
+   "type": "parte-de",
+   "confidence": "alta",
+   "rationale": "En la jerarquía del marco, «Modelo en estrella» es una rama de «Power BI».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "c:sql-optimizacion",
+   "target": "c:sql",
+   "type": "parte-de",
+   "confidence": "media",
+   "rationale": "En la jerarquía del marco, «Optimización de consultas» es una rama de «SQL».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "c:jupyter",
+   "target": "c:python",
+   "type": "parte-de",
+   "confidence": "alta",
+   "rationale": "En la jerarquía del marco, «Jupyter Notebooks» es una rama de «Python».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "c:model-eval",
+   "target": "c:ml",
+   "type": "parte-de",
+   "confidence": "alta",
+   "rationale": "En la jerarquía del marco, «Evaluación de modelos» es una rama de «Machine learning».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "c:feature-eng",
+   "target": "c:ml",
+   "type": "parte-de",
+   "confidence": "alta",
+   "rationale": "En la jerarquía del marco, «Ingeniería de variables» es una rama de «Machine learning».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "c:numpy-scipy",
+   "target": "c:python",
+   "type": "parte-de",
+   "confidence": "media",
+   "rationale": "En la jerarquía del marco, «NumPy y SciPy» es una rama de «Python».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "c:clasificacion",
+   "target": "c:clasificacion-regresion",
+   "type": "parte-de",
+   "confidence": "alta",
+   "rationale": "En la jerarquía del marco, «Clasificación» es una rama de «Aprendizaje supervisado».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "c:regresion",
+   "target": "c:clasificacion-regresion",
+   "type": "parte-de",
+   "confidence": "media",
+   "rationale": "En la jerarquía del marco, «Regresión» es una rama de «Aprendizaje supervisado».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "c:random-forest",
+   "target": "c:clasificacion",
+   "type": "parte-de",
+   "confidence": "alta",
+   "rationale": "En la jerarquía del marco, «Random Forest» es una rama de «Clasificación».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "c:regresion-logistica",
+   "target": "c:clasificacion",
+   "type": "parte-de",
+   "confidence": "media",
+   "rationale": "En la jerarquía del marco, «Regresión logística» es una rama de «Clasificación».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "c:validacion-cruzada",
+   "target": "c:model-eval",
+   "type": "parte-de",
+   "confidence": "alta",
+   "rationale": "En la jerarquía del marco, «Separación y validación cruzada» es una rama de «Evaluación de modelos».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "c:imputacion-valores",
+   "target": "c:feature-eng",
+   "type": "parte-de",
+   "confidence": "alta",
+   "rationale": "En la jerarquía del marco, «Tratamiento de valores ausentes» es una rama de «Ingeniería de variables».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "c:sql-subconsultas",
+   "target": "c:sql",
+   "type": "parte-de",
+   "confidence": "alta",
+   "rationale": "En la jerarquía del marco, «Subconsultas» es una rama de «SQL».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "c:sql-agregaciones",
+   "target": "c:sql",
+   "type": "parte-de",
+   "confidence": "alta",
+   "rationale": "En la jerarquía del marco, «Agregaciones y agrupaciones» es una rama de «SQL».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "c:sql-ddl",
+   "target": "c:sql",
+   "type": "parte-de",
+   "confidence": "alta",
+   "rationale": "En la jerarquía del marco, «Creación de tablas y vistas (DDL)» es una rama de «SQL».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "p:demo-proyectos-churn-clientes-ttdwk2",
+   "target": "c:random-forest",
+   "type": "demuestra",
+   "confidence": "media",
+   "rationale": "1 archivo del proyecto contienen código o artefactos de Random Forest.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1
+  },
+  {
+   "source": "p:demo-proyectos-churn-clientes-ttdwk2",
+   "target": "c:clasificacion",
+   "type": "demuestra",
+   "confidence": "media",
+   "rationale": "1 archivo del proyecto contienen código o artefactos de Clasificación.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1
+  },
+  {
+   "source": "p:demo-proyectos-churn-clientes-ttdwk2",
+   "target": "c:validacion-cruzada",
+   "type": "demuestra",
+   "confidence": "media",
+   "rationale": "1 archivo del proyecto contienen código o artefactos de Separación y validación cruzada.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1
+  },
+  {
+   "source": "p:demo-proyectos-churn-clientes-ttdwk2",
+   "target": "c:clasificacion-regresion",
+   "type": "demuestra",
+   "confidence": "media",
+   "rationale": "1 archivo del proyecto contienen código o artefactos de Aprendizaje supervisado.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1
+  },
+  {
+   "source": "p:demo-proyectos-churn-clientes-ttdwk2",
+   "target": "c:model-eval",
+   "type": "demuestra",
+   "confidence": "media",
+   "rationale": "1 archivo del proyecto contienen código o artefactos de Evaluación de modelos.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1
+  },
+  {
+   "source": "p:demo-proyectos-churn-clientes-ttdwk2",
+   "target": "c:estadistica",
+   "type": "demuestra",
+   "confidence": "media",
+   "rationale": "1 archivo del proyecto contienen código o artefactos de Estadística.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1
+  },
+  {
+   "source": "p:demo-proyectos-churn-clientes-ttdwk2",
+   "target": "c:ml",
+   "type": "demuestra",
+   "confidence": "media",
+   "rationale": "1 archivo del proyecto contienen código o artefactos de Machine learning.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1
+  },
+  {
+   "source": "p:demo-proyectos-churn-clientes-ttdwk2",
+   "target": "c:scikit-learn",
+   "type": "demuestra",
+   "confidence": "media",
+   "rationale": "1 archivo del proyecto contienen código o artefactos de scikit-learn.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1
+  },
+  {
+   "source": "p:demo-proyectos-churn-clientes-ttdwk2",
+   "target": "c:testing-calidad",
+   "type": "demuestra",
+   "confidence": "media",
+   "rationale": "1 archivo del proyecto contienen código o artefactos de Pruebas y validación.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1
+  },
+  {
+   "source": "p:demo-proyectos-churn-clientes-ttdwk2",
    "target": "c:pandas",
    "type": "demuestra",
    "confidence": "alta",
@@ -2249,34 +4447,16 @@
    "evidenceCount": 2
   },
   {
-   "source": "p:demo-proyectos-churn-clientes",
-   "target": "c:clasificacion-regresion",
+   "source": "p:demo-proyectos-scripts-sueltos-otd8mg",
+   "target": "c:imputacion-valores",
    "type": "demuestra",
    "confidence": "media",
-   "rationale": "1 archivo del proyecto contienen código o artefactos de Clasificación y regresión.",
+   "rationale": "1 archivo del proyecto contienen código o artefactos de Tratamiento de valores ausentes.",
    "updatedAt": "2026-01-15T10:00:00.000Z",
    "evidenceCount": 1
   },
   {
-   "source": "p:demo-proyectos-churn-clientes",
-   "target": "c:data-quality",
-   "type": "demuestra",
-   "confidence": "media",
-   "rationale": "1 archivo del proyecto contienen código o artefactos de Calidad y limpieza de datos.",
-   "updatedAt": "2026-01-15T10:00:00.000Z",
-   "evidenceCount": 1
-  },
-  {
-   "source": "p:demo-proyectos-churn-clientes",
-   "target": "c:eda",
-   "type": "demuestra",
-   "confidence": "media",
-   "rationale": "1 archivo del proyecto contienen código o artefactos de Análisis exploratorio (EDA).",
-   "updatedAt": "2026-01-15T10:00:00.000Z",
-   "evidenceCount": 1
-  },
-  {
-   "source": "p:demo-proyectos-churn-clientes",
+   "source": "p:demo-proyectos-scripts-sueltos-otd8mg",
    "target": "c:estadistica",
    "type": "demuestra",
    "confidence": "media",
@@ -2285,52 +4465,7 @@
    "evidenceCount": 1
   },
   {
-   "source": "p:demo-proyectos-scripts-sueltos",
-   "target": "c:pandas",
-   "type": "demuestra",
-   "confidence": "alta",
-   "rationale": "3 archivos del proyecto contienen código o artefactos de pandas.",
-   "updatedAt": "2026-01-15T10:00:00.000Z",
-   "evidenceCount": 3
-  },
-  {
-   "source": "p:demo-proyectos-scripts-sueltos",
-   "target": "c:python",
-   "type": "demuestra",
-   "confidence": "alta",
-   "rationale": "3 archivos del proyecto contienen código o artefactos de Python.",
-   "updatedAt": "2026-01-15T10:00:00.000Z",
-   "evidenceCount": 3
-  },
-  {
-   "source": "p:demo-proyectos-scripts-sueltos",
-   "target": "c:data-quality",
-   "type": "demuestra",
-   "confidence": "media",
-   "rationale": "1 archivo del proyecto contienen código o artefactos de Calidad y limpieza de datos.",
-   "updatedAt": "2026-01-15T10:00:00.000Z",
-   "evidenceCount": 1
-  },
-  {
-   "source": "p:demo-proyectos-scripts-sueltos",
-   "target": "c:eda",
-   "type": "demuestra",
-   "confidence": "media",
-   "rationale": "1 archivo del proyecto contienen código o artefactos de Análisis exploratorio (EDA).",
-   "updatedAt": "2026-01-15T10:00:00.000Z",
-   "evidenceCount": 1
-  },
-  {
-   "source": "p:demo-proyectos-scripts-sueltos",
-   "target": "c:estadistica",
-   "type": "demuestra",
-   "confidence": "media",
-   "rationale": "1 archivo del proyecto contienen código o artefactos de Estadística.",
-   "updatedAt": "2026-01-15T10:00:00.000Z",
-   "evidenceCount": 1
-  },
-  {
-   "source": "p:demo-proyectos-scripts-sueltos",
+   "source": "p:demo-proyectos-scripts-sueltos-otd8mg",
    "target": "c:etl",
    "type": "demuestra",
    "confidence": "media",
@@ -2339,25 +4474,25 @@
    "evidenceCount": 1
   },
   {
-   "source": "p:demo-proyectos-ventas-tienda-sql",
-   "target": "c:modelo-estrella",
+   "source": "p:demo-proyectos-scripts-sueltos-otd8mg",
+   "target": "c:pandas",
    "type": "demuestra",
    "confidence": "alta",
-   "rationale": "3 archivos del proyecto contienen código o artefactos de Modelo en estrella.",
+   "rationale": "3 archivos del proyecto contienen código o artefactos de pandas.",
    "updatedAt": "2026-01-15T10:00:00.000Z",
    "evidenceCount": 3
   },
   {
-   "source": "p:demo-proyectos-ventas-tienda-sql",
-   "target": "c:sql",
+   "source": "p:demo-proyectos-scripts-sueltos-otd8mg",
+   "target": "c:python",
    "type": "demuestra",
    "confidence": "alta",
-   "rationale": "3 archivos del proyecto contienen código o artefactos de SQL.",
+   "rationale": "3 archivos del proyecto contienen código o artefactos de Python.",
    "updatedAt": "2026-01-15T10:00:00.000Z",
    "evidenceCount": 3
   },
   {
-   "source": "p:demo-proyectos-ventas-tienda-sql",
+   "source": "p:demo-proyectos-scripts-sueltos-otd8mg",
    "target": "c:data-quality",
    "type": "demuestra",
    "confidence": "media",
@@ -2366,16 +4501,34 @@
    "evidenceCount": 1
   },
   {
-   "source": "p:demo-proyectos-ventas-tienda-sql",
-   "target": "c:modelado-datos",
+   "source": "p:demo-proyectos-scripts-sueltos-otd8mg",
+   "target": "c:eda",
    "type": "demuestra",
    "confidence": "media",
-   "rationale": "1 archivo del proyecto contienen código o artefactos de Modelado de datos.",
+   "rationale": "1 archivo del proyecto contienen código o artefactos de Análisis exploratorio (EDA).",
    "updatedAt": "2026-01-15T10:00:00.000Z",
    "evidenceCount": 1
   },
   {
-   "source": "p:demo-proyectos-ventas-tienda-sql",
+   "source": "p:demo-proyectos-ventas-tienda-sql-14pdy3k",
+   "target": "c:modelo-estrella",
+   "type": "demuestra",
+   "confidence": "alta",
+   "rationale": "3 archivos del proyecto contienen código o artefactos de Modelo en estrella.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 3
+  },
+  {
+   "source": "p:demo-proyectos-ventas-tienda-sql-14pdy3k",
+   "target": "c:sql-agregaciones",
+   "type": "demuestra",
+   "confidence": "media",
+   "rationale": "1 archivo del proyecto contienen código o artefactos de Agregaciones y agrupaciones.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1
+  },
+  {
+   "source": "p:demo-proyectos-ventas-tienda-sql-14pdy3k",
    "target": "c:sql-cte",
    "type": "demuestra",
    "confidence": "media",
@@ -2384,7 +4537,16 @@
    "evidenceCount": 1
   },
   {
-   "source": "p:demo-proyectos-ventas-tienda-sql",
+   "source": "p:demo-proyectos-ventas-tienda-sql-14pdy3k",
+   "target": "c:sql-ddl",
+   "type": "demuestra",
+   "confidence": "media",
+   "rationale": "1 archivo del proyecto contienen código o artefactos de Creación de tablas y vistas (DDL).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1
+  },
+  {
+   "source": "p:demo-proyectos-ventas-tienda-sql-14pdy3k",
    "target": "c:sql-joins",
    "type": "demuestra",
    "confidence": "media",
@@ -2393,16 +4555,52 @@
    "evidenceCount": 1
   },
   {
-   "source": "p:demo-proyectos-informe-ventas-pbi",
-   "target": "c:dax",
+   "source": "p:demo-proyectos-ventas-tienda-sql-14pdy3k",
+   "target": "c:sql-subconsultas",
    "type": "demuestra",
    "confidence": "media",
-   "rationale": "1 archivo del proyecto contienen código o artefactos de DAX.",
+   "rationale": "1 archivo del proyecto contienen código o artefactos de Subconsultas.",
    "updatedAt": "2026-01-15T10:00:00.000Z",
    "evidenceCount": 1
   },
   {
-   "source": "p:demo-proyectos-informe-ventas-pbi",
+   "source": "p:demo-proyectos-ventas-tienda-sql-14pdy3k",
+   "target": "c:sql-window",
+   "type": "demuestra",
+   "confidence": "media",
+   "rationale": "1 archivo del proyecto contienen código o artefactos de Funciones de ventana.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1
+  },
+  {
+   "source": "p:demo-proyectos-ventas-tienda-sql-14pdy3k",
+   "target": "c:sql",
+   "type": "demuestra",
+   "confidence": "alta",
+   "rationale": "3 archivos del proyecto contienen código o artefactos de SQL.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 3
+  },
+  {
+   "source": "p:demo-proyectos-ventas-tienda-sql-14pdy3k",
+   "target": "c:modelado-datos",
+   "type": "demuestra",
+   "confidence": "media",
+   "rationale": "1 archivo del proyecto contienen código o artefactos de Modelado de datos.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1
+  },
+  {
+   "source": "p:demo-proyectos-ventas-tienda-sql-14pdy3k",
+   "target": "c:data-quality",
+   "type": "demuestra",
+   "confidence": "media",
+   "rationale": "1 archivo del proyecto contienen código o artefactos de Calidad y limpieza de datos.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1
+  },
+  {
+   "source": "p:demo-proyectos-informe-ventas-pbi-1huo4ns",
    "target": "c:dax-contexto",
    "type": "demuestra",
    "confidence": "media",
@@ -2411,20 +4609,29 @@
    "evidenceCount": 1
   },
   {
-   "source": "p:demo-proyectos-informe-ventas-pbi",
-   "target": "c:git",
-   "type": "demuestra",
-   "confidence": "media",
-   "rationale": "1 archivo del proyecto contienen código o artefactos de Git y GitHub.",
-   "updatedAt": "2026-01-15T10:00:00.000Z",
-   "evidenceCount": 1
-  },
-  {
-   "source": "p:demo-proyectos-informe-ventas-pbi",
+   "source": "p:demo-proyectos-informe-ventas-pbi-1huo4ns",
    "target": "c:time-intelligence",
    "type": "demuestra",
    "confidence": "media",
    "rationale": "1 archivo del proyecto contienen código o artefactos de Inteligencia de tiempo.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1
+  },
+  {
+   "source": "p:demo-proyectos-informe-ventas-pbi-1huo4ns",
+   "target": "c:dax",
+   "type": "demuestra",
+   "confidence": "media",
+   "rationale": "1 archivo del proyecto contienen código o artefactos de DAX.",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1
+  },
+  {
+   "source": "p:demo-proyectos-informe-ventas-pbi-1huo4ns",
+   "target": "c:git",
+   "type": "demuestra",
+   "confidence": "media",
+   "rationale": "1 archivo del proyecto contienen código o artefactos de Git y GitHub.",
    "updatedAt": "2026-01-15T10:00:00.000Z",
    "evidenceCount": 1
   },
@@ -2581,6 +4788,22 @@
    "updatedAt": "2026-01-15T10:00:00.000Z"
   },
   {
+   "source": "k:python-analisis",
+   "target": "c:numpy-scipy",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "En el marco, NumPy y SciPy forma parte de «Python aplicado al análisis».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "k:python-analisis",
+   "target": "c:apis-datos",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "En el marco, APIs y datos web forma parte de «Python aplicado al análisis».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
    "source": "o:junior",
    "target": "k:python-analisis",
    "type": "necesita",
@@ -2630,6 +4853,14 @@
   },
   {
    "source": "k:powerbi-dax",
+   "target": "c:power-bi-service",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "En el marco, Power BI Service forma parte de «Power BI, DAX y Power Query».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "k:powerbi-dax",
    "target": "c:dax-contexto",
    "type": "agrupa",
    "confidence": "alta",
@@ -2646,10 +4877,18 @@
   },
   {
    "source": "k:powerbi-dax",
-   "target": "c:power-bi-service",
+   "target": "c:dax-avanzado",
    "type": "agrupa",
    "confidence": "alta",
-   "rationale": "En el marco, Power BI Service forma parte de «Power BI, DAX y Power Query».",
+   "rationale": "En el marco, Funciones DAX avanzadas forma parte de «Power BI, DAX y Power Query».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "k:powerbi-dax",
+   "target": "c:pbi-diseno-dinamico",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "En el marco, Interactividad en Power BI forma parte de «Power BI, DAX y Power Query».",
    "updatedAt": "2026-01-15T10:00:00.000Z"
   },
   {
@@ -2754,6 +4993,22 @@
    "type": "agrupa",
    "confidence": "alta",
    "rationale": "En el marco, pandas forma parte de «Estadística y análisis exploratorio».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "k:estadistica-eda",
+   "target": "c:experimentacion",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "En el marco, Experimentación (tests A/B) forma parte de «Estadística y análisis exploratorio».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "k:estadistica-eda",
+   "target": "c:numpy-scipy",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "En el marco, NumPy y SciPy forma parte de «Estadística y análisis exploratorio».",
    "updatedAt": "2026-01-15T10:00:00.000Z"
   },
   {
@@ -2914,6 +5169,38 @@
    "type": "agrupa",
    "confidence": "alta",
    "rationale": "En el marco, Justificación de decisiones forma parte de «Interpretación del negocio».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "k:negocio-interpretacion",
+   "target": "c:retail-ventas",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "En el marco, Retail y ventas forma parte de «Interpretación del negocio».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "k:negocio-interpretacion",
+   "target": "c:finanzas",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "En el marco, Finanzas y control de gestión forma parte de «Interpretación del negocio».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "k:negocio-interpretacion",
+   "target": "c:marketing-clientes",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "En el marco, Marketing y clientes forma parte de «Interpretación del negocio».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "k:negocio-interpretacion",
+   "target": "c:turismo-hosteleria",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "En el marco, Turismo y hostelería forma parte de «Interpretación del negocio».",
    "updatedAt": "2026-01-15T10:00:00.000Z"
   },
   {
@@ -3089,7 +5376,23 @@
    "target": "c:clasificacion-regresion",
    "type": "agrupa",
    "confidence": "alta",
-   "rationale": "En el marco, Clasificación y regresión forma parte de «Machine learning aplicado».",
+   "rationale": "En el marco, Aprendizaje supervisado forma parte de «Machine learning aplicado».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "k:ml-aplicado",
+   "target": "c:feature-eng",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "En el marco, Ingeniería de variables forma parte de «Machine learning aplicado».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "k:ml-aplicado",
+   "target": "c:deep-learning",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "En el marco, Redes neuronales y deep learning forma parte de «Machine learning aplicado».",
    "updatedAt": "2026-01-15T10:00:00.000Z"
   },
   {
@@ -3117,6 +5420,78 @@
    "updatedAt": "2026-01-15T10:00:00.000Z"
   },
   {
+   "source": "k:plataformas-datos",
+   "target": "c:apis-datos",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "En el marco, APIs y datos web forma parte de «Plataformas de datos (cloud y big data)».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "k:plataformas-datos",
+   "target": "c:automatizacion",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "En el marco, Automatización forma parte de «Plataformas de datos (cloud y big data)».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "o:mid",
+   "target": "k:plataformas-datos",
+   "type": "necesita",
+   "confidence": "media",
+   "rationale": "Relevancia 2/3 para «Data Analyst Mid-Level» según el marco general.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "k:conocimiento-sectorial",
+   "target": "c:retail-ventas",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "En el marco, Retail y ventas forma parte de «Conocimiento de sectores de negocio».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "k:conocimiento-sectorial",
+   "target": "c:finanzas",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "En el marco, Finanzas y control de gestión forma parte de «Conocimiento de sectores de negocio».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "k:conocimiento-sectorial",
+   "target": "c:marketing-clientes",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "En el marco, Marketing y clientes forma parte de «Conocimiento de sectores de negocio».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "k:conocimiento-sectorial",
+   "target": "c:turismo-hosteleria",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "En el marco, Turismo y hostelería forma parte de «Conocimiento de sectores de negocio».",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "o:consolidado",
+   "target": "k:conocimiento-sectorial",
+   "type": "necesita",
+   "confidence": "media",
+   "rationale": "Relevancia 2/3 para «Junior consolidado» según el marco general.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "o:mid",
+   "target": "k:conocimiento-sectorial",
+   "type": "necesita",
+   "confidence": "media",
+   "rationale": "Relevancia 3/3 para «Data Analyst Mid-Level» según el marco general.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
    "source": "r:kpi-seguimiento",
    "target": "k:kpi-seguimiento",
    "type": "recomienda",
@@ -3133,6 +5508,14 @@
    "updatedAt": "2026-01-15T10:00:00.000Z"
   },
   {
+   "source": "r:conocimiento-sectorial",
+   "target": "k:conocimiento-sectorial",
+   "type": "recomienda",
+   "confidence": "media",
+   "rationale": "Demostrar: Conocimiento de sectores de negocio: Aparece mencionado (Retail y ventas), pero no hay práctica detectable que lo demuestre.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
    "source": "r:negocio-interpretacion",
    "target": "k:negocio-interpretacion",
    "type": "recomienda",
@@ -3145,7 +5528,47 @@
    "target": "k:powerbi-dax",
    "type": "recomienda",
    "confidence": "media",
-   "rationale": "Completar: Power BI, DAX y Power Query: Hay evidencia parcial; falta cubrir Power BI, Power Query.",
+   "rationale": "Completar: Power BI, DAX y Power Query: Hay evidencia parcial; falta cubrir Power Query, Power BI Service.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "r:estadistica-eda",
+   "target": "k:estadistica-eda",
+   "type": "recomienda",
+   "confidence": "alta",
+   "rationale": "Completar: Estadística y análisis exploratorio: El núcleo está respaldado; faltan por demostrar Experimentación (tests A/B), NumPy y SciPy.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "r:explicar-decisiones",
+   "target": "k:explicar-decisiones",
+   "type": "recomienda",
+   "confidence": "alta",
+   "rationale": "Completar: Explicar decisiones y justificar resultados: El núcleo está respaldado; faltan por demostrar Data Storytelling.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "r:preparacion-calidad",
+   "target": "k:preparacion-calidad",
+   "type": "recomienda",
+   "confidence": "alta",
+   "rationale": "Completar: Preparación, limpieza y calidad de datos: El núcleo está respaldado; faltan por demostrar Power Query.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "r:python-analisis",
+   "target": "k:python-analisis",
+   "type": "recomienda",
+   "confidence": "alta",
+   "rationale": "Completar: Python aplicado al análisis: El núcleo está respaldado; faltan por demostrar NumPy y SciPy, APIs y datos web.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "r:sql-analitico",
+   "target": "k:sql-analitico",
+   "type": "recomienda",
+   "confidence": "alta",
+   "rationale": "Completar: SQL y consultas analíticas: El núcleo está respaldado; faltan por demostrar Optimización de consultas.",
    "updatedAt": "2026-01-15T10:00:00.000Z"
   },
   {
@@ -3157,12 +5580,533 @@
    "updatedAt": "2026-01-15T10:00:00.000Z"
   },
   {
-   "source": "r:doc-demo-proyectos-scripts-sueltos",
-   "target": "p:demo-proyectos-scripts-sueltos",
+   "source": "r:doc-demo-proyectos-scripts-sueltos-otd8mg",
+   "target": "p:demo-proyectos-scripts-sueltos-otd8mg",
    "type": "recomienda",
    "confidence": "media",
    "rationale": "Documentar el proyecto «scripts-sueltos»: Hay trabajo práctico, pero sin explicación escrita de las decisiones es difícil defenderlo en una entrevista.",
    "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "n:nucleo",
+   "target": "a:bi",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Business Intelligence y Power BI» es una de las áreas de tu conocimiento profesional (11 conocimientos).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "overview": true
+  },
+  {
+   "source": "a:bi",
+   "target": "c:powerbi",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Power BI» pertenece al área «Business Intelligence y Power BI» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:bi",
+   "target": "k:powerbi-dax",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Power BI, DAX y Power Query» pertenece al área «Business Intelligence y Power BI» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:bi",
+   "target": "k:modelado",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Modelado de datos y medidas» pertenece al área «Business Intelligence y Power BI» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "n:nucleo",
+   "target": "a:datos",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Ingeniería y preparación de datos» es una de las áreas de tu conocimiento profesional (18 conocimientos).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "overview": true
+  },
+  {
+   "source": "a:datos",
+   "target": "c:sql",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«SQL» pertenece al área «Ingeniería y preparación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:datos",
+   "target": "c:python",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Python» pertenece al área «Ingeniería y preparación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:datos",
+   "target": "c:etl",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«ETL y pipelines» pertenece al área «Ingeniería y preparación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:datos",
+   "target": "c:data-quality",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Calidad y limpieza de datos» pertenece al área «Ingeniería y preparación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:datos",
+   "target": "c:modelado-datos",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Modelado de datos» pertenece al área «Ingeniería y preparación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:datos",
+   "target": "c:excel",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Excel» pertenece al área «Ingeniería y preparación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:datos",
+   "target": "c:apis-datos",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«APIs y datos web» pertenece al área «Ingeniería y preparación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:datos",
+   "target": "k:preparacion-calidad",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Preparación, limpieza y calidad de datos» pertenece al área «Ingeniería y preparación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:datos",
+   "target": "k:sql-analitico",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«SQL y consultas analíticas» pertenece al área «Ingeniería y preparación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:datos",
+   "target": "k:python-analisis",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Python aplicado al análisis» pertenece al área «Ingeniería y preparación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:datos",
+   "target": "k:excel-operativo",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Excel para análisis operativo» pertenece al área «Ingeniería y preparación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:datos",
+   "target": "k:plataformas-datos",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Plataformas de datos (cloud y big data)» pertenece al área «Ingeniería y preparación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "n:nucleo",
+   "target": "a:analisis",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Análisis, estadística y machine learning» es una de las áreas de tu conocimiento profesional (14 conocimientos).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "overview": true
+  },
+  {
+   "source": "a:analisis",
+   "target": "c:estadistica",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Estadística» pertenece al área «Análisis, estadística y machine learning» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:analisis",
+   "target": "c:eda",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Análisis exploratorio (EDA)» pertenece al área «Análisis, estadística y machine learning» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:analisis",
+   "target": "c:ml",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Machine learning» pertenece al área «Análisis, estadística y machine learning» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:analisis",
+   "target": "c:scikit-learn",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«scikit-learn» pertenece al área «Análisis, estadística y machine learning» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:analisis",
+   "target": "c:experimentacion",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Experimentación (tests A/B)» pertenece al área «Análisis, estadística y machine learning» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:analisis",
+   "target": "k:estadistica-eda",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Estadística y análisis exploratorio» pertenece al área «Análisis, estadística y machine learning» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:analisis",
+   "target": "k:ml-aplicado",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Machine learning aplicado» pertenece al área «Análisis, estadística y machine learning» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "n:nucleo",
+   "target": "a:visualizacion",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Visualización y comunicación de datos» es una de las áreas de tu conocimiento profesional (5 conocimientos).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "overview": true
+  },
+  {
+   "source": "a:visualizacion",
+   "target": "c:visualizacion-datos",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Visualización de datos» pertenece al área «Visualización y comunicación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:visualizacion",
+   "target": "c:data-storytelling",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Data Storytelling» pertenece al área «Visualización y comunicación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:visualizacion",
+   "target": "c:ibcs",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«IBCS» pertenece al área «Visualización y comunicación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:visualizacion",
+   "target": "c:diseno-dashboard",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Diseño de dashboards» pertenece al área «Visualización y comunicación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:visualizacion",
+   "target": "c:accesibilidad",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Accesibilidad» pertenece al área «Visualización y comunicación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:visualizacion",
+   "target": "k:visualizacion-comunicacion",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Visualización y comunicación de resultados» pertenece al área «Visualización y comunicación de datos» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "n:nucleo",
+   "target": "a:ux",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«UX/UI y desarrollo web (complementario)» es una de las áreas de tu conocimiento profesional (0 conocimientos).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "overview": true
+  },
+  {
+   "source": "a:ux",
+   "target": "k:ux-complementario",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«UX/UI, diseño de interfaces y web» pertenece al área «UX/UI y desarrollo web (complementario)» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "n:nucleo",
+   "target": "a:profesional",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Competencias profesionales» es una de las áreas de tu conocimiento profesional (7 conocimientos).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "overview": true
+  },
+  {
+   "source": "a:profesional",
+   "target": "c:kpi",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«KPI e indicadores» pertenece al área «Competencias profesionales» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:profesional",
+   "target": "c:git",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Git y GitHub» pertenece al área «Competencias profesionales» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:profesional",
+   "target": "c:automatizacion",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Automatización» pertenece al área «Competencias profesionales» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:profesional",
+   "target": "c:testing-calidad",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Pruebas y validación» pertenece al área «Competencias profesionales» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:profesional",
+   "target": "c:documentacion",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Documentación» pertenece al área «Competencias profesionales» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:profesional",
+   "target": "c:negocio",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Interpretación del negocio» pertenece al área «Competencias profesionales» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:profesional",
+   "target": "c:decisiones",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Justificación de decisiones» pertenece al área «Competencias profesionales» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:profesional",
+   "target": "k:kpi-seguimiento",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Definición y seguimiento de KPI» pertenece al área «Competencias profesionales» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:profesional",
+   "target": "k:negocio-interpretacion",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Interpretación del negocio» pertenece al área «Competencias profesionales» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:profesional",
+   "target": "k:automatizacion-fiabilidad",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Automatización, mantenimiento y fiabilidad» pertenece al área «Competencias profesionales» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:profesional",
+   "target": "k:documentacion-git",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Documentación, Git y colaboración» pertenece al área «Competencias profesionales» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:profesional",
+   "target": "k:explicar-decisiones",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Explicar decisiones y justificar resultados» pertenece al área «Competencias profesionales» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "n:nucleo",
+   "target": "a:negocio",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Dominios de negocio» es una de las áreas de tu conocimiento profesional (4 conocimientos).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "overview": true
+  },
+  {
+   "source": "a:negocio",
+   "target": "c:retail-ventas",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Retail y ventas» pertenece al área «Dominios de negocio» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:negocio",
+   "target": "c:finanzas",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Finanzas y control de gestión» pertenece al área «Dominios de negocio» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:negocio",
+   "target": "c:marketing-clientes",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Marketing y clientes» pertenece al área «Dominios de negocio» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:negocio",
+   "target": "c:turismo-hosteleria",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Turismo y hostelería» pertenece al área «Dominios de negocio» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:negocio",
+   "target": "k:conocimiento-sectorial",
+   "type": "agrupa",
+   "confidence": "alta",
+   "rationale": "«Conocimiento de sectores de negocio» pertenece al área «Dominios de negocio» en el marco.",
+   "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+   "source": "a:analisis",
+   "target": "a:datos",
+   "type": "conecta",
+   "confidence": "alta",
+   "rationale": "3 relaciones entre conceptos de «Análisis, estadística y machine learning» y de «Ingeniería y preparación de datos»: habilita (1), parte-de (1), usa (1).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 3,
+   "overview": true
+  },
+  {
+   "source": "a:analisis",
+   "target": "a:profesional",
+   "type": "conecta",
+   "confidence": "media",
+   "rationale": "1 relación entre conceptos de «Análisis, estadística y machine learning» y de «Competencias profesionales»: habilita (1).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1,
+   "overview": true
+  },
+  {
+   "source": "a:bi",
+   "target": "a:datos",
+   "type": "conecta",
+   "confidence": "media",
+   "rationale": "2 relaciones entre conceptos de «Business Intelligence y Power BI» y de «Ingeniería y preparación de datos»: parte-de (1), usa (1).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 2,
+   "overview": true
+  },
+  {
+   "source": "a:bi",
+   "target": "a:profesional",
+   "type": "conecta",
+   "confidence": "media",
+   "rationale": "1 relación entre conceptos de «Business Intelligence y Power BI» y de «Competencias profesionales»: habilita (1).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1,
+   "overview": true
+  },
+  {
+   "source": "a:bi",
+   "target": "a:visualizacion",
+   "type": "conecta",
+   "confidence": "media",
+   "rationale": "2 relaciones entre conceptos de «Business Intelligence y Power BI» y de «Visualización y comunicación de datos»: mejora (1), usa (1).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 2,
+   "overview": true
+  },
+  {
+   "source": "a:datos",
+   "target": "a:profesional",
+   "type": "conecta",
+   "confidence": "media",
+   "rationale": "2 relaciones entre conceptos de «Ingeniería y preparación de datos» y de «Competencias profesionales»: mejora (2).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 2,
+   "overview": true
+  },
+  {
+   "source": "a:negocio",
+   "target": "a:profesional",
+   "type": "conecta",
+   "confidence": "alta",
+   "rationale": "5 relaciones entre conceptos de «Dominios de negocio» y de «Competencias profesionales»: habilita (5).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 5,
+   "overview": true
+  },
+  {
+   "source": "a:negocio",
+   "target": "a:visualizacion",
+   "type": "conecta",
+   "confidence": "media",
+   "rationale": "1 relación entre conceptos de «Dominios de negocio» y de «Visualización y comunicación de datos»: mejora (1).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1,
+   "overview": true
+  },
+  {
+   "source": "a:profesional",
+   "target": "a:visualizacion",
+   "type": "conecta",
+   "confidence": "media",
+   "rationale": "1 relación entre conceptos de «Competencias profesionales» y de «Visualización y comunicación de datos»: habilita (1).",
+   "updatedAt": "2026-01-15T10:00:00.000Z",
+   "evidenceCount": 1,
+   "overview": true
   }
  ],
  "recommendations": [
@@ -3201,6 +6145,23 @@
    }
   },
   {
+   "id": "rec-conocimiento-sectorial",
+   "nodeId": "r:conocimiento-sectorial",
+   "targetId": "k:conocimiento-sectorial",
+   "what": "Demostrar: Conocimiento de sectores de negocio",
+   "why": "Aparece mencionado (Retail y ventas), pero no hay práctica detectable que lo demuestre.",
+   "evidence": "Solo menciones en documentación o listas declarativas.",
+   "result": "Un caso que habla el idioma del sector al que aplicas.",
+   "action": "Elige el sector al que te presentas y reescribe un proyecto con su vocabulario y sus KPI (por ejemplo, margen por categoría y rotación en retail).",
+   "objective": "Avanzar hacia «Junior consolidado»",
+   "confidence": "media",
+   "effort": "medio (estimación genérica del marco)",
+   "priority": {
+    "score": 1.2,
+    "bucket": "ahora"
+   }
+  },
+  {
    "id": "rec-negocio-interpretacion",
    "nodeId": "r:negocio-interpretacion",
    "targetId": "k:negocio-interpretacion",
@@ -3214,7 +6175,7 @@
    "effort": "alto (estimación genérica del marco)",
    "priority": {
     "score": 1.2,
-    "bucket": "ahora"
+    "bucket": "despues"
    }
   },
   {
@@ -3222,8 +6183,8 @@
    "nodeId": "r:powerbi-dax",
    "targetId": "k:powerbi-dax",
    "what": "Completar: Power BI, DAX y Power Query",
-   "why": "Hay evidencia parcial; falta cubrir Power BI, Power Query.",
-   "evidence": "Evidencia en 1 de 3 conceptos del núcleo.",
+   "why": "Hay evidencia parcial; falta cubrir Power Query, Power BI Service.",
+   "evidence": "Evidencia en 2 de 4 conceptos del núcleo.",
    "result": "Un informe completo, del dato al servicio, con medidas que se pueden justificar.",
    "action": "Publica un informe en Power BI Service con actualización programada y medidas de inteligencia de tiempo documentadas.",
    "objective": "Avanzar hacia «Junior consolidado»",
@@ -3231,6 +6192,91 @@
    "effort": "medio (estimación genérica del marco)",
    "priority": {
     "score": 1.2,
+    "bucket": "despues"
+   }
+  },
+  {
+   "id": "rec-estadistica-eda",
+   "nodeId": "r:estadistica-eda",
+   "targetId": "k:estadistica-eda",
+   "what": "Completar: Estadística y análisis exploratorio",
+   "why": "El núcleo está respaldado; faltan por demostrar Experimentación (tests A/B), NumPy y SciPy.",
+   "evidence": "Núcleo completo; 2 facetas opcionales solo mencionadas o sin práctica detectable.",
+   "result": "Un análisis que separa lo observado de lo inferido.",
+   "action": "Acompaña un análisis con un contraste de hipótesis o un intervalo de confianza e indica qué se puede y qué no se puede concluir.",
+   "objective": "Avanzar hacia «Junior consolidado»",
+   "confidence": "alta",
+   "effort": "medio (estimación genérica del marco)",
+   "priority": {
+    "score": 0.75,
+    "bucket": "despues"
+   }
+  },
+  {
+   "id": "rec-explicar-decisiones",
+   "nodeId": "r:explicar-decisiones",
+   "targetId": "k:explicar-decisiones",
+   "what": "Completar: Explicar decisiones y justificar resultados",
+   "why": "El núcleo está respaldado; faltan por demostrar Data Storytelling.",
+   "evidence": "Núcleo completo; 1 faceta opcional solo mencionada o sin práctica detectable.",
+   "result": "Respuestas preparadas para «¿por qué lo hiciste así?» en una entrevista.",
+   "action": "Añade a cada proyecto una sección «Decisiones y limitaciones» con alternativas descartadas.",
+   "objective": "Avanzar hacia «Junior consolidado»",
+   "confidence": "alta",
+   "effort": "bajo (estimación genérica del marco)",
+   "priority": {
+    "score": 0.75,
+    "bucket": "despues"
+   }
+  },
+  {
+   "id": "rec-preparacion-calidad",
+   "nodeId": "r:preparacion-calidad",
+   "targetId": "k:preparacion-calidad",
+   "what": "Completar: Preparación, limpieza y calidad de datos",
+   "why": "El núcleo está respaldado; faltan por demostrar Power Query.",
+   "evidence": "Núcleo completo; 1 faceta opcional solo mencionada o sin práctica detectable.",
+   "result": "Un caso de calidad de datos que se puede explicar y reproducir.",
+   "action": "Documenta en un proyecto los problemas de calidad que encontraste (nulos, duplicados, tipos) y cómo los trataste, con una comprobación automática de cada regla.",
+   "objective": "Avanzar hacia «Junior consolidado»",
+   "confidence": "alta",
+   "effort": "medio (estimación genérica del marco)",
+   "priority": {
+    "score": 0.75,
+    "bucket": "despues"
+   }
+  },
+  {
+   "id": "rec-python-analisis",
+   "nodeId": "r:python-analisis",
+   "targetId": "k:python-analisis",
+   "what": "Completar: Python aplicado al análisis",
+   "why": "El núcleo está respaldado; faltan por demostrar NumPy y SciPy, APIs y datos web.",
+   "evidence": "Núcleo completo; 2 facetas opcionales solo mencionadas o sin práctica detectable.",
+   "result": "Un análisis en Python que otra persona puede volver a ejecutar.",
+   "action": "Convierte un notebook en un script reproducible con funciones y datos de entrada definidos.",
+   "objective": "Avanzar hacia «Junior consolidado»",
+   "confidence": "alta",
+   "effort": "medio (estimación genérica del marco)",
+   "priority": {
+    "score": 0.75,
+    "bucket": "despues"
+   }
+  },
+  {
+   "id": "rec-sql-analitico",
+   "nodeId": "r:sql-analitico",
+   "targetId": "k:sql-analitico",
+   "what": "Completar: SQL y consultas analíticas",
+   "why": "El núcleo está respaldado; faltan por demostrar Optimización de consultas.",
+   "evidence": "Núcleo completo; 1 faceta opcional solo mencionada o sin práctica detectable.",
+   "result": "Un proyecto SQL que demuestre consultas por capas y criterio de rendimiento.",
+   "action": "Resuelve un análisis con funciones de ventana y CTE sobre un dataset propio y compara el plan de ejecución antes y después de optimizarlo.",
+   "objective": "Avanzar hacia «Junior consolidado»",
+   "confidence": "alta",
+   "effort": "medio (estimación genérica del marco)",
+   "priority": {
+    "score": 0.75,
     "bucket": "despues"
    }
   },
@@ -3252,9 +6298,9 @@
    }
   },
   {
-   "id": "rec-doc-demo-proyectos-scripts-sueltos",
-   "nodeId": "r:doc-demo-proyectos-scripts-sueltos",
-   "targetId": "p:demo-proyectos-scripts-sueltos",
+   "id": "rec-doc-demo-proyectos-scripts-sueltos-otd8mg",
+   "nodeId": "r:doc-demo-proyectos-scripts-sueltos-otd8mg",
+   "targetId": "p:demo-proyectos-scripts-sueltos-otd8mg",
    "what": "Documentar el proyecto «scripts-sueltos»",
    "why": "Hay trabajo práctico, pero sin explicación escrita de las decisiones es difícil defenderlo en una entrevista.",
    "evidence": "3 archivos con práctica y ningún documento (md, docx, txt, html) en el proyecto.",
@@ -3275,6 +6321,7 @@
    "id": "preparacion-calidad",
    "state": "respaldado",
    "partial": false,
+   "extendable": true,
    "confidence": "alta",
    "levels": {
     "junior": 3,
@@ -3283,8 +6330,8 @@
    },
    "relevance": 3,
    "priority": {
-    "score": 0.3,
-    "rank": 0.3
+    "score": 0.75,
+    "rank": 0.75
    },
    "effort": "medio",
    "unverified": [
@@ -3302,6 +6349,7 @@
    "id": "sql-analitico",
    "state": "respaldado",
    "partial": false,
+   "extendable": true,
    "confidence": "alta",
    "levels": {
     "junior": 3,
@@ -3310,8 +6358,8 @@
    },
    "relevance": 3,
    "priority": {
-    "score": 0.3,
-    "rank": 0.3
+    "score": 0.75,
+    "rank": 0.75
    },
    "effort": "medio",
    "unverified": [
@@ -3330,6 +6378,7 @@
    "id": "python-analisis",
    "state": "respaldado",
    "partial": false,
+   "extendable": true,
    "confidence": "alta",
    "levels": {
     "junior": 2,
@@ -3338,16 +6387,21 @@
    },
    "relevance": 3,
    "priority": {
-    "score": 0.3,
-    "rank": 0.3
+    "score": 0.75,
+    "rank": 0.75
    },
    "effort": "medio",
-   "unverified": [],
+   "unverified": [
+    "NumPy y SciPy: pendiente",
+    "APIs y datos web: pendiente"
+   ],
    "members": [
     "c:python",
     "c:pandas",
     "c:jupyter",
-    "c:eda"
+    "c:eda",
+    "c:numpy-scipy",
+    "c:apis-datos"
    ]
   },
   {
@@ -3355,6 +6409,7 @@
    "id": "powerbi-dax",
    "state": "respaldado",
    "partial": true,
+   "extendable": false,
    "confidence": "media",
    "levels": {
     "junior": 3,
@@ -3368,17 +6423,20 @@
    },
    "effort": "medio",
    "unverified": [
-    "Power BI: solo mencionado",
     "Power Query: brecha probable",
-    "Power BI Service: pendiente"
+    "Power BI Service: brecha probable",
+    "Funciones DAX avanzadas: pendiente",
+    "Interactividad en Power BI: pendiente"
    ],
    "members": [
     "c:powerbi",
     "c:dax",
     "c:power-query",
+    "c:power-bi-service",
     "c:dax-contexto",
     "c:time-intelligence",
-    "c:power-bi-service"
+    "c:dax-avanzado",
+    "c:pbi-diseno-dinamico"
    ]
   },
   {
@@ -3386,6 +6444,7 @@
    "id": "modelado",
    "state": "respaldado",
    "partial": false,
+   "extendable": false,
    "confidence": "alta",
    "levels": {
     "junior": 2,
@@ -3411,6 +6470,7 @@
    "id": "estadistica-eda",
    "state": "respaldado",
    "partial": false,
+   "extendable": true,
    "confidence": "alta",
    "levels": {
     "junior": 2,
@@ -3419,15 +6479,20 @@
    },
    "relevance": 3,
    "priority": {
-    "score": 0.3,
-    "rank": 0.3
+    "score": 0.75,
+    "rank": 0.75
    },
    "effort": "medio",
-   "unverified": [],
+   "unverified": [
+    "Experimentación (tests A/B): pendiente",
+    "NumPy y SciPy: pendiente"
+   ],
    "members": [
     "c:estadistica",
     "c:eda",
-    "c:pandas"
+    "c:pandas",
+    "c:experimentacion",
+    "c:numpy-scipy"
    ]
   },
   {
@@ -3435,6 +6500,7 @@
    "id": "kpi-seguimiento",
    "state": "mencionado",
    "partial": false,
+   "extendable": false,
    "confidence": "media",
    "levels": {
     "junior": 2,
@@ -3462,6 +6528,7 @@
    "id": "visualizacion-comunicacion",
    "state": "mencionado",
    "partial": false,
+   "extendable": false,
    "confidence": "media",
    "levels": {
     "junior": 3,
@@ -3494,6 +6561,7 @@
    "id": "negocio-interpretacion",
    "state": "mencionado",
    "partial": false,
+   "extendable": false,
    "confidence": "media",
    "levels": {
     "junior": 1,
@@ -3508,12 +6576,20 @@
    "effort": "alto",
    "unverified": [
     "Interpretación del negocio: solo mencionado",
-    "KPI e indicadores: solo mencionado"
+    "KPI e indicadores: solo mencionado",
+    "Retail y ventas: solo mencionado",
+    "Finanzas y control de gestión: pendiente",
+    "Marketing y clientes: pendiente",
+    "Turismo y hostelería: pendiente"
    ],
    "members": [
     "c:negocio",
     "c:kpi",
-    "c:decisiones"
+    "c:decisiones",
+    "c:retail-ventas",
+    "c:finanzas",
+    "c:marketing-clientes",
+    "c:turismo-hosteleria"
    ]
   },
   {
@@ -3521,6 +6597,7 @@
    "id": "automatizacion-fiabilidad",
    "state": "respaldado",
    "partial": true,
+   "extendable": false,
    "confidence": "media",
    "levels": {
     "junior": 1,
@@ -3550,6 +6627,7 @@
    "id": "documentacion-git",
    "state": "respaldado",
    "partial": false,
+   "extendable": false,
    "confidence": "alta",
    "levels": {
     "junior": 2,
@@ -3573,6 +6651,7 @@
    "id": "explicar-decisiones",
    "state": "respaldado",
    "partial": false,
+   "extendable": true,
    "confidence": "alta",
    "levels": {
     "junior": 1,
@@ -3581,8 +6660,8 @@
    },
    "relevance": 3,
    "priority": {
-    "score": 0.3,
-    "rank": 0.3
+    "score": 0.75,
+    "rank": 0.75
    },
    "effort": "bajo",
    "unverified": [
@@ -3599,6 +6678,7 @@
    "id": "ml-aplicado",
    "state": "respaldado",
    "partial": false,
+   "extendable": true,
    "confidence": "alta",
    "levels": {
     "junior": 0,
@@ -3607,21 +6687,26 @@
    },
    "relevance": 1,
    "priority": {
-    "score": 0.1,
-    "rank": 0.1
+    "score": 0.25,
+    "rank": 0.25
    },
    "effort": "alto",
    "unverified": [
-    "Segmentación y clustering: sin evidencia en las fuentes analizadas",
+    "Clustering y segmentación: sin evidencia en las fuentes analizadas",
     "Series temporales y previsión: sin evidencia en las fuentes analizadas",
-    "Ingeniería de variables: sin evidencia en las fuentes analizadas",
-    "Explicabilidad de modelos: sin evidencia en las fuentes analizadas"
+    "Explicabilidad de modelos: sin evidencia en las fuentes analizadas",
+    "Reducción de dimensionalidad: sin evidencia en las fuentes analizadas",
+    "Redes neuronales y deep learning: solo mencionado",
+    "NLP, LLM y agentes de IA: sin evidencia en las fuentes analizadas",
+    "Sistemas de recomendación: sin evidencia en las fuentes analizadas"
    ],
    "members": [
     "c:ml",
     "c:model-eval",
     "c:scikit-learn",
-    "c:clasificacion-regresion"
+    "c:clasificacion-regresion",
+    "c:feature-eng",
+    "c:deep-learning"
    ]
   },
   {
@@ -3629,6 +6714,7 @@
    "id": "ux-complementario",
    "state": "pendiente",
    "partial": false,
+   "extendable": false,
    "confidence": "baja",
    "levels": {
     "junior": 0,
@@ -3645,7 +6731,8 @@
     "UX/UI: sin evidencia en las fuentes analizadas",
     "Investigación de usuarios: sin evidencia en las fuentes analizadas",
     "Arquitectura de la información: sin evidencia en las fuentes analizadas",
-    "Figma: sin evidencia en las fuentes analizadas"
+    "Figma: sin evidencia en las fuentes analizadas",
+    "Desarrollo web (HTML, CSS, JS): sin evidencia en las fuentes analizadas"
    ],
    "members": []
   },
@@ -3654,6 +6741,7 @@
    "id": "excel-operativo",
    "state": "mencionado",
    "partial": false,
+   "extendable": false,
    "confidence": "media",
    "levels": {
     "junior": 2,
@@ -3672,13 +6760,98 @@
    "members": [
     "c:excel"
    ]
+  },
+  {
+   "nodeId": "k:plataformas-datos",
+   "id": "plataformas-datos",
+   "state": "pendiente",
+   "partial": false,
+   "extendable": false,
+   "confidence": "baja",
+   "levels": {
+    "junior": 0,
+    "consolidado": 1,
+    "mid": 2
+   },
+   "relevance": 1,
+   "priority": {
+    "score": 0.5,
+    "rank": 0.3
+   },
+   "effort": "alto",
+   "unverified": [
+    "Plataformas cloud de datos: sin evidencia en las fuentes analizadas",
+    "Big data y procesamiento distribuido: sin evidencia en las fuentes analizadas",
+    "APIs y datos web: pendiente",
+    "Automatización: brecha probable"
+   ],
+   "members": [
+    "c:apis-datos",
+    "c:automatizacion"
+   ]
+  },
+  {
+   "nodeId": "k:conocimiento-sectorial",
+   "id": "conocimiento-sectorial",
+   "state": "mencionado",
+   "partial": false,
+   "extendable": false,
+   "confidence": "media",
+   "levels": {
+    "junior": 1,
+    "consolidado": 2,
+    "mid": 3
+   },
+   "relevance": 2,
+   "priority": {
+    "score": 1.2,
+    "rank": 0.96
+   },
+   "effort": "medio",
+   "unverified": [
+    "Retail y ventas: solo mencionado",
+    "Finanzas y control de gestión: pendiente",
+    "Marketing y clientes: pendiente",
+    "Turismo y hostelería: pendiente"
+   ],
+   "members": [
+    "c:retail-ventas",
+    "c:finanzas",
+    "c:marketing-clientes",
+    "c:turismo-hosteleria"
+   ]
   }
  ],
  "trace": {
   "c:powerbi": [
    {
     "p": "demo-proyectos/informe-ventas-pbi",
+    "f": "informe-ventas-pbi/medidas.dax",
+    "c": "practica"
+   },
+   {
+    "p": "demo-proyectos/ventas-tienda-sql",
+    "f": "ventas-tienda-sql/01_esquema.sql",
+    "c": "practica"
+   },
+   {
+    "p": "demo-proyectos/ventas-tienda-sql",
+    "f": "ventas-tienda-sql/02_ventas_por_categoria.sql",
+    "c": "practica"
+   },
+   {
+    "p": "demo-proyectos/ventas-tienda-sql",
+    "f": "ventas-tienda-sql/03_calidad.sql",
+    "c": "practica"
+   },
+   {
+    "p": "demo-proyectos/informe-ventas-pbi",
     "f": "informe-ventas-pbi/README.md",
+    "c": "explicativa"
+   },
+   {
+    "p": "demo-proyectos/ventas-tienda-sql",
+    "f": "ventas-tienda-sql/README.md",
     "c": "explicativa"
    },
    {
@@ -3773,6 +6946,16 @@
     "c": "explicativa"
    },
    {
+    "p": "demo-proyectos/ventas-tienda-sql",
+    "f": "ventas-tienda-sql/01_esquema.sql",
+    "c": "explicativa"
+   },
+   {
+    "p": "demo-proyectos/ventas-tienda-sql",
+    "f": "ventas-tienda-sql/02_ventas_por_categoria.sql",
+    "c": "explicativa"
+   },
+   {
     "p": "demo-declarativo",
     "f": "habilidades.md",
     "c": "declarativa"
@@ -3842,9 +7025,24 @@
     "c": "practica"
    },
    {
-    "p": "demo-declarativo",
-    "f": "habilidades.md",
-    "c": "declarativa"
+    "p": "demo-proyectos/churn-clientes",
+    "f": "churn-clientes/analisis.ipynb",
+    "c": "explicativa"
+   },
+   {
+    "p": "demo-proyectos/churn-clientes",
+    "f": "churn-clientes/modelo.py",
+    "c": "explicativa"
+   },
+   {
+    "p": "demo-proyectos/scripts-sueltos",
+    "f": "scripts-sueltos/limpiar.py",
+    "c": "explicativa"
+   },
+   {
+    "p": "demo-proyectos/scripts-sueltos",
+    "f": "scripts-sueltos/resumen.py",
+    "c": "explicativa"
    }
   ],
   "c:pandas": [
@@ -4039,6 +7237,16 @@
     "p": "demo-proyectos/churn-clientes",
     "f": "churn-clientes/modelo.py",
     "c": "practica"
+   },
+   {
+    "p": "demo-proyectos/scripts-sueltos",
+    "f": "scripts-sueltos/limpiar.py",
+    "c": "practica"
+   },
+   {
+    "p": "demo-proyectos/churn-clientes",
+    "f": "churn-clientes/README.md",
+    "c": "explicativa"
    }
   ],
   "c:scikit-learn": [
@@ -4075,6 +7283,13 @@
     "p": "demo-proyectos/churn-clientes",
     "f": "churn-clientes/README.md",
     "c": "explicativa"
+   }
+  ],
+  "c:feature-eng": [
+   {
+    "p": "demo-proyectos/scripts-sueltos",
+    "f": "scripts-sueltos/limpiar.py",
+    "c": "practica"
    }
   ],
   "c:visualizacion-datos": [
@@ -4119,6 +7334,116 @@
    {
     "p": "demo-manual",
     "f": "guia.md",
+    "c": "explicativa"
+   }
+  ],
+  "c:dax-avanzado": [],
+  "c:pbi-diseno-dinamico": [],
+  "c:numpy-scipy": [],
+  "c:apis-datos": [],
+  "c:deep-learning": [
+   {
+    "p": "demo-proyectos/churn-clientes",
+    "f": "churn-clientes/README.md",
+    "c": "explicativa"
+   }
+  ],
+  "c:experimentacion": [],
+  "c:retail-ventas": [
+   {
+    "p": "demo-proyectos/ventas-tienda-sql",
+    "f": "ventas-tienda-sql/README.md",
+    "c": "explicativa"
+   }
+  ],
+  "c:finanzas": [],
+  "c:marketing-clientes": [],
+  "c:turismo-hosteleria": [],
+  "c:clasificacion": [
+   {
+    "p": "demo-proyectos/churn-clientes",
+    "f": "churn-clientes/modelo.py",
+    "c": "practica"
+   },
+   {
+    "p": "demo-proyectos/churn-clientes",
+    "f": "churn-clientes/README.md",
+    "c": "explicativa"
+   }
+  ],
+  "c:regresion": [
+   {
+    "p": "demo-proyectos/churn-clientes",
+    "f": "churn-clientes/README.md",
+    "c": "explicativa"
+   }
+  ],
+  "c:random-forest": [
+   {
+    "p": "demo-proyectos/churn-clientes",
+    "f": "churn-clientes/modelo.py",
+    "c": "practica"
+   },
+   {
+    "p": "demo-proyectos/churn-clientes",
+    "f": "churn-clientes/README.md",
+    "c": "explicativa"
+   }
+  ],
+  "c:regresion-logistica": [
+   {
+    "p": "demo-proyectos/churn-clientes",
+    "f": "churn-clientes/README.md",
+    "c": "explicativa"
+   }
+  ],
+  "c:validacion-cruzada": [
+   {
+    "p": "demo-proyectos/churn-clientes",
+    "f": "churn-clientes/modelo.py",
+    "c": "practica"
+   },
+   {
+    "p": "demo-proyectos/churn-clientes",
+    "f": "churn-clientes/README.md",
+    "c": "explicativa"
+   }
+  ],
+  "c:imputacion-valores": [
+   {
+    "p": "demo-proyectos/scripts-sueltos",
+    "f": "scripts-sueltos/limpiar.py",
+    "c": "practica"
+   }
+  ],
+  "c:sql-subconsultas": [
+   {
+    "p": "demo-proyectos/ventas-tienda-sql",
+    "f": "ventas-tienda-sql/02_ventas_por_categoria.sql",
+    "c": "practica"
+   }
+  ],
+  "c:sql-agregaciones": [
+   {
+    "p": "demo-proyectos/ventas-tienda-sql",
+    "f": "ventas-tienda-sql/02_ventas_por_categoria.sql",
+    "c": "practica"
+   },
+   {
+    "p": "demo-proyectos/ventas-tienda-sql",
+    "f": "ventas-tienda-sql/02_ventas_por_categoria.sql",
+    "c": "explicativa"
+   }
+  ],
+  "c:sql-ddl": [
+   {
+    "p": "demo-proyectos/ventas-tienda-sql",
+    "f": "ventas-tienda-sql/01_esquema.sql",
+    "c": "practica"
+   },
+   {
+    "p": "demo-proyectos/ventas-tienda-sql",
+    "f": "ventas-tienda-sql/01_esquema.sql",
     "c": "explicativa"
    }
   ],
@@ -4216,13 +7541,18 @@
   "k:powerbi-dax": [
    {
     "p": "demo-proyectos/informe-ventas-pbi",
-    "f": "informe-ventas-pbi/README.md",
-    "c": "explicativa"
+    "f": "informe-ventas-pbi/medidas.dax",
+    "c": "practica"
    },
    {
-    "p": "demo-declarativo",
-    "f": "habilidades.md",
-    "c": "declarativa"
+    "p": "demo-proyectos/ventas-tienda-sql",
+    "f": "ventas-tienda-sql/01_esquema.sql",
+    "c": "practica"
+   },
+   {
+    "p": "demo-proyectos/ventas-tienda-sql",
+    "f": "ventas-tienda-sql/02_ventas_por_categoria.sql",
+    "c": "practica"
    },
    {
     "p": "demo-proyectos/informe-ventas-pbi",
@@ -4368,6 +7698,16 @@
     "c": "practica"
    },
    {
+    "p": "demo-proyectos/scripts-sueltos",
+    "f": "scripts-sueltos/limpiar.py",
+    "c": "practica"
+   },
+   {
+    "p": "demo-proyectos/churn-clientes",
+    "f": "churn-clientes/README.md",
+    "c": "explicativa"
+   },
+   {
     "p": "demo-proyectos/churn-clientes",
     "f": "churn-clientes/modelo.py",
     "c": "practica"
@@ -4384,6 +7724,14 @@
     "p": "demo-declarativo",
     "f": "habilidades.md",
     "c": "declarativa"
+   }
+  ],
+  "k:plataformas-datos": [],
+  "k:conocimiento-sectorial": [
+   {
+    "p": "demo-proyectos/ventas-tienda-sql",
+    "f": "ventas-tienda-sql/README.md",
+    "c": "explicativa"
    }
   ]
  }

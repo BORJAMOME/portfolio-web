@@ -28,10 +28,22 @@ jobs:
       - name: Páginas inglesas al día y sin frases por traducir
         run: node tools/build-en.mjs --check
       - name: Enlaces, recursos, anclas, sitemap y hreflang
+        if: ${{ !cancelled() }}
         run: node tools/check-links.mjs
+      - name: Mapa de estructura (pestaña Mapa) al día
+        if: ${{ !cancelled() }}
+        run: node tools/mapa/build-mapa.mjs --check
       - name: Versiones de caché (?v=) al día
+        if: ${{ !cancelled() }}
         run: node tools/version-assets.mjs --check
+      - name: Lógica del Centro de trabajo (Hoy)
+        if: ${{ !cancelled() }}
+        run: node tools/test-kanban.mjs
+      - name: Lógica del Studio de proyectos
+        if: ${{ !cancelled() }}
+        run: node tools/test-studio.mjs
       - name: Second Brain (motor, contrato y seguridad)
+        if: ${{ !cancelled() }}
         run: node --test tools/second-brain/second-brain.test.mjs
 
   accesibilidad:
@@ -51,6 +63,10 @@ jobs:
         run: node tools/check-a11y.mjs
       - name: Briefing de entrevista (dos A4, móvil y axe-core)
         run: node tools/check-briefing.mjs
+      - name: Centro de trabajo (flujos de interfaz con Supabase simulado)
+        run: node tools/check-kanban.mjs
+      - name: Studio de proyectos (flujos de interfaz con Supabase simulado)
+        run: node tools/check-studio.mjs
 
   funciones:
     name: Edge Functions (Deno)

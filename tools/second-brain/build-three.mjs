@@ -27,9 +27,13 @@ const USED = [
   'TorusGeometry', 'ConeGeometry', 'RingGeometry', 'MeshLambertMaterial', 'MeshBasicMaterial',
   'InstancedMesh', 'Mesh', 'DynamicDrawUsage', 'DoubleSide', 'Matrix4', 'Vector3', 'Vector2', 'Quaternion',
   'BufferGeometry', 'BufferAttribute', 'LineSegments', 'LineBasicMaterial', 'Raycaster',
+  // v3: nodos con icono dibujados por un shader instanciado y líneas discontinuas por tipo
+  'ShaderMaterial', 'InstancedBufferGeometry', 'InstancedBufferAttribute', 'CanvasTexture', 'PlaneGeometry', 'LineDashedMaterial',
+  'LinearFilter', 'LinearMipmapLinearFilter', 'NoColorSpace',
 ];
+const BUNDLE_REV = 'sb2';   // cambia si cambia USED: el nombre del archivo hace de versión de caché
 
-const out = join(ROOT, 'vendor', `three-${version}-sb.min.js`);
+const out = join(ROOT, 'vendor', `three-${version}-${BUNDLE_REV}.min.js`);
 mkdirSync(dirname(out), { recursive: true });
 const r = await build({
   stdin: { contents: `export { ${USED.join(', ')} } from 'three';`, resolveDir: ROOT, loader: 'js' },

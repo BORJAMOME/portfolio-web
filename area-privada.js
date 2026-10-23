@@ -446,12 +446,16 @@
      <link rel="prefetch" data-ap-module="…"> de area-privada.html. */
   var MODULES = {
     hoy:         { global: 'APHoy',         title: 'Hoy' },
+    // sin pestaña propia: lo monta «Hoy» (tab) encima de sus tarjetas
+    kanban:      { global: 'APKanban',      title: 'Hoy', tab: 'hoy' },
+    studio:      { global: 'APStudio',      title: 'Studio' },
     calendario:  { global: 'APCalendario',  title: 'Calendario' },
     entrevistas: { global: 'APEntrevistas', title: 'Entrevistas' },
     // sin pestaña propia: vive dentro de «Entrevistas» (tab) con su propio archivo
     preparacion: { global: 'APPreparacion', title: 'Entrevistas', tab: 'entrevistas' },
     portfolio:   { global: 'APPortfolio',   title: 'Portfolio' },
     'second-brain': { global: 'APSecondBrain', title: 'Second Brain' },
+    mapa:        { global: 'APMapa',        title: 'Mapa' },
     fichero:     { global: 'APFichero',     title: 'Fichero' },
     configuracion: { global: 'APConfiguracion', title: 'Configuración' }
   };
@@ -506,7 +510,7 @@
     if (isModule) {
       job = loadModule(r.name).then(function (mod) {
         return mod.render({
-          api: api, h: h, ui: ui, ask: ask, setStatus: setStatus, fail: fail, view: els.view, arg: r.arg,
+          api: api, h: h, ui: ui, ask: ask, fail: fail, module: loadModule, setStatus: setStatus, fail: fail, view: els.view, arg: r.arg,
           isCurrent: function () { return seq === renderSeq; }
         });
       });

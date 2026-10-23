@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 4,
   "nota": "Marco general de competencias de analista de datos. Es un punto de partida editable, NO un estudio de mercado ni una evaluación oficial. Cambiar este archivo no requiere tocar el motor ni el visor.",
   "niveles": [
     {
@@ -21,35 +21,64 @@
   "regiones": [
     {
       "id": "bi",
-      "label": "Business Intelligence y Power BI"
+      "label": "Business Intelligence y Power BI",
+      "color": "#F5C84C",
+      "icono": "powerbi",
+      "familia": "bi"
     },
     {
       "id": "datos",
-      "label": "Ingeniería y preparación de datos"
+      "label": "Ingeniería y preparación de datos",
+      "color": "#168A83",
+      "icono": "database",
+      "familia": "ingenieria"
     },
     {
       "id": "analisis",
-      "label": "Análisis, estadística y machine learning"
+      "label": "Análisis, estadística y machine learning",
+      "color": "#8B5CF6",
+      "icono": "brain",
+      "familia": "ml"
     },
     {
       "id": "visualizacion",
-      "label": "Visualización y comunicación de datos"
+      "label": "Visualización y comunicación de datos",
+      "color": "#D96C45",
+      "icono": "chart",
+      "familia": "storytelling"
     },
     {
       "id": "ux",
-      "label": "UX/UI y diseño (complementario)"
+      "label": "UX/UI y desarrollo web (complementario)",
+      "color": "#D95D9E",
+      "icono": "cursor",
+      "familia": "ux"
     },
     {
       "id": "profesional",
-      "label": "Competencias profesionales"
+      "label": "Competencias profesionales",
+      "color": "#64748B",
+      "icono": "briefcase",
+      "familia": "negocio"
+    },
+    {
+      "id": "negocio",
+      "label": "Dominios de negocio",
+      "color": "#8493A8",
+      "icono": "store",
+      "familia": "negocio"
     },
     {
       "id": "practica",
-      "label": "Proyectos y experiencia demostrada"
+      "label": "Proyectos y experiencia demostrada",
+      "color": "#273a5f",
+      "icono": "folder"
     },
     {
       "id": "objetivos",
-      "label": "Objetivos y oportunidades"
+      "label": "Objetivos y oportunidades",
+      "color": "#1d2638",
+      "icono": "flag"
     }
   ],
   "conceptos": [
@@ -69,7 +98,9 @@
         "pbix",
         "pbip"
       ],
-      "resumen": "Plataforma de Microsoft para modelar datos y construir informes interactivos."
+      "resumen": "Plataforma de Microsoft para modelar datos y construir informes interactivos.",
+      "icono": "powerbi",
+      "familia": "bi"
     },
     {
       "id": "dax",
@@ -92,7 +123,10 @@
       "artefactos": [
         "pbix-measures",
         "tmdl"
-      ]
+      ],
+      "icono": "fx",
+      "familia": "bi",
+      "padre": "powerbi"
     },
     {
       "id": "dax-contexto",
@@ -117,7 +151,10 @@
           "\\b(ALLSELECTED|ALLEXCEPT|REMOVEFILTERS|KEEPFILTERS)\\s*\\("
         ]
       },
-      "resumen": "Cómo DAX evalúa cada medida según filtros, segmentaciones y filas: la base de las medidas avanzadas."
+      "resumen": "Cómo DAX evalúa cada medida según filtros, segmentaciones y filas: la base de las medidas avanzadas.",
+      "icono": "filter",
+      "familia": "bi",
+      "padre": "dax"
     },
     {
       "id": "time-intelligence",
@@ -141,7 +178,10 @@
           "\\b(DATESYTD|TOTALYTD|SAMEPERIODLASTYEAR|DATEADD)\\s*\\("
         ]
       },
-      "resumen": "Comparativas YTD, mes anterior o mismo periodo del año pasado sobre una tabla de fechas."
+      "resumen": "Comparativas YTD, mes anterior o mismo periodo del año pasado sobre una tabla de fechas.",
+      "icono": "calendar",
+      "familia": "bi",
+      "padre": "dax"
     },
     {
       "id": "power-query",
@@ -159,7 +199,10 @@
           "\\blet\\b[\\s\\S]*\\bin\\b"
         ]
       },
-      "resumen": "Editor de transformación de datos de Power BI y Excel (lenguaje M)."
+      "resumen": "Editor de transformación de datos de Power BI y Excel (lenguaje M).",
+      "icono": "transform",
+      "familia": "bi",
+      "padre": "powerbi"
     },
     {
       "id": "power-bi-service",
@@ -177,7 +220,10 @@
         "scheduled refresh",
         "app de Power BI"
       ],
-      "resumen": "Entorno en la nube donde se publican, comparten y refrescan los informes."
+      "resumen": "Entorno en la nube donde se publican, comparten y refrescan los informes.",
+      "icono": "cloud",
+      "familia": "bi",
+      "padre": "powerbi"
     },
     {
       "id": "rls",
@@ -191,7 +237,10 @@
         "row level security",
         "seguridad a nivel de fila"
       ],
-      "resumen": "Restringe qué filas ve cada usuario en un informe o base de datos."
+      "resumen": "Restringe qué filas ve cada usuario en un informe o base de datos.",
+      "icono": "lock",
+      "familia": "bi",
+      "padre": "power-bi-service"
     },
     {
       "id": "pbi-optimizacion",
@@ -208,7 +257,10 @@
         "optimización del modelo",
         "rendimiento del informe"
       ],
-      "resumen": "Medir y mejorar el rendimiento de un modelo semántico y sus medidas."
+      "resumen": "Medir y mejorar el rendimiento de un modelo semántico y sus medidas.",
+      "icono": "gauge",
+      "familia": "bi",
+      "padre": "powerbi"
     },
     {
       "id": "modelo-estrella",
@@ -227,7 +279,9 @@
         "tabla de dimensión",
         "dimension table",
         "tablas de dimensiones",
-        "snowflake"
+        "snowflake",
+        "granularidad",
+        "grano de la tabla"
       ],
       "resumen": "Organización del modelo en tablas de hechos y dimensiones para consultas simples y rápidas.",
       "codigo": {
@@ -238,7 +292,10 @@
         "python": [
           "\\b(dim|fact)_\\w+\\s*="
         ]
-      }
+      },
+      "icono": "star-schema",
+      "familia": "bi",
+      "padre": "powerbi"
     },
     {
       "id": "kpi",
@@ -254,7 +311,9 @@
         "cuadro de mando",
         "scorecard"
       ],
-      "resumen": "Métricas que miden el cumplimiento de un objetivo y sirven para seguirlo en el tiempo."
+      "resumen": "Métricas que miden el cumplimiento de un objetivo y sirven para seguirlo en el tiempo.",
+      "icono": "target",
+      "familia": "negocio"
     },
     {
       "id": "sql",
@@ -277,7 +336,9 @@
           "\\bGROUP\\s+BY\\b"
         ]
       },
-      "resumen": "Lenguaje estándar para consultar y transformar datos en bases relacionales."
+      "resumen": "Lenguaje estándar para consultar y transformar datos en bases relacionales.",
+      "icono": "database",
+      "familia": "sql"
     },
     {
       "id": "sql-joins",
@@ -295,7 +356,10 @@
           "\\b(INNER|LEFT|RIGHT|FULL|CROSS)?\\s*JOIN\\b"
         ]
       },
-      "resumen": "Combinar tablas por sus claves, entendiendo cuándo cambia el número de filas."
+      "resumen": "Combinar tablas por sus claves, entendiendo cuándo cambia el número de filas.",
+      "icono": "venn",
+      "familia": "sql",
+      "padre": "sql"
     },
     {
       "id": "sql-window",
@@ -315,7 +379,10 @@
           "\\b(ROW_NUMBER|RANK|DENSE_RANK|LAG|LEAD|NTILE)\\s*\\("
         ]
       },
-      "resumen": "Cálculos sobre conjuntos de filas relacionadas (rankings, acumulados, comparativas con el periodo anterior)."
+      "resumen": "Cálculos sobre conjuntos de filas relacionadas (rankings, acumulados, comparativas con el periodo anterior).",
+      "icono": "window",
+      "familia": "sql",
+      "padre": "sql"
     },
     {
       "id": "sql-cte",
@@ -336,7 +403,10 @@
           "\\)\\s*,\\s*\\w+\\s+AS\\s*\\("
         ]
       },
-      "resumen": "Descomponer una consulta compleja en pasos legibles y reutilizables."
+      "resumen": "Descomponer una consulta compleja en pasos legibles y reutilizables.",
+      "icono": "layers",
+      "familia": "sql",
+      "padre": "sql"
     },
     {
       "id": "sql-optimizacion",
@@ -358,7 +428,10 @@
           "\\bCREATE\\s+(UNIQUE\\s+)?INDEX\\b"
         ]
       },
-      "resumen": "Leer planes de ejecución, crear índices y reescribir consultas para que escalen."
+      "resumen": "Leer planes de ejecución, crear índices y reescribir consultas para que escalen.",
+      "icono": "gauge",
+      "familia": "sql",
+      "padre": "sql"
     },
     {
       "id": "python",
@@ -375,7 +448,9 @@
           "^\\s*def\\s+\\w+\\("
         ]
       },
-      "resumen": "Lenguaje de propósito general muy usado para análisis, automatización y machine learning."
+      "resumen": "Lenguaje de propósito general muy usado para análisis, automatización y machine learning.",
+      "icono": "braces",
+      "familia": "python"
     },
     {
       "id": "pandas",
@@ -393,7 +468,10 @@
           "\\bpd\\.(read_\\w+|DataFrame|merge|concat)\\b"
         ]
       },
-      "resumen": "Biblioteca de Python para manipular tablas de datos."
+      "resumen": "Biblioteca de Python para manipular tablas de datos.",
+      "icono": "table",
+      "familia": "python",
+      "padre": "python"
     },
     {
       "id": "jupyter",
@@ -409,7 +487,10 @@
       "artefactos": [
         "ipynb"
       ],
-      "resumen": "Documentos que mezclan código, resultados y explicación para análisis reproducibles."
+      "resumen": "Documentos que mezclan código, resultados y explicación para análisis reproducibles.",
+      "icono": "notebook",
+      "familia": "python",
+      "padre": "python"
     },
     {
       "id": "etl",
@@ -434,7 +515,9 @@
           "\\bINSERT\\s+INTO\\b",
           "\\bCREATE\\s+(OR\\s+REPLACE\\s+)?(TABLE|VIEW)\\s+\\S+\\s+AS\\b"
         ]
-      }
+      },
+      "icono": "pipeline",
+      "familia": "ingenieria"
     },
     {
       "id": "data-quality",
@@ -464,7 +547,9 @@
           "\\bCOALESCE\\s*\\("
         ]
       },
-      "resumen": "Detectar y tratar nulos, duplicados, tipos erróneos y valores atípicos antes de analizar."
+      "resumen": "Detectar y tratar nulos, duplicados, tipos erróneos y valores atípicos antes de analizar.",
+      "icono": "shield-check",
+      "familia": "ingenieria"
     },
     {
       "id": "modelado-datos",
@@ -489,7 +574,9 @@
           "\\bREFERENCES\\b"
         ]
       },
-      "resumen": "Diseñar tablas, claves y relaciones para que los datos se puedan analizar sin ambigüedad."
+      "resumen": "Diseñar tablas, claves y relaciones para que los datos se puedan analizar sin ambigüedad.",
+      "icono": "entities",
+      "familia": "ingenieria"
     },
     {
       "id": "excel",
@@ -508,7 +595,9 @@
       "artefactos": [
         "xlsx:explicativa"
       ],
-      "resumen": "Hoja de cálculo para exploración rápida, tablas dinámicas y reporting operativo."
+      "resumen": "Hoja de cálculo para exploración rápida, tablas dinámicas y reporting operativo.",
+      "icono": "grid",
+      "familia": "ingenieria"
     },
     {
       "id": "git",
@@ -528,7 +617,9 @@
         "gitignore",
         "git-repo"
       ],
-      "resumen": "Control de versiones y colaboración sobre el código y los documentos de un proyecto."
+      "resumen": "Control de versiones y colaboración sobre el código y los documentos de un proyecto.",
+      "icono": "branch",
+      "familia": "ingenieria"
     },
     {
       "id": "automatizacion",
@@ -554,7 +645,9 @@
       },
       "artefactos": [
         "workflow"
-      ]
+      ],
+      "icono": "cycle",
+      "familia": "ingenieria"
     },
     {
       "id": "testing-calidad",
@@ -576,7 +669,9 @@
           "^\\s*assert\\s+"
         ]
       },
-      "resumen": "Comprobar con código que las transformaciones y los resultados siguen siendo correctos."
+      "resumen": "Comprobar con código que las transformaciones y los resultados siguen siendo correctos.",
+      "icono": "checklist",
+      "familia": "ingenieria"
     },
     {
       "id": "documentacion",
@@ -596,7 +691,9 @@
         "guía de uso",
         "metodología"
       ],
-      "resumen": "Dejar por escrito qué hace un proyecto, de dónde salen los datos y cómo se reproduce."
+      "resumen": "Dejar por escrito qué hace un proyecto, de dónde salen los datos y cómo se reproduce.",
+      "icono": "doc",
+      "familia": "negocio"
     },
     {
       "id": "negocio",
@@ -616,7 +713,9 @@
         "recomendación de negocio",
         "recomendaciones de negocio"
       ],
-      "resumen": "Traducir una necesidad de negocio en preguntas de datos y devolver conclusiones accionables."
+      "resumen": "Traducir una necesidad de negocio en preguntas de datos y devolver conclusiones accionables.",
+      "icono": "briefcase",
+      "familia": "negocio"
     },
     {
       "id": "decisiones",
@@ -636,7 +735,9 @@
         "por qué elegí",
         "justificación"
       ],
-      "resumen": "Explicar por qué se eligió un enfoque, qué supuestos tiene y qué limitaciones deja."
+      "resumen": "Explicar por qué se eligió un enfoque, qué supuestos tiene y qué limitaciones deja.",
+      "icono": "compass",
+      "familia": "negocio"
     },
     {
       "id": "estadistica",
@@ -662,10 +763,13 @@
       "codigo": {
         "python": [
           "\\b(scipy\\.stats|statsmodels)\\b",
-          "\\.(corr|describe)\\s*\\("
+          "\\.(corr|describe)\\s*\\(",
+          "\\bttest_|\\bchi2_contingency\\b|\\bmannwhitneyu\\b"
         ]
       },
-      "resumen": "Herramientas para describir datos y decidir cuánto se puede concluir de una muestra."
+      "resumen": "Herramientas para describir datos y decidir cuánto se puede concluir de una muestra.",
+      "icono": "bell",
+      "familia": "python"
     },
     {
       "id": "eda",
@@ -684,7 +788,9 @@
           "\\.(describe|info|value_counts|nunique)\\s*\\("
         ]
       },
-      "resumen": "Primera lectura de los datos: distribuciones, relaciones y anomalías antes de modelar."
+      "resumen": "Primera lectura de los datos: distribuciones, relaciones y anomalías antes de modelar.",
+      "icono": "search-chart",
+      "familia": "python"
     },
     {
       "id": "ml",
@@ -706,7 +812,9 @@
           "\\.predict\\s*\\("
         ]
       },
-      "resumen": "Modelos que aprenden patrones de datos históricos para predecir o agrupar."
+      "resumen": "Modelos que aprenden patrones de datos históricos para predecir o agrupar.",
+      "icono": "brain",
+      "familia": "ml"
     },
     {
       "id": "scikit-learn",
@@ -723,11 +831,13 @@
           "\\b(from|import)\\s+sklearn\\b"
         ]
       },
-      "resumen": "Biblioteca de Python para modelos clásicos de machine learning."
+      "resumen": "Biblioteca de Python para modelos clásicos de machine learning.",
+      "icono": "nodes",
+      "familia": "ml"
     },
     {
       "id": "clasificacion-regresion",
-      "label": "Clasificación y regresión",
+      "label": "Aprendizaje supervisado",
       "tipo": "tecnica",
       "region": "analisis",
       "naturaleza": "practica",
@@ -742,14 +852,21 @@
       ],
       "codigo": {
         "python": [
-          "\\b(LogisticRegression|RandomForest\\w*|GradientBoosting\\w*|XGB\\w*|LinearRegression|DecisionTree\\w*)\\b"
+          "\\b(LogisticRegression|RandomForest\\w*|GradientBoosting\\w*|XGB\\w*|LinearRegression|DecisionTree\\w*|SVC|SVR|GaussianNB|MultinomialNB|KNeighbors\\w*|Ridge|Lasso)\\b",
+          "\\b(sm\\.(Logit|OLS|GLM)|smf\\.(ols|logit|glm))\\b"
         ]
       },
-      "resumen": "Predecir una categoría o un valor numérico a partir de variables explicativas."
+      "resumen": "Aprender de ejemplos con respuesta conocida para predecir una categoría (clasificación) o un valor numérico (regresión).",
+      "icono": "tree",
+      "familia": "ml",
+      "padre": "ml",
+      "rutas": [
+        "supervisado"
+      ]
     },
     {
       "id": "clustering",
-      "label": "Segmentación y clustering",
+      "label": "Clustering y segmentación",
       "tipo": "tecnica",
       "region": "analisis",
       "naturaleza": "practica",
@@ -765,7 +882,13 @@
           "\\b(KMeans|DBSCAN|AgglomerativeClustering)\\b"
         ]
       },
-      "resumen": "Agrupar clientes u observaciones parecidos sin etiquetas previas."
+      "resumen": "Agrupar clientes u observaciones parecidos sin etiquetas previas.",
+      "icono": "clusters",
+      "familia": "ml",
+      "padre": "ml-no-supervisado",
+      "rutas": [
+        "clustering"
+      ]
     },
     {
       "id": "forecasting",
@@ -788,7 +911,13 @@
           "\\b(SARIMAX|ARIMA|ExponentialSmoothing|Prophet)\\b"
         ]
       },
-      "resumen": "Prever valores futuros a partir de su historia, respetando el orden temporal."
+      "resumen": "Prever valores futuros a partir de su historia, respetando el orden temporal.",
+      "icono": "trend",
+      "familia": "ml",
+      "padre": "ml",
+      "rutas": [
+        "series temporales"
+      ]
     },
     {
       "id": "model-eval",
@@ -814,7 +943,10 @@
           "\\b(cross_val_score|train_test_split|classification_report|roc_auc_score|mean_squared_error|mean_absolute_error|GridSearchCV)\\b"
         ]
       },
-      "resumen": "Medir si un modelo generaliza: particiones, métricas adecuadas y control del sobreajuste."
+      "resumen": "Medir si un modelo generaliza: particiones, métricas adecuadas y control del sobreajuste.",
+      "icono": "ruler",
+      "familia": "ml",
+      "padre": "ml"
     },
     {
       "id": "feature-eng",
@@ -834,7 +966,10 @@
           "\\b(OneHotEncoder|StandardScaler|MinMaxScaler|ColumnTransformer|get_dummies)\\b"
         ]
       },
-      "resumen": "Transformar y crear variables para que el modelo pueda aprovecharlas."
+      "resumen": "Transformar y crear variables para que el modelo pueda aprovecharlas.",
+      "icono": "wrench",
+      "familia": "ml",
+      "padre": "ml"
     },
     {
       "id": "explicabilidad",
@@ -855,7 +990,10 @@
           "\\bpermutation_importance\\b"
         ]
       },
-      "resumen": "Entender y contar qué variables mueven las predicciones de un modelo."
+      "resumen": "Entender y contar qué variables mueven las predicciones de un modelo.",
+      "icono": "eye",
+      "familia": "ml",
+      "padre": "ml"
     },
     {
       "id": "analisis-conjunto",
@@ -868,7 +1006,9 @@
         "análisis conjunto",
         "utilidades parciales"
       ],
-      "resumen": "Estimar qué atributos de un producto valoran más los clientes a partir de sus elecciones."
+      "resumen": "Estimar qué atributos de un producto valoran más los clientes a partir de sus elecciones.",
+      "icono": "sliders",
+      "familia": "ml"
     },
     {
       "id": "visualizacion-datos",
@@ -896,7 +1036,9 @@
           "\\b(import|from)\\s+(matplotlib|seaborn|plotly|altair)\\b"
         ]
       },
-      "resumen": "Elegir y construir gráficos que respondan una pregunta concreta."
+      "resumen": "Elegir y construir gráficos que respondan una pregunta concreta.",
+      "icono": "chart",
+      "familia": "storytelling"
     },
     {
       "id": "data-storytelling",
@@ -910,7 +1052,9 @@
         "narrativa de datos",
         "historia con datos"
       ],
-      "resumen": "Estructurar los datos como una narrativa con mensaje, contexto y llamada a la acción."
+      "resumen": "Estructurar los datos como una narrativa con mensaje, contexto y llamada a la acción.",
+      "icono": "story",
+      "familia": "storytelling"
     },
     {
       "id": "ibcs",
@@ -923,7 +1067,9 @@
         "Hichert",
         "International Business Communication Standards"
       ],
-      "resumen": "Estándares para notación y diseño uniformes en informes de negocio."
+      "resumen": "Estándares para notación y diseño uniformes en informes de negocio.",
+      "icono": "bars-baseline",
+      "familia": "storytelling"
     },
     {
       "id": "diseno-dashboard",
@@ -941,7 +1087,9 @@
         "diseño del dashboard",
         "percepción visual"
       ],
-      "resumen": "Organizar un informe para que lo importante se vea primero y se lea sin esfuerzo."
+      "resumen": "Organizar un informe para que lo importante se vea primero y se lea sin esfuerzo.",
+      "icono": "layout",
+      "familia": "storytelling"
     },
     {
       "id": "accesibilidad",
@@ -957,7 +1105,9 @@
         "lector de pantalla",
         "accessibility"
       ],
-      "resumen": "Diseñar para que cualquier persona pueda leer e interactuar con el informe."
+      "resumen": "Diseñar para que cualquier persona pueda leer e interactuar con el informe.",
+      "icono": "a11y",
+      "familia": "ux"
     },
     {
       "id": "streamlit",
@@ -973,7 +1123,9 @@
           "\\bimport\\s+streamlit\\b"
         ]
       },
-      "resumen": "Framework de Python para publicar análisis como aplicaciones web interactivas."
+      "resumen": "Framework de Python para publicar análisis como aplicaciones web interactivas.",
+      "icono": "app",
+      "familia": "python"
     },
     {
       "id": "ux-ui",
@@ -990,7 +1142,9 @@
         "interfaz de usuario",
         "heurísticas de usabilidad"
       ],
-      "resumen": "Diseño de la experiencia y la interfaz a partir de cómo las personas usan el producto."
+      "resumen": "Diseño de la experiencia y la interfaz a partir de cómo las personas usan el producto.",
+      "icono": "cursor",
+      "familia": "ux"
     },
     {
       "id": "investigacion-usuarios",
@@ -1007,7 +1161,9 @@
         "design thinking",
         "personas de usuario"
       ],
-      "resumen": "Conocer necesidades y problemas reales con entrevistas, observación y pruebas."
+      "resumen": "Conocer necesidades y problemas reales con entrevistas, observación y pruebas.",
+      "icono": "user-search",
+      "familia": "ux"
     },
     {
       "id": "arquitectura-informacion",
@@ -1022,7 +1178,9 @@
         "information architecture",
         "mapa del sitio"
       ],
-      "resumen": "Organizar y nombrar el contenido para que se encuentre sin pensar."
+      "resumen": "Organizar y nombrar el contenido para que se encuentre sin pensar.",
+      "icono": "sitemap",
+      "familia": "ux"
     },
     {
       "id": "figma",
@@ -1036,7 +1194,1292 @@
         "wireframes",
         "prototipo"
       ],
-      "resumen": "Herramienta de diseño de interfaces y prototipos."
+      "resumen": "Herramienta de diseño de interfaces y prototipos.",
+      "icono": "pen",
+      "familia": "ux"
+    },
+    {
+      "id": "dax-avanzado",
+      "label": "Funciones DAX avanzadas",
+      "tipo": "tecnica",
+      "region": "bi",
+      "naturaleza": "practica",
+      "icono": "fx-plus",
+      "terminos": [
+        "TREATAS",
+        "USERELATIONSHIP",
+        "LOOKUPVALUE",
+        "HASONEVALUE",
+        "ISINSCOPE",
+        "RANKX",
+        "TOPN",
+        "CROSSFILTER",
+        "tablas virtuales"
+      ],
+      "codigo": {
+        "dax": [
+          "\\b(TREATAS|USERELATIONSHIP|LOOKUPVALUE|HASONEVALUE|ISINSCOPE|RANKX|TOPN|CROSSFILTER|WINDOW|OFFSET|INDEX|SUMMARIZECOLUMNS|ADDCOLUMNS)\\s*\\("
+        ],
+        "markdown": [
+          "\\b(TREATAS|USERELATIONSHIP|LOOKUPVALUE|HASONEVALUE|ISINSCOPE|RANKX|TOPN|WINDOW|OFFSET)\\s*\\("
+        ]
+      },
+      "resumen": "Relaciones virtuales, rankings, funciones de ventana y tablas en memoria para resolver casos que las medidas básicas no cubren.",
+      "familia": "bi",
+      "padre": "dax"
+    },
+    {
+      "id": "pbi-diseno-dinamico",
+      "label": "Interactividad en Power BI",
+      "tipo": "tecnica",
+      "region": "bi",
+      "naturaleza": "practica",
+      "icono": "toggle",
+      "terminos": [
+        "parámetros de campo",
+        "parámetro de campo",
+        "field parameters",
+        "formato condicional",
+        "conditional formatting",
+        "grupos de cálculo",
+        "calculation groups",
+        "títulos dinámicos",
+        "encabezados dinámicos",
+        "marcadores",
+        "bookmarks",
+        "tooltip page"
+      ],
+      "resumen": "Parámetros de campo, formato condicional, grupos de cálculo y títulos dinámicos para informes que se adaptan a la pregunta.",
+      "familia": "bi",
+      "padre": "powerbi"
+    },
+    {
+      "id": "numpy-scipy",
+      "label": "NumPy y SciPy",
+      "tipo": "tecnologia",
+      "region": "datos",
+      "naturaleza": "practica",
+      "icono": "cube",
+      "terminos": [
+        "numpy",
+        "scipy",
+        "statsmodels"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(import|from)\\s+(numpy|scipy|statsmodels)\\b"
+        ]
+      },
+      "resumen": "Cálculo numérico y estadístico en Python: arrays, álgebra lineal, contrastes y modelos estadísticos.",
+      "familia": "python",
+      "padre": "python"
+    },
+    {
+      "id": "apis-datos",
+      "label": "APIs y datos web",
+      "tipo": "tecnica",
+      "region": "datos",
+      "naturaleza": "practica",
+      "icono": "plug",
+      "terminos": [
+        "API REST",
+        "APIs",
+        "endpoint",
+        "web scraping",
+        "JSON"
+      ],
+      "codigo": {
+        "python": [
+          "\\bimport\\s+requests\\b",
+          "\\brequests\\.(get|post)\\s*\\(",
+          "\\bBeautifulSoup\\b"
+        ],
+        "javascript": [
+          "\\bfetch\\s*\\("
+        ]
+      },
+      "resumen": "Obtener datos de servicios web y APIs y convertirlos en tablas analizables.",
+      "familia": "ingenieria"
+    },
+    {
+      "id": "big-data",
+      "label": "Big data y procesamiento distribuido",
+      "tipo": "concepto",
+      "region": "datos",
+      "naturaleza": "practica",
+      "icono": "servers",
+      "terminos": [
+        "big data",
+        "Spark",
+        "PySpark",
+        "Hadoop",
+        "procesamiento distribuido",
+        "Databricks"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(from|import)\\s+pyspark\\b",
+          "\\bSparkSession\\b"
+        ]
+      },
+      "resumen": "Procesar volúmenes que no caben en una máquina repartiendo el cálculo entre varias.",
+      "familia": "ingenieria",
+      "padre": "ia-bigdata",
+      "rutas": [
+        "big data distribuido"
+      ]
+    },
+    {
+      "id": "cloud-datos",
+      "label": "Plataformas cloud de datos",
+      "tipo": "tecnologia",
+      "region": "datos",
+      "naturaleza": "practica",
+      "icono": "cloud",
+      "terminos": [
+        "Azure",
+        "AWS",
+        "GCP",
+        "Microsoft Fabric",
+        "BigQuery",
+        "Snowflake",
+        "Supabase",
+        "PostgreSQL en la nube"
+      ],
+      "resumen": "Servicios en la nube para almacenar, transformar y servir datos (Azure, Fabric, AWS, GCP, Supabase…).",
+      "familia": "ingenieria"
+    },
+    {
+      "id": "reduccion-dimensionalidad",
+      "label": "Reducción de dimensionalidad",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "icono": "converge",
+      "terminos": [
+        "PCA",
+        "t-SNE",
+        "UMAP",
+        "reducción de dimensionalidad",
+        "componentes principales"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(PCA|TSNE|UMAP)\\s*\\("
+        ]
+      },
+      "resumen": "Resumir muchas variables en pocas dimensiones para visualizar, agrupar o quitar ruido.",
+      "familia": "ml",
+      "padre": "ml-no-supervisado",
+      "rutas": [
+        "reduccion dimensionalidad"
+      ]
+    },
+    {
+      "id": "deep-learning",
+      "label": "Redes neuronales y deep learning",
+      "tipo": "concepto",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "icono": "network",
+      "terminos": [
+        "deep learning",
+        "red neuronal",
+        "redes neuronales",
+        "CNN",
+        "TensorFlow",
+        "Keras",
+        "PyTorch"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(import|from)\\s+(tensorflow|keras|torch|ultralytics)\\b"
+        ]
+      },
+      "resumen": "Redes neuronales profundas para imágenes, secuencias o datos no estructurados.",
+      "familia": "ml",
+      "padre": "ml",
+      "rutas": [
+        "redes neuronales"
+      ]
+    },
+    {
+      "id": "ia-generativa",
+      "label": "NLP, LLM y agentes de IA",
+      "tipo": "concepto",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "icono": "chat",
+      "terminos": [
+        "NLP",
+        "procesamiento del lenguaje natural",
+        "LLM",
+        "LLMs",
+        "RAG",
+        "agentes de IA",
+        "agente de IA",
+        "transformers",
+        "embeddings",
+        "LangChain"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(import|from)\\s+(transformers|langchain|openai|anthropic|sentence_transformers)\\b"
+        ]
+      },
+      "resumen": "Modelos de lenguaje, recuperación aumentada (RAG) y agentes que usan herramientas.",
+      "familia": "ml",
+      "padre": "ia-bigdata"
+    },
+    {
+      "id": "recomendadores",
+      "label": "Sistemas de recomendación",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "icono": "thumbs",
+      "terminos": [
+        "sistemas de recomendación",
+        "sistema de recomendación",
+        "filtrado colaborativo",
+        "recommender",
+        "basado en contenido"
+      ],
+      "resumen": "Sugerir productos o contenidos a partir de comportamiento similar o de características.",
+      "familia": "ml",
+      "padre": "ml",
+      "rutas": [
+        "sistemas recomendacion"
+      ]
+    },
+    {
+      "id": "experimentacion",
+      "label": "Experimentación (tests A/B)",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "icono": "ab",
+      "terminos": [
+        "test A/B",
+        "tests A/B",
+        "A/B testing",
+        "experimento controlado",
+        "grupo de control",
+        "tamaño muestral"
+      ],
+      "resumen": "Diseñar y analizar experimentos para medir el efecto real de un cambio.",
+      "familia": "ml"
+    },
+    {
+      "id": "desarrollo-web",
+      "label": "Desarrollo web (HTML, CSS, JS)",
+      "tipo": "tecnologia",
+      "region": "ux",
+      "naturaleza": "practica",
+      "icono": "code",
+      "terminos": [
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "Three.js",
+        "D3.js",
+        "Chart.js",
+        "GitHub Pages"
+      ],
+      "codigo": {
+        "javascript": [
+          "\\b(document\\.querySelector|addEventListener|createElement)\\b"
+        ]
+      },
+      "artefactos": [
+        "webpage"
+      ],
+      "resumen": "Construir páginas e interfaces web propias, incluidas visualizaciones a medida.",
+      "familia": "ux"
+    },
+    {
+      "id": "retail-ventas",
+      "label": "Retail y ventas",
+      "tipo": "concepto",
+      "region": "negocio",
+      "naturaleza": "explicativa",
+      "icono": "cart",
+      "terminos": [
+        "retail",
+        "ventas minoristas",
+        "ticket medio",
+        "tienda",
+        "tiendas",
+        "demanda",
+        "surtido",
+        "concesionario",
+        "concesionarios"
+      ],
+      "resumen": "Conocimiento del negocio minorista: ventas, ticket, demanda, surtido y tiendas.",
+      "familia": "negocio"
+    },
+    {
+      "id": "finanzas",
+      "label": "Finanzas y control de gestión",
+      "tipo": "concepto",
+      "region": "negocio",
+      "naturaleza": "explicativa",
+      "icono": "coin",
+      "terminos": [
+        "pérdidas y ganancias",
+        "cuenta de resultados",
+        "P&L",
+        "PyG",
+        "presupuesto",
+        "presupuestos",
+        "EBITDA",
+        "margen bruto",
+        "control de gestión",
+        "informe financiero"
+      ],
+      "resumen": "Cuenta de resultados, presupuesto frente a real, márgenes y control de gestión.",
+      "familia": "negocio"
+    },
+    {
+      "id": "marketing-clientes",
+      "label": "Marketing y clientes",
+      "tipo": "concepto",
+      "region": "negocio",
+      "naturaleza": "explicativa",
+      "icono": "megaphone",
+      "terminos": [
+        "marketing",
+        "campaña",
+        "campañas",
+        "fidelización",
+        "churn",
+        "CLV",
+        "valor de vida del cliente",
+        "RFM",
+        "segmentación de clientes",
+        "conversión",
+        "redes sociales"
+      ],
+      "resumen": "Clientes, campañas, fidelización, abandono y valor del cliente.",
+      "familia": "negocio"
+    },
+    {
+      "id": "turismo-hosteleria",
+      "label": "Turismo y hostelería",
+      "tipo": "concepto",
+      "region": "negocio",
+      "naturaleza": "explicativa",
+      "icono": "bed",
+      "terminos": [
+        "hostelería",
+        "Airbnb",
+        "turismo",
+        "aerolínea",
+        "aerolíneas",
+        "vuelos",
+        "reservas",
+        "ocupación",
+        "restaurante",
+        "restaurantes"
+      ],
+      "resumen": "Negocios de viajes, alojamiento y restauración: reservas, ocupación, precios y demanda.",
+      "familia": "negocio"
+    },
+    {
+      "id": "ml-no-supervisado",
+      "label": "Aprendizaje no supervisado",
+      "tipo": "concepto",
+      "region": "analisis",
+      "naturaleza": "explicativa",
+      "terminos": [
+        "aprendizaje no supervisado",
+        "unsupervised"
+      ],
+      "rutas": [
+        "no supervisado"
+      ],
+      "resumen": "Encontrar estructura en datos sin respuesta conocida: grupos, patrones o dimensiones que resumen las variables.",
+      "icono": "clusters",
+      "familia": "ml",
+      "padre": "ml"
+    },
+    {
+      "id": "clasificacion",
+      "label": "Clasificación",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "clasificación",
+        "clasificar",
+        "classification"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(LogisticRegression|RandomForestClassifier|DecisionTreeClassifier|GradientBoostingClassifier|XGBClassifier|SVC|GaussianNB|MultinomialNB|KNeighborsClassifier|MLPClassifier)\\b",
+          "\\bsm\\.Logit\\b",
+          "\\bsmf\\.logit\\s*\\(",
+          "\\bclassification_report\\b"
+        ]
+      },
+      "rutas": [
+        "clasificacion"
+      ],
+      "resumen": "Predecir a qué categoría pertenece cada caso (churn sí/no, segmento de cliente, admitido o no).",
+      "icono": "tree",
+      "familia": "ml",
+      "padre": "clasificacion-regresion"
+    },
+    {
+      "id": "regresion",
+      "label": "Regresión",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "regresión",
+        "regression"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(LinearRegression|Ridge|Lasso|ElasticNet|GradientBoostingRegressor|XGBRegressor|RandomForestRegressor|SVR|MLPRegressor)\\b",
+          "\\bsm\\.OLS\\b",
+          "\\bsmf\\.ols\\s*\\("
+        ]
+      },
+      "rutas": [
+        "regresion"
+      ],
+      "resumen": "Predecir un valor numérico (precio, ventas, tiempo) a partir de variables explicativas.",
+      "icono": "trend",
+      "familia": "ml",
+      "padre": "clasificacion-regresion"
+    },
+    {
+      "id": "arbol-decision",
+      "label": "Árboles de decisión",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "árbol de decisión",
+        "árboles de decisión",
+        "decision tree"
+      ],
+      "codigo": {
+        "python": [
+          "\\bDecisionTree(Classifier|Regressor)\\b",
+          "\\bplot_tree\\b",
+          "\\bexport_graphviz\\b"
+        ]
+      },
+      "rutas": [
+        "arbol decision",
+        "arboles decision"
+      ],
+      "resumen": "Modelo que decide con una secuencia de preguntas sobre las variables; fácil de explicar.",
+      "icono": "tree",
+      "familia": "ml",
+      "padre": "clasificacion"
+    },
+    {
+      "id": "random-forest",
+      "label": "Random Forest",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "random forest",
+        "bosque aleatorio"
+      ],
+      "codigo": {
+        "python": [
+          "\\bRandomForest(Classifier|Regressor)\\b"
+        ]
+      },
+      "rutas": [
+        "random forest"
+      ],
+      "resumen": "Conjunto de muchos árboles de decisión que votan; más robusto que un árbol solo.",
+      "icono": "tree",
+      "familia": "ml",
+      "padre": "clasificacion"
+    },
+    {
+      "id": "regresion-logistica",
+      "label": "Regresión logística",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "regresión logística",
+        "logistic regression"
+      ],
+      "codigo": {
+        "python": [
+          "\\bLogisticRegression\\b",
+          "\\bsm\\.Logit\\b",
+          "\\bsmf\\.logit\\s*\\("
+        ]
+      },
+      "rutas": [
+        "regresion logistica"
+      ],
+      "resumen": "Estima la probabilidad de una categoría y permite interpretar el efecto de cada variable.",
+      "icono": "trend",
+      "familia": "ml",
+      "padre": "clasificacion"
+    },
+    {
+      "id": "svm",
+      "label": "SVM (máquinas de vectores de soporte)",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "SVM",
+        "máquinas de vectores de soporte",
+        "support vector"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(SVC|SVR|LinearSVC|NuSVC)\\b"
+        ]
+      },
+      "rutas": [
+        "svm"
+      ],
+      "resumen": "Busca la frontera que mejor separa las clases, con margen máximo.",
+      "icono": "sliders",
+      "familia": "ml",
+      "padre": "clasificacion"
+    },
+    {
+      "id": "naive-bayes",
+      "label": "Naive Bayes",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "naive bayes",
+        "naïve bayes"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(GaussianNB|MultinomialNB|BernoulliNB|ComplementNB)\\b"
+        ]
+      },
+      "rutas": [
+        "naive bayes"
+      ],
+      "resumen": "Clasificador probabilístico simple, muy usado con texto.",
+      "icono": "bell",
+      "familia": "ml",
+      "padre": "clasificacion"
+    },
+    {
+      "id": "xgboost",
+      "label": "XGBoost",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "XGBoost"
+      ],
+      "codigo": {
+        "python": [
+          "\\bXGB(Classifier|Regressor)\\b",
+          "\\b(import|from)\\s+xgboost\\b"
+        ]
+      },
+      "rutas": [
+        "xgboost"
+      ],
+      "resumen": "Implementación optimizada de gradient boosting, habitual en competiciones.",
+      "icono": "tree",
+      "familia": "ml",
+      "padre": "clasificacion"
+    },
+    {
+      "id": "gradient-boosting",
+      "label": "Gradient Boosting",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "gradient boosting"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(GradientBoosting(Classifier|Regressor)|HistGradientBoosting\\w*|LGBM\\w*)\\b",
+          "\\bimport\\s+lightgbm\\b"
+        ]
+      },
+      "rutas": [
+        "gradient boosting"
+      ],
+      "resumen": "Construye árboles en secuencia, cada uno corrigiendo los errores del anterior.",
+      "icono": "tree",
+      "familia": "ml",
+      "padre": "regresion"
+    },
+    {
+      "id": "regresion-lineal",
+      "label": "Regresión lineal (simple y múltiple)",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "regresión lineal",
+        "linear regression"
+      ],
+      "codigo": {
+        "python": [
+          "\\bLinearRegression\\b",
+          "\\bsm\\.OLS\\b",
+          "\\bsmf\\.ols\\s*\\("
+        ]
+      },
+      "rutas": [
+        "regresion lineal"
+      ],
+      "resumen": "Relaciona una variable con una o varias explicativas mediante una recta (o un plano).",
+      "icono": "trend",
+      "familia": "ml",
+      "padre": "regresion"
+    },
+    {
+      "id": "ridge-lasso",
+      "label": "Regularización (Ridge y Lasso)",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "Ridge",
+        "Lasso",
+        "Elastic Net",
+        "regularización"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(Ridge|Lasso|ElasticNet)(CV)?\\b"
+        ]
+      },
+      "rutas": [
+        "ridge lasso",
+        "regularizacion"
+      ],
+      "resumen": "Penaliza coeficientes grandes para evitar el sobreajuste y simplificar el modelo.",
+      "icono": "sliders",
+      "familia": "ml",
+      "padre": "regresion"
+    },
+    {
+      "id": "kmeans",
+      "label": "K-Means",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "k-means",
+        "KMeans"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(MiniBatch)?KMeans\\b"
+        ]
+      },
+      "rutas": [
+        "kmeans",
+        "k means"
+      ],
+      "resumen": "Agrupa observaciones en k grupos alrededor de centros; exige elegir k con criterio.",
+      "icono": "clusters",
+      "familia": "ml",
+      "padre": "clustering"
+    },
+    {
+      "id": "clustering-jerarquico",
+      "label": "Clustering jerárquico",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "clustering jerárquico",
+        "agrupamiento jerárquico",
+        "dendrograma",
+        "hierarchical clustering"
+      ],
+      "codigo": {
+        "python": [
+          "\\bAgglomerativeClustering\\b",
+          "\\bdendrogram\\b",
+          "\\blinkage\\s*\\("
+        ]
+      },
+      "rutas": [
+        "jerarquico"
+      ],
+      "resumen": "Agrupa de abajo arriba y muestra el árbol de fusiones (dendrograma).",
+      "icono": "sitemap",
+      "familia": "ml",
+      "padre": "clustering"
+    },
+    {
+      "id": "pca",
+      "label": "PCA (componentes principales)",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "PCA",
+        "componentes principales"
+      ],
+      "codigo": {
+        "python": [
+          "\\bPCA\\s*\\("
+        ]
+      },
+      "rutas": [
+        "pca"
+      ],
+      "resumen": "Resume muchas variables correlacionadas en pocos componentes.",
+      "icono": "converge",
+      "familia": "ml",
+      "padre": "reduccion-dimensionalidad"
+    },
+    {
+      "id": "tsne",
+      "label": "t-SNE",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "t-SNE",
+        "tSNE"
+      ],
+      "codigo": {
+        "python": [
+          "\\bTSNE\\s*\\("
+        ]
+      },
+      "rutas": [
+        "tsne",
+        "t sne"
+      ],
+      "resumen": "Proyecta los datos en 2D conservando la vecindad; sirve para visualizar grupos.",
+      "icono": "converge",
+      "familia": "ml",
+      "padre": "reduccion-dimensionalidad"
+    },
+    {
+      "id": "mlp",
+      "label": "Perceptrón multicapa (MLP)",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "MLP",
+        "perceptrón multicapa"
+      ],
+      "codigo": {
+        "python": [
+          "\\bMLP(Classifier|Regressor)\\b",
+          "\\bSequential\\s*\\("
+        ]
+      },
+      "rutas": [
+        "mlp"
+      ],
+      "resumen": "Red neuronal de capas totalmente conectadas, la base del deep learning.",
+      "icono": "network",
+      "familia": "ml",
+      "padre": "deep-learning"
+    },
+    {
+      "id": "som",
+      "label": "Mapas autoorganizados (SOM)",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "SOM",
+        "mapas autoorganizados",
+        "self-organizing map",
+        "Self-Organizing Maps"
+      ],
+      "codigo": {
+        "python": [
+          "\\bMiniSom\\b",
+          "\\b(import|from)\\s+minisom\\b"
+        ]
+      },
+      "rutas": [
+        "som"
+      ],
+      "resumen": "Red no supervisada que organiza los datos en un mapa 2D según su parecido.",
+      "icono": "grid",
+      "familia": "ml",
+      "padre": "deep-learning"
+    },
+    {
+      "id": "arima",
+      "label": "ARIMA, SARIMA y SARIMAX",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "ARIMA",
+        "SARIMA",
+        "SARIMAX",
+        "auto_arima"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(SARIMAX?|ARIMAX?|auto_arima)\\b"
+        ]
+      },
+      "rutas": [
+        "arima",
+        "sarima"
+      ],
+      "resumen": "Modelos estadísticos de series temporales, con estacionalidad y variables externas.",
+      "icono": "trend",
+      "familia": "ml",
+      "padre": "forecasting"
+    },
+    {
+      "id": "analisis-series",
+      "label": "Estacionariedad, ACF/PACF y descomposición",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "estacionariedad",
+        "autocorrelación",
+        "ACF",
+        "PACF",
+        "descomposición estacional"
+      ],
+      "codigo": {
+        "python": [
+          "\\badfuller\\b",
+          "\\bkpss\\b",
+          "\\bplot_p?acf\\b",
+          "\\bp?acf\\s*\\(",
+          "\\bseasonal_decompose\\b"
+        ]
+      },
+      "resumen": "Diagnóstico previo de una serie: tendencia, estacionalidad y dependencia temporal.",
+      "icono": "search-chart",
+      "familia": "ml",
+      "padre": "forecasting"
+    },
+    {
+      "id": "refuerzo",
+      "label": "Aprendizaje por refuerzo",
+      "tipo": "concepto",
+      "region": "analisis",
+      "naturaleza": "explicativa",
+      "terminos": [
+        "aprendizaje por refuerzo",
+        "reinforcement learning",
+        "Q-learning"
+      ],
+      "rutas": [
+        "aprendizaje por refuerzo"
+      ],
+      "resumen": "Un agente aprende probando acciones y recibiendo recompensas.",
+      "icono": "cycle",
+      "familia": "ml",
+      "padre": "ml"
+    },
+    {
+      "id": "sarsa",
+      "label": "SARSA",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "SARSA"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(sarsa|q_table|q_learning)\\b"
+        ]
+      },
+      "rutas": [
+        "sarsa"
+      ],
+      "resumen": "Algoritmo de refuerzo que actualiza el valor de cada acción con la política que sigue.",
+      "icono": "cycle",
+      "familia": "ml",
+      "padre": "refuerzo"
+    },
+    {
+      "id": "recomendacion-contenido",
+      "label": "Recomendación basada en contenido",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "basado en contenido",
+        "content-based",
+        "similitud del coseno"
+      ],
+      "codigo": {
+        "python": [
+          "\\bcosine_similarity\\b"
+        ]
+      },
+      "rutas": [
+        "recomendador peliculas contenido"
+      ],
+      "resumen": "Recomienda elementos parecidos a los que ya gustaron, según sus características.",
+      "icono": "thumbs",
+      "familia": "ml",
+      "padre": "recomendadores"
+    },
+    {
+      "id": "ia-bigdata",
+      "label": "IA y Big Data",
+      "tipo": "concepto",
+      "region": "analisis",
+      "naturaleza": "explicativa",
+      "terminos": [
+        "inteligencia artificial",
+        "big data"
+      ],
+      "rutas": [
+        "ia bigdata",
+        "ia big data"
+      ],
+      "resumen": "Aplicaciones de IA y procesamiento de datos a gran escala que van más allá del modelado clásico.",
+      "icono": "brain",
+      "familia": "ml"
+    },
+    {
+      "id": "agentes-ia",
+      "label": "Agentes y chatbots",
+      "tipo": "concepto",
+      "region": "analisis",
+      "naturaleza": "explicativa",
+      "terminos": [
+        "chatbot",
+        "agente de IA",
+        "agentes de IA"
+      ],
+      "rutas": [
+        "agentes ia"
+      ],
+      "resumen": "Programas que conversan o actúan siguiendo reglas o modelos.",
+      "icono": "chat",
+      "familia": "ml",
+      "padre": "ia-bigdata"
+    },
+    {
+      "id": "vision-artificial",
+      "label": "Visión artificial",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "visión artificial",
+        "computer vision",
+        "YOLO",
+        "detección de objetos",
+        "OpenCV"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(import|from)\\s+(ultralytics|cv2)\\b",
+          "\\bYOLO\\s*\\("
+        ]
+      },
+      "rutas": [
+        "vision artificial"
+      ],
+      "resumen": "Detectar y contar objetos en imágenes o vídeo con redes neuronales.",
+      "icono": "eye",
+      "familia": "ml",
+      "padre": "ia-bigdata"
+    },
+    {
+      "id": "reglas-asociacion",
+      "label": "Reglas de asociación (Apriori)",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "Apriori",
+        "reglas de asociación",
+        "cesta de la compra"
+      ],
+      "codigo": {
+        "python": [
+          "\\bapriori\\s*\\(",
+          "\\bassociation_rules\\b"
+        ]
+      },
+      "rutas": [
+        "mineria datos",
+        "apriori"
+      ],
+      "resumen": "Encuentra productos que se compran juntos con soporte, confianza y lift.",
+      "icono": "cart",
+      "familia": "ml",
+      "padre": "ia-bigdata"
+    },
+    {
+      "id": "pyspark",
+      "label": "PySpark y Spark",
+      "tipo": "tecnica",
+      "region": "datos",
+      "naturaleza": "practica",
+      "terminos": [
+        "PySpark",
+        "Spark"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(from|import)\\s+pyspark\\b",
+          "\\bSparkSession\\b"
+        ]
+      },
+      "rutas": [
+        "pyspark"
+      ],
+      "resumen": "Procesamiento distribuido en Python sobre Apache Spark.",
+      "icono": "servers",
+      "familia": "ingenieria",
+      "padre": "big-data"
+    },
+    {
+      "id": "metricas-clasificacion",
+      "label": "Métricas de clasificación",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "matriz de confusión",
+        "curva ROC",
+        "F1-score"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(confusion_matrix|classification_report|roc_auc_score|roc_curve|f1_score|precision_score|recall_score|accuracy_score)\\b"
+        ]
+      },
+      "resumen": "Medir un clasificador: exactitud, precisión, recall, F1, AUC y matriz de confusión.",
+      "icono": "ruler",
+      "familia": "ml",
+      "padre": "model-eval"
+    },
+    {
+      "id": "metricas-regresion",
+      "label": "Métricas de regresión",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "RMSE",
+        "MAE"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(mean_squared_error|mean_absolute_error|r2_score|mean_absolute_percentage_error|root_mean_squared_error)\\b"
+        ]
+      },
+      "resumen": "Medir un modelo de regresión: RMSE, MAE, MAPE y R².",
+      "icono": "ruler",
+      "familia": "ml",
+      "padre": "model-eval"
+    },
+    {
+      "id": "validacion-cruzada",
+      "label": "Separación y validación cruzada",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "validación cruzada",
+        "cross validation",
+        "train test split"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(train_test_split|cross_val_score|cross_val_predict|KFold|StratifiedKFold|TimeSeriesSplit)\\b"
+        ]
+      },
+      "resumen": "Separar datos de entrenamiento y prueba y repetir la evaluación para no engañarse.",
+      "icono": "ruler",
+      "familia": "ml",
+      "padre": "model-eval"
+    },
+    {
+      "id": "ajuste-hiperparametros",
+      "label": "Ajuste de hiperparámetros",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "hiperparámetros",
+        "grid search"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(GridSearchCV|RandomizedSearchCV)\\b",
+          "\\bimport\\s+optuna\\b"
+        ]
+      },
+      "resumen": "Probar combinaciones de parámetros del modelo y quedarse con la mejor validada.",
+      "icono": "sliders",
+      "familia": "ml",
+      "padre": "model-eval"
+    },
+    {
+      "id": "comparacion-modelos",
+      "label": "Comparación de modelos",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "explicativa",
+      "terminos": [
+        "comparativa de modelos",
+        "comparación de modelos"
+      ],
+      "rutas": [
+        "comparativa modelos"
+      ],
+      "resumen": "Enfrentar varios modelos con las mismas métricas para elegir con criterio.",
+      "icono": "ab",
+      "familia": "ml",
+      "padre": "model-eval"
+    },
+    {
+      "id": "escalado-variables",
+      "label": "Escalado de variables",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "escalado",
+        "estandarización",
+        "normalización"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(StandardScaler|MinMaxScaler|RobustScaler)\\b"
+        ]
+      },
+      "resumen": "Poner las variables en escalas comparables antes de modelar.",
+      "icono": "wrench",
+      "familia": "ml",
+      "padre": "feature-eng"
+    },
+    {
+      "id": "codificacion-variables",
+      "label": "Codificación de variables categóricas",
+      "tipo": "tecnica",
+      "region": "analisis",
+      "naturaleza": "practica",
+      "terminos": [
+        "one-hot",
+        "codificación de variables"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(OneHotEncoder|LabelEncoder|OrdinalEncoder)\\b",
+          "\\bget_dummies\\b"
+        ]
+      },
+      "resumen": "Convertir categorías en números que un modelo pueda usar.",
+      "icono": "wrench",
+      "familia": "ml",
+      "padre": "feature-eng"
+    },
+    {
+      "id": "imputacion-valores",
+      "label": "Tratamiento de valores ausentes",
+      "tipo": "tecnica",
+      "region": "datos",
+      "naturaleza": "practica",
+      "terminos": [
+        "valores ausentes",
+        "imputación"
+      ],
+      "codigo": {
+        "python": [
+          "\\b(SimpleImputer|KNNImputer|IterativeImputer)\\b",
+          "\\.fillna\\s*\\("
+        ]
+      },
+      "resumen": "Decidir qué hacer con los datos que faltan: eliminar, imputar o marcar.",
+      "icono": "wrench",
+      "familia": "ml",
+      "padre": "feature-eng"
+    },
+    {
+      "id": "sql-subconsultas",
+      "label": "Subconsultas",
+      "tipo": "tecnica",
+      "region": "datos",
+      "naturaleza": "practica",
+      "terminos": [
+        "subconsulta",
+        "subconsultas",
+        "subquery",
+        "subqueries"
+      ],
+      "codigo": {
+        "sql": [
+          "\\(\\s*SELECT\\b"
+        ]
+      },
+      "resumen": "Consultas dentro de consultas, incluidas las correlacionadas.",
+      "icono": "layers",
+      "familia": "sql",
+      "padre": "sql"
+    },
+    {
+      "id": "sql-agregaciones",
+      "label": "Agregaciones y agrupaciones",
+      "tipo": "tecnica",
+      "region": "datos",
+      "naturaleza": "practica",
+      "terminos": [
+        "GROUP BY",
+        "agregaciones"
+      ],
+      "codigo": {
+        "sql": [
+          "\\bGROUP\\s+BY\\b",
+          "\\bHAVING\\b"
+        ]
+      },
+      "resumen": "Resumir filas con GROUP BY, HAVING y funciones de agregado.",
+      "icono": "table",
+      "familia": "sql",
+      "padre": "sql"
+    },
+    {
+      "id": "sql-ddl",
+      "label": "Creación de tablas y vistas (DDL)",
+      "tipo": "tecnica",
+      "region": "datos",
+      "naturaleza": "practica",
+      "terminos": [
+        "CREATE TABLE",
+        "CREATE VIEW"
+      ],
+      "codigo": {
+        "sql": [
+          "\\bCREATE\\s+(TABLE|VIEW)\\b"
+        ]
+      },
+      "resumen": "Definir la estructura: tablas, claves y vistas.",
+      "icono": "database",
+      "familia": "sql",
+      "padre": "sql"
     }
   ],
   "relaciones": [
@@ -1333,6 +2776,240 @@
       "negocio",
       "habilita",
       "Contar bien los datos es lo que traslada una recomendación a quien decide."
+    ],
+    [
+      "dax-avanzado",
+      "dax",
+      "parte-de",
+      "Son funciones del propio lenguaje DAX para casos avanzados."
+    ],
+    [
+      "dax-avanzado",
+      "dax-contexto",
+      "requiere",
+      "TREATAS, WINDOW o RANKX solo se usan bien entendiendo cómo modifican el contexto de filtro."
+    ],
+    [
+      "pbi-diseno-dinamico",
+      "diseno-dashboard",
+      "mejora",
+      "Parámetros de campo y formato condicional permiten informes que se adaptan sin duplicar páginas."
+    ],
+    [
+      "pbi-diseno-dinamico",
+      "powerbi",
+      "parte-de",
+      "Son funcionalidades de Power BI Desktop."
+    ],
+    [
+      "numpy-scipy",
+      "pandas",
+      "habilita",
+      "pandas se apoya en NumPy; SciPy y statsmodels añaden los contrastes estadísticos."
+    ],
+    [
+      "numpy-scipy",
+      "estadistica",
+      "usa",
+      "Los contrastes y modelos estadísticos en Python se calculan con SciPy y statsmodels."
+    ],
+    [
+      "apis-datos",
+      "etl",
+      "habilita",
+      "Una API es una fuente más del pipeline de datos."
+    ],
+    [
+      "big-data",
+      "etl",
+      "mejora",
+      "El procesamiento distribuido permite pipelines sobre volúmenes grandes."
+    ],
+    [
+      "cloud-datos",
+      "big-data",
+      "habilita",
+      "Las plataformas cloud ofrecen el cómputo distribuido sin montar infraestructura."
+    ],
+    [
+      "cloud-datos",
+      "automatizacion",
+      "habilita",
+      "En la nube las cargas y actualizaciones se programan y monitorizan."
+    ],
+    [
+      "reduccion-dimensionalidad",
+      "clustering",
+      "mejora",
+      "Reducir dimensiones antes de agrupar mejora la separación y permite visualizar los grupos."
+    ],
+    [
+      "reduccion-dimensionalidad",
+      "ml",
+      "parte-de",
+      "Es una técnica de aprendizaje no supervisado."
+    ],
+    [
+      "deep-learning",
+      "ml",
+      "parte-de",
+      "Las redes neuronales profundas son una familia de modelos de machine learning."
+    ],
+    [
+      "ia-generativa",
+      "deep-learning",
+      "usa",
+      "Los modelos de lenguaje son redes neuronales profundas (transformers)."
+    ],
+    [
+      "recomendadores",
+      "ml",
+      "parte-de",
+      "Los recomendadores aplican técnicas de aprendizaje sobre el comportamiento de usuarios."
+    ],
+    [
+      "experimentacion",
+      "estadistica",
+      "usa",
+      "Un test A/B se decide con un contraste de hipótesis y un tamaño muestral adecuado."
+    ],
+    [
+      "experimentacion",
+      "decisiones",
+      "habilita",
+      "Un experimento bien diseñado convierte una opinión en una decisión respaldada."
+    ],
+    [
+      "desarrollo-web",
+      "visualizacion-datos",
+      "habilita",
+      "Con HTML, CSS y JS se construyen visualizaciones a medida fuera de las herramientas de BI."
+    ],
+    [
+      "desarrollo-web",
+      "accesibilidad",
+      "usa",
+      "La accesibilidad web (WCAG) se implementa en el propio código de la página."
+    ],
+    [
+      "retail-ventas",
+      "negocio",
+      "habilita",
+      "Conocer el sector permite formular preguntas de negocio relevantes."
+    ],
+    [
+      "finanzas",
+      "negocio",
+      "habilita",
+      "Entender la cuenta de resultados permite traducir datos en impacto económico."
+    ],
+    [
+      "marketing-clientes",
+      "negocio",
+      "habilita",
+      "El vocabulario de clientes y campañas orienta los análisis a decisiones comerciales."
+    ],
+    [
+      "turismo-hosteleria",
+      "negocio",
+      "habilita",
+      "Conocer reservas, ocupación y precios orienta el análisis en viajes y hostelería."
+    ],
+    [
+      "marketing-clientes",
+      "clustering",
+      "usa",
+      "La segmentación de clientes (RFM y similares) suele resolverse con clustering."
+    ],
+    [
+      "finanzas",
+      "kpi",
+      "habilita",
+      "Margen, presupuesto y desviaciones son KPI financieros habituales."
+    ],
+    [
+      "retail-ventas",
+      "forecasting",
+      "usa",
+      "La previsión de la demanda es una necesidad central del retail."
+    ],
+    [
+      "ibcs",
+      "finanzas",
+      "mejora",
+      "IBCS nace en el reporting financiero: variaciones frente a presupuesto y año anterior."
+    ],
+    [
+      "xgboost",
+      "gradient-boosting",
+      "usa",
+      "XGBoost es una implementación optimizada de gradient boosting."
+    ],
+    [
+      "vision-artificial",
+      "deep-learning",
+      "usa",
+      "La visión artificial moderna se apoya en redes neuronales convolucionales."
+    ],
+    [
+      "arima",
+      "analisis-series",
+      "requiere",
+      "ARIMA exige diagnosticar antes la estacionariedad y la autocorrelación."
+    ],
+    [
+      "kmeans",
+      "pca",
+      "mejora",
+      "Reducir dimensiones antes de agrupar mejora la separación y permite visualizar los grupos."
+    ],
+    [
+      "kmeans",
+      "tsne",
+      "mejora",
+      "Proyectar con t-SNE ayuda a comprobar visualmente si los grupos de K-Means tienen sentido."
+    ],
+    [
+      "random-forest",
+      "arbol-decision",
+      "usa",
+      "Un random forest es un conjunto de árboles de decisión."
+    ],
+    [
+      "ridge-lasso",
+      "regresion-lineal",
+      "mejora",
+      "La regularización corrige el sobreajuste de la regresión lineal con muchas variables."
+    ],
+    [
+      "metricas-clasificacion",
+      "clasificacion",
+      "habilita",
+      "Sin métricas no se puede comparar ni elegir un clasificador."
+    ],
+    [
+      "metricas-regresion",
+      "regresion",
+      "habilita",
+      "Sin métricas de error no se puede valorar un modelo de regresión."
+    ],
+    [
+      "ajuste-hiperparametros",
+      "validacion-cruzada",
+      "requiere",
+      "Ajustar parámetros sin validar lleva al sobreajuste."
+    ],
+    [
+      "comparacion-modelos",
+      "metricas-clasificacion",
+      "requiere",
+      "Comparar modelos exige usar las mismas métricas para todos."
+    ],
+    [
+      "sql-subconsultas",
+      "sql-cte",
+      "mejora",
+      "Las CTE suelen hacer más legibles las subconsultas anidadas."
     ]
   ],
   "competencias": [
@@ -1358,7 +3035,9 @@
       ],
       "esfuerzo": "medio",
       "siguiente": "Documenta en un proyecto los problemas de calidad que encontraste (nulos, duplicados, tipos) y cómo los trataste, con una comprobación automática de cada regla.",
-      "resultado": "Un caso de calidad de datos que se puede explicar y reproducir."
+      "resultado": "Un caso de calidad de datos que se puede explicar y reproducir.",
+      "icono": "shield-check",
+      "familia": "ingenieria"
     },
     {
       "id": "sql-analitico",
@@ -1383,7 +3062,9 @@
       ],
       "esfuerzo": "medio",
       "siguiente": "Resuelve un análisis con funciones de ventana y CTE sobre un dataset propio y compara el plan de ejecución antes y después de optimizarlo.",
-      "resultado": "Un proyecto SQL que demuestre consultas por capas y criterio de rendimiento."
+      "resultado": "Un proyecto SQL que demuestre consultas por capas y criterio de rendimiento.",
+      "icono": "database",
+      "familia": "sql"
     },
     {
       "id": "python-analisis",
@@ -1395,7 +3076,9 @@
       ],
       "opcionales": [
         "jupyter",
-        "eda"
+        "eda",
+        "numpy-scipy",
+        "apis-datos"
       ],
       "niveles": {
         "junior": 2,
@@ -1407,7 +3090,9 @@
       ],
       "esfuerzo": "medio",
       "siguiente": "Convierte un notebook en un script reproducible con funciones y datos de entrada definidos.",
-      "resultado": "Un análisis en Python que otra persona puede volver a ejecutar."
+      "resultado": "Un análisis en Python que otra persona puede volver a ejecutar.",
+      "icono": "braces",
+      "familia": "python"
     },
     {
       "id": "powerbi-dax",
@@ -1416,12 +3101,14 @@
       "nucleo": [
         "powerbi",
         "dax",
-        "power-query"
+        "power-query",
+        "power-bi-service"
       ],
       "opcionales": [
         "dax-contexto",
         "time-intelligence",
-        "power-bi-service"
+        "dax-avanzado",
+        "pbi-diseno-dinamico"
       ],
       "niveles": {
         "junior": 3,
@@ -1433,7 +3120,9 @@
       ],
       "esfuerzo": "medio",
       "siguiente": "Publica un informe en Power BI Service con actualización programada y medidas de inteligencia de tiempo documentadas.",
-      "resultado": "Un informe completo, del dato al servicio, con medidas que se pueden justificar."
+      "resultado": "Un informe completo, del dato al servicio, con medidas que se pueden justificar.",
+      "icono": "powerbi",
+      "familia": "bi"
     },
     {
       "id": "modelado",
@@ -1457,7 +3146,9 @@
       ],
       "esfuerzo": "medio",
       "siguiente": "Redacta la decisión de modelado de un proyecto existente: qué son hechos y dimensiones, qué granularidad tiene cada tabla y por qué.",
-      "resultado": "Un modelo en estrella documentado, con granularidad y claves explicadas."
+      "resultado": "Un modelo en estrella documentado, con granularidad y claves explicadas.",
+      "icono": "star-schema",
+      "familia": "bi"
     },
     {
       "id": "estadistica-eda",
@@ -1468,7 +3159,9 @@
         "eda"
       ],
       "opcionales": [
-        "pandas"
+        "pandas",
+        "experimentacion",
+        "numpy-scipy"
       ],
       "niveles": {
         "junior": 2,
@@ -1481,7 +3174,9 @@
       ],
       "esfuerzo": "medio",
       "siguiente": "Acompaña un análisis con un contraste de hipótesis o un intervalo de confianza e indica qué se puede y qué no se puede concluir.",
-      "resultado": "Un análisis que separa lo observado de lo inferido."
+      "resultado": "Un análisis que separa lo observado de lo inferido.",
+      "icono": "bell",
+      "familia": "python"
     },
     {
       "id": "kpi-seguimiento",
@@ -1505,7 +3200,9 @@
       ],
       "esfuerzo": "bajo",
       "siguiente": "Escribe la ficha de cada KPI de un proyecto: definición, fórmula, fuente, periodicidad y qué decisión informa.",
-      "resultado": "Un catálogo de KPI con definición inequívoca."
+      "resultado": "Un catálogo de KPI con definición inequívoca.",
+      "icono": "target",
+      "familia": "negocio"
     },
     {
       "id": "visualizacion-comunicacion",
@@ -1531,7 +3228,9 @@
       ],
       "esfuerzo": "bajo",
       "siguiente": "Re-escribe un informe con un mensaje por página y una comprobación de accesibilidad de color y contraste.",
-      "resultado": "Un informe donde cada gráfico responde una pregunta y se puede leer sin ayuda."
+      "resultado": "Un informe donde cada gráfico responde una pregunta y se puede leer sin ayuda.",
+      "icono": "chart",
+      "familia": "storytelling"
     },
     {
       "id": "negocio-interpretacion",
@@ -1542,7 +3241,11 @@
       ],
       "opcionales": [
         "kpi",
-        "decisiones"
+        "decisiones",
+        "retail-ventas",
+        "finanzas",
+        "marketing-clientes",
+        "turismo-hosteleria"
       ],
       "niveles": {
         "junior": 1,
@@ -1555,7 +3258,9 @@
       ],
       "esfuerzo": "alto",
       "siguiente": "Parte de una pregunta de negocio real (no del dataset) y termina con una recomendación y su impacto esperado.",
-      "resultado": "Un caso donde se ve la decisión que cambia el análisis."
+      "resultado": "Un caso donde se ve la decisión que cambia el análisis.",
+      "icono": "briefcase",
+      "familia": "negocio"
     },
     {
       "id": "automatizacion-fiabilidad",
@@ -1579,7 +3284,9 @@
       ],
       "esfuerzo": "alto",
       "siguiente": "Añade a un proyecto una comprobación automática y una ejecución programada, y deja constancia de qué pasa si falla.",
-      "resultado": "Un pipeline que avisa cuando algo se rompe."
+      "resultado": "Un pipeline que avisa cuando algo se rompe.",
+      "icono": "cycle",
+      "familia": "ingenieria"
     },
     {
       "id": "documentacion-git",
@@ -1601,7 +3308,9 @@
       ],
       "esfuerzo": "bajo",
       "siguiente": "Homogeneiza los README de tus proyectos con el mismo esquema: problema, datos, método, resultados y limitaciones.",
-      "resultado": "Proyectos que se entienden en cinco minutos."
+      "resultado": "Proyectos que se entienden en cinco minutos.",
+      "icono": "doc",
+      "familia": "ingenieria"
     },
     {
       "id": "explicar-decisiones",
@@ -1624,7 +3333,9 @@
       ],
       "esfuerzo": "bajo",
       "siguiente": "Añade a cada proyecto una sección «Decisiones y limitaciones» con alternativas descartadas.",
-      "resultado": "Respuestas preparadas para «¿por qué lo hiciste así?» en una entrevista."
+      "resultado": "Respuestas preparadas para «¿por qué lo hiciste así?» en una entrevista.",
+      "icono": "compass",
+      "familia": "negocio"
     },
     {
       "id": "ml-aplicado",
@@ -1640,7 +3351,11 @@
         "clustering",
         "forecasting",
         "feature-eng",
-        "explicabilidad"
+        "explicabilidad",
+        "reduccion-dimensionalidad",
+        "deep-learning",
+        "ia-generativa",
+        "recomendadores"
       ],
       "niveles": {
         "junior": 0,
@@ -1652,11 +3367,13 @@
       ],
       "esfuerzo": "alto",
       "siguiente": "Cierra un proyecto de modelado con validación honesta (partición temporal si hay tiempo) y una explicación de qué variables pesan.",
-      "resultado": "Un modelo evaluado y explicado, con el límite de lo que puede afirmar."
+      "resultado": "Un modelo evaluado y explicado, con el límite de lo que puede afirmar.",
+      "icono": "brain",
+      "familia": "ml"
     },
     {
       "id": "ux-complementario",
-      "label": "UX/UI y diseño de interfaces",
+      "label": "UX/UI, diseño de interfaces y web",
       "region": "ux",
       "nucleo": [
         "ux-ui"
@@ -1664,7 +3381,8 @@
       "opcionales": [
         "investigacion-usuarios",
         "arquitectura-informacion",
-        "figma"
+        "figma",
+        "desarrollo-web"
       ],
       "niveles": {
         "junior": 0,
@@ -1677,7 +3395,9 @@
       ],
       "esfuerzo": "medio",
       "siguiente": "Aplica un hallazgo de investigación de usuarios al rediseño de un dashboard y documenta el antes y el después.",
-      "resultado": "Un caso que une UX con análisis de datos."
+      "resultado": "Un caso que une UX con análisis de datos.",
+      "icono": "cursor",
+      "familia": "ux"
     },
     {
       "id": "excel-operativo",
@@ -1698,7 +3418,119 @@
       ],
       "esfuerzo": "bajo",
       "siguiente": "Reproduce un análisis de Excel en SQL o Power Query y anota qué ganas y qué pierdes.",
-      "resultado": "Una comparativa que muestra criterio al elegir herramienta."
+      "resultado": "Una comparativa que muestra criterio al elegir herramienta.",
+      "icono": "grid",
+      "familia": "ingenieria"
+    },
+    {
+      "id": "plataformas-datos",
+      "label": "Plataformas de datos (cloud y big data)",
+      "region": "datos",
+      "nucleo": [
+        "cloud-datos"
+      ],
+      "opcionales": [
+        "big-data",
+        "apis-datos",
+        "automatizacion"
+      ],
+      "niveles": {
+        "junior": 0,
+        "consolidado": 1,
+        "mid": 2
+      },
+      "buscarEn": [
+        "practica"
+      ],
+      "esfuerzo": "alto",
+      "siguiente": "Lleva un proyecto existente a una plataforma en la nube (Fabric, Azure o Supabase) con carga programada y documenta el coste y los permisos.",
+      "resultado": "Un pipeline en la nube que se actualiza solo y se puede explicar.",
+      "icono": "cloud",
+      "familia": "ingenieria"
+    },
+    {
+      "id": "conocimiento-sectorial",
+      "label": "Conocimiento de sectores de negocio",
+      "region": "negocio",
+      "nucleo": [
+        "retail-ventas"
+      ],
+      "opcionales": [
+        "finanzas",
+        "marketing-clientes",
+        "turismo-hosteleria"
+      ],
+      "niveles": {
+        "junior": 1,
+        "consolidado": 2,
+        "mid": 3
+      },
+      "buscarEn": [
+        "explicativa"
+      ],
+      "esfuerzo": "medio",
+      "siguiente": "Elige el sector al que te presentas y reescribe un proyecto con su vocabulario y sus KPI (por ejemplo, margen por categoría y rotación en retail).",
+      "resultado": "Un caso que habla el idioma del sector al que aplicas.",
+      "icono": "store",
+      "familia": "negocio"
+    }
+  ],
+  "familias": [
+    {
+      "id": "bi",
+      "label": "Power BI y Business Intelligence",
+      "color": "#F5C84C",
+      "ink": "#8A6500",
+      "icono": "powerbi"
+    },
+    {
+      "id": "sql",
+      "label": "SQL y bases de datos",
+      "color": "#4C8BF5",
+      "ink": "#1F5BC4",
+      "icono": "database"
+    },
+    {
+      "id": "python",
+      "label": "Python y análisis de datos",
+      "color": "#36A265",
+      "ink": "#1E7A48",
+      "icono": "notebook"
+    },
+    {
+      "id": "ml",
+      "label": "Machine Learning e IA",
+      "color": "#8B5CF6",
+      "ink": "#6535D6",
+      "icono": "brain"
+    },
+    {
+      "id": "storytelling",
+      "label": "Data Storytelling y visualización",
+      "color": "#D96C45",
+      "ink": "#B04E2B",
+      "icono": "chart"
+    },
+    {
+      "id": "ux",
+      "label": "UX/UI y diseño",
+      "color": "#D95D9E",
+      "ink": "#B03A7C",
+      "icono": "cursor"
+    },
+    {
+      "id": "ingenieria",
+      "label": "Ingeniería y preparación de datos",
+      "color": "#168A83",
+      "ink": "#0F6A64",
+      "icono": "transform"
+    },
+    {
+      "id": "negocio",
+      "label": "Negocio y competencias transversales",
+      "color": "#64748B",
+      "ink": "#475569",
+      "icono": "briefcase"
     }
   ]
 }

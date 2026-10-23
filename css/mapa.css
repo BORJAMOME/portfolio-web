@@ -1,0 +1,252 @@
+/* ═══════════════════════════════════════════════
+   css/mapa.css: pestaña «Mapa» del área privada (#/mapa, area-privada-mapa.js)
+   ─────────────────────────────────────────────────
+   Diagrama de árbol en gris sobre blanco: título con notas y líneas guía, un bus
+   horizontal que reparte los bloques, ramas con codos finos y flechas punteadas
+   curvas entre ramas. El árbol es HTML real (listas anidadas con botones); el SVG solo
+   dibuja las flechas por encima y es decorativo (aria-hidden): las relaciones también
+   salen como texto en el panel de detalle.
+   Usa los tokens de css/area-privada.css. Sin estilos en línea (CSP): las medidas del
+   SVG se ponen desde el script, no desde este archivo.
+   ═══════════════════════════════════════════════ */
+.mp {
+  --mp-line: #8f99aa;          /* ramas y líneas guía */
+  --mp-edge: #6f7a8f;          /* flechas punteadas */
+  --mp-row: 24px;              /* alto de una fila del árbol */
+  --mp-mid: 12px;              /* altura del codo respecto al inicio de la fila */
+  font-family: var(--font);
+  color: var(--text);
+}
+
+/* ─── LIENZO ─── */
+.mp-canvas {
+  position: relative;
+  background: var(--white);
+  border: 1px solid var(--ap-line);
+  border-radius: var(--radius-lg);
+  padding: 30px clamp(18px, 2.6vw, 44px) 40px;
+}
+
+/* ─── TÍTULO ─── */
+.mp-head { text-align: center; padding-top: 34px; }
+.mp-title { display: inline-block; font-size: 22px; line-height: 1.2; font-weight: 700; letter-spacing: -.2px; color: var(--ink); }
+.mp-ver {
+  margin: 12px 0 0; font-size: 11.5px; font-weight: 600; color: var(--muted); letter-spacing: .01em;
+  font-variant-numeric: tabular-nums;
+}
+.mp-stem { position: relative; height: 22px; }
+.mp-stem::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; border-left: 1px solid var(--mp-line); }
+
+/* ─── NOTAS CON LÍNEA GUÍA ─── */
+.mp-lab { position: relative; display: inline-block; width: max-content; max-width: calc(100% + 5px); min-width: 0; margin-left: -5px; }
+.mp-note {
+  position: absolute; left: calc(100% + 16px); bottom: calc(100% - 7px);
+  width: max-content; max-width: min(210px, 52vw);
+  font-size: 11.5px; font-weight: 600; line-height: 1.3; color: var(--muted);
+  text-align: left; pointer-events: none;
+}
+.mp-note::before {
+  content: ''; position: absolute; left: -16px; bottom: -4px; width: 17px;
+  border-top: 1px solid var(--mp-line); transform-origin: left center; transform: rotate(-36deg);
+}
+.mp-note--l { left: auto; right: calc(100% + 16px); text-align: right; }
+.mp-note--l::before { left: auto; right: -16px; transform-origin: right center; transform: rotate(36deg); }
+.mp-note--sub { font-weight: 500; }
+
+/* ─── COLUMNAS Y BUS ─── */
+.mp-cols { position: relative; display: grid; grid-template-columns: repeat(var(--cols, 5), minmax(0, 1fr)); align-items: start; }
+.mp-col { position: relative; min-width: 0; padding: 62px 18px 0 0; }
+.mp-col::before { content: ''; position: absolute; left: 14px; top: 0; width: 100%; border-top: 1px solid var(--mp-line); }
+.mp-col:last-child::before, .mp-col.is-last::before { display: none; }
+.mp-col::after { content: ''; position: absolute; left: 14px; top: 0; height: 56px; border-left: 1px solid var(--mp-line); }
+.mp-colhead { font-size: 15px; line-height: 1.3; font-weight: 700; color: var(--ink); }
+.mp-colhead .mp-label { font-weight: 700; }
+
+/* ─── ÁRBOL ─── */
+.mp-tree, .mp-tree ul { list-style: none; margin: 0; padding: 0; }
+.mp-tree { margin: 8px 0 0 6px; }
+.mp-tree ul { margin-left: 4px; }
+.mp-node { --mp-top: 0px; position: relative; padding: var(--mp-top) 0 0 20px; }
+.mp-node--note { --mp-top: 24px; }
+.mp-node::before {                         /* tronco: baja por toda la fila */
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; border-left: 1px solid var(--mp-line);
+}
+.mp-node:last-child::before { bottom: auto; height: calc(var(--mp-top) + var(--mp-mid)); }
+.mp-node::after {                          /* codo hacia la etiqueta */
+  content: ''; position: absolute; left: 0; top: calc(var(--mp-top) + var(--mp-mid)); width: 13px; border-top: 1px solid var(--mp-line);
+}
+.mp-row { min-height: var(--mp-row); display: flex; align-items: center; }
+
+.mp-label {
+  display: inline-block; max-width: 100%;
+  appearance: none; background: none; border: 0; margin: 0; padding: 1px 5px;
+  font: inherit; font-size: 13.5px; line-height: 1.35; color: var(--ink); text-align: left;
+  border-radius: 5px; cursor: pointer; overflow-wrap: break-word; min-width: 0;
+  transition: background-color .12s, color .12s, opacity .12s;
+}
+.mp-node > .mp-row .mp-label.mp-t-grupo,
+.mp-node > .mp-row .mp-label.mp-t-esquema { font-weight: 600; }
+.mp-label.mp-t-tabla, .mp-label.mp-t-funcion, .mp-label.mp-t-herramienta, .mp-label.mp-t-workflow { font-family: var(--font-mono); font-size: 12.5px; }
+@media (hover: hover) and (pointer: fine) { .mp-label:hover { background: var(--ap-hover); text-decoration: underline; text-underline-offset: 3px; } }
+.mp-label:focus-visible { outline: 2px solid var(--purple-text); outline-offset: 1px; }
+
+/* Marca de tipo: el color dice la familia y la forma la repite (el color solo no basta). */
+.mp-label[data-fam] { padding-left: 22px; text-indent: -17px; }
+.mp-label[data-fam]::before { display: inline-block; margin-right: 7px; vertical-align: -1px; text-indent: 0; }
+.mp-label[data-fam]::before, .mp-key::before, .mp-dot {
+  content: ''; flex: none; width: 10px; height: 10px; background: var(--fam, #44546F);
+}
+.mp-label[data-shape="circulo"]::before, .mp-key[data-shape="circulo"]::before, .mp-dot[data-shape="circulo"] { border-radius: 50%; }
+.mp-label[data-shape="cuadrado"]::before, .mp-key[data-shape="cuadrado"]::before, .mp-dot[data-shape="cuadrado"] { border-radius: 1.5px; }
+.mp-label[data-shape="rombo"]::before, .mp-key[data-shape="rombo"]::before, .mp-dot[data-shape="rombo"] { clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
+.mp-label[data-shape="triangulo"]::before, .mp-key[data-shape="triangulo"]::before, .mp-dot[data-shape="triangulo"] { clip-path: polygon(50% 4%, 100% 94%, 0 94%); }
+.mp-label[data-shape="hexagono"]::before, .mp-key[data-shape="hexagono"]::before, .mp-dot[data-shape="hexagono"] { clip-path: polygon(25% 4%, 75% 4%, 100% 50%, 75% 96%, 25% 96%, 0 50%); }
+.mp-dot { display: inline-block; margin-right: 8px; vertical-align: -1px; }
+
+/* estados de selección */
+.mp.has-active .mp-label:not(.is-rel):not(.is-active) { color: var(--muted); }
+.mp.has-active .mp-label:not(.is-rel):not(.is-active)::before { opacity: .35; }
+.mp-label.is-rel { background: var(--purple-light); color: var(--purple); }
+.mp-label.is-active { background: var(--purple); color: #fff; }
+.mp-label.is-active::before { box-shadow: 0 0 0 2px #fff; }
+/* resaltar un tipo desde la leyenda */
+.mp.has-fam .mp-label:not(.is-fam) { color: var(--muted); }
+.mp.has-fam .mp-label:not(.is-fam)::before { opacity: .3; }
+.mp.has-fam .mp-label.is-fam { background: color-mix(in srgb, var(--fam) 13%, white); font-weight: 600; }
+
+/* ─── FLECHAS ─── */
+.mp-edges { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.mp-edge {
+  fill: none; stroke: var(--mp-edge); stroke-width: 1.25; stroke-linecap: round; stroke-dasharray: 1.2 4;
+  opacity: .85; transition: opacity .12s;
+}
+.mp-edge.is-folded { display: none !important; }
+.mp-edge.is-weak { display: none; }                      /* comprobaciones y workflows: solo al seleccionar */
+.mp.show-all .mp-edge.is-weak { display: inline; opacity: .55; }
+.mp.has-active .mp-edge, .mp.has-active.show-all .mp-edge.is-weak { opacity: .1; }
+.mp.has-active .mp-edge.is-on { display: inline; opacity: 1; stroke: var(--ec, var(--purple-text)); stroke-width: 1.8; }
+.mp-arrow-path { fill: none; stroke: var(--mp-edge); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+.mp-arrow-path--on { stroke: var(--purple-text); }
+
+/* ─── LEYENDA Y DETALLE ─── */
+.mp-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 12px 0 14px; font-size: 12.5px; color: var(--text); }
+.mp-key {
+  display: inline-flex; align-items: center; gap: 7px; min-height: 30px; padding: 3px 11px 3px 10px; cursor: pointer;
+  font: inherit; font-size: 12.5px; color: var(--ink); background: var(--white); border: 1px solid var(--ap-line); border-radius: 999px;
+}
+.mp-key-n { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 11.5px; }
+.mp-key[aria-pressed="true"] { border-color: var(--fam); background: color-mix(in srgb, var(--fam) 12%, white); font-weight: 600; }
+.mp-key:focus-visible { outline: 2px solid var(--purple-text); outline-offset: 2px; }
+@media (hover: hover) and (pointer: fine) { .mp-key:hover { border-color: var(--fam); } }
+.mp-foot { margin: 14px 2px 0; font-size: 12px; color: var(--muted); }
+.mp-legend-line { display: flex; align-items: center; gap: 8px; margin: 0 0 6px; }
+.mp-legend-line svg { width: 34px; height: 10px; flex: none; }
+.mp-miss { margin: 6px 0 0; }
+.mp-miss summary { cursor: pointer; }
+.mp-miss ul { margin: 6px 0 0; padding-left: 18px; }
+.mp-miss code { font-family: var(--font-mono); font-size: 11.5px; }
+.mp-all { display: inline-flex; align-items: center; gap: 8px; min-height: 30px; margin-left: auto; cursor: pointer; font-size: 12.5px; }
+.mp-all input { width: 16px; height: 16px; margin: 0; accent-color: var(--purple); }
+.mp-all input:focus-visible { outline: 2px solid var(--purple-text); outline-offset: 2px; }
+@media (max-width: 1359px) { .mp-all { display: none; } }
+.mp-detail {
+  position: sticky; bottom: 12px; z-index: 5; margin-top: 14px;
+  background: var(--white); border: 1px solid var(--ap-line-strong); border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px var(--ap-shadow); padding: 14px 16px 14px;
+  max-height: min(34vh, 280px); overflow: auto;
+}
+.mp-detail[hidden] { display: none; }
+.mp-d-top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.mp-d-name { font-size: 15px; font-weight: 700; color: var(--ink); }
+.mp-d-type { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); }
+.mp-d-path { font-family: var(--font-mono); font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
+.mp-d-note { margin: 4px 0 0; font-size: 13px; color: var(--text); }
+.mp-d-actions { margin-left: auto; display: flex; gap: 14px; align-items: center; }
+.mp-d-link, .mp-d-close { font: inherit; font-size: 13px; font-weight: 600; color: var(--purple-text); background: none; border: 0; padding: 4px 2px; min-height: 28px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.mp-d-link:focus-visible, .mp-d-close:focus-visible { outline: 2px solid var(--purple-text); outline-offset: 2px; border-radius: 3px; }
+.mp-d-tec { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 5px; }
+.mp-d-tec li { font-size: 11.5px; color: var(--text); background: var(--ap-surface-2); border: 1px solid var(--ap-line); border-radius: 999px; padding: 1px 9px; }
+.mp-d-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 4px 36px; margin-top: 10px; }
+.mp-d-h { margin: 0 0 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); }
+.mp-d-more { margin: 4px 0 0; font-size: 12px; color: var(--muted); }
+.mp-d-rels { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.mp-d-rels li { font-size: 13px; line-height: 1.4; }
+.mp-d-verb { color: var(--muted); }
+.mp-d-n { font-variant-numeric: tabular-nums; color: var(--muted); font-weight: 600; }
+.mp-d-rel { font: inherit; font-weight: 600; color: var(--ink); background: none; border: 0; padding: 0; cursor: pointer; text-align: left; text-decoration: underline; text-decoration-color: var(--ap-line-strong); text-underline-offset: 3px; }
+.mp-d-rel:focus-visible { outline: 2px solid var(--purple-text); outline-offset: 2px; border-radius: 3px; }
+@media (hover: hover) and (pointer: fine) { .mp-d-rel:hover { text-decoration-color: var(--purple-text); } }
+.mp-d-extra { display: block; font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); overflow-wrap: anywhere; }
+.mp-d-empty { margin: 10px 0 0; font-size: 13px; color: var(--muted); }
+
+/* ─── ADAPTACIÓN ─── */
+/* Sin espacio para 4 columnas: dos y luego una. Sin bus, sin notas flotantes y sin flechas
+   (se leen en el panel de detalle). */
+@media (max-width: 1359px) {
+  .mp-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 24px; row-gap: 8px; }
+}
+@media (max-width: 1359px) {
+  .mp-col { padding: 22px 0 0; }
+  .mp-col::before, .mp-col::after, .mp-stem { display: none; }
+  .mp-edges { display: none; }
+  .mp-head { padding-top: 0; }
+  .mp-note { position: static; display: block; width: auto; max-width: none; margin: 0 0 0 2px; font-weight: 500; }
+  .mp-note::before { display: none; }
+  .mp-note--l { text-align: left; }
+  .mp-lab { display: block; }
+  .mp-head .mp-lab { display: inline-block; }
+  .mp-head .mp-note { text-align: center; margin: 4px 0 0; }
+  .mp-node--note { --mp-top: 0px; }
+  .mp-row { flex-wrap: wrap; }
+  .mp-row .mp-lab { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 0 10px; }
+  .mp-row .mp-note { display: inline; }
+}
+@media (max-width: 999px) {
+  .mp-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 639px) {
+  .mp-cols { grid-template-columns: minmax(0, 1fr); }
+  .mp-detail { bottom: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mp-label, .mp-edge { transition: none; }
+}
+
+/* ─── PLEGADO DE GRUPOS ─── */
+.mp-tog {
+  appearance: none; background: none; border: 0; padding: 0; margin: 0 4px 0 -2px; width: 20px; height: 22px; flex: none;
+  font: inherit; font-size: 13px; line-height: 1; color: var(--muted); cursor: pointer; border-radius: 4px;
+}
+.mp-tog:focus-visible { outline: 2px solid var(--purple-text); outline-offset: 1px; }
+@media (hover: hover) and (pointer: fine) { .mp-tog:hover { background: var(--ap-hover); color: var(--ink); } }
+.mp-count { margin-left: 8px; font-size: 11.5px; font-variant-numeric: tabular-nums; color: var(--muted); }
+.mp-fold { font: inherit; font-size: 12.5px; color: var(--purple-text); background: none; border: 1px solid var(--ap-line); border-radius: 999px; min-height: 30px; padding: 3px 12px; cursor: pointer; }
+.mp-fold:focus-visible { outline: 2px solid var(--purple-text); outline-offset: 2px; }
+
+.mp-edge--usa { opacity: .5; stroke-width: 1; }
+.mp.has-active .mp-edge--usa.is-on { opacity: 1; stroke-width: 1.8; }
+
+/* ─── BÚSQUEDA, VISTAS Y HUÉRFANAS ─── */
+.mp-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: 12px 0 4px; }
+.mp-search { position: relative; display: inline-flex; align-items: center; gap: 10px; flex: 1 1 320px; max-width: 520px; }
+.mp-q {
+  flex: 1; min-height: 36px; padding: 6px 12px; font: inherit; font-size: 13.5px; color: var(--ink);
+  background: var(--white); border: 1px solid var(--ap-line-strong); border-radius: 999px;
+}
+.mp-q:focus-visible { outline: 2px solid var(--purple-text); outline-offset: 2px; }
+.mp-q-n { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.mp-orphans { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 8px 0 0; font-size: 12.5px; color: var(--text); }
+.mp-chip { font: inherit; font-size: 12.5px; color: var(--ink); background: var(--ap-support-soft); border: 1px solid var(--ap-line); border-radius: 999px; min-height: 28px; padding: 2px 11px; cursor: pointer; }
+.mp-chip:focus-visible { outline: 2px solid var(--purple-text); outline-offset: 2px; }
+.mp.has-q .mp-label:not(.is-hit) { color: var(--muted); }
+.mp.has-q .mp-label:not(.is-hit)::before { opacity: .3; }
+.mp-label.is-hit { background: var(--ap-support-soft); color: var(--ink); box-shadow: inset 0 0 0 1px #d9b66a; }
+
+/* Las notas de la última columna visible se abren hacia la izquierda: a la derecha se saldrían del lienzo */
+@media (min-width: 1360px) {
+  .mp-col:last-child .mp-note--sub, .mp-col.is-last .mp-note--sub { left: auto; right: calc(100% + 16px); text-align: right; }
+  .mp-col:last-child .mp-note--sub::before, .mp-col.is-last .mp-note--sub::before { left: auto; right: -16px; transform-origin: right center; transform: rotate(36deg); }
+}
+
+/* una referencia (algo que una página enseña y vive en otra sección) lleva ↗ */
+.mp-label.is-ref::after { content: ' ↗'; color: var(--muted); }

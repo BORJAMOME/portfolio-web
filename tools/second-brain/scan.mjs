@@ -11,7 +11,27 @@ import { readdirSync, statSync, readFileSync, realpathSync, existsSync } from 'n
 import { createHash } from 'node:crypto';
 import { join, relative, sep, parse, basename, extname } from 'node:path';
 import { extractFile, SUPPORTED, KNOWN_UNSUPPORTED } from './extract.mjs';
-import { detect } from './lexicon.mjs';
+import { detect, detectRoute } from './lexicon.mjs';
+import { readCatalog } from './catalog.mjs';
+import { slug } from './text.mjs';
+
+/** Título (primer encabezado) y descripción (primer párrafo de prosa) de un README, como texto plano y acotado. */
+export function readmeMeta(md) {
+  const clean = (s) => s.replace(/!\[[^\]]*\]\([^)]*\)/g, '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/[*_`>#|]/g, '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+  const lines = md.replace(/\r/g, '').split('\n');
+  let title = null, desc = null, inCode = false;
+  for (const l of lines) {
+    if (/^```/.test(l)) { inCode = !inCode; continue; }
+    if (inCode) continue;
+    if (!title && /^#{1,2}\s+\S/.test(l)) { title = clean(l); continue; }
+    if (title && !desc && l.trim() && !/^(#|\||-{3,}|!\[|<|\[!\[)/.test(l.trim())) { const c = clean(l); if (c.length > 40) desc = c; }
+    if (title && desc) break;
+  }
+  // enlaces de GitHub normalizados a «owner/repo» o «owner/repo/ruta» en minúsculas
+  const links = [...new Set([...md.matchAll(/https:\/\/github\.com\/([\w.-]+\/[\w.-]+)(\/tree\/[\w.-]+\/[^\s)<>"'\]]*)?/g)]
+    .map((m) => { let p = m[1].replace(/\.git$/, ''); if (m[2]) { try { p += decodeURIComponent(m[2].replace(/^\/tree\/[\w.-]+/, '')); } catch { /* ruta rara: se ignora */ } } return p.replace(/\/+$/, '').toLowerCase(); }))].slice(0, 40);
+  return title ? { title: title.slice(0, 90), desc: desc ? desc.slice(0, 260) : null, links } : null;
+}
 
 export const DEFAULT_EXCLUDE = [
   'node_modules', '.git', '.venv', 'venv', 'env', '__pycache__', '.ipynb_checkpoints', '.idea', '.vscode', '.mypy_cache',
@@ -30,15 +50,48 @@ export function assertSafeSource(src) {
   return real;
 }
 
-function projectOf(src, relParts) {
+/** «03-prediccion-impagos» → «prediccion impagos» (solo cuando una carpeta sin README es el nombre del proyecto). */
+const prettify = (name) => name.replace(/^\d+[-_ ]+/, '').replace(/[-_]+/g, ' ').trim() || name;
+
+function projectOf(src, relParts, readmeDirs, containerDirs) {
+  if (src.projectDepth === 'auto') {
+    // «auto»: el proyecto es la carpeta con README más cercana por encima del archivo
+    const dirs = relParts.slice(0, -1);
+    for (let k = dirs.length; k >= 1; k--) {
+      const cand = posix(join(...dirs.slice(0, k)));
+      if (readmeDirs && readmeDirs.has(cand)) {
+        const container = !!(containerDirs && containerDirs.has(cand));
+        // un README que es el índice de otros proyectos no es dueño del código de una subcarpeta sin README:
+        // esa subcarpeta es un proyecto sin documentar (antes se le atribuía al índice y se mezclaban)
+        if (container && k < dirs.length) {
+          const own = posix(join(...dirs));
+          return { key: `${src.id}/${own}`, label: prettify(dirs[dirs.length - 1]), root: false, noReadme: true, dir: own };
+        }
+        return { key: `${src.id}/${cand}`, label: dirs[k - 1], root: false, container, dir: cand };
+      }
+    }
+    return { key: `${src.id}/.`, label: src.label || src.id, root: true, container: !!(readmeDirs && readmeDirs.size), dir: '' };
+  }
   const depth = Number.isInteger(src.projectDepth) ? src.projectDepth : 0;
-  if (depth === 0) return { key: src.id, label: src.label || src.id, root: false };
+  if (depth === 0) return { key: src.id, label: src.label || src.id, root: false, dir: '' };
   // relParts incluye el nombre del archivo: solo es proyecto si hay al menos `depth` carpetas por encima
   if (relParts.length - 1 >= depth) {
     const dirs = relParts.slice(0, depth);
-    return { key: `${src.id}/${posix(join(...dirs))}`, label: dirs[dirs.length - 1], root: false };
+    return { key: `${src.id}/${posix(join(...dirs))}`, label: dirs[dirs.length - 1], root: false, dir: posix(join(...dirs)) };
   }
-  return { key: `${src.id}/.`, label: src.label || src.id, root: true };
+  return { key: `${src.id}/.`, label: src.label || src.id, root: true, dir: '' };
+}
+
+/** Repositorio de GitHub de una fuente: el declarado en la configuración o el «origin» de su .git/config (solo se lee el slug, nunca credenciales). */
+function repoOf(src, root) {
+  const clean = (s) => String(s).replace(/^https:\/\/github\.com\//, '').replace(/\.git$/, '').replace(/\/$/, '');
+  if (src.repo) return { slug: clean(src.repo), branch: src.branch || 'main' };
+  try {
+    const cfg = readFileSync(join(root, '.git', 'config'), 'utf8');
+    const m = /url\s*=\s*(?:https:\/\/(?:[^@\s\/]+@)?github\.com\/|git@github\.com:)([\w.-]+\/[\w.-]+?)(?:\.git)?\s*$/im.exec(cfg);
+    if (m) return { slug: m[1], branch: src.branch || 'main' };
+  } catch { /* no es un repositorio local o no es de GitHub */ }
+  return null;
 }
 
 /**
@@ -64,8 +117,44 @@ export function scanSources(config, lexicon, cache, lexiconDigest) {
     coverage.sources.push(cov);
     let count = 0;
 
+    // ── fuente «catalogo»: proyectos publicados en el portfolio (casos, laboratorio .pbix, inventario) ──
+    if (kind === 'catalogo') {
+      const entries = readCatalog(root);
+      for (const e of entries) {
+        const key = `${src.id}/${slug(e.title)}`;
+        projects.set(key, { key, label: e.title, source: src.id, root: false, artifacts: new Set(e.pbix ? ['pbix'] : []), readme: { title: e.title, desc: e.desc, depth: 0, links: [] }, link: e.url, group: e.group, kind: 'catalogo', noReadme: false, container: false, dir: '', repo: null, catalog: { repo: e.repo || null, page: e.page || null, url: e.url || null } });
+        // texto descriptivo (documentación) + tecnologías que el propio portfolio declara para un artefacto
+        // publicado (informe o .pbix): se cuentan como práctica porque el artefacto existe y es público
+        const text = [e.title, e.desc, e.group].join('. ');
+        const hits = detect(lexicon, [{ cls: 'explicativa', lang: 'markdown', text }], e.pbix ? ['pbix'] : []);
+        // una visualización publicada (Behance) es práctica de visualización de datos aunque sus etiquetas sean temáticas
+        const techText = e.techs.concat(e.group === 'Visualización' ? ['visualización de datos'] : []).join('. ');
+        const tech = detect(lexicon, [{ cls: 'declarativa', lang: 'markdown', text: techText }], []);
+        for (const id of Object.keys(tech)) (hits[id] ||= { practica: 0, explicativa: 0, declarativa: 0 }).practica = 1;
+        files.push({ source: src.id, kind: 'proyectos', rel: 'catalogo/' + slug(e.title), project: key, ext: 'catalogo', hits, artifacts: e.pbix ? ['pbix'] : [], note: null });
+        cov.files++; cov.supported++; coverage.processed++;
+      }
+      coverage.byExt.catalogo = (coverage.byExt.catalogo || 0) + entries.length;
+      continue;
+    }
+    const readmeDirs = new Set();
+    if (src.projectDepth === 'auto') {
+      const collect = (dir) => {
+        let es; try { es = readdirSync(dir, { withFileTypes: true }); } catch { return; }
+        for (const e of es) {
+          if (e.isSymbolicLink()) continue;
+          if (e.isDirectory()) { if (!exclude.has(e.name) && !e.name.startsWith('.')) collect(join(dir, e.name)); }
+          else if (/^readme\.md$/i.test(e.name) && dir !== root) readmeDirs.add(posix(relative(root, dir)));
+        }
+      };
+      collect(root);
+    }
+    // un README «contenedor» es el índice de otros proyectos (tiene README más abajo)
+    const containerDirs = new Set([...readmeDirs].filter((d) => [...readmeDirs].some((o) => o.startsWith(d + '/'))));
+    const srcRepo = repoOf(src, root);
+
     const touchProject = (pj) => {
-      if (!projects.has(pj.key)) projects.set(pj.key, { key: pj.key, label: pj.label, source: src.id, root: pj.root, artifacts: new Set() });
+      if (!projects.has(pj.key)) projects.set(pj.key, { key: pj.key, label: pj.label, source: src.id, root: pj.root, artifacts: new Set(), readme: null, noReadme: !!pj.noReadme, container: !!pj.container, dir: pj.dir || '', repo: srcRepo, kind });
       return projects.get(pj.key);
     };
 
@@ -79,7 +168,7 @@ export function scanSources(config, lexicon, cache, lexiconDigest) {
         const rel = relative(root, abs);
         const parts = rel.split(sep);
         if (e.isDirectory()) {
-          if (e.name === '.git') { touchProject(projectOf(src, parts.slice(0, -1).concat('x'))).artifacts.add('git-repo'); continue; }
+          if (e.name === '.git') { touchProject(projectOf(src, parts.slice(0, -1).concat('x'), readmeDirs, containerDirs)).artifacts.add('git-repo'); continue; }
           if (exclude.has(e.name)) continue;
           if (e.name.startsWith('.') && e.name !== '.github') continue;
           walk(abs);
@@ -125,15 +214,20 @@ export function scanSources(config, lexicon, cache, lexiconDigest) {
               const weak = detect(lexicon, [], artifacts);
               for (const [id, h] of Object.entries(weak)) { const o = (hits[id] ||= { practica: 0, explicativa: 0, declarativa: 0 }); if (h.practica || h.explicativa) o.explicativa = 1; }
             }
-            entry = { size: st.size, mtimeMs: st.mtimeMs, sha: digest, ext, hits, artifacts, note: r.note || null };
+            if (kind !== 'declarativo') {
+              for (const [id] of Object.entries(detectRoute(lexicon, posix(rel)))) { const o = (hits[id] ||= { practica: 0, explicativa: 0, declarativa: 0 }); o.explicativa = 1; o.ruta = 1; }
+            }
+            entry = { size: st.size, mtimeMs: st.mtimeMs, sha: digest, ext, hits, artifacts, note: r.note || null, readme: /^readme\.md$/i.test(basename(e.name)) ? readmeMeta(buf.toString('utf8')) : null };
             coverage.changed++;
           }
         }
         nextCache.files[key] = entry;
         coverage.processed++;
-        const pj = touchProject(projectOf(src, parts));
+        const pj = touchProject(projectOf(src, parts, readmeDirs, containerDirs));
         for (const a of entry.artifacts) pj.artifacts.add(a);
         files.push({ source: src.id, kind, rel: posix(rel), project: pj.key, ext, hits: entry.hits, artifacts: entry.artifacts, note: entry.note });
+        // el README más cercano a la raíz del proyecto le da título y descripción
+        if (entry.readme && (!pj.readme || rel.split(sep).length < pj.readme.depth)) { const p = projects.get(pj.key); if (p) p.readme = { ...entry.readme, depth: rel.split(sep).length }; }
       }
     };
     walk(root);

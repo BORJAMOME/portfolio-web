@@ -21,6 +21,7 @@ const CODE_LANG = {
 const FENCE_LANG = { python: 'python', py: 'python', sql: 'sql', dax: 'dax', m: 'm', powerquery: 'm', pq: 'm', yaml: 'yaml', yml: 'yaml' };
 
 export const SUPPORTED = new Set([
+  'js', 'mjs', 'css',
   'md', 'markdown', 'txt', 'rst', 'py', 'sql', 'dax', 'tmdl', 'm', 'pq', 'yml', 'yaml', 'ipynb', 'html', 'htm',
   'docx', 'pbix', 'csv', 'tsv', 'xlsx', 'pbip', 'gitignore',
 ]);
@@ -125,7 +126,8 @@ export function extractFile(path, buf, opts = {}) {
   if (ext === 'gitignore') r = { segments: [], artifacts: ['gitignore'] };
   else if (ext === 'md' || ext === 'markdown' || ext === 'rst') r = { segments: splitMarkdown(buf.toString('utf8'), declarative), artifacts: [] };
   else if (ext === 'txt') r = { segments: wrap(declarative ? 'declarativa' : 'explicativa', 'markdown', buf.toString('utf8')), artifacts: [] };
-  else if (ext === 'html' || ext === 'htm') r = { segments: wrap(declarative ? 'declarativa' : 'explicativa', 'markdown', stripHtml(buf.toString('utf8'))), artifacts: [] };
+  else if (ext === 'html' || ext === 'htm') r = { segments: wrap(declarative ? 'declarativa' : 'explicativa', 'markdown', stripHtml(buf.toString('utf8'))), artifacts: declarative ? [] : ['webpage'] };
+  else if (ext === 'css') r = { segments: [], artifacts: declarative ? [] : ['webpage'] };
   else if (ext === 'ipynb') r = notebook(buf, declarative);
   else if (ext === 'docx') r = docx(buf, declarative);
   else if (ext === 'pbix') r = pbix(buf);

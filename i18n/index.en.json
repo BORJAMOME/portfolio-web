@@ -235,7 +235,8 @@
     "Copiar": "Copy",
     "Copiar email": "Copy email",
     "borja.mora.mendez@gmail.com": "borja.mora.mendez@gmail.com",
-    "¿Prefieres escribir desde tu correo? <span class=\"contact-alt-mail\">borja.mora.mendez@gmail.com</span>": "Prefer to write from your own email? <span class=\"contact-alt-mail\">borja.mora.mendez@gmail.com</span>"
+    "¿Prefieres escribir desde tu correo? <span class=\"contact-alt-mail\">borja.mora.mendez@gmail.com</span>": "Prefer to write from your own email? <span class=\"contact-alt-mail\">borja.mora.mendez@gmail.com</span>",
+    "<span style=\"width:6px;height:6px;border-radius:50%;background:#7a7bff;flex-shrink:0;animation:pulse-dot 1.8s ease-in-out infinite\"></span>Interactivo\n          </span>": "<span style=\"width:6px;height:6px;border-radius:50%;background:#7a7bff;flex-shrink:0;animation:pulse-dot 1.8s ease-in-out infinite\"></span>Interactive\n          </span>"
   },
   "keep": [
     "Borja Mora Méndez",

@@ -31,7 +31,29 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
 - Formularios de las pestañas: `ctx.ui` (field, input, select, area, formDialog, invalid) en `area-privada.js`; no los dupliques.
 - **Configuración** (`#/configuracion`): listas de opciones en `public.ap_opciones` (`supabase/opciones.sql`), hoy temas y formatos del Fichero.
   Renombrar/eliminar van por RPC y actualizan también los enlaces. Lista nueva: entrada en `GROUPS` de `area-privada-configuracion.js`.
-- **Hoy** (`#/`): próximos 7 días, entrevistas programadas y procesos parados. Solo lee.
+- **Hoy** (`#/`): arriba el **Centro de trabajo** (módulo `kanban`, ver abajo) y debajo «Agenda y seguimiento»: próximos 7 días,
+  entrevistas programadas y procesos parados (solo lee).
+- **Centro de trabajo** (en `#/`, sin ruta ni pestaña propias): `area-privada-kanban.js` (`window.APKanban`), lo monta `area-privada-hoy.js` con
+  `ctx.module('kanban')`. Vistas Hoy / Tablero / Archivo. Tablas `kb_proyectos`, `kb_tarjetas`, `kb_subtareas`, `kb_historial`, `kb_ajustes`
+  (`supabase/kanban.sql`; revertir con `kanban-rollback.sql`). El historial y `completada_en` los escribe un trigger. Orden por `posicion` (punto medio).
+  Arrastre con Pointer Events propios (sin biblioteca: CSP sin CDN y regla de no añadir dependencias); teclado con Mayús+flechas; en táctil, desde el asa.
+  Límites WIP y capacidad diaria en `kb_ajustes`; avisan, no bloquean. La lógica pura está en `APKanban.logic`.
+  Pruebas: `node tools/test-kanban.mjs` (lógica, sin dependencias) y `node tools/check-kanban.mjs` (interfaz con Playwright y un Supabase simulado en memoria; no toca la base real).
+  Color semántico por estado (`--st-<estado>` en `css/area-privada.css`), siempre con icono de progreso y texto. Iconos SVG propios en `ICON`.
+  Captura inteligente local (`logic.parseCapture`: #proyecto, !prioridad, fechas en español, @hoy). Paleta `Ctrl/⌘+K`.
+  IA opcional: Edge Function `supabase/functions/kanban-ia` (desglosar, siguiente paso, plan del día, texto → tarjetas). Solo propone:
+  la web enseña una revisión y guarda lo confirmado. `KB_AI_PROVIDER=off` por defecto (los botones de IA no aparecen). Guía: su `README.md`.
+- **Studio** (`#/studio`): proyectos y tareas con varias vistas sobre el mismo estado (Resumen, Tablero, Archivo; panel lateral contextual). Módulo
+  `area-privada-studio.js` (`window.APStudio`, lógica pura en `.logic`), CSS con prefijo `aps-` al final de `css/area-privada.css` (reutiliza los tokens y los `--st-*` del Centro de trabajo).
+  Tablas propias `ps_projects`, `ps_tasks` (con `parent_id` = subtarea de un solo nivel), `ps_settings` (límites WIP) y `ps_activity` (la escribe un trigger)
+  en `supabase/studio.sql` (revertir con `studio-rollback.sql`). **Independiente del Centro de trabajo**: no lee ni escribe `kb_*`. La fase del proyecto (`stage`) y su estado (`status`)
+  son cosas distintas; un proyecto que no está activo oculta sus tareas del tablero. Arrastre con Pointer Events propios, Mayús+flechas, deshacer (botón y Ctrl/⌘+Z).
+  Hito 2 (`supabase/studio-ideas.sql`, revertir con `studio-ideas-rollback.sql`): **Idea Lab** (`ps_ideas`: captura de una frase, grupo libre `topic`, tipo, estado y conexión a un proyecto;
+  `ps_convert_idea()` la convierte en proyecto de forma atómica), **notas e investigación** (`ps_notes`: nota, investigación, hipótesis, decisión, referencia) y **entregables**
+  (`ps_deliverables`) como secciones desplegables del panel de proyecto. Los enlaces solo se pintan si son http(s) (`logic.safeUrl`; la base lo exige también con un `check`).
+  Sin ejecutar `studio-ideas.sql` el resto del Studio funciona y esas secciones avisan dónde falta.
+  Pendiente por hitos: hoja de ruta (hitos y dependencias, relaciones entre ideas), lienzo (coordenadas en tabla aparte) y revisión/cierre.
+  Pruebas: `node tools/test-studio.mjs` (lógica) y `node tools/check-studio.mjs` (interfaz con Playwright y Supabase simulado; no toca la base real).
 - **Calendario** (`#/calendario`): solo lectura. Google → iCal secreto → Edge Function `supabase/functions/calendario-sync`
   (pg_cron cada 15 min) → `public.calendar_events`. La página nunca habla con Google. Guía: `supabase/functions/calendario-sync/README.md`.
 - **Entrevistas** (`#/entrevistas`, `/analisis`, `/<uuid>`): tablas `procesos` y `entrevistas` (`supabase/entrevistas.sql`).
@@ -41,14 +63,31 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
   y escribe briefings en `ii_interviews`/`ii_runs`/`ii_reports` (`supabase/interview-intel.sql`). La web solo lee y llama a `ii_action()`.
   Perfil profesional: nota «Perfil profesional · Interview Intelligence» (carga en `supabase/interview-intel-perfil.sql`, no versionado).
   Pruebas: `deno test --allow-read supabase/functions/` y `node tools/check-briefing.mjs`. Guía: `supabase/functions/interview-intel/README.md`.
+- **Procesos desde Gmail** (en `#/entrevistas`, panel «Correos por revisar»): Apps Script en la cuenta de Google (`tools/gmail-procesos/`,
+  solo lectura) → Edge Function `supabase/functions/procesos-sync` (reglas sin IA en `classify.ts`) → `public.procesos_correo`;
+  `pc_aplicar()` crea o actualiza `procesos` (`supabase/procesos-correo.sql`). Nunca pisa lo escrito a mano ni reabre un proceso cerrado.
+  Guía: `tools/gmail-procesos/README.md`.
 - Pestaña **Fichero** (`#/fichero`): tabla de enlaces guardados, `area-privada-fichero.js`, tabla `public.links` (`supabase/fichero.sql`;
   carga inicial en `supabase/fichero-datos.sql`). Se añade, edita y borra desde la propia tabla; Supabase es la fuente de verdad.
 - **Second Brain** (`#/second-brain`, `#/second-brain/demo`): grafo 3D del conocimiento. La web solo DIBUJA un snapshot ya calculado
   (`area-privada-second-brain.js`, `second-brain/viewer.js` con Three.js, `second-brain/contract.js` compartido con el motor, `css/second-brain.css`).
   El motor corre en local (`tools/second-brain/`, sin dependencias) y publica en `public.sb_snapshots`/`sb_runs` (`supabase/second-brain.sql`, RLS).
+  Fuentes: carpetas locales (`projectDepth` N o `"auto"` = carpeta con README) y el catálogo publicado del propio portfolio (`kind: "catalogo"`, `catalog.mjs`:
+  casos de estudio, `descargas.html` y `supabase/portfolio.sql`). Notas del usuario en `sb_notas` (`supabase/second-brain-notas.sql`).
   Three.js va recortado en `vendor/three-<versión>-sb.min.js` (`tools/second-brain/build-three.mjs`). Config y snapshots reales: `.second-brain/` (no versionado).
+  Jerarquía: `padre` y `rutas` en `framework.json` → `second-brain/taxonomy.js` (lógica pura) y `tools/second-brain/TAXONOMIA.md` (se genera con `--doc`); un proyecto = una entidad (`identity.mjs`).
+  Calidad visual del mapa: `SIZE`/`nodeRadius`, atlas normalizado (`icons.js`), separación y etiquetas (`viewer.js`); medir con `viewer.debugMetrics()` (E2E sección 4f).
+  Color = familia tecnológica (`framework.json → familias`, campo `family` de cada nodo); las áreas son los sectores del suelo.
+  Exploración (v9): núcleo `n:nucleo` y áreas `a:<región>` son nodos derivados; la vista por defecto es «Por áreas» y desplegar/contraer es solo visibilidad (`buildExplore` en `taxonomy.js`, posiciones fijas). Las aristas `conecta` entre áreas resumen relaciones reales (`evidenceCount`), no son relaciones nuevas.
   Pruebas: `node --test tools/second-brain/second-brain.test.mjs` y `node tools/second-brain/e2e.mjs`. Guía y reglas de evidencia: `tools/second-brain/README.md`.
   Cambiar `framework.json` o el motor → `node tools/second-brain/analyze.mjs --demo` (regenera el demo; hay un test que lo comprueba).
+- **Mapa** (`#/mapa`): árbol de toda la estructura (páginas públicas, pestañas, tablas y funciones de Supabase, herramientas y CI) con flechas punteadas entre elementos.
+  Solo dibuja `mapa/estructura.js`, que **se genera** leyendo el repositorio: `node tools/mapa/build-mapa.mjs` y después `node tools/version-assets.mjs` (CI falla con `--check` si queda desactualizado).
+  Agrupaciones, etiquetas y textos a mano en `tools/mapa/mapa.config.json`; lo que no encaja sale en «sin clasificar/». Una pestaña, tabla, página o herramienta nueva aparece sola al regenerar.
+  `--check` falla también si hay un enlace del contenido sin clasificar (resuélvelo en la config o añádelo a `web.revisados`), una clave de la config sin página, o area-privada.html / MODULES cambian de formato. Solo ve lo que git conoce (rastreado o añadido): un archivo suelto no cambia el mapa.
+  Relaciones = lo que cada archivo menciona (tablas por `/rest/v1/…`, `ctx.module(…)`, enlaces, `tools/…` en los workflows); no se declaran a mano. Las débiles (`debil` en la config) solo se ven al seleccionar.
+  Una sola vista relacional: cinco bloques (portfolio web, dónde vive, área privada, datos y herramientas) con las relaciones entre ellos como flechas punteadas; los grupos de la web y los esquemas SQL salen plegados. Lo que una página enseña pero vive en otra aparece como referencia (↗) bajo ella, unida a su original (relación «es el mismo que»). La web pública se modela como árbol de navegación: cada página con lo que enseña (casos, apps, proyectos SQL/Python/ML, gráficos, posts, Behance, `.pbix` del laboratorio, experiencia y formación de `sobre-mi`, capítulos del manual de Data Storytelling). La pestaña tiene búsqueda y el resumen de páginas sin enlaces desde el sitio.
+  Módulo `area-privada-mapa.js`, estilos `css/mapa.css` (prefijo `mp-`). El SVG de flechas es decorativo: lo mismo se lee en el panel de detalle.
 - **Supabase no se pausa**: `.github/workflows/supabase-keepalive.yml` llama a `public.keepalive()` (`supabase/keepalive.sql`) lunes y jueves
   con la clave pública, y se reactiva a sí mismo para que GitHub no desactive la tarea tras 60 días sin actividad en el repo.
 - Nada de lo que venga de la base se pinta como HTML sin escapar. La clave del JS es la pública; la `service_role` nunca va en el frontend.

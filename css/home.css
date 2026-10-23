@@ -26,7 +26,8 @@
   h1 { font-size: clamp(32px, 9vw, 64px); }
   h2 { font-size: clamp(24px, 6vw, 44px); }
   
-  [class*="grid"] { grid-template-columns: 1fr; gap: clamp(24px, 6vw, 40px); }
+  /* el footer usa sus propios cortes de shared.css, igual que en el resto de páginas */
+  [class*="grid"]:not(.foot-grid) { grid-template-columns: 1fr; gap: clamp(24px, 6vw, 40px); }
 }
 
 @media (max-width: 1024px) {
@@ -277,6 +278,90 @@
   .dashboard-frame { filter: grayscale(1); }
   .dashboard-frame:hover { filter: grayscale(0); }
 }
+
+/* ─── DASHBOARD 3D (js/dashboard-3d.js) ───
+   Marco de cristal. Solo con .df3d-on, que el script pone en escritorio con hover real y sin
+   prefers-reduced-motion: en móvil o con movimiento reducido el marco queda como antes.
+   El interior sigue plano. El marco empieza en gris y el cristal en neutro; al pasar el ratón
+   se revelan juntos el color del dashboard y la dispersión cromática del cristal. La sombra y el canto
+   son siempre grises neutros. */
+.hero-right.df3d-on { perspective: 1500px; }
+.hero-right.df3d-on .dashboard-frame {
+  transform-style: preserve-3d;
+  will-change: transform;
+  overflow: visible;   /* overflow:hidden aplana el 3D: las esquinas redondeadas las llevan titlebar y body */
+  filter: none;        /* un filter también aplana: el gris del hover pasa a los hijos (abajo) */
+  box-shadow: none;    /* la sombra la pone .df3d-shadow, que sí sigue la inclinación */
+}
+/* En un contexto 3D, Chrome no entra a los chips de .df-filters (z-index: 5) y el clic cae en .df-header.
+   Sin ese z-index el orden de pintado no cambia: el menú desplegable lleva su propio z-index: 20. */
+.hero-right.df3d-on .df-filters { z-index: auto; }
+.hero-right.df3d-on .df-titlebar { border-radius: 9.5px 9.5px 0 0; }
+.hero-right.df3d-on .df-body { border-radius: 0 0 9.5px 9.5px; }
+@media (hover: hover) and (pointer: fine) {
+  .hero-right.df3d-on .df-titlebar,
+  .hero-right.df3d-on .df-body { filter: grayscale(1); transition: filter .6s var(--ease), background .6s var(--ease); }
+  .hero-right.df3d-on .dashboard-frame:hover > .df-titlebar,
+  .hero-right.df3d-on .dashboard-frame:hover > .df-body { filter: grayscale(0); }
+}
+
+/* grosor: pila de láminas translúcidas. --t va de 0 (pegada al frente) a 1 (la más lejana);
+   --ex y --ey (los pone el script) es lo que se desplaza la más lejana. Cerca del frente se acumula
+   más opacidad y hacia fuera se aclara, así el canto se desvanece como un cristal grueso. */
+.df3d-edge { position: absolute; inset: 0; transform-style: preserve-3d; pointer-events: none; }
+.hero-right.df3d-on:not(.df3d-ready) .df3d-edge { visibility: hidden; }  /* hasta el primer fotograma del script */
+/* placa opaca con el mismo fondo del marco, por encima de las láminas y por debajo del contenido (ver dashboard-3d.js) */
+.df3d-plate { position: absolute; inset: 0; border-radius: inherit; background: inherit; pointer-events: none; }
+.df3d-layer {
+  position: absolute; inset: -.5px; border-radius: var(--r);
+  transform: translate3d(calc(var(--ex, 10px) * var(--t)), calc(var(--ey, 12px) * var(--t)), calc(var(--t) * -14px - 1px));
+}
+.df3d-layer:last-child { box-shadow: inset 0 0 0 1px rgba(255,255,255,.75), 0 0 0 .5px rgba(60,60,60,.22); }
+
+/* cristal sobre el frente: reflejo que se desliza con el giro, borde con luz arriba y sombra abajo, viñeta suave.
+   La dispersión cromática del borde (cian a la izquierda, rosa a la derecha) solo aparece con el color. */
+.df3d-glass {
+  position: absolute; inset: 0; border-radius: 10px; pointer-events: none;
+  transform: translateZ(1px);
+  background:
+    linear-gradient(115deg, rgba(255,255,255,.22) 0%, rgba(255,255,255,0) 26%, rgba(255,255,255,0) 64%, rgba(170,170,170,.12) 100%),
+    radial-gradient(ellipse 125% 95% at 50% 45%, transparent 64%, rgba(20,20,20,.09) 100%);
+  background-size: 230% 100%, 100% 100%;
+  background-position: calc(50% + var(--sx, 0%)) 0, 0 0;
+  box-shadow:
+    inset 0 0 0 .5px rgba(255,255,255,.9),
+    inset 0 1.5px 1px rgba(255,255,255,.95),
+    inset 0 -1.5px 2px rgba(70,70,70,.24),
+    inset 2px 0 4px -2px rgba(120,120,130,.0),
+    inset -2px 0 4px -2px rgba(120,120,130,.0);
+  transition: box-shadow .6s var(--ease);
+}
+.hero-right.df3d-on .dashboard-frame:hover > .df3d-glass {
+  box-shadow:
+    inset 0 0 0 .5px rgba(255,255,255,.9),
+    inset 0 1.5px 1px rgba(255,255,255,.95),
+    inset 0 -1.5px 2px rgba(70,70,70,.24),
+    inset 2px 0 4px -2px rgba(110,205,255,.42),
+    inset -2px 0 4px -2px rgba(255,150,215,.34);
+}
+
+/* sombra de profundidad: hermana del marco, centrada detrás; el script la mueve al revés que la inclinación */
+.df3d-shadow {
+  position: absolute; left: calc(min(640px, 110%) / 2); top: 50%;
+  width: 560px; height: 420px; margin: -210px 0 0 -280px;
+  background: rgba(20,20,20,.42); filter: blur(36px); border-radius: 24px;
+  pointer-events: none; will-change: transform, opacity;
+}
+@media (max-width: 1050px) { .df3d-shadow { left: 50%; } }
+
+/* brillo suave que sigue al cursor (--gx y --gy los pone el script) */
+.df3d-glare {
+  position: absolute; inset: 0; border-radius: 10px; pointer-events: none;
+  transform: translateZ(2px);
+  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 50%), rgba(255,255,255,.5), rgba(255,255,255,.12) 38%, transparent 62%);
+  opacity: 0; transition: opacity .5s;
+}
+.df3d-glare.is-on { opacity: .9; }
 .df-dot { width: 9px; height: 9px; border-radius: 50%; }
 .df-omnibox {
   flex: 1 1 auto; min-width: 0;
