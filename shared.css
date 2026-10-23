@@ -418,6 +418,8 @@ footer[data-lamp-root] { position: relative; overflow: hidden; }
 .foot-lamp-halo { background: radial-gradient(ellipse 36% 28% at 52% 62%, rgba(255,255,255,.13) 0, transparent 100%); }
 .foot-lamp-glow { background: radial-gradient(ellipse 16% 14% at 51.2% 58%, rgba(255,255,255,.30) 0, transparent 100%); }
 .foot-lamp-core { background: radial-gradient(ellipse 4.5% 5% at 50.8% 57.5%, rgba(255,255,255,.75) 0, transparent 100%); }
+/* mientras la imagen (lazy) no ha llegado, la luz no flota sola sobre el negro (footer-lamp.js) */
+.foot-art.is-loading .foot-lamp-halo, .foot-art.is-loading .foot-lamp-glow, .foot-art.is-loading .foot-lamp-core { visibility: hidden; }
 .foot-col { display: flex; flex-direction: column; gap: 2px; }
 .foot-col--brand { gap: 10px; }
 .foot-brand-name {
