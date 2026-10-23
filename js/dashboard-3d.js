@@ -32,7 +32,7 @@
   var K_CURSOR = .06, K_HOVER = .05;   /* suavizado por fotograma */
   var EPS = .02;                    /* giro mínimo: con el marco exactamente de frente Chrome lo trata como plano y las láminas se pintan encima */
 
-  var edge, shadow, glass, glare;   /* capas creadas */
+  var edge, plate, shadow, glass, glare;   /* capas creadas */
   var active = false, visible = false, raf = 0, io = null;
   var px = 0, py = 0, hasPointer = false;
   var cx = 0, cy = 0;               /* cursor suavizado, -1..1 respecto al centro del marco */
@@ -65,6 +65,12 @@
       edge.appendChild(lay);
     }
     frame.insertBefore(edge, frame.firstChild);
+    /* placa con el fondo del marco entre las láminas y el contenido: si Chrome deja de ordenar en 3D
+       (pasa, por ejemplo, al cargar con el dashboard a medio entrar en pantalla) pinta las láminas planas
+       y oscurecería el fondo; la placa las tapa y solo asoma el canto */
+    plate = el('df3d-plate');
+    plate.setAttribute('aria-hidden', 'true');
+    frame.insertBefore(plate, edge.nextSibling);
     /* sin transform el marco no abre el contexto 3D y las láminas se verían planas sobre el fondo hasta el primer fotograma */
     frame.style.transform = 'translateZ(' + LIFT + 'px) rotateX(' + EPS + 'deg) rotateY(' + EPS + 'deg)';
 
@@ -153,7 +159,7 @@
     io = null;
     window.removeEventListener('pointermove', onMove);
     document.documentElement.removeEventListener('pointerleave', onLeave);
-    [edge, glass, glare, shadow].forEach(function (n) { if (n && n.parentNode) n.parentNode.removeChild(n); });
+    [edge, plate, glass, glare, shadow].forEach(function (n) { if (n && n.parentNode) n.parentNode.removeChild(n); });
     frame.style.transform = '';
     right.classList.remove('df3d-on', 'df3d-ready');
     cx = cy = 0; h = 1; glareOn = false; hasPointer = false; ready = false;

@@ -310,6 +310,8 @@
    más opacidad y hacia fuera se aclara, así el canto se desvanece como un cristal grueso. */
 .df3d-edge { position: absolute; inset: 0; transform-style: preserve-3d; pointer-events: none; }
 .hero-right.df3d-on:not(.df3d-ready) .df3d-edge { visibility: hidden; }  /* hasta el primer fotograma del script */
+/* placa opaca con el mismo fondo del marco, por encima de las láminas y por debajo del contenido (ver dashboard-3d.js) */
+.df3d-plate { position: absolute; inset: 0; border-radius: inherit; background: inherit; pointer-events: none; }
 .df3d-layer {
   position: absolute; inset: -.5px; border-radius: var(--r);
   transform: translate3d(calc(var(--ex, 10px) * var(--t)), calc(var(--ey, 12px) * var(--t)), calc(var(--t) * -14px - 1px));
