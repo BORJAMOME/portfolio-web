@@ -1366,13 +1366,24 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   display: none;
 }
 @media(min-width:760px){ .idx-tag { display: inline; } }
+/* El "+" se dibuja con dos barras: un glifo de texto queda descentrado
+   (línea base de la fuente) y gira sobre un eje que no es su centro visual. */
 .idx-toggle {
-  width: 30px; height: 30px; border: 1px solid var(--ink); border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--mono); font-size: 15px; flex-shrink: 0;
-  transition: background .25s, color .25s, transform .35s;
+  position: relative; width: 30px; height: 30px; border: 1px solid var(--ink); border-radius: 50%;
+  font-size: 0; line-height: 0; color: transparent; flex-shrink: 0;
+  transition: background .3s var(--ease), transform .5s cubic-bezier(.2,.8,.2,1);
 }
-.idx-row.open .idx-toggle { background: var(--ink); color: #ffffff; transform: rotate(45deg); }
+.idx-toggle::before, .idx-toggle::after {
+  content: ""; position: absolute; top: 50%; left: 50%;
+  width: 10px; height: 1.5px; border-radius: 1px;
+  background: var(--ink);
+  transform: translate(-50%, -50%);
+  transition: background .3s var(--ease);
+}
+.idx-toggle::after { transform: translate(-50%, -50%) rotate(90deg); }
+.idx-head:hover .idx-toggle { background: rgba(0,0,0,.04); }
+.idx-row.open .idx-toggle { background: var(--ink); transform: rotate(45deg); }
+.idx-row.open .idx-toggle::before, .idx-row.open .idx-toggle::after { background: #ffffff; }
 
 /* Panel expandible (técnica grid-template-rows) */
 .idx-panel {
