@@ -26,7 +26,8 @@
   h1 { font-size: clamp(32px, 9vw, 64px); }
   h2 { font-size: clamp(24px, 6vw, 44px); }
   
-  [class*="grid"] { grid-template-columns: 1fr; gap: clamp(24px, 6vw, 40px); }
+  /* el footer usa sus propios cortes de shared.css, igual que en el resto de páginas */
+  [class*="grid"]:not(.foot-grid) { grid-template-columns: 1fr; gap: clamp(24px, 6vw, 40px); }
 }
 
 @media (max-width: 1024px) {
