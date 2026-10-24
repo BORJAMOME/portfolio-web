@@ -21,6 +21,11 @@
 <!-- Pestañas con archivo propio: area-privada.js las inyecta al abrirlas; el navegador las precarga en reposo -->
 <link rel="prefetch" as="script" href="./area-privada-hoy.js?v=4950d5f1b7" data-ap-module="hoy">
 <link rel="prefetch" as="script" href="./area-privada-studio.js?v=a88c21e6b6" data-ap-module="studio">
+<link rel="prefetch" as="script" href="./area-privada-color.js?v=356f0e0a8d" data-ap-module="color">
+<link rel="prefetch" as="script" href="./color-studio/engine.js?v=32d5a20ebd" data-ap-asset="cs-engine">
+<link rel="prefetch" as="script" href="./color-studio/socks.js?v=415d2a64fe" data-ap-asset="cs-socks">
+<link rel="prefetch" as="script" href="./color-studio/data.js?v=95600ea753" data-ap-asset="cs-data">
+<link rel="prefetch" as="script" href="./color-studio/image.js?v=357f4d80cb" data-ap-asset="cs-image">
 <link rel="prefetch" as="script" href="./area-privada-kanban.js?v=ab3301bf21" data-ap-module="kanban">
 <link rel="prefetch" as="script" href="./area-privada-calendario.js?v=2e9cb28a18" data-ap-module="calendario">
 <link rel="prefetch" as="script" href="./area-privada-entrevistas.js?v=bdaabb17fe" data-ap-module="entrevistas">
@@ -35,9 +40,10 @@
 <link rel="prefetch" as="script" href="./second-brain/viewer.js?v=6c0aa3a1e3" data-ap-asset="sb-viewer">
 <link rel="prefetch" as="script" href="./area-privada-fichero.js?v=5834b6b4aa" data-ap-module="fichero">
 <link rel="prefetch" as="script" href="./area-privada-mapa.js?v=d3db579c96" data-ap-module="mapa">
-<link rel="prefetch" as="script" href="./mapa/estructura.js?v=fd78e00a71" data-ap-asset="mapa-datos">
+<link rel="prefetch" as="script" href="./mapa/estructura.js?v=61319569d8" data-ap-asset="mapa-datos">
 <link rel="stylesheet" href="./css/second-brain.css?v=2f3f8407a3">
 <link rel="stylesheet" href="./css/mapa.css?v=9a1505f87b">
+<link rel="stylesheet" href="./css/color-studio.css?v=1a0927ab87">
 <link rel="stylesheet" href="./css/area-privada.css?v=bfd1bc7e1b">
 </head>
 <body>
@@ -90,6 +96,7 @@
       <nav class="ap-tabs" aria-label="Secciones del área privada">
         <a href="#/" data-tab="hoy">Hoy</a>
         <a href="#/studio" data-tab="studio">Studio</a>
+        <a href="#/color" data-tab="color">Color Studio</a>
         <a href="#/calendario" data-tab="calendario">Calendario</a>
         <a href="#/entrevistas" data-tab="entrevistas">Entrevistas</a>
         <a href="#/portfolio" data-tab="portfolio">Portfolio</a>
@@ -150,6 +157,6 @@
   <p class="ap-foot-copy">© 2026 Borja Mora Méndez · <a href="./privacidad.html">Privacidad</a></p>
 </footer>
 
-<script src="./area-privada.js?v=f5b99fbb1c" defer></script>
+<script src="./area-privada.js?v=c303ddd653" defer></script>
 </body>
 </html>
