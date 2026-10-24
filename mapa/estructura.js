@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "37df682",
+ "huella": "e6648b4",
  "recuento": {
   "paginas": 19,
   "proyectos": 40,
@@ -8,11 +8,11 @@ export default {
   "perfil": 9,
   "capitulos": 10,
   "plataformas": 11,
-  "pestanas": 10,
-  "tablas": 29,
+  "pestanas": 11,
+  "tablas": 32,
   "funciones": 4,
-  "herramientas": 14,
-  "relaciones": 173,
+  "herramientas": 17,
+  "relaciones": 178,
   "sinExplicar": 0
  },
  "columnas": [
@@ -1634,6 +1634,14 @@ export default {
      "familia": "privada"
     },
     {
+     "id": "t:color",
+     "tipo": "pestana",
+     "etiqueta": "Color Studio",
+     "href": "#/color",
+     "archivo": "area-privada-color.js",
+     "familia": "privada"
+    },
+    {
      "id": "t:calendario",
      "tipo": "pestana",
      "etiqueta": "Calendario",
@@ -1784,6 +1792,33 @@ export default {
        "id": "q:calendar_sync",
        "tipo": "tabla",
        "etiqueta": "calendar_sync",
+       "familia": "dato"
+      }
+     ],
+     "familia": "dato"
+    },
+    {
+     "id": "d:color-studio",
+     "tipo": "esquema",
+     "etiqueta": "color-studio.sql",
+     "archivo": "supabase/color-studio.sql",
+     "hijos": [
+      {
+       "id": "q:cs_garments",
+       "tipo": "tabla",
+       "etiqueta": "cs_garments",
+       "familia": "dato"
+      },
+      {
+       "id": "q:cs_palettes",
+       "tipo": "tabla",
+       "etiqueta": "cs_palettes",
+       "familia": "dato"
+      },
+      {
+       "id": "q:cs_outfits",
+       "tipo": "tabla",
+       "etiqueta": "cs_outfits",
        "familia": "dato"
       }
      ],
@@ -2126,6 +2161,13 @@ export default {
        "familia": "herramienta"
       },
       {
+       "id": "h:check-color",
+       "tipo": "herramienta",
+       "etiqueta": "check-color.mjs",
+       "archivo": "tools/check-color.mjs",
+       "familia": "herramienta"
+      },
+      {
        "id": "h:check-kanban",
        "tipo": "herramienta",
        "etiqueta": "check-kanban.mjs",
@@ -2144,6 +2186,13 @@ export default {
        "tipo": "herramienta",
        "etiqueta": "check-studio.mjs",
        "archivo": "tools/check-studio.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:test-color",
+       "tipo": "herramienta",
+       "etiqueta": "test-color.mjs",
+       "archivo": "tools/test-color.mjs",
        "familia": "herramienta"
       },
       {
@@ -2180,6 +2229,21 @@ export default {
        "tipo": "herramienta",
        "etiqueta": "second-brain/",
        "archivo": "tools/second-brain/",
+       "familia": "herramienta"
+      }
+     ]
+    },
+    {
+     "id": "g:tools:otras",
+     "tipo": "grupo",
+     "etiqueta": "sin clasificar/",
+     "nota": "añádela a un grupo en mapa.config.json",
+     "hijos": [
+      {
+       "id": "h:color-studio",
+       "tipo": "herramienta",
+       "etiqueta": "color-studio/",
+       "archivo": "tools/color-studio/",
        "familia": "herramienta"
       }
      ]
@@ -2740,6 +2804,12 @@ export default {
    "detalle": []
   },
   {
+   "de": "h:check-color",
+   "a": "t:color",
+   "tipo": "verifica",
+   "detalle": []
+  },
+  {
    "de": "h:check-kanban",
    "a": "m:kanban",
    "tipo": "verifica",
@@ -2776,6 +2846,12 @@ export default {
    "de": "h:second-brain",
    "a": "t:second-brain",
    "tipo": "alimenta",
+   "detalle": []
+  },
+  {
+   "de": "h:test-color",
+   "a": "t:color",
+   "tipo": "verifica",
    "detalle": []
   },
   {
@@ -3161,6 +3237,16 @@ export default {
    ]
   },
   {
+   "de": "t:color",
+   "a": "d:color-studio",
+   "tipo": "usa",
+   "detalle": [
+    "cs_garments",
+    "cs_outfits",
+    "cs_palettes"
+   ]
+  },
+  {
    "de": "t:configuracion",
    "a": "d:agenda",
    "tipo": "usa",
@@ -3343,6 +3429,12 @@ export default {
   },
   {
    "de": "w:checks",
+   "a": "h:check-color",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:checks",
    "a": "h:check-kanban",
    "tipo": "ejecuta",
    "detalle": []
@@ -3368,6 +3460,12 @@ export default {
   {
    "de": "w:checks",
    "a": "h:second-brain",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:checks",
+   "a": "h:test-color",
    "tipo": "ejecuta",
    "detalle": []
   },

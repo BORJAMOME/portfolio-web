@@ -54,6 +54,12 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
   Sin ejecutar `studio-ideas.sql` el resto del Studio funciona y esas secciones avisan dónde falta.
   Pendiente por hitos: hoja de ruta (hitos y dependencias, relaciones entre ideas), lienzo (coordenadas en tabla aparte) y revisión/cierre.
   Pruebas: `node tools/test-studio.mjs` (lógica) y `node tools/check-studio.mjs` (interfaz con Playwright y Supabase simulado; no toca la base real).
+- **Color Studio** (`#/color`, `/biblioteca`, `/armario`, `/calcetines`): outfits con prendas reales, paletas de referencia y guía de calcetines.
+  Interfaz `area-privada-color.js` (`window.APColor`, CSS `css/color-studio.css`, prefijo `cs-`; fondo #FBFBFB solo en esta pestaña con `body:has(.cs)`).
+  Lógica en módulos ES sin DOM en `color-studio/` (`engine.js` color/ΔE00/proporciones, `socks.js` reglas, `data.js` validación e importación, `image.js` fotos),
+  cargados con `<link data-ap-asset="cs-*">`. Tablas `cs_garments`, `cs_palettes`, `cs_outfits` y bucket privado `armario` (`supabase/color-studio.sql`, revertir con `color-studio-rollback.sql`).
+  Proporciones = estimaciones editables; no inventar porcentajes de confianza ni contenido del libro de Sanzo Wada. Modo ejemplo en memoria, nunca se guarda.
+  Pruebas: `node --test tools/test-color.mjs` y `node tools/check-color.mjs`. Guía y decisiones: `color-studio/README.md`.
 - **Calendario** (`#/calendario`): solo lectura. Google → iCal secreto → Edge Function `supabase/functions/calendario-sync`
   (pg_cron cada 15 min) → `public.calendar_events`. La página nunca habla con Google. Guía: `supabase/functions/calendario-sync/README.md`.
 - **Entrevistas** (`#/entrevistas`, `/analisis`, `/<uuid>`): tablas `procesos` y `entrevistas` (`supabase/entrevistas.sql`).

@@ -42,6 +42,9 @@ jobs:
       - name: Lógica del Studio de proyectos
         if: ${{ !cancelled() }}
         run: node tools/test-studio.mjs
+      - name: Motor de Color Studio (color, proporciones, calcetines, importación)
+        if: ${{ !cancelled() }}
+        run: node --test tools/test-color.mjs
       - name: Second Brain (motor, contrato y seguridad)
         if: ${{ !cancelled() }}
         run: node --test tools/second-brain/second-brain.test.mjs
@@ -67,6 +70,8 @@ jobs:
         run: node tools/check-kanban.mjs
       - name: Studio de proyectos (flujos de interfaz con Supabase simulado)
         run: node tools/check-studio.mjs
+      - name: Color Studio (flujos de interfaz con Supabase simulado)
+        run: node tools/check-color.mjs
 
   funciones:
     name: Edge Functions (Deno)

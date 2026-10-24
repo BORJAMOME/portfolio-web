@@ -449,6 +449,7 @@
     // sin pestaña propia: lo monta «Hoy» (tab) encima de sus tarjetas
     kanban:      { global: 'APKanban',      title: 'Hoy', tab: 'hoy' },
     studio:      { global: 'APStudio',      title: 'Studio' },
+    color:       { global: 'APColor',       title: 'Color Studio' },
     calendario:  { global: 'APCalendario',  title: 'Calendario' },
     entrevistas: { global: 'APEntrevistas', title: 'Entrevistas' },
     // sin pestaña propia: vive dentro de «Entrevistas» (tab) con su propio archivo
