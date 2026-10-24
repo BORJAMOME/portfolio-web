@@ -63,6 +63,22 @@ no hay ninguna, el tono opuesto al color con más presencia con la saturación l
 cambia el orden; en formal, la segura va primero y el contraste al final. Cada propuesta indica si tienes un calcetín
 parecido (ΔE00 ≤ 12).
 
+## Referencias de Sanzo Wada (348 combinaciones)
+
+Las combinaciones de *A Dictionary of Color Combinations* son las referencias de la biblioteca. No están en el repositorio:
+se generan en local y se importan a mano.
+
+```bash
+node tools/color-studio/wada-import.mjs [salida.json] [--from colors.json]
+```
+
+- Fuente: [mattdesl/dictionary-of-colour-combinations](https://github.com/mattdesl/dictionary-of-colour-combinations) (MIT),
+  recopilado originalmente por Dain M. Blodorn Kim. Commit y huella SHA-256 fijados en el script: si el dataset cambia, falla.
+- Resultado comprobado: 348 paletas (120 de 2 colores, 120 de 3, 108 de 4; el libro no tiene de 5), 159 colores, sin duplicados.
+- Cada color guarda el CMYK del libro como `original` y el HEX convertido (aproximado, perfil SWOP v2 → sRGB) como valor normalizado,
+  más su nombre y capítulo. Origen «Libro», con nota de procedencia: no verificado contra el ejemplar impreso.
+- Para importar: Biblioteca → Importar → elegir el JSON → revisar → confirmar.
+
 ## Importación y exportación
 
 - JSON: exportación de Color Studio (`format: "color-studio"`, `version: 1`), lista de paletas o lista de listas de HEX.

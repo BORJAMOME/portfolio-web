@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "5bcb4b1",
+ "huella": "e6648b4",
  "recuento": {
   "paginas": 19,
   "proyectos": 40,
@@ -11,7 +11,7 @@ export default {
   "pestanas": 11,
   "tablas": 32,
   "funciones": 4,
-  "herramientas": 16,
+  "herramientas": 17,
   "relaciones": 178,
   "sinExplicar": 0
  },
@@ -2229,6 +2229,21 @@ export default {
        "tipo": "herramienta",
        "etiqueta": "second-brain/",
        "archivo": "tools/second-brain/",
+       "familia": "herramienta"
+      }
+     ]
+    },
+    {
+     "id": "g:tools:otras",
+     "tipo": "grupo",
+     "etiqueta": "sin clasificar/",
+     "nota": "añádela a un grupo en mapa.config.json",
+     "hijos": [
+      {
+       "id": "h:color-studio",
+       "tipo": "herramienta",
+       "etiqueta": "color-studio/",
+       "archivo": "tools/color-studio/",
        "familia": "herramienta"
       }
      ]
