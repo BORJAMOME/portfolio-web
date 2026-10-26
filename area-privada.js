@@ -44,7 +44,7 @@
     dText: $('ap-dialog-text'), dField: $('ap-dialog-field'), dInput: $('ap-dialog-input'),
     dOk: $('ap-dialog-ok'), dCancel: $('ap-dialog-cancel'),
     toolbar: $('ap-toolbar'), crumbsNav: $('ap-crumbs-nav'), tabs: document.querySelectorAll('.ap-tabs a[data-tab]'),
-    appbar: $('ap-appbar'), appBack: $('ap-appbar-back')
+    appbar: $('ap-appbar'), appBack: $('ap-appbar-back'), bar: $('ap-bar'), more: $('ap-more')
   };
 
   /* ═══════════ FECHA Y HORA (cabecera) ═══════════
@@ -611,6 +611,7 @@
       var bar = a.parentNode, r = a.getBoundingClientRect(), b = bar.getBoundingClientRect();
       if (r.left < b.left || r.right > b.right) bar.scrollLeft += r.left - b.left - 16;
     });
+    syncNav(tab);
     els.title.textContent = isModule ? MODULES[r.name].title : 'Archivos y notas';
     if (isModule) {
       job = loadModule(r.name).then(function (mod) {
@@ -1068,6 +1069,69 @@
     els.drop.hidden = true;
     uploadFiles(e.dataTransfer.files);
   });
+
+  /* ═══════════ NAVEGACIÓN MÓVIL ═══════════
+     En pantallas estrechas las pestañas (.ap-tabs, única fuente de las secciones) se sustituyen por una barra inferior
+     con las cuatro de uso diario y «Más», que abre una hoja con el resto y «Cerrar sesión». Se genera a partir de
+     .ap-tabs, así que una pestaña nueva aparece sola en la hoja. En modo app (ap-in-app) no se muestra. */
+  var NAV_ICONS = {
+    hoy: '<circle cx="12" cy="12" r="3.6"/><path d="M12 3.5v2M12 18.5v2M3.5 12h2M18.5 12h2M6 6l1.4 1.4M16.6 16.6 18 18M18 6l-1.4 1.4M7.4 16.6 6 18"/>',
+    apps: '<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/>',
+    calendario: '<rect x="4" y="5.5" width="16" height="14.5" rx="2"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/>',
+    entrevistas: '<path d="M5 5.5h14a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5h-7l-4.5 3.5V16.5H5A1.5 1.5 0 0 1 3.5 15V7A1.5 1.5 0 0 1 5 5.5z"/>',
+    portfolio: '<rect x="3.5" y="7.5" width="17" height="12" rx="2"/><path d="M9 7.5V6a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 6v1.5M3.5 13h17"/>',
+    'second-brain': '<circle cx="12" cy="6" r="2.2"/><circle cx="5.5" cy="17.5" r="2.2"/><circle cx="18.5" cy="17.5" r="2.2"/><path d="M10.9 7.9 6.6 15.6M13.1 7.9l4.3 7.7M7.7 17.5h8.6"/>',
+    mapa: '<rect x="9" y="3.5" width="6" height="4.5" rx="1"/><rect x="3.5" y="16" width="6" height="4.5" rx="1"/><rect x="14.5" y="16" width="6" height="4.5" rx="1"/><path d="M12 8v4M6.5 16v-4h11v4"/>',
+    archivos: '<path d="M3.5 7.5a2 2 0 0 1 2-2h4l2 2h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/>',
+    fichero: '<path d="M6.5 3.5h11v17L12 16.5l-5.5 4z"/>',
+    configuracion: '<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',
+    mas: '<circle cx="6" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18" cy="12" r="1.2"/>',
+    salir: '<path d="M9.5 4.5h-4A1.5 1.5 0 0 0 4 6v12a1.5 1.5 0 0 0 1.5 1.5h4M15 8l4 4-4 4M19 12H9.5"/>',
+    cerrar: '<path d="M6 6l12 12M18 6 6 18"/>'
+  };
+  var BAR_TABS = ['hoy', 'apps', 'calendario', 'entrevistas'];
+  function navIcon(id) {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + (NAV_ICONS[id] || '') + '</svg>';
+  }
+  var navMoreBtn = null;
+  (function buildNav() {
+    var tabs = [].map.call(els.tabs, function (a) { return { id: a.getAttribute('data-tab'), href: a.getAttribute('href'), label: a.textContent.trim() }; });
+    tabs.filter(function (t) { return BAR_TABS.indexOf(t.id) > -1; }).forEach(function (t) {
+      els.bar.appendChild(h('a', { class: 'ap-bar-a', href: t.href, 'data-tab': t.id }, [h('span', { class: 'ap-bar-ico', html: navIcon(t.id) }), h('span', { text: t.label })]));
+    });
+    navMoreBtn = h('button', { type: 'button', class: 'ap-bar-a ap-bar-more', 'aria-haspopup': 'dialog', 'aria-controls': 'ap-more', 'aria-expanded': 'false' }, [
+      h('span', { class: 'ap-bar-ico', html: navIcon('mas') }), h('span', { text: 'Más' })
+    ]);
+    els.bar.appendChild(navMoreBtn);
+    var closeBtn = h('button', { type: 'button', class: 'ap-more-x', 'aria-label': 'Cerrar', html: navIcon('cerrar') });
+    var logoutBtn = h('button', { type: 'button', class: 'ap-more-a ap-more-out' }, [h('span', { class: 'ap-more-ico', html: navIcon('salir') }), h('span', { text: 'Cerrar sesión' })]);
+    els.more.appendChild(h('div', { class: 'ap-more-card' }, [
+      h('div', { class: 'ap-more-head' }, [h('h2', { class: 'ap-more-title', id: 'ap-more-title', text: 'Más secciones' }), closeBtn]),
+      h('ul', { class: 'ap-more-list' }, tabs.filter(function (t) { return BAR_TABS.indexOf(t.id) < 0; }).map(function (t) {
+        return h('li', null, [h('a', { class: 'ap-more-a', href: t.href, 'data-tab': t.id }, [h('span', { class: 'ap-more-ico', html: navIcon(t.id) }), h('span', { text: t.label })])]);
+      })),
+      logoutBtn
+    ]));
+    navMoreBtn.addEventListener('click', function () {
+      els.more.showModal();
+      navMoreBtn.setAttribute('aria-expanded', 'true');
+    });
+    els.more.addEventListener('close', function () { navMoreBtn.setAttribute('aria-expanded', 'false'); });
+    closeBtn.addEventListener('click', function () { els.more.close(); });
+    els.more.addEventListener('click', function (e) {
+      if (e.target === els.more) return els.more.close();                      // clic en el fondo
+      var a = e.target.closest && e.target.closest('a');
+      if (a && !e.defaultPrevented) els.more.close();                           // navegar (si el aviso de cambios sin guardar no lo impide)
+    });
+    logoutBtn.addEventListener('click', function () { els.more.close(); els.logout.click(); });
+    window.addEventListener('resize', function () { if (els.more.open && window.innerWidth >= 900) els.more.close(); });
+  })();
+  function syncNav(tab) {
+    [].forEach.call(document.querySelectorAll('.ap-bar a[data-tab], .ap-more a[data-tab]'), function (a) {
+      if (a.getAttribute('data-tab') === tab) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+    });
+    navMoreBtn.classList.toggle('is-on', BAR_TABS.indexOf(tab) < 0);
+  }
 
   /* ═══════════ ARRANQUE ═══════════ */
   readSession();
