@@ -25,6 +25,10 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
 - **Pestañas en módulos** que se cargan al abrirlas: `area-privada-<nombre>.js` define `window.AP<Nombre> = { render(ctx) → Promise<paint> }`
   y se declara en el HTML como `<link rel="prefetch" data-ap-module="<nombre>">` (así `version-assets` le pone el `?v=`).
   Para una pestaña nueva: el archivo, ese `<link>`, una entrada en `MODULES` (de ahí sale también la ruta) y el enlace en `.ap-tabs`.
+- **Navegación móvil** (< 900 px): las pestañas `.ap-tabs` (única fuente de las secciones) se sustituyen por una barra inferior con Hoy, Apps, Calendario, Entrevistas y «Más»;
+  «Más» abre una hoja (`<dialog>` modal) con el resto de pestañas y «Cerrar sesión». Las dos se **generan** en `area-privada.js` (`buildNav`, `BAR_TABS`, `NAV_ICONS`) a partir de `.ap-tabs`:
+  una pestaña nueva aparece sola en la hoja (y necesita su icono en `NAV_ICONS`); para subirla a la barra, añadirla a `BAR_TABS`. La barra no se muestra en modo app. En móvil la cabecera es una sola fila
+  (reloj + «Volver al Laboratorio»). Todo lo fijo abajo (barra, `.apk-toast`, `.mp-detail`) cuenta con la altura de la barra. Pruebas: `node tools/check-color.mjs` (flujos «Móvil»).
 - **Apps** (`#/apps`): catálogo de las herramientas personales. El registro `APPS` de `area-privada.js` es la única fuente de nombre, descripción, icono y ruta;
   `area-privada-apps.js` (`window.APApps`) solo lo pinta (CSS con prefijo `apl-` al final de `css/area-privada.css`, fondo #FBFBFB con `body:has(.apl)`).
   **Modo app**: una entrada con `module` vive en esta página (su módulo va en `MODULES` con `tab: 'apps'`) y al abrirla el shell pone `body.ap-in-app`:

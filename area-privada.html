@@ -44,7 +44,7 @@
 <link rel="stylesheet" href="./css/second-brain.css?v=2f3f8407a3">
 <link rel="stylesheet" href="./css/mapa.css?v=9a1505f87b">
 <link rel="stylesheet" href="./css/color-studio.css?v=31d65880af">
-<link rel="stylesheet" href="./css/area-privada.css?v=d472c61200">
+<link rel="stylesheet" href="./css/area-privada.css?v=d4c31b448c">
 </head>
 <body>
 <a href="#main-content" class="skip-link">Saltar al contenido</a>
@@ -132,6 +132,9 @@
       <ul class="ap-uploads" id="ap-uploads" aria-label="Subidas en curso"></ul>
       <div class="ap-view" id="ap-view"></div>
     </div>
+    <!-- Móvil: barra inferior y hoja «Más». Las construye area-privada.js a partir de .ap-tabs (única fuente de las secciones) -->
+    <nav class="ap-bar" id="ap-bar" aria-label="Secciones del área privada"></nav>
+    <dialog class="ap-more" id="ap-more" aria-labelledby="ap-more-title"></dialog>
     <div class="ap-drop" id="ap-drop" aria-hidden="true" hidden><p>Suelta los archivos para subirlos a esta carpeta</p></div>
   </section>
 
@@ -162,6 +165,6 @@
   <p class="ap-foot-copy">© 2026 Borja Mora Méndez · <a href="./privacidad.html">Privacidad</a></p>
 </footer>
 
-<script src="./area-privada.js?v=2cdbd58c9a" defer></script>
+<script src="./area-privada.js?v=9212f4cc24" defer></script>
 </body>
 </html>
