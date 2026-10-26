@@ -467,6 +467,27 @@ await step('Calcetines: sin pantalón ni calzado explica la limitación', async 
   ok((await page.textContent('.cs-socks')).includes('Falta información'), 'sin explicación');
 });
 
+await step('CS-13: un color hipotético se guarda como tal y sigue marcado al reabrir el outfit', async () => {
+  const g = db.cs_garments.find((x) => x.name === 'Chino marino');
+  await page.evaluate((gid) => sessionStorage.setItem('bm_cs_draft', JSON.stringify({ id: null, name: '', palette_id: null, override: null, formality: 'smart', direction: 'balanced', shoeType: '', original: null, occasion: '', notes: '', is_favorite: false,
+    slots: { bottom: { garment_id: gid, hex: null, weight: 35 }, accessory: { garment_id: null, hex: '#C9A23A', weight: 3, hypothetical: true } } })), g.id);
+  await page.reload(); await go(page, '#/color'); await page.waitForSelector('.cs-slots');
+  ok((await page.textContent('.cs-slot:has-text("Accesorio")')).includes('Color hipotético'), 'el borrador no muestra el color hipotético');
+  await page.click('[data-key="save-outfit"]');
+  await page.waitForSelector('dialog[open] #cs-o-name');
+  await page.fill('#cs-o-name', 'Con hipotético');
+  await submit(page);
+  await page.waitForSelector('dialog[open]', { state: 'detached' });
+  const o = db.cs_outfits.find((x) => x.name === 'Con hipotético');
+  eq(o.items.find((i) => i.slot === 'accessory').hypothetical, true, 'no se guardó la marca');
+  ok(!('hypothetical' in o.items.find((i) => i.slot === 'bottom')), 'una prenda real quedó marcada como hipotética');
+  await page.click('.cs-card-head .cs-link:has-text("Vaciar")');
+  await page.click('.cs-outfit:has-text("Con hipotético") .cs-link:has-text("Abrir")');
+  await page.waitForSelector('.cs-slot:has-text("Accesorio")');
+  ok((await page.textContent('.cs-slot:has-text("Accesorio")')).includes('Color hipotético'), 'al reabrir se perdió la marca');
+  await page.click('.cs-card-head .cs-link:has-text("Vaciar")');
+});
+
 /* ── Color Studio 2.0 en modo ejemplo (no escribe nada: lo comprueba el registro de escrituras) ── */
 await step('Dirección: lectura del conjunto y propuestas que no tocan el outfit hasta aplicarlas', async () => {
   missing = true;
@@ -575,6 +596,21 @@ await step('CS-07: sin colores próximos, las paletas relacionadas por familia a
   ok(ref.includes('Misma familia en el conjunto'), 'los colores emparejados por familia no se distinguen de los idénticos');
   ok(!ref.includes('Coincidencia exacta'), 'una relación por familia se presenta como coincidencia exacta');
 });
+await step('CS-06: en móvil el Studio va por tareas y «Guardar» queda siempre a mano; en escritorio no cambia', async () => {
+  const { page: p } = globalThis.__x;
+  await go(p, '#/color');
+  const top = (sel) => p.$eval(sel, (e) => e.getBoundingClientRect().top + scrollY);
+  await p.setViewportSize({ width: 390, height: 844 });
+  await p.evaluate(() => scrollTo(0, 0));
+  const [slots, dir, socks, compose] = [await top('.cs-o-slots'), await top('.cs-o-dir'), await top('.cs-o-socks'), await top('.cs-o-compose')];
+  ok(slots < dir && dir < socks && socks < compose, 'orden móvil: ' + [slots, dir, socks, compose].map(Math.round));
+  const save = await p.$eval('.cs-save-btn', (b) => { const r = b.getBoundingClientRect(); return { top: r.top, bottom: r.bottom, h: innerHeight }; });
+  ok(save.top > 0 && save.bottom < save.h, '«Guardar» no se ve sin desplazarse: ' + JSON.stringify(save));
+  const nav = await p.$eval('.cs-nav', (n) => n.getBoundingClientRect().top);
+  ok(save.bottom <= nav, '«Guardar» queda tapado por la barra inferior');
+  await p.setViewportSize({ width: 1440, height: 1000 });
+  ok((await top('.cs-o-compose')) < (await top('.cs-o-slots')), 'en escritorio la composición debería seguir arriba');
+});
 await step('Modo ejemplo 2.0: sin escrituras, sin errores, axe correcto y sin scroll horizontal a 390 px', async () => {
   const { page: p, ctx: c, errors: errs, writes } = globalThis.__x;
   eq(writes, [], 'escrituras en modo ejemplo');
@@ -592,6 +628,19 @@ await step('Modo ejemplo 2.0: sin escrituras, sin errores, axe correcto y sin sc
   eq(errs, []);
   await c.close();
   missing = false;
+});
+await step('CS-05: cada módulo de color-studio/ se descarga una sola vez y siempre con su versión', async () => {
+  const x = await open(null, '#/color');
+  const reqs = [];
+  x.page.on('request', (r) => { const u = new URL(r.url()); if (/\/color-studio\/\w+\.js$/.test(u.pathname)) reqs.push(u.pathname.split('/').pop() + u.search); });
+  await x.page.reload(); await x.page.waitForSelector('.cs');
+  const by = {}; reqs.forEach((r) => { const f = r.split('?')[0]; (by[f] = by[f] || new Set()).add(r); });
+  eq(Object.keys(by).sort(), ['compose.js', 'data.js', 'engine.js', 'image.js', 'socks.js']);
+  Object.entries(by).forEach(([f, set]) => {
+    eq(set.size, 1, f + ' se pide con URLs distintas: ' + [...set].join(' · '));
+    ok([...set][0].includes('?v='), f + ' sin versión');
+  });
+  await x.ctx.close();
 });
 await step('Error de guardado: se muestra en el formulario y no hay confirmación falsa', async () => {
   await go(page, '#/color/biblioteca');

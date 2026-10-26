@@ -27,6 +27,7 @@ No hace falta ninguna variable de entorno ni clave nueva: usa la sesión y la cl
 | `color-studio/data.js` | Validación, importación JSON/CSV, duplicados, exportación y datos de ejemplo. |
 | `color-studio/image.js` | Fotos en el navegador: validación, reducción sin EXIF y proveedor de visión `local`. |
 | `css/color-studio.css` | Estilos (prefijo `cs-`), mobile-first. |
+| Versiones | Los imports entre módulos llevan `?v=` (lo escribe `node tools/version-assets.mjs`): la página y los módulos piden la misma URL de cada dependencia, así se descarga una vez y no se mezclan versiones tras publicar. |
 | `tools/test-color.mjs` | Pruebas del motor (`node --test tools/test-color.mjs`, sin dependencias). |
 | `tools/check-color.mjs` | Pruebas de interfaz con Playwright y Supabase simulado (no toca la base real). |
 
@@ -52,7 +53,7 @@ No hace falta ninguna variable de entorno ni clave nueva: usa la sesión y la cl
 - **Procedencia en la paleta** (tipo, título, URL, notas) en lugar de una tabla de fuentes: para uso personal no compensa.
   Cada color conserva el valor registrado (`original`) y su HEX normalizado. Las paletas «Libro» son datos introducidos por
   la persona; la herramienta no verifica ni importa contenido del libro.
-- **Outfits con `items` en JSON** (`slot`, `garment_id` o `hex` provisional, `weight`). Si una prenda se borra, el outfit
+- **Outfits con `items` en JSON** (`slot`, `garment_id` o `hex` provisional, `weight` y, solo con `hex`, `hypothetical: true` si era un color propuesto que no tienes). Si una prenda se borra, el outfit
   lo muestra como «prenda eliminada» en vez de perder el registro.
 - **Fotos**: se reducen a 1600 px y se recodifican (WebP o JPEG) en el navegador, lo que elimina EXIF y ubicación. Bucket
   privado; se descargan con la sesión. Borrar una prenda o cambiar su foto borra el archivo anterior.
@@ -112,6 +113,12 @@ orientativa. Nada de eso es una puntuación: no hay porcentajes de estilo ni «o
   completan con paletas que tienen al menos dos colores de la misma familia y luminosidad parecida (|ΔL| ≤ 15) que el
   conjunto. Se marcan como «Relación por familia» y nunca como coincidencia. Con un armario neutro típico pasan de
   0–1 a 3–5 paletas de Wada que relacionan dos colores o más. `cr-paleta` las usa solo si ninguna paleta próxima da propuesta.
+
+## Studio en el móvil
+
+En una columna (< 1100 px) los bloques se ordenan por tarea: prendas → dirección → calcetines → composición → paletas →
+ajuste manual y cálculo → mis outfits. «Guardar outfit» queda fijo encima de la barra inferior en cuanto hay una prenda.
+En escritorio el orden no cambia. Se hace con CSS (`order` y las clases `cs-o-*`), sin duplicar la vista.
 
 ## Calcetines
 
@@ -174,7 +181,6 @@ node tools/color-studio/wada-import.mjs [salida.json] [--from colors.json]
 - La temperatura y la relación entre colores son aproximaciones por tono; los materiales y texturas no intervienen
   porque el campo es texto libre y no se deducen.
 - Las direcciones cambian como mucho una prenda por propuesta; no buscan combinaciones de varias prendas a la vez.
-- Un color hipotético aplicado y guardado queda como «color a mano» (el aviso de hipotético vive solo en el borrador).
 - La familia de un color es aproximada en los límites entre tonos (p. ej. camel/naranja, turquesa/verde).
 - HEIC no se lee en navegadores de escritorio: el iPhone debe compartir la foto como JPEG.
 - El borrador del Studio vive en `sessionStorage` (se pierde al cerrar la pestaña); lo guardado está en Supabase.

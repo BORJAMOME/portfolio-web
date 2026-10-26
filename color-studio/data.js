@@ -4,7 +4,7 @@
    Módulo ES puro (sin red ni DOM). La web valida aquí ANTES de escribir en Supabase;
    la base vuelve a exigir lo esencial con checks (supabase/color-studio.sql).
    ═══════════════════════════════════════════════ */
-import { normalizeHex, normalizePaletteColors, findDuplicates, CATEGORY_LABEL, SLOT, sanitizeWeight, normalizeDistribution } from './engine.js';
+import { normalizeHex, normalizePaletteColors, findDuplicates, CATEGORY_LABEL, SLOT, sanitizeWeight, normalizeDistribution } from './engine.js?v=4cb484b1b7';
 
 export const SOURCE_TYPES = [
   ['own', 'Creada por mí'], ['book', 'Libro'], ['web', 'Página web'], ['photo', 'Fotografía'], ['other', 'Otra referencia']
@@ -79,7 +79,7 @@ export function validateGarment(input) {
   };
 }
 
-/** Outfit listo para guardar. items: [{ slot, garment_id | hex, weight }] */
+/** Outfit listo para guardar. items: [{ slot, garment_id | hex, weight, hypothetical? }] (hypothetical solo con hex: color propuesto, no una prenda tuya) */
 export function validateOutfit(input) {
   const errors = [];
   const i = input && typeof input === 'object' ? input : {};
@@ -92,7 +92,9 @@ export function validateOutfit(input) {
     if (!w.valid) errors.push('Peso no válido en ' + (slot ? SLOT[slot].label.toLowerCase() : 'una prenda'));
     const hex = normalizeHex((it && it.hex) || '');
     if (!(it && it.garment_id) && !hex) errors.push('Cada hueco necesita una prenda o un color');
-    return { slot, weight: w.value, garment_id: (it && it.garment_id) || null, hex: it && it.garment_id ? null : hex };
+    const item = { slot, weight: w.value, garment_id: (it && it.garment_id) || null, hex: it && it.garment_id ? null : hex };
+    if (!item.garment_id && it && it.hypothetical === true) item.hypothetical = true;   // color propuesto que no tienes (CS-13)
+    return item;
   });
   if (!items.length) errors.push('El outfit no tiene prendas');
   if (items.length > 12) errors.push('Como máximo 12 prendas');

@@ -289,7 +289,15 @@ Huecos de cobertura:
 
 Sin resolver por ahora: la corrección del balance de blancos (CS-17) y el fondo oscuro con una prenda negra, que se confunden.
 
-## 12. Roadmap
+**Fase 3, hecha el 26-10-2026** (con permiso expreso):
+
+| ID | Qué se ha hecho |
+|---|---|
+| CS-05 | `version-assets` también versiona los imports entre módulos de `color-studio/`: cada módulo se descarga una sola vez y siempre con su versión. Lo comprueba una prueba de interfaz. |
+| CS-06 | En móvil el Studio va por tareas (prendas → dirección → calcetines → composición…) y «Guardar» queda fijo encima de la barra inferior. La dirección empieza a ~1 080 px (antes ~1 550). El escritorio no cambia. |
+| CS-13 | La marca de color hipotético se guarda en `cs_outfits.items` (`hypothetical: true`, solo en huecos con color) y se recupera al reabrir. No cambia el esquema: el check del JSON ya admitía la clave. |
+
+
 
 1. **Inmediato** (pequeño, localizado, reversible): CS-01 (solo separar los pasos de la CI), CS-02, CS-09, CS-10, CS-11, CS-12, CS-14, CS-15 y CS-18.
 2. **Precisión cromática**: CS-03, CS-04, CS-08, CS-16 y CS-07, cada uno con sus casos de prueba antes de cambiar la lógica.
