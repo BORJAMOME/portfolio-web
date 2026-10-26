@@ -52,17 +52,6 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
   Captura inteligente local (`logic.parseCapture`: #proyecto, !prioridad, fechas en español, @hoy). Paleta `Ctrl/⌘+K`.
   IA opcional: Edge Function `supabase/functions/kanban-ia` (desglosar, siguiente paso, plan del día, texto → tarjetas). Solo propone:
   la web enseña una revisión y guarda lo confirmado. `KB_AI_PROVIDER=off` por defecto (los botones de IA no aparecen). Guía: su `README.md`.
-- **Studio** (`#/studio`): proyectos y tareas con varias vistas sobre el mismo estado (Resumen, Tablero, Archivo; panel lateral contextual). Módulo
-  `area-privada-studio.js` (`window.APStudio`, lógica pura en `.logic`), CSS con prefijo `aps-` al final de `css/area-privada.css` (reutiliza los tokens y los `--st-*` del Centro de trabajo).
-  Tablas propias `ps_projects`, `ps_tasks` (con `parent_id` = subtarea de un solo nivel), `ps_settings` (límites WIP) y `ps_activity` (la escribe un trigger)
-  en `supabase/studio.sql` (revertir con `studio-rollback.sql`). **Independiente del Centro de trabajo**: no lee ni escribe `kb_*`. La fase del proyecto (`stage`) y su estado (`status`)
-  son cosas distintas; un proyecto que no está activo oculta sus tareas del tablero. Arrastre con Pointer Events propios, Mayús+flechas, deshacer (botón y Ctrl/⌘+Z).
-  Hito 2 (`supabase/studio-ideas.sql`, revertir con `studio-ideas-rollback.sql`): **Idea Lab** (`ps_ideas`: captura de una frase, grupo libre `topic`, tipo, estado y conexión a un proyecto;
-  `ps_convert_idea()` la convierte en proyecto de forma atómica), **notas e investigación** (`ps_notes`: nota, investigación, hipótesis, decisión, referencia) y **entregables**
-  (`ps_deliverables`) como secciones desplegables del panel de proyecto. Los enlaces solo se pintan si son http(s) (`logic.safeUrl`; la base lo exige también con un `check`).
-  Sin ejecutar `studio-ideas.sql` el resto del Studio funciona y esas secciones avisan dónde falta.
-  Pendiente por hitos: hoja de ruta (hitos y dependencias, relaciones entre ideas), lienzo (coordenadas en tabla aparte) y revisión/cierre.
-  Pruebas: `node tools/test-studio.mjs` (lógica) y `node tools/check-studio.mjs` (interfaz con Playwright y Supabase simulado; no toca la base real).
 - **Color Studio** (`#/color`, `/biblioteca`, `/armario`, `/calcetines`; app del catálogo, se abre en modo app): outfits con prendas reales, paletas de referencia y guía de calcetines.
   Interfaz `area-privada-color.js` (`window.APColor`, CSS `css/color-studio.css`, prefijo `cs-`; fondo #FBFBFB solo en esta pestaña con `body:has(.cs)`).
   Lógica en módulos ES sin DOM en `color-studio/` (`engine.js` color/ΔE00/proporciones, `socks.js` reglas, `data.js` validación e importación, `image.js` fotos),

@@ -141,7 +141,7 @@ async function open(viewport, hash, realCsp, motion) {
   page.on('pageerror', (e) => errors.push(e.message));
   page.on('console', (m) => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push(m.text()); });
   await page.goto(BASE + (hash || '#/color'));
-  await page.waitForSelector('.cs, .aps-head, .apl, #ap-lock:not([hidden])');
+  await page.waitForSelector('.cs, .apl, .ap-view > *, #ap-lock:not([hidden])');
   return { ctx, page, errors };
 }
 async function axe(page, label) {
@@ -636,7 +636,7 @@ await step('Intro: móvil 390 px sin desbordes; salir de Color Studio durante la
   ok(w <= 390 - 32, 'el título se sale en móvil: ' + w);
   eq(await c.page.evaluate(() => document.documentElement.scrollWidth), 390);
   await shot(c.page, '09-intro-movil');
-  await c.page.evaluate(() => { location.hash = '#/studio'; });
+  await c.page.evaluate(() => { location.hash = '#/apps'; });
   await c.page.waitForSelector('.csi', { state: 'detached', timeout: 1000 });
   await c.ctx.close();
 });
@@ -671,11 +671,29 @@ await step('Intro: CSP real sin violaciones', async () => {
   eq(c.errors, []);
   await c.ctx.close();
 });
-await step('El resto del área privada sigue funcionando (Studio de proyectos)', async () => {
-  const c = await open(null, '#/studio');
-  await c.page.waitForSelector('.aps-head');
+await step('El resto del área privada sigue funcionando (Portfolio)', async () => {
+  const c = await open(null, '#/portfolio');
+  await c.page.waitForSelector('.ap-tabs a[data-tab="portfolio"][aria-current]');
   ok(await c.page.evaluate(() => getComputedStyle(document.body).backgroundColor) !== 'rgb(251, 251, 251)', 'el fondo de Color Studio se filtra a otras pestañas');
   ok(await c.page.isVisible('.ap-tabs') && await c.page.isHidden('#ap-appbar'), 'el modo app se filtra a otras pestañas');
+  eq(await c.page.$('.ap-tabs a[data-tab="studio"]'), null, 'sigue la pestaña Studio');
+  eq(await c.page.$('#ap-user'), null, 'sigue el email junto a «Cerrar sesión»');
+  ok(!(await c.page.textContent('.ap-head')).includes('@'), 'hay un email en la cabecera');
+  // reloj LCD: cada dígito lleva su cifra (data-v) y enciende los segmentos que le tocan
+  const lcd = await c.page.evaluate(() => {
+    const v = (k) => document.querySelector('[data-lcd="' + k + '"]').getAttribute('data-v');
+    const on = (k) => document.querySelectorAll('[data-lcd="' + k + '"] .ap-lcd-s.is-on').length;
+    return { day: document.querySelector('.ap-lcd-day.is-on').textContent, dd: v('d1') + v('d2'), mm: v('n1') + v('n2'), h: v('h1') + v('h2'), min: v('m1') + v('m2'),
+      lit: ['h1', 'h2', 'm1', 'm2', 's1', 's2'].map((k) => [v(k), on(k)]), days: document.querySelectorAll('.ap-lcd-day.is-on').length, now: new Date() };
+  });
+  const t = new Date(), p2 = (n) => String(n).padStart(2, '0');
+  eq(lcd.day, ['DO', 'LU', 'MA', 'MI', 'JU', 'VI', 'SA'][t.getDay()], 'día de la semana');
+  eq(lcd.days, 1, 'más de un día encendido');
+  eq(lcd.dd + '-' + lcd.mm, p2(t.getDate()) + '-' + p2(t.getMonth() + 1), 'fecha DD-MM');
+  ok(Math.abs((+lcd.h * 60 + +lcd.min) - (t.getHours() * 60 + t.getMinutes())) <= 1, 'hora ' + lcd.h + ':' + lcd.min);
+  const SEGS = { 0: 6, 1: 2, 2: 5, 3: 5, 4: 4, 5: 5, 6: 6, 7: 3, 8: 7, 9: 6 };
+  ok(lcd.lit.every(([n, k]) => SEGS[n] === k), 'segmentos encendidos que no corresponden a su cifra: ' + JSON.stringify(lcd.lit));
+  ok((await c.page.textContent('#ap-now-spoken')).includes(String(t.getFullYear())), 'sin fecha completa para lectores de pantalla');
   await c.ctx.close();
 });
 
