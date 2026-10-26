@@ -72,6 +72,7 @@ body:has(.cs) { --off: #FBFBFB; background: #FBFBFB; }
 .cs-badge { display: inline-flex; align-items: center; min-height: 24px; padding: 0 9px; border-radius: 999px; font-size: 12px; font-weight: 600; border: 1px solid var(--cs-line); color: var(--cs-muted); background: var(--cs-paper); white-space: nowrap; }
 .cs-badge--exact { background: var(--green-light); color: var(--green-ink); border-color: transparent; }
 .cs-badge--approx, .cs-badge--manual, .cs-badge--demo { background: var(--ap-support-soft); color: var(--ap-support-ink); border-color: transparent; }
+.cs-badge--family { background: var(--cs-paper); color: var(--cs-ink); border-color: var(--cs-line-strong); border-style: dashed; }
 .cs-badge--own { background: var(--purple-light); color: var(--purple); border-color: transparent; }
 .cs-badges { display: flex; flex-wrap: wrap; gap: 6px; }
 
@@ -406,6 +407,7 @@ body:has(.cs) { --off: #FBFBFB; background: #FBFBFB; }
 .cs-adapt-s { font-size: 12.5px; color: var(--cs-muted); line-height: 1.35; }
 .cs-adapt-r.is-in .cs-adapt-s { color: var(--green-ink); }
 .cs-adapt-r.is-cand .cs-adapt-s { color: var(--cs-ink); }
+.cs-adapt-r.is-fam .cs-adapt-s { color: var(--cs-muted); font-style: italic; }
 .cs-adapt-gap { width: 40px; height: 40px; border-radius: 6px; border: 1px dashed var(--cs-line-strong); }
 .cs-adapt-role { grid-area: r; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--cs-muted); }
 .cs-ref-act { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; }

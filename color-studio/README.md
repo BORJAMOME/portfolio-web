@@ -37,8 +37,11 @@ No hace falta ninguna variable de entorno ni clave nueva: usa la sesión y la cl
 - **Comparación en CIELAB con CIEDE2000.** Validado contra los pares publicados por Sharma, Wu y Dalal (2005).
   Umbrales orientativos: idéntica (mismo HEX), muy próxima (ΔE00 ≤ 5), próxima (≤ 10). La distancia es una señal de
   proximidad, no un juicio estético: no hay porcentajes de confianza ni puntuaciones.
-- **Familias cromáticas** aproximadas en LCh, calibradas con colores de referencia. Marino, marrón y beige cuentan como
-  neutros por convención de vestuario.
+- **Familias cromáticas** aproximadas en LCh, calibradas con colores de ropa (tabla en `tools/test-color.mjs`). Marino,
+  marrón, beige y caqui claro cuentan como neutros por convención de vestuario; un marino muy saturado (croma ≥ 45)
+  pasa a azul. Nombres propios para oliva, caqui, mostaza, ocre, teja y azul petróleo.
+- **Gama sRGB**: un color calculado que no cabe en sRGB se lleva a la gama reduciendo el croma con la misma
+  luminosidad y tono; antes se recortaba cada canal y cambiaba el tono.
 - **Proporciones = estimaciones.** Superficie de una prenda = peso ÷ suma de pesos × 100. Pesos por defecto (hipótesis
   editable): pantalón 35, parte superior 30, exterior 25, calzado 10, accesorio 3, calcetines 2. La distribución cromática
   reparte esa superficie entre los colores de cada prenda (si se definió su reparto; si no, cuenta el principal) y agrupa
@@ -53,8 +56,11 @@ No hace falta ninguna variable de entorno ni clave nueva: usa la sesión y la cl
   lo muestra como «prenda eliminada» en vez de perder el registro.
 - **Fotos**: se reducen a 1600 px y se recodifican (WebP o JPEG) en el navegador, lo que elimina EXIF y ubicación. Bucket
   privado; se descargan con la sesión. Borrar una prenda o cambiar su foto borra el archivo anterior.
-- **Color de la foto**: k-means local sobre una copia de 96 px, ponderando el centro y rebajando el color del borde
-  (probable fondo). Es una propuesta: siempre se corrige a mano.
+- **Color de la foto**: k-means local sobre una copia de 96 px, ponderando el centro. El fondo se detecta agrupando
+  los píxeles del borde (hasta 3 colores, para fondos de rayas o con dibujo) y se rebaja. Dos grupos del mismo tono que
+  solo difieren en luz (≤ 30 de L, croma proporcional) se tratan como sombra y se funde el más oscuro en el más claro.
+  Los neutros no se funden. No corrige el balance de blancos: con luz cálida, un blanco sale crudo. Es una propuesta:
+  siempre se corrige a mano.
 - **Modo ejemplo**: datos inventados en memoria, señalados en pantalla, que nunca se guardan ni se mezclan con los reales.
 
 ## Intro de bienvenida
@@ -102,6 +108,10 @@ orientativa. Nada de eso es una puntuación: no hay porcentajes de estilo ni «o
 - **Paletas que inspiran**: para cada color de la paleta, si ya está en el conjunto (y en qué prenda), qué prenda de tu
   armario podría representarlo (ΔE00 ≤ 12) o que no tienes ninguna, y su papel respecto al dominante (tonal, de apoyo o
   de contraste). «Comparar con mi conjunto» abre la propuesta `cr-paleta` de esa paleta concreta.
+- **Relación por familia** (`rankPalettesByFamily`): si hay menos de tres paletas con colores próximos (ΔE00 ≤ 10), se
+  completan con paletas que tienen al menos dos colores de la misma familia y luminosidad parecida (|ΔL| ≤ 15) que el
+  conjunto. Se marcan como «Relación por familia» y nunca como coincidencia. Con un armario neutro típico pasan de
+  0–1 a 3–5 paletas de Wada que relacionan dos colores o más. `cr-paleta` las usa solo si ninguna paleta próxima da propuesta.
 
 ## Calcetines
 

@@ -45,11 +45,18 @@ export function temperatureOf(C, h) {
   return 'intermedia';
 }
 /** { hex, L, C, h, family, neutral, name, temperature } o null si no es un HEX válido. */
+const factsCache = new Map();            // las 159 tintas de Wada y las prendas se repiten en cada repintado
 export function colorFacts(hex) {
   const n = normalizeHex(hex);
   if (!n) return null;
-  const lch = labToLch(hexToLab(n)), d = describeColor(n);
-  return { hex: n, L: lch.L, C: lch.C, h: lch.h, family: d.family, neutral: d.neutral, name: d.name, temperature: temperatureOf(lch.C, lch.h) };
+  let f = factsCache.get(n);
+  if (!f) {
+    const lch = labToLch(hexToLab(n)), d = describeColor(n);
+    f = Object.freeze({ hex: n, L: lch.L, C: lch.C, h: lch.h, family: d.family, neutral: d.neutral, name: d.name, temperature: temperatureOf(lch.C, lch.h) });
+    if (factsCache.size > 4000) factsCache.clear();
+    factsCache.set(n, f);
+  }
+  return Object.assign({}, f);           // copia: quien la recibe puede añadir campos (pct, role…)
 }
 export const hueGap = (a, b) => { const d = Math.abs(a - b) % 360; return d > 180 ? 360 - d : d; };
 export function lightnessLevel(dL) { return dL < 15 ? 'bajo' : dL < 35 ? 'medio' : 'alto'; }
@@ -333,8 +340,11 @@ const MOVE_FNS = {
   },
   'cr-paleta'(c, opts) {
     const colors = c.before.colors.map((x) => ({ hex: x.hex, share: x.pct }));
-    const pals = opts && opts.palette ? [{ palette: opts.palette }] : rankPalettes(colors, c.palettes, { limit: 12 })
-      .sort((a, b) => ((b.palette.source_type === 'book') - (a.palette.source_type === 'book')));
+    const byBook = (a, b) => ((b.palette.source_type === 'book') - (a.palette.source_type === 'book'));
+    let pals = opts && opts.palette ? [{ palette: opts.palette, family: !!opts.family }] : rankPalettes(colors, c.palettes, { limit: 12 }).sort(byBook);
+    if (!(opts && opts.palette)) {
+      pals = pals.concat(rankPalettesByFamily(colors, c.palettes, { limit: 12, exclude: pals.map((r) => r.palette) }).sort(byBook).map((r) => Object.assign({ family: true }, r)));
+    }
     const present = outfitHexes(c);
     for (const r of pals) {
       const missing = (r.palette.colors || []).map((pc) => ({ hex: normalizeHex(pc.hex), name: pc.name })).filter((pc) => pc.hex && !nearAny(pc.hex, present, 15) && labToLch(hexToLab(pc.hex)).C >= 18);
@@ -343,7 +353,7 @@ const MOVE_FNS = {
           const g = realFor(c, slot).filter((x) => colorDistance(x.primary_color, m.hex) <= 12).sort((a, b) => colorDistance(a.primary_color, m.hex) - colorDistance(b.primary_color, m.hex))[0];
           if (g) {
             return proposal(c, 'creative', 'cr-paleta', [{ slot, garment: g }],
-              'La paleta «' + (r.palette.name || 'sin nombre') + '» ya comparte colores con el conjunto. ' + (itemOf(c, slot) ? 'Cambia ' + fromText(c, slot) + ' por ' : 'Añade ') + garmentLabel(g) +
+              'La paleta «' + (r.palette.name || 'sin nombre') + '» ' + (r.family ? 'comparte familias de color con el conjunto (no colores exactos). ' : 'ya comparte colores con el conjunto. ') + (itemOf(c, slot) ? 'Cambia ' + fromText(c, slot) + ' por ' : 'Añade ') + garmentLabel(g) +
               ': aporta el ' + (m.name || nameOfHex(m.hex)) + ' de la paleta, que el conjunto aún no usa.', { palette: r.palette, paletteHex: m.hex });
           }
         }
@@ -351,7 +361,7 @@ const MOVE_FNS = {
       if (missing.length) {
         const m = missing[0], slot = itemOf(c, 'accessory') && !itemOf(c, 'socks') ? 'socks' : 'accessory';
         return proposal(c, 'creative', 'cr-paleta', [{ slot, hex: m.hex }],
-          'La paleta «' + (r.palette.name || 'sin nombre') + '» ya comparte colores con el conjunto. Hipótesis: ' + (slot === 'socks' ? 'unos calcetines' : 'un accesorio') + ' en ' + (m.name || nameOfHex(m.hex)) +
+          'La paleta «' + (r.palette.name || 'sin nombre') + '» ' + (r.family ? 'comparte familias de color con el conjunto (no colores exactos). ' : 'ya comparte colores con el conjunto. ') + 'Hipótesis: ' + (slot === 'socks' ? 'unos calcetines' : 'un accesorio') + ' en ' + (m.name || nameOfHex(m.hex)) +
           ' (no tienes una prenda de ese color) completaría la combinación.', { palette: r.palette, paletteHex: m.hex });
       }
     }
@@ -423,6 +433,40 @@ export function proposeDirection(direction, input) {
 }
 
 /* ═══════════ PALETAS COMO INSPIRACIÓN ═══════════ */
+/* Relación por familia (auditoría CS-07): con un armario sobrio, pocas paletas tienen colores a ΔE00 ≤ 10 de las
+   prendas. Esta relación más laxa empareja cada color del conjunto con un color de la paleta de la MISMA familia
+   cromática y luminosidad parecida (|ΔL| ≤ 15). Exige al menos dos colores emparejados (con colores distintos
+   de la paleta) y siempre se presenta como «relación por familia», nunca como coincidencia de color. */
+export const FAMILY_DL = 15;
+export function rankPalettesByFamily(colors, palettes, opts = {}) {
+  const outfit = (colors || []).map((c) => normalizeHex(c.hex)).filter(Boolean).map((hex) => colorFacts(hex));
+  const exclude = new Set((opts.exclude || []).map((p) => p.id));
+  return (palettes || []).filter((p) => !exclude.has(p.id)).map((p) => {
+    const pc = (p.colors || []).map((c, i) => ({ f: colorFacts(c.hex), i, name: c.name })).filter((x) => x.f);
+    const links = [];
+    outfit.forEach((o) => {
+      let best = null;
+      pc.forEach((x) => {
+        const dL = Math.abs(x.f.L - o.L);
+        if (x.f.family !== o.family || dL > FAMILY_DL) return;
+        const dE = colorDistance(o.hex, x.f.hex);
+        if (!best || dE < best.dE) best = { hex: o.hex, paletteIndex: x.i, paletteHex: x.f.hex, paletteName: x.name || x.f.name, dE, dL, sameFamily: true, family: o.family };
+      });
+      if (best) links.push(best);
+    });
+    const indexes = [...new Set(links.map((l) => l.paletteIndex))];
+    return { palette: p, match: { kind: 'family', links, connected: indexes.length, paletteIndexes: indexes.sort((a, b) => a - b),
+      meanDE: links.length ? links.reduce((t, l) => t + l.dE, 0) / links.length : Infinity } };
+  }).filter((r) => r.match.connected >= 2)
+    .sort((x, y) => (y.match.connected - x.match.connected) || (x.match.meanDE - y.match.meanDE))
+    .slice(0, opts.limit || 50);
+}
+/** Frases que explican una relación por familia. */
+export function explainFamilyMatch(match) {
+  return match.links.map((l) => colorFacts(l.hex).name + ' (' + l.hex + ') y el ' + l.paletteName + ' de la paleta (' + l.paletteHex + ') son de la misma familia con luminosidad parecida; no son el mismo color (ΔE00 ' +
+    l.dE.toLocaleString('es-ES', { maximumFractionDigits: 1 }) + ').');
+}
+
 export const PALETTE_ROLE = { tonal: 'Tonal', apoyo: 'De apoyo', contraste: 'De contraste' };
 /**
  * Cada color de la paleta frente al conjunto: si ya está (y en qué prenda), qué prenda real de tu armario
@@ -438,6 +482,13 @@ export function adaptPalette(palette, input) {
     if (!hex) return null;
     let present = null;
     entries.forEach((e) => { const d = colorDistance(e.hex, hex); if (d <= 10 && (!present || d < present.dE)) present = Object.assign({ dE: d }, e); });
+    if (!present && input.family) {          // relación por familia: misma familia y luminosidad parecida (no el mismo color)
+      const f = colorFacts(hex);
+      entries.forEach((e) => {
+        const g = colorFacts(e.hex), d = colorDistance(e.hex, hex);
+        if (g.family === f.family && Math.abs(g.L - f.L) <= FAMILY_DL && (!present || d < present.dE)) present = Object.assign({ dE: d, family: true }, e);
+      });
+    }
     let candidate = null;
     if (!present) {
       c.garments.forEach((g) => {
@@ -460,6 +511,6 @@ export function adaptPalette(palette, input) {
 export function proposeFromPalette(palette, input) {
   const c = context(input);
   if (!c.before.valid) return null;
-  const p = MOVE_FNS['cr-paleta'](c, { palette });
+  const p = MOVE_FNS['cr-paleta'](c, { palette, family: !!input.family });
   return p && !sameSlots(p.slots, c.slots, c.garments) ? p : null;
 }

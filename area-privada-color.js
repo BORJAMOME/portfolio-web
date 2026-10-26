@@ -622,18 +622,21 @@ window.APColor = (function () {
       if (!c.match.length) { sec.appendChild(h('p', { class: 'cs-note', text: 'Elige prendas para buscar paletas con colores idénticos o próximos.' })); return sec; }
       var ranked = M.E.rankPalettes(c.match, pals, { limit: 3 });
       if (chosen && !ranked.some(function (r) { return r.palette.id === chosen.id; })) ranked.unshift({ palette: chosen, match: M.E.matchColorsToPalette(c.match, chosen) });
-      if (!ranked.length) { sec.appendChild(h('p', { class: 'cs-note', text: 'Ninguna paleta de tu biblioteca tiene colores idénticos ni próximos (ΔE00 ≤ 10) a los de este conjunto.' })); return sec; }
+      // con menos de 3 coincidencias por color, se completan con paletas relacionadas por familia (señaladas como tales)
+      if (ranked.length < 3) ranked = ranked.concat(M.C.rankPalettesByFamily(c.match, pals, { limit: 3 - ranked.length, exclude: ranked.map(function (r) { return r.palette; }) }));
+      if (!ranked.length) { sec.appendChild(h('p', { class: 'cs-note', text: 'Ninguna paleta de tu biblioteca tiene colores próximos (ΔE00 ≤ 10) ni dos colores de la misma familia que este conjunto.' })); return sec; }
       var input = { slots: d.slots, garments: data().garments, palettes: pals, formality: d.formality };
       var ROLE = M.C.PALETTE_ROLE;
       sec.appendChild(h('ul', { class: 'cs-refs' }, ranked.map(function (r) {
-        var p = r.palette, on = d.palette_id === p.id, rows = M.C.adaptPalette(p, input);
+        var p = r.palette, on = d.palette_id === p.id, fam = r.match.kind === 'family';
+        var rows = M.C.adaptPalette(p, fam ? Object.assign({ family: true }, input) : input);
         return h('li', { class: 'cs-ref' + (on ? ' is-on' : '') }, [
           h('div', { class: 'cs-ref-meta' }, [
             h('p', { class: 'cs-ref-n', text: p.name || 'Paleta sin nombre' }),
-            h('p', { class: 'cs-badges' }, [r.match.overall === 'exact' ? badge('Coincidencia exacta', 'exact') : badge('Coincidencia aproximada', 'approx'), sourceBadge(p)])
+            h('p', { class: 'cs-badges' }, [fam ? badge('Relación por familia', 'family') : r.match.overall === 'exact' ? badge('Coincidencia exacta', 'exact') : badge('Coincidencia aproximada', 'approx'), sourceBadge(p)])
           ]),
           h('ul', { class: 'cs-adapt', 'aria-label': 'Colores de la paleta frente al conjunto' }, rows.map(function (x) {
-            var status = x.present ? ['En el conjunto: ' + x.present.label.toLowerCase(), 'is-in']
+            var status = x.present ? [(x.present.family ? 'Misma familia en el conjunto: ' : 'En el conjunto: ') + x.present.label.toLowerCase(), x.present.family ? 'is-fam' : 'is-in']
               : x.candidate ? ['Podría ser: ' + garmentName(x.candidate.garment) + ' (' + x.candidate.label.toLowerCase() + ')', 'is-cand']
               : ['No tienes una prenda de este color', 'is-miss'];
             return h('li', { class: 'cs-adapt-r ' + status[1] }, [
@@ -644,18 +647,18 @@ window.APColor = (function () {
             ]);
           })),
           h('div', { class: 'cs-ref-act' }, [
-            btn(['Comparar con mi conjunto', h('span', { class: 'sr-only', text: ' («' + (p.name || 'sin nombre') + '»)' })], 'cs-btn-s', function () { comparePalette(p); }, { 'data-key': 'cmp-' + p.id }),
+            btn(['Comparar con mi conjunto', h('span', { class: 'sr-only', text: ' («' + (p.name || 'sin nombre') + '»)' })], 'cs-btn-s', function () { comparePalette(p, fam); }, { 'data-key': 'cmp-' + p.id }),
             btn(on ? 'Referencia elegida' : 'Usar como referencia', on ? 'cs-link is-on' : 'cs-link', function () { d.palette_id = on ? null : p.id; refresh(); }, { 'aria-pressed': on ? 'true' : 'false', 'data-key': 'ref-' + p.id })
           ]),
-          h('details', { class: 'cs-rules' }, [h('summary', { text: 'Por qué se relaciona' }), h('ul', { class: 'cs-why' }, M.E.explainMatch(r.match, p).slice(0, 4).map(function (l) { return h('li', { text: l }); }))])
+          h('details', { class: 'cs-rules' }, [h('summary', { text: 'Por qué se relaciona' }), h('ul', { class: 'cs-why' }, (fam ? M.C.explainFamilyMatch(r.match) : M.E.explainMatch(r.match, p)).slice(0, 4).map(function (l) { return h('li', { text: l }); }))])
         ]);
       })));
-      sec.appendChild(h('p', { class: 'cs-fine', text: 'Muestra a la izquierda: color de la paleta. A la derecha: tu prenda o el color de tu conjunto. Papel = relación con el color dominante. ΔE00 mide proximidad, no si combinan bien. Los HEX de las paletas de libro son conversiones aproximadas de valores de impresión.' }));
+      sec.appendChild(h('p', { class: 'cs-fine', text: 'Muestra a la izquierda: color de la paleta. A la derecha: tu prenda o el color de tu conjunto. Papel = relación con el color dominante. «Relación por familia» = mismos tipos de color con luminosidad parecida, no los mismos colores. ΔE00 mide proximidad, no si combinan bien. Los HEX de las paletas de libro son conversiones aproximadas de valores de impresión.' }));
       return sec;
     }
-    function comparePalette(p) {
+    function comparePalette(p, family) {
       var d = cur();
-      var prop = M.C.proposeFromPalette(p, { slots: d.slots, garments: data().garments, palettes: data().palettes, formality: d.formality });
+      var prop = M.C.proposeFromPalette(p, { slots: d.slots, garments: data().garments, palettes: data().palettes, formality: d.formality, family: !!family });
       sheet('Comparar con «' + (p.name || 'sin nombre') + '»', function (box, close) {
         box.appendChild(band(p.colors, { cls: 'cs-band--ref' }));
         if (!prop) { box.appendChild(h('p', { class: 'cs-note', text: 'El conjunto ya contiene los colores de esta paleta que se pueden llevar a una prenda, o la paleta no aporta un color nuevo y distinto (ΔE00 > 15).' })); return; }
