@@ -720,6 +720,8 @@ await step('Móvil: «Más» abre la hoja con el resto de secciones; navegar la 
   await c.page.click('.ap-more-list a[data-tab="portfolio"]');
   await c.page.waitForSelector('dialog.ap-more:not([open])', { state: 'attached' });
   eq(await c.page.evaluate(() => location.hash), '#/portfolio');
+  // el módulo de Portfolio se carga de forma asíncrona: en la CI (más lenta) el título seguía en «Hoy» al leerlo
+  await c.page.waitForFunction(() => document.querySelector('#ap-app-title').textContent === 'Portfolio', null, { timeout: 10000 }).catch(() => {});
   eq(await c.page.textContent('#ap-app-title'), 'Portfolio');
   ok(await c.page.$eval('.ap-bar-more', (e) => e.classList.contains('is-on')), '«Más» no queda marcado');
   eq(await c.page.$('.ap-bar a[aria-current]'), null, 'queda una sección de la barra marcada');
