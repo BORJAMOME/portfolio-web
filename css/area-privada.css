@@ -65,9 +65,7 @@ body { background: var(--off); }
 .ap-top .ap-back { justify-self: end; }
 @media (max-width: 720px) {
   .ap-top { grid-template-columns: 1fr auto; padding-block: 10px; }
-  .ap-top-title { grid-column: 1 / -1; grid-row: 1; font-size: 19px; }
-  .ap-now { grid-row: 2; }
-  .ap-top .ap-back { grid-row: 2; }
+  .ap-top-title { display: none; }                  /* en móvil el título de cada sección ya está debajo */
 }
 .ap-back {
   font-size: 13px; font-weight: 500; color: var(--ink); text-decoration: none;
@@ -1221,3 +1219,57 @@ body:has(.apl) { --off: #FBFBFB; background: #FBFBFB; }
 @media (hover: hover) and (pointer: fine) { .ap-appbar-back:hover { background: rgba(29, 38, 56, .06); } }
 .ap-appbar-back:active { background: rgba(29, 38, 56, .1); }
 .ap-appbar-back:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+
+/* ───────────── NAVEGACIÓN MÓVIL: barra inferior + hoja «Más» (area-privada.js → buildNav) ───────────── */
+.ap-bar, .ap-more:not([open]) { display: none; }
+@media (max-width: 899.98px) {
+  .ap-tabs, .ap-head-actions { display: none; }      /* las pestañas pasan a la barra inferior; «Cerrar sesión» a la hoja «Más» */
+  .ap-head { margin-bottom: 8px; }
+  .ap-shell { padding-top: 20px; padding-bottom: calc(40px + 60px + env(safe-area-inset-bottom, 0px)); }
+  .ap-foot { padding-bottom: calc(28px + 60px + env(safe-area-inset-bottom, 0px)); }
+  .apk-toast { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+  .mp-detail { bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
+  .ap-bar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; display: grid; grid-template-columns: repeat(5, 1fr);
+    background: var(--off); border-top: 1px solid var(--ap-line); padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @supports (background: color-mix(in srgb, red 50%, transparent)) { .ap-bar { background: color-mix(in srgb, var(--off) 94%, transparent); } }
+  @supports (backdrop-filter: blur(8px)) { .ap-bar { backdrop-filter: blur(10px); } }
+  .ap-bar-a {
+    position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 60px; padding: 0;
+    border: 0; background: none; font: inherit; font-size: 11.5px; font-weight: 600; color: var(--muted); text-decoration: none; cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .ap-bar-ico, .ap-bar-ico svg { display: block; width: 24px; height: 24px; }
+  .ap-bar-more .ap-bar-ico svg { fill: currentColor; stroke: none; }
+  .ap-bar-a[aria-current], .ap-bar-a.is-on { color: var(--ink); }
+  .ap-bar-a[aria-current]::before, .ap-bar-a.is-on::before { content: ''; position: absolute; top: -1px; left: 28%; right: 28%; height: 2px; background: var(--purple); border-radius: 0 0 2px 2px; }
+  .ap-bar-a:active { background: var(--ap-hover); }
+  .ap-bar-a:focus-visible { outline: 2px solid var(--purple); outline-offset: -3px; }
+  .ap-in-app .ap-bar { display: none; }
+
+  /* Hoja «Más»: <dialog> modal anclado abajo (Esc, foco atrapado y fondo los pone el navegador) */
+  .ap-more[open] {
+    display: block; position: fixed; inset: auto 0 0 0; margin: 0; width: 100%; max-width: none; max-height: 85dvh; padding: 0; overflow: auto;
+    border: 0; border-radius: 18px 18px 0 0; background: var(--white); color: var(--ink); animation: ap-sheet .22s ease-out;
+  }
+  .ap-more::backdrop { background: rgba(29, 38, 56, .45); }
+  .ap-more-card { padding: 6px 8px calc(10px + env(safe-area-inset-bottom, 0px)); }
+  .ap-more-head { display: flex; align-items: center; justify-content: space-between; padding: 6px 4px 2px 12px; }
+  .ap-more-title { font-family: var(--font-serif); font-weight: 500; font-size: 22px; letter-spacing: -.3px; }
+  .ap-more-x { display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: none; color: var(--ink); cursor: pointer; }
+  .ap-more-x svg { width: 22px; height: 22px; }
+  .ap-more-list { list-style: none; display: grid; margin: 4px 0; }
+  .ap-more-a {
+    display: flex; align-items: center; gap: 14px; width: 100%; min-height: 52px; padding: 0 12px; border: 0; border-radius: 12px; background: none;
+    font: inherit; font-size: 16px; font-weight: 500; color: var(--ink); text-align: left; text-decoration: none; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .ap-more-a[aria-current] { background: var(--purple-light); font-weight: 600; }
+  .ap-more-a:active { background: var(--ap-hover); }
+  .ap-more-a:focus-visible, .ap-more-x:focus-visible { outline: 2px solid var(--purple); outline-offset: -2px; }
+  .ap-more-ico, .ap-more-ico svg { display: block; width: 22px; height: 22px; color: var(--muted); }
+  .ap-more-out { margin-top: 6px; border-top: 1px solid var(--ap-line); border-radius: 0 0 12px 12px; padding-top: 4px; }
+  @keyframes ap-sheet { from { transform: translateY(28px); opacity: 0; } }
+}
+@media (min-width: 900px) { .ap-more { display: none !important; } }
+@media (prefers-reduced-motion: reduce) { .ap-more[open] { animation: none; } }

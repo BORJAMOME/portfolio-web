@@ -111,8 +111,20 @@ async function open(viewport) {
   await page.waitForSelector('.apk-head');
   return { ctx, page, errors };
 }
+// shared.css pone html { scroll-behavior: smooth }: si la página aún se está desplazando (p. ej. tras cambiar un filtro y repintar),
+// medir o arrastrar a esa altura falla, porque las tarjetas se mueven bajo el puntero. En el CI (más lento) pasaba: se espera a que se asiente.
+async function settleScroll(page) {
+  await page.evaluate(() => new Promise((resolve) => {
+    let last = -1, still = 0, frames = 0;
+    (function frame() {
+      still = scrollY === last ? still + 1 : 0; last = scrollY; frames++;
+      if (still >= 8 || frames > 240) resolve(); else requestAnimationFrame(frame);
+    })();
+  }));
+}
 // el tablero se repinta al cerrar un diálogo: se espera a que el elemento exista y tenga caja antes de medirlo
 async function bbox(sel) {
+  await settleScroll(pagePtr.page);
   for (let i = 0; i < 60; i++) {
     const el = await pagePtr.page.$(sel);
     const b = el && await el.boundingBox().catch(() => null);
