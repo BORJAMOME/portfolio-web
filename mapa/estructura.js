@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "0869179",
+ "huella": "2bd61ec",
  "recuento": {
   "paginas": 19,
   "proyectos": 40,
@@ -8,11 +8,11 @@ export default {
   "perfil": 9,
   "capitulos": 10,
   "plataformas": 11,
-  "pestanas": 11,
+  "pestanas": 10,
   "tablas": 32,
   "funciones": 4,
-  "herramientas": 17,
-  "relaciones": 178,
+  "herramientas": 15,
+  "relaciones": 172,
   "sinExplicar": 0
  },
  "columnas": [
@@ -1625,15 +1625,6 @@ export default {
      "familia": "privada"
     },
     {
-     "id": "t:studio",
-     "tipo": "pestana",
-     "etiqueta": "Studio",
-     "nota": "proyectos, ideas y entregables",
-     "href": "#/studio",
-     "archivo": "area-privada-studio.js",
-     "familia": "privada"
-    },
-    {
      "id": "t:apps",
      "tipo": "pestana",
      "etiqueta": "Apps",
@@ -2193,13 +2184,6 @@ export default {
        "familia": "herramienta"
       },
       {
-       "id": "h:check-studio",
-       "tipo": "herramienta",
-       "etiqueta": "check-studio.mjs",
-       "archivo": "tools/check-studio.mjs",
-       "familia": "herramienta"
-      },
-      {
        "id": "h:test-color",
        "tipo": "herramienta",
        "etiqueta": "test-color.mjs",
@@ -2211,13 +2195,6 @@ export default {
        "tipo": "herramienta",
        "etiqueta": "test-kanban.mjs",
        "archivo": "tools/test-kanban.mjs",
-       "familia": "herramienta"
-      },
-      {
-       "id": "h:test-studio",
-       "tipo": "herramienta",
-       "etiqueta": "test-studio.mjs",
-       "archivo": "tools/test-studio.mjs",
        "familia": "herramienta"
       }
      ]
@@ -2827,12 +2804,6 @@ export default {
    "detalle": []
   },
   {
-   "de": "h:check-studio",
-   "a": "t:studio",
-   "tipo": "verifica",
-   "detalle": []
-  },
-  {
    "de": "h:mapa",
    "a": "t:mapa",
    "tipo": "alimenta",
@@ -2868,12 +2839,6 @@ export default {
   {
    "de": "h:test-kanban",
    "a": "m:kanban",
-   "tipo": "verifica",
-   "detalle": []
-  },
-  {
-   "de": "h:test-studio",
-   "a": "t:studio",
    "tipo": "verifica",
    "detalle": []
   },
@@ -3399,28 +3364,6 @@ export default {
    ]
   },
   {
-   "de": "t:studio",
-   "a": "d:studio-ideas",
-   "tipo": "usa",
-   "detalle": [
-    "ps_convert_idea()",
-    "ps_deliverables",
-    "ps_ideas",
-    "ps_notes"
-   ]
-  },
-  {
-   "de": "t:studio",
-   "a": "d:studio",
-   "tipo": "usa",
-   "detalle": [
-    "ps_activity",
-    "ps_projects",
-    "ps_settings",
-    "ps_tasks"
-   ]
-  },
-  {
    "de": "w:checks",
    "a": "h:build-en",
    "tipo": "ejecuta",
@@ -3458,12 +3401,6 @@ export default {
   },
   {
    "de": "w:checks",
-   "a": "h:check-studio",
-   "tipo": "ejecuta",
-   "detalle": []
-  },
-  {
-   "de": "w:checks",
    "a": "h:mapa",
    "tipo": "ejecuta",
    "detalle": []
@@ -3483,12 +3420,6 @@ export default {
   {
    "de": "w:checks",
    "a": "h:test-kanban",
-   "tipo": "ejecuta",
-   "detalle": []
-  },
-  {
-   "de": "w:checks",
-   "a": "h:test-studio",
    "tipo": "ejecuta",
    "detalle": []
   },
