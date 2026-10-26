@@ -36,7 +36,7 @@
   var els = {
     lock: $('ap-lock'), app: $('ap-app'), form: $('ap-login'), pass: $('ap-pass'),
     toggle: $('ap-pass-toggle'), loginMsg: $('ap-login-msg'), loginBtn: $('ap-login-btn'),
-    user: $('ap-user'), logout: $('ap-logout'), title: $('ap-app-title'),
+    logout: $('ap-logout'), title: $('ap-app-title'),
     searchForm: $('ap-search-form'), search: $('ap-search'), file: $('ap-file'),
     crumbs: $('ap-crumbs'), status: $('ap-status'), uploads: $('ap-uploads'),
     view: $('ap-view'), drop: $('ap-drop'),
@@ -48,25 +48,93 @@
   };
 
   /* ═══════════ FECHA Y HORA (cabecera) ═══════════
-     Se actualiza al cambiar de minuto; no se anuncia a lectores de pantalla en cada cambio. */
-  var nowDate = $('ap-now-date'), nowTime = $('ap-now-time');
-  var clockDay = new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
-  var clockTime = new Intl.DateTimeFormat('es-ES', { hour: '2-digit', minute: '2-digit' });
+     Módulo LCD de siete segmentos: días de la semana, fecha (DD-MM), hora y segundos. Se dibuja con SVG propio
+     (sin fuentes ni librerías): cada dígito son siete polígonos y la clase is-on enciende los de su cifra; los
+     apagados quedan visibles y tenues, como en un LCD real. Todo lo visible es decorativo (aria-hidden): los
+     lectores de pantalla leen la fecha de #ap-now-spoken, que no es una región en vivo, así que no anuncia cada cambio. */
+  var lcdBox = $('ap-lcd'), nowSpoken = $('ap-now-spoken');
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  var DAYS = ['DO', 'LU', 'MA', 'MI', 'JU', 'VI', 'SA'];     // getDay(): domingo = 0
+  var DIGIT_SEGS = ['abcdef', 'bc', 'abdeg', 'abcdg', 'bcfg', 'acdfg', 'acdefg', 'abc', 'abcdefg', 'abcdfg'];
+  var clockSpoken = new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
-  function tick() {
-    var d = new Date();
-    nowDate.dateTime = d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
-    nowDate.textContent = '';
-    nowDate.appendChild(document.createTextNode(clockDay.format(d)));
-    var y = document.createElement('span');
-    y.className = 'ap-now-date-y';
-    y.textContent = ' de ' + d.getFullYear();
-    nowDate.appendChild(y);
-    nowTime.dateTime = pad2(d.getHours()) + ':' + pad2(d.getMinutes());
-    nowTime.textContent = clockTime.format(d);
-    setTimeout(tick, 60000 - (d.getSeconds() * 1000 + d.getMilliseconds()) + 50);
+  function svgEl(tag, attrs, parent) {
+    var el = document.createElementNS(SVGNS, tag);
+    Object.keys(attrs).forEach(function (k) { el.setAttribute(k, attrs[k]); });
+    if (parent) parent.appendChild(el);
+    return el;
   }
-  if (nowDate && nowTime) tick();
+  function hex(pts) { return pts.map(function (p) { return p[0] + ',' + p[1]; }).join(' '); }
+  function hSeg(x1, x2, y) { return hex([[x1, y], [x1 + 5, y - 5], [x2 - 5, y - 5], [x2, y], [x2 - 5, y + 5], [x1 + 5, y + 5]]); }
+  function vSeg(x, y1, y2) { return hex([[x, y1], [x + 5, y1 + 5], [x + 5, y2 - 5], [x, y2], [x - 5, y2 - 5], [x - 5, y1 + 5]]); }
+  var SEG_SHAPE = { a: hSeg(7, 53, 6), b: vSeg(54, 9, 47), c: vSeg(54, 53, 91), d: hSeg(7, 53, 94), e: vSeg(6, 53, 91), f: vSeg(6, 9, 47), g: hSeg(7, 53, 50) };
+  var SLANT = 'translate(8.75 0) skewX(-5)';                // cursiva suave, como el LCD de un reloj digital
+  function lcdDigit(id, small) {
+    var svg = svgEl('svg', { viewBox: '0 0 68 100', class: 'ap-lcd-d' + (small ? ' ap-lcd-d--s' : ''), focusable: 'false', 'data-lcd': id });
+    var g = svgEl('g', { transform: SLANT }, svg);
+    Object.keys(SEG_SHAPE).forEach(function (k) { svgEl('polygon', { points: SEG_SHAPE[k], class: 'ap-lcd-s', 'data-s': k }, g); });
+    return svg;
+  }
+  function lcdColon() {
+    var svg = svgEl('svg', { viewBox: '0 0 26 100', class: 'ap-lcd-c', focusable: 'false' });
+    var g = svgEl('g', { transform: SLANT, class: 'ap-lcd-blink' }, svg);
+    svgEl('rect', { x: 6, y: 25, width: 13, height: 13 }, g);
+    svgEl('rect', { x: 6, y: 62, width: 13, height: 13 }, g);
+    return svg;
+  }
+  function lcdDash() {
+    var svg = svgEl('svg', { viewBox: '0 0 40 100', class: 'ap-lcd-dash', focusable: 'false' });
+    svgEl('polygon', { points: hSeg(5, 35, 50), class: 'ap-lcd-s is-on' }, svgEl('g', { transform: SLANT }, svg));
+    return svg;
+  }
+  function span(cls, kids) {
+    var el = document.createElement('span');
+    el.className = cls;
+    kids.forEach(function (k) { el.appendChild(k); });
+    return el;
+  }
+  var lcd = null;
+  function lcdBuild() {
+    var d = {};
+    ['d1', 'd2', 'n1', 'n2', 'h1', 'h2', 'm1', 'm2', 's1', 's2'].forEach(function (k) { d[k] = lcdDigit(k, /^[dns]/.test(k)); });
+    var days = DAYS.slice(1).concat(DAYS[0]).map(function (t) {      // semana de lunes a domingo
+      var el = document.createElement('span');
+      el.className = 'ap-lcd-day';
+      el.textContent = t;
+      return el;
+    });
+    lcdBox.appendChild(span('ap-lcd-screen', [
+      span('ap-lcd-days', days),
+      span('ap-lcd-row', [
+        span('ap-lcd-date', [d.d1, d.d2, lcdDash(), d.n1, d.n2]),
+        span('ap-lcd-time', [d.h1, d.h2, lcdColon(), d.m1, d.m2]),
+        span('ap-lcd-sec', [d.s1, d.s2])
+      ])
+    ]));
+    lcd = { d: d, days: days };
+  }
+  function lcdSet(svg, n) {
+    if (svg.getAttribute('data-v') === String(n)) return;
+    svg.setAttribute('data-v', n);
+    [].forEach.call(svg.querySelectorAll('.ap-lcd-s'), function (p) {
+      p.classList.toggle('is-on', DIGIT_SEGS[n].indexOf(p.getAttribute('data-s')) > -1);
+    });
+  }
+  function lcdPair(a, b, n) { lcdSet(a, Math.floor(n / 10)); lcdSet(b, n % 10); }
+  function tick() {
+    var t = new Date(), hm = pad2(t.getHours()) + ':' + pad2(t.getMinutes());
+    if (!lcd) lcdBuild();
+    lcdPair(lcd.d.d1, lcd.d.d2, t.getDate());
+    lcdPair(lcd.d.n1, lcd.d.n2, t.getMonth() + 1);
+    lcdPair(lcd.d.h1, lcd.d.h2, t.getHours());
+    lcdPair(lcd.d.m1, lcd.d.m2, t.getMinutes());
+    lcdPair(lcd.d.s1, lcd.d.s2, t.getSeconds());
+    lcd.days.forEach(function (el) { el.classList.toggle('is-on', el.textContent === DAYS[t.getDay()]); });
+    var spoken = clockSpoken.format(t) + ', ' + hm;
+    if (nowSpoken.textContent !== spoken) nowSpoken.textContent = spoken;
+    setTimeout(tick, 1000 - t.getMilliseconds() + 20);
+  }
+  if (lcdBox && nowSpoken) tick();
 
   /* ═══════════ SESIÓN ═══════════ */
   var session = null;
@@ -449,7 +517,6 @@
     hoy:         { global: 'APHoy',         title: 'Hoy' },
     // sin pestaña propia: lo monta «Hoy» (tab) encima de sus tarjetas
     kanban:      { global: 'APKanban',      title: 'Hoy', tab: 'hoy' },
-    studio:      { global: 'APStudio',      title: 'Studio' },
     apps:        { global: 'APApps',        title: 'Apps' },
     // app del catálogo (APPS): se abre en modo app, sin pestaña propia
     color:       { global: 'APColor',       title: 'Color Studio', tab: 'apps' },
@@ -889,7 +956,6 @@
   function unlockScreen() {
     els.lock.hidden = true;
     els.app.hidden = false;
-    els.user.textContent = session.email || '';
     IDLE_EVENTS.forEach(function (ev) { document.addEventListener(ev, bumpIdle, { passive: true }); });
     bumpIdle();
     render();

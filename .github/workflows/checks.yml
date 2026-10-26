@@ -39,9 +39,6 @@ jobs:
       - name: Lógica del Centro de trabajo (Hoy)
         if: ${{ !cancelled() }}
         run: node tools/test-kanban.mjs
-      - name: Lógica del Studio de proyectos
-        if: ${{ !cancelled() }}
-        run: node tools/test-studio.mjs
       - name: Motor de Color Studio (color, proporciones, calcetines, importación)
         if: ${{ !cancelled() }}
         run: node --test tools/test-color.mjs
@@ -68,8 +65,6 @@ jobs:
         run: node tools/check-briefing.mjs
       - name: Centro de trabajo (flujos de interfaz con Supabase simulado)
         run: node tools/check-kanban.mjs
-      - name: Studio de proyectos (flujos de interfaz con Supabase simulado)
-        run: node tools/check-studio.mjs
       - name: Color Studio (flujos de interfaz con Supabase simulado)
         run: node tools/check-color.mjs
 

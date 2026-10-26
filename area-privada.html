@@ -20,7 +20,6 @@
 <link rel="stylesheet" href="./shared.css?v=7f31d1e0dd">
 <!-- Pestañas con archivo propio: area-privada.js las inyecta al abrirlas; el navegador las precarga en reposo -->
 <link rel="prefetch" as="script" href="./area-privada-hoy.js?v=4950d5f1b7" data-ap-module="hoy">
-<link rel="prefetch" as="script" href="./area-privada-studio.js?v=a88c21e6b6" data-ap-module="studio">
 <link rel="prefetch" as="script" href="./area-privada-apps.js?v=b486ca669c" data-ap-module="apps">
 <link rel="prefetch" as="script" href="./area-privada-color.js?v=edc93b15ae" data-ap-module="color">
 <link rel="prefetch" as="script" href="./color-studio/engine.js?v=32d5a20ebd" data-ap-asset="cs-engine">
@@ -41,17 +40,21 @@
 <link rel="prefetch" as="script" href="./second-brain/viewer.js?v=6c0aa3a1e3" data-ap-asset="sb-viewer">
 <link rel="prefetch" as="script" href="./area-privada-fichero.js?v=5834b6b4aa" data-ap-module="fichero">
 <link rel="prefetch" as="script" href="./area-privada-mapa.js?v=d3db579c96" data-ap-module="mapa">
-<link rel="prefetch" as="script" href="./mapa/estructura.js?v=0e9b8d2c81" data-ap-asset="mapa-datos">
+<link rel="prefetch" as="script" href="./mapa/estructura.js?v=65e6b61def" data-ap-asset="mapa-datos">
 <link rel="stylesheet" href="./css/second-brain.css?v=2f3f8407a3">
 <link rel="stylesheet" href="./css/mapa.css?v=9a1505f87b">
 <link rel="stylesheet" href="./css/color-studio.css?v=31d65880af">
-<link rel="stylesheet" href="./css/area-privada.css?v=43d4ffdfdd">
+<link rel="stylesheet" href="./css/area-privada.css?v=d472c61200">
 </head>
 <body>
 <a href="#main-content" class="skip-link">Saltar al contenido</a>
 
 <header class="ap-top">
-  <p class="ap-now"><time id="ap-now-date"></time><span class="ap-now-sep" aria-hidden="true">·</span><time id="ap-now-time" class="ap-now-time"></time></p>
+  <!-- Reloj: módulo LCD de siete segmentos (lo construye area-privada.js, decorativo); la fecha completa la leen los lectores de pantalla -->
+  <p class="ap-now">
+    <span class="ap-lcd" id="ap-lcd" aria-hidden="true"></span>
+    <span class="sr-only" id="ap-now-spoken"></span>
+  </p>
   <p class="ap-top-title">Área personal de trabajo</p>
   <a class="ap-back" href="./descargas.html"><span aria-hidden="true">←</span> Volver al Laboratorio</a>
 </header>
@@ -92,14 +95,12 @@
       <div class="ap-head">
         <h1 class="ap-app-title" id="ap-app-title" tabindex="-1">Hoy</h1>
         <div class="ap-head-actions">
-          <span class="ap-user" id="ap-user"></span>
           <button type="button" class="btn btn-outline" id="ap-logout">Cerrar sesión</button>
         </div>
       </div>
 
       <nav class="ap-tabs" aria-label="Secciones del área privada">
         <a href="#/" data-tab="hoy">Hoy</a>
-        <a href="#/studio" data-tab="studio">Studio</a>
         <a href="#/apps" data-tab="apps">Apps</a>
         <a href="#/calendario" data-tab="calendario">Calendario</a>
         <a href="#/entrevistas" data-tab="entrevistas">Entrevistas</a>
@@ -161,6 +162,6 @@
   <p class="ap-foot-copy">© 2026 Borja Mora Méndez · <a href="./privacidad.html">Privacidad</a></p>
 </footer>
 
-<script src="./area-privada.js?v=69fa0fb865" defer></script>
+<script src="./area-privada.js?v=2cdbd58c9a" defer></script>
 </body>
 </html>
