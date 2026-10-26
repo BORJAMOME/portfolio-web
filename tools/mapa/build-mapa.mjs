@@ -305,8 +305,8 @@ for (const k of pageKeys) {
 }
 for (const l of A.lives.filter((x) => !x.enlaza)) link(l.de, l.a, 'aloja', l.detalle);
 for (const d of A.derive) link(d.de, d.a, 'deriva');
-// el área privada enlaza a páginas públicas (Caesar III → roma-aeterna/)
-for (const k of pageKeys) if (apHtml.includes(`href="./${k}"`) || apHtml.includes(`href="./${k}/"`)) link('col:privada', P[k].id, 'enlaza');
+// el área privada enlaza a páginas públicas (catálogo de apps APPS de area-privada.js → roma-aeterna/)
+for (const k of pageKeys) if (apHtml.includes(`href="./${k}"`) || apHtml.includes(`href="./${k}/"`) || apJs.includes(`href: './${k}/'`)) link('col:privada', P[k].id, 'enlaza');
 // las páginas públicas que apuntan al área privada (también desde carpetas: roma-aeterna)
 for (const k of pageKeys) if (A.internal[k].includes('area-privada.html')) link(P[k].id, 'col:privada', 'enlaza');
 

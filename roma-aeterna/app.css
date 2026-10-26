@@ -49,9 +49,15 @@ button { font: inherit; color: inherit; }
 #launcher {
   position: relative; z-index: 1; min-height: 100%;
   padding: calc(var(--safe-t) + 20px) calc(var(--safe-r) + 20px) calc(var(--safe-b) + 24px) calc(var(--safe-l) + 20px);
-  display: grid; place-items: center;
+  display: grid; place-items: center; grid-template-rows: auto 1fr; gap: 8px;
   overflow-y: auto; -webkit-overflow-scrolling: touch;
 }
+.app-back {
+  place-self: start; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; margin: -6px 0 0 -12px;
+  border-radius: 999px; color: var(--stone); font-size: 15px; font-weight: 500; text-decoration: none;
+}
+.app-back:hover { color: var(--gold); }
+.app-back:active { background: rgba(217, 180, 106, .12); }
 .tabula {
   width: min(100%, 980px);
   display: grid; gap: 28px;

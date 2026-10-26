@@ -43,7 +43,8 @@
     dialog: $('ap-dialog'), dForm: $('ap-dialog-form'), dTitle: $('ap-dialog-title'),
     dText: $('ap-dialog-text'), dField: $('ap-dialog-field'), dInput: $('ap-dialog-input'),
     dOk: $('ap-dialog-ok'), dCancel: $('ap-dialog-cancel'),
-    toolbar: $('ap-toolbar'), crumbsNav: $('ap-crumbs-nav'), tabs: document.querySelectorAll('.ap-tabs a[data-tab]')
+    toolbar: $('ap-toolbar'), crumbsNav: $('ap-crumbs-nav'), tabs: document.querySelectorAll('.ap-tabs a[data-tab]'),
+    appbar: $('ap-appbar'), appBack: $('ap-appbar-back')
   };
 
   /* ═══════════ FECHA Y HORA (cabecera) ═══════════
@@ -449,7 +450,9 @@
     // sin pestaña propia: lo monta «Hoy» (tab) encima de sus tarjetas
     kanban:      { global: 'APKanban',      title: 'Hoy', tab: 'hoy' },
     studio:      { global: 'APStudio',      title: 'Studio' },
-    color:       { global: 'APColor',       title: 'Color Studio' },
+    apps:        { global: 'APApps',        title: 'Apps' },
+    // app del catálogo (APPS): se abre en modo app, sin pestaña propia
+    color:       { global: 'APColor',       title: 'Color Studio', tab: 'apps' },
     calendario:  { global: 'APCalendario',  title: 'Calendario' },
     entrevistas: { global: 'APEntrevistas', title: 'Entrevistas' },
     // sin pestaña propia: vive dentro de «Entrevistas» (tab) con su propio archivo
@@ -460,6 +463,36 @@
     fichero:     { global: 'APFichero',     title: 'Fichero' },
     configuracion: { global: 'APConfiguracion', title: 'Configuración' }
   };
+  /* Catálogo de apps (#/apps): única fuente de nombre, icono, ruta y descripción de cada una.
+     · Con «module»: vive en esta página y se abre en modo app (sin cabecera, pestañas ni pie
+       del área privada; solo «Volver al área privada»). Su módulo va en MODULES con tab: 'apps'.
+     · Sin «module»: página propia con su layout y su vuelta (p. ej. la PWA de roma-aeterna/).
+     Orden alfabético. Añadir una app = una entrada aquí (y, si vive aquí, su módulo). */
+  var APPS = [
+    { id: 'caesar', name: 'Caesar III', desc: 'Tu provincia romana en el iPhone', icon: './roma-aeterna/icons/icon-192.png', href: './roma-aeterna/' },
+    { id: 'color', name: 'Color Studio', desc: 'Color aplicado a tu armario', icon: './img/apps/color-studio.svg', href: '#/color', module: 'color' }
+  ];
+  function appOf(moduleName) { return APPS.filter(function (a) { return a.module === moduleName; })[0] || null; }
+
+  /* Volver de una app al catálogo sin apilar entradas en el historial. Cada entrada guarda su
+     índice en history.state; si se entró en la app desde #/apps, «Volver» retrocede hasta esa
+     entrada (saltando las vistas internas de la app) y Adelante sigue funcionando. Si se llegó por
+     URL directa, marcador o recarga, el enlace navega a #/apps como uno normal. */
+  var navIdx = 0, appReturn = null, lastApp = null, lastWasApps = false, lastIdx = 0;
+  function stampHistory() {
+    var st = history.state;
+    if (st && typeof st.apIdx === 'number') { navIdx = st.apIdx; return; }
+    navIdx += 1;
+    try { history.replaceState({ apIdx: navIdx }, ''); } catch (e) { /* sin historial: el enlace sigue valiendo */ }
+  }
+  function setAppMode(app) {
+    if (app && app !== lastApp) appReturn = lastWasApps && lastIdx < navIdx ? lastIdx : null;
+    if (!app) appReturn = null;
+    lastApp = app;
+    document.body.classList.toggle('ap-in-app', !!app);
+    els.appbar.hidden = !app;
+  }
+
   var MODULE_ROUTE = new RegExp('^#/(' + Object.keys(MODULES).join('|') + ')(?:/(.*))?$');
   var loading = {};
   function loadModule(name) {
@@ -498,6 +531,10 @@
     dirty = false;
     setStatus('Cargando…');
     var job, isModule = r.kind === 'module', tab = isModule ? (MODULES[r.name].tab || r.name) : 'archivos';
+    stampHistory();
+    setAppMode(isModule ? appOf(r.name) : null);
+    lastWasApps = isModule && r.name === 'apps';
+    lastIdx = navIdx;
     // la barra del drive (buscar, + Carpeta, subir) y las migas solo tienen sentido en «Archivos y notas»
     els.toolbar.hidden = els.crumbsNav.hidden = isModule;
     [].forEach.call(els.tabs, function (a) {
@@ -511,7 +548,7 @@
     if (isModule) {
       job = loadModule(r.name).then(function (mod) {
         return mod.render({
-          api: api, h: h, ui: ui, ask: ask, fail: fail, module: loadModule, setStatus: setStatus, fail: fail, view: els.view, arg: r.arg,
+          api: api, h: h, ui: ui, ask: ask, fail: fail, module: loadModule, setStatus: setStatus, fail: fail, view: els.view, arg: r.arg, apps: APPS,
           isCurrent: function () { return seq === renderSeq; }
         });
       });
@@ -868,6 +905,7 @@
     els.crumbs.textContent = '';
     els.uploads.textContent = '';
     setStatus('');
+    setAppMode(null);                   // la pantalla de acceso lleva siempre la cabecera del área privada
     els.app.hidden = true;
     els.lock.hidden = false;
     if (location.hash) history.replaceState(null, '', location.pathname + location.search);
@@ -937,6 +975,12 @@
     if (!session) return;
     if (parseRoute().kind !== 'search') els.search.value = '';
     render();
+  });
+  els.appBack.addEventListener('click', function (e) {
+    if (e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (appReturn === null || appReturn >= navIdx) return;   // sin catálogo detrás: navega a #/apps
+    e.preventDefault();
+    history.go(appReturn - navIdx);
   });
   window.addEventListener('beforeunload', function (e) { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
   /* navegar dentro de la app con una nota a medias: pedir confirmación */

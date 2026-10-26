@@ -1328,3 +1328,37 @@ main { min-height: calc(100vh - var(--ap-top-h) - 90px); outline: none; }
 .aps-ext { font-size: 12.5px; color: var(--purple-text); overflow-wrap: anywhere; text-decoration: underline; text-underline-offset: 2px; }
 .aps-note + .aps-note, .aps-panel .aps-row { border-bottom-color: var(--ap-line-soft); }
 .aps-panel .aps-idea-main { flex-basis: 180px; }
+
+/* ───────────── APPS (area-privada-apps.js, prefijo apl-) Y MODO APP ───────────── */
+/* El catálogo usa el fondo neutro de las apps (#FBFBFB, como Color Studio): el color lo ponen los iconos */
+body:has(.apl) { --off: #FBFBFB; background: #FBFBFB; }
+.apl-intro { max-width: 60ch; margin: 0 0 24px; font-size: 15px; line-height: 1.55; color: var(--muted); }
+/* Fichas de icono + nombre + una línea: en 390 px caben dos por fila con objetivos de ~185 × 150 px */
+.apl-grid { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 4px 8px; margin-inline: -12px; }
+@media (min-width: 900px) { .apl-grid { grid-template-columns: repeat(auto-fill, minmax(184px, 1fr)); } }
+.apl-app {
+  display: grid; justify-items: start; align-content: start; gap: 4px; height: 100%; padding: 14px 12px 16px; border-radius: 16px;
+  color: var(--ink); text-decoration: none; -webkit-tap-highlight-color: transparent; transition: background-color .15s ease;
+}
+/* misma máscara para todos los iconos (se publican cuadrados, a sangre) */
+.apl-icon { width: 64px; height: 64px; margin-bottom: 10px; border-radius: 15px; box-shadow: 0 0 0 1px rgba(29, 38, 56, .06), 0 1px 3px rgba(29, 38, 56, .12); transition: transform .12s ease; }
+.apl-name { font-size: 15px; font-weight: 600; line-height: 1.3; }
+.apl-desc { font-size: 13px; line-height: 1.4; color: var(--muted); }
+@media (hover: hover) and (pointer: fine) { .apl-app:hover { background: rgba(29, 38, 56, .045); } }
+.apl-app:active .apl-icon { transform: scale(.95); }
+.apl-app:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+
+/* Modo app (area-privada.js → setAppMode): la app ocupa la pantalla y del área privada solo queda la vuelta */
+.ap-in-app .ap-top, .ap-in-app .ap-tabs, .ap-in-app .ap-head-actions, .ap-in-app .ap-foot { display: none; }
+.ap-in-app .ap-shell { padding-top: 0; }
+.ap-in-app .ap-head { margin: 0; }
+/* sigue siendo el h1 de la página (y el nombre de la sección de la app) para lectores de pantalla */
+.ap-in-app .ap-app-title { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.ap-appbar { display: flex; align-items: center; min-height: 56px; margin-bottom: 4px; }
+.ap-appbar-back {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; margin-left: -12px; border-radius: 999px;
+  font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: none; -webkit-tap-highlight-color: transparent;
+}
+@media (hover: hover) and (pointer: fine) { .ap-appbar-back:hover { background: rgba(29, 38, 56, .06); } }
+.ap-appbar-back:active { background: rgba(29, 38, 56, .1); }
+.ap-appbar-back:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
