@@ -6,7 +6,7 @@ Contexto de producto y marca: `PRODUCT.md` (solo local). Mapa de archivos y coma
 ## Reglas
 - Español de España en todo el contenido. Rol: «Data Analyst Junior». Lema: «Analizo datos. Diseño cómo se leen.»
 - Las páginas de `en/` **se generan** (`node tools/build-en.mjs`); nunca se editan a mano. Traducciones en `i18n/`.
-- Tras cambiar un CSS/JS propio: `node tools/version-assets.mjs` (versiones `?v=`).
+- Tras cambiar un CSS/JS propio: `node tools/version-assets.mjs` (versiones `?v=`; también en los imports entre módulos de `color-studio/`, para que cada uno se descargue una sola vez).
 - Sin dependencias nuevas salvo que no haya alternativa nativa razonable.
 - Manuales con sistema propio: `ds/` (Data Storytelling), `ml/` (se genera en otro repo), `pbi/`.
 

@@ -376,16 +376,19 @@ window.APColor = (function () {
         ]));
       }
 
-      main.appendChild(composition(c));
-      main.appendChild(slotList(c));
-      main.appendChild(directions(c));
-      main.appendChild(sockInline(c));
-      main.appendChild(manualEditor(c));
-      main.appendChild(howItWorks());
+      // cs-o-*: en móvil (una columna) el CSS reordena los bloques por tarea: prendas → dirección → calcetines →
+      // composición → paletas → detalles → outfits, con «Guardar» fijo abajo (auditoría CS-06). En escritorio no cambia nada.
+      function o(el, k) { el.classList.add('cs-o-' + k); return el; }
+      main.appendChild(o(composition(c), 'compose'));
+      main.appendChild(o(slotList(c), 'slots'));
+      main.appendChild(o(directions(c), 'dir'));
+      main.appendChild(o(sockInline(c), 'socks'));
+      main.appendChild(o(manualEditor(c), 'manual'));
+      main.appendChild(o(howItWorks(), 'how'));
 
-      side.appendChild(references(c));
-      side.appendChild(saveBlock(c));
-      side.appendChild(savedOutfits());
+      side.appendChild(o(references(c), 'refs'));
+      side.appendChild(o(saveBlock(c), 'save'));
+      side.appendChild(o(savedOutfits(), 'outfits'));
     }
 
     function composition(c) {
@@ -692,7 +695,7 @@ window.APColor = (function () {
 
     function saveBlock(c) {
       var d = cur();
-      var sec = h('section', { class: 'cs-card cs-save', 'aria-label': 'Guardar el outfit' });
+      var sec = h('section', { class: 'cs-card cs-save' + (c.items.length ? ' is-ready' : ''), 'aria-label': 'Guardar el outfit' });
       if (d.id) sec.appendChild(h('p', { class: 'cs-note', text: 'Editando «' + d.name + '».' }));
       sec.appendChild(btn(d.id ? 'Guardar cambios' : 'Guardar outfit', 'btn btn-primary cs-save-btn', function () { saveOutfit(c); }, { disabled: c.items.length ? null : true, 'data-key': 'save-outfit' }));
       if (!c.items.length) sec.appendChild(h('p', { class: 'cs-fine', text: 'Elige al menos una prenda para guardar.' }));
@@ -715,7 +718,7 @@ window.APColor = (function () {
         var v = M.D.validateOutfit({
           name: name.value, occasion: occ.value, formality: form.value || null, notes: notes.value, is_favorite: fav.checked, palette_id: d.palette_id,
           distribution_override: c.manual ? c.shown : null,
-          items: c.items.map(function (it) { var e = d.slots[it.slot]; return { slot: it.slot, garment_id: e.garment_id || null, hex: e.hex || null, weight: e.weight }; })
+          items: c.items.map(function (it) { var e = d.slots[it.slot]; return { slot: it.slot, garment_id: e.garment_id || null, hex: e.hex || null, weight: e.weight, hypothetical: e.hypothetical === true }; })
         });
         if (!v.ok) throw ui.invalid(v.errors[0], v.errors[0].indexOf('nombre') >= 0 ? name : null);
         var job = d.id && !asNew.checked ? st.update('cs_outfits', d.id, v.value) : st.insert('cs_outfits', v.value).then(function (r) { return r[0]; });
@@ -756,7 +759,7 @@ window.APColor = (function () {
       var d = cur();
       d.id = o.id; d.name = o.name; d.palette_id = o.palette_id; d.override = o.distribution_override; d.formality = o.formality || 'smart';
       d.occasion = o.occasion || ''; d.notes = o.notes || ''; d.is_favorite = o.is_favorite; d.slots = {}; d.original = null;
-      (o.items || []).forEach(function (it) { d.slots[it.slot] = { garment_id: it.garment_id, hex: it.hex, weight: it.weight }; });
+      (o.items || []).forEach(function (it) { d.slots[it.slot] = { garment_id: it.garment_id, hex: it.hex, weight: it.weight, hypothetical: !it.garment_id && it.hypothetical === true }; });
       mem.sock = { trousers: null, shoes: null }; mem.sockPending = { tr: null, sh: null };
       refresh();
       toast('Outfit «' + o.name + '» cargado.');

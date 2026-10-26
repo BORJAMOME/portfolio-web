@@ -433,6 +433,22 @@ body:has(.cs) { --off: #FBFBFB; background: #FBFBFB; }
 }
 .cs-note--manual { margin-top: 10px; padding: 8px 12px; border-left: 3px solid var(--ap-support); background: var(--ap-support-soft); color: var(--ap-support-ink); border-radius: 0 8px 8px 0; }
 
+/* Studio en una columna (< 1100 px): orden por tarea y «Guardar» siempre a mano (auditoría CS-06) */
+@media (max-width: 1099.98px) {
+  .cs-studio { display: flex; flex-direction: column; }
+  .cs-studio > .cs-col { display: contents; }
+  .cs-studio .cs-card, .cs-col > .cs-card:first-child, .cs-col--side > .cs-card:first-child { border-top: 1px solid var(--cs-line); padding-top: 20px; }
+  .cs-o-slots { order: 1; } .cs-o-dir { order: 2; } .cs-o-socks { order: 3; } .cs-o-compose { order: 4; } .cs-o-refs { order: 5; }
+  .cs-o-manual { order: 6; } .cs-o-how { order: 7; } .cs-o-outfits { order: 8; } .cs-o-save { order: 9; }
+  .cs-studio > .cs-col > .cs-o-slots { border-top: 0; padding-top: 4px; }
+  .cs-o-save.is-ready { position: sticky; bottom: 0; z-index: 5; margin: 0 -16px; padding: 12px 16px; background: #FBFBFB; border-top: 1px solid var(--cs-line); }
+  .cs-o-save.is-ready .cs-save-btn { width: 100%; justify-content: center; }
+}
+@media (max-width: 899.98px) {
+  .cs-o-save.is-ready { bottom: calc(61px + env(safe-area-inset-bottom, 0px)); }
+  .cs:has(.cs-o-save.is-ready) .cs-toast { bottom: calc(146px + env(safe-area-inset-bottom, 0px)); }   /* por encima de la barra de guardar */
+}
+
 @keyframes cs-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .cs-prop2, .cs-sockline { animation: none; } .cs-dir-b { transition: none; } }
 

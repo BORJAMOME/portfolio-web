@@ -498,6 +498,15 @@ test('CS-07: paletas relacionadas por familia cuando no hay colores próximos, s
   assert.equal(C.rankPalettesByFamily(outfit, [one]).length, 0, 'una sola coincidencia de familia no basta');
 });
 
+/* ── Fase 3 de la auditoría ── */
+test('CS-13: validateOutfit conserva la marca de color hipotético (solo en huecos con color, no con prenda)', () => {
+  const v = D.validateOutfit({ name: 'X', items: [{ slot: 'accessory', hex: '#C9A23A', weight: 3, hypothetical: true }, { slot: 'bottom', garment_id: 'g1', weight: 35, hypothetical: true }, { slot: 'top', hex: '#FFFFFF', weight: 30 }] });
+  assert.equal(v.ok, true);
+  assert.equal(v.value.items[0].hypothetical, true);
+  assert.equal('hypothetical' in v.value.items[1], false, 'una prenda real nunca es hipotética');
+  assert.equal('hypothetical' in v.value.items[2], false, 'un color a mano no se marca como hipotético');
+});
+
 /* ── Composición y direcciones ── */
 const G = (id, category, primary, extra) => Object.assign({ id, name: id, category, primary_color: primary, secondary_colors: [], color_shares: null, pattern: 'liso' }, extra || {});
 const wardrobe = [
