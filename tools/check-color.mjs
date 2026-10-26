@@ -33,7 +33,7 @@ let seq = 0;
 const uid = () => '00000000-0000-4000-8000-' + String(++seq).padStart(12, '0');
 const db = { cs_garments: [], cs_palettes: [], cs_outfits: [] };
 const objects = new Map();                     // ruta en el bucket → { body, type }
-let failWrites = false, missing = false, unauth = false;
+let failWrites = false, missing = false, unauth = false, readDelay = 0;
 const log = [];
 const HEX = /^#[0-9A-F]{6}$/;
 const CATS = ['camisetas', 'camisas', 'jerseis', 'chaquetas', 'pantalones', 'vaqueros', 'calzado', 'calcetines', 'accesorios'];
@@ -86,7 +86,7 @@ async function route(r) {
   if (!(t in db)) return json(200, []);
   if (missing) return json(404, { code: 'PGRST205', message: 'Could not find the table' });
   const rows = db[t], params = [...url.searchParams.entries()];
-  if (method === 'GET') return json(200, rows.filter((x) => matches(x, params)));
+  if (method === 'GET') { if (readDelay) await new Promise((res) => setTimeout(res, readDelay)); return json(200, rows.filter((x) => matches(x, params))); }
   log.push(method + ' ' + t);
   if (failWrites) return json(500, { message: 'Fallo simulado de guardado' });
   const body = req.postData() ? JSON.parse(req.postData()) : null;
@@ -124,12 +124,16 @@ const eq = (a, b, msg) => { if (JSON.stringify(a) !== JSON.stringify(b)) throw n
 const ok = (c, msg) => { if (!c) throw new Error(msg); };
 const shot = async (page, name) => { if (process.env.COLOR_SHOTS) await page.screenshot({ path: join(process.env.COLOR_SHOTS, name + '.png'), fullPage: true }); };
 
-async function open(viewport, hash, realCsp) {
-  const ctx = await browser.newContext({ viewport: viewport || { width: 1440, height: 1000 }, bypassCSP: !realCsp, hasTouch: !!(viewport && viewport.width < 600), reducedMotion: 'reduce' });
+async function open(viewport, hash, realCsp, motion) {
+  const ctx = await browser.newContext({ viewport: viewport || { width: 1440, height: 1000 }, bypassCSP: !realCsp, hasTouch: !!(viewport && viewport.width < 600), reducedMotion: motion ? 'no-preference' : 'reduce' });
   await ctx.route(/googletagmanager|google-analytics|fonts\.(googleapis|gstatic)/, (r) => r.abort());
   await ctx.route(/supabase\.co/, route);
   await ctx.addInitScript(() => {
     try { sessionStorage.setItem('bm_ap_session', JSON.stringify({ access_token: 'x', refresh_token: 'y', expires_at: Math.floor(Date.now() / 1000) + 3600, email: 'borja.mora.mendez@gmail.com' })); } catch (e) { /* noop */ }
+  });
+  await ctx.addInitScript(() => {          // momento (ms desde la navegación) en que se retira la intro
+    new MutationObserver((list) => { list.forEach((m) => m.removedNodes.forEach((n) => { if (n.classList && n.classList.contains('csi')) window.__csiGone = performance.now(); })); })
+      .observe(document, { childList: true, subtree: true });
   });
   await ctx.addInitScript(() => { document.addEventListener('securitypolicyviolation', (e) => { (window.__csp = window.__csp || []).push(e.violatedDirective + ' ' + e.blockedURI); }); });
   const page = await ctx.newPage();
@@ -525,6 +529,91 @@ await step('Tablas sin crear: explica qué ejecutar y permite el modo ejemplo', 
   await c.page.click('.cs-demo .cs-link');
   await c.page.waitForSelector('.cs-setup');
   missing = false;
+  eq(c.errors, []);
+  await c.ctx.close();
+});
+/* ── Intro de bienvenida ── */
+const introGone = (page, ms) => page.waitForSelector('.csi', { state: 'detached', timeout: ms || 8000 });
+await step('Intro: con movimiento reducido no aparece', async () => {
+  const c = await open(null, '#/color');
+  await c.page.waitForTimeout(300);
+  eq(await c.page.$('.csi'), null, 'la intro aparece con prefers-reduced-motion');
+  await c.ctx.close();
+});
+await step('Intro: primera entrada → nombre a pantalla completa sobre #FBFBFB y transición a la aplicación (≈2 s)', async () => {
+  const t0 = Date.now();
+  const c = await open(null, '#/color', true, true);
+  await c.page.waitForSelector('.csi');
+  eq((await c.page.textContent('.csi-title')).replace(/\s+/g, ' ').trim(), 'Color Studio');
+  eq(await c.page.$eval('.csi', (e) => getComputedStyle(e).backgroundColor), 'rgb(251, 251, 251)');
+  eq(await c.page.getAttribute('.csi', 'aria-hidden'), 'true');
+  const box = await c.page.$eval('.csi', (e) => { const r = e.getBoundingClientRect(); return [r.width, r.height]; });
+  eq(box, [1440, 1000], 'no ocupa la pantalla');
+  await shot(c.page, '08-intro');
+  await introGone(c.page);
+  const ms = Date.now() - t0;
+  ok(ms >= 1500 && ms < 4500, 'duración fuera de rango: ' + ms + ' ms');
+  ok(await c.page.isVisible('.cs-nav'), 'la aplicación no está visible');
+  await c.page.click('.cs-nav a[href="#/color/biblioteca"]');
+  await c.page.waitForSelector('.cs[data-view="biblioteca"]');
+  eq(await c.page.$('.csi'), null, 'se repite al cambiar de sección');
+  await c.page.click('.ap-tabs a[data-tab="studio"]');
+  await c.page.waitForSelector('.aps-head');
+  await c.page.click('.ap-tabs a[data-tab="color"]');
+  await c.page.waitForSelector('.cs');
+  await c.page.waitForTimeout(200);
+  eq(await c.page.$('.csi'), null, 'se repite al volver a la pestaña');
+  eq(c.errors, []);
+  // recargar la página es una entrada nueva; un clic la adelanta
+  await c.page.reload();
+  await c.page.waitForSelector('.csi');
+  await c.page.waitForTimeout(400);
+  const t1 = Date.now();
+  await c.page.mouse.click(700, 500);
+  await introGone(c.page, 1500);
+  ok(Date.now() - t1 < 1200, 'el clic no adelanta la salida');
+  await c.ctx.close();
+});
+await step('Intro: móvil 390 px sin desbordes; salir de Color Studio durante la intro la quita', async () => {
+  const c = await open({ width: 390, height: 844 }, '#/color', false, true);
+  await c.page.waitForSelector('.csi.is-in');
+  await c.page.waitForTimeout(900);
+  const w = await c.page.$eval('.csi-title', (e) => e.getBoundingClientRect().width);
+  ok(w <= 390 - 32, 'el título se sale en móvil: ' + w);
+  eq(await c.page.evaluate(() => document.documentElement.scrollWidth), 390);
+  await shot(c.page, '09-intro-movil');
+  await c.page.evaluate(() => { location.hash = '#/studio'; });
+  await c.page.waitForSelector('.csi', { state: 'detached', timeout: 1000 });
+  await c.ctx.close();
+});
+await step('Intro: con carga lenta espera a los datos reales; con carga muy lenta no pasa de 6 s', async () => {
+  readDelay = 2600;
+  let t0 = Date.now();
+  let c = await open(null, '#/color', false, true);
+  await introGone(c.page);
+  let ms = Date.now() - t0;
+  ok(ms >= 2600 && ms < 4500, 'no se coordina con la carga: ' + ms + ' ms');
+  ok(await c.page.isVisible('.cs-nav'), 'sin aplicación tras la intro');
+  await c.ctx.close();
+  readDelay = 9000;
+  c = await open(null, '#/color', false, true);
+  ms = await c.page.evaluate(() => window.__csiGone);
+  ok(ms && ms < 7500, 'la intro retiene más de lo previsto: ' + ms + ' ms');
+  readDelay = 0;
+  await c.ctx.close();
+});
+await step('Intro: un error de sesión la quita y muestra el acceso', async () => {
+  unauth = true;
+  const c = await open(null, '#/color', false, true);
+  await c.page.waitForSelector('#ap-lock:not([hidden])');
+  await introGone(c.page, 2000);
+  unauth = false;
+  await c.ctx.close();
+});
+await step('Intro: CSP real sin violaciones', async () => {
+  const c = await open(null, '#/color', true, true);
+  await introGone(c.page);
+  eq(await c.page.evaluate(() => window.__csp || []), []);
   eq(c.errors, []);
   await c.ctx.close();
 });
