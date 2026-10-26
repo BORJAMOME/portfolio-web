@@ -1273,3 +1273,45 @@ body:has(.apl) { --off: #FBFBFB; background: #FBFBFB; }
 }
 @media (min-width: 900px) { .ap-more { display: none !important; } }
 @media (prefers-reduced-motion: reduce) { .ap-more[open] { animation: none; } }
+
+/* ─── PANTALLA DE ACCESO: negro y blanco ───
+   Mientras #ap-lock está visible la página es un espacio cerrado: fondo negro, sin reloj, título ni pie.
+   Solo CSS (body:has): al entrar, el área privada recupera su aspecto de siempre. */
+body:has(#ap-lock:not([hidden])) { background: #000; color: #fff; }
+body:has(#ap-lock:not([hidden])) .ap-top { background: transparent; border-bottom: 0; grid-template-columns: 1fr; }
+body:has(#ap-lock:not([hidden])) .ap-now,
+body:has(#ap-lock:not([hidden])) .ap-top-title,
+body:has(#ap-lock:not([hidden])) .ap-foot { display: none; }
+body:has(#ap-lock:not([hidden])) .ap-top .ap-back { justify-self: start; color: #fff; opacity: .7; transition: opacity .2s; }
+body:has(#ap-lock:not([hidden])) .ap-top .ap-back:hover,
+body:has(#ap-lock:not([hidden])) .ap-top .ap-back:focus-visible { opacity: 1; color: #fff; }
+body:has(#ap-lock:not([hidden])) :focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+body:has(#ap-lock:not([hidden])) main { min-height: calc(100vh - var(--ap-top-h)); }
+.ap-lock:not([hidden]) { min-height: calc(100vh - var(--ap-top-h) - 24px); padding: 24px 24px 72px; }
+.ap-lock .ap-lock-card { width: min(320px, 100%); padding: 0; background: none; border: 0; border-radius: 0; box-shadow: none; text-align: center; }
+.ap-lock .ap-lock-icon { width: 44px; height: 44px; margin-bottom: 28px; border: 1px solid #fff; border-radius: 50%; background: none; color: #fff; }
+.ap-lock .ap-lock-icon svg { width: 20px; height: 20px; }
+.ap-lock .ap-lock-title {
+  margin-bottom: 40px; font-family: var(--font-mono); font-size: 12px; font-weight: 500;
+  letter-spacing: .32em; text-transform: uppercase; line-height: 1.4; color: #fff;
+}
+.ap-lock .ap-login { text-align: left; }
+.ap-lock .ap-field-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.ap-lock .ap-pass { border: 0; border-bottom: 1px solid #fff; border-radius: 0; background: transparent; }
+.ap-lock .ap-pass:focus-within { border-color: #fff; box-shadow: 0 2px 0 #fff; }
+.ap-lock .ap-pass input { padding: 12px 0; color: #fff; border-radius: 0; caret-color: #fff; letter-spacing: .08em; }
+.ap-lock .ap-pass input[aria-invalid="true"] { color: #fff; }
+.ap-lock .ap-pass input:-webkit-autofill { -webkit-text-fill-color: #fff; box-shadow: 0 0 0 100px #000 inset; }
+.ap-lock .ap-pass-toggle { padding: 0 0 0 14px; border-radius: 0; color: #fff; opacity: .7; font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+.ap-lock .ap-pass-toggle:hover, .ap-lock .ap-pass-toggle:focus-visible { opacity: 1; }
+.ap-lock .ap-msg { color: #fff; opacity: .75; text-align: center; font-size: 13px; }
+.ap-lock .ap-msg.is-error { color: #FF8A8A; opacity: 1; }
+.ap-lock .ap-login-btn {
+  background: #fff; color: #000; border: 1px solid #fff; border-radius: 0;
+  font-family: var(--font-mono); font-size: 12px; font-weight: 500; letter-spacing: .24em; text-transform: uppercase;
+}
+.ap-lock .ap-login-btn::before { display: none; }
+@media (hover: hover) and (pointer: fine) { .ap-lock .ap-login-btn:hover { background: #000; color: #fff; } }
+.ap-lock .ap-login-btn:focus-visible { outline-color: #fff; outline-offset: 4px; }
+body:has(#ap-lock:not([hidden])) .ap-lock .ap-pass input:focus-visible { outline: none; }   /* el foco lo marca el subrayado */
+.ap-lock .ap-pass input::placeholder { color: rgba(255, 255, 255, .55); letter-spacing: .08em; }
