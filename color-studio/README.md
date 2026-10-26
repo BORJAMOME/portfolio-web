@@ -54,6 +54,20 @@ No hace falta ninguna variable de entorno ni clave nueva: usa la sesión y la cl
   (probable fondo). Es una propuesta: siempre se corrige a mano.
 - **Modo ejemplo**: datos inventados en memoria, señalados en pantalla, que nunca se guardan ni se mezclan con los reales.
 
+## Intro de bienvenida
+
+Al entrar en Color Studio, una capa a pantalla completa (#FBFBFB) revela el nombre con una máscara
+(transform + opacidad, 0,9 s, curva ease-out del sitio, 80 ms de desfase entre palabras) y dibuja una línea fina debajo.
+Código: bloque `INTRO` de `area-privada-color.js` y estilos `csi-` al final de `css/color-studio.css`; se quita borrando ambos.
+
+- Corre en paralelo a la carga real: se retira cuando termina la animación (≈2 s en total) **y** la aplicación ya está pintada.
+  Nunca retiene más de 6 s; un error o una sesión caducada la quitan al momento.
+- Una vez por carga de la página: no se repite al cambiar de sección ni al volver desde otra pestaña; recargar es una entrada nueva.
+  Sin `localStorage` ni cookies.
+- Un clic o una tecla la adelantan; salir de `#/color` durante la intro la quita.
+- Espera hasta 700 ms a la fuente Newsreader para que el título no cambie de letra a mitad del movimiento.
+- `prefers-reduced-motion`: no se muestra. Es decorativa (`aria-hidden`); el título real sigue siendo el `h1` de la página.
+
 ## Calcetines
 
 Tres propuestas por reglas explícitas (`RULES` en `socks.js`): **Segura** (color del pantalón, o del calzado si no hay

@@ -337,3 +337,28 @@ body:has(.cs) { --off: #FBFBFB; background: #FBFBFB; }
 .cs-toast.is-error { background: var(--red-ink); }
 @media (min-width: 900px) { .cs-toast { bottom: 24px; } }
 @media (prefers-reduced-motion: reduce) { .cs-toast { transition: none; } }
+
+/* ─── Intro: bienvenida al entrar (bloque INTRO de area-privada-color.js) · prefijo csi- ───
+   Máscara + desplazamiento + opacidad en el nombre; una línea fina como único recurso complementario.
+   Solo transform y opacity. Con movimiento reducido el JS no la crea. */
+.csi {
+  position: fixed; inset: 0; z-index: 10000;
+  display: grid; place-content: center; justify-items: center; gap: clamp(18px, 3vw, 28px);
+  padding: 24px; background: #FBFBFB; color: #161616;
+  transition: opacity .6s cubic-bezier(.4, 0, .2, 1);
+}
+.csi-title {
+  font-family: var(--font-serif); font-weight: 500; font-optical-sizing: auto;
+  font-size: clamp(40px, 13.5vw, 136px); line-height: 1; letter-spacing: -.035em; white-space: nowrap; text-align: center;
+  transition: transform .6s cubic-bezier(.4, 0, .2, 1);
+}
+.csi-mask { display: inline-block; overflow: hidden; vertical-align: bottom; padding: .06em .03em .16em; margin: -.06em -.03em -.16em; }
+.csi-word { display: inline-block; transform: translateY(108%); opacity: 0; }
+.csi.is-in .csi-word { animation: csi-rise .9s cubic-bezier(.16, 1, .3, 1) forwards; }
+.csi.is-in .csi-mask + .csi-mask .csi-word { animation-delay: .08s; }
+.csi-rule { width: clamp(56px, 9vw, 96px); height: 1px; background: currentColor; opacity: .32; transform: scaleX(0); transform-origin: left center; }
+.csi.is-in .csi-rule { animation: csi-draw .7s cubic-bezier(.16, 1, .3, 1) .38s forwards; }
+.csi.is-out { opacity: 0; pointer-events: none; }
+.csi.is-out .csi-title { transform: translateY(-6px); }
+@keyframes csi-rise { 0% { transform: translateY(108%); opacity: 0; } 35% { opacity: 1; } 100% { transform: none; opacity: 1; } }
+@keyframes csi-draw { to { transform: scaleX(1); } }

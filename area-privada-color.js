@@ -68,8 +68,62 @@ window.APColor = (function () {
   function isMissing(err) { return !!err && (err.status === 404 || err.code === 'PGRST205' || err.code === '42P01'); }
   var JSON_H = { 'Content-Type': 'application/json' };
 
+  /* ═══════════ INTRO ═══════════
+     Bienvenida a pantalla completa al entrar en Color Studio: el nombre se revela con una máscara
+     (transform + opacidad) y una línea fina se dibuja debajo. Es una capa aparte sobre la página:
+     no toca la aplicación y se puede quitar borrando este bloque y los estilos csi- del CSS.
+     · Una vez por carga de la página (memoria del módulo): no se repite al cambiar de sección ni al volver a la pestaña.
+     · Corre en paralelo a la carga real: se va cuando termina la animación (~2 s) Y la aplicación está pintada;
+       nunca espera más de INTRO.max. Un clic o una tecla la adelantan; salir de #/color la quita al momento.
+     · Con prefers-reduced-motion no se muestra. Es decorativa: aria-hidden, el título real sigue siendo el h1. */
+  var INTRO = { font: 700, reveal: 900, hold: 550, exit: 600, max: 6000 };
+  var introPlayed = false, activeIntro = null;
+  function startIntro() {
+    if (activeIntro) return activeIntro;
+    if (introPlayed) return null;
+    introPlayed = true;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return null;
+    var el = document.createElement('div');
+    el.className = 'csi';
+    el.setAttribute('aria-hidden', 'true');
+    el.innerHTML = '<p class="csi-title"><span class="csi-mask"><span class="csi-word">Color</span></span> <span class="csi-mask"><span class="csi-word">Studio</span></span></p><span class="csi-rule"></span>';
+    document.body.appendChild(el);
+    var ready = false, shown = false, gone = false, timers = [];
+    function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
+    function remove() {
+      if (gone) return;
+      gone = true;
+      timers.forEach(clearTimeout);
+      window.removeEventListener('hashchange', onHash);
+      document.removeEventListener('pointerdown', leave, true);
+      document.removeEventListener('keydown', leave, true);
+      el.remove();
+      activeIntro = null;
+    }
+    function leave() {
+      if (gone || el.classList.contains('is-out')) return;
+      el.classList.add('is-out');
+      later(remove, INTRO.exit + 50);
+    }
+    function onHash() { if (!/^#\/color(\/|$)/.test(location.hash)) remove(); }
+    window.addEventListener('hashchange', onHash);
+    document.addEventListener('pointerdown', leave, true);
+    document.addEventListener('keydown', leave, true);
+    // espera breve a la fuente del título para que no cambie de letra a mitad de la animación
+    var font = document.fonts && document.fonts.load ? document.fonts.load('500 64px Newsreader').catch(function () {}) : null;
+    Promise.race([font, new Promise(function (r) { setTimeout(r, INTRO.font); })]).then(function () {
+      if (gone) return;
+      el.classList.add('is-in');
+      later(function () { shown = true; if (ready) leave(); }, INTRO.reveal + INTRO.hold);
+    });
+    later(leave, INTRO.max);
+    activeIntro = { ready: function () { ready = true; if (shown) leave(); }, abort: remove };
+    return activeIntro;
+  }
+
   /* ═══════════ RENDER ═══════════ */
   function render(ctx) {
+    var intro = startIntro();
     var h = ctx.h, ui = ctx.ui;
     var view = VIEWS.filter(function (v) { return v.arg === (ctx.arg || '').split('/')[0]; })[0] || VIEWS[0];
     var root, body, toastEl, toastTimer;
@@ -1121,10 +1175,10 @@ window.APColor = (function () {
       if (demo || (cache && Date.now() - cache.at < STALE_MS)) return null;
       return st.load();
     }).then(function () {
-      return function paint() { rebuild(); };
+      return function paint() { rebuild(); if (activeIntro) activeIntro.ready(); };
     }).catch(function (err) {
-      if (err && err.auth) throw err;
-      if (isMissing(err)) return function paintSetup() { if (demo) rebuild(); else setup(); };
+      if (isMissing(err)) return function paintSetup() { if (demo) rebuild(); else setup(); if (activeIntro) activeIntro.ready(); };
+      if (intro) intro.abort();          // error o sesión caducada: nada de quedarse en la bienvenida
       throw err;
     });
   }
