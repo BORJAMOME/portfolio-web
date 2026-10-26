@@ -65,7 +65,26 @@ export function labToRgb({ L, a, b }) {
   return { r: toGamma(clip(R)), g: toGamma(clip(G)), b: toGamma(clip(B)) };
 }
 export const hexToLab = (hex) => { const rgb = hexToRgb(hex); return rgb ? rgbToLab(rgb) : null; };
-export const labToHex = (lab) => { const c = labToRgb(lab); return rgbToHex(c.r, c.g, c.b); };
+/* Lab → HEX dentro de la gama sRGB. Fuera de gama, recortar cada canal cambia el tono (auditoría CS-16):
+   se reduce el croma conservando L y h (búsqueda binaria) hasta que el color cabe. */
+function linearRgb({ L, a, b }) {
+  const fy = (L + 16) / 116, fx = fy + a / 500, fz = fy - b / 200;
+  const inv = (f) => (f ** 3 > EPS ? f ** 3 : (116 * f - 16) / KAPPA);
+  const x = inv(fx) * WHITE.x, y = (L > KAPPA * EPS ? fy ** 3 : L / KAPPA) * WHITE.y, z = inv(fz) * WHITE.z;
+  return [3.2404542 * x - 1.5371385 * y - 0.4985314 * z, -0.9692660 * x + 1.8760108 * y + 0.0415560 * z, 0.0556434 * x - 0.2040259 * y + 1.0572252 * z];
+}
+const inGamut = (lab) => linearRgb(lab).every((v) => v >= -1e-4 && v <= 1 + 1e-4);
+export const labToHex = (lab) => {
+  let target = lab;
+  if (!inGamut(lab) && lab.L > 0 && lab.L < 100) {
+    const C = Math.hypot(lab.a, lab.b), h = Math.atan2(lab.b, lab.a);
+    let lo = 0, hi = C;
+    for (let i = 0; i < 24; i++) { const m = (lo + hi) / 2; if (inGamut({ L: lab.L, a: m * Math.cos(h), b: m * Math.sin(h) })) lo = m; else hi = m; }
+    target = { L: lab.L, a: lo * Math.cos(h), b: lo * Math.sin(h) };
+  }
+  const c = labToRgb(target);
+  return rgbToHex(c.r, c.g, c.b);
+};
 export function labToLch({ L, a, b }) {
   let h = Math.atan2(b, a) * 180 / Math.PI;
   if (h < 0) h += 360;
@@ -157,8 +176,15 @@ export function describeColor(hex) {
     return out('marron', 'marrón oscuro');
   }
   if (inH(h, 85, 125) && C < 45 && L < 65) return out('verde', L < 45 ? 'verde oliva oscuro' : C < 30 ? 'caqui' : 'verde oliva');
+  // auditoría CS-08: oliva intenso, caqui claro, mostaza y ocre (calibrados con colores de ropa en tools/test-color.mjs)
+  if (inH(h, 95, 130) && C >= 12 && C < 70 && L < 60) return out('verde', L < 45 ? 'verde oliva oscuro' : 'verde oliva');
+  if (inH(h, 88, 110) && C >= 22 && C < 45 && L >= 60 && L < 82) return out('beige', 'caqui claro');   // chino caqui: neutro de vestuario
+  if (inH(h, 78, 100) && C >= 45 && L >= 50 && L < 84) return out('amarillo', 'mostaza');
+  if (inH(h, 60, 78) && C >= 45 && L >= 50 && L < 70) return out('naranja', 'ocre');
   if (C < 12 && !inH(h, 30, 110)) return out('gris', inH(h, 200, 300) ? 'gris azulado' : 'gris');
-  if (inH(h, 240, 320) && L < 30) return out('marino', 'azul marino');
+  if (inH(h, 240, 320) && L < 30) return C < 45 ? out('marino', 'azul marino') : out('azul', 'azul marino intenso');   // muy saturado ya no es un neutro
+  if (inH(h, 180, 215) && L < 55 && C >= 15) return out('azul', 'azul petróleo');
+  if (inH(h, 28, 50) && C >= 45 && C < 75 && L >= 35 && L < 55) return out('naranja', 'teja');      // terracota intenso, no marrón (CS-08)
   if (inH(h, 30, 75) && L < 45) return out('marron', L < 25 ? 'marrón oscuro' : 'marrón');
   if (inH(h, 50, 85) && C < 45 && L < 75) return out('marron', 'camel');
   if (inH(h, 350, 20)) return L >= 45 ? out('rosa', L > 75 ? 'rosa claro' : 'rosa') : out('rojo', 'granate');
@@ -404,11 +430,15 @@ export function setColorShare(list, hex, pct) {
 /* ═══════════ EXTRACCIÓN DE COLOR (sin red) ═══════════
    K-means en Lab sobre los píxeles de una imagen ya reducida. Se pondera el centro (la prenda suele
    estar ahí) y se rebaja lo que se parece al borde (probablemente el fondo). Es una PROPUESTA:
-   la luz y el balance de blancos cambian el color, por eso la web siempre deja corregirlo. */
+   la luz y el balance de blancos cambian el color, por eso la web siempre deja corregirlo.
+   · Fondo: los píxeles del borde se agrupan (hasta 3 colores) y se rebaja cada grupo con peso; con la media
+     del borde, un fondo de rayas no se parecía a ninguno de sus colores (auditoría CS-04).
+   · Sombras: dos grupos del mismo tono e intensidad proporcional que solo difieren en luz (≤ 30 de L) se
+     funden y se queda el más claro, que es la zona iluminada (CS-03). Dos colores distintos de la misma
+     familia (marino y azul claro, camel y marrón) difieren más y no se funden. Los neutros no se funden. */
 export function extractDominantColors(data, width, height, opts = {}) {
   const k = opts.k || 5, step = Math.max(1, opts.step || 1);
-  const px = [];
-  const border = { L: 0, a: 0, b: 0, n: 0 };
+  const px = [], border = [];
   for (let y = 0; y < height; y += step) {
     for (let x = 0; x < width; x += step) {
       const o = (y * width + x) * 4;
@@ -416,14 +446,14 @@ export function extractDominantColors(data, width, height, opts = {}) {
       const lab = rgbToLab({ r: data[o], g: data[o + 1], b: data[o + 2] });
       const dx = (x / (width - 1 || 1)) - 0.5, dy = (y / (height - 1 || 1)) - 0.5;
       const edge = x < width * 0.06 || x >= width * 0.94 || y < height * 0.06 || y >= height * 0.94;
-      if (edge) { border.L += lab.L; border.a += lab.a; border.b += lab.b; border.n++; }
+      if (edge) border.push(lab);
       px.push({ lab, w: opts.centerWeight === false ? 1 : 1.5 - Math.min(1, Math.hypot(dx, dy) * 1.6) });
     }
   }
   if (!px.length) return [];
-  if (border.n && opts.ignoreBackground !== false) {
-    const bg = { L: border.L / border.n, a: border.a / border.n, b: border.b / border.n };
-    px.forEach((p) => { if (deltaE2000(p.lab, bg) < 8) p.w *= 0.15; });
+  if (border.length && opts.ignoreBackground !== false) {
+    const bgs = borderColors(border);
+    px.forEach((p) => { if (bgs.some((bg) => deltaE2000(p.lab, bg) < 8)) p.w *= 0.15; });
   }
   // centros iniciales deterministas: el más pesado y, después, el más lejano a los elegidos
   const centers = [px.reduce((a, b) => (b.w > a.w ? b : a)).lab];
@@ -450,5 +480,47 @@ export function extractDominantColors(data, width, height, opts = {}) {
     const twin = found.find((f) => deltaE2000(f.lab, c.lab) < 6);
     if (twin) twin.share += c.share; else found.push(c);
   });
+  if (opts.mergeShadows !== false) {
+    for (let i = 0; i < found.length; i++) {
+      for (let j = i + 1; j < found.length; j++) {
+        if (!isShadowPair(found[i].lab, found[j].lab)) continue;
+        if (found[j].lab.L > found[i].lab.L) found[i].lab = found[j].lab;   // se queda la zona iluminada
+        found[i].share += found[j].share;
+        found.splice(j, 1); j--;
+      }
+    }
+    found.sort((a, b) => b.share - a.share);
+  }
   return found.filter((c) => c.share >= (opts.minShare || 0.04)).map((c) => ({ hex: labToHex(c.lab), share: c.share }));
+}
+/** ¿b es a con más o menos luz? Mismo tono (≤ 15°), croma proporcional y diferencia de luminosidad moderada. */
+function isShadowPair(a, b) {
+  const A = labToLch(a), B = labToLch(b);
+  if (A.C < 10 || B.C < 10) return false;
+  const dh = Math.abs(A.h - B.h) % 360, gap = dh > 180 ? 360 - dh : dh;
+  const dL = Math.abs(A.L - B.L);
+  const lo = A.L < B.L ? A : B, hi = A.L < B.L ? B : A;
+  const ratio = lo.C / hi.C;
+  return gap <= 15 && dL >= 6 && dL <= 30 && ratio >= 0.5 && ratio <= 1.2;
+}
+/** Colores del fondo: k-means pequeño (k ≤ 3, inicio determinista) sobre los píxeles del borde; grupos con ≥ 15 %. */
+function borderColors(list) {
+  const centers = [list[0]];
+  while (centers.length < Math.min(3, list.length)) {
+    let far = null, fd = -1;
+    list.forEach((p) => { const d = Math.min(...centers.map((c) => deltaE2000(c, p))); if (d > fd) { fd = d; far = p; } });
+    if (!far || fd < 8) break;
+    centers.push(far);
+  }
+  let assign = [];
+  for (let it = 0; it < 6; it++) {
+    assign = list.map((p) => { let best = 0, bd = Infinity; centers.forEach((c, j) => { const d = (c.L - p.L) ** 2 + (c.a - p.a) ** 2 + (c.b - p.b) ** 2; if (d < bd) { bd = d; best = j; } }); return best; });
+    centers.forEach((c, j) => {
+      let L = 0, a = 0, b = 0, n = 0;
+      list.forEach((p, i) => { if (assign[i] === j) { L += p.L; a += p.a; b += p.b; n++; } });
+      if (n) centers[j] = { L: L / n, a: a / n, b: b / n };
+    });
+  }
+  const counts = centers.map((_, j) => assign.filter((x) => x === j).length);
+  return centers.filter((_, j) => counts[j] / list.length >= 0.15);
 }

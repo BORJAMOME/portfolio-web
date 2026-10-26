@@ -563,6 +563,18 @@ await step('CS-14 y CS-15: a 320 px se ve la etiqueta de rol y los controles mid
   eq(small, [], 'controles por debajo de 44 px');
   await p.setViewportSize({ width: 1440, height: 1000 });
 });
+await step('CS-07: sin colores próximos, las paletas relacionadas por familia aparecen señaladas como tales', async () => {
+  const { page: p } = globalThis.__x;
+  await go(p, '#/color');
+  await p.click('.cs-card-head .cs-link:has-text("Vaciar")');
+  const hexIn = async (slot, hex) => { await p.click(`[data-key="pick-${slot}"]`); await p.fill('#cs-pick-hex', hex); await p.click('dialog[open] button:has-text("Usar este color")'); };
+  await hexIn('bottom', '#3D4F2A'); await hexIn('top', '#BB9988');
+  await p.waitForSelector('.cs-ref');
+  const ref = await p.textContent('.cs-refs');
+  ok(ref.includes('Relación por familia'), 'sin la etiqueta de relación por familia');
+  ok(ref.includes('Misma familia en el conjunto'), 'los colores emparejados por familia no se distinguen de los idénticos');
+  ok(!ref.includes('Coincidencia exacta'), 'una relación por familia se presenta como coincidencia exacta');
+});
 await step('Modo ejemplo 2.0: sin escrituras, sin errores, axe correcto y sin scroll horizontal a 390 px', async () => {
   const { page: p, ctx: c, errors: errs, writes } = globalThis.__x;
   eq(writes, [], 'escrituras en modo ejemplo');

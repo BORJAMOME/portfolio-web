@@ -277,6 +277,18 @@ Huecos de cobertura:
 | CS-15 | En pantallas táctiles o estrechas, los controles miden 44 px; los desplegables conservan su triángulo. |
 | CS-18 | Pruebas con los 34 pares de CIEDE2000, referencias sRGB, ida y vuelta, y regresiones de esta fase. |
 
+**Fase 2, hecha el 26-10-2026** (precisión cromática; sin cambios de esquema):
+
+| ID | Qué se ha hecho |
+|---|---|
+| CS-03 | Las sombras se funden con la zona iluminada: la prenda roja a media sombra sale roja (ΔE00 0, antes 14,8). Dos colores reales de la misma familia (camel y marrón, marino y azul claro) no se funden. |
+| CS-04 | El fondo se detecta por grupos de color del borde: un fondo de rayas baja del 30 % al 9 % por color y la prenda queda primera (81 %). |
+| CS-08 | Oliva, caqui claro, mostaza, ocre, teja y azul petróleo se clasifican bien. El marino muy saturado deja de contar como neutro. |
+| CS-16 | Los colores fuera de gama conservan luminosidad y tono (se reduce el croma). |
+| CS-07 | Relación por familia, señalada como tal, cuando hay pocas paletas con colores próximos. |
+
+Sin resolver por ahora: la corrección del balance de blancos (CS-17) y el fondo oscuro con una prenda negra, que se confunden.
+
 ## 12. Roadmap
 
 1. **Inmediato** (pequeño, localizado, reversible): CS-01 (solo separar los pasos de la CI), CS-02, CS-09, CS-10, CS-11, CS-12, CS-14, CS-15 y CS-18.

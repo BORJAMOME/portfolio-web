@@ -99,7 +99,7 @@ test('matchKind: umbrales', () => {
 /* ── Familias ── */
 test('describeColor: familias de colores de referencia', () => {
   const cases = { '#111111': 'negro', '#FAFAFA': 'blanco', '#808080': 'gris', '#36393D': 'gris', '#D8C3A5': 'beige', '#F3EBDD': 'beige',
-    '#6B4226': 'marron', '#C19A6B': 'marron', '#1B2A4A': 'marino', '#000080': 'marino', '#0000FF': 'azul', '#87CEEB': 'azul', '#4A6A8A': 'azul',
+    '#6B4226': 'marron', '#C19A6B': 'marron', '#1B2A4A': 'marino', '#000080': 'azul', '#0000FF': 'azul', '#87CEEB': 'azul', '#4A6A8A': 'azul',
     '#008000': 'verde', '#708238': 'verde', '#8F8A5C': 'verde', '#FFFF00': 'amarillo', '#C9A227': 'amarillo', '#FFA500': 'naranja',
     '#FF0000': 'rojo', '#800020': 'rojo', '#FFC0CB': 'rosa', '#800080': 'morado', '#B57EDC': 'morado' };
   for (const [hex, fam] of Object.entries(cases)) assert.equal(E.familyOf(hex), fam, hex);
@@ -427,6 +427,75 @@ test('CS-12: el contraste se informa por separado frente al pantalón y frente a
   const noTr = S.recommendSocks({ shoes: '#4A2E1F' }).proposals[0];
   assert.equal(noTr.contrastTrousers, null);
   assert.equal(noTr.contrast, noTr.contrastShoes);
+});
+
+/* ── Fase 2 de la auditoría (color-studio/AUDITORIA-2026-10.md) ── */
+const W = 96, H = 120;
+function synth(fn) {
+  const d = new Uint8ClampedArray(W * H * 4);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const c = E.hexToRgb(fn(x, y)); const o = (y * W + x) * 4; d[o] = c.r; d[o + 1] = c.g; d[o + 2] = c.b; d[o + 3] = 255; }
+  return d;
+}
+const inBox = (x, y, x0, y0, x1, y1) => x >= W * x0 && x < W * x1 && y >= H * y0 && y < H * y1;
+test('CS-03: una prenda con media superficie en sombra da su color, no el de la sombra', () => {
+  const r = E.extractDominantColors(synth((x, y) => inBox(x, y, .2, .15, .8, .85) ? (x > W / 2 ? '#B5452B' : '#76281A') : '#F0F0EE'), W, H, { k: 5 });
+  assert.ok(E.colorDistance(r[0].hex, '#B5452B') <= 5, 'primer color ' + r[0].hex + ' (ΔE00 ' + E.colorDistance(r[0].hex, '#B5452B').toFixed(1) + ')');
+  assert.ok(!r.some((c) => E.colorDistance(c.hex, '#76281A') <= 5), 'la sombra sigue como color aparte');
+});
+test('CS-03: dos colores reales de la misma familia pero distintos no se fusionan (camel y marrón; marino y azul claro)', () => {
+  const two = (a, b) => E.extractDominantColors(synth((x, y) => inBox(x, y, .2, .15, .8, .85) ? (x > W / 2 ? a : b) : '#F0F0EE'), W, H, { k: 5 });
+  const cb = two('#B48A5A', '#4A2E1F');
+  assert.ok(cb.some((c) => E.colorDistance(c.hex, '#B48A5A') <= 5) && cb.some((c) => E.colorDistance(c.hex, '#4A2E1F') <= 5));
+  const nb = two('#1F2A44', '#A9C1DC');
+  assert.ok(nb.some((c) => E.colorDistance(c.hex, '#1F2A44') <= 5) && nb.some((c) => E.colorDistance(c.hex, '#A9C1DC') <= 5));
+});
+test('CS-04: un fondo de rayas de dos colores no se propone como color de la prenda', () => {
+  const r = E.extractDominantColors(synth((x, y) => inBox(x, y, .25, .2, .75, .8) ? '#A9C1DC' : (Math.floor(x / 6) % 2 ? '#7A4E2D' : '#E9E2D0')), W, H, { k: 5 });
+  assert.ok(E.colorDistance(r[0].hex, '#A9C1DC') <= 5, 'primer color ' + r[0].hex);
+  const bg = r.filter((c) => E.colorDistance(c.hex, '#7A4E2D') <= 5 || E.colorDistance(c.hex, '#E9E2D0') <= 5);
+  assert.ok(bg.every((c) => c.share < 0.12), 'el fondo pesa demasiado: ' + JSON.stringify(r));
+});
+test('CS-04: la prenda que llena la foto y la centrada sobre fondo liso siguen funcionando', () => {
+  assert.equal(E.extractDominantColors(synth(() => '#6B1F2A'), W, H)[0].hex, '#6B1F2A');
+  const r = E.extractDominantColors(synth((x, y) => inBox(x, y, .2, .15, .8, .85) ? '#1F2A44' : '#EDEDEB'), W, H, { k: 5 });
+  assert.equal(r[0].hex, '#1F2A44');
+});
+test('CS-08: familias de colores frecuentes en ropa', () => {
+  const cases = {
+    '#808000': ['verde', 'verde oliva'], '#556B2F': ['verde', 'verde oliva oscuro'], '#BDB76B': ['beige', 'caqui claro'], '#A89F6E': ['beige', 'caqui claro'],
+    '#E1AD01': ['amarillo', 'mostaza'], '#D4A017': ['amarillo', 'mostaza'], '#B8860B': ['amarillo', 'mostaza'], '#C9A23A': ['amarillo', 'mostaza'],
+    '#CC7722': ['naranja', 'ocre'], '#000080': ['azul', 'azul marino intenso'], '#1F2A44': ['marino', 'azul marino'], '#008080': ['azul', 'azul petróleo'],
+    '#C19A6B': ['marron', 'camel'], '#B9AE96': ['beige', 'piedra'], '#40E0D0': ['azul', 'turquesa'], '#FFD700': ['amarillo', 'amarillo'], '#B5452B': ['naranja', 'teja'], '#4A2E1F': ['marron', 'marrón oscuro'], '#6B1F2A': ['rojo', 'granate']
+  };
+  for (const [hex, [fam, name]] of Object.entries(cases)) { const d = E.describeColor(hex); assert.deepEqual([d.family, d.name], [fam, name], hex); }
+  assert.equal(E.isNeutral('#BDB76B'), true, 'el caqui claro es un neutro de vestuario');
+  assert.equal(E.isNeutral('#000080'), false, 'un marino muy saturado ya no cuenta como neutro');
+  assert.equal(E.familyOf(E.labToHex(E.lchToLab({ L: 50, C: 8, h: 128 }))), 'gris', 'un gris verdoso muy apagado sigue siendo gris');
+});
+test('CS-16: un color fuera de gama conserva luminosidad y tono al pasar a HEX (reduce croma)', () => {
+  for (const [L, C, h] of [[60, 120, 140], [40, 110, 300], [85, 90, 20], [20, 80, 250]]) {
+    const back = E.labToLch(E.hexToLab(E.labToHex(E.lchToLab({ L, C, h }))));
+    assert.ok(Math.abs(back.L - L) <= 1.5, 'L ' + L + ' → ' + back.L.toFixed(1));
+    assert.ok(C3(back.h, h) <= 3, 'h ' + h + ' → ' + back.h.toFixed(1));
+    assert.ok(back.C < C, 'debe reducir croma');
+  }
+  // los colores ya en gama no cambian
+  for (const hex of ['#1F2A44', '#C9A23A', '#FF0000', '#00FF00', '#0000FF', '#FFFFFF', '#000000']) assert.equal(E.labToHex(E.hexToLab(hex)), hex);
+});
+function C3(a, b) { const d = Math.abs(a - b) % 360; return d > 180 ? 360 - d : d; }
+test('CS-07: paletas relacionadas por familia cuando no hay colores próximos, señaladas como tales', () => {
+  const outfit = [{ hex: '#1F2A44', share: 50 }, { hex: '#B9AE96', share: 40 }];
+  const pal = { id: 'f', name: 'Familia', colors: [{ hex: '#004466', name: 'azul profundo' }, { hex: '#BB9988', name: 'arena rosada' }, { hex: '#9E2B25', name: 'rojo' }] };
+  assert.equal(E.rankPalettes(outfit, [pal]).length, 0, 'por proximidad estricta no conecta');
+  const r = C.rankPalettesByFamily(outfit, [pal]);
+  assert.equal(r.length, 1);
+  assert.equal(r[0].match.kind, 'family');
+  assert.equal(r[0].match.links.length, 2);
+  assert.ok(r[0].match.links.every((l) => l.sameFamily && l.dL <= 15));
+  const far = { id: 'x', name: 'Lejos', colors: [{ hex: '#FFD700' }, { hex: '#00A86B' }] };
+  assert.equal(C.rankPalettesByFamily(outfit, [far]).length, 0, 'sin relación de familia');
+  const one = { id: 'o', name: 'Uno', colors: [{ hex: '#004466' }, { hex: '#FFD700' }] };
+  assert.equal(C.rankPalettesByFamily(outfit, [one]).length, 0, 'una sola coincidencia de familia no basta');
 });
 
 /* ── Composición y direcciones ── */
