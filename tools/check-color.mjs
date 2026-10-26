@@ -610,7 +610,7 @@ await step('Apps: pestaña del área privada, fichas desde el registro e iconos;
   eq(await c.page.getAttribute('.ap-tabs a[data-tab="apps"]', 'aria-current'), 'page');
   eq(await c.page.$$eval('.apl-app', (a) => a.map((x) => [x.querySelector('.apl-name').textContent, x.getAttribute('href')])), [['Caesar III', './roma-aeterna/'], ['Color Studio', '#/color']]);
   ok(await c.page.isVisible('.ap-bar') && await c.page.isHidden('#ap-appbar'), 'el catálogo se pinta en modo app');
-  await c.page.waitForFunction(() => [...document.querySelectorAll('.apl-icon')].every((i) => i.complete));
+  await c.page.waitForFunction(() => [...document.querySelectorAll('.apl-icon')].every((i) => i.naturalWidth > 0), null, { timeout: 15000 }).catch(() => {});
   ok(await c.page.$$eval('.apl-icon', (i) => i.every((x) => x.naturalWidth > 0)), 'icono sin cargar');
   const boxes = await c.page.$$eval('.apl-app', (a) => a.map((x) => { const r = x.getBoundingClientRect(); return [r.width, r.height]; }));
   ok(boxes.every(([w, hh]) => w >= 44 && hh >= 44), 'objetivo táctil menor de 44 px: ' + JSON.stringify(boxes));
@@ -689,8 +689,8 @@ await step('Móvil: «Más» abre la hoja con el resto de secciones; navegar la 
   await shot(c.page, '11-movil-mas');
   await c.page.click('.ap-more-list a[data-tab="portfolio"]');
   await c.page.waitForSelector('dialog.ap-more:not([open])', { state: 'attached' });
-  eq(await c.page.evaluate(() => location.hash), '#/portfolio');
-  eq(await c.page.textContent('#ap-app-title'), 'Portfolio');
+  // el hash cambia al instante, pero hashchange (que repinta título y barra) llega en otra tarea: en el CI, más lento, se leía el título antiguo
+  await c.page.waitForFunction(() => location.hash === '#/portfolio' && document.getElementById('ap-app-title').textContent === 'Portfolio');
   ok(await c.page.$eval('.ap-bar-more', (e) => e.classList.contains('is-on')), '«Más» no queda marcado');
   eq(await c.page.$('.ap-bar a[aria-current]'), null, 'queda una sección de la barra marcada');
   await c.page.click('.ap-bar-more');
