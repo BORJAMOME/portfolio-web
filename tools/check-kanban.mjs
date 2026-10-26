@@ -111,8 +111,20 @@ async function open(viewport) {
   await page.waitForSelector('.apk-head');
   return { ctx, page, errors };
 }
+// shared.css pone html { scroll-behavior: smooth }: si la página aún se está desplazando (p. ej. tras cambiar un filtro y repintar),
+// medir o arrastrar a esa altura falla, porque las tarjetas se mueven bajo el puntero. En el CI (más lento) pasaba: se espera a que se asiente.
+async function settleScroll(page) {
+  await page.evaluate(() => new Promise((resolve) => {
+    let last = -1, still = 0, frames = 0;
+    (function frame() {
+      still = scrollY === last ? still + 1 : 0; last = scrollY; frames++;
+      if (still >= 8 || frames > 240) resolve(); else requestAnimationFrame(frame);
+    })();
+  }));
+}
 // el tablero se repinta al cerrar un diálogo: se espera a que el elemento exista y tenga caja antes de medirlo
 async function bbox(sel) {
+  await settleScroll(pagePtr.page);
   for (let i = 0; i < 60; i++) {
     const el = await pagePtr.page.$(sel);
     const b = el && await el.boundingBox().catch(() => null);
@@ -379,26 +391,9 @@ await step('Regresión: con filtro activo, soltar entre dos visibles respeta el 
   await page.reload(); await page.waitForSelector('.apk-head'); await goBoard(page);
   await page.selectOption('.apk-filters select[aria-label="Filtrar por prioridad"]', '3');
   const bBox = await bbox(cardSel('F-B'));
-  // traza del arrastre (solo para el mensaje si falla): scroll y posición de B en cada puntero y fotograma
-  await page.evaluate((titulo) => {
-    window.__tr = [];
-    window.__calls = [];
-    const wrap = (obj, name) => { const o = obj[name]; obj[name] = function () { if (window.__calls.length < 24) window.__calls.push(name + ' < ' + new Error().stack.split('\n').slice(2, 5).map((l) => l.trim().replace(/https?:\/\/[^/]+\//, '')).join(' < ')); return o.apply(this, arguments); }; };
-    wrap(window, 'scrollTo'); wrap(window, 'scrollBy'); wrap(Element.prototype, 'scrollIntoView'); wrap(HTMLElement.prototype, 'focus');
-    window.addEventListener('scroll', () => { if (window.__calls.length < 24) window.__calls.push('scroll y=' + Math.round(scrollY) + ' docH=' + document.documentElement.scrollHeight); }, { passive: true });
-    const desc = (e) => { const t = e.target; return t && t.tagName ? t.tagName.toLowerCase() + (t.className && typeof t.className === 'string' ? '.' + t.className.split(' ')[0] : '') : String(t); };
-    ['pointerdown', 'mousedown', 'focusin', 'focusout', 'selectstart', 'dragstart', 'hashchange', 'popstate', 'click', 'wheel', 'keydown'].forEach((ev) => document.addEventListener(ev, (e) => { if (window.__calls.length < 24) window.__calls.push(ev + ' ' + desc(e) + ' y=' + Math.round(scrollY)); }, true));
-    window.__calls.push('inicio y=' + Math.round(scrollY) + ' hash=' + location.hash + ' act=' + (document.activeElement ? document.activeElement.tagName : '') + ' sr=' + history.scrollRestoration);
-    const find = () => [...document.querySelectorAll('.apk-card')].find((c) => (c.querySelector('.apk-card-open') || {}).textContent === titulo);
-    const sample = (k) => { const b = find(); window.__tr.push([k, Math.round(scrollY), b ? Math.round(b.getBoundingClientRect().top) : null, document.querySelectorAll('.apk-drop').length]); };
-    document.addEventListener('pointermove', (e) => sample('m' + Math.round(e.clientY)), true);
-    (function loop() { sample('f'); window.__trRaf = requestAnimationFrame(loop); })();
-  }, 'F-B');
   await drag(page, cardSel('F-A'), bBox.x + bBox.width / 2, bBox.y + bBox.height - 4);
-  const trace = await page.evaluate(() => { cancelAnimationFrame(window.__trRaf); return window.__tr.filter((t, i, a) => i === 0 || t[0][0] === 'm' || i > a.length - 8).slice(-26); });
-  const calls = await page.evaluate(() => window.__calls);
   const pos = (t) => db.kb_tarjetas.find((c) => c.titulo === t).posicion;
-  ok(pos('F-A') > pos('F-B') && pos('F-A') < pos('F-C'), 'A debe quedar entre B y C: ' + [pos('F-B'), pos('F-A'), pos('F-C')] + ' · B antes ' + JSON.stringify(bBox) + ' · vp ' + (await page.evaluate(() => innerWidth + 'x' + innerHeight)) + ' · traza [evento, scrollY, B.top, huecos] ' + JSON.stringify(trace) + ' · llamadas ' + JSON.stringify(calls));
+  ok(pos('F-A') > pos('F-B') && pos('F-A') < pos('F-C'), 'A debe quedar entre B y C: ' + [pos('F-B'), pos('F-A'), pos('F-C')]);
   ok(pos('F-H1') < pos('F-B') && pos('F-H2') < pos('F-B'), 'las ocultas no se mueven de sitio');
 });
 await step('«Quedó de ayer»: lo no terminado se ofrece mantener o quitar', async () => {
