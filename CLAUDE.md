@@ -58,10 +58,12 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
   la web enseña una revisión y guarda lo confirmado. `KB_AI_PROVIDER=off` por defecto (los botones de IA no aparecen). Guía: su `README.md`.
 - **Color Studio** (`#/color`, `/biblioteca`, `/armario`, `/calcetines`; app del catálogo, se abre en modo app): outfits con prendas reales, paletas de referencia y guía de calcetines.
   Interfaz `area-privada-color.js` (`window.APColor`, CSS `css/color-studio.css`, prefijo `cs-`; fondo #FBFBFB solo en esta pestaña con `body:has(.cs)`).
-  Lógica en módulos ES sin DOM en `color-studio/` (`engine.js` color/ΔE00/proporciones, `socks.js` reglas, `data.js` validación e importación, `image.js` fotos),
+  Lógica en módulos ES sin DOM en `color-studio/` (`engine.js` color/ΔE00/proporciones, `compose.js` lectura del conjunto, direcciones Minimalista/Equilibrada/Creativa
+  con criterios con nombre (`MOVES`) y paletas como inspiración, `socks.js` reglas de calcetines con tipo de calzado, `data.js` validación e importación, `image.js` fotos),
   cargados con `<link data-ap-asset="cs-*">`. Tablas `cs_garments`, `cs_palettes`, `cs_outfits` y bucket privado `armario` (`supabase/color-studio.sql`, revertir con `color-studio-rollback.sql`).
   Intro de bienvenida (bloque `INTRO`, estilos `csi-`): una vez por carga de página, coordinada con la carga real (máx. 6 s), sin animación con movimiento reducido.
   Proporciones = estimaciones editables; no inventar porcentajes de confianza ni contenido del libro de Sanzo Wada. Modo ejemplo en memoria, nunca se guarda.
+  Las propuestas usan prendas reales; si no hay, el color va marcado como hipotético. Aplicar guarda el conjunto de partida en el borrador para volver a él.
   Pruebas: `node --test tools/test-color.mjs` y `node tools/check-color.mjs`. Guía y decisiones: `color-studio/README.md`.
 - **Calendario** (`#/calendario`): solo lectura. Google → iCal secreto → Edge Function `supabase/functions/calendario-sync`
   (pg_cron cada 15 min) → `public.calendar_events`. La página nunca habla con Google. Guía: `supabase/functions/calendario-sync/README.md`.

@@ -1,8 +1,10 @@
 # Color Studio
 
 Herramienta personal de color aplicada al vestuario, en el área privada (`#/color`).
-Construye outfits con prendas reales, mira cómo se reparte el color, compáralo con una biblioteca
-de paletas de referencia y recibe propuestas de calcetines explicadas.
+Construye outfits con prendas reales, lee cómo funciona su color (jerarquía, contraste, temperatura,
+repetición), explora tres direcciones (Minimalista, Equilibrada, Creativa) comparando cada propuesta con
+el conjunto original, usa las paletas de la biblioteca como inspiración y elige calcetines explicados.
+No elige la ropa por ti: propone, explica y deja decidir.
 
 ## Puesta en marcha
 
@@ -20,7 +22,8 @@ No hace falta ninguna variable de entorno ni clave nueva: usa la sesión y la cl
 |---|---|
 | `area-privada-color.js` | Interfaz: Studio, Biblioteca, Armario y Calcetines. Solo pinta e interactúa. |
 | `color-studio/engine.js` | Motor puro: HEX, CIELAB, ΔE00, familias, paletas, coincidencias, proporciones, extracción de color. |
-| `color-studio/socks.js` | Reglas de calcetines con identificadores (`RULES`). |
+| `color-studio/compose.js` | Lectura del conjunto (roles, relaciones, contraste, temperatura, repetición), direcciones con criterios con nombre (`MOVES`), comparación y paletas como inspiración. |
+| `color-studio/socks.js` | Reglas de calcetines con identificadores (`RULES`), tipo de calzado y deduplicación de propuestas. |
 | `color-studio/data.js` | Validación, importación JSON/CSV, duplicados, exportación y datos de ejemplo. |
 | `color-studio/image.js` | Fotos en el navegador: validación, reducción sin EXIF y proveedor de visión `local`. |
 | `css/color-studio.css` | Estilos (prefijo `cs-`), mobile-first. |
@@ -68,14 +71,65 @@ Código: bloque `INTRO` de `area-privada-color.js` y estilos `csi-` al final de 
 - Espera hasta 700 ms a la fuente Newsreader para que el título no cambie de letra a mitad del movimiento.
 - `prefers-reduced-motion`: no se muestra. Es decorativa (`aria-hidden`); el título real sigue siendo el `h1` de la página.
 
+## Composición y direcciones (Color Studio 2.0)
+
+Tres capas separadas en `compose.js`: **hechos** calculados, **criterios** de estilismo con nombre y una **lectura**
+orientativa. Nada de eso es una puntuación: no hay porcentajes de estilo ni «outfit perfecto».
+
+- **Hechos**: luminosidad, croma y tono (LCh), temperatura aproximada por tono (cálida, fría, intermedia o neutra si
+  el croma < 8), ΔE00, superficie estimada. **Relación** entre dos colores: casi igual (ΔE00 ≤ 5), entre neutros, color
+  sobre neutro, tonal (hueco de tono ≤ 20°), análoga (≤ 50°), complementaria (≥ 130°; en LCh azul y naranja quedan a
+  ~140°) o contraste de tono; contraste de luminosidad bajo (< 15), medio (< 35) o alto. «Apagado» = croma < 35 en ambos.
+- **Jerarquía sugerida** (orientación, no medida): dominante = más superficie; acento = < 15 %, no neutro, croma ≥ 25 y
+  ΔE00 > 15 con todos los colores mayores; el resto, apoyo. La superficie no es peso visual: se dice en pantalla.
+- **Lectura**: más cerca de lo minimalista (sin acentos, ≤ 1 familia fuera de los neutros, croma medio < 22, sin contraste
+  fuerte), de lo creativo (≥ 2 acentos, contraste complementario o de tono con croma ≥ 30 entre dos colores con ≥ 10 %,
+  ≥ 3 familias o un acento con croma ≥ 65) o equilibrada.
+- **Direcciones**: cada una prueba sus criterios (`MOVES`) en orden y enseña como mucho dos propuestas distintas
+  (mismos huecos con ΔE00 ≤ 5 = repetida; igual al original = descartada).
+  - Minimalista: `min-apagar` (prenda neutra o apagada en lugar del color más intenso; si es un accesorio o un
+    calcetín y no hay sustituto, quitarlo) y `min-tonal` (parte de arriba en la familia del pantalón).
+  - Equilibrada: `eq-reducir` (con dos acentos, uno pasa a apoyo), `eq-repetir` (repetir un color en otra zona: un
+    calcetín que repite el pantalón es continuidad, no cuenta) y `eq-apoyo` (sobre una base solo neutra, un color apagado).
+  - Creativa: `cr-paleta` (color de una paleta relacionada que el conjunto no usa; las de libro primero), `cr-acento`
+    (complementario, de contraste o análogo en una prenda pequeña) y `cr-repetir` (el acento en dos zonas).
+- **Prendas reales primero.** Si ninguna encaja, el color se ofrece como **hipotético** (borde discontinuo y aviso
+  «no tienes esta prenda»). Al aplicarlo entra en el borrador como color provisional, nunca como prenda.
+- **Comparar y aplicar**: cada propuesta enseña Ahora / Propuesta, los cambios por hueco, qué cambia (contraste,
+  acento, familias, intensidad, repetición, pantalón-calzado, temperatura, lectura) y el criterio. Aplicar guarda el
+  conjunto de partida en el borrador (`original`) y permite volver a él. La dirección es estado de interfaz: no se
+  guarda en `cs_outfits` (no hizo falta tocar el esquema).
+- **Paletas que inspiran**: para cada color de la paleta, si ya está en el conjunto (y en qué prenda), qué prenda de tu
+  armario podría representarlo (ΔE00 ≤ 12) o que no tienes ninguna, y su papel respecto al dominante (tonal, de apoyo o
+  de contraste). «Comparar con mi conjunto» abre la propuesta `cr-paleta` de esa paleta concreta.
+
 ## Calcetines
 
-Tres propuestas por reglas explícitas (`RULES` en `socks.js`): **Segura** (color del pantalón, o del calzado si no hay
-pantalón), **Coordinada** (un color de la parte de arriba o de un accesorio; si no lo hay, el calzado o un tono más oscuro)
-y **Con contraste** (un color de la paleta de la biblioteca que más se relaciona con el outfit y que este aún no usa; si
-no hay ninguna, el tono opuesto al color con más presencia con la saturación limitada por la formalidad). La preferencia
-cambia el orden; en formal, la segura va primero y el contraste al final. Cada propuesta indica si tienes un calcetín
-parecido (ΔE00 ≤ 12).
+El calcetín está entre el pantalón y el calzado: tres propuestas por reglas explícitas (`RULES` en `socks.js`), siempre
+distintas entre sí (ΔE00 > 10). Si no hay datos para tres de verdad, se enseñan menos y se explica.
+
+- **Continuidad**: familia del pantalón. Pantalón muy oscuro (L < 22): su color; medio: un punto más oscuro (−6 L);
+  claro (L > 65): uno o dos tonos más oscuro (−12 L). Si tienes un calcetín a ΔE00 ≤ 8, se propone ese. Sin pantalón,
+  sigue al calzado.
+- **Coordinación**: en este orden, blanco/crudo de unas deportivas blancas; un color de unas deportivas de color que
+  también esté en otra prenda; colores de arriba (en minimalista, neutros primero; si no, el color primero); secundarios
+  del dibujo del pantalón y de la parte de arriba; el calzado; tono sobre tono a distancia clara de la continuidad.
+- **Contraste**: paleta de la biblioteca relacionada (las de libro primero) → secundario que ya existe en el conjunto →
+  calculado (opuesto al pantalón si tiene tono, o al color más intenso; análogo en minimalista). Debe distar > 15 del
+  pantalón y del calzado y tener croma ≥ 15; no se elige «el más lejano»: se busca el croma objetivo
+  (formal 25, smart casual 40, informal 55; −10 minimalista, +10 creativa) y, en formal o con zapato formal, tonos profundos.
+- **Tipo de calzado**: se deduce de la subcategoría o el nombre del calzado (bota, mocasín, deportiva, running, oxford…;
+  `inferShoeType`) y se corrige en la guía; el tono de una deportiva (blanca, oscura, de color) sale de su color. Añade
+  notas (mocasín, bota, técnica, oscura) y activa reglas de coordinación; no prohíbe nada.
+- **Orden**: minimalista continuidad → coordinación → contraste; equilibrada coordinación primero; creativa contraste
+  primero. En formal, la continuidad primero y el contraste al final. Cada propuesta indica contraste cualitativo con
+  pantalón y calzado (bajo < 10, medio < 25, alto), efecto buscado, qué la inspira y si tienes uno parecido (ΔE00 ≤ 12).
+- **Fuentes de las convenciones**: [Permanent Style](https://www.permanentstyle.com/2018/12/the-rules-and-how-to-break-them-your-socks-should-match-your-trousers)
+  (por defecto, calcetín del color del pantalón; con pantalón claro, un tono o dos más oscuro; harmonizar en vez de igualar
+  es válido) y [Gentleman's Gazette](https://www.gentlemansgazette.com/how-to-combine-socks-shoes-pants/) (igualar
+  exactamente el pantalón no es lo más logrado, mejor que igualar el zapato; enlazar con la parte de arriba). Lo de las
+  deportivas blancas es convención informal extendida, no regla. Los umbrales de croma son decisiones propias.
+- El estilo del calcetín (invisible, tobillero, media caña) no se registra: no se deduce ni se inventa.
 
 ## Referencias de Sanzo Wada (348 combinaciones)
 
@@ -104,7 +158,11 @@ node tools/color-studio/wada-import.mjs [salida.json] [--from colors.json]
 ## Limitaciones conocidas
 
 - La estimación de superficie no usa la foto del outfit vestido (segmentación y solapes quedan para una fase posterior).
-- Las propuestas no contemplan estampados en el calcetín.
+- Las propuestas no contemplan estampados en el calcetín ni su largo o material (no se registran).
+- La temperatura y la relación entre colores son aproximaciones por tono; los materiales y texturas no intervienen
+  porque el campo es texto libre y no se deducen.
+- Las direcciones cambian como mucho una prenda por propuesta; no buscan combinaciones de varias prendas a la vez.
+- Un color hipotético aplicado y guardado queda como «color a mano» (el aviso de hipotético vive solo en el borrador).
 - La familia de un color es aproximada en los límites entre tonos (p. ej. camel/naranja, turquesa/verde).
 - HEIC no se lee en navegadores de escritorio: el iPhone debe compartir la foto como JPEG.
 - El borrador del Studio vive en `sessionStorage` (se pierde al cerrar la pestaña); lo guardado está en Supabase.
