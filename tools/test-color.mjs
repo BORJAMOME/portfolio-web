@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════
    tools/test-color.mjs: pruebas del motor de Color Studio
      node --test tools/test-color.mjs
-   Sin dependencias ni red: importa los módulos ES de color-studio/ (motor, guía de calcetines y datos).
+   Sin dependencias ni red: importa los módulos ES de color-studio/ (motor, composición, calcetines y datos).
    La interfaz se prueba aparte con tools/check-color.mjs.
    ═══════════════════════════════════════════════ */
 import { test } from 'node:test';
@@ -9,6 +9,7 @@ import assert from 'node:assert/strict';
 import * as E from '../color-studio/engine.js';
 import * as S from '../color-studio/socks.js';
 import * as D from '../color-studio/data.js';
+import * as C from '../color-studio/compose.js';
 
 const sum = (a) => a.reduce((s, x) => s + x, 0);
 const near = (a, b, eps = 1e-9) => Math.abs(a - b) <= eps;
@@ -203,11 +204,13 @@ test('recommendSocks: sin pantalón ni calzado explica la limitación', () => {
   assert.equal(r.proposals.length, 0);
   assert.match(r.notes[0], /pantalón o el calzado/);
 });
-test('recommendSocks: tres propuestas, segura = pantalón y reconoce el calcetín propio', () => {
+test('recommendSocks: tres propuestas, continuidad = pantalón (con el calcetín propio si es casi igual)', () => {
   const r = S.recommendSocks({ trousers: '#1F2A44', shoes: '#4A2E1F', others: [{ hex: '#6B1F2A', label: 'Jersey', share: 30 }], formality: 'smart', preference: 'discreet', socks });
   assert.deepEqual(r.proposals.map((p) => p.type), ['safe', 'coordinated', 'contrast']);
   const safe = r.proposals[0];
-  assert.equal(safe.hex, '#1F2A44');
+  assert.equal(safe.label, 'Continuidad');
+  assert.equal(safe.hex, '#1E2740', 'usa el calcetín marino que ya tienes (ΔE00 ≤ 8)');
+  assert.equal(safe.origin, 'owned');
   assert.deepEqual(safe.rules, ['continuidad-pantalon']);
   assert.equal(safe.owned.garment.id, 's1');
   assert.equal(r.proposals[1].hex, '#6B1F2A');
@@ -228,7 +231,9 @@ test('recommendSocks: sin colores arriba, coordina con el calzado o va tono sobr
   const mono = S.recommendSocks({ trousers: '#1F2A44', shoes: '#1F2A44' });
   const c = mono.proposals.find((p) => p.type === 'coordinated');
   assert.equal(c.rules[0], 'tono-sobre-tono');
-  assert.ok(E.hexToLab(c.hex).L < E.hexToLab('#1F2A44').L);
+  assert.ok(E.hexToLab(c.hex).L > E.hexToLab('#1F2A44').L, 'un pantalón muy oscuro no admite un tono más oscuro: va uno más claro');
+  const light = S.recommendSocks({ trousers: '#8A8D91', shoes: '#8A8D91' }).proposals.find((p) => p.type === 'coordinated');
+  assert.ok(E.hexToLab(light.hex).L < E.hexToLab('#8A8D91').L);
 });
 test('recommendSocks: el contraste sale de una paleta de la biblioteca si encaja', () => {
   const pal = { id: 'p', name: 'Bosque', colors: [{ hex: '#1F2A44' }, { hex: '#4A2E1F' }, { hex: '#C9A23A', name: 'mostaza' }] };
@@ -245,6 +250,209 @@ test('recommendSocks: sin pantalón, la segura sigue al calzado y se avisa', () 
   const r = S.recommendSocks({ shoes: '#4A2E1F' });
   assert.equal(r.proposals.find((p) => p.type === 'safe').rules[0], 'continuidad-calzado');
   assert.ok(r.notes.some((n) => /Sin pantalón/.test(n)));
+});
+
+/* ── Calcetines 2.0: casos representativos (ejemplos para probar reglas, no leyes de moda) ── */
+const L = (hex) => E.labToLch(E.hexToLab(hex)).L, Ch = (hex) => E.labToLch(E.hexToLab(hex)).C;
+const distinctAll = (ps) => ps.every((p, i) => ps.every((q, j) => i === j || E.colorDistance(p.hex, q.hex) > 10));
+test('inferShoeType y sneakerTone: tipo desde el texto escrito y tono desde el color', () => {
+  assert.equal(S.inferShoeType('Bota chelsea'), 'boot');
+  assert.equal(S.inferShoeType('mocasín penny'), 'loafer');
+  assert.equal(S.inferShoeType('Zapatilla blanca'), 'sneaker');
+  assert.equal(S.inferShoeType('zapatillas de running'), 'technical');
+  assert.equal(S.inferShoeType('Oxford negro'), 'formal');
+  assert.equal(S.inferShoeType('Calzado'), null);
+  assert.equal(S.inferShoeType(''), null);
+  assert.equal(S.sneakerTone('#F4F4F2'), 'white');
+  assert.equal(S.sneakerTone('#1A1A1A'), 'dark');
+  assert.equal(S.sneakerTone('#C8452B'), 'colored');
+});
+test('calcetines: pantalón marino y zapato marrón formal → continuidad primero y contraste profundo', () => {
+  const r = S.recommendSocks({ trousers: '#1F2A44', shoes: '#4A2E1F', shoeType: 'formal', formality: 'formal', others: [{ hex: '#F4F2EC', label: 'Camisa' }] });
+  assert.equal(r.proposals[0].type, 'safe');
+  assert.ok(r.proposals[0].rules.includes('calzado-formal'));
+  const x = r.proposals.find((p) => p.type === 'contrast');
+  assert.ok(L(x.hex) <= 50 && Ch(x.hex) <= 30, 'formal: contraste profundo y contenido');
+  assert.ok(distinctAll(r.proposals));
+});
+test('calcetines: pantalón gris y calzado oscuro → continuidad un punto más oscura, no el mismo HEX', () => {
+  const r = S.recommendSocks({ trousers: '#8A8D91', shoes: '#202020' });
+  const safe = r.proposals.find((p) => p.type === 'safe');
+  assert.notEqual(safe.hex, '#8A8D91');
+  assert.ok(L(safe.hex) < L('#8A8D91') && E.colorDistance(safe.hex, '#8A8D91') < 10);
+  assert.ok(safe.rules.includes('separacion-sutil'));
+});
+test('calcetines: pantalón claro y deportivas blancas → coordinación en blanco y continuidad más oscura', () => {
+  const r = S.recommendSocks({ trousers: '#D9CFBA', shoes: '#F4F4F2', shoeType: 'sneaker', formality: 'casual', others: [{ hex: '#1F2A44', label: 'Jersey' }] });
+  const coord = r.proposals.find((p) => p.type === 'coordinated'), safe = r.proposals.find((p) => p.type === 'safe');
+  assert.deepEqual(coord.rules, ['deportiva-blanca']);
+  assert.equal(coord.hex, '#F4F4F2');
+  assert.ok(safe.rules.includes('pantalon-claro') && L(safe.hex) < L('#D9CFBA'));
+  assert.match(coord.explanation, /deportivas/);
+});
+test('calcetines: pantalón oliva y deportivas neutras, dirección creativa → el contraste va primero', () => {
+  const r = S.recommendSocks({ trousers: '#5E6B3A', shoes: '#B8B3A8', shoeType: 'sneaker', formality: 'casual', direction: 'creative', others: [{ hex: '#F4F2EC', label: 'Camiseta' }] });
+  assert.deepEqual(r.proposals.map((p) => p.type), ['contrast', 'coordinated', 'safe']);
+  assert.equal(r.direction, 'creative');
+  assert.ok(distinctAll(r.proposals));
+});
+test('calcetines: pantalón negro y calzado que contrasta → continuidad negra y tres tonos distintos', () => {
+  const r = S.recommendSocks({ trousers: '#151515', shoes: '#B5452B', others: [{ hex: '#9A9A97', label: 'Camiseta' }] });
+  assert.equal(r.proposals.find((p) => p.type === 'safe').hex, '#151515');
+  assert.equal(r.proposals.length, 3);
+  assert.ok(distinctAll(r.proposals));
+});
+test('calcetines: pantalón estampado → la coordinación recoge un secundario del dibujo', () => {
+  const r = S.recommendSocks({ trousers: '#3B4A5E', trousersSecondary: ['#B7472A'], trousersPattern: 'cuadros', shoes: '#4A2E1F' });
+  const coord = r.proposals.find((p) => p.type === 'coordinated');
+  assert.equal(coord.hex, '#B7472A');
+  assert.ok(coord.rules.includes('secundario-estampado'));
+  assert.ok(r.notes.some((n) => /dibujo/.test(n)));
+});
+test('calcetines: un acento arriba se lleva al tobillo en la coordinación', () => {
+  const r = S.recommendSocks({ trousers: '#8A8D91', shoes: '#202020', others: [{ hex: '#F4F2EC', label: 'Camisa', share: 30 }, { hex: '#C9A23A', label: 'Accesorio', share: 3 }], direction: 'balanced' });
+  assert.equal(r.proposals.find((p) => p.type === 'coordinated').hex, '#C9A23A', 'equilibrada/creativa: el color antes que el neutro');
+  const min = S.recommendSocks({ trousers: '#8A8D91', shoes: '#202020', others: [{ hex: '#F4F2EC', label: 'Camisa', share: 30 }, { hex: '#C9A23A', label: 'Accesorio', share: 3 }], direction: 'minimal' });
+  assert.equal(min.proposals.find((p) => p.type === 'coordinated').hex, '#F4F2EC', 'minimalista: el neutro antes que el color');
+  assert.deepEqual(min.proposals.map((p) => p.type), ['safe', 'coordinated', 'contrast']);
+});
+test('calcetines: sin calcetines registrados no se inventa ninguno propio', () => {
+  const r = S.recommendSocks({ trousers: '#1F2A44', shoes: '#4A2E1F', socks: [] });
+  assert.ok(r.proposals.every((p) => p.owned === null));
+  assert.ok(r.proposals.every((p) => p.origin !== 'owned'));
+});
+test('calcetines: con poca información no se inventa diversidad y se explica', () => {
+  const r = S.recommendSocks({ trousers: '#1F2A44', shoes: '#1F2A44', others: [{ hex: '#1F2A44', label: 'Jersey' }] });
+  assert.ok(distinctAll(r.proposals), 'nunca dos propuestas del mismo tono');
+  assert.ok(r.proposals.length >= 2);
+});
+test('calcetines: la formalidad y la dirección cambian la intensidad del contraste calculado', () => {
+  const base = { trousers: '#8A8D91', shoes: '#202020' };
+  const formal = S.recommendSocks(Object.assign({ formality: 'formal', direction: 'minimal' }, base)).proposals.find((p) => p.type === 'contrast');
+  const casual = S.recommendSocks(Object.assign({ formality: 'casual', direction: 'creative' }, base)).proposals.find((p) => p.type === 'contrast');
+  assert.ok(Ch(formal.hex) < Ch(casual.hex), 'formal + minimalista más contenido que informal + creativo');
+  assert.ok(['bajo', 'medio', 'alto'].includes(casual.contrast));
+  assert.ok(casual.effect.length > 10);
+});
+test('calcetines: los calzados con nota propia la añaden sin cambiar las reglas de color', () => {
+  ['loafer', 'boot', 'technical'].forEach((t) => {
+    const r = S.recommendSocks({ trousers: '#1F2A44', shoes: '#4A2E1F', shoeType: t });
+    assert.ok(r.notes.some((n) => n === S.RULES[{ loafer: 'mocasin', boot: 'bota', technical: 'deportiva-tecnica' }[t]]));
+  });
+});
+test('calcetines: deterministas (mismo resultado en dos llamadas) y reglas conocidas', () => {
+  const input = { trousers: '#5E6B3A', shoes: '#F4F4F2', shoeType: 'sneaker', others: [{ hex: '#6B1F2A', label: 'Jersey' }], palettes: [{ id: 'p', name: 'X', source_type: 'book', colors: [{ hex: '#5E6B3A' }, { hex: '#C9A23A' }] }] };
+  assert.deepEqual(JSON.stringify(S.recommendSocks(input)), JSON.stringify(S.recommendSocks(input)));
+  S.recommendSocks(input).proposals.forEach((p) => assert.ok(p.rules.every((id) => S.RULES[id]), p.rules.join()));
+});
+
+/* ── Composición y direcciones ── */
+const G = (id, category, primary, extra) => Object.assign({ id, name: id, category, primary_color: primary, secondary_colors: [], color_shares: null, pattern: 'liso' }, extra || {});
+const wardrobe = [
+  G('chino-marino', 'pantalones', '#1F2A44'), G('chino-piedra', 'pantalones', '#B9AE96'),
+  G('camisa-blanca', 'camisas', '#F4F2EC'), G('jersey-burdeos', 'jerseis', '#6B1F2A'), G('camiseta-gris', 'camisetas', '#9A9A97'), G('jersey-azul', 'jerseis', '#3A5078'),
+  G('bota-marron', 'calzado', '#4A2E1F'), G('zapatilla-blanca', 'calzado', '#F2F1EE'),
+  G('cal-burdeos', 'calcetines', '#6E2230'), G('panuelo-mostaza', 'accesorios', '#C9A23A'), G('sobrecamisa-oliva', 'chaquetas', '#5E6B3A')
+];
+const slotsOf = (map) => Object.fromEntries(Object.entries(map).map(([k, id]) => [k, { garment_id: id, hex: null, weight: E.SLOT[k].weight }]));
+test('relation: tonal, análoga, complementaria, color sobre neutro e igual', () => {
+  assert.equal(C.relation('#1F2A44', '#3A5078').kind, 'tonal');
+  assert.equal(C.relation('#5E6B3A', '#C9A23A').kind, 'analoga');
+  assert.equal(C.relation('#2E5FA8', '#D9822B').kind, 'complementaria');
+  assert.equal(C.relation('#F4F2EC', '#6B1F2A').kind, 'base-neutra');
+  assert.equal(C.relation('#1F2A44', '#1E2740').kind, 'igual');
+  assert.equal(C.relation('#000000', '#FFFFFF').light, 'alto');
+  assert.equal(C.relation('#1F2A44', 'nope'), null);
+  assert.match(C.describeRelation(C.relation('#1F2A44', '#B48A5A')), /opuestos en versión apagada/);
+});
+test('temperatureOf: cálidos, fríos y neutros', () => {
+  assert.equal(C.colorFacts('#B5452B').temperature, 'cálida');
+  assert.equal(C.colorFacts('#2E5FA8').temperature, 'fría');
+  assert.equal(C.colorFacts('#9A9A97').temperature, 'neutra');
+});
+test('analyzeOutfit: dominante, acento, repetición y lectura', () => {
+  const items = C.buildItems(slotsOf({ bottom: 'chino-marino', top: 'jersey-burdeos', shoes: 'bota-marron', accessory: 'panuelo-mostaza', socks: 'cal-burdeos' }), wardrobe);
+  const a = C.analyzeOutfit(items);
+  assert.equal(a.dominant.hex, '#1F2A44');
+  assert.deepEqual(a.accents.map((x) => x.hex), ['#C9A23A']);
+  assert.ok(a.repetitions.some((r) => r.slots.includes('top') && r.slots.includes('socks')), 'el burdeos se repite arriba y en el tobillo');
+  assert.equal(a.reading, 'balanced');
+  const neutral = C.analyzeOutfit(C.buildItems(slotsOf({ bottom: 'chino-marino', top: 'camisa-blanca', shoes: 'bota-marron' }), wardrobe));
+  assert.equal(neutral.reading, 'minimal');
+  assert.equal(neutral.accents.length, 0);
+  const loud = C.analyzeOutfit(C.buildItems({ top: { hex: '#2E5FA8', weight: 30 }, bottom: { hex: '#D9822B', weight: 35 } }, []));
+  assert.equal(loud.reading, 'creative');
+  assert.equal(C.analyzeOutfit([]).valid, false);
+});
+test('analyzeOutfit: una distribución ajustada a mano cambia la jerarquía', () => {
+  const items = C.buildItems(slotsOf({ bottom: 'chino-marino', top: 'camisa-blanca' }), wardrobe);
+  const manual = C.analyzeOutfit(items, { distribution: [{ hex: '#1F2A44', pct: 20 }, { hex: '#F4F2EC', pct: 80 }] });
+  assert.equal(manual.dominant.hex, '#F4F2EC');
+});
+test('compareAnalyses: describe lo que cambia sin valorar', () => {
+  const a = C.analyzeOutfit(C.buildItems(slotsOf({ bottom: 'chino-marino', top: 'camisa-blanca' }), wardrobe));
+  const b = C.analyzeOutfit(C.buildItems(slotsOf({ bottom: 'chino-marino', top: 'jersey-azul' }), wardrobe));
+  const d = C.compareAnalyses(a, b);
+  assert.ok(d.some((t) => /luminosidad: alto → (bajo|medio)/.test(t)), d.join(' | '));
+  assert.ok(d.every((t) => !/mejor|peor|perfect|%/.test(t)));
+});
+test('proposeDirection: no toca el original, propone prendas reales y es determinista', () => {
+  const slots = slotsOf({ bottom: 'chino-marino', top: 'jersey-burdeos', shoes: 'bota-marron', accessory: 'panuelo-mostaza' });
+  const frozen = JSON.stringify(slots);
+  const input = { slots, garments: wardrobe, palettes: [], formality: 'smart' };
+  const min = C.proposeDirection('minimal', input);
+  assert.equal(JSON.stringify(slots), frozen, 'el borrador original no cambia');
+  assert.ok(min.proposals.length >= 1);
+  const p = min.proposals[0];
+  assert.equal(p.move, 'min-apagar');
+  assert.ok(p.changes.every((ch) => ch.garment || ch.remove || ch.hypothetical));
+  assert.ok(C.MOVES[p.move] && p.explanation.length > 30);
+  assert.ok(p.after.weightedC < p.before.weightedC, 'minimalista: menos intensidad media');
+  assert.equal(JSON.stringify(C.proposeDirection('minimal', input)), JSON.stringify(min));
+  const eq = C.proposeDirection('balanced', input);
+  const rep = eq.proposals.find((x) => x.move === 'eq-repetir');
+  assert.ok(rep && rep.changes[0].garment.id === 'cal-burdeos', 'repite el burdeos del jersey con el calcetín que tienes');
+});
+test('proposeDirection: propuestas distintas entre sí y nunca iguales al original', () => {
+  const input = { slots: slotsOf({ bottom: 'chino-marino', top: 'jersey-burdeos', shoes: 'bota-marron' }), garments: wardrobe, palettes: [], formality: 'smart' };
+  ['minimal', 'balanced', 'creative'].forEach((d) => {
+    const r = C.proposeDirection(d, input);
+    assert.ok(r.proposals.length <= 2);
+    const keys = r.proposals.map((p) => JSON.stringify(Object.entries(p.slots).map(([k, v]) => k + (v.garment_id || v.hex))));
+    assert.equal(new Set(keys).size, keys.length, d + ': propuestas repetidas');
+    r.proposals.forEach((p) => assert.notDeepEqual(p.slots, input.slots));
+  });
+});
+test('proposeDirection: sin prenda real que encaje, la propuesta se marca como hipotética', () => {
+  const r = C.proposeDirection('creative', { slots: slotsOf({ bottom: 'chino-marino', top: 'camisa-blanca' }), garments: wardrobe.filter((g) => ['chino-marino', 'camisa-blanca'].includes(g.id)), palettes: [] });
+  assert.ok(r.proposals.length);
+  assert.ok(r.proposals.every((p) => p.hypothetical && p.changes.some((ch) => ch.hypothetical)));
+  assert.match(r.proposals[0].explanation, /Hipótesis/);
+});
+test('proposeDirection: un conjunto ya minimalista sin alternativas no se fuerza', () => {
+  const r = C.proposeDirection('minimal', { slots: slotsOf({ bottom: 'chino-marino', top: 'camisa-blanca' }), garments: wardrobe.filter((g) => ['chino-marino', 'camisa-blanca'].includes(g.id)) });
+  assert.equal(r.kept, true);
+  assert.equal(r.note, C.MOVES.mantener);
+  assert.match(C.proposeDirection('balanced', { slots: {}, garments: wardrobe }).note, /Elige al menos una prenda/);
+});
+test('proposeDirection creativa: usa primero una paleta de libro (Sanzo Wada) relacionada', () => {
+  const own = { id: 'own', name: 'Mía', source_type: 'own', colors: [{ hex: '#1F2A44' }, { hex: '#F4F2EC' }, { hex: '#3A5078' }] };
+  const wada = { id: 'w', name: 'Wada n.º 001', source_type: 'book', colors: [{ hex: '#1F2A44' }, { hex: '#F4F2EC' }, { hex: '#5E6B3A', name: 'oliva' }] };
+  const r = C.proposeDirection('creative', { slots: slotsOf({ bottom: 'chino-marino', top: 'camisa-blanca' }), garments: wardrobe, palettes: [own, wada] });
+  const p = r.proposals.find((x) => x.move === 'cr-paleta');
+  assert.equal(p.palette.id, 'w');
+  assert.equal(p.changes[0].garment.id, 'sobrecamisa-oliva');
+});
+test('adaptPalette y proposeFromPalette: presente, prenda candidata y color que falta', () => {
+  const pal = { id: 'p', name: 'Bosque', colors: [{ hex: '#1F2A44', name: 'marino' }, { hex: '#5E6B3A', name: 'oliva' }, { hex: '#7A3E9D', name: 'morado' }] };
+  const input = { slots: slotsOf({ bottom: 'chino-marino', top: 'camisa-blanca' }), garments: wardrobe };
+  const rows = C.adaptPalette(pal, input);
+  assert.equal(rows[0].present.slot, 'bottom');
+  assert.equal(rows[1].candidate.garment.id, 'sobrecamisa-oliva');
+  assert.ok(!rows[2].present && !rows[2].candidate);
+  assert.ok(rows.every((x) => ['tonal', 'apoyo', 'contraste'].includes(x.role)));
+  assert.ok(C.proposeFromPalette(pal, input));
+  assert.equal(C.proposeFromPalette({ colors: [{ hex: '#1F2A44' }, { hex: '#F4F2EC' }] }, input), null, 'nada nuevo que aportar');
 });
 
 /* ── Validación, importación y exportación ── */

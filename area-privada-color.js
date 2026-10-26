@@ -8,7 +8,8 @@
      #/color/calcetines  Guía de calcetines (reglas explícitas)
    Esta capa solo pinta e interactúa. Las reglas viven en módulos ES aparte, sin DOM y probados
    con tools/test-color.mjs: color-studio/engine.js (color, proporciones, coincidencias),
-   socks.js (calcetines), data.js (validación, importación, exportación) e image.js (fotos).
+   compose.js (lectura del conjunto, direcciones y paletas como inspiración), socks.js (calcetines),
+   data.js (validación, importación, exportación) e image.js (fotos).
    Datos: tablas cs_* y bucket privado «armario» (supabase/color-studio.sql), con RLS.
    Modo ejemplo: datos inventados en memoria, señalados en todo momento y que nunca se guardan.
    ═══════════════════════════════════════════════ */
@@ -16,10 +17,10 @@ window.APColor = (function () {
   'use strict';
 
   var VIEWS = [
-    { id: 'studio', arg: '', label: 'Studio', title: 'Construye un conjunto', sub: 'Elige prendas reales y mira cómo se reparte el color.' },
+    { id: 'studio', arg: '', label: 'Studio', title: 'Construye un conjunto', sub: 'Elige prendas reales, lee cómo funciona el color y explora otras direcciones.' },
     { id: 'biblioteca', arg: 'biblioteca', label: 'Biblioteca', title: 'Biblioteca de paletas', sub: 'Combinaciones de referencia: tuyas, de libros, webs o fotos.' },
     { id: 'armario', arg: 'armario', label: 'Armario', title: 'Mi armario', sub: 'Tus prendas, con su foto y sus colores corregidos a mano.' },
-    { id: 'calcetines', arg: 'calcetines', label: 'Calcetines', title: 'Guía de calcetines', sub: 'Tres propuestas razonadas a partir del pantalón y el calzado.' }
+    { id: 'calcetines', arg: 'calcetines', label: 'Calcetines', title: 'Guía de calcetines', sub: 'Continuidad, coordinación y contraste: el calcetín según el pantalón, el calzado y el resto del conjunto.' }
   ];
   var ICON = {
     studio: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="4" y="3.5" width="16" height="17" rx="1.5"/><path d="M4 9.5h16M4 15h16"/></svg>',
@@ -32,7 +33,7 @@ window.APColor = (function () {
   var STALE_MS = 5 * 60 * 1000;
 
   /* ── Estado que sobrevive al cambiar de vista (el shell vuelve a llamar a render en cada ruta) ── */
-  var M = null;                 // módulos { E, S, D, I }
+  var M = null;                 // módulos { E, S, D, I, C }
   var cache = null;             // datos reales { garments, palettes, outfits, at }
   var demo = null;              // datos de ejemplo si el modo ejemplo está activo
   var images = {};              // ruta → Promise<blob: URL> (fotos privadas descargadas con la sesión)
@@ -43,9 +44,18 @@ window.APColor = (function () {
   };
   var draft = readDraft(false), demoDraft = emptyDraft();
 
-  function emptyDraft() { return { id: null, name: '', slots: {}, palette_id: null, override: null, formality: 'smart', preference: 'balanced', occasion: '', notes: '', is_favorite: false }; }
+  // direction: Minimalista / Equilibrada / Creativa (estado de interfaz, no se guarda en cs_outfits)
+  // shoeType: '' = deducido de la subcategoría del calzado · original: huecos antes de aplicar una propuesta
+  function emptyDraft() { return { id: null, name: '', slots: {}, palette_id: null, override: null, formality: 'smart', direction: 'balanced', shoeType: '', original: null, occasion: '', notes: '', is_favorite: false }; }
   function readDraft() {
-    try { var d = JSON.parse(sessionStorage.getItem(DRAFT_KEY)); if (d && typeof d === 'object' && d.slots) return Object.assign(emptyDraft(), d); } catch (e) { /* sin almacenamiento */ }
+    try {
+      var d = JSON.parse(sessionStorage.getItem(DRAFT_KEY));
+      if (d && typeof d === 'object' && d.slots) {
+        if (!d.direction && d.preference) d.direction = d.preference === 'discreet' ? 'minimal' : d.preference === 'contrast' ? 'creative' : 'balanced';   // borradores anteriores
+        delete d.preference;
+        return Object.assign(emptyDraft(), d);
+      }
+    } catch (e) { /* sin almacenamiento */ }
     return emptyDraft();
   }
   function cur() { return demo ? demoDraft : draft; }
@@ -61,8 +71,9 @@ window.APColor = (function () {
       import(assetUrl('cs-engine', './color-studio/engine.js')),
       import(assetUrl('cs-socks', './color-studio/socks.js')),
       import(assetUrl('cs-data', './color-studio/data.js')),
-      import(assetUrl('cs-image', './color-studio/image.js'))
-    ]).then(function (m) { M = { E: m[0], S: m[1], D: m[2], I: m[3] }; return M; })
+      import(assetUrl('cs-image', './color-studio/image.js')),
+      import(assetUrl('cs-compose', './color-studio/compose.js'))
+    ]).then(function (m) { M = { E: m[0], S: m[1], D: m[2], I: m[3], C: m[4] }; return M; })
       .catch(function () { throw new Error('No se ha podido cargar Color Studio. Revisa la conexión.'); });
   }
   function isMissing(err) { return !!err && (err.status === 404 || err.code === 'PGRST205' || err.code === '42P01'); }
@@ -286,14 +297,7 @@ window.APColor = (function () {
     function refresh() { saveDraft(); rebuild(); }
 
     /* ═══════════ STUDIO ═══════════ */
-    function slotItems() {
-      var d = cur();
-      return M.E.SLOTS.filter(function (s) { return d.slots[s.id]; }).map(function (s) {
-        var e = d.slots[s.id], g = e.garment_id ? garmentById(e.garment_id) : null;
-        var colors = g ? M.E.garmentColorParts(g) : e.hex ? [{ hex: e.hex, share: 1 }] : [];
-        return { slot: s.id, label: s.label, garment: g, lost: !!(e.garment_id && !g), hex: g ? g.primary_color : e.hex || null, weight: e.weight, colors: colors };
-      });
-    }
+    function slotItems() { return M.C.buildItems(cur().slots, data().garments); }
     function computed() {
       var items = slotItems(), est = M.E.estimateDistribution(items), d = cur(), manual = false, shown = est.colors.map(function (c) { return { hex: c.hex, pct: c.pct }; });
       if (d.override) {
@@ -311,7 +315,7 @@ window.APColor = (function () {
           if (prev) { prev.share += share; prev.label += ' y ' + it.label.toLowerCase(); } else match.push({ hex: hex, share: share, label: it.label });
         });
       });
-      return { items: items, est: est, shown: shown, manual: manual, match: match };
+      return { items: items, est: est, shown: shown, manual: manual, match: match, analysis: M.C.analyzeOutfit(items, { distribution: manual ? shown : null }) };
     }
     function setSlot(slot, entry) {
       var d = cur(), prev = d.slots[slot];
@@ -319,19 +323,41 @@ window.APColor = (function () {
       d.override = null;
       refresh();
     }
+    function snapshot(x) { return JSON.parse(JSON.stringify(x)); }
+    function applyProposal(p) {
+      var d = cur();
+      if (!d.original) d.original = snapshot(d.slots);          // el conjunto de partida se conserva para volver a él
+      d.slots = snapshot(p.slots); d.override = null;
+      refresh();
+      toast(p.hypothetical ? 'Propuesta aplicada con un color provisional: no es una prenda que tengas.' : 'Propuesta aplicada al outfit.');
+    }
+    function restoreOriginal() { var d = cur(); if (!d.original) return; d.slots = d.original; d.original = null; d.override = null; refresh(); toast('Has vuelto al conjunto original.'); }
+    function shoeGarment(c) { var it = c.items.filter(function (x) { return x.slot === 'shoes'; })[0]; return it && it.garment ? it.garment : null; }
+    function detectedShoe(c) { var g = shoeGarment(c); return g ? M.S.inferShoeType([g.subcategory, g.name].join(' ')) : null; }
     function sockInputFrom(c) {
       var by = {}; c.items.forEach(function (it) { by[it.slot] = it; });
       var others = c.items.filter(function (it) { return ['outer', 'top', 'accessory'].indexOf(it.slot) >= 0 && it.hex; }).map(function (it) {
         var g = c.est.garments.filter(function (x) { return x.slot === it.slot; })[0];
-        return { hex: it.hex, label: it.label, share: g ? g.pct : 0 };
+        return { hex: it.hex, label: it.label, share: g ? g.pct : 0, secondary: it.garment ? it.garment.secondary_colors || [] : [] };
       });
-      var d = cur();
+      var d = cur(), tr = by.bottom && by.bottom.garment, sh = by.shoes && by.shoes.garment;
       return {
         trousers: mem.sock.trousers || (by.bottom && by.bottom.hex) || null, shoes: mem.sock.shoes || (by.shoes && by.shoes.hex) || null,
-        others: others, formality: d.formality, preference: d.preference,
+        trousersSecondary: !mem.sock.trousers && tr ? tr.secondary_colors || [] : [], trousersPattern: tr ? tr.pattern : null,
+        shoesSecondary: !mem.sock.shoes && sh ? sh.secondary_colors || [] : [],
+        shoeType: d.shoeType || detectedShoe(c),
+        others: others, formality: d.formality, direction: d.direction,
         socks: data().garments.filter(function (g) { return g.category === 'calcetines'; }), palettes: data().palettes
       };
     }
+    function useSock(p) {
+      var d = cur();
+      d.slots.socks = Object.assign({ weight: d.slots.socks ? d.slots.socks.weight : M.E.SLOT.socks.weight }, p.owned ? { garment_id: p.owned.garment.id, hex: null } : { garment_id: null, hex: p.hex });
+      d.override = null;
+      refresh();
+      toast(p.owned ? 'Calcetín de tu armario añadido al outfit.' : 'Calcetín añadido como color provisional: no tienes uno de este tono registrado.');
+    }
+    function sockIsOn(p) { var e = cur().slots.socks; return !!e && (p.owned ? e.garment_id === p.owned.garment.id : !e.garment_id && e.hex === p.hex); }
 
     function paintStudio() {
       var c = computed(), d = cur();
@@ -349,12 +375,12 @@ window.APColor = (function () {
 
       main.appendChild(composition(c));
       main.appendChild(slotList(c));
+      main.appendChild(directions(c));
+      main.appendChild(sockInline(c));
       main.appendChild(manualEditor(c));
       main.appendChild(howItWorks());
 
       side.appendChild(references(c));
-      side.appendChild(alternatives(c));
-      side.appendChild(sockTeaser(c));
       side.appendChild(saveBlock(c));
       side.appendChild(savedOutfits());
     }
@@ -367,7 +393,7 @@ window.APColor = (function () {
       ]));
       if (!c.est.valid) {
         sec.appendChild(h('div', { class: 'cs-compose-empty' }, [
-          h('span', { class: 'cs-plate is-empty', 'aria-hidden': 'true' }),
+          h('span', { class: 'cs-plate is-empty', 'aria-hidden': 'true' }, [h('span'), h('span'), h('span')]),
           h('p', { text: c.items.length ? 'Los pesos suman 0: asigna un peso mayor que 0 a alguna prenda para calcular la distribución.' : 'Elige al menos una prenda o un color para ver su composición.' })
         ]));
         if (c.est.warnings.length) sec.appendChild(h('ul', { class: 'cs-warn' }, c.est.warnings.map(function (w) { return h('li', { text: w }); })));
@@ -384,12 +410,17 @@ window.APColor = (function () {
         h('figcaption', { class: 'sr-only', text: 'Superficie estimada por prenda: ' + c.items.map(function (it, i) { return it.label + ' ' + gPct[i] + ' %'; }).join(', ') })
       ]);
       var cPct = M.E.roundPercentages(c.shown.map(function (x) { return x.pct; }));
+      var roles = {}; (c.analysis.colors || []).forEach(function (x) { roles[x.hex] = x.role; });
+      var ROLE = { dominante: 'Dominante', apoyo: 'Apoyo', acento: 'Acento' };
       var legend = h('div', { class: 'cs-compose-legend' }, [
         h('p', { class: 'cs-mini-t', text: 'Distribución cromática' }),
         band(c.shown, { cls: 'cs-band--dist' }),
         h('ul', { class: 'cs-dist', 'aria-label': 'Distribución cromática' + (c.manual ? ' ajustada a mano' : ' estimada') }, c.shown.map(function (x, i) {
-          return h('li', { class: 'cs-dist-row' }, [swatch(x.hex), h('span', { class: 'cs-dist-name', text: colorName(x.hex) }), h('span', { class: 'cs-hex', text: x.hex }), h('span', { class: 'cs-pct', text: cPct[i] + ' %' })]);
+          var role = roles[x.hex];
+          return h('li', { class: 'cs-dist-row' }, [swatch(x.hex), h('span', { class: 'cs-dist-name' }, [colorName(x.hex), role ? h('span', { class: 'cs-role cs-role--' + role, text: ROLE[role] }) : null]),
+            h('span', { class: 'cs-hex', text: x.hex }), h('span', { class: 'cs-pct', text: cPct[i] + ' %' })]);
         })),
+        h('p', { class: 'cs-fine cs-fine--tight', text: (c.manual ? 'Porcentajes ajustados a mano.' : 'Porcentajes = superficie estimada, no peso visual.') + ' Dominante, apoyo y acento son una jerarquía sugerida: un acento es un color pequeño que destaca por intensidad o distancia.' }),
         h('p', { class: 'cs-mini-t', text: 'Superficie por prenda' }),
         h('ul', { class: 'cs-surf' }, c.items.map(function (it, i) {
           return h('li', null, [h('span', { text: it.label }), h('span', { class: 'cs-pct', text: gPct[i] + ' %' })]);
@@ -404,7 +435,7 @@ window.APColor = (function () {
       var d = cur();
       var sec = h('section', { class: 'cs-card', 'aria-labelledby': 'cs-slots-t' }, [
         h('div', { class: 'cs-card-head' }, [h('h3', { class: 'cs-h3', id: 'cs-slots-t', text: 'Prendas' }),
-          Object.keys(d.slots).length ? btn('Vaciar', 'cs-link', function () { var x = cur(); x.slots = {}; x.override = null; x.id = null; x.name = ''; x.palette_id = null; mem.sock = { trousers: null, shoes: null }; refresh(); }) : null])
+          Object.keys(d.slots).length ? btn('Vaciar', 'cs-link', function () { var x = cur(); x.slots = {}; x.override = null; x.id = null; x.name = ''; x.palette_id = null; x.original = null; mem.sock = { trousers: null, shoes: null }; refresh(); }) : null])
       ]);
       var list = h('ul', { class: 'cs-slots' });
       M.E.SLOTS.forEach(function (s) {
@@ -424,7 +455,8 @@ window.APColor = (function () {
           g ? thumb(g) : (function () { var t = h('span', { class: 'cs-thumb' + (it.lost ? ' is-empty' : ''), 'aria-hidden': 'true' }); if (it.hex) t.style.backgroundColor = it.hex; return t; })(),
           h('span', { class: 'cs-slot-txt' }, [
             h('span', { class: 'cs-slot-k', text: s.label }),
-            h('span', { class: 'cs-slot-n', text: it.lost ? 'Prenda eliminada del armario' : g ? garmentName(g) : 'Color a mano' }),
+            h('span', { class: 'cs-slot-n', text: it.lost ? 'Prenda eliminada del armario' : g ? garmentName(g) : it.hypothetical ? 'Color hipotético' : 'Color a mano' }),
+            it.hypothetical && !g ? h('span', { class: 'cs-hypo', text: 'Propuesta: no es una prenda que tengas' }) : null,
             it.hex ? h('span', { class: 'cs-slot-c' }, [h('span', { class: 'cs-hex', text: it.hex }), ' · ', colorName(it.hex),
               g && g.secondary_colors && g.secondary_colors.length ? ' · +' + g.secondary_colors.length : null]) : null
           ]),
@@ -500,76 +532,155 @@ window.APColor = (function () {
       ]);
     }
 
+    /* ── Dirección cromática: lectura del conjunto y propuestas que no tocan el original hasta aplicarlas ── */
+    function glossary(keys) {
+      return h('details', { class: 'cs-gloss' }, [h('summary', { text: '¿Qué significa cada término?' }),
+        h('dl', null, [].concat.apply([], keys.map(function (k) { var e = M.C.GLOSSARY[k]; return [h('dt', { text: e[0] }), h('dd', { text: e[1] })]; })))]);
+    }
+    function readingFacts(a) {
+      var rel = a.relations[0];
+      var rows = [
+        ['Contraste de luminosidad', a.light],
+        ['Temperatura', a.temperature === 'mixta' ? 'mezcla cálidos y fríos' : a.temperature],
+        ['Acento', a.accents.length ? a.accents.map(function (x) { return x.name; }).join(', ') : 'ninguno'],
+        ['Repetición', a.repetitions.length ? a.repetitions.map(function (r) { return r.name + ' (' + r.labels.join(' y ').toLowerCase() + ')'; }).join('; ') : 'ningún color se repite entre prendas'],
+        a.lower ? ['Pantalón y calzado', a.lower.label.toLowerCase() + ', contraste ' + a.lower.light] : null,
+        rel ? ['Relación principal', rel.label.toLowerCase() + ': ' + M.C.describeRelation(rel).replace(/^.*?: /, '')] : null
+      ].filter(Boolean);
+      return h('dl', { class: 'cs-facts' }, [].concat.apply([], rows.map(function (r) { return [h('dt', { text: r[0] }), h('dd', { text: r[1] })]; })));
+    }
+    function compareBands(p) {
+      var col = function (title, a, cls) {
+        return h('div', { class: 'cs-cmp-col' + (cls ? ' ' + cls : '') }, [
+          h('p', { class: 'cs-mini-t', text: title }),
+          band(a.colors.map(function (x) { return { hex: x.hex, pct: x.pct }; }), { cls: 'cs-band--cmp' }),
+          h('p', { class: 'sr-only', text: title + ': ' + a.colors.map(function (x) { return x.name + ' ' + x.hex; }).join(', ') })
+        ]);
+      };
+      return h('div', { class: 'cs-cmp' }, [col('Ahora', p.before), col('Propuesta', p.after, 'is-new')]);
+    }
+    function changeList(p) {
+      return h('ul', { class: 'cs-changes' }, p.changes.map(function (ch) {
+        return h('li', { class: 'cs-change' }, [
+          ch.remove ? h('span', { class: 'cs-sw cs-sw--x', 'aria-hidden': 'true' }) : ch.garment ? thumb(ch.garment, 'cs-thumb--s') : swatch(ch.hex, 'cs-sw--m'),
+          h('span', { class: 'cs-change-txt' }, [
+            h('span', { class: 'cs-slot-k', text: ch.label }),
+            h('span', { class: 'cs-change-n' }, [ch.from + ' → ', h('strong', { text: ch.name })]),
+            ch.remove ? null : h('span', { class: 'cs-change-s' }, [h('span', { class: 'cs-hex', text: ch.hex }), ' · ',
+              ch.hypothetical ? h('span', { class: 'cs-hypo', text: 'Hipotético: no tienes esta prenda' }) : h('span', { text: 'De tu armario' })])
+          ])
+        ]);
+      }));
+    }
+    function proposalCard(p, key) {
+      return h('article', { class: 'cs-prop2' + (p.hypothetical ? ' is-hypo' : '') }, [
+        compareBands(p),
+        changeList(p),
+        h('p', { class: 'cs-prop2-exp', text: p.explanation }),
+        p.diff.length ? h('div', { class: 'cs-diff' }, [h('p', { class: 'cs-mini-t', text: 'Qué cambia' }), h('ul', null, p.diff.map(function (t) { return h('li', { text: t }); }))]) : null,
+        h('details', { class: 'cs-rules' }, [h('summary', { text: 'Criterio aplicado' }), h('ul', null, [h('li', { text: p.rule }),
+          p.palette ? h('li', { text: 'Inspiración: paleta «' + (p.palette.name || 'sin nombre') + '»' + (p.palette.source_type === 'book' ? ' (HEX convertido de CMYK, aproximado).' : '.') }) : null])]),
+        btn([p.hypothetical ? 'Aplicar con color provisional' : 'Aplicar al outfit', h('span', { class: 'sr-only', text: ' (' + p.changes.map(function (ch) { return ch.label.toLowerCase(); }).join(', ') + ')' })], 'cs-btn-s', function () { applyProposal(p); }, { 'data-key': key })
+      ]);
+    }
+    function directions(c) {
+      var d = cur();
+      var sec = h('section', { class: 'cs-card cs-dir', 'aria-labelledby': 'cs-dir-t' }, [h('div', { class: 'cs-card-head' }, [h('h3', { class: 'cs-h3', id: 'cs-dir-t', text: 'Dirección cromática' })])]);
+      sec.appendChild(h('div', { class: 'cs-dirs', role: 'group', 'aria-label': 'Dirección' }, M.C.DIRECTIONS.map(function (x) {
+        var on = d.direction === x.id;
+        return btn([h('span', { class: 'cs-dir-n', text: x.label }), h('span', { class: 'cs-dir-g', text: x.goal })], 'cs-dir-b', function () { d.direction = x.id; refresh(); }, { 'aria-pressed': on ? 'true' : 'false', 'data-key': 'dir-' + x.id });
+      })));
+      if (d.original) {
+        sec.appendChild(h('div', { class: 'cs-orig', role: 'note' }, [h('p', { text: 'Has aplicado una propuesta. El conjunto de partida sigue guardado en este borrador.' }),
+          btn('Volver al conjunto original', 'cs-link', restoreOriginal, { 'data-key': 'restore-original' })]));
+      }
+      if (!c.analysis.valid) { sec.appendChild(h('p', { class: 'cs-note', text: 'Elige prendas para leer el conjunto y explorar alternativas en cada dirección.' })); return sec; }
+      var a = c.analysis;
+      sec.appendChild(h('div', { class: 'cs-reading' }, [
+        h('p', { class: 'cs-reading-t' }, ['Lectura actual: ', h('strong', { text: M.C.READING_LABEL[a.reading] })]),
+        readingFacts(a),
+        glossary(['luminosidad', 'acento', 'repeticion', 'temperatura', 'tonal', 'analoga', 'complementaria'])
+      ]));
+      var r = M.C.proposeDirection(d.direction, { slots: d.slots, garments: data().garments, palettes: data().palettes, formality: d.formality });
+      var box = h('div', { class: 'cs-dir-props', 'aria-live': 'polite' });
+      if (r.note) box.appendChild(h('p', { class: 'cs-note', text: r.note }));
+      r.proposals.forEach(function (p, i) { box.appendChild(proposalCard(p, 'apply-' + i)); });
+      sec.appendChild(box);
+      sec.appendChild(h('p', { class: 'cs-fine', text: 'Las propuestas usan primero tus prendas; un color que no tienes se marca como hipotético. Aplicar cambia el borrador, no lo guardado' + (c.manual ? '; la comparación usa la superficie estimada, no tu ajuste manual.' : '.') }));
+      return sec;
+    }
+
     function references(c) {
       var d = cur(), pals = data().palettes;
-      var sec = h('section', { class: 'cs-card', 'aria-labelledby': 'cs-refs-t' }, [h('div', { class: 'cs-card-head' }, [h('h3', { class: 'cs-h3', id: 'cs-refs-t', text: 'Referencias compatibles' })])]);
+      var sec = h('section', { class: 'cs-card', 'aria-labelledby': 'cs-refs-t' }, [h('div', { class: 'cs-card-head' }, [h('h3', { class: 'cs-h3', id: 'cs-refs-t', text: 'Paletas que inspiran' })])]);
       var chosen = d.palette_id ? paletteById(d.palette_id) : null;
       if (d.palette_id && !chosen) d.palette_id = null;
-      if (!pals.length) { sec.appendChild(empty('Biblioteca vacía', 'Registra paletas para ver cuáles se relacionan con este conjunto.', [h('a', { class: 'btn btn-outline', href: '#/color/biblioteca', text: 'Ir a la biblioteca' })])); return sec; }
+      if (!pals.length) { sec.appendChild(empty('Biblioteca vacía', 'Importa las combinaciones de Sanzo Wada o registra paletas para ver cuáles se relacionan con este conjunto.', [h('a', { class: 'btn btn-outline', href: '#/color/biblioteca', text: 'Ir a la biblioteca' })])); return sec; }
       if (!c.match.length) { sec.appendChild(h('p', { class: 'cs-note', text: 'Elige prendas para buscar paletas con colores idénticos o próximos.' })); return sec; }
-      var ranked = M.E.rankPalettes(c.match, pals, { limit: 4 });
+      var ranked = M.E.rankPalettes(c.match, pals, { limit: 3 });
       if (chosen && !ranked.some(function (r) { return r.palette.id === chosen.id; })) ranked.unshift({ palette: chosen, match: M.E.matchColorsToPalette(c.match, chosen) });
       if (!ranked.length) { sec.appendChild(h('p', { class: 'cs-note', text: 'Ninguna paleta de tu biblioteca tiene colores idénticos ni próximos (ΔE00 ≤ 10) a los de este conjunto.' })); return sec; }
+      var input = { slots: d.slots, garments: data().garments, palettes: pals, formality: d.formality };
+      var ROLE = M.C.PALETTE_ROLE;
       sec.appendChild(h('ul', { class: 'cs-refs' }, ranked.map(function (r) {
-        var p = r.palette, on = d.palette_id === p.id, lines = M.E.explainMatch(r.match, p);
+        var p = r.palette, on = d.palette_id === p.id, rows = M.C.adaptPalette(p, input);
         return h('li', { class: 'cs-ref' + (on ? ' is-on' : '') }, [
-          band(p.colors, { mark: r.match.paletteIndexes, cls: 'cs-band--ref' }),
           h('div', { class: 'cs-ref-meta' }, [
             h('p', { class: 'cs-ref-n', text: p.name || 'Paleta sin nombre' }),
             h('p', { class: 'cs-badges' }, [r.match.overall === 'exact' ? badge('Coincidencia exacta', 'exact') : badge('Coincidencia aproximada', 'approx'), sourceBadge(p)])
           ]),
-          h('ul', { class: 'cs-why' }, lines.slice(0, 4).map(function (l) { return h('li', { text: l }); })),
-          h('p', { class: 'sr-only', text: 'Colores de la paleta: ' + hexList(p.colors) }),
-          btn(on ? 'Referencia elegida' : 'Usar como referencia', on ? 'cs-btn-s is-on' : 'cs-btn-s', function () { d.palette_id = on ? null : p.id; refresh(); }, { 'aria-pressed': on ? 'true' : 'false', 'data-key': 'ref-' + p.id })
+          h('ul', { class: 'cs-adapt', 'aria-label': 'Colores de la paleta frente al conjunto' }, rows.map(function (x) {
+            var status = x.present ? ['En el conjunto: ' + x.present.label.toLowerCase(), 'is-in']
+              : x.candidate ? ['Podría ser: ' + garmentName(x.candidate.garment) + ' (' + x.candidate.label.toLowerCase() + ')', 'is-cand']
+              : ['No tienes una prenda de este color', 'is-miss'];
+            return h('li', { class: 'cs-adapt-r ' + status[1] }, [
+              swatch(x.hex, 'cs-sw--pal'),
+              h('span', { class: 'cs-adapt-txt' }, [h('span', { class: 'cs-adapt-n' }, [x.name + ' ', h('span', { class: 'cs-hex', text: x.hex })]), h('span', { class: 'cs-adapt-s', text: status[0] })]),
+              x.candidate ? thumb(x.candidate.garment, 'cs-thumb--s') : x.present && x.present.hex ? swatch(x.present.hex, 'cs-sw--m', 'Color de ' + x.present.label.toLowerCase() + ': ' + x.present.hex) : h('span', { class: 'cs-adapt-gap', 'aria-hidden': 'true' }),
+              x.role ? h('span', { class: 'cs-adapt-role', text: ROLE[x.role] }) : null
+            ]);
+          })),
+          h('div', { class: 'cs-ref-act' }, [
+            btn(['Comparar con mi conjunto', h('span', { class: 'sr-only', text: ' («' + (p.name || 'sin nombre') + '»)' })], 'cs-btn-s', function () { comparePalette(p); }, { 'data-key': 'cmp-' + p.id }),
+            btn(on ? 'Referencia elegida' : 'Usar como referencia', on ? 'cs-link is-on' : 'cs-link', function () { d.palette_id = on ? null : p.id; refresh(); }, { 'aria-pressed': on ? 'true' : 'false', 'data-key': 'ref-' + p.id })
+          ]),
+          h('details', { class: 'cs-rules' }, [h('summary', { text: 'Por qué se relaciona' }), h('ul', { class: 'cs-why' }, M.E.explainMatch(r.match, p).slice(0, 4).map(function (l) { return h('li', { text: l }); }))])
         ]);
       })));
-      sec.appendChild(h('p', { class: 'cs-fine', text: 'Las marcas bajo una muestra indican qué colores conectan. ΔE00 mide proximidad entre colores, no si combinan bien: es una pista, no un veredicto.' }));
+      sec.appendChild(h('p', { class: 'cs-fine', text: 'Muestra a la izquierda: color de la paleta. A la derecha: tu prenda o el color de tu conjunto. Papel = relación con el color dominante. ΔE00 mide proximidad, no si combinan bien. Los HEX de las paletas de libro son conversiones aproximadas de valores de impresión.' }));
       return sec;
     }
-
-    function alternatives(c) {
+    function comparePalette(p) {
       var d = cur();
-      var sec = h('section', { class: 'cs-card', 'aria-labelledby': 'cs-alts-t' }, [h('div', { class: 'cs-card-head' }, [h('h3', { class: 'cs-h3', id: 'cs-alts-t', text: 'Alternativas de tu armario' }), badge('Sugerencia del sistema', 'rule')])]);
-      var ref = d.palette_id ? paletteById(d.palette_id) : null;
-      if (!ref && c.match.length) { var top = M.E.rankPalettes(c.match, data().palettes, { limit: 1 })[0]; ref = top ? top.palette : null; }
-      if (!ref) { sec.appendChild(h('p', { class: 'cs-note', text: 'Las alternativas salen de una paleta de referencia. Elige una o añade paletas a la biblioteca.' })); return sec; }
-      var used = {}; c.items.forEach(function (it) { if (it.garment) used[it.garment.id] = true; });
-      var out = [];
-      M.E.SLOTS.forEach(function (s) {
-        var best = null;
-        data().garments.forEach(function (g) {
-          if (used[g.id] || s.categories.indexOf(g.category) < 0) return;
-          var m = M.E.matchColorsToPalette([{ hex: g.primary_color }], ref).links[0];
-          if (m.kind !== 'none' && (!best || m.dE < best.m.dE)) best = { g: g, m: m, slot: s };
-        });
-        if (best) out.push(best);
-      });
-      if (!out.length) { sec.appendChild(h('p', { class: 'cs-note', text: 'Ninguna otra prenda de tu armario tiene un color próximo a la paleta «' + (ref.name || 'sin nombre') + '».' })); return sec; }
-      sec.appendChild(h('p', { class: 'cs-fine', text: 'Según la paleta «' + (ref.name || 'sin nombre') + '»' + (d.palette_id ? '' : ', la que más se relaciona con el conjunto') + '.' }));
-      sec.appendChild(h('ul', { class: 'cs-alts' }, out.slice(0, 4).map(function (a) {
-        var pc = ref.colors[a.m.paletteIndex] || {};
-        return h('li', { class: 'cs-alt' }, [
-          thumb(a.g),
-          h('span', { class: 'cs-slot-txt' }, [h('span', { class: 'cs-slot-k', text: a.slot.label }), h('span', { class: 'cs-slot-n', text: garmentName(a.g) }),
-            h('span', { class: 'cs-slot-c', text: (a.m.kind === 'exact' ? 'Idéntico al ' : 'Próximo al ') + (pc.name || 'color ' + (a.m.paletteIndex + 1)) + ' de la paleta' })]),
-          btn(['Probar', h('span', { class: 'sr-only', text: ' ' + garmentName(a.g) })], 'cs-btn-s', function () { setSlot(a.slot.id, { garment_id: a.g.id, hex: null }); })
-        ]);
-      })));
-      return sec;
+      var prop = M.C.proposeFromPalette(p, { slots: d.slots, garments: data().garments, palettes: data().palettes, formality: d.formality });
+      sheet('Comparar con «' + (p.name || 'sin nombre') + '»', function (box, close) {
+        box.appendChild(band(p.colors, { cls: 'cs-band--ref' }));
+        if (!prop) { box.appendChild(h('p', { class: 'cs-note', text: 'El conjunto ya contiene los colores de esta paleta que se pueden llevar a una prenda, o la paleta no aporta un color nuevo y distinto (ΔE00 > 15).' })); return; }
+        var card = proposalCard(prop, 'apply-pal');
+        card.querySelector('button[data-key="apply-pal"]').addEventListener('click', close);
+        box.appendChild(card);
+      }, { wide: true });
     }
 
-    function sockTeaser(c) {
-      var sec = h('section', { class: 'cs-card', 'aria-labelledby': 'cs-sock-t' }, [h('div', { class: 'cs-card-head' }, [h('h3', { class: 'cs-h3', id: 'cs-sock-t', text: 'Calcetines' })])]);
-      var r = M.S.recommendSocks(sockInputFrom(c));
-      if (r.insufficient) { sec.appendChild(h('p', { class: 'cs-note', text: r.notes[0] })); }
-      else {
-        var p = r.proposals[0];
-        sec.appendChild(h('div', { class: 'cs-sock-mini' }, [
-          h('span', { class: 'cs-ankle is-mini', 'aria-hidden': 'true' }, ankle(sockInputFrom(c), p.hex)),
-          h('p', null, [h('span', { class: 'cs-slot-k', text: 'Primera propuesta · ' + p.label }), h('span', { class: 'cs-slot-n', text: p.name + ' ' }), h('span', { class: 'cs-hex', text: p.hex })])
-        ]));
-      }
-      sec.appendChild(h('a', { class: 'cs-link', href: '#/color/calcetines', text: 'Abrir la guía de calcetines' }));
+    function sockResult(c) { return M.S.recommendSocks(sockInputFrom(c)); }
+    function sockInline(c) {
+      var sec = h('section', { class: 'cs-card', 'aria-labelledby': 'cs-sock-t' }, [h('div', { class: 'cs-card-head' }, [h('h3', { class: 'cs-h3', id: 'cs-sock-t', text: 'Calcetines' }),
+        h('a', { class: 'cs-link', href: '#/color/calcetines', text: 'Guía completa' })])]);
+      var input = sockInputFrom(c), r = sockResult(c);
+      if (r.insufficient) { sec.appendChild(h('p', { class: 'cs-note', text: r.notes[0] })); return sec; }
+      if (input.shoeType) sec.appendChild(h('p', { class: 'cs-fine cs-fine--top', text: 'Calzado: ' + M.S.SHOE_LABEL[input.shoeType].toLowerCase() + (cur().shoeType ? ' (elegido a mano)' : ' (deducido de la prenda)') + ' · Dirección ' + M.C.DIRECTION[cur().direction].label.toLowerCase() + '.' }));
+      sec.appendChild(h('ul', { class: 'cs-socklines' }, r.proposals.map(function (p) {
+        var on = sockIsOn(p);
+        return h('li', { class: 'cs-sockline' + (on ? ' is-on' : '') }, [
+          h('span', { class: 'cs-ankle is-mini', 'aria-hidden': 'true' }, ankle(input, p.hex)),
+          h('span', { class: 'cs-sockline-txt' }, [
+            h('span', { class: 'cs-slot-k', text: p.label + ' · contraste ' + p.contrast }),
+            h('span', { class: 'cs-slot-n' }, [p.name + ' ', h('span', { class: 'cs-hex', text: p.hex })]),
+            h('span', { class: 'cs-slot-c', text: p.owned ? 'En tu armario: ' + garmentName(p.owned.garment) : 'No tienes uno de este tono registrado' })
+          ]),
+          btn([on ? 'En el outfit' : 'Usar', h('span', { class: 'sr-only', text: ' calcetín ' + p.label.toLowerCase() })], on ? 'cs-btn-s is-on' : 'cs-btn-s', function () { if (!on) useSock(p); }, { 'aria-pressed': on ? 'true' : 'false', 'data-key': 'sock-' + p.type })
+        ]);
+      })));
       return sec;
     }
 
@@ -638,7 +749,7 @@ window.APColor = (function () {
     function loadOutfit(o) {
       var d = cur();
       d.id = o.id; d.name = o.name; d.palette_id = o.palette_id; d.override = o.distribution_override; d.formality = o.formality || 'smart';
-      d.occasion = o.occasion || ''; d.notes = o.notes || ''; d.is_favorite = o.is_favorite; d.slots = {};
+      d.occasion = o.occasion || ''; d.notes = o.notes || ''; d.is_favorite = o.is_favorite; d.slots = {}; d.original = null;
       (o.items || []).forEach(function (it) { d.slots[it.slot] = { garment_id: it.garment_id, hex: it.hex, weight: it.weight }; });
       mem.sock = { trousers: null, shoes: null };
       refresh();
@@ -1126,8 +1237,14 @@ window.APColor = (function () {
       }
       basis.appendChild(h('div', { class: 'cs-segs' }, [
         seg('Formalidad', M.S.FORMALITY, d.formality, function (v) { d.formality = v; }, 'form'),
-        seg('Preferencia', M.S.PREFERENCE, d.preference, function (v) { d.preference = v; }, 'pref')
+        seg('Dirección', M.C.DIRECTIONS.map(function (x) { return [x.id, x.label]; }), d.direction, function (v) { d.direction = v; }, 'dir')
       ]));
+      var detected = detectedShoe(c);
+      var shoeSel = ui.select([['', detected ? 'Automático: ' + M.S.SHOE_LABEL[detected].toLowerCase() : 'Automático (sin dato)']].concat(M.S.SHOE_TYPES), d.shoeType || '');
+      shoeSel.id = 'cs-s-shoe'; shoeSel.setAttribute('data-key', 'shoe-type');
+      shoeSel.addEventListener('change', function () { d.shoeType = shoeSel.value; refresh(); });
+      basis.appendChild(h('div', { class: 'cs-shoe' }, [h('label', { class: 'ap-field-label', for: 'cs-s-shoe', text: 'Tipo de calzado' }), shoeSel,
+        h('p', { class: 'cs-fine cs-fine--tight', text: detected ? 'Deducido de lo que escribiste en la prenda (subcategoría o nombre). Puedes corregirlo aquí; solo afecta a esta guía.' : 'Escribe el tipo en la subcategoría del calzado (bota, mocasín, deportiva…) para que se deduzca solo, o elígelo aquí.' })]));
       body.appendChild(basis);
 
       var r = M.S.recommendSocks(input);
@@ -1139,25 +1256,25 @@ window.APColor = (function () {
       }
       out.appendChild(h('ol', { class: 'cs-props' }, r.proposals.map(function (p) {
         var big = h('span', { class: 'cs-prop-sw', 'aria-hidden': 'true' }); big.style.backgroundColor = p.hex;
-        return h('li', { class: 'cs-propcard' }, [
+        var on = sockIsOn(p);
+        return h('li', { class: 'cs-propcard' + (on ? ' is-on' : '') }, [
           h('div', { class: 'cs-prop-vis' }, [big, h('span', { class: 'cs-ankle', 'aria-hidden': 'true' }, ankle(input, p.hex))]),
           h('div', { class: 'cs-prop-body' }, [
             h('p', { class: 'cs-eyebrow', text: p.label }),
             h('p', { class: 'cs-prop-name' }, [p.name + ' ', h('span', { class: 'cs-hex', text: p.hex })]),
+            h('p', { class: 'cs-prop-meta' }, [h('span', { text: 'Contraste con pantalón y calzado: ' + p.contrast }), h('span', { text: 'Inspira: ' + p.source })]),
             h('p', { class: 'cs-prop-exp', text: p.explanation }),
+            h('p', { class: 'cs-prop-eff', text: p.effect }),
             h('p', { class: 'cs-prop-own' + (p.owned ? ' is-own' : '') }, p.owned
               ? [swatch(p.owned.garment.primary_color, 'cs-dot'), ' En tu armario: ' + garmentName(p.owned.garment) + ' (' + M.E.MATCH_LABEL[M.E.matchKind(p.owned.dE)].toLowerCase() + ')']
               : ['No tienes calcetines de este tono registrados.']),
             h('details', { class: 'cs-rules' }, [h('summary', { text: 'Reglas aplicadas' }), h('ul', null, p.rules.map(function (id) { return h('li', { text: M.S.RULES[id] }); }))]),
-            btn(['Usar en el outfit', h('span', { class: 'sr-only', text: ' (' + p.label.toLowerCase() + ')' })], 'cs-btn-s', function () {
-              d.slots.socks = Object.assign({ weight: d.slots.socks ? d.slots.socks.weight : M.E.SLOT.socks.weight }, p.owned ? { garment_id: p.owned.garment.id, hex: null } : { garment_id: null, hex: p.hex });
-              d.override = null; saveDraft(); toast('Calcetín añadido al outfit del Studio.');
-            })
+            btn([on ? 'En el outfit' : 'Usar en el outfit', h('span', { class: 'sr-only', text: ' (' + p.label.toLowerCase() + ')' })], on ? 'cs-btn-s is-on' : 'cs-btn-s', function () { if (!on) useSock(p); }, { 'aria-pressed': on ? 'true' : 'false', 'data-key': 'use-' + p.type })
           ])
         ]);
       })));
       if (r.notes.length) out.appendChild(h('ul', { class: 'cs-warn' }, r.notes.map(function (n) { return h('li', { text: n }); })));
-      out.appendChild(h('p', { class: 'cs-fine', text: 'Las propuestas salen de reglas explícitas y de tus colores, no del azar. Son orientativas: la formalidad cambia el orden, no convierte una opción en obligatoria.' }));
+      out.appendChild(h('p', { class: 'cs-fine', text: 'Las propuestas salen de reglas explícitas y de tus colores, no del azar, y nunca repiten el mismo tono. Son orientativas: la formalidad y la dirección cambian el orden, no convierten una opción en obligatoria. El estilo del calcetín (invisible, tobillero, media caña) no se registra todavía: si lo anotas en la subcategoría, aparece en tu armario.' }));
       body.appendChild(out);
     }
 
