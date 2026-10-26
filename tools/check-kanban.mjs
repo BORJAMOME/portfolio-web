@@ -383,9 +383,12 @@ await step('Regresión: con filtro activo, soltar entre dos visibles respeta el 
   await page.evaluate((titulo) => {
     window.__tr = [];
     window.__calls = [];
-    const wrap = (obj, name) => { const o = obj[name]; obj[name] = function () { if (window.__calls.length < 16) window.__calls.push(name + ' < ' + new Error().stack.split('\n').slice(2, 5).map((l) => l.trim().replace(/https?:\/\/[^/]+\//, '')).join(' < ')); return o.apply(this, arguments); }; };
+    const wrap = (obj, name) => { const o = obj[name]; obj[name] = function () { if (window.__calls.length < 24) window.__calls.push(name + ' < ' + new Error().stack.split('\n').slice(2, 5).map((l) => l.trim().replace(/https?:\/\/[^/]+\//, '')).join(' < ')); return o.apply(this, arguments); }; };
     wrap(window, 'scrollTo'); wrap(window, 'scrollBy'); wrap(Element.prototype, 'scrollIntoView'); wrap(HTMLElement.prototype, 'focus');
-    window.addEventListener('scroll', () => { if (window.__calls.length < 16) window.__calls.push('scroll y=' + Math.round(scrollY) + ' docH=' + document.documentElement.scrollHeight); }, { passive: true });
+    window.addEventListener('scroll', () => { if (window.__calls.length < 24) window.__calls.push('scroll y=' + Math.round(scrollY) + ' docH=' + document.documentElement.scrollHeight); }, { passive: true });
+    const desc = (e) => { const t = e.target; return t && t.tagName ? t.tagName.toLowerCase() + (t.className && typeof t.className === 'string' ? '.' + t.className.split(' ')[0] : '') : String(t); };
+    ['pointerdown', 'mousedown', 'focusin', 'focusout', 'selectstart', 'dragstart', 'hashchange', 'popstate', 'click', 'wheel', 'keydown'].forEach((ev) => document.addEventListener(ev, (e) => { if (window.__calls.length < 24) window.__calls.push(ev + ' ' + desc(e) + ' y=' + Math.round(scrollY)); }, true));
+    window.__calls.push('inicio y=' + Math.round(scrollY) + ' hash=' + location.hash + ' act=' + (document.activeElement ? document.activeElement.tagName : '') + ' sr=' + history.scrollRestoration);
     const find = () => [...document.querySelectorAll('.apk-card')].find((c) => (c.querySelector('.apk-card-open') || {}).textContent === titulo);
     const sample = (k) => { const b = find(); window.__tr.push([k, Math.round(scrollY), b ? Math.round(b.getBoundingClientRect().top) : null, document.querySelectorAll('.apk-drop').length]); };
     document.addEventListener('pointermove', (e) => sample('m' + Math.round(e.clientY)), true);
