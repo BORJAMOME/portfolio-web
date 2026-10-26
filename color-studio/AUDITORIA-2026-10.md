@@ -267,7 +267,7 @@ Huecos de cobertura:
 
 | ID | Qué se ha hecho |
 |---|---|
-| CS-01 | En la CI, cada suite de interfaz corre aunque falle la anterior (`if: ${{ !cancelled() }}`), así que Color Studio vuelve a probarse en remoto. La prueba intermitente del Centro de trabajo sigue pendiente: queda fuera del alcance de Color Studio. |
+| CS-01 | En la CI, cada suite de interfaz corre aunque falle la anterior (`if: ${{ !cancelled() }}`), así que Color Studio vuelve a probarse en remoto. La prueba del Centro de trabajo que fallaba solo en la CI se arregló en #76: medía las tarjetas mientras la página aún se desplazaba (`shared.css` activa `scroll-behavior: smooth`). Además se corrigió una espera que faltaba en la prueba móvil de la hoja «Más», que también fallaba solo en la CI. |
 | CS-02 | Lo escrito en la guía solo cuenta al pulsar «Actualizar», solo afecta a la guía (con un aviso) y el Studio usa siempre el outfit. |
 | CS-09 | Las reglas de continuidad describen el color que se propone de verdad. |
 | CS-10 | «informal» se lee como calzado casual. |
@@ -287,4 +287,4 @@ Huecos de cobertura:
    - CS-13: cambia el formato guardado en `cs_outfits.items`.
 4. **Evolución del producto**: CS-17, CS-21 y CS-22.
 
-Fuera del alcance de Color Studio, pero bloquea su CI: la prueba intermitente de `tools/check-kanban.mjs` («con filtro activo, soltar entre dos visibles respeta el orden real»).
+Resuelto: la prueba de `tools/check-kanban.mjs` que bloqueaba la CI (se arregló en #76).
