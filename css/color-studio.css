@@ -6,7 +6,6 @@
 
 /* Mientras Color Studio está en pantalla la página usa su fondo #FBFBFB; el resto del área privada no cambia */
 body:has(.cs) { --off: #FBFBFB; background: #FBFBFB; }
-@media (max-width: 899.98px) { body:has(.cs) .ap-foot { padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)); } }   /* que la barra inferior no tape el pie */
 
 .cs {
   --cs-ink: #161616;

@@ -25,6 +25,15 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
 - **Pestañas en módulos** que se cargan al abrirlas: `area-privada-<nombre>.js` define `window.AP<Nombre> = { render(ctx) → Promise<paint> }`
   y se declara en el HTML como `<link rel="prefetch" data-ap-module="<nombre>">` (así `version-assets` le pone el `?v=`).
   Para una pestaña nueva: el archivo, ese `<link>`, una entrada en `MODULES` (de ahí sale también la ruta) y el enlace en `.ap-tabs`.
+- **Apps** (`#/apps`): catálogo de las herramientas personales. El registro `APPS` de `area-privada.js` es la única fuente de nombre, descripción, icono y ruta;
+  `area-privada-apps.js` (`window.APApps`) solo lo pinta (CSS con prefijo `apl-` al final de `css/area-privada.css`, fondo #FBFBFB con `body:has(.apl)`).
+  **Modo app**: una entrada con `module` vive en esta página (su módulo va en `MODULES` con `tab: 'apps'`) y al abrirla el shell pone `body.ap-in-app`:
+  oculta cabecera, pestañas, acciones y pie del área privada (el `h1` queda solo para lectores de pantalla) y enseña `#ap-appbar` «← Volver al área privada».
+  La vuelta usa el índice que el shell guarda en `history.state`: si se entró desde `#/apps`, retrocede hasta esa entrada (sin apilar historial); si no (URL directa, recarga), navega a `#/apps`.
+  Una entrada sin `module` es una página propia con su layout (Caesar III → `roma-aeterna/`, PWA) y su propia vuelta, en el mismo sitio (arriba a la izquierda) hacia `../area-privada.html#/apps`.
+  App nueva: una entrada en `APPS` (orden alfabético) y, si vive aquí, su módulo. Iconos cuadrados y a sangre (la máscara la pone el catálogo), con la misma construcción:
+  fondo con degradado suave, anillo fino y un emblema central (`roma-aeterna/icons/icon-192.png`, `img/apps/color-studio.svg`).
+  Pruebas: los flujos de Apps y del modo app están en `node tools/check-color.mjs`.
 - **Portfolio** (`#/portfolio`): inventario de manuales, proyectos, gráficos, apps de Streamlit, repos y visualizaciones.
   Tabla `public.portfolio` (`supabase/portfolio.sql`, con carga inicial generada desde las páginas del sitio).
   Los tipos son el grupo `portfolio.tipo` de `ap_opciones`.
@@ -54,7 +63,7 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
   Sin ejecutar `studio-ideas.sql` el resto del Studio funciona y esas secciones avisan dónde falta.
   Pendiente por hitos: hoja de ruta (hitos y dependencias, relaciones entre ideas), lienzo (coordenadas en tabla aparte) y revisión/cierre.
   Pruebas: `node tools/test-studio.mjs` (lógica) y `node tools/check-studio.mjs` (interfaz con Playwright y Supabase simulado; no toca la base real).
-- **Color Studio** (`#/color`, `/biblioteca`, `/armario`, `/calcetines`): outfits con prendas reales, paletas de referencia y guía de calcetines.
+- **Color Studio** (`#/color`, `/biblioteca`, `/armario`, `/calcetines`; app del catálogo, se abre en modo app): outfits con prendas reales, paletas de referencia y guía de calcetines.
   Interfaz `area-privada-color.js` (`window.APColor`, CSS `css/color-studio.css`, prefijo `cs-`; fondo #FBFBFB solo en esta pestaña con `body:has(.cs)`).
   Lógica en módulos ES sin DOM en `color-studio/` (`engine.js` color/ΔE00/proporciones, `compose.js` lectura del conjunto, direcciones Minimalista/Equilibrada/Creativa
   con criterios con nombre (`MOVES`) y paletas como inspiración, `socks.js` reglas de calcetines con tipo de calzado, `data.js` validación e importación, `image.js` fotos),

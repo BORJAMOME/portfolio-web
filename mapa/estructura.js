@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "e6648b4",
+ "huella": "0869179",
  "recuento": {
   "paginas": 19,
   "proyectos": 40,
@@ -1634,11 +1634,22 @@ export default {
      "familia": "privada"
     },
     {
-     "id": "t:color",
+     "id": "t:apps",
      "tipo": "pestana",
-     "etiqueta": "Color Studio",
-     "href": "#/color",
-     "archivo": "area-privada-color.js",
+     "etiqueta": "Apps",
+     "nota": "catálogo de aplicaciones",
+     "href": "#/apps",
+     "archivo": "area-privada-apps.js",
+     "hijos": [
+      {
+       "id": "m:color",
+       "tipo": "modulo",
+       "etiqueta": "Color Studio",
+       "nota": "outfits y paletas (modo app)",
+       "archivo": "area-privada-color.js",
+       "familia": "privada"
+      }
+     ],
      "familia": "privada"
     },
     {
@@ -2805,7 +2816,7 @@ export default {
   },
   {
    "de": "h:check-color",
-   "a": "t:color",
+   "a": "m:color",
    "tipo": "verifica",
    "detalle": []
   },
@@ -2850,7 +2861,7 @@ export default {
   },
   {
    "de": "h:test-color",
-   "a": "t:color",
+   "a": "m:color",
    "tipo": "verifica",
    "detalle": []
   },
@@ -2865,6 +2876,16 @@ export default {
    "a": "t:studio",
    "tipo": "verifica",
    "detalle": []
+  },
+  {
+   "de": "m:color",
+   "a": "d:color-studio",
+   "tipo": "usa",
+   "detalle": [
+    "cs_garments",
+    "cs_outfits",
+    "cs_palettes"
+   ]
   },
   {
    "de": "m:kanban",
@@ -3234,16 +3255,6 @@ export default {
    "tipo": "usa",
    "detalle": [
     "ap_opciones"
-   ]
-  },
-  {
-   "de": "t:color",
-   "a": "d:color-studio",
-   "tipo": "usa",
-   "detalle": [
-    "cs_garments",
-    "cs_outfits",
-    "cs_palettes"
    ]
   },
   {

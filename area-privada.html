@@ -21,6 +21,7 @@
 <!-- Pestañas con archivo propio: area-privada.js las inyecta al abrirlas; el navegador las precarga en reposo -->
 <link rel="prefetch" as="script" href="./area-privada-hoy.js?v=4950d5f1b7" data-ap-module="hoy">
 <link rel="prefetch" as="script" href="./area-privada-studio.js?v=a88c21e6b6" data-ap-module="studio">
+<link rel="prefetch" as="script" href="./area-privada-apps.js?v=b486ca669c" data-ap-module="apps">
 <link rel="prefetch" as="script" href="./area-privada-color.js?v=71537dc482" data-ap-module="color">
 <link rel="prefetch" as="script" href="./color-studio/engine.js?v=32d5a20ebd" data-ap-asset="cs-engine">
 <link rel="prefetch" as="script" href="./color-studio/socks.js?v=d97d396684" data-ap-asset="cs-socks">
@@ -41,11 +42,11 @@
 <link rel="prefetch" as="script" href="./second-brain/viewer.js?v=6c0aa3a1e3" data-ap-asset="sb-viewer">
 <link rel="prefetch" as="script" href="./area-privada-fichero.js?v=5834b6b4aa" data-ap-module="fichero">
 <link rel="prefetch" as="script" href="./area-privada-mapa.js?v=d3db579c96" data-ap-module="mapa">
-<link rel="prefetch" as="script" href="./mapa/estructura.js?v=f151091b39" data-ap-asset="mapa-datos">
+<link rel="prefetch" as="script" href="./mapa/estructura.js?v=0e9b8d2c81" data-ap-asset="mapa-datos">
 <link rel="stylesheet" href="./css/second-brain.css?v=2f3f8407a3">
 <link rel="stylesheet" href="./css/mapa.css?v=9a1505f87b">
-<link rel="stylesheet" href="./css/color-studio.css?v=72be60bd20">
-<link rel="stylesheet" href="./css/area-privada.css?v=bfd1bc7e1b">
+<link rel="stylesheet" href="./css/color-studio.css?v=008bf7c380">
+<link rel="stylesheet" href="./css/area-privada.css?v=43d4ffdfdd">
 </head>
 <body>
 <a href="#main-content" class="skip-link">Saltar al contenido</a>
@@ -85,11 +86,14 @@
   <!-- ─────────── CONTENIDO (solo con sesión) ─────────── -->
   <section class="ap-app" id="ap-app" aria-labelledby="ap-app-title" hidden>
     <div class="ap-shell">
+      <!-- Solo dentro de una app del catálogo (modo app: sin cabecera, pestañas ni pie del área privada) -->
+      <nav class="ap-appbar" id="ap-appbar" aria-label="Salir de la app" hidden>
+        <a class="ap-appbar-back" id="ap-appbar-back" href="#/apps"><span aria-hidden="true">←</span> Volver al área privada</a>
+      </nav>
       <div class="ap-head">
         <h1 class="ap-app-title" id="ap-app-title" tabindex="-1">Hoy</h1>
         <div class="ap-head-actions">
           <span class="ap-user" id="ap-user"></span>
-          <a class="btn btn-outline" href="./roma-aeterna/">Caesar III</a>
           <button type="button" class="btn btn-outline" id="ap-logout">Cerrar sesión</button>
         </div>
       </div>
@@ -97,7 +101,7 @@
       <nav class="ap-tabs" aria-label="Secciones del área privada">
         <a href="#/" data-tab="hoy">Hoy</a>
         <a href="#/studio" data-tab="studio">Studio</a>
-        <a href="#/color" data-tab="color">Color Studio</a>
+        <a href="#/apps" data-tab="apps">Apps</a>
         <a href="#/calendario" data-tab="calendario">Calendario</a>
         <a href="#/entrevistas" data-tab="entrevistas">Entrevistas</a>
         <a href="#/portfolio" data-tab="portfolio">Portfolio</a>
@@ -158,6 +162,6 @@
   <p class="ap-foot-copy">© 2026 Borja Mora Méndez · <a href="./privacidad.html">Privacidad</a></p>
 </footer>
 
-<script src="./area-privada.js?v=c303ddd653" defer></script>
+<script src="./area-privada.js?v=69fa0fb865" defer></script>
 </body>
 </html>
