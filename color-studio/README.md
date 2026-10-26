@@ -122,14 +122,16 @@ distintas entre sí (ΔE00 > 10). Si no hay datos para tres de verdad, se enseñ
   `inferShoeType`) y se corrige en la guía; el tono de una deportiva (blanca, oscura, de color) sale de su color. Añade
   notas (mocasín, bota, técnica, oscura) y activa reglas de coordinación; no prohíbe nada.
 - **Orden**: minimalista continuidad → coordinación → contraste; equilibrada coordinación primero; creativa contraste
-  primero. En formal, la continuidad primero y el contraste al final. Cada propuesta indica contraste cualitativo con
-  pantalón y calzado (bajo < 10, medio < 25, alto), efecto buscado, qué la inspira y si tienes uno parecido (ΔE00 ≤ 12).
+  primero. En formal, la continuidad primero y el contraste al final. Cada propuesta indica el contraste cualitativo frente al
+  pantalón y frente al calzado, por separado (ΔE00 bajo < 10, medio < 25, alto), efecto buscado, qué la inspira y si tienes uno parecido (ΔE00 ≤ 12).
 - **Fuentes de las convenciones**: [Permanent Style](https://www.permanentstyle.com/2018/12/the-rules-and-how-to-break-them-your-socks-should-match-your-trousers)
   (por defecto, calcetín del color del pantalón; con pantalón claro, un tono o dos más oscuro; harmonizar en vez de igualar
   es válido) y [Gentleman's Gazette](https://www.gentlemansgazette.com/how-to-combine-socks-shoes-pants/) (igualar
   exactamente el pantalón no es lo más logrado, mejor que igualar el zapato; enlazar con la parte de arriba). Lo de las
   deportivas blancas es convención informal extendida, no regla. Los umbrales de croma son decisiones propias.
 - El estilo del calcetín (invisible, tobillero, media caña) no se registra: no se deduce ni se inventa.
+- Los colores que escribes en la guía solo cuentan al pulsar «Actualizar propuestas» y solo cambian la guía: el bloque de
+  calcetines del Studio usa siempre los colores reales del outfit.
 
 ## Referencias de Sanzo Wada (348 combinaciones)
 

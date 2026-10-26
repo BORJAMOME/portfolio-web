@@ -261,6 +261,22 @@ Huecos de cobertura:
 | CS-21 | P4 | — | `socks.js`, `cs_garments` | Faltan el estilo y largo del calcetín y la ocasión | Consejo menos contextual | Empezar leyendo la subcategoría; campos opcionales solo si hace falta (pedir permiso para el esquema) | M | Medio | Pruebas unitarias |
 | CS-22 | P4 | — | `compose.js` | Las propuestas cambian una sola prenda | Exploración limitada | Combinaciones de 2 prendas con poda y análisis de «qué prenda me falta» | L | Medio | Pruebas unitarias |
 
+## Estado de las correcciones
+
+**Fase 1, hecha el 26-10-2026.** Cada corrección lleva una prueba que fallaba antes del cambio.
+
+| ID | Qué se ha hecho |
+|---|---|
+| CS-01 | En la CI, cada suite de interfaz corre aunque falle la anterior (`if: ${{ !cancelled() }}`), así que Color Studio vuelve a probarse en remoto. La prueba intermitente del Centro de trabajo sigue pendiente: queda fuera del alcance de Color Studio. |
+| CS-02 | Lo escrito en la guía solo cuenta al pulsar «Actualizar», solo afecta a la guía (con un aviso) y el Studio usa siempre el outfit. |
+| CS-09 | Las reglas de continuidad describen el color que se propone de verdad. |
+| CS-10 | «informal» se lee como calzado casual. |
+| CS-11 | El contraste calculado prueba candidatos en orden y solo propone uno que cumpla la regla; si ninguno la cumple, lo explica. |
+| CS-12 | El contraste se informa por separado frente al pantalón y frente al calzado. |
+| CS-14 | A 320 px la etiqueta de rol baja de línea en vez de cortar el nombre. |
+| CS-15 | En pantallas táctiles o estrechas, los controles miden 44 px; los desplegables conservan su triángulo. |
+| CS-18 | Pruebas con los 34 pares de CIEDE2000, referencias sRGB, ida y vuelta, y regresiones de esta fase. |
+
 ## 12. Roadmap
 
 1. **Inmediato** (pequeño, localizado, reversible): CS-01 (solo separar los pasos de la CI), CS-02, CS-09, CS-10, CS-11, CS-12, CS-14, CS-15 y CS-18.

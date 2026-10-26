@@ -67,6 +67,7 @@ export function inferShoeType(text) {
   if (/deportiv|zapatill|sneaker|trainer|tenis|bamba/.test(t)) return 'sneaker';
   if (/mocas|loafer|penny|kiltie/.test(t)) return 'loafer';
   if (/bota|botin|boot|chelsea|chukka/.test(t)) return 'boot';
+  if (/informal/.test(t)) return 'casual';                // antes que /formal/: «informal» contiene «formal»
   if (/oxford|derby|blucher|monk|brogue|zapato|formal|vestir/.test(t)) return 'formal';
   if (/nautic|alpargat|espadrill|sandal|naut/.test(t)) return 'casual';
   return null;
@@ -94,9 +95,9 @@ function shade(hex, dL) {
   const lch = lchOf(hex);
   return labToHex(lchToLab({ L: Math.max(8, Math.min(92, lch.L + dL)), C: lch.C, h: lch.h }));
 }
-function contrastLevel(hex, trousers, shoes) {
-  const ref = [trousers, shoes].filter(Boolean);
-  const d = Math.min(...ref.map((r) => colorDistance(hex, r)));
+function contrastLevel(hex, ref) {
+  if (!ref) return null;
+  const d = colorDistance(hex, ref);
   return d < 10 ? 'bajo' : d < 25 ? 'medio' : 'alto';
 }
 
@@ -108,7 +109,7 @@ function contrastLevel(hex, trousers, shoes) {
  *   formality: 'formal' | 'smart' | 'casual' · direction: 'minimal' | 'balanced' | 'creative' (o preference antigua)
  *   socks: [prendas de la categoría calcetines] · palettes: [paletas de la biblioteca]
  * }
- * → { proposals: [{ type, label, hex, name, explanation, effect, contrast, rules, owned, origin, source }], notes, insufficient, shoeType }
+ * → { proposals: [{ type, label, hex, name, explanation, effect, contrast (frente al pantalón; si no hay, al calzado), contrastTrousers, contrastShoes, rules, owned, origin, source }], notes, insufficient, shoeType }
  */
 export function recommendSocks(input) {
   input = input || {};
@@ -136,10 +137,12 @@ export function recommendSocks(input) {
   if (trousers) {
     const L = lchOf(trousers).L;
     const target = L > 65 ? shade(trousers, -12) : L < 22 ? trousers : shade(trousers, -6);
-    const rules = ['continuidad-pantalon'].concat(L > 65 ? ['pantalon-claro'] : L < 22 ? [] : ['separacion-sutil']);
     const mine = owned.map((s) => ({ s, d: Math.min(colorDistance(s.primary_color, trousers), colorDistance(s.primary_color, target)) }))
       .filter((x) => x.d <= OWN_SNAP).sort((a, b) => a.d - b.d)[0];
     const hex = mine ? normalizeHex(mine.s.primary_color) : target;
+    // las reglas describen el color que se propone de verdad (un calcetín propio puede ser idéntico al pantalón)
+    const darker = L - lchOf(hex).L >= 3;
+    const rules = ['continuidad-pantalon'].concat(darker ? [L > 65 ? 'pantalon-claro' : 'separacion-sutil'] : []);
     safe = { type: 'safe', hex, rules, origin: mine ? 'owned' : target === trousers ? 'outfit' : 'rule', source: 'Pantalón ' + nameOf(trousers),
       explanation: (mine ? 'Tu calcetín ' + (mine.s.name || nameOf(hex)) + ' prolonga' : target === trousers ? 'Del color del pantalón (' + nameOf(trousers) + '): prolonga' : 'Un punto más oscuro que el pantalón ' + nameOf(trousers) + ': prolonga') +
         ' la pierna' + (shoes ? ' y deja que el calzado ' + nameOf(shoes) + ' cierre el conjunto' : '') + '.' + (L > 65 && !mine ? ' Con un pantalón claro, el calcetín igualado tiende a lavarse.' : '') };
@@ -219,12 +222,17 @@ export function recommendSocks(input) {
     const refL = lchOf(trousers || shoes).L;
     const L = deepOnly ? Math.max(25, Math.min(42, refL + 10)) : Math.max(30, Math.min(65, refL + (refL < 50 ? 15 : -15)));
     const C = Math.max(22, limit - 5);
-    const h = analog ? (lch.h + 40) % 360 : (lch.h + 180) % 360;
-    let hex = labToHex(lchToLab({ L, C, h }));
-    if (!fits(hex)) hex = labToHex(lchToLab({ L: L + (L < 50 ? 15 : -15), C, h: (lch.h + 180) % 360 }));
-    contrast = { type: 'contrast', hex, rules: [analog ? 'contraste-analogo' : 'contraste-opuesto'], origin: 'rule', source: 'Regla calculada',
-      explanation: (analog ? 'Vecino del ' : 'Opuesto al ') + nameOf(anchor) + ', con la saturación limitada (' + CONTEXT[formality] + (deepOnly ? ', tono profundo' : '') +
-        '). Es una regla de partida, no una garantía: compruébalo con la prenda real.' };
+    // candidatos en orden de preferencia; se propone el primero que cumple la regla (> 15 ΔE00 de pantalón y calzado)
+    const L2 = L + (L < 50 ? 15 : -15), opp = (lch.h + 180) % 360;
+    const cands = (analog ? [[(lch.h + 40) % 360, L, true], [(lch.h + 40) % 360, L2, true]] : [])
+      .concat([[opp, L, false], [opp, L2, false], [(opp + 30) % 360, L, false], [(opp + 330) % 360, L, false], [(opp + 30) % 360, L2, false], [(opp + 330) % 360, L2, false]])
+      .map((c) => ({ hex: labToHex(lchToLab({ L: c[1], C, h: c[0] })), analog: c[2] }));
+    const found = cands.find((c) => fits(c.hex));
+    if (found) {
+      contrast = { type: 'contrast', hex: found.hex, rules: [found.analog ? 'contraste-analogo' : 'contraste-opuesto'], origin: 'rule', source: 'Regla calculada',
+        explanation: (found.analog ? 'Vecino del ' : 'Opuesto al ') + nameOf(anchor) + ', con la saturación limitada (' + CONTEXT[formality] + (deepOnly ? ', tono profundo' : '') +
+          '). Es una regla de partida, no una garantía: compruébalo con la prenda real.' };
+    }
   }
   if (contrast && chroma(contrast.hex) > limit + 15) notes.push('El contraste propuesto es más saturado de lo habitual en un contexto ' + CONTEXT[formality] + '.');
   if (contrast && distinct(contrast.hex, chosen)) chosen.push(contrast);
@@ -247,7 +255,8 @@ export function recommendSocks(input) {
   return {
     insufficient: false, notes, shoeType, direction,
     proposals: order.map((t) => chosen.find((p) => p.type === t)).filter(Boolean).map((p) => Object.assign(p, {
-      label: TYPES[p.type], name: nameOf(p.hex), effect: EFFECT[p.type], contrast: contrastLevel(p.hex, trousers, shoes), owned: nearestOwned(p.hex, owned)
+      label: TYPES[p.type], name: nameOf(p.hex), effect: EFFECT[p.type], contrastTrousers: contrastLevel(p.hex, trousers), contrastShoes: contrastLevel(p.hex, shoes),
+      contrast: contrastLevel(p.hex, trousers || shoes), owned: nearestOwned(p.hex, owned)
     }))
   };
 }

@@ -446,7 +446,7 @@ await step('Calcetines: tres propuestas explicadas; formal pone la continuidad p
   ok(exps.every((t) => t.length > 30), 'explicaciones vacías');
   const cols = await page.$$eval('.cs-propcard .cs-hex', (e) => e.map((x) => x.textContent));
   eq(new Set(cols).size, 3, 'propuestas repetidas');
-  ok((await page.textContent('.cs-propcard')).includes('Contraste con pantalón y calzado'), 'sin nivel de contraste');
+  ok((await page.textContent('.cs-propcard')).includes('Contraste: pantalón'), 'sin nivel de contraste frente al pantalón');
   await page.click('[data-key="form-formal"]');
   await page.waitForFunction(() => document.querySelector('.cs-propcard .cs-eyebrow').textContent === 'Continuidad');
   ok((await page.textContent('.cs-propcard')).includes('pantalón'), 'la continuidad no sigue al pantalón');
@@ -532,6 +532,36 @@ await step('Tipo de calzado: se deduce de la prenda y se puede corregir', async 
   await p.selectOption('#cs-s-shoe', 'loafer');
   await p.waitForFunction(() => document.querySelector('.cs-socks').textContent.includes('mocasín'));
   await shot(p, '09-calcetines-calzado');
+});
+await step('CS-02: lo escrito en la guía de calcetines no cambia los calcetines del Studio', async () => {
+  const { page: p } = globalThis.__x;
+  await go(p, '#/color');
+  const before = await p.textContent('.cs-socklines');
+  await go(p, '#/color/calcetines');
+  await p.fill('#cs-s-tr', '#E8E0D0');                       // sin pulsar «Actualizar»
+  await go(p, '#/color');
+  eq(await p.textContent('.cs-socklines'), before, 'cambió sin aplicar');
+  await go(p, '#/color/calcetines');
+  eq(await p.inputValue('#cs-s-tr'), '#E8E0D0', 'se perdió lo escrito al repintar');
+  await p.click('[data-key="sock-apply"]');
+  await p.waitForSelector('.cs-note--manual');
+  ok((await p.textContent('.cs-prop-meta')).includes('Contraste: pantalón'), 'CS-12: sin contraste frente al pantalón');
+  await go(p, '#/color');
+  eq(await p.textContent('.cs-socklines'), before, 'el Studio usó los colores escritos en la guía');
+  await go(p, '#/color/calcetines');
+  await p.click('[data-key="sock-reset"]');
+  await p.waitForSelector('.cs-socks:not(:has(.cs-note--manual))');
+  ok(!(await p.$('.cs-note--manual')), 'no volvió a los colores del outfit');
+});
+await step('CS-14 y CS-15: a 320 px se ve la etiqueta de rol y los controles miden al menos 44 px', async () => {
+  const { page: p } = globalThis.__x;
+  await p.setViewportSize({ width: 320, height: 740 });
+  await go(p, '#/color');
+  const roles = await p.$$eval('.cs-dist-row', (rows) => rows.map((r) => { const b = r.querySelector('.cs-role'); if (!b) return null; const x = b.getBoundingClientRect(), n = r.querySelector('.cs-dist-name').getBoundingClientRect(); return x.width > 20 && x.right <= n.right + 1; }).filter((v) => v !== null));
+  ok(roles.length && roles.every(Boolean), 'etiqueta de rol recortada: ' + JSON.stringify(roles));
+  const small = await p.$$eval('.cs .cs-btn-s, .cs .cs-weight, .cs summary, .cs input[type="range"]', (els) => els.filter((e) => { const r = e.getBoundingClientRect(); return r.height && r.height < 44; }).map((e) => e.className || e.tagName));
+  eq(small, [], 'controles por debajo de 44 px');
+  await p.setViewportSize({ width: 1440, height: 1000 });
 });
 await step('Modo ejemplo 2.0: sin escrituras, sin errores, axe correcto y sin scroll horizontal a 390 px', async () => {
   const { page: p, ctx: c, errors: errs, writes } = globalThis.__x;
