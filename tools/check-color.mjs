@@ -6,6 +6,8 @@
    (solo cs_* y el bucket «armario»). NO toca la base real. Recorre: navegación, vacíos, modo ejemplo,
    paletas (crear, validar, duplicados, importar), armario (color a mano y foto), Studio (pesos,
    distribución que suma 100, ajuste manual, referencias, guardar), recarga, calcetines,
+   direcciones (lectura, comparar, aplicar y volver al original, hipotéticos), paletas como inspiración,
+   calcetines dentro del Studio y tipo de calzado,
    errores de guardado, sesión caducada, tablas sin crear, móvil sin scroll horizontal, axe y CSP real.
    ═══════════════════════════════════════════════ */
 import { createServer } from 'node:http';
@@ -404,8 +406,9 @@ await step('Studio: referencias compatibles distinguen exacta/aproximada y se el
   ok(refs.includes('Otoño urbano'), 'no aparece la paleta con colores idénticos');
   ok(/Coincidencia (exacta|aproximada)/.test(refs), 'sin tipo de coincidencia');
   ok(refs.includes('Pantalón (#1F2A44) es idéntico'), 'sin explicación de la conexión');
-  await page.click('.cs-ref:has-text("Otoño urbano") .cs-btn-s');
-  eq(await page.getAttribute('.cs-ref:has-text("Otoño urbano") .cs-btn-s', 'aria-pressed'), 'true');
+  ok(refs.includes('En el conjunto: pantalón'), 'sin adaptación de la paleta al conjunto');
+  await page.click('.cs-ref:has-text("Otoño urbano") [data-key^="ref-"]');
+  eq(await page.getAttribute('.cs-ref:has-text("Otoño urbano") [data-key^="ref-"]', 'aria-pressed'), 'true');
 });
 await step('Studio: guardar el outfit (la confirmación llega después de guardar)', async () => {
   await page.click('[data-key="save-outfit"]');
@@ -433,22 +436,26 @@ await step('Persistencia: tras recargar siguen prendas, paletas, outfit y el bor
   eq(await page.$$eval('.cs-pal', (e) => e.length), 4);
 });
 
-await step('Calcetines: tres propuestas explicadas; formal pone la segura primero', async () => {
+await step('Calcetines: tres propuestas explicadas; formal pone la continuidad primero', async () => {
   await go(page, '#/color/calcetines');
   await page.waitForSelector('.cs-propcard');
   eq(await page.$$eval('.cs-propcard', (e) => e.length), 3);
   const exps = await page.$$eval('.cs-prop-exp', (e) => e.map((x) => x.textContent));
   ok(exps.every((t) => t.length > 30), 'explicaciones vacías');
+  const cols = await page.$$eval('.cs-propcard .cs-hex', (e) => e.map((x) => x.textContent));
+  eq(new Set(cols).size, 3, 'propuestas repetidas');
+  ok((await page.textContent('.cs-propcard')).includes('Contraste con pantalón y calzado'), 'sin nivel de contraste');
   await page.click('[data-key="form-formal"]');
-  await page.waitForFunction(() => document.querySelector('.cs-propcard .cs-eyebrow').textContent === 'Segura');
-  ok((await page.textContent('.cs-propcard')).includes('pantalón'), 'la segura no sigue al pantalón');
-  await page.click('[data-key="pref-contrast"]');
-  eq(await page.textContent('.cs-propcard .cs-eyebrow'), 'Segura');           // formal manda sobre la preferencia
+  await page.waitForFunction(() => document.querySelector('.cs-propcard .cs-eyebrow').textContent === 'Continuidad');
+  ok((await page.textContent('.cs-propcard')).includes('pantalón'), 'la continuidad no sigue al pantalón');
+  await page.click('[data-key="dir-creative"]');
+  eq(await page.textContent('.cs-propcard .cs-eyebrow'), 'Continuidad');           // formal manda sobre la dirección
   await page.click('[data-key="form-casual"]');
-  await page.waitForFunction(() => document.querySelector('.cs-propcard .cs-eyebrow').textContent === 'Con contraste');
+  await page.waitForFunction(() => document.querySelector('.cs-propcard .cs-eyebrow').textContent === 'Contraste');
   await shot(page, '05-calcetines');
   await page.click('.cs-propcard:nth-child(3) .cs-btn-s');
-  ok((await toastText(page)).includes('Calcetín añadido'), 'sin confirmación');
+  ok(/Calcetín .*añadido/.test(await toastText(page)), 'sin confirmación');
+  eq(await page.getAttribute('.cs-propcard:nth-child(3) .cs-btn-s', 'aria-pressed'), 'true');
   await go(page, '#/color');
   ok((await page.textContent('.cs-slot:has-text("Calcetines")')).includes('Color a mano') || (await page.textContent('.cs-slot:has-text("Calcetines")')).includes('Calcetín'), 'el calcetín no llegó al Studio');
 });
@@ -458,6 +465,90 @@ await step('Calcetines: sin pantalón ni calzado explica la limitación', async 
   ok((await page.textContent('.cs-socks')).includes('Falta información'), 'sin explicación');
 });
 
+/* ── Color Studio 2.0 en modo ejemplo (no escribe nada: lo comprueba el registro de escrituras) ── */
+await step('Dirección: lectura del conjunto y propuestas que no tocan el outfit hasta aplicarlas', async () => {
+  missing = true;
+  const x = await open(null, '#/color');
+  globalThis.__x = x;
+  x.writes = [];
+  x.page.on('request', (r) => { if (/supabase\.co/.test(r.url()) && !['GET', 'OPTIONS'].includes(r.method())) x.writes.push(r.method() + ' ' + r.url()); });
+  await x.page.click('button:has-text("Ver con datos de ejemplo")');
+  const pick = async (slot, txt) => { await x.page.click(`[data-key="pick-${slot}"]`); await x.page.click(`dialog[open] .cs-pick-b:has-text("${txt}")`); };
+  await pick('bottom', 'Chino marino'); await pick('shoes', 'Bota marrón'); await pick('top', 'Jersey burdeos'); await pick('accessory', 'Pañuelo mostaza');
+  ok((await x.page.textContent('.cs-reading')).includes('Lectura actual'), 'sin lectura del conjunto');
+  ok((await x.page.textContent('.cs-compose')).includes('Acento'), 'sin jerarquía (acento) en la composición');
+  await x.page.click('[data-key="dir-minimal"]');
+  await x.page.waitForSelector('.cs-prop2');
+  eq(await x.page.getAttribute('[data-key="dir-minimal"]', 'aria-pressed'), 'true');
+  eq(await x.page.$$eval('.cs-prop2:first-of-type .cs-cmp .cs-band', (e) => e.length), 2, 'sin comparación ahora / propuesta');
+  ok((await x.page.textContent('.cs-prop2')).includes('Qué cambia'), 'sin diferencias explicadas');
+  ok(!/\d+ ?% de estilo|perfect|óptim/i.test(await x.page.textContent('.cs-dir')), 'puntuación estética inventada');
+  const slots = await x.page.textContent('.cs-slots');
+  ok(slots.includes('Jersey burdeos') && slots.includes('Pañuelo mostaza'), 'explorar cambió el outfit');
+  await shot(x.page, '08-direccion');
+});
+await step('Dirección: aplicar una propuesta conserva el original y se puede volver a él', async () => {
+  const { page: p } = globalThis.__x;
+  const before = await p.textContent('.cs-slots');
+  await p.click('[data-key="apply-0"]');
+  await p.waitForSelector('.cs-orig');
+  ok((await p.textContent('.cs-slots')) !== before, 'aplicar no cambió el outfit');
+  await p.click('[data-key="restore-original"]');
+  await p.waitForSelector('.cs-dir:not(:has(.cs-orig))');
+  eq(await p.textContent('.cs-slots'), before, 'no volvió al conjunto original');
+});
+await step('Dirección creativa: los colores que no tienes se marcan como hipotéticos', async () => {
+  const { page: p } = globalThis.__x;
+  await p.click('[data-key="dir-creative"]');
+  await p.waitForSelector('.cs-prop2');
+  const cards = await p.$$eval('.cs-prop2', (e) => e.map((c) => ({ hypo: c.classList.contains('is-hypo'), text: c.textContent })));
+  ok(cards.length >= 1, 'sin propuestas creativas');
+  cards.forEach((c) => ok(c.hypo ? c.text.includes('Hipotético: no tienes esta prenda') : c.text.includes('De tu armario'), 'procedencia de la prenda sin señalar'));
+  ok(cards.some((c) => c.text.includes('paleta «')), 'la paleta de la biblioteca no inspira ninguna propuesta');
+});
+await step('Paletas que inspiran: comparar con el conjunto abre la propuesta y aplicarla la lleva al outfit', async () => {
+  const { page: p } = globalThis.__x;
+  await p.click('.cs-ref:has-text("Bosque") [data-key^="cmp-"]');
+  await p.waitForSelector('dialog[open] .cs-prop2');
+  await p.click('dialog[open] [data-key="apply-pal"]');
+  await p.waitForSelector('dialog[open]', { state: 'detached' });
+  await p.waitForSelector('.cs-orig');
+  await p.click('[data-key="restore-original"]');
+});
+await step('Calcetines en el Studio: tres propuestas distintas y «Usar» las lleva al outfit sin salir', async () => {
+  const { page: p } = globalThis.__x;
+  eq(await p.$$eval('.cs-sockline', (e) => e.length), 3);
+  await p.click('[data-key="sock-safe"]');
+  await p.waitForSelector('[data-key="sock-safe"][aria-pressed="true"]');
+  ok(!(await p.textContent('.cs-slot:has-text("Calcetines")')).includes('Sin elegir'), 'el calcetín no llegó al outfit');
+});
+await step('Tipo de calzado: se deduce de la prenda y se puede corregir', async () => {
+  const { page: p } = globalThis.__x;
+  await go(p, '#/color/calcetines');
+  ok((await p.textContent('#cs-s-shoe')).includes('Automático: bota'), 'no deduce la bota del nombre');
+  ok((await p.textContent('.cs-socks')).includes('asoma poco'), 'sin la nota de la bota');
+  await p.selectOption('#cs-s-shoe', 'loafer');
+  await p.waitForFunction(() => document.querySelector('.cs-socks').textContent.includes('mocasín'));
+  await shot(p, '09-calcetines-calzado');
+});
+await step('Modo ejemplo 2.0: sin escrituras, sin errores, axe correcto y sin scroll horizontal a 390 px', async () => {
+  const { page: p, ctx: c, errors: errs, writes } = globalThis.__x;
+  eq(writes, [], 'escrituras en modo ejemplo');
+  await go(p, '#/color');
+  await axe(p, 'Studio con direcciones');
+  await go(p, '#/color/calcetines');
+  await axe(p, 'Calcetines con tipo de calzado');
+  await p.setViewportSize({ width: 390, height: 844 });
+  for (const h of ['#/color', '#/color/calcetines']) {
+    await go(p, h);
+    const sw = await p.evaluate(() => document.documentElement.scrollWidth);
+    ok(sw <= 390, h + ': scroll horizontal (' + sw + ' px)');
+  }
+  await axe(p, 'móvil Studio 2.0');
+  eq(errs, []);
+  await c.close();
+  missing = false;
+});
 await step('Error de guardado: se muestra en el formulario y no hay confirmación falsa', async () => {
   await go(page, '#/color/biblioteca');
   failWrites = true;
