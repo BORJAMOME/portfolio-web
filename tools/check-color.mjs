@@ -141,7 +141,7 @@ async function open(viewport, hash, realCsp, motion) {
   page.on('pageerror', (e) => errors.push(e.message));
   page.on('console', (m) => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push(m.text()); });
   await page.goto(BASE + (hash || '#/color'));
-  await page.waitForSelector('.cs, .aps-head, #ap-lock:not([hidden])');
+  await page.waitForSelector('.cs, .aps-head, .apl, #ap-lock:not([hidden])');
   return { ctx, page, errors };
 }
 async function axe(page, label) {
@@ -177,8 +177,10 @@ async function pngOf(page, w, h, fill) {     // genera una imagen en el propio n
 /* ═══════════ FLUJOS ═══════════ */
 const { page, ctx, errors } = await open();
 
-await step('Navegación: pestaña «Color Studio», ruta #/color y cuatro secciones', async () => {
-  eq(await page.getAttribute('.ap-tabs a[data-tab="color"]', 'aria-current'), 'page');
+await step('Navegación: modo app en #/color (sin cabecera, pestañas ni pie del área privada) y cuatro secciones', async () => {
+  for (const sel of ['.ap-top', '.ap-tabs', '.ap-foot', '#ap-logout']) ok(await page.isHidden(sel), sel + ' visible dentro de la app');
+  eq(await page.getAttribute('#ap-appbar-back', 'href'), '#/apps');
+  ok(await page.isVisible('#ap-appbar-back'), 'sin «Volver al área privada»');
   eq(await page.$$eval('.cs-nav a', (a) => a.map((x) => x.textContent.trim())), ['Studio', 'Biblioteca', 'Armario', 'Calcetines']);
   eq(await page.getAttribute('.cs-nav a[href="#/color"]', 'aria-current'), 'page');
   eq(await page.textContent('#ap-app-title'), 'Color Studio');
@@ -511,11 +513,63 @@ await step('CSP real: sin violaciones y las muestras se pintan por CSSOM', async
   eq(c.errors, []);
   await c.ctx.close();
 });
+await step('Apps: pestaña del área privada, fichas desde el registro e iconos; 390 px táctil y axe', async () => {
+  const c = await open({ width: 390, height: 844 }, '#/apps');
+  await c.page.waitForSelector('.apl-app');
+  eq(await c.page.getAttribute('.ap-tabs a[data-tab="apps"]', 'aria-current'), 'page');
+  eq(await c.page.$$eval('.apl-app', (a) => a.map((x) => [x.querySelector('.apl-name').textContent, x.getAttribute('href')])), [['Caesar III', './roma-aeterna/'], ['Color Studio', '#/color']]);
+  ok(await c.page.isVisible('.ap-tabs') && await c.page.isHidden('#ap-appbar'), 'el catálogo se pinta en modo app');
+  await c.page.waitForFunction(() => [...document.querySelectorAll('.apl-icon')].every((i) => i.complete));
+  ok(await c.page.$$eval('.apl-icon', (i) => i.every((x) => x.naturalWidth > 0)), 'icono sin cargar');
+  const boxes = await c.page.$$eval('.apl-app', (a) => a.map((x) => { const r = x.getBoundingClientRect(); return [r.width, r.height]; }));
+  ok(boxes.every(([w, hh]) => w >= 44 && hh >= 44), 'objetivo táctil menor de 44 px: ' + JSON.stringify(boxes));
+  eq(await c.page.evaluate(() => document.documentElement.scrollWidth), 390, 'scroll horizontal');
+  await shot(c.page, '00-apps-movil');
+  await axe(c.page, 'Apps');
+  eq(c.errors, []);
+  await c.ctx.close();
+});
+await step('Modo app desde Apps: vistas internas y «Volver» regresa al catálogo sin apilar historial; Adelante reabre', async () => {
+  const c = await open(null, '#/apps');
+  await c.page.waitForSelector('.apl-app');
+  const len0 = await c.page.evaluate(() => history.length);
+  await c.page.click('.apl-app[data-app="color"]');
+  await c.page.waitForSelector('.cs');
+  eq(await c.page.textContent('#ap-app-title'), 'Color Studio', 'el h1 no nombra la app');
+  await c.page.click('.cs-nav a[href="#/color/armario"]');
+  await c.page.waitForSelector('.cs[data-view="armario"]');
+  await c.page.click('#ap-appbar-back');
+  await c.page.waitForSelector('.apl-app');
+  eq(await c.page.evaluate(() => location.hash), '#/apps');
+  eq(await c.page.evaluate(() => history.length), len0 + 2, 'la vuelta añadió entradas al historial');
+  ok(await c.page.isVisible('.ap-tabs') && await c.page.isHidden('#ap-appbar'), 'sigue en modo app');
+  await c.page.goForward();
+  await c.page.waitForSelector('.cs');
+  ok(await c.page.isVisible('#ap-appbar-back'), 'Adelante no vuelve al modo app');
+  eq(c.errors, []);
+  await c.ctx.close();
+});
+await step('Modo app por URL directa y recarga: «Volver» (teclado) lleva a Apps y Atrás devuelve a la app', async () => {
+  const c = await open(null, '#/color/biblioteca');
+  await c.page.waitForSelector('.cs[data-view="biblioteca"]');
+  await c.page.reload();
+  await c.page.waitForSelector('.cs[data-view="biblioteca"]');
+  await c.page.focus('#ap-appbar-back');
+  await c.page.keyboard.press('Enter');
+  await c.page.waitForSelector('.apl-app');
+  ok(await c.page.isVisible('.ap-tabs'), 'sin pestañas en Apps');
+  await c.page.goBack();
+  await c.page.waitForSelector('.cs[data-view="biblioteca"]');
+  ok(await c.page.isHidden('.ap-tabs'), 'Atrás no restaura el modo app');
+  eq(c.errors, []);
+  await c.ctx.close();
+});
 await step('Sesión caducada: vuelve a la pantalla de acceso sin enseñar datos', async () => {
   unauth = true;
   const c = await open(null, '#/color/armario');
   await c.page.waitForSelector('#ap-lock:not([hidden])');
   ok(await c.page.isHidden('#ap-app'), 'el área sigue visible');
+  ok(await c.page.isVisible('.ap-top') && !(await c.page.evaluate(() => document.body.classList.contains('ap-in-app'))), 'la pantalla de acceso hereda el modo app');
   unauth = false;
   await c.ctx.close();
 });
@@ -557,12 +611,12 @@ await step('Intro: primera entrada → nombre a pantalla completa sobre #FBFBFB 
   await c.page.click('.cs-nav a[href="#/color/biblioteca"]');
   await c.page.waitForSelector('.cs[data-view="biblioteca"]');
   eq(await c.page.$('.csi'), null, 'se repite al cambiar de sección');
-  await c.page.click('.ap-tabs a[data-tab="studio"]');
-  await c.page.waitForSelector('.aps-head');
-  await c.page.click('.ap-tabs a[data-tab="color"]');
+  await c.page.click('#ap-appbar-back');
+  await c.page.waitForSelector('.apl-app');
+  await c.page.click('.apl-app[data-app="color"]');
   await c.page.waitForSelector('.cs');
   await c.page.waitForTimeout(200);
-  eq(await c.page.$('.csi'), null, 'se repite al volver a la pestaña');
+  eq(await c.page.$('.csi'), null, 'se repite al volver a abrirla desde Apps');
   eq(c.errors, []);
   // recargar la página es una entrada nueva; un clic la adelanta
   await c.page.reload();
@@ -621,6 +675,7 @@ await step('El resto del área privada sigue funcionando (Studio de proyectos)',
   const c = await open(null, '#/studio');
   await c.page.waitForSelector('.aps-head');
   ok(await c.page.evaluate(() => getComputedStyle(document.body).backgroundColor) !== 'rgb(251, 251, 251)', 'el fondo de Color Studio se filtra a otras pestañas');
+  ok(await c.page.isVisible('.ap-tabs') && await c.page.isHidden('#ap-appbar'), 'el modo app se filtra a otras pestañas');
   await c.ctx.close();
 });
 
