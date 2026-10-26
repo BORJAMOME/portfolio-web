@@ -45,7 +45,7 @@
 <link rel="stylesheet" href="./css/second-brain.css?v=2f3f8407a3">
 <link rel="stylesheet" href="./css/mapa.css?v=9a1505f87b">
 <link rel="stylesheet" href="./css/color-studio.css?v=5f7fc8dbdb">
-<link rel="stylesheet" href="./css/area-privada.css?v=d4c31b448c">
+<link rel="stylesheet" href="./css/area-privada.css?v=3bb5e40089">
 </head>
 <body>
 <a href="#main-content" class="skip-link">Saltar al contenido</a>
@@ -68,16 +68,14 @@
       <span class="ap-lock-icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.2"/></svg>
       </span>
-      <p class="ap-label">Acceso restringido</p>
-      <h1 class="ap-lock-title" id="ap-lock-title">Área privada</h1>
-      <p class="ap-lock-sub">Manuales, notas y recursos de trabajo. Introduce la contraseña para entrar.</p>
+      <h1 class="ap-lock-title" id="ap-lock-title">Acceso restringido</h1>
 
       <form class="ap-login" id="ap-login" novalidate>
         <!-- usuario fijo: solo para que el gestor de contraseñas reconozca el acceso -->
         <input class="sr-only" type="email" name="username" autocomplete="username" value="borja.mora.mendez@gmail.com" tabindex="-1" aria-hidden="true" readonly>
         <label class="ap-field-label" for="ap-pass">Contraseña</label>
         <div class="ap-pass">
-          <input id="ap-pass" name="password" type="password" autocomplete="current-password" required aria-describedby="ap-login-msg">
+          <input id="ap-pass" name="password" type="password" autocomplete="current-password" placeholder="Contraseña" required aria-describedby="ap-login-msg">
           <button type="button" class="ap-pass-toggle" id="ap-pass-toggle" aria-pressed="false" aria-controls="ap-pass">Mostrar</button>
         </div>
         <p class="ap-msg" id="ap-login-msg" aria-live="assertive"></p>
