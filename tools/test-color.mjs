@@ -33,13 +33,56 @@ test('hexToRgb / rgbToHex ida y vuelta, con recorte', () => {
 });
 
 /* ── Distancias ── */
-test('deltaE2000: pares de referencia publicados (Sharma, Wu y Dalal, 2005)', () => {
-  const pairs = [
-    [[50, 2.6772, -79.7751], [50, 0, -82.7485], 2.0425], [[50, -1.3802, -84.2814], [50, 0, -82.7485], 1.0000],
-    [[50, 2.5, 0], [73, 25, -18], 27.1492], [[60.2574, -34.0099, 36.2677], [60.4626, -34.1751, 39.4387], 1.2644],
-    [[22.7233, 20.0904, -46.6940], [23.0331, 14.9730, -42.5619], 2.0373], [[2.0776, 0.0795, -1.1350], [0.9033, -0.0636, -0.5514], 0.9082]
-  ];
-  for (const [a, b, exp] of pairs) assert.ok(near(E.deltaE2000({ L: a[0], a: a[1], b: a[2] }, { L: b[0], a: b[1], b: b[2] }), exp, 1e-4), String(exp));
+// Los 34 pares de prueba oficiales de CIEDE2000 (Sharma, Wu y Dalal, 2005: ciede2000testdata.txt)
+const SHARMA = [
+  [50.0000, 2.6772, -79.7751, 50.0000, 0.0000, -82.7485, 2.0425],
+  [50.0000, 3.1571, -77.2803, 50.0000, 0.0000, -82.7485, 2.8615],
+  [50.0000, 2.8361, -74.0200, 50.0000, 0.0000, -82.7485, 3.4412],
+  [50.0000, -1.3802, -84.2814, 50.0000, 0.0000, -82.7485, 1.0000],
+  [50.0000, -1.1848, -84.8006, 50.0000, 0.0000, -82.7485, 1.0000],
+  [50.0000, -0.9009, -85.5211, 50.0000, 0.0000, -82.7485, 1.0000],
+  [50.0000, 0.0000, 0.0000, 50.0000, -1.0000, 2.0000, 2.3669],
+  [50.0000, -1.0000, 2.0000, 50.0000, 0.0000, 0.0000, 2.3669],
+  [50.0000, 2.4900, -0.0010, 50.0000, -2.4900, 0.0009, 7.1792],
+  [50.0000, 2.4900, -0.0010, 50.0000, -2.4900, 0.0010, 7.1792],
+  [50.0000, 2.4900, -0.0010, 50.0000, -2.4900, 0.0011, 7.2195],
+  [50.0000, 2.4900, -0.0010, 50.0000, -2.4900, 0.0012, 7.2195],
+  [50.0000, -0.0010, 2.4900, 50.0000, 0.0009, -2.4900, 4.8045],
+  [50.0000, -0.0010, 2.4900, 50.0000, 0.0010, -2.4900, 4.8045],
+  [50.0000, -0.0010, 2.4900, 50.0000, 0.0011, -2.4900, 4.7461],
+  [50.0000, 2.5000, 0.0000, 50.0000, 0.0000, -2.5000, 4.3065],
+  [50.0000, 2.5000, 0.0000, 73.0000, 25.0000, -18.0000, 27.1492],
+  [50.0000, 2.5000, 0.0000, 61.0000, -5.0000, 29.0000, 22.8977],
+  [50.0000, 2.5000, 0.0000, 56.0000, -27.0000, -3.0000, 31.9030],
+  [50.0000, 2.5000, 0.0000, 58.0000, 24.0000, 15.0000, 19.4535],
+  [50.0000, 2.5000, 0.0000, 50.0000, 3.1736, 0.5854, 1.0000],
+  [50.0000, 2.5000, 0.0000, 50.0000, 3.2972, 0.0000, 1.0000],
+  [50.0000, 2.5000, 0.0000, 50.0000, 1.8634, 0.5757, 1.0000],
+  [50.0000, 2.5000, 0.0000, 50.0000, 3.2592, 0.3350, 1.0000],
+  [60.2574, -34.0099, 36.2677, 60.4626, -34.1751, 39.4387, 1.2644],
+  [63.0109, -31.0961, -5.8663, 62.8187, -29.7946, -4.0864, 1.2630],
+  [61.2901, 3.7196, -5.3901, 61.4292, 2.2480, -4.9620, 1.8731],
+  [35.0831, -44.1164, 3.7933, 35.0232, -40.0716, 1.5901, 1.8645],
+  [22.7233, 20.0904, -46.6940, 23.0331, 14.9730, -42.5619, 2.0373],
+  [36.4612, 47.8580, 18.3852, 36.2715, 50.5065, 21.2231, 1.4146],
+  [90.8027, -2.0831, 1.4410, 91.1528, -1.6435, 0.0447, 1.4441],
+  [90.9257, -0.5406, -0.9208, 88.6381, -0.8985, -0.7239, 1.5381],
+  [6.7747, -0.2908, -2.4247, 5.8714, -0.0985, -2.2286, 0.6377],
+  [2.0776, 0.0795, -1.1350, 0.9033, -0.0636, -0.5514, 0.9082]
+];
+test('deltaE2000: los 34 pares de referencia publicados (Sharma, Wu y Dalal, 2005), simétrico', () => {
+  assert.equal(SHARMA.length, 34);
+  SHARMA.forEach((r, i) => {
+    const a = { L: r[0], a: r[1], b: r[2] }, b = { L: r[3], a: r[4], b: r[5] };
+    assert.ok(near(E.deltaE2000(a, b), r[6], 5e-5), 'par ' + (i + 1) + ': esperado ' + r[6] + ', obtenido ' + E.deltaE2000(a, b));
+    assert.ok(near(E.deltaE2000(a, b), E.deltaE2000(b, a), 1e-12), 'par ' + (i + 1) + ' no simétrico');
+  });
+});
+test('hexToLab: referencias sRGB D65 y ida y vuelta en una muestra amplia', () => {
+  const ref = { '#FF0000': [53.2408, 80.0925, 67.2032], '#00FF00': [87.7347, -86.1827, 83.1793], '#0000FF': [32.2970, 79.1875, -107.8602], '#808080': [53.5850, 0, 0] };
+  for (const [h, v] of Object.entries(ref)) { const l = E.hexToLab(h); assert.ok(near(l.L, v[0], 1e-3) && near(l.a, v[1], 1e-3) && near(l.b, v[2], 1e-3), h); }
+  let seed = 7; const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+  for (let i = 0; i < 20000; i++) { const h = E.rgbToHex(rnd() * 255, rnd() * 255, rnd() * 255); assert.equal(E.labToHex(E.hexToLab(h)), h); }
 });
 test('colorDistance: idéntico 0, simétrico e Infinity con HEX no válido', () => {
   assert.equal(E.colorDistance('#abc', '#AABBCC'), 0);
@@ -344,6 +387,46 @@ test('calcetines: deterministas (mismo resultado en dos llamadas) y reglas conoc
   const input = { trousers: '#5E6B3A', shoes: '#F4F4F2', shoeType: 'sneaker', others: [{ hex: '#6B1F2A', label: 'Jersey' }], palettes: [{ id: 'p', name: 'X', source_type: 'book', colors: [{ hex: '#5E6B3A' }, { hex: '#C9A23A' }] }] };
   assert.deepEqual(JSON.stringify(S.recommendSocks(input)), JSON.stringify(S.recommendSocks(input)));
   S.recommendSocks(input).proposals.forEach((p) => assert.ok(p.rules.every((id) => S.RULES[id]), p.rules.join()));
+});
+
+/* ── Fase 1 de la auditoría (color-studio/AUDITORIA-2026-10.md) ── */
+test('CS-09: si la continuidad usa un calcetín propio idéntico al pantalón, no dice «un punto más oscuro»', () => {
+  const r = S.recommendSocks({ trousers: '#8A8D91', shoes: '#202020', socks: [{ id: 's', name: 'Gris', primary_color: '#8A8D91' }] });
+  const safe = r.proposals.find((p) => p.type === 'safe');
+  assert.equal(safe.hex, '#8A8D91');
+  assert.deepEqual(safe.rules, ['continuidad-pantalon']);
+  const dark = S.recommendSocks({ trousers: '#8A8D91', shoes: '#202020', socks: [{ id: 's', name: 'Gris oscuro', primary_color: '#7E8185' }] }).proposals.find((p) => p.type === 'safe');
+  assert.ok(dark.rules.includes('separacion-sutil'), 'un calcetín propio algo más oscuro sí es separación sutil');
+});
+test('CS-10: «informal» no se lee como zapato formal', () => {
+  assert.equal(S.inferShoeType('Zapato informal'), 'casual');
+  assert.equal(S.inferShoeType('Zapatilla informal'), 'sneaker');
+  assert.equal(S.inferShoeType('Zapato formal'), 'formal');
+  assert.equal(S.inferShoeType('Derby de vestir'), 'formal');
+});
+test('CS-11: el contraste propuesto siempre dista más de 15 ΔE00 del pantalón y del calzado', () => {
+  let seed = 3; const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+  const hx = () => E.rgbToHex(rnd() * 255, rnd() * 255, rnd() * 255);
+  let bad = 0;
+  for (let i = 0; i < 4000; i++) {
+    const t = hx(), s = hx(), o = hx();
+    const r = S.recommendSocks({ trousers: t, shoes: s, others: [{ hex: o, label: 'Camisa', share: 30 }], formality: ['formal', 'smart', 'casual'][i % 3], direction: ['minimal', 'balanced', 'creative'][(i >> 2) % 3] });
+    const x = r.proposals.find((p) => p.type === 'contrast');
+    if (x && (E.colorDistance(x.hex, t) <= 15 || E.colorDistance(x.hex, s) <= 15)) bad++;
+    if (!x) assert.ok(r.notes.some((n) => /contraste/.test(n)), 'sin contraste y sin explicarlo');
+  }
+  assert.equal(bad, 0);
+});
+test('CS-12: el contraste se informa por separado frente al pantalón y frente al calzado', () => {
+  const r = S.recommendSocks({ trousers: '#1F2A44', shoes: '#4A2E1F' });
+  const coord = r.proposals.find((p) => p.type === 'coordinated');
+  assert.equal(coord.hex, '#4A2E1F', 'coordina con el calzado');
+  assert.equal(coord.contrastShoes, 'bajo');
+  assert.notEqual(coord.contrastTrousers, 'bajo', 'frente al pantalón marino el marrón no es contraste bajo');
+  assert.equal(coord.contrast, coord.contrastTrousers, 'el nivel principal es frente al pantalón');
+  const noTr = S.recommendSocks({ shoes: '#4A2E1F' }).proposals[0];
+  assert.equal(noTr.contrastTrousers, null);
+  assert.equal(noTr.contrast, noTr.contrastShoes);
 });
 
 /* ── Composición y direcciones ── */

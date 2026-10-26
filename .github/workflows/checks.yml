@@ -61,11 +61,15 @@ jobs:
           npx playwright install --with-deps chromium
       - name: axe-core en todas las páginas
         run: node tools/check-a11y.mjs
+      # Cada suite de interfaz corre aunque falle la anterior (if: !cancelled()); el job sigue en rojo si falla alguna
       - name: Briefing de entrevista (dos A4, móvil y axe-core)
+        if: ${{ !cancelled() }}
         run: node tools/check-briefing.mjs
       - name: Centro de trabajo (flujos de interfaz con Supabase simulado)
+        if: ${{ !cancelled() }}
         run: node tools/check-kanban.mjs
       - name: Color Studio (flujos de interfaz con Supabase simulado)
+        if: ${{ !cancelled() }}
         run: node tools/check-color.mjs
 
   funciones:

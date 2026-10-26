@@ -40,7 +40,8 @@ window.APColor = (function () {
   var mem = {
     lib: { q: '', count: '', family: '', tag: '', source: '', fav: false },
     ward: { q: '', cat: '' },
-    sock: { trousers: null, shoes: null }
+    sock: { trousers: null, shoes: null },      // colores escritos en la guía y aplicados con «Actualizar»: solo valen en la guía
+    sockPending: { tr: null, sh: null }         // texto escrito y aún no aplicado (sobrevive a repintar la guía)
   };
   var draft = readDraft(false), demoDraft = emptyDraft();
 
@@ -334,17 +335,19 @@ window.APColor = (function () {
     function restoreOriginal() { var d = cur(); if (!d.original) return; d.slots = d.original; d.original = null; d.override = null; refresh(); toast('Has vuelto al conjunto original.'); }
     function shoeGarment(c) { var it = c.items.filter(function (x) { return x.slot === 'shoes'; })[0]; return it && it.garment ? it.garment : null; }
     function detectedShoe(c) { var g = shoeGarment(c); return g ? M.S.inferShoeType([g.subcategory, g.name].join(' ')) : null; }
-    function sockInputFrom(c) {
+    // manual = true solo en la guía de calcetines: el Studio usa siempre los colores reales del outfit
+    function sockInputFrom(c, manual) {
       var by = {}; c.items.forEach(function (it) { by[it.slot] = it; });
       var others = c.items.filter(function (it) { return ['outer', 'top', 'accessory'].indexOf(it.slot) >= 0 && it.hex; }).map(function (it) {
         var g = c.est.garments.filter(function (x) { return x.slot === it.slot; })[0];
         return { hex: it.hex, label: it.label, share: g ? g.pct : 0, secondary: it.garment ? it.garment.secondary_colors || [] : [] };
       });
       var d = cur(), tr = by.bottom && by.bottom.garment, sh = by.shoes && by.shoes.garment;
+      var mt = manual ? mem.sock.trousers : null, ms = manual ? mem.sock.shoes : null;
       return {
-        trousers: mem.sock.trousers || (by.bottom && by.bottom.hex) || null, shoes: mem.sock.shoes || (by.shoes && by.shoes.hex) || null,
-        trousersSecondary: !mem.sock.trousers && tr ? tr.secondary_colors || [] : [], trousersPattern: tr ? tr.pattern : null,
-        shoesSecondary: !mem.sock.shoes && sh ? sh.secondary_colors || [] : [],
+        trousers: mt || (by.bottom && by.bottom.hex) || null, shoes: ms || (by.shoes && by.shoes.hex) || null,
+        trousersSecondary: !mt && tr ? tr.secondary_colors || [] : [], trousersPattern: !mt && tr ? tr.pattern : null,
+        shoesSecondary: !ms && sh ? sh.secondary_colors || [] : [],
         shoeType: d.shoeType || detectedShoe(c),
         others: others, formality: d.formality, direction: d.direction,
         socks: data().garments.filter(function (g) { return g.category === 'calcetines'; }), palettes: data().palettes
@@ -417,7 +420,7 @@ window.APColor = (function () {
         band(c.shown, { cls: 'cs-band--dist' }),
         h('ul', { class: 'cs-dist', 'aria-label': 'Distribución cromática' + (c.manual ? ' ajustada a mano' : ' estimada') }, c.shown.map(function (x, i) {
           var role = roles[x.hex];
-          return h('li', { class: 'cs-dist-row' }, [swatch(x.hex), h('span', { class: 'cs-dist-name' }, [colorName(x.hex), role ? h('span', { class: 'cs-role cs-role--' + role, text: ROLE[role] }) : null]),
+          return h('li', { class: 'cs-dist-row' }, [swatch(x.hex), h('span', { class: 'cs-dist-name' }, [h('span', { class: 'cs-dist-txt', text: colorName(x.hex) }), role ? h('span', { class: 'cs-role cs-role--' + role, text: ROLE[role] }) : null]),
             h('span', { class: 'cs-hex', text: x.hex }), h('span', { class: 'cs-pct', text: cPct[i] + ' %' })]);
         })),
         h('p', { class: 'cs-fine cs-fine--tight', text: (c.manual ? 'Porcentajes ajustados a mano.' : 'Porcentajes = superficie estimada, no peso visual.') + ' Dominante, apoyo y acento son una jerarquía sugerida: un acento es un color pequeño que destaca por intensidad o distancia.' }),
@@ -435,7 +438,7 @@ window.APColor = (function () {
       var d = cur();
       var sec = h('section', { class: 'cs-card', 'aria-labelledby': 'cs-slots-t' }, [
         h('div', { class: 'cs-card-head' }, [h('h3', { class: 'cs-h3', id: 'cs-slots-t', text: 'Prendas' }),
-          Object.keys(d.slots).length ? btn('Vaciar', 'cs-link', function () { var x = cur(); x.slots = {}; x.override = null; x.id = null; x.name = ''; x.palette_id = null; x.original = null; mem.sock = { trousers: null, shoes: null }; refresh(); }) : null])
+          Object.keys(d.slots).length ? btn('Vaciar', 'cs-link', function () { var x = cur(); x.slots = {}; x.override = null; x.id = null; x.name = ''; x.palette_id = null; x.original = null; mem.sock = { trousers: null, shoes: null }; mem.sockPending = { tr: null, sh: null }; refresh(); }) : null])
       ]);
       var list = h('ul', { class: 'cs-slots' });
       M.E.SLOTS.forEach(function (s) {
@@ -674,7 +677,7 @@ window.APColor = (function () {
         return h('li', { class: 'cs-sockline' + (on ? ' is-on' : '') }, [
           h('span', { class: 'cs-ankle is-mini', 'aria-hidden': 'true' }, ankle(input, p.hex)),
           h('span', { class: 'cs-sockline-txt' }, [
-            h('span', { class: 'cs-slot-k', text: p.label + ' · contraste ' + p.contrast }),
+            h('span', { class: 'cs-slot-k', text: p.label + ' · contraste con el ' + (p.contrastTrousers ? 'pantalón ' + p.contrastTrousers : 'calzado ' + p.contrastShoes) }),
             h('span', { class: 'cs-slot-n' }, [p.name + ' ', h('span', { class: 'cs-hex', text: p.hex })]),
             h('span', { class: 'cs-slot-c', text: p.owned ? 'En tu armario: ' + garmentName(p.owned.garment) : 'No tienes uno de este tono registrado' })
           ]),
@@ -751,7 +754,7 @@ window.APColor = (function () {
       d.id = o.id; d.name = o.name; d.palette_id = o.palette_id; d.override = o.distribution_override; d.formality = o.formality || 'smart';
       d.occasion = o.occasion || ''; d.notes = o.notes || ''; d.is_favorite = o.is_favorite; d.slots = {}; d.original = null;
       (o.items || []).forEach(function (it) { d.slots[it.slot] = { garment_id: it.garment_id, hex: it.hex, weight: it.weight }; });
-      mem.sock = { trousers: null, shoes: null };
+      mem.sock = { trousers: null, shoes: null }; mem.sockPending = { tr: null, sh: null };
       refresh();
       toast('Outfit «' + o.name + '» cargado.');
     }
@@ -1213,21 +1216,27 @@ window.APColor = (function () {
       });
     }
     function paintSocks() {
-      var c = computed(), d = cur(), input = sockInputFrom(c);
+      var c = computed(), d = cur(), input = sockInputFrom(c, true);
       var basis = h('section', { class: 'cs-card', 'aria-labelledby': 'cs-basis-t' }, [h('div', { class: 'cs-card-head' }, [h('h3', { class: 'cs-h3', id: 'cs-basis-t', text: 'Punto de partida' })])]);
       basis.appendChild(h('p', { class: 'cs-note', text: c.items.length ? 'Se toman del outfit del Studio. Puedes cambiarlos aquí sin tocar el outfit.' : 'No hay outfit en el Studio: elige los colores a mano.' }));
-      var raw = { tr: '', sh: '' };
-      var tr = colorInput('cs-s-tr', 'Pantalón', input.trousers || '', function (v, t) { mem.sock.trousers = v; raw.tr = t; });
-      var sh = colorInput('cs-s-sh', 'Calzado', input.shoes || '', function (v, t) { mem.sock.shoes = v; raw.sh = t; });
+      // lo escrito no cuenta hasta pulsar «Actualizar propuestas»; vacío = color del outfit
+      var pend = mem.sockPending;
+      var tr = colorInput('cs-s-tr', 'Pantalón', pend.tr != null ? pend.tr : input.trousers || '', function (v, t) { pend.tr = t; });
+      var sh = colorInput('cs-s-sh', 'Calzado', pend.sh != null ? pend.sh : input.shoes || '', function (v, t) { pend.sh = t; });
       basis.appendChild(h('div', { class: 'cs-basis' }, [tr.el, sh.el]));
       basis.appendChild(h('div', { class: 'cs-basis-act' }, [
         btn('Actualizar propuestas', 'btn btn-outline', function () {
-          var bad = raw.tr && !M.E.normalizeHex(raw.tr) ? tr : raw.sh && !M.E.normalizeHex(raw.sh) ? sh : null;
+          var bad = pend.tr && !M.E.normalizeHex(pend.tr) ? tr : pend.sh && !M.E.normalizeHex(pend.sh) ? sh : null;
           if (bad) { toast('Escribe un HEX válido (#RRGGBB) o deja el campo vacío para usar el color del outfit.', true); bad.text.focus(); return; }
+          var outfit = sockInputFrom(c);
+          var t = pend.tr == null ? mem.sock.trousers : M.E.normalizeHex(pend.tr), s2 = pend.sh == null ? mem.sock.shoes : M.E.normalizeHex(pend.sh);
+          mem.sock = { trousers: t && t !== outfit.trousers ? t : null, shoes: s2 && s2 !== outfit.shoes ? s2 : null };
+          mem.sockPending = { tr: null, sh: null };
           refresh();
         }, { 'data-key': 'sock-apply' }),
-        (mem.sock.trousers || mem.sock.shoes) ? btn('Volver a los colores del outfit', 'cs-link', function () { mem.sock = { trousers: null, shoes: null }; refresh(); }) : null
+        (mem.sock.trousers || mem.sock.shoes || pend.tr != null || pend.sh != null) ? btn('Volver a los colores del outfit', 'cs-link', function () { mem.sock = { trousers: null, shoes: null }; mem.sockPending = { tr: null, sh: null }; refresh(); }, { 'data-key': 'sock-reset' }) : null
       ]));
+      if (mem.sock.trousers || mem.sock.shoes) basis.appendChild(h('p', { class: 'cs-note cs-note--manual', role: 'note', text: 'Estás probando colores escritos a mano: solo cambian esta guía. El Studio sigue usando los colores del outfit.' }));
       if (input.others.length) basis.appendChild(h('p', { class: 'cs-fine' }, ['Resto del outfit: '].concat(input.others.map(function (o, i) { return [i ? ', ' : '', swatch(o.hex, 'cs-dot'), ' ' + o.label.toLowerCase() + ' (' + colorName(o.hex) + ')']; }))));
       function seg(label, opts, value, onPick, key) {
         return h('div', { class: 'cs-segfield' }, [h('p', { class: 'ap-field-label', id: 'cs-seg-' + key, text: label }),
@@ -1262,7 +1271,9 @@ window.APColor = (function () {
           h('div', { class: 'cs-prop-body' }, [
             h('p', { class: 'cs-eyebrow', text: p.label }),
             h('p', { class: 'cs-prop-name' }, [p.name + ' ', h('span', { class: 'cs-hex', text: p.hex })]),
-            h('p', { class: 'cs-prop-meta' }, [h('span', { text: 'Contraste con pantalón y calzado: ' + p.contrast }), h('span', { text: 'Inspira: ' + p.source })]),
+            h('p', { class: 'cs-prop-meta' }, [
+              h('span', { text: 'Contraste: ' + [p.contrastTrousers ? 'pantalón ' + p.contrastTrousers : null, p.contrastShoes ? 'calzado ' + p.contrastShoes : null].filter(Boolean).join(' · ') }),
+              h('span', { text: 'Inspira: ' + p.source })]),
             h('p', { class: 'cs-prop-exp', text: p.explanation }),
             h('p', { class: 'cs-prop-eff', text: p.effect }),
             h('p', { class: 'cs-prop-own' + (p.owned ? ' is-own' : '') }, p.owned
