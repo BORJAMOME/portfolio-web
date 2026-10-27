@@ -7,7 +7,8 @@
 /* Mientras Color Studio está en pantalla la página usa su fondo #FBFBFB; el resto del área privada no cambia */
 body:has(.cs) { --off: #FBFBFB; background: #FBFBFB; }
 
-.cs {
+/* Los tokens también en las hojas y formularios: se montan en <body>, fuera de .cs */
+.cs, .cs-sheet, body:has(.cs) .ap-dialog {
   --cs-ink: #161616;
   --cs-muted: #5A5A5A;            /* 6,6:1 sobre #FBFBFB */
   --cs-line: #E2E2DE;
@@ -15,6 +16,8 @@ body:has(.cs) { --off: #FBFBFB; background: #FBFBFB; }
   --cs-line-strong: #C4C4BE;
   --cs-paper: #FFFFFF;
   --cs-focus: #273A5F;
+}
+.cs {
   color: var(--cs-ink);
   padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));   /* deja sitio a la barra inferior en móvil */
 }
@@ -31,7 +34,7 @@ body:has(.cs) { --off: #FBFBFB; background: #FBFBFB; }
 /* ─── Navegación: barra inferior en móvil, segmentos en escritorio ─── */
 .cs-nav {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
-  display: grid; grid-template-columns: repeat(4, 1fr);
+  display: grid; grid-template-columns: repeat(5, 1fr);
   background: rgba(251, 251, 251, .97); border-top: 1px solid var(--cs-line);
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
@@ -459,6 +462,99 @@ body:has(.cs) { --off: #FBFBFB; background: #FBFBFB; }
 
 @keyframes cs-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .cs-prop2, .cs-sockline { animation: none; } .cs-dir-b { transition: none; } }
+
+/* ─── Inspiración (#/color/inspiracion) · prefijo cs-ins- ───
+   Rejilla uniforme 4:5 (no mampostería): mantiene el orden de lectura y del teclado, y las fotos de outfits suelen ser verticales.
+   La imagen manda; debajo, título, una línea de contexto y la paleta como franja fina. */
+.cs-ins-bar { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: end; justify-content: space-between; margin-bottom: 10px; }
+.cs-ins-sort, .cs-ins-f { display: grid; gap: 4px; }
+.cs-ins-fl { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--cs-muted); }
+.cs-ins-sort .apf-select, .cs-ins-f .apf-select { min-height: 44px; }
+.cs-ins-panel { display: none; gap: 12px; padding: 14px 0 16px; margin-bottom: 6px; border-bottom: 1px solid var(--cs-line); }
+.cs-ins-panel.is-open { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cs-ins-checks { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0 18px; }
+.cs-ins-panel > .cs-link { grid-column: 1 / -1; justify-self: start; }
+@media (min-width: 900px) {
+  .cs-ins-filters { display: flex; align-items: end; gap: 14px; padding-bottom: 14px; margin-bottom: 6px; border-bottom: 1px solid var(--cs-line); }
+  .cs-ins-toggle { display: none; }
+  .cs-ins-bar { order: 2; margin: 0 0 0 auto; }
+  .cs-ins-panel, .cs-ins-panel.is-open { display: flex; flex-wrap: wrap; align-items: end; gap: 10px 14px; padding: 0; margin: 0; border: 0; }
+}
+
+.cs-ins-grid { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 12px; }
+@media (min-width: 640px) { .cs-ins-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 32px 20px; } }
+@media (min-width: 1400px) { .cs-ins-grid { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); } }
+.cs-ins-card { position: relative; min-width: 0; }
+.cs-ins-open { display: grid; gap: 8px; width: 100%; padding: 0; border: 0; background: none; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+.cs-ins-media { position: relative; display: grid; place-items: stretch; width: 100%; aspect-ratio: 4 / 5; border-radius: 10px; overflow: hidden; background: var(--cs-line-soft); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .06); }
+.cs-ins-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cs-ins-media.is-broken::after { content: 'Imagen no disponible'; position: absolute; inset: auto 0 10px; text-align: center; font-size: 12px; color: var(--cs-ink); }
+.cs-ins-media > .cs-band--cover, .cs-ins-hero > .cs-band--cover { height: 100%; flex-direction: column; gap: 0; }
+.cs-band--cover .cs-band-c { border-radius: 0 !important; box-shadow: none; }
+.cs-ins-nophoto { display: grid; place-items: center; font-size: 13px; color: var(--cs-muted); }
+.cs-ins-txt { display: grid; gap: 4px; min-width: 0; padding-right: 36px; }
+.cs-ins-t { font-family: var(--font-serif); font-size: 16.5px; font-weight: 500; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.cs-ins-m { font-size: 12.5px; color: var(--cs-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cs-band--strip { height: 8px; margin-top: 2px; }
+.cs-band--strip .cs-band-c { min-width: 2px; }
+.cs-ins-flag { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ap-support-ink); }
+.cs-ins-flag::before { content: ''; width: 9px; height: 9px; border-radius: 2px; border: 1.5px dashed currentColor; flex: none; }
+.cs-ins-fav { top: auto; bottom: -8px; right: -8px; }
+@media (hover: hover) and (pointer: fine) { .cs-ins-open:hover .cs-ins-t { text-decoration: underline; text-underline-offset: 3px; } }
+
+/* Detalle */
+.cs-ins-detail { display: grid; gap: 16px; }
+@media (min-width: 640px) { .cs-ins-detail { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; } }
+.cs-ins-hero { position: relative; margin: 0; width: 100%; aspect-ratio: 4 / 5; max-height: 70dvh; border-radius: 12px; overflow: hidden; background: var(--cs-line-soft); display: flex; }
+.cs-ins-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: var(--cs-line-soft); }
+.cs-ins-hero > p { margin: auto; padding: 16px; }
+.cs-ins-info { display: grid; gap: 10px; align-content: start; font-size: 14px; line-height: 1.5; }
+.cs-ins-src { color: var(--cs-muted); }
+.cs-ins-link { color: var(--cs-ink); font-weight: 600; text-underline-offset: 3px; }
+.cs-ins-link::after { content: ' ↗'; }
+.cs-tag--season { background: none; box-shadow: inset 0 0 0 1px var(--cs-line-strong); }
+.cs-ins-cols .cs-mini-t { display: inline; margin: 0 6px 0 0; }
+.cs-ins-rate { font-size: 16px; letter-spacing: 2px; color: var(--cs-ink); }
+.cs-ins-sec { padding: 18px 0 4px; margin-top: 18px; border-top: 1px solid var(--cs-line); }
+.cs-ins-sec .cs-h3 { margin-bottom: 12px; }
+.cs-ins-sec .cs-card-head .cs-h3 { margin-bottom: 0; }
+.cs-ins-colors { list-style: none; display: grid; gap: 4px; margin-top: 12px; }
+.cs-ins-color { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--cs-line-soft); }
+.cs-ins-ctxt { display: grid; gap: 3px; min-width: 0; }
+.cs-ins-cname { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-size: 14px; }
+.cs-role--secundario { border-color: var(--cs-line-strong); color: var(--cs-ink); }
+.cs-ins-manual { font-size: 12px; color: var(--cs-muted); font-style: italic; }
+.cs-ins-w { display: grid; grid-template-columns: minmax(0, 1fr) 46px; gap: 8px; align-items: center; }
+.cs-ins-meter { display: block; height: 6px; border-radius: 3px; background: var(--cs-line-soft); overflow: hidden; }
+.cs-ins-meter-in { display: block; height: 100%; background: var(--cs-ink); border-radius: 3px; }
+.cs-ins-copy { padding: 0 12px; font-size: 12.5px; }
+.cs-ins-note { white-space: pre-line; font-size: 14.5px; line-height: 1.6; }
+.cs-ins-sim { list-style: none; display: grid; gap: 6px; }
+.cs-ins-sim-b { display: grid; grid-template-columns: 76px minmax(0, 1fr) auto; gap: 12px; align-items: center; width: 100%; min-height: 48px; padding: 6px 0; border: 0; background: none; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+.cs-ins-sim-b .cs-fine { margin: 0; }
+.cs-ins-sim-t { font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
+@media (max-width: 420px) { .cs-ins-sim-b { grid-template-columns: 76px minmax(0, 1fr); } .cs-ins-sim-b .cs-fine { grid-column: 2; } }
+
+/* Alta y edición */
+.cs-ins-urlrow { display: flex; flex-wrap: wrap; gap: 8px; }
+.cs-ins-urlrow input { flex: 1 1 220px; min-width: 0; }
+.cs-ins-photo { display: grid; gap: 14px; }
+@media (min-width: 640px) { .cs-ins-photo { grid-template-columns: 180px minmax(0, 1fr); align-items: start; } }
+.cs-ins-preview { width: 100%; max-width: 220px; aspect-ratio: 4 / 5; border-radius: 12px; overflow: hidden; background: var(--cs-line-soft); display: grid; place-items: center; position: relative; }
+.cs-ins-preview:has(> .cs-photo-empty) { aspect-ratio: auto; height: 88px; max-width: none; }   /* sin imagen no ocupa media pantalla */
+.cs-ins-preview img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cs-ins-preview .cs-ins-media { position: absolute; inset: 0; aspect-ratio: auto; border-radius: 0; }
+.cs-ins-photo-side { display: grid; gap: 8px; min-width: 0; }
+@media (hover: hover) and (pointer: fine) { .cs-ins-cam { display: none; } }
+.cs-ins-pallist { list-style: none; display: grid; gap: 4px; margin-top: 8px; font-size: 13px; }
+.cs-ins-pallist li { display: grid; grid-template-columns: 16px minmax(0, 1fr) auto 42px; gap: 8px; align-items: center; }
+.cs-ins-chipset { display: flex; flex-wrap: wrap; gap: 8px; }
+.cs-ins-newrow { display: flex; gap: 8px; margin-top: 10px; }
+.cs-ins-new { flex: 1 1 auto; min-width: 0; min-height: 40px; padding: 8px 12px; font: inherit; font-size: 16px; border: 1px solid var(--cs-line-strong); border-radius: 8px; }
+.cs-ins-more { border-top: 1px solid var(--cs-line); padding-top: 6px; }
+.cs-ins-more > .apf-grid { margin-top: 10px; }
+.cs-ins-wl { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; color: var(--cs-muted); }
+.cs-ins-wl .cs-weight { width: 76px; }
 
 /* ─── Intro: bienvenida al entrar (bloque INTRO de area-privada-color.js) · prefijo csi- ───
    Máscara + desplazamiento + opacidad en el nombre; una línea fina como único recurso complementario.

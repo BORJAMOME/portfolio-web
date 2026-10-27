@@ -65,6 +65,10 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
   Proporciones = estimaciones editables; no inventar porcentajes de confianza ni contenido del libro de Sanzo Wada. Modo ejemplo en memoria, nunca se guarda.
   Las propuestas usan prendas reales (dos a la vez solo si con una no basta); si no hay, el color va marcado como hipotético. Aplicar guarda el conjunto de partida en el borrador para volver a él.
   «Qué prenda te falta» sale de las propuestas hipotéticas (`wardrobeGaps`). Cuentagotas en la foto (`engine.sampleColor`). Largo del calcetín por calzado (`sockFit`), leído de la subcategoría: sin columnas nuevas.
+  **Inspiración** (`#/color/inspiracion`): outfits guardados de internet en `cs_inspirations` (`supabase/color-studio-inspiracion.sql`, RLS por dueño
+  `owner = auth.uid()`; fotos en `armario/inspiracion/<usuario>/` con miniatura), lógica en `color-studio/inspiration.js`, paleta extraída con el mismo
+  motor y editable; estilos y colecciones = grupos `inspiracion.estilo`/`inspiracion.coleccion` de `ap_opciones`. «Leer enlace» usa la Edge Function
+  `supabase/functions/inspiracion-meta` (opcional, anti-SSRF). «Usar en Studio» copia la paleta a la Biblioteca; nunca crea prendas.
   Pruebas: `node --test tools/test-color.mjs` y `node tools/check-color.mjs`. Guía y decisiones: `color-studio/README.md`.
 - **Calendario** (`#/calendario`): solo lectura. Google → iCal secreto → Edge Function `supabase/functions/calendario-sync`
   (pg_cron cada 15 min) → `public.calendar_events`. La página nunca habla con Google. Guía: `supabase/functions/calendario-sync/README.md`.

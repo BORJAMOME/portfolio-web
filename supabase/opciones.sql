@@ -9,6 +9,8 @@
 --   fichero.formato  → formatos del Fichero (links.type, text)
 --   portfolio.tipo   → tipos de la pestaña Portfolio (portfolio.tipo, text; ver portfolio.sql)
 --   agenda.categoria → categorías del Calendario (agenda.categoria, text; ver agenda.sql)
+--   inspiracion.estilo / inspiracion.coleccion → Color Studio · Inspiración (cs_inspirations.styles / collections, text[];
+--                      ver color-studio-inspiracion.sql)
 -- Un grupo nuevo no necesita cambiar la base: basta con insertar filas con ese grupo
 -- y enseñarlo en la página.
 --
@@ -66,6 +68,18 @@ begin
   elsif o.grupo = 'agenda.categoria' then
     update public.agenda set categoria = nuevo where categoria = o.valor;
     get diagnostics n = row_count;
+  elsif o.grupo in ('inspiracion.estilo', 'inspiracion.coleccion') then
+    -- Color Studio · Inspiración (color-studio-inspiracion.sql); la RLS limita el cambio a las referencias propias
+    if o.grupo = 'inspiracion.estilo' then
+      update public.cs_inspirations
+         set styles = (select array_agg(distinct t) from unnest(array_replace(styles, o.valor, nuevo)) t)
+       where o.valor = any (styles);
+    else
+      update public.cs_inspirations
+         set collections = (select array_agg(distinct t) from unnest(array_replace(collections, o.valor, nuevo)) t)
+       where o.valor = any (collections);
+    end if;
+    get diagnostics n = row_count;
   end if;
   return n;
 end $$;
@@ -91,6 +105,12 @@ begin
     get diagnostics n = row_count;
   elsif o.grupo = 'agenda.categoria' then
     update public.agenda set categoria = null where categoria = o.valor;
+    get diagnostics n = row_count;
+  elsif o.grupo = 'inspiracion.estilo' then
+    update public.cs_inspirations set styles = array_remove(styles, o.valor) where o.valor = any (styles);
+    get diagnostics n = row_count;
+  elsif o.grupo = 'inspiracion.coleccion' then
+    update public.cs_inspirations set collections = array_remove(collections, o.valor) where o.valor = any (collections);
     get diagnostics n = row_count;
   end if;
   delete from public.ap_opciones where id = p_id;

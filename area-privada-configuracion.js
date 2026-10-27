@@ -32,6 +32,16 @@ window.APConfiguracion = (function () {
       id: 'agenda.categoria', section: 'Calendario', title: 'Categorías', one: 'categoría', fem: true, source: { table: 'agenda', select: 'categoria' }, unit: ['elemento', 'elementos'],
       desc: 'Dan color a tus eventos, bloques de foco y tareas. El color sigue el orden de la lista.',
       uses: function (rows, v) { return rows.filter(function (r) { return r.categoria === v; }).length; }
+    },
+    {
+      id: 'inspiracion.estilo', section: 'Color Studio', title: 'Estilos de inspiración', one: 'estilo', source: { table: 'cs_inspirations', select: 'styles,collections' }, unit: ['referencia', 'referencias'],
+      desc: 'Clasifican los outfits guardados en Inspiración. Una referencia puede tener varios.',
+      uses: function (rows, v) { return rows.filter(function (r) { return (r.styles || []).indexOf(v) > -1; }).length; }
+    },
+    {
+      id: 'inspiracion.coleccion', section: 'Color Studio', title: 'Colecciones de inspiración', one: 'colección', fem: true, source: { table: 'cs_inspirations', select: 'styles,collections' }, unit: ['referencia', 'referencias'],
+      desc: 'Agrupaciones personales de referencias: un viaje, la oficina, una boda…',
+      uses: function (rows, v) { return rows.filter(function (r) { return (r.collections || []).indexOf(v) > -1; }).length; }
     }
   ];
 

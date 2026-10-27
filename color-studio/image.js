@@ -49,10 +49,12 @@ function copyAt(canvas, side) {
 function toBlob(canvas, type, q) { return new Promise((r) => canvas.toBlob(r, type, q)); }
 
 /**
- * Prepara una foto para subirla. → { blob, type, width, height, sample, pick }  (sample y pick: { data, width, height })
+ * Prepara una foto para subirla. → { blob, type, width, height, sample, pick, thumb }  (sample y pick: { data, width, height })
  * sample es una copia pequeña (≤ 96 px) para el análisis de color; pick, una mayor (≤ 480 px) para el cuentagotas.
+ * Con opts.thumb (lado en px), thumb = { blob, type } es una miniatura para las tarjetas (Inspiración); null si no se pide
+ * o si la imagen no es mayor que ese lado.
  */
-export async function prepareImage(file) {
+export async function prepareImage(file, opts = {}) {
   const problem = checkFile(file);
   if (problem) throw new Error(problem);
   let bmp;
@@ -75,8 +77,16 @@ export async function prepareImage(file) {
   s2d.drawImage(canvas, 0, 0, sw, sh);
   const sample = { data: s2d.getImageData(0, 0, sw, sh).data, width: sw, height: sh };
   const pick = copyAt(canvas, PICK_SIDE);
+  let thumb = null;
+  if (opts.thumb && Math.max(w, h) > opts.thumb) {       // si la imagen ya es pequeña, la miniatura sería la misma
+    const t = Math.min(1, opts.thumb / Math.max(w, h)), tc = document.createElement('canvas');
+    tc.width = Math.max(1, Math.round(w * t)); tc.height = Math.max(1, Math.round(h * t));
+    tc.getContext('2d').drawImage(canvas, 0, 0, tc.width, tc.height);
+    const tb = await toBlob(tc, type, 0.8);
+    if (tb) thumb = { blob: tb, type };
+  }
   if (bmp.close) bmp.close();
-  return { blob, type, width: w, height: h, sample, pick };
+  return { blob, type, width: w, height: h, sample, pick, thumb };
 }
 
 /* ── Proveedores de visión ── */

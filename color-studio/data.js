@@ -189,13 +189,14 @@ export function reviewImport(rows, existing) {
 /* ═══════════ EXPORTACIÓN ═══════════ */
 const pick = (o, keys) => Object.fromEntries(keys.filter((k) => o[k] !== undefined).map((k) => [k, o[k]]));
 /** Copia portable de los datos propios. Las fotos no viajan: solo su ruta en el bucket privado. */
-export function buildExport({ garments, palettes, outfits }, now = new Date()) {
+export function buildExport({ garments, palettes, outfits, inspirations }, now = new Date()) {
   return {
     format: EXPORT_FORMAT, version: EXPORT_VERSION, exported_at: now.toISOString(),
-    note: 'Las fotos de las prendas no se incluyen; image_path es su ruta en el bucket privado «armario».',
+    note: 'Las fotos de las prendas y de las inspiraciones no se incluyen; image_path es su ruta en el bucket privado «armario».',
     palettes: (palettes || []).map((p) => pick(p, ['id', 'name', 'colors', 'tags', 'source_type', 'source_title', 'source_url', 'source_notes', 'notes', 'is_favorite', 'created_at', 'updated_at'])),
     garments: (garments || []).map((g) => pick(g, ['id', 'name', 'category', 'subcategory', 'image_path', 'primary_color', 'secondary_colors', 'color_shares', 'pattern', 'material', 'notes', 'created_at', 'updated_at'])),
-    outfits: (outfits || []).map((o) => pick(o, ['id', 'name', 'items', 'palette_id', 'distribution_override', 'occasion', 'formality', 'notes', 'is_favorite', 'created_at', 'updated_at']))
+    outfits: (outfits || []).map((o) => pick(o, ['id', 'name', 'items', 'palette_id', 'distribution_override', 'occasion', 'formality', 'notes', 'is_favorite', 'created_at', 'updated_at'])),
+    inspirations: (inspirations || []).map((x) => pick(x, ['id', 'title', 'source_url', 'source_name', 'published_on', 'image_path', 'description', 'notes', 'styles', 'collections', 'seasons', 'rating', 'is_favorite', 'palette', 'palette_status', 'palette_id', 'created_at', 'updated_at']))
   };
 }
 
@@ -209,6 +210,10 @@ export function demoData() {
   const p = (id, name, colors, tags) => ({ id: 'demo-p' + id, demo: true, name, tags, source_type: 'own', source_title: 'Ejemplo de Color Studio (inventado, sin fuente)',
     source_url: null, source_notes: null, notes: null, is_favorite: false,
     colors: colors.map((c) => ({ original: c[0], hex: c[0], name: c[1], role: null, note: null })) });
+  const i = (id, title, styles, seasons, colors, fav, days) => ({ id: 'demo-i' + id, demo: true, title, source_url: null, source_name: 'Ejemplo de Color Studio', published_on: null,
+    image_path: null, thumb_path: null, image_hash: null, description: null, notes: null, styles, collections: [], seasons, rating: null, is_favorite: fav,
+    palette: colors.map((c) => ({ hex: c[0], weight: c[1], source: 'auto' })), palette_status: 'reviewed', palette_id: null,
+    created_at: new Date(Date.UTC(2026, 0, 10 + days)).toISOString() });
   return {
     garments: [
       g('pan-marino', 'Chino marino', 'pantalones', '#1F2A44'), g('pan-piedra', 'Chino piedra', 'pantalones', '#B9AE96'),
@@ -226,6 +231,12 @@ export function demoData() {
       p(3, 'Vino y niebla', [['#6B1F2A', 'burdeos'], ['#9A9A97', 'gris'], ['#2E3F5C', 'índigo']], ['contraste']),
       p(4, 'Mar de invierno', [['#A9C1DC', 'azul claro'], ['#1F2A44', 'marino'], ['#F2F1EE', 'blanco'], ['#B8B09B', 'arena'], ['#6E2230', 'granate']], ['azul'])
     ],
-    outfits: []
+    outfits: [],
+    // referencias de Inspiración sin foto (la tarjeta enseña su paleta); inventadas, sin enlace ni fuente real
+    inspirations: [
+      i(1, 'Ejemplo · Camel y marino', ['Smart casual'], ['otono', 'invierno'], [['#B48A5A', 38], ['#1F2A44', 34], ['#F4F2EC', 18], ['#4A2E1F', 10]], true, 3),
+      i(2, 'Ejemplo · Lino y arena', ['Casual', 'Minimalista'], ['verano'], [['#F2F1EE', 46], ['#B8B09B', 32], ['#A9C1DC', 22]], false, 2),
+      i(3, 'Ejemplo · Oliva y burdeos', ['Workwear'], ['entretiempo'], [['#5E6B3A', 44], ['#2E3F5C', 30], ['#6B1F2A', 16], ['#C9A23A', 10]], false, 1)
+    ]
   };
 }
