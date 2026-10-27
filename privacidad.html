@@ -13,8 +13,8 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" rel="stylesheet">
 <!-- Shared styles: variables, nav, footer, botones, reset -->
 <link rel="stylesheet" href="./shared.css?v=7f31d1e0dd">
 
@@ -50,13 +50,12 @@
   #bm-cookie-banner {
     position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(0);
     z-index: 99999; width: min(540px, calc(100vw - 32px));
-    background: var(--ink); color: #f7f7fa;
-    border: 1px solid rgba(122,123,255,.3);
-    border-radius: 16px; padding: 16px 20px;
+    background: #111111; color: #f5f5f5;
+    border: 1px solid #4a4a4a;
+    border-radius: 4px; padding: 16px 20px;
     display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-    box-shadow: 0 12px 48px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.04);
-    font-family: var(--font);
-    font-size: 13px; line-height: 1.55;
+    font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, 'Cascadia Code', Consolas, monospace;
+    font-size: 12px; line-height: 1.6;
     opacity: 0; pointer-events: none; visibility: hidden;
     transition: opacity .3s ease, transform .35s var(--ease);
   }
@@ -66,27 +65,27 @@
   #bm-cookie-banner.bm-hiding {
     visibility: visible; opacity: 0; transform: translateX(-50%) translateY(16px);
   }
-  #bm-cookie-banner p { margin: 0; flex: 1; min-width: 200px; color: #b8b8cc; }
-  #bm-cookie-banner strong { color: #f7f7fa; font-weight: 600; }
-  #bm-cookie-banner a { color: #7a7bff; text-decoration: none; border-bottom: 1px solid rgba(122,123,255,.4); }
+  #bm-cookie-banner p { margin: 0; flex: 1; min-width: 200px; color: #c4c4c4; }
+  #bm-cookie-banner strong { color: #ffffff; font-weight: 700; }
+  #bm-cookie-banner a { color: #ffffff; text-decoration: underline; text-underline-offset: 3px; }
   .bm-cb-btns { display: flex; gap: 8px; flex-shrink: 0; }
   .bm-cb-btn {
-    cursor: pointer; border: none; border-radius: 9px;
-    padding: 9px 18px; font-size: 12px; font-weight: 700;
-    font-family: inherit; letter-spacing: .4px;
-    transition: opacity .15s, transform .12s;
+    cursor: pointer; border: 1px solid #f5f5f5; border-radius: 2px;
+    padding: 10px 18px; min-height: 40px; font-size: 12px; font-weight: 600;
+    font-family: inherit; letter-spacing: .04em;
+    transition: background .15s, color .15s;
     text-transform: uppercase;
   }
+  .bm-cb-btn:focus-visible { outline: 2px solid #ffffff; outline-offset: 3px; }
+  .bm-cb-btn[aria-pressed="true"] { box-shadow: 0 0 0 2px #111111, 0 0 0 3px #c4c4c4; }
+  .bm-cb-accept { background: #f5f5f5; color: #111111; }
+  .bm-cb-reject { background: transparent; color: #f5f5f5; }
   @media (hover: hover) and (pointer: fine) {
-    .bm-cb-btn:hover { opacity: .82; transform: translateY(-1px); }
+    .bm-cb-accept:hover { background: #ffffff; }
+    .bm-cb-reject:hover { background: #f5f5f5; color: #111111; }
   }
-  .bm-cb-btn:active { transform: translateY(0); }
-  .bm-cb-btn:focus-visible { outline: 2px solid #f7f7fa; outline-offset: 2px; }
-  .bm-cb-btn[aria-pressed="true"] { box-shadow: 0 0 0 2px #0b0b0f, 0 0 0 3px #b8b8cc; }
-  .bm-cb-accept { background: #7a7bff; color: #fff; }
-  .bm-cb-reject { background: rgba(255,255,255,.07); color: #b8b8cc; border: 1px solid rgba(255,255,255,.1); }
   @media (max-width: 480px) {
-    #bm-cookie-banner { bottom: 16px; padding: 14px 16px; border-radius: 12px; }
+    #bm-cookie-banner { bottom: 16px; padding: 14px 16px; }
     .bm-cb-btns { width: 100%; justify-content: flex-end; }
   }
 </style>
@@ -121,19 +120,23 @@
 
 
 <style>
+/* Privacidad · monocromo, tipografía de código. Solo esta página; los tokens del sitio se neutralizan aquí. */
 :root{
   --ink:#111111;
   --paper:#ffffff;
-  --muted:#5a5a5a;
-  --off:#f7f7fa;
-  --line:#e7e7ee;
-  --purple:#7a7bff;
-  --purple2:#5a5be0;
-  --purple-light:#ededff;
-  --green:#3c8a37;
+  --muted:#595959;
+  --body:#2b2b2b;
+  --off:#f5f5f5;
+  --line:#e3e3e3;
+  /* shared.css usa --purple para el foco, la selección y el logo: en esta página pasan a gris casi negro */
+  --purple:#111111;
+  --purple2:#111111;
+  --purple-light:#f0f0f0;
+  --logo-purple:#111111;
   --ease:cubic-bezier(0.16,1,0.3,1);
   --font:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;
   --font-serif:'Newsreader',Georgia,serif;
+  --pv-mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,'Cascadia Code',Consolas,monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -141,109 +144,115 @@ body{
   font-family:var(--font); background:var(--paper); color:var(--ink);
   line-height:1.6; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; overflow-x:hidden;
 }
-::selection{background:var(--purple);color:#fff}
+::selection{background:var(--ink);color:#fff}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-.shell{max-width:1240px;margin:0 auto;padding:0 clamp(20px,4vw,48px)}
+footer *:focus-visible,.nav-drawer *:focus-visible{outline-color:#fff}
 
-/* ── Portada ── */
-.pv-hero{padding:132px 0 56px;border-bottom:1px solid var(--line)}
-.pv-eyebrow{font-size:12px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--purple2);margin-bottom:18px}
-.pv-h1{font-family:var(--font-serif);font-weight:500;font-size:clamp(40px,6vw,76px);line-height:1;letter-spacing:-2px;max-width:14ch}
-.pv-h1 em{font-style:italic;color:var(--purple2)}
-.pv-lede{margin-top:24px;max-width:60ch;font-size:clamp(16px,1.4vw,19px);color:#3d3d3d}
-.pv-meta{margin-top:28px;display:flex;flex-wrap:wrap;gap:8px 22px;font-size:13px;color:var(--muted)}
-.pv-meta b{color:var(--ink);font-weight:600}
+/* ── Marco: índice (200px) + columna de lectura (72 caracteres) ── */
+.pv-wrap{
+  font-family:var(--pv-mono); font-size:15px; line-height:1.7; color:var(--body);
+  width:100%; max-width:calc(200px + 64px + 72ch + 2 * clamp(20px,5vw,48px));
+  margin:0 auto; padding:0 clamp(20px,5vw,48px);
+  overflow-wrap:break-word;
+}
+.pv-wrap strong,.pv-wrap b{font-weight:700;color:var(--ink)}
+.pv-wrap a{color:var(--ink);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px;transition:text-decoration-thickness .15s}
+.pv-wrap a:hover{text-decoration-thickness:2px}
+.pv-wrap :focus-visible{outline:2px solid var(--ink);outline-offset:3px}
 
-/* ── En corto ── */
-.pv-short{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin:48px 0 0}
-.pv-short li{list-style:none;background:var(--paper);padding:22px 22px 24px;display:flex;flex-direction:column;gap:10px}
-.pv-short-k{font-family:var(--font-serif);font-size:30px;line-height:1;color:var(--purple2)}
-.pv-short-t{font-weight:700;font-size:15px;letter-spacing:-.2px}
-.pv-short-d{font-size:14px;color:var(--muted);line-height:1.5}
+/* ── Cabecera ── */
+.pv-hero{padding:136px 0 56px;border-bottom:1px solid var(--line)}
+.pv-eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:20px}
+.pv-h1{font-weight:700;font-size:clamp(24px,7vw,44px);line-height:1.1;letter-spacing:-.035em;color:var(--ink)}
+.pv-h1 em{font-style:normal;color:var(--muted)}
+.pv-lede{margin-top:24px;max-width:64ch;font-size:15px;color:var(--body)}
+.pv-meta{margin-top:24px;display:flex;flex-wrap:wrap;gap:4px 28px;font-size:12px;line-height:1.6;color:var(--muted)}
+.pv-meta b{font-weight:700;color:var(--ink)}
 
-/* ── Cuerpo: índice fijo + texto ── */
-.pv-body{display:grid;grid-template-columns:220px minmax(0,1fr);gap:clamp(32px,6vw,96px);padding:64px 0 96px}
+/* ── Resumen: cuatro afirmaciones separadas por filetes ── */
+.pv-short{list-style:none;margin-top:48px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0 32px}
+.pv-short li{border-top:1px solid var(--ink);padding-top:14px;display:flex;flex-direction:column;gap:6px}
+.pv-short-t{font-weight:700;font-size:14px;line-height:1.4;color:var(--ink)}
+.pv-short-d{font-size:13px;line-height:1.6;color:var(--muted)}
+
+/* ── Cuerpo ── */
+.pv-body{display:grid;grid-template-columns:200px minmax(0,72ch);gap:64px;padding:56px 0 112px}
 .pv-toc{position:sticky;top:96px;align-self:start}
-.pv-toc-title{font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
-.pv-toc ol{list-style:none;counter-reset:toc;display:flex;flex-direction:column;gap:2px;border-left:1px solid var(--line)}
-.pv-toc li{counter-increment:toc}
-.pv-toc a{display:flex;gap:10px;padding:7px 0 7px 16px;margin-left:-1px;border-left:2px solid transparent;font-size:14px;color:var(--muted);text-decoration:none;transition:color .2s,border-color .2s}
-.pv-toc a::before{content:counter(toc,decimal-leading-zero);font-variant-numeric:tabular-nums;font-size:12px;color:#8a8a96;padding-top:1px}
-.pv-toc a:hover,.pv-toc a.is-current{color:var(--ink);border-left-color:var(--purple)}
-.pv-toc a:focus-visible{outline:2px solid var(--purple2);outline-offset:2px}
+.pv-toc-title{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.pv-toc ol{list-style:none;display:flex;flex-direction:column;border-left:1px solid var(--line)}
+.pv-toc a{display:block;padding:6px 0 6px 14px;margin-left:-1px;border-left:1px solid transparent;font-size:12.5px;line-height:1.5;color:var(--muted);text-decoration:none;transition:color .15s,border-color .15s}
+.pv-toc a:hover{color:var(--ink);text-decoration:none}
+.pv-toc a.is-current{color:var(--ink);font-weight:700;border-left-color:var(--ink)}
 
-.pv-text{max-width:720px}
-.pv-sec{padding-top:8px;scroll-margin-top:96px}
-.pv-sec + .pv-sec{margin-top:56px;padding-top:56px;border-top:1px solid var(--line)}
-.pv-sec h2{font-family:var(--font-serif);font-weight:500;font-size:clamp(26px,2.6vw,34px);letter-spacing:-.8px;line-height:1.15;margin-bottom:18px}
-.pv-sec h2 .n{display:block;font-family:var(--font);font-size:12px;font-weight:700;letter-spacing:1.4px;color:var(--purple2);margin-bottom:10px}
-.pv-sec h3{font-size:16px;font-weight:700;margin:28px 0 8px;letter-spacing:-.2px}
-.pv-sec p,.pv-sec li{font-size:16px;color:#333}
+.pv-sec{scroll-margin-top:96px}
+.pv-sec + .pv-sec{margin-top:48px;padding-top:48px;border-top:1px solid var(--line)}
+.pv-sec h2{font-weight:700;font-size:clamp(18px,4.6vw,21px);line-height:1.35;letter-spacing:-.02em;color:var(--ink);margin-bottom:18px}
+.pv-sec h3{font-weight:700;font-size:15px;line-height:1.5;color:var(--ink);margin:28px 0 8px}
 .pv-sec p + p{margin-top:14px}
-.pv-sec ul + p,.pv-sec .pv-state + p,.pv-sec .pv-card + p{margin-top:18px}
-.pv-sec ul{margin:14px 0 0 0;padding-left:20px;display:flex;flex-direction:column;gap:8px}
-.pv-sec a{color:var(--purple2);text-underline-offset:3px;text-decoration-thickness:1px}
-.pv-sec a:hover{color:var(--ink)}
-.pv-sec strong{color:var(--ink)}
-.pv-note{margin-top:18px;padding:16px 18px;background:var(--off);border-radius:12px;font-size:14px !important;color:#444 !important}
+.pv-sec ul + p,.pv-sec .pv-state + p,.pv-sec .pv-card + p,.pv-sec .pv-note + h3{margin-top:18px}
+.pv-sec ul{margin:14px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:8px}
+.pv-sec li::marker{color:var(--muted)}
+.pv-note{margin-top:18px;padding-left:16px;border-left:2px solid var(--ink);font-size:13px;line-height:1.7}
 
 /* ── Ficha del responsable ── */
-.pv-card{margin-top:18px;border:1px solid var(--line);border-radius:14px;display:grid;grid-template-columns:max-content 1fr}
-.pv-card dt,.pv-card dd{padding:13px 18px;font-size:15px;border-top:1px solid var(--line)}
-.pv-card dt:first-of-type,.pv-card dt:first-of-type + dd{border-top:0}
-.pv-card dt{color:var(--muted);font-weight:500}
-.pv-card dd{color:var(--ink);font-weight:600;overflow-wrap:anywhere}
+.pv-card{margin-top:18px;border-top:1px solid var(--ink);display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:32px}
+.pv-card dt,.pv-card dd{padding:11px 0;border-bottom:1px solid var(--line);font-size:14px}
+.pv-card dt{color:var(--muted)}
+.pv-card dd{color:var(--ink);font-weight:700;overflow-wrap:anywhere}
+.pv-card dd a{font-weight:700}
 
 /* ── Estado del consentimiento ── */
-.pv-state{margin-top:24px;background:var(--ink);color:#f7f7fa;border-radius:18px;padding:26px 26px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
-.pv-state-l{display:flex;align-items:center;gap:16px}
-.pv-state-dot{width:12px;height:12px;border-radius:50%;background:#8a8a96;box-shadow:0 0 0 6px rgba(255,255,255,.06);flex-shrink:0;transition:background .3s}
-.pv-state[data-state="accepted"] .pv-state-dot{background:#6fd36a}
-.pv-state[data-state="rejected"] .pv-state-dot{background:#ff8a7a}
-.pv-state .pv-state-k{font-size:12px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:#b8b8cc}
-.pv-state .pv-state-v{color:#f7f7fa;font-family:var(--font-serif);font-size:24px;line-height:1.2;margin-top:2px}
-.pv-state-btn{cursor:pointer;border:0;border-radius:999px;background:#5a5be0;color:#fff;font:700 13px/1 var(--font);letter-spacing:.3px;padding:14px 22px;min-height:44px;transition:transform .15s var(--ease),background .2s}
-.pv-state-btn:hover{background:#4a4bd0;transform:translateY(-1px)}
-.pv-state-btn:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.pv-state{margin-top:20px;border:1px solid var(--ink);padding:20px;display:flex;align-items:center;justify-content:space-between;gap:16px 24px;flex-wrap:wrap}
+.pv-state .pv-state-k{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.pv-state .pv-state-v{font-size:20px;font-weight:700;line-height:1.3;color:var(--ink);margin-top:4px}
+.pv-state-btn{cursor:pointer;border:1px solid var(--ink);border-radius:2px;background:var(--ink);color:#fff;font:600 12px/1 var(--pv-mono);letter-spacing:.04em;padding:14px 20px;min-height:44px;transition:background .15s,color .15s}
+.pv-state-btn:hover{background:#fff;color:var(--ink)}
+.pv-wrap .pv-state-btn:focus-visible{outline-offset:3px}
 
 /* ── Tabla de cookies ── */
-.pv-table-wrap{margin-top:18px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
-.pv-table{width:100%;border-collapse:collapse;font-size:14px}
-.pv-table th,.pv-table td{text-align:left;padding:13px 16px;vertical-align:top}
-.pv-table thead th{background:var(--off);font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted)}
+.pv-table-wrap{margin-top:18px;border-top:1px solid var(--ink)}
+.pv-table{width:100%;border-collapse:collapse;font-size:13px;line-height:1.6}
+.pv-table th,.pv-table td{text-align:left;padding:12px 16px 12px 0;vertical-align:top}
+.pv-table th:last-child,.pv-table td:last-child{padding-right:0}
+.pv-table thead th{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line)}
 .pv-table tbody tr + tr td{border-top:1px solid var(--line)}
-.pv-table code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;background:var(--purple-light);color:#3c3dad;padding:2px 6px;border-radius:5px;white-space:nowrap}
-.pv-tag{display:inline-block;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:#f0f0f3;color:#444;white-space:nowrap}
-.pv-tag--c{background:var(--purple-light);color:#3c3dad}
+.pv-table code{font-family:var(--pv-mono);font-size:13px;font-weight:700;color:var(--ink);white-space:nowrap}
+.pv-tag{display:inline-block;white-space:nowrap;font-size:11px;font-weight:600;line-height:1.5;padding:1px 6px;border:1px solid var(--line);border-radius:2px;color:var(--muted)}
+.pv-tag--c{border-color:var(--ink);color:var(--ink)}
 
 /* ── Derechos ── */
-.pv-rights{margin-top:18px !important;padding:0 !important;list-style:none;display:grid !important;grid-template-columns:repeat(2,1fr);gap:10px !important}
-.pv-rights li{border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:14px !important;line-height:1.45}
-.pv-rights b{display:block;font-size:15px;color:var(--ink);margin-bottom:2px}
+.pv-rights{margin-top:18px !important;padding:0 !important;list-style:none;display:grid !important;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 32px !important}
+.pv-rights li{border-top:1px solid var(--line);padding:12px 0 14px;font-size:13px;line-height:1.6;color:var(--muted)}
+.pv-rights li:nth-child(-n+2){border-top-color:var(--ink)}
+.pv-rights b{display:block;font-size:14px;color:var(--ink);margin-bottom:2px}
 
 @media (max-width:980px){
-  .pv-short{grid-template-columns:repeat(2,1fr)}
-  .pv-body{grid-template-columns:1fr}
+  .pv-short{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 32px}
+  .pv-body{grid-template-columns:minmax(0,1fr);gap:40px;padding-top:40px}
   .pv-toc{position:static}
-  .pv-toc ol{flex-direction:row;flex-wrap:wrap;border-left:0;gap:6px}
-  .pv-toc a{border:1px solid var(--line);border-radius:999px;padding:6px 12px;margin:0}
-  .pv-toc a:hover,.pv-toc a.is-current{border-color:var(--purple)}
+  .pv-toc ol{flex-direction:row;flex-wrap:wrap;border-left:0;gap:0 20px}
+  .pv-toc a{padding:6px 0;margin:0;border-left:0;border-bottom:1px solid transparent;min-height:32px}
+  .pv-toc a.is-current{border-bottom-color:var(--ink)}
 }
 @media (max-width:640px){
-  .pv-hero{padding:112px 0 40px}
-  .pv-short{grid-template-columns:1fr}
-  .pv-rights{grid-template-columns:1fr}
-  .pv-card{grid-template-columns:1fr}
-  .pv-card dd{border-top:0;padding-top:0}
+  .pv-wrap{font-size:14px}
+  .pv-hero{padding:108px 0 40px}
+  .pv-short{grid-template-columns:minmax(0,1fr)}
+  .pv-rights{grid-template-columns:minmax(0,1fr)}
+  .pv-rights li:nth-child(2){border-top-color:var(--line)}
+  .pv-card{grid-template-columns:minmax(0,1fr)}
+  .pv-card dt{border-bottom:0;padding:11px 0 0}
+  .pv-card dd{padding-top:2px}
   .pv-table thead{display:none}
   .pv-table,.pv-table tbody,.pv-table tr,.pv-table td{display:block;width:100%}
   .pv-table tbody tr + tr{border-top:1px solid var(--line)}
   .pv-table tbody tr + tr td{border-top:0}
-  .pv-table td{padding:6px 16px}
-  .pv-table td:first-child{padding-top:16px}
-  .pv-table td:last-child{padding-bottom:16px}
-  .pv-table td[data-th]::before{content:attr(data-th);display:block;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
-  .pv-state{padding:22px}
+  .pv-table td{padding:4px 0}
+  .pv-table td:first-child{padding-top:14px}
+  .pv-table td:last-child{padding-bottom:14px}
+  .pv-table td[data-th]::before{content:attr(data-th);display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+  .pv-state{padding:16px}
+  .pv-state-btn{width:100%}
 }
 @media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} *{transition:none !important} }
 </style>
@@ -392,7 +401,7 @@ body{
 
 <!-- ─────────── PÁGINA ─────────── -->
 <main id="main-content" tabindex="-1">
-<div class="shell">
+<div class="pv-wrap">
 
   <header class="pv-hero">
     <p class="pv-eyebrow">Información legal</p>
@@ -404,10 +413,10 @@ body{
     </div>
 
     <ul class="pv-short" aria-label="Resumen">
-      <li><span class="pv-short-k" aria-hidden="true">01</span><span class="pv-short-t">Solo analítica</span><span class="pv-short-d">Google Analytics 4, para saber qué páginas se visitan. Nada de publicidad.</span></li>
-      <li><span class="pv-short-k" aria-hidden="true">02</span><span class="pv-short-t">Solo si aceptas</span><span class="pv-short-d">Hasta que aceptes, no se guarda ninguna cookie de analítica.</span></li>
-      <li><span class="pv-short-k" aria-hidden="true">03</span><span class="pv-short-t">Reversible</span><span class="pv-short-d">Puedes cambiar tu decisión en cualquier momento desde el pie de cada página.</span></li>
-      <li><span class="pv-short-k" aria-hidden="true">04</span><span class="pv-short-t">Sin cesiones</span><span class="pv-short-d">No vendo ni comparto tus datos con nadie para otros fines.</span></li>
+      <li><span class="pv-short-t">Solo analítica</span><span class="pv-short-d">Google Analytics 4, para saber qué páginas se visitan. Nada de publicidad.</span></li>
+      <li><span class="pv-short-t">Solo si aceptas</span><span class="pv-short-d">Hasta que aceptes, no se guarda ninguna cookie de analítica.</span></li>
+      <li><span class="pv-short-t">Reversible</span><span class="pv-short-d">Puedes cambiar tu decisión en cualquier momento desde el pie de cada página.</span></li>
+      <li><span class="pv-short-t">Sin cesiones</span><span class="pv-short-d">No vendo ni comparto tus datos con nadie para otros fines.</span></li>
     </ul>
   </header>
 
@@ -428,7 +437,7 @@ body{
     <div class="pv-text">
 
       <section class="pv-sec" id="responsable" aria-labelledby="h-responsable">
-        <h2 id="h-responsable"><span class="n">01</span>Responsable</h2>
+        <h2 id="h-responsable">Responsable</h2>
         <p>El responsable del tratamiento de los datos de esta web es:</p>
         <dl class="pv-card">
           <dt>Titular</dt><dd>Borja Mora Méndez</dd>
@@ -439,11 +448,11 @@ body{
       </section>
 
       <section class="pv-sec" id="datos" aria-labelledby="h-datos">
-        <h2 id="h-datos"><span class="n">02</span>Qué datos se tratan y para qué</h2>
+        <h2 id="h-datos">Qué datos se tratan y para qué</h2>
         <h3>Analítica de uso (solo con tu consentimiento)</h3>
-        <p>Si aceptas las cookies de analítica, Google Analytics 4 registra datos de navegación: páginas vistas, clics en enlaces y botones, tiempo en la página, tipo de dispositivo y navegador, y una ubicación aproximada (país o ciudad). Google Analytics 4 no guarda las direcciones IP completas.</p>
+        <p>Si aceptas las cookies de analítica, Google Analytics 4 registra datos de navegación: páginas vistas, clics en enlaces y botones, tiempo en la página, tipo de dispositivo y navegador, y una ubicación aproximada (país o ciudad). Google Analytics 4 <strong>no guarda las direcciones IP completas</strong>.</p>
         <p>Lo uso solo para una cosa: saber qué contenidos interesan y mejorar el portfolio. La base legal es tu <strong>consentimiento</strong> (art. 6.1.a RGPD y art. 22.2 LSSI), que puedes retirar cuando quieras.</p>
-        <p>Si no aceptas, Google Analytics funciona en modo sin cookies (Consent Mode): no guarda ni lee cookies en tu navegador y solo recibe avisos anónimos de que ha habido una visita, sin identificadores.</p>
+        <p>Si no aceptas, Google Analytics funciona en modo sin cookies (Consent Mode): <strong>no guarda ni lee cookies</strong> en tu navegador y solo recibe avisos anónimos de que ha habido una visita, sin identificadores.</p>
         <h3>Contacto</h3>
         <p>Si me escribes por correo electrónico, trataré tu dirección y tu mensaje únicamente para responderte. La base legal es tu propia solicitud y el interés legítimo en contestarla.</p>
         <h3>Solicitud del CV</h3>
@@ -451,7 +460,7 @@ body{
       </section>
 
       <section class="pv-sec" id="cookies" aria-labelledby="h-cookies">
-        <h2 id="h-cookies"><span class="n">03</span>Cookies</h2>
+        <h2 id="h-cookies">Cookies</h2>
         <p>Una cookie es un pequeño archivo que la web guarda en tu navegador. Esta web solo usa estas:</p>
         <div class="pv-table-wrap">
           <table class="pv-table">
@@ -466,12 +475,11 @@ body{
             </tbody>
           </table>
         </div>
-        <p class="pv-note">Las tres últimas son técnicas: sirven para que la web funcione como elegiste y no requieren consentimiento. Las de Google solo se crean si aceptas.</p>
+        <p class="pv-note">Las tres últimas son técnicas: sirven para que la web funcione como elegiste y <strong>no requieren consentimiento</strong>. Las de Google <strong>solo se crean si aceptas</strong>.</p>
 
         <h3>Tu elección ahora mismo</h3>
         <div class="pv-state" id="pvState" data-state="none" aria-live="polite">
           <div class="pv-state-l">
-            <span class="pv-state-dot" aria-hidden="true"></span>
             <div>
               <p class="pv-state-k">Cookies de analítica</p>
               <p class="pv-state-v"><span data-state-label="accepted" hidden>Aceptadas</span><span data-state-label="rejected" hidden>Rechazadas</span><span data-state-label="none">Sin decidir</span></p>
@@ -483,7 +491,7 @@ body{
       </section>
 
       <section class="pv-sec" id="terceros" aria-labelledby="h-terceros">
-        <h2 id="h-terceros"><span class="n">04</span>Terceros y transferencias</h2>
+        <h2 id="h-terceros">Terceros y transferencias</h2>
         <p>Para funcionar, esta web se apoya en algunos servicios externos. Al cargar la página, tu navegador se conecta con ellos y, como en cualquier conexión en internet, reciben tu dirección IP:</p>
         <ul>
           <li><strong>GitHub Pages</strong> (GitHub, Inc.): aloja la web y puede registrar datos técnicos de acceso por seguridad. <a href="https://docs.github.com/es/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener noreferrer">Su privacidad</a>.</li>
@@ -496,17 +504,17 @@ body{
       </section>
 
       <section class="pv-sec" id="conservacion" aria-labelledby="h-conservacion">
-        <h2 id="h-conservacion"><span class="n">05</span>Cuánto tiempo se conservan</h2>
+        <h2 id="h-conservacion">Cuánto tiempo se conservan</h2>
         <ul>
-          <li><strong>Analítica:</strong> los datos de Google Analytics se conservan durante el plazo configurado en la herramienta, como máximo 14 meses, y después se borran de forma automática.</li>
+          <li><strong>Analítica:</strong> los datos de Google Analytics se conservan durante el plazo configurado en la herramienta, como máximo <strong>14 meses</strong>, y después se borran de forma automática.</li>
           <li><strong>Correos:</strong> el tiempo necesario para atender tu mensaje y, como máximo, un año después del último contacto, salvo que me pidas borrarlos antes.</li>
           <li><strong>Tu elección de cookies e idioma:</strong> se quedan en tu navegador hasta que borres sus datos.</li>
         </ul>
       </section>
 
       <section class="pv-sec" id="derechos" aria-labelledby="h-derechos">
-        <h2 id="h-derechos"><span class="n">06</span>Tus derechos</h2>
-        <p>Puedes ejercer estos derechos escribiendo a <a href="mailto:borja.mora.mendez@gmail.com">borja.mora.mendez@gmail.com</a>. Te responderé en el plazo máximo de un mes.</p>
+        <h2 id="h-derechos">Tus derechos</h2>
+        <p>Puedes ejercer estos derechos escribiendo a <a href="mailto:borja.mora.mendez@gmail.com">borja.mora.mendez@gmail.com</a>. Te responderé en el plazo máximo de <strong>un mes</strong>.</p>
         <ul class="pv-rights">
           <li><b>Acceso</b>Saber qué datos tuyos trato.</li>
           <li><b>Rectificación</b>Corregir datos inexactos.</li>
@@ -519,7 +527,7 @@ body{
       </section>
 
       <section class="pv-sec" id="cambios" aria-labelledby="h-cambios">
-        <h2 id="h-cambios"><span class="n">07</span>Cambios en esta política</h2>
+        <h2 id="h-cambios">Cambios en esta política</h2>
         <p>Si cambio algo relevante, por ejemplo si añado una herramienta nueva, actualizaré esta página y la fecha del principio. Si el cambio afecta a las cookies, volverás a ver el aviso para decidir de nuevo.</p>
       </section>
 
