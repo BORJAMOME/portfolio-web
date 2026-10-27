@@ -4,7 +4,7 @@
    Módulo ES puro (sin red ni DOM). La web valida aquí ANTES de escribir en Supabase;
    la base vuelve a exigir lo esencial con checks (supabase/color-studio.sql).
    ═══════════════════════════════════════════════ */
-import { normalizeHex, normalizePaletteColors, findDuplicates, CATEGORY_LABEL, SLOT, sanitizeWeight, normalizeDistribution } from './engine.js?v=ad34183687';
+import { normalizeHex, normalizePaletteColors, findDuplicates, CATEGORY_LABEL, SLOT, sanitizeWeight, normalizeDistribution } from './engine.js?v=554dcefb20';
 
 export const SOURCE_TYPES = [
   ['own', 'Creada por mí'], ['book', 'Libro'], ['web', 'Página web'], ['photo', 'Fotografía'], ['other', 'Otra referencia']
@@ -196,7 +196,7 @@ export function buildExport({ garments, palettes, outfits, inspirations }, now =
     palettes: (palettes || []).map((p) => pick(p, ['id', 'name', 'colors', 'tags', 'source_type', 'source_title', 'source_url', 'source_notes', 'notes', 'is_favorite', 'created_at', 'updated_at'])),
     garments: (garments || []).map((g) => pick(g, ['id', 'name', 'category', 'subcategory', 'image_path', 'primary_color', 'secondary_colors', 'color_shares', 'pattern', 'material', 'notes', 'created_at', 'updated_at'])),
     outfits: (outfits || []).map((o) => pick(o, ['id', 'name', 'items', 'palette_id', 'distribution_override', 'occasion', 'formality', 'notes', 'is_favorite', 'created_at', 'updated_at'])),
-    inspirations: (inspirations || []).map((x) => pick(x, ['id', 'title', 'source_url', 'source_name', 'published_on', 'image_path', 'description', 'notes', 'styles', 'collections', 'seasons', 'rating', 'is_favorite', 'palette', 'palette_status', 'palette_id', 'created_at', 'updated_at']))
+    inspirations: (inspirations || []).map((x) => pick(x, ['id', 'title', 'source_url', 'source_name', 'published_on', 'image_path', 'description', 'notes', 'styles', 'collections', 'seasons', 'rating', 'is_favorite', 'palette', 'suggestions', 'palette_status', 'palette_id', 'created_at', 'updated_at']))
   };
 }
 
@@ -212,7 +212,7 @@ export function demoData() {
     colors: colors.map((c) => ({ original: c[0], hex: c[0], name: c[1], role: null, note: null })) });
   const i = (id, title, styles, seasons, colors, fav, days) => ({ id: 'demo-i' + id, demo: true, title, source_url: null, source_name: 'Ejemplo de Color Studio', published_on: null,
     image_path: null, thumb_path: null, image_hash: null, description: null, notes: null, styles, collections: [], seasons, rating: null, is_favorite: fav,
-    palette: colors.map((c) => ({ hex: c[0], weight: c[1], source: 'auto' })), palette_status: 'reviewed', palette_id: null,
+    palette: colors.map((c, k) => ({ id: 'demo-c' + id + k, hex: c[0], weight: c[1], source: 'auto' })), suggestions: [], palette_status: 'reviewed', palette_id: null,
     created_at: new Date(Date.UTC(2026, 0, 10 + days)).toISOString() });
   return {
     garments: [

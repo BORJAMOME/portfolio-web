@@ -202,7 +202,8 @@ Guarda la imagen y el enlace, extrae la paleta en el dispositivo y la deja usar 
 
 **Puesta en marcha**
 
-1. SQL Editor → `supabase/color-studio-inspiracion.sql` (requiere `color-studio.sql` y `opciones.sql`; idempotente, no toca datos).
+1. SQL Editor → `supabase/color-studio-inspiracion.sql` (requiere `color-studio.sql` y `opciones.sql`; idempotente, no toca datos;
+   se puede volver a ejecutar entero para aplicar versiones nuevas, como la del cuentagotas, sin recuperar estilos borrados).
    Crea `cs_inspirations` con RLS **por dueño** (`owner = auth.uid()`, que pone la base; además `is_member()`), una política
    restrictiva para que la carpeta `inspiracion/<usuario>/` del bucket `armario` solo la use su dueño y los estilos iniciales.
 2. Vuelve a ejecutar solo las funciones `ap_opcion_renombrar` y `ap_opcion_eliminar` de `opciones.sql` (ahora actualizan también
@@ -215,12 +216,36 @@ Guarda la imagen y el enlace, extrae la paleta en el dispositivo y la deja usar 
 **Decisiones**
 
 - **Tabla propia**, no `cs_outfits` ni `cs_garments`: una referencia no es una prenda ni un conjunto tuyo. Nunca entra en el armario.
-- **Paleta en JSONB** (`[{ hex, weight, source }]`), como `cs_palettes`: se lee y se edita entera, en orden, y no se consulta por color en la base.
-  RGB, Lab y familia se derivan del HEX; no se guardan. `weight` = % estimado de presencia en los píxeles analizados (0–100, suma 100).
-  `source` = `auto` o `manual` (corregido). `palette_status`: `none`, `auto` (por revisar), `reviewed` o `failed`.
-- **Extracción**: la misma de las prendas (`engine.extractDominantColors`: k-means local, fondo del borde rebajado, sombras fundidas) con hasta 8
-  grupos y descartando los < 3 %. El número de colores depende de la foto. Incluye piel, fondo o accesorios si se ven: por eso es una
-  estimación editable (cambiar, quitar, añadir, ajustar pesos o volver a extraer) y nunca bloquea el guardado.
+- **Dos listas en JSONB**, como `cs_palettes` (se leen y editan enteras, en orden; no se consulta por color en la base):
+  - `palette`: la paleta **definitiva**, decisión de la persona: `[{ id, hex, source, label?, weight? }]`. `source` = `manual` (cuentagotas o
+    HEX escrito) o `auto` (sugerencia aceptada). `label` = prenda o nombre libre. `weight` solo en colores extraídos (presencia estimada, 0–100).
+  - `suggestions`: candidatos de la extracción automática **sin aceptar**: `[{ hex, weight }]`. Nunca se mezclan con la paleta: se añaden
+    uno a uno o se descartan. Añadir un color manual no regenera nada.
+  - RGB, Lab y familia se derivan del HEX; no se guardan. `palette_status`: `none`, `auto` (hay colores pero ninguna decisión), `reviewed`
+    (paleta confirmada o con colores elegidos) o `failed` (la extracción no dio nada). Las referencias anteriores (`[{ hex, weight, source }]`)
+    se leen igual: sus colores siguen en la paleta, con sus pesos, y se pueden confirmar o completar.
+- **Cuentagotas («Seleccionar colores»)**, en el detalle de una referencia y en el formulario nada más elegir la imagen:
+  - Se toca o se hace clic en la prenda; en escritorio, pasar el ratón ya enseña la lupa. Nada se añade solo: cada muestra se confirma
+    («Añadir a la paleta», con prenda opcional) o se cancela. «Corregir» sustituye un color por otra muestra; «×» lo quita. Teclado: flechas e Intro.
+  - Coordenadas: la imagen se ve entera y sin `object-fit`, así su rectángulo (`getBoundingClientRect`, que ya incluye escalado responsive,
+    desplazamiento y densidad de píxeles) es la imagen, y el punto se lleva al píxel con una regla de tres (`inspiration.toImagePoint`).
+  - Muestra: **mediana de cada canal RGB en 5 × 5 píxeles** de la imagen guardada a su resolución real (`engine.sampleMedian`), ignorando
+    transparentes; dos o tres píxeles extremos (reflejo, costura, artefacto) no la mueven. «Punto exacto» toma un solo píxel. Si más del 35 % de la
+    zona dista ΔE00 > 10 de la mediana (un borde o una sombra), se avisa de que la zona mezcla colores.
+  - Lupa: 15 × 15 píxeles reales ampliados sin suavizado, con el recuadro de la zona medida; va en la esquina contraria al punto, nunca bajo el
+    dedo. El valor guardado sale siempre de los píxeles originales, no de la lupa.
+  - Rendimiento y privacidad: la imagen se descarga y se lee una vez por apertura (`image.readPixels`); cada movimiento lee 25 píxeles, como
+    mucho una vez por fotograma. Ninguna petición de red al muestrear (hay una prueba que lo comprueba); nada sale del dispositivo.
+  - Sale de la imagen **tal y como se guarda** (WebP o JPEG de ≤ 1600 px, sin EXIF): es la decisión de privacidad de siempre. La compresión
+    puede mover un color una unidad (ΔE00 < 1,5, imperceptible). El archivo original del dispositivo no se sube.
+- **Sugerencias automáticas sin el fondo**: la causa de la paleta contaminada era que la extracción analizaba la foto entera y solo
+  *rebajaba* (×0,15) los colores del borde, así que una pared o una web que ocupa media foto seguía saliendo. Ahora el fondo son los colores del
+  borde presentes en **al menos dos lados** (≥ 20 % de cada uno) y se **excluyen**; una prenda que toca un solo lado (el pantalón, abajo) no
+  cuenta como fondo. Se analiza una copia de 160 px (antes 96). Si al quitar el fondo no queda nada, se vuelve al análisis de siempre.
+  La piel y los accesorios pueden seguir apareciendo: por eso son sugerencias. Las prendas del armario no cambian (opciones nuevas del motor,
+  con el comportamiento de siempre por defecto).
+- **Hueco para segmentación futura**: `extractOutfitPalette(sample, { mask })` acepta una máscara por píxel (0 = ignorar) y entonces no
+  calcula fondo. El cuentagotas no depende de ella.
 - **Clasificación**: estilos (varios), temporadas (lista fija: primavera, verano, otoño, invierno, entretiempo), colecciones (varias), favorita,
   valoración 1–5, notas privadas y fecha de publicación si se conoce. Estilos y colecciones son las listas `inspiracion.estilo` e
   `inspiracion.coleccion` de `ap_opciones`: se crean desde el formulario y se renombran o eliminan en Configuración, que actualiza las referencias.
@@ -246,9 +271,10 @@ Guarda la imagen y el enlace, extrae la paleta en el dispositivo y la deja usar 
 
 ## Limitaciones conocidas
 
-- Inspiración: la paleta es de la foto entera (no segmenta la ropa: fondo y piel pueden aparecer) y no corrige el balance de blancos.
+- Inspiración: las sugerencias no segmentan la ropa (la piel o un accesorio pueden aparecer; un fondo que solo toca un lado de la foto no se
+  detecta) y nada corrige el balance de blancos: con luz cálida, un blanco sale crudo. El cuentagotas no tiene zoom propio (la lupa da la precisión).
   Instagram, Pinterest y otras redes suelen bloquear «Leer enlace». Las colecciones y estilos se comparten entre miembros (`ap_opciones`);
-  las referencias, no. No hay cuentagotas sobre la foto de una referencia.
+  las referencias, no.
 
 - La estimación de superficie no usa la foto del outfit vestido (segmentación y solapes quedan para una fase posterior).
 - Las propuestas no contemplan estampados en el calcetín ni su material; el largo solo cuenta si se anota en la subcategoría.

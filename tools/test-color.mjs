@@ -791,33 +791,83 @@ function outfitSample(w = 80, h = 100) {
   }
   return { data, width: w, height: h };
 }
-test('Inspiración: la paleta de una foto reutiliza el motor, varía en número y sus pesos suman 100', () => {
+test('Inspiración: sugerencias de una foto sin el fondo (ni la pared ni el suelo), variables en número y con pesos que suman 100', () => {
   const p = I.extractOutfitPalette(outfitSample());
   assert.ok(p.length >= 2 && p.length <= 8, 'número de colores: ' + p.length);
   assert.equal(sum(p.map((c) => c.weight)), 100);
-  assert.ok(p.every((c) => /^#[0-9A-F]{6}$/.test(c.hex) && c.source === 'auto'));
+  assert.ok(p.every((c) => /^#[0-9A-F]{6}$/.test(c.hex) && c.source === undefined), 'una sugerencia no lleva procedencia: no es una decisión');
   const fam = p.map((c) => E.familyOf(c.hex));
   assert.ok(fam.includes('marino'), 'falta el marino: ' + fam);
   assert.ok(fam.includes('marron') || fam.includes('beige') || fam.includes('naranja'), 'falta el camel: ' + fam);
-  // una imagen lisa da un solo color, no 8 inventados
+  assert.ok(!p.some((c) => E.colorDistance(c.hex, '#ECECE9') < 10), 'el fondo sigue en las sugerencias: ' + p.map((c) => c.hex));
+  // una imagen lisa (sin persona) no se queda sin nada: vuelve al análisis de siempre
   const flat = { data: new Uint8ClampedArray(40 * 40 * 4).fill(120), width: 40, height: 40 };
   for (let i = 3; i < flat.data.length; i += 4) flat.data[i] = 255;
   assert.equal(I.extractOutfitPalette(flat).length, 1);
   assert.deepEqual(I.extractOutfitPalette(null), []);
 });
-test('Inspiración: normalizar y ajustar pesos (sin duplicados, suma 100, máx. 10 colores)', () => {
-  const n = I.normalizePalette([{ hex: '1f2a44', weight: 30 }, { hex: '#1F2A44', weight: 10, source: 'manual' }, { hex: 'nope', weight: 50 }, { hex: '#F4F2EC', weight: 60 }]);
-  assert.deepEqual(n.map((c) => c.hex), ['#1F2A44', '#F4F2EC']);
-  assert.deepEqual(n.map((c) => c.weight), [40, 60]);
-  assert.equal(n[0].source, 'manual');
-  const z = I.normalizePalette([{ hex: '#000000' }, { hex: '#FFFFFF' }]);
-  assert.deepEqual(z.map((c) => c.weight), [50, 50]);
-  assert.equal(I.normalizePalette(Array.from({ length: 14 }, (_, i) => ({ hex: '#0000' + String(i + 10), weight: 1 }))).length, 10);
-  const s = I.setPaletteWeight([{ hex: '#111111', weight: 50 }, { hex: '#222222', weight: 30 }, { hex: '#333333', weight: 20 }], 0, 80);
-  assert.equal(s[0].weight, 80);
-  assert.ok(Math.abs(sum(s.map((c) => c.weight)) - 100) < 0.2);
-  assert.equal(s[1].weight, 12);
-  assert.equal(s[2].weight, 8);
+test('Inspiración: fondo = colores del borde en dos o más lados; un pantalón que toca el borde de abajo no es fondo', () => {
+  const s = outfitSample();
+  const o = (x, y) => (y * 80 + x) * 4;
+  for (let y = 92; y < 100; y++) for (let x = 20; x < 60; x++) { s.data[o(x, y)] = 31; s.data[o(x, y) + 1] = 42; s.data[o(x, y) + 2] = 68; }
+  const bgs = I.backgroundColors(s);
+  assert.equal(bgs.length, 1, 'fondos: ' + bgs.length);
+  assert.ok(E.deltaE2000(bgs[0], E.hexToLab('#ECECE9')) < 3);
+  assert.ok(I.extractOutfitPalette(s).some((c) => E.familyOf(c.hex) === 'marino'), 'el pantalón que toca el borde se perdió');
+});
+test('Inspiración: máscara opcional (futura segmentación): solo cuenta lo que deja ver', () => {
+  const s = outfitSample(), mask = new Uint8Array(80 * 100);
+  for (let y = 50; y < 92; y++) for (let x = 20; x < 60; x++) mask[y * 80 + x] = 1;          // solo el pantalón
+  const p = I.extractOutfitPalette(s, { mask });
+  assert.deepEqual(p.map((c) => E.familyOf(c.hex)), ['marino']);
+  assert.equal(s.data[3], 255, 'la máscara modificó la imagen original');
+});
+test('Inspiración: sugerencias normalizadas y paleta definitiva (orden, id, etiqueta, procedencia y compatibilidad)', () => {
+  const n = I.normalizeSuggestions([{ hex: '1f2a44', weight: 30 }, { hex: '#1F2A44', weight: 10 }, { hex: 'nope', weight: 50 }, { hex: '#F4F2EC', weight: 60 }]);
+  assert.deepEqual(n, [{ hex: '#1F2A44', weight: 40 }, { hex: '#F4F2EC', weight: 60 }]);
+  const p = I.normalizePalette([{ id: 'abc', hex: '#1f2a44', source: 'manual', label: '  Pantalón ' }, { hex: '#1F2A44', source: 'manual', label: 'Calcetines' }, { hex: '#B48A5A', weight: 44, source: 'auto' }, { hex: 'x' }]);
+  assert.deepEqual(p.map((c) => [c.hex, c.source, c.label || null, c.weight ?? null]), [['#1F2A44', 'manual', 'Pantalón', null], ['#1F2A44', 'manual', 'Calcetines', null], ['#B48A5A', 'auto', null, 44]]);
+  assert.equal(p[0].id, 'abc');
+  assert.ok(/^[A-Za-z0-9_-]+$/.test(p[1].id) && p[1].id !== p[0].id);
+  // referencia guardada antes del cuentagotas: [{ hex, weight, source }] se lee igual
+  const old = I.normalizePalette([{ hex: '#B48A5A', weight: 60, source: 'auto' }, { hex: '#1F2A44', weight: 40, source: 'auto' }]);
+  assert.deepEqual(old.map((c) => [c.hex, c.weight, c.source]), [['#B48A5A', 60, 'auto'], ['#1F2A44', 40, 'auto']]);
+  assert.equal(I.normalizePalette(Array.from({ length: 15 }, () => ({ hex: '#111111' }))).length, 12);
+  assert.deepEqual(I.bandWeights([{ hex: '#111111' }, { hex: '#222222', weight: 50 }]), [1, 1]);
+  assert.deepEqual(I.bandWeights([{ weight: 30 }, { weight: 70 }]), [30, 70]);
+  assert.deepEqual(I.effectivePalette({ palette: [], suggestions: [{ hex: '#111111', weight: 100 }] }).map((c) => c.hex), ['#111111']);
+  assert.deepEqual(I.effectivePalette({ palette: [{ hex: '#222222' }], suggestions: [{ hex: '#111111', weight: 100 }] }).map((c) => c.hex), ['#222222']);
+  assert.notEqual(I.newColorId(), I.newColorId());
+});
+test('Cuentagotas: mediana de 5 × 5 (resiste píxeles extremos), punto exacto, transparencias, bordes y zona mezclada', () => {
+  const W = 20, H = 10, data = new Uint8ClampedArray(W * H * 4);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const o = (y * W + x) * 4; const left = x < 10; data[o] = left ? 31 : 180; data[o + 1] = left ? 42 : 138; data[o + 2] = left ? 68 : 90; data[o + 3] = 255; }
+  const px = { data, width: W, height: H };
+  assert.equal(I.pickColor(px, 4, 5).hex, '#1F2A44');
+  assert.equal(I.pickColor(px, 15, 5).hex, '#B48A5A');
+  // dos píxeles blancos (un reflejo) dentro de la zona no cambian la mediana; la media sí se habría ido
+  [[3, 4], [5, 6]].forEach(([x, y]) => { const o = (y * W + x) * 4; data[o] = data[o + 1] = data[o + 2] = 255; });
+  assert.equal(I.pickColor(px, 4, 5).hex, '#1F2A44');
+  assert.equal(I.pickColor(px, 3, 4, true).hex, '#FFFFFF', 'el punto exacto toma ese píxel');
+  assert.equal(I.pickColor(px, 4, 5).n, 25);
+  assert.equal(I.pickColor(px, 0, 0).n, 9, 'en la esquina la zona se recorta a la imagen');
+  assert.equal(I.pickColor(px, -1, 3), null);
+  assert.equal(I.pickColor(px, 20, 3), null);
+  assert.equal(I.pickColor(null, 1, 1), null);
+  assert.ok(I.pickColor(px, 10, 5).mixed >= I.MIXED_WARN, 'la frontera entre dos prendas no se marca como mezclada');
+  assert.equal(I.pickColor(px, 15, 5).mixed, 0);
+  const clear = { data: new Uint8ClampedArray(9 * 4), width: 3, height: 3 };
+  assert.equal(I.pickColor(clear, 1, 1), null, 'zona transparente');
+});
+test('Cuentagotas: de la pantalla a la imagen con la imagen escalada, desplazada y fuera de límites', () => {
+  const rect = { left: 100, top: 50, width: 300, height: 400 };            // imagen de 1200 × 1600 mostrada a 300 × 400
+  assert.deepEqual(I.toImagePoint(100, 50, rect, 1200, 1600), { x: 0, y: 0 });
+  assert.deepEqual(I.toImagePoint(250, 250, rect, 1200, 1600), { x: 600, y: 800 });
+  assert.deepEqual(I.toImagePoint(399.9, 449.9, rect, 1200, 1600), { x: 1199, y: 1599 });
+  assert.equal(I.toImagePoint(400, 250, rect, 1200, 1600), null);
+  assert.equal(I.toImagePoint(99, 250, rect, 1200, 1600), null);
+  assert.deepEqual(I.toImagePoint(130, 90, { left: 100, top: 50, width: 600, height: 800 }, 300, 400), { x: 15, y: 20 }, 'imagen ampliada');
+  assert.equal(I.toImagePoint(10, 10, { left: 0, top: 0, width: 0, height: 0 }, 10, 10), null);
 });
 test('Inspiración: información derivada y papeles por peso', () => {
   const c = I.colorInfo('#1f2a44');
@@ -827,6 +877,7 @@ test('Inspiración: información derivada y papeles por peso', () => {
   assert.equal(I.colorInfo('x'), null);
   const r = I.paletteRoles([{ hex: '#111111', weight: 50 }, { hex: '#222222', weight: 40 }, { hex: '#333333', weight: 10 }]);
   assert.deepEqual(r.map((x) => x.role), ['dominante', 'secundario', 'detalle']);
+  assert.deepEqual(I.paletteRoles([{ hex: '#111111', source: 'manual' }, { hex: '#222222', weight: 40 }]).map((x) => x.role), [null, null], 'sin pesos no se inventan papeles');
 });
 test('Inspiración: huella de imagen estable ante el tamaño y distinta entre imágenes', () => {
   const a = I.imageHash(outfitSample(80, 100)), b = I.imageHash(outfitSample(160, 200));
@@ -838,6 +889,11 @@ test('Inspiración: huella de imagen estable ante el tamaño y distinta entre im
   for (let y = 0; y < 100; y++) for (let x = 0; x < 80; x++) { const o = (y * 80 + x) * 4; grad.data[o] = grad.data[o + 1] = grad.data[o + 2] = 255 - x * 3; grad.data[o + 3] = 255; }
   assert.ok(I.hashDistance(a, I.imageHash(grad)) > I.HASH_NEAR);
   assert.equal(I.hashDistance(a, null), Infinity);
+  const blank = { data: new Uint8ClampedArray(40 * 40 * 4), width: 40, height: 40 };
+  assert.equal(I.imageHash(blank), null, 'imagen transparente');
+  const blocks = { data: new Uint8ClampedArray(40 * 40 * 4), width: 40, height: 40 };
+  for (let y = 0; y < 40; y++) for (let x = 0; x < 40; x++) { const o = (y * 40 + x) * 4, v = x < 20 ? 40 : 220; blocks.data[o] = blocks.data[o + 1] = blocks.data[o + 2] = v; blocks.data[o + 3] = 255; }
+  assert.equal(I.imageHash(blocks), null, 'bloques planos: sin estructura para comparar');
 });
 test('Inspiración: enlaces comparables y fuente por dominio', () => {
   assert.equal(I.normalizeSourceUrl('https://www.Ejemplo.com/look/12/?utm_source=x&fbclid=y&talla=m#foto'), 'ejemplo.com/look/12?talla=m');
@@ -865,6 +921,9 @@ test('Inspiración: validar (basta imagen, enlace o título; nada más obligator
   assert.equal(I.validateInspiration({ title: 'x', palette_status: 'failed' }).value.palette_status, 'failed');
   assert.equal(I.validateInspiration({ title: 'x', palette: [{ hex: '#111111', weight: 1 }] }).value.palette_status, 'auto');
   assert.equal(I.validateInspiration({ title: 'x', palette: [{ hex: '#111111', weight: 1 }], palette_status: 'reviewed' }).value.palette_status, 'reviewed');
+  assert.equal(I.validateInspiration({ title: 'x', suggestions: [{ hex: '#111111', weight: 1 }] }).value.palette_status, 'auto', 'solo sugerencias: por revisar');
+  assert.equal(I.validateInspiration({ title: 'x', palette: [{ hex: '#111111', source: 'manual' }] }).value.palette_status, 'reviewed', 'un color elegido a mano es una decisión');
+  assert.deepEqual(I.validateInspiration({ title: 'x', suggestions: [{ hex: '#111111', weight: 1 }] }).value.palette, [], 'las sugerencias nunca entran solas en la paleta');
 });
 const insp = (id, extra) => Object.assign({ id, title: null, source_url: null, source_name: null, styles: [], collections: [], seasons: [], palette: [], palette_status: 'none', is_favorite: false, rating: null, created_at: '2026-01-0' + id + 'T10:00:00Z', published_on: null }, extra);
 test('Inspiración: duplicados por enlace normalizado o imagen casi igual', () => {

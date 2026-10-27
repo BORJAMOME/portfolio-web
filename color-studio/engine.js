@@ -447,6 +447,34 @@ export function sampleColor(data, width, height, x, y, r = 3) {
   return rgbToHex(toGamma(R / n), toGamma(G / n), toGamma(B / n));
 }
 
+/**
+ * Cuentagotas de Inspiración: color representativo de una zona por MEDIANA de cada canal RGB de los píxeles opacos
+ * de un cuadrado de lado 2r+1 alrededor del píxel (px, py) en coordenadas de la imagen (enteras, no relativas).
+ * La mediana ignora uno o dos píxeles extremos (un reflejo, una costura, un artefacto JPEG); r = 0 es el píxel exacto.
+ * → { hex, n, mixed } · n = píxeles válidos · mixed = proporción de píxeles a ΔE00 > 10 de la mediana (zona mezclada).
+ * null si el punto cae fuera de la imagen o todos los píxeles son transparentes.
+ */
+export function sampleMedian(data, width, height, px, py, r = 2) {
+  if (!data || !width || !height || !Number.isFinite(px) || !Number.isFinite(py)) return null;
+  const cx = Math.floor(px), cy = Math.floor(py);
+  if (cx < 0 || cy < 0 || cx >= width || cy >= height) return null;
+  const R = [], G = [], B = [];
+  for (let j = Math.max(0, cy - r); j <= Math.min(height - 1, cy + r); j++) {
+    for (let i = Math.max(0, cx - r); i <= Math.min(width - 1, cx + r); i++) {
+      const o = (j * width + i) * 4;
+      if (data[o + 3] < 128) continue;
+      R.push(data[o]); G.push(data[o + 1]); B.push(data[o + 2]);
+    }
+  }
+  if (!R.length) return null;
+  const med = (a) => { a.sort((x, y) => x - y); const m = a.length >> 1; return a.length % 2 ? a[m] : Math.round((a[m - 1] + a[m]) / 2); };
+  const lab0 = { r: med(R.slice()), g: med(G.slice()), b: med(B.slice()) };
+  const hex = rgbToHex(lab0.r, lab0.g, lab0.b), ref = rgbToLab(lab0);
+  let far = 0;
+  for (let k = 0; k < R.length; k++) if (deltaE2000(ref, rgbToLab({ r: R[k], g: G[k], b: B[k] })) > 10) far++;
+  return { hex, n: R.length, mixed: far / R.length };
+}
+
 /* ═══════════ EXTRACCIÓN DE COLOR (sin red) ═══════════
    K-means en Lab sobre los píxeles de una imagen ya reducida. Se pondera el centro (la prenda suele
    estar ahí) y se rebaja lo que se parece al borde (probablemente el fondo). Es una PROPUESTA:
@@ -471,9 +499,12 @@ export function extractDominantColors(data, width, height, opts = {}) {
     }
   }
   if (!px.length) return [];
-  if (border.length && opts.ignoreBackground !== false) {
-    const bgs = borderColors(border);
-    px.forEach((p) => { if (bgs.some((bg) => deltaE2000(p.lab, bg) < 8)) p.w *= 0.15; });
+  // opts.backgrounds: colores de fondo ya calculados (Lab) y opts.backgroundWeight su peso (0 = se excluyen).
+  // Sin ellos, el comportamiento de siempre (prendas): fondo del borde rebajado a 0,15.
+  if (opts.backgrounds || (border.length && opts.ignoreBackground !== false)) {
+    const bgs = opts.backgrounds || borderColors(border), bw = opts.backgroundWeight != null ? opts.backgroundWeight : 0.15, tol = opts.backgroundTolerance || 8;
+    px.forEach((p) => { if (bgs.some((bg) => deltaE2000(p.lab, bg) < tol)) p.w *= bw; });
+    if (bw === 0 && !px.some((p) => p.w > 0)) return [];
   }
   // centros iniciales deterministas: el más pesado y, después, el más lejano a los elegidos
   const centers = [px.reduce((a, b) => (b.w > a.w ? b : a)).lab];

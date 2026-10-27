@@ -3,19 +3,18 @@
    ─────────────────────────────────────────────────
    Módulo ES puro (sin red ni DOM), probado con tools/test-color.mjs. La interfaz está en area-privada-color.js
    y los datos en cs_inspirations (supabase/color-studio-inspiracion.sql).
-   · Paleta de una foto: reutiliza engine.extractDominantColors (k-means local, fondo rebajado, sombras fundidas).
-     El peso es la presencia ESTIMADA de cada color en los píxeles analizados (incluye piel, fondo o accesorios),
-     no la superficie de cada prenda.
+   · Paleta definitiva (palette) = decisión de la persona: colores tomados con el cuentagotas o sugerencias aceptadas.
+   · Sugerencias (suggestions) = engine.extractDominantColors sin el fondo (colores del borde presentes en dos o más
+     lados). Su peso es la presencia ESTIMADA en los píxeles analizados (puede incluir piel o accesorios), no la superficie.
    · Lo derivable no se guarda: RGB, Lab, nombre y familia salen del HEX.
    · Duplicados: mismo enlace normalizado o imagen casi igual (dHash de 64 bits a distancia ≤ 6). Solo avisan.
    ═══════════════════════════════════════════════ */
-import { normalizeHex, hexToRgb, hexToLab, labToLch, describeColor, extractDominantColors, roundPercentages, rankPalettes } from './engine.js?v=ad34183687';
+import { normalizeHex, hexToRgb, hexToLab, labToLch, rgbToLab, deltaE2000, describeColor, extractDominantColors, sampleMedian, roundPercentages, rankPalettes } from './engine.js?v=554dcefb20';
 
 export const SEASONS = [['primavera', 'Primavera'], ['verano', 'Verano'], ['otono', 'Otoño'], ['invierno', 'Invierno'], ['entretiempo', 'Entretiempo']];
 export const SEASON_LABEL = Object.fromEntries(SEASONS);
 export const STATUS_LABEL = { none: 'Sin paleta', auto: 'Paleta por revisar', reviewed: 'Paleta revisada', failed: 'No se pudo extraer la paleta' };
 export const SORTS = [['saved', 'Guardadas recientes'], ['saved-asc', 'Guardadas antiguas'], ['published', 'Fecha de publicación'], ['favorites', 'Favoritas primero'], ['rating', 'Mejor valoradas']];
-export const PALETTE_LIMIT = 10;
 export const DEFAULT_STYLES = ['Casual', 'Smart casual', 'Formal', 'Minimalista', 'Streetwear', 'Workwear', 'Deportivo'];
 export const SECONDARY_MIN = 15;     // % a partir del cual un color, sin ser el mayor, se lee como secundario
 export const HASH_NEAR = 6;          // bits distintos (de 64) para considerar dos imágenes casi iguales
@@ -24,46 +23,115 @@ const str = (v, max) => (typeof v === 'string' && v.trim() ? v.trim().replace(/\
 const text = (v, max) => (typeof v === 'string' && v.trim() ? v.trim().slice(0, max) : null);
 const round1 = (x) => Math.round(x * 10) / 10;
 
-/* ═══════════ PALETA ═══════════ */
+/* ═══════════ PALETA ═══════════
+   Dos listas separadas en cada referencia:
+   · palette      → la paleta DEFINITIVA, decisión de la persona: colores elegidos con el cuentagotas (source 'manual')
+                    o sugerencias aceptadas (source 'auto', con su peso). [{ id, hex, source, label?, weight? }]
+   · suggestions  → candidatos de la extracción automática, sin aceptar. [{ hex, weight }] (pesos que suman 100)
+   La extracción nunca escribe en palette: aceptar una sugerencia la copia; añadir un color manual no regenera nada. */
+export const PALETTE_LIMIT = 12;
+export const SUGGESTION_LIMIT = 8;
+export const GARMENT_LABELS = ['Camiseta', 'Camisa', 'Jersey', 'Chaqueta', 'Abrigo', 'Pantalón', 'Vaquero', 'Calzado', 'Calcetines', 'Accesorio'];
+export const SAMPLE_RADIUS = 2;      // cuentagotas: zona de 5 × 5 píxeles de la imagen guardada
+export const MIXED_WARN = 0.35;      // proporción de píxeles lejanos a la mediana a partir de la que se avisa de zona mezclada
+
 /**
- * Paleta de una foto de outfit: entre 1 y 8 colores según lo que justifique la imagen (los grupos < 3 % se descartan).
- * sample: { data, width, height } (copia pequeña de image.prepareImage). → [{ hex, weight, source: 'auto' }] con pesos que suman 100.
+ * Fondo de una foto de outfit: colores del borde que aparecen en al menos dos lados de la imagen (≥ 20 % de cada uno).
+ * Un fondo (pared, web, suelo de estudio) rodea a la persona; una prenda solo toca un lado (el pantalón, abajo).
+ * → lista de colores Lab. Antes se usaba todo el borde y se rebajaba (no se quitaba), así que un fondo que ocupa
+ * media foto seguía saliendo como «color» de la paleta.
+ */
+export function backgroundColors(sample) {
+  const { data, width: w, height: h } = sample;
+  const band = Math.max(1, Math.round(Math.min(w, h) * 0.06));
+  const sides = { top: [], bottom: [], left: [], right: [] };
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const o = (y * w + x) * 4;
+      if (data[o + 3] < 128) continue;
+      const lab = rgbToLab({ r: data[o], g: data[o + 1], b: data[o + 2] });
+      if (y < band) sides.top.push(lab); else if (y >= h - band) sides.bottom.push(lab);
+      if (x < band) sides.left.push(lab); else if (x >= w - band) sides.right.push(lab);
+    }
+  }
+  // candidatos: grupos de color de todo el borde (agrupación voraz por ΔE00 < 10, representante = el primero)
+  const all = [].concat(sides.top, sides.bottom, sides.left, sides.right), groups = [];
+  for (let i = 0; i < all.length; i += 2) {
+    const g = groups.find((c) => deltaE2000(c, all[i]) < 10);
+    if (!g) { groups.push(all[i]); if (groups.length > 12) break; }
+  }
+  return groups.filter((g) => Object.values(sides).filter((list) => list.length && list.filter((p) => deltaE2000(p, g) < 10).length / list.length >= 0.2).length >= 2);
+}
+
+/**
+ * Sugerencias de color de una foto de outfit (no son la paleta: hay que revisarlas). Entre 1 y 8 según la foto.
+ * sample: { data, width, height } (copia reducida). opts.mask: Uint8Array opcional, un valor por píxel (0 = ignorar):
+ * hueco para una futura segmentación de prendas; sin ella se excluye el fondo detectado por backgroundColors.
+ * → [{ hex, weight }] con pesos que suman 100.
  */
 export function extractOutfitPalette(sample, opts = {}) {
   if (!sample || !sample.data || !sample.width || !sample.height) return [];
-  const found = extractDominantColors(sample.data, sample.width, sample.height, { k: opts.k || 8, minShare: opts.minShare || 0.03 });
-  const colors = found.slice(0, 8);
+  let data = sample.data;
+  if (opts.mask) {
+    data = new Uint8ClampedArray(sample.data);
+    for (let i = 0; i < opts.mask.length; i++) if (!opts.mask[i]) data[i * 4 + 3] = 0;
+  }
+  const src = { data, width: sample.width, height: sample.height };
+  const bgs = opts.mask ? [] : backgroundColors(src);
+  let found = extractDominantColors(data, src.width, src.height, { k: opts.k || 8, minShare: opts.minShare || 0.03, backgrounds: bgs, backgroundWeight: 0, backgroundTolerance: 10 });
+  // si al quitar el fondo no queda nada (foto de una tela lisa, por ejemplo), se vuelve al análisis de siempre
+  if (!found.length) found = extractDominantColors(data, src.width, src.height, { k: opts.k || 8, minShare: opts.minShare || 0.03 });
+  const colors = found.slice(0, SUGGESTION_LIMIT);
   const pct = roundPercentages(colors.map((c) => c.share));
-  return colors.map((c, i) => ({ hex: c.hex, weight: pct[i], source: 'auto' }));
+  return colors.map((c, i) => ({ hex: c.hex, weight: pct[i] }));
 }
 
-/** Limpia una paleta: HEX válidos, sin repetidos (se suman), pesos ≥ 0 y normalizados a 100 con un decimal. */
-export function normalizePalette(list) {
+/** Sugerencias limpias: HEX válidos, sin repetidos (se suman), pesos normalizados a 100 con un decimal. */
+export function normalizeSuggestions(list) {
   const out = [];
   (Array.isArray(list) ? list : []).forEach((c) => {
     const hex = normalizeHex(c && (c.hex || c));
     if (!hex) return;
-    const w = Number(c && c.weight);
-    const weight = Number.isFinite(w) && w > 0 ? w : 0;
+    const w = Number(c && c.weight), weight = Number.isFinite(w) && w > 0 ? w : 0;
     const prev = out.find((x) => x.hex === hex);
-    if (prev) { prev.weight += weight; if (c.source === 'manual') prev.source = 'manual'; return; }
-    out.push({ hex, weight, source: c && c.source === 'manual' ? 'manual' : 'auto' });
+    if (prev) prev.weight += weight; else out.push({ hex, weight });
   });
-  const list2 = out.slice(0, PALETTE_LIMIT);
-  const sum = list2.reduce((s, x) => s + x.weight, 0);
+  const list2 = out.slice(0, SUGGESTION_LIMIT);
+  const sum = list2.reduce((t, x) => t + x.weight, 0);
   list2.forEach((x) => { x.weight = sum ? round1(x.weight / sum * 100) : round1(100 / list2.length); });
   return list2;
 }
 
-/** Fija el peso de un color (0–100) y reparte el resto entre los demás en proporción. Siempre suma 100. */
-export function setPaletteWeight(list, index, pct) {
-  const base = normalizePalette(list);
-  if (!base[index]) return base;
-  const p = Math.max(0, Math.min(100, Number(pct) || 0));
-  const others = base.filter((_, j) => j !== index);
-  if (!others.length) return [Object.assign({}, base[0], { weight: 100 })];
-  const osum = others.reduce((s, x) => s + x.weight, 0), rest = 100 - p;
-  return base.map((x, j) => Object.assign({}, x, { weight: round1(j === index ? p : osum ? x.weight / osum * rest : rest / others.length) }));
+let idSeq = 0;
+/** Identificador corto para un color de la paleta (estable una vez guardado). */
+export function newColorId() { idSeq = (idSeq + 1) % 1e6; return 'c' + Date.now().toString(36) + idSeq.toString(36); }
+/**
+ * Paleta definitiva limpia. Conserva el orden, el id, la etiqueta y la procedencia; admite dos colores iguales
+ * (dos prendas del mismo tono). El peso solo existe si venía de la extracción. Máx. 12.
+ * Compatible con referencias anteriores: [{ hex, weight, source }] sin id ni etiqueta se leen igual.
+ */
+export function normalizePalette(list) {
+  const out = [];
+  (Array.isArray(list) ? list : []).forEach((c, i) => {
+    const hex = normalizeHex(c && (c.hex || c));
+    if (!hex || out.length >= PALETTE_LIMIT) return;
+    const item = { id: typeof c.id === 'string' && /^[A-Za-z0-9_-]{1,40}$/.test(c.id) ? c.id : 'c' + i + hex.slice(1).toLowerCase(), hex, source: c && c.source === 'manual' ? 'manual' : 'auto' };
+    const label = str(c && c.label, 60);
+    if (label) item.label = label;
+    const w = Number(c && c.weight);
+    if (c && c.weight != null && Number.isFinite(w) && w >= 0) item.weight = round1(Math.min(100, w));
+    out.push(item);
+  });
+  return out;
+}
+/** Colores con los que se trabaja (tarjeta, filtros, parecidas, Studio): la paleta si la hay; si no, las sugerencias. */
+export function effectivePalette(x) {
+  const p = (x && x.palette) || [];
+  return p.length ? p : ((x && x.suggestions) || []);
+}
+/** Pesos para pintar una franja: los propios si todos los tienen; si no, partes iguales (una paleta elegida a mano no tiene pesos). */
+export function bandWeights(list) {
+  return (list || []).every((c) => typeof c.weight === 'number' && c.weight > 0) ? list.map((c) => c.weight) : (list || []).map(() => 1);
 }
 
 /** Información derivada de un color: nombre, familia, RGB y Lab/LCh (redondeados para mostrarlos). */
@@ -77,9 +145,13 @@ export function colorInfo(hex) {
   };
 }
 
-/** Papel de cada color por su peso: el mayor es dominante; los de ≥ 15 %, secundarios; el resto, detalles. */
+/**
+ * Papel de cada color por su peso: el mayor es dominante; los de ≥ 15 %, secundarios; el resto, detalles.
+ * Solo si todos tienen peso (sugerencias o paletas extraídas); en una paleta elegida a mano, role = null.
+ */
 export function paletteRoles(list) {
-  const p = normalizePalette(list);
+  const p = list || [];
+  if (!p.length || !p.every((x) => typeof x.weight === 'number')) return p.map((x) => Object.assign({}, x, { role: null }));
   const max = Math.max(0, ...p.map((x) => x.weight));
   let dominantGiven = false;
   return p.map((x) => {
@@ -88,14 +160,35 @@ export function paletteRoles(list) {
     return Object.assign({}, x, { role });
   });
 }
+
 export const ROLE_LABEL = { dominante: 'Dominante', secundario: 'Secundario', detalle: 'Detalle' };
+
+/* ═══════════ CUENTAGOTAS ═══════════ */
+/**
+ * De la pantalla a la imagen: el punto (clientX, clientY) sobre un elemento que pinta la imagen ENTERA y sin deformar
+ * en el rectángulo rect (getBoundingClientRect; ya incluye desplazamiento, escalado responsive y densidad de píxeles)
+ * → píxel de la imagen de width × height. null si cae fuera.
+ */
+export function toImagePoint(clientX, clientY, rect, width, height) {
+  if (!rect || !rect.width || !rect.height || !width || !height) return null;
+  const rx = (clientX - rect.left) / rect.width, ry = (clientY - rect.top) / rect.height;
+  if (!(rx >= 0 && rx < 1 && ry >= 0 && ry < 1)) return null;
+  return { x: Math.min(width - 1, Math.floor(rx * width)), y: Math.min(height - 1, Math.floor(ry * height)) };
+}
+/** Muestra del cuentagotas en el píxel (x, y): zona 5 × 5 por mediana (o el píxel exacto con exact). → { hex, n, mixed } | null */
+export function pickColor(pixels, x, y, exact) {
+  return pixels ? sampleMedian(pixels.data, pixels.width, pixels.height, x, y, exact ? 0 : SAMPLE_RADIUS) : null;
+}
 
 /* ═══════════ HUELLA DE IMAGEN (duplicados) ═══════════
    dHash: la imagen en gris a 9 × 8 y, por fila, si cada píxel es más claro que el siguiente. Resiste
-   cambios de tamaño y de compresión; no resiste recortes. 16 caracteres hex. */
+   cambios de tamaño y de compresión; no resiste recortes. 16 caracteres hex, o null si la imagen no tiene estructura
+   suficiente (lisa, transparente o de bloques planos), para no dar duplicados falsos. */
 export function imageHash(sample) {
   if (!sample || !sample.data || !sample.width || !sample.height) return null;
   const { data, width, height } = sample, W = 9, H = 8, g = [];
+  let transparent = 0;
+  for (let i = 3; i < data.length; i += 4) if (data[i] < 128) transparent++;
   for (let y = 0; y < H; y++) {
     for (let x = 0; x < W; x++) {
       const x0 = Math.floor(x * width / W), x1 = Math.max(x0 + 1, Math.floor((x + 1) * width / W));
@@ -112,6 +205,9 @@ export function imageHash(sample) {
   }
   let bits = '';
   for (let y = 0; y < H; y++) for (let x = 0; x < W - 1; x++) bits += g[y * W + x] > g[y * W + x + 1] ? '1' : '0';
+  // sin estructura (casi todo 0 o todo 1: imagen lisa, transparente o de bloques planos) la huella no distingue nada: no se compara
+  const ones = bits.split('').filter((c) => c === '1').length;
+  if (ones <= 3 || ones >= 61 || transparent > data.length / 8) return null;
   let hex = '';
   for (let i = 0; i < 64; i += 4) hex += parseInt(bits.slice(i, i + 4), 2).toString(16);
   return hex;
@@ -184,14 +280,16 @@ export function validateInspiration(input) {
     if (Number.isInteger(r) && r >= 1 && r <= 5) rating = r; else errors.push('La valoración va de 1 a 5');
   }
   const seasons = labels(i.seasons, 5).map((s) => s.toLowerCase()).filter((s) => SEASON_IDS.includes(s));
-  const palette = normalizePalette(i.palette);
-  // con colores: revisada si se dice, si no por revisar; sin colores: fallida si se dice, si no sin paleta
-  const status = palette.length ? (i.palette_status === 'reviewed' ? 'reviewed' : 'auto') : (i.palette_status === 'failed' ? 'failed' : 'none');
+  const palette = normalizePalette(i.palette), suggestions = normalizeSuggestions(i.suggestions);
+  // revisada: hay paleta y se dijo (o tiene colores elegidos a mano) · por revisar: hay colores pero ninguna decisión
+  // fallida: la extracción no dio nada y no hay paleta · sin paleta: nada de lo anterior
+  const status = palette.length ? (i.palette_status === 'reviewed' || palette.some((c) => c.source === 'manual') ? 'reviewed' : 'auto')
+    : suggestions.length ? 'auto' : (i.palette_status === 'failed' ? 'failed' : 'none');
   const value = {
     title: str(i.title, 160), source_url, source_name: str(i.source_name, 120) || (source_url ? sourceNameFromUrl(source_url) : null),
     published_on, description: text(i.description, 2000), notes: text(i.notes, 4000),
     styles: labels(i.styles, 12), collections: labels(i.collections, 20), seasons, rating,
-    is_favorite: i.is_favorite === true, palette, palette_status: status
+    is_favorite: i.is_favorite === true, palette, suggestions, palette_status: status
   };
   if (!value.title && !value.source_url && !i.has_image) errors.push('Añade una imagen, un enlace o al menos un título');
   return { ok: !errors.length, value, errors };
@@ -229,10 +327,10 @@ export function matchesFilters(x, f) {
   if (f.season && !(x.seasons || []).includes(f.season)) return false;
   if (f.fav && !x.is_favorite) return false;
   if (f.review && !(x.palette_status === 'auto' || x.palette_status === 'failed' || (x.palette_status === 'none' && (x.image_path || x.demo)))) return false;
-  if (f.family && !(x.palette || []).some((c) => c.weight >= 5 && (describeColor(c.hex) || {}).family === f.family)) return false;
+  if (f.family && !effectivePalette(x).some((c) => (c.weight == null || c.weight >= 5) && (describeColor(c.hex) || {}).family === f.family)) return false;
   if (f.q) {
     const hay = fold([x.title, x.source_name, x.source_url, x.description, x.notes].concat(x.styles || [], x.collections || [], (x.seasons || []).map((s) => SEASON_LABEL[s]))
-      .concat((x.palette || []).map((c) => c.hex + ' ' + ((describeColor(c.hex) || {}).name || ''))).join(' '));
+      .concat(effectivePalette(x).map((c) => c.hex + ' ' + (c.label || '') + ' ' + ((describeColor(c.hex) || {}).name || ''))).join(' '));
     if (!fold(f.q).split(/\s+/).filter(Boolean).every((w) => hay.includes(w))) return false;
   }
   return true;
@@ -262,23 +360,27 @@ export function optionValues(configured, items, key) {
 }
 
 /* ═══════════ RELACIÓN CON EL RESTO DE COLOR STUDIO ═══════════ */
-const asPalette = (x) => ({ id: x.id, name: displayTitle(x), colors: (x.palette || []).map((c) => ({ hex: c.hex })), ref: x });
+const asPalette = (x) => ({ id: x.id, name: displayTitle(x), colors: effectivePalette(x).map((c) => ({ hex: c.hex })), ref: x });
 /** Referencias con paleta parecida (mismo criterio que la Biblioteca: colores conectados por ΔE00 ≤ 10, ponderados por peso). */
 export function similarInspirations(target, list, limit = 4) {
-  if (!target || !(target.palette || []).length) return [];
-  const colors = target.palette.map((c) => ({ hex: c.hex, share: c.weight }));
-  const others = (list || []).filter((x) => x.id !== target.id && (x.palette || []).length).map(asPalette);
+  const own = effectivePalette(target);
+  if (!own.length) return [];
+  const w = bandWeights(own), colors = own.map((c, i) => ({ hex: c.hex, share: w[i] }));
+  const others = (list || []).filter((x) => x.id !== target.id && effectivePalette(x).length).map(asPalette);
   return rankPalettes(colors, others, { minConnected: Math.min(2, colors.length), limit }).map((r) => ({ item: r.palette.ref, match: r.match }));
 }
+const uniqueHex = (list) => list.filter((c, i) => list.findIndex((o) => o.hex === c.hex) === i);
 /** Paleta para la Biblioteca (cs_palettes) a partir de una referencia: mismos colores en orden, con su procedencia. */
 export function paletteForLibrary(x) {
   return {
     name: (x.title || x.source_name || 'Inspiración').slice(0, 120),
-    colors: (x.palette || []).slice(0, 12).map((c) => ({ hex: c.hex, original: c.hex })),
+    colors: uniqueHex(effectivePalette(x)).slice(0, 12).map((c) => ({ hex: c.hex, original: c.hex, name: c.label || null })),
     tags: ['inspiración'].concat((x.styles || []).map((s) => s.toLowerCase())),
     source_type: x.source_url ? 'web' : 'photo',
     source_title: x.source_name || null,
     source_url: x.source_url && x.source_url.length <= 600 ? x.source_url : null,
-    source_notes: 'Colores extraídos de una foto de outfit guardada en Inspiración: una estimación de la imagen (incluye fondo y piel si se ven), no de las prendas.'
+    source_notes: (x.palette || []).some((c) => c.source === 'manual')
+      ? 'Colores tomados con el cuentagotas sobre una foto de outfit guardada en Inspiración (zona de 5 × 5 píxeles, mediana). La luz de la foto los altera.'
+      : 'Colores sugeridos por el análisis automático de una foto de outfit guardada en Inspiración: una estimación sin el fondo, que puede incluir piel o accesorios.'
   };
 }
