@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "37df682",
+ "huella": "2bd61ec",
  "recuento": {
   "paginas": 19,
   "proyectos": 40,
@@ -9,10 +9,10 @@ export default {
   "capitulos": 10,
   "plataformas": 11,
   "pestanas": 10,
-  "tablas": 29,
+  "tablas": 32,
   "funciones": 4,
-  "herramientas": 14,
-  "relaciones": 173,
+  "herramientas": 15,
+  "relaciones": 172,
   "sinExplicar": 0
  },
  "columnas": [
@@ -1625,12 +1625,22 @@ export default {
      "familia": "privada"
     },
     {
-     "id": "t:studio",
+     "id": "t:apps",
      "tipo": "pestana",
-     "etiqueta": "Studio",
-     "nota": "proyectos, ideas y entregables",
-     "href": "#/studio",
-     "archivo": "area-privada-studio.js",
+     "etiqueta": "Apps",
+     "nota": "catálogo de aplicaciones",
+     "href": "#/apps",
+     "archivo": "area-privada-apps.js",
+     "hijos": [
+      {
+       "id": "m:color",
+       "tipo": "modulo",
+       "etiqueta": "Color Studio",
+       "nota": "outfits y paletas (modo app)",
+       "archivo": "area-privada-color.js",
+       "familia": "privada"
+      }
+     ],
      "familia": "privada"
     },
     {
@@ -1784,6 +1794,33 @@ export default {
        "id": "q:calendar_sync",
        "tipo": "tabla",
        "etiqueta": "calendar_sync",
+       "familia": "dato"
+      }
+     ],
+     "familia": "dato"
+    },
+    {
+     "id": "d:color-studio",
+     "tipo": "esquema",
+     "etiqueta": "color-studio.sql",
+     "archivo": "supabase/color-studio.sql",
+     "hijos": [
+      {
+       "id": "q:cs_garments",
+       "tipo": "tabla",
+       "etiqueta": "cs_garments",
+       "familia": "dato"
+      },
+      {
+       "id": "q:cs_palettes",
+       "tipo": "tabla",
+       "etiqueta": "cs_palettes",
+       "familia": "dato"
+      },
+      {
+       "id": "q:cs_outfits",
+       "tipo": "tabla",
+       "etiqueta": "cs_outfits",
        "familia": "dato"
       }
      ],
@@ -2126,6 +2163,13 @@ export default {
        "familia": "herramienta"
       },
       {
+       "id": "h:check-color",
+       "tipo": "herramienta",
+       "etiqueta": "check-color.mjs",
+       "archivo": "tools/check-color.mjs",
+       "familia": "herramienta"
+      },
+      {
        "id": "h:check-kanban",
        "tipo": "herramienta",
        "etiqueta": "check-kanban.mjs",
@@ -2140,10 +2184,10 @@ export default {
        "familia": "herramienta"
       },
       {
-       "id": "h:check-studio",
+       "id": "h:test-color",
        "tipo": "herramienta",
-       "etiqueta": "check-studio.mjs",
-       "archivo": "tools/check-studio.mjs",
+       "etiqueta": "test-color.mjs",
+       "archivo": "tools/test-color.mjs",
        "familia": "herramienta"
       },
       {
@@ -2151,13 +2195,6 @@ export default {
        "tipo": "herramienta",
        "etiqueta": "test-kanban.mjs",
        "archivo": "tools/test-kanban.mjs",
-       "familia": "herramienta"
-      },
-      {
-       "id": "h:test-studio",
-       "tipo": "herramienta",
-       "etiqueta": "test-studio.mjs",
-       "archivo": "tools/test-studio.mjs",
        "familia": "herramienta"
       }
      ]
@@ -2180,6 +2217,21 @@ export default {
        "tipo": "herramienta",
        "etiqueta": "second-brain/",
        "archivo": "tools/second-brain/",
+       "familia": "herramienta"
+      }
+     ]
+    },
+    {
+     "id": "g:tools:otras",
+     "tipo": "grupo",
+     "etiqueta": "sin clasificar/",
+     "nota": "añádela a un grupo en mapa.config.json",
+     "hijos": [
+      {
+       "id": "h:color-studio",
+       "tipo": "herramienta",
+       "etiqueta": "color-studio/",
+       "archivo": "tools/color-studio/",
        "familia": "herramienta"
       }
      ]
@@ -2740,14 +2792,14 @@ export default {
    "detalle": []
   },
   {
-   "de": "h:check-kanban",
-   "a": "m:kanban",
+   "de": "h:check-color",
+   "a": "m:color",
    "tipo": "verifica",
    "detalle": []
   },
   {
-   "de": "h:check-studio",
-   "a": "t:studio",
+   "de": "h:check-kanban",
+   "a": "m:kanban",
    "tipo": "verifica",
    "detalle": []
   },
@@ -2779,16 +2831,26 @@ export default {
    "detalle": []
   },
   {
+   "de": "h:test-color",
+   "a": "m:color",
+   "tipo": "verifica",
+   "detalle": []
+  },
+  {
    "de": "h:test-kanban",
    "a": "m:kanban",
    "tipo": "verifica",
    "detalle": []
   },
   {
-   "de": "h:test-studio",
-   "a": "t:studio",
-   "tipo": "verifica",
-   "detalle": []
+   "de": "m:color",
+   "a": "d:color-studio",
+   "tipo": "usa",
+   "detalle": [
+    "cs_garments",
+    "cs_outfits",
+    "cs_palettes"
+   ]
   },
   {
    "de": "m:kanban",
@@ -3302,28 +3364,6 @@ export default {
    ]
   },
   {
-   "de": "t:studio",
-   "a": "d:studio-ideas",
-   "tipo": "usa",
-   "detalle": [
-    "ps_convert_idea()",
-    "ps_deliverables",
-    "ps_ideas",
-    "ps_notes"
-   ]
-  },
-  {
-   "de": "t:studio",
-   "a": "d:studio",
-   "tipo": "usa",
-   "detalle": [
-    "ps_activity",
-    "ps_projects",
-    "ps_settings",
-    "ps_tasks"
-   ]
-  },
-  {
    "de": "w:checks",
    "a": "h:build-en",
    "tipo": "ejecuta",
@@ -3343,6 +3383,12 @@ export default {
   },
   {
    "de": "w:checks",
+   "a": "h:check-color",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:checks",
    "a": "h:check-kanban",
    "tipo": "ejecuta",
    "detalle": []
@@ -3350,12 +3396,6 @@ export default {
   {
    "de": "w:checks",
    "a": "h:check-links",
-   "tipo": "ejecuta",
-   "detalle": []
-  },
-  {
-   "de": "w:checks",
-   "a": "h:check-studio",
    "tipo": "ejecuta",
    "detalle": []
   },
@@ -3373,13 +3413,13 @@ export default {
   },
   {
    "de": "w:checks",
-   "a": "h:test-kanban",
+   "a": "h:test-color",
    "tipo": "ejecuta",
    "detalle": []
   },
   {
    "de": "w:checks",
-   "a": "h:test-studio",
+   "a": "h:test-kanban",
    "tipo": "ejecuta",
    "detalle": []
   },

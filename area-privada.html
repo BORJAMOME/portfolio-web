@@ -20,7 +20,13 @@
 <link rel="stylesheet" href="./shared.css?v=7f31d1e0dd">
 <!-- Pestañas con archivo propio: area-privada.js las inyecta al abrirlas; el navegador las precarga en reposo -->
 <link rel="prefetch" as="script" href="./area-privada-hoy.js?v=4950d5f1b7" data-ap-module="hoy">
-<link rel="prefetch" as="script" href="./area-privada-studio.js?v=a88c21e6b6" data-ap-module="studio">
+<link rel="prefetch" as="script" href="./area-privada-apps.js?v=b486ca669c" data-ap-module="apps">
+<link rel="prefetch" as="script" href="./area-privada-color.js?v=2a3878be8c" data-ap-module="color">
+<link rel="prefetch" as="script" href="./color-studio/engine.js?v=ad34183687" data-ap-asset="cs-engine">
+<link rel="prefetch" as="script" href="./color-studio/socks.js?v=d97495b416" data-ap-asset="cs-socks">
+<link rel="prefetch" as="script" href="./color-studio/data.js?v=348e6b5fd1" data-ap-asset="cs-data">
+<link rel="prefetch" as="script" href="./color-studio/image.js?v=162db4e74f" data-ap-asset="cs-image">
+<link rel="prefetch" as="script" href="./color-studio/compose.js?v=7b22337f70" data-ap-asset="cs-compose">
 <link rel="prefetch" as="script" href="./area-privada-kanban.js?v=ab3301bf21" data-ap-module="kanban">
 <link rel="prefetch" as="script" href="./area-privada-calendario.js?v=2e9cb28a18" data-ap-module="calendario">
 <link rel="prefetch" as="script" href="./area-privada-entrevistas.js?v=bdaabb17fe" data-ap-module="entrevistas">
@@ -35,16 +41,21 @@
 <link rel="prefetch" as="script" href="./second-brain/viewer.js?v=6c0aa3a1e3" data-ap-asset="sb-viewer">
 <link rel="prefetch" as="script" href="./area-privada-fichero.js?v=5834b6b4aa" data-ap-module="fichero">
 <link rel="prefetch" as="script" href="./area-privada-mapa.js?v=d3db579c96" data-ap-module="mapa">
-<link rel="prefetch" as="script" href="./mapa/estructura.js?v=fd78e00a71" data-ap-asset="mapa-datos">
+<link rel="prefetch" as="script" href="./mapa/estructura.js?v=65e6b61def" data-ap-asset="mapa-datos">
 <link rel="stylesheet" href="./css/second-brain.css?v=2f3f8407a3">
 <link rel="stylesheet" href="./css/mapa.css?v=9a1505f87b">
-<link rel="stylesheet" href="./css/area-privada.css?v=bfd1bc7e1b">
+<link rel="stylesheet" href="./css/color-studio.css?v=59d73c09f2">
+<link rel="stylesheet" href="./css/area-privada.css?v=3bb5e40089">
 </head>
 <body>
 <a href="#main-content" class="skip-link">Saltar al contenido</a>
 
 <header class="ap-top">
-  <p class="ap-now"><time id="ap-now-date"></time><span class="ap-now-sep" aria-hidden="true">·</span><time id="ap-now-time" class="ap-now-time"></time></p>
+  <!-- Reloj: módulo LCD de siete segmentos (lo construye area-privada.js, decorativo); la fecha completa la leen los lectores de pantalla -->
+  <p class="ap-now">
+    <span class="ap-lcd" id="ap-lcd" aria-hidden="true"></span>
+    <span class="sr-only" id="ap-now-spoken"></span>
+  </p>
   <p class="ap-top-title">Área personal de trabajo</p>
   <a class="ap-back" href="./descargas.html"><span aria-hidden="true">←</span> Volver al Laboratorio</a>
 </header>
@@ -57,16 +68,14 @@
       <span class="ap-lock-icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.2"/></svg>
       </span>
-      <p class="ap-label">Acceso restringido</p>
-      <h1 class="ap-lock-title" id="ap-lock-title">Área privada</h1>
-      <p class="ap-lock-sub">Manuales, notas y recursos de trabajo. Introduce la contraseña para entrar.</p>
+      <h1 class="ap-lock-title" id="ap-lock-title">Acceso restringido</h1>
 
       <form class="ap-login" id="ap-login" novalidate>
         <!-- usuario fijo: solo para que el gestor de contraseñas reconozca el acceso -->
         <input class="sr-only" type="email" name="username" autocomplete="username" value="borja.mora.mendez@gmail.com" tabindex="-1" aria-hidden="true" readonly>
         <label class="ap-field-label" for="ap-pass">Contraseña</label>
         <div class="ap-pass">
-          <input id="ap-pass" name="password" type="password" autocomplete="current-password" required aria-describedby="ap-login-msg">
+          <input id="ap-pass" name="password" type="password" autocomplete="current-password" placeholder="Contraseña" required aria-describedby="ap-login-msg">
           <button type="button" class="ap-pass-toggle" id="ap-pass-toggle" aria-pressed="false" aria-controls="ap-pass">Mostrar</button>
         </div>
         <p class="ap-msg" id="ap-login-msg" aria-live="assertive"></p>
@@ -78,18 +87,20 @@
   <!-- ─────────── CONTENIDO (solo con sesión) ─────────── -->
   <section class="ap-app" id="ap-app" aria-labelledby="ap-app-title" hidden>
     <div class="ap-shell">
+      <!-- Solo dentro de una app del catálogo (modo app: sin cabecera, pestañas ni pie del área privada) -->
+      <nav class="ap-appbar" id="ap-appbar" aria-label="Salir de la app" hidden>
+        <a class="ap-appbar-back" id="ap-appbar-back" href="#/apps"><span aria-hidden="true">←</span> Volver al área privada</a>
+      </nav>
       <div class="ap-head">
         <h1 class="ap-app-title" id="ap-app-title" tabindex="-1">Hoy</h1>
         <div class="ap-head-actions">
-          <span class="ap-user" id="ap-user"></span>
-          <a class="btn btn-outline" href="./roma-aeterna/">Caesar III</a>
           <button type="button" class="btn btn-outline" id="ap-logout">Cerrar sesión</button>
         </div>
       </div>
 
       <nav class="ap-tabs" aria-label="Secciones del área privada">
         <a href="#/" data-tab="hoy">Hoy</a>
-        <a href="#/studio" data-tab="studio">Studio</a>
+        <a href="#/apps" data-tab="apps">Apps</a>
         <a href="#/calendario" data-tab="calendario">Calendario</a>
         <a href="#/entrevistas" data-tab="entrevistas">Entrevistas</a>
         <a href="#/portfolio" data-tab="portfolio">Portfolio</a>
@@ -120,6 +131,9 @@
       <ul class="ap-uploads" id="ap-uploads" aria-label="Subidas en curso"></ul>
       <div class="ap-view" id="ap-view"></div>
     </div>
+    <!-- Móvil: barra inferior y hoja «Más». Las construye area-privada.js a partir de .ap-tabs (única fuente de las secciones) -->
+    <nav class="ap-bar" id="ap-bar" aria-label="Secciones del área privada"></nav>
+    <dialog class="ap-more" id="ap-more" aria-labelledby="ap-more-title"></dialog>
     <div class="ap-drop" id="ap-drop" aria-hidden="true" hidden><p>Suelta los archivos para subirlos a esta carpeta</p></div>
   </section>
 
@@ -150,6 +164,6 @@
   <p class="ap-foot-copy">© 2026 Borja Mora Méndez · <a href="./privacidad.html">Privacidad</a></p>
 </footer>
 
-<script src="./area-privada.js?v=f5b99fbb1c" defer></script>
+<script src="./area-privada.js?v=9212f4cc24" defer></script>
 </body>
 </html>

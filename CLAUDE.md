@@ -6,7 +6,7 @@ Contexto de producto y marca: `PRODUCT.md` (solo local). Mapa de archivos y coma
 ## Reglas
 - Español de España en todo el contenido. Rol: «Data Analyst Junior». Lema: «Analizo datos. Diseño cómo se leen.»
 - Las páginas de `en/` **se generan** (`node tools/build-en.mjs`); nunca se editan a mano. Traducciones en `i18n/`.
-- Tras cambiar un CSS/JS propio: `node tools/version-assets.mjs` (versiones `?v=`).
+- Tras cambiar un CSS/JS propio: `node tools/version-assets.mjs` (versiones `?v=`; también en los imports entre módulos de `color-studio/`, para que cada uno se descargue una sola vez).
 - Sin dependencias nuevas salvo que no haya alternativa nativa razonable.
 - Manuales con sistema propio: `ds/` (Data Storytelling), `ml/` (se genera en otro repo), `pbi/`.
 
@@ -25,6 +25,19 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
 - **Pestañas en módulos** que se cargan al abrirlas: `area-privada-<nombre>.js` define `window.AP<Nombre> = { render(ctx) → Promise<paint> }`
   y se declara en el HTML como `<link rel="prefetch" data-ap-module="<nombre>">` (así `version-assets` le pone el `?v=`).
   Para una pestaña nueva: el archivo, ese `<link>`, una entrada en `MODULES` (de ahí sale también la ruta) y el enlace en `.ap-tabs`.
+- **Navegación móvil** (< 900 px): las pestañas `.ap-tabs` (única fuente de las secciones) se sustituyen por una barra inferior con Hoy, Apps, Calendario, Entrevistas y «Más»;
+  «Más» abre una hoja (`<dialog>` modal) con el resto de pestañas y «Cerrar sesión». Las dos se **generan** en `area-privada.js` (`buildNav`, `BAR_TABS`, `NAV_ICONS`) a partir de `.ap-tabs`:
+  una pestaña nueva aparece sola en la hoja (y necesita su icono en `NAV_ICONS`); para subirla a la barra, añadirla a `BAR_TABS`. La barra no se muestra en modo app. En móvil la cabecera es una sola fila
+  (reloj + «Volver al Laboratorio»). Todo lo fijo abajo (barra, `.apk-toast`, `.mp-detail`) cuenta con la altura de la barra. Pruebas: `node tools/check-color.mjs` (flujos «Móvil»).
+- **Apps** (`#/apps`): catálogo de las herramientas personales. El registro `APPS` de `area-privada.js` es la única fuente de nombre, descripción, icono y ruta;
+  `area-privada-apps.js` (`window.APApps`) solo lo pinta (CSS con prefijo `apl-` al final de `css/area-privada.css`, fondo #FBFBFB con `body:has(.apl)`).
+  **Modo app**: una entrada con `module` vive en esta página (su módulo va en `MODULES` con `tab: 'apps'`) y al abrirla el shell pone `body.ap-in-app`:
+  oculta cabecera, pestañas, acciones y pie del área privada (el `h1` queda solo para lectores de pantalla) y enseña `#ap-appbar` «← Volver al área privada».
+  La vuelta usa el índice que el shell guarda en `history.state`: si se entró desde `#/apps`, retrocede hasta esa entrada (sin apilar historial); si no (URL directa, recarga), navega a `#/apps`.
+  Una entrada sin `module` es una página propia con su layout (Caesar III → `roma-aeterna/`, PWA) y su propia vuelta, en el mismo sitio (arriba a la izquierda) hacia `../area-privada.html#/apps`.
+  App nueva: una entrada en `APPS` (orden alfabético) y, si vive aquí, su módulo. Iconos cuadrados y a sangre (la máscara la pone el catálogo), con la misma construcción:
+  fondo con degradado suave, anillo fino y un emblema central (`roma-aeterna/icons/icon-192.png`, `img/apps/color-studio.svg`).
+  Pruebas: los flujos de Apps y del modo app están en `node tools/check-color.mjs`.
 - **Portfolio** (`#/portfolio`): inventario de manuales, proyectos, gráficos, apps de Streamlit, repos y visualizaciones.
   Tabla `public.portfolio` (`supabase/portfolio.sql`, con carga inicial generada desde las páginas del sitio).
   Los tipos son el grupo `portfolio.tipo` de `ap_opciones`.
@@ -43,17 +56,16 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
   Captura inteligente local (`logic.parseCapture`: #proyecto, !prioridad, fechas en español, @hoy). Paleta `Ctrl/⌘+K`.
   IA opcional: Edge Function `supabase/functions/kanban-ia` (desglosar, siguiente paso, plan del día, texto → tarjetas). Solo propone:
   la web enseña una revisión y guarda lo confirmado. `KB_AI_PROVIDER=off` por defecto (los botones de IA no aparecen). Guía: su `README.md`.
-- **Studio** (`#/studio`): proyectos y tareas con varias vistas sobre el mismo estado (Resumen, Tablero, Archivo; panel lateral contextual). Módulo
-  `area-privada-studio.js` (`window.APStudio`, lógica pura en `.logic`), CSS con prefijo `aps-` al final de `css/area-privada.css` (reutiliza los tokens y los `--st-*` del Centro de trabajo).
-  Tablas propias `ps_projects`, `ps_tasks` (con `parent_id` = subtarea de un solo nivel), `ps_settings` (límites WIP) y `ps_activity` (la escribe un trigger)
-  en `supabase/studio.sql` (revertir con `studio-rollback.sql`). **Independiente del Centro de trabajo**: no lee ni escribe `kb_*`. La fase del proyecto (`stage`) y su estado (`status`)
-  son cosas distintas; un proyecto que no está activo oculta sus tareas del tablero. Arrastre con Pointer Events propios, Mayús+flechas, deshacer (botón y Ctrl/⌘+Z).
-  Hito 2 (`supabase/studio-ideas.sql`, revertir con `studio-ideas-rollback.sql`): **Idea Lab** (`ps_ideas`: captura de una frase, grupo libre `topic`, tipo, estado y conexión a un proyecto;
-  `ps_convert_idea()` la convierte en proyecto de forma atómica), **notas e investigación** (`ps_notes`: nota, investigación, hipótesis, decisión, referencia) y **entregables**
-  (`ps_deliverables`) como secciones desplegables del panel de proyecto. Los enlaces solo se pintan si son http(s) (`logic.safeUrl`; la base lo exige también con un `check`).
-  Sin ejecutar `studio-ideas.sql` el resto del Studio funciona y esas secciones avisan dónde falta.
-  Pendiente por hitos: hoja de ruta (hitos y dependencias, relaciones entre ideas), lienzo (coordenadas en tabla aparte) y revisión/cierre.
-  Pruebas: `node tools/test-studio.mjs` (lógica) y `node tools/check-studio.mjs` (interfaz con Playwright y Supabase simulado; no toca la base real).
+- **Color Studio** (`#/color`, `/biblioteca`, `/armario`, `/calcetines`; app del catálogo, se abre en modo app): outfits con prendas reales, paletas de referencia y guía de calcetines.
+  Interfaz `area-privada-color.js` (`window.APColor`, CSS `css/color-studio.css`, prefijo `cs-`; fondo #FBFBFB solo en esta pestaña con `body:has(.cs)`).
+  Lógica en módulos ES sin DOM en `color-studio/` (`engine.js` color/ΔE00/proporciones, `compose.js` lectura del conjunto, direcciones Minimalista/Equilibrada/Creativa
+  con criterios con nombre (`MOVES`) y paletas como inspiración, `socks.js` reglas de calcetines con tipo de calzado, `data.js` validación e importación, `image.js` fotos),
+  cargados con `<link data-ap-asset="cs-*">`. Tablas `cs_garments`, `cs_palettes`, `cs_outfits` y bucket privado `armario` (`supabase/color-studio.sql`, revertir con `color-studio-rollback.sql`).
+  Intro de bienvenida (bloque `INTRO`, estilos `csi-`): una vez por carga de página, coordinada con la carga real (máx. 6 s), sin animación con movimiento reducido.
+  Proporciones = estimaciones editables; no inventar porcentajes de confianza ni contenido del libro de Sanzo Wada. Modo ejemplo en memoria, nunca se guarda.
+  Las propuestas usan prendas reales (dos a la vez solo si con una no basta); si no hay, el color va marcado como hipotético. Aplicar guarda el conjunto de partida en el borrador para volver a él.
+  «Qué prenda te falta» sale de las propuestas hipotéticas (`wardrobeGaps`). Cuentagotas en la foto (`engine.sampleColor`). Largo del calcetín por calzado (`sockFit`), leído de la subcategoría: sin columnas nuevas.
+  Pruebas: `node --test tools/test-color.mjs` y `node tools/check-color.mjs`. Guía y decisiones: `color-studio/README.md`.
 - **Calendario** (`#/calendario`): solo lectura. Google → iCal secreto → Edge Function `supabase/functions/calendario-sync`
   (pg_cron cada 15 min) → `public.calendar_events`. La página nunca habla con Google. Guía: `supabase/functions/calendario-sync/README.md`.
 - **Entrevistas** (`#/entrevistas`, `/analisis`, `/<uuid>`): tablas `procesos` y `entrevistas` (`supabase/entrevistas.sql`).

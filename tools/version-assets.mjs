@@ -9,6 +9,9 @@
    navegadores descargan la versión nueva; si no cambia, siguen usando la caché.
    Sustituye a las fechas escritas a mano (?v=20260930i), fáciles de olvidar o repetir.
    Después de ejecutarlo no hace falta regenerar el inglés: se actualizan las dos versiones.
+   Módulos ES que se importan entre sí (MODULE_DIRS): sus imports relativos también llevan ?v=. Así la página
+   y los módulos piden la MISMA URL de cada dependencia (una sola descarga e instancia) y, tras publicar,
+   no se mezclan versiones nuevas con dependencias viejas de la caché (auditoría de Color Studio, CS-05).
    Sin dependencias: solo Node.
    ═══════════════════════════════════════════════ */
 import { readFileSync, writeFileSync, readdirSync, existsSync } from 'node:fs';
@@ -23,10 +26,35 @@ const pages = [
   ...readdirSync(join(ROOT, 'en')).filter((f) => f.endsWith('.html')).map((f) => join(ROOT, 'en', f)),
 ];
 const hashes = {};
+const memory = {};                         // contenido ya reescrito (o por reescribir, con --check) de los módulos
+const read = (file) => memory[file] ?? readFileSync(file, 'utf8');
 // el hash ignora los finales de línea (CRLF en Windows, LF en Git/CI): mismo contenido, misma versión en cualquier equipo
-const hashOf = (file) => (hashes[file] ??= createHash('sha256').update(readFileSync(file, 'utf8').replace(/\r\n/g, '\n')).digest('hex').slice(0, 10));
+const hashOf = (file) => (hashes[file] ??= createHash('sha256').update(read(file).replace(/\r\n/g, '\n')).digest('hex').slice(0, 10));
 
 let changed = 0;
+/* ── Imports entre módulos: de las hojas hacia arriba, hasta que nada cambie (el grafo no tiene ciclos) ── */
+const MODULE_DIRS = ['color-studio'];
+const IMPORT = /(\bfrom\s*'|\bimport\(\s*')(\.{1,2}\/[^'?#]+\.js)(?:\?v=[^']*)?'/g;
+const modules = MODULE_DIRS.flatMap((d) => readdirSync(join(ROOT, d)).filter((f) => f.endsWith('.js')).map((f) => join(ROOT, d, f)));
+for (let pass = 0, dirty = true; dirty; pass++) {
+  if (pass > modules.length + 1) throw new Error('Los imports entre módulos no convergen (¿hay un ciclo?)');
+  dirty = false;
+  for (const m of modules) {
+    const src = read(m);
+    const out = src.replace(IMPORT, (all, pre, path) => {
+      const dep = resolve(dirname(m), path);
+      return existsSync(dep) ? `${pre}${path}?v=${hashOf(dep)}'` : all;
+    });
+    if (out !== src) { memory[m] = out; dirty = true; for (const k of Object.keys(hashes)) delete hashes[k]; }
+  }
+}
+for (const m of modules) {
+  if (memory[m] === undefined || memory[m] === readFileSync(m, 'utf8')) continue;
+  changed++;
+  if (CHECK) console.log(`✗ ${relative(ROOT, m)} · versiones de los imports desactualizadas`);
+  else writeFileSync(m, memory[m]);
+}
+
 for (const p of pages) {
   const src = readFileSync(p, 'utf8');
   const out = src.replace(/(\s(?:href|src)=")((?:\.{1,2}\/|\/(?!\/))[^"?#]+\.(?:css|js))(?:\?v=[^"#]*)?"/g, (m, pre, path) => {
@@ -41,4 +69,4 @@ for (const p of pages) {
   }
 }
 if (CHECK && changed) { console.error(`\nEjecuta: node tools/version-assets.mjs`); process.exit(1); }
-console.log(CHECK ? `✓ versiones de caché al día en ${pages.length} páginas.` : `${changed} página(s) actualizadas.`);
+console.log(CHECK ? `✓ versiones de caché al día en ${pages.length} páginas y ${modules.length} módulos.` : `${changed} archivo(s) actualizados.`);

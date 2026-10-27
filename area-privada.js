@@ -36,36 +36,105 @@
   var els = {
     lock: $('ap-lock'), app: $('ap-app'), form: $('ap-login'), pass: $('ap-pass'),
     toggle: $('ap-pass-toggle'), loginMsg: $('ap-login-msg'), loginBtn: $('ap-login-btn'),
-    user: $('ap-user'), logout: $('ap-logout'), title: $('ap-app-title'),
+    logout: $('ap-logout'), title: $('ap-app-title'),
     searchForm: $('ap-search-form'), search: $('ap-search'), file: $('ap-file'),
     crumbs: $('ap-crumbs'), status: $('ap-status'), uploads: $('ap-uploads'),
     view: $('ap-view'), drop: $('ap-drop'),
     dialog: $('ap-dialog'), dForm: $('ap-dialog-form'), dTitle: $('ap-dialog-title'),
     dText: $('ap-dialog-text'), dField: $('ap-dialog-field'), dInput: $('ap-dialog-input'),
     dOk: $('ap-dialog-ok'), dCancel: $('ap-dialog-cancel'),
-    toolbar: $('ap-toolbar'), crumbsNav: $('ap-crumbs-nav'), tabs: document.querySelectorAll('.ap-tabs a[data-tab]')
+    toolbar: $('ap-toolbar'), crumbsNav: $('ap-crumbs-nav'), tabs: document.querySelectorAll('.ap-tabs a[data-tab]'),
+    appbar: $('ap-appbar'), appBack: $('ap-appbar-back'), bar: $('ap-bar'), more: $('ap-more')
   };
 
   /* ═══════════ FECHA Y HORA (cabecera) ═══════════
-     Se actualiza al cambiar de minuto; no se anuncia a lectores de pantalla en cada cambio. */
-  var nowDate = $('ap-now-date'), nowTime = $('ap-now-time');
-  var clockDay = new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
-  var clockTime = new Intl.DateTimeFormat('es-ES', { hour: '2-digit', minute: '2-digit' });
+     Módulo LCD de siete segmentos: días de la semana, fecha (DD-MM), hora y segundos. Se dibuja con SVG propio
+     (sin fuentes ni librerías): cada dígito son siete polígonos y la clase is-on enciende los de su cifra; los
+     apagados quedan visibles y tenues, como en un LCD real. Todo lo visible es decorativo (aria-hidden): los
+     lectores de pantalla leen la fecha de #ap-now-spoken, que no es una región en vivo, así que no anuncia cada cambio. */
+  var lcdBox = $('ap-lcd'), nowSpoken = $('ap-now-spoken');
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  var DAYS = ['DO', 'LU', 'MA', 'MI', 'JU', 'VI', 'SA'];     // getDay(): domingo = 0
+  var DIGIT_SEGS = ['abcdef', 'bc', 'abdeg', 'abcdg', 'bcfg', 'acdfg', 'acdefg', 'abc', 'abcdefg', 'abcdfg'];
+  var clockSpoken = new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
-  function tick() {
-    var d = new Date();
-    nowDate.dateTime = d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
-    nowDate.textContent = '';
-    nowDate.appendChild(document.createTextNode(clockDay.format(d)));
-    var y = document.createElement('span');
-    y.className = 'ap-now-date-y';
-    y.textContent = ' de ' + d.getFullYear();
-    nowDate.appendChild(y);
-    nowTime.dateTime = pad2(d.getHours()) + ':' + pad2(d.getMinutes());
-    nowTime.textContent = clockTime.format(d);
-    setTimeout(tick, 60000 - (d.getSeconds() * 1000 + d.getMilliseconds()) + 50);
+  function svgEl(tag, attrs, parent) {
+    var el = document.createElementNS(SVGNS, tag);
+    Object.keys(attrs).forEach(function (k) { el.setAttribute(k, attrs[k]); });
+    if (parent) parent.appendChild(el);
+    return el;
   }
-  if (nowDate && nowTime) tick();
+  function hex(pts) { return pts.map(function (p) { return p[0] + ',' + p[1]; }).join(' '); }
+  function hSeg(x1, x2, y) { return hex([[x1, y], [x1 + 5, y - 5], [x2 - 5, y - 5], [x2, y], [x2 - 5, y + 5], [x1 + 5, y + 5]]); }
+  function vSeg(x, y1, y2) { return hex([[x, y1], [x + 5, y1 + 5], [x + 5, y2 - 5], [x, y2], [x - 5, y2 - 5], [x - 5, y1 + 5]]); }
+  var SEG_SHAPE = { a: hSeg(7, 53, 6), b: vSeg(54, 9, 47), c: vSeg(54, 53, 91), d: hSeg(7, 53, 94), e: vSeg(6, 53, 91), f: vSeg(6, 9, 47), g: hSeg(7, 53, 50) };
+  var SLANT = 'translate(8.75 0) skewX(-5)';                // cursiva suave, como el LCD de un reloj digital
+  function lcdDigit(id, small) {
+    var svg = svgEl('svg', { viewBox: '0 0 68 100', class: 'ap-lcd-d' + (small ? ' ap-lcd-d--s' : ''), focusable: 'false', 'data-lcd': id });
+    var g = svgEl('g', { transform: SLANT }, svg);
+    Object.keys(SEG_SHAPE).forEach(function (k) { svgEl('polygon', { points: SEG_SHAPE[k], class: 'ap-lcd-s', 'data-s': k }, g); });
+    return svg;
+  }
+  function lcdColon() {
+    var svg = svgEl('svg', { viewBox: '0 0 26 100', class: 'ap-lcd-c', focusable: 'false' });
+    var g = svgEl('g', { transform: SLANT, class: 'ap-lcd-blink' }, svg);
+    svgEl('rect', { x: 6, y: 25, width: 13, height: 13 }, g);
+    svgEl('rect', { x: 6, y: 62, width: 13, height: 13 }, g);
+    return svg;
+  }
+  function lcdDash() {
+    var svg = svgEl('svg', { viewBox: '0 0 40 100', class: 'ap-lcd-dash', focusable: 'false' });
+    svgEl('polygon', { points: hSeg(5, 35, 50), class: 'ap-lcd-s is-on' }, svgEl('g', { transform: SLANT }, svg));
+    return svg;
+  }
+  function span(cls, kids) {
+    var el = document.createElement('span');
+    el.className = cls;
+    kids.forEach(function (k) { el.appendChild(k); });
+    return el;
+  }
+  var lcd = null;
+  function lcdBuild() {
+    var d = {};
+    ['d1', 'd2', 'n1', 'n2', 'h1', 'h2', 'm1', 'm2', 's1', 's2'].forEach(function (k) { d[k] = lcdDigit(k, /^[dns]/.test(k)); });
+    var days = DAYS.slice(1).concat(DAYS[0]).map(function (t) {      // semana de lunes a domingo
+      var el = document.createElement('span');
+      el.className = 'ap-lcd-day';
+      el.textContent = t;
+      return el;
+    });
+    lcdBox.appendChild(span('ap-lcd-screen', [
+      span('ap-lcd-days', days),
+      span('ap-lcd-row', [
+        span('ap-lcd-date', [d.d1, d.d2, lcdDash(), d.n1, d.n2]),
+        span('ap-lcd-time', [d.h1, d.h2, lcdColon(), d.m1, d.m2]),
+        span('ap-lcd-sec', [d.s1, d.s2])
+      ])
+    ]));
+    lcd = { d: d, days: days };
+  }
+  function lcdSet(svg, n) {
+    if (svg.getAttribute('data-v') === String(n)) return;
+    svg.setAttribute('data-v', n);
+    [].forEach.call(svg.querySelectorAll('.ap-lcd-s'), function (p) {
+      p.classList.toggle('is-on', DIGIT_SEGS[n].indexOf(p.getAttribute('data-s')) > -1);
+    });
+  }
+  function lcdPair(a, b, n) { lcdSet(a, Math.floor(n / 10)); lcdSet(b, n % 10); }
+  function tick() {
+    var t = new Date(), hm = pad2(t.getHours()) + ':' + pad2(t.getMinutes());
+    if (!lcd) lcdBuild();
+    lcdPair(lcd.d.d1, lcd.d.d2, t.getDate());
+    lcdPair(lcd.d.n1, lcd.d.n2, t.getMonth() + 1);
+    lcdPair(lcd.d.h1, lcd.d.h2, t.getHours());
+    lcdPair(lcd.d.m1, lcd.d.m2, t.getMinutes());
+    lcdPair(lcd.d.s1, lcd.d.s2, t.getSeconds());
+    lcd.days.forEach(function (el) { el.classList.toggle('is-on', el.textContent === DAYS[t.getDay()]); });
+    var spoken = clockSpoken.format(t) + ', ' + hm;
+    if (nowSpoken.textContent !== spoken) nowSpoken.textContent = spoken;
+    setTimeout(tick, 1000 - t.getMilliseconds() + 20);
+  }
+  if (lcdBox && nowSpoken) tick();
 
   /* ═══════════ SESIÓN ═══════════ */
   var session = null;
@@ -448,7 +517,9 @@
     hoy:         { global: 'APHoy',         title: 'Hoy' },
     // sin pestaña propia: lo monta «Hoy» (tab) encima de sus tarjetas
     kanban:      { global: 'APKanban',      title: 'Hoy', tab: 'hoy' },
-    studio:      { global: 'APStudio',      title: 'Studio' },
+    apps:        { global: 'APApps',        title: 'Apps' },
+    // app del catálogo (APPS): se abre en modo app, sin pestaña propia
+    color:       { global: 'APColor',       title: 'Color Studio', tab: 'apps' },
     calendario:  { global: 'APCalendario',  title: 'Calendario' },
     entrevistas: { global: 'APEntrevistas', title: 'Entrevistas' },
     // sin pestaña propia: vive dentro de «Entrevistas» (tab) con su propio archivo
@@ -459,6 +530,36 @@
     fichero:     { global: 'APFichero',     title: 'Fichero' },
     configuracion: { global: 'APConfiguracion', title: 'Configuración' }
   };
+  /* Catálogo de apps (#/apps): única fuente de nombre, icono, ruta y descripción de cada una.
+     · Con «module»: vive en esta página y se abre en modo app (sin cabecera, pestañas ni pie
+       del área privada; solo «Volver al área privada»). Su módulo va en MODULES con tab: 'apps'.
+     · Sin «module»: página propia con su layout y su vuelta (p. ej. la PWA de roma-aeterna/).
+     Orden alfabético. Añadir una app = una entrada aquí (y, si vive aquí, su módulo). */
+  var APPS = [
+    { id: 'caesar', name: 'Caesar III', desc: 'Tu provincia romana en el iPhone', icon: './roma-aeterna/icons/icon-192.png', href: './roma-aeterna/' },
+    { id: 'color', name: 'Color Studio', desc: 'Color aplicado a tu armario', icon: './img/apps/color-studio.svg', href: '#/color', module: 'color' }
+  ];
+  function appOf(moduleName) { return APPS.filter(function (a) { return a.module === moduleName; })[0] || null; }
+
+  /* Volver de una app al catálogo sin apilar entradas en el historial. Cada entrada guarda su
+     índice en history.state; si se entró en la app desde #/apps, «Volver» retrocede hasta esa
+     entrada (saltando las vistas internas de la app) y Adelante sigue funcionando. Si se llegó por
+     URL directa, marcador o recarga, el enlace navega a #/apps como uno normal. */
+  var navIdx = 0, appReturn = null, lastApp = null, lastWasApps = false, lastIdx = 0;
+  function stampHistory() {
+    var st = history.state;
+    if (st && typeof st.apIdx === 'number') { navIdx = st.apIdx; return; }
+    navIdx += 1;
+    try { history.replaceState({ apIdx: navIdx }, ''); } catch (e) { /* sin historial: el enlace sigue valiendo */ }
+  }
+  function setAppMode(app) {
+    if (app && app !== lastApp) appReturn = lastWasApps && lastIdx < navIdx ? lastIdx : null;
+    if (!app) appReturn = null;
+    lastApp = app;
+    document.body.classList.toggle('ap-in-app', !!app);
+    els.appbar.hidden = !app;
+  }
+
   var MODULE_ROUTE = new RegExp('^#/(' + Object.keys(MODULES).join('|') + ')(?:/(.*))?$');
   var loading = {};
   function loadModule(name) {
@@ -497,6 +598,10 @@
     dirty = false;
     setStatus('Cargando…');
     var job, isModule = r.kind === 'module', tab = isModule ? (MODULES[r.name].tab || r.name) : 'archivos';
+    stampHistory();
+    setAppMode(isModule ? appOf(r.name) : null);
+    lastWasApps = isModule && r.name === 'apps';
+    lastIdx = navIdx;
     // la barra del drive (buscar, + Carpeta, subir) y las migas solo tienen sentido en «Archivos y notas»
     els.toolbar.hidden = els.crumbsNav.hidden = isModule;
     [].forEach.call(els.tabs, function (a) {
@@ -506,11 +611,12 @@
       var bar = a.parentNode, r = a.getBoundingClientRect(), b = bar.getBoundingClientRect();
       if (r.left < b.left || r.right > b.right) bar.scrollLeft += r.left - b.left - 16;
     });
+    syncNav(tab);
     els.title.textContent = isModule ? MODULES[r.name].title : 'Archivos y notas';
     if (isModule) {
       job = loadModule(r.name).then(function (mod) {
         return mod.render({
-          api: api, h: h, ui: ui, ask: ask, fail: fail, module: loadModule, setStatus: setStatus, fail: fail, view: els.view, arg: r.arg,
+          api: api, h: h, ui: ui, ask: ask, fail: fail, module: loadModule, setStatus: setStatus, fail: fail, view: els.view, arg: r.arg, apps: APPS,
           isCurrent: function () { return seq === renderSeq; }
         });
       });
@@ -851,7 +957,6 @@
   function unlockScreen() {
     els.lock.hidden = true;
     els.app.hidden = false;
-    els.user.textContent = session.email || '';
     IDLE_EVENTS.forEach(function (ev) { document.addEventListener(ev, bumpIdle, { passive: true }); });
     bumpIdle();
     render();
@@ -867,6 +972,7 @@
     els.crumbs.textContent = '';
     els.uploads.textContent = '';
     setStatus('');
+    setAppMode(null);                   // la pantalla de acceso lleva siempre la cabecera del área privada
     els.app.hidden = true;
     els.lock.hidden = false;
     if (location.hash) history.replaceState(null, '', location.pathname + location.search);
@@ -937,6 +1043,12 @@
     if (parseRoute().kind !== 'search') els.search.value = '';
     render();
   });
+  els.appBack.addEventListener('click', function (e) {
+    if (e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (appReturn === null || appReturn >= navIdx) return;   // sin catálogo detrás: navega a #/apps
+    e.preventDefault();
+    history.go(appReturn - navIdx);
+  });
   window.addEventListener('beforeunload', function (e) { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
   /* navegar dentro de la app con una nota a medias: pedir confirmación */
   els.app.addEventListener('click', function (e) {
@@ -957,6 +1069,69 @@
     els.drop.hidden = true;
     uploadFiles(e.dataTransfer.files);
   });
+
+  /* ═══════════ NAVEGACIÓN MÓVIL ═══════════
+     En pantallas estrechas las pestañas (.ap-tabs, única fuente de las secciones) se sustituyen por una barra inferior
+     con las cuatro de uso diario y «Más», que abre una hoja con el resto y «Cerrar sesión». Se genera a partir de
+     .ap-tabs, así que una pestaña nueva aparece sola en la hoja. En modo app (ap-in-app) no se muestra. */
+  var NAV_ICONS = {
+    hoy: '<circle cx="12" cy="12" r="3.6"/><path d="M12 3.5v2M12 18.5v2M3.5 12h2M18.5 12h2M6 6l1.4 1.4M16.6 16.6 18 18M18 6l-1.4 1.4M7.4 16.6 6 18"/>',
+    apps: '<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/>',
+    calendario: '<rect x="4" y="5.5" width="16" height="14.5" rx="2"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/>',
+    entrevistas: '<path d="M5 5.5h14a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5h-7l-4.5 3.5V16.5H5A1.5 1.5 0 0 1 3.5 15V7A1.5 1.5 0 0 1 5 5.5z"/>',
+    portfolio: '<rect x="3.5" y="7.5" width="17" height="12" rx="2"/><path d="M9 7.5V6a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 6v1.5M3.5 13h17"/>',
+    'second-brain': '<circle cx="12" cy="6" r="2.2"/><circle cx="5.5" cy="17.5" r="2.2"/><circle cx="18.5" cy="17.5" r="2.2"/><path d="M10.9 7.9 6.6 15.6M13.1 7.9l4.3 7.7M7.7 17.5h8.6"/>',
+    mapa: '<rect x="9" y="3.5" width="6" height="4.5" rx="1"/><rect x="3.5" y="16" width="6" height="4.5" rx="1"/><rect x="14.5" y="16" width="6" height="4.5" rx="1"/><path d="M12 8v4M6.5 16v-4h11v4"/>',
+    archivos: '<path d="M3.5 7.5a2 2 0 0 1 2-2h4l2 2h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/>',
+    fichero: '<path d="M6.5 3.5h11v17L12 16.5l-5.5 4z"/>',
+    configuracion: '<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',
+    mas: '<circle cx="6" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18" cy="12" r="1.2"/>',
+    salir: '<path d="M9.5 4.5h-4A1.5 1.5 0 0 0 4 6v12a1.5 1.5 0 0 0 1.5 1.5h4M15 8l4 4-4 4M19 12H9.5"/>',
+    cerrar: '<path d="M6 6l12 12M18 6 6 18"/>'
+  };
+  var BAR_TABS = ['hoy', 'apps', 'calendario', 'entrevistas'];
+  function navIcon(id) {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + (NAV_ICONS[id] || '') + '</svg>';
+  }
+  var navMoreBtn = null;
+  (function buildNav() {
+    var tabs = [].map.call(els.tabs, function (a) { return { id: a.getAttribute('data-tab'), href: a.getAttribute('href'), label: a.textContent.trim() }; });
+    tabs.filter(function (t) { return BAR_TABS.indexOf(t.id) > -1; }).forEach(function (t) {
+      els.bar.appendChild(h('a', { class: 'ap-bar-a', href: t.href, 'data-tab': t.id }, [h('span', { class: 'ap-bar-ico', html: navIcon(t.id) }), h('span', { text: t.label })]));
+    });
+    navMoreBtn = h('button', { type: 'button', class: 'ap-bar-a ap-bar-more', 'aria-haspopup': 'dialog', 'aria-controls': 'ap-more', 'aria-expanded': 'false' }, [
+      h('span', { class: 'ap-bar-ico', html: navIcon('mas') }), h('span', { text: 'Más' })
+    ]);
+    els.bar.appendChild(navMoreBtn);
+    var closeBtn = h('button', { type: 'button', class: 'ap-more-x', 'aria-label': 'Cerrar', html: navIcon('cerrar') });
+    var logoutBtn = h('button', { type: 'button', class: 'ap-more-a ap-more-out' }, [h('span', { class: 'ap-more-ico', html: navIcon('salir') }), h('span', { text: 'Cerrar sesión' })]);
+    els.more.appendChild(h('div', { class: 'ap-more-card' }, [
+      h('div', { class: 'ap-more-head' }, [h('h2', { class: 'ap-more-title', id: 'ap-more-title', text: 'Más secciones' }), closeBtn]),
+      h('ul', { class: 'ap-more-list' }, tabs.filter(function (t) { return BAR_TABS.indexOf(t.id) < 0; }).map(function (t) {
+        return h('li', null, [h('a', { class: 'ap-more-a', href: t.href, 'data-tab': t.id }, [h('span', { class: 'ap-more-ico', html: navIcon(t.id) }), h('span', { text: t.label })])]);
+      })),
+      logoutBtn
+    ]));
+    navMoreBtn.addEventListener('click', function () {
+      els.more.showModal();
+      navMoreBtn.setAttribute('aria-expanded', 'true');
+    });
+    els.more.addEventListener('close', function () { navMoreBtn.setAttribute('aria-expanded', 'false'); });
+    closeBtn.addEventListener('click', function () { els.more.close(); });
+    els.more.addEventListener('click', function (e) {
+      if (e.target === els.more) return els.more.close();                      // clic en el fondo
+      var a = e.target.closest && e.target.closest('a');
+      if (a && !e.defaultPrevented) els.more.close();                           // navegar (si el aviso de cambios sin guardar no lo impide)
+    });
+    logoutBtn.addEventListener('click', function () { els.more.close(); els.logout.click(); });
+    window.addEventListener('resize', function () { if (els.more.open && window.innerWidth >= 900) els.more.close(); });
+  })();
+  function syncNav(tab) {
+    [].forEach.call(document.querySelectorAll('.ap-bar a[data-tab], .ap-more a[data-tab]'), function (a) {
+      if (a.getAttribute('data-tab') === tab) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+    });
+    navMoreBtn.classList.toggle('is-on', BAR_TABS.indexOf(tab) < 0);
+  }
 
   /* ═══════════ ARRANQUE ═══════════ */
   readSession();
