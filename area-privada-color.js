@@ -1073,7 +1073,7 @@ window.APColor = (function () {
             h('span', { class: 'cs-ins-ctxt' }, [
               h('span', { class: 'cs-ins-cname' }, [h('span', { text: info.name }), h('span', { class: 'cs-role cs-role--' + c.role, text: M.N.ROLE_LABEL[c.role] }),
                 c.source === 'manual' ? h('span', { class: 'cs-ins-manual', text: 'corregido a mano' }) : null]),
-              h('span', { class: 'cs-hex', text: c.hex + ' · RGB ' + info.rgb.r + ' ' + info.rgb.g + ' ' + info.rgb.b + ' · Lab ' + info.lab.L + ' ' + info.lab.a + ' ' + info.lab.b }),
+              h('span', { class: 'cs-hex cs-ins-codes' }, [h('span', { text: c.hex }), h('span', { text: 'RGB ' + info.rgb.r + ' ' + info.rgb.g + ' ' + info.rgb.b }), h('span', { text: 'Lab ' + info.lab.L + ' ' + info.lab.a + ' ' + info.lab.b })]),
               h('span', { class: 'cs-ins-w' }, [h('span', { class: 'cs-ins-meter', 'aria-hidden': 'true' }, [bar]), h('span', { class: 'cs-pct', text: pcts[i] + ' %' })])
             ]),
             copy
