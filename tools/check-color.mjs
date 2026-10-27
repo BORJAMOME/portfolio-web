@@ -821,7 +821,7 @@ await step('Inspiración: detalle con paleta (HEX, RGB, Lab, pesos), confirmar, 
   await page.waitForSelector('dialog[open] .cs-ins-colors');
   const txt = await page.textContent('dialog[open]');
   ok(txt.includes('Ver la publicación original') && txt.includes('Revista Prueba') && txt.includes('2 de marzo de 2026'), 'faltan fuente, enlace o fecha');
-  ok(/RGB \d+ \d+ \d+ · Lab/.test(txt) && txt.includes('Dominante'), 'sin datos del color');
+  ok(/RGB \d+ \d+ \d+Lab/.test(txt) && txt.includes('Dominante'), 'sin datos del color');
   eq(await page.getAttribute('dialog[open] .cs-ins-link', 'rel'), 'noopener noreferrer');
   const pcts = await page.$$eval('dialog[open] .cs-ins-colors .cs-pct', (e) => e.map((x) => parseInt(x.textContent, 10)));
   eq(pcts.reduce((a, b) => a + b, 0), 100);
@@ -985,6 +985,23 @@ await step('Inspiración en móvil 390 px: filtros plegados, rejilla de dos colu
   await shot(m.page, '14-inspiracion-detalle-movil');
   const small2 = await m.page.$$eval('dialog[open] button, dialog[open] .btn', (e) => e.filter((x) => x.offsetParent && x.getBoundingClientRect().height < 40).map((x) => x.textContent.trim()));
   eq(small2, [], 'botones con poca área táctil');
+  eq(m.errors, []);
+  await m.ctx.close();
+});
+await step('Móvil 320 px: sin scroll horizontal; direcciones, barra inferior y textos de las tarjetas caben en su caja', async () => {
+  const m = await open({ width: 320, height: 700 }, '#/color');
+  await m.page.waitForSelector('.cs-dir-b');
+  const fit = (sel) => m.page.$$eval(sel, (e) => e.filter((x) => x.scrollWidth > x.clientWidth + 1).map((x) => x.textContent.trim()));
+  eq(await fit('.cs-dir-b'), [], 'texto fuera de los botones de dirección');
+  eq(await fit('.cs-nav-a'), [], 'texto fuera de la barra inferior');
+  eq(await m.page.evaluate(() => document.documentElement.scrollWidth), 320);
+  await go(m.page, '#/color/inspiracion');
+  await m.page.waitForSelector('.cs-ins-card');
+  eq(await m.page.evaluate(() => document.documentElement.scrollWidth), 320);
+  await m.page.click('[data-key="insp-' + db.cs_inspirations.find((x) => x.title === 'Look de prueba E2E').id + '"]');
+  await m.page.waitForSelector('dialog[open] .cs-ins-codes');
+  eq(await fit('dialog[open] .cs-ins-codes > span'), [], 'códigos de color cortados');
+  eq(await m.page.$eval('dialog[open]', (d) => d.scrollWidth <= d.clientWidth), true, 'el detalle desborda en horizontal');
   eq(m.errors, []);
   await m.ctx.close();
 });
