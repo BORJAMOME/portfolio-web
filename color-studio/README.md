@@ -62,6 +62,11 @@ No hace falta ninguna variable de entorno ni clave nueva: usa la sesión y la cl
   solo difieren en luz (≤ 30 de L, croma proporcional) se tratan como sombra y se funde el más oscuro en el más claro.
   Los neutros no se funden. No corrige el balance de blancos: con luz cálida, un blanco sale crudo. Es una propuesta:
   siempre se corrige a mano.
+- **Cuentagotas** (`engine.sampleColor`): con una foto recién elegida, se toca un punto de la prenda (o se mueve con las
+  flechas e Intro) y se toma la media, en luz lineal, de un cuadrado de 7 × 7 píxeles de una copia de ≤ 480 px. En ese
+  modo la foto se ve entera, sin recorte, para que el punto tocado sea el que se mide. Tampoco corrige el balance de
+  blancos: el formulario aconseja luz natural indirecta, sin flash, y fondo liso blanco o gris. Con una foto ya guardada
+  no hay cuentagotas (habría que volver a descargarla para leer sus píxeles); basta con volver a elegirla.
 - **Modo ejemplo**: datos inventados en memoria, señalados en pantalla, que nunca se guardan ni se mezclan con los reales.
 
 ## Intro de bienvenida
@@ -100,6 +105,14 @@ orientativa. Nada de eso es una puntuación: no hay porcentajes de estilo ni «o
     calcetín que repite el pantalón es continuidad, no cuenta) y `eq-apoyo` (sobre una base solo neutra, un color apagado).
   - Creativa: `cr-paleta` (color de una paleta relacionada que el conjunto no usa; las de libro primero), `cr-acento`
     (complementario, de contraste o análogo en una prenda pequeña) y `cr-repetir` (el acento en dos zonas).
+  - **Dos prendas a la vez** (`par-prendas`): solo si el conjunto aún no se lee en esa dirección y ningún cambio de una
+    prenda real lo consigue. Se prueban parejas de prendas reales en los huecos ocupados, con poda: las 4 más prometedoras
+    por hueco (minimalista, las más apagadas; equilibrada, las que repiten un color de otra zona; creativa, las más intensas
+    sin pasarse del contexto) y 240 combinaciones como mucho. De las que alcanzan la lectura, gana la que menos cambia la
+    intensidad media. Ocupa un hueco libre o sustituye a una propuesta hipotética. Tarda unos milisegundos.
+- **Qué prenda te falta** (`wardrobeGaps`): reúne los colores hipotéticos que proponen las tres direcciones para el
+  conjunto, agrupados por hueco y color (ΔE00 ≤ 10), con las direcciones que abrirían y el criterio. No valora el
+  armario ni es una lista de la compra; si las tres direcciones se resuelven con prendas reales, lo dice.
 - **Prendas reales primero.** Si ninguna encaja, el color se ofrece como **hipotético** (borde discontinuo y aviso
   «no tienes esta prenda»). Al aplicarlo entra en el borrador como color provisional, nunca como prenda.
 - **Comparar y aplicar**: cada propuesta enseña Ahora / Propuesta, los cambios por hueco, qué cambia (contraste,
@@ -146,7 +159,13 @@ distintas entre sí (ΔE00 > 10). Si no hay datos para tres de verdad, se enseñ
   es válido) y [Gentleman's Gazette](https://www.gentlemansgazette.com/how-to-combine-socks-shoes-pants/) (igualar
   exactamente el pantalón no es lo más logrado, mejor que igualar el zapato; enlazar con la parte de arriba). Lo de las
   deportivas blancas es convención informal extendida, no regla. Los umbrales de croma son decisiones propias.
-- El estilo del calcetín (invisible, tobillero, media caña) no se registra: no se deduce ni se inventa.
+- **Largo y grosor** (`sockFit`): por tipo de calzado; sin tipo, por formalidad. Zapato formal: largo o media caña, fino;
+  mocasín: invisible o media caña, fino; bota: media caña o largo, medio o grueso; deportiva: tobillero, invisible o media
+  caña; técnica: tobillero o media caña técnico; náutico o alpargata: invisible. Son convenciones, no reglas. Si la
+  referencia es el invisible, se avisa de que el color no se verá. El largo de tus calcetines se deduce de su subcategoría
+  o nombre (`inferSockLength`: invisible, tobillero, media caña/crew, largo/ejecutivo); entre dos calcetines tuyos de
+  color parecido gana el de un largo adecuado, y si el tuyo no encaja con el calzado se dice. Sin esquema nuevo: si
+  no lo anotas, no se juzga.
 - Los colores que escribes en la guía solo cuentan al pulsar «Actualizar propuestas» y solo cambian la guía: el bloque de
   calcetines del Studio usa siempre los colores reales del outfit.
 
@@ -177,10 +196,10 @@ node tools/color-studio/wada-import.mjs [salida.json] [--from colors.json]
 ## Limitaciones conocidas
 
 - La estimación de superficie no usa la foto del outfit vestido (segmentación y solapes quedan para una fase posterior).
-- Las propuestas no contemplan estampados en el calcetín ni su largo o material (no se registran).
+- Las propuestas no contemplan estampados en el calcetín ni su material; el largo solo cuenta si se anota en la subcategoría.
 - La temperatura y la relación entre colores son aproximaciones por tono; los materiales y texturas no intervienen
   porque el campo es texto libre y no se deducen.
-- Las direcciones cambian como mucho una prenda por propuesta; no buscan combinaciones de varias prendas a la vez.
+- Las direcciones cambian como mucho dos prendas por propuesta, y dos solo si con una no basta; no exploran tres o más.
 - La familia de un color es aproximada en los límites entre tonos (p. ej. camel/naranja, turquesa/verde).
 - HEIC no se lee en navegadores de escritorio: el iPhone debe compartir la foto como JPEG.
 - El borrador del Studio vive en `sessionStorage` (se pierde al cerrar la pestaña); lo guardado está en Supabase.

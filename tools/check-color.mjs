@@ -359,6 +359,37 @@ await step('Armario: quitar la foto la borra del bucket; eliminar la prenda tamb
   ok(!objects.has(t.image_path), 'la foto sigue en el bucket');
 });
 
+await step('CS-17: cuentagotas sobre la foto con puntero y con teclado; el color se lleva al principal', async () => {
+  await go(page, '#/color/armario');
+  await page.click('[data-key="new-garment"]');
+  await page.waitForSelector('dialog[open] #cs-g-cat');
+  ok(await page.isHidden('[data-key="eyedropper"]'), 'cuentagotas sin foto');
+  ok((await page.textContent('dialog[open] .cs-photo-field')).includes('balance de blancos'), 'sin consejo de captura');
+  await page.setInputFiles('dialog[open] .cs-photo-act label:has-text("Elegir imagen") input', await pngOf(page, 600, 800, '#4A2E1F'));
+  await page.waitForSelector('dialog[open] .cs-prop-row');
+  await page.click('[data-key="eyedropper"]');
+  await page.waitForSelector('[data-key="pick-area"]');
+  eq(await page.getAttribute('[data-key="eyedropper"]', 'aria-pressed'), 'true');
+  eq(await page.evaluate(() => document.activeElement && document.activeElement.dataset.key), 'pick-area', 'el foco no pasa a la foto');
+  await page.keyboard.press('Enter');                                     // centro: la prenda
+  await page.waitForSelector('.cs-pick-out .cs-hex');
+  eq(await page.textContent('.cs-pick-out .cs-hex'), '#4A2E1F');
+  for (let i = 0; i < 4; i++) await page.keyboard.press('Shift+ArrowLeft');   // x = 0,1: el fondo
+  await page.keyboard.press('Enter');
+  await page.waitForFunction(() => document.querySelector('.cs-pick-out .cs-hex').textContent === '#F0F0EE');
+  await page.click('[data-key="pick-primary"]');
+  eq(await page.inputValue('#cs-g-primary'), '#F0F0EE');
+  const box = await page.$eval('[data-key="pick-area"] img', (i) => { const r = i.getBoundingClientRect(); return { x: r.left, y: r.top, w: r.width, h: r.height }; });
+  ok(Math.abs(box.w / box.h - 600 / 800) < 0.02, 'la foto se recorta en modo cuentagotas: ' + JSON.stringify(box));
+  await page.mouse.click(box.x + box.w * 0.5, box.y + box.h * 0.5);       // puntero: la prenda
+  await page.waitForFunction(() => document.querySelector('.cs-pick-out .cs-hex').textContent === '#4A2E1F');
+  await shot(page, '10-cuentagotas');
+  await axe(page, 'formulario con cuentagotas');
+  await page.click('[data-key="eyedropper"]');
+  await page.waitForSelector('dialog[open] .cs-photo img:not([alt=""])');
+  await page.click('dialog[open] button:has-text("Cancelar")');
+  await page.waitForSelector('dialog[open]', { state: 'detached' });
+});
 await step('Studio: pantalón y calzado del armario + parte superior con color provisional', async () => {
   await go(page, '#/color');
   await page.click('[data-key="pick-bottom"]');
@@ -550,8 +581,15 @@ await step('Tipo de calzado: se deduce de la prenda y se puede corregir', async 
   await go(p, '#/color/calcetines');
   ok((await p.textContent('#cs-s-shoe')).includes('Automático: bota'), 'no deduce la bota del nombre');
   ok((await p.textContent('.cs-socks')).includes('asoma poco'), 'sin la nota de la bota');
+  ok((await p.textContent('[data-key="sock-fit-guide"]')).includes('Media caña o largo'), 'CS-21: sin largo para la bota');
   await p.selectOption('#cs-s-shoe', 'loafer');
   await p.waitForFunction(() => document.querySelector('.cs-socks').textContent.includes('mocasín'));
+  ok((await p.textContent('[data-key="sock-fit-guide"]')).includes('Invisible o media caña'), 'CS-21: el largo no sigue al calzado');
+  ok((await p.textContent('.cs-socks .cs-warn')).includes('invisible el color no se ve'), 'CS-21: sin aviso del invisible');
+  await go(p, '#/color');
+  ok((await p.textContent('[data-key="sock-fit"]')).includes('invisible o media caña'), 'CS-21: el Studio no muestra el largo');
+  await go(p, '#/color/calcetines');
+  await p.selectOption('#cs-s-shoe', '');
   await shot(p, '09-calcetines-calzado');
 });
 await step('CS-02: lo escrito en la guía de calcetines no cambia los calcetines del Studio', async () => {
@@ -573,6 +611,21 @@ await step('CS-02: lo escrito en la guía de calcetines no cambia los calcetines
   await p.click('[data-key="sock-reset"]');
   await p.waitForSelector('.cs-socks:not(:has(.cs-note--manual))');
   ok(!(await p.$('.cs-note--manual')), 'no volvió a los colores del outfit');
+});
+await step('CS-22: «Qué prenda te falta» sale de las propuestas hipotéticas y nunca propone una prenda que ya tienes', async () => {
+  const { page: p } = globalThis.__x;
+  await go(p, '#/color');
+  await p.waitForSelector('.cs-gaps');
+  const gaps = await p.$$eval('.cs-gap', (e) => e.map((x) => x.textContent));
+  const none = await p.$('[data-key="gaps-none"]');
+  ok(gaps.length || none, 'la tarjeta no dice nada');
+  gaps.forEach((t) => ok(/Abriría: (Minimalista|Equilibrada|Creativa)/.test(t), 'sin dirección: ' + t));
+  if (gaps.length) ok((await p.textContent('.cs-gaps')).includes('No es una valoración de tu armario'), 'sin aclaración');
+  if (process.env.COLOR_SHOTS) {
+    await p.setViewportSize({ width: 390, height: 844 });
+    await (await p.$('.cs-gaps')).screenshot({ path: join(process.env.COLOR_SHOTS, '11-falta.png') });
+    await p.setViewportSize({ width: 1440, height: 1000 });
+  }
 });
 await step('CS-14 y CS-15: a 320 px se ve la etiqueta de rol y los controles miden al menos 44 px', async () => {
   const { page: p } = globalThis.__x;

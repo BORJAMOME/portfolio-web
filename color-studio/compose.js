@@ -7,11 +7,11 @@
         cita el suyo y sus frases solo describen lo que el criterio hace de verdad.
      3. LECTURA: «más cerca de lo minimalista / equilibrado / creativo», derivada de los hechos con
         umbrales documentados. Es una orientación, nunca una nota ni un porcentaje.
-   Las propuestas cambian una o dos prendas por otras REALES del armario. Cuando no hay prenda
+   Las propuestas cambian una o dos prendas por otras REALES del armario (dos a la vez solo si con una no basta). Cuando no hay prenda
    que encaje, el color se ofrece como HIPOTÉTICO (hypothetical: true) y la interfaz lo dice:
    nunca se presenta como algo que ya tienes.
    ═══════════════════════════════════════════════ */
-import { normalizeHex, colorDistance, describeColor, hexToLab, labToLch, lchToLab, labToHex, rankPalettes, SLOTS, SLOT, garmentColorParts, estimateDistribution } from './engine.js?v=4cb484b1b7';
+import { normalizeHex, colorDistance, describeColor, hexToLab, labToLch, lchToLab, labToHex, rankPalettes, SLOTS, SLOT, garmentColorParts, estimateDistribution } from './engine.js?v=ad34183687';
 
 export const DIRECTIONS = [
   { id: 'minimal', label: 'Minimalista', goal: 'Discreto y tonal: neutros o tonos apagados, sin acentos que compitan.' },
@@ -201,6 +201,7 @@ export const MOVES = {
   'cr-paleta': 'Incorporar un color de una paleta de la biblioteca que ya comparte colores con el conjunto y que este aún no usa.',
   'cr-acento': 'Un acento en relación complementaria, de contraste o análoga con el color principal, en una prenda pequeña.',
   'cr-repetir': 'Repetir el acento en una segunda zona: el color inesperado se lee como decisión, no como accidente.',
+  'par-prendas': 'Cuando ningún cambio de una sola prenda lleva el conjunto a la dirección, probar parejas de prendas reales y quedarse con la que lo consigue alterando menos el conjunto.',
   'mantener': 'El conjunto ya cumple los criterios de esta dirección: no se fuerza un cambio.'
 };
 const SMALL = ['accessory', 'socks', 'top', 'outer'];
@@ -399,6 +400,52 @@ const MOVE_FNS = {
     return null;
   }
 };
+/* ── Dos prendas a la vez (auditoría CS-22) ──
+   Solo cuando el conjunto aún no se lee en la dirección y ningún cambio de UNA prenda real lo consigue.
+   Poda: en cada hueco ocupado se prueban como mucho PAIR_K prendas reales, las más prometedoras para la
+   dirección (minimalista: las más apagadas; equilibrada: las que repiten un color de otra zona; creativa:
+   las más intensas sin pasarse del contexto), y como mucho PAIR_MAX combinaciones. De las que alcanzan la
+   lectura, gana la que menos cambia la intensidad media; los empates se resuelven por orden de prueba. */
+const PAIR_K = 4, PAIR_MAX = 240;
+function pairCandidates(c, dir, slot) {
+  const others = c.items.filter((it) => it.slot !== slot).flatMap((it) => (it.colors || []).map((x) => x.hex));
+  const key = (g) => {
+    const f = colorFacts(g.primary_color);
+    if (dir === 'minimal') return (f.neutral ? 0 : 100) + f.C;
+    if (dir === 'balanced') return others.length ? Math.min(...others.map((h) => colorDistance(h, g.primary_color))) : f.C;
+    return f.C > CHROMA_CAP[c.formality] + 25 ? 1000 : -f.C;
+  };
+  return realFor(c, slot).map((g) => ({ g, k: key(g) })).sort((a, b) => a.k - b.k).slice(0, PAIR_K).map((x) => x.g);
+}
+function pairMove(c, dir) {
+  if (c.before.reading === dir) return null;
+  const slots = c.items.filter((it) => !it.lost).map((it) => it.slot);
+  const cands = Object.fromEntries(slots.map((s) => [s, pairCandidates(c, dir, s)]));
+  let best = null, tried = 0;
+  for (let i = 0; i < slots.length && tried < PAIR_MAX; i++) {
+    for (let j = i + 1; j < slots.length && tried < PAIR_MAX; j++) {
+      for (const ga of cands[slots[i]]) {
+        for (const gb of cands[slots[j]]) {
+          if (++tried > PAIR_MAX) break;
+          const next = JSON.parse(JSON.stringify(c.slots));
+          [[slots[i], ga], [slots[j], gb]].forEach(([s, g]) => { next[s] = { weight: next[s].weight, garment_id: g.id, hex: null }; });
+          const a = analyzeOutfit(buildItems(next, c.garments));
+          if (!a.valid || a.reading !== dir) continue;
+          const cost = Math.abs(a.weightedC - c.before.weightedC);
+          if (!best || cost < best.cost) best = { cost, a, changes: [{ slot: slots[i], garment: ga }, { slot: slots[j], garment: gb }] };
+        }
+      }
+    }
+  }
+  if (!best) return null;
+  const a = best.a, [x, y] = best.changes;
+  const why = dir === 'minimal' ? 'quedan neutros o tonos apagados, sin acentos que compitan.'
+    : dir === 'balanced' ? 'un color manda' + (a.repetitions.length ? ' y el ' + a.repetitions[0].name + ' se repite entre prendas.' : ' y como mucho queda un acento.')
+    : a.accents.length ? 'el ' + a.accents[0].name + ' queda como acento deliberado.' : 'aparece un contraste de tono entre superficies grandes.';
+  return proposal(c, dir, 'par-prendas', best.changes,
+    'Con un solo cambio de tu armario el conjunto no llega a leerse ' + READING_LABEL[dir] + '. Cambia ' + fromText(c, x.slot) + ' por ' + garmentLabel(x.garment) +
+    ' y ' + fromText(c, y.slot) + ' por ' + garmentLabel(y.garment) + ': ' + why);
+}
 const ORDER = { minimal: ['min-apagar', 'min-tonal'], balanced: ['eq-reducir', 'eq-repetir', 'eq-apoyo'], creative: ['cr-paleta', 'cr-acento', 'cr-repetir'] };
 
 /* Dos composiciones son la misma si tienen los mismos huecos y cada hueco conserva su color (ΔE00 ≤ 5). */
@@ -417,11 +464,20 @@ export function proposeDirection(direction, input) {
   const c = context(input);
   if (!c.before.valid) return { direction: dir, kept: false, proposals: [], note: 'Elige al menos una prenda para explorar direcciones.' };
   const out = [];
+  const fresh = (p) => p && !sameSlots(p.slots, c.slots, c.garments) && !out.some((q) => sameSlots(q.slots, p.slots, c.garments));
   for (const move of ORDER[dir]) {
     if (out.length >= 2) break;
     const p = MOVE_FNS[move](c);
-    if (!p || sameSlots(p.slots, c.slots, c.garments) || out.some((q) => sameSlots(q.slots, p.slots, c.garments))) continue;
-    out.push(p);
+    if (fresh(p)) out.push(p);
+  }
+  // dos prendas reales a la vez si ningún cambio de una prenda real alcanza la dirección; ocupa un hueco libre
+  // o sustituye a una propuesta hipotética (las prendas que tienes van antes que un color que no tienes)
+  if (!out.some((p) => !p.hypothetical && p.after.reading === dir)) {
+    const pair = pairMove(c, dir);
+    if (fresh(pair)) {
+      const hypo = out.findIndex((p) => p.hypothetical);
+      if (out.length < 2) out.push(pair); else if (hypo >= 0) out.splice(hypo, 1, pair);
+    }
   }
   const already = c.before.reading === dir;
   return {
@@ -430,6 +486,22 @@ export function proposeDirection(direction, input) {
       : already ? MOVES.mantener : 'Con tu armario actual no hay un cambio de una o dos prendas que lleve el conjunto en esta dirección sin inventar prendas.',
     proposals: out
   };
+}
+
+/* ═══════════ QUÉ PRENDA TE FALTA (auditoría CS-22) ═══════════
+   Se deduce de las propuestas HIPOTÉTICAS de las tres direcciones para este conjunto: cada una es un color que
+   no tienes en ese tipo de prenda y que haría posible la propuesta. Se agrupan por hueco y color (ΔE00 ≤ 10).
+   No valora el armario ni sugiere comprar: dice qué color, en qué hueco, desbloquearía qué dirección y por qué. */
+export function wardrobeGaps(input) {
+  const out = [];
+  DIRECTIONS.forEach((d) => {
+    proposeDirection(d.id, input).proposals.forEach((p) => p.changes.filter((ch) => ch.hypothetical).forEach((ch) => {
+      const g = out.find((x) => x.slot === ch.slot && colorDistance(x.hex, ch.hex) <= 10);
+      if (g) { if (!g.directions.includes(d.id)) g.directions.push(d.id); return; }
+      out.push({ slot: ch.slot, label: ch.label, hex: ch.hex, name: ch.name, directions: [d.id], move: p.move, rule: p.rule, explanation: p.explanation });
+    }));
+  });
+  return out.sort((a, b) => (b.directions.length - a.directions.length));
 }
 
 /* ═══════════ PALETAS COMO INSPIRACIÓN ═══════════ */

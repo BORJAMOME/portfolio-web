@@ -4,7 +4,7 @@
    Módulo ES puro (sin red ni DOM). La web valida aquí ANTES de escribir en Supabase;
    la base vuelve a exigir lo esencial con checks (supabase/color-studio.sql).
    ═══════════════════════════════════════════════ */
-import { normalizeHex, normalizePaletteColors, findDuplicates, CATEGORY_LABEL, SLOT, sanitizeWeight, normalizeDistribution } from './engine.js?v=4cb484b1b7';
+import { normalizeHex, normalizePaletteColors, findDuplicates, CATEGORY_LABEL, SLOT, sanitizeWeight, normalizeDistribution } from './engine.js?v=ad34183687';
 
 export const SOURCE_TYPES = [
   ['own', 'Creada por mí'], ['book', 'Libro'], ['web', 'Página web'], ['photo', 'Fotografía'], ['other', 'Otra referencia']

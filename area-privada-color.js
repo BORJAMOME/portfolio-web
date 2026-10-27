@@ -382,6 +382,7 @@ window.APColor = (function () {
       main.appendChild(o(composition(c), 'compose'));
       main.appendChild(o(slotList(c), 'slots'));
       main.appendChild(o(directions(c), 'dir'));
+      main.appendChild(o(gapsCard(c), 'gaps'));
       main.appendChild(o(sockInline(c), 'socks'));
       main.appendChild(o(manualEditor(c), 'manual'));
       main.appendChild(o(howItWorks(), 'how'));
@@ -616,6 +617,27 @@ window.APColor = (function () {
       return sec;
     }
 
+    // qué prenda te falta (auditoría CS-22): sale de las propuestas hipotéticas de las tres direcciones
+    function gapsCard(c) {
+      var d = cur();
+      var sec = h('section', { class: 'cs-card cs-gaps', 'aria-labelledby': 'cs-gaps-t' }, [h('div', { class: 'cs-card-head' }, [h('h3', { class: 'cs-h3', id: 'cs-gaps-t', text: 'Qué prenda te falta' })])]);
+      if (!c.analysis.valid) { sec.appendChild(h('p', { class: 'cs-note', text: 'Elige prendas para ver qué color, en qué prenda, abriría más propuestas.' })); return sec; }
+      var gaps = M.C.wardrobeGaps({ slots: d.slots, garments: data().garments, palettes: data().palettes, formality: d.formality });
+      if (!gaps.length) { sec.appendChild(h('p', { class: 'cs-note', 'data-key': 'gaps-none', text: 'Para este conjunto, las tres direcciones se resuelven con prendas que ya tienes.' })); return sec; }
+      sec.appendChild(h('ul', { class: 'cs-gap-list', 'data-key': 'gaps' }, gaps.map(function (x) {
+        return h('li', { class: 'cs-gap' }, [
+          swatch(x.hex, 'cs-sw--l'),
+          h('span', { class: 'cs-gap-txt' }, [
+            h('span', { class: 'cs-slot-n', text: x.label + ' en ' + x.name }),
+            h('span', { class: 'cs-slot-c' }, [h('span', { class: 'cs-hex', text: x.hex }), ' · Abriría: ' + x.directions.map(function (id) { return M.C.DIRECTION[id].label; }).join(', ')]),
+            h('details', { class: 'cs-rules' }, [h('summary', { text: 'Por qué' }), h('ul', null, [h('li', { text: x.explanation }), h('li', { text: 'Criterio: ' + x.rule })])])
+          ])
+        ]);
+      })));
+      sec.appendChild(h('p', { class: 'cs-fine', text: 'Se deduce de las propuestas de las tres direcciones para este conjunto: son colores que no tienes en ese tipo de prenda. No es una valoración de tu armario ni una lista de la compra.' }));
+      return sec;
+    }
+
     function references(c) {
       var d = cur(), pals = data().palettes;
       var sec = h('section', { class: 'cs-card', 'aria-labelledby': 'cs-refs-t' }, [h('div', { class: 'cs-card-head' }, [h('h3', { class: 'cs-h3', id: 'cs-refs-t', text: 'Paletas que inspiran' })])]);
@@ -671,6 +693,9 @@ window.APColor = (function () {
       }, { wide: true });
     }
 
+    function lengthNote(own, fit) {
+      return own.lengthOk === false ? ' (' + M.S.SOCK_LENGTH_LABEL[own.length].toLowerCase() + '; con este calzado mejor ' + fit.label + ')' : '';
+    }
     function sockResult(c) { return M.S.recommendSocks(sockInputFrom(c)); }
     function sockInline(c) {
       var sec = h('section', { class: 'cs-card', 'aria-labelledby': 'cs-sock-t' }, [h('div', { class: 'cs-card-head' }, [h('h3', { class: 'cs-h3', id: 'cs-sock-t', text: 'Calcetines' }),
@@ -678,6 +703,7 @@ window.APColor = (function () {
       var input = sockInputFrom(c), r = sockResult(c);
       if (r.insufficient) { sec.appendChild(h('p', { class: 'cs-note', text: r.notes[0] })); return sec; }
       if (input.shoeType) sec.appendChild(h('p', { class: 'cs-fine cs-fine--top', text: 'Calzado: ' + M.S.SHOE_LABEL[input.shoeType].toLowerCase() + (cur().shoeType ? ' (elegido a mano)' : ' (deducido de la prenda)') + ' · Dirección ' + M.C.DIRECTION[cur().direction].label.toLowerCase() + '.' }));
+      sec.appendChild(h('p', { class: 'cs-fine' + (input.shoeType ? ' cs-fine--tight' : ' cs-fine--top'), 'data-key': 'sock-fit' }, [h('strong', { text: 'Largo: ' }), r.fit.label + ' · ' + r.fit.weight.toLowerCase() + '.']));
       sec.appendChild(h('ul', { class: 'cs-socklines' }, r.proposals.map(function (p) {
         var on = sockIsOn(p);
         return h('li', { class: 'cs-sockline' + (on ? ' is-on' : '') }, [
@@ -685,7 +711,7 @@ window.APColor = (function () {
           h('span', { class: 'cs-sockline-txt' }, [
             h('span', { class: 'cs-slot-k', text: p.label + ' · contraste con el ' + (p.contrastTrousers ? 'pantalón ' + p.contrastTrousers : 'calzado ' + p.contrastShoes) }),
             h('span', { class: 'cs-slot-n' }, [p.name + ' ', h('span', { class: 'cs-hex', text: p.hex })]),
-            h('span', { class: 'cs-slot-c', text: p.owned ? 'En tu armario: ' + garmentName(p.owned.garment) : 'No tienes uno de este tono registrado' })
+            h('span', { class: 'cs-slot-c', text: p.owned ? 'En tu armario: ' + garmentName(p.owned.garment) + lengthNote(p.owned, r.fit) : 'No tienes uno de este tono registrado' })
           ]),
           btn([on ? 'En el outfit' : 'Usar', h('span', { class: 'sr-only', text: ' calcetín ' + p.label.toLowerCase() })], on ? 'cs-btn-s is-on' : 'cs-btn-s', function () { if (!on) useSock(p); }, { 'aria-pressed': on ? 'true' : 'false', 'data-key': 'sock-' + p.type })
         ]);
@@ -1095,7 +1121,7 @@ window.APColor = (function () {
     function editGarment(g, opts) {
       if (demo) return demoBlocked();
       opts = opts || {};
-      var s = { prep: null, previewUrl: null, removePhoto: false, primary: g ? g.primary_color : '', secondary: g ? (g.secondary_colors || []).slice() : [], shares: g && g.color_shares ? g.color_shares.slice() : null };
+      var s = { prep: null, previewUrl: null, removePhoto: false, picking: false, pickAt: { x: 0.5, y: 0.5 }, primary: g ? g.primary_color : '', secondary: g ? (g.secondary_colors || []).slice() : [], shares: g && g.color_shares ? g.color_shares.slice() : null };
       var cat = ui.select(M.E.CATEGORIES, g ? g.category : opts.category || '', 'Elige una categoría');
       var name = ui.input('text', g ? g.name || '' : '', { maxlength: '120' });
       var sub = ui.input('text', g ? g.subcategory || '' : '', { maxlength: '80' });
@@ -1105,16 +1131,56 @@ window.APColor = (function () {
       var preview = h('div', { class: 'cs-photo' });
       var proposals = h('div', { class: 'cs-proposals', 'aria-live': 'polite' });
       var photoMsg = h('p', { class: 'apf-hint', 'aria-live': 'polite' });
+      var pickOut = h('div', { class: 'cs-pick-out', 'aria-live': 'polite' });
       var primary = colorInput('cs-g-primary', 'Color principal', s.primary, function (v) { s.primary = v; });
       var secList = h('ul', { class: 'cs-sec' });
       var sharesBox = h('div', { class: 'cs-shares' });
       function paintPreview() {
         preview.textContent = '';
         var src = s.previewUrl;
-        if (src) { var img = h('img', { alt: 'Vista previa de la foto de la prenda', src: src }); preview.appendChild(img); }
+        preview.classList.toggle('is-picking', !!(src && s.picking));
+        if (src && s.picking) preview.appendChild(pickArea(src));
+        else if (src) { var img = h('img', { alt: 'Vista previa de la foto de la prenda', src: src }); preview.appendChild(img); }
         else if (g && g.image_path && !s.removePhoto) { var box = thumb(g, 'cs-thumb--photo'); preview.appendChild(box); }
         else preview.appendChild(h('span', { class: 'cs-photo-empty', text: 'Sin foto' }));
         removeBtn.hidden = !(s.previewUrl || (g && g.image_path && !s.removePhoto));
+        pickBtn.hidden = !(s.prep && s.prep.pick);
+        pickBtn.setAttribute('aria-pressed', s.picking ? 'true' : 'false');
+        pickBtn.textContent = s.picking ? 'Cerrar cuentagotas' : 'Cuentagotas';
+      }
+      // cuentagotas (auditoría CS-17): el color de un punto de la foto, elegido a mano; flechas para moverlo e Intro para tomarlo
+      function sampleAt() { var p = s.prep.pick; return M.E.sampleColor(p.data, p.width, p.height, s.pickAt.x, s.pickAt.y, 3); }
+      function pickArea(src) {
+        var img = h('img', { alt: '', src: src, draggable: 'false' });
+        var mark = h('span', { class: 'cs-pick-mark', 'aria-hidden': 'true' });
+        var area = h('div', { class: 'cs-pick-area', tabindex: '0', role: 'application', 'data-key': 'pick-area',
+          'aria-label': 'Cuentagotas sobre la foto. Toca un punto de la prenda, o muévete con las flechas (Mayús para ir más rápido) y pulsa Intro para tomar su color.' }, [img, mark]);
+        function place() { mark.style.left = (s.pickAt.x * 100) + '%'; mark.style.top = (s.pickAt.y * 100) + '%'; var hex = sampleAt(); mark.style.backgroundColor = hex || 'transparent'; }
+        area.addEventListener('pointerdown', function (e) {
+          var r = img.getBoundingClientRect();
+          if (!r.width || !r.height) return;
+          s.pickAt = { x: Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)), y: Math.max(0, Math.min(1, (e.clientY - r.top) / r.height)) };
+          place(); take();
+        });
+        area.addEventListener('keydown', function (e) {
+          var step = e.shiftKey ? 0.1 : 0.02, dx = { ArrowLeft: -step, ArrowRight: step }[e.key] || 0, dy = { ArrowUp: -step, ArrowDown: step }[e.key] || 0;
+          if (dx || dy) { e.preventDefault(); s.pickAt = { x: Math.max(0, Math.min(1, s.pickAt.x + dx)), y: Math.max(0, Math.min(1, s.pickAt.y + dy)) }; place(); }
+          else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); take(); }
+        });
+        place();
+        return area;
+      }
+      function take() {
+        var hex = sampleAt();
+        pickOut.textContent = '';
+        if (!hex) { pickOut.appendChild(h('p', { class: 'apf-hint', text: 'En ese punto la imagen es transparente: elige otro.' })); return; }
+        pickOut.appendChild(h('p', { class: 'cs-mini-t', text: 'Color del punto elegido' }));
+        pickOut.appendChild(h('ul', { class: 'cs-prop' }, [colorRow(hex, 'pick')]));
+      }
+      function colorRow(hex, key) {
+        return h('li', { class: 'cs-prop-row' }, [swatch(hex, 'cs-sw--l'), h('span', { class: 'cs-prop-t' }, [h('span', { text: colorName(hex) }), h('span', { class: 'cs-hex', text: hex })]),
+          btn(['Principal', h('span', { class: 'sr-only', text: ' ' + hex })], 'cs-btn-s', function () { s.primary = hex; primary.set(hex); }, key ? { 'data-key': key + '-primary' } : null),
+          btn(['+ Secundario', h('span', { class: 'sr-only', text: ' ' + hex })], 'cs-btn-s', function () { addSecondary(hex); }, key ? { 'data-key': key + '-secondary' } : null)]);
       }
       function paintSecondary() {
         secList.textContent = '';
@@ -1142,7 +1208,7 @@ window.APColor = (function () {
         photoMsg.textContent = 'Preparando la foto…';
         M.I.prepareImage(file).then(function (prep) {
           if (s.previewUrl) URL.revokeObjectURL(s.previewUrl);
-          s.prep = prep; s.previewUrl = URL.createObjectURL(prep.blob); s.removePhoto = false;
+          s.prep = prep; s.previewUrl = URL.createObjectURL(prep.blob); s.removePhoto = false; s.picking = false; s.pickAt = { x: 0.5, y: 0.5 }; pickOut.textContent = '';
           paintPreview();
           photoMsg.textContent = 'Foto lista (' + prep.width + '×' + prep.height + ' px, sin datos de ubicación). Analizando colores en tu dispositivo…';
           return M.I.visionProvider('local').analyze(prep.sample);
@@ -1150,19 +1216,20 @@ window.APColor = (function () {
           if (!res) return;
           proposals.textContent = '';
           if (!res.colors.length) { photoMsg.textContent = 'No se han encontrado colores claros. Elige el color a mano.'; return; }
-          photoMsg.textContent = 'Colores propuestos: la luz y el balance de blancos los alteran, compáralos con la prenda.';
-          proposals.appendChild(h('ul', { class: 'cs-prop' }, res.colors.map(function (c) {
-            return h('li', { class: 'cs-prop-row' }, [swatch(c.hex, 'cs-sw--l'), h('span', { class: 'cs-prop-t' }, [h('span', { text: colorName(c.hex) }), h('span', { class: 'cs-hex', text: c.hex })]),
-              btn(['Principal', h('span', { class: 'sr-only', text: ' ' + c.hex })], 'cs-btn-s', function () { s.primary = c.hex; primary.set(c.hex); }),
-              btn(['+ Secundario', h('span', { class: 'sr-only', text: ' ' + c.hex })], 'cs-btn-s', function () { addSecondary(c.hex); })]);
-          })));
+          photoMsg.textContent = 'Colores propuestos: la luz y el balance de blancos los alteran, compáralos con la prenda. Si alguno no se parece, usa el cuentagotas sobre la zona bien iluminada.';
+          proposals.appendChild(h('p', { class: 'cs-mini-t', text: 'Colores del análisis' }));
+          proposals.appendChild(h('ul', { class: 'cs-prop' }, res.colors.map(function (c) { return colorRow(c.hex); })));
           if (!s.primary) { s.primary = res.colors[0].hex; primary.set(res.colors[0].hex); }
         }).catch(function (err) { photoMsg.textContent = err.message; });
       }
       var camIn = h('input', { type: 'file', accept: 'image/*', capture: 'environment', class: 'sr-only' });
       var galIn = h('input', { type: 'file', accept: M.I.ACCEPTED.join(','), class: 'sr-only' });
       [camIn, galIn].forEach(function (inp) { inp.addEventListener('change', function () { var f = inp.files[0]; inp.value = ''; if (f) usePhoto(f); }); });
-      var removeBtn = btn('Quitar foto', 'cs-link cs-link--muted', function () { if (s.previewUrl) URL.revokeObjectURL(s.previewUrl); s.prep = null; s.previewUrl = null; s.removePhoto = true; proposals.textContent = ''; paintPreview(); });
+      var removeBtn = btn('Quitar foto', 'cs-link cs-link--muted', function () { if (s.previewUrl) URL.revokeObjectURL(s.previewUrl); s.prep = null; s.previewUrl = null; s.removePhoto = true; s.picking = false; proposals.textContent = ''; pickOut.textContent = ''; paintPreview(); });
+      var pickBtn = btn('Cuentagotas', 'btn btn-outline', function () {
+        s.picking = !s.picking; paintPreview();
+        var area = preview.querySelector('.cs-pick-area'); if (area) area.focus();
+      }, { 'aria-pressed': 'false', 'data-key': 'eyedropper' });
       paintPreview(); paintSecondary();
       var del = g ? btn('Eliminar prenda', 'cs-link cs-link--danger', function () {
         var dlg = del.closest('dialog');
@@ -1179,12 +1246,14 @@ window.APColor = (function () {
       var fields = [
         h('div', { class: 'apf-wide cs-photo-field' }, [preview, h('div', { class: 'cs-photo-act' }, [
           h('label', { class: 'btn btn-outline cs-file' }, ['Hacer foto', camIn]),
-          h('label', { class: 'btn btn-outline cs-file' }, ['Elegir imagen', galIn]), removeBtn]), photoMsg, proposals]),
+          h('label', { class: 'btn btn-outline cs-file' }, ['Elegir imagen', galIn]), pickBtn, removeBtn]),
+          h('p', { class: 'cs-fine cs-fine--tight', text: 'Para colores fieles: luz natural indirecta, sin flash y la prenda sobre un fondo liso blanco o gris. Ni el análisis ni el cuentagotas corrigen el balance de blancos.' }),
+          photoMsg, pickOut, proposals]),
         ui.field('cs-g-cat', 'Categoría', cat),
         h('div', { class: 'apf-field' }, [primary.el]),
         h('fieldset', { class: 'apf-fieldset apf-wide' }, [h('legend', { class: 'ap-field-label', text: 'Colores secundarios' }), secList,
           btn('+ Añadir color secundario', 'cs-link', function () { addSecondary(''); }), sharesBox]),
-        ui.field('cs-g-name', 'Nombre (opcional)', name), ui.field('cs-g-sub', 'Subcategoría', sub, { hint: 'Chino, oxford, bota…' }),
+        ui.field('cs-g-name', 'Nombre (opcional)', name), ui.field('cs-g-sub', 'Subcategoría', sub, { hint: 'Chino, oxford, bota, calcetín tobillero…' }),
         ui.field('cs-g-pattern', 'Patrón', pattern), ui.field('cs-g-mat', 'Material', material),
         ui.field('cs-g-notes', 'Notas', notes, { wide: true }),
         del ? h('div', { class: 'apf-wide' }, [del]) : null
@@ -1269,6 +1338,11 @@ window.APColor = (function () {
         body.appendChild(out);
         return;
       }
+      out.appendChild(h('div', { class: 'cs-fit', 'data-key': 'sock-fit-guide' }, [
+        h('p', { class: 'cs-eyebrow', text: 'Largo y grosor' }),
+        h('p', { class: 'cs-fit-main' }, [h('strong', { text: r.fit.label.replace(/^./, function (m) { return m.toUpperCase(); }) }), ' · ' + r.fit.weight]),
+        h('p', { class: 'cs-fine cs-fine--tight', text: r.fit.why + (r.shoeType ? '' : ' Indica el tipo de calzado para afinarlo.') })
+      ]));
       out.appendChild(h('ol', { class: 'cs-props' }, r.proposals.map(function (p) {
         var big = h('span', { class: 'cs-prop-sw', 'aria-hidden': 'true' }); big.style.backgroundColor = p.hex;
         var on = sockIsOn(p);
@@ -1283,7 +1357,8 @@ window.APColor = (function () {
             h('p', { class: 'cs-prop-exp', text: p.explanation }),
             h('p', { class: 'cs-prop-eff', text: p.effect }),
             h('p', { class: 'cs-prop-own' + (p.owned ? ' is-own' : '') }, p.owned
-              ? [swatch(p.owned.garment.primary_color, 'cs-dot'), ' En tu armario: ' + garmentName(p.owned.garment) + ' (' + M.E.MATCH_LABEL[M.E.matchKind(p.owned.dE)].toLowerCase() + ')']
+              ? [swatch(p.owned.garment.primary_color, 'cs-dot'), ' En tu armario: ' + garmentName(p.owned.garment) + ' (' + M.E.MATCH_LABEL[M.E.matchKind(p.owned.dE)].toLowerCase() + ')' +
+                (p.owned.lengthOk === false ? '. Es ' + M.S.SOCK_LENGTH_LABEL[p.owned.length].toLowerCase() + ': con este calzado se suele llevar ' + r.fit.label + '.' : '')]
               : ['No tienes calcetines de este tono registrados.']),
             h('details', { class: 'cs-rules' }, [h('summary', { text: 'Reglas aplicadas' }), h('ul', null, p.rules.map(function (id) { return h('li', { text: M.S.RULES[id] }); }))]),
             btn([on ? 'En el outfit' : 'Usar en el outfit', h('span', { class: 'sr-only', text: ' (' + p.label.toLowerCase() + ')' })], on ? 'cs-btn-s is-on' : 'cs-btn-s', function () { if (!on) useSock(p); }, { 'aria-pressed': on ? 'true' : 'false', 'data-key': 'use-' + p.type })
@@ -1291,7 +1366,7 @@ window.APColor = (function () {
         ]);
       })));
       if (r.notes.length) out.appendChild(h('ul', { class: 'cs-warn' }, r.notes.map(function (n) { return h('li', { text: n }); })));
-      out.appendChild(h('p', { class: 'cs-fine', text: 'Las propuestas salen de reglas explícitas y de tus colores, no del azar, y nunca repiten el mismo tono. Son orientativas: la formalidad y la dirección cambian el orden, no convierten una opción en obligatoria. El estilo del calcetín (invisible, tobillero, media caña) no se registra todavía: si lo anotas en la subcategoría, aparece en tu armario.' }));
+      out.appendChild(h('p', { class: 'cs-fine', text: 'Las propuestas salen de reglas explícitas y de tus colores, no del azar, y nunca repiten el mismo tono. Son orientativas: la formalidad y la dirección cambian el orden, no convierten una opción en obligatoria. El largo de tus calcetines se lee de su subcategoría o nombre (invisible, tobillero, media caña, largo): anótalo ahí para que cuente.' }));
       body.appendChild(out);
     }
 

@@ -273,6 +273,14 @@ body:has(.cs) { --off: #FBFBFB; background: #FBFBFB; }
 .cs-photo img { width: 100%; height: 100%; object-fit: cover; }
 .cs-photo-empty { font-size: 13px; color: var(--cs-muted); }
 .cs-photo-act { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+/* Cuentagotas (CS-17): la foto entera, sin recorte, para que cada punto tocado sea el píxel que se mide */
+.cs-photo.is-picking { aspect-ratio: auto; overflow: visible; background: none; }
+.cs-pick-area { position: relative; width: 100%; cursor: crosshair; touch-action: none; border-radius: 12px; }
+.cs-pick-area img { display: block; width: 100%; height: auto; border-radius: 12px; user-select: none; -webkit-user-select: none; }
+.cs-pick-area:focus-visible { outline: 2px solid var(--cs-ink); outline-offset: 3px; }
+.cs-pick-mark { position: absolute; width: 28px; height: 28px; margin: -14px 0 0 -14px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .55), 0 2px 6px rgba(0, 0, 0, .25); pointer-events: none; }
+.cs-pick-out:empty { display: none; }
+.cs-pick-out, .cs-proposals { display: grid; gap: 6px; }
 .cs-prop { list-style: none; display: grid; gap: 8px; }
 .cs-prop-row { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto auto; gap: 8px; align-items: center; }
 .cs-prop-t { display: grid; font-size: 13.5px; }
@@ -438,7 +446,7 @@ body:has(.cs) { --off: #FBFBFB; background: #FBFBFB; }
   .cs-studio { display: flex; flex-direction: column; }
   .cs-studio > .cs-col { display: contents; }
   .cs-studio .cs-card, .cs-col > .cs-card:first-child, .cs-col--side > .cs-card:first-child { border-top: 1px solid var(--cs-line); padding-top: 20px; }
-  .cs-o-slots { order: 1; } .cs-o-dir { order: 2; } .cs-o-socks { order: 3; } .cs-o-compose { order: 4; } .cs-o-refs { order: 5; }
+  .cs-o-slots { order: 1; } .cs-o-dir, .cs-o-gaps { order: 2; } .cs-o-socks { order: 3; } .cs-o-compose { order: 4; } .cs-o-refs { order: 5; }
   .cs-o-manual { order: 6; } .cs-o-how { order: 7; } .cs-o-outfits { order: 8; } .cs-o-save { order: 9; }
   .cs-studio > .cs-col > .cs-o-slots { border-top: 0; padding-top: 4px; }
   .cs-o-save.is-ready { position: sticky; bottom: 0; z-index: 5; margin: 0 -16px; padding: 12px 16px; background: #FBFBFB; border-top: 1px solid var(--cs-line); }
@@ -476,3 +484,13 @@ body:has(.cs) { --off: #FBFBFB; background: #FBFBFB; }
 .csi.is-out .csi-title { transform: translateY(-6px); }
 @keyframes csi-rise { 0% { transform: translateY(108%); opacity: 0; } 35% { opacity: 1; } 100% { transform: none; opacity: 1; } }
 @keyframes csi-draw { to { transform: scaleX(1); } }
+
+/* Largo y grosor del calcetín (CS-21) */
+.cs-fit { display: grid; gap: 4px; padding: 12px 14px; border: 1px solid var(--cs-line); border-radius: 12px; margin-bottom: 12px; }
+.cs-fit-main { font-size: 15px; }
+.cs-fit .cs-eyebrow { margin-bottom: 0; }
+
+/* Qué prenda te falta (CS-22) */
+.cs-gap-list { list-style: none; display: grid; gap: 12px; }
+.cs-gap { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 10px; align-items: start; }
+.cs-gap-txt { display: grid; gap: 2px; min-width: 0; }

@@ -698,3 +698,80 @@ test('demoData: marcado como demo, sin fuentes reales y coherente con el motor',
   assert.ok(d.palettes.every((p) => p.demo && p.source_type === 'own' && !p.source_url && D.validatePalette(p).ok));
   assert.ok(d.palettes.every((p) => /inventado/.test(p.source_title)));
 });
+
+/* ═══════════ Fase 4 de la auditoría (CS-17, CS-21, CS-22) ═══════════ */
+const img = (w, h, f) => { const d = new Uint8ClampedArray(w * h * 4); for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { const o = (y * w + x) * 4, c = f(x, y); d[o] = c[0]; d[o + 1] = c[1]; d[o + 2] = c[2]; d[o + 3] = c[3] == null ? 255 : c[3]; } return d; };
+test('CS-17 sampleColor: el color del punto elegido, medido en luz lineal', () => {
+  const half = img(20, 20, (x) => (x < 10 ? [31, 42, 68] : [244, 242, 236]));
+  assert.equal(E.sampleColor(half, 20, 20, 0.1, 0.5), '#1F2A44');
+  assert.equal(E.sampleColor(half, 20, 20, 0.9, 0.5), '#F4F2EC');
+  // trama blanco/negro: la media lineal da el gris que se percibe (~#BCBCBC), no el #808080 de promediar en sRGB
+  const weave = img(10, 10, (x, y) => ((x + y) % 2 ? [255, 255, 255] : [0, 0, 0]));
+  const g = E.sampleColor(weave, 10, 10, 0.5, 0.5, 2);
+  assert.ok(E.hexToRgb(g).r > 170 && E.hexToRgb(g).r < 200, g);
+  // bordes: las coordenadas se acotan; zonas transparentes no cuentan
+  assert.equal(E.sampleColor(half, 20, 20, -3, 5), '#1F2A44');
+  assert.equal(E.sampleColor(img(4, 4, () => [0, 0, 0, 0]), 4, 4, 0.5, 0.5), null);
+  assert.equal(E.sampleColor(null, 4, 4, 0.5, 0.5), null);
+});
+test('CS-21 inferSockLength y sockFit: largo según subcategoría y calzado', () => {
+  assert.equal(S.inferSockLength('Calcetín invisible'), 'invisible');
+  assert.equal(S.inferSockLength('tobillero algodón'), 'tobillero');
+  assert.equal(S.inferSockLength('Media caña canalé'), 'media');
+  assert.equal(S.inferSockLength('Crew'), 'media');
+  assert.equal(S.inferSockLength('Ejecutivo hilo de Escocia'), 'largo');
+  assert.equal(S.inferSockLength('Azul midnight'), null, '«midnight» no es «mid»');
+  assert.equal(S.inferSockLength(''), null);
+  assert.deepEqual(S.sockFit('formal', 'smart').lengths, ['largo', 'media']);
+  assert.equal(S.sockFit('loafer').hidden, true);
+  assert.equal(S.sockFit('boot').lengths[0], 'media');
+  assert.equal(S.sockFit(null, 'casual').rule, 'largo-contexto');
+  assert.ok(Object.values({ a: S.sockFit('sneaker'), b: S.sockFit('technical'), c: S.sockFit('casual') }).every((f) => S.RULES[f.rule] && f.label));
+});
+test('CS-21 recommendSocks: devuelve el largo, avisa si el invisible oculta el color y prefiere tu calcetín de largo adecuado', () => {
+  const socks = [G('tob', 'calcetines', '#1F2A44', { subcategory: 'tobillero' }), G('eje', 'calcetines', '#1E2943', { subcategory: 'ejecutivo' })];
+  const r = S.recommendSocks({ trousers: '#1F2A44', shoes: '#2B1A12', shoeType: 'formal', formality: 'smart', socks });
+  assert.equal(r.fit.rule, 'largo-formal');
+  const safe = r.proposals.find((p) => p.type === 'safe');
+  assert.equal(safe.owned.garment.id, 'eje', 'con zapato formal gana el ejecutivo aunque el tobillero sea igual de color');
+  assert.equal(safe.owned.lengthOk, true);
+  const only = S.recommendSocks({ trousers: '#1F2A44', shoes: '#2B1A12', shoeType: 'formal', socks: [socks[0]] });
+  assert.equal(only.proposals.find((p) => p.type === 'safe').owned.lengthOk, false);
+  const loafer = S.recommendSocks({ trousers: '#B9AE96', shoes: '#4A2E1F', shoeType: 'loafer' });
+  assert.ok(loafer.notes.some((n) => /invisible el color no se ve/.test(n)));
+  const unknown = S.recommendSocks({ trousers: '#1F2A44', socks: [G('x', 'calcetines', '#1F2A44')] });
+  assert.equal(unknown.proposals[0].owned.lengthOk, null, 'sin largo anotado no se juzga');
+  assert.ok(S.recommendSocks({}).fit, 'también sin datos');
+});
+const wardrobe4 = wardrobe.concat([G('pantalon-naranja', 'pantalones', '#D9822B'), G('camisa-azulon', 'camisas', '#2E5FA8')]);
+test('CS-22 proposeDirection: dos prendas reales a la vez cuando con una no basta', () => {
+  const input = { slots: slotsOf({ bottom: 'pantalon-naranja', top: 'camisa-azulon', shoes: 'bota-marron' }), garments: wardrobe4, palettes: [], formality: 'smart' };
+  const min = C.proposeDirection('minimal', input);
+  const pair = min.proposals.find((p) => p.move === 'par-prendas');
+  assert.ok(pair, min.proposals.map((p) => p.move).join());
+  assert.equal(pair.changes.length, 2);
+  assert.ok(pair.changes.every((ch) => ch.garment && !ch.hypothetical), 'solo prendas reales');
+  assert.equal(pair.after.reading, 'minimal');
+  assert.ok(min.proposals.every((p) => p.move === 'par-prendas' || p.after.reading !== 'minimal'), 'solo aparece si ningún cambio de una prenda real alcanza la dirección');
+  assert.match(pair.explanation, /Con un solo cambio/);
+  assert.equal(JSON.stringify(C.proposeDirection('minimal', input)), JSON.stringify(min), 'determinista');
+  // en la equilibrada sustituye o acompaña a la hipotética, nunca la duplica
+  const eq = C.proposeDirection('balanced', input);
+  assert.ok(eq.proposals.length <= 2 && eq.proposals.some((p) => p.move === 'par-prendas'));
+});
+test('CS-22 proposeDirection: si el conjunto ya se lee en la dirección no se buscan parejas', () => {
+  const input = { slots: slotsOf({ bottom: 'chino-marino', top: 'camisa-blanca', shoes: 'bota-marron' }), garments: wardrobe4, palettes: [] };
+  assert.ok(C.proposeDirection('minimal', input).proposals.every((p) => p.move !== 'par-prendas'));
+});
+test('CS-22 wardrobeGaps: colores hipotéticos de las tres direcciones, agrupados por hueco', () => {
+  const few = wardrobe.filter((g) => ['chino-marino', 'camisa-blanca'].includes(g.id));
+  const gaps = C.wardrobeGaps({ slots: slotsOf({ bottom: 'chino-marino', top: 'camisa-blanca' }), garments: few, palettes: [] });
+  assert.ok(gaps.length >= 1);
+  gaps.forEach((x) => {
+    assert.ok(E.SLOT[x.slot] && E.normalizeHex(x.hex) && x.directions.length && C.MOVES[x.move]);
+    assert.ok(!few.some((g) => E.SLOT[x.slot].categories.includes(g.category) && E.colorDistance(g.primary_color, x.hex) <= 12), 'no es una prenda que ya tienes');
+  });
+  const keys = gaps.map((x) => x.slot + x.hex);
+  assert.equal(new Set(keys).size, keys.length);
+  assert.deepEqual(C.wardrobeGaps({ slots: {}, garments: few }), []);
+});

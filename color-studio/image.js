@@ -5,11 +5,12 @@
    · La reduce (máx. 1600 px) y la vuelve a codificar con canvas: el archivo que se sube
      no lleva EXIF (ni fecha ni ubicación GPS) y pesa poco.
    · Propone colores con un análisis LOCAL (engine.extractDominantColors): nada sale del dispositivo.
+   · Guarda una copia mediana (pick) para el cuentagotas: el color se toma a mano sobre la foto (engine.sampleColor).
    · Proveedor de visión desacoplado: hoy solo existe «local». Uno externo (p. ej. una Edge Function
      con la clave en el servidor) tendría que implementar la misma interfaz `analyze(sample)` y
      declararse aquí; la web nunca llevará claves de API.
    ═══════════════════════════════════════════════ */
-import { extractDominantColors } from './engine.js?v=4cb484b1b7';
+import { extractDominantColors } from './engine.js?v=ad34183687';
 
 export const ACCEPTED = ['image/jpeg', 'image/png', 'image/webp'];
 export const MAX_INPUT_BYTES = 15 * 1024 * 1024;
@@ -35,11 +36,21 @@ function decode(file) {
     img.src = url;
   });
 }
+const PICK_SIDE = 480;
+function copyAt(canvas, side) {
+  const s = Math.min(1, side / Math.max(canvas.width, canvas.height));
+  const w = Math.max(1, Math.round(canvas.width * s)), h = Math.max(1, Math.round(canvas.height * s));
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  const c2d = c.getContext('2d');
+  c2d.drawImage(canvas, 0, 0, w, h);
+  return { data: c2d.getImageData(0, 0, w, h).data, width: w, height: h };
+}
 function toBlob(canvas, type, q) { return new Promise((r) => canvas.toBlob(r, type, q)); }
 
 /**
- * Prepara una foto para subirla. → { blob, type, width, height, sample: { data, width, height } }
- * sample es una copia pequeña (≤ 96 px) para el análisis de color.
+ * Prepara una foto para subirla. → { blob, type, width, height, sample, pick }  (sample y pick: { data, width, height })
+ * sample es una copia pequeña (≤ 96 px) para el análisis de color; pick, una mayor (≤ 480 px) para el cuentagotas.
  */
 export async function prepareImage(file) {
   const problem = checkFile(file);
@@ -63,8 +74,9 @@ export async function prepareImage(file) {
   const s2d = small.getContext('2d');
   s2d.drawImage(canvas, 0, 0, sw, sh);
   const sample = { data: s2d.getImageData(0, 0, sw, sh).data, width: sw, height: sh };
+  const pick = copyAt(canvas, PICK_SIDE);
   if (bmp.close) bmp.close();
-  return { blob, type, width: w, height: h, sample };
+  return { blob, type, width: w, height: h, sample, pick };
 }
 
 /* ── Proveedores de visión ── */
