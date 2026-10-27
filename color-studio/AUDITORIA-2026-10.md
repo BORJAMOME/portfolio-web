@@ -287,7 +287,7 @@ Huecos de cobertura:
 | CS-16 | Los colores fuera de gama conservan luminosidad y tono (se reduce el croma). |
 | CS-07 | Relación por familia, señalada como tal, cuando hay pocas paletas con colores próximos. |
 
-Sin resolver por ahora: la corrección del balance de blancos (CS-17) y el fondo oscuro con una prenda negra, que se confunden.
+Sin resolver por ahora: la corrección del balance de blancos (CS-17; la fase 4 añade el cuentagotas como alternativa manual) y el fondo oscuro con una prenda negra, que se confunden.
 
 **Fase 3, hecha el 26-10-2026** (con permiso expreso):
 
@@ -296,6 +296,14 @@ Sin resolver por ahora: la corrección del balance de blancos (CS-17) y el fondo
 | CS-05 | `version-assets` también versiona los imports entre módulos de `color-studio/`: cada módulo se descarga una sola vez y siempre con su versión. Lo comprueba una prueba de interfaz. |
 | CS-06 | En móvil el Studio va por tareas (prendas → dirección → calcetines → composición…) y «Guardar» queda fijo encima de la barra inferior. La dirección empieza a ~1 080 px (antes ~1 550). El escritorio no cambia. |
 | CS-13 | La marca de color hipotético se guarda en `cs_outfits.items` (`hypothetical: true`, solo en huecos con color) y se recupera al reabrir. No cambia el esquema: el check del JSON ya admitía la clave. |
+
+**Fase 4, hecha el 27-10-2026** (evolución del producto, sin cambios de esquema):
+
+| ID | Qué se ha hecho |
+|---|---|
+| CS-17 | Cuentagotas sobre la foto recién elegida, con puntero o con teclado (flechas e Intro): media en luz lineal de 7 × 7 píxeles y la foto entera, sin recorte. Consejo de captura en el formulario. El balance de blancos sigue sin corregirse: se elige a mano la zona bien iluminada. |
+| CS-21 | Largo y grosor del calcetín por tipo de calzado (o por formalidad), con aviso si el invisible oculta el color. El largo de tus calcetines se lee de su subcategoría o nombre; sin columna nueva. |
+| CS-22 | Propuestas de dos prendas reales cuando con una no basta (poda: 4 por hueco y 240 combinaciones como máximo) y tarjeta «Qué prenda te falta» a partir de las propuestas hipotéticas de las tres direcciones. |
 
 
 

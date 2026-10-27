@@ -427,6 +427,26 @@ export function setColorShare(list, hex, pct) {
   return base.map((x, j) => (j === i ? { hex: x.hex, pct: p } : { hex: x.hex, pct: osum ? x.pct / osum * rest : rest / others.length }));
 }
 
+/* ═══════════ CUENTAGOTAS (auditoría CS-17) ═══════════
+   Color de un punto de la foto elegido a mano: media de los píxeles opacos de un cuadrado de lado 2r+1
+   alrededor de (x, y), en coordenadas relativas 0–1. La media se hace en luz lineal (no en sRGB), así un
+   tejido con trama clara y oscura da el color que se percibe a distancia. No corrige el balance de blancos:
+   por eso se elige a mano la zona bien iluminada de la prenda. */
+export function sampleColor(data, width, height, x, y, r = 3) {
+  if (!data || !width || !height || !Number.isFinite(x) || !Number.isFinite(y)) return null;
+  const cx = Math.round(Math.max(0, Math.min(1, x)) * (width - 1)), cy = Math.round(Math.max(0, Math.min(1, y)) * (height - 1));
+  let R = 0, G = 0, B = 0, n = 0;
+  for (let j = Math.max(0, cy - r); j <= Math.min(height - 1, cy + r); j++) {
+    for (let i = Math.max(0, cx - r); i <= Math.min(width - 1, cx + r); i++) {
+      const o = (j * width + i) * 4;
+      if (data[o + 3] < 128) continue;
+      R += toLinear(data[o]); G += toLinear(data[o + 1]); B += toLinear(data[o + 2]); n++;
+    }
+  }
+  if (!n) return null;
+  return rgbToHex(toGamma(R / n), toGamma(G / n), toGamma(B / n));
+}
+
 /* ═══════════ EXTRACCIÓN DE COLOR (sin red) ═══════════
    K-means en Lab sobre los píxeles de una imagen ya reducida. Se pondera el centro (la prenda suele
    estar ahí) y se rebaja lo que se parece al borde (probablemente el fondo). Es una PROPUESTA:

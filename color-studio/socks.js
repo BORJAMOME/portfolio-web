@@ -12,8 +12,8 @@
    claro, un tono o dos más oscuro) y Gentleman's Gazette (el mismo color exacto que el pantalón no es la
    opción más lograda; mejor que igualar el calzado; enlazar con la parte de arriba). Ver color-studio/README.md.
    ═══════════════════════════════════════════════ */
-import { normalizeHex, colorDistance, describeColor, hexToLab, labToLch, lchToLab, labToHex, rankPalettes } from './engine.js?v=4cb484b1b7';
-import { directionOf, relation } from './compose.js?v=8349efe333';
+import { normalizeHex, colorDistance, describeColor, hexToLab, labToLch, lchToLab, labToHex, rankPalettes } from './engine.js?v=ad34183687';
+import { directionOf, relation } from './compose.js?v=7b22337f70';
 
 export const RULES = {
   'continuidad-pantalon': 'Calcetín en la familia del pantalón: la pierna se lee como una sola línea y el calzado queda como remate.',
@@ -35,7 +35,14 @@ export const RULES = {
   'contraste-secundario': 'Un color secundario que ya existe en alguna prenda del conjunto, llevado al tobillo como acento.',
   'contraste-opuesto': 'Tono opuesto al color con más presencia, con la saturación contenida para no romper el conjunto.',
   'contraste-analogo': 'Tono vecino del color principal, más intenso: un acento suave, coherente con una dirección discreta.',
-  'formalidad': 'En un contexto formal la continuidad va primero y el contraste se suaviza.'
+  'formalidad': 'En un contexto formal la continuidad va primero y el contraste se suaviza.',
+  'largo-formal': 'Con zapato formal, calcetín largo o de media caña alta y fino: al sentarte no debe verse la pierna.',
+  'largo-mocasin': 'Con mocasín, invisible o de media caña; el tobillero que asoma a medias es lo que menos funciona.',
+  'largo-bota': 'Con bota, más alto que la caña para que no roce, y algo más grueso (lana o algodón).',
+  'largo-deportiva': 'Con deportivas, invisible o tobillero si no quieres que se vea; de media caña si quieres que se vea, con un aire más deportivo.',
+  'largo-tecnica': 'Con calzado técnico, calcetín técnico tobillero o de media caña.',
+  'largo-casual': 'Con náuticos, alpargatas o sandalias, la convención es el invisible o ir sin calcetín.',
+  'largo-contexto': 'Sin tipo de calzado, el largo sigue a la formalidad: cuanto más formal, más largo y más fino.'
 };
 export const TYPES = { safe: 'Continuidad', coordinated: 'Coordinación', contrast: 'Contraste' };
 export const EFFECT = {
@@ -47,6 +54,40 @@ export const FORMALITY = [['formal', 'Formal'], ['smart', 'Smart casual'], ['cas
 export const PREFERENCE = [['discreet', 'Discreto'], ['balanced', 'Equilibrado'], ['contrast', 'Con contraste']];   // compatibilidad: hoy manda la dirección
 export const SHOE_TYPES = [['formal', 'Zapato formal'], ['loafer', 'Mocasín'], ['boot', 'Bota'], ['sneaker', 'Deportiva'], ['technical', 'Deportiva técnica'], ['casual', 'Casual']];
 export const SHOE_LABEL = Object.fromEntries(SHOE_TYPES);
+export const SOCK_LENGTHS = [['invisible', 'Invisible'], ['tobillero', 'Tobillero'], ['media', 'Media caña'], ['largo', 'Largo']];
+export const SOCK_LENGTH_LABEL = Object.fromEntries(SOCK_LENGTHS);
+/* Largo y grosor por tipo de calzado (auditoría CS-21). Convenciones de estilismo, no reglas: el primero es la
+   referencia y el resto, alternativas válidas. Sin tipo de calzado, decide la formalidad. */
+const FIT = {
+  formal: { lengths: ['largo', 'media'], weight: 'Fino (hilo de Escocia o merino fino)', rule: 'largo-formal' },
+  loafer: { lengths: ['invisible', 'media'], weight: 'Fino', rule: 'largo-mocasin' },
+  boot: { lengths: ['media', 'largo'], weight: 'Medio o grueso (lana, algodón)', rule: 'largo-bota' },
+  sneaker: { lengths: ['tobillero', 'invisible', 'media'], weight: 'Algodón', rule: 'largo-deportiva' },
+  technical: { lengths: ['tobillero', 'media'], weight: 'Técnico (transpirable)', rule: 'largo-tecnica' },
+  casual: { lengths: ['invisible'], weight: 'Fino', rule: 'largo-casual' }
+};
+const FIT_BY_FORMALITY = {
+  formal: { lengths: ['largo', 'media'], weight: 'Fino', rule: 'largo-contexto' },
+  smart: { lengths: ['media', 'largo'], weight: 'Fino o medio', rule: 'largo-contexto' },
+  casual: { lengths: ['tobillero', 'media', 'invisible'], weight: 'Algodón', rule: 'largo-contexto' }
+};
+/** Largo de un calcetín a partir de su subcategoría o nombre (null si no se reconoce). */
+export function inferSockLength(text) {
+  const t = String(text || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  if (!t.trim()) return null;
+  if (/invisible|pinkie|no ?show|bailarin|pinky/.test(t)) return 'invisible';
+  if (/media cana|mediacana|cana media|crew|\bmid\b/.test(t)) return 'media';
+  if (/tobiller|ankle|quarter|corto/.test(t)) return 'tobillero';
+  if (/largo|ejecutivo|\balto\b|rodilla|knee|over.?the.?calf|\botc\b/.test(t)) return 'largo';
+  return null;
+}
+const sockLength = (g) => (g ? inferSockLength([g.subcategory, g.name].join(' ')) : null);
+/** Largo, grosor y regla para un tipo de calzado y una formalidad. */
+export function sockFit(shoeType, formality) {
+  const f = FIT[shoeType] || FIT_BY_FORMALITY[formality] || FIT_BY_FORMALITY.smart;
+  return { lengths: f.lengths.slice(), weight: f.weight, rule: f.rule, why: RULES[f.rule], label: f.lengths.map((x) => SOCK_LENGTH_LABEL[x].toLowerCase()).join(' o '),
+    hidden: f.lengths[0] === 'invisible' };
+}
 const MAX_CHROMA = { formal: 25, smart: 40, casual: 55 };   // convención práctica, no estándar: ver README
 const DIR_SHIFT = { minimal: -10, balanced: 0, creative: 10 };
 const CONTEXT = { formal: 'formal', smart: 'smart casual', casual: 'informal' };
@@ -82,14 +123,20 @@ export function sneakerTone(hex) {
   return C >= 20 ? 'colored' : 'neutral';
 }
 
-/** El calcetín de tu armario más próximo a un color (si lo hay a ΔE00 ≤ 12). */
-export function nearestOwned(hex, socks) {
+/** El calcetín de tu armario más próximo a un color (si lo hay a ΔE00 ≤ 12). Con `lengths`, entre los de
+    color parecido gana el de un largo adecuado (o desconocido) frente al que no encaja con el calzado. */
+export function nearestOwned(hex, socks, lengths) {
   let best = null;
+  const miss = (s) => { const l = sockLength(s); return lengths && l && !lengths.includes(l) ? 1 : 0; };
   (socks || []).forEach((s) => {
     const d = colorDistance(hex, s.primary_color);
-    if (d <= OWN_TOLERANCE && (!best || d < best.dE)) best = { garment: s, dE: d };
+    if (d > OWN_TOLERANCE) return;
+    const m = miss(s);
+    if (!best || m < best.miss || (m === best.miss && d < best.dE)) best = { garment: s, dE: d, miss: m };
   });
-  return best;
+  if (!best) return null;
+  const length = sockLength(best.garment);
+  return { garment: best.garment, dE: best.dE, length, lengthOk: lengths && length ? lengths.includes(length) : null };
 }
 function shade(hex, dL) {
   const lch = lchOf(hex);
@@ -109,7 +156,8 @@ function contrastLevel(hex, ref) {
  *   formality: 'formal' | 'smart' | 'casual' · direction: 'minimal' | 'balanced' | 'creative' (o preference antigua)
  *   socks: [prendas de la categoría calcetines] · palettes: [paletas de la biblioteca]
  * }
- * → { proposals: [{ type, label, hex, name, explanation, effect, contrast (frente al pantalón; si no hay, al calzado), contrastTrousers, contrastShoes, rules, owned, origin, source }], notes, insufficient, shoeType }
+ * → { proposals: [{ type, label, hex, name, explanation, effect, contrast (frente al pantalón; si no hay, al calzado), contrastTrousers, contrastShoes, rules, owned, origin, source }], notes, insufficient, shoeType,
+ *     fit: { lengths, label, weight, rule, why, hidden } }   owned: { garment, dE, length, lengthOk } (largo deducido de su subcategoría)
  */
 export function recommendSocks(input) {
   input = input || {};
@@ -122,8 +170,9 @@ export function recommendSocks(input) {
   const trSec = clean(input.trousersSecondary), shSec = clean(input.shoesSecondary);
   const others = (input.others || []).map((o) => ({ hex: normalizeHex(o.hex), label: o.label || '', share: Number(o.share) || 0, secondary: clean(o.secondary) })).filter((o) => o.hex);
   const notes = [];
+  const fit = sockFit(shoeType, formality);
   if (!trousers && !shoes) {
-    return { proposals: [], insufficient: true, shoeType, notes: ['Elige al menos el pantalón o el calzado: sin ellos no hay una base sobre la que decidir el calcetín.'] };
+    return { proposals: [], insufficient: true, shoeType, fit, notes: ['Elige al menos el pantalón o el calzado: sin ellos no hay una base sobre la que decidir el calcetín.'] };
   }
   if (!trousers) notes.push('Sin pantalón, la continuidad sigue al calzado.');
   if (!shoes) notes.push('Sin calzado no se puede comprobar si el calcetín conecta también con el zapato.');
@@ -244,6 +293,7 @@ export function recommendSocks(input) {
   if (shoeType === 'technical') notes.push(RULES['deportiva-tecnica']);
   if (shoeType === 'sneaker' && tone === 'dark') notes.push(RULES['deportiva-oscura']);
   if (shoeType === 'formal' && formality !== 'formal') notes.push(RULES['calzado-formal']);
+  if (fit.hidden) notes.push('Con calcetín invisible el color no se ve: estas propuestas sirven si eliges uno que se vea (' + fit.lengths.filter((l) => l !== 'invisible').map((l) => SOCK_LENGTH_LABEL[l].toLowerCase()).join(' o ') + ').');
 
   // ── Orden según dirección y formalidad ──
   const order = direction === 'minimal' ? ['safe', 'coordinated', 'contrast'] : direction === 'creative' ? ['contrast', 'coordinated', 'safe'] : ['coordinated', 'safe', 'contrast'];
@@ -253,10 +303,10 @@ export function recommendSocks(input) {
     notes.push(RULES.formalidad);
   }
   return {
-    insufficient: false, notes, shoeType, direction,
+    insufficient: false, notes, shoeType, direction, fit,
     proposals: order.map((t) => chosen.find((p) => p.type === t)).filter(Boolean).map((p) => Object.assign(p, {
       label: TYPES[p.type], name: nameOf(p.hex), effect: EFFECT[p.type], contrastTrousers: contrastLevel(p.hex, trousers), contrastShoes: contrastLevel(p.hex, shoes),
-      contrast: contrastLevel(p.hex, trousers || shoes), owned: nearestOwned(p.hex, owned)
+      contrast: contrastLevel(p.hex, trousers || shoes), owned: nearestOwned(p.hex, owned, fit.lengths)
     }))
   };
 }
