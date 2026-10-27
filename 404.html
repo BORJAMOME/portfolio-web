@@ -93,34 +93,42 @@
 <meta name="robots" content="noindex">
 <meta name="description" content="Esta página no existe. Vuelve al portfolio de Borja Mora, Data Analyst. · This page doesn’t exist.">
 <style>
-/* 404 · monocromo, tipografía de código. Solo esta página; los tokens del sitio se neutralizan aquí. */
+/* 404 · «desconectado»: pixel art monocromo y tipografía de código. Solo esta página; los tokens del sitio se neutralizan aquí. */
 :root{
   --purple:#111111;--purple2:#111111;--purple-light:#f0f0f0;--logo-purple:#111111;
-  --nf-muted:#595959;--nf-line:#e3e3e3;
+  --nf-bg:#f7f7f7;--nf-muted:#595959;--nf-line:#dcdcdc;
   --nf-mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,'Cascadia Code',Consolas,monospace;
 }
 ::selection{background:#111111;color:#fff}
-footer *:focus-visible{outline-color:#fff}
-.nf{min-height:100svh;display:flex;flex-direction:column;background:#fff;color:var(--ink);font-family:var(--nf-mono)}
-.nf-top{display:flex;align-items:center;justify-content:space-between;padding:22px clamp(20px,5vw,48px)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.nf{min-height:100svh;display:flex;flex-direction:column;background:var(--nf-bg);color:var(--ink);font-family:var(--nf-mono)}
+.nf-top{display:flex;align-items:center;padding:22px clamp(20px,5vw,48px)}
 .nf-logo{font-size:14px;font-weight:700;letter-spacing:-.02em;color:var(--ink);text-decoration:none}
 .nf-logo:hover{text-decoration:underline;text-underline-offset:4px}
-.nf-main{flex:1;display:grid;align-content:center;gap:clamp(32px,5vw,56px);max-width:1040px;width:100%;margin:0 auto;padding:40px clamp(20px,5vw,48px) 64px}
-.nf-code{font-weight:700;font-size:clamp(96px,20vw,220px);line-height:.85;letter-spacing:-.06em;color:var(--ink);margin:0}
-.nf-code .z{display:inline-block;color:transparent;-webkit-text-stroke:2px var(--ink)}
-.nf-cols{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,5vw,72px);border-top:1px solid var(--ink);padding-top:clamp(24px,3vw,36px)}
-.nf-col h1,.nf-col h2{font-weight:700;font-size:clamp(20px,3vw,26px);letter-spacing:-.02em;line-height:1.3;margin:0 0 12px}
-.nf-col p{font-size:15px;color:#2b2b2b;line-height:1.7;margin:0 0 24px;max-width:46ch}
-.nf-k{display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--nf-muted);margin-bottom:14px}
-.nf-links{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
-.nf-links a{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:2px;border:1px solid var(--ink);background:#fff;color:var(--ink);font:600 13px/1.3 var(--nf-mono);text-decoration:none;transition:background .15s,color .15s}
-.nf-links a.p{background:var(--ink);color:#fff}
-.nf-links a:hover{background:var(--ink);color:#fff}
-.nf-links a.p:hover{background:#fff;color:var(--ink)}
-.nf-links a:focus-visible,.nf-logo:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
-.nf-foot{padding:20px clamp(20px,5vw,48px);font-family:var(--nf-mono);font-size:12px;color:rgba(255,255,255,.78);display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between}
-.nf-foot .foot-legal{font-family:var(--nf-mono);color:rgba(255,255,255,.88)}
-@media (max-width:760px){.nf-cols{grid-template-columns:1fr}.nf-col + .nf-col{border-top:1px solid var(--nf-line);padding-top:24px}}
+.nf-main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px clamp(20px,5vw,48px) 56px}
+
+/* Ilustración: rejilla de 88×44 píxeles; el tamaño es siempre un múltiplo entero para que cada píxel mida lo mismo */
+.nf-art{display:block;width:264px;height:132px;overflow:visible}
+.nf-art .k{fill:#111111}.nf-art .d{fill:#555555}.nf-art .m{fill:#8c8c8c}.nf-art .l{fill:#cfcfcf}.nf-art .w{fill:#ffffff}
+.nf-plug{transition:transform .25s steps(2)}
+@media (hover:hover) and (pointer:fine){.nf-art:hover .nf-plug{transform:translateX(-2px)}}
+@media (min-width:400px){.nf-art{width:352px;height:176px}}
+@media (min-width:720px){.nf-art{width:440px;height:220px}}
+@media (min-width:1000px){.nf-art{width:528px;height:264px}}
+
+.nf-code{margin:clamp(20px,3vw,32px) 0 0;font-weight:700;font-size:clamp(64px,13vw,120px);line-height:1;letter-spacing:-.04em;font-feature-settings:"zero" 1;color:var(--ink)}
+.nf-msg{display:flex;flex-direction:column;align-items:center}
+.nf-msg[hidden]{display:none}
+.nf-msg h1{margin:12px 0 0;font-weight:700;font-size:clamp(18px,2.6vw,24px);line-height:1.35;letter-spacing:-.02em;max-width:26ch;text-wrap:balance}
+.nf-msg p{margin:12px 0 0;font-size:14px;line-height:1.7;color:var(--nf-muted);max-width:44ch}
+.nf-btn{display:inline-flex;align-items:center;justify-content:center;margin-top:28px;min-height:48px;padding:0 24px;border:1px solid var(--ink);border-radius:0;background:var(--ink);color:#fff;font:600 14px/1.3 var(--nf-mono);text-decoration:none;transition:background .15s,color .15s}
+.nf-btn:hover{background:#fff;color:var(--ink)}
+.nf-btn:focus-visible,.nf-logo:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+
+footer.nf-foot{background:transparent;border-top:1px solid var(--nf-line);padding:18px clamp(20px,5vw,48px);font-family:var(--nf-mono);font-size:12px;color:var(--nf-muted);display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;align-items:center}
+.nf-foot .foot-legal{font-family:var(--nf-mono);font-size:12px;color:var(--nf-muted)}
+.nf-foot .foot-legal a,.nf-foot .foot-legal button{color:var(--ink);font-family:var(--nf-mono)}
+@media (max-width:480px){footer.nf-foot{flex-direction:column;align-items:flex-start}}
 @media (prefers-reduced-motion:reduce){*{transition:none !important}}
 </style>
 </head>
@@ -128,31 +136,34 @@ footer *:focus-visible{outline-color:#fff}
 <div class="nf">
   <header class="nf-top"><a class="nf-logo" href="/">Borja Mora Méndez.</a></header>
   <main class="nf-main" id="main-content">
-    <p class="nf-code" aria-hidden="true">4<span class="z">0</span>4</p>
-    <div class="nf-cols">
-      <section class="nf-col es" lang="es">
-        <span class="nf-k">Error 404</span>
-        <h1>Esta página no existe</h1>
-        <p>Puede que el enlace esté mal escrito o que la página haya cambiado de sitio. Todo lo demás sigue aquí.</p>
-        <ul class="nf-links">
-          <li><a class="p" href="/">Inicio</a></li>
-          <li><a href="/power-bi.html">Proyectos</a></li>
-          <li><a href="/data-storytelling.html">Manual de Data Storytelling</a></li>
-          <li><a href="mailto:borja.mora.mendez@gmail.com">Escríbeme</a></li>
-        </ul>
-      </section>
-      <section class="nf-col en" lang="en">
-        <span class="nf-k">Error 404</span>
-        <h2>This page doesn’t exist</h2>
-        <p>The link may be mistyped, or the page may have moved. Everything else is still here.</p>
-        <ul class="nf-links">
-          <li><a class="p" href="/en/index.html">Home</a></li>
-          <li><a href="/en/projects.html">Projects</a></li>
-          <li><a href="/en/data-storytelling.html">Data Storytelling guide</a></li>
-          <li><a href="mailto:borja.mora.mendez@gmail.com">Email me</a></li>
-        </ul>
-      </section>
-    </div>
+    <svg class="nf-art" viewBox="-6 0 88 44" shape-rendering="crispEdges" role="img" aria-labelledby="nfArtT">
+      <title id="nfArtT">Un enchufe separado de su toma de corriente</title>
+      <g class="nf-fixed">
+      <path class="l" d="M0 0h1v1h-1zM2 2h1v1h-1zM1 3h1v1h-1zM0 4h1v1h-1zM2 6h1v1h-1zM1 7h1v1h-1zM0 8h1v1h-1zM2 10h1v1h-1zM1 11h1v1h-1zM20 11h1v1h-1zM0 12h1v1h-1zM19 12h2v1h-2zM7 13h1v1h-1zM19 13h2v1h-2zM2 14h1v1h-1zM7 14h1v1h-1zM19 14h2v1h-2zM1 15h1v1h-1zM7 15h1v1h-1zM19 15h2v1h-2zM0 16h1v1h-1zM7 16h1v1h-1zM7 17h1v1h-1zM2 18h1v1h-1zM7 18h1v1h-1zM1 19h1v1h-1zM7 19h1v1h-1zM19 19h2v1h-2zM0 20h1v1h-1zM7 20h1v1h-1zM19 20h2v1h-2zM7 21h1v1h-1zM19 21h2v1h-2zM2 22h1v1h-1zM7 22h1v1h-1zM19 22h2v1h-2zM1 23h1v1h-1zM7 23h1v1h-1zM19 23h2v1h-2zM0 24h1v1h-1zM7 24h1v1h-1zM7 25h1v1h-1zM2 26h1v1h-1zM7 26h1v1h-1zM1 27h1v1h-1zM7 27h1v1h-1zM19 27h2v1h-2zM0 28h1v1h-1zM7 28h1v1h-1zM19 28h2v1h-2zM7 29h1v1h-1zM19 29h2v1h-2zM2 30h1v1h-1zM7 30h1v1h-1zM19 30h2v1h-2zM1 31h1v1h-1zM5 31h16v1h-16zM0 32h1v1h-1zM5 32h14v1h-14zM2 34h1v1h-1zM6 34h1v1h-1zM8 34h1v1h-1zM10 34h1v1h-1zM12 34h1v1h-1zM14 34h1v1h-1zM16 34h1v1h-1zM18 34h1v1h-1zM20 34h1v1h-1zM22 34h1v1h-1zM1 35h1v1h-1zM7 35h1v1h-1zM9 35h1v1h-1zM11 35h1v1h-1zM13 35h1v1h-1zM15 35h1v1h-1zM17 35h1v1h-1zM19 35h1v1h-1zM21 35h1v1h-1zM23 35h1v1h-1zM0 36h1v1h-1zM2 38h1v1h-1zM1 39h1v1h-1zM0 40h1v1h-1zM2 42h1v1h-1zM1 43h1v1h-1z"/>
+      <path class="w" d="M1 0h2v1h-2zM0 1h3v1h-3zM0 2h2v1h-2zM0 3h1v1h-1zM2 3h1v1h-1zM1 4h2v1h-2zM0 5h3v1h-3zM0 6h2v1h-2zM0 7h1v1h-1zM2 7h1v1h-1zM1 8h2v1h-2zM0 9h3v1h-3zM0 10h2v1h-2zM0 11h1v1h-1zM2 11h1v1h-1zM5 11h15v1h-15zM1 12h2v1h-2zM5 12h14v1h-14zM0 13h3v1h-3zM5 13h2v1h-2zM8 13h11v1h-11zM0 14h2v1h-2zM5 14h2v1h-2zM8 14h11v1h-11zM0 15h1v1h-1zM2 15h1v1h-1zM5 15h2v1h-2zM8 15h11v1h-11zM1 16h2v1h-2zM5 16h2v1h-2zM8 16h7v1h-7zM0 17h3v1h-3zM5 17h2v1h-2zM8 17h6v1h-6zM0 18h2v1h-2zM5 18h2v1h-2zM8 18h6v1h-6zM0 19h1v1h-1zM2 19h1v1h-1zM5 19h2v1h-2zM8 19h11v1h-11zM1 20h2v1h-2zM5 20h2v1h-2zM8 20h11v1h-11zM0 21h3v1h-3zM5 21h2v1h-2zM8 21h3v1h-3zM13 21h6v1h-6zM0 22h2v1h-2zM5 22h2v1h-2zM8 22h3v1h-3zM13 22h6v1h-6zM0 23h1v1h-1zM2 23h1v1h-1zM5 23h2v1h-2zM8 23h11v1h-11zM1 24h2v1h-2zM5 24h2v1h-2zM8 24h7v1h-7zM0 25h3v1h-3zM5 25h2v1h-2zM8 25h6v1h-6zM0 26h2v1h-2zM5 26h2v1h-2zM8 26h6v1h-6zM0 27h1v1h-1zM2 27h1v1h-1zM5 27h2v1h-2zM8 27h11v1h-11zM1 28h2v1h-2zM5 28h2v1h-2zM8 28h11v1h-11zM0 29h3v1h-3zM5 29h2v1h-2zM8 29h1v1h-1zM10 29h9v1h-9zM0 30h2v1h-2zM5 30h2v1h-2zM8 30h11v1h-11zM0 31h1v1h-1zM2 31h1v1h-1zM1 32h2v1h-2zM0 33h3v1h-3zM0 34h2v1h-2zM0 35h1v1h-1zM2 35h1v1h-1zM1 36h2v1h-2zM0 37h3v1h-3zM0 38h2v1h-2zM0 39h1v1h-1zM2 39h1v1h-1zM1 40h2v1h-2zM0 41h3v1h-3zM0 42h2v1h-2zM0 43h1v1h-1zM2 43h1v1h-1z"/>
+      <path class="m" d="M15 16h6v1h-6zM12 21h1v1h-1zM15 24h6v1h-6zM9 29h1v1h-1zM19 32h2v1h-2z"/>
+      <path class="d" d="M14 17h1v1h-1zM14 18h1v1h-1zM11 21h1v1h-1zM12 22h1v1h-1zM14 25h1v1h-1zM14 26h1v1h-1z"/>
+      <path class="k" d="M3 0h1v1h-1zM3 1h1v1h-1zM3 2h1v1h-1zM3 3h1v1h-1zM3 4h1v1h-1zM3 5h1v1h-1zM3 6h1v1h-1zM3 7h1v1h-1zM3 8h1v1h-1zM3 9h1v1h-1zM3 10h18v1h-18zM3 11h2v1h-2zM21 11h1v1h-1zM3 12h2v1h-2zM21 12h1v1h-1zM3 13h2v1h-2zM21 13h1v1h-1zM3 14h2v1h-2zM21 14h1v1h-1zM3 15h2v1h-2zM21 15h1v1h-1zM3 16h2v1h-2zM21 16h1v1h-1zM3 17h2v1h-2zM15 17h7v1h-7zM3 18h2v1h-2zM15 18h7v1h-7zM3 19h2v1h-2zM21 19h1v1h-1zM3 20h2v1h-2zM21 20h1v1h-1zM3 21h2v1h-2zM21 21h1v1h-1zM3 22h2v1h-2zM11 22h1v1h-1zM21 22h1v1h-1zM3 23h2v1h-2zM21 23h1v1h-1zM3 24h2v1h-2zM21 24h1v1h-1zM3 25h2v1h-2zM15 25h7v1h-7zM3 26h2v1h-2zM15 26h7v1h-7zM3 27h2v1h-2zM21 27h1v1h-1zM3 28h2v1h-2zM21 28h1v1h-1zM3 29h2v1h-2zM21 29h1v1h-1zM3 30h2v1h-2zM21 30h1v1h-1zM3 31h2v1h-2zM21 31h1v1h-1zM3 32h2v1h-2zM21 32h1v1h-1zM3 33h18v1h-18zM3 34h1v1h-1zM3 35h1v1h-1zM3 36h1v1h-1zM3 37h1v1h-1zM3 38h1v1h-1zM3 39h1v1h-1zM3 40h1v1h-1zM3 41h1v1h-1zM3 42h1v1h-1zM3 43h1v1h-1z"/>
+      </g>
+      <g class="nf-plug">
+      <path class="l" d="M40 32h1v1h-1zM42 32h1v1h-1zM44 32h1v1h-1zM46 32h1v1h-1zM48 32h1v1h-1zM50 32h1v1h-1zM52 32h1v1h-1zM54 32h1v1h-1zM56 32h1v1h-1zM58 32h1v1h-1zM60 32h1v1h-1zM62 32h1v1h-1zM64 32h1v1h-1zM41 33h1v1h-1zM43 33h1v1h-1zM45 33h1v1h-1zM47 33h1v1h-1zM49 33h1v1h-1zM51 33h1v1h-1zM53 33h1v1h-1zM55 33h1v1h-1zM57 33h1v1h-1zM59 33h1v1h-1zM61 33h1v1h-1zM63 33h1v1h-1zM65 33h1v1h-1z"/>
+      <path class="w" d="M42 13h2v1h-2zM42 14h1v1h-1zM30 17h9v1h-9zM30 25h9v1h-9z"/>
+      <path class="m" d="M44 13h18v1h-18zM43 14h17v1h-17zM42 15h1v1h-1zM42 16h1v1h-1zM50 16h1v1h-1zM53 16h1v1h-1zM56 16h1v1h-1zM42 17h1v1h-1zM50 17h1v1h-1zM53 17h1v1h-1zM56 17h1v1h-1zM30 18h9v1h-9zM42 18h1v1h-1zM50 18h1v1h-1zM53 18h1v1h-1zM56 18h1v1h-1zM42 19h1v1h-1zM50 19h1v1h-1zM53 19h1v1h-1zM56 19h1v1h-1zM42 20h1v1h-1zM50 20h1v1h-1zM53 20h1v1h-1zM56 20h1v1h-1zM42 21h1v1h-1zM50 21h1v1h-1zM53 21h1v1h-1zM56 21h1v1h-1zM42 22h1v1h-1zM50 22h1v1h-1zM53 22h1v1h-1zM56 22h1v1h-1zM42 23h1v1h-1zM50 23h1v1h-1zM53 23h1v1h-1zM56 23h1v1h-1zM42 24h1v1h-1zM50 24h1v1h-1zM53 24h1v1h-1zM56 24h1v1h-1zM42 25h1v1h-1zM50 25h1v1h-1zM53 25h1v1h-1zM56 25h1v1h-1zM30 26h9v1h-9zM42 26h1v1h-1zM50 26h1v1h-1zM53 26h1v1h-1zM56 26h1v1h-1zM42 27h1v1h-1zM50 27h1v1h-1zM53 27h1v1h-1zM56 27h1v1h-1zM42 28h1v1h-1zM42 29h1v1h-1zM42 30h1v1h-1z"/>
+      <path class="d" d="M43 15h17v1h-17zM43 16h6v1h-6zM51 16h1v1h-1zM54 16h1v1h-1zM57 16h3v1h-3zM43 17h6v1h-6zM51 17h1v1h-1zM54 17h1v1h-1zM57 17h3v1h-3zM43 18h6v1h-6zM51 18h1v1h-1zM54 18h1v1h-1zM57 18h3v1h-3zM43 19h6v1h-6zM51 19h1v1h-1zM54 19h1v1h-1zM57 19h3v1h-3zM43 20h6v1h-6zM51 20h1v1h-1zM54 20h1v1h-1zM57 20h3v1h-3zM63 20h2v1h-2zM67 20h1v1h-1zM69 20h1v1h-1zM43 21h6v1h-6zM51 21h1v1h-1zM54 21h1v1h-1zM57 21h3v1h-3zM43 22h6v1h-6zM51 22h1v1h-1zM54 22h1v1h-1zM57 22h3v1h-3zM43 23h6v1h-6zM51 23h1v1h-1zM54 23h1v1h-1zM57 23h3v1h-3zM63 23h2v1h-2zM43 24h6v1h-6zM51 24h1v1h-1zM54 24h1v1h-1zM57 24h3v1h-3zM43 25h6v1h-6zM51 25h1v1h-1zM54 25h1v1h-1zM57 25h3v1h-3zM43 26h6v1h-6zM51 26h1v1h-1zM54 26h1v1h-1zM57 26h3v1h-3zM74 26h1v1h-1zM43 27h6v1h-6zM51 27h1v1h-1zM54 27h1v1h-1zM57 27h3v1h-3zM43 28h17v1h-17zM43 29h17v1h-17zM74 29h1v1h-1zM74 32h1v1h-1zM73 35h1v1h-1z"/>
+      <path class="k" d="M26 7h1v1h-1zM33 7h1v1h-1zM27 8h1v1h-1zM33 8h1v1h-1zM28 9h1v1h-1zM33 9h1v1h-1zM33 10h1v1h-1zM42 12h20v1h-20zM41 13h1v1h-1zM62 13h1v1h-1zM41 14h1v1h-1zM60 14h3v1h-3zM39 15h3v1h-3zM60 15h3v1h-3zM30 16h12v1h-12zM49 16h1v1h-1zM52 16h1v1h-1zM55 16h1v1h-1zM60 16h3v1h-3zM29 17h1v1h-1zM39 17h3v1h-3zM49 17h1v1h-1zM52 17h1v1h-1zM55 17h1v1h-1zM60 17h3v1h-3zM29 18h1v1h-1zM39 18h3v1h-3zM49 18h1v1h-1zM52 18h1v1h-1zM55 18h1v1h-1zM60 18h3v1h-3zM30 19h12v1h-12zM49 19h1v1h-1zM52 19h1v1h-1zM55 19h1v1h-1zM60 19h6v1h-6zM39 20h3v1h-3zM49 20h1v1h-1zM52 20h1v1h-1zM55 20h1v1h-1zM60 20h3v1h-3zM65 20h2v1h-2zM68 20h1v1h-1zM70 20h2v1h-2zM39 21h3v1h-3zM49 21h1v1h-1zM52 21h1v1h-1zM55 21h1v1h-1zM60 21h14v1h-14zM39 22h3v1h-3zM49 22h1v1h-1zM52 22h1v1h-1zM55 22h1v1h-1zM60 22h6v1h-6zM71 22h4v1h-4zM39 23h3v1h-3zM49 23h1v1h-1zM52 23h1v1h-1zM55 23h1v1h-1zM60 23h3v1h-3zM65 23h1v1h-1zM73 23h2v1h-2zM30 24h12v1h-12zM49 24h1v1h-1zM52 24h1v1h-1zM55 24h1v1h-1zM60 24h6v1h-6zM73 24h3v1h-3zM29 25h1v1h-1zM39 25h3v1h-3zM49 25h1v1h-1zM52 25h1v1h-1zM55 25h1v1h-1zM60 25h3v1h-3zM74 25h2v1h-2zM29 26h1v1h-1zM39 26h3v1h-3zM49 26h1v1h-1zM52 26h1v1h-1zM55 26h1v1h-1zM60 26h3v1h-3zM75 26h1v1h-1zM30 27h12v1h-12zM49 27h1v1h-1zM52 27h1v1h-1zM55 27h1v1h-1zM60 27h3v1h-3zM74 27h2v1h-2zM39 28h3v1h-3zM60 28h3v1h-3zM74 28h2v1h-2zM28 29h1v1h-1zM41 29h1v1h-1zM60 29h3v1h-3zM75 29h1v1h-1zM27 30h1v1h-1zM41 30h1v1h-1zM43 30h20v1h-20zM74 30h2v1h-2zM26 31h1v1h-1zM42 31h20v1h-20zM74 31h2v1h-2zM75 32h1v1h-1zM74 33h2v1h-2zM74 34h2v1h-2zM74 35h2v1h-2zM73 36h2v1h-2zM73 37h1v1h-1zM72 38h1v1h-1zM74 38h1v1h-1zM71 39h1v1h-1zM73 39h1v1h-1zM72 40h1v1h-1zM71 41h1v1h-1zM70 42h1v1h-1z"/>
+      </g>
+    </svg>
+    <p class="nf-code"><span class="sr-only">Error </span>404</p>
+    <section class="nf-msg" lang="es" data-l="es">
+      <h1>La página que buscas no está conectada.</h1>
+      <p>Puede que haya sido movida, eliminada o que simplemente no exista.</p>
+      <a class="nf-btn" href="/">← Volver al inicio</a>
+    </section>
+    <section class="nf-msg" lang="en" data-l="en" hidden>
+      <h1>The page you’re looking for isn’t connected.</h1>
+      <p>It may have been moved, deleted or may simply not exist.</p>
+      <a class="nf-btn" href="/en/index.html">← Back to home</a>
+    </section>
   </main>
   <footer class="nf-foot">
     <span>© 2026 Borja Mora Méndez</span>
@@ -160,16 +171,11 @@ footer *:focus-visible{outline-color:#fff}
   </footer>
 </div>
 <script>
-/* Quien llega desde /en/… ve primero la versión inglesa */
+/* Quien llega desde /en/… ve el mensaje en inglés; el resto, en español */
 (function(){
   if (location.pathname.indexOf('/en/') !== 0) return;
   document.documentElement.lang = 'en';
-  var c = document.querySelector('.nf-cols'), en = c.querySelector('.en');
-  c.insertBefore(en, c.firstChild);
-  var h1 = en.querySelector('h2'), h2 = c.querySelector('.es h1');
-  // el primer título visible es el h1
-  var n1 = document.createElement('h1'); n1.textContent = h1.textContent; h1.replaceWith(n1);
-  var n2 = document.createElement('h2'); n2.textContent = h2.textContent; h2.replaceWith(n2);
+  document.querySelectorAll('.nf-msg').forEach(function(s){ s.hidden = s.getAttribute('data-l') !== 'en'; });
   document.title = 'Page not found · Borja Mora';
 })();
 if (typeof gtag === 'function') gtag('event', 'pagina_no_encontrada', { path: location.pathname, referrer: document.referrer || '(directo)' });
