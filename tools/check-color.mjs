@@ -9,6 +9,9 @@
    direcciones (lectura, comparar, aplicar y volver al original, hipotéticos), paletas como inspiración,
    calcetines dentro del Studio y tipo de calzado,
    errores de guardado, sesión caducada, tablas sin crear, móvil sin scroll horizontal, axe y CSP real.
+   Inspiración: alta con enlace (función inspiracion-meta simulada) e imagen, sin enlace, con la lectura caída, con la
+   extracción fallida; paleta, clasificación, estilos nuevos, colecciones, búsqueda, filtros, favoritas, notas, duplicados,
+   borrar (con sus fotos), recarga, aislamiento entre usuarios (RLS simulada), «Usar en Studio», móvil, axe y CSP.
    ═══════════════════════════════════════════════ */
 import { createServer } from 'node:http';
 import { readFileSync, existsSync, statSync } from 'node:fs';
@@ -33,9 +36,13 @@ const BASE = `http://localhost:${server.address().port}/area-privada.html`;
 /* ── Supabase en memoria ── */
 let seq = 0;
 const uid = () => '00000000-0000-4000-8000-' + String(++seq).padStart(12, '0');
-const db = { cs_garments: [], cs_palettes: [], cs_outfits: [] };
+const db = { cs_garments: [], cs_palettes: [], cs_outfits: [], cs_inspirations: [], ap_opciones: [] };
+['Casual', 'Smart casual', 'Formal', 'Minimalista', 'Streetwear', 'Workwear', 'Deportivo'].forEach((v, i) => db.ap_opciones.push({ id: 'op-' + i, grupo: 'inspiracion.estilo', valor: v, posicion: i + 1 }));
+const USER_A = 'aaaaaaaa-0000-4000-8000-000000000001', USER_B = 'bbbbbbbb-0000-4000-8000-000000000002';
+let currentUser = USER_A, inspMissing = false, fnMode = 'ok', fnImage = null;   // fnMode: ok | missing | blocked | noimage
 const objects = new Map();                     // ruta en el bucket → { body, type }
 let failWrites = false, missing = false, unauth = false, readDelay = 0;
+const SEASON_IDS = ['primavera', 'verano', 'otono', 'invierno', 'entretiempo'];
 const log = [];
 const HEX = /^#[0-9A-F]{6}$/;
 const CATS = ['camisetas', 'camisas', 'jerseis', 'chaquetas', 'pantalones', 'vaqueros', 'calzado', 'calcetines', 'accesorios'];
@@ -49,6 +56,14 @@ function check(t, r) {                         // lo esencial de los checks de s
     if (!Array.isArray(r.colors) || !r.colors.length || r.colors.length > 12 || r.colors.some((c) => !HEX.test(c.hex || ''))) return 'colors';
     if (r.source_url && !/^https?:\/\//i.test(r.source_url)) return 'source_url';
   }
+  if (t === 'cs_inspirations') {               // lo esencial de supabase/color-studio-inspiracion.sql
+    if (!Array.isArray(r.palette) || r.palette.length > 10 || r.palette.some((c) => !HEX.test(c.hex || '') || typeof c.weight !== 'number' || c.weight < 0 || c.weight > 100)) return 'palette';
+    if (!['none', 'auto', 'reviewed', 'failed'].includes(r.palette_status)) return 'palette_status';
+    if ((r.seasons || []).some((x) => !SEASON_IDS.includes(x))) return 'seasons';
+    if (r.source_url && !/^https?:\/\//i.test(r.source_url)) return 'source_url';
+    if (r.rating != null && !(r.rating >= 1 && r.rating <= 5)) return 'rating';
+    if (r.image_hash != null && !/^[0-9a-f]{16}$/.test(r.image_hash)) return 'image_hash';
+  }
   if (t === 'cs_outfits') {
     if (!r.name) return 'name';
     if (!Array.isArray(r.items) || r.items.some((i) => !i.slot || i.weight < 0 || (!i.garment_id && !HEX.test(i.hex || '')))) return 'items';
@@ -58,8 +73,12 @@ function check(t, r) {                         // lo esencial de los checks de s
 const DEFAULT_ROW = {
   cs_garments: { name: null, subcategory: null, image_path: null, secondary_colors: [], color_shares: null, pattern: 'liso', material: null, notes: null },
   cs_palettes: { name: null, tags: [], source_type: 'own', source_title: null, source_url: null, source_notes: null, notes: null, is_favorite: false },
-  cs_outfits: { items: [], palette_id: null, distribution_override: null, occasion: null, formality: null, notes: null, is_favorite: false }
+  cs_outfits: { items: [], palette_id: null, distribution_override: null, occasion: null, formality: null, notes: null, is_favorite: false },
+  cs_inspirations: { title: null, source_url: null, source_name: null, published_on: null, image_path: null, thumb_path: null, image_hash: null, description: null, notes: null,
+    styles: [], collections: [], seasons: [], rating: null, is_favorite: false, palette: [], palette_status: 'none', palette_id: null },
+  ap_opciones: { posicion: 0 }
 };
+const OWNED = new Set(['cs_inspirations']);   // RLS simulada: owner = auth.uid() (la pone la base, no el navegador)
 function matches(row, params) {
   for (const [k, v] of params) {
     if (['select', 'order', 'limit'].includes(k)) continue;
@@ -74,9 +93,20 @@ async function route(r) {
   if (method === 'OPTIONS') return r.fulfill({ status: 204, headers: cors });
   if (/\/auth\/v1\/token/.test(url.pathname)) return unauth ? json(400, { error: 'invalid_grant' }) : json(200, { access_token: 'x', refresh_token: 'y', expires_in: 3600 });
   if (unauth) return json(401, { message: 'JWT expired' });
+  if (/\/auth\/v1\/user$/.test(url.pathname)) return json(200, { id: currentUser, email: 'x@ejemplo.org' });
+  if (/\/functions\/v1\/inspiracion-meta$/.test(url.pathname)) {
+    const b = JSON.parse(req.postData() || '{}');
+    log.push('FN ' + b.action + ' ' + b.url);
+    if (fnMode === 'missing') return json(404, { message: 'Function not found' });
+    if (fnMode === 'blocked') return json(422, { error: 'La página responde 403' });
+    if (b.action === 'meta') return json(200, { title: 'Look de prueba E2E', siteName: 'Revista Prueba', image: fnMode === 'noimage' ? null : 'https://cdn.ejemplo.org/look.png', published: '2026-03-02', description: 'Descripción de prueba', url: b.url });
+    return r.fulfill({ status: 200, headers: cors, contentType: 'image/png', body: fnImage });
+  }
   const so = /\/storage\/v1\/object\/(?:authenticated\/)?armario\/?(.*)$/.exec(url.pathname);
   if (so) {
     const path = decodeURIComponent(so[1]);
+    const seg = path.split('/');
+    if (seg[0] === 'inspiracion' && seg[1] !== currentUser && method !== 'DELETE') return json(403, { message: 'new row violates row-level security policy' });
     if (method === 'GET') { const o = objects.get(path); return o ? r.fulfill({ status: 200, headers: cors, contentType: o.type, body: o.body }) : json(404, { message: 'Object not found' }); }
     if (failWrites) return json(500, { message: 'Fallo simulado de guardado' });
     if (method === 'POST') { log.push('UPLOAD ' + path); objects.set(path, { body: req.postDataBuffer(), type: req.headers()['content-type'] }); return json(200, { Key: 'armario/' + path }); }
@@ -86,18 +116,20 @@ async function route(r) {
   if (!m) return json(200, {});
   const t = m[1];
   if (!(t in db)) return json(200, []);
-  if (missing) return json(404, { code: 'PGRST205', message: 'Could not find the table' });
-  const rows = db[t], params = [...url.searchParams.entries()];
+  if (missing || (inspMissing && t === 'cs_inspirations')) return json(404, { code: 'PGRST205', message: 'Could not find the table' });
+  const all = db[t], params = [...url.searchParams.entries()];
+  const rows = OWNED.has(t) ? all.filter((x) => x.owner === currentUser) : all;
   if (method === 'GET') { if (readDelay) await new Promise((res) => setTimeout(res, readDelay)); return json(200, rows.filter((x) => matches(x, params))); }
   log.push(method + ' ' + t);
   if (failWrites) return json(500, { message: 'Fallo simulado de guardado' });
   const body = req.postData() ? JSON.parse(req.postData()) : null;
   const now = new Date().toISOString();
   if (method === 'POST') {
-    const list = [].concat(body).map((b) => Object.assign({ id: uid(), created_at: now, updated_at: now }, DEFAULT_ROW[t], b));
+    if (OWNED.has(t) && [].concat(body).some((b) => b.owner && b.owner !== currentUser)) return json(403, { message: 'new row violates row-level security policy' });
+    const list = [].concat(body).map((b) => Object.assign({ id: uid(), created_at: now, updated_at: now }, DEFAULT_ROW[t], OWNED.has(t) ? { owner: currentUser } : {}, b));
     const bad = list.map((x) => check(t, x)).find(Boolean);
     if (bad) return json(400, { message: 'violates check constraint (' + bad + ')' });
-    rows.push(...list);
+    all.push(...list);
     return json(201, list);
   }
   const hit = rows.filter((x) => matches(x, params));
@@ -108,7 +140,7 @@ async function route(r) {
     return json(200, hit);
   }
   if (method === 'DELETE') {
-    hit.forEach((x) => rows.splice(rows.indexOf(x), 1));
+    hit.forEach((x) => all.splice(all.indexOf(x), 1));
     if (t === 'cs_palettes') db.cs_outfits.forEach((o) => { if (hit.some((x) => x.id === o.palette_id)) o.palette_id = null; });
     return json(204, null);
   }
@@ -179,11 +211,11 @@ async function pngOf(page, w, h, fill) {     // genera una imagen en el propio n
 /* ═══════════ FLUJOS ═══════════ */
 const { page, ctx, errors } = await open();
 
-await step('Navegación: modo app en #/color (sin cabecera, pestañas ni pie del área privada) y cuatro secciones', async () => {
+await step('Navegación: modo app en #/color (sin cabecera, pestañas ni pie del área privada) y cinco secciones', async () => {
   for (const sel of ['.ap-top', '.ap-tabs', '.ap-foot', '#ap-logout']) ok(await page.isHidden(sel), sel + ' visible dentro de la app');
   eq(await page.getAttribute('#ap-appbar-back', 'href'), '#/apps');
   ok(await page.isVisible('#ap-appbar-back'), 'sin «Volver al área privada»');
-  eq(await page.$$eval('.cs-nav a', (a) => a.map((x) => x.textContent.trim())), ['Studio', 'Biblioteca', 'Armario', 'Calcetines']);
+  eq(await page.$$eval('.cs-nav a', (a) => a.map((x) => x.textContent.trim())), ['Studio', 'Inspiración', 'Biblioteca', 'Armario', 'Calcetines']);
   eq(await page.getAttribute('.cs-nav a[href="#/color"]', 'aria-current'), 'page');
   eq(await page.textContent('#ap-app-title'), 'Color Studio');
 });
@@ -682,13 +714,302 @@ await step('Modo ejemplo 2.0: sin escrituras, sin errores, axe correcto y sin sc
   await c.close();
   missing = false;
 });
+/* ── Inspiración ── */
+async function outfitPng(page, transparent) {     // «foto de outfit»: fondo claro, abrigo camel, pantalón marino (o transparente, sin color)
+  const b64 = await page.evaluate((transparent) => {
+    const c = document.createElement('canvas'); c.width = 1200; c.height = 1500;
+    const x = c.getContext('2d');
+    if (!transparent) {
+      x.fillStyle = '#ECECE9'; x.fillRect(0, 0, 1200, 1500);
+      x.fillStyle = '#B48A5A'; x.fillRect(250, 150, 700, 650);
+      x.fillStyle = '#1F2A44'; x.fillRect(325, 800, 550, 600);
+      for (let i = 0; i < 400; i++) { x.fillStyle = 'rgba(0,0,0,' + (i % 7) / 60 + ')'; x.fillRect((i * 97) % 1200, (i * 53) % 1500, 9, 9); }   // textura: que la compresión tenga trabajo
+    }
+    return c.toDataURL('image/png').split(',')[1];
+  }, !!transparent);
+  return { name: 'outfit.png', mimeType: 'image/png', buffer: Buffer.from(b64, 'base64') };
+}
+const inspFile = 'dialog[open] .cs-ins-photo label:has-text("Elegir imagen") input';
+const inspSaveFlow = async (page) => { await submit(page); await page.waitForSelector('dialog[open]', { state: 'detached' }); };
+await step('Inspiración: vacío claro y acción principal visible', async () => {
+  await go(page, '#/color/inspiracion');
+  await page.waitForSelector('.cs[data-view="inspiracion"]');
+  ok((await page.textContent('.cs-body')).includes('Tu archivo de inspiración está vacío'), 'sin estado vacío');
+  ok(await page.isVisible('[data-key="new-insp"]'), 'sin «Añadir inspiración»');
+  eq(await page.getAttribute('.cs-nav a[href="#/color/inspiracion"]', 'aria-current'), 'page');
+});
+await step('Inspiración: enlace + «Leer enlace» trae título, fuente, fecha e imagen; la paleta se extrae y se guarda en privado', async () => {
+  fnImage = (await outfitPng(page)).buffer;
+  fnMode = 'ok';
+  await page.click('[data-key="new-insp"]');
+  await page.waitForSelector('dialog[open] #cs-i-url');
+  await page.fill('#cs-i-url', 'https://www.ejemplo.org/look/1?utm_source=x');
+  await page.click('[data-key="insp-read"]');
+  await page.waitForFunction(() => /Obtenido: .*imagen/.test(document.querySelector('dialog[open] .cs-ins-urlrow + .apf-hint').textContent), null, { timeout: 8000 });
+  eq(await page.inputValue('#cs-i-title'), 'Look de prueba E2E');
+  eq(await page.inputValue('#cs-i-src'), 'Revista Prueba');
+  eq(await page.inputValue('#cs-i-pub'), '2026-03-02');
+  ok(await page.isVisible('dialog[open] .cs-ins-preview img'), 'sin vista previa');
+  const n = await page.$$eval('dialog[open] .cs-ins-pallist li', (l) => l.length);
+  ok(n >= 2 && n <= 8, 'colores extraídos: ' + n);
+  await page.click('dialog[open] [data-key="cs-i-sty-1"]');               // Smart casual
+  await page.click('dialog[open] [data-key="cs-i-sea-2"]');               // Otoño
+  await inspSaveFlow(page);
+  const r = db.cs_inspirations[0];
+  eq(r.owner, USER_A);
+  eq(r.title, 'Look de prueba E2E');
+  eq(r.source_url, 'https://www.ejemplo.org/look/1?utm_source=x');
+  eq(r.styles, ['Smart casual']);
+  eq(r.seasons, ['otono']);
+  eq(r.palette_status, 'auto');
+  eq(Math.round(r.palette.reduce((t, c) => t + c.weight, 0)), 100);
+  ok(r.palette.some((c) => /^#1[0-9A-F]2[0-9A-F]4[0-9A-F]$/.test(c.hex) || c.hex === '#1F2A44'), 'falta el marino: ' + r.palette.map((c) => c.hex));
+  ok(new RegExp('^inspiracion/' + USER_A + '/[0-9a-f-]{36}\\.(webp|jpg)$').test(r.image_path), 'ruta de la imagen: ' + r.image_path);
+  ok(r.thumb_path && objects.has(r.image_path) && objects.has(r.thumb_path), 'imagen o miniatura sin subir');
+  ok(objects.get(r.thumb_path).body.length < objects.get(r.image_path).body.length, 'la miniatura no es más ligera');
+  ok(/^[0-9a-f]{16}$/.test(r.image_hash), 'sin huella');
+  ok((await toastText(page)).includes('Revisa su paleta'), 'sin aviso de revisión');
+  await page.waitForSelector('.cs-ins-card .cs-ins-media img');
+  ok((await page.textContent('.cs-ins-card')).includes('Paleta por revisar'), 'sin indicador de revisión');
+  await shot(page, '10-inspiracion');
+});
+await step('Inspiración: sin enlace (solo imagen) y con la lectura caída (solo enlace) se guarda igual', async () => {
+  await page.click('[data-key="new-insp"]');
+  await page.setInputFiles(inspFile, await pngOf(page, 400, 500, '#6B1F2A'));
+  await page.waitForSelector('dialog[open] .cs-ins-pallist li');
+  await page.fill('#cs-i-title', 'Jersey burdeos');
+  await inspSaveFlow(page);
+  const b = db.cs_inspirations.find((x) => x.title === 'Jersey burdeos');
+  ok(b && !b.source_url && b.image_path && b.palette.length, 'no se guardó la referencia sin enlace');
+  fnMode = 'missing';
+  await page.click('[data-key="new-insp"]');
+  await page.fill('#cs-i-url', 'https://tienda.ejemplo.org/producto/9');
+  await page.click('[data-key="insp-read"]');
+  await page.waitForFunction(() => /no está activada/.test(document.querySelector('dialog[open] .cs-ins-urlrow + .apf-hint').textContent));
+  eq(await page.inputValue('#cs-i-src'), 'tienda.ejemplo.org', 'sin fuente deducida del enlace');
+  fnMode = 'blocked';
+  await page.click('[data-key="insp-read"]');
+  await page.waitForFunction(() => /No se ha podido leer la página \(La página responde 403\)/.test(document.querySelector('dialog[open] .cs-ins-urlrow + .apf-hint').textContent));
+  ok(!(await page.$('dialog[open] .cs-ins-preview img')), 'dice que hay imagen sin haberla');
+  await inspSaveFlow(page);
+  const c = db.cs_inspirations.find((x) => x.source_url === 'https://tienda.ejemplo.org/producto/9');
+  ok(c && !c.image_path && c.palette_status === 'none' && c.source_name === 'tienda.ejemplo.org', 'no se guardó solo con el enlace');
+  fnMode = 'ok';
+});
+await step('Inspiración: si la extracción de color falla, se guarda con la paleta marcada como no extraída', async () => {
+  await page.click('[data-key="new-insp"]');
+  await page.setInputFiles(inspFile, await outfitPng(page, true));
+  await page.waitForFunction(() => /No se ha podido extraer/.test(document.querySelector('dialog[open] .cs-ins-photo').textContent));
+  await page.fill('#cs-i-title', 'Imagen transparente');
+  await inspSaveFlow(page);
+  const r = db.cs_inspirations.find((x) => x.title === 'Imagen transparente');
+  eq(r.palette_status, 'failed'); eq(r.palette, []);
+  ok(r.image_path, 'perdió la imagen');
+});
+await step('Inspiración: un duplicado (mismo enlace) avisa y solo se guarda si se confirma', async () => {
+  await page.click('[data-key="new-insp"]');
+  await page.fill('#cs-i-url', 'https://ejemplo.org/look/1/');
+  await page.fill('#cs-i-title', 'Repetida');
+  await submit(page);
+  await page.waitForFunction(() => /Ya guardaste este enlace en «Look de prueba E2E»/.test(document.querySelector('dialog[open] .ap-msg').textContent));
+  ok(!db.cs_inspirations.some((x) => x.title === 'Repetida'), 'guardó sin confirmar');
+  await page.click('dialog[open] button:has-text("Cancelar")');
+});
+await step('Inspiración: detalle con paleta (HEX, RGB, Lab, pesos), confirmar, corregir y copiar', async () => {
+  const r = db.cs_inspirations[0];
+  await page.click('[data-key="insp-' + r.id + '"]');
+  await page.waitForSelector('dialog[open] .cs-ins-colors');
+  const txt = await page.textContent('dialog[open]');
+  ok(txt.includes('Ver la publicación original') && txt.includes('Revista Prueba') && txt.includes('2 de marzo de 2026'), 'faltan fuente, enlace o fecha');
+  ok(/RGB \d+ \d+ \d+ · Lab/.test(txt) && txt.includes('Dominante'), 'sin datos del color');
+  eq(await page.getAttribute('dialog[open] .cs-ins-link', 'rel'), 'noopener noreferrer');
+  const pcts = await page.$$eval('dialog[open] .cs-ins-colors .cs-pct', (e) => e.map((x) => parseInt(x.textContent, 10)));
+  eq(pcts.reduce((a, b) => a + b, 0), 100);
+  ok(await page.isVisible('dialog[open] img[alt^="Foto guardada: Look de prueba E2E"]'), 'imagen sin texto alternativo útil');
+  await axe(page, 'detalle de inspiración');
+  await shot(page, '12-inspiracion-detalle');
+  await page.click('[data-key="insp-confirm"]');
+  await page.waitForFunction(() => /Paleta revisada/.test((document.querySelector('dialog[open]') || {}).textContent || ''));
+  eq(db.cs_inspirations[0].palette_status, 'reviewed');
+  await page.click('[data-key="insp-palette"]');
+  await page.waitForSelector('dialog[open] #cs-ip-0');
+  await page.fill('#cs-ip-0', '#2A2A2A');
+  await submit(page);
+  await page.waitForFunction(() => /corregido a mano/.test((document.querySelector('dialog[open]') || {}).textContent || ''));
+  const p0 = db.cs_inspirations[0].palette[0];
+  eq([p0.hex, p0.source], ['#2A2A2A', 'manual']);
+  await page.click('dialog[open] .cs-sheet-head .cs-link');
+});
+await step('Inspiración: estilo y colección nuevos (van a Configuración), notas y valoración; se conservan', async () => {
+  const r = db.cs_inspirations[0];
+  await page.click('[data-key="insp-' + r.id + '"]');
+  await page.click('[data-key="insp-edit"]');
+  await page.waitForSelector('dialog[open] #cs-i-sty-new');
+  await page.fill('#cs-i-sty-new', 'Prueba E2E');
+  await page.press('#cs-i-sty-new', 'Enter');
+  ok(await page.$('dialog[open]'), 'Intro en el campo nuevo envió el formulario');
+  await page.fill('#cs-i-col-new', 'Oficina E2E');
+  await page.click('dialog[open] .cs-ins-newrow:has(#cs-i-col-new) button');
+  await page.$eval('dialog[open] .cs-ins-more', (d) => { d.open = true; });   // abierto ya si la referencia tiene fecha
+  await page.fill('#cs-i-notes', 'Me gusta la proporción abrigo-pantalón.');
+  await page.selectOption('#cs-i-rate', '4');
+  await inspSaveFlow(page);
+  const x = db.cs_inspirations[0];
+  eq(x.styles, ['Smart casual', 'Prueba E2E']);
+  eq(x.collections, ['Oficina E2E']);
+  eq(x.notes, 'Me gusta la proporción abrigo-pantalón.');
+  eq(x.rating, 4);
+  eq(x.palette[0].hex, '#2A2A2A', 'editar los datos cambió la paleta');
+  ok(db.ap_opciones.some((o) => o.grupo === 'inspiracion.estilo' && o.valor === 'Prueba E2E'), 'el estilo nuevo no llegó a Configuración');
+  ok(db.ap_opciones.some((o) => o.grupo === 'inspiracion.coleccion' && o.valor === 'Oficina E2E'), 'la colección nueva no llegó a Configuración');
+});
+await step('Inspiración: buscar, filtrar (colección, temporada, color, por revisar) y ordenar', async () => {
+  const titles = () => page.$$eval('.cs-ins-t', (e) => e.map((x) => x.textContent));
+  await page.fill('#cs-in-q', 'proporcion abrigo');                          // sin tildes, en las notas
+  await page.waitForFunction(() => document.querySelectorAll('.cs-ins-card').length === 1);
+  eq(await titles(), ['Look de prueba E2E']);
+  await page.fill('#cs-in-q', '');
+  await page.selectOption('#cs-in-col', 'Oficina E2E');
+  eq(await titles(), ['Look de prueba E2E']);
+  ok((await page.textContent('[data-key="insp-filters"]')).includes('(1)'), 'sin contador de filtros');
+  await page.click('[data-key="insp-clear"]');
+  await page.selectOption('#cs-in-season', 'otono');
+  eq((await titles()).length, 1);
+  await page.selectOption('#cs-in-season', '');
+  await page.selectOption('#cs-in-fam', 'rojo');
+  ok((await titles()).includes('Jersey burdeos') && !(await titles()).includes('Look de prueba E2E'), 'filtro por color');
+  await page.selectOption('#cs-in-fam', '');
+  await page.check('[data-key="insp-review"]');
+  const rev = await titles();
+  ok(rev.includes('Imagen transparente') && !rev.includes('Look de prueba E2E'), 'filtro por revisar: ' + rev);
+  await page.click('[data-key="insp-clear"]');
+  await page.selectOption('#cs-in-sort', 'saved-asc');
+  eq((await titles())[0], 'Look de prueba E2E');
+  await page.selectOption('#cs-in-sort', 'saved');
+});
+await step('Inspiración: favorita desde la tarjeta (y quitarla) y «Solo favoritas»', async () => {
+  const r = db.cs_inspirations.find((x) => x.title === 'Jersey burdeos');
+  await page.click('[data-key="ifav-' + r.id + '"]');
+  await page.waitForFunction((id) => document.querySelector('[data-key="ifav-' + id + '"]').getAttribute('aria-pressed') === 'true', r.id);
+  eq(r.is_favorite, true);
+  await page.check('[data-key="insp-fav"]');
+  eq(await page.$$eval('.cs-ins-card', (e) => e.length), 1);
+  await page.click('[data-key="ifav-' + r.id + '"]');
+  await page.waitForFunction(() => document.querySelectorAll('.cs-ins-card').length === 0);
+  eq(r.is_favorite, false);
+  await page.click('[data-key="insp-clear"]');
+});
+await step('Inspiración: persistencia tras recargar y aislamiento entre usuarios (RLS simulada)', async () => {
+  db.cs_inspirations.push(Object.assign({ id: uid(), owner: USER_B, created_at: new Date().toISOString(), updated_at: new Date().toISOString() }, DEFAULT_ROW.cs_inspirations, { title: 'De otra persona' }));
+  await page.reload();
+  await page.waitForSelector('.cs-ins-card');
+  const titles = await page.$$eval('.cs-ins-t', (e) => e.map((x) => x.textContent));
+  ok(titles.includes('Look de prueba E2E') && titles.includes('Jersey burdeos'), 'se perdieron tras recargar');
+  ok(!titles.includes('De otra persona'), 'se ve una referencia de otra persona');
+  const st = await page.evaluate(async () => {
+    const t = JSON.parse(sessionStorage.getItem('bm_ap_session')).access_token;
+    const r = await fetch('https://x.supabase.co/storage/v1/object/armario/inspiracion/bbbbbbbb-0000-4000-8000-000000000002/a.webp', { method: 'POST', headers: { Authorization: 'Bearer ' + t }, body: 'x' });
+    return r.status;
+  });
+  eq(st, 403, 'se puede subir a la carpeta de otra persona');
+  db.cs_inspirations = db.cs_inspirations.filter((x) => x.owner === USER_A);
+});
+await step('Inspiración: «Con tu armario» y «Usar en Studio» crean la paleta en la Biblioteca y la eligen, sin tocar el armario', async () => {
+  const r = db.cs_inspirations[0];
+  const garments = db.cs_garments.length, pals = db.cs_palettes.length;
+  await page.click('[data-key="insp-' + r.id + '"]');
+  await page.waitForSelector('dialog[open] .cs-adapt');
+  ok((await page.textContent('dialog[open]')).includes('Coincidir en color no basta'), 'sin aviso de que no es reproducible por color');
+  await page.click('[data-key="insp-studio"]');
+  await page.waitForSelector('.cs[data-view="studio"]');
+  eq(db.cs_palettes.length, pals + 1);
+  const p = db.cs_palettes[db.cs_palettes.length - 1];
+  eq(p.colors.map((c) => c.hex), r.palette.map((c) => c.hex));
+  ok(p.tags.includes('inspiración') && p.source_type === 'web', 'paleta sin procedencia');
+  eq(db.cs_inspirations[0].palette_id, p.id);
+  eq(db.cs_garments.length, garments, 'tocó el armario');
+  ok((await toastText(page)).includes('creada en tu Biblioteca'), 'sin aviso');
+  ok(await page.$('.cs-ref.is-on'), 'el Studio no la muestra como referencia elegida');
+  // segunda vez: reutiliza la misma paleta
+  await go(page, '#/color/inspiracion');
+  await page.click('[data-key="insp-' + r.id + '"]');
+  await page.click('[data-key="insp-studio"]');
+  await page.waitForSelector('.cs[data-view="studio"]');
+  eq(db.cs_palettes.length, pals + 1, 'duplicó la paleta');
+});
+await step('Inspiración: eliminar pide confirmación y borra la referencia y sus imágenes', async () => {
+  await go(page, '#/color/inspiracion');
+  const r = db.cs_inspirations.find((x) => x.title === 'Jersey burdeos');
+  await page.click('[data-key="insp-' + r.id + '"]');
+  await page.click('[data-key="insp-del"]');
+  await page.waitForSelector('#ap-dialog-ok');
+  ok(db.cs_inspirations.includes(r), 'borró antes de confirmar');
+  await page.click('#ap-dialog-ok');
+  await page.waitForFunction(() => /Inspiración eliminada/.test(document.querySelector('.cs-toast').textContent));
+  ok(!db.cs_inspirations.includes(r), 'no se borró');
+  ok(!objects.has(r.image_path) && !objects.has(r.thumb_path), 'quedaron imágenes huérfanas');
+});
+await step('Inspiración: tabla sin crear → aviso solo en esa vista; el resto de Color Studio sigue', async () => {
+  inspMissing = true;
+  const c = await open(null, '#/color/inspiracion');
+  await c.page.waitForSelector('.cs[data-view="inspiracion"]');
+  ok((await c.page.textContent('.cs-body')).includes('color-studio-inspiracion.sql'), 'sin instrucciones');
+  await go(c.page, '#/color/biblioteca');
+  await c.page.waitForSelector('.cs-pal');
+  inspMissing = false;
+  eq(c.errors, []);
+  await c.ctx.close();
+});
+await step('Inspiración en móvil 390 px: filtros plegados, rejilla de dos columnas, alta usable y sin scroll horizontal', async () => {
+  const m = await open({ width: 390, height: 844 }, '#/color/inspiracion');
+  await m.page.waitForSelector('.cs-ins-card');
+  ok(await m.page.isHidden('#cs-ins-panel'), 'los filtros ocupan la pantalla de inicio');
+  await m.page.click('[data-key="insp-filters"]');
+  ok(await m.page.isVisible('#cs-in-style'), 'el botón no abre los filtros');
+  const cols = await m.page.$$eval('.cs-ins-card', (e) => new Set(e.slice(0, 2).map((x) => Math.round(x.getBoundingClientRect().top))).size);
+  eq(cols, 1, 'las dos primeras tarjetas no comparten fila');
+  eq(await m.page.evaluate(() => document.documentElement.scrollWidth), 390);
+  await axe(m.page, 'móvil inspiración con filtros');
+  await shot(m.page, '11-inspiracion-movil');
+  await m.page.click('[data-key="new-insp"]');
+  await m.page.waitForSelector('dialog[open] #cs-i-url');
+  eq(await m.page.evaluate(() => document.documentElement.scrollWidth), 390);
+  await axe(m.page, 'móvil alta de inspiración');
+  await shot(m.page, '13-inspiracion-alta-movil');
+  const small = await m.page.$$eval('dialog[open] button, dialog[open] .btn', (e) => e.filter((x) => x.offsetParent && x.getBoundingClientRect().height < 40).map((x) => x.textContent.trim()));
+  eq(small, [], 'botones con poca área táctil');
+  await m.page.click('dialog[open] button:has-text("Cancelar")');
+  await m.page.click('[data-key="insp-' + db.cs_inspirations.find((x) => x.title === 'Look de prueba E2E').id + '"]');
+  await m.page.waitForSelector('dialog[open] .cs-ins-colors');
+  eq(await m.page.evaluate(() => document.documentElement.scrollWidth), 390);
+  await shot(m.page, '14-inspiracion-detalle-movil');
+  const small2 = await m.page.$$eval('dialog[open] button, dialog[open] .btn', (e) => e.filter((x) => x.offsetParent && x.getBoundingClientRect().height < 40).map((x) => x.textContent.trim()));
+  eq(small2, [], 'botones con poca área táctil');
+  eq(m.errors, []);
+  await m.ctx.close();
+});
+await step('Inspiración: CSP real sin violaciones (imágenes privadas por blob:)', async () => {
+  const c = await open(null, '#/color/inspiracion', true);
+  await c.page.waitForSelector('.cs-ins-card .cs-ins-media img');
+  eq(await c.page.evaluate(() => window.__csp || []), []);
+  eq(c.errors, []);
+  await c.ctx.close();
+});
+await step('Configuración muestra estilos y colecciones de Inspiración con sus usos', async () => {
+  const c = await open(null, '#/configuracion');
+  await c.page.waitForSelector('.apx-card');
+  const t = await c.page.textContent('.ap-view');
+  ok(t.includes('Estilos de inspiración') && t.includes('Colecciones de inspiración') && t.includes('Oficina E2E'), 'faltan las listas');
+  eq(c.errors, []);
+  await c.ctx.close();
+});
 await step('CS-05: cada módulo de color-studio/ se descarga una sola vez y siempre con su versión', async () => {
   const x = await open(null, '#/color');
   const reqs = [];
   x.page.on('request', (r) => { const u = new URL(r.url()); if (/\/color-studio\/\w+\.js$/.test(u.pathname)) reqs.push(u.pathname.split('/').pop() + u.search); });
   await x.page.reload(); await x.page.waitForSelector('.cs');
   const by = {}; reqs.forEach((r) => { const f = r.split('?')[0]; (by[f] = by[f] || new Set()).add(r); });
-  eq(Object.keys(by).sort(), ['compose.js', 'data.js', 'engine.js', 'image.js', 'socks.js']);
+  eq(Object.keys(by).sort(), ['compose.js', 'data.js', 'engine.js', 'image.js', 'inspiration.js', 'socks.js']);
   Object.entries(by).forEach(([f, set]) => {
     eq(set.size, 1, f + ' se pide con URLs distintas: ' + [...set].join(' · '));
     ok([...set][0].includes('?v='), f + ' sin versión');
@@ -709,7 +1030,7 @@ await step('Error de guardado: se muestra en el formulario y no hay confirmació
   failWrites = false;
 });
 await step('Accesibilidad (axe) en escritorio: Studio, Biblioteca, Armario, Calcetines y un formulario', async () => {
-  for (const h of ['#/color', '#/color/biblioteca', '#/color/armario', '#/color/calcetines']) { await go(page, h); await axe(page, h); }
+  for (const h of ['#/color', '#/color/inspiracion', '#/color/biblioteca', '#/color/armario', '#/color/calcetines']) { await go(page, h); await axe(page, h); }
   await go(page, '#/color/biblioteca');
   await page.click('[data-key="new-pal"]');
   await page.waitForSelector('dialog[open] #cs-p-name');
@@ -719,9 +1040,9 @@ await step('Accesibilidad (axe) en escritorio: Studio, Biblioteca, Armario, Calc
 await step('Sin errores de JavaScript en la sesión de escritorio', async () => { eq(errors, []); });
 await ctx.close();
 
-await step('Móvil 390 px: barra inferior fija, sin scroll horizontal y axe en las cuatro vistas', async () => {
+await step('Móvil 390 px: barra inferior fija, sin scroll horizontal y axe en las cinco vistas', async () => {
   const m = await open({ width: 390, height: 844 }, '#/color');
-  for (const h of ['#/color', '#/color/biblioteca', '#/color/armario', '#/color/calcetines']) {
+  for (const h of ['#/color', '#/color/inspiracion', '#/color/biblioteca', '#/color/armario', '#/color/calcetines']) {
     await go(m.page, h);
     const sw = await m.page.evaluate(() => document.documentElement.scrollWidth);
     ok(sw <= 390, h + ': scroll horizontal (' + sw + ' px)');

@@ -13,6 +13,7 @@ No elige la ropa por ti: propone, explica y deja decidir.
    y el bucket privado `armario` (solo JPEG/PNG/WebP, 5 MB). Requiere `area-privada.sql`.
 2. Recargar el área privada. Sin el paso 1, la pestaña lo explica y ofrece el modo ejemplo.
 3. Reversión (destructiva): vaciar el bucket `armario` desde Storage y ejecutar `supabase/color-studio-rollback.sql`.
+4. Inspiración (opcional, después de 1): ver [Inspiración](#inspiración).
 
 No hace falta ninguna variable de entorno ni clave nueva: usa la sesión y la clave pública del área privada.
 
@@ -25,7 +26,8 @@ No hace falta ninguna variable de entorno ni clave nueva: usa la sesión y la cl
 | `color-studio/compose.js` | Lectura del conjunto (roles, relaciones, contraste, temperatura, repetición), direcciones con criterios con nombre (`MOVES`), comparación y paletas como inspiración. |
 | `color-studio/socks.js` | Reglas de calcetines con identificadores (`RULES`), tipo de calzado y deduplicación de propuestas. |
 | `color-studio/data.js` | Validación, importación JSON/CSV, duplicados, exportación y datos de ejemplo. |
-| `color-studio/image.js` | Fotos en el navegador: validación, reducción sin EXIF y proveedor de visión `local`. |
+| `color-studio/image.js` | Fotos en el navegador: validación, reducción sin EXIF, miniatura opcional y proveedor de visión `local`. |
+| `color-studio/inspiration.js` | Inspiración: paleta de una foto de outfit, validación, duplicados (enlace y huella dHash), búsqueda, filtros, orden, referencias parecidas y paleta para la Biblioteca. |
 | `css/color-studio.css` | Estilos (prefijo `cs-`), mobile-first. |
 | Versiones | Los imports entre módulos llevan `?v=` (lo escribe `node tools/version-assets.mjs`): la página y los módulos piden la misma URL de cada dependencia, así se descarga una vez y no se mezclan versiones tras publicar. |
 | `tools/test-color.mjs` | Pruebas del motor (`node --test tools/test-color.mjs`, sin dependencias). |
@@ -193,7 +195,60 @@ node tools/color-studio/wada-import.mjs [salida.json] [--from colors.json]
 - Guardar una URL no descarga su contenido. No hay scraping.
 - Exportar descarga un JSON con paletas, prendas y outfits; las fotos no viajan (solo su ruta).
 
+## Inspiración
+
+Archivo personal de outfits encontrados en internet (`#/color/inspiracion`, segunda sección de Color Studio).
+Guarda la imagen y el enlace, extrae la paleta en el dispositivo y la deja usar como referencia en el Studio.
+
+**Puesta en marcha**
+
+1. SQL Editor → `supabase/color-studio-inspiracion.sql` (requiere `color-studio.sql` y `opciones.sql`; idempotente, no toca datos).
+   Crea `cs_inspirations` con RLS **por dueño** (`owner = auth.uid()`, que pone la base; además `is_member()`), una política
+   restrictiva para que la carpeta `inspiracion/<usuario>/` del bucket `armario` solo la use su dueño y los estilos iniciales.
+2. Vuelve a ejecutar solo las funciones `ap_opcion_renombrar` y `ap_opcion_eliminar` de `opciones.sql` (ahora actualizan también
+   estilos y colecciones de las referencias). El archivo entero vuelve a crear las opciones del Fichero que hubieras borrado.
+3. Opcional: `supabase functions deploy inspiracion-meta --no-verify-jwt` para «Leer enlace» (ver su `README.md`). Sin ella todo funciona
+   y la página lo dice: el enlace se guarda y la imagen se añade a mano.
+4. Comprobación: en Inspiración aparece el estado vacío (no el aviso de «Falta preparar»), y en Configuración, «Estilos de inspiración».
+5. Reversión (destructiva): borrar la carpeta `inspiracion` del bucket y ejecutar `supabase/color-studio-inspiracion-rollback.sql`.
+
+**Decisiones**
+
+- **Tabla propia**, no `cs_outfits` ni `cs_garments`: una referencia no es una prenda ni un conjunto tuyo. Nunca entra en el armario.
+- **Paleta en JSONB** (`[{ hex, weight, source }]`), como `cs_palettes`: se lee y se edita entera, en orden, y no se consulta por color en la base.
+  RGB, Lab y familia se derivan del HEX; no se guardan. `weight` = % estimado de presencia en los píxeles analizados (0–100, suma 100).
+  `source` = `auto` o `manual` (corregido). `palette_status`: `none`, `auto` (por revisar), `reviewed` o `failed`.
+- **Extracción**: la misma de las prendas (`engine.extractDominantColors`: k-means local, fondo del borde rebajado, sombras fundidas) con hasta 8
+  grupos y descartando los < 3 %. El número de colores depende de la foto. Incluye piel, fondo o accesorios si se ven: por eso es una
+  estimación editable (cambiar, quitar, añadir, ajustar pesos o volver a extraer) y nunca bloquea el guardado.
+- **Clasificación**: estilos (varios), temporadas (lista fija: primavera, verano, otoño, invierno, entretiempo), colecciones (varias), favorita,
+  valoración 1–5, notas privadas y fecha de publicación si se conoce. Estilos y colecciones son las listas `inspiracion.estilo` e
+  `inspiracion.coleccion` de `ap_opciones`: se crean desde el formulario y se renombran o eliminan en Configuración, que actualiza las referencias.
+  Estilos iniciales: Casual, Smart casual, Formal, Minimalista, Streetwear, Workwear y Deportivo («Inspiración de temporada» no es un estilo: es la temporada).
+- **Rejilla uniforme 4:5**, no mampostería: conserva el orden de lectura y de teclado, y las fotos de outfits suelen ser verticales.
+  La foto es la protagonista; debajo, título, estilo y fuente, y la paleta como franja. Sin foto, la tarjeta enseña la paleta.
+- **Imágenes**: se reducen en el navegador (1600 px, sin EXIF) y se guarda también una miniatura de 640 px para las tarjetas, que se
+  descargan solo al acercarse a la pantalla (IntersectionObserver). El detalle descarga la grande. Nada se enlaza a webs externas
+  (la CSP lo impide y la referencia no depende de que la web original siga viva).
+- **Enlaces**: el navegador no puede leer otras webs (CORS), así que «Leer enlace» usa la Edge Function `inspiracion-meta` (Open Graph,
+  solo miembros, protegida contra SSRF). Lo que no consigue lo dice («Obtenido: título, fuente. La imagen no se ha podido descargar…»).
+- **Duplicados**: mismo enlace normalizado (sin `utm_*`, `fbclid`, ancla, `www` ni barra final) o imagen casi igual (dHash de 64 bits, ≤ 6 bits
+  distintos). Avisan y se guardan si se confirma.
+- **Usar en Studio**: copia la paleta a la Biblioteca (origen «Página web» o «Fotografía», etiqueta `inspiración`, nota de que es una
+  estimación de la foto) o reutiliza la idéntica que ya exista, y la deja elegida como referencia del Studio. A partir de ahí trabaja el
+  motor de siempre (Paletas que inspiran, Comparar, `cr-paleta`) sin cambios. La paleta de la Biblioteca es una copia: corregir después la de la
+  referencia no la cambia (volver a pulsar crea otra si ya no es idéntica).
+- **Con tu armario**: para cada color, la prenda con el color principal más próximo (ΔE00 ≤ 12, `compose.adaptPalette`). Avisa de que
+  coincidir en color no basta para reproducir un look.
+- **Referencias parecidas**: mismo criterio que la Biblioteca (`engine.rankPalettes`), con al menos dos colores en común (ΔE00 ≤ 10).
+- **Rendimiento**: se cargan todas las filas de una vez (son metadatos y paletas pequeñas); las imágenes, perezosas. Con miles de referencias
+  habría que paginar.
+
 ## Limitaciones conocidas
+
+- Inspiración: la paleta es de la foto entera (no segmenta la ropa: fondo y piel pueden aparecer) y no corrige el balance de blancos.
+  Instagram, Pinterest y otras redes suelen bloquear «Leer enlace». Las colecciones y estilos se comparten entre miembros (`ap_opciones`);
+  las referencias, no. No hay cuentagotas sobre la foto de una referencia.
 
 - La estimación de superficie no usa la foto del outfit vestido (segmentación y solapes quedan para una fase posterior).
 - Las propuestas no contemplan estampados en el calcetín ni su material; el largo solo cuenta si se anota en la subcategoría.

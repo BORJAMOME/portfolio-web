@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════
    tools/test-color.mjs: pruebas del motor de Color Studio
      node --test tools/test-color.mjs
-   Sin dependencias ni red: importa los módulos ES de color-studio/ (motor, composición, calcetines y datos).
+   Sin dependencias ni red: importa los módulos ES de color-studio/ (motor, composición, calcetines, datos e inspiración).
    La interfaz se prueba aparte con tools/check-color.mjs.
    ═══════════════════════════════════════════════ */
 import { test } from 'node:test';
@@ -10,6 +10,7 @@ import * as E from '../color-studio/engine.js';
 import * as S from '../color-studio/socks.js';
 import * as D from '../color-studio/data.js';
 import * as C from '../color-studio/compose.js';
+import * as I from '../color-studio/inspiration.js';
 
 const sum = (a) => a.reduce((s, x) => s + x, 0);
 const near = (a, b, eps = 1e-9) => Math.abs(a - b) <= eps;
@@ -774,4 +775,148 @@ test('CS-22 wardrobeGaps: colores hipotéticos de las tres direcciones, agrupado
   const keys = gaps.map((x) => x.slot + x.hex);
   assert.equal(new Set(keys).size, keys.length);
   assert.deepEqual(C.wardrobeGaps({ slots: {}, garments: few }), []);
+});
+
+/* ── Inspiración (color-studio/inspiration.js) ── */
+// imagen sintética: fondo gris claro, «abrigo» camel a la izquierda, «pantalón» marino abajo y una franja blanca
+function outfitSample(w = 80, h = 100) {
+  const data = new Uint8ClampedArray(w * h * 4);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const o = (y * w + x) * 4;
+    let c = [236, 236, 233];
+    if (x > w * 0.2 && x < w * 0.8 && y > h * 0.1 && y < h * 0.5) c = [180, 138, 90];
+    if (x > w * 0.42 && x < w * 0.58 && y > h * 0.12 && y < h * 0.45) c = [244, 242, 236];
+    if (x > w * 0.25 && x < w * 0.75 && y >= h * 0.5 && y < h * 0.92) c = [31, 42, 68];
+    data[o] = c[0]; data[o + 1] = c[1]; data[o + 2] = c[2]; data[o + 3] = 255;
+  }
+  return { data, width: w, height: h };
+}
+test('Inspiración: la paleta de una foto reutiliza el motor, varía en número y sus pesos suman 100', () => {
+  const p = I.extractOutfitPalette(outfitSample());
+  assert.ok(p.length >= 2 && p.length <= 8, 'número de colores: ' + p.length);
+  assert.equal(sum(p.map((c) => c.weight)), 100);
+  assert.ok(p.every((c) => /^#[0-9A-F]{6}$/.test(c.hex) && c.source === 'auto'));
+  const fam = p.map((c) => E.familyOf(c.hex));
+  assert.ok(fam.includes('marino'), 'falta el marino: ' + fam);
+  assert.ok(fam.includes('marron') || fam.includes('beige') || fam.includes('naranja'), 'falta el camel: ' + fam);
+  // una imagen lisa da un solo color, no 8 inventados
+  const flat = { data: new Uint8ClampedArray(40 * 40 * 4).fill(120), width: 40, height: 40 };
+  for (let i = 3; i < flat.data.length; i += 4) flat.data[i] = 255;
+  assert.equal(I.extractOutfitPalette(flat).length, 1);
+  assert.deepEqual(I.extractOutfitPalette(null), []);
+});
+test('Inspiración: normalizar y ajustar pesos (sin duplicados, suma 100, máx. 10 colores)', () => {
+  const n = I.normalizePalette([{ hex: '1f2a44', weight: 30 }, { hex: '#1F2A44', weight: 10, source: 'manual' }, { hex: 'nope', weight: 50 }, { hex: '#F4F2EC', weight: 60 }]);
+  assert.deepEqual(n.map((c) => c.hex), ['#1F2A44', '#F4F2EC']);
+  assert.deepEqual(n.map((c) => c.weight), [40, 60]);
+  assert.equal(n[0].source, 'manual');
+  const z = I.normalizePalette([{ hex: '#000000' }, { hex: '#FFFFFF' }]);
+  assert.deepEqual(z.map((c) => c.weight), [50, 50]);
+  assert.equal(I.normalizePalette(Array.from({ length: 14 }, (_, i) => ({ hex: '#0000' + String(i + 10), weight: 1 }))).length, 10);
+  const s = I.setPaletteWeight([{ hex: '#111111', weight: 50 }, { hex: '#222222', weight: 30 }, { hex: '#333333', weight: 20 }], 0, 80);
+  assert.equal(s[0].weight, 80);
+  assert.ok(Math.abs(sum(s.map((c) => c.weight)) - 100) < 0.2);
+  assert.equal(s[1].weight, 12);
+  assert.equal(s[2].weight, 8);
+});
+test('Inspiración: información derivada y papeles por peso', () => {
+  const c = I.colorInfo('#1f2a44');
+  assert.deepEqual(c.rgb, { r: 31, g: 42, b: 68 });
+  assert.equal(c.family, 'marino');
+  assert.ok(Number.isInteger(c.lab.L));
+  assert.equal(I.colorInfo('x'), null);
+  const r = I.paletteRoles([{ hex: '#111111', weight: 50 }, { hex: '#222222', weight: 40 }, { hex: '#333333', weight: 10 }]);
+  assert.deepEqual(r.map((x) => x.role), ['dominante', 'secundario', 'detalle']);
+});
+test('Inspiración: huella de imagen estable ante el tamaño y distinta entre imágenes', () => {
+  const a = I.imageHash(outfitSample(80, 100)), b = I.imageHash(outfitSample(160, 200));
+  assert.match(a, /^[0-9a-f]{16}$/);
+  assert.ok(I.hashDistance(a, b) <= I.HASH_NEAR, 'misma imagen a otro tamaño: ' + I.hashDistance(a, b));
+  const flipped = outfitSample(); const d = flipped.data;
+  for (let y = 0; y < 100; y++) for (let x = 0; x < 40; x++) for (let k = 0; k < 4; k++) { const o1 = (y * 80 + x) * 4 + k, o2 = (y * 80 + (79 - x)) * 4 + k, t = d[o1]; d[o1] = d[o2]; d[o2] = t; }
+  const grad = { data: new Uint8ClampedArray(80 * 100 * 4), width: 80, height: 100 };
+  for (let y = 0; y < 100; y++) for (let x = 0; x < 80; x++) { const o = (y * 80 + x) * 4; grad.data[o] = grad.data[o + 1] = grad.data[o + 2] = 255 - x * 3; grad.data[o + 3] = 255; }
+  assert.ok(I.hashDistance(a, I.imageHash(grad)) > I.HASH_NEAR);
+  assert.equal(I.hashDistance(a, null), Infinity);
+});
+test('Inspiración: enlaces comparables y fuente por dominio', () => {
+  assert.equal(I.normalizeSourceUrl('https://www.Ejemplo.com/look/12/?utm_source=x&fbclid=y&talla=m#foto'), 'ejemplo.com/look/12?talla=m');
+  assert.equal(I.normalizeSourceUrl('http://ejemplo.com/look/12'), 'ejemplo.com/look/12');
+  assert.equal(I.normalizeSourceUrl('javascript:alert(1)'), null);
+  assert.equal(I.sourceNameFromUrl('https://www.pinterest.es/pin/1'), 'pinterest.es');
+  assert.equal(I.httpUrl('https://user:pass@ejemplo.com/'), null);
+  assert.equal(I.httpUrl('https://ejemplo.com/' + 'a'.repeat(990)), null);
+  assert.ok(I.httpUrl('https://ejemplo.com/' + 'a'.repeat(800)));
+});
+test('Inspiración: validar (basta imagen, enlace o título; nada más obligatorio)', () => {
+  assert.equal(I.validateInspiration({}).ok, false);
+  assert.equal(I.validateInspiration({ has_image: true }).ok, true);
+  const v = I.validateInspiration({ source_url: 'https://www.zara.com/es/look', styles: ['Casual', ' casual ', 'Smart casual'], seasons: ['otono', 'nunca'], rating: 4, published_on: '2026-02-30' });
+  assert.equal(v.ok, false);
+  assert.match(v.errors[0], /fecha/);
+  const w = I.validateInspiration({ source_url: 'https://www.zara.com/es/look', styles: ['Casual', ' casual ', 'Smart casual'], seasons: ['otono', 'nunca'], rating: 4, published_on: '2026-02-03' });
+  assert.equal(w.ok, true);
+  assert.equal(w.value.source_name, 'zara.com');
+  assert.deepEqual(w.value.styles, ['Casual', 'Smart casual']);
+  assert.deepEqual(w.value.seasons, ['otono']);
+  assert.equal(w.value.palette_status, 'none');
+  assert.equal(I.validateInspiration({ title: 'x', source_url: 'ftp://a' }).ok, false);
+  assert.equal(I.validateInspiration({ title: 'x', rating: 7 }).ok, false);
+  assert.equal(I.validateInspiration({ title: 'x', palette_status: 'failed' }).value.palette_status, 'failed');
+  assert.equal(I.validateInspiration({ title: 'x', palette: [{ hex: '#111111', weight: 1 }] }).value.palette_status, 'auto');
+  assert.equal(I.validateInspiration({ title: 'x', palette: [{ hex: '#111111', weight: 1 }], palette_status: 'reviewed' }).value.palette_status, 'reviewed');
+});
+const insp = (id, extra) => Object.assign({ id, title: null, source_url: null, source_name: null, styles: [], collections: [], seasons: [], palette: [], palette_status: 'none', is_favorite: false, rating: null, created_at: '2026-01-0' + id + 'T10:00:00Z', published_on: null }, extra);
+test('Inspiración: duplicados por enlace normalizado o imagen casi igual', () => {
+  const list = [insp(1, { source_url: 'https://ejemplo.com/a?utm_medium=x' }), insp(2, { image_hash: 'ffff0000ffff0000' })];
+  assert.deepEqual(I.findDuplicateInspirations({ source_url: 'https://www.ejemplo.com/a/' }, list).map((d) => d.reason), ['url']);
+  assert.deepEqual(I.findDuplicateInspirations({ image_hash: 'ffff0000ffff0003' }, list).map((d) => d.reason), ['image']);
+  assert.deepEqual(I.findDuplicateInspirations({ id: 2, image_hash: 'ffff0000ffff0000' }, list), []);
+  assert.deepEqual(I.findDuplicateInspirations({ image_hash: '0000ffff0000ffff' }, list), []);
+});
+test('Inspiración: buscar (sin tildes), filtrar y ordenar', () => {
+  const list = [
+    insp(1, { title: 'Abrigo camel en Milán', styles: ['Smart casual'], seasons: ['invierno'], palette: [{ hex: '#B48A5A', weight: 60 }, { hex: '#1F2A44', weight: 40 }], palette_status: 'auto', rating: 3 }),
+    insp(2, { title: 'Lino', styles: ['Casual'], collections: ['Verano 26'], seasons: ['verano'], is_favorite: true, palette: [{ hex: '#F4F2EC', weight: 100 }], palette_status: 'reviewed', published_on: '2025-06-01' }),
+    insp(3, { source_name: 'pinterest.com', notes: 'Ver el corte del pantalón', image_path: 'x', palette_status: 'failed', published_on: '2026-03-01', rating: 5 })
+  ];
+  const ids = (f) => list.filter((x) => I.matchesFilters(x, f)).map((x) => x.id);
+  assert.deepEqual(ids({ q: 'milan' }), [1]);
+  assert.deepEqual(ids({ q: 'pantalon corte' }), [3]);
+  assert.deepEqual(ids({ q: 'marino' }), [1]);
+  assert.deepEqual(ids({ q: 'invierno' }), [1]);
+  assert.deepEqual(ids({ style: 'Casual' }), [2]);
+  assert.deepEqual(ids({ collection: 'Verano 26' }), [2]);
+  assert.deepEqual(ids({ season: 'verano' }), [2]);
+  assert.deepEqual(ids({ family: 'marino' }), [1]);
+  assert.deepEqual(ids({ fav: true }), [2]);
+  assert.deepEqual(ids({ review: true }), [1, 3]);
+  const order = (s) => I.sortInspirations(list, s).map((x) => x.id);
+  assert.deepEqual(order('saved'), [3, 2, 1]);
+  assert.deepEqual(order('saved-asc'), [1, 2, 3]);
+  assert.deepEqual(order('published'), [3, 2, 1]);
+  assert.deepEqual(order('favorites'), [2, 3, 1]);
+  assert.deepEqual(order('rating'), [3, 1, 2]);
+  assert.deepEqual(I.optionValues(['Casual', 'Formal'], list, 'styles'), ['Casual', 'Formal', 'Smart casual']);
+});
+test('Inspiración: referencias parecidas y paleta para la Biblioteca', () => {
+  const a = insp(1, { palette: [{ hex: '#1F2A44', weight: 50 }, { hex: '#B48A5A', weight: 30 }, { hex: '#F4F2EC', weight: 20 }] });
+  const b = insp(2, { palette: [{ hex: '#202B46', weight: 40 }, { hex: '#B38B5C', weight: 60 }] });
+  const c = insp(3, { palette: [{ hex: '#C2185B', weight: 100 }] });
+  const d = insp(4, { palette: [{ hex: '#1F2A44', weight: 100 }] });
+  const sim = I.similarInspirations(a, [a, b, c, d]);
+  assert.deepEqual(sim.map((s) => s.item.id), [2], 'solo cuenta la que comparte al menos dos colores');
+  assert.deepEqual(I.similarInspirations(insp(5), [a, b]), []);
+  const pal = I.paletteForLibrary(Object.assign({}, a, { title: 'Look', source_url: 'https://ejemplo.com/x', source_name: 'ejemplo.com', styles: ['Smart casual'] }));
+  const v = D.validatePalette(pal);
+  assert.equal(v.ok, true, v.errors.join());
+  assert.deepEqual(v.value.colors.map((x) => x.hex), ['#1F2A44', '#B48A5A', '#F4F2EC']);
+  assert.equal(v.value.source_type, 'web');
+  assert.deepEqual(v.value.tags, ['inspiración', 'smart casual']);
+  assert.equal(I.paletteForLibrary(insp(6, { palette: [{ hex: '#111111', weight: 100 }] })).source_type, 'photo');
+});
+test('Inspiración: título a mostrar', () => {
+  assert.equal(I.displayTitle({ title: 'Mi look' }), 'Mi look');
+  assert.match(I.displayTitle({ source_name: 'zara.com', created_at: '2026-10-01T10:00:00Z' }), /^zara\.com · 1 oct/);
+  assert.match(I.displayTitle({ created_at: '2026-10-01T10:00:00Z' }), /^Referencia del 1/);
 });

@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "2bd61ec",
+ "huella": "fab2625",
  "recuento": {
   "paginas": 19,
   "proyectos": 40,
@@ -9,10 +9,10 @@ export default {
   "capitulos": 10,
   "plataformas": 11,
   "pestanas": 10,
-  "tablas": 32,
-  "funciones": 4,
+  "tablas": 33,
+  "funciones": 5,
   "herramientas": 15,
-  "relaciones": 172,
+  "relaciones": 176,
   "sinExplicar": 0
  },
  "columnas": [
@@ -1800,6 +1800,21 @@ export default {
      "familia": "dato"
     },
     {
+     "id": "d:color-studio-inspiracion",
+     "tipo": "esquema",
+     "etiqueta": "color-studio-inspiracion.sql",
+     "archivo": "supabase/color-studio-inspiracion.sql",
+     "hijos": [
+      {
+       "id": "q:cs_inspirations",
+       "tipo": "tabla",
+       "etiqueta": "cs_inspirations",
+       "familia": "dato"
+      }
+     ],
+     "familia": "dato"
+    },
+    {
      "id": "d:color-studio",
      "tipo": "esquema",
      "etiqueta": "color-studio.sql",
@@ -2080,6 +2095,13 @@ export default {
        "tipo": "funcion",
        "etiqueta": "calendario-sync",
        "archivo": "supabase/functions/calendario-sync/",
+       "familia": "dato"
+      },
+      {
+       "id": "f:inspiracion-meta",
+       "tipo": "funcion",
+       "etiqueta": "inspiracion-meta",
+       "archivo": "supabase/functions/inspiracion-meta/",
        "familia": "dato"
       },
       {
@@ -2718,6 +2740,14 @@ export default {
    ]
   },
   {
+   "de": "f:inspiracion-meta",
+   "a": "d:area-privada",
+   "tipo": "usa",
+   "detalle": [
+    "members"
+   ]
+  },
+  {
    "de": "f:interview-intel",
    "a": "d:area-privada",
    "tipo": "usa",
@@ -2844,12 +2874,28 @@ export default {
   },
   {
    "de": "m:color",
+   "a": "d:color-studio-inspiracion",
+   "tipo": "usa",
+   "detalle": [
+    "cs_inspirations"
+   ]
+  },
+  {
+   "de": "m:color",
    "a": "d:color-studio",
    "tipo": "usa",
    "detalle": [
     "cs_garments",
     "cs_outfits",
     "cs_palettes"
+   ]
+  },
+  {
+   "de": "m:color",
+   "a": "d:opciones",
+   "tipo": "usa",
+   "detalle": [
+    "ap_opciones"
    ]
   },
   {
@@ -3228,6 +3274,14 @@ export default {
    "tipo": "usa",
    "detalle": [
     "agenda"
+   ]
+  },
+  {
+   "de": "t:configuracion",
+   "a": "d:color-studio-inspiracion",
+   "tipo": "usa",
+   "detalle": [
+    "cs_inspirations"
    ]
   },
   {
