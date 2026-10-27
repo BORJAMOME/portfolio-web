@@ -62,7 +62,16 @@ body { background: var(--off); }
 @keyframes ap-blink { 50% { opacity: .1; } }
 @media (prefers-reduced-motion: reduce) { .ap-lcd-blink { animation: none; } }
 .ap-top-title { justify-self: center; font-family: var(--font-serif); font-size: 21px; font-weight: 500; letter-spacing: -.3px; color: var(--ink); text-align: center; }
-.ap-top .ap-back { justify-self: end; }
+/* «Volver al Laboratorio» y «Cerrar sesión» juntos, a la derecha: salir de la sección y salir de la sesión son las dos
+   acciones globales. El segundo es un botón discreto (sin caja) separado por una línea fina, para que no compita con el primero. */
+.ap-top-actions { justify-self: end; display: flex; align-items: center; gap: 14px; }
+.ap-out {
+  position: relative; min-height: 44px; padding: 0 0 0 15px; border: 0; background: none; cursor: pointer;
+  font: inherit; font-size: 13px; font-weight: 500; color: var(--muted);
+}
+.ap-out::before { content: ""; position: absolute; left: 0; top: 50%; height: 16px; margin-top: -8px; border-left: 1px solid var(--ap-line-strong); }
+@media (hover: hover) and (pointer: fine) { .ap-out:hover { color: var(--ink); } }
+.ap-out:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; border-radius: 4px; }
 @media (max-width: 720px) {
   .ap-top { grid-template-columns: 1fr auto; padding-block: 10px; }
   .ap-top-title { display: none; }                  /* en móvil el título de cada sección ya está debajo */
@@ -132,7 +141,6 @@ main { min-height: calc(100vh - var(--ap-top-h) - 90px); outline: none; }
   font-family: var(--font-serif); font-weight: 500; font-size: clamp(30px, 4.4vw, 44px);
   letter-spacing: -1.2px; line-height: 1.05; outline: none;
 }
-.ap-head-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 
 .ap-toolbar { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 20px; }
 .ap-search { position: relative; flex: 1 1 280px; }
@@ -523,8 +531,12 @@ main { min-height: calc(100vh - var(--ap-top-h) - 90px); outline: none; }
 .apc-arrows { display: flex; gap: 4px; }
 .apc-arrow { min-width: 44px; justify-content: center; font-size: 20px; line-height: 1; }
 .apc-month { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; font-family: var(--font-serif); font-size: 26px; font-weight: 500; letter-spacing: -.5px; color: var(--ink); margin: 0 4px; }
-.apc-weekno { font-family: var(--font); font-size: 12px; font-weight: 600; letter-spacing: .04em; color: var(--muted); padding: 3px 9px; border: 1px solid var(--ap-line); border-radius: 999px; }
+.apc-weekno { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font); font-size: 12px; font-weight: 600; letter-spacing: .04em; color: var(--muted); padding: 3px 10px; border: 1px solid var(--ap-line); border-radius: 999px; font-variant-numeric: tabular-nums; }
+/* posición de la semana en el año: --p = semana / semanas del año (la cifra ya está en el texto; la barra es decorativa) */
+.apc-weekbar { display: block; width: 56px; height: 4px; background: var(--ap-line-strong); border-radius: 4px; overflow: hidden; }
+.apc-weekbar i { display: block; width: var(--p, 0%); height: 100%; background: var(--ink); border-radius: 4px; }
 .apc-search { flex: 0 1 220px; }
+.apc-views { display: flex; align-items: center; gap: 10px; flex: none; }
 .apc-modes { margin-bottom: 0; }
 .apc-help-btn { min-width: 44px; justify-content: center; font-weight: 700; }
 
@@ -585,6 +597,8 @@ main { min-height: calc(100vh - var(--ap-top-h) - 90px); outline: none; }
 .apc-layer { display: flex; align-items: center; gap: 10px; min-height: 34px; font-size: 13px; color: var(--ink); cursor: pointer; }
 .apc-layer input { width: 16px; height: 16px; accent-color: var(--purple); cursor: pointer; }
 .apc-swatch { display: inline-block; width: 11px; height: 11px; border-radius: 3px; background: var(--c, var(--purple)); flex: none; }
+.apc-swatch--cat { width: 12px; height: 12px; margin-left: 8px; vertical-align: -1px; }
+.apc-swatch--cat[hidden] { display: none; }
 .apc-swatch.is-interview { --c: #273A5F; box-shadow: 0 0 0 2px var(--white), 0 0 0 3px #273A5F; }
 .apc-legend { display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: 12px; color: var(--muted); }
 
@@ -1206,7 +1220,7 @@ body:has(.apl) { --off: #FBFBFB; background: #FBFBFB; }
 .apl-app:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
 
 /* Modo app (area-privada.js → setAppMode): la app ocupa la pantalla y del área privada solo queda la vuelta */
-.ap-in-app .ap-top, .ap-in-app .ap-tabs, .ap-in-app .ap-head-actions, .ap-in-app .ap-foot { display: none; }
+.ap-in-app .ap-top, .ap-in-app .ap-tabs, .ap-in-app .ap-foot { display: none; }
 .ap-in-app .ap-shell { padding-top: 0; }
 .ap-in-app .ap-head { margin: 0; }
 /* sigue siendo el h1 de la página (y el nombre de la sección de la app) para lectores de pantalla */
@@ -1223,7 +1237,7 @@ body:has(.apl) { --off: #FBFBFB; background: #FBFBFB; }
 /* ───────────── NAVEGACIÓN MÓVIL: barra inferior + hoja «Más» (area-privada.js → buildNav) ───────────── */
 .ap-bar, .ap-more:not([open]) { display: none; }
 @media (max-width: 899.98px) {
-  .ap-tabs, .ap-head-actions { display: none; }      /* las pestañas pasan a la barra inferior; «Cerrar sesión» a la hoja «Más» */
+  .ap-tabs, .ap-out { display: none; }      /* las pestañas pasan a la barra inferior; «Cerrar sesión» a la hoja «Más» */
   .ap-head { margin-bottom: 8px; }
   .ap-shell { padding-top: 20px; padding-bottom: calc(40px + 60px + env(safe-area-inset-bottom, 0px)); }
   .ap-foot { padding-bottom: calc(28px + 60px + env(safe-area-inset-bottom, 0px)); }
@@ -1281,8 +1295,10 @@ body:has(#ap-lock:not([hidden])) { background: #000; color: #fff; }
 body:has(#ap-lock:not([hidden])) .ap-top { background: transparent; border-bottom: 0; grid-template-columns: 1fr; }
 body:has(#ap-lock:not([hidden])) .ap-now,
 body:has(#ap-lock:not([hidden])) .ap-top-title,
-body:has(#ap-lock:not([hidden])) .ap-foot { display: none; }
-body:has(#ap-lock:not([hidden])) .ap-top .ap-back { justify-self: start; color: #fff; opacity: .7; transition: opacity .2s; }
+body:has(#ap-lock:not([hidden])) .ap-foot,
+body:has(#ap-lock:not([hidden])) .ap-out { display: none; }
+body:has(#ap-lock:not([hidden])) .ap-top-actions { justify-self: start; }
+body:has(#ap-lock:not([hidden])) .ap-top .ap-back { color: #fff; opacity: .7; transition: opacity .2s; }
 body:has(#ap-lock:not([hidden])) .ap-top .ap-back:hover,
 body:has(#ap-lock:not([hidden])) .ap-top .ap-back:focus-visible { opacity: 1; color: #fff; }
 body:has(#ap-lock:not([hidden])) :focus-visible { outline: 2px solid #fff; outline-offset: 3px; }

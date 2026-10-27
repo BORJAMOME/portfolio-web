@@ -29,7 +29,7 @@
 <link rel="prefetch" as="script" href="./color-studio/compose.js?v=7b22337f70" data-ap-asset="cs-compose">
 <link rel="prefetch" as="script" href="./color-studio/inspiration.js?v=cad019f508" data-ap-asset="cs-inspiration">
 <link rel="prefetch" as="script" href="./area-privada-kanban.js?v=ab3301bf21" data-ap-module="kanban">
-<link rel="prefetch" as="script" href="./area-privada-calendario.js?v=2e9cb28a18" data-ap-module="calendario">
+<link rel="prefetch" as="script" href="./area-privada-calendario.js?v=82be64ce48" data-ap-module="calendario">
 <link rel="prefetch" as="script" href="./area-privada-entrevistas.js?v=bdaabb17fe" data-ap-module="entrevistas">
 <link rel="prefetch" as="script" href="./area-privada-preparacion.js?v=e043ec3be5" data-ap-module="preparacion">
 <link rel="prefetch" as="script" href="./area-privada-portfolio.js?v=d76394854f" data-ap-module="portfolio">
@@ -46,7 +46,7 @@
 <link rel="stylesheet" href="./css/second-brain.css?v=2f3f8407a3">
 <link rel="stylesheet" href="./css/mapa.css?v=9a1505f87b">
 <link rel="stylesheet" href="./css/color-studio.css?v=bde61b4366">
-<link rel="stylesheet" href="./css/area-privada.css?v=3bb5e40089">
+<link rel="stylesheet" href="./css/area-privada.css?v=adeed36033">
 </head>
 <body>
 <a href="#main-content" class="skip-link">Saltar al contenido</a>
@@ -58,7 +58,10 @@
     <span class="sr-only" id="ap-now-spoken"></span>
   </p>
   <p class="ap-top-title">Área personal de trabajo</p>
-  <a class="ap-back" href="./descargas.html"><span aria-hidden="true">←</span> Volver al Laboratorio</a>
+  <div class="ap-top-actions">
+    <a class="ap-back" href="./descargas.html"><span aria-hidden="true">←</span> Volver al Laboratorio</a>
+    <button type="button" class="ap-out" id="ap-logout">Cerrar sesión</button>
+  </div>
 </header>
 
 <main id="main-content" tabindex="-1">
@@ -94,9 +97,6 @@
       </nav>
       <div class="ap-head">
         <h1 class="ap-app-title" id="ap-app-title" tabindex="-1">Hoy</h1>
-        <div class="ap-head-actions">
-          <button type="button" class="btn btn-outline" id="ap-logout">Cerrar sesión</button>
-        </div>
       </div>
 
       <nav class="ap-tabs" aria-label="Secciones del área privada">
