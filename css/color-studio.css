@@ -564,6 +564,56 @@ body:has(.cs) { --off: #FBFBFB; background: #FBFBFB; }
 .cs-ins-wl { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; color: var(--cs-muted); }
 .cs-ins-wl .cs-weight { width: 76px; }
 
+/* Paleta: sugerencias aparte y procedencia */
+.cs-band.is-suggested { opacity: .6; }
+.cs-ins-src-chip { font-size: 11px; font-weight: 600; letter-spacing: .02em; color: var(--cs-muted); }
+.cs-ins-sug { margin-top: 18px; padding-top: 14px; border-top: 1px dashed var(--cs-line-strong); }
+.cs-ins-suglist { list-style: none; display: grid; gap: 6px; }
+.cs-ins-suglist li { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; }
+.cs-ins-sugt { display: grid; font-size: 13.5px; min-width: 0; }
+.cs-sw--m { width: 28px; height: 28px; border-radius: 5px; }
+.cs-ins-pickbtn { margin-top: 4px; }
+
+/* ─── Cuentagotas (Seleccionar colores) · prefijo cs-pk- ───
+   La imagen se ve entera y sin deformar (sin object-fit): su rectángulo es la imagen, así la conversión
+   pantalla → píxel es una regla de tres. Lupa en la esquina contraria al punto, nunca bajo el dedo. */
+.cs-sheet--picker { width: 100%; }
+@media (min-width: 640px) { .cs-sheet--picker.cs-sheet--wide { width: min(1080px, calc(100vw - 32px)); } }
+.cs-pk { display: grid; gap: 16px; }
+@media (min-width: 900px) { .cs-pk { grid-template-columns: minmax(0, 1.3fr) minmax(300px, 1fr); align-items: start; } .cs-pk-left { position: sticky; top: 60px; } }
+.cs-pk-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+.cs-pk-stage { position: relative; width: fit-content; max-width: 100%; margin: 0 auto; touch-action: none; cursor: crosshair; border-radius: 10px; background: var(--cs-line-soft); min-height: 120px; min-width: 120px; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.cs-pk-stage:focus-visible { outline: 2px solid var(--cs-focus); outline-offset: 3px; }
+.cs-pk-img { display: block; max-width: 100%; max-height: 62dvh; width: auto; height: auto; border-radius: 10px; }
+@media (max-width: 639.98px) { .cs-pk-img { max-height: 52dvh; } }
+.cs-pk-mark { position: absolute; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .6), 0 2px 6px rgba(0, 0, 0, .25); pointer-events: none; }
+.cs-pk-loupe { position: absolute; top: 8px; left: 8px; border: 3px solid #fff; border-radius: 10px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .35), 0 6px 18px rgba(0, 0, 0, .25); pointer-events: none; image-rendering: pixelated; background: #FBFBFB; }
+.cs-pk-loupe.is-right { left: auto; right: 8px; }
+.cs-pk-loupe.is-low { top: auto; bottom: 8px; }
+.cs-pk-status { margin-top: 10px; font-size: 13.5px; line-height: 1.5; color: var(--cs-muted); min-height: 1.5em; }
+.cs-pk-status.is-error { color: var(--red); }
+.cs-pk-pending { padding: 14px; border: 1px solid var(--cs-line-strong); border-radius: 12px; background: var(--cs-paper); display: grid; gap: 10px; }
+.cs-pk-pending .cs-mini-t { margin: 0; }
+.cs-pk-prow { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; align-items: center; }
+.cs-pk-big { width: 64px; height: 64px; border-radius: 10px; }
+.cs-pk-ptxt { display: grid; gap: 2px; min-width: 0; }
+.cs-pk-pname { font-family: var(--font-serif); font-size: 18px; }
+.cs-pk-warn { font-size: 13px; line-height: 1.45; color: var(--ap-support-ink); background: var(--ap-support-soft); border-radius: 8px; padding: 8px 10px; }
+.cs-pk-pact { display: flex; flex-wrap: wrap; gap: 8px; }
+.cs-pk-label { width: 100%; min-height: 44px; padding: 8px 12px; font: inherit; font-size: 16px; border: 1px solid var(--cs-line-strong); border-radius: 8px; background: var(--cs-paper); }
+.cs-pk-pal { list-style: none; display: grid; gap: 4px; margin-bottom: 8px; }
+.cs-pk-empty { font-size: 13.5px; color: var(--cs-muted); padding: 6px 0; }
+.cs-pk-item { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--cs-line-soft); }
+.cs-pk-item.is-fixing { background: var(--ap-support-soft); border-radius: 8px; padding: 6px; }
+.cs-pk-itxt { display: grid; gap: 2px; min-width: 0; }
+.cs-pk-itxt .cs-pk-label { min-height: 40px; padding: 6px 10px; }
+.cs-pk-iact { display: flex; gap: 6px; align-items: center; }
+.cs-pk-sug { margin: 6px 0 4px; }
+@media (max-width: 899.98px) {                      /* móvil: guardar y cancelar siempre a mano, al pie de la hoja */
+  .cs-pk-right .cs-sheet-actions { position: sticky; bottom: calc(-24px - env(safe-area-inset-bottom, 0px)); margin: 12px -20px calc(-24px - env(safe-area-inset-bottom, 0px)); padding: 10px 20px calc(12px + env(safe-area-inset-bottom, 0px)); background: #FBFBFB; border-top: 1px solid var(--cs-line); z-index: 2; }
+}
+@media (max-width: 380px) { .cs-pk-item { grid-template-columns: 32px minmax(0, 1fr); } .cs-pk-iact { grid-column: 2; } .cs-ins-suglist li { grid-template-columns: 28px minmax(0, 1fr) auto; } .cs-ins-suglist li > .cs-link { grid-column: 2 / -1; justify-self: start; } }
+
 /* ─── Intro: bienvenida al entrar (bloque INTRO de area-privada-color.js) · prefijo csi- ───
    Máscara + desplazamiento + opacidad en el nombre; una línea fina como único recurso complementario.
    Solo transform y opacity. Con movimiento reducido el JS no la crea. */

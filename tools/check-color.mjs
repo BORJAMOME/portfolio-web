@@ -19,6 +19,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, extname, normalize } from 'node:path';
 import { chromium } from 'playwright';
+import * as E from '../color-studio/engine.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
@@ -57,7 +58,9 @@ function check(t, r) {                         // lo esencial de los checks de s
     if (r.source_url && !/^https?:\/\//i.test(r.source_url)) return 'source_url';
   }
   if (t === 'cs_inspirations') {               // lo esencial de supabase/color-studio-inspiracion.sql
-    if (!Array.isArray(r.palette) || r.palette.length > 10 || r.palette.some((c) => !HEX.test(c.hex || '') || typeof c.weight !== 'number' || c.weight < 0 || c.weight > 100)) return 'palette';
+    if (!Array.isArray(r.palette) || r.palette.length > 12 || r.palette.some((c) => !HEX.test(c.hex || '') || ('weight' in c && (typeof c.weight !== 'number' || c.weight < 0 || c.weight > 100)) ||
+      ('label' in c && c.label !== null && (typeof c.label !== 'string' || c.label.length > 60)) || ('source' in c && !['manual', 'auto'].includes(c.source)))) return 'palette';
+    if (!Array.isArray(r.suggestions) || r.suggestions.length > 8 || r.suggestions.some((c) => !HEX.test(c.hex || '') || typeof c.weight !== 'number')) return 'suggestions';
     if (!['none', 'auto', 'reviewed', 'failed'].includes(r.palette_status)) return 'palette_status';
     if ((r.seasons || []).some((x) => !SEASON_IDS.includes(x))) return 'seasons';
     if (r.source_url && !/^https?:\/\//i.test(r.source_url)) return 'source_url';
@@ -75,7 +78,7 @@ const DEFAULT_ROW = {
   cs_palettes: { name: null, tags: [], source_type: 'own', source_title: null, source_url: null, source_notes: null, notes: null, is_favorite: false },
   cs_outfits: { items: [], palette_id: null, distribution_override: null, occasion: null, formality: null, notes: null, is_favorite: false },
   cs_inspirations: { title: null, source_url: null, source_name: null, published_on: null, image_path: null, thumb_path: null, image_hash: null, description: null, notes: null,
-    styles: [], collections: [], seasons: [], rating: null, is_favorite: false, palette: [], palette_status: 'none', palette_id: null },
+    styles: [], collections: [], seasons: [], rating: null, is_favorite: false, palette: [], suggestions: [], palette_status: 'none', palette_id: null },
   ap_opciones: { posicion: 0 }
 };
 const OWNED = new Set(['cs_inspirations']);   // RLS simulada: owner = auth.uid() (la pone la base, no el navegador)
@@ -750,8 +753,8 @@ await step('Inspiración: enlace + «Leer enlace» trae título, fuente, fecha e
   eq(await page.inputValue('#cs-i-src'), 'Revista Prueba');
   eq(await page.inputValue('#cs-i-pub'), '2026-03-02');
   ok(await page.isVisible('dialog[open] .cs-ins-preview img'), 'sin vista previa');
-  const n = await page.$$eval('dialog[open] .cs-ins-pallist li', (l) => l.length);
-  ok(n >= 2 && n <= 8, 'colores extraídos: ' + n);
+  ok(/colores sugeridos/.test(await page.textContent('dialog[open] .cs-ins-palprev')), 'sin sugerencias en el formulario');
+  eq(await page.$('dialog[open] .cs-ins-pallist'), null, 'las sugerencias entraron solas en la paleta');
   await page.click('dialog[open] [data-key="cs-i-sty-1"]');               // Smart casual
   await page.click('dialog[open] [data-key="cs-i-sea-2"]');               // Otoño
   await inspSaveFlow(page);
@@ -762,13 +765,16 @@ await step('Inspiración: enlace + «Leer enlace» trae título, fuente, fecha e
   eq(r.styles, ['Smart casual']);
   eq(r.seasons, ['otono']);
   eq(r.palette_status, 'auto');
-  eq(Math.round(r.palette.reduce((t, c) => t + c.weight, 0)), 100);
-  ok(r.palette.some((c) => /^#1[0-9A-F]2[0-9A-F]4[0-9A-F]$/.test(c.hex) || c.hex === '#1F2A44'), 'falta el marino: ' + r.palette.map((c) => c.hex));
+  eq(r.palette, [], 'la extracción escribió en la paleta');
+  ok(r.suggestions.length >= 2 && r.suggestions.length <= 8, 'sugerencias: ' + r.suggestions.length);
+  eq(Math.round(r.suggestions.reduce((t, c) => t + c.weight, 0)), 100);
+  ok(r.suggestions.some((c) => /^#1[0-9A-F]2[0-9A-F]4[0-9A-F]$/.test(c.hex) || c.hex === '#1F2A44'), 'falta el marino: ' + r.suggestions.map((c) => c.hex));
+  ok(!r.suggestions.some((c) => /^#E[A-F0-9]E[A-F0-9]E[A-F0-9]$/.test(c.hex)), 'el fondo de la foto sigue en las sugerencias: ' + r.suggestions.map((c) => c.hex));
   ok(new RegExp('^inspiracion/' + USER_A + '/[0-9a-f-]{36}\\.(webp|jpg)$').test(r.image_path), 'ruta de la imagen: ' + r.image_path);
   ok(r.thumb_path && objects.has(r.image_path) && objects.has(r.thumb_path), 'imagen o miniatura sin subir');
   ok(objects.get(r.thumb_path).body.length < objects.get(r.image_path).body.length, 'la miniatura no es más ligera');
   ok(/^[0-9a-f]{16}$/.test(r.image_hash), 'sin huella');
-  ok((await toastText(page)).includes('Revisa su paleta'), 'sin aviso de revisión');
+  ok((await toastText(page)).includes('Elige sus colores'), 'sin aviso de revisión');
   await page.waitForSelector('.cs-ins-card .cs-ins-media img');
   ok((await page.textContent('.cs-ins-card')).includes('Paleta por revisar'), 'sin indicador de revisión');
   await shot(page, '10-inspiracion');
@@ -776,11 +782,11 @@ await step('Inspiración: enlace + «Leer enlace» trae título, fuente, fecha e
 await step('Inspiración: sin enlace (solo imagen) y con la lectura caída (solo enlace) se guarda igual', async () => {
   await page.click('[data-key="new-insp"]');
   await page.setInputFiles(inspFile, await pngOf(page, 400, 500, '#6B1F2A'));
-  await page.waitForSelector('dialog[open] .cs-ins-pallist li');
+  await page.waitForFunction(() => /sugerido/.test(document.querySelector('dialog[open] .cs-ins-photo').textContent));
   await page.fill('#cs-i-title', 'Jersey burdeos');
   await inspSaveFlow(page);
   const b = db.cs_inspirations.find((x) => x.title === 'Jersey burdeos');
-  ok(b && !b.source_url && b.image_path && b.palette.length, 'no se guardó la referencia sin enlace');
+  ok(b && !b.source_url && b.image_path && b.suggestions.length, 'no se guardó la referencia sin enlace');
   fnMode = 'missing';
   await page.click('[data-key="new-insp"]');
   await page.fill('#cs-i-url', 'https://tienda.ejemplo.org/producto/9');
@@ -799,11 +805,11 @@ await step('Inspiración: sin enlace (solo imagen) y con la lectura caída (solo
 await step('Inspiración: si la extracción de color falla, se guarda con la paleta marcada como no extraída', async () => {
   await page.click('[data-key="new-insp"]');
   await page.setInputFiles(inspFile, await outfitPng(page, true));
-  await page.waitForFunction(() => /No se ha podido extraer/.test(document.querySelector('dialog[open] .cs-ins-photo').textContent));
+  await page.waitForFunction(() => /no ha encontrado colores/.test(document.querySelector('dialog[open] .cs-ins-photo').textContent));
   await page.fill('#cs-i-title', 'Imagen transparente');
   await inspSaveFlow(page);
   const r = db.cs_inspirations.find((x) => x.title === 'Imagen transparente');
-  eq(r.palette_status, 'failed'); eq(r.palette, []);
+  eq(r.palette_status, 'failed'); eq(r.palette, []); eq(r.suggestions, []);
   ok(r.image_path, 'perdió la imagen');
 });
 await step('Inspiración: un duplicado (mismo enlace) avisa y solo se guarda si se confirma', async () => {
@@ -815,29 +821,32 @@ await step('Inspiración: un duplicado (mismo enlace) avisa y solo se guarda si 
   ok(!db.cs_inspirations.some((x) => x.title === 'Repetida'), 'guardó sin confirmar');
   await page.click('dialog[open] button:has-text("Cancelar")');
 });
-await step('Inspiración: detalle con paleta (HEX, RGB, Lab, pesos), confirmar, corregir y copiar', async () => {
+await step('Inspiración: detalle con sugerencias aparte; aceptar una la lleva a la paleta (HEX, RGB, Lab); editar HEX la marca como manual', async () => {
   const r = db.cs_inspirations[0];
   await page.click('[data-key="insp-' + r.id + '"]');
-  await page.waitForSelector('dialog[open] .cs-ins-colors');
+  await page.waitForSelector('dialog[open] .cs-ins-suglist');
   const txt = await page.textContent('dialog[open]');
   ok(txt.includes('Ver la publicación original') && txt.includes('Revista Prueba') && txt.includes('2 de marzo de 2026'), 'faltan fuente, enlace o fecha');
-  ok(/RGB \d+ \d+ \d+Lab/.test(txt) && txt.includes('Dominante'), 'sin datos del color');
+  ok(txt.includes('Aún no has elegido colores') && txt.includes('No forman parte de la paleta'), 'no distingue paleta y sugerencias');
   eq(await page.getAttribute('dialog[open] .cs-ins-link', 'rel'), 'noopener noreferrer');
-  const pcts = await page.$$eval('dialog[open] .cs-ins-colors .cs-pct', (e) => e.map((x) => parseInt(x.textContent, 10)));
-  eq(pcts.reduce((a, b) => a + b, 0), 100);
+  ok(await page.isVisible('dialog[open] [data-key="insp-pick"]'), 'sin «Seleccionar colores»');
   ok(await page.isVisible('dialog[open] img[alt^="Foto guardada: Look de prueba E2E"]'), 'imagen sin texto alternativo útil');
   await axe(page, 'detalle de inspiración');
   await shot(page, '12-inspiracion-detalle');
-  await page.click('[data-key="insp-confirm"]');
-  await page.waitForFunction(() => /Paleta revisada/.test((document.querySelector('dialog[open]') || {}).textContent || ''));
-  eq(db.cs_inspirations[0].palette_status, 'reviewed');
+  const first = r.suggestions[0].hex, nSug = r.suggestions.length;
+  await page.click('dialog[open] [data-key="insp-sug-0"]');
+  await page.waitForSelector('dialog[open] .cs-ins-colors');
+  const x = db.cs_inspirations[0];
+  eq([x.palette.length, x.palette[0].hex, x.palette[0].source, x.suggestions.length, x.palette_status], [1, first, 'auto', nSug - 1, 'reviewed']);
+  ok(/RGB \d+ \d+ \d+Lab/.test(await page.textContent('dialog[open]')) && (await page.textContent('dialog[open]')).includes('Sugerencia aceptada'), 'sin datos del color o sin procedencia');
   await page.click('[data-key="insp-palette"]');
   await page.waitForSelector('dialog[open] #cs-ip-0');
   await page.fill('#cs-ip-0', '#2A2A2A');
   await submit(page);
-  await page.waitForFunction(() => /corregido a mano/.test((document.querySelector('dialog[open]') || {}).textContent || ''));
+  await page.waitForFunction(() => /Cuentagotas/.test((document.querySelector('dialog[open]') || {}).textContent || ''));
   const p0 = db.cs_inspirations[0].palette[0];
-  eq([p0.hex, p0.source], ['#2A2A2A', 'manual']);
+  eq([p0.hex, p0.source, 'weight' in p0], ['#2A2A2A', 'manual', false]);
+  eq(db.cs_inspirations[0].suggestions.length, nSug - 1, 'editar la paleta tocó las sugerencias');
   await page.click('dialog[open] .cs-sheet-head .cs-link');
 });
 await step('Inspiración: estilo y colección nuevos (van a Configuración), notas y valoración; se conservan', async () => {
@@ -898,6 +907,140 @@ await step('Inspiración: favorita desde la tarjeta (y quitarla) y «Solo favori
   await page.waitForFunction(() => document.querySelectorAll('.cs-ins-card').length === 0);
   eq(r.is_favorite, false);
   await page.click('[data-key="insp-clear"]');
+});
+/* ── Cuentagotas: imagen de cuadrantes con colores conocidos y píxeles sueltos (ruido) ── */
+const QUAD = { tl: '#1F2A44', tr: '#B48A5A', bl: '#6B1F2A', br: '#F4F2EC' };
+async function quadPng(page) {
+  const b64 = await page.evaluate((Q) => {
+    const c = document.createElement('canvas'); c.width = 1200; c.height = 1500;
+    const x = c.getContext('2d');
+    x.fillStyle = Q.tl; x.fillRect(0, 0, 600, 750); x.fillStyle = Q.tr; x.fillRect(600, 0, 600, 750);
+    x.fillStyle = Q.bl; x.fillRect(0, 750, 600, 750); x.fillStyle = Q.br; x.fillRect(600, 750, 600, 750);
+    x.fillStyle = '#FFFFFF'; for (let i = 0; i < 4000; i++) x.fillRect((i * 131) % 1200, (i * 197) % 1500, 1, 1);     // reflejos sueltos
+    return c.toDataURL('image/png').split(',')[1];
+  }, QUAD);
+  return { name: 'cuadrantes.png', mimeType: 'image/png', buffer: Buffer.from(b64, 'base64') };
+}
+// punto relativo (0–1) de la imagen del cuentagotas en coordenadas de la pantalla
+const pkPoint = (pg, fx, fy) => pg.$eval('dialog[open] .cs-pk-img', (img, f) => { const r = img.getBoundingClientRect(); return { x: r.left + r.width * f[0], y: r.top + r.height * f[1], w: r.width, nw: img.naturalWidth }; }, [fx, fy]);
+const pendingHex = (pg) => pg.$eval('dialog[open] .cs-pk-pending .cs-hex', (e) => e.textContent.slice(0, 7));
+await step('Cuentagotas (ratón): imagen escalada, mediana que ignora reflejos, varios colores, etiquetas, corregir, eliminar y sin peticiones de red', async () => {
+  await go(page, '#/color/inspiracion');
+  await page.click('[data-key="new-insp"]');
+  await page.setInputFiles(inspFile, await quadPng(page));
+  await page.waitForSelector('dialog[open] [data-key="insp-form-pick"]');
+  await page.fill('#cs-i-title', 'Cuadrantes');
+  await page.click('[data-key="insp-form-pick"]');
+  await page.waitForSelector('dialog.cs-sheet--picker[open] .cs-pk-stage.is-ready');
+  const reqs = [];
+  const onReq = (r) => reqs.push(r.url());
+  page.on('request', onReq);
+  let pt = await pkPoint(page, 0.25, 0.25);
+  ok(pt.w < pt.nw, 'la imagen no se ve reducida (' + pt.w + ' de ' + pt.nw + ' px): la prueba de escala no vale');
+  await page.mouse.move(pt.x, pt.y);
+  ok(await page.isVisible('dialog[open] .cs-pk-loupe'), 'sin lupa al pasar el ratón');
+  await shot(page, '15a-lupa');
+  eq(await page.$eval('dialog[open] .cs-pk-pending', (e) => e.hidden), true, 'pasar el ratón ya añadió una muestra');
+  await page.mouse.click(pt.x, pt.y);
+  eq(await pendingHex(page), QUAD.tl, 'muestra del cuadrante superior izquierdo');
+  await page.fill('#cs-pk-newlabel', 'Pantalón');
+  await page.click('[data-key="pk-add"]');
+  pt = await pkPoint(page, 0.75, 0.25); await page.mouse.click(pt.x, pt.y);
+  eq(await pendingHex(page), QUAD.tr);
+  await page.click('[data-key="pk-add"]');
+  pt = await pkPoint(page, 0.5, 0.75); await page.mouse.click(pt.x, pt.y);           // frontera entre dos colores
+  ok(await page.isVisible('dialog[open] .cs-pk-pending .cs-pk-warn'), 'no avisa de una zona mezclada');
+  await page.click('[data-key="pk-discard"]');
+  eq(await page.$$eval('dialog[open] .cs-pk-item', (e) => e.length), 2, 'cancelar añadió la muestra');
+  await page.click('[data-key="pk-del-1"]');
+  await page.click('[data-key="pk-fix-0"]');
+  pt = await pkPoint(page, 0.25, 0.75); await page.mouse.click(pt.x, pt.y);
+  eq(await pendingHex(page), QUAD.bl);
+  ok((await page.textContent('[data-key="pk-add"]')).includes('Sustituir'), 'corregir no sustituye');
+  await page.click('[data-key="pk-add"]');
+  await page.click('[data-key="pk-exact"]');
+  pt = await pkPoint(page, 131.5 / 1200, 197.5 / 1500); await page.mouse.click(pt.x, pt.y);   // un reflejo exacto: el punto exacto lo toma
+  eq(await pendingHex(page), '#FFFFFF', 'el punto exacto no toma el píxel');
+  await page.click('[data-key="pk-zone"]');
+  await page.click('[data-key="pk-discard"]');
+  await axe(page, 'cuentagotas');
+  await shot(page, '15-cuentagotas');
+  page.off('request', onReq);
+  // las fuentes de Google las pide la propia página (y la prueba las bloquea); nada más puede salir del dispositivo
+  eq(reqs.filter((u) => !/^(blob|data):/.test(u) && !/fonts\.(googleapis|gstatic)\.com/.test(u)), [], 'el cuentagotas hizo peticiones de red');
+  await page.click('[data-key="pk-save"]');
+  await page.waitForSelector('dialog.cs-sheet--picker', { state: 'detached' });
+  ok((await page.textContent('dialog[open] .cs-ins-palprev')).includes('Pantalón'), 'la paleta no vuelve al formulario');
+  await inspSaveFlow(page);
+  const r = db.cs_inspirations.find((x) => x.title === 'Cuadrantes');
+  eq(r.palette.map((c) => [c.hex, c.source, c.label]), [[QUAD.bl, 'manual', 'Pantalón']]);
+  ok(/^[A-Za-z0-9_-]+$/.test(r.palette[0].id) && !('weight' in r.palette[0]), 'color sin id o con un peso inventado');
+  ok(r.suggestions.length > 0 && r.palette_status === 'reviewed', 'sugerencias perdidas o estado erróneo');
+});
+await step('Cuentagotas (táctil, móvil 390 px) sobre una referencia guardada: tocar, añadir y guardar; sin scroll horizontal', async () => {
+  const m = await open({ width: 390, height: 844 }, '#/color/inspiracion');
+  const r = db.cs_inspirations.find((x) => x.title === 'Cuadrantes');
+  await m.page.click('[data-key="insp-' + r.id + '"]');
+  await m.page.click('dialog[open] [data-key="insp-pick"]');
+  await m.page.waitForSelector('dialog.cs-sheet--picker[open] .cs-pk-stage.is-ready');
+  eq(await m.page.$$eval('dialog[open] .cs-pk-item', (e) => e.length), 1, 'no carga la paleta guardada');
+  const pt = await pkPoint(m.page, 0.75, 0.75);
+  await m.page.touchscreen.tap(pt.x, pt.y);
+  // la imagen guardada es WebP con pérdida (sin EXIF, ≤ 5 MB): el color puede variar una unidad, imperceptible (ΔE00 < 1,5)
+  const got = await pendingHex(m.page);
+  ok(E.colorDistance(got, QUAD.br) < 1.5, 'el toque no toma el color: ' + got);
+  await m.page.click('[data-key="pk-add"]');
+  eq(await m.page.evaluate(() => document.documentElement.scrollWidth), 390);
+  const dlgOk = await m.page.$eval('dialog[open]', (d) => d.scrollWidth <= d.clientWidth + 1);
+  ok(dlgOk, 'el cuentagotas desborda en horizontal');
+  await axe(m.page, 'cuentagotas móvil');
+  await shot(m.page, '16-cuentagotas-movil');
+  await m.page.click('[data-key="pk-save"]');
+  await m.page.waitForSelector('dialog[open] .cs-ins-colors');
+  const x = db.cs_inspirations.find((y) => y.id === r.id);
+  eq(x.palette.map((c) => c.hex), [QUAD.bl, got]);
+  eq(m.errors, []);
+  await m.ctx.close();
+});
+await step('Cuentagotas: cerrar con cambios sin guardar pide confirmación y no escribe nada', async () => {
+  const r = db.cs_inspirations.find((x) => x.title === 'Cuadrantes'), before = JSON.stringify(r.palette);
+  await page.reload();
+  await page.click('[data-key="insp-' + r.id + '"]');
+  await page.click('dialog[open] [data-key="insp-pick"]');
+  await page.waitForSelector('dialog.cs-sheet--picker[open] .cs-pk-stage.is-ready');
+  const pt = await pkPoint(page, 0.75, 0.25); await page.mouse.click(pt.x, pt.y);
+  await page.click('[data-key="pk-add"]');
+  await page.click('[data-key="pk-close"]');
+  await page.waitForSelector('#ap-dialog-ok');
+  await page.click('#ap-dialog-ok');
+  await page.waitForSelector('dialog.cs-sheet--picker', { state: 'detached' });
+  eq(JSON.stringify(db.cs_inspirations.find((x) => x.id === r.id).palette), before, 'se guardó sin confirmar');
+});
+await step('Sustituir la imagen: sugerencias nuevas y aviso (sin borrar) de que los colores elegidos son de la imagen anterior', async () => {
+  const r = db.cs_inspirations.find((x) => x.title === 'Cuadrantes');
+  await page.click('[data-key="insp-' + r.id + '"]');
+  await page.click('[data-key="insp-edit"]');
+  await page.setInputFiles(inspFile, await outfitPng(page));
+  await page.waitForSelector('dialog[open] [data-key="insp-stale-clear"]');
+  eq(await page.$$eval('dialog[open] .cs-ins-pallist li', (e) => e.length), 2, 'la paleta se borró en silencio');
+  await page.click('dialog[open] button:has-text("Cancelar")');
+  eq(db.cs_inspirations.find((x) => x.id === r.id).palette.length, 2);
+});
+await step('Referencia guardada antes del cuentagotas (paleta con pesos, sin id ni sugerencias): se abre, se confirma y admite colores nuevos', async () => {
+  const old = { id: uid(), owner: USER_A, created_at: '2026-01-01T10:00:00Z', updated_at: '2026-01-01T10:00:00Z', title: 'Antigua', source_url: null, source_name: null, published_on: null, image_path: null, thumb_path: null,
+    image_hash: null, description: null, notes: null, styles: [], collections: [], seasons: [], rating: null, is_favorite: false, palette: [{ hex: '#B48A5A', weight: 60, source: 'auto' }, { hex: '#1F2A44', weight: 40, source: 'auto' }], palette_status: 'auto', palette_id: null,
+    suggestions: [] };   // tras la migración la columna nueva llega con su valor por defecto
+  db.cs_inspirations.push(old);
+  await page.reload();
+  await page.click('[data-key="insp-' + old.id + '"]');
+  await page.waitForSelector('dialog[open] .cs-ins-colors');
+  const txt = await page.textContent('dialog[open]');
+  ok(txt.includes('Dominante') && /60 %/.test(txt), 'la paleta antigua no se lee con sus pesos');
+  await page.click('[data-key="insp-confirm"]');
+  await page.waitForFunction(() => /Paleta revisada/.test((document.querySelector('dialog[open]') || {}).textContent || ''));
+  const x = db.cs_inspirations.find((y) => y.id === old.id);
+  eq([x.palette_status, x.palette.map((c) => c.hex)], ['reviewed', ['#B48A5A', '#1F2A44']], 'confirmar cambió los colores');
+  await page.click('dialog[open] .cs-sheet-head .cs-link');
 });
 await step('Inspiración: persistencia tras recargar y aislamiento entre usuarios (RLS simulada)', async () => {
   db.cs_inspirations.push(Object.assign({ id: uid(), owner: USER_B, created_at: new Date().toISOString(), updated_at: new Date().toISOString() }, DEFAULT_ROW.cs_inspirations, { title: 'De otra persona' }));

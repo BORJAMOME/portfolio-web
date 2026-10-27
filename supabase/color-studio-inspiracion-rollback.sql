@@ -4,5 +4,6 @@
 -- (solo se ejecutan con los grupos inspiracion.*), y las opciones de esos grupos se quitan aquí.
 drop table if exists public.cs_inspirations cascade;
 drop function if exists public.cs_valid_inspiration_palette(jsonb);
+drop function if exists public.cs_valid_inspiration_suggestions(jsonb);
 drop policy if exists "armario: inspiración solo de su dueño" on storage.objects;
 delete from public.ap_opciones where grupo in ('inspiracion.estilo', 'inspiracion.coleccion');

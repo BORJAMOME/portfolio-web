@@ -261,7 +261,7 @@ window.APColor = (function () {
     function sheet(title, build, opts) {
       opts = opts || {};
       var id = 'cs-sheet-' + Math.random().toString(36).slice(2, 8);
-      var dlg = h('dialog', { class: 'cs-sheet' + (opts.wide ? ' cs-sheet--wide' : ''), 'aria-labelledby': id });
+      var dlg = h('dialog', { class: 'cs-sheet' + (opts.wide ? ' cs-sheet--wide' : '') + (opts.cls ? ' ' + opts.cls : ''), 'aria-labelledby': id });
       var close = function () { dlg.close(); };
       dlg.appendChild(h('div', { class: 'cs-sheet-head' }, [
         h('h2', { class: 'cs-sheet-title', id: id, text: title }),
@@ -860,15 +860,21 @@ window.APColor = (function () {
     }
     function inspStyles() { return M.N.optionValues(inspOptions('inspiracion.estilo'), inspData().items, 'styles'); }
     function inspCollections() { return M.N.optionValues(inspOptions('inspiracion.coleccion'), inspData().items, 'collections'); }
-    function inspBand(x, cls) { return (x.palette || []).length ? band(x.palette.map(function (c) { return { hex: c.hex, pct: c.weight }; }), { cls: cls }) : null; }
+    // colores con los que se pinta una referencia: su paleta o, si aún no la tiene, las sugerencias (marcadas como tales)
+    function effPal(x) { return M.N.effectivePalette(x); }
+    function inspBand(x, cls) {
+      var list = effPal(x); if (!list.length) return null;
+      var w = M.N.bandWeights(list);
+      return band(list.map(function (c, i) { return { hex: c.hex, pct: w[i] }; }), { cls: cls + ((x.palette || []).length ? '' : ' is-suggested') });
+    }
     function pctList(pal) { return M.E.roundPercentages(pal.map(function (c) { return c.weight; })); }
-    function paletteText(x) { var p = pctList(x.palette || []); return (x.palette || []).map(function (c, i) { return colorName(c.hex) + ' ' + p[i] + ' %'; }).join(', '); }
+    function paletteText(x) { return effPal(x).map(function (c) { return (c.label ? c.label + ' ' : '') + colorName(c.hex); }).join(', ') + ((x.palette || []).length ? '' : ' (sugeridos)'); }
     function fmtDate(v) {
       var d = new Date(String(v).length === 10 ? v + 'T12:00:00' : v);
       return isNaN(d) ? '' : d.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
     }
     function photoOf(x) { return x.demo ? null : x.thumb_path || x.image_path || null; }
-    function needsReview(x) { return x.palette_status === 'auto' || x.palette_status === 'failed' || !(x.palette || []).length; }
+    function needsReview(x) { return x.palette_status === 'auto' || x.palette_status === 'failed' || !effPal(x).length; }
     function reviewText(x) { return x.palette_status === 'auto' ? 'Paleta por revisar' : x.palette_status === 'failed' ? 'Paleta no extraída' : 'Sin paleta'; }
     // fotos privadas: se descargan con la sesión solo cuando la tarjeta se acerca a la pantalla
     function lazyPhoto(box, path) {
@@ -967,7 +973,7 @@ window.APColor = (function () {
       var title = M.N.displayTitle(x), photo = photoOf(x);
       var media = h('span', { class: 'cs-ins-media', 'aria-hidden': 'true' });
       if (photo) {
-        if ((x.palette || []).length) media.style.backgroundColor = x.palette[0].hex;      // color de espera: el dominante
+        if (effPal(x).length) media.style.backgroundColor = effPal(x)[0].hex;      // color de espera mientras llega la foto
         lazyPhoto(media, photo);
       } else media.appendChild(inspBand(x, 'cs-band--cover') || h('span', { class: 'cs-ins-nophoto', text: 'Sin imagen' }));
       var meta = [(x.styles || [])[0], x.source_name].filter(Boolean).join(' · ');
@@ -980,7 +986,7 @@ window.APColor = (function () {
             photo ? inspBand(x, 'cs-band--strip') : null,
             needsReview(x) ? h('span', { class: 'cs-ins-flag', text: reviewText(x) }) : null
           ]),
-          (x.palette || []).length ? h('span', { class: 'sr-only', text: '. Colores: ' + paletteText(x) }) : null
+          effPal(x).length ? h('span', { class: 'sr-only', text: '. Colores: ' + paletteText(x) }) : null
         ]),
         favButton(x)
       ]);
@@ -990,7 +996,16 @@ window.APColor = (function () {
         { 'aria-pressed': x.is_favorite ? 'true' : 'false', 'aria-label': 'Favorita: ' + M.N.displayTitle(x), 'data-key': 'ifav-' + x.id });
     }
     function saveInsp(x, patch, then) {
-      return st.update('cs_inspirations', x.id, patch).then(function (row) { replaceIn(inspCache.items, row); refresh(); if (then) then(row); return row; });
+      return inspWrite(st.update('cs_inspirations', x.id, patch)).then(function (row) { replaceIn(inspCache.items, row); refresh(); if (then) then(row); return row; });
+    }
+    // sin la versión 2 del SQL (columna suggestions, paleta con colores sin peso) Supabase rechaza la escritura: se dice qué hacer
+    function inspWrite(job) {
+      return job.catch(function (err) {
+        if (err && !err.auth && /suggestions|cs_inspirations_palette_check|PGRST204/.test((err.message || '') + ' ' + (err.code || ''))) {
+          var e = new Error('Falta actualizar la base de datos: vuelve a ejecutar supabase/color-studio-inspiracion.sql en Supabase (es seguro ejecutarlo entero).'); e.status = err.status; throw e;
+        }
+        throw err;
+      });
     }
     function toggleInspFav(x, reopen) {
       if (demo) return demoBlocked();
@@ -998,7 +1013,7 @@ window.APColor = (function () {
     }
 
     function inspDetail(x) {
-      var title = M.N.displayTitle(x), pal = x.palette || [];
+      var title = M.N.displayTitle(x), pal = effPal(x);
       sheet(title, function (box, close) {
         var hero = h('figure', { class: 'cs-ins-hero' });
         if (x.image_path && !x.demo) {
@@ -1057,52 +1072,87 @@ window.APColor = (function () {
       navigator.clipboard.writeText(hex).then(function () { done('Copiado'); }, function () { done('No se ha podido'); });
     }
     function paletteSection(x, close) {
-      var roles = M.N.paletteRoles(x.palette || []), pcts = pctList(roles);
+      var pal = x.palette || [], sug = x.suggestions || [], roles = M.N.paletteRoles(pal);
+      var weighted = roles.some(function (c) { return c.role; }), pcts = weighted ? pctList(roles) : [];
+      var canPick = !!(x.image_path && !x.demo);
       var sec = h('section', { class: 'cs-ins-sec', 'aria-labelledby': 'cs-ins-pal-t' }, [h('div', { class: 'cs-card-head' }, [
         h('h3', { class: 'cs-h3', id: 'cs-ins-pal-t', text: 'Paleta' }),
         badge(M.N.STATUS_LABEL[x.palette_status] || 'Sin paleta', x.palette_status === 'reviewed' ? 'own' : x.palette_status === 'auto' ? 'approx' : null)
       ])]);
       if (roles.length) {
-        sec.appendChild(inspBand(x, 'cs-band--ref'));
+        sec.appendChild(inspBand({ palette: pal }, 'cs-band--ref'));
         sec.appendChild(h('ul', { class: 'cs-ins-colors' }, roles.map(function (c, i) {
-          var info = M.N.colorInfo(c.hex), bar = h('span', { class: 'cs-ins-meter-in' });
-          bar.style.width = Math.max(1, c.weight) + '%';
+          var info = M.N.colorInfo(c.hex);
           var copy = btn([h('span', { text: 'Copiar' }), h('span', { class: 'sr-only', text: ' ' + c.hex })], 'cs-btn-s cs-ins-copy', function () { copyHex(c.hex, copy); });
+          var meter = null;
+          if (weighted) { var bar = h('span', { class: 'cs-ins-meter-in' }); bar.style.width = Math.max(1, c.weight) + '%'; meter = h('span', { class: 'cs-ins-w' }, [h('span', { class: 'cs-ins-meter', 'aria-hidden': 'true' }, [bar]), h('span', { class: 'cs-pct', text: pcts[i] + ' %' })]); }
           return h('li', { class: 'cs-ins-color' }, [
             swatch(c.hex, 'cs-sw--l'),
             h('span', { class: 'cs-ins-ctxt' }, [
-              h('span', { class: 'cs-ins-cname' }, [h('span', { text: info.name }), h('span', { class: 'cs-role cs-role--' + c.role, text: M.N.ROLE_LABEL[c.role] }),
-                c.source === 'manual' ? h('span', { class: 'cs-ins-manual', text: 'corregido a mano' }) : null]),
+              h('span', { class: 'cs-ins-cname' }, [h('span', { text: c.label || info.name }), c.label ? h('span', { class: 'cs-ins-manual', text: info.name }) : null,
+                c.role ? h('span', { class: 'cs-role cs-role--' + c.role, text: M.N.ROLE_LABEL[c.role] }) : null,
+                h('span', { class: 'cs-ins-src-chip', text: c.source === 'manual' ? 'Cuentagotas' : 'Sugerencia aceptada' })]),
               h('span', { class: 'cs-hex cs-ins-codes' }, [h('span', { text: c.hex }), h('span', { text: 'RGB ' + info.rgb.r + ' ' + info.rgb.g + ' ' + info.rgb.b }), h('span', { text: 'Lab ' + info.lab.L + ' ' + info.lab.a + ' ' + info.lab.b })]),
-              h('span', { class: 'cs-ins-w' }, [h('span', { class: 'cs-ins-meter', 'aria-hidden': 'true' }, [bar]), h('span', { class: 'cs-pct', text: pcts[i] + ' %' })])
+              meter
             ]),
             copy
           ]);
         })));
-        sec.appendChild(h('p', { class: 'cs-fine', text: 'Porcentaje = presencia estimada en los píxeles analizados (puede incluir fondo, piel o accesorios), no la superficie de cada prenda. Dominante = el de más presencia; secundario = 15 % o más; el resto, detalles.' }));
+        if (weighted) sec.appendChild(h('p', { class: 'cs-fine', text: 'Porcentaje = presencia estimada en los píxeles analizados, no la superficie de cada prenda.' }));
       } else {
-        sec.appendChild(h('p', { class: 'cs-note', text: x.palette_status === 'failed' ? 'No se pudo extraer la paleta de esta imagen. Vuelve a intentarlo o añade los colores a mano.'
-          : x.image_path ? 'Esta referencia aún no tiene paleta.' : 'Sin imagen no hay paleta automática: añade una imagen o los colores a mano.' }));
+        sec.appendChild(h('p', { class: 'cs-note', text: canPick ? 'Aún no has elegido colores. Con «Seleccionar colores» tomas cada prenda directamente de la imagen.'
+          : x.image_path ? 'Esta referencia aún no tiene paleta.' : 'Sin imagen no hay cuentagotas: añade una imagen o escribe los colores a mano.' }));
       }
       sec.appendChild(h('div', { class: 'cs-ref-act' }, [
+        canPick ? btn('Seleccionar colores', 'btn btn-primary cs-ins-pickbtn', function () { close(); pickerForSaved(x); }, { 'data-key': 'insp-pick' }) : null,
         x.palette_status === 'auto' && roles.length ? btn('Confirmar paleta', 'cs-btn-s', function () {
           if (demo) return demoBlocked();
           close(); saveInsp(x, { palette_status: 'reviewed' }, inspDetail).catch(failSoft);
         }, { 'data-key': 'insp-confirm' }) : null,
-        btn(roles.length ? 'Corregir paleta' : 'Añadir colores', 'cs-btn-s', function () { close(); editInspPalette(x); }, { 'data-key': 'insp-palette' }),
-        x.image_path && !x.demo ? btn('Volver a extraer', 'cs-link', function () { close(); reExtractPalette(x); }, { 'data-key': 'insp-extract' }) : null
+        btn(roles.length ? 'Editar HEX' : 'Escribir colores', 'cs-btn-s', function () { close(); editInspPalette(x); }, { 'data-key': 'insp-palette' })
       ]));
+      // sugerencias automáticas: aparte, nunca mezcladas con la paleta
+      if (sug.length || (x.image_path && !x.demo)) {
+        var box = h('div', { class: 'cs-ins-sug' }, [h('p', { class: 'cs-mini-t', text: 'Sugerencias automáticas' })]);
+        if (sug.length) {
+          box.appendChild(h('ul', { class: 'cs-ins-suglist', 'aria-label': 'Colores sugeridos' }, sug.map(function (c, i) {
+            return h('li', null, [swatch(c.hex, 'cs-sw--m'), h('span', { class: 'cs-ins-sugt' }, [h('span', { text: colorName(c.hex) }), h('span', { class: 'cs-hex', text: c.hex + ' · ' + Math.round(c.weight) + ' %' })]),
+              btn(['Añadir', h('span', { class: 'sr-only', text: ' ' + c.hex + ' a la paleta' })], 'cs-btn-s', function () { close(); acceptSuggestion(x, i); }, { 'data-key': 'insp-sug-' + i })]);
+          })));
+          box.appendChild(h('p', { class: 'cs-fine', text: 'Calculadas sin el fondo de la foto; aun así pueden incluir piel o accesorios. No forman parte de la paleta hasta que las añades.' }));
+        } else box.appendChild(h('p', { class: 'cs-fine', text: x.palette_status === 'failed' ? 'El análisis automático no encontró colores claros en esta imagen.' : 'No hay sugerencias pendientes.' }));
+        box.appendChild(h('div', { class: 'cs-ref-act' }, [
+          sug.length ? btn('Descartar sugerencias', 'cs-link cs-link--muted', function () { close(); setSuggestions(x, []); }, { 'data-key': 'insp-sug-clear' }) : null,
+          x.image_path && !x.demo ? btn(sug.length ? 'Volver a sugerir' : 'Sugerir colores', 'cs-link', function () { close(); reExtractPalette(x); }, { 'data-key': 'insp-extract' }) : null
+        ]));
+        sec.appendChild(box);
+      }
       return sec;
+    }
+    function statusFor(palette, suggestions, prev) {
+      return palette.length ? (prev === 'reviewed' || palette.some(function (c) { return c.source === 'manual'; }) ? 'reviewed' : 'auto') : suggestions.length ? 'auto' : prev === 'failed' ? 'failed' : 'none';
+    }
+    function acceptSuggestion(x, i) {
+      if (demo) return demoBlocked();
+      var sug = (x.suggestions || []).slice(), c = sug.splice(i, 1)[0];
+      if (!c) return;
+      if ((x.palette || []).length >= M.N.PALETTE_LIMIT) return toast('La paleta admite como mucho ' + M.N.PALETTE_LIMIT + ' colores.', true);
+      var pal = (x.palette || []).concat([{ id: M.N.newColorId(), hex: c.hex, source: 'auto', weight: c.weight }]);
+      saveInsp(x, { palette: pal, suggestions: sug, palette_status: 'reviewed' }, inspDetail).catch(failSoft);
+    }
+    function setSuggestions(x, sug, status) {
+      if (demo) return demoBlocked();
+      saveInsp(x, { suggestions: sug, palette_status: status || statusFor(x.palette || [], sug, x.palette_status) }, inspDetail).catch(failSoft);
     }
     function wardrobeSection(x) {
       var garments = data().garments;
       var sec = h('section', { class: 'cs-ins-sec', 'aria-labelledby': 'cs-ins-ward-t' }, [h('h3', { class: 'cs-h3', id: 'cs-ins-ward-t', text: 'Con tu armario' })]);
       if (!garments.length) { sec.appendChild(h('p', { class: 'cs-note', text: 'Registra prendas en el Armario para ver cuáles se acercan a estos colores.' })); return sec; }
-      var rows = M.C.adaptPalette({ colors: x.palette }, { slots: {}, garments: garments, palettes: [] });
+      var rows = M.C.adaptPalette({ colors: effPal(x) }, { slots: {}, garments: garments, palettes: [] });
       sec.appendChild(h('ul', { class: 'cs-adapt', 'aria-label': 'Colores de la referencia frente a tu armario' }, rows.map(function (r) {
         return h('li', { class: 'cs-adapt-r ' + (r.candidate ? 'is-cand' : 'is-miss') }, [
           swatch(r.hex, 'cs-sw--pal'),
-          h('span', { class: 'cs-adapt-txt' }, [h('span', { class: 'cs-adapt-n' }, [r.name + ' ', h('span', { class: 'cs-hex', text: r.hex })]),
+          h('span', { class: 'cs-adapt-txt' }, [h('span', { class: 'cs-adapt-n' }, [(effPal(x)[r.index] && effPal(x)[r.index].label ? effPal(x)[r.index].label + ' · ' : '') + r.name + ' ', h('span', { class: 'cs-hex', text: r.hex })]),
             h('span', { class: 'cs-adapt-s', text: r.candidate ? 'Cerca: ' + garmentName(r.candidate.garment) + ' (' + r.candidate.label.toLowerCase() + ')' : 'No tienes una prenda de este color' })]),
           r.candidate ? thumb(r.candidate.garment, 'cs-thumb--s') : h('span', { class: 'cs-adapt-gap', 'aria-hidden': 'true' })
         ]);
@@ -1144,32 +1194,27 @@ window.APColor = (function () {
         });
       }).catch(failSoft);
     }
+    // vuelve a calcular las SUGERENCIAS (nunca toca la paleta elegida): la imagen se descarga y se lee una vez
     function reExtractPalette(x) {
       if (demo) return demoBlocked();
-      function go() {
-        toast('Extrayendo la paleta en tu dispositivo…');
-        st.imageBlob(x.image_path).then(function (blob) { return M.I.prepareImage(blob); }).then(function (prep) {
-          var pal = M.N.extractOutfitPalette(prep.sample);
-          return saveInsp(x, { palette: pal, palette_status: pal.length ? 'auto' : 'failed', image_hash: M.N.imageHash(prep.sample) }, inspDetail);
-        }).then(function (row) { toast(row.palette.length ? 'Paleta extraída de nuevo: revísala.' : 'No se ha podido extraer la paleta de esta imagen.', !row.palette.length); }).catch(failSoft);
-      }
-      if (!(x.palette || []).length) return go();
-      var manual = x.palette.some(function (c) { return c.source === 'manual'; });
-      ctx.ask({ title: 'Volver a extraer la paleta', text: 'Sustituye los colores actuales' + (manual ? ', incluidas tus correcciones,' : '') + ' por los del análisis de la imagen.', ok: 'Extraer' })
-        .then(function (yes) { if (yes) go(); }).catch(failSoft);
+      toast('Calculando sugerencias en tu dispositivo…');
+      st.imageBlob(x.image_path).then(function (blob) { return M.I.prepareImage(blob, { sample: 160 }); }).then(function (prep) {
+        var sug = M.N.extractOutfitPalette(prep.sample);
+        return saveInsp(x, { suggestions: sug, image_hash: M.N.imageHash(prep.sample), palette_status: sug.length ? statusFor(x.palette || [], sug, x.palette_status) : (x.palette || []).length ? x.palette_status : 'failed' }, inspDetail);
+      }).then(function (row) { toast((row.suggestions || []).length ? 'Sugerencias nuevas: revísalas en el detalle.' : 'No se han encontrado colores claros en esta imagen.', !(row.suggestions || []).length); }).catch(failSoft);
     }
+    // editar la paleta escribiendo HEX (alternativa al cuentagotas, y la única opción sin imagen)
     function editInspPalette(x) {
       if (demo) return demoBlocked();
-      var rows = (x.palette || []).map(function (c) { return { hex: c.hex, weight: c.weight, source: c.source, orig: c.hex, origW: c.weight }; });
-      if (!rows.length) rows.push({ hex: '', weight: 100, source: 'manual' });
+      var rows = (x.palette || []).map(function (c) { return Object.assign({ orig: c.hex }, c); });
+      if (!rows.length) rows.push({ id: M.N.newColorId(), hex: '', source: 'manual' });
       var listEl = h('ol', { class: 'cs-edit-colors' }), msg = h('p', { class: 'apf-hint', 'aria-live': 'polite' });
       function paint(focus) {
         listEl.textContent = '';
         rows.forEach(function (r, i) {
-          var w = h('input', { type: 'number', min: '0', max: '100', step: 'any', inputmode: 'decimal', value: String(r.weight), class: 'cs-weight', 'aria-label': 'Presencia del color ' + (i + 1) + ' (%)' });
-          w.addEventListener('input', function () { var n = Number(w.value.replace(',', '.')); r.weight = Number.isFinite(n) && n >= 0 ? n : 0; });
-          var cf = colorInput('cs-ip-' + i, 'Color ' + (i + 1), r.hex, function (v, raw) { r.hex = v || ''; r.raw = raw; }, { compact: true, extra: [
-            h('span', { class: 'cs-ins-wl' }, [w, h('span', { 'aria-hidden': 'true', text: '%' })]),
+          var lab = h('input', { type: 'text', value: r.label || '', maxlength: '60', class: 'cs-cname', placeholder: 'Prenda (opcional)', 'aria-label': 'Prenda o nombre del color ' + (i + 1), list: 'cs-garment-labels' });
+          lab.addEventListener('input', function () { r.label = lab.value; });
+          var cf = colorInput('cs-ip-' + i, 'Color ' + (i + 1), r.hex, function (v, raw) { r.hex = v || ''; r.raw = raw; }, { compact: true, extra: [lab,
             btn('×', 'cs-icon-b', function () { rows.splice(i, 1); paint(Math.max(0, i - 1)); }, { 'aria-label': 'Quitar color ' + (i + 1) })] });
           listEl.appendChild(h('li', { class: 'cs-edit-color' }, [cf.el]));
           if (focus === i) setTimeout(function () { cf.text.focus(); }, 0);
@@ -1178,19 +1223,237 @@ window.APColor = (function () {
       paint();
       var add = btn('+ Añadir color', 'cs-link', function () {
         if (rows.length >= M.N.PALETTE_LIMIT) { msg.textContent = 'Máximo ' + M.N.PALETTE_LIMIT + ' colores.'; return; }
-        rows.push({ hex: '', weight: 0, source: 'manual' }); paint(rows.length - 1);
+        rows.push({ id: M.N.newColorId(), hex: '', source: 'manual' }); paint(rows.length - 1);
       });
-      ui.formDialog('Corregir la paleta', 'Guardar paleta', [
-        h('p', { class: 'apf-hint apf-wide', text: 'Cambia un color si la luz de la foto lo altera, quita los que no son del outfit (fondo, piel) y ajusta su presencia. Los porcentajes se reparten en proporción para sumar 100.' }),
-        h('fieldset', { class: 'apf-fieldset apf-wide' }, [h('legend', { class: 'ap-field-label', text: 'Colores (en orden)' }), listEl, add, msg])
+      ui.formDialog('Editar la paleta', 'Guardar paleta', [
+        h('p', { class: 'apf-hint apf-wide', text: 'Escribe o corrige el HEX de cada color y, si quieres, la prenda. Para tomarlo de la foto, usa «Seleccionar colores».' }),
+        h('fieldset', { class: 'apf-fieldset apf-wide' }, [h('legend', { class: 'ap-field-label', text: 'Colores (en orden)' }), listEl, add, msg, garmentDatalist()])
       ], function () {
         var bad = rows.findIndex(function (r) { return r.raw != null ? !M.E.normalizeHex(r.raw) : !r.hex; });
         if (bad >= 0) throw ui.invalid('El color ' + (bad + 1) + ' no es un HEX válido.', listEl.querySelectorAll('.cs-hex-input')[bad]);
-        var pal = M.N.normalizePalette(rows.map(function (r) { return { hex: r.hex, weight: r.weight, source: r.hex !== r.orig || r.weight !== r.origW ? 'manual' : r.source }; }));
-        return saveInsp(x, { palette: pal, palette_status: pal.length ? 'reviewed' : 'none' }, inspDetail).then(function () { toast('Paleta guardada.'); });
+        var pal = M.N.normalizePalette(rows.map(function (r) {
+          var changed = r.hex !== r.orig, o = { id: r.id, hex: r.hex, label: r.label, source: changed ? 'manual' : r.source };
+          if (!changed && typeof r.weight === 'number') o.weight = r.weight;      // el peso solo vale para el color extraído tal cual
+          return o;
+        }));
+        return saveInsp(x, { palette: pal, palette_status: statusFor(pal, x.suggestions || [], pal.length ? 'reviewed' : x.palette_status) }, inspDetail).then(function () { toast('Paleta guardada.'); });
       }, listEl.querySelector('.cs-hex-input'));
     }
+    function garmentDatalist() {
+      if (document.getElementById('cs-garment-labels')) return null;
+      return h('datalist', { id: 'cs-garment-labels' }, M.N.GARMENT_LABELS.map(function (l) { return h('option', { value: l }); }));
+    }
 
+    /* ═══════════ CUENTAGOTAS ═══════════
+       Selección de colores sobre la imagen guardada (o recién elegida), a su resolución real:
+       · el punto de la pantalla se lleva al píxel con M.N.toImagePoint (rect de la imagen, que ya incluye escalado y desplazamiento);
+       · el color es la mediana de una zona de 5 × 5 píxeles (o el píxel exacto), leída de los píxeles originales una sola vez;
+       · la lupa enseña los píxeles reales alrededor del punto; el valor nunca sale de la lupa;
+       · nada se añade solo: cada muestra se confirma («Añadir a la paleta») o se descarta. Todo ocurre en el dispositivo. */
+    function pickerForSaved(x) {
+      if (demo) return demoBlocked();
+      openPicker({
+        title: 'Seleccionar colores',
+        load: function () {
+          return st.imageBlob(x.image_path).then(function (blob) {
+            return M.I.readPixels(blob).then(function (px) { return { pixels: px, url: URL.createObjectURL(blob), revoke: true }; });
+          });
+        },
+        palette: x.palette || [], suggestions: x.suggestions || [],
+        save: function (pal, sug) {
+          return saveInsp(x, { palette: pal, suggestions: sug, palette_status: statusFor(pal, sug, pal.length ? 'reviewed' : x.palette_status) }, inspDetail)
+            .then(function () { toast(pal.length ? 'Paleta guardada.' : 'Paleta vacía guardada.'); });
+        }
+      });
+    }
+    function openPicker(o) {
+      var pal = (o.palette || []).map(function (c) { return Object.assign({}, c); });
+      var sug = (o.suggestions || []).slice();
+      var st0 = { px: null, url: null, src: null, point: null, pending: null, exact: false, correcting: -1, dirty: false, active: false, raf: 0, revoke: false }, ctl = {};
+      var dlg = sheet(o.title, function (box, close) {
+        var status = h('p', { class: 'cs-pk-status', role: 'status', 'aria-live': 'polite', text: 'Cargando la imagen…' });
+        var mode = h('div', { class: 'cs-seg cs-pk-mode', role: 'group', 'aria-label': 'Tamaño de la muestra' }, [['zone', 'Zona 5 × 5'], ['exact', 'Punto exacto']].map(function (m) {
+          return btn(m[1], 'cs-seg-b', function () { st0.exact = m[0] === 'exact'; [].forEach.call(mode.children, function (b, i) { b.setAttribute('aria-pressed', (i === 1) === st0.exact ? 'true' : 'false'); }); if (st0.point) preview(st0.point); }, { 'aria-pressed': m[0] === 'zone' ? 'true' : 'false', 'data-key': 'pk-' + m[0] });
+        }));
+        var img = h('img', { class: 'cs-pk-img', alt: 'Imagen del outfit: toca una prenda para tomar su color', draggable: 'false' });
+        var mark = h('span', { class: 'cs-pk-mark', 'aria-hidden': 'true', hidden: true });
+        var loupe = h('canvas', { class: 'cs-pk-loupe', 'aria-hidden': 'true', hidden: true });
+        var stage = h('div', { class: 'cs-pk-stage', tabindex: '0', role: 'application', 'data-key': 'pk-stage',
+          'aria-label': 'Imagen para seleccionar colores. Toca o haz clic en una prenda; con el teclado, flechas para mover (Mayús para ir más rápido) e Intro para tomar el color.' }, [img, mark, loupe]);
+        var pendingBox = h('div', { class: 'cs-pk-pending', 'aria-live': 'polite', hidden: true });
+        var palList = h('ol', { class: 'cs-pk-pal', 'aria-label': 'Colores de la paleta' });
+        var sugBox = h('div', { class: 'cs-pk-sug' });
+        var saveBtn = btn('Guardar paleta', 'btn btn-primary', function () {
+          saveBtn.disabled = true; status.textContent = 'Guardando…';
+          Promise.resolve(o.save(M.N.normalizePalette(pal), sug)).then(function () { st0.dirty = false; close(); }, function (err) {
+            saveBtn.disabled = false;
+            if (err && err.auth) { close(); return ctx.fail(err); }
+            status.textContent = (err && err.message) || 'No se ha podido guardar.'; status.classList.add('is-error');
+          });
+        }, { 'data-key': 'pk-save' });
+        box.appendChild(h('div', { class: 'cs-pk' }, [
+          h('div', { class: 'cs-pk-left' }, [h('div', { class: 'cs-pk-tools' }, [mode]), stage, status]),
+          h('div', { class: 'cs-pk-right' }, [pendingBox, h('p', { class: 'cs-mini-t', text: 'Tu paleta' }), palList, sugBox, garmentDatalist(),
+            h('div', { class: 'cs-sheet-actions' }, [saveBtn, btn('Cancelar', 'btn btn-outline', tryClose, { 'data-key': 'pk-cancel' })])])
+        ]));
+        function tryClose() {
+          if (!st0.dirty) return close();
+          ctx.ask({ title: 'Descartar los cambios', text: 'Has añadido o cambiado colores que no se han guardado.', ok: 'Descartar', danger: true }).then(function (yes) { if (yes) { st0.dirty = false; close(); } });
+        }
+        ctl.tryClose = tryClose;
+
+        function paintPal() {
+          palList.textContent = '';
+          if (!pal.length) palList.appendChild(h('li', { class: 'cs-pk-empty', text: 'Todavía no hay colores. Toca una prenda en la imagen.' }));
+          pal.forEach(function (c, i) {
+            var lab = h('input', { type: 'text', value: c.label || '', maxlength: '60', class: 'cs-pk-label', placeholder: colorName(c.hex), list: 'cs-garment-labels', 'aria-label': 'Prenda del color ' + (i + 1) + ' (opcional)' });
+            lab.addEventListener('input', function () { c.label = lab.value; st0.dirty = true; });
+            palList.appendChild(h('li', { class: 'cs-pk-item' + (st0.correcting === i ? ' is-fixing' : '') }, [
+              swatch(c.hex, 'cs-sw--l', (c.label || colorName(c.hex)) + ': ' + c.hex),
+              h('span', { class: 'cs-pk-itxt' }, [lab, h('span', { class: 'cs-hex', text: c.hex + (c.source === 'manual' ? '' : ' · sugerido') })]),
+              h('span', { class: 'cs-pk-iact' }, [
+                btn([st0.correcting === i ? 'Cancelar' : 'Corregir', h('span', { class: 'sr-only', text: ' color ' + (i + 1) })], 'cs-btn-s', function () {
+                  st0.correcting = st0.correcting === i ? -1 : i; paintPal();
+                  status.textContent = st0.correcting >= 0 ? 'Toca en la imagen el color correcto para «' + (c.label || colorName(c.hex)) + '».' : hint();
+                  stage.focus();
+                }, { 'data-key': 'pk-fix-' + i }),
+                btn(['×', h('span', { class: 'sr-only', text: ' Eliminar color ' + (i + 1) })], 'cs-icon-b', function () {
+                  pal.splice(i, 1); if (st0.correcting === i) st0.correcting = -1; else if (st0.correcting > i) st0.correcting--;
+                  st0.dirty = true; paintPal();
+                }, { 'data-key': 'pk-del-' + i })
+              ])
+            ]));
+          });
+        }
+        function paintSug() {
+          sugBox.textContent = '';
+          if (!sug.length) return;
+          sugBox.appendChild(h('p', { class: 'cs-mini-t', text: 'Sugerencias automáticas' }));
+          sugBox.appendChild(h('ul', { class: 'cs-ins-suglist' }, sug.map(function (c, i) {
+            return h('li', null, [swatch(c.hex, 'cs-sw--m'), h('span', { class: 'cs-ins-sugt' }, [h('span', { text: colorName(c.hex) }), h('span', { class: 'cs-hex', text: c.hex })]),
+              btn(['Añadir', h('span', { class: 'sr-only', text: ' ' + c.hex })], 'cs-btn-s', function () {
+                if (pal.length >= M.N.PALETTE_LIMIT) { status.textContent = 'Máximo ' + M.N.PALETTE_LIMIT + ' colores.'; return; }
+                pal.push({ id: M.N.newColorId(), hex: c.hex, source: 'auto', weight: c.weight }); sug.splice(i, 1); st0.dirty = true; paintPal(); paintSug();
+              }, { 'data-key': 'pk-sug-' + i }),
+              btn(['Descartar', h('span', { class: 'sr-only', text: ' ' + c.hex })], 'cs-link cs-link--muted', function () { sug.splice(i, 1); st0.dirty = true; paintSug(); })]);
+          })));
+          sugBox.appendChild(h('p', { class: 'cs-fine', text: 'Calculadas sin el fondo; pueden incluir piel o accesorios.' }));
+        }
+        function hint() { return matchMedia('(hover: none)').matches ? 'Toca una prenda y desliza el dedo para afinar: la lupa enseña la zona exacta.' : 'Pasa el ratón por una prenda (la lupa enseña la zona) y haz clic para tomar su color.'; }
+
+        // ── muestreo ──
+        function preview(p) {
+          st0.point = p;
+          var smp = M.N.pickColor(st0.px, p.x, p.y, st0.exact);
+          mark.hidden = false;
+          mark.style.left = ((p.x + 0.5) / st0.px.width * 100) + '%'; mark.style.top = ((p.y + 0.5) / st0.px.height * 100) + '%';
+          mark.style.backgroundColor = smp ? smp.hex : 'transparent';
+          drawLoupe(p, smp);
+          return smp;
+        }
+        function drawLoupe(p, smp) {
+          var R = 7, cells = 2 * R + 1, cssSize = matchMedia('(max-width: 640px)').matches ? 96 : 120, dpr = Math.min(3, window.devicePixelRatio || 1);
+          loupe.width = loupe.height = Math.round(cssSize * dpr);
+          loupe.style.width = loupe.style.height = cssSize + 'px';
+          var c2 = loupe.getContext('2d'), cell = loupe.width / cells;
+          c2.imageSmoothingEnabled = false;
+          c2.fillStyle = '#FBFBFB'; c2.fillRect(0, 0, loupe.width, loupe.height);
+          c2.drawImage(st0.src, p.x - R, p.y - R, cells, cells, 0, 0, loupe.width, loupe.height);   // píxeles reales alrededor del punto
+          var r = st0.exact ? 0 : M.N.SAMPLE_RADIUS;
+          c2.lineWidth = Math.max(1, dpr); c2.strokeStyle = '#FFFFFF';
+          c2.strokeRect((R - r) * cell, (R - r) * cell, (2 * r + 1) * cell, (2 * r + 1) * cell);
+          c2.strokeStyle = 'rgba(0,0,0,.6)';
+          c2.strokeRect((R - r) * cell - c2.lineWidth, (R - r) * cell - c2.lineWidth, (2 * r + 1) * cell + 2 * c2.lineWidth, (2 * r + 1) * cell + 2 * c2.lineWidth);
+          loupe.style.borderColor = smp ? smp.hex : '';
+          loupe.hidden = false;
+          // lejos del dedo: en la esquina superior contraria al punto (abajo si el punto está arriba)
+          var right = p.x < st0.px.width / 2, low = p.y < st0.px.height * 0.3;
+          loupe.classList.toggle('is-right', right); loupe.classList.toggle('is-low', low);
+        }
+        function hideHover() { if (!st0.active && !st0.pending) { loupe.hidden = true; mark.hidden = true; } }
+        function setPending(p) {
+          var smp = preview(p);
+          if (!smp) { st0.pending = null; pendingBox.hidden = true; status.textContent = 'En ese punto la imagen es transparente: elige otro.'; return; }
+          st0.pending = { hex: smp.hex, mixed: smp.mixed };
+          paintPending();
+        }
+        function paintPending() {
+          var pd = st0.pending;
+          pendingBox.textContent = '';
+          if (!pd) { pendingBox.hidden = true; return; }
+          var fixing = st0.correcting >= 0 && pal[st0.correcting];
+          var lab = h('input', { type: 'text', maxlength: '60', class: 'cs-pk-label', id: 'cs-pk-newlabel', list: 'cs-garment-labels', placeholder: 'Pantalón, camisa…', value: fixing ? fixing.label || '' : '' });
+          var addB = btn(fixing ? 'Sustituir el color' : 'Añadir a la paleta', 'btn btn-primary', function () {
+            if (fixing) { Object.assign(fixing, { hex: pd.hex, source: 'manual', label: lab.value.trim() || null }); delete fixing.weight; st0.correcting = -1; }
+            else {
+              if (pal.length >= M.N.PALETTE_LIMIT) { status.textContent = 'Máximo ' + M.N.PALETTE_LIMIT + ' colores.'; return; }
+              pal.push({ id: M.N.newColorId(), hex: pd.hex, source: 'manual', label: lab.value.trim() || null });
+            }
+            st0.dirty = true; st0.pending = null; paintPending(); paintPal(); hideHover();
+            status.textContent = fixing ? 'Color corregido.' : 'Añadido: ' + pd.hex + '. Toca otra prenda para seguir.';
+            stage.focus();
+          }, { 'data-key': 'pk-add' });
+          pendingBox.appendChild(h('p', { class: 'cs-mini-t', text: fixing ? 'Nuevo color' : 'Muestra' }));
+          pendingBox.appendChild(h('div', { class: 'cs-pk-prow' }, [swatch(pd.hex, 'cs-pk-big', 'Color de la muestra: ' + pd.hex), h('span', { class: 'cs-pk-ptxt' }, [
+            h('span', { class: 'cs-pk-pname', text: colorName(pd.hex) }), h('span', { class: 'cs-hex', text: pd.hex + ' · ' + (st0.exact ? 'punto exacto' : 'mediana de 5 × 5 píxeles') })])]));
+          if (pd.mixed >= M.N.MIXED_WARN) pendingBox.appendChild(h('p', { class: 'cs-pk-warn', text: 'La zona mezcla colores (un borde o una sombra). Prueba un poco más dentro de la prenda.' }));
+          pendingBox.appendChild(h('div', { class: 'apf-field' }, [h('label', { class: 'ap-field-label', for: 'cs-pk-newlabel', text: 'Prenda (opcional)' }), lab]));
+          pendingBox.appendChild(h('div', { class: 'cs-pk-pact' }, [addB, btn('Cancelar', 'btn btn-outline', function () { st0.pending = null; paintPending(); hideHover(); status.textContent = hint(); stage.focus(); }, { 'data-key': 'pk-discard' })]));
+          pendingBox.hidden = false;
+        }
+        function pointAt(e) { return st0.px ? M.N.toImagePoint(e.clientX, e.clientY, img.getBoundingClientRect(), st0.px.width, st0.px.height) : null; }
+        function schedule(p) { cancelAnimationFrame(st0.raf); st0.raf = requestAnimationFrame(function () { preview(p); }); }   // como mucho una lectura por fotograma
+        stage.addEventListener('pointerdown', function (e) {
+          if (!st0.px || e.button > 0) return;
+          var p = pointAt(e); if (!p) return;
+          e.preventDefault();
+          st0.active = true; st0.pending = null; paintPending();
+          if (stage.setPointerCapture) try { stage.setPointerCapture(e.pointerId); } catch (x) { /* sin captura */ }
+          preview(p);
+        });
+        stage.addEventListener('pointermove', function (e) {
+          if (!st0.px || (!st0.active && e.pointerType !== 'mouse') || st0.pending && !st0.active) return;
+          var p = pointAt(e); if (p) schedule(p); else if (!st0.active) hideHover();
+        });
+        stage.addEventListener('pointerup', function (e) {
+          if (!st0.active) return;
+          st0.active = false; cancelAnimationFrame(st0.raf);
+          var p = pointAt(e) || st0.point;
+          if (p) setPending(p);
+        });
+        stage.addEventListener('pointercancel', function () { st0.active = false; hideHover(); });
+        stage.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') hideHover(); });
+        stage.addEventListener('keydown', function (e) {
+          if (!st0.px) return;
+          var p = st0.point || { x: st0.px.width >> 1, y: st0.px.height >> 1 };
+          var step = Math.max(1, Math.round(Math.max(st0.px.width, st0.px.height) / (e.shiftKey ? 20 : 200)));
+          var dx = { ArrowLeft: -step, ArrowRight: step }[e.key] || 0, dy = { ArrowUp: -step, ArrowDown: step }[e.key] || 0;
+          if (dx || dy) { e.preventDefault(); st0.pending = null; paintPending(); preview({ x: Math.max(0, Math.min(st0.px.width - 1, p.x + dx)), y: Math.max(0, Math.min(st0.px.height - 1, p.y + dy)) }); }
+          else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setPending(p); }
+        });
+        paintPal(); paintSug();
+        Promise.resolve().then(o.load).then(function (r) {
+          if (!dlg || !dlg.isConnected) { if (r.revoke) URL.revokeObjectURL(r.url); return; }
+          st0.px = r.pixels; st0.url = r.url; st0.revoke = !!r.revoke;
+          // una sola copia en un canvas para la lupa; las muestras leen siempre st0.px (los píxeles originales)
+          var c = document.createElement('canvas'); c.width = r.pixels.width; c.height = r.pixels.height;
+          c.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(r.pixels.data), r.pixels.width, r.pixels.height), 0, 0);
+          st0.src = c;
+          img.addEventListener('load', function () { stage.classList.add('is-ready'); status.textContent = hint(); }, { once: true });
+          img.addEventListener('error', function () { status.textContent = 'No se ha podido mostrar la imagen.'; status.classList.add('is-error'); }, { once: true });
+          img.src = r.url;
+        }).catch(function (err) {
+          if (err && err.auth) { close(); return ctx.fail(err); }
+          status.textContent = ((err && err.message) || 'No se ha podido leer la imagen.') + ' Puedes escribir los colores con «Editar HEX».';
+          status.classList.add('is-error');
+        });
+      }, { wide: true, cls: 'cs-sheet--picker', onClose: function () { cancelAnimationFrame(st0.raf); if (st0.revoke && st0.url) URL.revokeObjectURL(st0.url); st0.px = null; st0.src = null; } });
+      // la cabecera «Cerrar» y Esc pasan por la misma comprobación de cambios sin guardar
+      var headBtn = dlg.querySelector('.cs-sheet-head .cs-link');
+      if (headBtn) headBtn.replaceWith(btn('Cerrar', 'cs-link', ctl.tryClose, { 'data-key': 'pk-close' }));
+      dlg.addEventListener('cancel', function (e) { if (st0.dirty) { e.preventDefault(); ctl.tryClose(); } });
+      return dlg;
+    }
     function chipGroup(id, label, options, selected, onAdd) {
       var wrap = h('div', { class: 'cs-ins-chipset' });
       var fs = h('fieldset', { class: 'apf-fieldset apf-wide' }, [h('legend', { class: 'ap-field-label', text: label }), wrap]);
@@ -1230,7 +1493,8 @@ window.APColor = (function () {
       var editing = !!x;
       var s = {
         prep: null, previewUrl: null, removeImage: false, dupOk: false,
-        palette: x ? (x.palette || []).slice() : [], status: x ? x.palette_status : 'none', hash: x ? x.image_hash : null,
+        palette: x ? (x.palette || []).slice() : [], suggestions: x ? (x.suggestions || []).slice() : [], stale: false,
+        status: x ? x.palette_status : 'none', hash: x ? x.image_hash : null,
         styles: x ? (x.styles || []).slice() : [], collections: x ? (x.collections || []).slice() : [], seasons: x ? (x.seasons || []).slice() : [],
         added: { estilo: [], coleccion: [] }
       };
@@ -1248,7 +1512,8 @@ window.APColor = (function () {
       var readBtn = btn('Leer enlace', 'btn btn-outline', readLink, { 'data-key': 'insp-read' });
       var removeBtn = btn('Quitar imagen', 'cs-link cs-link--muted', function () {
         if (s.previewUrl) URL.revokeObjectURL(s.previewUrl);
-        s.prep = null; s.previewUrl = null; s.removeImage = true; s.hash = null; s.palette = []; s.status = 'none'; photoMsg.textContent = '';
+        s.prep = null; s.previewUrl = null; s.removeImage = true; s.hash = null; s.suggestions = []; s.stale = s.palette.length > 0;
+        s.status = statusFor(s.palette, [], s.status === 'failed' ? 'none' : s.status); photoMsg.textContent = '';
         paintPreview();
       });
       function paintPreview() {
@@ -1260,29 +1525,53 @@ window.APColor = (function () {
           preview.appendChild(b);
         } else preview.appendChild(h('span', { class: 'cs-photo-empty', text: 'Sin imagen' }));
         removeBtn.hidden = !(s.previewUrl || (x && x.image_path && !s.removeImage));
+        paintPal();
+      }
+      // paleta elegida y sugerencias, separadas; «Seleccionar colores» abre el cuentagotas sobre la imagen (nueva o guardada)
+      function paintPal() {
         palBox.textContent = '';
+        var hasImg = !!(s.prep && s.prep.full) || !!(x && x.image_path && !s.removeImage);
         if (s.palette.length) {
-          var p = pctList(s.palette);
-          palBox.appendChild(h('p', { class: 'cs-mini-t', text: s.status === 'auto' ? 'Paleta extraída (por revisar)' : 'Paleta' }));
-          palBox.appendChild(band(s.palette.map(function (c) { return { hex: c.hex, pct: c.weight }; }), { cls: 'cs-band--dist' }));
-          palBox.appendChild(h('ul', { class: 'cs-ins-pallist', 'aria-label': 'Colores de la paleta' }, s.palette.map(function (c, i) {
-            return h('li', null, [swatch(c.hex), h('span', { text: colorName(c.hex) }), h('span', { class: 'cs-hex', text: c.hex }), h('span', { class: 'cs-pct', text: p[i] + ' %' })]);
+          palBox.appendChild(h('p', { class: 'cs-mini-t', text: 'Tu paleta' }));
+          palBox.appendChild(h('ul', { class: 'cs-ins-pallist', 'aria-label': 'Colores de la paleta' }, s.palette.map(function (c) {
+            return h('li', null, [swatch(c.hex), h('span', { text: c.label || colorName(c.hex) }), h('span', { class: 'cs-hex', text: c.hex }), h('span', { class: 'cs-fine', text: c.source === 'manual' ? 'elegido' : 'sugerido' })]);
           })));
-          if (s.prep) palBox.appendChild(h('p', { class: 'cs-fine cs-fine--tight', text: 'Estimación de la imagen completa (puede incluir fondo o piel). La podrás corregir desde el detalle.' }));
-        } else if (s.status === 'failed') palBox.appendChild(h('p', { class: 'apf-hint', text: 'No se ha podido extraer la paleta. Puedes guardar igualmente y añadir los colores después.' }));
+          if (s.stale) palBox.appendChild(h('div', { class: 'cs-pk-warn' }, ['Estos colores se eligieron sobre la imagen anterior. ',
+            btn('Quitarlos', 'cs-link', function () { s.palette = []; s.stale = false; s.status = statusFor([], s.suggestions, 'none'); paintPal(); }, { 'data-key': 'insp-stale-clear' }),
+            ' · ', btn('Conservarlos', 'cs-link cs-link--muted', function () { s.stale = false; paintPal(); })]));
+        }
+        if (s.suggestions.length) {
+          palBox.appendChild(h('p', { class: 'cs-mini-t', text: 'Sugerencias automáticas (sin revisar)' }));
+          palBox.appendChild(band(s.suggestions.map(function (c) { return { hex: c.hex, pct: c.weight }; }), { cls: 'cs-band--dist is-suggested' }));
+          palBox.appendChild(h('p', { class: 'cs-fine cs-fine--tight', text: s.suggestions.length + (s.suggestions.length === 1 ? ' color sugerido' : ' colores sugeridos') + ' sin el fondo de la foto. No entran en la paleta hasta que los añades.' }));
+        } else if (s.status === 'failed') palBox.appendChild(h('p', { class: 'apf-hint', text: 'El análisis automático no ha encontrado colores. Elígelos con el cuentagotas o guarda y complétalo después.' }));
+        if (hasImg) palBox.appendChild(btn(s.palette.length ? 'Seleccionar más colores' : 'Seleccionar colores', 'btn btn-outline cs-ins-pickbtn', function () {
+          openPicker({
+            title: 'Seleccionar colores',
+            load: function () {
+              if (s.prep && s.prep.full) return Promise.resolve({ pixels: s.prep.full, url: s.previewUrl, revoke: false });
+              return st.imageBlob(x.image_path).then(function (blob) { return M.I.readPixels(blob).then(function (px) { return { pixels: px, url: URL.createObjectURL(blob), revoke: true }; }); });
+            },
+            palette: s.palette, suggestions: s.suggestions,
+            save: function (pal, sug) { s.palette = pal; s.suggestions = sug; s.stale = false; s.status = statusFor(pal, sug, pal.length ? 'reviewed' : s.status); paintPal(); return Promise.resolve(); }
+          });
+        }, { 'data-key': 'insp-form-pick' }));
       }
       function usePhoto(file, fromLink) {
         photoMsg.textContent = 'Preparando la imagen…';
-        return M.I.prepareImage(file, { thumb: 640 }).then(function (prep) {
+        return M.I.prepareImage(file, { thumb: 640, sample: 160, full: true }).then(function (prep) {
+          var replaced = !!(s.prep || (x && x.image_path && !s.removeImage) || s.removeImage);
           if (s.previewUrl) URL.revokeObjectURL(s.previewUrl);
           s.prep = prep; s.previewUrl = URL.createObjectURL(prep.blob); s.removeImage = false;
           s.hash = M.N.imageHash(prep.sample);
-          var pal = [];
-          try { pal = M.N.extractOutfitPalette(prep.sample); } catch (e) { console.warn('[color] extracción fallida', e); }
-          s.palette = pal; s.status = pal.length ? 'auto' : 'failed';
+          var sug = [];
+          try { sug = M.N.extractOutfitPalette(prep.sample); } catch (e) { console.warn('[color] extracción fallida', e); }
+          // la imagen nueva trae sugerencias nuevas; la paleta elegida no se borra en silencio: se avisa
+          s.suggestions = sug; s.stale = replaced && s.palette.length > 0;
+          s.status = sug.length || s.palette.length ? statusFor(s.palette, sug, s.status) : 'failed';
           paintPreview();
           photoMsg.textContent = (fromLink ? 'Imagen descargada del enlace' : 'Imagen lista') + ' (' + prep.width + '×' + prep.height + ' px, sin datos de ubicación). ' +
-            (pal.length ? pal.length + (pal.length === 1 ? ' color extraído' : ' colores extraídos') + ' en tu dispositivo.' : 'No se ha podido extraer la paleta.');
+            (sug.length ? sug.length + (sug.length === 1 ? ' color sugerido' : ' colores sugeridos') + ' en tu dispositivo: elige los de las prendas con «Seleccionar colores».' : 'El análisis automático no ha encontrado colores: elígelos con «Seleccionar colores».');
           var dup = M.N.findDuplicateInspirations({ id: x && x.id, image_hash: s.hash }, inspCache.items)[0];
           if (dup) photoMsg.textContent += ' Parece la misma imagen que «' + M.N.displayTitle(dup.item) + '».';
           return true;
@@ -1359,7 +1648,7 @@ window.APColor = (function () {
       ui.formDialog(editing ? 'Editar inspiración' : 'Nueva inspiración', 'Guardar', fields, function () {
         var hasImage = !!s.prep || !!(x && x.image_path && !s.removeImage);
         var v = M.N.validateInspiration({ title: title.value, source_url: url.value, source_name: source.value, published_on: published.value, description: desc.value, notes: notes.value,
-          styles: s.styles, collections: s.collections, seasons: s.seasons, rating: rating.value, is_favorite: fav.checked, palette: s.palette, palette_status: s.status, has_image: hasImage });
+          styles: s.styles, collections: s.collections, seasons: s.seasons, rating: rating.value, is_favorite: fav.checked, palette: s.palette, suggestions: s.suggestions, palette_status: s.status, has_image: hasImage });
         if (!v.ok) { var e0 = v.errors[0]; throw ui.invalid(e0, /enlace/i.test(e0) ? url : /fecha/i.test(e0) ? published : /valoración/i.test(e0) ? rating : title); }
         var row = v.value;
         row.image_hash = s.prep ? s.hash : hasImage && x ? x.image_hash : null;
@@ -1379,14 +1668,14 @@ window.APColor = (function () {
           }).then(function () { row.image_path = paths.image; row.thumb_path = paths.thumb; });
         } else if (s.removeImage) { row.image_path = null; row.thumb_path = null; }
         return job.then(function () {
-          return editing ? st.update('cs_inspirations', x.id, row) : st.insert('cs_inspirations', row).then(function (r) { return r[0]; });
+          return inspWrite(editing ? st.update('cs_inspirations', x.id, row) : st.insert('cs_inspirations', row).then(function (r) { return r[0]; }));
         }).then(function (saved) {
           if (paths && s.previewUrl) { images[paths.image] = Promise.resolve(s.previewUrl); if (paths.thumb) images[paths.thumb] = images[paths.image]; }   // la vista previa ya es la foto subida
           if (editing && x.image_path && x.image_path !== saved.image_path) st.removeImages([x.image_path, x.thumb_path].filter(Boolean)).catch(function (e) { console.warn('[color] imagen anterior no borrada', e && e.status); });
           replaceIn(inspCache.items, saved);
           saveNewOptions(s.added);
           refresh();
-          toast('Inspiración guardada.' + (saved.palette_status === 'auto' ? ' Revisa su paleta cuando puedas.' : saved.palette_status === 'failed' ? ' Sin paleta: no se pudo extraer.' : ''));
+          toast('Inspiración guardada.' + (saved.palette_status === 'auto' ? ' Elige sus colores cuando puedas.' : saved.palette_status === 'failed' ? ' Sin paleta todavía.' : ''));
         }).catch(function (err) {
           if (paths && err && !err.auth) st.removeImages([paths.image, paths.thumb].filter(Boolean)).catch(function () {});   // no dejar fotos huérfanas
           throw err;

@@ -10,7 +10,7 @@
      con la clave en el servidor) tendría que implementar la misma interfaz `analyze(sample)` y
      declararse aquí; la web nunca llevará claves de API.
    ═══════════════════════════════════════════════ */
-import { extractDominantColors } from './engine.js?v=ad34183687';
+import { extractDominantColors } from './engine.js?v=554dcefb20';
 
 export const ACCEPTED = ['image/jpeg', 'image/png', 'image/webp'];
 export const MAX_INPUT_BYTES = 15 * 1024 * 1024;
@@ -52,7 +52,8 @@ function toBlob(canvas, type, q) { return new Promise((r) => canvas.toBlob(r, ty
  * Prepara una foto para subirla. → { blob, type, width, height, sample, pick, thumb }  (sample y pick: { data, width, height })
  * sample es una copia pequeña (≤ 96 px) para el análisis de color; pick, una mayor (≤ 480 px) para el cuentagotas.
  * Con opts.thumb (lado en px), thumb = { blob, type } es una miniatura para las tarjetas (Inspiración); null si no se pide
- * o si la imagen no es mayor que ese lado.
+ * o si la imagen no es mayor que ese lado. opts.sample cambia el lado de la copia de análisis (96 por defecto).
+ * Con opts.full, full = { data, width, height } son los píxeles de la imagen tal y como se guarda (cuentagotas de Inspiración).
  */
 export async function prepareImage(file, opts = {}) {
   const problem = checkFile(file);
@@ -70,7 +71,7 @@ export async function prepareImage(file, opts = {}) {
   let type = 'image/webp', blob = await toBlob(canvas, type, 0.85);
   if (!blob || blob.type !== 'image/webp') { type = 'image/jpeg'; blob = await toBlob(canvas, type, 0.86); }
   if (!blob) throw new Error('No se ha podido preparar la imagen.');
-  const s = Math.min(1, 96 / Math.max(w, h)), sw = Math.max(1, Math.round(w * s)), sh = Math.max(1, Math.round(h * s));
+  const s = Math.min(1, (opts.sample || 96) / Math.max(w, h)), sw = Math.max(1, Math.round(w * s)), sh = Math.max(1, Math.round(h * s));
   const small = document.createElement('canvas');
   small.width = sw; small.height = sh;
   const s2d = small.getContext('2d');
@@ -85,8 +86,25 @@ export async function prepareImage(file, opts = {}) {
     const tb = await toBlob(tc, type, 0.8);
     if (tb) thumb = { blob: tb, type };
   }
+  const full = opts.full ? { data: c2d.getImageData(0, 0, w, h).data, width: w, height: h } : null;
   if (bmp.close) bmp.close();
-  return { blob, type, width: w, height: h, sample, pick, thumb };
+  return { blob, type, width: w, height: h, sample, pick, thumb, full };
+}
+
+/**
+ * Píxeles de una imagen ya guardada, a su resolución real y sin volver a codificarla: { data, width, height }.
+ * Para el cuentagotas sobre una referencia guardada (la imagen se descarga una vez y se lee una vez).
+ */
+export async function readPixels(blob) {
+  let bmp;
+  try { bmp = await decode(blob); } catch (e) { throw new Error('No se ha podido leer la imagen guardada.'); }
+  const c = document.createElement('canvas');
+  c.width = bmp.width; c.height = bmp.height;
+  const c2d = c.getContext('2d', { willReadFrequently: true });
+  c2d.drawImage(bmp, 0, 0);
+  if (bmp.close) bmp.close();
+  try { return { data: c2d.getImageData(0, 0, c.width, c.height).data, width: c.width, height: c.height }; }
+  catch (e) { throw new Error('El navegador no deja leer los colores de esta imagen.'); }
 }
 
 /* ── Proveedores de visión ── */
