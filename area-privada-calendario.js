@@ -28,7 +28,7 @@ window.APCalendario = (function () {
   var JSON_REP = { 'Content-Type': 'application/json', Prefer: 'return=representation' };
 
   var ctx = null, view = null, flash = '', q = '';
-  var data = { google: [], own: [], tasks: [], links: {}, prep: {}, syncs: [], cats: [], googleReady: true, ownReady: true };
+  var data = { google: [], own: [], tasks: [], links: {}, prep: {}, syncs: [], cats: [], catSeed: {}, googleReady: true, ownReady: true };
   var prefs = loadPrefs();
   var keysBound = false;
 
@@ -59,6 +59,11 @@ window.APCalendario = (function () {
     var t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
     t.setUTCDate(t.getUTCDate() + 4 - (t.getUTCDay() || 7));
     return Math.ceil(((t - new Date(Date.UTC(t.getUTCFullYear(), 0, 1))) / DAY + 1) / 7);
+  }
+  function weeksInYear(d) {   // semanas ISO del año al que pertenece d (52 o 53): el 28 de diciembre siempre cae en la última
+    var t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    t.setUTCDate(t.getUTCDate() + 4 - (t.getUTCDay() || 7));
+    return weekNumber(new Date(t.getUTCFullYear(), 11, 28));
   }
   function ago(iso) {
     var mins = Math.round((new Date(iso) - Date.now()) / 60000);
@@ -141,7 +146,7 @@ window.APCalendario = (function () {
       // todas las tareas pendientes (panel lateral), con o sin fecha
       api('/rest/v1/agenda?select=*&tipo=eq.tarea&hecho=eq.false&order=inicio.asc.nullslast,created_at.asc&limit=500').catch(soft()),
       api('/rest/v1/entrevistas?select=calendar_uid,proceso_id,fase,procesos(empresa)&calendar_uid=not.is.null').catch(soft()),
-      api('/rest/v1/ap_opciones?select=valor&grupo=eq.agenda.categoria&order=posicion.asc,created_at.asc').catch(soft()),
+      api('/rest/v1/ap_opciones?select=valor,posicion&grupo=eq.agenda.categoria&order=posicion.asc,created_at.asc').catch(soft()),
       // preparación automática (area-privada-preparacion.js): estado del briefing de cada entrevista detectada
       api('/rest/v1/ii_interviews?select=id,calendar,event_uid,status,status_note,current_report_id,updated_at&status=neq.dismissed&starts_at=gte.' + addDays(from, -1).toISOString() + '&limit=500').catch(soft())
     ]).then(function (res) {
@@ -152,6 +157,8 @@ window.APCalendario = (function () {
       data.links = {};
       (res[4] || []).forEach(function (e) { data.links[e.calendar_uid] = e; });
       data.cats = (res[5] || []).map(function (o) { return o.valor; });
+      data.catSeed = {};
+      (res[5] || []).forEach(function (o, i) { data.catSeed[o.valor] = o.posicion > 0 ? o.posicion : i + 1; });
       data.prep = {};
       (res[6] || []).forEach(function (p) { data.prep[p.calendar + '|' + p.event_uid] = p; });
     });
@@ -165,7 +172,13 @@ window.APCalendario = (function () {
     return names;
   }
   function googleColor(name) { var c = googleCals(); return c.length > 1 ? PALETTE[(c.indexOf(name) + 5) % PALETTE.length] : C_GOOGLE; }
-  function catColor(c) { var i = data.cats.indexOf(c); return i < 0 ? null : PALETTE[i % PALETTE.length]; }
+  /* Color de categoría: un tono por categoría, repartido con el ángulo áureo para que las consecutivas queden lo más lejos posible
+     entre sí (con 7 colores fijos se repetían y chocaban con los de tipo y calendario). Se calcula con la posición de la opción
+     en Configuración, que no cambia al borrar otra: así una categoría conserva su color. */
+  function catColor(c) {
+    var seed = data.catSeed && data.catSeed[c];
+    return seed ? 'hsl(' + Math.round((seed * 137.508 + 20) % 360) + ' 52% 38%)' : null;
+  }
   function items() {
     var out = [];
     data.google.forEach(function (e) {
@@ -251,6 +264,13 @@ window.APCalendario = (function () {
     var h = ctx.h;
     ui.search = h('input', { type: 'search', id: 'apc-q', placeholder: 'Buscar', autocomplete: 'off', value: q,
       oninput: function () { q = this.value; repaintKeepFocus(); } });
+    var weekEl = null;
+    if (view.mode === 'semana') {
+      var wn = weekNumber(view.range.from), wt = weeksInYear(view.range.from);
+      var bar = h('span', { class: 'apc-weekbar', 'aria-hidden': 'true' }, [h('i')]);
+      bar.style.setProperty('--p', (wn / wt * 100).toFixed(1) + '%');
+      weekEl = h('span', { class: 'apc-weekno' }, [h('span', { text: 'Semana ' + wn + ' de ' + wt }), bar]);
+    }
     return h('div', { class: 'apc-toolbar' }, [
       h('div', { class: 'apc-nav' }, [
         h('a', { class: 'ap-tool', href: href(view.mode, startOfDay(new Date())), text: 'Hoy', 'aria-keyshortcuts': 'T' }),
@@ -258,7 +278,7 @@ window.APCalendario = (function () {
           h('a', { class: 'ap-tool apc-arrow', href: href(view.mode, step(-1)), 'aria-label': 'Periodo anterior', text: '‹' }),
           h('a', { class: 'ap-tool apc-arrow', href: href(view.mode, step(1)), 'aria-label': 'Periodo siguiente', text: '›' })
         ]),
-        h('h2', { class: 'apc-month' }, [title(), view.mode === 'semana' ? h('span', { class: 'apc-weekno', text: 'Semana ' + weekNumber(view.range.from) }) : null])
+        h('h2', { class: 'apc-month' }, [title(), weekEl])
       ]),
       h('div', { class: 'apc-right' }, [
         h('div', { class: 'ap-search apc-search' }, [
@@ -266,10 +286,13 @@ window.APCalendario = (function () {
           h('span', { class: 'ap-search-ico', 'aria-hidden': 'true', html: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>' }),
           ui.search
         ]),
-        h('nav', { class: 'ape-subnav apc-modes', 'aria-label': 'Vista del calendario' }, VIEWS.map(function (v) {
-          return h('a', { href: href(v[0], view.anchor), 'aria-current': view.mode === v[0] ? 'page' : null, 'aria-keyshortcuts': v[2], text: v[1] });
-        })),
-        h('button', { type: 'button', class: 'ap-tool apc-help-btn', 'aria-label': 'Atajos de teclado', 'aria-keyshortcuts': 'Shift+?', text: '?', onclick: help })
+        // selector de vista y «?» van siempre juntos: si falta sitio, baja el grupo entero, no solo el «?»
+        h('div', { class: 'apc-views' }, [
+          h('nav', { class: 'ape-subnav apc-modes', 'aria-label': 'Vista del calendario' }, VIEWS.map(function (v) {
+            return h('a', { href: href(v[0], view.anchor), 'aria-current': view.mode === v[0] ? 'page' : null, 'aria-keyshortcuts': v[2], text: v[1] });
+          })),
+          h('button', { type: 'button', class: 'ap-tool apc-help-btn', 'aria-label': 'Atajos de teclado', 'aria-keyshortcuts': 'Shift+?', text: '?', onclick: help })
+        ])
       ])
     ]);
   }
@@ -825,9 +848,20 @@ window.APCalendario = (function () {
     }
     f.tipo.addEventListener('change', sync);
     f.todo.addEventListener('change', sync);
+    // muestra del color con el que se verá en el calendario (el desplegable nativo no admite colores por opción)
+    var catField = u.field('apc-f-cat', 'Categoría', f.cat, { hint: 'Se gestionan en Configuración. Define el color en el calendario.' });
+    var catSw = h('span', { class: 'apc-swatch apc-swatch--cat', 'aria-hidden': 'true' });
+    catField.querySelector('label').appendChild(catSw);
+    function catSync() {
+      var c = catColor(f.cat.value);
+      catSw.hidden = !c;
+      if (c) catSw.style.setProperty('--c', c);
+    }
+    f.cat.addEventListener('change', catSync);
+    catSync();
     u.formDialog(isNew ? 'Nuevo en la agenda' : 'Editar', isNew ? 'Crear' : 'Guardar cambios', [
       u.field('apc-f-tipo', 'Tipo', f.tipo),
-      u.field('apc-f-cat', 'Categoría', f.cat, { hint: 'Se gestionan en Configuración.' }),
+      catField,
       u.field('apc-f-tit', 'Título', f.titulo, { wide: true }),
       u.field('apc-f-fecha', 'Fecha', f.fecha, { hint: 'En las tareas es opcional.' }),
       h('div', { class: 'apf-field apc-f-todo' }, [h('label', { class: 'apf-check', for: 'apc-f-todo' }, [f.todo, ' Todo el día'])]),
