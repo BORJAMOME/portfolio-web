@@ -22,9 +22,17 @@
 - Sin estilos en línea ni HTML sin sanear (CSP del área privada).
 - El contenido se publica con la sesión del usuario (`CM_PASSWORD`), nunca con la `service_role`. Desde Claude Code también se puede subir con el MCP de Supabase (`execute_sql`) generando el SQL desde `toRows`.
 
+## Carga de contenido (decidido por el consejo de expertos, 29-10-2026)
+
+Cuatro especialistas (datos, tecnología, UX, IA) coincidieron y el Red Team lo dejó en «sobrevive con cambios». Hecho: dossier crudo local (`dossier.mjs`), lista de lo que hay que contrastar (`riesgos.mjs`),
+`publish.mjs` con `--diff` y contraseña por prompt, skill local `cargar-tema`. **No** se construye: Edge Function con API, formulario en el área privada, scraper propio, Markdown.
+Pendiente de decidir: ficha ligera. El Red Team avisa de que relajar `quiz`/`ex` quita justo lo que enseña; solo se relajaría lo que fuerza relleno (`viz`, `caso`, `conf`/`pro`, `rec`, `rel`) y el lector
+debería ocultar lo que no exista (hoy pinta secciones vacías y falla sin `quiz`). Antes, **cronometrar la carga de un tutorial real por fases** (extracción, redacción, revisión) para ver dónde se pierde el tiempo.
+Pendiente de cerrar: denegar por permisos las herramientas de escritura de Supabase en este proyecto (hoy es una regla de la skill, no un permiso).
+
 ## Siguiente tarea
 
-1. **Siguiente tema de Claude Academy** (enlace o texto). Criterio de validación: `publish.mjs --dry-run` y `check-claude-academy` en verde; cada tema con `src` (curso, URL, fecha) y `ver` honesto; mapa con relaciones justificadas; si el concepto ya existe, se amplía su ficha.
+1. **Siguiente tema de Claude Academy** (enlace o texto; con la skill `cargar-tema`). Criterio de validación: `publish.mjs --dry-run` y `check-claude-academy` en verde; cada tema con `src` (curso, URL, fecha) y `ver` honesto; mapa con relaciones justificadas; si el concepto ya existe, se amplía su ficha.
 2. Cuando haya más de un tema por bloque, revisar la estructura de bloques (hoy solo «Coste y uso»).
 
 ## Pendiente y no verificado

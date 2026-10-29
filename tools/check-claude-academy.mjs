@@ -11,7 +11,8 @@
    3. Mapa: ningún nodo sobre otro, con el manual real y con uno sintético de 139 temas.
    4. Publicador: con un fetch simulado, comprueba que inicia sesión como tú, sube con upsert por lotes, que SOLO poda con --prune
       y que no usa jamás la service_role.
-   5. Privacidad: el contenido de los cursos no está versionado (.claude-academy/ ignorada y sin archivos rastreados) y la carpeta
+   5. Dossier, riesgos contra la fuente y diff con la base (casos que se detectan y casos que no deben marcarse).
+   6. Privacidad: el contenido de los cursos no está versionado (.claude-academy/ ignorada y sin archivos rastreados) y la carpeta
       pública antigua claude-academy/ no existe.
    Errores → salida 1. Sin dependencias: solo Node.
    ═══════════════════════════════════════════════ */
@@ -21,7 +22,9 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { ROOT, loadContent, toRows } from './claude-academy/load.mjs';
 import { validate } from './claude-academy/validate.mjs';
-import { publishRows } from './claude-academy/publish.mjs';
+import { publishRows, diffRows, leerRemoto } from './claude-academy/publish.mjs';
+import { riesgos, formatear } from './claude-academy/riesgos.mjs';
+import { hashTexto, parseLecturas, dossierDir } from './claude-academy/dossier.mjs';
 
 const errors = [];
 const err = (m) => errors.push(m);
@@ -106,6 +109,46 @@ for (const [name, exp] of [['todo desplegado', Object.fromEntries(sb.map((b) => 
   if (r.pruned !== 1 || del.length !== 1 || !del[0].url.includes('topic%3Aya-no-existe')) err('publicador: --prune no borra exactamente lo que sobra');
   let threw = false; try { await publishRows(rows, { env: { ...base, CM_PASSWORD: '' }, fetchImpl: fake() }); } catch { threw = true; }
   if (!threw) err('publicador: debería negarse a subir sin CM_PASSWORD');
+}
+
+/* 6 · dossier, riesgos contra la fuente y diff con la base */
+{
+  /* dossier: el hash ignora la maquetación, los ids de curso se validan y lecturas.md se interpreta */
+  if (hashTexto('Hola   mundo\n') !== hashTexto(' Hola mundo')) err('dossier: el hash depende de los espacios');
+  if (hashTexto('Hola mundo') === hashTexto('Hola mundos')) err('dossier: el hash no distingue textos distintos');
+  let bad = false; try { dossierDir('../fuera'); } catch { bad = true; }
+  if (!bad) err('dossier: acepta un id de curso con «../»');
+  const lec = parseLecturas('# c\n- [imagen] (t-uno, t-dos) Un dato: 42\n- [dom] Otro dato\n- texto suelto');
+  if (lec.length !== 2 || lec[0].tipo !== 'imagen' || lec[0].temas.join() !== 't-uno,t-dos' || lec[1].temas.length) err('dossier: lecturas.md mal interpretado: ' + JSON.stringify(lec));
+
+  /* riesgos: detecta lo que no está en la fuente y NO marca lo que sí está */
+  const fuente = { c1: { texto: 'Ejecuta claude --effort low y luego /usage. Ajuste effortLevel y CLAUDE_CODE_EFFORT_LEVEL. Son 15 minutos y 3,5 puntos. Archivo csv_to_json.py.', lecturas: [{ tipo: 'imagen', temas: ['t1'], t: 'dato de dibujo' }, { tipo: 'dom', temas: [], t: 'otro' }] } };
+  const base = { id: 't1', t: 'T', src: [{ t: 's', k: 'oficial', u: 'https://x.es', d: '2026-10-29', c: 'c1' }], ver: { e: 'verificado', d: '2026-10-29' } };
+  const T = (o) => ({ ...base, ...o });
+  const go = (t, d = fuente) => riesgos({ TOPICS: [t] }, d)[0];
+  let r = go(T({ one: 'Dura <b>15</b> minutos, 3,5 puntos; usa <code>claude --effort low</code>, <code>/usage</code>, <code>effortLevel</code> y <code>csv_to_json.py</code>.', key: 'k' }));
+  if (r.sinAncla.length) err('riesgos: marca como sin ancla lo que sí está en la fuente: ' + JSON.stringify(r.sinAncla));
+  r = go(T({ one: 'Dura 99 minutos y usa <code>--inventado</code>, <code>/nocomando</code>, <code>MI_VARIABLE_FALSA</code> y <code>fakeSetting</code>.' }));
+  const vals = r.sinAncla.map((x) => x.valor).sort().join('|');
+  if (vals !== '--inventado|/nocomando|99|MI_VARIABLE_FALSA|fakeSetting') err('riesgos: no detecta lo inventado: ' + vals);
+  r = go(T({ ex: '<b>Ejemplo mío:</b> tarda 20 s y 40 %', code: [{ l: 'bash', t: 'x', s: 'claude --effort low\n/usage' }] }));
+  if (r.sinAncla.length || !r.propios.includes('ex')) err('riesgos: un «ejemplo mío» debe quedar como propio y sin anclar: ' + JSON.stringify(r));
+  if (!go(T({ one: 'x' })).verAlto || go(T({ one: 'x', ver: { e: 'parcial', d: '2026-10-29' } })).verAlto || go(T({ id: 't2', one: 'x' })).verAlto) err('riesgos: ver «verificado» + dato de imagen (solo de los temas etiquetados)');
+  if (go(T({ one: 'Dura 15 minutos' }), {}).sinDossier.join() !== 'c1') err('riesgos: no avisa de un curso sin dossier');
+  if (!formatear([go(T({ one: 'Dura 99 minutos' }))]).some((l) => l.includes('«99»'))) err('riesgos: formatear no enseña los problemas');
+  if (formatear(riesgos({ TOPICS: [T({ one: 'x', src: [{ t: 'i', k: 'interna' }], ver: { e: 'verificado', d: '2026-10-29' } })] }, {})).length) err('riesgos: una ficha sin curso y verificada no debería dar avisos');
+
+  /* diff: nuevas / cambiadas / iguales / solo en la base, sin depender del orden de las claves */
+  const rows = [{ id: 'a', data: { x: 1, y: { p: 1, q: [1, 2] } } }, { id: 'b', data: { x: 2 } }, { id: 'c', data: { x: 3 } }];
+  const remote = [{ id: 'a', data: { y: { q: [1, 2], p: 1 }, x: 1 } }, { id: 'b', data: { x: 99 } }, { id: 'z', data: {} }];
+  const d = diffRows(rows, remote);
+  if (d.iguales.join() !== 'a' || d.cambiadas.join() !== 'b' || d.nuevas.join() !== 'c' || d.soloBase.join() !== 'z') err('diff: resultado incorrecto ' + JSON.stringify(d));
+  const calls = [], env = { CM_PASSWORD: 'secreto-de-prueba', CM_EMAIL: 'yo@example.com', CM_SUPABASE_URL: 'https://x.supabase.co', CM_SUPABASE_KEY: 'sb_publishable_test' };
+  const fake = async (url, init = {}) => { calls.push({ url, method: init.method || 'GET' }); return url.includes('/auth/v1/token') ? new Response(JSON.stringify({ access_token: 't' }), { status: 200 }) : new Response(JSON.stringify(remote), { status: 200 }); };
+  const rem = await leerRemoto({ env, fetchImpl: fake });
+  if (rem.length !== 3 || calls.some((c) => c.method !== 'GET' && !c.url.includes('/auth/v1/token'))) err('diff: leerRemoto debe ser solo lectura');
+  let nopw = false; try { await leerRemoto({ env: { ...env, CM_PASSWORD: '' }, fetchImpl: fake }); } catch { nopw = true; }
+  if (!nopw) err('diff: debería pedir la contraseña');
 }
 
 /* 5 · privacidad */
