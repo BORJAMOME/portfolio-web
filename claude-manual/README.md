@@ -11,7 +11,7 @@ Para que el manual sea privado de verdad:
 
 | Qué | Dónde | Quién lo ve |
 |---|---|---|
-| **Motor** (código, estilos, la Guía del propio manual) | repo: `area-privada-claude.js`, `claude-manual/`, `css/claude-manual.css` | cualquiera (no contiene contenido de cursos) |
+| **Motor** (código, estilos, visuales genéricos; ningún tema) | repo: `area-privada-claude.js`, `claude-manual/`, `css/claude-manual.css` | cualquiera (no contiene contenido de cursos) |
 | **Contenido** (bloques, fichas, cursos, glosario, registro) | Supabase, tabla `cm_docs` con RLS (`supabase/claude-manual.sql`) | solo tú, con sesión |
 | **Tus fuentes de trabajo** de los cursos | `.claude-academy/` en tu equipo, **ignorada por git** | solo tú |
 | **Progreso del lector** y tema claro/oscuro | `localStorage` del navegador (`bm_cm_*`) | solo ese navegador |
@@ -28,10 +28,11 @@ claude-manual/
 ├── config.js              MANUAL, SRCKINDS, VERSTATES, RELTYPES (qué es el manual y qué tipos admite)
 ├── grafo.js               lógica pura: grafo de relaciones, ruta de aprendizaje, posiciones del mapa
 ├── mapa.js                vista del mapa (SVG con zoom + lista equivalente) y miniatura de Inicio
-├── viz.js                 un visual interactivo por tema: VIZ.<id> = function(f){…}  (solo clases, sin atributos style)
-└── seed/                  semilla pública: la Guía del propio manual (content.js + temas/00-guia.js)
+└── viz.js                 visuales interactivos: los genéricos (escala, pestanas, precedencia, con los datos en vizData de la ficha)
+                           y los de la ficha de prueba. Solo clases, sin atributos style
 supabase/claude-manual.sql             tabla cm_docs + RLS (claude-manual-rollback.sql la revierte)
 tools/claude-academy/{load,validate,publish}.mjs   cargar, validar y subir el contenido
+tools/claude-academy/fixtures/guia/    ficha de prueba (solo para las comprobaciones; nunca se publica). Su content.js documenta el formato de una ficha
 tools/check-claude-academy.mjs         contenido, cableado, mapa, publicador y privacidad (CI)
 tools/check-claude-manual.mjs          interfaz con Supabase simulado, CSP real y axe (CI)
 .claude-academy/           (local, ignorada por git) tu contenido de los cursos: content.js (opcional) y temas/*.js
@@ -40,7 +41,7 @@ tools/check-claude-manual.mjs          interfaz con Supabase simulado, CSP real 
 ## Puesta en marcha (una vez)
 
 1. Supabase → SQL Editor → ejecutar `supabase/claude-manual.sql` (necesita `area-privada.sql` y `entrevistas.sql` ya ejecutados).
-2. Publicar la semilla: `CM_PASSWORD=<tu contraseña del área privada> node tools/claude-academy/publish.mjs` (antes, con `--dry-run`).
+2. Publicar tu contenido: `CM_PASSWORD=<tu contraseña del área privada> node tools/claude-academy/publish.mjs` (antes, con `--dry-run`).
 3. Abrir el área privada → Portfolio → «Manual de Claude».
 
 ## Incorporar un curso nuevo
@@ -49,8 +50,8 @@ tools/check-claude-manual.mjs          interfaz con Supabase simulado, CSP real 
 2. **Buscar lo que ya existe** (catálogo de Temas, `Ctrl K`, `grep` en `.claude-academy/temas/`). Un concepto = una ficha: si ya existe, se amplía y se añade la fuente;
    si dos fuentes difieren, se muestran las dos, no se borra una.
 3. **Registrar el curso** en `.claude-academy/content.js`: `export const COURSES = [{id, t, u (https), k, d (fecha de consulta AAAA-MM-DD)}]`
-   (y, si hace falta, `BLOCKS`, `GLOSS`, `LOG`: se **añaden** a los de la semilla).
-4. **Escribir las fichas** en `.claude-academy/temas/<curso>.js` con `export default [ {…}, … ]`. El esquema está en la cabecera de `claude-manual/seed/content.js`. Cada ficha:
+   (y, si hace falta, `BLOCKS`, `GLOSS`, `LOG`: van en el mismo archivo; `.claude-academy/` es lo único que se publica).
+4. **Escribir las fichas** en `.claude-academy/temas/<curso>.js` con `export default [ {…}, … ]`. El esquema está en la cabecera de `tools/claude-academy/fixtures/guia/content.js`. Cada ficha:
    - `src:[{t, u, k, c:"<id del curso>", d}]`: fuente junto al concepto que explica. `k = oficial` exige URL.
    - `ver:{e, d, n}`: `verificado` / `parcial` solo si se **contrastó** con la fuente (con fecha); si no, `pendiente`.
    - `rel:[{t, a, w}]`: relaciones con temas que existen; `w` explica por qué (obligatorio). `necesita` marca orden de estudio y no admite ciclos.
@@ -58,8 +59,10 @@ tools/check-claude-manual.mjs          interfaz con Supabase simulado, CSP real 
    - Explicación en dos niveles: capítulos 1-2 (idea y ejemplo) sin jerga; el resto, para aplicar. `lab` (ejercicio paso a paso) y `ejer` (con solución explicada) solo si el tema lo permite.
      Nada de resultados de ejecución que no se hayan ejecutado.
 5. **Bloque**: si el tema no encaja en uno existente, añadirlo a `BLOCKS` (`n` consecutivo desde 0; sin bloques vacíos).
-6. **Visual** por tema: `claude-manual/viz.js` (público, así que solo para visuales genéricos). Un visual específico de un curso **revelaría contenido**: de momento, usar uno existente
-   o dejar el tema sin visual propio; los visuales declarativos (definidos en el propio dato) son una mejora pendiente.
+6. **Visual** por tema: `viz` + `vizData` en la ficha. `claude-manual/viz.js` es público, así que solo lleva visuales **genéricos** y los datos viajan con la ficha (en la base):
+   `escala` (niveles con barras: `{max, dims[], niveles[{n,d,m[]}]}`), `pestanas` (`{pestanas[{n,t?,items[],fin?}]}`) y `precedencia` (capas con desplegables: `{vacio, capas[{t,d,v[]|fija}]}`).
+   El validador comprueba la forma de `vizData`. Un visual nuevo y genérico se añade a `viz.js` y a `GENERIC` en `validate.mjs`; nunca uno con texto de un curso
+   (`check-claude-academy` falla si `viz.js` o `config.js` mencionan el tema de un curso).
 7. **Registrar el cambio** en `LOG` (`{d, r, curso, nuevo[], mod[], mapa, pend[]}`): cada tema nuevo debe aparecer en algún `nuevo`.
 8. **Comprobar y publicar**:
    ```bash
@@ -72,7 +75,7 @@ tools/check-claude-manual.mjs          interfaz con Supabase simulado, CSP real 
 
 ## Decisiones y desvíos respecto a la skill `manual-borja`
 
-- `BLOCKS[].n` empieza en **0** (la Guía es el bloque 0). Sin bloques vacíos: la estructura prevista (Fundamentos, Claude Code, Skills, Agentes, MCP, …) es una hipótesis.
+- `BLOCKS[].n` empieza en **0** (el primer bloque del manual). Sin bloques vacíos: la estructura prevista (Fundamentos, Claude Code, Skills, Agentes, MCP, …) es una hipótesis.
 - Campos nuevos por ficha: `kw`, `tags`, `upd`, `ver`, `rel`, `lab`, `ejer`; `src` admite objetos. Búsqueda por todas las palabras (sin tildes ni mayúsculas).
 - Mapa: a partir de 40 temas las ramas salen plegadas (`MAX_ALL` en `grafo.js`). Las relaciones se distinguen por **trazo** además de por texto; la lista equivalente es la vista por defecto en móvil.
 - Seguridad: los ids se admiten solo en formato slug; todo HTML del contenido se sanea con lista blanca (sin `script`, `iframe`, `img`, manejadores ni `style`; solo enlaces `https:` o internos); los títulos se escapan.
@@ -80,6 +83,6 @@ tools/check-claude-manual.mjs          interfaz con Supabase simulado, CSP real 
 
 ## Lo que NO está verificado
 
-- El contenido de los cursos: todavía no hay ninguno. La Guía describe el propio manual y se comprobó contra su interfaz.
+- El contenido de los cursos se contrasta con la página del curso en la fecha que indica cada ficha; nada se ha probado todavía en una sesión real de Claude Code.
 - Contra la base real: la prueba E2E usa un Supabase simulado; falta ejecutar el SQL y publicar en tu proyecto (pasos de arriba).
 - Zoom con dos dedos en un táctil real, Safari y Firefox.

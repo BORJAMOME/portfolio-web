@@ -63,7 +63,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   try {
     const { data, files, hasLocal } = await loadContent();
     files.forEach((f) => console.log('· ' + f));
-    if (!hasLocal) console.log('· (no hay .claude-academy/: solo se publica la semilla)');
+    if (!hasLocal || !data.TOPICS.length) throw new Error('No hay contenido que publicar: crea .claude-academy/ con temas/*.js (ver claude-manual/README.md).');
     const v = await validate(data);
     v.warns.forEach((w) => console.log('⚠ ' + w));
     if (v.errors.length) { v.errors.forEach((e) => console.error('✗ ' + e)); console.error('\n✗ El contenido no valida: no se sube nada.'); process.exit(1); }

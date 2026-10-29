@@ -17,6 +17,41 @@ const norm = (s) => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,
 const str = (v) => typeof v === 'string' && v.trim().length > 0;
 const isoOk = (d) => ISO.test(d) && !isNaN(Date.parse(d));
 
+/* Forma de vizData para los visuales genéricos de claude-manual/viz.js (escala, pestanas, precedencia): devuelven los problemas */
+const arr = (v) => Array.isArray(v) && v.length > 0;
+const GENERIC = {
+  escala(d) {
+    const e = [];
+    if (!d || typeof d !== 'object') return ['falta vizData'];
+    if (!arr(d.dims)) e.push('dims debe ser una lista de nombres');
+    if (!arr(d.niveles)) e.push('niveles debe ser una lista');
+    const max = d.max === undefined ? 5 : d.max;
+    if (!Number.isInteger(max) || max < 1 || max > 10) e.push('max debe ser un entero de 1 a 10');
+    (d.niveles || []).forEach((n, i) => {
+      if (!str(n.n) || !str(n.d)) e.push(`niveles[${i}] necesita n y d`);
+      if (!Array.isArray(n.m) || n.m.length !== (d.dims || []).length || n.m.some((x) => !Number.isInteger(x) || x < 0 || x > max)) e.push(`niveles[${i}].m debe tener un entero de 0 a ${max} por cada dimensión`);
+    });
+    return e;
+  },
+  pestanas(d) {
+    const e = [];
+    if (!d || !arr(d.pestanas)) return ['pestanas debe ser una lista'];
+    d.pestanas.forEach((p, i) => { if (!str(p.n) || !arr(p.items) || p.items.some((x) => !str(x))) e.push(`pestanas[${i}] necesita n e items de texto`); });
+    return e;
+  },
+  precedencia(d) {
+    const e = [];
+    if (!d || !arr(d.capas)) return ['capas debe ser una lista'];
+    if (!str(d.vacio)) e.push('vacio es obligatorio (el valor si ninguna capa lo fija)');
+    d.capas.forEach((c, i) => {
+      if (!str(c.t) || !str(c.d)) e.push(`capas[${i}] necesita t y d`);
+      if (!c.fija && !arr(c.v)) e.push(`capas[${i}] necesita v (valores posibles) o fija:true`);
+      if (c.fija && i !== d.capas.length - 1) e.push(`capas[${i}]: una capa fija debe ser la última`);
+    });
+    return e;
+  },
+};
+
 export async function validate(data) {
   const { SRCKINDS, VERSTATES, RELTYPES } = await imp('config.js');
   const { VIZ } = await imp('viz.js');
@@ -65,6 +100,8 @@ export async function validate(data) {
     const q = t.quiz;
     if (!q || !str(q.q) || !Array.isArray(q.o) || q.o.length < 2 || !Number.isInteger(q.a) || q.a < 0 || q.a >= q.o.length || !str(q.w)) err(`${w}: quiz incompleto o con a fuera de rango`);
     if (typeof VIZ[t.viz] !== 'function') err(`${w}: no existe VIZ["${t.viz}"] en claude-manual/viz.js`);
+    else if (GENERIC[t.viz]) GENERIC[t.viz](t.vizData).forEach((m) => err(`${w}: vizData de «${t.viz}»: ${m}`));
+    else if (t.vizData !== undefined) warn(`${w}: vizData no se usa con el visual «${t.viz}»`);
     if (!Array.isArray(t.kw) || t.kw.length < 2) err(`${w}: kw necesita al menos 2 palabras clave (el buscador depende de ellas)`);
     if (t.upd !== undefined && !isoOk(t.upd)) err(`${w}: upd debe ser AAAA-MM-DD`);
     if (!t.ver || !VERSTATES[t.ver.e]) err(`${w}: ver.e debe ser uno de ${Object.keys(VERSTATES).join(', ')}`);

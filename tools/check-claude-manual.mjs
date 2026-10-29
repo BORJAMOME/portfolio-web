@@ -30,7 +30,8 @@ const server = createServer((req, res) => {
 const BASE = `http://localhost:${server.address().port}/area-privada.html`;
 
 /* ── Supabase en memoria ── */
-const { data } = await loadContent({ local: false });
+const { data } = await loadContent({ local: false, fixtures: true });
+const real = await loadContent();   // tu .claude-academy/, si existe (en CI no existe: ese paso se omite)
 const seedRows = toRows(data);
 const HOSTILE = {
   id: 'topic:hostil', kind: 'topic', pos: 99,
@@ -90,7 +91,7 @@ async function open(hash, viewport, opts = {}) {
 async function axe(page, label) {
   await page.evaluate(AXE);      // por CDP: addScriptTag crearía un <script> en línea y la CSP real lo bloquea
   const r = await page.evaluate(() => window.axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] } }));
-  const v = r.violations.map((x) => x.id + ' (' + x.nodes.length + '): ' + x.nodes.slice(0, 2).map((n) => n.target.join(' ')).join(' | '));
+  const v = r.violations.map((x) => x.id + ' (' + x.nodes.length + '): ' + x.nodes.slice(0, 2).map((n) => n.target.join(' ') + ' «' + n.html.slice(0, 90) + '» ' + ((n.any[0] && n.any[0].message) || '')).join(' | '));
   if (v.length) throw new Error(label + ': ' + v.join('; '));
 }
 const go = async (page, hash) => { await page.evaluate((h) => { location.hash = h; }, hash); await page.waitForTimeout(300); };
@@ -213,6 +214,76 @@ await step('El HTML que llega de la base se sanea: sin scripts, manejadores, ifr
   ok(csp.every((v) => /^(script|style)-src-attr inline/.test(v)), 'violaciones de CSP inesperadas: ' + csp.join(' | '));
   eq(c.errors.filter((e) => !/Content Security Policy/.test(e)), [], 'errores de JS');   // la consola avisa de lo bloqueado: es lo esperado
   await c.ctx.close();
+});
+
+await step('Visuales genéricos (escala, pestañas, precedencia): se pintan desde vizData, escapados y sin estilos en línea', async () => {
+  const mk = (id, viz, vizData) => ({ id: 'topic:' + id, kind: 'topic', pos: 50, data: {
+    id, b: 'prueba', t: 'Visual ' + viz, lvl: 1, q: 'q', one: 'o', friend: 'f', steps: ['a', 'b', 'c'], ex: 'x', key: 'k', viz, vizNote: 'n', vizData,
+    caso: { sec: 's', q: 'q', html: '<p>c</p>' }, yes: ['y'], no: ['n'], conf: [{ t: 'a', d: 'b' }], rec: ['a', 'b', 'c'], quiz: { q: 'q', o: ['a', 'b'], a: 0, w: 'w' },
+    pro: [{ k: 'k', t: 't' }], src: [{ t: 's', k: 'interna' }], kw: ['x', 'y'], rel: [], ver: { e: 'pendiente' },
+    code: [{ l: 'bash', t: 'prueba', s: '# comentario\nclaude --effort low\n-- otro comentario' }] } });
+  const keep = docs;
+  docs = docs.concat(
+    mk('v-escala', 'escala', { titulo: 'Escala <b>x</b>', max: 5, dims: ['Lectura', 'Verificación'], niveles: [{ n: 'bajo', d: 'Poco <img src=x onerror=window.__pwned=1>', m: [1, 0] }, { n: 'alto', d: 'Mucho', m: [5, 4] }] }),
+    mk('v-pestanas', 'pestanas', { titulo: 'Pestañas', pestanas: [{ n: 'Uno', items: ['a <i>b</i>'], fin: 'Fin uno' }, { n: 'Dos', t: 'Subtítulo', items: ['c'] }] }),
+    mk('v-precedencia', 'precedencia', { titulo: 'Capas', etiqueta: 'Gana', vacio: 'el de fábrica', capas: [{ t: 'Arriba', d: 'La más fuerte', v: ['a', 'b'] }, { t: 'Medio', d: 'La segunda', v: ['c'] }, { t: 'Fábrica', d: 'Siempre', fija: true }] }),
+    mk('v-vacio', 'escala', undefined));   // sin vizData: no debe romper la ficha
+  try {
+    let c = await open('#/claude/tema/v-escala');
+    eq(await Tall(c.page, '#vizHost .viz-ctrl button'), ['bajo', 'alto']);
+    ok((await T(c.page, '#vizHost .vz-h')) === 'bajo', 'el nivel inicial no es el primero');
+    eq(await N(c.page, '#vizHost .vz-dim:first-of-type .vz-meter i.on'), 1, 'barras llenas en «bajo»');
+    ok(!(await Q(c.page, '#vizHost', (e) => e.innerHTML)).includes('<img'), 'el texto de vizData se pintó como HTML');
+    ok((await T(c.page, '#vizHost .vt')).includes('<b>x</b>'), 'el título del visual debería verse como texto');
+    await c.page.click('#vizHost .viz-ctrl button >> nth=1');
+    eq(await Tall(c.page, '#vizHost .vz-meter'), ['', ''], 'las barras no llevan texto');
+    eq(await c.page.$$eval('#vizHost .vz-meter', (els) => els.map((e) => e.getAttribute('aria-label') + '|' + e.querySelectorAll('i.on').length)), ['Lectura: 5 de 5|5', 'Verificación: 4 de 5|4']);
+    eq(await c.page.evaluate(() => window.__pwned), undefined, 'se ejecutó código de vizData');
+    eq(await Tall(c.page, '.dcode .c'), ['# comentario', '-- otro comentario'], 'un flag --x se pintó como comentario');
+    eq(await Q(c.page, '.dcode code', (e) => getComputedStyle(e).backgroundColor), 'rgba(0, 0, 0, 0)', 'el <code> del bloque de código hereda el fondo de las etiquetas en línea');
+    await clean(c); await axe(c.page, 'escala'); await c.ctx.close();
+    c = await open('#/claude/tema/v-pestanas');
+    eq(await T(c.page, '#vizHost .vz-big'), 'Fin uno');
+    await c.page.click('#vizHost .viz-ctrl button >> nth=1');
+    eq(await T(c.page, '#vizHost .vz-q'), 'Subtítulo'); eq(await N(c.page, '#vizHost .vz-big'), 0, 'sin conclusión no debería pintarse');
+    eq(await c.page.$$eval('#vizHost .viz-ctrl button', (b) => b.map((x) => x.getAttribute('aria-pressed'))), ['false', 'true']);
+    await clean(c); await axe(c.page, 'pestañas'); await c.ctx.close();
+    c = await open('#/claude/tema/v-precedencia');
+    eq(await T(c.page, '#vz-w'), 'Gana: el de fábrica · lo fija la capa 3 (Fábrica).');
+    await c.page.selectOption('select[data-i="1"]', 'c');
+    eq(await T(c.page, '#vz-w'), 'Gana: c · lo fija la capa 2 (Medio).');
+    await c.page.selectOption('select[data-i="0"]', 'b');
+    eq(await T(c.page, '#vz-w'), 'Gana: b · lo fija la capa 1 (Arriba).');
+    eq(await c.page.$$eval('.vz-lay.on', (e) => e.length), 1, 'solo una capa activa');
+    await c.page.click('#vz-rs');
+    eq(await T(c.page, '#vz-w'), 'Gana: el de fábrica · lo fija la capa 3 (Fábrica).');
+    await shot(c.page, 'visual-precedencia'); await clean(c); await axe(c.page, 'precedencia'); await c.ctx.close();
+    c = await open('#/claude/tema/v-vacio');
+    eq(await c.page.$$eval('.cm-host h1', (e) => e.length), 1, 'la ficha sin vizData no se pintó');
+    await c.ctx.close();
+  } finally { docs = keep; }
+});
+
+if (real.hasLocal && real.data.TOPICS.length) await step('Contenido real (.claude-academy/): cada ficha se pinta, sin errores, con visual y axe', async () => {
+  const keep = docs; docs = toRows(real.data);
+  try {
+    const c = await open('#/claude');
+    ok((await Tall(c.page, '.hs .n')).length === 4, 'sin estadísticas en el inicio');
+    await shot(c.page, 'real-inicio');
+    for (const t of real.data.TOPICS) {
+      await go(c.page, '#/claude/tema/' + t.id);
+      await c.page.waitForSelector('#vizHost .viz-b > *', { timeout: 3000 });
+      ok(!/no disponible|No se pudo cargar|no tiene datos/.test(await T(c.page, '#vizHost')), t.id + ': el visual no se pintó');
+      eq(await T(c.page, '.cm-host h1'), t.t, t.id + ': título');
+      ok((await N(c.page, '#detail .ca-src')) >= 1, t.id + ': sin fuente');
+      await shot(c.page, 'real-' + t.id);
+      await axe(c.page, t.id);
+    }
+    await go(c.page, '#/claude/mapa'); await shot(c.page, 'real-mapa');
+    await go(c.page, '#/claude/glosario'); await axe(c.page, 'glosario real');
+    eq(c.errors.filter((e) => !/Content Security Policy/.test(e)), [], 'errores de JS');
+    await c.ctx.close();
+  } finally { docs = keep; }
 });
 
 await step('Tabla sin crear y tabla vacía: mensajes claros', async () => {

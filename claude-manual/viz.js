@@ -1,11 +1,83 @@
 /* Un visual interactivo por tema: VIZ.<id> = function(f){ … }  (módulo ES)
-   f.title (span), f.ctrl (contenedor de controles), f.body (lienzo), f.env = {topics, search, reltypes}.
+   f.title (span), f.ctrl (contenedor de controles), f.body (lienzo), f.data (vizData del tema), f.env = {topics, search, reltypes}.
    Reglas: HTML/SVG puro, colores y trazos solo con clases (la CSP del área privada no admite atributos style)
    y variables de css/claude-manual.css; var(--lab1…6) para series. Estilo dinámico: element.style.x = …
-   Los visuales de la Guía son simulaciones: no tocan tu progreso real. */
+
+   Este archivo es PÚBLICO (se sirve con la web), así que no lleva contenido de cursos. Los temas reales usan los visuales
+   genéricos de abajo (escala, pestanas, precedencia), que se rellenan con el campo vizData de la ficha, guardado en la base.
+   Los visuales «guia-…» son los de la ficha de prueba de tools/claude-academy/fixtures/; sirven para las pruebas. */
 export const VIZ = {};
 
 function vzEsc(s){ return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+function vzPress(ctrl, cur){ Array.prototype.forEach.call(ctrl.querySelectorAll("button"), function(b, i){ b.setAttribute("aria-pressed", i === cur ? "true" : "false"); b.classList.toggle("on", i === cur); }); }
+
+/* ══ Visuales genéricos: el contenido llega en f.data (texto plano: se escapa siempre) ══ */
+
+/* escala · una escala de niveles (p. ej. low … max): pulsas un nivel y ves su descripción y cuánto sube cada dimensión.
+   data = {titulo?, nota?, marca?, max: 5, dims: ["…"], niveles: [{n: "low", d: "descripción", m: [1, 1, 1, 0]}]}  (m: un valor 0…max por dimensión) */
+VIZ.escala = function(f){
+  var D = f.data, MAX = D.max || 5, L = D.niveles || [], cur = 0;
+  f.title.textContent = D.titulo || "La escala";
+  if(!L.length){ f.body.textContent = "Este visual no tiene datos."; return; }
+  f.ctrl.innerHTML = L.map(function(l, i){ return '<button type="button" class="vbtn" data-i="' + i + '" aria-pressed="' + (i === 0) + '">' + vzEsc(l.n) + "</button>"; }).join("");
+  f.body.innerHTML = (D.marca ? '<p class="vz-note">' + vzEsc(D.marca) + "</p>" : "") + '<div class="vz-card" id="vz-c" aria-live="polite"></div><div class="vz-dims" id="vz-dm"></div>' + (D.nota ? '<p class="vz-note">' + vzEsc(D.nota) + "</p>" : "");
+  function draw(){
+    var l = L[cur];
+    f.body.querySelector("#vz-c").innerHTML = '<div class="vz-k">Cómo suele verse</div><h4 class="vz-h">' + vzEsc(l.n) + "</h4><p>" + vzEsc(l.d) + "</p>";
+    f.body.querySelector("#vz-dm").innerHTML = (D.dims || []).map(function(n, j){
+      var v = Math.max(0, Math.min(MAX, +(l.m || [])[j] || 0)), seg = "";
+      for(var k = 0; k < MAX; k++) seg += '<i class="' + (k < v ? "on" : "") + '"></i>';
+      return '<div class="vz-dim"><span>' + vzEsc(n) + '</span><span class="vz-meter" role="img" aria-label="' + vzEsc(n) + ": " + v + " de " + MAX + '">' + seg + "</span></div>";
+    }).join("");
+    vzPress(f.ctrl, cur);
+  }
+  f.ctrl.addEventListener("click", function(e){ var b = e.target.closest("button[data-i]"); if(!b) return; cur = +b.dataset.i; draw(); });
+  draw();
+};
+
+/* pestanas · varias lecturas de lo mismo, una por pestaña.
+   data = {titulo?, nota?, pestanas: [{n: "nombre", t?: "subtítulo", items: ["…"], fin?: "conclusión"}]} */
+VIZ.pestanas = function(f){
+  var D = f.data, P = D.pestanas || [], cur = 0;
+  f.title.textContent = D.titulo || "Compara";
+  if(!P.length){ f.body.textContent = "Este visual no tiene datos."; return; }
+  f.ctrl.innerHTML = P.map(function(p, i){ return '<button type="button" class="vbtn" data-i="' + i + '" aria-pressed="' + (i === 0) + '">' + vzEsc(p.n) + "</button>"; }).join("");
+  f.body.innerHTML = (D.nota ? '<p class="vz-note">' + vzEsc(D.nota) + "</p>" : "") + '<div class="vz-card" id="vz-c" aria-live="polite"></div>';
+  function draw(){
+    var p = P[cur];
+    f.body.querySelector("#vz-c").innerHTML = '<h4 class="vz-h">' + vzEsc(p.n) + "</h4>" + (p.t ? '<p class="vz-q">' + vzEsc(p.t) + "</p>" : "") +
+      '<ul class="vz-ul">' + (p.items || []).map(function(x){ return "<li>" + vzEsc(x) + "</li>"; }).join("") + "</ul>" + (p.fin ? '<p class="vz-big">' + vzEsc(p.fin) + "</p>" : "");
+    vzPress(f.ctrl, cur);
+  }
+  f.ctrl.addEventListener("click", function(e){ var b = e.target.closest("button[data-i]"); if(!b) return; cur = +b.dataset.i; draw(); });
+  draw();
+};
+
+/* precedencia · capas ordenadas: gana la primera que tenga valor. Cada capa tiene un desplegable con «No establecido».
+   data = {titulo?, nota?, etiqueta?: "texto antes del resultado", vacio: "valor si no hay ninguna", capas: [{t: "nombre", d: "cuándo aplica", v: ["valores posibles"], fija?: true}]}
+   Una capa con fija:true siempre tiene valor (el de vacio) y cierra la lista. */
+VIZ.precedencia = function(f){
+  var D = f.data, C = D.capas || [], val = C.map(function(){ return ""; });
+  f.title.textContent = D.titulo || "Qué gana";
+  if(!C.length){ f.body.textContent = "Este visual no tiene datos."; return; }
+  f.ctrl.innerHTML = '<button type="button" class="vbtn" id="vz-rs">Reiniciar</button>';
+  f.body.innerHTML = (D.nota ? '<p class="vz-note">' + vzEsc(D.nota) + "</p>" : "") + '<div class="vz-lays" id="vz-ls"></div><p class="vz-big" id="vz-w" aria-live="polite"></p>';
+  f.body.querySelector("#vz-ls").innerHTML = C.map(function(c, i){
+    var ctl = c.fija ? '<span class="vz-s">siempre activa</span>' :
+      '<select class="vz-sel" data-i="' + i + '" aria-label="' + vzEsc(c.t) + '"><option value="">No establecido</option>' + (c.v || []).map(function(v){ return '<option value="' + vzEsc(v) + '">' + vzEsc(v) + "</option>"; }).join("") + "</select>";
+    return '<div class="vz-lay" data-i="' + i + '"><span class="vz-n">' + (i + 1) + '</span><span class="vz-lt"><b>' + vzEsc(c.t) + "</b><br><span>" + vzEsc(c.d) + "</span></span>" + ctl + "</div>";
+  }).join("");
+  function draw(){
+    var w = -1;
+    for(var i = 0; i < C.length; i++){ if(C[i].fija || val[i]){ w = i; break; } }
+    Array.prototype.forEach.call(f.body.querySelectorAll(".vz-lay"), function(el, i){ el.classList.toggle("on", i === w); });
+    var out = w < 0 ? "" : (C[w].fija ? D.vacio : val[w]);
+    f.body.querySelector("#vz-w").innerHTML = w < 0 ? "" : vzEsc(D.etiqueta || "En efecto") + ": <b>" + vzEsc(out) + "</b> · lo fija la capa " + (w + 1) + " (" + vzEsc(C[w].t) + ").";
+  }
+  f.body.addEventListener("change", function(e){ var s = e.target.closest("select[data-i]"); if(!s) return; val[+s.dataset.i] = s.value; draw(); });
+  f.ctrl.querySelector("#vz-rs").addEventListener("click", function(){ val = C.map(function(){ return ""; }); Array.prototype.forEach.call(f.body.querySelectorAll("select"), function(s){ s.value = ""; }); draw(); });
+  draw();
+};
 
 /* ── Cómo recorrer el manual: estados de aprendizaje ── */
 VIZ["guia-recorrer"] = function(f){
