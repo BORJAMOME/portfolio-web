@@ -17,7 +17,7 @@
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Merriweather:ital,opsz,wght@0,18..144,400..700;1,18..144,400..700&display=swap">
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Merriweather:ital,opsz,wght@0,18..144,400..700;1,18..144,400..700&display=swap" rel="stylesheet">
 <!-- Shared styles: variables, nav, footer, botones, reset -->
-<link rel="stylesheet" href="../shared.css?v=53f78ef5a0">
+<link rel="stylesheet" href="../shared.css?v=c5a6f6a3af">
 <!-- Primary Meta Tags -->
 <meta name="description" content="Machine learning, exploratory analysis and advanced queries with Python and SQL. SARIMA, K-Means and XGBoost models applied to real data.">
 <meta name="keywords" content="Machine Learning, Python, SQL, SARIMA, K-Means, XGBoost, data analysis, Data Analyst, portfolio">
@@ -245,7 +245,7 @@
 .c{max-width:1240px;margin:0 auto;padding:0 clamp(20px,4vw,48px)}
 
 /* HERO */
-.proj-hero{padding:130px 0 72px;background:var(--white)}
+.proj-hero{padding:130px 0 72px;background:var(--page)}
 .hero-tag{display:none}
 .hero-h1{font-family:var(--font-serif);font-size:clamp(36px,4.2vw,58px);font-weight:500;color:var(--ink);letter-spacing:-1.6px;line-height:1.04;margin-bottom:20px}
 .hero-sub{font-size:15px;color:var(--muted);line-height:1.7;max-width:560px}
@@ -262,12 +262,12 @@
 .section-sub{font-size:15px;color:var(--muted);line-height:1.7;max-width:640px;margin:0}
 
 /* Project sections */
-.proj-section{padding:56px 0 56px;background:var(--white)}
+.proj-section{padding:56px 0 56px;background:var(--page)}
 .proj-section + .proj-section{border-top:1px solid #e8e8ee}
 
 /* ─── ML CARDS: mismo sistema visual que .proj-card (index.html) ─── */
 .ml-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
-.card-c{background:#ffffff;border:1px solid #e8e8ee;border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;padding:20px 30px 28px;box-shadow:0 0 0 1px rgba(0,0,0,.06),0 1px 1px -0.5px rgba(0,0,0,.06),0 3px 3px -1.5px rgba(0,0,0,.06),0 6px 6px -3px rgba(0,0,0,.06),0 12px 12px -6px rgba(0,0,0,.06),0 24px 24px -12px rgba(0,0,0,.06);transition:background .18s cubic-bezier(.4,0,.2,1),transform .16s ease-out;cursor:pointer}
+.card-c{background:var(--card);border:1px solid #e8e8ee;border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;padding:20px 30px 28px;box-shadow:0 0 0 1px rgba(0,0,0,.06),0 1px 1px -0.5px rgba(0,0,0,.06),0 3px 3px -1.5px rgba(0,0,0,.06),0 6px 6px -3px rgba(0,0,0,.06),0 12px 12px -6px rgba(0,0,0,.06),0 24px 24px -12px rgba(0,0,0,.06);transition:background .18s cubic-bezier(.4,0,.2,1),transform .16s ease-out;cursor:pointer}
 .card-c:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .card-c:active{transform:scale(.98)}
 @media (hover: hover) and (pointer: fine) { .card-c:hover{transform:translateY(-4px);box-shadow:0 1px 2px rgba(17,17,17,.04),0 20px 40px rgba(17,17,17,.09)} }
