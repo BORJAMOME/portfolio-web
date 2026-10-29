@@ -65,11 +65,6 @@
   -webkit-mask-image: radial-gradient(ellipse 58% 62% at 50% 46%, black 0%, black 18%, transparent 72%);
   mask-image: radial-gradient(ellipse 58% 62% at 50% 46%, black 0%, black 18%, transparent 72%);
 }
-/* El botón "Cómo trabajo" es transparente por diseño: le damos fondo sólido
-   para que nunca se le transparente la rejilla detrás. */
-.hero-actions .btn-outline {
-  background: var(--white);
-}
 
 /* ── Textura de grano: da profundidad y personalidad al fondo del hero ── */
 .hero-texture {
@@ -767,19 +762,17 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 }
 .v4-cred svg { flex: none; width: 24px; height: 24px; margin-top: 1px; color: var(--v4-sage-lit); }
 
-/* CTA: botón crema · texto espresso · sweep morado del portfolio */
+/* CTA: botón blanco · texto espresso · color fijo (solo se mueve la flecha) */
 .v4-cta.btn {
   min-height: 48px; padding: 0 28px;
   font-size: 12px; font-weight: 600; letter-spacing: .06em;
-  background: var(--v4-cream); color: var(--v4-esp);
-  border: 1px solid var(--v4-cream);
+  background: #ffffff; color: var(--v4-esp);
+  border: 1px solid #ffffff;
 }
-.v4-cta.btn::before { background: var(--purple); }
+.v4-cta.btn::before { content: none; }
 .v4-cta.btn:focus-visible { outline: 2px solid var(--purple); outline-offset: 4px; }
-.v4-cta.btn:focus-visible::before { transform: translateY(0); }
 .v4-cta.btn:focus-visible .btn-arrow { transform: translateX(4px); }
 @media (hover: hover) and (pointer: fine) {
-  .v4-cta.btn:hover { color: var(--v4-esp); border-color: var(--purple); }
   .v4-cta.btn[data-arrow="right"]:hover .btn-arrow { transform: translateX(4px); }
 }
 
@@ -1147,14 +1140,9 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   min-height: 44px; box-sizing: border-box;
   transition: background .18s var(--ease), color .18s var(--ease), opacity .18s;
 }
-.contact-bar-btn-primary { background: var(--ink); color: #fff; border: 1px solid var(--ink); }
+/* Color fijo: «Enviar mensaje» y «Agendar llamada» con el fondo de la tarjeta y borde; sin cambio al pasar el ratón */
 .contact-bar-btn-outline { background: transparent; border: 1px solid var(--ink); color: var(--ink); }
 .contact-bar-btn-ghost { background: transparent; color: var(--muted); padding: 13px 16px; border: 1px solid transparent; }
-@media (hover: hover) and (pointer: fine) {
-  .contact-bar-btn-primary:hover { opacity: .85; }
-  .contact-bar-btn-outline:hover { background: var(--ink); color: #fff; }
-  .contact-bar-btn-ghost:hover { color: var(--ink); }
-}
 .contact-bar-actions { flex-wrap: wrap; justify-content: center; }
 
 /* Escritorio: la tarjeta compacta del móvil a mayor escala. Tarjeta estrecha
