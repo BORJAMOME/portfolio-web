@@ -286,10 +286,10 @@ section { padding: 5rem 0; }
 <style>
 /* selector de idioma: el mismo botón que el del portfolio (shared.css), aquí autocontenido y con el color de esta barra */
 .ds-lang { --dsl: var(--pg-ink); margin-left: auto; flex: none; display: flex; align-items: center; }
-.ds-lang-btn { display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 12px 0 10px; border-radius: 8px; border: 1px solid color-mix(in srgb, var(--dsl) 20%, transparent); color: var(--dsl); font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .4px; line-height: 1; text-transform: uppercase; text-decoration: none; transition: border-color .2s, background .2s, transform .12s; }
-.ds-lang-ico { width: 16px; height: 16px; flex: none; }
-@media (hover: hover) and (pointer: fine) { .ds-lang-btn:hover { border-color: var(--dsl); background: color-mix(in srgb, var(--dsl) 8%, transparent); } }
-.ds-lang-btn:focus-visible { outline: 2px solid var(--dsl); outline-offset: 2px; }
+.ds-lang-btn { display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 12px; border-radius: 7px; color: var(--dsl); opacity: .76; font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: .3px; line-height: 1; text-transform: uppercase; text-decoration: none; transition: opacity .2s, background .2s, transform .12s; }
+.ds-lang-ico { width: 15px; height: 15px; flex: none; }
+@media (hover: hover) and (pointer: fine) { .ds-lang-btn:hover { opacity: 1; background: color-mix(in srgb, var(--dsl) 8%, transparent); } }
+.ds-lang-btn:focus-visible { opacity: 1; outline: 2px solid var(--dsl); outline-offset: 2px; }
 .ds-lang-btn:active { transform: scale(.96); }
 </style>
 <style>
