@@ -240,7 +240,6 @@ window.APClaude = (function () {
   }
   function renderHome(v) {
     var M = A.CFG.MANUAL, T = D.TOPICS;
-    var done = T.filter(function (t) { return PROG[t.id] === 2; }).length;
     var next = T.filter(function (t) { return PROG[t.id] !== 2; })[0] || T[0];
     var started = T.some(function (t) { return PROG[t.id]; });
     var autos = { 'Temas': T.length, 'Bloques': D.BLOCKS.length, 'Cursos': D.COURSES.length, 'Relaciones': G.edges.length };
@@ -249,9 +248,9 @@ window.APClaude = (function () {
       '<p class="lead">' + esc(M.lead) + '</p>' +
       '<div class="hero-cta"><a class="btn solid" href="' + R('tema/' + next.id) + '">' + (started ? 'Seguir por «' : 'Empezar por «') + esc(plain(next.t)) + '» →</a><a class="btn" href="' + R('mapa') + '">Ver el mapa mental</a></div>' +
       '<div class="hero-stats">' + M.stats.map(function (s) { var n = s[1] === 'auto' ? (autos[s[0]] !== undefined ? autos[s[0]] : '') : s[1]; return '<div class="hs"><div class="n">' + n + '</div><div class="l">' + esc(s[0]) + '</div></div>'; }).join('') + '</div></div>' +
-      '<div class="hero-art">' + A.MP.miniature(A.GR, G, 'Esquema del manual: ' + M.mapCenter + ', ' + D.BLOCKS.length + ' bloques y ' + T.length + ' temas', M.mapCenter) + '<div class="ha-cap"><span>' + esc(M.mapCenter) + '</span><span>' + done + '/' + T.length + ' entendidos</span></div></div></div>' +
-      '<div class="sec-h"><h2>Cómo está pensado cada tema</h2><p>La misma secuencia en las ' + T.length + ' fichas, de lo intuitivo a lo técnico.</p></div>' +
-      '<div class="howgrid">' + M.how.map(function (h, i) { return '<div class="how"><span class="hn">' + (i + 1) + '</span><div class="hk">' + esc(h[0]) + '</div><p>' + esc(h[1]) + '</p></div>'; }).join('') + '</div>' +
+      '</div>' +
+      '<div class="sec-h"><h2>Flujo de trabajo</h2><p>Los cuatro pasos de cada tarea con Claude Code.</p></div>' +
+      '<div class="howgrid">' + M.flow.map(function (h, i) { return '<div class="how"><span class="hn">' + (i + 1) + '</span><div class="hk">' + esc(h[0]) + '</div><p>' + esc(h[1]) + '</p></div>'; }).join('') + '</div>' +
       '<div class="sec-h"><h2>Ruta de aprendizaje</h2><p>' + D.BLOCKS.length + (D.BLOCKS.length === 1 ? ' bloque' : ' bloques') + ' en orden. El punto verde marca lo que ya entiendes.</p></div>' + blocksHTML() +
       '<div class="sec-h"><h2>Cursos incorporados</h2><p>' + D.COURSES.length + '</p></div>' + coursesHTML() +
       '<div class="sec-h"><h2>De dónde sale este manual</h2></div><p class="lead cm-narrow">' + esc(M.sources) + '</p>' + logHTML();

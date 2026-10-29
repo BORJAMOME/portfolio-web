@@ -23,7 +23,7 @@ Se abre en `#/claude` (enlace en la pestaña **Portfolio**, sección «Manuales 
 ```
 area-privada-claude.js     módulo del área privada (window.APClaude): datos, rutas, ficha, catálogo, glosario, Ctrl K, progreso.
                            Se pinta en un Shadow DOM; todo HTML del contenido pasa por clean() (lista blanca); sin estilos en línea (CSP)
-css/claude-manual.css      sistema de diseño de los manuales (:host hace de :root/body) + ampliaciones (ca-, vz-, mn-)
+css/claude-manual.css      sistema de diseño de los manuales (:host hace de :root/body) + ampliaciones (ca-, vz-)
 claude-manual/
 ├── config.js              MANUAL, SRCKINDS, VERSTATES, RELTYPES (qué es el manual y qué tipos admite)
 ├── grafo.js               lógica pura: grafo de relaciones, ruta de aprendizaje, posiciones del mapa

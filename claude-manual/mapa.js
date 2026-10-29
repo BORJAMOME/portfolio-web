@@ -1,9 +1,9 @@
 /* ══════════════════════════════════════════════════════════════
-   Mapa mental (vista #/claude/mapa) y miniatura de la portada. Módulo ES del Manual de Claude.
+   Mapa mental (vista #/claude/mapa). Módulo ES del Manual de Claude.
    Solo dibuja: las posiciones y las relaciones salen de grafo.js (CAGrafo) y, por tanto, de las fichas.
    Dos presentaciones de los mismos datos: mapa SVG (zoom, desplazamiento, resaltado) y lista por ramas
    (pantallas pequeñas y lectores de pantalla). El detalle de cada nodo vive en un panel común.
-   Recibe grafo.js como ctx.GR (render) o GR (miniature). Lo monta area-privada-claude.js dentro de su Shadow DOM.
+   Recibe grafo.js como ctx.GR. Lo monta area-privada-claude.js dentro de su Shadow DOM.
    CSP del área privada: sin atributos style; todo el aspecto va en clases de css/claude-manual.css.
    ══════════════════════════════════════════════════════════════ */
 "use strict";
@@ -29,28 +29,6 @@ function fmtDate(d){
   return +m[3] + " de " + ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"][+m[2] - 1] + " de " + m[1];
 }
 
-/* ── miniatura de la portada: los mismos nodos, sin interacción ── */
-function miniature(GR, G, title, centerLabel){
-  var L = GR.layout(G), W = 400, H = 300, P = 34, b = L.bounds;
-  var k = Math.min((W - 2 * P) / (b.w - 220), (H - 2 * P) / (b.h - 220));
-  var cx = W / 2 - (b.x + b.w / 2) * k, cy = H / 2 - (b.y + b.h / 2) * k;
-  function X(p){ return (cx + p.x * k).toFixed(1); } function Y(p){ return (cy + p.y * k).toFixed(1); }
-  var s = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(title) + '">', pos = L.pos;
-  G.blocks.forEach(function(bl){
-    s += '<line x1="' + X(pos.center) + '" y1="' + Y(pos.center) + '" x2="' + X(pos[bl.id]) + '" y2="' + Y(pos[bl.id]) + '" class="mn-spoke"/>';
-    G.topics.forEach(function(t){ if(t.b === bl.id && pos[t.id]) s += '<line x1="' + X(pos[bl.id]) + '" y1="' + Y(pos[bl.id]) + '" x2="' + X(pos[t.id]) + '" y2="' + Y(pos[t.id]) + '" class="mn-leaf"/>'; });
-  });
-  G.edges.forEach(function(e){ if(pos[e.from] && pos[e.to]) s += '<line x1="' + X(pos[e.from]) + '" y1="' + Y(pos[e.from]) + '" x2="' + X(pos[e.to]) + '" y2="' + Y(pos[e.to]) + '" class="mn-rel"/>'; });
-  G.topics.forEach(function(t){ if(pos[t.id]) s += '<circle cx="' + X(pos[t.id]) + '" cy="' + Y(pos[t.id]) + '" r="4.5" class="mn-topic"/>'; });
-  G.blocks.forEach(function(bl){
-    s += '<circle cx="' + X(pos[bl.id]) + '" cy="' + Y(pos[bl.id]) + '" r="13" class="mn-block"/><text class="mn-num" x="' + X(pos[bl.id]) + '" y="' + (+Y(pos[bl.id]) + 5) + '" text-anchor="middle">' + bl.n + "</text>";
-  });
-  var lines = wrap(centerLabel, 12), ph = 22 + lines.length * 15, pw = 112;
-  s += '<rect x="' + (+X(pos.center) - pw / 2) + '" y="' + (+Y(pos.center) - ph / 2) + '" width="' + pw + '" height="' + ph + '" rx="9" class="mn-center"/>';
-  lines.forEach(function(l, i){ s += '<text class="mn-ct" x="' + X(pos.center) + '" y="' + (+Y(pos.center) - ph / 2 + 22 + i * 15) + '" text-anchor="middle">' + esc(l) + "</text>"; });
-  return s + "</svg>";
-}
-
 /* ── vista del mapa ── */
 var S = {sel:null, q:"", fb:"", fs:"", mode:null, expanded:null, courses:false};   // sobrevive entre visitas a la vista
 
@@ -60,6 +38,10 @@ function render(host, ctx){
   if(!S.expanded || ctx.reset) S.expanded = ctx.GR.defaultExpanded(G);
   if(S.mode === null) S.mode = window.matchMedia && window.matchMedia("(max-width: 759px)").matches ? "lista" : "mapa";
   var collapsible = G.topics.length > ctx.GR.MAX_ALL;
+
+  /* color por temática: cada bloque tiene el suyo (8 colores que se repiten); sus temas lo heredan */
+  var BI = {}; G.blocks.forEach(function(b, i){ BI[b.id] = "ca-c" + (i % 8); });
+  function cls(id){ return G.topic[id] ? BI[G.topic[id].b] : BI[id] || ""; }
 
   function title(id){ return esc(G.topic[id] ? G.topic[id].t : G.block[id] ? G.block[id].t : G.course[id] ? G.course[id].t : id); }
   function kind(id){ return G.topic[id] ? "topic" : G.block[id] ? "block" : G.course[id] ? "course" : "center"; }
@@ -82,10 +64,10 @@ function render(host, ctx){
   /* ── armazón ── */
   host.innerHTML =
     '<div class="modehead"><div class="eyebrow">Mapa mental</div><h2 class="th-title">' + esc(M.mapCenter) + '</h2>' +
-    '<p class="th-sub">Cada punto es un tema; cada línea, una relación con nombre. Pulsa un punto para ver su resumen, sus conexiones y la <b>ruta de aprendizaje</b> hasta él.</p></div>' +
+    '<p class="th-sub">Cada punto es un tema; cada línea, una relación con nombre. Pulsa un punto para ver su resumen, sus conexiones y la <b>ruta de aprendizaje</b> hasta él, debajo del mapa. El color indica la temática (el bloque).</p></div>' +
     '<div class="toolbar"><label class="search"><span class="sr">Buscar un concepto en el mapa</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="ca-q" type="search" placeholder="Buscar un concepto…" autocomplete="off"></label>' +
     '<span class="count" id="ca-status" role="status"></span></div>' +
-    '<div class="toolbar ca-filters"><div class="filters" id="ca-fb" role="group" aria-label="Filtrar por bloque"><button type="button" class="fb" data-v="" aria-pressed="false">Todos los bloques</button>' + G.blocks.map(function(b){ return '<button type="button" class="fb" data-v="' + b.id + '" aria-pressed="false">' + b.n + " · " + esc(b.t) + "</button>"; }).join("") + "</div>" +
+    '<div class="toolbar ca-filters"><div class="filters" id="ca-fb" role="group" aria-label="Filtrar por bloque"><button type="button" class="fb" data-v="" aria-pressed="false">Todos los bloques</button>' + G.blocks.map(function(b){ return '<button type="button" class="fb" data-v="' + b.id + '" aria-pressed="false"><i class="ca-sw ' + BI[b.id] + '" aria-hidden="true"></i>' + b.n + " · " + esc(b.t) + "</button>"; }).join("") + "</div>" +
     '<div class="filters" id="ca-fs" role="group" aria-label="Filtrar por tu estado"><button type="button" class="fb" data-v="" aria-pressed="false">Todos</button>' + ST.map(function(x, i){ return '<button type="button" class="fb" data-v="' + i + '" aria-pressed="false">' + (i === 0 ? "Pendientes" : i === 1 ? "En estudio" : "Entendidos") + "</button>"; }).join("") + "</div>" +
     '<div class="filters ca-view" id="ca-mode" role="group" aria-label="Forma de verlo"><button type="button" class="fb" data-v="mapa" aria-pressed="false">Mapa</button><button type="button" class="fb" data-v="lista" aria-pressed="false">Lista</button>' +
     '<button type="button" class="fb" id="ca-courses" aria-pressed="false"' + (G.courses.length ? "" : " disabled") + ' title="' + (G.courses.length ? "Mostrar los cursos de origen" : "Todavía no hay cursos incorporados") + '">Cursos</button></div></div>' +
@@ -109,8 +91,8 @@ function render(host, ctx){
     function vis(id){ return !!pos[id]; }
     /* jerarquía: centro → bloque → tema */
     G.blocks.forEach(function(b){
-      hier += '<line class="ca-h" data-e="h:' + b.id + '" x1="0" y1="0" x2="' + pos[b.id].x.toFixed(1) + '" y2="' + pos[b.id].y.toFixed(1) + '"/>';
-      G.topics.forEach(function(t){ if(t.b === b.id && vis(t.id)) hier += '<line class="ca-h" data-e="h:' + t.id + '" x1="' + pos[b.id].x.toFixed(1) + '" y1="' + pos[b.id].y.toFixed(1) + '" x2="' + pos[t.id].x.toFixed(1) + '" y2="' + pos[t.id].y.toFixed(1) + '"/>'; });
+      hier += '<line class="ca-h ' + BI[b.id] + '" data-e="h:' + b.id + '" x1="0" y1="0" x2="' + pos[b.id].x.toFixed(1) + '" y2="' + pos[b.id].y.toFixed(1) + '"/>';
+      G.topics.forEach(function(t){ if(t.b === b.id && vis(t.id)) hier += '<line class="ca-h ' + BI[b.id] + '" data-e="h:' + t.id + '" x1="' + pos[b.id].x.toFixed(1) + '" y1="' + pos[b.id].y.toFixed(1) + '" x2="' + pos[t.id].x.toFixed(1) + '" y2="' + pos[t.id].y.toFixed(1) + '"/>'; });
     });
     /* relaciones entre temas (curvas hacia el centro para que no se pisen) */
     G.edges.forEach(function(e, i){
@@ -135,7 +117,7 @@ function render(host, ctx){
     function tspans(lb, y0, dy){ return lb.map(function(l, i){ return '<tspan x="0" y="' + (y0 + i * dy) + '">' + esc(l) + (i < lb.length - 1 ? " " : "") + "</tspan>"; }).join(""); }
     G.blocks.forEach(function(b){
       var p = pos[b.id], lb = wrap(b.t, 16), open = S.expanded[b.id], n = G.topics.filter(function(t){ return t.b === b.id; }).length;
-      nodes += '<g class="ca-n ca-block" data-n="' + b.id + '" data-k="block" transform="translate(' + p.x.toFixed(1) + " " + p.y.toFixed(1) + ')">' +
+      nodes += '<g class="ca-n ca-block ' + BI[b.id] + '" data-n="' + b.id + '" data-k="block" transform="translate(' + p.x.toFixed(1) + " " + p.y.toFixed(1) + ')">' +
         '<circle r="' + R_BLOCK + '" tabindex="0" role="button" aria-pressed="false" aria-label="' + esc(plain(b.t)) + ". Bloque " + b.n + ", " + n + (n === 1 ? " tema" : " temas") + (collapsible ? (open ? ", desplegado" : ", plegado") : "") + '"/>' +
         '<text class="ca-num" y="7" text-anchor="middle" aria-hidden="true">' + b.n + "</text>" +
         '<text class="ca-bl" text-anchor="middle" aria-hidden="true">' + tspans(lb, R_BLOCK + 20, 15) + "</text>" +
@@ -144,7 +126,7 @@ function render(host, ctx){
     G.topics.forEach(function(t){
       if(!vis(t.id)) return;
       var p = pos[t.id], s = st(t.id), lb = wrap(t.t, 16), d = G.degree(t.id);
-      nodes += '<g class="ca-n ca-topic ca-s' + s + '" data-n="' + t.id + '" data-k="topic" transform="translate(' + p.x.toFixed(1) + " " + p.y.toFixed(1) + ')">' +
+      nodes += '<g class="ca-n ca-topic ' + cls(t.id) + ' ca-s' + s + '" data-n="' + t.id + '" data-k="topic" transform="translate(' + p.x.toFixed(1) + " " + p.y.toFixed(1) + ')">' +
         '<circle r="' + R_TOPIC + '" tabindex="0" role="button" aria-pressed="false" aria-label="' + esc(plain(t.t)) + ". Tema, " + ST[s].toLowerCase() + ", " + d + (d === 1 ? " relación" : " relaciones") + '"/>' + stateMark(s) +
         '<text class="ca-lb" text-anchor="middle" aria-hidden="true">' + tspans(lb, R_TOPIC + 17, 14) + "</text></g>";
     });
@@ -311,7 +293,7 @@ function render(host, ctx){
       var ts = G.topics.filter(function(t){ return t.b === b.id && (!on || m[t.id]); });
       if(on && !ts.length) return;
       var all = G.topics.filter(function(t){ return t.b === b.id; }), done = all.filter(function(t){ return st(t.id) === 2; }).length;
-      h += '<section class="ca-lb-s"><h3><button type="button" class="ca-go' + (S.sel === b.id ? " on" : "") + '" data-go="' + b.id + '"><span class="ca-bn">' + esc(b.n) + "</span>" + esc(b.t) + '</button><span class="ca-cnt">' + done + " de " + all.length + " entendidos</span></h3><ul>" +
+      h += '<section class="ca-lb-s ' + BI[b.id] + '"><h3><button type="button" class="ca-go' + (S.sel === b.id ? " on" : "") + '" data-go="' + b.id + '"><span class="ca-bn">' + esc(b.n) + "</span>" + esc(b.t) + '</button><span class="ca-cnt">' + done + " de " + all.length + " entendidos</span></h3><ul>" +
         ts.map(function(t){ return '<li><button type="button" class="ca-go' + (S.sel === t.id ? " on" : "") + '" data-go="' + t.id + '">' + dotHTML(t.id) + '<span class="ca-tt">' + esc(t.t) + '</span><span class="ca-cnt">' + G.degree(t.id) + (G.degree(t.id) === 1 ? " relación" : " relaciones") + "</span></button></li>"; }).join("") + "</ul></section>";
     });
     if(G.courses.length) h += '<section class="ca-lb-s"><h3><span class="ca-bn">C</span>Cursos</h3><ul>' + G.courses.map(function(c){ return '<li><button type="button" class="ca-go' + (S.sel === c.id ? " on" : "") + '" data-go="' + c.id + '"><span class="ca-tt">' + esc(c.t) + '</span><span class="ca-cnt">' + (G.courseTopics[c.id] || []).length + " temas</span></button></li>"; }).join("") + "</ul></section>";
@@ -356,7 +338,8 @@ function render(host, ctx){
 
   /* ── leyenda ── */
   function legend(){
-    var h = '<div class="ca-lg"><b>Tu estado</b>' + ST.map(function(x, i){ return '<span class="ca-li"><svg width="22" height="22" viewBox="-12 -12 24 24" aria-hidden="true" class="ca-s' + i + '"><circle r="9"/>' + stateMark(i) + "</svg>" + x + "</span>"; }).join("") + "</div>" +
+    var h = '<div class="ca-lg"><b>Temática</b>' + G.blocks.map(function(b){ return '<span class="ca-li"><i class="ca-sw ' + BI[b.id] + '" aria-hidden="true"></i>' + esc(b.t) + "</span>"; }).join("") + "</div>" +
+      '<div class="ca-lg"><b>Tu estado</b>' + ST.map(function(x, i){ return '<span class="ca-li"><svg width="22" height="22" viewBox="-12 -12 24 24" aria-hidden="true" class="ca-s' + i + '"><circle r="9"/>' + stateMark(i) + "</svg>" + x + "</span>"; }).join("") + "</div>" +
       '<div class="ca-lg"><b>Relaciones</b>' + Object.keys(G.types).map(function(k){ var t = G.types[k];
         return '<span class="ca-li"><svg width="34" height="12" viewBox="0 0 34 12" aria-hidden="true"><path d="M1 6 H' + (t.s ? 33 : 28) + '" class="ca-lp"' + (t.d ? ' stroke-dasharray="' + t.d + '"' : "") + "/>" + (t.s ? "" : '<path d="M27 2 L33 6 L27 10 z" class="ca-ah"/>') + "</svg>" + t.l + "</span>"; }).join("") + "</div>";
     $1(".ca-legend").innerHTML = h;
@@ -366,4 +349,4 @@ function render(host, ctx){
   if(S.sel && S.mode === "mapa" && L.pos[S.sel] && collapsible) focusOn(S.sel);
 }
 
-export { render, miniature };
+export { render };
