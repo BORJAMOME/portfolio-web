@@ -16,7 +16,7 @@
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,800&family=Merriweather:ital,opsz,wght@0,18..144,400..700;1,18..144,400..700&display=swap">
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,800&family=Merriweather:ital,opsz,wght@0,18..144,400..700;1,18..144,400..700&display=swap" rel="stylesheet">
 <!-- Shared styles: variables, nav, footer, botones, reset -->
-<link rel="stylesheet" href="./shared.css?v=53f8e95a6f">
+<link rel="stylesheet" href="./shared.css?v=53f78ef5a0">
 
 <!-- ── Cookie Consent + GA4 Consent Mode v2 (RGPD/LOPDGDD) ── -->
 <script>
@@ -261,10 +261,10 @@ body{
 .pj-floor span:last-child{position:absolute;left:24%;right:-36%;top:8px;height:24px;border-radius:50%;background:rgba(12,13,16,.16);filter:blur(12px)}
 /* Texto: mismo estilo que las tarjetas .pbix (.m-title / .m-desc) */
 .pj-text{align-self:stretch;flex:1;display:flex;flex-direction:column;gap:4px;margin-top:8px}
-.pj-title{font-size:16px;font-weight:700;letter-spacing:-.3px;line-height:1.25;color:#111;margin:0;overflow-wrap:break-word}
+.pj-title{font-family:var(--font-serif);font-weight:400;font-size:16px;letter-spacing:-.2px;line-height:1.25;color:#111;margin:0;overflow-wrap:break-word}
 .pj-desc{margin:6px 0 0;font-size:13px;line-height:1.55;color:#3a3d45}
 .pj-actions{margin-top:auto;padding-top:14px;display:flex;flex-direction:column;gap:8px}
-.pj-link{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:46px;border-radius:8px;background:#111;color:#fff;border:1px solid #111;font-size:11px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;text-decoration:none}
+.pj-link{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:46px;border-radius:8px;background:#111;color:#fff;border:1px solid #111;font-family:var(--font-serif);font-weight:400;font-size:11px;letter-spacing:.4px;text-transform:uppercase;text-decoration:none}
 .pj-link:focus-visible{outline:2px solid #111;outline-offset:2px}
 .pj-link svg{width:14px;height:14px;display:block;flex-shrink:0}
 .pj-host{font-size:11px;color:#5a5a5a;text-align:center}
@@ -471,7 +471,8 @@ body{
   margin-top:8px;
 }
 .m-title{
-  font-size:16px;font-weight:700;letter-spacing:-.3px;line-height:1.25;
+  font-family:var(--font-serif);
+  font-size:16px;font-weight:400;letter-spacing:-.2px;line-height:1.25;
   color:#111;
   margin:0;
   overflow-wrap:break-word;
@@ -493,7 +494,8 @@ body{
   border-radius:8px;
   background:#111;color:#fff;
   border:1px solid #111;
-  font-size:11px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;
+  font-family:var(--font-serif);
+  font-size:11px;font-weight:400;letter-spacing:.4px;text-transform:uppercase;
   text-decoration:none;
 }
 .m-ext{

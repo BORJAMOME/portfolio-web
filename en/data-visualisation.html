@@ -17,7 +17,7 @@
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Merriweather:ital,opsz,wght@0,18..144,400..700;1,18..144,400..700&display=swap">
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Merriweather:ital,opsz,wght@0,18..144,400..700;1,18..144,400..700&display=swap" rel="stylesheet">
 <!-- Shared styles: variables, nav, footer, botones, reset -->
-<link rel="stylesheet" href="../shared.css?v=53f8e95a6f">
+<link rel="stylesheet" href="../shared.css?v=53f78ef5a0">
 <!-- Primary Meta Tags -->
 <meta name="description" content="Editorial infographics, 3D cartography and information design. Data visualisation projects where design is the analytical tool.">
 <meta name="keywords" content="data visualisation, infographics, 3D maps, cartography, data viz, information design, Borja Mora">
@@ -256,22 +256,22 @@
 @media (hover: hover) and (pointer: fine) { .viz-card:hover .viz-card-bg{transform:scale(1.03)} }
 .viz-card-overlay{display:none}
 .viz-card-content{position:relative;z-index:1;padding:22px 24px 8px;margin-top:0}
-.viz-card-title{font-size:16px;font-weight:700;letter-spacing:-.3px;line-height:1.3;color:var(--ink);text-shadow:none;text-wrap:balance}
+.viz-card-title{font-family:var(--font-serif);font-weight:400;font-size:16px;letter-spacing:-.2px;line-height:1.3;color:var(--ink);text-shadow:none;text-wrap:balance}
 .viz-card-footer{position:relative;z-index:1;padding:0 24px 22px;display:flex;flex-direction:column;gap:10px;flex:1;justify-content:flex-start}
 .viz-card-desc{font-size:13px;color:var(--muted);line-height:1.65;text-shadow:none;margin:0}
 .viz-card-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:0}
 .viz-card-tags span{font-size:11px;font-weight:500;background:#eeeef1;color:var(--ink);padding:6px 13px;border:1px solid #e2e2e8;border-radius:var(--radius-pill)}
-.viz-card-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--ink);background:transparent;padding:12px 0;min-height:44px;width:fit-content;margin-top:auto;transition:color .18s,gap .2s}
+.viz-card-link{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-serif);font-weight:400;font-size:13px;color:var(--ink);background:transparent;padding:12px 0;min-height:44px;width:fit-content;margin-top:auto;transition:color .18s,gap .2s}
 .viz-card-link svg{display:none}
 .viz-card-link::after{content:"\2192";display:inline-block;transition:transform .2s}
 @media (hover: hover) and (pointer: fine) { .viz-card:hover .viz-card-link{gap:10px} }
 .viz-card-more{background:#ffffff;border:1px solid #e8e8ee;border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;color:var(--ink);min-height:300px;box-shadow:0 0 0 1px rgba(0,0,0,.06),0 1px 1px -0.5px rgba(0,0,0,.06),0 3px 3px -1.5px rgba(0,0,0,.06),0 6px 6px -3px rgba(0,0,0,.06),0 12px 12px -6px rgba(0,0,0,.06),0 24px 24px -12px rgba(0,0,0,.06);transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
-.viz-card-more div{color:inherit}
+.viz-card-more div{color:inherit;font-family:var(--font-serif)}
 .viz-card-more svg{stroke:currentColor}
 @media (hover: hover) and (pointer: fine) { .viz-card-more:hover{transform:translateY(-4px);box-shadow:0 1px 2px rgba(17,17,17,.04),0 20px 40px rgba(17,17,17,.09)} }
 
 /* Ext button */
-.ext-btn{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#fff;font-size:13px;font-weight:600;letter-spacing:.02em;padding:12px 24px;border:1px solid var(--ink);border-radius:var(--radius-md);text-decoration:none;transition:background .2s var(--ease),border-color .2s,transform .15s}
+.ext-btn{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#fff;font-family:var(--font-serif);font-weight:400;font-size:13px;letter-spacing:.02em;padding:12px 24px;border:1px solid var(--ink);border-radius:var(--radius-md);text-decoration:none;transition:background .2s var(--ease),border-color .2s,transform .15s}
 @media (hover: hover) and (pointer: fine) { .ext-btn:hover{opacity:.85;transform:translateY(-1px)} }
 .ext-btn-green{background:var(--ink)}
 .ext-btn svg{fill:currentColor}
@@ -558,7 +558,7 @@
           <a href="https://www.behance.net/borjamm2/projects" target="_blank" rel="noopener noreferrer" class="viz-card viz-card-more">
             <div style="text-align:center;">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
-              <div style="font-size:13px;font-weight:600;margin-top:10px;">See more projects</div>
+              <div style="font-size:13px;font-weight:400;margin-top:10px;">See more projects</div>
             </div>
           </a>
         </div>

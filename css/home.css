@@ -572,7 +572,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 }
 .pc-body { padding: 20px 30px 28px; flex: 1; display: flex; flex-direction: column; }
 .pc-cat { font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
-.pc-name { font-size: 20px; font-weight: 700; color: var(--ink); margin-bottom: 10px; letter-spacing: -.4px; line-height: 1.25; }
+.pc-name { font-family: var(--font-serif); font-size: 20px; font-weight: 400; color: var(--ink); margin-bottom: 10px; letter-spacing: -.2px; line-height: 1.25; }
 .pc-desc { font-size: 13.5px; color: var(--muted); line-height: 1.7; flex: 1; margin-bottom: 20px; }
 .pc-foot { display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 1px solid #e8e8ee; }
 .pc-pills { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -589,7 +589,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   transition: background .2s var(--ease), color .2s var(--ease);
 }
 .pc-pill + .pc-pill::before { content: ''; margin-right: 0; color: var(--muted); }
-.pc-link { font-size: 13.5px; color: var(--ink); font-weight: 600; text-decoration: none; letter-spacing: normal; text-transform: none; transition: color .18s; padding: 12px 4px; min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; }
+.pc-link { font-family: var(--font-serif); font-size: 13.5px; color: var(--ink); font-weight: 400; text-decoration: none; letter-spacing: normal; text-transform: none; transition: color .18s; padding: 12px 4px; min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; }
 .pc-link:hover { color: var(--ink); }
 .proj-more { display: flex; justify-content: center; align-items: center; margin-top: 40px; width: 100%; }
 
@@ -613,7 +613,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   cursor: pointer;
 }
 .card-c:active { transform: scale(.98); }
-.cc-cat { font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -.4px; text-transform: none; color: var(--ink); line-height: 1.25; margin-bottom: 16px; text-wrap: balance; }
+.cc-cat { font-family: var(--font-serif); font-size: 20px; font-weight: 400; letter-spacing: -.2px; text-transform: none; color: var(--ink); line-height: 1.25; margin-bottom: 16px; text-wrap: balance; }
 .cc-block { margin-bottom: 16px; }
 .cc-label { font-size: 10px; font-weight: 700; color: var(--ink); margin-bottom: 6px; letter-spacing: .05em; text-transform: uppercase; }
 .cc-text { font-size: 13.5px; color: var(--muted); line-height: 1.7; }
@@ -625,7 +625,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 .cc-foot { display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 1px solid #e8e8ee; }
 .cc-pills { display: flex; gap: 8px; flex-wrap: wrap; }
 .cc-pill { font-size: 11px; font-weight: 500; background: #eeeef1; border: 1px solid #e2e2e8; color: var(--ink); padding: 6px 13px; border-radius: var(--radius-pill); letter-spacing: 0; text-transform: none; transition: background .2s var(--ease), color .2s var(--ease); }
-.cc-link { font-size: 13.5px; color: var(--ink); font-weight: 600; text-decoration: none; letter-spacing: normal; text-transform: none; transition: color .18s; padding: 12px 4px; min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; }
+.cc-link { font-family: var(--font-serif); font-size: 13.5px; color: var(--ink); font-weight: 400; text-decoration: none; letter-spacing: normal; text-transform: none; transition: color .18s; padding: 12px 4px; min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; }
 .cc-link:hover { color: var(--ink); }
 @media (max-width:900px) { .ml-grid { grid-template-columns:1fr; } }
 
@@ -762,10 +762,13 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 }
 .v4-cred svg { flex: none; width: 24px; height: 24px; margin-top: 1px; color: var(--v4-sage-lit); }
 
+/* Botones de la home en Merriweather Regular (shared.css los deja en Inter para el resto del sitio) */
+.btn { font-family: var(--font-serif); font-weight: 400; }
+
 /* CTA: botón blanco · texto espresso · color fijo (solo se mueve la flecha) */
 .v4-cta.btn {
   min-height: 48px; padding: 0 28px;
-  font-size: 12px; font-weight: 600; letter-spacing: .06em;
+  font-size: 12px; font-weight: 400; letter-spacing: .06em;
   background: #ffffff; color: var(--v4-esp);
   border: 1px solid #ffffff;
 }
@@ -1087,7 +1090,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 .contact-alt-btn {
   display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 6px 12px;
   border: 1px solid #d9d9de; border-radius: 999px; background: #fff; color: var(--ink);
-  font: 600 12px/1 var(--font); letter-spacing: .2px; cursor: pointer;
+  font: 400 12px/1 var(--font-serif); letter-spacing: .2px; cursor: pointer;
   transition: border-color .2s, background .2s, color .2s;
 }
 .contact-alt-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.3; }
@@ -1132,8 +1135,8 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 }
 .contact-bar-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 .contact-bar-btn {
-  font-family: var(--font);
-  font-size: 14px; font-weight: 600;
+  font-family: var(--font-serif);
+  font-size: 14px; font-weight: 400;
   padding: 13px 22px; border-radius: 999px;
   text-decoration: none; white-space: nowrap;
   display: inline-flex; align-items: center; justify-content: center;
