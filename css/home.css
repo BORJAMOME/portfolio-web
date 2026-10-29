@@ -1525,11 +1525,11 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 /* ══════════════════════════════
    NAV LINKS: purple underline on hover
 ══════════════════════════════ */
-.nav-links a:not(.nav-cta) {
+.nav-links a:not(.nav-cta):not(.ds-lang-btn) {
   position: relative;
   padding-bottom: 7px;
 }
-.nav-links a:not(.nav-cta)::after {
+.nav-links a:not(.nav-cta):not(.ds-lang-btn)::after {
   content: '';
   position: absolute;
   bottom: 0; left: 50%;
@@ -1540,13 +1540,13 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   transform-origin: center;
   transition: transform .22s var(--ease);
 }
-.nav-links a:not(.nav-cta):hover::after,
-.nav-links a:not(.nav-cta).active::after {
+.nav-links a:not(.nav-cta):not(.ds-lang-btn):hover::after,
+.nav-links a:not(.nav-cta):not(.ds-lang-btn).active::after {
   transform: translateX(-50%) scaleX(1);
 }
 /* ensure nav links visible on desktop */
 @media(min-width:876px) {
-  .nav-links a:not(.nav-cta) { display: inline-flex !important; }
+  .nav-links a:not(.nav-cta):not(.ds-lang-btn) { display: inline-flex !important; }
 }
 
 

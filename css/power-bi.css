@@ -229,7 +229,7 @@
   .li-grid,.nat-viz-grid{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:600px){
-  .nav-links a:not(.nav-cta):not(.active){display:none}
+  .nav-links a:not(.nav-cta):not(.ds-lang-btn):not(.active){display:none}
   .proj-card{flex:0 0 100%}
   .li-grid,.nat-viz-grid{grid-template-columns:1fr}
   .dax-cards{grid-template-columns:1fr}
