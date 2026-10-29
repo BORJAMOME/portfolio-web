@@ -24,6 +24,7 @@ const CHECK = process.argv.includes('--check');
 const pages = [
   ...readdirSync(ROOT).filter((f) => f.endsWith('.html')).map((f) => join(ROOT, f)),
   ...readdirSync(join(ROOT, 'en')).filter((f) => f.endsWith('.html')).map((f) => join(ROOT, 'en', f)),
+  join(ROOT, 'claude-academy', 'index.html'),   // manual con scripts por curso (temas/*.js): sin versión, un curso nuevo no llegaría a quien ya lo tiene en caché
 ];
 const hashes = {};
 const memory = {};                         // contenido ya reescrito (o por reescribir, con --check) de los módulos

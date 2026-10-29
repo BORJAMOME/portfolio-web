@@ -51,6 +51,7 @@
     "tipos": {
       "data-storytelling.html": "manual",
       "pbi": "manual",
+      "claude-academy": "manual",
       "roma-aeterna": "app",
       "dashboard/casa-origen": "app"
     },

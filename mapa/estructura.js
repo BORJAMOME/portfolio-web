@@ -1,8 +1,8 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "fab2625",
+ "huella": "71fc052",
  "recuento": {
-  "paginas": 19,
+  "paginas": 20,
   "proyectos": 40,
   "recursos": 52,
   "perfil": 9,
@@ -11,8 +11,8 @@ export default {
   "pestanas": 10,
   "tablas": 33,
   "funciones": 5,
-  "herramientas": 15,
-  "relaciones": 176,
+  "herramientas": 16,
+  "relaciones": 177,
   "sinExplicar": 0
  },
  "columnas": [
@@ -1476,6 +1476,15 @@ export default {
      "nota": "ninguna página pública las enlaza",
      "hijos": [
       {
+       "id": "p:claude-academy",
+       "tipo": "manual",
+       "etiqueta": "Manual de Claude",
+       "nota": "Manual visual y en crecimiento sobre Claude y su ecosistema, construido a partir de los cursos de Claude Academy: cada concepto explicado en llano, con sus fuentes, sus conexiones y un mapa mental.",
+       "href": "./claude-academy/",
+       "archivo": "claude-academy/",
+       "familia": "manual"
+      },
+      {
        "id": "p:pbi",
        "tipo": "manual",
        "etiqueta": "Manual de Power BI",
@@ -2182,6 +2191,13 @@ export default {
        "tipo": "herramienta",
        "etiqueta": "check-briefing.mjs",
        "archivo": "tools/check-briefing.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:check-claude-academy",
+       "tipo": "herramienta",
+       "etiqueta": "check-claude-academy.mjs",
+       "archivo": "tools/check-claude-academy.mjs",
        "familia": "herramienta"
       },
       {
@@ -3432,6 +3448,12 @@ export default {
   {
    "de": "w:checks",
    "a": "h:check-briefing",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:checks",
+   "a": "h:check-claude-academy",
    "tipo": "ejecuta",
    "detalle": []
   },

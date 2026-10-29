@@ -36,6 +36,9 @@ jobs:
       - name: Versiones de caché (?v=) al día
         if: ${{ !cancelled() }}
         run: node tools/version-assets.mjs --check
+      - name: Manual de Claude (datos, relaciones, fuentes y mapa)
+        if: ${{ !cancelled() }}
+        run: node tools/check-claude-academy.mjs
       - name: Lógica del Centro de trabajo (Hoy)
         if: ${{ !cancelled() }}
         run: node tools/test-kanban.mjs

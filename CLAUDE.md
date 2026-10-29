@@ -9,6 +9,10 @@ Contexto de producto y marca: `PRODUCT.md` (solo local). Mapa de archivos y coma
 - Tras cambiar un CSS/JS propio: `node tools/version-assets.mjs` (versiones `?v=`; también en los imports entre módulos de `color-studio/`, para que cada uno se descargue una sola vez).
 - Sin dependencias nuevas salvo que no haya alternativa nativa razonable.
 - Manuales con sistema propio: `ds/` (Data Storytelling), `ml/` (se genera en otro repo), `pbi/`.
+- **Manual de Claude** (`claude-academy/`, crece con cada curso de Claude Academy): fichas en `temas/<curso>.js`, resto de datos en `content.js`;
+  el mapa mental, «Dónde encaja», el índice y los filtros se **derivan** de `rel` y `src` de cada ficha (no se mantienen aparte). Un concepto = una ficha, ids estables,
+  fuentes con fecha y estado de verificación (nunca `verificado` sin contrastar), cada tema nuevo anotado en `LOG`. Procedimiento para incorporar un curso:
+  su `README.md`. Tras tocarlo: `node tools/check-claude-academy.mjs`, `node tools/version-assets.mjs` y `node tools/mapa/build-mapa.mjs` (CI las comprueba).
 
 ## Comprobaciones (CI en cada PR)
 ```bash
