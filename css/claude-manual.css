@@ -16,7 +16,7 @@
   --positive:#2F7D5B;--positive-ink:#1F5C42;--positive-soft:#E6F1EB;
   --negative:#A3223E;--negative-ink:#7A1A2E;--negative-soft:#F7E8EB;
   --support:#9A6414;--support-ink:#6B4508;--support-strong:#4A2F05;--support-soft:#F6EEDC;
-  --code-bg:#1D2638;--code-ink:#E6EBF3;--code-k:#9DB6E6;--code-f:#F0C98A;--code-s:#A9D9B8;--code-c:#7C8AA5;--code-n:#E9A8B8;
+  --code-bg:#1D2638;--code-ink:#E6EBF3;--code-k:#9DB6E6;--code-f:#F0C98A;--code-s:#A9D9B8;--code-c:#98A6C0;--code-n:#E9A8B8;
   --on-ink:#FFFFFF;--glass:rgba(251,251,251,.88);
   --lab1:#273A5F;--lab2:#C8602F;--lab3:#1F8A7A;--lab4:#B03A4E;--lab5:#C99A1C;--lab6:#BE5F8A;
   --sans:'Plus Jakarta Sans','Segoe UI',system-ui,-apple-system,'Helvetica Neue',sans-serif;
@@ -281,6 +281,7 @@ table.t td.n{text-align:right}
 .code .cl{display:flex;justify-content:space-between;align-items:center;background:color-mix(in srgb,var(--code-bg) 92%,#fff);color:var(--code-c);font-size:11.5px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;padding:8px 14px;border-radius:var(--r) var(--r) 0 0}
 .code .cl button{background:none;border:.5px solid color-mix(in srgb,var(--code-ink) 25%,transparent);color:var(--code-ink);border-radius:6px;font-size:11px;padding:3px 8px;cursor:pointer;text-transform:none;letter-spacing:0}
 pre.dcode{background:var(--code-bg);color:var(--code-ink);border-radius:0 0 var(--r) var(--r);padding:16px 18px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;line-height:1.7;margin:0;tab-size:4}
+pre.dcode code{background:none;color:inherit;padding:0;font-size:inherit;border-radius:0;overflow-wrap:normal}
 pre.dcode .k{color:var(--code-k);font-weight:500}
 pre.dcode .f{color:var(--code-f)}
 pre.dcode .s{color:var(--code-s)}
@@ -591,3 +592,20 @@ a.card{text-decoration:none}
 .vz-node{fill:var(--card);stroke:var(--line-2);stroke-width:2}
 .vz-nt{font-family:var(--serif);font-size:20px;fill:var(--ink)}
 .vz-line{fill:none;stroke:var(--accent-2);stroke-width:2}
+
+/* Visuales genéricos (escala, pestanas, precedencia): el contenido viene del campo vizData de cada ficha */
+.vz-dims{max-width:640px;margin:12px 0 4px}
+.vz-dim{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:8px 0;border-top:.5px solid var(--line);font-size:14.5px}
+.vz-meter{display:inline-flex;gap:4px;flex:none}
+.vz-meter i{width:22px;height:7px;border-radius:4px;background:var(--line-2)}
+.vz-meter i.on{background:var(--accent)}
+.vz-ul{margin:8px 0 4px 18px;display:flex;flex-direction:column;gap:6px}
+.vz-lays{display:flex;flex-direction:column;gap:6px;max-width:680px}
+.vz-lay{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px 12px;align-items:center;padding:10px 12px;border-radius:var(--r);border:.5px solid var(--line);background:var(--card)}
+.vz-lay.on{border-color:var(--accent);background:var(--accent-soft)}
+.vz-n{width:24px;height:24px;border-radius:50%;background:var(--card-2);color:var(--ink);display:grid;place-items:center;font-size:12.5px;font-weight:600}
+.vz-lay.on .vz-n{background:var(--accent);color:var(--on-accent)}
+.vz-lt{font-size:14px;line-height:1.45}
+.vz-lt span{color:var(--muted);font-size:13px}
+.vz-sel{height:34px;border:.5px solid var(--line);border-radius:8px;padding:0 8px;background:var(--card);color:var(--ink);font-size:13.5px;max-width:100%}
+@media (max-width:560px){.vz-lay{grid-template-columns:28px minmax(0,1fr)}.vz-lay .vz-sel,.vz-lay>.vz-s{grid-column:2}}

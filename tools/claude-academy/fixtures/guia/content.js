@@ -1,12 +1,12 @@
 /* ══════════════════════════════════════════════════════════════
-   Semilla del Manual de Claude · bloque 0 (Guía del manual)
-   Contenido propio del manual, sin datos de cursos: va en el repositorio para que las pruebas tengan datos reales.
-   El contenido de los cursos NO se versiona: vive en .claude-academy/ (carpeta local, ignorada por git) con este mismo
-   formato y se publica en Supabase con tools/claude-academy/publish.mjs. Ver claude-manual/README.md.
+   Ficha de PRUEBA del Manual de Claude · bloque 0 (Guía del manual)
+   Solo sirve para las comprobaciones (check-claude-academy y check-claude-manual): NO se publica en la base ni se ve en el manual.
+   Es contenido propio, sin datos de cursos. El contenido real NO se versiona: vive en .claude-academy/ (carpeta local, ignorada
+   por git) con este mismo formato y se publica en Supabase con tools/claude-academy/publish.mjs. Ver claude-manual/README.md.
 
    Campos de cada tema (export default [...] en temas/*.js):
      id (estable: no se cambia nunca), b (bloque), t (título), lvl (1-3), q (pregunta que responde)
-     one, friend, steps[3-6], ex, key, viz (id de VIZ.<id>), vizNote
+     one, friend, steps[3-6], ex, key, viz (id de VIZ.<id>), vizNote, vizData (los datos de los visuales genéricos escala, pestanas y precedencia)
      caso{sec,q,html}, yes[], no[], conf[{t,d}], rec[3-5], quiz{q,o[],a,w}, pro[{k,t}]
      src[]  → objeto {t, u?, k, c?, d?, rev?} o texto (ver SRCKINDS en config.js)
      kw[]   → palabras sencillas por las que alguien buscaría el tema (sinónimos, «para qué sirve»)
@@ -16,7 +16,7 @@
      code[{l,t,s}], lab{…}, ejer[{n,q,sol}]  → opcionales
    Los campos de texto admiten HTML en línea (<b>, <i>, <code>, <p>, <ul>…); al pintarlos se sanean (lista blanca).
    ══════════════════════════════════════════════════════════════ */
-/* n empieza en 0: la Guía es el bloque 0 y el resto sigue la numeración de la estructura prevista.
+/* n empieza en 0 en cada manual (aquí la Guía de prueba; en el real, su primer bloque).
    No se crean bloques vacíos: un bloque nace cuando llega su primer tema. */
 export const BLOCKS = [
   {id:"guia", n:0, t:"Guía del manual", s:"Cómo recorrerlo, cómo está hecha cada ficha, de dónde sale la información y cómo se leen el buscador y el mapa."}

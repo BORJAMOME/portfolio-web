@@ -4,7 +4,8 @@
      node tools/check-claude-academy.mjs
 
    Sin DOM, sin red y sin tocar la base:
-   1. Valida el contenido (semilla + tu carpeta local .claude-academy/ si existe) con tools/claude-academy/validate.mjs.
+   1. Valida el contenido (ficha de prueba de tools/claude-academy/fixtures/ + tu carpeta local .claude-academy/ si existe)
+      con tools/claude-academy/validate.mjs.
    2. Comprueba el cableado: módulo registrado en area-privada.js, scripts y hoja de estilos precargados en area-privada.html,
       archivos que existen, enlace desde Portfolio.
    3. Mapa: ningún nodo sobre otro, con el manual real y con uno sintético de 139 temas.
@@ -28,9 +29,16 @@ const imp = (f) => import(pathToFileURL(join(ROOT, 'claude-manual', f)).href);
 const read = (f) => readFileSync(join(ROOT, f), 'utf8');
 
 /* 1 · contenido */
-const { data, files, hasLocal } = await loadContent();
+/* La ficha de prueba y el contenido real se validan POR SEPARADO: son dos manuales independientes (cada uno con su bloque 0). */
+const { data } = await loadContent({ local: false, fixtures: true });
 const v = await validate(data);
-v.errors.forEach(err);
+v.errors.forEach((m) => err('ficha de prueba: ' + m));
+const { data: realData, hasLocal } = await loadContent();   // solo .claude-academy/, si existe en este equipo (en CI no existe)
+if (hasLocal) {
+  const rv = await validate(realData);
+  rv.errors.forEach((m) => err('contenido real (.claude-academy/): ' + m));
+  v.warns.push(...rv.warns.map((w) => 'real: ' + w));
+}
 const GR = await imp('grafo.js'), { RELTYPES } = await imp('config.js');
 
 /* 2 · cableado */
@@ -59,7 +67,11 @@ function minDist(G, expanded) {
 }
 const MIN = 58, real = GR.build({ TOPICS: data.TOPICS, BLOCKS: data.BLOCKS, COURSES: data.COURSES, RELTYPES });
 const r1 = minDist(real, undefined);
-if (!(r1.d >= MIN)) err(`mapa real: nodos demasiado juntos (${r1.d.toFixed(1)} px entre ${r1.pair})`);
+if (!(r1.d >= MIN)) err(`mapa de la ficha de prueba: nodos demasiado juntos (${r1.d.toFixed(1)} px entre ${r1.pair})`);
+if (hasLocal) {
+  const rr = minDist(GR.build({ TOPICS: realData.TOPICS, BLOCKS: realData.BLOCKS, COURSES: realData.COURSES, RELTYPES }), undefined);
+  if (!(rr.d >= MIN)) err(`mapa del contenido real: nodos demasiado juntos (${rr.d.toFixed(1)} px entre ${rr.pair})`);
+}
 const sizes = [30, 12, 8, 25, 3, 1, 40, 20];
 const sb = sizes.map((_, i) => ({ id: 'b' + i, n: i, t: 'Bloque ' + i, s: '' }));
 const st = sizes.flatMap((n, bi) => Array.from({ length: n }, (_, k) => ({ id: `b${bi}-t${k}`, b: 'b' + bi, t: 'Tema ' + bi + '.' + k, rel: [], src: k % 7 === 0 ? [{ t: 'x', k: 'oficial', c: 'c' + (bi % 3) }] : [] })));
@@ -101,6 +113,12 @@ for (const [name, exp] of [['todo desplegado', Object.fromEntries(sb.map((b) => 
   const ign = existsSync(join(ROOT, '.gitignore')) ? read('.gitignore') : '';
   if (!/^\/?\.claude-academy\/?\s*$/m.test(ign)) err('.gitignore: falta /.claude-academy/ (el contenido de los cursos no debe versionarse)');
   if (existsSync(join(ROOT, 'claude-academy'))) err('existe la carpeta pública claude-academy/: el manual vive solo en el área privada');
+  if (existsSync(join(ROOT, 'claude-manual', 'seed'))) err('existe claude-manual/seed/: el repositorio público no debe llevar fichas del manual (solo la de prueba, en tools/claude-academy/fixtures/)');
+  if (hasLocal) {   // lo que se publica en el repo no puede nombrar los temas, cursos ni bloques reales (el texto de un visual va en vizData, en la base)
+    const pub = ['claude-manual/viz.js', 'claude-manual/config.js', 'area-privada-claude.js', 'css/claude-manual.css'].map((f) => [f, read(f).toLowerCase()]);
+    const secrets = [...realData.TOPICS.flatMap((t) => [t.id, t.t]), ...realData.COURSES.map((c) => c.t), ...realData.BLOCKS.map((b) => b.t)].filter((x) => x && x.length > 4);
+    for (const [f, txt] of pub) for (const w of secrets) if (txt.includes(w.toLowerCase())) err(`${f} menciona «${w}», que es contenido privado del manual`);
+  }
   try {
     const tracked = execFileSync('git', ['ls-files', '.claude-academy', 'claude-academy'], { cwd: ROOT, encoding: 'utf8' }).trim();
     if (tracked) err('git rastrea archivos de contenido privado:\n' + tracked);
@@ -109,4 +127,4 @@ for (const [name, exp] of [['todo desplegado', Object.fromEntries(sb.map((b) => 
 
 v.warns.forEach((w) => console.log('⚠ ' + w));
 if (errors.length) { errors.forEach((e) => console.error('✗ ' + e)); console.error(`\n✗ ${errors.length} problema(s) en el Manual de Claude.`); process.exit(1); }
-console.log(`✓ Manual de Claude: ${data.TOPICS.length} fichas, ${data.BLOCKS.length} bloques, ${data.COURSES.length} cursos, ${real.edges.length} relaciones, ${data.GLOSS.length} términos (${hasLocal ? 'semilla + .claude-academy/' : 'solo semilla'}); cableado, mapa sin solapes, publicador y privacidad correctos.`);
+console.log(`✓ Manual de Claude: ${data.TOPICS.length} fichas, ${data.BLOCKS.length} bloques, ${data.COURSES.length} cursos, ${real.edges.length} relaciones, ${data.GLOSS.length} términos (${hasLocal ? 'ficha de prueba + .claude-academy/' : 'solo la ficha de prueba'}); cableado, mapa sin solapes, publicador y privacidad correctos.`);

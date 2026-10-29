@@ -126,7 +126,7 @@ window.APClaude = (function () {
     var out = '', i = 0, s = String(src), m;
     while (i < s.length) {
       var r = s.slice(i);
-      if ((m = r.match(/^(--|\/\/|#)[^\n]*/))) { out += '<span class="c">' + esc(m[0]) + '</span>'; i += m[0].length; continue; }
+      if ((m = r.match(/^(--(?=\s|$)|\/\/|#)[^\n]*/))) { out += '<span class="c">' + esc(m[0]) + '</span>'; i += m[0].length; continue; }
       if ((m = r.match(/^\/\*[\s\S]*?\*\//))) { out += '<span class="c">' + esc(m[0]) + '</span>'; i += m[0].length; continue; }
       if ((m = r.match(/^("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/))) { out += '<span class="s">' + esc(m[0]) + '</span>'; i += m[0].length; continue; }
       if ((m = r.match(/^\d+(?:[.,]\d+)?/)) && !/[\w]/.test(s[i - 1] || '')) { out += '<span class="n">' + m[0] + '</span>'; i += m[0].length; continue; }
@@ -224,7 +224,7 @@ window.APClaude = (function () {
   }
   function coursesHTML() {
     var K = A.CFG.SRCKINDS;
-    if (!D.COURSES.length) return '<div class="ca-empty"><b>Todavía no hay ningún curso incorporado.</b><p>De momento el manual solo contiene su propia guía. Cuando se incorpore el primer curso aparecerá aquí con la fecha en que se consultó y los temas que aporta, y cada tema quedará enlazado a su lección de origen.</p></div>';
+    if (!D.COURSES.length) return '<div class="ca-empty"><b>Todavía no hay ningún curso incorporado.</b><p>Cuando se incorpore el primer curso aparecerá aquí con la fecha en que se consultó y los temas que aporta, y cada tema quedará enlazado a su lección de origen.</p></div>';
     return '<div class="cards">' + D.COURSES.map(function (c) {
       var n = (G.courseTopics[c.id] || []).length;
       return '<a class="card" href="' + R('mapa/' + c.id) + '"><div class="cb">' + esc(K[c.k] || 'Curso') + '</div><h3>' + esc(c.t) + '</h3><p class="cq">' + (c.d ? 'Consultado el ' + fmtDate(c.d) + '. ' : '') + n + (n === 1 ? ' tema' : ' temas') + '.</p></a>';
@@ -323,9 +323,9 @@ window.APClaude = (function () {
       if (cb) cb(ok);
     });
   }
-  function mountViz(id, hostEl, note) {
+  function mountViz(id, hostEl, note, data) {
     hostEl.innerHTML = '<div class="viz"><div class="viz-h"><span class="vt">Visual</span><div class="viz-ctrl"></div></div><div class="viz-b"></div>' + (note ? '<div class="viz-n"><b>Qué debes notar:</b> ' + clean(note) + '</div>' : '') + '</div>';
-    var f = { title: $('.vt', hostEl), ctrl: $('.viz-ctrl', hostEl), body: $('.viz-b', hostEl), env: { topics: D.TOPICS, reltypes: A.CFG.RELTYPES, search: search } };
+    var f = { title: $('.vt', hostEl), ctrl: $('.viz-ctrl', hostEl), body: $('.viz-b', hostEl), data: data || {}, env: { topics: D.TOPICS, reltypes: A.CFG.RELTYPES, search: search } };
     try { if (A.VZ.VIZ[id]) A.VZ.VIZ[id](f); else f.body.textContent = 'Visual no disponible.'; }
     catch (err) { f.body.textContent = 'No se pudo cargar el visual.'; if (window.console) console.error(err); }
   }
@@ -400,7 +400,7 @@ window.APClaude = (function () {
       '<nav class="dnav" aria-label="Tema anterior y siguiente">' + (prev ? '<a href="' + R('tema/' + prev.id) + '"><span class="nk">← Anterior</span><span class="nt">' + esc(prev.t) + '</span></a>' : '<span></span>') + (next ? '<a class="nx" href="' + R('tema/' + next.id) + '"><span class="nk">Siguiente →</span><span class="nt">' + esc(next.t) + '</span></a>' : '') + '</nav></div></div>';
 
     function onQuiz(ok) { if (ok) setProg(t.id, 2); syncProgBtn(t); }
-    mountViz(t.viz, $('#vizHost'), t.vizNote);
+    mountViz(t.viz, $('#vizHost'), t.vizNote, t.vizData);
     bindQuiz($('#topicQuiz'), t, onQuiz);
     var rt = $('#qRetry'); if (rt) rt.addEventListener('click', function () { var h = $('#topicQuiz'); h.innerHTML = quizInner(t); bindQuiz(h, t, onQuiz); });
     $$('[data-copy]', $('#detail')).forEach(function (bt) { bt.addEventListener('click', function () { var src = t.code[+bt.dataset.copy].s; if (navigator.clipboard) navigator.clipboard.writeText(src).then(function () { bt.textContent = 'Copiado'; setTimeout(function () { bt.textContent = 'Copiar'; }, 1500); }); }); });
