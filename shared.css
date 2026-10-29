@@ -114,10 +114,10 @@ html.sn-pending [data-split-name] { visibility: hidden; }
 
 .nav-links { display: flex; gap: 2px; align-items: center; margin-left: auto; }
 .nav-links a {
-  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-family: var(--font-serif);
   font-size: 11px; color: var(--muted);
   text-decoration: none; padding: 6px 14px;
-  border-radius: 7px; font-weight: 500;
+  border-radius: 7px; font-weight: 400;
   transition: color .2s, background .2s;
   letter-spacing: .3px;
   text-transform: uppercase;
@@ -150,10 +150,10 @@ html.sn-pending [data-split-name] { visibility: hidden; }
   position: relative;
 }
 .nav-dropdown-trigger {
-  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-family: var(--font-serif);
   font-size: 11px; color: var(--muted);
   text-decoration: none; padding: 6px 14px;
-  border-radius: 7px; font-weight: 500;
+  border-radius: 7px; font-weight: 400;
   transition: color .2s, background .2s;
   letter-spacing: .3px;
   text-transform: uppercase;
@@ -230,8 +230,8 @@ html.sn-pending [data-split-name] { visibility: hidden; }
 .nav-dropdown-menu a {
   display: block;
   padding: 9px 12px;
-  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-  font-size: 11px; font-weight: 500;
+  font-family: var(--font-serif);
+  font-size: 11px; font-weight: 400;
   color: var(--muted);
   text-decoration: none;
   letter-spacing: .3px;
@@ -259,8 +259,8 @@ html.sn-pending [data-split-name] { visibility: hidden; }
 .nav-cta {
   background: var(--ink) !important;
   color: #ffffff !important;
-  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif !important;
-  font-weight: 500 !important;
+  font-family: var(--font-serif) !important;
+  font-weight: 400 !important;
   font-size: 11px !important;
   letter-spacing: .4px !important;
   border-radius: var(--radius-md) !important;
@@ -293,10 +293,10 @@ html.sn-pending [data-split-name] { visibility: hidden; }
   grid-row: 1;
 }
 .nav-cta .cta-text-wrap span:last-child { transform: translateY(100%); }
+/* Fondo negro fijo: al pasar el ratón solo cambia el texto (Contacto → ¿Hablamos?) */
 @media (hover: hover) and (pointer: fine) {
   .nav-cta:hover .cta-text-wrap span:first-child { transform: translateY(-100%); }
   .nav-cta:hover .cta-text-wrap span:last-child { transform: translateY(0); }
-  .nav-cta:hover { background: #ffffff !important; color: var(--ink) !important; box-shadow: inset 0 0 0 1.5px var(--ink) !important; }
 }
 .nav-cta:focus-visible {
   outline: 2px dashed var(--white) !important;
@@ -380,10 +380,10 @@ html.sn-pending [data-split-name] { visibility: hidden; }
 .btn-white:focus-visible, .btn-black:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
 
 /* ─── FOOTER ───
-   Negro estructural de marca (--ink), el mismo que nav, botones y filetes.
+   Gris carbón #272828, algo más claro que el negro de marca (--ink) de nav y botones.
    El espresso de Casa Origen NO se usa aquí: es paleta invitada de esa sección, no el negro del sitio. */
 footer {
-  background: var(--ink);
+  background: #272828;
   color: #ffffff;
   padding: 0;
 }
@@ -1056,7 +1056,7 @@ nav:not(#nav) > .ds-lang { margin-left: auto; }
   display: inline-flex; align-items: center; gap: 6px;
   height: 34px; padding: 0 12px; border-radius: 7px;
   background: transparent; color: var(--muted);
-  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: .3px; line-height: 1;
+  font-family: var(--font-serif); font-size: 11px; font-weight: 400; letter-spacing: .3px; line-height: 1;
   text-transform: uppercase; text-decoration: none;
   transition: color .2s, background .2s, transform .12s var(--ease);
 }
