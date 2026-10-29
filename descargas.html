@@ -16,7 +16,7 @@
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,800&family=Merriweather:ital,opsz,wght@0,18..144,400..700;1,18..144,400..700&display=swap">
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,800&family=Merriweather:ital,opsz,wght@0,18..144,400..700;1,18..144,400..700&display=swap" rel="stylesheet">
 <!-- Shared styles: variables, nav, footer, botones, reset -->
-<link rel="stylesheet" href="./shared.css?v=53f78ef5a0">
+<link rel="stylesheet" href="./shared.css?v=c5a6f6a3af">
 
 <!-- ── Cookie Consent + GA4 Consent Mode v2 (RGPD/LOPDGDD) ── -->
 <script>
@@ -145,8 +145,7 @@
 html{scroll-behavior:smooth}
 body{
   font-family:var(--font);
-  background:radial-gradient(1400px 900px at 50% 0,rgba(255,255,255,.9) 0%,rgba(255,255,255,0) 70%) no-repeat,linear-gradient(180deg,#eceef1 0%,#e3e5e9 40%,#dfe1e6 100%);
-  background-color:#e3e5e9;
+  background:var(--page);
   color:var(--ink);
   line-height:1.55;
   font-feature-settings:"tnum" 0;
@@ -1052,7 +1051,6 @@ const ICON_LI = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
 // Textos de la interfaz generada (los traduce i18n/descargas.en.json → js)
 const T = {
   dl: 'Descargar .pbix',
-  dlAria: 'Descargar',
   li: 'Ver post en LinkedIn',
   done: 'Ya descargado'
 };
@@ -1112,7 +1110,7 @@ function moduleHtml(it, idx){
       <h3 class="m-title">${esc(it.title)}</h3>
       <p class="m-desc">${esc(it.desc)}</p>
       <div class="m-actions">
-        <a class="m-dl" href="${esc(it.dl)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(T.dlAria)} ${esc(it.title)} (.pbix)">${esc(T.dl)}${ICON_DL}</a>
+        <a class="m-dl" href="${esc(it.dl)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(T.dl)}: ${esc(it.title)}">${esc(T.dl)}${ICON_DL}</a>
         <a class="m-ext" href="${esc(it.li)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(T.li)}" title="${esc(T.li)}">${ICON_LI}</a>
       </div>
     </div>

@@ -41,7 +41,7 @@
   min-height: 100svh;
   padding: 80px clamp(1.5rem,3vw,2.5rem) 80px;
   display: flex; align-items: center;
-  background: var(--white);
+  background: var(--page);
   position: relative; overflow: hidden;
 }
 .hero::before {
@@ -536,13 +536,13 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 
 
 /* ─── PROJECTS ─── */
-.proj-section { background: var(--off); border-top: 1px solid #e8e8ee; border-bottom: 1px solid #e8e8ee; }
+.proj-section { background: var(--page); }
 .proj-section > .c { max-width: 100%; padding: 0 clamp(1.5rem,4vw,5rem); margin: 0 auto; }
 .proj-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 52px; gap: 24px; flex-wrap: wrap; }
 .proj-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; align-items: stretch; }
 
 .proj-card {
-  background: var(--white);
+  background: var(--card);
   border: 1px solid #e8e8ee;
   border-radius: var(--radius-lg); overflow: hidden;
   transition: background .18s cubic-bezier(.4,0,.2,1), transform .16s ease-out;
@@ -596,7 +596,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 /* ─── ML CARDS: mismo sistema visual que .proj-card ─── */
 .ml-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; align-items: stretch; }
 .card-c {
-  background: var(--white);
+  background: var(--card);
   border: 1px solid #e8e8ee;
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -650,7 +650,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   --v4-ease-print: cubic-bezier(.22,.8,.3,1);
   --v4-ease-out:   var(--ease, cubic-bezier(0.16,1,0.3,1));
 
-  background: var(--white);
+  background: var(--page);
   padding: 0 0 clamp(96px, 10vw, 120px);
   position: relative;
   overflow-x: clip;
@@ -968,12 +968,12 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 }
 
 /* ─── STACK SKILLS ─── */
-.stack-section { background: var(--off); border-top: 1px solid #e8e8ee; border-bottom: 1px solid #e8e8ee; }
+.stack-section { background: var(--page); }
 .stack-section > .c { max-width: 100%; padding: 0 clamp(1.5rem,5vw,4rem); }
 
 /* ─── CTA FINAL ─── */
 .cta-final {
-  background: var(--white);
+  background: var(--page);
   position: relative;
   overflow: hidden;
   text-align: center;
@@ -1107,7 +1107,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 /* Tarjeta centrada en columna (titular en dos líneas → foto → acciones),
    la misma composición en escritorio y en móvil; cambia solo la escala. */
 .contact-bar {
-  background: #f4f4f4;
+  background: var(--card);
   border-radius: 24px;
   padding: 32px 28px;
   display: flex; flex-direction: column; align-items: center;
@@ -1311,7 +1311,7 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 
 /* ─── CÓMO TRABAJO · ÍNDICE XXL ─── */
 .dph-section {
-  background: var(--white);
+  background: var(--page);
   padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px);
 }
 
