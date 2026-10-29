@@ -12,13 +12,11 @@ export const MANUAL = {
   mapCenter: "Claude y su ecosistema",
   lead: "Un manual privado que crece con cada curso de Claude Academy que estudio: cada concepto explicado en llano, con su fuente, sus conexiones y un mapa para ver cómo encaja todo.",
   stats: [["Temas", "auto"], ["Bloques", "auto"], ["Cursos", "auto"], ["Relaciones", "auto"]],   // "auto" = se calcula
-  how: [
-    ["Entiéndelo", "La idea en una frase, una analogía, los pasos y un ejemplo con números."],
-    ["Míralo en acción", "Un visual interactivo propio del tema: toca los controles y fíjate en lo que cambia."],
-    ["Úsalo en un proyecto", "Un caso real, cuándo sí y cuándo no, y, si el tema lo permite, un ejercicio paso a paso."],
-    ["Por dentro", "El código o la configuración y los conceptos con los que se confunde."],
-    ["Ponte a prueba", "Lo que tienes que recordar y una pregunta de autochequeo con progreso guardado."],
-    ["Nivel profesional", "Matices de proyectos reales, cómo encaja con otros temas y de dónde sale la información."]
+  flow: [
+    ["Explorar", "Claude lee el código y entiende el problema antes de cambiar nada."],
+    ["Planificar", "Se acuerda qué hay que cambiar, en qué orden y con qué criterio de éxito. Un plan corregido a tiempo ahorra rehacer."],
+    ["Codificar", "Con el plan claro, Claude hace los cambios. Se hace en pasos pequeños que puedas revisar."],
+    ["Confirmar", "Se comprueba el resultado (pruebas, revisión del cambio) antes de darlo por bueno."]
   ],
   sources: "Este manual se construye a partir de los cursos y la documentación oficial de Anthropic que voy incorporando, uno a uno. Cada ficha indica su fuente, el curso de origen, cuándo se consultó y si el contenido se ha contrastado. Las explicaciones están reformuladas para entenderlas; no son citas."
 };
