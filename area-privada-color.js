@@ -130,7 +130,7 @@ window.APColor = (function () {
     document.addEventListener('pointerdown', leave, true);
     document.addEventListener('keydown', leave, true);
     // espera breve a la fuente del título para que no cambie de letra a mitad de la animación
-    var font = document.fonts && document.fonts.load ? document.fonts.load('500 64px Newsreader').catch(function () {}) : null;
+    var font = document.fonts && document.fonts.load ? document.fonts.load('500 64px Merriweather').catch(function () {}) : null;
     Promise.race([font, new Promise(function (r) { setTimeout(r, INTRO.font); })]).then(function () {
       if (gone) return;
       el.classList.add('is-in');

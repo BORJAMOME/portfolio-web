@@ -23,9 +23,9 @@
   --mutedB:       #5a5a5a; /* alias de --muted (antes #6e6e6e): consolidado, no crear grises nuevos */
   --li:           #0077b5;
   --logo-purple:  #7a7bff;
-  --font:         'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
-  --font-serif:   'Newsreader', Georgia, serif;
-  --mono:         'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+  --font:         'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-serif:   'Merriweather', Georgia, serif;
+  --mono:         'Inter', 'Segoe UI', system-ui, sans-serif;
   --radius-lg:    10px;
   --radius-md:    8px;
   --radius-pill:  999px;
@@ -114,7 +114,7 @@ html.sn-pending [data-split-name] { visibility: hidden; }
 
 .nav-links { display: flex; gap: 2px; align-items: center; margin-left: auto; }
 .nav-links a {
-  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   font-size: 11px; color: var(--muted);
   text-decoration: none; padding: 6px 14px;
   border-radius: 7px; font-weight: 500;
@@ -150,7 +150,7 @@ html.sn-pending [data-split-name] { visibility: hidden; }
   position: relative;
 }
 .nav-dropdown-trigger {
-  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   font-size: 11px; color: var(--muted);
   text-decoration: none; padding: 6px 14px;
   border-radius: 7px; font-weight: 500;
@@ -230,7 +230,7 @@ html.sn-pending [data-split-name] { visibility: hidden; }
 .nav-dropdown-menu a {
   display: block;
   padding: 9px 12px;
-  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   font-size: 11px; font-weight: 500;
   color: var(--muted);
   text-decoration: none;
@@ -259,7 +259,7 @@ html.sn-pending [data-split-name] { visibility: hidden; }
 .nav-cta {
   background: var(--ink) !important;
   color: #ffffff !important;
-  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif !important;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif !important;
   font-weight: 500 !important;
   font-size: 11px !important;
   letter-spacing: .4px !important;
@@ -338,7 +338,7 @@ html.sn-pending [data-split-name] { visibility: hidden; }
               border-color .45s cubic-bezier(0.65,0,0.35,1),
               transform .16s ease-out;
   border: none;
-  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   letter-spacing: .4px;
   text-transform: uppercase;
   cursor: pointer;
@@ -442,7 +442,7 @@ footer[data-lamp-root] { position: relative; overflow: hidden; }
   line-height: 1.5; margin: 0; max-width: 280px;
 }
 .foot-brand-loc {
-  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   font-size: 11px; color: rgba(255,255,255,.55);
   margin: 0; letter-spacing: .5px;
 }
@@ -450,7 +450,7 @@ footer[data-lamp-root] { position: relative; overflow: hidden; }
 .foot-copy-email {
   display: inline-flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; margin-top: 4px; padding: 6px 0;
   background: none; border: 0; cursor: pointer; text-align: left;
-  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; font-size: 13px; color: rgba(255,255,255,.88);
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; font-size: 13px; color: rgba(255,255,255,.88);
 }
 .foot-copy-email-act {
   font-size: 11px; font-weight: 600; letter-spacing: .4px; text-transform: uppercase;
@@ -463,7 +463,7 @@ footer[data-lamp-root] { position: relative; overflow: hidden; }
 .foot-copy-email.is-copied .foot-copy-email-act { background: #7a7bff; border-color: #7a7bff; color: #fff; }
 .foot-copy-email:focus-visible { outline: 2px solid #fff; outline-offset: 3px; border-radius: 4px; }
 .foot-col-title {
-  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   font-size: 11px; font-weight: 500;
   color: rgba(255,255,255,.55);
   letter-spacing: .8px; text-transform: uppercase;
@@ -487,13 +487,13 @@ footer[data-lamp-root] { position: relative; overflow: hidden; }
   flex-wrap: wrap; gap: 12px;
 }
 .foot-copy {
-  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   font-size: 11px; color: rgba(255,255,255,.7); letter-spacing: .3px;
 }
 /* Enlaces legales del pie: privacidad y preferencias de cookies (consent.js) */
 .foot-legal-wrap { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 18px; }
 .foot-legal { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 4px 16px; font-size: 11px; letter-spacing: .3px; }
-.foot-bottom .foot-legal { font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; color: rgba(255,255,255,.8); }
+.foot-bottom .foot-legal { font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; color: rgba(255,255,255,.8); }
 .foot-legal a, .foot-legal button {
   color: inherit; font: inherit; letter-spacing: inherit;
   background: none; border: 0; padding: 4px 0; min-height: 24px; cursor: pointer;
@@ -506,11 +506,11 @@ footer[data-lamp-root] { position: relative; overflow: hidden; }
 .foot-legal a:focus-visible, .foot-legal button:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 2px; }
 .foot-made {
   display: flex; align-items: center; gap: 8px;
-  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   font-size: 11px; color: rgba(255,255,255,.7); letter-spacing: .3px; flex-wrap: wrap;
 }
 .foot-tech {
-  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; font-size: 11px;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; font-size: 11px;
   background: rgba(255,255,255,.08); padding: 2px 7px; border-radius: 4px;
   color: #ffffff; font-weight: 500; border: .5px solid rgba(255,255,255,.14);
 }
@@ -1027,7 +1027,7 @@ nav.nav-drawer-links {
 /* ─── SEC-NAV (barra de navegación de secciones, páginas de proyectos) ─── */
 .sec-nav{position:sticky;top:60px;z-index:99;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
 .sec-nav-inner{display:flex;align-items:center;gap:10px;padding:14px clamp(20px,4vw,48px);max-width:1240px;margin:0 auto;overflow-x:auto;flex-wrap:wrap;border:0}
-.sec-nav a,.sec-nav button{font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;font-size:12px;font-weight:500;color:var(--ink);background:#fff;border:1px solid var(--ink);border-radius:999px;padding:9px 18px;text-decoration:none;white-space:nowrap;cursor:pointer;letter-spacing:.02em;transition:background .15s var(--ease),color .15s var(--ease)}
+.sec-nav a,.sec-nav button{font-family:'Inter','Segoe UI',system-ui,sans-serif;font-size:12px;font-weight:500;color:var(--ink);background:#fff;border:1px solid var(--ink);border-radius:999px;padding:9px 18px;text-decoration:none;white-space:nowrap;cursor:pointer;letter-spacing:.02em;transition:background .15s var(--ease),color .15s var(--ease)}
 @media (hover: hover) and (pointer: fine) { .sec-nav a:hover,.sec-nav button:hover{background:#f2f2f2;color:var(--ink);border-color:var(--ink)} }
 .sec-nav a.active,.sec-nav button.active{background:var(--ink);color:#fff;border-color:var(--ink);font-weight:600}
 
@@ -1056,7 +1056,7 @@ nav:not(#nav) > .ds-lang { margin-left: auto; }
   display: inline-flex; align-items: center; gap: 6px;
   height: 34px; padding: 0 12px; border-radius: 7px;
   background: transparent; color: var(--muted);
-  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: .3px; line-height: 1;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: .3px; line-height: 1;
   text-transform: uppercase; text-decoration: none;
   transition: color .2s, background .2s, transform .12s var(--ease);
 }

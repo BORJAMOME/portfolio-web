@@ -128,7 +128,7 @@ await step('Inicio: Shadow DOM aislado, datos de la semilla y sin violaciones de
   eq(info.docLinks + info.sheets, 0, 'la hoja del manual se ha colado en el documento'); eq(info.inShadow, 1);
   ok(info.bar === '0%', 'barra de progreso sin ancho por CSSOM: ' + info.bar);
   const font = await c.page.evaluate(() => [getComputedStyle(document.querySelector('.ap-top')).fontFamily, getComputedStyle(document.querySelector('.cm-host').shadowRoot.querySelector('h1')).fontFamily]);
-  ok(/Newsreader/.test(font[1]), 'el título no usa la tipografía del manual'); ok(font[0] !== font[1], 'el área privada hereda la tipografía del manual');
+  ok(/Merriweather/.test(font[1]), 'el título no usa la tipografía del manual'); ok(font[0] !== font[1], 'el área privada hereda la tipografía del manual');
   await shot(c.page, 'inicio'); await clean(c); await c.ctx.close();
 });
 

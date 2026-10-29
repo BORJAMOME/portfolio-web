@@ -18,8 +18,8 @@
   --green-ink: #4A3E79;   /* mismo acento, más oscuro, para texto pequeño (9,0:1) */
   --green-wash: #F0EEF6;
   --red: #a3223e;         /* solo para escalas divergentes */
-  --serif: 'Newsreader', Georgia, serif;
-  --sans: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+  --serif: 'Merriweather', Georgia, serif;
+  --sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
   --t-fast: .3s;
   --t-mid: .55s;
   --t-slow: .85s;

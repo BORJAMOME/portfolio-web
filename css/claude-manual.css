@@ -2,8 +2,8 @@
    MANUAL DE CLAUDE (área privada) · sistema de diseño de los manuales de Power BI y Machine Learning
    Se carga DENTRO de un Shadow DOM (area-privada-claude.js): :host hace de :root y de body, y nada de lo
    de aquí sale al área privada ni entra de ella. Mismo sistema que el Manual de Machine Learning:
-   fondo #FBFBFB, tinta azul oscuro, Plus Jakarta Sans para el texto,
-   Newsreader para los títulos editoriales e IBM Plex Mono para código.
+   fondo #FBFBFB, tinta azul oscuro, Inter para el texto,
+   Merriweather para los títulos editoriales e IBM Plex Mono para código.
    El azul marino #273A5F es el único acento de interfaz; los colores
    de datos (--lab1…6) solo aparecen dentro de los visuales.
    ══════════════════════════════════════════════════════════════ */
@@ -20,8 +20,8 @@
   --on-ink:#FFFFFF;--glass:rgba(251,251,251,.88);
   --lab1:#273A5F;--lab2:#C8602F;--lab3:#1F8A7A;--lab4:#B03A4E;--lab5:#C99A1C;--lab6:#BE5F8A;
   --bc0:#273A5F;--bc1:#C8602F;--bc2:#1F8A7A;--bc3:#B03A4E;--bc4:#8A5A0C;--bc5:#B2527F;--bc6:#6B4FA3;--bc7:#4F7D2E;
-  --sans:'Plus Jakarta Sans','Segoe UI',system-ui,-apple-system,'Helvetica Neue',sans-serif;
-  --serif:'Newsreader',Georgia,'Times New Roman',serif;
+  --sans:'Inter','Segoe UI',system-ui,-apple-system,'Helvetica Neue',sans-serif;
+  --serif:'Merriweather',Georgia,'Times New Roman',serif;
   --mono:'IBM Plex Mono','Cascadia Code',Consolas,'SF Mono','Courier New',monospace;
   --r-lg:12px;--r:10px;--r-sm:7px;
   --shadow-1:0 1px 2px rgba(29,38,56,.04);
