@@ -1040,17 +1040,18 @@ nav.nav-drawer-links {
    sin menú, a la derecha. En móvil se queda en la cabecera, junto a la hamburguesa.
    Las versiones inglesas las genera tools/build-en.mjs. */
 .ds-lang { flex: none; display: flex; align-items: center; }
-#nav .nav-links .ds-lang { margin: 0 6px 0 8px; }
+#nav .nav-links .ds-lang { margin: 0 4px 0 2px; }
 nav:not(#nav) > .ds-lang { margin-left: auto; }
+/* mismo aspecto que los enlaces del menú (.nav-links a): sin borde ni fondo, gris que pasa a negro */
 .ds-lang .ds-lang-btn {
   display: inline-flex; align-items: center; gap: 6px;
-  height: 34px; padding: 0 12px 0 10px; border-radius: var(--radius-md);
-  border: 1px solid var(--gray); background: #ffffff; color: var(--ink);
-  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .4px; line-height: 1;
+  height: 34px; padding: 0 12px; border-radius: 7px;
+  background: transparent; color: var(--muted);
+  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: .3px; line-height: 1;
   text-transform: uppercase; text-decoration: none;
-  transition: border-color .2s var(--ease), background .2s var(--ease), transform .12s var(--ease);
+  transition: color .2s, background .2s, transform .12s var(--ease);
 }
-.ds-lang-ico { width: 16px; height: 16px; flex: none; }
-@media (hover: hover) and (pointer: fine) { .ds-lang .ds-lang-btn:hover { border-color: var(--ink); background: var(--off); color: var(--ink); } }
+.ds-lang-ico { width: 15px; height: 15px; flex: none; }
+@media (hover: hover) and (pointer: fine) { .ds-lang .ds-lang-btn:hover { background: var(--off); color: var(--ink); } }
 .ds-lang .ds-lang-btn:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; background: var(--off); }
 .ds-lang .ds-lang-btn:active { transform: scale(.96); }
