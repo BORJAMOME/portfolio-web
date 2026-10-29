@@ -369,6 +369,15 @@ html.sn-pending [data-split-name] { visibility: hidden; }
   .btn-outline:hover { color: #ffffff; border-color: #111111; }
   .btn-outline[data-arrow="right"]:hover .btn-arrow { transform: translateX(4px); }
 }
+/* Color fijo: el botón no cambia de color al pasar el ratón (home, sobre mí, laboratorio).
+   Solo la flecha se desplaza, como en el resto de botones. */
+.btn-white { background: #ffffff; color: var(--ink); border: 1px solid var(--ink); }
+.btn-black { background: var(--ink); color: #ffffff; border: 1px solid var(--ink); }
+.btn-white::before, .btn-black::before { content: none; }
+@media (hover: hover) and (pointer: fine) {
+  .btn-white[data-arrow="right"]:hover .btn-arrow, .btn-black[data-arrow="right"]:hover .btn-arrow { transform: translateX(4px); }
+}
+.btn-white:focus-visible, .btn-black:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
 
 /* ─── FOOTER ───
    Negro estructural de marca (--ink), el mismo que nav, botones y filetes.
