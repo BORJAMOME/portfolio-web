@@ -525,6 +525,8 @@
     // sin pestaña propia: vive dentro de «Entrevistas» (tab) con su propio archivo
     preparacion: { global: 'APPreparacion', title: 'Entrevistas', tab: 'entrevistas' },
     portfolio:   { global: 'APPortfolio',   title: 'Portfolio' },
+    // sin pestaña propia: se abre desde «Portfolio» (tab), que es donde vive el manual privado
+    claude:      { global: 'APClaude',      title: 'Manual de Claude', tab: 'portfolio' },
     'second-brain': { global: 'APSecondBrain', title: 'Second Brain' },
     mapa:        { global: 'APMapa',        title: 'Mapa' },
     fichero:     { global: 'APFichero',     title: 'Fichero' },

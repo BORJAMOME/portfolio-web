@@ -1,11 +1,11 @@
 /* ══════════════════════════════════════════════════════════════
-   Mapa mental (vista #mapa) y miniatura de la portada.
+   Mapa mental (vista #/claude/mapa) y miniatura de la portada. Módulo ES del Manual de Claude.
    Solo dibuja: las posiciones y las relaciones salen de grafo.js (CAGrafo) y, por tanto, de las fichas.
    Dos presentaciones de los mismos datos: mapa SVG (zoom, desplazamiento, resaltado) y lista por ramas
    (pantallas pequeñas y lectores de pantalla). El detalle de cada nodo vive en un panel común.
-   Necesita: CAGrafo (grafo.js). Se monta desde app.js con CAMapa.render(host, ctx).
+   Recibe grafo.js como ctx.GR (render) o GR (miniature). Lo monta area-privada-claude.js dentro de su Shadow DOM.
+   CSP del área privada: sin atributos style; todo el aspecto va en clases de css/claude-manual.css.
    ══════════════════════════════════════════════════════════════ */
-(function(){
 "use strict";
 
 var ST = ["Pendiente", "En estudio", "Entendido"];
@@ -25,29 +25,29 @@ function wrap(s, n){
 /* Punto a distancia d de p, en dirección a q */
 function toward(p, q, d){ var dx = q.x - p.x, dy = q.y - p.y, l = Math.sqrt(dx * dx + dy * dy) || 1; return {x:p.x + dx / l * d, y:p.y + dy / l * d}; }
 function fmtDate(d){
-  var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d || ""); if(!m) return d || "";
+  var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d || ""); if(!m) return esc(d || "");
   return +m[3] + " de " + ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"][+m[2] - 1] + " de " + m[1];
 }
 
 /* ── miniatura de la portada: los mismos nodos, sin interacción ── */
-function miniature(G, title, centerLabel){
-  var L = CAGrafo.layout(G), W = 400, H = 300, P = 34, b = L.bounds;
+function miniature(GR, G, title, centerLabel){
+  var L = GR.layout(G), W = 400, H = 300, P = 34, b = L.bounds;
   var k = Math.min((W - 2 * P) / (b.w - 220), (H - 2 * P) / (b.h - 220));
   var cx = W / 2 - (b.x + b.w / 2) * k, cy = H / 2 - (b.y + b.h / 2) * k;
   function X(p){ return (cx + p.x * k).toFixed(1); } function Y(p){ return (cy + p.y * k).toFixed(1); }
   var s = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(title) + '">', pos = L.pos;
   G.blocks.forEach(function(bl){
-    s += '<line x1="' + X(pos.center) + '" y1="' + Y(pos.center) + '" x2="' + X(pos[bl.id]) + '" y2="' + Y(pos[bl.id]) + '" style="stroke:var(--line-2);stroke-width:1.2"/>';
-    G.topics.forEach(function(t){ if(t.b === bl.id && pos[t.id]) s += '<line x1="' + X(pos[bl.id]) + '" y1="' + Y(pos[bl.id]) + '" x2="' + X(pos[t.id]) + '" y2="' + Y(pos[t.id]) + '" style="stroke:var(--line);stroke-width:.8"/>'; });
+    s += '<line x1="' + X(pos.center) + '" y1="' + Y(pos.center) + '" x2="' + X(pos[bl.id]) + '" y2="' + Y(pos[bl.id]) + '" class="mn-spoke"/>';
+    G.topics.forEach(function(t){ if(t.b === bl.id && pos[t.id]) s += '<line x1="' + X(pos[bl.id]) + '" y1="' + Y(pos[bl.id]) + '" x2="' + X(pos[t.id]) + '" y2="' + Y(pos[t.id]) + '" class="mn-leaf"/>'; });
   });
-  G.edges.forEach(function(e){ if(pos[e.from] && pos[e.to]) s += '<line x1="' + X(pos[e.from]) + '" y1="' + Y(pos[e.from]) + '" x2="' + X(pos[e.to]) + '" y2="' + Y(pos[e.to]) + '" style="stroke:var(--accent-2);stroke-width:1.1;opacity:.6"/>'; });
-  G.topics.forEach(function(t){ if(pos[t.id]) s += '<circle cx="' + X(pos[t.id]) + '" cy="' + Y(pos[t.id]) + '" r="4.5" style="fill:var(--card);stroke:var(--accent-2);stroke-width:1.5"/>'; });
+  G.edges.forEach(function(e){ if(pos[e.from] && pos[e.to]) s += '<line x1="' + X(pos[e.from]) + '" y1="' + Y(pos[e.from]) + '" x2="' + X(pos[e.to]) + '" y2="' + Y(pos[e.to]) + '" class="mn-rel"/>'; });
+  G.topics.forEach(function(t){ if(pos[t.id]) s += '<circle cx="' + X(pos[t.id]) + '" cy="' + Y(pos[t.id]) + '" r="4.5" class="mn-topic"/>'; });
   G.blocks.forEach(function(bl){
-    s += '<circle cx="' + X(pos[bl.id]) + '" cy="' + Y(pos[bl.id]) + '" r="13" style="fill:var(--accent)"/><text x="' + X(pos[bl.id]) + '" y="' + (+Y(pos[bl.id]) + 5) + '" text-anchor="middle" style="font-family:var(--serif);font-size:15px;fill:var(--on-accent)">' + bl.n + "</text>";
+    s += '<circle cx="' + X(pos[bl.id]) + '" cy="' + Y(pos[bl.id]) + '" r="13" class="mn-block"/><text class="mn-num" x="' + X(pos[bl.id]) + '" y="' + (+Y(pos[bl.id]) + 5) + '" text-anchor="middle">' + bl.n + "</text>";
   });
   var lines = wrap(centerLabel, 12), ph = 22 + lines.length * 15, pw = 112;
-  s += '<rect x="' + (+X(pos.center) - pw / 2) + '" y="' + (+Y(pos.center) - ph / 2) + '" width="' + pw + '" height="' + ph + '" rx="9" style="fill:var(--accent)"/>';
-  lines.forEach(function(l, i){ s += '<text x="' + X(pos.center) + '" y="' + (+Y(pos.center) - ph / 2 + 22 + i * 15) + '" text-anchor="middle" style="font-family:var(--serif);font-size:14px;fill:var(--on-accent)">' + esc(l) + "</text>"; });
+  s += '<rect x="' + (+X(pos.center) - pw / 2) + '" y="' + (+Y(pos.center) - ph / 2) + '" width="' + pw + '" height="' + ph + '" rx="9" class="mn-center"/>';
+  lines.forEach(function(l, i){ s += '<text class="mn-ct" x="' + X(pos.center) + '" y="' + (+Y(pos.center) - ph / 2 + 22 + i * 15) + '" text-anchor="middle">' + esc(l) + "</text>"; });
   return s + "</svg>";
 }
 
@@ -57,11 +57,11 @@ var S = {sel:null, q:"", fb:"", fs:"", mode:null, expanded:null, courses:false};
 function render(host, ctx){
   var G = ctx.G, M = ctx.MANUAL, vb = null, base = null, zoom = 1, drag = null, dragged = false, pts = {}, pinch = 0, L = null, svg = null;
   if(ctx.sel !== undefined) S.sel = ctx.sel && (G.topic[ctx.sel] || G.block[ctx.sel] || G.course[ctx.sel]) ? ctx.sel : null;
-  if(!S.expanded || ctx.reset) S.expanded = CAGrafo.defaultExpanded(G);
+  if(!S.expanded || ctx.reset) S.expanded = ctx.GR.defaultExpanded(G);
   if(S.mode === null) S.mode = window.matchMedia && window.matchMedia("(max-width: 759px)").matches ? "lista" : "mapa";
-  var collapsible = G.topics.length > CAGrafo.MAX_ALL;
+  var collapsible = G.topics.length > ctx.GR.MAX_ALL;
 
-  function title(id){ return G.topic[id] ? G.topic[id].t : G.block[id] ? G.block[id].t : G.course[id] ? G.course[id].t : id; }
+  function title(id){ return esc(G.topic[id] ? G.topic[id].t : G.block[id] ? G.block[id].t : G.course[id] ? G.course[id].t : id); }
   function kind(id){ return G.topic[id] ? "topic" : G.block[id] ? "block" : G.course[id] ? "course" : "center"; }
   function st(id){ return ctx.prog(id) || 0; }
   function filterOn(){ return !!(S.q.trim() || S.fb || S.fs !== ""); }
@@ -102,7 +102,7 @@ function render(host, ctx){
     return s === 2 ? '<path d="M-5 0.5 L-1.5 4 L5 -3.5" class="ca-ck"/>' : s === 1 ? '<circle r="4" class="ca-half"/>' : "";
   }
   function build(){
-    L = CAGrafo.layout(G, {expanded:S.expanded});
+    L = ctx.GR.layout(G, {expanded:S.expanded});
     base = {x:L.bounds.x, y:L.bounds.y, w:L.bounds.w, h:L.bounds.h};
     if(!vb) vb = {x:base.x, y:base.y, w:base.w, h:base.h};
     var pos = L.pos, s = "", edges = "", nodes = "", hier = "";
@@ -311,15 +311,15 @@ function render(host, ctx){
       var ts = G.topics.filter(function(t){ return t.b === b.id && (!on || m[t.id]); });
       if(on && !ts.length) return;
       var all = G.topics.filter(function(t){ return t.b === b.id; }), done = all.filter(function(t){ return st(t.id) === 2; }).length;
-      h += '<section class="ca-lb-s"><h3><button type="button" class="ca-go' + (S.sel === b.id ? " on" : "") + '" data-go="' + b.id + '"><span class="ca-bn">' + b.n + "</span>" + esc(b.t) + '</button><span class="ca-cnt">' + done + " de " + all.length + " entendidos</span></h3><ul>" +
-        ts.map(function(t){ return '<li><button type="button" class="ca-go' + (S.sel === t.id ? " on" : "") + '" data-go="' + t.id + '">' + dotHTML(t.id) + '<span class="ca-tt">' + t.t + '</span><span class="ca-cnt">' + G.degree(t.id) + (G.degree(t.id) === 1 ? " relación" : " relaciones") + "</span></button></li>"; }).join("") + "</ul></section>";
+      h += '<section class="ca-lb-s"><h3><button type="button" class="ca-go' + (S.sel === b.id ? " on" : "") + '" data-go="' + b.id + '"><span class="ca-bn">' + esc(b.n) + "</span>" + esc(b.t) + '</button><span class="ca-cnt">' + done + " de " + all.length + " entendidos</span></h3><ul>" +
+        ts.map(function(t){ return '<li><button type="button" class="ca-go' + (S.sel === t.id ? " on" : "") + '" data-go="' + t.id + '">' + dotHTML(t.id) + '<span class="ca-tt">' + esc(t.t) + '</span><span class="ca-cnt">' + G.degree(t.id) + (G.degree(t.id) === 1 ? " relación" : " relaciones") + "</span></button></li>"; }).join("") + "</ul></section>";
     });
-    if(G.courses.length) h += '<section class="ca-lb-s"><h3><span class="ca-bn">C</span>Cursos</h3><ul>' + G.courses.map(function(c){ return '<li><button type="button" class="ca-go' + (S.sel === c.id ? " on" : "") + '" data-go="' + c.id + '"><span class="ca-tt">' + c.t + '</span><span class="ca-cnt">' + (G.courseTopics[c.id] || []).length + " temas</span></button></li>"; }).join("") + "</ul></section>";
+    if(G.courses.length) h += '<section class="ca-lb-s"><h3><span class="ca-bn">C</span>Cursos</h3><ul>' + G.courses.map(function(c){ return '<li><button type="button" class="ca-go' + (S.sel === c.id ? " on" : "") + '" data-go="' + c.id + '"><span class="ca-tt">' + esc(c.t) + '</span><span class="ca-cnt">' + (G.courseTopics[c.id] || []).length + " temas</span></button></li>"; }).join("") + "</ul></section>";
     $1("#ca-list").innerHTML = h || '<p class="lead">Ningún tema coincide con los filtros.</p>';
   }
 
   /* ── panel de detalle ── */
-  function linkTo(id, extra){ return '<button type="button" class="ca-lk" data-go="' + id + '">' + (G.topic[id] ? dotHTML(id) : "") + title(id) + "</button>" + (extra ? ' <span class="ca-w">' + extra + "</span>" : ""); }
+  function linkTo(id, extra){ return '<button type="button" class="ca-lk" data-go="' + esc(id) + '">' + (G.topic[id] ? dotHTML(id) : "") + title(id) + "</button>" + (extra ? ' <span class="ca-w">' + ctx.clean(extra) + "</span>" : ""); }
   function drawPanel(){
     var id = S.sel, h = "", p = $1("#ca-panel");
     if(!id){
@@ -327,22 +327,22 @@ function render(host, ctx){
         '<p class="ca-p">' + G.topics.length + (G.topics.length === 1 ? " tema" : " temas") + " en " + G.blocks.length + (G.blocks.length === 1 ? " bloque" : " bloques") + ", " + G.edges.length + (G.edges.length === 1 ? " relación" : " relaciones") + (G.courses.length ? ", " + G.courses.length + (G.courses.length === 1 ? " curso" : " cursos") : ", todavía ningún curso incorporado") + ".</p>";
     }else if(G.topic[id]){
       var t = G.topic[id], b = G.block[t.b], s = st(id), rt = G.route(id), gs = G.groups(id), dep = G.dependents(id);
-      h = '<div class="ca-ph"><span class="chip acc">' + b.n + " · " + esc(b.t) + '</span><span class="chip">' + ST[s] + "</span>" + ctx.lv(t.lvl) + "</div><h3>" + t.t + '</h3><p class="ca-p">' + t.one + "</p>" +
-        '<div class="ca-act"><a class="btn solid" href="#tema/' + t.id + '">Abrir ficha →</a></div>' +
-        '<h4>Ruta de aprendizaje</h4>' + (rt.length ? '<ol class="ca-route">' + rt.map(function(x){ return "<li>" + linkTo(x) + "</li>"; }).join("") + '<li class="ca-cur">' + dotHTML(id) + '<b>' + t.t + "</b></li></ol>" : '<p class="ca-p">No necesita conocimientos previos del manual: puedes empezar por aquí.</p>') +
+      h = '<div class="ca-ph"><span class="chip acc">' + esc(b.n) + " · " + esc(b.t) + '</span><span class="chip">' + ST[s] + "</span>" + ctx.lv(t.lvl) + "</div><h3>" + esc(t.t) + '</h3><p class="ca-p">' + ctx.clean(t.one) + "</p>" +
+        '<div class="ca-act"><a class="btn solid" href="' + ctx.href("tema/" + t.id) + '">Abrir ficha →</a></div>' +
+        '<h4>Ruta de aprendizaje</h4>' + (rt.length ? '<ol class="ca-route">' + rt.map(function(x){ return "<li>" + linkTo(x) + "</li>"; }).join("") + '<li class="ca-cur">' + dotHTML(id) + '<b>' + esc(t.t) + "</b></li></ol>" : '<p class="ca-p">No necesita conocimientos previos del manual: puedes empezar por aquí.</p>') +
         (dep.length ? '<p class="ca-p">Después de este tema: ' + dep.map(function(x){ return linkTo(x); }).join(" · ") + ".</p>" : "") +
         '<h4>Relaciones</h4>' + (gs.length ? gs.map(function(g){ return '<div class="ca-grp"><div class="ca-gl">' + esc(g.label) + "</div><ul>" + g.items.map(function(x){ return "<li>" + linkTo(x.id, x.w) + "</li>"; }).join("") + "</ul></div>"; }).join("") : '<p class="ca-p">Todavía no tiene relaciones declaradas.</p>');
       var cs = G.coursesOf(id);
       if(cs.length) h += "<h4>Cursos de origen</h4><ul class=\"ca-ul\">" + cs.map(function(c){ return "<li>" + linkTo(c) + "</li>"; }).join("") + "</ul>";
     }else if(G.block[id]){
       var bl = G.block[id], ts = G.topics.filter(function(t){ return t.b === id; }), dn = ts.filter(function(t){ return st(t.id) === 2; }).length;
-      h = '<div class="ca-ph"><span class="chip acc">Bloque ' + bl.n + "</span></div><h3>" + esc(bl.t) + '</h3><p class="ca-p">' + bl.s + '</p><p class="ca-p">' + dn + " de " + ts.length + " temas entendidos.</p>" +
+      h = '<div class="ca-ph"><span class="chip acc">Bloque ' + esc(bl.n) + "</span></div><h3>" + esc(bl.t) + '</h3><p class="ca-p">' + ctx.clean(bl.s) + '</p><p class="ca-p">' + dn + " de " + ts.length + " temas entendidos.</p>" +
         '<h4>Temas</h4><ul class="ca-ul">' + ts.map(function(t){ return "<li>" + linkTo(t.id) + "</li>"; }).join("") + "</ul>" +
         (collapsible ? '<p class="ca-p">' + (S.expanded[id] ? "Pulsa de nuevo el bloque para plegar sus temas." : "Pulsa de nuevo el bloque para desplegar sus temas.") + "</p>" : "");
     }else if(G.course[id]){
       var c = G.course[id];
-      h = '<div class="ca-ph"><span class="chip ex">Curso</span></div><h3>' + c.t + '</h3><p class="ca-p">' + ((ctx.kinds || {})[c.k] || "") + (c.d ? " · consultado el " + fmtDate(c.d) : "") + "</p>" +
-        (c.u ? '<div class="ca-act"><a class="btn" href="' + esc(c.u) + '" target="_blank" rel="noopener noreferrer">Abrir el curso original ↗</a></div>' : "") +
+      h = '<div class="ca-ph"><span class="chip ex">Curso</span></div><h3>' + esc(c.t) + '</h3><p class="ca-p">' + ((ctx.kinds || {})[c.k] || "") + (c.d ? " · consultado el " + fmtDate(c.d) : "") + "</p>" +
+        (/^https:\/\//.test(c.u || "") ? '<div class="ca-act"><a class="btn" href="' + esc(c.u) + '" target="_blank" rel="noopener noreferrer">Abrir el curso original ↗</a></div>' : "") +
         '<h4>Temas que aporta</h4><ul class="ca-ul">' + (G.courseTopics[id] || []).map(function(x){ return "<li>" + linkTo(x) + "</li>"; }).join("") + "</ul>";
     }
     p.innerHTML = h;
@@ -366,5 +366,4 @@ function render(host, ctx){
   if(S.sel && S.mode === "mapa" && L.pos[S.sel] && collapsible) focusOn(S.sel);
 }
 
-window.CAMapa = {render:render, miniature:miniature};
-})();
+export { render, miniature };

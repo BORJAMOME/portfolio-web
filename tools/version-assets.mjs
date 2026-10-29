@@ -24,7 +24,6 @@ const CHECK = process.argv.includes('--check');
 const pages = [
   ...readdirSync(ROOT).filter((f) => f.endsWith('.html')).map((f) => join(ROOT, f)),
   ...readdirSync(join(ROOT, 'en')).filter((f) => f.endsWith('.html')).map((f) => join(ROOT, 'en', f)),
-  join(ROOT, 'claude-academy', 'index.html'),   // manual con scripts por curso (temas/*.js): sin versión, un curso nuevo no llegaría a quien ya lo tiene en caché
 ];
 const hashes = {};
 const memory = {};                         // contenido ya reescrito (o por reescribir, con --check) de los módulos
@@ -34,7 +33,7 @@ const hashOf = (file) => (hashes[file] ??= createHash('sha256').update(read(file
 
 let changed = 0;
 /* ── Imports entre módulos: de las hojas hacia arriba, hasta que nada cambie (el grafo no tiene ciclos) ── */
-const MODULE_DIRS = ['color-studio'];
+const MODULE_DIRS = ['color-studio', 'claude-manual'];
 const IMPORT = /(\bfrom\s*'|\bimport\(\s*')(\.{1,2}\/[^'?#]+\.js)(?:\?v=[^']*)?'/g;
 const modules = MODULE_DIRS.flatMap((d) => readdirSync(join(ROOT, d)).filter((f) => f.endsWith('.js')).map((f) => join(ROOT, d, f)));
 for (let pass = 0, dirty = true; dirty; pass++) {

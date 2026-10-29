@@ -1,18 +1,19 @@
-/* Un visual interactivo por tema: VIZ.<id> = function(f){ … }
-   f.title (span), f.ctrl (contenedor de controles), f.body (lienzo).
-   Reglas: HTML/SVG puro, colores solo con var(--…) y var(--lab1…6) para series.
+/* Un visual interactivo por tema: VIZ.<id> = function(f){ … }  (módulo ES)
+   f.title (span), f.ctrl (contenedor de controles), f.body (lienzo), f.env = {topics, search, reltypes}.
+   Reglas: HTML/SVG puro, colores y trazos solo con clases (la CSP del área privada no admite atributos style)
+   y variables de css/claude-manual.css; var(--lab1…6) para series. Estilo dinámico: element.style.x = …
    Los visuales de la Guía son simulaciones: no tocan tu progreso real. */
-var VIZ = {};
+export const VIZ = {};
 
 function vzEsc(s){ return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
 
 /* ── Cómo recorrer el manual: estados de aprendizaje ── */
 VIZ["guia-recorrer"] = function(f){
   f.title.textContent = "Simula tu progreso";
-  var ts = TOPICS.filter(function(t){ return t.b === "guia"; }), st = ts.map(function(){ return 0; }), NAMES = ["Pendiente", "En estudio", "Lo entiendo"];
+  var ts = f.env.topics.filter(function(t){ return t.b === "guia"; }), st = ts.map(function(){ return 0; }), NAMES = ["Pendiente", "En estudio", "Lo entiendo"];
   f.ctrl.innerHTML = '<button type="button" class="vbtn" id="vz-rs">Reiniciar</button>';
   f.body.innerHTML = '<p class="vz-note">Simulación: no cambia tu progreso real. Pulsa un tema para pasar de pendiente a en estudio y a entendido.</p><div class="vz-list" id="vz-ls"></div>' +
-    '<div class="vz-bar"><div class="bar"><i id="vz-bi" style="width:0%"></i></div><p id="vz-bt" class="vz-big"></p></div>';
+    '<div class="vz-bar"><div class="bar"><i id="vz-bi"></i></div><p id="vz-bt" class="vz-big"></p></div>';
   function draw(){
     f.body.querySelector("#vz-ls").innerHTML = ts.map(function(t, i){
       return '<button type="button" class="vz-row" data-i="' + i + '"><span class="td ' + (st[i] ? "s" + st[i] : "") + '"></span><span class="vz-t">' + t.t + '</span><span class="vz-s">' + NAMES[st[i]] + "</span></button>";
@@ -78,7 +79,7 @@ VIZ["guia-busqueda"] = function(f){
   function draw(){
     var v = q.value.trim();
     if(!v){ r.innerHTML = '<p class="vz-big">Escribe algo para ver qué encuentra.</p>'; return; }
-    var res = CA.search(v);
+    var res = f.env.search(v);
     r.innerHTML = '<p class="vz-big">' + res.length + (res.length === 1 ? " resultado" : " resultados") + (res.length > 6 ? " (se muestran 6)" : "") + "</p>" + res.slice(0, 6).map(function(x){
       return '<a class="vz-row" href="' + vzEsc(x.h) + '"><span class="chip">' + x.k + '</span><span class="vz-t">' + vzEsc(x.n) + "</span></a>"; }).join("");
   }
@@ -88,7 +89,7 @@ VIZ["guia-busqueda"] = function(f){
 /* ── Cómo leer el mapa mental: tipos de relación ── */
 VIZ["guia-mapa"] = function(f){
   f.title.textContent = "Tipos de relación";
-  var KEYS = Object.keys(RELTYPES), cur = 0;
+  var KEYS = Object.keys(f.env.reltypes), cur = 0;
   var NOTE = {
     necesita:"Marca un orden de estudio: lo que se necesita conocer va primero.",
     tipo:"La idea general y sus variedades: lo específico es un caso de lo general.",
@@ -97,15 +98,15 @@ VIZ["guia-mapa"] = function(f){
     alternativa:"Dos maneras de resolver el mismo problema. Conviene saber cuándo elegir cada una.",
     usa:"Una pieza que se emplea dentro de otra."
   };
-  f.ctrl.innerHTML = KEYS.map(function(k, i){ return '<button type="button" class="vbtn" data-i="' + i + '" aria-pressed="' + (i === 0) + '">' + RELTYPES[k].l + "</button>"; }).join("");
+  f.ctrl.innerHTML = KEYS.map(function(k, i){ return '<button type="button" class="vbtn" data-i="' + i + '" aria-pressed="' + (i === 0) + '">' + f.env.reltypes[k].l + "</button>"; }).join("");
   f.body.innerHTML = '<p class="vz-note">Ejemplo genérico con dos temas, A y B.</p><div id="vz-s"></div><p class="vz-big" id="vz-a"></p><p class="vz-big" id="vz-b"></p><p id="vz-n"></p>';
   function draw(){
-    var k = KEYS[cur], t = RELTYPES[k];
-    f.body.querySelector("#vz-s").innerHTML = '<svg viewBox="0 0 400 90" role="img" aria-label="Dos temas, A y B, unidos por una línea ' + (t.d ? "discontinua" : "continua") + (t.s ? "" : " con flecha hacia B") + '" style="width:100%;max-width:520px">' +
-      '<defs><marker id="vz-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 1 L9 5 L0 9 z" style="fill:var(--accent-2)"/></marker></defs>' +
-      '<circle cx="60" cy="45" r="22" style="fill:var(--card);stroke:var(--line-2);stroke-width:2"/><text x="60" y="51" text-anchor="middle" style="font-family:var(--serif);font-size:20px;fill:var(--ink)">A</text>' +
-      '<circle cx="340" cy="45" r="22" style="fill:var(--card);stroke:var(--line-2);stroke-width:2"/><text x="340" y="51" text-anchor="middle" style="font-family:var(--serif);font-size:20px;fill:var(--ink)">B</text>' +
-      '<path d="M86 45 H' + (t.s ? 314 : 308) + '" style="fill:none;stroke:var(--accent-2);stroke-width:2"' + (t.d ? ' stroke-dasharray="' + t.d + '"' : "") + (t.s ? "" : ' marker-end="url(#vz-ar)"') + "/></svg>";
+    var k = KEYS[cur], t = f.env.reltypes[k];
+    f.body.querySelector("#vz-s").innerHTML = '<svg viewBox="0 0 400 90" role="img" aria-label="Dos temas, A y B, unidos por una línea ' + (t.d ? "discontinua" : "continua") + (t.s ? "" : " con flecha hacia B") + '" class="vz-svg">' +
+      '<defs><marker id="vz-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 1 L9 5 L0 9 z" class="vz-ah"/></marker></defs>' +
+      '<circle cx="60" cy="45" r="22" class="vz-node"/><text x="60" y="51" text-anchor="middle" class="vz-nt">A</text>' +
+      '<circle cx="340" cy="45" r="22" class="vz-node"/><text x="340" y="51" text-anchor="middle" class="vz-nt">B</text>' +
+      '<path d="M86 45 H' + (t.s ? 314 : 308) + '" class="vz-line"' + (t.d ? ' stroke-dasharray="' + t.d + '"' : "") + (t.s ? "" : ' marker-end="url(#vz-ar)"') + "/></svg>";
     f.body.querySelector("#vz-a").innerHTML = "<b>A</b> " + t.l + " <b>B</b>.";
     f.body.querySelector("#vz-b").innerHTML = t.s ? "Se lee igual en los dos sentidos." : "<b>B</b> " + t.i + " <b>A</b>.";
     f.body.querySelector("#vz-n").textContent = NOTE[KEYS[cur]] || "";

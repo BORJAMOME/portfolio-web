@@ -2,9 +2,8 @@
    Grafo del conocimiento: lógica pura (sin DOM), compartida por la ficha, el mapa y las comprobaciones.
    Entrada: los datos de content.js y temas/*.js (TOPICS, BLOCKS, COURSES, RELTYPES).
    Las relaciones salen SOLO de TOPICS[].rel y de TOPICS[].src[].c: no hay un segundo mapa que mantener.
-   Se carga como script clásico (window.CAGrafo) y como módulo de Node (tools/check-claude-academy.mjs).
+   Módulo ES: lo importan el módulo del área privada (import()) y las comprobaciones de Node.
    ══════════════════════════════════════════════════════════════ */
-(function(root){
 "use strict";
 
 var MAX_ALL = 40;      // hasta aquí el mapa muestra todos los temas; por encima, las ramas parten plegadas
@@ -138,6 +137,4 @@ function layout(G, opt){
   return {pos:pos, bounds:{x:minx - pad, y:miny - pad, w:maxx - minx + 2 * pad, h:maxy - miny + 2 * pad}, expanded:ex};
 }
 
-var api = {build:build, layout:layout, defaultExpanded:defaultExpanded, MAX_ALL:MAX_ALL};
-if(typeof module !== "undefined" && module.exports) module.exports = api; else root.CAGrafo = api;
-})(typeof window !== "undefined" ? window : this);
+export { build, layout, defaultExpanded, MAX_ALL };

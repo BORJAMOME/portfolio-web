@@ -1,5 +1,5 @@
 /* Bloque 0 · Guía del manual. Contenido propio: no depende de ningún curso. */
-TOPICS.push(
+export default [
 {
   id:"guia-recorrer", b:"guia", t:"Cómo recorrer el manual", lvl:1,
   q:"¿Por dónde empiezo y cómo sé qué me falta?",
@@ -25,7 +25,7 @@ TOPICS.push(
   rec:["Hay dos formas de entrar: la ruta ordenada y la consulta directa.", "Abrir una ficha la deja «En estudio»; «Lo entiendo» lo decides tú.", "El progreso vive en tu navegador, no en una cuenta."],
   quiz:{q:"Abres una ficha, lees un par de líneas y la cierras. ¿En qué estado queda?", o:["Pendiente","En estudio","Lo entiendo"], a:1,
     w:"Abrir una ficha ya la pasa a «En estudio». «Pendiente» es el estado de las fichas que no has abierto nunca, y «Lo entiendo» solo se marca a mano o acertando la pregunta."},
-  pro:[{k:"Dónde se guarda", t:"El progreso y las respuestas se guardan en el almacenamiento local del navegador, con el prefijo <code>claudeacademy_</code>. Si borras los datos del sitio o cambias de navegador, empiezas de cero."}],
+  pro:[{k:"Dónde se guarda", t:"El progreso y las respuestas se guardan en el almacenamiento local del navegador, con el prefijo <code>bm_cm_</code>. Si borras los datos del sitio o cambias de navegador, empiezas de cero."}],
   src:[{t:"Documentación del propio manual (README del proyecto)", k:"interna"}],
   kw:["empezar","por dónde empiezo","orden de lectura","progreso","ruta","cómo se usa","instrucciones","guardar progreso","primeros pasos"],
   tags:["manual","empezar"], upd:"2026-10-29", ver:{e:"interno", n:"Describe el comportamiento del propio manual."},
@@ -53,7 +53,7 @@ TOPICS.push(
   no:["Buscas la lista completa de comandos o ajustes de una herramienta: eso es referencia, y una ficha explica un concepto, no sustituye a la documentación."],
   conf:[
     {t:"Nivel del tema y nivel de lectura", d:"El nivel (básico, intermedio o avanzado) dice lo exigente que es el tema. El nivel de lectura (inicial, de aplicación, técnico) lo eliges tú según cuántos capítulos leas."},
-    {t:"Identificador y título", d:"El título se puede mejorar con el tiempo. El identificador (lo que va tras <code>#tema/</code>) no cambia nunca, así que los enlaces, las relaciones y el mapa siguen funcionando."}
+    {t:"Identificador y título", d:"El título se puede mejorar con el tiempo. El identificador (lo que va tras <code>tema/</code> en la dirección) no cambia nunca, así que los enlaces, las relaciones y el mapa siguen funcionando."}
   ],
   rec:["Seis capítulos, siempre en el mismo orden.", "Una ficha = una idea clave.", "El título puede cambiar; el identificador, no."],
   quiz:{q:"¿En qué capítulo están los matices de proyectos reales y las trampas habituales?", o:["En «Por dentro»","En «Nivel profesional»","En «Ponte a prueba»"], a:1,
@@ -129,7 +129,7 @@ TOPICS.push(
       {h:"Vuelve a <b>Temas</b>, escribe <b>recorrer</b> en el buscador del catálogo y abre la ficha que aparece.", w:"El catálogo busca en el título, la pregunta que responde, la frase y las palabras clave del tema, y debe llevarte a la misma ficha."}
     ],
     res:"Las dos búsquedas terminan en la ficha «Cómo recorrer el manual».",
-    comprobar:"La dirección del navegador acaba en <code>#tema/guia-recorrer</code> y la pestaña empieza por «Cómo recorrer el manual».",
+    comprobar:"La dirección del navegador acaba en <code>#/claude/tema/guia-recorrer</code> y la ficha se titula «Cómo recorrer el manual».",
     errores:[
       {t:"La tecla / no hace nada", d:"Solo funciona si el cursor no está dentro de un campo de texto. Haz clic fuera del campo, o usa <code>Ctrl K</code>."},
       {t:"No aparece el tema que esperabas", d:"Prueba con una sola palabra o con un sinónimo. Si un término razonable no lo encuentra, falta una palabra clave en esa ficha."}
@@ -196,4 +196,4 @@ TOPICS.push(
     {t:"integra", a:"guia-busqueda", w:"El mapa tiene su propio buscador de conceptos y filtros por bloque, igual que el catálogo de Temas."}
   ]
 }
-);
+];

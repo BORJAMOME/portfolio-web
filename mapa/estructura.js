@@ -1,18 +1,18 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "71fc052",
+ "huella": "7b9ead7",
  "recuento": {
-  "paginas": 20,
+  "paginas": 19,
   "proyectos": 40,
   "recursos": 52,
   "perfil": 9,
   "capitulos": 10,
   "plataformas": 11,
   "pestanas": 10,
-  "tablas": 33,
+  "tablas": 34,
   "funciones": 5,
-  "herramientas": 16,
-  "relaciones": 177,
+  "herramientas": 18,
+  "relaciones": 182,
   "sinExplicar": 0
  },
  "columnas": [
@@ -1476,15 +1476,6 @@ export default {
      "nota": "ninguna página pública las enlaza",
      "hijos": [
       {
-       "id": "p:claude-academy",
-       "tipo": "manual",
-       "etiqueta": "Manual de Claude",
-       "nota": "Manual visual y en crecimiento sobre Claude y su ecosistema, construido a partir de los cursos de Claude Academy: cada concepto explicado en llano, con sus fuentes, sus conexiones y un mapa mental.",
-       "href": "./claude-academy/",
-       "archivo": "claude-academy/",
-       "familia": "manual"
-      },
-      {
        "id": "p:pbi",
        "tipo": "manual",
        "etiqueta": "Manual de Power BI",
@@ -1687,6 +1678,15 @@ export default {
      "nota": "inventario de lo publicado",
      "href": "#/portfolio",
      "archivo": "area-privada-portfolio.js",
+     "hijos": [
+      {
+       "id": "m:claude",
+       "tipo": "modulo",
+       "etiqueta": "Manual de Claude",
+       "archivo": "area-privada-claude.js",
+       "familia": "privada"
+      }
+     ],
      "familia": "privada"
     },
     {
@@ -1803,6 +1803,21 @@ export default {
        "id": "q:calendar_sync",
        "tipo": "tabla",
        "etiqueta": "calendar_sync",
+       "familia": "dato"
+      }
+     ],
+     "familia": "dato"
+    },
+    {
+     "id": "d:claude-manual",
+     "tipo": "esquema",
+     "etiqueta": "claude-manual.sql",
+     "archivo": "supabase/claude-manual.sql",
+     "hijos": [
+      {
+       "id": "q:cm_docs",
+       "tipo": "tabla",
+       "etiqueta": "cm_docs",
        "familia": "dato"
       }
      ],
@@ -2201,6 +2216,13 @@ export default {
        "familia": "herramienta"
       },
       {
+       "id": "h:check-claude-manual",
+       "tipo": "herramienta",
+       "etiqueta": "check-claude-manual.mjs",
+       "archivo": "tools/check-claude-manual.mjs",
+       "familia": "herramienta"
+      },
+      {
        "id": "h:check-color",
        "tipo": "herramienta",
        "etiqueta": "check-color.mjs",
@@ -2265,6 +2287,13 @@ export default {
      "etiqueta": "sin clasificar/",
      "nota": "añádela a un grupo en mapa.config.json",
      "hijos": [
+      {
+       "id": "h:claude-academy",
+       "tipo": "herramienta",
+       "etiqueta": "claude-academy/",
+       "archivo": "tools/claude-academy/",
+       "familia": "herramienta"
+      },
       {
        "id": "h:color-studio",
        "tipo": "herramienta",
@@ -2838,6 +2867,18 @@ export default {
    "detalle": []
   },
   {
+   "de": "h:check-claude-academy",
+   "a": "m:claude",
+   "tipo": "verifica",
+   "detalle": []
+  },
+  {
+   "de": "h:check-claude-academy",
+   "a": "t:portfolio",
+   "tipo": "verifica",
+   "detalle": []
+  },
+  {
    "de": "h:check-color",
    "a": "m:color",
    "tipo": "verifica",
@@ -2848,6 +2889,14 @@ export default {
    "a": "m:kanban",
    "tipo": "verifica",
    "detalle": []
+  },
+  {
+   "de": "h:claude-academy",
+   "a": "d:claude-manual",
+   "tipo": "usa",
+   "detalle": [
+    "cm_docs"
+   ]
   },
   {
    "de": "h:mapa",
@@ -2887,6 +2936,14 @@ export default {
    "a": "m:kanban",
    "tipo": "verifica",
    "detalle": []
+  },
+  {
+   "de": "m:claude",
+   "a": "d:claude-manual",
+   "tipo": "usa",
+   "detalle": [
+    "cm_docs"
+   ]
   },
   {
    "de": "m:color",
@@ -3454,6 +3511,12 @@ export default {
   {
    "de": "w:checks",
    "a": "h:check-claude-academy",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:checks",
+   "a": "h:check-claude-manual",
    "tipo": "ejecuta",
    "detalle": []
   },

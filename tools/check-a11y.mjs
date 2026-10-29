@@ -35,8 +35,6 @@ const BASE = `http://localhost:${server.address().port}/`;
 const all = [
   ...readdirSync(ROOT).filter((f) => f.endsWith('.html') && f !== 'proyectos.html'),
   ...readdirSync(join(ROOT, 'en')).filter((f) => f.endsWith('.html')).map((f) => 'en/' + f),
-  // Manual de Claude: una sola página con vistas por hash; se prueba cada una (el mapa también con un nodo seleccionado)
-  ...['', '#temas', '#mapa', '#mapa/guia-mapa', '#tema/guia-mapa', '#glosario'].map((h) => 'claude-academy/index.html' + h),
 ];
 const pages = process.argv.slice(2).length ? process.argv.slice(2) : all;
 
