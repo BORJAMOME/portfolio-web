@@ -165,6 +165,36 @@ await step('Ficha: visual, quiz (acierto guarda progreso), «Dónde encaja» y n
   await shot(c.page, 'ficha'); await clean(c); await c.ctx.close();
 });
 
+await step('Inicio: tabla de cursos (vacía, añadir, editar, marcar, persistir, eliminar), sin flujo de trabajo y sin título ni pestañas del área privada', async () => {
+  const c = await open('#/claude');
+  const q = (s) => c.page.locator('.cm-host').locator(s);
+  eq(await q('.trk-empty').count(), 1, 'tabla vacía');
+  eq(await q('.trk-t th').allTextContents(), ['Nombre del curso', 'Información', 'Completado']);
+  const w = await c.page.evaluate(() => { const r = document.querySelector('.cm-host').shadowRoot; const t = r.querySelector('.trk-t').getBoundingClientRect(), m = r.querySelector('#view').getBoundingClientRect(); return [Math.round(t.width), Math.round(m.width)]; });
+  ok(Math.abs(w[0] - w[1]) <= 2, 'la tabla no ocupa todo el ancho: ' + w);
+  ok(!/Flujo de trabajo/.test(await q('#view').innerText()), 'queda el flujo de trabajo');
+  eq(await c.page.evaluate(() => getComputedStyle(document.querySelector('.ap-tabs')).display), 'none', 'pestañas del área privada visibles');
+  await q('#trkAdd').click(); await q('#trkAdd').click();
+  const names = q('input[data-f=n]'), infos = q('textarea[data-f=i]'), boxes = q('input[data-f=d]');
+  await names.nth(0).fill('Curso A'); await infos.nth(0).fill('Notas A'); await names.nth(1).fill('Curso B');
+  await boxes.nth(1).check();
+  eq([await boxes.nth(0).isChecked(), await boxes.nth(1).isChecked()], [false, true], 'checkboxes independientes');
+  await c.page.reload(); await q('.trk-t').waitFor();
+  eq(await q('input[data-f=n]').evaluateAll((e) => e.map((x) => x.value)), ['Curso A', 'Curso B'], 'persistencia');
+  eq(await q('textarea[data-f=i]').first().inputValue(), 'Notas A');
+  eq(await q('input[data-f=d]').evaluateAll((e) => e.map((x) => x.checked)), [false, true], 'estado guardado');
+  await q('.trk-del').first().click();
+  eq(await q('input[data-f=n]').evaluateAll((e) => e.map((x) => x.value)), ['Curso B'], 'eliminar');
+  await c.page.reload(); await q('.trk-t').waitFor();
+  eq(await q('input[data-f=n]').count(), 1, 'eliminado persiste');
+  await clean(c); await c.ctx.close();
+  const m = await open('#/claude', { width: 390, height: 844 });
+  await m.page.locator('.cm-host').locator('.trk-t').waitFor();
+  const ov = await m.page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  ok(ov <= 0, 'desbordamiento horizontal en móvil: ' + ov);
+  await clean(m); await m.ctx.close();
+});
+
 await step('Mapa: selección, ruta de aprendizaje, teclado, filtros, lista y hash compartible', async () => {
   const c = await open('#/claude/mapa/guia-mapa');
   eq(await T(c.page, '#ca-panel h3'), 'Cómo leer el mapa mental');

@@ -238,6 +238,38 @@ window.APClaude = (function () {
         (l.mapa ? '<p>Mapa: ' + clean(l.mapa) + '</p>' : '') + (l.pend && l.pend.length ? '<p>Pendiente: ' + l.pend.map(clean).join(' ') + '</p>' : '') + '</div></div>';
     }).join('') + '</details>';
   }
+  /* Seguimiento de cursos: lista editable guardada en este navegador (misma vía que el progreso: localStorage con el prefijo del manual) */
+  var TRK = [];
+  function trkRow(c) {
+    return '<tr data-id="' + esc(c.id) + '"><td data-label="Nombre del curso"><div class="trk-n"><input class="trk-in" data-f="n" type="text" maxlength="160" value="' + esc(c.n) + '" aria-label="Nombre del curso" placeholder="Nombre del curso">' +
+      '<button type="button" class="trk-del" data-del aria-label="Eliminar el curso">×</button></div></td>' +
+      '<td data-label="Información"><textarea class="trk-in" data-f="i" rows="1" maxlength="600" aria-label="Información del curso" placeholder="Notas o descripción">' + esc(c.i) + '</textarea></td>' +
+      '<td data-label="Completado" class="trk-c"><input type="checkbox" data-f="d" aria-label="Curso completado"' + (c.d ? ' checked' : '') + '></td></tr>';
+  }
+  function trkBody() { return TRK.length ? TRK.map(trkRow).join('') : '<tr class="trk-empty"><td colspan="3">Todavía no hay cursos. Pulsa «Añadir curso» para empezar.</td></tr>'; }
+  function trackHTML() {
+    TRK = (lsGet('cursos', []) || []).filter(function (c) { return c && typeof c === 'object'; }).map(function (c) { return { id: String(c.id || Math.random().toString(36).slice(2)), n: String(c.n || ''), i: String(c.i || ''), d: !!c.d }; });
+    return '<div class="trk"><table class="trk-t"><thead><tr><th scope="col">Nombre del curso</th><th scope="col">Información</th><th scope="col" class="trk-c">Completado</th></tr></thead><tbody id="trkBody">' + trkBody() + '</tbody></table>' +
+      '<div class="trk-f"><button type="button" class="btn" id="trkAdd">+ Añadir curso</button><span class="trk-s" id="trkS" role="status"></span></div></div>';
+  }
+  function bindTrack(v) {
+    var body = $('#trkBody', v), st = $('#trkS', v);
+    function save() { lsSet('cursos', TRK); var d = TRK.filter(function (c) { return c.d; }).length; st.textContent = TRK.length ? d + ' de ' + TRK.length + (TRK.length === 1 ? ' completado' : ' completados') : ''; }
+    function find(el) { var tr = el.closest('tr[data-id]'); return tr && TRK.filter(function (c) { return c.id === tr.dataset.id; })[0]; }
+    save();
+    $('#trkAdd', v).addEventListener('click', function () {
+      TRK.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), n: '', i: '', d: false }); save(); body.innerHTML = trkBody();
+      var last = body.querySelector('tr:last-child .trk-in'); if (last) last.focus();
+    });
+    body.addEventListener('input', function (e) { var c = find(e.target), f = e.target.dataset.f; if (c && (f === 'n' || f === 'i')) { c[f] = e.target.value; save(); } });
+    body.addEventListener('change', function (e) { var c = find(e.target); if (c && e.target.dataset.f === 'd') { c.d = e.target.checked; save(); } });
+    body.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-del]'); if (!b) return;
+      var c = find(b); if (!c) return;
+      TRK = TRK.filter(function (x) { return x !== c; }); save(); body.innerHTML = trkBody();
+      var add = $('#trkAdd', v); if (add) add.focus();
+    });
+  }
   function renderHome(v) {
     var M = A.CFG.MANUAL, T = D.TOPICS;
     var next = T.filter(function (t) { return PROG[t.id] !== 2; })[0] || T[0];
@@ -249,11 +281,11 @@ window.APClaude = (function () {
       '<div class="hero-cta"><a class="btn solid" href="' + R('tema/' + next.id) + '">' + (started ? 'Seguir por «' : 'Empezar por «') + esc(plain(next.t)) + '» →</a><a class="btn" href="' + R('mapa') + '">Ver el mapa mental</a></div>' +
       '<div class="hero-stats">' + M.stats.map(function (s) { var n = s[1] === 'auto' ? (autos[s[0]] !== undefined ? autos[s[0]] : '') : s[1]; return '<div class="hs"><div class="n">' + n + '</div><div class="l">' + esc(s[0]) + '</div></div>'; }).join('') + '</div></div>' +
       '</div>' +
-      '<div class="sec-h"><h2>Flujo de trabajo</h2><p>Los cuatro pasos de cada tarea con Claude Code.</p></div>' +
-      '<div class="howgrid">' + M.flow.map(function (h, i) { return '<div class="how"><span class="hn">' + (i + 1) + '</span><div class="hk">' + esc(h[0]) + '</div><p>' + esc(h[1]) + '</p></div>'; }).join('') + '</div>' +
+      '<div class="sec-h"><h2>Mis cursos de Anthropic</h2><p>Apunta los que quieres hacer y marca los terminados. Se guarda en este navegador.</p></div>' + trackHTML() +
       '<div class="sec-h"><h2>Ruta de aprendizaje</h2><p>' + D.BLOCKS.length + (D.BLOCKS.length === 1 ? ' bloque' : ' bloques') + ' en orden. El punto verde marca lo que ya entiendes.</p></div>' + blocksHTML() +
       '<div class="sec-h"><h2>Cursos incorporados</h2><p>' + D.COURSES.length + '</p></div>' + coursesHTML() +
       '<div class="sec-h"><h2>De dónde sale este manual</h2></div><p class="lead cm-narrow">' + esc(M.sources) + '</p>' + logHTML();
+    bindTrack(v);
   }
 
   /* ══ TEMAS (catálogo con búsqueda y filtros) ══ */
