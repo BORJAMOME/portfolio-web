@@ -267,6 +267,11 @@
         });
       });
     },
+    /* Objetos bajo una «carpeta» del bucket (p. ej. kanban/<tarjeta>/): [{ name, metadata: { size, mimetype }, created_at }] */
+    list: function (prefix) {
+      return api('/storage/v1/object/list/' + BUCKET, { method: 'POST', headers: JSON_HEADERS, body: JSON.stringify({ prefix: prefix, limit: 100, offset: 0, sortBy: { column: 'created_at', order: 'asc' } }) })
+        .then(function (r) { return (r || []).filter(function (o) { return o && o.id; }); });   // las subcarpetas vienen sin id
+    },
     blob: function (path) {
       return api('/storage/v1/object/authenticated/' + BUCKET + '/' + encPath(path), { raw: true })
         .then(function (r) { return r.blob(); });
@@ -360,6 +365,7 @@
       els.dInput.value = o.value || '';
       els.dInput.required = !!o.input;
       els.dOk.textContent = o.ok || 'Aceptar';
+      els.dCancel.textContent = o.cancel || 'Cancelar';
       els.dOk.classList.toggle('btn-danger', !!o.danger);
       var done = false;
       function finish(v) {
@@ -379,7 +385,7 @@
         finish(v.slice(0, 200));
       }
       function onCancel() { finish(null); }
-      function onClose() { finish(null); }
+      function onClose() { if (!els.dialog.open) finish(null); }     // el «close» de una pregunta anterior puede llegar con esta ya abierta
       els.dForm.addEventListener('submit', onSubmit);
       els.dCancel.addEventListener('click', onCancel);
       els.dialog.addEventListener('close', onClose);
@@ -393,9 +399,10 @@
   function field(id, labelText, el, opts) {
     opts = opts || {};
     el.id = id;
+    if (opts.hint) el.setAttribute('aria-describedby', id + '-hint');     // la ayuda se lee junto a la etiqueta
     return h('div', { class: 'apf-field' + (opts.wide ? ' apf-wide' : '') }, [
       h('label', { class: 'ap-field-label', for: id, text: labelText }), el,
-      opts.hint ? h('p', { class: 'apf-hint', text: opts.hint }) : null
+      opts.hint ? h('p', { class: 'apf-hint', id: id + '-hint', text: opts.hint }) : null
     ]);
   }
   function input(type, value, attrs) { return h('input', Object.assign({ type: type, value: value == null ? '' : value, autocomplete: 'off' }, attrs || {})); }
@@ -562,6 +569,17 @@
     els.appbar.hidden = !app;
   }
 
+  /* Intenciones de un solo uso entre el shell y un módulo: la barra móvil pide «nueva tarjeta» y el
+     Centro de trabajo (en #/) la atiende al pintarse, o al momento si ya está en pantalla (evento ap:intent). */
+  var intents = {};
+  function takeIntent(name) { var v = intents[name]; delete intents[name]; return v; }
+  function requestIntent(name) {        // hoy solo la atiende «Hoy» (#/)
+    intents[name] = true;
+    var r = parseRoute();
+    if (r.kind === 'module' && r.name === 'hoy') document.dispatchEvent(new CustomEvent('ap:intent'));
+    else location.hash = '#/';
+  }
+
   var MODULE_ROUTE = new RegExp('^#/(' + Object.keys(MODULES).join('|') + ')(?:/(.*))?$');
   var loading = {};
   function loadModule(name) {
@@ -600,6 +618,7 @@
     dirty = false;
     setStatus('Cargando…');
     var job, isModule = r.kind === 'module', tab = isModule ? (MODULES[r.name].tab || r.name) : 'archivos';
+    if (tab !== 'hoy') intents = {};      // una intención («nueva tarjeta») solo vale para la vista que la va a atender
     stampHistory();
     setAppMode(isModule ? appOf(r.name) : null);
     document.body.classList.toggle('ap-in-manual', isModule && r.name === 'claude');   // el manual lleva su propia cabecera: sin el título ni las pestañas del área privada
@@ -620,6 +639,7 @@
       job = loadModule(r.name).then(function (mod) {
         return mod.render({
           api: api, h: h, ui: ui, ask: ask, fail: fail, module: loadModule, setStatus: setStatus, fail: fail, view: els.view, arg: r.arg, apps: APPS,
+          storage: storage, takeIntent: takeIntent,
           isCurrent: function () { return seq === renderSeq; }
         });
       });
@@ -1089,19 +1109,28 @@
     archivos: '<path d="M3.5 7.5a2 2 0 0 1 2-2h4l2 2h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/>',
     fichero: '<path d="M6.5 3.5h11v17L12 16.5l-5.5 4z"/>',
     configuracion: '<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',
+    tarjeta: '<path d="M12 7v10M7 12h10"/>',
     mas: '<circle cx="6" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18" cy="12" r="1.2"/>',
     salir: '<path d="M9.5 4.5h-4A1.5 1.5 0 0 0 4 6v12a1.5 1.5 0 0 0 1.5 1.5h4M15 8l4 4-4 4M19 12H9.5"/>',
     cerrar: '<path d="M6 6l12 12M18 6 6 18"/>'
   };
-  var BAR_TABS = ['hoy', 'apps', 'calendario', 'entrevistas'];
+  /* Orden de la barra. «+tarjeta» no es una sección sino una acción: abre una tarjeta nueva (en Hoy) sin pantalla intermedia.
+     Entrevistas y el resto quedan en la hoja «Más». */
+  var BAR_TABS = ['hoy', '+tarjeta', 'calendario', 'apps'];
   function navIcon(id) {
     return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + (NAV_ICONS[id] || '') + '</svg>';
   }
   var navMoreBtn = null;
   (function buildNav() {
     var tabs = [].map.call(els.tabs, function (a) { return { id: a.getAttribute('data-tab'), href: a.getAttribute('href'), label: a.textContent.trim() }; });
-    tabs.filter(function (t) { return BAR_TABS.indexOf(t.id) > -1; }).forEach(function (t) {
-      els.bar.appendChild(h('a', { class: 'ap-bar-a', href: t.href, 'data-tab': t.id }, [h('span', { class: 'ap-bar-ico', html: navIcon(t.id) }), h('span', { text: t.label })]));
+    BAR_TABS.forEach(function (id) {
+      if (id === '+tarjeta') {
+        return els.bar.appendChild(h('button', { type: 'button', class: 'ap-bar-a ap-bar-new', 'aria-label': 'Nueva tarjeta', onclick: function () { requestIntent('nueva-tarjeta'); } }, [
+          h('span', { class: 'ap-bar-ico', html: navIcon('tarjeta') }), h('span', { text: 'Tarjeta', 'aria-hidden': 'true' })
+        ]));
+      }
+      var t = tabs.filter(function (x) { return x.id === id; })[0];
+      if (t) els.bar.appendChild(h('a', { class: 'ap-bar-a', href: t.href, 'data-tab': t.id }, [h('span', { class: 'ap-bar-ico', html: navIcon(t.id) }), h('span', { text: t.label })]));
     });
     navMoreBtn = h('button', { type: 'button', class: 'ap-bar-a ap-bar-more', 'aria-haspopup': 'dialog', 'aria-controls': 'ap-more', 'aria-expanded': 'false' }, [
       h('span', { class: 'ap-bar-ico', html: navIcon('mas') }), h('span', { text: 'Más' })

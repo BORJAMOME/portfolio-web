@@ -31,7 +31,8 @@ const BASE = `http://localhost:${server.address().port}/area-privada.html`;
 let seq = 0;
 const uid = () => '00000000-0000-4000-8000-' + String(++seq).padStart(12, '0');
 const db = { kb_tarjetas: [], kb_proyectos: [], kb_subtareas: [], kb_historial: [], kb_ajustes: [{ clave: 'capacidad', valor: { hoy: 2 } }] };
-let failWrites = false, writeDelay = 0, writes = 0, iaOn = false, iaCalls = 0;
+const files = new Map();       // Storage simulado: ruta → { body, type }
+let failUploads = false, failWrites = false, writeDelay = 0, writes = 0, iaOn = false, iaCalls = 0;
 const log = [];
 function matches(row, params) {
   for (const [k, v] of params) {
@@ -60,6 +61,17 @@ async function route(r) {
     if (b.action === 'siguiente_paso') return send({ siguiente_paso: 'Abrir el PBIX y anotar el primer cambio', motivo: 'Es lo más pequeño.', remaining: 29 });
     if (b.action === 'plan_dia') return send({ resumen: 'Acaba lo empezado antes de abrir frentes nuevos.', elegidas: (b.cards || []).slice(0, b.capacidad).map((c) => ({ id: c.id, motivo: 'Motivo simulado' })), remaining: 29 });
     if (b.action === 'capturar') return send({ tarjetas: [{ titulo: 'Tarea IA uno', estado: 'pendiente', prioridad: 3, fecha_limite: null, proyecto_id: null, siguiente_paso: 'Empezar' }, { titulo: 'Idea IA dos', estado: 'ideas', prioridad: 2, fecha_limite: null, proyecto_id: null, siguiente_paso: null }], remaining: 29 });
+  }
+  const sm = /\/storage\/v1\/object\/(list\/|authenticated\/)?recursos\/?(.*)$/.exec(url.pathname);
+  if (sm) {                                                  // Storage en memoria (bucket «recursos»)
+    const path = decodeURIComponent(sm[2] || ''), json = (status, body) => r.fulfill({ status, headers: cors, contentType: 'application/json', body: JSON.stringify(body) });
+    if (sm[1] === 'list/') {
+      const prefix = JSON.parse(req.postData() || '{}').prefix || '';
+      return json(200, [...files.entries()].filter(([k]) => k.startsWith(prefix) && !k.slice(prefix.length).includes('/')).map(([k, f]) => ({ name: k.slice(prefix.length), id: k, created_at: f.at, metadata: { size: f.body.length, mimetype: f.type } })));
+    }
+    if (sm[1] === 'authenticated/') { const f = files.get(path); return f ? r.fulfill({ status: 200, headers: cors, contentType: f.type, body: f.body }) : json(404, { message: 'Not found' }); }
+    if (req.method() === 'POST') { if (failUploads) return json(500, { message: 'Fallo simulado de subida' }); files.set(path, { body: req.postDataBuffer(), type: req.headers()['content-type'], at: new Date().toISOString() }); return json(200, { Key: 'recursos/' + path }); }
+    if (req.method() === 'DELETE') { (JSON.parse(req.postData() || '{}').prefixes || []).forEach((k) => files.delete(k)); return json(200, []); }
   }
   if (!m) return r.fulfill({ status: 200, headers: cors, contentType: 'application/json', body: '{}' });
   const t = m[1], json = (status, body) => r.fulfill({ status, headers: cors, contentType: 'application/json', body: JSON.stringify(body) });
@@ -122,6 +134,8 @@ async function settleScroll(page) {
     })();
   }));
 }
+// las secciones secundarias de la tarjeta van plegadas: se abren antes de rellenar
+async function openSec(page, id) { await page.$eval('#apk-sec-' + id, (d) => { d.open = true; }); }
 // el tablero se repinta al cerrar un diálogo: se espera a que el elemento exista y tenga caja antes de medirlo
 async function bbox(sel) {
   await settleScroll(pagePtr.page);
@@ -177,8 +191,8 @@ await step('1. Crear tarjetas desde la columna (estado automático)', async () =
 });
 await step('1b. Crear con el botón «Nueva tarjeta»', async () => {
   await page.click('[data-role="new"]');
-  await page.fill('#apk-n-t', 'Publicar proyecto');
-  await page.selectOption('#apk-n-e', 'en_curso');
+  await page.fill('#apk-d-t', 'Publicar proyecto');
+  await page.selectOption('#apk-d-e', 'en_curso');
   await page.click('dialog[open] button[type="submit"]');
   await page.waitForSelector('.apk-col[data-estado="en_curso"] .apk-card');
   eq(await titles(page, 'en_curso'), ['Publicar proyecto']);
@@ -186,6 +200,7 @@ await step('1b. Crear con el botón «Nueva tarjeta»', async () => {
 await step('2. Editar: título, prioridad, fecha, bloqueo, siguiente paso y notas', async () => {
   await page.click(cardSel('Estudiar DAX') + ' .apk-card-open');
   await page.fill('#apk-d-t', 'Estudiar DAX avanzado');
+  await openSec(page, 'plan'); await openSec(page, 'notas');
   await page.selectOption('#apk-d-pr', '4');
   await page.fill('#apk-d-f', '2026-10-15');
   await page.fill('#apk-d-p', 'Resolver 3 ejercicios');
@@ -198,9 +213,14 @@ await step('2. Editar: título, prioridad, fecha, bloqueo, siguiente paso y nota
 });
 await step('2b. Bloqueo exige motivo y se muestra', async () => {
   await page.click(cardSel('Revisar CV') + ' .apk-card-open');
-  await page.check('dialog[open] .apk-check input');
+  ok(await page.isHidden('#apk-d-b'), 'el motivo se ve sin estar bloqueada');
+  eq(await page.getAttribute('#apk-d-bl', 'role'), 'switch', 'el bloqueo no es un interruptor');
+  await page.check('#apk-d-bl');
+  ok(await page.isVisible('#apk-d-b'), 'activar el bloqueo no enseña el motivo');
   await page.click('dialog[open] button[type="submit"]');
-  ok((await page.textContent('dialog[open] .ap-msg')).includes('bloquea'), 'sin aviso de motivo');
+  ok((await page.textContent('#apk-d-b-err')).includes('bloquea'), 'sin aviso de motivo junto al campo');
+  eq(await page.getAttribute('#apk-d-b', 'aria-invalid'), 'true', 'el campo no se marca como inválido');
+  ok((await page.getAttribute('#apk-d-b', 'aria-describedby')).includes('apk-d-b-err'), 'el error no está asociado al campo');
   await page.fill('#apk-d-b', 'Falta feedback');
   await page.click('dialog[open] button[type="submit"]');
   await page.waitForSelector('dialog[open]', { state: 'detached' });
@@ -250,10 +270,11 @@ await step('6. Proyectos: crear y asignar tareas', async () => {
 });
 await step('7. Pasos: añadir, marcar y contar', async () => {
   await page.click(cardSel('Publicar proyecto') + ' .apk-card-open');
+  await openSec(page, 'pasos');
   for (const t of ['Escribir README', 'Subir capturas']) { await page.fill('dialog[open] input[aria-label="Nuevo paso"]', t); await page.keyboard.press('Enter'); await page.waitForSelector(`dialog[open] .apk-sub:has-text("${t}")`); }
   await page.check('dialog[open] .apk-sub input[type="checkbox"]');
   await page.waitForTimeout(100);
-  await page.click('dialog[open] button:has-text("Cerrar")');
+  await page.click('dialog[open] [data-role="close"]');
   await page.waitForTimeout(100);
   ok((await page.textContent(cardSel('Publicar proyecto'))).includes('1/2 pasos'), 'contador de pasos');
 });
@@ -362,12 +383,12 @@ await step('Regresión: editar una tarjeta archivada guarda y se ve al reabrir',
   await page.click('.apk-seg-btn:has-text("Archivo")');
   await page.waitForSelector('.apk-arch .apk-card');
   await page.click('.apk-arch .apk-card-open');
-  await page.fill('#apk-d-t', 'Cuarta editada'); await page.fill('#apk-d-n', 'Notas nuevas');
+  await page.fill('#apk-d-t', 'Cuarta editada'); await openSec(page, 'notas'); await page.fill('#apk-d-n', 'Notas nuevas');
   await page.click('dialog[open] button[type="submit"]'); await page.waitForSelector('dialog[open]', { state: 'detached' });
   await page.click('.apk-arch .apk-card-open');
   eq(await page.inputValue('#apk-d-t'), 'Cuarta editada', 'el diálogo debe mostrar lo guardado');
   eq(await page.inputValue('#apk-d-n'), 'Notas nuevas');
-  await page.click('dialog[open] button:has-text("Cerrar")');
+  await page.click('dialog[open] [data-role="close"]');
   c.archivada_en = null; c.titulo = 'Cuarta';
 });
 await step('Regresión: «Deshacer» deshace la última acción aunque el guardado vaya lento', async () => {
@@ -419,6 +440,7 @@ await step('El aprendizaje se anota desde el aviso y se ve en la tarjeta de Hech
   await page.click(cardSel(t) + ' .apk-card-open'); await page.selectOption('#apk-d-e', 'hecho');
   await page.click('dialog[open] button[type="submit"]'); await page.waitForSelector('dialog[open]', { state: 'detached' });
   await page.click(cardSel(t) + ' .apk-card-open');
+  await openSec(page, 'notas');
   await page.fill('#apk-d-a', 'Aprendí a probar con datos simulados');
   await page.click('dialog[open] button[type="submit"]'); await page.waitForSelector('dialog[open]', { state: 'detached' });
   ok((await page.textContent(cardSel(t))).includes('Aprendí a probar'), 'la tarjeta no muestra el aprendizaje (' + est + ')');
@@ -436,7 +458,7 @@ await step('Paleta Ctrl+K: buscar abre la tarjeta y un texto nuevo se crea con c
   await page.keyboard.press('Enter');
   await page.waitForSelector('#apk-d-t');
   eq(await page.inputValue('#apk-d-t'), 'Publicar proyecto', 'abre la tarjeta buscada');
-  await page.click('dialog[open] button:has-text("Cerrar")');
+  await page.click('dialog[open] [data-role="close"]');
   await page.keyboard.press('Control+k');
   await page.waitForSelector('dialog.apk-pal[open]');
   await page.keyboard.type('Tarea paleta mañana !alta');
@@ -473,6 +495,7 @@ await step('IA activa: desglosar en pasos (editables) y proponer siguiente paso 
   await goBoard(page);
   const target = db.kb_tarjetas.find((c) => c.titulo === 'Tercera');
   await page.click(cardSel('Tercera') + ' .apk-card-open');
+  await openSec(page, 'pasos');
   await page.click('[data-role="ia-desglosar"]');
   await page.waitForSelector('dialog.apk-review[open]');
   await page.fill('.apk-review .apk-rv-item:nth-child(1) input[type="text"]', 'Paso uno editado');
@@ -483,10 +506,14 @@ await step('IA activa: desglosar en pasos (editables) y proponer siguiente paso 
   const subs = db.kb_subtareas.filter((x) => x.tarjeta_id === target.id).map((x) => x.titulo);
   ok(subs.includes('Paso uno editado') && subs.includes('Paso tres') && !subs.includes('Paso dos'), 'pasos guardados: ' + subs);
   const prevNext = target.siguiente_paso;
+  await openSec(page, 'plan');
   await page.click('[data-role="ia-next"]');
   await page.waitForFunction(() => document.querySelector('#apk-d-p').value.includes('PBIX'));
   eq(db.kb_tarjetas.find((c) => c.id === target.id).siguiente_paso, prevNext, 'no se guarda sin pulsar Guardar');
-  await page.click('dialog[open] button:has-text("Cerrar")');
+  await page.click('dialog[open] [data-role="close"]');          // hay un cambio sin guardar (la propuesta): se confirma descartarlo
+  await page.click('#ap-dialog[open] #ap-dialog-ok');
+  await page.waitForSelector('dialog.apk-card-dlg', { state: 'detached' });
+  eq(db.kb_tarjetas.find((c) => c.id === target.id).siguiente_paso, prevNext, 'descartar no guarda');
 });
 await step('IA activa: texto libre → tarjetas propuestas → se crean al confirmar', async () => {
   await page.click('.apk-seg-btn:has-text("Hoy")');
@@ -503,6 +530,109 @@ await step('IA activa: texto libre → tarjetas propuestas → se crean al confi
   ok(a && a.prioridad === 3 && a.estado === 'pendiente' && a.siguiente_paso === 'Empezar', 'tarjeta 1: ' + JSON.stringify(a));
   ok(b && b.estado === 'ideas', 'tarjeta 2');
   if (process.env.SHOTS) { await page.waitForTimeout(200); await page.screenshot({ path: join(process.env.SHOTS, 'hoy-ia.png'), fullPage: true }); }
+});
+await step('Tarjeta: sin cambios, X, Esc y clic fuera cierran al momento; con cambios se pide confirmar', async () => {
+  await goBoard(page);
+  const n = db.kb_tarjetas.length;
+  await page.click('[data-role="new"]');
+  await page.waitForSelector('dialog.apk-card-dlg[open]');
+  eq(await page.evaluate(() => document.activeElement.id), 'apk-d-t', 'al crear, el foco no va al título');
+  ok(await page.isVisible('dialog[open] [data-role="close"][aria-label="Cerrar"]'), 'sin X accesible');
+  const x = await page.$eval('dialog[open] [data-role="close"]', (e) => { const r = e.getBoundingClientRect(), d = e.closest('dialog').getBoundingClientRect(); return { top: r.top - d.top, right: d.right - r.right, w: r.width, h: r.height }; });
+  ok(x.top < 24 && x.right < 24 && x.w >= 44 && x.h >= 44, 'la X no está arriba a la derecha o es pequeña: ' + JSON.stringify(x));
+  await page.keyboard.press('Escape');
+  await page.waitForSelector('dialog.apk-card-dlg', { state: 'detached' });
+  eq(await page.isVisible('#ap-dialog[open]'), false, 'pregunta sin cambios');
+  await page.click('[data-role="new"]');
+  await page.mouse.click(8, 8);                                  // fondo
+  await page.waitForSelector('dialog.apk-card-dlg', { state: 'detached' });
+  await page.click('[data-role="new"]');
+  await page.fill('#apk-d-t', 'Algo a medio escribir');
+  await page.keyboard.press('Escape');
+  await page.waitForSelector('#ap-dialog[open]');
+  eq((await page.textContent('#ap-dialog-cancel')).trim(), 'Seguir editando');
+  await page.click('#ap-dialog-cancel');
+  eq(await page.inputValue('#apk-d-t'), 'Algo a medio escribir', 'se ha perdido lo escrito');
+  await page.mouse.click(8, 8);
+  await page.waitForSelector('#ap-dialog[open]');
+  await page.click('#ap-dialog-cancel');
+  await page.click('dialog[open] [data-role="close"]');
+  await page.waitForSelector('#ap-dialog[open]');
+  await page.click('#ap-dialog-ok');
+  await page.waitForSelector('dialog.apk-card-dlg', { state: 'detached' });
+  eq(db.kb_tarjetas.length, n, 'descartar ha creado una tarjeta');
+});
+await step('Tarjeta: cabecera y pie fijos con el cuerpo desplazable; secciones que conservan lo escrito', async () => {
+  await page.click(cardSel('Publicar proyecto') + ' .apk-card-open');
+  for (const id of ['plan', 'notas', 'pasos', 'hist']) await openSec(page, id);
+  const m = await page.$eval('dialog.apk-card-dlg', (d) => { const b = d.querySelector('.apk-dlg-body'); return { sh: b.scrollHeight, ch: b.clientHeight, dh: d.getBoundingClientRect().height, vh: innerHeight }; });
+  ok(m.sh > m.ch && m.dh <= m.vh, 'el cuerpo no se desplaza dentro del diálogo: ' + JSON.stringify(m));
+  await page.$eval('dialog[open] .apk-dlg-body', (b) => { b.scrollTop = b.scrollHeight; });
+  ok(await page.isVisible('dialog[open] [data-role="close"]') && await page.isVisible('dialog[open] [data-role="save"]'), 'X o Guardar dejan de verse al desplazar');
+  const inView = await page.$eval('dialog[open] [data-role="save"]', (e) => { const r = e.getBoundingClientRect(); return r.bottom <= innerHeight && r.top >= 0; });
+  ok(inView, 'Guardar fuera de la pantalla');
+  await page.fill('#apk-d-tag', 'sql, portfolio');
+  await page.$eval('#apk-sec-plan', (d) => { d.open = false; });
+  ok((await page.textContent('#apk-sec-plan-sum')).includes('2 etiquetas'), 'el resumen no refleja lo escrito');
+  await openSec(page, 'plan');
+  eq(await page.inputValue('#apk-d-tag'), 'sql, portfolio', 'plegar ha borrado lo escrito');
+  await page.click('dialog[open] [data-role="save"]');
+  await page.waitForSelector('dialog.apk-card-dlg', { state: 'detached' });
+  eq(db.kb_tarjetas.find((c) => c.titulo === 'Publicar proyecto').etiquetas, ['sql', 'portfolio']);
+});
+const PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', 'base64');
+await step('Imágenes en las notas: adjuntar, quitar antes de guardar, persistir y volver a ver al editar', async () => {
+  const card = db.kb_tarjetas.find((c) => c.titulo === 'Publicar proyecto'), prefix = 'kanban/' + card.id + '/';
+  await page.click(cardSel('Publicar proyecto') + ' .apk-card-open');
+  await openSec(page, 'notas');
+  await page.setInputFiles('dialog[open] .apk-imgs-field input[type="file"]', [
+    { name: 'captura uno.png', mimeType: 'image/png', buffer: PNG }, { name: 'dos.png', mimeType: 'image/png', buffer: PNG },
+    { name: 'notas.txt', mimeType: 'text/plain', buffer: Buffer.from('hola') }
+  ]);
+  ok((await page.textContent('.apk-img-msg')).includes('«notas.txt» no es PNG'), 'el formato no válido no se avisa');
+  eq((await page.$$('dialog[open] .apk-img')).length, 2, 'vista previa de las imágenes válidas');
+  eq(files.size, 0, 'sube antes de guardar');
+  await page.click('dialog[open] [aria-label="Quitar la imagen «dos.png»"]');
+  eq((await page.$$('dialog[open] .apk-img')).length, 1, 'no se quita antes de guardar');
+  await page.click('dialog[open] [data-role="save"]');
+  await page.waitForSelector('dialog.apk-card-dlg', { state: 'detached' });
+  const keys = [...files.keys()];
+  ok(keys.length === 1 && keys[0].startsWith(prefix) && keys[0].endsWith('captura-uno.png'), 'no se ha guardado en el bucket: ' + keys);
+  await page.reload(); await page.waitForSelector('.apk-head'); await goBoard(page);
+  await page.click(cardSel('Publicar proyecto') + ' .apk-card-open');
+  await page.waitForSelector('dialog[open] .apk-img img[alt="captura-uno.png"]');
+  ok(await page.$eval('#apk-sec-notas', (d) => d.open), 'con imágenes, la sección de notas se abre');
+  ok((await page.$eval('dialog[open] .apk-img img', (i) => i.naturalWidth)) === 1, 'la imagen guardada no se ve');
+  ok((await page.textContent('#apk-sec-notas-sum')).includes('1 imagen'), 'el resumen no cuenta la imagen');
+  await page.click('dialog[open] .apk-img-x');
+  await page.click('dialog[open] [data-role="save"]');
+  await page.waitForSelector('dialog.apk-card-dlg', { state: 'detached' });
+  eq(files.size, 0, 'la imagen quitada sigue en el bucket');
+});
+await step('Imágenes: si la subida falla, la tarjeta se guarda, la imagen sigue pendiente y se puede reintentar', async () => {
+  await page.click(cardSel('Publicar proyecto') + ' .apk-card-open');
+  await openSec(page, 'notas');
+  await page.setInputFiles('dialog[open] .apk-imgs-field input[type="file"]', [{ name: 'tres.png', mimeType: 'image/png', buffer: PNG }]);
+  failUploads = true;
+  await page.click('dialog[open] [data-role="save"]');
+  await page.waitForFunction(() => /Imágenes sin guardar|imágenes sin guardar/.test(document.querySelector('dialog[open] .apk-dlg-msg').textContent));
+  ok(await page.isVisible('dialog[open] .apk-img.is-new'), 'la imagen pendiente ha desaparecido');
+  failUploads = false;
+  await page.click('dialog[open] [data-role="save"]');
+  await page.waitForSelector('dialog.apk-card-dlg', { state: 'detached' });
+  eq(files.size, 1, 'el reintento no sube la imagen');
+});
+await step('Eliminar una tarjeta borra sus imágenes cuando ya no se puede deshacer', async () => {
+  const card = db.kb_tarjetas.find((c) => c.titulo === 'Publicar proyecto');
+  await page.click(cardSel('Publicar proyecto') + ' .apk-card-open');
+  await page.click('dialog[open] .apk-dlg-more button:has-text("Eliminar")');
+  await page.click('#ap-dialog-ok');
+  await page.waitForFunction(() => !document.querySelector('.apk-card-open') || ![...document.querySelectorAll('.apk-card-open')].some((e) => e.textContent === 'Publicar proyecto'));
+  eq(files.size, 1, 'borra las imágenes antes de poder deshacer');
+  await page.waitForTimeout(10600);                                 // el aviso con «Deshacer» ya ha caducado
+  eq([...files.keys()].filter((k) => k.includes(card.id)).length, 0, 'las imágenes quedan huérfanas');
+  await page.locator('body').press('Control+z');                    // Ctrl+Z aún recupera la tarjeta (sin imágenes)
+  await page.waitForFunction(() => [...document.querySelectorAll('.apk-card-open')].some((e) => e.textContent === 'Publicar proyecto'));
 });
 await step('Sin errores de JavaScript', async () => { eq(errors, [], 'errores de consola'); });
 await step('Accesibilidad (axe, WCAG 2 A/AA) en Tablero y Hoy', async () => {
@@ -528,6 +658,45 @@ await step('Móvil: una columna con selector de estado, sin desbordar', async ()
   eq(await m.page.$$eval('.apk-col', (cs) => cs.filter((c) => c.offsetParent !== null).map((c) => c.dataset.estado)), ['pendiente']);
   eq(await m.page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true, 'scroll horizontal de página');
   if (process.env.SHOTS) await m.page.screenshot({ path: join(process.env.SHOTS, 'movil.png') });
+  await m.ctx.close();
+});
+
+await step('Móvil: Hoy · Tarjeta · Calendario · Apps · Más; «+» abre una tarjeta nueva a pantalla completa y se crea con título y Guardar', async () => {
+  const m = await open({ width: 390, height: 844 });
+  eq(await m.page.$$eval('.ap-bar > *', (a) => a.map((x) => x.textContent.trim())), ['Hoy', 'Tarjeta', 'Calendario', 'Apps', 'Más']);
+  ok(await m.page.isHidden('.ap-now'), 'el reloj se ve en móvil');
+  const back = await m.page.$eval('.ap-back', (e) => Math.round(e.getBoundingClientRect().left));
+  ok(back <= 24, '«Volver al Laboratorio» no se alinea a la izquierda: ' + back);
+  await m.page.click('.ap-bar-new');
+  await m.page.waitForSelector('dialog.apk-card-dlg[open]');
+  const r = await m.page.$eval('dialog.apk-card-dlg', (d) => { const b = d.getBoundingClientRect(); return [Math.round(b.left), Math.round(b.top), Math.round(b.width), Math.round(b.height)]; });
+  eq(r, [0, 0, 390, 844], 'no ocupa la pantalla');
+  eq(await m.page.evaluate(() => document.activeElement.id), 'apk-d-t', 'el foco no va al título');
+  ok(await m.page.$eval('#apk-sec-plan', (d) => !d.open) && await m.page.$eval('#apk-sec-notas', (d) => !d.open), 'las opciones secundarias no empiezan plegadas');
+  const t = await m.page.$$eval('dialog[open] button, dialog[open] summary, dialog[open] input:not([type="file"]), dialog[open] select', (els) => els.filter((e) => e.offsetParent).map((e) => { const b = e.getBoundingClientRect(); return [e.textContent.trim() || e.id || e.type, Math.round(b.height)]; }).filter(([, hh]) => hh < 44));
+  eq(t, [], 'objetivos táctiles de menos de 44 px');
+  // teclado virtual: el viewport visual encoge; el diálogo lo sigue y Guardar queda encima
+  await m.page.evaluate(() => { Object.defineProperty(visualViewport, 'height', { value: 480, configurable: true }); visualViewport.dispatchEvent(new Event('resize')); });
+  const save = await m.page.$eval('dialog[open] [data-role="save"]', (e) => Math.round(e.getBoundingClientRect().bottom));
+  ok(save <= 480, 'Guardar queda bajo el teclado: ' + save);
+  await m.page.fill('#apk-d-t', 'Desde el móvil');
+  await m.page.click('dialog[open] [data-role="save"]');
+  await m.page.waitForSelector('dialog.apk-card-dlg', { state: 'detached' });
+  ok(db.kb_tarjetas.some((c) => c.titulo === 'Desde el móvil' && c.estado === 'pendiente'), 'no se ha creado');
+  // desde otra sección: «+» lleva a Hoy y abre la tarjeta sin pasos intermedios
+  await m.page.goto(BASE + '#/calendario'); await m.page.waitForSelector('.ap-bar-new');
+  await m.page.click('.ap-bar-new');
+  await m.page.waitForSelector('dialog.apk-card-dlg[open]');
+  eq(await m.page.evaluate(() => location.hash), '#/', 'no vuelve a Hoy');
+  await m.page.click('dialog[open] [data-role="close"]');
+  await m.page.waitForSelector('dialog.apk-card-dlg', { state: 'detached' });
+  eq(await m.page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true, 'scroll horizontal');
+  await m.page.addScriptTag({ content: AXE });
+  await m.page.click('.ap-bar-new'); await m.page.waitForSelector('dialog.apk-card-dlg[open]');
+  const v = await m.page.evaluate(async () => (await axe.run(document.querySelector('dialog.apk-card-dlg'), { runOnly: ['wcag2a', 'wcag2aa'] })).violations.map((x) => x.id + ': ' + x.nodes.length));
+  eq(v, [], 'axe en el diálogo móvil');
+  if (process.env.SHOTS) await m.page.screenshot({ path: join(process.env.SHOTS, 'movil-tarjeta.png') });
+  eq(m.errors, [], 'errores de consola');
   await m.ctx.close();
 });
 
