@@ -1,7 +1,7 @@
 {
   "_": "Traducción al inglés británico de rfm-hosteleria.html (→ en/rfm-hosteleria.html). La usa tools/build-en.mjs.",
   "units": {
-    "Idioma · Language": "Language · Idioma",
+    "Idioma: ES, español. Cambiar a inglés": "Language: EN, English. Switch to Spanish",
     "El problema": "The problem",
     "El objetivo": "The goal",
     "Modelo de datos": "Data model",
@@ -131,7 +131,6 @@
     "Borja Mora Méndez.",
     "Español",
     "ES",
-    "Read in English",
     "EN",
     "Customer analytics · B2B",
     "scroll ↓",

@@ -17,7 +17,7 @@
    · Una «frase» es un tramo de texto con su marcado en línea (<b>, <em>, <a>, <span>…)
      entre dos elementos de bloque. Si no está en el diccionario, se queda en español y
      aparece en el aviso: cualquier cambio en la versión española se detecta.
-   · El selector ES | EN (.ds-lang) se invierte solo: en inglés, EN activo y ES enlace.
+   · El selector de idioma (.ds-lang) se invierte solo: en inglés muestra EN y enlaza a la página española.
    Sin dependencias: solo Node.
    ═══════════════════════════════════════════════ */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
@@ -125,15 +125,14 @@ function build(name, P, wantMissing) {
     // rutas dentro de scripts (window.location = './x.html', etc.)
     .replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, (blk) => blk.replace(/(['"])\.\/([\w-]+\.html)/g, (m, q, f) => q + rel('./' + f)));
 
-  // selector de idioma: EN activo y ES como enlace a la página española
-  //  (se conserva la etiqueta de apertura de cada página: alguna lleva su propio estilo en línea)
-  const INNER = `
-    <a href="../${P.src}" class="ds-lang-b" hreflang="es" lang="es" data-lang-to="es" title="Leer en español" aria-label="Leer en español">ES</a>
-    <span class="ds-lang-a" aria-current="true" lang="en" title="English">EN</span>
-  </div>`;
-  const reT = /(<div class="ds-lang"[^>]*>)[\s\S]*?<\/div>/;
+  // selector de idioma: el botón muestra EN (idioma activo) y lleva a la página española
+  //  (se conservan la etiqueta de apertura y la sangría de cada página)
+  const INNER = (ind) => `
+${ind}  <a href="../${P.src}" class="ds-lang-btn" hreflang="es" data-lang-to="es" aria-label="Language: EN, English. Switch to Spanish"><svg class="ds-lang-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9.25"/><path d="M2.75 12h18.5"/><path d="M12 2.75c2.4 2.5 3.6 5.6 3.6 9.25s-1.2 6.75-3.6 9.25c-2.4-2.5-3.6-5.6-3.6-9.25S9.6 5.25 12 2.75z"/></svg><span>EN</span></a>
+${ind}</div>`;
+  const reT = /([ \t]*)(<div class="ds-lang"[^>]*>)[\s\S]*?<\/div>/;
   if (!reT.test(en)) console.warn(`  · ${name}: no encuentro el selector de idioma`);
-  en = en.replace(reT, (m, open) => open.replace(/aria-label="[^"]*"/, 'aria-label="Language · Idioma"') + INNER);
+  en = en.replace(reT, (m, ind, open) => ind + open + INNER(ind));
   // el diccionario JS lleva su propia versión de caché (hash del contenido, como tools/version-assets.mjs)
   if (P.script) en = en.replace(P.script.before, (m) => `<script src="${P.script.src}?v=${createHash('sha256').update(readFileSync(join(ROOT, 'en', P.script.src))).digest('hex').slice(0, 10)}" defer></script>\n${m}`);
 

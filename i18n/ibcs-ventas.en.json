@@ -1,7 +1,7 @@
 {
   "_": "Traducción al inglés británico de ibcs-ventas.html (→ en/ibcs-ventas.html). La usa tools/build-en.mjs.",
   "units": {
-    "Idioma · Language": "Language · Idioma",
+    "Idioma: ES, español. Cambiar a inglés": "Language: EN, English. Switch to Spanish",
     "Análisis de ventas · IBCS": "Sales analysis · IBCS",
     "Informe de ventas con enfoque IBCS": "Sales report with an IBCS approach",
     "El problema": "The problem",
@@ -118,7 +118,6 @@
     "Borja Mora Méndez.",
     "Español",
     "ES",
-    "Read in English",
     "EN",
     "scroll ↓",
     "Power BI",

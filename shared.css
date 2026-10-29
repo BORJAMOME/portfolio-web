@@ -268,8 +268,9 @@ html.sn-pending [data-split-name] { visibility: hidden; }
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  padding: 12px 28px !important;
-  min-width: 180px !important;
+  height: 34px !important;
+  padding: 0 20px !important;
+  min-width: 132px !important;
   text-align: center !important;
   text-transform: uppercase !important;
   transition: background .25s var(--ease) !important;
@@ -988,8 +989,12 @@ nav.nav-drawer-links {
 
 /* ─── RESPONSIVE MOBILE NAV ─── */
 @media (max-width: 875px) {
-  .nav-links, .nav-social { display: none !important; }
+  /* del menú solo queda el selector de idioma, junto a la hamburguesa */
+  .nav-social, .nav-links > :not(.ds-lang) { display: none !important; }
+  .nav-links { margin-left: auto; }
+  #nav .nav-links .ds-lang { margin: 0; }
   .nav-burger { display: flex; margin-left: auto; }
+  .nav-links + .nav-social + .nav-burger, .nav-links + .nav-burger { margin-left: 8px; }
 }
 @media (max-width: 640px) {
   #nav, body > nav { height: 56px; padding: 0 clamp(1rem,3vw,1.5rem); }
@@ -1029,19 +1034,23 @@ nav.nav-drawer-links {
   @view-transition { navigation: none; }
 }
 
-/* ═══ SELECTOR DE IDIOMA (ES | EN) ═══
-   Dos siglas con el mismo gesto que el enlace activo del menú del portfolio (shared.css,
-   .nav-links a.active): mayúsculas de 11 px, el idioma activo en negrita y subrayado.
-   En blanco y negro, sin banderas. Centrado en el hueco libre del menú. Lo usan la home y el manual,
-   en español y en inglés (las versiones inglesas las genera tools/build-en.mjs). */
-#nav .ds-lang { margin-inline: auto; flex: none; display: flex; align-items: center; gap: 2px; }
-#nav .ds-lang + .nav-links { margin-left: 0; }
-.ds-lang-a, .ds-lang-b {
-  position: relative; padding: 6px 10px; border-radius: 7px;
-  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: .3px; text-transform: uppercase;
-  color: var(--muted); text-decoration: none; transition: color .2s, background .2s;
+/* ═══ SELECTOR DE IDIOMA ═══
+   Un solo botón (globo + sigla del idioma activo) que lleva a la otra versión: ES → EN, EN → ES.
+   En el menú va entre Laboratorio y Contacto, con su misma altura (34 px); en las páginas de caso,
+   sin menú, a la derecha. En móvil se queda en la cabecera, junto a la hamburguesa.
+   Las versiones inglesas las genera tools/build-en.mjs. */
+.ds-lang { flex: none; display: flex; align-items: center; }
+#nav .nav-links .ds-lang { margin: 0 6px 0 8px; }
+nav:not(#nav) > .ds-lang { margin-left: auto; }
+.ds-lang .ds-lang-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 34px; padding: 0 12px 0 10px; border-radius: var(--radius-md);
+  border: 1px solid var(--gray); background: #ffffff; color: var(--ink);
+  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .4px; line-height: 1;
+  text-transform: uppercase; text-decoration: none;
+  transition: border-color .2s var(--ease), background .2s var(--ease), transform .12s var(--ease);
 }
-.ds-lang-a { color: var(--ink); font-weight: 700; cursor: default; }
-.ds-lang-a::after { content: ''; position: absolute; bottom: 2px; left: 10px; right: 10px; height: 1.5px; background: var(--ink); border-radius: 99px; }
-@media (hover: hover) and (pointer: fine) { .ds-lang-b:hover { color: var(--ink); background: var(--off); } }
-.ds-lang-b:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; background: var(--off); }
+.ds-lang-ico { width: 16px; height: 16px; flex: none; }
+@media (hover: hover) and (pointer: fine) { .ds-lang .ds-lang-btn:hover { border-color: var(--ink); background: var(--off); color: var(--ink); } }
+.ds-lang .ds-lang-btn:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; background: var(--off); }
+.ds-lang .ds-lang-btn:active { transform: scale(.96); }
