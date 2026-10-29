@@ -12,8 +12,8 @@
   --cds-gap-xs: 6px; --cds-gap-sm: 10px; --cds-gap-md: 16px; --cds-gap-lg: 24px; --cds-gap-xl: 32px;
   --cds-font-size-caption: 12.5px; --cds-font-size-body: 14.5px; --cds-font-size-heading: 16px; --cds-font-size-title: 28px; --cds-font-weight-medium: 600;
   --cds-dur-slow: 300ms; --cds-ease-out: cubic-bezier(.2, .7, .2, 1);
-  --font-sans: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
-  --font-serif: 'Newsreader', Georgia, serif;
+  --font-sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-serif: 'Merriweather', Georgia, serif;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {

@@ -82,7 +82,7 @@ Código: bloque `INTRO` de `area-privada-color.js` y estilos `csi-` al final de 
 - Una vez por carga de la página: no se repite al cambiar de sección ni al volver desde otra pestaña; recargar es una entrada nueva.
   Sin `localStorage` ni cookies.
 - Un clic o una tecla la adelantan; salir de `#/color` durante la intro la quita.
-- Espera hasta 700 ms a la fuente Newsreader para que el título no cambie de letra a mitad del movimiento.
+- Espera hasta 700 ms a la fuente Merriweather para que el título no cambie de letra a mitad del movimiento.
 - `prefers-reduced-motion`: no se muestra. Es decorativa (`aria-hidden`); el título real sigue siendo el `h1` de la página.
 
 ## Composición y direcciones (Color Studio 2.0)
