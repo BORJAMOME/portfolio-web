@@ -99,7 +99,9 @@ window.APPortfolio = (function () {
     var h = ctx.h, list = visible();
     ui.count.textContent = list.length === items.length ? plural(items.length, 'elemento', 'elementos') : list.length + ' de ' + plural(items.length, 'elemento', 'elementos');
     ui.list.textContent = '';
+    var priv = privateSection();
     if (!list.length) {
+      if (priv) return;
       ui.list.appendChild(h('div', { class: 'ap-empty' }, [
         h('p', { class: 'ap-empty-title', text: items.length ? 'Nada con esos criterios' : 'El portfolio está vacío' }),
         h('p', { text: items.length ? 'Prueba con otra palabra o quita los filtros.' : 'Añade tu primer manual, proyecto o app con «+ Añadir».' })
@@ -121,6 +123,29 @@ window.APPortfolio = (function () {
         h('ul', { class: 'app-grid' }, group.map(card))
       ]));
     });
+  }
+
+  /* Manuales privados: viven dentro del área privada (su contenido está en Supabase con RLS, no en la web pública),
+     así que no son filas de la tabla portfolio sino rutas internas. Aparecen con los filtros «Manual» / «Publicado» o sin filtros. */
+  var PRIVATE = [{ titulo: 'Manual de Claude', href: '#/claude', descripcion: 'Lo que voy aprendiendo en Claude Academy, explicado en llano, con sus fuentes, un mapa mental y mi progreso. Solo visible con tu sesión.', tecnologias: ['Claude', 'Claude Code', 'MCP', 'Skills'] }];
+  function privateSection() {
+    var h = ctx.h, words = norm(st.q).split(/\s+/).filter(Boolean);
+    if ((st.tipo && st.tipo !== 'Manual') || (st.estado && st.estado !== 'publicado')) return false;
+    var shown = PRIVATE.filter(function (m) { var hay = norm([m.titulo, m.descripcion, 'manual privado', m.tecnologias.join(' ')].join(' ')); return words.every(function (w) { return hay.indexOf(w) > -1; }); });
+    if (!shown.length) return false;
+    ui.list.appendChild(h('section', { class: 'app-section', 'aria-labelledby': 'app-s-privados' }, [
+      h('div', { class: 'app-section-head' }, [h('h2', { class: 'ape-h3', id: 'app-s-privados', text: 'Manuales privados' }), h('span', { class: 'apx-count', text: String(shown.length) })]),
+      h('ul', { class: 'app-grid' }, shown.map(function (m) {
+        return h('li', { class: 'app-card' }, [
+          h('div', { class: 'app-card-top' }, [h('span', { class: 'ape-badge is-live', text: 'Privado' })]),
+          h('h3', { class: 'app-title' }, [h('a', { class: 'app-title-link', href: m.href, text: m.titulo })]),
+          h('p', { class: 'app-desc', text: m.descripcion }),
+          h('ul', { class: 'app-tags', 'aria-label': 'Temas' }, m.tecnologias.map(function (t) { return h('li', { class: 'apf-tag', text: t }); })),
+          h('div', { class: 'app-card-foot' }, [h('div', { class: 'app-links' }, [h('a', { class: 'app-link app-link--main', href: m.href, text: 'Abrir' })])])
+        ]);
+      }))
+    ]));
+    return true;
   }
 
   function extLink(href, text, cls) {

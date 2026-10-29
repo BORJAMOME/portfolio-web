@@ -9,6 +9,11 @@ Contexto de producto y marca: `PRODUCT.md` (solo local). Mapa de archivos y coma
 - Tras cambiar un CSS/JS propio: `node tools/version-assets.mjs` (versiones `?v=`; también en los imports entre módulos de `color-studio/`, para que cada uno se descargue una sola vez).
 - Sin dependencias nuevas salvo que no haya alternativa nativa razonable.
 - Manuales con sistema propio: `ds/` (Data Storytelling), `ml/` (se genera en otro repo), `pbi/`.
+- **Manual de Claude** (`#/claude`, desde Portfolio → «Manuales privados»; privado de verdad: repo y GitHub Pages son públicos, así que **el contenido no está en el repo**).
+  Motor público: `area-privada-claude.js` (Shadow DOM, sin estilos en línea por la CSP, todo HTML del contenido pasa por `clean()`), `claude-manual/` (`config`, `grafo`, `mapa`, `viz` como módulos ES, `seed/` = la Guía del propio manual) y `css/claude-manual.css`.
+  Contenido: tabla `cm_docs` con RLS (`supabase/claude-manual.sql`, revertir con `claude-manual-rollback.sql`); los cursos se escriben en `.claude-academy/` (carpeta local, **ignorada por git**, mismo formato que `claude-manual/seed/`) y se suben con `node tools/claude-academy/publish.mjs` (`CM_PASSWORD`; `--dry-run`, `--prune`).
+  Un concepto = una ficha, ids estables, `rel` (con `w`) y `src` (con fecha) de cada ficha alimentan el mapa, «Dónde encaja» y los filtros; `ver` nunca `verificado` sin contrastar; cada tema nuevo en `LOG`. Procedimiento: `claude-manual/README.md`.
+  Pruebas: `node tools/check-claude-academy.mjs` (contenido, cableado, mapa, publicador y privacidad) y `node tools/check-claude-manual.mjs` (interfaz con Supabase simulado, CSP real y axe).
 
 ## Comprobaciones (CI en cada PR)
 ```bash

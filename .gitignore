@@ -15,6 +15,9 @@ supabase/interview-intel-perfil.sql
 # Carga de procesos de selección sacada del correo (datos personales)
 supabase/procesos-2026-carga.sql
 
+# Contenido privado del Manual de Claude (carpeta local; se publica en Supabase con tools/claude-academy/publish.mjs)
+/.claude-academy/
+
 # Estado local de la CLI de Supabase (npx supabase …)
 supabase/.temp/
 

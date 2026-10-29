@@ -36,6 +36,9 @@ jobs:
       - name: Versiones de caché (?v=) al día
         if: ${{ !cancelled() }}
         run: node tools/version-assets.mjs --check
+      - name: Manual de Claude (contenido, cableado, mapa, publicador y privacidad)
+        if: ${{ !cancelled() }}
+        run: node tools/check-claude-academy.mjs
       - name: Lógica del Centro de trabajo (Hoy)
         if: ${{ !cancelled() }}
         run: node tools/test-kanban.mjs
@@ -71,6 +74,9 @@ jobs:
       - name: Color Studio (flujos de interfaz con Supabase simulado)
         if: ${{ !cancelled() }}
         run: node tools/check-color.mjs
+      - name: Manual de Claude en el área privada (interfaz con Supabase simulado, CSP real y axe)
+        if: ${{ !cancelled() }}
+        run: node tools/check-claude-manual.mjs
 
   funciones:
     name: Edge Functions (Deno)
