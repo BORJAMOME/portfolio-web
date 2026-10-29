@@ -1221,6 +1221,9 @@ body:has(.apl) { --off: #FBFBFB; background: #FBFBFB; }
 
 /* Modo app (area-privada.js → setAppMode): la app ocupa la pantalla y del área privada solo queda la vuelta */
 .ap-in-app .ap-top, .ap-in-app .ap-tabs, .ap-in-app .ap-foot { display: none; }
+/* Manual de Claude: sin el título ni las pestañas del área privada (el h1 sigue para lectores de pantalla) */
+.ap-in-manual .ap-tabs { display: none; }
+.ap-in-manual .ap-app-title { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .ap-in-app .ap-shell { padding-top: 0; }
 .ap-in-app .ap-head { margin: 0; }
 /* sigue siendo el h1 de la página (y el nombre de la sección de la app) para lectores de pantalla */

@@ -602,6 +602,7 @@
     var job, isModule = r.kind === 'module', tab = isModule ? (MODULES[r.name].tab || r.name) : 'archivos';
     stampHistory();
     setAppMode(isModule ? appOf(r.name) : null);
+    document.body.classList.toggle('ap-in-manual', isModule && r.name === 'claude');   // el manual lleva su propia cabecera: sin el título ni las pestañas del área privada
     lastWasApps = isModule && r.name === 'apps';
     lastIdx = navIdx;
     // la barra del drive (buscar, + Carpeta, subir) y las migas solo tienen sentido en «Archivos y notas»
@@ -974,6 +975,7 @@
     els.crumbs.textContent = '';
     els.uploads.textContent = '';
     setStatus('');
+    document.body.classList.remove('ap-in-manual');
     setAppMode(null);                   // la pantalla de acceso lleva siempre la cabecera del área privada
     els.app.hidden = true;
     els.lock.hidden = false;
