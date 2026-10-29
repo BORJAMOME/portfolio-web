@@ -197,7 +197,8 @@ window.APKanban = (function () {
     libro: SV + '<path d="M2.4 3.3c1.9-.6 3.9-.4 5.6.9 1.7-1.3 3.7-1.5 5.6-.9v9.5c-1.9-.6-3.9-.4-5.6.9-1.7-1.3-3.7-1.5-5.6-.9zM8 4.2v9.5"/></svg>',
     hoy: SV + '<circle cx="8" cy="8" r="2.8"/><path d="M8 1.6v1.5M8 12.9v1.5M1.6 8h1.5M12.9 8h1.5M3.5 3.5l1 1M11.5 11.5l1 1M3.5 12.5l1-1M11.5 4.5l1-1"/></svg>',
     ia: SV + '<path d="M7 2.2l1.4 3.9 3.9 1.4-3.9 1.4L7 12.8 5.6 8.9 1.7 7.5l3.9-1.4z"/><path d="M12.6 1.6v2.8M11.2 3h2.8"/></svg>',
-    buscar: SV + '<circle cx="7" cy="7" r="4.6"/><path d="M10.4 10.4 14 14"/></svg>'
+    buscar: SV + '<circle cx="7" cy="7" r="4.6"/><path d="M10.4 10.4 14 14"/></svg>',
+    imagen: SV + '<rect x="2" y="2.8" width="12" height="10.4" rx="1.8"/><circle cx="5.8" cy="6.4" r="1.1"/><path d="m2.6 12 3.6-3.4 2.8 2.6 1.8-1.7 2.6 2.5"/></svg>'
   };
   function stIcon(estado) { var s = h2('span', { class: 'apk-st', 'data-estado': estado, html: ICON['st_' + estado] }); return s; }
   function icon(name) { return h2('span', { class: 'apk-ico', html: ICON[name] }); }
@@ -347,7 +348,7 @@ window.APKanban = (function () {
         keep = c.id; fresh = c.id;
         pushUndo('creación de «' + clip(c.titulo) + '»', function () {
           st.cards = st.cards.filter(function (x) { return x.id !== c.id; });
-          return api('/rest/v1/kb_tarjetas?id=eq.' + c.id, { method: 'DELETE', headers: { Prefer: 'return=minimal' } });
+          return api('/rest/v1/kb_tarjetas?id=eq.' + c.id, { method: 'DELETE', headers: { Prefer: 'return=minimal' } }).then(function () { removeImages(c.id); });
         });
         paint();
         say('Tarjeta creada en ' + ESTADO_LABEL[estado] + '.', { undo: true });
@@ -381,7 +382,10 @@ window.APKanban = (function () {
       paint();
       return api('/rest/v1/kb_tarjetas?id=eq.' + card.id, { method: 'DELETE', headers: { Prefer: 'return=minimal' } }).then(function () {
         say('«' + clip(card.titulo) + '» eliminada.', { undo: true });
+        // las imágenes se borran cuando ya no se puede deshacer desde el aviso (deshacer después recupera la tarjeta sin ellas)
+        var imgTimer = setTimeout(function () { removeImages(card.id); }, 10000);
         pushUndo('eliminación de «' + clip(card.titulo) + '»', function () {
+          clearTimeout(imgTimer);
           var row = Object.assign({}, card);
           return api('/rest/v1/kb_tarjetas', { method: 'POST', headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(row) })
             .then(function () {
@@ -716,33 +720,178 @@ window.APKanban = (function () {
     function selectEstado(v) { return ui.select(ESTADOS.map(function (e) { return [e.id, e.label]; }), v); }
     function selectProy(v) { return ui.select(st.projects.filter(function (p) { return p.estado !== 'archivado' || p.id === v; }).map(function (p) { return [p.id, p.titulo]; }), v || '', 'Sin proyecto'); }
 
-    function newDialog(estado) {
-      var t = ui.input('text', '', { maxlength: '200', required: true });
-      var e = selectEstado(estado), p = selectProy(st.filters.proyecto && st.filters.proyecto !== 'none' ? st.filters.proyecto : '');
-      ui.formDialog('Nueva tarjeta', 'Crear', [
-        ui.field('apk-n-t', 'Título', t, { wide: true }), ui.field('apk-n-e', 'Estado inicial', e), ui.field('apk-n-p', 'Proyecto (opcional)', p)
-      ], function () {
-        var v = t.value.trim();
-        if (!v) throw ui.invalid('Escribe un título.', t);
-        var f = captureFields(v, e.value);
-        return create(f.titulo, e.value, p.value || f.p.proyecto_id || null, f.extra);
-      }, t);
+    /* ── Tarjeta: un único diálogo para crear y para editar (botón «Nueva tarjeta», columnas, paleta y «+ Tarjeta» de la barra móvil) ──
+       Cabecera (título + X) y pie (Cancelar / Guardar) fijos; solo el cuerpo se desplaza. Siempre a la vista lo esencial:
+       título, estado, proyecto y bloqueo. Planificación, notas e imágenes, pasos e historial van en secciones plegables
+       (<details>: plegar no borra nada) con un resumen de lo que contienen. En móvil ocupa la pantalla y sigue al teclado.
+       Cerrar (X, Esc, clic fuera, Cancelar) es inmediato si no hay cambios; si los hay, pregunta antes de descartarlos.
+       Imágenes de las notas: bucket privado «recursos», en kanban/<tarjeta>/; se suben y se quitan al pulsar Guardar. */
+    var IMG_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'], IMG_MAX = 10 * 1024 * 1024, IMG_LIMIT = 12;
+    function imgPrefix(id) { return 'kanban/' + id + '/'; }
+    function imgName(path) { return path.split('/').pop().replace(/^[0-9a-f]{8}-/, ''); }
+    function safeFile(name) {
+      var n = String(name || 'imagen').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\w.-]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+      return (n || 'imagen').slice(-80);
+    }
+    function removeImages(id) {          // borra las imágenes de una tarjeta que ya no existe (sin bloquear nada si falla)
+      if (!ctx.storage) return Promise.resolve();
+      return ctx.storage.list(imgPrefix(id)).then(function (list) {
+        return list.length ? ctx.storage.remove(list.map(function (x) { return imgPrefix(id) + x.name; })) : null;
+      }).catch(function (err) { console.warn('[kanban] imágenes sin borrar', err); });
     }
 
-    function detailDialog(c0, focusField) {
-      var c = c0, subs = (st.subs[c.id] || []).slice(), dlg, msg = h('p', { class: 'ap-msg', 'aria-live': 'assertive' });
+    function newDialog(estado) { cardDialog(null, { estado: estado }); }
+    function detailDialog(c0, focusField) { cardDialog(c0, { focus: focusField }); }
+
+    function cardDialog(c0, o) {
+      o = o || {};
+      var c = c0, subs = c ? (st.subs[c.id] || []).slice() : [], dlg, saving = false;
+      var src = c || { titulo: '', estado: o.estado || 'pendiente', proyecto_id: st.filters.proyecto && st.filters.proyecto !== 'none' ? st.filters.proyecto : '', prioridad: 2, etiquetas: [], bloqueada: false };
+      var msg = h('p', { class: 'ap-msg apk-dlg-msg', 'aria-live': 'assertive' });
       var f = {
-        titulo: ui.input('text', c.titulo, { maxlength: '200' }), estado: selectEstado(c.estado), proyecto: selectProy(c.proyecto_id),
-        prioridad: ui.select([['4', 'Urgente'], ['3', 'Alta'], ['2', 'Normal'], ['1', 'Baja']], String(c.prioridad)),
-        fecha: ui.input('date', c.fecha_limite || ''),
-        esfuerzo: ui.select([['1', ESFUERZO[1]], ['2', ESFUERZO[2]], ['3', ESFUERZO[3]]], c.esfuerzo ? String(c.esfuerzo) : '', 'Sin estimar'),
-        tags: ui.input('text', (c.etiquetas || []).join(', '), { maxlength: '200' }),
-        bloqueada: h('input', { type: 'checkbox', checked: c.bloqueada }), bloqueo: ui.input('text', c.bloqueo || '', { maxlength: '300' }),
-        paso: ui.input('text', c.siguiente_paso || '', { maxlength: '300' }),
-        notas: ui.area(c.notas, 8, 8000), aprendizaje: ui.area(c.aprendizaje, 3, 2000)
+        titulo: ui.input('text', src.titulo, { maxlength: '200', 'aria-required': 'true', enterkeyhint: 'done' }),
+        estado: selectEstado(src.estado), proyecto: selectProy(src.proyecto_id),
+        prioridad: ui.select([['4', 'Urgente'], ['3', 'Alta'], ['2', 'Normal'], ['1', 'Baja']], String(src.prioridad || 2)),
+        fecha: ui.input('date', src.fecha_limite || ''),
+        esfuerzo: ui.select([['1', ESFUERZO[1]], ['2', ESFUERZO[2]], ['3', ESFUERZO[3]]], src.esfuerzo ? String(src.esfuerzo) : '', 'Sin estimar'),
+        tags: ui.input('text', (src.etiquetas || []).join(', '), { maxlength: '200', autocapitalize: 'none' }),
+        bloqueada: h('input', { type: 'checkbox', role: 'switch', class: 'apk-switch-in', id: 'apk-d-bl', checked: !!src.bloqueada, 'aria-describedby': 'apk-d-bl-hint' }),
+        bloqueo: ui.input('text', src.bloqueo || '', { maxlength: '300', placeholder: 'p. ej. Espero acceso a la base de datos' }),
+        paso: ui.input('text', src.siguiente_paso || '', { maxlength: '300' }),
+        notas: ui.area(src.notas, 6, 8000), aprendizaje: ui.area(src.aprendizaje, 3, 2000)
       };
+      var title = h('h2', { class: 'ap-dialog-title apk-dlg-title', id: 'apk-d-title', tabindex: '-1', text: c ? 'Editar tarjeta' : 'Nueva tarjeta' });
+
+      /* Errores junto al campo (y la sección se abre si estaba plegada) */
+      function fieldErr(el, text) {
+        var id = el.id + '-err', p = document.getElementById(id);
+        if (!p) { p = h('p', { class: 'apk-err', id: id }); el.insertAdjacentElement('afterend', p); }
+        p.textContent = text;
+        el.setAttribute('aria-invalid', 'true');
+        el.setAttribute('aria-describedby', ((el.getAttribute('aria-describedby') || '').replace(id, '').trim() + ' ' + id).trim());
+        var sec = el.closest('details'); if (sec) sec.open = true;
+        el.focus();
+      }
+      function clearErrs() {
+        [].forEach.call(dlg.querySelectorAll('.apk-err'), function (p) {
+          var el = document.getElementById(p.id.replace(/-err$/, ''));
+          if (el) { el.removeAttribute('aria-invalid'); var d = (el.getAttribute('aria-describedby') || '').replace(p.id, '').trim(); if (d) el.setAttribute('aria-describedby', d); else el.removeAttribute('aria-describedby'); }
+          p.remove();
+        });
+      }
+
+      /* ── Bloqueo: interruptor con su efecto explicado; el motivo solo aparece (y se exige) si está activo ── */
+      var blockWhy = h('div', { class: 'apk-block-why' }, [h('label', { class: 'ap-field-label', for: 'apk-d-b', text: 'Qué la bloquea' }), (f.bloqueo.id = 'apk-d-b', f.bloqueo)]);
+      function syncBlock() { blockWhy.hidden = !f.bloqueada.checked; }
+      f.bloqueada.addEventListener('change', function () { syncBlock(); if (f.bloqueada.checked) f.bloqueo.focus(); });
+      syncBlock();
+      var blockBox = h('div', { class: 'apf-field apf-wide apk-block' }, [
+        h('label', { class: 'apk-switch', for: 'apk-d-bl' }, [f.bloqueada, h('span', { class: 'apk-switch-ui', 'aria-hidden': 'true' }), h('span', { class: 'apk-switch-t' }, [icon('bloqueo'), 'Bloqueada'])]),
+        h('p', { class: 'apf-hint', id: 'apk-d-bl-hint', text: 'Algo externo te impide avanzar. Se marca en el tablero y no se sugiere para hoy.' }),
+        blockWhy
+      ]);
+
+      /* ── Secciones plegables con resumen de lo que hay dentro ── */
+      function section(id, label, kids, open) {
+        var sum = h('span', { class: 'apk-sec-sum', id: id + '-sum' });
+        var d = h('details', { class: 'apk-sec', id: id, open: !!open }, [
+          h('summary', { class: 'apk-sec-h' }, [h('span', { class: 'apk-sec-t', text: label }), sum]),
+          h('div', { class: 'apk-sec-b apf-grid' }, kids)
+        ]);
+        d.sum = sum;
+        return d;
+      }
+      function planSummary() {
+        var p = [];
+        if (f.prioridad.value !== '2') p.push(PRIO[f.prioridad.value]);
+        if (f.fecha.value) p.push(dueLabel(f.fecha.value, now).text);
+        if (f.esfuerzo.value) p.push(ESFUERZO[f.esfuerzo.value]);
+        var n = parseTags(f.tags.value).length; if (n) p.push(n + (n === 1 ? ' etiqueta' : ' etiquetas'));
+        if (f.paso.value.trim()) p.push('con siguiente paso');
+        return p.join(' · ') || 'Prioridad normal, sin fecha';
+      }
+      function notesSummary() {
+        var p = [], n = imgs.filter(function (x) { return !x.gone; }).length + added.length;
+        if (f.notas.value.trim()) p.push('Con notas');
+        if (n) p.push(n + (n === 1 ? ' imagen' : ' imágenes'));
+        if (f.aprendizaje.value.trim()) p.push('con aprendizaje');
+        return p.join(' · ') || 'Vacío';
+      }
+
+      /* ── Imágenes: las guardadas (con su ruta) y las nuevas (aún en el dispositivo) ── */
+      var imgs = [], added = [], urls = [], imgsReady = !c;
+      var fileIn = h('input', { type: 'file', accept: IMG_TYPES.join(','), multiple: true, hidden: true, 'aria-hidden': 'true', tabindex: '-1' });
+      var gallery = h('ul', { class: 'apk-imgs', 'aria-label': 'Imágenes adjuntas' });
+      var imgMsg = h('p', { class: 'apf-hint apk-img-msg', 'aria-live': 'polite' });
+      var addImg = btn([icon('imagen'), 'Añadir imágenes'], 'apk-btn', function () { fileIn.click(); }, { 'data-role': 'img-add', 'aria-describedby': 'apk-d-img-hint' });
+      function objUrl(b) { var u = URL.createObjectURL(b); urls.push(u); return u; }
+      function drawImgs() {
+        gallery.textContent = '';
+        imgs.filter(function (x) { return !x.gone; }).concat(added).forEach(function (x) {
+          gallery.appendChild(h('li', { class: 'apk-img' + (x.file ? ' is-new' : '') }, [
+            x.url ? h('a', { href: x.url, target: '_blank', rel: 'noopener', class: 'apk-img-a', title: 'Abrir a tamaño completo' }, [h('img', { src: x.url, alt: x.name, loading: 'lazy' })])
+              : h('span', { class: 'apk-img-ph', text: x.failed ? 'Sin vista previa' : 'Cargando…' }),
+            x.file ? h('span', { class: 'apk-img-tag', text: 'Sin guardar' }) : null,
+            btn('Quitar', 'apk-img-x', function () {
+              if (x.file) added.splice(added.indexOf(x), 1); else x.gone = true;
+              drawImgs(); imgMsg.textContent = '«' + x.name + '» se quitará al guardar.'; addImg.focus();
+            }, { 'aria-label': 'Quitar la imagen «' + x.name + '»' })
+          ]));
+        });
+        gallery.hidden = !gallery.firstChild;
+        if (notesSec) notesSec.sum.textContent = notesSummary();
+      }
+      fileIn.addEventListener('change', function () {
+        var files = [].slice.call(fileIn.files || []), bad = [], room = IMG_LIMIT - (imgs.filter(function (x) { return !x.gone; }).length + added.length);
+        files.forEach(function (file) {
+          if (IMG_TYPES.indexOf(file.type) < 0) return bad.push('«' + file.name + '» no es PNG, JPG, WebP ni GIF');
+          if (file.size > IMG_MAX) return bad.push('«' + file.name + '» pesa más de 10 MB');
+          if (room <= 0) return bad.push('«' + file.name + '» supera el máximo de ' + IMG_LIMIT + ' imágenes');
+          room--; added.push({ file: file, name: file.name, url: objUrl(file) });
+        });
+        fileIn.value = '';
+        drawImgs();
+        imgMsg.textContent = bad.length ? 'No se han añadido: ' + bad.join('; ') + '.' : files.length ? (files.length === 1 ? 'Imagen añadida.' : files.length + ' imágenes añadidas.') + ' Se subirán al guardar.' : '';
+        imgMsg.classList.toggle('is-error', !!bad.length);
+      });
+      function loadImgs() {
+        if (!c || !ctx.storage) { imgsReady = true; return; }
+        imgMsg.textContent = 'Cargando imágenes…';
+        ctx.storage.list(imgPrefix(c.id)).then(function (list) {
+          imgs = list.map(function (x) { return { path: imgPrefix(c.id) + x.name, name: imgName(x.name) }; });
+          imgsReady = true; imgMsg.textContent = ''; drawImgs();
+          if (imgs.length && notesSec) notesSec.open = true;
+          imgs.forEach(function (x) {
+            ctx.storage.blob(x.path).then(function (b) { x.url = objUrl(b); }, function () { x.failed = true; }).then(function () { if (dlg.open) drawImgs(); });
+          });
+        }).catch(function (err) {
+          if (auth(err)) return;
+          imgMsg.textContent = 'No se han podido cargar las imágenes guardadas. Lo demás se puede editar con normalidad.'; imgMsg.classList.add('is-error');
+          addImg.disabled = true;      // sin saber qué hay guardado, no se mezclan altas
+        });
+      }
+      /* Sube las nuevas y borra las quitadas. Lo que falle se queda pendiente (y a la vista) para reintentar. */
+      function syncImages() {
+        if (!c || (!added.length && !imgs.some(function (x) { return x.gone; }))) return Promise.resolve();
+        var errs = [];
+        var ups = added.slice().map(function (x) {
+          var path = imgPrefix(c.id) + Math.random().toString(16).slice(2, 10).padEnd(8, '0') + '-' + safeFile(x.name);
+          return ctx.storage.upload(x.file, path, x.file.type, function () {}).then(function () {
+            added.splice(added.indexOf(x), 1); imgs.push({ path: path, name: x.name, url: x.url });
+          }, function (err) { errs.push('«' + x.name + '»: ' + (err.status === 413 ? 'demasiado grande' : err.status === 415 ? 'formato no admitido' : err.message)); if (err.auth) throw err; });
+        });
+        var gone = imgs.filter(function (x) { return x.gone; });
+        var del = gone.length ? ctx.storage.remove(gone.map(function (x) { return x.path; })).then(function () {
+          imgs = imgs.filter(function (x) { return !x.gone; });
+        }, function (err) { errs.push('no se han podido quitar ' + gone.length + (gone.length === 1 ? ' imagen' : ' imágenes')); if (err.auth) throw err; }) : null;
+        return Promise.all(ups.concat(del)).then(function () {
+          drawImgs();
+          if (errs.length) { var e = new Error('Imágenes sin guardar (' + errs.join('; ') + ')'); e.images = true; throw e; }
+        });
+      }
+
+      /* ── Pasos (solo al editar: se guardan al momento, como hasta ahora) ── */
       var subList = h('ul', { class: 'apk-subs' });
-      var histBox = h('ul', { class: 'apk-hist' });
       function drawSubs() {
         subList.textContent = '';
         subs.forEach(function (s) {
@@ -751,6 +900,7 @@ window.APKanban = (function () {
             var prev = s.hecho; s.hecho = cb.checked;
             api('/rest/v1/kb_subtareas?id=eq.' + s.id, { method: 'PATCH', headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify({ hecho: s.hecho }) })
               .catch(function (err) { s.hecho = prev; cb.checked = prev; msg.textContent = 'No se ha guardado el paso: ' + err.message; msg.classList.add('is-error'); });
+            stepsSum();
           });
           subList.appendChild(h('li', { class: 'apk-sub' }, [h('label', null, [cb, h('span', { text: s.titulo })]),
             btn('Quitar', 'apk-link', function () {
@@ -759,8 +909,10 @@ window.APKanban = (function () {
               }).catch(function (err) { msg.textContent = 'No se ha podido quitar: ' + err.message; msg.classList.add('is-error'); });
             }, { 'aria-label': 'Quitar el paso «' + s.titulo + '»' })]));
         });
+        stepsSum();
       }
-      var newSub = ui.input('text', '', { maxlength: '200', placeholder: 'Nuevo paso y Enter', 'aria-label': 'Nuevo paso' });
+      function stepsSum() { if (stepsSec) { var d = subs.filter(function (s) { return s.hecho; }).length; stepsSec.sum.textContent = subs.length ? d + ' de ' + subs.length + ' hechos' : 'Ninguno'; } }
+      var newSub = ui.input('text', '', { maxlength: '200', placeholder: 'Nuevo paso y Enter', 'aria-label': 'Nuevo paso', enterkeyhint: 'enter', 'aria-describedby': 'apk-d-sub-hint' });
       newSub.addEventListener('keydown', function (ev) {
         if (ev.key !== 'Enter') return;
         ev.preventDefault();
@@ -771,97 +923,189 @@ window.APKanban = (function () {
           subs.push(r[0]); st.subs[c.id] = subs; newSub.value = ''; drawSubs(); newSub.disabled = false; newSub.focus();
         }).catch(function (err) { newSub.disabled = false; msg.textContent = 'No se ha podido añadir: ' + err.message; msg.classList.add('is-error'); });
       });
-      drawSubs();
-      api('/rest/v1/kb_historial?select=tipo,de,a,created_at&tarjeta_id=eq.' + c.id + '&order=created_at.desc&limit=12').then(function (r) {
-        (r || []).forEach(function (e) {
-          var txt = e.tipo === 'creada' ? 'Creada en ' + ESTADO_LABEL[e.a] : e.tipo === 'estado' ? ESTADO_LABEL[e.de] + ' → ' + ESTADO_LABEL[e.a] : e.tipo === 'archivada' ? 'Archivada' : 'Recuperada';
-          histBox.appendChild(h('li', null, [h('time', { text: new Date(e.created_at).toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) }), ' · ' + txt]));
-        });
-        if (!histBox.firstChild) histBox.appendChild(h('li', { text: 'Sin cambios registrados.' }));
-      }).catch(function () { histBox.appendChild(h('li', { text: 'No se ha podido cargar el historial.' })); });
 
-      var dates = [h('span', { text: 'Creada ' + new Date(c.created_at).toLocaleDateString('es-ES') }), c.updated_at ? h('span', { text: 'Actualizada ' + new Date(c.updated_at).toLocaleDateString('es-ES') }) : null,
-        c.completada_en ? h('span', { text: 'Terminada ' + new Date(c.completada_en).toLocaleDateString('es-ES') }) : null];
+      /* ── Historial: se pide al abrir su sección ── */
+      var histBox = h('ul', { class: 'apk-hist' }), histLoaded = false;
+      function loadHist() {
+        if (histLoaded || !c) return; histLoaded = true;
+        api('/rest/v1/kb_historial?select=tipo,de,a,created_at&tarjeta_id=eq.' + c.id + '&order=created_at.desc&limit=12').then(function (r) {
+          (r || []).forEach(function (e) {
+            var txt = e.tipo === 'creada' ? 'Creada en ' + ESTADO_LABEL[e.a] : e.tipo === 'estado' ? ESTADO_LABEL[e.de] + ' → ' + ESTADO_LABEL[e.a] : e.tipo === 'archivada' ? 'Archivada' : 'Recuperada';
+            histBox.appendChild(h('li', null, [h('time', { text: new Date(e.created_at).toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) }), ' · ' + txt]));
+          });
+          if (!histBox.firstChild) histBox.appendChild(h('li', { text: 'Sin cambios registrados.' }));
+        }).catch(function () { histLoaded = false; histBox.appendChild(h('li', { text: 'No se ha podido cargar el historial.' })); });
+      }
 
-      var save = btn('Guardar', 'btn btn-primary', null, { type: 'submit' });
+      var save = btn(c ? 'Guardar' : 'Crear tarjeta', 'btn btn-primary', null, { type: 'submit', 'data-role': 'save' });
       var iaHint = h('p', { class: 'apk-hint apk-ia-note', 'aria-live': 'polite' });
-      var actions = h('div', { class: 'ap-dialog-actions apk-dlg-actions' }, [
-        c.archivada_en ? btn('Recuperar', 'btn btn-outline', function () { dlg.close(); archive(c, false); }) : btn('Archivar', 'btn btn-outline', function () { dlg.close(); archive(c, true); }),
-        btn('Eliminar', 'btn btn-outline apk-danger', function () {
-          ctx.ask({ title: 'Eliminar «' + clip(c.titulo) + '»', text: 'Se borra con sus pasos e historial. Podrás deshacerlo unos segundos; si dudas, archívala.', ok: 'Eliminar', danger: true }).then(function (ok) { if (ok) { dlg.close(); remove(c); } });
-        }),
-        h('span', { class: 'apk-grow' }),
-        btn('Cerrar', 'btn btn-outline', function () { dlg.close(); }), save
-      ]);
-      var idea = c.tipo === 'idea' || c.estado === 'ideas' ? h('div', { class: 'apk-promote' }, [
+      var idea = c && (c.tipo === 'idea' || c.estado === 'ideas') ? h('div', { class: 'apk-promote apf-wide' }, [
         h('p', { class: 'apk-hint', text: 'Es una idea. Cuando decidas trabajar en ella:' }),
         btn('Convertir en tarea', 'apk-btn', function () { f.estado.value = 'pendiente'; save.click(); }),
         btn('Convertir en proyecto', 'apk-btn', function () {
           api('/rest/v1/kb_proyectos?select=*', { method: 'POST', headers: REP, body: JSON.stringify({ titulo: f.titulo.value.trim() || c.titulo, objetivo: (f.notas.value || '').slice(0, 1000) || null }) }).then(function (r) {
-            st.projects.push(r[0]); f.proyecto = selectProy(r[0].id); f.estado.value = 'pendiente';
-            var opt = h('option', { value: r[0].id, text: r[0].titulo }); var sel = dlg.querySelector('#apk-d-proy'); sel.appendChild(opt); sel.value = r[0].id;
+            st.projects.push(r[0]); f.estado.value = 'pendiente';
+            f.proyecto.appendChild(h('option', { value: r[0].id, text: r[0].titulo })); f.proyecto.value = r[0].id;
             save.click();
           }).catch(function (err) { msg.textContent = err.message; msg.classList.add('is-error'); });
         })
       ]) : null;
 
-      var form = h('form', { method: 'dialog', novalidate: true, onsubmit: function (ev) {
+      var showLearn = c && (c.estado === 'hecho' || c.estado === 'revision');
+      var planSec = section('apk-sec-plan', 'Planificación', [
+        ui.field('apk-d-pr', 'Prioridad', f.prioridad), ui.field('apk-d-f', 'Fecha límite', f.fecha),
+        ui.field('apk-d-es', 'Esfuerzo', f.esfuerzo), ui.field('apk-d-tag', 'Etiquetas', f.tags, { hint: 'Separadas por comas, p. ej. sql, portfolio.' }),
+        ui.field('apk-d-p', 'Siguiente paso concreto', f.paso, { wide: true, hint: 'La primera acción física, la que harías nada más sentarte.' }),
+        st.ia && c ? h('div', { class: 'apf-field apf-wide apk-ia-row' }, [btn([icon('ia'), 'Proponer siguiente paso con IA'], 'apk-btn apk-btn--ia', function (ev) { suggestNext(c, f.paso, iaHint, ev.currentTarget); }, { 'data-role': 'ia-next' }), iaHint]) : null
+      ], o.focus === 'plan');
+      var notesSec = null;
+      notesSec = section('apk-sec-notas', 'Notas e imágenes', [
+        ui.field('apk-d-n', 'Notas', f.notas, { wide: true, hint: 'Contexto, decisiones, preguntas o enlaces que quieras conservar.' }),
+        h('div', { class: 'apf-field apf-wide apk-imgs-field' }, [
+          h('p', { class: 'ap-field-label', text: 'Imágenes' }),
+          gallery,
+          h('div', { class: 'apk-img-row' }, [addImg, fileIn]),
+          h('p', { class: 'apf-hint', id: 'apk-d-img-hint', text: 'Capturas, fotos o esquemas. PNG, JPG, WebP o GIF; hasta 10 MB cada una. Se suben al guardar.' }),
+          imgMsg
+        ]),
+        showLearn ? ui.field('apk-d-a', 'Qué he aprendido', f.aprendizaje, { wide: true, hint: 'Lo que te llevarías a la próxima tarea parecida.' }) : null
+      ], c && (!!c.notas || o.focus === 'aprendizaje'));
+      var stepsSec = null;
+      stepsSec = c ? section('apk-sec-pasos', 'Pasos', [h('div', { class: 'apf-field apf-wide' }, [subList, newSub,
+        h('p', { class: 'apf-hint', id: 'apk-d-sub-hint', text: 'Pasos pequeños para avanzar. Se guardan al momento, sin pulsar Guardar.' }),
+        st.ia ? btn([icon('ia'), 'Desglosar con IA'], 'apk-btn apk-btn--ia apk-ia-break', function (ev) { breakdown(c, subs.map(function (s) { return s.titulo; }), function (rows) { rows.forEach(function (r) { subs.push(r); }); st.subs[c.id] = subs; drawSubs(); }, ev.currentTarget); }, { 'data-role': 'ia-desglosar' }) : null])], subs.length > 0) : null;
+      var histSec = c ? section('apk-sec-hist', 'Historial', [h('div', { class: 'apf-field apf-wide' }, [
+        h('p', { class: 'apk-dates' }, [h('span', { text: 'Creada ' + new Date(c.created_at).toLocaleDateString('es-ES') }), c.updated_at ? h('span', { text: 'Actualizada ' + new Date(c.updated_at).toLocaleDateString('es-ES') }) : null,
+          c.completada_en ? h('span', { text: 'Terminada ' + new Date(c.completada_en).toLocaleDateString('es-ES') }) : null]),
+        histBox])]) : null;
+      if (histSec) { histSec.sum.textContent = 'Cambios de estado y fechas'; histSec.addEventListener('toggle', function () { if (histSec.open) loadHist(); }); }
+      var more = c ? h('div', { class: 'apk-dlg-more' }, [
+        c.archivada_en ? btn('Recuperar', 'apk-btn', function () { guarded(function () { archive(c, false); }); }) : btn('Archivar', 'apk-btn', function () { guarded(function () { archive(c, true); }); }),
+        btn('Eliminar', 'apk-btn apk-danger', function () {
+          ctx.ask({ title: 'Eliminar «' + clip(c.titulo) + '»', text: 'Se borra con sus pasos, imágenes e historial. Podrás deshacerlo unos segundos; si dudas, archívala.', ok: 'Eliminar', danger: true }).then(function (ok) { if (ok) { dlg.close(); remove(c); } });
+        })
+      ]) : null;
+
+      [f.prioridad, f.fecha, f.esfuerzo, f.tags, f.paso].forEach(function (el) { el.addEventListener('input', function () { planSec.sum.textContent = planSummary(); }); el.addEventListener('change', function () { planSec.sum.textContent = planSummary(); }); });
+      [f.notas, f.aprendizaje].forEach(function (el) { el.addEventListener('input', function () { notesSec.sum.textContent = notesSummary(); }); });
+
+      /* ── Cambios sin guardar ── */
+      function snap() { return JSON.stringify(Object.keys(f).map(function (k) { return f[k].type === 'checkbox' ? f[k].checked : f[k].value; })); }
+      var initial = '';
+      function dirty() { return snap() !== initial || added.length > 0 || imgs.some(function (x) { return x.gone; }); }
+      function onBeforeUnload(e) { if (dlg.open && dirty()) { e.preventDefault(); e.returnValue = ''; } }
+      function guarded(fn) {
+        if (!dirty()) { dlg.close(); return fn && fn(); }
+        ctx.ask({ title: '¿Descartar los cambios?', text: 'Has cambiado esta tarjeta y no lo has guardado.', ok: 'Descartar cambios', cancel: 'Seguir editando', danger: true })
+          .then(function (ok) { if (ok) { dlg.close(); if (fn) fn(); } });
+      }
+      function requestClose() { if (!saving) guarded(null); }
+
+      function submit(ev) {
         ev.preventDefault();
+        if (saving) return;
+        clearErrs(); msg.classList.remove('is-error'); msg.textContent = '';
         var t = f.titulo.value.trim();
-        if (!t) { msg.textContent = 'Escribe un título.'; msg.classList.add('is-error'); return f.titulo.focus(); }
-        if (f.bloqueada.checked && !f.bloqueo.value.trim()) { msg.textContent = 'Indica qué bloquea la tarjeta.'; msg.classList.add('is-error'); return f.bloqueo.focus(); }
-        save.disabled = true; msg.classList.remove('is-error'); msg.textContent = 'Guardando…';
-        var patch = {
-          titulo: t, proyecto_id: f.proyecto.value || null, prioridad: +f.prioridad.value, fecha_limite: f.fecha.value || null,
+        if (!t) return fieldErr(f.titulo, 'Escribe un título: es lo único obligatorio.');
+        if (f.bloqueada.checked && !f.bloqueo.value.trim()) return fieldErr(f.bloqueo, 'Indica qué la bloquea, o desactiva «Bloqueada».');
+        if (!imgsReady && c) { msg.textContent = 'Espera a que terminen de cargar las imágenes.'; return; }
+        saving = true; save.disabled = true; dlg.setAttribute('aria-busy', 'true');
+        msg.textContent = added.length ? 'Guardando y subiendo ' + added.length + (added.length === 1 ? ' imagen…' : ' imágenes…') : 'Guardando…';
+        var fields = {
+          proyecto_id: f.proyecto.value || null, prioridad: +f.prioridad.value, fecha_limite: f.fecha.value || null,
           esfuerzo: f.esfuerzo.value ? +f.esfuerzo.value : null, etiquetas: parseTags(f.tags.value),
           bloqueada: f.bloqueada.checked, bloqueo: f.bloqueada.checked ? f.bloqueo.value.trim() : null,
           siguiente_paso: f.paso.value.trim() || null, notas: f.notas.value.trim() || null, aprendizaje: f.aprendizaje.value.trim() || null
         };
-        var prev = Object.assign({}, c), newEstado = f.estado.value, changedState = newEstado !== c.estado;
-        if (changedState) {
-          patch.estado = newEstado; patch.tipo = newEstado === 'ideas' ? 'idea' : 'tarea';
-          var col = column(st.cards, newEstado); patch.posicion = col.length ? col[col.length - 1].posicion + GAP : GAP;
-        }
-        patchCard(c.id, patch).then(function (row) {
-          Object.assign(c, row);     // c puede ser una tarjeta archivada que no está en st.cards
-          pushUndo('edición de «' + clip(c.titulo) + '»', function () {
-            var back = {}; Object.keys(patch).forEach(function (k) { back[k] = prev[k]; });
-            return patchCard(c.id, back).then(function (row) { Object.assign(c, row); });
+        var job;
+        if (!c) {
+          // Captura inteligente en el título (#proyecto, !prioridad, fechas, @hoy): rellena lo que el formulario dejó por defecto
+          var cap = captureFields(t, f.estado.value), extra = Object.assign({}, fields);
+          if (cap.extra.prioridad && fields.prioridad === 2) extra.prioridad = cap.extra.prioridad;
+          if (cap.extra.fecha_limite && !fields.fecha_limite) extra.fecha_limite = cap.extra.fecha_limite;
+          if (cap.extra.etiquetas) extra.etiquetas = fields.etiquetas.concat(cap.extra.etiquetas.filter(function (x) { return fields.etiquetas.indexOf(x) < 0; })).slice(0, 8);
+          if (cap.extra.hoy_fecha) extra.hoy_fecha = cap.extra.hoy_fecha;
+          var proj = fields.proyecto_id || cap.p.proyecto_id || null;
+          delete extra.proyecto_id;
+          job = create(cap.titulo, f.estado.value, proj, extra).then(function (row) { c = row; });
+        } else {
+          var patch = Object.assign({ titulo: t }, fields);
+          var prev = Object.assign({}, c), newEstado = f.estado.value;
+          if (newEstado !== c.estado) {
+            patch.estado = newEstado; patch.tipo = newEstado === 'ideas' ? 'idea' : 'tarea';
+            var col = column(st.cards, newEstado); patch.posicion = col.length ? col[col.length - 1].posicion + GAP : GAP;
+          }
+          job = patchCard(c.id, patch).then(function (row) {
+            Object.assign(c, row);     // c puede ser una tarjeta archivada que no está en st.cards
+            pushUndo('edición de «' + clip(c.titulo) + '»', function () {
+              var back = {}; Object.keys(patch).forEach(function (k) { back[k] = prev[k]; });
+              return patchCard(c.id, back).then(function (row) { Object.assign(c, row); });
+            });
           });
+        }
+        var wasNew = !c0;
+        job.then(function () { initial = snap(); return syncImages(); }).then(function () {
+          saving = false; dlg.removeAttribute('aria-busy');
           dlg.close(); paint();
-          say('Cambios guardados.', { undo: true });
+          if (!wasNew) say('Cambios guardados.', { undo: true });
         }).catch(function (err) {
-          save.disabled = false;
+          saving = false; save.disabled = false; dlg.removeAttribute('aria-busy');
           if (err && err.auth) { dlg.close(); return auth(err); }
-          msg.textContent = 'No se ha guardado: ' + (err.message || 'error') + '. No se ha perdido nada de lo escrito.'; msg.classList.add('is-error');
+          if (c && wasNew) { title.textContent = 'Editar tarjeta'; save.textContent = 'Guardar'; }   // la tarjeta ya existe: el siguiente intento solo sube lo pendiente
+          msg.textContent = err && err.images ? 'La tarjeta se ha guardado, pero hay ' + err.message.charAt(0).toLowerCase() + err.message.slice(1) + '. Pulsa Guardar para reintentarlo.'
+            : 'No se ha guardado: ' + ((err && err.message) || 'error') + '. No se ha perdido nada de lo escrito.';
+          msg.classList.add('is-error');
+          if (err && err.images) { notesSec.open = true; }
         });
-      } }, [
-        h('h2', { class: 'ap-dialog-title', id: 'apk-d-title', text: 'Tarjeta' }),
-        h('p', { class: 'apk-dates' }, dates),
-        idea,
-        h('div', { class: 'apf-grid' }, [
-          ui.field('apk-d-t', 'Título', f.titulo, { wide: true }),
-          ui.field('apk-d-e', 'Estado', f.estado),
-          ui.field('apk-d-proy', 'Proyecto', f.proyecto),
-          ui.field('apk-d-pr', 'Prioridad', f.prioridad), ui.field('apk-d-f', 'Fecha límite', f.fecha),
-          ui.field('apk-d-es', 'Esfuerzo', f.esfuerzo), ui.field('apk-d-tag', 'Etiquetas (separadas por comas)', f.tags),
-          ui.field('apk-d-p', 'Siguiente paso concreto', f.paso, { wide: true }),
-          st.ia ? h('div', { class: 'apf-field apf-wide apk-ia-row' }, [btn([icon('ia'), 'Proponer siguiente paso con IA'], 'apk-btn apk-btn--ia', function (ev) { suggestNext(c, f.paso, iaHint, ev.currentTarget); }, { 'data-role': 'ia-next' }), iaHint]) : null,
-          h('div', { class: 'apf-field apf-wide apk-blockrow' }, [
-            h('label', { class: 'apk-check' }, [f.bloqueada, h('span', { text: 'Está bloqueada' })]),
-            h('label', { class: 'ap-field-label', for: 'apk-d-b', text: 'Qué la bloquea' }), (f.bloqueo.id = 'apk-d-b', f.bloqueo)
+      }
+
+      var closeX = h('button', { type: 'button', class: 'apk-dlg-x', 'aria-label': 'Cerrar', 'data-role': 'close', onclick: requestClose, html: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>' });
+      var form = h('form', { method: 'dialog', novalidate: true, class: 'apk-dlg-form', onsubmit: submit }, [
+        h('header', { class: 'apk-dlg-head' }, [title, closeX]),
+        h('div', { class: 'apk-dlg-body' }, [
+          h('div', { class: 'apf-grid apk-dlg-main' }, [
+            idea,
+            ui.field('apk-d-t', 'Título', f.titulo, { wide: true, hint: c ? null : 'En pocas palabras. Puedes añadir #proyecto, !alta o «mañana» y se rellenan solos.' }),
+            ui.field('apk-d-e', 'Estado', f.estado),
+            ui.field('apk-d-proy', 'Proyecto', f.proyecto),
+            blockBox
           ]),
-          ui.field('apk-d-n', 'Notas (idea, problema, preguntas, decisiones, soluciones)', f.notas, { wide: true }),
-          c.estado === 'hecho' || c.estado === 'revision' ? ui.field('apk-d-a', 'Qué he aprendido', f.aprendizaje, { wide: true }) : null,
-          h('div', { class: 'apf-field apf-wide' }, [h('p', { class: 'ap-field-label', text: 'Pasos' }), subList, newSub,
-            st.ia ? btn([icon('ia'), 'Desglosar con IA'], 'apk-btn apk-btn--ia apk-ia-break', function (ev) { breakdown(c, subs.map(function (s) { return s.titulo; }), function (rows) { rows.forEach(function (r) { subs.push(r); }); st.subs[c.id] = subs; drawSubs(); }, ev.currentTarget); }, { 'data-role': 'ia-desglosar' }) : null]),
-          h('div', { class: 'apf-field apf-wide' }, [h('p', { class: 'ap-field-label', text: 'Historial' }), histBox])
+          planSec, notesSec, stepsSec, histSec, more
         ]),
-        msg, actions
+        h('footer', { class: 'apk-dlg-foot' }, [msg, h('div', { class: 'apk-dlg-btns' }, [btn('Cancelar', 'btn btn-outline', requestClose, { 'data-role': 'cancel' }), save])])
       ]);
-      dlg = h('dialog', { class: 'ap-dialog apf-dialog apk-dialog', 'aria-labelledby': 'apk-d-title', onclose: function () { dlg.remove(); if (root.isConnected) paint(); } }, [form]);   // repinta: los pasos se guardan al instante y la tarjeta cuenta
-      document.body.appendChild(dlg); dlg.showModal();
-      if (focusField === 'aprendizaje' && f.aprendizaje.isConnected && f.aprendizaje.id) f.aprendizaje.focus();
+      planSec.sum.textContent = planSummary();
+      dlg = h('dialog', { class: 'ap-dialog apk-dialog apk-card-dlg', 'aria-labelledby': 'apk-d-title', onclose: function () {
+        window.removeEventListener('beforeunload', onBeforeUnload);
+        if (vv) { vv.removeEventListener('resize', fit); vv.removeEventListener('scroll', fit); }
+        urls.forEach(URL.revokeObjectURL);
+        dlg.remove(); if (root.isConnected) paint();      // repinta: los pasos se guardan al instante y la tarjeta cuenta
+      } }, [form]);
+      dlg.addEventListener('cancel', function (ev) { ev.preventDefault(); requestClose(); });      // Esc
+      var downOut = false;      // clic fuera: solo si empieza y termina en el fondo (seleccionar texto y soltar fuera no cierra)
+      dlg.addEventListener('pointerdown', function (ev) { downOut = ev.target === dlg; });
+      dlg.addEventListener('click', function (ev) { if (ev.target === dlg && downOut) requestClose(); downOut = false; });
+
+      /* Móvil: a pantalla completa, con la altura del viewport visual para que el pie (Guardar) quede encima del teclado */
+      var vv = window.visualViewport, sheet = window.matchMedia && matchMedia('(max-width: 599.98px), (max-height: 520px)');
+      function fit() {
+        if (!vv || !sheet || !sheet.matches) { dlg.style.height = ''; dlg.style.top = ''; return; }
+        dlg.style.height = Math.round(vv.height) + 'px'; dlg.style.top = Math.round(vv.offsetTop) + 'px';
+      }
+      if (vv) { vv.addEventListener('resize', fit); vv.addEventListener('scroll', fit); }
+      form.addEventListener('focusin', function (ev) {      // con el teclado abierto, el campo activo queda a la vista dentro del cuerpo
+        var el = ev.target;
+        if (!/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName) || !sheet || !sheet.matches) return;
+        setTimeout(function () { if (document.activeElement === el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest' }); }, 280);
+      });
+
+      drawSubs(); drawImgs(); loadImgs();
+      initial = snap();
+      window.addEventListener('beforeunload', onBeforeUnload);
+      document.body.appendChild(dlg); dlg.showModal(); fit();
+      if (o.focus === 'aprendizaje' && f.aprendizaje.isConnected) f.aprendizaje.focus();
+      else if (!c) f.titulo.focus();
+      else title.focus();      // al editar no se abre el teclado del móvil: se lee el título del diálogo y se elige qué tocar
     }
 
     function projectsDialog() {
@@ -1140,6 +1384,11 @@ window.APKanban = (function () {
       if (!document.hidden && dayKey(new Date()) !== today) resync();      // cambió el día con la pestaña abierta
     }
     document.addEventListener('visibilitychange', onVisible);
+    /* «+ Tarjeta» de la barra móvil: el shell deja la intención y avisa (o navega a Hoy y se atiende al pintar; ver paintFirst) */
+    function onIntent() {
+      if (!root.isConnected) return document.removeEventListener('ap:intent', onIntent);
+      if (ctx.takeIntent && ctx.takeIntent('nueva-tarjeta') && !document.querySelector('dialog[open]')) newDialog('pendiente');
+    }
 
     /* ── Arrastrar y soltar (Pointer Events) ── */
     root.addEventListener('pointerdown', function (ev) {
@@ -1219,6 +1468,8 @@ window.APKanban = (function () {
         ctx.view.appendChild(root);
         paint();
         iaCheck();
+        document.addEventListener('ap:intent', onIntent);
+        setTimeout(onIntent);      // Hoy monta el tablero en su caja justo después de este paint: se espera a que root esté en el documento
       };
     }).catch(function (err) {
       if (err && err.auth) throw err;

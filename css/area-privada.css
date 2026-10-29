@@ -1058,6 +1058,86 @@ main { min-height: calc(100vh - var(--ap-top-h) - 90px); outline: none; }
 .apk-sub { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
 .apk-sub label { display: flex; gap: 8px; align-items: center; }
 .apk-dlg-actions { align-items: center; }
+
+/* Tarjeta (crear y editar, area-privada-kanban.js → cardDialog): cabecera y pie fijos, solo el cuerpo se desplaza.
+   El <dialog> no lleva relleno: así un clic con destino el propio <dialog> es siempre el fondo (cierra). */
+.apk-card-dlg { width: min(760px, calc(100vw - 32px)); max-height: calc(100dvh - 48px); padding: 0; overflow: hidden; }
+.apk-card-dlg[open] { display: flex; flex-direction: column; }
+.apk-dlg-form { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+.apk-dlg-head { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 14px 12px 28px; border-bottom: 1px solid var(--ap-line-soft); }
+.apk-dlg-title { margin: 0; font-size: 22px; }
+.apk-dlg-title:focus { outline: none; }
+.apk-dlg-title:focus-visible { outline: 2px solid var(--purple); outline-offset: 4px; border-radius: 4px; }
+.apk-dlg-x { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: none; color: var(--ink); cursor: pointer; }
+@media (hover: hover) and (pointer: fine) { .apk-dlg-x:hover { background: var(--ap-hover); } }
+.apk-dlg-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 18px 28px 22px; }
+.apk-dlg-main { margin-top: 0; }
+.apk-dlg-foot { flex: none; padding: 12px 28px 16px; border-top: 1px solid var(--ap-line-soft); background: var(--white); }
+.apk-dlg-msg:empty { display: none; }
+.apk-dlg-msg { margin: 0 0 10px; }
+.apk-dlg-btns { display: flex; justify-content: flex-end; gap: 10px; }
+.apk-card-dlg .apf-hint { color: var(--muted); line-height: 1.4; }      /* gris neutro, 5,7:1 sobre blanco */
+.apk-err { margin-top: 6px; font-size: 13px; font-weight: 600; color: var(--red-ink); }
+.apk-card-dlg [aria-invalid="true"] { border-color: var(--red) !important; }
+
+/* Bloqueo: interruptor (checkbox con role=switch) con su efecto explicado debajo */
+.apk-block { padding: 12px 14px; border: 1px solid var(--ap-line); border-radius: var(--radius-md); background: var(--ap-surface-2); }
+.apk-block:has(.apk-switch-in:checked) { border-color: var(--st-bloq); background: var(--red-light); }
+.apk-switch { position: relative; display: inline-flex; align-items: center; gap: 10px; min-height: 44px; cursor: pointer; font-size: 15px; font-weight: 600; color: var(--ink); }
+.apk-switch-in { position: absolute; left: 0; top: 50%; width: 44px; height: 28px; margin: -14px 0 0; opacity: 0; cursor: pointer; }
+.apk-switch-ui { position: relative; flex: none; width: 44px; height: 26px; border-radius: 999px; background: var(--ap-line-strong); transition: background .15s; }
+.apk-switch-ui::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--white); box-shadow: 0 1px 2px var(--ap-shadow); transition: transform .15s; }
+.apk-switch-in:checked + .apk-switch-ui { background: var(--st-bloq); }
+.apk-switch-in:checked + .apk-switch-ui::after { transform: translateX(18px); }
+.apk-switch-in:focus-visible + .apk-switch-ui { outline: 2px solid var(--purple); outline-offset: 2px; }
+.apk-switch-t { display: inline-flex; align-items: center; gap: 6px; }
+.apk-switch-in:checked ~ .apk-switch-t { color: var(--red-ink); }
+.apk-block .apf-hint { margin-top: 0; }
+.apk-block-why { margin-top: 10px; }
+.apk-block-why input { width: 100%; }
+
+/* Secciones plegables: <summary> con título y resumen de lo que contienen */
+.apk-sec { border-top: 1px solid var(--ap-line); margin-top: 16px; }
+.apk-sec + .apk-sec { margin-top: 0; }
+.apk-sec-h { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 4px 34px 4px 0; position: relative; cursor: pointer; list-style: none; }
+.apk-sec-h::-webkit-details-marker { display: none; }
+.apk-sec-h::after { content: ''; position: absolute; right: 8px; top: 50%; width: 8px; height: 8px; margin-top: -6px; border-right: 2px solid var(--ink); border-bottom: 2px solid var(--ink); transform: rotate(45deg); transition: transform .15s; }
+.apk-sec[open] > .apk-sec-h::after { transform: rotate(-135deg); margin-top: -2px; }
+.apk-sec-h:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; border-radius: 4px; }
+.apk-sec-t { flex: none; font-size: 15px; font-weight: 700; color: var(--ink); }
+.apk-sec-sum { min-width: 0; font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.apk-sec-b { margin: 0 0 18px; }
+.apk-dlg-more { display: flex; flex-wrap: wrap; gap: 10px; padding-top: 16px; margin-top: 4px; border-top: 1px solid var(--ap-line); }
+.apk-card-dlg .apk-promote { margin-bottom: 0; }
+
+/* Imágenes de las notas */
+.apk-imgs { list-style: none; margin: 4px 0 10px; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 10px; }
+.apk-img { position: relative; display: grid; grid-template-rows: auto auto; border: 1px solid var(--ap-line); border-radius: var(--radius-md); overflow: hidden; background: var(--ap-surface-2); }
+.apk-img.is-new { border-style: dashed; border-color: var(--ap-line-strong); }
+.apk-img-a, .apk-img-ph { display: block; aspect-ratio: 1; }
+.apk-img img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.apk-img-a:focus-visible { outline: 2px solid var(--purple); outline-offset: -2px; }
+.apk-img-ph { display: grid; place-items: center; font-size: 12px; color: var(--muted); }
+.apk-img-tag { position: absolute; top: 6px; left: 6px; padding: 2px 7px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 11px; font-weight: 600; }
+.apk-img-x { min-height: 40px; border: 0; border-top: 1px solid var(--ap-line); background: var(--white); font: inherit; font-size: 13px; font-weight: 600; color: var(--red-ink); cursor: pointer; }
+.apk-img-x:focus-visible { outline: 2px solid var(--purple); outline-offset: -2px; }
+.apk-img-row { display: flex; gap: 10px; align-items: center; }
+.apk-img-msg:empty { display: none; }
+.apk-img-msg.is-error { color: var(--red-ink); font-weight: 600; }
+@media (pointer: coarse) { .apk-img-x { min-height: 44px; } .apk-dlg-btns .btn { min-height: 48px; } }
+
+/* Móvil (o pantalla muy baja): a pantalla completa. La altura la ajusta el JS al viewport visual, así el pie queda sobre el teclado */
+@media (max-width: 599.98px), (max-height: 520px) {
+  .apk-card-dlg { position: fixed; inset: 0; width: 100%; max-width: none; height: 100dvh; max-height: none; margin: 0; border: 0; border-radius: 0; box-shadow: none; }
+  .apk-dlg-head { padding: calc(6px + env(safe-area-inset-top, 0px)) 6px 6px 16px; }
+  .apk-dlg-title { font-size: 20px; }
+  .apk-dlg-body { padding: 14px 16px 24px; }
+  .apk-dlg-foot { padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); }
+  .apk-dlg-btns .btn { flex: 1 1 0; justify-content: center; }
+  .apk-dlg-btns .btn-primary { flex-grow: 2; }
+  .apk-card-dlg .apf-field input, .apk-card-dlg .apf-field textarea, .apk-card-dlg .apf-select { font-size: 16px; }   /* iOS no hace zoom al enfocar */
+}
+@media (prefers-reduced-motion: reduce) { .apk-switch-ui, .apk-switch-ui::after, .apk-sec-h::after { transition: none; } }
 .apk-grow { flex: 1 1 auto; }
 .apk-danger { color: var(--red-ink) !important; border-color: var(--red) !important; }
 .apk-proj-row { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--ap-line-soft); }
@@ -1264,6 +1344,15 @@ body:has(.apl) { --off: #FBFBFB; background: #FBFBFB; }
   .ap-bar-a:active { background: var(--ap-hover); }
   .ap-bar-a:focus-visible { outline: 2px solid var(--purple); outline-offset: -3px; }
   .ap-in-app .ap-bar { display: none; }
+  /* «+ Tarjeta»: una acción, no una sección; el «+» va en un círculo de tinta para que se reconozca al instante */
+  .ap-bar-new { color: var(--ink); }
+  .ap-bar-new .ap-bar-ico { display: grid; place-items: center; width: 32px; height: 32px; margin-block: -4px; border-radius: 50%; background: var(--ink); color: #fff; }
+  .ap-bar-new .ap-bar-ico svg { width: 20px; height: 20px; stroke-width: 2; }
+  .ap-bar-new:active .ap-bar-ico { background: var(--text); }
+  /* Sin reloj en móvil: el título sigue centrado y, por debajo de 720 px (sin título), «Volver al Laboratorio» va a la izquierda */
+  .ap-now { display: none; }
+  .ap-top-title { grid-column: 2; }
+  .ap-top-actions { grid-column: 3; }
 
   /* Hoja «Más»: <dialog> modal anclado abajo (Esc, foco atrapado y fondo los pone el navegador) */
   .ap-more[open] {
@@ -1288,6 +1377,10 @@ body:has(.apl) { --off: #FBFBFB; background: #FBFBFB; }
   .ap-more-out { margin-top: 6px; border-top: 1px solid var(--ap-line); border-radius: 0 0 12px 12px; padding-top: 4px; }
   @keyframes ap-sheet { from { transform: translateY(28px); opacity: 0; } }
 }
+@media (max-width: 720px) {
+  .ap-top { grid-template-columns: 1fr; min-height: 52px; padding-block: 4px; }
+  .ap-top-actions { grid-column: 1; justify-self: start; }
+}
 @media (min-width: 900px) { .ap-more { display: none !important; } }
 @media (prefers-reduced-motion: reduce) { .ap-more[open] { animation: none; } }
 
@@ -1300,7 +1393,7 @@ body:has(#ap-lock:not([hidden])) .ap-now,
 body:has(#ap-lock:not([hidden])) .ap-top-title,
 body:has(#ap-lock:not([hidden])) .ap-foot,
 body:has(#ap-lock:not([hidden])) .ap-out { display: none; }
-body:has(#ap-lock:not([hidden])) .ap-top-actions { justify-self: start; }
+body:has(#ap-lock:not([hidden])) .ap-top-actions { grid-column: 1; justify-self: start; }
 body:has(#ap-lock:not([hidden])) .ap-top .ap-back { color: #fff; opacity: .7; transition: opacity .2s; }
 body:has(#ap-lock:not([hidden])) .ap-top .ap-back:hover,
 body:has(#ap-lock:not([hidden])) .ap-top .ap-back:focus-visible { opacity: 1; color: #fff; }

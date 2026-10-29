@@ -1280,12 +1280,12 @@ await step('Modo app por URL directa y recarga: «Volver» (teclado) lleva a App
   eq(c.errors, []);
   await c.ctx.close();
 });
-await step('Móvil: cabecera compacta y barra inferior (Hoy, Apps, Calendario, Entrevistas, Más); sin pestañas arriba', async () => {
+await step('Móvil: cabecera compacta y barra inferior (Hoy, Tarjeta, Calendario, Apps, Más); sin pestañas arriba', async () => {
   const c = await open({ width: 390, height: 844 }, '#/');
   await c.page.waitForSelector('.ap-bar-a');
   ok(await c.page.isVisible('.ap-bar'), 'sin barra inferior');
-  eq(await c.page.$$eval('.ap-bar > *', (a) => a.map((x) => x.textContent.trim())), ['Hoy', 'Apps', 'Calendario', 'Entrevistas', 'Más']);
-  for (const sel of ['.ap-tabs', '#ap-logout', '.ap-top-title']) ok(await c.page.isHidden(sel), sel + ' visible en móvil');
+  eq(await c.page.$$eval('.ap-bar > *', (a) => a.map((x) => x.textContent.trim())), ['Hoy', 'Tarjeta', 'Calendario', 'Apps', 'Más']);
+  for (const sel of ['.ap-tabs', '#ap-logout', '.ap-top-title', '.ap-now']) ok(await c.page.isHidden(sel), sel + ' visible en móvil');
   eq(await c.page.getAttribute('.ap-bar a[data-tab="hoy"]', 'aria-current'), 'page');
   const boxes = await c.page.$$eval('.ap-bar > *', (a) => a.map((x) => { const r = x.getBoundingClientRect(); return [Math.round(r.width), Math.round(r.height)]; }));
   ok(boxes.every(([w, hh]) => w >= 44 && hh >= 44), 'objetivo táctil menor de 44 px: ' + JSON.stringify(boxes));
@@ -1306,7 +1306,7 @@ await step('Móvil: «Más» abre la hoja con el resto de secciones; navegar la 
   await c.page.click('.ap-bar-more');
   await c.page.waitForSelector('dialog.ap-more[open]');
   eq(await c.page.getAttribute('.ap-bar-more', 'aria-expanded'), 'true');
-  eq(await c.page.$$eval('.ap-more-list a', (a) => a.map((x) => x.textContent.trim())), ['Portfolio', 'Second Brain', 'Mapa', 'Archivos y notas', 'Fichero', 'Configuración']);
+  eq(await c.page.$$eval('.ap-more-list a', (a) => a.map((x) => x.textContent.trim())), ['Entrevistas', 'Portfolio', 'Second Brain', 'Mapa', 'Archivos y notas', 'Fichero', 'Configuración']);
   ok((await c.page.textContent('.ap-more-out')).includes('Cerrar sesión'), 'sin «Cerrar sesión» en la hoja');
   const rows = await c.page.$$eval('.ap-more-a, .ap-more-x', (a) => a.map((x) => Math.round(x.getBoundingClientRect().height)));
   ok(rows.every((n) => n >= 44), 'fila táctil menor de 44 px: ' + rows);

@@ -30,10 +30,10 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
 - **Pestañas en módulos** que se cargan al abrirlas: `area-privada-<nombre>.js` define `window.AP<Nombre> = { render(ctx) → Promise<paint> }`
   y se declara en el HTML como `<link rel="prefetch" data-ap-module="<nombre>">` (así `version-assets` le pone el `?v=`).
   Para una pestaña nueva: el archivo, ese `<link>`, una entrada en `MODULES` (de ahí sale también la ruta) y el enlace en `.ap-tabs`.
-- **Navegación móvil** (< 900 px): las pestañas `.ap-tabs` (única fuente de las secciones) se sustituyen por una barra inferior con Hoy, Apps, Calendario, Entrevistas y «Más»;
+- **Navegación móvil** (< 900 px): las pestañas `.ap-tabs` (única fuente de las secciones) se sustituyen por una barra inferior con Hoy, «+ Tarjeta», Calendario, Apps y «Más» («+ Tarjeta» es una acción: abre una tarjeta nueva en Hoy con `requestIntent`/`ctx.takeIntent`; Entrevistas va en la hoja);
   «Más» abre una hoja (`<dialog>` modal) con el resto de pestañas y «Cerrar sesión». Las dos se **generan** en `area-privada.js` (`buildNav`, `BAR_TABS`, `NAV_ICONS`) a partir de `.ap-tabs`:
   una pestaña nueva aparece sola en la hoja (y necesita su icono en `NAV_ICONS`); para subirla a la barra, añadirla a `BAR_TABS`. La barra no se muestra en modo app. En móvil la cabecera es una sola fila
-  (reloj + «Volver al Laboratorio»). Todo lo fijo abajo (barra, `.apk-toast`, `.mp-detail`) cuenta con la altura de la barra. Pruebas: `node tools/check-color.mjs` (flujos «Móvil»).
+  (solo «Volver al Laboratorio»; el reloj LCD se oculta por CSS por debajo de 900 px). Todo lo fijo abajo (barra, `.apk-toast`, `.mp-detail`) cuenta con la altura de la barra. Pruebas: `node tools/check-color.mjs` (flujos «Móvil»).
 - **Apps** (`#/apps`): catálogo de las herramientas personales. El registro `APPS` de `area-privada.js` es la única fuente de nombre, descripción, icono y ruta;
   `area-privada-apps.js` (`window.APApps`) solo lo pinta (CSS con prefijo `apl-` al final de `css/area-privada.css`, fondo #FBFBFB con `body:has(.apl)`).
   **Modo app**: una entrada con `module` vive en esta página (su módulo va en `MODULES` con `tab: 'apps'`) y al abrirla el shell pone `body.ap-in-app`:
@@ -58,6 +58,8 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
   Límites WIP y capacidad diaria en `kb_ajustes`; avisan, no bloquean. La lógica pura está en `APKanban.logic`.
   Pruebas: `node tools/test-kanban.mjs` (lógica, sin dependencias) y `node tools/check-kanban.mjs` (interfaz con Playwright y un Supabase simulado en memoria; no toca la base real).
   Color semántico por estado (`--st-<estado>` en `css/area-privada.css`), siempre con icono de progreso y texto. Iconos SVG propios en `ICON`.
+  **Tarjeta** (crear y editar): un único diálogo, `cardDialog`, con cabecera y pie fijos, secciones plegables (<details>), bloqueo como interruptor y protección de cambios sin guardar (X, Esc, clic fuera, Cancelar).
+  Imágenes de las notas en el bucket `recursos`, ruta `kanban/<tarjeta>/` (sin columnas nuevas: se listan con `ctx.storage.list`); se suben y se quitan al guardar y se borran 10 s después de eliminar la tarjeta.
   Captura inteligente local (`logic.parseCapture`: #proyecto, !prioridad, fechas en español, @hoy). Paleta `Ctrl/⌘+K`.
   IA opcional: Edge Function `supabase/functions/kanban-ia` (desglosar, siguiente paso, plan del día, texto → tarjetas). Solo propone:
   la web enseña una revisión y guarda lo confirmado. `KB_AI_PROVIDER=off` por defecto (los botones de IA no aparecen). Guía: su `README.md`.
