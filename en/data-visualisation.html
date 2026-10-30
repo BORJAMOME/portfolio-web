@@ -669,7 +669,7 @@ const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersec
 document.querySelectorAll('.sr').forEach(el=>obs.observe(el));
 
 // ── SECTION FILTER ──
-function showSection(sec){
+function showSection(sec, scroll = true){
   // Nav active
   document.querySelectorAll('.sec-nav a,.sec-nav button').forEach(a=>{
     a.classList.toggle('active', a.dataset.sec === sec);
@@ -695,7 +695,7 @@ function showSection(sec){
   });
 
   // Scroll al titulo (col-header) de la seccion, no al .sec-nav
-  if(headerToScroll){
+  if(scroll && headerToScroll){
     window.scrollTo({top: headerToScroll.offsetTop - 80, behavior:'smooth'});
   }
 }
@@ -707,8 +707,9 @@ document.querySelectorAll('.sec-nav a,.sec-nav button').forEach(a=>{
   });
 });
 
-// Inicializar Infografias como seccion activa por defecto
-showSection('diseno');
+// Seccion inicial: la del hash si existe (#mapas); si no, Infografias sin desplazar la pagina
+const initialSec = location.hash === '#mapas' ? 'mapas' : 'diseno';
+showSection(initialSec, initialSec !== 'diseno');
 
 // Collapsible sections
 document.querySelectorAll('.col-header').forEach(h=>{
