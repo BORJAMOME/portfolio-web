@@ -381,6 +381,26 @@ html.sn-pending [data-split-name] { visibility: hidden; }
 }
 .btn-white:focus-visible, .btn-black:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
 
+/* ─── ACCESO AL PROYECTO DESDE SU TARJETA ───
+   Botón cuadrado con ArrowUpRight de Lucide (SVG en línea, sin dependencia) sobre la esquina
+   inferior derecha de la imagen; cada tipo de tarjeta fija su `top`. Área táctil de 44 px con ::before. */
+.card-go {
+  position: absolute; z-index: 3; right: 12px;
+  width: 32px; height: 32px; padding: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #e8e6e2; color: var(--ink);
+  border: 0; border-radius: 6px;
+  cursor: pointer; text-decoration: none;
+}
+.card-go::before { content: ""; position: absolute; inset: -6px; }
+.card-go svg { width: 16px; height: 16px; display: block; }
+.card-go:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+/* Power BI (inicio y proyectos): imagen a todo el ancho con proporción 1400/969 */
+.proj-card { container-type: inline-size; }
+.proj-card .card-go { top: calc(100cqi * 969 / 1400 - 44px); }
+/* Análisis: tarjeta sin imagen; el botón ocupa el sitio del antiguo «Ver →» */
+.cc-foot .card-go { position: relative; right: auto; flex-shrink: 0; }
+
 /* ─── FOOTER ───
    Gris carbón #272828, algo más claro que el negro de marca (--ink) de nav y botones.
    El espresso de Casa Origen NO se usa aquí: es paleta invitada de esa sección, no el negro del sitio. */

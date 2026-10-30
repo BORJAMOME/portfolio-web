@@ -26,7 +26,7 @@
     "Seleccioné 9 variables de comportamiento relacionadas con gasto, frecuencia y canal. El análisis permitió identificar 4 perfiles de cliente, desde el premium hasta el riesgo de abandono, y asociar una estrategia a cada uno.": "I selected 9 behavioural variables related to spend, frequency and channel. The analysis identified 4 customer profiles, from premium to at risk of leaving, and matched a strategy to each one.",
     "El resultado": "The result",
     "acierto en el segmento premium": "accuracy in the premium segment",
-    "Ver →": "View →",
+    "Ver proyecto": "View project",
     "¿Qué pasa con las ventas cuando ocurre algo inesperado?": "What happens to sales when something unexpected happens?",
     "Una cadena retail podía prever bastante bien las semanas normales, pero sus predicciones fallaban cuando aparecían promociones, huelgas o problemas logísticos. El histórico explicaba el pasado, pero no siempre lo que estaba ocurriendo alrededor.": "A retail chain could forecast normal weeks fairly well, but its predictions failed when promotions, strikes or logistics problems came up. The history explained the past, but not always what was happening around it.",
     "Comparé dos modelos sobre 156 semanas: uno basado solo en ventas históricas y otro que incorporaba cinco variables externas. Los validé mediante backtesting temporal y simulé más de diez escenarios futuros.": "I compared two models over 156 weeks: one based only on historical sales and another that added five external variables. I validated them with time-based backtesting and simulated more than ten future scenarios.",

@@ -67,12 +67,8 @@
 .pc-pill::after{content:""}
 .pc-pills .pc-pill:nth-child(n+4){display:none}
 
-.pc-foot{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid #e8e8ee;margin-top:auto;gap:12px}
-.pc-btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-serif);font-weight:400;font-size:13px;background:var(--ink);color:#fff;padding:10px 20px;border:1px solid var(--ink);border-radius:var(--radius-md);text-decoration:none;transition:background .2s var(--ease),border-color .2s,transform .15s}
-.pc-btn svg{stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round}
-@media (hover: hover) and (pointer: fine) {
-  .pc-btn:hover{opacity:.85;transform:translateY(-1px)}
-}
+/* El pie solo contenía «Ver caso completo»; el acceso es ahora el botón ↗ sobre la imagen */
+.pc-foot{display:contents}
 .pc-read-more{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--ink);background:none;border:0;cursor:pointer;padding:12px 4px;min-height:44px;transition:color .18s}
 .pc-read-more svg{stroke:currentColor;fill:none;stroke-width:2.5;width:11px;height:11px}
 @media (hover: hover) and (pointer: fine) {
