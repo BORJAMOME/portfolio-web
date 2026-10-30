@@ -123,7 +123,7 @@ html.sn-pending [data-split-name] { visibility: hidden; }
   border-radius: 7px; font-weight: 400;
   transition: color .2s, background .2s;
   letter-spacing: .3px;
-  text-transform: uppercase;
+  text-transform: none;
   position: relative;
 }
 @media (hover: hover) and (pointer: fine) {
@@ -159,7 +159,7 @@ html.sn-pending [data-split-name] { visibility: hidden; }
   border-radius: 7px; font-weight: 400;
   transition: color .2s, background .2s;
   letter-spacing: .3px;
-  text-transform: uppercase;
+  text-transform: none;
   position: relative;
   display: inline-flex; align-items: center; gap: 6px;
   background: none; border: none; cursor: pointer;
@@ -238,7 +238,7 @@ html.sn-pending [data-split-name] { visibility: hidden; }
   color: var(--muted);
   text-decoration: none;
   letter-spacing: .3px;
-  text-transform: uppercase;
+  text-transform: none;
   border-radius: 5px;
   transition: color .15s, background .15s;
   white-space: nowrap;
@@ -275,7 +275,7 @@ html.sn-pending [data-split-name] { visibility: hidden; }
   padding: 0 20px !important;
   min-width: 132px !important;
   text-align: center !important;
-  text-transform: uppercase !important;
+  text-transform: none !important;
   transition: background .25s var(--ease) !important;
   border-radius: var(--radius-md) !important;
 }
