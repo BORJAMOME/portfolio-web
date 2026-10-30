@@ -231,8 +231,6 @@
   }
   .sec-nav-inner::-webkit-scrollbar{display:none}
   .sec-nav a,.sec-nav button{
-    font-size:11px;
-    padding:7px 13px;
     flex-shrink:0;
   }
 }
