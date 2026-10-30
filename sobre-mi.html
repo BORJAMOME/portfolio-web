@@ -257,12 +257,6 @@
   padding: 2px 6px;
   display: inline;
 }
-.about-btns {
-  display: flex; gap: 12px; margin-top: 0; flex-wrap: wrap;
-}
-/* .btn-li / .btn-cv retirados: LinkedIn y Descargar CV ahora usan
-   el sistema compartido .btn.btn-white de shared.css (color fijo, sin cambio al pasar el ratón),
-   con el mismo tamaño base que en index.html (sin overrides de página). */
 
 /* ── PHOTO COLUMN (left) ── */
 .about-photo-col {
@@ -333,7 +327,6 @@
   .about-hero-grid { grid-template-columns: 1fr; gap: 40px; }
   .about-photo-col { position: static; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 20px; }
   .about-photo-wrap { max-width: 200px; }
-  .about-photo-col .about-btns { margin-top: 0; }
   .about-copy p { font-size: 14px; line-height: 1.75; }
 }
 
@@ -375,10 +368,6 @@
     flex-basis: 100% !important;
   }
 
-  .about-btns {
-    flex-direction: row !important;
-    gap: 8px !important;
-  }
 
   .about-h1 {
     font-size: clamp(26px, 7vw, 36px) !important;
@@ -510,34 +499,8 @@
   display: none !important;
 }
 
-/* Más información queda debajo de las dos columnas, sin línea */
-.about-more {
-  grid-column: 1 / -1;
-  margin-top: clamp(46px, 6vh, 72px);
-  padding-top: 0;
-  border-top: none !important;
-  text-align: center;
-  padding-bottom: 52px;
-}
 
-.about-more h2 {
-  margin: 0 0 30px;
-  font-family: var(--font);
-  font-size: clamp(18px, 2vw, 24px);
-  line-height: 1.15;
-  font-weight: 400;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-}
 
-.about-btns {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  margin: 0;
-  flex-wrap: wrap;
-}
 
 /* ═══════════════════════════════════════
    RESPONSIVE: al reducir la ventana,
@@ -618,11 +581,6 @@
     width: 100%;
   }
 
-  .about-more {
-    order: 3;
-    width: 100%;
-    margin-top: 38px;
-  }
 }
 
 @media (max-width: 520px) {
@@ -659,22 +617,9 @@
     border-radius: 22px;
   }
 
-  .about-more {
-    margin-top: 46px;
-    padding-bottom: 34px;
-  }
 
-  .about-more h2 {
-    margin-bottom: 26px;
-  }
 
-  .about-more h2 {
-    font-size: 20px;
-  }
 
-  .about-btns {
-    gap: 8px;
-  }
 }
 </style>
 
@@ -742,9 +687,6 @@
     margin-left: 0 !important;
   }
 
-  .about-more {
-    text-align: center !important;
-  }
 }
 
 @media (max-width: 520px) {
@@ -774,7 +716,7 @@
   display: inline-block;
   font-family: 'Inter','Segoe UI',system-ui,sans-serif;
   font-size: 13px; font-weight: 700; letter-spacing: .2px;
-  color: var(--purple-text); background: var(--purple-light);
+  color: #59534e; background: #e8e6e2; /* neutro cálido: 6,08:1 (AA) */
   padding: 5px 13px; border-radius: var(--radius-pill);
   margin: 14px 0 20px;
 }
@@ -799,7 +741,7 @@
 .res-row { display: grid; grid-template-columns: 170px 1fr; gap: 28px; padding: 24px 0; border-bottom: 1px solid #ececf2; }
 .res-date { font-size: 13px; color: var(--muted); padding-top: 3px; }
 .res-role { font-family: var(--font-serif); font-size: 17px; font-weight: 500; color: var(--ink); margin: 0 0 6px; line-height: 1.35; }
-.res-org { color: var(--purple-text); font-weight: 500; }
+.res-org { color: #8c4a2f; font-weight: 500; } /* terracota: 6,36:1 sobre --page (AA), cálido como la pill y --card-desc */
 .res-link {
   color: inherit; text-decoration: underline;
   text-decoration-color: rgba(17,17,17,.25); text-underline-offset: 2px;
@@ -809,6 +751,32 @@
 .res-desc { font-size: 13.5px; color: var(--card-desc); line-height: 1.7; max-width: 640px; margin: 0; }
 .res-desc strong { font-weight: 400; color: inherit; }
 .res-desc + .res-desc { margin-top: 10px; }
+
+/* ── CTA del hero: misma jerarquía que el hero de inicio (home.css, .hero-actions):
+   un botón sólido para la acción principal (CV) y LinkedIn como enlace subrayado. ── */
+.about-actions { display: flex; gap: 10px 20px; flex-wrap: wrap; align-items: center; margin-top: 26px; }
+.about-actions .btn {
+  min-height: 48px; padding: 0 22px;
+  font-family: var(--font); font-size: 15px; font-weight: 500;
+  letter-spacing: 0; text-transform: none;
+}
+.about-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 48px; padding: 0 4px;
+  font-size: 15px; font-weight: 500; color: var(--ink); text-decoration: none;
+  background: linear-gradient(currentColor, currentColor) 0 calc(50% + 12px) / 100% 1px no-repeat;
+  transition: background-size .55s cubic-bezier(0.65,0,0.35,1);
+}
+.about-link:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+@media (hover: hover) and (pointer: fine) {
+  .about-link:hover { background-size: 0 1px; background-position: 100% calc(50% + 12px); }
+  .about-link:hover .btn-arrow { transform: translate(2px, -2px); }
+}
+@media (max-width: 700px) {
+  .about-actions { flex-direction: column; align-items: stretch; gap: 8px; }
+  .about-actions .btn { width: 100%; justify-content: center; }
+  .about-link { align-self: center; }
+}
 
 @media (max-width: 700px) {
   .res-row { grid-template-columns: 1fr; gap: 5px; padding: 20px 0; }
@@ -976,15 +944,9 @@
           <p>Llegué hasta aquí después de siete años entre <strong>Madrid y Londres</strong>, trabajando en marketing, análisis y operaciones. Esa experiencia me aporta una perspectiva de negocio que hoy complemento con mi especialización en datos y visualización.</p>
         </div>
 
-        <div class="about-btns" style="margin-top:26px;">
-          <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="btn btn-white" data-ga="clic_linkedin" data-ga-location="hero">
-            <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-            LinkedIn
-          </a>
-          <a href="https://tally.so/r/6878EN" target="_blank" rel="noopener noreferrer" class="btn btn-white" data-ga="clic_form_cv" data-ga-location="hero">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Descargar CV
-          </a>
+        <div class="about-actions">
+          <a href="https://tally.so/r/6878EN" target="_blank" rel="noopener noreferrer" class="btn btn-black" data-arrow="right" data-ga="clic_form_cv" data-ga-location="hero"><span>Descargar CV</span><span class="btn-arrow">→</span></a>
+          <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="about-link" data-ga="clic_linkedin" data-ga-location="hero"><span>LinkedIn</span><span class="btn-arrow">↗</span></a>
         </div>
       </div>
 
@@ -1092,25 +1054,6 @@
           <p class="res-role">Microsoft Certified: Power BI Data Analyst Associate <span class="res-org">· PL-300</span></p>
           <p class="res-desc">Certificación oficial de Microsoft que acredita conocimientos en <strong>preparación y modelado de datos, DAX, visualización y publicación de informes en Power BI</strong>.</p>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA FINAL -->
-<section class="about-section" aria-label="Contacto">
-  <div class="c">
-    <div class="about-more sr">
-      <h2>¿Hablamos?</h2>
-      <div class="about-btns">
-        <a href="https://www.linkedin.com/in/borjamoramendez/" target="_blank" rel="noopener noreferrer" class="btn btn-white" data-ga="clic_linkedin" data-ga-location="about_btns">
-          <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-          LinkedIn
-        </a>
-        <a href="https://tally.so/r/6878EN" target="_blank" rel="noopener noreferrer" class="btn btn-white" data-ga="clic_form_cv" data-ga-location="sobre_mi_final">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Descargar CV
-        </a>
       </div>
     </div>
   </div>
