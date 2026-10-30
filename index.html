@@ -19,7 +19,7 @@
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Merriweather:ital,opsz,wght@0,18..144,400..700;1,18..144,400..700&display=swap">
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Merriweather:ital,opsz,wght@0,18..144,400..700;1,18..144,400..700&display=swap" rel="stylesheet">
 <!-- Shared styles: variables, nav, footer, botones, reset -->
-<link rel="stylesheet" href="./shared.css?v=c5a6f6a3af">
+<link rel="stylesheet" href="./shared.css?v=86c886577c">
 <!-- Primary Meta Tags -->
 <meta name="description" content="Borja Mora, Data Analyst Junior en Madrid especializado en Power BI (PL-300). Dashboards que se entienden y se usan para decidir. SQL, Python y DAX.">
 <meta name="keywords" content="Data Analyst, Power BI Developer, Business Intelligence, DAX, Data Storytelling, Microsoft PL-300, Power BI España, dashboards Power BI, Borja Mora">
@@ -167,7 +167,7 @@
   }
 </style>
   
-<link rel="stylesheet" href="./css/home.css?v=2e86bec059">
+<link rel="stylesheet" href="./css/home.css?v=0a016e85c4">
 </head>
 <body>
 <a href="#main-content" class="skip-link" style="position:absolute;left:-9999px;top:4px;z-index:9999;background:var(--ink);color:#fff;padding:8px 16px;font-size:13px;font-weight:600;text-decoration:none;border-radius:4px;transition:left 0s" onfocus="this.style.left='4px'" onblur="this.style.left='-9999px'">Saltar al contenido</a>
@@ -778,7 +778,7 @@
           <p class="pc-desc">En muchos equipos el análisis de ventas empieza y termina en el total. Construí un informe que aplica el estándar IBCS para integrar <strong>volumen, variación absoluta y porcentaje en un único visual</strong>, con tres tipos de gráfico distintos según el ángulo de lectura.</p>
           <div class="pc-foot">
             <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">IBCS</span></div>
-            <button class="pc-link" onclick="event.stopPropagation();location.href='./ibcs-ventas.html'" style="background:none;border:none;cursor:pointer;padding:0;">Ver →</button>
+            <button type="button" class="pc-link card-go" aria-label="Ver proyecto" onclick="event.stopPropagation();location.href='./ibcs-ventas.html'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></button>
           </div>
         </div>
       </div>
@@ -800,7 +800,7 @@
           <p class="pc-desc">En la mayoría de empresas la información financiera está dispersa. Construí un sistema que conecta <strong>balance, PyG y cash flow</strong> en una sola lectura, con drill-down hasta el asiento contable que explica cada número.</p>
           <div class="pc-foot">
             <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">Modelado en estrella</span></div>
-            <button class="pc-link" onclick="event.stopPropagation();location.href='./informe-financiero.html'" style="background:none;border:none;cursor:pointer;padding:0;">Ver →</button>
+            <button type="button" class="pc-link card-go" aria-label="Ver proyecto" onclick="event.stopPropagation();location.href='./informe-financiero.html'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></button>
           </div>
         </div>
       </div>
@@ -823,7 +823,7 @@
           <p class="pc-desc">Una distribuidora de hostelería, 400 clientes y una caída de revenue que nadie sabía explicar. El análisis RFM identificó <strong>198.000€ en riesgo</strong> dentro del segmento que generaba la mitad del negocio.</p>
           <div class="pc-foot">
             <div class="pc-pills"><span class="pc-pill">Power BI</span><span class="pc-pill">DAX</span><span class="pc-pill">Marketing Analytics</span></div>
-            <button class="pc-link" onclick="event.stopPropagation();location.href='./rfm-hosteleria.html'" style="background:none;border:none;cursor:pointer;padding:0;">Ver →</button>
+            <button type="button" class="pc-link card-go" aria-label="Ver proyecto" onclick="event.stopPropagation();location.href='./rfm-hosteleria.html'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></button>
           </div>
         </div>
       </div>
@@ -831,7 +831,7 @@
     </div>
 
     <div class="proj-more sr">
-      <a href="./power-bi.html" class="btn btn-black">Ver todos los proyectos de Power BI →</a>
+      <a href="./power-bi.html" class="btn btn-black">Ver más proyectos de Power BI</a>
     </div>
 
     <!-- ── ML PROJECTS ROW ── -->
@@ -855,7 +855,7 @@
         </div>
         <div class="cc-foot">
           <div class="cc-pills"><span class="cc-pill">K-Means</span><span class="cc-pill">t-SNE</span></div>
-          <a class="cc-link" href="https://segmentacion-retail.streamlit.app" target="_blank" rel="noopener noreferrer" data-ga="clic_app_streamlit" data-ga-app_name="¿Todos tus clientes merecen la misma oferta?" data-ga-location="home_analisis" data-ga-trigger="ver_link" onclick="event.stopPropagation()">Ver →</a>
+          <a class="cc-link card-go" aria-label="Ver proyecto" href="https://segmentacion-retail.streamlit.app" target="_blank" rel="noopener noreferrer" data-ga="clic_app_streamlit" data-ga-app_name="¿Todos tus clientes merecen la misma oferta?" data-ga-location="home_analisis" data-ga-trigger="ver_link" onclick="event.stopPropagation()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
         </div>
       </div>
 
@@ -876,7 +876,7 @@
         </div>
         <div class="cc-foot">
           <div class="cc-pills"><span class="cc-pill">SARIMAX</span><span class="cc-pill">statsmodels</span></div>
-          <a class="cc-link" href="https://forecast-ventas-retail-app-w5msdvcsbuxas94qjcdore.streamlit.app" target="_blank" rel="noopener noreferrer" data-ga="clic_app_streamlit" data-ga-app_name="¿Qué pasa con las ventas cuando ocurre algo inesperado?" data-ga-location="home_analisis" data-ga-trigger="ver_link" onclick="event.stopPropagation()">Ver →</a>
+          <a class="cc-link card-go" aria-label="Ver proyecto" href="https://forecast-ventas-retail-app-w5msdvcsbuxas94qjcdore.streamlit.app" target="_blank" rel="noopener noreferrer" data-ga="clic_app_streamlit" data-ga-app_name="¿Qué pasa con las ventas cuando ocurre algo inesperado?" data-ga-location="home_analisis" data-ga-trigger="ver_link" onclick="event.stopPropagation()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
         </div>
       </div>
 
@@ -897,14 +897,14 @@
         </div>
         <div class="cc-foot">
           <div class="cc-pills"><span class="cc-pill">Gradient Boosting</span><span class="cc-pill">scikit-learn</span></div>
-          <a class="cc-link" href="https://comparativa-modelos-aerolinea.streamlit.app" target="_blank" rel="noopener noreferrer" data-ga="clic_app_streamlit" data-ga-app_name="¿A quién estamos a punto de perder?" data-ga-location="home_analisis" data-ga-trigger="ver_link" onclick="event.stopPropagation()">Ver →</a>
+          <a class="cc-link card-go" aria-label="Ver proyecto" href="https://comparativa-modelos-aerolinea.streamlit.app" target="_blank" rel="noopener noreferrer" data-ga="clic_app_streamlit" data-ga-app_name="¿A quién estamos a punto de perder?" data-ga-location="home_analisis" data-ga-trigger="ver_link" onclick="event.stopPropagation()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
         </div>
       </div>
 
     </div>
   </div>
   <div class="proj-more sr">
-    <a href="./analisis-datos.html" class="btn btn-black">Ver todos los proyectos de análisis →</a>
+    <a href="./analisis-datos.html" class="btn btn-black">Ver más proyectos de análisis</a>
   </div>
 </section>
 

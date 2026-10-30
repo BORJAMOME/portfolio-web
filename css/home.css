@@ -590,8 +590,6 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   transition: background .2s var(--ease), color .2s var(--ease);
 }
 .pc-pill + .pc-pill::before { content: ''; margin-right: 0; color: var(--muted); }
-.pc-link { font-family: var(--font-serif); font-size: 13.5px; color: var(--ink); font-weight: 400; text-decoration: none; letter-spacing: normal; text-transform: none; transition: color .18s; padding: 12px 4px; min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; }
-.pc-link:hover { color: var(--ink); }
 .proj-more { display: flex; justify-content: center; align-items: center; margin-top: 40px; width: 100%; }
 
 /* ─── ML CARDS: mismo sistema visual que .proj-card ─── */
@@ -626,8 +624,6 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 .cc-foot { display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 1px solid #e8e8ee; }
 .cc-pills { display: flex; gap: 8px; flex-wrap: wrap; }
 .cc-pill { font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; font-size: 11px; font-weight: 500; background: #e8e6e2; border: 0; color: #59534e; padding: 6px 13px; border-radius: var(--radius-pill); letter-spacing: 0; text-transform: none; transition: background .2s var(--ease), color .2s var(--ease); }
-.cc-link { font-family: var(--font-serif); font-size: 13.5px; color: var(--ink); font-weight: 400; text-decoration: none; letter-spacing: normal; text-transform: none; transition: color .18s; padding: 12px 4px; min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; }
-.cc-link:hover { color: var(--ink); }
 @media (max-width:900px) { .ml-grid { grid-template-columns:1fr; } }
 
 /* ─── PROYECTO ESTRELLA: "El ticket" (Casa Origen) ───
