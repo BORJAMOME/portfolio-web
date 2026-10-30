@@ -189,8 +189,28 @@
 }
 .hero-sub strong { color: var(--ink); font-weight: 600; }
 .hero-actions {
-  display: flex; gap: 10px; flex-wrap: wrap;
+  display: flex; gap: 10px 20px; flex-wrap: wrap; align-items: center;
   opacity: 0; animation: fadeUp .8s .62s var(--ease) forwards;
+}
+/* Jerarquía: un único botón sólido (la acción que busca quien selecciona) y la
+   secundaria rebajada a enlace. Inter 500 en tipo oración, como el subtítulo. */
+.hero-actions .btn {
+  min-height: 48px; padding: 0 22px;
+  font-family: var(--font); font-size: 15px; font-weight: 500;
+  letter-spacing: 0; text-transform: none;
+}
+.hero-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 48px; padding: 0 4px;
+  font-size: 15px; font-weight: 500; color: var(--ink); text-decoration: none;
+  /* Subrayado dibujado con un fondo para poder animarlo: se recoge al pasar el ratón */
+  background: linear-gradient(currentColor, currentColor) 0 calc(50% + 12px) / 100% 1px no-repeat;
+  transition: background-size .55s cubic-bezier(0.65,0,0.35,1);
+}
+.hero-link:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+@media (hover: hover) and (pointer: fine) {
+  .hero-link:hover { background-size: 0 1px; background-position: 100% calc(50% + 12px); }
+  .hero-link:hover .btn-arrow { transform: translateY(3px); }
 }
 
 /* ─── HERO DASHBOARD ─── */
@@ -1301,9 +1321,8 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   .hero-social-proof { display: none; } /* fuera en mobile: LinkedIn + impresiones */
   .hero-meta:not(.hero-social-proof) { margin-bottom: 56px; } /* el más amplio: cierre de la tarjeta antes de los CTAs */
 
-  /* Botones apilados a ancho completo: cada uno una barra horizontal,
-     no dos botones estrechos compitiendo por el mismo ancho. */
-  .hero-actions { flex-direction: column; gap: 12px; }
+  /* Botón principal a ancho completo; el enlace secundario, centrado debajo. */
+  .hero-actions { flex-direction: column; gap: 8px; }
   .hero-actions .btn { width: 100%; justify-content: center; }
 }
 
