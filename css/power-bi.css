@@ -236,6 +236,17 @@
   .pc-overlay-inner{grid-template-columns:1fr;max-height:90vh;overflow-y:auto}
   .pco-arrow{display:none}
   .proj-cards-outer{margin:0}
+  /* Tarjeta horizontal: imagen a la izquierda; «Ver caso completo» pasa a botón ↗ sobre la imagen */
+  .proj-card{--pc-img:clamp(96px,34%,168px);flex-direction:row}
+  .pc-photo-wrap{flex:0 0 var(--pc-img);aspect-ratio:auto;border-bottom:0;border-right:1px solid #e8e8ee;border-radius:var(--radius-lg) 0 0 var(--radius-lg)}
+  .pc-badge{top:8px;left:8px;right:8px;flex-direction:column;align-items:flex-start;gap:4px}
+  .pc-num,.pc-cat{padding:4px 9px}
+  .pc-copy{padding:16px 16px 18px;min-width:0}
+  .pc-short{-webkit-line-clamp:3;flex:none;margin-bottom:14px}
+  .pc-pills{margin-bottom:0}
+  .pc-foot{display:contents}
+  .pc-btn{position:absolute;z-index:3;left:calc(var(--pc-img) - 40px);bottom:8px;width:32px;height:32px;padding:0;justify-content:center;font-size:0;background:rgba(255,255,255,.92);color:var(--ink);border:1px solid #e8e8ee;border-radius:var(--radius-md)}
+  .pc-btn svg{width:14px;height:14px}
   .col-header{padding:24px 0}
   .col-header .col-title{font-size:22px}
   /* ── sec-nav móvil: scroll horizontal compacto ── */
