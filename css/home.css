@@ -1507,6 +1507,35 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
   }
 }
 
+/* Móvil: tarjeta horizontal (imagen a la izquierda) y el enlace «Ver →»
+   pasa a botón ↗ en la esquina inferior derecha de la imagen. */
+@media (max-width: 600px) {
+  /* La sección y su .c sumaban 48 px por lado: con la tarjeta horizontal el texto no cabía */
+  .proj-section > .c { padding: 0; }
+  .proj-card { --pc-img: clamp(96px, 34%, 168px); flex-direction: row; position: relative; }
+  .pc-visual {
+    flex: 0 0 var(--pc-img); aspect-ratio: auto;
+    border-bottom: 0; border-right: 1px solid #e8e8ee;
+    border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+  }
+  /* El portátil ocupa el 71 % del ancho de la imagen: ×1,35 recorta solo el margen blanco */
+  .pc-visual img { transform: scale(1.35); }
+  .pc-body { padding: 16px 16px 18px; min-width: 0; }
+  .pc-pill { min-width: 0; }
+  .pc-desc { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 14px; }
+  .pc-foot { padding-top: 12px; }
+  .pc-link {
+    position: absolute; z-index: 3; left: calc(var(--pc-img) - 40px); bottom: 8px;
+    width: 32px; height: 32px; min-width: 0; min-height: 0; padding: 0 !important;
+    justify-content: center; font-size: 0;
+    background: rgba(255,255,255,.92) !important; border: 1px solid #e8e8ee !important; border-radius: var(--radius-md);
+  }
+  .pc-link::after {
+    content: ""; width: 14px; height: 14px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111111' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M7 17L17 7M17 7H7M17 7v10'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+}
+
 /* ══════════════════════════════
    5. BUTTONS: directional sweep (era MAGNETIC)
 ══════════════════════════════ */
