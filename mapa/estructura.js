@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "7b9ead7",
+ "huella": "258ffcb",
  "recuento": {
   "paginas": 19,
   "proyectos": 40,
@@ -3605,7 +3605,7 @@ export default {
   },
   {
    "dominio": "tally.so",
-   "n": 3
+   "n": 2
   }
  ],
  "tipos": {
