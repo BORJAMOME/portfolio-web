@@ -59,8 +59,8 @@
 .pc-eyebrow{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px}
 .pc-eyebrow span{display:none}
 .pc-headline{font-family:var(--font-serif);font-weight:400;font-size:20px;letter-spacing:-.2px;line-height:1.25;color:var(--ink);margin-bottom:10px;text-wrap:balance}
-.pc-short{font-size:13.5px;color:var(--muted);line-height:1.7;margin-bottom:20px;flex:1;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
-.pc-short strong{color:var(--ink);font-weight:600}
+.pc-short{font-size:13.5px;color:var(--card-desc);line-height:1.7;margin-bottom:20px;flex:1;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.pc-short strong{color:inherit;font-weight:400}
 
 .pc-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
 .pc-pill{font-family:'Inter','Segoe UI',system-ui,sans-serif;font-size:11px;font-weight:500;background:#e8e6e2;border:0;color:#59534e;padding:6px 13px;border-radius:var(--radius-pill);letter-spacing:0;text-transform:none}
@@ -98,7 +98,7 @@
 .li-card-body{display:flex;flex-direction:column;padding:22px 24px;gap:10px;flex:1;margin-top:0}
 .li-card-title{font-family:var(--font-serif);font-weight:400;font-size:16px;line-height:1.3;letter-spacing:-.2px;color:var(--ink);transition:color .12s;text-wrap:balance}
 @media (hover: hover) and (pointer: fine) { .li-card:hover .li-card-title{color:var(--ink)} }
-.li-card-desc{font-size:13px;line-height:1.65;color:var(--muted)}
+.li-card-desc{font-size:13px;line-height:1.65;color:var(--card-desc)}
 /* Botón ↗ sobre la esquina inferior derecha de la imagen (200 px) */
 .li-card .card-go{top:156px}
 
@@ -114,7 +114,7 @@
 .nat-viz-title{font-family:var(--font-serif);font-weight:400;font-size:16px;letter-spacing:-.2px;line-height:1.3;color:var(--ink);transition:color .12s;text-wrap:balance}
 @media (hover: hover) and (pointer: fine) { .nat-viz-card:hover .nat-viz-title{color:var(--ink)} }
 .nat-viz-footer{padding:0 24px 22px;display:flex;flex-direction:column;gap:10px;flex:1;justify-content:space-between}
-.nat-viz-desc{font-size:13px;color:var(--muted);line-height:1.65;margin:0}
+.nat-viz-desc{font-size:13px;color:var(--card-desc);line-height:1.65;margin:0}
 /* Botón ↗ sobre la esquina inferior derecha de la imagen (180 px) */
 .nat-viz-card .card-go{top:136px}
 
@@ -127,7 +127,7 @@
 .dax-card-num{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;font-variant-numeric:tabular-nums}
 .dax-card-title{font-family:var(--font-serif);font-weight:400;font-size:18px;letter-spacing:-.2px;line-height:1.25;color:var(--ink);margin-bottom:12px}
 @media (hover: hover) and (pointer: fine) { .dax-card:hover .dax-card-title{color:var(--ink)} }
-.dax-card-desc{font-size:13px;color:var(--muted);line-height:1.65;flex:1;margin-bottom:24px}
+.dax-card-desc{font-size:13px;color:var(--card-desc);line-height:1.65;flex:1;margin-bottom:24px}
 /* Sin imagen: el botón ↗ ocupa la esquina inferior derecha de la tarjeta */
 .dax-card .card-go{position:relative;right:auto;margin-top:auto;align-self:flex-end}
 

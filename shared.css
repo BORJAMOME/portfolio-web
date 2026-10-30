@@ -22,6 +22,7 @@
   --ink:          #111111;
   --muted:        #5a5a5a; /* único gris de texto secundario: WCAG AA ≥ 6.8:1 sobre #fff */
   --muted-light:  #5a5a5a; /* alias de --muted (antes #696969): consolidado, no crear grises nuevos */
+  --card-desc:    #6f6c69; /* texto explicativo de las tarjetas de proyecto: 4,69:1 sobre --card y 4,95:1 sobre --page (AA) */
   --mutedB:       #5a5a5a; /* alias de --muted (antes #6e6e6e): consolidado, no crear grises nuevos */
   --li:           #0077b5;
   --logo-purple:  #7a7bff;
