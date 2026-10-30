@@ -1518,9 +1518,8 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
     border-bottom: 0; border-right: 1px solid #e8e8ee;
     border-radius: var(--radius-lg) 0 0 var(--radius-lg);
   }
-  /* En móvil el <picture> sirve la captura del dashboard (la misma de power-bi.html), que llena la columna como allí */
-  .pc-visual picture { display: block; width: 100%; height: 100%; }
-  .pc-visual img { object-fit: cover !important; object-position: top; }
+  /* El portátil ocupa el 71 % del ancho de la imagen: ×1,35 recorta solo el margen blanco */
+  .pc-visual img { transform: scale(1.35); }
   .pc-body { padding: 16px 16px 18px; min-width: 0; }
   .pc-pill { min-width: 0; }
   .pc-desc { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 14px; }
