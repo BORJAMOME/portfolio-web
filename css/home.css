@@ -763,10 +763,14 @@ section { padding: 0 clamp(1.5rem,5vw,4rem) clamp(96px,10vw,120px); }
 /* Botones de la home en Merriweather Regular (shared.css los deja en Inter para el resto del sitio) */
 .btn { font-family: var(--font-serif); font-weight: 400; }
 
+/* «Ver más proyectos…» y «Ver caso completo» en tipo oración (solo la primera en mayúscula).
+   Sin versalitas el texto pide más cuerpo y nada de interletrado para no verse diminuto. */
+.proj-more .btn, .v4-cta.btn { text-transform: none; font-size: 14px; letter-spacing: 0; }
+
 /* CTA: botón blanco · texto espresso · color fijo (solo se mueve la flecha) */
 .v4-cta.btn {
   min-height: 48px; padding: 0 28px;
-  font-size: 12px; font-weight: 400; letter-spacing: .06em;
+  font-weight: 400;
   background: #ffffff; color: var(--v4-esp);
   border: 1px solid #ffffff;
 }
