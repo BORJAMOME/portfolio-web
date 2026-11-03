@@ -56,6 +56,14 @@ No hace falta ninguna variable de entorno ni clave nueva: usa la sesión y la cl
   Se guarda y se edita, pero el detalle de la paleta ya no la enseña: en su lugar va la figura del outfit.
   Cada color conserva el valor registrado (`original`) y su HEX normalizado. Las paletas «Libro» son datos introducidos por
   la persona; la herramienta no verifica ni importa contenido del libro.
+- **Tipos de prenda: una lista fija** (`engine.GARMENT_TYPES`) para la prenda de cada color en Inspiración (cuentagotas y «Editar HEX»)
+  y para el tipo de cada prenda del armario: Prenda exterior, Abrigo, Chaqueta, Americana, Jersey, Sudadera, Camisa, Polo, Camiseta,
+  Camiseta interior, Pantalón, Vaquero, Zapato, Mocasín, Bota, Deportiva, Calcetín, Cinturón y Accesorio. Así el cruce es exacto:
+  un color «Deportiva» busca tus deportivas antes que un zapato del mismo color (`matchColorsToWardrobe`). Sin cambios de
+  esquema: en el armario la categoría de la base sale del tipo y el tipo va al principio de la subcategoría («Deportiva» o
+  «Deportiva · running», `splitSubcategory`/`joinSubcategory`), que es lo que ya lee la guía de calcetines para el calzado. Las prendas y
+  etiquetas anteriores se leen igual: el tipo se deduce de la categoría y del texto (`garmentType`), y una etiqueta antigua escrita
+  a mano se conserva como opción hasta que se cambie.
 - **Prenda interior** (hueco `inner`, tras la parte superior): camiseta interior o camisa bajo un jersey; admite camisetas y
   camisas, pesa 10 por defecto y entra en la estimación, la lectura, las direcciones (como zona pequeña para un acento o una
   repetición), las sugerencias y los calcetines. No cambia el esquema: el hueco va en `cs_outfits.items` (texto libre en la
@@ -108,7 +116,8 @@ prenda que coincide no basta. Son niveles de proximidad, no una nota de estilo n
   calcetines con canalé y calzado de frente), contorno del propio color y una luz suave desde la izquierda que no altera el color
   (velo del 8 %, por pernera). Diseño revisado con una crítica de diseño específica (legibilidad del color de cada prenda,
   calcetines, calzado, prendas claras sobre el fondo). **Editable**: en el detalle de una paleta, cada prenda tiene su selector de
-  color (exterior y accesorio se pueden quitar) y «Restablecer la propuesta» vuelve a la automática; la elección vive en la sesión,
+  color (exterior y accesorio se pueden quitar; el calzado admite también negro, blanco y marrón, los habituales, marcados como
+  «fuera de la paleta») y «Restablecer la propuesta» vuelve a la automática; la elección vive en la sesión,
   no se guarda. Propuesta automática: los colores con nombre de prenda (los de Inspiración llevan su etiqueta) van en su prenda;
   el resto por sobriedad (el color con menos croma en las prendas grandes; un blanco o un crudo, como apoyo); los calcetines,
   del color del pantalón. **El libro no da proporciones**: el porcentaje es la superficie aproximada de cada prenda en el dibujo

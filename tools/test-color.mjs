@@ -1155,3 +1155,35 @@ test('Con tu armario: el color del pantalón se busca entre pantalones (no entre
   assert.deepEqual(rows.map((r) => r.candidate && r.candidate.garment.id), ['chino', 'bota']);
   assert.deepEqual(rows.map((r) => r.wanted), ['bottom', 'shoes']);
 });
+test('Tipos de prenda: lista fija común a Inspiración y Armario, guardada en la subcategoría y con cruce exacto por tipo', () => {
+  assert.deepEqual(I.GARMENT_LABELS, E.GARMENT_TYPES.map((t) => t.label), 'Inspiración usa la misma lista que el armario');
+  E.GARMENT_TYPES.forEach((t) => { assert.ok(E.CATEGORY_LABEL[t.category], t.label + ' sin categoría válida'); assert.ok(E.SLOT[t.slot], t.label + ' sin hueco'); assert.equal(C.slotFromLabel(t.label), t.slot, t.label); });
+  assert.deepEqual(E.splitSubcategory('Deportiva · running'), { type: 'Deportiva', detail: 'running' });
+  assert.deepEqual(E.splitSubcategory('Bota'), { type: 'Bota', detail: null });
+  assert.deepEqual(E.splitSubcategory('chino'), { type: null, detail: 'chino' }, 'una subcategoría antigua se conserva como detalle');
+  assert.equal(E.joinSubcategory('Bota', ' chelsea '), 'Bota · chelsea'); assert.equal(E.joinSubcategory('Camisa', ''), 'Camisa');
+  // prendas anteriores (sin tipo guardado): el tipo se deduce
+  assert.equal(E.garmentType({ category: 'calzado', subcategory: 'zapatillas blancas' }), 'Deportiva');
+  assert.equal(E.garmentType({ category: 'calzado', subcategory: null, name: 'Oxford' }), 'Zapato');
+  assert.equal(E.garmentType({ category: 'pantalones' }), 'Pantalón');
+  assert.equal(E.garmentType({ category: 'calzado', subcategory: 'Mocasín · penny' }), 'Mocasín');
+  assert.equal(S.inferShoeType('Deportiva · running'), 'technical', 'la guía de calcetines sigue leyendo el tipo de calzado');
+  assert.equal(S.inferShoeType('Bota'), 'boot');
+  // cruce exacto: el color «Deportiva» prefiere tus deportivas a un zapato del mismo color (aunque el zapato esté más cerca)
+  const w = [garm('zapato', 'calzado', '#F1EFEA', { subcategory: 'Zapato' }), garm('depor', 'calzado', '#ECE8DF', { subcategory: 'Deportiva' })];
+  assert.ok(E.colorDistance('#F2F0EB', '#F1EFEA') < E.colorDistance('#F2F0EB', '#ECE8DF'));
+  assert.equal(C.matchColorsToWardrobe([{ hex: '#F2F0EB', label: 'Deportiva' }], w)[0].candidate.garment.id, 'depor');
+  assert.equal(C.matchColorsToWardrobe([{ hex: '#F2F0EB', label: 'Zapato' }], w)[0].candidate.garment.id, 'zapato');
+});
+test('Figurín: el calzado admite negro, blanco y marrón además de los colores de la paleta (señalados como fuera de ella)', () => {
+  const p = pal('mc', 'marino camel crudo', ['#1F2A44', '#B48A5A', '#F4F2EC']);
+  assert.deepEqual(C.SHOE_COLORS.map((c) => c.name), ['negro', 'blanco', 'marrón']);
+  const f = C.paletteFigure(p, { shoes: '#5A3A24' });
+  assert.equal(f.garments.find((g) => g.slot === 'shoes').hex, '#5A3A24');
+  const extra = f.colors.find((c) => c.extra);
+  assert.ok(extra && extra.name === 'marrón' && extra.slots.join() === 'shoes');
+  assert.ok(Math.abs(f.colors.reduce((t, c) => t + c.share, 0) - 100) < 1e-6);
+  // solo el calzado: en otra prenda un HEX ajeno a la paleta no vale y vuelve a la propuesta
+  const bad = C.paletteFigure(p, { bottom: '#1C1C1C' });
+  assert.equal(bad.assignment.bottom, C.paletteFigure(p).assignment.bottom);
+});

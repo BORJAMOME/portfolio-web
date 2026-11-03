@@ -11,7 +11,7 @@
    que encaje, el color se ofrece como HIPOTÉTICO (hypothetical: true) y la interfaz lo dice:
    nunca se presenta como algo que ya tienes.
    ═══════════════════════════════════════════════ */
-import { normalizeHex, colorDistance, describeColor, hexToLab, labToLch, lchToLab, labToHex, rankPalettes, SLOTS, SLOT, garmentColorParts, estimateDistribution, paletteAffinity, byAffinity, similarityLevel, SIMILARITY, SIMILARITY_LABEL } from './engine.js?v=48d0c9d163';
+import { normalizeHex, colorDistance, describeColor, hexToLab, labToLch, lchToLab, labToHex, rankPalettes, SLOTS, SLOT, garmentColorParts, estimateDistribution, paletteAffinity, byAffinity, similarityLevel, SIMILARITY, SIMILARITY_LABEL, garmentTypeInfo, garmentType } from './engine.js?v=0ea937e1d8';
 
 export const DIRECTIONS = [
   { id: 'minimal', label: 'Minimalista', goal: 'Discreto y tonal: neutros o tonos apagados, sin acentos que compitan.' },
@@ -629,6 +629,8 @@ const LABEL_RULES = [
 ];
 /** Hueco del Studio que corresponde a lo escrito en una etiqueta («Pantalón» → bottom). null si no se reconoce. */
 export function slotFromLabel(text) {
+  const info = garmentTypeInfo(text);                 // un tipo de la lista fija: correspondencia exacta
+  if (info) return info.slot;
   const t = String(text || '').toLowerCase().normalize('NFC');
   if (!t.trim()) return null;
   const hit = LABEL_RULES.find(([, re]) => re.test(t));
@@ -642,7 +644,7 @@ export function slotFromLabel(text) {
  */
 export function matchColorsToWardrobe(colors, garments, opts = {}) {
   const exclude = new Set(opts.exclude || []), tol = opts.tolerance || SIMILARITY.RELATED;
-  const rows = (colors || []).map((c) => ({ hex: normalizeHex(c.hex), wanted: slotFromLabel(c.label), weight: Number(c.weight) || 0 }));
+  const rows = (colors || []).map((c) => ({ hex: normalizeHex(c.hex), wanted: slotFromLabel(c.label), type: (garmentTypeInfo(c.label) || {}).label || null, weight: Number(c.weight) || 0 }));
   const pairs = [];
   rows.forEach((r, i) => {
     if (!r.hex) return;
@@ -654,7 +656,8 @@ export function matchColorsToWardrobe(colors, garments, opts = {}) {
         if (r.wanted && s.id !== r.wanted) return;                                   // la etiqueta manda
         if (!r.wanted && r.weight >= 12 && (s.id === 'socks' || s.id === 'accessory')) return;
         // sin etiqueta, una camisa o camiseta va antes como parte superior que como interior, y lo pequeño, al final
-        const cost = d + (r.wanted ? 0 : (s.id === 'inner' ? 2 : 0) + (s.id === 'socks' || s.id === 'accessory' ? 4 : 0));
+        // con un tipo de la lista (Deportiva, Mocasín…), una prenda de ese mismo tipo va antes que otra del mismo hueco
+        const cost = d + (r.wanted ? (r.type && garmentType(g) !== r.type ? 6 : 0) : (s.id === 'inner' ? 2 : 0) + (s.id === 'socks' || s.id === 'accessory' ? 4 : 0));
         pairs.push({ i, g, slot: s.id, d, cost, labeled: !!r.wanted });
       });
     });
@@ -735,6 +738,9 @@ const FIGURE_MAP = {
   6: { outer: 0, top: 2, bottom: 1, shoes: 3, accessory: 4, socks: 5 }
 };
 export const FIGURE_AREA = { outer: 34, top: 13, bottom: 33, socks: 3, shoes: 7, accessory: 3 };   // superficie dibujada (aprox.)
+// calzado: además de los colores de la paleta, los habituales en un armario (no son de la combinación y se dice)
+export const SHOE_COLORS = [{ name: 'negro', hex: '#1C1C1C' }, { name: 'blanco', hex: '#F3F2EE' }, { name: 'marrón', hex: '#5A3A24' }];
+const SHOE_EXTRA = Object.fromEntries(SHOE_COLORS.map((c) => [c.hex, c]));
 /**
  * Figurín de una paleta. assignment opcional: { slot: índice del color en la paleta | null } (null = sin esa prenda; solo
  * prenda exterior y accesorio son opcionales). Sin él, la propuesta automática (etiquetas y sobriedad).
@@ -747,15 +753,18 @@ export function paletteFigure(palette, assignment) {
   const asg = {};
   FIGURE_SLOTS.forEach((slot) => {
     const v = assignment && slot in assignment ? assignment[slot] : auto[slot];
-    asg[slot] = v == null ? (FIGURE_OPTIONAL.includes(slot) ? null : auto[slot]) : cols.some((c) => c.index === v) ? v : auto[slot];
+    // el calzado admite también negro, blanco o marrón (su HEX en lugar del índice de un color de la paleta)
+    asg[slot] = v == null ? (FIGURE_OPTIONAL.includes(slot) ? null : auto[slot]) : cols.some((c) => c.index === v) || (slot === 'shoes' && SHOE_EXTRA[v]) ? v : auto[slot];
   });
   const byIndex = Object.fromEntries(cols.map((c) => [c.index, c]));
+  if (SHOE_EXTRA[asg.shoes]) byIndex[asg.shoes] = Object.assign({ index: asg.shoes, extra: true }, SHOE_EXTRA[asg.shoes]);
   const area = Object.assign({}, FIGURE_AREA);
   if (asg.outer == null) { area.top += area.outer; area.outer = 0; }          // sin prenda exterior, la parte superior se ve entera
   const garments = FIGURE_SLOTS.filter((slot) => asg[slot] != null).map((slot) => ({ slot, hex: byIndex[asg[slot]].hex, index: asg[slot], area: area[slot] }));
   const total = garments.reduce((t, g) => t + g.area, 0) || 1;
   garments.forEach((g) => { g.share = g.area / total * 100; });
-  const colors = cols.map((f) => ({ hex: f.hex, name: f.name, index: f.index, share: garments.filter((g) => g.index === f.index).reduce((t, g) => t + g.share, 0), slots: garments.filter((g) => g.index === f.index).map((g) => g.slot) }));
+  const list = cols.concat(SHOE_EXTRA[asg.shoes] ? [byIndex[asg.shoes]] : []);
+  const colors = list.map((f) => ({ hex: f.hex, name: f.name, index: f.index, extra: !!f.extra, share: garments.filter((g) => g.index === f.index).reduce((t, g) => t + g.share, 0), slots: garments.filter((g) => g.index === f.index).map((g) => g.slot) }));
   const isAuto = FIGURE_SLOTS.every((slot) => asg[slot] === auto[slot]);
   return { garments: garments.map((g) => ({ slot: g.slot, hex: g.hex, share: g.share })), colors, assignment: asg, auto: isAuto, illustrative: true };
 }

@@ -380,6 +380,52 @@ export const CATEGORIES = [
   ['pantalones', 'Pantalones'], ['vaqueros', 'Vaqueros'], ['calzado', 'Calzado'], ['calcetines', 'Calcetines'], ['accesorios', 'Accesorios']
 ];
 export const CATEGORY_LABEL = Object.fromEntries(CATEGORIES);
+/* ═══════════ TIPOS DE PRENDA (lista fija, compartida) ═══════════
+   La misma lista para la prenda de cada color de una inspiración y para cada prenda del armario: así el cruce entre
+   las dos es exacto (un color «Deportiva» busca tus deportivas). Cada tipo lleva su categoría de la base (cs_garments.category)
+   y su hueco del Studio. En el armario el tipo se guarda al principio de la subcategoría («Deportiva» o «Deportiva · running»):
+   sin columnas nuevas, y la guía de calcetines sigue leyendo de ahí el tipo de calzado. */
+export const GARMENT_TYPES = [
+  ['Prenda exterior', 'chaquetas', 'outer'], ['Abrigo', 'chaquetas', 'outer'], ['Chaqueta', 'chaquetas', 'outer'], ['Americana', 'chaquetas', 'outer'],
+  ['Jersey', 'jerseis', 'top'], ['Sudadera', 'jerseis', 'top'], ['Camisa', 'camisas', 'top'], ['Polo', 'camisetas', 'top'], ['Camiseta', 'camisetas', 'top'],
+  ['Camiseta interior', 'camisetas', 'inner'],
+  ['Pantalón', 'pantalones', 'bottom'], ['Vaquero', 'vaqueros', 'bottom'],
+  ['Zapato', 'calzado', 'shoes'], ['Mocasín', 'calzado', 'shoes'], ['Bota', 'calzado', 'shoes'], ['Deportiva', 'calzado', 'shoes'],
+  ['Calcetín', 'calcetines', 'socks'], ['Cinturón', 'accesorios', 'accessory'], ['Accesorio', 'accesorios', 'accessory']
+].map(([label, category, slot]) => ({ label, category, slot }));
+const TYPE_BY_KEY = Object.fromEntries(GARMENT_TYPES.map((t) => [t.label.toLowerCase(), t]));
+/** Tipo de la lista a partir de su nombre (sin distinguir mayúsculas). null si no es uno de la lista. */
+export const garmentTypeInfo = (label) => TYPE_BY_KEY[String(label || '').trim().toLowerCase()] || null;
+const SUB_SEP = ' · ';
+/** «Deportiva · running» → { type: 'Deportiva', detail: 'running' }; una subcategoría antigua sin tipo → { type: null, detail } */
+export function splitSubcategory(sub) {
+  const t = String(sub || '').trim();
+  const i = t.indexOf(SUB_SEP), head = i >= 0 ? t.slice(0, i) : t;
+  const info = garmentTypeInfo(head);
+  return info ? { type: info.label, detail: i >= 0 ? t.slice(i + SUB_SEP.length).trim() || null : null } : { type: null, detail: t || null };
+}
+export function joinSubcategory(type, detail) {
+  const d = String(detail || '').trim();
+  return type ? (d ? type + SUB_SEP + d : type) : d || null;
+}
+const FALLBACK_TYPE = { chaquetas: 'Chaqueta', jerseis: 'Jersey', camisas: 'Camisa', camisetas: 'Camiseta', pantalones: 'Pantalón', vaqueros: 'Vaquero', calzado: 'Zapato', calcetines: 'Calcetín', accesorios: 'Accesorio' };
+/** Tipo de una prenda: el guardado en la subcategoría o, en prendas anteriores, el que se deduce de la categoría y el texto. */
+export function garmentType(g) {
+  if (!g) return null;
+  const sp = splitSubcategory(g.subcategory);
+  if (sp.type) return sp.type;
+  const text = [g.subcategory, g.name].join(' ').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  if (g.category === 'calzado') {
+    if (/deportiv|zapatill|sneaker|trainer|tenis|bamba|running/.test(text)) return 'Deportiva';
+    if (/mocas|loafer/.test(text)) return 'Mocasín';
+    if (/bota|botin|boot|chelsea|chukka/.test(text)) return 'Bota';
+  }
+  if (g.category === 'chaquetas') { if (/abrigo|gabardin|parka|plumifero/.test(text)) return 'Abrigo'; if (/americana|blazer/.test(text)) return 'Americana'; }
+  if (g.category === 'jerseis' && /sudadera/.test(text)) return 'Sudadera';
+  if (g.category === 'camisetas') { if (/interior/.test(text)) return 'Camiseta interior'; if (/polo/.test(text)) return 'Polo'; }
+  if (g.category === 'accesorios' && /cinturon/.test(text)) return 'Cinturón';
+  return FALLBACK_TYPE[g.category] || null;
+}
 export const slotForCategory = (cat) => (SLOTS.find((s) => s.categories.includes(cat)) || {}).id || null;
 
 /** Peso válido (número finito ≥ 0). Lo demás cuenta como 0 y se explica. */

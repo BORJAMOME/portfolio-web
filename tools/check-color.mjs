@@ -335,6 +335,12 @@ await step('Detalle de paleta: figura del outfit con reparto ilustrativo (sin el
   ok(await page.$('dialog[open] [data-key="fig-reset"]'), 'sin «Restablecer la propuesta»');
   await page.click('dialog[open] [data-key="fig-reset"]');
   await page.waitForFunction(() => /Prenda exterior/.test([...document.querySelectorAll('dialog[open] .cs-fig-w')].map((x) => x.textContent).join('|')));
+  // calzado: además de los colores de la paleta, negro, blanco y marrón (señalados como fuera de la paleta)
+  for (const k of ['1c1c1c', 'f3f2ee', '5a3a24']) ok(await page.$('dialog[open] [data-key="fig-shoes-' + k + '"]'), 'falta el color habitual de calzado ' + k);
+  await page.click('dialog[open] [data-key="fig-shoes-1c1c1c"]');
+  await page.waitForFunction(() => /fuera de la paleta/.test(document.querySelector('dialog[open] .cs-fig-legend').textContent));
+  eq(await page.getAttribute('dialog[open] [data-key="fig-shoes-1c1c1c"]', 'aria-checked'), 'true');
+  await page.click('dialog[open] [data-key="fig-reset"]');
   ok(!log.slice(writes0).some((l) => /^(POST|PATCH|DELETE)/.test(l)), 'elegir colores del figurín escribió en la base');
   ok(await page.$('dialog[open] .cs-pal-insp'), 'falta la sección de inspiraciones relacionadas');
   // X visible aunque se desplace el contenido
@@ -360,24 +366,27 @@ await step('Detalle de paleta: figura del outfit con reparto ilustrativo (sin el
   await page.click('dialog[open] button:has-text("Cancelar")');
 });
 
-await step('Armario: prenda con color a mano (sin foto); la categoría es obligatoria', async () => {
+await step('Armario: prenda con color a mano (sin foto); el tipo de prenda (lista fija) es obligatorio y fija la categoría', async () => {
   await go(page, '#/color/armario');
   await page.click('[data-key="new-garment"]');
   await page.waitForSelector('dialog[open] #cs-g-cat');
   await page.fill('#cs-g-primary', '#1f2a44');
   await submit(page);
-  await page.waitForFunction(() => /categoría/i.test(document.querySelector('dialog[open] .ap-msg').textContent));
-  await page.selectOption('#cs-g-cat', 'pantalones');
+  await page.waitForFunction(() => /tipo de prenda/i.test(document.querySelector('dialog[open] .ap-msg').textContent));
+  eq(await page.$eval('#cs-g-cat', (s) => s.tagName), 'SELECT', 'el tipo no es un selector');
+  await page.selectOption('#cs-g-cat', 'Pantalón');
   await page.fill('#cs-g-name', 'Chino marino');
   await submit(page);
   await page.waitForSelector('dialog[open]', { state: 'detached' });
   eq(db.cs_garments[0].primary_color, '#1F2A44');
   eq(db.cs_garments[0].image_path, null);
+  eq(db.cs_garments[0].category, 'pantalones', 'la categoría no sale del tipo');
+  eq(db.cs_garments[0].subcategory, 'Pantalón', 'el tipo no se guarda');
 });
 await step('Armario: foto → vista previa, colores propuestos, corrección y subida privada', async () => {
   await page.click('[data-key="new-garment"]');
   await page.waitForSelector('dialog[open] #cs-g-cat');
-  await page.selectOption('#cs-g-cat', 'calzado');
+  await page.selectOption('#cs-g-cat', 'Zapato');
   await page.setInputFiles('dialog[open] .cs-photo-act label:has-text("Elegir imagen") input', await pngOf(page, 600, 800, '#4A2E1F'));
   await page.waitForSelector('dialog[open] .cs-photo img');
   await page.waitForSelector('dialog[open] .cs-prop-row');
@@ -410,7 +419,7 @@ await step('Armario: quitar la foto la borra del bucket; eliminar la prenda tamb
   ok(!objects.has(path), 'la foto anterior sigue en el bucket');
   // añadir y eliminar una prenda con foto
   await page.click('[data-key="new-garment"]');
-  await page.selectOption('#cs-g-cat', 'camisetas');
+  await page.selectOption('#cs-g-cat', 'Camiseta');
   await page.setInputFiles('dialog[open] .cs-photo-act label:has-text("Elegir imagen") input', await pngOf(page, 300, 300, '#9A9A97'));
   await page.waitForSelector('dialog[open] .cs-prop-row');
   await page.fill('#cs-g-name', 'Camiseta de prueba');
@@ -1006,7 +1015,8 @@ await step('Cuentagotas (ratón): imagen escalada, mediana que ignora reflejos, 
   eq(await page.$eval('dialog[open] .cs-pk-pending', (e) => e.hidden), true, 'pasar el ratón ya añadió una muestra');
   await page.mouse.click(pt.x, pt.y);
   eq(await pendingHex(page), QUAD.tl, 'muestra del cuadrante superior izquierdo');
-  await page.fill('#cs-pk-newlabel', 'Pantalón');
+  eq(await page.$eval('#cs-pk-newlabel', (s) => s.tagName), 'SELECT', 'la prenda del color no es una lista fija');
+  await page.selectOption('#cs-pk-newlabel', 'Pantalón');
   await page.click('[data-key="pk-add"]');
   pt = await pkPoint(page, 0.75, 0.25); await page.mouse.click(pt.x, pt.y);
   eq(await pendingHex(page), QUAD.tr);
