@@ -103,13 +103,16 @@ muy similar ≤ 6, relacionado ≤ 12 (diferencia perceptible), sin similitud > 
 conectan al menos 2 de sus colores (o todos si tiene 2) y, como mucho, el 15 % de tu superficie queda fuera: una sola
 prenda que coincide no basta. Son niveles de proximidad, no una nota de estilo ni un porcentaje de acierto.
 
-- **Figura del outfit** (detalle de una paleta, sugerencias): figura vertical en SVG con las prendas en el orden en que se
-  llevan (exterior con la interior asomando, cinturón o accesorio, pantalón, calcetines, calzado). Se eligió esta forma
-  (bloques con silueta de prenda) frente a un maniquí: se lee igual con 2, 3, 4 o 6 colores, la superficie de cada bloque
-  sigue su porcentaje y no depende de detalles anatómicos. **El libro no da proporciones**: en una paleta el reparto es
-  ilustrativo por sobriedad («base, apoyo y acento»: el color con menos croma va en la superficie mayor; un blanco o un
-  crudo cuenta como apoyo): 2 → 65/35, 3 → 50/30/20, 4 → 45/25/20/10, 5 → 40/25/15/12/8, 6 → 35/25/15/12/8/5, y la
-  pantalla lo dice. En un outfit real, la superficie es la estimada con los pesos del Studio.
+- **Figurín del outfit** (detalle de una paleta, sugerencias): ilustración de moda en plano (SVG por DOM, proporción de figurín)
+  con maniquí neutro, prendas en capas (exterior abierta, parte superior, interior con cuello, faldón y puños, cinturón, pantalón,
+  calcetines con canalé y calzado de frente), contorno del propio color y una luz suave desde la izquierda que no altera el color
+  (velo del 8 %, por pernera). Diseño revisado con una crítica de diseño específica (legibilidad del color de cada prenda,
+  calcetines, calzado, prendas claras sobre el fondo). **Editable**: en el detalle de una paleta, cada prenda tiene su selector de
+  color (exterior y accesorio se pueden quitar) y «Restablecer la propuesta» vuelve a la automática; la elección vive en la sesión,
+  no se guarda. Propuesta automática: los colores con nombre de prenda (los de Inspiración llevan su etiqueta) van en su prenda;
+  el resto por sobriedad (el color con menos croma en las prendas grandes; un blanco o un crudo, como apoyo); los calcetines,
+  del color del pantalón. **El libro no da proporciones**: el porcentaje es la superficie aproximada de cada prenda en el dibujo
+  (`compose.FIGURE_AREA`) y se dice. En un outfit real, la superficie es la estimada con los pesos del Studio.
 - **Sugerencias de outfits** (`compose.suggestOutfits`, tarjeta «Outfits con tu armario» del Studio): conjuntos completos con
   tus prendas (parte superior, pantalón y calzado; exterior e interior opcionales, la interior solo bajo un jersey o una
   exterior). Cada prenda a ΔE00 ≤ 12 de un color de la combinación, al menos 2 colores representados y el color mayor con

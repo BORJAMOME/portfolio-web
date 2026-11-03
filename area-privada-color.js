@@ -378,65 +378,78 @@ window.APColor = (function () {
       var by = {}; fig.garments.forEach(function (g) { if (!by[g.slot]) by[g.slot] = g.hex; });
       var svg = svgEl('svg', { viewBox: '0 0 200 460', class: 'cs-fig-svg', 'aria-hidden': 'true', focusable: 'false' });
       var defs = svgEl('defs', {}), uid = 'f' + Math.random().toString(36).slice(2, 7);
-      // luz: un velo que oscurece el lado derecho de cada prenda (la sombra se superpone, el color base no cambia)
+      // luz desde la izquierda: un velo muy suave en el borde derecho de cada pieza (8 %), para no cambiar el color que se juzga
       var grad = svgEl('linearGradient', { id: uid + 'l', x1: '0', y1: '0', x2: '1', y2: '0' });
-      [['0', 0], ['0.55', 0], ['1', 0.16]].forEach(function (st) { grad.appendChild(svgEl('stop', { offset: st[0], 'stop-color': '#000', 'stop-opacity': String(st[1]) })); });
+      [['0', 0], ['0.7', 0], ['1', 0.08]].forEach(function (st) { grad.appendChild(svgEl('stop', { offset: st[0], 'stop-color': '#000', 'stop-opacity': String(st[1]) })); });
       defs.appendChild(grad); svg.appendChild(defs);
+      var L = function (hex) { var lab = M.E.hexToLab(hex); return lab ? lab.L : 50; };
+      // contorno del propio color: más marcado en colores claros (un crudo sobre fondo claro no se perdería)
+      var edge = function (hex) { return shadeHex(hex, L(hex) > 80 ? -30 : -16); };
       function part(d, hex, extra) {
-        var g = svgEl('g', {});
-        g.appendChild(svgEl('path', { d: d, fill: hex, stroke: shadeHex(hex, -16), 'stroke-width': '1', 'stroke-linejoin': 'round' }));
-        if (!extra || extra.light !== false) g.appendChild(svgEl('path', { d: d, fill: 'url(#' + uid + 'l)' }));
-        svg.appendChild(g);
-        return g;
+        svg.appendChild(svgEl('path', { d: d, fill: hex, stroke: edge(hex), 'stroke-width': '1', 'stroke-linejoin': 'round' }));
+        if (!extra || extra.light !== false) svg.appendChild(svgEl('path', { d: d, fill: 'url(#' + uid + 'l)' }));
       }
-      function line(d, hex, op) { svg.appendChild(svgEl('path', { d: d, fill: 'none', stroke: shadeHex(hex, -22), 'stroke-width': '1', 'stroke-linecap': 'round', opacity: String(op == null ? 0.55 : op) })); }
-      // suelo y maniquí (cabeza, cuello, manos)
-      svg.appendChild(svgEl('ellipse', { cx: '100', cy: '446', rx: '54', ry: '5', fill: '#000', opacity: '0.07' }));
-      svg.appendChild(svgEl('ellipse', { cx: '100', cy: '34', rx: '14.5', ry: '18', fill: MANNEQUIN, stroke: MANNEQUIN_LINE, 'stroke-width': '1' }));
-      svg.appendChild(svgEl('path', { d: 'M93 48 L93 66 L107 66 L107 48 Z', fill: MANNEQUIN, stroke: MANNEQUIN_LINE, 'stroke-width': '1' }));
-      [['54', '247'], ['146', '247']].forEach(function (c) { svg.appendChild(svgEl('ellipse', { cx: c[0], cy: c[1], rx: '5.5', ry: '8', fill: MANNEQUIN, stroke: MANNEQUIN_LINE, 'stroke-width': '1' })); });
-      var top = by.top || by.inner || by.outer || '#D9D5CF', bottom = by.bottom || '#CFCAC3';
-      // pantalón: talle, entrepierna y perneras que se estrechan hasta el tobillo; raya marcada
-      part('M66 206 L134 206 L136 226 L129 404 L106 404 L101.5 240 L98.5 240 L94 404 L71 404 L64 226 Z', bottom);
-      line('M82.5 244 L82.5 398', bottom, 0.35); line('M117.5 244 L117.5 398', bottom, 0.35);
-      line('M71 400 L94 400', bottom, 0.4); line('M106 400 L129 400', bottom, 0.4);
-      // calcetines: la franja del tobillo, entre el bajo y el zapato
-      var socks = by.socks || bottom;
-      part('M74 404 L92 404 L92.5 419 L73.5 419 Z', socks, { light: false });
-      part('M108 404 L126 404 L126.5 419 L107.5 419 Z', socks, { light: false });
-      // calzado: punta redondeada hacia fuera, empeine y suela
-      var shoes = by.shoes || '#3A3532';
-      part('M73 418 L93 418 Q96 420 96 427 L96 432 L62 432 Q58 432 59 428 Q62 421 73 418 Z', shoes);
-      part('M107 418 L127 418 Q138 421 141 428 Q142 432 138 432 L104 432 L104 427 Q104 420 107 418 Z', shoes);
-      svg.appendChild(svgEl('path', { d: 'M59 431 L96 431 M104 431 L141 431', stroke: shadeHex(shoes, -28), 'stroke-width': '2.4', 'stroke-linecap': 'round', fill: 'none' }));
-      // parte superior: torso con hombros redondeados, mangas largas (si no hay prenda exterior se ven enteras) y bajo a la cadera
+      function veil(d) { svg.appendChild(svgEl('path', { d: d, fill: 'url(#' + uid + 'l)' })); }
+      function shade(d, op) { svg.appendChild(svgEl('path', { d: d, fill: '#000', opacity: String(op) })); }
+      // costuras: más oscuras que la prenda; en una prenda muy oscura, más claras (si no, no se verían)
+      function line(d, hex, op, w) { svg.appendChild(svgEl('path', { d: d, fill: 'none', stroke: L(hex) < 28 ? shadeHex(hex, 20) : shadeHex(hex, -22), 'stroke-width': String(w || 1), 'stroke-linecap': 'round', opacity: String(op == null ? 0.55 : op) })); }
+      function skin(d) { svg.appendChild(svgEl('path', { d: d, fill: MANNEQUIN, stroke: MANNEQUIN_LINE, 'stroke-width': '1', 'stroke-linejoin': 'round' })); }
+      // suelo y maniquí neutro (cabeza, cuello con curva; las manos van con las mangas)
+      svg.appendChild(svgEl('ellipse', { cx: '100', cy: '444', rx: '50', ry: '4.5', fill: '#000', opacity: '0.08' }));
+      svg.appendChild(svgEl('ellipse', { cx: '100', cy: '32', rx: '13.5', ry: '17', fill: MANNEQUIN, stroke: MANNEQUIN_LINE, 'stroke-width': '1' }));
+      skin('M94 46 Q95.5 58 93 68 L107 68 Q104.5 58 106 46 Z');
+      var top = by.top || by.inner || by.outer || '#D9D5CF', bottom = by.bottom || '#CFCAC3', socks = by.socks || bottom, shoes = by.shoes || '#3A3532';
+      // pantalón hasta el tobillo; la luz va por pernera (si cubriera todo el pantalón, oscurecería una pernera entera)
+      part('M66 206 L134 206 L136 226 L129.5 394 L106 394 L101.5 240 L98.5 240 L94 394 L70.5 394 L64 226 Z', bottom, { light: false });
+      veil('M64 226 L100 226 L98.5 240 L94 394 L70.5 394 Z'); veil('M100 226 L136 226 L129.5 394 L106 394 L101.5 240 Z');
+      line('M82.5 244 L82.5 388', bottom, 0.32); line('M117.5 244 L117.5 388', bottom, 0.32);
+      line('M71 390 L94 390', bottom, 0.4); line('M106 390 L129.5 390', bottom, 0.4);
+      // calcetines: más estrechos que el bajo (se lee el tobillo), con la sombra del bajo y canalé: se ven aunque sean del color del pantalón
+      part('M75 394 L91 394 L91.5 420 L74.5 420 Z', socks, { light: false });
+      part('M109 394 L125 394 L125.5 420 L108.5 420 Z', socks, { light: false });
+      shade('M75 394 L91 394 L91 397.5 L75 397.5 Z', 0.14); shade('M109 394 L125 394 L125 397.5 L109 397.5 Z', 0.14);
+      [78.5, 82.5, 86.5, 112.5, 116.5, 120.5].forEach(function (x) { line('M' + x + ' 399 L' + x + ' 413', socks, 0.28); });
+      // calzado de frente, puntera algo abierta, boca y suela fina
+      part('M74 414 L92 414 Q95 418 95.5 426 Q96 436 88 438.5 Q80 440 73.5 437 Q68 434 69.5 425 Q70.5 418 74 414 Z', shoes);
+      part('M126 414 L108 414 Q105 418 104.5 426 Q104 436 112 438.5 Q120 440 126.5 437 Q132 434 130.5 425 Q129.5 418 126 414 Z', shoes);
+      line('M75.5 418 Q83 421 90.5 418', shoes, 0.5); line('M109.5 418 Q117 421 124.5 418', shoes, 0.5);
+      svg.appendChild(svgEl('path', { d: 'M69.5 433 Q72 441 82 441 Q94 441 95.8 433 M130.5 433 Q128 441 118 441 Q106 441 104.2 433', fill: 'none', stroke: shadeHex(shoes, L(shoes) < 28 ? 18 : -28), 'stroke-width': '1.6', 'stroke-linecap': 'round' }));
+      // parte superior: torso con hombros redondeados y bajo a la cadera
       part('M70 80 Q73 68 87 66 L113 66 Q127 68 130 80 L135 210 L65 210 Z', top);
-      if (!by.outer) {
+      var cuffs = !by.outer && by.inner;
+      if (!by.outer) {           // sin prenda exterior: mangas de la parte superior y manos al final
         part('M70 80 L55 238 L67 240 L80 110 Z', top); part('M130 80 L145 238 L133 240 L120 110 Z', top);
         line('M55.5 232 L67 234', top, 0.45); line('M144.5 232 L133 234', top, 0.45);
       }
-      // prenda interior: cuello y bajo que asoman bajo la parte superior
+      line('M100 80 L100 204', top, 0.28);
+      // prenda interior (camisa o camiseta que asoma): cuello con picos, faldón curvo y, sin prenda exterior, puños
       if (by.inner) {
-        part('M90 66 L100 80 L110 66 L104 66 L100 72 L96 66 Z', by.inner, { light: false });
-        part('M66 206 L134 206 L134.5 213 L65.5 213 Z', by.inner, { light: false });
+        part('M92 66 L100 79 L108 66 L106.5 74 L100 83 L93.5 74 Z', by.inner, { light: false });
+        part('M66 208 L134 208 L134.6 214 Q100 219.5 65.4 214 Z', by.inner, { light: false });
+        if (cuffs) { part('M55 238 L67 240 L66.5 245 L54.5 243 Z', by.inner, { light: false }); part('M145 238 L133 240 L133.5 245 L145.5 243 Z', by.inner, { light: false }); }
       }
-      line('M100 80 L100 204', top, 0.3);
       // accesorio: cinturón con hebilla
       if (by.accessory) {
         part('M65 203 L135 203 L135.4 211 L64.6 211 Z', by.accessory, { light: false });
-        svg.appendChild(svgEl('rect', { x: '96', y: '203.5', width: '8', height: '7', rx: '1.5', fill: 'none', stroke: shadeHex(by.accessory, 30), 'stroke-width': '1.2' }));
+        svg.appendChild(svgEl('rect', { x: '96', y: '203.5', width: '8', height: '7', rx: '1.5', fill: 'none', stroke: shadeHex(by.accessory, L(by.accessory) < 50 ? 34 : -30), 'stroke-width': '1.2' }));
       }
-      // prenda exterior abierta: dos delanteros con solapa que dejan ver la parte superior, largo a medio muslo, mangas encima
+      // prenda exterior abierta: delanteros con una abertura amplia (se juzga el color de la parte superior), solapas del mismo
+      // color con muesca y su sombra, mangas encima y bolsillos
       if (by.outer) {
         var o = by.outer;
-        part('M66 82 Q69 68 86 66 L95 96 L93 254 L58 254 Z', o);
-        part('M134 82 Q131 68 114 66 L105 96 L107 254 L142 254 Z', o);
-        part('M86 66 L95 96 L88 118 L80 98 Z', shadeHex(o, 6), { light: false });            // solapas
-        part('M114 66 L105 96 L112 118 L120 98 Z', shadeHex(o, 6), { light: false });
+        part('M66 82 Q69 68 86 66 L91 104 L86 254 L58 254 Z', o);
+        part('M134 82 Q131 68 114 66 L109 104 L114 254 L142 254 Z', o);
+        shade('M87.5 66 L92.5 104 L86.5 124 L80.5 101 L84.5 93 L81.5 86 Z', 0.10); shade('M115.5 66 L110.5 104 L116.5 124 L122.5 101 L118.5 93 L121.5 86 Z', 0.10);
+        part('M86 66 L91 104 L85 124 L79 101 L83 93 L80 86 Z', o, { light: false });
+        part('M114 66 L109 104 L115 124 L121 101 L117 93 L120 86 Z', o, { light: false });
         part('M66 82 L52 240 L65 242 L79 112 Z', o); part('M134 82 L148 240 L135 242 L121 112 Z', o);
         line('M52.5 233 L65.5 235', o, 0.45); line('M147.5 233 L134.5 235', o, 0.45);
-        line('M64 172 L80 172', o, 0.35); line('M120 172 L136 172', o, 0.35);                     // bolsillos
+        line('M64 172 L80 172', o, 0.4); line('M120 172 L136 172', o, 0.4);
       }
+      // manos en gota, unidas a la manga (más abajo si asoman los puños)
+      var hy = cuffs ? 4 : 0;
+      skin('M54 ' + (240 + hy) + ' Q50.5 ' + (249 + hy) + ' 53.5 ' + (257 + hy) + ' Q57 ' + (261 + hy) + ' 60 ' + (256 + hy) + ' Q62 ' + (248 + hy) + ' 60 ' + (241 + hy) + ' Z');
+      skin('M146 ' + (240 + hy) + ' Q149.5 ' + (249 + hy) + ' 146.5 ' + (257 + hy) + ' Q143 ' + (261 + hy) + ' 140 ' + (256 + hy) + ' Q138 ' + (248 + hy) + ' 140 ' + (241 + hy) + ' Z');
       return svg;
     }
     // figurín + leyenda (porcentaje = superficie aproximada en el dibujo) y, en la Biblioteca, el color de cada prenda a elegir

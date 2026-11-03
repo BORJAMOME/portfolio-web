@@ -317,7 +317,7 @@ await step('Biblioteca: filtros por número de colores, origen y favoritas', asy
 });
 await step('Detalle de paleta: figura del outfit con reparto ilustrativo (sin el bloque de procedencia), X y clic fuera cierran, y duplicar', async () => {
   await page.click('.cs-pal-open:has-text("Otoño urbano")');
-  await page.waitForSelector('dialog[open] .cs-fig svg rect');
+  await page.waitForSelector('dialog[open] .cs-fig svg path');
   eq(await page.$('dialog[open] .cs-prov'), null, 'sigue el bloque de procedencia');
   ok(!(await page.textContent('dialog[open]')).includes('Registrado como'), 'siguen los detalles técnicos de conversión');
   const legend = await page.$$eval('dialog[open] .cs-fig-legend .cs-pct', (els) => els.map((e) => e.textContent));
