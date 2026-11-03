@@ -690,6 +690,8 @@ html.cs-locked, html.cs-locked body { overflow: hidden; }
 .cs-fig-sw[aria-checked="true"] { box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .14), 0 0 0 2px #FBFBFB, 0 0 0 4px var(--cs-ink); }
 .cs-fig-sw.is-none .cs-fig-none { position: absolute; inset: 7px; border-radius: 50%; background: linear-gradient(135deg, transparent 46%, var(--cs-muted) 46%, var(--cs-muted) 54%, transparent 54%); }
 .cs-fig-sw:focus-visible { outline: 2px solid var(--cs-focus); outline-offset: 4px; }
+.cs-fig-sw.is-sep { margin-left: 10px; }   /* negro, blanco y marrón del calzado: aparte de los colores de la paleta */
+.cs-fig-sw.is-sep::before { content: ''; position: absolute; left: -9px; top: 4px; bottom: 4px; width: 1px; background: var(--cs-line-strong); }
 @media (pointer: coarse) and (min-width: 560px) { .cs-fig-sw { width: 40px; height: 40px; } .cs-fig-opts { gap: 8px; } }
 .cs-fig.is-compact { grid-template-columns: 1fr; margin: 0; }
 .cs-fig.is-compact .cs-fig-art { padding: 8px 2px 2px; border-radius: 10px; }

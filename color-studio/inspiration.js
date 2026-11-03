@@ -9,7 +9,7 @@
    · Lo derivable no se guarda: RGB, Lab, nombre y familia salen del HEX.
    · Duplicados: mismo enlace normalizado o imagen casi igual (dHash de 64 bits a distancia ≤ 6). Solo avisan.
    ═══════════════════════════════════════════════ */
-import { normalizeHex, hexToRgb, hexToLab, labToLch, describeColor, extractColors, sampleMedian, roundPercentages, rankPalettes, paletteAffinity, similarityLevel } from './engine.js?v=48d0c9d163';
+import { normalizeHex, hexToRgb, hexToLab, labToLch, describeColor, extractColors, sampleMedian, roundPercentages, rankPalettes, paletteAffinity, similarityLevel, GARMENT_TYPES } from './engine.js?v=0ea937e1d8';
 
 export const SEASONS = [['primavera', 'Primavera'], ['verano', 'Verano'], ['otono', 'Otoño'], ['invierno', 'Invierno'], ['entretiempo', 'Entretiempo']];
 export const SEASON_LABEL = Object.fromEntries(SEASONS);
@@ -31,7 +31,7 @@ const round1 = (x) => Math.round(x * 10) / 10;
    La extracción nunca escribe en palette: aceptar una sugerencia la copia; añadir un color manual no regenera nada. */
 export const PALETTE_LIMIT = 12;
 export const SUGGESTION_LIMIT = 8;
-export const GARMENT_LABELS = ['Camiseta', 'Camisa', 'Jersey', 'Chaqueta', 'Abrigo', 'Pantalón', 'Vaquero', 'Calzado', 'Calcetines', 'Accesorio'];
+export const GARMENT_LABELS = GARMENT_TYPES.map((t) => t.label);   // la prenda de cada color: la misma lista fija que el armario
 export const SAMPLE_RADIUS = 2;      // cuentagotas: zona de 5 × 5 píxeles de la imagen guardada
 export const MIXED_WARN = 0.35;      // proporción de píxeles lejanos a la mediana a partir de la que se avisa de zona mezclada
 
