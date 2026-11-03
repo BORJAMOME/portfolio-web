@@ -72,6 +72,10 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
   Proporciones = estimaciones editables; no inventar porcentajes de confianza ni contenido del libro de Sanzo Wada. Modo ejemplo en memoria, nunca se guarda.
   Las propuestas usan prendas reales (dos a la vez solo si con una no basta); si no hay, el color va marcado como hipotético. Aplicar guarda el conjunto de partida en el borrador para volver a él.
   «Qué prenda te falta» sale de las propuestas hipotéticas (`wardrobeGaps`). Cuentagotas en la foto (`engine.sampleColor`). Largo del calcetín por calzado (`sockFit`), leído de la subcategoría: sin columnas nuevas.
+  Extracción de color única (`engine.extractColors`: superpíxeles + conectividad geodésica con el borde para quitar el fondo, fusión de sombras, piel rebajada) para Armario, Inspiración y Biblioteca.
+  **Biblioteca = referencia común**: `engine.paletteAffinity` (ΔE00, niveles en `engine.SIMILARITY`) la usan las sugerencias de outfits (`compose.suggestOutfits`, tarjeta del Studio),
+  la dirección (criterio `biblioteca` y referencia de cada propuesta), los calcetines (outfit completo) y las inspiraciones relacionadas. Hueco «Prenda interior» (`inner`) sin cambios de esquema.
+  Figura del outfit (`compose.paletteFigure`/`outfitFigure`, SVG en la interfaz): en una paleta el reparto es ilustrativo y se dice. Vista Fotografía/Gama de colores en Inspiración y Armario (mismo componente).
   **Inspiración** (`#/color/inspiracion`): outfits guardados de internet en `cs_inspirations` (`supabase/color-studio-inspiracion.sql`, RLS por dueño
   `owner = auth.uid()`; fotos en `armario/inspiracion/<usuario>/` con miniatura), lógica en `color-studio/inspiration.js`, paleta extraída con el mismo
   motor; `palette` (definitiva: cuentagotas «Seleccionar colores», mediana 5 × 5 sobre la imagen guardada, o sugerencias aceptadas) y `suggestions`
