@@ -315,15 +315,35 @@ await step('Biblioteca: filtros por número de colores, origen y favoritas', asy
   await page.uncheck('.cs-filters .cs-check input');
   await shot(page, '02-biblioteca');
 });
-await step('Detalle de paleta: procedencia, enlace seguro y duplicar', async () => {
+await step('Detalle de paleta: figura del outfit con reparto ilustrativo (sin el bloque de procedencia), X y clic fuera cierran, y duplicar', async () => {
   await page.click('.cs-pal-open:has-text("Otoño urbano")');
-  await page.waitForSelector('dialog[open] .cs-swatches');
-  eq(await page.getAttribute('dialog[open] .cs-prov a', 'href'), 'https://ejemplo.org/paleta');
-  eq(await page.getAttribute('dialog[open] .cs-prov a', 'rel'), 'noopener noreferrer');
-  ok((await page.textContent('dialog[open] .cs-swatches')).includes('Registrado como «1f2a44»'), 'no muestra el original');
+  await page.waitForSelector('dialog[open] .cs-fig svg rect');
+  eq(await page.$('dialog[open] .cs-prov'), null, 'sigue el bloque de procedencia');
+  ok(!(await page.textContent('dialog[open]')).includes('Registrado como'), 'siguen los detalles técnicos de conversión');
+  const legend = await page.$$eval('dialog[open] .cs-fig-legend .cs-pct', (els) => els.map((e) => e.textContent));
+  eq(legend.length, 3, 'leyenda de la figura'); ok(legend.every((t) => t.startsWith('≈')), 'el reparto no se marca como aproximado');
+  ok((await page.textContent('dialog[open] .cs-fig-cap')).includes('ilustrativo'), 'no se dice que el reparto es ilustrativo');
+  ok(await page.$('dialog[open] .cs-pal-insp'), 'falta la sección de inspiraciones relacionadas');
+  // X visible aunque se desplace el contenido
+  await page.evaluate(() => { const d = document.querySelector('dialog[open]'); d.scrollTop = d.scrollHeight; });
+  const x = await page.$('dialog[open] .cs-sheet-head .cs-x');
+  ok(x && await x.isVisible(), 'la X no está a la vista tras desplazar');
+  ok(await x.evaluate((el) => { const r = el.getBoundingClientRect(), d = el.closest('dialog').getBoundingClientRect(); return r.top >= d.top - 1 && r.top < d.top + 80; }), 'la X no queda arriba');
+  await x.click();
+  await page.waitForFunction(() => !document.querySelector('dialog.cs-sheet[open]'));
+  // escritorio: un clic fuera del contenido cierra; dentro, no
+  await page.click('.cs-pal-open:has-text("Otoño urbano")');
+  await page.waitForSelector('dialog[open] .cs-fig');
+  await page.click('dialog[open] .cs-fig-art');
+  ok(await page.$('dialog.cs-sheet[open]'), 'un clic dentro cerró la hoja');
+  await page.mouse.click(8, 500);
+  await page.waitForFunction(() => !document.querySelector('dialog.cs-sheet[open]'));
+  await page.click('.cs-pal-open:has-text("Otoño urbano")');
+  await page.waitForSelector('dialog[open] .cs-fig');
   await page.click('dialog[open] button:has-text("Duplicar")');
   await page.waitForSelector('dialog[open] #cs-p-name');
   eq(await page.inputValue('#cs-p-name'), 'Otoño urbano (copia)');
+  ok(await page.$('dialog[open] .cs-x-wrap .cs-x'), 'el formulario no tiene X');
   await page.click('dialog[open] button:has-text("Cancelar")');
 });
 
@@ -754,6 +774,8 @@ await step('Inspiración: enlace + «Leer enlace» trae título, fuente, fecha e
   eq(await page.inputValue('#cs-i-pub'), '2026-03-02');
   ok(await page.isVisible('dialog[open] .cs-ins-preview img'), 'sin vista previa');
   ok(/colores sugeridos/.test(await page.textContent('dialog[open] .cs-ins-palprev')), 'sin sugerencias en el formulario');
+  ok(!/JPEG, PNG o WebP|Se reduce en tu dispositivo|Imagen (lista|descargada)|sugeridos en tu dispositivo/.test(await page.textContent('dialog[open]')), 'siguen los mensajes de carga que se quitaron');
+  ok(await page.isVisible('dialog[open] .cs-x-wrap .cs-x'), 'el formulario no tiene X arriba a la derecha');
   eq(await page.$('dialog[open] .cs-ins-pallist'), null, 'las sugerencias entraron solas en la paleta');
   await page.click('dialog[open] [data-key="cs-i-sty-1"]');               // Smart casual
   await page.click('dialog[open] [data-key="cs-i-sea-2"]');               // Otoño
@@ -847,7 +869,7 @@ await step('Inspiración: detalle con sugerencias aparte; aceptar una la lleva a
   const p0 = db.cs_inspirations[0].palette[0];
   eq([p0.hex, p0.source, 'weight' in p0], ['#2A2A2A', 'manual', false]);
   eq(db.cs_inspirations[0].suggestions.length, nSug - 1, 'editar la paleta tocó las sugerencias');
-  await page.click('dialog[open] .cs-sheet-head .cs-link');
+  await page.click('dialog[open] .cs-sheet-head .cs-x');
 });
 await step('Inspiración: estilo y colección nuevos (van a Configuración), notas y valoración; se conservan', async () => {
   const r = db.cs_inspirations[0];
@@ -869,6 +891,8 @@ await step('Inspiración: estilo y colección nuevos (van a Configuración), not
   eq(x.notes, 'Me gusta la proporción abrigo-pantalón.');
   eq(x.rating, 4);
   eq(x.palette[0].hex, '#2A2A2A', 'editar los datos cambió la paleta');
+  // el alta en Configuración va en segundo plano tras guardar (saveNewOptions): se espera a que llegue, sin rebajar la comprobación
+  for (let i = 0; i < 30 && !db.ap_opciones.some((o) => o.grupo === 'inspiracion.estilo' && o.valor === 'Prueba E2E'); i++) await page.waitForTimeout(100);
   ok(db.ap_opciones.some((o) => o.grupo === 'inspiracion.estilo' && o.valor === 'Prueba E2E'), 'el estilo nuevo no llegó a Configuración');
   ok(db.ap_opciones.some((o) => o.grupo === 'inspiracion.coleccion' && o.valor === 'Oficina E2E'), 'la colección nueva no llegó a Configuración');
 });
@@ -907,6 +931,32 @@ await step('Inspiración: favorita desde la tarjeta (y quitarla) y «Solo favori
   await page.waitForFunction(() => document.querySelectorAll('.cs-ins-card').length === 0);
   eq(r.is_favorite, false);
   await page.click('[data-key="insp-clear"]');
+});
+await step('Vista Fotografía / Gama de colores: mismo selector en Inspiración y Armario, cambio inmediato y sin escrituras', async () => {
+  const before = JSON.stringify(db.cs_inspirations), writes = log.length;
+  ok(await page.isVisible('.cs-ins-bar [data-key="insp-view-photo"]'), 'sin selector junto a Filtros y Ordenar');
+  eq(await page.$$eval('.cs-ins-card .cs-gamut', (e) => e.length), 0, 'gama en modo fotografía');
+  await page.click('[data-key="insp-view-palette"]');
+  const withPhoto = await page.$$eval('.cs-ins-card .cs-ins-media.has-img, .cs-ins-card .cs-ins-media img', (e) => e.length);
+  ok(await page.$$eval('.cs-ins-card .cs-gamut', (e) => e.length) >= 1, 'sin columna de gama (' + withPhoto + ' con foto)');
+  eq(await page.getAttribute('[data-key="insp-view-palette"]', 'aria-pressed'), 'true');
+  await page.click('[data-key="insp-view-photo"]');
+  eq(await page.$$eval('.cs-ins-card .cs-gamut', (e) => e.length), 0, 'la gama no se quita');
+  eq(JSON.stringify(db.cs_inspirations), before, 'cambiar la vista modificó los datos');
+  ok(!log.slice(writes).some((l) => /^(POST|PATCH|DELETE)/.test(l)), 'cambiar la vista escribió en la base');
+  await go(page, '#/color/armario');
+  await page.click('[data-key="ward-view-palette"]');
+  ok(await page.$$eval('.cs-garment .cs-gamut', (e) => e.length) >= 1, 'el Armario no enseña la gama');
+  ok(await page.$('.cs-garment .cs-thumb.is-gamut'), 'misma construcción que Inspiración');
+  await page.click('[data-key="ward-view-photo"]');
+  eq(await page.$$eval('.cs-garment .cs-gamut', (e) => e.length), 0);
+});
+await step('Studio: «Prenda interior» justo después de la parte superior y tarjeta de outfits con tu armario', async () => {
+  await go(page, '#/color');
+  const order = await page.$$eval('.cs-slots .cs-slot-k', (e) => e.map((x) => x.textContent));
+  eq(order.indexOf('Prenda interior'), order.indexOf('Parte superior') + 1, 'orden de los huecos: ' + order.join(', '));
+  ok(await page.$('.cs-sugg'), 'sin tarjeta de sugerencias');
+  ok(await page.$('.cs-sugg .cs-sugg-item, .cs-sugg [data-key="sugg-none"], .cs-sugg .cs-note'), 'la tarjeta no explica nada');
 });
 /* ── Cuentagotas: imagen de cuadrantes con colores conocidos y píxeles sueltos (ruido) ── */
 const QUAD = { tl: '#1F2A44', tr: '#B48A5A', bl: '#6B1F2A', br: '#F4F2EC' };
@@ -1040,7 +1090,7 @@ await step('Referencia guardada antes del cuentagotas (paleta con pesos, sin id 
   await page.waitForFunction(() => /Paleta revisada/.test((document.querySelector('dialog[open]') || {}).textContent || ''));
   const x = db.cs_inspirations.find((y) => y.id === old.id);
   eq([x.palette_status, x.palette.map((c) => c.hex)], ['reviewed', ['#B48A5A', '#1F2A44']], 'confirmar cambió los colores');
-  await page.click('dialog[open] .cs-sheet-head .cs-link');
+  await page.click('dialog[open] .cs-sheet-head .cs-x');
 });
 await step('Inspiración: persistencia tras recargar y aislamiento entre usuarios (RLS simulada)', async () => {
   db.cs_inspirations.push(Object.assign({ id: uid(), owner: USER_B, created_at: new Date().toISOString(), updated_at: new Date().toISOString() }, DEFAULT_ROW.cs_inspirations, { title: 'De otra persona' }));

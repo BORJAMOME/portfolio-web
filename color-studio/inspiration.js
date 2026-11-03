@@ -4,12 +4,12 @@
    Módulo ES puro (sin red ni DOM), probado con tools/test-color.mjs. La interfaz está en area-privada-color.js
    y los datos en cs_inspirations (supabase/color-studio-inspiracion.sql).
    · Paleta definitiva (palette) = decisión de la persona: colores tomados con el cuentagotas o sugerencias aceptadas.
-   · Sugerencias (suggestions) = engine.extractDominantColors sin el fondo (colores del borde presentes en dos o más
-     lados). Su peso es la presencia ESTIMADA en los píxeles analizados (puede incluir piel o accesorios), no la superficie.
+   · Sugerencias (suggestions) = engine.extractColors: sin el fondo (conectividad con el borde), con luces y sombras de una
+     misma prenda fundidas y la piel rebajada. Su peso es la presencia ESTIMADA en la figura, no la superficie de cada prenda.
    · Lo derivable no se guarda: RGB, Lab, nombre y familia salen del HEX.
    · Duplicados: mismo enlace normalizado o imagen casi igual (dHash de 64 bits a distancia ≤ 6). Solo avisan.
    ═══════════════════════════════════════════════ */
-import { normalizeHex, hexToRgb, hexToLab, labToLch, rgbToLab, deltaE2000, describeColor, extractDominantColors, sampleMedian, roundPercentages, rankPalettes } from './engine.js?v=554dcefb20';
+import { normalizeHex, hexToRgb, hexToLab, labToLch, describeColor, extractColors, sampleMedian, roundPercentages, rankPalettes, paletteAffinity, similarityLevel } from './engine.js?v=48d0c9d163';
 
 export const SEASONS = [['primavera', 'Primavera'], ['verano', 'Verano'], ['otono', 'Otoño'], ['invierno', 'Invierno'], ['entretiempo', 'Entretiempo']];
 export const SEASON_LABEL = Object.fromEntries(SEASONS);
@@ -36,52 +36,16 @@ export const SAMPLE_RADIUS = 2;      // cuentagotas: zona de 5 × 5 píxeles de 
 export const MIXED_WARN = 0.35;      // proporción de píxeles lejanos a la mediana a partir de la que se avisa de zona mezclada
 
 /**
- * Fondo de una foto de outfit: colores del borde que aparecen en al menos dos lados de la imagen (≥ 20 % de cada uno).
- * Un fondo (pared, web, suelo de estudio) rodea a la persona; una prenda solo toca un lado (el pantalón, abajo).
- * → lista de colores Lab. Antes se usaba todo el borde y se rebajaba (no se quitaba), así que un fondo que ocupa
- * media foto seguía saliendo como «color» de la paleta.
- */
-export function backgroundColors(sample) {
-  const { data, width: w, height: h } = sample;
-  const band = Math.max(1, Math.round(Math.min(w, h) * 0.06));
-  const sides = { top: [], bottom: [], left: [], right: [] };
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      const o = (y * w + x) * 4;
-      if (data[o + 3] < 128) continue;
-      const lab = rgbToLab({ r: data[o], g: data[o + 1], b: data[o + 2] });
-      if (y < band) sides.top.push(lab); else if (y >= h - band) sides.bottom.push(lab);
-      if (x < band) sides.left.push(lab); else if (x >= w - band) sides.right.push(lab);
-    }
-  }
-  // candidatos: grupos de color de todo el borde (agrupación voraz por ΔE00 < 10, representante = el primero)
-  const all = [].concat(sides.top, sides.bottom, sides.left, sides.right), groups = [];
-  for (let i = 0; i < all.length; i += 2) {
-    const g = groups.find((c) => deltaE2000(c, all[i]) < 10);
-    if (!g) { groups.push(all[i]); if (groups.length > 12) break; }
-  }
-  return groups.filter((g) => Object.values(sides).filter((list) => list.length && list.filter((p) => deltaE2000(p, g) < 10).length / list.length >= 0.2).length >= 2);
-}
-
-/**
- * Sugerencias de color de una foto de outfit (no son la paleta: hay que revisarlas). Entre 1 y 8 según la foto.
- * sample: { data, width, height } (copia reducida). opts.mask: Uint8Array opcional, un valor por píxel (0 = ignorar):
- * hueco para una futura segmentación de prendas; sin ella se excluye el fondo detectado por backgroundColors.
+ * Sugerencias de color de una foto de outfit (no son la paleta: hay que revisarlas). Entre 1 y 6 según la foto.
+ * Usa el sistema de extracción del motor (engine.extractColors): quita el fondo por conectividad con el borde, funde
+ * luces y sombras de una misma prenda y rebaja la piel. sample: { data, width, height } (copia reducida).
+ * opts.mask: Uint8Array opcional, un valor por píxel (0 = ignorar): hueco para una futura segmentación de prendas.
  * → [{ hex, weight }] con pesos que suman 100.
  */
 export function extractOutfitPalette(sample, opts = {}) {
   if (!sample || !sample.data || !sample.width || !sample.height) return [];
-  let data = sample.data;
-  if (opts.mask) {
-    data = new Uint8ClampedArray(sample.data);
-    for (let i = 0; i < opts.mask.length; i++) if (!opts.mask[i]) data[i * 4 + 3] = 0;
-  }
-  const src = { data, width: sample.width, height: sample.height };
-  const bgs = opts.mask ? [] : backgroundColors(src);
-  let found = extractDominantColors(data, src.width, src.height, { k: opts.k || 8, minShare: opts.minShare || 0.03, backgrounds: bgs, backgroundWeight: 0, backgroundTolerance: 10 });
-  // si al quitar el fondo no queda nada (foto de una tela lisa, por ejemplo), se vuelve al análisis de siempre
-  if (!found.length) found = extractDominantColors(data, src.width, src.height, { k: opts.k || 8, minShare: opts.minShare || 0.03 });
-  const colors = found.slice(0, SUGGESTION_LIMIT);
+  const colors = extractColors(sample.data, sample.width, sample.height, { skin: true, minShare: opts.minShare || 0.035, max: opts.max || 6, mask: opts.mask || null })
+    .slice(0, SUGGESTION_LIMIT);
   const pct = roundPercentages(colors.map((c) => c.share));
   return colors.map((c, i) => ({ hex: c.hex, weight: pct[i] }));
 }
@@ -383,4 +347,27 @@ export function paletteForLibrary(x) {
       ? 'Colores tomados con el cuentagotas sobre una foto de outfit guardada en Inspiración (zona de 5 × 5 píxeles, mediana). La luz de la foto los altera.'
       : 'Colores sugeridos por el análisis automático de una foto de outfit guardada en Inspiración: una estimación sin el fondo, que puede incluir piel o accesorios.'
   };
+}
+
+/**
+ * Inspiraciones con colores iguales o cromáticamente próximos a una combinación de la Biblioteca (no hace falta el mismo HEX).
+ * Medida común del motor (engine.paletteAffinity, ΔE00 en CIELAB): cada color de la combinación busca el más próximo de la
+ * paleta de la inspiración (la elegida o, si no hay, sus sugerencias). Solo cuenta si la combinación queda representada:
+ * al menos 2 de sus colores (todos si tiene 2) y, con 3 o más, al menos la mitad. Los demás colores de la foto no penalizan:
+ * una foto tiene más colores que una combinación.
+ * → [{ item, affinity, level, covered, meanDE }] (level: identical | close | related; ordenadas de más a menos parecidas)
+ */
+export function relatedInspirations(palette, items, opts = {}) {
+  const P = (palette && palette.colors || []).filter((c) => normalizeHex(c.hex));
+  if (P.length < 2) return [];
+  const need = Math.max(Math.min(2, P.length), Math.ceil(P.length / 2));
+  return (items || []).map((item) => {
+    const colors = effectivePalette(item).map((c) => ({ hex: c.hex, share: 1 }));
+    if (!colors.length) return null;
+    const affinity = paletteAffinity(palette, colors, { maxOff: 1 });
+    const hit = affinity.paletteLinks.filter((l) => l.level !== 'none');
+    if (hit.length < need) return null;
+    const meanDE = hit.reduce((t, l) => t + l.dE, 0) / hit.length;
+    return { item, affinity, covered: hit.length, meanDE, level: similarityLevel(meanDE) };
+  }).filter(Boolean).sort((a, b) => (b.covered - a.covered) || (a.meanDE - b.meanDE)).slice(0, opts.limit || 8);
 }

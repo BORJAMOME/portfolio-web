@@ -46,30 +46,94 @@ No hace falta ninguna variable de entorno ni clave nueva: usa la sesión y la cl
 - **Gama sRGB**: un color calculado que no cabe en sRGB se lleva a la gama reduciendo el croma con la misma
   luminosidad y tono; antes se recortaba cada canal y cambiaba el tono.
 - **Proporciones = estimaciones.** Superficie de una prenda = peso ÷ suma de pesos × 100. Pesos por defecto (hipótesis
-  editable): pantalón 35, parte superior 30, exterior 25, calzado 10, accesorio 3, calcetines 2. La distribución cromática
+  editable): pantalón 35, parte superior 30, exterior 25, prenda interior 10, calzado 10, accesorio 3, calcetines 2. La distribución cromática
   reparte esa superficie entre los colores de cada prenda (si se definió su reparto; si no, cuenta el principal) y agrupa
   colores casi indistinguibles (ΔE00 < 3). Los porcentajes mostrados se redondean con el mayor resto para sumar 100.
   El peso visual percibido no se calcula; por eso la distribución se puede ajustar a mano.
 - **No se guarda lo derivable**: familia, distribución estimada y recomendaciones se recalculan. Solo se guarda la
   distribución si se ajustó a mano.
 - **Procedencia en la paleta** (tipo, título, URL, notas) en lugar de una tabla de fuentes: para uso personal no compensa.
+  Se guarda y se edita, pero el detalle de la paleta ya no la enseña: en su lugar va la figura del outfit.
   Cada color conserva el valor registrado (`original`) y su HEX normalizado. Las paletas «Libro» son datos introducidos por
   la persona; la herramienta no verifica ni importa contenido del libro.
+- **Prenda interior** (hueco `inner`, tras la parte superior): camiseta interior o camisa bajo un jersey; admite camisetas y
+  camisas, pesa 10 por defecto y entra en la estimación, la lectura, las direcciones (como zona pequeña para un acento o una
+  repetición), las sugerencias y los calcetines. No cambia el esquema: el hueco va en `cs_outfits.items` (texto libre en la
+  base) y lo valida `data.validateOutfit` con `engine.SLOTS`; las categorías de prenda no cambian.
 - **Outfits con `items` en JSON** (`slot`, `garment_id` o `hex` provisional, `weight` y, solo con `hex`, `hypothetical: true` si era un color propuesto que no tienes). Si una prenda se borra, el outfit
   lo muestra como «prenda eliminada» en vez de perder el registro.
 - **Fotos**: se reducen a 1600 px y se recodifican (WebP o JPEG) en el navegador, lo que elimina EXIF y ubicación. Bucket
   privado; se descargan con la sesión. Borrar una prenda o cambiar su foto borra el archivo anterior.
-- **Color de la foto**: k-means local sobre una copia de 96 px, ponderando el centro. El fondo se detecta agrupando
-  los píxeles del borde (hasta 3 colores, para fondos de rayas o con dibujo) y se rebaja. Dos grupos del mismo tono que
-  solo difieren en luz (≤ 30 de L, croma proporcional) se tratan como sombra y se funde el más oscuro en el más claro.
-  Los neutros no se funden. No corrige el balance de blancos: con luz cálida, un blanco sale crudo. Es una propuesta:
-  siempre se corrige a mano.
+- **Color de la foto: un solo sistema** (`engine.extractColors`) para el Armario, Inspiración y «Extraer de una imagen».
+  Se rehízo en noviembre de 2026 tras medirlo con 12 fotos reales de outfits: el fondo con textura, reflejos o degradado
+  (cristal, ladrillo, cielo) salía como color principal (34–38 %), una prenda salía en 3–4 tonos casi iguales, la piel
+  quedaba segunda (18–19 %) y se perdían la camisa blanca o los zapatos. Causas: el fondo solo se reconocía si era casi
+  uniforme en el borde; la fusión exigía ΔE00 < 6 y nunca unía neutros ni sombras profundas; el inicio del k-means elegía
+  los píxeles extremos (brillos, costuras).
+  1. **Primer plano**: superpíxeles (SLIC simplificado; Achanta et al., 2012) y conectividad con el borde geodésica
+     (Zhu, Liang, Wei y Sun, CVPR 2014), con recorte de pesos pequeños (Wei et al., 2012) para atravesar texturas y
+     degradados. El borde de abajo cuenta 0,2 y los laterales 0,6 (el encuadre corta el cuerpo por ahí, no por arriba)
+     y la franja central se protege. Además: colores de «telón» (los que ocupan el borde de arriba y otro lado) para fondos
+     de rayas; huecos pequeños con color de fondo encerrados por la figura (entre las piernas), y un modelo de color del
+     fondo que solo corrige el contorno. Una prenda entera del color del fondo (camiseta blanca ante pared blanca) se conserva.
+  2. **Colores**: k-means en Lab ponderado por primer plano, con inicio por histograma (los colores más frecuentes).
+     El representante de cada grupo es la mediana ponderada.
+  3. **Fusión** (`sameGarmentColor`): ΔE00 < 10, sombra (mismo tono ±25°, ≤ 35 de L, croma 0,35–1,35 veces), sombra que
+     desatura un color poco intenso, y neutros a ≤ 12 de L. Se queda la zona iluminada.
+  4. **Piel** (solo Inspiración): un grupo con color de piel (YCbCr de Chai y Ngan, 1999, y LCh) pesa ×0,3. Se rebaja, no se
+     quita: un abrigo camel grande sigue saliendo.
+  Resultado con las mismas fotos: el traje da marino 71 % y la camisa blanca, sin el cristal; la camiseta roja con chaqueta
+  negra, rojo 53 % y negro 32 % (piel 4–6 %); 40–300 ms por foto (antes ~550). Si casi nada destaca del fondo (una tela que
+  llena la foto), se analiza la imagen entera. Sigue sin segmentar prendas una a una y sin corregir el balance de blancos:
+  es una propuesta y siempre se corrige a mano. Pruebas: `tools/test-color.mjs` (degradado con textura, rayas, sombra, piel,
+  camel grande, huecos, determinismo y tiempo).
 - **Cuentagotas** (`engine.sampleColor`): con una foto recién elegida, se toca un punto de la prenda (o se mueve con las
   flechas e Intro) y se toma la media, en luz lineal, de un cuadrado de 7 × 7 píxeles de una copia de ≤ 480 px. En ese
   modo la foto se ve entera, sin recorte, para que el punto tocado sea el que se mide. Tampoco corrige el balance de
   blancos: el formulario aconseja luz natural indirecta, sin flash, y fondo liso blanco o gris. Con una foto ya guardada
   no hay cuentagotas (habría que volver a descargarla para leer sus píxeles); basta con volver a elegirla.
 - **Modo ejemplo**: datos inventados en memoria, señalados en pantalla, que nunca se guardan ni se mezclan con los reales.
+
+## Biblioteca como referencia común
+
+Todo lo que compara tus colores reales con la Biblioteca usa la misma medida, `engine.paletteAffinity` (ΔE00 en CIELAB):
+sugerencias de outfits, inspiraciones relacionadas, dirección cromática y calcetines. Tus colores nunca coinciden con los
+del libro, así que cuenta la proximidad, con umbrales configurables en `engine.SIMILARITY`: prácticamente idéntico ≤ 3,
+muy similar ≤ 6, relacionado ≤ 12 (diferencia perceptible), sin similitud > 12. Una paleta solo está «representada» si
+conectan al menos 2 de sus colores (o todos si tiene 2) y, como mucho, el 15 % de tu superficie queda fuera: una sola
+prenda que coincide no basta. Son niveles de proximidad, no una nota de estilo ni un porcentaje de acierto.
+
+- **Figura del outfit** (detalle de una paleta, sugerencias): figura vertical en SVG con las prendas en el orden en que se
+  llevan (exterior con la interior asomando, cinturón o accesorio, pantalón, calcetines, calzado). Se eligió esta forma
+  (bloques con silueta de prenda) frente a un maniquí: se lee igual con 2, 3, 4 o 6 colores, la superficie de cada bloque
+  sigue su porcentaje y no depende de detalles anatómicos. **El libro no da proporciones**: en una paleta el reparto es
+  ilustrativo por sobriedad («base, apoyo y acento»: el color con menos croma va en la superficie mayor; un blanco o un
+  crudo cuenta como apoyo): 2 → 65/35, 3 → 50/30/20, 4 → 45/25/20/10, 5 → 40/25/15/12/8, 6 → 35/25/15/12/8/5, y la
+  pantalla lo dice. En un outfit real, la superficie es la estimada con los pesos del Studio.
+- **Sugerencias de outfits** (`compose.suggestOutfits`, tarjeta «Outfits con tu armario» del Studio): conjuntos completos con
+  tus prendas (parte superior, pantalón y calzado; exterior e interior opcionales, la interior solo bajo un jersey o una
+  exterior). Cada prenda a ΔE00 ≤ 12 de un color de la combinación, al menos 2 colores representados y el color mayor con
+  ≥ 30 % de la superficie. Orden: colores representados y ΔE00 medio ponderado. Solo «muy similar» (≤ 6) o, si no hay,
+  relacionado con media ≤ 9; como mucho 6, una prenda en 2 como mucho. Se recalculan con el armario de cada momento.
+- **Dirección cromática**: cada dirección prueba primero `biblioteca` (completar con una prenda real una combinación que el
+  conjunto ya representa en parte y que encaja con la dirección: sobria para minimalista, con un color intenso para
+  creativa) y después sus criterios de siempre. Cada propuesta y la lectura actual citan la combinación más próxima.
+- **Calcetines**: la referencia es la combinación que representa el outfit COMPLETO (pantalón, calzado, parte de arriba,
+  interior y exterior, con su superficie). La coordinación prefiere colores que también están en ella y el contraste sale
+  primero de ella; cada propuesta lo indica. Sin referencia, siguen las reglas de siempre.
+- **Inspiraciones relacionadas** (detalle de una paleta): las que tienen colores próximos a la combinación (no el mismo
+  HEX), con al menos 2 de sus colores (y la mitad si tiene 3 o más); los demás colores de la foto no penalizan.
+
+## Vistas y navegación
+
+- **Fotografía / Gama de colores** en Inspiración y Armario: el mismo selector y el mismo componente (`gamut`): la foto a la
+  izquierda y sus colores en columna proporcional a la derecha. En el Armario, con reparto anotado las alturas lo siguen; sin
+  él, el principal ocupa casi todo y los secundarios son franjas finas. No guarda ni duplica nada.
+- **Cierre de hojas y formularios**: X fija arriba a la derecha (visible aunque se desplace el contenido) y, en escritorio,
+  clic fuera en las hojas de detalle (los formularios no se cierran por fuera para no perder lo escrito; el cuentagotas
+  pregunta si hay cambios). Con un modal abierto la página de detrás no se desplaza.
+- **Desplazamiento estable**: al cambiar de sección se vuelve arriba; dentro de una sección, repintar conserva la posición
+  y devolver el foco no la mueve (`preventScroll`).
 
 ## Intro de bienvenida
 

@@ -10,7 +10,7 @@
      con la clave en el servidor) tendría que implementar la misma interfaz `analyze(sample)` y
      declararse aquí; la web nunca llevará claves de API.
    ═══════════════════════════════════════════════ */
-import { extractDominantColors } from './engine.js?v=554dcefb20';
+import { extractDominantColors } from './engine.js?v=48d0c9d163';
 
 export const ACCEPTED = ['image/jpeg', 'image/png', 'image/webp'];
 export const MAX_INPUT_BYTES = 15 * 1024 * 1024;

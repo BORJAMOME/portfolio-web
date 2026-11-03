@@ -11,7 +11,7 @@
    que encaje, el color se ofrece como HIPOTÉTICO (hypothetical: true) y la interfaz lo dice:
    nunca se presenta como algo que ya tienes.
    ═══════════════════════════════════════════════ */
-import { normalizeHex, colorDistance, describeColor, hexToLab, labToLch, lchToLab, labToHex, rankPalettes, SLOTS, SLOT, garmentColorParts, estimateDistribution } from './engine.js?v=554dcefb20';
+import { normalizeHex, colorDistance, describeColor, hexToLab, labToLch, lchToLab, labToHex, rankPalettes, SLOTS, SLOT, garmentColorParts, estimateDistribution, paletteAffinity, byAffinity, similarityLevel, SIMILARITY, SIMILARITY_LABEL } from './engine.js?v=48d0c9d163';
 
 export const DIRECTIONS = [
   { id: 'minimal', label: 'Minimalista', goal: 'Discreto y tonal: neutros o tonos apagados, sin acentos que compitan.' },
@@ -201,10 +201,11 @@ export const MOVES = {
   'cr-paleta': 'Incorporar un color de una paleta de la biblioteca que ya comparte colores con el conjunto y que este aún no usa.',
   'cr-acento': 'Un acento en relación complementaria, de contraste o análoga con el color principal, en una prenda pequeña.',
   'cr-repetir': 'Repetir el acento en una segunda zona: el color inesperado se lee como decisión, no como accidente.',
+  'biblioteca': 'Acercar el conjunto a una combinación de tu Biblioteca que ya representa en parte: una prenda real de tu armario completa el color que le falta.',
   'par-prendas': 'Cuando ningún cambio de una sola prenda lleva el conjunto a la dirección, probar parejas de prendas reales y quedarse con la que lo consigue alterando menos el conjunto.',
   'mantener': 'El conjunto ya cumple los criterios de esta dirección: no se fuerza un cambio.'
 };
-const SMALL = ['accessory', 'socks', 'top', 'outer'];
+const SMALL = ['accessory', 'socks', 'inner', 'top', 'outer'];
 const CHROMA_CAP = { formal: 30, smart: 45, casual: 60 };
 
 function context(input) {
@@ -293,8 +294,8 @@ const MOVE_FNS = {
     if (c.before.repetitions.length) return null;
     let best = null;
     // la repetición une ZONAS distintas: un calcetín que repite el pantalón o el calzado es continuidad, no repetición
-    const NEIGHBOURS = { socks: ['bottom', 'shoes', 'socks'], accessory: ['accessory'], outer: ['outer'], top: ['top'] };
-    ['accessory', 'socks', 'outer', 'top'].forEach((slot) => {
+    const NEIGHBOURS = { socks: ['bottom', 'shoes', 'socks'], accessory: ['accessory'], outer: ['outer'], top: ['top'], inner: ['inner'] };
+    ['accessory', 'socks', 'inner', 'outer', 'top'].forEach((slot) => {
       const others = c.items.filter((it) => !NEIGHBOURS[slot].includes(it.slot));
       realFor(c, slot).forEach((g) => {
         [g.primary_color].concat(g.secondary_colors || []).forEach((hex) => others.forEach((it) => (it.colors || []).forEach((col) => {
@@ -329,7 +330,7 @@ const MOVE_FNS = {
     if (c.before.families.length) return null;
     const dom = c.before.dominant;
     let best = null;
-    ['top', 'outer', 'accessory'].forEach((slot) => realFor(c, slot).forEach((g) => {
+    ['top', 'inner', 'outer', 'accessory'].forEach((slot) => realFor(c, slot).forEach((g) => {
       const f = colorFacts(g.primary_color);
       if (f.neutral || f.C < 15 || f.C > 45) return;
       if (!best || Math.abs(f.C - 28) < Math.abs(best.f.C - 28)) best = { slot, g, f };
@@ -350,7 +351,7 @@ const MOVE_FNS = {
     for (const r of pals) {
       const missing = (r.palette.colors || []).map((pc) => ({ hex: normalizeHex(pc.hex), name: pc.name })).filter((pc) => pc.hex && !nearAny(pc.hex, present, 15) && labToLch(hexToLab(pc.hex)).C >= 18);
       for (const m of missing) {
-        for (const slot of ['accessory', 'socks', 'top', 'outer', 'shoes']) {
+        for (const slot of ['accessory', 'socks', 'inner', 'top', 'outer', 'shoes']) {
           const g = realFor(c, slot).filter((x) => colorDistance(x.primary_color, m.hex) <= 12).sort((a, b) => colorDistance(a.primary_color, m.hex) - colorDistance(b.primary_color, m.hex))[0];
           if (g) {
             return proposal(c, 'creative', 'cr-paleta', [{ slot, garment: g }],
@@ -372,7 +373,7 @@ const MOVE_FNS = {
     const anchor = c.before.colors.find((x) => !x.neutral && x.C >= 10) || c.before.dominant;
     const present = outfitHexes(c), cap = CHROMA_CAP[c.formality] + 10;
     let best = null;
-    ['accessory', 'socks', 'top'].forEach((slot) => realFor(c, slot).forEach((g) => {
+    ['accessory', 'socks', 'inner', 'top'].forEach((slot) => realFor(c, slot).forEach((g) => {
       const f = colorFacts(g.primary_color);
       if (f.C < 25 || f.C > cap + 15 || nearAny(f.hex, present, 15)) return;
       const r = relation(anchor.hex, f.hex);
@@ -392,13 +393,67 @@ const MOVE_FNS = {
   'cr-repetir'(c) {
     const acc = c.before.accents[0];
     if (!acc || c.before.repetitions.some((r) => colorDistance(r.hex, acc.hex) <= 10)) return null;
-    for (const slot of ['socks', 'accessory', 'top']) {
+    for (const slot of ['socks', 'accessory', 'inner', 'top']) {
       if (acc.slots.includes(slot)) continue;
       const g = realFor(c, slot).find((x) => [x.primary_color].concat(x.secondary_colors || []).some((h) => colorDistance(h, acc.hex) <= 10));
       if (g) return proposal(c, 'creative', 'cr-repetir', [{ slot, garment: g }], (itemOf(c, slot) ? 'Cambia ' + fromText(c, slot) + ' por ' : 'Añade ') + garmentLabel(g) + ': repite el ' + acc.name + ' en una segunda zona.');
     }
     return null;
   }
+};
+/* ── Biblioteca como referencia común (dirección, sugerencias y calcetines usan paletteAffinity) ──
+   Colores del conjunto con su superficie estimada → afinidad con cada paleta. Una paleta encaja con una dirección por su
+   propio carácter: minimalista = colores sobrios (croma medio < 28 y ninguno > 45); creativa = al menos un color intenso
+   (croma ≥ 35); equilibrada = cualquiera. */
+const LIB_TRY = 12, LIB_PER_SLOT = 3;
+export function outfitColorsOf(analysis) { return analysis && analysis.valid ? analysis.colors.map((x) => ({ hex: x.hex, share: x.pct })) : []; }
+function paletteFits(p, dir) {
+  const cs = (p.colors || []).map((x) => colorFacts(x.hex)).filter(Boolean);
+  if (cs.length < 2) return false;
+  const meanC = cs.reduce((t, x) => t + x.C, 0) / cs.length;
+  if (dir === 'minimal') return meanC < 28 && cs.every((x) => x.C <= 45);
+  if (dir === 'creative') return cs.some((x) => x.C >= 35);
+  return true;
+}
+/** La paleta de la Biblioteca que mejor representa unos colores (solo si la representa de verdad: valid). */
+export function libraryReference(colors, palettes, opts = {}) {
+  let best = null;
+  (palettes || []).forEach((p) => {
+    if ((p.colors || []).length < 2 || (opts.filter && !opts.filter(p))) return;
+    const a = paletteAffinity(p, colors, opts);
+    if (a.valid && (!best || byAffinity(a, best.affinity) < 0)) best = { palette: p, affinity: a };
+  });
+  return best;
+}
+MOVE_FNS.biblioteca = function (c, dir) {
+  const now = outfitColorsOf(c.before);
+  if (!now.length || !c.palettes.length) return null;
+  const ranked = c.palettes.filter((p) => paletteFits(p, dir)).map((p) => ({ p, a: paletteAffinity(p, now, { maxOff: 1 }) }))
+    // ya relacionada (≥ 1 color) pero aún sin representarla del todo (con el criterio por defecto de paletteAffinity)
+    .filter((r) => r.a.covered >= 1 && !paletteAffinity(r.p, now).valid).sort((x, y) => byAffinity(x.a, y.a)).slice(0, LIB_TRY);
+  let best = null;
+  for (const r of ranked) {
+    const missing = r.a.paletteLinks.filter((l) => l.level === 'none').map((l) => l.hex);
+    if (!missing.length) continue;
+    for (const slot of ['top', 'inner', 'outer', 'bottom', 'shoes', 'accessory']) {
+      const cands = realFor(c, slot).map((g) => ({ g, d: Math.min(...missing.map((h) => colorDistance(g.primary_color, h))) }))
+        .filter((x) => x.d <= SIMILARITY.RELATED).sort((x, y) => x.d - y.d).slice(0, LIB_PER_SLOT);
+      for (const x of cands) {
+        const p = proposal(c, dir, 'biblioteca', [{ slot, garment: x.g }], '');
+        if (!p.after.valid || (dir !== 'balanced' && p.after.reading !== dir)) continue;
+        const a = paletteAffinity(r.p, outfitColorsOf(p.after));
+        if (!a.valid) continue;
+        if (!best || byAffinity(a, best.a) < 0) best = { p, a, palette: r.p, before: r.a, slot, g: x.g };
+      }
+    }
+    if (best && best.a.level !== 'related') break;            // ya hay una muy buena: no hace falta seguir buscando
+  }
+  if (!best) return null;
+  const name = best.palette.name || 'sin nombre';
+  best.p.explanation = 'La combinación «' + name + '» de tu Biblioteca ya está en ' + best.before.covered + ' de sus ' + (best.palette.colors || []).length + ' colores. ' +
+    (itemOf(c, best.slot) ? 'Cambia ' + fromText(c, best.slot) + ' por ' : 'Añade ') + garmentLabel(best.g) + ': el conjunto pasa a representarla (similitud ' + SIMILARITY_LABEL[best.a.level].toLowerCase() + ').';
+  best.p.palette = best.palette;
+  return best.p;
 };
 /* ── Dos prendas a la vez (auditoría CS-22) ──
    Solo cuando el conjunto aún no se lee en la dirección y ningún cambio de UNA prenda real lo consigue.
@@ -446,7 +501,7 @@ function pairMove(c, dir) {
     'Con un solo cambio de tu armario el conjunto no llega a leerse ' + READING_LABEL[dir] + '. Cambia ' + fromText(c, x.slot) + ' por ' + garmentLabel(x.garment) +
     ' y ' + fromText(c, y.slot) + ' por ' + garmentLabel(y.garment) + ': ' + why);
 }
-const ORDER = { minimal: ['min-apagar', 'min-tonal'], balanced: ['eq-reducir', 'eq-repetir', 'eq-apoyo'], creative: ['cr-paleta', 'cr-acento', 'cr-repetir'] };
+const ORDER = { minimal: ['biblioteca', 'min-apagar', 'min-tonal'], balanced: ['biblioteca', 'eq-reducir', 'eq-repetir', 'eq-apoyo'], creative: ['biblioteca', 'cr-paleta', 'cr-acento', 'cr-repetir'] };
 
 /* Dos composiciones son la misma si tienen los mismos huecos y cada hueco conserva su color (ΔE00 ≤ 5). */
 function sameSlots(a, b, garments) {
@@ -459,7 +514,19 @@ function sameSlots(a, b, garments) {
  * → { direction, reading, kept, note, proposals: [ … ] }  (como mucho 2 propuestas distintas)
  * El borrador original no se toca: cada propuesta trae sus propios slots.
  */
+// la tarjeta de dirección y «Qué prenda te falta» piden lo mismo en cada repintado: se recuerda el último resultado por dirección
+const dirMemo = new Map();
 export function proposeDirection(direction, input) {
+  const key = directionOf(direction) + '#' + JSON.stringify(input.slots || {}) + '#' + (input.formality || '') + '#' +
+    (input.garments || []).map((g) => g.id + g.category + g.primary_color + (g.secondary_colors || []).join('') + (g.color_shares || []).join(',')).join('|') + '#' +
+    (input.palettes || []).map((p) => p.id + (p.colors || []).map((c) => c.hex).join('')).join('|');
+  if (dirMemo.has(key)) return dirMemo.get(key);
+  const r = proposeDirectionRaw(direction, input);
+  if (dirMemo.size > 12) dirMemo.clear();
+  dirMemo.set(key, r);
+  return r;
+}
+function proposeDirectionRaw(direction, input) {
   const dir = directionOf(direction);
   const c = context(input);
   if (!c.before.valid) return { direction: dir, kept: false, proposals: [], note: 'Elige al menos una prenda para explorar direcciones.' };
@@ -467,7 +534,7 @@ export function proposeDirection(direction, input) {
   const fresh = (p) => p && !sameSlots(p.slots, c.slots, c.garments) && !out.some((q) => sameSlots(q.slots, p.slots, c.garments));
   for (const move of ORDER[dir]) {
     if (out.length >= 2) break;
-    const p = MOVE_FNS[move](c);
+    const p = MOVE_FNS[move](c, dir);
     if (fresh(p)) out.push(p);
   }
   // dos prendas reales a la vez si ningún cambio de una prenda real alcanza la dirección; ocupa un hueco libre
@@ -480,8 +547,10 @@ export function proposeDirection(direction, input) {
     }
   }
   const already = c.before.reading === dir;
+  // referencia de la Biblioteca de cada propuesta (la misma medida que las sugerencias y los calcetines)
+  out.forEach((p) => { if (!p.reference) p.reference = libraryReference(outfitColorsOf(p.after), c.palettes); });
   return {
-    direction: dir, reading: c.before.reading, kept: !out.length,
+    direction: dir, reading: c.before.reading, kept: !out.length, reference: libraryReference(outfitColorsOf(c.before), c.palettes),
     note: out.length ? (already ? 'El conjunto ya se lee ' + READING_LABEL[dir] + '; estas son variaciones dentro de la misma dirección.' : null)
       : already ? MOVES.mantener : 'Con tu armario actual no hay un cambio de una o dos prendas que lleve el conjunto en esta dirección sin inventar prendas.',
     proposals: out
@@ -585,4 +654,115 @@ export function proposeFromPalette(palette, input) {
   if (!c.before.valid) return null;
   const p = MOVE_FNS['cr-paleta'](c, { palette, family: !!input.family });
   return p && !sameSlots(p.slots, c.slots, c.garments) ? p : null;
+}
+
+/* ═══════════ FIGURA DEL OUTFIT ═══════════
+   Una combinación de la Biblioteca no dice cuánto ocupa cada color (el libro no da proporciones): para enseñarla
+   como un conjunto se usa un reparto ILUSTRATIVO por orden de sobriedad, la convención de estilismo de «base, apoyo y
+   acento»: el color más sobrio (menos croma; un blanco o un crudo cuenta como apoyo) va en la superficie mayor y el más
+   intenso, en la menor.
+   Reparto por número de colores: 2 → 65/35 · 3 → 50/30/20 · 4 → 45/25/20/10 · 5 → 40/25/15/12/8 · 6 → 35/25/15/12/8/5.
+   Las prendas de la figura se asignan para acercarse a ese reparto (con los pesos de superficie del Studio). */
+export const ILLUSTRATIVE_SHARES = { 2: [65, 35], 3: [50, 30, 20], 4: [45, 25, 20, 10], 5: [40, 25, 15, 12, 8], 6: [35, 25, 15, 12, 8, 5] };
+// prenda de la figura → índice del color (por sobriedad) para cada número de colores
+const FIGURE_MAP = {
+  1: { outer: 0, top: 0, bottom: 0, shoes: 0 },
+  2: { outer: 0, top: 1, bottom: 0, shoes: 1 },
+  3: { outer: 0, top: 2, bottom: 1, shoes: 0 },
+  4: { outer: 0, top: 2, bottom: 1, shoes: 3 },
+  5: { outer: 0, top: 2, bottom: 1, shoes: 3, accessory: 4 },
+  6: { outer: 0, top: 2, bottom: 1, shoes: 3, accessory: 4, socks: 5 }
+};
+const FIGURE_AREA = { outer: 34, top: 12, bottom: 34, shoes: 8, accessory: 6, socks: 3 };   // superficie dibujada (ilustrativa)
+/**
+ * Figura ilustrativa de una paleta. → { garments: [{ slot, hex, share }], colors: [{ hex, name, share, slots }], illustrative: true }
+ * share = % ilustrativo (no es un dato de la paleta). Con más de 6 colores, se dibujan los 6 más sobrios.
+ */
+export function paletteFigure(palette) {
+  const cols = (palette && palette.colors || []).map((c) => { const f = colorFacts(c.hex); if (f && c.name) f.name = c.name; return f; }).filter(Boolean);   // el nombre de la paleta, si lo tiene
+  if (!cols.length) return { garments: [], colors: [], illustrative: true };
+  // sobriedad = croma; un blanco o un crudo (L > 85) cuenta como apoyo, no como base (convención: la camisa clara, no el abrigo)
+  const sober = (f) => f.C + (f.L > 85 ? 25 : 0);
+  const sorted = cols.map((f, i) => ({ f, i })).sort((a, b) => (sober(a.f) - sober(b.f)) || (a.f.L - b.f.L) || (a.i - b.i)).slice(0, 6).map((x) => x.f);
+  const n = sorted.length, map = FIGURE_MAP[n];
+  const garments = Object.keys(map).map((slot) => ({ slot, hex: sorted[map[slot]].hex, area: FIGURE_AREA[slot] }));
+  const target = n === 1 ? [100] : ILLUSTRATIVE_SHARES[n];
+  const colors = sorted.map((f, k) => ({ hex: f.hex, name: f.name, share: target[k], slots: garments.filter((g) => g.hex === f.hex).map((g) => g.slot) }));
+  // la superficie de cada prenda se reparte para que la suma por color sea el reparto ilustrativo
+  colors.forEach((c) => {
+    const gs = garments.filter((g) => g.hex === c.hex), sumA = gs.reduce((t, g) => t + g.area, 0) || 1;
+    gs.forEach((g) => { g.share = c.share * g.area / sumA; });
+  });
+  return { garments: garments.map((g) => ({ slot: g.slot, hex: g.hex, share: g.share })), colors, illustrative: true };
+}
+/** Figura de un outfit real: cada prenda con su color principal y su superficie ESTIMADA (pesos del Studio). */
+export function outfitFigure(items) {
+  const est = estimateDistribution(items);
+  if (!est.valid) return { garments: [], colors: [], illustrative: false };
+  const garments = items.map((it, i) => ({ slot: it.slot, hex: it.hex, share: est.garments[i] ? est.garments[i].pct : 0 })).filter((g) => g.hex && g.share > 0);
+  return { garments, colors: est.colors.map((c) => ({ hex: c.hex, share: c.pct, name: colorFacts(c.hex).name })), illustrative: false };
+}
+
+/* ═══════════ SUGERENCIAS DE OUTFITS (armario × Biblioteca) ═══════════
+   Busca conjuntos completos con TUS prendas que representen una combinación de la Biblioteca:
+   · Prendas: parte superior, pantalón y calzado (obligatorios); prenda exterior y prenda interior (opcionales; la interior
+     solo bajo un jersey o una prenda exterior). Calcetines y accesorios quedan fuera: los decide la guía de calcetines.
+   · Cada prenda tiene que estar cerca de un color de la paleta (ΔE00 ≤ 12, «relacionado»): ninguna fuera de la combinación.
+   · La paleta tiene que quedar representada en conjunto: al menos 2 de sus colores (o todos si tiene 2), sin que una sola
+     prenda lo explique todo; el color con más superficie ocupa al menos el 30 %.
+   · Orden: más colores de la paleta representados, menor ΔE00 medio ponderado por superficie. Solo se enseñan las que
+     quedan en «muy similar» o mejor (ΔE00 medio ≤ 6) o, si no hay, «relacionado» con ΔE00 medio ≤ 9. Mejor pocas que flojas.
+   · Variedad: una prenda aparece como mucho en 2 sugerencias y no se repite el mismo conjunto con otra paleta.
+   Se recalcula con el armario de cada momento: una prenda nueva entra sola en las siguientes sugerencias. */
+export const SUGGEST = { PER_SLOT: 3, MAX_MEAN: 9, GOOD_MEAN: SIMILARITY.CLOSE, MAX_REUSE: 2, MIN_DOMINANT: 30 };
+let suggestMemo = { key: null, value: null };
+export function suggestOutfits(input = {}) {
+  const garments = input.garments || [], palettes = (input.palettes || []).filter((p) => (p.colors || []).length >= 2), limit = input.limit || 6;
+  const key = garments.map((g) => g.id + g.category + g.primary_color).join('|') + '#' + palettes.map((p) => p.id + (p.colors || []).map((c) => c.hex).join('')).join('|') + '#' + limit;
+  if (suggestMemo.key === key) return suggestMemo.value;
+  const bySlot = {};
+  ['outer', 'top', 'inner', 'bottom', 'shoes'].forEach((slot) => { bySlot[slot] = garments.filter((g) => SLOT[slot].categories.includes(g.category) && normalizeHex(g.primary_color)); });
+  const found = [];
+  palettes.forEach((p) => {
+    const P = (p.colors || []).map((c) => normalizeHex(c.hex)).filter(Boolean);
+    const near = (g) => { let j = -1, d = Infinity; P.forEach((h, k) => { const x = colorDistance(g.primary_color, h); if (x < d) { d = x; j = k; } }); return { g, j, d }; };
+    const cands = {};
+    for (const slot of Object.keys(bySlot)) {
+      cands[slot] = bySlot[slot].map(near).filter((x) => x.d <= SIMILARITY.RELATED).sort((a, b) => a.d - b.d).slice(0, SUGGEST.PER_SLOT);
+      if (['top', 'bottom', 'shoes'].includes(slot) && !cands[slot].length) return;
+    }
+    let best = null;
+    const outerOpts = [null].concat(cands.outer), innerOpts = [null].concat(cands.inner);
+    cands.top.forEach((t) => cands.bottom.forEach((b) => cands.shoes.forEach((s) => outerOpts.forEach((o) => innerOpts.forEach((i) => {
+      if (i && (i.g.id === t.g.id || (t.g.category !== 'jerseis' && !o))) return;      // la interior va debajo de algo
+      const parts = [['top', t], ['bottom', b], ['shoes', s]].concat(o ? [['outer', o]] : [], i ? [['inner', i]] : []);
+      const total = parts.reduce((x, [slot]) => x + SLOT[slot].weight, 0);
+      const share = {}; let meanDE = 0;
+      parts.forEach(([slot, x]) => { const w = SLOT[slot].weight / total; share[x.j] = (share[x.j] || 0) + w; meanDE += x.d * w; });
+      const covered = Object.keys(share).length, dominant = Math.max(...Object.values(share)) * 100;
+      if (covered < Math.min(2, P.length) || dominant < SUGGEST.MIN_DOMINANT || meanDE > SUGGEST.MAX_MEAN) return;
+      const cand = { parts, covered, meanDE, coverage: covered / P.length };
+      if (!best || (cand.covered - best.covered || best.meanDE - cand.meanDE) > 0) best = cand;
+    })))));
+    if (best) found.push(Object.assign(best, { palette: p }));
+  });
+  found.sort((a, b) => (b.covered - a.covered) || (a.meanDE - b.meanDE));
+  const good = found.filter((f) => f.meanDE <= SUGGEST.GOOD_MEAN);
+  const pool = good.length ? good : found;
+  const out = [], uses = {}, seen = new Set();
+  for (const f of pool) {
+    if (out.length >= limit) break;
+    const ids = f.parts.map(([, x]) => x.g.id), sig = ids.slice().sort().join();
+    if (seen.has(sig) || ids.some((id) => (uses[id] || 0) >= SUGGEST.MAX_REUSE)) continue;
+    seen.add(sig); ids.forEach((id) => { uses[id] = (uses[id] || 0) + 1; });
+    const slots = {};
+    f.parts.forEach(([slot, x]) => { slots[slot] = { garment_id: x.g.id, hex: null, weight: SLOT[slot].weight }; });
+    const items = buildItems(slots, garments), analysis = analyzeOutfit(items);
+    const affinity = paletteAffinity(f.palette, outfitColorsOf(analysis), { maxOff: 1 });
+    out.push({ id: f.palette.id + ':' + sig, palette: f.palette, slots, items, analysis, affinity, meanDE: f.meanDE, level: similarityLevel(f.meanDE),
+      covered: f.covered, paletteSize: (f.palette.colors || []).length, figure: outfitFigure(items) });
+  }
+  const value = { suggestions: out, considered: found.length, strict: good.length > 0 };
+  suggestMemo = { key, value };
+  return value;
 }
