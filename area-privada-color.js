@@ -48,7 +48,8 @@ window.APColor = (function () {
     ward: { q: '', cat: '', view: 'photo' },
     insp: { q: '', style: '', collection: '', season: '', family: '', fav: false, review: false, sort: 'saved', open: false, view: 'photo' },
     sock: { trousers: null, shoes: null },      // colores escritos en la guía y aplicados con «Actualizar»: solo valen en la guía
-    sockPending: { tr: null, sh: null }         // texto escrito y aún no aplicado (sobrevive a repintar la guía)
+    sockPending: { tr: null, sh: null },        // texto escrito y aún no aplicado (sobrevive a repintar la guía)
+    fig: {}                                     // color elegido para cada prenda del figurín, por paleta (solo en esta sesión: no se guarda)
   };
   var draft = readDraft(false), demoDraft = emptyDraft();
   var lastView = null;
@@ -363,91 +364,129 @@ window.APColor = (function () {
         a.level ? simBadge(a.level) : null]);
     }
 
-    /* ── Figura del outfit (SVG vertical, sin biblioteca; colores por atributo, que la CSP permite) ──
-       Prendas apiladas en el orden en que se llevan: parte de arriba (exterior con la interior asomando en el centro),
-       cinturón o accesorio, pantalón, calcetines y calzado. La superficie de cada bloque sigue su porcentaje. */
+    /* ── Figurín del outfit (SVG generado por DOM; colores por atributo, que la CSP permite) ──
+       Ilustración de moda en plano, de frente, con proporción de figurín (≈ 9 cabezas): maniquí neutro (no es un tono de
+       piel), prendas en capas con contorno fino del propio color oscurecido, una sola luz desde arriba a la izquierda
+       (sombra lateral suave) y costuras mínimas (solapas, tapeta, raya del pantalón, suela). Calcetines siempre visibles
+       entre el bajo y el zapato. Prendas: exterior (abierta, deja ver la parte superior), parte superior, interior (cuello
+       y bajo que asoman), accesorio (cinturón), pantalón, calcetines y calzado. */
     var FIG_LABEL = { outer: 'Prenda exterior', top: 'Parte superior', inner: 'Prenda interior', bottom: 'Pantalón', socks: 'Calcetines', shoes: 'Calzado', accessory: 'Accesorio' };
+    var MANNEQUIN = '#ECE7E0', MANNEQUIN_LINE = '#D3CBC1';
     function svgEl(tag, attrs) { var e = document.createElementNS(SVG_NS, tag); Object.keys(attrs).forEach(function (k) { e.setAttribute(k, attrs[k]); }); return e; }
+    function shadeHex(hex, dL) { var lab = M.E.hexToLab(hex); return lab ? M.E.labToHex({ L: Math.max(0, Math.min(100, lab.L + dL)), a: lab.a, b: lab.b }) : hex; }
     function figureSvg(fig) {
-      var by = {}; fig.garments.forEach(function (g) { by[g.slot] = by[g.slot] ? { slot: g.slot, hex: by[g.slot].hex, share: by[g.slot].share + g.share } : Object.assign({}, g); });
-      var upper = ['outer', 'top', 'inner'].filter(function (k) { return by[k]; });
-      var W = 120, Wb = 92, Ws = 104, total = 0;
-      // alturas: superficie / anchura del bloque, con mínimos para que cada prenda se reconozca
-      var hs = {
-        upper: upper.reduce(function (t, k) { return t + by[k].share; }, 0) / W,
-        accessory: by.accessory ? by.accessory.share / Wb : 0,
-        bottom: by.bottom ? by.bottom.share / Wb : 0,
-        socks: by.socks ? by.socks.share / (Wb - 8) : 0,
-        shoes: by.shoes ? by.shoes.share / Ws : 0
-      };
-      Object.keys(hs).forEach(function (k) { total += hs[k]; });
-      var H = 250, k = total ? H / total : 0, MIN = { upper: 54, accessory: 7, bottom: 60, socks: 6, shoes: 14 };
-      Object.keys(hs).forEach(function (key) { if (hs[key]) hs[key] = Math.max(MIN[key], hs[key] * k); });
-      var sum = Object.keys(hs).reduce(function (t, key) { return t + hs[key]; }, 0), gap = 3, y = 6;
-      var svg = svgEl('svg', { viewBox: '0 0 160 ' + Math.round(sum + 12 + gap * 4), class: 'cs-fig-svg', 'aria-hidden': 'true', focusable: 'false' });
-      var x0 = (160 - W) / 2;
-      if (hs.upper) {
-        var base = by.outer || by.top || by.inner, hu = hs.upper;
-        // tronco con hombros redondeados y mangas
-        svg.appendChild(svgEl('rect', { x: x0 - 10, y: y + 6, width: 12, height: hu * 0.86, rx: 6, fill: base.hex }));
-        svg.appendChild(svgEl('rect', { x: x0 + W - 2, y: y + 6, width: 12, height: hu * 0.86, rx: 6, fill: base.hex }));
-        svg.appendChild(svgEl('path', { d: 'M' + (x0 + 14) + ' ' + y + ' H' + (x0 + W - 14) + ' Q' + (x0 + W) + ' ' + y + ' ' + (x0 + W) + ' ' + (y + 14) + ' V' + (y + hu) + ' H' + x0 + ' V' + (y + 14) + ' Q' + x0 + ' ' + y + ' ' + (x0 + 14) + ' ' + y + ' Z', fill: base.hex }));
-        // capas visibles en el centro: la de debajo asoma con una anchura proporcional a su superficie
-        var layers = upper.slice(1), outerShare = upper.reduce(function (t, key) { return t + by[key].share; }, 0), wNow = W;
-        layers.forEach(function (key, i) {
-          var rest = layers.slice(i).reduce(function (t, k2) { return t + by[k2].share; }, 0);
-          var w = Math.max(10, Math.min(wNow - 18, W * rest / outerShare));
-          var lx = (160 - w) / 2, top = y + (i ? 8 : 4);
-          svg.appendChild(svgEl('path', { d: 'M' + lx + ' ' + top + ' L' + (lx + w) + ' ' + top + ' L' + (lx + w) + ' ' + (y + hu) + ' L' + lx + ' ' + (y + hu) + ' Z', fill: by[key].hex }));
-          wNow = w;
-        });
-        if (layers.length) svg.appendChild(svgEl('path', { d: 'M' + (80 - 8) + ' ' + (y + 1) + ' L80 ' + (y + 12) + ' L' + (80 + 8) + ' ' + (y + 1), fill: 'none', stroke: 'rgba(0,0,0,.18)', 'stroke-width': '1' }));
-        y += hu + gap;
+      var by = {}; fig.garments.forEach(function (g) { if (!by[g.slot]) by[g.slot] = g.hex; });
+      var svg = svgEl('svg', { viewBox: '0 0 200 460', class: 'cs-fig-svg', 'aria-hidden': 'true', focusable: 'false' });
+      var defs = svgEl('defs', {}), uid = 'f' + Math.random().toString(36).slice(2, 7);
+      // luz: un velo que oscurece el lado derecho de cada prenda (la sombra se superpone, el color base no cambia)
+      var grad = svgEl('linearGradient', { id: uid + 'l', x1: '0', y1: '0', x2: '1', y2: '0' });
+      [['0', 0], ['0.55', 0], ['1', 0.16]].forEach(function (st) { grad.appendChild(svgEl('stop', { offset: st[0], 'stop-color': '#000', 'stop-opacity': String(st[1]) })); });
+      defs.appendChild(grad); svg.appendChild(defs);
+      function part(d, hex, extra) {
+        var g = svgEl('g', {});
+        g.appendChild(svgEl('path', { d: d, fill: hex, stroke: shadeHex(hex, -16), 'stroke-width': '1', 'stroke-linejoin': 'round' }));
+        if (!extra || extra.light !== false) g.appendChild(svgEl('path', { d: d, fill: 'url(#' + uid + 'l)' }));
+        svg.appendChild(g);
+        return g;
       }
-      var xb = (160 - Wb) / 2;
-      if (hs.accessory) { svg.appendChild(svgEl('rect', { x: xb, y: y, width: Wb, height: hs.accessory, rx: 2, fill: by.accessory.hex })); y += hs.accessory + gap; }
-      if (hs.bottom) {
-        var leg = (Wb - 6) / 2;
-        svg.appendChild(svgEl('rect', { x: xb, y: y, width: Wb, height: Math.min(14, hs.bottom), rx: 3, fill: by.bottom.hex }));
-        svg.appendChild(svgEl('rect', { x: xb, y: y + 6, width: leg, height: hs.bottom - 6, rx: 4, fill: by.bottom.hex }));
-        svg.appendChild(svgEl('rect', { x: xb + leg + 6, y: y + 6, width: leg, height: hs.bottom - 6, rx: 4, fill: by.bottom.hex }));
-        y += hs.bottom + gap;
+      function line(d, hex, op) { svg.appendChild(svgEl('path', { d: d, fill: 'none', stroke: shadeHex(hex, -22), 'stroke-width': '1', 'stroke-linecap': 'round', opacity: String(op == null ? 0.55 : op) })); }
+      // suelo y maniquí (cabeza, cuello, manos)
+      svg.appendChild(svgEl('ellipse', { cx: '100', cy: '446', rx: '54', ry: '5', fill: '#000', opacity: '0.07' }));
+      svg.appendChild(svgEl('ellipse', { cx: '100', cy: '34', rx: '14.5', ry: '18', fill: MANNEQUIN, stroke: MANNEQUIN_LINE, 'stroke-width': '1' }));
+      svg.appendChild(svgEl('path', { d: 'M93 48 L93 66 L107 66 L107 48 Z', fill: MANNEQUIN, stroke: MANNEQUIN_LINE, 'stroke-width': '1' }));
+      [['54', '247'], ['146', '247']].forEach(function (c) { svg.appendChild(svgEl('ellipse', { cx: c[0], cy: c[1], rx: '5.5', ry: '8', fill: MANNEQUIN, stroke: MANNEQUIN_LINE, 'stroke-width': '1' })); });
+      var top = by.top || by.inner || by.outer || '#D9D5CF', bottom = by.bottom || '#CFCAC3';
+      // pantalón: talle, entrepierna y perneras que se estrechan hasta el tobillo; raya marcada
+      part('M66 206 L134 206 L136 226 L129 404 L106 404 L101.5 240 L98.5 240 L94 404 L71 404 L64 226 Z', bottom);
+      line('M82.5 244 L82.5 398', bottom, 0.35); line('M117.5 244 L117.5 398', bottom, 0.35);
+      line('M71 400 L94 400', bottom, 0.4); line('M106 400 L129 400', bottom, 0.4);
+      // calcetines: la franja del tobillo, entre el bajo y el zapato
+      var socks = by.socks || bottom;
+      part('M74 404 L92 404 L92.5 419 L73.5 419 Z', socks, { light: false });
+      part('M108 404 L126 404 L126.5 419 L107.5 419 Z', socks, { light: false });
+      // calzado: punta redondeada hacia fuera, empeine y suela
+      var shoes = by.shoes || '#3A3532';
+      part('M73 418 L93 418 Q96 420 96 427 L96 432 L62 432 Q58 432 59 428 Q62 421 73 418 Z', shoes);
+      part('M107 418 L127 418 Q138 421 141 428 Q142 432 138 432 L104 432 L104 427 Q104 420 107 418 Z', shoes);
+      svg.appendChild(svgEl('path', { d: 'M59 431 L96 431 M104 431 L141 431', stroke: shadeHex(shoes, -28), 'stroke-width': '2.4', 'stroke-linecap': 'round', fill: 'none' }));
+      // parte superior: torso con hombros redondeados, mangas largas (si no hay prenda exterior se ven enteras) y bajo a la cadera
+      part('M70 80 Q73 68 87 66 L113 66 Q127 68 130 80 L135 210 L65 210 Z', top);
+      if (!by.outer) {
+        part('M70 80 L55 238 L67 240 L80 110 Z', top); part('M130 80 L145 238 L133 240 L120 110 Z', top);
+        line('M55.5 232 L67 234', top, 0.45); line('M144.5 232 L133 234', top, 0.45);
       }
-      if (hs.socks) {
-        var sw = (Wb - 6) / 2 - 6;
-        svg.appendChild(svgEl('rect', { x: xb + 3, y: y, width: sw, height: hs.socks, rx: 2, fill: by.socks.hex }));
-        svg.appendChild(svgEl('rect', { x: xb + (Wb - 6) / 2 + 9, y: y, width: sw, height: hs.socks, rx: 2, fill: by.socks.hex }));
-        y += hs.socks + gap;
+      // prenda interior: cuello y bajo que asoman bajo la parte superior
+      if (by.inner) {
+        part('M90 66 L100 80 L110 66 L104 66 L100 72 L96 66 Z', by.inner, { light: false });
+        part('M66 206 L134 206 L134.5 213 L65.5 213 Z', by.inner, { light: false });
       }
-      if (hs.shoes) {
-        var shw = (Ws - 8) / 2, xs = (160 - Ws) / 2;
-        svg.appendChild(svgEl('rect', { x: xs, y: y, width: shw, height: hs.shoes, rx: hs.shoes / 2.2, fill: by.shoes.hex }));
-        svg.appendChild(svgEl('rect', { x: xs + shw + 8, y: y, width: shw, height: hs.shoes, rx: hs.shoes / 2.2, fill: by.shoes.hex }));
+      line('M100 80 L100 204', top, 0.3);
+      // accesorio: cinturón con hebilla
+      if (by.accessory) {
+        part('M65 203 L135 203 L135.4 211 L64.6 211 Z', by.accessory, { light: false });
+        svg.appendChild(svgEl('rect', { x: '96', y: '203.5', width: '8', height: '7', rx: '1.5', fill: 'none', stroke: shadeHex(by.accessory, 30), 'stroke-width': '1.2' }));
       }
-      // contorno suave para que un blanco no desaparezca sobre el fondo claro
-      [].forEach.call(svg.children, function (el) { if (!el.getAttribute('stroke')) { el.setAttribute('stroke', 'rgba(0,0,0,.10)'); el.setAttribute('stroke-width', '1'); } });
+      // prenda exterior abierta: dos delanteros con solapa que dejan ver la parte superior, largo a medio muslo, mangas encima
+      if (by.outer) {
+        var o = by.outer;
+        part('M66 82 Q69 68 86 66 L95 96 L93 254 L58 254 Z', o);
+        part('M134 82 Q131 68 114 66 L105 96 L107 254 L142 254 Z', o);
+        part('M86 66 L95 96 L88 118 L80 98 Z', shadeHex(o, 6), { light: false });            // solapas
+        part('M114 66 L105 96 L112 118 L120 98 Z', shadeHex(o, 6), { light: false });
+        part('M66 82 L52 240 L65 242 L79 112 Z', o); part('M134 82 L148 240 L135 242 L121 112 Z', o);
+        line('M52.5 233 L65.5 235', o, 0.45); line('M147.5 233 L134.5 235', o, 0.45);
+        line('M64 172 L80 172', o, 0.35); line('M120 172 L136 172', o, 0.35);                     // bolsillos
+      }
       return svg;
     }
-    // figura + leyenda con el porcentaje de cada color (ilustrativo en la Biblioteca, estimado en un outfit real)
+    // figurín + leyenda (porcentaje = superficie aproximada en el dibujo) y, en la Biblioteca, el color de cada prenda a elegir
+    var FIG_SLOTS_EDIT = ['outer', 'top', 'bottom', 'socks', 'shoes', 'accessory'];
     function figureBlock(fig, opts) {
       opts = opts || {};
       if (!fig.garments.length) return null;
-      var pct = M.E.roundPercentages(fig.colors.map(function (c) { return c.share; }));
-      var desc = fig.colors.map(function (c, i) {
-        var where = fig.garments.filter(function (g) { return g.hex === c.hex; }).map(function (g) { return FIG_LABEL[g.slot].toLowerCase(); });
-        return (c.name || colorName(c.hex)) + ' ' + pct[i] + ' %' + (where.length ? ' (' + where.join(' y ') + ')' : '');
+      // un outfit real (outfitFigure) no trae las prendas de cada color: se deducen del figurín
+      fig.colors.forEach(function (c) { if (!c.slots) c.slots = fig.garments.filter(function (g) { return g.hex === c.hex; }).map(function (g) { return g.slot; }); });
+      var used = fig.colors.filter(function (c) { return c.share > 0; });
+      var pct = M.E.roundPercentages(used.map(function (c) { return c.share; }));
+      var desc = used.map(function (c, i) {
+        return (c.name || colorName(c.hex)) + ' ' + pct[i] + ' % (' + c.slots.map(function (sl) { return FIG_LABEL[sl].toLowerCase(); }).join(' y ') + ')';
       });
-      return h('figure', { class: 'cs-fig' + (opts.compact ? ' is-compact' : '') }, [
-        h('div', { class: 'cs-fig-art', role: 'img', 'aria-label': (fig.illustrative ? 'Figura ilustrativa del outfit: ' : 'Figura del outfit: ') + desc.join(', ') }, [figureSvg(fig)]),
-        opts.compact ? null : h('figcaption', { class: 'cs-fig-cap' }, [
-          h('ul', { class: 'cs-fig-legend' }, fig.colors.map(function (c, i) {
-            var where = fig.garments.filter(function (g) { return g.hex === c.hex; }).map(function (g) { return FIG_LABEL[g.slot]; });
-            return h('li', null, [swatch(c.hex), h('span', { class: 'cs-fig-n' }, [h('span', { text: c.name || colorName(c.hex) }), where.length ? h('span', { class: 'cs-fig-w', text: where.join(' · ') }) : null]),
-              h('span', { class: 'cs-pct', text: (fig.illustrative ? '≈ ' : '') + pct[i] + ' %' })]);
-          })),
-          h('p', { class: 'cs-fine cs-fine--tight', text: fig.illustrative ? 'Reparto ilustrativo: la combinación no define proporciones. El color más sobrio ocupa más superficie; el más intenso, menos.' : 'Superficie estimada con los pesos del Studio.' })
-        ])
-      ]);
+      var wrap = h('figure', { class: 'cs-fig' + (opts.compact ? ' is-compact' : '') });
+      wrap.appendChild(h('div', { class: 'cs-fig-art', role: 'img', 'aria-label': (fig.illustrative ? 'Figurín ilustrativo del outfit: ' : 'Figurín del outfit: ') + desc.join(', ') }, [figureSvg(fig)]));
+      if (opts.compact) return wrap;
+      var cap = h('figcaption', { class: 'cs-fig-cap' });
+      cap.appendChild(h('ul', { class: 'cs-fig-legend' }, used.map(function (c, i) {
+        return h('li', null, [swatch(c.hex), h('span', { class: 'cs-fig-n' }, [h('span', { text: c.name || colorName(c.hex) }), h('span', { class: 'cs-fig-w', text: c.slots.map(function (sl) { return FIG_LABEL[sl]; }).join(' · ') })]),
+          h('span', { class: 'cs-pct', text: (fig.illustrative ? '≈ ' : '') + pct[i] + ' %' })]);
+      })));
+      if (opts.onAssign) cap.appendChild(figureEditor(fig, opts));
+      cap.appendChild(h('p', { class: 'cs-fine cs-fine--tight', text: fig.illustrative
+        ? (opts.onAssign ? 'Elige el color de cada prenda para ver cómo quedaría. ' : '') + 'Porcentaje = superficie aproximada de cada prenda en el figurín: la combinación no define proporciones.'
+        : 'Superficie estimada con los pesos del Studio.' }));
+      wrap.appendChild(cap);
+      return wrap;
+    }
+    // una fila por prenda con los colores de la paleta (radio); prenda exterior y accesorio se pueden quitar
+    function figureEditor(fig, opts) {
+      var box = h('div', { class: 'cs-fig-edit', role: 'group', 'aria-label': 'Color de cada prenda del figurín' });
+      FIG_SLOTS_EDIT.forEach(function (slot) {
+        var cur = fig.assignment[slot], id = 'cs-fe-' + slot;
+        var choices = fig.colors.map(function (c) { return { v: c.index, hex: c.hex, name: c.name || colorName(c.hex) }; });
+        if (M.C.FIGURE_OPTIONAL.indexOf(slot) >= 0) choices.unshift({ v: null, hex: null, name: 'Sin ' + FIG_LABEL[slot].toLowerCase() });
+        box.appendChild(h('div', { class: 'cs-fig-row' }, [
+          h('span', { class: 'cs-fig-k', id: id, text: FIG_LABEL[slot] }),
+          h('div', { class: 'cs-fig-opts', role: 'radiogroup', 'aria-labelledby': id }, choices.map(function (ch) {
+            var on = cur === ch.v;
+            var b = btn(ch.hex ? [h('span', { class: 'sr-only', text: ch.name })] : [h('span', { class: 'cs-fig-none', 'aria-hidden': 'true' }), h('span', { class: 'sr-only', text: ch.name })],
+              'cs-fig-sw' + (ch.hex ? '' : ' is-none'), function () { if (!on) opts.onAssign(slot, ch.v); },
+              { role: 'radio', 'aria-checked': on ? 'true' : 'false', title: ch.name, 'data-key': 'fig-' + slot + '-' + (ch.v == null ? 'none' : ch.v) });
+            if (ch.hex) b.style.backgroundColor = ch.hex;
+            return b;
+          }))
+        ]));
+      });
+      if (!fig.auto) box.appendChild(btn('Restablecer la propuesta', 'cs-link', function () { opts.onAssign(null); }, { 'data-key': 'fig-reset' }));
+      return box;
     }
 
     /* ── Esqueleto ── */
@@ -1986,8 +2025,20 @@ window.APColor = (function () {
       sheet(name, function (box, close) {
         box.appendChild(h('p', { class: 'cs-badges' }, [sourceBadge(p), badge(p.colors.length + ' colores'), p.is_favorite ? badge('★ Favorita', 'fav') : null]));
         // en lugar de la procedencia: cómo quedaría un outfit con esta combinación (figura vertical y reparto ilustrativo)
-        box.appendChild(h('div', { class: 'cs-pal-look' }, [
-          figureBlock(M.C.paletteFigure(p)),
+        var look = h('div', { class: 'cs-pal-look' });
+        var paintLook = function () {
+          var asg = mem.fig[p.id] || null, fig = M.C.paletteFigure(p, asg), old = look.querySelector('.cs-fig');
+          var focus = document.activeElement && document.activeElement.getAttribute && document.activeElement.getAttribute('data-key');
+          var el = figureBlock(fig, { onAssign: function (slot, v) {
+            if (slot === null) delete mem.fig[p.id]; else mem.fig[p.id] = Object.assign({}, fig.assignment, (function () { var o = {}; o[slot] = v; return o; })());
+            paintLook();
+          } });
+          if (old) old.replaceWith(el); else look.insertBefore(el, look.firstChild);
+          if (focus) { var f = look.querySelector('[data-key="' + focus + '"]'); if (f) f.focus({ preventScroll: true }); }
+        };
+        box.appendChild(look);
+        paintLook();
+        look.appendChild(h('div', { class: 'cs-pal-look-rest' }, [
           h('ol', { class: 'cs-swatches cs-swatches--side' }, p.colors.map(function (c) {
             var block = h('span', { class: 'cs-swatch-big', 'aria-hidden': 'true' }); block.style.backgroundColor = c.hex;
             return h('li', { class: 'cs-swatch' }, [block, h('span', { class: 'cs-swatch-txt' }, [

@@ -714,15 +714,18 @@ export function proposeFromPalette(palette, input) {
   return p && !sameSlots(p.slots, c.slots, c.garments) ? p : null;
 }
 
-/* ═══════════ FIGURA DEL OUTFIT ═══════════
-   Una combinación de la Biblioteca no dice cuánto ocupa cada color (el libro no da proporciones): para enseñarla
-   como un conjunto se usa un reparto ILUSTRATIVO por orden de sobriedad, la convención de estilismo de «base, apoyo y
-   acento»: el color más sobrio (menos croma; un blanco o un crudo cuenta como apoyo) va en la superficie mayor y el más
-   intenso, en la menor.
-   Reparto por número de colores: 2 → 65/35 · 3 → 50/30/20 · 4 → 45/25/20/10 · 5 → 40/25/15/12/8 · 6 → 35/25/15/12/8/5.
-   Las prendas de la figura se asignan para acercarse a ese reparto (con los pesos de superficie del Studio). */
-export const ILLUSTRATIVE_SHARES = { 2: [65, 35], 3: [50, 30, 20], 4: [45, 25, 20, 10], 5: [40, 25, 15, 12, 8], 6: [35, 25, 15, 12, 8, 5] };
-// prenda de la figura → índice del color (por sobriedad) para cada número de colores
+/* ═══════════ FIGURA DEL OUTFIT (figurín) ═══════════
+   Una combinación de la Biblioteca no dice qué color va en qué prenda ni cuánto ocupa (el libro no da proporciones).
+   El figurín propone un reparto y la persona lo cambia prenda a prenda:
+   · Etiquetas primero: si un color se llama como una prenda (los que vienen de Inspiración llevan la etiqueta del
+     cuentagotas: «Pantalón», «Calzado»…), va en esa prenda (slotFromLabel).
+   · El resto, por sobriedad, la convención de «base, apoyo y acento»: el color con menos croma va en las prendas grandes
+     y el más intenso en las pequeñas (un blanco o un crudo cuenta como apoyo, no como base).
+   · Calcetines: siempre en el figurín; por defecto, del color del pantalón (continuidad), y se pueden cambiar.
+   · Porcentajes = superficie aproximada de cada prenda en el dibujo (FIGURE_AREA), sumada por color. Son ILUSTRATIVOS. */
+export const FIGURE_SLOTS = ['outer', 'top', 'bottom', 'socks', 'shoes', 'accessory'];
+export const FIGURE_OPTIONAL = ['outer', 'accessory'];
+// prenda → índice del color por sobriedad, según el número de colores (los calcetines siguen al pantalón)
 const FIGURE_MAP = {
   1: { outer: 0, top: 0, bottom: 0, shoes: 0 },
   2: { outer: 0, top: 1, bottom: 0, shoes: 1 },
@@ -731,27 +734,44 @@ const FIGURE_MAP = {
   5: { outer: 0, top: 2, bottom: 1, shoes: 3, accessory: 4 },
   6: { outer: 0, top: 2, bottom: 1, shoes: 3, accessory: 4, socks: 5 }
 };
-const FIGURE_AREA = { outer: 34, top: 12, bottom: 34, shoes: 8, accessory: 6, socks: 3 };   // superficie dibujada (ilustrativa)
+export const FIGURE_AREA = { outer: 34, top: 13, bottom: 33, socks: 3, shoes: 7, accessory: 3 };   // superficie dibujada (aprox.)
 /**
- * Figura ilustrativa de una paleta. → { garments: [{ slot, hex, share }], colors: [{ hex, name, share, slots }], illustrative: true }
- * share = % ilustrativo (no es un dato de la paleta). Con más de 6 colores, se dibujan los 6 más sobrios.
+ * Figurín de una paleta. assignment opcional: { slot: índice del color en la paleta | null } (null = sin esa prenda; solo
+ * prenda exterior y accesorio son opcionales). Sin él, la propuesta automática (etiquetas y sobriedad).
+ * → { garments: [{ slot, hex, share }], colors: [{ hex, name, share, slots, index }], assignment, auto, illustrative: true }
  */
-export function paletteFigure(palette) {
-  const cols = (palette && palette.colors || []).map((c) => { const f = colorFacts(c.hex); if (f && c.name) f.name = c.name; return f; }).filter(Boolean);   // el nombre de la paleta, si lo tiene
-  if (!cols.length) return { garments: [], colors: [], illustrative: true };
+export function paletteFigure(palette, assignment) {
+  const cols = (palette && palette.colors || []).map((c, index) => { const f = colorFacts(c.hex); if (!f) return null; if (c.name) f.name = c.name; f.index = index; f.label = c.name || c.label || null; return f; }).filter(Boolean);
+  if (!cols.length) return { garments: [], colors: [], assignment: {}, auto: true, illustrative: true };
+  const auto = defaultAssignment(cols);
+  const asg = {};
+  FIGURE_SLOTS.forEach((slot) => {
+    const v = assignment && slot in assignment ? assignment[slot] : auto[slot];
+    asg[slot] = v == null ? (FIGURE_OPTIONAL.includes(slot) ? null : auto[slot]) : cols.some((c) => c.index === v) ? v : auto[slot];
+  });
+  const byIndex = Object.fromEntries(cols.map((c) => [c.index, c]));
+  const area = Object.assign({}, FIGURE_AREA);
+  if (asg.outer == null) { area.top += area.outer; area.outer = 0; }          // sin prenda exterior, la parte superior se ve entera
+  const garments = FIGURE_SLOTS.filter((slot) => asg[slot] != null).map((slot) => ({ slot, hex: byIndex[asg[slot]].hex, index: asg[slot], area: area[slot] }));
+  const total = garments.reduce((t, g) => t + g.area, 0) || 1;
+  garments.forEach((g) => { g.share = g.area / total * 100; });
+  const colors = cols.map((f) => ({ hex: f.hex, name: f.name, index: f.index, share: garments.filter((g) => g.index === f.index).reduce((t, g) => t + g.share, 0), slots: garments.filter((g) => g.index === f.index).map((g) => g.slot) }));
+  const isAuto = FIGURE_SLOTS.every((slot) => asg[slot] === auto[slot]);
+  return { garments: garments.map((g) => ({ slot: g.slot, hex: g.hex, share: g.share })), colors, assignment: asg, auto: isAuto, illustrative: true };
+}
+function defaultAssignment(cols) {
   // sobriedad = croma; un blanco o un crudo (L > 85) cuenta como apoyo, no como base (convención: la camisa clara, no el abrigo)
   const sober = (f) => f.C + (f.L > 85 ? 25 : 0);
-  const sorted = cols.map((f, i) => ({ f, i })).sort((a, b) => (sober(a.f) - sober(b.f)) || (a.f.L - b.f.L) || (a.i - b.i)).slice(0, 6).map((x) => x.f);
-  const n = sorted.length, map = FIGURE_MAP[n];
-  const garments = Object.keys(map).map((slot) => ({ slot, hex: sorted[map[slot]].hex, area: FIGURE_AREA[slot] }));
-  const target = n === 1 ? [100] : ILLUSTRATIVE_SHARES[n];
-  const colors = sorted.map((f, k) => ({ hex: f.hex, name: f.name, share: target[k], slots: garments.filter((g) => g.hex === f.hex).map((g) => g.slot) }));
-  // la superficie de cada prenda se reparte para que la suma por color sea el reparto ilustrativo
-  colors.forEach((c) => {
-    const gs = garments.filter((g) => g.hex === c.hex), sumA = gs.reduce((t, g) => t + g.area, 0) || 1;
-    gs.forEach((g) => { g.share = c.share * g.area / sumA; });
-  });
-  return { garments: garments.map((g) => ({ slot: g.slot, hex: g.hex, share: g.share })), colors, illustrative: true };
+  const sorted = cols.slice().sort((a, b) => (sober(a) - sober(b)) || (a.L - b.L) || (a.index - b.index)).slice(0, 6);
+  const map = FIGURE_MAP[sorted.length], asg = { outer: null, accessory: null };
+  Object.keys(map).forEach((slot) => { asg[slot] = sorted[map[slot]].index; });
+  // etiquetas: un color que se llama como una prenda va en ella (la parte de dentro cuenta como parte superior)
+  let labeled = false;
+  cols.forEach((f) => { let slot = slotFromLabel(f.label); if (slot === 'inner') slot = 'top'; if (slot && FIGURE_SLOTS.includes(slot)) { asg[slot] = f.index; labeled = labeled || {}; labeled[slot] = true; } });
+  // con prendas etiquetadas, lo que no se etiquetó como prenda exterior o accesorio no se inventa
+  if (labeled) FIGURE_OPTIONAL.forEach((slot) => { if (!labeled[slot]) asg[slot] = null; });
+  if (asg.socks == null) asg.socks = asg.bottom;
+  return asg;
 }
 /** Figura de un outfit real: cada prenda con su color principal y su superficie ESTIMADA (pesos del Studio). */
 export function outfitFigure(items) {

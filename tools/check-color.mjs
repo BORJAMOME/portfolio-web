@@ -322,7 +322,20 @@ await step('Detalle de paleta: figura del outfit con reparto ilustrativo (sin el
   ok(!(await page.textContent('dialog[open]')).includes('Registrado como'), 'siguen los detalles técnicos de conversión');
   const legend = await page.$$eval('dialog[open] .cs-fig-legend .cs-pct', (els) => els.map((e) => e.textContent));
   eq(legend.length, 3, 'leyenda de la figura'); ok(legend.every((t) => t.startsWith('≈')), 'el reparto no se marca como aproximado');
-  ok((await page.textContent('dialog[open] .cs-fig-cap')).includes('ilustrativo'), 'no se dice que el reparto es ilustrativo');
+  ok((await page.textContent('dialog[open] .cs-fig-cap')).includes('no define proporciones'), 'no se dice que el reparto es ilustrativo');
+  // prendas editables: quitar la prenda exterior y cambiar los calcetines repinta el figurín y la leyenda sin escribir nada
+  const writes0 = log.length;
+  ok(await page.$('dialog[open] [data-key="fig-socks-0"]'), 'el figurín no deja elegir los calcetines');
+  const lbl = () => page.$$eval('dialog[open] .cs-fig-w', (e) => e.map((x) => x.textContent).join('|'));
+  ok((await lbl()).includes('Prenda exterior'), 'la propuesta no lleva prenda exterior');
+  await page.click('dialog[open] [data-key="fig-outer-none"]');
+  await page.waitForFunction(() => !/Prenda exterior/.test([...document.querySelectorAll('dialog[open] .cs-fig-w')].map((x) => x.textContent).join('|')));
+  await page.click('dialog[open] [data-key="fig-socks-1"]');
+  eq(await page.getAttribute('dialog[open] [data-key="fig-socks-1"]', 'aria-checked'), 'true');
+  ok(await page.$('dialog[open] [data-key="fig-reset"]'), 'sin «Restablecer la propuesta»');
+  await page.click('dialog[open] [data-key="fig-reset"]');
+  await page.waitForFunction(() => /Prenda exterior/.test([...document.querySelectorAll('dialog[open] .cs-fig-w')].map((x) => x.textContent).join('|')));
+  ok(!log.slice(writes0).some((l) => /^(POST|PATCH|DELETE)/.test(l)), 'elegir colores del figurín escribió en la base');
   ok(await page.$('dialog[open] .cs-pal-insp'), 'falta la sección de inspiraciones relacionadas');
   // X visible aunque se desplace el contenido
   await page.evaluate(() => { const d = document.querySelector('dialog[open]'); d.scrollTop = d.scrollHeight; });

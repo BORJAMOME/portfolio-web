@@ -1053,18 +1053,32 @@ test('Prenda interior: hueco propio tras la parte superior, entra en la estructu
   const sock = S.recommendSocks({ trousers: '#6B6B6B', shoes: '#3B2A20', others: [{ hex: '#F4F2EC', label: 'Prenda interior', share: 8 }] });
   assert.ok(sock.proposals.length >= 2);
 });
-test('Figura de una paleta: reparto ilustrativo (2, 3, 4 y más colores), el más sobrio en la superficie mayor', () => {
+test('Figurín de una paleta: propuesta por sobriedad, calcetines siempre, superficie que suma 100 y prendas editables', () => {
   [2, 3, 4, 5, 6].forEach((n) => {
     const hexes = ['#1F2A44', '#C0392B', '#B48A5A', '#2E7D32', '#F1C40F', '#8E44AD'].slice(0, n);
     const f = C.paletteFigure(pal('p' + n, 'n' + n, hexes));
-    assert.equal(f.illustrative, true);
-    assert.deepEqual(f.colors.map((c) => c.share), C.ILLUSTRATIVE_SHARES[n]);
+    assert.equal(f.illustrative, true); assert.equal(f.auto, true);
+    assert.ok(f.garments.some((g) => g.slot === 'socks'), 'faltan los calcetines con ' + n + ' colores');
     assert.ok(Math.abs(f.garments.reduce((t, g) => t + g.share, 0) - 100) < 1e-6, 'la figura suma 100');
-    f.colors.forEach((c) => assert.ok(Math.abs(f.garments.filter((g) => g.hex === c.hex).reduce((t, g) => t + g.share, 0) - c.share) < 1e-6, 'superficie por color = reparto'));
-    assert.equal(f.colors[0].hex, '#1F2A44', 'el marino (el más sobrio) es la base');
+    assert.ok(Math.abs(f.colors.reduce((t, c) => t + c.share, 0) - 100) < 1e-6, 'los colores suman 100');
+    assert.equal(f.assignment.outer, 0, 'el marino (el más sobrio) es la prenda exterior');
   });
-  const f3 = C.paletteFigure(pal('w', 'blanco', ['#FFFFFF', '#1F2A44', '#C0392B']));
-  assert.notEqual(f3.colors[0].hex, '#FFFFFF', 'un blanco es apoyo, no la base');
+  assert.notEqual(C.paletteFigure(pal('w', 'blanco', ['#FFFFFF', '#1F2A44', '#C0392B'])).assignment.outer, 0, 'un blanco es apoyo, no la base');
+  const p = pal('mc', 'marino camel crudo', ['#1F2A44', '#B48A5A', '#F4F2EC']);
+  const auto = C.paletteFigure(p);
+  assert.equal(auto.assignment.socks, auto.assignment.bottom, 'por defecto, calcetines del color del pantalón');
+  // la persona elige: sin prenda exterior y calcetines camel
+  const mine = C.paletteFigure(p, Object.assign({}, auto.assignment, { outer: null, socks: 1 }));
+  assert.equal(mine.auto, false);
+  assert.ok(!mine.garments.some((g) => g.slot === 'outer'));
+  assert.equal(mine.garments.find((g) => g.slot === 'socks').hex, '#B48A5A');
+  assert.ok(mine.colors.find((c) => c.hex === '#B48A5A').share > auto.colors.find((c) => c.hex === '#B48A5A').share, 'sin abrigo la parte superior gana superficie');
+  // un índice que no existe o quitar una prenda obligatoria vuelve a la propuesta
+  const bad = C.paletteFigure(p, { bottom: 9, shoes: null });
+  assert.equal(bad.assignment.bottom, auto.assignment.bottom); assert.equal(bad.assignment.shoes, auto.assignment.shoes);
+  // colores con la prenda en el nombre (vienen de Inspiración): cada uno en su prenda y sin abrigo inventado
+  const lab = C.paletteFigure({ colors: [{ hex: '#1F2A44', name: 'Jersey' }, { hex: '#EFEADF', name: 'Pantalón' }, { hex: '#9A6A41', name: 'Calzado' }] });
+  assert.deepEqual(lab.assignment, { outer: null, top: 0, bottom: 1, socks: 1, shoes: 2, accessory: null });
 });
 test('Sugerencias de outfits: conjuntos completos con prendas reales, coherentes con la Biblioteca y que se actualizan con el armario', () => {
   const lib = [pal('mc', 'Marino, crudo y camel', ['#1F2A44', '#F2EEE3', '#9C6B3F']), pal('rv', 'Rojo y verde', ['#C0392B', '#27AE60'])];
