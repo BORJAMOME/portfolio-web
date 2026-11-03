@@ -337,6 +337,7 @@ await step('Detalle de paleta: figura del outfit con reparto ilustrativo (sin el
   await page.waitForFunction(() => /Prenda exterior/.test([...document.querySelectorAll('dialog[open] .cs-fig-w')].map((x) => x.textContent).join('|')));
   // calzado: además de los colores de la paleta, negro, blanco y marrón (señalados como fuera de la paleta)
   for (const k of ['1c1c1c', 'f3f2ee', '5a3a24']) ok(await page.$('dialog[open] [data-key="fig-shoes-' + k + '"]'), 'falta el color habitual de calzado ' + k);
+  ok(await page.$('dialog[open] [data-key="fig-socks-f3f2ee"]'), 'los calcetines no ofrecen siempre el blanco');
   await page.click('dialog[open] [data-key="fig-shoes-1c1c1c"]');
   await page.waitForFunction(() => /fuera de la paleta/.test(document.querySelector('dialog[open] .cs-fig-legend').textContent));
   eq(await page.getAttribute('dialog[open] [data-key="fig-shoes-1c1c1c"]', 'aria-checked'), 'true');

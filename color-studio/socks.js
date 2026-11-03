@@ -13,7 +13,7 @@
    opción más lograda; mejor que igualar el calzado; enlazar con la parte de arriba). Ver color-studio/README.md.
    ═══════════════════════════════════════════════ */
 import { normalizeHex, colorDistance, describeColor, hexToLab, labToLch, lchToLab, labToHex, paletteAffinity, byAffinity, SIMILARITY } from './engine.js?v=0ea937e1d8';
-import { directionOf, relation } from './compose.js?v=1c6dde4a56';
+import { directionOf, relation } from './compose.js?v=412d6d8671';
 
 export const RULES = {
   'continuidad-pantalon': 'Calcetín en la familia del pantalón: la pierna se lee como una sola línea y el calzado queda como remate.',
