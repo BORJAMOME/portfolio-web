@@ -724,7 +724,8 @@ export function proposeFromPalette(palette, input) {
      cuentagotas: «Pantalón», «Calzado»…), va en esa prenda (slotFromLabel).
    · El resto, por sobriedad, la convención de «base, apoyo y acento»: el color con menos croma va en las prendas grandes
      y el más intenso en las pequeñas (un blanco o un crudo cuenta como apoyo, no como base).
-   · Calcetines: siempre en el figurín; por defecto, del color del pantalón (continuidad), y se pueden cambiar.
+   · Calcetines: siempre en el figurín; por defecto, del color del pantalón (continuidad), y se pueden cambiar (también a
+     blanco, aunque la paleta no lo tenga). El calzado admite además negro, blanco y marrón (EXTRA_COLORS).
    · Porcentajes = superficie aproximada de cada prenda en el dibujo (FIGURE_AREA), sumada por color. Son ILUSTRATIVOS. */
 export const FIGURE_SLOTS = ['outer', 'top', 'bottom', 'socks', 'shoes', 'accessory'];
 export const FIGURE_OPTIONAL = ['outer', 'accessory'];
@@ -740,7 +741,10 @@ const FIGURE_MAP = {
 export const FIGURE_AREA = { outer: 34, top: 13, bottom: 33, socks: 3, shoes: 7, accessory: 3 };   // superficie dibujada (aprox.)
 // calzado: además de los colores de la paleta, los habituales en un armario (no son de la combinación y se dice)
 export const SHOE_COLORS = [{ name: 'negro', hex: '#1C1C1C' }, { name: 'blanco', hex: '#F3F2EE' }, { name: 'marrón', hex: '#5A3A24' }];
-const SHOE_EXTRA = Object.fromEntries(SHOE_COLORS.map((c) => [c.hex, c]));
+// calcetines: el blanco, uno de los más habituales, siempre disponible aunque la paleta no lo tenga
+export const SOCK_COLORS = [{ name: 'blanco', hex: '#F3F2EE' }];
+export const EXTRA_COLORS = { shoes: SHOE_COLORS, socks: SOCK_COLORS };
+const extraFor = (slot, v) => (EXTRA_COLORS[slot] || []).find((c) => c.hex === v) || null;
 /**
  * Figurín de una paleta. assignment opcional: { slot: índice del color en la paleta | null } (null = sin esa prenda; solo
  * prenda exterior y accesorio son opcionales). Sin él, la propuesta automática (etiquetas y sobriedad).
@@ -754,16 +758,20 @@ export function paletteFigure(palette, assignment) {
   FIGURE_SLOTS.forEach((slot) => {
     const v = assignment && slot in assignment ? assignment[slot] : auto[slot];
     // el calzado admite también negro, blanco o marrón (su HEX en lugar del índice de un color de la paleta)
-    asg[slot] = v == null ? (FIGURE_OPTIONAL.includes(slot) ? null : auto[slot]) : cols.some((c) => c.index === v) || (slot === 'shoes' && SHOE_EXTRA[v]) ? v : auto[slot];
+    asg[slot] = v == null ? (FIGURE_OPTIONAL.includes(slot) ? null : auto[slot]) : cols.some((c) => c.index === v) || extraFor(slot, v) ? v : auto[slot];
   });
   const byIndex = Object.fromEntries(cols.map((c) => [c.index, c]));
-  if (SHOE_EXTRA[asg.shoes]) byIndex[asg.shoes] = Object.assign({ index: asg.shoes, extra: true }, SHOE_EXTRA[asg.shoes]);
+  const extras = [];
+  Object.keys(EXTRA_COLORS).forEach((slot) => {
+    const e = extraFor(slot, asg[slot]);
+    if (e && !byIndex[asg[slot]]) { byIndex[asg[slot]] = Object.assign({ index: asg[slot], extra: true }, e); extras.push(byIndex[asg[slot]]); }
+  });
   const area = Object.assign({}, FIGURE_AREA);
   if (asg.outer == null) { area.top += area.outer; area.outer = 0; }          // sin prenda exterior, la parte superior se ve entera
   const garments = FIGURE_SLOTS.filter((slot) => asg[slot] != null).map((slot) => ({ slot, hex: byIndex[asg[slot]].hex, index: asg[slot], area: area[slot] }));
   const total = garments.reduce((t, g) => t + g.area, 0) || 1;
   garments.forEach((g) => { g.share = g.area / total * 100; });
-  const list = cols.concat(SHOE_EXTRA[asg.shoes] ? [byIndex[asg.shoes]] : []);
+  const list = cols.concat(extras);
   const colors = list.map((f) => ({ hex: f.hex, name: f.name, index: f.index, extra: !!f.extra, share: garments.filter((g) => g.index === f.index).reduce((t, g) => t + g.share, 0), slots: garments.filter((g) => g.index === f.index).map((g) => g.slot) }));
   const isAuto = FIGURE_SLOTS.every((slot) => asg[slot] === auto[slot]);
   return { garments: garments.map((g) => ({ slot: g.slot, hex: g.hex, share: g.share })), colors, assignment: asg, auto: isAuto, illustrative: true };

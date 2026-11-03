@@ -1187,3 +1187,15 @@ test('Figurín: el calzado admite negro, blanco y marrón además de los colores
   const bad = C.paletteFigure(p, { bottom: '#1C1C1C' });
   assert.equal(bad.assignment.bottom, C.paletteFigure(p).assignment.bottom);
 });
+test('Figurín: los calcetines tienen siempre el blanco disponible, aunque la paleta no lo tenga', () => {
+  const p = pal('mcr', 'marino camel teja', ['#1F2A44', '#B48A5A', '#C0392B']);
+  assert.deepEqual(C.EXTRA_COLORS.socks.map((c) => c.name), ['blanco']);
+  const f = C.paletteFigure(p, { socks: '#F3F2EE' });
+  assert.equal(f.garments.find((g) => g.slot === 'socks').hex, '#F3F2EE');
+  assert.ok(f.colors.find((c) => c.extra && c.slots.join() === 'socks'), 'el blanco no sale como color fuera de la paleta');
+  // calcetines y calzado blancos: un solo color en la leyenda
+  const both = C.paletteFigure(p, { socks: '#F3F2EE', shoes: '#F3F2EE' });
+  assert.deepEqual(both.colors.filter((c) => c.extra).map((c) => c.slots.join()), ['socks,shoes']);
+  // el marrón es solo de calzado: en calcetines no vale y vuelve a la propuesta
+  assert.equal(C.paletteFigure(p, { socks: '#5A3A24' }).assignment.socks, C.paletteFigure(p).assignment.socks);
+});

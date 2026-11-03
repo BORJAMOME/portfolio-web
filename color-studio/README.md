@@ -116,8 +116,8 @@ prenda que coincide no basta. Son niveles de proximidad, no una nota de estilo n
   calcetines con canalé y calzado de frente), contorno del propio color y una luz suave desde la izquierda que no altera el color
   (velo del 8 %, por pernera). Diseño revisado con una crítica de diseño específica (legibilidad del color de cada prenda,
   calcetines, calzado, prendas claras sobre el fondo). **Editable**: en el detalle de una paleta, cada prenda tiene su selector de
-  color (exterior y accesorio se pueden quitar; el calzado admite también negro, blanco y marrón, los habituales, marcados como
-  «fuera de la paleta») y «Restablecer la propuesta» vuelve a la automática; la elección vive en la sesión,
+  color (exterior y accesorio se pueden quitar; el calzado admite también negro, blanco y marrón y los calcetines, blanco: los
+  habituales, marcados como «fuera de la paleta») y «Restablecer la propuesta» vuelve a la automática; la elección vive en la sesión,
   no se guarda. Propuesta automática: los colores con nombre de prenda (los de Inspiración llevan su etiqueta) van en su prenda;
   el resto por sobriedad (el color con menos croma en las prendas grandes; un blanco o un crudo, como apoyo); los calcetines,
   del color del pantalón. **El libro no da proporciones**: el porcentaje es la superficie aproximada de cada prenda en el dibujo

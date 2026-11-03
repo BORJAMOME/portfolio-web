@@ -486,8 +486,8 @@ window.APColor = (function () {
         var cur = fig.assignment[slot], id = 'cs-fe-' + slot;
         var choices = fig.colors.filter(function (c) { return !c.extra; }).map(function (c) { return { v: c.index, hex: c.hex, name: c.name || colorName(c.hex) }; });
         if (M.C.FIGURE_OPTIONAL.indexOf(slot) >= 0) choices.unshift({ v: null, hex: null, name: 'Sin ' + FIG_LABEL[slot].toLowerCase() });
-        // calzado: también los colores más habituales (negro, blanco, marrón), separados de los de la paleta
-        if (slot === 'shoes') M.C.SHOE_COLORS.forEach(function (c, k) { choices.push({ v: c.hex, hex: c.hex, name: c.name.replace(/^./, function (m) { return m.toUpperCase(); }) + ' (habitual en calzado)', sep: k === 0 }); });
+        // calzado y calcetines: también los colores más habituales (negro, blanco, marrón; blanco), separados de los de la paleta
+        (M.C.EXTRA_COLORS[slot] || []).forEach(function (c, k) { choices.push({ v: c.hex, hex: c.hex, name: c.name.replace(/^./, function (m) { return m.toUpperCase(); }) + ' (habitual en ' + FIG_LABEL[slot].toLowerCase() + ')', sep: k === 0 }); });
         box.appendChild(h('div', { class: 'cs-fig-row' }, [
           h('span', { class: 'cs-fig-k', id: id, text: FIG_LABEL[slot] }),
           h('div', { class: 'cs-fig-opts', role: 'radiogroup', 'aria-labelledby': id }, choices.map(function (ch) {
