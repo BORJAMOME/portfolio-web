@@ -894,7 +894,7 @@ window.APColor = (function () {
           h('ul', { class: 'cs-adapt', 'aria-label': 'Colores de la paleta frente al conjunto' }, rows.map(function (x) {
             var status = x.present ? [(x.present.family ? 'Misma familia en el conjunto: ' : 'En el conjunto: ') + x.present.label.toLowerCase(), x.present.family ? 'is-fam' : 'is-in']
               : x.candidate ? ['Podría ser: ' + garmentName(x.candidate.garment) + ' (' + x.candidate.label.toLowerCase() + ')', 'is-cand']
-              : ['No tienes una prenda de este color', 'is-miss'];
+              : [x.wanted ? M.E.SLOT[x.wanted].label + ': no tienes uno de este color' : 'No tienes una prenda de este color', 'is-miss'];
             return h('li', { class: 'cs-adapt-r ' + status[1] }, [
               swatch(x.hex, 'cs-sw--pal'),
               h('span', { class: 'cs-adapt-txt' }, [h('span', { class: 'cs-adapt-n' }, [x.name + ' ', h('span', { class: 'cs-hex', text: x.hex })]), h('span', { class: 'cs-adapt-s', text: status[0] })]),
@@ -1356,11 +1356,12 @@ window.APColor = (function () {
         return h('li', { class: 'cs-adapt-r ' + (r.candidate ? 'is-cand' : 'is-miss') }, [
           swatch(r.hex, 'cs-sw--pal'),
           h('span', { class: 'cs-adapt-txt' }, [h('span', { class: 'cs-adapt-n' }, [(effPal(x)[r.index] && effPal(x)[r.index].label ? effPal(x)[r.index].label + ' · ' : '') + r.name + ' ', h('span', { class: 'cs-hex', text: r.hex })]),
-            h('span', { class: 'cs-adapt-s', text: r.candidate ? 'Cerca: ' + garmentName(r.candidate.garment) + ' (' + r.candidate.label.toLowerCase() + ')' : 'No tienes una prenda de este color' })]),
+            h('span', { class: 'cs-adapt-s', text: r.candidate ? (r.wanted ? M.E.SLOT[r.wanted].label + ': ' : 'Podría ser: ') + garmentName(r.candidate.garment) + (r.wanted ? '' : ' (' + r.candidate.label.toLowerCase() + ')')
+              : r.wanted ? M.E.SLOT[r.wanted].label + ': no tienes uno de este color' : 'No tienes una prenda de este color' })]),
           r.candidate ? thumb(r.candidate.garment, 'cs-thumb--s') : h('span', { class: 'cs-adapt-gap', 'aria-hidden': 'true' })
         ]);
       })));
-      sec.appendChild(h('p', { class: 'cs-fine', text: 'Prenda de tu armario con el color principal más próximo (ΔE00 ≤ 12). Coincidir en color no basta para reproducir el look: el corte, el material, el contexto y tener las demás piezas también cuentan.' }));
+      sec.appendChild(h('p', { class: 'cs-fine', text: 'Si el color lleva la prenda (Pantalón, Calzado…), se busca solo entre esas prendas; sin ella, se monta un conjunto: cada prenda una vez y una por tipo, con el color principal más próximo (ΔE00 ≤ 12). Etiqueta los colores con «Seleccionar colores» para afinarlo. Coincidir en color no basta para reproducir el look: el corte, el material y el contexto también cuentan.' }));
       return sec;
     }
 

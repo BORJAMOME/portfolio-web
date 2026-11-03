@@ -1116,3 +1116,28 @@ test('Inspiraciones relacionadas con una combinación: colores próximos (no id�
   assert.ok(['identical', 'close'].includes(r[0].level));
   assert.equal(r[1].covered, 2);
 });
+test('Con tu armario: el color del pantalón se busca entre pantalones (no entre zapatillas) y el conjunto no repite prenda ni tipo', () => {
+  assert.equal(C.slotFromLabel('Pantalón'), 'bottom'); assert.equal(C.slotFromLabel('Vaquero'), 'bottom'); assert.equal(C.slotFromLabel('Calzado'), 'shoes');
+  assert.equal(C.slotFromLabel('zapatillas blancas'), 'shoes'); assert.equal(C.slotFromLabel('Camisa bajo el jersey'), 'inner'); assert.equal(C.slotFromLabel('Camiseta interior'), 'inner');
+  assert.equal(C.slotFromLabel('Jersey'), 'top'); assert.equal(C.slotFromLabel('Abrigo'), 'outer'); assert.equal(C.slotFromLabel('Calcetines'), 'socks'); assert.equal(C.slotFromLabel('Cinturón'), 'accessory');
+  assert.equal(C.slotFromLabel('beige bonito'), null); assert.equal(C.slotFromLabel(''), null);
+  const wardrobe = [garm('zapas', 'calzado', '#F1EEE6'), garm('chino', 'pantalones', '#E2DACB'), garm('jersey', 'jerseis', '#22304B'), garm('bota', 'calzado', '#6B4A33'), garm('calc', 'calcetines', '#23314C')];
+  // caso del fallo: el color del pantalón está más cerca de las zapatillas que del chino
+  const labeled = C.matchColorsToWardrobe([{ hex: '#F0ECE3', label: 'Pantalón' }, { hex: '#6A4934', label: 'Calzado' }, { hex: '#21304A', label: 'Jersey' }], wardrobe);
+  assert.ok(E.colorDistance('#F0ECE3', '#F1EEE6') < E.colorDistance('#F0ECE3', '#E2DACB'), 'el caso de prueba reproduce el fallo');
+  assert.deepEqual(labeled.map((r) => r.candidate && r.candidate.garment.id), ['chino', 'bota', 'jersey']);
+  assert.deepEqual(labeled.map((r) => r.slot), ['bottom', 'shoes', 'top']);
+  // con etiqueta y sin una prenda de ese tipo en ese color: no se cambia de tipo
+  const none = C.matchColorsToWardrobe([{ hex: '#F1EEE6', label: 'Abrigo' }], wardrobe);
+  assert.equal(none[0].candidate, null); assert.equal(none[0].slot, 'outer');
+  // sin etiquetas: un conjunto coherente (no dos calzados; un color con mucha presencia no va a calcetines)
+  const free = C.matchColorsToWardrobe([{ hex: '#F0ECE3', weight: 40 }, { hex: '#E6DED0', weight: 30 }, { hex: '#22304B', weight: 30 }], wardrobe);
+  const slots = free.filter((r) => r.candidate).map((r) => r.candidate.slot);
+  assert.equal(new Set(slots).size, slots.length, 'huecos repetidos: ' + slots);
+  assert.equal(new Set(free.filter((r) => r.candidate).map((r) => r.candidate.garment.id)).size, slots.length, 'prenda repetida');
+  assert.ok(!slots.includes('socks'), 'un color con el 30 % de presencia propuesto como calcetines');
+  // la sección de Inspiración (adaptPalette sin outfit) usa las etiquetas
+  const rows = C.adaptPalette({ colors: [{ hex: '#F0ECE3', label: 'Pantalón' }, { hex: '#6A4934', label: 'Calzado' }] }, { slots: {}, garments: wardrobe, palettes: [] });
+  assert.deepEqual(rows.map((r) => r.candidate && r.candidate.garment.id), ['chino', 'bota']);
+  assert.deepEqual(rows.map((r) => r.wanted), ['bottom', 'shoes']);
+});

@@ -327,8 +327,12 @@ Guarda la imagen y el enlace, extrae la paleta en el dispositivo y la deja usar 
   estimación de la foto) o reutiliza la idéntica que ya exista, y la deja elegida como referencia del Studio. A partir de ahí trabaja el
   motor de siempre (Paletas que inspiran, Comparar, `cr-paleta`) sin cambios. La paleta de la Biblioteca es una copia: corregir después la de la
   referencia no la cambia (volver a pulsar crea otra si ya no es idéntica).
-- **Con tu armario**: para cada color, la prenda con el color principal más próximo (ΔE00 ≤ 12, `compose.adaptPalette`). Avisa de que
-  coincidir en color no basta para reproducir un look.
+- **Con tu armario** (`compose.matchColorsToWardrobe`, también en «Paletas que inspiran»): respeta el tipo de prenda. Si el color
+  lleva la prenda en su etiqueta (Pantalón, Calzado, «Camisa bajo el jersey»…, `slotFromLabel`), solo se busca en ese tipo y, si no
+  tienes ninguna de ese color, se dice; sin etiqueta, se monta un conjunto: cada prenda una vez, una por hueco y nunca un color con
+  mucha presencia (≥ 12 %) en calcetines o accesorios, emparejando primero lo más próximo (ΔE00 ≤ 12). Antes se elegía la prenda de
+  color más próximo de todo el armario, así que el color del pantalón podía acabar en unas zapatillas. Avisa de que coincidir en
+  color no basta para reproducir un look.
 - **Referencias parecidas**: mismo criterio que la Biblioteca (`engine.rankPalettes`), con al menos dos colores en común (ΔE00 ≤ 10).
 - **Rendimiento**: se cargan todas las filas de una vez (son metadatos y paletas pequeñas); las imágenes, perezosas. Con miles de referencias
   habría que paginar.

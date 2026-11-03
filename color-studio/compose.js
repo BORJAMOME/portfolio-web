@@ -609,16 +609,77 @@ export function explainFamilyMatch(match) {
 }
 
 export const PALETTE_ROLE = { tonal: 'Tonal', apoyo: 'De apoyo', contraste: 'De contraste' };
+
+/* ═══════════ COLORES → PRENDAS DE TU ARMARIO ═══════════
+   Para reproducir una referencia (una inspiración o una paleta) con tu ropa no basta con la prenda de color más próximo:
+   el color del pantalón tiene que buscarse entre tus pantalones, no entre tus zapatillas. Reglas:
+   · Si el color lleva la prenda escrita (etiqueta del cuentagotas: «Pantalón», «Calzado», «Camisa bajo el jersey»…), solo
+     se busca en ese tipo de prenda (slotFromLabel). Sin una prenda de ese tipo y color, se dice: no se cambia de tipo.
+   · Sin etiqueta, se monta un conjunto coherente: cada prenda una sola vez y como mucho una por hueco (no dos calzados),
+     emparejando primero lo más próximo (ΔE00 ≤ 12). Un color con mucha presencia en la foto (≥ 12 %) no se asigna a
+     calcetines ni a accesorios, que ocupan poco; los colores etiquetados se reparten antes que los demás. */
+const LABEL_RULES = [
+  ['socks', /calcet/],
+  ['inner', /interior|debajo|bajo (el|la) /],
+  ['outer', /abrigo|chaquet|cazadora|american|blazer|gabardin|parka|plum[ií]fero|sobrecamisa|chaleco|anorak|trenca/],
+  ['shoes', /calzado|zapat|bota|botin|deportiv|sneaker|mocas[ií]n|sandalia|n[aá]utic|alpargat|oxford|derby|loafer|tenis/],
+  ['bottom', /pantal[oó]n|vaquer|jean|chino|falda|bermuda|short|jogger|cargo/],
+  ['accessory', /accesorio|cintur[oó]n|bufanda|gorr|sombrero|bolso|mochila|corbata|pañuelo|reloj|gafas|cartera|guante/],
+  ['top', /camis|jersey|su[eé]ter|polo|sudadera|blusa|top\b|c[aá]rdigan|rebeca|punto|cuello/]
+];
+/** Hueco del Studio que corresponde a lo escrito en una etiqueta («Pantalón» → bottom). null si no se reconoce. */
+export function slotFromLabel(text) {
+  const t = String(text || '').toLowerCase().normalize('NFC');
+  if (!t.trim()) return null;
+  const hit = LABEL_RULES.find(([, re]) => re.test(t));
+  return hit ? hit[0] : null;
+}
+/**
+ * Empareja colores con prendas reales respetando el tipo de prenda.
+ * colors: [{ hex, label?, weight? }] · garments: armario · opts.exclude: ids de prendas que no se pueden usar
+ * → por cada color, en el mismo orden: { hex, slot (pedido por la etiqueta o el de la prenda elegida), bySlot ('label' | null),
+ *   candidate: { garment, slot, label, dE } | null }
+ */
+export function matchColorsToWardrobe(colors, garments, opts = {}) {
+  const exclude = new Set(opts.exclude || []), tol = opts.tolerance || SIMILARITY.RELATED;
+  const rows = (colors || []).map((c) => ({ hex: normalizeHex(c.hex), wanted: slotFromLabel(c.label), weight: Number(c.weight) || 0 }));
+  const pairs = [];
+  rows.forEach((r, i) => {
+    if (!r.hex) return;
+    (garments || []).forEach((g) => {
+      if (exclude.has(g.id) || !normalizeHex(g.primary_color)) return;
+      const d = colorDistance(g.primary_color, r.hex);
+      if (d > tol) return;
+      SLOTS.filter((s) => s.categories.includes(g.category)).forEach((s) => {
+        if (r.wanted && s.id !== r.wanted) return;                                   // la etiqueta manda
+        if (!r.wanted && r.weight >= 12 && (s.id === 'socks' || s.id === 'accessory')) return;
+        // sin etiqueta, una camisa o camiseta va antes como parte superior que como interior, y lo pequeño, al final
+        const cost = d + (r.wanted ? 0 : (s.id === 'inner' ? 2 : 0) + (s.id === 'socks' || s.id === 'accessory' ? 4 : 0));
+        pairs.push({ i, g, slot: s.id, d, cost, labeled: !!r.wanted });
+      });
+    });
+  });
+  pairs.sort((a, b) => (b.labeled - a.labeled) || (a.cost - b.cost));
+  const done = new Set(), usedG = new Set(), usedS = new Set(), pick = {};
+  pairs.forEach((p) => {
+    if (done.has(p.i) || usedG.has(p.g.id) || usedS.has(p.slot)) return;
+    done.add(p.i); usedG.add(p.g.id); usedS.add(p.slot);
+    pick[p.i] = { garment: p.g, slot: p.slot, label: SLOT[p.slot].label, dE: p.d };
+  });
+  return rows.map((r, i) => ({ hex: r.hex, slot: r.wanted || (pick[i] ? pick[i].slot : null), bySlot: r.wanted ? 'label' : null, candidate: pick[i] || null }));
+}
+
 /**
  * Cada color de la paleta frente al conjunto: si ya está (y en qué prenda), qué prenda real de tu armario
- * podría representarlo (ΔE00 ≤ 12) y qué papel cumpliría respecto al color dominante.
+ * podría representarlo (ΔE00 ≤ 12, respetando el tipo de prenda: ver matchColorsToWardrobe) y qué papel cumpliría
+ * respecto al color dominante.
  */
 export function adaptPalette(palette, input) {
   const c = context(input);
   const dom = c.before.valid ? c.before.dominant.hex : null;
   const entries = [];
   c.items.forEach((it) => (it.colors || []).forEach((col) => entries.push({ hex: col.hex, slot: it.slot, label: it.label })));
-  return (palette.colors || []).map((pc, i) => {
+  const rows = (palette.colors || []).map((pc, i) => {
     const hex = normalizeHex(pc.hex);
     if (!hex) return null;
     let present = null;
@@ -630,23 +691,20 @@ export function adaptPalette(palette, input) {
         if (g.family === f.family && Math.abs(g.L - f.L) <= FAMILY_DL && (!present || d < present.dE)) present = Object.assign({ dE: d, family: true }, e);
       });
     }
-    let candidate = null;
-    if (!present) {
-      c.garments.forEach((g) => {
-        if (c.used.has(g.id)) return;
-        const d = colorDistance(g.primary_color, hex);
-        const slot = SLOTS.find((s) => s.categories.includes(g.category));
-        if (slot && d <= 12 && (!candidate || d < candidate.dE)) candidate = { garment: g, slot: slot.id, label: slot.label, dE: d };
-      });
-    }
     let role = null;
     if (dom) {
       const r = relation(dom, hex);
       // tonos apagados con poca diferencia de luz acompañan aunque sus tonos se opongan (marino y marrón)
       role = r.kind === 'igual' || r.kind === 'tonal' ? 'tonal' : r.light === 'alto' || ((r.kind === 'complementaria' || r.kind === 'contraste-tono') && !r.muted) ? 'contraste' : 'apoyo';
     }
-    return { index: i, hex, name: pc.name || nameOfHex(hex), original: pc.original || null, present, candidate, role };
+    return { index: i, hex, name: pc.name || nameOfHex(hex), original: pc.original || null, label: pc.label || null, weight: pc.weight, present, candidate: null, wanted: null, role };
   }).filter(Boolean);
+  // los colores que el conjunto aún no tiene se reparten entre tus prendas como un conjunto: tipo de prenda respetado,
+  // sin repetir prenda ni hueco, y sin las prendas que ya llevas
+  const missing = rows.filter((r) => !r.present);
+  const match = matchColorsToWardrobe(missing.map((r) => ({ hex: r.hex, label: r.label, weight: r.weight })), c.garments, { exclude: [...c.used] });
+  missing.forEach((r, k) => { r.candidate = match[k].candidate; r.wanted = match[k].bySlot ? match[k].slot : null; });
+  return rows;
 }
 /** Propuesta creativa a partir de una paleta concreta (para «Comparar» desde las referencias). */
 export function proposeFromPalette(palette, input) {
