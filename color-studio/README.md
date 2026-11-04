@@ -134,7 +134,8 @@ prenda que coincide no basta. Son niveles de proximidad, no una nota de estilo n
   tus prendas (parte superior, pantalón y calzado; exterior e interior opcionales, la interior solo bajo un jersey o una
   exterior). Cada prenda a ΔE00 ≤ 12 de un color de la combinación, al menos 2 colores representados y el color mayor con
   ≥ 30 % de la superficie. Orden: colores representados y ΔE00 medio ponderado. Solo «muy similar» (≤ 6) o, si no hay,
-  relacionado con media ≤ 9; como mucho 6, una prenda en 2 como mucho. Se recalculan con el armario de cada momento.
+  relacionado con media ≤ 9; como mucho 6, una prenda en 2 como mucho, y como mucho una prenda grande estampada (dos dibujos
+  compiten). Se recalculan con el armario de cada momento (también si cambia el estampado de una prenda).
 - **Dirección cromática**: cada dirección prueba primero `biblioteca` (completar con una prenda real una combinación que el
   conjunto ya representa en parte y que encaja con la dirección: sobria para minimalista, con un color intenso para
   creativa) y después sus criterios de siempre. Cada propuesta y la lectura actual citan la combinación más próxima.
