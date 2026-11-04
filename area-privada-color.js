@@ -47,6 +47,7 @@ window.APColor = (function () {
   var mem = {
     lib: { q: '', count: '', family: '', tag: '', source: '', fav: false },
     ward: { q: '', cat: '', view: 'photo' },
+    sugg: { season: null, occasion: '' },        // contexto de «Outfits con tu armario» (temporada por defecto: la de hoy)
     insp: { q: '', style: '', collection: '', season: '', family: '', fav: false, review: false, sort: 'saved', open: false, view: 'photo' },
     sock: { trousers: null, shoes: null },      // colores escritos en la guía y aplicados con «Actualizar»: solo valen en la guía
     sockPending: { tr: null, sh: null },        // texto escrito y aún no aplicado (sobrevive a repintar la guía)
@@ -162,8 +163,10 @@ window.APColor = (function () {
         return Promise.all([
           ctx.api('/rest/v1/cs_garments?select=*&order=created_at.desc'),
           ctx.api('/rest/v1/cs_palettes?select=*&order=updated_at.desc'),
-          ctx.api('/rest/v1/cs_outfits?select=*&order=updated_at.desc')
-        ]).then(function (r) { cache = { garments: r[0] || [], palettes: r[1] || [], outfits: r[2] || [], at: Date.now() }; });
+          ctx.api('/rest/v1/cs_outfits?select=*&order=updated_at.desc'),
+          // uso real (supabase/color-studio-contexto.sql): sin la tabla, las sugerencias funcionan igual, sin «Lo he llevado»
+          ctx.api('/rest/v1/cs_wear?select=*&order=worn_on.desc&limit=500').catch(function (err) { if (err && err.auth) throw err; return null; })
+        ]).then(function (r) { cache = { garments: r[0] || [], palettes: r[1] || [], outfits: r[2] || [], wear: r[3], at: Date.now() }; });
       },
       // Inspiración: tabla propia (color-studio-inspiracion.sql). Si no existe, solo esa vista lo explica.
       // Estilos y colecciones salen de ap_opciones (Configuración); sin esa tabla se usan los estilos por defecto.
@@ -765,21 +768,56 @@ window.APColor = (function () {
       var sec = h('section', { class: 'cs-card cs-sugg', 'aria-labelledby': 'cs-sugg-t' }, [h('div', { class: 'cs-card-head' }, [h('h3', { class: 'cs-h3', id: 'cs-sugg-t', text: 'Outfits con tu armario' })])]);
       var g = data().garments, pals = data().palettes;
       if (!g.length || !pals.length) { sec.appendChild(h('p', { class: 'cs-note', text: !g.length ? 'Registra prendas en el Armario: las sugerencias se construyen solo con lo que tienes.' : 'Importa o crea combinaciones en la Biblioteca: son la referencia de las sugerencias.' })); return sec; }
-      var r = M.C.suggestOutfits({ garments: g, palettes: pals, limit: 6 });
-      if (!r.suggestions.length) { sec.appendChild(h('p', { class: 'cs-note', 'data-key': 'sugg-none', text: 'Con tu armario actual no hay un conjunto completo (parte superior, pantalón y calzado) lo bastante próximo a ninguna combinación de tu Biblioteca. Es preferible no sugerir nada a sugerir algo flojo.' })); return sec; }
+      var sc = mem.sugg; if (!sc.season) sc.season = M.C.seasonOf(new Date());
+      var seasonSel = ui.select([['', 'Cualquier temporada']].concat(M.D.GARMENT_SEASONS), sc.season);
+      seasonSel.id = 'cs-sg-season'; seasonSel.setAttribute('data-key', 'sugg-season');
+      seasonSel.addEventListener('change', function () { sc.season = seasonSel.value || 'todas'; refresh(); });
+      if (sc.season === 'todas') seasonSel.value = '';
+      var occSel = ui.select([['', 'Cualquier ocasión']].concat(M.D.GARMENT_FORMALITY), sc.occasion);
+      occSel.id = 'cs-sg-occ'; occSel.setAttribute('data-key', 'sugg-occasion');
+      occSel.addEventListener('change', function () { sc.occasion = occSel.value; refresh(); });
+      sec.appendChild(h('div', { class: 'cs-sugg-ctx' }, [
+        h('div', { class: 'cs-ins-f' }, [h('label', { class: 'cs-ins-fl', for: 'cs-sg-season', text: 'Temporada' }), seasonSel]),
+        h('div', { class: 'cs-ins-f' }, [h('label', { class: 'cs-ins-fl', for: 'cs-sg-occ', text: 'Ocasión' }), occSel])]));
+      var context = { season: sc.season === 'todas' ? null : sc.season, occasion: sc.occasion || null };
+      var r = M.C.suggestOutfits({ garments: g, palettes: pals, limit: 6, context: context, wear: data().wear || [] });
+      if (!r.suggestions.length) { sec.appendChild(h('p', { class: 'cs-note', 'data-key': 'sugg-none', text: 'Con tu armario actual ' + (context.season || context.occasion ? 'y este contexto ' : '') + 'no hay un conjunto completo (parte superior, pantalón y calzado) lo bastante próximo a ninguna combinación de tu Biblioteca. Es preferible no sugerir nada a sugerir algo flojo.' })); return sec; }
       sec.appendChild(h('ul', { class: 'cs-sugg-list' }, r.suggestions.map(function (x, i) {
         return h('li', { class: 'cs-sugg-item' }, [
           figureBlock(x.figure, { compact: true }),
           h('div', { class: 'cs-sugg-body' }, [
             h('ul', { class: 'cs-sugg-g' }, x.items.map(function (it) { return h('li', null, [thumb(it.garment, 'cs-thumb--s'), h('span', { class: 'cs-sugg-gt' }, [h('span', { class: 'cs-slot-k', text: it.label }), h('span', { class: 'cs-slot-n', text: garmentName(it.garment) })])]); })),
             h('p', { class: 'cs-libref' }, [h('span', { class: 'cs-libref-k', text: 'Referencia: ' }), band(x.palette.colors, { cls: 'cs-band--libref' }), h('span', { class: 'cs-libref-n', text: '«' + (x.palette.name || 'sin nombre') + '»' })]),
-            h('p', { class: 'cs-sugg-meta' }, [simBadge(x.level), h('span', { class: 'cs-fine', text: x.covered + ' de ' + x.paletteSize + ' colores · ΔE00 medio ' + fmt1(x.meanDE) })]),
-            btn(['Usar en el Studio', h('span', { class: 'sr-only', text: ' (sugerencia ' + (i + 1) + ')' })], 'cs-btn-s', function () { useSuggestion(x); }, { 'data-key': 'sugg-' + i })
+            h('p', { class: 'cs-sugg-meta' }, [simBadge(x.level), h('span', { class: 'cs-fine', text: x.covered + ' de ' + x.paletteSize + ' colores · ΔE00 medio ' + fmt1(x.meanDE) }),
+              x.lastWorn != null ? h('span', { class: 'cs-fine', 'data-key': 'sugg-worn-' + i, text: x.lastWorn === 0 ? 'Llevado hoy' : 'Llevado hace ' + x.lastWorn + (x.lastWorn === 1 ? ' día' : ' días') }) : null]),
+            h('div', { class: 'cs-sugg-act' }, [
+              btn(['Usar en el Studio', h('span', { class: 'sr-only', text: ' (sugerencia ' + (i + 1) + ')' })], 'cs-btn-s', function () { useSuggestion(x); }, { 'data-key': 'sugg-' + i }),
+              data().wear ? btn([x.lastWorn === 0 ? 'Llevado hoy' : 'Lo he llevado', h('span', { class: 'sr-only', text: ' (sugerencia ' + (i + 1) + ')' })], 'cs-btn-s', function () { if (x.lastWorn !== 0) logWear(x, 'worn'); },
+                { 'aria-pressed': x.lastWorn === 0 ? 'true' : 'false', 'data-key': 'sugg-wore-' + i }) : null,
+              data().wear ? btn([h('span', { 'aria-hidden': 'true', text: x.liked ? '♥ ' : '♡ ' }), 'Me gusta', h('span', { class: 'sr-only', text: ' (sugerencia ' + (i + 1) + ')' })], 'cs-btn-s' + (x.liked ? ' is-on' : ''),
+                function () { x.liked ? unlike(x) : logWear(x, 'liked'); }, { 'aria-pressed': x.liked ? 'true' : 'false', 'data-key': 'sugg-like-' + i }) : null
+            ])
           ])
         ]);
       })));
-      sec.appendChild(h('p', { class: 'cs-fine', text: 'Cada prenda está cerca de un color de la combinación (ΔE00 ≤ 12) y la combinación queda representada en conjunto, no por una sola prenda. Se ordenan por colores representados y ΔE00 medio ponderado por superficie. Calcetines y accesorios, en la guía de calcetines.' }));
+      sec.appendChild(h('p', { class: 'cs-fine', text: 'Cada prenda está cerca de un color de la combinación (ΔE00 ≤ 12) y la combinación queda representada en conjunto, no por una sola prenda. Primero lo que te gusta y lo que no llevaste en las últimas dos semanas; después, colores representados y ΔE00 medio. Una prenda sin temporada vale todo el año y sin formalidad, para cualquier ocasión. Calcetines y accesorios, en la guía de calcetines.' }));
       return sec;
+    }
+    // uso real: «Lo he llevado» (hoy) y «Me gusta» se guardan en cs_wear; las sugerencias se reordenan solas
+    function logWear(x, kind) {
+      if (demo) return demoBlocked();
+      st.insert('cs_wear', [{ kind: kind, garment_ids: x.garmentIds, palette_id: x.palette.id }]).then(function (r) {
+        cache.wear = [r[0]].concat(cache.wear || []);
+        refresh(); toast(kind === 'worn' ? 'Anotado: lo llevas hoy. No se volverá a sugerir primero en 14 días.' : 'Guardado en «Me gusta»: sube en las sugerencias.');
+      }).catch(failSoft);
+    }
+    function unlike(x) {
+      if (demo) return demoBlocked();
+      var ids = (cache.wear || []).filter(function (w) { return w.kind === 'liked' && w.garment_ids.slice().sort().join() === x.garmentIds.slice().sort().join(); }).map(function (w) { return w.id; });
+      Promise.all(ids.map(function (id) { return st.remove('cs_wear', id); })).then(function () {
+        cache.wear = (cache.wear || []).filter(function (w) { return ids.indexOf(w.id) < 0; });
+        refresh(); toast('Quitado de «Me gusta».');
+      }).catch(failSoft);
     }
     function useSuggestion(x) {
       var d = cur();
@@ -2450,6 +2488,14 @@ window.APColor = (function () {
       var name = ui.input('text', g ? g.name || '' : '', { maxlength: '120' });
       var sub = ui.input('text', g ? split.detail || '' : '', { maxlength: '60' });
       var pattern = ui.select(M.D.PATTERNS, g ? g.pattern : 'liso');
+      // contexto (supabase/color-studio-contexto.sql): sin temporada = todo el año; sin formalidad = cualquier ocasión
+      var seasons = (g && g.seasons || []).slice();
+      var seasonBox = h('div', { class: 'cs-chips cs-chips--wrap', role: 'group', 'aria-labelledby': 'cs-g-seasons-l' }, M.D.GARMENT_SEASONS.map(function (o) {
+        var b = h('button', { type: 'button', class: 'cs-chip', 'aria-pressed': seasons.indexOf(o[0]) >= 0 ? 'true' : 'false', 'data-key': 'season-' + o[0], text: o[1] });
+        b.addEventListener('click', function () { var i = seasons.indexOf(o[0]); if (i >= 0) seasons.splice(i, 1); else seasons.push(o[0]); b.setAttribute('aria-pressed', i >= 0 ? 'false' : 'true'); });
+        return b;
+      }));
+      var formality = ui.select(M.D.GARMENT_FORMALITY, g ? g.formality || '' : '', 'Cualquier ocasión');
       var material = ui.input('text', g ? g.material || '' : '', { maxlength: '80' });
       var notes = ui.area(g ? g.notes || '' : '', 2, 2000);
       var preview = h('div', { class: 'cs-photo' });
@@ -2607,6 +2653,9 @@ window.APColor = (function () {
           btn('+ Añadir color secundario', 'cs-link', function () { addSecondary(''); }), sharesBox]),
         ui.field('cs-g-name', 'Nombre (opcional)', name), ui.field('cs-g-sub', 'Detalle (opcional)', sub, { hint: 'Chino, oxford, running, tobillero…' }),
         ui.field('cs-g-pattern', 'Patrón', pattern), ui.field('cs-g-mat', 'Material', material),
+        h('div', { class: 'apf-field' }, [h('span', { class: 'ap-field-label', id: 'cs-g-seasons-l', text: 'Temporada' }), seasonBox,
+          h('p', { class: 'apf-hint', text: 'Ninguna marcada: vale todo el año.' })]),
+        ui.field('cs-g-form', 'Formalidad', formality),
         ui.field('cs-g-notes', 'Notas', notes, { wide: true }),
         del ? h('div', { class: 'apf-wide' }, [del]) : null
       ].filter(Boolean);
@@ -2614,7 +2663,8 @@ window.APColor = (function () {
         var type = M.E.garmentTypeInfo(cat.value);
         if (!type) throw ui.invalid('Elige un tipo de prenda.', cat);
         var v = M.D.validateGarment({ category: type.category, primary_color: s.primary, secondary_colors: s.secondary.filter(Boolean), color_shares: s.shares,
-          name: name.value, subcategory: M.E.joinSubcategory(type.label, sub.value), pattern: pattern.value, material: material.value, notes: notes.value });
+          name: name.value, subcategory: M.E.joinSubcategory(type.label, sub.value), pattern: pattern.value, material: material.value, notes: notes.value,
+          seasons: seasons, formality: formality.value || null });
         if (!v.ok) throw ui.invalid(v.errors[0], /categor/i.test(v.errors[0]) ? cat : /principal/i.test(v.errors[0]) ? primary.text : null);
         var row = v.value, newPath = null, upload = Promise.resolve();
         if (s.prep) {

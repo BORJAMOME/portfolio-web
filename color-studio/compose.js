@@ -809,12 +809,37 @@ export function outfitFigure(items) {
      quedan en «muy similar» o mejor (ΔE00 medio ≤ 6) o, si no hay, «relacionado» con ΔE00 medio ≤ 9. Mejor pocas que flojas.
    · Estampados: como mucho una prenda grande con dibujo (parte superior, pantalón o exterior); dos dibujos compiten.
    · Variedad: una prenda aparece como mucho en 2 sugerencias y no se repite el mismo conjunto con otra paleta.
+   · Contexto: temporada y ocasión filtran las prendas (fitsContext); lo que te gusta sube y lo llevado hace menos de 14 días
+     baja (wearIndex, tabla cs_wear).
    Se recalcula con el armario de cada momento: una prenda nueva entra sola en las siguientes sugerencias. */
-export const SUGGEST = { PER_SLOT: 3, MAX_MEAN: 9, GOOD_MEAN: SIMILARITY.CLOSE, MAX_REUSE: 2, MIN_DOMINANT: 30 };
+export const SUGGEST = { PER_SLOT: 3, MAX_MEAN: 9, GOOD_MEAN: SIMILARITY.CLOSE, MAX_REUSE: 2, MIN_DOMINANT: 30, RECENT_DAYS: 14 };
+/* Contexto (supabase/color-studio-contexto.sql): una prenda sin temporadas vale todo el año y una sin formalidad, para
+   cualquier ocasión. Ocasión formal → fuera lo informal; informal → fuera lo formal; smart casual → todo. */
+export function seasonOf(date) { const m = (date || new Date()).getMonth(); return m >= 2 && m <= 4 ? 'primavera' : m >= 5 && m <= 7 ? 'verano' : m >= 8 && m <= 10 ? 'otono' : 'invierno'; }
+export function fitsContext(g, ctx) {
+  if (!ctx) return true;
+  if (ctx.season && Array.isArray(g.seasons) && g.seasons.length && !g.seasons.includes(ctx.season)) return false;
+  if (ctx.occasion === 'formal' && g.formality === 'casual') return false;
+  if (ctx.occasion === 'casual' && g.formality === 'formal') return false;
+  return true;
+}
+/** Uso real (cs_wear): firma del conjunto (ids ordenados) → { liked, lastWorn (días desde la última vez) } */
+export function wearIndex(wear, today) {
+  const out = {}, now = (today || new Date()).getTime();
+  (wear || []).forEach((w) => {
+    const sig = (w.garment_ids || []).slice().sort().join();
+    const e = out[sig] || (out[sig] = { liked: false, likedId: null, lastWorn: null });
+    if (w.kind === 'liked') { e.liked = true; e.likedId = w.id; }
+    if (w.kind === 'worn') { const d = Math.floor((now - new Date(w.worn_on + 'T12:00:00').getTime()) / 86400000); if (e.lastWorn == null || d < e.lastWorn) e.lastWorn = Math.max(0, d); }
+  });
+  return out;
+}
 let suggestMemo = { key: null, value: null };
 export function suggestOutfits(input = {}) {
-  const garments = input.garments || [], palettes = (input.palettes || []).filter((p) => (p.colors || []).length >= 2), limit = input.limit || 6;
-  const key = garments.map((g) => g.id + g.category + g.primary_color + (g.pattern || '')).join('|') + '#' + palettes.map((p) => p.id + (p.colors || []).map((c) => c.hex).join('')).join('|') + '#' + limit;
+  const ctxF = input.context || null, wear = wearIndex(input.wear, input.today);
+  const garments = (input.garments || []).filter((g) => fitsContext(g, ctxF)), palettes = (input.palettes || []).filter((p) => (p.colors || []).length >= 2), limit = input.limit || 6;
+  const key = garments.map((g) => g.id + g.category + g.primary_color + (g.pattern || '')).join('|') + '#' + palettes.map((p) => p.id + (p.colors || []).map((c) => c.hex).join('')).join('|') + '#' + limit +
+    '#' + JSON.stringify(ctxF) + '#' + JSON.stringify(wear);
   if (suggestMemo.key === key) return suggestMemo.value;
   const bySlot = {};
   ['outer', 'top', 'inner', 'bottom', 'shoes'].forEach((slot) => { bySlot[slot] = garments.filter((g) => SLOT[slot].categories.includes(g.category) && normalizeHex(g.primary_color)); });
@@ -844,7 +869,10 @@ export function suggestOutfits(input = {}) {
     })))));
     if (best) found.push(Object.assign(best, { palette: p }));
   });
-  found.sort((a, b) => (b.covered - a.covered) || (a.meanDE - b.meanDE));
+  // uso real: lo que te gusta sube; lo que llevaste hace menos de RECENT_DAYS días baja (no se quita: se dice cuándo)
+  const sigOf = (f) => f.parts.map(([, x]) => x.g.id).sort().join();
+  found.forEach((f) => { const w = wear[sigOf(f)] || {}; f.liked = !!w.liked; f.likedId = w.likedId || null; f.lastWorn = w.lastWorn == null ? null : w.lastWorn; f.recent = f.lastWorn != null && f.lastWorn < SUGGEST.RECENT_DAYS; });
+  found.sort((a, b) => (a.recent - b.recent) || (b.liked - a.liked) || (b.covered - a.covered) || (a.meanDE - b.meanDE));
   const good = found.filter((f) => f.meanDE <= SUGGEST.GOOD_MEAN);
   const pool = good.length ? good : found;
   const out = [], uses = {}, seen = new Set();
@@ -858,7 +886,8 @@ export function suggestOutfits(input = {}) {
     const items = buildItems(slots, garments), analysis = analyzeOutfit(items);
     const affinity = paletteAffinity(f.palette, outfitColorsOf(analysis), { maxOff: 1 });
     out.push({ id: f.palette.id + ':' + sig, palette: f.palette, slots, items, analysis, affinity, meanDE: f.meanDE, level: similarityLevel(f.meanDE),
-      covered: f.covered, paletteSize: (f.palette.colors || []).length, figure: outfitFigure(items) });
+      covered: f.covered, paletteSize: (f.palette.colors || []).length, figure: outfitFigure(items),
+      garmentIds: sig.split(','), liked: f.liked, likedId: f.likedId, lastWorn: f.lastWorn, recent: f.recent });
   }
   const value = { suggestions: out, considered: found.length, strict: good.length > 0 };
   suggestMemo = { key, value };
