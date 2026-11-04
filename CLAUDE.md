@@ -27,6 +27,7 @@ En Windows, `build-en --check` puede marcar páginas como desactualizadas por lo
 ## Área privada (`area-privada.html`)
 Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde Laboratorio. Sin librerías: habla con la API de Supabase con `fetch`.
 - `area-privada.js`: shell (sesión, `api`, rutas `#/…`, diálogo) y el drive (`#/archivos`). `supabase/area-privada.sql`: tablas y RLS.
+- **SANCHO (asistente personal)** accede como agente, no como miembro: `supabase/sancho-acceso.sql` (tabla `agents`, `is_sancho()`, políticas «sancho: leer/crear/editar», **nunca borrar**; revertir con `sancho-acceso-rollback.sql`). Al crear una tabla nueva, añadirla a las listas `lectura`/`escritura` de ese archivo y volver a ejecutarlo.
 - **Pestañas en módulos** que se cargan al abrirlas: `area-privada-<nombre>.js` define `window.AP<Nombre> = { render(ctx) → Promise<paint> }`
   y se declara en el HTML como `<link rel="prefetch" data-ap-module="<nombre>">` (así `version-assets` le pone el `?v=`).
   Para una pestaña nueva: el archivo, ese `<link>`, una entrada en `MODULES` (de ahí sale también la ruta) y el enlace en `.ap-tabs`.
