@@ -95,6 +95,14 @@ No hace falta ninguna variable de entorno ni clave nueva: usa la sesión y la cl
   llena la foto), se analiza la imagen entera. Sigue sin segmentar prendas una a una y sin corregir el balance de blancos:
   es una propuesta y siempre se corrige a mano. Pruebas: `tools/test-color.mjs` (degradado con textura, rayas, sombra, piel,
   camel grande, huecos, determinismo y tiempo).
+- **Alta en lote** (Armario → «Añadir varias»): hasta 12 fotos a la vez. Cada una se analiza en el dispositivo como una prenda
+  suelta; en una sola hoja se elige su tipo (obligatorio, lista fija) y su color principal entre los propuestos, y se guardan de una
+  vez. Las que fallan se quedan en la hoja para reintentarlas y ninguna foto queda huérfana en el bucket.
+- **Revisión de tipos**: si hay prendas con el tipo deducido (anteriores a la lista fija), el Armario lo avisa y «Revisar tipos»
+  las enseña todas con la propuesta deducida para confirmarlas de una vez (se conserva el detalle anterior: «Deportiva · zapatillas»).
+- **Corregir la luz** (formulario de prenda): se toca en la foto algo blanco o gris (`engine.neutralGains`: ganancias por canal en luz
+  lineal, adaptación de von Kries) y se corrigen el análisis y el cuentagotas; un punto con color (croma > 22) se rechaza. La foto
+  que se guarda no cambia. «Deshacer» vuelve a los colores sin corregir.
 - **Cuentagotas** (`engine.sampleColor`): con una foto recién elegida, se toca un punto de la prenda (o se mueve con las
   flechas e Intro) y se toma la media, en luz lineal, de un cuadrado de 7 × 7 píxeles de una copia de ≤ 480 px. En ese
   modo la foto se ve entera, sin recorte, para que el punto tocado sea el que se mide. Tampoco corrige el balance de
@@ -117,8 +125,8 @@ prenda que coincide no basta. Son niveles de proximidad, no una nota de estilo n
   (velo del 8 %, por pernera). Diseño revisado con una crítica de diseño específica (legibilidad del color de cada prenda,
   calcetines, calzado, prendas claras sobre el fondo). **Editable**: en el detalle de una paleta, cada prenda tiene su selector de
   color (exterior y accesorio se pueden quitar; el calzado admite también negro, blanco y marrón y los calcetines, blanco: los
-  habituales, marcados como «fuera de la paleta») y «Restablecer la propuesta» vuelve a la automática; la elección vive en la sesión,
-  no se guarda. Propuesta automática: los colores con nombre de prenda (los de Inspiración llevan su etiqueta) van en su prenda;
+  habituales, marcados como «fuera de la paleta») y «Restablecer la propuesta» vuelve a la automática; la elección se recuerda en
+  este dispositivo (`localStorage`, clave `bm_cs_fig`): no va a la base. Propuesta automática: los colores con nombre de prenda (los de Inspiración llevan su etiqueta) van en su prenda;
   el resto por sobriedad (el color con menos croma en las prendas grandes; un blanco o un crudo, como apoyo); los calcetines,
   del color del pantalón. **El libro no da proporciones**: el porcentaje es la superficie aproximada de cada prenda en el dibujo
   (`compose.FIGURE_AREA`) y se dice. En un outfit real, la superficie es la estimada con los pesos del Studio.
@@ -126,7 +134,8 @@ prenda que coincide no basta. Son niveles de proximidad, no una nota de estilo n
   tus prendas (parte superior, pantalón y calzado; exterior e interior opcionales, la interior solo bajo un jersey o una
   exterior). Cada prenda a ΔE00 ≤ 12 de un color de la combinación, al menos 2 colores representados y el color mayor con
   ≥ 30 % de la superficie. Orden: colores representados y ΔE00 medio ponderado. Solo «muy similar» (≤ 6) o, si no hay,
-  relacionado con media ≤ 9; como mucho 6, una prenda en 2 como mucho. Se recalculan con el armario de cada momento.
+  relacionado con media ≤ 9; como mucho 6, una prenda en 2 como mucho, y como mucho una prenda grande estampada (dos dibujos
+  compiten). Se recalculan con el armario de cada momento (también si cambia el estampado de una prenda).
 - **Dirección cromática**: cada dirección prueba primero `biblioteca` (completar con una prenda real una combinación que el
   conjunto ya representa en parte y que encaja con la dirección: sobria para minimalista, con un color intenso para
   creativa) y después sus criterios de siempre. Cada propuesta y la lectura actual citan la combinación más próxima.

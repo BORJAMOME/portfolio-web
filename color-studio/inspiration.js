@@ -9,7 +9,7 @@
    · Lo derivable no se guarda: RGB, Lab, nombre y familia salen del HEX.
    · Duplicados: mismo enlace normalizado o imagen casi igual (dHash de 64 bits a distancia ≤ 6). Solo avisan.
    ═══════════════════════════════════════════════ */
-import { normalizeHex, hexToRgb, hexToLab, labToLch, describeColor, extractColors, sampleMedian, roundPercentages, rankPalettes, paletteAffinity, similarityLevel, GARMENT_TYPES } from './engine.js?v=0ea937e1d8';
+import { normalizeHex, hexToRgb, hexToLab, labToLch, describeColor, extractColors, sampleMedian, roundPercentages, rankPalettes, paletteAffinity, similarityLevel, GARMENT_TYPES } from './engine.js?v=a649e19a90';
 
 export const SEASONS = [['primavera', 'Primavera'], ['verano', 'Verano'], ['otono', 'Otoño'], ['invierno', 'Invierno'], ['entretiempo', 'Entretiempo']];
 export const SEASON_LABEL = Object.fromEntries(SEASONS);

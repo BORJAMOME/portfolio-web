@@ -437,12 +437,73 @@ await step('Armario: quitar la foto la borra del bucket; eliminar la prenda tamb
   ok(!objects.has(t.image_path), 'la foto sigue en el bucket');
 });
 
+await step('Armario: alta en lote (varias fotos, tipo obligatorio y color propuesto) y revisión de tipos deducidos', async () => {
+  await go(page, '#/color/armario');
+  const before = db.cs_garments.length, ups = objects.size;
+  await page.setInputFiles('[data-key="batch-files"]', [Object.assign(await pngOf(page, 300, 400, '#1F2A44'), { name: 'a.png' }), Object.assign(await pngOf(page, 300, 400, '#8B4A2B'), { name: 'b.png' })]);
+  await page.waitForSelector('dialog[open] .cs-batch-row');
+  await page.waitForFunction(() => document.querySelectorAll('dialog[open] [data-key^="batch-color-"]').length >= 2, null, { timeout: 15000 });
+  ok(await page.$eval('[data-key="batch-save"]', (b) => b.disabled), 'deja guardar sin tipo');
+  await page.selectOption('[data-key="batch-type-0"]', 'Jersey');
+  await page.selectOption('[data-key="batch-type-1"]', 'Mocasín');
+  await page.waitForFunction(() => !document.querySelector('[data-key="batch-save"]').disabled);
+  await page.click('[data-key="batch-save"]');
+  await page.waitForFunction(() => !document.querySelector('dialog.cs-sheet[open]'), null, { timeout: 15000 });
+  eq(db.cs_garments.length, before + 2, 'no se han guardado las dos');
+  const added = db.cs_garments.slice(-2).sort((a, b) => (a.subcategory > b.subcategory ? 1 : -1));
+  eq(added.map((g) => [g.category, g.subcategory]), [['jerseis', 'Jersey'], ['calzado', 'Mocasín']]);
+  ok(added.every((g) => g.image_path && objects.has(g.image_path)), 'falta alguna foto en el bucket');
+  eq(objects.size, ups + 2, 'fotos de más o de menos');
+  ok(E.colorDistance(added[0].primary_color, '#1F2A44') < 8, 'color principal del jersey: ' + added[0].primary_color);
+  // una prenda anterior a la lista fija: aviso, propuesta deducida y confirmación
+  db.cs_garments.push(Object.assign({ id: uid(), created_at: new Date().toISOString(), updated_at: new Date().toISOString() }, DEFAULT_ROW.cs_garments, { category: 'calzado', subcategory: 'zapatillas', name: 'Zapatillas viejas', primary_color: '#F2F2F0' }));
+  await page.reload(); await page.waitForSelector('.cs'); await go(page, '#/color/armario');
+  await page.waitForSelector('[data-key="review-types"]');
+  await page.click('[data-key="review-types"]');
+  await page.waitForSelector('dialog[open] [data-key^="review-type-"]');
+  const idx = await page.$$eval('dialog[open] .cs-batch-row .cs-slot-n', (e) => e.map((x) => x.textContent).indexOf('Zapatillas viejas'));
+  ok(idx >= 0, 'la prenda anterior no está en la revisión');
+  eq(await page.inputValue('[data-key="review-type-' + idx + '"]'), 'Deportiva', 'el tipo deducido no se propone');
+  await page.click('[data-key="review-save"]');
+  await page.waitForFunction(() => !document.querySelector('dialog.cs-sheet[open]'));
+  const old = db.cs_garments.find((g) => g.name === 'Zapatillas viejas');
+  eq([old.category, old.subcategory], ['calzado', 'Deportiva · zapatillas'], 'el tipo no se confirma o se pierde el detalle');
+  eq(await page.$('[data-key="review-types"]'), null, 'el aviso sigue tras confirmar');
+});
+await step('Corregir la luz: un punto neutro de la foto corrige sus colores; un punto con color se rechaza; deshacer', async () => {
+  await go(page, '#/color/armario');
+  await page.click('[data-key="new-garment"]');
+  await page.waitForSelector('dialog[open] #cs-g-cat');
+  const warm = await page.evaluate(() => {                // fondo crema por luz cálida y prenda azul con la misma dominante
+    const c = document.createElement('canvas'); c.width = 400; c.height = 500; const x = c.getContext('2d');
+    x.fillStyle = '#F2E6CF'; x.fillRect(0, 0, 400, 500); x.fillStyle = '#2E4A6E'; x.fillRect(80, 75, 240, 350);
+    return c.toDataURL('image/png').split(',')[1];
+  });
+  await page.setInputFiles('dialog[open] .cs-photo-act label:has-text("Elegir imagen") input', { name: 'calida.png', mimeType: 'image/png', buffer: Buffer.from(warm, 'base64') });
+  await page.waitForSelector('dialog[open] [data-key="white-balance"]:not([hidden])');
+  await page.waitForFunction(() => document.querySelector('#cs-g-primary').value.length === 7);
+  const before = await page.inputValue('#cs-g-primary');
+  await page.click('[data-key="white-balance"]');
+  // clic sobre la propia imagen (Playwright la lleva a la vista): con coordenadas de pantalla, en la CI la foto quedaba fuera
+  const img = await page.waitForSelector('dialog[open] .cs-pick-area img');
+  const at = async (fx, fy) => { const b = await img.boundingBox(); await img.click({ position: { x: b.width * fx, y: b.height * fy } }); };
+  await at(0.5, 0.5);                                                               // la prenda azul: tiene color, no sirve
+  await page.waitForSelector('[data-key="wb-bad"]');
+  await at(0.06, 0.06);                                                             // el fondo crema: neutro con luz cálida
+  await page.waitForSelector('[data-key="wb-ok"]');
+  await page.waitForFunction((b) => document.querySelector('#cs-g-primary').value !== b, before);
+  const after = await page.inputValue('#cs-g-primary');
+  ok(E.labToLch(E.hexToLab(after)).h > E.labToLch(E.hexToLab(before)).h - 1 && E.colorDistance(after, before) > 2, 'la corrección no cambia el color: ' + before + ' → ' + after);
+  await page.click('[data-key="wb-undo"]');
+  await page.waitForFunction((b) => document.querySelector('#cs-g-primary').value === b, before);
+  await page.click('dialog[open] button:has-text("Cancelar")');
+});
 await step('CS-17: cuentagotas sobre la foto con puntero y con teclado; el color se lleva al principal', async () => {
   await go(page, '#/color/armario');
   await page.click('[data-key="new-garment"]');
   await page.waitForSelector('dialog[open] #cs-g-cat');
   ok(await page.isHidden('[data-key="eyedropper"]'), 'cuentagotas sin foto');
-  ok((await page.textContent('dialog[open] .cs-photo-field')).includes('balance de blancos'), 'sin consejo de captura');
+  ok(/luz natural.*Corregir la luz/.test(await page.textContent('dialog[open] .cs-photo-field')), 'sin consejo de captura');
   await page.setInputFiles('dialog[open] .cs-photo-act label:has-text("Elegir imagen") input', await pngOf(page, 600, 800, '#4A2E1F'));
   await page.waitForSelector('dialog[open] .cs-prop-row');
   await page.click('[data-key="eyedropper"]');

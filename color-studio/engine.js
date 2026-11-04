@@ -573,6 +573,37 @@ export function sampleMedian(data, width, height, px, py, r = 2) {
   return { hex, n: R.length, mixed: far / R.length };
 }
 
+/* ═══════════ CORRECCIÓN DE LA LUZ (balance de blancos) ═══════════
+   Una foto con luz cálida o fría desplaza todos los colores (una camisa blanca sale crema). Se corrige con un punto que la
+   persona sabe que es neutro (blanco, gris, una hoja de papel): las ganancias de cada canal en luz LINEAL que lo vuelven gris
+   con la misma luminancia (adaptación de von Kries en RGB lineal). Se aplica a las copias de análisis y al color tomado; la
+   foto que se guarda no cambia. Un punto con color (croma > 22: un azul marino ya lo supera) no es un neutro fiable y se rechaza. */
+export function neutralGains(hex) {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return null;
+  const lab = rgbToLab(rgb);
+  if (Math.hypot(lab.a, lab.b) > 22 || lab.L < 15) return null;              // ni con color (un blanco con luz cálida queda en 13–19) ni casi negro
+  const lin = [toLinear(rgb.r), toLinear(rgb.g), toLinear(rgb.b)];
+  const Y = 0.2126729 * lin[0] + 0.7151522 * lin[1] + 0.0721750 * lin[2];
+  if (lin.some((v) => v <= 0.0005)) return null;
+  return lin.map((v) => Y / v);
+}
+/** Color corregido con unas ganancias (null = sin corrección). */
+export function applyGainsHex(hex, gains) {
+  const rgb = hexToRgb(hex);
+  if (!rgb || !gains) return normalizeHex(hex);
+  const c = [rgb.r, rgb.g, rgb.b].map((v, i) => toGamma(Math.min(1, toLinear(v) * gains[i])));
+  return rgbToHex(c[0], c[1], c[2]);
+}
+/** Copia corregida de unos píxeles { data, width, height }. */
+export function applyGains(px, gains) {
+  if (!px || !gains) return px;
+  const lut = gains.map((g) => { const t = new Uint8ClampedArray(256); for (let v = 0; v < 256; v++) t[v] = Math.round(toGamma(Math.min(1, toLinear(v) * g))); return t; });
+  const out = new Uint8ClampedArray(px.data.length);
+  for (let i = 0; i < out.length; i += 4) { out[i] = lut[0][px.data[i]]; out[i + 1] = lut[1][px.data[i + 1]]; out[i + 2] = lut[2][px.data[i + 2]]; out[i + 3] = px.data[i + 3]; }
+  return { data: out, width: px.width, height: px.height };
+}
+
 /* ═══════════ EXTRACCIÓN DE COLOR (sin red) ═══════════
    Un solo sistema para todas las fotos (prendas del Armario, outfits de Inspiración, «Extraer de una imagen»):
      1. Primer plano: superpíxeles (SLIC simplificado; Achanta et al., 2012) y conectividad con el borde GEODÉSICA

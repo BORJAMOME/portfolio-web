@@ -33,6 +33,7 @@ window.APColor = (function () {
   };
   var BUCKET = 'armario';
   var DRAFT_KEY = 'bm_cs_draft';
+  var FIG_KEY = 'bm_cs_fig';
   var STALE_MS = 5 * 60 * 1000;
 
   /* ── Estado que sobrevive al cambiar de vista (el shell vuelve a llamar a render en cada ruta) ── */
@@ -49,9 +50,12 @@ window.APColor = (function () {
     insp: { q: '', style: '', collection: '', season: '', family: '', fav: false, review: false, sort: 'saved', open: false, view: 'photo' },
     sock: { trousers: null, shoes: null },      // colores escritos en la guía y aplicados con «Actualizar»: solo valen en la guía
     sockPending: { tr: null, sh: null },        // texto escrito y aún no aplicado (sobrevive a repintar la guía)
-    fig: {}                                     // color elegido para cada prenda del figurín, por paleta (solo en esta sesión: no se guarda)
+    fig: readFig()                              // color elegido para cada prenda del figurín, por paleta (se recuerda en este dispositivo)
   };
   var draft = readDraft(false), demoDraft = emptyDraft();
+  // figurín: las elecciones por paleta se recuerdan en este dispositivo (localStorage); sin almacenamiento, solo en la sesión
+  function readFig() { try { var v = JSON.parse(localStorage.getItem(FIG_KEY) || '{}'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
+  function saveFig() { try { localStorage.setItem(FIG_KEY, JSON.stringify(mem.fig)); } catch (e) { /* sin almacenamiento: queda en la sesión */ } }
   var lastView = null;
   var pendingInsp = null;       // inspiración que hay que abrir al llegar a Inspiración (desde la Biblioteca)          // sección pintada la última vez: al cambiar de sección se vuelve arriba (antes se heredaba el desplazamiento)
   var SVG_NS = 'http://www.w3.org/2000/svg';
@@ -474,7 +478,7 @@ window.APColor = (function () {
       })));
       if (opts.onAssign) cap.appendChild(figureEditor(fig, opts));
       cap.appendChild(h('p', { class: 'cs-fine cs-fine--tight', text: fig.illustrative
-        ? (opts.onAssign ? 'Elige el color de cada prenda para ver cómo quedaría. ' : '') + 'Porcentaje = superficie aproximada de cada prenda en el figurín: la combinación no define proporciones.'
+        ? (opts.onAssign ? 'Elige el color de cada prenda para ver cómo quedaría (se recuerda en este dispositivo). ' : '') + 'Porcentaje = superficie aproximada de cada prenda en el figurín: la combinación no define proporciones.'
         : 'Superficie estimada con los pesos del Studio.' }));
       wrap.appendChild(cap);
       return wrap;
@@ -2053,6 +2057,7 @@ window.APColor = (function () {
           var focus = document.activeElement && document.activeElement.getAttribute && document.activeElement.getAttribute('data-key');
           var el = figureBlock(fig, { onAssign: function (slot, v) {
             if (slot === null) delete mem.fig[p.id]; else mem.fig[p.id] = Object.assign({}, fig.assignment, (function () { var o = {}; o[slot] = v; return o; })());
+            if (!p.demo) saveFig();
             paintLook();
           } });
           if (old) old.replaceWith(el); else look.insertBefore(el, look.firstChild);
@@ -2265,13 +2270,21 @@ window.APColor = (function () {
       q.addEventListener('input', function () { f.q = q.value.trim(); paintGrid(); });
       var cam = h('input', { type: 'file', accept: 'image/*', capture: 'environment', class: 'sr-only' });
       cam.addEventListener('change', function () { var file = cam.files[0]; cam.value = ''; if (file) editGarment(null, { file: file, category: f.cat || null }); });
+      var many = h('input', { type: 'file', accept: M.I.ACCEPTED.join(','), multiple: true, class: 'sr-only', 'data-key': 'batch-files' });
+      many.addEventListener('change', function () { var files = [].slice.call(many.files || []); many.value = ''; if (files.length) batchGarments(files, f.cat || null); });
       body.appendChild(h('div', { class: 'cs-toolbar' }, [
         h('div', { class: 'cs-search' }, [h('label', { class: 'sr-only', for: 'cs-w-q', text: 'Buscar prendas' }), q]),
         h('div', { class: 'cs-actions' }, [
           btn('Añadir prenda', 'btn btn-primary', function () { editGarment(null, { category: f.cat || null }); }, { 'data-key': 'new-garment' }),
-          demo ? null : h('label', { class: 'btn btn-outline cs-file' }, ['Hacer foto', cam])
+          demo ? null : h('label', { class: 'btn btn-outline cs-file' }, ['Hacer foto', cam]),
+          demo ? null : h('label', { class: 'btn btn-outline cs-file', 'data-key': 'batch-label' }, ['Añadir varias', many])
         ])
       ]));
+      // prendas con el tipo deducido (anteriores a la lista fija): se confirman todas de una vez
+      var untyped = all.filter(function (g) { return !g.demo && !M.E.splitSubcategory(g.subcategory).type; });
+      if (untyped.length && !demo) body.appendChild(h('div', { class: 'cs-note cs-ward-review', role: 'note' }, [
+        h('span', { text: untyped.length + (untyped.length === 1 ? ' prenda tiene' : ' prendas tienen') + ' el tipo deducido, sin confirmar. Confírmalo para que las sugerencias crucen bien con tus inspiraciones.' }),
+        btn('Revisar tipos', 'cs-btn-s', function () { reviewTypes(untyped); }, { 'data-key': 'review-types' })]));
       body.appendChild(h('div', { class: 'cs-ins-bar cs-ward-bar' }, [viewToggle(f, function () { paintGrid(); }, 'ward-view')]));
       var counts = {}; all.forEach(function (g) { counts[g.category] = (counts[g.category] || 0) + 1; });
       body.appendChild(h('div', { class: 'cs-chips', role: 'group', 'aria-label': 'Categoría' }, [['', 'Todas']].concat(M.E.CATEGORIES).map(function (c) {
@@ -2316,10 +2329,120 @@ window.APColor = (function () {
       paintGrid();
     }
 
+    /* ── Alta en lote: varias fotos a la vez, cada una con su tipo (obligatorio) y su color principal propuesto ──
+       Se analizan en el dispositivo como una prenda suelta; se revisa todo en una sola hoja y se guarda de una vez.
+       Las que fallan al guardarse se quedan en la hoja para reintentarlas; ninguna foto queda huérfana. */
+    var BATCH_MAX = 12;
+    function batchGarments(files, cat) {
+      var startType = (M.E.GARMENT_TYPES.filter(function (t) { return t.category === cat; })[0] || {}).label || '';
+      var rows = files.slice(0, BATCH_MAX).map(function (file, i) { return { i: i, file: file, prep: null, url: null, colors: [], primary: null, type: startType, name: '', error: null, saved: false }; });
+      sheet('Añadir varias prendas', function (box, close) {
+        if (files.length > BATCH_MAX) box.appendChild(h('p', { class: 'cs-note', text: 'Se añaden las ' + BATCH_MAX + ' primeras; el resto, en otra tanda.' }));
+        var list = h('ul', { class: 'cs-batch' }), msg = h('p', { class: 'ap-msg', 'aria-live': 'polite' });
+        var save = btn('Guardar', 'btn btn-primary', go, { 'data-key': 'batch-save', disabled: true });
+        box.appendChild(list);
+        box.appendChild(msg);
+        box.appendChild(h('div', { class: 'cs-sheet-actions' }, [save, btn('Cancelar', 'btn btn-outline', close)]));
+        function paint() {
+          list.textContent = '';
+          rows.filter(function (r) { return !r.saved; }).forEach(function (r) {
+            var media = h('span', { class: 'cs-thumb cs-batch-media', 'aria-hidden': 'true' });
+            if (r.url) media.appendChild(h('img', { alt: '', src: r.url })); else media.classList.add('is-loading');
+            var type = typeSelect(r.type, { 'aria-label': 'Tipo de la prenda ' + (r.i + 1), 'data-key': 'batch-type-' + r.i }, 'Elige el tipo');
+            type.addEventListener('change', function () { r.type = type.value; sync(); });
+            var name = h('input', { type: 'text', value: r.name, maxlength: '120', class: 'cs-batch-name', placeholder: 'Nombre (opcional)', 'aria-label': 'Nombre de la prenda ' + (r.i + 1) });
+            name.addEventListener('input', function () { r.name = name.value; });
+            var sw = h('div', { class: 'cs-fig-opts', role: 'radiogroup', 'aria-label': 'Color principal de la prenda ' + (r.i + 1) }, r.colors.map(function (c, k) {
+              var on = r.primary === c.hex, b = btn(h('span', { class: 'sr-only', text: colorName(c.hex) + ' ' + c.hex }), 'cs-fig-sw', function () { r.primary = c.hex; paint(); },
+                { role: 'radio', 'aria-checked': on ? 'true' : 'false', title: colorName(c.hex) + ' ' + c.hex, 'data-key': 'batch-color-' + r.i + '-' + k });
+              b.style.backgroundColor = c.hex; return b;
+            }));
+            list.appendChild(h('li', { class: 'cs-batch-row' + (r.error ? ' is-error' : '') }, [media, h('div', { class: 'cs-batch-fields' }, [
+              type, name, r.colors.length ? sw : h('p', { class: 'cs-fine', text: r.prep ? 'Sin colores claros: corrígelo después en la prenda.' : 'Analizando…' }),
+              r.error ? h('p', { class: 'cs-imp-err', text: r.error }) : null,
+              btn(['Quitar', h('span', { class: 'sr-only', text: ' la prenda ' + (r.i + 1) })], 'cs-link cs-link--muted', function () {
+                rows.splice(rows.indexOf(r), 1); if (r.url) URL.revokeObjectURL(r.url);
+                if (!rows.filter(function (x) { return !x.saved; }).length) close(); else paint();
+              }, { 'data-key': 'batch-remove-' + r.i })
+            ])]));
+          });
+          sync();
+        }
+        function sync() {
+          var pending = rows.filter(function (r) { return !r.saved; });
+          var ready = pending.length && pending.every(function (r) { return r.prep && r.primary && M.E.garmentTypeInfo(r.type); });
+          save.disabled = !ready;
+          save.textContent = 'Guardar ' + pending.length + (pending.length === 1 ? ' prenda' : ' prendas');
+          if (!ready && pending.every(function (r) { return r.prep; })) msg.textContent = 'Elige el tipo de cada prenda para guardarlas.';
+          else if (ready) msg.textContent = '';
+        }
+        // análisis de una en una (no satura un móvil)
+        rows.reduce(function (p, r) {
+          return p.then(function () { return M.I.prepareImage(r.file); }).then(function (prep) {
+            r.prep = prep; r.url = URL.createObjectURL(prep.blob);
+            return M.I.visionProvider('local').analyze(prep.sample).then(function (res) { r.colors = res.colors.slice(0, 5); r.primary = r.colors[0] ? r.colors[0].hex : null; });
+          }).catch(function (err) { r.error = err.message; r.prep = r.prep || null; }).then(paint);
+        }, Promise.resolve());
+        paint();
+        function go() {
+          save.disabled = true; msg.textContent = 'Guardando…';
+          var pending = rows.filter(function (r) { return !r.saved && r.prep; });
+          pending.reduce(function (p, r) {
+            return p.then(function () {
+              var t = M.E.garmentTypeInfo(r.type);
+              var v = M.D.validateGarment({ category: t.category, primary_color: r.primary, secondary_colors: [], name: r.name, subcategory: t.label, pattern: 'liso' });
+              if (!v.ok) { r.error = v.errors[0]; return; }
+              var path = 'prendas/' + crypto.randomUUID() + (r.prep.type === 'image/webp' ? '.webp' : '.jpg');
+              return st.upload(path, r.prep.blob, r.prep.type).then(function () {
+                var row = Object.assign({}, v.value, { image_path: path });
+                return st.insert('cs_garments', row).catch(function (err) { st.removeImages([path]).catch(function () {}); throw err; });
+              }).then(function (res) {
+                replaceIn(cache.garments, res[0]); images[path] = Promise.resolve(r.url); r.saved = true; r.error = null;
+              }, function (err) { if (err && err.auth) throw err; r.error = 'No se ha guardado: ' + ((err && err.message) || 'error desconocido'); });
+            });
+          }, Promise.resolve()).then(function () {
+            var done = rows.filter(function (r) { return r.saved; }).length, left = rows.filter(function (r) { return !r.saved; }).length;
+            if (!left) { close(); refresh(); toast(done + (done === 1 ? ' prenda añadida.' : ' prendas añadidas.')); return; }
+            paint(); msg.textContent = done + ' guardadas; ' + left + ' con error: revísalas y vuelve a guardar.';
+          }).catch(function (err) { close(); ctx.fail(err); });
+        }
+      }, { wide: true, noOutside: true });
+    }
+    /* ── Revisión de tipos: prendas anteriores a la lista fija, con el tipo deducido propuesto ── */
+    function reviewTypes(list) {
+      var rows = list.map(function (g) { return { g: g, type: M.E.garmentType(g) || '' }; });
+      sheet('Confirmar el tipo de tus prendas', function (box, close) {
+        box.appendChild(h('p', { class: 'cs-note', text: 'Propuesta deducida de la categoría y el nombre. Corrige las que no sean (por ejemplo, Deportiva en lugar de Zapato) y guarda.' }));
+        var msg = h('p', { class: 'ap-msg', 'aria-live': 'polite' });
+        box.appendChild(h('ul', { class: 'cs-batch' }, rows.map(function (r, i) {
+          var sel = typeSelect(r.type, { 'aria-label': 'Tipo de ' + garmentName(r.g), 'data-key': 'review-type-' + i }, 'Elige el tipo');
+          sel.addEventListener('change', function () { r.type = sel.value; });
+          return h('li', { class: 'cs-batch-row' }, [thumb(r.g, 'cs-batch-media'), h('div', { class: 'cs-batch-fields' }, [h('span', { class: 'cs-slot-n', text: garmentName(r.g) }), sel])]);
+        })));
+        box.appendChild(msg);
+        var save = btn('Guardar tipos', 'btn btn-primary', function () {
+          save.disabled = true; msg.textContent = 'Guardando…';
+          var bad = 0;
+          rows.reduce(function (p, r) {
+            return p.then(function () {
+              var t = M.E.garmentTypeInfo(r.type);
+              if (!t) { bad++; return; }
+              var sp = M.E.splitSubcategory(r.g.subcategory);
+              return st.update('cs_garments', r.g.id, { category: t.category, subcategory: M.E.joinSubcategory(t.label, sp.detail) }).then(function (row) { replaceIn(cache.garments, row); });
+            });
+          }, Promise.resolve()).then(function () {
+            close(); refresh(); toast(bad ? 'Tipos guardados; ' + bad + ' sin tipo elegido.' : 'Tipos confirmados.');
+          }).catch(function (err) { if (err && err.auth) { close(); return ctx.fail(err); } save.disabled = false; msg.textContent = (err && err.message) || 'No se ha podido guardar.'; msg.classList.add('is-error'); });
+        }, { 'data-key': 'review-save' });
+        box.appendChild(h('div', { class: 'cs-sheet-actions' }, [save, btn('Cancelar', 'btn btn-outline', close)]));
+      }, { wide: true, noOutside: true });
+    }
+
     function editGarment(g, opts) {
       if (demo) return demoBlocked();
       opts = opts || {};
-      var s = { prep: null, previewUrl: null, removePhoto: false, picking: false, pickAt: { x: 0.5, y: 0.5 }, primary: g ? g.primary_color : '', secondary: g ? (g.secondary_colors || []).slice() : [], shares: g && g.color_shares ? g.color_shares.slice() : null };
+      var s = { prep: null, previewUrl: null, removePhoto: false, picking: false, pickAt: { x: 0.5, y: 0.5 }, primary: g ? g.primary_color : '', secondary: g ? (g.secondary_colors || []).slice() : [], shares: g && g.color_shares ? g.color_shares.slice() : null,
+        mode: 'color', gains: null, autoPrimary: false };      // mode 'white': el cuentagotas toma el punto neutro para corregir la luz
       // tipo de prenda de la lista fija (la misma que la prenda de cada color en Inspiración); la categoría de la base sale de él
       var split = g ? M.E.splitSubcategory(g.subcategory) : { type: null, detail: null };
       var startType = g ? M.E.garmentType(g) : (M.E.GARMENT_TYPES.filter(function (t) { return t.category === opts.category; })[0] || {}).label || '';
@@ -2333,7 +2456,7 @@ window.APColor = (function () {
       var proposals = h('div', { class: 'cs-proposals', 'aria-live': 'polite' });
       var photoMsg = h('p', { class: 'apf-hint', 'aria-live': 'polite' });
       var pickOut = h('div', { class: 'cs-pick-out', 'aria-live': 'polite' });
-      var primary = colorInput('cs-g-primary', 'Color principal', s.primary, function (v) { s.primary = v; });
+      var primary = colorInput('cs-g-primary', 'Color principal', s.primary, function (v) { s.primary = v; s.autoPrimary = false; });
       var secList = h('ul', { class: 'cs-sec' });
       var sharesBox = h('div', { class: 'cs-shares' });
       function paintPreview() {
@@ -2346,11 +2469,15 @@ window.APColor = (function () {
         else preview.appendChild(h('span', { class: 'cs-photo-empty', text: 'Sin foto' }));
         removeBtn.hidden = !(s.previewUrl || (g && g.image_path && !s.removePhoto));
         pickBtn.hidden = !(s.prep && s.prep.pick);
-        pickBtn.setAttribute('aria-pressed', s.picking ? 'true' : 'false');
-        pickBtn.textContent = s.picking ? 'Cerrar cuentagotas' : 'Cuentagotas';
+        wbBtn.hidden = !(s.prep && s.prep.pick);
+        wbBtn.setAttribute('aria-pressed', s.picking && s.mode === 'white' ? 'true' : 'false');
+        pickBtn.setAttribute('aria-pressed', s.picking && s.mode !== 'white' ? 'true' : 'false');
+        pickBtn.textContent = s.picking && s.mode !== 'white' ? 'Cerrar cuentagotas' : 'Cuentagotas';
       }
       // cuentagotas (auditoría CS-17): el color de un punto de la foto, elegido a mano; flechas para moverlo e Intro para tomarlo
-      function sampleAt() { var p = s.prep.pick; return M.E.sampleColor(p.data, p.width, p.height, s.pickAt.x, s.pickAt.y, 3); }
+      function sampleRaw() { var p = s.prep.pick; return M.E.sampleColor(p.data, p.width, p.height, s.pickAt.x, s.pickAt.y, 3); }
+      // el color tomado lleva la corrección de luz si la hay; el punto neutro se mide sin corregir
+      function sampleAt() { var hex = sampleRaw(); return hex && s.mode !== 'white' ? M.E.applyGainsHex(hex, s.gains) : hex; }
       function pickArea(src) {
         var img = h('img', { alt: '', src: src, draggable: 'false' });
         var mark = h('span', { class: 'cs-pick-mark', 'aria-hidden': 'true' });
@@ -2372,6 +2499,7 @@ window.APColor = (function () {
         return area;
       }
       function take() {
+        if (s.mode === 'white') return takeWhite();
         var hex = sampleAt();
         pickOut.textContent = '';
         if (!hex) { pickOut.appendChild(h('p', { class: 'apf-hint', text: 'En ese punto la imagen es transparente: elige otro.' })); return; }
@@ -2380,7 +2508,7 @@ window.APColor = (function () {
       }
       function colorRow(hex, key) {
         return h('li', { class: 'cs-prop-row' }, [swatch(hex, 'cs-sw--l'), h('span', { class: 'cs-prop-t' }, [h('span', { text: colorName(hex) }), h('span', { class: 'cs-hex', text: hex })]),
-          btn(['Principal', h('span', { class: 'sr-only', text: ' ' + hex })], 'cs-btn-s', function () { s.primary = hex; primary.set(hex); }, key ? { 'data-key': key + '-primary' } : null),
+          btn(['Principal', h('span', { class: 'sr-only', text: ' ' + hex })], 'cs-btn-s', function () { s.primary = hex; s.autoPrimary = false; primary.set(hex); }, key ? { 'data-key': key + '-primary' } : null),
           btn(['+ Secundario', h('span', { class: 'sr-only', text: ' ' + hex })], 'cs-btn-s', function () { addSecondary(hex); }, key ? { 'data-key': key + '-secondary' } : null)]);
       }
       function paintSecondary() {
@@ -2405,30 +2533,53 @@ window.APColor = (function () {
           }))]));
       }
       function addSecondary(hex) { if (s.secondary.length >= 6) { photoMsg.textContent = 'Máximo 6 colores secundarios.'; return; } s.secondary.push(hex || ''); s.shares = null; paintSecondary(); }
+      // colores de la foto (con la luz corregida si se eligió un punto neutro)
+      function analyze() {
+        var sample = M.E.applyGains(s.prep.sample, s.gains);
+        return M.I.visionProvider('local').analyze(sample).then(function (res) {
+          proposals.textContent = '';
+          if (!res.colors.length) { photoMsg.textContent = 'No se han encontrado colores claros. Elige el color a mano.'; return; }
+          photoMsg.textContent = s.gains ? 'Colores con la luz corregida. Si alguno no se parece, usa el cuentagotas sobre la zona bien iluminada.'
+            : 'Colores propuestos: la luz los altera. Si la foto tiene un tono cálido o frío, usa «Corregir la luz» tocando algo blanco o gris.';
+          proposals.appendChild(h('p', { class: 'cs-mini-t', text: 'Colores del análisis' }));
+          proposals.appendChild(h('ul', { class: 'cs-prop' }, res.colors.map(function (c) { return colorRow(c.hex); })));
+          if (!s.primary || s.autoPrimary) { s.primary = res.colors[0].hex; s.autoPrimary = true; primary.set(res.colors[0].hex); }
+        });
+      }
+      // corregir la luz: el punto tocado es neutro (blanco, gris, papel); las ganancias se aplican al análisis y al cuentagotas
+      function takeWhite() {
+        var hex = sampleRaw();
+        pickOut.textContent = '';
+        var gains = hex ? M.E.neutralGains(hex) : null;
+        if (!gains) { pickOut.appendChild(h('p', { class: 'apf-hint', 'data-key': 'wb-bad', text: 'Ese punto tiene demasiado color (o está casi negro) para servir de referencia. Toca algo blanco o gris claro.' })); return; }
+        s.gains = gains; s.mode = 'color'; s.picking = false;
+        paintPreview();
+        pickOut.appendChild(h('p', { class: 'cs-wb-ok', 'data-key': 'wb-ok' }, ['Luz corregida con el punto elegido ', swatch(hex, 'cs-dot', 'Referencia: ' + hex), '. ',
+          btn('Deshacer', 'cs-link', function () { s.gains = null; pickOut.textContent = ''; analyze().catch(function (err) { photoMsg.textContent = err.message; }); }, { 'data-key': 'wb-undo' })]));
+        analyze().catch(function (err) { photoMsg.textContent = err.message; });
+      }
       function usePhoto(file) {
         photoMsg.textContent = 'Preparando la foto…';
         M.I.prepareImage(file).then(function (prep) {
           if (s.previewUrl) URL.revokeObjectURL(s.previewUrl);
-          s.prep = prep; s.previewUrl = URL.createObjectURL(prep.blob); s.removePhoto = false; s.picking = false; s.pickAt = { x: 0.5, y: 0.5 }; pickOut.textContent = '';
+          s.prep = prep; s.previewUrl = URL.createObjectURL(prep.blob); s.removePhoto = false; s.picking = false; s.mode = 'color'; s.gains = null; s.pickAt = { x: 0.5, y: 0.5 }; pickOut.textContent = '';
           paintPreview();
-          photoMsg.textContent = 'Foto lista (' + prep.width + '×' + prep.height + ' px, sin datos de ubicación). Analizando colores en tu dispositivo…';
-          return M.I.visionProvider('local').analyze(prep.sample);
-        }).then(function (res) {
-          if (!res) return;
-          proposals.textContent = '';
-          if (!res.colors.length) { photoMsg.textContent = 'No se han encontrado colores claros. Elige el color a mano.'; return; }
-          photoMsg.textContent = 'Colores propuestos: la luz y el balance de blancos los alteran, compáralos con la prenda. Si alguno no se parece, usa el cuentagotas sobre la zona bien iluminada.';
-          proposals.appendChild(h('p', { class: 'cs-mini-t', text: 'Colores del análisis' }));
-          proposals.appendChild(h('ul', { class: 'cs-prop' }, res.colors.map(function (c) { return colorRow(c.hex); })));
-          if (!s.primary) { s.primary = res.colors[0].hex; primary.set(res.colors[0].hex); }
+          photoMsg.textContent = 'Analizando colores en tu dispositivo…';
+          return analyze();
         }).catch(function (err) { photoMsg.textContent = err.message; });
       }
       var camIn = h('input', { type: 'file', accept: 'image/*', capture: 'environment', class: 'sr-only' });
       var galIn = h('input', { type: 'file', accept: M.I.ACCEPTED.join(','), class: 'sr-only' });
       [camIn, galIn].forEach(function (inp) { inp.addEventListener('change', function () { var f = inp.files[0]; inp.value = ''; if (f) usePhoto(f); }); });
       var removeBtn = btn('Quitar foto', 'cs-link cs-link--muted', function () { if (s.previewUrl) URL.revokeObjectURL(s.previewUrl); s.prep = null; s.previewUrl = null; s.removePhoto = true; s.picking = false; proposals.textContent = ''; pickOut.textContent = ''; paintPreview(); });
+      var wbBtn = btn('Corregir la luz', 'btn btn-outline', function () {
+        s.mode = s.picking && s.mode === 'white' ? 'color' : 'white'; s.picking = s.mode === 'white'; paintPreview();
+        pickOut.textContent = '';
+        if (s.picking) pickOut.appendChild(h('p', { class: 'apf-hint', text: 'Toca en la foto algo blanco o gris (una etiqueta, el fondo de papel, una costura blanca): se corrige el tono de toda la foto.' }));
+        var area = preview.querySelector('.cs-pick-area'); if (area) area.focus();
+      }, { 'aria-pressed': 'false', 'data-key': 'white-balance' });
       var pickBtn = btn('Cuentagotas', 'btn btn-outline', function () {
-        s.picking = !s.picking; paintPreview();
+        s.picking = !(s.picking && s.mode !== 'white'); s.mode = 'color'; paintPreview();
         var area = preview.querySelector('.cs-pick-area'); if (area) area.focus();
       }, { 'aria-pressed': 'false', 'data-key': 'eyedropper' });
       paintPreview(); paintSecondary();
@@ -2447,8 +2598,8 @@ window.APColor = (function () {
       var fields = [
         h('div', { class: 'apf-wide cs-photo-field' }, [preview, h('div', { class: 'cs-photo-act' }, [
           h('label', { class: 'btn btn-outline cs-file' }, ['Hacer foto', camIn]),
-          h('label', { class: 'btn btn-outline cs-file' }, ['Elegir imagen', galIn]), pickBtn, removeBtn]),
-          h('p', { class: 'cs-fine cs-fine--tight', text: 'Para colores fieles: luz natural indirecta, sin flash y la prenda sobre un fondo liso blanco o gris. Ni el análisis ni el cuentagotas corrigen el balance de blancos.' }),
+          h('label', { class: 'btn btn-outline cs-file' }, ['Elegir imagen', galIn]), pickBtn, wbBtn, removeBtn]),
+          h('p', { class: 'cs-fine cs-fine--tight', text: 'Para colores fieles: luz natural indirecta, sin flash y la prenda sobre un fondo liso blanco o gris. Si la foto sale cálida o fría, «Corregir la luz» y toca algo blanco o gris.' }),
           photoMsg, pickOut, proposals]),
         ui.field('cs-g-cat', 'Tipo de prenda', cat),
         h('div', { class: 'apf-field' }, [primary.el]),
