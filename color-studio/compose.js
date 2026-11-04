@@ -11,7 +11,7 @@
    que encaje, el color se ofrece como HIPOTÉTICO (hypothetical: true) y la interfaz lo dice:
    nunca se presenta como algo que ya tienes.
    ═══════════════════════════════════════════════ */
-import { normalizeHex, colorDistance, describeColor, hexToLab, labToLch, lchToLab, labToHex, rankPalettes, SLOTS, SLOT, garmentColorParts, estimateDistribution, paletteAffinity, byAffinity, similarityLevel, SIMILARITY, SIMILARITY_LABEL, garmentTypeInfo, garmentType } from './engine.js?v=0ea937e1d8';
+import { normalizeHex, colorDistance, describeColor, hexToLab, labToLch, lchToLab, labToHex, rankPalettes, SLOTS, SLOT, garmentColorParts, estimateDistribution, paletteAffinity, byAffinity, similarityLevel, SIMILARITY, SIMILARITY_LABEL, garmentTypeInfo, garmentType } from './engine.js?v=a649e19a90';
 
 export const DIRECTIONS = [
   { id: 'minimal', label: 'Minimalista', goal: 'Discreto y tonal: neutros o tonos apagados, sin acentos que compitan.' },
@@ -807,13 +807,14 @@ export function outfitFigure(items) {
      prenda lo explique todo; el color con más superficie ocupa al menos el 30 %.
    · Orden: más colores de la paleta representados, menor ΔE00 medio ponderado por superficie. Solo se enseñan las que
      quedan en «muy similar» o mejor (ΔE00 medio ≤ 6) o, si no hay, «relacionado» con ΔE00 medio ≤ 9. Mejor pocas que flojas.
+   · Estampados: como mucho una prenda grande con dibujo (parte superior, pantalón o exterior); dos dibujos compiten.
    · Variedad: una prenda aparece como mucho en 2 sugerencias y no se repite el mismo conjunto con otra paleta.
    Se recalcula con el armario de cada momento: una prenda nueva entra sola en las siguientes sugerencias. */
 export const SUGGEST = { PER_SLOT: 3, MAX_MEAN: 9, GOOD_MEAN: SIMILARITY.CLOSE, MAX_REUSE: 2, MIN_DOMINANT: 30 };
 let suggestMemo = { key: null, value: null };
 export function suggestOutfits(input = {}) {
   const garments = input.garments || [], palettes = (input.palettes || []).filter((p) => (p.colors || []).length >= 2), limit = input.limit || 6;
-  const key = garments.map((g) => g.id + g.category + g.primary_color).join('|') + '#' + palettes.map((p) => p.id + (p.colors || []).map((c) => c.hex).join('')).join('|') + '#' + limit;
+  const key = garments.map((g) => g.id + g.category + g.primary_color + (g.pattern || '')).join('|') + '#' + palettes.map((p) => p.id + (p.colors || []).map((c) => c.hex).join('')).join('|') + '#' + limit;
   if (suggestMemo.key === key) return suggestMemo.value;
   const bySlot = {};
   ['outer', 'top', 'inner', 'bottom', 'shoes'].forEach((slot) => { bySlot[slot] = garments.filter((g) => SLOT[slot].categories.includes(g.category) && normalizeHex(g.primary_color)); });
@@ -830,6 +831,8 @@ export function suggestOutfits(input = {}) {
     const outerOpts = [null].concat(cands.outer), innerOpts = [null].concat(cands.inner);
     cands.top.forEach((t) => cands.bottom.forEach((b) => cands.shoes.forEach((s) => outerOpts.forEach((o) => innerOpts.forEach((i) => {
       if (i && (i.g.id === t.g.id || (t.g.category !== 'jerseis' && !o))) return;      // la interior va debajo de algo
+      // estampados: como mucho una prenda con dibujo (rayas, cuadros, estampado) entre las grandes; dos dibujos compiten
+      if ([t, b, o].filter((x) => x && x.g.pattern && x.g.pattern !== 'liso').length > 1) return;
       const parts = [['top', t], ['bottom', b], ['shoes', s]].concat(o ? [['outer', o]] : [], i ? [['inner', i]] : []);
       const total = parts.reduce((x, [slot]) => x + SLOT[slot].weight, 0);
       const share = {}; let meanDE = 0;

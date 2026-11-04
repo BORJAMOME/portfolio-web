@@ -742,3 +742,17 @@ html.cs-locked, html.cs-locked body { overflow: hidden; }
 .cs-sugg-meta .cs-fine { margin: 0; }
 @media (min-width: 1100px) { .cs-sugg-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 359.98px) { .cs-sugg-item { grid-template-columns: 76px minmax(0, 1fr); gap: 10px; padding: 10px; } }
+
+/* Alta en lote y revisión de tipos (Armario) */
+.cs-ward-review { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; justify-content: space-between; margin: 0 0 12px; padding: 10px 12px; border: 1px solid var(--cs-line); border-radius: 10px; background: var(--cs-paper); }
+.cs-batch { list-style: none; display: grid; gap: 10px; }
+.cs-batch-row { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 12px; align-items: start; padding: 10px; border: 1px solid var(--cs-line); border-radius: 12px; background: var(--cs-paper); }
+.cs-batch-row.is-error { border-color: var(--red, #B3261E); }
+.cs-batch-media { width: 72px; height: 90px; }
+.cs-batch-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cs-batch-media.is-loading { background: linear-gradient(90deg, var(--cs-line-soft), #F6F5F2, var(--cs-line-soft)); }
+.cs-batch-fields { display: grid; gap: 8px; justify-items: start; min-width: 0; }
+.cs-batch-fields .apf-select, .cs-batch-name { width: 100%; max-width: 320px; min-height: 44px; padding: 8px 10px; font: inherit; font-size: 15px; border: 1px solid var(--ap-line-strong, #C4C4BE); border-radius: 8px; background: var(--cs-paper); }
+.cs-batch-fields .cs-fine { margin: 0; }
+/* Corrección de la luz */
+.cs-wb-ok { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; font-size: 13.5px; }

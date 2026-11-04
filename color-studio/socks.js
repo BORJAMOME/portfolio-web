@@ -12,8 +12,8 @@
    claro, un tono o dos más oscuro) y Gentleman's Gazette (el mismo color exacto que el pantalón no es la
    opción más lograda; mejor que igualar el calzado; enlazar con la parte de arriba). Ver color-studio/README.md.
    ═══════════════════════════════════════════════ */
-import { normalizeHex, colorDistance, describeColor, hexToLab, labToLch, lchToLab, labToHex, paletteAffinity, byAffinity, SIMILARITY } from './engine.js?v=0ea937e1d8';
-import { directionOf, relation } from './compose.js?v=412d6d8671';
+import { normalizeHex, colorDistance, describeColor, hexToLab, labToLch, lchToLab, labToHex, paletteAffinity, byAffinity, SIMILARITY } from './engine.js?v=a649e19a90';
+import { directionOf, relation } from './compose.js?v=93cfbec93b';
 
 export const RULES = {
   'continuidad-pantalon': 'Calcetín en la familia del pantalón: la pierna se lee como una sola línea y el calzado queda como remate.',

@@ -1199,3 +1199,31 @@ test('Figurín: los calcetines tienen siempre el blanco disponible, aunque la pa
   // el marrón es solo de calzado: en calcetines no vale y vuelve a la propuesta
   assert.equal(C.paletteFigure(p, { socks: '#5A3A24' }).assignment.socks, C.paletteFigure(p).assignment.socks);
 });
+test('Corrección de la luz: un neutro tomado de la foto devuelve el gris y corrige el resto; un punto con color no sirve', () => {
+  const g = E.neutralGains('#F2E6CF');                     // camisa blanca con luz cálida
+  assert.ok(g && g.length === 3);
+  const fixed = E.labToLch(E.hexToLab(E.applyGainsHex('#F2E6CF', g)));
+  assert.ok(fixed.C < 1.5, 'el neutro no queda gris: C ' + fixed.C.toFixed(2));
+  assert.ok(Math.abs(fixed.L - E.labToLch(E.hexToLab('#F2E6CF')).L) < 1.5, 'la corrección cambió la luminosidad del neutro');
+  // el mismo desplazamiento cálido aplicado a un azul marino se deshace
+  const warm = (hex) => { const c = E.hexToRgb(hex); const k = [1.06, 1.0, 0.86]; return E.rgbToHex(Math.min(255, c.r * k[0]), c.g * k[1], c.b * k[2]); };
+  const g2 = E.neutralGains(warm('#E8E8E8'));
+  assert.ok(E.colorDistance(E.applyGainsHex(warm('#2B4C7E'), g2), '#2B4C7E') < E.colorDistance(warm('#2B4C7E'), '#2B4C7E'), 'el azul no se acerca a su color real');
+  assert.equal(E.neutralGains('#C0392B'), null, 'un rojo no es una referencia neutra');
+  assert.equal(E.neutralGains('#050505'), null, 'casi negro no sirve');
+  const px = { data: Uint8ClampedArray.from([242, 230, 207, 255, 10, 20, 30, 0]), width: 2, height: 1 };
+  const out = E.applyGains(px, g);
+  assert.equal(out.data[7], 0, 'la transparencia se conserva'); assert.equal(px.data[0], 242, 'la imagen original no cambia');
+  assert.equal(E.applyGains(px, null), px);
+});
+test('Sugerencias: como mucho una prenda grande estampada (dos dibujos compiten)', () => {
+  const lib = [pal('mc', 'Marino, crudo y camel', ['#1F2A44', '#F2EEE3', '#9C6B3F'])];
+  const base = [garm('jersey', 'jerseis', '#21304A', { pattern: 'rayas' }), garm('chino', 'pantalones', '#EFEADF', { pattern: 'cuadros' }), garm('bota', 'calzado', '#9A6A41')];
+  assert.equal(C.suggestOutfits({ garments: base, palettes: lib }).suggestions.length, 0, 'jersey de rayas con pantalón de cuadros');
+  const one = base.map((g) => g.id === 'chino' ? Object.assign({}, g, { pattern: 'liso' }) : g);
+  assert.equal(C.suggestOutfits({ garments: one, palettes: lib }).suggestions.length, 1, 'con un solo estampado sí');
+});
+test('Corrección de la luz: un azul marino no se acepta como neutro; un blanco con luz cálida, sí', () => {
+  assert.equal(E.neutralGains('#2E4A6E'), null);
+  assert.ok(E.neutralGains('#E9D9B8'));
+});
