@@ -804,20 +804,25 @@ window.APColor = (function () {
       return sec;
     }
     // uso real: «Lo he llevado» (hoy) y «Me gusta» se guardan en cs_wear; las sugerencias se reordenan solas
+    var wearBusy = false;     // un doble toque no guarda dos registros
     function logWear(x, kind) {
       if (demo) return demoBlocked();
+      if (wearBusy) return;
+      wearBusy = true;
       st.insert('cs_wear', [{ kind: kind, garment_ids: x.garmentIds, palette_id: x.palette.id }]).then(function (r) {
         cache.wear = [r[0]].concat(cache.wear || []);
-        refresh(); toast(kind === 'worn' ? 'Anotado: lo llevas hoy. No se volverá a sugerir primero en 14 días.' : 'Guardado en «Me gusta»: sube en las sugerencias.');
-      }).catch(failSoft);
+        wearBusy = false; refresh(); toast(kind === 'worn' ? 'Anotado: lo llevas hoy. No se volverá a sugerir primero en 14 días.' : 'Guardado en «Me gusta»: sube en las sugerencias.');
+      }).catch(function (err) { wearBusy = false; failSoft(err); });
     }
     function unlike(x) {
       if (demo) return demoBlocked();
+      if (wearBusy) return;
+      wearBusy = true;
       var ids = (cache.wear || []).filter(function (w) { return w.kind === 'liked' && w.garment_ids.slice().sort().join() === x.garmentIds.slice().sort().join(); }).map(function (w) { return w.id; });
       Promise.all(ids.map(function (id) { return st.remove('cs_wear', id); })).then(function () {
         cache.wear = (cache.wear || []).filter(function (w) { return ids.indexOf(w.id) < 0; });
-        refresh(); toast('Quitado de «Me gusta».');
-      }).catch(failSoft);
+        wearBusy = false; refresh(); toast('Quitado de «Me gusta».');
+      }).catch(function (err) { wearBusy = false; failSoft(err); });
     }
     function useSuggestion(x) {
       var d = cur();
