@@ -75,6 +75,8 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
   Extracción de color única (`engine.extractColors`: superpíxeles + conectividad geodésica con el borde para quitar el fondo, fusión de sombras, piel rebajada) para Armario, Inspiración y Biblioteca.
   **Biblioteca = referencia común**: `engine.paletteAffinity` (ΔE00, niveles en `engine.SIMILARITY`) la usan las sugerencias de outfits (`compose.suggestOutfits`, tarjeta del Studio),
   la dirección (criterio `biblioteca` y referencia de cada propuesta), los calcetines (outfit completo) y las inspiraciones relacionadas. Hueco «Prenda interior» (`inner`) sin cambios de esquema.
+  **Contexto y uso** (`supabase/color-studio-contexto.sql`, revertir con `color-studio-contexto-rollback.sql`): `cs_garments.seasons`/`formality` (vacío = todo el año / cualquier ocasión)
+  y tabla `cs_wear` («Lo he llevado» / «Me gusta»); filtros de temporada y ocasión en «Outfits con tu armario» (`compose.fitsContext`, `seasonOf`, `wearIndex`): lo que gusta sube, lo llevado hace < 14 días baja.
   Figura del outfit (`compose.paletteFigure`/`outfitFigure`, SVG en la interfaz): en una paleta el reparto es ilustrativo y se dice. Vista Fotografía/Gama de colores en Inspiración y Armario (mismo componente).
   **Inspiración** (`#/color/inspiracion`): outfits guardados de internet en `cs_inspirations` (`supabase/color-studio-inspiracion.sql`, RLS por dueño
   `owner = auth.uid()`; fotos en `armario/inspiracion/<usuario>/` con miniatura), lógica en `color-studio/inspiration.js`, paleta extraída con el mismo

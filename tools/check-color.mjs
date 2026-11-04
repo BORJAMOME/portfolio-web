@@ -37,7 +37,7 @@ const BASE = `http://localhost:${server.address().port}/area-privada.html`;
 /* ── Supabase en memoria ── */
 let seq = 0;
 const uid = () => '00000000-0000-4000-8000-' + String(++seq).padStart(12, '0');
-const db = { cs_garments: [], cs_palettes: [], cs_outfits: [], cs_inspirations: [], ap_opciones: [] };
+const db = { cs_garments: [], cs_palettes: [], cs_outfits: [], cs_inspirations: [], cs_wear: [], ap_opciones: [] };
 ['Casual', 'Smart casual', 'Formal', 'Minimalista', 'Streetwear', 'Workwear', 'Deportivo'].forEach((v, i) => db.ap_opciones.push({ id: 'op-' + i, grupo: 'inspiracion.estilo', valor: v, posicion: i + 1 }));
 const USER_A = 'aaaaaaaa-0000-4000-8000-000000000001', USER_B = 'bbbbbbbb-0000-4000-8000-000000000002';
 let currentUser = USER_A, inspMissing = false, fnMode = 'ok', fnImage = null;   // fnMode: ok | missing | blocked | noimage
@@ -52,6 +52,12 @@ function check(t, r) {                         // lo esencial de los checks de s
     if (!CATS.includes(r.category)) return 'category';
     if (!HEX.test(r.primary_color || '')) return 'primary_color';
     if ((r.secondary_colors || []).some((x) => !HEX.test(x))) return 'secondary_colors';
+    if (!Array.isArray(r.seasons) || r.seasons.length > 4 || r.seasons.some((x) => !SEASON_IDS.slice(0, 4).includes(x))) return 'seasons';   // supabase/color-studio-contexto.sql
+    if (r.formality != null && !['formal', 'smart', 'casual'].includes(r.formality)) return 'formality';
+  }
+  if (t === 'cs_wear') {
+    if (!['worn', 'liked'].includes(r.kind)) return 'kind';
+    if (!Array.isArray(r.garment_ids) || r.garment_ids.length < 1 || r.garment_ids.length > 8) return 'garment_ids';
   }
   if (t === 'cs_palettes') {
     if (!Array.isArray(r.colors) || !r.colors.length || r.colors.length > 12 || r.colors.some((c) => !HEX.test(c.hex || ''))) return 'colors';
@@ -74,7 +80,8 @@ function check(t, r) {                         // lo esencial de los checks de s
   return null;
 }
 const DEFAULT_ROW = {
-  cs_garments: { name: null, subcategory: null, image_path: null, secondary_colors: [], color_shares: null, pattern: 'liso', material: null, notes: null },
+  cs_garments: { name: null, subcategory: null, image_path: null, secondary_colors: [], color_shares: null, pattern: 'liso', material: null, notes: null, seasons: [], formality: null },
+  cs_wear: { palette_id: null, worn_on: new Date().toISOString().slice(0, 10) },
   cs_palettes: { name: null, tags: [], source_type: 'own', source_title: null, source_url: null, source_notes: null, notes: null, is_favorite: false },
   cs_outfits: { items: [], palette_id: null, distribution_override: null, occasion: null, formality: null, notes: null, is_favorite: false },
   cs_inspirations: { title: null, source_url: null, source_name: null, published_on: null, image_path: null, thumb_path: null, image_hash: null, description: null, notes: null,
@@ -1041,6 +1048,60 @@ await step('Studio: «Prenda interior» justo después de la parte superior y ta
   eq(order.indexOf('Prenda interior'), order.indexOf('Parte superior') + 1, 'orden de los huecos: ' + order.join(', '));
   ok(await page.$('.cs-sugg'), 'sin tarjeta de sugerencias');
   ok(await page.$('.cs-sugg .cs-sugg-item, .cs-sugg [data-key="sugg-none"], .cs-sugg .cs-note'), 'la tarjeta no explica nada');
+});
+await step('Contexto y uso: temporada y formalidad en la prenda, filtros de las sugerencias, «Lo he llevado» y «Me gusta»', async () => {
+  const keep = { g: db.cs_garments.splice(0), p: db.cs_palettes.splice(0), w: db.cs_wear.splice(0) };
+  const stamp = () => ({ id: uid(), created_at: new Date().toISOString(), updated_at: new Date().toISOString() });
+  try {
+    const T = Object.assign(stamp(), DEFAULT_ROW.cs_garments, { category: 'camisetas', subcategory: 'Camiseta', name: 'Camiseta verano', primary_color: '#1F2A44', seasons: ['verano'] });
+    const B = Object.assign(stamp(), DEFAULT_ROW.cs_garments, { category: 'pantalones', subcategory: 'Pantalón', name: 'Chino arena', primary_color: '#B48A5A' });
+    const S = Object.assign(stamp(), DEFAULT_ROW.cs_garments, { category: 'calzado', subcategory: 'Zapato', name: 'Zapato burdeos', primary_color: '#6B1F2A', formality: 'formal' });
+    db.cs_garments.push(T, B, S);
+    db.cs_palettes.push(Object.assign(stamp(), DEFAULT_ROW.cs_palettes, { name: 'Prueba contexto', colors: [{ hex: '#1F2A44' }, { hex: '#B48A5A' }, { hex: '#6B1F2A' }] }));
+    await page.reload(); await page.waitForSelector('.cs'); await go(page, '#/color');
+    await page.waitForSelector('[data-key="sugg-season"]');
+    const items = () => page.$$eval('.cs-sugg .cs-sugg-item', (e) => e.length);
+    await page.selectOption('[data-key="sugg-season"]', 'verano'); await page.waitForTimeout(150);
+    eq(await items(), 1, 'en verano la camiseta de verano cabe');
+    await page.selectOption('[data-key="sugg-season"]', 'invierno'); await page.waitForTimeout(150);
+    eq(await items(), 0, 'en invierno no debería caber la camiseta de verano');
+    ok(await page.$('.cs-sugg [data-key="sugg-none"]'), 'sin explicación cuando el contexto no deja nada');
+    await page.selectOption('[data-key="sugg-season"]', ''); await page.waitForTimeout(150);
+    await page.selectOption('[data-key="sugg-occasion"]', 'casual'); await page.waitForTimeout(150);
+    eq(await items(), 0, 'un zapato formal no va en un plan informal');
+    await page.selectOption('[data-key="sugg-occasion"]', 'formal'); await page.waitForTimeout(150);
+    eq(await items(), 1, 'ocasión formal');
+    await page.selectOption('[data-key="sugg-occasion"]', ''); await page.waitForTimeout(150);
+    eq(await items(), 1);
+    const sig = [T.id, B.id, S.id].sort();
+    await page.click('[data-key="sugg-wore-0"]');
+    await page.waitForFunction(() => /Llevado hoy/.test((document.querySelector('[data-key="sugg-worn-0"]') || {}).textContent || ''));
+    eq(db.cs_wear.length, 1); eq([db.cs_wear[0].kind, db.cs_wear[0].garment_ids.slice().sort()], ['worn', sig], 'uso mal guardado');
+    eq(await page.getAttribute('[data-key="sugg-wore-0"]', 'aria-pressed'), 'true');
+    await page.click('[data-key="sugg-like-0"]');
+    await page.waitForFunction(() => (document.querySelector('[data-key="sugg-like-0"]') || {}).getAttribute && document.querySelector('[data-key="sugg-like-0"]').getAttribute('aria-pressed') === 'true');
+    ok(db.cs_wear.some((w) => w.kind === 'liked' && w.garment_ids.slice().sort().join() === sig.join()), '«Me gusta» no se guarda');
+    await page.click('[data-key="sugg-like-0"]');
+    await page.waitForFunction(() => document.querySelector('[data-key="sugg-like-0"]').getAttribute('aria-pressed') === 'false');
+    eq(db.cs_wear.filter((w) => w.kind === 'liked').length, 0, 'quitar «Me gusta» no borra');
+    // formulario de prenda: temporadas y formalidad se guardan
+    await go(page, '#/color/armario');
+    await page.click('[data-key="new-garment"]');
+    await page.waitForSelector('dialog[open] #cs-g-cat');
+    await page.selectOption('dialog[open] #cs-g-cat', 'Camisa');
+    await page.fill('dialog[open] #cs-g-primary', '#F4F2EC');
+    await page.fill('dialog[open] #cs-g-name', 'Camisa contexto');
+    await page.click('dialog[open] [data-key="season-primavera"]'); await page.click('dialog[open] [data-key="season-otono"]');
+    await page.selectOption('dialog[open] #cs-g-form', 'smart');
+    await submit(page);
+    await page.waitForSelector('dialog[open]', { state: 'detached' });
+    const c = db.cs_garments.find((x) => x.name === 'Camisa contexto');
+    ok(c, 'la camisa no se guardó');
+    eq([c.seasons, c.formality], [['primavera', 'otono'], 'smart'], 'temporadas o formalidad perdidas');
+  } finally {
+    db.cs_garments.splice(0, db.cs_garments.length, ...keep.g); db.cs_palettes.splice(0, db.cs_palettes.length, ...keep.p); db.cs_wear.splice(0, db.cs_wear.length, ...keep.w);
+    await page.reload(); await page.waitForSelector('.cs');
+  }
 });
 /* ── Cuentagotas: imagen de cuadrantes con colores conocidos y píxeles sueltos (ruido) ── */
 const QUAD = { tl: '#1F2A44', tr: '#B48A5A', bl: '#6B1F2A', br: '#F4F2EC' };

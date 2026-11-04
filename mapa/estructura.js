@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "258ffcb",
+ "huella": "e5b2ca3",
  "recuento": {
   "paginas": 19,
   "proyectos": 40,
@@ -9,10 +9,10 @@ export default {
   "capitulos": 10,
   "plataformas": 11,
   "pestanas": 10,
-  "tablas": 34,
+  "tablas": 35,
   "funciones": 5,
   "herramientas": 18,
-  "relaciones": 182,
+  "relaciones": 183,
   "sinExplicar": 0
  },
  "columnas": [
@@ -1824,6 +1824,21 @@ export default {
      "familia": "dato"
     },
     {
+     "id": "d:color-studio-contexto",
+     "tipo": "esquema",
+     "etiqueta": "color-studio-contexto.sql",
+     "archivo": "supabase/color-studio-contexto.sql",
+     "hijos": [
+      {
+       "id": "q:cs_wear",
+       "tipo": "tabla",
+       "etiqueta": "cs_wear",
+       "familia": "dato"
+      }
+     ],
+     "familia": "dato"
+    },
+    {
      "id": "d:color-studio-inspiracion",
      "tipo": "esquema",
      "etiqueta": "color-studio-inspiracion.sql",
@@ -2943,6 +2958,14 @@ export default {
    "tipo": "usa",
    "detalle": [
     "cm_docs"
+   ]
+  },
+  {
+   "de": "m:color",
+   "a": "d:color-studio-contexto",
+   "tipo": "usa",
+   "detalle": [
+    "cs_wear"
    ]
   },
   {

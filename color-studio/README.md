@@ -14,6 +14,9 @@ No elige la ropa por ti: propone, explica y deja decidir.
 2. Recargar el área privada. Sin el paso 1, la pestaña lo explica y ofrece el modo ejemplo.
 3. Reversión (destructiva): vaciar el bucket `armario` desde Storage y ejecutar `supabase/color-studio-rollback.sql`.
 4. Inspiración (opcional, después de 1): ver [Inspiración](#inspiración).
+5. Contexto y uso (opcional, después de 1): `supabase/color-studio-contexto.sql` añade `seasons` y `formality` a `cs_garments`
+   y la tabla `cs_wear` («Lo he llevado» / «Me gusta», RLS con `is_member()`). Revertir con `color-studio-contexto-rollback.sql`.
+   Sin la tabla, las sugerencias funcionan igual y no se enseñan los botones de uso.
 
 No hace falta ninguna variable de entorno ni clave nueva: usa la sesión y la clave pública del área privada.
 
@@ -136,6 +139,11 @@ prenda que coincide no basta. Son niveles de proximidad, no una nota de estilo n
   ≥ 30 % de la superficie. Orden: colores representados y ΔE00 medio ponderado. Solo «muy similar» (≤ 6) o, si no hay,
   relacionado con media ≤ 9; como mucho 6, una prenda en 2 como mucho, y como mucho una prenda grande estampada (dos dibujos
   compiten). Se recalculan con el armario de cada momento (también si cambia el estampado de una prenda).
+  **Contexto**: filtros de temporada (por defecto la de hoy, `compose.seasonOf`) y ocasión. `fitsContext`: una prenda sin
+  temporadas vale todo el año y sin formalidad, para cualquier ocasión; formal deja fuera lo informal, informal deja fuera lo
+  formal y smart casual admite todo. **Uso** (`cs_wear`, `wearIndex`): «Me gusta» sube un conjunto; «Lo he llevado» lo baja
+  durante 14 días (`SUGGEST.RECENT_DAYS`) sin quitarlo, y la tarjeta dice hace cuántos días. Un conjunto es la lista de prendas
+  ordenada, así que se reconoce aunque salga con otra combinación de la Biblioteca.
 - **Dirección cromática**: cada dirección prueba primero `biblioteca` (completar con una prenda real una combinación que el
   conjunto ya representa en parte y que encaja con la dirección: sobria para minimalista, con un color intenso para
   creativa) y después sus criterios de siempre. Cada propuesta y la lectura actual citan la combinación más próxima.
