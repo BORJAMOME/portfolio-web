@@ -286,7 +286,8 @@ node tools/color-studio/wada-import.mjs [salida.json] [--from colors.json]
 - CSV con cabecera: `nombre`, `colores` (HEX separados por espacio, `|` o `;`), `etiquetas`, `origen`, `fuente`, `url`, `notas`.
 - Máximo 2 MB y 500 paletas. Se revisa fila a fila (errores y duplicados frente a la biblioteca y al propio archivo) antes de importar.
 - Guardar una URL no descarga su contenido. No hay scraping.
-- Exportar descarga un JSON con paletas, prendas y outfits; las fotos no viajan (solo su ruta).
+- Exportar descarga un JSON con paletas, prendas (con temporada y formalidad), outfits, inspiraciones y el historial de uso (`wear`: «Lo he llevado» / «Me gusta»); las fotos no viajan (solo su ruta).
+- Importar solo trae paletas: la exportación es una copia de seguridad, no una restauración completa.
 
 ## Inspiración
 
