@@ -484,10 +484,12 @@ await step('Corregir la luz: un punto neutro de la foto corrige sus colores; un 
   await page.waitForFunction(() => document.querySelector('#cs-g-primary').value.length === 7);
   const before = await page.inputValue('#cs-g-primary');
   await page.click('[data-key="white-balance"]');
-  const box = await (await page.$('dialog[open] .cs-pick-area img')).boundingBox();
-  await page.mouse.click(box.x + box.width * 0.5, box.y + box.height * 0.5);       // la prenda azul: tiene color, no sirve
+  // clic sobre la propia imagen (Playwright la lleva a la vista): con coordenadas de pantalla, en la CI la foto quedaba fuera
+  const img = await page.waitForSelector('dialog[open] .cs-pick-area img');
+  const at = async (fx, fy) => { const b = await img.boundingBox(); await img.click({ position: { x: b.width * fx, y: b.height * fy } }); };
+  await at(0.5, 0.5);                                                               // la prenda azul: tiene color, no sirve
   await page.waitForSelector('[data-key="wb-bad"]');
-  await page.mouse.click(box.x + box.width * 0.06, box.y + box.height * 0.06);     // el fondo crema: neutro con luz cálida
+  await at(0.06, 0.06);                                                             // el fondo crema: neutro con luz cálida
   await page.waitForSelector('[data-key="wb-ok"]');
   await page.waitForFunction((b) => document.querySelector('#cs-g-primary').value !== b, before);
   const after = await page.inputValue('#cs-g-primary');
