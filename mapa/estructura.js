@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "e5b2ca3",
+ "huella": "256db64",
  "recuento": {
   "paginas": 19,
   "proyectos": 40,
@@ -9,10 +9,10 @@ export default {
   "capitulos": 10,
   "plataformas": 11,
   "pestanas": 10,
-  "tablas": 35,
+  "tablas": 36,
   "funciones": 5,
   "herramientas": 18,
-  "relaciones": 183,
+  "relaciones": 184,
   "sinExplicar": 0
  },
  "columnas": [
@@ -1944,6 +1944,21 @@ export default {
      "familia": "dato"
     },
     {
+     "id": "d:kanban-dependencias",
+     "tipo": "esquema",
+     "etiqueta": "kanban-dependencias.sql",
+     "archivo": "supabase/kanban-dependencias.sql",
+     "hijos": [
+      {
+       "id": "q:kb_dependencias",
+       "tipo": "tabla",
+       "etiqueta": "kb_dependencias",
+       "familia": "dato"
+      }
+     ],
+     "familia": "dato"
+    },
+    {
      "id": "d:kanban",
      "tipo": "esquema",
      "etiqueta": "kanban.sql",
@@ -2992,6 +3007,14 @@ export default {
    "tipo": "usa",
    "detalle": [
     "ap_opciones"
+   ]
+  },
+  {
+   "de": "m:kanban",
+   "a": "d:kanban-dependencias",
+   "tipo": "usa",
+   "detalle": [
+    "kb_dependencias"
    ]
   },
   {
