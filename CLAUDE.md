@@ -64,6 +64,9 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
   **Tarjeta** (crear y editar): un único diálogo, `cardDialog`, con cabecera y pie fijos, secciones plegables (<details>), bloqueo como interruptor y protección de cambios sin guardar (X, Esc, clic fuera, Cancelar).
   Imágenes de las notas en el bucket `recursos`, ruta `kanban/<tarjeta>/` (sin columnas nuevas: se listan con `ctx.storage.list`); se suben y se quitan al guardar y se borran 10 s después de eliminar la tarjeta.
   Captura inteligente local (`logic.parseCapture`: #proyecto, !prioridad, fechas en español, @hoy). Paleta `Ctrl/⌘+K`.
+  Atajos (`?` los lista en `keysDialog`): `/` busca y, con el foco en una tarjeta, D Hecho, S En curso, H hoy, X seleccionar, Supr eliminar.
+  Varias a la vez (Tablero): Ctrl/⌘ o Mayús + clic, X o el botón «Seleccionar» (táctil); `selBar` mueve, añade a hoy, archiva o elimina, con un único Deshacer
+  (`reg(…, o.collect)` junta los deshacer de cada tarjeta).
   IA opcional: Edge Function `supabase/functions/kanban-ia` (desglosar, siguiente paso, plan del día, texto → tarjetas). Solo propone:
   la web enseña una revisión y guarda lo confirmado. `KB_AI_PROVIDER=off` por defecto (los botones de IA no aparecen). Guía: su `README.md`.
 - **Color Studio** (`#/color`, `/biblioteca`, `/armario`, `/calcetines`; app del catálogo, se abre en modo app): outfits con prendas reales, paletas de referencia y guía de calcetines.

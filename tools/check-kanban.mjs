@@ -728,6 +728,89 @@ await step('Dependencias: sin la tabla (SQL sin ejecutar) el tablero funciona y 
   await o.ctx.close();
   depsMissing = false;
 });
+await step('Atajos: «?» lista los atajos, «/» va a la búsqueda y D/S/H actúan sobre la tarjeta con el foco', async () => {
+  await goBoard(page);
+  await page.click('.apk-title');                                       // foco fuera de campos
+  await page.keyboard.press('?');
+  await page.waitForSelector('dialog.apk-keys[open]');
+  ok((await page.textContent('dialog.apk-keys')).includes('Mover a Hecho'), 'la ayuda no lista D');
+  await page.addScriptTag({ content: AXE });
+  const v = await page.evaluate(async () => (await axe.run(document.querySelector('dialog.apk-keys'), { runOnly: ['wcag2a', 'wcag2aa'] })).violations.map((x) => x.id + ': ' + x.nodes.length));
+  eq(v, [], 'axe en la ayuda de atajos');
+  await page.keyboard.press('Escape');
+  await page.waitForSelector('dialog.apk-keys', { state: 'detached' });
+  await page.click('.apk-title');
+  await page.keyboard.press('/');
+  eq(await page.evaluate(() => document.activeElement.matches('.apk-filters input[type=search]')), true, '«/» no lleva a la búsqueda');
+  await addInline(page, 'pendiente', 'Atajo uno');
+  const id = db.kb_tarjetas.find((c) => c.titulo === 'Atajo uno').id;
+  await page.focus(`${cardSel('Atajo uno')} [data-role="open"]`);
+  await page.keyboard.press('s');
+  await page.waitForFunction(() => document.querySelector('.apk-col[data-estado="en_curso"] .apk-card-open') && [...document.querySelectorAll('.apk-col[data-estado="en_curso"] .apk-card-open')].some((e) => e.textContent === 'Atajo uno'));
+  eq(db.kb_tarjetas.find((c) => c.id === id).estado, 'en_curso', 'S');
+  eq(await page.evaluate(() => document.activeElement.textContent), 'Atajo uno', 'el foco sigue en la tarjeta');
+  await page.keyboard.press('h');
+  await page.waitForTimeout(100);
+  ok(db.kb_tarjetas.find((c) => c.id === id).hoy_fecha, 'H no la añadió a hoy');
+  await page.keyboard.press('d');
+  await page.waitForTimeout(100);
+  eq(db.kb_tarjetas.find((c) => c.id === id).estado, 'hecho', 'D');
+  await page.focus(`${cardSel('Atajo uno')} [data-role="open"]`);
+  await page.keyboard.press('Delete');
+  await page.waitForSelector('dialog[open] >> text=Eliminar «Atajo uno»');
+  await page.click('dialog[open] button:has-text("Eliminar")');
+  await page.waitForFunction(() => ![...document.querySelectorAll('.apk-card-open')].some((e) => e.textContent === 'Atajo uno'));
+  ok(!db.kb_tarjetas.some((c) => c.id === id), 'Supr no la eliminó');
+});
+await step('Varias a la vez: seleccionar con Ctrl+clic y con el modo «Seleccionar», mover y deshacer de una vez', async () => {
+  await goBoard(page);
+  for (const t of ['Lote A', 'Lote B', 'Lote C']) await addInline(page, 'ideas', t);
+  const ids = ['Lote A', 'Lote B', 'Lote C'].map((t) => db.kb_tarjetas.find((c) => c.titulo === t).id);
+  await page.click(`${cardSel('Lote A')} [data-role="open"]`, { modifiers: ['Control'] });
+  await page.waitForSelector('.apk-selbar');
+  ok(!(await page.$('dialog.apk-card-dlg[open]')), 'Ctrl+clic abrió la tarjeta');
+  await page.click(`${cardSel('Lote B')} [data-role="open"]`);         // con selección activa, un clic normal también selecciona
+  eq(await page.textContent('.apk-selbar-n'), '2 seleccionadas');
+  eq(await page.getAttribute(`${cardSel('Lote B')} [data-role="open"]`, 'aria-pressed'), 'true', 'aria-pressed');
+  const v = await page.evaluate(async () => (await axe.run(document.querySelector('.apk-tablero'), { runOnly: ['wcag2a', 'wcag2aa'] })).violations.map((x) => x.id + ': ' + x.nodes.length));
+  eq(v, [], 'axe con la barra de selección');
+  if (process.env.SHOTS) await page.screenshot({ path: join(process.env.SHOTS, 'seleccion.png') });
+  await page.selectOption('.apk-selbar select', 'pendiente');
+  await page.waitForFunction(() => !document.querySelector('.apk-selbar'));
+  eq(ids.map((i) => db.kb_tarjetas.find((c) => c.id === i).estado), ['pendiente', 'pendiente', 'ideas'], 'mover en grupo');
+  ok((await page.textContent('.apk-toast')).includes('2 tarjetas → Pendiente'), 'aviso del grupo');
+  await page.click('.apk-toast button:has-text("Deshacer")');
+  await page.waitForFunction((i) => [...document.querySelectorAll('.apk-col[data-estado="ideas"] .apk-card')].filter((e) => i.includes(e.dataset.id)).length === 3, ids);
+  eq(ids.map((i) => db.kb_tarjetas.find((c) => c.id === i).estado), ['ideas', 'ideas', 'ideas'], 'un solo Deshacer devuelve las dos');
+  // modo «Seleccionar» (táctil) + archivar en grupo + Deshacer
+  await page.click('[data-role="sel-mode"]');
+  await page.waitForSelector('.apk-selbar');
+  ok(await page.$eval('[data-role="sel-arch"]', (b) => b.disabled), 'sin selección, las acciones no deberían estar activas');
+  await page.click(`${cardSel('Lote B')} [data-role="open"]`);
+  await page.click(`${cardSel('Lote C')} [data-role="open"]`);
+  ok(!(await page.$('dialog.apk-card-dlg[open]')), 'en modo selección el clic abrió la tarjeta');
+  await page.click('[data-role="sel-arch"]');
+  await page.waitForFunction(() => !document.querySelector('.apk-selbar'));
+  ok(db.kb_tarjetas.filter((c) => ids.slice(1).includes(c.id)).every((c) => c.archivada_en), 'archivar en grupo');
+  await page.click('.apk-toast button:has-text("Deshacer")');
+  await page.waitForFunction((i) => [...document.querySelectorAll('.apk-card')].filter((e) => i.includes(e.dataset.id)).length === 3, ids);
+  ok(db.kb_tarjetas.filter((c) => ids.includes(c.id)).every((c) => !c.archivada_en), 'deshacer el archivado en grupo');
+  // X con el teclado y Esc quita la selección; luego eliminar en grupo
+  await page.focus(`${cardSel('Lote A')} [data-role="open"]`);
+  await page.keyboard.press('x');
+  await page.waitForSelector('.apk-selbar');
+  await page.click('.apk-title');
+  await page.keyboard.press('Escape');
+  await page.waitForFunction(() => !document.querySelector('.apk-selbar'));
+  for (const t of ['Lote A', 'Lote B', 'Lote C']) await page.click(`${cardSel(t)} [data-role="open"]`, { modifiers: ['Shift'] });
+  await page.click('[data-role="sel-del"]');
+  await page.click('dialog[open] button:has-text("Eliminar")');
+  await page.waitForFunction((i) => ![...document.querySelectorAll('.apk-card')].some((e) => i.includes(e.dataset.id)), ids);
+  ok(!db.kb_tarjetas.some((c) => ids.includes(c.id)), 'eliminar en grupo');
+  await page.click('.apk-toast button:has-text("Deshacer")');
+  await page.waitForFunction((i) => [...document.querySelectorAll('.apk-card')].filter((e) => i.includes(e.dataset.id)).length === 3, ids);
+  eq(db.kb_tarjetas.filter((c) => ids.includes(c.id)).length, 3, 'deshacer la eliminación en grupo');
+});
 await step('Sin errores de JavaScript', async () => { eq(errors, [], 'errores de consola'); });
 await step('Accesibilidad (axe, WCAG 2 A/AA) en Tablero y Hoy', async () => {
   for (const v of ['Tablero', 'Hoy']) {

@@ -261,7 +261,8 @@ window.APKanban = (function () {
     var st = {
       cards: [], archived: null, projects: [], subs: {}, hist: {}, deps: [], depsOk: false, cfg: { wip: {}, capacidad: DEFAULTS.capacidad, resultado: '' },
       view: pref('view') || 'hoy', filters: { q: '', proyecto: '', prioridad: 0, bloqueadas: false },
-      colTab: pref('col') || 'en_curso', hechoMas: false
+      colTab: pref('col') || 'en_curso', hechoMas: false,
+      sel: {}, selMode: false      // selección múltiple (Tablero): ids elegidos y modo «Seleccionar» (para táctil)
     };
     var W = {};      // tarjetas que espera cada una (waitingMap); se recalcula en cada paint()
     function waits() { return waitingMap(st.cards, st.deps); }
@@ -347,6 +348,9 @@ window.APKanban = (function () {
     function snapshot(c, keys) { var s = {}; keys.forEach(function (k) { s[k] = c[k]; }); return s; }
 
     function pushUndo(label, fn) { var e = { label: label, fn: fn }; undo.push(e); if (undo.length > 30) undo.shift(); return e; }
+    /* Con o.collect (acciones sobre varias tarjetas), el deshacer de cada una se junta en una lista y la acción
+       registra un único «Deshacer» para todas; sin él, va a la pila como siempre. */
+    function reg(label, fn, o) { if (o && o.collect) { var e = { label: label, fn: fn }; o.collect.push(e); return e; } return pushUndo(label, fn); }
     function dropUndo(e) { var i = undo.indexOf(e); if (i > -1) undo.splice(i, 1); }
     function doUndo() {
       var u = undo.pop();
@@ -360,7 +364,8 @@ window.APKanban = (function () {
     }
 
     /* Mover (columna + posición). index = posición final en la columna destino. */
-    function move(card, estado, index, how, beforeId) {
+    function move(card, estado, index, how, beforeId, o) {
+      o = o || {};
       var prev = snapshot(card, ['estado', 'posicion', 'tipo', 'completada_en', 'hoy_fecha']);
       var others = column(st.cards, estado).filter(function (c) { return c.id !== card.id; });
       if (beforeId !== undefined) { index = beforeId ? others.map(function (c) { return c.id; }).indexOf(beforeId) : others.length; if (index < 0) index = others.length; }   // soltar entre dos visibles = entre esas dos reales
@@ -382,16 +387,16 @@ window.APKanban = (function () {
       var pos = card.posicion;
       paint();
       var w = limit && prev.estado !== estado ? wipState(before + 1, limit) : null;
-      say('«' + clip(card.titulo) + '» → ' + ESTADO_LABEL[estado] + (how === 'key' ? ', posición ' + (index + 1) + ' de ' + (before + 1) : '') +
+      if (!o.quiet) say('«' + clip(card.titulo) + '» → ' + ESTADO_LABEL[estado] + (how === 'key' ? ', posición ' + (index + 1) + ' de ' + (before + 1) : '') +
         (w && w.over ? '. ' + ESTADO_LABEL[estado] + ' supera su límite (' + (before + 1) + '/' + limit + ').' : '.') +
         // avisan, no impiden (como el límite WIP)
         (waitedOn.length && estado !== 'ideas' && estado !== 'pendiente' ? ' Aún espera a ' + names(waitedOn) + '.' : '') +
         (freed.length ? (freed.length === 1 ? ' Queda libre ' : ' Quedan libres ') + names(freed) + '.' : ''),
         { undo: true, action: estado === 'hecho' && prev.estado !== 'hecho' ? { label: 'Anotar aprendizaje', fn: function () { detailDialog(card, 'aprendizaje'); } } : null });
-      var entry = pushUndo('movimiento de «' + clip(card.titulo) + '»', function () {
+      var entry = reg('movimiento de «' + clip(card.titulo) + '»', function () {
         Object.assign(card, prev); paint();
         return patchCard(card.id, { estado: prev.estado, tipo: prev.tipo, posicion: prev.posicion, hoy_fecha: prev.hoy_fecha }).then(function () { return null; });
-      });
+      }, o);
       var writes = [patchCard(card.id, Object.assign({ posicion: pos }, patch))];
       if (renumber) others.forEach(function (c) { if (c.id !== card.id) writes.push(patchCard(c.id, { posicion: c.posicion })); });
       return Promise.all(writes).catch(function (err) { dropUndo(entry); failed(err, 'movimiento', function () { Object.assign(card, prev); }); });
@@ -435,14 +440,16 @@ window.APKanban = (function () {
       });
     }
 
-    function archive(card, on) {
+    function archive(card, on, o) {
+      o = o || {};
       var prevA = card.archivada_en;
       card.archivada_en = on ? new Date().toISOString() : null;
       if (on) { st.cards = st.cards.filter(function (c) { return c.id !== card.id; }); if (st.archived) st.archived.unshift(card); }
       else { st.cards.push(card); st.archived = (st.archived || []).filter(function (c) { return c.id !== card.id; }); }
       paint();
-      say(on ? '«' + clip(card.titulo) + '» archivada.' : '«' + clip(card.titulo) + '» recuperada.', { undo: true });
-      var entry = pushUndo(on ? 'archivado' : 'recuperación', function () { return archive(card, !on); });
+      if (!o.quiet) say(on ? '«' + clip(card.titulo) + '» archivada.' : '«' + clip(card.titulo) + '» recuperada.', { undo: true });
+      // en grupo, deshacer no apila ni avisa por tarjeta: lo hace la acción de grupo
+      var entry = reg(on ? 'archivado' : 'recuperación', function () { return archive(card, !on, o.collect ? { quiet: true, collect: [] } : undefined); }, o);
       return api('/rest/v1/kb_tarjetas?id=eq.' + card.id, { method: 'PATCH', headers: { Prefer: 'return=minimal', 'Content-Type': 'application/json' }, body: JSON.stringify({ archivada_en: card.archivada_en }) })
         .catch(function (err) {
           dropUndo(entry);
@@ -454,17 +461,18 @@ window.APKanban = (function () {
         });
     }
 
-    function remove(card) {
+    function remove(card, o) {
+      o = o || {};
       var subs = st.subs[card.id] || [], rel = st.deps.filter(involves(card.id));
       st.deps = st.deps.filter(notInvolves(card.id));
       st.cards = st.cards.filter(function (c) { return c.id !== card.id; });
       if (st.archived) st.archived = st.archived.filter(function (c) { return c.id !== card.id; });
       paint();
       return api('/rest/v1/kb_tarjetas?id=eq.' + card.id, { method: 'DELETE', headers: { Prefer: 'return=minimal' } }).then(function () {
-        say('«' + clip(card.titulo) + '» eliminada.', { undo: true });
+        if (!o.quiet) say('«' + clip(card.titulo) + '» eliminada.', { undo: true });
         // las imágenes se borran cuando ya no se puede deshacer desde el aviso (deshacer después recupera la tarjeta sin ellas)
         var imgTimer = setTimeout(function () { removeImages(card.id); }, 10000);
-        pushUndo('eliminación de «' + clip(card.titulo) + '»', function () {
+        reg('eliminación de «' + clip(card.titulo) + '»', function () {
           clearTimeout(imgTimer);
           var row = Object.assign({}, card);
           return api('/rest/v1/kb_tarjetas', { method: 'POST', headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(row) })
@@ -473,22 +481,94 @@ window.APKanban = (function () {
               return api('/rest/v1/kb_subtareas', { method: 'POST', headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(subs) });
             }).then(function () {
               (card.archivada_en ? (st.archived = st.archived || []) : st.cards).push(card); st.subs[card.id] = subs;
-              var back = rel.filter(function (d) { return byAny(d.tarjeta_id) && byAny(d.depende_de); })      // la otra tarjeta puede haberse borrado entretanto
+              var back = rel.filter(function (d) {      // la otra tarjeta puede haberse borrado entretanto; en grupo, la fila puede haber vuelto ya con la otra
+                return byAny(d.tarjeta_id) && byAny(d.depende_de) && !st.deps.some(function (x) { return x.tarjeta_id === d.tarjeta_id && x.depende_de === d.depende_de; });
+              })
                 .map(function (d) { return { tarjeta_id: d.tarjeta_id, depende_de: d.depende_de }; });
               if (!back.length) return null;
               return api('/rest/v1/kb_dependencias', { method: 'POST', headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(back) })
                 .then(function () { st.deps = st.deps.concat(back); });
             });
-        });
+        }, o);
       }).catch(function (err) { failed(err, 'eliminar'); });
     }
 
-    function setHoy(card, on) {
+    function setHoy(card, on, o) {
+      o = o || {};
       tick();
       var prev = card.hoy_fecha, value = on ? today : null;
-      if (on && todayList().length >= st.cfg.capacidad) say('Ya tienes ' + todayList().length + ' elegidas para hoy (tu capacidad es ' + st.cfg.capacidad + '). Se añade igualmente: decide qué quitas.');
+      if (o.collect) o.collect.push({ label: 'hoy', fn: function () { card.hoy_fecha = prev; return patchCard(card.id, { hoy_fecha: prev }); } });
+      if (!o.quiet && on && todayList().length >= st.cfg.capacidad) say('Ya tienes ' + todayList().length + ' elegidas para hoy (tu capacidad es ' + st.cfg.capacidad + '). Se añade igualmente: decide qué quitas.');
       card.hoy_fecha = value; paint();
       return patchCard(card.id, { hoy_fecha: value }).catch(function (err) { failed(err, 'hoy', function () { card.hoy_fecha = prev; }); });
+    }
+    /* ── Varias tarjetas a la vez (Tablero): Ctrl/⌘ o Mayús + clic, X con el teclado, o el modo «Seleccionar» (táctil) ── */
+    function selActive() { return st.selMode || Object.keys(st.sel).length > 0; }
+    function selectedCards() {      // solo las visibles con los filtros actuales, en el orden del tablero
+      var order = ESTADOS.map(function (e) { return e.id; });
+      return filterCards(st.cards, st.filters, st.subs, W).filter(function (c) { return st.sel[c.id]; })
+        .sort(function (a, b) { return (order.indexOf(a.estado) - order.indexOf(b.estado)) || byPos(a, b); });
+    }
+    function clearSel() { st.sel = {}; st.selMode = false; }
+    function announce(msg) { live.textContent = ''; setTimeout(function () { live.textContent = msg; }, 20); }
+    function toggleSel(c) {
+      if (st.sel[c.id]) delete st.sel[c.id]; else st.sel[c.id] = true;
+      var n = Object.keys(st.sel).length;
+      keep = c.id; paint();
+      announce((st.sel[c.id] ? '«' + clip(c.titulo) + '» seleccionada. ' : '«' + clip(c.titulo) + '» fuera de la selección. ') + n + (n === 1 ? ' seleccionada.' : ' seleccionadas.'));
+    }
+    function bulk(kind, estado) {
+      var cards = selectedCards(), n = cards.length;
+      if (!n) return;
+      var col = [], o = { quiet: true, collect: col }, what = n + (n === 1 ? ' tarjeta' : ' tarjetas'), msg = '', label = '';
+      if (kind === 'move') {
+        var freed = [];
+        if (estado === 'hecho') {      // qué queda libre al terminar todas las elegidas
+          var sim = st.cards.map(function (c) { return st.sel[c.id] ? Object.assign({}, c, { estado: 'hecho' }) : c; }), after = waitingMap(sim, st.deps);
+          freed = Object.keys(W).filter(function (id) { return !after[id] && !st.sel[id]; }).map(byId).filter(Boolean);
+        }
+        cards.forEach(function (c) { if (c.estado !== estado) move(c, estado, column(st.cards, estado).filter(function (x) { return x.id !== c.id; }).length, 'bulk', undefined, o); });
+        var lim = st.cfg.wip[estado], total = column(st.cards, estado).length;
+        msg = what + ' → ' + ESTADO_LABEL[estado] + '.' + (lim && total > lim ? ' ' + ESTADO_LABEL[estado] + ' supera su límite (' + total + '/' + lim + ').' : '') +
+          (freed.length ? (freed.length === 1 ? ' Queda libre ' : ' Quedan libres ') + names(freed) + '.' : '');
+        label = 'mover ' + what;
+      } else if (kind === 'hoy') {
+        var add = cards.filter(function (c) { return c.hoy_fecha !== today && c.estado !== 'hecho' && c.estado !== 'ideas'; });
+        add.forEach(function (c) { setHoy(c, true, o); });
+        var k = todayList().length;
+        msg = (add.length ? add.length + (add.length === 1 ? ' añadida a hoy.' : ' añadidas a hoy.') : 'Ninguna se puede añadir a hoy (ya estaban, o son ideas o están hechas).') +
+          (add.length && k > st.cfg.capacidad ? ' Tienes ' + k + ' para hoy y tu capacidad es ' + st.cfg.capacidad + ': decide qué quitas.' : '');
+        label = 'añadir a hoy ' + what;
+      } else if (kind === 'archive') {
+        cards.forEach(function (c) { archive(c, true, o); });
+        msg = what + (n === 1 ? ' archivada.' : ' archivadas.'); label = 'archivado de ' + what;
+      } else if (kind === 'remove') {
+        cards.forEach(function (c) { remove(c, o); });
+        msg = what + (n === 1 ? ' eliminada.' : ' eliminadas.'); label = 'eliminación de ' + what;
+      }
+      clearSel();
+      if (col.length || kind === 'remove') pushUndo(label, function () {      // en orden inverso y de una en una (así cada tarjeta vuelve antes que las suyas)
+        return col.slice().reverse().reduce(function (p, e) { return p.then(function () { return e.fn(); }); }, Promise.resolve()).then(function () { paint(); });
+      });
+      paint();
+      say(msg, { undo: col.length > 0 || kind === 'remove' });
+    }
+    function selBar() {
+      var cards = selectedCards(), n = cards.length, off = !n;
+      var mv = ui.select(ESTADOS.map(function (e) { return [e.id, e.label]; }), '', 'Mover a…');
+      mv.classList.add('apk-select'); mv.setAttribute('aria-label', 'Mover las seleccionadas a'); if (off) mv.disabled = true;
+      mv.addEventListener('change', function () { if (mv.value) bulk('move', mv.value); });
+      return h('div', { class: 'apk-selbar', role: 'group', 'aria-label': 'Acciones con las tarjetas seleccionadas' }, [
+        h('p', { class: 'apk-selbar-n', text: n ? n + (n === 1 ? ' seleccionada' : ' seleccionadas') : 'Toca tarjetas para seleccionarlas' }),
+        mv,
+        btn([icon('hoy'), 'Añadir a hoy'], 'apk-btn', function () { bulk('hoy'); }, { disabled: off, 'data-role': 'sel-hoy' }),
+        btn('Archivar', 'apk-btn', function () { bulk('archive'); }, { disabled: off, 'data-role': 'sel-arch' }),
+        btn('Eliminar', 'apk-btn apk-danger', function () {
+          ctx.ask({ title: 'Eliminar ' + n + (n === 1 ? ' tarjeta' : ' tarjetas'), text: 'Se borran con sus pasos, imágenes, historial y dependencias. Podrás deshacerlo unos segundos; si dudas, archívalas.', ok: 'Eliminar', danger: true })
+            .then(function (ok) { if (ok) bulk('remove'); });
+        }, { disabled: off, 'data-role': 'sel-del' }),
+        btn('Terminar', 'apk-link', function () { clearSel(); paint(); announce('Selección terminada.'); var b = root.querySelector('[data-role="sel-mode"]'); if (b) b.focus(); }, { 'data-role': 'sel-end' })
+      ]);
     }
     function todayList() { return st.cards.filter(function (c) { return c.hoy_fecha === today && c.estado !== 'hecho'; }).sort(byPos); }
 
@@ -545,7 +625,7 @@ window.APKanban = (function () {
         ]),
         h('div', { class: 'apk-head-actions' }, [
           h('div', { class: 'apk-seg', role: 'group', 'aria-label': 'Vista' }, tabs.map(function (t) {
-            return btn(t[1], 'apk-seg-btn', function () { swap(function () { st.view = t[0]; setPref('view', t[0]); paint(); }); if (t[0] === 'archivo') loadArchived(); }, { 'aria-pressed': String(st.view === t[0]) });
+            return btn(t[1], 'apk-seg-btn', function () { clearSel(); swap(function () { st.view = t[0]; setPref('view', t[0]); paint(); }); if (t[0] === 'archivo') loadArchived(); }, { 'aria-pressed': String(st.view === t[0]) });
           })),
           btn([icon('buscar'), 'Buscar', h('kbd', { class: 'apk-kbd', text: 'Ctrl K' })], 'apk-btn apk-btn--search', palette, { 'aria-keyshortcuts': 'Control+K', 'data-role': 'palette' }),
           btn('Proyectos', 'apk-btn', projectsDialog),
@@ -590,15 +670,22 @@ window.APKanban = (function () {
       if (c.esfuerzo) meta.push(h('span', { class: 'apk-chip' }, [icon('reloj'), ESFUERZO[c.esfuerzo]]));
       (c.etiquetas || []).slice(0, 3).forEach(function (t) { meta.push(h('span', { class: 'apk-chip apk-tag', text: '#' + t })); });
       var idx = ESTADOS.map(function (e) { return e.id; }).indexOf(c.estado), next = ESTADOS[idx + 1];
-      return h('li', { class: 'apk-card' + (c.bloqueada ? ' is-blocked' : '') + (wt ? ' is-waiting' : '') + (c.estado === 'hecho' ? ' is-done' : '') + (fresh === c.id ? ' is-new' : ''), 'data-id': c.id, 'data-estado': c.estado }, [
+      var selecting = st.view === 'tablero' && selActive(), picked = selecting && !!st.sel[c.id];
+      return h('li', { class: 'apk-card' + (c.bloqueada ? ' is-blocked' : '') + (wt ? ' is-waiting' : '') + (picked ? ' is-selected' : '') + (c.estado === 'hecho' ? ' is-done' : '') + (fresh === c.id ? ' is-new' : ''), 'data-id': c.id, 'data-estado': c.estado }, [
         h('div', { class: 'apk-card-top' }, [
           h('span', { class: 'apk-grip', 'aria-hidden': 'true' }, [icon('grip')]),
+          selecting ? h('span', { class: 'apk-selbox' + (picked ? ' is-on' : ''), 'aria-hidden': 'true' }) : null,
           stIcon(c.estado), h('span', { class: 'sr-only', text: 'Estado: ' + ESTADO_LABEL[c.estado] + '. ' }),
           c.tipo === 'idea' ? h('span', { class: 'apk-type', title: 'Idea' }, [icon('idea')]) : null,
           proj ? h('span', { class: 'apk-proj' }, [(function () { var d = h('span', { class: 'apk-dot', 'aria-hidden': 'true' }); d.style.background = tone(proj.id); return d; })(), h('span', { class: 'apk-proj-t', text: proj.titulo })]) : null,
         ]),
-        h('button', { type: 'button', class: 'apk-card-open', 'data-role': 'open', 'aria-keyshortcuts': 'Shift+ArrowLeft Shift+ArrowRight Shift+ArrowUp Shift+ArrowDown',
-          'aria-describedby': 'apk-kbd-help', onclick: function () { if (Date.now() - lastDrag > 80) detailDialog(c); }, text: c.titulo }),
+        h('button', { type: 'button', class: 'apk-card-open', 'data-role': 'open', 'aria-keyshortcuts': 'Shift+ArrowLeft Shift+ArrowRight Shift+ArrowUp Shift+ArrowDown D S H X Delete',
+          'aria-pressed': selecting ? String(picked) : null,      // en modo selección, el título selecciona en vez de abrir
+          'aria-describedby': 'apk-kbd-help', text: c.titulo, onclick: function (ev) {
+            if (Date.now() - lastDrag <= 80) return;
+            if (st.view === 'tablero' && (selecting || ev.ctrlKey || ev.metaKey || ev.shiftKey)) return toggleSel(c);
+            detailDialog(c);
+          } }),
         c.siguiente_paso && c.estado !== 'hecho' ? h('p', { class: 'apk-next' }, [icon('next'), h('span', { class: 'sr-only', text: 'Siguiente paso: ' }), c.siguiente_paso]) : null,
         c.bloqueada && c.bloqueo ? h('p', { class: 'apk-why-block', text: 'Bloqueo: ' + c.bloqueo }) : null,
         wt ? h('p', { class: 'apk-why-wait', text: 'Espera a ' + names(wt) }) : null,
@@ -629,8 +716,8 @@ window.APKanban = (function () {
         return btn([stIcon(e.id), e.label + ' ' + column(visible, e.id).length], 'apk-coltab', function () { swap(function () { st.colTab = e.id; setPref('col', e.id); paint(); }); }, { 'aria-pressed': String(st.colTab === e.id), 'data-estado': e.id });
       }));
       return h('div', { class: 'apk-tablero', 'data-tab': st.colTab }, [
-        filtersEl(filtered), tabs,
-        h('p', { class: 'sr-only', id: 'apk-kbd-help', text: 'Mayús más flechas izquierda o derecha cambia la tarjeta de columna; Mayús más flechas arriba o abajo la reordena.' }),
+        filtersEl(filtered), selActive() ? selBar() : null, tabs,
+        h('p', { class: 'sr-only', id: 'apk-kbd-help', text: 'Mayús más flechas izquierda o derecha cambia la tarjeta de columna; Mayús más flechas arriba o abajo la reordena. D la pasa a Hecho, S a En curso, H la añade o quita de hoy, X la selecciona y Suprimir la elimina. Interrogación muestra todos los atajos.' }),
         h('div', { class: 'apk-board', tabindex: '-1' }, cols)
       ]);
     }
@@ -650,7 +737,11 @@ window.APKanban = (function () {
       return h('div', { class: 'apk-filters' }, [
         q, proj, pr,
         btn(st.depsOk ? 'Bloqueadas o en espera' : 'Solo bloqueadas', 'apk-chipbtn', function () { st.filters.bloqueadas = !st.filters.bloqueadas; paint(); }, { 'aria-pressed': String(st.filters.bloqueadas) }),
-        filtered ? btn('Quitar filtros', 'apk-link', function () { st.filters = { q: '', proyecto: '', prioridad: 0, bloqueadas: false }; paint(); }) : null
+        filtered ? btn('Quitar filtros', 'apk-link', function () { st.filters = { q: '', proyecto: '', prioridad: 0, bloqueadas: false }; paint(); }) : null,
+        btn('Seleccionar', 'apk-chipbtn apk-push', function () {
+          if (selActive()) clearSel(); else st.selMode = true;
+          paint(); announce(selActive() ? 'Modo selección: cada tarjeta que toques se selecciona.' : 'Selección terminada.');
+        }, { 'aria-pressed': String(selActive()), 'data-role': 'sel-mode' })
       ]);
     }
 
@@ -1491,7 +1582,8 @@ window.APKanban = (function () {
           { ico: 'st_en_curso', label: 'Ir al Tablero', run: go('tablero') },
           { ico: 'libro', label: 'Ir al Archivo', run: go('archivo') },
           { ico: 'proyecto', label: 'Proyectos', run: projectsDialog },
-          { ico: 'reloj', label: 'Ajustes del tablero', run: settingsDialog }
+          { ico: 'reloj', label: 'Ajustes del tablero', run: settingsDialog },
+          { ico: 'buscar', label: 'Atajos de teclado', run: keysDialog }
         ];
         if (st.ia) a.push({ ico: 'ia', label: 'Plan del día con IA', run: function () { go('hoy')(); planDia(); } }, { ico: 'ia', label: 'Convertir texto en tarjetas con IA', run: function () { captureAI(''); } });
         return a.map(function (x) { x.kind = 'Acción'; return x; });
@@ -1528,9 +1620,53 @@ window.APKanban = (function () {
       document.body.appendChild(dlg); dlg.showModal(); draw(); input.focus();
     }
 
+    /* ── Atajos (los lista keysDialog, con «?») ── */
+    var MAC = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent || '');
+    function keysDialog() {
+      if (document.querySelector('dialog.apk-keys')) return;
+      var mod = MAC ? '⌘' : 'Ctrl';
+      var groups = [
+        ['General', [[mod + ' K', 'Buscar tarjetas y acciones'], ['/', 'Buscar en el tablero'], [mod + ' Z', 'Deshacer'], ['?', 'Ver estos atajos'], ['Esc', 'Cerrar un diálogo o quitar la selección']]],
+        ['Tarjeta con el foco', [['Enter', 'Abrir'], ['D', 'Mover a Hecho'], ['S', 'Mover a En curso'], ['H', 'Añadir a hoy o quitar de hoy'], ['X', 'Seleccionar o quitar de la selección (Tablero)'],
+          ['Supr', 'Eliminar (pide confirmación)'], ['Mayús ← →', 'Cambiar de columna (Tablero)'], ['Mayús ↑ ↓', 'Reordenar en la columna (Tablero)']]],
+        ['Varias tarjetas (Tablero)', [[mod + ' clic · Mayús clic', 'Seleccionar o quitar una tarjeta'], ['Seleccionar', 'Botón junto a los filtros: cada toque selecciona (pantallas táctiles)']]]
+      ];
+      var dlg = h('dialog', { class: 'ap-dialog apk-dialog apk-keys', 'aria-labelledby': 'apk-keys-t', onclose: function () { dlg.remove(); } }, [
+        h('h2', { class: 'ap-dialog-title', id: 'apk-keys-t', text: 'Atajos de teclado' }),
+        groups.map(function (g) {
+          return h('section', { class: 'apk-keys-g' }, [h('h3', { class: 'apk-keys-h', text: g[0] }),
+            h('dl', { class: 'apk-keys-l' }, g[1].map(function (r) { return [h('dt', null, [h('kbd', { class: 'apk-kbd', text: r[0] })]), h('dd', { text: r[1] })]; }))]);
+        }),
+        h('div', { class: 'ap-dialog-actions' }, [btn('Cerrar', 'btn btn-primary', function () { dlg.close(); }, { 'data-role': 'keys-close' })])
+      ]);
+      document.body.appendChild(dlg); dlg.showModal(); dlg.querySelector('[data-role="keys-close"]').focus();
+    }
+    /* Teclas sobre la tarjeta enfocada (su título), sin modificadores */
+    function cardKey(ev, c) {
+      var k = ev.key.length === 1 ? ev.key.toLowerCase() : ev.key;
+      var go = function (estado) { ev.preventDefault(); keep = c.id; if (c.estado === estado) return say('Ya está en ' + ESTADO_LABEL[estado] + '.'); move(c, estado, column(st.cards, estado).length, 'btn'); };
+      if (k === 'd') return go('hecho');
+      if (k === 's') return go('en_curso');
+      if (k === 'h') {
+        ev.preventDefault(); keep = c.id;
+        if (c.estado === 'hecho' || c.estado === 'ideas') return say('Solo se eligen para hoy tarjetas sin terminar que no sean ideas.');
+        var on = c.hoy_fecha !== today; setHoy(c, on);
+        return announce(on ? '«' + clip(c.titulo) + '» añadida a hoy.' : '«' + clip(c.titulo) + '» quitada de hoy.');
+      }
+      if (k === 'x' && st.view === 'tablero') { ev.preventDefault(); return toggleSel(c); }
+      if (k === 'Delete' || k === 'Backspace') {
+        ev.preventDefault();
+        ctx.ask({ title: 'Eliminar «' + clip(c.titulo) + '»', text: 'Se borra con sus pasos, imágenes, historial y dependencias. Podrás deshacerlo unos segundos; si dudas, archívala.', ok: 'Eliminar', danger: true })
+          .then(function (ok) { if (ok) remove(c); });
+      }
+    }
+
     /* ── Teclado: Mayús + flechas mueve la tarjeta enfocada; Ctrl/⌘+Z deshace ── */
     root.addEventListener('keydown', function (ev) {
       var li = ev.target.closest && ev.target.closest('.apk-card[data-id]');
+      if (li && !ev.shiftKey && !ev.ctrlKey && !ev.metaKey && !ev.altKey && ev.target.getAttribute('data-role') === 'open') {
+        var cc = byId(li.getAttribute('data-id')); if (cc) return cardKey(ev, cc);
+      }
       if (!li || !ev.shiftKey || ev.altKey || ev.ctrlKey || ev.metaKey || ev.target.tagName === 'INPUT') return;
       var dx = ev.key === 'ArrowRight' ? 1 : ev.key === 'ArrowLeft' ? -1 : 0, dy = ev.key === 'ArrowDown' ? 1 : ev.key === 'ArrowUp' ? -1 : 0;
       if (!dx && !dy) return;
@@ -1545,6 +1681,15 @@ window.APKanban = (function () {
       if (!root.isConnected) return document.removeEventListener('keydown', onDocKey);
       if ((ev.ctrlKey || ev.metaKey) && !ev.shiftKey && !ev.altKey && ev.key.toLowerCase() === 'k' && !document.querySelector('dialog[open]')) { ev.preventDefault(); return palette(); }
       if ((ev.ctrlKey || ev.metaKey) && !ev.shiftKey && ev.key.toLowerCase() === 'z' && !/^(INPUT|TEXTAREA|SELECT)$/.test(ev.target.tagName) && !document.querySelector('dialog[open]')) { ev.preventDefault(); doUndo(); }
+      var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(ev.target.tagName) || ev.target.isContentEditable;
+      if (typing || ev.ctrlKey || ev.metaKey || ev.altKey || document.querySelector('dialog[open]')) return;
+      if (ev.key === '?') { ev.preventDefault(); return keysDialog(); }
+      if (ev.key === '/') {
+        ev.preventDefault();
+        var q = st.view === 'tablero' && root.querySelector('.apk-filters input[type=search]');
+        return q ? q.focus() : palette();
+      }
+      if (ev.key === 'Escape' && st.view === 'tablero' && selActive()) { clearSel(); paint(); announce('Selección quitada.'); }
     }
     document.addEventListener('keydown', onDocKey);
     function onVisible() {
