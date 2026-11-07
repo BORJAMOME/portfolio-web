@@ -999,6 +999,10 @@ main { min-height: calc(100vh - var(--ap-top-h) - 90px); outline: none; }
 .apk-due[data-tone="late"] { color: var(--red-ink); border-color: var(--red); }
 .apk-due[data-tone="soon"] { color: var(--ap-support-ink); border-color: var(--ap-support); }
 .apk-chip.apk-block { color: var(--red-ink); background: var(--red-light); border-color: var(--red-light); font-weight: 600; }
+/* En espera (dependencias): se distingue de «Bloqueada» por forma (borde discontinuo, icono de enlace) y texto, no solo por color */
+.apk-chip.apk-wait { color: var(--ink); background: var(--ap-surface-2); border-style: dashed; border-color: var(--muted); font-weight: 600; }
+.apk-card.is-waiting:not(.is-blocked) { border-style: dashed; border-color: var(--muted); }
+.apk-why-wait { font-size: 13px; line-height: 1.45; color: var(--muted); overflow-wrap: anywhere; }
 .apk-card-act { position: absolute; top: 6px; right: 6px; display: flex; gap: 2px; }
 .apk-card-act--static { position: static; justify-content: flex-end; }
 .apk-card-top .apk-proj { max-width: calc(100% - 150px); }
@@ -1057,6 +1061,18 @@ main { min-height: calc(100vh - var(--ap-top-h) - 90px); outline: none; }
 .apk-hist { font-size: 13px; color: var(--muted); }
 .apk-sub { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
 .apk-sub label { display: flex; gap: 8px; align-items: center; }
+/* Dependencias en la tarjeta (cardDialog → sección «Dependencias») */
+.apk-deps, .apk-dep-res { list-style: none; margin: 0 0 8px; padding: 0; display: grid; gap: 4px; font-size: 14px; }
+.apk-dep, .apk-dep-opt { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.apk-dep { padding: 6px 8px; border: 1px dashed var(--ap-line); border-radius: var(--radius-md); }
+.apk-dep-t { flex: 1; min-width: 0; overflow-wrap: anywhere; color: var(--ink); }
+.apk-dep-st { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.apk-dep-res { margin-top: 6px; }
+.apk-dep-opt { width: 100%; min-height: 40px; font: inherit; text-align: left; padding: 6px 8px; background: var(--white); border: 1px solid var(--ap-line); border-radius: var(--radius-md); cursor: pointer; }
+.apk-dep-opt:hover:not([disabled]) { border-color: var(--purple-text); }
+.apk-dep-opt[disabled] { cursor: not-allowed; opacity: .6; }
+.apk-dep-cyc { margin: 2px 0 0 8px; }
+.apk-dep-by { font-size: 13px; color: var(--muted); margin-top: 8px; overflow-wrap: anywhere; }
 .apk-dlg-actions { align-items: center; }
 
 /* Tarjeta (crear y editar, area-privada-kanban.js → cardDialog): cabecera y pie fijos, solo el cuerpo se desplaza.
@@ -1427,3 +1443,12 @@ body:has(#ap-lock:not([hidden])) main { min-height: calc(100vh - var(--ap-top-h)
 .ap-lock .ap-login-btn:focus-visible { outline-color: #fff; outline-offset: 4px; }
 body:has(#ap-lock:not([hidden])) .ap-lock .ap-pass input:focus-visible { outline: none; }   /* el foco lo marca el subrayado */
 .ap-lock .ap-pass input::placeholder { color: rgba(255, 255, 255, .55); letter-spacing: .08em; }
+
+/* Selección múltiple del Tablero (area-privada-kanban.js → selBar) */
+.apk-card.is-selected { outline: 2px solid var(--purple-text); outline-offset: 2px; }
+.apk-selbox { flex: none; width: 16px; height: 16px; border: 1.6px solid var(--muted); border-radius: 4px; background: var(--white); }
+.apk-selbox.is-on { border-color: var(--purple-text); background: var(--purple-text) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.4l2.6 2.6L12 5.4' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 14px no-repeat; }
+.apk-selbar { position: sticky; top: 8px; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 12px; padding: 10px 12px; background: var(--white); border: 1px solid var(--purple-text); border-radius: var(--radius-md); box-shadow: 0 8px 18px -12px rgba(29, 38, 56, .35); }
+.apk-selbar-n { margin: 0 auto 0 0; font-size: 14px; font-weight: 600; color: var(--ink); }
+.apk-selbar .apk-btn[disabled], .apk-selbar select[disabled] { opacity: .55; cursor: not-allowed; }
+@media (max-width: 599.98px) { .apk-selbar-n { flex-basis: 100%; } }

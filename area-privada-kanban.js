@@ -65,14 +65,15 @@ window.APKanban = (function () {
   }
 
   function norm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
-  /* f: { q, proyecto ('' todos · 'none' sin proyecto · id), prioridad (0 = todas), bloqueadas (bool) } */
-  function filterCards(cards, f, subs) {
+  /* f: { q, proyecto ('' todos · 'none' sin proyecto · id), prioridad (0 = todas), bloqueadas (bool: bloqueadas o en espera) }
+     waiting: el mapa de waitingMap (opcional) */
+  function filterCards(cards, f, subs, waiting) {
     var q = norm(f.q);
     return cards.filter(function (c) {
       if (f.proyecto === 'none' && c.proyecto_id) return false;
       if (f.proyecto && f.proyecto !== 'none' && c.proyecto_id !== f.proyecto) return false;
       if (f.prioridad && c.prioridad !== f.prioridad) return false;
-      if (f.bloqueadas && !c.bloqueada) return false;
+      if (f.bloqueadas && !c.bloqueada && !(waiting && waiting[c.id])) return false;
       if (!q) return true;
       var hay = [c.titulo, c.notas, c.siguiente_paso, c.bloqueo, (c.etiquetas || []).join(' ')];
       ((subs && subs[c.id]) || []).forEach(function (s) { hay.push(s.titulo); });
@@ -82,14 +83,15 @@ window.APKanban = (function () {
 
   /* Sugerencias de «qué toca». Heurística visible, no una verdad: cada punto lleva su motivo.
      Pesos: prioridad 0-3 · vencimiento 0-3 · ya empezada +1,5 (acabar antes de empezar) ·
-     en revisión +1 · rápida +0,5 · -1 si ya hay tantas en curso como el límite. */
+     en revisión +1 · rápida +0,5 · -1 si ya hay tantas en curso como el límite.
+     Fuera: bloqueadas y las que esperan a otra tarjeta (o.waiting, el mapa de waitingMap). */
   function suggest(cards, now, o) {
     o = o || {};
     var inCourse = cards.filter(function (c) { return c.estado === 'en_curso' && !c.archivada_en; }).length;
     var limit = o.wipEnCurso || 0;
-    var today = dayKey(now);
+    var today = dayKey(now), waiting = o.waiting || {};
     return cards.filter(function (c) {
-      return !c.archivada_en && !c.bloqueada && c.estado !== 'hecho' && c.estado !== 'ideas' && c.hoy_fecha !== today;
+      return !c.archivada_en && !c.bloqueada && !waiting[c.id] && c.estado !== 'hecho' && c.estado !== 'ideas' && c.hoy_fecha !== today;
     }).map(function (c) {
       var score = c.prioridad - 1, why = [];
       if (c.prioridad >= 3) why.push('Prioridad ' + PRIO[c.prioridad].toLowerCase());
@@ -111,6 +113,49 @@ window.APKanban = (function () {
     var done = (list || []).filter(function (s) { return s.hecho; }).length;
     return { done: done, total: (list || []).length };
   }
+  /* Dependencias: filas { tarjeta_id, depende_de } = «tarjeta_id espera a depende_de» (supabase/kanban-dependencias.sql).
+     «Espera» se calcula, no se guarda: una dependencia retiene mientras no esté en Hecho. Si no está entre las tarjetas
+     cargadas (archivada o borrada), ya no retiene. Así una tarjeta queda libre sola cuando terminan las que espera. */
+  function depIndex(deps) {
+    var on = {}, by = {};
+    (deps || []).forEach(function (d) {
+      (on[d.tarjeta_id] = on[d.tarjeta_id] || []).push(d.depende_de);
+      (by[d.depende_de] = by[d.depende_de] || []).push(d.tarjeta_id);
+    });
+    return { on: on, by: by };
+  }
+  function cardMap(cards) { var m = {}; cards.forEach(function (c) { if (!c.archivada_en) m[c.id] = c; }); return m; }
+  /* Tarjetas sin terminar a las que espera cada tarjeta sin terminar. Solo aparecen las que esperan a alguna. */
+  function waitingMap(cards, deps) {
+    var m = cardMap(cards), on = depIndex(deps).on, out = {};
+    Object.keys(on).forEach(function (id) {
+      var c = m[id]; if (!c || c.estado === 'hecho') return;
+      var w = on[id].map(function (x) { return m[x]; }).filter(function (x) { return x && x.estado !== 'hecho'; }).sort(byPos);
+      if (w.length) out[id] = w;
+    });
+    return out;
+  }
+  /* ¿Añadir «id espera a candidate» cerraría un círculo? Sí si candidate ya espera (directa o indirectamente) a id. */
+  function wouldCycle(deps, id, candidate) {
+    if (!id || !candidate) return false;
+    if (id === candidate) return true;
+    var on = depIndex(deps).on, seen = {}, stack = [candidate];
+    while (stack.length) {
+      var x = stack.pop();
+      if (x === id) return true;
+      if (seen[x]) continue;
+      seen[x] = 1;
+      (on[x] || []).forEach(function (y) { stack.push(y); });
+    }
+    return false;
+  }
+  /* Tarjetas que quedan libres si `id` pasa a Hecho: las que hoy solo esperan a esa. */
+  function freedBy(id, cards, deps) {
+    var w = waitingMap(cards, deps);
+    return Object.keys(w).filter(function (k) { return w[k].length === 1 && w[k][0].id === id; })
+      .map(function (k) { return cardMap(cards)[k]; }).sort(byPos);
+  }
+
   function parseTags(s) {
     var seen = {}, out = [];
     String(s || '').split(',').forEach(function (t) {
@@ -168,7 +213,8 @@ window.APKanban = (function () {
   var logic = {
     ESTADOS: ESTADOS, PRIO: PRIO, DEFAULTS: DEFAULTS, dayKey: dayKey, daysUntil: daysUntil, dueLabel: dueLabel,
     insertPosition: insertPosition, needsRenumber: needsRenumber, column: column, wipState: wipState,
-    filterCards: filterCards, suggest: suggest, subProgress: subProgress, parseTags: parseTags, parseCapture: parseCapture
+    filterCards: filterCards, suggest: suggest, subProgress: subProgress, parseTags: parseTags, parseCapture: parseCapture,
+    depIndex: depIndex, waitingMap: waitingMap, wouldCycle: wouldCycle, freedBy: freedBy
   };
 
   /* ═══════════ INTERFAZ ═══════════ */
@@ -198,6 +244,7 @@ window.APKanban = (function () {
     hoy: SV + '<circle cx="8" cy="8" r="2.8"/><path d="M8 1.6v1.5M8 12.9v1.5M1.6 8h1.5M12.9 8h1.5M3.5 3.5l1 1M11.5 11.5l1 1M3.5 12.5l1-1M11.5 4.5l1-1"/></svg>',
     ia: SV + '<path d="M7 2.2l1.4 3.9 3.9 1.4-3.9 1.4L7 12.8 5.6 8.9 1.7 7.5l3.9-1.4z"/><path d="M12.6 1.6v2.8M11.2 3h2.8"/></svg>',
     buscar: SV + '<circle cx="7" cy="7" r="4.6"/><path d="M10.4 10.4 14 14"/></svg>',
+    espera: SV + '<path d="M6.6 9.4l2.8-2.8"/><path d="M7.6 4.4l.9-.9a2.6 2.6 0 0 1 3.7 3.7l-.9.9M8.4 11.6l-.9.9a2.6 2.6 0 0 1-3.7-3.7l.9-.9"/></svg>',
     imagen: SV + '<rect x="2" y="2.8" width="12" height="10.4" rx="1.8"/><circle cx="5.8" cy="6.4" r="1.1"/><path d="m2.6 12 3.6-3.4 2.8 2.6 1.8-1.7 2.6 2.5"/></svg>'
   };
   function stIcon(estado) { var s = h2('span', { class: 'apk-st', 'data-estado': estado, html: ICON['st_' + estado] }); return s; }
@@ -212,10 +259,13 @@ window.APKanban = (function () {
     var now = new Date(), today = dayKey(now);
     function tick() { var n = new Date(), changed = dayKey(n) !== today; now = n; if (changed) { today = dayKey(n); st.cfg.resultado = ''; } return changed; }
     var st = {
-      cards: [], archived: null, projects: [], subs: {}, hist: {}, cfg: { wip: {}, capacidad: DEFAULTS.capacidad, resultado: '' },
+      cards: [], archived: null, projects: [], subs: {}, hist: {}, deps: [], depsOk: false, cfg: { wip: {}, capacidad: DEFAULTS.capacidad, resultado: '' },
       view: pref('view') || 'hoy', filters: { q: '', proyecto: '', prioridad: 0, bloqueadas: false },
-      colTab: pref('col') || 'en_curso', hechoMas: false
+      colTab: pref('col') || 'en_curso', hechoMas: false,
+      sel: {}, selMode: false      // selección múltiple (Tablero): ids elegidos y modo «Seleccionar» (para táctil)
     };
+    var W = {};      // tarjetas que espera cada una (waitingMap); se recalcula en cada paint()
+    function waits() { return waitingMap(st.cards, st.deps); }
     var undo = [], root = h('section', { class: 'apk', 'aria-label': 'Centro de trabajo' });
     var live = h('p', { class: 'sr-only apk-live', role: 'status', 'aria-live': 'polite' });
     var toastBox = h('div', { class: 'apk-toast', role: 'status', 'aria-live': 'polite' });
@@ -233,7 +283,9 @@ window.APKanban = (function () {
         api('/rest/v1/kb_tarjetas?select=*&archivada_en=is.null&order=posicion.asc&limit=1000'),
         api('/rest/v1/kb_proyectos?select=*&order=created_at.asc'),
         api('/rest/v1/kb_subtareas?select=*&order=posicion.asc&limit=5000'),
-        api('/rest/v1/kb_ajustes?select=clave,valor')
+        api('/rest/v1/kb_ajustes?select=clave,valor'),
+        // dependencias: tabla aparte (kanban-dependencias.sql); si aún no existe, el tablero funciona igual sin ellas
+        api('/rest/v1/kb_dependencias?select=tarjeta_id,depende_de&limit=5000').catch(function (err) { if (missing(err)) return null; throw err; })
       ]).then(function (r) {
         st.cards = r[0] || [];
         st.projects = r[1] || [];
@@ -244,6 +296,8 @@ window.APKanban = (function () {
         st.cfg.wip = Object.assign({}, DEFAULTS.wip, cfg.wip || {});
         st.cfg.capacidad = (cfg.capacidad && cfg.capacidad.hoy) || DEFAULTS.capacidad;
         st.cfg.resultado = cfg.hoy_resultado && cfg.hoy_resultado.fecha === today ? cfg.hoy_resultado.texto : '';
+        st.depsOk = r[4] !== null;
+        st.deps = r[4] || [];
       });
     }
 
@@ -294,6 +348,9 @@ window.APKanban = (function () {
     function snapshot(c, keys) { var s = {}; keys.forEach(function (k) { s[k] = c[k]; }); return s; }
 
     function pushUndo(label, fn) { var e = { label: label, fn: fn }; undo.push(e); if (undo.length > 30) undo.shift(); return e; }
+    /* Con o.collect (acciones sobre varias tarjetas), el deshacer de cada una se junta en una lista y la acción
+       registra un único «Deshacer» para todas; sin él, va a la pila como siempre. */
+    function reg(label, fn, o) { if (o && o.collect) { var e = { label: label, fn: fn }; o.collect.push(e); return e; } return pushUndo(label, fn); }
     function dropUndo(e) { var i = undo.indexOf(e); if (i > -1) undo.splice(i, 1); }
     function doUndo() {
       var u = undo.pop();
@@ -307,7 +364,8 @@ window.APKanban = (function () {
     }
 
     /* Mover (columna + posición). index = posición final en la columna destino. */
-    function move(card, estado, index, how, beforeId) {
+    function move(card, estado, index, how, beforeId, o) {
+      o = o || {};
       var prev = snapshot(card, ['estado', 'posicion', 'tipo', 'completada_en', 'hoy_fecha']);
       var others = column(st.cards, estado).filter(function (c) { return c.id !== card.id; });
       if (beforeId !== undefined) { index = beforeId ? others.map(function (c) { return c.id; }).indexOf(beforeId) : others.length; if (index < 0) index = others.length; }   // soltar entre dos visibles = entre esas dos reales
@@ -317,6 +375,8 @@ window.APKanban = (function () {
       var patch = { estado: estado, tipo: estado === 'ideas' ? 'idea' : 'tarea' };
       if (estado === 'hecho' && card.hoy_fecha) patch.hoy_fecha = card.hoy_fecha;       // se conserva para «hecho hoy»
       var limit = st.cfg.wip[estado], before = others.length;
+      var waitedOn = waits()[card.id] || [];      // antes de moverla: lo que aún espera
+      var freed = estado === 'hecho' && prev.estado !== 'hecho' ? freedBy(card.id, st.cards, st.deps) : [];
       Object.assign(card, patch);
       if (renumber) {
         others.splice(index, 0, card);
@@ -327,18 +387,41 @@ window.APKanban = (function () {
       var pos = card.posicion;
       paint();
       var w = limit && prev.estado !== estado ? wipState(before + 1, limit) : null;
-      say('«' + clip(card.titulo) + '» → ' + ESTADO_LABEL[estado] + (how === 'key' ? ', posición ' + (index + 1) + ' de ' + (before + 1) : '') +
-        (w && w.over ? '. ' + ESTADO_LABEL[estado] + ' supera su límite (' + (before + 1) + '/' + limit + ').' : '.'),
+      if (!o.quiet) say('«' + clip(card.titulo) + '» → ' + ESTADO_LABEL[estado] + (how === 'key' ? ', posición ' + (index + 1) + ' de ' + (before + 1) : '') +
+        (w && w.over ? '. ' + ESTADO_LABEL[estado] + ' supera su límite (' + (before + 1) + '/' + limit + ').' : '.') +
+        // avisan, no impiden (como el límite WIP)
+        (waitedOn.length && estado !== 'ideas' && estado !== 'pendiente' ? ' Aún espera a ' + names(waitedOn) + '.' : '') +
+        (freed.length ? (freed.length === 1 ? ' Queda libre ' : ' Quedan libres ') + names(freed) + '.' : ''),
         { undo: true, action: estado === 'hecho' && prev.estado !== 'hecho' ? { label: 'Anotar aprendizaje', fn: function () { detailDialog(card, 'aprendizaje'); } } : null });
-      var entry = pushUndo('movimiento de «' + clip(card.titulo) + '»', function () {
+      var entry = reg('movimiento de «' + clip(card.titulo) + '»', function () {
         Object.assign(card, prev); paint();
         return patchCard(card.id, { estado: prev.estado, tipo: prev.tipo, posicion: prev.posicion, hoy_fecha: prev.hoy_fecha }).then(function () { return null; });
-      });
+      }, o);
       var writes = [patchCard(card.id, Object.assign({ posicion: pos }, patch))];
       if (renumber) others.forEach(function (c) { if (c.id !== card.id) writes.push(patchCard(c.id, { posicion: c.posicion })); });
       return Promise.all(writes).catch(function (err) { dropUndo(entry); failed(err, 'movimiento', function () { Object.assign(card, prev); }); });
     }
     function clip(s, n) { n = n || 40; return s.length > n ? s.slice(0, n - 1) + '…' : s; }
+    function names(list) {      // «A», «B» y 2 más
+      var t = list.slice(0, 2).map(function (c) { return '«' + clip(c.titulo, 32) + '»'; });
+      return list.length > 2 ? t.join(', ') + ' y ' + (list.length - 2) + ' más' : t.join(' y ');
+    }
+    function involves(id) { return function (d) { return d.tarjeta_id === id || d.depende_de === id; }; }
+    function notInvolves(id) { var f = involves(id); return function (d) { return !f(d); }; }
+    /* Deja en `list` las tarjetas que espera `id`: borra las que sobran y crea las nuevas (en paralelo: no se pisan,
+       porque un ciclo depende de quién espera a `id`, no de a quién espera). El servidor rechaza los ciclos. */
+    function setDeps(id, list) {
+      var cur = st.deps.filter(function (d) { return d.tarjeta_id === id; }).map(function (d) { return d.depende_de; });
+      var add = list.filter(function (x) { return cur.indexOf(x) < 0; }), del = cur.filter(function (x) { return list.indexOf(x) < 0; });
+      var jobs = del.map(function (x) {
+        return api('/rest/v1/kb_dependencias?tarjeta_id=eq.' + id + '&depende_de=eq.' + x, { method: 'DELETE', headers: { Prefer: 'return=minimal' } })
+          .then(function () { st.deps = st.deps.filter(function (d) { return !(d.tarjeta_id === id && d.depende_de === x); }); });
+      });
+      if (add.length) jobs.push(api('/rest/v1/kb_dependencias', { method: 'POST', headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        body: JSON.stringify(add.map(function (x) { return { tarjeta_id: id, depende_de: x }; })) })
+        .then(function () { add.forEach(function (x) { st.deps.push({ tarjeta_id: id, depende_de: x }); }); }));
+      return Promise.all(jobs);
+    }
 
     function create(titulo, estado, proyecto, extra) {
       var col = column(st.cards, estado), pos = col.length ? col[col.length - 1].posicion + GAP : GAP;
@@ -348,6 +431,7 @@ window.APKanban = (function () {
         keep = c.id; fresh = c.id;
         pushUndo('creación de «' + clip(c.titulo) + '»', function () {
           st.cards = st.cards.filter(function (x) { return x.id !== c.id; });
+          st.deps = st.deps.filter(notInvolves(c.id));      // en la base se van con la tarjeta (on delete cascade)
           return api('/rest/v1/kb_tarjetas?id=eq.' + c.id, { method: 'DELETE', headers: { Prefer: 'return=minimal' } }).then(function () { removeImages(c.id); });
         });
         paint();
@@ -356,14 +440,16 @@ window.APKanban = (function () {
       });
     }
 
-    function archive(card, on) {
+    function archive(card, on, o) {
+      o = o || {};
       var prevA = card.archivada_en;
       card.archivada_en = on ? new Date().toISOString() : null;
       if (on) { st.cards = st.cards.filter(function (c) { return c.id !== card.id; }); if (st.archived) st.archived.unshift(card); }
       else { st.cards.push(card); st.archived = (st.archived || []).filter(function (c) { return c.id !== card.id; }); }
       paint();
-      say(on ? '«' + clip(card.titulo) + '» archivada.' : '«' + clip(card.titulo) + '» recuperada.', { undo: true });
-      var entry = pushUndo(on ? 'archivado' : 'recuperación', function () { return archive(card, !on); });
+      if (!o.quiet) say(on ? '«' + clip(card.titulo) + '» archivada.' : '«' + clip(card.titulo) + '» recuperada.', { undo: true });
+      // en grupo, deshacer no apila ni avisa por tarjeta: lo hace la acción de grupo
+      var entry = reg(on ? 'archivado' : 'recuperación', function () { return archive(card, !on, o.collect ? { quiet: true, collect: [] } : undefined); }, o);
       return api('/rest/v1/kb_tarjetas?id=eq.' + card.id, { method: 'PATCH', headers: { Prefer: 'return=minimal', 'Content-Type': 'application/json' }, body: JSON.stringify({ archivada_en: card.archivada_en }) })
         .catch(function (err) {
           dropUndo(entry);
@@ -375,33 +461,114 @@ window.APKanban = (function () {
         });
     }
 
-    function remove(card) {
-      var subs = st.subs[card.id] || [];
+    function remove(card, o) {
+      o = o || {};
+      var subs = st.subs[card.id] || [], rel = st.deps.filter(involves(card.id));
+      st.deps = st.deps.filter(notInvolves(card.id));
       st.cards = st.cards.filter(function (c) { return c.id !== card.id; });
       if (st.archived) st.archived = st.archived.filter(function (c) { return c.id !== card.id; });
       paint();
       return api('/rest/v1/kb_tarjetas?id=eq.' + card.id, { method: 'DELETE', headers: { Prefer: 'return=minimal' } }).then(function () {
-        say('«' + clip(card.titulo) + '» eliminada.', { undo: true });
+        if (!o.quiet) say('«' + clip(card.titulo) + '» eliminada.', { undo: true });
         // las imágenes se borran cuando ya no se puede deshacer desde el aviso (deshacer después recupera la tarjeta sin ellas)
         var imgTimer = setTimeout(function () { removeImages(card.id); }, 10000);
-        pushUndo('eliminación de «' + clip(card.titulo) + '»', function () {
+        reg('eliminación de «' + clip(card.titulo) + '»', function () {
           clearTimeout(imgTimer);
           var row = Object.assign({}, card);
           return api('/rest/v1/kb_tarjetas', { method: 'POST', headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(row) })
             .then(function () {
               if (!subs.length) return null;
               return api('/rest/v1/kb_subtareas', { method: 'POST', headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(subs) });
-            }).then(function () { (card.archivada_en ? (st.archived = st.archived || []) : st.cards).push(card); st.subs[card.id] = subs; });
-        });
+            }).then(function () {
+              (card.archivada_en ? (st.archived = st.archived || []) : st.cards).push(card); st.subs[card.id] = subs;
+              var back = rel.filter(function (d) {      // la otra tarjeta puede haberse borrado entretanto; en grupo, la fila puede haber vuelto ya con la otra
+                return byAny(d.tarjeta_id) && byAny(d.depende_de) && !st.deps.some(function (x) { return x.tarjeta_id === d.tarjeta_id && x.depende_de === d.depende_de; });
+              })
+                .map(function (d) { return { tarjeta_id: d.tarjeta_id, depende_de: d.depende_de }; });
+              if (!back.length) return null;
+              return api('/rest/v1/kb_dependencias', { method: 'POST', headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(back) })
+                .then(function () { st.deps = st.deps.concat(back); });
+            });
+        }, o);
       }).catch(function (err) { failed(err, 'eliminar'); });
     }
 
-    function setHoy(card, on) {
+    function setHoy(card, on, o) {
+      o = o || {};
       tick();
       var prev = card.hoy_fecha, value = on ? today : null;
-      if (on && todayList().length >= st.cfg.capacidad) say('Ya tienes ' + todayList().length + ' elegidas para hoy (tu capacidad es ' + st.cfg.capacidad + '). Se añade igualmente: decide qué quitas.');
+      if (o.collect) o.collect.push({ label: 'hoy', fn: function () { card.hoy_fecha = prev; return patchCard(card.id, { hoy_fecha: prev }); } });
+      if (!o.quiet && on && todayList().length >= st.cfg.capacidad) say('Ya tienes ' + todayList().length + ' elegidas para hoy (tu capacidad es ' + st.cfg.capacidad + '). Se añade igualmente: decide qué quitas.');
       card.hoy_fecha = value; paint();
       return patchCard(card.id, { hoy_fecha: value }).catch(function (err) { failed(err, 'hoy', function () { card.hoy_fecha = prev; }); });
+    }
+    /* ── Varias tarjetas a la vez (Tablero): Ctrl/⌘ o Mayús + clic, o el modo «Seleccionar» (táctil) ── */
+    function selActive() { return st.selMode || Object.keys(st.sel).length > 0; }
+    function selectedCards() {      // solo las visibles con los filtros actuales, en el orden del tablero
+      var order = ESTADOS.map(function (e) { return e.id; });
+      return filterCards(st.cards, st.filters, st.subs, W).filter(function (c) { return st.sel[c.id]; })
+        .sort(function (a, b) { return (order.indexOf(a.estado) - order.indexOf(b.estado)) || byPos(a, b); });
+    }
+    function clearSel() { st.sel = {}; st.selMode = false; }
+    function announce(msg) { live.textContent = ''; setTimeout(function () { live.textContent = msg; }, 20); }
+    function toggleSel(c) {
+      if (st.sel[c.id]) delete st.sel[c.id]; else st.sel[c.id] = true;
+      var n = Object.keys(st.sel).length;
+      keep = c.id; paint();
+      announce((st.sel[c.id] ? '«' + clip(c.titulo) + '» seleccionada. ' : '«' + clip(c.titulo) + '» fuera de la selección. ') + n + (n === 1 ? ' seleccionada.' : ' seleccionadas.'));
+    }
+    function bulk(kind, estado) {
+      var cards = selectedCards(), n = cards.length;
+      if (!n) return;
+      var col = [], o = { quiet: true, collect: col }, what = n + (n === 1 ? ' tarjeta' : ' tarjetas'), msg = '', label = '';
+      if (kind === 'move') {
+        var freed = [];
+        if (estado === 'hecho') {      // qué queda libre al terminar todas las elegidas
+          var sim = st.cards.map(function (c) { return st.sel[c.id] ? Object.assign({}, c, { estado: 'hecho' }) : c; }), after = waitingMap(sim, st.deps);
+          freed = Object.keys(W).filter(function (id) { return !after[id] && !st.sel[id]; }).map(byId).filter(Boolean);
+        }
+        cards.forEach(function (c) { if (c.estado !== estado) move(c, estado, column(st.cards, estado).filter(function (x) { return x.id !== c.id; }).length, 'bulk', undefined, o); });
+        var lim = st.cfg.wip[estado], total = column(st.cards, estado).length;
+        msg = what + ' → ' + ESTADO_LABEL[estado] + '.' + (lim && total > lim ? ' ' + ESTADO_LABEL[estado] + ' supera su límite (' + total + '/' + lim + ').' : '') +
+          (freed.length ? (freed.length === 1 ? ' Queda libre ' : ' Quedan libres ') + names(freed) + '.' : '');
+        label = 'mover ' + what;
+      } else if (kind === 'hoy') {
+        var add = cards.filter(function (c) { return c.hoy_fecha !== today && c.estado !== 'hecho' && c.estado !== 'ideas'; });
+        add.forEach(function (c) { setHoy(c, true, o); });
+        var k = todayList().length;
+        msg = (add.length ? add.length + (add.length === 1 ? ' añadida a hoy.' : ' añadidas a hoy.') : 'Ninguna se puede añadir a hoy (ya estaban, o son ideas o están hechas).') +
+          (add.length && k > st.cfg.capacidad ? ' Tienes ' + k + ' para hoy y tu capacidad es ' + st.cfg.capacidad + ': decide qué quitas.' : '');
+        label = 'añadir a hoy ' + what;
+      } else if (kind === 'archive') {
+        cards.forEach(function (c) { archive(c, true, o); });
+        msg = what + (n === 1 ? ' archivada.' : ' archivadas.'); label = 'archivado de ' + what;
+      } else if (kind === 'remove') {
+        cards.forEach(function (c) { remove(c, o); });
+        msg = what + (n === 1 ? ' eliminada.' : ' eliminadas.'); label = 'eliminación de ' + what;
+      }
+      clearSel();
+      if (col.length || kind === 'remove') pushUndo(label, function () {      // en orden inverso y de una en una (así cada tarjeta vuelve antes que las suyas)
+        return col.slice().reverse().reduce(function (p, e) { return p.then(function () { return e.fn(); }); }, Promise.resolve()).then(function () { paint(); });
+      });
+      paint();
+      say(msg, { undo: col.length > 0 || kind === 'remove' });
+    }
+    function selBar() {
+      var cards = selectedCards(), n = cards.length, off = !n;
+      var mv = ui.select(ESTADOS.map(function (e) { return [e.id, e.label]; }), '', 'Mover a…');
+      mv.classList.add('apk-select'); mv.setAttribute('aria-label', 'Mover las seleccionadas a'); if (off) mv.disabled = true;
+      mv.addEventListener('change', function () { if (mv.value) bulk('move', mv.value); });
+      return h('div', { class: 'apk-selbar', role: 'group', 'aria-label': 'Acciones con las tarjetas seleccionadas' }, [
+        h('p', { class: 'apk-selbar-n', text: n ? n + (n === 1 ? ' seleccionada' : ' seleccionadas') : 'Toca tarjetas para seleccionarlas' }),
+        mv,
+        btn([icon('hoy'), 'Añadir a hoy'], 'apk-btn', function () { bulk('hoy'); }, { disabled: off, 'data-role': 'sel-hoy' }),
+        btn('Archivar', 'apk-btn', function () { bulk('archive'); }, { disabled: off, 'data-role': 'sel-arch' }),
+        btn('Eliminar', 'apk-btn apk-danger', function () {
+          ctx.ask({ title: 'Eliminar ' + n + (n === 1 ? ' tarjeta' : ' tarjetas'), text: 'Se borran con sus pasos, imágenes, historial y dependencias. Podrás deshacerlo unos segundos; si dudas, archívalas.', ok: 'Eliminar', danger: true })
+            .then(function (ok) { if (ok) bulk('remove'); });
+        }, { disabled: off, 'data-role': 'sel-del' }),
+        btn('Terminar', 'apk-link', function () { clearSel(); paint(); announce('Selección terminada.'); var b = root.querySelector('[data-role="sel-mode"]'); if (b) b.focus(); }, { 'data-role': 'sel-end' })
+      ]);
     }
     function todayList() { return st.cards.filter(function (c) { return c.hoy_fecha === today && c.estado !== 'hecho'; }).sort(byPos); }
 
@@ -413,6 +580,7 @@ window.APKanban = (function () {
     var scrollLeft = 0;
     function paint() {
       tick();
+      W = waits();
       var board = root.querySelector('.apk-board'); if (board) scrollLeft = board.scrollLeft;
       var before = {};
       [].forEach.call(root.querySelectorAll('.apk-card[data-id]'), function (el) { before[el.getAttribute('data-id')] = el.getBoundingClientRect(); });
@@ -443,9 +611,11 @@ window.APKanban = (function () {
       var cur = st.cards.filter(function (c) { return c.estado === 'en_curso'; }).length;
       var doneToday = st.cards.filter(function (c) { return c.completada_en && dayKey(new Date(c.completada_en)) === today; }).length;
       var blocked = st.cards.filter(function (c) { return c.bloqueada && c.estado !== 'hecho'; }).length;
+      var waiting = Object.keys(W).length;
       var title = dateFmt.format(now); title = title.charAt(0).toUpperCase() + title.slice(1);
       var parts = [cur + (cur === 1 ? ' en curso' : ' en curso'), doneToday + (doneToday === 1 ? ' terminada hoy' : ' terminadas hoy')];
       if (blocked) parts.push(blocked + (blocked === 1 ? ' bloqueada' : ' bloqueadas'));
+      if (waiting) parts.push(waiting + ' en espera');
       var tabs = [['hoy', 'Hoy'], ['tablero', 'Tablero'], ['archivo', 'Archivo']];
       return h('header', { class: 'apk-head' }, [
         h('div', { class: 'apk-head-main' }, [
@@ -455,7 +625,7 @@ window.APKanban = (function () {
         ]),
         h('div', { class: 'apk-head-actions' }, [
           h('div', { class: 'apk-seg', role: 'group', 'aria-label': 'Vista' }, tabs.map(function (t) {
-            return btn(t[1], 'apk-seg-btn', function () { swap(function () { st.view = t[0]; setPref('view', t[0]); paint(); }); if (t[0] === 'archivo') loadArchived(); }, { 'aria-pressed': String(st.view === t[0]) });
+            return btn(t[1], 'apk-seg-btn', function () { clearSel(); swap(function () { st.view = t[0]; setPref('view', t[0]); paint(); }); if (t[0] === 'archivo') loadArchived(); }, { 'aria-pressed': String(st.view === t[0]) });
           })),
           btn([icon('buscar'), 'Buscar', h('kbd', { class: 'apk-kbd', text: 'Ctrl K' })], 'apk-btn apk-btn--search', palette, { 'aria-keyshortcuts': 'Control+K', 'data-role': 'palette' }),
           btn('Proyectos', 'apk-btn', projectsDialog),
@@ -492,23 +662,33 @@ window.APKanban = (function () {
       if (c.prioridad >= 3) meta.push(h('span', { class: 'apk-chip apk-prio', 'data-prio': c.prioridad }, [icon('prio'), PRIO[c.prioridad]]));
       if (c.fecha_limite && c.estado !== 'hecho') { var d = dueLabel(c.fecha_limite, now); meta.push(h('span', { class: 'apk-chip apk-due', 'data-tone': d.tone }, [icon('fecha'), d.text])); }
       if (c.bloqueada) meta.push(h('span', { class: 'apk-chip apk-block' }, [icon('bloqueo'), 'Bloqueada']));
+      var wt = W[c.id];
+      if (wt) meta.push(h('span', { class: 'apk-chip apk-wait' }, [icon('espera'), 'En espera']));
       var still = (c.estado === 'en_curso' || c.estado === 'revision') && c.updated_at ? Math.floor((now - new Date(c.updated_at)) / DAY) : 0;
       if (still >= 7) meta.push(h('span', { class: 'apk-chip apk-stale' }, [icon('reloj'), 'Sin mover ' + still + ' d']));
       if (sp.total) { var bar = h('span', { class: 'apk-bar', 'aria-hidden': 'true' }, [h('span', { class: 'apk-bar-fill' })]); bar.firstChild.style.width = Math.round(sp.done / sp.total * 100) + '%'; meta.push(h('span', { class: 'apk-chip apk-steps' }, [icon('pasos'), bar, sp.done + '/' + sp.total + ' pasos'])); }
       if (c.esfuerzo) meta.push(h('span', { class: 'apk-chip' }, [icon('reloj'), ESFUERZO[c.esfuerzo]]));
       (c.etiquetas || []).slice(0, 3).forEach(function (t) { meta.push(h('span', { class: 'apk-chip apk-tag', text: '#' + t })); });
       var idx = ESTADOS.map(function (e) { return e.id; }).indexOf(c.estado), next = ESTADOS[idx + 1];
-      return h('li', { class: 'apk-card' + (c.bloqueada ? ' is-blocked' : '') + (c.estado === 'hecho' ? ' is-done' : '') + (fresh === c.id ? ' is-new' : ''), 'data-id': c.id, 'data-estado': c.estado }, [
+      var selecting = st.view === 'tablero' && selActive(), picked = selecting && !!st.sel[c.id];
+      return h('li', { class: 'apk-card' + (c.bloqueada ? ' is-blocked' : '') + (wt ? ' is-waiting' : '') + (picked ? ' is-selected' : '') + (c.estado === 'hecho' ? ' is-done' : '') + (fresh === c.id ? ' is-new' : ''), 'data-id': c.id, 'data-estado': c.estado }, [
         h('div', { class: 'apk-card-top' }, [
           h('span', { class: 'apk-grip', 'aria-hidden': 'true' }, [icon('grip')]),
+          selecting ? h('span', { class: 'apk-selbox' + (picked ? ' is-on' : ''), 'aria-hidden': 'true' }) : null,
           stIcon(c.estado), h('span', { class: 'sr-only', text: 'Estado: ' + ESTADO_LABEL[c.estado] + '. ' }),
           c.tipo === 'idea' ? h('span', { class: 'apk-type', title: 'Idea' }, [icon('idea')]) : null,
           proj ? h('span', { class: 'apk-proj' }, [(function () { var d = h('span', { class: 'apk-dot', 'aria-hidden': 'true' }); d.style.background = tone(proj.id); return d; })(), h('span', { class: 'apk-proj-t', text: proj.titulo })]) : null,
         ]),
         h('button', { type: 'button', class: 'apk-card-open', 'data-role': 'open', 'aria-keyshortcuts': 'Shift+ArrowLeft Shift+ArrowRight Shift+ArrowUp Shift+ArrowDown',
-          'aria-describedby': 'apk-kbd-help', onclick: function () { if (Date.now() - lastDrag > 80) detailDialog(c); }, text: c.titulo }),
+          'aria-pressed': selecting ? String(picked) : null,      // en modo selección, el título selecciona en vez de abrir
+          'aria-describedby': 'apk-kbd-help', text: c.titulo, onclick: function (ev) {
+            if (Date.now() - lastDrag <= 80) return;
+            if (st.view === 'tablero' && (selecting || ev.ctrlKey || ev.metaKey || ev.shiftKey)) return toggleSel(c);
+            detailDialog(c);
+          } }),
         c.siguiente_paso && c.estado !== 'hecho' ? h('p', { class: 'apk-next' }, [icon('next'), h('span', { class: 'sr-only', text: 'Siguiente paso: ' }), c.siguiente_paso]) : null,
         c.bloqueada && c.bloqueo ? h('p', { class: 'apk-why-block', text: 'Bloqueo: ' + c.bloqueo }) : null,
+        wt ? h('p', { class: 'apk-why-wait', text: 'Espera a ' + names(wt) }) : null,
         c.estado === 'hecho' && c.aprendizaje ? h('p', { class: 'apk-learn' }, [icon('libro'), h('strong', { text: 'Aprendido: ' }), clip(c.aprendizaje, 140)]) : null,
         o.askNext && !c.siguiente_paso && c.estado !== 'hecho' ? h('p', { class: 'apk-next' }, [btn('Definir siguiente paso', 'apk-link', function () {
           ctx.ask({ title: 'Siguiente paso de «' + clip(c.titulo) + '»', text: 'La acción concreta más pequeña que puedes hacer a continuación.', input: true, ok: 'Guardar' }).then(function (v) {
@@ -529,14 +709,14 @@ window.APKanban = (function () {
 
     /* ── Tablero ── */
     function viewTablero() {
-      var visible = filterCards(st.cards, st.filters, st.subs);
+      var visible = filterCards(st.cards, st.filters, st.subs, W);
       var filtered = !!(st.filters.q || st.filters.proyecto || st.filters.prioridad || st.filters.bloqueadas);
       var cols = ESTADOS.map(function (e) { return colEl(e, column(visible, e.id), column(st.cards, e.id).length, filtered); });
       var tabs = h('div', { class: 'apk-coltabs', role: 'group', 'aria-label': 'Columna visible (móvil)' }, ESTADOS.map(function (e) {
         return btn([stIcon(e.id), e.label + ' ' + column(visible, e.id).length], 'apk-coltab', function () { swap(function () { st.colTab = e.id; setPref('col', e.id); paint(); }); }, { 'aria-pressed': String(st.colTab === e.id), 'data-estado': e.id });
       }));
       return h('div', { class: 'apk-tablero', 'data-tab': st.colTab }, [
-        filtersEl(filtered), tabs,
+        filtersEl(filtered), selActive() ? selBar() : null, tabs,
         h('p', { class: 'sr-only', id: 'apk-kbd-help', text: 'Mayús más flechas izquierda o derecha cambia la tarjeta de columna; Mayús más flechas arriba o abajo la reordena.' }),
         h('div', { class: 'apk-board', tabindex: '-1' }, cols)
       ]);
@@ -556,8 +736,12 @@ window.APKanban = (function () {
       pr.addEventListener('change', function () { st.filters.prioridad = +pr.value; paint(); });
       return h('div', { class: 'apk-filters' }, [
         q, proj, pr,
-        btn('Solo bloqueadas', 'apk-chipbtn', function () { st.filters.bloqueadas = !st.filters.bloqueadas; paint(); }, { 'aria-pressed': String(st.filters.bloqueadas) }),
-        filtered ? btn('Quitar filtros', 'apk-link', function () { st.filters = { q: '', proyecto: '', prioridad: 0, bloqueadas: false }; paint(); }) : null
+        btn(st.depsOk ? 'Bloqueadas o en espera' : 'Solo bloqueadas', 'apk-chipbtn', function () { st.filters.bloqueadas = !st.filters.bloqueadas; paint(); }, { 'aria-pressed': String(st.filters.bloqueadas) }),
+        filtered ? btn('Quitar filtros', 'apk-link', function () { st.filters = { q: '', proyecto: '', prioridad: 0, bloqueadas: false }; paint(); }) : null,
+        btn('Seleccionar', 'apk-chipbtn apk-push', function () {
+          if (selActive()) clearSel(); else st.selMode = true;
+          paint(); announce(selActive() ? 'Modo selección: cada tarjeta que toques se selecciona.' : 'Selección terminada.');
+        }, { 'aria-pressed': String(selActive()), 'data-role': 'sel-mode' })
       ]);
     }
 
@@ -567,8 +751,10 @@ window.APKanban = (function () {
       if (e.id === 'hecho') shown = cards.slice().sort(function (a, b) { return (b.completada_en || '') < (a.completada_en || '') ? -1 : 1; });
       if (hechoCut) shown = shown.slice(0, 10);
       var count = h('span', { class: 'apk-count' + (w.over ? ' is-over' : w.at ? ' is-at' : ''), text: String(total) + (limit ? ' / ' + limit : '') });
-      var nb = column(st.cards, e.id).filter(function (c) { return c.bloqueada; }).length;
-      var note = nb ? h('span', { class: 'apk-count-note', text: '· ' + nb + (nb === 1 ? ' bloqueada' : ' bloqueadas') }) : null;
+      var colAll = column(st.cards, e.id);
+      var nb = colAll.filter(function (c) { return c.bloqueada; }).length, nw = colAll.filter(function (c) { return W[c.id]; }).length;
+      var noteT = [nb ? nb + (nb === 1 ? ' bloqueada' : ' bloqueadas') : '', nw ? nw + ' en espera' : ''].filter(Boolean).join(' · ');
+      var note = noteT ? h('span', { class: 'apk-count-note', text: '· ' + noteT }) : null;
       var list = h('ul', { class: 'apk-list', 'data-estado': e.id, 'aria-label': e.label }, shown.map(function (c) { return cardEl(c, { hoy: e.id !== 'hecho' && e.id !== 'ideas' }); }));
       var empty = !shown.length ? h('p', { class: 'apk-empty', text: filtered && total ? 'Ninguna tarjeta coincide con los filtros.' : e.vacio }) : null;
       return h('section', { class: 'apk-col', 'data-estado': e.id, 'aria-labelledby': 'apk-h-' + e.id }, [
@@ -612,9 +798,9 @@ window.APKanban = (function () {
     function viewHoy() {
       var list = todayList(), cap = st.cfg.capacidad;
       var doneToday = st.cards.filter(function (c) { return c.completada_en && dayKey(new Date(c.completada_en)) === today; });
-      var inCourse = column(st.cards, 'en_curso').filter(function (c) { return c.hoy_fecha !== today && !c.bloqueada; });
-      var blocked = st.cards.filter(function (c) { return c.bloqueada && c.estado !== 'hecho'; });
-      var sug = suggest(st.cards, now, { wipEnCurso: st.cfg.wip.en_curso }).slice(0, 5);
+      var inCourse = column(st.cards, 'en_curso').filter(function (c) { return c.hoy_fecha !== today && !c.bloqueada && !W[c.id]; });
+      var blocked = st.cards.filter(function (c) { return (c.bloqueada || W[c.id]) && c.estado !== 'hecho'; }).sort(byPos);
+      var sug = suggest(st.cards, now, { wipEnCurso: st.cfg.wip.en_curso, waiting: W }).slice(0, 5);
       var main = h('div', { class: 'apk-main' }, [
         h('p', { class: 'apk-label', text: 'Resultado principal de hoy' }),
         st.cfg.resultado ? h('p', { class: 'apk-main-text', text: st.cfg.resultado }) : h('p', { class: 'apk-main-text is-empty', text: 'Si hoy solo consiguieras una cosa, ¿cuál sería?' }),
@@ -661,11 +847,11 @@ window.APKanban = (function () {
           block('Elegidas para hoy', capacity(list.length, cap), list.length > cap ? 'Has elegido más de lo que cabe (' + cap + '). Decide qué quitas.' : '',
             list.length ? list.map(function (c) { return cardEl(c, { hoy: true, askNext: true }); }) : null, 'Elige tarjetas desde «Siguientes pasos» o desde el tablero.'),
           block('En curso', String(inCourse.length), '', inCourse.length ? inCourse.map(function (c) { return cardEl(c, { hoy: true }); }) : null, 'Nada más en curso fuera de lo elegido para hoy.'),
-          block('Bloqueos', String(blocked.length), '', blocked.length ? blocked.map(function (c) { return cardEl(c, { noAdvance: true }); }) : null, 'Sin bloqueos.'),
+          block('Bloqueos', String(blocked.length), '', blocked.length ? blocked.map(function (c) { return cardEl(c, { noAdvance: true }); }) : null, st.depsOk ? 'Nada bloqueado ni en espera.' : 'Sin bloqueos.'),
           h('section', { class: 'apk-block apk-block--wide', 'aria-labelledby': 'apk-sug' }, [
             h('header', { class: 'apk-block-head' }, [h('h3', { id: 'apk-sug', class: 'apk-block-title' }, [icon('next'), 'Siguientes pasos sugeridos']),
               st.ia ? btn([icon('ia'), 'Plan del día con IA'], 'apk-btn apk-btn--ia apk-push', planDia, { 'data-role': 'ia-plan' }) : null]),
-            h('p', { class: 'apk-hint', text: 'Sugerencias, no órdenes: puntúan prioridad, fecha límite y si ya está empezada. El motivo va debajo de cada una.' }),
+            h('p', { class: 'apk-hint', text: 'Sugerencias, no órdenes: puntúan prioridad, fecha límite y si ya está empezada. El motivo va debajo de cada una. No entra lo bloqueado ni lo que espera a otra tarjeta.' }),
             sug.length ? h('ul', { class: 'apk-sug' }, sug.map(function (s) {
               return h('li', { class: 'apk-sug-item', 'data-id': s.card.id }, [
                 h('div', null, [
@@ -978,6 +1164,76 @@ window.APKanban = (function () {
         h('p', { class: 'apk-dates' }, [h('span', { text: 'Creada ' + new Date(c.created_at).toLocaleDateString('es-ES') }), c.updated_at ? h('span', { text: 'Actualizada ' + new Date(c.updated_at).toLocaleDateString('es-ES') }) : null,
           c.completada_en ? h('span', { text: 'Terminada ' + new Date(c.completada_en).toLocaleDateString('es-ES') }) : null]),
         histBox])]) : null;
+
+      /* ── Dependencias: a qué tarjetas espera. Como el resto del formulario, se guardan al pulsar Guardar.
+         Búsqueda por título; las que cerrarían un círculo salen desactivadas y con el motivo escrito. ── */
+      var depOrig = c ? (depIndex(st.deps).on[c.id] || []).slice() : [], depSel = depOrig.slice(), depsSec = null;
+      if (st.depsOk) {
+        var waitBy = c ? (depIndex(st.deps).by[c.id] || []).map(function (id) { return byAny(id); }).filter(Boolean) : [];
+        var depList = h('ul', { class: 'apk-deps', 'aria-label': 'Tarjetas a las que espera' });
+        var depQ = h('input', { type: 'search', class: 'apk-input', id: 'apk-d-dep', placeholder: 'Buscar una tarjeta por su título', autocomplete: 'off', enterkeyhint: 'search', 'aria-describedby': 'apk-d-dep-hint', 'aria-controls': 'apk-d-dep-res' });
+        var depRes = h('ul', { class: 'apk-dep-res', id: 'apk-d-dep-res', 'aria-label': 'Tarjetas que coinciden', hidden: true });
+        var depMsg = h('p', { class: 'apf-hint', 'aria-live': 'polite' });
+        var tempDeps = function () {      // lo guardado de las demás + lo elegido aquí (aún sin guardar)
+          return st.deps.filter(function (d) { return !c || d.tarjeta_id !== c.id; }).concat(c ? depSel.map(function (x) { return { tarjeta_id: c.id, depende_de: x }; }) : []);
+        };
+        var drawDeps = function () {
+          depList.textContent = '';
+          depSel.forEach(function (id) {
+            var d = byAny(id), t = d ? d.titulo : 'Tarjeta archivada';
+            depList.appendChild(h('li', { class: 'apk-dep' }, [
+              d ? stIcon(d.estado) : icon('espera'), h('span', { class: 'apk-dep-t', text: t }),
+              h('span', { class: 'apk-dep-st', text: d ? (d.archivada_en ? 'Archivada' : ESTADO_LABEL[d.estado]) : '' }),
+              btn('Quitar', 'apk-link', function () {
+                depSel.splice(depSel.indexOf(id), 1); drawDeps(); drawRes();
+                depMsg.textContent = '«' + clip(t) + '» se quitará al guardar.'; depQ.focus();
+              }, { 'aria-label': 'Quitar «' + t + '» de las dependencias' })
+            ]));
+          });
+          depList.hidden = !depSel.length;
+          var p = [depSel.length ? 'Espera a ' + depSel.length : 'No espera a ninguna'];
+          if (waitBy.length) p.push(waitBy.length + (waitBy.length === 1 ? ' la espera' : ' la esperan'));
+          depsSec.sum.textContent = p.join(' · ');
+        };
+        var addDep = function (x) {
+          depSel.push(x.id); depQ.value = ''; drawRes(); drawDeps();
+          depMsg.textContent = 'Esperará a «' + clip(x.titulo) + '». Se guarda al pulsar Guardar.'; depQ.focus();
+        };
+        var drawRes = function () {
+          depRes.textContent = '';
+          var q = norm(depQ.value.trim());
+          if (!q) { depRes.hidden = true; return; }
+          var deps = tempDeps();
+          var hits = st.cards.filter(function (x) { return (!c || x.id !== c.id) && depSel.indexOf(x.id) < 0 && x.estado !== 'hecho' && norm(x.titulo).indexOf(q) > -1; }).sort(byPos).slice(0, 6);
+          hits.forEach(function (x) {
+            var cyc = !!c && wouldCycle(deps, c.id, x.id);
+            depRes.appendChild(h('li', null, [
+              btn([stIcon(x.estado), h('span', { class: 'apk-dep-t', text: x.titulo }), h('span', { class: 'apk-dep-st', text: ESTADO_LABEL[x.estado] })], 'apk-dep-opt', function () { addDep(x); },
+                cyc ? { disabled: true, 'aria-describedby': 'apk-dep-cyc-' + x.id } : { 'data-role': 'dep-opt' }),
+              cyc ? h('p', { class: 'apf-hint apk-dep-cyc', id: 'apk-dep-cyc-' + x.id, text: 'No se puede: «' + clip(x.titulo) + '» ya espera a esta tarjeta.' }) : null
+            ]));
+          });
+          if (!hits.length) depRes.appendChild(h('li', { class: 'apk-hint', text: 'Ninguna tarjeta sin terminar coincide.' }));
+          depRes.hidden = false;
+        };
+        depQ.addEventListener('input', drawRes);
+        depQ.addEventListener('keydown', function (ev) {
+          if (ev.key === 'Enter') {      // no envía el formulario: elige la primera que se puede
+            ev.preventDefault();
+            var first = depRes.querySelector('button:not([disabled])'); if (first) first.click();
+          } else if (ev.key === 'Escape' && depQ.value) {      // con texto, Esc limpia la búsqueda; sin texto, cierra como siempre
+            ev.preventDefault(); ev.stopPropagation(); depQ.value = ''; drawRes();
+          }
+        });
+        depsSec = section('apk-sec-deps', 'Dependencias', [h('div', { class: 'apf-field apf-wide' }, [
+          h('label', { class: 'ap-field-label', for: 'apk-d-dep', text: 'Espera a' }),
+          depList, depQ, depRes,
+          h('p', { class: 'apf-hint', id: 'apk-d-dep-hint', text: 'Tarjetas que tienen que terminar antes. Mientras alguna no esté en Hecho, esta sale «En espera» y no se sugiere para hoy; queda libre sola cuando terminan.' }),
+          depMsg,
+          waitBy.length ? h('p', { class: 'apk-dep-by', text: 'La esperan: ' + names(waitBy) + '.' }) : null
+        ])], depSel.length > 0);
+        drawDeps();
+      }
       if (histSec) { histSec.sum.textContent = 'Cambios de estado y fechas'; histSec.addEventListener('toggle', function () { if (histSec.open) loadHist(); }); }
       var more = c ? h('div', { class: 'apk-dlg-more' }, [
         c.archivada_en ? btn('Recuperar', 'apk-btn', function () { guarded(function () { archive(c, false); }); }) : btn('Archivar', 'apk-btn', function () { guarded(function () { archive(c, true); }); }),
@@ -990,7 +1246,7 @@ window.APKanban = (function () {
       [f.notas, f.aprendizaje].forEach(function (el) { el.addEventListener('input', function () { notesSec.sum.textContent = notesSummary(); }); });
 
       /* ── Cambios sin guardar ── */
-      function snap() { return JSON.stringify(Object.keys(f).map(function (k) { return f[k].type === 'checkbox' ? f[k].checked : f[k].value; })); }
+      function snap() { return JSON.stringify(Object.keys(f).map(function (k) { return f[k].type === 'checkbox' ? f[k].checked : f[k].value; }).concat([depSel.slice().sort().join(',')])); }
       var initial = '';
       function dirty() { return snap() !== initial || added.length > 0 || imgs.some(function (x) { return x.gone; }); }
       function onBeforeUnload(e) { if (dlg.open && dirty()) { e.preventDefault(); e.returnValue = ''; } }
@@ -1031,6 +1287,7 @@ window.APKanban = (function () {
         } else {
           var patch = Object.assign({ titulo: t }, fields);
           var prev = Object.assign({}, c), newEstado = f.estado.value;
+          var depBefore = st.deps.filter(function (d) { return d.tarjeta_id === c.id; }).map(function (d) { return d.depende_de; });
           if (newEstado !== c.estado) {
             patch.estado = newEstado; patch.tipo = newEstado === 'ideas' ? 'idea' : 'tarea';
             var col = column(st.cards, newEstado); patch.posicion = col.length ? col[col.length - 1].posicion + GAP : GAP;
@@ -1039,12 +1296,13 @@ window.APKanban = (function () {
             Object.assign(c, row);     // c puede ser una tarjeta archivada que no está en st.cards
             pushUndo('edición de «' + clip(c.titulo) + '»', function () {
               var back = {}; Object.keys(patch).forEach(function (k) { back[k] = prev[k]; });
-              return patchCard(c.id, back).then(function (row) { Object.assign(c, row); });
+              return patchCard(c.id, back).then(function (row) { Object.assign(c, row); return st.depsOk ? setDeps(c.id, depBefore) : null; });
             });
           });
         }
         var wasNew = !c0;
-        job.then(function () { initial = snap(); return syncImages(); }).then(function () {
+        job.then(function () { return st.depsOk ? setDeps(c.id, depSel) : null; })      // la tarjeta ya existe (también si es nueva)
+          .then(function () { initial = snap(); return syncImages(); }).then(function () {
           saving = false; dlg.removeAttribute('aria-busy');
           dlg.close(); paint();
           if (!wasNew) say('Cambios guardados.', { undo: true });
@@ -1070,7 +1328,7 @@ window.APKanban = (function () {
             ui.field('apk-d-proy', 'Proyecto', f.proyecto),
             blockBox
           ]),
-          planSec, notesSec, stepsSec, histSec, more
+          planSec, depsSec, notesSec, stepsSec, histSec, more
         ]),
         h('footer', { class: 'apk-dlg-foot' }, [msg, h('div', { class: 'apk-dlg-btns' }, [btn('Cancelar', 'btn btn-outline', requestClose, { 'data-role': 'cancel' }), save])])
       ]);
@@ -1266,7 +1524,8 @@ window.APKanban = (function () {
     function planDia(ev) {
       var el = ev && ev.currentTarget, chosen = todayList().length, free = Math.max(0, st.cfg.capacidad - chosen);
       if (!free) return say('Ya tienes el día completo (' + chosen + ' de ' + st.cfg.capacidad + '). Quita algo antes de añadir más.');
-      var cands = st.cards.filter(function (c) { return c.estado !== 'hecho' && c.estado !== 'ideas' && !c.bloqueada && c.hoy_fecha !== today; }).slice(0, 60);
+      var wm = waits();
+      var cands = st.cards.filter(function (c) { return c.estado !== 'hecho' && c.estado !== 'ideas' && !c.bloqueada && !wm[c.id] && c.hoy_fecha !== today; }).slice(0, 60);
       if (!cands.length) return say('No hay tarjetas pendientes que planificar.');
       busy(el, iaCall({ action: 'plan_dia', hoy: today, capacidad: free, resultado: st.cfg.resultado || undefined, cards: cands.map(function (c) {
         return { id: c.id, titulo: c.titulo, estado: c.estado, prioridad: c.prioridad, fecha_limite: c.fecha_limite, esfuerzo: c.esfuerzo, bloqueada: c.bloqueada, siguiente_paso: c.siguiente_paso };

@@ -128,3 +128,42 @@ test('parseCapture: prioridad, proyecto, etiqueta, fechas y @hoy salen del títu
   eq(r('31/02 imposible').fecha_limite, null);
   eq(r('Idea suelta').titulo, 'Idea suelta');
 });
+
+test('Dependencias: espera mientras la dependencia no está en Hecho y queda libre sola', () => {
+  const a = card({ id: 'a', titulo: 'A' }), b = card({ id: 'b', titulo: 'B', posicion: 2048 }), c = card({ id: 'c', titulo: 'C', posicion: 3072 });
+  const deps = [{ tarjeta_id: 'c', depende_de: 'a' }, { tarjeta_id: 'c', depende_de: 'b' }];
+  const ids = (m) => Object.fromEntries(Object.entries(m).map(([k, v]) => [k, v.map((x) => x.id)]));
+  eq(ids(L.waitingMap([a, b, c], deps)), { c: ['a', 'b'] });
+  a.estado = 'hecho';
+  eq(ids(L.waitingMap([a, b, c], deps)), { c: ['b'] });
+  b.estado = 'hecho';
+  eq(ids(L.waitingMap([a, b, c], deps)), {}, 'todas hechas: libre');
+  b.estado = 'pendiente'; b.archivada_en = '2026-10-01';
+  eq(ids(L.waitingMap([a, b, c], deps)), {}, 'una dependencia archivada ya no retiene');
+  eq(ids(L.waitingMap([a, c], deps)), {}, 'una dependencia que no está cargada no retiene');
+  c.estado = 'hecho'; b.archivada_en = null;
+  eq(ids(L.waitingMap([a, b, c], deps)), {}, 'una tarjeta ya hecha no se marca como en espera');
+});
+
+test('Dependencias: wouldCycle detecta ciclos directos, indirectos y la propia', () => {
+  const deps = [{ tarjeta_id: 'b', depende_de: 'a' }, { tarjeta_id: 'c', depende_de: 'b' }];      // c → b → a
+  assert.equal(L.wouldCycle(deps, 'a', 'b'), true, 'directo');
+  assert.equal(L.wouldCycle(deps, 'a', 'c'), true, 'indirecto');
+  assert.equal(L.wouldCycle(deps, 'a', 'a'), true, 'propia');
+  assert.equal(L.wouldCycle(deps, 'c', 'a'), false, 'redundante pero válida');
+  assert.equal(L.wouldCycle(deps, 'd', 'c'), false);
+  assert.equal(L.wouldCycle(deps, null, 'c'), false, 'tarjeta nueva: nadie la espera aún');
+  assert.equal(L.wouldCycle([{ tarjeta_id: 'x', depende_de: 'y' }, { tarjeta_id: 'y', depende_de: 'x' }], 'z', 'x'), false, 'termina aunque los datos ya traigan un ciclo');
+});
+
+test('Dependencias: freedBy, filtro «bloqueadas o en espera» y sugerencias', () => {
+  const a = card({ id: 'a' }), b = card({ id: 'b' }), c = card({ id: 'c', prioridad: 4 }), d = card({ id: 'd' });
+  const deps = [{ tarjeta_id: 'c', depende_de: 'a' }, { tarjeta_id: 'd', depende_de: 'a' }, { tarjeta_id: 'd', depende_de: 'b' }];
+  eq(L.freedBy('a', [a, b, c, d], deps).map((x) => x.id), ['c'], 'd sigue esperando a b');
+  const w = L.waitingMap([a, b, c, d], deps);
+  eq(L.filterCards([a, b, c, d], { q: '', proyecto: '', prioridad: 0, bloqueadas: true }, {}, w).map((x) => x.id), ['c', 'd']);
+  eq(L.filterCards([a, b, c, d], { q: '', proyecto: '', prioridad: 0, bloqueadas: true }, {}).map((x) => x.id), [], 'sin mapa, como antes');
+  const s = L.suggest([a, b, c, d], NOW, { waiting: w }).map((x) => x.card.id);
+  assert.ok(!s.includes('c') && !s.includes('d'), 'lo que espera no se sugiere aunque sea urgente');
+  eq(L.depIndex(deps).by.a, ['c', 'd']);
+});
