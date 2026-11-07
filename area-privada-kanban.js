@@ -502,7 +502,7 @@ window.APKanban = (function () {
       card.hoy_fecha = value; paint();
       return patchCard(card.id, { hoy_fecha: value }).catch(function (err) { failed(err, 'hoy', function () { card.hoy_fecha = prev; }); });
     }
-    /* ── Varias tarjetas a la vez (Tablero): Ctrl/⌘ o Mayús + clic, X con el teclado, o el modo «Seleccionar» (táctil) ── */
+    /* ── Varias tarjetas a la vez (Tablero): Ctrl/⌘ o Mayús + clic, o el modo «Seleccionar» (táctil) ── */
     function selActive() { return st.selMode || Object.keys(st.sel).length > 0; }
     function selectedCards() {      // solo las visibles con los filtros actuales, en el orden del tablero
       var order = ESTADOS.map(function (e) { return e.id; });
@@ -679,7 +679,7 @@ window.APKanban = (function () {
           c.tipo === 'idea' ? h('span', { class: 'apk-type', title: 'Idea' }, [icon('idea')]) : null,
           proj ? h('span', { class: 'apk-proj' }, [(function () { var d = h('span', { class: 'apk-dot', 'aria-hidden': 'true' }); d.style.background = tone(proj.id); return d; })(), h('span', { class: 'apk-proj-t', text: proj.titulo })]) : null,
         ]),
-        h('button', { type: 'button', class: 'apk-card-open', 'data-role': 'open', 'aria-keyshortcuts': 'Shift+ArrowLeft Shift+ArrowRight Shift+ArrowUp Shift+ArrowDown D S H X Delete',
+        h('button', { type: 'button', class: 'apk-card-open', 'data-role': 'open', 'aria-keyshortcuts': 'Shift+ArrowLeft Shift+ArrowRight Shift+ArrowUp Shift+ArrowDown',
           'aria-pressed': selecting ? String(picked) : null,      // en modo selección, el título selecciona en vez de abrir
           'aria-describedby': 'apk-kbd-help', text: c.titulo, onclick: function (ev) {
             if (Date.now() - lastDrag <= 80) return;
@@ -717,7 +717,7 @@ window.APKanban = (function () {
       }));
       return h('div', { class: 'apk-tablero', 'data-tab': st.colTab }, [
         filtersEl(filtered), selActive() ? selBar() : null, tabs,
-        h('p', { class: 'sr-only', id: 'apk-kbd-help', text: 'Mayús más flechas izquierda o derecha cambia la tarjeta de columna; Mayús más flechas arriba o abajo la reordena. D la pasa a Hecho, S a En curso, H la añade o quita de hoy, X la selecciona y Suprimir la elimina. Interrogación muestra todos los atajos.' }),
+        h('p', { class: 'sr-only', id: 'apk-kbd-help', text: 'Mayús más flechas izquierda o derecha cambia la tarjeta de columna; Mayús más flechas arriba o abajo la reordena.' }),
         h('div', { class: 'apk-board', tabindex: '-1' }, cols)
       ]);
     }
@@ -1582,8 +1582,7 @@ window.APKanban = (function () {
           { ico: 'st_en_curso', label: 'Ir al Tablero', run: go('tablero') },
           { ico: 'libro', label: 'Ir al Archivo', run: go('archivo') },
           { ico: 'proyecto', label: 'Proyectos', run: projectsDialog },
-          { ico: 'reloj', label: 'Ajustes del tablero', run: settingsDialog },
-          { ico: 'buscar', label: 'Atajos de teclado', run: keysDialog }
+          { ico: 'reloj', label: 'Ajustes del tablero', run: settingsDialog }
         ];
         if (st.ia) a.push({ ico: 'ia', label: 'Plan del día con IA', run: function () { go('hoy')(); planDia(); } }, { ico: 'ia', label: 'Convertir texto en tarjetas con IA', run: function () { captureAI(''); } });
         return a.map(function (x) { x.kind = 'Acción'; return x; });
@@ -1620,53 +1619,9 @@ window.APKanban = (function () {
       document.body.appendChild(dlg); dlg.showModal(); draw(); input.focus();
     }
 
-    /* ── Atajos (los lista keysDialog, con «?») ── */
-    var MAC = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent || '');
-    function keysDialog() {
-      if (document.querySelector('dialog.apk-keys')) return;
-      var mod = MAC ? '⌘' : 'Ctrl';
-      var groups = [
-        ['General', [[mod + ' K', 'Buscar tarjetas y acciones'], ['/', 'Buscar en el tablero'], [mod + ' Z', 'Deshacer'], ['?', 'Ver estos atajos'], ['Esc', 'Cerrar un diálogo o quitar la selección']]],
-        ['Tarjeta con el foco', [['Enter', 'Abrir'], ['D', 'Mover a Hecho'], ['S', 'Mover a En curso'], ['H', 'Añadir a hoy o quitar de hoy'], ['X', 'Seleccionar o quitar de la selección (Tablero)'],
-          ['Supr', 'Eliminar (pide confirmación)'], ['Mayús ← →', 'Cambiar de columna (Tablero)'], ['Mayús ↑ ↓', 'Reordenar en la columna (Tablero)']]],
-        ['Varias tarjetas (Tablero)', [[mod + ' clic · Mayús clic', 'Seleccionar o quitar una tarjeta'], ['Seleccionar', 'Botón junto a los filtros: cada toque selecciona (pantallas táctiles)']]]
-      ];
-      var dlg = h('dialog', { class: 'ap-dialog apk-dialog apk-keys', 'aria-labelledby': 'apk-keys-t', onclose: function () { dlg.remove(); } }, [
-        h('h2', { class: 'ap-dialog-title', id: 'apk-keys-t', text: 'Atajos de teclado' }),
-        groups.map(function (g) {
-          return h('section', { class: 'apk-keys-g' }, [h('h3', { class: 'apk-keys-h', text: g[0] }),
-            h('dl', { class: 'apk-keys-l' }, g[1].map(function (r) { return [h('dt', null, [h('kbd', { class: 'apk-kbd', text: r[0] })]), h('dd', { text: r[1] })]; }))]);
-        }),
-        h('div', { class: 'ap-dialog-actions' }, [btn('Cerrar', 'btn btn-primary', function () { dlg.close(); }, { 'data-role': 'keys-close' })])
-      ]);
-      document.body.appendChild(dlg); dlg.showModal(); dlg.querySelector('[data-role="keys-close"]').focus();
-    }
-    /* Teclas sobre la tarjeta enfocada (su título), sin modificadores */
-    function cardKey(ev, c) {
-      var k = ev.key.length === 1 ? ev.key.toLowerCase() : ev.key;
-      var go = function (estado) { ev.preventDefault(); keep = c.id; if (c.estado === estado) return say('Ya está en ' + ESTADO_LABEL[estado] + '.'); move(c, estado, column(st.cards, estado).length, 'btn'); };
-      if (k === 'd') return go('hecho');
-      if (k === 's') return go('en_curso');
-      if (k === 'h') {
-        ev.preventDefault(); keep = c.id;
-        if (c.estado === 'hecho' || c.estado === 'ideas') return say('Solo se eligen para hoy tarjetas sin terminar que no sean ideas.');
-        var on = c.hoy_fecha !== today; setHoy(c, on);
-        return announce(on ? '«' + clip(c.titulo) + '» añadida a hoy.' : '«' + clip(c.titulo) + '» quitada de hoy.');
-      }
-      if (k === 'x' && st.view === 'tablero') { ev.preventDefault(); return toggleSel(c); }
-      if (k === 'Delete' || k === 'Backspace') {
-        ev.preventDefault();
-        ctx.ask({ title: 'Eliminar «' + clip(c.titulo) + '»', text: 'Se borra con sus pasos, imágenes, historial y dependencias. Podrás deshacerlo unos segundos; si dudas, archívala.', ok: 'Eliminar', danger: true })
-          .then(function (ok) { if (ok) remove(c); });
-      }
-    }
-
     /* ── Teclado: Mayús + flechas mueve la tarjeta enfocada; Ctrl/⌘+Z deshace ── */
     root.addEventListener('keydown', function (ev) {
       var li = ev.target.closest && ev.target.closest('.apk-card[data-id]');
-      if (li && !ev.shiftKey && !ev.ctrlKey && !ev.metaKey && !ev.altKey && ev.target.getAttribute('data-role') === 'open') {
-        var cc = byId(li.getAttribute('data-id')); if (cc) return cardKey(ev, cc);
-      }
       if (!li || !ev.shiftKey || ev.altKey || ev.ctrlKey || ev.metaKey || ev.target.tagName === 'INPUT') return;
       var dx = ev.key === 'ArrowRight' ? 1 : ev.key === 'ArrowLeft' ? -1 : 0, dy = ev.key === 'ArrowDown' ? 1 : ev.key === 'ArrowUp' ? -1 : 0;
       if (!dx && !dy) return;
@@ -1681,15 +1636,6 @@ window.APKanban = (function () {
       if (!root.isConnected) return document.removeEventListener('keydown', onDocKey);
       if ((ev.ctrlKey || ev.metaKey) && !ev.shiftKey && !ev.altKey && ev.key.toLowerCase() === 'k' && !document.querySelector('dialog[open]')) { ev.preventDefault(); return palette(); }
       if ((ev.ctrlKey || ev.metaKey) && !ev.shiftKey && ev.key.toLowerCase() === 'z' && !/^(INPUT|TEXTAREA|SELECT)$/.test(ev.target.tagName) && !document.querySelector('dialog[open]')) { ev.preventDefault(); doUndo(); }
-      var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(ev.target.tagName) || ev.target.isContentEditable;
-      if (typing || ev.ctrlKey || ev.metaKey || ev.altKey || document.querySelector('dialog[open]')) return;
-      if (ev.key === '?') { ev.preventDefault(); return keysDialog(); }
-      if (ev.key === '/') {
-        ev.preventDefault();
-        var q = st.view === 'tablero' && root.querySelector('.apk-filters input[type=search]');
-        return q ? q.focus() : palette();
-      }
-      if (ev.key === 'Escape' && st.view === 'tablero' && selActive()) { clearSel(); paint(); announce('Selección quitada.'); }
     }
     document.addEventListener('keydown', onDocKey);
     function onVisible() {
