@@ -7,7 +7,7 @@
      El HTML es público pero no contiene datos: todo llega de Supabase tras iniciar sesión. -->
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co; img-src 'self' data: blob:; frame-src blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co; img-src 'self' data: blob:; frame-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="theme-color" content="#111111">
 <title>Área privada · Borja Mora Méndez</title>
 <link rel="icon" type="image/svg+xml" href="./img/favicon.svg">
@@ -21,6 +21,7 @@
 <!-- Pestañas con archivo propio: area-privada.js las inyecta al abrirlas; el navegador las precarga en reposo -->
 <link rel="prefetch" as="script" href="./area-privada-hoy.js?v=4950d5f1b7" data-ap-module="hoy">
 <link rel="prefetch" as="script" href="./area-privada-apps.js?v=b486ca669c" data-ap-module="apps">
+<link rel="prefetch" as="script" href="./area-privada-ahorro.js?v=c1c1d616fa" data-ap-module="ahorro">
 <link rel="prefetch" as="script" href="./area-privada-color.js?v=05e891c7ab" data-ap-module="color">
 <link rel="prefetch" as="script" href="./color-studio/engine.js?v=a649e19a90" data-ap-asset="cs-engine">
 <link rel="prefetch" as="script" href="./color-studio/socks.js?v=a59ba209d5" data-ap-asset="cs-socks">
@@ -48,11 +49,11 @@
 <link rel="prefetch" as="script" href="./second-brain/viewer.js?v=6c0aa3a1e3" data-ap-asset="sb-viewer">
 <link rel="prefetch" as="script" href="./area-privada-fichero.js?v=5834b6b4aa" data-ap-module="fichero">
 <link rel="prefetch" as="script" href="./area-privada-mapa.js?v=d3db579c96" data-ap-module="mapa">
-<link rel="prefetch" as="script" href="./mapa/estructura.js?v=2c0f322444" data-ap-asset="mapa-datos">
+<link rel="prefetch" as="script" href="./mapa/estructura.js?v=6f84ac2787" data-ap-asset="mapa-datos">
 <link rel="stylesheet" href="./css/second-brain.css?v=02aa895e48">
 <link rel="stylesheet" href="./css/mapa.css?v=9a1505f87b">
 <link rel="stylesheet" href="./css/color-studio.css?v=6a26d8541f">
-<link rel="stylesheet" href="./css/area-privada.css?v=0f1d11f06c">
+<link rel="stylesheet" href="./css/area-privada.css?v=f84f5d771b">
 </head>
 <body>
 <a href="#main-content" class="skip-link">Saltar al contenido</a>
@@ -171,6 +172,6 @@
   <p class="ap-foot-copy">© 2026 Borja Mora Méndez · <a href="./privacidad.html">Privacidad</a></p>
 </footer>
 
-<script src="./area-privada.js?v=eb06e795a3" defer></script>
+<script src="./area-privada.js?v=6a53fd2870" defer></script>
 </body>
 </html>

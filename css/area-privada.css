@@ -1427,3 +1427,11 @@ body:has(#ap-lock:not([hidden])) main { min-height: calc(100vh - var(--ap-top-h)
 .ap-lock .ap-login-btn:focus-visible { outline-color: #fff; outline-offset: 4px; }
 body:has(#ap-lock:not([hidden])) .ap-lock .ap-pass input:focus-visible { outline: none; }   /* el foco lo marca el subrayado */
 .ap-lock .ap-pass input::placeholder { color: rgba(255, 255, 255, .55); letter-spacing: .08em; }
+
+.ap-ahorro-frame {
+  display: block;
+  width: 100%;
+  height: calc(100vh - 74px);
+  height: calc(100dvh - 74px);
+  border: 0;
+}

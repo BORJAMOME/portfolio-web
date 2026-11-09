@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "e5b2ca3",
+ "huella": "cc18967",
  "recuento": {
   "paginas": 19,
   "proyectos": 40,
@@ -9,10 +9,10 @@ export default {
   "capitulos": 10,
   "plataformas": 11,
   "pestanas": 10,
-  "tablas": 35,
+  "tablas": 36,
   "funciones": 5,
   "herramientas": 18,
-  "relaciones": 183,
+  "relaciones": 185,
   "sinExplicar": 0
  },
  "columnas": [
@@ -1633,6 +1633,13 @@ export default {
      "archivo": "area-privada-apps.js",
      "hijos": [
       {
+       "id": "m:ahorro",
+       "tipo": "modulo",
+       "etiqueta": "Ahorro con perspectiva",
+       "archivo": "area-privada-ahorro.js",
+       "familia": "privada"
+      },
+      {
        "id": "m:color",
        "tipo": "modulo",
        "etiqueta": "Color Studio",
@@ -1761,6 +1768,21 @@ export default {
        "id": "q:agenda",
        "tipo": "tabla",
        "etiqueta": "agenda",
+       "familia": "dato"
+      }
+     ],
+     "familia": "dato"
+    },
+    {
+     "id": "d:ahorro",
+     "tipo": "esquema",
+     "etiqueta": "ahorro.sql",
+     "archivo": "supabase/ahorro.sql",
+     "hijos": [
+      {
+       "id": "q:ahorro_preferences",
+       "tipo": "tabla",
+       "etiqueta": "ahorro_preferences",
        "familia": "dato"
       }
      ],
@@ -2951,6 +2973,22 @@ export default {
    "a": "m:kanban",
    "tipo": "verifica",
    "detalle": []
+  },
+  {
+   "de": "m:ahorro",
+   "a": "d:ahorro",
+   "tipo": "usa",
+   "detalle": [
+    "ahorro_preferences"
+   ]
+  },
+  {
+   "de": "m:ahorro",
+   "a": "d:area-privada",
+   "tipo": "usa",
+   "detalle": [
+    "members"
+   ]
   },
   {
    "de": "m:claude",
