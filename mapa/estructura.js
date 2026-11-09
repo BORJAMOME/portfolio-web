@@ -1,19 +1,19 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "e5b2ca3",
+ "huella": "04d6b4a",
  "recuento": {
-  "paginas": 19,
+  "paginas": 20,
   "proyectos": 40,
   "recursos": 52,
   "perfil": 9,
   "capitulos": 10,
   "plataformas": 11,
   "pestanas": 10,
-  "tablas": 35,
+  "tablas": 36,
   "funciones": 5,
   "herramientas": 18,
-  "relaciones": 183,
-  "sinExplicar": 0
+  "relaciones": 186,
+  "sinExplicar": 7
  },
  "columnas": [
   {
@@ -1476,6 +1476,15 @@ export default {
      "nota": "ninguna página pública las enlaza",
      "hijos": [
       {
+       "id": "p:apps/ahorro-con-perspectiva",
+       "tipo": "pagina",
+       "etiqueta": "Tu ahorro, con perspectiva",
+       "nota": "Tu manual interactivo de ahorro: organiza gastos, ensaya decisiones y compara cuentas con gráficos y supuestos claros.",
+       "href": "./apps/ahorro-con-perspectiva/",
+       "archivo": "apps/ahorro-con-perspectiva/",
+       "familia": "pagina"
+      },
+      {
        "id": "p:pbi",
        "tipo": "manual",
        "etiqueta": "Manual de Power BI",
@@ -1633,6 +1642,13 @@ export default {
      "archivo": "area-privada-apps.js",
      "hijos": [
       {
+       "id": "m:ahorro",
+       "tipo": "modulo",
+       "etiqueta": "Ahorro con perspectiva",
+       "archivo": "area-privada-ahorro.js",
+       "familia": "privada"
+      },
+      {
        "id": "m:color",
        "tipo": "modulo",
        "etiqueta": "Color Studio",
@@ -1761,6 +1777,21 @@ export default {
        "id": "q:agenda",
        "tipo": "tabla",
        "etiqueta": "agenda",
+       "familia": "dato"
+      }
+     ],
+     "familia": "dato"
+    },
+    {
+     "id": "d:ahorro",
+     "tipo": "esquema",
+     "etiqueta": "ahorro.sql",
+     "archivo": "supabase/ahorro.sql",
+     "hijos": [
+      {
+       "id": "q:ahorro_preferences",
+       "tipo": "tabla",
+       "etiqueta": "ahorro_preferences",
        "familia": "dato"
       }
      ],
@@ -2953,6 +2984,22 @@ export default {
    "detalle": []
   },
   {
+   "de": "m:ahorro",
+   "a": "d:ahorro",
+   "tipo": "usa",
+   "detalle": [
+    "ahorro_preferences"
+   ]
+  },
+  {
+   "de": "m:ahorro",
+   "a": "d:area-privada",
+   "tipo": "usa",
+   "detalle": [
+    "members"
+   ]
+  },
+  {
    "de": "m:claude",
    "a": "d:claude-manual",
    "tipo": "usa",
@@ -3042,6 +3089,12 @@ export default {
   {
    "de": "p:analisis-datos",
    "a": "z:gh:data-analytics-portfolio",
+   "tipo": "enlaza",
+   "detalle": []
+  },
+  {
+   "de": "p:apps/ahorro-con-perspectiva",
+   "a": "col:privada",
    "tipo": "enlaza",
    "detalle": []
   },
@@ -3592,7 +3645,50 @@ export default {
    "detalle": []
   }
  ],
- "sinExplicar": [],
+ "sinExplicar": [
+  {
+   "url": "bde.es/f/webbe/INF/MenuHorizontal/AreasActuacion/conducta/ficheros/Sesion4Gestionfinanzaspersonales.pdf",
+   "paginas": [
+    "apps/ahorro-con-perspectiva"
+   ]
+  },
+  {
+   "url": "clientebancario.bde.es/pcb/es/menu-horizontal/podemosayudarte/tiposinteres/guia_textual/latae/tae_deposito.html",
+   "paginas": [
+    "apps/ahorro-con-perspectiva"
+   ]
+  },
+  {
+   "url": "consumerfinance.gov/an-essential-guide-to-building-an-emergency-fund",
+   "paginas": [
+    "apps/ahorro-con-perspectiva"
+   ]
+  },
+  {
+   "url": "consumerfinance.gov/archive/blog/how-reduce-your-debt",
+   "paginas": [
+    "apps/ahorro-con-perspectiva"
+   ]
+  },
+  {
+   "url": "fgd.es/informacion-general/que-es-el-fgd/depositos-dinerarios/depositos-dinerarios-garantizados",
+   "paginas": [
+    "apps/ahorro-con-perspectiva"
+   ]
+  },
+  {
+   "url": "finanzasparatodos.es/como-elaborar-un-presupuesto",
+   "paginas": [
+    "apps/ahorro-con-perspectiva"
+   ]
+  },
+  {
+   "url": "finanzasparatodos.es/herramientas",
+   "paginas": [
+    "apps/ahorro-con-perspectiva"
+   ]
+  }
+ ],
  "ignorados": [
   {
    "dominio": "behance.net",
