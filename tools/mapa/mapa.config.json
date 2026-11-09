@@ -28,6 +28,7 @@
       "proyectos.html"
     ],
     "ignorarCarpetas": [
+      "apps",
       "node_modules",
       "en",
       "vendor",

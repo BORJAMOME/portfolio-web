@@ -1,8 +1,8 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "04d6b4a",
+ "huella": "cc18967",
  "recuento": {
-  "paginas": 20,
+  "paginas": 19,
   "proyectos": 40,
   "recursos": 52,
   "perfil": 9,
@@ -12,8 +12,8 @@ export default {
   "tablas": 36,
   "funciones": 5,
   "herramientas": 18,
-  "relaciones": 186,
-  "sinExplicar": 7
+  "relaciones": 185,
+  "sinExplicar": 0
  },
  "columnas": [
   {
@@ -1475,15 +1475,6 @@ export default {
      "etiqueta": "sin enlaces desde el sitio/",
      "nota": "ninguna página pública las enlaza",
      "hijos": [
-      {
-       "id": "p:apps/ahorro-con-perspectiva",
-       "tipo": "pagina",
-       "etiqueta": "Tu ahorro, con perspectiva",
-       "nota": "Tu manual interactivo de ahorro: organiza gastos, ensaya decisiones y compara cuentas con gráficos y supuestos claros.",
-       "href": "./apps/ahorro-con-perspectiva/",
-       "archivo": "apps/ahorro-con-perspectiva/",
-       "familia": "pagina"
-      },
       {
        "id": "p:pbi",
        "tipo": "manual",
@@ -3093,12 +3084,6 @@ export default {
    "detalle": []
   },
   {
-   "de": "p:apps/ahorro-con-perspectiva",
-   "a": "col:privada",
-   "tipo": "enlaza",
-   "detalle": []
-  },
-  {
    "de": "p:casa-origen",
    "a": "p:ibcs-ventas",
    "tipo": "siguiente",
@@ -3645,50 +3630,7 @@ export default {
    "detalle": []
   }
  ],
- "sinExplicar": [
-  {
-   "url": "bde.es/f/webbe/INF/MenuHorizontal/AreasActuacion/conducta/ficheros/Sesion4Gestionfinanzaspersonales.pdf",
-   "paginas": [
-    "apps/ahorro-con-perspectiva"
-   ]
-  },
-  {
-   "url": "clientebancario.bde.es/pcb/es/menu-horizontal/podemosayudarte/tiposinteres/guia_textual/latae/tae_deposito.html",
-   "paginas": [
-    "apps/ahorro-con-perspectiva"
-   ]
-  },
-  {
-   "url": "consumerfinance.gov/an-essential-guide-to-building-an-emergency-fund",
-   "paginas": [
-    "apps/ahorro-con-perspectiva"
-   ]
-  },
-  {
-   "url": "consumerfinance.gov/archive/blog/how-reduce-your-debt",
-   "paginas": [
-    "apps/ahorro-con-perspectiva"
-   ]
-  },
-  {
-   "url": "fgd.es/informacion-general/que-es-el-fgd/depositos-dinerarios/depositos-dinerarios-garantizados",
-   "paginas": [
-    "apps/ahorro-con-perspectiva"
-   ]
-  },
-  {
-   "url": "finanzasparatodos.es/como-elaborar-un-presupuesto",
-   "paginas": [
-    "apps/ahorro-con-perspectiva"
-   ]
-  },
-  {
-   "url": "finanzasparatodos.es/herramientas",
-   "paginas": [
-    "apps/ahorro-con-perspectiva"
-   ]
-  }
- ],
+ "sinExplicar": [],
  "ignorados": [
   {
    "dominio": "behance.net",
