@@ -25,6 +25,7 @@
     "excluir": [
       "404.html",
       "area-privada.html",
+      "boveda.html",
       "proyectos.html"
     ],
     "ignorarCarpetas": [
