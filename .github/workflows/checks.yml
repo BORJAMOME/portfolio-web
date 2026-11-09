@@ -45,6 +45,9 @@ jobs:
       - name: Motor de Color Studio (color, proporciones, calcetines, importación)
         if: ${{ !cancelled() }}
         run: node --test tools/test-color.mjs
+      - name: Bóveda (versiones cifradas y conflictos)
+        if: ${{ !cancelled() }}
+        run: node --test tools/test-boveda.cjs
       - name: Second Brain (motor, contrato y seguridad)
         if: ${{ !cancelled() }}
         run: node --test tools/second-brain/second-brain.test.mjs
@@ -74,6 +77,9 @@ jobs:
       - name: Color Studio (flujos de interfaz con Supabase simulado)
         if: ${{ !cancelled() }}
         run: node tools/check-color.mjs
+      - name: Bóveda (cifrado local, acceso y Drive simulado)
+        if: ${{ !cancelled() }}
+        run: node tools/check-boveda.mjs
       - name: Manual de Claude en el área privada (interfaz con Supabase simulado, CSP real y axe)
         if: ${{ !cancelled() }}
         run: node tools/check-claude-manual.mjs

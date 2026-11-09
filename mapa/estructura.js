@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "cc18967",
+ "huella": "359faaa",
  "recuento": {
   "paginas": 19,
   "proyectos": 40,
@@ -11,8 +11,8 @@ export default {
   "pestanas": 10,
   "tablas": 36,
   "funciones": 5,
-  "herramientas": 18,
-  "relaciones": 185,
+  "herramientas": 20,
+  "relaciones": 187,
   "sinExplicar": 0
  },
  "columnas": [
@@ -2239,6 +2239,13 @@ export default {
        "familia": "herramienta"
       },
       {
+       "id": "h:check-boveda",
+       "tipo": "herramienta",
+       "etiqueta": "check-boveda.mjs",
+       "archivo": "tools/check-boveda.mjs",
+       "familia": "herramienta"
+      },
+      {
        "id": "h:check-briefing",
        "tipo": "herramienta",
        "etiqueta": "check-briefing.mjs",
@@ -2278,6 +2285,13 @@ export default {
        "tipo": "herramienta",
        "etiqueta": "check-links.mjs",
        "archivo": "tools/check-links.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:test-boveda",
+       "tipo": "herramienta",
+       "etiqueta": "test-boveda.cjs",
+       "archivo": "tools/test-boveda.cjs",
        "familia": "herramienta"
       },
       {
@@ -3565,6 +3579,12 @@ export default {
   },
   {
    "de": "w:checks",
+   "a": "h:check-boveda",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:checks",
    "a": "h:check-briefing",
    "tipo": "ejecuta",
    "detalle": []
@@ -3608,6 +3628,12 @@ export default {
   {
    "de": "w:checks",
    "a": "h:second-brain",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:checks",
+   "a": "h:test-boveda",
    "tipo": "ejecuta",
    "detalle": []
   },
