@@ -128,3 +128,45 @@ mark.dudoso{background:var(--support-soft);color:var(--support-ink);border-radiu
   .ind{padding:18px}
   #imode{margin-left:0}
 }
+
+/* Figuras del manual: las etiquetas son texto y se adaptan al espacio disponible. */
+.libro .rv-figure {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+  margin: 24px 0;
+  padding: clamp(14px, 3vw, 26px);
+  background: var(--card-2);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  font-size: 15px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.rv-heading { margin-bottom: 15px; }
+.rv-heading strong, .rv-heading span, .rv-item strong, .rv-item span { display: block; }
+.rv-heading strong { color: var(--ink); font-size: clamp(20px, 4vw, 26px); line-height: 1.2; }
+.rv-heading span { margin-top: 6px; }
+.rv-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 175px), 1fr)); }
+.rv-item { min-width: 0; padding: 12px 14px; border: 1px solid var(--line); border-radius: 9px; background: var(--card); }
+.rv-item strong { color: var(--ink); margin-bottom: 4px; }
+.rv-flow .rv-grid { counter-reset: rail-step; }
+.rv-flow .rv-item { counter-increment: rail-step; }
+.rv-flow .rv-item strong::before { content: counter(rail-step, decimal-leading-zero) " · "; color: var(--accent-ink); }
+.rv-bars .rv-grid { grid-template-columns: minmax(0, 1fr); }
+.rv-track { height: 10px; margin-top: 9px; background: var(--line); border-radius: 8px; }
+.rv-fill { height: 100%; background: #16857c; border-radius: inherit; }
+.rv-p37 { width: 37.037%; }
+.rv-p39 { width: 39%; }
+.rv-p50 { width: 50%; }
+.rv-p65 { width: 65%; }
+.rv-p100 { width: 100%; }
+.libro .rv-figure img, .libro img.rail-visual {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin: 0 0 12px;
+  border-radius: 8px;
+}
+
