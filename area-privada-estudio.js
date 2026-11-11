@@ -55,6 +55,18 @@ window.APEstudio = (function () {
       if (n.nodeType === 3) { dst.appendChild(document.createTextNode(n.nodeValue)); return; }
       if (n.nodeType !== 1) return;
       var tag = n.tagName.toLowerCase();
+      if (tag === 'img' && n.getAttribute('class') === 'rail-visual') {
+        var png = n.getAttribute('src') || '';
+        if (png.length <= 150000 && /^data:image\/png;base64,iVBORw0KGgo[A-Za-z0-9+/]*={0,2}$/.test(png)) {
+          var picture = document.createElement('img');
+          picture.src = png;
+          picture.alt = (n.getAttribute('alt') || '').slice(0, 500);
+          picture.style.width = '100%';
+          picture.loading = 'lazy';
+          dst.appendChild(picture);
+        }
+        return;
+      }
       if (DROP[tag]) return;
       if (!ALLOW[tag]) { copyClean(n, dst); return; }
       var e = document.createElement(tag);
