@@ -1,0 +1,130 @@
+/* ══════════════════════════════════════════════════════════════
+   MANUAL DE ESTUDIO (área privada, #/estudio) · ampliación de css/claude-manual.css
+   Se carga DENTRO del Shadow DOM de area-privada-estudio.js, después de claude-manual.css (mismo sistema de diseño).
+   Añade lo propio de un manual de libro: texto completo, recuadros «En sencillo», indicadores y glosario.
+   Sin contenido: solo estilos. Solo usa los tokens del sistema (no redefine ninguno).
+   ══════════════════════════════════════════════════════════════ */
+.card{text-decoration:none;color:inherit}
+.me-push{margin-top:auto;padding-top:12px}
+.me-narrow{max-width:820px}
+.ind.hit{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.libro mark.dudoso,.call mark.dudoso{display:inline}
+
+/* texto del capítulo */
+.libro{max-width:76ch;font-size:17px;line-height:1.8;color:var(--text)}
+.libro p{margin:0 0 14px}
+.libro ul,.libro ol{padding-left:22px;margin:0 0 18px;display:flex;flex-direction:column;gap:6px}
+.libro li>ul,.libro li>ol{margin:8px 0 2px}
+.libro li>p{margin:0 0 8px}
+.libro em{font-style:italic}
+
+.libro h3.s1{font-family:var(--serif);font-size:clamp(27px,2.5vw,36px);font-weight:500;letter-spacing:-.02em;line-height:1.12;color:var(--ink);margin:72px 0 20px;padding-top:30px;border-top:.5px solid var(--line);scroll-margin-top:8px}
+.libro h3.s1:first-child{margin-top:0;padding-top:0;border-top:0}
+.libro h4.s2{font-family:var(--serif);font-size:clamp(22px,1.9vw,27px);font-weight:500;letter-spacing:-.01em;line-height:1.2;color:var(--ink);margin:50px 0 14px;scroll-margin-top:8px}
+.libro h5.s3{font-family:var(--serif);font-size:21px;font-weight:500;line-height:1.25;color:var(--ink);margin:36px 0 10px;scroll-margin-top:8px}
+.libro h6.s4{font-size:11.5px;letter-spacing:1.1px;text-transform:uppercase;font-weight:600;color:var(--accent-ink);margin:30px 0 8px;scroll-margin-top:8px}
+.libro h6.s5{font-family:var(--serif);font-style:italic;font-size:18px;font-weight:500;color:var(--ink);margin:26px 0 8px;scroll-margin-top:8px}
+
+/* recuadros del libro (notas, pies de figura, apartados destacados) */
+.libro blockquote.recuadro{background:var(--card-2);border:.5px solid var(--line);border-left:3px solid var(--accent-2);border-radius:var(--r);padding:16px 20px;margin:22px 0;font-size:16px;line-height:1.7}
+.libro blockquote.recuadro>:last-child{margin-bottom:0}
+.libro blockquote.recuadro ul,.libro blockquote.recuadro ol{margin-bottom:12px}
+
+/* tablas */
+.libro .tw,.call .tw,.mini .tw{overflow-x:auto;margin:18px 0;max-width:100%}
+.libro .dxtbl,.call .dxtbl,.mini .dxtbl{font-size:14px;margin:0}
+.libro .dxtbl th,.call .dxtbl th,.mini .dxtbl th{position:static}
+.call .tw:last-child,.mini .tw:last-child{margin-bottom:0}
+.call .tw:first-child,.mini .tw:first-child{margin-top:0}
+
+/* recuadros «En sencillo» dentro del texto */
+.libro .call,.libro .mini{max-width:none;margin:20px 0 30px}
+.libro .call .dbody,.libro .mini .dbody{font-size:16px;line-height:1.72;max-width:none}
+.libro .call .dbody>*:last-child,.libro .mini .dbody>*:last-child{margin-bottom:0}
+.libro .call .dbody ul,.libro .call .dbody ol{margin-bottom:12px}
+.mini .ck{font-size:11px;letter-spacing:1.1px;text-transform:uppercase;font-weight:600;color:var(--accent-ink);margin-bottom:8px}
+.libro .call.analog{background:var(--accent-soft-2)}
+
+/* pasajes dudosos de la transcripción */
+mark.dudoso{background:var(--support-soft);color:var(--support-ink);border-radius:4px;padding:0 4px;font-size:.82em;font-weight:600;cursor:help;white-space:nowrap}
+
+/* anexo plegable */
+.libro details.note{margin:64px 0 0}
+.libro details.note .nb{font-size:15.5px}
+
+/* índice lateral: apartados de segundo nivel */
+.stoc li.sub a{padding-left:26px;font-size:12.5px}
+.stoc li.sec-h2 a{font-weight:500;color:var(--text)}
+
+/* cabecera de capítulo en la ficha */
+.dfacts dd.sm{font-size:12.5px;font-weight:400;color:var(--muted);line-height:1.45}
+
+/* resultados del buscador con fragmento */
+.qk-it .qd mark{background:var(--accent-soft);color:var(--ink);border-radius:3px;padding:0 2px}
+
+/* ══ INICIO ══ */
+.hero.solo{grid-template-columns:minmax(0,1fr);max-width:980px}
+.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:14px}
+.card.tool{text-decoration:none}
+.card.tool h3 span{color:var(--accent);transition:transform .16s;display:inline-block}
+.card.tool:hover h3 span{transform:translateX(3px)}
+
+/* ══ GLOSARIO ══ */
+.card .cq.clamp{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+.libro p.gl-entry{scroll-margin-top:8px;border-radius:6px;transition:background .6s,box-shadow .6s}
+.libro p.gl-entry.hit{background:var(--accent-soft);box-shadow:0 0 0 8px var(--accent-soft)}
+
+/* ══ VOCABULARIO EN EL CAPÍTULO ══ */
+.vintro{font-size:14px;color:var(--muted);margin-bottom:14px;max-width:76ch}
+
+/* ══ INDICADORES ══ */
+.ifam{margin-bottom:8px}
+.ifam .sec-h{margin-top:48px}
+.ind-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(470px,100%),1fr));gap:14px;align-items:start}
+.ind{background:var(--card);border:.5px solid var(--line);border-radius:var(--r-lg);padding:22px 24px;display:flex;flex-direction:column;gap:14px;scroll-margin-top:8px;transition:box-shadow .3s,border-color .3s}
+.ind.flash{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.ind .cb{font-size:11px;letter-spacing:.9px;text-transform:uppercase;color:var(--accent-ink);font-weight:600;margin-bottom:6px}
+.ind h3{font-family:var(--serif);font-size:24px;font-weight:500;color:var(--ink);letter-spacing:-.01em;line-height:1.2}
+.ind .iq{font-family:var(--serif);font-style:italic;font-size:17px;color:var(--text);margin-top:4px;line-height:1.4}
+.ind .idesc{font-size:15.5px;line-height:1.65;color:var(--text)}
+.ik{font-size:10.5px;letter-spacing:1px;text-transform:uppercase;font-weight:600;color:var(--label)}
+.ibox{background:var(--card-2);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.iu{font-size:13.5px;color:var(--text)}
+.iu .ik{margin-right:6px}
+.fml{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px;color:var(--ink)}
+.fml .flhs{font-weight:600;white-space:nowrap}
+.fml .frac{display:inline-flex;flex-direction:column;align-items:center;text-align:center;line-height:1.35}
+.fml .frac .fn{padding:0 6px 4px;border-bottom:1.5px solid var(--ink)}
+.fml .frac .fd{padding:4px 6px 0}
+.fml .fx{font-weight:500}
+.fml.big{font-size:15.5px}
+.fml.big .flhs{display:none}
+.fml.big .frac .fn,.fml.big .frac .fd{font-family:var(--serif);font-size:18px}
+.fml.big .fx{font-family:var(--serif);font-size:18px;line-height:1.4}
+.iex{border:.5px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.iexh{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.iex p{font-size:15px;line-height:1.65}
+.itrap{font-size:14.5px;line-height:1.6;color:var(--support-ink);background:var(--support-soft);border-radius:var(--r);padding:11px 14px}
+.itrap b{color:var(--support-strong)}
+.idax summary{font-size:13px;font-weight:600;color:var(--accent-ink);cursor:pointer}
+.idax pre.dcode{border-radius:var(--r);margin-top:8px;font-size:12.5px;white-space:pre-wrap}
+.ilink{align-self:flex-start;font-size:13.5px;font-weight:600;color:var(--accent-ink);text-decoration:none}
+.ilink:hover{text-decoration:underline}
+.ichu-intro{font-size:14px;color:var(--muted);margin:4px 0 12px}
+.ichu th{position:static}
+.ichu td:first-child a{font-weight:600;color:var(--ink);text-decoration:none}
+.ichu td:first-child a:hover{color:var(--accent-ink);text-decoration:underline}
+.ichu .ifamt{display:block;font-size:11px;color:var(--muted);margin-top:3px}
+.ichu .fml{font-size:13px}
+.ichu td:nth-child(2){min-width:250px}
+.ichu td:first-child{min-width:170px}
+.ichu .fml .flhs{display:none}
+.ichu td:last-child{font-size:13.5px}
+#imode{margin-left:auto}
+
+@media(max-width:860px){
+  .libro{font-size:16.5px}
+  .libro h3.s1{margin-top:56px}
+  .ind{padding:18px}
+  #imode{margin-left:0}
+}

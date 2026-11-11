@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "359faaa",
+ "huella": "c99521b",
  "recuento": {
   "paginas": 19,
   "proyectos": 40,
@@ -1691,6 +1691,13 @@ export default {
        "tipo": "modulo",
        "etiqueta": "Manual de Claude",
        "archivo": "area-privada-claude.js",
+       "familia": "privada"
+      },
+      {
+       "id": "m:estudio",
+       "tipo": "modulo",
+       "etiqueta": "Manual de estudio",
+       "archivo": "area-privada-estudio.js",
        "familia": "privada"
       }
      ],
