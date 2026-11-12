@@ -8,7 +8,8 @@
 -- no contiene contenido ni título: todo lo que se lee (título, capítulos, glosario, indicadores) vive aquí y solo lo lee
 -- un miembro con sesión. El contenido de origen está en una carpeta local fuera del repositorio.
 --
--- me_docs  un documento por fila: kind = meta | block | topic | chunk | gloss | fam | indic; data = el objeto;
+-- me_docs  un documento por fila: kind = meta | block | topic | chunk | gloss | fam | indic, y para el glosario completo
+--          gconf | gfam | gsig | gterm | gvis (en bases ya creadas: manual-estudio-glosario.sql); data = el objeto;
 --          pos = orden de aparición. id = «<kind>:<id estable>». Un capítulo largo se guarda en varias filas «chunk»
 --          (un apartado de primer nivel por fila) para no pasar del límite de tamaño de cada documento.
 -- Lo escribe tools/manual-estudio/publish.mjs con TU sesión (sin la clave service_role). Lo lee area-privada-estudio.js.
@@ -16,8 +17,8 @@
 -- ═══════════════════════════════════════════════
 
 create table if not exists public.me_docs (
-  id         text primary key check (id ~ '^(meta|block|topic|chunk|gloss|fam|indic):[A-Za-z0-9._:-]{1,160}$'),
-  kind       text not null check (kind in ('meta', 'block', 'topic', 'chunk', 'gloss', 'fam', 'indic')),
+  id         text primary key check (id ~ '^(meta|block|topic|chunk|gloss|fam|indic|gconf|gfam|gsig|gterm|gvis):[A-Za-z0-9._:-]{1,160}$'),
+  kind       text not null check (kind in ('meta', 'block', 'topic', 'chunk', 'gloss', 'fam', 'indic', 'gconf', 'gfam', 'gsig', 'gterm', 'gvis')),
   pos        integer not null default 0,
   data       jsonb not null check (jsonb_typeof(data) = 'object' and pg_column_size(data) < 400000),
   created_at timestamptz not null default now(),
