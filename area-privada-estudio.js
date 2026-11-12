@@ -106,8 +106,16 @@ window.APEstudio = (function () {
         BLOCKS: of('block').filter(function (b) { return ID.test(String(b.id)); }),
         GLOSS: of('gloss').filter(function (g) { return g.k && ID.test(String(g.t)); }),
         INDFAM: of('fam').filter(function (f) { return ID.test(String(f.id)); }),
-        INDIC: of('indic').filter(function (x) { return ID.test(String(x.id)) && ID.test(String(x.fam)); })
+        INDIC: of('indic').filter(function (x) { return ID.test(String(x.id)) && ID.test(String(x.fam)); }),
+        /* glosario completo (opcional: solo si el manual publica glosario.js) */
+        GTERMS: of('gterm').filter(function (g) { return g.k && ID.test(String(g.id)) && ID.test(String(g.fam)); }),
+        GFAM: of('gfam').filter(function (f) { return ID.test(String(f.id)); }),
+        SIGLAS: of('gsig').filter(function (r) { return r.s && r.d; }),
+        GCONF: of('gconf')[0] || {},
+        GVIS: {}
       };
+      of('gvis').forEach(function (x) { if (ID.test(String(x.id))) data.GVIS[x.id] = x; });
+
       data.byId = {}; TOPICS.forEach(function (t, i) { t._i = i; data.byId[t.id] = t; });
       data.blockById = {}; data.BLOCKS.forEach(function (b) { data.blockById[b.id] = b; });
       data.famById = {}; data.INDFAM.forEach(function (f) { data.famById[f.id] = f; });
@@ -122,6 +130,7 @@ window.APEstudio = (function () {
   var GCAT = { s: 'Sigla', l: 'Término del libro', m: 'Concepto del capítulo', v: 'Vocabulario básico' };
   function gcat(g) { return g.c || (g.v ? 'v' : 'm'); }
   function buildGloss(d) {
+    if (d.GTERMS.length) return buildFullGloss(d);
     var all = [], seen = {};
     function add(o) { var k = String(o.k).toLowerCase(); if (seen[k]) return; seen[k] = 1; all.push(o); }
     d.GLOSS.forEach(function (g) { add({ k: g.k, d: g.d, t: g.t, a: g.a }); });
@@ -129,12 +138,33 @@ window.APEstudio = (function () {
     d.TOPICS.forEach(function (t) { (t.vocab || []).forEach(function (v) { if (v && v[0]) add({ k: v[0], d: v[1], t: t.id, a: 's-vocab', v: true }); }); });
     return all;
   }
-  function gHref(g) { return R('tema/' + g.t + (g.a && ID.test(g.a) ? '/' + g.a : '')); }
+  /* Glosario completo (manuales con glosario.js): entradas por familias + fichas de capítulo y vocabulario.
+     Una ficha cuyo término coincide con el término o un alias de una entrada se fusiona con ella
+     (solo aporta su enlace «En el manual»). Mismas reglas que la web local (GMERGE). */
+  function gkey(s) { return norm(String(s)).trim(); }
+  function buildFullGloss(d) {
+    var c = d.GCONF, famT = c.famT || {}, famK = c.famK || {}, dup = c.dup || {}, alias = {}, all = [];
+    d.GBY = {};
+    d.GTERMS.forEach(function (g) { g.m = (g.m || []).slice(); d.GBY[g.id] = g; all.push(g); [g.k].concat(g.al || []).forEach(function (a) { alias[gkey(a)] = g.id; }); });
+    function addCap(k, txt, t, a, kind) {
+      if (!ID.test(String(t))) return;
+      var id = alias[gkey(k)] || (dup[k] && alias[gkey(dup[k])]);
+      if (id) { var g = d.GBY[id]; if (!g.m.some(function (x) { return x[0] === t && x[1] === a; })) g.m.push([t, a]); return; }
+      var nid = gkey(k).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 't'; while (d.GBY[nid]) nid += '-b';
+      var e = { id: nid, k: k, fam: famK[k] || famT[t] || (d.GFAM[0] || {}).id, d: esc(txt), m: [[t, a]], kind: kind };
+      d.GBY[nid] = e; alias[gkey(k)] = nid; all.push(e);
+    }
+    d.GLOSS.forEach(function (g) { addCap(g.k, g.d, g.t, g.a, 'cap'); });
+    d.TOPICS.forEach(function (t) { (t.vocab || []).forEach(function (v) { if (v && v[0]) addCap(v[0], v[1], t.id, 's-vocab', 'vocab'); }); });
+    return all;
+  }
+  function gHref(g) { return g.id && D.GBY ? R('glosario/' + g.id) : R('tema/' + g.t + (g.a && ID.test(g.a) ? '/' + g.a : '')); }
+  function gText(g) { return g._s || (g._s = norm([g.k].concat(g.al || []).join(' ') + ' ' + plain(g.d) + ' ' + plain(g.x || ''))); }
 
   /* ── búsqueda ── */
   function topicText(t) { return t._tx || (t._tx = norm([t.t, t.q, t.one, (t.rec || []).join(' '), (D.BOOK[t.id].secs || []).map(function (s) { return s.t; }).join(' ')].join(' '))); }
   function indText(x) { return x._s || (x._s = norm([x.n, x.q, plain(x.d), plain(x.ej), x.u, (D.famById[x.fam] || {}).n].join(' '))); }
-  var RANK = { 'Sección': 0, 'Indicador': 1, 'Capítulo': 2, 'Glosario': 3, 'Apartado': 4 };
+  var RANK = { 'Sección': 0, 'Indicador': 1, 'Capítulo': 2, 'Sigla': 3, 'Glosario': 3, 'Apartado': 4 };
   function buildIndex(d) {
     var idx = [];
     d.TOPICS.forEach(function (t) {
@@ -142,7 +172,8 @@ window.APEstudio = (function () {
       d.BOOK[t.id].secs.forEach(function (s) { idx.push({ k: 'Apartado', n: s.t, d: 'Cap. ' + t.num + ' · ' + t.t, h: R('tema/' + t.id + '/' + s.id), s: norm(s.t + ' ' + (s.txt || '')), txt: s.txt || '' }); });
     });
     d.INDIC.forEach(function (x) { idx.push({ k: 'Indicador', n: x.n, d: x.q, h: R('indicadores/' + x.id), s: indText(x), txt: '' }); });
-    d.ALLG.forEach(function (g) { idx.push({ k: 'Glosario', n: g.k, d: g.d, h: gHref(g), s: norm(g.k + ' ' + g.d), txt: '' }); });
+    d.ALLG.forEach(function (g) { idx.push({ k: 'Glosario', n: g.k, d: plain(g.d), h: gHref(g), s: d.GBY ? gText(g) : norm(g.k + ' ' + g.d), txt: '' }); });
+    if (d.GBY) d.SIGLAS.forEach(function (r) { idx.push({ k: 'Sigla', n: r.s, d: r.d, h: R('glosario/' + (r.g && d.GBY[r.g] ? r.g : 'siglas')), s: norm(r.s + ' ' + r.d), txt: '' }); });
     [['Inicio', ''], ['Todos los capítulos', 'temas'], ['Indicadores', 'indicadores'], ['Glosario', 'glosario']].forEach(function (v) { idx.push({ k: 'Sección', n: v[0], d: 'Ir a la sección', h: R(v[1]), s: norm(v[0]), txt: '' }); });
     return idx;
   }
@@ -202,7 +233,7 @@ window.APEstudio = (function () {
     if (isTopic) anchor = renderTopic(parts[1], parts[2]);
     else if (view === 'temas') renderTemas(v);
     else if (view === 'indicadores') anchor = renderIndicadores(v, parts[1]);
-    else if (view === 'glosario') renderGlosario(v);
+    else if (view === 'glosario') anchor = renderGlosario(v, parts[1]);
     else renderHome(v);
     setWidths(root);
     if (anchor) {
@@ -211,7 +242,7 @@ window.APEstudio = (function () {
         var det = el.closest('details'); if (det) det.open = true;
         setTimeout(function () {
           el.scrollIntoView({ block: 'start', behavior: 'instant' });
-          if (el.classList.contains('gl-entry') || el.classList.contains('ind')) { el.classList.add('hit'); setTimeout(function () { el.classList.remove('hit'); }, 2200); }
+          if (el.classList.contains('gl-entry') || el.classList.contains('ind') || el.classList.contains('gent')) { el.classList.add('hit'); setTimeout(function () { el.classList.remove('hit'); }, 2200); }
         }, 60);
       }
       lastArg = ctx.arg;
@@ -289,7 +320,8 @@ window.APEstudio = (function () {
       '<div class="iex"><div class="iexh"><span class="ik">Ejemplo</span><span class="chip ' + o[0] + '">' + o[1] + '</span></div><p>' + clean(nb(x.ej)) + '</p></div>' +
       '<p class="itrap"><b>Ojo:</b> ' + clean(nb(x.trap)) + '</p>' +
       (x.dax ? '<details class="idax"><summary>Si lo calcularas en Power BI</summary><pre class="dcode"><code>' + esc(x.dax) + '</code></pre></details>' : '') +
-      (top && ID.test(String(x.a)) ? '<a class="ilink" href="' + R('tema/' + x.t + '/' + x.a) + '">Leer en el capítulo ' + esc(top.num) + ' →</a>' : '') + '</article>';
+      (top && ID.test(String(x.a)) ? '<a class="ilink" href="' + R('tema/' + x.t + '/' + x.a) + '">Leer en el capítulo ' + esc(top.num) + ' →</a>' : '') +
+      (x.g && D.GBY && D.GBY[x.g] ? '<a class="ilink" href="' + R('glosario/' + x.g) + '">Ver en el glosario →</a>' : '') + '</article>';
   }
   function renderIndicadores(v, anchor) {
     if (anchor) { indState = { q: '', f: '', m: 'fichas' }; }
@@ -327,7 +359,8 @@ window.APEstudio = (function () {
   }
 
   /* ══ GLOSARIO ═════════════════════════════ */
-  function renderGlosario(v) {
+  function renderGlosario(v, anchor) {
+    if (D.GBY) return renderFullGlosario(v, anchor);
     var cnt = { s: 0, l: 0, m: 0, v: 0 };
     D.ALLG.forEach(function (g) { cnt[gcat(g)]++; });
     function fbtn(f, label) { return cnt[f] ? '<button class="fb" data-f="' + f + '">' + label + ' (' + cnt[f] + ')</button>' : ''; }
@@ -347,6 +380,70 @@ window.APEstudio = (function () {
     $('#gcards', v).innerHTML = list.length ? list.map(function (g) {
       return '<a class="card" href="' + gHref(g) + '"><div class="cb">' + GCAT[gcat(g)] + '</div><h3>' + esc(g.k) + '</h3><p class="cq clamp">' + esc(g.d) + '</p></a>';
     }).join('') : '<p class="lead">Ningún término coincide con la búsqueda.</p>';
+  }
+
+  /* Glosario completo: tabla de siglas y entradas por familias. Todo el texto del contenido pasa por clean();
+     los esquemas son imágenes SVG en data: (no ejecutan nada) y solo se aceptan con ese formato exacto. */
+  var SVG_DATA = /^data:image\/svg\+xml;base64,[A-Za-z0-9+/]+={0,2}$/;
+  function gVis(id) {
+    var x = D.GVIS[id]; if (!x) return '';
+    var inner = x.img && x.img.length <= 300000 && SVG_DATA.test(x.img) ? '<img class="gvis-img" src="' + x.img + '" alt="' + esc(x.alt) + '" loading="lazy">' : (x.html ? clean(x.html) : '');
+    if (!inner) return '';
+    return '<figure class="gvis"><div class="gvis-in">' + inner + '</div><figcaption><b>' + esc(x.t) + '.</b> ' + esc(x.alt) + '</figcaption></figure>';
+  }
+  function gSecLabel(t, a) {
+    var top = D.byId[t]; if (!top || !ID.test(String(a))) return null;
+    var s = a === 's-vocab' ? 'vocabulario básico' : ((D.BOOK[t].secs.filter(function (x) { return x.id === a; })[0] || {}).t || '');
+    return (top.num === 0 ? 'Capítulo 0' : 'Tema ' + top.num) + (s ? ' · ' + s : '');
+  }
+  function gSiglas(g) { return (g.al || []).filter(function (a) { return a !== g.k && String(a).length <= 9 && (/[A-Z].*[A-Z]/.test(a) || /[·.\/]/.test(a)); }); }
+  function gEntry(g) {
+    var sig = gSiglas(g), tag = g.kind === 'vocab' ? '<span class="chip">Definición general, no del libro</span>' : (g.kind === 'cap' ? '<span class="chip">Concepto de un capítulo</span>' : '');
+    var m = (g.m || []).map(function (x) { var l = x[2] || gSecLabel(x[0], x[1]); return l ? '<a href="' + R('tema/' + x[0] + '/' + x[1]) + '">' + esc(l) + '</a>' : ''; }).filter(Boolean);
+    var src = (g.s || []).filter(function (s) { return /^https:\/\//.test(String(s[1])); });
+    return '<article class="gent" id="g-' + esc(g.id) + '" data-s="' + esc(gText(g)) + '">' +
+      '<div class="gent-h"><h3>' + esc(g.k) + '</h3>' + (sig.length ? '<span class="gsig-l">' + sig.map(esc).join(' · ') + '</span>' : '') + tag + '</div>' +
+      '<p class="gd">' + clean(g.d) + '</p>' + (g.x ? '<p class="gx">' + clean(g.x) + '</p>' : '') +
+      (g.n ? '<p class="gn"><b>Uso.</b> ' + clean(g.n) + '</p>' : '') +
+      (g.v ? gVis(g.v) : '') +
+      (g.cf && g.cf.length ? '<div class="gcf"><div class="gk">Se confunde con</div><ul>' + g.cf.map(function (c) { var o = D.GBY[c[0]]; return '<li>' + (o ? '<a href="' + R('glosario/' + o.id) + '">' + esc(o.k) + '</a>: ' : '') + clean(c[1]) + '</li>'; }).join('') + '</ul></div>' : '') +
+      (m.length ? '<p class="gm"><span class="gk">En el manual</span> ' + m.join(' · ') + '</p>' : '') +
+      (src.length ? '<p class="gsrc"><span class="gk">Fuente</span> ' + src.map(function (s) { return '<a href="' + esc(s[1]) + '" target="_blank" rel="noopener noreferrer">' + esc(s[0]) + '</a>'; }).join(' · ') + '</p>' : '') +
+      '</article>';
+  }
+  function renderFullGlosario(v, anchor) {
+    if (anchor) glosState.q = '';
+    var byFam = {}; D.GFAM.forEach(function (f) { byFam[f.id] = []; });
+    D.ALLG.forEach(function (g) { if (byFam[g.fam]) byFam[g.fam].push(g); });
+    var nav = '<nav class="gnav" aria-label="Ir a una familia del glosario"><a class="fb" href="' + R('glosario/siglas') + '">Siglas</a>' + D.GFAM.map(function (f) { return '<a class="fb" href="' + R('glosario/gf-' + f.id) + '">' + esc(f.n) + '</a>'; }).join('') + '</nav>';
+    var sig = '<section class="gsec" id="g-siglas"><div class="sec-h"><h2>Siglas, acrónimos, símbolos y abreviaturas</h2><p>Ordenadas alfabéticamente. «Ver entrada» lleva a la explicación completa.</p></div>' +
+      '<div class="gv-tw"><table class="t gtab"><thead><tr><th>Sigla</th><th>Significado</th></tr></thead><tbody>' +
+      D.SIGLAS.map(function (r) {
+        return '<tr data-s="' + esc(norm(r.s + ' ' + r.d + ' ' + (r.x || ''))) + '"><td class="gs">' + esc(r.s) + '</td><td><b>' + esc(r.d) + '</b>' + (r.x ? '<br>' + esc(r.x) : '') +
+          (r.n ? '<br><span class="gnote">' + esc(r.n) + '</span>' : '') + (r.g && D.GBY[r.g] ? ' <a class="gto" href="' + R('glosario/' + r.g) + '">Ver entrada →</a>' : '') + '</td></tr>';
+      }).join('') + '</tbody></table></div></section>';
+    var fams = D.GFAM.map(function (f) {
+      var xs = (byFam[f.id] || []).slice().sort(function (a, b) { return a.k.localeCompare(b.k, 'es', { sensitivity: 'base' }); });
+      if (!xs.length) return '';
+      return '<section class="gsec gfam" id="gf-' + esc(f.id) + '"><div class="sec-h"><h2>' + esc(f.n) + '</h2><p>' + esc(f.s) + '</p></div>' + (f.v ? gVis(f.v) : '') + '<div class="gents">' + xs.map(gEntry).join('') + '</div></section>';
+    }).join('');
+    v.innerHTML = '<div class="modehead gmh"><div class="eyebrow">Glosario</div><h2 class="th-title">Glosario</h2></div>' +
+      '<div class="toolbar"><label class="search"><span class="sr">Buscar en el glosario</span><input id="gq" type="search" placeholder="Busca una sigla, un término o una palabra de su definición…" value="' + esc(glosState.q) + '"></label><span class="count" id="gcount"></span></div>' +
+      nav + sig + fams + '<p class="lead" id="gempty" hidden>Nada coincide con la búsqueda.</p>';
+    $('#gq', v).addEventListener('input', function (e) { glosState.q = e.target.value; drawFullGloss(v); });
+    drawFullGloss(v);
+    if (!anchor || !ID.test(anchor)) return null;
+    return D.GBY[anchor] || anchor === 'siglas' ? 'g-' + anchor : anchor;
+  }
+  function drawFullGloss(v) {
+    var q = norm(glosState.q.trim()), n = 0, ns = 0;
+    $$('.gent', v).forEach(function (a) { var on = !q || a.dataset.s.indexOf(q) > -1; a.hidden = !on; if (on) n++; });
+    $$('.gtab tbody tr', v).forEach(function (r) { var on = !q || r.dataset.s.indexOf(q) > -1; r.hidden = !on; if (on) ns++; });
+    $$('.gfam', v).forEach(function (s) { s.hidden = !!q && !$('.gent:not([hidden])', s); });
+    $('#g-siglas', v).hidden = !!q && !ns;
+    $('.gnav', v).hidden = !!q;
+    $('#gcount', v).textContent = n + (n === 1 ? ' término' : ' términos') + ' · ' + ns + ' siglas';
+    $('#gempty', v).hidden = !!(n || ns);
   }
 
   /* ══ CAPÍTULO ═════════════════════════════ */

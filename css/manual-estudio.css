@@ -195,3 +195,48 @@ mark.dudoso{background:var(--support-soft);color:var(--support-ink);border-radiu
 
 .cover-hero{display:block;min-height:620px;margin-top:28px;padding:clamp(32px,5vw,76px);border-radius:16px;background:linear-gradient(90deg,rgba(246,242,231,.98),rgba(246,242,231,.93) 33%,rgba(246,242,231,.18) 68%,transparent),url('../img/manuales/portada-alta-velocidad.webp') center 63%/cover no-repeat}.cover-copy{max-width:580px}.cover-copy h1,.cover-copy h1 em,.cover-copy .lead,.cover-copy .eyebrow,.cover-copy .hs .n,.cover-copy .hs .l{color:#273a5f}.cover-copy .btn{background:#f6f2e7;color:#273a5f}.cover-copy .btn.solid{background:#273a5f;color:#fff}.native-map{border:1px solid var(--line);border-radius:12px;overflow:hidden}.rail-toolbar{display:flex;gap:8px;flex-wrap:wrap;padding:16px;background:var(--card)}.rail-toggle[aria-pressed="false"]{opacity:.45}.rail-toggle[data-layer="av"]{border-bottom:4px solid #345f91}.rail-toggle[data-layer="conv"]{border-bottom:4px solid #a66b48}.rail-toggle[data-layer="metric"]{border-bottom:4px solid #547d65}.rail-viewport{overflow:auto;max-height:750px;background:#eaf0f2}.rail-map{display:block;width:100%;max-width:none;height:auto}.land{fill:#faf7ef;stroke:#aebabc;stroke-width:.6}.rail-layer path{fill:none;stroke-linejoin:round;stroke-linecap:round}.rail-layer.av path{stroke:#345f91;stroke-width:4}.rail-layer.conv path{stroke:#a66b48;stroke-width:1.9}.rail-layer.metric path{stroke:#547d65;stroke-width:2.5;stroke-dasharray:4 2}.station{fill:#fff;stroke:#273a5f;stroke-width:1}.rail-map text{font:10px sans-serif;fill:#273a5f;paint-order:stroke;stroke:#faf7ef;stroke-width:3px}.native-map .map-caption{padding:14px 18px;font-size:12px;color:var(--muted)}
 @media(max-width:700px){.cover-hero{min-height:720px;padding:30px 24px;background-image:linear-gradient(180deg,rgba(246,242,231,.98),rgba(246,242,231,.93) 50%,transparent 85%),url('../img/manuales/portada-alta-velocidad.webp');background-position:center,bottom center}.rail-map{min-width:760px}}
+
+/* ══ Glosario completo (manuales con glosario.js) ══ */
+.gmh{padding-bottom:18px}
+.gnav{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 8px}
+.gnav .fb{text-decoration:none}
+.gsec{scroll-margin-top:72px}
+.gsec .sec-h{margin-top:44px}
+.gent[hidden],.gsec[hidden],.gnav[hidden],.gtab tr[hidden]{display:none}
+.gv-tw{overflow-x:auto;max-width:100%}
+.gtab{width:100%;max-width:1100px;font-size:14px}
+.gtab td.gs{font-family:var(--mono);font-weight:500;white-space:nowrap;color:var(--ink)}
+.gtab .gnote{display:inline-block;margin-top:4px;font-size:13px;color:var(--support-ink)}
+.gtab .gto{font-size:13px;white-space:nowrap}
+.gents{display:flex;flex-direction:column;gap:12px;max-width:1100px}
+.gent{background:var(--card);border:.5px solid var(--line);border-radius:var(--r-lg);padding:18px 22px;scroll-margin-top:72px;transition:border-color .3s,box-shadow .3s}
+.gent.hit{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.gent-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px;margin-bottom:6px}
+.gent-h h3{font-family:var(--serif);font-size:22px;font-weight:500;color:var(--ink);letter-spacing:-.01em}
+.gsig-l{font-family:var(--mono);font-size:12.5px;color:var(--accent-ink)}
+.gent p{font-size:15.5px;line-height:1.65;color:var(--text);margin:6px 0}
+.gent p.gd{color:var(--ink);font-size:16.5px}
+.gent .gn{background:var(--support-soft);color:var(--support-ink);border-radius:8px;padding:8px 12px;font-size:14.5px}
+.gk{display:block;font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:600;color:var(--label);margin-bottom:4px}
+.gm .gk,.gsrc .gk{display:inline;margin-right:6px}
+.gcf{background:var(--accent-soft-2);border-radius:8px;padding:10px 14px;margin:10px 0}
+.gcf ul{padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.gcf li{font-size:14.5px;line-height:1.55}
+.gent .gm,.gent .gsrc{font-size:13.5px;color:var(--muted)}
+.gent a{color:var(--accent-ink)}
+.gvis{margin:12px 0;max-width:560px}
+.gvis-in{background:#FFFFFF;border:.5px solid var(--line);border-radius:10px;padding:6px;overflow:hidden}
+.gvis-img{display:block;width:100%;height:auto}
+.gvis figcaption{font-size:13px;line-height:1.5;color:var(--muted);margin-top:6px}
+.gsec>.gvis{max-width:1100px}
+.gsec>.gvis .gvis-in{background:var(--card);padding:0;border:0}
+.gv-tbl{width:100%;font-size:13.5px;margin:0}
+.gv-note{font-size:13px;color:var(--muted);margin-top:6px}
+@media(max-width:600px){
+  .gent{padding:16px 12px}
+  .gent .gvis{margin:12px -12px}
+  .gvis-in{padding:2px;border-radius:0;border-left:0;border-right:0}
+  .gvis figcaption{padding:0 12px}
+  .gent-h h3{font-size:20px}
+  .gtab td{padding:8px 10px}
+}

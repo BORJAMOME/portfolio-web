@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "7ba47fe",
+ "huella": "39df021",
  "recuento": {
   "paginas": 19,
   "proyectos": 40,
@@ -9,7 +9,7 @@ export default {
   "capitulos": 10,
   "plataformas": 11,
   "pestanas": 10,
-  "tablas": 38,
+  "tablas": 39,
   "funciones": 5,
   "herramientas": 21,
   "relaciones": 190,
@@ -2081,6 +2081,21 @@ export default {
        "id": "q:procesos_correo",
        "tipo": "tabla",
        "etiqueta": "procesos_correo",
+       "familia": "dato"
+      }
+     ],
+     "familia": "dato"
+    },
+    {
+     "id": "d:sancho-acceso",
+     "tipo": "esquema",
+     "etiqueta": "sancho-acceso.sql",
+     "archivo": "supabase/sancho-acceso.sql",
+     "hijos": [
+      {
+       "id": "q:agents",
+       "tipo": "tabla",
+       "etiqueta": "agents",
        "familia": "dato"
       }
      ],

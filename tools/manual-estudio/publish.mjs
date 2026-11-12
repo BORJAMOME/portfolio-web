@@ -29,13 +29,44 @@ function fromShell(name) {
 const j = async (r) => { const t = await r.text(); try { return t ? JSON.parse(t) : {}; } catch { return {}; } };
 const slugify = (s) => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 80) || 'x';
 
-/* Carga los tres archivos de datos (scripts de navegador con «var …») en un contexto aislado */
+/* Carga los tres archivos de datos (scripts de navegador con «var …») en un contexto aislado.
+   glosario.js es opcional: si existe, aporta el glosario completo (GFAM, SIGLAS, GTERMS, GVIS, GMERGE). */
 export function loadSource(src) {
   const files = ['content.js', 'capitulos.js', 'indicadores.js'].map((f) => join(src, f));
   files.forEach((f) => { if (!existsSync(f)) throw new Error(`No encuentro ${f}. Ejecuta antes «python build.py» en la carpeta del manual.`); });
   const code = files.map((f) => readFileSync(f, 'utf8')).join('\n;\n') +
     '\n;({ MANUAL, BLOCKS, GLOSS, TOPICS, BOOK, INDIC: typeof INDIC === "undefined" ? [] : INDIC, INDFAM: typeof INDFAM === "undefined" ? [] : INDFAM })';
-  return vm.runInNewContext(code, {}, { timeout: 5000 });
+  const d = vm.runInNewContext(code, {}, { timeout: 5000 });
+  const g = join(src, 'glosario.js');
+  d.GLOSARIO = null;
+  if (existsSync(g)) {
+    const sb = {}; sb.window = sb;
+    vm.runInNewContext(readFileSync(g, 'utf8'), sb, { timeout: 5000 });
+    d.GLOSARIO = { GFAM: sb.GFAM || [], SIGLAS: sb.SIGLAS || [], GTERMS: sb.GTERMS || [], GVIS: sb.GVIS || {}, GMERGE: sb.GMERGE || {} };
+    d.GLOSARIO.IMG = svgImages(src, d.GLOSARIO.GVIS);
+  }
+  return d;
+}
+
+/* Los esquemas del glosario son SVG que en la web local toman los colores del tema por CSS.
+   El área privada no admite SVG en línea (clean() lo descarta), así que cada esquema se publica como
+   imagen autónoma (data:image/svg+xml): fondo blanco y colores del tema claro, resueltos aquí a partir de
+   styles.css (:root) y de las reglas .gvis svg / .gv-* de libro.css. Una imagen SVG no ejecuta scripts. */
+export function svgImages(src, GVIS) {
+  const read = (f) => (existsSync(join(src, f)) ? readFileSync(join(src, f), 'utf8') : '');
+  const rootBlock = (/:root\s*\{([^}]*)\}/.exec(read('styles.css')) || [])[1] || '';
+  const vars = {}; rootBlock.replace(/--([\w-]+)\s*:\s*([^;]+);/g, (m, k, v) => { vars[k] = v.trim(); return m; });
+  const css = read('libro.css').replace(/@media[^{]*\{(?:[^{}]*\{[^}]*\})*[^}]*\}/g, '')
+    .split('\n').filter((l) => /^\.(gvis svg|gv-)/.test(l.trim()))
+    .map((l) => l.trim().replace(/\.gvis svg /g, '').replace(/var\(--([\w-]+)\)/g, (m, k) => vars[k] || '#000')).join('');
+  const out = {};
+  Object.keys(GVIS).forEach((id) => {
+    const svg = GVIS[id] && GVIS[id].svg; if (!svg) return;
+    const doc = svg.replace(/^<svg /, '<svg xmlns="http://www.w3.org/2000/svg" ')
+      .replace(/(<svg[^>]*>)/, `$1<style>text{font-family:'Segoe UI',system-ui,sans-serif}${css}</style><rect width="100%" height="100%" fill="#FFFFFF"/>`);
+    out[id] = 'data:image/svg+xml;base64,' + Buffer.from(doc, 'utf8').toString('base64');
+  });
+  return out;
 }
 
 /* Parte el HTML de un capítulo en trozos (uno por apartado de primer nivel y el anexo) y reparte sus apartados */
@@ -60,6 +91,17 @@ export function toRows(d) {
   d.GLOSS.forEach((g, i) => { let k = slugify(g.k); while (seen[k]) k += '-2'; seen[k] = 1; rows.push({ id: `gloss:${k}`, kind: 'gloss', pos: i, data: g }); });
   d.INDFAM.forEach((f, i) => rows.push({ id: `fam:${f.id}`, kind: 'fam', pos: i, data: f }));
   d.INDIC.forEach((x, i) => rows.push({ id: `indic:${x.id}`, kind: 'indic', pos: i, data: x }));
+  const G = d.GLOSARIO;
+  if (G && G.GTERMS.length) {
+    rows.push({ id: 'gconf:main', kind: 'gconf', pos: 0, data: { famT: G.GMERGE.famT || {}, famK: G.GMERGE.famK || {}, dup: G.GMERGE.dup || {} } });
+    G.GFAM.forEach((f, i) => rows.push({ id: `gfam:${f.id}`, kind: 'gfam', pos: i, data: f }));
+    G.SIGLAS.forEach((r, i) => rows.push({ id: `gsig:${String(i).padStart(3, '0')}`, kind: 'gsig', pos: i, data: r }));
+    G.GTERMS.forEach((g, i) => rows.push({ id: `gterm:${g.id}`, kind: 'gterm', pos: i, data: g }));
+    Object.keys(G.GVIS).forEach((id, i) => {
+      const v = G.GVIS[id];
+      rows.push({ id: `gvis:${id}`, kind: 'gvis', pos: i, data: { id, t: v.t, alt: v.alt, img: G.IMG[id] || null, html: v.svg ? null : (v.html || null) } });
+    });
+  }
   return rows;
 }
 
@@ -73,6 +115,21 @@ export function validate(d, rows) {
   d.BLOCKS.forEach((b) => { if (!SLUG.test(b.id)) errors.push(`Bloque con id no válido: ${b.id}`); });
   d.INDIC.forEach((x) => { if (!SLUG.test(x.id)) errors.push(`Indicador con id no válido: ${x.id}`); });
   d.INDFAM.forEach((f) => { if (!SLUG.test(f.id)) errors.push(`Familia con id no válido: ${f.id}`); });
+  const G = d.GLOSARIO;
+  if (G && G.GTERMS.length) {
+    const fam = new Set(G.GFAM.map((f) => f.id)), ent = new Set(G.GTERMS.map((g) => g.id));
+    G.GFAM.forEach((f) => { if (!SLUG.test(f.id)) errors.push(`Familia del glosario con id no válido: ${f.id}`); if (f.v && !G.GVIS[f.v]) errors.push(`Familia ${f.id}: no existe el esquema ${f.v}`); });
+    G.GTERMS.forEach((g) => {
+      if (!SLUG.test(g.id)) errors.push(`Entrada del glosario con id no válido: ${g.id}`);
+      if (!fam.has(g.fam)) errors.push(`Entrada ${g.id}: familia desconocida ${g.fam}`);
+      if (g.v && !G.GVIS[g.v]) errors.push(`Entrada ${g.id}: no existe el esquema ${g.v}`);
+      (g.cf || []).forEach((c) => { if (!ent.has(c[0])) errors.push(`Entrada ${g.id}: «se confunde con» apunta a ${c[0]}, que no existe`); });
+      (g.s || []).forEach((s) => { if (!/^https:\/\//.test(s[1])) errors.push(`Entrada ${g.id}: fuente sin https (${s[1]})`); });
+      (g.m || []).forEach((m) => { if (!d.BOOK[m[0]] || !d.BOOK[m[0]].secs.some((s) => s.id === m[1])) errors.push(`Entrada ${g.id}: el apartado ${m[0]}/${m[1]} no existe`); });
+    });
+    G.SIGLAS.forEach((r) => { if (r.g && !ent.has(r.g)) errors.push(`Sigla ${r.s}: la entrada ${r.g} no existe`); });
+    Object.keys(G.GVIS).forEach((id) => { if (!SLUG.test(id)) errors.push(`Esquema con id no válido: ${id}`); if (G.GVIS[id].svg && !G.IMG[id]) errors.push(`Esquema ${id}: no se pudo convertir en imagen`); });
+  }
   const ids = new Set();
   rows.forEach((r) => {
     if (ids.has(r.id)) errors.push(`Id repetido: ${r.id}`); ids.add(r.id);
@@ -143,7 +200,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     if (errors.length) { errors.forEach((e) => console.error('✗ ' + e)); console.error('\n✗ El contenido no valida: no se sube nada.'); process.exit(1); }
     const count = (k) => rows.filter((r) => r.kind === k).length;
     const big = rows.reduce((m, r) => Math.max(m, Buffer.byteLength(JSON.stringify(r.data))), 0);
-    console.log(`${rows.length} documentos: ${count('topic')} capítulos en ${count('chunk')} trozos, ${count('block')} bloques, ${count('gloss')} términos, ${count('indic')} indicadores en ${count('fam')} familias. El mayor ocupa ${Math.round(big / 1024)} KB.`);
+    console.log(`${rows.length} documentos: ${count('topic')} capítulos en ${count('chunk')} trozos, ${count('block')} bloques, ${count('gloss')} términos, ${count('indic')} indicadores en ${count('fam')} familias${count('gterm') ? `; glosario: ${count('gterm')} entradas, ${count('gsig')} siglas y ${count('gvis')} esquemas` : ''}. El mayor ocupa ${Math.round(big / 1024)} KB.`);
     if (dry) { console.log('\nSimulacro: no se ha tocado la base (sin red).'); process.exit(0); }
     if (prune && !yes) throw new Error('--prune borra de la base lo que no esté en tus archivos. Repite con --yes si es lo que quieres.');
     const env = { ...process.env };
