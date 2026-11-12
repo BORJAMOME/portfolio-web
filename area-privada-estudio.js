@@ -241,14 +241,17 @@ window.APEstudio = (function () {
       [R('temas'), 'Capítulos', 'El texto completo de cada capítulo con sus recuadros «En sencillo». Usa Ctrl K para buscar cualquier palabra.']
     ];
     v.innerHTML =
-      '<div class="hero solo"><div><div class="eyebrow">Manual visual · edición ' + esc(M.edition || '') + '</div><h1>' + clean(M.heroTitle || esc(M.title || '')) + '</h1>' +
-      '<p class="lead">' + clean(M.lead || '') + '</p>' +
-      '<div class="hero-cta"><a class="btn solid" href="' + R('tema/' + next.id) + '">' + (done ? 'Seguir por el capítulo ' : 'Empezar por el capítulo ') + esc(next.num) + ' →</a><a class="btn" href="' + R('indicadores') + '">Ver los indicadores</a></div>' +
-      '<div class="hero-stats">' + stats.map(function (s) { return '<div class="hs"><div class="n">' + s[1] + '</div><div class="l">' + s[0] + '</div></div>'; }).join('') + '</div></div></div>' +
+      '<section class="cover-hero"><div class="cover-copy"><div class="eyebrow">Manual visual · edición ' + esc(M.edition || '') + '</div><h1>' + clean(M.heroTitle || esc(M.title || '')) + '</h1>' +
+      '<p class="lead">Una guía visual para entender la infraestructura, los servicios y la operación del ferrocarril en España.</p>' +
+      '<div class="hero-cta"><a class="btn solid" href="' + R('tema/' + next.id) + '">' + (done ? 'Seguir por el capítulo ' : 'Empezar por el capítulo ') + esc(next.num) + ' →</a><a class="btn" href="' + R('temas') + '">Explorar capítulos</a></div>' +
+      '<div class="hero-stats">' + stats.map(function (s) { return '<div class="hs"><div class="n">' + s[1] + '</div><div class="l">' + s[0] + '</div></div>'; }).join('') + '</div></div>' +
+      '<figure class="cover-art"><img src="./img/manuales/portada-alta-velocidad.webp" alt="Tren de alta velocidad sobre un viaducto en un paisaje castellano" fetchpriority="high" decoding="async"><figcaption><span>Portada elegida · 01 Alta velocidad</span><span>Grabado azul sobre papel crema</span></figcaption></figure></section>' +
+      '<section class="network-section" aria-labelledby="network-title"><div class="sec-h"><h2 id="network-title">La red ferroviaria de España</h2><p>Mapa interactivo oficial de Adif Alta Velocidad.</p></div>' +
+      '<div class="official-map"><iframe class="official-map-frame" title="Mapa interactivo de la red ferroviaria española de Adif Alta Velocidad" src="https://www.adifaltavelocidad.es/static-data/mapa/index.html" loading="lazy" referrerpolicy="no-referrer" allowfullscreen></iframe><div class="map-caption">Acerca o aleja con los controles del mapa. Abre el icono de capas para filtrar estaciones, cambiadores, anchos de vía, electrificación y actuaciones.</div></div>' +
+      '<div class="service-map-note"><p>Este mapa representa infraestructura ferroviaria. Para consultar mapas de servicios de viajeros, usa las fuentes de Renfe:</p><div class="service-map-links"><a class="btn" href="https://www.renfe.com/es/es/viajar/informacion-util/mapas-y-lineas/ave-y-larga-distancia" target="_blank" rel="noopener">AVE y Larga Distancia ↗</a><a class="btn" href="https://www.renfe.com/es/es/viajar/informacion-util/mapas-y-lineas/media-distancia-y-avant" target="_blank" rel="noopener">Media Distancia y Avant ↗</a><a class="btn" href="https://www.renfe.com/es/es/ayuda/cercanias" target="_blank" rel="noopener">Cercanías ↗</a></div><a class="official-map-source" href="https://www.adifaltavelocidad.es/sobre-adif-av/red-av/mapa" target="_blank" rel="noopener">Ver mapa en la web de Adif AV ↗</a></div></section>' +
       '<div class="sec-h"><h2>Ruta de lectura</h2><p>' + done + ' de ' + T.length + ' capítulos entendidos. El punto verde marca lo que ya dominas.</p></div>' + blocksHTML() +
       '<div class="sec-h"><h2>Para estudiar</h2><p>Herramientas que cruzan todo el manual.</p></div>' +
-      '<div class="tools">' + tools.map(function (x) { return '<a class="card tool" href="' + x[0] + '"><h3>' + x[1] + ' <span aria-hidden="true">→</span></h3><p class="cq">' + x[2] + '</p></a>'; }).join('') + '</div>' +
-      '<div class="sec-h"><h2>De dónde sale este manual</h2></div><p class="lead me-narrow">' + clean(M.sources || '') + '</p>';
+      '<div class="tools">' + tools.map(function (x) { return '<a class="card tool" href="' + x[0] + '"><h3>' + x[1] + ' <span aria-hidden="true">→</span></h3><p class="cq">' + x[2] + '</p></a>'; }).join('') + '</div>';
   }
 
   /* ══ CAPÍTULOS ═══════════════════════════ */

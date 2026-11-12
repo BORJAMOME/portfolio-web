@@ -170,3 +170,25 @@ mark.dudoso{background:var(--support-soft);color:var(--support-ink);border-radiu
   border-radius: 8px;
 }
 
+
+.cover-hero{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(26px,4vw,58px);align-items:center;padding:clamp(36px,5vw,68px) 0 30px}
+.cover-copy h1{font-family:var(--serif);font-size:clamp(42px,5.1vw,70px);font-weight:500;letter-spacing:-.035em;line-height:.98;color:var(--ink);margin-bottom:18px}
+.cover-copy h1 em{font-style:italic;color:var(--accent)}
+.cover-copy .lead{font-size:clamp(17px,1.4vw,19px);line-height:1.7;color:var(--text);max-width:570px;margin-bottom:24px}
+.cover-copy .hero-cta{margin-bottom:26px}
+.cover-art{position:relative;margin:0;background:var(--card-2);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-2)}
+.cover-art img{display:block;width:100%;height:clamp(280px,34vw,490px);object-fit:cover;object-position:center 58%}
+.cover-art figcaption{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;font-size:11px;color:var(--muted);background:var(--card)}
+.cover-art figcaption span:first-child{font-weight:600;color:var(--ink)}
+.network-section{margin-top:64px}
+.official-map{overflow:hidden;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--card);box-shadow:var(--shadow-2)}
+.official-map-frame{display:block;width:100%;height:min(72vw,820px);min-height:590px;border:0;background:#fff}
+.official-map .map-caption{padding:12px 16px;text-align:left;font-size:12px;color:var(--muted);border-top:1px solid var(--line)}
+.service-map-note{display:flex;flex-direction:column;gap:12px;margin-top:16px;padding:20px 22px;border-radius:var(--r-lg);border:1px solid var(--line);background:var(--card)}
+.service-map-note p{font-size:13px;color:var(--muted);line-height:1.6}
+.service-map-links{display:flex;gap:8px;flex-wrap:wrap}
+.service-map-links .btn{font-size:12px;padding:9px 13px}
+.official-map-source{align-self:flex-start;font-size:12px;color:var(--accent-ink);text-decoration:none}
+.official-map-source:hover{text-decoration:underline}
+
+@media(max-width:860px){.cover-hero{grid-template-columns:1fr}.cover-art img{height:clamp(250px,65vw,400px)}.official-map-frame{height:620px;min-height:560px}}
