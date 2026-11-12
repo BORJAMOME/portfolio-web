@@ -404,7 +404,7 @@ window.APEstudio = (function () {
     return '<article class="gent" id="g-' + esc(g.id) + '" data-s="' + esc(gText(g)) + '">' +
       '<div class="gent-h"><h3>' + esc(g.k) + '</h3>' + (sig.length ? '<span class="gsig-l">' + sig.map(esc).join(' · ') + '</span>' : '') + tag + '</div>' +
       '<p class="gd">' + clean(g.d) + '</p>' + (g.x ? '<p class="gx">' + clean(g.x) + '</p>' : '') +
-      (g.n ? '<p class="gn"><b>Uso.</b> ' + clean(g.n) + '</p>' : '') +
+      (g.n ? '<p class="gn"><b>Ojo.</b> ' + clean(g.n) + '</p>' : '') +
       (g.v ? gVis(g.v) : '') +
       (g.cf && g.cf.length ? '<div class="gcf"><div class="gk">Se confunde con</div><ul>' + g.cf.map(function (c) { var o = D.GBY[c[0]]; return '<li>' + (o ? '<a href="' + R('glosario/' + o.id) + '">' + esc(o.k) + '</a>: ' : '') + clean(c[1]) + '</li>'; }).join('') + '</ul></div>' : '') +
       (m.length ? '<p class="gm"><span class="gk">En el manual</span> ' + m.join(' · ') + '</p>' : '') +
