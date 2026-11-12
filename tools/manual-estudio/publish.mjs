@@ -9,13 +9,12 @@
    carpeta no debe quedar en este repositorio público).
    Usa el MISMO acceso que la web: inicia sesión como tú con la clave pública y escribe a través de las políticas RLS de
    supabase/manual-estudio.sql. No hace falta la service_role.
-   En una terminal interactiva pide el correo y la contraseña del área privada (la contraseña no se muestra).
-   Sin terminal interactiva, usa ME_EMAIL y ME_PASSWORD.
+   Contraseña: ME_PASSWORD o, mejor, el prompt que sale al ejecutarlo en tu terminal (no se muestra). Sin terminal
+   interactivo (p. ej. dentro de una sesión de Claude Code) y sin ME_PASSWORD, no sube: es a propósito.
    ═══════════════════════════════════════════════ */
 import { readFileSync, existsSync } from 'node:fs';
-import { execFileSync } from 'node:child_process';
 import { join, resolve, dirname } from 'node:path';
-import { createInterface } from 'node:readline/promises';
+import { createInterface } from 'node:readline';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import vm from 'node:vm';
 
@@ -23,24 +22,9 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const MAX_BYTES = 380000;   // la tabla admite < 400000 por documento
 
-function fromShell(name, source = readFileSync(join(ROOT, 'area-privada.js'), 'utf8')) {
-  const m = new RegExp(`var ${name} = '([^']+)'`).exec(source);
+function fromShell(name) {
+  const m = new RegExp(`var ${name} = '([^']+)'`).exec(readFileSync(join(ROOT, 'area-privada.js'), 'utf8'));
   return m ? m[1] : null;
-}
-
-function configuredOwner(env) {
-  const url = fromShell('SUPABASE_URL');
-  if (env.ME_SUPABASE_URL && env.ME_SUPABASE_URL.replace(/\/$/, '') !== url) return '';
-  const owner = fromShell('OWNER_EMAIL');
-  if (owner) return owner;
-  try {
-    const committed = execFileSync('git', ['show', 'HEAD:area-privada.js'], {
-      cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore']
-    });
-    return fromShell('SUPABASE_URL', committed) === url ? fromShell('OWNER_EMAIL', committed) || '' : '';
-  } catch {
-    return '';
-  }
 }
 const j = async (r) => { const t = await r.text(); try { return t ? JSON.parse(t) : {}; } catch { return {}; } };
 const slugify = (s) => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 80) || 'x';
@@ -158,10 +142,9 @@ export function validate(d, rows) {
 async function login(env) {
   const url = (env.ME_SUPABASE_URL || fromShell('SUPABASE_URL') || '').replace(/\/$/, '');
   const key = env.ME_SUPABASE_KEY || fromShell('SUPABASE_KEY');
-  const email = env.ME_EMAIL?.trim();
+  const email = env.ME_EMAIL || fromShell('OWNER_EMAIL');
   const password = env.ME_PASSWORD;
-  if (!url || !key) throw new Error('Falta la URL o la clave pública de Supabase. Revisa area-privada.js o define ME_SUPABASE_URL y ME_SUPABASE_KEY.');
-  if (!email) throw new Error('Falta el correo del área privada. Ejecuta el comando en una terminal interactiva o define ME_EMAIL.');
+  if (!url || !key || !email) throw new Error('Falta la URL, la clave pública o el email de Supabase.');
   if (!password) throw new Error('Falta la contraseña: ejecuta el comando en tu terminal (te la pedirá sin mostrarla) o define ME_PASSWORD.');
   const auth = await fetch(`${url}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: key, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
   const a = await j(auth);
@@ -192,34 +175,16 @@ async function publish(rows, { prune, env, log }) {
   return { sent, pruned };
 }
 
-async function askCredentials(env) {
-  if (!process.stdin.isTTY || (env.ME_EMAIL?.trim() && env.ME_PASSWORD)) return;
+/* Pide la contraseña sin mostrarla. Solo con terminal interactivo: una sesión de Claude Code no puede publicar sola. */
+async function askPassword() {
+  if (!process.stdin.isTTY) return '';
   const rl = createInterface({ input: process.stdin, output: process.stdout, terminal: true });
-  const cancel = new AbortController();
-  rl.once('close', () => cancel.abort());
-  const options = { signal: cancel.signal };
-  try {
-    if (!env.ME_EMAIL?.trim()) env.ME_EMAIL = (await rl.question('Correo del área privada: ', options)).trim();
-    if (!/^[^\s@]+@[^\s@]+$/.test(env.ME_EMAIL)) {
-      throw new Error('Introduce la dirección de correo con la que entras al área privada. Debe incluir @.');
-    }
-    if (env.ME_EMAIL && !env.ME_PASSWORD) {
-      process.stdout.write('Contraseña del área privada (no se muestra): ');
-      const write = rl._writeToOutput;
-      rl._writeToOutput = () => {};
-      try {
-        env.ME_PASSWORD = await rl.question('', options);
-      } finally {
-        rl._writeToOutput = write;
-        process.stdout.write('\n');
-      }
-    }
-  } catch (error) {
-    if (!cancel.signal.aborted) throw error;
-    throw new Error('Se canceló la entrada de credenciales.');
-  } finally {
-    rl.close();
-  }
+  const write = rl._writeToOutput.bind(rl); let muted = false;
+  rl._writeToOutput = (s) => { if (!muted) write(s); };
+  process.stdout.write('Contraseña del área privada (no se muestra): '); muted = true;
+  const pw = await new Promise((res) => rl.question('', res));
+  rl.close(); process.stdout.write('\n');
+  return pw;
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
@@ -239,8 +204,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     if (dry) { console.log('\nSimulacro: no se ha tocado la base (sin red).'); process.exit(0); }
     if (prune && !yes) throw new Error('--prune borra de la base lo que no esté en tus archivos. Repite con --yes si es lo que quieres.');
     const env = { ...process.env };
-    if (!env.ME_EMAIL?.trim()) env.ME_EMAIL = configuredOwner(env);
-    await askCredentials(env);
+    if (!env.ME_PASSWORD) env.ME_PASSWORD = await askPassword();
     const r = await publish(rows, { prune, env, log: console.log });
     console.log(`✓ Publicado: ${r.sent} documentos${prune ? `, ${r.pruned} borrados` : ''}. Recarga el manual en el área privada (los datos se cachean 5 min).`);
   } catch (e) { console.error('✗ ' + e.message); process.exit(1); }

@@ -25,9 +25,11 @@
     "excluir": [
       "404.html",
       "area-privada.html",
+      "boveda.html",
       "proyectos.html"
     ],
     "ignorarCarpetas": [
+      "apps",
       "node_modules",
       "en",
       "vendor",

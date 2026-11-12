@@ -45,13 +45,17 @@ jobs:
       - name: Motor de Color Studio (color, proporciones, calcetines, importación)
         if: ${{ !cancelled() }}
         run: node --test tools/test-color.mjs
+      - name: Bóveda (versiones cifradas y conflictos)
+        if: ${{ !cancelled() }}
+        run: node --test tools/test-boveda.cjs
       - name: Second Brain (motor, contrato y seguridad)
         if: ${{ !cancelled() }}
         run: node --test tools/second-brain/second-brain.test.mjs
 
   accesibilidad:
     name: Accesibilidad (WCAG 2.2 AA) y errores JS
-    runs-on: ubuntu-latest
+    # Fijada: ubuntu-latest pasó a 26.04 y Playwright 1.56.1 no soporta Chromium ahí. Subirla al actualizar Playwright.
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
@@ -74,6 +78,9 @@ jobs:
       - name: Color Studio (flujos de interfaz con Supabase simulado)
         if: ${{ !cancelled() }}
         run: node tools/check-color.mjs
+      - name: Bóveda (cifrado local, acceso y Drive simulado)
+        if: ${{ !cancelled() }}
+        run: node tools/check-boveda.mjs
       - name: Manual de Claude en el área privada (interfaz con Supabase simulado, CSP real y axe)
         if: ${{ !cancelled() }}
         run: node tools/check-claude-manual.mjs

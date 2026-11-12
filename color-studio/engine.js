@@ -123,10 +123,15 @@ function labOf(hex) {
   return v;
 }
 /** ΔE00 entre dos HEX (Infinity si alguno no es válido). */
+const dECache = new Map();              // los mismos pares (tus prendas × colores de la Biblioteca) se repiten en cada repintado
 export function colorDistance(a, b) {
   const x = normalizeHex(a), y = normalizeHex(b);
   if (!x || !y) return Infinity;
-  return x === y ? 0 : deltaE2000(labOf(x), labOf(y));
+  if (x === y) return 0;
+  const key = x < y ? x + y : y + x;
+  let d = dECache.get(key);
+  if (d === undefined) { d = deltaE2000(labOf(x), labOf(y)); if (dECache.size > 200000) dECache.clear(); dECache.set(key, d); }
+  return d;
 }
 
 /* ═══════════ COINCIDENCIAS ═══════════
@@ -296,6 +301,51 @@ export function rankPalettes(colors, palettes, opts = {}) {
     .slice(0, opts.limit || 50);
 }
 
+/* ═══════════ SIMILITUD CON UNA PALETA (referencia común) ═══════════
+   La misma medida para todo lo que compara colores reales con la Biblioteca: sugerencias de outfits, inspiraciones
+   relacionadas, dirección cromática y calcetines. Tus colores nunca coinciden exactamente con los del libro, así que
+   se compara por PROXIMIDAD (ΔE00 en CIELAB) con umbrales configurables aquí:
+     ≤ 3 prácticamente idéntico · ≤ 6 muy similar · ≤ 12 relacionado (diferencia perceptible) · > 12 sin similitud.
+   Son niveles de proximidad, no una nota de estilo ni un porcentaje de acierto. */
+export const SIMILARITY = { IDENTICAL: 3, CLOSE: 6, RELATED: 12 };
+export const SIMILARITY_LABEL = { identical: 'Prácticamente idéntico', close: 'Muy similar', related: 'Relacionado', none: 'Sin similitud suficiente' };
+export function similarityLevel(dE) {
+  return dE <= SIMILARITY.IDENTICAL ? 'identical' : dE <= SIMILARITY.CLOSE ? 'close' : dE <= SIMILARITY.RELATED ? 'related' : 'none';
+}
+/**
+ * Cómo de bien representa un conjunto de colores (prendas, una foto) a una paleta.
+ * colors: [{ hex, share?, label? }] (share = superficie o presencia; sin él, todos pesan igual).
+ * → { paletteLinks: por cada color de la paleta, el color tuyo más próximo; links: por cada color tuyo, el de la paleta más próximo;
+ *     covered (colores de la paleta representados), coverage (0–1), offShare (parte de tus colores sin equivalente),
+ *     meanDE (ΔE00 medio ponderado de tus colores que sí tienen equivalente), level, valid }
+ * valid: la paleta está representada en conjunto, no por un solo color: al menos 2 colores (o todos si tiene menos) y como mucho
+ * opts.maxOff (0,15) de tu superficie fuera de la paleta. level resume la proximidad de lo que conecta.
+ */
+export function paletteAffinity(palette, colors, opts = {}) {
+  const P = hexesOf(palette), tol = opts.tolerance || SIMILARITY.RELATED;
+  const C = (colors || []).map((c) => ({ hex: normalizeHex(c.hex), share: c.share == null ? 1 : Math.max(0, Number(c.share) || 0), label: c.label || null })).filter((c) => c.hex);
+  const total = C.reduce((t, c) => t + c.share, 0) || 1;
+  const links = C.map((c) => {
+    let best = -1, dE = Infinity;
+    P.forEach((h, j) => { const d = colorDistance(c.hex, h); if (d < dE) { dE = d; best = j; } });
+    return { hex: c.hex, label: c.label, share: c.share / total, paletteIndex: best, paletteHex: P[best] || null, dE, level: dE <= tol ? similarityLevel(dE) : 'none' };
+  });
+  const paletteLinks = P.map((h, j) => {
+    let best = null;
+    links.forEach((l) => { const d = colorDistance(h, l.hex); if (d <= tol && (!best || d < best.dE)) best = { hex: l.hex, label: l.label, dE: d }; });
+    return { index: j, hex: h, nearest: best ? best.hex : null, label: best ? best.label : null, dE: best ? best.dE : Infinity, level: best ? similarityLevel(best.dE) : 'none' };
+  });
+  const hit = links.filter((l) => l.level !== 'none');
+  const hitShare = hit.reduce((t, l) => t + l.share, 0);
+  const covered = paletteLinks.filter((l) => l.level !== 'none').length;
+  const meanDE = hitShare ? hit.reduce((t, l) => t + l.dE * l.share, 0) / hitShare : Infinity;
+  const offShare = 1 - hitShare;
+  const valid = covered >= Math.min(opts.minCovered || 2, P.length) && offShare <= (opts.maxOff == null ? 0.15 : opts.maxOff);
+  return { paletteLinks, links, covered, coverage: P.length ? covered / P.length : 0, offShare, meanDE, level: hit.length ? similarityLevel(meanDE) : 'none', valid };
+}
+/** Orden de afinidades: más colores de la paleta representados, menos superficie fuera y menor ΔE00 medio. */
+export const byAffinity = (x, y) => (y.covered - x.covered) || (x.offShare - y.offShare) || (x.meanDE - y.meanDE);
+
 const fmtDE = (d) => d.toLocaleString('es-ES', { maximumFractionDigits: 1, minimumFractionDigits: 1 });
 /** Frases que explican por qué una paleta se relaciona con los colores. */
 export function explainMatch(match, palette) {
@@ -317,6 +367,8 @@ export function explainMatch(match, palette) {
 export const SLOTS = [
   { id: 'outer', label: 'Prenda exterior', categories: ['chaquetas'], weight: 25 },
   { id: 'top', label: 'Parte superior', categories: ['camisetas', 'camisas', 'jerseis'], weight: 30 },
+  // lo que se lleva debajo y asoma (camiseta interior, camisa bajo un jersey): poca superficie visible
+  { id: 'inner', label: 'Prenda interior', categories: ['camisetas', 'camisas'], weight: 10 },
   { id: 'bottom', label: 'Pantalón', categories: ['pantalones', 'vaqueros'], weight: 35 },
   { id: 'socks', label: 'Calcetines', categories: ['calcetines'], weight: 2 },
   { id: 'shoes', label: 'Calzado', categories: ['calzado'], weight: 10 },
@@ -328,6 +380,52 @@ export const CATEGORIES = [
   ['pantalones', 'Pantalones'], ['vaqueros', 'Vaqueros'], ['calzado', 'Calzado'], ['calcetines', 'Calcetines'], ['accesorios', 'Accesorios']
 ];
 export const CATEGORY_LABEL = Object.fromEntries(CATEGORIES);
+/* ═══════════ TIPOS DE PRENDA (lista fija, compartida) ═══════════
+   La misma lista para la prenda de cada color de una inspiración y para cada prenda del armario: así el cruce entre
+   las dos es exacto (un color «Deportiva» busca tus deportivas). Cada tipo lleva su categoría de la base (cs_garments.category)
+   y su hueco del Studio. En el armario el tipo se guarda al principio de la subcategoría («Deportiva» o «Deportiva · running»):
+   sin columnas nuevas, y la guía de calcetines sigue leyendo de ahí el tipo de calzado. */
+export const GARMENT_TYPES = [
+  ['Prenda exterior', 'chaquetas', 'outer'], ['Abrigo', 'chaquetas', 'outer'], ['Chaqueta', 'chaquetas', 'outer'], ['Americana', 'chaquetas', 'outer'],
+  ['Jersey', 'jerseis', 'top'], ['Sudadera', 'jerseis', 'top'], ['Camisa', 'camisas', 'top'], ['Polo', 'camisetas', 'top'], ['Camiseta', 'camisetas', 'top'],
+  ['Camiseta interior', 'camisetas', 'inner'],
+  ['Pantalón', 'pantalones', 'bottom'], ['Vaquero', 'vaqueros', 'bottom'],
+  ['Zapato', 'calzado', 'shoes'], ['Mocasín', 'calzado', 'shoes'], ['Bota', 'calzado', 'shoes'], ['Deportiva', 'calzado', 'shoes'],
+  ['Calcetín', 'calcetines', 'socks'], ['Cinturón', 'accesorios', 'accessory'], ['Accesorio', 'accesorios', 'accessory']
+].map(([label, category, slot]) => ({ label, category, slot }));
+const TYPE_BY_KEY = Object.fromEntries(GARMENT_TYPES.map((t) => [t.label.toLowerCase(), t]));
+/** Tipo de la lista a partir de su nombre (sin distinguir mayúsculas). null si no es uno de la lista. */
+export const garmentTypeInfo = (label) => TYPE_BY_KEY[String(label || '').trim().toLowerCase()] || null;
+const SUB_SEP = ' · ';
+/** «Deportiva · running» → { type: 'Deportiva', detail: 'running' }; una subcategoría antigua sin tipo → { type: null, detail } */
+export function splitSubcategory(sub) {
+  const t = String(sub || '').trim();
+  const i = t.indexOf(SUB_SEP), head = i >= 0 ? t.slice(0, i) : t;
+  const info = garmentTypeInfo(head);
+  return info ? { type: info.label, detail: i >= 0 ? t.slice(i + SUB_SEP.length).trim() || null : null } : { type: null, detail: t || null };
+}
+export function joinSubcategory(type, detail) {
+  const d = String(detail || '').trim();
+  return type ? (d ? type + SUB_SEP + d : type) : d || null;
+}
+const FALLBACK_TYPE = { chaquetas: 'Chaqueta', jerseis: 'Jersey', camisas: 'Camisa', camisetas: 'Camiseta', pantalones: 'Pantalón', vaqueros: 'Vaquero', calzado: 'Zapato', calcetines: 'Calcetín', accesorios: 'Accesorio' };
+/** Tipo de una prenda: el guardado en la subcategoría o, en prendas anteriores, el que se deduce de la categoría y el texto. */
+export function garmentType(g) {
+  if (!g) return null;
+  const sp = splitSubcategory(g.subcategory);
+  if (sp.type) return sp.type;
+  const text = [g.subcategory, g.name].join(' ').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  if (g.category === 'calzado') {
+    if (/deportiv|zapatill|sneaker|trainer|tenis|bamba|running/.test(text)) return 'Deportiva';
+    if (/mocas|loafer/.test(text)) return 'Mocasín';
+    if (/bota|botin|boot|chelsea|chukka/.test(text)) return 'Bota';
+  }
+  if (g.category === 'chaquetas') { if (/abrigo|gabardin|parka|plumifero/.test(text)) return 'Abrigo'; if (/americana|blazer/.test(text)) return 'Americana'; }
+  if (g.category === 'jerseis' && /sudadera/.test(text)) return 'Sudadera';
+  if (g.category === 'camisetas') { if (/interior/.test(text)) return 'Camiseta interior'; if (/polo/.test(text)) return 'Polo'; }
+  if (g.category === 'accesorios' && /cinturon/.test(text)) return 'Cinturón';
+  return FALLBACK_TYPE[g.category] || null;
+}
 export const slotForCategory = (cat) => (SLOTS.find((s) => s.categories.includes(cat)) || {}).id || null;
 
 /** Peso válido (número finito ≥ 0). Lo demás cuenta como 0 y se explica. */
@@ -475,103 +573,312 @@ export function sampleMedian(data, width, height, px, py, r = 2) {
   return { hex, n: R.length, mixed: far / R.length };
 }
 
+/* ═══════════ CORRECCIÓN DE LA LUZ (balance de blancos) ═══════════
+   Una foto con luz cálida o fría desplaza todos los colores (una camisa blanca sale crema). Se corrige con un punto que la
+   persona sabe que es neutro (blanco, gris, una hoja de papel): las ganancias de cada canal en luz LINEAL que lo vuelven gris
+   con la misma luminancia (adaptación de von Kries en RGB lineal). Se aplica a las copias de análisis y al color tomado; la
+   foto que se guarda no cambia. Un punto con color (croma > 22: un azul marino ya lo supera) no es un neutro fiable y se rechaza. */
+export function neutralGains(hex) {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return null;
+  const lab = rgbToLab(rgb);
+  if (Math.hypot(lab.a, lab.b) > 22 || lab.L < 15) return null;              // ni con color (un blanco con luz cálida queda en 13–19) ni casi negro
+  const lin = [toLinear(rgb.r), toLinear(rgb.g), toLinear(rgb.b)];
+  const Y = 0.2126729 * lin[0] + 0.7151522 * lin[1] + 0.0721750 * lin[2];
+  if (lin.some((v) => v <= 0.0005)) return null;
+  return lin.map((v) => Y / v);
+}
+/** Color corregido con unas ganancias (null = sin corrección). */
+export function applyGainsHex(hex, gains) {
+  const rgb = hexToRgb(hex);
+  if (!rgb || !gains) return normalizeHex(hex);
+  const c = [rgb.r, rgb.g, rgb.b].map((v, i) => toGamma(Math.min(1, toLinear(v) * gains[i])));
+  return rgbToHex(c[0], c[1], c[2]);
+}
+/** Copia corregida de unos píxeles { data, width, height }. */
+export function applyGains(px, gains) {
+  if (!px || !gains) return px;
+  const lut = gains.map((g) => { const t = new Uint8ClampedArray(256); for (let v = 0; v < 256; v++) t[v] = Math.round(toGamma(Math.min(1, toLinear(v) * g))); return t; });
+  const out = new Uint8ClampedArray(px.data.length);
+  for (let i = 0; i < out.length; i += 4) { out[i] = lut[0][px.data[i]]; out[i + 1] = lut[1][px.data[i + 1]]; out[i + 2] = lut[2][px.data[i + 2]]; out[i + 3] = px.data[i + 3]; }
+  return { data: out, width: px.width, height: px.height };
+}
+
 /* ═══════════ EXTRACCIÓN DE COLOR (sin red) ═══════════
-   K-means en Lab sobre los píxeles de una imagen ya reducida. Se pondera el centro (la prenda suele
-   estar ahí) y se rebaja lo que se parece al borde (probablemente el fondo). Es una PROPUESTA:
-   la luz y el balance de blancos cambian el color, por eso la web siempre deja corregirlo.
-   · Fondo: los píxeles del borde se agrupan (hasta 3 colores) y se rebaja cada grupo con peso; con la media
-     del borde, un fondo de rayas no se parecía a ninguno de sus colores (auditoría CS-04).
-   · Sombras: dos grupos del mismo tono e intensidad proporcional que solo difieren en luz (≤ 30 de L) se
-     funden y se queda el más claro, que es la zona iluminada (CS-03). Dos colores distintos de la misma
-     familia (marino y azul claro, camel y marrón) difieren más y no se funden. Los neutros no se funden. */
-export function extractDominantColors(data, width, height, opts = {}) {
-  const k = opts.k || 5, step = Math.max(1, opts.step || 1);
-  const px = [], border = [];
-  for (let y = 0; y < height; y += step) {
-    for (let x = 0; x < width; x += step) {
-      const o = (y * width + x) * 4;
-      if (data[o + 3] < 128) continue;                         // transparente
-      const lab = rgbToLab({ r: data[o], g: data[o + 1], b: data[o + 2] });
-      const dx = (x / (width - 1 || 1)) - 0.5, dy = (y / (height - 1 || 1)) - 0.5;
-      const edge = x < width * 0.06 || x >= width * 0.94 || y < height * 0.06 || y >= height * 0.94;
-      if (edge) border.push(lab);
-      px.push({ lab, w: opts.centerWeight === false ? 1 : 1.5 - Math.min(1, Math.hypot(dx, dy) * 1.6) });
-    }
+   Un solo sistema para todas las fotos (prendas del Armario, outfits de Inspiración, «Extraer de una imagen»):
+     1. Primer plano: superpíxeles (SLIC simplificado; Achanta et al., 2012) y conectividad con el borde GEODÉSICA
+        (Zhu, Liang, Wei y Sun, CVPR 2014). El fondo es lo que se une al borde por caminos de color parecido: así se
+        reconoce un fondo con textura, reflejos o degradado (cristal, ladrillo, cielo, rayas), que antes se colaba
+        porque solo se buscaban colores del borde casi uniformes. Como el encuadre de una foto de ropa corta el cuerpo
+        por abajo y por los lados, esos bordes cuentan menos que el de arriba, y la franja central se protege.
+     2. Colores: k-means en Lab sobre los píxeles pesados por primer plano, con inicio determinista por histograma (los
+        colores más frecuentes, no los extremos: un brillo o una costura no gastan un grupo).
+     3. Fusión de lo que es la misma prenda: tonos casi iguales (ΔE00 < 10), sombras (mismo tono, más oscuro y algo
+        menos intenso, o un color poco intenso que la sombra vuelve gris) y neutros de luz parecida. Queda el color
+        de la zona iluminada. El representante de cada grupo es la mediana ponderada, no la media (no se embarra).
+     4. Piel (opcional, fotos con personas): un grupo con color de piel (YCbCr de Chai y Ngan, 1999, y LCh) pesa ×0,3.
+        Se rebaja, no se quita: un abrigo camel grande sigue saliendo.
+   Si casi nada parece primer plano (una tela que llena la foto), se analiza la imagen entera.
+   Es una PROPUESTA: no segmenta prendas una a una ni corrige el balance de blancos; la web siempre deja corregirla. */
+const SLIC_M = 10, GEO_SIGMA = 10, GEO_CLIP = 5, BND_SIGMA = 0.6, EDGE_BOTTOM = 0.2, EDGE_SIDE = 0.6, CENTER_POW = 2;
+function imageLab(data, n) {
+  const L = new Float32Array(n), A = new Float32Array(n), B = new Float32Array(n), ok = new Uint8Array(n), lut = new Map();
+  for (let i = 0; i < n; i++) {
+    const o = i * 4;
+    if (data[o + 3] < 128) continue;                          // transparente
+    const key = (data[o] << 16) | (data[o + 1] << 8) | data[o + 2];
+    let lab = lut.get(key);
+    if (!lab) { lab = rgbToLab({ r: data[o], g: data[o + 1], b: data[o + 2] }); lut.set(key, lab); }
+    L[i] = lab.L; A[i] = lab.a; B[i] = lab.b; ok[i] = 1;
   }
-  if (!px.length) return [];
-  // opts.backgrounds: colores de fondo ya calculados (Lab) y opts.backgroundWeight su peso (0 = se excluyen).
-  // Sin ellos, el comportamiento de siempre (prendas): fondo del borde rebajado a 0,15.
-  if (opts.backgrounds || (border.length && opts.ignoreBackground !== false)) {
-    const bgs = opts.backgrounds || borderColors(border), bw = opts.backgroundWeight != null ? opts.backgroundWeight : 0.15, tol = opts.backgroundTolerance || 8;
-    px.forEach((p) => { if (bgs.some((bg) => deltaE2000(p.lab, bg) < tol)) p.w *= bw; });
-    if (bw === 0 && !px.some((p) => p.w > 0)) return [];
+  return { L, A, B, ok };
+}
+/** Montículo binario mínimo de pares [distancia, nodo] (Dijkstra). */
+function heapPush(h, item) { h.push(item); let i = h.length - 1; while (i) { const p = (i - 1) >> 1; if (h[p][0] <= h[i][0]) break; [h[p], h[i]] = [h[i], h[p]]; i = p; } }
+function heapPop(h) {
+  const top = h[0], last = h.pop();
+  if (h.length) {
+    h[0] = last; let i = 0;
+    for (;;) { const l = 2 * i + 1, r = l + 1; let m = i; if (l < h.length && h[l][0] < h[m][0]) m = l; if (r < h.length && h[r][0] < h[m][0]) m = r; if (m === i) break; [h[m], h[i]] = [h[i], h[m]]; i = m; }
   }
-  // centros iniciales deterministas: el más pesado y, después, el más lejano a los elegidos
-  const centers = [px.reduce((a, b) => (b.w > a.w ? b : a)).lab];
-  while (centers.length < Math.min(k, px.length)) {
-    let far = null, fd = -1;
-    px.forEach((p) => { const d = Math.min(...centers.map((c) => deltaE2000(c, p.lab))) * p.w; if (d > fd) { fd = d; far = p; } });
-    if (!far || fd <= 0) break;
-    centers.push(far.lab);
+  return top;
+}
+/**
+ * Probabilidad de primer plano de cada píxel (0–1), Float32Array de width × height. Ver el bloque de arriba.
+ * opts.superpixels (300): número aproximado de superpíxeles.
+ */
+export function foregroundMap(data, width, height, opts = {}, lab) {
+  const W = width, H = height, n = W * H;
+  const { L, A, B, ok } = lab || imageLab(data, n);
+  const fg = new Float32Array(n);
+  const S = Math.max(3, Math.round(Math.sqrt(n / (opts.superpixels || 300))));
+  const seeds = [];
+  for (let y = Math.floor(S / 2); y < H; y += S) for (let x = Math.floor(S / 2); x < W; x += S) {
+    const i = y * W + x; if (ok[i]) seeds.push({ x, y, L: L[i], a: A[i], b: B[i] });
   }
-  let assign = new Array(px.length).fill(0);
-  for (let it = 0; it < 8; it++) {
-    assign = px.map((p) => { let best = 0, bd = Infinity; centers.forEach((c, j) => { const d = (c.L - p.lab.L) ** 2 + (c.a - p.lab.a) ** 2 + (c.b - p.lab.b) ** 2; if (d < bd) { bd = d; best = j; } }); return best; });
-    centers.forEach((c, j) => {
-      let L = 0, a = 0, b = 0, w = 0;
-      px.forEach((p, i) => { if (assign[i] === j) { L += p.lab.L * p.w; a += p.lab.a * p.w; b += p.lab.b * p.w; w += p.w; } });
-      if (w) centers[j] = { L: L / w, a: a / w, b: b / w };
-    });
-  }
-  const weights = centers.map(() => 0);
-  px.forEach((p, i) => { weights[assign[i]] += p.w; });
-  const total = weights.reduce((s, w) => s + w, 0) || 1;
-  const found = [];
-  centers.map((c, j) => ({ lab: c, share: weights[j] / total })).sort((a, b) => b.share - a.share).forEach((c) => {
-    const twin = found.find((f) => deltaE2000(f.lab, c.lab) < 6);
-    if (twin) twin.share += c.share; else found.push(c);
-  });
-  if (opts.mergeShadows !== false) {
-    for (let i = 0; i < found.length; i++) {
-      for (let j = i + 1; j < found.length; j++) {
-        if (!isShadowPair(found[i].lab, found[j].lab)) continue;
-        if (found[j].lab.L > found[i].lab.L) found[i].lab = found[j].lab;   // se queda la zona iluminada
-        found[i].share += found[j].share;
-        found.splice(j, 1); j--;
+  if (!seeds.length) return fg;
+  const sp = new Int32Array(n).fill(-1), dmin = new Float32Array(n), M2 = SLIC_M * SLIC_M / (S * S);
+  for (let it = 0; it < 5; it++) {
+    dmin.fill(Infinity);
+    for (let k = 0; k < seeds.length; k++) {
+      const c = seeds[k];
+      const x0 = Math.max(0, Math.floor(c.x - S)), x1 = Math.min(W - 1, Math.ceil(c.x + S)), y0 = Math.max(0, Math.floor(c.y - S)), y1 = Math.min(H - 1, Math.ceil(c.y + S));
+      for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
+        const i = y * W + x; if (!ok[i]) continue;
+        const d = (c.L - L[i]) ** 2 + (c.a - A[i]) ** 2 + (c.b - B[i]) ** 2 + ((c.x - x) ** 2 + (c.y - y) ** 2) * M2;
+        if (d < dmin[i]) { dmin[i] = d; sp[i] = k; }
       }
     }
-    found.sort((a, b) => b.share - a.share);
+    const acc = new Float64Array(seeds.length * 6);
+    for (let i = 0; i < n; i++) { const k = sp[i]; if (k < 0) continue; const x = i % W, o = k * 6; acc[o]++; acc[o + 1] += x; acc[o + 2] += (i - x) / W; acc[o + 3] += L[i]; acc[o + 4] += A[i]; acc[o + 5] += B[i]; }
+    seeds.forEach((c, k) => { const o = k * 6, m = acc[o]; if (m) { c.x = acc[o + 1] / m; c.y = acc[o + 2] / m; c.L = acc[o + 3] / m; c.a = acc[o + 4] / m; c.b = acc[o + 5] / m; } });
   }
-  return found.filter((c) => c.share >= (opts.minShare || 0.04)).map((c) => ({ hex: labToHex(c.lab), share: c.share }));
+  // superpíxeles: área, borde ponderado (abajo y lados cuentan menos), franja central y vecinos
+  const K = seeds.length, area = new Float64Array(K), border = new Float64Array(K), center = new Float64Array(K), nb = seeds.map(() => new Set());
+  for (let i = 0; i < n; i++) {
+    const k = sp[i]; if (k < 0) continue;
+    const x = i % W, y = (i - x) / W;
+    area[k]++;
+    if (y === 0) border[k] += 1; else if (y === H - 1) border[k] += EDGE_BOTTOM; else if (x === 0 || x === W - 1) border[k] += EDGE_SIDE;
+    if (x >= W * 0.4 && x < W * 0.6 && y >= H * 0.25 && y < H * 0.85) center[k]++;
+    if (x < W - 1) { const q = sp[i + 1]; if (q >= 0 && q !== k) { nb[k].add(q); nb[q].add(k); } }
+    if (y < H - 1) { const q = sp[i + W]; if (q >= 0 && q !== k) { nb[k].add(q); nb[q].add(k); } }
+  }
+  // colores de telón: los que ocupan el borde de ARRIBA y otro lado (≥ 15 % de cada uno). Cubre lo que la conectividad no
+  // ve: un fondo de rayas muy contrastadas (cada raya es estrecha y por sí sola apenas toca el borde). Exigir el borde de
+  // arriba evita confundir una chaqueta que en un plano corto toca los dos lados y el de abajo.
+  const sideCount = [new Map(), new Map(), new Map(), new Map()], sideTot = [0, 0, 0, 0];   // arriba, abajo, izquierda, derecha
+  for (let x = 0; x < W; x++) { [[0, x], [1, (H - 1) * W + x]].forEach(([s, i]) => { const k = sp[i]; if (k >= 0) { sideTot[s]++; sideCount[s].set(k, (sideCount[s].get(k) || 0) + 1); } }); }
+  for (let y = 1; y < H - 1; y++) { [[2, y * W], [3, y * W + W - 1]].forEach(([s, i]) => { const k = sp[i]; if (k >= 0) { sideTot[s]++; sideCount[s].set(k, (sideCount[s].get(k) || 0) + 1); } }); }
+  const classes = [];
+  sideCount.forEach((m, s) => m.forEach((cnt, k) => {
+    const c = seeds[k];
+    let g = classes.find((x) => deltaE2000(x, c) < 6);
+    if (!g) { g = { L: c.L, a: c.a, b: c.b, side: [0, 0, 0, 0] }; classes.push(g); }
+    g.side[s] += cnt;
+  }));
+  const backdrop = classes.filter((g) => sideTot[0] && g.side[0] / sideTot[0] >= 0.15 && [1, 2, 3].some((s) => sideTot[s] && g.side[s] / sideTot[s] >= 0.15));
+  const pfg = new Float32Array(K), raw = new Float32Array(K), cut = 3 * GEO_SIGMA, dist = new Float64Array(K), seen = new Int32Array(K).fill(-1), done = new Int32Array(K).fill(-1);
+  for (let s = 0; s < K; s++) {
+    if (!area[s]) continue;
+    let a = 0, len = 0;
+    const heap = [[0, s]]; dist[s] = 0; seen[s] = s;
+    while (heap.length) {
+      const [d, u] = heapPop(heap);
+      if (done[u] === s) continue; done[u] = s;
+      const w = Math.exp(-(d * d) / (2 * GEO_SIGMA * GEO_SIGMA));
+      a += area[u] * w; len += border[u] * w;
+      nb[u].forEach((v) => {
+        if (done[v] === s || !area[v]) return;
+        const cu = seeds[u], cv = seeds[v];
+        // recorte de pesos pequeños (Wei et al., 2012): atravesar una textura o un degradado no acumula distancia
+        const nd = d + Math.max(0, Math.sqrt((cu.L - cv.L) ** 2 + (cu.a - cv.a) ** 2 + (cu.b - cv.b) ** 2) - GEO_CLIP);
+        if (nd <= cut && (seen[v] !== s || nd < dist[v])) { seen[v] = s; dist[v] = nd; heapPush(heap, [nd, v]); }
+      });
+    }
+    const bnd = len / Math.sqrt(a);
+    let pb = 1 - Math.exp(-(bnd * bnd) / (2 * BND_SIGMA * BND_SIGMA));
+    if (backdrop.some((g) => deltaE2000(g, seeds[s]) < 4)) pb = Math.max(pb, 0.9);
+    raw[s] = 1 - pb;
+    if (center[s] / area[s] > 0.5) pb = pb ** CENTER_POW;          // franja central: casi siempre la persona (un fondo claro sigue siendo fondo)
+    pfg[s] = 1 - pb;
+  }
+  // modelo de color del fondo (como el paso de color de GrabCut, simplificado): un píxel de primer plano cuyo color se
+  // explica mucho mejor por el fondo que por la figura (cielo entre las piernas, pared junto a la cabeza) deja de contar
+  // solo superpíxeles homogéneos: uno que mezcla la figura y el fondo (en el contorno) no describe ninguno de los dos
+  const spread = new Float64Array(K);
+  for (let i = 0; i < n; i++) { const k = sp[i]; if (k >= 0) { const c = seeds[k]; spread[k] += (c.L - L[i]) ** 2 + (c.a - A[i]) ** 2 + (c.b - B[i]) ** 2; } }
+  const bgCols = [], fgCols = [];
+  seeds.forEach((c, k) => { if (!area[k] || spread[k] / area[k] > 200) return; if (raw[k] < 0.15) bgCols.push(c); else if (raw[k] > 0.5) fgCols.push(c); });   // sin la protección central: el modelo usa la señal pura
+  // huecos: zonas pequeñas (< 3 % de la foto) con el color del fondo encerradas por la figura (entre las piernas, bajo el
+  // brazo). La conectividad no las ve porque no llegan al borde. Una prenda grande del mismo color (camiseta blanca ante
+  // una pared blanca) supera ese tamaño y se conserva.
+  if (bgCols.length) {
+    const like = (k) => { const c = seeds[k]; return bgCols.some((b) => (b.L - c.L) ** 2 + (b.a - c.a) ** 2 + (b.b - c.b) ** 2 < 100); };
+    const cand = new Uint8Array(K), comp = new Int32Array(K).fill(-1);
+    for (let k = 0; k < K; k++) if (area[k] && raw[k] >= 0.15 && like(k)) cand[k] = 1;
+    for (let k = 0; k < K; k++) {
+      if (!cand[k] || comp[k] >= 0) continue;
+      const members = [k]; comp[k] = k; let sum = 0;
+      const around = new Set();
+      for (let m = 0; m < members.length; m++) { const u = members[m]; sum += area[u]; nb[u].forEach((v) => { if (cand[v]) { if (comp[v] < 0) { comp[v] = k; members.push(v); } } else around.add(v); }); }
+      // encerrado: casi todo lo que lo rodea es figura (un pantalón claro ante una pared clara tiene pared alrededor)
+      let fig = 0; around.forEach((v) => { if (raw[v] > 0.5) fig++; });
+      if (sum < n * 0.03 && around.size && fig / around.size >= 0.6) members.forEach((u) => { pfg[u] = Math.min(pfg[u], 0.15); raw[u] = Math.min(raw[u], 0.15); });
+    }
+  }
+  for (let j = fgCols.length - 1; j >= 0; j--) if (raw[seeds.indexOf(fgCols[j])] <= 0.15) fgCols.splice(j, 1);   // los huecos ya no son figura
+  // a nivel de píxel: un píxel que no se parece a su superpíxel (el hueco estrecho entre las piernas, un borde) toma el
+  // valor del superpíxel vecino cuyo color se le parece más
+  for (let i = 0; i < n; i++) {
+    const k = sp[i]; if (k < 0) continue;
+    const c = seeds[k], d0 = (c.L - L[i]) ** 2 + (c.a - A[i]) ** 2 + (c.b - B[i]) ** 2;
+    let best = k, bd = d0;
+    if (d0 > 100) nb[k].forEach((q) => { const e = seeds[q], d = (e.L - L[i]) ** 2 + (e.a - A[i]) ** 2 + (e.b - B[i]) ** 2; if (d < bd) { bd = d; best = q; } });
+    fg[i] = pfg[best];
+  }
+  if (bgCols.length && fgCols.length) {
+    const near = (list, l, a, b) => { let m = Infinity; for (const c of list) { const d = (c.L - l) ** 2 + (c.a - a) ** 2 + (c.b - b) ** 2; if (d < m) m = d; } return m; };
+    const memo = new Map();
+    for (let i = 0; i < n; i++) {
+      // solo el contorno (superpíxeles mezclados o de figura dudosa): una prenda entera del color del fondo se conserva
+      if (fg[i] < 0.3 || (spread[sp[i]] / area[sp[i]] <= 200 && raw[sp[i]] > 0.6)) continue;
+      const key = Math.round(L[i]) * 65536 + Math.round(A[i] + 128) * 256 + Math.round(B[i] + 128);
+      let explained = memo.get(key);
+      if (explained === undefined) { const dB = near(bgCols, L[i], A[i], B[i]), dF = near(fgCols, L[i], A[i], B[i]); explained = dB < 225 && dB * 4 < dF; memo.set(key, explained); }
+      if (explained) fg[i] = Math.min(fg[i], 0.2);
+    }
+  }
+  return fg;
 }
-/** ¿b es a con más o menos luz? Mismo tono (≤ 15°), croma proporcional y diferencia de luminosidad moderada. */
-function isShadowPair(a, b) {
-  const A = labToLch(a), B = labToLch(b);
-  if (A.C < 10 || B.C < 10) return false;
-  const dh = Math.abs(A.h - B.h) % 360, gap = dh > 180 ? 360 - dh : dh;
-  const dL = Math.abs(A.L - B.L);
-  const lo = A.L < B.L ? A : B, hi = A.L < B.L ? B : A;
-  const ratio = lo.C / hi.C;
-  return gap <= 15 && dL >= 6 && dL <= 30 && ratio >= 0.5 && ratio <= 1.2;
+/** ¿Parece piel? YCbCr (Chai y Ngan, 1999) y tono anaranjado de croma moderado en LCh. */
+export function isSkinTone(lab) {
+  const c = labToRgb(lab), cb = 128 - 0.168736 * c.r - 0.331264 * c.g + 0.5 * c.b, cr = 128 + 0.5 * c.r - 0.418688 * c.g - 0.081312 * c.b;
+  const p = labToLch(lab);
+  return cb >= 77 && cb <= 127 && cr >= 133 && cr <= 173 && p.h >= 20 && p.h <= 80 && p.C >= 10 && p.C <= 45 && p.L >= 25 && p.L <= 88;
 }
-/** Colores del fondo: k-means pequeño (k ≤ 3, inicio determinista) sobre los píxeles del borde; grupos con ≥ 15 %. */
-function borderColors(list) {
-  const centers = [list[0]];
-  while (centers.length < Math.min(3, list.length)) {
-    let far = null, fd = -1;
-    list.forEach((p) => { const d = Math.min(...centers.map((c) => deltaE2000(c, p))); if (d > fd) { fd = d; far = p; } });
-    if (!far || fd < 8) break;
-    centers.push(far);
+/** ¿b y a son la misma prenda con otra luz o casi el mismo color? (fusión de la extracción) */
+export function sameGarmentColor(a, b) {
+  if (deltaE2000(a, b) < 10) return true;
+  const P = labToLch(a), Q = labToLch(b), dL = Math.abs(P.L - Q.L);
+  const dh = Math.abs(P.h - Q.h) % 360, gap = dh > 180 ? 360 - dh : dh;
+  const lo = P.L < Q.L ? P : Q, hi = P.L < Q.L ? Q : P;
+  if (P.C >= 8 && Q.C >= 8 && gap <= 25 && dL <= 35) { const r = lo.C / hi.C; if (r >= 0.35 && r <= 1.35) return true; }   // sombra
+  if (lo.C < 6 && hi.C < 16 && dL <= 20) return true;          // sombra que desatura un color poco intenso (cuero en sombra)
+  if (P.C < 8 && Q.C < 8 && dL <= 12) return true;             // neutros de luz parecida
+  return false;
+}
+/**
+ * Colores de una foto. → [{ hex, share, skin }] ordenados por presencia (share suma 1 entre los devueltos).
+ * opts: k (grupos iniciales, 14) · max (6) · minShare (0,04) · foreground (true: quitar el fondo) · skin (false: rebajar la piel)
+ *       mask (Uint8Array opcional, 0 = ignorar el píxel: si la hay, no se calcula fondo).
+ */
+export function extractColors(data, width, height, opts = {}) {
+  const W = width, H = height, n = W * H;
+  if (!data || !W || !H) return [];
+  const lab = imageLab(data, n), { L, A, B, ok } = lab;
+  if (opts.mask) for (let i = 0; i < n; i++) if (!opts.mask[i]) ok[i] = 0;
+  let valid = 0; for (let i = 0; i < n; i++) valid += ok[i];
+  if (!valid) return [];
+  // peso de cada píxel: primer plano (con un umbral: lo que parece fondo no suma) × un ligero favor al centro
+  const w = new Float32Array(n);
+  const fg = opts.mask || opts.foreground === false ? null : foregroundMap(data, W, H, opts, lab);
+  let wsum = 0;
+  for (let i = 0; i < n; i++) {
+    if (!ok[i]) continue;
+    const x = i % W, y = (i - x) / W, dx = x / (W - 1 || 1) - 0.5, dy = y / (H - 1 || 1) - 0.5;
+    const prior = 1.2 - Math.min(0.6, Math.hypot(dx * 1.2, dy) * 0.9);
+    w[i] = (fg ? Math.max(0, (fg[i] - 0.3) / 0.7) ** 1.5 : 1) * prior;
+    wsum += w[i];
   }
-  let assign = [];
-  for (let it = 0; it < 6; it++) {
-    assign = list.map((p) => { let best = 0, bd = Infinity; centers.forEach((c, j) => { const d = (c.L - p.L) ** 2 + (c.a - p.a) ** 2 + (c.b - p.b) ** 2; if (d < bd) { bd = d; best = j; } }); return best; });
-    centers.forEach((c, j) => {
-      let L = 0, a = 0, b = 0, n = 0;
-      list.forEach((p, i) => { if (assign[i] === j) { L += p.L; a += p.a; b += p.b; n++; } });
-      if (n) centers[j] = { L: L / n, a: a / n, b: b / n };
-    });
+  if (fg && wsum < valid * 0.08) {                              // casi nada destaca del fondo: la tela llena la foto
+    wsum = 0;
+    for (let i = 0; i < n; i++) if (ok[i]) { const x = i % W, y = (i - x) / W; w[i] = 1.2 - Math.min(0.6, Math.hypot((x / (W - 1 || 1) - 0.5) * 1.2, y / (H - 1 || 1) - 0.5) * 0.9); wsum += w[i]; }
   }
-  const counts = centers.map((_, j) => assign.filter((x) => x === j).length);
-  return centers.filter((_, j) => counts[j] / list.length >= 0.15);
+  // k-means con inicio por histograma: los colores más frecuentes (pesados) y separados entre sí
+  const bins = new Map();
+  for (let i = 0; i < n; i++) {
+    if (!w[i]) continue;
+    const key = Math.floor(L[i] / 8) * 10000 + Math.floor((A[i] + 128) / 10) * 100 + Math.floor((B[i] + 128) / 10);
+    const e = bins.get(key);
+    if (e) { e.w += w[i]; e.L += L[i] * w[i]; e.a += A[i] * w[i]; e.b += B[i] * w[i]; } else bins.set(key, { w: w[i], L: L[i] * w[i], a: A[i] * w[i], b: B[i] * w[i] });
+  }
+  const centers = [];
+  [...bins.values()].sort((x, y) => y.w - x.w).forEach((e) => {
+    if (centers.length >= (opts.k || 14)) return;
+    const c = { L: e.L / e.w, a: e.a / e.w, b: e.b / e.w };
+    if (centers.every((d) => (d.L - c.L) ** 2 + (d.a - c.a) ** 2 + (d.b - c.b) ** 2 > 100)) centers.push(c);
+  });
+  if (!centers.length) return [];
+  const label = new Int16Array(n).fill(-1), K = centers.length, acc = new Float64Array(K * 4);
+  for (let it = 0; it < 10; it++) {
+    acc.fill(0);
+    let moved = 0;
+    for (let i = 0; i < n; i++) {
+      if (!w[i]) continue;
+      let best = 0, bd = Infinity;
+      for (let j = 0; j < K; j++) { const c = centers[j]; const d = (c.L - L[i]) ** 2 + (c.a - A[i]) ** 2 + (c.b - B[i]) ** 2; if (d < bd) { bd = d; best = j; } }
+      if (label[i] !== best) { moved++; label[i] = best; }
+      const o = best * 4; acc[o] += w[i]; acc[o + 1] += L[i] * w[i]; acc[o + 2] += A[i] * w[i]; acc[o + 3] += B[i] * w[i];
+    }
+    centers.forEach((c, j) => { const o = j * 4; if (acc[o]) { c.L = acc[o + 1] / acc[o]; c.a = acc[o + 2] / acc[o]; c.b = acc[o + 3] / acc[o]; } });
+    if (moved < n * 0.002) break;
+  }
+  // representante = mediana ponderada de cada canal (no la media: una sombra no embarra el color)
+  const groups = centers.map(() => ({ w: 0, idx: [] }));
+  for (let i = 0; i < n; i++) if (w[i] && label[i] >= 0) { const g = groups[label[i]]; g.w += w[i]; g.idx.push(i); }
+  const wmed = (idx, ch) => {
+    const s = idx.slice().sort((p, q) => ch[p] - ch[q]), half = s.reduce((t, i) => t + w[i], 0) / 2;
+    let a = 0; for (const i of s) { a += w[i]; if (a >= half) return ch[i]; } return ch[s[s.length - 1]];
+  };
+  let list = groups.filter((g) => g.w > 0).map((g) => ({ lab: { L: wmed(g.idx, L), a: wmed(g.idx, A), b: wmed(g.idx, B) }, w: g.w }));
+  list.forEach((c) => { c.skin = isSkinTone(c.lab); if (c.skin && opts.skin) c.w *= 0.3; });
+  // fusión: la pareja más parecida primero, hasta que no quede ninguna que sea la misma prenda
+  for (;;) {
+    let best = null;
+    for (let i = 0; i < list.length; i++) for (let j = i + 1; j < list.length; j++) {
+      if (!sameGarmentColor(list[i].lab, list[j].lab)) continue;
+      const d = deltaE2000(list[i].lab, list[j].lab);
+      if (!best || d < best.d) best = { i, j, d };
+    }
+    if (!best) break;
+    const p = list[best.i], q = list[best.j];
+    const lit = p.lab.L >= q.lab.L ? p : q, dark = lit === p ? q : p;
+    const rep = lit.w >= dark.w / 3 ? lit : dark;                // la zona iluminada, salvo que sea un brillo residual
+    p.lab = rep.lab; p.skin = rep.skin; p.w += q.w;
+    list.splice(best.j, 1);
+  }
+  const total = list.reduce((s, c) => s + c.w, 0) || 1;
+  const out = list.map((c) => ({ hex: labToHex(c.lab), share: c.w / total, skin: c.skin })).sort((a, b) => b.share - a.share)
+    .filter((c) => c.share >= (opts.minShare == null ? 0.04 : opts.minShare)).slice(0, opts.max || 6);
+  const kept = out.reduce((s, c) => s + c.share, 0) || 1;
+  return out.map((c) => ({ hex: c.hex, share: c.share / kept, skin: c.skin }));
+}
+/**
+ * Colores de la foto de una PRENDA (Armario, «Extraer de una imagen»). Mismo sistema que Inspiración, sin rebajar la piel.
+ * Se mantiene la firma de siempre: → [{ hex, share }]. opts.k = número máximo de colores.
+ */
+export function extractDominantColors(data, width, height, opts = {}) {
+  return extractColors(data, width, height, { max: opts.k || 5, minShare: opts.minShare, superpixels: opts.superpixels })
+    .map((c) => ({ hex: c.hex, share: c.share }));
 }

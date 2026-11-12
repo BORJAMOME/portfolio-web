@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "591ed54",
+ "huella": "39df021",
  "recuento": {
   "paginas": 19,
   "proyectos": 40,
@@ -9,10 +9,10 @@ export default {
   "capitulos": 10,
   "plataformas": 11,
   "pestanas": 10,
-  "tablas": 36,
+  "tablas": 39,
   "funciones": 5,
-  "herramientas": 19,
-  "relaciones": 184,
+  "herramientas": 21,
+  "relaciones": 190,
   "sinExplicar": 0
  },
  "columnas": [
@@ -1633,6 +1633,13 @@ export default {
      "archivo": "area-privada-apps.js",
      "hijos": [
       {
+       "id": "m:ahorro",
+       "tipo": "modulo",
+       "etiqueta": "Ahorro con perspectiva",
+       "archivo": "area-privada-ahorro.js",
+       "familia": "privada"
+      },
+      {
        "id": "m:color",
        "tipo": "modulo",
        "etiqueta": "Color Studio",
@@ -1774,6 +1781,21 @@ export default {
      "familia": "dato"
     },
     {
+     "id": "d:ahorro",
+     "tipo": "esquema",
+     "etiqueta": "ahorro.sql",
+     "archivo": "supabase/ahorro.sql",
+     "hijos": [
+      {
+       "id": "q:ahorro_preferences",
+       "tipo": "tabla",
+       "etiqueta": "ahorro_preferences",
+       "familia": "dato"
+      }
+     ],
+     "familia": "dato"
+    },
+    {
      "id": "d:area-privada",
      "tipo": "esquema",
      "etiqueta": "area-privada.sql",
@@ -1825,6 +1847,21 @@ export default {
        "id": "q:cm_docs",
        "tipo": "tabla",
        "etiqueta": "cm_docs",
+       "familia": "dato"
+      }
+     ],
+     "familia": "dato"
+    },
+    {
+     "id": "d:color-studio-contexto",
+     "tipo": "esquema",
+     "etiqueta": "color-studio-contexto.sql",
+     "archivo": "supabase/color-studio-contexto.sql",
+     "hijos": [
+      {
+       "id": "q:cs_wear",
+       "tipo": "tabla",
+       "etiqueta": "cs_wear",
        "familia": "dato"
       }
      ],
@@ -1930,6 +1967,21 @@ export default {
        "id": "q:ii_reports",
        "tipo": "tabla",
        "etiqueta": "ii_reports",
+       "familia": "dato"
+      }
+     ],
+     "familia": "dato"
+    },
+    {
+     "id": "d:kanban-dependencias",
+     "tipo": "esquema",
+     "etiqueta": "kanban-dependencias.sql",
+     "archivo": "supabase/kanban-dependencias.sql",
+     "hijos": [
+      {
+       "id": "q:kb_dependencias",
+       "tipo": "tabla",
+       "etiqueta": "kb_dependencias",
        "familia": "dato"
       }
      ],
@@ -2239,6 +2291,13 @@ export default {
        "familia": "herramienta"
       },
       {
+       "id": "h:check-boveda",
+       "tipo": "herramienta",
+       "etiqueta": "check-boveda.mjs",
+       "archivo": "tools/check-boveda.mjs",
+       "familia": "herramienta"
+      },
+      {
        "id": "h:check-briefing",
        "tipo": "herramienta",
        "etiqueta": "check-briefing.mjs",
@@ -2278,6 +2337,13 @@ export default {
        "tipo": "herramienta",
        "etiqueta": "check-links.mjs",
        "archivo": "tools/check-links.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:test-boveda",
+       "tipo": "herramienta",
+       "etiqueta": "test-boveda.cjs",
+       "archivo": "tools/test-boveda.cjs",
        "familia": "herramienta"
       },
       {
@@ -2990,11 +3056,35 @@ export default {
    "detalle": []
   },
   {
+   "de": "m:ahorro",
+   "a": "d:ahorro",
+   "tipo": "usa",
+   "detalle": [
+    "ahorro_preferences"
+   ]
+  },
+  {
+   "de": "m:ahorro",
+   "a": "d:area-privada",
+   "tipo": "usa",
+   "detalle": [
+    "members"
+   ]
+  },
+  {
    "de": "m:claude",
    "a": "d:claude-manual",
    "tipo": "usa",
    "detalle": [
     "cm_docs"
+   ]
+  },
+  {
+   "de": "m:color",
+   "a": "d:color-studio-contexto",
+   "tipo": "usa",
+   "detalle": [
+    "cs_wear"
    ]
   },
   {
@@ -3029,6 +3119,14 @@ export default {
    "tipo": "usa",
    "detalle": [
     "me_docs"
+   ]
+  },
+  {
+   "de": "m:kanban",
+   "a": "d:kanban-dependencias",
+   "tipo": "usa",
+   "detalle": [
+    "kb_dependencias"
    ]
   },
   {
@@ -3564,6 +3662,12 @@ export default {
   },
   {
    "de": "w:checks",
+   "a": "h:check-boveda",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:checks",
    "a": "h:check-briefing",
    "tipo": "ejecuta",
    "detalle": []
@@ -3607,6 +3711,12 @@ export default {
   {
    "de": "w:checks",
    "a": "h:second-brain",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:checks",
+   "a": "h:test-boveda",
    "tipo": "ejecuta",
    "detalle": []
   },

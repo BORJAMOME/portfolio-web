@@ -127,7 +127,11 @@ window.APPortfolio = (function () {
 
   /* Manuales privados: viven dentro del área privada (su contenido está en Supabase con RLS, no en la web pública),
      así que no son filas de la tabla portfolio sino rutas internas. Aparecen con los filtros «Manual» / «Publicado» o sin filtros. */
-  var PRIVATE = [{ titulo: 'Manual de Claude', href: '#/claude', descripcion: 'Lo que voy aprendiendo en Claude Academy, explicado en llano, con sus fuentes, un mapa mental y mi progreso. Solo visible con tu sesión.', tecnologias: ['Claude', 'Claude Code', 'MCP', 'Skills'] }];
+  var PRIVATE = [
+    { titulo: 'Manual de Claude', href: '#/claude', descripcion: 'Lo que voy aprendiendo en Claude Academy, explicado en llano, con sus fuentes, un mapa mental y mi progreso. Solo visible con tu sesión.', tecnologias: ['Claude', 'Claude Code', 'MCP', 'Skills'] },
+    // título genérico a propósito: el nombre real y todo el contenido están en Supabase (me_docs), no en este repositorio público
+    { titulo: 'Manual de estudio', href: '#/estudio', descripcion: 'Manual de un libro de estudio: texto completo por capítulos con explicaciones en llano, indicadores y glosario. Solo visible con tu sesión.', tecnologias: ['Estudio', 'Indicadores', 'Glosario'] }
+  ];
   function privateSection() {
     var h = ctx.h, words = norm(st.q).split(/\s+/).filter(Boolean);
     if ((st.tipo && st.tipo !== 'Manual') || (st.estado && st.estado !== 'publicado')) return false;

@@ -12,8 +12,8 @@
    claro, un tono o dos más oscuro) y Gentleman's Gazette (el mismo color exacto que el pantalón no es la
    opción más lograda; mejor que igualar el calzado; enlazar con la parte de arriba). Ver color-studio/README.md.
    ═══════════════════════════════════════════════ */
-import { normalizeHex, colorDistance, describeColor, hexToLab, labToLch, lchToLab, labToHex, rankPalettes } from './engine.js?v=554dcefb20';
-import { directionOf, relation } from './compose.js?v=3e7d3d81a2';
+import { normalizeHex, colorDistance, describeColor, hexToLab, labToLch, lchToLab, labToHex, paletteAffinity, byAffinity, SIMILARITY } from './engine.js?v=a649e19a90';
+import { directionOf, relation } from './compose.js?v=15bb56ba87';
 
 export const RULES = {
   'continuidad-pantalon': 'Calcetín en la familia del pantalón: la pierna se lee como una sola línea y el calzado queda como remate.',
@@ -31,7 +31,8 @@ export const RULES = {
   'mocasin': 'Con mocasín el tobillo queda a la vista: o el calcetín no se ve (invisible) o se ve del todo; si se ve, cuenta como una prenda más.',
   'bota': 'Con bota el calcetín asoma poco de pie; se ve al sentarse. Los tonos tierra son una opción, no una obligación.',
   'calzado-formal': 'Con zapato formal, la continuidad con el pantalón es la referencia clásica; el contraste, mejor profundo que brillante.',
-  'contraste-paleta': 'Color de una paleta de tu biblioteca (las de Sanzo Wada primero) que se relaciona con el outfit y que este aún no usa.',
+  'contraste-paleta': 'Color de la combinación de tu Biblioteca que mejor representa el outfit completo (ΔE00) y que este aún no usa.',
+  'paleta-coordinacion': 'El color también está en la combinación de tu Biblioteca que mejor representa el outfit: el calcetín sigue esa referencia.',
   'contraste-secundario': 'Un color secundario que ya existe en alguna prenda del conjunto, llevado al tobillo como acento.',
   'contraste-opuesto': 'Tono opuesto al color con más presencia, con la saturación contenida para no romper el conjunto.',
   'contraste-analogo': 'Tono vecino del color principal, más intenso: un acento suave, coherente con una dirección discreta.',
@@ -178,6 +179,13 @@ export function recommendSocks(input) {
   if (!shoes) notes.push('Sin calzado no se puede comprobar si el calcetín conecta también con el zapato.');
   if (input.trousersPattern && input.trousersPattern !== 'liso' && trSec.length) notes.push('Pantalón con dibujo: la continuidad sigue a su color principal y la coordinación puede recoger uno de sus secundarios.');
   const outfit = [trousers, shoes, ...trSec, ...shSec].concat(...others.map((o) => [o.hex].concat(o.secondary))).filter(Boolean);
+  // Biblioteca como referencia: combinaciones que representan el outfit COMPLETO (pantalón, calzado, arriba, interior,
+  // exterior, con su superficie), no un solo color. Misma medida que la dirección y las sugerencias (engine.paletteAffinity).
+  const weighted = (input.outfitColors || []).map((c) => ({ hex: normalizeHex(c.hex), share: Number(c.share) || 0 })).filter((c) => c.hex);
+  const basis = weighted.length ? weighted : outfit.map((hex) => ({ hex, share: 1 }));
+  const refs = (input.palettes || []).filter((p) => (p.colors || []).length >= 2).map((p) => ({ palette: p, affinity: paletteAffinity(p, basis, { maxOff: 0.3 }) }))
+    .filter((r) => r.affinity.valid).sort((a, b) => byAffinity(a.affinity, b.affinity)).slice(0, 6);
+  const refFor = (hex) => { for (const r of refs) { const d = Math.min(...(r.palette.colors || []).map((c) => colorDistance(hex, c.hex))); if (d <= SIMILARITY.RELATED) return { palette: r.palette, level: r.affinity.level, covered: r.affinity.covered, dE: d }; } return null; };
   const distinct = (hex, chosen) => chosen.every((p) => colorDistance(hex, p.hex) > DISTINCT);
   const owned = (input.socks || []);
 
@@ -231,7 +239,10 @@ export function recommendSocks(input) {
   const bL = lchOf(base).L;
   push(shade(base, bL > 65 ? -24 : bL < 22 ? 14 : -20), ['tono-sobre-tono'], 'Pantalón ' + nameOf(base),
     'El conjunto no tiene otro color que conectar: un tono ' + (bL < 22 ? 'más claro' : 'más oscuro') + ' que el ' + nameOf(base) + ' da profundidad sin salir de la familia.');
-  const coord = cands.find((x) => distinct(x.hex, chosen));
+  // primero los candidatos que también están en la combinación de referencia
+  const ranked2 = cands.map((x, i) => ({ x, i, ref: refFor(x.hex) })).sort((a, b) => ((b.ref ? 1 : 0) - (a.ref ? 1 : 0)) || (a.i - b.i));
+  const pickC = ranked2.find((r) => distinct(r.x.hex, chosen));
+  const coord = pickC ? Object.assign({}, pickC.x, pickC.ref && !pickC.x.rules.includes('paleta-coordinacion') ? { rules: pickC.x.rules.concat('paleta-coordinacion') } : {}) : null;
   if (coord) chosen.push(Object.assign({ type: 'coordinated', origin: coord.rules[0] === 'tono-sobre-tono' ? 'rule' : 'outfit' }, coord));
   else notes.push('No hay un segundo color en el conjunto lo bastante distinto para una propuesta de coordinación.');
 
@@ -245,15 +256,13 @@ export function recommendSocks(input) {
     return pa - pb;
   })[0];
   let contrast = null;
-  const ranked = rankPalettes(outfit.map((hex) => ({ hex, share: 1 })), input.palettes || [], { limit: 12 })
-    .sort((a, b) => ((b.palette.source_type === 'book') - (a.palette.source_type === 'book')));
-  for (const r of ranked) {
-    const used = new Set(r.match.paletteIndexes);
+  for (const r of refs) {
+    const used = new Set(r.affinity.paletteLinks.filter((l) => l.level !== 'none').map((l) => l.index));
     const free = (r.palette.colors || []).map((c, i) => ({ hex: normalizeHex(c.hex), i, name: c.name })).filter((c) => c.hex && !used.has(c.i) && outfit.every((o) => colorDistance(o, c.hex) > 15));
     const best = pick(free);
     if (best) {
       contrast = { type: 'contrast', hex: best.hex, rules: ['contraste-paleta'], origin: 'palette', palette: r.palette, source: 'Paleta «' + (r.palette.name || 'sin nombre') + '»',
-        explanation: 'De la paleta «' + (r.palette.name || 'sin nombre') + '», que comparte ' + r.match.connected + ' color(es) con el outfit: el ' + (best.name || nameOf(best.hex)) +
+        explanation: 'De la combinación «' + (r.palette.name || 'sin nombre') + '», que representa ' + r.affinity.covered + ' de sus colores con tu outfit completo: el ' + (best.name || nameOf(best.hex)) +
           ' aún no aparece en el conjunto y contrasta con el pantalón sin salirse de la combinación.' };
       break;
     }
@@ -306,7 +315,8 @@ export function recommendSocks(input) {
     insufficient: false, notes, shoeType, direction, fit,
     proposals: order.map((t) => chosen.find((p) => p.type === t)).filter(Boolean).map((p) => Object.assign(p, {
       label: TYPES[p.type], name: nameOf(p.hex), effect: EFFECT[p.type], contrastTrousers: contrastLevel(p.hex, trousers), contrastShoes: contrastLevel(p.hex, shoes),
-      contrast: contrastLevel(p.hex, trousers || shoes), owned: nearestOwned(p.hex, owned, fit.lengths)
-    }))
+      contrast: contrastLevel(p.hex, trousers || shoes), owned: nearestOwned(p.hex, owned, fit.lengths),
+      reference: p.palette ? Object.assign({ palette: p.palette }, (() => { const r = refs.find((x) => x.palette === p.palette); return r ? { level: r.affinity.level, covered: r.affinity.covered } : {}; })()) : refFor(p.hex)
+    })), reference: refs[0] ? { palette: refs[0].palette, level: refs[0].affinity.level, covered: refs[0].affinity.covered } : null
   };
 }

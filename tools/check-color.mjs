@@ -37,7 +37,7 @@ const BASE = `http://localhost:${server.address().port}/area-privada.html`;
 /* ── Supabase en memoria ── */
 let seq = 0;
 const uid = () => '00000000-0000-4000-8000-' + String(++seq).padStart(12, '0');
-const db = { cs_garments: [], cs_palettes: [], cs_outfits: [], cs_inspirations: [], ap_opciones: [] };
+const db = { cs_garments: [], cs_palettes: [], cs_outfits: [], cs_inspirations: [], cs_wear: [], ap_opciones: [] };
 ['Casual', 'Smart casual', 'Formal', 'Minimalista', 'Streetwear', 'Workwear', 'Deportivo'].forEach((v, i) => db.ap_opciones.push({ id: 'op-' + i, grupo: 'inspiracion.estilo', valor: v, posicion: i + 1 }));
 const USER_A = 'aaaaaaaa-0000-4000-8000-000000000001', USER_B = 'bbbbbbbb-0000-4000-8000-000000000002';
 let currentUser = USER_A, inspMissing = false, fnMode = 'ok', fnImage = null;   // fnMode: ok | missing | blocked | noimage
@@ -52,6 +52,12 @@ function check(t, r) {                         // lo esencial de los checks de s
     if (!CATS.includes(r.category)) return 'category';
     if (!HEX.test(r.primary_color || '')) return 'primary_color';
     if ((r.secondary_colors || []).some((x) => !HEX.test(x))) return 'secondary_colors';
+    if (!Array.isArray(r.seasons) || r.seasons.length > 4 || r.seasons.some((x) => !SEASON_IDS.slice(0, 4).includes(x))) return 'seasons';   // supabase/color-studio-contexto.sql
+    if (r.formality != null && !['formal', 'smart', 'casual'].includes(r.formality)) return 'formality';
+  }
+  if (t === 'cs_wear') {
+    if (!['worn', 'liked'].includes(r.kind)) return 'kind';
+    if (!Array.isArray(r.garment_ids) || r.garment_ids.length < 1 || r.garment_ids.length > 8) return 'garment_ids';
   }
   if (t === 'cs_palettes') {
     if (!Array.isArray(r.colors) || !r.colors.length || r.colors.length > 12 || r.colors.some((c) => !HEX.test(c.hex || ''))) return 'colors';
@@ -74,7 +80,8 @@ function check(t, r) {                         // lo esencial de los checks de s
   return null;
 }
 const DEFAULT_ROW = {
-  cs_garments: { name: null, subcategory: null, image_path: null, secondary_colors: [], color_shares: null, pattern: 'liso', material: null, notes: null },
+  cs_garments: { name: null, subcategory: null, image_path: null, secondary_colors: [], color_shares: null, pattern: 'liso', material: null, notes: null, seasons: [], formality: null },
+  cs_wear: { palette_id: null, worn_on: new Date().toISOString().slice(0, 10) },
   cs_palettes: { name: null, tags: [], source_type: 'own', source_title: null, source_url: null, source_notes: null, notes: null, is_favorite: false },
   cs_outfits: { items: [], palette_id: null, distribution_override: null, occasion: null, formality: null, notes: null, is_favorite: false },
   cs_inspirations: { title: null, source_url: null, source_name: null, published_on: null, image_path: null, thumb_path: null, image_hash: null, description: null, notes: null,
@@ -315,36 +322,79 @@ await step('Biblioteca: filtros por número de colores, origen y favoritas', asy
   await page.uncheck('.cs-filters .cs-check input');
   await shot(page, '02-biblioteca');
 });
-await step('Detalle de paleta: procedencia, enlace seguro y duplicar', async () => {
+await step('Detalle de paleta: figura del outfit con reparto ilustrativo (sin el bloque de procedencia), X y clic fuera cierran, y duplicar', async () => {
   await page.click('.cs-pal-open:has-text("Otoño urbano")');
-  await page.waitForSelector('dialog[open] .cs-swatches');
-  eq(await page.getAttribute('dialog[open] .cs-prov a', 'href'), 'https://ejemplo.org/paleta');
-  eq(await page.getAttribute('dialog[open] .cs-prov a', 'rel'), 'noopener noreferrer');
-  ok((await page.textContent('dialog[open] .cs-swatches')).includes('Registrado como «1f2a44»'), 'no muestra el original');
+  await page.waitForSelector('dialog[open] .cs-fig svg path');
+  eq(await page.$('dialog[open] .cs-prov'), null, 'sigue el bloque de procedencia');
+  ok(!(await page.textContent('dialog[open]')).includes('Registrado como'), 'siguen los detalles técnicos de conversión');
+  const legend = await page.$$eval('dialog[open] .cs-fig-legend .cs-pct', (els) => els.map((e) => e.textContent));
+  eq(legend.length, 3, 'leyenda de la figura'); ok(legend.every((t) => t.startsWith('≈')), 'el reparto no se marca como aproximado');
+  ok((await page.textContent('dialog[open] .cs-fig-cap')).includes('no define proporciones'), 'no se dice que el reparto es ilustrativo');
+  // prendas editables: quitar la prenda exterior y cambiar los calcetines repinta el figurín y la leyenda sin escribir nada
+  const writes0 = log.length;
+  ok(await page.$('dialog[open] [data-key="fig-socks-0"]'), 'el figurín no deja elegir los calcetines');
+  const lbl = () => page.$$eval('dialog[open] .cs-fig-w', (e) => e.map((x) => x.textContent).join('|'));
+  ok((await lbl()).includes('Prenda exterior'), 'la propuesta no lleva prenda exterior');
+  await page.click('dialog[open] [data-key="fig-outer-none"]');
+  await page.waitForFunction(() => !/Prenda exterior/.test([...document.querySelectorAll('dialog[open] .cs-fig-w')].map((x) => x.textContent).join('|')));
+  await page.click('dialog[open] [data-key="fig-socks-1"]');
+  eq(await page.getAttribute('dialog[open] [data-key="fig-socks-1"]', 'aria-checked'), 'true');
+  ok(await page.$('dialog[open] [data-key="fig-reset"]'), 'sin «Restablecer la propuesta»');
+  await page.click('dialog[open] [data-key="fig-reset"]');
+  await page.waitForFunction(() => /Prenda exterior/.test([...document.querySelectorAll('dialog[open] .cs-fig-w')].map((x) => x.textContent).join('|')));
+  // calzado: además de los colores de la paleta, negro, blanco y marrón (señalados como fuera de la paleta)
+  for (const k of ['1c1c1c', 'f3f2ee', '5a3a24']) ok(await page.$('dialog[open] [data-key="fig-shoes-' + k + '"]'), 'falta el color habitual de calzado ' + k);
+  ok(await page.$('dialog[open] [data-key="fig-socks-f3f2ee"]'), 'los calcetines no ofrecen siempre el blanco');
+  await page.click('dialog[open] [data-key="fig-shoes-1c1c1c"]');
+  await page.waitForFunction(() => /fuera de la paleta/.test(document.querySelector('dialog[open] .cs-fig-legend').textContent));
+  eq(await page.getAttribute('dialog[open] [data-key="fig-shoes-1c1c1c"]', 'aria-checked'), 'true');
+  await page.click('dialog[open] [data-key="fig-reset"]');
+  ok(!log.slice(writes0).some((l) => /^(POST|PATCH|DELETE)/.test(l)), 'elegir colores del figurín escribió en la base');
+  ok(await page.$('dialog[open] .cs-pal-insp'), 'falta la sección de inspiraciones relacionadas');
+  // X visible aunque se desplace el contenido
+  await page.evaluate(() => { const d = document.querySelector('dialog[open]'); d.scrollTop = d.scrollHeight; });
+  const x = await page.$('dialog[open] .cs-sheet-head .cs-x');
+  ok(x && await x.isVisible(), 'la X no está a la vista tras desplazar');
+  ok(await x.evaluate((el) => { const r = el.getBoundingClientRect(), d = el.closest('dialog').getBoundingClientRect(); return r.top >= d.top - 1 && r.top < d.top + 80; }), 'la X no queda arriba');
+  await x.click();
+  await page.waitForFunction(() => !document.querySelector('dialog.cs-sheet[open]'));
+  // escritorio: un clic fuera del contenido cierra; dentro, no
+  await page.click('.cs-pal-open:has-text("Otoño urbano")');
+  await page.waitForSelector('dialog[open] .cs-fig');
+  await page.click('dialog[open] .cs-fig-art');
+  ok(await page.$('dialog.cs-sheet[open]'), 'un clic dentro cerró la hoja');
+  await page.mouse.click(8, 500);
+  await page.waitForFunction(() => !document.querySelector('dialog.cs-sheet[open]'));
+  await page.click('.cs-pal-open:has-text("Otoño urbano")');
+  await page.waitForSelector('dialog[open] .cs-fig');
   await page.click('dialog[open] button:has-text("Duplicar")');
   await page.waitForSelector('dialog[open] #cs-p-name');
   eq(await page.inputValue('#cs-p-name'), 'Otoño urbano (copia)');
+  ok(await page.$('dialog[open] .cs-x-wrap .cs-x'), 'el formulario no tiene X');
   await page.click('dialog[open] button:has-text("Cancelar")');
 });
 
-await step('Armario: prenda con color a mano (sin foto); la categoría es obligatoria', async () => {
+await step('Armario: prenda con color a mano (sin foto); el tipo de prenda (lista fija) es obligatorio y fija la categoría', async () => {
   await go(page, '#/color/armario');
   await page.click('[data-key="new-garment"]');
   await page.waitForSelector('dialog[open] #cs-g-cat');
   await page.fill('#cs-g-primary', '#1f2a44');
   await submit(page);
-  await page.waitForFunction(() => /categoría/i.test(document.querySelector('dialog[open] .ap-msg').textContent));
-  await page.selectOption('#cs-g-cat', 'pantalones');
+  await page.waitForFunction(() => /tipo de prenda/i.test(document.querySelector('dialog[open] .ap-msg').textContent));
+  eq(await page.$eval('#cs-g-cat', (s) => s.tagName), 'SELECT', 'el tipo no es un selector');
+  await page.selectOption('#cs-g-cat', 'Pantalón');
   await page.fill('#cs-g-name', 'Chino marino');
   await submit(page);
   await page.waitForSelector('dialog[open]', { state: 'detached' });
   eq(db.cs_garments[0].primary_color, '#1F2A44');
   eq(db.cs_garments[0].image_path, null);
+  eq(db.cs_garments[0].category, 'pantalones', 'la categoría no sale del tipo');
+  eq(db.cs_garments[0].subcategory, 'Pantalón', 'el tipo no se guarda');
 });
 await step('Armario: foto → vista previa, colores propuestos, corrección y subida privada', async () => {
   await page.click('[data-key="new-garment"]');
   await page.waitForSelector('dialog[open] #cs-g-cat');
-  await page.selectOption('#cs-g-cat', 'calzado');
+  await page.selectOption('#cs-g-cat', 'Zapato');
   await page.setInputFiles('dialog[open] .cs-photo-act label:has-text("Elegir imagen") input', await pngOf(page, 600, 800, '#4A2E1F'));
   await page.waitForSelector('dialog[open] .cs-photo img');
   await page.waitForSelector('dialog[open] .cs-prop-row');
@@ -377,7 +427,7 @@ await step('Armario: quitar la foto la borra del bucket; eliminar la prenda tamb
   ok(!objects.has(path), 'la foto anterior sigue en el bucket');
   // añadir y eliminar una prenda con foto
   await page.click('[data-key="new-garment"]');
-  await page.selectOption('#cs-g-cat', 'camisetas');
+  await page.selectOption('#cs-g-cat', 'Camiseta');
   await page.setInputFiles('dialog[open] .cs-photo-act label:has-text("Elegir imagen") input', await pngOf(page, 300, 300, '#9A9A97'));
   await page.waitForSelector('dialog[open] .cs-prop-row');
   await page.fill('#cs-g-name', 'Camiseta de prueba');
@@ -394,12 +444,73 @@ await step('Armario: quitar la foto la borra del bucket; eliminar la prenda tamb
   ok(!objects.has(t.image_path), 'la foto sigue en el bucket');
 });
 
+await step('Armario: alta en lote (varias fotos, tipo obligatorio y color propuesto) y revisión de tipos deducidos', async () => {
+  await go(page, '#/color/armario');
+  const before = db.cs_garments.length, ups = objects.size;
+  await page.setInputFiles('[data-key="batch-files"]', [Object.assign(await pngOf(page, 300, 400, '#1F2A44'), { name: 'a.png' }), Object.assign(await pngOf(page, 300, 400, '#8B4A2B'), { name: 'b.png' })]);
+  await page.waitForSelector('dialog[open] .cs-batch-row');
+  await page.waitForFunction(() => document.querySelectorAll('dialog[open] [data-key^="batch-color-"]').length >= 2, null, { timeout: 15000 });
+  ok(await page.$eval('[data-key="batch-save"]', (b) => b.disabled), 'deja guardar sin tipo');
+  await page.selectOption('[data-key="batch-type-0"]', 'Jersey');
+  await page.selectOption('[data-key="batch-type-1"]', 'Mocasín');
+  await page.waitForFunction(() => !document.querySelector('[data-key="batch-save"]').disabled);
+  await page.click('[data-key="batch-save"]');
+  await page.waitForFunction(() => !document.querySelector('dialog.cs-sheet[open]'), null, { timeout: 15000 });
+  eq(db.cs_garments.length, before + 2, 'no se han guardado las dos');
+  const added = db.cs_garments.slice(-2).sort((a, b) => (a.subcategory > b.subcategory ? 1 : -1));
+  eq(added.map((g) => [g.category, g.subcategory]), [['jerseis', 'Jersey'], ['calzado', 'Mocasín']]);
+  ok(added.every((g) => g.image_path && objects.has(g.image_path)), 'falta alguna foto en el bucket');
+  eq(objects.size, ups + 2, 'fotos de más o de menos');
+  ok(E.colorDistance(added[0].primary_color, '#1F2A44') < 8, 'color principal del jersey: ' + added[0].primary_color);
+  // una prenda anterior a la lista fija: aviso, propuesta deducida y confirmación
+  db.cs_garments.push(Object.assign({ id: uid(), created_at: new Date().toISOString(), updated_at: new Date().toISOString() }, DEFAULT_ROW.cs_garments, { category: 'calzado', subcategory: 'zapatillas', name: 'Zapatillas viejas', primary_color: '#F2F2F0' }));
+  await page.reload(); await page.waitForSelector('.cs'); await go(page, '#/color/armario');
+  await page.waitForSelector('[data-key="review-types"]');
+  await page.click('[data-key="review-types"]');
+  await page.waitForSelector('dialog[open] [data-key^="review-type-"]');
+  const idx = await page.$$eval('dialog[open] .cs-batch-row .cs-slot-n', (e) => e.map((x) => x.textContent).indexOf('Zapatillas viejas'));
+  ok(idx >= 0, 'la prenda anterior no está en la revisión');
+  eq(await page.inputValue('[data-key="review-type-' + idx + '"]'), 'Deportiva', 'el tipo deducido no se propone');
+  await page.click('[data-key="review-save"]');
+  await page.waitForFunction(() => !document.querySelector('dialog.cs-sheet[open]'));
+  const old = db.cs_garments.find((g) => g.name === 'Zapatillas viejas');
+  eq([old.category, old.subcategory], ['calzado', 'Deportiva · zapatillas'], 'el tipo no se confirma o se pierde el detalle');
+  eq(await page.$('[data-key="review-types"]'), null, 'el aviso sigue tras confirmar');
+});
+await step('Corregir la luz: un punto neutro de la foto corrige sus colores; un punto con color se rechaza; deshacer', async () => {
+  await go(page, '#/color/armario');
+  await page.click('[data-key="new-garment"]');
+  await page.waitForSelector('dialog[open] #cs-g-cat');
+  const warm = await page.evaluate(() => {                // fondo crema por luz cálida y prenda azul con la misma dominante
+    const c = document.createElement('canvas'); c.width = 400; c.height = 500; const x = c.getContext('2d');
+    x.fillStyle = '#F2E6CF'; x.fillRect(0, 0, 400, 500); x.fillStyle = '#2E4A6E'; x.fillRect(80, 75, 240, 350);
+    return c.toDataURL('image/png').split(',')[1];
+  });
+  await page.setInputFiles('dialog[open] .cs-photo-act label:has-text("Elegir imagen") input', { name: 'calida.png', mimeType: 'image/png', buffer: Buffer.from(warm, 'base64') });
+  await page.waitForSelector('dialog[open] [data-key="white-balance"]:not([hidden])');
+  await page.waitForFunction(() => document.querySelector('#cs-g-primary').value.length === 7);
+  const before = await page.inputValue('#cs-g-primary');
+  await page.click('[data-key="white-balance"]');
+  // clic sobre la propia imagen (Playwright la lleva a la vista): con coordenadas de pantalla, en la CI la foto quedaba fuera
+  const img = await page.waitForSelector('dialog[open] .cs-pick-area img');
+  const at = async (fx, fy) => { const b = await img.boundingBox(); await img.click({ position: { x: b.width * fx, y: b.height * fy } }); };
+  await at(0.5, 0.5);                                                               // la prenda azul: tiene color, no sirve
+  await page.waitForSelector('[data-key="wb-bad"]');
+  await at(0.06, 0.06);                                                             // el fondo crema: neutro con luz cálida
+  await page.waitForSelector('[data-key="wb-ok"]');
+  await page.waitForFunction((b) => document.querySelector('#cs-g-primary').value !== b, before);
+  const after = await page.inputValue('#cs-g-primary');
+  ok(E.labToLch(E.hexToLab(after)).h > E.labToLch(E.hexToLab(before)).h - 1 && E.colorDistance(after, before) > 2, 'la corrección no cambia el color: ' + before + ' → ' + after);
+  await page.click('[data-key="wb-undo"]');
+  await page.waitForFunction((b) => document.querySelector('#cs-g-primary').value === b, before);
+  await page.click('dialog[open] button:has-text("Cancelar")');
+});
 await step('CS-17: cuentagotas sobre la foto con puntero y con teclado; el color se lleva al principal', async () => {
   await go(page, '#/color/armario');
   await page.click('[data-key="new-garment"]');
   await page.waitForSelector('dialog[open] #cs-g-cat');
   ok(await page.isHidden('[data-key="eyedropper"]'), 'cuentagotas sin foto');
-  ok((await page.textContent('dialog[open] .cs-photo-field')).includes('balance de blancos'), 'sin consejo de captura');
+  ok(/luz natural.*Corregir la luz/.test(await page.textContent('dialog[open] .cs-photo-field')), 'sin consejo de captura');
   await page.setInputFiles('dialog[open] .cs-photo-act label:has-text("Elegir imagen") input', await pngOf(page, 600, 800, '#4A2E1F'));
   await page.waitForSelector('dialog[open] .cs-prop-row');
   await page.click('[data-key="eyedropper"]');
@@ -754,6 +865,8 @@ await step('Inspiración: enlace + «Leer enlace» trae título, fuente, fecha e
   eq(await page.inputValue('#cs-i-pub'), '2026-03-02');
   ok(await page.isVisible('dialog[open] .cs-ins-preview img'), 'sin vista previa');
   ok(/colores sugeridos/.test(await page.textContent('dialog[open] .cs-ins-palprev')), 'sin sugerencias en el formulario');
+  ok(!/JPEG, PNG o WebP|Se reduce en tu dispositivo|Imagen (lista|descargada)|sugeridos en tu dispositivo/.test(await page.textContent('dialog[open]')), 'siguen los mensajes de carga que se quitaron');
+  ok(await page.isVisible('dialog[open] .cs-x-wrap .cs-x'), 'el formulario no tiene X arriba a la derecha');
   eq(await page.$('dialog[open] .cs-ins-pallist'), null, 'las sugerencias entraron solas en la paleta');
   await page.click('dialog[open] [data-key="cs-i-sty-1"]');               // Smart casual
   await page.click('dialog[open] [data-key="cs-i-sea-2"]');               // Otoño
@@ -847,7 +960,7 @@ await step('Inspiración: detalle con sugerencias aparte; aceptar una la lleva a
   const p0 = db.cs_inspirations[0].palette[0];
   eq([p0.hex, p0.source, 'weight' in p0], ['#2A2A2A', 'manual', false]);
   eq(db.cs_inspirations[0].suggestions.length, nSug - 1, 'editar la paleta tocó las sugerencias');
-  await page.click('dialog[open] .cs-sheet-head .cs-link');
+  await page.click('dialog[open] .cs-sheet-head .cs-x');
 });
 await step('Inspiración: estilo y colección nuevos (van a Configuración), notas y valoración; se conservan', async () => {
   const r = db.cs_inspirations[0];
@@ -869,6 +982,8 @@ await step('Inspiración: estilo y colección nuevos (van a Configuración), not
   eq(x.notes, 'Me gusta la proporción abrigo-pantalón.');
   eq(x.rating, 4);
   eq(x.palette[0].hex, '#2A2A2A', 'editar los datos cambió la paleta');
+  // el alta en Configuración va en segundo plano tras guardar (saveNewOptions): se espera a que llegue, sin rebajar la comprobación
+  for (let i = 0; i < 30 && !db.ap_opciones.some((o) => o.grupo === 'inspiracion.estilo' && o.valor === 'Prueba E2E'); i++) await page.waitForTimeout(100);
   ok(db.ap_opciones.some((o) => o.grupo === 'inspiracion.estilo' && o.valor === 'Prueba E2E'), 'el estilo nuevo no llegó a Configuración');
   ok(db.ap_opciones.some((o) => o.grupo === 'inspiracion.coleccion' && o.valor === 'Oficina E2E'), 'la colección nueva no llegó a Configuración');
 });
@@ -908,6 +1023,86 @@ await step('Inspiración: favorita desde la tarjeta (y quitarla) y «Solo favori
   eq(r.is_favorite, false);
   await page.click('[data-key="insp-clear"]');
 });
+await step('Vista Fotografía / Gama de colores: mismo selector en Inspiración y Armario, cambio inmediato y sin escrituras', async () => {
+  const before = JSON.stringify(db.cs_inspirations), writes = log.length;
+  ok(await page.isVisible('.cs-ins-bar [data-key="insp-view-photo"]'), 'sin selector junto a Filtros y Ordenar');
+  eq(await page.$$eval('.cs-ins-card .cs-gamut', (e) => e.length), 0, 'gama en modo fotografía');
+  await page.click('[data-key="insp-view-palette"]');
+  const withPhoto = await page.$$eval('.cs-ins-card .cs-ins-media.has-img, .cs-ins-card .cs-ins-media img', (e) => e.length);
+  ok(await page.$$eval('.cs-ins-card .cs-gamut', (e) => e.length) >= 1, 'sin columna de gama (' + withPhoto + ' con foto)');
+  eq(await page.getAttribute('[data-key="insp-view-palette"]', 'aria-pressed'), 'true');
+  await page.click('[data-key="insp-view-photo"]');
+  eq(await page.$$eval('.cs-ins-card .cs-gamut', (e) => e.length), 0, 'la gama no se quita');
+  eq(JSON.stringify(db.cs_inspirations), before, 'cambiar la vista modificó los datos');
+  ok(!log.slice(writes).some((l) => /^(POST|PATCH|DELETE)/.test(l)), 'cambiar la vista escribió en la base');
+  await go(page, '#/color/armario');
+  await page.click('[data-key="ward-view-palette"]');
+  ok(await page.$$eval('.cs-garment .cs-gamut', (e) => e.length) >= 1, 'el Armario no enseña la gama');
+  ok(await page.$('.cs-garment .cs-thumb.is-gamut'), 'misma construcción que Inspiración');
+  await page.click('[data-key="ward-view-photo"]');
+  eq(await page.$$eval('.cs-garment .cs-gamut', (e) => e.length), 0);
+});
+await step('Studio: «Prenda interior» justo después de la parte superior y tarjeta de outfits con tu armario', async () => {
+  await go(page, '#/color');
+  const order = await page.$$eval('.cs-slots .cs-slot-k', (e) => e.map((x) => x.textContent));
+  eq(order.indexOf('Prenda interior'), order.indexOf('Parte superior') + 1, 'orden de los huecos: ' + order.join(', '));
+  ok(await page.$('.cs-sugg'), 'sin tarjeta de sugerencias');
+  ok(await page.$('.cs-sugg .cs-sugg-item, .cs-sugg [data-key="sugg-none"], .cs-sugg .cs-note'), 'la tarjeta no explica nada');
+});
+await step('Contexto y uso: temporada y formalidad en la prenda, filtros de las sugerencias, «Lo he llevado» y «Me gusta»', async () => {
+  const keep = { g: db.cs_garments.splice(0), p: db.cs_palettes.splice(0), w: db.cs_wear.splice(0) };
+  const stamp = () => ({ id: uid(), created_at: new Date().toISOString(), updated_at: new Date().toISOString() });
+  try {
+    const T = Object.assign(stamp(), DEFAULT_ROW.cs_garments, { category: 'camisetas', subcategory: 'Camiseta', name: 'Camiseta verano', primary_color: '#1F2A44', seasons: ['verano'] });
+    const B = Object.assign(stamp(), DEFAULT_ROW.cs_garments, { category: 'pantalones', subcategory: 'Pantalón', name: 'Chino arena', primary_color: '#B48A5A' });
+    const S = Object.assign(stamp(), DEFAULT_ROW.cs_garments, { category: 'calzado', subcategory: 'Zapato', name: 'Zapato burdeos', primary_color: '#6B1F2A', formality: 'formal' });
+    db.cs_garments.push(T, B, S);
+    db.cs_palettes.push(Object.assign(stamp(), DEFAULT_ROW.cs_palettes, { name: 'Prueba contexto', colors: [{ hex: '#1F2A44' }, { hex: '#B48A5A' }, { hex: '#6B1F2A' }] }));
+    await page.reload(); await page.waitForSelector('.cs'); await go(page, '#/color');
+    await page.waitForSelector('[data-key="sugg-season"]');
+    const items = () => page.$$eval('.cs-sugg .cs-sugg-item', (e) => e.length);
+    await page.selectOption('[data-key="sugg-season"]', 'verano'); await page.waitForTimeout(150);
+    eq(await items(), 1, 'en verano la camiseta de verano cabe');
+    await page.selectOption('[data-key="sugg-season"]', 'invierno'); await page.waitForTimeout(150);
+    eq(await items(), 0, 'en invierno no debería caber la camiseta de verano');
+    ok(await page.$('.cs-sugg [data-key="sugg-none"]'), 'sin explicación cuando el contexto no deja nada');
+    await page.selectOption('[data-key="sugg-season"]', ''); await page.waitForTimeout(150);
+    await page.selectOption('[data-key="sugg-occasion"]', 'casual'); await page.waitForTimeout(150);
+    eq(await items(), 0, 'un zapato formal no va en un plan informal');
+    await page.selectOption('[data-key="sugg-occasion"]', 'formal'); await page.waitForTimeout(150);
+    eq(await items(), 1, 'ocasión formal');
+    await page.selectOption('[data-key="sugg-occasion"]', ''); await page.waitForTimeout(150);
+    eq(await items(), 1);
+    const sig = [T.id, B.id, S.id].sort();
+    await page.click('[data-key="sugg-wore-0"]');
+    await page.waitForFunction(() => /Llevado hoy/.test((document.querySelector('[data-key="sugg-worn-0"]') || {}).textContent || ''));
+    eq(db.cs_wear.length, 1); eq([db.cs_wear[0].kind, db.cs_wear[0].garment_ids.slice().sort()], ['worn', sig], 'uso mal guardado');
+    eq(await page.getAttribute('[data-key="sugg-wore-0"]', 'aria-pressed'), 'true');
+    await page.click('[data-key="sugg-like-0"]');
+    await page.waitForFunction(() => (document.querySelector('[data-key="sugg-like-0"]') || {}).getAttribute && document.querySelector('[data-key="sugg-like-0"]').getAttribute('aria-pressed') === 'true');
+    ok(db.cs_wear.some((w) => w.kind === 'liked' && w.garment_ids.slice().sort().join() === sig.join()), '«Me gusta» no se guarda');
+    await page.click('[data-key="sugg-like-0"]');
+    await page.waitForFunction(() => document.querySelector('[data-key="sugg-like-0"]').getAttribute('aria-pressed') === 'false');
+    eq(db.cs_wear.filter((w) => w.kind === 'liked').length, 0, 'quitar «Me gusta» no borra');
+    // formulario de prenda: temporadas y formalidad se guardan
+    await go(page, '#/color/armario');
+    await page.click('[data-key="new-garment"]');
+    await page.waitForSelector('dialog[open] #cs-g-cat');
+    await page.selectOption('dialog[open] #cs-g-cat', 'Camisa');
+    await page.fill('dialog[open] #cs-g-primary', '#F4F2EC');
+    await page.fill('dialog[open] #cs-g-name', 'Camisa contexto');
+    await page.click('dialog[open] [data-key="season-primavera"]'); await page.click('dialog[open] [data-key="season-otono"]');
+    await page.selectOption('dialog[open] #cs-g-form', 'smart');
+    await submit(page);
+    await page.waitForSelector('dialog[open]', { state: 'detached' });
+    const c = db.cs_garments.find((x) => x.name === 'Camisa contexto');
+    ok(c, 'la camisa no se guardó');
+    eq([c.seasons, c.formality], [['primavera', 'otono'], 'smart'], 'temporadas o formalidad perdidas');
+  } finally {
+    db.cs_garments.splice(0, db.cs_garments.length, ...keep.g); db.cs_palettes.splice(0, db.cs_palettes.length, ...keep.p); db.cs_wear.splice(0, db.cs_wear.length, ...keep.w);
+    await page.reload(); await page.waitForSelector('.cs');
+  }
+});
 /* ── Cuentagotas: imagen de cuadrantes con colores conocidos y píxeles sueltos (ruido) ── */
 const QUAD = { tl: '#1F2A44', tr: '#B48A5A', bl: '#6B1F2A', br: '#F4F2EC' };
 async function quadPng(page) {
@@ -943,7 +1138,8 @@ await step('Cuentagotas (ratón): imagen escalada, mediana que ignora reflejos, 
   eq(await page.$eval('dialog[open] .cs-pk-pending', (e) => e.hidden), true, 'pasar el ratón ya añadió una muestra');
   await page.mouse.click(pt.x, pt.y);
   eq(await pendingHex(page), QUAD.tl, 'muestra del cuadrante superior izquierdo');
-  await page.fill('#cs-pk-newlabel', 'Pantalón');
+  eq(await page.$eval('#cs-pk-newlabel', (s) => s.tagName), 'SELECT', 'la prenda del color no es una lista fija');
+  await page.selectOption('#cs-pk-newlabel', 'Pantalón');
   await page.click('[data-key="pk-add"]');
   pt = await pkPoint(page, 0.75, 0.25); await page.mouse.click(pt.x, pt.y);
   eq(await pendingHex(page), QUAD.tr);
@@ -1040,7 +1236,7 @@ await step('Referencia guardada antes del cuentagotas (paleta con pesos, sin id 
   await page.waitForFunction(() => /Paleta revisada/.test((document.querySelector('dialog[open]') || {}).textContent || ''));
   const x = db.cs_inspirations.find((y) => y.id === old.id);
   eq([x.palette_status, x.palette.map((c) => c.hex)], ['reviewed', ['#B48A5A', '#1F2A44']], 'confirmar cambió los colores');
-  await page.click('dialog[open] .cs-sheet-head .cs-link');
+  await page.click('dialog[open] .cs-sheet-head .cs-x');
 });
 await step('Inspiración: persistencia tras recargar y aislamiento entre usuarios (RLS simulada)', async () => {
   db.cs_inspirations.push(Object.assign({ id: uid(), owner: USER_B, created_at: new Date().toISOString(), updated_at: new Date().toISOString() }, DEFAULT_ROW.cs_inspirations, { title: 'De otra persona' }));
@@ -1233,7 +1429,7 @@ await step('Apps: pestaña del área privada, fichas desde el registro e iconos;
   const c = await open({ width: 390, height: 844 }, '#/apps');
   await c.page.waitForSelector('.apl-app');
   eq(await c.page.getAttribute('.ap-tabs a[data-tab="apps"]', 'aria-current'), 'page');
-  eq(await c.page.$$eval('.apl-app', (a) => a.map((x) => [x.querySelector('.apl-name').textContent, x.getAttribute('href')])), [['Caesar III', './roma-aeterna/'], ['Color Studio', '#/color']]);
+  eq(await c.page.$$eval('.apl-app', (a) => a.map((x) => [x.querySelector('.apl-name').textContent, x.getAttribute('href')])), [['Ahorro con perspectiva', '#/ahorro'], ['Bóveda', './boveda.html'], ['Caesar III', './roma-aeterna/'], ['Color Studio', '#/color']]);
   ok(await c.page.isVisible('.ap-bar') && await c.page.isHidden('#ap-appbar'), 'el catálogo se pinta en modo app');
   await c.page.waitForFunction(() => [...document.querySelectorAll('.apl-icon')].every((i) => i.naturalWidth > 0), null, { timeout: 15000 }).catch(() => {});
   ok(await c.page.$$eval('.apl-icon', (i) => i.every((x) => x.naturalWidth > 0)), 'icono sin cargar');

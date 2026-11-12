@@ -4,13 +4,16 @@
    Módulo ES puro (sin red ni DOM). La web valida aquí ANTES de escribir en Supabase;
    la base vuelve a exigir lo esencial con checks (supabase/color-studio.sql).
    ═══════════════════════════════════════════════ */
-import { normalizeHex, normalizePaletteColors, findDuplicates, CATEGORY_LABEL, SLOT, sanitizeWeight, normalizeDistribution } from './engine.js?v=554dcefb20';
+import { normalizeHex, normalizePaletteColors, findDuplicates, CATEGORY_LABEL, SLOT, sanitizeWeight, normalizeDistribution } from './engine.js?v=a649e19a90';
 
 export const SOURCE_TYPES = [
   ['own', 'Creada por mí'], ['book', 'Libro'], ['web', 'Página web'], ['photo', 'Fotografía'], ['other', 'Otra referencia']
 ];
 export const SOURCE_LABEL = Object.fromEntries(SOURCE_TYPES);
 export const PATTERNS = [['liso', 'Liso'], ['rayas', 'Rayas'], ['cuadros', 'Cuadros'], ['estampado', 'Estampado'], ['otro', 'Otro']];
+// contexto de una prenda (supabase/color-studio-contexto.sql): temporadas (vacío = todo el año) y formalidad (null = cualquiera)
+export const GARMENT_SEASONS = [['primavera', 'Primavera'], ['verano', 'Verano'], ['otono', 'Otoño'], ['invierno', 'Invierno']];
+export const GARMENT_FORMALITY = [['formal', 'Formal'], ['smart', 'Smart casual'], ['casual', 'Informal']];
 export const EXPORT_FORMAT = 'color-studio';
 export const EXPORT_VERSION = 1;
 export const IMPORT_MAX_BYTES = 2 * 1024 * 1024;
@@ -72,11 +75,12 @@ export function validateGarment(input) {
     else shares = s.map((x) => x.value);
   }
   const pattern = PATTERNS.some((p) => p[0] === i.pattern) ? i.pattern : 'liso';
-  return {
-    ok: !errors.length, errors,
-    value: { name: str(i.name, 120), category: i.category, subcategory: str(i.subcategory, 80), primary_color: primary, secondary_colors: secondary.slice(0, 6),
-      color_shares: shares, pattern, material: str(i.material, 80), notes: str(i.notes, 2000) }
-  };
+  const value = { name: str(i.name, 120), category: i.category, subcategory: str(i.subcategory, 80), primary_color: primary, secondary_colors: secondary.slice(0, 6),
+    color_shares: shares, pattern, material: str(i.material, 80), notes: str(i.notes, 2000) };
+  // contexto: solo se envía si se pasa (así una base sin esas columnas sigue aceptando el resto)
+  if ('seasons' in i) value.seasons = GARMENT_SEASONS.map((x) => x[0]).filter((x) => (i.seasons || []).includes(x));
+  if ('formality' in i) value.formality = GARMENT_FORMALITY.some((x) => x[0] === i.formality) ? i.formality : null;
+  return { ok: !errors.length, errors, value };
 }
 
 /** Outfit listo para guardar. items: [{ slot, garment_id | hex, weight, hypothetical? }] (hypothetical solo con hex: color propuesto, no una prenda tuya) */

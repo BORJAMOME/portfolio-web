@@ -526,6 +526,7 @@
     kanban:      { global: 'APKanban',      title: 'Hoy', tab: 'hoy' },
     apps:        { global: 'APApps',        title: 'Apps' },
     // app del catálogo (APPS): se abre en modo app, sin pestaña propia
+    ahorro:      { global: 'APAhorro',      title: 'Ahorro con perspectiva', tab: 'apps' },
     color:       { global: 'APColor',       title: 'Color Studio', tab: 'apps' },
     calendario:  { global: 'APCalendario',  title: 'Calendario' },
     entrevistas: { global: 'APEntrevistas', title: 'Entrevistas' },
@@ -547,6 +548,8 @@
      · Sin «module»: página propia con su layout y su vuelta (p. ej. la PWA de roma-aeterna/).
      Orden alfabético. Añadir una app = una entrada aquí (y, si vive aquí, su módulo). */
   var APPS = [
+    { id: 'ahorro', name: 'Ahorro con perspectiva', desc: 'Organiza tu presupuesto y compara escenarios de ahorro', icon: './img/apps/ahorro.svg', href: '#/ahorro', module: 'ahorro' },
+    { id: 'boveda', name: 'Bóveda', desc: 'Cuentas y contraseñas cifradas', icon: './img/apps/boveda.svg', href: './boveda.html' },
     { id: 'caesar', name: 'Caesar III', desc: 'Tu provincia romana en el iPhone', icon: './roma-aeterna/icons/icon-192.png', href: './roma-aeterna/' },
     { id: 'color', name: 'Color Studio', desc: 'Color aplicado a tu armario', icon: './img/apps/color-studio.svg', href: '#/color', module: 'color' }
   ];

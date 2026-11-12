@@ -799,21 +799,66 @@ test('Inspiración: sugerencias de una foto sin el fondo (ni la pared ni el suel
   const fam = p.map((c) => E.familyOf(c.hex));
   assert.ok(fam.includes('marino'), 'falta el marino: ' + fam);
   assert.ok(fam.includes('marron') || fam.includes('beige') || fam.includes('naranja'), 'falta el camel: ' + fam);
-  assert.ok(!p.some((c) => E.colorDistance(c.hex, '#ECECE9') < 10), 'el fondo sigue en las sugerencias: ' + p.map((c) => c.hex));
+  // la franja blanca es una prenda (camisa) casi del color de la pared: puede salir, pero solo con su superficie, sin sumar la pared
+  assert.ok(p.filter((c) => E.colorDistance(c.hex, '#ECECE9') < 10).every((c) => c.weight <= 25), 'el fondo sigue en las sugerencias: ' + JSON.stringify(p));
   // una imagen lisa (sin persona) no se queda sin nada: vuelve al análisis de siempre
   const flat = { data: new Uint8ClampedArray(40 * 40 * 4).fill(120), width: 40, height: 40 };
   for (let i = 3; i < flat.data.length; i += 4) flat.data[i] = 255;
   assert.equal(I.extractOutfitPalette(flat).length, 1);
   assert.deepEqual(I.extractOutfitPalette(null), []);
 });
-test('Inspiración: fondo = colores del borde en dos o más lados; un pantalón que toca el borde de abajo no es fondo', () => {
+test('Extracción: un pantalón que toca el borde de abajo es primer plano; la pared que rodea a la persona, fondo', () => {
   const s = outfitSample();
   const o = (x, y) => (y * 80 + x) * 4;
   for (let y = 92; y < 100; y++) for (let x = 20; x < 60; x++) { s.data[o(x, y)] = 31; s.data[o(x, y) + 1] = 42; s.data[o(x, y) + 2] = 68; }
-  const bgs = I.backgroundColors(s);
-  assert.equal(bgs.length, 1, 'fondos: ' + bgs.length);
-  assert.ok(E.deltaE2000(bgs[0], E.hexToLab('#ECECE9')) < 3);
+  const fg = E.foregroundMap(s.data, 80, 100);
+  assert.ok(fg[95 * 80 + 40] > 0.6, 'pantalón en el borde: ' + fg[95 * 80 + 40].toFixed(2));
+  assert.ok(fg[5 * 80 + 5] < 0.3 && fg[50 * 80 + 4] < 0.3, 'pared: ' + fg[5 * 80 + 5].toFixed(2) + ' / ' + fg[50 * 80 + 4].toFixed(2));
   assert.ok(I.extractOutfitPalette(s).some((c) => E.familyOf(c.hex) === 'marino'), 'el pantalón que toca el borde se perdió');
+});
+// fotos más realistas: fondo con degradado y textura (ruido determinista), prenda con su sombra y piel
+function rng(seed) { let x = seed; return () => { x = (x * 1103515245 + 12345) & 0x7fffffff; return x / 0x7fffffff; }; }
+function photo({ w = 100, h = 140, bg, bgEnd, noise = 0, figure }) {
+  const data = new Uint8ClampedArray(w * h * 4), r = rng(7), a = E.hexToRgb(bg), b = E.hexToRgb(bgEnd || bg);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const t = y / (h - 1), n = (r() - 0.5) * noise;
+    let c = { r: a.r + (b.r - a.r) * t + n, g: a.g + (b.g - a.g) * t + n, b: a.b + (b.b - a.b) * t + n };
+    const f = figure(x / w, y / h); if (f) { const q = E.hexToRgb(f); const m = (r() - 0.5) * noise * 0.4; c = { r: q.r + m, g: q.g + m, b: q.b + m }; }
+    const o = (y * w + x) * 4; data[o] = c.r; data[o + 1] = c.g; data[o + 2] = c.b; data[o + 3] = 255;
+  }
+  return { data, width: w, height: h };
+}
+// persona: cara (piel), torso (abrigo con un lado en sombra), pantalón hasta el borde de abajo y zapatos
+const person = (coat, shade, trousers, shoes) => (x, y) => {
+  if (y > 0.06 && y < 0.16 && x > 0.44 && x < 0.56) return '#D9A88A';
+  if (y >= 0.16 && y < 0.52 && x > 0.3 && x < 0.7) return x < 0.42 ? shade : coat;
+  if (y >= 0.52 && y < 0.93 && ((x > 0.35 && x < 0.48) || (x > 0.52 && x < 0.65))) return trousers;
+  if (y >= 0.93 && ((x > 0.33 && x < 0.49) || (x > 0.51 && x < 0.67))) return shoes;
+  return null;
+};
+test('Extracción: fondo con degradado y textura fuera; sombra fundida con su prenda; la piel no pasa por delante de las prendas', () => {
+  const s = photo({ bg: '#9FB3B4', bgEnd: '#D7DDDB', noise: 26, figure: person('#1A2C59', '#101B38', '#1A2C59', '#8B4A2B') });
+  const p = I.extractOutfitPalette(s);
+  const near = (hex, t = 12) => p.find((c) => E.colorDistance(c.hex, hex) <= t);
+  assert.ok(near('#1A2C59'), 'falta el marino: ' + JSON.stringify(p));
+  assert.equal(E.colorDistance(p[0].hex, '#1A2C59') <= 12, true, 'el primer color no es el traje: ' + p[0].hex);
+  assert.ok(!p.some((c) => E.colorDistance(c.hex, '#9FB3B4') <= 10 || E.colorDistance(c.hex, '#D7DDDB') <= 10 || E.colorDistance(c.hex, '#BBC8C8') <= 10), 'el fondo sigue: ' + JSON.stringify(p));
+  assert.ok(!near('#101B38', 5) || near('#101B38', 5) === near('#1A2C59'), 'la sombra sale como color aparte');
+  const skin = p.findIndex((c) => E.colorDistance(c.hex, '#D9A88A') <= 10), shoe = p.findIndex((c) => E.colorDistance(c.hex, '#8B4A2B') <= 12);
+  assert.ok(skin < 0 || (shoe >= 0 && shoe < skin) || p[skin].weight <= 6, 'la piel pesa como una prenda: ' + JSON.stringify(p));
+});
+test('Extracción: una prenda camel grande no se pierde aunque parezca piel; fondo de rayas fuera', () => {
+  const stripes = photo({ bg: '#E9E2D0', figure: (x, y) => (x > 0.25 && x < 0.75 && y > 0.12 && y < 0.95 ? '#C8956B' : (Math.floor(x * 100 / 6) % 2 ? '#7A4E2D' : null)) });
+  const p = I.extractOutfitPalette(stripes);
+  assert.ok(E.colorDistance(p[0].hex, '#C8956B') <= 8, 'primer color ' + p[0].hex + ' en ' + JSON.stringify(p));
+  assert.ok(p.filter((c) => E.colorDistance(c.hex, '#7A4E2D') <= 8 || E.colorDistance(c.hex, '#E9E2D0') <= 8).every((c) => c.weight < 12), 'rayas del fondo: ' + JSON.stringify(p));
+});
+test('Extracción: rápida, determinista y sin tonos casi repetidos', () => {
+  const s = photo({ bg: '#B9775A', bgEnd: '#8E4E36', noise: 40, figure: person('#0B0B0B', '#050505', '#2B3F66', '#F2F2F0') });
+  const t = performance.now(), a = I.extractOutfitPalette(s), ms = performance.now() - t;
+  assert.deepEqual(I.extractOutfitPalette(s), a, 'dos análisis de la misma foto dan resultados distintos');
+  assert.ok(ms < 1500, 'tarda ' + ms.toFixed(0) + ' ms');
+  for (let i = 0; i < a.length; i++) for (let j = i + 1; j < a.length; j++) assert.ok(!E.sameGarmentColor(E.hexToLab(a[i].hex), E.hexToLab(a[j].hex)), 'repetidos: ' + a[i].hex + ' y ' + a[j].hex);
 });
 test('Inspiración: máscara opcional (futura segmentación): solo cuenta lo que deja ver', () => {
   const s = outfitSample(), mask = new Uint8Array(80 * 100);
@@ -978,4 +1023,243 @@ test('Inspiración: título a mostrar', () => {
   assert.equal(I.displayTitle({ title: 'Mi look' }), 'Mi look');
   assert.match(I.displayTitle({ source_name: 'zara.com', created_at: '2026-10-01T10:00:00Z' }), /^zara\.com · 1 oct/);
   assert.match(I.displayTitle({ created_at: '2026-10-01T10:00:00Z' }), /^Referencia del 1/);
+});
+
+/* ── Evolución: Biblioteca como referencia común, prenda interior, figura y sugerencias ── */
+const pal = (id, name, hexes, extra) => Object.assign({ id, name, source_type: 'book', colors: hexes.map((hex) => ({ hex, original: hex })) }, extra || {});
+const garm = (id, category, primary_color, extra) => Object.assign({ id, category, primary_color, secondary_colors: [], name: id }, extra || {});
+test('Similitud con una paleta: niveles por ΔE00 (sin exigir el mismo HEX) y una sola prenda no basta', () => {
+  assert.equal(E.similarityLevel(2), 'identical'); assert.equal(E.similarityLevel(5), 'close'); assert.equal(E.similarityLevel(11), 'related'); assert.equal(E.similarityLevel(13), 'none');
+  const p = pal('p', 'Marino y camel', ['#1F2A44', '#B48A5A', '#F4F2EC']);
+  const a = E.paletteAffinity(p, [{ hex: '#22304D', share: 60 }, { hex: '#B98F60', share: 40 }]);
+  assert.equal(a.covered, 2); assert.ok(a.valid); assert.ok(a.meanDE > 0 && a.meanDE <= 6, 'ΔE medio ' + a.meanDE);
+  assert.notEqual(a.links[0].hex, a.links[0].paletteHex, 'no son el mismo HEX y aun así conectan');
+  const one = E.paletteAffinity(p, [{ hex: '#1F2A44', share: 60 }, { hex: '#C0392B', share: 40 }]);
+  assert.equal(one.valid, false, 'una sola prenda en la paleta y otra fuera no la representan');
+  assert.ok(one.offShare >= 0.39);
+});
+test('Prenda interior: hueco propio tras la parte superior, entra en la estructura de datos y en las propuestas', () => {
+  const i = E.SLOTS.findIndex((s) => s.id === 'inner');
+  assert.equal(E.SLOTS[i - 1].id, 'top', 'va inmediatamente después de la parte superior');
+  assert.deepEqual(E.SLOT.inner.categories, ['camisetas', 'camisas']);
+  const v = D.validateOutfit({ name: 'Capas', items: [{ slot: 'top', hex: '#1F2A44', weight: 30 }, { slot: 'inner', hex: '#F4F2EC', weight: 10 }] });
+  assert.ok(v.ok, JSON.stringify(v.errors)); assert.equal(v.value.items[1].slot, 'inner');
+  const garments = [garm('jer', 'jerseis', '#1F2A44'), garm('cam', 'camisas', '#F4F2EC'), garm('naranja', 'camisetas', '#C86A3A'), garm('pan', 'pantalones', '#6B6B6B'), garm('zap', 'calzado', '#3B2A20')];
+  const slots = { top: { garment_id: 'jer', weight: 30 }, inner: { garment_id: 'cam', weight: 10 }, bottom: { garment_id: 'pan', weight: 35 }, shoes: { garment_id: 'zap', weight: 10 } };
+  const items = C.buildItems(slots, garments);
+  assert.deepEqual(items.map((x) => x.slot), ['top', 'inner', 'bottom', 'shoes']);
+  const r = C.proposeDirection('creative', { slots, garments, palettes: [] });
+  assert.ok(r.proposals.some((p) => p.changes.some((ch) => ch.slot === 'inner')), 'la creativa puede usar la prenda interior como acento: ' + JSON.stringify(r.proposals.map((p) => p.changes.map((ch) => ch.slot))));
+  const sock = S.recommendSocks({ trousers: '#6B6B6B', shoes: '#3B2A20', others: [{ hex: '#F4F2EC', label: 'Prenda interior', share: 8 }] });
+  assert.ok(sock.proposals.length >= 2);
+});
+test('Figurín de una paleta: propuesta por sobriedad, calcetines siempre, superficie que suma 100 y prendas editables', () => {
+  [2, 3, 4, 5, 6].forEach((n) => {
+    const hexes = ['#1F2A44', '#C0392B', '#B48A5A', '#2E7D32', '#F1C40F', '#8E44AD'].slice(0, n);
+    const f = C.paletteFigure(pal('p' + n, 'n' + n, hexes));
+    assert.equal(f.illustrative, true); assert.equal(f.auto, true);
+    assert.ok(f.garments.some((g) => g.slot === 'socks'), 'faltan los calcetines con ' + n + ' colores');
+    assert.ok(Math.abs(f.garments.reduce((t, g) => t + g.share, 0) - 100) < 1e-6, 'la figura suma 100');
+    assert.ok(Math.abs(f.colors.reduce((t, c) => t + c.share, 0) - 100) < 1e-6, 'los colores suman 100');
+    assert.equal(f.assignment.outer, 0, 'el marino (el más sobrio) es la prenda exterior');
+  });
+  assert.notEqual(C.paletteFigure(pal('w', 'blanco', ['#FFFFFF', '#1F2A44', '#C0392B'])).assignment.outer, 0, 'un blanco es apoyo, no la base');
+  const p = pal('mc', 'marino camel crudo', ['#1F2A44', '#B48A5A', '#F4F2EC']);
+  const auto = C.paletteFigure(p);
+  assert.equal(auto.assignment.socks, auto.assignment.bottom, 'por defecto, calcetines del color del pantalón');
+  // la persona elige: sin prenda exterior y calcetines camel
+  const mine = C.paletteFigure(p, Object.assign({}, auto.assignment, { outer: null, socks: 1 }));
+  assert.equal(mine.auto, false);
+  assert.ok(!mine.garments.some((g) => g.slot === 'outer'));
+  assert.equal(mine.garments.find((g) => g.slot === 'socks').hex, '#B48A5A');
+  assert.ok(mine.colors.find((c) => c.hex === '#B48A5A').share > auto.colors.find((c) => c.hex === '#B48A5A').share, 'sin abrigo la parte superior gana superficie');
+  // un índice que no existe o quitar una prenda obligatoria vuelve a la propuesta
+  const bad = C.paletteFigure(p, { bottom: 9, shoes: null });
+  assert.equal(bad.assignment.bottom, auto.assignment.bottom); assert.equal(bad.assignment.shoes, auto.assignment.shoes);
+  // colores con la prenda en el nombre (vienen de Inspiración): cada uno en su prenda y sin abrigo inventado
+  const lab = C.paletteFigure({ colors: [{ hex: '#1F2A44', name: 'Jersey' }, { hex: '#EFEADF', name: 'Pantalón' }, { hex: '#9A6A41', name: 'Calzado' }] });
+  assert.deepEqual(lab.assignment, { outer: null, top: 0, bottom: 1, socks: 1, shoes: 2, accessory: null });
+});
+test('Sugerencias de outfits: conjuntos completos con prendas reales, coherentes con la Biblioteca y que se actualizan con el armario', () => {
+  const lib = [pal('mc', 'Marino, crudo y camel', ['#1F2A44', '#F2EEE3', '#9C6B3F']), pal('rv', 'Rojo y verde', ['#C0392B', '#27AE60'])];
+  const base = [garm('jersey', 'jerseis', '#21304A'), garm('chino', 'pantalones', '#EFEADF'), garm('bota', 'calzado', '#9A6A41'), garm('fucsia', 'camisetas', '#E91E63')];
+  const r = C.suggestOutfits({ garments: base, palettes: lib });
+  assert.equal(r.suggestions.length, 1, JSON.stringify(r.suggestions.map((x) => x.palette.name)));
+  const s = r.suggestions[0];
+  assert.equal(s.palette.id, 'mc');
+  assert.deepEqual(Object.keys(s.slots).sort(), ['bottom', 'shoes', 'top']);
+  assert.ok(s.level === 'identical' || s.level === 'close', 'nivel ' + s.level);
+  assert.ok(s.items.every((it) => it.garment && !it.hypothetical), 'solo prendas reales');
+  assert.ok(!Object.values(s.slots).some((x) => x.garment_id === 'fucsia'), 'una prenda fuera de la combinación no entra');
+  // sin una combinación que lo represente en conjunto, no se sugiere nada (mejor nada que algo flojo)
+  assert.equal(C.suggestOutfits({ garments: [garm('a', 'camisetas', '#E91E63'), garm('b', 'pantalones', '#1F2A44'), garm('c', 'calzado', '#F1C40F')], palettes: lib }).suggestions.length, 0);
+  // una prenda nueva entra sola: un abrigo marino se añade como prenda exterior
+  const more = C.suggestOutfits({ garments: base.concat(garm('abrigo', 'chaquetas', '#1C2840')), palettes: lib });
+  assert.ok(more.suggestions.some((x) => x.slots.outer && x.slots.outer.garment_id === 'abrigo'), 'el abrigo nuevo no aparece');
+});
+test('Dirección cromática: la Biblioteca propone completar una combinación con prendas reales y cada propuesta cita su referencia', () => {
+  const lib = [pal('mc', 'Marino, crudo y camel', ['#1F2A44', '#F2EEE3', '#9C6B3F'])];
+  const garments = [garm('gris', 'jerseis', '#6E6E6E'), garm('jersey', 'jerseis', '#21304A'), garm('chino', 'pantalones', '#EFEADF'), garm('bota', 'calzado', '#9A6A41')];
+  const slots = { top: { garment_id: 'gris', weight: 30 }, bottom: { garment_id: 'chino', weight: 35 }, shoes: { garment_id: 'bota', weight: 10 } };
+  const r = C.proposeDirection('balanced', { slots, garments, palettes: lib });
+  const p = r.proposals.find((x) => x.move === 'biblioteca');
+  assert.ok(p, 'sin propuesta de la Biblioteca: ' + JSON.stringify(r.proposals.map((x) => x.move)));
+  assert.equal(p.changes[0].garment.id, 'jersey');
+  assert.equal(p.reference.palette.id, 'mc');
+  assert.ok(p.reference.affinity.valid);
+});
+test('Calcetines: la combinación que representa el outfit completo es la referencia y las propuestas lo citan', () => {
+  const lib = [pal('mc', 'Marino, crudo y camel', ['#1F2A44', '#F2EEE3', '#9C6B3F', '#7A1F2B'])];
+  const r = S.recommendSocks({ trousers: '#EFEADF', shoes: '#9A6A41', others: [{ hex: '#21304A', label: 'Parte superior', share: 40 }], palettes: lib,
+    outfitColors: [{ hex: '#21304A', share: 40 }, { hex: '#EFEADF', share: 45 }, { hex: '#9A6A41', share: 15 }] });
+  assert.equal(r.reference && r.reference.palette.id, 'mc');
+  assert.ok(r.proposals.some((p) => p.reference && p.reference.palette.id === 'mc'), 'ninguna propuesta cita la combinación');
+  const contrast = r.proposals.find((p) => p.type === 'contrast');
+  assert.ok(contrast && contrast.palette && contrast.palette.id === 'mc', 'el contraste sale de la combinación de referencia: ' + JSON.stringify(contrast));
+});
+test('Inspiraciones relacionadas con una combinación: colores próximos (no idénticos) sí; sin relación suficiente, no', () => {
+  const p = pal('mc', 'Marino, crudo y camel', ['#1F2A44', '#F2EEE3', '#9C6B3F']);
+  const items = [
+    { id: 'a', title: 'Casi igual', palette: [{ hex: '#22304B' }, { hex: '#EFEBE0' }, { hex: '#A06E42' }], suggestions: [] },
+    { id: 'b', title: 'Dos de tres', palette: [], suggestions: [{ hex: '#24324F', weight: 50 }, { hex: '#A57446', weight: 30 }, { hex: '#C0392B', weight: 20 }] },
+    { id: 'c', title: 'Uno solo', palette: [{ hex: '#1F2A44' }, { hex: '#E91E63' }], suggestions: [] },
+    { id: 'd', title: 'Nada', palette: [{ hex: '#27AE60' }, { hex: '#F1C40F' }], suggestions: [] }
+  ];
+  const r = I.relatedInspirations(p, items);
+  assert.deepEqual(r.map((x) => x.item.id), ['a', 'b']);
+  assert.ok(['identical', 'close'].includes(r[0].level));
+  assert.equal(r[1].covered, 2);
+});
+test('Con tu armario: el color del pantalón se busca entre pantalones (no entre zapatillas) y el conjunto no repite prenda ni tipo', () => {
+  assert.equal(C.slotFromLabel('Pantalón'), 'bottom'); assert.equal(C.slotFromLabel('Vaquero'), 'bottom'); assert.equal(C.slotFromLabel('Calzado'), 'shoes');
+  assert.equal(C.slotFromLabel('zapatillas blancas'), 'shoes'); assert.equal(C.slotFromLabel('Camisa bajo el jersey'), 'inner'); assert.equal(C.slotFromLabel('Camiseta interior'), 'inner');
+  assert.equal(C.slotFromLabel('Jersey'), 'top'); assert.equal(C.slotFromLabel('Abrigo'), 'outer'); assert.equal(C.slotFromLabel('Calcetines'), 'socks'); assert.equal(C.slotFromLabel('Cinturón'), 'accessory');
+  assert.equal(C.slotFromLabel('beige bonito'), null); assert.equal(C.slotFromLabel(''), null);
+  const wardrobe = [garm('zapas', 'calzado', '#F1EEE6'), garm('chino', 'pantalones', '#E2DACB'), garm('jersey', 'jerseis', '#22304B'), garm('bota', 'calzado', '#6B4A33'), garm('calc', 'calcetines', '#23314C')];
+  // caso del fallo: el color del pantalón está más cerca de las zapatillas que del chino
+  const labeled = C.matchColorsToWardrobe([{ hex: '#F0ECE3', label: 'Pantalón' }, { hex: '#6A4934', label: 'Calzado' }, { hex: '#21304A', label: 'Jersey' }], wardrobe);
+  assert.ok(E.colorDistance('#F0ECE3', '#F1EEE6') < E.colorDistance('#F0ECE3', '#E2DACB'), 'el caso de prueba reproduce el fallo');
+  assert.deepEqual(labeled.map((r) => r.candidate && r.candidate.garment.id), ['chino', 'bota', 'jersey']);
+  assert.deepEqual(labeled.map((r) => r.slot), ['bottom', 'shoes', 'top']);
+  // con etiqueta y sin una prenda de ese tipo en ese color: no se cambia de tipo
+  const none = C.matchColorsToWardrobe([{ hex: '#F1EEE6', label: 'Abrigo' }], wardrobe);
+  assert.equal(none[0].candidate, null); assert.equal(none[0].slot, 'outer');
+  // sin etiquetas: un conjunto coherente (no dos calzados; un color con mucha presencia no va a calcetines)
+  const free = C.matchColorsToWardrobe([{ hex: '#F0ECE3', weight: 40 }, { hex: '#E6DED0', weight: 30 }, { hex: '#22304B', weight: 30 }], wardrobe);
+  const slots = free.filter((r) => r.candidate).map((r) => r.candidate.slot);
+  assert.equal(new Set(slots).size, slots.length, 'huecos repetidos: ' + slots);
+  assert.equal(new Set(free.filter((r) => r.candidate).map((r) => r.candidate.garment.id)).size, slots.length, 'prenda repetida');
+  assert.ok(!slots.includes('socks'), 'un color con el 30 % de presencia propuesto como calcetines');
+  // la sección de Inspiración (adaptPalette sin outfit) usa las etiquetas
+  const rows = C.adaptPalette({ colors: [{ hex: '#F0ECE3', label: 'Pantalón' }, { hex: '#6A4934', label: 'Calzado' }] }, { slots: {}, garments: wardrobe, palettes: [] });
+  assert.deepEqual(rows.map((r) => r.candidate && r.candidate.garment.id), ['chino', 'bota']);
+  assert.deepEqual(rows.map((r) => r.wanted), ['bottom', 'shoes']);
+});
+test('Tipos de prenda: lista fija común a Inspiración y Armario, guardada en la subcategoría y con cruce exacto por tipo', () => {
+  assert.deepEqual(I.GARMENT_LABELS, E.GARMENT_TYPES.map((t) => t.label), 'Inspiración usa la misma lista que el armario');
+  E.GARMENT_TYPES.forEach((t) => { assert.ok(E.CATEGORY_LABEL[t.category], t.label + ' sin categoría válida'); assert.ok(E.SLOT[t.slot], t.label + ' sin hueco'); assert.equal(C.slotFromLabel(t.label), t.slot, t.label); });
+  assert.deepEqual(E.splitSubcategory('Deportiva · running'), { type: 'Deportiva', detail: 'running' });
+  assert.deepEqual(E.splitSubcategory('Bota'), { type: 'Bota', detail: null });
+  assert.deepEqual(E.splitSubcategory('chino'), { type: null, detail: 'chino' }, 'una subcategoría antigua se conserva como detalle');
+  assert.equal(E.joinSubcategory('Bota', ' chelsea '), 'Bota · chelsea'); assert.equal(E.joinSubcategory('Camisa', ''), 'Camisa');
+  // prendas anteriores (sin tipo guardado): el tipo se deduce
+  assert.equal(E.garmentType({ category: 'calzado', subcategory: 'zapatillas blancas' }), 'Deportiva');
+  assert.equal(E.garmentType({ category: 'calzado', subcategory: null, name: 'Oxford' }), 'Zapato');
+  assert.equal(E.garmentType({ category: 'pantalones' }), 'Pantalón');
+  assert.equal(E.garmentType({ category: 'calzado', subcategory: 'Mocasín · penny' }), 'Mocasín');
+  assert.equal(S.inferShoeType('Deportiva · running'), 'technical', 'la guía de calcetines sigue leyendo el tipo de calzado');
+  assert.equal(S.inferShoeType('Bota'), 'boot');
+  // cruce exacto: el color «Deportiva» prefiere tus deportivas a un zapato del mismo color (aunque el zapato esté más cerca)
+  const w = [garm('zapato', 'calzado', '#F1EFEA', { subcategory: 'Zapato' }), garm('depor', 'calzado', '#ECE8DF', { subcategory: 'Deportiva' })];
+  assert.ok(E.colorDistance('#F2F0EB', '#F1EFEA') < E.colorDistance('#F2F0EB', '#ECE8DF'));
+  assert.equal(C.matchColorsToWardrobe([{ hex: '#F2F0EB', label: 'Deportiva' }], w)[0].candidate.garment.id, 'depor');
+  assert.equal(C.matchColorsToWardrobe([{ hex: '#F2F0EB', label: 'Zapato' }], w)[0].candidate.garment.id, 'zapato');
+});
+test('Figurín: el calzado admite negro, blanco y marrón además de los colores de la paleta (señalados como fuera de ella)', () => {
+  const p = pal('mc', 'marino camel crudo', ['#1F2A44', '#B48A5A', '#F4F2EC']);
+  assert.deepEqual(C.SHOE_COLORS.map((c) => c.name), ['negro', 'blanco', 'marrón']);
+  const f = C.paletteFigure(p, { shoes: '#5A3A24' });
+  assert.equal(f.garments.find((g) => g.slot === 'shoes').hex, '#5A3A24');
+  const extra = f.colors.find((c) => c.extra);
+  assert.ok(extra && extra.name === 'marrón' && extra.slots.join() === 'shoes');
+  assert.ok(Math.abs(f.colors.reduce((t, c) => t + c.share, 0) - 100) < 1e-6);
+  // solo el calzado: en otra prenda un HEX ajeno a la paleta no vale y vuelve a la propuesta
+  const bad = C.paletteFigure(p, { bottom: '#1C1C1C' });
+  assert.equal(bad.assignment.bottom, C.paletteFigure(p).assignment.bottom);
+});
+test('Figurín: los calcetines tienen siempre el blanco disponible, aunque la paleta no lo tenga', () => {
+  const p = pal('mcr', 'marino camel teja', ['#1F2A44', '#B48A5A', '#C0392B']);
+  assert.deepEqual(C.EXTRA_COLORS.socks.map((c) => c.name), ['blanco']);
+  const f = C.paletteFigure(p, { socks: '#F3F2EE' });
+  assert.equal(f.garments.find((g) => g.slot === 'socks').hex, '#F3F2EE');
+  assert.ok(f.colors.find((c) => c.extra && c.slots.join() === 'socks'), 'el blanco no sale como color fuera de la paleta');
+  // calcetines y calzado blancos: un solo color en la leyenda
+  const both = C.paletteFigure(p, { socks: '#F3F2EE', shoes: '#F3F2EE' });
+  assert.deepEqual(both.colors.filter((c) => c.extra).map((c) => c.slots.join()), ['socks,shoes']);
+  // el marrón es solo de calzado: en calcetines no vale y vuelve a la propuesta
+  assert.equal(C.paletteFigure(p, { socks: '#5A3A24' }).assignment.socks, C.paletteFigure(p).assignment.socks);
+});
+test('Corrección de la luz: un neutro tomado de la foto devuelve el gris y corrige el resto; un punto con color no sirve', () => {
+  const g = E.neutralGains('#F2E6CF');                     // camisa blanca con luz cálida
+  assert.ok(g && g.length === 3);
+  const fixed = E.labToLch(E.hexToLab(E.applyGainsHex('#F2E6CF', g)));
+  assert.ok(fixed.C < 1.5, 'el neutro no queda gris: C ' + fixed.C.toFixed(2));
+  assert.ok(Math.abs(fixed.L - E.labToLch(E.hexToLab('#F2E6CF')).L) < 1.5, 'la corrección cambió la luminosidad del neutro');
+  // el mismo desplazamiento cálido aplicado a un azul marino se deshace
+  const warm = (hex) => { const c = E.hexToRgb(hex); const k = [1.06, 1.0, 0.86]; return E.rgbToHex(Math.min(255, c.r * k[0]), c.g * k[1], c.b * k[2]); };
+  const g2 = E.neutralGains(warm('#E8E8E8'));
+  assert.ok(E.colorDistance(E.applyGainsHex(warm('#2B4C7E'), g2), '#2B4C7E') < E.colorDistance(warm('#2B4C7E'), '#2B4C7E'), 'el azul no se acerca a su color real');
+  assert.equal(E.neutralGains('#C0392B'), null, 'un rojo no es una referencia neutra');
+  assert.equal(E.neutralGains('#050505'), null, 'casi negro no sirve');
+  const px = { data: Uint8ClampedArray.from([242, 230, 207, 255, 10, 20, 30, 0]), width: 2, height: 1 };
+  const out = E.applyGains(px, g);
+  assert.equal(out.data[7], 0, 'la transparencia se conserva'); assert.equal(px.data[0], 242, 'la imagen original no cambia');
+  assert.equal(E.applyGains(px, null), px);
+});
+test('Sugerencias: como mucho una prenda grande estampada (dos dibujos compiten)', () => {
+  const lib = [pal('mc', 'Marino, crudo y camel', ['#1F2A44', '#F2EEE3', '#9C6B3F'])];
+  const base = [garm('jersey', 'jerseis', '#21304A', { pattern: 'rayas' }), garm('chino', 'pantalones', '#EFEADF', { pattern: 'cuadros' }), garm('bota', 'calzado', '#9A6A41')];
+  assert.equal(C.suggestOutfits({ garments: base, palettes: lib }).suggestions.length, 0, 'jersey de rayas con pantalón de cuadros');
+  const one = base.map((g) => g.id === 'chino' ? Object.assign({}, g, { pattern: 'liso' }) : g);
+  assert.equal(C.suggestOutfits({ garments: one, palettes: lib }).suggestions.length, 1, 'con un solo estampado sí');
+});
+test('Corrección de la luz: un azul marino no se acepta como neutro; un blanco con luz cálida, sí', () => {
+  assert.equal(E.neutralGains('#2E4A6E'), null);
+  assert.ok(E.neutralGains('#E9D9B8'));
+});
+test('Contexto: temporada y formalidad por prenda (vacío = todo el año / cualquier ocasión) y validación', () => {
+  assert.equal(C.seasonOf(new Date(2026, 2, 21)), 'primavera'); assert.equal(C.seasonOf(new Date(2026, 6, 1)), 'verano');
+  assert.equal(C.seasonOf(new Date(2026, 10, 4)), 'otono'); assert.equal(C.seasonOf(new Date(2026, 0, 15)), 'invierno'); assert.equal(C.seasonOf(new Date(2026, 11, 31)), 'invierno');
+  const g = (seasons, formality) => ({ seasons, formality });
+  assert.ok(C.fitsContext(g([], null), { season: 'invierno', occasion: 'formal' }), 'sin datos vale para todo');
+  assert.ok(!C.fitsContext(g(['verano'], null), { season: 'invierno' }));
+  assert.ok(C.fitsContext(g(['verano', 'invierno'], null), { season: 'invierno' }));
+  assert.ok(!C.fitsContext(g([], 'casual'), { occasion: 'formal' })); assert.ok(!C.fitsContext(g([], 'formal'), { occasion: 'casual' }));
+  assert.ok(C.fitsContext(g([], 'formal'), { occasion: 'smart' }) && C.fitsContext(g([], 'casual'), { occasion: 'smart' }), 'smart casual admite todo');
+  assert.ok(C.fitsContext(g(['verano'], 'casual'), null), 'sin contexto no filtra');
+  const ok = D.validateGarment({ category: 'camisas', primary_color: '#F4F2EC', seasons: ['otono', 'primavera', 'nada', 'otono'], formality: 'smart' });
+  assert.ok(ok.ok); assert.deepEqual(ok.value.seasons, ['primavera', 'otono']); assert.equal(ok.value.formality, 'smart');
+  assert.equal(D.validateGarment({ category: 'camisas', primary_color: '#F4F2EC', formality: 'gala' }).value.formality, null);
+  assert.ok(!('seasons' in D.validateGarment({ category: 'camisas', primary_color: '#F4F2EC' }).value), 'sin el campo no se toca la columna');
+});
+test('Sugerencias con contexto y uso: filtra por temporada y ocasión, sube lo que gusta y baja lo llevado hace poco', () => {
+  const lib = [pal('mc', 'Marino, crudo y camel', ['#1F2A44', '#F2EEE3', '#9C6B3F']), pal('gc', 'Gris, crudo y camel', ['#6E6E6E', '#F2EEE3', '#9C6B3F'])];
+  const base = [garm('jersey', 'jerseis', '#21304A', { seasons: ['invierno'] }), garm('gris', 'jerseis', '#6F6F6F'), garm('chino', 'pantalones', '#EFEADF'), garm('bota', 'calzado', '#9A6A41', { formality: 'casual' })];
+  const all = C.suggestOutfits({ garments: base, palettes: lib });
+  assert.equal(all.suggestions.length, 2);
+  const summer = C.suggestOutfits({ garments: base, palettes: lib, context: { season: 'verano' } });
+  assert.deepEqual(summer.suggestions.map((x) => x.palette.id), ['gc'], 'el jersey de invierno no va en verano');
+  assert.equal(C.suggestOutfits({ garments: base, palettes: lib, context: { occasion: 'formal' } }).suggestions.length, 0, 'la bota informal no va en formal');
+  const today = new Date(2026, 10, 4, 12);
+  const sigOf = (x) => x.garmentIds.slice().sort().join();
+  const mc = all.suggestions.find((x) => x.palette.id === 'mc'), gc = all.suggestions.find((x) => x.palette.id === 'gc');
+  const liked = C.suggestOutfits({ garments: base, palettes: lib, today, wear: [{ id: 'w1', kind: 'liked', garment_ids: gc.garmentIds.slice().reverse(), worn_on: '2026-10-01' }] });
+  assert.equal(liked.suggestions[0].palette.id, 'gc', 'lo que gusta sube'); assert.equal(liked.suggestions[0].likedId, 'w1');
+  const worn = C.suggestOutfits({ garments: base, palettes: lib, today, wear: [{ id: 'w2', kind: 'worn', garment_ids: liked.suggestions[0].garmentIds, worn_on: '2026-11-01' }, { id: 'w1', kind: 'liked', garment_ids: gc.garmentIds, worn_on: '2026-10-01' }] });
+  assert.equal(worn.suggestions[0].palette.id, 'mc', 'lo llevado hace 3 días baja aunque guste');
+  const g2 = worn.suggestions.find((x) => sigOf(x) === sigOf(gc));
+  assert.equal(g2.lastWorn, 3); assert.ok(g2.recent && g2.liked);
+  const idx = C.wearIndex([{ kind: 'worn', garment_ids: ['b', 'a'], worn_on: '2026-10-01' }, { kind: 'worn', garment_ids: ['a', 'b'], worn_on: '2026-11-04' }], today);
+  assert.equal(idx['a,b'].lastWorn, 0, 'cuenta la vez más reciente');
+  assert.ok(sigOf(mc));
 });

@@ -455,8 +455,8 @@ body:has(.cs) { --off: #FBFBFB; background: #FBFBFB; }
   .cs-studio { display: flex; flex-direction: column; }
   .cs-studio > .cs-col { display: contents; }
   .cs-studio .cs-card, .cs-col > .cs-card:first-child, .cs-col--side > .cs-card:first-child { border-top: 1px solid var(--cs-line); padding-top: 20px; }
-  .cs-o-slots { order: 1; } .cs-o-dir, .cs-o-gaps { order: 2; } .cs-o-socks { order: 3; } .cs-o-compose { order: 4; } .cs-o-refs { order: 5; }
-  .cs-o-manual { order: 6; } .cs-o-how { order: 7; } .cs-o-outfits { order: 8; } .cs-o-save { order: 9; }
+  .cs-o-slots { order: 1; } .cs-o-dir, .cs-o-gaps { order: 2; } .cs-o-socks { order: 3; } .cs-o-sugg { order: 4; } .cs-o-compose { order: 5; } .cs-o-refs { order: 6; }
+  .cs-o-manual { order: 7; } .cs-o-how { order: 8; } .cs-o-outfits { order: 9; } .cs-o-save { order: 10; }
   .cs-studio > .cs-col > .cs-o-slots { border-top: 0; padding-top: 4px; }
   .cs-o-save.is-ready { position: sticky; bottom: 0; z-index: 5; margin: 0 -16px; padding: 12px 16px; background: #FBFBFB; border-top: 1px solid var(--cs-line); }
   .cs-o-save.is-ready .cs-save-btn { width: 100%; justify-content: center; }
@@ -648,3 +648,114 @@ body:has(.cs) { --off: #FBFBFB; background: #FBFBFB; }
 .cs-gap-list { list-style: none; display: grid; gap: 12px; }
 .cs-gap { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 10px; align-items: start; }
 .cs-gap-txt { display: grid; gap: 2px; min-width: 0; }
+
+/* ═══════════ Evolución: cierre, vistas, figura, sugerencias y referencia de la Biblioteca ═══════════ */
+/* Cierre: X fija arriba a la derecha en hojas y formularios (la cabecera de la hoja ya es sticky) */
+.cs-x { flex: none; display: inline-grid; place-items: center; width: 44px; height: 44px; margin: -6px -10px -6px 0; padding: 0; border: 0; border-radius: 999px; background: none; color: var(--cs-ink); cursor: pointer; }
+.cs-x svg { width: 22px; height: 22px; }
+@media (hover: hover) and (pointer: fine) { .cs-x:hover { background: rgba(0, 0, 0, .06); } }
+.cs-x:focus-visible { outline: 2px solid var(--cs-focus); outline-offset: 2px; }
+.cs-x-wrap { position: sticky; top: 0; z-index: 4; height: 0; display: flex; justify-content: flex-end; }
+.cs-x-wrap .cs-x { margin: -18px -18px 0 0; background: rgba(255, 255, 255, .92); box-shadow: 0 1px 0 rgba(0, 0, 0, .06); }
+.cs-form .ap-dialog-title { padding-right: 40px; }
+/* Con un modal abierto la página no se desplaza detrás; los modales no encadenan el desplazamiento */
+html.cs-locked, html.cs-locked body { overflow: hidden; }
+.cs-sheet, .cs-form { overscroll-behavior: contain; }
+
+/* Selector Fotografía / Gama de colores (Inspiración y Armario) */
+.cs-viewseg .cs-seg-b { padding: 0 14px; }
+.cs-ward-bar { justify-content: flex-start; margin: 0 0 12px; }
+/* Gama: foto a la izquierda y su paleta en columna proporcional a la derecha (mismo componente en las dos secciones) */
+.cs-gamut { position: absolute; top: 0; right: 0; bottom: 0; width: 34%; display: flex; flex-direction: column; box-shadow: inset 1px 0 0 rgba(255, 255, 255, .7); }
+.cs-gamut-c { flex: 1 1 0; min-height: 6px; }
+.cs-ins-media.is-gamut img, .cs-thumb.is-gamut img { width: 66%; }
+.cs-ins-media.is-gamut, .cs-thumb.is-gamut { background: var(--cs-line-soft); }
+
+/* Figurín del outfit: lámina clara con el figurín centrado y la leyenda al lado */
+.cs-fig { display: grid; grid-template-columns: minmax(150px, 210px) minmax(0, 1fr); gap: 22px; align-items: start; margin: 4px 0 6px; }
+.cs-fig-art { position: relative; display: grid; place-items: center; padding: 18px 10px 10px; border-radius: 14px; background: linear-gradient(180deg, #F3F1ED 0%, #EAE7E1 100%); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .05); overflow: hidden; }
+.cs-fig-svg path, .cs-fig-svg ellipse, .cs-fig-svg rect { vector-effect: non-scaling-stroke; }   /* el contorno queda en 1 px a cualquier tamaño */
+.cs-fig-svg { position: relative; display: block; width: 100%; max-width: 168px; height: auto; }
+.cs-fig-cap { display: grid; gap: 12px; align-content: start; }
+.cs-fig-legend { list-style: none; display: grid; gap: 8px; }
+.cs-fig-legend li { display: grid; grid-template-columns: 16px minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: 14px; }
+.cs-fig-n { display: grid; min-width: 0; }
+.cs-fig-w { font-size: 12.5px; color: var(--cs-muted); }
+/* Editor: una fila por prenda con las muestras de la paleta */
+.cs-fig-edit { display: grid; gap: 6px; padding-top: 12px; border-top: 1px solid var(--cs-line); }
+.cs-fig-row { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 10px; align-items: center; }
+.cs-fig-k { font-size: 12.5px; font-weight: 600; color: var(--cs-muted); }
+.cs-fig-opts { display: flex; flex-wrap: wrap; gap: 6px; }
+.cs-fig-sw { position: relative; width: 30px; height: 30px; padding: 0; border: 0; border-radius: 50%; cursor: pointer; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .14); background: var(--cs-paper); }
+.cs-fig-sw[aria-checked="true"] { box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .14), 0 0 0 2px #FBFBFB, 0 0 0 4px var(--cs-ink); }
+.cs-fig-sw.is-none .cs-fig-none { position: absolute; inset: 7px; border-radius: 50%; background: linear-gradient(135deg, transparent 46%, var(--cs-muted) 46%, var(--cs-muted) 54%, transparent 54%); }
+.cs-fig-sw:focus-visible { outline: 2px solid var(--cs-focus); outline-offset: 4px; }
+.cs-fig-sw.is-sep { margin-left: 10px; }   /* negro, blanco y marrón del calzado: aparte de los colores de la paleta */
+.cs-fig-sw.is-sep::before { content: ''; position: absolute; left: -9px; top: 4px; bottom: 4px; width: 1px; background: var(--cs-line-strong); }
+@media (pointer: coarse) and (min-width: 560px) { .cs-fig-sw { width: 40px; height: 40px; } .cs-fig-opts { gap: 8px; } }
+.cs-fig.is-compact { grid-template-columns: 1fr; margin: 0; }
+.cs-fig.is-compact .cs-fig-art { padding: 8px 2px 2px; border-radius: 10px; }
+.cs-fig.is-compact .cs-fig-svg { max-width: 108px; }
+/* móvil: el figurín a la izquierda y fijo mientras se eligen colores a la derecha (se ve el cambio sin desplazarse) */
+@media (max-width: 559.98px) {
+  .cs-fig:not(.is-compact) { grid-template-columns: 124px minmax(0, 1fr); gap: 14px; }
+  .cs-fig:not(.is-compact) .cs-fig-art { position: sticky; top: 64px; padding: 10px 4px 6px; border-radius: 12px; }
+  .cs-fig-legend li { font-size: 13px; gap: 8px; }
+  .cs-fig-row { grid-template-columns: 1fr; gap: 4px; }
+  .cs-fig-sw { width: 38px; height: 38px; }
+  .cs-fig-opts { gap: 7px; }
+}
+/* Detalle de la paleta: figura y colores */
+.cs-pal-look { display: grid; gap: 14px; margin: 14px 0 6px; }
+.cs-pal-look-rest { display: grid; gap: 10px; }
+.cs-swatches--side { margin: 0; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.cs-swatches--side .cs-swatch { grid-template-columns: 48px minmax(0, 1fr); gap: 10px; }
+.cs-swatches--side .cs-swatch-big { height: 40px; }
+/* Inspiraciones relacionadas con la combinación */
+.cs-pal-insp-list { list-style: none; display: grid; gap: 4px; }
+.cs-pal-insp-b { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; align-items: center; width: 100%; min-height: 48px; padding: 6px 0; border: 0; background: none; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+.cs-pal-insp-media { width: 64px; aspect-ratio: 4 / 5; border-radius: 8px; }
+.cs-pal-insp-txt { display: grid; gap: 4px; justify-items: start; min-width: 0; }
+.cs-pal-insp-txt .cs-fine { margin: 0; }
+.cs-pal-insp-dots { display: inline-flex; gap: 4px; }
+.cs-pal-insp-dot { width: 14px; height: 14px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .12); }
+.cs-pal-insp-dot.is-miss { opacity: .35; }
+@media (hover: hover) and (pointer: fine) { .cs-pal-insp-b:hover .cs-ins-sim-t { text-decoration: underline; text-underline-offset: 3px; } }
+
+/* Referencia de la Biblioteca (dirección, calcetines, sugerencias) */
+.cs-libref { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-top: 8px; font-size: 13px; color: var(--cs-muted); }
+.cs-libref-k { color: var(--cs-muted); }
+.cs-libref-n { color: var(--cs-ink); font-weight: 600; }
+.cs-band--libref { width: 56px; height: 14px; border-radius: 3px; }
+.cs-fit--ref { margin-top: 10px; }
+
+/* Outfits con tu armario */
+.cs-sugg-list { list-style: none; display: grid; gap: 14px; }
+.cs-sugg-item { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 14px; padding: 12px; border: 1px solid var(--cs-line); border-radius: 12px; background: var(--cs-paper); }
+.cs-sugg-body { display: grid; gap: 6px; align-content: start; min-width: 0; justify-items: start; }
+.cs-sugg-g { list-style: none; display: grid; gap: 6px; width: 100%; }
+.cs-sugg-g li { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 10px; align-items: center; }
+.cs-sugg-g .cs-thumb--s { width: 36px; height: 36px; }
+.cs-sugg-gt { display: grid; min-width: 0; }
+.cs-sugg-gt .cs-slot-n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cs-sugg-meta { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+.cs-sugg-meta .cs-fine { margin: 0; }
+.cs-sugg-ctx { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin: 0 0 14px; }
+.cs-sugg-act { display: flex; flex-wrap: wrap; gap: 8px; }
+.cs-chips--wrap { flex-wrap: wrap; overflow: visible; padding-bottom: 2px; }
+@media (min-width: 1100px) { .cs-sugg-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 359.98px) { .cs-sugg-item { grid-template-columns: 76px minmax(0, 1fr); gap: 10px; padding: 10px; } }
+
+/* Alta en lote y revisión de tipos (Armario) */
+.cs-ward-review { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; justify-content: space-between; margin: 0 0 12px; padding: 10px 12px; border: 1px solid var(--cs-line); border-radius: 10px; background: var(--cs-paper); }
+.cs-batch { list-style: none; display: grid; gap: 10px; }
+.cs-batch-row { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 12px; align-items: start; padding: 10px; border: 1px solid var(--cs-line); border-radius: 12px; background: var(--cs-paper); }
+.cs-batch-row.is-error { border-color: var(--red, #B3261E); }
+.cs-batch-media { width: 72px; height: 90px; }
+.cs-batch-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cs-batch-media.is-loading { background: linear-gradient(90deg, var(--cs-line-soft), #F6F5F2, var(--cs-line-soft)); }
+.cs-batch-fields { display: grid; gap: 8px; justify-items: start; min-width: 0; }
+.cs-batch-fields .apf-select, .cs-batch-name { width: 100%; max-width: 320px; min-height: 44px; padding: 8px 10px; font: inherit; font-size: 15px; border: 1px solid var(--ap-line-strong, #C4C4BE); border-radius: 8px; background: var(--cs-paper); }
+.cs-batch-fields .cs-fine { margin: 0; }
+/* Corrección de la luz */
+.cs-wb-ok { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; font-size: 13.5px; }
