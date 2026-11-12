@@ -1,0 +1,154 @@
+/* ═══════════════════════════════════════════════
+   tools/manual-estudio/publish.mjs: sube el «Manual de estudio» a tu Supabase (tabla me_docs, privada con RLS)
+   ─────────────────────────────────────────────────
+     node tools/manual-estudio/publish.mjs --src <carpeta> --dry-run   valida y enseña qué subiría (sin red ni contraseña)
+     node tools/manual-estudio/publish.mjs --src <carpeta>             valida y sube (upsert por id)
+     node tools/manual-estudio/publish.mjs --src <carpeta> --prune --yes   además borra de la base lo que ya no está en los archivos
+   Origen del contenido: una carpeta LOCAL fuera de este repositorio con content.js, capitulos.js e indicadores.js, tal como
+   los genera su build.py. Se indica con --src <ruta> o con la variable ME_SRC (no hay ruta por defecto: el nombre de la
+   carpeta no debe quedar en este repositorio público).
+   Usa el MISMO acceso que la web: inicia sesión como tú con la clave pública y escribe a través de las políticas RLS de
+   supabase/manual-estudio.sql. No hace falta la service_role.
+   Contraseña: ME_PASSWORD o, mejor, el prompt que sale al ejecutarlo en tu terminal (no se muestra). Sin terminal
+   interactivo (p. ej. dentro de una sesión de Claude Code) y sin ME_PASSWORD, no sube: es a propósito.
+   ═══════════════════════════════════════════════ */
+import { readFileSync, existsSync } from 'node:fs';
+import { join, resolve, dirname } from 'node:path';
+import { createInterface } from 'node:readline';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import vm from 'node:vm';
+
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
+const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+const MAX_BYTES = 380000;   // la tabla admite < 400000 por documento
+
+function fromShell(name) {
+  const m = new RegExp(`var ${name} = '([^']+)'`).exec(readFileSync(join(ROOT, 'area-privada.js'), 'utf8'));
+  return m ? m[1] : null;
+}
+const j = async (r) => { const t = await r.text(); try { return t ? JSON.parse(t) : {}; } catch { return {}; } };
+const slugify = (s) => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 80) || 'x';
+
+/* Carga los tres archivos de datos (scripts de navegador con «var …») en un contexto aislado */
+export function loadSource(src) {
+  const files = ['content.js', 'capitulos.js', 'indicadores.js'].map((f) => join(src, f));
+  files.forEach((f) => { if (!existsSync(f)) throw new Error(`No encuentro ${f}. Ejecuta antes «python build.py» en la carpeta del manual.`); });
+  const code = files.map((f) => readFileSync(f, 'utf8')).join('\n;\n') +
+    '\n;({ MANUAL, BLOCKS, GLOSS, TOPICS, BOOK, INDIC: typeof INDIC === "undefined" ? [] : INDIC, INDFAM: typeof INDFAM === "undefined" ? [] : INDFAM })';
+  return vm.runInNewContext(code, {}, { timeout: 5000 });
+}
+
+/* Parte el HTML de un capítulo en trozos (uno por apartado de primer nivel y el anexo) y reparte sus apartados */
+export function chunksOf(tid, book) {
+  const parts = String(book.html).split(/(?=<h3 class="s1"|<details class="note")/).filter(Boolean);
+  return parts.map((html, i) => {
+    const secs = book.secs.filter((s) => html.indexOf(`id="${s.id}"`) > -1);
+    return { t: tid, i, html, secs };
+  });
+}
+
+export function toRows(d) {
+  const rows = [];
+  const M = d.MANUAL;
+  rows.push({ id: 'meta:manual', kind: 'meta', pos: 0, data: { title: M.title, edition: M.edition, heroTitle: M.heroTitle, lead: M.lead, sources: M.sources } });
+  d.BLOCKS.forEach((b, i) => rows.push({ id: `block:${b.id}`, kind: 'block', pos: i, data: b }));
+  d.TOPICS.forEach((t, i) => {
+    rows.push({ id: `topic:${t.id}`, kind: 'topic', pos: i, data: t });
+    chunksOf(t.id, d.BOOK[t.id]).forEach((c) => rows.push({ id: `chunk:${t.id}:${String(c.i).padStart(3, '0')}`, kind: 'chunk', pos: i * 1000 + c.i, data: c }));
+  });
+  const seen = {};
+  d.GLOSS.forEach((g, i) => { let k = slugify(g.k); while (seen[k]) k += '-2'; seen[k] = 1; rows.push({ id: `gloss:${k}`, kind: 'gloss', pos: i, data: g }); });
+  d.INDFAM.forEach((f, i) => rows.push({ id: `fam:${f.id}`, kind: 'fam', pos: i, data: f }));
+  d.INDIC.forEach((x, i) => rows.push({ id: `indic:${x.id}`, kind: 'indic', pos: i, data: x }));
+  return rows;
+}
+
+export function validate(d, rows) {
+  const errors = [];
+  if (!d.MANUAL || !d.MANUAL.title) errors.push('Falta MANUAL.title en content.js.');
+  d.TOPICS.forEach((t) => {
+    if (!SLUG.test(t.id)) errors.push(`Capítulo con id no válido: ${t.id}`);
+    if (!d.BOOK[t.id]) errors.push(`Falta el texto del capítulo ${t.id} en capitulos.js.`);
+  });
+  d.BLOCKS.forEach((b) => { if (!SLUG.test(b.id)) errors.push(`Bloque con id no válido: ${b.id}`); });
+  d.INDIC.forEach((x) => { if (!SLUG.test(x.id)) errors.push(`Indicador con id no válido: ${x.id}`); });
+  d.INDFAM.forEach((f) => { if (!SLUG.test(f.id)) errors.push(`Familia con id no válido: ${f.id}`); });
+  const ids = new Set();
+  rows.forEach((r) => {
+    if (ids.has(r.id)) errors.push(`Id repetido: ${r.id}`); ids.add(r.id);
+    const n = Buffer.byteLength(JSON.stringify(r.data), 'utf8');
+    if (n > MAX_BYTES) errors.push(`${r.id} ocupa ${n} bytes (máximo ${MAX_BYTES}).`);
+  });
+  return errors;
+}
+
+async function login(env) {
+  const url = (env.ME_SUPABASE_URL || fromShell('SUPABASE_URL') || '').replace(/\/$/, '');
+  const key = env.ME_SUPABASE_KEY || fromShell('SUPABASE_KEY');
+  const email = env.ME_EMAIL || fromShell('OWNER_EMAIL');
+  const password = env.ME_PASSWORD;
+  if (!url || !key || !email) throw new Error('Falta la URL, la clave pública o el email de Supabase.');
+  if (!password) throw new Error('Falta la contraseña: ejecuta el comando en tu terminal (te la pedirá sin mostrarla) o define ME_PASSWORD.');
+  const auth = await fetch(`${url}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: key, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
+  const a = await j(auth);
+  if (!auth.ok || !a.access_token) throw new Error(`Inicio de sesión rechazado (HTTP ${auth.status}).`);
+  return { url, headers: { apikey: key, Authorization: `Bearer ${a.access_token}`, 'Content-Type': 'application/json' } };
+}
+
+async function publish(rows, { prune, env, log }) {
+  const { url, headers } = await login(env);
+  let sent = 0;
+  for (let i = 0; i < rows.length; i += 25) {
+    const chunk = rows.slice(i, i + 25);
+    const r = await fetch(`${url}/rest/v1/me_docs?on_conflict=id`, { method: 'POST', headers: { ...headers, Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify(chunk) });
+    if (!r.ok) { const d = await j(r); throw new Error(`La base rechazó la subida (HTTP ${r.status}${d.code ? `, ${d.code}` : ''}). ¿Ejecutaste supabase/manual-estudio.sql?`); }
+    sent += chunk.length; log(`  subidos ${sent}/${rows.length}`);
+  }
+  let pruned = 0;
+  if (prune) {
+    const r = await fetch(`${url}/rest/v1/me_docs?select=id&limit=10000`, { headers });
+    if (!r.ok) throw new Error(`No se pudo leer la base para podar (HTTP ${r.status}).`);
+    const keep = new Set(rows.map((x) => x.id)), stale = (await j(r)).map((x) => x.id).filter((id) => !keep.has(id));
+    for (const id of stale) {
+      const d = await fetch(`${url}/rest/v1/me_docs?id=eq.${encodeURIComponent(id)}`, { method: 'DELETE', headers });
+      if (!d.ok) throw new Error(`No se pudo borrar «${id}» (HTTP ${d.status}).`);
+      pruned++; log(`  borrado ${id}`);
+    }
+  }
+  return { sent, pruned };
+}
+
+/* Pide la contraseña sin mostrarla. Solo con terminal interactivo: una sesión de Claude Code no puede publicar sola. */
+async function askPassword() {
+  if (!process.stdin.isTTY) return '';
+  const rl = createInterface({ input: process.stdin, output: process.stdout, terminal: true });
+  const write = rl._writeToOutput.bind(rl); let muted = false;
+  rl._writeToOutput = (s) => { if (!muted) write(s); };
+  process.stdout.write('Contraseña del área privada (no se muestra): '); muted = true;
+  const pw = await new Promise((res) => rl.question('', res));
+  rl.close(); process.stdout.write('\n');
+  return pw;
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  const args = process.argv.slice(2), dry = args.includes('--dry-run'), prune = args.includes('--prune'), yes = args.includes('--yes');
+  const si = args.indexOf('--src');
+  const srcArg = si > -1 ? args[si + 1] : process.env.ME_SRC;
+  if (!srcArg) { console.error('✗ Indica la carpeta del manual: --src <ruta> (o la variable ME_SRC).'); process.exit(1); }
+  const src = resolve(srcArg);
+  try {
+    if (src.startsWith(ROOT + '\\') || src.startsWith(ROOT + '/')) throw new Error('La carpeta de origen está dentro del repositorio público: muévela fuera antes de publicar.');
+    const d = loadSource(src), rows = toRows(d), errors = validate(d, rows);
+    console.log(`Origen: ${src}`);
+    if (errors.length) { errors.forEach((e) => console.error('✗ ' + e)); console.error('\n✗ El contenido no valida: no se sube nada.'); process.exit(1); }
+    const count = (k) => rows.filter((r) => r.kind === k).length;
+    const big = rows.reduce((m, r) => Math.max(m, Buffer.byteLength(JSON.stringify(r.data))), 0);
+    console.log(`${rows.length} documentos: ${count('topic')} capítulos en ${count('chunk')} trozos, ${count('block')} bloques, ${count('gloss')} términos, ${count('indic')} indicadores en ${count('fam')} familias. El mayor ocupa ${Math.round(big / 1024)} KB.`);
+    if (dry) { console.log('\nSimulacro: no se ha tocado la base (sin red).'); process.exit(0); }
+    if (prune && !yes) throw new Error('--prune borra de la base lo que no esté en tus archivos. Repite con --yes si es lo que quieres.');
+    const env = { ...process.env };
+    if (!env.ME_PASSWORD) env.ME_PASSWORD = await askPassword();
+    const r = await publish(rows, { prune, env, log: console.log });
+    console.log(`✓ Publicado: ${r.sent} documentos${prune ? `, ${r.pruned} borrados` : ''}. Recarga el manual en el área privada (los datos se cachean 5 min).`);
+  } catch (e) { console.error('✗ ' + e.message); process.exit(1); }
+}

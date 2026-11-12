@@ -526,6 +526,7 @@
     kanban:      { global: 'APKanban',      title: 'Hoy', tab: 'hoy' },
     apps:        { global: 'APApps',        title: 'Apps' },
     // app del catálogo (APPS): se abre en modo app, sin pestaña propia
+    ahorro:      { global: 'APAhorro',      title: 'Ahorro con perspectiva', tab: 'apps' },
     color:       { global: 'APColor',       title: 'Color Studio', tab: 'apps' },
     calendario:  { global: 'APCalendario',  title: 'Calendario' },
     entrevistas: { global: 'APEntrevistas', title: 'Entrevistas' },
@@ -534,6 +535,8 @@
     portfolio:   { global: 'APPortfolio',   title: 'Portfolio' },
     // sin pestaña propia: se abre desde «Portfolio» (tab), que es donde vive el manual privado
     claude:      { global: 'APClaude',      title: 'Manual de Claude', tab: 'portfolio' },
+    // manual privado de estudio: mismo patrón que el de Claude (contenido y título en Supabase, tabla me_docs)
+    estudio:     { global: 'APEstudio',     title: 'Manual de estudio', tab: 'portfolio' },
     'second-brain': { global: 'APSecondBrain', title: 'Second Brain' },
     mapa:        { global: 'APMapa',        title: 'Mapa' },
     fichero:     { global: 'APFichero',     title: 'Fichero' },
@@ -545,6 +548,8 @@
      · Sin «module»: página propia con su layout y su vuelta (p. ej. la PWA de roma-aeterna/).
      Orden alfabético. Añadir una app = una entrada aquí (y, si vive aquí, su módulo). */
   var APPS = [
+    { id: 'ahorro', name: 'Ahorro con perspectiva', desc: 'Organiza tu presupuesto y compara escenarios de ahorro', icon: './img/apps/ahorro.svg', href: '#/ahorro', module: 'ahorro' },
+    { id: 'boveda', name: 'Bóveda', desc: 'Cuentas y contraseñas cifradas', icon: './img/apps/boveda.svg', href: './boveda.html' },
     { id: 'caesar', name: 'Caesar III', desc: 'Tu provincia romana en el iPhone', icon: './roma-aeterna/icons/icon-192.png', href: './roma-aeterna/' },
     { id: 'color', name: 'Color Studio', desc: 'Color aplicado a tu armario', icon: './img/apps/color-studio.svg', href: '#/color', module: 'color' }
   ];
@@ -621,7 +626,7 @@
     if (tab !== 'hoy') intents = {};      // una intención («nueva tarjeta») solo vale para la vista que la va a atender
     stampHistory();
     setAppMode(isModule ? appOf(r.name) : null);
-    document.body.classList.toggle('ap-in-manual', isModule && r.name === 'claude');   // el manual lleva su propia cabecera: sin el título ni las pestañas del área privada
+    document.body.classList.toggle('ap-in-manual', isModule && (r.name === 'claude' || r.name === 'estudio'));   // los manuales llevan su propia cabecera: sin el título ni las pestañas del área privada
     lastWasApps = isModule && r.name === 'apps';
     lastIdx = navIdx;
     // la barra del drive (buscar, + Carpeta, subir) y las migas solo tienen sentido en «Archivos y notas»

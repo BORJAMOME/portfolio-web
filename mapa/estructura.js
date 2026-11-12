@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "256db64",
+ "huella": "7ba47fe",
  "recuento": {
   "paginas": 19,
   "proyectos": 40,
@@ -9,10 +9,10 @@ export default {
   "capitulos": 10,
   "plataformas": 11,
   "pestanas": 10,
-  "tablas": 36,
+  "tablas": 38,
   "funciones": 5,
-  "herramientas": 18,
-  "relaciones": 184,
+  "herramientas": 21,
+  "relaciones": 190,
   "sinExplicar": 0
  },
  "columnas": [
@@ -1633,6 +1633,13 @@ export default {
      "archivo": "area-privada-apps.js",
      "hijos": [
       {
+       "id": "m:ahorro",
+       "tipo": "modulo",
+       "etiqueta": "Ahorro con perspectiva",
+       "archivo": "area-privada-ahorro.js",
+       "familia": "privada"
+      },
+      {
        "id": "m:color",
        "tipo": "modulo",
        "etiqueta": "Color Studio",
@@ -1684,6 +1691,13 @@ export default {
        "tipo": "modulo",
        "etiqueta": "Manual de Claude",
        "archivo": "area-privada-claude.js",
+       "familia": "privada"
+      },
+      {
+       "id": "m:estudio",
+       "tipo": "modulo",
+       "etiqueta": "Manual de estudio",
+       "archivo": "area-privada-estudio.js",
        "familia": "privada"
       }
      ],
@@ -1761,6 +1775,21 @@ export default {
        "id": "q:agenda",
        "tipo": "tabla",
        "etiqueta": "agenda",
+       "familia": "dato"
+      }
+     ],
+     "familia": "dato"
+    },
+    {
+     "id": "d:ahorro",
+     "tipo": "esquema",
+     "etiqueta": "ahorro.sql",
+     "archivo": "supabase/ahorro.sql",
+     "hijos": [
+      {
+       "id": "q:ahorro_preferences",
+       "tipo": "tabla",
+       "etiqueta": "ahorro_preferences",
        "familia": "dato"
       }
      ],
@@ -1992,6 +2021,21 @@ export default {
        "id": "q:kb_ajustes",
        "tipo": "tabla",
        "etiqueta": "kb_ajustes",
+       "familia": "dato"
+      }
+     ],
+     "familia": "dato"
+    },
+    {
+     "id": "d:manual-estudio",
+     "tipo": "esquema",
+     "etiqueta": "manual-estudio.sql",
+     "archivo": "supabase/manual-estudio.sql",
+     "hijos": [
+      {
+       "id": "q:me_docs",
+       "tipo": "tabla",
+       "etiqueta": "me_docs",
        "familia": "dato"
       }
      ],
@@ -2232,6 +2276,13 @@ export default {
        "familia": "herramienta"
       },
       {
+       "id": "h:check-boveda",
+       "tipo": "herramienta",
+       "etiqueta": "check-boveda.mjs",
+       "archivo": "tools/check-boveda.mjs",
+       "familia": "herramienta"
+      },
+      {
        "id": "h:check-briefing",
        "tipo": "herramienta",
        "etiqueta": "check-briefing.mjs",
@@ -2271,6 +2322,13 @@ export default {
        "tipo": "herramienta",
        "etiqueta": "check-links.mjs",
        "archivo": "tools/check-links.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:test-boveda",
+       "tipo": "herramienta",
+       "etiqueta": "test-boveda.cjs",
+       "archivo": "tools/test-boveda.cjs",
        "familia": "herramienta"
       },
       {
@@ -2329,6 +2387,13 @@ export default {
        "tipo": "herramienta",
        "etiqueta": "color-studio/",
        "archivo": "tools/color-studio/",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:manual-estudio",
+       "tipo": "herramienta",
+       "etiqueta": "manual-estudio/",
+       "archivo": "tools/manual-estudio/",
        "familia": "herramienta"
       }
      ]
@@ -2929,6 +2994,14 @@ export default {
    ]
   },
   {
+   "de": "h:manual-estudio",
+   "a": "d:manual-estudio",
+   "tipo": "usa",
+   "detalle": [
+    "me_docs"
+   ]
+  },
+  {
    "de": "h:mapa",
    "a": "t:mapa",
    "tipo": "alimenta",
@@ -2966,6 +3039,22 @@ export default {
    "a": "m:kanban",
    "tipo": "verifica",
    "detalle": []
+  },
+  {
+   "de": "m:ahorro",
+   "a": "d:ahorro",
+   "tipo": "usa",
+   "detalle": [
+    "ahorro_preferences"
+   ]
+  },
+  {
+   "de": "m:ahorro",
+   "a": "d:area-privada",
+   "tipo": "usa",
+   "detalle": [
+    "members"
+   ]
   },
   {
    "de": "m:claude",
@@ -3007,6 +3096,14 @@ export default {
    "tipo": "usa",
    "detalle": [
     "ap_opciones"
+   ]
+  },
+  {
+   "de": "m:estudio",
+   "a": "d:manual-estudio",
+   "tipo": "usa",
+   "detalle": [
+    "me_docs"
    ]
   },
   {
@@ -3550,6 +3647,12 @@ export default {
   },
   {
    "de": "w:checks",
+   "a": "h:check-boveda",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:checks",
    "a": "h:check-briefing",
    "tipo": "ejecuta",
    "detalle": []
@@ -3593,6 +3696,12 @@ export default {
   {
    "de": "w:checks",
    "a": "h:second-brain",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:checks",
+   "a": "h:test-boveda",
    "tipo": "ejecuta",
    "detalle": []
   },

@@ -1452,3 +1452,11 @@ body:has(#ap-lock:not([hidden])) .ap-lock .ap-pass input:focus-visible { outline
 .apk-selbar-n { margin: 0 auto 0 0; font-size: 14px; font-weight: 600; color: var(--ink); }
 .apk-selbar .apk-btn[disabled], .apk-selbar select[disabled] { opacity: .55; cursor: not-allowed; }
 @media (max-width: 599.98px) { .apk-selbar-n { flex-basis: 100%; } }
+
+.ap-ahorro-frame {
+  display: block;
+  width: 100%;
+  height: calc(100vh - 74px);
+  height: calc(100dvh - 74px);
+  border: 0;
+}

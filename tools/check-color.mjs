@@ -1429,7 +1429,7 @@ await step('Apps: pestaña del área privada, fichas desde el registro e iconos;
   const c = await open({ width: 390, height: 844 }, '#/apps');
   await c.page.waitForSelector('.apl-app');
   eq(await c.page.getAttribute('.ap-tabs a[data-tab="apps"]', 'aria-current'), 'page');
-  eq(await c.page.$$eval('.apl-app', (a) => a.map((x) => [x.querySelector('.apl-name').textContent, x.getAttribute('href')])), [['Caesar III', './roma-aeterna/'], ['Color Studio', '#/color']]);
+  eq(await c.page.$$eval('.apl-app', (a) => a.map((x) => [x.querySelector('.apl-name').textContent, x.getAttribute('href')])), [['Ahorro con perspectiva', '#/ahorro'], ['Bóveda', './boveda.html'], ['Caesar III', './roma-aeterna/'], ['Color Studio', '#/color']]);
   ok(await c.page.isVisible('.ap-bar') && await c.page.isHidden('#ap-appbar'), 'el catálogo se pinta en modo app');
   await c.page.waitForFunction(() => [...document.querySelectorAll('.apl-icon')].every((i) => i.naturalWidth > 0), null, { timeout: 15000 }).catch(() => {});
   ok(await c.page.$$eval('.apl-icon', (i) => i.every((x) => x.naturalWidth > 0)), 'icono sin cargar');
