@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "258ffcb",
+ "huella": "591ed54",
  "recuento": {
   "paginas": 19,
   "proyectos": 40,
@@ -9,10 +9,10 @@ export default {
   "capitulos": 10,
   "plataformas": 11,
   "pestanas": 10,
-  "tablas": 34,
+  "tablas": 36,
   "funciones": 5,
-  "herramientas": 18,
-  "relaciones": 182,
+  "herramientas": 19,
+  "relaciones": 184,
   "sinExplicar": 0
  },
  "columnas": [
@@ -1685,6 +1685,13 @@ export default {
        "etiqueta": "Manual de Claude",
        "archivo": "area-privada-claude.js",
        "familia": "privada"
+      },
+      {
+       "id": "m:estudio",
+       "tipo": "modulo",
+       "etiqueta": "Manual de estudio",
+       "archivo": "area-privada-estudio.js",
+       "familia": "privada"
       }
      ],
      "familia": "privada"
@@ -1968,6 +1975,21 @@ export default {
      "familia": "dato"
     },
     {
+     "id": "d:manual-estudio",
+     "tipo": "esquema",
+     "etiqueta": "manual-estudio.sql",
+     "archivo": "supabase/manual-estudio.sql",
+     "hijos": [
+      {
+       "id": "q:me_docs",
+       "tipo": "tabla",
+       "etiqueta": "me_docs",
+       "familia": "dato"
+      }
+     ],
+     "familia": "dato"
+    },
+    {
      "id": "d:opciones",
      "tipo": "esquema",
      "etiqueta": "opciones.sql",
@@ -2007,6 +2029,21 @@ export default {
        "id": "q:procesos_correo",
        "tipo": "tabla",
        "etiqueta": "procesos_correo",
+       "familia": "dato"
+      }
+     ],
+     "familia": "dato"
+    },
+    {
+     "id": "d:sancho-acceso",
+     "tipo": "esquema",
+     "etiqueta": "sancho-acceso.sql",
+     "archivo": "supabase/sancho-acceso.sql",
+     "hijos": [
+      {
+       "id": "q:agents",
+       "tipo": "tabla",
+       "etiqueta": "agents",
        "familia": "dato"
       }
      ],
@@ -2299,6 +2336,13 @@ export default {
        "tipo": "herramienta",
        "etiqueta": "color-studio/",
        "archivo": "tools/color-studio/",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:manual-estudio",
+       "tipo": "herramienta",
+       "etiqueta": "manual-estudio/",
+       "archivo": "tools/manual-estudio/",
        "familia": "herramienta"
       }
      ]
@@ -2899,6 +2943,14 @@ export default {
    ]
   },
   {
+   "de": "h:manual-estudio",
+   "a": "d:manual-estudio",
+   "tipo": "usa",
+   "detalle": [
+    "me_docs"
+   ]
+  },
+  {
    "de": "h:mapa",
    "a": "t:mapa",
    "tipo": "alimenta",
@@ -2969,6 +3021,14 @@ export default {
    "tipo": "usa",
    "detalle": [
     "ap_opciones"
+   ]
+  },
+  {
+   "de": "m:estudio",
+   "a": "d:manual-estudio",
+   "tipo": "usa",
+   "detalle": [
+    "me_docs"
    ]
   },
   {

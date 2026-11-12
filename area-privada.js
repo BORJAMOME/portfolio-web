@@ -534,6 +534,8 @@
     portfolio:   { global: 'APPortfolio',   title: 'Portfolio' },
     // sin pestaña propia: se abre desde «Portfolio» (tab), que es donde vive el manual privado
     claude:      { global: 'APClaude',      title: 'Manual de Claude', tab: 'portfolio' },
+    // manual privado de estudio: mismo patrón que el de Claude (contenido y título en Supabase, tabla me_docs)
+    estudio:     { global: 'APEstudio',     title: 'Manual de estudio', tab: 'portfolio' },
     'second-brain': { global: 'APSecondBrain', title: 'Second Brain' },
     mapa:        { global: 'APMapa',        title: 'Mapa' },
     fichero:     { global: 'APFichero',     title: 'Fichero' },
@@ -621,7 +623,7 @@
     if (tab !== 'hoy') intents = {};      // una intención («nueva tarjeta») solo vale para la vista que la va a atender
     stampHistory();
     setAppMode(isModule ? appOf(r.name) : null);
-    document.body.classList.toggle('ap-in-manual', isModule && r.name === 'claude');   // el manual lleva su propia cabecera: sin el título ni las pestañas del área privada
+    document.body.classList.toggle('ap-in-manual', isModule && (r.name === 'claude' || r.name === 'estudio'));   // los manuales llevan su propia cabecera: sin el título ni las pestañas del área privada
     lastWasApps = isModule && r.name === 'apps';
     lastIdx = navIdx;
     // la barra del drive (buscar, + Carpeta, subir) y las migas solo tienen sentido en «Archivos y notas»
