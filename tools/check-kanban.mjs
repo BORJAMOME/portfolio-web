@@ -30,7 +30,14 @@ const BASE = `http://localhost:${server.address().port}/area-privada.html`;
 /* ── PostgREST en memoria ── */
 let seq = 0;
 const uid = () => '00000000-0000-4000-8000-' + String(++seq).padStart(12, '0');
-const db = { kb_tarjetas: [], kb_proyectos: [], kb_subtareas: [], kb_historial: [], kb_ajustes: [{ clave: 'capacidad', valor: { hoy: 2 } }] };
+const db = { kb_tarjetas: [], kb_proyectos: [], kb_subtareas: [], kb_historial: [], kb_dependencias: [], kb_ajustes: [{ clave: 'capacidad', valor: { hoy: 2 } }] };
+let depsMissing = false;       // simula que aún no se ha ejecutado kanban-dependencias.sql
+// lo que hace el trigger kb_dependencias_sin_ciclos: ¿«from» ya espera (directa o indirectamente) a «to»?
+function reaches(from, to, seen = new Set()) {
+  if (from === to) return true;
+  if (seen.has(from)) return false; seen.add(from);
+  return db.kb_dependencias.filter((d) => d.tarjeta_id === from).some((d) => reaches(d.depende_de, to, seen));
+}
 const files = new Map();       // Storage simulado: ruta → { body, type }
 let failUploads = false, failWrites = false, writeDelay = 0, writes = 0, iaOn = false, iaCalls = 0;
 const log = [];
@@ -75,6 +82,7 @@ async function route(r) {
   }
   if (!m) return r.fulfill({ status: 200, headers: cors, contentType: 'application/json', body: '{}' });
   const t = m[1], json = (status, body) => r.fulfill({ status, headers: cors, contentType: 'application/json', body: JSON.stringify(body) });
+  if (t === 'kb_dependencias' && depsMissing) return json(404, { code: 'PGRST205', message: 'Could not find the table' });
   if (!(t in db)) return json(200, []);
   const method = req.method(), rows = db[t], params = [...url.searchParams.entries()];
   if (method === 'GET') return json(200, rows.filter((x) => matches(x, params)));
@@ -83,6 +91,12 @@ async function route(r) {
   if (writeDelay) await new Promise((res) => setTimeout(res, writeDelay));
   if (failWrites) return json(500, { message: 'Fallo simulado de guardado' });
   const body = req.postData() ? JSON.parse(req.postData()) : null;
+  if (method === 'POST' && t === 'kb_dependencias') {
+    const list = [].concat(body);
+    if (list.some((b) => b.tarjeta_id === b.depende_de || reaches(b.depende_de, b.tarjeta_id))) return json(400, { code: '23514', message: 'Esa dependencia crearía un ciclo: la otra tarjeta ya espera a esta.' });
+    list.forEach((b) => rows.push({ tarjeta_id: b.tarjeta_id, depende_de: b.depende_de }));
+    return json(201, list);
+  }
   if (method === 'POST') {
     const list = [].concat(body).map((b) => {
       const prior = t === 'kb_ajustes' ? rows.find((x) => x.clave === b.clave) : null;
@@ -94,7 +108,7 @@ async function route(r) {
   }
   const hit = rows.filter((x) => matches(x, params));
   if (method === 'PATCH') { hit.forEach((x) => { const old = { ...x }; Object.assign(x, body); if (t === 'kb_tarjetas') trigger(x, old); }); return json(200, hit); }
-  if (method === 'DELETE') { hit.forEach((x) => rows.splice(rows.indexOf(x), 1)); if (t === 'kb_tarjetas') db.kb_subtareas = db.kb_subtareas.filter((s) => rows.some((c) => c.id === s.tarjeta_id)); return json(204, null); }
+  if (method === 'DELETE') { hit.forEach((x) => rows.splice(rows.indexOf(x), 1)); if (t === 'kb_tarjetas') { db.kb_subtareas = db.kb_subtareas.filter((s) => rows.some((c) => c.id === s.tarjeta_id)); db.kb_dependencias = db.kb_dependencias.filter((d) => rows.some((c) => c.id === d.tarjeta_id) && rows.some((c) => c.id === d.depende_de)); } return json(204, null); }
   return json(400, {});
 }
 
@@ -633,6 +647,134 @@ await step('Eliminar una tarjeta borra sus imágenes cuando ya no se puede desha
   eq([...files.keys()].filter((k) => k.includes(card.id)).length, 0, 'las imágenes quedan huérfanas');
   await page.locator('body').press('Control+z');                    // Ctrl+Z aún recupera la tarjeta (sin imágenes)
   await page.waitForFunction(() => [...document.querySelectorAll('.apk-card-open')].some((e) => e.textContent === 'Publicar proyecto'));
+});
+await step('Dependencias: esperar a otra tarjeta, sin ciclos, y quedar libre al terminarla', async () => {
+  await goBoard(page);
+  await addInline(page, 'pendiente', 'Modelo de datos');
+  await addInline(page, 'pendiente', 'Informe final');
+  await page.click(`${cardSel('Informe final')} [data-role="open"]`);
+  await page.waitForSelector('dialog.apk-card-dlg[open]');
+  await openSec(page, 'deps');
+  await page.fill('#apk-d-dep', 'modelo');
+  await page.keyboard.press('Enter');                                    // Enter elige la primera (no envía el formulario)
+  ok(await page.isVisible('dialog.apk-card-dlg[open]'), 'Enter en la búsqueda cerró el diálogo');
+  ok((await page.textContent('.apk-deps')).includes('Modelo de datos'), 'no aparece en la lista');
+  await page.click('dialog[open] [data-role="save"]');
+  await page.waitForSelector('dialog.apk-card-dlg', { state: 'detached' });
+  const inf = db.kb_tarjetas.find((c) => c.titulo === 'Informe final'), mod = db.kb_tarjetas.find((c) => c.titulo === 'Modelo de datos');
+  eq(db.kb_dependencias.filter((d) => d.tarjeta_id === inf.id).map((d) => d.depende_de), [mod.id], 'fila guardada');
+  ok(await page.isVisible(`${cardSel('Informe final')} .apk-wait`), 'sin chip «En espera»');
+  eq(await page.textContent(`${cardSel('Informe final')} .apk-why-wait`), 'Espera a «Modelo de datos»');
+  ok((await page.textContent('.apk-sub')).includes('en espera'), 'la cabecera no cuenta las tarjetas en espera');
+  if (process.env.SHOTS) await (await page.$(cardSel('Informe final'))).screenshot({ path: join(process.env.SHOTS, 'dependencias-tarjeta.png') });
+  // el ciclo se ofrece desactivado y con el motivo
+  await page.click(`${cardSel('Modelo de datos')} [data-role="open"]`);
+  await page.waitForSelector('dialog.apk-card-dlg[open]');
+  await openSec(page, 'deps');
+  ok((await page.textContent('.apk-dep-by')).includes('Informe final'), 'no dice quién la espera');
+  await page.fill('#apk-d-dep', 'informe');
+  ok(await page.$eval('.apk-dep-opt', (b) => b.disabled), 'el ciclo se puede elegir');
+  ok((await page.textContent('.apk-dep-cyc')).includes('ya espera a esta tarjeta'), 'sin motivo del ciclo');
+  await page.addScriptTag({ content: AXE });
+  const v = await page.evaluate(async () => (await axe.run(document.querySelector('dialog.apk-card-dlg'), { runOnly: ['wcag2a', 'wcag2aa'] })).violations.map((x) => x.id + ': ' + x.nodes.length));
+  eq(v, [], 'axe en la sección Dependencias');
+  if (process.env.SHOTS) await page.screenshot({ path: join(process.env.SHOTS, 'dependencias-dialogo.png') });
+  await page.keyboard.press('Escape');                                   // con texto, Esc limpia la búsqueda y no cierra
+  ok(await page.isVisible('dialog.apk-card-dlg[open]'), 'Esc con texto cerró el diálogo');
+  eq(await page.inputValue('#apk-d-dep'), '', 'búsqueda sin limpiar');
+  await page.keyboard.press('Escape');
+  await page.waitForSelector('dialog.apk-card-dlg', { state: 'detached' });
+  // no se sugiere para hoy mientras espera
+  await page.click('.apk-seg-btn:has-text("Hoy")'); await page.waitForSelector('.apk-hoy');
+  ok(!(await page.$$eval('.apk-sug-item .apk-card-open', (e) => e.map((x) => x.textContent))).includes('Informe final'), 'se sugiere algo en espera');
+  ok((await page.textContent('.apk-block[aria-label="Bloqueos"]')).includes('Informe final'), 'no sale en Bloqueos');
+  await goBoard(page);
+  // terminar «Modelo de datos» libera «Informe final» y lo dice
+  for (let i = 0; i < 3; i++) { await page.click(`${cardSel('Modelo de datos')} [data-role="adv"]`); await page.waitForTimeout(80); }
+  eq(db.kb_tarjetas.find((c) => c.id === mod.id).estado, 'hecho');
+  ok((await page.textContent('.apk-toast')).includes('Queda libre «Informe final»'), 'el aviso no dice qué queda libre');
+  ok(!(await page.isVisible(`${cardSel('Informe final')} .apk-wait`)), 'sigue en espera');
+  // quitar la dependencia también se guarda
+  await page.click(`${cardSel('Informe final')} [data-role="open"]`);
+  await page.waitForSelector('dialog.apk-card-dlg[open]');
+  await page.click('.apk-dep .apk-link');
+  await page.click('dialog[open] [data-role="save"]');
+  await page.waitForSelector('dialog.apk-card-dlg', { state: 'detached' });
+  eq(db.kb_dependencias.filter((d) => d.tarjeta_id === inf.id).length, 0, 'la dependencia no se borró');
+});
+await step('Dependencias: deshacer una edición devuelve también las dependencias', async () => {
+  const inf = db.kb_tarjetas.find((c) => c.titulo === 'Informe final');
+  await page.click(`${cardSel('Informe final')} [data-role="open"]`);
+  await page.waitForSelector('dialog.apk-card-dlg[open]');
+  await openSec(page, 'deps');
+  await page.fill('#apk-d-dep', 'estudiar');
+  await page.click('[data-role="dep-opt"]');
+  await page.click('dialog[open] [data-role="save"]');
+  await page.waitForSelector('dialog.apk-card-dlg', { state: 'detached' });
+  eq(db.kb_dependencias.filter((d) => d.tarjeta_id === inf.id).length, 1, 'no se guardó');
+  await page.click('.apk-toast button:has-text("Deshacer")');
+  await page.waitForFunction(() => !document.querySelector('.apk-card .apk-why-wait'));
+  eq(db.kb_dependencias.filter((d) => d.tarjeta_id === inf.id).length, 0, 'deshacer no quitó la dependencia');
+});
+await step('Dependencias: sin la tabla (SQL sin ejecutar) el tablero funciona y no ofrece la sección', async () => {
+  depsMissing = true;
+  const o = await open();
+  await goBoard(o.page);
+  await o.page.click(`${cardSel('Informe final')} [data-role="open"]`);
+  await o.page.waitForSelector('dialog.apk-card-dlg[open]');
+  eq(await o.page.$('#apk-sec-deps'), null, 'aparece la sección sin tabla');
+  eq(await o.page.textContent('.apk-chipbtn'), 'Solo bloqueadas');
+  eq(o.errors, [], 'errores de consola');
+  await o.ctx.close();
+  depsMissing = false;
+});
+await step('Varias a la vez: seleccionar con Ctrl/Mayús+clic y con el modo «Seleccionar», mover, archivar, eliminar y deshacer de una vez', async () => {
+  await goBoard(page);
+  for (const t of ['Lote A', 'Lote B', 'Lote C']) await addInline(page, 'ideas', t);
+  const ids = ['Lote A', 'Lote B', 'Lote C'].map((t) => db.kb_tarjetas.find((c) => c.titulo === t).id);
+  await page.click(`${cardSel('Lote A')} [data-role="open"]`, { modifiers: ['Control'] });
+  await page.waitForSelector('.apk-selbar');
+  ok(!(await page.$('dialog.apk-card-dlg[open]')), 'Ctrl+clic abrió la tarjeta');
+  await page.click(`${cardSel('Lote B')} [data-role="open"]`);         // con selección activa, un clic normal también selecciona
+  eq(await page.textContent('.apk-selbar-n'), '2 seleccionadas');
+  eq(await page.getAttribute(`${cardSel('Lote B')} [data-role="open"]`, 'aria-pressed'), 'true', 'aria-pressed');
+  await page.addScriptTag({ content: AXE });
+  const v = await page.evaluate(async () => (await axe.run(document.querySelector('.apk-tablero'), { runOnly: ['wcag2a', 'wcag2aa'] })).violations.map((x) => x.id + ': ' + x.nodes.length));
+  eq(v, [], 'axe con la barra de selección');
+  if (process.env.SHOTS) await page.screenshot({ path: join(process.env.SHOTS, 'seleccion.png') });
+  await page.selectOption('.apk-selbar select', 'pendiente');
+  await page.waitForFunction(() => !document.querySelector('.apk-selbar'));
+  eq(ids.map((i) => db.kb_tarjetas.find((c) => c.id === i).estado), ['pendiente', 'pendiente', 'ideas'], 'mover en grupo');
+  ok((await page.textContent('.apk-toast')).includes('2 tarjetas → Pendiente'), 'aviso del grupo');
+  await page.click('.apk-toast button:has-text("Deshacer")');
+  await page.waitForFunction((i) => [...document.querySelectorAll('.apk-col[data-estado="ideas"] .apk-card')].filter((e) => i.includes(e.dataset.id)).length === 3, ids);
+  eq(ids.map((i) => db.kb_tarjetas.find((c) => c.id === i).estado), ['ideas', 'ideas', 'ideas'], 'un solo Deshacer devuelve las dos');
+  // modo «Seleccionar» (táctil) + archivar en grupo + Deshacer
+  await page.click('[data-role="sel-mode"]');
+  await page.waitForSelector('.apk-selbar');
+  ok(await page.$eval('[data-role="sel-arch"]', (b) => b.disabled), 'sin selección, las acciones no deberían estar activas');
+  await page.click(`${cardSel('Lote B')} [data-role="open"]`);
+  await page.click(`${cardSel('Lote C')} [data-role="open"]`);
+  ok(!(await page.$('dialog.apk-card-dlg[open]')), 'en modo selección el clic abrió la tarjeta');
+  await page.click('[data-role="sel-arch"]');
+  await page.waitForFunction(() => !document.querySelector('.apk-selbar'));
+  ok(db.kb_tarjetas.filter((c) => ids.slice(1).includes(c.id)).every((c) => c.archivada_en), 'archivar en grupo');
+  await page.click('.apk-toast button:has-text("Deshacer")');
+  await page.waitForFunction((i) => [...document.querySelectorAll('.apk-card')].filter((e) => i.includes(e.dataset.id)).length === 3, ids);
+  ok(db.kb_tarjetas.filter((c) => ids.includes(c.id)).every((c) => !c.archivada_en), 'deshacer el archivado en grupo');
+  // «Terminar» quita la selección; luego eliminar en grupo (Mayús+clic)
+  await page.click(`${cardSel('Lote A')} [data-role="open"]`, { modifiers: ['Control'] });
+  await page.waitForSelector('.apk-selbar');
+  await page.click('[data-role="sel-end"]');
+  await page.waitForFunction(() => !document.querySelector('.apk-selbar'));
+  for (const t of ['Lote A', 'Lote B', 'Lote C']) await page.click(`${cardSel(t)} [data-role="open"]`, { modifiers: ['Shift'] });
+  await page.click('[data-role="sel-del"]');
+  await page.click('dialog[open] button:has-text("Eliminar")');
+  await page.waitForFunction((i) => ![...document.querySelectorAll('.apk-card')].some((e) => i.includes(e.dataset.id)), ids);
+  ok(!db.kb_tarjetas.some((c) => ids.includes(c.id)), 'eliminar en grupo');
+  await page.click('.apk-toast button:has-text("Deshacer")');
+  await page.waitForFunction((i) => [...document.querySelectorAll('.apk-card')].filter((e) => i.includes(e.dataset.id)).length === 3, ids);
+  eq(db.kb_tarjetas.filter((c) => ids.includes(c.id)).length, 3, 'deshacer la eliminación en grupo');
 });
 await step('Sin errores de JavaScript', async () => { eq(errors, [], 'errores de consola'); });
 await step('Accesibilidad (axe, WCAG 2 A/AA) en Tablero y Hoy', async () => {

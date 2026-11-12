@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "c99521b",
+ "huella": "7ba47fe",
  "recuento": {
   "paginas": 19,
   "proyectos": 40,
@@ -9,10 +9,10 @@ export default {
   "capitulos": 10,
   "plataformas": 11,
   "pestanas": 10,
-  "tablas": 36,
+  "tablas": 38,
   "funciones": 5,
-  "herramientas": 20,
-  "relaciones": 187,
+  "herramientas": 21,
+  "relaciones": 190,
   "sinExplicar": 0
  },
  "columnas": [
@@ -1973,6 +1973,21 @@ export default {
      "familia": "dato"
     },
     {
+     "id": "d:kanban-dependencias",
+     "tipo": "esquema",
+     "etiqueta": "kanban-dependencias.sql",
+     "archivo": "supabase/kanban-dependencias.sql",
+     "hijos": [
+      {
+       "id": "q:kb_dependencias",
+       "tipo": "tabla",
+       "etiqueta": "kb_dependencias",
+       "familia": "dato"
+      }
+     ],
+     "familia": "dato"
+    },
+    {
      "id": "d:kanban",
      "tipo": "esquema",
      "etiqueta": "kanban.sql",
@@ -2006,6 +2021,21 @@ export default {
        "id": "q:kb_ajustes",
        "tipo": "tabla",
        "etiqueta": "kb_ajustes",
+       "familia": "dato"
+      }
+     ],
+     "familia": "dato"
+    },
+    {
+     "id": "d:manual-estudio",
+     "tipo": "esquema",
+     "etiqueta": "manual-estudio.sql",
+     "archivo": "supabase/manual-estudio.sql",
+     "hijos": [
+      {
+       "id": "q:me_docs",
+       "tipo": "tabla",
+       "etiqueta": "me_docs",
        "familia": "dato"
       }
      ],
@@ -2357,6 +2387,13 @@ export default {
        "tipo": "herramienta",
        "etiqueta": "color-studio/",
        "archivo": "tools/color-studio/",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:manual-estudio",
+       "tipo": "herramienta",
+       "etiqueta": "manual-estudio/",
+       "archivo": "tools/manual-estudio/",
        "familia": "herramienta"
       }
      ]
@@ -2957,6 +2994,14 @@ export default {
    ]
   },
   {
+   "de": "h:manual-estudio",
+   "a": "d:manual-estudio",
+   "tipo": "usa",
+   "detalle": [
+    "me_docs"
+   ]
+  },
+  {
    "de": "h:mapa",
    "a": "t:mapa",
    "tipo": "alimenta",
@@ -3051,6 +3096,22 @@ export default {
    "tipo": "usa",
    "detalle": [
     "ap_opciones"
+   ]
+  },
+  {
+   "de": "m:estudio",
+   "a": "d:manual-estudio",
+   "tipo": "usa",
+   "detalle": [
+    "me_docs"
+   ]
+  },
+  {
+   "de": "m:kanban",
+   "a": "d:kanban-dependencias",
+   "tipo": "usa",
+   "detalle": [
+    "kb_dependencias"
    ]
   },
   {
