@@ -40,7 +40,8 @@ window.APEstudio = (function () {
   function setWidths(el) { $$('[data-w]', el).forEach(function (n) { n.style.width = n.getAttribute('data-w') + '%'; }); }   // CSSOM: la CSP no admite atributos de estilo
   function dot(id) { var p = PROG[id] || 0; return '<span class="td ' + (p ? 's' + p : '') + '" title="' + (p === 2 ? 'Entendido' : p === 1 ? 'En estudio' : 'Pendiente') + '"></span>'; }
 
-  /* ── Marcas y notas (mismo código que estudio.js del manual local; se pinta dentro del Shadow DOM) ── */
+  /* ── Marcas y notas, barra fija, botón de subir, visor de explicaciones y visor de redes
+     (mismo código que estudio.js del manual local; se pinta dentro del Shadow DOM) ── */
   var Marcas = (function () {
 
   var KEY = "", chap = "", root = null, notesBtn = null, countEl = null;
@@ -85,12 +86,21 @@ window.APEstudio = (function () {
 
   /* ── texto plano del capítulo y posiciones ── */
   function textNodes(){
-    var out = [], w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null), n;
+    var out = [], w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {acceptNode:function(n){
+      var p = n.parentNode; return p && p.closest && p.closest(".est-skip") ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT; }}), n;
     while((n = w.nextNode())) out.push(n);
     return out;
   }
   function flatText(){ return textNodes().map(function(n){ return n.nodeValue; }).join(""); }
-  function off(node, o){ var r = document.createRange(); r.setStart(root, 0); r.setEnd(node, o); return r.toString().length; }
+  function off(node, o){
+    var r = document.createRange(); r.setStart(root, 0); r.setEnd(node, o);
+    var total = 0;
+    textNodes().forEach(function(n){
+      if(!r.intersectsNode(n)) return;
+      total += n === r.endContainer ? r.endOffset : n.nodeValue.length;
+    });
+    return total;
+  }
   function common(a, b, fromEnd){
     var n = 0, la = a.length, lb = b.length;
     while(n < la && n < lb && (fromEnd ? a[la - 1 - n] === b[lb - 1 - n] : a[n] === b[n])) n++;
@@ -303,6 +313,8 @@ window.APEstudio = (function () {
     var r = currentRange();
     if(!r) return;
     if(!root.contains(r.commonAncestorContainer)) return;
+    var anc = r.commonAncestorContainer.nodeType === 1 ? r.commonAncestorContainer : r.commonAncestorContainer.parentNode;
+    if(anc && anc.closest && anc.closest(".est-skip")) return;
     var so, eo; try{ so = off(r.startContainer, r.startOffset); eo = off(r.endContainer, r.endOffset); }catch(e){ return; }
     if(eo - so < 1) return;
     var rect = r.getBoundingClientRect(); lastRect = rect;
@@ -412,7 +424,226 @@ window.APEstudio = (function () {
     if(panel){ panel.remove(); panel = null; }
     root = null; notesBtn = null; countEl = null; HOST = null; recs = []; cur = pend = null; noteOpen = panelOpen = false;
   }
-  return { mount: mount, unmount: unmount };
+
+  /* ── barra del capítulo siempre visible (fija bajo la cabecera aunque un contenedor rompa el «sticky») ── */
+  var pinState = null;
+  function pinBar(bar, appbar){
+    unpinBar();
+    var ph = document.createElement("div"); ph.className = "sbar-ph"; bar.parentNode.insertBefore(ph, bar);
+    function upd(){
+      if(!bar.isConnected){ unpinBar(); return; }
+      var top = appbar && appbar.isConnected ? Math.max(0, appbar.getBoundingClientRect().bottom) : 0;
+      var r = ph.getBoundingClientRect();
+      if(r.top < top){
+        if(!bar.classList.contains("pinned")){ ph.style.height = bar.offsetHeight + "px"; bar.classList.add("pinned"); }
+        bar.style.top = top + "px"; bar.style.left = r.left + "px"; bar.style.width = r.width + "px";
+      }else if(bar.classList.contains("pinned")){
+        bar.classList.remove("pinned"); ph.style.height = ""; bar.style.top = ""; bar.style.left = ""; bar.style.width = "";
+      }
+    }
+    var f = 0; function sched(){ if(f) return; f = requestAnimationFrame(function(){ f = 0; upd(); }); }
+    document.addEventListener("scroll", sched, true); window.addEventListener("resize", sched);
+    pinState = {sched:sched}; upd();
+  }
+  function unpinBar(){ if(!pinState) return; document.removeEventListener("scroll", pinState.sched, true); window.removeEventListener("resize", pinState.sched); pinState = null; }
+
+  /* ── botón «subir al principio» (abajo a la derecha) ── */
+  var topState = null;
+  function backTop(target, host){
+    removeTop();
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "est-ui btop"; b.hidden = true;
+    b.setAttribute("aria-label", "Subir al principio del capítulo"); b.title = "Subir al principio";
+    b.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+    (host || document.body).appendChild(b);
+    b.addEventListener("click", function(){
+      var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      target.scrollIntoView({block:"start", behavior:still ? "auto" : "smooth"});
+      var f = target.querySelector("h1"); if(f){ f.setAttribute("tabindex", "-1"); f.focus({preventScroll:true}); }
+    });
+    function upd(){ if(!target.isConnected){ removeTop(); return; } b.hidden = target.getBoundingClientRect().top > -600; }
+    var f = 0; function sched(){ if(f) return; f = requestAnimationFrame(function(){ f = 0; upd(); }); }
+    document.addEventListener("scroll", sched, true);
+    topState = {b:b, sched:sched}; upd();
+  }
+  function removeTop(){ if(!topState) return; document.removeEventListener("scroll", topState.sched, true); topState.b.remove(); topState = null; }
+
+  /* ── visor de explicaciones visuales: modal con X arriba a la derecha; se cierra con la X, con Esc o pulsando fuera ── */
+  function viewer(o){
+    var d = document.createElement("dialog");
+    d.className = "est-ui vv"; d.setAttribute("aria-label", "Explicación visual: " + o.title);
+    d.innerHTML = '<div class="vv-box"><div class="vv-h"><div><span class="vv-k">Explicación visual</span><h2>' + esc(o.title) + '</h2></div>' +
+      '<button type="button" class="vv-x" aria-label="Cerrar la explicación visual" title="Cerrar">×</button></div>' +
+      (o.text ? '<p class="vv-t">' + esc(o.text) + "</p>" : "") + '<div class="vv-b">' + o.html + "</div></div>";
+    (o.host || document.body).appendChild(d);
+    d.addEventListener("close", function(){ d.remove(); if(o.ret && o.ret.isConnected) o.ret.focus(); });
+    d.addEventListener("click", function(e){ if(e.target === d) d.close(); });
+    d.querySelector(".vv-x").addEventListener("click", function(){ d.close(); });
+    if(typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", "");
+    d.querySelector(".vv-x").focus();
+    return d;
+  }
+
+  /* ── visor de redes: líneas y estaciones a partir de GTFS (datos en un <div class="visor-data"> con JSON) ── */
+  var SVGNS = "http://www.w3.org/2000/svg";
+  function sv(tag, attrs, parent){ var e = document.createElementNS(SVGNS, tag); for(var k in attrs) e.setAttribute(k, attrs[k]); if(parent) parent.appendChild(e); return e; }
+  function visor(el){
+    var dn = el.querySelector(".visor-data"); if(!dn) return;
+    var data; try{ data = JSON.parse(dn.textContent); }catch(e){ return; }
+    el.textContent = "";
+    var tabs = data.tabs || [];
+    var bar = document.createElement("div"); bar.className = "vz-tabs"; bar.setAttribute("role", "tablist"); bar.setAttribute("aria-label", "Redes");
+    var panel = document.createElement("div"); panel.className = "vz-panel"; panel.setAttribute("role", "tabpanel");
+    el.appendChild(bar); el.appendChild(panel);
+    tabs.forEach(function(t, i){
+      var b = document.createElement("button"); b.type = "button"; b.className = "vz-tab"; b.setAttribute("role", "tab");
+      b.innerHTML = "<b>" + esc(t.t) + "</b><span>" + esc(t.sub || "") + "</span>";
+      b.addEventListener("click", function(){ show(i); });
+      bar.appendChild(b);
+    });
+    function show(i){
+      Array.prototype.forEach.call(bar.children, function(b, k){ b.setAttribute("aria-selected", k === i ? "true" : "false"); b.tabIndex = k === i ? 0 : -1; });
+      panel.textContent = "";
+      var t = tabs[i];
+      if(t.pending){
+        panel.innerHTML = '<p class="vz-pend">' + esc(t.pending) + (t.link ? ' <a href="' + esc(t.link[1]) + '" target="_blank" rel="noopener noreferrer">' + esc(t.link[0]) + " ↗</a>" : "") + "</p>";
+        return;
+      }
+      drawNet(panel, t);
+    }
+    bar.addEventListener("keydown", function(e){
+      var bs = Array.prototype.slice.call(bar.children), k = bs.indexOf(document.activeElement && document.activeElement.closest ? document.activeElement.closest(".vz-tab") : null);
+      var sh = el.getRootNode && el.getRootNode().activeElement; if(k < 0 && sh) k = bs.indexOf(sh);
+      if(k < 0) return;
+      if(e.key === "ArrowRight" || e.key === "ArrowLeft"){ e.preventDefault(); var n = (k + (e.key === "ArrowRight" ? 1 : bs.length - 1)) % bs.length; bs[n].focus(); bs[n].click(); }
+    });
+    show(0);
+  }
+  function drawNet(panel, t){
+    var W = 1000, pad = 28, all = [];
+    t.lines.forEach(function(L){ L.p.forEach(function(p){ p.g.forEach(function(q){ all.push(q); }); }); });
+    t.stops.forEach(function(q){ all.push(q); });
+    var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    all.forEach(function(q){ minX = Math.min(minX, q[0]); maxX = Math.max(maxX, q[0]); minY = Math.min(minY, q[1]); maxY = Math.max(maxY, q[1]); });
+    var k = Math.cos((minY + maxY) / 2 * Math.PI / 180), ex = Math.max((maxX - minX) * k, 1e-6), ey = Math.max(maxY - minY, 1e-6);
+    var s = (W - 2 * pad) / ex, H = ey * s + 2 * pad;
+    if(H > 720){ s = (720 - 2 * pad) / ey; H = 720; W = Math.max(520, ex * s + 2 * pad); }
+    if(H < 360){ H = 360; }
+    var offX = (W - ex * s) / 2, offY = (H - ey * s) / 2;
+    function P(q){ return [offX + (q[0] - minX) * k * s, offY + (maxY - q[1]) * s]; }
+    var byStop = {};
+    t.lines.forEach(function(L, li){ L.p.forEach(function(p){ p.s.forEach(function(si){ (byStop[si] = byStop[si] || []); if(byStop[si].indexOf(li) < 0) byStop[si].push(li); }); }); });
+
+    var nSt = t.stops.length;
+    panel.innerHTML = '<div class="vz-meta"><span>' + esc(t.sub || "") + "</span><span>" + t.lines.length + (t.lines.length === 1 ? " línea" : " líneas") + " · " + nSt + " estaciones</span></div>" +
+      '<div class="vz-chips" role="group" aria-label="Líneas"></div>' +
+      '<div class="vz-body"><div class="vz-map"><div class="vz-zoom"><button type="button" data-z="in" aria-label="Acercar">+</button><button type="button" data-z="out" aria-label="Alejar">−</button><button type="button" data-z="reset" aria-label="Ver toda la red">⤢</button></div></div>' +
+      '<div class="vz-list" aria-live="polite"></div></div>' +
+      '<p class="vz-src">Fuente: GTFS de ' + esc(t.src.o) + ' (<a href="' + esc(t.src.u) + '" target="_blank" rel="noopener noreferrer">descarga oficial ↗</a>), descargado el ' + esc(t.src.d) + (t.src.v ? "; válido del " + esc(t.src.v) : "") +
+      ". Trazados del GTFS simplificados, sin mapa de fondo." + (t.missing && t.missing.length ? " El GTFS no trae recorridos de: " + t.missing.map(esc).join(", ") + "." : "") + (t.note ? " " + esc(t.note) : "") + "</p>";
+    var chips = panel.querySelector(".vz-chips"), mapBox = panel.querySelector(".vz-map"), list = panel.querySelector(".vz-list");
+    var svg = sv("svg", {viewBox:"0 0 " + W + " " + H, role:"img", "aria-label":"Esquema de la red " + t.t + " con sus líneas y estaciones", class:"vz-svg"});
+    mapBox.insertBefore(svg, mapBox.firstChild);
+    var gL = sv("g", {}, svg), gS = sv("g", {}, svg), gT = sv("g", {}, svg);
+    var lineEls = [];
+    t.lines.forEach(function(L){
+      var els = [];
+      L.p.forEach(function(p){
+        var pts = p.g.map(function(q){ var a = P(q); return a[0].toFixed(1) + "," + a[1].toFixed(1); }).join(" ");
+        els.push(sv("polyline", {points:pts, fill:"none", stroke:L.c, "stroke-width":"4", "stroke-linecap":"round", "stroke-linejoin":"round", "vector-effect":"non-scaling-stroke"}, gL));
+      });
+      lineEls.push(els);
+    });
+    var stopEls = t.stops.map(function(q, i){
+      var a = P(q), c = sv("circle", {cx:a[0].toFixed(1), cy:a[1].toFixed(1), r:"3.4", fill:"#FFFFFF", stroke:"#1D2638", "stroke-width":"1.4", "vector-effect":"non-scaling-stroke", tabindex:"-1", class:"vz-st"}, gS);
+      sv("title", {}, c).textContent = q[2];
+      c.addEventListener("click", function(e){ e.stopPropagation(); pick(i); });
+      return c;
+    });
+    var vb = {x:0, y:0, w:W, h:H}, state = {line:-1, stop:-1};
+    function scale(){ var r = svg.getBoundingClientRect(); return r.width ? vb.w / r.width : 1; }
+    function applyVB(){ svg.setAttribute("viewBox", vb.x + " " + vb.y + " " + vb.w + " " + vb.h); refresh(); }
+    function label(i, strong){
+      var a = P(t.stops[i]), sc = scale(), tx = sv("text", {x:(a[0] + 7 * sc).toFixed(1), y:(a[1] - 6 * sc).toFixed(1), "font-size":(12.5 * sc).toFixed(2), "font-weight":strong ? "700" : "600", fill:"#1D2638", stroke:"#FFFFFF", "stroke-width":(3.2 * sc).toFixed(2), "paint-order":"stroke", "stroke-linejoin":"round"}, gT);
+      tx.textContent = t.stops[i][2];
+    }
+    function refresh(){
+      var sc = scale(), sel = state.line;
+      lineEls.forEach(function(els, li){ els.forEach(function(e){ e.setAttribute("stroke-opacity", sel < 0 || sel === li ? "1" : "0.14"); e.setAttribute("stroke-width", sel === li ? "6" : "4"); }); });
+      var inLine = {};
+      if(sel >= 0) t.lines[sel].p.forEach(function(p){ p.s.forEach(function(si){ inLine[si] = 1; }); });
+      stopEls.forEach(function(c, i){
+        var on = sel < 0 || inLine[i];
+        c.setAttribute("r", ((state.stop === i ? 6.5 : on && sel >= 0 ? 4.6 : 3.4) * sc).toFixed(2));
+        c.setAttribute("opacity", on ? "1" : "0.25");
+        c.setAttribute("stroke", state.stop === i ? "#C8602F" : sel >= 0 && inLine[i] ? t.lines[sel].c : "#1D2638");
+        c.setAttribute("stroke-width", state.stop === i ? "3" : sel >= 0 && inLine[i] ? "2.4" : "1.4");
+      });
+      gT.textContent = "";
+      if(sel >= 0) t.lines[sel].p.forEach(function(p){ label(p.s[0]); label(p.s[p.s.length - 1]); });
+      if(state.stop >= 0) label(state.stop, true);
+    }
+    function chip(label, color, idx){
+      var b = document.createElement("button"); b.type = "button"; b.className = "vz-chip";
+      b.innerHTML = (color ? '<i class="vz-sw" data-c="' + esc(color) + '"></i>' : "") + esc(label);
+      if(color) b.querySelector(".vz-sw").style.background = color;
+      b.addEventListener("click", function(){ state.line = idx; state.stop = -1; syncChips(); drawList(); refresh(); });
+      chips.appendChild(b); return b;
+    }
+    var chipEls = [chip("Todas", "", -1)];
+    t.lines.forEach(function(L, li){ chipEls.push(chip(L.n, L.c, li)); });
+    function syncChips(){ chipEls.forEach(function(b, i){ b.setAttribute("aria-pressed", (i - 1) === state.line ? "true" : "false"); }); }
+    function stName(i){ return t.stops[i][2]; }
+    function drawList(){
+      if(state.line < 0){
+        list.innerHTML = '<p class="vz-lh">Elige una línea para ver sus estaciones en orden. Pulsa una estación del esquema para ver su nombre.</p><ul class="vz-ls">' + t.lines.map(function(L, li){
+          var n = {}; L.p.forEach(function(p){ p.s.forEach(function(si){ n[si] = 1; }); });
+          return '<li><button type="button" data-l="' + li + '"><i class="vz-sw"></i><b>' + esc(L.n) + "</b><span>" + esc(L.d || "") + " · " + Object.keys(n).length + " est. · " + esc(L.k) + "</span></button></li>";
+        }).join("") + "</ul>" + (state.stop >= 0 ? stopInfo() : "");
+        Array.prototype.forEach.call(list.querySelectorAll("[data-l]"), function(b){ var L = t.lines[+b.dataset.l]; b.querySelector(".vz-sw").style.background = L.c; b.addEventListener("click", function(){ state.line = +b.dataset.l; state.stop = -1; syncChips(); drawList(); refresh(); }); });
+        return;
+      }
+      var L = t.lines[state.line];
+      list.innerHTML = '<div class="vz-lt"><i class="vz-sw"></i><div><b>Línea ' + esc(L.n) + "</b><span>" + esc(L.d || "") + " · " + esc(L.k) + "</span></div></div>" +
+        L.p.map(function(p, pi){
+          return (L.p.length > 1 ? '<p class="vz-rec">Recorrido ' + (pi + 1) + ": " + esc(stName(p.s[0])) + " – " + esc(stName(p.s[p.s.length - 1])) + " · " + p.s.length + " estaciones</p>" : '<p class="vz-rec">' + p.s.length + " estaciones</p>") +
+            '<ol class="vz-ol">' + p.s.map(function(si){ return '<li><button type="button" data-s="' + si + '"' + (si === state.stop ? ' aria-current="true"' : "") + ">" + esc(stName(si)) + ((byStop[si] || []).length > 1 ? ' <small>' + byStop[si].filter(function(x){ return x !== state.line; }).map(function(x){ return esc(t.lines[x].n); }).join(" · ") + "</small>" : "") + "</button></li>"; }).join("") + "</ol>";
+        }).join("");
+      list.querySelector(".vz-sw").style.background = L.c;
+      Array.prototype.forEach.call(list.querySelectorAll("[data-s]"), function(b){ b.addEventListener("click", function(){ pick(+b.dataset.s, true); }); });
+    }
+    function stopInfo(){
+      var i = state.stop; return '<p class="vz-stinfo"><b>' + esc(stName(i)) + "</b> · líneas: " + (byStop[i] || []).map(function(x){ return esc(t.lines[x].n); }).join(", ") + "</p>";
+    }
+    function pick(i, center){
+      state.stop = i;
+      if(center){ var a = P(t.stops[i]); if(a[0] < vb.x || a[0] > vb.x + vb.w || a[1] < vb.y || a[1] > vb.y + vb.h){ vb.x = a[0] - vb.w / 2; vb.y = a[1] - vb.h / 2; applyVB(); } }
+      if(state.line >= 0){ Array.prototype.forEach.call(list.querySelectorAll("[data-s]"), function(b){ if(+b.dataset.s === i) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current"); }); }
+      else drawList();
+      refresh();
+    }
+    function zoom(f, cx, cy){
+      var nw = Math.min(W, Math.max(W / 12, vb.w * f)), nh = nw * H / W;
+      if(cx === undefined){ cx = vb.x + vb.w / 2; cy = vb.y + vb.h / 2; }
+      vb.x = cx - (cx - vb.x) * nw / vb.w; vb.y = cy - (cy - vb.y) * nh / vb.h; vb.w = nw; vb.h = nh;
+      if(nw >= W){ vb.x = 0; vb.y = 0; }
+      applyVB();
+    }
+    mapBox.querySelector(".vz-zoom").addEventListener("click", function(e){
+      var b = e.target.closest("button"); if(!b) return;
+      if(b.dataset.z === "in") zoom(0.6); else if(b.dataset.z === "out") zoom(1 / 0.6); else { vb = {x:0, y:0, w:W, h:H}; applyVB(); }
+    });
+    var drag = null;
+    svg.addEventListener("pointerdown", function(e){ if(e.target.closest && e.target.closest(".vz-st")) return; drag = {x:e.clientX, y:e.clientY, vx:vb.x, vy:vb.y}; svg.setPointerCapture(e.pointerId); });
+    svg.addEventListener("pointermove", function(e){ if(!drag) return; var sc = scale(); vb.x = drag.vx - (e.clientX - drag.x) * sc; vb.y = drag.vy - (e.clientY - drag.y) * sc; svg.setAttribute("viewBox", vb.x + " " + vb.y + " " + vb.w + " " + vb.h); });
+    svg.addEventListener("pointerup", function(){ drag = null; });
+    svg.addEventListener("pointercancel", function(){ drag = null; });
+    svg.addEventListener("dblclick", function(e){ var r = svg.getBoundingClientRect(), sc = scale(); zoom(0.6, vb.x + (e.clientX - r.left) * sc, vb.y + (e.clientY - r.top) * sc); });
+    syncChips(); drawList();
+    requestAnimationFrame(refresh);
+    if("ResizeObserver" in window) new ResizeObserver(function(){ refresh(); }).observe(svg);
+  }
+  return {mount:mount, unmount:unmount, visor:visor, pinBar:pinBar, unpinBar:unpinBar, backTop:backTop, removeTop:removeTop, viewer:viewer};
   })();
 
   /* ── saneado del HTML del contenido: lista blanca de etiquetas, atributos y enlaces ── */
@@ -593,7 +824,7 @@ window.APEstudio = (function () {
   }
 
   function paint() {
-    Marcas.unmount();
+    Marcas.unmount(); Marcas.unpinBar(); Marcas.removeTop();
     ctx.view.textContent = '';
     host = document.createElement('div'); host.className = 'cm-host me-host'; host.hidden = true;
     root = host.attachShadow({ mode: 'open' });
@@ -848,7 +1079,7 @@ window.APEstudio = (function () {
     body += chap(1, 'Parte 1', 'Antes de leer',
       blk('s-idea', 'La idea en una frase', '<p class="oneliner">' + esc(t.one) + '</p>') +
       blk('s-rec', 'Lo que te llevas de este capítulo', '<div class="recall"><div class="ck">Recuerda</div><ul>' + (t.rec || []).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>') +
-      (t.vocab && t.vocab.length ? blk('s-vocab', 'Vocabulario mínimo para leer el capítulo', '<p class="vintro">Palabras que el libro usa sin explicar porque las da por sabidas. Son definiciones generales, no del libro.</p><dl class="gl">' + t.vocab.map(function (v) { return '<div><dt>' + esc(v[0]) + '</dt><dd>' + esc(v[1]) + '</dd>' + (v[2] ? '<dd class="vfig">' + clean(v[2]) + '</dd>' : '') + '</div>'; }).join('') + '</dl>') : '') +
+      (t.vocab && t.vocab.length ? blk('s-vocab', 'Vocabulario mínimo para leer el capítulo', '<p class="vintro">Palabras que el libro usa sin explicar porque las da por sabidas. Son definiciones generales, no del libro.</p><dl class="gl">' + t.vocab.map(function (v, i) { return '<div><dt>' + esc(v[0]) + '</dt><dd>' + esc(v[1]) + '</dd>' + (v[2] ? '<dd class="vbt"><button type="button" class="vbtn" data-vf="' + i + '"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="m7 14 3-3 3 3 4-5"/></svg>Ver explicación visual</button></dd>' : '') + '</div>'; }).join('') + '</dl>') : '') +
       (t.clean ? '' : blk('s-como', 'Cómo leer el capítulo', '<div class="call analog"><div class="ck">Guía rápida</div><div class="dbody"><p>El texto del libro está <b>completo</b> y en su orden. Debajo de los apartados que lo necesitan hay un recuadro <b>«En sencillo»</b> con la idea en llano, una analogía o un ejemplo con números; las cuentas que no son del libro lo indican.</p><p>Si ves <mark class="dudoso" title="Pasaje dudoso de la transcripción">[¿?]</mark>, es un pasaje que no se leyó con seguridad: al final del capítulo tienes la lista de dudas para contrastar con el libro.</p></div></div>')));
 
     if (!t.clean) toc.push(['ch', 'El capítulo completo']);
@@ -885,7 +1116,11 @@ window.APEstudio = (function () {
       tocObs = new IntersectionObserver(function (ents) { ents.forEach(function (en) { if (en.isIntersecting) { $$('.stoc a').forEach(function (a) { var on = a.dataset.sec === en.target.id; a.classList.toggle('on', on); if (on) $('#tocNow').textContent = a.textContent; }); } }); }, { rootMargin: '-90px 0px -70% 0px' });
       $$('.blk, .libro h3[id], .libro h4[id]', $('#detail')).forEach(function (s) { tocObs.observe(s); });
     }
+    $$('.visor', $('#detail')).forEach(function (v) { Marcas.visor(v); });
     Marcas.mount({ key: P + 'marcas', chapter: t.id, root: $('#sbody'), notesBtn: $('#notesBtn'), countEl: $('#notesN'), host: root });
+    Marcas.pinBar($('#sbar'), $('.appbar'));
+    Marcas.backTop($('#detail'), root);
+    $$('.vbtn', $('#detail')).forEach(function (b) { b.addEventListener('click', function () { var v = t.vocab[+b.dataset.vf]; Marcas.viewer({ title: v[0], text: v[1], html: clean(v[2]), ret: b, host: root }); }); });
     return anchor && ID.test(anchor) ? anchor : null;
   }
   function syncProgBtn(t) {
