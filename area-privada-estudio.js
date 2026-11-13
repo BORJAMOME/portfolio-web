@@ -40,7 +40,7 @@ window.APEstudio = (function () {
   function setWidths(el) { $$('[data-w]', el).forEach(function (n) { n.style.width = n.getAttribute('data-w') + '%'; }); }   // CSSOM: la CSP no admite atributos de estilo
   function dot(id) { var p = PROG[id] || 0; return '<span class="td ' + (p ? 's' + p : '') + '" title="' + (p === 2 ? 'Entendido' : p === 1 ? 'En estudio' : 'Pendiente') + '"></span>'; }
 
-  /* ── Marcas y notas, barra fija, botón de subir, visor de explicaciones y visor de redes
+  /* ── Marcas y notas, barra fija, botón de subir, visor de explicaciones y visor de redes con mapa base
      (mismo código que estudio.js del manual local; se pinta dentro del Shadow DOM) ── */
   var Marcas = (function () {
 
@@ -503,6 +503,7 @@ window.APEstudio = (function () {
     });
     function show(i){
       Array.prototype.forEach.call(bar.children, function(b, k){ b.setAttribute("aria-selected", k === i ? "true" : "false"); b.tabIndex = k === i ? 0 : -1; });
+      var cur = bar.children[i]; if(cur && bar.scrollWidth > bar.clientWidth){ var l = cur.offsetLeft - bar.offsetLeft, r = l + cur.offsetWidth; if(l < bar.scrollLeft || r > bar.scrollLeft + bar.clientWidth) bar.scrollLeft = Math.max(0, l - 24); }
       panel.textContent = "";
       var t = tabs[i];
       if(t.pending){
@@ -540,20 +541,48 @@ window.APEstudio = (function () {
       '<div class="vz-body"><div class="vz-map"><div class="vz-zoom"><button type="button" data-z="in" aria-label="Acercar">+</button><button type="button" data-z="out" aria-label="Alejar">−</button><button type="button" data-z="reset" aria-label="Ver toda la red">⤢</button></div></div>' +
       '<div class="vz-list" aria-live="polite"></div></div>' +
       '<p class="vz-src">Fuente: GTFS de ' + esc(t.src.o) + ' (<a href="' + esc(t.src.u) + '" target="_blank" rel="noopener noreferrer">descarga oficial ↗</a>), descargado el ' + esc(t.src.d) + (t.src.v ? "; válido del " + esc(t.src.v) : "") +
-      ". Trazados del GTFS simplificados, sin mapa de fondo." + (t.missing && t.missing.length ? " El GTFS no trae recorridos de: " + t.missing.map(esc).join(", ") + "." : "") + (t.note ? " " + esc(t.note) : "") + "</p>";
+      ". Trazados del GTFS simplificados." + (t.bm ? ' Mapa base: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">' + esc(t.bm.atrib) + " ↗</a>." : "") + (t.missing && t.missing.length ? " El GTFS no trae recorridos de: " + t.missing.map(esc).join(", ") + "." : "") + (t.note ? " " + esc(t.note) : "") + "</p>";
     var chips = panel.querySelector(".vz-chips"), mapBox = panel.querySelector(".vz-map"), list = panel.querySelector(".vz-list");
     var svg = sv("svg", {viewBox:"0 0 " + W + " " + H, role:"img", "aria-label":"Esquema de la red " + t.t + " con sus líneas y estaciones", class:"vz-svg"});
     mapBox.insertBefore(svg, mapBox.firstChild);
-    var gL = sv("g", {}, svg), gS = sv("g", {}, svg), gT = sv("g", {}, svg);
+    var gB = sv("g", {class:"vz-bm"}, svg), gP = sv("g", {}, svg), gL = sv("g", {}, svg), gS = sv("g", {}, svg), gT = sv("g", {}, svg);
+    var bm = t.bm;
+    function G(ix, iy){ return P([bm.b[0] + ix / bm.n * bm.b[2], bm.b[1] + iy / bm.n * bm.b[3]]); }
+    if(bm){
+      var c0 = G(0, 0), c1 = G(bm.n, bm.n);
+      sv("rect", {x:c0[0].toFixed(1), y:c1[1].toFixed(1), width:(c1[0] - c0[0]).toFixed(1), height:(c0[1] - c1[1]).toFixed(1), class:bm.mar ? "vz-mar" : "vz-tierra"}, gB);
+      var dec = function(a, close){ var x = 0, y = 0, d = ""; for(var i = 0; i < a.length; i += 2){ x += a[i]; y += a[i + 1]; var q = G(x, y); d += (i ? "L" : "M") + q[0].toFixed(1) + "," + q[1].toFixed(1); } return d + (close ? "Z" : ""); };
+      [["tierra", 1], ["parque", 1], ["agua", 1], ["rio", 0], ["lim", 0], ["via2", 0], ["via", 0]].forEach(function(c){
+        var arr = bm[c[0]]; if(!arr || !arr.length) return;
+        sv("path", {d:arr.map(function(a){ return dec(a, c[1]); }).join(""), class:"vz-" + c[0], "vector-effect":"non-scaling-stroke"}, gB);
+      });
+    }
     var lineEls = [];
     t.lines.forEach(function(L){
       var els = [];
       L.p.forEach(function(p){
         var pts = p.g.map(function(q){ var a = P(q); return a[0].toFixed(1) + "," + a[1].toFixed(1); }).join(" ");
-        els.push(sv("polyline", {points:pts, fill:"none", stroke:L.c, "stroke-width":"4", "stroke-linecap":"round", "stroke-linejoin":"round", "vector-effect":"non-scaling-stroke"}, gL));
+        var cas = sv("polyline", {points:pts, class:"vz-cas", "stroke-width":"7", "vector-effect":"non-scaling-stroke"}, gL);
+        var ln = sv("polyline", {points:pts, fill:"none", stroke:L.c, "stroke-width":"4", "stroke-linecap":"round", "stroke-linejoin":"round", "vector-effect":"non-scaling-stroke"}, gL);
+        ln._cas = cas; els.push(ln);
       });
       lineEls.push(els);
     });
+    function places(){
+      gP.textContent = "";
+      if(!bm || !bm.lug) return;
+      var sc = scale(), z = W / vb.w, maxR = z >= 2.5 ? 3 : 2, boxes = [];
+      bm.lug.forEach(function(L){
+        if(L[3] > maxR) return;
+        var q = G(L[0], L[1]);
+        var fs = (L[3] === 0 ? 13 : L[3] === 1 ? 11.5 : 10.5) * sc, w = L[2].length * fs * 0.56;
+        var bx = [q[0] - w / 2 - 3 * sc, q[1] - fs, q[0] + w / 2 + 3 * sc, q[1] + 3 * sc];
+        if(bx[0] < vb.x || bx[2] > vb.x + vb.w || bx[1] < vb.y || bx[3] > vb.y + vb.h) return;  // sin nombres cortados en el borde
+        if(boxes.some(function(o){ return bx[0] < o[2] && bx[2] > o[0] && bx[1] < o[3] && bx[3] > o[1]; })) return;
+        boxes.push(bx);
+        sv("text", {x:q[0].toFixed(1), y:q[1].toFixed(1), "font-size":fs.toFixed(2), "text-anchor":"middle", class:"vz-plc r" + L[3], "stroke-width":(3 * sc).toFixed(2)}, gP).textContent = L[2];
+      });
+    }
     var stopEls = t.stops.map(function(q, i){
       var a = P(q), c = sv("circle", {cx:a[0].toFixed(1), cy:a[1].toFixed(1), r:"3.4", fill:"#FFFFFF", stroke:"#1D2638", "stroke-width":"1.4", "vector-effect":"non-scaling-stroke", tabindex:"-1", class:"vz-st"}, gS);
       sv("title", {}, c).textContent = q[2];
@@ -569,7 +598,9 @@ window.APEstudio = (function () {
     }
     function refresh(){
       var sc = scale(), sel = state.line;
-      lineEls.forEach(function(els, li){ els.forEach(function(e){ e.setAttribute("stroke-opacity", sel < 0 || sel === li ? "1" : "0.14"); e.setAttribute("stroke-width", sel === li ? "6" : "4"); }); });
+      lineEls.forEach(function(els, li){ els.forEach(function(e){ var on = sel < 0 || sel === li; e.setAttribute("stroke-opacity", on ? "1" : "0.18"); e.setAttribute("stroke-width", sel === li ? "6" : "4"); e._cas.setAttribute("stroke-opacity", on ? "0.9" : "0"); e._cas.setAttribute("stroke-width", sel === li ? "9" : "7"); }); });
+      if(sel >= 0) lineEls[sel].forEach(function(e){ gL.appendChild(e._cas); gL.appendChild(e); });
+      places();
       var inLine = {};
       if(sel >= 0) t.lines[sel].p.forEach(function(p){ p.s.forEach(function(si){ inLine[si] = 1; }); });
       stopEls.forEach(function(c, i){
@@ -636,7 +667,7 @@ window.APEstudio = (function () {
     var drag = null;
     svg.addEventListener("pointerdown", function(e){ if(e.target.closest && e.target.closest(".vz-st")) return; drag = {x:e.clientX, y:e.clientY, vx:vb.x, vy:vb.y}; svg.setPointerCapture(e.pointerId); });
     svg.addEventListener("pointermove", function(e){ if(!drag) return; var sc = scale(); vb.x = drag.vx - (e.clientX - drag.x) * sc; vb.y = drag.vy - (e.clientY - drag.y) * sc; svg.setAttribute("viewBox", vb.x + " " + vb.y + " " + vb.w + " " + vb.h); });
-    svg.addEventListener("pointerup", function(){ drag = null; });
+    svg.addEventListener("pointerup", function(){ if(drag){ drag = null; refresh(); } });
     svg.addEventListener("pointercancel", function(){ drag = null; });
     svg.addEventListener("dblclick", function(e){ var r = svg.getBoundingClientRect(), sc = scale(); zoom(0.6, vb.x + (e.clientX - r.left) * sc, vb.y + (e.clientY - r.top) * sc); });
     syncChips(); drawList();
