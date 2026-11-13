@@ -240,3 +240,6 @@ mark.dudoso{background:var(--support-soft);color:var(--support-ink);border-radiu
   .gent-h h3{font-size:20px}
   .gtab td{padding:8px 10px}
 }
+
+/* Sin «Ficha rápida»: el encabezado del capítulo ocupa todo el ancho */
+.dhero{grid-template-columns:minmax(0,1fr)}

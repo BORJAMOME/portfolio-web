@@ -301,7 +301,7 @@ window.APEstudio = (function () {
     var list = D.TOPICS.filter(function (t) { return !q || topicText(t).indexOf(q) > -1; });
     $('#tcount', v).textContent = list.length + (list.length === 1 ? ' capítulo' : ' capítulos');
     $('#tcards', v).innerHTML = list.length ? list.map(function (t) {
-      return '<a class="card" href="' + R('tema/' + t.id) + '"><div class="cb">Capítulo ' + esc(t.num) + '</div><h3>' + esc(t.t) + '</h3><p class="cq">' + esc(t.q) + '</p><div class="dmeta me-push"><span class="chip">' + esc(t.nsec) + ' apartados</span><span class="chip">' + nf.format(t.pal || 0) + ' palabras</span>' + dot(t.id) + '</div></a>';
+      return '<a class="card" href="' + R('tema/' + t.id) + '"><div class="cb">Capítulo ' + esc(t.num) + '</div><h3>' + esc(t.t) + '</h3><p class="cq">' + esc(t.q) + '</p><div class="dmeta me-push">' + dot(t.id) + '</div></a>';
     }).join('') : '<p class="lead">Ningún capítulo coincide con la búsqueda.</p>';
   }
 
@@ -394,7 +394,7 @@ window.APEstudio = (function () {
   function gSecLabel(t, a) {
     var top = D.byId[t]; if (!top || !ID.test(String(a))) return null;
     var s = a === 's-vocab' ? 'vocabulario básico' : ((D.BOOK[t].secs.filter(function (x) { return x.id === a; })[0] || {}).t || '');
-    return (top.num === 0 ? 'Capítulo 0' : 'Tema ' + top.num) + (s ? ' · ' + s : '');
+    return 'Tema ' + top.num + (s ? ' · ' + s : '');
   }
   function gSiglas(g) { return (g.al || []).filter(function (a) { return a !== g.k && String(a).length <= 9 && (/[A-Z].*[A-Z]/.test(a) || /[·.\/]/.test(a)); }); }
   function gEntry(g) {
@@ -475,7 +475,7 @@ window.APEstudio = (function () {
 
     $('#detail').innerHTML = '<div class="dtop"><a class="dback" href="' + R('temas') + '">← Capítulos</a><span class="sep">/</span><span>' + esc(b.t) + '</span><span class="sep">/</span><span>Capítulo ' + esc(t.num) + '</span></div>' +
       '<div class="dhero"><div><h1>' + esc(t.t) + '</h1><div class="dmeta"><span class="chip acc">Capítulo ' + esc(t.num) + '</span><span class="chip">' + esc(t.nsec) + ' apartados</span></div><p class="dhero-q">' + esc(t.q) + '</p></div>' +
-      '<div class="dfacts"><h4>Ficha rápida</h4><dl><dt>Capítulo</dt><dd>' + esc(t.num) + '</dd><dt>Apartados</dt><dd>' + esc(t.nsec) + '</dd><dt>Texto</dt><dd>' + nf.format(t.pal || 0) + ' palabras</dd><dt>Fuente</dt><dd class="sm">' + esc((t.src || [])[0] || '—') + '</dd></dl></div></div>' +
+      '</div>' +
       '<div class="study"><nav class="stoc" aria-label="Índice del capítulo">' + tocHTML + '</nav><div class="smain">' + body +
       '<nav class="dnav" aria-label="Capítulo anterior y siguiente">' + (prev ? '<a href="' + R('tema/' + prev.id) + '"><span class="nk">← Anterior</span><span class="nt">' + esc(prev.t) + '</span></a>' : '<span></span>') + (next ? '<a class="nx" href="' + R('tema/' + next.id) + '"><span class="nk">Siguiente →</span><span class="nt">' + esc(next.t) + '</span></a>' : '') + '</nav></div></div>';
 
