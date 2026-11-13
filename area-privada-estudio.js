@@ -40,9 +40,385 @@ window.APEstudio = (function () {
   function setWidths(el) { $$('[data-w]', el).forEach(function (n) { n.style.width = n.getAttribute('data-w') + '%'; }); }   // CSSOM: la CSP no admite atributos de estilo
   function dot(id) { var p = PROG[id] || 0; return '<span class="td ' + (p ? 's' + p : '') + '" title="' + (p === 2 ? 'Entendido' : p === 1 ? 'En estudio' : 'Pendiente') + '"></span>'; }
 
+  /* ── Marcas y notas (mismo código que estudio.js del manual local; se pinta dentro del Shadow DOM) ── */
+  var Marcas = (function () {
+
+  var KEY = "", chap = "", root = null, notesBtn = null, countEl = null;
+  var recs = [], cur = null, pend = null, noteOpen = false, panelOpen = false, saved = true;
+  var card = null, panel = null, mounted = false, timer = null, raf = 0, selTimer = null, HOST = null;
+  var MAXQ = 3000;
+
+  function esc(s){ return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function find(id){ for(var i = 0; i < recs.length; i++) if(recs[i].id === id) return recs[i]; return null; }
+  function small(){ return window.matchMedia("(max-width:720px)").matches; }
+
+  /* ── selección (también dentro de un Shadow DOM) ── */
+  function shadowOf(){ var rn = root && root.getRootNode ? root.getRootNode() : null; return rn && rn.host ? rn : null; }
+  function currentRange(){
+    var sh = shadowOf(), s;
+    if(sh && typeof sh.getSelection === "function") s = sh.getSelection();
+    else s = window.getSelection();
+    if(!s) return null;
+    if(sh && typeof sh.getSelection !== "function" && typeof s.getComposedRanges === "function"){
+      var sr = s.getComposedRanges({shadowRoots:[sh]})[0];
+      if(!sr || sr.collapsed) return null;
+      var r = document.createRange(); r.setStart(sr.startContainer, sr.startOffset); r.setEnd(sr.endContainer, sr.endOffset); return r;
+    }
+    if(!s.rangeCount || s.isCollapsed) return null;
+    return s.getRangeAt(0);
+  }
+  function clearSelection(){
+    try{ var sh = shadowOf(); (sh && typeof sh.getSelection === "function" ? sh.getSelection() : window.getSelection()).removeAllRanges(); }catch(e){}
+  }
+
+  /* ── persistencia ── */
+  function readAll(){ try{ return JSON.parse(localStorage.getItem(KEY) || "{}") || {}; }catch(e){ return {}; } }
+  function persist(){
+    try{
+      var all = readAll();
+      var keep = recs.filter(function(r){ return r.hl || r.b || r.i || r.u || plainNote(r.note); }).map(function(r){ return {id:r.id, s:r.s, q:r.q, p:r.p, n:r.n, hl:r.hl, b:r.b, i:r.i, u:r.u, note:r.note, t:r.t}; });
+      if(keep.length) all[chap] = keep; else delete all[chap];
+      localStorage.setItem(KEY, JSON.stringify(all)); saved = true;
+    }catch(e){ saved = false; }
+  }
+  function plainNote(h){ return String(h || "").replace(/<br\s*\/?>/g, " ").replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ").trim(); }
+
+  /* ── texto plano del capítulo y posiciones ── */
+  function textNodes(){
+    var out = [], w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null), n;
+    while((n = w.nextNode())) out.push(n);
+    return out;
+  }
+  function flatText(){ return textNodes().map(function(n){ return n.nodeValue; }).join(""); }
+  function off(node, o){ var r = document.createRange(); r.setStart(root, 0); r.setEnd(node, o); return r.toString().length; }
+  function common(a, b, fromEnd){
+    var n = 0, la = a.length, lb = b.length;
+    while(n < la && n < lb && (fromEnd ? a[la - 1 - n] === b[lb - 1 - n] : a[n] === b[n])) n++;
+    return n;
+  }
+  function locate(rec, flat){
+    var q = rec.q, best = -1, bs = -1, i = -1;
+    while((i = flat.indexOf(q, i + 1)) > -1){
+      var pre = flat.slice(Math.max(0, i - rec.p.length), i), suf = flat.slice(i + q.length, i + q.length + rec.n.length);
+      var sc = common(pre, rec.p, true) + common(suf, rec.n, false) - Math.min(Math.abs(i - rec.s), 1e6) / 1e6;
+      if(sc > bs){ bs = sc; best = i; }
+    }
+    return best;
+  }
+
+  /* ── pintar y despintar ── */
+  function cls(r){ return "est" + (r.hl ? " est-hl" : "") + (r.b ? " est-b" : "") + (r.i ? " est-i" : "") + (r.u ? " est-u" : "") + (plainNote(r.note) ? " est-n" : ""); }
+  function unwrapAll(){
+    Array.prototype.slice.call(root.querySelectorAll("mark.est")).forEach(function(m){
+      var p = m.parentNode; while(m.firstChild) p.insertBefore(m.firstChild, m); p.removeChild(m);
+    });
+    root.normalize();
+  }
+  function wrap(rec){
+    var flat = flatText(), pos = locate(rec, flat);
+    if(pos < 0){ rec.lost = true; return; }
+    rec.lost = false; rec.s = pos;
+    var e = pos + rec.q.length, acc = 0, pieces = [];
+    textNodes().forEach(function(n){
+      var L = n.nodeValue.length, a = acc, b = acc + L; acc = b;
+      if(b <= pos || a >= e) return;
+      var ls = Math.max(pos, a) - a, le = Math.min(e, b) - a;
+      if(n.nodeValue.slice(ls, le).trim()) pieces.push([n, ls, le]);
+    });
+    pieces.forEach(function(p, k){
+      var n = p[0], ls = p[1], le = p[2];
+      if(le < n.nodeValue.length) n.splitText(le);
+      var mid = ls > 0 ? n.splitText(ls) : n, m = document.createElement("mark");
+      m.className = cls(rec) + (k === pieces.length - 1 ? " est-end" : ""); m.dataset.id = rec.id;
+      mid.parentNode.insertBefore(m, mid); m.appendChild(mid);
+    });
+  }
+  function render(){
+    if(!root) return;
+    unwrapAll();
+    recs.forEach(wrap);
+    updateCount();
+    if(panelOpen) drawPanel();
+  }
+  function updateCount(){
+    var n = recs.filter(function(r){ return r.hl || r.b || r.i || r.u || plainNote(r.note); }).length;
+    if(countEl) countEl.textContent = n ? String(n) : "";
+    if(notesBtn) notesBtn.setAttribute("aria-label", "Mis marcas y notas" + (n ? " (" + n + ")" : ""));
+  }
+
+  /* ── notas: HTML saneado (solo N, K, S, saltos y bloques) ── */
+  function clean(html){
+    var t = document.createElement("template"); t.innerHTML = html;
+    function walk(n){
+      var out = "";
+      n.childNodes.forEach(function(c){
+        if(c.nodeType === 3){ out += esc(c.nodeValue); return; }
+        if(c.nodeType !== 1) return;
+        var tg = c.tagName.toLowerCase(), inner = walk(c);
+        if(tg === "b" || tg === "strong") out += "<b>" + inner + "</b>";
+        else if(tg === "i" || tg === "em") out += "<i>" + inner + "</i>";
+        else if(tg === "u") out += "<u>" + inner + "</u>";
+        else if(tg === "br") out += "<br>";
+        else if(tg === "div" || tg === "p") out += "<div>" + inner + "</div>";
+        else out += inner;
+      });
+      return out;
+    }
+    return walk(t.content);
+  }
+
+  /* ── altas y bajas ── */
+  function addRec(sel){
+    var flat = flatText(), s = sel.s, e = sel.e;
+    while(s < e && /\s/.test(flat[s])) s++;
+    while(e > s && /\s/.test(flat[e - 1])) e--;
+    if(e <= s) return null;
+    if(e - s > MAXQ){ flash("Selecciona un fragmento más corto (máximo " + MAXQ.toLocaleString("es-ES") + " caracteres)."); return null; }
+    var rec = {id:"m" + Date.now().toString(36) + Math.random().toString(36).slice(2, 5), s:s, q:flat.slice(s, e), p:flat.slice(Math.max(0, s - 30), s), n:flat.slice(e, e + 30), hl:0, b:0, i:0, u:0, note:"", t:Date.now()};
+    recs.push(rec); return rec;
+  }
+  function ensureRec(){
+    var rec = cur && find(cur);
+    if(rec) return rec;
+    if(!pend) return null;
+    rec = addRec(pend); if(!rec) return null;
+    cur = rec.id; pend = null;
+    clearSelection();
+    return rec;
+  }
+  function removeRec(id){
+    recs = recs.filter(function(r){ return r.id !== id; });
+    persist(); render(); closeCard(true);
+  }
+  function toggle(k){
+    var rec = ensureRec(); if(!rec) return;
+    rec[k] = rec[k] ? 0 : 1;
+    persist(); render(); drawCard();
+  }
+  function setNote(html){
+    var rec = cur && find(cur); if(!rec) return;
+    rec.note = clean(html);
+    clearTimeout(timer); timer = setTimeout(function(){ persist(); }, 250);
+  }
+
+  /* ── tarjeta flotante ── */
+  function ensureCard(){
+    if(card) return card;
+    card = document.createElement("div"); card.className = "est-ui est-card"; card.setAttribute("role", "dialog"); card.setAttribute("aria-label", "Subrayado, formato y nota");
+    card.hidden = true; (HOST || document.body).appendChild(card);
+    card.addEventListener("pointerdown", function(e){ if(!e.target.closest(".est-note")) e.preventDefault(); });
+    card.addEventListener("click", onCardClick);
+    card.addEventListener("keydown", function(e){ if(e.key === "Escape"){ closeCard(); } });
+    return card;
+  }
+  function btn(act, label, pressed, extra, title){
+    return '<button type="button" class="est-btn' + (extra ? " " + extra : "") + '" data-act="' + act + '"' + (pressed !== null ? ' aria-pressed="' + (pressed ? "true" : "false") + '"' : "") + ' aria-label="' + (title || label) + '" title="' + (title || label) + '">' + label + "</button>";
+  }
+  function drawCard(){
+    ensureCard();
+    var rec = cur && find(cur), has = !!rec;
+    var h = '<div class="est-row">' +
+      btn("hl", "Subrayar", has && rec.hl, "est-hlb", "Subrayar el fragmento") +
+      btn("b", "<b>N</b>", has && rec.b, "est-fmt", "Negrita (formato personal)") +
+      btn("i", "<i>K</i>", has && rec.i, "est-fmt", "Cursiva (formato personal)") +
+      btn("u", "<u>S</u>", has && rec.u, "est-fmt", "Subrayado de texto (formato personal)") +
+      btn("note", "Nota", noteOpen || (has && !!plainNote(rec.note)), "est-notebtn", "Anotación vinculada al fragmento") +
+      (has ? btn("del", "Quitar", null, "est-del", "Quitar subrayado, formato y nota") : "") +
+      "</div>";
+    if(noteOpen && has){
+      h += '<div class="est-nw"><div class="est-row est-mini">' +
+        '<button type="button" class="est-btn est-fmt" data-fmt="bold" aria-label="Negrita en la nota" title="Negrita en la nota"><b>N</b></button>' +
+        '<button type="button" class="est-btn est-fmt" data-fmt="italic" aria-label="Cursiva en la nota" title="Cursiva en la nota"><i>K</i></button>' +
+        '<button type="button" class="est-btn est-fmt" data-fmt="underline" aria-label="Subrayado en la nota" title="Subrayado en la nota"><u>S</u></button>' +
+        (plainNote(rec.note) ? '<button type="button" class="est-btn est-del" data-act="delnote">Borrar nota</button>' : "") +
+        '</div><div class="est-note" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Anotación" data-ph="Escribe tu anotación…">' + (rec.note || "") + "</div></div>";
+    }
+    if(rec) h += '<p class="est-q"><span>Fragmento</span> «' + esc(rec.q.length > 110 ? rec.q.slice(0, 110) + "…" : rec.q) + "»</p>";
+    if(!saved) h += '<p class="est-warn">Este navegador no permite guardar: las marcas se perderán al cerrar.</p>';
+    card.innerHTML = h; card.hidden = false;
+    var ed = card.querySelector(".est-note");
+    if(ed){
+      ed.addEventListener("input", function(){ setNote(ed.innerHTML); });
+      ed.addEventListener("blur", function(){ persist(); updateCount(); var r = cur && find(cur); if(r) refreshNoteMark(r); if(panelOpen) drawPanel(); });
+      ed.addEventListener("paste", function(e){ e.preventDefault(); var t = (e.clipboardData || window.clipboardData).getData("text"); document.execCommand("insertText", false, t); });
+    }
+    place();
+  }
+  function refreshNoteMark(rec){
+    Array.prototype.slice.call(root.querySelectorAll('mark.est[data-id="' + rec.id + '"]')).forEach(function(m){
+      var end = m.classList.contains("est-end"); m.className = cls(rec) + (end ? " est-end" : "");
+    });
+  }
+  function anchorRect(){
+    var rec = cur && find(cur);
+    if(rec){
+      var ms = root.querySelectorAll('mark.est[data-id="' + rec.id + '"]');
+      if(ms.length){ var a = ms[0].getBoundingClientRect(), z = ms[ms.length - 1].getBoundingClientRect(); return {top:Math.min(a.top, z.top), bottom:Math.max(a.bottom, z.bottom), left:Math.min(a.left, z.left), right:Math.max(a.right, z.right)}; }
+    }
+    var cr = currentRange();
+    if(cr){ return cr.getBoundingClientRect(); }
+    return lastRect;
+  }
+  var lastRect = null;
+  function place(){
+    if(!card || card.hidden) return;
+    var r = anchorRect(); if(r) lastRect = r;
+    if(small()){ card.classList.add("est-sheet"); card.style.left = card.style.top = ""; return; }
+    card.classList.remove("est-sheet");
+    if(!r) return;
+    var w = card.offsetWidth, h = card.offsetHeight, vw = document.documentElement.clientWidth, vh = window.innerHeight;
+    var top = r.top - h - 10; if(top < 72) top = r.bottom + 10;
+    if(top + h > vh - 8) top = Math.max(72, vh - h - 8);
+    var left = Math.min(Math.max(8, (r.left + r.right) / 2 - w / 2), vw - w - 8);
+    card.style.left = left + "px"; card.style.top = top + "px";
+  }
+  function closeCard(skipClean){
+    var rec = cur && find(cur);
+    if(rec && !skipClean){
+      if(!(rec.hl || rec.b || rec.i || rec.u || plainNote(rec.note))) recs = recs.filter(function(r){ return r !== rec; });
+      persist(); render();
+    }
+    cur = null; pend = null; noteOpen = false;
+    if(card) card.hidden = true;
+  }
+  function onCardClick(e){
+    var f = e.target.closest("[data-fmt]");
+    if(f){ var ed = card.querySelector(".est-note"); if(ed){ ed.focus(); document.execCommand(f.dataset.fmt, false, null); setNote(ed.innerHTML); } return; }
+    var b = e.target.closest("[data-act]"); if(!b) return;
+    var a = b.dataset.act;
+    if(a === "hl" || a === "b" || a === "i" || a === "u") toggle(a);
+    else if(a === "note"){
+      if(!ensureRec()) return;
+      noteOpen = !noteOpen; drawCard();
+      if(noteOpen){ var ed2 = card.querySelector(".est-note"); if(ed2) ed2.focus(); }
+    }
+    else if(a === "delnote"){ var r = cur && find(cur); if(r){ r.note = ""; persist(); render(); noteOpen = false; drawCard(); } }
+    else if(a === "del"){ if(cur) removeRec(cur); }
+  }
+
+  /* ── selección (ratón y táctil) y clic sobre una marca ── */
+  function onSel(){
+    if(!mounted) return;
+    if(root && !root.isConnected){ unmount(); return; }
+    var r = currentRange();
+    if(!r) return;
+    if(!root.contains(r.commonAncestorContainer)) return;
+    var so, eo; try{ so = off(r.startContainer, r.startOffset); eo = off(r.endContainer, r.endOffset); }catch(e){ return; }
+    if(eo - so < 1) return;
+    var rect = r.getBoundingClientRect(); lastRect = rect;
+    cur = null; pend = {s:so, e:eo}; noteOpen = false;
+    drawCard();
+  }
+  function onClick(e){
+    if(currentRange()) return;
+    var m = e.target.closest && e.target.closest("mark.est"); if(!m || e.target.closest("a")) return;
+    cur = m.dataset.id; pend = null; var rec = find(cur); noteOpen = !!(rec && plainNote(rec.note));
+    drawCard();
+  }
+  function onDocPointer(e){
+    if(root && !root.isConnected){ unmount(); return; }
+    if(!card || card.hidden) return;
+    var path = e.composedPath ? e.composedPath() : [e.target];
+    if(path.indexOf(card) > -1 || (panel && path.indexOf(panel) > -1)) return;
+    if(path.some(function(n){ return n.nodeType === 1 && n.matches && n.matches("mark.est"); })) return;
+    closeCard();
+  }
+  function onKey(e){ if(e.key === "Escape"){ if(card && !card.hidden) closeCard(); else if(panelOpen) togglePanel(false); } }
+  function onScroll(){ if(raf) return; raf = requestAnimationFrame(function(){ raf = 0; place(); }); }
+  function onSelChange(){ clearTimeout(selTimer); selTimer = setTimeout(onSel, 220); }
+
+  /* ── panel «Mis notas» ── */
+  function ensurePanel(){
+    if(panel) return panel;
+    panel = document.createElement("aside"); panel.className = "est-ui est-panel"; panel.setAttribute("aria-label", "Mis marcas y notas"); panel.hidden = true;
+    (HOST || document.body).appendChild(panel);
+    panel.addEventListener("click", function(e){
+      var c = e.target.closest("[data-pa]"); if(!c){ return; }
+      var id = c.closest("[data-id]") ? c.closest("[data-id]").dataset.id : "";
+      var a = c.dataset.pa;
+      if(a === "close") togglePanel(false);
+      else if(a === "go") goTo(id);
+      else if(a === "edit"){ goTo(id, true); }
+      else if(a === "del"){ if(confirm("¿Quitar esta marca y su nota?")) removeRec(id); }
+    });
+    return panel;
+  }
+  function drawPanel(){
+    ensurePanel();
+    var list = recs.filter(function(r){ return r.hl || r.b || r.i || r.u || plainNote(r.note); }).sort(function(a, b){ return a.s - b.s; });
+    var h = '<div class="est-ph"><h2>Mis marcas y notas</h2><button type="button" class="est-btn" data-pa="close" aria-label="Cerrar el panel">Cerrar</button></div>';
+    if(!list.length) h += '<p class="est-empty">Aún no has marcado nada en este capítulo. Selecciona un fragmento del texto para subrayarlo, darle formato o añadir una nota.</p>';
+    else h += '<ol class="est-list">' + list.map(function(r){
+      var fl = [r.hl ? "subrayado" : "", r.b ? "negrita" : "", r.i ? "cursiva" : "", r.u ? "subrayado de texto" : ""].filter(Boolean).join(", ");
+      return '<li data-id="' + r.id + '"' + (r.lost ? ' class="est-lost"' : "") + '><button type="button" class="est-go" data-pa="go"><span class="est-qq ' + cls(r).replace("est ", "").replace("est-n", "") + '">' + esc(r.q.length > 140 ? r.q.slice(0, 140) + "…" : r.q) + "</span>" +
+        (fl ? '<span class="est-fl">' + fl + "</span>" : "") + (r.lost ? '<span class="est-fl">No localizado: el texto ha cambiado</span>' : "") + "</button>" +
+        (plainNote(r.note) ? '<div class="est-nt">' + r.note + "</div>" : "") +
+        '<div class="est-ac"><button type="button" class="est-btn" data-pa="edit">Editar</button><button type="button" class="est-btn est-del" data-pa="del">Quitar</button></div></li>';
+    }).join("") + "</ol>";
+    if(!saved) h += '<p class="est-warn">Este navegador no permite guardar: las marcas se perderán al cerrar.</p>';
+    panel.innerHTML = h;
+  }
+  function togglePanel(on){
+    panelOpen = on === undefined ? !panelOpen : on;
+    ensurePanel(); panel.hidden = !panelOpen;
+    if(notesBtn) notesBtn.setAttribute("aria-expanded", panelOpen ? "true" : "false");
+    if(panelOpen){ drawPanel(); closeCard(); }
+  }
+  function goTo(id, edit){
+    var ms = root.querySelectorAll('mark.est[data-id="' + id + '"]');
+    if(!ms.length) return;
+    var d = ms[0].closest("details"); if(d) d.open = true;
+    if(small()) togglePanel(false);
+    ms[0].scrollIntoView({block:"center", behavior:"smooth"});
+    Array.prototype.forEach.call(ms, function(m){ m.classList.add("est-flash"); });
+    setTimeout(function(){ Array.prototype.forEach.call(ms, function(m){ m.classList.remove("est-flash"); }); }, 1800);
+    if(edit){ setTimeout(function(){ cur = id; pend = null; var r = find(id); noteOpen = true; lastRect = null; drawCard(); var ed = card.querySelector(".est-note"); if(ed) ed.focus(); }, 450); }
+  }
+  function flash(msg){
+    ensureCard(); lastRect = lastRect || {top:120, bottom:140, left:20, right:200};
+    card.innerHTML = '<p class="est-warn">' + esc(msg) + "</p>"; card.hidden = false; place();
+    setTimeout(function(){ if(!cur && !pend && card) card.hidden = true; }, 2600);
+  }
+
+  /* ── ciclo de vida ── */
+  function onNotesBtn(){ togglePanel(); }
+  function mount(o){
+    unmount();
+    KEY = o.key; chap = o.chapter; root = o.root; HOST = o.host || null; notesBtn = o.notesBtn || null; countEl = o.countEl || null;
+    var all = readAll(); recs = (all[chap] || []).map(function(r){ return Object.assign({hl:0, b:0, i:0, u:0, note:""}, r); });
+    cur = pend = null; noteOpen = false; panelOpen = false; saved = true;
+    mounted = true;
+    render();
+    root.addEventListener("click", onClick);
+    document.addEventListener("selectionchange", onSelChange);
+    document.addEventListener("pointerdown", onDocPointer, true);
+    document.addEventListener("keydown", onKey);
+    window.addEventListener("scroll", onScroll, {passive:true});
+    window.addEventListener("resize", onScroll);
+    if(notesBtn){ notesBtn.addEventListener("click", onNotesBtn); notesBtn.setAttribute("aria-expanded", "false"); }
+  }
+  function unmount(){
+    if(!mounted) return;
+    mounted = false;
+    clearTimeout(timer); clearTimeout(selTimer);
+    if(root) root.removeEventListener("click", onClick);
+    document.removeEventListener("selectionchange", onSelChange);
+    document.removeEventListener("pointerdown", onDocPointer, true);
+    document.removeEventListener("keydown", onKey);
+    window.removeEventListener("scroll", onScroll);
+    window.removeEventListener("resize", onScroll);
+    if(notesBtn) notesBtn.removeEventListener("click", onNotesBtn);
+    if(card){ card.remove(); card = null; }
+    if(panel){ panel.remove(); panel = null; }
+    root = null; notesBtn = null; countEl = null; HOST = null; recs = []; cur = pend = null; noteOpen = panelOpen = false;
+  }
+  return { mount: mount, unmount: unmount };
+  })();
+
   /* ── saneado del HTML del contenido: lista blanca de etiquetas, atributos y enlaces ── */
   var ALLOW = { b: 1, strong: 1, i: 1, em: 1, u: 1, code: 1, p: 1, br: 1, ul: 1, ol: 1, li: 1, sub: 1, sup: 1, blockquote: 1, h3: 1, h4: 1, h5: 1, h6: 1,
-    table: 1, thead: 1, tbody: 1, tr: 1, th: 1, td: 1, a: 1, div: 1, span: 1, mark: 1, details: 1, summary: 1 };
+    table: 1, thead: 1, tbody: 1, tr: 1, th: 1, td: 1, a: 1, div: 1, span: 1, mark: 1, details: 1, summary: 1,
+    figure: 1, figcaption: 1, article: 1, header: 1, footer: 1, dl: 1, dt: 1, dd: 1 };
   var DROP = { script: 1, style: 1, iframe: 1, object: 1, embed: 1, svg: 1, math: 1, template: 1, noscript: 1, link: 1, meta: 1, form: 1, input: 1, button: 1, textarea: 1, select: 1, img: 1, video: 1, audio: 1 };
   var ID = /^[a-z0-9]+(-[a-z0-9]+)*$/;
   function safeHref(href) {
@@ -61,9 +437,18 @@ window.APEstudio = (function () {
           var picture = document.createElement('img');
           picture.src = png;
           picture.alt = (n.getAttribute('alt') || '').slice(0, 500);
-          picture.style.width = '100%';
+          picture.className = 'rail-visual';   // el ancho va por CSS: un atributo style (aunque sea de CSSOM) acaba en el innerHTML y la CSP lo bloquea
           picture.loading = 'lazy';
           dst.appendChild(picture);
+        }
+        return;
+      }
+      if (tag === 'img' && n.getAttribute('class') === 'fig-img') {   // figuras SVG autónomas (data:image/svg+xml): una imagen no ejecuta scripts
+        var uri = n.getAttribute('src') || '';
+        if (uri.length <= 260000 && /^data:image\/svg\+xml;base64,[A-Za-z0-9+/]+={0,2}$/.test(uri)) {
+          var fig = document.createElement('img');
+          fig.className = 'fig-img'; fig.src = uri; fig.alt = (n.getAttribute('alt') || '').slice(0, 600); fig.loading = 'lazy'; fig.decoding = 'async';
+          dst.appendChild(fig);
         }
         return;
       }
@@ -208,6 +593,7 @@ window.APEstudio = (function () {
   }
 
   function paint() {
+    Marcas.unmount();
     ctx.view.textContent = '';
     host = document.createElement('div'); host.className = 'cm-host me-host'; host.hidden = true;
     root = host.attachShadow({ mode: 'open' });
@@ -447,6 +833,7 @@ window.APEstudio = (function () {
   }
 
   /* ══ CAPÍTULO ═════════════════════════════ */
+  var tocClose = null;
   function renderTopic(id, anchor) {
     var t = D.byId[id];
     if (!t) { location.hash = R('temas'); return null; }
@@ -461,12 +848,12 @@ window.APEstudio = (function () {
     body += chap(1, 'Parte 1', 'Antes de leer',
       blk('s-idea', 'La idea en una frase', '<p class="oneliner">' + esc(t.one) + '</p>') +
       blk('s-rec', 'Lo que te llevas de este capítulo', '<div class="recall"><div class="ck">Recuerda</div><ul>' + (t.rec || []).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>') +
-      (t.vocab && t.vocab.length ? blk('s-vocab', 'Vocabulario mínimo para leer el capítulo', '<p class="vintro">Palabras que el libro usa sin explicar porque las da por sabidas. Son definiciones generales, no del libro.</p><dl class="gl">' + t.vocab.map(function (v) { return '<div><dt>' + esc(v[0]) + '</dt><dd>' + esc(v[1]) + '</dd></div>'; }).join('') + '</dl>') : '') +
-      blk('s-como', 'Cómo leer el capítulo', '<div class="call analog"><div class="ck">Guía rápida</div><div class="dbody"><p>El texto del libro está <b>completo</b> y en su orden. Debajo de los apartados que lo necesitan hay un recuadro <b>«En sencillo»</b> con la idea en llano, una analogía o un ejemplo con números; las cuentas que no son del libro lo indican.</p><p>Si ves <mark class="dudoso" title="Pasaje dudoso de la transcripción">[¿?]</mark>, es un pasaje que no se leyó con seguridad: al final del capítulo tienes la lista de dudas para contrastar con el libro.</p></div></div>'));
+      (t.vocab && t.vocab.length ? blk('s-vocab', 'Vocabulario mínimo para leer el capítulo', '<p class="vintro">Palabras que el libro usa sin explicar porque las da por sabidas. Son definiciones generales, no del libro.</p><dl class="gl">' + t.vocab.map(function (v) { return '<div><dt>' + esc(v[0]) + '</dt><dd>' + esc(v[1]) + '</dd>' + (v[2] ? '<dd class="vfig">' + clean(v[2]) + '</dd>' : '') + '</div>'; }).join('') + '</dl>') : '') +
+      (t.clean ? '' : blk('s-como', 'Cómo leer el capítulo', '<div class="call analog"><div class="ck">Guía rápida</div><div class="dbody"><p>El texto del libro está <b>completo</b> y en su orden. Debajo de los apartados que lo necesitan hay un recuadro <b>«En sencillo»</b> con la idea en llano, una analogía o un ejemplo con números; las cuentas que no son del libro lo indican.</p><p>Si ves <mark class="dudoso" title="Pasaje dudoso de la transcripción">[¿?]</mark>, es un pasaje que no se leyó con seguridad: al final del capítulo tienes la lista de dudas para contrastar con el libro.</p></div></div>')));
 
-    toc.push(['ch', 'El capítulo completo']);
+    if (!t.clean) toc.push(['ch', 'El capítulo completo']);
     bk.secs.filter(function (s) { return s.lvl <= 2; }).forEach(function (s) { toc.push([s.id, s.t, s.lvl]); });
-    body += chap(2, 'Parte 2', 'El capítulo completo', '<div class="libro">' + clean(bk.html) + '</div>');
+    body += t.clean ? '<div class="libro">' + clean(bk.html) + '</div>' : chap(2, 'Parte 2', 'El capítulo completo', '<div class="libro">' + clean(bk.html) + '</div>');
 
     var tocHTML = '<div class="tt">En este capítulo</div><ol>' + toc.map(function (x) {
       if (x[0] === 'ch') return '<li class="ch">' + esc(x[1]) + '</li>';
@@ -476,17 +863,29 @@ window.APEstudio = (function () {
     $('#detail').innerHTML = '<div class="dtop"><a class="dback" href="' + R('temas') + '">← Capítulos</a><span class="sep">/</span><span>' + esc(b.t) + '</span><span class="sep">/</span><span>Capítulo ' + esc(t.num) + '</span></div>' +
       '<div class="dhero"><div><h1>' + esc(t.t) + '</h1><div class="dmeta"><span class="chip acc">Capítulo ' + esc(t.num) + '</span><span class="chip">' + esc(t.nsec) + ' apartados</span></div><p class="dhero-q">' + esc(t.q) + '</p></div>' +
       '</div>' +
-      '<div class="study"><nav class="stoc" aria-label="Índice del capítulo">' + tocHTML + '</nav><div class="smain">' + body +
+      '<div class="sbar" id="sbar"><button type="button" class="sb-btn" id="tocBtn" aria-expanded="false" aria-controls="stoc"><span aria-hidden="true">☰</span> Índice<span class="sb-now" id="tocNow"></span></button>' +
+      '<button type="button" class="sb-btn" id="notesBtn" aria-expanded="false" aria-label="Mis marcas y notas">✎ Mis notas<span class="sb-n" id="notesN"></span></button>' +
+      '<nav class="stoc" id="stoc" aria-label="Índice del capítulo" hidden>' + tocHTML + '</nav></div>' +
+      '<div class="study"><div class="smain"><div class="sbody" id="sbody">' + body + '</div>' +
       '<nav class="dnav" aria-label="Capítulo anterior y siguiente">' + (prev ? '<a href="' + R('tema/' + prev.id) + '"><span class="nk">← Anterior</span><span class="nt">' + esc(prev.t) + '</span></a>' : '<span></span>') + (next ? '<a class="nx" href="' + R('tema/' + next.id) + '"><span class="nk">Siguiente →</span><span class="nt">' + esc(next.t) + '</span></a>' : '') + '</nav></div></div>';
 
-    $$('.stoc a[data-sec]').forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); var el = root.getElementById(a.dataset.sec); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }); });
+    var stoc = $('#stoc'), tocBtn = $('#tocBtn');
+    function setToc(on) { stoc.hidden = !on; tocBtn.setAttribute('aria-expanded', on ? 'true' : 'false'); if (on) { var c = $('a.on', stoc); if (c) c.scrollIntoView({ block: 'nearest' }); } }
+    tocBtn.addEventListener('click', function (e) { e.stopPropagation(); setToc(stoc.hidden); });
+    $('#sbar').addEventListener('keydown', function (e) { if (e.key === 'Escape' && !stoc.hidden) { setToc(false); tocBtn.focus(); } });
+    if (tocClose) document.removeEventListener('pointerdown', tocClose, true);
+    var sbar = $('#sbar');
+    tocClose = function (e) { if (!sbar.isConnected) return; if (!stoc.hidden && (e.composedPath ? e.composedPath().indexOf(sbar) < 0 : true)) setToc(false); };
+    document.addEventListener('pointerdown', tocClose, true);
+    $$('.stoc a[data-sec]').forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); var el = root.getElementById(a.dataset.sec); setToc(false); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }); });
     $('#progBtn').addEventListener('click', function () { PROG[t.id] = PROG[t.id] === 2 ? 1 : 2; lsSet('prog', PROG); syncProgBtn(t); });
     syncProgBtn(t);
     if (tocObs) tocObs.disconnect();
     if ('IntersectionObserver' in window) {
-      tocObs = new IntersectionObserver(function (ents) { ents.forEach(function (en) { if (en.isIntersecting) { $$('.stoc a').forEach(function (a) { a.classList.toggle('on', a.dataset.sec === en.target.id); }); } }); }, { rootMargin: '-90px 0px -70% 0px' });
+      tocObs = new IntersectionObserver(function (ents) { ents.forEach(function (en) { if (en.isIntersecting) { $$('.stoc a').forEach(function (a) { var on = a.dataset.sec === en.target.id; a.classList.toggle('on', on); if (on) $('#tocNow').textContent = a.textContent; }); } }); }, { rootMargin: '-90px 0px -70% 0px' });
       $$('.blk, .libro h3[id], .libro h4[id]', $('#detail')).forEach(function (s) { tocObs.observe(s); });
     }
+    Marcas.mount({ key: P + 'marcas', chapter: t.id, root: $('#sbody'), notesBtn: $('#notesBtn'), countEl: $('#notesN'), host: root });
     return anchor && ID.test(anchor) ? anchor : null;
   }
   function syncProgBtn(t) {
