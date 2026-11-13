@@ -69,9 +69,10 @@ export function svgImages(src, GVIS) {
   return out;
 }
 
-/* Parte el HTML de un capítulo en trozos (uno por apartado de primer nivel y el anexo) y reparte sus apartados */
+/* Parte el HTML de un capítulo en trozos (uno por apartado de primer nivel, el anexo y cada visor de redes, que lleva
+   dentro sus datos y su mapa base) y reparte sus apartados. El motor los vuelve a unir en orden. */
 export function chunksOf(tid, book) {
-  const parts = String(book.html).split(/(?=<h3 class="s1"|<details class="note")/).filter(Boolean);
+  const parts = String(book.html).split(/(?=<h3 class="s1"|<details class="note"|<figure class="fig fig-w visor-fig")/).filter(Boolean);
   return parts.map((html, i) => {
     const secs = book.secs.filter((s) => html.indexOf(`id="${s.id}"`) > -1);
     return { t: tid, i, html, secs };
