@@ -210,11 +210,16 @@ window.APKanban = (function () {
     return out;
   }
 
+  /* Tarjeta de trabajo (el empleo, no el resto de proyectos): se marca con la etiqueta #trabajo, sin columna nueva.
+     Sin mayúsculas ni tildes, para que #Trabajo o #TRABAJO cuenten igual. */
+  var WORK_TAG = 'trabajo';
+  function isWork(c) { return (c && c.etiquetas || []).some(function (t) { return norm(t) === WORK_TAG; }); }
+
   var logic = {
     ESTADOS: ESTADOS, PRIO: PRIO, DEFAULTS: DEFAULTS, dayKey: dayKey, daysUntil: daysUntil, dueLabel: dueLabel,
     insertPosition: insertPosition, needsRenumber: needsRenumber, column: column, wipState: wipState,
     filterCards: filterCards, suggest: suggest, subProgress: subProgress, parseTags: parseTags, parseCapture: parseCapture,
-    depIndex: depIndex, waitingMap: waitingMap, wouldCycle: wouldCycle, freedBy: freedBy
+    depIndex: depIndex, waitingMap: waitingMap, wouldCycle: wouldCycle, freedBy: freedBy, isWork: isWork
   };
 
   /* ═══════════ INTERFAZ ═══════════ */
@@ -245,6 +250,7 @@ window.APKanban = (function () {
     ia: SV + '<path d="M7 2.2l1.4 3.9 3.9 1.4-3.9 1.4L7 12.8 5.6 8.9 1.7 7.5l3.9-1.4z"/><path d="M12.6 1.6v2.8M11.2 3h2.8"/></svg>',
     buscar: SV + '<circle cx="7" cy="7" r="4.6"/><path d="M10.4 10.4 14 14"/></svg>',
     espera: SV + '<path d="M6.6 9.4l2.8-2.8"/><path d="M7.6 4.4l.9-.9a2.6 2.6 0 0 1 3.7 3.7l-.9.9M8.4 11.6l-.9.9a2.6 2.6 0 0 1-3.7-3.7l.9-.9"/></svg>',
+    trabajo: SV + '<rect x="1.9" y="4.6" width="12.2" height="8.9" rx="1.6"/><path d="M5.8 4.6V3.3c0-.6.5-1 1-1h2.4c.6 0 1 .4 1 1v1.3M1.9 8.4h12.2"/></svg>',
     imagen: SV + '<rect x="2" y="2.8" width="12" height="10.4" rx="1.8"/><circle cx="5.8" cy="6.4" r="1.1"/><path d="m2.6 12 3.6-3.4 2.8 2.6 1.8-1.7 2.6 2.5"/></svg>'
   };
   function stIcon(estado) { var s = h2('span', { class: 'apk-st', 'data-estado': estado, html: ICON['st_' + estado] }); return s; }
@@ -656,8 +662,9 @@ window.APKanban = (function () {
     /* ── Tarjeta ── */
     function cardEl(c, o) {
       o = o || {};
-      var sp = subProgress(st.subs[c.id]), proj = projOf(c);
+      var sp = subProgress(st.subs[c.id]), proj = projOf(c), work = isWork(c);
       var meta = [];
+      if (work) meta.push(h('span', { class: 'apk-chip apk-work' }, [icon('trabajo'), 'Trabajo']));
       if (c.hoy_fecha === today && c.estado !== 'hecho') meta.push(h('span', { class: 'apk-chip apk-today' }, [icon('hoy'), 'Hoy']));
       if (c.prioridad >= 3) meta.push(h('span', { class: 'apk-chip apk-prio', 'data-prio': c.prioridad }, [icon('prio'), PRIO[c.prioridad]]));
       if (c.fecha_limite && c.estado !== 'hecho') { var d = dueLabel(c.fecha_limite, now); meta.push(h('span', { class: 'apk-chip apk-due', 'data-tone': d.tone }, [icon('fecha'), d.text])); }
@@ -668,10 +675,10 @@ window.APKanban = (function () {
       if (still >= 7) meta.push(h('span', { class: 'apk-chip apk-stale' }, [icon('reloj'), 'Sin mover ' + still + ' d']));
       if (sp.total) { var bar = h('span', { class: 'apk-bar', 'aria-hidden': 'true' }, [h('span', { class: 'apk-bar-fill' })]); bar.firstChild.style.width = Math.round(sp.done / sp.total * 100) + '%'; meta.push(h('span', { class: 'apk-chip apk-steps' }, [icon('pasos'), bar, sp.done + '/' + sp.total + ' pasos'])); }
       if (c.esfuerzo) meta.push(h('span', { class: 'apk-chip' }, [icon('reloj'), ESFUERZO[c.esfuerzo]]));
-      (c.etiquetas || []).slice(0, 3).forEach(function (t) { meta.push(h('span', { class: 'apk-chip apk-tag', text: '#' + t })); });
+      (c.etiquetas || []).filter(function (t) { return norm(t) !== WORK_TAG; }).slice(0, 3).forEach(function (t) { meta.push(h('span', { class: 'apk-chip apk-tag', text: '#' + t })); });   // #trabajo ya va como «Trabajo»
       var idx = ESTADOS.map(function (e) { return e.id; }).indexOf(c.estado), next = ESTADOS[idx + 1];
       var selecting = st.view === 'tablero' && selActive(), picked = selecting && !!st.sel[c.id];
-      return h('li', { class: 'apk-card' + (c.bloqueada ? ' is-blocked' : '') + (wt ? ' is-waiting' : '') + (picked ? ' is-selected' : '') + (c.estado === 'hecho' ? ' is-done' : '') + (fresh === c.id ? ' is-new' : ''), 'data-id': c.id, 'data-estado': c.estado }, [
+      return h('li', { class: 'apk-card' + (c.bloqueada ? ' is-blocked' : '') + (work ? ' is-work' : '') + (wt ? ' is-waiting' : '') + (picked ? ' is-selected' : '') + (c.estado === 'hecho' ? ' is-done' : '') + (fresh === c.id ? ' is-new' : ''), 'data-id': c.id, 'data-estado': c.estado }, [
         h('div', { class: 'apk-card-top' }, [
           h('span', { class: 'apk-grip', 'aria-hidden': 'true' }, [icon('grip')]),
           selecting ? h('span', { class: 'apk-selbox' + (picked ? ' is-on' : ''), 'aria-hidden': 'true' }) : null,
@@ -825,7 +832,7 @@ window.APKanban = (function () {
         h('div', { class: 'apk-capture-row' }, [h('span', { class: 'apk-capture-ico' }, [icon('idea')]), capInput,
           st.ia ? btn([icon('ia'), 'Varias con IA'], 'apk-btn apk-btn--ia', function () { captureAI(capInput.value); }, { 'data-role': 'ia-capturar' }) : null]),
         capChips,
-        h('p', { class: 'apk-hint apk-cap-help', id: 'apk-cap-help', text: '#proyecto o #etiqueta · !alta, !urgente, !baja · hoy, mañana, viernes, 24/10 · @hoy para elegirla hoy' })
+        h('p', { class: 'apk-hint apk-cap-help', id: 'apk-cap-help', text: '#proyecto o #etiqueta (#trabajo la marca como de trabajo) · !alta, !urgente, !baja · hoy, mañana, viernes, 24/10 · @hoy para elegirla hoy' })
       ]);
       return h('div', { class: 'apk-hoy' }, [
         capture,
