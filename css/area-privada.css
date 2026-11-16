@@ -1195,6 +1195,7 @@ main { min-height: calc(100vh - var(--ap-top-h) - 90px); outline: none; }
   --st-revision: #A8620A;  --st-revision-soft: #FAF4EC;
   --st-hecho: #2B7A57;     --st-hecho-soft: #EEF6F2;
   --st-bloq: #B0273F;      --ia: #6A4FB0;
+  --work: #0B6E78;         --work-soft: #E8F4F4;     /* trabajo (#trabajo): petróleo, fuera de los tonos de estado; 6:1 sobre blanco, 5,3:1 sobre su tinte */
 }
 [data-estado="ideas"] { --st: var(--st-ideas); --st-soft: var(--st-ideas-soft); }
 [data-estado="pendiente"] { --st: var(--st-pendiente); --st-soft: var(--st-pendiente-soft); }
@@ -1219,6 +1220,11 @@ main { min-height: calc(100vh - var(--ap-top-h) - 90px); outline: none; }
 .apk-chip .apk-ico svg { width: 12px; height: 12px; }
 .apk-chip[data-estado] { color: var(--ink); border-color: color-mix(in srgb, var(--st) 40%, var(--ap-line)); background: var(--st-soft); }
 .apk-chip[data-estado] .apk-st svg { width: 12px; height: 12px; }
+/* Tarjeta de trabajo: banda izquierda (el bloqueo usa la de arriba) y la única pastilla rellena, con icono y texto */
+.apk-card.is-work { box-shadow: inset 4px 0 0 var(--work), 0 1px 2px rgba(29, 38, 56, .05); padding-left: 16px; }
+.apk-card.is-work:not(.is-blocked) { background: var(--work-soft); border-color: color-mix(in srgb, var(--work) 35%, var(--ap-line)); }   /* bloqueada conserva su banda roja arriba */
+@media (hover: hover) and (pointer: fine) { .apk-card.is-work:hover { box-shadow: inset 4px 0 0 var(--work), 0 8px 18px -10px rgba(29, 38, 56, .35); } }
+.apk-chip.apk-work { color: #fff; background: var(--work); border-color: var(--work); font-weight: 600; }
 .apk-chip.apk-today { color: var(--st-en_curso); border-color: color-mix(in srgb, var(--st-en_curso) 40%, var(--ap-line)); }
 .apk-next { display: flex; gap: 6px; align-items: baseline; }
 .apk-next .apk-ico { flex: none; color: var(--st, var(--muted)); transform: translateY(2px); }

@@ -167,3 +167,12 @@ test('Dependencias: freedBy, filtro «bloqueadas o en espera» y sugerencias', (
   assert.ok(!s.includes('c') && !s.includes('d'), 'lo que espera no se sugiere aunque sea urgente');
   eq(L.depIndex(deps).by.a, ['c', 'd']);
 });
+
+test('isWork: la etiqueta #trabajo marca la tarjeta, sin mayúsculas ni tildes', () => {
+  assert.equal(L.isWork(card({ etiquetas: ['trabajo'] })), true);
+  assert.equal(L.isWork(card({ etiquetas: ['DP-600', 'Trabajo'] })), true);
+  assert.equal(L.isWork(card({ etiquetas: ['TRÁBAJO'] })), true);
+  assert.equal(L.isWork(card({ etiquetas: ['trabajos', 'DP-600'] })), false);
+  assert.equal(L.isWork(card({ etiquetas: [] })), false);
+  assert.equal(L.isWork(card({ etiquetas: null })), false);
+});

@@ -776,6 +776,22 @@ await step('Varias a la vez: seleccionar con Ctrl/Mayús+clic y con el modo «Se
   await page.waitForFunction((i) => [...document.querySelectorAll('.apk-card')].filter((e) => i.includes(e.dataset.id)).length === 3, ids);
   eq(db.kb_tarjetas.filter((c) => ids.includes(c.id)).length, 3, 'deshacer la eliminación en grupo');
 });
+await step('Trabajo: #trabajo en la captura marca la tarjeta (banda, pastilla «Trabajo» y sin #trabajo repetido)', async () => {
+  if (!(await page.$('.apk-board'))) await goBoard(page);
+  // la captura quita «#Trabajo» del título: no sirve addInline, que espera el texto tal cual
+  await page.click('.apk-col[data-estado="pendiente"] .apk-add');
+  await page.fill('.apk-col[data-estado="pendiente"] .apk-add-form input', 'Informe semanal #Trabajo');
+  await page.keyboard.press('Enter');
+  await page.waitForFunction(() => [...document.querySelectorAll('.apk-card-open')].some((e) => e.textContent === 'Informe semanal'));
+  await page.keyboard.press('Escape');
+  const row = db.kb_tarjetas.find((c) => c.titulo === 'Informe semanal');
+  ok(row && row.etiquetas.some((e) => e.toLowerCase() === 'trabajo'), 'la captura guarda la etiqueta');
+  const sel = `.apk-card[data-id="${row.id}"]`;
+  await page.waitForSelector(sel + '.is-work .apk-work');
+  eq(await page.$eval(sel, (el) => [...el.querySelectorAll('.apk-tag')].map((e) => e.textContent)), [], 'sin pastilla #trabajo duplicada');
+  eq(await page.$eval(sel + ' .apk-work', (el) => el.textContent), 'Trabajo', 'texto de la pastilla');
+  if (process.env.KB_SHOT) await page.screenshot({ path: process.env.KB_SHOT, fullPage: false });
+});
 await step('Sin errores de JavaScript', async () => { eq(errors, [], 'errores de consola'); });
 await step('Accesibilidad (axe, WCAG 2 A/AA) en Tablero y Hoy', async () => {
   for (const v of ['Tablero', 'Hoy']) {
