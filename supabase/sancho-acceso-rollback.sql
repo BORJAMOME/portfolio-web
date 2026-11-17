@@ -1,4 +1,5 @@
 -- Revierte sancho-acceso.sql: quita las políticas del agente, la función y la tabla.
+-- Si se ejecutó sancho-latido.sql, revertir antes con sancho-latido-rollback.sql.
 -- No toca las políticas de Borja ni ningún dato del área privada.
 -- El usuario de Authentication se borra a mano (Authentication → Users) si se desea.
 
