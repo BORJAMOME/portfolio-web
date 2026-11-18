@@ -1,0 +1,920 @@
+{
+ "meta": {
+  "cutoff": "2026-11-18",
+  "scope": "España peninsular",
+  "sources": {
+   "ports-law": {
+    "title": "Real Decreto Legislativo 2/2011, Anexo I · Puertos de interés general",
+    "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2011-16467#ai"
+   },
+   "airports-aena": {
+    "title": "Aena · Nuestros aeropuertos",
+    "url": "https://www.aena.es/es/pasajeros/nuestros-aeropuertos.html"
+   },
+   "ign-ports": {
+    "title": "IGN · IGR Redes de Transporte, nodos portuarios",
+    "url": "https://api-features.idee.es/collections/portnode"
+   },
+   "ign-airports": {
+    "title": "IGN · IGR Redes de Transporte, nodos de aeródromo",
+    "url": "https://api-features.idee.es/collections/aerodromenode"
+   },
+   "provinces": {
+    "title": "Eurostat GISCO · NUTS 2021 nivel 3, 1:1.000.000",
+    "url": "https://gisco-services.ec.europa.eu/distribution/v2/nuts/geojson/NUTS_RG_01M_2021_4326_LEVL_3.geojson"
+   }
+  },
+  "excluded": "Fuera del ámbito peninsular: puertos y aeropuertos de Baleares, Canarias, Ceuta y Melilla. El helipuerto de Algeciras forma parte de la red de Aena, pero es un helipuerto."
+ },
+ "ports": [
+  {
+   "id": "port-pasaia",
+   "name": "Pasaia",
+   "official_name": "Puerto de Pasaia",
+   "authority": "Autoridad Portuaria de Pasaia",
+   "province": "Gipuzkoa",
+   "note": null,
+   "coordinates": [
+    -1.92559,
+    43.32937
+   ],
+   "ign_nodes": 2,
+   "ign_id": 200640000017
+  },
+  {
+   "id": "port-bilbao",
+   "name": "Bilbao",
+   "official_name": "Puerto de Bilbao",
+   "authority": "Autoridad Portuaria de Bilbao",
+   "province": "Bizkaia",
+   "note": null,
+   "coordinates": [
+    -3.01596,
+    43.34036
+   ],
+   "ign_nodes": 3,
+   "ign_id": 480440000018
+  },
+  {
+   "id": "port-santander",
+   "name": "Santander",
+   "official_name": "Puerto de Santander",
+   "authority": "Autoridad Portuaria de Santander",
+   "province": "Cantabria",
+   "note": null,
+   "coordinates": [
+    -3.82583,
+    43.44917
+   ],
+   "ign_nodes": 1,
+   "ign_id": 390750000003
+  },
+  {
+   "id": "port-gijon-musel",
+   "name": "Gijón-Musel",
+   "official_name": "Puerto de Gijón-Musel",
+   "authority": "Autoridad Portuaria de Gijón",
+   "province": "Asturias",
+   "note": null,
+   "coordinates": [
+    -5.69379,
+    43.54963
+   ],
+   "ign_nodes": 2,
+   "ign_id": 330240000019
+  },
+  {
+   "id": "port-aviles",
+   "name": "Avilés",
+   "official_name": "Puerto de Avilés",
+   "authority": "Autoridad Portuaria de Avilés",
+   "province": "Asturias",
+   "note": null,
+   "coordinates": [
+    -5.91809,
+    43.58302
+   ],
+   "ign_nodes": 3,
+   "ign_id": 330040000009
+  },
+  {
+   "id": "port-san-cibrao",
+   "name": "San Cibrao",
+   "official_name": "Puerto de San Cibrao",
+   "authority": "Autoridad Portuaria de Ferrol-San Cibrao",
+   "province": "Lugo",
+   "note": null,
+   "coordinates": [
+    -7.46117,
+    43.7074
+   ],
+   "ign_nodes": 2,
+   "ign_id": 270130000064
+  },
+  {
+   "id": "port-ferrol-y-su-ria",
+   "name": "Ferrol y su ría",
+   "official_name": "Puerto de Ferrol y su ría",
+   "authority": "Autoridad Portuaria de Ferrol-San Cibrao",
+   "province": "A Coruña",
+   "note": null,
+   "coordinates": [
+    -8.23892,
+    43.46186
+   ],
+   "ign_nodes": 4,
+   "ign_id": 150510000002
+  },
+  {
+   "id": "port-a-coruna",
+   "name": "A Coruña",
+   "official_name": "Puerto de A Coruña",
+   "authority": "Autoridad Portuaria de A Coruña",
+   "province": "A Coruña",
+   "note": null,
+   "coordinates": [
+    -8.39698,
+    43.35867
+   ],
+   "ign_nodes": 2,
+   "ign_id": 150300000052
+  },
+  {
+   "id": "port-vilagarcia-de-arousa-y-su-ria",
+   "name": "Vilagarcía de Arousa y su ría",
+   "official_name": "Puerto de Vilagarcía de Arousa y su ría",
+   "authority": "Autoridad Portuaria de Vilagarcía de Arousa",
+   "province": "Pontevedra",
+   "note": null,
+   "coordinates": [
+    -8.77681,
+    42.59361
+   ],
+   "ign_nodes": 1,
+   "ign_id": 360600000028
+  },
+  {
+   "id": "port-marin-y-ria-de-pontevedra",
+   "name": "Marín y ría de Pontevedra",
+   "official_name": "Puerto de Marín y ría de Pontevedra",
+   "authority": "Autoridad Portuaria de Marín y Ría de Pontevedra",
+   "province": "Pontevedra",
+   "note": null,
+   "coordinates": [
+    -8.69076,
+    42.40167
+   ],
+   "ign_nodes": 1,
+   "ign_id": 360380000016
+  },
+  {
+   "id": "port-vigo-y-su-ria",
+   "name": "Vigo y su ría",
+   "official_name": "Puerto de Vigo y su ría",
+   "authority": "Autoridad Portuaria de Vigo",
+   "province": "Pontevedra",
+   "note": null,
+   "coordinates": [
+    -8.67001,
+    42.27437
+   ],
+   "ign_nodes": 10,
+   "ign_id": 360450000006
+  },
+  {
+   "id": "port-huelva",
+   "name": "Huelva",
+   "official_name": "Puerto de Huelva",
+   "authority": "Autoridad Portuaria de Huelva",
+   "province": "Huelva",
+   "note": null,
+   "coordinates": [
+    -6.91488,
+    37.177
+   ],
+   "ign_nodes": 1,
+   "ign_id": 210550000010
+  },
+  {
+   "id": "port-sevilla-y-su-ria",
+   "name": "Sevilla y su ría",
+   "official_name": "Puerto de Sevilla y su ría",
+   "authority": "Autoridad Portuaria de Sevilla",
+   "province": "Sevilla",
+   "note": "Único puerto marítimo de interior de España, en el Guadalquivir.",
+   "coordinates": [
+    -5.99652,
+    37.3467
+   ],
+   "ign_nodes": 1,
+   "ign_id": 410910000003
+  },
+  {
+   "id": "port-cadiz-y-su-bahia",
+   "name": "Cádiz y su bahía",
+   "official_name": "Puerto de Cádiz y su bahía",
+   "authority": "Autoridad Portuaria de Bahía de Cádiz",
+   "province": "Cádiz",
+   "note": "Incluye el Puerto de Santa María, el de la zona franca de Cádiz, Puerto Real, el Bajo de la Cabezuela y Puerto Sherry.",
+   "coordinates": [
+    -6.2837,
+    36.53359
+   ],
+   "ign_nodes": 5,
+   "ign_id": 110120000007
+  },
+  {
+   "id": "port-tarifa",
+   "name": "Tarifa",
+   "official_name": "Puerto de Tarifa",
+   "authority": "Autoridad Portuaria de Bahía de Algeciras",
+   "province": "Cádiz",
+   "note": null,
+   "coordinates": [
+    -5.60597,
+    36.00909
+   ],
+   "ign_nodes": 1,
+   "ign_id": 110350000021
+  },
+  {
+   "id": "port-bahia-de-algeciras",
+   "name": "Bahía de Algeciras",
+   "official_name": "Puerto de Bahía de Algeciras",
+   "authority": "Autoridad Portuaria de Bahía de Algeciras",
+   "province": "Cádiz",
+   "note": null,
+   "coordinates": [
+    -5.39823,
+    36.17846
+   ],
+   "ign_nodes": 6,
+   "ign_id": 110330000016
+  },
+  {
+   "id": "port-malaga",
+   "name": "Málaga",
+   "official_name": "Puerto de Málaga",
+   "authority": "Autoridad Portuaria de Málaga",
+   "province": "Málaga",
+   "note": null,
+   "coordinates": [
+    -4.4238,
+    36.70901
+   ],
+   "ign_nodes": 1,
+   "ign_id": 290670000009
+  },
+  {
+   "id": "port-motril",
+   "name": "Motril",
+   "official_name": "Puerto de Motril",
+   "authority": "Autoridad Portuaria de Motril",
+   "province": "Granada",
+   "note": null,
+   "coordinates": [
+    -3.51389,
+    36.71849
+   ],
+   "ign_nodes": 1,
+   "ign_id": 181400000001
+  },
+  {
+   "id": "port-almeria",
+   "name": "Almería",
+   "official_name": "Puerto de Almería",
+   "authority": "Autoridad Portuaria de Almería",
+   "province": "Almería",
+   "note": null,
+   "coordinates": [
+    -2.46667,
+    36.83333
+   ],
+   "ign_nodes": 1,
+   "ign_id": 40130000009
+  },
+  {
+   "id": "port-carboneras",
+   "name": "Carboneras",
+   "official_name": "Puerto de Carboneras",
+   "authority": "Autoridad Portuaria de Almería",
+   "province": "Almería",
+   "note": null,
+   "coordinates": [
+    -1.9008,
+    36.97564
+   ],
+   "ign_nodes": 1,
+   "ign_id": 40320000006
+  },
+  {
+   "id": "port-cartagena",
+   "name": "Cartagena",
+   "official_name": "Puerto de Cartagena",
+   "authority": "Autoridad Portuaria de Cartagena",
+   "province": "Murcia",
+   "note": "Incluye la dársena de Escombreras.",
+   "coordinates": [
+    -0.97372,
+    37.59553
+   ],
+   "ign_nodes": 2,
+   "ign_id": 300160000004
+  },
+  {
+   "id": "port-alicante",
+   "name": "Alicante",
+   "official_name": "Puerto de Alicante",
+   "authority": "Autoridad Portuaria de Alicante",
+   "province": "Alicante/Alacant",
+   "note": null,
+   "coordinates": [
+    -0.49281,
+    38.33648
+   ],
+   "ign_nodes": 1,
+   "ign_id": 30140000001
+  },
+  {
+   "id": "port-gandia",
+   "name": "Gandía",
+   "official_name": "Puerto de Gandía",
+   "authority": "Autoridad Portuaria de Valencia",
+   "province": "Valencia/València",
+   "note": null,
+   "coordinates": [
+    -0.1558,
+    38.99365
+   ],
+   "ign_nodes": 1,
+   "ign_id": 461310000001
+  },
+  {
+   "id": "port-valencia",
+   "name": "Valencia",
+   "official_name": "Puerto de Valencia",
+   "authority": "Autoridad Portuaria de Valencia",
+   "province": "Valencia/València",
+   "note": null,
+   "coordinates": [
+    -0.33129,
+    39.45923
+   ],
+   "ign_nodes": 1,
+   "ign_id": 462500000001
+  },
+  {
+   "id": "port-sagunto",
+   "name": "Sagunto",
+   "official_name": "Puerto de Sagunto",
+   "authority": "Autoridad Portuaria de Valencia",
+   "province": "Valencia/València",
+   "note": null,
+   "coordinates": [
+    -0.22008,
+    39.65124
+   ],
+   "ign_nodes": 1,
+   "ign_id": 462200000001
+  },
+  {
+   "id": "port-castellon",
+   "name": "Castellón",
+   "official_name": "Puerto de Castellón",
+   "authority": "Autoridad Portuaria de Castellón",
+   "province": "Castellón/Castelló",
+   "note": null,
+   "coordinates": [
+    0.01081,
+    39.95415
+   ],
+   "ign_nodes": 1,
+   "ign_id": 120400000001
+  },
+  {
+   "id": "port-tarragona",
+   "name": "Tarragona",
+   "official_name": "Puerto de Tarragona",
+   "authority": "Autoridad Portuaria de Tarragona",
+   "province": "Tarragona",
+   "note": null,
+   "coordinates": [
+    1.23255,
+    41.10441
+   ],
+   "ign_nodes": 1,
+   "ign_id": 431480000011
+  },
+  {
+   "id": "port-barcelona",
+   "name": "Barcelona",
+   "official_name": "Puerto de Barcelona",
+   "authority": "Autoridad Portuaria de Barcelona",
+   "province": "Barcelona",
+   "note": null,
+   "coordinates": [
+    2.16831,
+    41.3583
+   ],
+   "ign_nodes": 1,
+   "ign_id": 80190000014
+  }
+ ],
+ "airports": [
+  {
+   "id": "airport-lcg",
+   "iata": "LCG",
+   "icao": "LECO",
+   "name": "A Coruña",
+   "ign_name": "Aeropuerto de A Coruña",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "A Coruña",
+   "category": "Internacional",
+   "military": false,
+   "coordinates": [
+    -8.37726,
+    43.30206
+   ]
+  },
+  {
+   "id": "airport-mad",
+   "iata": "MAD",
+   "icao": "LEMD",
+   "name": "Adolfo Suárez Madrid-Barajas",
+   "ign_name": "Aeropuerto Adolfo Suárez Madrid-Barajas",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Madrid",
+   "category": "Internacional",
+   "military": false,
+   "coordinates": [
+    -3.56095,
+    40.47223
+   ]
+  },
+  {
+   "id": "airport-abc",
+   "iata": "ABC",
+   "icao": "LEAB",
+   "name": "Albacete",
+   "ign_name": "Base Aérea de Albacete",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Albacete",
+   "category": "Internacional",
+   "military": true,
+   "coordinates": [
+    -1.86344,
+    38.94847
+   ]
+  },
+  {
+   "id": "airport-alc",
+   "iata": "ALC",
+   "icao": "LEAL",
+   "name": "Alicante-Elche Miguel Hernández",
+   "ign_name": "Aeropuerto de Alicante-Elche Miguel Hernández",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Alicante/Alacant",
+   "category": "Internacional",
+   "military": false,
+   "coordinates": [
+    -0.55816,
+    38.28217
+   ]
+  },
+  {
+   "id": "airport-lei",
+   "iata": "LEI",
+   "icao": "LEAM",
+   "name": "Almería",
+   "ign_name": "Aeropuerto de Almería",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Almería",
+   "category": "Internacional",
+   "military": false,
+   "coordinates": [
+    -2.3701,
+    36.84394
+   ]
+  },
+  {
+   "id": "airport-ovd",
+   "iata": "OVD",
+   "icao": "LEAS",
+   "name": "Asturias",
+   "ign_name": "Aeropuerto de Asturias",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Asturias",
+   "category": "Internacional",
+   "military": false,
+   "coordinates": [
+    -6.03462,
+    43.56357
+   ]
+  },
+  {
+   "id": "airport-bjz",
+   "iata": "BJZ",
+   "icao": "LEBZ",
+   "name": "Badajoz",
+   "ign_name": "Base Aérea de Talavera la Real (Badajoz)",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Badajoz",
+   "category": "Internacional",
+   "military": true,
+   "coordinates": [
+    -6.82133,
+    38.89125
+   ]
+  },
+  {
+   "id": "airport-bio",
+   "iata": "BIO",
+   "icao": "LEBB",
+   "name": "Bilbao",
+   "ign_name": "Aeropuerto de Bilbao",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Bizkaia",
+   "category": "Internacional",
+   "military": false,
+   "coordinates": [
+    -2.91008,
+    43.30055
+   ]
+  },
+  {
+   "id": "airport-rgs",
+   "iata": "RGS",
+   "icao": "LEBG",
+   "name": "Burgos",
+   "ign_name": "Aeropuerto de Burgos (Villafría)",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Burgos",
+   "category": "Internacional",
+   "military": false,
+   "coordinates": [
+    -3.61364,
+    42.35738
+   ]
+  },
+  {
+   "id": "airport-odb",
+   "iata": "ODB",
+   "icao": "LEBA",
+   "name": "Córdoba",
+   "ign_name": "Aeropuerto de Córdoba",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Córdoba",
+   "category": "Nacional",
+   "military": false,
+   "coordinates": [
+    -4.84888,
+    37.842
+   ]
+  },
+  {
+   "id": "airport-grx",
+   "iata": "GRX",
+   "icao": "LEGR",
+   "name": "Federico García Lorca Granada-Jaén",
+   "ign_name": "Aeropuerto de Federico García Lorca Granada-Jaén",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Granada",
+   "category": "Internacional",
+   "military": false,
+   "coordinates": [
+    -3.77736,
+    37.18873
+   ]
+  },
+  {
+   "id": "airport-gro",
+   "iata": "GRO",
+   "icao": "LEGE",
+   "name": "Girona-Costa Brava",
+   "ign_name": "Aeroport de Girona",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Girona",
+   "category": "Internacional",
+   "military": false,
+   "coordinates": [
+    2.76055,
+    41.90097
+   ]
+  },
+  {
+   "id": "airport-hsk",
+   "iata": "HSK",
+   "icao": "LEHC",
+   "name": "Huesca-Pirineos",
+   "ign_name": "Aeropuerto de Huesca-Pirineos",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Huesca",
+   "category": "Internacional",
+   "military": false,
+   "coordinates": [
+    -0.32347,
+    42.08093
+   ]
+  },
+  {
+   "id": "airport-rmu",
+   "iata": "RMU",
+   "icao": "LEMI",
+   "name": "Internacional Región de Murcia",
+   "ign_name": "Aeropuerto de la Región de Murcia",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Murcia",
+   "category": "Internacional",
+   "military": false,
+   "coordinates": [
+    -1.12466,
+    37.80319
+   ]
+  },
+  {
+   "id": "airport-xry",
+   "iata": "XRY",
+   "icao": "LEJR",
+   "name": "Jerez",
+   "ign_name": "Aeropuerto de Jerez",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Cádiz",
+   "category": "Internacional",
+   "military": false,
+   "coordinates": [
+    -6.06011,
+    36.74462
+   ]
+  },
+  {
+   "id": "airport-bcn",
+   "iata": "BCN",
+   "icao": "LEBL",
+   "name": "Josep Tarradellas Barcelona-El Prat",
+   "ign_name": "Aeropuerto de Josep Tarradellas Barcelona-El Prat",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Barcelona",
+   "category": "Internacional",
+   "military": false,
+   "coordinates": [
+    2.07846,
+    41.29708
+   ]
+  },
+  {
+   "id": "airport-len",
+   "iata": "LEN",
+   "icao": "LELN",
+   "name": "León",
+   "ign_name": "Base Aérea de León",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "León",
+   "category": "Internacional",
+   "military": true,
+   "coordinates": [
+    -5.65618,
+    42.58859
+   ]
+  },
+  {
+   "id": "airport-rjl",
+   "iata": "RJL",
+   "icao": "LERJ",
+   "name": "Logroño-Agoncillo",
+   "ign_name": "Aeropuerto de Logroño-Agoncillo",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "La Rioja",
+   "category": "Internacional",
+   "military": false,
+   "coordinates": [
+    -2.32049,
+    42.46053
+   ]
+  },
+  {
+   "id": "airport-mcv",
+   "iata": "MCV",
+   "icao": "LECU/LEVS",
+   "name": "Madrid-Cuatro Vientos",
+   "ign_name": "Aeropuerto de Madrid-Cuatro Vientos",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Madrid",
+   "category": "Internacional",
+   "military": false,
+   "coordinates": [
+    -3.78514,
+    40.37068
+   ]
+  },
+  {
+   "id": "airport-agp",
+   "iata": "AGP",
+   "icao": "LEMG",
+   "name": "Málaga-Costa del Sol",
+   "ign_name": "Aeropuerto de Málaga-Costa del Sol",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Málaga",
+   "category": "Internacional",
+   "military": false,
+   "coordinates": [
+    -4.49921,
+    36.67497
+   ]
+  },
+  {
+   "id": "airport-pna",
+   "iata": "PNA",
+   "icao": "LEPP",
+   "name": "Pamplona",
+   "ign_name": "Aeropuerto de Pamplona",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Navarra",
+   "category": "Internacional",
+   "military": false,
+   "coordinates": [
+    -1.64633,
+    42.77004
+   ]
+  },
+  {
+   "id": "airport-reu",
+   "iata": "REU",
+   "icao": "LERS",
+   "name": "Reus",
+   "ign_name": "Aeropuerto de Reus",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Tarragona",
+   "category": "Internacional",
+   "military": false,
+   "coordinates": [
+    1.16717,
+    41.14739
+   ]
+  },
+  {
+   "id": "airport-qsa",
+   "iata": "QSA",
+   "icao": "LELL",
+   "name": "Sabadell",
+   "ign_name": "Aeropuerto de Sabadell",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Barcelona",
+   "category": "Nacional",
+   "military": false,
+   "coordinates": [
+    2.10503,
+    41.5209
+   ]
+  },
+  {
+   "id": "airport-slm",
+   "iata": "SLM",
+   "icao": "LESA",
+   "name": "Salamanca",
+   "ign_name": "Base Aérea de Matacán (Salamanca)",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Salamanca",
+   "category": "Internacional",
+   "military": true,
+   "coordinates": [
+    -5.50202,
+    40.95203
+   ]
+  },
+  {
+   "id": "airport-eas",
+   "iata": "EAS",
+   "icao": "LESO",
+   "name": "San Sebastián",
+   "ign_name": "Aeropuerto de San Sebastián",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Gipuzkoa",
+   "category": "Internacional",
+   "military": false,
+   "coordinates": [
+    -1.79061,
+    43.35652
+   ]
+  },
+  {
+   "id": "airport-scq",
+   "iata": "SCQ",
+   "icao": "LEST",
+   "name": "Santiago-Rosalía de Castro",
+   "ign_name": "Aeropuerto de Santiago-Rosalía de Castro",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "A Coruña",
+   "category": "Internacional",
+   "military": false,
+   "coordinates": [
+    -8.41514,
+    42.89633
+   ]
+  },
+  {
+   "id": "airport-sdr",
+   "iata": "SDR",
+   "icao": "LEXJ",
+   "name": "Seve Ballesteros-Santander",
+   "ign_name": "Aeropuerto Seve Ballesteros-Santander",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Cantabria",
+   "category": "Internacional",
+   "military": false,
+   "coordinates": [
+    -3.82,
+    43.42706
+   ]
+  },
+  {
+   "id": "airport-svq",
+   "iata": "SVQ",
+   "icao": "LEZL",
+   "name": "Sevilla",
+   "ign_name": "Aeropuerto de Sevilla",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Sevilla",
+   "category": "Internacional",
+   "military": false,
+   "coordinates": [
+    -5.89891,
+    37.41792
+   ]
+  },
+  {
+   "id": "airport-vlc",
+   "iata": "VLC",
+   "icao": "LEVC",
+   "name": "Valencia",
+   "ign_name": "Aeropuerto de Valencia",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Valencia/València",
+   "category": "Internacional",
+   "military": false,
+   "coordinates": [
+    -0.48162,
+    39.48931
+   ]
+  },
+  {
+   "id": "airport-vll",
+   "iata": "VLL",
+   "icao": "LEVD",
+   "name": "Valladolid",
+   "ign_name": "Base Aérea de Villanubla (Valladolid)",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Valladolid",
+   "category": "Internacional",
+   "military": true,
+   "coordinates": [
+    -4.85186,
+    41.706
+   ]
+  },
+  {
+   "id": "airport-vgo",
+   "iata": "VGO",
+   "icao": "LEVX",
+   "name": "Vigo",
+   "ign_name": "Aeropuerto de Vigo",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Pontevedra",
+   "category": "Internacional",
+   "military": false,
+   "coordinates": [
+    -8.62753,
+    42.22912
+   ]
+  },
+  {
+   "id": "airport-vit",
+   "iata": "VIT",
+   "icao": "LEVT",
+   "name": "Vitoria",
+   "ign_name": "Aeropuerto de Vitoria",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Araba/Álava",
+   "category": "Internacional",
+   "military": false,
+   "coordinates": [
+    -2.72447,
+    42.88284
+   ]
+  },
+  {
+   "id": "airport-zaz",
+   "iata": "ZAZ",
+   "icao": "LEZG",
+   "name": "Zaragoza",
+   "ign_name": "Aeropuerto de Zaragoza / Base Aérea de Zaragoza",
+   "operator": "Aena S.M.E., S.A.",
+   "province": "Zaragoza",
+   "category": "Internacional",
+   "military": true,
+   "coordinates": [
+    -1.04155,
+    41.66624
+   ]
+  }
+ ]
+}

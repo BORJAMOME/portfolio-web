@@ -17,16 +17,20 @@
     return {type:'FeatureCollection',features:units().map(u=>({type:'Feature',
       geometry:{type:'Point',coordinates:u.coordinates},properties:{uid:u.id,name:u.name,pop:u.population,sel:u.id===selected?1:0}}))};
   }
-  function radiusExpression(){
-    const stops=C.zoomFactor.flatMap(([z,f])=>[z,['max',C.minRadius,['*',['sqrt',['get','pop']],C.k*f]]]);
+  function radiusExpression(scale=1){
+    const stops=C.zoomFactor.flatMap(([z,f])=>[z,['max',C.minRadius*scale,['*',['sqrt',['get','pop']],C.k*f*scale]]]);
     return ['interpolate',['linear'],['zoom'],...stops];
   }
   function ensureLayers(){
     if(map.getSource('population'))return;
     map.addSource('population',{type:'geojson',data:collection(),attribution:'Población: INE, Censo anual 2025 · Áreas urbanas: MIVAU, Atlas 2025'});
     const before=map.getLayer('rail')?'rail':undefined;
+    // Halo difuminado en #490938 bajo cada círculo: da volumen sin endurecer el borde.
+    map.addLayer({id:'population-halo',type:'circle',source:'population',layout:{'circle-sort-key':['-',['get','pop']]},paint:{
+      'circle-radius':radiusExpression(1.45),'circle-color':C.color,'circle-opacity':['interpolate',['linear'],['zoom'],5,.10,10,.07],'circle-blur':.85,
+      'circle-pitch-alignment':'viewport','circle-pitch-scale':'viewport'}},before);
     map.addLayer({id:'population-circles',type:'circle',source:'population',layout:{'circle-sort-key':['-',['get','pop']]},paint:{
-      'circle-radius':radiusExpression(),'circle-color':C.fill,
+      'circle-radius':radiusExpression(),'circle-color':C.color,'circle-opacity':['interpolate',['linear'],['zoom'],5,['case',['==',['get','sel'],1],.32,.20],10,['case',['==',['get','sel'],1],.26,.14]],'circle-blur':.18,
       'circle-stroke-color':['case',['==',['get','sel'],1],C.selected,C.stroke],
       'circle-stroke-width':['case',['==',['get','sel'],1],2,.8],
       // Marcador orientado a la pantalla: la inclinación 3D no deforma ni encoge los círculos.
@@ -62,7 +66,7 @@
     if(!map||!data)return;
     ensureLayers();
     map.getSource('population').setData(collection());
-    for(const id of ['population-circles','population-labels'])map.setLayoutProperty(id,'visibility',enabled?'visible':'none');
+    for(const id of ['population-halo','population-circles','population-labels'])map.setLayoutProperty(id,'visibility',enabled?'visible':'none');
     renderList();onChange?.();
   }
   function renderPanel(){
@@ -90,21 +94,16 @@
     if(fly)map.easeTo({center:u.coordinates,zoom:Math.max(map.getZoom(),u.kind==='area'?8:9),duration:root.AtlasConfig.reducedMotion()?0:700});
     const m=data.meta;
     const fields=u.kind==='area'?{
-      'Unidad':'Gran área urbana · suma de sus municipios, no solo la ciudad central',
-      'Habitantes':number.format(u.population),
-      'Municipios que la forman':number.format(u.municipalities),
-      'Fecha de referencia':'1 de enero de 2025 · Censo anual de población (INE)',
-      'Delimitación':m.areas.edition+'. La cifra publicada por el Atlas (1-1-2024) era '+number.format(u.atlas_population_2024)+' habitantes.',
-      'Posición del círculo':'Municipio de '+u.anchor+' (el más poblado del área). El círculo no dibuja el perímetro del área.'
+      'Qué cuenta':'La suma de todos los municipios del área, no solo la ciudad central.',
+      'Delimitación':m.areas.edition,
+      'Posición del círculo':'Municipio de '+u.anchor+', el más poblado del área.'
     }:{
-      'Unidad':'Capital de provincia · municipio completo',
-      'Habitantes':number.format(u.population),
-      'Provincia':u.province,
-      'Código INE':u.ine,
-      'Fecha de referencia':'1 de enero de 2025 · Censo anual de población (INE)',
-      'Posición del círculo':'Núcleo de la capital según el IGN.'
+      'Qué cuenta':'El municipio completo de la capital.',
+      'Provincia':u.province
     };
-    showInfo(u.kind==='area'?'Población · gran área urbana':'Población · capital de provincia',u.name,fields,{title:'INE · Censo anual de población (tabla 68065)',url:m.series_url});
+    showInfo(u.kind==='area'?'Gran área urbana':'Capital de provincia',u.name,fields,{
+      subtitle:'Población a 1 de enero de 2025',
+      facts:[{value:number.format(u.population),label:'habitantes'},...(u.kind==='area'?[{value:number.format(u.municipalities),label:'municipios'}]:[])]});
   }
   function legend(){
     if(!enabled||!data)return null;
