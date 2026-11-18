@@ -6,15 +6,15 @@
 <meta name="robots" content="noindex, nofollow">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; worker-src 'self' blob:; child-src blob:; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://www.ign.es; connect-src 'self' https://www.ign.es; object-src 'none'; base-uri 'self'; form-action 'self'">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="vendor/maplibre-gl.css?v=b613b67c"><link rel="stylesheet" href="atlas.css?v=e640a504">
+<link rel="stylesheet" href="vendor/maplibre-gl.css?v=b613b67c"><link rel="stylesheet" href="atlas.css?v=be8299f2">
 <script defer src="vendor/maplibre-gl.js?v=eb107f3e"></script>
-<script defer src="capas-config.js?v=3ae4e685"></script><script defer src="etiquetas.js?v=76b151f4"></script>
+<script defer src="capas-config.js?v=c05efb58"></script><script defer src="etiquetas.js?v=76b151f4"></script>
 <script defer src="filtros.js?v=d84ceba8"></script><script defer src="cartography.js?v=ff56cf9b"></script>
 <script defer src="themes.js?v=e07018c8"></script><script defer src="export-map.js?v=b781c9a8"></script>
 <script defer src="terrain-manifest.js?v=3088cd3d"></script><script defer src="terrain-controls.js?v=4b990399"></script>
 <script defer src="line-identity.js?v=3023ba0c"></script>
-<script defer src="poblacion.js?v=6cf5d905"></script><script defer src="capas.js?v=65553d4b"></script>
-<script defer src="atlas.js?v=e0f1e6d3"></script>
+<script defer src="poblacion.js?v=6cf5d905"></script><script defer src="capas.js?v=48a03ce7"></script>
+<script defer src="atlas.js?v=30f1b7cf"></script><script defer src="orientacion.js?v=3c295037"></script>
 </head>
 <body>
 <a class="skip" href="#map">Saltar al mapa</a>
@@ -22,6 +22,10 @@
 <h1>Atlas ferroviario de España</h1>
 <nav aria-label="Vista del mapa">
 <button id="home" type="button" title="Volver a la vista de la España peninsular">Vista inicial</button>
+<div class="orient" role="group" aria-label="Orientación de la pantalla">
+<button id="orient-portrait" type="button" aria-pressed="true" aria-label="Ver en vertical"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="7" y="2.5" width="10" height="19" rx="2.2"/><path d="M11 18.5h2"/></svg><span>Vertical</span></button>
+<button id="orient-landscape" type="button" aria-pressed="false" aria-label="Ver en horizontal a pantalla completa"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="2.5" y="7" width="19" height="10" rx="2.2"/><path d="M18.5 11v2"/></svg><span>Horizontal</span></button>
+</div>
 <div class="mode" role="group" aria-label="Modo de vista"><button id="flat" type="button" aria-pressed="true">2D</button><button id="mode" type="button" aria-pressed="false">Relieve 3D</button></div>
 </nav>
 </header>
@@ -81,6 +85,7 @@
 <div id="map" aria-label="Mapa ferroviario de la España peninsular" tabindex="-1"></div>
 <div id="info" hidden role="dialog" aria-modal="false" aria-labelledby="name"><button id="close" type="button" aria-label="Cerrar ficha">×</button><small id="kind"></small><h2 id="name" tabindex="-1"></h2><figure id="info-media" hidden><img alt=""><figcaption></figcaption></figure><dl id="attributes"></dl></div>
 <section id="legend" aria-label="Leyenda" tabindex="0"></section>
+<div id="toast" role="status" aria-live="polite" hidden></div>
 <div id="loading" role="status">Preparando la cartografía ferroviaria…</div>
 </main>
 <footer><span id="status" role="status">Cargando datos…</span><span id="coordinates"></span></footer>

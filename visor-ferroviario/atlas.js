@@ -6,7 +6,7 @@ const number = new Intl.NumberFormat("es-ES");
 const filters = {gauge:[], electric:[], tracks:[]};
 const dimensions = {gauge:"Ancho de vía", electric:"Electrificación", tracks:"Número de vías"};
 const bounds = CFG.bounds;
-const padding = () => ({top:30,bottom:40,left:window.innerWidth>760?330:20,right:window.innerWidth>760?40:20});
+const padding = () => CFG.compact() ? {top:20,bottom:20,left:20,right:20} : {top:30,bottom:40,left:330,right:40};
 let dataset = null;
 let peninsular = [];
 let filtered = [];
@@ -101,7 +101,7 @@ $("#toggle-panel").onclick=function(){
   panel.hidden=!panel.hidden;
   this.setAttribute("aria-expanded",String(!panel.hidden));
 };
-if(window.innerWidth<=760)$("#toggle-panel").click();
+if(CFG.compact())$("#toggle-panel").click();
 
 /* ── ficha (hoja inferior en móvil) ── */
 function clearSelection(){
@@ -120,7 +120,7 @@ $("#close").onclick=closeInfo;
 document.addEventListener("keydown",event=>{
   if(event.key!=="Escape")return;
   if(!$("#info").hidden){closeInfo();event.preventDefault();}
-  else if(window.innerWidth<=760&&!$("#tools").hidden){$("#toggle-panel").click();$("#toggle-panel").focus();}
+  else if(CFG.compact()&&!$("#tools").hidden){$("#toggle-panel").click();$("#toggle-panel").focus();}
 });
 function showInfo(kind,title,fields,source,actions,media) {
   infoRevision++;
@@ -153,7 +153,7 @@ function showInfo(kind,title,fields,source,actions,media) {
   dd.append(a);list.append(dt,dd);
   $("#info").hidden=false;
   // En móvil la ficha ocupa la hoja inferior: se pliega el panel para que no se superpongan.
-  if(window.innerWidth<=760&&!$("#tools").hidden){$("#tools").hidden=true;$("#toggle-panel").setAttribute("aria-expanded","false");}
+  if(CFG.compact()&&!$("#tools").hidden){$("#tools").hidden=true;$("#toggle-panel").setAttribute("aria-expanded","false");}
   $("#name").focus({preventScroll:true});
   writeHash();
 }
@@ -233,7 +233,7 @@ $("#search").oninput=function(){
     button.onclick=()=>{
       map.flyTo({center:feature.geometry.coordinates.slice(0,2),zoom:12,duration:motion(1200)});
       stationInfo(feature);results.replaceChildren();
-      if(window.innerWidth<=760&&!$("#tools").hidden)$("#toggle-panel").click();
+      if(CFG.compact()&&!$("#tools").hidden)$("#toggle-panel").click();
     };
     results.append(button);
   }
@@ -295,9 +295,18 @@ function applyFilters() {
 $("#reset").onclick=()=>{readFilters({});applyFilters();};
 
 /* ── leyenda: refleja el tema y las capas activas ── */
+let legendOpen=null;
 function renderLegend() {
-  const legend=$("#legend");
-  legend.replaceChildren();
+  const host=$("#legend");
+  host.replaceChildren();
+  // En móvil la leyenda empieza plegada en una pestaña para no tapar el mapa.
+  if(legendOpen===null)legendOpen=!CFG.compact();
+  const toggle=document.createElement("button");
+  toggle.type="button";toggle.className="legend-toggle";toggle.setAttribute("aria-expanded",String(legendOpen));toggle.setAttribute("aria-controls","legend-body");
+  toggle.textContent="Leyenda";
+  toggle.onclick=()=>{legendOpen=!legendOpen;renderLegend();};
+  const legend=document.createElement("div");legend.id="legend-body";legend.hidden=!legendOpen;
+  host.append(toggle,legend);
   const theme=window.AtlasCapas?.current()||"gauge";
   if(!window.AtlasCapas?.legend(legend)) {
     const items=theme==="gauge"
@@ -316,7 +325,8 @@ function renderLegend() {
   }
   const sizes=window.AtlasPopulation?.legend();
   if(sizes)legend.append(sizes);
-  legend.hidden=!legend.childElementCount;
+  host.hidden=!legend.childElementCount;
+  host.classList.toggle("collapsed",!legendOpen);
 }
 
 /* ── consultas y exportación ── */
