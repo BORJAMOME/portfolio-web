@@ -6,15 +6,15 @@
 <meta name="robots" content="noindex, nofollow">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; worker-src 'self' blob:; child-src blob:; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://www.ign.es; connect-src 'self' https://www.ign.es; object-src 'none'; base-uri 'self'; form-action 'self'">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="vendor/maplibre-gl.css?v=b613b67c"><link rel="stylesheet" href="atlas.css?v=be8299f2">
+<link rel="stylesheet" href="vendor/maplibre-gl.css?v=b613b67c"><link rel="stylesheet" href="atlas.css?v=e540ae4f">
 <script defer src="vendor/maplibre-gl.js?v=eb107f3e"></script>
-<script defer src="capas-config.js?v=c05efb58"></script><script defer src="etiquetas.js?v=76b151f4"></script>
+<script defer src="capas-config.js?v=212ae84a"></script><script defer src="etiquetas.js?v=76b151f4"></script>
 <script defer src="filtros.js?v=d84ceba8"></script><script defer src="cartography.js?v=ff56cf9b"></script>
-<script defer src="themes.js?v=e07018c8"></script><script defer src="export-map.js?v=b781c9a8"></script>
-<script defer src="terrain-manifest.js?v=3088cd3d"></script><script defer src="terrain-controls.js?v=4b990399"></script>
+<script defer src="themes.js?v=0ea48449"></script><script defer src="export-map.js?v=b781c9a8"></script>
+<script defer src="terrain-manifest.js?v=3088cd3d"></script><script defer src="terrain-controls.js?v=fce4be9c"></script>
 <script defer src="line-identity.js?v=3023ba0c"></script>
-<script defer src="poblacion.js?v=6cf5d905"></script><script defer src="capas.js?v=48a03ce7"></script>
-<script defer src="atlas.js?v=30f1b7cf"></script><script defer src="orientacion.js?v=3c295037"></script>
+<script defer src="poblacion.js?v=fb0a00ca"></script><script defer src="capas.js?v=cf98fc54"></script>
+<script defer src="transporte.js?v=b72fd8c7"></script><script defer src="atlas.js?v=afab31f8"></script><script defer src="orientacion.js?v=3c295037"></script>
 </head>
 <body>
 <a class="skip" href="#map">Saltar al mapa</a>
@@ -22,6 +22,7 @@
 <h1>Atlas ferroviario de España</h1>
 <nav aria-label="Vista del mapa">
 <button id="home" type="button" title="Volver a la vista de la España peninsular">Vista inicial</button>
+<a id="web-view" class="nav-link" href="https://borjamora.es/visor-ferroviario/#%7B%22t%22%3A%22corridors%22%2C%22k%22%3A%22sur%2Cnoreste%2Cnorte%2Clevante%2Clitoral%22%2C%22st%22%3A%22service%2Cconstruction%2Cproject%22%7D" target="_blank" rel="noopener" title="Abrir el visor publicado en una pestaña nueva">Vista web<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3H3v10h10v-3M9 3h4v4M13 3 7 9"/></svg><span class="visually-hidden"> (se abre en una pestaña nueva)</span></a>
 <div class="orient" role="group" aria-label="Orientación de la pantalla">
 <button id="orient-portrait" type="button" aria-pressed="true" aria-label="Ver en vertical"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="7" y="2.5" width="10" height="19" rx="2.2"/><path d="M11 18.5h2"/></svg><span>Vertical</span></button>
 <button id="orient-landscape" type="button" aria-pressed="false" aria-label="Ver en horizontal a pantalla completa"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="2.5" y="7" width="19" height="10" rx="2.2"/><path d="M18.5 11v2"/></svg><span>Horizontal</span></button>
@@ -62,6 +63,8 @@
 <p id="population-note" class="muted"></p>
 <p id="population-live" class="visually-hidden" aria-live="polite"></p>
 </div>
+<label class="row"><input type="checkbox" id="ports-toggle"> <i class="poi-key port" aria-hidden="true"></i> Puertos de interés general</label>
+<label class="row"><input type="checkbox" id="airports-toggle"> <i class="poi-key airport" aria-hidden="true"></i> Aeropuertos de interés general</label>
 <label class="row"><input type="checkbox" data-layer="stations" checked> Estaciones Renfe</label>
 <label class="row"><input type="checkbox" data-layer="rail" checked> Red ferroviaria IGN (fondo)</label>
 <label class="row"><input type="checkbox" data-layer="topography"> Topografía IGN</label>
@@ -83,7 +86,7 @@
 </details>
 </aside>
 <div id="map" aria-label="Mapa ferroviario de la España peninsular" tabindex="-1"></div>
-<div id="info" hidden role="dialog" aria-modal="false" aria-labelledby="name"><button id="close" type="button" aria-label="Cerrar ficha">×</button><small id="kind"></small><h2 id="name" tabindex="-1"></h2><figure id="info-media" hidden><img alt=""><figcaption></figcaption></figure><dl id="attributes"></dl></div>
+<div id="info" hidden role="dialog" aria-modal="false" aria-labelledby="name"><button id="close" type="button" aria-label="Cerrar ficha">×</button><small id="kind"></small><h2 id="name" tabindex="-1"></h2><p id="info-subtitle" hidden></p><ul id="info-chips" hidden></ul><div id="info-facts" hidden></div><figure id="info-media" hidden><img alt=""><figcaption></figcaption></figure><dl id="attributes"></dl></div>
 <section id="legend" aria-label="Leyenda" tabindex="0"></section>
 <div id="toast" role="status" aria-live="polite" hidden></div>
 <div id="loading" role="status">Preparando la cartografía ferroviaria…</div>

@@ -77,7 +77,7 @@ dt{color:var(--muted);margin-top:11px;font-size:var(--fs-xs)}dd{margin:3px 0;ove
 .station-key,.stop-key{flex:none;height:7px;width:7px;border:1.6px solid var(--navy);background:#fff;border-radius:50%;margin:0 8px}
 .legend-sizes{margin-top:8px;border-top:1px solid var(--line);padding-top:6px}
 .legend-sizes svg{display:block;margin:4px 0;overflow:visible}.legend-sizes text{font-size:12px;fill:var(--ink);font-family:inherit}
-.legend-bubble{fill:rgba(39,58,95,.10);stroke:rgba(39,58,95,.6);stroke-width:.8}
+.legend-bubble{fill:rgba(73,9,56,.18);stroke:rgba(73,9,56,.55);stroke-width:.8}
 .legend-sizes small{display:block;color:var(--muted);line-height:1.45}
 #loading{position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);padding:16px 24px;background:var(--paper);border:1px solid var(--line);border-radius:6px;font-size:var(--fs-m);z-index:5}
 footer{height:30px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 18px;font-size:var(--fs-xs);color:var(--muted)}
@@ -155,3 +155,31 @@ footer{height:30px;display:flex;align-items:center;justify-content:space-between
 #legend.collapsed{padding:4px 12px;max-height:none}
 #legend.collapsed .legend-toggle{padding:0}
 @media(min-width:761px) and (min-height:521px){.legend-toggle{display:none}#legend-body[hidden]{display:block}}
+
+/* ── Vista web, fichas enriquecidas, «Todas las vías» y puertos/aeropuertos ── */
+.nav-link{display:inline-flex;align-items:center;gap:5px;min-height:var(--hit);padding:6px 10px;border:1px solid var(--line);border-radius:5px;background:var(--paper);color:var(--navy);text-decoration:none;font-size:var(--fs-s);box-sizing:border-box;white-space:nowrap}
+.nav-link:hover{background:var(--wash)}
+.nav-link svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+#info-subtitle{margin:0 0 10px;color:var(--muted);font-size:var(--fs-s);line-height:1.4}
+#info-chips{list-style:none;display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px;padding:0}
+#info-chips li{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-xs);font-weight:600;padding:2px 9px;border-radius:999px;background:var(--wash);color:var(--navy);line-height:1.7}
+#info-chips li.coloured{background:#fff;box-shadow:inset 0 0 0 1px var(--line-strong)}
+#info-chips li.coloured::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--c)}
+#info-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(84px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:7px;overflow:hidden;margin:0 0 6px}
+#info-facts div{background:#fff;padding:8px 10px;min-width:0}
+#info-facts strong{display:block;font:600 19px/1.15 "Newsreader",Georgia,serif;color:var(--ink);overflow-wrap:break-word;hyphens:auto}
+#info-facts span{display:block;font-size:var(--fs-xs);color:var(--muted);margin-top:2px}
+#attributes{margin:0}
+#attributes dt{margin-top:10px;padding-top:9px;border-top:1px solid var(--line);font-weight:600;letter-spacing:.02em}
+#attributes dt:first-child{border-top:0;padding-top:2px}
+.type-list{list-style:none;padding:0;margin:4px 0 8px}.type-list li{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:var(--fs-s);border-bottom:1px solid var(--line)}
+.type-list .count{margin-left:auto;color:var(--muted);font-size:var(--fs-xs);white-space:nowrap}
+.swatch.thick{border-top-width:7px}
+.poi-key{flex:none;display:inline-block;width:18px;height:18px;background:center/contain no-repeat;vertical-align:middle}
+.poi-key.port{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14.5' fill='%230B4F6C' stroke='%23fbfbfb' stroke-width='2.2'/%3E%3Cg transform='translate(4 4)' fill='%23fbfbfb'%3E%3Cpath d='M3.6 13.4h16.8l-2.5 4.9a1.8 1.8 0 0 1-1.6 1H7.7a1.8 1.8 0 0 1-1.6-1z'/%3E%3Cpath d='M7 12.4V9.3h10v3.1z'/%3E%3Cpath d='M10.6 8.3V5.4h2.8v2.9z'/%3E%3C/g%3E%3C/svg%3E")}
+.poi-key.airport{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14.5' fill='%233D3A8C' stroke='%23fbfbfb' stroke-width='2.2'/%3E%3Cg transform='translate(4 4)' fill='%23fbfbfb'%3E%3Cpath d='M12 2.6c.8 0 1.4.8 1.4 1.8v4.7l7.4 4.5v2.1l-7.4-2.2v4.3l2.1 1.6v1.7L12 20.2l-3.5 1v-1.7l2.1-1.6v-4.3l-7.4 2.2v-2.1l7.4-4.5V4.4c0-1 .6-1.8 1.4-1.8z'/%3E%3C/g%3E%3C/svg%3E")}
+.overlays .row .poi-key{margin-right:-2px}
+.legend-pois{margin-top:6px;border-top:1px solid var(--line);padding-top:6px;display:grid;gap:4px}
+@media(max-height:520px) and (orientation:landscape){.nav-link{min-height:36px;padding:4px 10px}}
+@media(pointer:coarse) and (max-width:420px){.nav-link svg{display:none}}
+@media(max-width:420px){nav{gap:5px}nav button,nav .nav-link,.mode button{padding:6px 7px;font-size:var(--fs-xs)}.orient button{padding:6px 9px}}

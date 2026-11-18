@@ -91,7 +91,7 @@
     map.setMaxPitch(75);
     const sliders={};
     const summary=document.createElement('p');summary.className='terrain-note';
-    summary.textContent=manifest?.tiles?.length?'Relieve IGN · detalle regional en Guadarrama. Fuera de esta zona se suavizan las alturas de la malla nacional; el acercamiento no añade detalle medido.':'Relieve Mapzen · fuente alternativa. MDT oficial no cargado.';
+    summary.textContent=manifest?.tiles?.length?'':'Relieve Mapzen · fuente alternativa. MDT oficial no cargado.';summary.hidden=!summary.textContent;
     function setEnabled(value){
       enabled=Boolean(value);map.setTerrain(enabled?{source,exaggeration}:null);
       map.easeTo({pitch:enabled?55:0,duration:root.AtlasConfig?.reducedMotion()?0:600});

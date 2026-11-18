@@ -166,7 +166,6 @@
   }
 
   /* ── fichas ───────────────────────────────────────────── */
-  function source(id){const s=services()?.meta.sources[id];return s?{title:s.title,url:s.url}:{title:'Fuente no disponible',url:'#'};}
   function familyOf(v){
     if(v.brand==='ave'||v.brand==='avlo')return v.brand;
     if(v.brand)return null;   // OUIGO e iryo: sin imagen de Renfe
@@ -184,9 +183,7 @@
     const brand=CFG.brands.find(b=>b.id===v.brand);
     const val=v.validity;
     const fields={
-      'Producto':brand?brand.name+' · marca de '+brand.operator:(v.published_brand+(v.aliases?.length?' · alias: '+v.aliases.join(', '):'')),
-      'Operador':v.operator,
-      'Origen y destino':v.origin+' → '+v.destination,
+      'Producto':brand?brand.name+' · marca de '+brand.operator:v.published_brand,
       ['Paradas comerciales ('+v.calls.length+')']:v.calls.map((c,i)=>(i+1)+'. '+s.stations[c.s].name+flags(c)).join('\n'),
       'Esta variante':siblings.length>1?'Una de '+siblings.length+' variantes con el mismo origen y destino; cada una tiene sus propias paradas. Elige otra en la ficha de una estación.':'Única variante vigente de esta relación.',
       'Vigencia':val?(val.note?val.note+' ('+fmtDate(val.from)+')':'Del '+fmtDate(val.from)+' al '+fmtDate(val.to))+(v.trips?' · '+number.format(v.trips)+' circulaciones en el calendario publicado':'')+(v.calendar_note?' · '+v.calendar_note:''):'Sin calendario',
@@ -196,8 +193,12 @@
       ...(v.madrid_assumed&&{'Estación de Madrid':'La tabla oficial solo dice «Madrid»; la estación usada para el trazado es una suposición del visor.'})
     };
     if(v.numbers?.length)fields['Números de tren']=v.numbers.slice(0,12).join(', ')+(v.numbers.length>12?'…':'');
-    if(v.aliases?.length)fields['Denominación']='En el horario: '+v.published_brand+' · denominación anterior: '+v.aliases.join(', ')+'. Renfe reorganizó sus marcas desde el 13-11-2026 (Alvia → Intercity, Media Distancia → Regional, Euromed → AVE Euromed).';
-    showInfo('Ruta · '+(brand?brand.name:CFG.services.find(x=>x.id===v.categories[0])?.name||v.published_brand),names[0]+' → '+names.at(-1),fields,source(v.source),null,media(familyOf(v)));
+    if(v.aliases?.length)fields['Denominación anterior']=v.aliases.join(', ');
+    const svc=CFG.services.find(x=>v.categories.includes(x.id));
+    showInfo('Ruta · '+(brand?brand.name:svc?.name.split(' · ').at(-1).replace(/^ahora /,'')||v.published_brand),names[0]+' → '+names.at(-1),fields,
+      {subtitle:v.operator,chips:[{label:brand?brand.name:v.published_brand,color:(brand||svc)?.color}],
+       facts:[{value:String(v.calls.length),label:'paradas'},{value:number.format(Math.round((hs+conv)/1000))+' km',label:'recorrido dibujado'},...(v.trips?[{value:number.format(v.trips),label:'circulaciones'}]:[])],
+       media:media(familyOf(v))});
   }
   function selectVariant(id){state.variant=id;state.experience=null;state.corridor=null;renderHighlight();variantInfo(services().variants.find(v=>v.id===id));
     const v=services().variants.find(x=>x.id===id);fit(v.calls.map(c=>services().stations[c.s].coordinates));onChange?.();}
@@ -214,15 +215,24 @@
   function stationInfo(sid){
     const s=services(),st=s.stations[sid];state.station=sid;
     const calling=s.variants.filter(v=>variantStatus(v)==='current'&&v.calls.some(c=>c.s===sid));
-    const brands=[...new Set(calling.map(v=>v.brand).filter(Boolean))].map(b=>CFG.brands.find(x=>x.id===b).name);
-    const cats=[...new Set(calling.flatMap(v=>v.categories))].map(c=>CFG.services.find(x=>x.id===c)?.name).filter(Boolean);
+    const brandIds=[...new Set(calling.map(v=>v.brand).filter(Boolean))];
+    const cats=[...new Set(calling.flatMap(v=>v.categories))].map(c=>CFG.services.find(x=>x.id===c)).filter(Boolean);
+    const relations=new Set(calling.map(v=>v.relation)).size;
+    const catalog=dataset.stations.features.find(f=>String(f.properties.CODIGO)===String(st.official_id))?.properties;
+    // Importancia: rutas vigentes con parada (todas las marcas y servicios integrados).
+    const rank=relations>=60?'Nudo principal de la red':relations>=20?'Estación de primer nivel':relations>=5?'Estación con servicio regular':relations?'Servicio limitado':'Sin servicio integrado';
+    const destinations=[...new Set(calling.flatMap(v=>[v.origin,v.destination]))].filter(n=>n&&n!==st.name).length;
     const fields={
-      'Marcas con parada comercial':brands.join(' · ')||'Ninguna de AVE, Avlo, iryo u OUIGO',
-      'Servicios con parada comercial':cats.join(' · ')||'—',
-      'Criterio':'Solo cuentan los trenes con parada acreditada en el horario; los que pasan sin parar (sin subida ni bajada) no se cuentan.',
-      'Código de estación':st.official_id
+      'Servicios con parada':[...new Set(cats.map(c=>c.name.split(' · ').at(-1).replace(/^ahora /,'')))].join(' · ')||undefined,
+      'Importancia en la red':rank+' · '+number.format(relations)+' rutas con parada en el horario vigente',
+      'Dirección':catalog?.DIRECION,
+      'Conexiones con otros transportes':root.AtlasConnections?.(st.coordinates)
     };
-    showInfo('Estación · servicios que paran',st.name,fields,source(st.source==='renfe-commuter'?'renfe-commuter':'renfe-national'),relationButtons(calling));
+    showInfo('Estación',st.name,fields,{
+      subtitle:catalog?[catalog.POBLACION,catalog.PROVINCIA].filter(Boolean).join(' · '):undefined,
+      chips:brandIds.map(b=>CFG.brands.find(x=>x.id===b)).map(b=>({label:b.name,color:b.color})),
+      facts:[{value:number.format(relations),label:'rutas con parada'},{value:number.format(destinations),label:'orígenes y destinos'}],
+      actions:relationButtons(calling)});
     buildLines();onChange?.();
   }
   function corridorInfo(p){
@@ -231,17 +241,16 @@
     const sections=data.corridors.features.filter(f=>f.properties.branch===p.branch).map(f=>f.properties);
     const km=k=>number.format(Math.round(sections.filter(s=>s.status===k).reduce((a,s)=>a+s.km,0)));
     const fields={
-      'Grupo':(group.group?group.group+' · ':'')+group.name,
-      'Ramal o tramo':p.branch,
-      'Tramo pulsado':p.name+' · '+CFG.status[p.status].name+' · '+number.format(p.km)+' km',
-      'Estado del ramal':'En servicio '+km('service')+' km · en construcción '+km('construction')+' km · en proyecto '+km('project')+' km',
+      'Tramo seleccionado':p.name+' · '+CFG.status[p.status].name.toLowerCase()+' · '+number.format(p.km)+' km',
       'Tramos del ramal':[...new Set(sections.map(s=>s.name+' ('+CFG.status[s.status].name.toLowerCase()+')'))].join('\n'),
-      'Trenes de alta velocidad':p.high_speed_trains?'Hay servicios AVE, Avlo, OUIGO, Avant o Euromed programados por este tramo en el corte.':'Ningún tren de alta velocidad programado por este tramo en el corte (16-11-2026).',
-      'Código de línea (Hermes)':p.line_code,
-      ...(p.status_note&&{'Estado actualizado':{title:p.status_note,url:p.status_note_url}}),
+      'Trenes de alta velocidad':p.high_speed_trains?'Circulan servicios AVE, Avlo, OUIGO, Avant o Euromed por este tramo.':'Ningún tren de alta velocidad programado por este tramo.',
+      'Línea':p.line_code,
+      ...(p.status_note&&{'Situación':p.status_note}),
       ...(p.corridor==='sur'&&{'NAFA':'Nuevo Acceso Ferroviario a Andalucía: nombre del proyecto de la línea Madrid–Sevilla, inaugurada en 1992. Los ramales de Málaga y Granada salen de ella. Fuente secundaria; no se ha localizado documento oficial.'})
     };
-    showInfo('Corredor de alta velocidad · '+(group.group||group.name),p.branch,fields,{title:'Hermes · Ministerio de Transportes ('+fmtDate(p.source_date)+')',url:p.source_url});
+    showInfo('Corredor de alta velocidad',p.branch,fields,{subtitle:(group.group?group.group+' · ':'')+group.name,
+      chips:[{label:CFG.status[p.status].name,color:group.color}],
+      facts:[{value:km('service')+' km',label:'en servicio'},{value:km('construction')+' km',label:'en obras'},{value:km('project')+' km',label:'en proyecto'}]});
     onChange?.();
   }
   function experienceInfo(e){
@@ -258,21 +267,21 @@
       ...(e.stations_note&&{'Nota sobre las estaciones':e.stations_note}),
       ...(e.bus&&{'Fuera de la vía':e.bus}),
       ...(e.note&&{'Nota':e.note}),
-      'Trazado':e.edges?.length?'Vía entre las estaciones citadas, inferida sobre la red IGN. Los traslados en autocar no se dibujan.'+(e.pending_segments?' '+e.pending_segments+' salto sin trazado verificable.':''):'Sin recorrido ferroviario publicado: solo se marca la estación de salida.',
-      'Otras fuentes':e.sources.slice(1).map(id=>m.sources[id]?.title).filter(Boolean).join(' · ')||'—'
+      'Trazado':e.edges?.length?'Vía entre las estaciones citadas, inferida sobre la red IGN. Los traslados en autocar no se dibujan.':'Sin recorrido ferroviario publicado: solo se marca la estación de salida.'
     };
-    showInfo('Tren turístico · '+group.name,e.name,fields,{title:src.title,url:src.url});
+    showInfo('Tren turístico',e.name,fields,{subtitle:e.organizer,chips:[{label:group.name,color:group.color}]});
     if(e.stops?.length)fit(e.stops.map(s=>s.coordinates));
     onChange?.();
   }
-  function onClick(e){
+  async function onClick(e){
+    if(root.AtlasTransport?.hit(e.point))return;
     const box=[[e.point.x-6,e.point.y-6],[e.point.x+6,e.point.y+6]];
     const stops=map.queryRenderedFeatures(box,{layers:['cx-stops']});
     if(stops.length){
       const sid=stops[0].properties.sid;
       if(state.theme==='tourism'){const name=sid.slice(2);const list=data.tourism.experiences.filter(x=>x.status==='current'&&state.keys.tourism.includes(x.group)&&x.stops.some(s=>s.name===name));
-        if(list.length===1)experienceInfo(list[0]);else showInfo('Estación · trenes turísticos',name,{'Experiencias con salida o parada aquí':list.map(x=>x.name).join('\n')},{title:'Renfe · Trenes turísticos',url:data.tourism.meta.sources.S11.url},list.map(x=>({label:x.name,action:()=>experienceInfo(x)})));}
-      else stationInfo(sid);
+        if(list.length===1)experienceInfo(list[0]);else showInfo('Estación · trenes turísticos',name,{'Experiencias con salida o parada aquí':list.map(x=>x.name).join('\n')},{actionsLabel:'Experiencias'},list.map(x=>({label:x.name,action:()=>experienceInfo(x)})));}
+      else{await Promise.all([root.AtlasThemes?.prepareConnections(),root.AtlasTransport?.load()]).catch(()=>{});stationInfo(sid);}
       return;
     }
     // Una estación del catálogo bajo el cursor tiene prioridad sobre la línea del tema.
@@ -282,12 +291,12 @@
     const p=lines[0].properties;
     if(state.theme==='corridors'){corridorInfo(data.corridors.features.find(f=>f.properties.id===p.sid).properties);return;}
     if(state.theme==='tourism'){const list=data.tourism.experiences.filter(x=>x.status==='current'&&x.edges.includes(p.fid)&&state.keys.tourism.includes(x.group));
-      if(list.length===1)experienceInfo(list[0]);else showInfo('Vía de trenes turísticos','Experiencias por este tramo',{'Experiencias':list.map(x=>x.name).join('\n')},{title:'Renfe · Trenes turísticos',url:data.tourism.meta.sources.S11.url},list.map(x=>({label:x.name,action:()=>experienceInfo(x)})));return;}
+      if(list.length===1)experienceInfo(list[0]);else showInfo('Vía de trenes turísticos','Experiencias por este tramo',{'Experiencias':list.map(x=>x.name).join('\n')},{actionsLabel:'Experiencias'},list.map(x=>({label:x.name,action:()=>experienceInfo(x)})));return;}
     const variants=p.vid?activeVariants().filter(v=>v.id===p.vid):activeVariants().filter(v=>v.edges.includes(p.fid));
     if(variants.length===1){selectVariant(variants[0].id);return;}
     const keys=[...new Set(variants.map(v=>variantKey(v,state.theme)))].map(k=>styleOf(state.theme,k).name);
     showInfo('Tramo compartido','Rutas que pasan por aquí',{'Marcas o servicios':keys.join(' · '),'Rutas vigentes':number.format(new Set(variants.map(v=>v.relation)).size)+' relaciones, '+number.format(variants.length)+' variantes. Elige una para ver sus paradas.',
-      'Trazado':'Inferido sobre la red IGN a partir de las paradas del horario.'},source('renfe-national'),relationButtons(variants));
+      'Trazado':'Inferido sobre la red IGN a partir de las paradas del horario.'},{},relationButtons(variants));
   }
 
   /* ── panel ────────────────────────────────────────────── */
@@ -324,13 +333,20 @@
     $('#legacy-panel').hidden=!['tent','transit'].includes(state.theme);
     if(['gauge','tent','transit'].includes(state.theme))return;
     const theme=state.theme;
+    if(theme==='all'){
+      const km=infrastructureKm(),ul=document.createElement('ul');ul.className='type-list';
+      for(const t of CFG.infrastructure.filter(t=>km[t.id+'_n'])){const li=document.createElement('li'),sw=document.createElement('i'),name=document.createElement('span'),count=document.createElement('span');
+        sw.className='swatch';sw.style.setProperty('--c',t.color);name.textContent=t.name;count.className='count';
+        count.textContent=t.id==='unknown'?number.format(km.unknown_n||0)+' tramos':number.format(Math.round(km[t.id]||0))+' km';li.append(sw,name,count);ul.append(li);}
+      panel.append(ul,note('Toda la red ferroviaria peninsular del IGN, sin filtros. Trazo grueso: vía doble.'));
+      return;
+    }
     if(theme==='corridors'){
       if(!data.corridors){panel.append(note('Cargando corredores…'));return;}
       const km={};for(const f of data.corridors.features){const p=f.properties;if(p.status==='service')km[p.corridor]=(km[p.corridor]||0)+p.km;}
       const counts=Object.fromEntries(Object.entries(km).map(([k,v])=>[k,number.format(Math.round(v))+' km']));
       panel.append(checkboxGroup('Corredores (km en servicio)',CFG.corridors.map(c=>({...c,name:(c.group?c.group.replace(' y litoral mediterráneo','')+': ':'')+c.name})),state.keys.corridors,counts,v=>{state.keys.corridors=v;refresh();}));
       panel.append(checkboxGroup('Estado de la infraestructura',Object.entries(CFG.status).map(([id,s])=>({id,name:s.name,color:'#586278',dash:id!=='service'})),state.statuses,null,v=>{state.statuses=v;refresh();}));
-      panel.append(note('Geometría y estado: Hermes (Ministerio de Transportes, febrero de 2024), con Murcia–Almería actualizado a «en construcción» por una nota oficial de 2026. El eje Madrid–Levante y el corredor litoral comparten color; el litoral va en doble trazo.'));
       return;
     }
     if(theme==='tourism'){
@@ -364,7 +380,6 @@
     }
     if(theme==='brands'&&selected.includes('ouigo'))panel.append(note('OUIGO: '+s.meta.ouigo_note));
     if(theme==='services'){
-      panel.append(note(s.meta.renames.note,'notice-text'));
       if(Object.keys(CFG.families).length){
       const d=document.createElement('details');d.className='inline gallery';const sum=document.createElement('summary');sum.textContent='Ver la nueva imagen de los trenes Renfe';d.append(sum);
       for(const [id,f] of Object.entries(CFG.families)){const fig=document.createElement('figure'),img=document.createElement('img'),cap=document.createElement('figcaption');
@@ -372,12 +387,7 @@
       d.append(note('Recreaciones generadas con IA por Renfe para presentar la nueva organización de servicios; los trenes reales la adoptan poco a poco. © Renfe · trenes.renfe.com, consultado el 18-11-2026.'));
       panel.append(d);}
     }
-    if(theme==='services'&&selected.includes('alvia'))panel.append(note('Alvia: '+s.meta.alvia.status+' '+s.meta.alvia.detail,'notice-text'));
-    if(theme==='services'&&selected.includes('night'))panel.append(note('Nocturnos: '+s.meta.night.status+' Criterio: '+s.meta.night.criterion,'notice-text'));
-    const future=s.variants.filter(v=>variantStatus(v)==='future'&&(theme==='brands'?selected.includes(v.brand):v.categories.some(c=>selected.includes(c)))).length;
-    const shown=activeVariants().length;
-    panel.append(note(shown?'Mostrando '+number.format(shown)+' variantes vigentes. Calendario del GTFS de Renfe del 16-11-2026'+(future?' · '+future+' variantes que empiezan después del 16-12-2026 quedan fuera':'')+'. Pulsa una línea o una estación para ver rutas y paradas.':
-      selected.length?'Ninguna ruta vigente con esta selección. Revisa las notas de arriba o elige otra marca o servicio.':'No hay ninguna marca o servicio seleccionado.','muted status-line'));
+    if(!activeVariants().length)panel.append(note(selected.length?'Ninguna ruta vigente con esta selección. Elige otra marca o servicio.':'No hay ninguna marca o servicio seleccionado.','muted status-line'));
   }
 
   /* ── leyenda ──────────────────────────────────────────── */
@@ -387,6 +397,7 @@
       ...state.statuses.map(s=>({name:CFG.status[s].name,color:'#586278',dash:s!=='service',pattern:s}))];
     if(t==='brands')return CFG.brands.filter(b=>state.keys.brands.includes(b.id)).map(b=>({name:b.name+(b.id==='iryo'?' (sin trazado verificado)':''),color:b.color}));
     if(t==='services')return CFG.services.filter(s=>state.keys.services.includes(s.id)).map(s=>({name:s.name,color:s.color,dash:!!s.dash}));
+    if(t==='all')return [...CFG.infrastructure.filter(x=>infrastructureKm()[x.id+'_n']).map(x=>({name:x.name,color:x.color})),{name:'Vía doble (trazo grueso)',color:'#586278',thick:true}];
     if(t==='tourism')return CFG.tourism.filter(x=>state.keys.tourism.includes(x.id)).map(x=>({name:x.name,color:x.color}));
     return null;
   }
@@ -394,11 +405,47 @@
     const items=legendItems();if(!items)return false;
     const h=document.createElement('strong');h.textContent=CFG.themes[state.theme].name;container.append(h);
     const ul=document.createElement('ul');
-    for(const item of items){const li=document.createElement('li'),sw=document.createElement('i');sw.className='swatch'+(item.dash?' dashed':'')+(item.double?' double':'')+(item.pattern==='project'?' dotted':'');
+    for(const item of items){const li=document.createElement('li'),sw=document.createElement('i');sw.className='swatch'+(item.dash?' dashed':'')+(item.double?' double':'')+(item.pattern==='project'?' dotted':'')+(item.thick?' thick':'');
       sw.style.setProperty('--c',item.color);li.append(sw,document.createTextNode(item.name));ul.append(li);}
     if(['brands','services','tourism'].includes(state.theme)){const li=document.createElement('li'),sw=document.createElement('i');sw.className='stop-key';li.append(sw,document.createTextNode('Parada comercial acreditada'));ul.append(li);}
     if(state.variant||state.experience){for(const [name,cls] of [['Recorrido elegido por vía de alta velocidad',''],['Recorrido elegido por vía convencional',' dashed']]){const li=document.createElement('li'),sw=document.createElement('i');sw.className='swatch'+cls;sw.style.setProperty('--c','#1d2638');li.append(sw,document.createTextNode(name));ul.append(li);}}
     container.append(ul);return true;
+  }
+
+  /* ── Todas las vías ───────────────────────────────────── */
+  const typeExpression=['match',['get','filter_gauge'],'1435','hs','1668','conv','mixed','mixed',['1000','narrow'],'metric','unknown'];
+  function allColor(){
+    return ['case',['boolean',['feature-state','selected'],false],'#101e36',['match',typeExpression,...CFG.infrastructure.flatMap(t=>[t.id,t.color]),'#8A94A6']];
+  }
+  const typeOf=g=>g==='1435'?'hs':g==='1668'?'conv':g==='mixed'?'mixed':(g==='1000'||g==='narrow')?'metric':'unknown';
+  let allKm=null;
+  function infrastructureKm(){
+    if(allKm)return allKm;
+    allKm={};
+    const ids=new Set();
+    for(const f of dataset.rail.features){
+      const p=f.properties;if(!p.pen||ids.has(p.id))continue;ids.add(p.id);
+      const t=typeOf(p.filter_gauge);
+      allKm[t]=(allKm[t]||0)+(p.attr!==0?(Number(p.length_m)||0)/1000:0);allKm[t+'_n']=(allKm[t+'_n']||0)+1;
+    }
+    return allKm;
+  }
+  // Servicios con trazado vigente por un tramo IGN (ficha del tramo).
+  function servicesOnEdge(fid){
+    const s=services();if(!s)return [];
+    const out=new Set();
+    for(const v of s.variants){
+      if(variantStatus(v)!=='current'||!v.edges.includes(fid))continue;
+      const brand=CFG.brands.find(b=>b.id===v.brand),svc=CFG.services.find(x=>v.categories.includes(x.id));
+      out.add(brand?brand.name:svc?svc.name.split(' · ').at(-1).replace(/^ahora /,''):v.published_brand);
+    }
+    return [...out];
+  }
+  function corridorsForLine(code){
+    if(!data.corridors||!code)return [];
+    const out=new Set();
+    for(const f of data.corridors.features){const p=f.properties;if(p.line_code&&String(p.line_code)===String(code)){const c=CFG.corridors.find(x=>x.id===p.corridor);out.add(c?.group||c?.name);}}
+    return [...out].filter(Boolean);
   }
 
   /* ── API ──────────────────────────────────────────────── */
@@ -406,9 +453,12 @@
     if(!CFG.themes[id])id='corridors';
     state.theme=id;state.variant=null;state.experience=null;state.corridor=null;state.station=null;
     for(const input of document.querySelectorAll('input[name="theme"]'))input.checked=input.value===id;
-    const base=id==='gauge';
-    map.setPaintProperty('rail','line-color',base?root.AtlasBaseRailColor:['case',['boolean',['feature-state','selected'],false],'#101e36','#b3bfd0']);
-    map.setPaintProperty('rail','line-opacity',base?.95:.9);
+    const base=id==='gauge',all=id==='all';
+    map.setPaintProperty('rail','line-color',base?root.AtlasBaseRailColor:all?allColor():['case',['boolean',['feature-state','selected'],false],'#101e36','#b3bfd0']);
+    map.setPaintProperty('rail','line-opacity',base||all?.95:.9);
+    // En «Todas las vías» la vía doble se dibuja más gruesa que la única.
+    const double=['in',['get','filter_tracks'],['literal',['2','4']]];
+    map.setPaintProperty('rail','line-width',all?['interpolate',['linear'],['zoom'],5,['case',double,1.3,.8],12,['case',double,3.6,2.2],16,['case',double,5,3]]:['interpolate',['linear'],['zoom'],5,.9,8,1.5,12,2.8,16,4]);
     if(['tent','transit'].includes(id))legacy?.change(id==='tent'?'corridors':'transit');else legacy?.change('gauge',{silent:true});
     renderPanel();
     try{if(files[id])data[id==='brands'?'services':id]=await load(id);}catch(e){$('#theme-panel').replaceChildren(note(e.message+' Reintenta más tarde.','notice-text'));}
@@ -439,6 +489,6 @@
   function clearSelection(){state.variant=null;state.experience=null;state.corridor=null;state.station=null;if(map.getSource('cx-lines')){renderHighlight();if(['brands','services','tourism'].includes(state.theme))buildLines();}onChange?.();}
   function hasStation(code){const s=services();if(!s||!code)return null;const id='renfe-national:'+code;return s.stations[id]?id:(s.stations['renfe-commuter:'+code]?'renfe-commuter:'+code:null);}
   async function loadServices(){if(!data.services)data.services=await load('services');return data.services;}
-  root.AtlasCapas={init,hasStation,loadServices,setTheme,legend,legendItems,getState,restore,clearSelection,current:()=>state.theme,stationInfo,
+  root.AtlasCapas={init,hasStation,loadServices,setTheme,legend,legendItems,getState,restore,clearSelection,current:()=>state.theme,stationInfo,servicesOnEdge,corridorsForLine,
     hitLayers:()=>['cx-stops','cx-hit'].filter(id=>map?.getLayer(id))};
 })(window);

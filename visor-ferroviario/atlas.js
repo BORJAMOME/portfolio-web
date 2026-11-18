@@ -37,7 +37,7 @@ let hashTimer;
 function writeHash() {
   clearTimeout(hashTimer);
   hashTimer = setTimeout(() => {
-    const state = {...filters, ...(window.AtlasCapas?.getState() || {}), p: window.AtlasPopulation?.state(), m: terrainEnabled ? 1 : undefined};
+    const state = {...filters, ...(window.AtlasCapas?.getState() || {}), p: window.AtlasPopulation?.state(), tp: window.AtlasTransport?.state(), m: terrainEnabled ? 1 : undefined};
     for(const key of Object.keys(filters)) if(!state[key].length) delete state[key];
     if(state.p && !state.p.on) delete state.p;
     try { history.replaceState(null, "", "#" + encodeURIComponent(JSON.stringify(state))); } catch {}
@@ -87,7 +87,7 @@ if(map) {
   });
   map.on("idle",()=>{if(statusText.dataset.warning&&ready){delete statusText.dataset.warning;statusText.textContent=baseStatus();}});
 }
-const baseStatus=()=>dataset?number.format(peninsular.length)+" tramos IGN peninsulares · corte de datos 16-11-2026":"Cargando datos…";
+const baseStatus=()=>dataset?number.format(peninsular.length)+" tramos IGN peninsulares · datos a noviembre de 2026":"Cargando datos…";
 
 function setTerrain(enabled) {
   if(!ready||!terrainController)return;
@@ -122,52 +122,63 @@ document.addEventListener("keydown",event=>{
   if(!$("#info").hidden){closeInfo();event.preventDefault();}
   else if(CFG.compact()&&!$("#tools").hidden){$("#toggle-panel").click();$("#toggle-panel").focus();}
 });
-function showInfo(kind,title,fields,source,actions,media) {
+/* Ficha: antetítulo, título, subtítulo, etiquetas (líneas o marcas), cifras clave y atributos.
+   La procedencia de cada dato queda en la atribución del mapa y en CAPAS.md, no en la ficha. */
+function showInfo(kind,title,fields,opts={},actions,media) {
+  if(opts?.url!==undefined)opts={};                       // llamadas antiguas: (…, fuente, acciones, imagen)
+  opts={actions,media,...opts};
   infoRevision++;
   if($("#info").hidden)infoOpener=document.activeElement!==document.body?document.activeElement:null;
   $("#kind").textContent=kind;
   $("#name").textContent=title;
-  const figure=$("#info-media");figure.hidden=!media;
-  if(media){const img=figure.querySelector("img");img.src=media.src;img.alt=media.alt;figure.querySelector("figcaption").textContent=media.caption;}
+  const subtitle=$("#info-subtitle");subtitle.hidden=!opts.subtitle;subtitle.textContent=opts.subtitle||"";
+  const chips=$("#info-chips");chips.replaceChildren();chips.hidden=!opts.chips?.length;
+  for(const chip of opts.chips||[]){const li=document.createElement("li");li.textContent=chip.label;if(chip.color){li.style.setProperty("--c",chip.color);li.classList.add("coloured");}if(chip.title)li.title=chip.title;chips.append(li);}
+  const facts=$("#info-facts");facts.replaceChildren();facts.hidden=!opts.facts?.length;
+  for(const fact of opts.facts||[]){const div=document.createElement("div"),strong=document.createElement("strong"),span=document.createElement("span");strong.textContent=fact.value;span.textContent=fact.label;div.append(strong,span);facts.append(div);}
+  const figure=$("#info-media");figure.hidden=!opts.media;
+  if(opts.media){const img=figure.querySelector("img");img.src=opts.media.src;img.alt=opts.media.alt;figure.querySelector("figcaption").textContent=opts.media.caption;}
   const list=$("#attributes");
   list.replaceChildren();
-  for(const [key,value] of Object.entries(fields)) {
-    if(value===undefined)continue;
+  for(const [key,value] of Object.entries(fields||{})) {
+    if(value===undefined||value===null||value==="")continue;
     const dt=document.createElement("dt"),dd=document.createElement("dd");
     dt.textContent=key;
-    if(value?.url) {
-      const link=document.createElement("a");
-      link.textContent=value.title;link.href=value.url;link.target="_blank";link.rel="noopener";
-      dd.append(link);
-    } else dd.textContent=value ?? "Sin dato en la fuente";
+    dd.textContent=value?.title??value;
     list.append(dt,dd);
   }
-  if(actions?.length){
+  if(opts.actions?.length){
     const dt=document.createElement("dt"),dd=document.createElement("dd"),ul=document.createElement("ul");
-    dt.textContent="Rutas";ul.className="info-actions";
-    for(const action of actions){const li=document.createElement("li"),b=document.createElement("button");b.type="button";b.textContent=action.label;b.onclick=action.action;li.append(b);ul.append(li);}
+    dt.textContent=opts.actionsLabel||"Rutas";ul.className="info-actions";
+    for(const action of opts.actions){const li=document.createElement("li"),b=document.createElement("button");b.type="button";b.textContent=action.label;b.onclick=action.action;li.append(b);ul.append(li);}
     dd.append(ul);list.append(dt,dd);
   }
-  const dt=document.createElement("dt"),dd=document.createElement("dd"),a=document.createElement("a");
-  dt.textContent="Fuente";a.textContent=source.title;a.href=source.url;a.target="_blank";a.rel="noopener";
-  dd.append(a);list.append(dt,dd);
   $("#info").hidden=false;
   // En móvil la ficha ocupa la hoja inferior: se pliega el panel para que no se superpongan.
   if(CFG.compact()&&!$("#tools").hidden){$("#tools").hidden=true;$("#toggle-panel").setAttribute("aria-expanded","false");}
   $("#name").focus({preventScroll:true});
   writeHash();
 }
+window.AtlasShowInfo=(...args)=>showInfo(...args);
+/* Conexiones de una estación con otros modos: metro o metro ligero a pie (≤ 400 m) y aeropuertos o puertos cercanos (≤ 3 km). */
+function connections(coordinates){
+  const out=[];
+  const near=window.AtlasThemes?.nearbyStations?.(coordinates,400)||[];
+  for(const s of near)out.push(s.network+": "+s.name+" ("+s.lines.join(", ")+") a "+number.format(Math.round(s.metres/10)*10)+" m");
+  for(const x of window.AtlasTransport?.near?.(coordinates,3000)||[])out.push(x.kind+": "+x.name+" a "+(x.metres<1000?number.format(Math.round(x.metres/10)*10)+" m":number.format(Math.round(x.metres/100)/10)+" km"));
+  return out.length?out.join("\n"):undefined;
+}
+window.AtlasConnections=connections;
 async function stationInfo(feature) {
   const p=feature.properties;
   // La ficha de estación muestra los servicios con parada acreditada, sea cual sea el tema activo.
-  try{await AtlasCapas.loadServices();}catch{}
+  try{await Promise.all([AtlasCapas.loadServices(),AtlasThemes.prepareConnections(),AtlasTransport.load()]);}catch{}
   if(AtlasCapas.hasStation(p.CODIGO)){AtlasCapas.stationInfo(AtlasCapas.hasStation(p.CODIGO));return;}
-  showInfo("Estación · catálogo Renfe",p.DESCRIPCION,{
-    "Código":p.CODIGO,"Localidad":p.POBLACION,"Provincia":p.PROVINCIA,
+  showInfo("Estación Renfe",p.DESCRIPCION,{
     "Dirección":p.DIRECION,
-    "Servicios con parada":"Ningún tren de los horarios integrados (Renfe AV/LD, Cercanías métricas y OUIGO) tiene parada comercial acreditada en esta estación.",
-    "Fecha de descarga":"13/11/2026"
-  },{title:"Renfe Operadora · CC BY 4.0",url:"https://data.renfe.com/es/dataset/estaciones-listado-completo"});
+    "Servicios con parada":"Sin parada comercial de los trenes de alta velocidad, larga distancia, Cercanías métricas u OUIGO en los horarios integrados.",
+    "Conexiones con otros transportes":connections(feature.geometry.coordinates)
+  },{subtitle:[p.POBLACION,p.PROVINCIA].filter(Boolean).join(" · ")});
 }
 function loadLineCatalog() {
   lineCatalog ??= fetch("line-catalog.geojson").then(response => {
@@ -175,6 +186,11 @@ function loadLineCatalog() {
     return response.json();
   }).then(AtlasLineIdentity.build).catch(error => { lineCatalog = undefined; console.warn(error); return null; });
   return lineCatalog;
+}
+function infrastructureType(feature){
+  const g=AtlasFilters.value(feature,"gauge");
+  const id=g==="1435"?"hs":g==="1668"?"conv":g==="mixed"?"mixed":(g==="1000"||g==="narrow")?"metric":"unknown";
+  return CFG.infrastructure.find(x=>x.id===id);
 }
 async function sectionInfo(rendered, location) {
   const original = dataset.rail.features[rendered.id];
@@ -185,42 +201,45 @@ async function sectionInfo(rendered, location) {
   map.setFeatureState({source:"rail",id:selectedId},{selected:true});
   const coordinates = [location.lng, location.lat];
   const station = AtlasLineIdentity.nearestStation(coordinates, dataset.stations.features);
-  const title = station ? "Tramo cerca de " + station.name : "Tramo ferroviario";
-  const stationDistance = station && (station.metres < 1000 ? number.format(Math.round(station.metres))+" m" : number.format(Math.round(station.metres/100)/10)+" km");
-  const fields = {
-    "Ubicación":coordinates.slice().reverse().map(value=>value.toFixed(5)).join(", "),
-    ...(station && {"Estación Renfe de referencia":station.name+" · "+stationDistance+" en línea recta"}),
-    "Ancho de vía":p.nominalgauge?number.format(p.nominalgauge)+" mm":label("gauge",AtlasFilters.value(feature,"gauge")),
-    "Electrificación":label("electric",AtlasFilters.value(feature,"electric")),
-    "Configuración":label("tracks",AtlasFilters.value(feature,"tracks")),
-    "Longitud del tramo seleccionado":number.format(Math.round(p.length_m))+" m",
-    "Referencia IGN":p.id
+  const type = infrastructureType(feature);
+  const tracks = AtlasFilters.value(feature,"tracks"), electric = AtlasFilters.value(feature,"electric");
+  const facts = [
+    {value:p.nominalgauge?number.format(p.nominalgauge)+" mm":label("gauge",AtlasFilters.value(feature,"gauge")),label:"ancho de vía"},
+    ...(tracks!=="unknown"?[{value:tracks==="1"?"Única":tracks==="2"?"Doble":tracks+" vías",label:"vía"}]:[]),
+    ...(electric!=="unknown"?[{value:electric==="yes"?"Sí":"No",label:"electrificada"}]:[])
+  ];
+  try{await AtlasCapas.loadServices();}catch{}
+  const services = AtlasCapas.servicesOnEdge?.(rendered.id) || [];
+  const base = {
+    "Tipo de infraestructura":type.name,
+    "Servicios que circulan":services.length?services.join(" · "):"Ningún servicio de viajeros de los horarios integrados usa este tramo.",
+    "Estación más próxima":station?station.name+" · a "+(station.metres<1000?number.format(Math.round(station.metres/10)*10)+" m":number.format(Math.round(station.metres/100)/10)+" km"):undefined,
+    "Longitud del tramo seleccionado":number.format(Math.round(p.length_m))+" m"
   };
-  const source = {title:"IGN · IGR Redes de Transporte",url:"https://api-features.idee.es/collections/railwaylink/items/"+encodeURIComponent(p.id)+"?f=json"};
-  showInfo("Infraestructura ferroviaria", title, {"Línea":"Buscando en el catálogo de Adif…", ...fields}, source);
+  const opts = {subtitle:station?"Cerca de "+station.name:undefined,chips:[{label:type.name,color:type.color}],facts};
+  showInfo("Tramo ferroviario", "Tramo ferroviario", {"Línea":"Buscando en el catálogo de Adif…", ...base}, opts);
   const revision = infoRevision;
   const match = await loadLineCatalog();
   if(revision !== infoRevision || $("#info").hidden) return;
   const identity = feature === original ? match?.(feature.geometry.coordinates) : null;
   if(!identity) {
-    showInfo("Infraestructura ferroviaria", title, {"Línea":match ? "Sin correspondencia inequívoca en el catálogo de Adif" : "Catálogo de Adif no disponible", ...fields}, source);
+    showInfo("Tramo ferroviario", "Tramo ferroviario", base, opts);
     return;
   }
   const section = identity.sections[0];
   const endpoints = section.origin && section.destination ? section.origin+" – "+section.destination : null;
   const sharedValue = key => { const value = section[key]; return value && identity.sections.every(item => item[key] === value) ? value : null; };
   const axis = sharedValue("axis"), status = sharedValue("status");
-  const catalogSource = identity.source;
-  const updated = section.source_date || catalogSource?.source_date;
+  const corridors = AtlasCapas.corridorsForLine?.(identity.code) || [];
   const lineTitle = section.line_name || (identity.sections.length === 1 && endpoints) || "Línea "+identity.code;
-  showInfo("Línea ferroviaria · coincidencia cartográfica", lineTitle, {
-    "Código de línea Adif":identity.code,
-    ...(axis && {"Eje según Adif":axis}), ...(status && {"Estado en el catálogo Adif":status}),
-    ...(identity.sections.length === 1 && endpoints && {"Sector según Adif":endpoints}),
-    ...(updated && {"Actualización del catálogo Adif":updated}),
-    ...fields,
-    ...(catalogSource?.source_url && {"Catálogo de líneas":{title:catalogSource.attribution,url:catalogSource.source_url}})
-  }, source);
+  showInfo("Tramo ferroviario · línea "+identity.code, lineTitle, {
+    ...(identity.sections.length === 1 && endpoints && {"Origen y destino":endpoints}),
+    ...(corridors.length && {"Corredor de alta velocidad":corridors.join(" · ")}),
+    ...(axis && {"Eje":axis}),
+    ...(status && {"Estado de explotación":status}),
+    ...base
+  }, {...opts, subtitle:endpoints && endpoints!==lineTitle ? endpoints : opts.subtitle,
+      chips:[...opts.chips,...corridors.map(name=>({label:"Corredor "+name}))]});
 }
 $("#search").oninput=function(){
   const results=$("#results");results.replaceChildren();
@@ -275,10 +294,12 @@ function updateStationCount(){
   $("#station-count").textContent=number.format(enabled?dataset.stations.features.filter(f=>b.contains(f.geometry.coordinates.slice(0,2))).length:0);
 }
 function applyFilters() {
-  filtered=peninsular.filter(f=>Object.keys(filters).every(d=>!filters[d].length||filters[d].includes(f.properties["filter_"+d])));
+  const all=window.AtlasCapas?.current()==="all";
+  filtered=all?peninsular:peninsular.filter(f=>Object.keys(filters).every(d=>!filters[d].length||filters[d].includes(f.properties["filter_"+d])));
   if(ready) {
     const clauses=Object.entries(filters).filter(([,values])=>values.length).map(([dimension,values])=>["in",AtlasFilters.expression(dimension),["literal",values]]);
-    const expression=["all",["==",["get","pen"],1],...clauses];
+    // «Todas las vías» dibuja la red completa: los filtros de «Ancho de vía» no se aplican.
+    const expression=window.AtlasCapas?.current()==="all"?["==",["get","pen"],1]:["all",["==",["get","pen"],1],...clauses];
     map.setFilter("rail",expression);map.setFilter("rail-hit",expression);
   }
   const metrics=AtlasCartography.metrics(filtered);
@@ -323,6 +344,8 @@ function renderLegend() {
   if($('[data-layer="stations"]').checked){
     const p=document.createElement("p"),key=document.createElement("i");key.className="station-key";p.append(key,document.createTextNode("Estación Renfe (catálogo)"));legend.append(p);
   }
+  const pois=window.AtlasTransport?.legend();
+  if(pois)legend.append(pois);
   const sizes=window.AtlasPopulation?.legend();
   if(sizes)legend.append(sizes);
   host.hidden=!legend.childElementCount;
@@ -436,11 +459,11 @@ if(map)map.on("load",async()=>{
       "text-variable-anchor":["top","bottom","left","right"],"text-radial-offset":.8,"text-padding":4},
       paint:{"text-color":"#273a5f","text-halo-color":"#fbfbfb","text-halo-width":2}});
     // Prioridad de selección: paradas del tema > estaciones > líneas del tema > tramo IGN > población.
-    const themeHit = point => { const layers=[...AtlasCapas.hitLayers(),"theme-hit"].filter(id=>map.getLayer(id)&&map.getLayoutProperty(id,"visibility")!=="none");
+    const themeHit = point => { const layers=[...AtlasCapas.hitLayers(),"theme-hit","urban-stations"].filter(id=>map.getLayer(id)&&map.getLayoutProperty(id,"visibility")!=="none");
       const box=[[point.x-6,point.y-6],[point.x+6,point.y+6]]; return layers.length && map.queryRenderedFeatures(box,{layers}).length; };
-    map.on("click","stations",e=>{ if(map.getLayer("cx-stops")&&map.queryRenderedFeatures(e.point,{layers:["cx-stops"]}).length)return; stationInfo(e.features[0]); });
+    map.on("click","stations",e=>{ if(window.AtlasTransport?.hit(e.point))return; if(map.getLayer("cx-stops")&&map.queryRenderedFeatures(e.point,{layers:["cx-stops"]}).length)return; stationInfo(e.features[0]); });
     map.on("click","rail-hit",e=>{
-      if(themeHit(e.point) || map.queryRenderedFeatures(e.point,{layers:["stations"]}).length)return;
+      if(window.AtlasTransport?.hit(e.point)||themeHit(e.point) || map.queryRenderedFeatures(e.point,{layers:["stations"]}).length)return;
       // Con Población activa, el círculo tiene prioridad sobre el tramo IGN de fondo.
       if(map.getLayer("population-circles")&&map.getLayoutProperty("population-circles","visibility")!=="none"&&map.queryRenderedFeatures(e.point,{layers:["population-circles"]}).length)return;
       sectionInfo(e.features[0], e.lngLat);
@@ -450,9 +473,10 @@ if(map)map.on("load",async()=>{
       map.on("mouseleave",id,()=>map.getCanvas().style.cursor="");
     }
     ready=true;
-    AtlasThemes.init({map,showInfo,onChange:()=>{renderLegend();writeHash();},onLegend:()=>renderLegend()});
-    AtlasCapas.init({map,dataset,showInfo,legacy:AtlasThemes,onChange:()=>{if(AtlasCapas.current()==="gauge")renderFacets();renderLegend();writeHash();}});
+    AtlasThemes.init({map,dataset,showInfo,onChange:()=>{renderLegend();writeHash();},onLegend:()=>renderLegend()});
+    AtlasCapas.init({map,dataset,showInfo,legacy:AtlasThemes,onChange:()=>applyFilters()});
     AtlasPopulation.init({map,showInfo,onChange:()=>{renderLegend();writeHash();}});
+    AtlasTransport.init({map,dataset,showInfo,onChange:()=>{renderLegend();writeHash();}});
     applyFilters();
     map.on("moveend",updateStationCount);
     terrainController=window.AtlasTerrain?.create(map,{container:$("#terrain-controls"),onToggle:enabled=>{
@@ -468,6 +492,7 @@ if(map)map.on("load",async()=>{
     await AtlasCapas.restore(hash.t?hash:legacyFilters?{t:"gauge"}:null);
     if(AtlasCapas.current()==="gauge")renderFacets();
     if(hash.p)await AtlasPopulation.restore(hash.p);
+    if(hash.tp)await AtlasTransport.restore(hash.tp);
     if(hash.m)setTerrain(true);
     renderLegend();finishLoading();
   } catch(error) {

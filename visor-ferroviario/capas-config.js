@@ -15,11 +15,12 @@
     brands:{name:'Marcas y operadores',hint:'Quién opera cada ruta de alta velocidad'},
     services:{name:'Servicios',hint:'Qué tipo de tren circula y dónde para'},
     tourism:{name:'Trenes turísticos',hint:'Viajes de varios días y excursiones'},
-    gauge:{name:'Ancho de vía · IGN',hint:'Toda la red por ancho de vía'},
+    all:{name:'Todas las vías',hint:'Toda la red IGN por tipo de infraestructura'},
+    gauge:{name:'Ancho de vía · IGN',hint:'Filtra la red por ancho, electrificación y vías'},
     tent:{name:'Corredores TEN-T',hint:'Red transeuropea (Hermes 2024)'},
     transit:{name:'Cercanías y redes urbanas',hint:'Líneas urbanas y de Cercanías (GTFS)'}
   };
-  const themeOrder=['corridors','brands','services','tourism','gauge','tent','transit'];
+  const themeOrder=['corridors','brands','services','tourism','all','gauge','tent','transit'];
 
   const corridors=[
     {id:'sur',name:'Sur',color:'#8A5A00'},
@@ -48,9 +49,20 @@
     {id:'md-conventional',name:'Media Distancia · ahora Regional',color:'#1E7F4C',width:2.2,family:'regional'},
     {id:'avant',name:'Media Distancia de alta velocidad · Avant',color:'#1E7F4C',width:3.2,dash:[2,1.2],family:'avant'},
     {id:'commuter-metric',name:'Cercanías de ancho métrico',color:'#7A2E86',width:2.4,family:'cercanias'},
-    {id:'day',name:'Convencional diurno · Intercity',color:'#1D2638',width:2,family:'intercity'},
-    {id:'night',name:'Convencional nocturno',color:'#1D2638',width:2,dash:[0.6,1.8]}
+    {id:'day',name:'Convencional diurno · Intercity',color:'#1D2638',width:2,family:'intercity'}
   ];
+  // «Todas las vías»: tipo de infraestructura deducido de los atributos IGN de cada tramo (ancho y vías).
+  const infrastructure=[
+    {id:'hs',name:'Ancho estándar · alta velocidad',color:'#C45C00'},
+    {id:'conv',name:'Ancho ibérico · red convencional',color:'#0072B2'},
+    {id:'mixed',name:'Ancho mixto',color:'#AA4499'},
+    {id:'metric',name:'Ancho métrico y estrecho',color:'#00856A'},
+    {id:'unknown',name:'Sin ancho en el IGN',color:'#8A94A6'}
+  ];
+  const transport={
+    ports:{name:'Puertos de interés general',color:'#0B4F6C'},
+    airports:{name:'Aeropuertos de interés general',color:'#3D3A8C'}
+  };
   // Libreas de la nueva imagen de Renfe (recreación generada con IA por Renfe; © Renfe). Uso personal del manual.
   const families={};  // versión pública: sin libreas © Renfe
   const tourism=[
@@ -59,7 +71,7 @@
   ];
   const population={
     views:[{id:'area',name:'Grandes áreas urbanas',unit:'Gran área urbana'},{id:'capital',name:'Capitales de provincia',unit:'Capital de provincia'}],
-    fill:'rgba(39,58,95,.10)',stroke:'rgba(39,58,95,.6)',selected:'#1d2638',
+    color:'#490938',fill:'rgba(73,9,56,.16)',stroke:'rgba(73,9,56,.55)',selected:'#490938',
     // r = k·√habitantes. Un mismo k para las dos vistas; crece con el zoom.
     k:0.0125, minRadius:2.5,
     zoomFactor:[[5,1],[7,1.7],[9,2.6],[12,3.6]],
@@ -76,5 +88,5 @@
   const compact=()=>root.matchMedia?.('(max-width: 760px), (max-height: 520px)').matches;
   const phoneLandscape=()=>root.matchMedia?.('(max-height: 520px) and (orientation: landscape)').matches;
   const reducedMotion=()=>root.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-  root.AtlasConfig={peninsular,bounds,themes,themeOrder,corridors,status,brands,services,families,tourism,population,zoomFactor,radius,reducedMotion,compact,phoneLandscape};
+  root.AtlasConfig={peninsular,bounds,themes,themeOrder,corridors,status,brands,services,infrastructure,transport,families,tourism,population,zoomFactor,radius,reducedMotion,compact,phoneLandscape};
 })(window);
