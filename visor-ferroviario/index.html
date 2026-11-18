@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Atlas ferroviario de España</title>
+<meta name="robots" content="noindex, nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; worker-src 'self' blob:; child-src blob:; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://www.ign.es; connect-src 'self' https://www.ign.es; object-src 'none'; base-uri 'self'; form-action 'self'">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="vendor/maplibre-gl.css?v=b613b67c"><link rel="stylesheet" href="atlas.css?v=e640a504">
+<script defer src="vendor/maplibre-gl.js?v=eb107f3e"></script>
+<script defer src="capas-config.js?v=3ae4e685"></script><script defer src="etiquetas.js?v=76b151f4"></script>
+<script defer src="filtros.js?v=d84ceba8"></script><script defer src="cartography.js?v=ff56cf9b"></script>
+<script defer src="themes.js?v=e07018c8"></script><script defer src="export-map.js?v=b781c9a8"></script>
+<script defer src="terrain-manifest.js?v=3088cd3d"></script><script defer src="terrain-controls.js?v=4b990399"></script>
+<script defer src="line-identity.js?v=3023ba0c"></script>
+<script defer src="poblacion.js?v=6cf5d905"></script><script defer src="capas.js?v=65553d4b"></script>
+<script defer src="atlas.js?v=e0f1e6d3"></script>
+</head>
+<body>
+<a class="skip" href="#map">Saltar al mapa</a>
+<header class="atlas-header">
+<h1>Atlas ferroviario de España</h1>
+<nav aria-label="Vista del mapa">
+<button id="home" type="button" title="Volver a la vista de la España peninsular">Vista inicial</button>
+<div class="mode" role="group" aria-label="Modo de vista"><button id="flat" type="button" aria-pressed="true">2D</button><button id="mode" type="button" aria-pressed="false">Relieve 3D</button></div>
+</nav>
+</header>
+<main>
+<button id="toggle-panel" type="button" aria-expanded="true" aria-controls="tools">Capas y búsqueda</button>
+<aside id="tools" class="tools" aria-label="Capas y búsqueda">
+<label class="search-label" for="search">Estación o localidad</label>
+<input id="search" type="search" placeholder="Buscar Madrid, Atocha…" autocomplete="off">
+<div id="results" aria-live="polite"></div>
+
+<fieldset class="themes"><legend>¿Qué quieres ver en las vías?</legend><div id="theme-list"></div></fieldset>
+<section id="theme-panel" aria-live="polite"></section>
+
+<section id="gauge-panel" hidden>
+<div class="kpis" aria-label="Indicadores de la consulta" aria-live="polite">
+<div><strong id="count">—</strong><span id="count-label">tramos de la consulta</span></div>
+<div><strong id="km">—</strong><span>km de ejes con atributos IGN</span></div>
+<div><strong id="gauge-coverage">—</strong><span>con ancho nominal informado</span></div>
+<div><strong id="station-count">—</strong><span>estaciones en el encuadre</span></div></div>
+<p id="extent" class="muted">Longitudes de los ejes IGN con atributos; no es la longitud oficial de líneas. Estaciones independientes de los filtros.</p>
+<div id="facets"></div><button id="reset" type="button">Restablecer filtros</button>
+</section>
+<section id="legacy-panel" hidden><p id="theme-note" class="muted"></p><div id="theme-options"></div></section>
+
+<fieldset class="overlays"><legend>Capas que se combinan</legend>
+<label class="row"><input type="checkbox" id="population-toggle"> Población</label>
+<div id="population-options" hidden>
+<div role="radiogroup" aria-label="Unidad de población" class="segmented">
+<label><input type="radio" name="population-view" value="area" checked> Grandes áreas urbanas</label>
+<label><input type="radio" name="population-view" value="capital"> Capitales de provincia</label>
+</div>
+<p id="population-summary" class="muted"></p>
+<ol id="population-list" class="population-list"></ol>
+<p id="population-note" class="muted"></p>
+<p id="population-live" class="visually-hidden" aria-live="polite"></p>
+</div>
+<label class="row"><input type="checkbox" data-layer="stations" checked> Estaciones Renfe</label>
+<label class="row"><input type="checkbox" data-layer="rail" checked> Red ferroviaria IGN (fondo)</label>
+<label class="row"><input type="checkbox" data-layer="topography"> Topografía IGN</label>
+</fieldset>
+
+<details><summary>Perspectiva y relieve</summary><div id="terrain-controls"></div></details>
+<details><summary>Consultas y exportación</summary>
+<label for="query-name">Nombre de la consulta</label><input id="query-name" placeholder="Mi consulta">
+<button id="save-query" type="button">Guardar consulta</button><select id="saved-query" aria-label="Consultas guardadas"><option value="">Recuperar consulta…</option></select>
+<button id="export" type="button">Exportar GeoJSON</button>
+<label>Formato <select id="export-format"><option>PDF</option><option>PNG</option><option>JPG</option></select></label>
+<label>Papel <select id="export-paper"><option>A4</option><option>A3</option></select></label>
+<label>Orientación <select id="export-orientation"><option value="landscape">Horizontal</option><option value="portrait">Vertical</option></select></label>
+<label>Calidad <select id="export-quality"><option value="150">Estándar · 150 ppp</option><option value="300">Alta · 300 ppp</option></select></label>
+<label>Título <input id="export-title" value="Red ferroviaria de España" maxlength="100"></label>
+<label><input id="export-legend" type="checkbox" checked> Incluir leyenda</label>
+<label><input id="export-metrics" type="checkbox" checked> Incluir consulta e indicadores</label>
+<button id="export-map" type="button">Exportar mapa</button><button id="share" type="button">Copiar enlace</button><p id="action-message" role="status"></p>
+</details>
+</aside>
+<div id="map" aria-label="Mapa ferroviario de la España peninsular" tabindex="-1"></div>
+<div id="info" hidden role="dialog" aria-modal="false" aria-labelledby="name"><button id="close" type="button" aria-label="Cerrar ficha">×</button><small id="kind"></small><h2 id="name" tabindex="-1"></h2><figure id="info-media" hidden><img alt=""><figcaption></figcaption></figure><dl id="attributes"></dl></div>
+<section id="legend" aria-label="Leyenda" tabindex="0"></section>
+<div id="loading" role="status">Preparando la cartografía ferroviaria…</div>
+</main>
+<footer><span id="status" role="status">Cargando datos…</span><span id="coordinates"></span></footer>
+<noscript>Activa JavaScript para explorar el atlas ferroviario.</noscript>
+</body></html>
