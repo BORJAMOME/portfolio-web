@@ -61,7 +61,7 @@
     map.addLayer({id:'cx-sel-conv',type:'line',source:'cx-highlight',filter:['==',['get','hs'],0],paint:{'line-color':'#1d2638','line-width':3,'line-dasharray':[2,1.4]}},before);
     map.addLayer({id:'cx-hit',type:'line',source:'cx-lines',paint:{'line-color':'#000','line-width':14,'line-opacity':0}},before);
     map.addSource('cx-border',{type:'geojson',data:empty});
-    map.addLayer({id:'cx-border',type:'symbol',source:'cx-border',layout:{'text-field':['get','label'],'text-font':['Noto Sans Regular'],'text-size':12,'text-anchor':['get','anchor'],'text-max-width':12,'text-allow-overlap':true},paint:{'text-color':'#273a5f','text-halo-color':'#fbfbfb','text-halo-width':2}});
+    map.addLayer({id:'cx-border',type:'symbol',source:'cx-border',minzoom:6.2,layout:{'text-field':['get','label'],'text-font':['Noto Sans Regular'],'text-size':12,'text-anchor':['get','anchor'],'text-max-width':12,'text-allow-overlap':true},paint:{'text-color':'#273a5f','text-halo-color':'#fbfbfb','text-halo-width':2}});
     map.addLayer({id:'cx-stops',type:'circle',source:'cx-stops',paint:{
       'circle-radius':['interpolate',['linear'],['zoom'],5,['case',['==',['get','sel'],1],4.5,2.6],10,['case',['==',['get','sel'],1],7,4.8]],
       'circle-color':'#fbfbfb','circle-stroke-color':['get','color'],'circle-stroke-width':['case',['==',['get','sel'],1],2.6,1.6],
@@ -139,8 +139,8 @@
     const fr=new Set(),pt=new Set();
     for(const v of activeVariants())for(const name of v.international||[]){const st=Object.values(services().stations).find(s=>s.name===name);if(!st)continue;(st.coordinates[0]<-6?pt:fr).add(name);}
     const out=[];
-    if(fr.size)out.push({type:'Feature',geometry:{type:'Point',coordinates:[2.87,42.46]},properties:{label:'Continúa a Francia: '+[...fr].slice(0,4).join(', '),anchor:'bottom-right'}});
-    if(pt.size)out.push({type:'Feature',geometry:{type:'Point',coordinates:[-8.65,42.05]},properties:{label:'Continúa a Portugal: '+[...pt].slice(0,3).join(', '),anchor:'top-right'}});
+    if(fr.size)out.push({type:'Feature',geometry:{type:'Point',coordinates:[2.87,42.46]},properties:{label:'Continúa a Francia: '+[...fr].slice(0,4).join(', '),anchor:'left'}});
+    if(pt.size)out.push({type:'Feature',geometry:{type:'Point',coordinates:[-8.65,42.05]},properties:{label:'Continúa a Portugal: '+[...pt].slice(0,3).join(', '),anchor:'right'}});
     return out;
   }
   function addStop(stops,sid,key,theme){
@@ -202,7 +202,7 @@
   function selectVariant(id){state.variant=id;state.experience=null;state.corridor=null;renderHighlight();variantInfo(services().variants.find(v=>v.id===id));
     const v=services().variants.find(x=>x.id===id);fit(v.calls.map(c=>services().stations[c.s].coordinates));onChange?.();}
   function fit(points){if(!points.length)return;const lons=points.map(p=>p[0]),lats=points.map(p=>p[1]);
-    map.fitBounds([[Math.min(...lons),Math.min(...lats)],[Math.max(...lons),Math.max(...lats)]],{padding:{top:60,bottom:window.innerWidth<=760?Math.round(window.innerHeight*.5):60,left:window.innerWidth>760?340:30,right:window.innerWidth>760?340:30},maxZoom:11,duration:reduced()?0:700});}
+    map.fitBounds([[Math.min(...lons),Math.min(...lats)],[Math.max(...lons),Math.max(...lats)]],{padding:CFG.phoneLandscape()?{top:20,bottom:20,left:20,right:Math.round(Math.min(360,window.innerWidth*.48))}:CFG.compact()?{top:40,bottom:Math.round(window.innerHeight*.5),left:24,right:24}:{top:60,bottom:60,left:340,right:340},maxZoom:11,duration:reduced()?0:700});}
   function relationButtons(variants){
     const groups=new Map();
     for(const v of variants){const k=v.relation;if(!groups.has(k))groups.set(k,[]);groups.get(k).push(v);}

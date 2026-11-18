@@ -72,6 +72,9 @@
     return z.at(-1)[1];
   }
   function radius(pop,zoom){return Math.max(population.minRadius,population.k*Math.sqrt(pop)*zoomFactor(zoom));}
+  // Móvil: vertical (ancho ≤ 760) u horizontal (alto ≤ 520).
+  const compact=()=>root.matchMedia?.('(max-width: 760px), (max-height: 520px)').matches;
+  const phoneLandscape=()=>root.matchMedia?.('(max-height: 520px) and (orientation: landscape)').matches;
   const reducedMotion=()=>root.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-  root.AtlasConfig={peninsular,bounds,themes,themeOrder,corridors,status,brands,services,families,tourism,population,zoomFactor,radius,reducedMotion};
+  root.AtlasConfig={peninsular,bounds,themes,themeOrder,corridors,status,brands,services,families,tourism,population,zoomFactor,radius,reducedMotion,compact,phoneLandscape};
 })(window);
