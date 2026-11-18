@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "17a51cb",
+ "huella": "0f45c39",
  "recuento": {
   "paginas": 20,
   "proyectos": 40,
@@ -9,7 +9,7 @@ export default {
   "capitulos": 10,
   "plataformas": 11,
   "pestanas": 10,
-  "tablas": 39,
+  "tablas": 41,
   "funciones": 5,
   "herramientas": 21,
   "relaciones": 190,
@@ -2104,6 +2104,27 @@ export default {
        "id": "q:agents",
        "tipo": "tabla",
        "etiqueta": "agents",
+       "familia": "dato"
+      }
+     ],
+     "familia": "dato"
+    },
+    {
+     "id": "d:sancho-latido",
+     "tipo": "esquema",
+     "etiqueta": "sancho-latido.sql",
+     "archivo": "supabase/sancho-latido.sql",
+     "hijos": [
+      {
+       "id": "q:sancho_latido",
+       "tipo": "tabla",
+       "etiqueta": "sancho_latido",
+       "familia": "dato"
+      },
+      {
+       "id": "q:sancho_vigilancia",
+       "tipo": "tabla",
+       "etiqueta": "sancho_vigilancia",
        "familia": "dato"
       }
      ],
