@@ -1,8 +1,8 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "39df021",
+ "huella": "17a51cb",
  "recuento": {
-  "paginas": 19,
+  "paginas": 20,
   "proyectos": 40,
   "recursos": 52,
   "perfil": 9,
@@ -1492,6 +1492,14 @@ export default {
        "href": "./roma-aeterna/",
        "archivo": "roma-aeterna/",
        "familia": "app"
+      },
+      {
+       "id": "p:visor-ferroviario",
+       "tipo": "pagina",
+       "etiqueta": "Atlas ferroviario de España",
+       "href": "./visor-ferroviario/",
+       "archivo": "visor-ferroviario/",
+       "familia": "pagina"
       }
      ]
     },
