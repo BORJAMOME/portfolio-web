@@ -10,12 +10,16 @@
   // Iconos propios: distintivo circular con el glifo en blanco (barco y avión con el mismo trazo).
   const glyph={
     ports:'<path d="M3.6 13.4h16.8l-2.5 4.9a1.8 1.8 0 0 1-1.6 1H7.7a1.8 1.8 0 0 1-1.6-1z"/><path d="M7 12.4V9.3h10v3.1z"/><path d="M10.6 8.3V5.4h2.8v2.9z"/>',
-    airports:'<path d="M12 2.6c.8 0 1.4.8 1.4 1.8v4.7l7.4 4.5v2.1l-7.4-2.2v4.3l2.1 1.6v1.7L12 20.2l-3.5 1v-1.7l2.1-1.6v-4.3l-7.4 2.2v-2.1l7.4-4.5V4.4c0-1 .6-1.8 1.4-1.8z"/>'
+    airports:'<path d="M12 2.6c.8 0 1.4.8 1.4 1.8v4.7l7.4 4.5v2.1l-7.4-2.2v4.3l2.1 1.6v1.7L12 20.2l-3.5 1v-1.7l2.1-1.6v-4.3l-7.4 2.2v-2.1l7.4-4.5V4.4c0-1 .6-1.8 1.4-1.8z"/>',
+    // Estación: frontal de tren con parabrisas, faros y bogies, en el mismo distintivo que puertos y aeropuertos.
+    stations:'<path d="M8 2.8h8a3.4 3.4 0 0 1 3.4 3.4v8.6a3.4 3.4 0 0 1-3.4 3.4H8a3.4 3.4 0 0 1-3.4-3.4V6.2A3.4 3.4 0 0 1 8 2.8z"/><path d="M8.6 18.6 6.6 21.4h2.2l1.4-1.9h3.6l1.4 1.9h2.2l-2-2.8z"/>'+
+      '<rect x="7" y="5.4" width="10" height="4.8" rx="1.2" fill="COLOR"/><circle cx="8.9" cy="14.3" r="1.2" fill="COLOR"/><circle cx="15.1" cy="14.3" r="1.2" fill="COLOR"/>'
   };
+  const STATION_COLOR='#1d2638';
   function badge(kind){
-    const color=CFG.transport[kind].color;
+    const color=kind==='stations'?STATION_COLOR:CFG.transport[kind].color;
     return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 32 32">'+
-      '<circle cx="16" cy="16" r="14.5" fill="'+color+'" stroke="#fbfbfb" stroke-width="2.2"/><g transform="translate(4 4)" fill="#fbfbfb">'+glyph[kind]+'</g></svg>');
+      '<circle cx="16" cy="16" r="14.5" fill="'+color+'" stroke="#fbfbfb" stroke-width="2.2"/><g transform="translate(4 4)" fill="#fbfbfb">'+glyph[kind].replaceAll('COLOR',color)+'</g></svg>');
   }
   function addIcon(kind){
     return new Promise(resolve=>{
@@ -128,4 +132,11 @@
     for(const kind of ['ports','airports']){const box=$('#'+kind+'-toggle');if(box)box.onchange=()=>setEnabled(kind,box.checked);}
   }
   root.AtlasTransport={init,load,hit,near,legend,state,restore,setEnabled,info};
+  // Símbolo de estación para la capa «Estaciones Renfe» (atlas.js lo añade al cargar el mapa).
+  root.AtlasStationSymbol={add(m){return new Promise(resolve=>{
+    if(m.hasImage('station-symbol'))return resolve();
+    const img=new Image(64,64);
+    img.onload=()=>{if(!m.hasImage('station-symbol'))m.addImage('station-symbol',img,{pixelRatio:2});resolve();};
+    img.onerror=()=>resolve();img.src=badge('stations');
+  });}};
 })(window);
