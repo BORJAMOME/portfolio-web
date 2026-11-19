@@ -94,7 +94,7 @@
     const top=valid.reduce((a,b)=>b.h>a.h?b:a),low=valid.reduce((a,b)=>b.h<a.h?b:a);
     // Cada marca (estación) se sitúa en la muestra más próxima.
     const placed=marks.map(m=>{let best=null,bm=Infinity;for(const s of samples){const x=metres(s.c,m.c);if(x<bm){bm=x;best=s;}}return best&&bm<3000?{...m,d:best.d}:null;}).filter(Boolean);
-    const detail=valid.filter(s=>s.z>=11).length/valid.length;
+    const detail=valid.filter(s=>s.z>=12).length/valid.length;
     return {samples,total,top,low,marks:placed,detail};
   }
 
@@ -148,7 +148,8 @@
     const wrap=el('div','profile-chart');
     const readout=el('p','profile-readout');readout.setAttribute('aria-live','polite');
     box.append(wrap,readout);
-    const res=profile.detail>0.9?'unos 30 m (MDT detallado de Guadarrama)':profile.detail>0.05?'entre 30 y 470 m según el tramo':'unos 470 m entre puntos del modelo';
+    // MDT detallado (~30 m) en Guadarrama, Pajares, Despeñaperros y Contreras; ~470 m en el resto.
+    const res=profile.detail>0.9?'unos 30 m (MDT detallado de este corredor)':profile.detail>0.05?'unos 30 m en los puertos de montaña con MDT detallado y unos 470 m en el resto':'unos 470 m entre puntos del modelo';
     box.append(el('p','muted profile-note','Relieve del terreno bajo el trazado (MDT del IGN), no la cota de la vía: en túneles y viaductos la vía pasa por debajo o por encima del terreno, y las pendientes del perfil no son las de la línea. Resolución horizontal: '+res+'. Escala vertical exagerada.'));
 
     let cursor=-1,svgEl,geom;
