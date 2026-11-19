@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; worker-src 'self' blob:; child-src blob:; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://www.ign.es; connect-src 'self' https://www.ign.es; object-src 'none'; base-uri 'self'; form-action 'self'">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="vendor/maplibre-gl.css?v=b613b67c"><link rel="stylesheet" href="atlas.css?v=fe6e870f">
+<link rel="stylesheet" href="vendor/maplibre-gl.css?v=b613b67c"><link rel="stylesheet" href="atlas.css?v=2b0c79d6">
 <script defer src="vendor/maplibre-gl.js?v=eb107f3e"></script>
 <script defer src="capas-config.js?v=76db37cf"></script><script defer src="etiquetas.js?v=76b151f4"></script>
 <script defer src="filtros.js?v=d84ceba8"></script><script defer src="cartography.js?v=ff56cf9b"></script>
@@ -14,7 +14,7 @@
 <script defer src="terrain-manifest.js?v=3088cd3d"></script><script defer src="terrain-controls.js?v=fce4be9c"></script>
 <script defer src="line-identity.js?v=3023ba0c"></script>
 <script defer src="poblacion.js?v=fb0a00ca"></script><script defer src="capas.js?v=4a72ba2c"></script>
-<script defer src="transporte.js?v=b72fd8c7"></script><script defer src="atlas.js?v=e9ff72ca"></script><script defer src="orientacion.js?v=3c295037"></script>
+<script defer src="transporte.js?v=c60ba40f"></script><script defer src="ruta.js?v=cfaca933"></script><script defer src="atlas.js?v=7bcb90ab"></script><script defer src="orientacion.js?v=3c295037"></script>
 </head>
 <body>
 <a class="skip" href="#map">Saltar al mapa</a>
@@ -31,12 +31,8 @@
 </nav>
 </header>
 <main>
-<button id="toggle-panel" type="button" aria-expanded="true" aria-controls="tools">Capas y búsqueda</button>
-<aside id="tools" class="tools" aria-label="Capas y búsqueda">
-<label class="search-label" for="search">Estación o localidad</label>
-<input id="search" type="search" placeholder="Buscar Madrid, Atocha…" autocomplete="off">
-<div id="results" aria-live="polite"></div>
-
+<button id="toggle-panel" type="button" aria-expanded="true" aria-controls="tools"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></svg><span>Capas</span></button>
+<aside id="tools" class="tools" aria-label="Capas y filtros">
 <fieldset class="themes"><legend>¿Qué quieres ver en las vías?</legend><div id="theme-list"></div></fieldset>
 <section id="theme-panel" aria-live="polite"></section>
 
@@ -65,7 +61,7 @@
 </div>
 <label class="row"><input type="checkbox" id="ports-toggle"> <i class="poi-key port" aria-hidden="true"></i> Puertos de interés general</label>
 <label class="row"><input type="checkbox" id="airports-toggle"> <i class="poi-key airport" aria-hidden="true"></i> Aeropuertos de interés general</label>
-<label class="row"><input type="checkbox" data-layer="stations" checked> Estaciones Renfe</label>
+<label class="row"><input type="checkbox" data-layer="stations" checked> <i class="poi-key station" aria-hidden="true"></i> Estaciones Renfe</label>
 <label class="row"><input type="checkbox" data-layer="rail" checked> Red ferroviaria IGN (fondo)</label>
 <label class="row"><input type="checkbox" data-layer="topography"> Topografía IGN</label>
 </fieldset>
@@ -85,8 +81,15 @@
 <button id="export-map" type="button">Exportar mapa</button><button id="share" type="button">Copiar enlace</button><p id="action-message" role="status"></p>
 </details>
 </aside>
+<form id="route-bar" class="route-bar" role="search" aria-label="Buscar una estación o una ruta" autocomplete="off" novalidate>
+<div class="rb-field rb-origin"><i class="rb-dot" aria-hidden="true"></i><label for="rb-origin">Origen</label><input id="rb-origin" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="rb-list" placeholder="Estación o localidad" spellcheck="false" enterkeyhint="search"><button type="button" class="rb-clear" data-clear="origin" aria-label="Borrar el origen" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 7l10 10M17 7 7 17"/></svg></button></div>
+<button type="button" id="rb-swap" class="rb-swap" aria-label="Intercambiar origen y destino" title="Intercambiar origen y destino"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 4 4.5 7.5 8 11M4.5 7.5H18M16 13l3.5 3.5L16 20m3.5-3.5H6"/></svg></button>
+<div class="rb-field rb-destination"><i class="rb-dot" aria-hidden="true"></i><label for="rb-destination">Destino</label><input id="rb-destination" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="rb-list" placeholder="Añade un destino" spellcheck="false" enterkeyhint="go"><button type="button" class="rb-clear" data-clear="destination" aria-label="Borrar el destino" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 7l10 10M17 7 7 17"/></svg></button></div>
+<button type="submit" id="rb-go" class="rb-go" disabled><span>Buscar</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
+<ul id="rb-list" class="rb-list" role="listbox" aria-label="Estaciones sugeridas" hidden></ul>
+</form>
 <div id="map" aria-label="Mapa ferroviario de la España peninsular" tabindex="-1"></div>
-<div id="info" hidden role="dialog" aria-modal="false" aria-labelledby="name"><button id="close" type="button" aria-label="Cerrar ficha">×</button><small id="kind"></small><h2 id="name" tabindex="-1"></h2><p id="info-subtitle" hidden></p><ul id="info-chips" hidden></ul><div id="info-facts" hidden></div><figure id="info-media" hidden><img alt=""><figcaption></figcaption></figure><dl id="attributes"></dl></div>
+<div id="info" hidden role="dialog" aria-modal="false" aria-labelledby="name"><button id="close" type="button" aria-label="Cerrar ficha">×</button><small id="kind"></small><h2 id="name" tabindex="-1"></h2><p id="info-subtitle" hidden></p><ul id="info-chips" hidden></ul><div id="info-facts" hidden></div><div id="info-extra" hidden></div><figure id="info-media" hidden><img alt=""><figcaption></figcaption></figure><dl id="attributes"></dl></div>
 <section id="legend" aria-label="Leyenda" tabindex="0"></section>
 <div id="toast" role="status" aria-live="polite" hidden></div>
 <div id="loading" role="status">Preparando la cartografía ferroviaria…</div>

@@ -37,7 +37,7 @@ let hashTimer;
 function writeHash() {
   clearTimeout(hashTimer);
   hashTimer = setTimeout(() => {
-    const state = {...filters, ...(window.AtlasCapas?.getState() || {}), p: window.AtlasPopulation?.state(), tp: window.AtlasTransport?.state(), m: terrainEnabled ? 1 : undefined};
+    const state = {...filters, ...(window.AtlasCapas?.getState() || {}), p: window.AtlasPopulation?.state(), tp: window.AtlasTransport?.state(), r: window.AtlasRoute?.state(), m: terrainEnabled ? 1 : undefined};
     for(const key of Object.keys(filters)) if(!state[key].length) delete state[key];
     if(state.p && !state.p.on) delete state.p;
     try { history.replaceState(null, "", "#" + encodeURIComponent(JSON.stringify(state))); } catch {}
@@ -113,6 +113,7 @@ function closeInfo(){
   clearSelection();
   window.AtlasCapas?.clearSelection();
   window.AtlasPopulation?.clearSelection();
+  window.AtlasRoute?.clearMap();
   infoOpener?.focus?.();infoOpener=null;
   writeHash();
 }
@@ -136,6 +137,9 @@ function showInfo(kind,title,fields,opts={},actions,media) {
   for(const chip of opts.chips||[]){const li=document.createElement("li");li.textContent=chip.label;if(chip.color){li.style.setProperty("--c",chip.color);li.classList.add("coloured");}if(chip.title)li.title=chip.title;chips.append(li);}
   const facts=$("#info-facts");facts.replaceChildren();facts.hidden=!opts.facts?.length;
   for(const fact of opts.facts||[]){const div=document.createElement("div"),strong=document.createElement("strong"),span=document.createElement("span");strong.textContent=fact.value;span.textContent=fact.label;div.append(strong,span);facts.append(div);}
+  const extra=$("#info-extra");extra.replaceChildren();extra.hidden=!opts.extra;if(opts.extra)extra.append(opts.extra);
+  // Una ficha que no es de ruta retira el trazo de la ruta anterior.
+  $("#info").dataset.route=opts.route?"1":"";if(!opts.route)window.AtlasRoute?.clearMap();
   const figure=$("#info-media");figure.hidden=!opts.media;
   if(opts.media){const img=figure.querySelector("img");img.src=opts.media.src;img.alt=opts.media.alt;figure.querySelector("figcaption").textContent=opts.media.caption;}
   const list=$("#attributes");
@@ -244,23 +248,7 @@ async function sectionInfo(rendered, location) {
   }, {...opts, subtitle:endpoints && endpoints!==lineTitle ? endpoints : opts.subtitle,
       chips:[...opts.chips,...corridors.map(name=>({label:"Corredor "+name}))]});
 }
-$("#search").oninput=function(){
-  const results=$("#results");results.replaceChildren();
-  const query=AtlasFilters.normalize(this.value.trim());
-  if(query.length<2||!dataset)return;
-  const matches=dataset.stations.features.filter(f=>AtlasFilters.normalize(f.properties.DESCRIPCION+" "+f.properties.POBLACION).includes(query)).slice(0,15);
-  for(const feature of matches) {
-    const button=document.createElement("button");button.type="button";
-    button.textContent=feature.properties.DESCRIPCION+" · "+feature.properties.POBLACION;
-    button.onclick=()=>{
-      map.flyTo({center:feature.geometry.coordinates.slice(0,2),zoom:12,duration:motion(1200)});
-      stationInfo(feature);results.replaceChildren();
-      if(CFG.compact()&&!$("#tools").hidden)$("#toggle-panel").click();
-    };
-    results.append(button);
-  }
-  if(!matches.length)results.textContent="Sin coincidencias en el catálogo de estaciones peninsulares.";
-};
+window.AtlasStationInfo=stationInfo;
 
 /* ── filtros IGN (tema «Ancho de vía») ── */
 let facetValues;
@@ -345,7 +333,7 @@ function renderLegend() {
     }
   }
   if($('[data-layer="stations"]').checked){
-    const p=document.createElement("p"),key=document.createElement("i");key.className="station-key";p.append(key,document.createTextNode("Estación Renfe (catálogo)"));legend.append(p);
+    const p=document.createElement("p"),key=document.createElement("i");key.className="poi-key station";p.append(key,document.createTextNode("Estación Renfe (catálogo)"));legend.append(p);
   }
   const pois=window.AtlasTransport?.legend();
   if(pois)legend.append(pois);
@@ -403,7 +391,7 @@ $("#export-map").onclick=async()=>{
 for(const checkbox of document.querySelectorAll("[data-layer]")) {
   checkbox.onchange=()=>{
     if(!ready)return;
-    const ids=checkbox.dataset.layer==="stations"?["stations","station-labels"]:checkbox.dataset.layer==="rail"?["rail","rail-hit"]:[checkbox.dataset.layer];
+    const ids=checkbox.dataset.layer==="stations"?["stations","station-badges","station-labels"]:checkbox.dataset.layer==="rail"?["rail","rail-hit"]:[checkbox.dataset.layer];
     for(const id of ids)map.setLayoutProperty(id,"visibility",checkbox.checked?"visible":"none");
     applyFilters();
   };
@@ -454,12 +442,17 @@ if(map)map.on("load",async()=>{
       paint:{"text-color":"#1d2638","text-halo-color":"#fbfbfb","text-halo-width":2}});
     map.addSource("stations",{type:"geojson",data:dataset.stations,attribution:'Origen de los datos: Renfe Operadora · CC BY 4.0'});
     map.addLayer({id:"stations",type:"circle",source:"stations",minzoom:7,paint:{
-      "circle-radius":["interpolate",["linear"],["zoom"],7,2,13,5],"circle-color":"#fbfbfb","circle-stroke-color":"#273a5f","circle-stroke-width":1.3,
+      "circle-radius":["interpolate",["linear"],["zoom"],7,2,9.9,4,10,9,13,12],"circle-color":"#fbfbfb","circle-stroke-color":"#273a5f","circle-stroke-width":1.3,
+      // Desde el zoom 10 el punto cede el sitio al símbolo de estación y queda invisible como zona de clic.
+      "circle-opacity":["step",["zoom"],1,10,0],"circle-stroke-opacity":["step",["zoom"],1,10,0],
       "circle-pitch-alignment":"viewport","circle-pitch-scale":"viewport"}});
+    AtlasStationSymbol.add(map).then(()=>{if(map.getLayer("station-badges"))return;map.addLayer({id:"station-badges",type:"symbol",source:"stations",minzoom:10,layout:{
+      "icon-image":"station-symbol","icon-size":["interpolate",["linear"],["zoom"],10,.62,13,.85,16,1],"icon-allow-overlap":true,"icon-pitch-alignment":"viewport",
+      visibility:$('[data-layer="stations"]').checked?"visible":"none"}},"station-labels");});
     const badge=document.createElement('canvas');badge.width=badge.height=32;const badgeContext=badge.getContext('2d');badgeContext.fillStyle='#fbfbfb';badgeContext.strokeStyle='#b9c5d6';badgeContext.lineWidth=1;badgeContext.beginPath();badgeContext.roundRect(1,1,30,30,5);badgeContext.fill();badgeContext.stroke();map.addImage('station-badge',badgeContext.getImageData(0,0,32,32),{stretchX:[[8,24]],stretchY:[[8,24]],content:[5,5,27,27],pixelRatio:2});
     map.addLayer({id:"station-labels",type:"symbol",source:"stations",minzoom:10,layout:{
       "icon-image":"station-badge","icon-text-fit":"both","icon-text-fit-padding":[4,6,4,6],"text-field":["get","DESCRIPCION"],"text-font":["Noto Sans Regular"],"text-size":12,
-      "text-variable-anchor":["top","bottom","left","right"],"text-radial-offset":.8,"text-padding":4},
+      "text-variable-anchor":["top","bottom","left","right"],"text-radial-offset":1.35,"text-padding":4},
       paint:{"text-color":"#273a5f","text-halo-color":"#fbfbfb","text-halo-width":2}});
     // Prioridad de selección: paradas del tema > estaciones > líneas del tema > tramo IGN > población.
     const themeHit = point => { const layers=[...AtlasCapas.hitLayers(),"theme-hit","urban-stations"].filter(id=>map.getLayer(id)&&map.getLayoutProperty(id,"visibility")!=="none");
@@ -480,6 +473,7 @@ if(map)map.on("load",async()=>{
     AtlasCapas.init({map,dataset,showInfo,legacy:AtlasThemes,onChange:()=>applyFilters()});
     AtlasPopulation.init({map,showInfo,onChange:()=>{renderLegend();writeHash();}});
     AtlasTransport.init({map,dataset,showInfo,onChange:()=>{renderLegend();writeHash();}});
+    window.AtlasRoute?.init({map,dataset,showInfo,onChange:writeHash,openStation:stationInfo});
     applyFilters();
     map.on("moveend",updateStationCount);
     terrainController=window.AtlasTerrain?.create(map,{container:$("#terrain-controls"),onToggle:enabled=>{
@@ -497,6 +491,7 @@ if(map)map.on("load",async()=>{
     if(hash.p)await AtlasPopulation.restore(hash.p);
     if(hash.tp)await AtlasTransport.restore(hash.tp);
     if(hash.m)setTerrain(true);
+    if(hash.r)await window.AtlasRoute?.restore(hash.r);
     renderLegend();finishLoading();
   } catch(error) {
     console.error(error);loading.textContent="Error al preparar el mapa: "+error.message;
