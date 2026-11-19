@@ -576,7 +576,9 @@
       stop('transfer',l.to,note);
     });
     stop('dest',last.to,timed?'Llegada '+hm(last.arr):'Llegada');
-    box.append(ol);
+    const slot=el('div','profile-slot');
+    box.append(slot,ol);
+    profileFor(r,slot);
     box.append(el('p','muted route-note',timed
       ?'Horas de los GTFS oficiales de Renfe ('+Object.values(tt.h.meta.sources).join('; ')+'), con al menos '+10+' min para cambiar de tren. Los cambios de estación por la ciudad son estimados. '+
         (r.exact?'Kilómetros sobre el trazado inferido en la red IGN.':'Algún tramo sin trazado verificable: sus kilómetros se aproximan en línea recta.')+' OUIGO: horario del PDF oficial 2026-2027 (válido hasta el 14-06-2027), por trayecto y con sus días; sin trenes Madrid–Andalucía hasta el 29-11-2026 por el aviso de suspensión. No incluye iryo, Cercanías de ancho ibérico ni redes autonómicas. Consulta el horario del operador antes de viajar.'
@@ -596,6 +598,25 @@
       chips:timed?[]:[...new Map(r.rides.map(l=>[l.product.name,l.product])).values()].map(p=>({label:p.name,color:p.color})),
       facts,extra:box,route:true,keepFocus:keep});
     if(keep){info.scrollTop=scroll;info.querySelector('.rt-option[aria-pressed="true"]')?.focus({preventScroll:true});}
+  }
+
+  /* ── perfil de elevación (perfil.js): tramos en tren; los cambios de estación cuentan distancia sin dibujarse ── */
+  function profileFor(r,slot){
+    if(!window.AtlasProfile)return;
+    const S=graph.services;
+    const parts=r.legs.map(l=>({coords:l.coords,gap:l.type!=='ride'}));
+    const marks=[];
+    const first=r.legs[0],last=r.legs.at(-1);
+    marks.push({name:first.from,c:first.type==='ride'?first.fromCoords:first.coords[0],major:true});
+    r.rides.forEach((l,k)=>{
+      if(k>0)marks.push({name:l.from,c:l.fromCoords,major:true});
+      for(const s of l.stops){const name=s.name||s,c=s.coords||S.stations[l.variant.calls.find(x=>S.stations[x.s].name===name)?.s]?.coordinates;if(c)marks.push({name,c,major:false});}
+      if(k<r.rides.length-1)marks.push({name:l.to,c:l.toCoords,major:true});
+    });
+    marks.push({name:last.to,c:last.type==='ride'?last.toCoords:last.coords.at(-1),major:true});
+    AtlasProfile.forRoute(map,parts,marks,{title:'Perfil del recorrido'}).then(block=>{
+      if(block&&slot.isConnected)slot.replaceWith(block);
+    }).catch(error=>console.warn(error));
   }
 
   /* ── trazo en el mapa ── */
@@ -654,6 +675,7 @@
   let savedBounds=null;
   const pt=(c,role,name,color)=>({type:'Feature',geometry:{type:'Point',coordinates:c},properties:{role,name,color:color||'#1d2638'}});
   function clearMap(){
+    window.AtlasProfile?.clear();
     if(!routeOn)return;routeOn=false;
     map?.getSource('route')?.setData({type:'FeatureCollection',features:[]});
     if(map?.getLayer('route-veil'))map.setLayoutProperty('route-veil','visibility','none');
