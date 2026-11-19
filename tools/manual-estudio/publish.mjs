@@ -44,8 +44,29 @@ export function loadSource(src) {
     vm.runInNewContext(readFileSync(g, 'utf8'), sb, { timeout: 5000 });
     d.GLOSARIO = { GFAM: sb.GFAM || [], SIGLAS: sb.SIGLAS || [], GTERMS: sb.GTERMS || [], GVIS: sb.GVIS || {}, GMERGE: sb.GMERGE || {} };
     d.GLOSARIO.IMG = svgImages(src, d.GLOSARIO.GVIS);
+    mergeContext(src, d);
   }
   return d;
+}
+
+/* Contexto ampliado del glosario (opcional): glosario-contexto.js define GCTX = { <id>: { k, c, e, r } }.
+   c = «En contexto», e = «Ejemplo», r = ids de entradas relacionadas. Se añade a la entrada completa (gterm) por id,
+   y a las fichas de capítulo (gloss) y al vocabulario de cada capítulo por término, que es como el motor las fusiona.
+   Así no hace falta ningún tipo de documento nuevo en la tabla. */
+const nk = (s) => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
+export function mergeContext(src, d) {
+  const f = join(src, 'glosario-contexto.js');
+  d.GLOSARIO.CTX = 0;
+  if (!existsSync(f)) return;
+  const sb = {}; sb.window = sb;
+  vm.runInNewContext(readFileSync(f, 'utf8'), sb, { timeout: 5000 });
+  const ctx = sb.GCTX || {};
+  const pick = (x) => { const o = {}; if (x.c) o.c = String(x.c); if (x.e) o.e = String(x.e); if (Array.isArray(x.r) && x.r.length) o.r = x.r.filter((r) => SLUG.test(r)); return o; };
+  const byK = {};
+  Object.values(ctx).forEach((x) => { if (x && x.k) byK[nk(x.k)] = x; });
+  d.GLOSARIO.GTERMS.forEach((g) => { if (ctx[g.id]) { Object.assign(g, pick(ctx[g.id])); d.GLOSARIO.CTX++; } });
+  d.GLOSS.forEach((g) => { const x = byK[nk(g.k)]; if (x) { Object.assign(g, pick(x)); d.GLOSARIO.CTX++; } });
+  d.TOPICS.forEach((t) => (t.vocab || []).forEach((v, i) => { const x = byK[nk(v[0])]; if (x) { t.vocab[i] = [v[0], v[1], pick(x)]; d.GLOSARIO.CTX++; } }));
 }
 
 /* Los esquemas del glosario son SVG que en la web local toman los colores del tema por CSS.
@@ -201,7 +222,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     if (errors.length) { errors.forEach((e) => console.error('✗ ' + e)); console.error('\n✗ El contenido no valida: no se sube nada.'); process.exit(1); }
     const count = (k) => rows.filter((r) => r.kind === k).length;
     const big = rows.reduce((m, r) => Math.max(m, Buffer.byteLength(JSON.stringify(r.data))), 0);
-    console.log(`${rows.length} documentos: ${count('topic')} capítulos en ${count('chunk')} trozos, ${count('block')} bloques, ${count('gloss')} términos, ${count('indic')} indicadores en ${count('fam')} familias${count('gterm') ? `; glosario: ${count('gterm')} entradas, ${count('gsig')} siglas y ${count('gvis')} esquemas` : ''}. El mayor ocupa ${Math.round(big / 1024)} KB.`);
+    console.log(`${rows.length} documentos: ${count('topic')} capítulos en ${count('chunk')} trozos, ${count('block')} bloques, ${count('gloss')} términos, ${count('indic')} indicadores en ${count('fam')} familias${count('gterm') ? `; glosario: ${count('gterm')} entradas, ${count('gsig')} siglas y ${count('gvis')} esquemas${d.GLOSARIO && d.GLOSARIO.CTX ? `; contexto ampliado en ${d.GLOSARIO.CTX} términos` : ''}` : ''}. El mayor ocupa ${Math.round(big / 1024)} KB.`);
     if (dry) { console.log('\nSimulacro: no se ha tocado la base (sin red).'); process.exit(0); }
     if (prune && !yes) throw new Error('--prune borra de la base lo que no esté en tus archivos. Repite con --yes si es lo que quieres.');
     const env = { ...process.env };

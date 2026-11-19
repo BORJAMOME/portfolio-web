@@ -498,3 +498,40 @@ mark.est-flash{animation:estflash 1.7s ease-out}
 /* móvil: la tira de pestañas del visor se desvanece por la derecha para indicar que hay más */
 @media(max-width:640px){.vz-tabs{-webkit-mask-image:linear-gradient(90deg,#000 82%,transparent);mask-image:linear-gradient(90deg,#000 82%,transparent);padding-right:40px}}
 .vz-zoom button{background:var(--card);color:var(--ink);border-color:var(--line-2)}
+
+/* Glosario: tarjeta breve con enlace a la ficha completa, que se abre en una ventana sobre la página */
+.gent .gmore{display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:14px;font-weight:600;color:var(--accent-ink);text-decoration:none;min-height:32px}
+.gent .gmore:hover{text-decoration:underline}
+.gmodal{position:fixed;inset:0;z-index:310;background:rgba(10,10,16,.48);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:24px 16px}
+.gmodal-box{position:relative;width:min(720px,100%);max-height:min(86vh,900px);display:flex;flex-direction:column;background:var(--card);border:.5px solid var(--line);border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.35);overflow:hidden}
+.gmodal-body{overflow-y:auto;padding:30px 34px 28px;overscroll-behavior:contain}
+.gmodal-x{position:absolute;top:10px;right:12px;width:40px;height:40px;border:0;border-radius:50%;background:var(--card);color:var(--muted);font-size:24px;line-height:1;cursor:pointer;z-index:1}
+.gmodal-x:hover{background:var(--accent-soft-2);color:var(--ink)}
+.gm-eyebrow{font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:600;color:var(--label);margin:0 44px 6px 0}
+.gmodal .gent-h{margin-bottom:8px}
+.gmodal .gent-h h2{font-family:var(--serif);font-size:30px;font-weight:500;line-height:1.15;color:var(--ink);letter-spacing:-.01em;margin:0}
+.gmodal .gent-h h2:focus{outline:none}
+.gmodal p{font-size:15.5px;line-height:1.65;color:var(--text);margin:6px 0}
+.gmodal p.gd{color:var(--ink);font-size:17px}
+.gmodal .gctx,.gmodal .gex,.gmodal .gxm{margin:16px 0 0}
+.gmodal .gctx p{font-size:16px}
+.gmodal .gex{background:var(--accent-soft-2);border-radius:10px;padding:12px 16px}
+.gmodal .gex p{margin:0}
+.gmodal .gn{background:var(--support-soft);color:var(--support-ink);border-radius:8px;padding:8px 12px;font-size:14.5px;margin-top:14px}
+.gmodal .gcf{margin:16px 0 0}
+.grel{margin:16px 0 0}
+.grel ul{list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.grel a{display:inline-flex;align-items:center;min-height:32px;padding:4px 12px;border:.5px solid var(--line);border-radius:999px;font-size:13.5px;color:var(--accent-ink);text-decoration:none;background:var(--card)}
+.grel a:hover{border-color:var(--accent);background:var(--accent-soft-2)}
+.gmodal .gm,.gmodal .gsrc{font-size:13.5px;color:var(--muted);margin-top:16px}
+.gmodal a{color:var(--accent-ink)}
+.gnote-ai{font-size:12.5px!important;color:var(--muted)!important;border-top:.5px solid var(--line);padding-top:10px;margin-top:18px!important}
+@media(prefers-reduced-motion:no-preference){.gmodal{animation:gm-in .16s ease-out}.gmodal-box{animation:gm-up .2s ease-out}}
+@keyframes gm-in{from{opacity:0}to{opacity:1}}
+@keyframes gm-up{from{transform:translateY(12px);opacity:.6}to{transform:none;opacity:1}}
+@media(max-width:600px){
+  .gmodal{align-items:flex-end;padding:0}
+  .gmodal-box{width:100%;max-height:92vh;border-radius:16px 16px 0 0}
+  .gmodal-body{padding:24px 18px 22px}
+  .gmodal .gent-h h2{font-size:25px}
+}

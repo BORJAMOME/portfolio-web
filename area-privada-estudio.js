@@ -793,20 +793,21 @@ window.APEstudio = (function () {
     var c = d.GCONF, famT = c.famT || {}, famK = c.famK || {}, dup = c.dup || {}, alias = {}, all = [];
     d.GBY = {};
     d.GTERMS.forEach(function (g) { g.m = (g.m || []).slice(); d.GBY[g.id] = g; all.push(g); [g.k].concat(g.al || []).forEach(function (a) { alias[gkey(a)] = g.id; }); });
-    function addCap(k, txt, t, a, kind) {
+    function addCap(k, txt, t, a, kind, more) {
       if (!ID.test(String(t))) return;
       var id = alias[gkey(k)] || (dup[k] && alias[gkey(dup[k])]);
       if (id) { var g = d.GBY[id]; if (!g.m.some(function (x) { return x[0] === t && x[1] === a; })) g.m.push([t, a]); return; }
       var nid = gkey(k).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 't'; while (d.GBY[nid]) nid += '-b';
       var e = { id: nid, k: k, fam: famK[k] || famT[t] || (d.GFAM[0] || {}).id, d: esc(txt), m: [[t, a]], kind: kind };
+      if (more && typeof more === 'object') { if (more.c) e.c = String(more.c); if (more.e) e.e = String(more.e); if (Array.isArray(more.r)) e.r = more.r.filter(function (x) { return ID.test(String(x)); }); }
       d.GBY[nid] = e; alias[gkey(k)] = nid; all.push(e);
     }
-    d.GLOSS.forEach(function (g) { addCap(g.k, g.d, g.t, g.a, 'cap'); });
-    d.TOPICS.forEach(function (t) { (t.vocab || []).forEach(function (v) { if (v && v[0]) addCap(v[0], v[1], t.id, 's-vocab', 'vocab'); }); });
+    d.GLOSS.forEach(function (g) { addCap(g.k, g.d, g.t, g.a, 'cap', g); });
+    d.TOPICS.forEach(function (t) { (t.vocab || []).forEach(function (v) { if (v && v[0]) addCap(v[0], v[1], t.id, 's-vocab', 'vocab', v[2]); }); });
     return all;
   }
   function gHref(g) { return g.id && D.GBY ? R('glosario/' + g.id) : R('tema/' + g.t + (g.a && ID.test(g.a) ? '/' + g.a : '')); }
-  function gText(g) { return g._s || (g._s = norm([g.k].concat(g.al || []).join(' ') + ' ' + plain(g.d) + ' ' + plain(g.x || ''))); }
+  function gText(g) { return g._s || (g._s = norm([g.k].concat(g.al || []).join(' ') + ' ' + plain(g.d) + ' ' + plain(g.x || '') + ' ' + plain(g.c || ''))); }
 
   /* ── búsqueda ── */
   function topicText(t) { return t._tx || (t._tx = norm([t.t, t.q, t.one, (t.rec || []).join(' '), (D.BOOK[t.id].secs || []).map(function (s) { return s.t; }).join(' ')].join(' '))); }
@@ -870,6 +871,7 @@ window.APEstudio = (function () {
     syncThemeBtn();
     $('#themeBtn').addEventListener('click', function () { var n = isDark() ? 'light' : 'dark'; host.setAttribute('data-theme', n); lsSet('theme', n); syncThemeBtn(); });
     $('#qkBtn').addEventListener('click', openQk);
+    gm = null; root.addEventListener('click', onLink);
     $('[data-skip]').addEventListener('click', function (e) { e.preventDefault(); $('#main').focus(); });
     if (!listening) { listening = true; document.addEventListener('keydown', onKey); }
 
@@ -891,6 +893,7 @@ window.APEstudio = (function () {
         setTimeout(function () {
           el.scrollIntoView({ block: 'start', behavior: 'instant' });
           if (el.classList.contains('gl-entry') || el.classList.contains('ind') || el.classList.contains('gent')) { el.classList.add('hit'); setTimeout(function () { el.classList.remove('hit'); }, 2200); }
+          if (el.classList.contains('gent') && view === 'glosario') openEntry(parts[1], false);
         }, 60);
       }
       lastArg = ctx.arg;
@@ -1045,19 +1048,86 @@ window.APEstudio = (function () {
     return 'Tema ' + top.num + (s ? ' · ' + s : '');
   }
   function gSiglas(g) { return (g.al || []).filter(function (a) { return a !== g.k && String(a).length <= 9 && (/[A-Z].*[A-Z]/.test(a) || /[·.\/]/.test(a)); }); }
+  /* Tarjeta del listado: término, siglas y definición. El resto (contexto, ejemplo, matiz, esquema, «se confunde con»,
+     relacionados, dónde se explica y fuente) se abre en una ventana sobre la página: openEntry(). */
+  function gTag(g) { return g.kind === 'vocab' ? '<span class="chip">Definición general, no del libro</span>' : (g.kind === 'cap' ? '<span class="chip">Concepto de un capítulo</span>' : ''); }
   function gEntry(g) {
-    var sig = gSiglas(g), tag = g.kind === 'vocab' ? '<span class="chip">Definición general, no del libro</span>' : (g.kind === 'cap' ? '<span class="chip">Concepto de un capítulo</span>' : '');
+    var sig = gSiglas(g);
+    return '<article class="gent" id="g-' + esc(g.id) + '" data-s="' + esc(gText(g)) + '">' +
+      '<div class="gent-h"><h3>' + esc(g.k) + '</h3>' + (sig.length ? '<span class="gsig-l">' + sig.map(esc).join(' · ') + '</span>' : '') + gTag(g) + '</div>' +
+      '<p class="gd">' + clean(g.d) + '</p>' +
+      '<a class="gmore" href="' + R('glosario/' + g.id) + '">Ver la ficha completa<span class="sr"> de ' + esc(g.k) + '</span> →</a>' +
+      '</article>';
+  }
+  function gFull(g) {
+    var sig = gSiglas(g), fam = (D.GFAM.filter(function (f) { return f.id === g.fam; })[0] || {}).n;
     var m = (g.m || []).map(function (x) { var l = x[2] || gSecLabel(x[0], x[1]); return l ? '<a href="' + R('tema/' + x[0] + '/' + x[1]) + '">' + esc(l) + '</a>' : ''; }).filter(Boolean);
     var src = (g.s || []).filter(function (s) { return /^https:\/\//.test(String(s[1])); });
-    return '<article class="gent" id="g-' + esc(g.id) + '" data-s="' + esc(gText(g)) + '">' +
-      '<div class="gent-h"><h3>' + esc(g.k) + '</h3>' + (sig.length ? '<span class="gsig-l">' + sig.map(esc).join(' · ') + '</span>' : '') + tag + '</div>' +
-      '<p class="gd">' + clean(g.d) + '</p>' + (g.x ? '<p class="gx">' + clean(g.x) + '</p>' : '') +
+    var rel = (g.r || []).map(function (id) { return D.GBY[id]; }).filter(function (o) { return o && o.id !== g.id; });
+    return '<div class="gm-eyebrow">' + esc(fam || 'Glosario') + '</div>' +
+      '<div class="gent-h"><h2 id="gm-title" tabindex="-1">' + esc(g.k) + '</h2>' + (sig.length ? '<span class="gsig-l">' + sig.map(esc).join(' · ') + '</span>' : '') + gTag(g) + '</div>' +
+      '<p class="gd">' + clean(g.d) + '</p>' +
+      (g.c ? '<div class="gctx"><div class="gk">En contexto</div><p>' + esc(g.c) + '</p></div>' : '') +
+      (g.e ? '<div class="gex"><div class="gk">Ejemplo</div><p>' + esc(g.e) + '</p></div>' : '') +
+      (g.x ? '<div class="gxm"><div class="gk">Matiz técnico</div><p>' + clean(g.x) + '</p></div>' : '') +
       (g.n ? '<p class="gn"><b>Uso.</b> ' + clean(g.n) + '</p>' : '') +
       (g.v ? gVis(g.v) : '') +
       (g.cf && g.cf.length ? '<div class="gcf"><div class="gk">Se confunde con</div><ul>' + g.cf.map(function (c) { var o = D.GBY[c[0]]; return '<li>' + (o ? '<a href="' + R('glosario/' + o.id) + '">' + esc(o.k) + '</a>: ' : '') + clean(c[1]) + '</li>'; }).join('') + '</ul></div>' : '') +
+      (rel.length ? '<div class="grel"><div class="gk">Relacionado</div><ul>' + rel.map(function (o) { return '<li><a href="' + R('glosario/' + o.id) + '">' + esc(o.k) + '</a></li>'; }).join('') + '</ul></div>' : '') +
       (m.length ? '<p class="gm"><span class="gk">En el manual</span> ' + m.join(' · ') + '</p>' : '') +
       (src.length ? '<p class="gsrc"><span class="gk">Fuente</span> ' + src.map(function (s) { return '<a href="' + esc(s[1]) + '" target="_blank" rel="noopener noreferrer">' + esc(s[0]) + '</a>'; }).join(' · ') + '</p>' : '') +
-      '</article>';
+      (g.c || g.e ? '<p class="gnote-ai">«En contexto» y «Ejemplo» son explicaciones añadidas al manual, no texto del libro.</p>' : '');
+  }
+  var gm = null, gmOpener = null;
+  function entryOf(href) {
+    var m = /^#\/estudio\/glosario\/([a-z0-9-]+)$/.exec(String(href || ''));
+    return m && D && D.GBY && D.GBY[m[1]] ? m[1] : null;
+  }
+  function openEntry(id, push) {
+    var g = D.GBY && D.GBY[id]; if (!g || !root) return;
+    var fresh = !gm;                                              // al pasar de una ficha a otra, una sola entrada de historial
+    if (!gm) {
+      gmOpener = root.activeElement;
+      gm = document.createElement('div'); gm.className = 'gmodal';
+      gm.innerHTML = '<div class="gmodal-box" role="dialog" aria-modal="true" aria-labelledby="gm-title"><button type="button" class="gmodal-x" aria-label="Cerrar la ficha">×</button><div class="gmodal-body"></div></div>';
+      root.appendChild(gm);
+      gm.addEventListener('click', function (e) { if (e.target === gm || e.target.closest('.gmodal-x')) closeEntry(); });
+      gm.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { e.stopPropagation(); closeEntry(); return; }
+        if (e.key !== 'Tab') return;                               // el foco no sale de la ventana
+        var f = $$('a[href],button', gm); if (!f.length) return;
+        var first = f[0], last = f[f.length - 1], act = root.activeElement;
+        if (e.shiftKey && act === first) { e.preventDefault(); last.focus(); } else if (!e.shiftKey && act === last) { e.preventDefault(); first.focus(); }
+      });
+    }
+    $('.gmodal-body', gm).innerHTML = gFull(g);
+    $('.gmodal-body', gm).scrollTop = 0;
+    gm.dataset.id = id;
+    var href = R('glosario/' + id);
+    if (push && location.hash !== href) { try { history[fresh ? 'pushState' : 'replaceState'](null, '', href); } catch (e) { /* sin historial: la ventana funciona igual */ } }
+    $('#gm-title', gm).focus({ preventScroll: true });
+  }
+  function closeEntry() {
+    if (!gm) return;
+    var id = gm.dataset.id; gm.remove(); gm = null;
+    if (entryOf(location.hash)) { try { history.replaceState(null, '', R('glosario')); } catch (e) { /* nada */ } }
+    var card = root && root.getElementById('g-' + id);
+    if (card && card.getClientRects().length) {                    // vuelve a la tarjeta del listado
+      card.scrollIntoView({ block: 'center', behavior: 'instant' });
+      card.classList.add('hit'); setTimeout(function () { card.classList.remove('hit'); }, 1800);
+    }
+    if (gmOpener && gmOpener.isConnected && gmOpener.focus) gmOpener.focus({ preventScroll: true });
+    gmOpener = null;
+  }
+  /* Enlaces internos: una ficha del glosario se abre en la ventana sin salir de la página (también desde un
+     capítulo o un indicador). Un enlace a la misma ruta en la que ya estás vuelve a llevarte a su destino:
+     el navegador no lanza hashchange si la dirección no cambia. */
+  function onLink(e) {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    var a = e.target.closest && e.target.closest('a[href^="#/estudio"]'); if (!a) return;
+    var href = a.getAttribute('href'), id = entryOf(href);
+    if (id) { e.preventDefault(); openEntry(id, true); return; }
+    if (href === location.hash) { e.preventDefault(); if (gm) closeEntry(); window.dispatchEvent(new HashChangeEvent('hashchange')); }
   }
   function renderFullGlosario(v, anchor) {
     if (anchor) glosState.q = '';
@@ -1170,14 +1240,20 @@ window.APEstudio = (function () {
     root.appendChild(qk);
     var inp = $('input', qk);
     inp.addEventListener('input', function () { qkSel = 0; drawQk(inp.value); });
-    qk.addEventListener('click', function (e) { if (e.target === qk) closeQk(); var it = e.target.closest('.qk-it'); if (it) { var h = it.dataset.h; closeQk(); location.hash = h; } });
+    qk.addEventListener('click', function (e) { if (e.target === qk) closeQk(); var it = e.target.closest('.qk-it'); if (it) { var h = it.dataset.h; closeQk(); goTo(h); } });
     inp.addEventListener('keydown', function (e) {
       if (e.key === 'ArrowDown') { e.preventDefault(); qkSel = Math.min(qkSel + 1, qkRes.length - 1); drawQk(inp.value); }
       else if (e.key === 'ArrowUp') { e.preventDefault(); qkSel = Math.max(qkSel - 1, 0); drawQk(inp.value); }
-      else if (e.key === 'Enter' && qkRes[qkSel]) { var h = qkRes[qkSel].h; closeQk(); location.hash = h; }
+      else if (e.key === 'Enter' && qkRes[qkSel]) { var h = qkRes[qkSel].h; closeQk(); goTo(h); }
       else if (e.key === 'Escape') { closeQk(); }
     });
     drawQk(''); inp.focus();
+  }
+  function goTo(h) {
+    var id = entryOf(h);
+    if (id) openEntry(id, true);
+    else if (h === location.hash) window.dispatchEvent(new HashChangeEvent('hashchange'));
+    else location.hash = h;
   }
   function closeQk() { if (!qk) return; qk.remove(); qk = null; if (qkPrev && qkPrev.focus) qkPrev.focus(); }
   function snippet(x, q) {
@@ -1197,6 +1273,7 @@ window.APEstudio = (function () {
   }
   function onKey(e) {
     if (!host || !host.isConnected) return;                    // otra pestaña del área privada: no es asunto del manual
+    if (gm) return;                                             // con la ficha abierta, el teclado es de la ventana
     var t = (e.composedPath && e.composedPath()[0]) || e.target, typing = t && /^(input|textarea|select)$/i.test(t.tagName || '');
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); qk ? closeQk() : openQk(); }
     else if (e.key === '/' && !qk && !typing) { e.preventDefault(); openQk(); }
