@@ -183,3 +183,8 @@ footer{height:30px;display:flex;align-items:center;justify-content:space-between
 @media(max-height:520px) and (orientation:landscape){.nav-link{min-height:36px;padding:4px 10px}}
 @media(pointer:coarse) and (max-width:420px){.nav-link svg{display:none}}
 @media(max-width:420px){nav{gap:5px}nav button,nav .nav-link,.mode button{padding:6px 7px;font-size:var(--fs-xs)}.orient button{padding:6px 9px}}
+.segmented.dims{display:flex;flex-wrap:wrap;gap:4px;margin:2px 0 8px}
+.segmented.dims label{flex:1 1 auto;display:flex;align-items:center;gap:6px;font-size:var(--fs-s);padding:6px 8px;border:1px solid var(--line);border-radius:5px;min-height:var(--hit);box-sizing:border-box;cursor:pointer}
+.segmented.dims label:has(input:checked){border-color:var(--navy);background:var(--wash);font-weight:600}
+.type-group{margin:10px 0 0;font-size:var(--fs-xs);font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.type-list li.empty{opacity:.55}
