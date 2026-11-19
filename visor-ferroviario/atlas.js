@@ -187,10 +187,9 @@ function loadLineCatalog() {
   }).then(AtlasLineIdentity.build).catch(error => { lineCatalog = undefined; console.warn(error); return null; });
   return lineCatalog;
 }
-function infrastructureType(feature){
-  const g=AtlasFilters.value(feature,"gauge");
-  const id=g==="1435"?"hs":g==="1668"?"conv":g==="mixed"?"mixed":(g==="1000"||g==="narrow")?"metric":"unknown";
-  return CFG.infrastructure.find(x=>x.id===id);
+function classOf(dim,p){
+  const d=CFG.classifications[dim];
+  return d.items.find(i=>(i.values||[i.id]).includes(String(p[d.prop])))||d.items.find(i=>i.id==="none"||i.id==="unknown");
 }
 async function sectionInfo(rendered, location) {
   const original = dataset.rail.features[rendered.id];
@@ -201,7 +200,8 @@ async function sectionInfo(rendered, location) {
   map.setFeatureState({source:"rail",id:selectedId},{selected:true});
   const coordinates = [location.lng, location.lat];
   const station = AtlasLineIdentity.nearestStation(coordinates, dataset.stations.features);
-  const type = infrastructureType(feature);
+  const net = classOf("net",p), perf = classOf("perf",p);
+  const rfig = ["adif","adifav","port","lfp","other"].includes(net.id);
   const tracks = AtlasFilters.value(feature,"tracks"), electric = AtlasFilters.value(feature,"electric");
   const facts = [
     {value:p.nominalgauge?number.format(p.nominalgauge)+" mm":label("gauge",AtlasFilters.value(feature,"gauge")),label:"ancho de vía"},
@@ -211,12 +211,15 @@ async function sectionInfo(rendered, location) {
   try{await AtlasCapas.loadServices();}catch{}
   const services = AtlasCapas.servicesOnEdge?.(rendered.id) || [];
   const base = {
-    "Tipo de infraestructura":type.name,
-    "Servicios que circulan":services.length?services.join(" · "):"Ningún servicio de viajeros de los horarios integrados usa este tramo.",
+    "Titularidad y gestión":net.id==="none"?"Sin identificar: no coincide con el catálogo de Adif ni con los trazados oficiales de FGC, FGV, ETS, Metro Bilbao o el CRTM.":(net.group?net.group+" · ":"")+net.name,
+    "Prestaciones":perf.id==="none"?undefined:perf.name,
+    "Red Ferroviaria de Interés General":rfig?"Sí":undefined,
+    // Solo hay horarios integrados de Renfe, OUIGO y las Cercanías métricas: en otras redes no se afirma la ausencia.
+    "Servicios que circulan":services.length?services.join(" · "):(["adif","adifav","lfp"].includes(net.id)?"Ningún servicio de viajeros de los horarios integrados usa este tramo.":undefined),
     "Estación más próxima":station?station.name+" · a "+(station.metres<1000?number.format(Math.round(station.metres/10)*10)+" m":number.format(Math.round(station.metres/100)/10)+" km"):undefined,
     "Longitud del tramo seleccionado":number.format(Math.round(p.length_m))+" m"
   };
-  const opts = {subtitle:station?"Cerca de "+station.name:undefined,chips:[{label:type.name,color:type.color}],facts};
+  const opts = {subtitle:station?"Cerca de "+station.name:undefined,chips:[...(perf.id!=="none"?[{label:perf.name,color:perf.color}]:[]),...(net.id!=="none"?[{label:net.name,color:net.color}]:[])],facts};
   showInfo("Tramo ferroviario", "Tramo ferroviario", {"Línea":"Buscando en el catálogo de Adif…", ...base}, opts);
   const revision = infoRevision;
   const match = await loadLineCatalog();

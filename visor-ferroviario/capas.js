@@ -12,7 +12,7 @@
   const data={};
   const state={theme:'corridors',
     keys:{corridors:CFG.corridors.map(c=>c.id),brands:CFG.brands.map(b=>b.id),services:['highspeed','avant','md-conventional','euromed'],tourism:CFG.tourism.map(t=>t.id)},
-    statuses:['service','construction','project'],variant:null,station:null,experience:null,corridor:null};
+    statuses:['service','construction','project'],dim:'perf',variant:null,station:null,experience:null,corridor:null};
   const files={corridors:'capas/corredores.geojson',brands:'capas/servicios.json',services:'capas/servicios.json',tourism:'capas/turismo.json'};
   const cache={};
   function load(theme){
@@ -333,14 +333,7 @@
     $('#legacy-panel').hidden=!['tent','transit'].includes(state.theme);
     if(['gauge','tent','transit'].includes(state.theme))return;
     const theme=state.theme;
-    if(theme==='all'){
-      const km=infrastructureKm(),ul=document.createElement('ul');ul.className='type-list';
-      for(const t of CFG.infrastructure.filter(t=>km[t.id+'_n'])){const li=document.createElement('li'),sw=document.createElement('i'),name=document.createElement('span'),count=document.createElement('span');
-        sw.className='swatch';sw.style.setProperty('--c',t.color);name.textContent=t.name;count.className='count';
-        count.textContent=t.id==='unknown'?number.format(km.unknown_n||0)+' tramos':number.format(Math.round(km[t.id]||0))+' km';li.append(sw,name,count);ul.append(li);}
-      panel.append(ul,note('Toda la red ferroviaria peninsular del IGN, sin filtros. Trazo grueso: vía doble.'));
-      return;
-    }
+    if(theme==='all'){allPanel(panel);return;}
     if(theme==='corridors'){
       if(!data.corridors){panel.append(note('Cargando corredores…'));return;}
       const km={};for(const f of data.corridors.features){const p=f.properties;if(p.status==='service')km[p.corridor]=(km[p.corridor]||0)+p.km;}
@@ -397,13 +390,13 @@
       ...state.statuses.map(s=>({name:CFG.status[s].name,color:'#586278',dash:s!=='service',pattern:s}))];
     if(t==='brands')return CFG.brands.filter(b=>state.keys.brands.includes(b.id)).map(b=>({name:b.name+(b.id==='iryo'?' (sin trazado verificado)':''),color:b.color}));
     if(t==='services')return CFG.services.filter(s=>state.keys.services.includes(s.id)).map(s=>({name:s.name,color:s.color,dash:!!s.dash}));
-    if(t==='all')return [...CFG.infrastructure.filter(x=>infrastructureKm()[x.id+'_n']).map(x=>({name:x.name,color:x.color})),{name:'Vía doble (trazo grueso)',color:'#586278',thick:true}];
+    if(t==='all')return [...dimension().items.filter(x=>classKm()[x.id+'_n']).map(x=>({name:x.name,color:x.color})),{name:'Vía doble (trazo grueso)',color:'#586278',thick:true}];
     if(t==='tourism')return CFG.tourism.filter(x=>state.keys.tourism.includes(x.id)).map(x=>({name:x.name,color:x.color}));
     return null;
   }
   function legend(container){
     const items=legendItems();if(!items)return false;
-    const h=document.createElement('strong');h.textContent=CFG.themes[state.theme].name;container.append(h);
+    const h=document.createElement('strong');h.textContent=CFG.themes[state.theme].name+(state.theme==='all'?' · '+dimension().name.toLowerCase():'');container.append(h);
     const ul=document.createElement('ul');
     for(const item of items){const li=document.createElement('li'),sw=document.createElement('i');sw.className='swatch'+(item.dash?' dashed':'')+(item.double?' double':'')+(item.pattern==='project'?' dotted':'')+(item.thick?' thick':'');
       sw.style.setProperty('--c',item.color);li.append(sw,document.createTextNode(item.name));ul.append(li);}
@@ -413,22 +406,58 @@
   }
 
   /* ── Todas las vías ───────────────────────────────────── */
-  const typeExpression=['match',['get','filter_gauge'],'1435','hs','1668','conv','mixed','mixed',['1000','narrow'],'metric','unknown'];
+  const dimension=()=>CFG.classifications[state.dim]||CFG.classifications.perf;
+  const valueOf=(d,p)=>{const v=p[d.prop];const item=d.items.find(i=>(i.values||[i.id]).includes(String(v)));return item?item.id:'none';};
   function allColor(){
-    return ['case',['boolean',['feature-state','selected'],false],'#101e36',['match',typeExpression,...CFG.infrastructure.flatMap(t=>[t.id,t.color]),'#8A94A6']];
+    const d=dimension(),pairs=[];
+    for(const it of d.items)for(const v of (it.values||[it.id]))pairs.push(v,it.color);
+    return ['case',['boolean',['feature-state','selected'],false],'#101e36',['match',['to-string',['coalesce',['get',d.prop],'none']],...pairs,'#A0A7B2']];
   }
-  const typeOf=g=>g==='1435'?'hs':g==='1668'?'conv':g==='mixed'?'mixed':(g==='1000'||g==='narrow')?'metric':'unknown';
-  let allKm=null;
-  function infrastructureKm(){
-    if(allKm)return allKm;
-    allKm={};
-    const ids=new Set();
+  const kmCache={};
+  function classKm(){
+    const d=dimension();if(kmCache[state.dim])return kmCache[state.dim];
+    const out={},ids=new Set();
     for(const f of dataset.rail.features){
       const p=f.properties;if(!p.pen||ids.has(p.id))continue;ids.add(p.id);
-      const t=typeOf(p.filter_gauge);
-      allKm[t]=(allKm[t]||0)+(p.attr!==0?(Number(p.length_m)||0)/1000:0);allKm[t+'_n']=(allKm[t+'_n']||0)+1;
+      const k=valueOf(d,p);out[k]=(out[k]||0)+(p.attr!==0?(Number(p.length_m)||0)/1000:0);out[k+'_n']=(out[k+'_n']||0)+1;
     }
-    return allKm;
+    return kmCache[state.dim]=out;
+  }
+  // Derivaciones particulares documentadas en el manual sin geometría oficial: se citan, no se dibujan.
+  const sidings=[
+    ['Sector energético e industrial','Samper–Andorra (Teruel; Carboex, de Endesa) · Adisseo (Villalonquéjar, Burgos) · Solvay (Torrelavega) · Naturgy (central de Meirama, A Coruña) · CLH (Escombreras, Torrejón de Ardoz) · Cepsa (Huelva) · Repsol (Tarragona y Puertollano)'],
+    ['Otros sectores','Azvi (Alcalá de Guadaíra) · Talgo (Las Matas) · CAF (Beasain) · Stadler (Massalfassar) · Seat (Martorell, Can Tunis) · Renault (Valladolid-La Carrera, Palencia)'],
+    ['Sin servicio','Ramal de Cella (Teruel) al polígono «Platea» y al complejo aeroportuario de Caudé']];
+  function allPanel(panel){
+    const seg=document.createElement('div');seg.className='segmented dims';seg.setAttribute('role','radiogroup');seg.setAttribute('aria-label','Clasificar la red por');
+    for(const [id,d] of Object.entries(CFG.classifications)){
+      const l=document.createElement('label'),i=document.createElement('input');i.type='radio';i.name='dim';i.value=id;i.checked=state.dim===id;
+      i.onchange=()=>{state.dim=id;map.setPaintProperty('rail','line-color',allColor());renderPanel();onChange?.();};l.append(i,document.createTextNode(' '+d.name));seg.append(l);
+    }
+    panel.append(seg);
+    const d=dimension(),km=classKm();let group=null,ul;
+    const flush=()=>{if(ul)panel.append(ul);};
+    for(const t of d.items){
+      if(t.group!==undefined&&t.group!==group){flush();group=t.group;if(group){const h=document.createElement('p');h.className='type-group';h.textContent=group;panel.append(h);}ul=null;}
+      ul??=document.createElement('ul');ul.className='type-list';
+      const li=document.createElement('li'),sw=document.createElement('i'),name=document.createElement('span'),count=document.createElement('span');
+      sw.className='swatch';sw.style.setProperty('--c',t.color);name.textContent=t.name;count.className='count';
+      const n=km[t.id+'_n']||0;
+      count.textContent=n?(km[t.id]>=1?number.format(Math.round(km[t.id]))+' km':number.format(n)+' tramos'):'sin tramos';
+      if(!n)li.classList.add('empty');
+      li.append(sw,name,count);ul.append(li);
+    }
+    flush();
+    const notes={
+      perf:'Alta velocidad: tramos de los ejes «A.V.» del catálogo de Adif y la concesión LFP Perthus. Sin determinar: ancho estándar sin correspondencia con ninguna red oficial.',
+      net:'Cada tramo del IGN se compara con el catálogo de Adif y los trazados oficiales de FGC, FGV, Euskotren, Metro Bilbao y el CRTM. Sin identificar: apartaderos, vías de servicio y redes sin geometría oficial integrada.',
+      gauge:'El IGN no distingue el ancho mixto (tercer carril): esos tramos figuran con uno de los dos anchos.'};
+    panel.append(note(notes[state.dim]+' Trazo grueso: vía doble.'));
+    if(state.dim==='net'){
+      const det=document.createElement('details');det.className='inline';const sum=document.createElement('summary');sum.textContent='Otras derivaciones particulares (sin trazado oficial)';det.append(sum);
+      for(const [t,txt] of sidings){const p=document.createElement('p');p.className='muted';const b=document.createElement('strong');b.textContent=t+': ';p.append(b,document.createTextNode(txt));det.append(p);}
+      panel.append(det);
+    }
   }
   // Servicios con trazado vigente por un tramo IGN (ficha del tramo).
   function servicesOnEdge(fid){
@@ -476,11 +505,12 @@
     ensureLayers();themeList();
   }
   function getState(){
-    return {t:state.theme,k:state.keys[state.theme]&&state.keys[state.theme].join(','),st:state.theme==='corridors'?state.statuses.join(','):undefined,v:state.variant||undefined,x:state.experience||undefined};
+    return {t:state.theme,k:state.keys[state.theme]&&state.keys[state.theme].join(','),st:state.theme==='corridors'?state.statuses.join(','):undefined,d:state.theme==='all'?state.dim:undefined,v:state.variant||undefined,x:state.experience||undefined};
   }
   async function restore(s){
     if(!s)return setTheme(state.theme);
     if(typeof s.k==='string'&&state.keys[s.t]){const allowed=(s.t==='brands'?CFG.brands:s.t==='services'?CFG.services:s.t==='tourism'?CFG.tourism:CFG.corridors).map(x=>x.id);state.keys[s.t]=s.k.split(',').filter(x=>allowed.includes(x));}
+    if(typeof s.d==='string'&&CFG.classifications[s.d])state.dim=s.d;
     if(typeof s.st==='string')state.statuses=s.st.split(',').filter(x=>CFG.status[x]);
     await setTheme(s.t||state.theme,{silent:true});
     if(s.v&&services()?.variants.some(v=>v.id===s.v))selectVariant(s.v);

@@ -51,14 +51,32 @@
     {id:'commuter-metric',name:'Cercanías de ancho métrico',color:'#7A2E86',width:2.4,family:'cercanias'},
     {id:'day',name:'Convencional diurno · Intercity',color:'#1D2638',width:2,family:'intercity'}
   ];
-  // «Todas las vías»: tipo de infraestructura deducido de los atributos IGN de cada tramo (ancho y vías).
-  const infrastructure=[
-    {id:'hs',name:'Ancho estándar · alta velocidad',color:'#C45C00'},
-    {id:'conv',name:'Ancho ibérico · red convencional',color:'#0072B2'},
-    {id:'mixed',name:'Ancho mixto',color:'#AA4499'},
-    {id:'metric',name:'Ancho métrico y estrecho',color:'#00856A'},
-    {id:'unknown',name:'Sin ancho en el IGN',color:'#8A94A6'}
-  ];
+  // «Todas las vías»: tres clasificaciones independientes de la red (prestaciones, titularidad y gestión,
+  // ancho de vía). La propiedad de cada tramo sale de preparar_clasificacion_red.py (net, perf) o del IGN (ancho).
+  const classifications={
+    perf:{name:'Prestaciones',prop:'perf',items:[
+      {id:'hs',name:'Alta velocidad',color:'#C45C00'},
+      {id:'conv',name:'Convencional',color:'#0072B2'},
+      {id:'none',name:'Sin determinar',color:'#A0A7B2'}]},
+    net:{name:'Titularidad y gestión',prop:'net',items:[
+      {id:'adif',name:'Adif',group:'Estatal (RFIG)',color:'#0072B2'},
+      {id:'adifav',name:'Adif AV',group:'Estatal (RFIG)',color:'#C45C00'},
+      {id:'port',name:'Autoridades portuarias',group:'Estatal (RFIG)',color:'#0B4F6C'},
+      {id:'lfp',name:'LFP Perthus (concesión)',group:'Estatal (RFIG)',color:'#D55E00'},
+      {id:'other',name:'Otros titulares',group:'Estatal (RFIG)',color:'#56B4E9'},
+      {id:'fgc',name:'FGC · Cataluña',group:'Autonómica',color:'#00856A'},
+      {id:'fgv',name:'FGV · Comunitat Valenciana',group:'Autonómica',color:'#4E9A06'},
+      {id:'ets',name:'ETS · Euskadi',group:'Autonómica',color:'#1B6B3A'},
+      {id:'urban',name:'Metros y metros ligeros',group:'Municipal o metropolitana',color:'#7A2E86'},
+      {id:'part',name:'Derivaciones particulares',group:'Privada',color:'#8A5A00'},
+      {id:'none',name:'Sin identificar',group:'',color:'#A0A7B2'}]},
+    gauge:{name:'Ancho de vía',prop:'filter_gauge',items:[
+      {id:'1668',name:'Ibérico · 1.668 mm',color:'#0072B2'},
+      {id:'1435',name:'Estándar · 1.435 mm',color:'#C45C00'},
+      {id:'narrow',name:'Métrico · 1.000 mm',color:'#00856A',values:['1000','narrow']},
+      {id:'mixed',name:'Mixto',color:'#AA4499'},
+      {id:'unknown',name:'Sin ancho en el IGN',color:'#A0A7B2',values:['unknown','notApplicable','pending','other']}]}
+  };
   const transport={
     ports:{name:'Puertos de interés general',color:'#0B4F6C'},
     airports:{name:'Aeropuertos de interés general',color:'#3D3A8C'}
@@ -88,5 +106,5 @@
   const compact=()=>root.matchMedia?.('(max-width: 760px), (max-height: 520px)').matches;
   const phoneLandscape=()=>root.matchMedia?.('(max-height: 520px) and (orientation: landscape)').matches;
   const reducedMotion=()=>root.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-  root.AtlasConfig={peninsular,bounds,themes,themeOrder,corridors,status,brands,services,infrastructure,transport,families,tourism,population,zoomFactor,radius,reducedMotion,compact,phoneLandscape};
+  root.AtlasConfig={peninsular,bounds,themes,themeOrder,corridors,status,brands,services,classifications,transport,families,tourism,population,zoomFactor,radius,reducedMotion,compact,phoneLandscape};
 })(window);
