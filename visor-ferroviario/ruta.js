@@ -232,10 +232,28 @@
         }
       }
     }
+    // OUIGO: trayectos origen-destino del PDF oficial, cada uno como un tren propio con su calendario.
+    for(const tr of ouigoTrips(graph,tt)){
+      if(!runs(tt,tr.cal,k))continue;
+      const v=tr.v,prof=tr.prof,trip={v,t0:tr.t0,prof,num:null};
+      for(let i=0;i<v.calls.length-1;i++)
+        out.push({from:graph.stationGroup[v.calls[i].s],to:graph.stationGroup[v.calls[i+1].s],dep:tr.t0+(i?prof[2*i-1]:0),arr:tr.t0+prof[2*i],trip,i,board:true,alight:true});
+    }
     out.sort((a,b)=>a.dep-b.dep||a.arr-b.arr);
     tt.cache.set(iso,out);
     if(tt.cache.size>KEEP_DAYS)tt.cache.delete(tt.cache.keys().next().value);
     return out;
+  }
+  function ouigoTrips(graph,tt){
+    if(tt.ouigo)return tt.ouigo;
+    const S=graph.services;
+    // Trazado: tramos IGN de todas las variantes OUIGO del atlas (el camino se busca dentro de ellos).
+    const edges=[...new Set(S.variants.filter(v=>v.brand==='ouigo').flatMap(v=>v.edges||[]))];
+    tt.ouigo=(tt.h.ouigo||[]).map(([sids,t0,p,cal,assumed],n)=>({t0,cal,prof:tt.h.patterns[p],
+      v:{id:'ouigo-pdf:'+n,operator:'OUIGO España',brand:'ouigo',published_brand:'OUIGO',categories:['highspeed'],
+        calls:sids.map(s=>({s})),destination:S.stations[sids.at(-1)]?.name,edges,madrid_assumed:Boolean(assumed),pdf:true}}))
+      .filter(x=>x.v.calls.every(c=>graph.stationGroup[c.s]));
+    return tt.ouigo;
   }
   function scan(graph,conns,src,dst,t0){
     const ready=new Map(),arrive=new Map(),via=new Map(),boarded=new Map();
@@ -540,6 +558,7 @@
         const meta=el('small',null,[l.stops.length?l.stops.length+(l.stops.length===1?' parada intermedia':' paradas intermedias'):'Sin paradas intermedias',
           (l.exact?'':'≈ ')+fmtKm(l.km),timed?fmtDur(l.minutes):'≈ '+fmtMin(l.minutes)].join(' · '));
         body.append(head,meta);
+        if(l.variant.madrid_assumed)body.append(el('small',null,'Estación de Madrid asignada por corredor: el horario de OUIGO solo dice «Madrid».'));
         if(l.alternatives.length){body.append(el('small','it-alt','También directo: '+l.alternatives.join(', ')));}
         if(l.stops.length){const d=el('details','it-stops'),ul=el('ol');d.append(el('summary',null,'Ver paradas'));
           for(const s of l.stops)ul.append(el('li',null,(s.time!==undefined?hm(s.time)+' · ':'')+(s.name||s)));d.append(ul);body.append(d);}
@@ -560,7 +579,7 @@
     box.append(ol);
     box.append(el('p','muted route-note',timed
       ?'Horas de los GTFS oficiales de Renfe ('+Object.values(tt.h.meta.sources).join('; ')+'), con al menos '+10+' min para cambiar de tren. Los cambios de estación por la ciudad son estimados. '+
-        (r.exact?'Kilómetros sobre el trazado inferido en la red IGN.':'Algún tramo sin trazado verificable: sus kilómetros se aproximan en línea recta.')+' No incluye OUIGO (su horario no está integrado), iryo, Cercanías de ancho ibérico ni redes autonómicas. Consulta el horario del operador antes de viajar.'
+        (r.exact?'Kilómetros sobre el trazado inferido en la red IGN.':'Algún tramo sin trazado verificable: sus kilómetros se aproximan en línea recta.')+' OUIGO: horario del PDF oficial 2026-2027 (válido hasta el 14-06-2027), por trayecto y con sus días; sin trenes Madrid–Andalucía hasta el 29-11-2026 por el aviso de suspensión. No incluye iryo, Cercanías de ancho ibérico ni redes autonómicas. Consulta el horario del operador antes de viajar.'
       :'Mejor combinación con los servicios vigentes integrados en el atlas: Renfe (alta velocidad, larga y media distancia), Cercanías de ancho métrico y OUIGO. '+
         'La duración es una estimación por distancia y tipo de vía, con '+TRANSFER+' min de margen por transbordo. '+
         (r.exact?'Los kilómetros se miden sobre el trazado inferido en la red IGN.':'Algún tramo no tiene trazado verificable: sus kilómetros se aproximan en línea recta.')+' No incluye Cercanías de ancho ibérico, iryo ni redes autonómicas.'));
