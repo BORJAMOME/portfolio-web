@@ -1078,41 +1078,73 @@ window.APEstudio = (function () {
       (src.length ? '<p class="gsrc"><span class="gk">Fuente</span> ' + src.map(function (s) { return '<a href="' + esc(s[1]) + '" target="_blank" rel="noopener noreferrer">' + esc(s[0]) + '</a>'; }).join(' · ') + '</p>' : '') +
       (g.c || g.e ? '<p class="gnote-ai">«En contexto» y «Ejemplo» son explicaciones añadidas al manual, no texto del libro.</p>' : '');
   }
-  var gm = null, gmOpener = null;
+  /* Ventana del glosario: dos vistas sobre la misma capa. «siglas» = tabla de siglas con su buscador;
+     <id> = ficha completa de un término. Desde las siglas, «Ver entrada» abre la ficha con «← Siglas» para volver. */
+  var gm = null, gmOpener = null, sigQ = '';
   function entryOf(href) {
     var m = /^#\/estudio\/glosario\/([a-z0-9-]+)$/.exec(String(href || ''));
-    return m && D && D.GBY && D.GBY[m[1]] ? m[1] : null;
+    if (!m || !D || !D.GBY) return null;
+    return m[1] === 'siglas' && D.SIGLAS.length ? 'siglas' : (D.GBY[m[1]] ? m[1] : null);
+  }
+  function siglaRow(r) {
+    return '<li class="gsl-it" data-s="' + esc(norm(r.s + ' ' + r.d + ' ' + (r.x || ''))) + '"><span class="gsl-s">' + esc(r.s) + '</span><div class="gsl-d"><b>' + esc(r.d) + '</b>' +
+      (r.x ? '<span class="gsl-x">' + esc(r.x) + '</span>' : '') + (r.n ? '<span class="gnote">' + esc(r.n) + '</span>' : '') +
+      (r.g && D.GBY[r.g] ? '<a class="gto" href="' + R('glosario/' + r.g) + '">Ver entrada<span class="sr"> de ' + esc(r.s) + '</span> →</a>' : '') + '</div></li>';
+  }
+  function siglasView() {
+    return '<div class="gm-eyebrow">Glosario</div><div class="gent-h"><h2 id="gm-title" tabindex="-1">Siglas y abreviaturas</h2></div>' +
+      '<p class="gsl-lead">Siglas, acrónimos, símbolos y abreviaturas, por orden alfabético. «Ver entrada» abre la explicación completa.</p>' +
+      '<label class="search gsl-q"><span class="sr">Buscar una sigla</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>' +
+      '<input id="gsl-in" type="search" placeholder="Busca una sigla o su significado…" autocomplete="off" value="' + esc(sigQ) + '"></label>' +
+      '<p class="count gsl-count" id="gsl-count" aria-live="polite"></p>' +
+      '<ul class="gsl" id="gsl">' + D.SIGLAS.map(siglaRow).join('') + '</ul><p class="lead gsl-empty" id="gsl-empty" hidden>Ninguna sigla coincide.</p>';
+  }
+  function drawSiglas() {
+    var q = norm(sigQ.trim()), n = 0;
+    $$('.gsl-it', gm).forEach(function (li) { var on = !q || li.dataset.s.indexOf(q) > -1; li.hidden = !on; if (on) n++; });
+    $('#gsl-count', gm).textContent = n + (n === 1 ? ' sigla' : ' siglas') + (q ? ' de ' + D.SIGLAS.length : '');
+    $('#gsl-empty', gm).hidden = !!n;
   }
   function openEntry(id, push) {
-    var g = D.GBY && D.GBY[id]; if (!g || !root) return;
-    var fresh = !gm;                                              // al pasar de una ficha a otra, una sola entrada de historial
+    if (!root || !(id === 'siglas' || (D.GBY && D.GBY[id]))) return;
+    var fresh = !gm, from = gm && gm.dataset.id;                   // de una vista a otra: una sola entrada de historial
     if (!gm) {
       gmOpener = root.activeElement;
       gm = document.createElement('div'); gm.className = 'gmodal';
-      gm.innerHTML = '<div class="gmodal-box" role="dialog" aria-modal="true" aria-labelledby="gm-title"><button type="button" class="gmodal-x" aria-label="Cerrar la ficha">×</button><div class="gmodal-body"></div></div>';
+      gm.innerHTML = '<div class="gmodal-box" role="dialog" aria-modal="true" aria-labelledby="gm-title"><button type="button" class="gmodal-x" aria-label="Cerrar">×</button><div class="gmodal-body"></div></div>';
       root.appendChild(gm);
-      gm.addEventListener('click', function (e) { if (e.target === gm || e.target.closest('.gmodal-x')) closeEntry(); });
+      gm.addEventListener('click', function (e) {
+        if (e.target === gm || e.target.closest('.gmodal-x')) closeEntry();
+        else if (e.target.closest('.gm-back')) openEntry('siglas', true);
+      });
+      gm.addEventListener('input', function (e) { if (e.target.id === 'gsl-in') { sigQ = e.target.value; drawSiglas(); } });
       gm.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') { e.stopPropagation(); closeEntry(); return; }
+        if (e.key === 'Escape') { e.stopPropagation(); if (e.target.id === 'gsl-in' && sigQ) { sigQ = e.target.value = ''; drawSiglas(); return; } closeEntry(); return; }
         if (e.key !== 'Tab') return;                               // el foco no sale de la ventana
-        var f = $$('a[href],button', gm); if (!f.length) return;
+        var f = $$('a[href],button,input', gm).filter(function (x) { return x.getClientRects().length; }); if (!f.length) return;
         var first = f[0], last = f[f.length - 1], act = root.activeElement;
         if (e.shiftKey && act === first) { e.preventDefault(); last.focus(); } else if (!e.shiftKey && act === last) { e.preventDefault(); first.focus(); }
       });
     }
-    $('.gmodal-body', gm).innerHTML = gFull(g);
-    $('.gmodal-body', gm).scrollTop = 0;
+    var body = $('.gmodal-body', gm), box = $('.gmodal-box', gm);
+    box.classList.toggle('gmodal-wide', id === 'siglas');
+    if (id === 'siglas') { body.innerHTML = siglasView(); drawSiglas(); }
+    else body.innerHTML = (from === 'siglas' || (from && gm.dataset.back) ? '<button type="button" class="gm-back">← Siglas</button>' : '') + gFull(D.GBY[id]);
+    gm.dataset.back = id !== 'siglas' && (from === 'siglas' || (from && gm.dataset.back)) ? '1' : '';
+    body.scrollTop = 0;
     gm.dataset.id = id;
     var href = R('glosario/' + id);
     if (push && location.hash !== href) { try { history[fresh ? 'pushState' : 'replaceState'](null, '', href); } catch (e) { /* sin historial: la ventana funciona igual */ } }
-    $('#gm-title', gm).focus({ preventScroll: true });
+    var input = id === 'siglas' && $('#gsl-in', gm);
+    if (input && matchMedia('(pointer: fine)').matches) input.focus({ preventScroll: true });   // en móvil no abre el teclado solo
+    else $('#gm-title', gm).focus({ preventScroll: true });
   }
   function closeEntry() {
     if (!gm) return;
     var id = gm.dataset.id; gm.remove(); gm = null;
     if (entryOf(location.hash)) { try { history.replaceState(null, '', R('glosario')); } catch (e) { /* nada */ } }
-    var card = root && root.getElementById('g-' + id);
-    if (card && card.getClientRects().length) {                    // vuelve a la tarjeta del listado
+    var card = id !== 'siglas' && root && root.getElementById('g-' + id);
+    if (card && card.getClientRects().length && !(gmOpener && gmOpener.closest && gmOpener.closest('.gsl-open'))) {   // vuelve a la tarjeta del listado
       card.scrollIntoView({ block: 'center', behavior: 'instant' });
       card.classList.add('hit'); setTimeout(function () { card.classList.remove('hit'); }, 1800);
     }
@@ -1133,35 +1165,35 @@ window.APEstudio = (function () {
     if (anchor) glosState.q = '';
     var byFam = {}; D.GFAM.forEach(function (f) { byFam[f.id] = []; });
     D.ALLG.forEach(function (g) { if (byFam[g.fam]) byFam[g.fam].push(g); });
-    var nav = '<nav class="gnav" aria-label="Ir a una familia del glosario"><a class="fb" href="' + R('glosario/siglas') + '">Siglas</a>' + D.GFAM.map(function (f) { return '<a class="fb" href="' + R('glosario/gf-' + f.id) + '">' + esc(f.n) + '</a>'; }).join('') + '</nav>';
-    var sig = '<section class="gsec" id="g-siglas"><div class="sec-h"><h2>Siglas, acrónimos, símbolos y abreviaturas</h2><p>Ordenadas alfabéticamente. «Ver entrada» lleva a la explicación completa.</p></div>' +
-      '<div class="gv-tw"><table class="t gtab"><thead><tr><th>Sigla</th><th>Significado</th></tr></thead><tbody>' +
-      D.SIGLAS.map(function (r) {
-        return '<tr data-s="' + esc(norm(r.s + ' ' + r.d + ' ' + (r.x || ''))) + '"><td class="gs">' + esc(r.s) + '</td><td><b>' + esc(r.d) + '</b>' + (r.x ? '<br>' + esc(r.x) : '') +
-          (r.n ? '<br><span class="gnote">' + esc(r.n) + '</span>' : '') + (r.g && D.GBY[r.g] ? ' <a class="gto" href="' + R('glosario/' + r.g) + '">Ver entrada →</a>' : '') + '</td></tr>';
-      }).join('') + '</tbody></table></div></section>';
+    var nav = '<nav class="gnav" aria-label="Ir a una familia del glosario">' + D.GFAM.map(function (f) { return '<a class="fb" href="' + R('glosario/gf-' + f.id) + '">' + esc(f.n) + '</a>'; }).join('') + '</nav>';
     var fams = D.GFAM.map(function (f) {
       var xs = (byFam[f.id] || []).slice().sort(function (a, b) { return a.k.localeCompare(b.k, 'es', { sensitivity: 'base' }); });
       if (!xs.length) return '';
       return '<section class="gsec gfam" id="gf-' + esc(f.id) + '"><div class="sec-h"><h2>' + esc(f.n) + '</h2><p>' + esc(f.s) + '</p></div>' + (f.v ? gVis(f.v) : '') + '<div class="gents">' + xs.map(gEntry).join('') + '</div></section>';
     }).join('');
-    v.innerHTML = '<div class="modehead gmh"><div class="eyebrow">Glosario</div><h2 class="th-title">Glosario</h2></div>' +
-      '<div class="toolbar"><label class="search"><span class="sr">Buscar en el glosario</span><input id="gq" type="search" placeholder="Busca una sigla, un término o una palabra de su definición…" value="' + esc(glosState.q) + '"></label><span class="count" id="gcount"></span></div>' +
-      nav + sig + fams + '<p class="lead" id="gempty" hidden>Nada coincide con la búsqueda.</p>';
+    var sigBtn = D.SIGLAS.length ? '<a class="gsl-open" href="' + R('glosario/siglas') + '" aria-haspopup="dialog"><span class="gsl-ic" aria-hidden="true">Aa</span><span class="gsl-l"><span class="gsl-t">Siglas y abreviaturas</span><span class="gsl-n">' + D.SIGLAS.length + ' siglas</span></span></a>' : '';
+    v.innerHTML = '<div class="modehead gmh"><div class="gmh-in"><div><div class="eyebrow">Glosario</div><h2 class="th-title">Glosario</h2></div>' + sigBtn + '</div></div>' +
+      '<div class="toolbar"><label class="search"><span class="sr">Buscar en el glosario</span><input id="gq" type="search" placeholder="Busca un término o una palabra de su definición…" value="' + esc(glosState.q) + '"></label><span class="count" id="gcount"></span></div>' +
+      '<p class="gsl-hint" id="gsl-hint" hidden></p>' +
+      nav + fams + '<p class="lead" id="gempty" hidden>Ningún término coincide con la búsqueda.</p>';
     $('#gq', v).addEventListener('input', function (e) { glosState.q = e.target.value; drawFullGloss(v); });
+    $('#gsl-hint', v).addEventListener('click', function (e) { if (e.target.closest('.gsl-hint-a')) { e.preventDefault(); sigQ = glosState.q; openEntry('siglas', true); } });
     drawFullGloss(v);
+    if (anchor === 'siglas') { setTimeout(function () { openEntry('siglas', false); }, 0); return null; }
     if (!anchor || !ID.test(anchor)) return null;
-    return D.GBY[anchor] || anchor === 'siglas' ? 'g-' + anchor : anchor;
+    return D.GBY[anchor] ? 'g-' + anchor : anchor;
   }
   function drawFullGloss(v) {
-    var q = norm(glosState.q.trim()), n = 0, ns = 0;
+    var q = norm(glosState.q.trim()), n = 0;
     $$('.gent', v).forEach(function (a) { var on = !q || a.dataset.s.indexOf(q) > -1; a.hidden = !on; if (on) n++; });
-    $$('.gtab tbody tr', v).forEach(function (r) { var on = !q || r.dataset.s.indexOf(q) > -1; r.hidden = !on; if (on) ns++; });
     $$('.gfam', v).forEach(function (s) { s.hidden = !!q && !$('.gent:not([hidden])', s); });
-    $('#g-siglas', v).hidden = !!q && !ns;
     $('.gnav', v).hidden = !!q;
-    $('#gcount', v).textContent = n + (n === 1 ? ' término' : ' términos') + ' · ' + ns + ' siglas';
-    $('#gempty', v).hidden = !!(n || ns);
+    $('#gcount', v).textContent = n + (n === 1 ? ' término' : ' términos');
+    // Las siglas viven en su ventana: si la búsqueda coincide con alguna, se avisa con un acceso directo.
+    var ns = q ? D.SIGLAS.filter(function (r) { return norm(r.s + ' ' + r.d + ' ' + (r.x || '')).indexOf(q) > -1; }).length : 0, hint = $('#gsl-hint', v);
+    hint.hidden = !ns;
+    hint.innerHTML = ns ? (ns === 1 ? '1 sigla coincide' : ns + ' siglas coinciden') + ' con la búsqueda. <a class="gsl-hint-a" href="' + R('glosario/siglas') + '">Ver en Siglas y abreviaturas →</a>' : '';
+    $('#gempty', v).hidden = !!n;
   }
 
   /* ══ CAPÍTULO ═════════════════════════════ */

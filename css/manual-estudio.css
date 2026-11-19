@@ -535,3 +535,42 @@ mark.est-flash{animation:estflash 1.7s ease-out}
   .gmodal-body{padding:24px 18px 22px}
   .gmodal .gent-h h2{font-size:25px}
 }
+
+/* Glosario: cabecera con acceso a «Siglas y abreviaturas» (lado opuesto al título) y su ventana */
+.gmh-in{display:flex;align-items:flex-end;justify-content:space-between;gap:16px 24px;flex-wrap:wrap}
+.gmh-in .th-title{margin-bottom:0}
+.gsl-open{display:inline-flex;align-items:center;gap:12px;min-height:48px;padding:8px 16px 8px 10px;border:.5px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);text-decoration:none;box-shadow:0 1px 2px rgba(0,0,0,.04);transition:border-color .2s,box-shadow .2s,transform .2s}
+.gsl-open:hover{border-color:var(--accent);box-shadow:0 6px 18px rgba(0,0,0,.08)}
+.gsl-open:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.gsl-ic{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--accent-soft);color:var(--accent-ink);font-family:var(--mono);font-size:13px;font-weight:600;flex:none}
+.gsl-l{display:flex;flex-direction:column;line-height:1.2}
+.gsl-t{font-size:14.5px;font-weight:600}
+.gsl-n{font-size:12.5px;color:var(--muted)}
+.gsl-hint{margin:-6px 0 14px;font-size:14px;color:var(--muted)}
+.gsl-hint[hidden]{display:none}
+.gsl-hint a{color:var(--accent-ink);font-weight:600}
+.gmodal-box.gmodal-wide{width:min(880px,100%);height:min(86vh,820px)}   /* alto fijo: al filtrar, la ventana no salta */
+.gsl-lead{font-size:14.5px!important;color:var(--muted)!important;margin:0 0 14px!important}
+.gsl-q{position:sticky;top:-30px;z-index:1;margin:0 0 6px;box-shadow:0 8px 14px -12px rgba(0,0,0,.25)}
+.gsl-count{margin:4px 0 8px}
+.gsl{list-style:none;padding:0;margin:0;border-top:.5px solid var(--line)}
+.gsl-it{display:grid;grid-template-columns:minmax(76px,124px) 1fr;gap:4px 18px;padding:12px 2px;border-bottom:.5px solid var(--line)}
+.gsl-it[hidden]{display:none}
+.gsl-s{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--ink);overflow-wrap:anywhere;padding-top:1px}
+.gsl-d{display:flex;flex-direction:column;gap:3px;font-size:14.5px;line-height:1.5;color:var(--text);min-width:0}
+.gsl-d b{color:var(--ink);font-weight:600}
+.gsl-x{color:var(--text)}
+.gsl-d .gnote{font-size:13px;color:var(--support-ink)}
+.gsl-d .gto{align-self:flex-start;font-size:13.5px;font-weight:600;color:var(--accent-ink);text-decoration:none;min-height:28px;display:inline-flex;align-items:center}
+.gsl-d .gto:hover{text-decoration:underline}
+.gm-back{display:inline-flex;align-items:center;min-height:36px;margin:-6px 0 10px -6px;padding:4px 10px;border:0;border-radius:8px;background:transparent;color:var(--accent-ink);font-size:14px;font-weight:600;cursor:pointer}
+.gm-back:hover{background:var(--accent-soft-2)}
+@media(max-width:600px){
+  .gmh-in{align-items:stretch}
+  .gsl-open{width:100%;box-sizing:border-box}
+  .gsl-q{top:-24px}
+  .gmodal-box.gmodal-wide{height:92vh}
+  .gsl-it{grid-template-columns:1fr;gap:2px;padding:12px 0}
+  .gsl-s{font-size:15px;color:var(--accent-ink)}
+}
+.modehead.gmh{max-width:none}
