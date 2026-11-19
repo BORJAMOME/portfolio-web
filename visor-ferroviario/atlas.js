@@ -160,7 +160,7 @@ function showInfo(kind,title,fields,opts={},actions,media) {
   $("#info").hidden=false;
   // En móvil la ficha ocupa la hoja inferior: se pliega el panel para que no se superpongan.
   if(CFG.compact()&&!$("#tools").hidden){$("#tools").hidden=true;$("#toggle-panel").setAttribute("aria-expanded","false");}
-  $("#name").focus({preventScroll:true});
+  if(!opts.keepFocus)$("#name").focus({preventScroll:true});
   writeHash();
 }
 window.AtlasShowInfo=(...args)=>showInfo(...args);
