@@ -229,8 +229,18 @@ async function sectionInfo(rendered, location) {
   const match = await loadLineCatalog();
   if(revision !== infoRevision || $("#info").hidden) return;
   const identity = feature === original ? match?.(feature.geometry.coordinates) : null;
+  // Trenes al día por el tramo (oferta.js): se añaden a la ficha cuando llegan los horarios.
+  const finish = (kind,title,fields,o) => {
+    showInfo(kind,title,fields,o);
+    const rev = infoRevision;
+    window.AtlasOffer?.forEdge(rendered.id).then(x => {
+      if(!x || rev !== infoRevision || $("#info").hidden) return;
+      showInfo(kind,title,{...fields,"Trenes un día laborable":x.by.map(([n,c])=>n+" "+c).join(" · ")+" ("+x.label+"; sin OUIGO, cuyo horario oficial no trae el recorrido)"},
+        {...o,keepFocus:true,facts:[{value:number.format(x.trains),label:"trenes al día"},...o.facts].slice(0,3)});
+    }).catch(e=>console.warn(e));
+  };
   if(!identity) {
-    showInfo("Tramo ferroviario", "Tramo ferroviario", base, opts);
+    finish("Tramo ferroviario", "Tramo ferroviario", base, opts);
     return;
   }
   const section = identity.sections[0];
@@ -239,7 +249,7 @@ async function sectionInfo(rendered, location) {
   const axis = sharedValue("axis"), status = sharedValue("status");
   const corridors = AtlasCapas.corridorsForLine?.(identity.code) || [];
   const lineTitle = section.line_name || (identity.sections.length === 1 && endpoints) || "Línea "+identity.code;
-  showInfo("Tramo ferroviario · línea "+identity.code, lineTitle, {
+  finish("Tramo ferroviario · línea "+identity.code, lineTitle, {
     ...(identity.sections.length === 1 && endpoints && {"Origen y destino":endpoints}),
     ...(corridors.length && {"Corredor de alta velocidad":corridors.join(" · ")}),
     ...(axis && {"Eje":axis}),

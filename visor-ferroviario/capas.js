@@ -195,10 +195,24 @@
     if(v.numbers?.length)fields['Números de tren']=v.numbers.slice(0,12).join(', ')+(v.numbers.length>12?'…':'');
     if(v.aliases?.length)fields['Denominación anterior']=v.aliases.join(', ');
     const svc=CFG.services.find(x=>v.categories.includes(x.id));
-    showInfo('Ruta · '+(brand?brand.name:svc?.name.split(' · ').at(-1).replace(/^ahora /,'')||v.published_brand),names[0]+' → '+names.at(-1),fields,
-      {subtitle:v.operator,chips:[{label:brand?brand.name:v.published_brand,color:(brand||svc)?.color}],
-       facts:[{value:String(v.calls.length),label:'paradas'},{value:number.format(Math.round((hs+conv)/1000))+' km',label:'recorrido dibujado'},...(v.trips?[{value:number.format(v.trips),label:'circulaciones'}]:[])],
-       media:media(familyOf(v))});
+    const kind='Ruta · '+(brand?brand.name:svc?.name.split(' · ').at(-1).replace(/^ahora /,'')||v.published_brand),title=names[0]+' → '+names.at(-1);
+    const km=(hs+conv)/1000;
+    const opts={subtitle:v.operator,chips:[{label:brand?brand.name:v.published_brand,color:(brand||svc)?.color}],
+       facts:[{value:String(v.calls.length),label:'paradas'},{value:number.format(Math.round(km))+' km',label:'recorrido dibujado'},...(v.trips?[{value:number.format(v.trips),label:'circulaciones'}]:[])],
+       media:media(familyOf(v))};
+    showInfo(kind,title,fields,opts);
+    // Horario (oferta.js): trenes del día, duración y velocidad comercial; las paradas pasan a llevar hora.
+    root.AtlasOffer?.forVariant(v).then(o=>{
+      if(!o||state.variant!==v.id||$('#info').hidden)return;
+      const {['Paradas comerciales ('+v.calls.length+')']:_,...rest}=fields;
+      const speed=km>0&&!v.pending_segments&&v.trace!=='gtfs'?Math.round(km/(o.duration/60)):null;
+      const scroll=$('#info').scrollTop;
+      showInfo(kind,title,rest,{...opts,extra:o.block,keepFocus:true,facts:[
+        {value:number.format(o.trains),label:o.trains===1?'tren con estas paradas':'trenes con estas paradas'},
+        {value:root.AtlasOffer.dur(o.duration),label:'duración habitual'},
+        speed?{value:speed+' km/h',label:'velocidad comercial'}:{value:String(v.calls.length),label:'paradas'}]});
+      $('#info').scrollTop=scroll;
+    }).catch(e=>console.warn(e));
   }
   function selectVariant(id){state.variant=id;state.experience=null;state.corridor=null;renderHighlight();variantInfo(services().variants.find(v=>v.id===id));
     const v=services().variants.find(x=>x.id===id);fit(v.calls.map(c=>services().stations[c.s].coordinates));onChange?.();}
@@ -228,12 +242,20 @@
       'Dirección':catalog?.DIRECION,
       'Conexiones con otros transportes':root.AtlasConnections?.(st.coordinates)
     };
-    showInfo('Estación',st.name,fields,{
+    const opts={
       subtitle:catalog?[catalog.POBLACION,catalog.PROVINCIA].filter(Boolean).join(' · '):undefined,
       chips:brandIds.map(b=>CFG.brands.find(x=>x.id===b)).map(b=>({label:b.name,color:b.color})),
       facts:[{value:number.format(relations),label:'rutas con parada'},{value:number.format(destinations),label:'orígenes y destinos'}],
-      actions:relationButtons(calling)});
+      actionsLabel:'Rutas con parada',actions:relationButtons(calling)};
+    showInfo('Estación',st.name,fields,opts);
     buildLines();onChange?.();
+    // Trenes del día (oferta.js): cuando llegan los horarios, la ficha responde primero cuántos trenes paran y cuándo.
+    root.AtlasOffer?.forStation(sid).then(o=>{
+      if(!o||state.station!==sid||$('#info').hidden||$('#name').textContent!==st.name)return;
+      const scroll=$('#info').scrollTop;
+      showInfo('Estación',st.name,fields,{...opts,facts:o.facts,extra:o.block,keepFocus:true});
+      $('#info').scrollTop=scroll;
+    }).catch(e=>console.warn(e));
   }
   function corridorInfo(p){
     const group=CFG.corridors.find(c=>c.id===p.corridor);
