@@ -101,9 +101,15 @@
       'Qué cuenta':'El municipio completo de la capital.',
       'Provincia':u.province
     };
-    showInfo(u.kind==='area'?'Gran área urbana':'Capital de provincia',u.name,fields,{
-      subtitle:'Población a 1 de enero de 2025',
-      facts:[{value:number.format(u.population),label:'habitantes'},...(u.kind==='area'?[{value:number.format(u.municipalities),label:'municipios'}]:[])]});
+    const kind=u.kind==='area'?'Gran área urbana':'Capital de provincia';
+    const opts={subtitle:'Población a 1 de enero de 2025',
+      facts:[{value:number.format(u.population),label:'habitantes'},...(u.kind==='area'?[{value:number.format(u.municipalities),label:'municipios'}]:[])]};
+    showInfo(kind,u.name,fields,opts);
+    // Oferta de tren en la zona (oferta.js): estaciones con servicio en un radio del centro (15 km en áreas, 5 km en capitales).
+    root.AtlasOffer?.forArea(u.coordinates,u.kind==='area'?15000:5000,u.kind==='area'?u.anchor:u.name).then(o=>{
+      if(!o||selected!==uid||document.querySelector('#info').hidden)return;
+      showInfo(kind,u.name,fields,{...opts,extra:o.block,keepFocus:true,facts:[opts.facts[0],...o.facts].slice(0,3)});
+    }).catch(e=>console.warn(e));
   }
   function legend(){
     if(!enabled||!data)return null;

@@ -92,6 +92,7 @@
         'Otros puertos de la misma Autoridad':siblings.join('\n')||undefined,
         'Estación del catálogo Renfe más próxima':station?title(station.name)+' · a '+distance(station.m)+' en línea recta':undefined
       },{subtitle:p.province,chips:[{label:'Interés general',color:CFG.transport.ports.color},{label:p.authority.replace('Autoridad Portuaria de ','AP ')}]});
+      railFact('Puerto de interés general',p.official_name,p.coordinates);
     } else {
       const a=data.airports.find(x=>x.id===id);if(!a)return;
       // Acceso ferroviario: solo estaciones cuyo nombre las identifica con el aeropuerto (Renfe o Metro).
@@ -107,7 +108,19 @@
         'Acceso en tren o metro':access.join('\n')||undefined
       },{subtitle:a.province,chips:[{label:a.iata,color:CFG.transport.airports.color,title:'Código IATA'},{label:a.icao,title:'Código OACI (ICAO)'}],
         facts:[{value:a.iata,label:'código IATA'},{value:a.icao,label:'código OACI'}]});
+      railFact('Aeropuerto de interés general','Aeropuerto '+a.name,a.coordinates);
     }
+  }
+  // Estación con trenes de los horarios integrados más próxima (≤ 15 km): se añade a la ficha abierta.
+  function railFact(kind,name,coords){
+    root.AtlasOffer?.nearest(coords,15000).then(s=>{
+      const info=document.querySelector('#info');
+      if(!s||info.hidden||document.querySelector('#name').textContent!==name)return;
+      const list=document.querySelector('#attributes'),dt=document.createElement('dt'),dd=document.createElement('dd');
+      dt.textContent='Estación más próxima con trenes de los horarios integrados';
+      dd.textContent=s.name+' · a '+distance(s.m)+' en línea recta · '+number.format(s.day.trains)+' trenes el '+s.label+'. '+root.AtlasOffer.SCOPE;
+      list.append(dt,dd);
+    }).catch(e=>console.warn(e));
   }
   async function setEnabled(kind,value){
     on[kind]=Boolean(value);
