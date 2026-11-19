@@ -186,11 +186,11 @@
       'Producto':brand?brand.name+' · marca de '+brand.operator:v.published_brand,
       ['Paradas comerciales ('+v.calls.length+')']:v.calls.map((c,i)=>(i+1)+'. '+s.stations[c.s].name+flags(c)).join('\n'),
       'Esta variante':siblings.length>1?'Una de '+siblings.length+' variantes con el mismo origen y destino; cada una tiene sus propias paradas. Elige otra en la ficha de una estación.':'Única variante vigente de esta relación.',
-      'Vigencia':val?(val.note?val.note+' ('+fmtDate(val.from)+')':'Del '+fmtDate(val.from)+' al '+fmtDate(val.to))+(v.trips?' · '+number.format(v.trips)+' circulaciones en el calendario publicado':'')+(v.calendar_note?' · '+v.calendar_note:''):'Sin calendario',
+      'Vigencia':val?(val.note?val.note+(val.from===val.to?' ('+fmtDate(val.from)+')':' (del '+fmtDate(val.from)+' al '+fmtDate(val.to)+')'):'Del '+fmtDate(val.from)+' al '+fmtDate(val.to))+(v.trips?' · '+number.format(v.trips)+' circulaciones en el calendario publicado':'')+(v.calendar_note?' · '+v.calendar_note:''):'Sin calendario',
       'Recorrido':v.trace==='gtfs'?'Forma publicada en el GTFS del operador.':
         'Trazado inferido sobre la red IGN entre paradas consecutivas (no es dato del operador). '+number.format(Math.round(hs/1000))+' km por vía de ancho estándar (alta velocidad) y '+number.format(Math.round(conv/1000))+' km por vía convencional; en el mapa, línea continua y discontinua.'+
         (v.pending_segments?' '+v.pending_segments+' de '+v.segments+' saltos entre paradas sin trazado verificable: no se dibujan.':'')+(v.international?' Continúa fuera del ámbito: '+v.international.join(', ')+'.':''),
-      ...(v.madrid_assumed&&{'Estación de Madrid':'La tabla oficial solo dice «Madrid»; la estación usada para el trazado es una suposición del visor.'})
+      ...(v.madrid_assumed&&{'Estación de Madrid':'El horario oficial solo dice «Madrid»; la estación se asigna por corredor (Atocha o Chamartín) y no está confirmada para esta relación.'})
     };
     if(v.numbers?.length)fields['Números de tren']=v.numbers.slice(0,12).join(', ')+(v.numbers.length>12?'…':'');
     if(v.aliases?.length)fields['Denominación anterior']=v.aliases.join(', ');
