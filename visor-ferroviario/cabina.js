@@ -238,7 +238,7 @@
     c=card('c-fuentes','Fuentes y fechas de corte');
     const dl=el('dl','src');
     for(const [k,v] of [['Red ferroviaria',J.fuentes.red+'. Clasificaciones de prestaciones y titularidad propias del atlas.'],
-      ['Horarios',J.fuentes.horarios+'. Día de referencia: el mismo que las fichas del visor (miércoles, sábado y domingo de la semana actual).'],
+      ['Horarios',J.fuentes.horarios+'. Día de referencia: el mismo que las fichas del visor (miércoles, sábado y domingo de la semana actual o, si ya no tiene horarios publicados de todas las fuentes, de la última semana completa que los tiene).'],
       ['Catálogo de servicios','Corte '+shortDate(J.servicios.fecha)+'. Trazados inferidos sobre la red IGN.'],
       ['Corredores y TEN-T','Hermes (Ministerio de Transportes), '+shortDate(J.corredores.fecha)+'.'],
       ['Población',J.fuentes.poblacion+'. Distancias en línea recta: 15 km en grandes áreas, 5 km en capitales.'],
@@ -254,11 +254,10 @@
     const wd=CD.trainsOn(D,k,CFG,true),sa=CD.trainsOn(D,O.core.dayIndex(D,days.saturday),CFG,false),su=CD.trainsOn(D,O.core.dayIndex(D,days.sunday),CFG,false);
     const ranked=CD.stations(D,days.weekday),cal=CD.calendar(D,CFG),allGroups=O.core.groups(D).length;
     const renfe=wd.operator.get('Renfe')||0,ouigo=wd.operator.get('OUIGO')||0;
-    $('#ref').replaceChildren('Día de referencia: ',el('strong',null,dayLabel(days.weekday)),'. Es la misma semana que usan las fichas del visor; fin de semana: '+dayLabel(days.saturday).replace(/ de \d{4}$/,'')+' y '+dayLabel(days.sunday).replace(/ de \d{4}$/,'')+'.');
+    $('#ref').replaceChildren('Día de referencia: ',el('strong',null,dayLabel(days.weekday)),(days.clamped?'. Última semana con horarios publicados (la misma que las fichas del visor); fin de semana: ':'. Es la misma semana que usan las fichas del visor; fin de semana: ')+dayLabel(days.saturday).replace(/ de \d{4}$/,'')+' y '+dayLabel(days.sunday).replace(/ de \d{4}$/,'')+'.');
 
-    // Aviso si el día de referencia cae fuera de la cobertura de alguna fuente.
-    const late=[['Cercanías de ancho métrico',cal.last.commuter],['Renfe AV, larga y media distancia',cal.last.national],['OUIGO',cal.last.ouigo]].filter(([,d])=>d&&d<days.weekday);
-    if(late.length){const a=$('#alert');a.hidden=false;a.textContent='Atención: los horarios publicados de '+late.map(([n,d])=>n+' (hasta el '+shortDate(d)+')').join(' y ')+' no llegan al día de referencia. Las cifras de oferta están incompletas en la Cabina y en las fichas del visor hasta que se actualicen los GTFS.';}
+    // Si la semana actual ya no tiene horarios de todas las fuentes, oferta.js usa la última semana completa con datos.
+    if(days.clamped){const a=$('#alert');a.hidden=false;a.textContent='Los horarios publicados de todas las fuentes llegan hasta el '+dayLabel(days.until)+'. La Cabina y las fichas del visor muestran la última semana completa con datos, no la actual, hasta que se actualicen los GTFS.';}
 
     // KPIs de oferta
     const kp=$('#kpis').children;
@@ -295,7 +294,7 @@
     const W=cal.weekly,refWeek=W.findIndex(w=>w.week<=days.weekday&&days.weekday<new Date(+new Date(w.week+'T00:00:00Z')+7*864e5).toISOString().slice(0,10));
     const at=iso=>W.findIndex(w=>w.week>iso)-1;
     c=card('c-calendario','Los horarios publicados se vacían a partir de diciembre: la serie mide la cobertura de los datos, no la evolución de la oferta','Media de trenes al día por semana, toda la vigencia de los ficheros');
-    const marks=[{i:refWeek,text:'Semana de referencia',cls:'today',row:0}];
+    const marks=[{i:refWeek,text:days.clamped?'Semana de referencia (última con datos)':'Semana de referencia',cls:'today',row:0}];
     if(cal.last.commuter)marks.push({i:at(cal.last.commuter),text:'Fin Cercanías métricas · '+shortDate(cal.last.commuter),row:1});
     if(cal.last.national)marks.push({i:at(cal.last.national),text:'Fin Renfe AV/LD/MD · '+shortDate(cal.last.national),row:2});
     if(cal.last.ouigo)marks.push({i:at(cal.last.ouigo),text:'Fin OUIGO · '+shortDate(cal.last.ouigo),row:0});
