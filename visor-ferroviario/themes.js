@@ -125,12 +125,12 @@
   for(const id of ['theme-hit','urban-stations']){map.on('mouseenter',id,()=>map.getCanvas().style.cursor='pointer');map.on('mouseleave',id,()=>map.getCanvas().style.cursor='');}
   // Prioridad: puerto o aeropuerto > estación Renfe (su ficha ya cita el metro cercano) > estación urbana.
   map.on('click','urban-stations',event=>{
-   if(root.AtlasTransport?.hit(event.point))return;
+   if(root.AtlasInfrastructure?.hit(event.point)||root.AtlasTransport?.hit(event.point))return;
    if(map.getLayer('stations')&&map.getLayoutProperty('stations','visibility')!=='none'&&map.queryRenderedFeatures(event.point,{layers:['stations']}).length)return;
    stationInfo(event.features[0].properties.sid);
   });
   map.on('click','theme-hit',event=>{
-   if(root.AtlasTransport?.hit(event.point))return;
+   if(root.AtlasInfrastructure?.hit(event.point)||root.AtlasTransport?.hit(event.point))return;
    if(map.queryRenderedFeatures(event.point,{layers:['stations','urban-stations'].filter(id=>map.getLayer(id)&&map.getLayoutProperty(id,'visibility')!=='none')}).length)return;
    const p=event.features[0].properties;
    // MapLibre devuelve los arrays de propiedades como texto.

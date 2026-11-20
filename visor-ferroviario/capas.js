@@ -348,7 +348,7 @@
     onChange?.();
   }
   async function onClick(e){
-    if(root.AtlasTransport?.hit(e.point))return;
+    if(root.AtlasInfrastructure?.hit(e.point)||root.AtlasTransport?.hit(e.point))return;
     const box=[[e.point.x-6,e.point.y-6],[e.point.x+6,e.point.y+6]];
     const stops=map.queryRenderedFeatures(box,{layers:['cx-stops']});
     if(stops.length){

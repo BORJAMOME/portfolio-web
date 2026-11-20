@@ -10,6 +10,8 @@
     activas:{title:'Capas activas'},
     vias:{title:'Vías'},
     estaciones:{title:'Estaciones y transporte',group:true},
+    demografia:{title:'Demografía',group:true},
+    infraestructuras:{title:'Infraestructuras',group:true},
     territorio:{title:'Territorio',group:true},
     relieve:{title:'Perspectiva y relieve'},
     exportar:{title:'Consultas y exportación'}
