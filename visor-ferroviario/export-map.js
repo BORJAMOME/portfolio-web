@@ -68,13 +68,15 @@
      let y=mapY+height+6*scale;const legend=[];const themeMode=legendItems?'theme':'gauge';
      if($('export-legend').checked&&themeMode==='gauge'&&document.querySelector('[data-layer="rail"]')?.checked){for(const value of new Set(filtered.map(f=>AtlasFilters.value(f,'gauge')))){const style=AtlasCartography.style(value);legend.push(style);}}
      if($('export-legend').checked&&themeMode!=='gauge'){for(const item of legendItems){legend.push(item);}}
+     if($('export-legend').checked)legend.push(...(root.AtlasDemography?.legendItems()||[]).map(i=>({...i,fill:i.fill!==false})),...(root.AtlasInfrastructure?.legendItems()||[]));
      const points=$('export-legend').checked?POINTS.filter(p=>p[3]()):[];
      const sizes=$('export-legend').checked?population(map,pixelRatio,scale):null;
      let x=margin;ctx.font=`${2.6*scale}px sans-serif`;
      const place=length=>{if(x+length>W-margin){x=margin;y+=5*scale;}};
      for(const item of legend){const length=ctx.measureText(item.name).width+13*scale;place(length);
        ctx.strokeStyle=item.color;ctx.setLineDash((dashOf(item)||[]).map(v=>v*scale));ctx.lineCap=item.pattern==='project'?'round':'butt';
-       if(item.double){ctx.lineWidth=.45*scale;for(const d of [-.6,.6]){ctx.beginPath();ctx.moveTo(x,y+d*scale);ctx.lineTo(x+7*scale,y+d*scale);ctx.stroke();}}
+       if(item.fill){ctx.fillStyle=item.color;ctx.fillRect(x,y-1.5*scale,7*scale,3*scale);}
+       else if(item.double){ctx.lineWidth=.45*scale;for(const d of [-.6,.6]){ctx.beginPath();ctx.moveTo(x,y+d*scale);ctx.lineTo(x+7*scale,y+d*scale);ctx.stroke();}}
        else{ctx.lineWidth=(item.thick?1.8:1)*scale;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+7*scale,y);ctx.stroke();}
        ctx.setLineDash([]);ctx.lineCap='butt';ctx.fillStyle='#1D2638';ctx.fillText(item.name,x+9*scale,y+scale);x+=length;}
      for(const [,color,name] of points){const length=ctx.measureText(name).width+9*scale;place(length);
@@ -120,7 +122,8 @@
        const placePdf=len=>{if(px+len>mmW-12){px=12;py+=5;}};
        for(const item of legend){const len=pdf.getTextWidth(item.name)+13;placePdf(len);pdf.setDrawColor(item.color);
          pdf.setLineDashPattern(dashOf(item)||[],0);pdf.setLineCap(item.pattern==='project'?'round':'butt');
-         if(item.double){pdf.setLineWidth(.4);pdf.line(px,py-1.6,px+7,py-1.6);pdf.line(px,py-.4,px+7,py-.4);}
+         if(item.fill){pdf.setFillColor(item.color);pdf.rect(px,py-2.5,7,3,'F');}
+         else if(item.double){pdf.setLineWidth(.4);pdf.line(px,py-1.6,px+7,py-1.6);pdf.line(px,py-.4,px+7,py-.4);}
          else{pdf.setLineWidth(item.thick?1.6:.8);pdf.line(px,py-1,px+7,py-1);}
          pdf.setLineDashPattern([],0);pdf.setLineCap('butt');pdf.text(item.name,px+9,py);px+=len;}
        for(const [,color,name] of points){const len=pdf.getTextWidth(name)+9;placePdf(len);

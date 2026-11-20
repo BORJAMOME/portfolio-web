@@ -45,7 +45,7 @@
     map.on('mouseleave','population-circles',()=>{map.getCanvas().style.cursor='';highlight(null);});
     map.on('mousemove','population-circles',e=>highlight(topUnit(e.features)));
     map.on('click',e=>{
-      if(!enabled)return;
+      if(!enabled||root.AtlasInfrastructure?.hit(e.point))return;
       // Prioridad: estación > trazado o servicio > círculo de población.
       const above=['stations','cx-stops','cx-hit','theme-hit'].filter(id=>map.getLayer(id)&&map.getLayoutProperty(id,'visibility')!=='none');
       const box=[[e.point.x-6,e.point.y-6],[e.point.x+6,e.point.y+6]];

@@ -540,3 +540,11 @@ main{flex:1;min-height:0}
   .route-bar.has-value .rb-swap{top:30px}
   .route-bar.has-value .rb-go span{position:static;width:auto;height:auto;overflow:visible;clip:auto}
 }
+/* Demografía e infraestructuras: salvia bajo las vías; ocre y ciruela para contexto. */
+.demo-swatch{display:inline-block;flex:none;width:13px;height:13px;border-radius:3px;border:1px solid #557d7440;vertical-align:middle;margin-right:6px}
+.demo-legend{margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.demo-legend>strong,.demo-legend>small{display:block}.demo-legend>small{color:var(--muted);margin:4px 0 8px}
+.infrastructure-legend{margin-top:7px;font-size:12px}
+.demo-sources{font-size:12px;line-height:1.6;margin:14px 0}.demo-sources summary{cursor:pointer;font-weight:600}.demo-sources a{color:var(--navy);text-decoration:underline}
+#demo-opacity-options label{display:flex;justify-content:space-between;gap:8px}#demo-opacity{width:100%;accent-color:#28695f}
+#roads-options select,#freight-options select{width:100%;margin-top:7px}

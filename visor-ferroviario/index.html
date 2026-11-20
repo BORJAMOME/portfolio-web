@@ -4,17 +4,18 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Atlas ferroviario de España</title>
 <meta name="robots" content="noindex, nofollow">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; worker-src 'self' blob:; child-src blob:; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://www.ign.es; connect-src 'self' https://www.ign.es https://tiles.openfreemap.org; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; worker-src 'self' blob:; child-src blob:; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://www.ign.es https://certiserviciosgis.ign.es; connect-src 'self' https://www.ign.es https://tiles.openfreemap.org https://certiserviciosgis.ign.es; object-src 'none'; base-uri 'self'; form-action 'self'">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="vendor/maplibre-gl.css?v=b613b67c"><link rel="stylesheet" href="atlas.css?v=d730786d">
+<link rel="stylesheet" href="vendor/maplibre-gl.css?v=b613b67c"><link rel="stylesheet" href="atlas.css?v=e7e5feba">
 <script defer src="vendor/maplibre-gl.js?v=eb107f3e"></script>
 <script defer src="capas-config.js?v=8d56ba43"></script><script defer src="etiquetas.js?v=8fa171d8"></script>
 <script defer src="filtros.js?v=a2059d81"></script><script defer src="cartography.js?v=26824df7"></script>
-<script defer src="themes.js?v=2343da1e"></script><script defer src="export-map.js?v=b368111f"></script>
+<script defer src="themes.js?v=bb1c07e9"></script><script defer src="export-map.js?v=ccb4b9c1"></script>
 <script defer src="terrain-manifest.js?v=2403d37f"></script><script defer src="terrain-controls.js?v=64c089cd"></script>
 <script defer src="basemap.js?v=b0750192"></script><script defer src="line-identity.js?v=0f30d6da"></script><script defer src="view-state.js?v=378b1b7b"></script>
-<script defer src="poblacion.js?v=bb19f9ff"></script><script defer src="capas.js?v=c4f06ceb"></script>
-<script defer src="transporte.js?v=9fca3862"></script><script defer src="oferta.js?v=cc85d2c0"></script><script defer src="perfil.js?v=e6338e28"></script><script defer src="ruta.js?v=53ed0ae8"></script><script defer src="atlas.js?v=40fcd804"></script><script defer src="panel.js?v=deb14641"></script><script defer src="orientacion.js?v=3c295037"></script>
+<script defer src="demografia.js?v=79758eee"></script><script defer src="infraestructuras.js?v=70f6ea77"></script>
+<script defer src="poblacion.js?v=0dcfbcf6"></script><script defer src="capas.js?v=0c63e27d"></script>
+<script defer src="transporte.js?v=9fca3862"></script><script defer src="oferta.js?v=cc85d2c0"></script><script defer src="perfil.js?v=e6338e28"></script><script defer src="ruta.js?v=53ed0ae8"></script><script defer src="atlas.js?v=e4bf69f8"></script><script defer src="panel.js?v=f5bae766"></script><script defer src="orientacion.js?v=3c295037"></script>
 </head>
 <body>
 <a class="skip" href="#map">Saltar al mapa</a>
@@ -38,6 +39,8 @@
 <hr>
 <button type="button" data-cat="vias" aria-controls="tools"><span class="rail-ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 2.5 6 21.5M16 2.5l2 19M6.6 6.5h10.8M6.2 11h11.6M5.8 15.5h12.4M5.4 20h13.2"/></svg></span><span class="rail-label">Vías</span></button>
 <button type="button" data-cat="estaciones" aria-controls="tools"><span class="rail-ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21.5s-6.5-6.2-6.5-11.3a6.5 6.5 0 0 1 13 0c0 5.1-6.5 11.3-6.5 11.3z"/><circle cx="12" cy="10" r="2.4"/></svg><b class="rail-count" data-count="estaciones" hidden></b></span><span class="rail-label">Estaciones</span></button>
+<button type="button" data-cat="demografia" aria-controls="tools"><span class="rail-ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 20h18M5 17v-5h3v5M10.5 17V7h3v10M16 17V3h3v14"/></svg><b class="rail-count" data-count="demografia" hidden></b></span><span class="rail-label">Demografía</span></button>
+<button type="button" data-cat="infraestructuras" aria-controls="tools"><span class="rail-ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 3 5 21M16 3l3 18M12 4v3M12 10v3M12 16v3"/></svg><b class="rail-count" data-count="infraestructuras" hidden></b></span><span class="rail-label">Otras redes</span></button>
 <button type="button" data-cat="territorio" aria-controls="tools"><span class="rail-ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z"/><path d="M9 4v13.5M15 6.5V20"/></svg><b class="rail-count" data-count="territorio" hidden></b></span><span class="rail-label">Territorio</span></button>
 <button type="button" data-cat="relieve" aria-controls="tools"><span class="rail-ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m2.5 19.5 6.5-11 4 6.5 2.5-4 6 8.5z"/><path d="m7 11.5 2 1.5 2-1.5"/></svg></span><span class="rail-label">Relieve</span></button>
 <button type="button" data-cat="exportar" aria-controls="tools"><span class="rail-ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3.5v11M7.5 10l4.5 4.5 4.5-4.5M4 15.5v4h16v-4"/></svg></span><span class="rail-label">Exportar</span></button>
@@ -74,9 +77,18 @@
 </fieldset>
 </section>
 
-<section class="cat" data-cat="territorio" hidden>
+<section class="cat" data-cat="demografia" hidden>
+<p class="muted">Cruza habitantes y densidad con cualquier tema ferroviario. Elige un relleno de población; los límites municipales se pueden superponer.</p>
+<fieldset class="layers"><legend>Población y territorio</legend>
+<div class="layer"><label class="layer-main"><input type="checkbox" role="switch" id="demo-municipalities-toggle"><span class="layer-text"><span class="layer-name">Municipios</span><small>Límites y ficha de población · Censo INE 2025</small></span></label></div>
+<div class="layer"><label class="layer-main"><input type="checkbox" role="switch" id="demo-density-toggle"><span class="layer-text"><span class="layer-name">Densidad de población</span><small>Habitantes por km² · municipios · 1 ene. 2025</small></span></label></div>
+<div class="layer"><label class="layer-main"><input type="checkbox" role="switch" id="demo-communities-toggle"><span class="layer-text"><span class="layer-name">Población por comunidad</span><small>Total autonómico · 1 oct. 2026 · provisional</small></span></label></div>
+<div class="layer"><label class="layer-main"><input type="checkbox" role="switch" id="demo-provinces-toggle"><span class="layer-text"><span class="layer-name">Población por provincia</span><small>Total provincial · 1 oct. 2026 · provisional</small></span></label></div>
+</fieldset>
+<div id="demo-opacity-options" class="layer-detail" hidden><label for="demo-opacity">Opacidad del relleno <output id="demo-opacity-value" for="demo-opacity">55 %</output></label><input id="demo-opacity" type="range" min="15" max="85" value="55" step="5"></div>
+<p id="demo-status" class="muted" role="status"></p>
 <fieldset class="layers"><legend>Población</legend>
-<div class="layer"><label class="layer-main"><input type="checkbox" role="switch" id="population-toggle"><span class="layer-text"><span class="layer-name">Población</span><small>Grandes áreas urbanas o capitales de provincia</small></span></label><button type="button" class="layer-more" aria-expanded="true" aria-controls="population-more" aria-label="Opciones de población" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></button></div>
+<div class="layer"><label class="layer-main"><input type="checkbox" role="switch" id="population-toggle"><span class="layer-text"><span class="layer-name">Población urbana</span><small>Grandes áreas urbanas o capitales de provincia</small></span></label><button type="button" class="layer-more" aria-expanded="true" aria-controls="population-more" aria-label="Opciones de población" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></button></div>
 <div id="population-more" class="layer-detail">
 <div id="population-options" hidden>
 <div role="radiogroup" aria-label="Unidad de población" class="segmented">
@@ -90,6 +102,15 @@
 </div>
 </div>
 </fieldset>
+<details class="demo-sources"><summary>Fuentes y fechas</summary><p>Municipios: <a href="https://www.ine.es/dyngs/Prensa/CensoVariables2025.htm" target="_blank" rel="noopener">Censo anual INE, 1 de enero de 2025</a>. Densidad calculada con la superficie de la cartografía municipal del INE antes de simplificarla.</p><p>Provincias y comunidades: <a href="https://www.ine.es/jaxiT3/Tabla.htm?t=59589" target="_blank" rel="noopener">ECP del INE, 1 de octubre de 2026</a>, provisional. Comunidades: suma de sus provincias. Límites provinciales y autonómicos: IGN / CNIG. Consulta: 20 de noviembre de 2026.</p><p>El visor se centra en la España peninsular. Los totales territoriales cuentan todo su ámbito administrativo.</p></details>
+</section>
+<section class="cat" data-cat="infraestructuras" hidden>
+<fieldset class="layers"><legend>Red viaria y logística</legend>
+<div class="layer"><label class="layer-main"><input type="checkbox" role="switch" id="roads-toggle"><span class="layer-text"><span class="layer-name">Carreteras</span><small>Red oficial del IGN · combinable con el tren</small></span></label></div>
+<div id="roads-options" class="layer-detail" hidden><label for="road-class">Tipo de carretera</label><select id="road-class"><option value="all">Toda la red de carreteras</option><option value="motorways">Autopistas y autovías</option></select><p class="muted">Servicio cartográfico del IGN en directo. Requiere conexión.</p></div>
+<div class="layer"><label class="layer-main"><input type="checkbox" role="switch" id="freight-toggle"><span class="layer-text"><span class="layer-name">Terminales de mercancías</span><small>Inventario IGN: terminales, estaciones y apartaderos</small></span></label></div>
+<div id="freight-options" class="layer-detail" hidden><label for="freight-use">Uso de la instalación</label><select id="freight-use"><option value="all">Mercancías y uso mixto</option><option value="cargo">Solo mercancías</option><option value="mixed">Uso mixto: viajeros y mercancías</option></select><p id="freight-count" class="muted"></p></div></fieldset><p id="infrastructure-status" class="muted" role="status"></p><details class="demo-sources"><summary>Fuentes y cobertura</summary><p>Carreteras: IGN / CNIG, SignA, red de transportes. Se muestran autopistas, autovías y carreteras convencionales, con la actualización disponible en el servicio.</p><p>Mercancías: <a href="https://api-features.idee.es/collections/railwaystationnode" target="_blank" rel="noopener">IGN, Información Geográfica de Referencia de Redes de Transporte</a>. Nodos de uso mercancías o mixto de la península, consultados el 20 de noviembre de 2026. Incluye apartaderos; no certifica actividad actual ni gestión por Adif. Consulta las condiciones operativas en <a href="https://piservi.adif.es/piservi/portal" target="_blank" rel="noopener">PISERVI de Adif</a>.</p></details></section>
+<section class="cat" data-cat="territorio" hidden>
 <fieldset class="layers"><legend>Fondo cartográfico</legend>
 <label for="basemap-select" class="stack">Mapa base</label>
 <select id="basemap-select" aria-describedby="basemap-note"><option value="simple">Simplificado</option><option value="positron">Positron · calles y territorio</option></select>

@@ -41,7 +41,7 @@ let hashTimer;
 function persistHash() {
   clearTimeout(hashTimer);
   if(!ready||restoringView)return;
-  const state = {...filters, ...(window.AtlasCapas?.getState() || {}), p: window.AtlasPopulation?.state(), tp: window.AtlasTransport?.state(), r: window.AtlasRoute?.state(), m: terrainEnabled ? 1 : undefined,
+  const state = {...filters, ...(window.AtlasCapas?.getState() || {}), p: window.AtlasPopulation?.state(), tp: window.AtlasTransport?.state(), d: window.AtlasDemography?.state(), ix: window.AtlasInfrastructure?.state(), r: window.AtlasRoute?.state(), m: terrainEnabled ? 1 : undefined,
     b:basemapController?.state()==='positron'?'positron':undefined,
     c:window.AtlasViewState.capture(map), tv:window.AtlasViewState.terrain(terrainController?.getState()),
     l:Object.fromEntries([...document.querySelectorAll("[data-layer]")].map(input=>[input.dataset.layer,input.checked]))};
@@ -430,6 +430,9 @@ function renderLegend() {
   const pois=window.AtlasTransport?.legend();
   if(pois)points.append(...pois.children);
   if(points.childElementCount)legend.append(points);
+  const demography=window.AtlasDemography?.legend();if(demography)legend.append(demography);
+  const infrastructure=window.AtlasInfrastructure?.legendItems()||[];
+  for(const item of infrastructure){const row=document.createElement("div"),sw=document.createElement("i");row.className="infrastructure-legend";sw.className="demo-swatch";sw.style.background=item.color;row.append(sw,document.createTextNode(item.name));legend.append(row);}
   const sizes=window.AtlasPopulation?.legend();
   if(sizes)legend.append(sizes);
   syncTerrainLegend();
@@ -472,6 +475,8 @@ $("#saved-query").onchange=async function(){
     await AtlasCapas.restore(view);
     await AtlasPopulation.restore(view.p||{on:false});
     await AtlasTransport.restore(view.tp||'');
+    await window.AtlasDemography?.restore(view.d);
+    await window.AtlasInfrastructure?.restore(view.ix);
     if(view.r)await window.AtlasRoute?.restore(view.r);else window.AtlasRoute?.reset();
     terrainController?.restoreState({exaggeration:1,shade:true,...window.AtlasViewState.terrain(view.tv)});
     setTerrain(view.m===1||view.m===true);
@@ -610,9 +615,9 @@ if(map)map.on("load",async()=>{
     // Prioridad de selección: paradas del tema > estaciones > líneas del tema > tramo IGN > población.
     const themeHit = point => { const layers=[...AtlasCapas.hitLayers(),"theme-hit","urban-stations"].filter(id=>map.getLayer(id)&&map.getLayoutProperty(id,"visibility")!=="none");
       const box=[[point.x-6,point.y-6],[point.x+6,point.y+6]]; return layers.length && map.queryRenderedFeatures(box,{layers}).length; };
-    map.on("click","stations",e=>{ if(window.AtlasTransport?.hit(e.point))return; if(map.getLayer("cx-stops")&&map.queryRenderedFeatures(e.point,{layers:["cx-stops"]}).length)return; stationInfo(e.features[0]); });
+    map.on("click","stations",e=>{ if(window.AtlasInfrastructure?.hit(e.point)||window.AtlasTransport?.hit(e.point))return; if(map.getLayer("cx-stops")&&map.queryRenderedFeatures(e.point,{layers:["cx-stops"]}).length)return; stationInfo(e.features[0]); });
     map.on("click","rail-hit",e=>{
-      if(window.AtlasTransport?.hit(e.point)||themeHit(e.point) || map.queryRenderedFeatures(e.point,{layers:["stations"]}).length)return;
+      if(window.AtlasInfrastructure?.hit(e.point)||window.AtlasTransport?.hit(e.point)||themeHit(e.point) || map.queryRenderedFeatures(e.point,{layers:["stations"]}).length)return;
       // Con Población activa, el círculo tiene prioridad sobre el tramo IGN de fondo.
       if(map.getLayer("population-circles")&&map.getLayoutProperty("population-circles","visibility")!=="none"&&map.queryRenderedFeatures(e.point,{layers:["population-circles"]}).length)return;
       sectionInfo(e.features[0], e.lngLat);
@@ -625,6 +630,8 @@ if(map)map.on("load",async()=>{
     ready=true;
     AtlasThemes.init({map,dataset,showInfo,onChange:()=>{renderLegend();writeHash();},onLegend:()=>renderLegend()});
     AtlasCapas.init({map,dataset,showInfo,legacy:AtlasThemes,onChange:()=>applyFilters()});
+    window.AtlasDemography?.init({map,showInfo,onChange:()=>{renderLegend();writeHash();}});
+    window.AtlasInfrastructure?.init({map,showInfo,onChange:()=>{if(!window.AtlasInfrastructure?.state()?.roads){failedMapSources.delete("infrastructure-roads");updateMapStatus();}renderLegend();writeHash();}});
     AtlasPopulation.init({map,showInfo,onChange:()=>{renderLegend();writeHash();}});
     AtlasTransport.init({map,dataset,showInfo,onChange:()=>{renderLegend();writeHash();}});
     window.AtlasRoute?.init({map,dataset,showInfo,onChange:writeHash,openStation:stationInfo});
@@ -649,6 +656,8 @@ if(map)map.on("load",async()=>{
     if(AtlasCapas.current()==="gauge")renderFacets();
     if(hash.p)await AtlasPopulation.restore(hash.p);
     if(hash.tp)await AtlasTransport.restore(hash.tp);
+    if(hash.d)await window.AtlasDemography?.restore(hash.d);
+    if(hash.ix)await window.AtlasInfrastructure?.restore(hash.ix);
     terrainController?.restoreState(window.AtlasViewState.terrain(hash.tv));
     if(hash.m===1||hash.m===true)setTerrain(true);
     if(hash.r)await window.AtlasRoute?.restore(hash.r);
