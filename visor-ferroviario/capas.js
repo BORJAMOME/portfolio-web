@@ -270,10 +270,28 @@
       ...(p.status_note&&{'Situación':p.status_note}),
       ...(p.corridor==='sur'&&{'NAFA':'Nuevo Acceso Ferroviario a Andalucía: nombre del proyecto de la línea Madrid–Sevilla, inaugurada en 1992. Los ramales de Málaga y Granada salen de ella. Fuente secundaria; no se ha localizado documento oficial.'})
     };
-    showInfo('Corredor de alta velocidad',p.branch,fields,{subtitle:(group.group?group.group+' · ':'')+group.name,
+    const opts={subtitle:(group.group?group.group+' · ':'')+group.name,
       chips:[{label:CFG.status[p.status].name,color:group.color}],
-      facts:[{value:km('service')+' km',label:'en servicio'},{value:km('construction')+' km',label:'en obras'},{value:km('project')+' km',label:'en proyecto'}]});
+      facts:[{value:km('service')+' km',label:'en servicio'},{value:km('construction')+' km',label:'en obras'},{value:km('project')+' km',label:'en proyecto'}]};
+    showInfo('Corredor de alta velocidad',p.branch,fields,opts);
     onChange?.();
+    // Trenes por el tramo seleccionado (oferta.js): el tramo IGN de ancho estándar más próximo a su punto medio (≤ 150 m).
+    if(p.status!=='service'||!root.AtlasOffer)return;
+    const geom=data.corridors.features.find(f=>f.properties.id===p.id)?.geometry;
+    const line=geom?.type==='MultiLineString'?geom.coordinates.flat():geom?.coordinates;
+    if(!line?.length)return;
+    const mid=line[Math.floor(line.length/2)];
+    const fid=root.AtlasOffer.nearestEdge(dataset.rail.features,mid,150,q=>q.nominalgauge===1435);
+    if(fid===null)return;
+    root.AtlasOffer.forEdge(fid).then(x=>{
+      if(!x||state.corridor!==p.branch||$('#info').hidden||$('#name').textContent!==p.branch)return;
+      const scroll=$('#info').scrollTop;
+      showInfo('Corredor de alta velocidad',p.branch,{
+        'Trenes por el tramo seleccionado':x.by.map(([n,c])=>n+' '+c).join(' · ')+' ('+x.label+').',
+        'Qué no está contado':'OUIGO (su horario oficial no trae el recorrido) e iryo (sin horarios abiertos). En los corredores con competencia, la CNMC atribuye a estos dos operadores una parte importante de los viajeros.',
+        ...fields},{...opts,keepFocus:true,facts:[{value:number.format(x.trains),label:'trenes Renfe al día por aquí'},...opts.facts.slice(0,2)]});
+      $('#info').scrollTop=scroll;
+    }).catch(e=>console.warn(e));
   }
   function experienceInfo(e){
     state.experience=e.id;state.variant=null;state.corridor=null;renderHighlight();

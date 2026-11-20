@@ -155,6 +155,48 @@
     const D=await load(),days=refDays(D),wd=edgeDay(D,fid,days.weekday);
     return wd.trains?{trains:wd.trains,by:wd.by,label:label(days.weekday)}:null;
   }
+  /* ── cercanía: estaciones con servicio en un radio y tramos IGN junto a un punto ── */
+  function metres(a,b){const k=Math.cos((a[1]+b[1])/2*Math.PI/180);return Math.hypot((a[0]-b[0])*k,a[1]-b[1])*111320;}
+  function groups(D){
+    if(D.groups)return D.groups;
+    const out=new Map();
+    for(const [sid,st] of Object.entries(D.S.stations)){
+      const g=D.gid(sid);if(!D.byGroup.has(g))continue;
+      const x=out.get(g);
+      if(!x||sid.startsWith('renfe-national:'))out.set(g,{key:g,sid,name:st.name,coords:st.coordinates});
+    }
+    return D.groups=[...out.values()];
+  }
+  // Estaciones con al menos un tren el día laborable de referencia, a menos de `radius` metros.
+  async function near(coord,radius){
+    const D=await load(),days=refDays(D);
+    const list=groups(D).map(g=>({...g,m:metres(coord,g.coords)})).filter(g=>g.m<=radius)
+      .map(g=>({...g,day:stationDay(D,g.sid,days.weekday)})).filter(g=>g.day.trains).sort((a,b)=>a.m-b.m);
+    return {list,label:label(days.weekday)};
+  }
+  async function forArea(coord,radius,place){
+    const {list,label:day}=await near(coord,radius);
+    const box=section('Tren');
+    if(!list.length){box.append(el('p','offer-lead','Ninguna estación con trenes de los horarios integrados a menos de '+nf.format(radius/1000)+' km de '+place+'.'),note(SCOPE));return {block:box,facts:[]};}
+    const stops=list.reduce((a,g)=>a+g.day.trains,0),dests=new Set(list.flatMap(g=>g.day.dests.map(([d])=>d)));
+    for(const g of list)dests.delete(g.name);
+    box.append(el('p','offer-lead',nf.format(list.length)+(list.length===1?' estación':' estaciones')+' con servicio a menos de '+nf.format(radius/1000)+' km de '+place+': '+nf.format(stops)+' paradas de tren el '+day+' y '+nf.format(dests.size)+' destinos sin transbordo.'));
+    const dl=el('dl','offer-list');
+    for(const g of list.slice(0,6)){dl.append(el('dt',null,g.name+' · a '+(g.m<1000?nf.format(Math.round(g.m/10)*10)+' m':nf.format(Math.round(g.m/100)/10)+' km')),el('dd',null,nf.format(g.day.trains)+' trenes'+(g.day.first!==null?' · '+hm(g.day.first)+'–'+hm(g.day.last):'')));}
+    box.append(dl,note(SCOPE+' Distancias en línea recta. Un tren que para en dos estaciones de la zona cuenta dos paradas.'));
+    return {block:box,facts:[{value:nf.format(list.length),label:list.length===1?'estación con trenes':'estaciones con trenes'},{value:nf.format(stops),label:'paradas de tren al día'}]};
+  }
+  // Estación con servicio más cercana (puertos y aeropuertos).
+  async function nearest(coord,radius){const {list,label:day}=await near(coord,radius);return list[0]?{...list[0],label:day}:null;}
+  // Tramo IGN de ancho estándar más próximo a un punto (≤ 150 m, la misma regla que la capa de corredores).
+  function nearestEdge(features,coord,max=150,filter=()=>true){
+    let best=null,bm=max;
+    features.forEach((f,fid)=>{
+      if(!filter(f.properties))return;
+      for(const c of f.geometry.coordinates){if(Math.abs(c[0]-coord[0])>0.01||Math.abs(c[1]-coord[1])>0.01)continue;const m=metres(c,coord);if(m<bm){bm=m;best=fid;}}
+    });
+    return best;
+  }
   const dur=m=>{m=Math.round(m);const h=Math.floor(m/60),r=m%60;return h?h+' h'+(r?' '+pad(r)+' min':''):r+' min';};
-  root.AtlasOffer={load,forStation,forVariant,forEdge,SCOPE,hm,dur};
+  root.AtlasOffer={load,forStation,forVariant,forEdge,forArea,nearest,nearestEdge,SCOPE,hm,dur};
 })(window);
