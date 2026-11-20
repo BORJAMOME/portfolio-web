@@ -4,12 +4,12 @@
     '1668':{name:'Ibérico · 1.668 mm',color:'#0072B2'},
     '1435':{name:'Estándar · 1.435 mm',color:'#C45C00'},
     '1000':{name:'Métrico · 1.000 mm',color:'#00856A'},
-    mixed:{name:'Ancho mixto',color:'#AA4499'},
+    mixed:{name:'Mixto (dos anchos)',color:'#AA4499'},
     narrow:{name:'Estrecho · medida no publicada',color:'#716190'},
     other:{name:'Otros anchos documentados',color:'#76542C'},
     notApplicable:{name:'No aplica',color:'#A0A7B2'},
     pending:{name:'Pendiente de verificación',color:'#8B6B16'},
-    unknown:{name:'Sin información',color:'#727C8B'}
+    unknown:{name:'Sin determinar',color:'#727C8B'}
   };
   function style(value){return styles[value]||styles.other;}
   function metrics(features){

@@ -528,7 +528,7 @@
     const notes={
       perf:'Alta velocidad: tramos de los ejes «A.V.» del catálogo de Adif y la concesión LFP Perthus. Sin determinar: ancho estándar sin correspondencia con ninguna red oficial.',
       net:'Cada tramo del IGN se compara con el catálogo de Adif y los trazados oficiales de FGC, FGV, Euskotren, Metro Bilbao y el CRTM. Sin identificar: apartaderos, vías de servicio y redes sin geometría oficial integrada.',
-      gauge:'El IGN no distingue el ancho mixto (tercer carril): esos tramos figuran con uno de los dos anchos.'};
+      gauge:'Ancho del IGN completado con el catálogo de tramos de Adif (incluido el ancho mixto, que el IGN marca como «no aplica») y, en nudos sin datos, con el ancho de los tramos contiguos. La ficha de cada tramo indica de dónde sale. «Mixto» no distingue tercer carril de vías paralelas de distinto ancho.'};
     panel.append(note(notes[state.dim]+' Trazo grueso: vía doble.'));
     if(state.dim==='net'){
       const det=document.createElement('details');det.className='inline';const sum=document.createElement('summary');sum.textContent='Otras derivaciones particulares (sin trazado oficial)';det.append(sum);

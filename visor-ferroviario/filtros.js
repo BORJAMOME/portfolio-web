@@ -11,6 +11,8 @@
   function value(feature, dimension) {
     const p = feature.properties;
     if (dimension === "gauge") {
+      // Ancho completado con Adif y la topología (capas/ancho.json, preparar_capa_ancho.py).
+      if (p.gauge_fix) return p.gauge_fix;
       const widths = Array.isArray(p.gauge_values_mm) ? new Set(p.gauge_values_mm.filter(positive)) : new Set();
       if (widths.size > 1) return "mixed";
       if (positive(p.nominalgauge)) {

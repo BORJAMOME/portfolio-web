@@ -63,6 +63,7 @@ function writeHash() {
 try { savedQueries = JSON.parse(localStorage.getItem("ferro_atlas_queries") || "[]"); if(!Array.isArray(savedQueries))savedQueries=[]; } catch {}
 
 function label(dimension, value) {
+  if(dimension === "gauge" && value === "unknown") return "Sin determinar";
   if(value === "unknown") return "Sin información";
   if(value === "notApplicable") return "No aplica";
   if(value === "pending") return "Pendiente de verificación";
@@ -247,7 +248,8 @@ async function sectionInfo(rendered, location) {
   const tracks = AtlasFilters.value(feature,"tracks"), electric = AtlasFilters.value(feature,"electric");
   const facts = [
     // «de la línea»: el IGN no da el dato del tramo y se toma el de su línea de Adif (capas/lineas-adif.json).
-    {value:p.nominalgauge?number.format(p.nominalgauge)+" mm":label("gauge",AtlasFilters.value(feature,"gauge")),label:"ancho de vía"+(p.fill_g?" · de la línea":"")},
+    (()=>{const g=AtlasFilters.value(feature,"gauge"),src=p.gauge_fix?GAUGE_SOURCE[p.gauge_src]||"":p.fill_g?"de la línea":"";
+      return {value:/^d+$/.test(g)?number.format(Number(g))+" mm":g==="mixed"?"Mixto":label("gauge",g),label:"ancho de vía"+(src?" · "+src:"")};})(),
     ...(tracks!=="unknown"?[{value:tracks==="1"?"Única":tracks==="2"?"Doble":tracks+" vías",label:"vía"}]:[]),
     ...(electric!=="unknown"?[{value:electric==="yes"?"Sí":"No",label:"electrificada"+(p.fill_e?" · de la línea":"")}]:[])
   ];
@@ -410,7 +412,7 @@ function renderLegend() {
   const theme=window.AtlasCapas?.current()||"gauge";
   if(!window.AtlasCapas?.legend(legend)) {
     const items=theme==="gauge"
-      ? ($('[data-layer="rail"]').checked?[...new Set(filtered.map(f=>AtlasFilters.value(f,"gauge")))].map(v=>AtlasCartography.style(v)):[])
+      ? ($('[data-layer="rail"]').checked?["1668","1435","1000","mixed","other","unknown"].filter(v=>filtered.some(f=>AtlasFilters.value(f,"gauge")===v)).map(v=>AtlasCartography.style(v)):[])
       : AtlasThemes.legend();
     if(items.length){
       const h=document.createElement("strong");h.textContent=CFG.themes[theme]?.name||"Red ferroviaria";legend.append(h);
@@ -524,6 +526,15 @@ for(const checkbox of document.querySelectorAll("[data-layer]")) {
 /* ── carga ── */
 const loadStarted=performance.now();
 const dataPromise=fetch("datos.json").then(r=>{if(!r.ok)throw new Error("No se ha podido cargar datos.json ("+r.status+")");return r.json();});
+// Ancho completado (Adif, IGN mixto, red métrica, topología). Si falta, el visor sigue con el ancho del IGN.
+const gaugePromise=fetch("capas/ancho.json").then(r=>r.ok?r.json():null).catch(()=>null);
+const GAUGE_SOURCE={adif:"según Adif",ign:"IGN (mixto)",net:"inferido: red métrica",topo:"inferido por la red",none:""};
+function applyGauge(features,gauge){
+  if(!gauge?.groups)return;
+  const fix=new Map();
+  for(const [key,ids] of Object.entries(gauge.groups)){const [value,src]=key.split("|");if(value==="unknown")continue;for(const id of ids)fix.set("FFCC_TR"+id,[value,src]);}
+  for(const f of features){const x=fix.get(f.properties.id);if(x){f.properties.gauge_fix=x[0];f.properties.gauge_src=x[1];}}
+}
 // Opcional: sin este archivo el visor funciona igual, solo sin los atributos de línea de Adif.
 const adifPromise=fetch("capas/lineas-adif.json").then(r=>r.ok?r.json():null).catch(()=>null);
 let adifLines=null;
@@ -537,6 +548,7 @@ function fillFromLine(p,relleno){
 if(map)map.on("load",async()=>{
   try {
     dataset=await dataPromise;
+    applyGauge(dataset.rail.features,await gaugePromise);
     const adif=await adifPromise;adifLines=adif?.lineas||null;
     for(const f of dataset.rail.features){fillFromLine(f.properties,adif?.relleno);AtlasFilters.prepare(f);f.properties.pen=CFG.peninsular(f.geometry.coordinates[0])?1:0;}
     peninsular=dataset.rail.features.filter(f=>f.properties.pen);
