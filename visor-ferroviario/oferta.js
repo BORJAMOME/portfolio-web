@@ -198,5 +198,7 @@
     return best;
   }
   const dur=m=>{m=Math.round(m);const h=Math.floor(m/60),r=m%60;return h?h+' h'+(r?' '+pad(r)+' min':''):r+' min';};
-  root.AtlasOffer={load,forStation,forVariant,forEdge,forArea,nearest,nearestEdge,SCOPE,hm,dur};
+  // `core`: las mismas reglas de conteo para Cabina (cabina.js), así sus cifras coinciden con las fichas.
+  root.AtlasOffer={load,forStation,forVariant,forEdge,forArea,nearest,nearestEdge,SCOPE,hm,dur,
+    core:{refDays,label,dayIndex,runs,at,stationDay,groups,metres}};
 })(window);

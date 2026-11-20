@@ -56,7 +56,7 @@
     map.addLayer({id:'cx-line-dash',type:'line',source:'cx-lines',filter:['==',['get','dash'],1],paint:{'line-color':['get','color'],'line-width':width,'line-offset':offset,'line-dasharray':[3,2]}},before);
     map.addLayer({id:'cx-line-dot',type:'line',source:'cx-lines',filter:['==',['get','dash'],2],layout:{'line-cap':'round'},paint:{'line-color':['get','color'],'line-width':width,'line-offset':offset,'line-dasharray':[0.6,2.2],'line-opacity':.85}},before);
     map.addLayer({id:'cx-core',type:'line',source:'cx-lines',filter:['==',['get','core'],1],paint:{'line-color':'#fbfbfb','line-width':['interpolate',['linear'],['zoom'],5,.8,12,1.8],'line-offset':offset}},before);
-    // Recorrido seleccionado: continuo por vía de ancho estándar (alta velocidad), discontinuo por vía convencional.
+    // Recorrido seleccionado: continuo por ancho estándar y discontinuo por otros anchos o sin ancho publicado. El ancho no acredita alta velocidad.
     map.addLayer({id:'cx-sel-hs',type:'line',source:'cx-highlight',filter:['==',['get','hs'],1],layout:{'line-cap':'round'},paint:{'line-color':'#1d2638','line-width':3}},before);
     map.addLayer({id:'cx-sel-conv',type:'line',source:'cx-highlight',filter:['==',['get','hs'],0],paint:{'line-color':'#1d2638','line-width':3,'line-dasharray':[2,1.4]}},before);
     map.addLayer({id:'cx-hit',type:'line',source:'cx-lines',paint:{'line-color':'#000','line-width':14,'line-opacity':0}},before);
@@ -188,7 +188,7 @@
       'Esta variante':siblings.length>1?'Una de '+siblings.length+' variantes con el mismo origen y destino; cada una tiene sus propias paradas. Elige otra en la ficha de una estación.':'Única variante vigente de esta relación.',
       'Vigencia':val?(val.note?val.note+(val.from===val.to?' ('+fmtDate(val.from)+')':' (del '+fmtDate(val.from)+' al '+fmtDate(val.to)+')'):'Del '+fmtDate(val.from)+' al '+fmtDate(val.to))+(v.trips?' · '+number.format(v.trips)+' circulaciones en el calendario publicado':'')+(v.calendar_note?' · '+v.calendar_note:''):'Sin calendario',
       'Recorrido':v.trace==='gtfs'?'Forma publicada en el GTFS del operador.':
-        'Trazado inferido sobre la red IGN entre paradas consecutivas (no es dato del operador). '+number.format(Math.round(hs/1000))+' km por vía de ancho estándar (alta velocidad) y '+number.format(Math.round(conv/1000))+' km por vía convencional; en el mapa, línea continua y discontinua.'+
+        'Trazado inferido sobre la red IGN entre paradas consecutivas (no es dato del operador). '+number.format(Math.round(hs/1000))+' km por vía de ancho estándar (1.435 mm) y '+number.format(Math.round(conv/1000))+' km por otros anchos o sin ancho documentado; en el mapa, línea continua y discontinua. El ancho no determina las prestaciones de la infraestructura.'+
         (v.pending_segments?' '+v.pending_segments+' de '+v.segments+' saltos entre paradas sin trazado verificable: no se dibujan.':'')+(v.international?' Continúa fuera del ámbito: '+v.international.join(', ')+'.':''),
       ...(v.madrid_assumed&&{'Estación de Madrid':'El horario oficial solo dice «Madrid»; la estación se asigna por corredor (Atocha o Chamartín) y no está confirmada para esta relación.'})
     };
@@ -355,7 +355,7 @@
   function checkboxGroup(title,items,selected,counts,onToggle){
     const fs=document.createElement('fieldset'),lg=document.createElement('legend');lg.textContent=title;fs.append(lg);
     const tools=document.createElement('div');tools.className='group-tools';
-    for(const [label,all] of [['Todas',true],['Ninguna',false]]){const b=document.createElement('button');b.type='button';b.className='link';b.textContent=label;
+    for(const [label,all] of [['Todas',true],['Ninguna',false]]){const b=document.createElement('button');b.type='button';b.className='link';b.textContent=label;b.setAttribute('aria-label',label+': '+title);
       b.onclick=()=>{onToggle(all?items.map(i=>i.id):[]);};tools.append(b);}
     fs.append(tools);
     for(const item of items){
@@ -534,7 +534,8 @@
     // En «Todas las vías» la vía doble se dibuja más gruesa que la única.
     const double=['in',['get','filter_tracks'],['literal',['2','4']]];
     map.setPaintProperty('rail','line-width',all?['interpolate',['linear'],['zoom'],5,['case',double,1.3,.8],12,['case',double,3.6,2.2],16,['case',double,5,3]]:['interpolate',['linear'],['zoom'],5,.9,8,1.5,12,2.8,16,4]);
-    if(['tent','transit'].includes(id))legacy?.change(id==='tent'?'corridors':'transit');else legacy?.change('gauge',{silent:true});
+    if(['tent','transit'].includes(id))await legacy?.change(id==='tent'?'corridors':'transit',{silent});else await legacy?.change('gauge',{silent:true});
+    if(state.theme!==id)return;
     renderPanel();
     try{if(files[id])data[id==='brands'?'services':id]=await load(id);}catch(e){$('#theme-panel').replaceChildren(note(e.message+' Reintenta más tarde.','notice-text'));}
     if(state.theme!==id)return;
@@ -551,14 +552,17 @@
     ensureLayers();themeList();
   }
   function getState(){
-    return {t:state.theme,k:state.keys[state.theme]&&state.keys[state.theme].join(','),st:state.theme==='corridors'?state.statuses.join(','):undefined,d:state.theme==='all'?state.dim:undefined,v:state.variant||undefined,x:state.experience||undefined};
+    return {t:state.theme,ls:['tent','transit'].includes(state.theme)?legacy?.state():undefined,k:state.keys[state.theme]&&state.keys[state.theme].join(','),st:state.theme==='corridors'?state.statuses.join(','):undefined,d:state.theme==='all'?state.dim:undefined,v:state.variant||undefined,x:state.experience||undefined};
   }
   async function restore(s){
     if(!s)return setTheme(state.theme);
     if(typeof s.k==='string'&&state.keys[s.t]){const allowed=(s.t==='brands'?CFG.brands:s.t==='services'?CFG.services:s.t==='tourism'?CFG.tourism:CFG.corridors).map(x=>x.id);state.keys[s.t]=s.k.split(',').filter(x=>allowed.includes(x));}
     if(typeof s.d==='string'&&CFG.classifications[s.d])state.dim=s.d;
     if(typeof s.st==='string')state.statuses=s.st.split(',').filter(x=>CFG.status[x]);
-    await setTheme(s.t||state.theme,{silent:true});
+    const requestedTheme=CFG.themes[s.t]?s.t:state.theme;
+    await setTheme(requestedTheme,{silent:true});
+    if(state.theme!==requestedTheme)return;
+    if(['tent','transit'].includes(state.theme))legacy?.restore(s.ls,{silent:true});
     if(s.v&&services()?.variants.some(v=>v.id===s.v))selectVariant(s.v);
     if(s.x&&data.tourism){const e=data.tourism.experiences.find(x=>x.id===s.x);if(e)experienceInfo(e);}
   }

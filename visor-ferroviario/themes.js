@@ -2,7 +2,7 @@
    Metro de Madrid y Metro Ligero (CRTM). Solo España peninsular. */
 (function(root){
  'use strict';
- const catalog={};let current='gauge',selected=[];let context;let revision=0;let legendItems=[];
+ const catalog={};let current='gauge',selected=[];let context;let revision=0;let legendItems=[];let optionInputs=[];
  const number=new Intl.NumberFormat('es-ES');
  const definitions={
   corridors:{file:'tramos-ten-t.geojson',name:'Corredores TEN-T · Hermes 2024'},
@@ -17,7 +17,7 @@
   if(mode==='corridors')return Object.entries(tent).map(([id,t])=>({id,name:'TEN-T '+t.name,color:t.color}));
   return (catalog.transit?.lines||[]).filter(l=>data.features.some(f=>f.properties.line_id===l.id)).map(l=>({id:l.id,name:[l.network||l.network_id,l.code,l.name].filter(Boolean).join(' · '),color:l.color||'#727C8B'}));
  }
- function matches(f){if(!selected.length)return true;const p=f.properties;return current==='corridors'?(p.corridor_ids||[]).some(id=>selected.includes(id)):selected.includes(p.line_id);}
+ function matches(f){if(!selected.length)return false;const p=f.properties;return current==='corridors'?(p.corridor_ids||[]).some(id=>selected.includes(id)):selected.includes(p.line_id);}
 
  /* ── estaciones urbanas (Metro de Madrid y Metro Ligero, CRTM) ── */
  let urban,urbanData=null;
@@ -38,7 +38,7 @@
  const lineInfo=id=>urbanData?.line_info?.[id];
  function stationFeatures(){
   if(!urbanData||current!=='transit')return [];
-  return urbanData.stations.features.filter(f=>!selected.length||f.properties.lines.some(id=>selected.includes(id))).map(f=>{
+  return urbanData.stations.features.filter(f=>f.properties.lines.some(id=>selected.includes(id))).map(f=>{
    const lines=f.properties.lines,first=lineById(lines[0]);
    return {type:'Feature',geometry:f.geometry,properties:{sid:f.properties.sid,name:f.properties.name,color:lines.length>1?'#1d2638':first?.color||'#1d2638',multi:lines.length>1?1:0}};
   });
@@ -148,12 +148,12 @@
   map.setLayoutProperty('theme-hit','visibility','visible');
   map.getSource('urban-stations').setData({type:'FeatureCollection',features:stationFeatures()});
   for(const id of ['urban-stations','urban-station-labels'])map.setLayoutProperty(id,'visibility',current==='transit'?'visible':'none');
-  onMetrics?.(features,current);legendItems=options(current,data).filter(o=>!selected.length||selected.includes(o.id));onLegend?.(legendItems);
+  onMetrics?.(features,current);legendItems=options(current,data).filter(o=>selected.includes(o.id));onLegend?.(legendItems);
   document.querySelector('#theme-note').textContent=current==='corridors'?'Continuo en servicio, discontinuo en construcción, punteado planificado.':'Acércate a Madrid para ver las estaciones de Metro y Metro Ligero.';
  }
  function hide(){const map=context.map;for(const id of ['theme','theme-construction','theme-project','theme-hit','urban-stations','urban-station-labels'])if(map.getLayer(id))map.setLayoutProperty(id,'visibility','none');}
- async function change(mode){
-  const token=++revision;current=mode;selected=[];hide();
+ async function change(mode,{silent=false}={}){
+  const token=++revision;current=mode;selected=[];optionInputs=[];hide();
   const box=document.querySelector('#theme-options');box.replaceChildren();
   if(mode==='gauge'){legendItems=[];document.querySelector('#theme-note').textContent='';return;}
   try{
@@ -162,11 +162,22 @@
    if(mode==='transit'&&!urbanData)urbanData=await loadUrban().catch(()=>null);
    if(token!==revision)return;
    const data=catalog[mode].geometry||catalog[mode];
-   for(const item of options(mode,data)){const row=document.createElement('label'),input=document.createElement('input'),sw=document.createElement('i');row.className='row';input.type='checkbox';input.value=item.id;
+   selected=options(mode,data).map(item=>item.id);
+   for(const item of options(mode,data)){const row=document.createElement('label'),input=document.createElement('input'),sw=document.createElement('i');row.className='row';input.type='checkbox';input.value=item.id;input.checked=true;optionInputs.push(input);
     input.onchange=()=>{selected=input.checked?[...selected,item.id]:selected.filter(x=>x!==item.id);show();context.onChange?.();};
     sw.className='swatch';sw.style.setProperty('--c',item.color);row.append(input,sw,document.createTextNode(item.name));box.append(row);}
-   show();context.onChange?.();
+   show();if(!silent)context.onChange?.();
   }catch(error){if(token===revision)document.querySelector('#theme-note').textContent=error.message+'. Reintenta más tarde.';}
+ }
+ // Missing legacy selection means all (old URLs); an explicit [] means none.
+ function restore(raw,{silent=false}={}){
+  const data=catalog[current]?.geometry||catalog[current];
+  if(!data||!['corridors','transit'].includes(current))return;
+  const allowed=options(current,data).map(item=>item.id);
+  const requested=Array.isArray(raw)?new Set(raw.slice(0,5000).filter(id=>typeof id==='string')):null;
+  selected=requested?allowed.filter(id=>requested.has(id)):allowed;
+  for(const input of optionInputs)input.checked=selected.includes(input.value);
+  show();if(!silent)context.onChange?.();
  }
  // Las fichas de estación Renfe usan las estaciones urbanas para las conexiones.
  async function prepareConnections(){
@@ -176,5 +187,5 @@
   }catch{}
  }
  function init(config){context=config;}
- root.AtlasThemes={init,change,legend:()=>legendItems,current:()=>current,refresh:()=>{if(current!=='gauge')show();},nearbyStations,prepareConnections,stationInfo,lineCard,tentCard};
+ root.AtlasThemes={init,change,state:()=>selected.slice(),restore,legend:()=>legendItems,current:()=>current,refresh:()=>{if(current!=='gauge')show();},nearbyStations,prepareConnections,stationInfo,lineCard,tentCard};
 })(window);

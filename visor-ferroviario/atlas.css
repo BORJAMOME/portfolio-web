@@ -431,6 +431,14 @@ input[role=switch]:focus-visible{outline:2px solid var(--focus);outline-offset:2
 .cat-form button,.cat-form select{margin-top:6px}
 .cat-form fieldset>button{width:100%}
 .cat-form .terrain-note{color:var(--muted);font-size:var(--fs-xs);line-height:1.6}
+#terrain-controls>button{display:block;width:100%;min-height:40px;text-align:left;padding:9px 12px}
+#terrain-controls>button:disabled{cursor:default;opacity:.55}
+#terrain-controls .terrain-control{border-bottom:1px solid var(--line);padding:7px 0;margin:0}
+#terrain-controls .terrain-control output{min-width:3.5em;text-align:right;font-variant-numeric:tabular-nums}
+#terrain-controls .terrain-note{padding:10px 12px;border-left:3px solid var(--line-strong);background:var(--wash);margin:14px 0 0}
+#terrain-controls .terrain-note[data-warning="1"]{border-color:#8a5a00;background:#fff7e6;color:#5a4a1d}
+.legend-terrain{border-top:1px solid var(--line);margin:8px 0 0;padding-top:8px;color:var(--muted);font-size:var(--fs-xs);line-height:1.5}
+.legend-terrain[data-warning="1"]{color:#714800}
 #action-message:empty{display:none}
 #action-message{font-size:var(--fs-xs);color:var(--muted);margin:8px 0 0}
 
@@ -507,3 +515,16 @@ details.legend-info small{position:absolute;left:12px;right:12px;margin-top:4px;
 .legend-sizes text{font-size:11.5px}
 .legend-leader{fill:none;stroke:var(--muted);stroke-width:.7}
 @media(max-width:760px){#legend{max-width:calc(100% - 16px);max-height:45%}}
+
+/* El alto real del encabezado cambia en móvil: no restar una constante al mapa.
+   Mantiene controles, atribución y estado dentro del viewport también en iframe. */
+body{height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+.atlas-header,footer{flex:none}
+main{flex:1;min-height:0}
+#map{height:100%;min-height:0}
+#basemap-note[data-warning="1"]{color:#755419}
+@media(max-width:760px){
+  .route-bar.has-value .rb-go{display:flex;flex:1 1 100%;justify-content:center;min-height:44px;margin:3px 0 0}
+  .route-bar.has-value .rb-swap{top:30px}
+  .route-bar.has-value .rb-go span{position:static;width:auto;height:auto;overflow:visible;clip:auto}
+}

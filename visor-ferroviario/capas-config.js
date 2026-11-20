@@ -73,7 +73,8 @@
     gauge:{name:'Ancho de vía',prop:'filter_gauge',items:[
       {id:'1668',name:'Ibérico · 1.668 mm',color:'#0072B2'},
       {id:'1435',name:'Estándar · 1.435 mm',color:'#C45C00'},
-      {id:'narrow',name:'Métrico · 1.000 mm',color:'#00856A',values:['1000','narrow']},
+      {id:'1000',name:'Métrico · 1.000 mm',color:'#00856A'},
+      {id:'narrow',name:'Estrecho · medida no publicada',color:'#716190'},
       {id:'mixed',name:'Mixto',color:'#AA4499'},
       {id:'unknown',name:'Sin ancho en el IGN',color:'#A0A7B2',values:['unknown','notApplicable','pending','other']}]}
   };
