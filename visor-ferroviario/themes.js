@@ -60,7 +60,8 @@
    'Dirección':p.address||undefined,
    'Zona tarifaria':p.zone||undefined,
    'Accesibilidad':p.accessible||undefined
-  },{subtitle:[...new Set(lines.map(l=>l.operator))].join(' · '),chips:lines.map(l=>({label:lineLabel(l),color:l.color||'#536071'}))});
+  },{subtitle:[...new Set(lines.map(l=>l.operator))].join(' · '),chips:lines.map(l=>({label:lineLabel(l),color:l.color||'#536071'})),
+     facts:[{value:String(lines.length),label:lines.length===1?'línea':'líneas'},{value:String(links.length),label:links.length===1?'conexión con otros modos':'conexiones con otros modos'}]});
  }
  function lineCard(p){
   const l=lineById(p.line_id)||p,info=lineInfo(p.line_id);
@@ -77,9 +78,12 @@
      chips:[{label:lineLabel(l),color:l.color||'#536071'},{label:modeName[l.mode]||l.mode}],
      facts:info?[{value:String(info.stations),label:'estaciones'},...(info.municipalities?[{value:String(info.municipalities.length),label:info.municipalities.length===1?'municipio':'municipios'}]:[]),{value:String(transfers.length),label:'correspondencias'}]:undefined});
  }
- function tentCard(p){
+ function tentCard(p,at){
   const ids=p.corridor_ids||[];
-  context.showInfo('Corredor TEN-T',p.name||(p.origin&&p.destination&&p.origin+' – '+p.destination)||'Tramo ferroviario',{
+  const title=(p.name||(p.origin&&p.destination&&p.origin+' – '+p.destination)||'Tramo ferroviario').replace(/\s*<-->\s*/g,' – ');
+  const km=p.pk_start!=null&&p.pk_end!=null?Math.abs(p.pk_end-p.pk_start):null;
+  const facts=[...(km?[{value:number.format(Math.round(km*10)/10)+' km',label:'según los PK'}]:[]),{value:String(ids.length),label:ids.length===1?'corredor europeo':'corredores europeos'}];
+  const fields={
    'Origen y destino':p.origin&&p.destination?p.origin+' – '+p.destination:undefined,
    'Tipo de infraestructura':p.rail_type,
    'Tráfico':p.activity,
@@ -87,7 +91,17 @@
    'Titular':p.owner,
    'Línea':p.line_code,
    'Puntos kilométricos':p.pk_start!=null&&p.pk_end!=null?'PK '+number.format(p.pk_start)+' – '+number.format(p.pk_end):undefined
-  },{subtitle:ids.map(id=>'Corredor '+tent[id]?.name).join(' · '),chips:[...ids.map(id=>({label:tent[id]?.name,color:tent[id]?.color})),...(p.status?[{label:p.status}]:[])]});
+  };
+  const opts={subtitle:ids.map(id=>'Corredor '+tent[id]?.name).join(' · '),chips:[...ids.map(id=>({label:tent[id]?.name,color:tent[id]?.color})),...(p.status?[{label:p.status}]:[])],facts};
+  context.showInfo('Corredor TEN-T',title,fields,opts);
+  // Trenes al día por el tramo IGN más próximo al punto pulsado (oferta.js, ≤ 150 m).
+  const D=context.dataset;if(!at||!D||!root.AtlasOffer)return;
+  const fid=root.AtlasOffer.nearestEdge(D.rail.features,at,150);if(fid===null)return;
+  root.AtlasOffer.forEdge(fid).then(x=>{
+   if(!x||document.querySelector('#info').hidden||document.querySelector('#name').textContent!==title)return;
+   context.showInfo('Corredor TEN-T',title,{'Trenes de viajeros por aquí':x.by.map(([n,c])=>n+' '+c).join(' · ')+' ('+x.label+'; horarios integrados de Renfe, sin OUIGO ni iryo ni mercancías).',...fields},
+    {...opts,keepFocus:true,facts:[{value:number.format(x.trains),label:'trenes de viajeros al día'},...facts].slice(0,3)});
+  }).catch(e=>console.warn(e));
  }
 
  const statusFilter={service:['==',['get','status'],'En servicio'],construction:['==',['get','status'],'En construcción'],project:['==',['get','status'],'Planificado']};
@@ -121,7 +135,7 @@
    const p=event.features[0].properties;
    // MapLibre devuelve los arrays de propiedades como texto.
    if(typeof p.corridor_ids==='string')try{p.corridor_ids=JSON.parse(p.corridor_ids);}catch{p.corridor_ids=[];}
-   if(current==='transit')lineCard(p);else tentCard(p);
+   if(current==='transit')lineCard(p);else tentCard(p,[event.lngLat.lng,event.lngLat.lat]);
   });
  }
  function show(){

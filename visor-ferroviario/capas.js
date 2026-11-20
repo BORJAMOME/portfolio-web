@@ -309,7 +309,10 @@
       ...(e.note&&{'Nota':e.note}),
       'Trazado':e.edges?.length?'Vía entre las estaciones citadas, inferida sobre la red IGN. Los traslados en autocar no se dibujan.':'Sin recorrido ferroviario publicado: solo se marca la estación de salida.'
     };
-    showInfo('Tren turístico',e.name,fields,{subtitle:e.organizer,chips:[{label:group.name,color:group.color}]});
+    showInfo('Tren turístico',e.name,fields,{subtitle:e.organizer,chips:[{label:group.name,color:group.color}],
+      facts:[{value:{current:'Vigente',unconfirmed:'Sin confirmar',historical:'Histórico'}[e.status],label:'estado'},
+        ...(e.stops?.length?[{value:String(e.stops.length),label:e.stops.length===1?'estación citada':'estaciones citadas'}]:[]),
+        ...(e.days?[{value:e.days,label:'duración'}]:[])]});
     if(e.stops?.length)fit(e.stops.map(s=>s.coordinates));
     onChange?.();
   }
