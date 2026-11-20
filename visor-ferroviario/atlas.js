@@ -6,7 +6,7 @@ const number = new Intl.NumberFormat("es-ES");
 const filters = {gauge:[], electric:[], tracks:[]};
 const dimensions = {gauge:"Ancho de vía", electric:"Electrificación", tracks:"Número de vías"};
 const bounds = CFG.bounds;
-const padding = () => CFG.compact() ? {top:20,bottom:20,left:20,right:20} : {top:30,bottom:40,left:330,right:40};
+const padding = () => CFG.compact() ? {top:20,bottom:20,left:20,right:20} : {top:30,bottom:40,left:document.querySelector("#tools")?.hidden?40:(document.querySelector("#tools")?.offsetWidth||340)+24,right:40};
 let dataset = null;
 let peninsular = [];
 let filtered = [];
@@ -35,6 +35,7 @@ pendingHash = readHash();
 readFilters(pendingHash);
 let hashTimer;
 function writeHash() {
+  window.AtlasPanel?.sync();
   clearTimeout(hashTimer);
   hashTimer = setTimeout(() => {
     const state = {...filters, ...(window.AtlasCapas?.getState() || {}), p: window.AtlasPopulation?.state(), tp: window.AtlasTransport?.state(), r: window.AtlasRoute?.state(), m: terrainEnabled ? 1 : undefined};
@@ -316,17 +317,23 @@ function applyFilters() {
 }
 $("#reset").onclick=()=>{readFilters({});applyFilters();};
 
-/* ── leyenda: refleja el tema y las capas activas ── */
-let legendOpen=null;
+/* ── leyenda: refleja el tema y las capas activas ──
+   Tarjeta compacta y plegable: colores del tema en columnas, estados en una fila, puntos
+   (estación, puerto, aeropuerto) en otra y círculos de población anidados. Plegada queda en
+   una línea con las muestras de color. Se pliega sola en pantallas compactas y, a 1100 px o
+   menos, mientras el panel de capas está abierto; si el usuario la toca, manda su elección. */
+let legendOpen=null,legendTouched=false;
+const legendAuto=()=>!CFG.compact()&&!(innerWidth<=1100&&!$("#tools").hidden);
 function renderLegend() {
   const host=$("#legend");
   host.replaceChildren();
-  // En móvil la leyenda empieza plegada en una pestaña para no tapar el mapa.
-  if(legendOpen===null)legendOpen=!CFG.compact();
+  if(!legendTouched)legendOpen=legendAuto();
   const toggle=document.createElement("button");
   toggle.type="button";toggle.className="legend-toggle";toggle.setAttribute("aria-expanded",String(legendOpen));toggle.setAttribute("aria-controls","legend-body");
-  toggle.textContent="Leyenda";
-  toggle.onclick=()=>{legendOpen=!legendOpen;renderLegend();};
+  const label=document.createElement("span");label.className="legend-label";label.textContent="Leyenda";
+  const preview=document.createElement("span");preview.className="legend-preview";preview.setAttribute("aria-hidden","true");
+  toggle.append(label,preview);
+  toggle.onclick=()=>{legendOpen=!legendOpen;legendTouched=true;renderLegend();};
   const legend=document.createElement("div");legend.id="legend-body";legend.hidden=!legendOpen;
   host.append(toggle,legend);
   const theme=window.AtlasCapas?.current()||"gauge";
@@ -336,22 +343,28 @@ function renderLegend() {
       : AtlasThemes.legend();
     if(items.length){
       const h=document.createElement("strong");h.textContent=CFG.themes[theme]?.name||"Red ferroviaria";legend.append(h);
-      const ul=document.createElement("ul");
+      const ul=document.createElement("ul");ul.className="legend-cols";
       for(const item of items.slice(0,12)){const li=document.createElement("li"),sw=document.createElement("i");sw.className="swatch";sw.style.setProperty("--c",item.color);li.append(sw,document.createTextNode(item.name));ul.append(li);}
-      if(items.length>12){const li=document.createElement("li");li.textContent="Y "+(items.length-12)+" más: selecciona líneas para acotar la leyenda.";ul.append(li);}
+      if(items.length>12){const li=document.createElement("li");li.className="legend-more";li.textContent="Y "+(items.length-12)+" más: selecciona líneas para acotar la leyenda.";ul.append(li);}
       legend.append(ul);
     }
   }
+  // Puntos del mapa en una sola fila.
+  const points=document.createElement("div");points.className="legend-points";
   if($('[data-layer="stations"]').checked){
-    const p=document.createElement("p"),key=document.createElement("i");key.className="poi-key station";p.append(key,document.createTextNode("Estación Renfe (catálogo)"));legend.append(p);
+    const p=document.createElement("p"),key=document.createElement("i");key.className="poi-key station";p.append(key,document.createTextNode("Estación Renfe"));points.append(p);
   }
   const pois=window.AtlasTransport?.legend();
-  if(pois)legend.append(pois);
+  if(pois)points.append(...pois.children);
+  if(points.childElementCount)legend.append(points);
   const sizes=window.AtlasPopulation?.legend();
   if(sizes)legend.append(sizes);
+  for(const sw of [...legend.querySelectorAll(".legend-cols .swatch")].slice(0,6))preview.append(sw.cloneNode());
+  if(legend.querySelector(".legend-sizes")){const dot=document.createElement("i");dot.className="legend-dot";preview.append(dot);}
   host.hidden=!legend.childElementCount;
   host.classList.toggle("collapsed",!legendOpen);
 }
+window.AtlasRenderLegend=()=>{if(dataset)renderLegend();};
 
 /* ── consultas y exportación ── */
 function renderSaved() {

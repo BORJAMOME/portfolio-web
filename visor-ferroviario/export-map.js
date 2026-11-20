@@ -8,6 +8,21 @@
    function idle(){finish(errors.length?new Error(errors[0]):null);}
    map.on('error',error);map.once('idle',idle);map.triggerRepaint();
  });}
+ /* Leyenda de la exportación: el mismo contenido que la leyenda de pantalla.
+    Líneas con su trazo (discontinuo, punteado, doble o grueso), puntos activos (estación, puerto,
+    aeropuerto) y círculos de población anidados con la escala del mapa exportado. Los rellenos son
+    colores sólidos ya mezclados con el papel para que el PDF y el PNG coincidan. */
+ const POINTS=[['stations','#1D2638','Estación Renfe',()=>document.querySelector('[data-layer="stations"]')?.checked],
+   ['ports','#0B4F6C','Puerto de interés general',()=>$('ports-toggle')?.checked],
+   ['airports','#3D3A8C','Aeropuerto de interés general',()=>$('airports-toggle')?.checked]];
+ const BUBBLE={fill:'#DBCFD8',stroke:'#99768F'};
+ const dashOf=item=>item.pattern==='project'?[.4,1.1]:item.dash?[2,1.2]:null;
+ const sampleLabel=v=>v>=1e6?(v/1e6).toLocaleString('es-ES')+(v===1e6?' millón':' millones'):v.toLocaleString('es-ES');
+ function population(map,pixelRatio,scale){
+   const C=root.AtlasConfig?.population;if(!C||!$('population-toggle')?.checked)return null;
+   // Radio en milímetros: radio en píxeles CSS del mapa × píxeles de salida por píxel CSS ÷ píxeles por mm.
+   return C.samples.map(v=>({value:v,label:sampleLabel(v),r:root.AtlasConfig.radius(v,map.getZoom())*pixelRatio/scale}));
+ }
  function download(blob,name){const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);}
  async function run({map,dataset,filters,filtered,label,terrainEnabled,legendItems,themeName}){
    const button=$('export-map'),message=$('action-message');button.disabled=true;message.textContent='Preparando cartografía y etiquetas…';
@@ -20,7 +35,11 @@
      const mmW=orientation==='landscape'?long:short,mmH=orientation==='landscape'?short:long;
      const W=Math.round(mmW*dpi/25.4),H=Math.round(mmH*dpi/25.4),margin=Math.round(12*dpi/25.4);
      const original=map.getCanvas(),ratio=original.width/original.height;
-     const areaW=W-2*margin,areaH=H-2*margin- Math.round(70*dpi/25.4);
+     // Hueco para la leyenda de población: radio máximo con el ancho que tendría el mapa sin ella (cota superior).
+     const popC=root.AtlasConfig?.population,popOn=$('export-legend').checked&&popC&&$('population-toggle')?.checked;
+     const mapMm=Math.min(mmW-24,(mmH-24-70)*ratio);
+     const popMm=popOn?2*Math.max(...popC.samples.map(v=>root.AtlasConfig.radius(v,map.getZoom())))*mapMm/map.getContainer().clientWidth+9:0;
+     const areaW=W-2*margin,areaH=H-2*margin- Math.round((70+popMm)*dpi/25.4);
      const width=Math.min(areaW,areaH*ratio),height=width/ratio;
      host=document.createElement('div');Object.assign(host.style,{position:'fixed',left:'-20000px',top:'0',width:map.getContainer().clientWidth+'px',height:map.getContainer().clientHeight+'px'});document.body.append(host);
      const pixelRatio=width/map.getContainer().clientWidth;
@@ -39,8 +58,28 @@
      let y=mapY+height+6*scale;const legend=[];const themeMode=legendItems?'theme':'gauge';
      if($('export-legend').checked&&themeMode==='gauge'){for(const value of new Set(filtered.map(f=>AtlasFilters.value(f,'gauge')))){const style=AtlasCartography.style(value);legend.push(style);}}
      if($('export-legend').checked&&themeMode!=='gauge'){for(const item of legendItems){legend.push(item);}}
+     const points=$('export-legend').checked?POINTS.filter(p=>p[3]()):[];
+     const sizes=$('export-legend').checked?population(map,pixelRatio,scale):null;
      let x=margin;ctx.font=`${2.6*scale}px sans-serif`;
-     for(const item of legend){const length=ctx.measureText(item.name).width+13*scale;if(x+length>W-margin){x=margin;y+=5*scale;}ctx.strokeStyle=item.color;ctx.lineWidth=1*scale;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+7*scale,y);ctx.stroke();ctx.fillStyle='#1D2638';ctx.fillText(item.name,x+9*scale,y+scale);x+=length;}
+     const place=length=>{if(x+length>W-margin){x=margin;y+=5*scale;}};
+     for(const item of legend){const length=ctx.measureText(item.name).width+13*scale;place(length);
+       ctx.strokeStyle=item.color;ctx.setLineDash((dashOf(item)||[]).map(v=>v*scale));ctx.lineCap=item.pattern==='project'?'round':'butt';
+       if(item.double){ctx.lineWidth=.45*scale;for(const d of [-.6,.6]){ctx.beginPath();ctx.moveTo(x,y+d*scale);ctx.lineTo(x+7*scale,y+d*scale);ctx.stroke();}}
+       else{ctx.lineWidth=(item.thick?1.8:1)*scale;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+7*scale,y);ctx.stroke();}
+       ctx.setLineDash([]);ctx.lineCap='butt';ctx.fillStyle='#1D2638';ctx.fillText(item.name,x+9*scale,y+scale);x+=length;}
+     for(const [,color,name] of points){const length=ctx.measureText(name).width+9*scale;place(length);
+       ctx.fillStyle=color;ctx.strokeStyle='#FBFBFB';ctx.lineWidth=.35*scale;ctx.beginPath();ctx.arc(x+1.8*scale,y,1.6*scale,0,2*Math.PI);ctx.fill();ctx.stroke();
+       ctx.fillStyle='#1D2638';ctx.fillText(name,x+5*scale,y+scale);x+=length;}
+     if(sizes){
+       const R=Math.max(...sizes.map(s=>s.r)),top=y+5*scale,base=top+(3+Math.max(2*R,9))*scale,cx=margin+R*scale,lx=margin+(2*R+5)*scale;
+       ctx.fillStyle='#1D2638';ctx.font=`600 ${2.6*scale}px sans-serif`;ctx.fillText('Población (área ∝ habitantes)',margin,top);ctx.font=`${2.4*scale}px sans-serif`;
+       let prev=-Infinity;
+       for(const s of sizes){ctx.fillStyle=BUBBLE.fill;ctx.strokeStyle=BUBBLE.stroke;ctx.lineWidth=.25*scale;ctx.beginPath();ctx.arc(cx,base-s.r*scale,s.r*scale,0,2*Math.PI);ctx.fill();ctx.stroke();}
+       for(const s of sizes){const yTop=base-2*s.r*scale,ly=Math.max(yTop+3*scale,prev+3*scale);prev=ly;
+         ctx.strokeStyle='#586278';ctx.lineWidth=.15*scale;ctx.beginPath();ctx.moveTo(cx,yTop);ctx.lineTo(lx-scale,yTop);ctx.lineTo(lx-scale,ly-.8*scale);ctx.lineTo(lx,ly-.8*scale);ctx.stroke();
+         ctx.fillStyle='#1D2638';ctx.fillText(s.label,lx+.5*scale,ly);}
+       y=Math.max(base,prev)+2*scale;x=margin;
+     }
      const metrics=AtlasCartography.metrics(filtered);y+=7*scale;
      const query=themeMode!=='gauge'?(themeName||'Tema')+' · '+legendItems.map(i=>i.name).join(', '):Object.entries(filters).filter(([,v])=>v.length).map(([d,v])=>v.map(a=>label(d,a)).join(' / ')).join(' · ')||'Todos los tramos';
      function wrap(text,fontSize=2.5){ctx.font=`${fontSize*scale}px sans-serif`;let line='';for(const word of text.split(' ')){if(ctx.measureText(line+' '+word).width>W-2*margin){ctx.fillText(line,margin,y);y+=4*scale;line=word;}else line+=(line?' ':'')+word;}ctx.fillText(line,margin,y);y+=5*scale;}
@@ -62,7 +101,23 @@
        if(scaleLabel){pdf.setDrawColor('#1D2638');pdf.setLineWidth(.5);pdf.line(mapX/scale+5,(mapY+height)/scale-6,mapX/scale+5+scaleLength,(mapY+height)/scale-6);pdf.setFontSize(7);pdf.text(scaleLabel,mapX/scale+5,(mapY+height)/scale-8);}
        pdf.setFontSize(8);pdf.text('N', (mapX+width)/scale-8,mapY/scale+8);
        let py=(mapY+height)/scale+6,px=12;pdf.setFontSize(8);
-       for(const item of legend){const len=pdf.getTextWidth(item.name)+13;if(px+len>mmW-12){px=12;py+=5;}pdf.setDrawColor(item.color);pdf.setLineWidth(.8);pdf.line(px,py-1,px+7,py-1);pdf.text(item.name,px+9,py);px+=len;}
+       const placePdf=len=>{if(px+len>mmW-12){px=12;py+=5;}};
+       for(const item of legend){const len=pdf.getTextWidth(item.name)+13;placePdf(len);pdf.setDrawColor(item.color);
+         pdf.setLineDashPattern(dashOf(item)||[],0);pdf.setLineCap(item.pattern==='project'?'round':'butt');
+         if(item.double){pdf.setLineWidth(.4);pdf.line(px,py-1.6,px+7,py-1.6);pdf.line(px,py-.4,px+7,py-.4);}
+         else{pdf.setLineWidth(item.thick?1.6:.8);pdf.line(px,py-1,px+7,py-1);}
+         pdf.setLineDashPattern([],0);pdf.setLineCap('butt');pdf.text(item.name,px+9,py);px+=len;}
+       for(const [,color,name] of points){const len=pdf.getTextWidth(name)+9;placePdf(len);
+         pdf.setFillColor(color);pdf.setDrawColor('#FBFBFB');pdf.setLineWidth(.3);pdf.circle(px+1.8,py-1,1.6,'FD');pdf.text(name,px+5,py);px+=len;}
+       if(sizes){
+         const R=Math.max(...sizes.map(s=>s.r)),top=py+5,base=top+3+Math.max(2*R,9),cx=12+R,lx=12+2*R+5;
+         pdf.setFont('helvetica','bold');pdf.text('Población (área proporcional a los habitantes)',12,top);pdf.setFont('helvetica','normal');pdf.setFontSize(7);
+         pdf.setFillColor(BUBBLE.fill);pdf.setDrawColor(BUBBLE.stroke);pdf.setLineWidth(.25);
+         for(const s of sizes)pdf.circle(cx,base-s.r,s.r,'FD');
+         let prev=-Infinity;pdf.setDrawColor('#586278');pdf.setLineWidth(.15);
+         for(const s of sizes){const yTop=base-2*s.r,ly=Math.max(yTop+2.5,prev+3);prev=ly;pdf.line(cx,yTop,lx-1,yTop);pdf.line(lx-1,yTop,lx-1,ly-.8);pdf.line(lx-1,ly-.8,lx,ly-.8);pdf.text(s.label,lx+.5,ly);}
+         pdf.setFontSize(8);py=Math.max(base,prev)+2;px=12;
+       }
        py+=7;
        for(const text of [$('export-metrics').checked?query:'',$('export-metrics').checked&&themeMode==='gauge'?`${metrics.sections} tramos · ${Math.round(metrics.km)} km geométricos estimados (no longitud oficial)`:'',credits]){if(!text)continue;const lines=pdf.splitTextToSize(text,mmW-24);pdf.text(lines,12,py);py+=lines.length*3.5+3;}
        if(py>mmH-12)throw new Error('La composición PDF excede el papel; selecciona A3.');

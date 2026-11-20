@@ -6,15 +6,15 @@
 <meta name="robots" content="noindex, nofollow">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; worker-src 'self' blob:; child-src blob:; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://www.ign.es; connect-src 'self' https://www.ign.es; object-src 'none'; base-uri 'self'; form-action 'self'">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="vendor/maplibre-gl.css?v=b613b67c"><link rel="stylesheet" href="atlas.css?v=a35e1e18">
+<link rel="stylesheet" href="vendor/maplibre-gl.css?v=b613b67c"><link rel="stylesheet" href="atlas.css?v=73dac4cf">
 <script defer src="vendor/maplibre-gl.js?v=eb107f3e"></script>
-<script defer src="capas-config.js?v=76db37cf"></script><script defer src="etiquetas.js?v=76b151f4"></script>
-<script defer src="filtros.js?v=d84ceba8"></script><script defer src="cartography.js?v=ff56cf9b"></script>
-<script defer src="themes.js?v=49f54240"></script><script defer src="export-map.js?v=b781c9a8"></script>
-<script defer src="terrain-manifest.js?v=7150e40e"></script><script defer src="terrain-controls.js?v=fce4be9c"></script>
-<script defer src="line-identity.js?v=3023ba0c"></script>
-<script defer src="poblacion.js?v=f42fd214"></script><script defer src="capas.js?v=65502170"></script>
-<script defer src="transporte.js?v=8d49c49e"></script><script defer src="oferta.js?v=80dcf463"></script><script defer src="perfil.js?v=921d1409"></script><script defer src="ruta.js?v=ca10efc6"></script><script defer src="atlas.js?v=a47dfc9d"></script><script defer src="orientacion.js?v=3c295037"></script>
+<script defer src="capas-config.js?v=f4f34929"></script><script defer src="etiquetas.js?v=8fa171d8"></script>
+<script defer src="filtros.js?v=cfb96cab"></script><script defer src="cartography.js?v=513150a3"></script>
+<script defer src="themes.js?v=ac530787"></script><script defer src="export-map.js?v=60b98a40"></script>
+<script defer src="terrain-manifest.js?v=2403d37f"></script><script defer src="terrain-controls.js?v=d806b802"></script>
+<script defer src="line-identity.js?v=9bd8af51"></script>
+<script defer src="poblacion.js?v=bb19f9ff"></script><script defer src="capas.js?v=eeca207f"></script>
+<script defer src="transporte.js?v=9fca3862"></script><script defer src="oferta.js?v=80dcf463"></script><script defer src="perfil.js?v=921d1409"></script><script defer src="ruta.js?v=31c59d8e"></script><script defer src="atlas.js?v=d14536c1"></script><script defer src="panel.js?v=e0c92e07"></script><script defer src="orientacion.js?v=3c295037"></script>
 </head>
 <body>
 <a class="skip" href="#map">Saltar al mapa</a>
@@ -32,10 +32,27 @@
 </header>
 <main>
 <button id="toggle-panel" type="button" aria-expanded="true" aria-controls="tools"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></svg><span>Capas</span></button>
-<aside id="tools" class="tools" aria-label="Capas y filtros">
+<nav id="rail" class="rail" aria-label="Categorías de capas y filtros">
+<button type="button" data-cat="activas" aria-controls="tools"><span class="rail-ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/><path d="m3 17.5 9 4.5 9-4.5" opacity=".55"/></svg><b class="rail-count" data-count="activas" hidden></b></span><span class="rail-label">Activas</span></button>
+<hr>
+<button type="button" data-cat="vias" aria-controls="tools"><span class="rail-ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 2.5 6 21.5M16 2.5l2 19M6.6 6.5h10.8M6.2 11h11.6M5.8 15.5h12.4M5.4 20h13.2"/></svg></span><span class="rail-label">Vías</span></button>
+<button type="button" data-cat="estaciones" aria-controls="tools"><span class="rail-ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21.5s-6.5-6.2-6.5-11.3a6.5 6.5 0 0 1 13 0c0 5.1-6.5 11.3-6.5 11.3z"/><circle cx="12" cy="10" r="2.4"/></svg><b class="rail-count" data-count="estaciones" hidden></b></span><span class="rail-label">Estaciones</span></button>
+<button type="button" data-cat="territorio" aria-controls="tools"><span class="rail-ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z"/><path d="M9 4v13.5M15 6.5V20"/></svg><b class="rail-count" data-count="territorio" hidden></b></span><span class="rail-label">Territorio</span></button>
+<button type="button" data-cat="relieve" aria-controls="tools"><span class="rail-ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m2.5 19.5 6.5-11 4 6.5 2.5-4 6 8.5z"/><path d="m7 11.5 2 1.5 2-1.5"/></svg></span><span class="rail-label">Relieve</span></button>
+<button type="button" data-cat="exportar" aria-controls="tools"><span class="rail-ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3.5v11M7.5 10l4.5 4.5 4.5-4.5M4 15.5v4h16v-4"/></svg></span><span class="rail-label">Exportar</span></button>
+</nav>
+<aside id="tools" class="tools" aria-labelledby="tools-title" data-cat="vias">
+<div class="tools-head"><h2 id="tools-title" tabindex="-1">Vías</h2><button id="tools-close" type="button" aria-label="Cerrar panel de capas y filtros"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 7l10 10M17 7 7 17"/></svg></button></div>
+<div id="tools-summary" class="tools-summary"><p id="tools-count" aria-live="polite"></p><button id="tools-off" type="button" class="ghost" hidden>Desactivar capas</button></div>
+<div class="tools-body">
+
+<section class="cat" data-cat="activas" hidden>
+<ul id="active-list" class="active-list"></ul>
+</section>
+
+<section class="cat" data-cat="vias">
 <fieldset class="themes"><legend>¿Qué quieres ver en las vías?</legend><div id="theme-list"></div></fieldset>
 <section id="theme-panel" aria-live="polite"></section>
-
 <section id="gauge-panel" hidden>
 <div class="kpis" aria-label="Indicadores de la consulta" aria-live="polite">
 <div><strong id="count">—</strong><span id="count-label">tramos de la consulta</span></div>
@@ -46,9 +63,20 @@
 <div id="facets"></div><button id="reset" type="button">Restablecer filtros</button>
 </section>
 <section id="legacy-panel" hidden><p id="theme-note" class="muted"></p><div id="theme-options"></div></section>
+</section>
 
-<fieldset class="overlays"><legend>Capas que se combinan</legend>
-<label class="row"><input type="checkbox" id="population-toggle"> Población</label>
+<section class="cat" data-cat="estaciones" hidden>
+<fieldset class="layers"><legend>Puntos en el mapa</legend>
+<div class="layer"><label class="layer-main"><input type="checkbox" role="switch" data-layer="stations" checked><span class="layer-text"><span class="layer-name"><i class="poi-key station" aria-hidden="true"></i>Estaciones Renfe</span><small>Catálogo de estaciones de Renfe</small></span></label></div>
+<div class="layer"><label class="layer-main"><input type="checkbox" role="switch" id="ports-toggle"><span class="layer-text"><span class="layer-name"><i class="poi-key port" aria-hidden="true"></i>Puertos de interés general</span><small>Anexo I de la Ley de Puertos</small></span></label></div>
+<div class="layer"><label class="layer-main"><input type="checkbox" role="switch" id="airports-toggle"><span class="layer-text"><span class="layer-name"><i class="poi-key airport" aria-hidden="true"></i>Aeropuertos de interés general</span><small>Red de Aena</small></span></label></div>
+</fieldset>
+</section>
+
+<section class="cat" data-cat="territorio" hidden>
+<fieldset class="layers"><legend>Población</legend>
+<div class="layer"><label class="layer-main"><input type="checkbox" role="switch" id="population-toggle"><span class="layer-text"><span class="layer-name">Población</span><small>Grandes áreas urbanas o capitales de provincia</small></span></label><button type="button" class="layer-more" aria-expanded="true" aria-controls="population-more" aria-label="Opciones de población" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></button></div>
+<div id="population-more" class="layer-detail">
 <div id="population-options" hidden>
 <div role="radiogroup" aria-label="Unidad de población" class="segmented">
 <label><input type="radio" name="population-view" value="area" checked> Grandes áreas urbanas</label>
@@ -59,17 +87,25 @@
 <p id="population-note" class="muted"></p>
 <p id="population-live" class="visually-hidden" aria-live="polite"></p>
 </div>
-<label class="row"><input type="checkbox" id="ports-toggle"> <i class="poi-key port" aria-hidden="true"></i> Puertos de interés general</label>
-<label class="row"><input type="checkbox" id="airports-toggle"> <i class="poi-key airport" aria-hidden="true"></i> Aeropuertos de interés general</label>
-<label class="row"><input type="checkbox" data-layer="stations" checked> <i class="poi-key station" aria-hidden="true"></i> Estaciones Renfe</label>
-<label class="row"><input type="checkbox" data-layer="rail" checked> Red ferroviaria IGN (fondo)</label>
-<label class="row"><input type="checkbox" data-layer="topography"> Topografía IGN</label>
+</div>
 </fieldset>
+<fieldset class="layers"><legend>Fondo cartográfico</legend>
+<div class="layer"><label class="layer-main"><input type="checkbox" role="switch" data-layer="rail" checked><span class="layer-text"><span class="layer-name">Red ferroviaria IGN</span><small>Ejes del IGN bajo el tema elegido</small></span></label></div>
+<div class="layer"><label class="layer-main"><input type="checkbox" role="switch" data-layer="topography"><span class="layer-text"><span class="layer-name">Topografía IGN</span><small>Mapa base del IGN</small></span></label></div>
+</fieldset>
+</section>
 
-<details><summary>Perspectiva y relieve</summary><div id="terrain-controls"></div></details>
-<details><summary>Consultas y exportación</summary>
-<label for="query-name">Nombre de la consulta</label><input id="query-name" placeholder="Mi consulta">
+<section class="cat cat-form" data-cat="relieve" hidden>
+<fieldset><legend>Perspectiva y relieve</legend><div id="terrain-controls"></div></fieldset>
+</section>
+
+<section class="cat cat-form" data-cat="exportar" hidden>
+<fieldset><legend>Consultas</legend>
+<label for="query-name" class="stack">Nombre de la consulta</label><input id="query-name" placeholder="Mi consulta">
 <button id="save-query" type="button">Guardar consulta</button><select id="saved-query" aria-label="Consultas guardadas"><option value="">Recuperar consulta…</option></select>
+<button id="share" type="button">Copiar enlace</button>
+</fieldset>
+<fieldset><legend>Exportación</legend>
 <button id="export" type="button">Exportar GeoJSON</button>
 <label>Formato <select id="export-format"><option>PDF</option><option>PNG</option><option>JPG</option></select></label>
 <label>Papel <select id="export-paper"><option>A4</option><option>A3</option></select></label>
@@ -78,8 +114,12 @@
 <label>Título <input id="export-title" value="Red ferroviaria de España" maxlength="100"></label>
 <label><input id="export-legend" type="checkbox" checked> Incluir leyenda</label>
 <label><input id="export-metrics" type="checkbox" checked> Incluir consulta e indicadores</label>
-<button id="export-map" type="button">Exportar mapa</button><button id="share" type="button">Copiar enlace</button><p id="action-message" role="status"></p>
-</details>
+<button id="export-map" type="button">Exportar mapa</button>
+</fieldset>
+<p id="action-message" role="status"></p>
+</section>
+
+</div>
 </aside>
 <form id="route-bar" class="route-bar" role="search" aria-label="Buscar una estación o una ruta" autocomplete="off" novalidate>
 <div class="rb-field rb-origin"><i class="rb-dot" aria-hidden="true"></i><label for="rb-origin">Origen</label><input id="rb-origin" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="rb-list" placeholder="Estación o localidad" spellcheck="false" enterkeyhint="search"><button type="button" class="rb-clear" data-clear="origin" aria-label="Borrar el origen" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 7l10 10M17 7 7 17"/></svg></button></div>

@@ -115,22 +115,30 @@
     if(!enabled||!data)return null;
     const zoom=map.getZoom();
     const box=document.createElement('div');box.className='legend-sizes';
-    const title=document.createElement('strong');title.textContent='Población · tamaño proporcional a los habitantes';box.append(title);
-    // Tres círculos de referencia en fila, con la misma escala que el mapa en el zoom actual.
-    const svgNS='http://www.w3.org/2000/svg',radii=C.samples.map(v=>root.AtlasConfig.radius(v,zoom));
-    const maxR=Math.max(...radii),h=Math.ceil(maxR*2+20);let x=2;
-    const svg=document.createElementNS(svgNS,'svg');svg.setAttribute('aria-hidden','true');svg.setAttribute('height',h);
-    C.samples.forEach((value,i)=>{
-      const r=radii[i],c=document.createElementNS(svgNS,'circle'),t=document.createElementNS(svgNS,'text');
-      const cx=x+Math.max(r,32);c.setAttribute('cx',cx);c.setAttribute('cy',maxR*2-r+1);c.setAttribute('r',r);c.setAttribute('class','legend-bubble');
-      t.setAttribute('x',cx);t.setAttribute('y',h-2);t.setAttribute('text-anchor','middle');t.textContent=number.format(value);
-      svg.append(c,t);x=cx+Math.max(r,32)+8;
-    });
-    svg.setAttribute('width',Math.ceil(x));
-    box.append(svg);
+    const head=document.createElement('div');head.className='legend-head';
+    const title=document.createElement('strong');title.textContent='Población';
+    const info=document.createElement('details');info.className='legend-info';
+    const sum=document.createElement('summary');sum.setAttribute('aria-label','Cómo leer los círculos');sum.textContent='i';
     const note=document.createElement('small');
-    note.textContent='Área del círculo ∝ habitantes; misma escala en las dos vistas. Radio mínimo '+String(C.minRadius).replace('.',',')+' px para que las capitales pequeñas se vean.';
-    box.append(note);return box;
+    note.textContent='Tamaño proporcional a los habitantes: área del círculo ∝ población, con la misma escala que el mapa en el zoom actual. Radio mínimo '+String(C.minRadius).replace('.',',')+' px para que las capitales pequeñas se vean.';
+    info.append(sum,note);head.append(title,info);box.append(head);
+    // Círculos anidados sobre la misma base, con la escala del mapa en el zoom actual.
+    const svgNS='http://www.w3.org/2000/svg',radii=C.samples.map(v=>root.AtlasConfig.radius(v,zoom));
+    const maxR=Math.max(...radii),line=13,h=Math.ceil(Math.max(maxR*2,line*C.samples.length)+4),base=h-2,cx=maxR+2,lx=maxR*2+12;
+    const words=v=>v>=1e6?number.format(v/1e6)+(v===1e6?' millón':' millones'):number.format(v);
+    const svg=document.createElementNS(svgNS,'svg');svg.setAttribute('aria-hidden','true');svg.setAttribute('height',h);svg.setAttribute('width',Math.ceil(lx+88));
+    let prev=-Infinity;
+    C.samples.forEach((value,i)=>{
+      const r=radii[i],top=base-2*r,ly=Math.max(top+4,prev+line);prev=ly;
+      const c=document.createElementNS(svgNS,'circle'),l=document.createElementNS(svgNS,'polyline'),t=document.createElementNS(svgNS,'text');
+      c.setAttribute('cx',cx);c.setAttribute('cy',base-r);c.setAttribute('r',r);c.setAttribute('class','legend-bubble');
+      l.setAttribute('points',cx+','+top+' '+(lx-4)+','+top+' '+(lx-4)+','+(ly-4)+' '+lx+','+(ly-4));l.setAttribute('class','legend-leader');
+      t.setAttribute('x',lx+3);t.setAttribute('y',ly);t.textContent=words(value);
+      svg.append(c,l,t);
+    });
+    box.append(svg);
+    const sr=document.createElement('span');sr.className='visually-hidden';sr.textContent='Círculos de referencia: '+C.samples.map(words).join(', ')+' habitantes.';box.append(sr);
+    return box;
   }
   async function setEnabled(value){
     enabled=Boolean(value);$('#population-toggle').checked=enabled;renderPanel();
