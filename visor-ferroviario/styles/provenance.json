@@ -1,0 +1,16 @@
+{
+  "upstream": "https://github.com/openmaptiles/positron-gl-style",
+  "upstream_style_sha256": "084275f4133cd6b1d02d852db6cb10c83a70d50571d0759617c12e6742a33099",
+  "provider_reference_sha256": "40565c7a5a0961cb1b33afefb55c1e48f06575d2e45868b309582334eeab82f1",
+  "adapted_style_sha256": "39a42ce8e0b30bd5ce90b25bfb7376379b12eee786e62f1b7ceb2b47dcf20c3c",
+  "provider": "https://tiles.openfreemap.org/planet",
+  "checked": "2026-11-20",
+  "adaptations": [
+    "Prefixed IDs and sources; preserve the atlas style and glyph URL",
+    "Noto Sans Regular from local glyphs; remove sprite icons",
+    "Spanish labels with name:latin/name fallback",
+    "Remove six contextual railway layers; atlas owns railway symbology",
+    "Keep original Positron palette, zoom hierarchy and geographic layers"
+  ],
+  "hash_normalization": "UTF-8; LF line endings"
+}

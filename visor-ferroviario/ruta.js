@@ -325,7 +325,19 @@
     return {timed:true,legs,rides,transfers:Math.max(0,rides.length-1),dep,arr,minutes:arr-dep,
       km:rides.reduce((a,l)=>a+l.km,0),hsKm:rides.reduce((a,l)=>a+l.hsKm,0),exact:rides.every(l=>l.exact)};
   }
-  root.AtlasRouteCore={build,plan,planTimed,timetable,metres,TRANSFER};
+  // Un único tren no hace directo el recorrido completo si exige otro desplazamiento.
+  function connectionText(route){
+    const rides=route.rides?.length??route.legs.filter(l=>l.type==='ride').length;
+    const city=route.legs.some(l=>l.type==='city'),walk=route.legs.some(l=>l.type==='walk');
+    const links=[...(city?['enlace urbano estimado']:[]),...(walk?['tramo a pie']:[])];
+    const transfers=Math.max(0,rides-1);
+    return {
+      trains:rides+(rides===1?' tren':' trenes')+(links.length?' + '+links.join(' + '):''),
+      connection:transfers?transfers+(transfers===1?' transbordo de tren':' transbordos de tren')+(links.length?' · '+links.join(' · '):'')
+        :links.length?links.join(' · '):'directo'
+    };
+  }
+  root.AtlasRouteCore={build,plan,planTimed,timetable,metres,TRANSFER,connectionText};
   if(typeof document==='undefined')return;
 
   /* ── interfaz: barra de búsqueda, sugerencias, ficha y trazo ─ */
@@ -335,7 +347,7 @@
   // El catálogo Renfe viene en mayúsculas: «JEREZ DE LA FRONTERA» → «Jerez de la Frontera».
   const SMALL=new Set(['de','del','la','las','los','el','y','i','en']);
   const title=s=>String(s||'').toLowerCase().replace(/(^|[\s\-\/(.'])(\p{L}+)/gu,(m,a,w,at)=>a+(at&&SMALL.has(w)?w:w[0].toUpperCase()+w.slice(1)));
-  let map,dataset,showInfo,onChange,openStation,graph=null,index=[],routeOn=false;
+  let map,dataset,showInfo,onChange,openStation,graph=null,index=[],routeOn=false,runRevision=0;
   const sel={origin:null,destination:null,date:null,time:null,pinned:false};
   const fields={origin:null,destination:null};
   let active=null,options=[],cursor=-1;
@@ -421,9 +433,11 @@
     else focusStation(entry);
   }
   async function focusStation(entry){
+    const revision=runRevision;
     map.flyTo({center:entry.coords,zoom:12,duration:CFG.reducedMotion()?0:1200});
     if(entry.feature)return openStation(entry.feature);
     await Promise.all([root.AtlasCapas.loadServices(),root.AtlasThemes?.prepareConnections(),root.AtlasTransport?.load()]).catch(()=>{});
+    if(revision!==runRevision)return;
     const sid=graph?.groups.get(entry.key)?.sids.find(s=>s.startsWith('renfe-national:'))||graph?.groups.get(entry.key)?.sids[0];
     if(sid)root.AtlasCapas.stationInfo(sid);
   }
@@ -462,13 +476,20 @@
   }
 
   async function run(){
+    const revision=++runRevision,origin=sel.origin,destination=sel.destination;
+    const go=$('#rb-go');go.classList.remove('busy');go.removeAttribute('aria-busy');
     closeList();
     if(!sel.origin||!sel.destination)return;
     if(sel.origin.key===sel.destination.key){toast('El origen y el destino son la misma estación.');return;}
-    const go=$('#rb-go');go.classList.add('busy');go.setAttribute('aria-busy','true');
-    try{await ensureGraph();}catch(e){toast('No se han podido cargar los servicios. Reintenta en unos segundos.');go.classList.remove('busy');go.removeAttribute('aria-busy');return;}
+    go.classList.add('busy');go.setAttribute('aria-busy','true');
+    const current=()=>revision===runRevision&&sel.origin===origin&&sel.destination===destination;
+    const finish=()=>{if(revision===runRevision){go.classList.remove('busy');go.removeAttribute('aria-busy');}};
+    try{await ensureGraph();}catch(e){if(current())toast('No se han podido cargar los servicios. Reintenta en unos segundos.');finish();return;}
+    if(!current()){finish();return;}
     try{await ensureTimetable();}catch{/* sin horarios: queda la estimación */}
+    if(!current()){finish();return;}
     await new Promise(r=>setTimeout(r,0));
+    if(!current()){finish();return;}
     defaultWhen();
     let result=null,note=null;
     if(tt){
@@ -522,7 +543,7 @@
     shown.options.forEach((o,n)=>{
       const b=el('button','rt-option');b.type='button';b.setAttribute('aria-pressed',String(n===shown.idx));b.dataset.idx=n;
       const times=el('span','rt-times',hm(o.dep)+' → '+hm(o.arr));
-      const meta=el('span','rt-meta',fmtDur(o.minutes)+' · '+(o.transfers?o.transfers+(o.transfers===1?' transbordo':' transbordos'):'directo'));
+      const meta=el('span','rt-meta',fmtDur(o.minutes)+' · '+connectionText(o).connection);
       const prods=el('span','rt-prods');
       for(const p of [...new Map(o.rides.map(l=>[l.product.name,l.product])).values()]){const c=el('i','rt-dot');c.style.setProperty('--c',p.color);c.title=p.name;prods.append(c,document.createTextNode(p.name+' '));}
       b.append(times,meta,prods);
@@ -559,7 +580,7 @@
           (l.exact?'':'≈ ')+fmtKm(l.km),timed?fmtDur(l.minutes):'≈ '+fmtMin(l.minutes)].join(' · '));
         body.append(head,meta);
         if(l.variant.madrid_assumed)body.append(el('small',null,'Estación de Madrid asignada por corredor: el horario de OUIGO solo dice «Madrid».'));
-        if(l.alternatives.length){body.append(el('small','it-alt','También directo: '+l.alternatives.join(', ')));}
+        if(l.alternatives.length){body.append(el('small','it-alt','Otros servicios para este tramo en tren: '+l.alternatives.join(', ')));}
         if(l.stops.length){const d=el('details','it-stops'),ul=el('ol');d.append(el('summary',null,'Ver paradas'));
           for(const s of l.stops)ul.append(el('li',null,(s.time!==undefined?hm(s.time)+' · ':'')+(s.name||s)));d.append(ul);body.append(d);}
         li.append(rail,body);ol.append(li);
@@ -586,13 +607,12 @@
         'La duración es una estimación por distancia y tipo de vía, con '+TRANSFER+' min de margen por transbordo. '+
         (r.exact?'Los kilómetros se miden sobre el trazado inferido en la red IGN.':'Algún tramo no tiene trazado verificable: sus kilómetros se aproximan en línea recta.')+' No incluye Cercanías de ancho ibérico, iryo ni redes autonómicas.'));
     const operators=[...new Set(r.rides.map(l=>l.variant.operator))];
-    const city=r.legs.find(l=>l.type==='city');
+    const summary=connectionText(r);
     const pct=r.km?Math.round(r.hsKm/r.km*100):0;
-    const subtitle=timed?dayLabel(sel.date)+' · '+(r.rides.length===1?'un solo tren':r.rides.length+' trenes')+' · '+operators.join(' y ')
-      :(r.rides.length===1?'Un solo tren':r.rides.length+' trenes')+(city?' · cambio de estación'+(city.town?' en '+title(city.town):''):'')+' · '+operators.join(' y ');
+    const subtitle=(timed?dayLabel(sel.date)+' · ':'')+summary.trains+' · '+operators.join(' y ');
     const facts=timed
-      ?[{value:hm(r.dep),label:'salida'},{value:hm(r.arr),label:'llegada'},{value:fmtDur(r.minutes),label:r.transfers?r.transfers+(r.transfers===1?' transbordo':' transbordos'):'directo'}]
-      :[{value:'≈ '+fmtMin(r.minutes),label:'duración estimada'},{value:(r.exact?'':'≈ ')+fmtKm(r.km),label:pct?pct+' % por alta velocidad':'por vía convencional'},{value:String(r.transfers),label:r.transfers===1?'transbordo':'transbordos'}];
+      ?[{value:hm(r.dep),label:'salida'},{value:hm(r.arr),label:'llegada'},{value:fmtDur(r.minutes),label:summary.connection}]
+      :[{value:'≈ '+fmtMin(r.minutes),label:'duración estimada'},{value:(r.exact?'':'≈ ')+fmtKm(r.km),label:pct?pct+' % por alta velocidad':'por vía convencional'},{value:String(r.transfers),label:r.transfers===1?'transbordo de tren':'transbordos de tren'}];
     const info=$('#info'),scroll=keep?info.scrollTop:0;
     showInfo('Ruta en tren',sel.origin.name+' → '+sel.destination.name,{},{subtitle,
       chips:timed?[]:[...new Map(r.rides.map(l=>[l.product.name,l.product])).values()].map(p=>({label:p.name,color:p.color})),
@@ -614,7 +634,7 @@
       if(k<r.rides.length-1)marks.push({name:l.to,c:l.toCoords,major:true});
     });
     marks.push({name:last.to,c:last.type==='ride'?last.toCoords:last.coords.at(-1),major:true});
-    AtlasProfile.forRoute(map,parts,marks,{title:'Perfil del recorrido'}).then(block=>{
+    AtlasProfile.forRoute(map,parts,marks,{title:'Perfil del recorrido',isCurrent:()=>slot.isConnected}).then(block=>{
       if(block&&slot.isConnected)slot.replaceWith(block);
     }).catch(error=>console.warn(error));
   }
@@ -675,12 +695,24 @@
   let savedBounds=null;
   const pt=(c,role,name,color)=>({type:'Feature',geometry:{type:'Point',coordinates:c},properties:{role,name,color:color||'#1d2638'}});
   function clearMap(){
+    runRevision++;
+    const go=$('#rb-go');go?.classList.remove('busy');go?.removeAttribute('aria-busy');
     window.AtlasProfile?.clear();
     if(!routeOn)return;routeOn=false;
     map?.getSource('route')?.setData({type:'FeatureCollection',features:[]});
     if(map?.getLayer('route-veil'))map.setLayoutProperty('route-veil','visibility','none');
     if(savedBounds){map.setMaxBounds(savedBounds);savedBounds=null;}
     onChange?.();
+  }
+  function reset(){
+    // Invalida trabajo pendiente antes de tocar campos o cerrar una ficha.
+    clearMap();shown=null;active=null;
+    Object.assign(sel,{origin:null,destination:null,date:null,time:null,pinned:false});
+    if(fields.origin&&fields.destination){
+      fields.origin.value='';fields.destination.value='';closeList();syncBar();
+    }
+    const info=$('#info');
+    if(info?.dataset.route)$('#close')?.click();
   }
 
   /* ── teclado y eventos de la barra ── */
@@ -730,7 +762,9 @@
   function state(){if(!(sel.origin&&sel.destination&&routeOn))return undefined;return sel.origin.key+'>'+sel.destination.key+(shown?.timed?'@'+sel.date+'T'+hmInput(sel.time):'');}
   async function restore(value){
     if(typeof value!=='string'||!value.includes('>'))return;
+    const revision=runRevision;
     try{await ensureGraph();}catch{return;}
+    if(revision!==runRevision)return;
     const [pair,when]=value.split('@'),[a,b]=pair.split('>'),find=k=>index.find(e=>e.key===k);
     const m=/^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})$/.exec(when||'');
     if(m){sel.date=m[1];sel.time=+m[2]*60+ +m[3];sel.pinned=true;}
@@ -738,5 +772,5 @@
     sel.origin=o;sel.destination=d;fields.origin.value=o.name;fields.destination.value=d.name;syncBar();
     await run();sel.pinned=false;
   }
-  root.AtlasRoute={init,clearMap,state,restore,active:()=>routeOn};
+  root.AtlasRoute={init,clearMap,reset,state,restore,active:()=>routeOn};
 })(typeof window!=='undefined'?window:globalThis);

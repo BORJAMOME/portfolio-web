@@ -90,42 +90,124 @@
     if(typeof map.setSky==='function')map.setSky({'sky-color':'#b9c5d6','horizon-color':'#fbfbfb','fog-color':'#cad9ea','sky-horizon-blend':0.8,'horizon-fog-blend':0.5,'fog-ground-blend':0.12});
     map.setMaxPitch(75);
     const sliders={};
-    const summary=document.createElement('p');summary.className='terrain-note';
-    summary.textContent=manifest?.tiles?.length?'':'Relieve Mapzen · fuente alternativa. MDT oficial no cargado.';summary.hidden=!summary.textContent;
-    function setEnabled(value){
+    const summary=document.createElement('p');summary.className='terrain-note';summary.setAttribute('role','status');
+    let terrainError='',previousView=null,returnButton=null;
+    const failedSources=new Set();
+    const tileKeys=new Set(manifest?.tiles||[]);
+    const motion=duration=>root.AtlasConfig?.reducedMotion()?0:duration;
+    function getState(){return {enabled,exaggeration,shade,pitch:map.getPitch(),bearing:map.getBearing(),source};}
+    function changed(){options.onChange?.(getState());}
+    function updateSummary(){
+      let text=manifest?.tiles?.length?'MDT IGN':'Relieve Mapzen · fuente alternativa';
+      if(tileKeys.size){
+        const centre=map.getCenter(),lat=Math.max(-85.051129,Math.min(85.051129,centre.lat));
+        // MapLibre's camera zoom uses 512 px tiles; this raster-dem uses 256 px.
+        // Nominal z = camera zoom + 1. This estimates sampling at the centre,
+        // not the renderer's adaptive terrain mesh LOD or altimetric accuracy.
+        const limit=Math.min(manifest.maxzoom??12,Math.max(0,Math.floor(map.getZoom()+1)));
+        let level=-1;
+        for(let z=limit;z>=0;z--){
+          const n=2**z,x=Math.floor((centre.lng+180)/360*n),y=Math.floor((1-Math.asinh(Math.tan(lat*Math.PI/180))/Math.PI)/2*n);
+          if(tileKeys.has(`${z}/${x}/${y}`)){level=z;break;}
+        }
+        if(level>=0){
+          const metres=40075016.68557849*Math.cos(lat*Math.PI/180)/(256*2**level);
+          const resolution=new Intl.NumberFormat('es-ES',{maximumSignificantDigits:2}).format(metres);
+          text+=` · muestreo aproximado en el centro: ≈${resolution} m/píxel (z${level})`;
+          if(level<limit||Math.floor(map.getZoom()+1)>(manifest.maxzoom??12))text+=' · detalle limitado a esta malla';
+        }else text+=' · sin cobertura en el centro';
+      }
+      text+=` · escala vertical ${new Intl.NumberFormat('es-ES',{maximumFractionDigits:1}).format(exaggeration)}×. `;
+      text+='El terreno no representa la cota de la vía: túneles y viaductos no están modelados. El muestreo no indica precisión altimétrica.';
+      if(terrainError)text+=' '+terrainError;
+      const hasChanged=summary.textContent!==text;
+      summary.textContent=text;
+      summary.dataset.warning=terrainError?'1':'0';
+      if(hasChanged)options.onSummary?.(text,Boolean(terrainError));
+    }
+    function onError(event){
+      if(![source,'ign-shading'].includes(event.sourceId))return;
+      const error=event.error,message=String(error?.message||'');
+      if(error?.name==='AbortError'||/abort|Fuera de cobertura del MDT IGN/i.test(message))return;
+      failedSources.add(event.sourceId);
+      summary.dataset.error=message;
+      terrainError='No se ha podido cargar parte del relieve. Puedes seguir explorando la red en 2D.';
+      updateSummary();
+    }
+    function onSourceData(event){
+      if(failedSources.has(event.sourceId)&&event.sourceDataType==='content'&&event.isSourceLoaded){
+        failedSources.delete(event.sourceId);if(!failedSources.size){terrainError='';delete summary.dataset.error;}updateSummary();
+      }
+    }
+    function setEnabled(value,{camera=true}={}){
       enabled=Boolean(value);map.setTerrain(enabled?{source,exaggeration}:null);
-      map.easeTo({pitch:enabled?55:0,duration:root.AtlasConfig?.reducedMotion()?0:600});
+      if(camera)map.easeTo({pitch:enabled?55:0,duration:motion(600)});
       if(sliders.pitch)sliders.pitch.input.value=enabled?55:0;
       options.onToggle?.(enabled);sync();
     }
     function sync(){
       if(sliders.pitch){sliders.pitch.input.value=Math.round(map.getPitch());sliders.pitch.output.textContent=Math.round(map.getPitch())+'°';}
       if(sliders.bearing){sliders.bearing.input.value=Math.round(map.getBearing());sliders.bearing.output.textContent=Math.round(map.getBearing())+'°';}
+      updateSummary();
     }
     function slider(key,title,min,max,step,value,unit,change){
       const label=document.createElement('label'),input=document.createElement('input'),output=document.createElement('output');
       label.className='terrain-control';label.append(document.createTextNode(title));input.type='range';input.min=min;input.max=max;input.step=step;input.value=value;input.setAttribute('aria-label',title);output.textContent=value+unit;
       input.oninput=()=>{output.textContent=input.value+unit;change(Number(input.value));};label.append(input,output);host.append(label);sliders[key]={input,output};
     }
-    function action(title,fn){const b=document.createElement('button');b.type='button';b.textContent=title;b.onclick=fn;host.append(b);}
+    function action(title,fn){const b=document.createElement('button');b.type='button';b.textContent=title;b.onclick=fn;host.append(b);return b;}
     if(host){
       slider('pitch','Inclinación',0,75,1,0,'°',v=>{if(!enabled)setEnabled(true);map.jumpTo({pitch:v});});
       slider('bearing','Orientación',-180,180,1,0,'°',v=>map.jumpTo({bearing:v}));
-      slider('exaggeration','Escala vertical',1,2,0.1,1,'×',v=>{exaggeration=v;if(enabled)map.setTerrain({source,exaggeration});});
+      slider('exaggeration','Escala vertical',1,2,0.1,1,'×',v=>{exaggeration=v;if(enabled)map.setTerrain({source,exaggeration});updateSummary();changed();});
       const label=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.checked=true;
-      check.onchange=()=>{shade=check.checked;map.setLayoutProperty('hillshade','visibility',shade?'visible':'none');};label.append(check,document.createTextNode('Sombreado del relieve'));host.append(label);
-      action('Explorar Guadarrama',()=>{setEnabled(true);map.flyTo({center:[-4.02,40.77],zoom:10.6,pitch:65,bearing:-25,duration:root.AtlasConfig?.reducedMotion()?0:1400});});
-      action('Restablecer perspectiva',()=>{exaggeration=1;sliders.exaggeration.input.value=1;sliders.exaggeration.output.textContent='1×';if(enabled)map.setTerrain({source,exaggeration});map.easeTo({pitch:enabled?55:0,bearing:0});});
+      sliders.shade=check;
+      check.onchange=()=>{shade=check.checked;if(map.getLayer('hillshade'))map.setLayoutProperty('hillshade','visibility',shade?'visible':'none');changed();};label.append(check,document.createTextNode('Sombreado del relieve'));host.append(label);
+      const areas=manifest?.detail_areas||(manifest?.detail_bounds?{Guadarrama:manifest.detail_bounds}:{});
+      for(const [name,box] of Object.entries(areas)){
+        if(!Array.isArray(box)||box.length!==4||!box.every(Number.isFinite))continue;
+        action('Explorar '+name.split(' (')[0],()=>{
+          const centre=map.getCenter();
+          previousView={...getState(),center:[centre.lng,centre.lat],zoom:map.getZoom(),padding:map.getPadding?.(),roll:map.getRoll?.()};
+          returnButton.disabled=false;
+          map.stop();setEnabled(true,{camera:false});
+          map.fitBounds([[box[0],box[1]],[box[2],box[3]]],{padding:typeof options.padding==='function'?options.padding():options.padding??65,maxZoom:11,pitch:60,bearing:0,duration:motion(1100)});
+        });
+      }
+      returnButton=action('Volver al encuadre anterior',()=>{
+        if(!previousView)return;
+        const view=previousView;previousView=null;returnButton.disabled=true;
+        map.stop();restoreState(view);setEnabled(view.enabled,{camera:false});
+        const camera={center:view.center,zoom:view.zoom,pitch:view.pitch,bearing:view.bearing,duration:motion(600)};
+        if(view.padding)camera.padding=view.padding;
+        if(Number.isFinite(view.roll))camera.roll=view.roll;
+        map.easeTo(camera);
+      });
+      returnButton.disabled=true;
+      action('Restablecer perspectiva',()=>{restoreState({exaggeration:1});map.easeTo({pitch:enabled?55:0,bearing:0,duration:motion(600)});});
       if(options.getSelection)action('Centrar selección',()=>{
         const feature=options.getSelection();if(!feature)return;
         let points=[];function walk(v){if(typeof v[0]==='number')points.push(v);else v.forEach(walk);}walk(feature.geometry.coordinates);
         const box=points.reduce((b,p)=>[[Math.min(b[0][0],p[0]),Math.min(b[0][1],p[1])],[Math.max(b[1][0],p[0]),Math.max(b[1][1],p[1])]],[[180,90],[-180,-90]]);
-        map.fitBounds(box,{padding:85,maxZoom:14,pitch:enabled?55:0});
+        map.fitBounds(box,{padding:typeof options.padding==='function'?options.padding():options.padding??85,maxZoom:14,pitch:enabled?55:0,duration:motion(600)});
       });
       host.append(summary);
     }
-    map.on('moveend',sync);
-    return {setEnabled,getState:()=>({enabled,exaggeration,shade,pitch:map.getPitch(),bearing:map.getBearing(),source}),destroy:()=>map.off('moveend',sync)};
+    function restoreState(state={}){
+      if(typeof state.exaggeration==='number'&&Number.isFinite(state.exaggeration)&&state.exaggeration>=1&&state.exaggeration<=2){
+        exaggeration=Math.round(state.exaggeration*10)/10;
+        if(sliders.exaggeration){sliders.exaggeration.input.value=exaggeration;sliders.exaggeration.output.textContent=exaggeration+'×';}
+        if(enabled)map.setTerrain({source,exaggeration});
+      }
+      if(typeof state.shade==='boolean'){
+        shade=state.shade;if(sliders.shade)sliders.shade.checked=shade;
+        if(map.getLayer('hillshade'))map.setLayoutProperty('hillshade','visibility',shade?'visible':'none');
+      }
+      updateSummary();changed();
+    }
+    map.on('moveend',sync);map.on('error',onError);map.on('sourcedata',onSourceData);
+    updateSummary();
+    return {setEnabled,getState,getSummary:()=>summary.textContent,restoreState,destroy:()=>{map.off('moveend',sync);map.off('error',onError);map.off('sourcedata',onSourceData);}};
   }
   root.AtlasTerrain={create};
 })(typeof window!=='undefined'?window:globalThis);

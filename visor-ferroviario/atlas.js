@@ -15,10 +15,14 @@ let selectedId = null;
 let savedQueries = [];
 let terrainEnabled = false;
 let terrainController;
+let basemapController;
+let terrainSummary="",terrainWarning=false;
+const failedMapSources = new Set();
 let infoRevision = 0;
 let lineCatalog;
 let infoOpener = null;
 let pendingHash = null;
+let restoringView = true;
 const $ = s => document.querySelector(s);
 const motion = ms => CFG.reducedMotion() ? 0 : ms;
 
@@ -29,20 +33,31 @@ function readFilters(value) {
   }
 }
 function readHash() {
-  try { return JSON.parse(decodeURIComponent(location.hash.slice(1) || "{}")) || {}; } catch { return {}; }
+  try { const value=JSON.parse(decodeURIComponent(location.hash.slice(1) || "{}")); return value&&typeof value==="object"&&!Array.isArray(value)?value:{}; } catch { return {}; }
 }
 pendingHash = readHash();
 readFilters(pendingHash);
 let hashTimer;
+function persistHash() {
+  clearTimeout(hashTimer);
+  if(!ready||restoringView)return;
+  const state = {...filters, ...(window.AtlasCapas?.getState() || {}), p: window.AtlasPopulation?.state(), tp: window.AtlasTransport?.state(), r: window.AtlasRoute?.state(), m: terrainEnabled ? 1 : undefined,
+    b:basemapController?.state()==='positron'?'positron':undefined,
+    c:window.AtlasViewState.capture(map), tv:window.AtlasViewState.terrain(terrainController?.getState()),
+    l:Object.fromEntries([...document.querySelectorAll("[data-layer]")].map(input=>[input.dataset.layer,input.checked]))};
+  for(const key of Object.keys(filters))if(!state[key].length)delete state[key];
+  if(state.p&&!state.p.on)delete state.p;
+  try {
+    const hash="#" + encodeURIComponent(JSON.stringify(state));
+    history.replaceState(null, "", hash);
+    const web=document.querySelector("#web-view");if(web)web.href="https://borjamora.es/visor-ferroviario/"+hash;
+  } catch {}
+}
 function writeHash() {
   window.AtlasPanel?.sync();
   clearTimeout(hashTimer);
-  hashTimer = setTimeout(() => {
-    const state = {...filters, ...(window.AtlasCapas?.getState() || {}), p: window.AtlasPopulation?.state(), tp: window.AtlasTransport?.state(), r: window.AtlasRoute?.state(), m: terrainEnabled ? 1 : undefined};
-    for(const key of Object.keys(filters)) if(!state[key].length) delete state[key];
-    if(state.p && !state.p.on) delete state.p;
-    try { history.replaceState(null, "", "#" + encodeURIComponent(JSON.stringify(state))); } catch {}
-  }, 150);
+  if(!ready||restoringView)return;
+  hashTimer = setTimeout(persistHash,150);
 }
 try { savedQueries = JSON.parse(localStorage.getItem("ferro_atlas_queries") || "[]"); if(!Array.isArray(savedQueries))savedQueries=[]; } catch {}
 
@@ -73,22 +88,37 @@ if(map) {
   map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),"top-right");
   map.addControl(new maplibregl.ScaleControl({unit:"metric"}),"bottom-left");
   map.addControl(new maplibregl.AttributionControl({compact:true}),"bottom-right");
+  map.getCanvas().addEventListener("webglcontextlost",()=>{failedMapSources.add("webgl");updateMapStatus();statusText.textContent="Se ha interrumpido el renderizado del mapa. Esperando recuperación gráfica…";});
+  map.getCanvas().addEventListener("webglcontextrestored",()=>{failedMapSources.delete("webgl");updateMapStatus();});
   const coordinate = new Intl.NumberFormat("es-ES",{minimumFractionDigits:4,maximumFractionDigits:4});
   map.on("mousemove",event=>{
     const {lat,lng}=event.lngLat;
     $("#coordinates").textContent=coordinate.format(Math.abs(lat))+"° "+(lat>=0?"N":"S")+" · "+coordinate.format(Math.abs(lng))+"° "+(lng>=0?"E":"O");
   });
-  // Solo avisa de fallos reales de capas externas; ignora cancelaciones y teselas del MDT sin cobertura.
+  // El controlador del terreno comunica sus fallos en el panel de relieve.
   map.on("error",event=>{
     const message=String(event.error?.message||"");
-    if(event.error?.name==="AbortError"||/abort/i.test(message)||["ign-terrain","ign-shading"].includes(event.sourceId))return;
+    if(event.error?.name==="AbortError"||/abort/i.test(message))return;
+    if(["ign-terrain","ign-shading","terrain"].includes(event.sourceId))return;
+    if(event.sourceId==='basemap-openmaptiles'&&basemapController?.state()!=='positron')return;
     console.error(event.error);
-    statusText.dataset.warning="1";
-    statusText.textContent="Una capa externa no ha podido cargarse. La red y las capas locales siguen disponibles.";
+    failedMapSources.add(event.sourceId||"unknown");
+    updateMapStatus();
   });
-  map.on("idle",()=>{if(statusText.dataset.warning&&ready){delete statusText.dataset.warning;statusText.textContent=baseStatus();}});
+  map.on("sourcedata",event=>{
+    // Idle also fires after failed requests: only content from the failed source
+    // can clear its warning. Metadata or success from another source cannot.
+    if(event.sourceDataType!=="content"||!event.isSourceLoaded)return;
+    if(failedMapSources.delete(event.sourceId))updateMapStatus();
+  });
 }
-const baseStatus=()=>dataset?number.format(peninsular.length)+" tramos IGN peninsulares · datos a noviembre de 2026":"Cargando datos…";
+const baseStatus=()=>failedMapSources.size?"Una capa del mapa no ha podido cargarse. Las demás capas siguen disponibles.":terrainWarning?"Relieve incompleto: parte del terreno no ha cargado. La red sigue disponible en 2D.":dataset?number.format(peninsular.length)+" tramos IGN peninsulares · datos a noviembre de 2026":"Cargando datos…";
+
+function updateMapStatus(){
+  if(failedMapSources.size)statusText.dataset.warning="1";
+  else delete statusText.dataset.warning;
+  statusText.textContent=baseStatus();
+}
 
 function setTerrain(enabled) {
   if(!ready||!terrainController)return;
@@ -110,6 +140,7 @@ function clearSelection(){
   selectedId=null;
 }
 function closeInfo(){
+  infoRevision++;
   $("#info").hidden=true;
   clearSelection();
   window.AtlasCapas?.clearSelection();
@@ -138,7 +169,9 @@ function showInfo(kind,title,fields,opts={},actions,media) {
   for(const chip of opts.chips||[]){const li=document.createElement("li");li.textContent=chip.label;if(chip.color){li.style.setProperty("--c",chip.color);li.classList.add("coloured");}if(chip.title)li.title=chip.title;chips.append(li);}
   const facts=$("#info-facts");facts.replaceChildren();facts.hidden=!opts.facts?.length;
   for(const fact of opts.facts||[]){const div=document.createElement("div"),strong=document.createElement("strong"),span=document.createElement("span");strong.textContent=fact.value;span.textContent=fact.label;div.append(strong,span);facts.append(div);}
-  const extra=$("#info-extra");extra.replaceChildren();extra.hidden=!opts.extra;if(opts.extra)extra.append(opts.extra);
+  const extra=$("#info-extra");
+  for(const profile of extra.querySelectorAll('.profile'))profile.dispatchEvent(new Event('profile-dispose'));
+  extra.replaceChildren();extra.hidden=!opts.extra;if(opts.extra)extra.append(opts.extra);
   // Una ficha que no es de ruta retira el trazo de la ruta anterior.
   $("#info").dataset.route=opts.route?"1":"";if(!opts.route)window.AtlasRoute?.clearMap();
   const figure=$("#info-media");figure.hidden=!opts.media;
@@ -175,9 +208,11 @@ function connections(coordinates){
 }
 window.AtlasConnections=connections;
 async function stationInfo(feature) {
+  const revision=++infoRevision;
   const p=feature.properties;
   // La ficha de estación muestra los servicios con parada acreditada, sea cual sea el tema activo.
   try{await Promise.all([AtlasCapas.loadServices(),AtlasThemes.prepareConnections(),AtlasTransport.load()]);}catch{}
+  if(revision!==infoRevision)return;
   if(AtlasCapas.hasStation(p.CODIGO)){AtlasCapas.stationInfo(AtlasCapas.hasStation(p.CODIGO));return;}
   showInfo("Estación Renfe",p.DESCRIPCION,{
     "Dirección":p.DIRECION,
@@ -197,6 +232,7 @@ function classOf(dim,p){
   return d.items.find(i=>(i.values||[i.id]).includes(String(p[d.prop])))||d.items.find(i=>i.id==="none"||i.id==="unknown");
 }
 async function sectionInfo(rendered, location) {
+  const requestRevision=++infoRevision;
   const original = dataset.rail.features[rendered.id];
   const feature = original?.properties.id === rendered.properties.id ? original : rendered;
   const p = feature.properties;
@@ -214,6 +250,7 @@ async function sectionInfo(rendered, location) {
     ...(electric!=="unknown"?[{value:electric==="yes"?"Sí":"No",label:"electrificada"}]:[])
   ];
   try{await AtlasCapas.loadServices();}catch{}
+  if(requestRevision!==infoRevision)return;
   const services = AtlasCapas.servicesOnEdge?.(rendered.id) || [];
   const base = {
     "Titularidad y gestión":net.id==="none"?"Sin identificar: no coincide con el catálogo de Adif ni con los trazados oficiales de FGC, FGV, ETS, Metro Bilbao o el CRTM.":(net.group?net.group+" · ":"")+net.name,
@@ -292,8 +329,19 @@ function renderFacets() {
   }
 }
 function updateStationCount(){
-  if(!map||!dataset)return;const b=map.getBounds();const enabled=$('[data-layer="stations"]').checked;
-  $("#station-count").textContent=number.format(enabled?dataset.stations.features.filter(f=>b.contains(f.geometry.coordinates.slice(0,2))).length:0);
+  if(!map||!dataset)return;
+  const zoom=map.getZoom(),enabled=$('[data-layer="stations"]').checked;
+  // At z10 the point is only an invisible hit target; count visible symbols and
+  // labels instead. Deduplicate tile fragments and icon/label pairs by station.
+  const candidates=zoom<10?["stations"]:["station-badges","station-labels"];
+  const layers=enabled?candidates.filter(id=>{
+    const layer=map.getLayer(id);
+    return layer&&map.getLayoutProperty(id,"visibility")!=="none"&&
+      zoom>=(layer.minzoom??0)&&zoom<(layer.maxzoom??24);
+  }):[];
+  const stations=new Set(layers.length?map.queryRenderedFeatures({layers}).map(feature=>
+    String(feature.properties?.CODIGO??feature.id??JSON.stringify(feature.geometry.coordinates))):[]);
+  $("#station-count").textContent=number.format(stations.size);
 }
 function applyFilters() {
   const all=window.AtlasCapas?.current()==="all";
@@ -324,6 +372,14 @@ $("#reset").onclick=()=>{readFilters({});applyFilters();};
    menos, mientras el panel de capas está abierto; si el usuario la toca, manda su elección. */
 let legendOpen=null,legendTouched=false;
 const legendAuto=()=>!CFG.compact()&&!(innerWidth<=1100&&!$("#tools").hidden);
+function syncTerrainLegend(){
+  const body=$("#legend-body");if(!body)return;
+  let note=body.querySelector('.legend-terrain');
+  if(!terrainEnabled&&!terrainWarning){note?.remove();return;}
+  if(!note){note=document.createElement('p');note.className='legend-terrain';body.append(note);}
+  note.textContent=(terrainEnabled?'Relieve 3D · ':'')+terrainSummary.split('El terreno')[0].trim()+(terrainWarning?' Relieve incompleto; puedes usar 2D.':'');
+  note.dataset.warning=terrainWarning?'1':'0';
+}
 function renderLegend() {
   const host=$("#legend");
   host.replaceChildren();
@@ -359,6 +415,7 @@ function renderLegend() {
   if(points.childElementCount)legend.append(points);
   const sizes=window.AtlasPopulation?.legend();
   if(sizes)legend.append(sizes);
+  syncTerrainLegend();
   for(const sw of [...legend.querySelectorAll(".legend-cols .swatch")].slice(0,6))preview.append(sw.cloneNode());
   if(legend.querySelector(".legend-sizes")){const dot=document.createElement("i");dot.className="legend-dot";preview.append(dot);}
   host.hidden=!legend.childElementCount;
@@ -377,19 +434,46 @@ $("#save-query").onclick=()=>{
   const name=$("#query-name").value.trim();
   if(!name){$("#action-message").textContent="Escribe un nombre para guardar la consulta.";return;}
   savedQueries=savedQueries.filter(q=>q.name!==name);
-  savedQueries.push({name,filters:JSON.parse(JSON.stringify(filters)),capas:window.AtlasCapas?.getState(),population:window.AtlasPopulation?.state()});
+  persistHash();
+  savedQueries.push({name,view:readHash(),filters:JSON.parse(JSON.stringify(filters)),capas:window.AtlasCapas?.getState(),population:window.AtlasPopulation?.state()});
   try{localStorage.setItem("ferro_atlas_queries",JSON.stringify(savedQueries));renderSaved();$("#action-message").textContent="Consulta guardada en este navegador.";}
   catch{$("#action-message").textContent="El navegador no permite guardar consultas.";}
 };
 $("#saved-query").onchange=async function(){
-  if(this.value==="")return;
-  const query=savedQueries[Number(this.value)];
-  readFilters(query.filters);applyFilters();
-  if(query.capas)await AtlasCapas.restore(query.capas);
-  if(query.population)await AtlasPopulation.restore(query.population);
+  if(this.value===""||!ready||restoringView)return;
+  const query=savedQueries[Number(this.value)];if(!query)return;
+  if(!query.view){
+    readFilters(query.filters);applyFilters();
+    if(query.capas)await AtlasCapas.restore(query.capas);
+    if(query.population)await AtlasPopulation.restore(query.population);
+    return;
+  }
+  restoringView=true;this.disabled=true;
+  try{
+    const view=query.view;
+    readFilters(view);applyFilters();
+    await AtlasCapas.restore(view);
+    await AtlasPopulation.restore(view.p||{on:false});
+    await AtlasTransport.restore(view.tp||'');
+    if(view.r)await window.AtlasRoute?.restore(view.r);else window.AtlasRoute?.reset();
+    terrainController?.restoreState({exaggeration:1,shade:true,...window.AtlasViewState.terrain(view.tv)});
+    setTerrain(view.m===1||view.m===true);
+    for(const [id,value] of Object.entries(window.AtlasViewState.layers(view.l))){
+      const input=document.querySelector('[data-layer="'+id+'"]');
+      if(input){input.checked=value;input.onchange();}
+    }
+    await basemapController.set(window.AtlasBasemap.valid(view.b));
+    const camera=window.AtlasViewState.camera(view.c);
+    if(camera){map.stop();map.jumpTo({...camera,pitch:terrainEnabled?camera.pitch:0});}
+    $("#action-message").textContent="Consulta restaurada con su encuadre, fondo y capas.";
+  }catch(error){$("#action-message").textContent="No se pudo restaurar toda la consulta: "+error.message;}
+  finally{restoringView=false;this.disabled=false;writeHash();renderLegend();}
 };
+$("#web-view").addEventListener("click",persistHash);
+$("#web-view").addEventListener("auxclick",persistHash);
 $("#share").onclick=async()=>{
-  try{await navigator.clipboard.writeText(location.href);$("#action-message").textContent="Enlace copiado con el tema, los filtros y la selección.";}
+  persistHash();
+  try{await navigator.clipboard.writeText(location.href);$("#action-message").textContent="Enlace copiado con el tema, los filtros, la cámara, el fondo, el relieve y las capas.";}
   catch{$("#action-message").textContent="Copia la dirección del navegador para conservar esta vista.";}
 };
 $("#export").onclick=()=>{
@@ -415,12 +499,14 @@ for(const checkbox of document.querySelectorAll("[data-layer]")) {
   checkbox.onchange=()=>{
     if(!ready)return;
     const ids=checkbox.dataset.layer==="stations"?["stations","station-badges","station-labels"]:checkbox.dataset.layer==="rail"?["rail","rail-hit"]:[checkbox.dataset.layer];
-    for(const id of ids)map.setLayoutProperty(id,"visibility",checkbox.checked?"visible":"none");
+    for(const id of ids)if(map.getLayer(id))map.setLayoutProperty(id,"visibility",checkbox.checked?"visible":"none");
+    basemapController?.sync();
     applyFilters();
   };
 }
 
 /* ── carga ── */
+const loadStarted=performance.now();
 const dataPromise=fetch("datos.json").then(r=>{if(!r.ok)throw new Error("No se ha podido cargar datos.json ("+r.status+")");return r.json();});
 if(map)map.on("load",async()=>{
   try {
@@ -469,7 +555,12 @@ if(map)map.on("load",async()=>{
       // Desde el zoom 10 el punto cede el sitio al símbolo de estación y queda invisible como zona de clic.
       "circle-opacity":["step",["zoom"],1,10,0],"circle-stroke-opacity":["step",["zoom"],1,10,0],
       "circle-pitch-alignment":"viewport","circle-pitch-scale":"viewport"}});
-    AtlasStationSymbol.add(map).then(()=>{if(map.getLayer("station-badges"))return;map.addLayer({id:"station-badges",type:"symbol",source:"stations",minzoom:10,layout:{
+    AtlasStationSymbol.add(map).then(()=>{
+      if(!map.hasImage("station-symbol")){
+        map.setPaintProperty("stations","circle-opacity",1);map.setPaintProperty("stations","circle-stroke-opacity",1);
+        return;
+      }
+      if(map.getLayer("station-badges"))return;map.addLayer({id:"station-badges",type:"symbol",source:"stations",minzoom:10,layout:{
       "icon-image":"station-symbol","icon-size":["interpolate",["linear"],["zoom"],10,.62,13,.85,16,1],"icon-allow-overlap":true,"icon-pitch-alignment":"viewport",
       visibility:$('[data-layer="stations"]').checked?"visible":"none"}},"station-labels");});
     const badge=document.createElement('canvas');badge.width=badge.height=32;const badgeContext=badge.getContext('2d');badgeContext.fillStyle='#fbfbfb';badgeContext.strokeStyle='#b9c5d6';badgeContext.lineWidth=1;badgeContext.beginPath();badgeContext.roundRect(1,1,30,30,5);badgeContext.fill();badgeContext.stroke();map.addImage('station-badge',badgeContext.getImageData(0,0,32,32),{stretchX:[[8,24]],stretchY:[[8,24]],content:[5,5,27,27],pixelRatio:2});
@@ -491,6 +582,7 @@ if(map)map.on("load",async()=>{
       map.on("mouseenter",id,()=>map.getCanvas().style.cursor="pointer");
       map.on("mouseleave",id,()=>map.getCanvas().style.cursor="");
     }
+    basemapController=window.AtlasBasemap.create(map,{select:$("#basemap-select"),note:$("#basemap-note"),retry:$("#basemap-fallback"),onChange:mode=>{if(mode==='simple'){failedMapSources.delete('basemap-openmaptiles');updateMapStatus();}writeHash();}});
     ready=true;
     AtlasThemes.init({map,dataset,showInfo,onChange:()=>{renderLegend();writeHash();},onLegend:()=>renderLegend()});
     AtlasCapas.init({map,dataset,showInfo,legacy:AtlasThemes,onChange:()=>applyFilters()});
@@ -499,9 +591,14 @@ if(map)map.on("load",async()=>{
     window.AtlasRoute?.init({map,dataset,showInfo,onChange:writeHash,openStation:stationInfo});
     applyFilters();
     map.on("moveend",updateStationCount);
+    map.on("idle",updateStationCount);
     terrainController=window.AtlasTerrain?.create(map,{container:$("#terrain-controls"),onToggle:enabled=>{
-      terrainEnabled=enabled;$("#mode").setAttribute("aria-pressed",String(enabled));$("#flat").setAttribute("aria-pressed",String(!enabled));writeHash();
-    },getSelection:()=>dataset.rail.features.find(f=>f.id===selectedId)});
+      terrainEnabled=enabled;$("#mode").setAttribute("aria-pressed",String(enabled));$("#flat").setAttribute("aria-pressed",String(!enabled));syncTerrainLegend();writeHash();
+    },onChange:writeHash,onSummary:(text,warning)=>{
+      terrainSummary=text;terrainWarning=warning;syncTerrainLegend();
+      if(ready&&!statusText.dataset.warning)statusText.textContent=baseStatus();
+    },padding,getSelection:()=>dataset.rail.features.find(f=>f.id===selectedId)});
+    map.on("moveend",writeHash);
     const finishLoading=()=>{if(loading.hidden)return;loading.hidden=true;const attrib=document.querySelector(".maplibregl-ctrl-attrib");attrib?.classList.remove("maplibregl-compact-show");attrib?.removeAttribute("open");};
     map.once("idle",finishLoading);setTimeout(finishLoading,4000);
     statusText.textContent=baseStatus();
@@ -513,8 +610,19 @@ if(map)map.on("load",async()=>{
     if(AtlasCapas.current()==="gauge")renderFacets();
     if(hash.p)await AtlasPopulation.restore(hash.p);
     if(hash.tp)await AtlasTransport.restore(hash.tp);
-    if(hash.m)setTerrain(true);
+    terrainController?.restoreState(window.AtlasViewState.terrain(hash.tv));
+    if(hash.m===1||hash.m===true)setTerrain(true);
     if(hash.r)await window.AtlasRoute?.restore(hash.r);
+    for(const [id,value] of Object.entries(window.AtlasViewState.layers(hash.l))){
+      const input=document.querySelector('[data-layer="'+id+'"]');
+      if(input){input.checked=value;input.onchange();}
+    }
+    await basemapController.set(window.AtlasBasemap.valid(hash.b));
+    // La ficha de ruta puede mover la cámara; el encuadre explícito del enlace tiene prioridad.
+    const camera=window.AtlasViewState.camera(hash.c);
+    if(camera){map.stop();map.jumpTo({...camera,pitch:terrainEnabled?camera.pitch:0});}
+    restoringView=false;writeHash();
+    document.querySelector("#map").dataset.readyMs=String(Math.round(performance.now()-loadStarted));
     renderLegend();finishLoading();
   } catch(error) {
     console.error(error);loading.textContent="Error al preparar el mapa: "+error.message;

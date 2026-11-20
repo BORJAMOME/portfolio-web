@@ -4,17 +4,17 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Atlas ferroviario de España</title>
 <meta name="robots" content="noindex, nofollow">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; worker-src 'self' blob:; child-src blob:; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://www.ign.es; connect-src 'self' https://www.ign.es; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; worker-src 'self' blob:; child-src blob:; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://www.ign.es; connect-src 'self' https://www.ign.es https://tiles.openfreemap.org; object-src 'none'; base-uri 'self'; form-action 'self'">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="vendor/maplibre-gl.css?v=b613b67c"><link rel="stylesheet" href="atlas.css?v=73dac4cf">
+<link rel="stylesheet" href="vendor/maplibre-gl.css?v=b613b67c"><link rel="stylesheet" href="atlas.css?v=798c51ff">
 <script defer src="vendor/maplibre-gl.js?v=eb107f3e"></script>
-<script defer src="capas-config.js?v=f4f34929"></script><script defer src="etiquetas.js?v=8fa171d8"></script>
-<script defer src="filtros.js?v=cfb96cab"></script><script defer src="cartography.js?v=513150a3"></script>
-<script defer src="themes.js?v=ac530787"></script><script defer src="export-map.js?v=60b98a40"></script>
-<script defer src="terrain-manifest.js?v=2403d37f"></script><script defer src="terrain-controls.js?v=d806b802"></script>
-<script defer src="line-identity.js?v=9bd8af51"></script>
-<script defer src="poblacion.js?v=bb19f9ff"></script><script defer src="capas.js?v=eeca207f"></script>
-<script defer src="transporte.js?v=9fca3862"></script><script defer src="oferta.js?v=80dcf463"></script><script defer src="perfil.js?v=921d1409"></script><script defer src="ruta.js?v=31c59d8e"></script><script defer src="atlas.js?v=d14536c1"></script><script defer src="panel.js?v=e0c92e07"></script><script defer src="orientacion.js?v=3c295037"></script>
+<script defer src="capas-config.js?v=7f662ed1"></script><script defer src="etiquetas.js?v=76b151f4"></script>
+<script defer src="filtros.js?v=d84ceba8"></script><script defer src="cartography.js?v=ff56cf9b"></script>
+<script defer src="themes.js?v=364c6d18"></script><script defer src="export-map.js?v=4622b933"></script>
+<script defer src="terrain-manifest.js?v=7150e40e"></script><script defer src="terrain-controls.js?v=bdb5889d"></script>
+<script defer src="basemap.js?v=b0750192"></script><script defer src="line-identity.js?v=3023ba0c"></script><script defer src="view-state.js?v=378b1b7b"></script>
+<script defer src="poblacion.js?v=80303d98"></script><script defer src="capas.js?v=016d587a"></script>
+<script defer src="transporte.js?v=8d49c49e"></script><script defer src="oferta.js?v=80dcf463"></script><script defer src="perfil.js?v=e6338e28"></script><script defer src="ruta.js?v=53ed0ae8"></script><script defer src="atlas.js?v=2af78a3e"></script><script defer src="panel.js?v=e0c92e07"></script><script defer src="orientacion.js?v=3c295037"></script>
 </head>
 <body>
 <a class="skip" href="#map">Saltar al mapa</a>
@@ -58,7 +58,7 @@
 <div><strong id="count">—</strong><span id="count-label">tramos de la consulta</span></div>
 <div><strong id="km">—</strong><span>km de ejes con atributos IGN</span></div>
 <div><strong id="gauge-coverage">—</strong><span>con ancho nominal informado</span></div>
-<div><strong id="station-count">—</strong><span>estaciones en el encuadre</span></div></div>
+<div><strong id="station-count">—</strong><span>estaciones visibles en el mapa</span></div></div>
 <p id="extent" class="muted">Longitudes de los ejes IGN con atributos; no es la longitud oficial de líneas. Estaciones independientes de los filtros.</p>
 <div id="facets"></div><button id="reset" type="button">Restablecer filtros</button>
 </section>
@@ -90,8 +90,12 @@
 </div>
 </fieldset>
 <fieldset class="layers"><legend>Fondo cartográfico</legend>
+<label for="basemap-select" class="stack">Mapa base</label>
+<select id="basemap-select" aria-describedby="basemap-note"><option value="simple">Simplificado</option><option value="positron">Positron · calles y territorio</option></select>
+<p id="basemap-note" class="muted" role="status"></p>
+<button id="basemap-fallback" type="button" hidden>Volver al fondo simplificado</button>
 <div class="layer"><label class="layer-main"><input type="checkbox" role="switch" data-layer="rail" checked><span class="layer-text"><span class="layer-name">Red ferroviaria IGN</span><small>Ejes del IGN bajo el tema elegido</small></span></label></div>
-<div class="layer"><label class="layer-main"><input type="checkbox" role="switch" data-layer="topography"><span class="layer-text"><span class="layer-name">Topografía IGN</span><small>Mapa base del IGN</small></span></label></div>
+<div class="layer"><label class="layer-main"><input type="checkbox" role="switch" data-layer="topography"><span class="layer-text"><span class="layer-name">Topografía IGN</span><small>Mapa raster superpuesto al fondo elegido</small></span></label></div>
 </fieldset>
 </section>
 

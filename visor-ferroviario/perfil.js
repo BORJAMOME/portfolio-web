@@ -14,7 +14,7 @@
   /* ── cotas ── */
   const tiles=new Map();
   function tile(key){
-    if(tiles.has(key))return tiles.get(key);
+    if(tiles.has(key)){const cached=tiles.get(key);tiles.delete(key);tiles.set(key,cached);return cached;}
     const p=(async()=>{
       const response=await fetch('terrain-ign/'+key+'.png');
       if(!response.ok)throw new Error('MDT no disponible');
@@ -26,7 +26,9 @@
       return out;
     })();
     tiles.set(key,p);
-    p.catch(()=>tiles.delete(key));
+    // Un perfil largo no debe retener indefinidamente todos los DEM visitados.
+    if(tiles.size>48)tiles.delete(tiles.keys().next().value);
+    p.catch(()=>{if(tiles.get(key)===p)tiles.delete(key);});
     return p;
   }
   // Posición en píxeles de Web Mercator para un zoom dado.
@@ -87,6 +89,7 @@
   }
   async function build(parts,marks=[]){
     const {samples,total}=sample(parts);
+    if(!Number.isFinite(total)||total<=0||samples.length<2)return null;
     const h=await heights(samples.map(s=>s.c));
     samples.forEach((s,i)=>{s.h=s.gap?null:h[i];s.z=zoomAt(s.c[0],s.c[1]);});
     const valid=samples.filter(s=>s.h!==null&&s.h!==undefined);
@@ -99,7 +102,7 @@
   }
 
   /* ── marcador en el mapa ── */
-  let mapRef=null,current=null,setCursorRef=null;
+  let mapRef=null,current=null,setCursorRef=null,disposeActive=null,requestRevision=0;
   function ensureMarker(map){
     if(map.getSource('profile-cursor'))return;
     map.addSource('profile-cursor',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
@@ -110,15 +113,16 @@
     mapRef.getSource('profile-cursor').setData(c?{type:'Feature',properties:{},geometry:{type:'Point',coordinates:c}}:{type:'FeatureCollection',features:[]});
   }
   function onMapMove(event){
-    if(!current||!setCursorRef)return;
+    if(!current||!setCursorRef||!mapRef.getLayer('route-line'))return;
     const hit=mapRef.queryRenderedFeatures(event.point,{layers:['route-line']});
-    if(!hit.length)return;
+    if(!hit.length){setCursorRef(-1,false);return;}
     const ll=[event.lngLat.lng,event.lngLat.lat];
     let best=-1,bm=Infinity;current.samples.forEach((s,i)=>{if(s.h==null)return;const m=metres(s.c,ll);if(m<bm){bm=m;best=i;}});
     if(best>=0)setCursorRef(best,false);
   }
   function attach(map){
     if(mapRef===map)return;
+    mapRef?.off('mousemove',onMapMove);
     mapRef=map;
     map.on('mousemove',onMapMove);
   }
@@ -142,7 +146,7 @@
     const ends=idx.length?[samples[idx[0]],samples[idx.at(-1)]]:[];
     const first=profile.marks[0],last=profile.marks.at(-1);
     const topNear=nearestMark(profile,profile.top.d);
-    facts.textContent=(first&&last?first.name+' a '+alt(ends[0].h)+' · '+last.name+' a '+alt(ends[1].h)+'. ':'')+
+    facts.textContent=(first&&last?'Terreno cerca de '+first.name+': '+alt(ends[0].h)+' · cerca de '+last.name+': '+alt(ends[1].h)+'. ':'')+
       'El terreno sobre el trazado llega a '+alt(profile.top.h)+(topNear?' cerca de '+topNear.name:'')+'.';
     box.append(facts);
     const wrap=el('div','profile-chart');
@@ -150,10 +154,11 @@
     box.append(wrap,readout);
     // MDT detallado (~30 m) en Guadarrama, Pajares, Despeñaperros y Contreras; ~470 m en el resto.
     const res=profile.detail>0.9?'unos 30 m (MDT detallado de este corredor)':profile.detail>0.05?'unos 30 m en los puertos de montaña con MDT detallado y unos 470 m en el resto':'unos 470 m entre puntos del modelo';
-    box.append(el('p','muted profile-note','Relieve del terreno bajo el trazado (MDT del IGN), no la cota de la vía: en túneles y viaductos la vía pasa por debajo o por encima del terreno, y las pendientes del perfil no son las de la línea. Resolución horizontal: '+res+'. Escala vertical exagerada.'));
+    box.append(el('p','muted profile-note','Relieve del terreno bajo el trazado (MDT del IGN), no la cota de la vía: en túneles y viaductos la vía pasa por debajo o por encima del terreno, y las pendientes del perfil no son las de la línea. Muestreo horizontal aproximado: '+res+'; no indica precisión altimétrica. Las teselas históricas no distinguen NoData de altitud cero. Escala vertical exagerada.'));
 
-    let cursor=-1,svgEl,geom;
+    let cursor=-1,svgEl,geom,disposed=false;
     function draw(){
+      if(disposed)return;
       const W=Math.max(220,Math.round(wrap.clientWidth||280)),H=W<300?132:150,L=40,R=8,T=10,B=24;
       let lo=Math.min(...idx.map(i=>samples[i].h)),hi=Math.max(...idx.map(i=>samples[i].h));
       const pad=Math.max(40,(hi-lo)*0.12);lo=Math.max(lo<0?lo:0,Math.floor((lo-pad)/50)*50);hi=Math.ceil((hi+pad)/50)*50;
@@ -211,6 +216,8 @@
       set(best,true);
     }
     function set(i,toMap){
+      if(disposed)return;
+      if(i<0){clear();return;}
       cursor=i;const s=samples[i];if(!s||!svgEl)return;
       const g=svgEl.querySelector('.pf-cursor'),x=geom.X(s.d),y=geom.Y(s.h);
       const l=g.querySelector('line');l.setAttribute('x1',x);l.setAttribute('x2',x);l.setAttribute('y1',geom.T);l.setAttribute('y2',geom.H-geom.B);
@@ -227,20 +234,27 @@
     ro.observe(wrap);
     requestAnimationFrame(draw);
     current=profile;setCursorRef=(i,toMap)=>set(i,toMap);
-    box.addEventListener('profile-dispose',()=>ro.disconnect());
+    const dispose=()=>{
+      if(disposed)return;disposed=true;ro.disconnect();
+      if(disposeActive===dispose){current=null;setCursorRef=null;disposeActive=null;mark(null);}
+    };
+    disposeActive=dispose;
+    box.addEventListener('profile-dispose',dispose,{once:true});
     return box;
   }
 
   /* API: crea el perfil de una ruta y devuelve el bloque para la ficha (o null si no hay relieve). */
   async function forRoute(map,parts,marks,opts){
     if(!available.size)return null;
+    const revision=++requestRevision;
     attach(map);
     const profile=await build(parts,marks);
-    if(!profile)return null;
+    if(!profile||revision!==requestRevision||opts?.isCurrent&&!opts.isCurrent())return null;
+    disposeActive?.();
     // Después de dibujar la ruta, para que el marcador quede por encima de su trazo.
     ensureMarker(map);map.moveLayer('profile-cursor');
     return render(profile,opts);
   }
-  function clear(){current=null;setCursorRef=null;mark(null);}
+  function clear(){requestRevision++;disposeActive?.();current=null;setCursorRef=null;mark(null);mapRef?.off('mousemove',onMapMove);mapRef=null;}
   root.AtlasProfile={forRoute,clear,build};
 })(window);
