@@ -209,9 +209,10 @@ async function sectionInfo(rendered, location) {
   const rfig = ["adif","adifav","port","lfp","other"].includes(net.id);
   const tracks = AtlasFilters.value(feature,"tracks"), electric = AtlasFilters.value(feature,"electric");
   const facts = [
-    {value:p.nominalgauge?number.format(p.nominalgauge)+" mm":label("gauge",AtlasFilters.value(feature,"gauge")),label:"ancho de vía"},
+    // «de la línea»: el IGN no da el dato del tramo y se toma el de su línea de Adif (capas/lineas-adif.json).
+    {value:p.nominalgauge?number.format(p.nominalgauge)+" mm":label("gauge",AtlasFilters.value(feature,"gauge")),label:"ancho de vía"+(p.fill_g?" · de la línea":"")},
     ...(tracks!=="unknown"?[{value:tracks==="1"?"Única":tracks==="2"?"Doble":tracks+" vías",label:"vía"}]:[]),
-    ...(electric!=="unknown"?[{value:electric==="yes"?"Sí":"No",label:"electrificada"}]:[])
+    ...(electric!=="unknown"?[{value:electric==="yes"?"Sí":"No",label:"electrificada"+(p.fill_e?" · de la línea":"")}]:[])
   ];
   try{await AtlasCapas.loadServices();}catch{}
   const services = AtlasCapas.servicesOnEdge?.(rendered.id) || [];
@@ -255,11 +256,24 @@ async function sectionInfo(rendered, location) {
     ...(corridors.length && {"Corredor de alta velocidad":corridors.join(" · ")}),
     ...(axis && {"Eje":axis}),
     ...(status && {"Estado de explotación":status}),
+    ...adifLineFields(adifLines?.[identity.code]),
     ...base
   }, {...opts, subtitle:endpoints && endpoints!==lineTitle ? endpoints : opts.subtitle,
       chips:[...opts.chips,...corridors.map(name=>({label:"Corredor "+name}))]});
 }
 window.AtlasStationInfo=stationInfo;
+/* Atributos de la línea entera según Adif (vía la capa del Atlas Estratégico de España). Son de la línea,
+   no del tramo seleccionado: la velocidad es la de DISEÑO, no la comercial, y el 0 que declara Adif no se muestra. */
+function adifLineFields(l){
+  if(!l)return {};
+  const electrification={total:"Toda la línea",ninguna:"Ninguna",parcial:l.tramos_electrificados&&l.n_tramos?"Parcial · "+l.tramos_electrificados+" de "+l.n_tramos+" tramos de Adif":"Parcial"}[l.electrificacion];
+  return {
+    "Velocidad de diseño de la línea":l.velocidad_diseno_kmh>0?number.format(l.velocidad_diseno_kmh)+" km/h · no es la velocidad comercial":undefined,
+    "Uso de la línea":l.uso?{viajeros:"Viajeros",mercancías:"Mercancías",mixto:"Mixto: viajeros y mercancías"}[l.uso]||l.uso:undefined,
+    "Electrificación de la línea":electrification,
+    "Longitud de la línea":l.longitud_medida_km?number.format(l.longitud_medida_km)+" km · medida sobre el trazado":undefined
+  };
+}
 
 /* ── filtros IGN (tema «Ancho de vía») ── */
 let facetValues;
@@ -422,10 +436,21 @@ for(const checkbox of document.querySelectorAll("[data-layer]")) {
 
 /* ── carga ── */
 const dataPromise=fetch("datos.json").then(r=>{if(!r.ok)throw new Error("No se ha podido cargar datos.json ("+r.status+")");return r.json();});
+// Opcional: sin este archivo el visor funciona igual, solo sin los atributos de línea de Adif.
+const adifPromise=fetch("capas/lineas-adif.json").then(r=>r.ok?r.json():null).catch(()=>null);
+let adifLines=null;
+/* Tramos IGN de Adif sin electrificación o ancho: se completan con el valor de su línea cuando es uniforme
+   (regla y recuento en tools/visor-atlas-adif.mjs). Se marcan con fill_e / fill_g para decirlo en la ficha. */
+function fillFromLine(p,relleno){
+  const r=relleno?.[p.id];if(!r)return;
+  if("e" in r&&(p.electrified===null||p.electrified===undefined)){p.electrified=r.e===1;p.fill_e=1;}
+  if("g" in r&&!(p.nominalgauge>0)){p.nominalgauge=r.g;p.fill_g=1;}
+}
 if(map)map.on("load",async()=>{
   try {
     dataset=await dataPromise;
-    for(const f of dataset.rail.features){AtlasFilters.prepare(f);f.properties.pen=CFG.peninsular(f.geometry.coordinates[0])?1:0;}
+    const adif=await adifPromise;adifLines=adif?.lineas||null;
+    for(const f of dataset.rail.features){fillFromLine(f.properties,adif?.relleno);AtlasFilters.prepare(f);f.properties.pen=CFG.peninsular(f.geometry.coordinates[0])?1:0;}
     peninsular=dataset.rail.features.filter(f=>f.properties.pen);
     dataset.stations.features=dataset.stations.features.filter(f=>CFG.peninsular(f.geometry.coordinates));
     map.addSource("land",{type:"geojson",data:dataset.boundary});
@@ -445,7 +470,7 @@ if(map)map.on("load",async()=>{
         attribution:'Relieve <a href="https://github.com/tilezen/joerd/blob/master/docs/attribution.md">Mapzen y colaboradores</a>'});
       map.addLayer({id:"hillshade",type:"hillshade",source:"terrain",maxzoom:14,paint:{"hillshade-exaggeration":.2,"hillshade-shadow-color":"#526a8e","hillshade-highlight-color":"#fbfbfb"}},"outside");
     }
-    map.addSource("rail",{type:"geojson",data:dataset.rail,tolerance:.2,attribution:'Obra derivada IGR-RT · IGN/SCNE · CC BY 4.0'});
+    map.addSource("rail",{type:"geojson",data:dataset.rail,tolerance:.2,attribution:'Obra derivada IGR-RT · IGN/SCNE · CC BY 4.0 · Atributos de línea: Adif vía <a href="https://atlas.eltercioviejo.com/ficha/ferrocarril/">Atlas Estratégico de España</a> · CC BY 4.0'});
     window.AtlasBaseRailColor=["case",["boolean",["feature-state","selected"],false],"#101e36",
       ["match",AtlasFilters.expression("gauge"),...Object.entries(AtlasCartography.styles).flatMap(([key,value])=>[key,value.color]),"#76542C"]];
     map.addLayer({id:"rail",type:"line",source:"rail",filter:["==",["get","pen"],1],paint:{
