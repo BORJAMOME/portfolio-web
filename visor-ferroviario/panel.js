@@ -76,7 +76,12 @@
       const sel=open&&b.dataset.cat===current;
       b.setAttribute('aria-expanded',String(sel));b.classList.toggle('is-selected',sel);
       const count=rail.querySelector('[data-count="'+b.dataset.cat+'"]');
-      b.setAttribute('aria-label',b.querySelector('.rail-label').textContent+(count&&!count.hidden?', '+count.textContent+(count.textContent==='1'?' capa activa':' capas activas'):''));
+      // Nombre accesible desde el contenido (sin aria-label, para que coincida con el texto visible · WCAG 2.5.3):
+      // el número de la insignia se oculta a los lectores y se lee completo en un texto oculto tras la etiqueta.
+      b.removeAttribute('aria-label');
+      if(count)count.setAttribute('aria-hidden','true');
+      let sr=b.querySelector('.rail-sr');if(!sr){sr=document.createElement('span');sr.className='rail-sr visually-hidden';b.querySelector('.rail-label').after(sr);}
+      sr.textContent=count&&!count.hidden?', '+count.textContent+(count.textContent==='1'?' capa activa':' capas activas'):'';
     }
     // Resumen y acción de grupo (solo capas conmutables; las facetas y el tema no cuentan).
     const summary=$('#tools-summary'),text=$('#tools-count'),off=$('#tools-off');
