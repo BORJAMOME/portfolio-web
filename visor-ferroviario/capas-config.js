@@ -16,7 +16,7 @@
     services:{name:'Servicios',hint:'Qué tipo de tren circula y dónde para'},
     tourism:{name:'Trenes turísticos',hint:'Viajes de varios días y excursiones'},
     all:{name:'Todas las vías',hint:'Toda la red IGN por tipo de infraestructura'},
-    gauge:{name:'Ancho de vía · IGN',hint:'Filtra la red por ancho, electrificación y vías'},
+    gauge:{name:'Ancho de vía',hint:'IGN y Adif: filtra por ancho, electrificación y vías'},
     tent:{name:'Corredores TEN-T',hint:'Red transeuropea (Hermes 2024)'},
     transit:{name:'Cercanías y redes urbanas',hint:'Líneas urbanas y de Cercanías (GTFS)'}
   };
@@ -74,9 +74,8 @@
       {id:'1668',name:'Ibérico · 1.668 mm',color:'#0072B2'},
       {id:'1435',name:'Estándar · 1.435 mm',color:'#C45C00'},
       {id:'1000',name:'Métrico · 1.000 mm',color:'#00856A'},
-      {id:'narrow',name:'Estrecho · medida no publicada',color:'#716190'},
-      {id:'mixed',name:'Mixto',color:'#AA4499'},
-      {id:'unknown',name:'Sin ancho en el IGN',color:'#A0A7B2',values:['unknown','notApplicable','pending','other']}]}
+      {id:'mixed',name:'Mixto (dos anchos)',color:'#AA4499'},
+      {id:'unknown',name:'Sin determinar',color:'#A0A7B2',values:['unknown','narrow','notApplicable','pending','other']}]}
   };
   const transport={
     ports:{name:'Puertos de interés general',color:'#0B4F6C'},
