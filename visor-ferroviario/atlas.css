@@ -153,7 +153,7 @@ footer{height:30px;display:flex;align-items:center;justify-content:space-between
 .legend-toggle[aria-expanded=false]::after{transform:rotate(45deg) translate(-2px,-2px)}
 #legend.collapsed{padding:4px 12px;max-height:none}
 #legend.collapsed .legend-toggle{padding:0}
-@media(min-width:761px) and (min-height:521px){.legend-toggle{display:none}#legend-body[hidden]{display:block}}
+
 
 /* ── Vista web, fichas enriquecidas, «Todas las vías» y puertos/aeropuertos ── */
 .nav-link{display:inline-flex;align-items:center;gap:5px;min-height:var(--hit);padding:6px 10px;border:1px solid var(--line);border-radius:5px;background:var(--paper);color:var(--navy);text-decoration:none;font-size:var(--fs-s);box-sizing:border-box;white-space:nowrap}
@@ -350,3 +350,160 @@ details.it-stops ol{margin:2px 0 0;padding-left:18px;font-size:var(--fs-xs);colo
 .offer-stops li{display:grid;grid-template-columns:44px 1fr;gap:6px}
 .of-time{font-variant-numeric:tabular-nums;color:var(--muted)}
 .offer-note{margin:8px 0 0}
+
+/* ── Panel «Capas y filtros»: barra lateral por categorías y panel contiguo ──
+   Escritorio: barra fija de 84 px pegada al borde izquierdo del mapa y panel de 340 px a su derecha.
+   Móvil: el botón «Capas» abre el panel y la barra pasa a ser una banda horizontal dentro de él. */
+:root{--rail:84px;--panel:340px;--accent-soft:#e2e8f2}
+.rail{display:flex;flex-direction:column;align-items:stretch;gap:2px;box-sizing:border-box}
+.rail hr{border:0;border-top:1px solid var(--line);margin:4px 16px 6px;width:auto}
+.rail button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:58px;padding:7px 4px;
+  border:0;border-radius:0;background:none;color:var(--muted);font:600 11.5px/1.2 'Plus Jakarta Sans','Segoe UI',sans-serif;letter-spacing:.01em;text-align:center}
+.rail button:hover{background:#f1f4f9;color:var(--ink)}
+.rail button:focus-visible{outline:2px solid var(--focus);outline-offset:-3px}
+.rail button.is-selected{background:var(--wash);color:var(--navy);box-shadow:inset 0 1px 0 var(--line-strong),inset 0 -1px 0 var(--line-strong),inset 3px 0 0 var(--navy)}
+.rail-ico{position:relative;display:block;width:22px;height:22px}
+.rail-ico svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.rail-count{position:absolute;left:calc(100% - 3px);top:-7px;min-width:17px;height:17px;padding:0 4px;box-sizing:border-box;border-radius:9px;
+  background:var(--navy);color:#fff;font:700 10.5px/17px 'Plus Jakarta Sans',sans-serif;text-align:center;box-shadow:0 0 0 2px var(--paper);font-variant-numeric:tabular-nums}
+.rail button.is-selected .rail-count{box-shadow:0 0 0 2px var(--wash)}
+.rail-label{display:block;max-width:76px;overflow-wrap:anywhere;hyphens:auto}
+
+/* Panel */
+.tools{padding:0;display:flex;flex-direction:column;overflow:hidden}
+.tools[hidden]{display:none}
+.tools-head{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:52px;padding:6px 6px 6px 16px;border-bottom:1px solid var(--line);flex:none;box-sizing:border-box}
+.tools-head h2{margin:0;font:700 12px/1.3 'Plus Jakarta Sans',sans-serif;letter-spacing:.09em;text-transform:uppercase;color:var(--ink)}
+#tools-close{width:40px;height:40px;min-height:0;padding:0;display:grid;place-items:center;border:0;border-radius:6px;background:none;color:var(--muted)}
+#tools-close:hover{background:var(--wash);color:var(--ink)}
+#tools-close svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.tools-summary{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:48px;padding:6px 16px;border-bottom:1px solid var(--line);flex:none;box-sizing:border-box}
+.tools-summary[hidden]{display:none}
+.tools-summary p{margin:0;font-size:var(--fs-s);color:var(--muted);line-height:1.35}
+button.ghost{min-height:30px;padding:4px 10px;border:1px solid var(--line-strong);border-radius:5px;background:var(--paper);color:var(--navy);font-size:var(--fs-xs);font-weight:600;white-space:nowrap}
+button.ghost:hover{background:var(--wash);border-color:var(--navy)}
+.tools-body{flex:1 1 auto;min-height:0;overflow:auto;padding:4px 16px 16px;scrollbar-width:thin;overscroll-behavior:contain}
+.tools .cat>fieldset,.tools .cat>section:not([hidden]){margin:0;padding:14px 0 10px}
+.tools .cat>*+fieldset,.tools .cat>*+section:not([hidden]){border-top:1px solid var(--line)}
+.tools legend{font:700 11px/1.3 'Plus Jakarta Sans',sans-serif;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;padding:0}
+.tools .themes{margin-top:0}
+#theme-panel{border-left:0;padding-left:0;margin:0}
+#theme-panel fieldset{margin:0 0 6px}#theme-panel fieldset+fieldset{border-top:1px solid var(--line);padding-top:12px;margin-top:8px}
+#theme-panel .group-tools{margin:-4px 0 4px}
+.theme-option{padding:7px 8px;margin:0 -8px;border-radius:6px}
+.theme-option:has(input:checked){background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--navy)}
+.theme-option:has(input:checked) span{color:var(--navy)}
+#facets fieldset{margin:12px 0 4px}
+
+/* Filas de capas conmutables: interruptor, nombre con línea secundaria y chevrón opcional */
+.layer{display:flex;align-items:stretch;gap:2px;margin:0 -8px;border-radius:6px}
+.layer+.layer{margin-top:2px}
+.layer.is-on{background:#f1f4f9}
+.layer-main{flex:1;display:flex;align-items:center;gap:12px;min-height:48px;padding:6px 8px;cursor:pointer;box-sizing:border-box}
+.layer-text{display:flex;flex-direction:column;gap:1px;min-width:0}
+.layer-name{display:flex;align-items:center;gap:7px;font-size:var(--fs-m);font-weight:500;color:var(--ink);line-height:1.3}
+.layer.is-on .layer-name{font-weight:650}
+.layer-text small{font-size:var(--fs-xs);color:var(--muted);line-height:1.35}
+.layer .poi-key{margin:0}
+.layer-more{flex:none;width:40px;min-height:0;padding:0;display:grid;place-items:center;border:0;border-radius:6px;background:none;color:var(--muted)}
+.layer-more[hidden]{display:none}
+.layer-more:hover{background:var(--wash);color:var(--ink)}
+.layer-more svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .15s}
+.layer-more[aria-expanded=false] svg{transform:rotate(-90deg)}
+.layer-detail{margin:2px 0 6px 50px}
+.layer-detail[hidden]{display:none}
+#population-options{margin:0}
+input[role=switch]{appearance:none;-webkit-appearance:none;position:relative;flex:none;width:34px;height:20px;margin:0;border-radius:10px;background:#c3ccda;cursor:pointer;transition:background-color .15s}
+input[role=switch]::before{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px #1d263840;transition:transform .15s}
+input[role=switch]:checked{background:var(--navy)}
+input[role=switch]:checked::before{transform:translateX(14px)}
+input[role=switch]:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+
+/* «Activas» */
+.active-list{list-style:none;margin:10px 0 0;padding:0}
+.active-list li{display:flex;align-items:center;gap:8px;margin:0 -8px 2px;border-radius:6px}
+.active-list .active-theme{padding:8px;justify-content:space-between;border:1px solid var(--line);margin:0 0 10px}
+.active-list .active-empty{padding:12px 8px;font-size:var(--fs-s);color:var(--muted);font-family:'Newsreader',Georgia,serif;font-style:italic}
+
+/* Relieve y exportación: formularios en una columna */
+.cat-form label{display:flex;gap:8px;align-items:center;margin:6px 0;font-size:var(--fs-s);min-height:var(--hit)}
+.cat-form label.stack{min-height:0;margin:0 0 4px;color:var(--muted);font-size:var(--fs-xs)}
+.cat-form button,.cat-form select{margin-top:6px}
+.cat-form fieldset>button{width:100%}
+.cat-form .terrain-note{color:var(--muted);font-size:var(--fs-xs);line-height:1.6}
+#action-message:empty{display:none}
+#action-message{font-size:var(--fs-xs);color:var(--muted);margin:8px 0 0}
+
+/* Escritorio: barra a toda la altura del mapa y panel contiguo */
+@media(min-width:761px) and (min-height:521px){
+  #toggle-panel{display:none}
+  .rail{position:absolute;top:0;left:0;bottom:0;width:var(--rail);z-index:4;padding:8px 0;background:var(--paper);border-right:1px solid var(--line);overflow-y:auto;scrollbar-width:none}
+  #map{margin-left:var(--rail)}
+  .tools{top:0;bottom:0;left:var(--rail);width:var(--panel);max-height:none;border-radius:0;border-width:0 1px 0 0;box-shadow:6px 0 18px #273a5f12;background:var(--paper)}
+  #legend{left:calc(var(--rail) + 16px)}
+  .tools:not([hidden])~#legend{left:calc(var(--rail) + var(--panel) + 16px)}
+  .route-bar{left:calc(var(--rail) + var(--panel) + 24px)}
+  .tools[hidden]~.route-bar{left:calc(var(--rail) + 24px)}
+}
+@media(min-width:761px) and (max-width:1100px) and (min-height:521px){
+  :root{--panel:320px}
+}
+
+/* Móvil: la barra se convierte en una banda horizontal dentro del panel */
+@media(max-width:760px),(max-height:520px){
+  .tools{padding:0;overflow:hidden;display:flex;flex-direction:column}
+  .tools[hidden]{display:none}
+  .tools .rail{flex-direction:row;flex-wrap:nowrap;flex:none;gap:0;margin:0;padding:0 4px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line);background:var(--paper)}
+  .tools .rail hr{display:none}
+  .tools .rail button{flex:1 0 auto;min-width:44px;min-height:56px;padding:8px 6px 6px}
+  .tools .rail-label{overflow-wrap:normal;hyphens:manual;white-space:nowrap;font-size:11px}
+  .tools .rail button.is-selected{box-shadow:inset 0 -3px 0 var(--navy)}
+  .tools .rail-ico,.tools .rail-ico svg{width:20px;height:20px}
+  .tools-head{min-height:48px}
+  .tools-body{padding:2px 14px 14px}
+  .layer-main{min-height:var(--hit)}
+}
+@media(max-height:520px) and (orientation:landscape){
+  .tools{padding:0;width:min(340px,48vw)}
+  .tools .rail button{flex-basis:56px;min-height:48px;padding:5px 2px}
+  .tools .rail-label{font-size:10.5px}
+  .tools-head{min-height:40px}.tools-summary{min-height:40px}
+}
+@media(prefers-reduced-motion:reduce){input[role=switch],input[role=switch]::before,.layer-more svg{transition:none}}
+
+/* ── Leyenda compacta y plegable ──
+   Colores del tema en columnas, estados y trazos en una fila, puntos en otra y círculos anidados.
+   Sin scroll interno en escritorio: si no cabe, se pliega. */
+#legend{width:max-content;min-width:210px;max-width:min(300px,calc(100% - 32px));max-height:min(70%,460px);padding:0;overflow:auto;background:#fbfbfbf5;border-radius:8px;box-shadow:0 2px 10px #273a5f14;scrollbar-width:thin}
+#legend .legend-toggle{display:flex;align-items:center;gap:10px;width:100%;min-height:36px;padding:0 12px;justify-content:flex-start;border:0;border-radius:0;background:none;color:var(--ink);font-size:var(--fs-s);font-weight:700}
+#legend .legend-toggle:hover{background:#f1f4f9}
+#legend .legend-toggle::after{margin-left:auto}
+#legend:not(.collapsed) .legend-toggle{border-bottom:1px solid var(--line)}
+.legend-preview{display:none;align-items:center;gap:3px}
+#legend.collapsed .legend-preview{display:inline-flex}
+.legend-preview .swatch{width:14px;border-top-width:3px}
+.legend-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:rgba(73,9,56,.18);border:1px solid rgba(73,9,56,.55);margin-left:3px}
+#legend-body{padding:8px 12px 10px}
+#legend-body>strong,.legend-head strong{display:block;margin:0 0 6px;font:700 10.5px/1.3 'Plus Jakarta Sans',sans-serif;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+#legend .legend-cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:4px 12px}
+#legend .legend-cols li{align-items:flex-start;line-height:1.3}
+#legend .legend-cols .swatch{width:16px;margin-top:6px}
+#legend .legend-more{grid-column:1/-1;color:var(--muted)}
+#legend .legend-row,.legend-points{display:flex;flex-wrap:wrap;gap:4px 12px;margin:8px 0 0;padding:7px 0 0;border-top:1px solid var(--line)}
+#legend .legend-row li{white-space:nowrap}
+#legend .legend-row .swatch{width:16px}
+.legend-points p{display:flex;align-items:center;gap:5px;margin:0!important;white-space:nowrap}
+.legend-points .poi-key{width:15px;height:15px;margin:0!important}
+#legend .legend-sizes{margin-top:8px;padding-top:7px}
+.legend-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.legend-head strong{margin:0!important}
+details.legend-info{border:0;margin:0;padding:0;position:static}
+details.legend-info summary{min-height:0;width:18px;height:18px;display:grid;place-items:center;border:1px solid var(--line-strong);border-radius:50%;font:italic 600 11px/1 'Newsreader',Georgia,serif;color:var(--muted);list-style:none}
+details.legend-info summary::-webkit-details-marker{display:none}
+details.legend-info[open] summary{background:var(--wash);color:var(--navy)}
+details.legend-info small{position:absolute;left:12px;right:12px;margin-top:4px;padding:6px 8px;background:var(--paper);border:1px solid var(--line);border-radius:6px;box-shadow:0 4px 12px #273a5f1a;z-index:1}
+#legend .legend-sizes{position:relative}
+.legend-sizes svg{margin:6px 0 0}
+.legend-sizes text{font-size:11.5px}
+.legend-leader{fill:none;stroke:var(--muted);stroke-width:.7}
+@media(max-width:760px){#legend{max-width:calc(100% - 16px);max-height:45%}}

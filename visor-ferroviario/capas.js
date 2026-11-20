@@ -440,12 +440,15 @@
   function legend(container){
     const items=legendItems();if(!items)return false;
     const h=document.createElement('strong');h.textContent=CFG.themes[state.theme].name+(state.theme==='all'?' · '+dimension().name.toLowerCase():'');container.append(h);
-    const ul=document.createElement('ul');
+    // Leyenda compacta: los colores en columnas; los estados, trazos y paradas, en una fila aparte.
+    const ul=document.createElement('ul'),row=document.createElement('ul');ul.className='legend-cols';row.className='legend-row';
     for(const item of items){const li=document.createElement('li'),sw=document.createElement('i');sw.className='swatch'+(item.dash?' dashed':'')+(item.double?' double':'')+(item.pattern==='project'?' dotted':'')+(item.thick?' thick':'');
-      sw.style.setProperty('--c',item.color);li.append(sw,document.createTextNode(item.name));ul.append(li);}
-    if(['brands','services','tourism'].includes(state.theme)){const li=document.createElement('li'),sw=document.createElement('i');sw.className='stop-key';li.append(sw,document.createTextNode('Parada comercial acreditada'));ul.append(li);}
-    if(state.variant||state.experience){for(const [name,cls] of [['Recorrido elegido por vía de alta velocidad',''],['Recorrido elegido por vía convencional',' dashed']]){const li=document.createElement('li'),sw=document.createElement('i');sw.className='swatch'+cls;sw.style.setProperty('--c','#1d2638');li.append(sw,document.createTextNode(name));ul.append(li);}}
-    container.append(ul);return true;
+      sw.style.setProperty('--c',item.color);
+      const name=item.pattern?{service:'En servicio',construction:'En obras',project:'En proyecto'}[item.pattern]||item.name:item.name.replace(/^Levante y litoral · /,'');
+      li.append(sw,document.createTextNode(name));if(name!==item.name)li.title=item.name;(item.pattern||item.thick?row:ul).append(li);}
+    if(['brands','services','tourism'].includes(state.theme)){const li=document.createElement('li'),sw=document.createElement('i');sw.className='stop-key';li.append(sw,document.createTextNode('Parada comercial'));li.title='Parada comercial acreditada';row.append(li);}
+    if(state.variant||state.experience){for(const [name,cls,full] of [['Elegido · alta velocidad','','Recorrido elegido por vía de alta velocidad'],['Elegido · convencional',' dashed','Recorrido elegido por vía convencional']]){const li=document.createElement('li'),sw=document.createElement('i');sw.className='swatch'+cls;sw.style.setProperty('--c','#1d2638');li.title=full;li.append(sw,document.createTextNode(name));row.append(li);}}
+    container.append(ul);if(row.childElementCount)container.append(row);return true;
   }
 
   /* ── Todas las vías ───────────────────────────────────── */

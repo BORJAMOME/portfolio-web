@@ -666,7 +666,7 @@
     const lons=all.map(p=>p[0]),lats=all.map(p=>p[1]);
     const pad=CFG.phoneLandscape()?{top:64,bottom:16,left:16,right:Math.round(Math.min(360,window.innerWidth*.48))}:
       CFG.compact()?{top:Math.round((document.querySelector('main').style.getPropertyValue('--rb-h').replace('px','')|0)+24),bottom:Math.round($('#info').hidden?window.innerHeight*.5:$('#info').getBoundingClientRect().height+28),left:24,right:24}:
-      {top:110,bottom:Math.max(60,($('#legend')?.offsetHeight||0)+70),left:$('#tools').hidden?60:350,right:400};
+      {top:110,bottom:Math.max(60,($('#legend')?.offsetHeight||0)+70),left:($('#rail')?.parentElement===$('#tools')?0:84)+($('#tools').hidden?60:356),right:400};
     // En pantallas estrechas, a zoom bajo, los límites del mapa impiden desplazar la ruta por encima de la ficha:
     // se amplían mientras la ruta está en pantalla y se recuperan al cerrarla.
     if(CFG.compact()){savedBounds??=map.getMaxBounds();map.setMaxBounds([[-40,10],[35,65]]);}
