@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "0f45c39",
+ "huella": "31ff144",
  "recuento": {
   "paginas": 20,
   "proyectos": 40,
@@ -11,7 +11,7 @@ export default {
   "pestanas": 10,
   "tablas": 41,
   "funciones": 5,
-  "herramientas": 21,
+  "herramientas": 23,
   "relaciones": 190,
   "sinExplicar": 0
  },
@@ -2284,6 +2284,13 @@ export default {
      "nota": "producen archivos del sitio",
      "hijos": [
       {
+       "id": "h:build-cabina",
+       "tipo": "herramienta",
+       "etiqueta": "build-cabina.mjs",
+       "archivo": "tools/build-cabina.mjs",
+       "familia": "herramienta"
+      },
+      {
        "id": "h:build-en",
        "tipo": "herramienta",
        "etiqueta": "build-en.mjs",
@@ -2438,6 +2445,13 @@ export default {
        "tipo": "herramienta",
        "etiqueta": "manual-estudio/",
        "archivo": "tools/manual-estudio/",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:visor-atlas-adif",
+       "tipo": "herramienta",
+       "etiqueta": "visor-atlas-adif.mjs",
+       "archivo": "tools/visor-atlas-adif.mjs",
        "familia": "herramienta"
       }
      ]

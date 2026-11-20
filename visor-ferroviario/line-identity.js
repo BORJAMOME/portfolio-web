@@ -7,6 +7,12 @@
   const tolerance = 20;
   const separation = 8;
   const cell = value => Math.floor(value / cellSize);
+  // Código de línea de Adif (5 caracteres) = eje (2) + línea (3). El código de 3 solo no es único:
+  // «000» se repite en seis ejes. Es la misma llave que usan corredores.geojson y la red del Atlas.
+  const lineKey = properties => {
+    const axis = String(properties.axis ?? "").slice(0, 2);
+    return /^\d\d$/.test(axis) ? axis + properties.line_code : properties.line_code;
+  };
 
   function distance(point, start, end) {
     const scaleX = metresPerDegree * Math.cos(point[1] * Math.PI / 180);
@@ -56,7 +62,7 @@
             const edgeLength = Math.hypot(edgeX, edgeY);
             if (!edgeLength || alignment < 0.9 * length * edgeLength) continue;
             const gap = distance(point, a, b);
-            const code = properties.line_code;
+            const code = lineKey(properties);
             if (gap <= tolerance + separation && gap < (distances.get(code)?.gap ?? Infinity)) {
               distances.set(code, {gap, properties});
             }
@@ -81,8 +87,8 @@
           const t = (step + 0.5) / steps;
           const point = [start[0] + (end[0] - start[0]) * t, start[1] + (end[1] - start[1]) * t];
           const section = closest(point, start, end);
-          if (!section || (code && code !== section.line_code)) return null;
-          code = section.line_code;
+          if (!section || (code && code !== lineKey(section))) return null;
+          code = lineKey(section);
           sections.set(section.section_id, section);
         }
       }
@@ -103,5 +109,5 @@
     return closest ? {name: closest, metres: best} : null;
   }
 
-  root.AtlasLineIdentity = {build, nearestStation};
+  root.AtlasLineIdentity = {build, nearestStation, lineKey};
 })(typeof module === "object" ? module.exports : window);

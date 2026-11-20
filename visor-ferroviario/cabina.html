@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cabina · Atlas ferroviario de España</title>
+<meta name="description" content="Cuadro de mando del atlas ferroviario: red, oferta de trenes, competencia en alta velocidad, territorio e intermodalidad de un vistazo.">
+<meta name="robots" content="noindex, nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="cabina.css?v=03787919">
+<script defer src="capas-config.js?v=a30389d3"></script>
+<script defer src="oferta.js?v=cc85d2c0"></script>
+<script defer src="cabina-datos.js?v=a8679f4d"></script>
+<script defer src="cabina.js?v=fc26b120"></script>
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<header class="cb-header">
+<div class="cb-wrap cb-head">
+<div>
+<a id="back" class="cb-back" href="index.html"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M10 3 5 8l5 5"/></svg>Volver al visor</a>
+<h1>Cabina</h1>
+<p class="cb-lead">¿Qué red tiene el tren en la España peninsular, cuántos trenes la recorren y dónde están los huecos? Todo lo que mide el atlas, en una página.</p>
+</div>
+<p id="ref" class="cb-ref" aria-live="polite">Calculando la oferta del día de referencia…</p>
+</div>
+</header>
+<div class="cb-tocbar">
+<nav class="cb-wrap cb-toc" aria-label="Secciones de la Cabina">
+<a href="#oferta">Oferta</a><a href="#competencia">Alta velocidad</a><a href="#red">Red</a><a href="#corredores">Corredores</a><a href="#territorio">Territorio</a><a href="#intermodal">Intermodalidad</a><a href="#turismo">Turismo</a><a href="#marcas">Marcas</a><a href="#limites">Límites</a>
+</nav>
+</div>
+
+<main id="contenido" class="cb-wrap" tabindex="-1">
+<div id="alert" class="cb-alert" role="status" hidden></div>
+
+<section class="cb-kpis" aria-label="Indicadores clave" id="kpis"></section>
+
+<section class="cb-section" id="oferta" aria-labelledby="oferta-t">
+<p class="cb-q">Oferta y frecuencias</p>
+<h2 id="oferta-t">Calculando…</h2>
+<div class="cb-grid">
+<article class="cb-card span-7" id="c-familia"></article>
+<article class="cb-card span-5" id="c-semana"></article>
+<article class="cb-card span-12" id="c-horas"></article>
+<article class="cb-card span-7" id="c-estaciones"></article>
+<article class="cb-card span-5" id="c-distrib"></article>
+<article class="cb-card span-12" id="c-calendario"></article>
+</div>
+</section>
+
+<section class="cb-section" id="competencia" aria-labelledby="competencia-t">
+<p class="cb-q">Competencia en alta velocidad</p>
+<h2 id="competencia-t">Calculando…</h2>
+<div class="cb-grid">
+<article class="cb-card span-8" id="c-competencia"></article>
+<article class="cb-card span-4" id="c-iryo"></article>
+</div>
+</section>
+
+<section class="cb-section" id="red" aria-labelledby="red-t">
+<p class="cb-q">Red e infraestructura</p>
+<h2 id="red-t">Calculando…</h2>
+<div class="cb-grid">
+<article class="cb-card span-6" id="c-prestaciones"></article>
+<article class="cb-card span-6" id="c-ancho"></article>
+<article class="cb-card span-6" id="c-titularidad"></article>
+<article class="cb-card span-6" id="c-vias"></article>
+<article class="cb-card span-12" id="c-cruce"></article>
+</div>
+</section>
+
+<section class="cb-section" id="corredores" aria-labelledby="corredores-t">
+<p class="cb-q">Corredores de alta velocidad y TEN-T</p>
+<h2 id="corredores-t">Calculando…</h2>
+<div class="cb-grid">
+<article class="cb-card span-7" id="c-corredores"></article>
+<article class="cb-card span-5" id="c-tent"></article>
+<article class="cb-card span-12" id="c-sintrenes"></article>
+</div>
+</section>
+
+<section class="cb-section" id="territorio" aria-labelledby="territorio-t">
+<p class="cb-q">Territorio y población servida</p>
+<h2 id="territorio-t">Calculando…</h2>
+<div class="cb-grid">
+<article class="cb-card span-7" id="c-areas"></article>
+<article class="cb-card span-5" id="c-huecos"></article>
+<article class="cb-card span-6" id="c-provincias"></article>
+<article class="cb-card span-6" id="c-catalogo"></article>
+</div>
+</section>
+
+<section class="cb-section" id="intermodal" aria-labelledby="intermodal-t">
+<p class="cb-q">Intermodalidad</p>
+<h2 id="intermodal-t">Calculando…</h2>
+<div class="cb-grid">
+<article class="cb-card span-6" id="c-puertos"></article>
+<article class="cb-card span-6" id="c-aeropuertos"></article>
+<article class="cb-card span-12" id="c-urbano"></article>
+</div>
+</section>
+
+<section class="cb-section" id="turismo" aria-labelledby="turismo-t">
+<p class="cb-q">Trenes turísticos</p>
+<h2 id="turismo-t">Calculando…</h2>
+<div class="cb-grid">
+<article class="cb-card span-4" id="c-turismo"></article>
+<article class="cb-card span-8" id="c-turismo-lista"></article>
+</div>
+</section>
+
+<section class="cb-section" id="marcas" aria-labelledby="marcas-t">
+<p class="cb-q">Nueva arquitectura de marcas de Renfe</p>
+<h2 id="marcas-t">Seis servicios en tres familias sustituyen a los antiguos productos de Renfe</h2>
+<div class="cb-grid">
+<article class="cb-card span-12" id="c-marcas"></article>
+</div>
+</section>
+
+<section class="cb-section" id="limites" aria-labelledby="limites-t">
+<p class="cb-q">Límites de los datos</p>
+<h2 id="limites-t">Lo que esta Cabina no puede responder</h2>
+<div class="cb-grid">
+<article class="cb-card span-6" id="c-no"></article>
+<article class="cb-card span-6" id="c-fuentes"></article>
+</div>
+</section>
+</main>
+
+<footer class="cb-wrap cb-foot"><span>Atlas ferroviario de España · Cabina</span><a id="back-foot" href="index.html">Volver al visor</a></footer>
+<noscript><p class="cb-wrap">Activa JavaScript para ver los indicadores de la Cabina.</p></noscript>
+</body>
+</html>
