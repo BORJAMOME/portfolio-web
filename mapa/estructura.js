@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "a0af2ee",
+ "huella": "ef53ada",
  "recuento": {
   "paginas": 20,
   "proyectos": 40,
@@ -11,7 +11,7 @@ export default {
   "pestanas": 10,
   "tablas": 41,
   "funciones": 5,
-  "herramientas": 25,
+  "herramientas": 26,
   "relaciones": 190,
   "sinExplicar": 0
  },
@@ -2288,6 +2288,13 @@ export default {
        "tipo": "herramienta",
        "etiqueta": "build-cabina.mjs",
        "archivo": "tools/build-cabina.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:build-cnmc",
+       "tipo": "herramienta",
+       "etiqueta": "build-cnmc.mjs",
+       "archivo": "tools/build-cnmc.mjs",
        "familia": "herramienta"
       },
       {
