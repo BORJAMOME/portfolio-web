@@ -3,7 +3,8 @@
 # se quedarían sin trenes al caducar.
 #
 # Pasos: descarga (Renfe AV/LD/MD y Cercanías, iryo, estaciones de Renfe y CNMC) → tools/build-rutas.mjs →
-# tools/build-cnmc.mjs → tools/build-cabina.mjs → control de cordura (tools/rutas/sanity.mjs: no publica si una
+# tools/build-cnmc.mjs → tools/build-cabina-mercado.mjs (INE, Eurostat y mercancías; si falla, se conserva el
+# mercado.json anterior y sigue) → tools/build-cabina.mjs → control de cordura (tools/rutas/sanity.mjs: no publica si una
 # fuente se hunde de golpe) → comprobaciones → commit en main solo si los datos han cambiado.
 # GitHub Pages publica main como siempre. Si algo falla, el job termina en rojo, no se sube nada y GitHub avisa.
 #
@@ -41,6 +42,12 @@ jobs:
       - name: CNMC (descarga y genera cnmc.json)
         run: node tools/build-cnmc.mjs --download
 
+      # Solo escribe mercado.json al final, con todo descargado y validado: si una API falla, queda el de la semana
+      # anterior y el resto de la tarea sigue.
+      - name: Mercado (INE, Eurostat y mercancías de la CNMC; genera mercado.json)
+        continue-on-error: true
+        run: node tools/build-cabina-mercado.mjs
+
       - name: Cabina (cabina.json y titulares de cabina.html)
         run: node --max-old-space-size=6144 tools/build-cabina.mjs
 
@@ -57,6 +64,7 @@ jobs:
       - name: Publicar en main si hay cambios
         run: |
           git add visor-ferroviario/capas/rutas.json visor-ferroviario/capas/rutas-actividad.json visor-ferroviario/capas/oferta.json visor-ferroviario/capas/cnmc.json \
+                  visor-ferroviario/capas/mercado.json \
                   visor-ferroviario/capas/cabina.json visor-ferroviario/cabina.html
           if git diff --cached --quiet; then
             echo "Sin cambios en los datos: no se confirma nada." | tee -a "$GITHUB_STEP_SUMMARY"

@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "2c06c7d",
+ "huella": "6b5a85e",
  "recuento": {
   "paginas": 20,
   "proyectos": 40,
@@ -11,8 +11,8 @@ export default {
   "pestanas": 10,
   "tablas": 41,
   "funciones": 5,
-  "herramientas": 27,
-  "relaciones": 196,
+  "herramientas": 41,
+  "relaciones": 202,
   "sinExplicar": 0
  },
  "columnas": [
@@ -2284,6 +2284,13 @@ export default {
      "nota": "producen archivos del sitio",
      "hijos": [
       {
+       "id": "h:build-cabina-mercado",
+       "tipo": "herramienta",
+       "etiqueta": "build-cabina-mercado.mjs",
+       "archivo": "tools/build-cabina-mercado.mjs",
+       "familia": "herramienta"
+      },
+      {
        "id": "h:build-cabina",
        "tipo": "herramienta",
        "etiqueta": "build-cabina.mjs",
@@ -2376,6 +2383,13 @@ export default {
        "familia": "herramienta"
       },
       {
+       "id": "h:check-incidencias",
+       "tipo": "herramienta",
+       "etiqueta": "check-incidencias.mjs",
+       "archivo": "tools/check-incidencias.mjs",
+       "familia": "herramienta"
+      },
+      {
        "id": "h:check-kanban",
        "tipo": "herramienta",
        "etiqueta": "check-kanban.mjs",
@@ -2455,6 +2469,76 @@ export default {
        "familia": "herramienta"
       },
       {
+       "id": "h:incidencias-ledger",
+       "tipo": "herramienta",
+       "etiqueta": "incidencias-ledger.mjs",
+       "archivo": "tools/incidencias-ledger.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:incidencias-metro",
+       "tipo": "herramienta",
+       "etiqueta": "incidencias-metro.mjs",
+       "archivo": "tools/incidencias-metro.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:incidencias-metro.test",
+       "tipo": "herramienta",
+       "etiqueta": "incidencias-metro.test.mjs",
+       "archivo": "tools/incidencias-metro.test.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:incidencias-multifuente",
+       "tipo": "herramienta",
+       "etiqueta": "incidencias-multifuente.mjs",
+       "archivo": "tools/incidencias-multifuente.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:incidencias-multifuente.test",
+       "tipo": "herramienta",
+       "etiqueta": "incidencias-multifuente.test.mjs",
+       "archivo": "tools/incidencias-multifuente.test.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:incidencias-rail",
+       "tipo": "herramienta",
+       "etiqueta": "incidencias-rail.mjs",
+       "archivo": "tools/incidencias-rail.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:incidencias-rail.test",
+       "tipo": "herramienta",
+       "etiqueta": "incidencias-rail.test.mjs",
+       "archivo": "tools/incidencias-rail.test.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:incidencias-territorio",
+       "tipo": "herramienta",
+       "etiqueta": "incidencias-territorio.mjs",
+       "archivo": "tools/incidencias-territorio.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:incidencias-territorio.test",
+       "tipo": "herramienta",
+       "etiqueta": "incidencias-territorio.test.mjs",
+       "archivo": "tools/incidencias-territorio.test.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:incidencias.test",
+       "tipo": "herramienta",
+       "etiqueta": "incidencias.test.mjs",
+       "archivo": "tools/incidencias.test.mjs",
+       "familia": "herramienta"
+      },
+      {
        "id": "h:manual-estudio",
        "tipo": "herramienta",
        "etiqueta": "manual-estudio/",
@@ -2466,6 +2550,13 @@ export default {
        "tipo": "herramienta",
        "etiqueta": "rutas/",
        "archivo": "tools/rutas/",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:update-incidencias",
+       "tipo": "herramienta",
+       "etiqueta": "update-incidencias.mjs",
+       "archivo": "tools/update-incidencias.mjs",
        "familia": "herramienta"
       },
       {
@@ -2488,6 +2579,13 @@ export default {
        "tipo": "workflow",
        "etiqueta": "checks.yml",
        "archivo": ".github/workflows/checks.yml",
+       "familia": "herramienta"
+      },
+      {
+       "id": "w:incidencias-semanales",
+       "tipo": "workflow",
+       "etiqueta": "incidencias-semanales.yml",
+       "archivo": ".github/workflows/incidencias-semanales.yml",
        "familia": "herramienta"
       },
       {
@@ -3763,6 +3861,12 @@ export default {
   },
   {
    "de": "w:checks",
+   "a": "h:check-incidencias",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:checks",
    "a": "h:check-kanban",
    "tipo": "ejecuta",
    "detalle": []
@@ -3775,7 +3879,19 @@ export default {
   },
   {
    "de": "w:checks",
+   "a": "h:incidencias.test",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:checks",
    "a": "h:mapa",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:checks",
+   "a": "h:rutas",
    "tipo": "ejecuta",
    "detalle": []
   },
@@ -3806,6 +3922,24 @@ export default {
   {
    "de": "w:checks",
    "a": "h:version-assets",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:incidencias-semanales",
+   "a": "h:incidencias.test",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:incidencias-semanales",
+   "a": "h:update-incidencias",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:rutas-semanal",
+   "a": "h:build-cabina-mercado",
    "tipo": "ejecuta",
    "detalle": []
   },
