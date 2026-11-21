@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "ef53ada",
+ "huella": "3307272",
  "recuento": {
   "paginas": 20,
   "proyectos": 40,
@@ -11,7 +11,7 @@ export default {
   "pestanas": 10,
   "tablas": 41,
   "funciones": 5,
-  "herramientas": 26,
+  "herramientas": 27,
   "relaciones": 190,
   "sinExplicar": 0
  },
@@ -2283,6 +2283,13 @@ export default {
      "etiqueta": "generadores/",
      "nota": "producen archivos del sitio",
      "hijos": [
+      {
+       "id": "h:build-cabina-mercado",
+       "tipo": "herramienta",
+       "etiqueta": "build-cabina-mercado.mjs",
+       "archivo": "tools/build-cabina-mercado.mjs",
+       "familia": "herramienta"
+      },
       {
        "id": "h:build-cabina",
        "tipo": "herramienta",
