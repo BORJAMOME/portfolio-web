@@ -101,6 +101,11 @@ const out = {
   },
   viajeros, mercancias, ue
 };
+// Si los datos no han cambiado, no se reescribe: así la tarea semanal no hace un commit solo por la fecha de descarga.
+const sinFecha = o => JSON.stringify({...o, descargado: null});
+let previo = null;
+try { previo = JSON.parse(fs.readFileSync(OUT, 'utf8')); } catch {}
+if (previo && sinFecha(previo) === sinFecha(out)) { console.log('capas/mercado.json · sin cambios en los datos: no se reescribe'); process.exit(0); }
 fs.writeFileSync(OUT, JSON.stringify(out));
 console.log(`capas/mercado.json · ${(fs.statSync(OUT).size / 1024).toFixed(1)} KB · INE hasta ${ultimo} · mercancías hasta ${out.fuentes.cnmc_mercancias.hasta} · Eurostat ${ue.viajeros.anios.at(-1)}`);
 console.log(JSON.stringify({resumen, av_peso_ld: viajeros.av_peso_ld, choque: viajeros.choque_av, merc: mercancias.anual.at(-1)}));
