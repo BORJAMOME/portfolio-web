@@ -345,14 +345,39 @@ const titulares = {
   competencia: `iryo y OUIGO paran en ${comp.length} estaciones; donde más pesan, en ${compMax.n}, son ${Math.round(compMax.priv * 100)} de cada 100 trenes de alta velocidad`,
   red: `El ${Math.round(100 * kmAV / red.km)} % de la red es de alta velocidad y el ${Math.round(100 * kmNo / red.km)} % sigue sin electrificar; ya se conoce el ancho del ${pf.format(100 * kmKnown / red.km)} % de los km`
 };
+/* ── Ola 2 · uso (INE, CNMC mercancías, Eurostat): capas/mercado.json, que descarga tools/build-cabina-mercado.mjs.
+   Se lee sin red, así este script y su --check siguen funcionando sin conexión. Si falta, el capítulo no se pinta. ── */
+const MERC = path.join(V, 'capas', 'mercado.json');
+const mercado = fs.existsSync(MERC) ? JSON.parse(fs.readFileSync(MERC, 'utf8')) : null;
+if (mercado) {
+  const V2 = mercado.viajeros.resumen, ue = mercado.ue.mercancias, i = ue.anios.length - 1;
+  titulares.uso = `La alta velocidad tiene un ${Math.round(V2.av.vs2019)} % más viajeros que en 2019; en mercancías, el tren pesa en España ${Math.round(ue.pais.EU27_2020[i] / ue.pais.ES[i])} veces menos que en la UE`;
+}
+/* ── Ola 2 · competencia en viajeros (CNMC): capas/cnmc.json, de tools/build-cnmc.mjs. Solo lo que pinta la Cabina. ── */
+const CN = path.join(V, 'capas', 'cnmc.json');
+let cnmc = null;
+if (fs.existsSync(CN)) {
+  const c = JSON.parse(fs.readFileSync(CN, 'utf8'));
+  const tot = op => c.corredores.reduce((a, x) => a + (x.a2025.operadores[op]?.viajeros || 0), 0);
+  const all = ['Renfe', 'OUIGO', 'iryo'].reduce((a, op) => a + tot(op), 0);
+  const desde = c.serie.findIndex(s => s.t === '2023T2');
+  cnmc = {licencia: c.licencia, fuentes: Object.values(c.fuentes).map(f => f.label), ultimo_trimestre: c.ultimo_trimestre, notas: c.notas,
+    corredores: c.corredores.map(x => ({corredor: x.corredor, viajeros: x.a2025.viajeros, op: Object.fromEntries(Object.entries(x.a2025.operadores).map(([k, v]) => [k, {cuota: v.cuota, ocupacion: v.ocupacion}]))})),
+    renfe_2025: round(100 * tot('Renfe') / all), ocupacion_5: c.ocupacion_5, serie: c.serie.map(s => [s.t, s.renfe]),
+    renfe_desde_2023: round(c.serie.slice(desde).reduce((a, s) => a + s.renfe, 0) / (c.serie.length - desde)), precio_2025: c.precio_2025};
+  // Precio: AVE frente a la opción más barata de cada trayecto (2025, año completo), media de los cinco.
+  const ratios = c.precio_2025.map(p => p['Renfe-AVE'] / Math.min(...['Renfe-AVLO', 'Iryo', 'OUIGO'].map(k => p[k]).filter(v => v != null)));
+  cnmc.ave_vs_barato = round(ratios.reduce((a, b) => a + b, 0) / ratios.length, 2);
+  titulares.competencia = `Renfe conserva el ${Math.round(cnmc.renfe_2025)} % de los viajeros de alta velocidad en los cinco corredores con competencia, y el AVE cuesta en torno a ${pf.format(round(cnmc.ave_vs_barato, 1))} veces la opción más barata`;
+}
 
-const out = JSON.stringify({version: 2, generado_con: 'tools/build-cabina.mjs', fuentes, red, estaciones, corredores, tenT, territorio, intermodal, turismo, urbano, servicios, oferta, cobertura, glosario, titulares}) + '\n';
+const out = JSON.stringify({version: 2, generado_con: 'tools/build-cabina.mjs', fuentes, red, estaciones, corredores, tenT, territorio, intermodal, turismo, urbano, servicios, oferta, cobertura, glosario, mercado, cnmc, titulares}) + '\n';
 // Escribe los titulares en el HTML: <h2 id="X-t">…</h2> y <p id="ref" …>…</p>.
 const HTML = path.join(V, 'cabina.html');
 const esc = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 const html0 = fs.readFileSync(HTML, 'utf8');
 let html = html0;
-for (const k of ['cobertura', 'servicio', 'competencia', 'red']) html = html.replace(new RegExp('(<h2 id="' + k + '-t">)[^<]*(</h2>)'), (m, a, b) => a + esc(titulares[k]) + b);
+for (const k of ['cobertura', 'servicio', 'uso', 'competencia', 'red'].filter(k => titulares[k])) html = html.replace(new RegExp('(<h2 id="' + k + '-t">)[^<]*(</h2>)'), (m, a, b) => a + esc(titulares[k]) + b);
 html = html.replace(/(<p id="ref"[^>]*>)[^<]*(<\/p>)/, (m, a, b) => a + esc(titulares.ref) + b);
 
 if (process.argv.includes('--check')) {

@@ -59,11 +59,30 @@ Cuadro de mando con una pregunta rectora: *¿qué servicio de tren recibe cada t
   - sin errores de JavaScript ni «Calculando…».
 - **Comprobaciones:** `check-a11y` sin infracciones en `cabina.html`, `cabina-rutas.html` e `index.html`; `check-links`, `version-assets --check`, `build-mapa --check`, `build-en --check` y `build-cabina --check`.
 
-## Pendiente (ola 2 de la propuesta)
+## Ola 2 (21-11-2026): uso, competencia en viajeros y precio
 
-- **CNMC:** viajeros, ocupación (viajeros-km ÷ plazas-km), cuota y precio por corredor. Ya hay análisis en `manual-ferrocarriles/mapa/investigacion-cabina/ola2/`. Licencia CC BY-SA.
-- **INE:** sparklines mensuales de viajeros; **Eurostat:** comparación con la UE.
+- **Capítulo nuevo «3 · ¿Cuánto se usa?»:**
+  - viajeros por tipo de servicio (INE 20239): cuatro small multiples con la misma escala (índice 2019 = 100 sobre la suma móvil de 12 meses) y el énfasis solo en alta velocidad;
+  - cuota del tren en el transporte por tierra, viajeros y mercancías, España frente a la UE y vecinos (Eurostat `tran_hv_psmod`, `tran_hv_frmod`);
+  - mercancías: cuota de Renfe por año y total de t-km (CNMC `ds_24402`).
+  - Datos: `capas/mercado.json`, de `node tools/build-cabina-mercado.mjs` (con red). Comprueba que larga distancia = alta velocidad + resto en todos los meses y, en mercancías, suma empresa a empresa (`TOTAL_EMPRESAS` solo trae ingresos).
+- **Capítulo 4, «¿Quién compite en alta velocidad y a qué precio?»:** cuota de viajeros por corredor (barras al 100 %), cuota trimestral de Renfe, ocupación (viajeros-km ÷ plazas-km) y precio medio de 2025 en puntos.
+  - Datos: `capas/cnmc.json` (`tools/build-cnmc.mjs`, de la sesión de la tabla de rutas; CC BY-SA 4.0).
+  - El precio usa solo el año natural 2025, porque la CNMC cambió el método en el 1T 2026.
+- **Cómo se integra:** `build-cabina.mjs` lee `mercado.json` y `cnmc.json` sin red, los incorpora a `cabina.json` y escribe los titulares de «uso» y «competencia» desde los datos. Si falta alguno, sus tarjetas no se pintan y el resto de la página funciona igual.
+- **Comprobado:**
+  - mismas cifras con dos implementaciones independientes: Node (este build) y pandas (`manual-ferrocarriles/mapa/investigacion-cabina/ola2/analisis.py`). Por ejemplo, AV +79,5 % frente a 2019, mercancías 9,82 mil millones de t-km con un 34,7 % de Renfe, y ocupación 75,4 / 71,3 / 82,6 %;
+  - los viajeros 2025 por corredor cuadran con la nota de prensa de la CNMC del 17-07-2026;
+  - `check-a11y` sin infracciones en `cabina.html` y `cabina-rutas.html` (corregido el contraste de las cifras de los paneles secundarios);
+  - escritorio (1440) y móvil (390) sin errores ni scroll horizontal;
+  - `build-cabina --check`, `check-links`, `version-assets --check`, `build-mapa --check` y `build-en --check`.
+- **Coste:** la página pasa de 4.498 a unos 6.400 px en escritorio y de 8.805 a unos 13.100 en móvil.
+
+## Pendiente
+
 - **Corredores:** actualizar con Adif, porque Hermes es de 2024.
+- **Tasa de accidentes:** el INE la permite calcular, pero hay que confirmar la unidad de los tren-km (tablas 24365 y 24366) antes de publicarla.
+- **Choque de la alta velocidad en enero y febrero de 2026** (−23,4 % interanual): la Cabina lo muestra sin atribuirle causa, que está por verificar con fuentes oficiales.
 - **Visor:** llevar las Cercanías de ancho ibérico e iryo a las fichas, para que tengan el mismo universo que Cabina.
 
 **Riesgo:** `tools/build-cabina.mjs` tarda unos 60 s por el cálculo de km (Dijkstra por pareja). Si crece, conviene guardar en caché los grafos por variante.

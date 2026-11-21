@@ -165,3 +165,19 @@ details.cb-data[open]>summary{margin-bottom:6px}
 .legend i.lg-alt{height:0;width:18px;border-radius:0;background:none;border-top:2px dashed var(--ctx);vertical-align:3px}
 /* tablas en móvil: cabeceras que se parten y columnas secundarias ocultas */
 @media(max-width:560px){th{white-space:normal}th.opt,td.opt{display:none}}
+/* ── Ola 2 · uso: small multiples con escala común (IBCS), énfasis solo en el panel que nombra el titular ── */
+.sm-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 18px;margin:4px 0 6px}
+.sm h4{margin:0;font-size:var(--fs-s);font-weight:600;color:var(--muted)}
+.sm .sm-v{margin:2px 0 0;font:600 22px/1.1 'Newsreader',Georgia,serif;color:var(--muted);font-variant-numeric:tabular-nums}
+.sm.hi .sm-v{color:var(--navy)}.sm.hi h4{color:var(--ink)}
+.sm .sm-s{margin:2px 0 4px;font-size:var(--fs-xs);color:var(--muted);line-height:1.35}
+.svgchart .ln.ctxl{stroke:var(--ctx);stroke-width:1.8}
+.svgchart .pt.ctx{fill:var(--ctx)}
+.svgchart .ref-line{stroke:var(--line-strong);stroke-width:1;stroke-dasharray:3 3}
+#c-ue h4{margin:10px 0 6px;font-size:var(--fs-s);font-weight:600;color:var(--ink)}
+@media(max-width:760px){.sm-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.sm-grid{grid-template-columns:1fr}}
+/* Puntos de precio por operador (mismos colores que las barras) */
+.svgchart .rng{stroke:var(--line-strong);stroke-width:3;stroke-linecap:round}
+.svgchart .d-ave{fill:#1d3557}.svgchart .d-avlo{fill:#882255}.svgchart .d-ouigo{fill:#0072b2}.svgchart .d-iryo{fill:#e07000}
+.svgchart circle.d-ave,.svgchart circle.d-avlo,.svgchart circle.d-ouigo,.svgchart circle.d-iryo{stroke:#fff;stroke-width:1.5}

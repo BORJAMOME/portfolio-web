@@ -173,6 +173,59 @@
   }
 
   /* ════════ 3 · Competencia ════════ */
+  /* Viajeros, ocupación y precio de la alta velocidad (CNMC, capas/cnmc.json → cabina.json · cnmc). */
+  const OPS=[['Renfe','c-ave','Renfe'],['OUIGO','c-ouigo','OUIGO'],['iryo','c-iryo','iryo']];
+  const PRICE=[['Renfe-AVE','d-ave','AVE'],['Renfe-AVLO','d-avlo','Avlo'],['Iryo','d-iryo','iryo'],['OUIGO','d-ouigo','OUIGO']];
+  const pc=v=>v===null||v===undefined?'—':pf.format(v)+' %',eur=v=>v===null||v===undefined?'—':pf.format(Math.round(v*10)/10)+' €';
+  /* Puntos por fila (precio por trayecto y operador): rango en gris y un punto por operador. */
+  function dots(rows,keys){
+    return w=>{
+      const L=w<520?92:122,R=14,T=6,row=30,B=22,H=T+rows.length*row+B,vals=rows.flatMap(r=>keys.map(k=>r[k[0]]).filter(v=>v!=null));
+      const x0=Math.floor(Math.min(...vals)/10)*10,x1=Math.ceil(Math.max(...vals)/10)*10,X=v=>L+(w-L-R)*(v-x0)/(x1-x0);
+      const s=svg('svg',{viewBox:`0 0 ${w} ${H}`,width:w,height:H,class:'svgchart','aria-hidden':'true'});
+      for(let v=x0;v<=x1;v+=10){s.append(svg('line',{x1:X(v),x2:X(v),y1:T,y2:H-B,class:'grid'}));s.append(svg('text',{x:X(v),y:H-6,'text-anchor':'middle'},v+' €'));}
+      rows.forEach((r,i)=>{const y=T+i*row+row/2,vs=keys.map(k=>r[k[0]]).filter(v=>v!=null);
+        s.append(svg('text',{x:L-8,y:y+4,'text-anchor':'end',class:'v'},r.trayecto.replace('Madrid-','Madrid–')));
+        s.append(svg('line',{x1:X(Math.min(...vs)),x2:X(Math.max(...vs)),y1:y,y2:y,class:'rng'}));
+        for(const [k,cls,name] of keys){if(r[k]==null)continue;const c=svg('circle',{cx:X(r[k]),cy:y,r:6,class:cls});c.append(svg('title',{},name+': '+eur(r[k])));s.append(c);}});
+      return s;
+    };
+  }
+  function renderViajerosAV(J){
+    const C=J.cnmc,ids=['c-cuota','c-cuota-t','c-ocupacion','c-precio'];
+    if(!C){for(const id of ids)document.getElementById(id)?.remove();return;}
+    // Cuota de viajeros por corredor (barras 100 % apiladas, ordenadas por la cuota de Renfe).
+    const rows=[...C.corredores].sort((a,b)=>a.op.Renfe.cuota-b.op.Renfe.cuota),rc=rows.map(x=>x.op.Renfe.cuota);
+    let c=card('c-cuota',`Renfe tiene entre el ${Math.round(Math.min(...rc))} % y el ${Math.round(Math.max(...rc))} % de los viajeros de cada corredor`,'Cuota de viajeros por operador · 2025 · CNMC');
+    c.append(legend(OPS.map(([,cls,n])=>[cls,n])),
+      hbars(rows.map(x=>({label:x.corredor.replace('Madrid-','Madrid–'),values:OPS.map(([k])=>x.op[k]?.cuota||0),shown:x.op.Renfe.cuota})),{classes:OPS.map(o=>o[1]),format:pc,extra:it=>'Renfe'}),
+      note('Barras al 100 %: la longitud es la cuota, no el número de viajeros. Los viajeros del corredor incluyen trayectos intermedios (Madrid–Zaragoza cuenta en Madrid–Barcelona).'),
+      dataTable([{label:'Corredor',key:'n'},{label:'Viajeros 2025 (millones)',key:'v'},...OPS.map(([k,,n])=>({label:n+' (%)',key:k}))],
+        rows.map(x=>({n:x.corredor,v:pf.format(x.viajeros),...Object.fromEntries(OPS.map(([k])=>[k,pf.format(x.op[k]?.cuota??0)]))})),'Cuota de viajeros por corredor, 2025'));
+    // Cuota de Renfe en el tiempo.
+    const S=C.serie,ticks=S.map((s,i)=>[i,s[0]]).filter(([,t])=>/T1$/.test(t)&&+t.slice(0,4)%2===0).map(([i])=>i);
+    c=card('c-cuota-t',`Desde 2023, Renfe se mantiene en torno al ${Math.round(C.renfe_desde_2023)} % de los viajeros; hasta 2021 tenía el 100 %`,'Cuota trimestral de Renfe en los cinco corredores · CNMC, hasta '+C.ultimo_trimestre.replace('T',' T'));
+    responsive(c,curves([{name:'Renfe',cls:'main',pts:S.map((s,i)=>[i,s[1]])}],{xTicks:ticks,xFmt:i=>S[i][0].slice(0,4),h:200,marks:[{x:S.length-1,y:S.at(-1)[1],text:pc(S.at(-1)[1])}]}),
+      'Cuota de Renfe por trimestre: 100 % hasta 2021 y en torno al '+Math.round(C.renfe_desde_2023)+' % desde 2023');
+    c.append(note('Coincide con la llegada de OUIGO (2021) e iryo (2022); la serie muestra el cambio, no prueba su causa.'),
+      dataTable([{label:'Trimestre',key:'t'},{label:'Cuota de Renfe (%)',key:'r'}],S.map(s=>({t:s[0],r:pf.format(s[1])})),'Cuota trimestral de Renfe'));
+    // Ocupación: viajeros-km ÷ plazas-km.
+    const O5=C.ocupacion_5,ord=OPS.map(o=>o[0]).sort((a,b)=>O5[b]-O5[a]),mb=C.corredores.find(x=>x.corredor==='Madrid-Barcelona');
+    c=card('c-ocupacion',`${ord[0]} llena el ${Math.round(O5[ord[0]])} % de sus plazas; ${ord[1]}, el ${Math.round(O5[ord[1]])} %, e ${ord[2]}, el ${Math.round(O5[ord[2]])} %`,'Ocupación en 2025 · los cinco corredores juntos · CNMC');
+    c.append(hbars(ord.map((k,i)=>({label:k,values:[O5[k]],hi:i===0})),{format:pc}),
+      note('Ocupación = viajeros-km ÷ plazas-km (dividir viajeros entre plazas da cifras falsas por los trayectos intermedios).'+(mb?' Solo Madrid–Barcelona: '+ord.map(k=>k+' '+pc(mb.op[k]?.ocupacion)).join(', ')+'.':'')),
+      dataTable([{label:'Operador',key:'k'},{label:'Cinco corredores (%)',key:'a'},...C.corredores.map(x=>({label:x.corredor.replace('Madrid-',''),key:x.corredor}))],
+        OPS.map(([k])=>({k,a:pf.format(O5[k]),...Object.fromEntries(C.corredores.map(x=>[x.corredor,pc(x.op[k]?.ocupacion)]))})),'Ocupación por operador y corredor, 2025'));
+    // Precio medio 2025 (año completo: la CNMC cambió el método en el 1T 2026).
+    const P=[...C.precio_2025].sort((a,b)=>b['Renfe-AVE']-a['Renfe-AVE']);
+    const ratio=P.map(r=>r['Renfe-AVE']/Math.min(...PRICE.slice(1).map(k=>r[k[0]]).filter(v=>v!=null)));
+    const lo=pf.format(Math.round(Math.min(...ratio)*10)/10),hi=pf.format(Math.round(Math.max(...ratio)*10)/10);
+    c=card('c-precio',`El AVE cuesta ${lo===hi?lo:'entre '+lo+' y '+hi} veces la opción más barata de cada corredor`,'Precio medio por viaje, 2025 (año completo) · CNMC');
+    c.append(legend(PRICE.map(([,cls,n])=>[cls.replace('d-','c-'),n])));
+    responsive(c,dots(P,PRICE),'Precio medio por viaje y operador en 2025. '+P.map(r=>r.trayecto+': AVE '+eur(r['Renfe-AVE'])).join('; '));
+    c.append(note('Sin IVA, media de todas las tarifas vendidas. En 2025 no hubo Avlo en Madrid–Barcelona. Los meses de 2026 no se comparan: la CNMC cambió el método de cálculo en el primer trimestre.'),
+      dataTable([{label:'Trayecto',key:'t'},...PRICE.map(([k,,n])=>({label:n,key:k})),{label:'Media',key:'Total'}],P.map(r=>({t:r.trayecto,...Object.fromEntries([...PRICE.map(([k])=>[k,eur(r[k])]),['Total',eur(r.Total)]])})),'Precio medio por viaje, 2025'));
+  }
   function renderCompetencia(J){
     const O=J.oferta,list=O.competencia.slice(0,8);
     const c=card('c-competencia','Trenes de alta velocidad por estación y operador','Estaciones donde paran iryo u OUIGO · '+longDate(O.referencia.laborable)+' · Avant aparte');
@@ -181,6 +234,57 @@
         extra:it=>'iryo y OUIGO '+pct(it.values[2]+it.values[3],it.values.reduce((a,b)=>a+b,0))}),
       note('Oferta programada (trenes con parada), no viajeros ni cuota de mercado. iryo sale de un GTFS comunitario, no oficial, compilado con los horarios de iryo.eu.'),
       dataTable([{label:'Estación',key:'n'},{label:'AVE',key:'ave',n:1},{label:'Avlo',key:'avlo',n:1},{label:'OUIGO',key:'ouigo',n:1},{label:'iryo',key:'iryo',n:1},{label:'Avant',key:'avant',n:1}],O.competencia,'Trenes con parada por operador'));
+  }
+
+  /* ════════ 3 · Uso: viajeros (INE), comparación con la UE (Eurostat) y mercancías (CNMC) ════════ */
+  const month=ym=>{const [y,m]=ym.split('-').map(Number);return new Date(y,m-1,15).toLocaleDateString('es-ES',{month:'long',year:'numeric'});};
+  const signed=v=>(v>0?'+':'')+pf.format(v)+' %';
+  /* Línea de tendencia con escala común entre paneles (small multiples, IBCS): pts = [[i, índice]], base 100 marcada. */
+  function trend(pts,{cls='ctxl',yMin,yMax,ticks=[],h=120}={}){
+    return w=>{
+      const L=30,R=6,T=8,B=20,n=pts.length-1,X=i=>L+(w-L-R)*i/n,Y=v=>h-B-(h-T-B)*(v-yMin)/(yMax-yMin);
+      const s=svg('svg',{viewBox:`0 0 ${w} ${h}`,width:w,height:h,class:'svgchart','aria-hidden':'true'});
+      for(const v of [50,100,150,200].filter(v=>v>=yMin&&v<=yMax)){s.append(svg('line',{x1:L,x2:w-R,y1:Y(v),y2:Y(v),class:v===100?'ref-line':'grid'}));s.append(svg('text',{x:L-5,y:Y(v)+4,'text-anchor':'end'},v));}
+      for(const [i,lab] of ticks)s.append(svg('text',{x:X(i),y:h-5,'text-anchor':'middle'},lab));
+      s.append(svg('polyline',{points:pts.map(([i,v])=>X(i).toFixed(1)+','+Y(v).toFixed(1)).join(' '),class:'ln '+cls}));
+      const [li,lv]=pts.at(-1);s.append(svg('circle',{cx:X(li),cy:Y(lv),r:3,class:cls==='main'?'pt':'pt ctx'}));
+      return s;
+    };
+  }
+  function renderUso(J){
+    const M=J.mercado;if(!M){$('#uso').hidden=true;document.querySelector('a[href="#uso"]')?.remove();return;}
+    const V=M.viajeros,S=V.series,R=V.resumen,ORDER=['av','media','cercanias','resto_ld'];
+    // Índice 2019 = 100 sobre la suma móvil de 12 meses: quita la estacionalidad y compara con el último año normal.
+    const idx={};
+    for(const k of ORDER){const m=S[k].meses,y19=m.filter(([d])=>d.startsWith('2019-')).reduce((a,[,v])=>a+v,0),pts=[];
+      for(let i=11;i<m.length;i++){let sum=0;for(let j=i-11;j<=i;j++)sum+=m[j][1];pts.push([i-11,100*sum/y19,m[i][0]]);}
+      idx[k]=pts;}
+    const all=ORDER.flatMap(k=>idx[k].map(p=>p[1])),yMin=Math.floor(Math.min(...all)/25)*25,yMax=Math.ceil(Math.max(...all)/25)*25;
+    const ticks=idx.av.map((p,i)=>[i,p[2]]).filter(([,d])=>/-01$/.test(d)&&+d.slice(0,4)%3===0).map(([i,d])=>[i,d.slice(0,4)]);
+    let c=card('c-demanda','Viajeros por tipo de servicio, frente a 2019','Suma de los últimos 12 meses, 2019 = 100 · misma escala en los cuatro paneles · INE, hasta '+month(V.ultimo));
+    const grid=el('div','sm-grid');
+    for(const k of ORDER){const box=el('div','sm'+(k==='av'?' hi':''));
+      box.append(el('h4',null,S[k].nombre),el('p','sm-v',signed(R[k].vs2019)),el('p','sm-s',fmt(R[k].m12/1000)+' millones en 12 meses · '+signed(R[k].var12)+' frente al año anterior'));
+      responsive(box,trend(idx[k].map(p=>[p[0],p[1]]),{cls:k==='av'?'main':'ctxl',yMin,yMax,ticks}),S[k].nombre+': '+signed(R[k].vs2019)+' frente a 2019');
+      grid.append(box);}
+    const ch=V.choque_av;
+    c.append(grid,
+      note(`La alta velocidad ya es el ${pf.format(V.av_peso_ld.ultimos12)} % de los viajeros de larga distancia (${pf.format(V.av_peso_ld['2017'])} % en 2017). En enero y febrero de 2026 cayó un ${pf.format(-ch.ene_feb_2026)} % frente a 2025 y de mayo a ${month(ch.hasta)} sigue un ${pf.format(-ch.may_ult_2026)} % por debajo: estos datos no dicen la causa.`),
+      dataTable([{label:'Servicio',key:'n'},{label:'Viajeros, 12 meses (miles)',key:'m12',n:1},{label:'Frente al año anterior',key:'v12'},{label:'Frente a 2019',key:'v19'}],
+        ORDER.map(k=>({n:S[k].nombre,m12:R[k].m12,v12:signed(R[k].var12),v19:signed(R[k].vs2019)})),'Viajeros por tipo de servicio, hasta '+month(V.ultimo)));
+    // Comparación con la UE: cuota del tren en el transporte por tierra, último año disponible.
+    const U=M.ue,NAME={ES:'España',EU27_2020:'UE-27',FR:'Francia',DE:'Alemania',IT:'Italia',PT:'Portugal'},last=U.viajeros.anios.length-1,yr=U.viajeros.anios[last];
+    const bars=D=>hbars(Object.keys(NAME).map(g=>({label:NAME[g],values:[D.pais[g][last]],hi:g==='ES'})).sort((a,b)=>b.values[0]-a.values[0]),{format:v=>pf.format(v)+' %'});
+    c=card('c-ue','Cuota del tren en el transporte por tierra, '+yr,'Viajeros-km y toneladas-km por tierra (tren, carretera y vías navegables) · Eurostat');
+    c.append(el('h4',null,'Viajeros'),bars(U.viajeros),el('h4',null,'Mercancías'),bars(U.mercancias),
+      note('En viajeros, España está en la media europea; en mercancías, el tren mueve en España cuatro veces menos que en la UE.'.replace('cuatro veces',pf.format(Math.round(U.mercancias.pais.EU27_2020[last]/U.mercancias.pais.ES[last]))+' veces')),
+      dataTable([{label:'País',key:'n'},{label:'Viajeros (%)',key:'v'},{label:'Mercancías (%)',key:'m'}],Object.keys(NAME).map(g=>({n:NAME[g],v:pf.format(U.viajeros.pais[g][last]),m:pf.format(U.mercancias.pais[g][last])})),'Cuota del tren por tierra, '+yr));
+    // Mercancías: cuota de Renfe por año (lo que más cambia) y el total como contexto.
+    const A=M.mercancias.anual,f0=A[0],fl=A.at(-1);
+    c=card('c-mercancias','Renfe Mercancías: del '+pf.format(f0.renfe_pct)+' % al '+pf.format(fl.renfe_pct)+' % de las toneladas-km','Cuota de Renfe por año · el total se mantiene en torno a '+pf.format(Math.round(A.reduce((a,x)=>a+x.tkm_mm,0)/A.length))+' mil millones de t-km · CNMC');
+    responsive(c,columns(A.map((x,i)=>({label:String(x.anio),value:x.renfe_pct,tick:"'"+String(x.anio).slice(2)})),{hi:[A.length-1],h:150}),'Cuota de Renfe en las toneladas-km por año: de '+pf.format(f0.renfe_pct)+' % en '+f0.anio+' a '+pf.format(fl.renfe_pct)+' % en '+fl.anio);
+    c.append(note(`${fl.anio}: ${pf.format(fl.tkm_mm)} mil millones de t-km netas; el ${pf.format(fl.intermodal_pct)} % en vagón intermodal (contenedores). El resto lo mueven Medway, Captrain, Continental Rail, Transervi y otras.`),
+      dataTable([{label:'Año',key:'anio'},{label:'t-km netas (miles de millones)',key:'t'},{label:'Renfe (%)',key:'r'},{label:'Intermodal (%)',key:'i'}],A.map(x=>({anio:String(x.anio),t:pf.format(x.tkm_mm),r:pf.format(x.renfe_pct),i:x.intermodal_pct===null?'—':pf.format(x.intermodal_pct)})),'Mercancías por ferrocarril'));
   }
 
   /* ════════ 4 · Red ════════ */
@@ -242,14 +346,18 @@
     c.append(dl);
     c=body('c-no');
     const ul=el('ul','plain');
-    for(const t of ['Viajeros, ocupación y cuota de mercado (la CNMC los publica por corredor: llegarán en la siguiente versión).','Puntualidad y retrasos: los horarios son oferta programada, no circulaciones reales.',
-      'Ingresos, tarifas y plazas por tren.','Operadores autonómicos (FGC, Euskotren, FGV): sus horarios están en el Punto de Acceso Nacional, con registro.','Mercancías, obras y cortes de vía.',
+    for(const t of ['Viajeros por estación, por línea o por tren: el INE solo da totales nacionales por tipo de servicio, y la CNMC, los cinco corredores de alta velocidad con competencia.','Puntualidad y retrasos: los horarios son oferta programada, no circulaciones reales.',
+      'Ingresos por operador y plazas por tren: la CNMC no publica los ingresos de cada empresa.','Operadores autonómicos (FGC, Euskotren, FGV): sus horarios están en el Punto de Acceso Nacional, con registro.','Mercancías por tramo o por terminal, obras y cortes de vía: las mercancías solo llegan como total nacional por operador.',
       'Acceso real a la estación: las distancias son en línea recta.'])ul.append(el('li',null,t));
     c.append(ul,note('Por eso no hay ratios de trenes por habitante ni comparaciones de calidad entre territorios más allá de la oferta programada.'));
     c=body('c-fuentes');
     const fl=el('dl','src');
     for(const s of Object.values(O.fuentes))fl.append(el('dt',null,s.label),el('dd',null,'Horarios publicados del '+date(s.from)+' al '+date(s.to)+(s.official===false?' · no oficial':'')+'.'));
     for(const [k,v] of [['Red',J.fuentes.red],['Población',J.fuentes.poblacion],['Corredores y TEN-T','Hermes (Ministerio de Transportes), '+date(J.corredores.fecha)]])fl.append(el('dt',null,k),el('dd',null,v));
+    if(J.mercado){const F=J.mercado.fuentes;
+      fl.append(el('dt',null,'Viajeros'),el('dd',null,F.ine.label+', hasta '+month(F.ine.hasta)+'.'),
+        el('dt',null,'Mercancías'),el('dd',null,F.cnmc_mercancias.label+', años completos hasta '+F.cnmc_mercancias.hasta+'.'),
+        el('dt',null,'Comparación con la UE'),el('dd',null,F.eurostat.label+', actualizado el '+date(F.eurostat.actualizado)+'.'));}
     c.append(fl,note('Todo se regenera con «node tools/build-rutas.mjs --download» y «node tools/build-cabina.mjs». Origen de los datos de horarios: Renfe Operadora (CC BY 4.0); iryo: Clément Desouche (CC BY 4.0).'));
   }
 
@@ -290,7 +398,7 @@
     try{const r=await fetch('capas/cabina.json',{cache:'no-cache'});if(!r.ok)throw new Error(r.status);J=await r.json();}
     catch{const a=$('#alert');a.hidden=false;a.textContent='No se han podido cargar los gráficos. Los titulares de cada capítulo siguen siendo válidos; recarga la página.';return;}
     // Cada bloque falla por separado: un error no deja la página en blanco.
-    for(const [name,fn] of [['indicadores',renderKpis],['cobertura',renderCobertura],['servicio',renderServicio],['competencia',renderCompetencia],['red',renderRed],['método',renderMetodo],['anexo',renderAnexo]]){
+    for(const [name,fn] of [['indicadores',renderKpis],['cobertura',renderCobertura],['servicio',renderServicio],['uso',renderUso],['alta velocidad · viajeros',renderViajerosAV],['competencia',renderCompetencia],['red',renderRed],['método',renderMetodo],['anexo',renderAnexo]]){
       try{fn(J);}catch(e){console.error(name,e);const a=$('#alert');a.hidden=false;a.textContent='No se ha podido pintar el bloque «'+name+'». El resto de la página sigue disponible.';}
     }
   }
