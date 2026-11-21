@@ -87,6 +87,14 @@ const corredores = {
   }),
   total: Object.fromEntries(['service', 'construction', 'project'].map(st => [st, round(cor.filter(x => x.status === st && CFG.corridors.some(c => c.id === x.corridor)).reduce((a, x) => a + (Number(x.km) || 0), 0), 0)])),
   sin_corredor: cor.filter(x => !CFG.corridors.some(c => c.id === x.corridor)).length,
+  /* Hermes es de 2024. El «en servicio» ya se contrasta con los horarios (high_speed_trains); las obras y los proyectos se
+     revisaron a mano con el Ministerio el 21-11-2026 y no ha cambiado ninguno: Murcia–Almería, Burgos–Vitoria y la Y vasca
+     siguen en obras, y València–La Encina también (sus trenes van por la variante de ancho ibérico abierta en 2023, a
+     menos de 150 m del trazado). Si Hermes publica una versión nueva, revisar de nuevo. */
+  verificado: {fecha: '2026-11-21', nota: 'Ningún tramo en obras o en proyecto de Hermes se ha abierto desde 2024 según el Ministerio de Transportes; València–La Encina tiene trenes por la variante de ancho ibérico, no por la línea de alta velocidad.',
+    fuentes: ['https://www.lamoncloa.gob.es/serviciosdeprensa/notasprensa/transportes-movilidad-sostenible/paginas/2026/110826-puente-visita-obras-ave-almeria.aspx',
+      'https://www.transportes.gob.es/ministerio/comunicacion/sala-prensa/vie-25092026-1125',
+      'https://www.lamoncloa.gob.es/serviciosdeprensa/notasprensa/transportes-movilidad-sostenible/paginas/2026/220426-puente-corredor-mediterraneo.aspx']},
   // Tramos en servicio por los que no pasa ningún tren de alta velocidad de los horarios (regla de 150 m del visor).
   servicio_sin_trenes: cor.filter(x => x.status === 'service' && x.high_speed_trains === false)
     .map(x => ({corredor: x.corridor, nombre: x.name, km: round(Number(x.km) || 0, 1)})).sort((a, b) => b.km - a.km)

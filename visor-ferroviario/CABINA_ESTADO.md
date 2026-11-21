@@ -1,6 +1,6 @@
 # Cabina: estado
 
-Última actualización: 21-11-2026 (ola 1 de `manual-ferrocarriles/mapa/investigacion-cabina/PROPUESTA_CABINA.md`, cerrada).
+Última actualización: 21-11-2026 (olas 1 y 2 cerradas; pendientes de la ola 2 resueltos salvo las fichas del visor).
 La tabla de rutas tiene su propio estado en `RUTAS_ESTADO.md`.
 
 ## Qué es ahora
@@ -78,11 +78,26 @@ Cuadro de mando con una pregunta rectora: *¿qué servicio de tren recibe cada t
   - `build-cabina --check`, `check-links`, `version-assets --check`, `build-mapa --check` y `build-en --check`.
 - **Coste:** la página pasa de 4.498 a unos 6.400 px en escritorio y de 8.805 a unos 13.100 en móvil.
 
+## Pendientes de la ola 2 resueltos (21-11-2026)
+
+- **Tasa de accidentes** (tarjeta «Accidentes significativos por millón de tren-km», capítulo de la red):
+  - el INE da los tren-km (tabla 24365, series TF607 y TF605) como «Trenes-Km» sin escala, pero son **miles**: coinciden año a año con Eurostat `rail_tf_trainmv` (THS_TRKM). `build-cabina-mercado.mjs` lo comprueba en cada ejecución y falla si se separan más de un 1 %;
+  - numerador: accidentes significativos de la tabla 24366 (suma de los seis tipos). 2025: 71 en 220,6 millones de tren-km = 0,32; media 2014–2019 = 0,25;
+  - el INE y Eurostat (`tran_sf_railac`) no coinciden en todos los años (2019: 55 frente a 49; 2024: 63 frente a 57). Se usa el INE porque numerador y denominador salen de la misma fuente.
+- **Caída de la alta velocidad en enero y febrero de 2026** (−23,4 %): ya no se dice «causa desconocida», sino dónde se concentra y con qué coincide:
+  - CNMC `ds_24408`, 1T 2026 frente a 1T 2025: Madrid–Málaga/Granada −60,6 %, Madrid–Sevilla −27,0 %, Madrid–Barcelona −17,4 %, Madrid–Valencia −7,7 %, Madrid–Alicante −6,2 %;
+  - coincide con el accidente de Adamuz (18-01-2026), tras el que se interrumpió la línea Madrid–Andalucía (comunicado del Ministerio de Transportes del 20-01-2026, enlazado en la nota);
+  - ni el INE ni la CNMC atribuyen la causa, y la nota lo dice. Las limitaciones de velocidad en Madrid–Barcelona solo constan en prensa: no se citan.
+- **Corredores (Hermes 2024):** revisados el 21-11-2026 con notas del Ministerio. Ningún tramo en obras o en proyecto se ha abierto. Murcia–Almería, Burgos–Vitoria y la Y vasca siguen en obras. València–La Encina tiene trenes a menos de 150 m porque va por la variante de ancho ibérico abierta en 2023, pero la línea de alta velocidad sigue en obras. La fecha de la revisión y su nota están en `build-cabina.mjs` (`corredores.verificado`) y se muestran en la tarjeta.
+- **Comprobado:** `check-a11y` sin infracciones en `cabina.html`; escritorio (1440) y móvil (390) sin errores ni scroll horizontal; `build-cabina --check`, `check-links`, `version-assets --check`, `build-mapa --check` y `build-en --check`.
+
 ## Pendiente
 
-- **Corredores:** actualizar con Adif, porque Hermes es de 2024.
-- **Tasa de accidentes:** el INE la permite calcular, pero hay que confirmar la unidad de los tren-km (tablas 24365 y 24366) antes de publicarla.
-- **Choque de la alta velocidad en enero y febrero de 2026** (−23,4 % interanual): la Cabina lo muestra sin atribuirle causa, que está por verificar con fuentes oficiales.
-- **Visor:** llevar las Cercanías de ancho ibérico e iryo a las fichas, para que tengan el mismo universo que Cabina.
+- **Visor: Cercanías de ancho ibérico e iryo en las fichas**, para que tengan el mismo universo que Cabina. No es un cambio de este repositorio:
+  - los horarios de las fichas (`capas/horarios.json` y `capas/servicios.json`) los genera `manual-ferrocarriles/mapa/preparar_horarios.py`;
+  - hay que añadir los dos GTFS, asignar los trenes a tramos IGN (para `forEdge`) y vigilar el tamaño, porque las Cercanías de ancho ibérico multiplican los viajes;
+  - además, `horarios.json` no se regenera cada semana y el GTFS de Cercanías dura unos 30 días, así que las fichas acabarán retrocediendo a la última semana cubierta.
+  - **Criterio de validación:** los trenes un laborable de una estación coinciden en la ficha del visor y en `oferta.json` (por ejemplo, Madrid-Atocha Cercanías y Sevilla-Santa Justa).
+- **Mantenimiento:** si Hermes publica una versión nueva de la capa TEN-T, volver a revisar los corredores y actualizar `corredores.verificado`. Cuando el INE publique 2026, la tasa de accidentes incluirá Adamuz y la tarjeta lo explica.
 
 **Riesgo:** `tools/build-cabina.mjs` tarda unos 60 s por el cálculo de km (Dijkstra por pareja). Si crece, conviene guardar en caché los grafos por variante.
