@@ -207,3 +207,13 @@ Con `--hoy=2026-11-21` es reproducible. El lector de GTFS (`tools/rutas/gtfs.mjs
 
 - **Fase 6: operadores autonómicos (FGC, Euskotren, FGV).** Bloqueada hasta que Borja cree la cuenta del NAP y su ApiKey.
 - **Pendiente de la fase 3:** el filtro por corredor Hermes o TEN-T.
+
+
+## Corrección del análisis territorial y tablas (21-11-2026)
+
+- Cada modo dispone de tabla específica con ordenación, búsqueda, selección, paginación y CSV. La selección de tabla centra el mapa; la del mapa detalla la entidad y sus rutas. La concentración resuelve el segmento concreto en el clic, con operadores y longitud en metros.
+- Frecuencia y conectividad combinan halos de intensidad y puntos consultables; las leyendas tienen umbrales fijos entre filtros y días.
+- Cobertura solo peninsular. Canarias, Ceuta y Melilla no entran en distancias ni indicadores. Baleares queda explícitamente fuera del catálogo, sin afirmar que no tenga trenes.
+- Asignación de estaciones a municipios por punto dentro del polígono (preselección por caja). Un municipio con estación y servicio se identifica como tal, con distancia municipal convencional 0. Se distinguen estaciones sin servicio seleccionado, proximidad al umbral y falta de estación próxima. Las estaciones se superponen al mapa municipal.
+- El punto representativo para distancia usa el centroide del polígono principal si cae dentro; en otro caso, un punto de su contorno. No es ubicación de población ni acceso viario. Los habitantes de municipios no se equiparan a población cubierta.
+- Pruebas de regresión: municipios gallegos con estación reconocidos (72 con este catálogo), Canarias fuera del cálculo, clic de tramo, rutas asociadas, tabla, CSV, conectividad con valores reales, vacío, filtros y accesibilidad.
