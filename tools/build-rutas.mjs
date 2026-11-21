@@ -15,6 +15,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {readGtfs,serviceDays,minutes,unzip,columns} from './rutas/gtfs.mjs';
 import {loadRed} from './rutas/red.mjs';
+import {routeActivity} from './rutas/heatmap.mjs';
 
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const CACHE=path.join(ROOT,'.cache','rutas'),V=path.join(ROOT,'visor-ferroviario'),OUT=path.join(V,'capas','rutas.json');
@@ -181,7 +182,9 @@ function build(today){
     });
   }
   out.sort((a,b)=>b.sem-a.sem||String(a.id).localeCompare(String(b.id)));
-  viaPorRuta(out,rows,stOut,RED,catalog,path.join(CACHE,SOURCES.cercanias.file),WD);
+  const traces=viaPorRuta(out,rows,stOut,RED,catalog,path.join(CACHE,SOURCES.cercanias.file),W);
+  const activity = {version:1, referencia:W, rutas:{}, traces};
+  for(const row of out) activity.rutas[row.id] = routeActivity(rows.get(row.id).trains, stIdx, W);
 
   const oferta=stationOffer(all,stIdx,stOut.length,W,sources);
   oferta.capitales=capitalPairs(all,stOut,stIdx,WD);
@@ -189,7 +192,7 @@ function build(today){
   return {version:1,generado:today,generado_con:'tools/build-rutas.mjs',
     referencia:{semana:W[0],laborable:WD,sabado:W[5],domingo:W[6],
       nota:'Semana completa (lunes a domingo) que cubren todas las fuentes. Mes = semana × 4,35 y año = semana × 52: estimaciones con semana tipo, sin festivos ni cambios de horario.'},
-    fuentes:sources,totales:totals,notas:notes,estaciones:stOut,rutas:out,oferta};
+    fuentes:sources,totales:totals,notas:notes,estaciones:stOut,rutas:out,oferta,activity};
 }
 /* Oferta por estación y por familia en la semana de referencia, con TODOS los trenes de viajeros con horario público
    (Renfe AV/LD/MD, Cercanías de todos los núcleos, OUIGO e iryo). Es la base de los titulares de Cabina, que así no
@@ -281,7 +284,8 @@ function ouigoFromAtlas(){
    Velocidad: km ÷ duración (mediana del día, y la del tren más rápido). */
 const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().slice(0,5);
 const GAUGE_GROUP=v=>['1668','1435','1000','mixed'].includes(v)?v:'unknown';
-function viaPorRuta(out,rows,stOut,RED,catalog,shapesFile,WD){
+function viaPorRuta(out,rows,stOut,RED,catalog,shapesFile,week){
+  const WD=week[2],traces={routes:{}, routeDays:{}, geometries:{}};
   const S=JSON.parse(fs.readFileSync(path.join(V,'capas','servicios.json'),'utf8'));
   const feat=RED.datos.rail.features,F=RED.F,code=sid=>S.stations[sid]?.official_id;
   // Estaciones de ancho métrico: las de las Cercanías métricas del visor (el catálogo de Renfe no las marca todas).
@@ -307,6 +311,11 @@ function viaPorRuta(out,rows,stOut,RED,catalog,shapesFile,WD){
   for(const row of out){
     const src=rows.get(row.id);let via=null;
     if(row.fam==='Cercanías'){
+      const days=week.map(day=>[...new Set(src.trains.filter(t=>t.days.has(day)).map(t=>t.shape).filter(id=>shapes.has(id)))]);
+      const ids=[...new Set(days.flat())];
+      traces.routes[row.id]=ids.map(id=>'gtfs:'+id);
+      traces.routeDays[row.id]=days.map(ids=>ids.map(id=>'gtfs:'+id));
+      for(const id of ids) traces.geometries['gtfs:'+id]=shapes.get(id).xy;
       // Solo los trenes que van de un extremo al otro de la línea (los extremos de la fila): muchos hacen solo un tramo y
       // su dibujo puede ser el de la línea entera (con 3 minutos de viaje saldrían 600 km/h).
       const ends=new Set([stOut[row.o]?.k,stOut[row.d]?.k]);
@@ -323,6 +332,8 @@ function viaPorRuta(out,rows,stOut,RED,catalog,shapesFile,WD){
       // Trazado inferido incompleto: con tramos pendientes o más corto que la línea recta entre los extremos (imposible).
       if(v&&(v.pending_segments>0||st0.km<straight*.98)){row.via={km:null,fuente:'ign',incompleto:true,variante:v.id};continue;}
       if(v){const st=st0,hs=st.perf.hs||0,yes=st.el.yes||0,no=st.el.no||0,unk=st.km-yes-no;
+        traces.routes[row.id]=[...new Set(v.edges)].filter(fid=>feat[fid]).map(fid=>'ign:'+fid);
+        for(const fid of new Set(v.edges))if(feat[fid])traces.geometries['ign:'+fid]=feat[fid].geometry.coordinates;
         const gs=Object.entries(st.g).sort((a,b)=>b[1]-a[1]),dom=gs[0]?.[0]||'unknown';
         via={km:Math.round(st.km),fuente:'ign',av:pct(hs,st.km),el:pct(yes,st.km),elSin:pct(unk,st.km),
           ancho:gs.length>1&&gs[1][1]/st.km>=.1?'varios':dom,anchos:Object.fromEntries(gs.map(([k,m])=>[k,pct(m,st.km)])),
@@ -331,12 +342,14 @@ function viaPorRuta(out,rows,stOut,RED,catalog,shapesFile,WD){
     }
     row.via=via;
   }
+  return traces;
 }
 
 if(process.argv[1]&&fileURLToPath(import.meta.url)===path.resolve(process.argv[1])){
   if(process.argv.includes('--download'))await download();
   const today=arg('hoy')||new Date().toISOString().slice(0,10);
-  const {oferta,...data}=build(today),txt=JSON.stringify(data)+'\n';
+  const {oferta,activity,...data}=build(today),txt=JSON.stringify(data)+'\n';
+  fs.writeFileSync(path.join(V,'capas','rutas-actividad.json'),JSON.stringify(activity)+'\n');
   fs.writeFileSync(OUT,txt);
   // oferta.json: misma lista de estaciones que rutas.json (los índices coinciden) y su oferta del día de referencia.
   const otxt=JSON.stringify({generado:today,generado_con:'tools/build-rutas.mjs',estaciones:data.estaciones,...oferta})+'\n';
