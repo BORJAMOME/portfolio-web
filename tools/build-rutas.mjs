@@ -13,7 +13,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {readGtfs,serviceDays,minutes} from './rutas/gtfs.mjs';
+import {readGtfs,serviceDays,minutes,unzip,columns} from './rutas/gtfs.mjs';
+import {loadRed} from './rutas/red.mjs';
 
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const CACHE=path.join(ROOT,'.cache','rutas'),V=path.join(ROOT,'visor-ferroviario'),OUT=path.join(V,'capas','rutas.json');
@@ -86,7 +87,7 @@ function build(today){
   // Estaciones: catálogo de Renfe (código de 5 cifras, provincia) + nombres y coordenadas de los GTFS.
   const catalog=new Map();
   for(const l of fs.readFileSync(path.join(CACHE,'estaciones.csv'),'utf8').split(/\r?\n/).slice(1)){
-    const c=l.split(';').map(x=>x.replace(/^"|"$/g,''));if(c[0])catalog.set(c[0],{prov:c[7]?title(c[7]).replace(/^(.*), (A|La|Las|Los|El|Les|L')$/i,'$2 $1'):null,coord:[+c[3],+c[2]]});
+    const c=l.split(';').map(x=>x.replace(/^"|"$/g,''));if(c[0])catalog.set(c[0],{prov:c[7]?title(c[7]).replace(/^(.*), (A|La|Las|Los|El|Les|L')$/i,'$2 $1'):null,coord:[+c[3],+c[2]],metric:c[10]==='SI'});
   }
   const stations=new Map(),seeStop=(code,s,rank)=>{const x=stations.get(code);if(!x||rank<x.rank)stations.set(code,{code,name:s.stop_name,coord:[+s.stop_lon,+s.stop_lat],rank});};
   const nuc=Object.fromEntries(JSON.parse(fs.readFileSync(path.join(V,'transit-catalog.json'),'utf8')).networks.filter(n=>n.id.startsWith('renfe-')).map(n=>[n.id.slice(6),n.name]));
@@ -104,7 +105,7 @@ function build(today){
     describe:r=>{const marca=BRAND[r.route_short_name.trim().toUpperCase()]||r.route_short_name.trim();return {operador:'Renfe',marca,familia:FAMILY[marca]||'Regional'};}}));
   add('cercanias',trainsFrom('cercanias',G.cercanias,{code:id,
     skip:r=>r.route_type==='3',   // autobuses de sustitución: no son trenes
-    describe:r=>{const n=r.route_id.slice(0,2);return {operador:'Renfe',marca:r.route_short_name,familia:'Cercanías',nucleo:nuc[n]||('Núcleo '+n),line:n+'|'+r.route_short_name,long:r.route_long_name.replace(/\s+/g,' ').trim(),color:r.route_color?'#'+r.route_color:null};}}));
+    describe:(r,t)=>{const n=r.route_id.slice(0,2);return {operador:'Renfe',marca:r.route_short_name,familia:'Cercanías',nucleo:nuc[n]||('Núcleo '+n),line:n+'|'+r.route_short_name,long:r.route_long_name.replace(/\s+/g,' ').trim(),color:r.route_color?'#'+r.route_color:null,shape:t.shape_id||null};}}));
   // OUIGO: su GTFS del NAP es el plan de julio de 2026 (no recoge la suspensión Madrid–Andalucía ni la programación
   // de diciembre). Se usa el PDF oficial «Horarios OUIGO 2026-2027» que ya integra el visor (capas/horarios.json).
   const ou=ouigoFromAtlas();for(const [code,s] of ou.stations)seeStop(code,s,4);
@@ -127,7 +128,7 @@ function build(today){
   for(const [k,s] of Object.entries(sources))if(s.to<iso(U(week)+28*864e5))notes.push(s.label+': horarios publicados solo hasta el '+s.to+'.');
 
   // Estaciones usadas → índice, comunidad y provincia.
-  const region=regionOf(datosRegions());
+  const RED=loadRed(V),region=regionOf(RED.datos.regions.features);
   const used=new Set(all.flatMap(t=>t.stops)),stIdx=new Map(),stOut=[];
   const cat=[...catalog.values()].filter(x=>x.prov&&x.coord[0]);for(const x of cat)x.ca??=region(x.coord);
   let provInferred=0;
@@ -175,6 +176,7 @@ function build(today){
     });
   }
   out.sort((a,b)=>b.sem-a.sem||String(a.id).localeCompare(String(b.id)));
+  viaPorRuta(out,rows,stOut,RED,catalog,path.join(CACHE,SOURCES.cercanias.file),WD);
 
   const oferta=stationOffer(all,stIdx,stOut.length,W,sources);
   oferta.capitales=capitalPairs(all,stOut,stIdx,WD);
@@ -265,9 +267,65 @@ function ouigoFromAtlas(){
   const stations=new Map();for(const s of Object.values(S.stations))if(s.official_id)stations.set(s.official_id,{stop_name:s.name,stop_lon:s.coordinates[0],stop_lat:s.coordinates[1]});
   return {trains:[...trains.values()],stations,source:S.meta.sources['ouigo-horarios']};
 }
-function datosRegions(){
-  // datos.json pesa 31 MB: se leen solo las regiones.
-  const j=JSON.parse(fs.readFileSync(path.join(V,'datos.json'),'utf8'));return j.regions.features;
+/* Vía e infraestructura de cada ruta.
+   - Renfe (AV/LD/MD), OUIGO e iryo: recorrido IGN inferido de la variante de servicios.json con los mismos extremos
+     (de la misma marca si la hay; si no, cualquiera: OUIGO e iryo usan las mismas vías). Km, % de alta velocidad,
+     % electrificado y ancho, con las correcciones del visor (tools/rutas/red.mjs).
+   - Cercanías: km del dibujo (shapes.txt) más frecuente de la línea el día de referencia; ancho métrico si al menos el
+     80 % de sus estaciones son de las Cercanías métricas del visor; electrificación y prestaciones sin dato.
+   Velocidad: km ÷ duración (mediana del día, y la del tren más rápido). */
+const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().slice(0,5);
+const GAUGE_GROUP=v=>['1668','1435','1000','mixed'].includes(v)?v:'unknown';
+function viaPorRuta(out,rows,stOut,RED,catalog,shapesFile,WD){
+  const S=JSON.parse(fs.readFileSync(path.join(V,'capas','servicios.json'),'utf8'));
+  const feat=RED.datos.rail.features,F=RED.F,code=sid=>S.stations[sid]?.official_id;
+  // Estaciones de ancho métrico: las de las Cercanías métricas del visor (el catálogo de Renfe no las marca todas).
+  const metricSet=new Set(S.variants.filter(v=>v.source==='renfe-commuter').flatMap(v=>v.calls.map(c=>code(c.s))).filter(Boolean));
+  const byEnds=new Map();
+  for(const v of S.variants){if(!v.edges?.length)continue;const a=code(v.calls[0].s),b=code(v.calls.at(-1).s);if(!a||!b)continue;
+    for(const k of [a+'>'+b,b+'>'+a]){if(!byEnds.has(k))byEnds.set(k,[]);byEnds.get(k).push(v);}}
+  const stats=edges=>{let km=0;const perf={},el={},g={};
+    for(const fid of new Set(edges)){const f=feat[fid];if(!f)continue;const m=(Number(f.properties.length_m)||0)/1000;km+=m;
+      const pf=f.properties.perf||'none';perf[pf]=(perf[pf]||0)+m;const e=F.value(f,'electric');el[e]=(el[e]||0)+m;const gg=GAUGE_GROUP(F.value(f,'gauge'));g[gg]=(g[gg]||0)+m;}
+    return {km,perf,el,g};};
+  // Cercanías: el GTFS da un único dibujo por línea (shapes.txt), no por tren. Los km de un tren son la distancia a lo
+  // largo de ese dibujo entre su primera y su última parada (cada estación, en el punto del dibujo más cercano).
+  const shapes=new Map();
+  {const c=columns(unzip(shapesFile).get('shapes.txt')(),['shape_id','shape_pt_lat','shape_pt_lon','shape_pt_sequence']),pts=new Map();
+    for(let i=0;i<c.shape_id.length;i++){const id=c.shape_id[i];if(!pts.has(id))pts.set(id,[]);pts.get(id).push([+c.shape_pt_sequence[i],+c.shape_pt_lon[i],+c.shape_pt_lat[i]]);}
+    for(const [id,a] of pts){a.sort((x,y)=>x[0]-y[0]);const xy=a.map(p=>[p[1],p[2]]),cum=[0];for(let i=1;i<xy.length;i++)cum.push(cum[i-1]+metres(xy[i-1],xy[i]));shapes.set(id,{xy,cum});}}
+  const posCache=new Map(),coordOf=new Map(stOut.map(s=>[s.k,s.c]));
+  const posOn=(sh,code)=>{const k=sh+'|'+code;if(posCache.has(k))return posCache.get(k);const S2=shapes.get(sh),c=coordOf.get(code);let b=null,bd=2000;
+    if(S2&&c)for(let i=0;i<S2.xy.length;i++){const d=metres(S2.xy[i],c);if(d<bd){bd=d;b=S2.cum[i];}}posCache.set(k,b);return b;};
+  const tripKm=t=>{if(!t.shape)return null;const a=posOn(t.shape,t.stops[0]),b=posOn(t.shape,t.stops.at(-1));return a===null||b===null||a===b?null:Math.abs(b-a)/1000;};
+  const pct=(x,t)=>t?Math.round(1000*x/t)/10:null,r1=x=>Math.round(x*10)/10;
+  for(const row of out){
+    const src=rows.get(row.id);let via=null;
+    if(row.fam==='Cercanías'){
+      // Solo los trenes que van de un extremo al otro de la línea (los extremos de la fila): muchos hacen solo un tramo y
+      // su dibujo puede ser el de la línea entera (con 3 minutos de viaje saldrían 600 km/h).
+      const ends=new Set([stOut[row.o]?.k,stOut[row.d]?.k]);
+      const base=src.trains.filter(t=>t.days.has(WD)&&ends.has(t.stops[0])&&ends.has(t.stops.at(-1))&&t.stops[0]!==t.stops.at(-1)),freq=new Map();
+      const med=a=>{const x=a.filter(v=>v!==null).sort((p,q)=>p-q);return x.length?x[Math.floor(x.length/2)]:null;};
+      const len=med(base.map(tripKm)),d=med(base.map(t=>t.arr-t.dep));
+      const met=row.est.filter(i=>metricSet.has(stOut[i].k)).length;
+      if(len){via={km:Math.round(len),fuente:'gtfs',ancho:met>=.8*row.est.length?'1000':'1668',tipo:null,av:null,el:null,vel:d?Math.round(len/(d/60)):null,velMax:null};}
+    }else{
+      const ends=row.o!==null&&row.d!==null?stOut[row.o].k+'>'+stOut[row.d].k:null,cands=byEnds.get(ends)||[];
+      const v=cands.find(x=>norm(x.published_brand)===norm(row.marca)&&code(x.calls[0].s)===stOut[row.o].k)||cands.find(x=>norm(x.published_brand)===norm(row.marca))||cands[0];
+      const straight=row.o!==null&&row.d!==null&&stOut[row.o].c&&stOut[row.d].c?metres(stOut[row.o].c,stOut[row.d].c)/1000:0;
+      const st0=v?stats(v.edges):null;
+      // Trazado inferido incompleto: con tramos pendientes o más corto que la línea recta entre los extremos (imposible).
+      if(v&&(v.pending_segments>0||st0.km<straight*.98)){row.via={km:null,fuente:'ign',incompleto:true,variante:v.id};continue;}
+      if(v){const st=st0,hs=st.perf.hs||0,yes=st.el.yes||0,no=st.el.no||0,unk=st.km-yes-no;
+        const gs=Object.entries(st.g).sort((a,b)=>b[1]-a[1]),dom=gs[0]?.[0]||'unknown';
+        via={km:Math.round(st.km),fuente:'ign',av:pct(hs,st.km),el:pct(yes,st.km),elSin:pct(unk,st.km),
+          ancho:gs.length>1&&gs[1][1]/st.km>=.1?'varios':dom,anchos:Object.fromEntries(gs.map(([k,m])=>[k,pct(m,st.km)])),
+          tipo:hs/st.km>=.8?'Alta velocidad':hs/st.km>=.2?'Mixta':'Convencional',
+          vel:row.dur?Math.round(st.km/(row.dur/60)):null,velMax:row.durMin?Math.round(st.km/(row.durMin/60)):null,variante:v.id};}
+    }
+    row.via=via;
+  }
 }
 
 if(process.argv[1]&&fileURLToPath(import.meta.url)===path.resolve(process.argv[1])){

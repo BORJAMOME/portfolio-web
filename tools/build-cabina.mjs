@@ -12,20 +12,14 @@
      node tools/build-cabina.mjs --check  falla si algo no está al día */
 import fs from 'node:fs';
 import path from 'node:path';
-import vm from 'node:vm';
 import {fileURLToPath} from 'node:url';
+import {loadRed} from './rutas/red.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const V = path.join(ROOT, 'visor-ferroviario');
 const OUT = path.join(V, 'capas', 'cabina.json');
 const read = f => JSON.parse(fs.readFileSync(path.join(V, f), 'utf8'));
 
-// Módulos del visor en un contexto con `window` (sin DOM: solo lógica pura).
-const ctx = {console};
-ctx.window = ctx; ctx.globalThis = ctx;
-vm.createContext(ctx);
-for (const f of ['filtros.js', 'cartography.js', 'capas-config.js']) vm.runInContext(fs.readFileSync(path.join(V, f), 'utf8'), ctx, {filename: f});
-const {AtlasFilters: F, AtlasCartography: C, AtlasConfig: CFG} = ctx;
 
 const round = (x, d = 1) => Math.round(x * 10 ** d) / 10 ** d;
 const tally = (items, key, val = () => 1) => {
@@ -34,22 +28,8 @@ const tally = (items, key, val = () => 1) => {
   return m;
 };
 
-/* ── Red IGN (ámbito peninsular, misma regla que el visor) ── */
-const datos = read('datos.json');
-// Mismas correcciones que atlas.js (applyGauge y fillFromLine) antes de clasificar.
-const ancho = read('capas/ancho.json'), adif = read('capas/lineas-adif.json');
-const gaugeFix = new Map();
-for (const [key, ids] of Object.entries(ancho.groups)) { const [value, src] = key.split('|'); if (value === 'unknown') continue; for (const id of ids) gaugeFix.set('FFCC_TR' + id, [value, src]); }
-for (const f of datos.rail.features) {
-  const p = f.properties, x = gaugeFix.get(p.id); if (x) { p.gauge_fix = x[0]; p.gauge_src = x[1]; }
-  const r = adif.relleno?.[p.id];
-  if (r) {
-    if ('e' in r && (p.electrified === null || p.electrified === undefined)) { p.electrified = r.e === 1; p.fill_e = 1; }
-    if ('g' in r && !(p.nominalgauge > 0)) { p.nominalgauge = r.g; p.fill_g = 1; }
-  }
-}
-const rail = datos.rail.features.filter(f => CFG.peninsular(f.geometry.coordinates[0]));
-rail.forEach(f => F.prepare(f));
+/* ── Red IGN (ámbito peninsular, mismas reglas y correcciones que el visor: tools/rutas/red.mjs) ── */
+const {datos, rail, ancho, F, C, CFG} = loadRed(V);
 const unique = [...new Map(rail.map(f => [f.properties.id, f])).values()];
 const km = f => f.properties.attr !== 0 ? (Number(f.properties.length_m) || 0) / 1000 : 0;   // misma regla que AtlasCartography.metrics
 const m = C.metrics(rail);
