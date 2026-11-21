@@ -18,7 +18,7 @@
   const OP_KEY={Renfe:'renfe',iryo:'iryo',OUIGO:'ouigo'},OP_ALT={renfe:'Renfe',avlo:'Renfe · Avlo',iryo:'iryo',ouigo:'OUIGO'};
   const opKey=r=>r.marca==='Avlo'?'avlo':OP_KEY[r.op]||null;
 
-  let R,ST,rows=[],view=[],shown=PAGE,sort={key:'sem',dir:-1};
+  let R,ST,CORTES=new Map(),rows=[],view=[],shown=PAGE,sort={key:'sem',dir:-1};
   const open=new Set(),cmp=new Set();
 
   /* ── columnas: clave, cabecera, valor, número, clase para ocultar en móvil ── */
@@ -86,11 +86,11 @@
   }
   const shortDate=iso=>new Date(iso+'T12:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long'});
   function renderKpis(){
-    const lab=view.reduce((a,r)=>a+r.lab,0),sem=view.reduce((a,r)=>a+r.sem,0),st=new Set();for(const r of view)for(const i of r.est)st.add(i);
+    const supWd=view.reduce((a,r)=>a+(r.sup?r.sup[2]:0),0),lab=view.reduce((a,r)=>a+r.lab,0),sem=view.reduce((a,r)=>a+r.sem,0),st=new Set();for(const r of view)for(const i of r.est)st.add(i);
     const ref=R.referencia,wd=new Date(ref.laborable+'T12:00:00').toLocaleDateString('es-ES',{weekday:'long'});
     $('#kpis').replaceChildren(
       kpiShare('Rutas',view.length,rows.length,'de '+fmt(rows.length)+' en total'),
-      kpi('Trenes en un día laborable',fmt(lab),'Suma de estas rutas el '+wd+' '+shortDate(ref.laborable)+', día tipo de la semana de referencia'),
+      kpi('Trenes en un día laborable',fmt(lab),'Suma de estas rutas el '+wd+' '+shortDate(ref.laborable)+', día tipo de la semana de referencia'+(supWd?'; sin los '+fmt(supWd)+' programados que no circulan por cortes de la vía':'')),
       kpi('Trenes en una semana',fmt(sem),'De lunes a domingo ('+shortDate(ref.semana)+' – '+shortDate(ref.domingo)+'). Al año, unos '+fmt(sem*52)),
       kpi('Estaciones servidas',fmt(st.size),'con al menos una parada de estas rutas'));
     $('#count').textContent=view.length===rows.length?fmt(view.length)+' rutas':fmt(view.length)+' de '+fmt(rows.length)+' rutas con estos filtros';
@@ -115,7 +115,9 @@
       b.onclick=()=>{open.has(r.id)?open.delete(r.id):open.add(r.id);renderTable();document.querySelector('[data-exp="'+CSS.escape(r.id)+'"]')?.focus();};
       b.dataset.exp=r.id;
       const n=el('div','rt-name');const t=el('b',null,r._title);n.append(t);if(r._sub)n.append(el('small',null,r._sub));
-      if(!r.sem){const z=el('span','rt-tag','sin trenes esta semana');t.append(z);}
+      const sup=r.sup?r.sup.reduce((a,x)=>a+x,0):0;
+      if(sup)t.append(el('span','rt-tag rt-tag-corte',r.sem?'corte: '+fmt(sup)+' sin circular':'suspendida por corte'));
+      else if(!r.sem){const z=el('span','rt-tag','sin trenes esta semana');t.append(z);}
       w.append(b,n);td.append(w);
     }else if(c.key==='marca'){const ch=el('span','rt-chip '+(FAM_CLS[r.fam]||''));ch.append(el('i'),r.marca);td.append(ch);
       if(r.fam==='Cercanías'&&r.nuc)td.append(el('small','rt-nuc',r.nuc));   // el núcleo va aquí, debajo de la línea
@@ -157,7 +159,12 @@
     if(r._cnmc){const c=r._cnmc;
       row('Corredor según la CNMC',c.corredor+' · '+r.op+': '+fmt2(c.viajeros)+' M de viajeros en los últimos 4 trimestres ('+CN.ultimos_4.join('–')+'), '+fmt(c.cuota)+' % del corredor; ocupación '+fmt(c.ocupacion)+' %'+(c.precio?'; precio medio de '+c.producto+' en 2025, '+eur(c.precio):'')+'.');
       row('Ojo','Cifras del operador en todo el corredor (incluye los trayectos intermedios), no de esta ruta. Datos derivados de CNMC Data, CC BY-SA 4.0.');}
-    row('Horarios publicados',date(r.desde)+' – '+date(r.hasta));
+    if(r.cortes){const sup=r.sup.reduce((a,x)=>a+x,0);
+      for(const id of r.cortes){const c=CORTES.get(id);if(!c)continue;const p=el('span');
+        p.append((sup?fmt(sup)+(sup===1?' tren programado no circula':' trenes programados no circulan')+' esta semana (L–D: '+r.sup.map(fmt).join(' · ')+'): ':'')+c.tramo+', desde el '+date(c.desde)+(c.hasta?' hasta el '+date(c.hasta)+' (previsto)':' (sin fecha de reapertura)')+'. '+(c.hasta_nota||'')+' ');
+        const f=c.fuentes[0];if(f){const a=el('a','cb-link','Fuente: '+f.t.split(' · ')[0]);a.href=f.url;a.rel='noopener';p.append(a);}
+        row('Corte de la vía',p);}}
+    row('Horarios publicados',r.desde?date(r.desde)+' – '+date(r.hasta):'ninguno: todos sus trenes quedan dentro del corte');
     if(r.num.length)row('Números de tren',r.num.slice(0,24).join(', ')+(r.num.length>24?' y '+(r.num.length-24)+' más':''));
     row('Estaciones ('+r.est.length+')',el('span','rt-stops',r.est.map(i=>ST[i].n).join(' · ')));
     row('Fuente',R.fuentes[r.src]?.label);
@@ -198,10 +205,10 @@
   /* ── CSV de la selección (UTF-8 con BOM y «;», para Excel en español) ── */
   $('#csv').onclick=()=>{
     const esc=v=>{const s=String(v??'');return /[;"\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;};
-    const head=['Origen','Destino','Línea','Núcleo','Servicio','Marca','Operador','Tipo de empresa','Trenes laborable','Trenes sábado','Trenes domingo','Trenes semana','Trenes mes (estimado)','Trenes año (estimado)','Primera salida','Última salida','Duración mediana (min)','Duración mínima (min)','Paradas (mediana)','Estaciones','Horarios desde','Horarios hasta','Km','Velocidad media (km/h)','Tipo de vía','Ancho','Electrificación','Corredor CNMC','Cuota del operador en el corredor (%)','Ocupación del operador en el corredor (%)','Precio medio 2025 del producto (€)','Fuente'];
+    const head=['Origen','Destino','Línea','Núcleo','Servicio','Marca','Operador','Tipo de empresa','Trenes laborable','Trenes sábado','Trenes domingo','Trenes semana','Trenes mes (estimado)','Trenes año (estimado)','Primera salida','Última salida','Duración mediana (min)','Duración mínima (min)','Paradas (mediana)','Estaciones','Horarios desde','Horarios hasta','Km','Velocidad media (km/h)','Tipo de vía','Ancho','Electrificación','Corredor CNMC','Cuota del operador en el corredor (%)','Ocupación del operador en el corredor (%)','Precio medio 2025 del producto (€)','Trenes suprimidos por corte (semana)','Corte de la vía','Fuente'];
     const lines=[head.join(';')];
     for(const r of view)lines.push([r.o!==null?ST[r.o].n:'',r.d!==null?ST[r.d].n:'',r.fam==='Cercanías'?r.marca:'',r.nuc||'',r.fam,r.marca,r.op,r.emp,r.lab,r.sab,r.dom,r.sem,r.mes,r.anio,
-      r.pri===null?'':hm(r.pri),r.ult===null?'':hm(r.ult),r.dur??'',r.durMin??'',r.par??'',r.est.length,r.desde,r.hasta,r.via?.km??'',r.via?.vel??'',viaTipo(r),viaAncho(r),viaElec(r),r._cnmc?.corredor??'',r._cnmc?.cuota??'',r._cnmc?.ocupacion??'',r._cnmc?.precio??'',R.fuentes[r.src]?.label].map(esc).join(';'));
+      r.pri===null?'':hm(r.pri),r.ult===null?'':hm(r.ult),r.dur??'',r.durMin??'',r.par??'',r.est.length,r.desde,r.hasta,r.via?.km??'',r.via?.vel??'',viaTipo(r),viaAncho(r),viaElec(r),r._cnmc?.corredor??'',r._cnmc?.cuota??'',r._cnmc?.ocupacion??'',r._cnmc?.precio??'',r.sup?r.sup.reduce((a,x)=>a+x,0):'',(r.cortes||[]).map(id=>CORTES.get(id)?.tramo).join(' | '),R.fuentes[r.src]?.label].map(esc).join(';'));
     lines.push('');if(CN)lines.push(esc('Columnas CNMC: datos derivados de CNMC Data (catalogodatos.cnmc.es), licencia CC BY-SA 4.0; se comparten con la misma licencia.'));lines.push(esc('Semana de referencia '+R.referencia.semana+' (laborable '+R.referencia.laborable+'). Mes y año: estimaciones con semana tipo (× 4,35 y × 52). Fuentes y licencias en la página.'));
     const blob=new Blob(['﻿'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');
     a.href=URL.createObjectURL(blob);a.download='rutas-ferroviarias-'+R.referencia.semana+'.csv';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
@@ -217,9 +224,14 @@
       'Laborable, sábado y domingo son los días de la semana de referencia ('+date(R.referencia.semana)+' a '+date(R.referencia.domingo)+'): la primera semana completa que cubren todas las fuentes.',
       'Mes y año (*) son estimaciones con esa semana tipo: semana × 4,35 y × 52. No recogen festivos, verano ni cambios de horario.',
       'Duración: mediana de los trenes del día. Paradas: mediana del número de paradas, origen y destino incluidos.',
-      'Comunidad por coordenadas; provincia según el catálogo de estaciones de Renfe (o la de la estación del catálogo más cercana).'])ul.append(el('li',null,t));
+      'Provincia según el catálogo de estaciones de Renfe o, si la estación no está en él, la del municipio del INE donde está; comunidad, la de su provincia.'])ul.append(el('li',null,t));
     m.append(ul);for(const n of R.notas)m.append(el('p','cb-note',n));
-    m.append(el('p','cb-note','Horarios programados, no circulaciones reales: no incluyen retrasos, cancelaciones ni incidencias. Madrid–Andalucía: el GTFS de Renfe y el de iryo programan trenes aunque las incidencias tras el accidente de Urda (28-10-2026) pueden no estar reflejadas.'));
+    m.append(el('p','cb-note','Horarios programados, no circulaciones reales: no incluyen retrasos ni cancelaciones del día.'));
+    if(R.cortes?.length){m.append(el('h3',null,'Cortes de la vía'));
+      m.append(el('p',null,'Los horarios publicados no siempre recogen los cortes: el GTFS de Renfe sigue programando trenes por tramos cerrados y mete como trenes algunos autobuses del plan alternativo. Esos trenes se quitan de los recuentos en las fechas del corte y se indican en cada ruta. Solo se aplica un corte con fuente oficial o de prensa y confirmado en el tiempo real de Renfe (ningún tren de esas rutas visto del 14 al 20 de noviembre de 2026).'));
+      const cu=el('ul','plain');for(const c of R.cortes){const li=el('li');li.append(el('b',null,c.tramo),'. '+date(c.desde)+' – '+(c.hasta?date(c.hasta)+' (previsto)':'sin fecha')+'. '+c.efecto+' '+fmt(c.lab)+' trenes menos el laborable de referencia. ');
+        c.fuentes.forEach((f,i)=>{const a=el('a',null,f.t.split(' · ')[0]+' ('+date(f.fecha)+')');a.href=f.url;a.rel='noopener';if(i)li.append(', ');li.append(a);});cu.append(li);}
+      m.append(cu);}
     const f=$('#c-fuentes');f.replaceChildren(el('h3',null,'Fuentes y licencias'));const dl=el('dl','src');
     for(const [k,s] of Object.entries(R.fuentes)){dl.append(el('dt',null,s.label));
       const dd=el('dd',null,s.licence+'. '+(s.from?'Horarios del '+date(s.from)+' al '+date(s.to)+'. ':'')+(s.excluidos||''));
@@ -248,7 +260,7 @@
   async function start(){
     try{const r=await fetch('capas/rutas.json',{cache:'no-cache'});if(!r.ok)throw new Error(r.status);R=await r.json();}
     catch{$('#ref').textContent='No se han podido cargar las rutas.';$('#tbody').replaceChildren();const p=el('p','cb-empty','No se han podido cargar los datos de las rutas. Recarga la página.');$('#tabla').append(p);return;}
-    ST=R.estaciones;
+    ST=R.estaciones;CORTES=new Map((R.cortes||[]).map(c=>[c.id,c]));
     try{const c=await fetch('capas/cnmc.json',{cache:'no-cache'});if(c.ok)CN=await c.json();}catch{CN=null;}
     // En Cercanías la línea (C1, R2…) ya está en la columna Servicio: el título solo lleva los extremos, para que quepa en una línea.
     rows=R.rutas.map(r=>{const o=ST[r.o]?.n,d=ST[r.d]?.n;const title=r.fam==='Cercanías'?(o&&d?o+' – '+d:r.linea):o+' → '+d;

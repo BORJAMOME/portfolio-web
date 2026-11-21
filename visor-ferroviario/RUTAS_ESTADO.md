@@ -192,3 +192,33 @@ Con `--hoy=2026-11-21` es reproducible. El lector de GTFS (`tools/rutas/gtfs.mjs
 
 - **Fase 6: operadores autonómicos (FGC, Euskotren, FGV).** Bloqueada hasta que Borja cree la cuenta del NAP y su ApiKey.
 - **Pendiente de la fase 3:** el filtro por corredor Hermes o TEN-T.
+
+## Auditoría y correcciones (21-11-2026)
+
+Auditoría independiente de `rutas.json`: recálculo en Python frente a los GTFS de Renfe AV/LD/MD, Cercanías e iryo, el PDF de OUIGO (parser propio), la CNMC y el catálogo de estaciones.
+- **Fiel a la fuente:** 711 de 711 filas de Renfe, Cercanías e iryo iguales al GTFS (trenes por día, horas, paradas, estaciones, números, vigencia); OUIGO, 212 de 212 trenes-día de la semana; CNMC, 130 de 130 valores.
+- **No fiel a la realidad:** el GTFS de Renfe AV/LD/MD programa trenes por tramos cortados y mete como trenes autobuses del plan alternativo (todos sus viajes son `route_type 2`). Se corrige con `tools/rutas/cortes.json` (abajo).
+
+**Cortes (`tools/rutas/cortes.json`).**
+- **Criterio de entrada:** fuente oficial o de prensa **y** confirmación en el tiempo real de Renfe (0 trenes vistos del 14 al 20-11-2026 en las rutas afectadas). En el ancho métrico, que el tiempo real no cubre, basta Adif.
+- **Cortes aplicados:**
+  - Urda, LAV Madrid–Sevilla: Renfe, iryo y OUIGO; los regionales por Alcázar siguen.
+  - Algeciras–Bobadilla.
+  - Zaragoza–Teruel–Sagunto.
+  - Xàtiva–Alcoi.
+  - Carancos–Llanes (23-11 a 05-12).
+- **Efecto:** `build-rutas` quita esos trenes de los recuentos en las fechas del corte. Cada ruta lleva `sup` (trenes suprimidos de lunes a domingo) y `cortes`; el fichero, `cortes` con la fuente.
+- **Avisos:** el script falla si un corte no afecta a ningún tren, y avisa cuando pasa su fecha `revisar`. Las Cercanías no se tocan: su GTFS ya separa los autobuses.
+- **Semana del 23-11:** 215 trenes menos en el laborable (de 5.909 a 5.694; Urda, 154).
+- **Sin aplicar por falta de pruebas:**
+  - Córdoba–Santa Cruz de Mudela: Adif lo da por cortado, pero Madrid–Jaén se ve en el tiempo real.
+  - Guadalajara–Plasencia de Jalón: solo Madrid–Soria es concluyente.
+
+**Km.** `viaPorRuta` sumaba las aristas de la variante, que dejan fuera la vía al cruzar cada estación (de 0,1 a 2,7 km por parada).
+- **Arreglo:** se unen los trozos por la red IGN (`bridge`) y hay controles nuevos: km < 1,02 × recta; ida y vuelta que comparten ≥ 90 % de vía y difieren > 5 %; velocidad imposible.
+- **Campo nuevo:** `via.motivo` explica cada ruta incompleta.
+- **Resultado:** 675 rutas con km (antes 655). Valladolid–Salamanca pasa de 108 a 120 km (≈ 120,8 por PK); Mérida–Badajoz, de 54 a 60 (59,3).
+
+**OUIGO.** Las erratas del PDF y de su lectura en `horarios.json` (el generador no está en este repositorio) se corrigen en `OUIGO_ERRATAS`; el script falla si una errata no encuentra su registro. Además se unen los trenes que el PDF parte en dos. La semana de referencia no cambia; diciembre y enero sí.
+
+**Territorio.** La provincia de las estaciones que no están en el catálogo de Renfe sale del municipio del INE, y la comunidad, de la provincia. Corrige 12 estaciones mal asignadas y 12 sin provincia.

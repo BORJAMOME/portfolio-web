@@ -1,0 +1,78 @@
+{
+  "nota": "Cortes de infraestructura que los horarios publicados no recogen: el GTFS de Renfe AV/LD/MD sigue programando trenes (o mete los autobuses del plan alternativo como trenes) y el PDF de OUIGO no los incluye. build-rutas.mjs quita esos trenes de los recuentos en las fechas del corte y los cuenta aparte (campo «sup» de cada ruta). Solo entra un corte con fuente oficial o de prensa Y confirmado en el tiempo real de Renfe (0 trenes vistos del 14 al 20-11-2026 en las rutas afectadas); en las líneas que el tiempo real no cubre (ancho métrico), basta la fuente oficial de Adif. Reglas: «toca» = el tren para en alguna de esas estaciones; «cruza» = el tren pasa entre dos paradas consecutivas de las que exactamente una está en «lado» y esa es una «puerta» (estación de la línea cortada). «hasta» incluido; null = sin fecha prevista. Revisar cada corte antes de su fecha «revisar».",
+  "cortes": [
+    {
+      "id": "lav-madrid-sevilla-urda",
+      "tramo": "LAV Madrid–Sevilla entre Mora y Orgaz y Urda (accidente del 28-10-2026)",
+      "desde": "2026-10-28",
+      "hasta": "2026-12-12",
+      "hasta_nota": "Sin fecha oficial de reapertura. Renfe, iryo y OUIGO venden Madrid–Andalucía desde el 13-12-2026.",
+      "revisar": "2026-12-07",
+      "regla": {
+        "cruza": {
+          "lado": {"comunidades": ["Andalucía"], "provincias": ["Ciudad Real"]},
+          "puerta": ["37200", "37300", "37700", "37704", "50500", "51003", "54413", "02030", "05000", "02002", "05012", "43019", "51300", "51405", "55020", "55007"],
+          "excepto_marcas": ["Regional"]
+        }
+      },
+      "efecto": "Sin trenes directos Madrid–Ciudad Real–Andalucía (AVE, Avlo, Avant, Intercity, iryo y OUIGO). Los «Avant» Madrid-Atocha Cercanías–Puertollano del GTFS son autobuses del plan alternativo. Siguen los regionales por la línea convencional (Alcázar de San Juan) y los Avant al sur del corte.",
+      "fuentes": [
+        {"t": "Adif · Estado de la red: «Continúa interrumpida la circulación en la línea de alta velocidad Madrid-Andalucía»", "url": "https://www.adif.es/viajeros/estado-de-la-red", "fecha": "2026-11-21"},
+        {"t": "Renfe · Comunicado sobre el accidente de Urda", "url": "https://grupo.renfe.com/es/es/sala-de-prensa/noticias/2026/10/comunicado-renfe-accidente-urda", "fecha": "2026-10-29"},
+        {"t": "El Español · Renfe, iryo y OUIGO mantienen suspendidas sus circulaciones directas; venta desde el 13-12", "url": "https://www.elespanol.com/malaga/20261119/luz-verde-judicial-reparar-via-urda-ave-malaga-madrid-da-paso-clave-reapertura/1003744465010_0.html", "fecha": "2026-11-19"}
+      ]
+    },
+    {
+      "id": "conv-algeciras-bobadilla",
+      "tramo": "Algeciras–Bobadilla (obras de la autopista ferroviaria Algeciras–Zaragoza)",
+      "desde": "2026-09-06",
+      "hasta": null,
+      "hasta_nota": "Otoño de 2027 según la prensa; sin fecha oficial.",
+      "revisar": "2027-03-01",
+      "regla": {"toca": ["55001", "55003", "55005", "55007", "55008", "55010", "55011", "55012", "55013", "55014", "55015", "55017", "55018", "55019", "55020"]},
+      "efecto": "Trenes Antequera–Ronda–Algeciras e Intercity Madrid–Algeciras/Ronda sustituidos por autobús.",
+      "fuentes": [
+        {"t": "Adif · Obras de la autopista ferroviaria Algeciras–Zaragoza", "url": "https://www.adif.es/w/obras-autopista-ferroviaria-algeciras-zaragoza", "fecha": "2026-09-30"}
+      ]
+    },
+    {
+      "id": "conv-zaragoza-teruel-sagunto",
+      "tramo": "Zaragoza–Teruel–Sagunto (convencional)",
+      "desde": "2026-01-01",
+      "hasta": null,
+      "hasta_nota": "Fecha de inicio aproximada; sin fecha de reapertura.",
+      "revisar": "2027-01-15",
+      "regla": {"toca_prefijo": ["67"]},
+      "efecto": "Plan alternativo por carretera en la línea Zaragoza–Teruel–Sagunto.",
+      "fuentes": [
+        {"t": "Adif · Obras Zaragoza–Teruel–Sagunto", "url": "https://www.adif.es/w/zaragoza-teruel-sagunt", "fecha": "2026-07-08"}
+      ]
+    },
+    {
+      "id": "conv-xativa-alcoi",
+      "tramo": "Xàtiva–Alcoi (convencional)",
+      "desde": "2026-03-24",
+      "hasta": null,
+      "hasta_nota": "Adif no indica el año de inicio ni la fecha de reapertura.",
+      "revisar": "2027-01-15",
+      "regla": {"toca_prefijo": ["69"]},
+      "efecto": "Servicio por autobús entre Xàtiva y Alcoi.",
+      "fuentes": [
+        {"t": "Adif · Avisos de viajeros (Xàtiva–Alcoi)", "url": "https://www.adif.es/viajeros/avisos", "fecha": "2026-07-08"}
+      ]
+    },
+    {
+      "id": "metrico-carancos-llanes",
+      "tramo": "Carancos–Llanes (ancho métrico, obras de Ribadesella, fase 3)",
+      "desde": "2026-11-23",
+      "hasta": "2026-12-05",
+      "hasta_nota": "Adif da el 04-05/12 como fin de la fase 3.",
+      "revisar": "2026-12-04",
+      "regla": {"toca": ["05531", "05533", "05534", "05535", "05537", "05539", "05541", "05542", "05543", "05545", "05547", "05549", "05551", "05553", "05555", "05557", "05559", "05561", "05563", "05565", "05567", "05569"]},
+      "efecto": "Autobús entre Carancos y Ribadesella/Llanes (C-6 y regionales Oviedo–Santander).",
+      "fuentes": [
+        {"t": "Adif · Obras de Ribadesella", "url": "https://www.adif.es/w/obras-ribadesella", "fecha": "2026-11-13"}
+      ]
+    }
+  ]
+}
