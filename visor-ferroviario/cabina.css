@@ -122,3 +122,4 @@ dl.src{margin:0;font-size:var(--fs-s)}dl.src dt{font-weight:600;margin-top:8px}d
 
 .cb-foot{display:flex;justify-content:space-between;gap:16px;padding-top:24px;padding-bottom:32px;margin-top:32px;border-top:1px solid var(--line);font-size:var(--fs-xs);color:var(--muted)}
 @media(max-width:760px){.cb-wrap{padding:0 16px}.cb-card{padding:14px 14px 12px}}
+.cb-toc a.cb-toc-out{margin-left:auto;border:1px solid var(--line-strong)}
