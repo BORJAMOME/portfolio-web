@@ -42,6 +42,9 @@ jobs:
       - name: Lógica del Centro de trabajo (Hoy)
         if: ${{ !cancelled() }}
         run: node tools/test-kanban.mjs
+      - name: Histórico de incidencias (deduplicación y cambio de año)
+        if: ${{ !cancelled() }}
+        run: node --test tools/incidencias.test.mjs
       - name: Motor de Color Studio (color, proporciones, calcetines, importación)
         if: ${{ !cancelled() }}
         run: node --test tools/test-color.mjs
@@ -68,6 +71,11 @@ jobs:
           npx playwright install --with-deps chromium
       - name: axe-core en todas las páginas
         run: node tools/check-a11y.mjs
+      - name: Cabina (incidencias, histórico, móvil y accesibilidad)
+        if: ${{ !cancelled() }}
+        run: |
+          node tools/check-incidencias.mjs
+          node tools/check-a11y.mjs visor-ferroviario/cabina.html
       # Cada suite de interfaz corre aunque falle la anterior (if: !cancelled()); el job sigue en rojo si falla alguna
       - name: Briefing de entrevista (dos A4, móvil y axe-core)
         if: ${{ !cancelled() }}

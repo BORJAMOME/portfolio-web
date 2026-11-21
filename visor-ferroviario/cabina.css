@@ -181,3 +181,15 @@ details.cb-data[open]>summary{margin-bottom:6px}
 .svgchart .rng{stroke:var(--line-strong);stroke-width:3;stroke-linecap:round}
 .svgchart .d-ave{fill:#1d3557}.svgchart .d-avlo{fill:#882255}.svgchart .d-ouigo{fill:#0072b2}.svgchart .d-iryo{fill:#e07000}
 .svgchart circle.d-ave,.svgchart circle.d-avlo,.svgchart circle.d-ouigo,.svgchart circle.d-iryo{stroke:#fff;stroke-width:1.5}
+.ci-controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:16px 0}
+.ci-controls label{font-size:var(--fs-s);font-weight:600}
+.ci-controls select,.ci-controls input,#c-incidencias button{font:inherit;min-height:var(--hit);padding:7px 10px;border:1px solid var(--line-strong);border-radius:5px;background:var(--paper);color:var(--ink)}
+.ci-controls input{min-width:120px;max-width:100%;flex:1}
+.ci-total{font-size:var(--fs-s);font-weight:700;color:var(--navy)}
+#c-incidencias h4{margin:24px 0 10px}
+#c-incidencias td{overflow-wrap:anywhere}
+#c-incidencias table{min-width:480px}
+#c-incidencias th:nth-child(2){min-width:110px}
+#c-incidencias td:nth-child(2){min-width:180px}
+#c-incidencias button:disabled{opacity:.5;cursor:default}
+#c-incidencias .ci-summary td,#c-incidencias .ci-summary th{white-space:nowrap;overflow-wrap:normal}
