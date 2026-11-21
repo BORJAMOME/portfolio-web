@@ -184,7 +184,7 @@ Con `--hoy=2026-11-21` es reproducible. El lector de GTFS (`tools/rutas/gtfs.mjs
 - `main` no tiene protección de rama, así que el bot puede subir directamente.
 
 **Comprobado en local:** el control pasa con los datos actuales y falla (código 1) si se simula la caída de Cercanías a 100 trenes. Mapa del repositorio regenerado, `check-links` y `version-assets --check` sin incidencias.
-**Pendiente de comprobar:** la primera ejecución en GitHub (descarga desde los servidores de Renfe, la CNMC y GitHub Pages de iryo desde un runner de EE. UU.).
+**Comprobado en GitHub (21-11-2026, ejecución 44907670673):** todos los pasos en verde; las descargas desde el runner funcionan y el control de cordura pasa (mismos trenes y rutas por fuente). El bot confirmó un commit, pero solo por la fecha de descarga (`downloaded`) en `fuentes`: se ha quitado de `build-rutas` para que una semana sin cambios en los datos no confirme nada; queda `last_modified`, que solo cambia si la fuente cambia.
 
 **Coordinación:** cuando se fusione la ola 2 de Cabina, el workflow tendrá que ejecutar también `tools/build-cabina-mercado.mjs` si sus datos deben refrescarse (lo decide esa sesión).
 
