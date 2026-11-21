@@ -222,3 +222,43 @@ Auditoría independiente de `rutas.json`: recálculo en Python frente a los GTFS
 **OUIGO.** Las erratas del PDF y de su lectura en `horarios.json` (el generador no está en este repositorio) se corrigen en `OUIGO_ERRATAS`; el script falla si una errata no encuentra su registro. Además se unen los trenes que el PDF parte en dos. La semana de referencia no cambia; diciembre y enero sí.
 
 **Territorio.** La provincia de las estaciones que no están en el catálogo de Renfe sale del municipio del INE, y la comunidad, de la provincia. Corrige 12 estaciones mal asignadas y 12 sin provincia.
+
+## Incidencias en tiempo real (21-11-2026)
+
+**Decisiones de Borja:** archivo propio del tiempo real de Renfe; incidencias = cancelados + retrasos de 15 min o más. El archivo comunitario `josernalist/renfe-gtfsrt`, que no tiene licencia, solo se ha usado para validar por dentro y no se publica.
+
+**Cómo funciona:** `.github/workflows/incidencias-rt.yml` se ejecuta cada 5 min y llama a `tools/rutas/incidencias.mjs`.
+- **Captura** (`captura`): baja `trip_updates_LD.json` y `trip_updates.json` (Cercanías). Una vez al día, a partir de las 03:30, crea el programa del día con el GTFS estático de ESE día.
+- **Estado del día:** vive en `.cache/rt/`, que se conserva con actions/cache. Se guardan las 3 últimas cachés.
+- **Cierre** (`cierre`, después de las 07:00): escribe un vector por ruta y día en `capas/incidencias/AAAA-MM.json` y los agregados de 1, 7, 30 y 365 días en `capas/incidencias.json`. Hace como mucho un commit al día en `main`.
+- **Coste:** no usa ningún modelo de IA, así que no gasta tokens. En un repositorio público, los minutos de Actions son gratis.
+
+**Definiciones** (en el código y en `incidencias.json → definiciones`):
+- **Visto:** al menos 2 capturas en circulación, entre 3 h antes de la salida y 6 h después de la llegada.
+- **Cancelado:** al menos 2 capturas CANCELED y ninguna en circulación después de salir.
+- **Contradictorio:** CANCELED y también en circulación después de salir. Cuenta como visto. Renfe publica muchas veces el mismo viaje como cancelado y en circulación durante todo el día: su trip_id vale para varios días y el feed no dice a qué fecha se refiere la cancelación.
+- **Retraso:** el último que informa el feed mientras se ve el tren. Se descartan los valores imposibles (más de 6 h, o más de 30 min de adelanto).
+- **Sin dato:** el tren programado no aparece nunca en el feed. No es una cancelación: el feed solo cubre alrededor del 60 % de lo programado (los números 3xxxx casi nunca salen). Por eso **no** se calcula «previsto − visto».
+- **Día válido:** al menos el 90 % de las capturas esperadas entre las 04:00 y las 24:00, y ningún hueco de más de 30 min. Los cron de GitHub se retrasan. Una captura sin trenes en circulación no cuenta (el 20-11 el feed solo trajo cancelados durante 3 h).
+- **Cortes:** los trenes de `cortes.json` no entran en los programados; se cuentan aparte.
+
+**Validación:** el 18-11-2026 se reprodujo con el estático archivado de ese día (`elguardagujas/renfe-gtfs-archive`) y las capturas de josernalist.
+- **Cobertura:** del 64 % sobre lo programado (el 83 % sin los trenes de los cortes). Coincide con el 64 % del análisis independiente.
+- **Cancelados:** 140 de 1.178 trenes con dato (12 %).
+- **Último retraso ≥ 15 min:** el 40 % de los vistos.
+- **Cifras sin contrastar:** las de cancelados y retrasos no se han podido comparar con una fuente oficial, porque Renfe no publica la puntualidad en datos abiertos.
+
+**Pruebas:** `node --test tools/rutas/incidencias.test.mjs`, incluido en `checks.yml`.
+
+**En la página:**
+- Columnas «Canc. %» y «Retr. %» (30 días), visibles desde 1.550 px.
+- Bloque «Incidencias en tiempo real» en el detalle (último día, 7, 30 y 365 días).
+- Comparación y CSV.
+- Un porcentaje solo se da con 10 trenes o más con dato.
+- iryo y OUIGO: «sin tiempo real».
+- Para dejar sitio, «Paradas», «Primero – último» y «Mes*» salen de la tabla. Siguen en el detalle, el CSV y la comparación.
+
+**Pendiente o con riesgo:**
+- **Primeros datos:** la tarea solo empieza al fusionar en `main`. El primer día se cierra a la mañana siguiente. 30 días tardan 30 días, y 365, un año.
+- **Medianoche:** los trenes de 00:00 a 03:30 no se siguen, porque aún no hay programa del día.
+- **Fin del corte de Urda:** `hasta` = 12-12, porque los operadores venden desde el 13-12. Si la línea no reabre, hay que ampliar el corte. El aviso salta el 07-12.

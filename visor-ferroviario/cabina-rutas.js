@@ -38,6 +38,8 @@
     {key:'par',label:'Paradas',n:1,val:r=>r.par,cls:'rt-c-par'},
     {key:'km',label:'Km',n:1,val:r=>r.via?.km??null,cls:'rt-c-km',title:'Km del trazado (red IGN; en Cercanías, dibujo del GTFS)'},
     {key:'vel',label:'Km/h',n:1,val:r=>r.via?.vel??null,cls:'rt-c-vel',title:'Velocidad media: km ÷ duración mediana'},
+    {key:'canc',label:'Canc. %',n:1,val:r=>incPct(r,'canc'),cls:'rt-c-inc',title:'Trenes cancelados según el tiempo real de Renfe, últimos 30 días: cancelados ÷ (vistos + cancelados). «—»: sin tiempo real o con menos de 10 trenes con dato'},
+    {key:'ret',label:'Retr. %',n:1,val:r=>incPct(r,'ret15'),cls:'rt-c-inc',title:'Trenes con 15 min o más de retraso según el tiempo real de Renfe, últimos 30 días: con retraso ÷ vistos'},
     {key:'ocu',label:'Ocup. %',n:1,val:r=>r._cnmc?.ocupacion??null,cls:'rt-c-ocu',title:'Ocupación del operador en su corredor (CNMC, últimos 4 trimestres): viajeros-km ÷ plazas-km'},
     {key:'cmp',label:'Comparar',cls:'rt-c-cmp',nosort:1}
   ];
@@ -128,6 +130,7 @@
       if(r.src==='iryo')td.append(el('span','rt-tag','no oficial'));}
     else if(c.key==='pri')td.textContent=r.pri===null?'—':hm(r.pri)+' – '+hm(r.ult);
     else if(c.key==='dur')td.textContent=dur(r.dur);
+    else if(c.key==='canc'||c.key==='ret'){const v=c.val(r);td.textContent=v===null?'—':pct1(v);if(v===null)td.classList.add('rt-zero');}
     else if(c.key==='cmp'){const l=el('label','rt-cmp'),i=el('input');i.type='checkbox';i.checked=cmp.has(r.id);i.disabled=!cmp.has(r.id)&&cmp.size>=3;
       i.setAttribute('aria-label','Comparar '+r._name);i.onchange=()=>{i.checked?cmp.add(r.id):cmp.delete(r.id);renderTable();renderCompare();};l.append(i);td.append(l);}
     else{const v=c.val(r);td.textContent=fmt(v);if(!v)td.classList.add('rt-zero');}
@@ -169,7 +172,8 @@
     row('Estaciones ('+r.est.length+')',el('span','rt-stops',r.est.map(i=>ST[i].n).join(' · ')));
     row('Fuente',R.fuentes[r.src]?.label);
     const a=el('a','cb-link','Ver en el visor');a.href=visorLink(r);row('Mapa',a);
-    right.append(dl);g.append(left,right);td.append(g);tr.append(td);return tr;
+    right.append(dl);g.append(left,right);td.append(g);
+    const ih=el('h3',null,'Incidencias en tiempo real');const iw=el('div','rt-inc-wrap');iw.append(ih,incBlock(r));td.append(iw);tr.append(td);return tr;
   }
   function visorLink(r){
     if(r.fam==='Cercanías'){const [n,l]=r.id.split('|').slice(1);return visor({t:'transit',ls:['renfe-'+n+'-'+l.toLowerCase()]});}
@@ -195,7 +199,7 @@
     const thead=el('thead');thead.append(head);t.append(thead);const tb=el('tbody');
     const lines=[['Servicio',r=>r.fam+' · '+r.marca],['Operador',r=>r.op],['Laborable',r=>fmt(r.lab)],['Sábado',r=>fmt(r.sab)],['Domingo',r=>fmt(r.dom)],['Semana',r=>fmt(r.sem)],
       ['Mes (estimado)',r=>fmt(r.mes)],['Año (estimado)',r=>fmt(r.anio)],['Primero – último',r=>r.pri===null?'—':hm(r.pri)+' – '+hm(r.ult)],['Duración (mediana)',r=>dur(r.dur)],
-      ['Más rápido o más corto',r=>dur(r.durMin)],['Paradas (mediana)',r=>fmt(r.par)],['Km del trazado',r=>fmt(r.via?.km)],['Velocidad media',r=>r.via?.vel?fmt(r.via.vel)+' km/h':'—'],['Tipo de vía',viaTipo],['Ocupación en el corredor (CNMC)',r=>r._cnmc?fmt(r._cnmc.ocupacion)+' %':'—'],['Precio medio 2025 (CNMC)',r=>r._cnmc?.precio?eur(r._cnmc.precio):'—'],['Estaciones servidas',r=>fmt(r.est.length)]];
+      ['Más rápido o más corto',r=>dur(r.durMin)],['Paradas (mediana)',r=>fmt(r.par)],['Km del trazado',r=>fmt(r.via?.km)],['Velocidad media',r=>r.via?.vel?fmt(r.via.vel)+' km/h':'—'],['Tipo de vía',viaTipo],['Cancelados, 30 días (tiempo real)',r=>pct1(incPct(r,'canc'))],['Retraso ≥ 15 min, 30 días (tiempo real)',r=>pct1(incPct(r,'ret15'))],['Ocupación en el corredor (CNMC)',r=>r._cnmc?fmt(r._cnmc.ocupacion)+' %':'—'],['Precio medio 2025 (CNMC)',r=>r._cnmc?.precio?eur(r._cnmc.precio):'—'],['Estaciones servidas',r=>fmt(r.est.length)]];
     for(const [k,f] of lines){const tr=el('tr'),th=el('th',null,k);th.scope='row';tr.append(th);for(const r of list)tr.append(el('td',null,f(r)));tb.append(tr);}
     t.append(tb);const w=el('div','tbl-wrap');w.append(t);body.replaceChildren(w);
   }
@@ -205,10 +209,10 @@
   /* ── CSV de la selección (UTF-8 con BOM y «;», para Excel en español) ── */
   $('#csv').onclick=()=>{
     const esc=v=>{const s=String(v??'');return /[;"\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;};
-    const head=['Origen','Destino','Línea','Núcleo','Servicio','Marca','Operador','Tipo de empresa','Trenes laborable','Trenes sábado','Trenes domingo','Trenes semana','Trenes mes (estimado)','Trenes año (estimado)','Primera salida','Última salida','Duración mediana (min)','Duración mínima (min)','Paradas (mediana)','Estaciones','Horarios desde','Horarios hasta','Km','Velocidad media (km/h)','Tipo de vía','Ancho','Electrificación','Corredor CNMC','Cuota del operador en el corredor (%)','Ocupación del operador en el corredor (%)','Precio medio 2025 del producto (€)','Trenes suprimidos por corte (semana)','Corte de la vía','Fuente'];
+    const head=['Origen','Destino','Línea','Núcleo','Servicio','Marca','Operador','Tipo de empresa','Trenes laborable','Trenes sábado','Trenes domingo','Trenes semana','Trenes mes (estimado)','Trenes año (estimado)','Primera salida','Última salida','Duración mediana (min)','Duración mínima (min)','Paradas (mediana)','Estaciones','Horarios desde','Horarios hasta','Km','Velocidad media (km/h)','Tipo de vía','Ancho','Electrificación','Corredor CNMC','Cuota del operador en el corredor (%)','Ocupación del operador en el corredor (%)','Precio medio 2025 del producto (€)','Trenes suprimidos por corte (semana)','Corte de la vía','Programados 30 días (tiempo real)','Con dato 30 días','Cancelados 30 días','Retraso ≥ 15 min 30 días','Fuente'];
     const lines=[head.join(';')];
     for(const r of view)lines.push([r.o!==null?ST[r.o].n:'',r.d!==null?ST[r.d].n:'',r.fam==='Cercanías'?r.marca:'',r.nuc||'',r.fam,r.marca,r.op,r.emp,r.lab,r.sab,r.dom,r.sem,r.mes,r.anio,
-      r.pri===null?'':hm(r.pri),r.ult===null?'':hm(r.ult),r.dur??'',r.durMin??'',r.par??'',r.est.length,r.desde,r.hasta,r.via?.km??'',r.via?.vel??'',viaTipo(r),viaAncho(r),viaElec(r),r._cnmc?.corredor??'',r._cnmc?.cuota??'',r._cnmc?.ocupacion??'',r._cnmc?.precio??'',r.sup?r.sup.reduce((a,x)=>a+x,0):'',(r.cortes||[]).map(id=>CORTES.get(id)?.tramo).join(' | '),R.fuentes[r.src]?.label].map(esc).join(';'));
+      r.pri===null?'':hm(r.pri),r.ult===null?'':hm(r.ult),r.dur??'',r.durMin??'',r.par??'',r.est.length,r.desde,r.hasta,r.via?.km??'',r.via?.vel??'',viaTipo(r),viaAncho(r),viaElec(r),r._cnmc?.corredor??'',r._cnmc?.cuota??'',r._cnmc?.ocupacion??'',r._cnmc?.precio??'',r.sup?r.sup.reduce((a,x)=>a+x,0):'',(r.cortes||[]).map(id=>CORTES.get(id)?.tramo).join(' | '),...(a=>a?[a.v[0],a.v[1]+a.v[2],a.v[2],a.v[5]]:['','','',''])(incOf(r)),R.fuentes[r.src]?.label].map(esc).join(';'));
     lines.push('');if(CN)lines.push(esc('Columnas CNMC: datos derivados de CNMC Data (catalogodatos.cnmc.es), licencia CC BY-SA 4.0; se comparten con la misma licencia.'));lines.push(esc('Semana de referencia '+R.referencia.semana+' (laborable '+R.referencia.laborable+'). Mes y año: estimaciones con semana tipo (× 4,35 y × 52). Fuentes y licencias en la página.'));
     const blob=new Blob(['﻿'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');
     a.href=URL.createObjectURL(blob);a.download='rutas-ferroviarias-'+R.referencia.semana+'.csv';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
@@ -236,12 +240,37 @@
     for(const [k,s] of Object.entries(R.fuentes)){dl.append(el('dt',null,s.label));
       const dd=el('dd',null,s.licence+'. '+(s.from?'Horarios del '+date(s.from)+' al '+date(s.to)+'. ':'')+(s.excluidos||''));
       if(s.url){const a=el('a',null,' Descarga');a.href=s.url;a.rel='noopener';dd.append(a);}dl.append(dd);}
+    if(INC){dl.append(el('dt',null,INC.fuente.label));dl.append(el('dd',null,INC.fuente.licence+'. Archivo propio cada 5 minutos'+(INC.primero?', del '+date(INC.primero)+' al '+date(INC.ultimo):'; aún sin días cerrados')+'. Un día cuenta si tiene '+INC.definiciones.dia_valido+'. Sin tiempo real: iryo y OUIGO.'));}
     if(CN){dl.append(el('dt',null,'CNMC Data · viajeros, plazas, ocupación y precio por corredor'));const dd=el('dd',null,CN.licencia+' Último trimestre: '+CN.ultimo_trimestre+'. '+CN.notas.join(' '));dl.append(dd);}
-    f.append(dl,el('p','cb-note','Sin datos todavía: FGC, Euskotren y FGV (necesitan acceso al Punto de Acceso Nacional), viajeros por ruta (la CNMC solo los da por corredor) y puntualidad.'));
+    f.append(dl,el('p','cb-note','Sin datos todavía: FGC, Euskotren y FGV (necesitan acceso al Punto de Acceso Nacional), viajeros por ruta (la CNMC solo los da por corredor) y puntualidad oficial (Renfe no la publica en datos abiertos).'));
   }
 
   /* ── CNMC: cada ruta de alta velocidad comercial con Madrid en un extremo, a su corredor (capas/cnmc.json) ── */
   let CN=null;
+  /* ── incidencias (capas/incidencias.json, tools/rutas/incidencias.mjs): vector [prog, vistos, canc, contra, ret5, ret15, sup] ── */
+  let INC=null;
+  const INC_MIN=10,incOf=(r,k='d30')=>INC?.rutas?.[r.id]?.[k]||null;
+  function incPct(r,what,k='d30'){const a=incOf(r,k);if(!a)return null;const [,vis,canc,,ret5,ret15]=a.v;
+    if(what==='canc')return vis+canc>=INC_MIN?100*canc/(vis+canc):null;
+    return vis>=INC_MIN?100*(what==='ret5'?ret5:ret15)/vis:null;}
+  const pct1=x=>x===null||x===undefined?'—':new Intl.NumberFormat('es-ES',{maximumFractionDigits:1}).format(x)+' %';
+  function incBlock(r){
+    const box=el('div','rt-inc');
+    if(r.src==='iryo'||r.src==='ouigo'){box.append(el('p','cb-note',(r.src==='iryo'?'iryo':'OUIGO')+' no publica tiempo real: no hay datos de cancelaciones ni retrasos.'));return box;}
+    if(!INC?.ultimo){box.append(el('p','cb-note','El tiempo real de Renfe se archiva cada 5 minutos; aún no hay ningún día cerrado. Los datos aparecen aquí al día siguiente del primer día completo.'));return box;}
+    const t=el('table','rt-inc-t'),hd=el('tr');for(const h of ['Periodo','Programados','Con dato','Cancelados','Retraso ≥ 15 min','Sin dato']){const th=el('th',null,h);th.scope='col';hd.append(th);}
+    const th_=el('thead');th_.append(hd);t.append(th_);const tb=el('tbody');
+    for(const [k,lab] of [['d1','Último día ('+date(INC.ultimo)+')'],['d7','7 días'],['d30','30 días'],['d365','365 días']]){
+      const a=incOf(r,k),tr=el('tr'),th=el('th',null,lab);th.scope='row';tr.append(th);
+      if(!a){tr.append(el('td',null,'—'),el('td',null,'—'),el('td',null,'—'),el('td',null,'—'),el('td',null,'—'));tb.append(tr);continue;}
+      const [prog,vis,canc,,,ret15]=a.v,dato=vis+canc,dias=INC.cobertura?.[r.src==='cercanias'?'cer':'ld']?.[k];
+      th.append(el('small',null,' · '+fmt(a.dias)+(a.dias===1?' día válido':' días válidos')+(dias&&dias.dias>dias.validos?' de '+fmt(dias.dias):'')));
+      tr.append(el('td','n',fmt(prog)),el('td','n',fmt(dato)+(prog?' ('+pct1(100*dato/prog)+')':'')),
+        el('td','n',fmt(canc)+(dato>=INC_MIN?' ('+pct1(100*canc/dato)+')':'')),el('td','n',fmt(ret15)+(vis>=INC_MIN?' ('+pct1(100*ret15/vis)+')':'')),el('td','n',fmt(prog-dato)));tb.append(tr);}
+    t.append(tb);const w=el('div','tbl-wrap');w.append(t);box.append(w);
+    box.append(el('p','cb-note','Tiempo real de Renfe (GTFS-RT, CC BY 4.0). «Sin dato»: trenes programados que el feed nunca informa; no son cancelaciones (el feed solo cubre una parte de los trenes). Los porcentajes de cancelados y de retraso se calculan sobre los trenes con dato, y solo con 10 o más. Retraso: el último que informa el feed mientras se ve el tren. No incluye los trenes de los cortes de la vía, que se cuentan aparte.'));
+    return box;
+  }
   const fmt2=n=>n===null||n===undefined?'—':new Intl.NumberFormat('es-ES',{maximumFractionDigits:2}).format(n);
   const eur=n=>new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).format(n);
   const PRODUCTO={'AVE':'Renfe-AVE','AVE Euromed':'Renfe-AVE','Avlo':'Renfe-AVLO','iryo':'Iryo','OUIGO':'OUIGO'};
@@ -262,6 +291,7 @@
     catch{$('#ref').textContent='No se han podido cargar las rutas.';$('#tbody').replaceChildren();const p=el('p','cb-empty','No se han podido cargar los datos de las rutas. Recarga la página.');$('#tabla').append(p);return;}
     ST=R.estaciones;CORTES=new Map((R.cortes||[]).map(c=>[c.id,c]));
     try{const c=await fetch('capas/cnmc.json',{cache:'no-cache'});if(c.ok)CN=await c.json();}catch{CN=null;}
+    try{const c=await fetch('capas/incidencias.json',{cache:'no-cache'});if(c.ok)INC=await c.json();}catch{INC=null;}
     // En Cercanías la línea (C1, R2…) ya está en la columna Servicio: el título solo lleva los extremos, para que quepa en una línea.
     rows=R.rutas.map(r=>{const o=ST[r.o]?.n,d=ST[r.d]?.n;const title=r.fam==='Cercanías'?(o&&d?o+' – '+d:r.linea):o+' → '+d;
       return {...r,_title:title,_name:r.fam==='Cercanías'?r.marca+' '+r.nuc:o+' → '+d+' ('+r.marca+')',_sub:r.fam==='Cercanías'?r.marca+' · Cercanías '+r.nuc:r.marca+' · '+r.op,

@@ -41,7 +41,7 @@ async function download(){
 }
 
 /* ── familias y marcas (nueva arquitectura de Renfe, trenes.renfe.com) ── */
-const BRAND={'AVE':'AVE','AVE EUROMED':'AVE Euromed','AVLO':'Avlo','AVANT':'Avant','AVANT EXP':'Avant Exprés','INTERCITY':'Intercity','REGIONAL':'Regional'};
+export const BRAND={'AVE':'AVE','AVE EUROMED':'AVE Euromed','AVLO':'Avlo','AVANT':'Avant','AVANT EXP':'Avant Exprés','INTERCITY':'Intercity','REGIONAL':'Regional'};
 const FAMILY={'AVE':'Alta velocidad','AVE Euromed':'Alta velocidad','Avlo':'Alta velocidad','iryo':'Alta velocidad','OUIGO':'Alta velocidad',
   'Avant':'Avant','Avant Exprés':'Avant','Intercity':'Intercity','Regional':'Regional'};
 const COMPANY={Renfe:'Pública · Renfe',iryo:'Privada',OUIGO:'Privada'};
@@ -173,7 +173,9 @@ function build(today){
       // t.days puede ser el mismo Set para todos los viajes del mismo service_id: se copia antes de tocarlo.
       for(const d of [...t.days])if(d>=c.desde&&(!c.hasta||d<=c.hasta)){if(!n)t.days=new Set(t.days);t.days.delete(d);t.sup.add(d);n++;}
       if(n){t.cortes.push(c.id);hits[c.id]+=n;}}}
-  for(const c of CORTES){if(!hits[c.id])throw new Error('cortes.json: el corte «'+c.id+'» no afecta a ningún tren; revisa la regla o retíralo');
+  for(const c of CORTES){
+    if(c.hasta&&c.hasta<today){notes.push('Corte «'+c.tramo+'»: terminó el '+c.hasta+'; se puede retirar de tools/rutas/cortes.json.');continue;}
+    if(!hits[c.id])throw new Error('cortes.json: el corte vigente «'+c.id+'» no afecta a ningún tren; revisa la regla o retíralo');
     if(c.revisar&&today>c.revisar)notes.push('Corte «'+c.tramo+'»: había que revisarlo el '+c.revisar+'.');}
 
   // Agregar trenes en filas.
@@ -232,7 +234,7 @@ function build(today){
 /* ¿Pasa el tren por el tramo de un corte? toca: para en alguna estación; toca_prefijo: código de estación con ese prefijo
    (línea entera); cruza: entre dos paradas consecutivas, exactamente una al otro «lado» y esa es una «puerta» (estación de la
    línea cortada), salvo las marcas exceptuadas (los regionales por la convencional). */
-function afectaCorte(regla,t,st){
+export function afectaCorte(regla,t,st){
   if(regla.toca&&t.stops.some(c=>regla.toca.includes(c)))return true;
   if(regla.toca_prefijo&&t.stops.some(c=>regla.toca_prefijo.some(p=>c.startsWith(p))))return true;
   const x=regla.cruza;if(!x||(x.excepto_marcas||[]).includes(t.marca))return false;
