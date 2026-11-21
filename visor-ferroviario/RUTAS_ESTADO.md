@@ -1,7 +1,7 @@
 # Cabina · Rutas: estado del proyecto
 
 Tabla de todas las rutas ferroviarias de viajeros de España, en una página propia (`cabina-rutas.html`) enlazada desde Cabina y desde el visor.
-Última actualización: 21-11-2026 (fase 3: vía, velocidad y duración, cerrada).
+Última actualización: 21-11-2026 (fase 4: CNMC por corredor, cerrada en la tabla).
 
 ## Decisiones de Borja (21-11-2026), a mantener
 
@@ -144,11 +144,30 @@ Con `--hoy=2026-11-21` es reproducible. El lector de GTFS (`tools/rutas/gtfs.mjs
 
 **Pendiente:** el filtro por corredor (Hermes o TEN-T) no está hecho. Habría que cruzar el recorrido de cada variante con `corredores.geojson` (tramos Hermes) o con `tramos-ten-t.geojson`.
 
+## Fase 4 terminada en la tabla (21-11-2026): CNMC por corredor
+
+`tools/build-cnmc.mjs --download` → `capas/cnmc.json` (7,5 KB). Se publica con la licencia CC BY-SA 4.0 de la CNMC.
+- **Fuente:** datastore de catalogodatos.cnmc.es (UTF-8, punto decimal), conjuntos ds_24408 (viajeros y plazas por corredor y operador), ds_24406 (viajeros-km y plazas-km) y ds_24410 (precio mensual).
+- **Por corredor y operador, para 2025 y los últimos 4 trimestres:** viajeros, plazas, cuota y ocupación (viajeros-km ÷ plazas-km).
+- **Ocupación de los 5 corredores juntos**, serie trimestral de la cuota de Renfe, viajeros por año y precio medio de 2025 por trayecto y producto. Para el precio solo vale 2025 completo: la CNMC cambió el método en el 1T 2026.
+- **El formato de `cnmc.json` está pactado con la sesión de la ola 2 de Cabina**, que lo lee desde `build-cabina`: no cambiar claves sin avisar.
+
+**En la tabla:**
+- Cada ruta de alta velocidad comercial (AVE, AVE Euromed, Avlo, iryo, OUIGO) con Madrid en un extremo se asigna al corredor de la ciudad del otro extremo. Solo cuentan las ciudades de la propia línea hasta la cabecera (`corredor_regex`), y Córdoba va al corredor del destino final.
+- Columna «Ocup. %» (se oculta por debajo de 1.200 px), filtro «Corredor de la CNMC», bloque «Corredor según la CNMC» en el detalle, y las mismas cifras en la comparación y en el CSV, con la nota de licencia.
+- Rutas asignadas: Alicante 8, Barcelona 10, Málaga/Granada 8, Sevilla 6, València 14.
+- Las columnas «Paradas», «Mes*», «Operador» y «Primero – último» ya no salen nunca en la tabla, porque el contenedor no pasa de 1.150 px. Siguen en el detalle, en la comparación y en el CSV.
+
+**Comprobado:**
+- Contraste con `manual-ferrocarriles/mapa/investigacion-cabina/ola2/resultados.json`, que salía de las copias en cp1252 y se validó contra la nota de prensa de la CNMC del 17-07-2026. Cuadran todos: viajeros 2025 por corredor, cuota y ocupación por corredor y operador, ocupación de los 5 corredores y viajeros anuales.
+- Tabla sin scroll interno de 1.920 a 375 px.
+- `check-a11y`, `check-links`, `version-assets`, `build-mapa`, `build-en` y `build-cabina --check`, sin incidencias.
+
+**Reparto con la otra sesión (21-11-2026):** esta sesión lleva `cnmc.json` y la tabla de rutas. La sesión «Diseño responsive y mejoras de contenido» lleva la ola 2 de Cabina (`cabina.*`, `build-cabina.mjs` y su propio `tools/build-cabina-mercado.mjs` para INE, mercancías y Eurostat), y lee la CNMC de `cnmc.json`.
+
 ## Siguiente tarea
 
-Fase 4: CNMC por corredor (viajeros, plazas, ingresos y precio) y su encaje con la ola 2 de Cabina, que lleva los mismos datos.
-- **Hay un análisis previo** de otra sesión en `manual-ferrocarriles/mapa/investigacion-cabina/ola2/` (`INFORME.md`, `analisis.py`). Ojo: la ocupación por corredor es viajeros-km ÷ plazas-km, no viajeros ÷ plazas.
-- **Hecha cuando:** cada ruta de alta velocidad de los 5 corredores de la CNMC muestre viajeros, plazas y precio de su corredor y operador (trimestre más reciente), con la atribución CC BY-SA y la ruptura de método del 1T 2026 avisada.
-- **Decidir con Borja** si estos datos van en la tabla de rutas, en Cabina o en las dos.
-
-Antes de las fases 6 y 7: la cuenta del NAP (autonómicos) y la GitHub Action semanal.
+- **Fase 6: operadores autonómicos (FGC, Euskotren, FGV).** Bloqueada hasta que Borja cree la cuenta del NAP y su ApiKey.
+- **Fase 7: GitHub Action semanal** que ejecute `build-rutas --download`, `build-cnmc --download` y `build-cabina`, y confirme si hay cambios. Es la siguiente que se puede hacer ya, porque Cercanías caduca el 20-12-2026.
+  - Hecha cuando la Action corra en el repositorio, regenere los datos y, si no hay cambios, no confirme nada.
+- **Pendiente de la fase 3:** el filtro por corredor Hermes o TEN-T.

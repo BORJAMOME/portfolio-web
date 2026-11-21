@@ -72,9 +72,10 @@
 .rt-more{text-align:center;margin:12px 0 0}
 
 /* columnas que se ocultan en pantallas estrechas */
-@media(max-width:1500px){.rt-c-par,.rt-c-mes{display:none}}
+/* El contenedor no pasa de 1.150 px: estas columnas van siempre en el detalle, la comparación y el CSV */
+.rt-c-par,.rt-c-mes,.rt-c-op,.rt-c-hor{display:none}
 @media(max-width:1300px){.rt-c-km{display:none}}
-@media(max-width:1200px){.rt-c-vel{display:none}}
+@media(max-width:1200px){.rt-c-vel,.rt-c-ocu{display:none}}
 @media(max-width:1100px){.rt-c-mes{display:none}}
 @media(max-width:900px){.rt-c-sab,.rt-c-dom,.rt-c-anio,.rt-c-dur{display:none}}
 @media(max-width:640px){.rt-c-op,.rt-c-hor,.rt-c-cmp,.rt-c-srv{display:none}.rt-table td,.rt-table th button{padding-left:6px;padding-right:6px}}
