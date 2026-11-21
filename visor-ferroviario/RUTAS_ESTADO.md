@@ -1,7 +1,7 @@
 # Cabina · Rutas: estado del proyecto
 
 Tabla de todas las rutas ferroviarias de viajeros de España, en una página propia (`cabina-rutas.html`) enlazada desde Cabina y desde el visor.
-Última actualización: 21-11-2026 (fase 1: datos base, cerrada).
+Última actualización: 21-11-2026 (fase 2: página, cerrada).
 
 ## Decisiones de Borja (21-11-2026), a mantener
 
@@ -92,10 +92,35 @@ Con `--hoy=2026-11-21` es reproducible. El lector de GTFS (`tools/rutas/gtfs.mjs
 - estaciones y números de tren: `est` (todas las estaciones) y `num`;
 - vigencia: `desde`/`hasta`.
 
+## Fase 2 terminada (21-11-2026): la página
+
+`cabina-rutas.html` + `cabina-rutas.css` (sobre `cabina.css`) + `cabina-rutas.js`. Lee `capas/rutas.json`; no calcula horarios en el navegador.
+- **Filtros:** búsqueda por palabras (estación, ruta, línea o número de tren; cada palabra por separado), operador, tipo de empresa, servicio, marca o línea (según el servicio), núcleo, comunidad, provincia (según la comunidad), mínimo de trenes al día y «solo con trenes la semana de referencia». Comunidad y provincia filtran por cualquier parada de la ruta.
+- **Tabla:** las columnas se ordenan (`aria-sort`), se muestran 50 filas más cada vez, barra de datos en «Semana». En pantallas estrechas se ocultan columnas (en móvil quedan Ruta, Laborable y Semana; el servicio va bajo el nombre).
+- **Detalle desplegable:** salidas del miércoles agrupadas por estación de origen, trenes de lunes a domingo, servicio, operador, nombre oficial de la línea, duración, paradas, vigencia, números de tren, estaciones, fuente y enlace al visor.
+- **Visor:** rutas con `{t:'services', r:'c:<origen>>c:<destino>'}` y líneas de Cercanías con `{t:'transit', ls:['renfe-<núcleo>-<línea>']}`.
+- **Comparar:** hasta 3 rutas en una barra fija abajo. **CSV:** la selección filtrada, UTF-8 con BOM y `;` (Excel en español), con la nota de la semana de referencia.
+- **Estado en el hash:** `#q=…&op=…&s=sem-` para compartir la vista.
+- **Enlaces de entrada:** botón «Rutas» en la cabecera del visor y «Tabla de rutas» en el índice de Cabina. La tarjeta de Cabina «Rutas del catálogo» pasa a «Recorridos del catálogo», porque contaba variantes de paradas, no rutas, y enlaza a la tabla.
+
+**Comprobado:**
+- **Cifras:** 744 rutas. El total del laborable de la página (5.908) es la suma exacta de las cuatro fuentes (1.611 + 4.209 + 28 + 60).
+- **Filtros, orden, búsqueda, despliegue y paginación:** probados en Chromium. La búsqueda queda en la URL.
+- **Enlace al visor:** la ruta Barcelona-Sants → Madrid-Puerta de Atocha rellena origen y destino, sin errores de JavaScript.
+- **CSV:** 700 líneas con BOM.
+- **Carga:** de 0,4 a 0,6 s.
+- **Pantalla:** sin scroll horizontal a 375 px, y a 1.280 px la tabla cabe sin scroll interno. La cabecera del visor mide lo mismo con el botón nuevo (148 px en móvil y 76 en escritorio).
+- **Comprobaciones:** `check-a11y` sin infracciones en `cabina-rutas.html`, `cabina.html` e `index.html`; `check-links`, `version-assets --check`, `build-mapa --check` y `build-en --check`, sin incidencias.
+
+**No comprobado:** el aspecto con el panel del navegador visible (las pruebas se hicieron en Chromium sin ventana).
+
 ## Siguiente tarea
 
-Fase 2: la página `cabina-rutas.html`. Hecha cuando:
-- cumpla los filtros, el orden, el buscador, los horarios desplegables, el CSV, la comparación y el enlace al visor;
-- pase `check-a11y`, no tenga scroll horizontal a 375 px y cargue en menos de 2 s.
+Fase 3: vía, velocidad y duración por ruta.
+- **Qué:** km del trazado, % de alta velocidad, % electrificado y ancho, a partir de las aristas IGN de `servicios.json` (1.090 de 1.226 variantes las tienen), y la velocidad comercial (km ÷ duración). Con eso, los filtros «vía y corredor» de la página.
+- **Hecha cuando:**
+  - las rutas sin trazado salen como «sin dato», no como 0;
+  - una muestra de 5 rutas cuadra con la ficha de ruta del visor.
+- **Decidir antes:** cómo tratar las Cercanías de ancho ibérico, que no tienen trazado IGN en el visor (¿con los `shapes.txt` del GTFS?).
 
-Antes de empezar: decidir con Borja la «ola 1» de Cabina que propone otra sesión (`manual-ferrocarriles/mapa/investigacion-cabina/PROPUESTA_CABINA.md`), porque toca los mismos archivos de Cabina.
+Antes de empezar: ordenar con Borja la «ola 1» de Cabina (`manual-ferrocarriles/mapa/investigacion-cabina/PROPUESTA_CABINA.md`), que Borja confirmó a otra sesión. Toca `cabina.*`: hay que hacer las dos cosas una detrás de otra, no a la vez.

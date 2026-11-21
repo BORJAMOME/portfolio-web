@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rutas · Cabina · Atlas ferroviario de España</title>
+<meta name="description" content="Todas las rutas ferroviarias de viajeros de España: trenes por día, semana, mes y año, horarios y filtros por operador, servicio y territorio.">
+<meta name="robots" content="noindex, nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="cabina.css?v=df318dc6"><link rel="stylesheet" href="cabina-rutas.css?v=9420a937">
+<script defer src="cabina-rutas.js?v=18e9fc9e"></script>
+</head>
+<body>
+<a class="skip" href="#tabla">Saltar a la tabla</a>
+<header class="cb-header">
+<div class="cb-wrap cb-head">
+<div>
+<p class="rt-crumbs"><a id="back" class="cb-back" href="cabina.html"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M10 3 5 8l5 5"/></svg>Volver a Cabina</a><a id="to-visor" class="cb-back" href="index.html">Abrir el visor</a></p>
+<h1>Rutas</h1>
+<p class="cb-lead">Todas las rutas ferroviarias de viajeros de España: cuántos trenes hacen cada relación al día, a la semana, al mes y al año, y a qué horas. Filtra, ordena, compara y descarga.</p>
+</div>
+<p id="ref" class="cb-ref" aria-live="polite">Cargando las rutas…</p>
+</div>
+</header>
+
+<main id="contenido" class="cb-wrap">
+<section class="rt-filters" aria-labelledby="filtros-t">
+<h2 id="filtros-t" class="visually-hidden">Filtros</h2>
+<form id="filters" class="rt-form" role="search" autocomplete="off">
+<div class="rt-field rt-search"><label for="f-q">Buscar</label><input id="f-q" type="search" placeholder="Estación, ruta, línea o número de tren" spellcheck="false"></div>
+<div class="rt-field"><label for="f-op">Operador</label><select id="f-op"><option value="">Todos</option></select></div>
+<div class="rt-field"><label for="f-emp">Tipo de empresa</label><select id="f-emp"><option value="">Todas</option></select></div>
+<div class="rt-field"><label for="f-fam">Servicio</label><select id="f-fam"><option value="">Todos</option></select></div>
+<div class="rt-field"><label for="f-marca">Marca o línea</label><select id="f-marca"><option value="">Todas</option></select></div>
+<div class="rt-field"><label for="f-nuc">Núcleo de Cercanías</label><select id="f-nuc"><option value="">Todos</option></select></div>
+<div class="rt-field"><label for="f-ca">Comunidad</label><select id="f-ca"><option value="">Todas</option></select></div>
+<div class="rt-field"><label for="f-pr">Provincia</label><select id="f-pr"><option value="">Todas</option></select></div>
+<div class="rt-field"><label for="f-min">Mínimo de trenes al día</label><input id="f-min" type="number" min="0" step="1" inputmode="numeric" placeholder="0"></div>
+<div class="rt-field rt-check"><label><input id="f-activas" type="checkbox" checked> Solo con trenes la semana de referencia</label></div>
+<div class="rt-actions"><button id="f-reset" type="reset">Restablecer filtros</button></div>
+</form>
+<p class="cb-note" id="f-note">Comunidad y provincia filtran las rutas que tienen alguna parada en ellas. Los filtros de vía y corredor llegan con los datos de infraestructura de cada ruta.</p>
+</section>
+
+<section class="cb-kpis rt-kpis" aria-label="Resumen de la selección" aria-live="polite" id="kpis"></section>
+
+<section aria-labelledby="tabla-t" class="rt-table-sec">
+<div class="rt-tablehead">
+<h2 id="tabla-t" class="rt-h2">Rutas</h2>
+<p id="count" class="rt-count" aria-live="polite"></p>
+<button id="csv" type="button" class="rt-btn">Descargar CSV</button>
+</div>
+<div class="tbl-wrap rt-wrap" id="tabla" tabindex="-1">
+<table class="rt-table">
+<caption class="visually-hidden">Rutas ferroviarias; cada fila se despliega con sus horarios. Las columnas se ordenan con sus botones.</caption>
+<thead><tr id="thead"></tr></thead>
+<tbody id="tbody"></tbody>
+</table>
+</div>
+<p class="rt-more"><button id="more" type="button" class="rt-btn" hidden>Mostrar más rutas</button></p>
+</section>
+
+<section class="cb-section" aria-labelledby="notas-t">
+<p class="cb-q">Método y fuentes</p>
+<h2 id="notas-t">Cómo se cuentan las rutas y los trenes</h2>
+<div class="cb-grid">
+<article class="cb-card span-6" id="c-metodo"></article>
+<article class="cb-card span-6" id="c-fuentes"></article>
+</div>
+</section>
+</main>
+
+<aside id="compare" class="rt-compare" aria-labelledby="compare-t" hidden>
+<div class="cb-wrap">
+<div class="rt-compare-head"><h2 id="compare-t">Comparar rutas</h2><button id="compare-clear" type="button" class="rt-btn">Quitar todas</button><button id="compare-toggle" type="button" class="rt-btn" aria-expanded="false" aria-controls="compare-body">Ver comparación</button></div>
+<div id="compare-body" hidden></div>
+</div>
+</aside>
+
+<footer class="cb-wrap cb-foot"><span>Atlas ferroviario de España · Cabina · Rutas</span><a href="cabina.html">Volver a Cabina</a></footer>
+<noscript><p class="cb-wrap">Activa JavaScript para ver la tabla de rutas.</p></noscript>
+</body>
+</html>

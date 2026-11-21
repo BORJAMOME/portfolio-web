@@ -188,8 +188,10 @@
     c.append(hbars(E.provincias.slice(0,15).map((p,i)=>({label:p.provincia,values:[p.estaciones],hi:i===0}))),
       note('Catálogo de estaciones de Renfe (datos abiertos). No es lo mismo que las estaciones con trenes de los horarios.'),link({l:{rail:true,stations:true}}));
     const S=J.servicios;
-    c=card('c-catalogo','Rutas del catálogo por tipo de servicio',fmt(S.variantes)+' rutas (recorridos con las mismas paradas) en '+fmt(S.estaciones)+' estaciones; corte '+shortDate(S.fecha));
+    // Variantes = recorridos con las mismas paradas; las rutas comerciales (relación por marca) están en la tabla de rutas.
+    c=card('c-catalogo','Recorridos del catálogo por tipo de servicio',fmt(S.variantes)+' recorridos distintos (cada combinación de paradas cuenta aparte) en '+fmt(S.estaciones)+' estaciones; corte '+shortDate(S.fecha));
     c.append(hbars([...S.por_servicio].sort((a,b)=>b.rutas-a.rutas).map((s,i)=>({label:s.nombre,values:[s.rutas],hi:i===0,href:visor({t:'services',k:s.id})}))),link({t:'services'}));
+    {const a=el('a','cb-link','Ver todas las rutas en la tabla');a.href='cabina-rutas.html';c.append(a);}
 
     /* Intermodalidad estática: redes urbanas */
     const U=J.urbano,modo={cercanias:'Cercanías','metro':'Metro','metro-ligero':'Metro ligero','tram-train':'Tren-tranvía'};
