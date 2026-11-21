@@ -1,13 +1,15 @@
 #!/usr/bin/env node
-/* Cabina del visor ferroviario: precalcula los indicadores ESTÁTICOS (red IGN, estaciones, corredores,
-   territorio, intermodalidad, turismo, redes urbanas y catálogo de servicios) en visor-ferroviario/capas/cabina.json.
-   La oferta de trenes por día (horarios) NO se precalcula: Cabina la calcula en el navegador con oferta.js,
-   igual que las fichas del visor, para que las cifras de las dos páginas coincidan el mismo día.
+/* Cabina del visor ferroviario: precalcula TODOS sus indicadores en visor-ferroviario/capas/cabina.json y escribe
+   los titulares en cabina.html, así la página no calcula nada en el navegador ni enseña «Calculando…».
 
-   Reutiliza las reglas del visor (filtros.js, cartography.js y la regla «peninsular» de capas-config.js):
-   si cambian allí, basta con volver a ejecutar este script.
-     node tools/build-cabina.mjs          escribe el JSON
-     node tools/build-cabina.mjs --check  falla si el JSON no está al día */
+   - Red: reglas del visor (filtros.js, cartography.js, «peninsular» de capas-config.js) y las mismas correcciones que
+     aplica atlas.js al cargar: ancho completado (capas/ancho.json) y electrificación y ancho de la línea de Adif
+     (capas/lineas-adif.json · relleno). Base: ejes IGN con atributos (attr ≠ 0), 19.559 km.
+   - Oferta, población servida, huecos, Pareto, velocidad y competencia: capas/oferta.json y capas/rutas.json
+     (tools/build-rutas.mjs), con todos los trenes de viajeros con horario público (también Cercanías de ancho
+     ibérico e iryo, que las fichas del visor aún no incluyen).
+     node tools/build-cabina.mjs          escribe el JSON y los titulares
+     node tools/build-cabina.mjs --check  falla si algo no está al día */
 import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
@@ -34,6 +36,18 @@ const tally = (items, key, val = () => 1) => {
 
 /* ── Red IGN (ámbito peninsular, misma regla que el visor) ── */
 const datos = read('datos.json');
+// Mismas correcciones que atlas.js (applyGauge y fillFromLine) antes de clasificar.
+const ancho = read('capas/ancho.json'), adif = read('capas/lineas-adif.json');
+const gaugeFix = new Map();
+for (const [key, ids] of Object.entries(ancho.groups)) { const [value, src] = key.split('|'); if (value === 'unknown') continue; for (const id of ids) gaugeFix.set('FFCC_TR' + id, [value, src]); }
+for (const f of datos.rail.features) {
+  const p = f.properties, x = gaugeFix.get(p.id); if (x) { p.gauge_fix = x[0]; p.gauge_src = x[1]; }
+  const r = adif.relleno?.[p.id];
+  if (r) {
+    if ('e' in r && (p.electrified === null || p.electrified === undefined)) { p.electrified = r.e === 1; p.fill_e = 1; }
+    if ('g' in r && !(p.nominalgauge > 0)) { p.nominalgauge = r.g; p.fill_g = 1; }
+  }
+}
 const rail = datos.rail.features.filter(f => CFG.peninsular(f.geometry.coordinates[0]));
 rail.forEach(f => F.prepare(f));
 const unique = [...new Map(rail.map(f => [f.properties.id, f])).values()];
@@ -49,6 +63,12 @@ const red = {
   tramos: m.sections, km: round(m.km, 0), cobertura_ancho: round(m.gaugeCoverage, 1),
   tramos_sin_atributos: unique.filter(f => f.properties.attr === 0).length,
   ancho: kmBy(f => gaugeGroup(F.value(f, 'gauge')), CFG.classifications.gauge.items.map(i => i.id)),
+  // De dónde sale el ancho de cada km (historia de calidad del dato): IGN directo → Adif → inferido.
+  ancho_origen: kmBy(f => {
+    const p = f.properties, g = F.value(f, 'gauge');
+    if (['unknown', 'narrow', 'notApplicable', 'pending', 'other'].includes(g)) return 'none';
+    return p.gauge_fix ? 'fix_' + p.gauge_src : p.fill_g ? 'linea' : 'ign';
+  }, ['ign', 'fix_adif', 'linea', 'fix_ign', 'fix_net', 'fix_topo', 'none']),
   electrificacion: kmBy(f => F.value(f, 'electric'), ['yes', 'no', 'unknown', 'notApplicable', 'pending']),
   vias: kmBy(f => F.value(f, 'tracks'), ['1', '2', '3', '4', 'unknown', 'notApplicable', 'pending']),
   prestaciones: kmBy(f => f.properties.perf || 'none', CFG.classifications.perf.items.map(i => i.id)),
@@ -150,19 +170,218 @@ const servicios = {
   por_marca: [...tally(sv.variants, v => v.published_brand || v.operator)].sort((a, b) => b[1] - a[1]).map(([marca, rutas]) => ({marca, rutas}))
 };
 
-const fuentes = {
-  red: datos.meta.source + ' · descargado ' + datos.meta.retrieved,
-  horarios: 'GTFS de Renfe (AV/LD/MD y Cercanías) y PDF oficial de OUIGO',
-  poblacion: pob.meta.label
+/* ── Oferta del universo completo (capas/oferta.json y capas/rutas.json, de tools/build-rutas.mjs) ── */
+const OF = read('capas/oferta.json'), RU = read('capas/rutas.json');
+const ST = OF.estaciones, PE = OF.por_estacion;   // mismo índice
+const metres = (a, b) => { const k = Math.cos((a[1] + b[1]) / 2 * Math.PI / 180); return Math.hypot((a[0] - b[0]) * k, a[1] - b[1]) * 111320; };
+const spain = i => ST[i].ca && ST[i].ca !== 'Fuera de España';
+const withTrains = ST.map((s, i) => ({i, n: s.n, c: s.c, ca: s.ca, pr: s.pr, lab: PE[i][0], fam: PE[i][3], av: PE[i][4], pri: PE[i][5], ult: PE[i][6], dest: PE[i][7]}))
+  .filter(s => s.lab > 0 && s.c && spain(s.i));
+const FAM = Object.keys(OF.familias);
+const oferta = {
+  referencia: OF.referencia, universo: OF.universo, fuentes: OF.fuentes,
+  familias: FAM.map(f => ({nombre: f, ...OF.familias[f]})),
+  trenes: FAM.reduce((a, f) => ({lab: a.lab + OF.familias[f].lab, sab: a.sab + OF.familias[f].sab, dom: a.dom + OF.familias[f].dom}), {lab: 0, sab: 0, dom: 0}),
+  estaciones_con_tren: withTrains.length, estaciones_total: ST.filter((s, i) => spain(i)).length,
+  paradas: withTrains.reduce((a, s) => a + s.lab, 0),
+  // Rankings separados: media y larga distancia (sin Cercanías) y solo Cercanías.
+  top_ld: withTrains.map(s => ({...s, v: s.lab - s.fam[4]})).filter(s => s.v > 0).sort((a, b) => b.v - a.v).slice(0, 15)
+    .map(s => ({n: s.n, c: s.c, v: s.v, av: s.fam[0] + s.fam[1], ic: s.fam[2], reg: s.fam[3], dest: s.dest, pri: s.pri, ult: s.ult})),
+  top_cer: withTrains.filter(s => s.fam[4] > 0).sort((a, b) => b.fam[4] - a.fam[4]).slice(0, 15).map(s => ({n: s.n, c: s.c, v: s.fam[4], total: s.lab})),
+  tramos: [['1–2', 1, 2], ['3–10', 3, 10], ['11–30', 11, 30], ['31–100', 31, 100], ['101–300', 101, 300], ['más de 300', 301, 1e9]]
+    .map(([label, a, b]) => ({label, n: withTrains.filter(s => s.lab >= a && s.lab <= b).length}))
 };
-const out = JSON.stringify({version: 1, generado_con: 'tools/build-cabina.mjs', fuentes, red, estaciones, corredores, tenT, territorio, intermodal, turismo, urbano, servicios}) + '\n';
+// Pareto: estaciones de más a menos paradas; qué % de estaciones suma el 50 % (y el 80 %) de las paradas. Gini aparte.
+{
+  const v = withTrains.map(s => s.lab).sort((a, b) => b - a), tot = v.reduce((a, b) => a + b, 0);
+  let acc = 0, p50 = null, p80 = null; const pts = [[0, 0]], step = Math.max(1, Math.floor(v.length / 60));
+  v.forEach((x, i) => { acc += x; const xs = (i + 1) / v.length, ys = acc / tot;
+    if (p50 === null && ys >= .5) p50 = xs; if (p80 === null && ys >= .8) p80 = xs;
+    if (i % step === 0 || i === v.length - 1) pts.push([round(xs * 100, 1), round(ys * 100, 1)]); });
+  const asc = [...v].reverse(); let g = 0; asc.forEach((x, i) => { g += (2 * (i + 1) - asc.length - 1) * x; });
+  oferta.pareto = {puntos: pts, p50: round(p50 * 100, 1), p80: round(p80 * 100, 1), n50: Math.round(p50 * v.length), gini: round(g / (asc.length * tot), 2)};
+}
+// Competencia en alta velocidad comercial por estación (AVE+Euromed, Avlo, OUIGO, iryo; Avant aparte).
+oferta.competencia = withTrains.filter(s => s.av[3] + s.av[4] > 0)
+  .map(s => ({n: s.n, c: s.c, ave: s.av[0], avlo: s.av[1], ouigo: s.av[3], iryo: s.av[4], avant: s.av[2]}))
+  .sort((a, b) => (b.ave + b.avlo + b.ouigo + b.iryo) - (a.ave + a.avlo + a.ouigo + a.iryo));
+
+/* ── Población servida y huecos (municipios INE 2025, centroide del polígono, distancia en línea recta) ── */
+const demo = read('capas/demografia.json');
+function centroid(geom) {
+  const polys = geom.type === 'Polygon' ? [geom.coordinates] : geom.coordinates; let best = null, ba = -1;
+  for (const poly of polys) {
+    const r = poly[0]; let a = 0, cx = 0, cy = 0;
+    for (let i = 0, j = r.length - 1; i < r.length; j = i++) { const f = r[j][0] * r[i][1] - r[i][0] * r[j][1]; a += f; cx += (r[j][0] + r[i][0]) * f; cy += (r[j][1] + r[i][1]) * f; }
+    if (a && Math.abs(a) > ba) { ba = Math.abs(a); best = [cx / (3 * a), cy / (3 * a)]; }
+  }
+  return best;
+}
+// Distancia municipio–estación: 0 si la estación está dentro del término municipal; si no, desde el centroide del
+// polígono. (Solo con el centroide, Badajoz, Jerez o Cáceres saldrían «sin tren»: su término es enorme y el centroide
+// queda lejos de la ciudad.) Sigue siendo línea recta, no acceso real.
+const inRing = (pt, ring) => { let c = false; for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) { const [xi, yi] = ring[i], [xj, yj] = ring[j]; if ((yi > pt[1]) !== (yj > pt[1]) && pt[0] < (xj - xi) * (pt[1] - yi) / (yj - yi) + xi) c = !c; } return c; };
+const inGeom = (pt, g, bb) => { if (pt[0] < bb[0] || pt[0] > bb[2] || pt[1] < bb[1] || pt[1] > bb[3]) return false;
+  const polys = g.type === 'Polygon' ? [g.coordinates] : g.coordinates; return polys.some(p => inRing(pt, p[0]) && !p.slice(1).some(h => inRing(pt, h))); };
+const bbox = g => { const b = [Infinity, Infinity, -Infinity, -Infinity]; const polys = g.type === 'Polygon' ? [g.coordinates] : g.coordinates;
+  for (const p of polys) for (const [x, y] of p[0]) { if (x < b[0]) b[0] = x; if (y < b[1]) b[1] = y; if (x > b[2]) b[2] = x; if (y > b[3]) b[3] = y; } return b; };
+const munis = demo.municipalities.features.map(f => ({id: f.properties.id, n: f.properties.name, pr: f.properties.province, pob: f.properties.population, c: centroid(f.geometry), g: f.geometry, bb: bbox(f.geometry)}))
+  .filter(m => m.c && CFG.peninsular(m.c) && m.pob > 0);
+const POB = munis.reduce((a, m) => a + m.pob, 0), DIST = [2, 5, 10], NS = [1, 2, 5, 10, 15, 20, 30, 50, 75, 100, 150, 200, 300];
+for (const m of munis) {
+  m.best = DIST.map(() => 0); m.near10 = null;
+  for (const s of withTrains) {
+    const d = inGeom(s.c, m.g, m.bb) ? 0 : metres(m.c, s.c);
+    DIST.forEach((km, k) => { if (d <= km * 1000 && s.lab > m.best[k]) m.best[k] = s.lab; });
+    if (s.lab >= 10 && (!m.near10 || d < m.near10.d)) m.near10 = {n: s.n, d, lab: s.lab};
+  }
+}
+const cobertura = {
+  poblacion: POB, municipios: munis.length, fecha: demo.meta.municipalityDate, distancias: DIST, umbrales: NS,
+  curva: DIST.map((km, k) => NS.map(N => round(100 * munis.filter(m => m.best[k] >= N).reduce((a, m) => a + m.pob, 0) / POB, 1))),
+  // Huecos: municipios de más de 20.000 habitantes sin estación con ≥ 10 trenes/día a ≤ 10 km.
+  huecos: munis.filter(m => m.pob > 20000 && m.best[2] < 10).sort((a, b) => b.pob - a.pob)
+    .map(m => ({id: m.id, n: m.n, pr: m.pr, pob: m.pob, c: m.c.map(x => round(x, 4)), cerca: m.near10 ? {n: m.near10.n, km: round(m.near10.d / 1000, 1), lab: m.near10.lab} : null}))
+};
+cobertura.kpi = {n10_5: cobertura.curva[1][NS.indexOf(10)], n1_5: cobertura.curva[1][NS.indexOf(1)], n30_5: cobertura.curva[1][NS.indexOf(30)]};
+cobertura.huecos_pob = cobertura.huecos.reduce((a, m) => a + m.pob, 0);
+
+/* ── Velocidad comercial programada entre capitales.
+   Tiempo: el tren directo más rápido entre las dos capitales, pare donde pare (oferta.json · capitales, de build-rutas).
+   Distancia: km del trazado IGN entre esas dos paradas, medidos a lo largo del recorrido inferido de una variante de
+   servicios.json que pase por las dos (posición de cada estación = vértice del recorrido más cercano). ── */
+{
+  const caps = new Map(pob.units.filter(u => u.kind === 'capital').map(u => [u.id, u]));
+  const varOf = new Map();   // código de estación → variantes que paran en ella
+  sv.variants.forEach((v, vi) => { if (!v.edges?.length) return; for (const c of v.calls) { const k = sv.stations[c.s]?.official_id; if (!k) continue; if (!varOf.has(k)) varOf.set(k, new Set()); varOf.get(k).add(vi); } });
+  // Las aristas de una variante no vienen ordenadas: se trata su recorrido como un grafo (nodos = extremos de los tramos
+  // IGN) y se busca el camino más corto entre las dos estaciones con Dijkstra, solo por esas aristas.
+  const graphCache = new Map(), nodeKey = c => c[0].toFixed(5) + ',' + c[1].toFixed(5);
+  const graphOf = vi => {
+    if (graphCache.has(vi)) return graphCache.get(vi);
+    const adj = new Map(), edges = [], grid = new Map();
+    // Extremos a menos de 25 m = el mismo nodo (los tramos IGN contiguos no siempre comparten la coordenada exacta).
+    const node = c => {
+      const gx = Math.floor(c[0] / 0.0005), gy = Math.floor(c[1] / 0.0005);
+      for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) for (const [k, p] of grid.get((gx + dx) + ':' + (gy + dy)) || []) if (metres(p, c) < 25) return k;
+      const k = nodeKey(c), cell = gx + ':' + gy; if (!grid.has(cell)) grid.set(cell, []); grid.get(cell).push([k, c]); return k;
+    };
+    for (const fid of sv.variants[vi].edges) {
+      const f = datos.rail.features[fid], g = f?.geometry.coordinates; if (!g?.length) continue;
+      const a = node(g[0]), b = node(g.at(-1)), w = Number(f.properties.length_m) || 0;
+      if (!adj.has(a)) adj.set(a, []); if (!adj.has(b)) adj.set(b, []);
+      adj.get(a).push([b, w]); adj.get(b).push([a, w]);
+      edges.push({g, a, b, w});
+    }
+    const r = {adj, edges}; graphCache.set(vi, r); return r;
+  };
+  // La estación se engancha al punto más cercano del recorrido (≤ 3 km), dentro del tramo: un nodo virtual unido a los dos
+  // extremos del tramo con la parte de longitud que queda a cada lado (en alta velocidad los tramos IGN miden kilómetros).
+  const nearestNode = (G, c, key) => {
+    let best = null, bd = 3000;
+    for (const e of G.edges) for (let i = 0; i < e.g.length; i++) { const d = metres(e.g[i], c); if (d < bd) { bd = d; best = [e, i]; } }
+    if (!best) return null;
+    const [e, i] = best; let along = 0, tot = 0;
+    for (let k = 1; k < e.g.length; k++) { const s = metres(e.g[k - 1], e.g[k]); tot += s; if (k <= i) along += s; }
+    const f = tot ? along / tot : 0, v = 'v:' + key;
+    G.adj.set(v, [[e.a, e.w * f], [e.b, e.w * (1 - f)]]);
+    G.adj.get(e.a).push([v, e.w * f]); G.adj.get(e.b).push([v, e.w * (1 - f)]);
+    return v;
+  };
+  const dijkstra = (G, from, to) => {
+    const dist = new Map([[from, 0]]), done = new Set(), q = [[0, from]];
+    while (q.length) {
+      let mi = 0; for (let i = 1; i < q.length; i++) if (q[i][0] < q[mi][0]) mi = i;
+      const [d, u] = q.splice(mi, 1)[0]; if (done.has(u)) continue; if (u === to) return d; done.add(u);
+      for (const [v, w] of G.adj.get(u) || []) { const nd = d + w; if (nd < (dist.get(v) ?? Infinity)) { dist.set(v, nd); q.push([nd, v]); } }
+    }
+    return null;
+  };
+  const coordOf = new Map(ST.map(s => [s.k, s.c]));
+  const kmBetween = (a, b) => {
+    const va = varOf.get(a), vb = varOf.get(b); if (!va || !vb) return null; const ks = [];
+    for (const vi of va) {
+      if (!vb.has(vi)) continue; graphCache.delete(vi);   // grafo nuevo: los nodos virtuales son de este par
+      const G = graphOf(vi), na = nearestNode(G, coordOf.get(a), a), nb = nearestNode(G, coordOf.get(b), b);
+      let d = na && nb && na !== nb ? dijkstra(G, na, nb) : null;
+      // Recorrido con huecos (tramos pendientes de inferir): si las dos estaciones son el origen y el destino de la
+      // variante, vale la suma de sus tramos, que mide justo ese trayecto.
+      const v = sv.variants[vi], o = sv.stations[v.calls[0].s]?.official_id, z = sv.stations[v.calls.at(-1).s]?.official_id;
+      if (!d && ((o === a && z === b) || (o === b && z === a))) d = v.edges.reduce((x, fid) => x + (Number(datos.rail.features[fid]?.properties.length_m) || 0), 0);
+      if (d) ks.push(d / 1000); if (ks.length >= 5) break;
+    }
+    if (!ks.length) return null; ks.sort((x, y) => x - y); return ks[Math.floor(ks.length / 2)];   // mediana de hasta 5 variantes
+  };
+  // Por cada pareja de capitales, el tren directo más rápido en TIEMPO (cualquier estación de las dos ciudades). Si no se
+  // pueden medir los km de ese tren, la pareja no sale: caer en otro tren más lento daría una velocidad engañosa.
+  const fastest = new Map();
+  for (const x of OF.capitales) { const k = [x[6], x[7]].sort().join('|'); if (!fastest.has(k) || x[2] < fastest.get(k)[2]) fastest.set(k, x); }
+  const best = new Map();
+  for (const [a, b, min, marca, op, fam, ca, cb] of fastest.values()) {
+    const A = caps.get(ca), B = caps.get(cb); if (!A || !B) continue;
+    const km = kmBetween(a, b); if (!km) continue;
+    const kmh = km / (min / 60), key = [A.name, B.name].sort((x, y) => x.localeCompare(y, 'es')).join(' – ');
+    const n = k => ST.find(s => s.k === k)?.n;
+    if (!best.has(key) || kmh > best.get(key).kmh)
+      best.set(key, {rel: key, de: n(a), a: n(b), marca, fam, op, km: round(km, 0), min, kmh: round(kmh, 0), pob: A.population + B.population});
+  }
+  oferta.velocidad_pares = best.size;
+  oferta.velocidad = [...best.values()].sort((x, y) => y.kmh - x.kmh);
+}
+
+/* ── Intermodalidad con el universo completo: estación con tren más cercana (≤ 15 km) ── */
+const nearest = (c, max = 15000) => { let b = null, bd = max; for (const s of withTrains) { const d = metres(c, s.c); if (d < bd) { bd = d; b = s; } } return b ? {n: b.n, m: Math.round(bd), lab: b.lab} : null; };
+intermodal.puertos = intermodal.puertos.map(p => ({...p, cerca: nearest(p.coord)}));
+intermodal.aeropuertos = intermodal.aeropuertos.map(p => ({...p, cerca: nearest(p.coord)}));
+
+/* ── Conciliación: una cifra por concepto y de dónde salen las demás ── */
+const kmOf = (list, id) => list.find(x => x.id === id)?.km || 0;
+const glosario = {
+  km_av: {prestaciones: kmOf(red.prestaciones, 'hs'), corredores: corredores.total.service, adifav: kmOf(red.titularidad, 'adifav'),
+    adifav_conv: red.net_perf.find(x => x.id === 'adifav')?.conv || 0, adif_hs: red.net_perf.find(x => x.id === 'adif')?.hs || 0},
+  estaciones: {catalogo: estaciones.total, horario: oferta.estaciones_total, con_tren: oferta.estaciones_con_tren, variantes: servicios.estaciones},
+  av: {comercial: OF.familias['Alta velocidad'].lab, avant: OF.familias['Avant'].lab, total: oferta.trenes.lab}
+};
+
+const fuentes = {
+  red: datos.meta.source + ' · descargado ' + datos.meta.retrieved + '; ancho completado con Adif (' + (ancho.meta.adif_downloaded || '') + ')',
+  horarios: OF.universo,
+  poblacion: 'INE · Censo anual de población a ' + demo.meta.municipalityDate + ' (municipios)'
+};
+for (const m of munis) { delete m.g; delete m.bb; }
+/* ── Titulares: la conclusión de cada capítulo, escrita también en cabina.html (sin «Calculando…» en el primer pintado) ── */
+const nf = new Intl.NumberFormat('es-ES'), pf = new Intl.NumberFormat('es-ES', {maximumFractionDigits: 1});
+const fam = Object.fromEntries(oferta.familias.map(f => [f.nombre, f.lab]));
+const cerShare = fam['Cercanías'] / oferta.trenes.lab;
+const comp = oferta.competencia.map(c => ({...c, priv: (c.ouigo + c.iryo) / (c.ave + c.avlo + c.ouigo + c.iryo)}));
+// Solo estaciones con 30 trenes de alta velocidad o más: en Puertollano, 2 trenes de iryo serían «el 100 %».
+const compBig = comp.filter(c => c.ave + c.avlo + c.ouigo + c.iryo >= 30), compMax = compBig.reduce((a, b) => b.priv > a.priv ? b : a, compBig[0]);
+const kmAV = kmOf(red.prestaciones, 'hs'), kmNo = kmOf(red.electrificacion, 'no'), kmKnown = red.km - kmOf(red.ancho, 'unknown');
+const refDate = new Date(oferta.referencia.laborable + 'T12:00:00').toLocaleDateString('es-ES', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
+const titulares = {
+  ref: 'Día de referencia: ' + refDate + '. Todos los trenes de viajeros con horario público, también Cercanías e iryo.',
+  cobertura: `El ${Math.round(cobertura.kpi.n10_5)} % de la población tiene a 5 km una estación con 10 trenes al día o más; ${cobertura.huecos.length} municipios grandes, ni a 10 km`,
+  servicio: `${Math.round(cerShare * 10)} de cada 10 trenes son de Cercanías, y el ${pf.format(oferta.pareto.p50)} % de las estaciones concentra la mitad de las paradas`,
+  competencia: `iryo y OUIGO paran en ${comp.length} estaciones; donde más pesan, en ${compMax.n}, son ${Math.round(compMax.priv * 100)} de cada 100 trenes de alta velocidad`,
+  red: `El ${Math.round(100 * kmAV / red.km)} % de la red es de alta velocidad y el ${Math.round(100 * kmNo / red.km)} % sigue sin electrificar; ya se conoce el ancho del ${pf.format(100 * kmKnown / red.km)} % de los km`
+};
+
+const out = JSON.stringify({version: 2, generado_con: 'tools/build-cabina.mjs', fuentes, red, estaciones, corredores, tenT, territorio, intermodal, turismo, urbano, servicios, oferta, cobertura, glosario, titulares}) + '\n';
+// Escribe los titulares en el HTML: <h2 id="X-t">…</h2> y <p id="ref" …>…</p>.
+const HTML = path.join(V, 'cabina.html');
+const esc = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const html0 = fs.readFileSync(HTML, 'utf8');
+let html = html0;
+for (const k of ['cobertura', 'servicio', 'competencia', 'red']) html = html.replace(new RegExp('(<h2 id="' + k + '-t">)[^<]*(</h2>)'), (m, a, b) => a + esc(titulares[k]) + b);
+html = html.replace(/(<p id="ref"[^>]*>)[^<]*(<\/p>)/, (m, a, b) => a + esc(titulares.ref) + b);
 
 if (process.argv.includes('--check')) {
   const cur = fs.existsSync(OUT) ? fs.readFileSync(OUT, 'utf8') : '';
-  if (cur !== out) { console.error('capas/cabina.json no está al día: node tools/build-cabina.mjs'); process.exit(1); }
-  console.log('capas/cabina.json al día');
+  if (cur !== out || html !== html0) { console.error('capas/cabina.json o los titulares de cabina.html no están al día: node tools/build-cabina.mjs'); process.exit(1); }
+  console.log('capas/cabina.json y titulares al día');
 } else {
   fs.writeFileSync(OUT, out);
+  if (html !== html0) fs.writeFileSync(HTML, html);
   console.log('Escrito', path.relative(ROOT, OUT), (out.length / 1024).toFixed(1) + ' KB',
     '· tramos', red.tramos, '· km', red.km, '· estaciones', estaciones.total, '· rutas', servicios.variantes);
 }

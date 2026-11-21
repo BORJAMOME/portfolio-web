@@ -86,12 +86,18 @@
         const t=at(D.h.patterns[p],t0,i,n),to=new Set();
         if(t.dep!==null&&!v.calls[i].p)for(let j=i+1;j<n;j++){if(v.calls[j].d)continue;const name=D.S.stations[v.calls[j].s]?.name;if(name&&D.gid(v.calls[j].s)!==g)to.add(name);}
         const op=v.brand==='ouigo'?'OUIGO':v.operator==='Renfe Viajeros'?'Renfe':v.operator;
-        (v.pdf?ouigo:list).push({arr:t.arr,dep:t.dep,op,to,board:t.dep!==null&&!v.calls[i].p});
+        // Rumbo hacia la parada anterior (llegada) y la siguiente (salida): dos OUIGO de sentido contrario pueden coincidir
+        // aquí a la misma hora (Albacete, 18:45/18:48) y no son el mismo tren. Misma regla que tools/build-rutas.mjs.
+        const xy=c=>D.S.stations[c?.s]?.coordinates,here=xy(v.calls[i]);
+        const bear=(a,b)=>a&&b?Math.atan2(b[1]-a[1],(b[0]-a[0])*Math.cos(a[1]*Math.PI/180)):null;
+        (v.pdf?ouigo:list).push({arr:t.arr,dep:t.dep,op,to,board:t.dep!==null&&!v.calls[i].p,bArr:i?bear(xy(v.calls[i-1]),here):null,bDep:i<n-1?bear(here,xy(v.calls[i+1])):null});
       }
     }
     const parent=ouigo.map((_,n)=>n),find=n=>parent[n]===n?n:(parent[n]=find(parent[n]));
-    const byKey=new Map();
-    ouigo.forEach((x,n)=>{for(const key of [x.arr!==null&&'a'+x.arr,x.dep!==null&&'d'+x.dep].filter(Boolean)){if(byKey.has(key))parent[find(n)]=find(byKey.get(key));else byKey.set(key,n);}});
+    const same=(p,q)=>p===null||q===null||Math.abs(Math.atan2(Math.sin(p-q),Math.cos(p-q)))<Math.PI/2,groups=new Map();
+    ouigo.forEach((x,n)=>{if(x.arr!==null)(groups.get('a'+x.arr)??groups.set('a'+x.arr,[]).get('a'+x.arr)).push([n,x.bArr]);
+      if(x.dep!==null)(groups.get('d'+x.dep)??groups.set('d'+x.dep,[]).get('d'+x.dep)).push([n,x.bDep]);});
+    for(const g of groups.values())for(let a=0;a<g.length;a++)for(let b=a+1;b<g.length;b++)if(same(g[a][1],g[b][1]))parent[find(g[a][0])]=find(g[b][0]);
     const merged=new Map();
     ouigo.forEach((x,n)=>{const r=find(n),m=merged.get(r)||{arr:null,dep:null,op:x.op,to:new Set(),board:false};
       if(x.arr!==null)m.arr=x.arr;if(x.dep!==null)m.dep=x.dep;x.to.forEach(d=>m.to.add(d));m.board||=x.board;merged.set(r,m);});
