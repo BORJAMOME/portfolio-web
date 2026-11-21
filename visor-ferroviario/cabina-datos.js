@@ -33,8 +33,11 @@
     }
     const parent=pdf.map((_,i)=>i),find=i=>parent[i]===i?i:(parent[i]=find(parent[i])),seen=new Map();
     pdf.forEach((x,i)=>{const n=x.v.calls.length;
-      x.v.calls.forEach((c,j)=>{const t=at(D.h.patterns[x.p],x.t0,j,n);if(t.dep===null)return;
-        const key=D.gid(c.s)+'@'+t.dep;if(seen.has(key))parent[find(i)]=find(seen.get(key));else seen.set(key,i);});});
+      // Por salida y por llegada, como stationDay: el PDF da a veces horas distintas a un mismo tren en una parada
+      // intermedia (Cuenca 8:17 / 8:20 en Madrid–València) y solo la llegada común lo identifica.
+      x.v.calls.forEach((c,j)=>{const t=at(D.h.patterns[x.p],x.t0,j,n);
+        for(const key of [t.dep!==null&&'d'+D.gid(c.s)+'@'+t.dep,t.arr!==null&&'a'+D.gid(c.s)+'@'+t.arr].filter(Boolean)){
+          if(seen.has(key))parent[find(i)]=find(seen.get(key));else seen.set(key,i);}});});
     const first=new Map();
     pdf.forEach((x,i)=>{const r=find(i);first.set(r,Math.min(first.get(r)??Infinity,x.t0));});
     for(const t0 of first.values())add(t0,'Alta velocidad comercial','OUIGO');

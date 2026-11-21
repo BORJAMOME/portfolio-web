@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "31ff144",
+ "huella": "a0af2ee",
  "recuento": {
   "paginas": 20,
   "proyectos": 40,
@@ -11,7 +11,7 @@ export default {
   "pestanas": 10,
   "tablas": 41,
   "funciones": 5,
-  "herramientas": 23,
+  "herramientas": 25,
   "relaciones": 190,
   "sinExplicar": 0
  },
@@ -2298,6 +2298,13 @@ export default {
        "familia": "herramienta"
       },
       {
+       "id": "h:build-rutas",
+       "tipo": "herramienta",
+       "etiqueta": "build-rutas.mjs",
+       "archivo": "tools/build-rutas.mjs",
+       "familia": "herramienta"
+      },
+      {
        "id": "h:mapa",
        "tipo": "herramienta",
        "etiqueta": "mapa/",
@@ -2445,6 +2452,13 @@ export default {
        "tipo": "herramienta",
        "etiqueta": "manual-estudio/",
        "archivo": "tools/manual-estudio/",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:rutas",
+       "tipo": "herramienta",
+       "etiqueta": "rutas/",
+       "archivo": "tools/rutas/",
        "familia": "herramienta"
       },
       {
