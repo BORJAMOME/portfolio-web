@@ -1,7 +1,7 @@
 # Cabina · Rutas: estado del proyecto
 
 Tabla de todas las rutas ferroviarias de viajeros de España, en una página propia (`cabina-rutas.html`) enlazada desde Cabina y desde el visor.
-Última actualización: 21-11-2026 (fase 4: CNMC por corredor, cerrada en la tabla).
+Última actualización: 21-11-2026 (rediseño de la tabla: logos, color por operador, provincias en castellano).
 
 ## Decisiones de Borja (21-11-2026), a mantener
 
@@ -13,7 +13,7 @@ Tabla de todas las rutas ferroviarias de viajeros de España, en una página pro
 - **Filtros:** operador y tipo de empresa; servicio y marca; estación y territorio (origen, destino, intermedia, comunidad, provincia, núcleo); vía y corredor.
 - **Por fila:** ver en el visor, desplegar horarios del día, exportar CSV (tabla filtrada), ordenar por columna y comparar 2-3 rutas.
 - **Actualización:** automática semanal con una GitHub Action.
-- **Sin imágenes de Renfe** (decisión de Cabina, 20-11-2026).
+- **Sin imágenes de Renfe** (decisión de Cabina, 20-11-2026), salvo los **logos de operador en la tabla de rutas**, en gris (pedidos por Borja el 21-11-2026).
 
 ## Fuentes (comprobadas el 20-11-2026)
 
@@ -164,6 +164,14 @@ Con `--hoy=2026-11-21` es reproducible. El lector de GTFS (`tools/rutas/gtfs.mjs
 - `check-a11y`, `check-links`, `version-assets`, `build-mapa`, `build-en` y `build-cabina --check`, sin incidencias.
 
 **Reparto con la otra sesión (21-11-2026):** esta sesión lleva `cnmc.json` y la tabla de rutas. La sesión «Diseño responsive y mejoras de contenido» lleva la ola 2 de Cabina (`cabina.*`, `build-cabina.mjs` y su propio `tools/build-cabina-mercado.mjs` para INE, mercancías y Eurostat), y lee la CNMC de `cnmc.json`.
+
+## Rediseño de la tabla (21-11-2026)
+
+- **Operador con logo en gris** (`img/operadores/*.svg`, trazados de Wikimedia Commons, dominio público, con un solo color `#6b7486`): Renfe, Avlo, iryo y OUIGO. Avlo es marca de Renfe pero lleva su logo. Se comprobó que la geometría coincide número a número con los SVG originales.
+- **Color de fila por operador** (tinte del 4 % y filete a la izquierda): Renfe `#5b064b`, Avlo `#bc8fb3`, iryo `#ce0511`, OUIGO `#e50a70`. El color nunca va solo: el logo con su `alt` dice lo mismo.
+- **Provincias**: el CSV de estaciones de Renfe viene en Latin-1 y se leía como UTF-8 («A Coru�a»). `build-rutas` lo detecta; las bilingües, en castellano (Alicante, Castellón, Valencia, Álava) y «Desconocido» pasa a sin dato. Las de nombre oficial único se dejan así (A Coruña, Bizkaia, Gipuzkoa, Girona, Lleida, Ourense). Al regenerar solo cambiaron las provincias (362 estaciones) y la fecha; `oferta.json` cambia por lo mismo.
+- **KPIs**: «Rutas» con barra del % del total; «Trenes en un día laborable» y «Trenes en una semana» explican que son sumas de las rutas filtradas y qué días cubren.
+- **Tabla**: página a 1.820 px como máximo, ruta en una línea (en Cercanías la línea y el núcleo van en Servicio), divisorias en el bloque de tiempo (| laborable sábado domingo | semana mes año |) y cortes de columnas calculados con la anchura real (ruta de hasta ~520 px). Sin desbordamiento de 1.920 a 375 px; solo las 3 rutas más largas (Bilbao/Santiago ↔ Chamartín) piden desplazamiento entre 641 y 975 px.
 
 ## Siguiente tarea
 
