@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "3307272",
+ "huella": "ae32bf4",
  "recuento": {
   "paginas": 20,
   "proyectos": 40,
@@ -11,8 +11,8 @@ export default {
   "pestanas": 10,
   "tablas": 41,
   "funciones": 5,
-  "herramientas": 27,
-  "relaciones": 190,
+  "herramientas": 28,
+  "relaciones": 196,
   "sinExplicar": 0
  },
  "columnas": [
@@ -2498,6 +2498,13 @@ export default {
        "familia": "herramienta"
       },
       {
+       "id": "w:rutas-semanal",
+       "tipo": "workflow",
+       "etiqueta": "rutas-semanal.yml",
+       "archivo": ".github/workflows/rutas-semanal.yml",
+       "familia": "herramienta"
+      },
+      {
        "id": "w:supabase-keepalive",
        "tipo": "workflow",
        "etiqueta": "supabase-keepalive.yml",
@@ -3805,6 +3812,42 @@ export default {
   },
   {
    "de": "w:checks",
+   "a": "h:version-assets",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:rutas-semanal",
+   "a": "h:build-cabina",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:rutas-semanal",
+   "a": "h:build-cnmc",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:rutas-semanal",
+   "a": "h:build-rutas",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:rutas-semanal",
+   "a": "h:check-links",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:rutas-semanal",
+   "a": "h:rutas",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:rutas-semanal",
    "a": "h:version-assets",
    "tipo": "ejecuta",
    "detalle": []

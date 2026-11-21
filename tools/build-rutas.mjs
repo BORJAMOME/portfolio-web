@@ -33,7 +33,9 @@ async function download(){
     const r=await fetch(s.url,{headers:{'user-agent':'borjamora.es visor ferroviario (portfolio)'}});
     if(!r.ok)throw new Error(`${k}: HTTP ${r.status} en ${s.url}`);
     fs.writeFileSync(path.join(CACHE,s.file),Buffer.from(await r.arrayBuffer()));
-    meta[k]={downloaded:new Date().toISOString().slice(0,10),last_modified:r.headers.get('last-modified')};
+    // Solo en la caché local: ni la fecha de descarga ni Last-Modified (Renfe lo da distinto en cada servidor, con segundos de diferencia)
+    // van a rutas.json, o la tarea semanal confirmaría un commit con los mismos datos. La vigencia de cada fuente está en from/to.
+    meta[k]={downloaded:new Date().toISOString(),last_modified:r.headers.get('last-modified')};
   }
   fs.writeFileSync(path.join(CACHE,'meta.json'),JSON.stringify(meta,null,1));
 }
@@ -82,12 +84,15 @@ function trainsFrom(src,g,opts){
 function build(today){
   const need=Object.values(SOURCES).filter(s=>!fs.existsSync(path.join(CACHE,s.file)));
   if(need.length)throw new Error('Faltan fuentes en .cache/rutas: ejecuta con --download');
-  const dl=fs.existsSync(path.join(CACHE,'meta.json'))?JSON.parse(fs.readFileSync(path.join(CACHE,'meta.json'),'utf8')):{};
 
   // Estaciones: catálogo de Renfe (código de 5 cifras, provincia) + nombres y coordenadas de los GTFS.
   const catalog=new Map();
-  for(const l of fs.readFileSync(path.join(CACHE,'estaciones.csv'),'utf8').split(/\r?\n/).slice(1)){
-    const c=l.split(';').map(x=>x.replace(/^"|"$/g,''));if(c[0])catalog.set(c[0],{prov:c[7]?title(c[7]).replace(/^(.*), (A|La|Las|Los|El|Les|L')$/i,'$2 $1'):null,coord:[+c[3],+c[2]],metric:c[10]==='SI'});
+  // El CSV de Renfe viene en Latin-1 (leído como UTF-8 salía «A Coru�a»). Provincias en castellano: de las bilingües, el nombre en castellano.
+  const raw=fs.readFileSync(path.join(CACHE,'estaciones.csv')),txt=raw.toString('utf8').includes('�')?raw.toString('latin1'):raw.toString('utf8');
+  const PROV_ES={'Alicante/Alacant':'Alicante','Castellón/Castelló':'Castellón','Valencia/València':'Valencia','Araba/Álava':'Álava'};
+  const prov=p=>{if(!p||/^desconocid/i.test(p))return null;const t=title(p).replace(/^(.*), (A|La|Las|Los|El|Les|L')$/i,(m,n,a)=>a[0].toUpperCase()+a.slice(1).toLowerCase()+' '+n);return PROV_ES[t]||t;};
+  for(const l of txt.split(/\r?\n/).slice(1)){
+    const c=l.split(';').map(x=>x.replace(/^"|"$/g,''));if(c[0])catalog.set(c[0],{prov:prov(c[7]),coord:[+c[3],+c[2]],metric:c[10]==='SI'});
   }
   const stations=new Map(),seeStop=(code,s,rank)=>{const x=stations.get(code);if(!x||rank<x.rank)stations.set(code,{code,name:s.stop_name,coord:[+s.stop_lon,+s.stop_lat],rank});};
   const nuc=Object.fromEntries(JSON.parse(fs.readFileSync(path.join(V,'transit-catalog.json'),'utf8')).networks.filter(n=>n.id.startsWith('renfe-')).map(n=>[n.id.slice(6),n.name]));
@@ -100,7 +105,7 @@ function build(today){
   for(const s of G.iryo.stops)seeStop(s.stop_id,s,3);
 
   const bad={};
-  const add=(k,res)=>{all.push(...res.trains);bad[k]=res.bad;sources[k]={...SOURCES[k],file:undefined,trains:res.trains.length,...(dl[k]||{})};};
+  const add=(k,res)=>{all.push(...res.trains);bad[k]=res.bad;sources[k]={...SOURCES[k],file:undefined,trains:res.trains.length};};
   add('renfe',trainsFrom('renfe',G.renfe,{code:id,number:t=>t.trip_short_name,
     describe:r=>{const marca=BRAND[r.route_short_name.trim().toUpperCase()]||r.route_short_name.trim();return {operador:'Renfe',marca,familia:FAMILY[marca]||'Regional'};}}));
   add('cercanias',trainsFrom('cercanias',G.cercanias,{code:id,

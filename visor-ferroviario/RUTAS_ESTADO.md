@@ -1,7 +1,7 @@
 # Cabina · Rutas: estado del proyecto
 
 Tabla de todas las rutas ferroviarias de viajeros de España, en una página propia (`cabina-rutas.html`) enlazada desde Cabina y desde el visor.
-Última actualización: 21-11-2026 (fase 4: CNMC por corredor, cerrada en la tabla).
+Última actualización: 21-11-2026 (rediseño de la tabla y fase 7: actualización semanal automática).
 
 ## Decisiones de Borja (21-11-2026), a mantener
 
@@ -13,7 +13,7 @@ Tabla de todas las rutas ferroviarias de viajeros de España, en una página pro
 - **Filtros:** operador y tipo de empresa; servicio y marca; estación y territorio (origen, destino, intermedia, comunidad, provincia, núcleo); vía y corredor.
 - **Por fila:** ver en el visor, desplegar horarios del día, exportar CSV (tabla filtrada), ordenar por columna y comparar 2-3 rutas.
 - **Actualización:** automática semanal con una GitHub Action.
-- **Sin imágenes de Renfe** (decisión de Cabina, 20-11-2026).
+- **Sin imágenes de Renfe** (decisión de Cabina, 20-11-2026), salvo los **logos de operador en la tabla de rutas**, en gris (pedidos por Borja el 21-11-2026).
 
 ## Fuentes (comprobadas el 20-11-2026)
 
@@ -165,9 +165,30 @@ Con `--hoy=2026-11-21` es reproducible. El lector de GTFS (`tools/rutas/gtfs.mjs
 
 **Reparto con la otra sesión (21-11-2026):** esta sesión lleva `cnmc.json` y la tabla de rutas. La sesión «Diseño responsive y mejoras de contenido» lleva la ola 2 de Cabina (`cabina.*`, `build-cabina.mjs` y su propio `tools/build-cabina-mercado.mjs` para INE, mercancías y Eurostat), y lee la CNMC de `cnmc.json`.
 
+## Rediseño de la tabla (21-11-2026)
+
+- **Operador con logo en gris** (`img/operadores/*.svg`, trazados de Wikimedia Commons, dominio público, con un solo color `#6b7486`): Renfe, Avlo, iryo y OUIGO. Avlo es marca de Renfe pero lleva su logo. Se comprobó que la geometría coincide número a número con los SVG originales.
+- **Color de fila por operador** (tinte del 4 % y filete a la izquierda): Renfe `#5b064b`, Avlo `#bc8fb3`, iryo `#ce0511`, OUIGO `#e50a70`. El color nunca va solo: el logo con su `alt` dice lo mismo.
+- **Provincias**: el CSV de estaciones de Renfe viene en Latin-1 y se leía como UTF-8 («A Coru�a»). `build-rutas` lo detecta; las bilingües, en castellano (Alicante, Castellón, Valencia, Álava) y «Desconocido» pasa a sin dato. Las de nombre oficial único se dejan así (A Coruña, Bizkaia, Gipuzkoa, Girona, Lleida, Ourense). Al regenerar solo cambiaron las provincias (362 estaciones) y la fecha; `oferta.json` cambia por lo mismo.
+- **KPIs**: «Rutas» con barra del % del total; «Trenes en un día laborable» y «Trenes en una semana» explican que son sumas de las rutas filtradas y qué días cubren.
+- **Tabla**: página a 1.820 px como máximo, ruta en una línea (en Cercanías la línea y el núcleo van en Servicio), divisorias en el bloque de tiempo (| laborable sábado domingo | semana mes año |) y cortes de columnas calculados con la anchura real (ruta de hasta ~520 px). Sin desbordamiento de 1.920 a 375 px; solo las 3 rutas más largas (Bilbao/Santiago ↔ Chamartín) piden desplazamiento entre 641 y 975 px.
+
+## Fase 7 (21-11-2026): actualización semanal automática
+
+`.github/workflows/rutas-semanal.yml`, los lunes a las 04:23 UTC y a mano con «Run workflow».
+- **Pasos:** `build-rutas --download` → `build-cnmc --download` → `build-cabina` → `tools/rutas/sanity.mjs` → `build-cabina --check`, `check-links` y `version-assets --check` → commit en `main` como github-actions[bot], solo si cambian `rutas.json`, `oferta.json`, `cnmc.json`, `cabina.json` o `cabina.html`.
+- **Control de cordura** (`tools/rutas/sanity.mjs`, frente a `HEAD`): no publica si una fuente pierde más del 40 % de los trenes de un laborable o más del 30 % de las rutas, si Cabina pierde más del 40 % de los trenes, si la CNMC no trae 5 corredores o si su último trimestre retrocede. El resumen (tabla por fuente con «horarios hasta») sale en la página de la ejecución.
+- **Si falla algo,** el job queda en rojo, no se sube nada y GitHub avisa por correo. Los datos publicados siguen siendo los de la semana anterior.
+- **Reactivación:** el último paso reactiva el propio workflow, como `supabase-keepalive.yml`, para que GitHub no lo apague tras 60 días sin actividad.
+- **Memoria:** 6 GB para Node (en local, build-rutas y build-cabina pasan con 3 GB).
+- `main` no tiene protección de rama, así que el bot puede subir directamente.
+
+**Comprobado en local:** el control pasa con los datos actuales y falla (código 1) si se simula la caída de Cercanías a 100 trenes. Mapa del repositorio regenerado, `check-links` y `version-assets --check` sin incidencias.
+**Comprobado en GitHub (21-11-2026, ejecución 44907670673):** todos los pasos en verde; las descargas desde el runner funcionan y el control de cordura pasa (mismos trenes y rutas por fuente). El bot confirmó un commit, pero solo por la fecha de descarga (`downloaded`) en `fuentes`: se ha quitado de `build-rutas`. La segunda ejecución volvió a confirmar porque Renfe da un `Last-Modified` distinto en cada servidor (segundos de diferencia) y republica a diario: tampoco va ya a `rutas.json`. Las dos fechas quedan solo en `.cache/rutas/meta.json`; la vigencia de cada fuente sigue en `from`/`to`.
+
+**Coordinación:** cuando se fusione la ola 2 de Cabina, el workflow tendrá que ejecutar también `tools/build-cabina-mercado.mjs` si sus datos deben refrescarse (lo decide esa sesión).
+
 ## Siguiente tarea
 
 - **Fase 6: operadores autonómicos (FGC, Euskotren, FGV).** Bloqueada hasta que Borja cree la cuenta del NAP y su ApiKey.
-- **Fase 7: GitHub Action semanal** que ejecute `build-rutas --download`, `build-cnmc --download` y `build-cabina`, y confirme si hay cambios. Es la siguiente que se puede hacer ya, porque Cercanías caduca el 20-12-2026.
-  - Hecha cuando la Action corra en el repositorio, regenere los datos y, si no hay cambios, no confirme nada.
 - **Pendiente de la fase 3:** el filtro por corredor Hermes o TEN-T.
