@@ -192,3 +192,73 @@ Con `--hoy=2026-11-21` es reproducible. El lector de GTFS (`tools/rutas/gtfs.mjs
 
 - **Fase 6: operadores autonómicos (FGC, Euskotren, FGV).** Bloqueada hasta que Borja cree la cuenta del NAP y su ApiKey.
 - **Pendiente de la fase 3:** el filtro por corredor Hermes o TEN-T.
+
+## Auditoría y correcciones (21-11-2026)
+
+Auditoría independiente de `rutas.json`: recálculo en Python frente a los GTFS de Renfe AV/LD/MD, Cercanías e iryo, el PDF de OUIGO (parser propio), la CNMC y el catálogo de estaciones.
+- **Fiel a la fuente:** 711 de 711 filas de Renfe, Cercanías e iryo iguales al GTFS (trenes por día, horas, paradas, estaciones, números, vigencia); OUIGO, 212 de 212 trenes-día de la semana; CNMC, 130 de 130 valores.
+- **No fiel a la realidad:** el GTFS de Renfe AV/LD/MD programa trenes por tramos cortados y mete como trenes autobuses del plan alternativo (todos sus viajes son `route_type 2`). Se corrige con `tools/rutas/cortes.json` (abajo).
+
+**Cortes (`tools/rutas/cortes.json`).**
+- **Criterio de entrada:** fuente oficial o de prensa **y** confirmación en el tiempo real de Renfe (0 trenes vistos del 14 al 20-11-2026 en las rutas afectadas). En el ancho métrico, que el tiempo real no cubre, basta Adif.
+- **Cortes aplicados:**
+  - Urda, LAV Madrid–Sevilla: Renfe, iryo y OUIGO; los regionales por Alcázar siguen.
+  - Algeciras–Bobadilla.
+  - Zaragoza–Teruel–Sagunto.
+  - Xàtiva–Alcoi.
+  - Carancos–Llanes (23-11 a 05-12).
+- **Efecto:** `build-rutas` quita esos trenes de los recuentos en las fechas del corte. Cada ruta lleva `sup` (trenes suprimidos de lunes a domingo) y `cortes`; el fichero, `cortes` con la fuente.
+- **Avisos:** el script falla si un corte no afecta a ningún tren, y avisa cuando pasa su fecha `revisar`. Las Cercanías no se tocan: su GTFS ya separa los autobuses.
+- **Semana del 23-11:** 215 trenes menos en el laborable (de 5.909 a 5.694; Urda, 154).
+- **Sin aplicar por falta de pruebas:**
+  - Córdoba–Santa Cruz de Mudela: Adif lo da por cortado, pero Madrid–Jaén se ve en el tiempo real.
+  - Guadalajara–Plasencia de Jalón: solo Madrid–Soria es concluyente.
+
+**Km.** `viaPorRuta` sumaba las aristas de la variante, que dejan fuera la vía al cruzar cada estación (de 0,1 a 2,7 km por parada).
+- **Arreglo:** se unen los trozos por la red IGN (`bridge`) y hay controles nuevos: km < 1,02 × recta; ida y vuelta que comparten ≥ 90 % de vía y difieren > 5 %; velocidad imposible.
+- **Campo nuevo:** `via.motivo` explica cada ruta incompleta.
+- **Resultado:** 675 rutas con km (antes 655). Valladolid–Salamanca pasa de 108 a 120 km (≈ 120,8 por PK); Mérida–Badajoz, de 54 a 60 (59,3).
+
+**OUIGO.** Las erratas del PDF y de su lectura en `horarios.json` (el generador no está en este repositorio) se corrigen en `OUIGO_ERRATAS`; el script falla si una errata no encuentra su registro. Además se unen los trenes que el PDF parte en dos. La semana de referencia no cambia; diciembre y enero sí.
+
+**Territorio.** La provincia de las estaciones que no están en el catálogo de Renfe sale del municipio del INE, y la comunidad, de la provincia. Corrige 12 estaciones mal asignadas y 12 sin provincia.
+
+## Incidencias en tiempo real (21-11-2026)
+
+**Decisiones de Borja:** archivo propio del tiempo real de Renfe; incidencias = cancelados + retrasos de 15 min o más. El archivo comunitario `josernalist/renfe-gtfsrt`, que no tiene licencia, solo se ha usado para validar por dentro y no se publica.
+
+**Cómo funciona:** `.github/workflows/incidencias-rt.yml` se ejecuta cada 5 min y llama a `tools/rutas/incidencias.mjs`.
+- **Captura** (`captura`): baja `trip_updates_LD.json` y `trip_updates.json` (Cercanías). Una vez al día, a partir de las 03:30, crea el programa del día con el GTFS estático de ESE día.
+- **Estado del día:** vive en `.cache/rt/`, que se conserva con actions/cache. Se guardan las 3 últimas cachés.
+- **Cierre** (`cierre`, después de las 07:00): escribe un vector por ruta y día en `capas/incidencias/AAAA-MM.json` y los agregados de 1, 7, 30 y 365 días en `capas/incidencias.json`. Hace como mucho un commit al día en `main`.
+- **Coste:** no usa ningún modelo de IA, así que no gasta tokens. En un repositorio público, los minutos de Actions son gratis.
+
+**Definiciones** (en el código y en `incidencias.json → definiciones`):
+- **Visto:** al menos 2 capturas en circulación, entre 3 h antes de la salida y 6 h después de la llegada.
+- **Cancelado:** al menos 2 capturas CANCELED y ninguna en circulación después de salir.
+- **Contradictorio:** CANCELED y también en circulación después de salir. Cuenta como visto. Renfe publica muchas veces el mismo viaje como cancelado y en circulación durante todo el día: su trip_id vale para varios días y el feed no dice a qué fecha se refiere la cancelación.
+- **Retraso:** el último que informa el feed mientras se ve el tren. Se descartan los valores imposibles (más de 6 h, o más de 30 min de adelanto).
+- **Sin dato:** el tren programado no aparece nunca en el feed. No es una cancelación: el feed solo cubre alrededor del 60 % de lo programado (los números 3xxxx casi nunca salen). Por eso **no** se calcula «previsto − visto».
+- **Día válido:** al menos el 90 % de las capturas esperadas entre las 04:00 y las 24:00, y ningún hueco de más de 30 min. Los cron de GitHub se retrasan. Una captura sin trenes en circulación no cuenta (el 20-11 el feed solo trajo cancelados durante 3 h).
+- **Cortes:** los trenes de `cortes.json` no entran en los programados; se cuentan aparte.
+
+**Validación:** el 18-11-2026 se reprodujo con el estático archivado de ese día (`elguardagujas/renfe-gtfs-archive`) y las capturas de josernalist.
+- **Cobertura:** del 64 % sobre lo programado (el 83 % sin los trenes de los cortes). Coincide con el 64 % del análisis independiente.
+- **Cancelados:** 140 de 1.178 trenes con dato (12 %).
+- **Último retraso ≥ 15 min:** el 40 % de los vistos.
+- **Cifras sin contrastar:** las de cancelados y retrasos no se han podido comparar con una fuente oficial, porque Renfe no publica la puntualidad en datos abiertos.
+
+**Pruebas:** `node --test tools/rutas/incidencias.test.mjs`, incluido en `checks.yml`.
+
+**En la página:**
+- Columnas «Canc. %» y «Retr. %» (30 días), visibles desde 1.550 px.
+- Bloque «Incidencias en tiempo real» en el detalle (último día, 7, 30 y 365 días).
+- Comparación y CSV.
+- Un porcentaje solo se da con 10 trenes o más con dato.
+- iryo y OUIGO: «sin tiempo real».
+- Para dejar sitio, «Paradas», «Primero – último» y «Mes*» salen de la tabla. Siguen en el detalle, el CSV y la comparación.
+
+**Pendiente o con riesgo:**
+- **Primeros datos:** la tarea solo empieza al fusionar en `main`. El primer día se cierra a la mañana siguiente. 30 días tardan 30 días, y 365, un año.
+- **Medianoche:** los trenes de 00:00 a 03:30 no se siguen, porque aún no hay programa del día.
+- **Fin del corte de Urda:** `hasta` = 12-12, porque los operadores venden desde el 13-12. Si la línea no reabre, hay que ampliar el corte. El aviso salta el 07-12.

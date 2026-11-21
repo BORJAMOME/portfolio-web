@@ -75,6 +75,7 @@
 .rt-chip i{width:10px;height:10px;border-radius:2px;background:var(--ctx);flex:none}
 .rt-fam-av i{background:#273a5f}.rt-fam-avant i{background:#4a628e}.rt-fam-ic i{background:#7a8597}.rt-fam-reg i{background:#a7b1c2}.rt-fam-cer i{background:#c9d1dd;box-shadow:inset 0 0 0 1px #7a8597}
 .rt-tag{font-size:11px;padding:1px 6px;border-radius:9px;background:#fbf3df;color:#6b520f;margin-left:6px;white-space:nowrap}
+.rt-tag-corte{background:#fbe7e4;color:#8a2516}
 .rt-zero{color:var(--muted)}
 .rt-cmp{display:flex;align-items:center;justify-content:center;min-height:var(--hit);min-width:var(--hit);cursor:pointer}
 .rt-cmp input{width:16px;height:16px;accent-color:var(--navy);margin:0}
@@ -97,11 +98,12 @@
 /* La ruta va en una línea (hasta ~520 px; solo 3 relaciones pasan de ahí). Cortes calculados con la anchura real de cada
    columna para que la tabla quepa sin desplazamiento: al estrechar se ocultan por orden de importancia.
    Lo oculto sigue en el detalle de la fila, la comparación y el CSV. */
-@media(max-width:1810px){.rt-c-par{display:none}}
-@media(max-width:1730px){.rt-c-km{display:none}}
-@media(max-width:1690px){.rt-c-hor{display:none}}
-@media(max-width:1550px){.rt-c-vel,.rt-c-ocu{display:none}}
-@media(max-width:1416px){.rt-c-mes{display:none}}
+/* Paradas, primera y última salida y mes (estimación) solo en el detalle, el CSV y la comparación: dejan sitio a las incidencias. */
+.rt-c-par,.rt-c-hor,.rt-c-mes{display:none}
+@media(max-width:1800px){.rt-c-km{display:none}}
+@media(max-width:1700px){.rt-c-ocu{display:none}}
+@media(max-width:1620px){.rt-c-vel{display:none}}
+@media(max-width:1550px){.rt-c-inc{display:none}}
 @media(max-width:1360px){.rt-c-dur{display:none}}
 @media(max-width:1273px){.rt-c-sab,.rt-c-dom{display:none}}
 @media(max-width:1112px){.rt-c-anio,.rt-c-cmp{display:none}.rt-table .rt-t-mid{border-right:1px solid var(--line-strong)}}
@@ -117,3 +119,10 @@
 .rt-detail td{max-width:0}   /* que el detalle no ensanche la tabla: se ajusta al ancho visible */
 @media(max-width:640px){.rt-name small{white-space:normal}}
 @media(forced-colors:active){.rt-row td:first-child{box-shadow:none}}
+
+/* Incidencias en tiempo real (detalle) */
+.rt-inc-wrap{margin-top:14px}
+.rt-inc-t{font-size:13px;border-collapse:collapse;min-width:520px}
+.rt-inc-t th,.rt-inc-t td{padding:4px 10px;border-bottom:1px solid var(--line);text-align:left}
+.rt-inc-t td.n{text-align:right;font-variant-numeric:tabular-nums}
+.rt-inc-t th small{font-weight:400;color:var(--muted)}

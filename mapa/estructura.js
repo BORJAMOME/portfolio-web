@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "10706b6",
+ "huella": "ac59295",
  "recuento": {
   "paginas": 20,
   "proyectos": 40,
@@ -11,8 +11,8 @@ export default {
   "pestanas": 10,
   "tablas": 41,
   "funciones": 5,
-  "herramientas": 28,
-  "relaciones": 197,
+  "herramientas": 29,
+  "relaciones": 200,
   "sinExplicar": 0
  },
  "columnas": [
@@ -2498,6 +2498,13 @@ export default {
        "familia": "herramienta"
       },
       {
+       "id": "w:incidencias-rt",
+       "tipo": "workflow",
+       "etiqueta": "incidencias-rt.yml",
+       "archivo": ".github/workflows/incidencias-rt.yml",
+       "familia": "herramienta"
+      },
+      {
        "id": "w:rutas-semanal",
        "tipo": "workflow",
        "etiqueta": "rutas-semanal.yml",
@@ -3788,6 +3795,12 @@ export default {
   },
   {
    "de": "w:checks",
+   "a": "h:rutas",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:checks",
    "a": "h:second-brain",
    "tipo": "ejecuta",
    "detalle": []
@@ -3813,6 +3826,18 @@ export default {
   {
    "de": "w:checks",
    "a": "h:version-assets",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:incidencias-rt",
+   "a": "h:build-rutas",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:incidencias-rt",
+   "a": "h:rutas",
    "tipo": "ejecuta",
    "detalle": []
   },

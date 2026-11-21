@@ -51,6 +51,9 @@ jobs:
       - name: Second Brain (motor, contrato y seguridad)
         if: ${{ !cancelled() }}
         run: node --test tools/second-brain/second-brain.test.mjs
+      - name: Rutas · reglas de las incidencias en tiempo real
+        if: ${{ !cancelled() }}
+        run: node --test tools/rutas/incidencias.test.mjs
 
   accesibilidad:
     name: Accesibilidad (WCAG 2.2 AA) y errores JS

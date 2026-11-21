@@ -41,7 +41,7 @@ async function download(){
 }
 
 /* ── familias y marcas (nueva arquitectura de Renfe, trenes.renfe.com) ── */
-const BRAND={'AVE':'AVE','AVE EUROMED':'AVE Euromed','AVLO':'Avlo','AVANT':'Avant','AVANT EXP':'Avant Exprés','INTERCITY':'Intercity','REGIONAL':'Regional'};
+export const BRAND={'AVE':'AVE','AVE EUROMED':'AVE Euromed','AVLO':'Avlo','AVANT':'Avant','AVANT EXP':'Avant Exprés','INTERCITY':'Intercity','REGIONAL':'Regional'};
 const FAMILY={'AVE':'Alta velocidad','AVE Euromed':'Alta velocidad','Avlo':'Alta velocidad','iryo':'Alta velocidad','OUIGO':'Alta velocidad',
   'Avant':'Avant','Avant Exprés':'Avant','Intercity':'Intercity','Regional':'Regional'};
 const COMPANY={Renfe:'Pública · Renfe',iryo:'Privada',OUIGO:'Privada'};
@@ -49,6 +49,19 @@ const COMPANY={Renfe:'Pública · Renfe',iryo:'Privada',OUIGO:'Privada'};
 /* ── territorio: comunidad por coordenadas (NUTS 2 de Eurostat/GISCO en datos.json) ── */
 function inRing(p,ring){let c=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const [xi,yi]=ring[i],[xj,yj]=ring[j];
   if((yi>p[1])!==(yj>p[1])&&p[0]<(xj-xi)*(p[1]-yi)/(yj-yi)+xi)c=!c;}return c;}
+/* Municipio del INE que contiene el punto (o el más cercano a ≤ 2 km, por la generalización del litoral) → provincia. */
+function municipalityOf(features,prov){
+  const items=features.map(f=>{const polys=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;
+    let b=[180,90,-180,-90];for(const p of polys)for(const [x,y] of p[0]){b=[Math.min(b[0],x),Math.min(b[1],y),Math.max(b[2],x),Math.max(b[3],y)];}
+    return {polys,b,pr:prov(f.properties.province),ca:f.properties.community};});
+  const ca=new Map(items.map(i=>[i.pr,i.ca]));
+  const at=p=>{for(const i of items){if(p[0]<i.b[0]||p[0]>i.b[2]||p[1]<i.b[1]||p[1]>i.b[3])continue;
+      for(const poly of i.polys)if(inRing(p,poly[0])&&!poly.slice(1).some(h=>inRing(p,h)))return i;}
+    let best=null,bm=2000;for(const i of items){if(p[0]<i.b[0]-0.03||p[0]>i.b[2]+0.03||p[1]<i.b[1]-0.03||p[1]>i.b[3]+0.03)continue;
+      for(const poly of i.polys)for(const v of poly[0]){const m=metres(p,v);if(m<bm){bm=m;best=i;}}}
+    return best;};
+  return {at,ca};
+}
 function regionOf(regions){
   return p=>{for(const f of regions){const polys=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;
     for(const poly of polys)if(inRing(p,poly[0])&&!poly.slice(1).some(h=>inRing(p,h)))return f.properties.NAME_LATN;}
@@ -89,7 +102,7 @@ function build(today){
   const catalog=new Map();
   // El CSV de Renfe viene en Latin-1 (leído como UTF-8 salía «A Coru�a»). Provincias en castellano: de las bilingües, el nombre en castellano.
   const raw=fs.readFileSync(path.join(CACHE,'estaciones.csv')),txt=raw.toString('utf8').includes('�')?raw.toString('latin1'):raw.toString('utf8');
-  const PROV_ES={'Alicante/Alacant':'Alicante','Castellón/Castelló':'Castellón','Valencia/València':'Valencia','Araba/Álava':'Álava'};
+  const PROV_ES={'Alicante/Alacant':'Alicante','Castellón/Castelló':'Castellón','Valencia/València':'Valencia','Valencia/Valéncia':'Valencia','Araba/Álava':'Álava'};
   const prov=p=>{if(!p||/^desconocid/i.test(p))return null;const t=title(p).replace(/^(.*), (A|La|Las|Los|El|Les|L')$/i,(m,n,a)=>a[0].toUpperCase()+a.slice(1).toLowerCase()+' '+n);return PROV_ES[t]||t;};
   for(const l of txt.split(/\r?\n/).slice(1)){
     const c=l.split(';').map(x=>x.replace(/^"|"$/g,''));if(c[0])catalog.set(c[0],{prov:prov(c[7]),coord:[+c[3],+c[2]],metric:c[10]==='SI'});
@@ -136,12 +149,34 @@ function build(today){
   const RED=loadRed(V),region=regionOf(RED.datos.regions.features);
   const used=new Set(all.flatMap(t=>t.stops)),stIdx=new Map(),stOut=[];
   const cat=[...catalog.values()].filter(x=>x.prov&&x.coord[0]);for(const x of cat)x.ca??=region(x.coord);
-  let provInferred=0;
+  // Municipios del INE (demografia.json): provincia de las estaciones que no están en el catálogo de Renfe, y comunidad
+  // de cada provincia. La comunidad sale de la provincia cuando se conoce: el polígono NUTS generalizado pone en Galicia
+  // estaciones asturianas de la ría del Eo (Vegadeo).
+  const muni=municipalityOf(JSON.parse(fs.readFileSync(path.join(V,'capas','demografia.json'),'utf8')).municipalities.features,prov);
+  let provMuni=0,provNear=0;
   for(const code of [...used].sort()){const s=stations.get(code)||{code,name:code,coord:null};stIdx.set(code,stOut.length);
-    const ca=!s.coord?null:FOREIGN.test(s.name)?'Fuera de España':(region(s.coord)||'Fuera de España');let pr=ca==='Fuera de España'?null:catalog.get(code)?.prov||null;   // el catálogo asigna provincia española a Cerbère o Valença
-    if(!pr&&s.coord&&ca!=='Fuera de España'){let bm=40000;for(const x of cat){if(x.ca!==ca)continue;const m=metres(s.coord,x.coord);if(m<bm){bm=m;pr=x.prov;}}if(pr)provInferred++;}
+    let ca=!s.coord?null:FOREIGN.test(s.name)?'Fuera de España':(region(s.coord)||'Fuera de España');let pr=ca==='Fuera de España'?null:catalog.get(code)?.prov||null;   // el catálogo asigna provincia española a Cerbère o Valença
+    if(!pr&&s.coord&&ca!=='Fuera de España'){const m=muni.at(s.coord);if(m){pr=m.pr;provMuni++;}}
+    if(!pr&&s.coord&&ca!=='Fuera de España'){let bm=40000;for(const x of cat){if(x.ca!==ca)continue;const m=metres(s.coord,x.coord);if(m<bm){bm=m;pr=x.prov;}}if(pr)provNear++;}
+    if(pr&&muni.ca.get(pr))ca=muni.ca.get(pr);
     stOut.push({k:code,n:s.name,c:s.coord?s.coord.map(x=>+x.toFixed(5)):null,ca,pr});}
-  notes.push('Provincia: la del catálogo de estaciones de Renfe; '+provInferred+' estaciones que no figuran en él toman la de la estación del catálogo más cercana (≤ 40 km, misma comunidad).');
+  notes.push('Provincia: la del catálogo de estaciones de Renfe; '+provMuni+' estaciones que no figuran en él toman la del municipio del INE donde están'+(provNear?' y '+provNear+' la de la estación del catálogo más cercana (≤ 40 km, misma comunidad)':'')+'. Comunidad: la de su provincia.');
+
+  // Cortes de infraestructura (tools/rutas/cortes.json): los trenes que pasan por un tramo cortado no circulan en esas fechas
+  // aunque el horario publicado los programe. Se quitan de sus días y se guardan en t.sup para contarlos aparte.
+  const CORTES=JSON.parse(fs.readFileSync(path.join(ROOT,'tools','rutas','cortes.json'),'utf8')).cortes,stByCode=new Map(stOut.map(s=>[s.k,s]));
+  const hits=Object.fromEntries(CORTES.map(c=>[c.id,0]));
+  for(const t of all){t.sup=new Set();t.cortes=[];
+    // El GTFS de Cercanías ya separa los autobuses de sustitución (route_type 3) y no se toca.
+    if(t.src==='cercanias')continue;
+    for(const c of CORTES){if(!afectaCorte(c.regla,t,stByCode))continue;let n=0;
+      // t.days puede ser el mismo Set para todos los viajes del mismo service_id: se copia antes de tocarlo.
+      for(const d of [...t.days])if(d>=c.desde&&(!c.hasta||d<=c.hasta)){if(!n)t.days=new Set(t.days);t.days.delete(d);t.sup.add(d);n++;}
+      if(n){t.cortes.push(c.id);hits[c.id]+=n;}}}
+  for(const c of CORTES){
+    if(c.hasta&&c.hasta<today){notes.push('Corte «'+c.tramo+'»: terminó el '+c.hasta+'; se puede retirar de tools/rutas/cortes.json.');continue;}
+    if(!hits[c.id])throw new Error('cortes.json: el corte vigente «'+c.id+'» no afecta a ningún tren; revisa la regla o retíralo');
+    if(c.revisar&&today>c.revisar)notes.push('Corte «'+c.tramo+'»: había que revisarlo el '+c.revisar+'.');}
 
   // Agregar trenes en filas.
   const rows=new Map();
@@ -159,7 +194,8 @@ function build(today){
     const per=W.map(day=>r.trains.filter(t=>t.days.has(day)));
     const week7=per.reduce((a,x)=>a+x.length,0);
     const allDays=new Set();for(const t of r.trains)for(const x of t.days)allDays.add(x);const sd=[...allDays].sort();
-    if(!sd.length)continue;
+    const supW=W.map(day=>r.trains.filter(t=>t.sup.has(day)).length),cortesR=[...new Set(r.trains.flatMap(t=>t.cortes))].sort();
+    if(!sd.length&&!supW.some(Boolean))continue;
     const wd=per[2],base=wd.length?wd:per.find(x=>x.length)||[];
     const st=new Set();for(const t of r.trains)for(const s of t.stops)st.add(stIdx.get(s));
     let o=r.o,d=r.d;
@@ -177,7 +213,9 @@ function build(today){
       sal:wd.map(t=>[t.dep,stIdx.get(t.stops[0])]).sort((a,b)=>a[0]-b[0]),
       est:[...st].sort((a,b)=>a-b),
       num:[...new Set(r.trains.map(t=>t.number).filter(Boolean))].sort().slice(0,60),
-      desde:sd[0],hasta:sd.at(-1)
+      desde:sd[0]||null,hasta:sd.at(-1)||null,
+      // Trenes programados que no circulan por un corte (lunes a domingo de la semana) y cortes que los afectan.
+      ...(cortesR.length?{sup:supW,cortes:cortesR}:{})
     });
   }
   out.sort((a,b)=>b.sem-a.sem||String(a.id).localeCompare(String(b.id)));
@@ -189,7 +227,21 @@ function build(today){
   return {version:1,generado:today,generado_con:'tools/build-rutas.mjs',
     referencia:{semana:W[0],laborable:WD,sabado:W[5],domingo:W[6],
       nota:'Semana completa (lunes a domingo) que cubren todas las fuentes. Mes = semana × 4,35 y año = semana × 52: estimaciones con semana tipo, sin festivos ni cambios de horario.'},
+    cortes:CORTES.map(c=>({id:c.id,tramo:c.tramo,desde:c.desde,hasta:c.hasta,hasta_nota:c.hasta_nota||null,efecto:c.efecto,fuentes:c.fuentes,
+      lab:all.filter(t=>t.cortes.includes(c.id)&&t.sup.has(WD)).length})),
     fuentes:sources,totales:totals,notas:notes,estaciones:stOut,rutas:out,oferta};
+}
+/* ¿Pasa el tren por el tramo de un corte? toca: para en alguna estación; toca_prefijo: código de estación con ese prefijo
+   (línea entera); cruza: entre dos paradas consecutivas, exactamente una al otro «lado» y esa es una «puerta» (estación de la
+   línea cortada), salvo las marcas exceptuadas (los regionales por la convencional). */
+export function afectaCorte(regla,t,st){
+  if(regla.toca&&t.stops.some(c=>regla.toca.includes(c)))return true;
+  if(regla.toca_prefijo&&t.stops.some(c=>regla.toca_prefijo.some(p=>c.startsWith(p))))return true;
+  const x=regla.cruza;if(!x||(x.excepto_marcas||[]).includes(t.marca))return false;
+  const lado=c=>{const s=st.get(c);return !!s&&((x.lado.comunidades||[]).includes(s.ca)||(x.lado.provincias||[]).includes(s.pr));};
+  for(let i=1;i<t.stops.length;i++){const a=t.stops[i-1],b=t.stops[i],la=lado(a),lb=lado(b);
+    if(la!==lb&&x.puerta.includes(la?a:b))return true;}
+  return false;
 }
 /* Oferta por estación y por familia en la semana de referencia, con TODOS los trenes de viajeros con horario público
    (Renfe AV/LD/MD, Cercanías de todos los núcleos, OUIGO e iryo). Es la base de los titulares de Cabina, que así no
@@ -238,29 +290,91 @@ function capitalPairs(all,stOut,stIdx,WD){
   }
   return [...best.values()];
 }
-/* OUIGO desde capas/horarios.json (PDF oficial): registros origen-destino [paradas, t0, patrón, calendario]. Cada día se unen
-   los que comparten estación y hora de salida o de llegada (componentes conexas, como oferta.js · stationDay); un tren = una
-   componente, identificado por su secuencia de paradas y horas para juntar los días en que circula igual. */
+/* Erratas del PDF «Horarios OUIGO 2026-2027» (y de su lectura en capas/horarios.json, cuyo generador no está en este repo).
+   Se aplican a los registros antes de reconstruir los trenes. Cada una identifica su registro por [origen, hora de salida,
+   destino] (códigos oficiales de estación); si no lo encuentra (o, al añadir, ya existe), el script falla: señal de que el
+   PDF o horarios.json han cambiado y hay que revisar la lista.
+   · cal: calendario completo que sustituye al del registro. dias = letras LMXJVSD; desde/hasta = fechas ISO (inclusive);
+     cerrado = fechas sueltas 'MM-DD'; cierre = {dias, desde, hasta} (esos días de la semana cerrados en ese intervalo).
+   · paradas: [[código, llegada, salida], …] con horas 'hh:mm' (null en la llegada del origen y en la salida del destino).
+   Estaciones: 60000 Madrid-Atocha, 17000 Madrid-Chamartín, 04040 Zaragoza, 50500 Córdoba, 51003 Sevilla, 60600 Albacete,
+   60911 Alicante, 03410 Elche, 61200 Murcia, 03208 Cuenca, 03216 València, 08004 Segovia. */
+const OUIGO_ERRATAS=[
+  // p. 27 · Zaragoza>Madrid 09:19 «Lunes, Viernes y Sábados¹» (¹ = disponible desde el 13-12): horarios.json perdió los sábados.
+  {registro:['04040','09:19','60000'],cal:{dias:'LVS',desde:'2026-12-13'},causa:'faltan los sábados'},
+  // p. 18 · Murcia>Albacete 21:00 «Todos los días¹,³» (¹ cerrada 25-12 y 1-1; ³ martes y miércoles cerrada del 11-1 al 14-3):
+  // horarios.json solo cierra los martes.
+  {registro:['61200','21:00','60600'],cal:{dias:'LMXJVSD',cerrado:['12-25','01-01'],cierre:{dias:'MX',desde:'2027-01-11',hasta:'2027-03-14'}},causa:'faltan los miércoles cerrados'},
+  // p. 16 · Madrid>Valencia 07:15: Cuenca «08:17→08.20» (punto en vez de dos puntos); horarios.json guarda 08:17→08:17.
+  {registro:['17000','07:15','03216'],paradas:[['17000',null,'07:15'],['03208','08:17','08:20'],['03216','09:16',null]],causa:'«08.20»'},
+  // p. 28 · Zaragoza>Sevilla «09:10 · Madrid 11:05→11:40 · Córdoba 13:25→13:28 · Sevilla 14:21»: es el Barcelona 07:50, que sale de
+  // Zaragoza a las 09:19 y llega a Madrid a las 11:07 (Barcelona>Madrid, Zaragoza>Madrid y Zaragoza>Córdoba 09:19) y a Sevilla a las 14:20
+  // (Madrid>Sevilla 11:40).
+  {registro:['04040','09:10','51003'],paradas:[['04040',null,'09:19'],['60000','11:07','11:40'],['50500','13:25','13:28'],['51003','14:20',null]],causa:'09:10 por 09:19'},
+  // Filas del PDF que horarios.json no recoge (tienen horas imposibles):
+  // p. 14 · Madrid>Elche 17:15 «Cuenca 17:45→17:48 · Albacete 17:45→17:48»: no para en Cuenca (Madrid>Albacete y Madrid>Murcia 17:15)
+  // y pasa por Albacete a las 18:45→18:48. «Todos los días», sin nota.
+  {añadir:['17000','17:15','03410'],paradas:[['17000',null,'17:15'],['60600','18:45','18:48'],['03410','19:36',null]],cal:{dias:'LMXJVSD'},causa:'Cuenca y Albacete con horas cruzadas'},
+  // p. 11 · Elche>Madrid 21:24 «Albacete 22:23→22:16»: llega a Albacete a las 22:13 (Elche>Albacete 21:24). «Todos los días²» (² cerrada 24 y 31-12).
+  {añadir:['03410','21:24','17000'],paradas:[['03410',null,'21:24'],['60600','22:13','22:16'],['17000','23:48',null]],cal:{dias:'LMXJVSD',cerrado:['12-24','12-31']},causa:'«22:23→22:16»'},
+  // p. 12 · Elche>Segovia 07:03 «Madrid 10:23→11:15»: sale de Madrid a las 10:45 (las demás secciones). «Todos los días¹» (¹ cerrada 25-12 y 1-1).
+  {añadir:['03410','07:03','08004'],paradas:[['03410',null,'07:03'],['60911','07:23','07:51'],['60600','08:39','08:42'],['03208','09:16','09:19'],['17000','10:23','10:45'],['08004','11:12',null]],
+    cal:{dias:'LMXJVSD',cerrado:['12-25','01-01']},causa:'Madrid «10:23→11:15»'},
+  // p. 27 · Zaragoza>Córdoba 17:28 «Madrid 11:19→11:55»: es 19:19→19:55 (Barcelona y Tarragona>Córdoba). «Todos los días¹» (¹ en esa
+  // página: disponible desde el 13-12).
+  {añadir:['04040','17:28','50500'],paradas:[['04040',null,'17:28'],['60000','19:19','19:55'],['50500','21:39',null]],cal:{dias:'LMXJVSD',desde:'2026-12-13'},causa:'Madrid «11:19→11:55»'}
+];
+/* OUIGO desde capas/horarios.json (PDF oficial): registros origen-destino [paradas, t0, patrón, calendario], corregidos con
+   OUIGO_ERRATAS. Cada día se unen los que comparten estación y hora de salida o de llegada (componentes conexas, como
+   oferta.js · stationDay); un tren = una componente, identificado por su secuencia de paradas y horas para juntar los días en
+   que circula igual. */
 function ouigoFromAtlas(){
   const S=JSON.parse(fs.readFileSync(path.join(V,'capas','servicios.json'),'utf8')),H=JSON.parse(fs.readFileSync(path.join(V,'capas','horarios.json'),'utf8'));
   const code=sid=>S.stations[sid]?.official_id||sid,start=Date.UTC(+H.meta.start.slice(0,4),+H.meta.start.slice(5,7)-1,+H.meta.start.slice(8,10));
   const bits=H.days.map(b=>Buffer.from(b,'base64')),runs=(cal,k)=>k>=0&&k<bits[cal].length*8&&((bits[cal][k>>3]>>(k&7))&1)===1;
   const recs=(H.ouigo||[]).map(([sids,t0,p,cal])=>{const prof=H.patterns[p],n=sids.length;
-    return {cal,calls:sids.map((s,i)=>({code:code(s),arr:i?t0+prof[2*i-2]:null,dep:i<n-1?t0+(i?prof[2*i-1]:0):null}))};});
+    return {on:k=>runs(cal,k),calls:sids.map((s,i)=>({code:code(s),arr:i?t0+prof[2*i-2]:null,dep:i<n-1?t0+(i?prof[2*i-1]:0):null}))};});
+  // Erratas: calendario declarativo → función del día k (días desde H.meta.start).
+  const mins=h=>h===null?null:+h.slice(0,2)*60+ +h.slice(3,5),WDAY='DLMXJVS';
+  const calOf=c=>k=>{const d=new Date(start+k*864e5),iso=d.toISOString().slice(0,10),md=iso.slice(5),wd=WDAY[d.getUTCDay()];
+    return c.dias.includes(wd)&&(!c.desde||iso>=c.desde)&&(!c.hasta||iso<=c.hasta)&&!(c.cerrado||[]).includes(md)
+      &&!(c.cierre&&c.cierre.dias.includes(wd)&&iso>=c.cierre.desde&&iso<=c.cierre.hasta);};
+  const callsOf=p=>p.map(([c,a,d])=>({code:c,arr:mins(a),dep:mins(d)}));
+  const keyOf=r=>r.calls[0].code+'@'+r.calls[0].dep+'>'+r.calls.at(-1).code;
+  for(const e of OUIGO_ERRATAS){const [o,h,d]=e.registro||e.añadir,k=o+'@'+mins(h)+'>'+d,hit=recs.filter(r=>keyOf(r)===k);
+    if(e.añadir){if(hit.length)throw new Error(`OUIGO_ERRATAS: ${o} ${h} → ${d} ya está en horarios.json; revisa la errata («${e.causa}»)`);
+      recs.push({on:calOf(e.cal),calls:callsOf(e.paradas)});continue;}
+    if(hit.length!==1)throw new Error(`OUIGO_ERRATAS: ${hit.length?'varios registros':'ningún registro'} ${o} ${h} → ${d} en horarios.json; revisa la errata («${e.causa}»)`);
+    if(e.cal)hit[0].on=calOf(e.cal);
+    if(e.paradas)hit[0].calls=callsOf(e.paradas);}
+  // Paradas conocidas (estación, llegada ↔ salida) de cualquier registro que pase por ella: unen un registro que acaba en una
+  // estación con otro que empieza en ella (Madrid 17:15 → Elche + Elche 19:39 → Murcia, los días en que no se vende el trayecto
+  // entero), que si no quedarían como dos trenes.
   const xy=new Map();for(const s of Object.values(S.stations))if(s.official_id)xy.set(s.official_id,s.coordinates);
   const bearing=(a,b)=>{const A=xy.get(a),B=xy.get(b);if(!A||!B)return null;return Math.atan2(B[1]-A[1],(B[0]-A[0])*Math.cos(A[1]*Math.PI/180));};
   const sameWay=(p,q)=>p===null||q===null||Math.abs(Math.atan2(Math.sin(p-q),Math.cos(p-q)))<Math.PI/2;
+  // Cada parada conocida guarda también el rumbo con que se llega y con que se sale (el tren puede cambiar de rumbo, como en
+  // Elche): un extremo solo se une a la parada que llega o sale con su mismo rumbo (en Albacete a las 18:45→18:48 coinciden
+  // dos trenes de sentido contrario).
+  const byArr=new Map(),byDep=new Map(),addTo=(m,k,v)=>{if(!m.has(k))m.set(k,[]);m.get(k).push(v);};
+  for(const r of recs)r.calls.forEach((c,ci)=>{if(c.arr===null||c.dep===null)return;
+    const bIn=bearing(r.calls[ci-1].code,c.code),bOut=bearing(c.code,r.calls[ci+1].code);
+    addTo(byArr,c.code+'@'+c.arr,[c.dep,bIn,bOut]);addTo(byDep,c.code+'@'+c.dep,[c.arr,bIn,bOut]);});
   const days=Math.round((Date.UTC(+H.meta.ouigo_end.slice(0,4),+H.meta.ouigo_end.slice(5,7)-1,+H.meta.ouigo_end.slice(8,10))-start)/864e5)+1;
   const trains=new Map();
   for(let k=0;k<days;k++){
-    const on=recs.filter(r=>runs(r.cal,k));if(!on.length)continue;
+    const on=recs.filter(r=>r.on(k));if(!on.length)continue;
     const parent=on.map((_,i)=>i),find=i=>parent[i]===i?i:(parent[i]=find(parent[i])),groups=new Map();
+    const put=(key,i,b)=>{if(!groups.has(key))groups.set(key,[]);groups.get(key).push([i,b]);};
     // Misma estación y misma hora de llegada (o de salida) Y mismo sentido: rumbo hacia la parada anterior/siguiente a
     // menos de 90°. Sin el rumbo, dos trenes de sentido contrario que coinciden en Albacete a las 18:45/18:48 se unían en
     // un tren imposible; con la parada siguiente exacta, un mismo tren listado con y sin paradas intermedias se partía.
+    // Un extremo (solo llegada o solo salida) entra también en el grupo de la hora complementaria si es una parada conocida.
     on.forEach((r,i)=>r.calls.forEach((c,ci)=>{
-      if(c.arr!==null&&ci>0){const k='a'+c.code+'@'+c.arr;if(!groups.has(k))groups.set(k,[]);groups.get(k).push([i,bearing(r.calls[ci-1].code,c.code)]);}
-      if(c.dep!==null&&ci<r.calls.length-1){const k='d'+c.code+'@'+c.dep;if(!groups.has(k))groups.set(k,[]);groups.get(k).push([i,bearing(c.code,r.calls[ci+1].code)]);}}));
+      if(c.arr!==null&&ci>0){const b=bearing(r.calls[ci-1].code,c.code);put('a'+c.code+'@'+c.arr,i,b);
+        if(c.dep===null)for(const [d,bIn,bOut] of byArr.get(c.code+'@'+c.arr)||[])if(sameWay(b,bIn))put('d'+c.code+'@'+d,i,bOut);}
+      if(c.dep!==null&&ci<r.calls.length-1){const b=bearing(c.code,r.calls[ci+1].code);put('d'+c.code+'@'+c.dep,i,b);
+        if(c.arr===null)for(const [a,bIn,bOut] of byDep.get(c.code+'@'+c.dep)||[])if(sameWay(b,bOut))put('a'+c.code+'@'+a,i,bIn);}}));
     for(const g of groups.values())for(let x=0;x<g.length;x++)for(let y=x+1;y<g.length;y++)if(sameWay(g[x][1],g[y][1]))parent[find(g[x][0])]=find(g[y][0]);
     const comp=new Map();on.forEach((r,i)=>{const root=find(i);if(!comp.has(root))comp.set(root,new Map());const m=comp.get(root);
       for(const c of r.calls){const t=c.dep??c.arr,x=m.get(c.code);if(!x||t<x)m.set(c.code,t);}});
@@ -293,6 +407,30 @@ function viaPorRuta(out,rows,stOut,RED,catalog,shapesFile,WD){
     for(const fid of new Set(edges)){const f=feat[fid];if(!f)continue;const m=(Number(f.properties.length_m)||0)/1000;km+=m;
       const pf=f.properties.perf||'none';perf[pf]=(perf[pf]||0)+m;const e=F.value(f,'electric');el[e]=(el[e]||0)+m;const gg=GAUGE_GROUP(F.value(f,'gauge'));g[gg]=(g[gg]||0)+m;}
     return {km,perf,el,g};};
+  // El trazado inferido de servicios.json se calcula parada a parada y deja un hueco en casi cada parada intermedia
+  // (la vía por la estación no entra en `edges`): Valladolid–Salamanca perdía 11 km en 12 huecos. Se cierran por la red
+  // IGN con el camino más corto entre los extremos sueltos de componentes distintas (Dijkstra, ≤ 6 km y ≤ 2 × la recta
+  // + 1,5 km); si la red IGN no da un camino razonable (falta el enlace, p. ej. en los túneles de Barcelona), con la recta
+  // hasta 3 km. Lo que no se puede cerrar se cuenta en `sueltos` y deja la ruta como incompleta.
+  const GAP_NET=6000,GAP_RECTA=3000,nkey=c=>c[0].toFixed(5)+','+c[1].toFixed(5),graph=new Map();
+  feat.forEach((f,i)=>{const c=f.geometry.coordinates,a=nkey(c[0]),b=nkey(c.at(-1)),m=Number(f.properties.length_m)||0;if(a===b)return;
+    for(const [x,y] of [[a,b],[b,a]]){if(!graph.has(x))graph.set(x,[]);graph.get(x).push([y,m,i]);}});
+  const near=(from,max)=>{const dist=new Map([[from,0]]),prev=new Map(),done=new Set(),q=[[0,from]];
+    while(q.length){let bi=0;for(let i=1;i<q.length;i++)if(q[i][0]<q[bi][0])bi=i;const [d,x]=q.splice(bi,1)[0];if(done.has(x))continue;done.add(x);
+      for(const [y,m,fid] of graph.get(x)||[]){const nd=d+m;if(nd<=max&&nd<(dist.get(y)??Infinity)){dist.set(y,nd);prev.set(y,[x,fid]);q.push([nd,y]);}}}
+    return {dist,prev};};
+  const bridge=edges=>{const E=[...new Set(edges)].filter(f=>feat[f]),deg=new Map(),adj=new Map();
+    for(const f of E){const c=feat[f].geometry.coordinates,a=nkey(c[0]),b=nkey(c.at(-1));for(const [x,y] of [[a,b],[b,a]]){deg.set(x,(deg.get(x)||0)+1);if(!adj.has(x))adj.set(x,[]);adj.get(x).push(y);}}
+    const comp=new Map();let n=0;for(const k of adj.keys()){if(comp.has(k))continue;n++;comp.set(k,n);const st=[k];while(st.length){const x=st.pop();for(const y of adj.get(x))if(!comp.has(y)){comp.set(y,n);st.push(y);}}}
+    if(n<2)return {edges:E,recta:0,sueltos:0};
+    const leaves=[...deg].filter(([,d])=>d===1).map(([k])=>k),pairs=[],pt=k=>k.split(',').map(Number);
+    for(const a of leaves){const {dist,prev}=near(a,GAP_NET);for(const b of leaves){if(comp.get(b)===comp.get(a))continue;
+      const recta=metres(pt(a),pt(b)),net=dist.get(b)??Infinity;
+      if(net<=2*recta+1500)pairs.push([net,a,b,prev]);else if(recta<=GAP_RECTA)pairs.push([recta,a,b,null]);}}
+    pairs.sort((x,y)=>x[0]-y[0]);const par=[...Array(n+1).keys()],fd=x=>par[x]===x?x:(par[x]=fd(par[x])),add=new Set();let recta=0,joined=0;
+    for(const [d,a,b,prev] of pairs){const A=fd(comp.get(a)),B=fd(comp.get(b));if(A===B)continue;par[A]=B;joined++;
+      if(!prev){recta+=d;continue;}for(let x=b;x!==a;){const [px,fid]=prev.get(x);add.add(fid);x=px;}}
+    return {edges:[...E,...add],recta:recta/1000,sueltos:n-1-joined};};
   // Cercanías: el GTFS da un único dibujo por línea (shapes.txt), no por tren. Los km de un tren son la distancia a lo
   // largo de ese dibujo entre su primera y su última parada (cada estación, en el punto del dibujo más cercano).
   const shapes=new Map();
@@ -303,7 +441,7 @@ function viaPorRuta(out,rows,stOut,RED,catalog,shapesFile,WD){
   const posOn=(sh,code)=>{const k=sh+'|'+code;if(posCache.has(k))return posCache.get(k);const S2=shapes.get(sh),c=coordOf.get(code);let b=null,bd=2000;
     if(S2&&c)for(let i=0;i<S2.xy.length;i++){const d=metres(S2.xy[i],c);if(d<bd){bd=d;b=S2.cum[i];}}posCache.set(k,b);return b;};
   const tripKm=t=>{if(!t.shape)return null;const a=posOn(t.shape,t.stops[0]),b=posOn(t.shape,t.stops.at(-1));return a===null||b===null||a===b?null:Math.abs(b-a)/1000;};
-  const pct=(x,t)=>t?Math.round(1000*x/t)/10:null,r1=x=>Math.round(x*10)/10;
+  const pct=(x,t)=>t?Math.round(1000*x/t)/10:null,r1=x=>Math.round(x*10)/10,trazas=new Map();
   for(const row of out){
     const src=rows.get(row.id);let via=null;
     if(row.fam==='Cercanías'){
@@ -319,18 +457,44 @@ function viaPorRuta(out,rows,stOut,RED,catalog,shapesFile,WD){
       const ends=row.o!==null&&row.d!==null?stOut[row.o].k+'>'+stOut[row.d].k:null,cands=byEnds.get(ends)||[];
       const v=cands.find(x=>norm(x.published_brand)===norm(row.marca)&&code(x.calls[0].s)===stOut[row.o].k)||cands.find(x=>norm(x.published_brand)===norm(row.marca))||cands[0];
       const straight=row.o!==null&&row.d!==null&&stOut[row.o].c&&stOut[row.d].c?metres(stOut[row.o].c,stOut[row.d].c)/1000:0;
-      const st0=v?stats(v.edges):null;
-      // Trazado inferido incompleto: con tramos pendientes o más corto que la línea recta entre los extremos (imposible).
-      if(v&&(v.pending_segments>0||st0.km<straight*.98)){row.via={km:null,fuente:'ign',incompleto:true,variante:v.id};continue;}
+      const br=v?bridge(v.edges):null,st0=v?stats(br.edges):null;if(st0)st0.km+=br.recta;
+      // Trazado inferido incompleto: con tramos pendientes, con huecos sin cerrar o casi tan corto como la línea recta
+      // entre los extremos (por vía siempre hay más de un 2 % de rodeo), o que se queda a más de 2 km de un extremo.
+      const lejos=c=>{let b=Infinity;if(c)for(const f of br.edges)for(const q of feat[f].geometry.coordinates){const d=metres(c,q);if(d<b)b=d;}return b>2000;};
+      const motivo=!v?null:v.pending_segments>0?'tramos pendientes':br.sueltos>0?'huecos en el trazado':st0.km<straight*1.02?'más corto que la línea recta'
+        :lejos(stOut[row.o].c)||lejos(stOut[row.d].c)?'el trazado no llega a un extremo':null;
+      if(motivo){row.via={km:null,fuente:'ign',incompleto:true,motivo,variante:v.id};continue;}
       if(v){const st=st0,hs=st.perf.hs||0,yes=st.el.yes||0,no=st.el.no||0,unk=st.km-yes-no;
         const gs=Object.entries(st.g).sort((a,b)=>b[1]-a[1]),dom=gs[0]?.[0]||'unknown';
         via={km:Math.round(st.km),fuente:'ign',av:pct(hs,st.km),el:pct(yes,st.km),elSin:pct(unk,st.km),
           ancho:gs.length>1&&gs[1][1]/st.km>=.1?'varios':dom,anchos:Object.fromEntries(gs.map(([k,m])=>[k,pct(m,st.km)])),
           tipo:hs/st.km>=.8?'Alta velocidad':hs/st.km>=.2?'Mixta':'Convencional',
-          vel:row.dur?Math.round(st.km/(row.dur/60)):null,velMax:row.durMin?Math.round(st.km/(row.durMin/60)):null,variante:v.id};}
+          vel:row.dur?Math.round(st.km/(row.dur/60)):null,velMax:row.durMin?Math.round(st.km/(row.durMin/60)):null,variante:v.id};
+        trazas.set(row,new Set(br.edges));}
     }
     row.via=via;
   }
+  cordura(out,trazas,feat);
+}
+/* Controles de cordura sobre `via` ya calculado:
+   - ida y vuelta (mismos extremos, misma fuente y marca) con km que difieren más de un 5 %: si los dos trazados
+     comparten casi toda la vía (≥ 90 % de los km del más corto) es el mismo recorrido mal medido y los dos quedan
+     incompletos; si no, son recorridos distintos de verdad (Ávila → Chamartín por Atocha, la vuelta por Pitis);
+   - velocidad media imposible para el tipo de vía (la del tren más rápido): convencional > 160, mixta > 230,
+     alta velocidad > 300, Cercanías > 120 km/h, o cualquiera < 10 km/h. */
+const VEL_MAX={'Convencional':160,'Mixta':230,'Alta velocidad':300};
+function cordura(out,trazas,feat){
+  const bad=(row,motivo)=>{row.via={km:null,fuente:row.via.fuente,incompleto:true,motivo,variante:row.via.variante};};
+  const idx=new Map(out.map(r=>[[r.src,r.marca,r.o,r.d].join('|'),r]));
+  for(const r of out){const w=idx.get([r.src,r.marca,r.d,r.o].join('|'));
+    if(!w||r.o>w.o||!r.via?.km||!w.via?.km||r.fam==='Cercanías')continue;
+    const a=r.via.km,b=w.via.km;if(Math.abs(a-b)<=.05*Math.min(a,b))continue;
+    const ea=trazas.get(r),eb=trazas.get(w);
+    const shared=ea&&eb?[...ea].filter(f=>eb.has(f)).reduce((s,f)=>s+(Number(feat[f].properties.length_m)||0),0)/1000:0;
+    if(shared>=.9*Math.min(a,b)){bad(r,'ida y vuelta no cuadran');bad(w,'ida y vuelta no cuadran');}
+  }
+  for(const r of out){const v=r.via;if(!v?.km)continue;const top=r.fam==='Cercanías'?120:VEL_MAX[v.tipo];
+    const x=v.velMax??v.vel;if(x!=null&&((top&&x>top)||x<10))bad(r,'velocidad media imposible');}
 }
 
 if(process.argv[1]&&fileURLToPath(import.meta.url)===path.resolve(process.argv[1])){

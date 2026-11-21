@@ -1,0 +1,94 @@
+# Incidencias por ruta: archivo propio del tiempo real de Renfe (GTFS-RT trip_updates de AV/LD/MD y Cercanías, CC BY 4.0).
+# El feed no guarda histórico: esta tarea lo captura cada 5 minutos y acumula, por tren y día, si se ha visto, si está
+# cancelado y su último retraso (tools/rutas/incidencias.mjs). El estado del día vive en la caché de Actions (.cache/rt/);
+# en el repositorio solo entra el resumen de cada día cerrado (visor-ferroviario/capas/incidencias/AAAA-MM.json) y los
+# agregados que lee la tabla de rutas (visor-ferroviario/capas/incidencias.json): como mucho un commit al día.
+#
+# No usa ningún modelo de IA: no gasta tokens. Repositorio público: los minutos de Actions de los runners estándar son gratis.
+# Los cron de GitHub pueden retrasarse o saltarse ejecuciones con carga: los días con menos del 90 % de las capturas
+# esperadas o con un hueco de más de 30 min se marcan como no válidos y no cuentan.
+name: Rutas · incidencias en tiempo real
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write             # commit diario del resumen
+  actions: write              # borrar cachés antiguas del estado y reactivar la tarea
+
+concurrency:
+  group: incidencias-rt
+  cancel-in-progress: false
+
+jobs:
+  captura:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /tools/build-rutas.mjs
+            /tools/rutas/
+            /visor-ferroviario/capas/rutas.json
+            /visor-ferroviario/capas/incidencias.json
+            /visor-ferroviario/capas/incidencias/
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Recuperar el estado del día
+        uses: actions/cache/restore@v4
+        with:
+          path: .cache/rt
+          key: rt-${{ github.run_id }}
+          restore-keys: rt-
+
+      - name: Captura (y programa del día, la primera vez después de las 03:30)
+        run: node --max-old-space-size=6144 tools/rutas/incidencias.mjs captura
+
+      - name: Cerrar los días terminados
+        run: node tools/rutas/incidencias.mjs cierre | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Guardar el estado
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: .cache/rt
+          key: rt-${{ github.run_id }}
+
+      - name: Publicar el resumen en main si hay días nuevos
+        run: |
+          rm -rf .cache/rt/gtfs
+          git add visor-ferroviario/capas/incidencias.json visor-ferroviario/capas/incidencias
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          ultimo=$(node -p "require('./visor-ferroviario/capas/incidencias.json').ultimo")
+          git commit -q -m "Visor ferroviario: incidencias del tiempo real de Renfe hasta el $ultimo" \
+                        -m "Generado por .github/workflows/incidencias-rt.yml (GTFS-RT de Renfe, CC BY 4.0)."
+          for intento in 1 2 3; do
+            git pull --rebase -q origin main && git push -q origin HEAD:main && exit 0
+            sleep $((intento * 10))
+          done
+          echo "::error::No se ha podido subir el resumen a main."
+          exit 1
+
+      - name: Borrar cachés antiguas del estado (se conservan las 3 últimas)
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${{ github.repository }}/actions/caches?key=rt-&sort=created_at&direction=desc&per_page=100" \
+            --jq '.actions_caches[3:][].id' | while read -r id; do
+            gh api -X DELETE "repos/${{ github.repository }}/actions/caches/$id" >/dev/null || true
+          done
+
+      - name: Evitar que GitHub desactive esta tarea programada
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/incidencias-rt.yml/enable" >/dev/null || echo "::warning::No se pudo reactivar la tarea."
