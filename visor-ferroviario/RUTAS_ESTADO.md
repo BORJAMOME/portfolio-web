@@ -1,7 +1,7 @@
 # Cabina · Rutas: estado del proyecto
 
 Tabla de todas las rutas ferroviarias de viajeros de España, en una página propia (`cabina-rutas.html`) enlazada desde Cabina y desde el visor.
-Última actualización: 21-11-2026 (fase 2: página, cerrada).
+Última actualización: 21-11-2026 (fase 3: vía, velocidad y duración, cerrada).
 
 ## Decisiones de Borja (21-11-2026), a mantener
 
@@ -114,13 +114,41 @@ Con `--hoy=2026-11-21` es reproducible. El lector de GTFS (`tools/rutas/gtfs.mjs
 
 **No comprobado:** el aspecto con el panel del navegador visible (las pruebas se hicieron en Chromium sin ventana).
 
+## Fase 3 terminada (21-11-2026): vía, velocidad y duración
+
+`tools/build-rutas.mjs` (función `viaPorRuta`) añade a cada ruta `via` = {km, av, el, elSin, ancho, anchos, tipo, vel, velMax, fuente, variante | incompleto}.
+
+**Cómo se calcula:**
+- **Renfe AV/LD/MD, OUIGO e iryo:** recorrido IGN inferido de la variante de `servicios.json` con los mismos extremos. Se prefiere la de la misma marca; si no la hay, cualquiera, porque OUIGO e iryo usan las mismas vías. La red sale de `tools/rutas/red.mjs`, módulo común con Cabina que aplica las mismas correcciones que el visor (`ancho.json` y el relleno de Adif).
+  - Tipo de vía: alta velocidad si al menos el 80 % de los km lo es; mixta, entre el 20 y el 80 %; convencional, por debajo.
+  - Electrificación: electrificada desde el 95 %; sin electrificar hasta el 5 %; sin dato si al menos la mitad de los km no lo tiene.
+- **Trazado incompleto (68 rutas, p. ej. Medina–Valladolid u Oviedo–Llanes):** si la variante tiene tramos pendientes, o si el trazado mide menos que la línea recta entre los extremos, la ruta queda sin km ni velocidad. Es mejor eso que una cifra falsa: Oviedo–Llanes salía con 54 km y en línea recta son 88.
+- **Cercanías:** el GTFS da un único dibujo por línea (`shapes.txt`), no por tren. Los km de cada tren son la distancia a lo largo de ese dibujo entre su primera y su última parada, y se usa la mediana de los trenes que van de extremo a extremo. Con la longitud del dibujo entero salía la R13 a 516 km/h.
+  - Ancho métrico si al menos el 80 % de las estaciones son de las Cercanías métricas del visor; el catálogo de Renfe no las marca todas.
+  - Tipo de vía y electrificación: sin dato.
+- **Velocidad:** km ÷ duración mediana del día, más la del tren más rápido.
+
+**En la página:**
+- columnas «Km» y «Km/h», que se ocultan en pantallas estrechas;
+- filtros de tipo de vía, ancho y electrificación;
+- línea «Vía» y «Velocidad media» en el detalle;
+- las mismas columnas en el CSV y en la comparación.
+- «Paradas» y «Mes*» se ocultan por debajo de 1.500 px (siguen en el detalle y en el CSV) para que la tabla quepa sin scroll interno.
+
+**Comprobado:**
+- **Distancias** (con las oficiales entre paréntesis): Madrid–Barcelona AVE 624 km (621), Madrid–Sevilla 469 (471), Madrid–València 396 (391), Madrid–Málaga 511 (513). iryo y OUIGO Madrid–Barcelona: 624 y 620 km.
+- **Cobertura:** 655 rutas con km, 68 con trazado incompleto y 22 sin dato.
+- **Ancho métrico** en las líneas de la fase 1, más Cartagena, Ferrol y León.
+- **Página:** sin errores en Chromium a 1.440, 1.280 y 375 px, y sin scroll interno de la tabla.
+- **Comprobaciones:** `check-a11y` sin infracciones en `cabina-rutas.html` y `cabina.html`; `check-links`, `version-assets`, `build-mapa`, `build-en` y `build-cabina --check`.
+
+**Pendiente:** el filtro por corredor (Hermes o TEN-T) no está hecho. Habría que cruzar el recorrido de cada variante con `corredores.geojson` (tramos Hermes) o con `tramos-ten-t.geojson`.
+
 ## Siguiente tarea
 
-Fase 3: vía, velocidad y duración por ruta.
-- **Qué:** km del trazado, % de alta velocidad, % electrificado y ancho, a partir de las aristas IGN de `servicios.json` (1.090 de 1.226 variantes las tienen), y la velocidad comercial (km ÷ duración). Con eso, los filtros «vía y corredor» de la página.
-- **Hecha cuando:**
-  - las rutas sin trazado salen como «sin dato», no como 0;
-  - una muestra de 5 rutas cuadra con la ficha de ruta del visor.
-- **Decidir antes:** cómo tratar las Cercanías de ancho ibérico, que no tienen trazado IGN en el visor (¿con los `shapes.txt` del GTFS?).
+Fase 4: CNMC por corredor (viajeros, plazas, ingresos y precio) y su encaje con la ola 2 de Cabina, que lleva los mismos datos.
+- **Hay un análisis previo** de otra sesión en `manual-ferrocarriles/mapa/investigacion-cabina/ola2/` (`INFORME.md`, `analisis.py`). Ojo: la ocupación por corredor es viajeros-km ÷ plazas-km, no viajeros ÷ plazas.
+- **Hecha cuando:** cada ruta de alta velocidad de los 5 corredores de la CNMC muestre viajeros, plazas y precio de su corredor y operador (trimestre más reciente), con la atribución CC BY-SA y la ruptura de método del 1T 2026 avisada.
+- **Decidir con Borja** si estos datos van en la tabla de rutas, en Cabina o en las dos.
 
-Antes de empezar: ordenar con Borja la «ola 1» de Cabina (`manual-ferrocarriles/mapa/investigacion-cabina/PROPUESTA_CABINA.md`), que Borja confirmó a otra sesión. Toca `cabina.*`: hay que hacer las dos cosas una detrás de otra, no a la vez.
+Antes de las fases 6 y 7: la cuenta del NAP (autonómicos) y la GitHub Action semanal.
