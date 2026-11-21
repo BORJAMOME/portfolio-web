@@ -1,7 +1,7 @@
 # Cabina · Rutas: estado del proyecto
 
 Tabla de todas las rutas ferroviarias de viajeros de España, en una página propia (`cabina-rutas.html`) enlazada desde Cabina y desde el visor.
-Última actualización: 21-11-2026 (fase 4: CNMC por corredor, cerrada en la tabla).
+Última actualización: 21-11-2026 (fase 7: actualización semanal automática).
 
 ## Decisiones de Borja (21-11-2026), a mantener
 
@@ -165,9 +165,22 @@ Con `--hoy=2026-11-21` es reproducible. El lector de GTFS (`tools/rutas/gtfs.mjs
 
 **Reparto con la otra sesión (21-11-2026):** esta sesión lleva `cnmc.json` y la tabla de rutas. La sesión «Diseño responsive y mejoras de contenido» lleva la ola 2 de Cabina (`cabina.*`, `build-cabina.mjs` y su propio `tools/build-cabina-mercado.mjs` para INE, mercancías y Eurostat), y lee la CNMC de `cnmc.json`.
 
+## Fase 7 (21-11-2026): actualización semanal automática
+
+`.github/workflows/rutas-semanal.yml`, los lunes a las 04:23 UTC y a mano con «Run workflow».
+- **Pasos:** `build-rutas --download` → `build-cnmc --download` → `build-cabina` → `tools/rutas/sanity.mjs` → `build-cabina --check`, `check-links` y `version-assets --check` → commit en `main` como github-actions[bot], solo si cambian `rutas.json`, `oferta.json`, `cnmc.json`, `cabina.json` o `cabina.html`.
+- **Control de cordura** (`tools/rutas/sanity.mjs`, frente a `HEAD`): no publica si una fuente pierde más del 40 % de los trenes de un laborable o más del 30 % de las rutas, si Cabina pierde más del 40 % de los trenes, si la CNMC no trae 5 corredores o si su último trimestre retrocede. El resumen (tabla por fuente con «horarios hasta») sale en la página de la ejecución.
+- **Si falla algo,** el job queda en rojo, no se sube nada y GitHub avisa por correo. Los datos publicados siguen siendo los de la semana anterior.
+- **Reactivación:** el último paso reactiva el propio workflow, como `supabase-keepalive.yml`, para que GitHub no lo apague tras 60 días sin actividad.
+- **Memoria:** 6 GB para Node (en local, build-rutas y build-cabina pasan con 3 GB).
+- `main` no tiene protección de rama, así que el bot puede subir directamente.
+
+**Comprobado en local:** el control pasa con los datos actuales y falla (código 1) si se simula la caída de Cercanías a 100 trenes. Mapa del repositorio regenerado, `check-links` y `version-assets --check` sin incidencias.
+**Pendiente de comprobar:** la primera ejecución en GitHub (descarga desde los servidores de Renfe, la CNMC y GitHub Pages de iryo desde un runner de EE. UU.).
+
+**Coordinación:** cuando se fusione la ola 2 de Cabina, el workflow tendrá que ejecutar también `tools/build-cabina-mercado.mjs` si sus datos deben refrescarse (lo decide esa sesión).
+
 ## Siguiente tarea
 
 - **Fase 6: operadores autonómicos (FGC, Euskotren, FGV).** Bloqueada hasta que Borja cree la cuenta del NAP y su ApiKey.
-- **Fase 7: GitHub Action semanal** que ejecute `build-rutas --download`, `build-cnmc --download` y `build-cabina`, y confirme si hay cambios. Es la siguiente que se puede hacer ya, porque Cercanías caduca el 20-12-2026.
-  - Hecha cuando la Action corra en el repositorio, regenere los datos y, si no hay cambios, no confirme nada.
 - **Pendiente de la fase 3:** el filtro por corredor Hermes o TEN-T.
