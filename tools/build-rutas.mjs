@@ -33,8 +33,9 @@ async function download(){
     const r=await fetch(s.url,{headers:{'user-agent':'borjamora.es visor ferroviario (portfolio)'}});
     if(!r.ok)throw new Error(`${k}: HTTP ${r.status} en ${s.url}`);
     fs.writeFileSync(path.join(CACHE,s.file),Buffer.from(await r.arrayBuffer()));
-    // Solo la fecha del servidor: con la de descarga, la tarea semanal confirmaría un cambio cada semana aunque los datos fueran los mismos.
-    meta[k]={last_modified:r.headers.get('last-modified')};
+    // Solo en la caché local: ni la fecha de descarga ni Last-Modified (Renfe lo da distinto en cada servidor, con segundos de diferencia)
+    // van a rutas.json, o la tarea semanal confirmaría un commit con los mismos datos. La vigencia de cada fuente está en from/to.
+    meta[k]={downloaded:new Date().toISOString(),last_modified:r.headers.get('last-modified')};
   }
   fs.writeFileSync(path.join(CACHE,'meta.json'),JSON.stringify(meta,null,1));
 }
@@ -83,7 +84,6 @@ function trainsFrom(src,g,opts){
 function build(today){
   const need=Object.values(SOURCES).filter(s=>!fs.existsSync(path.join(CACHE,s.file)));
   if(need.length)throw new Error('Faltan fuentes en .cache/rutas: ejecuta con --download');
-  const dl=fs.existsSync(path.join(CACHE,'meta.json'))?JSON.parse(fs.readFileSync(path.join(CACHE,'meta.json'),'utf8')):{};
 
   // Estaciones: catálogo de Renfe (código de 5 cifras, provincia) + nombres y coordenadas de los GTFS.
   const catalog=new Map();
@@ -105,7 +105,7 @@ function build(today){
   for(const s of G.iryo.stops)seeStop(s.stop_id,s,3);
 
   const bad={};
-  const add=(k,res)=>{all.push(...res.trains);bad[k]=res.bad;sources[k]={...SOURCES[k],file:undefined,trains:res.trains.length,...(dl[k]||{})};};
+  const add=(k,res)=>{all.push(...res.trains);bad[k]=res.bad;sources[k]={...SOURCES[k],file:undefined,trains:res.trains.length};};
   add('renfe',trainsFrom('renfe',G.renfe,{code:id,number:t=>t.trip_short_name,
     describe:r=>{const marca=BRAND[r.route_short_name.trim().toUpperCase()]||r.route_short_name.trim();return {operador:'Renfe',marca,familia:FAMILY[marca]||'Regional'};}}));
   add('cercanias',trainsFrom('cercanias',G.cercanias,{code:id,
