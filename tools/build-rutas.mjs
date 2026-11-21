@@ -49,6 +49,19 @@ const COMPANY={Renfe:'Pública · Renfe',iryo:'Privada',OUIGO:'Privada'};
 /* ── territorio: comunidad por coordenadas (NUTS 2 de Eurostat/GISCO en datos.json) ── */
 function inRing(p,ring){let c=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const [xi,yi]=ring[i],[xj,yj]=ring[j];
   if((yi>p[1])!==(yj>p[1])&&p[0]<(xj-xi)*(p[1]-yi)/(yj-yi)+xi)c=!c;}return c;}
+/* Municipio del INE que contiene el punto (o el más cercano a ≤ 2 km, por la generalización del litoral) → provincia. */
+function municipalityOf(features,prov){
+  const items=features.map(f=>{const polys=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;
+    let b=[180,90,-180,-90];for(const p of polys)for(const [x,y] of p[0]){b=[Math.min(b[0],x),Math.min(b[1],y),Math.max(b[2],x),Math.max(b[3],y)];}
+    return {polys,b,pr:prov(f.properties.province),ca:f.properties.community};});
+  const ca=new Map(items.map(i=>[i.pr,i.ca]));
+  const at=p=>{for(const i of items){if(p[0]<i.b[0]||p[0]>i.b[2]||p[1]<i.b[1]||p[1]>i.b[3])continue;
+      for(const poly of i.polys)if(inRing(p,poly[0])&&!poly.slice(1).some(h=>inRing(p,h)))return i;}
+    let best=null,bm=2000;for(const i of items){if(p[0]<i.b[0]-0.03||p[0]>i.b[2]+0.03||p[1]<i.b[1]-0.03||p[1]>i.b[3]+0.03)continue;
+      for(const poly of i.polys)for(const v of poly[0]){const m=metres(p,v);if(m<bm){bm=m;best=i;}}}
+    return best;};
+  return {at,ca};
+}
 function regionOf(regions){
   return p=>{for(const f of regions){const polys=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;
     for(const poly of polys)if(inRing(p,poly[0])&&!poly.slice(1).some(h=>inRing(p,h)))return f.properties.NAME_LATN;}
@@ -89,7 +102,7 @@ function build(today){
   const catalog=new Map();
   // El CSV de Renfe viene en Latin-1 (leído como UTF-8 salía «A Coru�a»). Provincias en castellano: de las bilingües, el nombre en castellano.
   const raw=fs.readFileSync(path.join(CACHE,'estaciones.csv')),txt=raw.toString('utf8').includes('�')?raw.toString('latin1'):raw.toString('utf8');
-  const PROV_ES={'Alicante/Alacant':'Alicante','Castellón/Castelló':'Castellón','Valencia/València':'Valencia','Araba/Álava':'Álava'};
+  const PROV_ES={'Alicante/Alacant':'Alicante','Castellón/Castelló':'Castellón','Valencia/València':'Valencia','Valencia/Valéncia':'Valencia','Araba/Álava':'Álava'};
   const prov=p=>{if(!p||/^desconocid/i.test(p))return null;const t=title(p).replace(/^(.*), (A|La|Las|Los|El|Les|L')$/i,(m,n,a)=>a[0].toUpperCase()+a.slice(1).toLowerCase()+' '+n);return PROV_ES[t]||t;};
   for(const l of txt.split(/\r?\n/).slice(1)){
     const c=l.split(';').map(x=>x.replace(/^"|"$/g,''));if(c[0])catalog.set(c[0],{prov:prov(c[7]),coord:[+c[3],+c[2]],metric:c[10]==='SI'});
@@ -136,12 +149,18 @@ function build(today){
   const RED=loadRed(V),region=regionOf(RED.datos.regions.features);
   const used=new Set(all.flatMap(t=>t.stops)),stIdx=new Map(),stOut=[];
   const cat=[...catalog.values()].filter(x=>x.prov&&x.coord[0]);for(const x of cat)x.ca??=region(x.coord);
-  let provInferred=0;
+  // Municipios del INE (demografia.json): provincia de las estaciones que no están en el catálogo de Renfe, y comunidad
+  // de cada provincia. La comunidad sale de la provincia cuando se conoce: el polígono NUTS generalizado pone en Galicia
+  // estaciones asturianas de la ría del Eo (Vegadeo).
+  const muni=municipalityOf(JSON.parse(fs.readFileSync(path.join(V,'capas','demografia.json'),'utf8')).municipalities.features,prov);
+  let provMuni=0,provNear=0;
   for(const code of [...used].sort()){const s=stations.get(code)||{code,name:code,coord:null};stIdx.set(code,stOut.length);
-    const ca=!s.coord?null:FOREIGN.test(s.name)?'Fuera de España':(region(s.coord)||'Fuera de España');let pr=ca==='Fuera de España'?null:catalog.get(code)?.prov||null;   // el catálogo asigna provincia española a Cerbère o Valença
-    if(!pr&&s.coord&&ca!=='Fuera de España'){let bm=40000;for(const x of cat){if(x.ca!==ca)continue;const m=metres(s.coord,x.coord);if(m<bm){bm=m;pr=x.prov;}}if(pr)provInferred++;}
+    let ca=!s.coord?null:FOREIGN.test(s.name)?'Fuera de España':(region(s.coord)||'Fuera de España');let pr=ca==='Fuera de España'?null:catalog.get(code)?.prov||null;   // el catálogo asigna provincia española a Cerbère o Valença
+    if(!pr&&s.coord&&ca!=='Fuera de España'){const m=muni.at(s.coord);if(m){pr=m.pr;provMuni++;}}
+    if(!pr&&s.coord&&ca!=='Fuera de España'){let bm=40000;for(const x of cat){if(x.ca!==ca)continue;const m=metres(s.coord,x.coord);if(m<bm){bm=m;pr=x.prov;}}if(pr)provNear++;}
+    if(pr&&muni.ca.get(pr))ca=muni.ca.get(pr);
     stOut.push({k:code,n:s.name,c:s.coord?s.coord.map(x=>+x.toFixed(5)):null,ca,pr});}
-  notes.push('Provincia: la del catálogo de estaciones de Renfe; '+provInferred+' estaciones que no figuran en él toman la de la estación del catálogo más cercana (≤ 40 km, misma comunidad).');
+  notes.push('Provincia: la del catálogo de estaciones de Renfe; '+provMuni+' estaciones que no figuran en él toman la del municipio del INE donde están'+(provNear?' y '+provNear+' la de la estación del catálogo más cercana (≤ 40 km, misma comunidad)':'')+'. Comunidad: la de su provincia.');
 
   // Agregar trenes en filas.
   const rows=new Map();
