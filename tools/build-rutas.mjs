@@ -33,7 +33,8 @@ async function download(){
     const r=await fetch(s.url,{headers:{'user-agent':'borjamora.es visor ferroviario (portfolio)'}});
     if(!r.ok)throw new Error(`${k}: HTTP ${r.status} en ${s.url}`);
     fs.writeFileSync(path.join(CACHE,s.file),Buffer.from(await r.arrayBuffer()));
-    meta[k]={downloaded:new Date().toISOString().slice(0,10),last_modified:r.headers.get('last-modified')};
+    // Solo la fecha del servidor: con la de descarga, la tarea semanal confirmaría un cambio cada semana aunque los datos fueran los mismos.
+    meta[k]={last_modified:r.headers.get('last-modified')};
   }
   fs.writeFileSync(path.join(CACHE,'meta.json'),JSON.stringify(meta,null,1));
 }
