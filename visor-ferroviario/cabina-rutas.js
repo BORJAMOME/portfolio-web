@@ -14,6 +14,9 @@
   const visor=state=>'index.html#'+encodeURIComponent(JSON.stringify(state));
   const PAGE=50,FAM_ORDER=['Alta velocidad','Avant','Intercity','Regional','Cercanías'];
   const FAM_CLS={'Alta velocidad':'rt-fam-av','Avant':'rt-fam-avant','Intercity':'rt-fam-ic','Regional':'rt-fam-reg','Cercanías':'rt-fam-cer'};
+  // Logo y color de fila por operador. Avlo es una marca de Renfe, pero lleva su propio logo y color.
+  const OP_KEY={Renfe:'renfe',iryo:'iryo',OUIGO:'ouigo'},OP_ALT={renfe:'Renfe',avlo:'Renfe · Avlo',iryo:'iryo',ouigo:'OUIGO'};
+  const opKey=r=>r.marca==='Avlo'?'avlo':OP_KEY[r.op]||null;
 
   let R,ST,rows=[],view=[],shown=PAGE,sort={key:'sem',dir:-1};
   const open=new Set(),cmp=new Set();
@@ -23,12 +26,13 @@
     {key:'ruta',label:'Ruta',val:r=>r._name},
     {key:'marca',label:'Servicio',val:r=>r.fam+' '+r.marca,cls:'rt-c-srv'},
     {key:'op',label:'Operador',val:r=>r.op,cls:'rt-c-op'},
-    {key:'lab',label:'Laborable',n:1,val:r=>r.lab,title:'Trenes el miércoles de referencia'},
+    // Bloque de tiempo: días sueltos | semana, mes y año. Las líneas divisorias van en rt-t-ini, rt-t-mid y rt-t-fin.
+    {key:'lab',label:'Laborable',n:1,val:r=>r.lab,cls:'rt-t-ini',title:'Trenes el miércoles de referencia'},
     {key:'sab',label:'Sábado',n:1,val:r=>r.sab,cls:'rt-c-sab'},
     {key:'dom',label:'Domingo',n:1,val:r=>r.dom,cls:'rt-c-dom'},
-    {key:'sem',label:'Semana',n:1,val:r=>r.sem},
+    {key:'sem',label:'Semana',n:1,val:r=>r.sem,cls:'rt-t-mid',title:'Trenes de lunes a domingo de la semana de referencia'},
     {key:'mes',label:'Mes*',n:1,val:r=>r.mes,cls:'rt-c-mes',title:'Estimación: semana × 4,35'},
-    {key:'anio',label:'Año*',n:1,val:r=>r.anio,cls:'rt-c-anio',title:'Estimación: semana × 52'},
+    {key:'anio',label:'Año*',n:1,val:r=>r.anio,cls:'rt-c-anio rt-t-fin',title:'Estimación: semana × 52'},
     {key:'pri',label:'Primero – último',val:r=>r.pri,cls:'rt-c-hor'},
     {key:'dur',label:'Duración',n:1,val:r=>r.dur,cls:'rt-c-dur',title:'Mediana de los trenes del día'},
     {key:'par',label:'Paradas',n:1,val:r=>r.par,cls:'rt-c-par'},
@@ -72,12 +76,22 @@
 
   /* ── resumen de la selección ── */
   function kpi(label,value,ref){const k=el('div','kpi');k.append(el('span','kpi-label',label),el('span','kpi-value',value),el('span','kpi-ref',ref));return k;}
+  // KPI con barra a la derecha: qué parte del total representa la selección.
+  function kpiShare(label,n,total,ref){
+    const k=el('div','kpi rt-kpi-share'),p=total?100*n/total:0,row=el('div','rt-share'),bar=el('div','rt-share-bar'),fill=el('span');
+    fill.style.width=p+'%';bar.append(fill);bar.setAttribute('aria-hidden','true');
+    const pc=el('span','rt-share-pc',(p>0&&p<1?'< 1':fmt(p))+' %');
+    const side=el('div','rt-share-side');side.append(pc,bar);row.append(el('span','kpi-value',fmt(n)),side);
+    k.append(el('span','kpi-label',label),row,el('span','kpi-ref',ref));return k;
+  }
+  const shortDate=iso=>new Date(iso+'T12:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long'});
   function renderKpis(){
     const lab=view.reduce((a,r)=>a+r.lab,0),sem=view.reduce((a,r)=>a+r.sem,0),st=new Set();for(const r of view)for(const i of r.est)st.add(i);
+    const ref=R.referencia,wd=new Date(ref.laborable+'T12:00:00').toLocaleDateString('es-ES',{weekday:'long'});
     $('#kpis').replaceChildren(
-      kpi('Rutas',fmt(view.length),'de '+fmt(rows.length)+' en total'),
-      kpi('Trenes un laborable',fmt(lab),longDate(R.referencia.laborable)),
-      kpi('Trenes a la semana',fmt(sem),'año estimado: '+fmt(sem*52)),
+      kpiShare('Rutas',view.length,rows.length,'de '+fmt(rows.length)+' en total'),
+      kpi('Trenes en un día laborable',fmt(lab),'Suma de estas rutas el '+wd+' '+shortDate(ref.laborable)+', día tipo de la semana de referencia'),
+      kpi('Trenes en una semana',fmt(sem),'De lunes a domingo ('+shortDate(ref.semana)+' – '+shortDate(ref.domingo)+'). Al año, unos '+fmt(sem*52)),
       kpi('Estaciones servidas',fmt(st.size),'con al menos una parada de estas rutas'));
     $('#count').textContent=view.length===rows.length?fmt(view.length)+' rutas':fmt(view.length)+' de '+fmt(rows.length)+' rutas con estos filtros';
   }
@@ -104,8 +118,12 @@
       if(!r.sem){const z=el('span','rt-tag','sin trenes esta semana');t.append(z);}
       w.append(b,n);td.append(w);
     }else if(c.key==='marca'){const ch=el('span','rt-chip '+(FAM_CLS[r.fam]||''));ch.append(el('i'),r.marca);td.append(ch);
+      if(r.fam==='Cercanías'&&r.nuc)td.append(el('small','rt-nuc',r.nuc));   // el núcleo va aquí, debajo de la línea
       if(r.fam!=='Cercanías'&&r.marca!==r.fam)td.title=r.fam;}
-    else if(c.key==='op'){td.textContent=r.op;if(r.src==='iryo')td.append(el('span','rt-tag','no oficial'));}
+    else if(c.key==='op'){const k=opKey(r);
+      if(k){const w=el('span','rt-op'),img=el('img','rt-logo rt-logo-'+k);img.src='img/operadores/'+k+'.svg';img.alt=OP_ALT[k];img.title=OP_ALT[k];img.decoding='async';w.append(img);td.append(w);}
+      else td.textContent=r.op;
+      if(r.src==='iryo')td.append(el('span','rt-tag','no oficial'));}
     else if(c.key==='pri')td.textContent=r.pri===null?'—':hm(r.pri)+' – '+hm(r.ult);
     else if(c.key==='dur')td.textContent=dur(r.dur);
     else if(c.key==='cmp'){const l=el('label','rt-cmp'),i=el('input');i.type='checkbox';i.checked=cmp.has(r.id);i.disabled=!cmp.has(r.id)&&cmp.size>=3;
@@ -153,7 +171,7 @@
   function renderTable(){
     renderHead();const tb=$('#tbody'),frag=document.createDocumentFragment();
     const max=Math.max(1,...view.map(r=>r.sem));
-    for(const r of view.slice(0,shown)){const tr=el('tr','rt-row');for(const c of COLS){const td=cell(r,c);
+    for(const r of view.slice(0,shown)){const k=opKey(r),tr=el('tr','rt-row'+(k?' rt-op-'+k:''));for(const c of COLS){const td=cell(r,c);
         if(c.key==='sem'&&r.sem){const b=el('span','db');b.style.width=(100*r.sem/max)+'%';td.append(b);}tr.append(td);}
       frag.append(tr);if(open.has(r.id))frag.append(detail(r));}
     if(!view.length){const tr=el('tr'),td=el('td');td.colSpan=COLS.length;td.append(el('p','cb-empty','Ninguna ruta cumple estos filtros. Prueba a quitar alguno o a buscar otra estación.'));tr.append(td);frag.append(tr);}
@@ -232,8 +250,9 @@
     catch{$('#ref').textContent='No se han podido cargar las rutas.';$('#tbody').replaceChildren();const p=el('p','cb-empty','No se han podido cargar los datos de las rutas. Recarga la página.');$('#tabla').append(p);return;}
     ST=R.estaciones;
     try{const c=await fetch('capas/cnmc.json',{cache:'no-cache'});if(c.ok)CN=await c.json();}catch{CN=null;}
-    rows=R.rutas.map(r=>{const o=ST[r.o]?.n,d=ST[r.d]?.n;const title=r.fam==='Cercanías'?r.marca+' · '+(o&&d?o+' – '+d:r.linea):o+' → '+d;
-      return {...r,_title:title,_name:r.fam==='Cercanías'?r.marca+' '+r.nuc:o+' → '+d+' ('+r.marca+')',_sub:r.fam==='Cercanías'?'Cercanías '+r.nuc:r.marca+' · '+r.op,
+    // En Cercanías la línea (C1, R2…) ya está en la columna Servicio: el título solo lleva los extremos, para que quepa en una línea.
+    rows=R.rutas.map(r=>{const o=ST[r.o]?.n,d=ST[r.d]?.n;const title=r.fam==='Cercanías'?(o&&d?o+' – '+d:r.linea):o+' → '+d;
+      return {...r,_title:title,_name:r.fam==='Cercanías'?r.marca+' '+r.nuc:o+' → '+d+' ('+r.marca+')',_sub:r.fam==='Cercanías'?r.marca+' · Cercanías '+r.nuc:r.marca+' · '+r.op,
         _search:norm([title,r.marca,r.nuc,r.linea,r.op,...r.num,...r.est.map(i=>ST[i].n)].join(' ')),_cnmc:cnmcOf(r)};});
     fillSelect(F.cor,CN?CN.corredores.map(c=>c.corredor):[]);
     $('#ref').replaceChildren('Semana de referencia: ',el('strong',null,date(R.referencia.semana)+' – '+date(R.referencia.domingo)),'. Laborable: '+longDate(R.referencia.laborable)+'. Datos generados el '+date(R.generado)+'.');
