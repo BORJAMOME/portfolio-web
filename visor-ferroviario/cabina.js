@@ -74,14 +74,14 @@
     let w=0;const paint=()=>{const nw=Math.max(260,Math.floor(host.clientWidth||container.clientWidth||600));if(nw===w)return;w=nw;host.replaceChildren(draw(w));};
     new ResizeObserver(paint).observe(host);paint();return host;
   }
-  function columns(data,{hi=[],h=150,labelEvery=1}={}){
+  function columns(data,{hi=[],h=150,labelEvery=1,format=fmt,top}={}){
     return w=>{
-      const L=4,R=4,T=16,B=20,H=h,max=Math.max(1,...data.map(d=>d.value)),bw=(w-L-R)/data.length;
+      const L=4,R=4,T=16,B=20,H=h,max=top??Math.max(1,...data.map(d=>d.value)),bw=(w-L-R)/data.length;
       const s=svg('svg',{viewBox:`0 0 ${w} ${H}`,width:w,height:H,class:'svgchart','aria-hidden':'true'});
       data.forEach((d,i)=>{const bh=d.value?Math.max(1.5,(H-T-B)*d.value/max):0,gap=Math.min(6,bw*.18),x=L+i*bw+gap,cw=bw-2*gap;
         const r=svg('rect',{x:x.toFixed(1),y:(H-B-bh).toFixed(1),width:Math.max(1,cw).toFixed(1),height:bh.toFixed(1),class:'col'+(hi.includes(i)?' hi':'')});
-        r.append(svg('title',{},d.label+': '+fmt(d.value)));s.append(r);
-        if(hi.includes(i))s.append(svg('text',{x:(x+cw/2).toFixed(1),y:(H-B-bh-4).toFixed(1),'text-anchor':'middle',class:'v'},fmt(d.value)));
+        r.append(svg('title',{},d.label+': '+format(d.value)));s.append(r);
+        if(hi.includes(i))s.append(svg('text',{x:(x+cw/2).toFixed(1),y:(H-B-bh-4).toFixed(1),'text-anchor':'middle',class:'v'},format(d.value)));
         if(i%labelEvery===0)s.append(svg('text',{x:(x+cw/2).toFixed(1),y:H-5,'text-anchor':'middle'},d.tick??d.label));});
       s.append(svg('line',{x1:L,x2:w-R,y1:H-B+.5,y2:H-B+.5,class:'axis'}));return s;
     };
@@ -269,7 +269,14 @@
       grid.append(box);}
     const ch=V.choque_av;
     c.append(grid,
-      note(`La alta velocidad ya es el ${pf.format(V.av_peso_ld.ultimos12)} % de los viajeros de larga distancia (${pf.format(V.av_peso_ld['2017'])} % en 2017). En enero y febrero de 2026 cayó un ${pf.format(-ch.ene_feb_2026)} % frente a 2025 y de mayo a ${month(ch.hasta)} sigue un ${pf.format(-ch.may_ult_2026)} % por debajo: estos datos no dicen la causa.`),
+      note(`La alta velocidad ya es el ${pf.format(V.av_peso_ld.ultimos12)} % de los viajeros de larga distancia (${pf.format(V.av_peso_ld['2017'])} % en 2017). En enero y febrero de 2026 cayó un ${pf.format(-ch.ene_feb_2026)} % frente a 2025 y de mayo a ${month(ch.hasta)} sigue un ${pf.format(-ch.may_ult_2026)} % por debajo.`));
+    if(ch.corredores_1t&&ch.evento){
+      // Dónde se concentra la caída (CNMC por corredor) y el hecho oficial que coincide en fecha y lugar. La causa no se calcula: se cita.
+      const p=note(`Por corredor, en el primer trimestre de 2026 frente al de 2025 (CNMC): ${ch.corredores_1t.map(x=>x.corredor+' '+signed(x.var)).join(', ')}. La caída se concentra en Andalucía y coincide con el ${ch.evento.nombre} del ${date(ch.evento.fecha)}, ${ch.evento.consecuencia} (`);
+      p.append(anchor(ch.evento.fuente,ch.evento.url),'). Ni el INE ni la CNMC atribuyen la caída a una causa.');
+      c.append(p);
+    }
+    c.append(
       dataTable([{label:'Servicio',key:'n'},{label:'Viajeros, 12 meses (miles)',key:'m12',n:1},{label:'Frente al año anterior',key:'v12'},{label:'Frente a 2019',key:'v19'}],
         ORDER.map(k=>({n:S[k].nombre,m12:R[k].m12,v12:signed(R[k].var12),v19:signed(R[k].vs2019)})),'Viajeros por tipo de servicio, hasta '+month(V.ultimo)));
     // Comparación con la UE: cuota del tren en el transporte por tierra, último año disponible.
@@ -285,6 +292,16 @@
     responsive(c,columns(A.map((x,i)=>({label:String(x.anio),value:x.renfe_pct,tick:"'"+String(x.anio).slice(2)})),{hi:[A.length-1],h:150}),'Cuota de Renfe en las toneladas-km por año: de '+pf.format(f0.renfe_pct)+' % en '+f0.anio+' a '+pf.format(fl.renfe_pct)+' % en '+fl.anio);
     c.append(note(`${fl.anio}: ${pf.format(fl.tkm_mm)} mil millones de t-km netas; el ${pf.format(fl.intermodal_pct)} % en vagón intermodal (contenedores). El resto lo mueven Medway, Captrain, Continental Rail, Transervi y otras.`),
       dataTable([{label:'Año',key:'anio'},{label:'t-km netas (miles de millones)',key:'t'},{label:'Renfe (%)',key:'r'},{label:'Intermodal (%)',key:'i'}],A.map(x=>({anio:String(x.anio),t:pf.format(x.tkm_mm),r:pf.format(x.renfe_pct),i:x.intermodal_pct===null?'—':pf.format(x.intermodal_pct)})),'Mercancías por ferrocarril'));
+  }
+
+  /* Seguridad (INE): accidentes significativos por millón de tren-km. Pocos accidentes al año: la tasa oscila mucho. */
+  function renderSeguridad(J){
+    const S=J.mercado?.seguridad;if(!S){$('#c-seguridad').hidden=true;return;}
+    const A=S.anual,l=A.at(-1),f2=new Intl.NumberFormat('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2}),f3=v=>f2.format(v);
+    const c=card('c-seguridad','Accidentes significativos por millón de tren-km: '+f3(l.tasa)+' en '+l.anio,'Viajeros y mercancías · media 2014–2019: '+f3(S.ref_2014_2019)+' · INE');
+    responsive(c,columns(A.map((x,i)=>({label:String(x.anio),value:x.tasa,tick:"'"+String(x.anio).slice(2)})),{hi:[A.length-1],h:140,format:f3,top:Math.max(...A.map(x=>x.tasa))}),'Accidentes significativos por millón de tren-km por año, de '+f3(A[0].tasa)+' en '+A[0].anio+' a '+f3(l.tasa)+' en '+l.anio);
+    c.append(note(`${l.anio}: ${fmt(l.accidentes)} accidentes significativos en ${pf.format(l.trenkm_mill)} millones de tren-km; ${fmt(l.tipos.arrollamientos)} fueron arrollamientos de personas y ${fmt(l.tipos.pasos_a_nivel)}, en pasos a nivel. Con tan pocos casos al año, un año aislado no marca tendencia. ${l.anio<2026?'El accidente de Adamuz (enero de 2026) entrará en la serie de '+(l.anio+1)+'.':''}`),
+      dataTable([{label:'Año',key:'a'},{label:'Accidentes',key:'n',n:1},{label:'Tren-km (millones)',key:'t'},{label:'Por millón de tren-km',key:'r'}],A.map(x=>({a:String(x.anio),n:x.accidentes,t:pf.format(x.trenkm_mill),r:f3(x.tasa)})),'Accidentes ferroviarios significativos'));
   }
 
   /* ════════ 4 · Red ════════ */
@@ -309,10 +326,11 @@
       note('Km de alta velocidad: '+fmt(G.prestaciones)+' (clasificación del atlas). Los '+fmt(G.corredores)+' km de corredores Hermes y los '+fmt(G.adifav)+' km de Adif AV miden otra cosa: ver el glosario.'),
       link(visor({t:'all',d:'perf'}),'Ver las prestaciones en el mapa'));
     const cor=[...J.corredores.por_corredor].sort((a,b)=>(b.service+b.construction+b.project)-(a.service+a.construction+a.project)),T=J.corredores.total;
-    c=card('c-corredores','Corredores de alta velocidad: en servicio, en obras y en proyecto','Hermes (Ministerio de Transportes), '+date(J.corredores.fecha)+' · km por corredor');
+    const VF=J.corredores.verificado;
+    c=card('c-corredores','Corredores de alta velocidad: en servicio, en obras y en proyecto','Hermes (Ministerio de Transportes), '+date(J.corredores.fecha)+(VF?' · estado contrastado el '+date(VF.fecha):'')+' · km por corredor');
     c.append(legend([['c-navy','En servicio'],['c-ctx','En construcción'],['c-soft','En proyecto']]),
       hbars(cor.map(x=>({label:x.nombre,values:[x.service,x.construction,x.project],shown:x.service,href:visor({t:'corridors',k:x.id,st:'service,construction,project'})})),{classes:['c-navy','c-ctx','c-soft'],extra:()=>'km en servicio'}),
-      note('La cifra es el tramo en servicio; la barra incluye las obras y los proyectos. Total: '+fmt(T.service)+' km en servicio, '+fmt(T.construction)+' en construcción y '+fmt(T.project)+' en proyecto. Datos de febrero de 2024: pueden haber cambiado.'),
+      note('La cifra es el tramo en servicio; la barra incluye las obras y los proyectos. Total: '+fmt(T.service)+' km en servicio, '+fmt(T.construction)+' en construcción y '+fmt(T.project)+' en proyecto. '+(VF?'Datos de Hermes de febrero de 2024, contrastados el '+date(VF.fecha)+': '+VF.nota:'Datos de febrero de 2024: pueden haber cambiado.')),
       link(visor({t:'corridors',k:CFG.corridors.map(x=>x.id).join(','),st:'service,construction,project'}),'Ver los corredores en el mapa'));
     // Detalle plegado
     const b=body('c-red-mas'),netName=id=>CFG.classifications.net.items.find(i=>i.id===id)?.name||id;
@@ -398,7 +416,7 @@
     try{const r=await fetch('capas/cabina.json',{cache:'no-cache'});if(!r.ok)throw new Error(r.status);J=await r.json();}
     catch{const a=$('#alert');a.hidden=false;a.textContent='No se han podido cargar los gráficos. Los titulares de cada capítulo siguen siendo válidos; recarga la página.';return;}
     // Cada bloque falla por separado: un error no deja la página en blanco.
-    for(const [name,fn] of [['indicadores',renderKpis],['cobertura',renderCobertura],['servicio',renderServicio],['uso',renderUso],['alta velocidad · viajeros',renderViajerosAV],['competencia',renderCompetencia],['red',renderRed],['método',renderMetodo],['anexo',renderAnexo]]){
+    for(const [name,fn] of [['indicadores',renderKpis],['cobertura',renderCobertura],['servicio',renderServicio],['uso',renderUso],['alta velocidad · viajeros',renderViajerosAV],['competencia',renderCompetencia],['red',renderRed],['seguridad',renderSeguridad],['método',renderMetodo],['anexo',renderAnexo]]){
       try{fn(J);}catch(e){console.error(name,e);const a=$('#alert');a.hidden=false;a.textContent='No se ha podido pintar el bloque «'+name+'». El resto de la página sigue disponible.';}
     }
   }
