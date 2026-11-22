@@ -617,7 +617,7 @@
     c.append(dl);
     c=body('c-no');
     const ul=el('ul','plain');
-    for(const t of ['Viajeros por estación, por línea o por tren: el INE solo da totales nacionales por tipo de servicio, y la CNMC, los cinco corredores de alta velocidad con competencia.','Puntualidad y retrasos: los horarios son oferta programada, no circulaciones reales.',
+    for(const t of ['Viajeros por estación, por línea o por tren: el INE solo da totales nacionales por tipo de servicio, y la CNMC, los cinco corredores de alta velocidad con competencia.','Puntualidad y retrasos: los horarios son oferta programada, no circulaciones reales. Los avisos de Cercanías se consultan una vez por semana en su capítulo, sin cubrir toda la red.',
       'Ingresos por operador y plazas por tren: la CNMC no publica los ingresos de cada empresa.','Operadores autonómicos (FGC, Euskotren, FGV): sus horarios están en el Punto de Acceso Nacional, con registro.','Mercancías por tramo o por terminal, obras y cortes de vía: las mercancías solo llegan como total nacional por operador.',
       'Acceso real a la estación: las distancias son en línea recta.'])ul.append(el('li',null,t));
     c.append(ul,note('Por eso no hay ratios de trenes por habitante ni comparaciones de calidad entre territorios más allá de la oferta programada.'));

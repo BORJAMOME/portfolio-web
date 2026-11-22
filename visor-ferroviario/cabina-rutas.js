@@ -72,6 +72,8 @@
     view.sort((a,b)=>{const x=c.val(a),y=c.val(b);if(x===y)return b.sem-a.sem;if(x===null||x===undefined)return 1;if(y===null||y===undefined)return -1;
       return (typeof x==='string'?x.localeCompare(y,'es'):x-y)*dir;});
     shown=PAGE;writeHash();renderKpis();renderTable();
+    window.RutasHeatmapSelection={rows:view,stations:ST,reference:R.referencia,filters:s};
+    window.dispatchEvent(new Event('rutas-selection'));
   }
 
   /* ── resumen de la selección ── */
