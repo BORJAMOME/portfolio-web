@@ -1,7 +1,28 @@
 # Cabina: estado
 
-Última actualización: 21-11-2026 (ola 1 de `manual-ferrocarriles/mapa/investigacion-cabina/PROPUESTA_CABINA.md`, cerrada).
+Última actualización: 22-11-2026 (ola 3: rediseño interactivo, sin commit todavía).
 La tabla de rutas tiene su propio estado en `RUTAS_ESTADO.md`.
+
+## Ola 3 (22-11-2026): interacción, marcas y filtros
+
+- **Cabecera:** fuera la pregunta rectora y el texto de referencia; título más grande y pastilla con el día de los horarios y la próxima regeneración (el lunes siguiente a `oferta.json · generado`, que es cuando corre `rutas-semanal.yml`). `build-cabina` la escribe en `#ref-date` y `#ref-next`.
+- **KPIs (6):** sin frases; botón «i» con definición y fuente. Población servida con mini barras (≥ 1 / ≥ 10 / ≥ 30 trenes), huecos con habitantes y % en barra, y KPI nuevo «Viajeros en 12 meses» (suma de los cuatro tipos del INE, 12 meses frente a los 12 anteriores: `mercado.viajeros.total12`).
+- **Quitado:** cuota del tren frente a la UE y Renfe Mercancías (los datos siguen en `mercado.json`). El titular de «uso» ya no habla de mercancías.
+- **Interacción:** tooltip único (`TIP`) en curvas, columnas, barras, puntos y mapa de calor; `lineChart` con guía y lectura al pasar el ratón.
+- **Población servida:** clic (o botones de umbral) para elegir umbrales → «Ver los datos» muestra solo los elegidos con % y habitantes; la tabla completa sale en una ventana (`<dialog>`). Datos nuevos: `cobertura.curva_pob`.
+- **Servicio:** filtro laborable / sábado / domingo; logos de marca; alta velocidad desglosada en AVE (con Euromed), Avlo, OUIGO e iryo; tabla de lunes a domingo (`familias[].dias`, `marcas_av`, de `build-rutas.mjs`). Salidas por hora con tooltip y mapa de calor (escala por servicio o común; se gira en móvil).
+- **Pareto:** calculado en el navegador desde `oferta.estaciones` (lista de las 1.448 estaciones con municipio INE), con la estación de cada punto y la tabla de paradas por estación.
+- **Estaciones:** un solo ranking filtrable por servicio (Cercanías, Regional, Alta velocidad, Avant, Intercity), comunidad, provincia y municipio. Sustituye a `top_ld` y `top_cer`.
+- **Velocidad:** origen y destino a elegir entre las 112 relaciones entre capitales.
+- **Viajeros:** líneas mes a mes por año (2019 y desde 2022; 2020–2021 solo en la tabla), selector de servicio, interanual y frente a 2019; tabla con todos los meses. Se actualiza con la tarea semanal (`build-cabina-mercado.mjs`), que recoge el mes nuevo del INE.
+- **Colores de operador** (de los logos oficiales): Renfe #5b064b, AVE #001f4c, Avlo #5fcbc6 (con borde #2a8a85), OUIGO #e3006a, iryo #cb151b. Los anchos de vía, que usaban los colores antiguos, pasan a `g-std`, `g-met` y `g-mix`.
+- **Ocupación:** fichas por operador (ocupación y % de viajeros) y puntos por corredor con cuota y viajeros en el tooltip.
+- **Logos:** `img/marcas/*.svg`, Wikimedia Commons (dominio público): Cercanías, AVE (2026), Avlo, Intercity, OUIGO (el que usa es.wikipedia) e iryo. Regional (dominio público) y Avant (Commons lo marca **CC BY-SA 3.0**, no dominio público) añadidos el 22-11-2026; SHA-1 idéntico al de Commons. El código oculta el logo si no existe.
+- **Codificación:** el commit `78b0ee6` dejó `cabina.html` y `cabina.css` con doble codificación UTF-8 («DÃ³nde»); corregido en el commit siguiente. Antes de confirmar, buscar `Ã` o `Â` en los archivos tocados.
+
+**Comprobado:** `build-rutas` sin descargas reproduce `oferta.json` y `rutas.json` idénticos salvo la fecha antes de añadir campos; total de la semana del miércoles = 5.909 (igual que el KPI); curva de población monótona y % = habitantes ÷ población; `check-a11y` sin infracciones en `cabina.html` y `cabina-rutas.html`; `build-cabina --check`, `check-links`, `version-assets --check` y `sanity`; sin scroll horizontal a 390 px; filtros probados (Andalucía · Sevilla · Regional = 22 estaciones).
+
+**Siguiente:** revisar y fusionar el PR #165. Validación: CI en verde y Cabina publicada con acentos y los ocho logos de «Trenes por servicio».
 
 ## Qué es ahora
 
@@ -78,11 +99,26 @@ Cuadro de mando con una pregunta rectora: *¿qué servicio de tren recibe cada t
   - `build-cabina --check`, `check-links`, `version-assets --check`, `build-mapa --check` y `build-en --check`.
 - **Coste:** la página pasa de 4.498 a unos 6.400 px en escritorio y de 8.805 a unos 13.100 en móvil.
 
+## Pendientes de la ola 2 resueltos (21-11-2026)
+
+- **Tasa de accidentes** (tarjeta «Accidentes significativos por millón de tren-km», capítulo de la red):
+  - el INE da los tren-km (tabla 24365, series TF607 y TF605) como «Trenes-Km» sin escala, pero son **miles**: coinciden año a año con Eurostat `rail_tf_trainmv` (THS_TRKM). `build-cabina-mercado.mjs` lo comprueba en cada ejecución y falla si se separan más de un 1 %;
+  - numerador: accidentes significativos de la tabla 24366 (suma de los seis tipos). 2025: 71 en 220,6 millones de tren-km = 0,32; media 2014–2019 = 0,25;
+  - el INE y Eurostat (`tran_sf_railac`) no coinciden en todos los años (2019: 55 frente a 49; 2024: 63 frente a 57). Se usa el INE porque numerador y denominador salen de la misma fuente.
+- **Caída de la alta velocidad en enero y febrero de 2026** (−23,4 %): ya no se dice «causa desconocida», sino dónde se concentra y con qué coincide:
+  - CNMC `ds_24408`, 1T 2026 frente a 1T 2025: Madrid–Málaga/Granada −60,6 %, Madrid–Sevilla −27,0 %, Madrid–Barcelona −17,4 %, Madrid–Valencia −7,7 %, Madrid–Alicante −6,2 %;
+  - coincide con el accidente de Adamuz (18-01-2026), tras el que se interrumpió la línea Madrid–Andalucía (comunicado del Ministerio de Transportes del 20-01-2026, enlazado en la nota);
+  - ni el INE ni la CNMC atribuyen la causa, y la nota lo dice. Las limitaciones de velocidad en Madrid–Barcelona solo constan en prensa: no se citan.
+- **Corredores (Hermes 2024):** revisados el 21-11-2026 con notas del Ministerio. Ningún tramo en obras o en proyecto se ha abierto. Murcia–Almería, Burgos–Vitoria y la Y vasca siguen en obras. València–La Encina tiene trenes a menos de 150 m porque va por la variante de ancho ibérico abierta en 2023, pero la línea de alta velocidad sigue en obras. La fecha de la revisión y su nota están en `build-cabina.mjs` (`corredores.verificado`) y se muestran en la tarjeta.
+- **Comprobado:** `check-a11y` sin infracciones en `cabina.html`; escritorio (1440) y móvil (390) sin errores ni scroll horizontal; `build-cabina --check`, `check-links`, `version-assets --check`, `build-mapa --check` y `build-en --check`.
+
 ## Pendiente
 
-- **Corredores:** actualizar con Adif, porque Hermes es de 2024.
-- **Tasa de accidentes:** el INE la permite calcular, pero hay que confirmar la unidad de los tren-km (tablas 24365 y 24366) antes de publicarla.
-- **Choque de la alta velocidad en enero y febrero de 2026** (−23,4 % interanual): la Cabina lo muestra sin atribuirle causa, que está por verificar con fuentes oficiales.
-- **Visor:** llevar las Cercanías de ancho ibérico e iryo a las fichas, para que tengan el mismo universo que Cabina.
+- **Visor: Cercanías de ancho ibérico e iryo en las fichas**, para que tengan el mismo universo que Cabina. No es un cambio de este repositorio:
+  - los horarios de las fichas (`capas/horarios.json` y `capas/servicios.json`) los genera `manual-ferrocarriles/mapa/preparar_horarios.py`;
+  - hay que añadir los dos GTFS, asignar los trenes a tramos IGN (para `forEdge`) y vigilar el tamaño, porque las Cercanías de ancho ibérico multiplican los viajes;
+  - además, `horarios.json` no se regenera cada semana y el GTFS de Cercanías dura unos 30 días, así que las fichas acabarán retrocediendo a la última semana cubierta.
+  - **Criterio de validación:** los trenes un laborable de una estación coinciden en la ficha del visor y en `oferta.json` (por ejemplo, Madrid-Atocha Cercanías y Sevilla-Santa Justa).
+- **Mantenimiento:** si Hermes publica una versión nueva de la capa TEN-T, volver a revisar los corredores y actualizar `corredores.verificado`. Cuando el INE publique 2026, la tasa de accidentes incluirá Adamuz y la tarjeta lo explica.
 
 **Riesgo:** `tools/build-cabina.mjs` tarda unos 60 s por el cálculo de km (Dijkstra por pareja). Si crece, conviene guardar en caché los grafos por variante.

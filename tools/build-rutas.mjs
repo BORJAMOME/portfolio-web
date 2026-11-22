@@ -202,10 +202,15 @@ const AV_KEY={'AVE':'ave','AVE Euromed':'ave','Avlo':'avlo','iryo':'iryo','OUIGO
 function stationOffer(all,stIdx,n,W,sources){
   const WD=W[2],SA=W[5],SU=W[6],AVK=['ave','avlo','avant','ouigo','iryo'];
   const st=[...Array(n)].map(()=>({lab:0,sab:0,dom:0,fam:[0,0,0,0,0],av:[0,0,0,0,0],pri:null,ult:null,dest:new Set()}));
-  const fam=Object.fromEntries(FAMILIES.map(f=>[f,{lab:0,sab:0,dom:0,horas:new Array(24).fill(0)}]));
+  // Por familia: los tres días de referencia, los siete días de la semana (lunes a domingo) y las salidas por hora de
+  // cada día de referencia. Por marca (AVE, Avlo, OUIGO, iryo…): los mismos tres días y la semana.
+  const fam=Object.fromEntries(FAMILIES.map(f=>[f,{lab:0,sab:0,dom:0,dias:new Array(7).fill(0),horas:new Array(24).fill(0),horas_sab:new Array(24).fill(0),horas_dom:new Array(24).fill(0)}]));
+  const marcas={};
   for(const t of all){
+    const h=Math.floor(t.dep/60)%24,M=marcas[t.marca]??={familia:t.familia,lab:0,sab:0,dom:0,dias:new Array(7).fill(0)};
+    W.forEach((d,i)=>{if(t.days.has(d)){fam[t.familia].dias[i]++;M.dias[i]++;}});
     const onWD=t.days.has(WD),onSA=t.days.has(SA),onSU=t.days.has(SU);if(!onWD&&!onSA&&!onSU)continue;
-    const F=fam[t.familia];if(onWD){F.lab++;F.horas[Math.floor(t.dep/60)%24]++;}if(onSA)F.sab++;if(onSU)F.dom++;
+    const F=fam[t.familia];if(onWD){F.lab++;F.horas[h]++;M.lab++;}if(onSA){F.sab++;F.horas_sab[h]++;M.sab++;}if(onSU){F.dom++;F.horas_dom[h]++;M.dom++;}
     const fi=FAMILIES.indexOf(t.familia),ai=AVK.indexOf(AV_KEY[t.marca]);
     const seen=new Set();
     t.stops.forEach((code,i)=>{const k=stIdx.get(code);if(seen.has(k))return;seen.add(k);const x=st[k];
@@ -219,7 +224,7 @@ function stationOffer(all,stIdx,n,W,sources){
     referencia:{laborable:WD,sabado:SA,domingo:SU},
     universo:'Trenes de viajeros con horario público: Renfe (alta velocidad, larga y media distancia y Cercanías de todos los núcleos, de ancho ibérico y métrico), OUIGO e iryo.',
     fuentes:Object.fromEntries(Object.entries(sources).filter(([,s])=>s.from).map(([k,s])=>[k,{label:s.label,from:s.from,to:s.to,official:s.official}])),
-    familias:fam,av_claves:AVK,
+    familias:fam,marcas,semana:W,av_claves:AVK,
     // Por estación (mismo índice que rutas.json · estaciones): [laborable, sábado, domingo, [por familia], [ave, avlo, avant, ouigo, iryo], primero, último, destinos directos]
     por_estacion:st.map((x,k)=>[x.lab,x.sab,x.dom,x.fam,x.av,x.pri,x.ult,(x.dest.delete(k),x.dest.size)])
   };
