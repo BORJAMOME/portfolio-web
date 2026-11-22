@@ -149,6 +149,9 @@ details.cb-data[open]>summary{margin-bottom:6px}
 .cb-annex details{padding:8px 18px}
 .cb-sub2{margin:14px 0 6px;font:600 var(--fs-s) 'Plus Jakarta Sans',sans-serif;color:var(--ink)}
 .cb-split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+/* Dos rankings con la misma escala: columnas fijas para que la pista mida lo mismo en los dos */
+.cb-split .hb-eq{grid-template-columns:12ch minmax(60px,1fr) 23ch}
+@media(max-width:520px){.cb-split .hb-eq{grid-template-columns:minmax(0,1fr) 23ch}}
 @media(max-width:760px){.cb-split{grid-template-columns:1fr}}
 /* barra 100 % (composición) */
 .bar100{display:flex;height:22px;border-radius:3px;overflow:hidden;margin:6px 0 4px}
