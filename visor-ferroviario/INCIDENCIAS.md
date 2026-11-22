@@ -10,6 +10,13 @@ El workflow `incidencias-semanales.yml` consulta los lunes a las 07:23 UTC (08:2
 
 Tras guardar los datos solicita explícitamente una construcción de GitHub Pages, porque los commits realizados con `GITHUB_TOKEN` no la disparan automáticamente. Requiere `pages: write` y mantiene el despliegue actual desde la rama principal, sin cambiar la configuración del sitio.
 
+## Cómo se presenta en Cabina (22-11-2026)
+
+- **Titular y dos gráficos** con los avisos presentes en la última consulta: por tipo (accesibilidad, obras y autobús, huelgas, incidencias técnicas, información) y por núcleo.
+- **Tipo:** palabras clave del texto, en castellano y euskera; gana la primera regla que encaja, en ese orden (`cabina-incidencias.js` · `TIPOS`). Los avisos de huelga incluyen los de desconvocatoria.
+- **Núcleo:** prefijo del código de línea del GTFS (10 = Madrid, 51 = Rodalies…) o código de estación, con el mapa `nucleos` de `capas/analisis.json` (`tools/build-cabina-analisis.mjs`). Sin ese archivo, el gráfico por núcleo queda vacío y el resto funciona.
+- **Histórico mensual y listado, plegados.** La tabla mensual solo enseña los meses desde la primera consulta guardada hasta el mes en curso (antes salían diez filas vacías).
+
 ## Qué se cuenta
 
 - Una unidad por identificador de aviso de Renfe; distintos identificadores pueden referirse al mismo suceso real. No se presenta como número de averías ni como número de trenes afectados.
@@ -28,4 +35,4 @@ Origen de los datos: Renfe Operadora. Se enlazan las [condiciones de reutilizaci
 
 `node --test tools/incidencias.test.mjs` comprueba deduplicación, cambios de texto, consultas vacías, cambio de mes/año, horario de Madrid y rechazo de fuentes no válidas.
 
-`node tools/check-incidencias.mjs` verifica tabla, búsqueda, paginación, móvil y el paso a 2027 en Chromium, con una fuente simulada determinista. `node tools/check-a11y.mjs visor-ferroviario/cabina.html` comprueba accesibilidad y errores de JavaScript. Ambas comprobaciones están incorporadas al CI.
+`node tools/check-incidencias.mjs` verifica el resumen (titular y gráficos), que el histórico empiece plegado, tabla, búsqueda, paginación, móvil y el paso a 2027 en Chromium, con una fuente simulada determinista. `node tools/check-a11y.mjs visor-ferroviario/cabina.html` comprueba accesibilidad y errores de JavaScript. Ambas comprobaciones están incorporadas al CI.

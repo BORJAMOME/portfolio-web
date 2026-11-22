@@ -1,13 +1,12 @@
 #!/usr/bin/env node
-/* Análisis de la Cabina (cabina-analisis.html): precalcula las once lecturas de la página en
+/* Análisis de la Cabina (cabina-analisis.html): precalcula las diez lecturas de la página en
    visor-ferroviario/capas/analisis.json y el mapa de trenes por tramo en capas/analisis-mapa.json.
    Solo usa datos que ya están en el proyecto (sin red):
      - capas/rutas.json, capas/rutas-actividad.json y capas/oferta.json (tools/build-rutas.mjs): oferta del miércoles de
        la semana de referencia, trenes de cada ruta y trazados;
      - capas/cabina.json (tools/build-cabina.mjs): velocidad comercial entre capitales;
-     - capas/cnmc.json (tools/build-cnmc.mjs): cuota y precio en los cinco corredores de alta velocidad;
      - capas/poblacion.json, capas/demografia.json y la red IGN del visor (tools/rutas/red.mjs).
-   Todo lo que se cuenta por ruta o por estación es OFERTA (trenes programados), nunca viajeros.
+   Todo es OFERTA (trenes programados), nunca viajeros. También lo leen la Cabina (capítulo de calidad e incidencias).
      node tools/build-cabina-analisis.mjs          escribe los dos JSON
      node tools/build-cabina-analisis.mjs --check  falla si no están al día */
 import fs from 'node:fs';
@@ -25,7 +24,7 @@ const quantile = (a, q) => { const s = a.filter(Number.isFinite).sort((x, y) => 
 const metres = (a, b) => { const r = Math.PI / 180, la = (b[1] - a[1]) * r, lo = (b[0] - a[0]) * r, h = Math.sin(la / 2) ** 2 + Math.cos(a[1] * r) * Math.cos(b[1] * r) * Math.sin(lo / 2) ** 2; return 12742000 * Math.asin(Math.min(1, Math.sqrt(h))); };
 
 const R = read('capas/rutas.json'), A = read('capas/rutas-actividad.json'), OF = read('capas/oferta.json');
-const CB = read('capas/cabina.json'), CN = read('capas/cnmc.json'), POB = read('capas/poblacion.json'), DEMO = read('capas/demografia.json');
+const CB = read('capas/cabina.json'), POB = read('capas/poblacion.json'), DEMO = read('capas/demografia.json');
 const {datos, rail, F, CFG} = loadRed(V);
 const E = R.estaciones, WD = R.referencia.laborable;
 if (A.referencia[2] !== WD || OF.referencia?.laborable && OF.referencia.laborable !== WD) throw new Error('rutas.json, rutas-actividad.json y oferta.json no son de la misma semana: node tools/build-rutas.mjs');
@@ -166,14 +165,13 @@ const electrificacion = {
   diesel: elRows.filter(r => r.via.el < 50).map(r => ({n: name(r), marca: r.marca, fam: r.fam, km: r.via.km, el: r.via.el, trenes: r.lab})).sort((a, b) => b.trenes * b.km - a.trenes * a.km).slice(0, 12)
 };
 
-/* ── 10 · Cuota y precio en los cinco corredores de alta velocidad (CNMC, 2025) ── */
-const competencia = CN.corredores.map(c => {
-  const p = CN.precio_2025.find(x => x.trayecto === CN.trayecto_de[c.corredor]) || {};
-  return {corredor: c.corredor, trayecto: p.trayecto || null, viajeros: c.a2025.viajeros,
-    cuota: Object.entries(c.a2025.operadores).map(([op, o]) => ({op, cuota: o.cuota, viajeros: o.viajeros, ocupacion: o.ocupacion})).sort((a, b) => b.cuota - a.cuota),
-    precio: [['Renfe', 'AVE', p['Renfe-AVE']], ['Renfe', 'Avlo', p['Renfe-AVLO']], ['iryo', 'iryo', p.Iryo], ['OUIGO', 'OUIGO', p.OUIGO]].map(([op, producto, eur]) => ({op, producto, eur: eur ?? null})),
-    media: p.Total ?? null};
-});
+/* ── Núcleos de Cercanías para clasificar los avisos de la Cabina (cabina-incidencias.js): prefijo de línea del GTFS
+   (10 = Madrid, 51 = Rodalies…) y código de estación → núcleo. Una estación de varios núcleos se queda con el primero. ── */
+const nucleos = {prefijos: {}, estaciones: {}};
+for (const r of R.rutas.filter(r => r.fam === 'Cercanías' && r.nuc)) {
+  const pre = String(r.id).split('|')[1]; if (pre) nucleos.prefijos[pre] ??= r.nuc;
+  for (const i of r.est) if (E[i]?.k) nucleos.estaciones[E[i].k] ??= r.nuc;
+}
 
 /* ── 11 · Densidad de red por comunidad: km de vía (ejes IGN con atributos, como la Cabina) por superficie y por habitante.
    Cada tramo se asigna a la comunidad donde cae su punto medio. ── */
@@ -303,8 +301,8 @@ const mapa = {
 };
 const analisis = {
   version: 1, generado_con: 'tools/build-cabina-analisis.mjs', referencia: R.referencia,
-  fuentes: {rutas: 'Horarios publicados (Renfe, OUIGO, iryo): tools/build-rutas.mjs', cnmc: CN.licencia, poblacion: 'INE · ' + densidad.fecha_poblacion + (densidad.provisional ? ' (provisional)' : '')},
-  capitales, velocidad, rodeo, paradas, espera, finde, horas, mapa: mapa.resumen, electrificacion, competencia, cnmc_nota: CN.notas, densidad
+  fuentes: {rutas: 'Horarios publicados (Renfe, OUIGO, iryo): tools/build-rutas.mjs', poblacion: 'INE · ' + densidad.fecha_poblacion + (densidad.provisional ? ' (provisional)' : '')},
+  capitales, velocidad, rodeo, paradas, espera, finde, horas, mapa: mapa.resumen, electrificacion, densidad, nucleos
 };
 const out = JSON.stringify(analisis) + '\n', outMap = JSON.stringify(mapa) + '\n';
 if (process.argv.includes('--check')) {

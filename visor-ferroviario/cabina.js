@@ -110,7 +110,7 @@
     k.append(v,el('span','kpi-def',def),el('span','kpi-ref',ref),el('span','kpi-src',src));
     if(href){const a=el('a',null,linkText);a.href=href;k.append(a);}return k;
   }
-  function renderKpis(J){
+  function renderKpis(J,A){
     const C=J.cobertura,O=J.oferta,R=J.red,elec=R.electrificacion.find(x=>x.id==='yes')?.km||0,ref=date(O.referencia.laborable);
     const cer=O.familias.find(f=>f.nombre==='Cercanías')?.lab||0;
     $('#kpis').replaceChildren(
@@ -120,11 +120,48 @@
         ref:fmt(C.huecos_pob)+' habitantes ('+pct(C.huecos_pob,C.poblacion)+')',src:'INE '+date(C.fecha)+' · horarios '+ref,href:'#c-huecos',linkText:'Ver cuáles'}),
       kpi({label:'Trenes un laborable',value:fmt(O.trenes.lab),def:'trenes de viajeros con horario público',
         ref:'Sábado '+fmt(O.trenes.sab)+' ('+pf.format(100*(O.trenes.sab/O.trenes.lab-1))+' %); Cercanías, '+pct(cer,O.trenes.lab),src:'GTFS Renfe, iryo · PDF OUIGO · '+ref,href:'cabina-rutas.html',linkText:'Ver por ruta'}),
-      kpi({label:'Concentración',value:pf.format(O.pareto.p50),unit:'%',def:'de las estaciones suma la mitad de las paradas',
-        ref:fmt(O.pareto.n50)+' de '+fmt(O.estaciones_con_tren)+' estaciones · Gini '+pf.format(O.pareto.gini),src:'Horarios '+ref,href:'#c-pareto',linkText:'Ver el Pareto'}),
+      // Calidad (capas/analisis.json, tools/build-cabina-analisis.mjs). Sin ese archivo, vuelve el KPI de concentración.
+      ...(A?calidadKpis(A,ref):[kpi({label:'Concentración',value:pf.format(O.pareto.p50),unit:'%',def:'de las estaciones suma la mitad de las paradas',
+        ref:fmt(O.pareto.n50)+' de '+fmt(O.estaciones_con_tren)+' estaciones · Gini '+pf.format(O.pareto.gini),src:'Horarios '+ref,href:'#c-pareto',linkText:'Ver el Pareto'})]),
       kpi({label:'Red electrificada',value:pf.format(100*elec/R.km),unit:'%',def:'de '+fmt(R.km)+' km de vía (ejes IGN con atributos)',
         ref:'Ancho conocido en el '+pct(R.km-(R.ancho.find(x=>x.id==='unknown')?.km||0),R.km).replace(' %','')+' % de los km',src:'IGN + Adif · nov 2026',href:'#red',linkText:'Ver la red'})
     );
+  }
+
+  /* ════════ Calidad del servicio (capas/analisis.json) ════════
+     Resumen de cuatro lecturas del análisis de la oferta; el detalle, con más gráficos, está en cabina-analisis.html. */
+  const median=a=>{const s=a.filter(Number.isFinite).sort((x,y)=>x-y);if(!s.length)return null;const m=s.length>>1;return s.length%2?s[m]:(s[m-1]+s[m])/2;};
+  const esperaMed=A=>({punta:median(A.espera.lineas.map(l=>l.punta.espera)),valle:median(A.espera.lineas.map(l=>l.valle.espera)),n:A.espera.lineas.filter(l=>l.punta.espera!==null).length});
+  function calidadKpis(A,ref){
+    const E=esperaMed(A),T=A.finde.total,F=Object.fromEntries(A.finde.familias.map(f=>[f.fam,f]));
+    return [
+      kpi({label:'Espera en hora punta',value:pf.format(Math.round(E.punta*10)/10),unit:'min',def:'de media en el andén principal de una línea típica de Cercanías (mediana de '+E.n+' líneas)',
+        ref:'En hora valle: '+pf.format(Math.round(E.valle*10)/10)+' min',src:'Horarios '+ref,href:'#calidad',linkText:'Ver la calidad'}),
+      kpi({label:'Servicio en domingo',value:pf.format(Math.round(100*T.dom/T.lab)),unit:'%',def:'de los trenes de un laborable circula el domingo',
+        ref:'Alta velocidad '+F['Alta velocidad'].dom+' %; Cercanías '+F['Cercanías'].dom+' %; Avant '+F.Avant.dom+' %',src:'Horarios '+ref,href:'#c-q-finde',linkText:'Ver por servicio'})];
+  }
+  function renderCalidad(A){
+    const E=esperaMed(A),T=A.finde.total,H=Object.fromEntries(A.horas.familias.map(f=>[f.fam,f]));
+    const more=(href,text)=>link('cabina-analisis.html'+href,text);
+    // Espera en punta por núcleo: mediana de sus líneas.
+    const nucs=[...new Set(A.espera.lineas.map(l=>l.nuc))].map(n=>{const ls=A.espera.lineas.filter(l=>l.nuc===n&&l.punta.espera!==null);return {n,v:median(ls.map(l=>l.punta.espera)),k:ls.length};}).filter(x=>x.v!==null).sort((a,b)=>a.v-b.v);
+    let c=card('c-q-espera','Espera en hora punta, por núcleo de Cercanías','Minutos de media en la estación principal de cada línea (7:00–9:30) · mediana de las líneas del núcleo');
+    c.append(hbars(nucs.map((x,i)=>({label:x.n,values:[Math.round(x.v*10)/10],hi:i===0,extra:x.k+(x.k===1?' línea':' líneas')})),{format:v=>pf.format(v)+' min'}),
+      note('Espera media de quien llega sin mirar el horario: con un tren cada 10 minutos, 5. En los núcleos con pocas líneas, la cifra es la de una sola.'),more('#espera','Ver por línea, en punta y en valle'));
+    c=card('c-q-finde','Trenes del domingo, en % de un laborable','Por tipo de servicio · laborable = miércoles = 100 %');
+    c.append(hbars(A.finde.familias.map(f=>({label:f.fam,values:[f.dom],extra:'sábado '+f.sab+' %',hi:f.dom===Math.min(...A.finde.familias.map(x=>x.dom))})),{format:v=>fmt(v)+' %',max:100}),
+      note('Todos los servicios: '+fmt(T.dom)+' trenes el domingo frente a '+fmt(T.lab)+' un laborable.'),more('#finde','Ver por núcleo y por ruta'));
+    c=card('c-q-horas','Horas al día con trenes','Primera a última salida del miércoles de una ruta típica de cada servicio (mediana)');
+    c.append(hbars(A.horas.familias.filter(f=>f.rutas).map(f=>({label:f.fam,values:[f.horas],extra:hm(f.pri)+'–'+hm(f.ult),hi:f.fam==='Cercanías'})),{format:v=>pf.format(v)+' h',max:24}),
+      note('Mide cuánto dura el día de servicio, no cuántos trenes hay.'),more('#horas','Ver la ventana de cada servicio'));
+    c=card('c-q-mas','Más lecturas de calidad en el análisis de la oferta','Simuladores y gráficos con el detalle por ruta');
+    const ul=el('ul','plain');
+    for(const [href,t,d] of [['#capitales','Simulador de capitales','qué capitales tienen trenes frecuentes y rápidos con Madrid'],['#velocidad','Velocidad por tipo de vía','qué rutas llegarían a una velocidad objetivo'],
+      ['#rodeo','Rodeos','las rutas más y menos directas frente a la línea recta'],['#paradas','Coste de cada parada','minutos que añade cada parada intermedia'],['#mapa','Trenes por tramo','el mapa de la carga de la red']]){
+      const li=el('li');li.append(anchor(t,'cabina-analisis.html'+href),': '+d+'.');ul.append(li);}
+    c.append(ul);
+    const best=nucs[0];
+    const tit=$('#calidad-t');if(tit)tit.textContent=`En una línea típica de Cercanías se esperan ${pf.format(Math.round(E.punta*10)/10)} minutos en hora punta (en ${best.n}, ${pf.format(Math.round(best.v*10)/10)}); el domingo circula el ${fmt(100*T.dom/T.lab)} % de los trenes de un laborable y una línea de Cercanías tiene servicio ${fmt(H['Cercanías'].horas)} horas al día`;
   }
 
   /* ════════ 1 · Cobertura ════════ */
@@ -395,10 +432,14 @@
 
   async function start(){
     tocSpy();let J;
+    // Análisis de la oferta (calidad): opcional; si falla, la Cabina se pinta igual sin ese capítulo.
+    const analisis=fetch('capas/analisis.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).catch(()=>null);
     try{const r=await fetch('capas/cabina.json',{cache:'no-cache'});if(!r.ok)throw new Error(r.status);J=await r.json();}
     catch{const a=$('#alert');a.hidden=false;a.textContent='No se han podido cargar los gráficos. Los titulares de cada capítulo siguen siendo válidos; recarga la página.';return;}
     // Cada bloque falla por separado: un error no deja la página en blanco.
-    for(const [name,fn] of [['indicadores',renderKpis],['cobertura',renderCobertura],['servicio',renderServicio],['uso',renderUso],['alta velocidad · viajeros',renderViajerosAV],['competencia',renderCompetencia],['red',renderRed],['método',renderMetodo],['anexo',renderAnexo]]){
+    const A=await analisis;
+    if(A){try{renderCalidad(A);}catch(e){console.error('calidad',e);}}else{const q=$('#calidad');if(q)q.hidden=true;}
+    for(const [name,fn] of [['indicadores',J=>renderKpis(J,A)],['cobertura',renderCobertura],['servicio',renderServicio],['uso',renderUso],['alta velocidad · viajeros',renderViajerosAV],['competencia',renderCompetencia],['red',renderRed],['método',renderMetodo],['anexo',renderAnexo]]){
       try{fn(J);}catch(e){console.error(name,e);const a=$('#alert');a.hidden=false;a.textContent='No se ha podido pintar el bloque «'+name+'». El resto de la página sigue disponible.';}
     }
   }

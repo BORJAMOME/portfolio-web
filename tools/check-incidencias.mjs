@@ -28,6 +28,11 @@ try {
   page.on('pageerror', e => errors.push(e.message));
   await page.clock.install({ time: new Date('2026-11-20T23:00:00Z') });
   await page.goto('https://cabina.test/visor-ferroviario/cabina.html');
+  // Resumen visible (titular y gráficos) y el histórico plegado: se despliega como lo haría quien lo consulta.
+  await page.locator('#c-inc-tipo .hb').waitFor();
+  assert.match(await page.locator('#incidencias-t').innerText(), /^\d+ avisos activos en Cercanías/);
+  assert.equal(await page.locator('#c-incidencias').evaluate(d => d.open), false, 'El histórico empieza plegado');
+  await page.locator('#c-incidencias > summary').click();
   await page.locator('#ci-year').waitFor();
   await page.locator('#ci-year').selectOption('2026');
   const count = data.records.filter(r => r.firstSeen.startsWith('2026-')).length;
@@ -51,11 +56,12 @@ try {
   console.log('Captura móvil: ' + screenshot);
   await page.clock.setFixedTime(new Date('2027-01-01T00:30:00Z'));
   await page.reload();
+  await page.locator('#c-incidencias > summary').click();
   await page.locator('#ci-year').waitFor();
   assert.equal(await page.locator('#ci-year').inputValue(), '2027');
   assert.match(await page.locator('.ci-total').innerText(), /^0 avisos únicos incorporados en 2027$/);
   await page.locator('#ci-year').selectOption('2026');
   assert.match(await page.locator('.ci-total').innerText(), new RegExp('^' + count + ' avisos'));
   assert.deepEqual(errors, []);
-  console.log('✓ Tabla, búsqueda, paginación, móvil y cambio de año con histórico conservado.');
+  console.log('✓ Resumen por tipo y núcleo, histórico plegado, tabla, búsqueda, paginación, móvil y cambio de año con histórico conservado.');
 } finally { await browser.close(); }

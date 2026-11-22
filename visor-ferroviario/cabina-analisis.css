@@ -111,10 +111,5 @@
 .an-tip{position:absolute;pointer-events:none;background:var(--ink);color:#fff;font-size:var(--fs-xs);padding:4px 8px;border-radius:4px;white-space:nowrap;transform:translate(-50%,-130%)}
 .an-tip[hidden]{display:none}
 
-/* Competencia: dos barras alineadas por corredor */
-.an-comp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin-top:6px}
-@media(max-width:760px){.an-comp{grid-template-columns:1fr}}
-.c-renfe{background:#1d3557!important}
-
 /* Tabla de datos con scroll vertical limitado */
 .an-scroll{max-height:420px;overflow:auto}

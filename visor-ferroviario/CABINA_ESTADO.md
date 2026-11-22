@@ -89,7 +89,7 @@ Cuadro de mando con una pregunta rectora: *¿qué servicio de tren recibe cada t
 
 ## Análisis de la oferta (22-11-2026)
 
-Página `cabina-analisis.html` (+ `.css`, `.js`), enlazada desde Cabina y desde la tabla de rutas. Once lecturas, todas de **oferta** (trenes programados) salvo la de competencia (viajeros de la CNMC por corredor):
+Página `cabina-analisis.html` (+ `.css`, `.js`), enlazada desde Cabina y desde la tabla de rutas. Diez lecturas, todas de **oferta** (trenes programados); la de competencia se quitó el 22-11-2026 porque repetía el capítulo de Cabina:
 
 1. **Simulador de capitales:** listón de trenes directos al día con Madrid y de velocidad en línea recta → cuatro grupos (barras con número de capitales y población).
 2. **Simulador de velocidad:** velocidad objetivo → qué rutas llegan por tipo de vía (dispersión km × duración y % por tipo).
@@ -100,8 +100,7 @@ Página `cabina-analisis.html` (+ `.css`, `.js`), enlazada desde Cabina y desde 
 7. **Horas de servicio:** primera y última salida de una ruta típica de cada servicio.
 8. **Trenes por tramo:** mapa SVG propio (zoom, arrastre y clic; vistas «Todos», «Media y larga distancia» y «Cercanías»), carga diferida de `capas/analisis-mapa.json`. Una sola red (ejes IGN): Cercanías se casa con el eje por el que circula (punto cada 25 m → eje IGN más cercano a ≤ 35 m, en paralelo y sin ancho estándar; la línea cuenta si recorre ≥ 40 % del eje o 150 m). Casa el 99 % de su longitud; 11,6 km de vía «hs» reciben Cercanías (ancho ibérico compartido). Las rutas con trazado incompleto suman en sus tramos conocidos.
 9. **Electrificación:** % de trenes·km bajo catenaria por servicio.
-10. **Competencia:** cuota y precio por corredor (CNMC 2025), con selector.
-11. **Densidad de red:** m/km² y km por 100.000 habitantes por comunidad.
+10. **Densidad de red:** m/km² y km por 100.000 habitantes por comunidad.
 
 **Cómo se genera:** `node tools/build-cabina-analisis.mjs` (sin red, unos 6 s) → `capas/analisis.json` (≈ 130 KB) y `capas/analisis-mapa.json` (≈ 850 KB). `--check` en la CI y en la tarea semanal, que lo regenera después de `build-cabina`.
 
@@ -113,3 +112,11 @@ Página `cabina-analisis.html` (+ `.css`, `.js`), enlazada desde Cabina y desde 
 **Comprobado:** `build-cabina-analisis --check`, `repair-demografia --check`, `build-cabina --check`, `check-links`, `version-assets --check`, `build-mapa --check`, `build-en --check`, `test-heatmap`, `check-heatmap`, `check-incidencias` y `check-a11y` (cabina, cabina-rutas y cabina-analisis) sin infracciones; escritorio y móvil sin scroll horizontal.
 
 **Límites:** sin viajeros por ruta ni estación; en estaciones y túneles paralelos (Chamartín – Nuevos Ministerios) un eje puede recoger todas las líneas que entran; 12 rutas (24 trenes) sin recorrido en el catálogo no se dibujan; las caídas de fin de semana de Cercanías se leen por núcleo porque algunas líneas cambian de nombre el fin de semana.
+
+## Auditoría de Cabina (22-11-2026): calidad e incidencias
+
+- **Capítulo nuevo «3 · ¿Con qué calidad?»** (la pregunta rectora promete calidad y solo había un ranking de velocidad): espera en hora punta por núcleo de Cercanías, trenes del domingo por servicio y horas de servicio, con enlace a cada lectura del análisis. Lee `capas/analisis.json` (`cabina.js` · `renderCalidad`); sin ese archivo, el capítulo se oculta.
+- **KPIs:** «Concentración» (sigue en el Pareto del capítulo 2) deja sitio a «Espera en hora punta» (mediana de las líneas de Cercanías) y «Servicio en domingo». Seis KPIs.
+- **Incidencias:** titular con conclusión, avisos activos por tipo y por núcleo, y el histórico mensual y el listado plegados (de 2.389 a 535 px en escritorio). Detalle en `INCIDENCIAS.md`.
+- **Duplicados:** se quita del análisis el capítulo de competencia (lo cubre Cabina).
+- **Pendiente de la auditoría:** sustituir el gráfico «velocidad desde Madrid» (10 barras casi iguales) por el ranking de todas las capitales; titular de Red con el cruce red ↔ servicio (el 34 % de la red sin catenaria lleva el 7,7 % del servicio de media y larga distancia); confirmar «sin IVA» en la nota del precio; rotular el primer año en mercancías.

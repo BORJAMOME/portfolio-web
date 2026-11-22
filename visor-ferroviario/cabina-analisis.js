@@ -386,32 +386,7 @@
     setH2('electrificacion-t',`El ${p0.format(E.total.si)} % del servicio de media y larga distancia circula bajo catenaria; en Regional, el ${p0.format(R.Regional.si)} %`);
   }
 
-  /* ══ 10 · Competencia ══ */
-  function comp(D){
-    const C=D.competencia,c=card('c-comp','Cuota de viajeros y precio medio por corredor','Elige un corredor. Mismos colores en los dos gráficos: Renfe (AVE y Avlo), iryo y OUIGO · CNMC, año 2025');
-    const seg=el('div','an-seg');seg.setAttribute('role','group');seg.setAttribute('aria-label','Corredor');c.append(seg);
-    const read=el('p','an-read');read.setAttribute('aria-live','polite');const two=el('div','an-comp');c.append(read,two);
-    const OPC={Renfe:'c-renfe',iryo:'c-iryo',OUIGO:'c-ouigo'},PRC={AVE:'c-ave',Avlo:'c-avlo',iryo:'c-iryo',OUIGO:'c-ouigo'};
-    const btns=C.map((x,i)=>{const b=el('button',null,x.corredor.replace('Madrid-','Madrid–'));b.type='button';b.onclick=()=>show(i);seg.append(b);return b;});
-    const show=i=>{btns.forEach((b,k)=>b.setAttribute('aria-pressed',String(k===i)));const x=C[i];
-      const a=el('div'),b=el('div');
-      const cu=hbars(x.cuota.map(o=>({label:o.op,values:[o.cuota],segCls:OPC[o.op],extra:pf.format(o.viajeros)+' M viajeros · ocup. '+f1(o.ocupacion)+' %'})),{format:v=>f1(v)+' %',max:100});
-      const pr=x.precio.filter(p=>p.eur!==null),pb=hbars(pr.map(p=>({label:p.producto+(p.op==='Renfe'?' (Renfe)':''),values:[p.eur],segCls:PRC[p.producto]})),{format:v=>pf.format(v)+' €',max:niceMax(Math.max(...C.flatMap(y=>y.precio.map(p=>p.eur||0))))});
-      a.append(el('h4',null,'¿Quién lleva más viajeros? (cuota)'),cu);
-      b.append(el('h4',null,'¿Cuánto cuesta de media un viaje?'),pb,note('Precio medio por viaje (CNMC, 2025)'+(x.media?'; media del corredor: '+pf.format(x.media)+' €':'')+(x.precio.some(p=>p.eur===null)?'. Sin dato de '+x.precio.filter(p=>p.eur===null).map(p=>p.producto).join(', ')+'.':'.')));
-      two.replaceChildren(a,b);
-      const lead=x.cuota[0],cheap=[...pr].sort((p,q)=>p.eur-q.eur)[0],ave=pr.find(p=>p.producto==='AVE');
-      read.replaceChildren(x.corredor.replace('Madrid-','Madrid–')+': ',el('strong',null,lead.op+' lleva el '+f1(lead.cuota)+' %'),' de los viajeros. El billete más barato de media es '+cheap.producto+' ('+pf.format(cheap.eur)+' €)'+(ave?'; el AVE cuesta '+pf.format(ave.eur/cheap.eur)+' veces más.':'.'));
-    };
-    show(C.findIndex(x=>x.corredor==='Madrid-Barcelona')>=0?C.findIndex(x=>x.corredor==='Madrid-Barcelona'):0);
-    c.append(note('Cuota = viajeros del operador ÷ viajeros del corredor (incluye los trayectos intermedios: Madrid–Zaragoza cuenta en Madrid–Barcelona). Precio: solo vale 2025 completo, porque la CNMC cambió el método en 2026. Que el más caro tenga más cuota no dice que el precio no importe: Renfe también ofrece más trenes y más destinos.'),
-      dataTable([{label:'Corredor',key:'corredor'},...['Renfe','iryo','OUIGO'].map(op=>({label:'Cuota '+op+' %',get:x=>f1(x.cuota.find(o=>o.op===op)?.cuota)})),...['AVE','Avlo','iryo','OUIGO'].map(p=>({label:'Precio '+p+' €',get:x=>{const v=x.precio.find(q=>q.producto===p)?.eur;return v===null||v===undefined?'—':pf.format(v);},opt:true}))],C,'Cuota de viajeros y precio medio, 2025'));
-    const rc=C.map(x=>x.cuota.find(o=>o.op==='Renfe')?.cuota).filter(Number.isFinite);
-    const prices=x=>x.precio.filter(p=>p.eur!==null),aveMax=C.every(x=>{const p=prices(x);return p.length&&p.sort((a,b)=>b.eur-a.eur)[0].producto==='AVE';}),ouMin=C.every(x=>{const p=prices(x);return p.length&&p.sort((a,b)=>a.eur-b.eur)[0].producto==='OUIGO';});
-    setH2('competencia-t',`Renfe${aveMax?', con el billete más caro (AVE),':''} lleva entre el ${p0.format(Math.min(...rc))} y el ${p0.format(Math.max(...rc))} % de los viajeros de cada corredor`+(ouMin?'; OUIGO es el más barato en los cinco':''));
-  }
-
-  /* ══ 11 · Densidad de red ══ */
+  /* ══ 10 · Densidad de red ══ */
   function densidad(D){
     const Dn=D.densidad,rows=Dn.comunidades,c=card('c-densidad','Densidad de red por comunidad autónoma','España peninsular · km de vía de los ejes IGN con atributos ('+fmt(Dn.total.km)+' km), asignados por su punto medio · población INE '+Dn.fecha_poblacion+(Dn.provisional?' (provisional)':''));
     const two=el('div','an-two');c.append(two);
@@ -441,8 +416,7 @@
       ['7 · Horas de servicio','Última salida − primera salida del miércoles en cada ruta; mediana por servicio.'],
       ['8 · Trenes por tramo','Suma de los trenes del miércoles que pasan por cada eje IGN (dos sentidos): las rutas de media y larga distancia por su recorrido y Cercanías casada con el eje por el que circula.'],
       ['9 · Electrificación','% de trenes·km (trenes × km de la ruta) por vía electrificada.'],
-      ['10 · Competencia','Cuota de viajeros y precio medio por viaje de la CNMC (2025).'],
-      ['11 · Densidad','km de vía ÷ superficie (m/km²) y ÷ población (km por 100.000 habitantes).']]));
+      ['10 · Densidad','km de vía ÷ superficie (m/km²) y ÷ población (km por 100.000 habitantes).']]));
     fix.append(el('p','cb-note','Antes de calcular se revisaron los datos. Esto se ha corregido en origen:'),dl([
       ['Duración de las líneas de Cercanías (rutas.json)','La mediana y el tren más rápido mezclaban trenes que solo hacen un trozo de la línea: la C5 de Madrid salía con un «tren más rápido» de 3 minutos. Ahora se calculan solo con los trenes que van de un extremo al otro (C5: 60 y 59 min). Lo usan también la tabla de rutas y la Cabina.'],
       ['Polígonos de comunidades y provincias (demografia.json)','En 13 territorios los anillos llegaban mal anidados: un contorno aparecía como «agujero» de un islote. En Cataluña era el contorno principal, así que un punto de Barcelona quedaba fuera de la comunidad: 195 estaciones y 2.155 km de vía no caían en ninguna comunidad. En el resto (Galicia, Girona, Tarragona…) eran islotes y no cambiaban ningún cálculo, pero se reparan igual. Con tools/repair-demografia.mjs ya no queda ninguna estación fuera, y las áreas cuadran con las del INE (Cataluña 32.739 frente a 32.118 km², con proyección aproximada).'],
@@ -456,7 +430,6 @@
     src.append(dl([
       ['Horarios','Renfe (GTFS de alta velocidad, larga y media distancia y Cercanías, CC BY 4.0), OUIGO (PDF oficial) e iryo (GTFS comunitario, no oficial). Semana del '+ref.semana+'; día de referencia, el miércoles '+ref.laborable+'.'],
       ['Red','IGN (ejes ferroviarios) con las correcciones del visor (ancho y electrificación de Adif).'],
-      ['CNMC','Viajeros, cuota y precio por corredor de alta velocidad. '+D.fuentes.cnmc],
       ['Población','INE: capitales a 1-1-2025 y comunidades a '+D.densidad.fecha_poblacion+(D.densidad.provisional?' (provisional)':'')+'.'],
       ['Qué no responde','Viajeros por ruta, estación o tren (no hay fuente pública), puntualidad (sin histórico) ni tiempo real de acceso a la estación. Mes y año serían estimaciones con semana tipo: aquí solo se usa el miércoles, salvo en el fin de semana.']]));
   }
@@ -464,7 +437,7 @@
   function fail(msg){const a=$('#alert');a.hidden=false;a.textContent=msg;}
   fetch('capas/analisis.json',{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error();return r.json();}).then(D=>{
     $('#ref').textContent='Día de referencia: '+longDate(D.referencia.laborable)+'. Todos los trenes de viajeros con horario público (Renfe, también Cercanías, OUIGO e iryo).';
-    for(const [f,n] of [[s1,'simulador de capitales'],[s2,'simulador de velocidad'],[rodeo,'rodeos'],[paradas,'paradas'],[espera,'espera'],[finde,'fin de semana'],[horas,'horas de servicio'],[mapaShell,'mapa'],[elec,'electrificación'],[comp,'competencia'],[densidad,'densidad'],[metodo,'método']]){
+    for(const [f,n] of [[s1,'simulador de capitales'],[s2,'simulador de velocidad'],[rodeo,'rodeos'],[paradas,'paradas'],[espera,'espera'],[finde,'fin de semana'],[horas,'horas de servicio'],[mapaShell,'mapa'],[elec,'electrificación'],[densidad,'densidad'],[metodo,'método']]){
       try{f(D);}catch(e){console.error(n,e);fail('No se ha podido pintar «'+n+'». El resto de la página funciona.');}
     }
   }).catch(()=>fail('No se han podido cargar los datos del análisis (capas/analisis.json). Recarga la página para reintentar.'));
