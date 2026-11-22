@@ -17,11 +17,12 @@ La tabla de rutas tiene su propio estado en `RUTAS_ESTADO.md`.
 - **Viajeros:** líneas mes a mes por año (2019 y desde 2022; 2020–2021 solo en la tabla), selector de servicio, interanual y frente a 2019; tabla con todos los meses. Se actualiza con la tarea semanal (`build-cabina-mercado.mjs`), que recoge el mes nuevo del INE.
 - **Colores de operador** (de los logos oficiales): Renfe #5b064b, AVE #001f4c, Avlo #5fcbc6 (con borde #2a8a85), OUIGO #e3006a, iryo #cb151b. Los anchos de vía, que usaban los colores antiguos, pasan a `g-std`, `g-met` y `g-mix`.
 - **Ocupación:** fichas por operador (ocupación y % de viajeros) y puntos por corredor con cuota y viajeros en el tooltip.
-- **Logos:** `img/marcas/*.svg`, Wikimedia Commons (dominio público): Cercanías, AVE (2026), Avlo, Intercity, OUIGO (el que usa es.wikipedia) e iryo. **Faltan Regional y Avant**: Wikimedia devolvió 429; el código oculta el logo si no existe.
+- **Logos:** `img/marcas/*.svg`, Wikimedia Commons (dominio público): Cercanías, AVE (2026), Avlo, Intercity, OUIGO (el que usa es.wikipedia) e iryo. Regional (dominio público) y Avant (Commons lo marca **CC BY-SA 3.0**, no dominio público) añadidos el 22-11-2026; SHA-1 idéntico al de Commons. El código oculta el logo si no existe.
+- **Codificación:** el commit `78b0ee6` dejó `cabina.html` y `cabina.css` con doble codificación UTF-8 («DÃ³nde»); corregido en el commit siguiente. Antes de confirmar, buscar `Ã` o `Â` en los archivos tocados.
 
 **Comprobado:** `build-rutas` sin descargas reproduce `oferta.json` y `rutas.json` idénticos salvo la fecha antes de añadir campos; total de la semana del miércoles = 5.909 (igual que el KPI); curva de población monótona y % = habitantes ÷ población; `check-a11y` sin infracciones en `cabina.html` y `cabina-rutas.html`; `build-cabina --check`, `check-links`, `version-assets --check` y `sanity`; sin scroll horizontal a 390 px; filtros probados (Andalucía · Sevilla · Regional = 22 estaciones).
 
-**Siguiente:** descargar `Renfe_Regional_Logotipo.svg` y `Renfe_Avant_Logotipo.svg` a `img/marcas/regional.svg` y `avant.svg` cuando Wikimedia deje de limitar. Validación: aparecen en «Trenes por servicio» sin 404 en consola.
+**Siguiente:** revisar y fusionar el PR #165. Validación: CI en verde y Cabina publicada con acentos y los ocho logos de «Trenes por servicio».
 
 ## Qué es ahora
 
