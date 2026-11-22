@@ -86,3 +86,41 @@ Cuadro de mando con una pregunta rectora: *¿qué servicio de tren recibe cada t
 - **Visor:** llevar las Cercanías de ancho ibérico e iryo a las fichas, para que tengan el mismo universo que Cabina.
 
 **Riesgo:** `tools/build-cabina.mjs` tarda unos 60 s por el cálculo de km (Dijkstra por pareja). Si crece, conviene guardar en caché los grafos por variante.
+
+## Análisis de la oferta (22-11-2026)
+
+Página `cabina-analisis.html` (+ `.css`, `.js`), enlazada desde Cabina y desde la tabla de rutas. Diez lecturas, todas de **oferta** (trenes programados); la de competencia se quitó el 22-11-2026 porque repetía el capítulo de Cabina:
+
+1. **Simulador de capitales:** listón de trenes directos al día con Madrid y de velocidad en línea recta → cuatro grupos (barras con número de capitales y población).
+2. **Simulador de velocidad:** velocidad objetivo → qué rutas llegan por tipo de vía (dispersión km × duración y % por tipo).
+3. **Rodeos:** las 12 rutas con más y con menos exceso sobre la recta (≥ 50 km en recta; por defecto, ≥ 3 trenes al día).
+4. **Coste de una parada:** pendiente minutos ÷ paradas dentro de cada relación; mediana por servicio y ejemplo con selector.
+5. **Espera media en Cercanías:** Σh² ÷ (2Σh) en la estación con más trenes de cada línea y en el sentido con más salidas (punta y valle).
+6. **Fin de semana:** sábado y domingo en % del miércoles, por servicio y por núcleo.
+7. **Horas de servicio:** primera y última salida de una ruta típica de cada servicio.
+8. **Trenes por tramo:** mapa SVG propio (zoom, arrastre y clic; vistas «Todos», «Media y larga distancia» y «Cercanías»), carga diferida de `capas/analisis-mapa.json`. Una sola red (ejes IGN): Cercanías se casa con el eje por el que circula (punto cada 25 m → eje IGN más cercano a ≤ 35 m, en paralelo y sin ancho estándar; la línea cuenta si recorre ≥ 40 % del eje o 150 m). Casa el 99 % de su longitud; 11,6 km de vía «hs» reciben Cercanías (ancho ibérico compartido). Las rutas con trazado incompleto suman en sus tramos conocidos.
+9. **Electrificación:** % de trenes·km bajo catenaria por servicio.
+10. **Densidad de red:** m/km² y km por 100.000 habitantes por comunidad.
+
+**Cómo se genera:** `node tools/build-cabina-analisis.mjs` (sin red, unos 6 s) → `capas/analisis.json` (≈ 130 KB) y `capas/analisis-mapa.json` (≈ 850 KB). `--check` en la CI y en la tarea semanal, que lo regenera después de `build-cabina`.
+
+**Correcciones de datos hechas para esta página:**
+- `build-rutas`: en Cercanías, `dur`/`durMin`/`par` solo con los trenes de extremo a extremo (la C5 salía con 3 min de tren más rápido; ahora 59). Nuevos datos aditivos: `oferta.capitales_trenes` y, en `rutas-actividad.json`, `tiempos`, `esperas` y `traces.carga`.
+- `demografia.json`: 13 territorios con anillos mal anidados; en Cataluña, 195 estaciones caían fuera de la comunidad. Reparado con `tools/repair-demografia.mjs` (`--check` en la CI).
+- Cada relación cuenta una vez (no por sentido); el rodeo negativo (≤ −2 %, imprecisión) cuenta como 0; en el mapa, Cercanías suma ida y vuelta.
+
+**Comprobado:** `build-cabina-analisis --check`, `repair-demografia --check`, `build-cabina --check`, `check-links`, `version-assets --check`, `build-mapa --check`, `build-en --check`, `test-heatmap`, `check-heatmap`, `check-incidencias` y `check-a11y` (cabina, cabina-rutas y cabina-analisis) sin infracciones; escritorio y móvil sin scroll horizontal.
+
+**Límites:** sin viajeros por ruta ni estación; en estaciones y túneles paralelos (Chamartín – Nuevos Ministerios) un eje puede recoger todas las líneas que entran; 12 rutas (24 trenes) sin recorrido en el catálogo no se dibujan; las caídas de fin de semana de Cercanías se leen por núcleo porque algunas líneas cambian de nombre el fin de semana.
+
+## Auditoría de Cabina (22-11-2026): calidad e incidencias
+
+- **Capítulo nuevo «3 · ¿Con qué calidad?»** (la pregunta rectora promete calidad y solo había un ranking de velocidad): espera en hora punta por núcleo de Cercanías, trenes del domingo por servicio y horas de servicio, con enlace a cada lectura del análisis. Lee `capas/analisis.json` (`cabina.js` · `renderCalidad`); sin ese archivo, el capítulo se oculta.
+- **KPIs:** «Concentración» (sigue en el Pareto del capítulo 2) deja sitio a «Espera en hora punta» (mediana de las líneas de Cercanías) y «Servicio en domingo». Seis KPIs.
+- **Incidencias:** titular con conclusión, avisos activos por tipo y por núcleo, y el histórico mensual y el listado plegados (de 2.389 a 535 px en escritorio). Detalle en `INCIDENCIAS.md`.
+- **Duplicados:** se quita del análisis el capítulo de competencia (lo cubre Cabina).
+- **Velocidad desde Madrid:** el top 10 de velocidad comercial (barras casi iguales, faltaban 12 capitales) pasa a las 8 más rápidas y las 8 más lentas de las 45 capitales con tren directo, en línea recta (`analisis.json` · `capitales`), con la misma escala en las dos listas (`.hb-eq`). Sin `analisis.json` se pinta el gráfico anterior.
+- **Titular de Red:** cruce red ↔ servicio, calculado en la página con `analisis.json` · `electrificacion.total` (34 % de la red sin catenaria → 7,7 % de los trenes·km de media y larga distancia). El titular escrito por `build-cabina` queda como respaldo.
+- **Precio (CNMC ds_24410):** se quita «sin IVA, media de todas las tarifas vendidas»: la ficha del catálogo (consultada el 22-11-2026) no lo dice y la nota metodológica no está publicada en el catálogo. Pendiente de confirmar con la CNMC (cnmcdata@cnmc.es).
+- **Mercancías:** el primer y el último año llevan la cifra con decimal, como el titular.
+- **Cobertura en tabla de calor:** la curva de población servida (tres líneas sobre eje logarítmico) pasa a una tabla de calor trenes al día × distancia con la cifra en cada celda (`.heat`, rampa de un solo tono en 6 tramos, texto oscuro o blanco con contraste ≥ 4,5:1) y la celda del titular (≥ 10 trenes a 5 km) recuadrada. La tabla es los datos: se quita el «Ver los datos» duplicado.

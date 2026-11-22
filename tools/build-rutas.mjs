@@ -155,7 +155,7 @@ function build(today){
     r.trains.push(t);
   }
   const median=a=>{if(!a.length)return null;const s=[...a].sort((x,y)=>x-y);return s[Math.floor(s.length/2)];};
-  const out=[];
+  const out=[],tiempos={},esperas={};
   for(const r of rows.values()){
     const per=W.map(day=>r.trains.filter(t=>t.days.has(day)));
     const week7=per.reduce((a,x)=>a+x.length,0);
@@ -166,28 +166,40 @@ function build(today){
     let o=r.o,d=r.d;
     if(r.familia==='Cercanías'){const f=new Map();for(const t of base){const k=[t.stops[0],t.stops.at(-1)].sort().join('>');f.set(k,(f.get(k)||0)+1);}
       const top=[...f].sort((a,b)=>b[1]-a[1])[0];if(top)[o,d]=top[0].split('>');}
+    // Duración y paradas: en Cercanías, solo los trenes que van de un extremo al otro de la fila. Con todos, la mediana y el
+    // mínimo mezclaban trenes que hacen un trozo de la línea (la C5 de Madrid salía con un «tren más rápido» de 3 minutos).
+    const full=r.familia==='Cercanías'?base.filter(t=>o!==d&&[o,d].includes(t.stops[0])&&[o,d].includes(t.stops.at(-1))&&t.stops[0]!==t.stops.at(-1)):base;
     out.push({
       id:r.key,src:r.src,op:r.operador,emp:r.empresa,fam:r.familia,marca:r.marca,nuc:r.nucleo,color:r.color,
       o:o?stIdx.get(o):null,d:d?stIdx.get(d):null,linea:r.long?r.long.replace(/\s+-\s*/g,' – '):null,
       lab:wd.length,sab:per[5].length,dom:per[6].length,sem:week7,mes:Math.round(week7*4.35),anio:week7*52,
       dias:per.map(x=>x.length),
       pri:base.length?Math.min(...base.map(t=>t.dep)):null,ult:base.length?Math.max(...base.map(t=>t.dep)):null,
-      dur:median(base.map(t=>t.arr-t.dep)),durMin:base.length?Math.min(...base.map(t=>t.arr-t.dep)):null,
-      par:median(base.map(t=>t.stops.length)),
+      dur:median(full.map(t=>t.arr-t.dep)),durMin:full.length?Math.min(...full.map(t=>t.arr-t.dep)):null,
+      par:median(full.map(t=>t.stops.length)),
       // Salidas del miércoles: [minuto, índice de la estación de origen del tren] (en Cercanías, de cada extremo).
       sal:wd.map(t=>[t.dep,stIdx.get(t.stops[0])]).sort((a,b)=>a[0]-b[0]),
       est:[...st].sort((a,b)=>a-b),
       num:[...new Set(r.trains.map(t=>t.number).filter(Boolean))].sort().slice(0,60),
       desde:sd[0],hasta:sd.at(-1)
     });
+    // Trenes del miércoles (los mismos de dur/durMin): [salida, minutos de viaje, paradas]. Para el análisis del tiempo por parada.
+    if(wd.length)tiempos[r.key]=full.filter(t=>wd.includes(t)).map(t=>[t.dep,t.arr-t.dep,t.stops.length]).sort((x,y)=>x[0]-y[0]);
+    // Cercanías: salidas del miércoles en la estación con más trenes de la línea, en el sentido con más salidas (el sentido
+    // lo da la parada siguiente). Es la espera que ve quien sube en la estación principal, no solo en un extremo.
+    if(r.familia==='Cercanías'&&wd.length){const calls=new Map();for(const t of wd)for(const c of new Set(t.stops))calls.set(c,(calls.get(c)||0)+1);
+      const st=[...calls].sort((a,b)=>b[1]-a[1]||String(a[0]).localeCompare(String(b[0])))[0][0],dirs=new Map();
+      for(const t of wd){const i=t.stops.indexOf(st);if(i<0||i===t.stops.length-1||t.times[i]===null||t.times[i]===undefined)continue;const nx=t.stops[i+1];if(!dirs.has(nx))dirs.set(nx,[]);dirs.get(nx).push(t.times[i]);}
+      const top=[...dirs].sort((a,b)=>b[1].length-a[1].length)[0];
+      if(top)esperas[r.key]={est:stIdx.get(st),hacia:stIdx.get(top[0]),sal:top[1].sort((x,y)=>x-y)};}
   }
   out.sort((a,b)=>b.sem-a.sem||String(a.id).localeCompare(String(b.id)));
   const traces=viaPorRuta(out,rows,stOut,RED,catalog,path.join(CACHE,SOURCES.cercanias.file),W);
-  const activity = {version:1, referencia:W, rutas:{}, traces};
+  const activity = {version:1, referencia:W, rutas:{}, traces, tiempos, esperas};
   for(const row of out) activity.rutas[row.id] = routeActivity(rows.get(row.id).trains, stIdx, W);
 
   const oferta=stationOffer(all,stIdx,stOut.length,W,sources);
-  oferta.capitales=capitalPairs(all,stOut,stIdx,WD);
+  {const cp=capitalPairs(all,stOut,stIdx,WD);oferta.capitales=cp.pares;oferta.capitales_trenes=cp.trenes;}   // [capital A, capital B, trenes directos A→B el miércoles]
   const totals={};for(const k of ['renfe','cercanias','ouigo','iryo'])totals[k]={lab:out.filter(r=>r.src===k).reduce((a,r)=>a+r.lab,0),filas:out.filter(r=>r.src===k).length};
   return {version:1,generado:today,generado_con:'tools/build-rutas.mjs',
     referencia:{semana:W[0],laborable:WD,sabado:W[5],domingo:W[6],
@@ -231,15 +243,18 @@ function capitalPairs(all,stOut,stIdx,WD){
   const caps=JSON.parse(fs.readFileSync(path.join(V,'capas','poblacion.json'),'utf8')).units.filter(u=>u.kind==='capital');
   const capOf=new Map();
   for(const s of stOut){if(!s.c)continue;let best=null,bd=12000;for(const c of caps){const d=metres(s.c,c.coordinates);if(d<bd){bd=d;best=c.id;}}if(best)capOf.set(s.k,best);}
-  const best=new Map();
+  const best=new Map(),count=new Map();
   for(const t of all){
     if(t.familia==='Cercanías'||!t.days.has(WD))continue;
+    // Trenes directos al día entre dos capitales (cada tren cuenta una vez por pareja y sentido, pare en la estación que pare).
+    {const seen=new Set();t.stops.forEach((s,i)=>{const ci=capOf.get(s);if(!ci)return;for(let j=i+1;j<t.stops.length;j++){const cj=capOf.get(t.stops[j]);if(cj&&cj!==ci)seen.add(ci+'>'+cj);}});
+      for(const k of seen)count.set(k,(count.get(k)||0)+1);}
     for(let i=0;i<t.stops.length;i++){const ci=capOf.get(t.stops[i]),ti=t.times[i];if(!ci||ti===null||ti===undefined)continue;
       for(let j=i+1;j<t.stops.length;j++){const cj=capOf.get(t.stops[j]),tj=t.times[j];if(!cj||cj===ci||tj===null||tj===undefined)continue;
         const key=t.stops[i]+'>'+t.stops[j],min=tj-ti;if(min<=0)continue;
         const x=best.get(key);if(!x||min<x[2])best.set(key,[t.stops[i],t.stops[j],min,t.marca,t.operador,t.familia,ci,cj]);}}
   }
-  return [...best.values()];
+  return {pares:[...best.values()],trenes:[...count].map(([k,n])=>[...k.split('>'),n]).sort((x,y)=>x[0].localeCompare(y[0])||x[1].localeCompare(y[1]))};
 }
 /* OUIGO desde capas/horarios.json (PDF oficial): registros origen-destino [paradas, t0, patrón, calendario]. Cada día se unen
    los que comparten estación y hora de salida o de llegada (componentes conexas, como oferta.js · stationDay); un tren = una
@@ -285,7 +300,7 @@ function ouigoFromAtlas(){
 const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().slice(0,5);
 const GAUGE_GROUP=v=>['1668','1435','1000','mixed'].includes(v)?v:'unknown';
 function viaPorRuta(out,rows,stOut,RED,catalog,shapesFile,week){
-  const WD=week[2],traces={routes:{}, routeDays:{}, geometries:{}};
+  const WD=week[2],traces={routes:{}, routeDays:{}, geometries:{}, carga:{}};
   const S=JSON.parse(fs.readFileSync(path.join(V,'capas','servicios.json'),'utf8'));
   const feat=RED.datos.rail.features,F=RED.F,code=sid=>S.stations[sid]?.official_id;
   // Estaciones de ancho métrico: las de las Cercanías métricas del visor (el catálogo de Renfe no las marca todas).
@@ -316,6 +331,13 @@ function viaPorRuta(out,rows,stOut,RED,catalog,shapesFile,week){
       traces.routes[row.id]=ids.map(id=>'gtfs:'+id);
       traces.routeDays[row.id]=days.map(ids=>ids.map(id=>'gtfs:'+id));
       for(const id of ids) traces.geometries['gtfs:'+id]=shapes.get(id).xy;
+      // Trenes del miércoles por segmento del dibujo: cada tren ocupa el trozo entre su primera y su última parada (el dibujo
+      // es de la línea entera). Se guarda comprimido: [[trenes, segmentos seguidos], …], en el orden de los puntos.
+      {const diff=new Map();
+        for(const t of src.trains){if(!t.days.has(WD)||!shapes.has(t.shape))continue;const a=posOn(t.shape,t.stops[0]),b=posOn(t.shape,t.stops.at(-1));if(a===null||b===null||a===b)continue;
+          const {cum}=shapes.get(t.shape),lo=Math.min(a,b),hi=Math.max(a,b);let i0=cum.findIndex(c=>c>=lo),i1=cum.findLastIndex(c=>c<=hi);if(i0<0||i1<=i0)continue;
+          if(!diff.has(t.shape))diff.set(t.shape,new Int32Array(cum.length));const d=diff.get(t.shape);d[i0]++;d[i1]--;}
+        for(const [id,d] of diff){const runs=[];let c=0;for(let i=0;i<d.length-1;i++){c+=d[i];if(runs.length&&runs.at(-1)[0]===c)runs.at(-1)[1]++;else runs.push([c,1]);}traces.carga['gtfs:'+id]=runs;}}
       // Solo los trenes que van de un extremo al otro de la línea (los extremos de la fila): muchos hacen solo un tramo y
       // su dibujo puede ser el de la línea entera (con 3 minutos de viaje saldrían 600 km/h).
       const ends=new Set([stOut[row.o]?.k,stOut[row.d]?.k]);

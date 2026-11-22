@@ -1,0 +1,115 @@
+/* Análisis de la oferta: piezas propias sobre cabina.css (mismos tokens). Prefijo an-.
+   Colores de tipo de vía validados (dataviz · validate_palette, claro): alta velocidad, mixta y convencional pasan banda de
+   luminosidad, croma, separación con daltonismo (ΔE ≥ 10) y contraste ≥ 3:1. Rampa secuencial de un solo tono para el mapa. */
+:root{--t-av:#3a5ba8;--t-mx:#c2610f;--t-cv:#18916f;--q1:#c3cddd;--q2:#98aac9;--q3:#6a83b0;--q4:#405f96;--q5:#253f72;--q6:#101d3d}
+
+/* Simulador: título, explicación y controles a la izquierda; gráfico a la derecha */
+.an-sim{display:grid;grid-template-columns:minmax(260px,4fr) minmax(0,8fr);gap:var(--gap);align-items:start}
+@media(max-width:900px){.an-sim{grid-template-columns:1fr}}
+.an-panel{background:var(--wash);border:1px solid var(--line);border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.an-panel h3{margin:0;font:600 var(--fs-m)/1.35 'Plus Jakarta Sans',sans-serif}
+.an-panel p{margin:0;font-size:var(--fs-s);line-height:1.5}
+.an-panel .an-how{font-size:var(--fs-xs);color:var(--muted)}
+.an-ctrl{display:flex;flex-direction:column;gap:4px}
+.an-ctrl label{font-size:var(--fs-s);font-weight:600;display:flex;justify-content:space-between;gap:8px}
+.an-ctrl output{font:600 var(--fs-m) 'Plus Jakarta Sans',sans-serif;color:var(--navy);font-variant-numeric:tabular-nums}
+.an-ctrl input[type=range]{width:100%;min-height:var(--hit);accent-color:var(--navy);margin:0}
+.an-ctrl .an-scale{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+.an-reset{align-self:flex-start;font:inherit;font-size:var(--fs-s);min-height:var(--hit);padding:4px 12px;border:1px solid var(--line-strong);border-radius:5px;background:var(--card);color:var(--navy);cursor:pointer}
+.an-reset:hover{background:var(--paper)}
+.an-result{margin:0;padding:10px 12px;border-left:3px solid var(--navy);background:var(--card);border-radius:0 6px 6px 0;font-size:var(--fs-s)}
+.an-result strong{color:var(--navy)}
+.an-chart{min-height:280px}
+
+/* Totales del simulador 1 */
+.an-totals{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:4px 0 14px}
+.an-total{border:1px solid var(--line);border-radius:6px;padding:8px 10px}
+.an-total span{display:block;font-size:var(--fs-xs);color:var(--muted)}
+.an-total strong{display:block;font:500 24px/1.15 'Newsreader',Georgia,serif;color:var(--ink);font-variant-numeric:tabular-nums}
+.an-total.hi strong{color:var(--navy)}
+@media(max-width:560px){.an-totals{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.an-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 18px;margin-top:12px;font-size:var(--fs-xs)}
+.an-groups h4{margin:6px 0 2px;font-size:var(--fs-xs);font-weight:700;color:var(--ink)}
+.an-groups p{margin:0;color:var(--muted);line-height:1.5}
+@media(max-width:560px){.an-groups{grid-template-columns:1fr}}
+.c-g0{background:var(--navy)!important}.c-g1{background:#7a8fb5!important}.c-g2{background:var(--ctx)!important}.c-g3{background:var(--ctx-soft)!important}
+
+/* Tipos de vía y puntos */
+.c-av{background:var(--t-av)!important}.c-mx{background:var(--t-mx)!important}.c-cv{background:var(--t-cv)!important}
+.svgchart .pt-av{fill:var(--t-av)}.svgchart .pt-mx{fill:var(--t-mx)}.svgchart .pt-cv{fill:var(--t-cv)}
+.svgchart circle.pt-av,.svgchart circle.pt-mx,.svgchart circle.pt-cv,.svgchart circle.dot{stroke:#fff;stroke-width:1}
+.svgchart circle.out{opacity:.28}
+.svgchart .goal{stroke:var(--ink);stroke-width:1.6;stroke-dasharray:6 4;fill:none}
+.svgchart .goal-zone{fill:var(--wash);opacity:.7}
+.svgchart .box{fill:var(--ctx-soft)}
+.svgchart .dot{fill:var(--navy)}.svgchart .dot.ctx{fill:var(--ctx)}
+.svgchart .fit{stroke:var(--navy);stroke-width:2;fill:none}
+.svgchart .rng-bar{fill:var(--navy)}.svgchart .rng-whisk{stroke:var(--ctx);stroke-width:2;stroke-linecap:round}
+.svgchart .d-sab{fill:var(--navy)}.svgchart .d-dom{fill:#fff;stroke:var(--navy);stroke-width:2}
+.svgchart .d-punta{fill:var(--navy)}.svgchart .d-valle{fill:#fff;stroke:var(--navy);stroke-width:2}
+.svgchart .lab{fill:var(--ink)}
+.svgchart .hundred{stroke:var(--ink);stroke-width:1;stroke-dasharray:3 3}
+.legend i.lg-dot{border-radius:50%;background:var(--navy)}
+.legend i.lg-ring{border-radius:50%;background:#fff;box-shadow:inset 0 0 0 2px var(--navy)}
+.legend i.lg-goal{height:0;width:18px;border-radius:0;background:none;border-top:2px dashed var(--ink);vertical-align:3px}
+.legend i.lg-fit{height:3px;width:18px;border-radius:0;background:var(--navy);vertical-align:3px}
+.legend i.lg-range{height:8px;width:18px;border-radius:2px;background:var(--navy);vertical-align:1px}
+.legend i.lg-whisk{height:2px;width:18px;border-radius:0;background:var(--ctx);vertical-align:3px}
+
+/* Por tipo de vía: tres filas con barra de % y nota */
+.an-types{display:grid;gap:10px;margin-top:14px}
+.an-type{display:grid;grid-template-columns:minmax(110px,max-content) minmax(0,1fr) max-content;gap:4px 12px;align-items:center;font-size:var(--fs-s)}
+.an-type .nm{display:flex;align-items:center;gap:6px;font-weight:600}
+.an-type .nm i{width:12px;height:12px;border-radius:50%;display:inline-block}
+.an-type .track{height:14px;background:var(--line);border-radius:2px;overflow:hidden}
+.an-type .track span{display:block;height:100%}
+.an-type .v{font-variant-numeric:tabular-nums;text-align:right}
+.an-type .note{grid-column:2/-1;font-size:var(--fs-xs);color:var(--muted)}
+@media(max-width:520px){.an-type{grid-template-columns:minmax(0,1fr) max-content}.an-type .track{grid-column:1/-1;grid-row:2}.an-type .note{grid-column:1/-1}}
+
+/* Dos rankings lado a lado */
+.an-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+@media(max-width:900px){.an-two{grid-template-columns:1fr}}
+.an-two h4,.an-h4{margin:4px 0 8px;font:600 var(--fs-s) 'Plus Jakarta Sans',sans-serif;color:var(--ink)}
+.an-check{display:flex;align-items:center;gap:8px;font-size:var(--fs-s);min-height:var(--hit);margin:0 0 6px}
+.an-check input{width:18px;height:18px;accent-color:var(--navy)}
+.an-bar-ctx .seg{background:var(--ctx-soft)!important}
+
+/* Explicación con pasos */
+.an-explain{margin:0;padding:0;list-style:none;display:grid;gap:10px;font-size:var(--fs-s)}
+.an-explain li{padding-left:28px;position:relative;line-height:1.5}
+.an-explain li::before{content:attr(data-n);position:absolute;left:0;top:0;width:20px;height:20px;border-radius:50%;background:var(--navy);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.an-insights{margin:12px 0 0;padding:12px 14px;background:var(--wash);border-radius:6px;font-size:var(--fs-s)}
+.an-insights h4{margin:0 0 6px;font-size:var(--fs-s)}
+.an-insights ul{margin:0;padding-left:18px}.an-insights li{margin:4px 0}
+
+/* Controles en línea (selects, segmentos) */
+.an-tools{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:0 0 12px}
+.an-tools label{font-size:var(--fs-s);font-weight:600}
+.an-tools select{font:inherit;font-size:var(--fs-s);min-height:var(--hit);padding:4px 8px;border:1px solid var(--line-strong);border-radius:5px;background:var(--paper);color:var(--ink);max-width:100%}
+.an-seg{display:inline-flex;flex-wrap:wrap;gap:4px}
+.an-seg button{font:inherit;font-size:var(--fs-s);min-height:var(--hit);padding:4px 12px;border:1px solid var(--line-strong);border-radius:5px;background:var(--card);color:var(--navy);cursor:pointer}
+.an-seg button[aria-pressed=true]{background:var(--navy);border-color:var(--navy);color:#fff}
+.an-seg+.legend{margin-top:12px}
+#c-mapa .an-seg{margin-bottom:4px}
+.an-read{margin:10px 0 0;font-size:var(--fs-s)}
+.an-read strong{color:var(--navy)}
+
+/* Mapa */
+.an-map{position:relative;border:1px solid var(--line);border-radius:6px;background:#f4f6f9;overflow:hidden}
+.an-map svg{display:block;width:100%;height:auto}
+.an-map .land{fill:#fff;stroke:var(--line-strong);stroke-width:.6}
+.an-map .seg{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.an-map .q1{stroke:var(--q1)}.an-map .q2{stroke:var(--q2)}.an-map .q3{stroke:var(--q3)}.an-map .q4{stroke:var(--q4)}.an-map .q5{stroke:var(--q5)}.an-map .q6{stroke:var(--q6)}
+.an-map .city{fill:var(--ink);stroke:#fff;stroke-width:1.5}
+.an-map .place{font:600 12px 'Plus Jakarta Sans',sans-serif;fill:var(--ink);paint-order:stroke;stroke:#fff;stroke-width:3px}
+.legend i.q1{background:var(--q1)}.legend i.q2{background:var(--q2)}.legend i.q3{background:var(--q3)}.legend i.q4{background:var(--q4)}.legend i.q5{background:var(--q5)}.legend i.q6{background:var(--q6)}
+.legend i.qw{height:var(--w);width:22px;border-radius:2px;vertical-align:middle}
+.an-zoom{position:absolute;right:8px;top:8px;display:flex;flex-direction:column;gap:4px}
+.an-zoom button{width:var(--hit);height:var(--hit);font:600 16px/1 'Plus Jakarta Sans',sans-serif;border:1px solid var(--line-strong);border-radius:5px;background:var(--card);color:var(--navy);cursor:pointer}
+.an-hint{margin:6px 0 0;font-size:var(--fs-xs);color:var(--muted)}
+.an-tip{position:absolute;pointer-events:none;background:var(--ink);color:#fff;font-size:var(--fs-xs);padding:4px 8px;border-radius:4px;white-space:nowrap;transform:translate(-50%,-130%)}
+.an-tip[hidden]{display:none}
+
+/* Tabla de datos con scroll vertical limitado */
+.an-scroll{max-height:420px;overflow:auto}

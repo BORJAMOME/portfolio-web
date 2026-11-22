@@ -33,8 +33,8 @@
   function body(id){const d=document.getElementById(id),b=d.querySelector('.cb-more-body');b.replaceChildren();return b;}
   const note=t=>el('p','cb-note',t);
   // Barras horizontales: el énfasis (hi) lo decide quien llama, según el titular; no el máximo.
-  function hbars(items,{format=fmt,classes=[],extra}={}){
-    const max=Math.max(1,...items.map(i=>i.values.reduce((a,b)=>a+b,0))),ul=el('ul','hb');
+  function hbars(items,{format=fmt,classes=[],extra,max:fixed}={}){
+    const max=fixed||Math.max(1,...items.map(i=>i.values.reduce((a,b)=>a+b,0))),ul=el('ul','hb');
     for(const it of items){
       const li=el('li',it.hi?'hi':null),lab=it.href?el('a','lab',it.label):el('span','lab',it.label);if(it.href)lab.href=it.href;lab.title=it.label;
       const track=el('span','track');track.setAttribute('aria-hidden','true');
@@ -66,7 +66,7 @@
     return box;
   }
   // «Ver los datos»: tabla alternativa de cada gráfico (accesible y copiable).
-  function dataTable(cols,rows,caption){const d=el('details','cb-data');d.append(el('summary',null,'Ver los datos'),table(cols,rows,{caption}));return d;}
+  function dataTable(cols,rows,caption,summary){const d=el('details','cb-data');d.append(el('summary',null,summary||'Ver los datos'),table(cols,rows,{caption}));return d;}
 
   /* Gráficos SVG dibujados al ancho real del contenedor (el texto queda siempre a 12 px). */
   function responsive(container,draw,label){
@@ -74,14 +74,14 @@
     let w=0;const paint=()=>{const nw=Math.max(260,Math.floor(host.clientWidth||container.clientWidth||600));if(nw===w)return;w=nw;host.replaceChildren(draw(w));};
     new ResizeObserver(paint).observe(host);paint();return host;
   }
-  function columns(data,{hi=[],h=150,labelEvery=1}={}){
+  function columns(data,{hi=[],lab=[],h=150,labelEvery=1,vfmt=fmt}={}){
     return w=>{
       const L=4,R=4,T=16,B=20,H=h,max=Math.max(1,...data.map(d=>d.value)),bw=(w-L-R)/data.length;
       const s=svg('svg',{viewBox:`0 0 ${w} ${H}`,width:w,height:H,class:'svgchart','aria-hidden':'true'});
       data.forEach((d,i)=>{const bh=d.value?Math.max(1.5,(H-T-B)*d.value/max):0,gap=Math.min(6,bw*.18),x=L+i*bw+gap,cw=bw-2*gap;
         const r=svg('rect',{x:x.toFixed(1),y:(H-B-bh).toFixed(1),width:Math.max(1,cw).toFixed(1),height:bh.toFixed(1),class:'col'+(hi.includes(i)?' hi':'')});
         r.append(svg('title',{},d.label+': '+fmt(d.value)));s.append(r);
-        if(hi.includes(i))s.append(svg('text',{x:(x+cw/2).toFixed(1),y:(H-B-bh-4).toFixed(1),'text-anchor':'middle',class:'v'},fmt(d.value)));
+        if(hi.includes(i)||lab.includes(i))s.append(svg('text',{x:(x+cw/2).toFixed(1),y:(H-B-bh-4).toFixed(1),'text-anchor':'middle',class:'v'},vfmt(d.value)));
         if(i%labelEvery===0)s.append(svg('text',{x:(x+cw/2).toFixed(1),y:H-5,'text-anchor':'middle'},d.tick??d.label));});
       s.append(svg('line',{x1:L,x2:w-R,y1:H-B+.5,y2:H-B+.5,class:'axis'}));return s;
     };
@@ -110,7 +110,7 @@
     k.append(v,el('span','kpi-def',def),el('span','kpi-ref',ref),el('span','kpi-src',src));
     if(href){const a=el('a',null,linkText);a.href=href;k.append(a);}return k;
   }
-  function renderKpis(J){
+  function renderKpis(J,A){
     const C=J.cobertura,O=J.oferta,R=J.red,elec=R.electrificacion.find(x=>x.id==='yes')?.km||0,ref=date(O.referencia.laborable);
     const cer=O.familias.find(f=>f.nombre==='Cercanías')?.lab||0;
     $('#kpis').replaceChildren(
@@ -120,29 +120,76 @@
         ref:fmt(C.huecos_pob)+' habitantes ('+pct(C.huecos_pob,C.poblacion)+')',src:'INE '+date(C.fecha)+' · horarios '+ref,href:'#c-huecos',linkText:'Ver cuáles'}),
       kpi({label:'Trenes un laborable',value:fmt(O.trenes.lab),def:'trenes de viajeros con horario público',
         ref:'Sábado '+fmt(O.trenes.sab)+' ('+pf.format(100*(O.trenes.sab/O.trenes.lab-1))+' %); Cercanías, '+pct(cer,O.trenes.lab),src:'GTFS Renfe, iryo · PDF OUIGO · '+ref,href:'cabina-rutas.html',linkText:'Ver por ruta'}),
-      kpi({label:'Concentración',value:pf.format(O.pareto.p50),unit:'%',def:'de las estaciones suma la mitad de las paradas',
-        ref:fmt(O.pareto.n50)+' de '+fmt(O.estaciones_con_tren)+' estaciones · Gini '+pf.format(O.pareto.gini),src:'Horarios '+ref,href:'#c-pareto',linkText:'Ver el Pareto'}),
+      // Calidad (capas/analisis.json, tools/build-cabina-analisis.mjs). Sin ese archivo, vuelve el KPI de concentración.
+      ...(A?calidadKpis(A,ref):[kpi({label:'Concentración',value:pf.format(O.pareto.p50),unit:'%',def:'de las estaciones suma la mitad de las paradas',
+        ref:fmt(O.pareto.n50)+' de '+fmt(O.estaciones_con_tren)+' estaciones · Gini '+pf.format(O.pareto.gini),src:'Horarios '+ref,href:'#c-pareto',linkText:'Ver el Pareto'})]),
       kpi({label:'Red electrificada',value:pf.format(100*elec/R.km),unit:'%',def:'de '+fmt(R.km)+' km de vía (ejes IGN con atributos)',
         ref:'Ancho conocido en el '+pct(R.km-(R.ancho.find(x=>x.id==='unknown')?.km||0),R.km).replace(' %','')+' % de los km',src:'IGN + Adif · nov 2026',href:'#red',linkText:'Ver la red'})
     );
   }
 
+  /* ════════ Calidad del servicio (capas/analisis.json) ════════
+     Resumen de cuatro lecturas del análisis de la oferta; el detalle, con más gráficos, está en cabina-analisis.html. */
+  const median=a=>{const s=a.filter(Number.isFinite).sort((x,y)=>x-y);if(!s.length)return null;const m=s.length>>1;return s.length%2?s[m]:(s[m-1]+s[m])/2;};
+  const esperaMed=A=>({punta:median(A.espera.lineas.map(l=>l.punta.espera)),valle:median(A.espera.lineas.map(l=>l.valle.espera)),n:A.espera.lineas.filter(l=>l.punta.espera!==null).length});
+  function calidadKpis(A,ref){
+    const E=esperaMed(A),T=A.finde.total,F=Object.fromEntries(A.finde.familias.map(f=>[f.fam,f]));
+    return [
+      kpi({label:'Espera en hora punta',value:pf.format(Math.round(E.punta*10)/10),unit:'min',def:'de media en el andén principal de una línea típica de Cercanías (mediana de '+E.n+' líneas)',
+        ref:'En hora valle: '+pf.format(Math.round(E.valle*10)/10)+' min',src:'Horarios '+ref,href:'#calidad',linkText:'Ver la calidad'}),
+      kpi({label:'Servicio en domingo',value:pf.format(Math.round(100*T.dom/T.lab)),unit:'%',def:'de los trenes de un laborable circula el domingo',
+        ref:'Alta velocidad '+F['Alta velocidad'].dom+' %; Cercanías '+F['Cercanías'].dom+' %; Avant '+F.Avant.dom+' %',src:'Horarios '+ref,href:'#c-q-finde',linkText:'Ver por servicio'})];
+  }
+  function renderCalidad(A){
+    const E=esperaMed(A),T=A.finde.total,H=Object.fromEntries(A.horas.familias.map(f=>[f.fam,f]));
+    const more=(href,text)=>link('cabina-analisis.html'+href,text);
+    // Espera en punta por núcleo: mediana de sus líneas.
+    const nucs=[...new Set(A.espera.lineas.map(l=>l.nuc))].map(n=>{const ls=A.espera.lineas.filter(l=>l.nuc===n&&l.punta.espera!==null);return {n,v:median(ls.map(l=>l.punta.espera)),k:ls.length};}).filter(x=>x.v!==null).sort((a,b)=>a.v-b.v);
+    let c=card('c-q-espera','Espera en hora punta, por núcleo de Cercanías','Minutos de media en la estación principal de cada línea (7:00–9:30) · mediana de las líneas del núcleo');
+    c.append(hbars(nucs.map((x,i)=>({label:x.n,values:[Math.round(x.v*10)/10],hi:i===0,extra:x.k+(x.k===1?' línea':' líneas')})),{format:v=>pf.format(v)+' min'}),
+      note('Espera media de quien llega sin mirar el horario: con un tren cada 10 minutos, 5. En los núcleos con pocas líneas, la cifra es la de una sola.'),more('#espera','Ver por línea, en punta y en valle'));
+    c=card('c-q-finde','Trenes del domingo, en % de un laborable','Por tipo de servicio · laborable = miércoles = 100 %');
+    c.append(hbars(A.finde.familias.map(f=>({label:f.fam,values:[f.dom],extra:'sábado '+f.sab+' %',hi:f.dom===Math.min(...A.finde.familias.map(x=>x.dom))})),{format:v=>fmt(v)+' %',max:100}),
+      note('Todos los servicios: '+fmt(T.dom)+' trenes el domingo frente a '+fmt(T.lab)+' un laborable.'),more('#finde','Ver por núcleo y por ruta'));
+    c=card('c-q-horas','Horas al día con trenes','Primera a última salida del miércoles de una ruta típica de cada servicio (mediana)');
+    c.append(hbars(A.horas.familias.filter(f=>f.rutas).map(f=>({label:f.fam,values:[f.horas],extra:hm(f.pri)+'–'+hm(f.ult),hi:f.fam==='Cercanías'})),{format:v=>pf.format(v)+' h',max:24}),
+      note('Mide cuánto dura el día de servicio, no cuántos trenes hay.'),more('#horas','Ver la ventana de cada servicio'));
+    c=card('c-q-mas','Más lecturas de calidad en el análisis de la oferta','Simuladores y gráficos con el detalle por ruta');
+    const ul=el('ul','plain');
+    for(const [href,t,d] of [['#capitales','Simulador de capitales','qué capitales tienen trenes frecuentes y rápidos con Madrid'],['#velocidad','Velocidad por tipo de vía','qué rutas llegarían a una velocidad objetivo'],
+      ['#rodeo','Rodeos','las rutas más y menos directas frente a la línea recta'],['#paradas','Coste de cada parada','minutos que añade cada parada intermedia'],['#mapa','Trenes por tramo','el mapa de la carga de la red']]){
+      const li=el('li');li.append(anchor(t,'cabina-analisis.html'+href),': '+d+'.');ul.append(li);}
+    c.append(ul);
+    const best=nucs[0];
+    const tit=$('#calidad-t');if(tit)tit.textContent=`En una línea típica de Cercanías se esperan ${pf.format(Math.round(E.punta*10)/10)} minutos en hora punta (en ${best.n}, ${pf.format(Math.round(best.v*10)/10)}); el domingo circula el ${fmt(100*T.dom/T.lab)} % de los trenes de un laborable y una línea de Cercanías tiene servicio ${fmt(H['Cercanías'].horas)} horas al día`;
+  }
+
   /* ════════ 1 · Cobertura ════════ */
   function renderCobertura(J){
     const C=J.cobertura,NS=C.umbrales;
-    let c=card('c-curva','Población con una estación a menos de X km que tiene al menos N trenes al día','% de la población peninsular (INE, '+date(C.fecha)+') según el umbral de trenes; línea principal, 5 km');
-    const series=C.distancias.map((d,k)=>({name:d+' km',cls:d===5?'main':'alt',pts:NS.map((n,i)=>[n,C.curva[k][i]])}));
-    responsive(c,curves(series,{log:true,xTicks:[1,2,5,10,30,100,300],xFmt:x=>'≥ '+x,marks:[{x:10,y:C.kpi.n10_5,text:pf.format(C.kpi.n10_5)+' % con ≥ 10 trenes a 5 km',dy:22}]}),
-      'Curva de población servida: '+C.distancias.map((d,k)=>'a '+d+' km, '+pf.format(C.curva[k][NS.indexOf(10)])+' % con al menos 10 trenes al día').join('; '));
-    c.append(legend([['lg-main','Hasta 5 km'],['lg-alt','Hasta 10 km (arriba) y 2 km (abajo)']]),note('Punto: '+pf.format(C.kpi.n10_5)+' % con al menos 10 trenes a 5 km. Eje horizontal: trenes al día que paran en la mejor estación cercana (escala logarítmica). Distancia en línea recta: 0 si la estación está dentro del término municipal y, si no, desde el centroide del municipio.'),
-      dataTable([{label:'Trenes al día',key:'n'},...C.distancias.map((d,k)=>({label:'≤ '+d+' km',key:'d'+k,n:1}))],NS.map((n,i)=>({n:'≥ '+n,...Object.fromEntries(C.distancias.map((d,k)=>['d'+k,pf.format(C.curva[k][i])+' %']))})),'Población servida (%)'));
+    // Tabla de calor: trenes al día (filas) × distancia a la estación (columnas) → % de la población. Se lee en las dos
+    // direcciones a la vez, con la cifra en cada celda; color por tramos de una rampa de un solo tono (texto oscuro o blanco
+    // según el fondo, contraste ≥ 4,5:1).
+    const BINS=[[70,'hm6'],[60,'hm5'],[50,'hm4'],[40,'hm3'],[30,'hm2'],[-1,'hm1']],bin=v=>BINS.find(([t])=>v>=t)[1];
+    const ki=NS.indexOf(10),kd=C.distancias.indexOf(5);
+    let c=card('c-curva','Población con una estación a menos de X km que tiene al menos N trenes al día','% de la población peninsular (INE, '+date(C.fecha)+') · cada celda: distancia a la estación (columna) y trenes que paran en ella (fila)');
+    const wrap=el('div','tbl-wrap'),t=el('table','heat');
+    t.append(el('caption','visually-hidden','Porcentaje de la población según la distancia a la estación y los trenes al día que paran en ella'));
+    const hr=el('tr'),th0=el('th',null,'Trenes al día');th0.scope='col';hr.append(th0);
+    for(const d of C.distancias){const th=el('th','n','≤ '+d+' km');th.scope='col';hr.append(th);}
+    const thead=el('thead');thead.append(hr);t.append(thead);const tb=el('tbody');
+    NS.forEach((n,i)=>{const tr=el('tr'),th=el('th',null,'≥ '+n);th.scope='row';tr.append(th);
+      C.distancias.forEach((d,k)=>{const v=C.curva[k][i],td=el('td','n '+bin(v)+(i===ki&&k===kd?' key':''),v.toLocaleString('es-ES',{minimumFractionDigits:1,maximumFractionDigits:1})+' %');tr.append(td);});tb.append(tr);});
+    t.append(tb);wrap.append(t);
+    c.append(wrap,legend([['hm1','menos del 30 %'],['hm2','30–40 %'],['hm3','40–50 %'],['hm4','50–60 %'],['hm5','60–70 %'],['hm6','70 % o más']]),
+      note('Recuadro naranja: '+pf.format(C.kpi.n10_5)+' % con al menos 10 trenes a 5 km, la cifra del titular. Hacia la derecha se acepta ir más lejos; hacia abajo se pide más servicio. Distancia en línea recta: 0 si la estación está dentro del término municipal y, si no, desde el centroide del municipio.'));
     c=card('c-huecos','Municipios de más de 20.000 habitantes sin estación con 10 trenes al día a 10 km','Ordenados por población · estación con ≥ 10 trenes más cercana');
     c.append(shortTable([{label:'Municipio',get:r=>anchor(r.n,visor(cam(r.c,11)))},{label:'Habitantes',key:'pob',n:1},{label:'Estación útil más cercana',get:r=>r.cerca?r.cerca.n+' · '+pf.format(r.cerca.km)+' km':'—',muted:1}],C.huecos,{bar:'pob'},7),
       note('Distancias en línea recta. Un municipio sale aquí aunque tenga estación propia si en ella paran menos de 10 trenes al día. Metro y tranvía no cuentan.'));
   }
 
   /* ════════ 2 · Servicio ════════ */
-  function renderServicio(J){
+  function renderServicio(J,A){
     const O=J.oferta,ref=longDate(O.referencia.laborable);
     let c=card('c-familia','Trenes por servicio un laborable',ref+' · un tren cuenta una vez al día');
     const fams=[...O.familias].sort((a,b)=>b.lab-a.lab);
@@ -159,13 +206,31 @@
     c.append(shortTable([{label:'Estación',get:r=>anchor(r.n,visor(cam(r.c,13.5)))},{label:'Trenes',key:'v',n:1},{label:'AV y Avant',key:'av',n:1,opt:1},{label:'Destinos directos',key:'dest',n:1}],O.top_ld,{bar:'v'},5));
     c=card('c-top-cer','Estaciones con más trenes de Cercanías','Todos los núcleos, ancho ibérico y métrico');
     c.append(shortTable([{label:'Estación',get:r=>anchor(r.n,visor(cam(r.c,13.5)))},{label:'Cercanías',key:'v',n:1},{label:'Todos los trenes',key:'total',n:1}],O.top_cer,{bar:'v'},5));
-    // Velocidad comercial: desde Madrid a cada capital, y todas las relaciones en la tabla.
-    const fromMad=O.velocidad.filter(v=>/(^| – )Madrid( – |$)/.test(v.rel));
-    c=card('c-velocidad','Velocidad comercial del tren directo más rápido desde Madrid','Las 10 capitales mejor conectadas de '+fromMad.length+' · km del trazado IGN entre las dos estaciones ÷ tiempo programado · '+ref);
-    c.append(hbars(fromMad.slice(0,10).map(v=>({label:v.rel.replace(/ – Madrid$|^Madrid – /,''),values:[v.kmh],extra:'km/h · '+dur(v.min)+' · '+v.marca}))),
-      note('Velocidad media entre las dos estaciones, paradas incluidas; no es la velocidad máxima. Solo capitales con tren directo cuyo recorrido se puede medir sobre la red.'),
-      el('p','cb-note','Las más lentas desde Madrid: '+fromMad.slice(-3).reverse().map(v=>v.rel.replace(/ – Madrid$|^Madrid – /,'')+' ('+v.kmh+' km/h, '+v.marca+')').join(', ')+'.'),
-      dataTable([{label:'Relación',key:'rel'},{label:'Desde',key:'de',muted:1},{label:'Hasta',key:'a',muted:1},{label:'Servicio',key:'marca'},{label:'Km',key:'km',n:1},{label:'Minutos',key:'min',n:1},{label:'Km/h',key:'kmh',n:1}],O.velocidad,'Las '+O.velocidad.length+' relaciones directas entre capitales'));
+    // Velocidad desde Madrid: todas las capitales con tren directo (analisis.json · capitales), en línea recta para poder
+    // medir las 45: la velocidad sobre el trazado falta donde el recorrido del tren pasa por tramos sin geometría completa.
+    const caps=(A?.capitales||[]).filter(x=>x.trenes&&x.kmh_recta).sort((a,b)=>b.kmh_recta-a.kmh_recta);
+    if(caps.length>=16){
+      const top=caps[0],low=caps.at(-1),sin=(A.capitales||[]).filter(x=>!x.trenes).map(x=>x.n),k=8,mx=top.kmh_recta;
+      const eq=u=>(u.classList.add('hb-eq'),u),row=x=>({label:x.n,values:[x.kmh_recta],extra:'km/h · '+dur(x.min)+' · '+x.marca});
+      c=card('c-velocidad',`Desde Madrid, el tren directo más rápido va de ${top.kmh_recta} km/h a ${top.n} a ${low.kmh_recta} km/h a ${low.n}, contada la distancia en línea recta`,
+        caps.length+' capitales con tren directo desde Madrid · distancia en línea recta ÷ tiempo del tren más rápido · '+ref);
+      const split=el('div','cb-split'),a=el('div'),b=el('div');
+      a.append(el('p','cb-sub2','Las '+k+' más rápidas'),eq(hbars(caps.slice(0,k).map(row),{max:mx})));
+      b.append(el('p','cb-sub2','Las '+k+' más lentas'),eq(hbars(caps.slice(-k).reverse().map(row),{max:mx})));
+      split.append(a,b);
+      const med=caps[Math.floor(caps.length/2)].kmh_recta,nVia=caps.filter(x=>x.kmh).length;
+      c.append(split,note('La mediana de las '+caps.length+' capitales es '+med+' km/h. La línea recta mide lo que nota el viajero: incluye rodeos y paradas, por eso sale por debajo de la velocidad sobre la vía (que solo se puede medir en '+nVia+' de ellas).'+(sin.length?' Sin tren directo desde Madrid: '+sin.join(', ')+'.':'')),
+        link('cabina-analisis.html#capitales','Simular frecuencia y velocidad por capital'),
+        dataTable([{label:'Capital',key:'n'},{label:'Servicio',key:'marca'},{label:'Trenes al día (ida)',key:'trenes',n:1},{label:'Minutos',key:'min',n:1},{label:'Km en línea recta',key:'recta',n:1},{label:'Km/h en línea recta',key:'kmh_recta',n:1},{label:'Km/h sobre la vía',key:'kmh',n:1}],caps,'Tren directo más rápido desde Madrid a cada capital','Ver las '+caps.length+' capitales'),
+        dataTable([{label:'Relación',key:'rel'},{label:'Desde',key:'de',muted:1},{label:'Hasta',key:'a',muted:1},{label:'Servicio',key:'marca'},{label:'Km',key:'km',n:1},{label:'Minutos',key:'min',n:1},{label:'Km/h',key:'kmh',n:1}],O.velocidad,'Velocidad sobre la vía de las '+O.velocidad.length+' relaciones directas entre capitales','Ver la velocidad sobre la vía entre todas las capitales'));
+    }else{
+      // Sin analisis.json: el ranking de velocidad comercial de siempre.
+      const fromMad=O.velocidad.filter(v=>/(^| – )Madrid( – |$)/.test(v.rel));
+      c=card('c-velocidad','Velocidad comercial del tren directo más rápido desde Madrid','Las 10 capitales mejor conectadas de '+fromMad.length+' · km del trazado IGN entre las dos estaciones ÷ tiempo programado · '+ref);
+      c.append(hbars(fromMad.slice(0,10).map(v=>({label:v.rel.replace(/ – Madrid$|^Madrid – /,''),values:[v.kmh],extra:'km/h · '+dur(v.min)+' · '+v.marca}))),
+        note('Velocidad media entre las dos estaciones, paradas incluidas; no es la velocidad máxima. Solo capitales con tren directo cuyo recorrido se puede medir sobre la red.'),
+        dataTable([{label:'Relación',key:'rel'},{label:'Desde',key:'de',muted:1},{label:'Hasta',key:'a',muted:1},{label:'Servicio',key:'marca'},{label:'Km',key:'km',n:1},{label:'Minutos',key:'min',n:1},{label:'Km/h',key:'kmh',n:1}],O.velocidad,'Las '+O.velocidad.length+' relaciones directas entre capitales'));
+    }
     const H=Array.from({length:24},(_,h)=>O.familias.reduce((a,f)=>a+f.horas[h],0)),peak=H.indexOf(Math.max(...H));
     c=document.getElementById('c-familia');const dh=el('details','cb-data');dh.append(el('summary',null,'Salidas por hora (pico entre las '+peak+' y las '+(peak+1)+' h)'));c.append(dh);c=dh;
     responsive(c,columns(H.map((v,h)=>({label:h+'–'+(h+1)+' h',tick:h+'h',value:v})),{hi:[peak],h:140,labelEvery:3}),'Salidas por hora: máximo de '+fmt(H[peak])+' entre las '+peak+' y las '+(peak+1)+' h');
@@ -223,7 +288,7 @@
     c=card('c-precio',`El AVE cuesta ${lo===hi?lo:'entre '+lo+' y '+hi} veces la opción más barata de cada corredor`,'Precio medio por viaje, 2025 (año completo) · CNMC');
     c.append(legend(PRICE.map(([,cls,n])=>[cls.replace('d-','c-'),n])));
     responsive(c,dots(P,PRICE),'Precio medio por viaje y operador en 2025. '+P.map(r=>r.trayecto+': AVE '+eur(r['Renfe-AVE'])).join('; '));
-    c.append(note('Sin IVA, media de todas las tarifas vendidas. En 2025 no hubo Avlo en Madrid–Barcelona. Los meses de 2026 no se comparan: la CNMC cambió el método de cálculo en el primer trimestre.'),
+    c.append(note('Precio medio por viaje que publica la CNMC (ds_24410); su ficha no indica si incluye IVA ni cómo se promedian las tarifas. En 2025 no hubo Avlo en Madrid–Barcelona. Los meses de 2026 no se comparan: la CNMC cambió el método de cálculo en el primer trimestre.'),
       dataTable([{label:'Trayecto',key:'t'},...PRICE.map(([k,,n])=>({label:n,key:k})),{label:'Media',key:'Total'}],P.map(r=>({t:r.trayecto,...Object.fromEntries([...PRICE.map(([k])=>[k,eur(r[k])]),['Total',eur(r.Total)]])})),'Precio medio por viaje, 2025'));
   }
   function renderCompetencia(J){
@@ -282,7 +347,7 @@
     // Mercancías: cuota de Renfe por año (lo que más cambia) y el total como contexto.
     const A=M.mercancias.anual,f0=A[0],fl=A.at(-1);
     c=card('c-mercancias','Renfe Mercancías: del '+pf.format(f0.renfe_pct)+' % al '+pf.format(fl.renfe_pct)+' % de las toneladas-km','Cuota de Renfe por año · el total se mantiene en torno a '+pf.format(Math.round(A.reduce((a,x)=>a+x.tkm_mm,0)/A.length))+' mil millones de t-km · CNMC');
-    responsive(c,columns(A.map((x,i)=>({label:String(x.anio),value:x.renfe_pct,tick:"'"+String(x.anio).slice(2)})),{hi:[A.length-1],h:150}),'Cuota de Renfe en las toneladas-km por año: de '+pf.format(f0.renfe_pct)+' % en '+f0.anio+' a '+pf.format(fl.renfe_pct)+' % en '+fl.anio);
+    responsive(c,columns(A.map((x,i)=>({label:String(x.anio),value:x.renfe_pct,tick:"'"+String(x.anio).slice(2)})),{hi:[A.length-1],lab:[0],h:150,vfmt:v=>pf.format(v)+' %'}),'Cuota de Renfe en las toneladas-km por año: de '+pf.format(f0.renfe_pct)+' % en '+f0.anio+' a '+pf.format(fl.renfe_pct)+' % en '+fl.anio);
     c.append(note(`${fl.anio}: ${pf.format(fl.tkm_mm)} mil millones de t-km netas; el ${pf.format(fl.intermodal_pct)} % en vagón intermodal (contenedores). El resto lo mueven Medway, Captrain, Continental Rail, Transervi y otras.`),
       dataTable([{label:'Año',key:'anio'},{label:'t-km netas (miles de millones)',key:'t'},{label:'Renfe (%)',key:'r'},{label:'Intermodal (%)',key:'i'}],A.map(x=>({anio:String(x.anio),t:pf.format(x.tkm_mm),r:pf.format(x.renfe_pct),i:x.intermodal_pct===null?'—':pf.format(x.intermodal_pct)})),'Mercancías por ferrocarril'));
   }
@@ -291,8 +356,11 @@
   const GAUGE={'1668':'Ibérico · 1.668 mm','1435':'Estándar · 1.435 mm','1000':'Métrico · 1.000 mm','mixed':'Mixto','unknown':'Sin determinar'};
   const GAUGE_CLS={'1668':'c-navy','1435':'c-ouigo','1000':'c-iryo','mixed':'c-avlo','unknown':'c-soft'};
   const ORIGIN={ign:'IGN: ancho nominal del tramo',fix_adif:'Adif: tramos en servicio',linea:'Adif: ancho de la línea',fix_ign:'IGN: ancho mixto',fix_net:'Inferido: red de ancho métrico',fix_topo:'Inferido por la red (tramos vecinos)',none:'Sin determinar'};
-  function renderRed(J){
+  function renderRed(J,A){
     const R=J.red,kmOf=(l,id)=>l.find(x=>x.id===id)?.km||0;
+    // Titular con el cruce red ↔ servicio: qué parte del servicio de media y larga distancia circula sin catenaria (analisis.json).
+    const ET=A?.electrificacion?.total,tit=$('#red-t');
+    if(ET&&tit)tit.textContent=`El ${fmt(100*kmOf(R.electrificacion,'no')/R.km)} % de la red sigue sin electrificar, pero por ella pasa solo el ${pf.format(ET.no)} % de los trenes·km de media y larga distancia; el ${fmt(100*kmOf(R.prestaciones,'hs')/R.km)} % es de alta velocidad`;
     let c=card('c-ancho','Km por ancho de vía','Sobre la misma base que el resto de la red: '+fmt(R.km)+' km');
     const bar=el('div','bar100');bar.setAttribute('aria-hidden','true');
     for(const a of R.ancho){if(!a.km)continue;const s=el('span',GAUGE_CLS[a.id]||'c-ctx');s.style.width=(100*a.km/R.km)+'%';s.title=(GAUGE[a.id]||a.id)+': '+fmt(a.km)+' km';bar.append(s);}
@@ -395,10 +463,14 @@
 
   async function start(){
     tocSpy();let J;
+    // Análisis de la oferta (calidad): opcional; si falla, la Cabina se pinta igual sin ese capítulo.
+    const analisis=fetch('capas/analisis.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).catch(()=>null);
     try{const r=await fetch('capas/cabina.json',{cache:'no-cache'});if(!r.ok)throw new Error(r.status);J=await r.json();}
     catch{const a=$('#alert');a.hidden=false;a.textContent='No se han podido cargar los gráficos. Los titulares de cada capítulo siguen siendo válidos; recarga la página.';return;}
     // Cada bloque falla por separado: un error no deja la página en blanco.
-    for(const [name,fn] of [['indicadores',renderKpis],['cobertura',renderCobertura],['servicio',renderServicio],['uso',renderUso],['alta velocidad · viajeros',renderViajerosAV],['competencia',renderCompetencia],['red',renderRed],['método',renderMetodo],['anexo',renderAnexo]]){
+    const A=await analisis;
+    if(A){try{renderCalidad(A);}catch(e){console.error('calidad',e);}}else{const q=$('#calidad');if(q)q.hidden=true;}
+    for(const [name,fn] of [['indicadores',J=>renderKpis(J,A)],['cobertura',renderCobertura],['servicio',J=>renderServicio(J,A)],['uso',renderUso],['alta velocidad · viajeros',renderViajerosAV],['competencia',renderCompetencia],['red',J=>renderRed(J,A)],['método',renderMetodo],['anexo',renderAnexo]]){
       try{fn(J);}catch(e){console.error(name,e);const a=$('#alert');a.hidden=false;a.textContent='No se ha podido pintar el bloque «'+name+'». El resto de la página sigue disponible.';}
     }
   }

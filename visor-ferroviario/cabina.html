@@ -7,17 +7,17 @@
 <meta name="robots" content="noindex, nofollow">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="cabina.css?v=13d37069">
+<link rel="stylesheet" href="cabina.css?v=bfad3341">
 <script defer src="capas-config.js?v=8d56ba43"></script>
-<script defer src="cabina.js?v=f01c1a19"></script>
-<script defer src="cabina-incidencias.js?v=86215bed"></script>
+<script defer src="cabina.js?v=61ae306f"></script>
+<script defer src="cabina-incidencias.js?v=e9eca623"></script>
 </head>
 <body>
 <a class="skip" href="#contenido">Saltar al contenido</a>
 <header class="cb-header">
 <div class="cb-wrap cb-head">
 <div>
-<p class="cb-crumbs"><a id="back" class="cb-back" href="index.html"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M10 3 5 8l5 5"/></svg>Volver al visor</a><a class="cb-back" href="cabina-rutas.html">Tabla de rutas</a></p>
+<p class="cb-crumbs"><a id="back" class="cb-back" href="index.html"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M10 3 5 8l5 5"/></svg>Volver al visor</a><a class="cb-back" href="cabina-rutas.html">Tabla de rutas</a><a class="cb-back" href="cabina-analisis.html">Análisis de la oferta</a></p>
 <h1>Cabina</h1>
 <p class="cb-lead">¿Qué servicio de tren recibe cada territorio de la España peninsular, con qué calidad y dónde están los huecos?</p>
 </div>
@@ -26,7 +26,7 @@
 </header>
 <div class="cb-tocbar">
 <nav class="cb-wrap cb-toc" aria-label="Capítulos de la Cabina">
-<a href="#cobertura">Dónde hay tren</a><a href="#servicio">Cuánto servicio</a><a href="#uso">Cuánto se usa</a><a href="#competencia">Alta velocidad</a><a href="#red">Red</a><a href="#incidencias">Incidencias</a><a href="#metodo">Método y límites</a><a href="#anexo">Anexo</a><a class="cb-toc-out" href="cabina-rutas.html">Tabla de rutas</a>
+<a href="#cobertura">Dónde hay tren</a><a href="#servicio">Cuánto servicio</a><a href="#calidad">Calidad</a><a href="#uso">Cuánto se usa</a><a href="#competencia">Alta velocidad</a><a href="#red">Red</a><a href="#incidencias">Incidencias</a><a href="#metodo">Método y límites</a><a href="#anexo">Anexo</a><a class="cb-toc-out" href="cabina-rutas.html">Tabla de rutas</a><a class="cb-toc-out" href="cabina-analisis.html">Análisis</a>
 </nav>
 </div>
 
@@ -45,7 +45,7 @@
 </section>
 
 <section class="cb-section" id="servicio" aria-labelledby="servicio-t">
-<p class="cb-q">2 · ¿Cuánto servicio y de qué calidad?</p>
+<p class="cb-q">2 · ¿Cuánto servicio?</p>
 <h2 id="servicio-t">7 de cada 10 trenes son de Cercanías, y el 13 % de las estaciones concentra la mitad de las paradas</h2>
 <div class="cb-grid">
 <article class="cb-card span-5" id="c-familia"></article>
@@ -56,8 +56,19 @@
 </div>
 </section>
 
+<section class="cb-section" id="calidad" aria-labelledby="calidad-t">
+<p class="cb-q">3 · ¿Con qué calidad?</p>
+<h2 id="calidad-t">Espera, servicio del fin de semana y horas de servicio</h2>
+<div class="cb-grid">
+<article class="cb-card span-4" id="c-q-espera"></article>
+<article class="cb-card span-4" id="c-q-finde"></article>
+<article class="cb-card span-4" id="c-q-horas"></article>
+<article class="cb-card span-12" id="c-q-mas"></article>
+</div>
+</section>
+
 <section class="cb-section" id="uso" aria-labelledby="uso-t">
-<p class="cb-q">3 · ¿Cuánto se usa?</p>
+<p class="cb-q">4 · ¿Cuánto se usa?</p>
 <h2 id="uso-t">La alta velocidad tiene un 80 % más viajeros que en 2019; en mercancías, el tren pesa en España 4 veces menos que en la UE</h2>
 <div class="cb-grid">
 <article class="cb-card span-12" id="c-demanda"></article>
@@ -67,7 +78,7 @@
 </section>
 
 <section class="cb-section" id="competencia" aria-labelledby="competencia-t">
-<p class="cb-q">4 · ¿Quién compite en alta velocidad y a qué precio?</p>
+<p class="cb-q">5 · ¿Quién compite en alta velocidad y a qué precio?</p>
 <h2 id="competencia-t">Renfe conserva el 60 % de los viajeros de alta velocidad en los cinco corredores con competencia, y el AVE cuesta en torno a 1,5 veces la opción más barata</h2>
 <div class="cb-grid">
 <article class="cb-card span-6" id="c-cuota"></article>
@@ -79,7 +90,7 @@
 </section>
 
 <section class="cb-section" id="red" aria-labelledby="red-t">
-<p class="cb-q">5 · ¿Qué red lo soporta?</p>
+<p class="cb-q">6 · ¿Qué red lo soporta?</p>
 <h2 id="red-t">El 19 % de la red es de alta velocidad y el 34 % sigue sin electrificar; ya se conoce el ancho del 98,5 % de los km</h2>
 <div class="cb-grid">
 <article class="cb-card span-6" id="c-ancho"></article>
@@ -90,13 +101,17 @@
 </section>
 
 <section class="cb-section" id="incidencias" aria-labelledby="incidencias-t">
-<p class="cb-q">6 · ¿Qué avisos publica Cercanías?</p>
-<h2 id="incidencias-t">Incidencias y recuento mensual</h2>
-<div class="cb-grid"><article class="cb-card span-12" id="c-incidencias"></article></div>
+<p class="cb-q">7 · ¿Qué avisos publica Cercanías?</p>
+<h2 id="incidencias-t">Avisos activos de Cercanías por tipo y por núcleo</h2>
+<div class="cb-grid">
+<article class="cb-card span-7" id="c-inc-tipo"></article>
+<article class="cb-card span-5" id="c-inc-nucleo"></article>
+<details class="cb-card cb-more span-12" id="c-incidencias"><summary>Histórico mensual y listado de avisos</summary><div class="cb-more-body"></div></details>
+</div>
 </section>
 
 <section class="cb-section" id="metodo" aria-labelledby="metodo-t">
-<p class="cb-q">7 · Método y límites</p>
+<p class="cb-q">8 · Método y límites</p>
 <h2 id="metodo-t">Cómo se calcula cada cifra y qué no responde esta Cabina</h2>
 <div class="cb-annex">
 <details class="cb-card" id="c-no"><summary>Qué no responde: viajeros, puntualidad, tarifas, operadores autonómicos y acceso real</summary><div class="cb-more-body"></div></details>
