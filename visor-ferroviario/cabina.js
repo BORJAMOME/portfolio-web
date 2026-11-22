@@ -167,12 +167,22 @@
   /* ════════ 1 · Cobertura ════════ */
   function renderCobertura(J){
     const C=J.cobertura,NS=C.umbrales;
-    let c=card('c-curva','Población con una estación a menos de X km que tiene al menos N trenes al día','% de la población peninsular (INE, '+date(C.fecha)+') según el umbral de trenes; línea principal, 5 km');
-    const series=C.distancias.map((d,k)=>({name:d+' km',cls:d===5?'main':'alt',pts:NS.map((n,i)=>[n,C.curva[k][i]])}));
-    responsive(c,curves(series,{log:true,xTicks:[1,2,5,10,30,100,300],xFmt:x=>'≥ '+x,marks:[{x:10,y:C.kpi.n10_5,text:pf.format(C.kpi.n10_5)+' % con ≥ 10 trenes a 5 km',dy:22}]}),
-      'Curva de población servida: '+C.distancias.map((d,k)=>'a '+d+' km, '+pf.format(C.curva[k][NS.indexOf(10)])+' % con al menos 10 trenes al día').join('; '));
-    c.append(legend([['lg-main','Hasta 5 km'],['lg-alt','Hasta 10 km (arriba) y 2 km (abajo)']]),note('Punto: '+pf.format(C.kpi.n10_5)+' % con al menos 10 trenes a 5 km. Eje horizontal: trenes al día que paran en la mejor estación cercana (escala logarítmica). Distancia en línea recta: 0 si la estación está dentro del término municipal y, si no, desde el centroide del municipio.'),
-      dataTable([{label:'Trenes al día',key:'n'},...C.distancias.map((d,k)=>({label:'≤ '+d+' km',key:'d'+k,n:1}))],NS.map((n,i)=>({n:'≥ '+n,...Object.fromEntries(C.distancias.map((d,k)=>['d'+k,pf.format(C.curva[k][i])+' %']))})),'Población servida (%)'));
+    // Tabla de calor: trenes al día (filas) × distancia a la estación (columnas) → % de la población. Se lee en las dos
+    // direcciones a la vez, con la cifra en cada celda; color por tramos de una rampa de un solo tono (texto oscuro o blanco
+    // según el fondo, contraste ≥ 4,5:1).
+    const BINS=[[70,'hm6'],[60,'hm5'],[50,'hm4'],[40,'hm3'],[30,'hm2'],[-1,'hm1']],bin=v=>BINS.find(([t])=>v>=t)[1];
+    const ki=NS.indexOf(10),kd=C.distancias.indexOf(5);
+    let c=card('c-curva','Población con una estación a menos de X km que tiene al menos N trenes al día','% de la población peninsular (INE, '+date(C.fecha)+') · cada celda: distancia a la estación (columna) y trenes que paran en ella (fila)');
+    const wrap=el('div','tbl-wrap'),t=el('table','heat');
+    t.append(el('caption','visually-hidden','Porcentaje de la población según la distancia a la estación y los trenes al día que paran en ella'));
+    const hr=el('tr'),th0=el('th',null,'Trenes al día');th0.scope='col';hr.append(th0);
+    for(const d of C.distancias){const th=el('th','n','≤ '+d+' km');th.scope='col';hr.append(th);}
+    const thead=el('thead');thead.append(hr);t.append(thead);const tb=el('tbody');
+    NS.forEach((n,i)=>{const tr=el('tr'),th=el('th',null,'≥ '+n);th.scope='row';tr.append(th);
+      C.distancias.forEach((d,k)=>{const v=C.curva[k][i],td=el('td','n '+bin(v)+(i===ki&&k===kd?' key':''),v.toLocaleString('es-ES',{minimumFractionDigits:1,maximumFractionDigits:1})+' %');tr.append(td);});tb.append(tr);});
+    t.append(tb);wrap.append(t);
+    c.append(wrap,legend([['hm1','menos del 30 %'],['hm2','30–40 %'],['hm3','40–50 %'],['hm4','50–60 %'],['hm5','60–70 %'],['hm6','70 % o más']]),
+      note('Recuadro naranja: '+pf.format(C.kpi.n10_5)+' % con al menos 10 trenes a 5 km, la cifra del titular. Hacia la derecha se acepta ir más lejos; hacia abajo se pide más servicio. Distancia en línea recta: 0 si la estación está dentro del término municipal y, si no, desde el centroide del municipio.'));
     c=card('c-huecos','Municipios de más de 20.000 habitantes sin estación con 10 trenes al día a 10 km','Ordenados por población · estación con ≥ 10 trenes más cercana');
     c.append(shortTable([{label:'Municipio',get:r=>anchor(r.n,visor(cam(r.c,11)))},{label:'Habitantes',key:'pob',n:1},{label:'Estación útil más cercana',get:r=>r.cerca?r.cerca.n+' · '+pf.format(r.cerca.km)+' km':'—',muted:1}],C.huecos,{bar:'pob'},7),
       note('Distancias en línea recta. Un municipio sale aquí aunque tenga estación propia si en ella paran menos de 10 trenes al día. Metro y tranvía no cuentan.'));
