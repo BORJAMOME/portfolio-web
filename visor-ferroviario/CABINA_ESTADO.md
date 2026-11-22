@@ -1,7 +1,27 @@
 # Cabina: estado
 
-Última actualización: 21-11-2026 (olas 1 y 2 cerradas; pendientes de la ola 2 resueltos salvo las fichas del visor).
+Última actualización: 22-11-2026 (ola 3: rediseño interactivo, sin commit todavía).
 La tabla de rutas tiene su propio estado en `RUTAS_ESTADO.md`.
+
+## Ola 3 (22-11-2026): interacción, marcas y filtros
+
+- **Cabecera:** fuera la pregunta rectora y el texto de referencia; título más grande y pastilla con el día de los horarios y la próxima regeneración (el lunes siguiente a `oferta.json · generado`, que es cuando corre `rutas-semanal.yml`). `build-cabina` la escribe en `#ref-date` y `#ref-next`.
+- **KPIs (6):** sin frases; botón «i» con definición y fuente. Población servida con mini barras (≥ 1 / ≥ 10 / ≥ 30 trenes), huecos con habitantes y % en barra, y KPI nuevo «Viajeros en 12 meses» (suma de los cuatro tipos del INE, 12 meses frente a los 12 anteriores: `mercado.viajeros.total12`).
+- **Quitado:** cuota del tren frente a la UE y Renfe Mercancías (los datos siguen en `mercado.json`). El titular de «uso» ya no habla de mercancías.
+- **Interacción:** tooltip único (`TIP`) en curvas, columnas, barras, puntos y mapa de calor; `lineChart` con guía y lectura al pasar el ratón.
+- **Población servida:** clic (o botones de umbral) para elegir umbrales → «Ver los datos» muestra solo los elegidos con % y habitantes; la tabla completa sale en una ventana (`<dialog>`). Datos nuevos: `cobertura.curva_pob`.
+- **Servicio:** filtro laborable / sábado / domingo; logos de marca; alta velocidad desglosada en AVE (con Euromed), Avlo, OUIGO e iryo; tabla de lunes a domingo (`familias[].dias`, `marcas_av`, de `build-rutas.mjs`). Salidas por hora con tooltip y mapa de calor (escala por servicio o común; se gira en móvil).
+- **Pareto:** calculado en el navegador desde `oferta.estaciones` (lista de las 1.448 estaciones con municipio INE), con la estación de cada punto y la tabla de paradas por estación.
+- **Estaciones:** un solo ranking filtrable por servicio (Cercanías, Regional, Alta velocidad, Avant, Intercity), comunidad, provincia y municipio. Sustituye a `top_ld` y `top_cer`.
+- **Velocidad:** origen y destino a elegir entre las 112 relaciones entre capitales.
+- **Viajeros:** líneas mes a mes por año (2019 y desde 2022; 2020–2021 solo en la tabla), selector de servicio, interanual y frente a 2019; tabla con todos los meses. Se actualiza con la tarea semanal (`build-cabina-mercado.mjs`), que recoge el mes nuevo del INE.
+- **Colores de operador** (de los logos oficiales): Renfe #5b064b, AVE #001f4c, Avlo #5fcbc6 (con borde #2a8a85), OUIGO #e3006a, iryo #cb151b. Los anchos de vía, que usaban los colores antiguos, pasan a `g-std`, `g-met` y `g-mix`.
+- **Ocupación:** fichas por operador (ocupación y % de viajeros) y puntos por corredor con cuota y viajeros en el tooltip.
+- **Logos:** `img/marcas/*.svg`, Wikimedia Commons (dominio público): Cercanías, AVE (2026), Avlo, Intercity, OUIGO (el que usa es.wikipedia) e iryo. **Faltan Regional y Avant**: Wikimedia devolvió 429; el código oculta el logo si no existe.
+
+**Comprobado:** `build-rutas` sin descargas reproduce `oferta.json` y `rutas.json` idénticos salvo la fecha antes de añadir campos; total de la semana del miércoles = 5.909 (igual que el KPI); curva de población monótona y % = habitantes ÷ población; `check-a11y` sin infracciones en `cabina.html` y `cabina-rutas.html`; `build-cabina --check`, `check-links`, `version-assets --check` y `sanity`; sin scroll horizontal a 390 px; filtros probados (Andalucía · Sevilla · Regional = 22 estaciones).
+
+**Siguiente:** descargar `Renfe_Regional_Logotipo.svg` y `Renfe_Avant_Logotipo.svg` a `img/marcas/regional.svg` y `avant.svg` cuando Wikimedia deje de limitar. Validación: aparecen en «Trenes por servicio» sin 404 en consola.
 
 ## Qué es ahora
 

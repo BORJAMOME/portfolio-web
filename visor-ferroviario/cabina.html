@@ -2,14 +2,14 @@
 <html lang="es">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Cabina · Atlas ferroviario de España</title>
-<meta name="description" content="Cuadro de mando del atlas ferroviario: qué servicio de tren recibe cada territorio, con qué calidad y dónde están los huecos.">
+<title>Cabina Â· Atlas ferroviario de EspaÃ±a</title>
+<meta name="description" content="Cuadro de mando del atlas ferroviario: quÃ© servicio de tren recibe cada territorio, con quÃ© calidad y dÃ³nde estÃ¡n los huecos.">
 <meta name="robots" content="noindex, nofollow">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="cabina.css?v=3e8810ca">
+<link rel="stylesheet" href="cabina.css?v=5d3e0009">
 <script defer src="capas-config.js?v=8d56ba43"></script>
-<script defer src="cabina.js?v=fe0a5c55"></script>
+<script defer src="cabina.js?v=8809dbf3"></script>
 </head>
 <body>
 <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -17,25 +17,24 @@
 <div class="cb-wrap cb-head">
 <div>
 <p class="cb-crumbs"><a id="back" class="cb-back" href="index.html"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M10 3 5 8l5 5"/></svg>Volver al visor</a><a class="cb-back" href="cabina-rutas.html">Tabla de rutas</a></p>
-<h1>Cabina</h1>
-<p class="cb-lead">¿Qué servicio de tren recibe cada territorio de la España peninsular, con qué calidad y dónde están los huecos?</p>
+<h1 class="cb-title">Cabina</h1>
 </div>
-<p id="ref" class="cb-ref">Día de referencia: miércoles, 25 de noviembre de 2026. Todos los trenes de viajeros con horario público, también Cercanías e iryo.</p>
+<p class="cb-pill" id="ref"><span class="cb-pill-dot" aria-hidden="true"></span><span class="cb-pill-main" id="ref-date">Horarios del mié 25 nov</span><span class="cb-pill-sep" aria-hidden="true"></span><span class="cb-pill-next" id="ref-next">Próxima actualización: lun 23 nov</span></p>
 </div>
 </header>
 <div class="cb-tocbar">
-<nav class="cb-wrap cb-toc" aria-label="Capítulos de la Cabina">
-<a href="#cobertura">Dónde hay tren</a><a href="#servicio">Cuánto servicio</a><a href="#uso">Cuánto se usa</a><a href="#competencia">Alta velocidad</a><a href="#red">Red</a><a href="#metodo">Método y límites</a><a href="#anexo">Anexo</a><a class="cb-toc-out" href="cabina-rutas.html">Tabla de rutas</a>
+<nav class="cb-wrap cb-toc" aria-label="CapÃ­tulos de la Cabina">
+<a href="#cobertura">DÃ³nde hay tren</a><a href="#servicio">CuÃ¡nto servicio</a><a href="#uso">CuÃ¡nto se usa</a><a href="#competencia">Alta velocidad</a><a href="#red">Red</a><a href="#metodo">MÃ©todo y lÃ­mites</a><a href="#anexo">Anexo</a><a class="cb-toc-out" href="cabina-rutas.html">Tabla de rutas</a>
 </nav>
 </div>
 
-<main id="contenido" class="cb-wrap" tabindex="-1">
+<main id="contenido" class="cb-wrap cb-main" tabindex="-1">
 <div id="alert" class="cb-alert" role="status" hidden></div>
 
-<section class="cb-kpis" aria-label="Indicadores clave" id="kpis"></section>
+<section class="cb-kpis cb-kpis6" aria-label="Indicadores clave" id="kpis"></section>
 
 <section class="cb-section" id="cobertura" aria-labelledby="cobertura-t">
-<p class="cb-q">1 · ¿Dónde hay tren y dónde no?</p>
+<p class="cb-q">1 Â· Â¿DÃ³nde hay tren y dÃ³nde no?</p>
 <h2 id="cobertura-t">El 66 % de la población tiene a 5 km una estación con 10 trenes al día o más; 99 municipios grandes, ni a 10 km</h2>
 <div class="cb-grid">
 <article class="cb-card span-7" id="c-curva"></article>
@@ -44,76 +43,75 @@
 </section>
 
 <section class="cb-section" id="servicio" aria-labelledby="servicio-t">
-<p class="cb-q">2 · ¿Cuánto servicio y de qué calidad?</p>
+<p class="cb-q">2 Â· Â¿CuÃ¡nto servicio y de quÃ© calidad?</p>
 <h2 id="servicio-t">7 de cada 10 trenes son de Cercanías, y el 13 % de las estaciones concentra la mitad de las paradas</h2>
 <div class="cb-grid">
 <article class="cb-card span-5" id="c-familia"></article>
-<article class="cb-card span-7" id="c-pareto"></article>
-<article class="cb-card span-6" id="c-top-ld"></article>
-<article class="cb-card span-6" id="c-top-cer"></article>
+<article class="cb-card span-7" id="c-horas"></article>
+<article class="cb-card span-12" id="c-pareto"></article>
+<article class="cb-card span-12" id="c-estaciones"></article>
 <article class="cb-card span-12" id="c-velocidad"></article>
 </div>
 </section>
 
 <section class="cb-section" id="uso" aria-labelledby="uso-t">
-<p class="cb-q">3 · ¿Cuánto se usa?</p>
-<h2 id="uso-t">La alta velocidad tiene un 80 % más viajeros que en 2019; en mercancías, el tren pesa en España 4 veces menos que en la UE</h2>
+<p class="cb-q">3 Â· Â¿CuÃ¡nto se usa?</p>
+<h2 id="uso-t">La alta velocidad tiene un 80 % más viajeros que en 2019; el tren en conjunto, un 4,9 % menos que hace un año</h2>
 <div class="cb-grid">
 <article class="cb-card span-12" id="c-demanda"></article>
-<article class="cb-card span-6" id="c-ue"></article>
-<article class="cb-card span-6" id="c-mercancias"></article>
 </div>
 </section>
 
 <section class="cb-section" id="competencia" aria-labelledby="competencia-t">
-<p class="cb-q">4 · ¿Quién compite en alta velocidad y a qué precio?</p>
+<p class="cb-q">4 Â· Â¿QuiÃ©n compite en alta velocidad y a quÃ© precio?</p>
 <h2 id="competencia-t">Renfe conserva el 60 % de los viajeros de alta velocidad en los cinco corredores con competencia, y el AVE cuesta en torno a 1,5 veces la opción más barata</h2>
 <div class="cb-grid">
 <article class="cb-card span-6" id="c-cuota"></article>
 <article class="cb-card span-6" id="c-cuota-t"></article>
-<article class="cb-card span-5" id="c-ocupacion"></article>
-<article class="cb-card span-7" id="c-precio"></article>
+<article class="cb-card span-12" id="c-ocupacion"></article>
+<article class="cb-card span-12" id="c-precio"></article>
 <article class="cb-card span-12" id="c-competencia"></article>
 </div>
 </section>
 
 <section class="cb-section" id="red" aria-labelledby="red-t">
-<p class="cb-q">5 · ¿Qué red lo soporta?</p>
+<p class="cb-q">5 Â· Â¿QuÃ© red lo soporta?</p>
 <h2 id="red-t">El 19 % de la red es de alta velocidad y el 34 % sigue sin electrificar; ya se conoce el ancho del 98,5 % de los km</h2>
 <div class="cb-grid">
 <article class="cb-card span-6" id="c-ancho"></article>
 <article class="cb-card span-6" id="c-electrica"></article>
 <article class="cb-card span-12" id="c-corredores"></article>
 <article class="cb-card span-12" id="c-seguridad"></article>
-<details class="cb-card span-12 cb-more" id="c-red-mas"><summary>Más detalle de la red: vías, titularidad, TEN-T y tramos sin trenes de alta velocidad</summary><div class="cb-more-body"></div></details>
+<details class="cb-card span-12 cb-more" id="c-red-mas"><summary>MÃ¡s detalle de la red: vÃ­as, titularidad, TEN-T y tramos sin trenes de alta velocidad</summary><div class="cb-more-body"></div></details>
 </div>
 </section>
 
 <section class="cb-section" id="metodo" aria-labelledby="metodo-t">
-<p class="cb-q">6 · Método y límites</p>
-<h2 id="metodo-t">Cómo se calcula cada cifra y qué no responde esta Cabina</h2>
+<p class="cb-q">6 Â· MÃ©todo y lÃ­mites</p>
+<h2 id="metodo-t">CÃ³mo se calcula cada cifra y quÃ© no responde esta Cabina</h2>
 <div class="cb-annex">
-<details class="cb-card" id="c-no"><summary>Qué no responde: viajeros, puntualidad, tarifas, operadores autonómicos y acceso real</summary><div class="cb-more-body"></div></details>
-<details class="cb-card" id="c-glosario"><summary>Glosario: una cifra por concepto (km de alta velocidad, estaciones, trenes…)</summary><div class="cb-more-body"></div></details>
+<details class="cb-card" id="c-no"><summary>QuÃ© no responde: viajeros, puntualidad, tarifas, operadores autonÃ³micos y acceso real</summary><div class="cb-more-body"></div></details>
+<details class="cb-card" id="c-glosario"><summary>Glosario: una cifra por concepto (km de alta velocidad, estaciones, trenesâ€¦)</summary><div class="cb-more-body"></div></details>
 <details class="cb-card" id="c-fuentes"><summary>Fuentes, licencias y vigencia de los horarios</summary><div class="cb-more-body"></div></details>
 </div>
 </section>
 
 <section class="cb-section" id="anexo" aria-labelledby="anexo-t">
 <p class="cb-q">Anexo</p>
-<h2 id="anexo-t">Catálogos del atlas</h2>
+<h2 id="anexo-t">CatÃ¡logos del atlas</h2>
 <p class="cb-note">Inventario, no indicadores: sirven para consultar, no para decidir. Por eso van plegados.</p>
 <div class="cb-annex">
-<details class="cb-card" id="a-intermodal"><summary>Puertos y aeropuertos: estación con tren más cercana</summary><div class="cb-more-body"></div></details>
-<details class="cb-card" id="a-turismo"><summary>Trenes turísticos</summary><div class="cb-more-body"></div></details>
+<details class="cb-card" id="a-intermodal"><summary>Puertos y aeropuertos: estaciÃ³n con tren mÃ¡s cercana</summary><div class="cb-more-body"></div></details>
+<details class="cb-card" id="a-turismo"><summary>Trenes turÃ­sticos</summary><div class="cb-more-body"></div></details>
 <details class="cb-card" id="a-marcas"><summary>Nueva arquitectura de marcas de Renfe</summary><div class="cb-more-body"></div></details>
-<details class="cb-card" id="a-urbano"><summary>Líneas urbanas y de Cercanías por red</summary><div class="cb-more-body"></div></details>
-<details class="cb-card" id="a-catalogo"><summary>Catálogo de estaciones y recorridos</summary><div class="cb-more-body"></div></details>
+<details class="cb-card" id="a-urbano"><summary>LÃ­neas urbanas y de CercanÃ­as por red</summary><div class="cb-more-body"></div></details>
+<details class="cb-card" id="a-catalogo"><summary>CatÃ¡logo de estaciones y recorridos</summary><div class="cb-more-body"></div></details>
 </div>
 </section>
 </main>
 
-<footer class="cb-wrap cb-foot"><span>Atlas ferroviario de España · Cabina</span><a id="back-foot" href="index.html">Volver al visor</a></footer>
-<noscript><p class="cb-wrap">Activa JavaScript para ver los gráficos de la Cabina. Los titulares de cada capítulo ya están arriba.</p></noscript>
+<footer class="cb-wrap cb-foot"><span>Atlas ferroviario de EspaÃ±a Â· Cabina</span><a id="back-foot" href="index.html">Volver al visor</a></footer>
+<dialog id="cb-dialog" class="cb-dialog" aria-labelledby="cb-dialog-t"><div class="cb-dialog-head"><h2 id="cb-dialog-t"></h2><button type="button" class="cb-dialog-x" aria-label="Cerrar">Ã—</button></div><div class="cb-dialog-body"></div></dialog>
+<noscript><p class="cb-wrap">Activa JavaScript para ver los grÃ¡ficos de la Cabina. Los titulares de cada capÃ­tulo ya estÃ¡n arriba.</p></noscript>
 </body>
 </html>

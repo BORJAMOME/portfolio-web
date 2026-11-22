@@ -172,10 +172,13 @@ const oferta = {
   trenes: FAM.reduce((a, f) => ({lab: a.lab + OF.familias[f].lab, sab: a.sab + OF.familias[f].sab, dom: a.dom + OF.familias[f].dom}), {lab: 0, sab: 0, dom: 0}),
   estaciones_con_tren: withTrains.length, estaciones_total: ST.filter((s, i) => spain(i)).length,
   paradas: withTrains.reduce((a, s) => a + s.lab, 0),
-  // Rankings separados: media y larga distancia (sin Cercanías) y solo Cercanías.
-  top_ld: withTrains.map(s => ({...s, v: s.lab - s.fam[4]})).filter(s => s.v > 0).sort((a, b) => b.v - a.v).slice(0, 15)
-    .map(s => ({n: s.n, c: s.c, v: s.v, av: s.fam[0] + s.fam[1], ic: s.fam[2], reg: s.fam[3], dest: s.dest, pri: s.pri, ult: s.ult})),
-  top_cer: withTrains.filter(s => s.fam[4] > 0).sort((a, b) => b.fam[4] - a.fam[4]).slice(0, 15).map(s => ({n: s.n, c: s.c, v: s.fam[4], total: s.lab})),
+  semana: OF.semana,
+  // Alta velocidad comercial por marca (AVE incluye AVE Euromed): laborable, sábado, domingo y lunes a domingo.
+  marcas_av: [['AVE', ['AVE', 'AVE Euromed']], ['Avlo', ['Avlo']], ['OUIGO', ['OUIGO']], ['iryo', ['iryo']]].map(([nombre, ks]) => {
+    const M = ks.map(k => OF.marcas?.[k]).filter(Boolean);
+    return {nombre, lab: M.reduce((a, m) => a + m.lab, 0), sab: M.reduce((a, m) => a + m.sab, 0), dom: M.reduce((a, m) => a + m.dom, 0),
+      dias: [0, 1, 2, 3, 4, 5, 6].map(i => M.reduce((a, m) => a + m.dias[i], 0))};
+  }),
   tramos: [['1–2', 1, 2], ['3–10', 3, 10], ['11–30', 11, 30], ['31–100', 31, 100], ['101–300', 101, 300], ['más de 300', 301, 1e9]]
     .map(([label, a, b]) => ({label, n: withTrains.filter(s => s.lab >= a && s.lab <= b).length}))
 };
@@ -231,6 +234,14 @@ const cobertura = {
   huecos: munis.filter(m => m.pob > 20000 && m.best[2] < 10).sort((a, b) => b.pob - a.pob)
     .map(m => ({id: m.id, n: m.n, pr: m.pr, pob: m.pob, c: m.c.map(x => round(x, 4)), cerca: m.near10 ? {n: m.near10.n, km: round(m.near10.d / 1000, 1), lab: m.near10.lab} : null}))
 };
+// Habitantes (no solo %) de cada punto de la curva, para la tabla completa.
+cobertura.curva_pob = DIST.map((km, k) => NS.map(N => munis.filter(m => m.best[k] >= N).reduce((a, m) => a + m.pob, 0)));
+// Lista de estaciones con tren (Pareto, ranking filtrable por servicio y territorio). Municipio = término que contiene la
+// estación (INE). Campos: [nombre, [lon, lat], comunidad, provincia, municipio, trenes, [AV, Avant, Intercity, Regional, Cercanías]].
+{
+  const muniOf = s => munis.find(m => inGeom(s.c, m.g, m.bb))?.n || null;
+  oferta.estaciones = withTrains.sort((a, b) => b.lab - a.lab).map(s => [s.n, s.c, s.ca, s.pr, muniOf(s), s.lab, s.fam]);
+}
 cobertura.kpi = {n10_5: cobertura.curva[1][NS.indexOf(10)], n1_5: cobertura.curva[1][NS.indexOf(1)], n30_5: cobertura.curva[1][NS.indexOf(30)]};
 cobertura.huecos_pob = cobertura.huecos.reduce((a, m) => a + m.pob, 0);
 
@@ -346,8 +357,12 @@ const comp = oferta.competencia.map(c => ({...c, priv: (c.ouigo + c.iryo) / (c.a
 const compBig = comp.filter(c => c.ave + c.avlo + c.ouigo + c.iryo >= 30), compMax = compBig.reduce((a, b) => b.priv > a.priv ? b : a, compBig[0]);
 const kmAV = kmOf(red.prestaciones, 'hs'), kmNo = kmOf(red.electrificacion, 'no'), kmKnown = red.km - kmOf(red.ancho, 'unknown');
 const refDate = new Date(oferta.referencia.laborable + 'T12:00:00').toLocaleDateString('es-ES', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
+// Pastilla de la cabecera: día de los horarios y próxima regeneración (rutas-semanal.yml: cada lunes).
+const shortDate = iso => new Date(iso + 'T12:00:00').toLocaleDateString('es-ES', {weekday: 'short', day: 'numeric', month: 'short'}).replace(/[.,]/g, '');
+const nextMonday = (() => { const d = new Date((OF.generado || oferta.referencia.laborable) + 'T12:00:00'); do d.setDate(d.getDate() + 1); while (d.getDay() !== 1); return d.toISOString().slice(0, 10); })();
+oferta.actualizacion = {generado: OF.generado, proxima: nextMonday};
 const titulares = {
-  ref: 'Día de referencia: ' + refDate + '. Todos los trenes de viajeros con horario público, también Cercanías e iryo.',
+  ref: 'Horarios del ' + shortDate(oferta.referencia.laborable) + '|Próxima actualización: ' + shortDate(nextMonday),
   cobertura: `El ${Math.round(cobertura.kpi.n10_5)} % de la población tiene a 5 km una estación con 10 trenes al día o más; ${cobertura.huecos.length} municipios grandes, ni a 10 km`,
   servicio: `${Math.round(cerShare * 10)} de cada 10 trenes son de Cercanías, y el ${pf.format(oferta.pareto.p50)} % de las estaciones concentra la mitad de las paradas`,
   competencia: `iryo y OUIGO paran en ${comp.length} estaciones; donde más pesan, en ${compMax.n}, son ${Math.round(compMax.priv * 100)} de cada 100 trenes de alta velocidad`,
@@ -358,8 +373,13 @@ const titulares = {
 const MERC = path.join(V, 'capas', 'mercado.json');
 const mercado = fs.existsSync(MERC) ? JSON.parse(fs.readFileSync(MERC, 'utf8')) : null;
 if (mercado) {
-  const V2 = mercado.viajeros.resumen, ue = mercado.ue.mercancias, i = ue.anios.length - 1;
-  titulares.uso = `La alta velocidad tiene un ${Math.round(V2.av.vs2019)} % más viajeros que en 2019; en mercancías, el tren pesa en España ${Math.round(ue.pais.EU27_2020[i] / ue.pais.ES[i])} veces menos que en la UE`;
+  const V2 = mercado.viajeros.resumen, S2 = mercado.viajeros.series, keys = Object.keys(S2);
+  // Total del tren: suma de los cuatro tipos, últimos 12 meses frente a los 12 anteriores (meses de la serie INE).
+  const sumMeses = (a, b) => keys.reduce((t, k) => t + S2[k].meses.slice(a, b).reduce((x, [, v]) => x + v, 0), 0);
+  const nM = S2[keys[0]].meses.length, m12 = sumMeses(nM - 12, nM), prev = sumMeses(nM - 24, nM - 12);
+  const var12 = round(100 * (m12 / prev - 1));
+  mercado.viajeros.total12 = {m12: round(m12, 0), anterior: round(prev, 0), var12};
+  titulares.uso = `La alta velocidad tiene un ${Math.round(V2.av.vs2019)} % más viajeros que en 2019; el tren en conjunto, un ${pf.format(Math.abs(var12))} % ${var12 >= 0 ? 'más' : 'menos'} que hace un año`;
 }
 /* ── Ola 2 · competencia en viajeros (CNMC): capas/cnmc.json, de tools/build-cnmc.mjs. Solo lo que pinta la Cabina. ── */
 const CN = path.join(V, 'capas', 'cnmc.json');
@@ -386,7 +406,8 @@ const esc = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 const html0 = fs.readFileSync(HTML, 'utf8');
 let html = html0;
 for (const k of ['cobertura', 'servicio', 'uso', 'competencia', 'red'].filter(k => titulares[k])) html = html.replace(new RegExp('(<h2 id="' + k + '-t">)[^<]*(</h2>)'), (m, a, b) => a + esc(titulares[k]) + b);
-html = html.replace(/(<p id="ref"[^>]*>)[^<]*(<\/p>)/, (m, a, b) => a + esc(titulares.ref) + b);
+{ const [a1, a2] = titulares.ref.split('|');
+  html = html.replace(/(<span[^>]*id="ref-date"[^>]*>)[^<]*(<\/span>)/, (m, a, b) => a + esc(a1) + b).replace(/(<span[^>]*id="ref-next"[^>]*>)[^<]*(<\/span>)/, (m, a, b) => a + esc(a2) + b); }
 
 if (process.argv.includes('--check')) {
   const cur = fs.existsSync(OUT) ? fs.readFileSync(OUT, 'utf8') : '';

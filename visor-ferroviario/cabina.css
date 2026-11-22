@@ -1,5 +1,5 @@
 /* Cabina: cuadro de mando del atlas. Mismos tokens que atlas.css (no se enlaza: sus reglas globales son para el mapa).
-   Gris para el contexto y un solo color de énfasis (azul marino); los colores de operador solo en los bloques de operador. */
+   Gris para el contexto y un solo color de Ã©nfasis (azul marino); los colores de operador solo en los bloques de operador. */
 :root{color-scheme:light;--ink:#1d2638;--navy:#273a5f;--muted:#586278;--line:#dce2eb;--line-strong:#b9c5d6;--paper:#fbfbfb;--wash:#e7ecf4;--focus:#4a628e;
   --ctx:#7a8597;--ctx-soft:#c9d1dd;--card:#fff;--fs-xs:12px;--fs-s:13px;--fs-m:14px;--hit:32px;--gap:16px}
 @media(max-width:760px){:root{--hit:44px}}
@@ -36,7 +36,7 @@ h1{font:500 clamp(28px,3.4vw,40px)/1.1 'Newsreader',Georgia,serif;margin:2px 0 6
 /* avisos */
 .cb-alert{margin:16px 0 0;padding:10px 14px;border:1px solid #d9c38a;border-left:4px solid #8B6B16;background:#fbf6e8;border-radius:6px;font-size:var(--fs-s)}
 
-/* KPI: etiqueta pequeña, valor corto con unidad, referencia explícita (cap. 06 del manual) */
+/* KPI: etiqueta pequeÃ±a, valor corto con unidad, referencia explÃ­cita (cap. 06 del manual) */
 .cb-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--gap);margin:24px 0 8px}
 .kpi{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
 .kpi-label{font-size:var(--fs-s);color:var(--ink);font-weight:600;line-height:1.3}
@@ -84,13 +84,13 @@ h1{font:500 clamp(28px,3.4vw,40px)/1.1 'Newsreader',Georgia,serif;margin:2px 0 6
 .legend{display:flex;flex-wrap:wrap;gap:4px 14px;margin:0 0 10px;padding:0;list-style:none;font-size:var(--fs-xs);color:var(--muted)}
 .legend i{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:5px;vertical-align:-2px;background:var(--ctx)}
 .c-navy{background:var(--navy)!important}.c-ctx{background:var(--ctx)!important}
-/* «En proyecto / planificado»: trama oscura sobre blanco (contraste ≥ 3:1, WCAG 1.4.11); el gris liso daba 1,54:1 */
+/* Â«En proyecto / planificadoÂ»: trama oscura sobre blanco (contraste â‰¥ 3:1, WCAG 1.4.11); el gris liso daba 1,54:1 */
 .c-soft{background:repeating-linear-gradient(45deg,#586278 0 1.5px,#fff 1.5px 5px)!important;box-shadow:inset 0 0 0 1px #586278}
-/* Operadores de alta velocidad: todos ≥ 3:1 sobre blanco (iryo, el más claro, 3,24:1) y luminancia distinta entre vecinos (≥ 1,4:1).
-   Antes Avlo y OUIGO tenían casi la misma luminancia (1,13:1). */
+/* Operadores de alta velocidad: todos â‰¥ 3:1 sobre blanco (iryo, el mÃ¡s claro, 3,24:1) y luminancia distinta entre vecinos (â‰¥ 1,4:1).
+   Antes Avlo y OUIGO tenÃ­an casi la misma luminancia (1,13:1). */
 .c-ave{background:#1d3557!important}.c-avlo{background:#882255!important}.c-ouigo{background:#0072b2!important}.c-iryo{background:#e07000!important}
 
-/* gráficos SVG (columnas y línea) */
+/* grÃ¡ficos SVG (columnas y lÃ­nea) */
 .svgchart{display:block;width:100%;height:auto;overflow:visible}
 .svgchart text{font:var(--fs-xs) 'Plus Jakarta Sans',sans-serif;fill:var(--muted)}
 .svgchart .v{fill:var(--ink);font-weight:600}
@@ -103,7 +103,7 @@ h1{font:500 clamp(28px,3.4vw,40px)/1.1 'Newsreader',Georgia,serif;margin:2px 0 6
 .svgchart .ann{fill:var(--ink)}
 .svgchart .today{fill:var(--navy);font-weight:600}
 
-/* tablas: valores exactos; la columna numérica lleva barra de datos */
+/* tablas: valores exactos; la columna numÃ©rica lleva barra de datos */
 .tbl-wrap{overflow-x:auto;margin:0 -4px;padding:0 4px}
 table{width:100%;border-collapse:collapse;font-size:var(--fs-s)}
 caption{text-align:left;font-size:var(--fs-xs);color:var(--muted);padding-bottom:6px}
@@ -130,7 +130,7 @@ dl.src{margin:0;font-size:var(--fs-s)}dl.src dt{font-weight:600;margin-top:8px}d
 @media(max-width:760px){.cb-wrap{padding:0 16px}.cb-card{padding:14px 14px 12px}}
 .cb-toc a.cb-toc-out{margin-left:auto;border:1px solid var(--line-strong)}
 
-/* migas, «ver datos» y bloques plegables */
+/* migas, Â«ver datosÂ» y bloques plegables */
 .cb-crumbs{display:flex;gap:16px;flex-wrap:wrap;margin:0}
 details.cb-data{margin-top:8px}
 details.cb-data>summary,details.cb-more>summary,.cb-annex details>summary{cursor:pointer;min-height:var(--hit);display:flex;align-items:center;gap:6px;font-size:var(--fs-s);font-weight:600;color:var(--navy);list-style:none}
@@ -149,23 +149,23 @@ details.cb-data[open]>summary{margin-bottom:6px}
 .cb-sub2{margin:14px 0 6px;font:600 var(--fs-s) 'Plus Jakarta Sans',sans-serif;color:var(--ink)}
 .cb-split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
 @media(max-width:760px){.cb-split{grid-template-columns:1fr}}
-/* barra 100 % (composición) */
+/* barra 100 % (composiciÃ³n) */
 .bar100{display:flex;height:22px;border-radius:3px;overflow:hidden;margin:6px 0 4px}
 .bar100 span{height:100%}
 .bar100 span+span{border-left:2px solid var(--card)}
-/* líneas de la curva de población y del Pareto */
+/* lÃ­neas de la curva de poblaciÃ³n y del Pareto */
 .svgchart .ln.main{stroke:var(--navy);stroke-width:2.6}
 .svgchart .ln.alt{stroke:var(--ctx);stroke-width:1.6;stroke-dasharray:5 3}
 .svgchart .ln.ref{stroke:var(--line-strong);stroke-width:1;stroke-dasharray:2 3}
 .svgchart .pt{fill:var(--navy)}
 @media print{.cb-tocbar,.cb-back,.cb-link,details>summary::before{display:none}.cb-card,.kpi{break-inside:avoid}details>*{display:block}body{background:#fff}}
 
-/* leyenda de líneas (curva de población) */
+/* leyenda de lÃ­neas (curva de poblaciÃ³n) */
 .legend i.lg-main{height:3px;width:18px;border-radius:0;background:var(--navy);vertical-align:3px}
 .legend i.lg-alt{height:0;width:18px;border-radius:0;background:none;border-top:2px dashed var(--ctx);vertical-align:3px}
-/* tablas en móvil: cabeceras que se parten y columnas secundarias ocultas */
+/* tablas en mÃ³vil: cabeceras que se parten y columnas secundarias ocultas */
 @media(max-width:560px){th{white-space:normal}th.opt,td.opt{display:none}}
-/* ── Ola 2 · uso: small multiples con escala común (IBCS), énfasis solo en el panel que nombra el titular ── */
+/* â”€â”€ Ola 2 Â· uso: small multiples con escala comÃºn (IBCS), Ã©nfasis solo en el panel que nombra el titular â”€â”€ */
 .sm-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 18px;margin:4px 0 6px}
 .sm h4{margin:0;font-size:var(--fs-s);font-weight:600;color:var(--muted)}
 .sm .sm-v{margin:2px 0 0;font:600 22px/1.1 'Newsreader',Georgia,serif;color:var(--muted);font-variant-numeric:tabular-nums}
@@ -181,3 +181,174 @@ details.cb-data[open]>summary{margin-bottom:6px}
 .svgchart .rng{stroke:var(--line-strong);stroke-width:3;stroke-linecap:round}
 .svgchart .d-ave{fill:#1d3557}.svgchart .d-avlo{fill:#882255}.svgchart .d-ouigo{fill:#0072b2}.svgchart .d-iryo{fill:#e07000}
 .svgchart circle.d-ave,.svgchart circle.d-avlo,.svgchart circle.d-ouigo,.svgchart circle.d-iryo{stroke:#fff;stroke-width:1.5}
+
+/* â•â•â•â•â•â•â•â•â•â• Ola 3: cabecera, KPIs, interacciÃ³n y colores de marca â•â•â•â•â•â•â•â•â•â• */
+/* tÃ­tulo y pastilla de actualizaciÃ³n */
+h1.cb-title{font:500 clamp(44px,6vw,72px)/.95 'Newsreader',Georgia,serif;letter-spacing:-.02em;margin:6px 0 4px}
+.cb-pill{display:inline-flex;align-items:center;gap:10px;margin:0 0 6px;padding:7px 14px 7px 12px;border-radius:999px;background:#fff;border:1px solid var(--line);
+  box-shadow:0 1px 2px rgba(29,38,56,.06),0 6px 18px -8px rgba(29,38,56,.18);font-size:var(--fs-s);color:var(--ink);white-space:nowrap}
+.cb-pill-dot{position:relative;width:8px;height:8px;border-radius:50%;background:#1f8a4c;flex:none}
+.cb-pill-dot::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid #1f8a4c;opacity:0;animation:cbPulse 2.4s ease-out infinite}
+@keyframes cbPulse{0%{transform:scale(.6);opacity:.55}100%{transform:scale(1.5);opacity:0}}
+@media(prefers-reduced-motion:reduce){.cb-pill-dot::after{animation:none}}
+.cb-pill-main{font-weight:600}
+.cb-pill-sep{width:1px;height:14px;background:var(--line-strong)}
+.cb-pill-next{color:var(--muted)}
+@media(max-width:560px){.cb-pill{white-space:normal;flex-wrap:wrap;border-radius:14px;gap:4px 10px}.cb-pill-sep{display:none}}
+
+/* KPI: etiqueta + Â«iÂ», valor y una pieza visual mÃ­nima */
+.cb-kpis6{grid-template-columns:repeat(6,minmax(0,1fr))}
+@media(max-width:1100px){.cb-kpis6{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:560px){.cb-kpis6{grid-template-columns:repeat(2,1fr)}}
+.cb-kpis6 .kpi{position:relative;gap:6px;padding:12px 14px 14px}
+.kpi-head{display:flex;align-items:flex-start;justify-content:space-between;gap:6px}
+.cb-kpis6 .kpi-label{font-size:var(--fs-xs);color:var(--muted);font-weight:600;line-height:1.3}
+.cb-kpis6 a.kpi-value{font:500 32px/1.05 'Newsreader',Georgia,serif;margin:2px 0 0;padding:0;text-decoration:none}
+@media(max-width:560px){.cb-kpis6 a.kpi-value{font-size:27px}}
+.cb-kpis6 .kpi>.kpi-sub,.cb-kpis6 .kpi>.kpi-bars,.cb-kpis6 .kpi>div:last-child{margin-top:auto}
+a.kpi-value{text-decoration:none}a.kpi-value:hover{text-decoration:underline;text-decoration-thickness:1px}
+.kpi-iw{position:relative;flex:none}
+.kpi-i{width:20px;height:20px;border-radius:50%;border:1px solid var(--line-strong);background:#fff;color:var(--muted);font:italic 600 12px/1 Georgia,serif;cursor:help;padding:0;display:grid;place-items:center}
+.kpi-i:hover,.kpi-i:focus-visible{background:var(--navy);border-color:var(--navy);color:#fff}
+.kpi-pop{position:absolute;z-index:30;top:26px;right:-6px;width:240px;padding:10px 12px;border-radius:8px;background:var(--ink);color:#fff;font-size:var(--fs-xs);line-height:1.45;
+  box-shadow:0 10px 28px -8px rgba(0,0,0,.35);display:none;flex-direction:column;gap:6px}
+.kpi-pop::before{content:'';position:absolute;top:-5px;right:12px;width:10px;height:10px;background:var(--ink);transform:rotate(45deg)}
+.kpi-pop .src{color:#c9d1dd;font-size:11px;border-top:1px solid rgba(255,255,255,.18);padding-top:6px}
+.kpi-iw:hover .kpi-pop,.kpi-iw:focus-within .kpi-pop,.kpi-iw.open .kpi-pop{display:flex}
+@media(max-width:560px){.kpi-pop{width:200px}}
+.kpi-sub{font-size:var(--fs-xs);color:var(--muted)}
+.kpi-delta{display:inline-block;font-weight:700;font-size:var(--fs-xs);color:#1f7a45;background:#e7f4ec;border-radius:4px;padding:1px 6px;font-variant-numeric:tabular-nums}
+.kpi-delta.down{color:#9b2c1f;background:#fbece9}
+.kpi-bars{list-style:none;margin:2px 0 0;padding:0;display:grid;gap:3px}
+.kpi-bars li{display:grid;grid-template-columns:52px 1fr 40px;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
+.kpi-bars .kb-track{height:5px;background:var(--wash);border-radius:3px;overflow:hidden}
+.kpi-bars .kb-fill{display:block;height:100%;background:var(--ctx);border-radius:3px}
+.kpi-bars li.hi .kb-fill{background:var(--navy)}.kpi-bars li.hi{color:var(--ink);font-weight:600}
+.kpi-bars .kb-v{text-align:right;font-variant-numeric:tabular-nums}
+
+/* tooltip */
+.cb-tip{position:fixed;z-index:50;pointer-events:none;max-width:300px;padding:8px 10px;border-radius:7px;background:rgba(29,38,56,.96);color:#fff;font-size:var(--fs-xs);line-height:1.45;
+  box-shadow:0 8px 24px -6px rgba(0,0,0,.35);display:flex;flex-direction:column;gap:2px}
+.cb-tip[hidden]{display:none}
+.cb-tip strong{font-weight:700;font-size:var(--fs-s);margin-bottom:2px}
+.cb-tip .tip-row{display:flex;align-items:center;gap:6px;color:#dfe5ee}
+.cb-tip .tip-row b{margin-left:auto;padding-left:12px;color:#fff;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cb-tip i.sw{width:10px;height:10px;border-radius:2px;flex:none;background:#c9d1dd}
+
+/* controles */
+.seg-ctl{display:inline-flex;flex-wrap:wrap;gap:2px;padding:3px;border-radius:8px;background:var(--wash);margin:0 0 12px;align-self:flex-start}
+.seg-ctl button{font:inherit;font-size:var(--fs-xs);font-weight:600;min-height:28px;padding:4px 10px;border:0;border-radius:6px;background:none;color:var(--muted);cursor:pointer}
+.seg-ctl button:hover{color:var(--ink)}
+.seg-ctl button[aria-pressed=true]{background:#fff;color:var(--navy);box-shadow:0 1px 2px rgba(29,38,56,.14)}
+@media(max-width:760px){.seg-ctl button{min-height:36px}}
+.filters{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:flex-end;margin-bottom:10px}
+.filters .seg-ctl{margin:0}
+.sels{display:flex;flex-wrap:wrap;gap:8px 12px}
+label.sel{display:flex;flex-direction:column;gap:2px;font-size:11px;color:var(--muted);font-weight:600;min-width:150px}
+label.sel select{font:inherit;font-size:var(--fs-s);min-height:var(--hit);padding:4px 28px 4px 10px;border:1px solid var(--line-strong);border-radius:6px;background:#fff;color:var(--ink);max-width:240px}
+.filters.od{align-items:flex-end}
+.btn-ghost{font:inherit;font-size:var(--fs-s);font-weight:600;min-height:var(--hit);padding:4px 12px;border:1px solid var(--line-strong);border-radius:6px;background:#fff;color:var(--navy);cursor:pointer;align-self:flex-start}
+.btn-ghost:hover{background:var(--wash)}
+.btn-ghost.swap{min-width:var(--hit);font-size:16px;padding:0 8px}
+.card-tools{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between;margin-top:6px}
+.chips{display:flex;flex-wrap:wrap;gap:4px}
+.chips button{font:inherit;font-size:11px;font-weight:600;min-height:26px;padding:2px 8px;border:1px solid var(--line-strong);border-radius:999px;background:#fff;color:var(--muted);cursor:pointer;font-variant-numeric:tabular-nums}
+.chips button[aria-pressed=true]{background:var(--navy);border-color:var(--navy);color:#fff}
+@media(max-width:760px){.chips button{min-height:32px}}
+
+/* ventana emergente */
+.cb-dialog{border:0;border-radius:12px;padding:0;max-width:min(760px,calc(100vw - 24px));width:100%;box-shadow:0 24px 60px -12px rgba(0,0,0,.4);color:var(--ink)}
+.cb-dialog::backdrop{background:rgba(29,38,56,.45)}
+.cb-dialog-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff}
+.cb-dialog-head h2{margin:0;font:500 20px/1.2 'Newsreader',Georgia,serif}
+.cb-dialog-x{font-size:22px;line-height:1;width:var(--hit);height:var(--hit);border:0;border-radius:6px;background:none;color:var(--muted);cursor:pointer}
+.cb-dialog-x:hover{background:var(--wash)}
+.cb-dialog-body{padding:12px 18px 18px}
+
+/* grÃ¡ficos interactivos */
+.svgchart .hit{fill:transparent;cursor:crosshair}
+.svgchart.pickable .hit{cursor:pointer}
+.svgchart .guide{stroke:var(--ink);stroke-width:1;stroke-dasharray:2 2;pointer-events:none}
+.svgchart .hdot{stroke:#fff;stroke-width:1.5;pointer-events:none;fill:var(--navy)}
+.svgchart .pickline{stroke:var(--navy);stroke-width:1;opacity:.35}
+.svgchart .pickpt{stroke:#fff;stroke-width:1.5;fill:var(--navy)}
+.svgchart .hdot.alt,.svgchart .pickpt.alt,.svgchart .hdot.alt2,.svgchart .pickpt.alt2,.svgchart .hdot.ref{fill:var(--ctx)}
+.svgchart .col.on{fill:var(--focus)}
+.svgchart .ln.alt2{stroke:var(--ctx);stroke-width:1.4;stroke-dasharray:1.5 3}
+.legend i.lg-alt2{height:0;width:18px;border-radius:0;background:none;border-top:2px dotted var(--ctx);vertical-align:3px}
+.cb-tip i.sw.lg-main{background:var(--navy)}.cb-tip i.sw.lg-alt,.cb-tip i.sw.lg-alt2{background:var(--ctx)}
+.svgchart .dot{stroke:#fff;stroke-width:1.5;cursor:pointer}
+.svgchart .dot:hover{stroke:var(--ink);stroke-width:2}
+.hb .seg{cursor:default}
+.hb .pick{cursor:pointer}
+.hb li.sel .lab-t{font-weight:700}
+.hb li.sub .lab{padding-left:14px;color:var(--muted)}
+.hb li.sub .seg{opacity:.55}
+.hb .lab{display:inline-flex;align-items:center;gap:6px;min-height:24px}
+.hb .lab-t{overflow:hidden;text-overflow:ellipsis;min-width:0}
+.hb .lab .logo{height:14px;width:auto;max-width:56px;flex:none}
+.hb .lab .logo-cercanias,.hb .lab .logo-ouigo{width:14px}
+.legend .logo{height:12px;width:auto;max-width:44px;margin-right:4px;vertical-align:-2px}
+.brand-fam dt .logo{height:14px;width:auto;max-width:56px;margin-right:6px;vertical-align:-2px}
+
+/* colores de marca (logos oficiales): Renfe #5b064b, AVE #001f4c, Avlo #5fcbc6 (con borde: es claro), OUIGO #e3006a, iryo #cb151b */
+.b-renfe{background:#5b064b!important}.b-ave{background:#001f4c!important}.b-avlo{background:#5fcbc6!important;box-shadow:inset 0 0 0 1px #2a8a85}
+.b-ouigo{background:#e3006a!important}.b-iryo{background:#cb151b!important}.b-ctx{background:var(--ctx)!important}
+.svgchart .b-renfe{fill:#5b064b}.svgchart .b-ave{fill:#001f4c}.svgchart .b-avlo{fill:#5fcbc6;stroke:#2a8a85}.svgchart .b-ouigo{fill:#e3006a}.svgchart .b-iryo{fill:#cb151b}
+.svgchart circle.dot.b-avlo{stroke:#2a8a85;stroke-width:1.5}
+.svgchart .ln.b-renfe-ln{stroke:#5b064b;stroke-width:2.6}.svgchart .hdot.b-renfe-ln{fill:#5b064b}
+/* familias de servicio (estaciones apiladas): AV, Avant, Intercity, Regional, CercanÃ­as */
+.fam-0{background:#273a5f!important}.fam-1{background:#6d86b8!important}.fam-2{background:#5b064b!important}.fam-3{background:#9aa4b5!important}.fam-4{background:#c8102e!important}
+/* anchos de vÃ­a (antes usaban los colores de operador) */
+.g-std{background:#0072b2!important}.g-met{background:#e07000!important}.g-mix{background:#882255!important}
+
+/* mapa de calor */
+.svgchart.heat .cell{fill:#273a5f;stroke:none}
+.svgchart.heat .cell:hover{stroke:var(--ink);stroke-width:1.5}
+.svgchart.heat .cv{font-size:10px;fill:var(--ink);pointer-events:none;font-variant-numeric:tabular-nums}
+.svgchart.heat .cv.inv{fill:#fff}
+
+/* viajeros aÃ±o contra aÃ±o */
+.yoy-read{display:flex;flex-wrap:wrap;gap:10px 28px;margin:0 0 8px}
+.yoy-k{display:flex;flex-direction:column;gap:2px}
+.yoy-t{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.yoy-v{font:500 24px/1.1 'Newsreader',Georgia,serif;color:var(--navy);font-variant-numeric:tabular-nums}
+.yoy-k .kpi-delta{align-self:flex-start}
+.svgchart .ln.ln-yr{stroke-width:1.4}
+.svgchart .ln.yr-cur{stroke:var(--navy);stroke-width:2.8}.svgchart .ln.yr-prev{stroke:#7a8597;stroke-width:2}
+.svgchart .ln.yr-ref{stroke:#586278;stroke-dasharray:5 3;stroke-width:1.6}.svgchart .ln.yr-old{stroke:#d5dbe4;stroke-width:1.2}
+.svgchart .hdot.yr-cur{fill:var(--navy)}.svgchart .hdot.yr-prev{fill:#7a8597}.svgchart .hdot.yr-ref{fill:#586278}.svgchart .hdot.yr-old{fill:#c9d1dd}
+.sw-yr-cur{background:var(--navy)!important}.sw-yr-prev{background:#7a8597!important}.sw-yr-ref{background:repeating-linear-gradient(90deg,#586278 0 4px,transparent 4px 6px)!important}.sw-yr-old{background:#d5dbe4!important}
+
+/* estaciones, velocidad y ocupaciÃ³n */
+.est-sum{margin:0 0 8px;font-size:var(--fs-xs);color:var(--muted)}
+.od-read{display:grid;grid-template-columns:auto 1fr;column-gap:14px;align-items:center;margin:4px 0 6px;padding:12px 14px;border-radius:8px;background:var(--wash)}
+.od-read .logo{grid-row:span 3;height:22px;width:auto;max-width:90px}
+.od-read p{margin:0}
+.od-kmh{font:500 34px/1 'Newsreader',Georgia,serif;color:var(--navy);font-variant-numeric:tabular-nums}
+.od-kmh small{font:600 var(--fs-s) 'Plus Jakarta Sans',sans-serif;color:var(--muted)}
+.od-det{font-size:var(--fs-s);font-weight:600}.od-st{font-size:var(--fs-xs);color:var(--muted)}
+.occ{display:grid;gap:18px}
+.occ-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media(max-width:620px){.occ-tiles{grid-template-columns:1fr}}
+.occ-tile{padding:12px 14px;border:1px solid var(--line);border-radius:8px}
+.occ-top{height:22px;display:flex;align-items:center}
+.occ-top .logo{height:20px;width:auto;max-width:80px}
+.occ-top .logo-ouigo{height:26px}
+.occ-v{margin:6px 0 4px;font:500 30px/1 'Newsreader',Georgia,serif;color:var(--ink);font-variant-numeric:tabular-nums}
+.occ-v small{font:600 var(--fs-s) 'Plus Jakarta Sans',sans-serif;color:var(--muted)}
+.occ-bar{display:block;height:8px;background:var(--wash);border-radius:4px;overflow:hidden}
+.occ-fill{display:block;height:100%;border-radius:4px}
+.occ-s{margin:6px 0 0;font-size:var(--fs-xs);color:var(--muted)}
+.occ-det .cb-sub2{margin-top:0}
+
+/* tablas compactas y sin saltos en la primera columna */
+th.nw,td.nw{white-space:nowrap}
+table.compact{font-size:var(--fs-xs)}
+table.compact th{font-size:10px;padding:5px 6px}
+table.compact td{padding:4px 6px}
+table.compact tr.sub td:first-child{padding-left:16px;color:var(--muted)}
+table.compact tr.tot td{font-weight:700;border-top:1px solid var(--line-strong)}
+.cb-main .tbl-wrap table td:first-child,.cb-main td.n,.cb-dialog td.n{white-space:nowrap}
+.cb-dialog table{font-size:var(--fs-xs)}.cb-dialog th{white-space:nowrap}
+.chart-host{min-width:0}
