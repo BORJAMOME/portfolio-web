@@ -98,7 +98,7 @@ Página `cabina-analisis.html` (+ `.css`, `.js`), enlazada desde Cabina y desde 
 5. **Espera media en Cercanías:** Σh² ÷ (2Σh) en la estación con más trenes de cada línea y en el sentido con más salidas (punta y valle).
 6. **Fin de semana:** sábado y domingo en % del miércoles, por servicio y por núcleo.
 7. **Horas de servicio:** primera y última salida de una ruta típica de cada servicio.
-8. **Trenes por tramo:** mapa SVG propio (zoom, arrastre y clic), carga diferida de `capas/analisis-mapa.json`.
+8. **Trenes por tramo:** mapa SVG propio (zoom, arrastre y clic; vistas «Todos», «Media y larga distancia» y «Cercanías»), carga diferida de `capas/analisis-mapa.json`. Una sola red (ejes IGN): Cercanías se casa con el eje por el que circula (punto cada 25 m → eje IGN más cercano a ≤ 35 m, en paralelo y sin ancho estándar; la línea cuenta si recorre ≥ 40 % del eje o 150 m). Casa el 99 % de su longitud; 11,6 km de vía «hs» reciben Cercanías (ancho ibérico compartido). Las rutas con trazado incompleto suman en sus tramos conocidos.
 9. **Electrificación:** % de trenes·km bajo catenaria por servicio.
 10. **Competencia:** cuota y precio por corredor (CNMC 2025), con selector.
 11. **Densidad de red:** m/km² y km por 100.000 habitantes por comunidad.
@@ -112,4 +112,4 @@ Página `cabina-analisis.html` (+ `.css`, `.js`), enlazada desde Cabina y desde 
 
 **Comprobado:** `build-cabina-analisis --check`, `repair-demografia --check`, `build-cabina --check`, `check-links`, `version-assets --check`, `build-mapa --check`, `build-en --check`, `test-heatmap`, `check-heatmap`, `check-incidencias` y `check-a11y` (cabina, cabina-rutas y cabina-analisis) sin infracciones; escritorio y móvil sin scroll horizontal.
 
-**Límites:** sin viajeros por ruta ni estación; las dos capas del mapa (IGN y GTFS de Cercanías) no se suman; 78 rutas (204 trenes) sin trazado no se dibujan; las caídas de fin de semana de Cercanías se leen por núcleo porque algunas líneas cambian de nombre el fin de semana.
+**Límites:** sin viajeros por ruta ni estación; en estaciones y túneles paralelos (Chamartín – Nuevos Ministerios) un eje puede recoger todas las líneas que entran; 12 rutas (24 trenes) sin recorrido en el catálogo no se dibujan; las caídas de fin de semana de Cercanías se leen por núcleo porque algunas líneas cambian de nombre el fin de semana.

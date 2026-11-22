@@ -199,11 +199,13 @@ const densidad = {
 };
 
 /* ── 8 · Mapa de trenes por tramo (capas/analisis-mapa.json) ──
-   - Ejes IGN (alta velocidad, larga y media distancia, OUIGO e iryo): cada fila de rutas.json es un origen → destino de
-     una marca y todos sus trenes hacen el recorrido completo, así que un tramo suma los trenes del miércoles de las
-     filas que pasan por él (los dos sentidos).
-   - Cercanías: los dibujos de línea del GTFS, con los trenes que ocupan cada trozo (rutas-actividad.json · carga).
-   Las dos capas no se suman entre sí: el GTFS no comparte geometría con el IGN. */
+   Una sola red, los ejes IGN, con dos cuentas por tramo (trenes del miércoles, los dos sentidos):
+   - media y larga distancia (alta velocidad, larga y media distancia, OUIGO e iryo): cada fila de rutas.json es un
+     origen → destino de una marca y todos sus trenes hacen el recorrido completo, así que un tramo suma los trenes de las
+     filas que pasan por él. Las filas con el trazado incompleto (huecos) suman en los tramos que sí se conocen;
+   - Cercanías: los dibujos de línea del GTFS con los trenes que ocupan cada trozo (rutas-actividad.json · carga), ida y
+     vuelta sumadas, casados con el eje IGN por el que circulan (a ≤ 35 m y con la misma dirección). Las líneas que
+     comparten vía (C2, C7 y C8 en Madrid) se suman. Lo que no casa con ningún eje se dibuja aparte con su dibujo GTFS. */
 const simplify = (pts, tol) => {   // Douglas-Peucker en grados (tol ≈ 0,002° ≈ 200 m)
   if (pts.length <= 2) return pts; const keep = new Uint8Array(pts.length); keep[0] = keep[pts.length - 1] = 1; const st = [[0, pts.length - 1]];
   while (st.length) { const [a, b] = st.pop(); let mi = -1, md = tol; const [x1, y1] = pts[a], [x2, y2] = pts[b], dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1e-12;
@@ -212,51 +214,93 @@ const simplify = (pts, tol) => {   // Douglas-Peucker en grados (tol ≈ 0,002°
   return pts.filter((_, i) => keep[i]);
 };
 const q = p => [round(p[0], 3), round(p[1], 3)];
-const load = new Map(), routesOf = new Map();
-let trenesSinTrazado = 0;
+const SV = read('capas/servicios.json'), VAR = new Map(SV.variants.map(v => [v.id, v])), FEAT = datos.rail.features;
+
+// 1 · Media y larga distancia por eje IGN.
+const ldLoad = new Map(), marcasOf = new Map();
+let trenesSinTrazado = 0, filasSinTrazado = 0, trenesParcial = 0, filasParcial = 0;
 for (const r of ld) {
-  const ids = A.traces.routes[r.id]; if (!ids?.length) { trenesSinTrazado += r.lab; continue; }
-  for (const id of ids) { load.set(id, (load.get(id) || 0) + r.lab); if (!routesOf.has(id)) routesOf.set(id, new Set()); routesOf.get(id).add(r.marca); }
+  let ids = A.traces.routes[r.id]?.filter(id => id.startsWith('ign:')).map(id => +id.slice(4));
+  if (!ids?.length && r.via?.incompleto) { const v = VAR.get(r.via.variante); if (v?.edges?.length) { ids = [...new Set(v.edges)].filter(f => FEAT[f]); filasParcial++; trenesParcial += r.lab; } }
+  if (!ids?.length) { filasSinTrazado++; trenesSinTrazado += r.lab; continue; }
+  for (const f of ids) { ldLoad.set(f, (ldLoad.get(f) || 0) + r.lab); if (!marcasOf.has(f)) marcasOf.set(f, new Set()); marcasOf.get(f).add(r.marca); }
 }
-// Tramos con los mismos trenes y vecinos forman una línea continua: se agrupan por número de trenes y se dibujan juntos.
-const segs = [];
-for (const [id, n] of load) { const g = A.traces.geometries[id]; if (!g || g.length < 2) continue; segs.push({n, g: simplify(g, .002).map(q), marcas: routesOf.get(id)}); }
-/* Cercanías: el GTFS da un dibujo por sentido (X y X_INV). Para medir igual que los ejes IGN (los dos sentidos), se dibuja
-   el de ida y a cada trozo se le suman los trenes del dibujo de vuelta en el punto más cercano (≤ 300 m). */
-const perPoint = (id) => { const g = A.traces.geometries[id], runs = A.traces.carga?.[id]; if (!g || !runs) return null; const n = []; for (const [c, len] of runs) for (let k = 0; k < len; k++) n.push(c); return {g, n}; };
-const cerSegs = [];
+
+// 2 · Cercanías: carga por trozo de cada línea (dibujo de ida + vuelta en el punto más cercano, ≤ 300 m).
+const perPoint = id => { const g = A.traces.geometries[id], runs = A.traces.carga?.[id]; if (!g || !runs) return null; const n = []; for (const [c, len] of runs) for (let k = 0; k < len; k++) n.push(c); return {g, n}; };
+const cerLines = [];
 for (const id of Object.keys(A.traces.carga || {})) {
-  if (id.endsWith('_INV') && A.traces.carga[id.slice(0, -4)]) continue;   // ya sumado a su dibujo de ida
+  if (id.endsWith('_INV') && A.traces.carga[id.slice(0, -4)]) continue;
   const fw = perPoint(id), bw = perPoint(id + '_INV'); if (!fw) continue;
-  const total = fw.n.map((c, i) => {
-    if (!bw) return c; const mid = [(fw.g[i][0] + fw.g[i + 1][0]) / 2, (fw.g[i][1] + fw.g[i + 1][1]) / 2]; let bi = -1, bd = 300;
-    for (let j = 0; j < bw.n.length; j++) { const d = metres(mid, bw.g[j]); if (d < bd) { bd = d; bi = j; } }
-    return c + (bi >= 0 ? bw.n[Math.min(bi, bw.n.length - 1)] : 0);
-  });
-  let i = 0; while (i < total.length) { let j = i; while (j + 1 < total.length && total[j + 1] === total[i]) j++;
-    if (total[i] > 0) cerSegs.push({n: total[i], g: simplify(fw.g.slice(i, j + 2), .002).map(q), id}); i = j + 1; }
+  const n = fw.n.map((c, i) => { if (!bw) return c; const mid = [(fw.g[i][0] + fw.g[i + 1][0]) / 2, (fw.g[i][1] + fw.g[i + 1][1]) / 2]; let bi = -1, bd = 300;
+    for (let j = 0; j < bw.n.length; j++) { const d = metres(mid, bw.g[j]); if (d < bd) { bd = d; bi = j; } } return c + (bi >= 0 ? bw.n[Math.min(bi, bw.n.length - 1)] : 0); });
+  cerLines.push({id, g: fw.g, n});
 }
+// Geometría local en metros y rejilla de trozos de Cercanías.
+const CELL = .0008, cellOf = (x, y) => Math.floor(x / CELL) + ':' + Math.floor(y / CELL);
+const KX = lat => 111320 * Math.cos(lat * Math.PI / 180), KY = 110540;
+const segDist = (p, a, b) => { const kx = KX(p[1]), ax = (a[0] - p[0]) * kx, ay = (a[1] - p[1]) * KY, bx = (b[0] - p[0]) * kx, by = (b[1] - p[1]) * KY, dx = bx - ax, dy = by - ay, L = dx * dx + dy * dy, t = L ? Math.max(0, Math.min(1, -(ax * dx + ay * dy) / L)) : 0; return Math.hypot(ax + t * dx, ay + t * dy); };
+const parallel = (u, v) => { const c = Math.abs(u[0] * v[1] - u[1] * v[0]) / ((Math.hypot(...u) * Math.hypot(...v)) || 1); return c < .42; };   // < 25°
+const dirOf = (a, b) => [(b[0] - a[0]) * Math.cos(a[1] * Math.PI / 180), b[1] - a[1]];
+const cerGrid = new Map(), cerSeg = [];
+cerLines.forEach((L, li) => { for (let i = 0; i < L.n.length; i++) { if (!(L.n[i] > 0)) continue; const a = L.g[i], b = L.g[i + 1]; if (!b) continue;
+  const k = cerSeg.length; cerSeg.push({li, i, a, b, n: L.n[i], len: metres(a, b), covered: false});
+  for (let gx = Math.floor(Math.min(a[0], b[0]) / CELL); gx <= Math.floor(Math.max(a[0], b[0]) / CELL); gx++) for (let gy = Math.floor(Math.min(a[1], b[1]) / CELL); gy <= Math.floor(Math.max(a[1], b[1]) / CELL); gy++) { const key = gx + ':' + gy; if (!cerGrid.has(key)) cerGrid.set(key, []); cerGrid.get(key).push(k); } } });
+const near = (grid, p) => { const gx = Math.floor(p[0] / CELL), gy = Math.floor(p[1] / CELL), out = new Set(); for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) for (const k of grid.get((gx + dx) + ':' + (gy + dy)) || []) out.add(k); return out; };
+// Cada trozo de Cercanías se muestrea cada 25 m y cada punto se asigna SOLO al eje IGN más cercano (≤ 35 m, en paralelo y
+// con ancho compatible: Cercanías no circula por ancho estándar, el de la alta velocidad). Asignarlo a todos los ejes
+// cercanos sumaba Cercanías a la vía de alta velocidad que va pegada a la convencional (el GTFS tiene decenas de metros de
+// imprecisión). Por eje y línea cuenta la carga máxima de sus puntos; las líneas que comparten eje se suman.
+const MATCH = 35, ignGrid = new Map(), peninsularFeat = FEAT.map((f, k) => k).filter(k => CFG.peninsular(FEAT[k].geometry.coordinates[0]) && FEAT[k].properties.attr !== 0 && F.value(FEAT[k], 'gauge') !== '1435');
+for (const k of peninsularFeat) { const g = FEAT[k].geometry.coordinates;
+  for (let i = 1; i < g.length; i++) { const a = g[i - 1], b = g[i];
+    for (let gx = Math.floor(Math.min(a[0], b[0]) / CELL); gx <= Math.floor(Math.max(a[0], b[0]) / CELL); gx++) for (let gy = Math.floor(Math.min(a[1], b[1]) / CELL); gy <= Math.floor(Math.max(a[1], b[1]) / CELL); gy++) { const key = gx + ':' + gy; if (!ignGrid.has(key)) ignGrid.set(key, []); ignGrid.get(key).push([k, i]); } } }
+const cerByEdge = new Map();   // eje → (línea → carga máxima)
+for (const S of cerSeg) {
+  const steps = Math.max(1, Math.ceil(S.len / 25)), d = dirOf(S.a, S.b); let hits = 0;
+  for (let t = 0; t < steps; t++) { const f = (t + .5) / steps, p = [S.a[0] + (S.b[0] - S.a[0]) * f, S.a[1] + (S.b[1] - S.a[1]) * f];
+    let best = null, bd = MATCH; for (const [k, i] of near(ignGrid, p)) { const g = FEAT[k].geometry.coordinates, dist = segDist(p, g[i - 1], g[i]); if (dist < bd && parallel(d, dirOf(g[i - 1], g[i]))) { bd = dist; best = k; } }
+    if (best === null) continue; hits++;
+    if (!cerByEdge.has(best)) cerByEdge.set(best, new Map()); const m = cerByEdge.get(best), x = m.get(S.li) || {n: 0, m: 0}; x.n = Math.max(x.n, S.n); x.m += S.len / steps; m.set(S.li, x); }
+  S.covered = hits * 2 >= steps;
+}
+// Una línea cuenta en un eje solo si lo recorre en al menos el 40 % de su longitud (o 150 m): unos pocos puntos en la boca
+// de una estación no bastan (la R2 de Rodalies se sumaba al túnel Sants – Plaça de Catalunya, que no usa).
+const edgeLen = k => Number(FEAT[k].properties.length_m) || 0;
+const cerLoad = new Map([...cerByEdge].map(([k, m]) => [k, [...m.values()].filter(x => x.m >= Math.min(.4 * edgeLen(k), 150)).reduce((a, x) => a + x.n, 0)]).filter(([, n]) => n > 0));
+const cerLen = cerSeg.reduce((a, S) => a + S.len, 0), cerCovered = cerSeg.filter(S => S.covered).reduce((a, S) => a + S.len, 0);
+// Control: km de alta velocidad (prestaciones «hs») que reciben trenes de Cercanías. Debería ser casi nada.
+const kmAvConCer = [...cerLoad.keys()].filter(k => FEAT[k].properties.perf === 'hs').reduce((a, k) => a + (Number(FEAT[k].properties.length_m) || 0) / 1000, 0);
+// Trozos sin casar: se dibujan con su dibujo GTFS (tramos seguidos de la misma línea y la misma carga).
+const cerExtra = [];
+cerLines.forEach((L, li) => { const segsL = cerSeg.filter(S => S.li === li && !S.covered); let run = null;
+  for (const S of segsL) { if (run && run.n === S.n && run.end === S.i) { run.pts.push(S.b); run.end = S.i + 1; } else { if (run) cerExtra.push(run); run = {n: S.n, pts: [S.a, S.b], end: S.i + 1}; } }
+  if (run) cerExtra.push(run); });
+
+// Salida: un elemento por eje IGN con trenes [media y larga distancia, Cercanías, geometría].
+const edges = [...new Set([...ldLoad.keys(), ...cerLoad.keys()])].map(k => ({k, ld: ldLoad.get(k) || 0, cer: cerLoad.get(k) || 0, g: simplify(FEAT[k].geometry.coordinates, .002).map(q)}))
+  .filter(e => e.g.length >= 2);
 const nearestSt = (() => { const st = E.map((s, i) => ({s, i})).filter(x => x.s.c && CFG.peninsular(x.s.c)); return c => { let b = null, bd = Infinity; for (const x of st) { const d = metres(c, x.s.c); if (d < bd) { bd = d; b = x.s.n; } } return b; }; })();
 // El tramo más cargado de cada zona: se descartan los que están a menos de `radio` km de uno ya elegido (si no, la lista
 // entera sería el mismo corredor, tramo a tramo).
-const top = (list, k, radio) => { const picked = [], out = [];
-  for (const x of [...list].sort((a, b) => b.n - a.n)) { const mid = x.g[Math.floor(x.g.length / 2)];
+const top = (list, val, k, radio) => { const picked = [], out = [];
+  for (const x of [...list].filter(x => val(x) > 0).sort((a, b) => val(b) - val(a))) { const mid = x.g[Math.floor(x.g.length / 2)];
     if (picked.some(p => metres(p, mid) < radio * 1000)) continue; picked.push(mid);
     const ends = [nearestSt(x.g[0]), nearestSt(x.g.at(-1))].filter((v, i, a) => a.indexOf(v) === i);
-    out.push({trenes: x.n, entre: ends.join(' – '), marcas: x.marcas ? [...x.marcas].sort() : undefined}); if (out.length >= k) break; }
+    out.push({trenes: val(x), ld: x.ld || 0, cer: x.cer || 0, entre: ends.join(' – '), marcas: x.k !== undefined && marcasOf.has(x.k) ? [...marcasOf.get(x.k)].sort() : []}); if (out.length >= k) break; }
   return out; };
 const mapa = {
-  version: 1, referencia: WD,
-  nota: 'Trenes programados el miércoles en los dos sentidos. Ejes IGN: alta velocidad, larga y media distancia, OUIGO e iryo. Cercanías: dibujos de línea del GTFS. Las dos capas no se suman.',
+  version: 2, referencia: WD,
+  nota: 'Trenes programados el miércoles en los dos sentidos, por eje IGN: media y larga distancia y Cercanías (casada con el eje por el que circula).',
   regiones: datos.regions.features.filter(f => !['Canarias', 'Illes Balears', 'Ciudad de Ceuta', 'Ciudad de Melilla', 'Ceuta', 'Melilla'].includes(f.properties.NAME_LATN))
     .map(f => polysOf(f.geometry).map(p => simplify(p[0], .01).map(q)).filter(r => r.length > 3)),
-  ign: segs.sort((a, b) => a.n - b.n).map(s => [s.n, s.g]),
-  cer: cerSegs.sort((a, b) => a.n - b.n).map(s => [s.n, s.g]),
-  resumen: {tramos_ign: segs.length, max_ign: Math.max(...segs.map(s => s.n)), max_cer: Math.max(...cerSegs.map(s => s.n)), trenes_sin_trazado: trenesSinTrazado,
-    filas_sin_trazado: ld.filter(r => !A.traces.routes[r.id]?.length).length},
-  top_ign: top(segs, 10, 40), top_cer: top(cerSegs, 10, 15)
+  ign: edges.sort((a, b) => (a.ld + a.cer) - (b.ld + b.cer)).map(e => [e.ld, e.cer, e.g]),
+  cer_extra: cerExtra.map(r => [r.n, simplify(r.pts, .002).map(q)]).filter(r => r[1].length >= 2),
+  resumen: {tramos: edges.length, max_total: Math.max(...edges.map(e => e.ld + e.cer)), max_ld: Math.max(...edges.map(e => e.ld)), max_cer: Math.max(...edges.map(e => e.cer), ...cerExtra.map(r => r.n)),
+    filas_sin_trazado: filasSinTrazado, trenes_sin_trazado: trenesSinTrazado, filas_parcial: filasParcial, trenes_parcial: trenesParcial,
+    cobertura_cer: round(100 * cerCovered / cerLen, 1), km_cer_sin_casar: round((cerLen - cerCovered) / 1000, 0), km_av_con_cer: round(kmAvConCer, 1)},
+  top: {total: top(edges, x => x.ld + x.cer, 10, 30), ld: top(edges, x => x.ld, 10, 40), cer: top(edges, x => x.cer, 10, 15)}
 };
-
 const analisis = {
   version: 1, generado_con: 'tools/build-cabina-analisis.mjs', referencia: R.referencia,
   fuentes: {rutas: 'Horarios publicados (Renfe, OUIGO, iryo): tools/build-rutas.mjs', cnmc: CN.licencia, poblacion: 'INE · ' + densidad.fecha_poblacion + (densidad.provisional ? ' (provisional)' : '')},
@@ -271,5 +315,6 @@ if (process.argv.includes('--check')) {
   fs.writeFileSync(OUT, out); fs.writeFileSync(OUT_MAP, outMap);
   console.log('Escrito capas/analisis.json', (out.length / 1024).toFixed(0) + ' KB · analisis-mapa.json', (outMap.length / 1024).toFixed(0) + ' KB');
   console.log('  capitales', capitales.length, '· rutas con velocidad', velRows.length, '· rodeo', rodeoRows.length, '· relaciones con paradas distintas', paradaRows.length, '· líneas de Cercanías con espera', espera.lineas.length);
-  console.log('  red asignada', densidad.total.km, 'de', densidad.total.km_red, 'km · sin comunidad', densidad.total.km_sin_comunidad, 'km · tramos IGN con trenes', segs.length, '· segmentos de Cercanías', cerSegs.length);
+  console.log('  red asignada', densidad.total.km, 'de', densidad.total.km_red, 'km · sin comunidad', densidad.total.km_sin_comunidad, 'km');
+  console.log('  mapa', JSON.stringify(mapa.resumen));
 }

@@ -1,7 +1,7 @@
 /* Análisis de la oferta: piezas propias sobre cabina.css (mismos tokens). Prefijo an-.
    Colores de tipo de vía validados (dataviz · validate_palette, claro): alta velocidad, mixta y convencional pasan banda de
    luminosidad, croma, separación con daltonismo (ΔE ≥ 10) y contraste ≥ 3:1. Rampa secuencial de un solo tono para el mapa. */
-:root{--t-av:#3a5ba8;--t-mx:#c2610f;--t-cv:#18916f;--q1:#c3cddd;--q2:#8fa2c4;--q3:#5a75a6;--q4:#2f4c84;--q5:#14264d}
+:root{--t-av:#3a5ba8;--t-mx:#c2610f;--t-cv:#18916f;--q1:#c3cddd;--q2:#98aac9;--q3:#6a83b0;--q4:#405f96;--q5:#253f72;--q6:#101d3d}
 
 /* Simulador: título, explicación y controles a la izquierda; gráfico a la derecha */
 .an-sim{display:grid;grid-template-columns:minmax(260px,4fr) minmax(0,8fr);gap:var(--gap);align-items:start}
@@ -91,6 +91,7 @@
 .an-seg button{font:inherit;font-size:var(--fs-s);min-height:var(--hit);padding:4px 12px;border:1px solid var(--line-strong);border-radius:5px;background:var(--card);color:var(--navy);cursor:pointer}
 .an-seg button[aria-pressed=true]{background:var(--navy);border-color:var(--navy);color:#fff}
 .an-seg+.legend{margin-top:12px}
+#c-mapa .an-seg{margin-bottom:4px}
 .an-read{margin:10px 0 0;font-size:var(--fs-s)}
 .an-read strong{color:var(--navy)}
 
@@ -99,10 +100,10 @@
 .an-map svg{display:block;width:100%;height:auto}
 .an-map .land{fill:#fff;stroke:var(--line-strong);stroke-width:.6}
 .an-map .seg{fill:none;stroke-linecap:round;stroke-linejoin:round}
-.an-map .q1{stroke:var(--q1)}.an-map .q2{stroke:var(--q2)}.an-map .q3{stroke:var(--q3)}.an-map .q4{stroke:var(--q4)}.an-map .q5{stroke:var(--q5)}
+.an-map .q1{stroke:var(--q1)}.an-map .q2{stroke:var(--q2)}.an-map .q3{stroke:var(--q3)}.an-map .q4{stroke:var(--q4)}.an-map .q5{stroke:var(--q5)}.an-map .q6{stroke:var(--q6)}
 .an-map .city{fill:var(--ink);stroke:#fff;stroke-width:1.5}
 .an-map .place{font:600 12px 'Plus Jakarta Sans',sans-serif;fill:var(--ink);paint-order:stroke;stroke:#fff;stroke-width:3px}
-.legend i.q1{background:var(--q1)}.legend i.q2{background:var(--q2)}.legend i.q3{background:var(--q3)}.legend i.q4{background:var(--q4)}.legend i.q5{background:var(--q5)}
+.legend i.q1{background:var(--q1)}.legend i.q2{background:var(--q2)}.legend i.q3{background:var(--q3)}.legend i.q4{background:var(--q4)}.legend i.q5{background:var(--q5)}.legend i.q6{background:var(--q6)}
 .legend i.qw{height:var(--w);width:22px;border-radius:2px;vertical-align:middle}
 .an-zoom{position:absolute;right:8px;top:8px;display:flex;flex-direction:column;gap:4px}
 .an-zoom button{width:var(--hit);height:var(--hit);font:600 16px/1 'Plus Jakarta Sans',sans-serif;border:1px solid var(--line-strong);border-radius:5px;background:var(--card);color:var(--navy);cursor:pointer}

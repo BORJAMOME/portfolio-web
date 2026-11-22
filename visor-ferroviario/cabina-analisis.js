@@ -309,60 +309,67 @@
   }
 
   /* ══ 8 · Mapa de trenes por tramo (carga diferida) ══ */
-  const Q=[10,30,60,120],qOf=n=>n<=Q[0]?1:n<=Q[1]?2:n<=Q[2]?3:n<=Q[3]?4:5,WIDTH=[0,1,1.7,2.6,3.8,5.2];
+  const Q=[10,30,60,120,250],qOf=n=>n<=Q[0]?1:n<=Q[1]?2:n<=Q[2]?3:n<=Q[3]?4:n<=Q[4]?5:6,WIDTH=[0,1,1.6,2.4,3.4,4.6,6];
   function mapaShell(D){
-    const c=card('c-mapa','Trenes programados al día en cada tramo, en los dos sentidos','Miércoles · grosor y color = trenes al día');
-    const tools=el('div','an-tools');
-    const mk=(id,text)=>{const l=el('label','an-check'),i=el('input');i.type='checkbox';i.id=id;i.checked=true;l.append(i,text);tools.append(l);return i;};
-    const ign=mk('m-ign','Alta velocidad, larga y media distancia'),cer=mk('m-cer','Cercanías');
-    c.append(tools);
-    c.append(legend(['1–10','11–30','31–60','61–120','Más de 120'].map((t,i)=>['q'+(i+1)+' qw',t])));
+    const M=D.mapa,c=card('c-mapa','Trenes programados al día en cada tramo de vía, en los dos sentidos','Miércoles · grosor y color = trenes al día · elige qué trenes sumar');
+    const seg=el('div','an-seg');seg.setAttribute('role','group');seg.setAttribute('aria-label','Qué trenes sumar');
+    const MODES=[['total','Todos los trenes'],['ld','Media y larga distancia'],['cer','Cercanías']];
+    const btns=MODES.map(([k,t])=>{const b=el('button',null,t);b.type='button';b.dataset.mode=k;seg.append(b);return b;});
+    c.append(seg,legend(['1–10','11–30','31–60','61–120','121–250','Más de 250'].map((t,i)=>['q'+(i+1)+' qw',t])));
     c.querySelectorAll('.legend i.qw').forEach((i,k)=>i.style.setProperty('--w',Math.max(3,WIDTH[k+1]*2)+'px'));
     const box=el('div','an-map');box.append(el('p','an-hint','Cargando el mapa…'));c.append(box);
-    const M=D.mapa;setH2('mapa-t',`Los tramos más cargados de media y larga distancia ven pasar hasta ${fmt(M.max_ign)} trenes al día, y los de Cercanías, hasta ${fmt(M.max_cer)}`);
-    c.append(note(`Cada fila de la tabla de rutas (origen → destino y marca) suma sus trenes en todos los tramos de su recorrido, porque todos lo hacen completo. Cercanías usa sus dibujos de línea con los trenes que ocupan cada trozo, ida y vuelta sumadas. Las dos capas no se suman entre sí (el GTFS de Cercanías no comparte geometría con el IGN) y tampoco las líneas de Cercanías que comparten vía, así que un tramo compartido puede tener más trenes de los que pinta cada capa. Sin dibujar: ${plural(M.filas_sin_trazado,'ruta','rutas')} de media y larga distancia sin trazado completo (${fmt(M.trenes_sin_trazado)} trenes).`));
-    const side=card('c-mapa-top','Tramos con más trenes','Entorno: estación más cercana a los extremos del tramo');
+    setH2('mapa-t',`Los tramos más cargados ven pasar hasta ${fmt(M.max_total)} trenes al día; en media y larga distancia, hasta ${fmt(M.max_ld)}`);
+    c.append(note(`Media y larga distancia: cada fila de la tabla de rutas (origen → destino y marca) suma sus trenes en todos los tramos de su recorrido, porque todos lo hacen completo; ${plural(M.filas_parcial,'ruta','rutas')} con el trazado incompleto (${fmt(M.trenes_parcial)} trenes) suman en los tramos que sí se conocen y ${plural(M.filas_sin_trazado,'ruta','rutas')} sin trazado (${fmt(M.trenes_sin_trazado)} trenes) no se dibujan. Cercanías: los trenes de cada trozo de línea (ida y vuelta) se asignan al eje IGN por el que circulan (el más cercano, a menos de 35 m, en paralelo y sin ancho estándar); casa el ${f1(M.cobertura_cer)} % de su longitud y el resto (${fmt(M.km_cer_sin_casar)} km) se dibuja con su trazado propio. Las líneas que comparten vía se suman. En las estaciones grandes, un tramo puede recoger todas las líneas que entran en ella.`));
+    const side=card('c-mapa-top','Tramos con más trenes','El más cargado de cada zona · entorno: estación más cercana a los extremos del tramo');
     let loaded=false;
     const io=new IntersectionObserver(es=>{if(loaded||!es.some(e=>e.isIntersecting))return;loaded=true;io.disconnect();
-      fetch('capas/analisis-mapa.json',{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error();return r.json();}).then(m=>mapa(m,box,side,ign,cer))
+      fetch('capas/analisis-mapa.json',{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error();return r.json();}).then(m=>mapa(m,box,side,btns))
         .catch(()=>{box.replaceChildren(el('p','an-hint','No se ha podido cargar el mapa. Recarga la página para reintentar.'));});},{rootMargin:'300px'});
     io.observe(c);
   }
-  function mapa(m,box,side,ign,cer){
+  function mapa(m,box,side,btns){
     const W=1000,kx=Math.cos(40*Math.PI/180),k=W/((3.45+9.45)*kx),X=lon=>(lon+9.45)*kx*k,Y=lat=>(43.95-lat)*k,H=Math.ceil(Y(35.9));
     const s=svg('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Mapa de la España peninsular con el número de trenes al día de cada tramo'});
     const g=svg('g');s.append(g);
     const path=pts=>pts.map((p,i)=>(i?'L':'M')+X(p[0]).toFixed(1)+','+Y(p[1]).toFixed(1)).join('');
     g.append(svg('path',{d:m.regiones.map(r=>r.map(ring=>path(ring)+'Z').join('')).join(''),class:'land','fill-rule':'evenodd'}));
-    const layer=(list,cls)=>{const lg=svg('g',{class:cls});const by=[[],[],[],[],[],[]];for(const [n,pts] of list)by[qOf(n)].push(path(pts));
-      for(let k=1;k<=5;k++)if(by[k].length)lg.append(svg('path',{d:by[k].join(''),class:'seg q'+k,'stroke-width':WIDTH[k]}));return lg;};
-    const L1=layer(m.ign,'l-ign'),L2=layer(m.cer,'l-cer');g.append(L1,L2);
+    const lay=svg('g');g.append(lay);
     for(const [name,lon,lat] of [['Madrid',-3.69,40.42],['Barcelona',2.17,41.39],['València',-0.38,39.47],['Sevilla',-5.98,37.39],['Zaragoza',-0.88,41.65],['Bilbao',-2.93,43.26],['Málaga',-4.42,36.72],['A Coruña',-8.41,43.36],['Valladolid',-4.72,41.65]])
       g.append(svg('circle',{cx:X(lon),cy:Y(lat),r:3.5,class:'city'}),svg('text',{x:X(lon)+6,y:Y(lat)-6,class:'place'},name));
+    let mode='total',z=1,cx=W/2,cy=H/2;
+    // Valor de cada elemento según la vista: [media y larga distancia, Cercanías, geometría] o [Cercanías sin casar, geometría]
+    const items=()=>{const out=[];for(const [l,c,pts] of m.ign){const n=mode==='total'?l+c:mode==='ld'?l:c;if(n>0)out.push([n,pts]);}
+      if(mode!=='ld')for(const [n,pts] of m.cer_extra)out.push([n,pts]);return out;};
+    const draw=()=>{const by=[[],[],[],[],[],[],[]];for(const [n,pts] of items())by[qOf(n)].push(path(pts));
+      lay.replaceChildren();for(let q=1;q<=6;q++)if(by[q].length)lay.append(svg('path',{d:by[q].join(''),class:'seg q'+q,'stroke-width':(WIDTH[q]/Math.sqrt(z)).toFixed(2)}));};
     const tip=el('div','an-tip');tip.hidden=true;
     const zoom=el('div','an-zoom'),zi=el('button',null,'+'),zo=el('button',null,'−'),zr=el('button',null,'⟲');
     zi.setAttribute('aria-label','Acercar');zo.setAttribute('aria-label','Alejar');zr.setAttribute('aria-label','Ver toda la península');for(const b of [zi,zo,zr])b.type='button';zoom.append(zi,zo,zr);
     box.replaceChildren(s,zoom,tip);
     box.after(el('p','an-hint','Usa + y − para acercar, arrastra para moverte y pulsa sobre una vía para ver sus trenes.'));
-    let z=1,cx=W/2,cy=H/2;
     const apply=()=>{const w=W/z,h=H/z;cx=Math.max(w/2,Math.min(W-w/2,cx));cy=Math.max(h/2,Math.min(H-h/2,cy));s.setAttribute('viewBox',`${(cx-w/2).toFixed(1)} ${(cy-h/2).toFixed(1)} ${w.toFixed(1)} ${h.toFixed(1)}`);
-      // el grosor de la vía no crece con el zoom
-      g.querySelectorAll('path.seg').forEach(p=>p.setAttribute('stroke-width',(WIDTH[+p.getAttribute('class').slice(-1)]/Math.sqrt(z)).toFixed(2)));};
-    zi.onclick=()=>{z=Math.min(12,z*1.6);apply();};zo.onclick=()=>{z=Math.max(1,z/1.6);apply();};zr.onclick=()=>{z=1;cx=W/2;cy=H/2;apply();};
+      lay.querySelectorAll('path.seg').forEach(p=>p.setAttribute('stroke-width',(WIDTH[+p.getAttribute('class').slice(-1)]/Math.sqrt(z)).toFixed(2)));};   // el grosor no crece con el zoom
+    zi.onclick=()=>{z=Math.min(16,z*1.6);apply();};zo.onclick=()=>{z=Math.max(1,z/1.6);apply();};zr.onclick=()=>{z=1;cx=W/2;cy=H/2;apply();};
     let drag=null;
     s.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,cx,cy,moved:false};s.setPointerCapture(e.pointerId);});
-    s.addEventListener('pointermove',e=>{if(!drag)return;const k=W/z/s.clientWidth,dx=(e.clientX-drag.x)*k,dy=(e.clientY-drag.y)*k;if(Math.abs(dx)+Math.abs(dy)>2)drag.moved=true;cx=drag.cx-dx;cy=drag.cy-dy;apply();});
+    s.addEventListener('pointermove',e=>{if(!drag)return;const kk=W/z/s.clientWidth,dx=(e.clientX-drag.x)*kk,dy=(e.clientY-drag.y)*kk;if(Math.abs(dx)+Math.abs(dy)>2)drag.moved=true;cx=drag.cx-dx;cy=drag.cy-dy;apply();});
     s.addEventListener('pointerup',e=>{const d=drag;drag=null;if(d&&!d.moved)pick(e);});
     const pick=e=>{const pt=new DOMPoint(e.clientX,e.clientY).matrixTransform(s.getScreenCTM().inverse());let best=null,bd=(8/z)**2;
       // Distancia al segmento (no solo a los vértices: los tramos simplificados tienen vértices muy separados).
       const seg2=(ax,ay,bx,by)=>{const dx=bx-ax,dy=by-ay,L=dx*dx+dy*dy,t=L?Math.max(0,Math.min(1,((pt.x-ax)*dx+(pt.y-ay)*dy)/L)):0;return (ax+t*dx-pt.x)**2+(ay+t*dy-pt.y)**2;};
-      const scan=(list,lay)=>{for(const [n,pts] of list)for(let i=1;i<pts.length;i++){const d=seg2(X(pts[i-1][0]),Y(pts[i-1][1]),X(pts[i][0]),Y(pts[i][1]));if(d<bd||(d===bd&&best&&n>best[0])){bd=d;best=[n,lay];}}};
-      if(ign.checked)scan(m.ign,'media y larga distancia');if(cer.checked)scan(m.cer,'Cercanías');
-      if(!best){tip.hidden=true;return;}const r=box.getBoundingClientRect();tip.textContent=fmt(best[0])+' trenes al día · '+best[1];tip.style.left=(e.clientX-r.left)+'px';tip.style.top=(e.clientY-r.top)+'px';tip.hidden=false;};
-    const vis=()=>{L1.style.display=ign.checked?'':'none';L2.style.display=cer.checked?'':'none';tip.hidden=true;};ign.addEventListener('change',vis);cer.addEventListener('change',vis);
-    // Tramos con más trenes
-    const list=(rows,withBrands)=>table([{label:'Trenes',key:'trenes',n:true},{label:'Entorno',key:'entre'},...(withBrands?[{label:'Marcas',get:r=>r.marcas.join(', '),opt:true}]:[])],rows);
-    const two=el('div','an-two'),a=el('div'),b=el('div');a.append(el('h4','an-h4','Alta velocidad, larga y media distancia'),list(m.top_ign.slice(0,8),true));b.append(el('h4','an-h4','Cercanías'),list(m.top_cer.slice(0,8),false));two.append(a,b);side.append(two);
+      const scan=(rows,val)=>{for(const r of rows){const pts=r.at(-1),n=val(r);if(!(n>0))continue;for(let i=1;i<pts.length;i++){const d=seg2(X(pts[i-1][0]),Y(pts[i-1][1]),X(pts[i][0]),Y(pts[i][1]));if(d<bd||(d===bd&&best&&n>best.n)){bd=d;best={n,r};}}}};
+      scan(m.ign,r=>mode==='total'?r[0]+r[1]:mode==='ld'?r[0]:r[1]);if(mode!=='ld')scan(m.cer_extra,r=>r[0]);
+      if(!best){tip.hidden=true;return;}const r=box.getBoundingClientRect(),row=best.r;
+      tip.textContent=fmt(best.n)+' trenes al día'+(row.length===3&&mode==='total'&&row[0]&&row[1]?' ('+fmt(row[0])+' de media y larga distancia y '+fmt(row[1])+' de Cercanías)':'');
+      tip.style.left=(e.clientX-r.left)+'px';tip.style.top=(e.clientY-r.top)+'px';tip.hidden=false;};
+    const list=(rows,withBrands)=>table([{label:'Trenes',key:'trenes',n:true},{label:'Entorno',key:'entre'},...(withBrands?[{label:'Marcas',get:r=>r.marcas.join(', ')||'—',opt:true}]:[{label:'De ellos, Cercanías',key:'cer',n:true,opt:true}])],rows);
+    const sideBody=el('div');side.append(sideBody);
+    const setMode=k=>{mode=k;btns.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===k)));tip.hidden=true;draw();
+      sideBody.replaceChildren(list(m.top[k],k==='ld'));};
+    btns.forEach(b=>b.onclick=()=>setMode(b.dataset.mode));setMode('total');
+    const [t1,t2]=m.top.total,l1=m.top.ld[0];
+    const cer=t=>t.cer>t.ld;
+    if(t1&&t2&&l1)setH2('mapa-t',`Los tramos con más trenes son ${t1.entre} (${fmt(t1.trenes)} al día) y ${t2.entre} (${fmt(t2.trenes)})${cer(t1)&&cer(t2)?', los dos de Cercanías':''}; en media y larga distancia, el máximo está en el entorno de ${l1.entre} (${fmt(l1.trenes)})`);
   }
 
   /* ══ 9 · Electrificación ══ */
@@ -432,7 +439,7 @@
       ['5 · Espera media','Σ intervalo² ÷ (2 × Σ intervalo) con las salidas de la estación con más trenes de cada línea de Cercanías, en el sentido con más salidas, en punta (7:00–9:30) y valle (10:00–13:00).'],
       ['6 · Fin de semana','Trenes del sábado y del domingo ÷ trenes del miércoles, por servicio y por núcleo.'],
       ['7 · Horas de servicio','Última salida − primera salida del miércoles en cada ruta; mediana por servicio.'],
-      ['8 · Trenes por tramo','Suma de los trenes del miércoles de las rutas que pasan por cada tramo (dos sentidos).'],
+      ['8 · Trenes por tramo','Suma de los trenes del miércoles que pasan por cada eje IGN (dos sentidos): las rutas de media y larga distancia por su recorrido y Cercanías casada con el eje por el que circula.'],
       ['9 · Electrificación','% de trenes·km (trenes × km de la ruta) por vía electrificada.'],
       ['10 · Competencia','Cuota de viajeros y precio medio por viaje de la CNMC (2025).'],
       ['11 · Densidad','km de vía ÷ superficie (m/km²) y ÷ población (km por 100.000 habitantes).']]));
@@ -442,7 +449,8 @@
       ['Doble conteo por sentido','La tabla de rutas tiene una fila por sentido. Aquí cada relación y marca cuenta una vez (el sentido con más trenes).'],
       ['Velocidad de 12 capitales','Su tren más rápido pasa por tramos con el trazado incompleto y no tiene km medibles. El simulador usa la velocidad en línea recta, medible en todas.'],
       ['Rodeo negativo','Una ruta no puede ser más corta que la recta: hasta un −2 % es imprecisión de coordenadas y cuenta como 0 %.'],
-      ['Cercanías en el mapa','El GTFS trae un dibujo por sentido; se suman ida y vuelta para medir igual que los ejes IGN.']]),
+      ['Cercanías en el mapa','El GTFS trae un dibujo por sentido y no comparte geometría con la red IGN. Se suman ida y vuelta y cada punto se asigna al eje IGN más cercano por el que puede circular; asignarlo a todos los ejes cercanos sumaba Cercanías a la vía de alta velocidad paralela (230 km; ahora 14, que son vías de ancho ibérico preparadas para alta velocidad y compartidas).'],
+      ['Rutas con el trazado incompleto','Antes no se dibujaban; ahora suman sus trenes en los tramos conocidos de su recorrido.']]),
       el('p','cb-note','Comprobado y no es un error: el lunes de la semana de referencia tiene más trenes en Madrid porque Renfe publica para ese día un plan propio (292 viajes en la C5, sin duplicados); Vigo → Ourense da un rodeo real (ese regional va por Pontevedra y Santiago), y algunas líneas no tienen trenes el domingo porque solo circulan los laborables (C5a de Asturias, RG1 de Girona, C1a de Cádiz).'));
     const ref=D.referencia;
     src.append(dl([
