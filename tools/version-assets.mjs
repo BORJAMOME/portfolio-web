@@ -25,6 +25,7 @@ const pages = [
   ...readdirSync(ROOT).filter((f) => f.endsWith('.html')).map((f) => join(ROOT, f)),
   ...readdirSync(join(ROOT, 'en')).filter((f) => f.endsWith('.html')).map((f) => join(ROOT, 'en', f)),
   join(ROOT, 'visor-ferroviario', 'cabina-rutas.html'),
+  join(ROOT, 'visor-ferroviario', 'cabina-analisis.html'),
 ];
 const hashes = {};
 const memory = {};                         // contenido ya reescrito (o por reescribir, con --check) de los módulos

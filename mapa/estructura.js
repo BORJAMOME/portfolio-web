@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "6b5a85e",
+ "huella": "0aac8f3",
  "recuento": {
   "paginas": 20,
   "proyectos": 40,
@@ -11,8 +11,8 @@ export default {
   "pestanas": 10,
   "tablas": 41,
   "funciones": 5,
-  "herramientas": 41,
-  "relaciones": 202,
+  "herramientas": 43,
+  "relaciones": 205,
   "sinExplicar": 0
  },
  "columnas": [
@@ -2284,6 +2284,13 @@ export default {
      "nota": "producen archivos del sitio",
      "hijos": [
       {
+       "id": "h:build-cabina-analisis",
+       "tipo": "herramienta",
+       "etiqueta": "build-cabina-analisis.mjs",
+       "archivo": "tools/build-cabina-analisis.mjs",
+       "familia": "herramienta"
+      },
+      {
        "id": "h:build-cabina-mercado",
        "tipo": "herramienta",
        "etiqueta": "build-cabina-mercado.mjs",
@@ -2543,6 +2550,13 @@ export default {
        "tipo": "herramienta",
        "etiqueta": "manual-estudio/",
        "archivo": "tools/manual-estudio/",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:repair-demografia",
+       "tipo": "herramienta",
+       "etiqueta": "repair-demografia.mjs",
+       "archivo": "tools/repair-demografia.mjs",
        "familia": "herramienta"
       },
       {
@@ -3819,6 +3833,12 @@ export default {
   },
   {
    "de": "w:checks",
+   "a": "h:build-cabina-analisis",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:checks",
    "a": "h:build-en",
    "tipo": "ejecuta",
    "detalle": []
@@ -3891,6 +3911,12 @@ export default {
   },
   {
    "de": "w:checks",
+   "a": "h:repair-demografia",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:checks",
    "a": "h:rutas",
    "tipo": "ejecuta",
    "detalle": []
@@ -3934,6 +3960,12 @@ export default {
   {
    "de": "w:incidencias-semanales",
    "a": "h:update-incidencias",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:rutas-semanal",
+   "a": "h:build-cabina-analisis",
    "tipo": "ejecuta",
    "detalle": []
   },

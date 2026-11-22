@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Análisis de la oferta · Atlas ferroviario de España</title>
+<meta name="description" content="Once lecturas de la oferta ferroviaria de España con los horarios publicados: frecuencia y velocidad, rodeos, paradas, espera, fin de semana, horario, carga de la red, electrificación, competencia y densidad.">
+<meta name="robots" content="noindex, nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="./cabina.css?v=bb6051139a">
+<link rel="stylesheet" href="./cabina-analisis.css?v=eb96ef2233">
+<script defer src="./cabina-analisis.js?v=03e244619f"></script>
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<header class="cb-header">
+<div class="cb-wrap cb-head">
+<div>
+<p class="cb-crumbs"><a id="back" class="cb-back" href="index.html"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M10 3 5 8l5 5"/></svg>Volver al visor</a><a class="cb-back" href="cabina.html">Cabina</a><a class="cb-back" href="cabina-rutas.html">Tabla de rutas</a></p>
+<h1>Análisis de la oferta</h1>
+<p class="cb-lead">¿Cuánto tren hay, a qué velocidad, con qué rodeos y paradas, cuándo y sobre qué vía? Once lecturas con los horarios publicados. Todo es <strong>oferta</strong> (trenes programados), no viajeros: los viajeros solo existen por corredor, en el capítulo de competencia.</p>
+</div>
+<p id="ref" class="cb-ref">Día de referencia: miércoles de la semana de los horarios publicados.</p>
+</div>
+</header>
+<div class="cb-tocbar">
+<nav class="cb-wrap cb-toc" aria-label="Capítulos del análisis">
+<a href="#capitales">Capitales</a><a href="#velocidad">Velocidad</a><a href="#rodeo">Rodeos</a><a href="#paradas">Paradas</a><a href="#espera">Espera</a><a href="#finde">Fin de semana</a><a href="#horas">Horario</a><a href="#mapa">Mapa</a><a href="#electrificacion">Electrificación</a><a href="#competencia">Competencia</a><a href="#densidad">Densidad</a><a href="#metodo">Método</a><a class="cb-toc-out" href="cabina.html">Cabina</a>
+</nav>
+</div>
+
+<main id="contenido" class="cb-wrap" tabindex="-1">
+<div id="alert" class="cb-alert" role="status" hidden></div>
+
+<section class="cb-section" id="capitales" aria-labelledby="capitales-t">
+<p class="cb-q">1 · Simulador · ¿Qué capitales tienen buen tren con Madrid?</p>
+<h2 id="capitales-t">Frecuencia y velocidad de los trenes directos entre Madrid y cada capital</h2>
+<div class="an-sim">
+<div class="an-panel" id="s1-panel"></div>
+<article class="cb-card an-chart" id="s1-chart"></article>
+</div>
+</section>
+
+<section class="cb-section" id="velocidad" aria-labelledby="velocidad-t">
+<p class="cb-q">2 · Simulador · ¿Qué pasa si pedimos más velocidad?</p>
+<h2 id="velocidad-t">La velocidad de cada ruta depende sobre todo del tipo de vía</h2>
+<div class="an-sim">
+<div class="an-panel" id="s2-panel"></div>
+<article class="cb-card an-chart" id="s2-chart"></article>
+</div>
+</section>
+
+<section class="cb-section" id="rodeo" aria-labelledby="rodeo-t">
+<p class="cb-q">3 · ¿Qué rutas dan más rodeo y cuáles van más directas?</p>
+<h2 id="rodeo-t">Exceso de recorrido frente a la línea recta</h2>
+<div class="cb-grid">
+<article class="cb-card span-12" id="c-rodeo"></article>
+</div>
+</section>
+
+<section class="cb-section" id="paradas" aria-labelledby="paradas-t">
+<p class="cb-q">4 · ¿Cuánto cuesta cada parada?</p>
+<h2 id="paradas-t">Minutos que añade cada parada intermedia, dentro de una misma relación</h2>
+<div class="cb-grid">
+<article class="cb-card span-5" id="c-paradas-que"></article>
+<article class="cb-card span-7" id="c-paradas-fam"></article>
+<article class="cb-card span-12" id="c-paradas-ej"></article>
+</div>
+</section>
+
+<section class="cb-section" id="espera" aria-labelledby="espera-t">
+<p class="cb-q">5 · ¿Cuánto espera quien llega al andén sin mirar el horario?</p>
+<h2 id="espera-t">Espera media en Cercanías, en hora punta y en hora valle</h2>
+<div class="cb-grid">
+<article class="cb-card span-12" id="c-espera"></article>
+</div>
+</section>
+
+<section class="cb-section" id="finde" aria-labelledby="finde-t">
+<p class="cb-q">6 · ¿Cuánto servicio se pierde el fin de semana?</p>
+<h2 id="finde-t">Trenes del sábado y del domingo frente a un laborable</h2>
+<div class="cb-grid">
+<article class="cb-card span-7" id="c-finde"></article>
+<article class="cb-card span-5" id="c-finde-caidas"></article>
+</div>
+</section>
+
+<section class="cb-section" id="horas" aria-labelledby="horas-t">
+<p class="cb-q">7 · ¿Cuántas horas al día hay tren?</p>
+<h2 id="horas-t">Ventana de servicio de una ruta típica de cada servicio</h2>
+<div class="cb-grid">
+<article class="cb-card span-12" id="c-horas"></article>
+</div>
+</section>
+
+<section class="cb-section" id="mapa" aria-labelledby="mapa-t">
+<p class="cb-q">8 · ¿Qué tramos soportan más trenes?</p>
+<h2 id="mapa-t">Trenes al día por tramo de vía</h2>
+<div class="cb-grid">
+<article class="cb-card span-12" id="c-mapa"></article>
+<article class="cb-card span-12" id="c-mapa-top"></article>
+</div>
+</section>
+
+<section class="cb-section" id="electrificacion" aria-labelledby="electrificacion-t">
+<p class="cb-q">9 · ¿Cuánto servicio circula sin catenaria?</p>
+<h2 id="electrificacion-t">Trenes·km bajo catenaria por servicio</h2>
+<div class="cb-grid">
+<article class="cb-card span-7" id="c-elec"></article>
+<article class="cb-card span-5" id="c-elec-diesel"></article>
+</div>
+</section>
+
+<section class="cb-section" id="competencia" aria-labelledby="competencia-t">
+<p class="cb-q">10 · ¿Quién lleva más viajeros y a qué precio?</p>
+<h2 id="competencia-t">Cuota de viajeros y precio medio en los corredores de alta velocidad</h2>
+<div class="cb-grid">
+<article class="cb-card span-12" id="c-comp"></article>
+</div>
+</section>
+
+<section class="cb-section" id="densidad" aria-labelledby="densidad-t">
+<p class="cb-q">11 · ¿Qué comunidad tiene más red?</p>
+<h2 id="densidad-t">Kilómetros de vía por superficie y por habitante</h2>
+<div class="cb-grid">
+<article class="cb-card span-12" id="c-densidad"></article>
+</div>
+</section>
+
+<section class="cb-section" id="metodo" aria-labelledby="metodo-t">
+<p class="cb-q">Método y límites</p>
+<h2 id="metodo-t">Cómo se calcula cada lectura y qué datos se han corregido</h2>
+<div class="cb-annex">
+<details class="cb-card" id="m-def"><summary>Definiciones de cada lectura</summary><div class="cb-more-body"></div></details>
+<details class="cb-card" id="m-fix"><summary>Errores de los datos corregidos</summary><div class="cb-more-body"></div></details>
+<details class="cb-card" id="m-src"><summary>Fuentes y límites</summary><div class="cb-more-body"></div></details>
+</div>
+</section>
+</main>
+
+<footer class="cb-wrap cb-foot"><span>Atlas ferroviario de España · Análisis de la oferta</span><a id="back-foot" href="index.html">Volver al visor</a></footer>
+<noscript><p class="cb-wrap">Activa JavaScript para ver los gráficos y los simuladores.</p></noscript>
+</body>
+</html>

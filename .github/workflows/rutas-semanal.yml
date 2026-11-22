@@ -4,7 +4,7 @@
 #
 # Pasos: descarga (Renfe AV/LD/MD y Cercanías, iryo, estaciones de Renfe y CNMC) → tools/build-rutas.mjs →
 # tools/build-cnmc.mjs → tools/build-cabina-mercado.mjs (INE, Eurostat y mercancías; si falla, se conserva el
-# mercado.json anterior y sigue) → tools/build-cabina.mjs → control de cordura (tools/rutas/sanity.mjs: no publica si una
+# mercado.json anterior y sigue) → tools/build-cabina.mjs → tools/build-cabina-analisis.mjs → control de cordura (tools/rutas/sanity.mjs: no publica si una
 # fuente se hunde de golpe) → comprobaciones → commit en main solo si los datos han cambiado.
 # GitHub Pages publica main como siempre. Si algo falla, el job termina en rojo, no se sube nada y GitHub avisa.
 #
@@ -51,12 +51,16 @@ jobs:
       - name: Cabina (cabina.json y titulares de cabina.html)
         run: node --max-old-space-size=6144 tools/build-cabina.mjs
 
+      - name: Análisis de la oferta (analisis.json y analisis-mapa.json)
+        run: node --max-old-space-size=6144 tools/build-cabina-analisis.mjs
+
       - name: Control de cordura frente a los datos anteriores
         run: node tools/rutas/sanity.mjs
 
       - name: Comprobaciones
         run: |
           node --max-old-space-size=6144 tools/build-cabina.mjs --check
+          node --max-old-space-size=6144 tools/build-cabina-analisis.mjs --check
           node tools/check-links.mjs
           node tools/rutas/test-heatmap.mjs
           node tools/version-assets.mjs --check
@@ -65,7 +69,8 @@ jobs:
         run: |
           git add visor-ferroviario/capas/rutas.json visor-ferroviario/capas/rutas-actividad.json visor-ferroviario/capas/oferta.json visor-ferroviario/capas/cnmc.json \
                   visor-ferroviario/capas/mercado.json \
-                  visor-ferroviario/capas/cabina.json visor-ferroviario/cabina.html
+                  visor-ferroviario/capas/cabina.json visor-ferroviario/cabina.html \
+                  visor-ferroviario/capas/analisis.json visor-ferroviario/capas/analisis-mapa.json
           if git diff --cached --quiet; then
             echo "Sin cambios en los datos: no se confirma nada." | tee -a "$GITHUB_STEP_SUMMARY"
             exit 0

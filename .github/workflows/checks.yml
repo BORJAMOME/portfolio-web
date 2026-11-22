@@ -45,6 +45,11 @@ jobs:
       - name: Agregados del mapa de calor de rutas
         if: ${{ !cancelled() }}
         run: node tools/rutas/test-heatmap.mjs
+      - name: Visor ferroviario · polígonos de demografía y análisis de la oferta al día
+        if: ${{ !cancelled() }}
+        run: |
+          node tools/repair-demografia.mjs --check
+          node --max-old-space-size=6144 tools/build-cabina-analisis.mjs --check
       - name: Histórico de incidencias (deduplicación y cambio de año)
         if: ${{ !cancelled() }}
         run: node --test tools/incidencias.test.mjs
@@ -81,7 +86,7 @@ jobs:
         if: ${{ !cancelled() }}
         run: |
           node tools/check-incidencias.mjs
-          node tools/check-a11y.mjs visor-ferroviario/cabina.html
+          node tools/check-a11y.mjs visor-ferroviario/cabina.html visor-ferroviario/cabina-analisis.html
       # Cada suite de interfaz corre aunque falle la anterior (if: !cancelled()); el job sigue en rojo si falla alguna
       - name: Briefing de entrevista (dos A4, móvil y axe-core)
         if: ${{ !cancelled() }}

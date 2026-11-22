@@ -86,3 +86,30 @@ Cuadro de mando con una pregunta rectora: *¿qué servicio de tren recibe cada t
 - **Visor:** llevar las Cercanías de ancho ibérico e iryo a las fichas, para que tengan el mismo universo que Cabina.
 
 **Riesgo:** `tools/build-cabina.mjs` tarda unos 60 s por el cálculo de km (Dijkstra por pareja). Si crece, conviene guardar en caché los grafos por variante.
+
+## Análisis de la oferta (22-11-2026)
+
+Página `cabina-analisis.html` (+ `.css`, `.js`), enlazada desde Cabina y desde la tabla de rutas. Once lecturas, todas de **oferta** (trenes programados) salvo la de competencia (viajeros de la CNMC por corredor):
+
+1. **Simulador de capitales:** listón de trenes directos al día con Madrid y de velocidad en línea recta → cuatro grupos (barras con número de capitales y población).
+2. **Simulador de velocidad:** velocidad objetivo → qué rutas llegan por tipo de vía (dispersión km × duración y % por tipo).
+3. **Rodeos:** las 12 rutas con más y con menos exceso sobre la recta (≥ 50 km en recta; por defecto, ≥ 3 trenes al día).
+4. **Coste de una parada:** pendiente minutos ÷ paradas dentro de cada relación; mediana por servicio y ejemplo con selector.
+5. **Espera media en Cercanías:** Σh² ÷ (2Σh) en la estación con más trenes de cada línea y en el sentido con más salidas (punta y valle).
+6. **Fin de semana:** sábado y domingo en % del miércoles, por servicio y por núcleo.
+7. **Horas de servicio:** primera y última salida de una ruta típica de cada servicio.
+8. **Trenes por tramo:** mapa SVG propio (zoom, arrastre y clic), carga diferida de `capas/analisis-mapa.json`.
+9. **Electrificación:** % de trenes·km bajo catenaria por servicio.
+10. **Competencia:** cuota y precio por corredor (CNMC 2025), con selector.
+11. **Densidad de red:** m/km² y km por 100.000 habitantes por comunidad.
+
+**Cómo se genera:** `node tools/build-cabina-analisis.mjs` (sin red, unos 6 s) → `capas/analisis.json` (≈ 130 KB) y `capas/analisis-mapa.json` (≈ 850 KB). `--check` en la CI y en la tarea semanal, que lo regenera después de `build-cabina`.
+
+**Correcciones de datos hechas para esta página:**
+- `build-rutas`: en Cercanías, `dur`/`durMin`/`par` solo con los trenes de extremo a extremo (la C5 salía con 3 min de tren más rápido; ahora 59). Nuevos datos aditivos: `oferta.capitales_trenes` y, en `rutas-actividad.json`, `tiempos`, `esperas` y `traces.carga`.
+- `demografia.json`: 13 territorios con anillos mal anidados; en Cataluña, 195 estaciones caían fuera de la comunidad. Reparado con `tools/repair-demografia.mjs` (`--check` en la CI).
+- Cada relación cuenta una vez (no por sentido); el rodeo negativo (≤ −2 %, imprecisión) cuenta como 0; en el mapa, Cercanías suma ida y vuelta.
+
+**Comprobado:** `build-cabina-analisis --check`, `repair-demografia --check`, `build-cabina --check`, `check-links`, `version-assets --check`, `build-mapa --check`, `build-en --check`, `test-heatmap`, `check-heatmap`, `check-incidencias` y `check-a11y` (cabina, cabina-rutas y cabina-analisis) sin infracciones; escritorio y móvil sin scroll horizontal.
+
+**Límites:** sin viajeros por ruta ni estación; las dos capas del mapa (IGN y GTFS de Cercanías) no se suman; 78 rutas (204 trenes) sin trazado no se dibujan; las caídas de fin de semana de Cercanías se leen por núcleo porque algunas líneas cambian de nombre el fin de semana.
