@@ -605,7 +605,7 @@
     const G=J.glosario,O=J.oferta;
     let c=body('c-glosario');
     const dl=el('dl','src'),row=(k,v)=>dl.append(el('dt',null,k),el('dd',null,v));
-    row('Universo de la oferta',O.universo+' Las fichas del visor todavía no incluyen Cercanías de ancho ibérico ni iryo: sus cifras por estación pueden ser menores.');
+    row('Universo de la oferta',O.universo+' Las fichas de estación del visor usan los mismos datos y el mismo día; los horarios de una ruta y los trenes por tramo del visor no incluyen Cercanías de ancho ibérico ni iryo, porque el atlas no traza su recorrido.');
     row('Tren',' Cada circulación programada del día, contada una vez en cada estación donde para. OUIGO se reconstruye uniendo los trayectos de su PDF (mismo tren si coincide estación, hora y sentido).');
     row('Día de referencia','Miércoles de la primera semana completa (lunes a domingo) que cubren todas las fuentes: '+longDate(O.referencia.laborable)+'. Los horarios se regeneran cada lunes'+(O.actualizacion?' (próxima: '+longDate(O.actualizacion.proxima)+')':'')+'.');
     row('Km de alta velocidad',fmt(G.km_av.prestaciones)+' km (prestaciones de la vía, clasificación del atlas sobre el IGN). No confundir con '+fmt(G.km_av.corredores)+' km de corredores Hermes en servicio ni con '+fmt(G.km_av.adifav)+' km gestionados por Adif AV.');
