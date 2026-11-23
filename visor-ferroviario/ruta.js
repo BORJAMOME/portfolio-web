@@ -247,11 +247,25 @@
   function ouigoTrips(graph,tt){
     if(tt.ouigo)return tt.ouigo;
     const S=graph.services;
-    // Trazado: tramos IGN de todas las variantes OUIGO del atlas (el camino se busca dentro de ellos).
-    const edges=[...new Set(S.variants.filter(v=>v.brand==='ouigo').flatMap(v=>v.edges||[]))];
+    // Trazado: los tramos IGN de la variante OUIGO del atlas con las mismas paradas (o, si no hay, la más corta que
+    // las recorra en orden). Con la unión de todas las variantes, el camino más corto entre dos paradas podía meterse
+    // por vías de otra relación y dar un rodeo (Madrid–Zaragoza–Barcelona salía 644 km en vez de 620). La unión queda
+    // solo como último recurso.
+    const ouigo=S.variants.filter(v=>v.brand==='ouigo'&&v.edges?.length);
+    const union=[...new Set(ouigo.flatMap(v=>v.edges))];
+    const seq=v=>v.calls.map(c=>graph.stationGroup[c.s]);
+    const covers=(big,small)=>{let k=0;for(const x of big)if(x===small[k])k++;return k===small.length;};
+    // Los tramos no tienen sentido de marcha: vale la variante del sentido contrario.
+    const edgesFor=sids=>{
+      const want=sids.map(s=>graph.stationGroup[s]),back=[...want].reverse(),key=want.join('>'),rkey=back.join('>');
+      const exact=ouigo.find(v=>{const k=seq(v).join('>');return k===key||k===rkey;});
+      if(exact)return exact.edges;
+      const wider=ouigo.filter(v=>covers(seq(v),want)||covers(seq(v),back)).sort((a,b)=>a.edges.length-b.edges.length)[0];
+      return wider?wider.edges:union;
+    };
     tt.ouigo=(tt.h.ouigo||[]).map(([sids,t0,p,cal,assumed],n)=>({t0,cal,prof:tt.h.patterns[p],
       v:{id:'ouigo-pdf:'+n,operator:'OUIGO España',brand:'ouigo',published_brand:'OUIGO',categories:['highspeed'],
-        calls:sids.map(s=>({s})),destination:S.stations[sids.at(-1)]?.name,edges,madrid_assumed:Boolean(assumed),pdf:true}}))
+        calls:sids.map(s=>({s})),destination:S.stations[sids.at(-1)]?.name,edges:edgesFor(sids),madrid_assumed:Boolean(assumed),pdf:true}}))
       .filter(x=>x.v.calls.every(c=>graph.stationGroup[c.s]));
     return tt.ouigo;
   }
