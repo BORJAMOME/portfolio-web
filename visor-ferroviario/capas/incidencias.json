@@ -6,12 +6,12 @@
     "catalog": "https://data.renfe.com/es/dataset/incidencias-avisos",
     "license": "https://data.renfe.com/es/legal"
   },
-  "updatedAt": "2026-11-20T22:16:08.696Z",
+  "updatedAt": "2026-11-23T19:22:54.663Z",
   "records": [
     {
       "id": "AVISO_442947",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "SERVICIO POR AUTOBÚS C-3: Plan alternativo de transporte por carretera. Más información: https://grupo.renfe.com/es/es/sala-de-prensa/noticias/2025/12/plan-transporte-c3-valencia",
       "routes": [
         "40T0054C3",
@@ -36,7 +36,7 @@
     {
       "id": "AVISO_442950",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Para los trenes de la línea C3 con origen o destino MÉRIDA, CÁCERES, PLASENCIA y MADRID son válidos los títulos de viaje de Cercanías sin reserva de plaza asignada. Desde el día 3 de febrero, el transporte de bicicletas y otros elementos de movilidad individual y el viaje con animales de compañía, se rige por las condiciones generales de Media Distancia Convencional.",
       "routes": [
         "30T0036C3",
@@ -56,7 +56,7 @@
     {
       "id": "AVISO_446239",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Plan alternativo de transporte para la Línea C2 de Cercanías por obras de Adif en la Región de Murcia. Consulte Horarios: https://www.renfe.com/es/es/grupo-renfe/comunicacion/renfe-al-dia/avisos/plan-alternativo-transporte-derovadp-obras-adif-ave-region-murcia",
       "routes": [
         "41T0023C2",
@@ -75,7 +75,7 @@
     {
       "id": "AVISO_467462",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "#MadC9 Debido a las obras que se están realizando en la línea C-9, los aseos públicos de la estación de Cercedilla permanecen temporalmente inoperativos. ",
       "routes": [
         "10T0026C9",
@@ -93,7 +93,7 @@
     {
       "id": "AVISO_470390",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "SERVICIO POR AUTOBÚS C-5: Plan alternativo de transporte por carretera. Más información: https://www.renfe.com/es/es/grupo-renfe/comunicacion/renfe-al-dia/avisos/plan-alternativo-carretera-zaragoza-teruel-sagunto-valencia-obras",
       "routes": [
         "40T0053C5",
@@ -113,7 +113,7 @@
     {
       "id": "AVISO_483553",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "#MadC9 Por obras de reforma integral en la línea C-9, se encuentra suspendido el servicio de trenes entre las estaciones de Cercedilla-Puerto de Navacerrada-Los Cotos. Se ha establecido un servicio especial de autobuses con reserva de plaza.",
       "routes": [
         "10T0026C9",
@@ -131,7 +131,7 @@
     {
       "id": "AVISO_505428",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Ascensor de la estación de Alfafar- Benetusser paso urbano, acceso a paso inferior, se encuentra fuera de servicio. Disculpen las molestias.",
       "routes": [],
       "stops": [
@@ -146,7 +146,7 @@
     {
       "id": "AVISO_505463",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Ascensor de la estación de Alfafar- Benetusser, sentido Gandia y Xàtiva de vía 1, se encuentra fuera de servicio. Disculpen las molestias.",
       "routes": [],
       "stops": [
@@ -161,7 +161,7 @@
     {
       "id": "AVISO_512188",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "ATENCIÓN Línea C3:\r\nPor obras de mejora en la infraestructura y para los trenes con origen/destino Madrid:\r\nSe establece un Plan Alternativo de Transporte por carretera entre las estaciones de Los Rosales y Cazalla-Constantina.\r\nEntre Los Rosales y Sevilla Santa Justa el recorrido se realiza con trenes de la línea C1.  (Consulta nuevos horarios por obras en canales oficiales y App).\r\nGracias por tu comprensión.",
       "routes": [
         "30T0036C3",
@@ -181,7 +181,7 @@
     {
       "id": "AVISO_512648",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "#LÍNEA C3. SERVICIO ALTERNATIVO POR AUTOBÚS entre las estaciones de Valencia Font de Sant Lluis y Valencia Sant Isidre por obras de mejora en la infraestructura desde el 13 de septiembre. Los viajeros con título de transporte SUMA y destino València, también pueden realizar transbordo en València Sant Isidre con Metro. Consulte los horarios en: https://renfe.com/es/es/cercanias/cercanias-valencia/horarios#/buscar",
       "routes": [
         "40T0054C3",
@@ -206,7 +206,7 @@
     {
       "id": "AVISO_516966",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Renfe Cercanías Málaga informa que la estación de TORREBLANCA no es accesible temporalmente para PMR, por motivos de mejora de la estación. Rogamos disculpen las molestias(-)",
       "routes": [
         "32T0001C1",
@@ -222,7 +222,7 @@
     {
       "id": "AVISO_518804",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "MIRIBILLA: Lau igogailu zerbitzuz kanpo daude. // Cuatro de los ascensores se encuentran fuera de servicio.",
       "routes": [],
       "stops": [
@@ -237,7 +237,7 @@
     {
       "id": "AVISO_519517",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Ascensor de la estación de Alfafar, sentido València de vía 2, se encuentra fuera de servicio. Disculpen las molestias.",
       "routes": [],
       "stops": [
@@ -252,7 +252,7 @@
     {
       "id": "AVISO_519596",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Ascensor de la estación de Sueca , sentido Gandia de vía 1, se encuentra fuera de servicio. Disculpen las molestias.",
       "routes": [],
       "stops": [
@@ -267,7 +267,7 @@
     {
       "id": "AVISO_519640",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "En estos momentos Renfe no garantiza accesibilidad a la estación de Alfafar -  Bentússer para usuarios con movilidad reducida. Disculpen las molestias.",
       "routes": [],
       "stops": [
@@ -282,7 +282,7 @@
     {
       "id": "AVISO_521807",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Circulación ferroviaria entre Lleida Pirineus y Manresa. El tramo entre Manresa y Terrassa Estació del Nord se realiza mediante los servicios de la línea R4.",
       "routes": [
         "51T0048RL4",
@@ -298,7 +298,7 @@
     {
       "id": "AVISO_521823",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Circulación ferroviaria entre La Garriga - Puigcerdà/La Tor de Querol. Servicio alternativo por carretera entre Fabra i Puig - La Garriga. Servicio complementario por carretera entre La Garriga - Puigcerdà/La Tor de Querol.",
       "routes": [
         "51T0040R3",
@@ -345,7 +345,7 @@
     {
       "id": "AVISO_521824",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Servicio ferroviario entre Lleida Pirineus - Les Borges Blanques y entre La Plana Picamoixons - Barcelona Estació de França. Servicio alternativo por carretera entre Lleida Pirineus - La Plana Picamoixons.",
       "routes": [
         "51T0139R13",
@@ -354,8 +354,10 @@
         "51T0187R13",
         "51T0175R13",
         "51T0176R13",
+        "51T0116R14",
         "51T0101R14",
-        "51T0102R14"
+        "51T0102R14",
+        "51T0115R14"
       ],
       "stops": [],
       "activePeriod": [
@@ -367,7 +369,7 @@
     {
       "id": "AVISO_523139",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Ascensor de la estación de Cullera, sentido Gandia de vías 1-3, se encuentra fuera de servicio. Disculpen las molestias.",
       "routes": [],
       "stops": [
@@ -382,7 +384,7 @@
     {
       "id": "AVISO_523425",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "SAN MAMES. Torres Quevedo irtenbidea: 2 trenbideko eskailera mekanikoak zerbitzuz kanpo daude. // Salida Torres Quevedo: escaleras mecánicas de vía 2 se encuentran fuera de servicio.",
       "routes": [],
       "stops": [
@@ -397,7 +399,7 @@
     {
       "id": "AVISO_523570",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Ascensor de la estación de El Puig, sentido València de vía 1, se encuentra fuera de servicio. Disculpen las molestias.",
       "routes": [],
       "stops": [
@@ -412,7 +414,7 @@
     {
       "id": "AVISO_523760",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Renfe Cercanías Málaga informa que el andén 1 de la estación de Los Álamos no es accesible temporalmente para PMR. Rogamos disculpen las molestias",
       "routes": [
         "32T0001C1",
@@ -451,7 +453,7 @@
     {
       "id": "AVISO_525558",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Atención: Por una incidencia técnica derivada del temporal, la estación de Cortadura se encuentra cerrada. Rogamos planifiquen sus desplazamientos evitando esta estación ya que el acceso a ella permanecerá imposibilitado hasta nuevo aviso. Disculpen las molestias.",
       "routes": [],
       "stops": [
@@ -466,7 +468,7 @@
     {
       "id": "AVISO_525563",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Por obras de Adif en el entorno de Castelldefels, del 12 de noviembre al 14 de diciembre se modifica temporalmente el servicio de la línea R2. Los trenes Granollers Centre - Castelldefels iniciarán y finalizarán su recorrido en Gavà.",
       "routes": [
         "51T0025R2",
@@ -486,13 +488,13 @@
         "51T0138RT1",
         "51T0140R13",
         "51T0105R16",
+        "51T0116R14",
         "51T0015R3",
         "51T0123R15",
         "51T0210R3",
         "51T0012R2S",
         "51T0196R3",
         "51T0207R13",
-        "51T0185R4",
         "51T0187R13",
         "51T0164R15",
         "51T0106R16",
@@ -552,6 +554,7 @@
         "51T0204R3",
         "51T0046R3",
         "51T0193R3",
+        "51T0115R14",
         "51T0034R3",
         "51T0023R8",
         "51T0100RL3",
@@ -573,7 +576,7 @@
     {
       "id": "AVISO_525838",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Ascensor de la estación de Carcaixent, sentido Xàtiva de vía 1, se encuentra fuera de servicio. Disculpen las molestias.",
       "routes": [],
       "stops": [
@@ -588,7 +591,7 @@
     {
       "id": "AVISO_526420",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Ascensor de la estación de Algemesí , sentido València de vía 2, se encuentra fuera de servicio. Disculpen las molestias.",
       "routes": [],
       "stops": [
@@ -603,7 +606,7 @@
     {
       "id": "AVISO_526429",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Sin servicio ferroviario por obras en el entorno de Montcada Bifurcació. El trayecto entre Fabra i Puig y Montcada Bifurcació se realiza mediante los servicios de la línea R4. Servicio alternativo por carretera entre Cerdanyola del Vallès y Cerdanyola Universitat.",
       "routes": [
         "51T0030R7",
@@ -620,6 +623,7 @@
         "51T0140R13",
         "51T0105R16",
         "51T0013R2",
+        "51T0116R14",
         "51T0015R3",
         "51T0026R2",
         "51T0123R15",
@@ -628,7 +632,6 @@
         "51T0196R3",
         "51T0207R13",
         "51T0014R2",
-        "51T0185R4",
         "51T0187R13",
         "51T0164R15",
         "51T0106R16",
@@ -688,6 +691,7 @@
         "51T0204R3",
         "51T0046R3",
         "51T0193R3",
+        "51T0115R14",
         "51T0095R2",
         "51T0034R3",
         "51T0023R8",
@@ -745,7 +749,7 @@
     {
       "id": "AVISO_527360",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Cercanías Cádiz y tramo Río Arillo - Cádiz de Trambahía, informa: Desconvocada la huelga prevista por el sindicato de maquinistas SEMAF para el día 23 de noviembre de 2026. El servicio ferroviario se prestará conforme a la programación habitual. Consulta la información actualizada sobre el estado del servicio a través de nuestros canales oficiales. Agradecemos su comprensión y su paciencia",
       "routes": [
         "31T0001C1",
@@ -765,7 +769,7 @@
     {
       "id": "AVISO_527379",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Cercanías València informa.\r\n\r\nDesconvocada la huelga prevista por el sindicato de maquinistas SEMAF para el día 23 de noviembre de 2026.\r\n\r\nEl servicio ferroviario se prestará conforme a la programación habitual.\r\n\r\nConsulta la información actualizada sobre el estado del servicio a través de nuestros canales oficiales.\r\n\r\nAgradecemos su comprensión y su paciencia.",
       "routes": [
         "40T0002C1",
@@ -812,7 +816,7 @@
     {
       "id": "AVISO_527386",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Cercanías Murcia-Alicante informa. Desconvocada la huelga prevista por el sindicato de maquinistas SEMAF para el día 23 de noviembre de 2026. El servicio ferroviario se prestará conforme a la programación habitual. Consulta la información actualizada sobre el estado del servicio a través de nuestros canales oficiales. Agradecemos su comprensión y su paciencia.",
       "routes": [
         "41T0002C1",
@@ -872,7 +876,7 @@
     {
       "id": "INFO_465103",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Renfe Cercanías Málaga informa que la estación de Plaza Mayor no es accesible temporalmente para PMR. Rogamos disculpen las molestias",
       "routes": [
         "32T0001C1",
@@ -892,7 +896,7 @@
     {
       "id": "INFO_508393",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "BIDEBIETA-BASAURI. Azpiegiturako lanak direla eta, sarbide berria egongo da, Agirre Lehendakaria etorbidearen eta Fauste kalearen artean dagoen plazatik. // BIDEBIETA-BASAURI. Debido a obras en la infraestructura, el acceso a la estación se realizará por la plaza situada entre Av. Agirre Lehendariak y Calle Fauste. ",
       "routes": [
         "60T0002C1",
@@ -918,7 +922,7 @@
     {
       "id": "INFO_509499",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "BALMASEDA. Ekainaren 29tik aurrera, Balmasedako geltokia itxita egongo da hobekuntza lanak direla eta. Nasara sartzeko. Justizia Jauregiaren ondoko kale beretik joan zaitezkete. // Desde el día 29 de junio, el acceso al vestíbulo de la estación de Balmaseda por la Calle Estación permanecerá cerrado temporalmente por obras de mejora. Para acceder al andén, utilicen el acceso situado en la misma calle, junto al Palacio de Justicia.",
       "routes": [
         "60T0002C1",
@@ -944,7 +948,7 @@
     {
       "id": "INFO_510941",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Desertu-Barakaldoko geltokia hobetzeko obrak direla eta, eraikin zaharra aldi baterako itxita egongo da. Jarduketek irauten duten bitartean, eraikinaren ondoan egokitutako sarbide batetik egingo da sarrera eta irteera. Irisgarritasuna eta instalazioak hobetzeko lanean jarraitzen dugu. Barkatu eragozpenak. // Debido a las obras de mejora en la estación de Desertu-Barakaldo, el edificio antiguo permanecerá cerrado temporalmente. Mientras duren las actuaciones, la entrada y salida se realizará por un acceso habilitado junto al edificio. Seguimos trabajando para mejorar la accesibilidad y las instalaciones. Disculpen las molestias.",
       "routes": [
         "60T0002C1",
@@ -970,7 +974,7 @@
     {
       "id": "INFO_512463",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "GÜEÑES. Matxura baten ondorioz, Güeneseko geltokiko sarbide nagusia itxita dago aldi baterako. Geltokiaren eraikinaren ondoko burdin hesi batetik sartzeko aukera ezarri da. //  El acceso principal de la estación de Güenes se encuentra temporalmente cerrado debido a una avería. Se ha habilitado un acceso por una verja colindante al edificio de la estación.",
       "routes": [
         "60T0002C1",
@@ -996,7 +1000,7 @@
     {
       "id": "INFO_519283",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Ascensor de la estación de Nuevos Ministerios, con acceso desde Calle de Raimundo Fernández Villaverde a vestíbulo de Cercanías y Metro, se encuentra fuera de servicio.",
       "routes": [],
       "stops": [
@@ -1011,7 +1015,7 @@
     {
       "id": "INFO_520876",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Ascensor de Nuevos Ministerios, con acceso a vía 6, sentido Alcobendas-San Sebastián de los Reyes y Colmenar Viejo, se encuentra fuera de servicio por mantenimiento.",
       "routes": [],
       "stops": [
@@ -1026,7 +1030,7 @@
     {
       "id": "INFO_523736",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Por trabajos de mantenimiento, ascensor de Asamblea de Madrid-Entrevías que da acceso a vía 2, sentido Alcalá de Henares y Guadalajara, se encuentra fuera de servicio.",
       "routes": [],
       "stops": [
@@ -1041,7 +1045,7 @@
     {
       "id": "INFO_523929",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "LOIOLA. 1. eta 2. trenbideko igogailuak zerbitzuz kanpo daude. // LOIOLA. Ascensores de vía 1 y 2 se encuentran fuera de servicio. ",
       "routes": [
         "61T0006C1",
@@ -1060,7 +1064,7 @@
     {
       "id": "INFO_524427",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "AMURRIO. 1. trenbideko igogailua zerbitzuz kanpo daude. // AMURRIO. Ascensor de vía 1 se encuentra fuera de servicio. ",
       "routes": [
         "60T0002C1",
@@ -1086,7 +1090,7 @@
     {
       "id": "INFO_524436",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "LA PEÑA. barruko eskailera mekaniko bat zerbitzuz kanpo dago. //  LA PEÑA. Una de las escaleras mecánicas interiores se encuentra fuera de servicio. ",
       "routes": [
         "60T0002C1",
@@ -1112,7 +1116,7 @@
     {
       "id": "INFO_524807",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Ascensor de Villalba, con acceso a vías 2 y 3 sentido Cercedilla y El Escorial, se encuentran fuera de servicio. La estación queda inaccesible. ",
       "routes": [],
       "stops": [
@@ -1127,7 +1131,7 @@
     {
       "id": "INFO_525700",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Ascensor vía 4 de la estación de Río Arillo, se encuentra fuera de servicio. Estación inaccesible para personas con movilidad reducida en trayectos con dirección Cádiz. Para más información contacten con el tlf. 856 170 290. Disculpen las molestias",
       "routes": [
         "31T0001C1",
@@ -1147,7 +1151,7 @@
     {
       "id": "INFO_525779",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Ascensores de la estación de Zarzaquemada con acceso a las vías 1 y 2, en ambos sentidos, fuera de servicio. Como alternativa, se encuentran disponibles otros dos ascensores con acceso a ambas vías, situados frente a los afectados.",
       "routes": [],
       "stops": [
@@ -1162,7 +1166,7 @@
     {
       "id": "INFO_525791",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Ascensor de la estación de Villalba, con acceso vestíbulo inferior conexión con andenes, se encuentra fuera de servicio. La estación queda inaccesible. ",
       "routes": [],
       "stops": [
@@ -1177,7 +1181,7 @@
     {
       "id": "INFO_525797",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Plataforma de la estación de Zarzaquemada, con acceso a la estación desde la calle María Moliner, se encuentra fuera de servicio. ",
       "routes": [],
       "stops": [
@@ -1192,7 +1196,7 @@
     {
       "id": "INFO_525804",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Ascensor de la estación de San Cristóbal Industrial, con acceso a vía 2, sentido Aranjuez, se encuentra fuera de servicio.",
       "routes": [],
       "stops": [
@@ -1207,7 +1211,7 @@
     {
       "id": "INFO_525925",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Actualmente, por motivos técnicos, el ascensor de la vía 1 y 2 de la estación de Bellavista se encuentra fuera de servicio. Si tiene Movilidad Reducida y origen o destino en esta estación, contacte a través de los puntos de información en estaciones, máquinas auto venta o en el 954 485 672. Disculpe las molestias.",
       "routes": [],
       "stops": [
@@ -1222,7 +1226,7 @@
     {
       "id": "INFO_525950",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Ascensor vía 6 de la estación de Las Aletas se encuentra fuera de servicio. Estación inaccesible para personas con movilidad reducida. Disculpen las molestias.",
       "routes": [
         "31T0005T1",
@@ -1259,7 +1263,7 @@
     {
       "id": "INFO_526077",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Ascensores de la estación Majadahonda, con acceso a las vías 1 y 2 sentido Príncipe Pío-Chamartín y sentido Villalba-Alcalá de Henares, se encuentran fuera de servicio.",
       "routes": [],
       "stops": [
@@ -1289,7 +1293,7 @@
     {
       "id": "INFO_526343",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Ascensor de la estación de Sol, con acceso desde la plaza Puerta del Sol, se encuentra fuera de servicio. ",
       "routes": [],
       "stops": [
@@ -1304,7 +1308,7 @@
     {
       "id": "INFO_526478",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Actualmente, por motivos técnicos, el ascensor del anden de la estación de San Jeronimo se encuentra fuera de servicio. Si tiene Movilidad Reducida y origen o destino en esta estación, contacte a través de los puntos de información en estaciones, máquinas auto venta o en el 954 485 672. Disculpe las molestias",
       "routes": [],
       "stops": [
@@ -1319,7 +1323,7 @@
     {
       "id": "INFO_526543",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Actualmente, por motivos técnicos, el ascensor de la vía 1 de la estación de Estadio Olímpico se encuentra fuera de servicio. Si tiene Movilidad Reducida y origen o destino en esta estación, contacte a través de los puntos de información en estaciones, máquinas auto venta o en el 954 485 672. Disculpe las molestias.",
       "routes": [],
       "stops": [
@@ -1349,7 +1353,7 @@
     {
       "id": "INFO_527025",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Actualmente, por motivos técnicos, el ascensor de la vía 3 de la estación de Utrera se encuentra fuera de servicio. Si tiene Movilidad Reducida y origen o destino en esta estación, contacte a través de los puntos de información en estaciones, máquinas auto venta o en el 954 485 672. Disculpe las molestias.",
       "routes": [],
       "stops": [
@@ -1379,7 +1383,7 @@
     {
       "id": "INFO_527384",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Ascensor de la estación de Príncipe Pío, con acceso desde el Paseo de la Florida a vestíbulo de Cercanías y Metro, se encuentra fuera de servicio. ",
       "routes": [],
       "stops": [
@@ -1409,7 +1413,7 @@
     {
       "id": "INFO_527427",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Cercanías SEVILLA informa: \r\nDesconvocada la huelga prevista por el sindicato de maquinistas SEMAF para el día 23 de noviembre de 2026.  \r\nEl servicio ferroviario se prestará conforme a la programación habitual. \r\nConsulta la información actualizada sobre el estado del servicio a través de nuestros canales oficiales. \r\nAgradecemos su comprensión y su paciencia. ",
       "routes": [
         "30T0001C1",
@@ -1438,7 +1442,7 @@
     {
       "id": "INFO_527447",
       "firstSeen": "2026-11-20",
-      "lastSeen": "2026-11-20",
+      "lastSeen": "2026-11-23",
       "text": "Actualmente, por motivos técnicos, el ascensor de la vía 1 y vía 2 de la estación de Los Rosales se encuentra fuera de servicio. Si tiene Movilidad Reducida y origen o destino en esta estación, contacte a través de los puntos de información en estaciones, máquinas auto venta o en el 954 485 672. Disculpe las molestias.",
       "routes": [],
       "stops": [
@@ -1477,6 +1481,329 @@
       "activePeriod": [
         {
           "start": "1795200420"
+        }
+      ]
+    },
+    {
+      "id": "AVISO_527914",
+      "firstSeen": "2026-11-23",
+      "lastSeen": "2026-11-23",
+      "text": "GROS. 1. trenbideko igogailua zerbitzuz kanpo dago. // GROS. Ascensor de vía 1 se encuentra fuera de servicio.",
+      "routes": [
+        "61T0006C1",
+        "61T0005C1",
+        "61T0003C1",
+        "61T0002C1",
+        "61T0001C1"
+      ],
+      "stops": [],
+      "activePeriod": [
+        {
+          "start": "1795377240"
+        }
+      ]
+    },
+    {
+      "id": "AVISO_527928",
+      "firstSeen": "2026-11-23",
+      "lastSeen": "2026-11-23",
+      "text": "#DonostiaAldiriakC1 Azaroaren 26tik aurrera, Donostiako aldiriko zerbitzuen ordutegiak eguneratzen dira, zirkulazio berriak gehitu dira ordu-tarte jakin batzuetan. // #SanSebastianC1 Desde el 26 de noviembre, se actualizan los horarios de los servicios de Cercanías de San Sebastian, incorporándose nuevas circulaciones en determinadas franjas horarias. ",
+      "routes": [
+        "61T0006C1",
+        "61T0005C1",
+        "61T0003C1",
+        "61T0002C1",
+        "61T0001C1"
+      ],
+      "stops": [],
+      "activePeriod": [
+        {
+          "start": "1795460400"
+        }
+      ]
+    },
+    {
+      "id": "AVISO_527931",
+      "firstSeen": "2026-11-23",
+      "lastSeen": "2026-11-23",
+      "text": "Ascensor de la estación de Albuixech, sentido Castellón de vía 2, se encuentra fuera de servicio. Disculpen las molestias.",
+      "routes": [],
+      "stops": [
+        "65005"
+      ],
+      "activePeriod": [
+        {
+          "start": "1795416900"
+        }
+      ]
+    },
+    {
+      "id": "AVISO_528009",
+      "firstSeen": "2026-11-23",
+      "lastSeen": "2026-11-23",
+      "text": "ABAROA. 2. trenbideko igogailua zerbitzuz kanpo daude. // ABAROA. Ascensor de vía 2 se encuentra fuera de servicio.",
+      "routes": [
+        "60T0006C3",
+        "60T0005C3"
+      ],
+      "stops": [],
+      "activePeriod": [
+        {
+          "start": "1795440180"
+        }
+      ]
+    },
+    {
+      "id": "AVISO_528025",
+      "firstSeen": "2026-11-23",
+      "lastSeen": "2026-11-23",
+      "text": "ZORROTZA. 2. trenbideko igogailua zerbitzuz kanpo dago. // ZORROZA. Ascensor de vía 2 se encuentra fuera de servicio.",
+      "routes": [
+        "60T0002C1",
+        "60T0001C1"
+      ],
+      "stops": [],
+      "activePeriod": [
+        {
+          "start": "1795440120"
+        }
+      ]
+    },
+    {
+      "id": "AVISO_528026",
+      "firstSeen": "2026-11-23",
+      "lastSeen": "2026-11-23",
+      "text": "Circulación normalizada.",
+      "routes": [
+        "51T0025R2",
+        "51T0013R2",
+        "51T0026R2",
+        "51T0014R2",
+        "51T0027R2",
+        "51T0028R2",
+        "51T0095R2",
+        "51T0004R2N",
+        "51T0003R2N"
+      ],
+      "stops": [],
+      "activePeriod": [
+        {
+          "start": "1795441380"
+        }
+      ]
+    },
+    {
+      "id": "AVISO_528035",
+      "firstSeen": "2026-11-23",
+      "lastSeen": "2026-11-23",
+      "text": "#MadC2c. Para el día de mañana 24 de noviembre de 2026. Trenes civis con salida de Chamartín y destino Guadalajara, excepcionalmente, no circularán. Trenes civis con salida de Guadalajara y destino Chamartín, excepcionalmente, no circularán. Sentimos las molestias ocasionadas y agradecemos su comprensión.",
+      "routes": [
+        "10T0005C2",
+        "10T0006C2",
+        "10T0037C2"
+      ],
+      "stops": [],
+      "activePeriod": [
+        {
+          "start": "1795452300"
+        }
+      ]
+    },
+    {
+      "id": "AVISO_528036",
+      "firstSeen": "2026-11-23",
+      "lastSeen": "2026-11-23",
+      "text": "#MadC5 Por avería en la infraestructura entre las estaciones de Aluche y Laguna. Los trenes están sufriendo demoras, detenciones y pueden ver variado su recorrido habitual. \r\n\r\n",
+      "routes": [
+        "10T0017C5",
+        "10T0018C5",
+        "10T0035C5",
+        "10T0047C5",
+        "10T0048C5"
+      ],
+      "stops": [],
+      "activePeriod": [
+        {
+          "start": "1795452480"
+        }
+      ]
+    },
+    {
+      "id": "AVISO_528049",
+      "firstSeen": "2026-11-23",
+      "lastSeen": "2026-11-23",
+      "text": "Línea C-1. Tren con salida a las 19:20h de la estación de AEROPUERTO DE JEREZ y con destino CÁDIZ, efectúa dicha salida con una demora de 15 minutos. Sentimos las molestias ",
+      "routes": [
+        "31T0001C1",
+        "31T0002C1",
+        "31T0007C1",
+        "31T0008C1"
+      ],
+      "stops": [],
+      "activePeriod": [
+        {
+          "start": "1795459020"
+        }
+      ]
+    },
+    {
+      "id": "AVISO_528050",
+      "firstSeen": "2026-11-23",
+      "lastSeen": "2026-11-23",
+      "text": "Línea C1. Tren con salida prevista a las 19:10h de la estación de Alacant Terminal con destino Murcia del Carmen, efectúa su salida con 25 minutos de retraso. Incidencia operativa.",
+      "routes": [
+        "41T0002C1",
+        "41T0001C1"
+      ],
+      "stops": [],
+      "activePeriod": [
+        {
+          "start": "1795459320"
+        }
+      ]
+    },
+    {
+      "id": "AVISO_528051",
+      "firstSeen": "2026-11-23",
+      "lastSeen": "2026-11-23",
+      "text": "Circulación interrumpida entre Barcelona-Fabra i Puig y Montcada Bifurcació por presencia de una persona en la zona de vías.",
+      "routes": [
+        "51T0020R4",
+        "51T0031R4",
+        "51T0032R4",
+        "51T0019R4"
+      ],
+      "stops": [],
+      "activePeriod": [
+        {
+          "start": "1795459620"
+        }
+      ]
+    },
+    {
+      "id": "AVISO_528054",
+      "firstSeen": "2026-11-23",
+      "lastSeen": "2026-11-23",
+      "text": "ACTUALIZACIÓN. Línea C-1. Tren con salida a las 19:20h de la estación de AEROPUERTO DE JEREZ y con destino CÁDIZ, circula con una demora de 8 minutos a su paso por la estación de PUERTO REAL. Sentimos las molestias.",
+      "routes": [
+        "31T0001C1",
+        "31T0002C1",
+        "31T0007C1",
+        "31T0008C1"
+      ],
+      "stops": [],
+      "activePeriod": [
+        {
+          "start": "1795461060"
+        }
+      ]
+    },
+    {
+      "id": "INFO_527494",
+      "firstSeen": "2026-11-23",
+      "lastSeen": "2026-11-23",
+      "text": "Actualmente, por motivos técnicos, el ascensor de la vía 2 de la estación de Los Estadio Olímpico se encuentra fuera de servicio. Si tiene Movilidad Reducida y origen o destino en esta estación, contacte a través de los puntos de información en estaciones, máquinas auto venta o en el 954 485 672. Disculpe las molestias. ",
+      "routes": [],
+      "stops": [
+        "51051"
+      ],
+      "activePeriod": [
+        {
+          "start": "1795262280"
+        }
+      ]
+    },
+    {
+      "id": "INFO_527623",
+      "firstSeen": "2026-11-23",
+      "lastSeen": "2026-11-23",
+      "text": "Ascensor de la estación de Nuevos Ministerios, acceso a vía 8, con sentido Parla y Aranjuez, se encuentra fuera de servicio. ",
+      "routes": [],
+      "stops": [
+        "18002"
+      ],
+      "activePeriod": [
+        {
+          "start": "1795262640"
+        }
+      ]
+    },
+    {
+      "id": "INFO_527940",
+      "firstSeen": "2026-11-23",
+      "lastSeen": "2026-11-23",
+      "text": "Actualmente, por motivos técnicos, el ascensor del vestíbulo de la estación de San Jerónimo se encuentra fuera de servicio. Si tiene Movilidad Reducida y origen o destino en esta estación, contacte a través de los puntos de información en estaciones, máquinas auto venta o en el 954 485 672. Disculpe las molestias.",
+      "routes": [],
+      "stops": [
+        "43000"
+      ],
+      "activePeriod": [
+        {
+          "start": "1795423740"
+        }
+      ]
+    },
+    {
+      "id": "INFO_527977",
+      "firstSeen": "2026-11-23",
+      "lastSeen": "2026-11-23",
+      "text": "ZUMARRAGA. 2. trenbideko igogailua zerbitzuz kanpo daude. //  ZUMARRAGA. Ascensor de vía 2 se encuentra fuera de servicio. ",
+      "routes": [
+        "61T0006C1",
+        "61T0005C1",
+        "61T0003C1",
+        "61T0002C1",
+        "61T0001C1"
+      ],
+      "stops": [],
+      "activePeriod": [
+        {
+          "start": "1795431540"
+        }
+      ]
+    },
+    {
+      "id": "INFO_527986",
+      "firstSeen": "2026-11-23",
+      "lastSeen": "2026-11-23",
+      "text": "Ascensor de la estación de Alcobendas-San Sebastián de los Reyes, con acceso desde la avenida de España a vestíbulo principal, se encuentra fuera de servicio. Como alternativa, puede utilizarse el ascensor ubicado en la acera de enfrente.",
+      "routes": [],
+      "stops": [
+        "19003"
+      ],
+      "activePeriod": [
+        {
+          "start": "1795428300"
+        }
+      ]
+    },
+    {
+      "id": "INFO_528052",
+      "firstSeen": "2026-11-23",
+      "lastSeen": "2026-11-23",
+      "text": "La estación de Las Margaritas, en estos momentos, se encuentra inaccesible. ",
+      "routes": [],
+      "stops": [
+        "37010"
+      ],
+      "activePeriod": [
+        {
+          "start": "1795460280"
+        }
+      ]
+    },
+    {
+      "id": "INFO_528055",
+      "firstSeen": "2026-11-23",
+      "lastSeen": "2026-11-23",
+      "text": "Ascensor de la estación de El Escorial, que da acceso desde vestíbulo principal al aparcamiento y calle anta Rosa, se encuentra fuera de servicio.",
+      "routes": [],
+      "stops": [
+        "10203"
+      ],
+      "activePeriod": [
+        {
+          "start": "1795461420"
         }
       ]
     }
@@ -1556,6 +1883,89 @@
         "INFO_527447",
         "INFO_527463",
         "INFO_527467"
+      ]
+    },
+    {
+      "date": "2026-11-23",
+      "collectedAt": "2026-11-23T19:22:54.663Z",
+      "sourceTimestamp": "2026-11-23T19:22:44.000Z",
+      "ids": [
+        "AVISO_442947",
+        "AVISO_442950",
+        "AVISO_446239",
+        "AVISO_467462",
+        "AVISO_470390",
+        "AVISO_483553",
+        "AVISO_505428",
+        "AVISO_505463",
+        "AVISO_512188",
+        "AVISO_512648",
+        "AVISO_516966",
+        "AVISO_518804",
+        "AVISO_519517",
+        "AVISO_519596",
+        "AVISO_519640",
+        "AVISO_521807",
+        "AVISO_521823",
+        "AVISO_521824",
+        "AVISO_523139",
+        "AVISO_523425",
+        "AVISO_523570",
+        "AVISO_523760",
+        "AVISO_525558",
+        "AVISO_525563",
+        "AVISO_525838",
+        "AVISO_526420",
+        "AVISO_526429",
+        "AVISO_527360",
+        "AVISO_527379",
+        "AVISO_527386",
+        "AVISO_527914",
+        "AVISO_527928",
+        "AVISO_527931",
+        "AVISO_528009",
+        "AVISO_528025",
+        "AVISO_528026",
+        "AVISO_528035",
+        "AVISO_528036",
+        "AVISO_528049",
+        "AVISO_528050",
+        "AVISO_528051",
+        "AVISO_528054",
+        "INFO_465103",
+        "INFO_508393",
+        "INFO_509499",
+        "INFO_510941",
+        "INFO_512463",
+        "INFO_519283",
+        "INFO_520876",
+        "INFO_523736",
+        "INFO_523929",
+        "INFO_524427",
+        "INFO_524436",
+        "INFO_524807",
+        "INFO_525700",
+        "INFO_525779",
+        "INFO_525791",
+        "INFO_525797",
+        "INFO_525804",
+        "INFO_525925",
+        "INFO_525950",
+        "INFO_526077",
+        "INFO_526343",
+        "INFO_526478",
+        "INFO_526543",
+        "INFO_527025",
+        "INFO_527384",
+        "INFO_527427",
+        "INFO_527447",
+        "INFO_527494",
+        "INFO_527623",
+        "INFO_527940",
+        "INFO_527977",
+        "INFO_527986",
+        "INFO_528052",
+        "INFO_528055"
       ]
     }
   ]
