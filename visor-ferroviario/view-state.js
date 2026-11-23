@@ -15,6 +15,10 @@
     if(!record(raw))return result;
     if(between(raw.exaggeration,1,2))result.exaggeration=raw.exaggeration;
     if(typeof raw.shade==='boolean')result.shade=raw.shade;
+    if(['day','warm','studio'].includes(raw.lighting))result.lighting=raw.lighting;
+    if(['soft','crisp','multi'].includes(raw.reliefStyle))result.reliefStyle=raw.reliefStyle;
+    if(between(raw.strength,0.2,1))result.strength=raw.strength;
+    if(['cartographic','elevation'].includes(raw.palette))result.palette=raw.palette;
     return result;
   }
   function layers(raw){

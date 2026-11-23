@@ -154,6 +154,7 @@ function closeInfo(){
 $("#close").onclick=closeInfo;
 document.addEventListener("keydown",event=>{
   if(event.key!=="Escape")return;
+  if(window.AtlasTerrainScene?.isOpen())return;
   if(!$("#info").hidden){closeInfo();event.preventDefault();}
   else if(CFG.compact()&&!$("#tools").hidden){$("#toggle-panel").click();$("#toggle-panel").focus();}
 });
@@ -478,7 +479,7 @@ $("#saved-query").onchange=async function(){
     await window.AtlasDemography?.restore(view.d);
     await window.AtlasInfrastructure?.restore(view.ix);
     if(view.r)await window.AtlasRoute?.restore(view.r);else window.AtlasRoute?.reset();
-    terrainController?.restoreState({exaggeration:1,shade:true,...window.AtlasViewState.terrain(view.tv)});
+    terrainController?.restoreState({exaggeration:1,shade:true,lighting:'day',reliefStyle:'soft',strength:0.45,palette:'cartographic',...window.AtlasViewState.terrain(view.tv)});
     setTerrain(view.m===1||view.m===true);
     for(const [id,value] of Object.entries(window.AtlasViewState.layers(view.l))){
       const input=document.querySelector('[data-layer="'+id+'"]');
@@ -643,7 +644,7 @@ if(map)map.on("load",async()=>{
     },onChange:writeHash,onSummary:(text,warning)=>{
       terrainSummary=text;terrainWarning=warning;syncTerrainLegend();
       if(ready&&!statusText.dataset.warning)statusText.textContent=baseStatus();
-    },padding,getSelection:()=>dataset.rail.features.find(f=>f.id===selectedId)});
+    },padding,getSelection:()=>dataset.rail.features.find(f=>f.id===selectedId),getFeatures:()=>filtered});
     map.on("moveend",writeHash);
     const finishLoading=()=>{if(loading.hidden)return;loading.hidden=true;const attrib=document.querySelector(".maplibregl-ctrl-attrib");attrib?.classList.remove("maplibregl-compact-show");attrib?.removeAttribute("open");};
     map.once("idle",finishLoading);setTimeout(finishLoading,4000);
