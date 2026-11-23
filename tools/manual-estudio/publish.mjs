@@ -52,6 +52,8 @@ export function loadSource(src) {
 /* Contexto ampliado del glosario (opcional): glosario-contexto.js define GCTX = { <id>: { k, c, e, r } }.
    c = «En contexto», e = «Ejemplo», r = ids de entradas relacionadas. Se añade a la entrada completa (gterm) por id,
    y a las fichas de capítulo (gloss) y al vocabulario de cada capítulo por término, que es como el motor las fusiona.
+   En el vocabulario va en la 5.ª posición [término, definición, figura, enlace oficial, contexto]: la figura (HTML)
+   y el enlace oficial del manual se conservan.
    Así no hace falta ningún tipo de documento nuevo en la tabla. */
 const nk = (s) => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
 export function mergeContext(src, d) {
@@ -66,7 +68,7 @@ export function mergeContext(src, d) {
   Object.values(ctx).forEach((x) => { if (x && x.k) byK[nk(x.k)] = x; });
   d.GLOSARIO.GTERMS.forEach((g) => { if (ctx[g.id]) { Object.assign(g, pick(ctx[g.id])); d.GLOSARIO.CTX++; } });
   d.GLOSS.forEach((g) => { const x = byK[nk(g.k)]; if (x) { Object.assign(g, pick(x)); d.GLOSARIO.CTX++; } });
-  d.TOPICS.forEach((t) => (t.vocab || []).forEach((v, i) => { const x = byK[nk(v[0])]; if (x) { t.vocab[i] = [v[0], v[1], pick(x)]; d.GLOSARIO.CTX++; } }));
+  d.TOPICS.forEach((t) => (t.vocab || []).forEach((v, i) => { const x = byK[nk(v[0])]; if (x) { t.vocab[i] = [v[0], v[1], v[2] || '', v[3] || '', pick(x)]; d.GLOSARIO.CTX++; } }));
 }
 
 /* Los esquemas del glosario son SVG que en la web local toman los colores del tema por CSS.

@@ -803,9 +803,11 @@ window.APEstudio = (function () {
       d.GBY[nid] = e; alias[gkey(k)] = nid; all.push(e);
     }
     d.GLOSS.forEach(function (g) { addCap(g.k, g.d, g.t, g.a, 'cap', g); });
-    d.TOPICS.forEach(function (t) { (t.vocab || []).forEach(function (v) { if (v && v[0]) addCap(v[0], v[1], t.id, 's-vocab', 'vocab', v[2]); }); });
+    d.TOPICS.forEach(function (t) { (t.vocab || []).forEach(function (v) { if (v && v[0]) addCap(v[0], v[1], t.id, 's-vocab', 'vocab', vctx(v)); }); });
     return all;
   }
+  /* contexto ampliado de una entrada del vocabulario: 5.º campo (o el 3.º en datos publicados antes, cuando era un objeto) */
+  function vctx(v) { return v[4] && typeof v[4] === 'object' ? v[4] : (v[2] && typeof v[2] === 'object' ? v[2] : null); }
   function gHref(g) { return g.id && D.GBY ? R('glosario/' + g.id) : R('tema/' + g.t + (g.a && ID.test(g.a) ? '/' + g.a : '')); }
   function gText(g) { return g._s || (g._s = norm([g.k].concat(g.al || []).join(' ') + ' ' + plain(g.d) + ' ' + plain(g.x || '') + ' ' + plain(g.c || ''))); }
 
@@ -860,8 +862,8 @@ window.APEstudio = (function () {
     ctx.view.textContent = '';
     host = document.createElement('div'); host.className = 'cm-host me-host'; host.hidden = true;
     root = host.attachShadow({ mode: 'open' });
-    var pending = 2, show = function () { if (--pending <= 0) host.hidden = false; };
-    [['cm-css', './css/claude-manual.css'], ['me-css', './css/manual-estudio.css']].forEach(function (a) {
+    var pending = 3, show = function () { if (--pending <= 0) host.hidden = false; };
+    [['cm-css', './css/claude-manual.css'], ['me-css', './css/manual-estudio.css'], ['me-sim-css', './css/manual-estudio-sim.css']].forEach(function (a) {
       var link = document.createElement('link'); link.rel = 'stylesheet'; link.href = assetUrl(a[0], a[1]);
       link.addEventListener('load', show); link.addEventListener('error', show); root.appendChild(link);
     });
@@ -1212,7 +1214,8 @@ window.APEstudio = (function () {
     body += chap(1, 'Parte 1', 'Antes de leer',
       blk('s-idea', 'La idea en una frase', '<p class="oneliner">' + esc(t.one) + '</p>') +
       blk('s-rec', 'Lo que te llevas de este capítulo', '<div class="recall"><div class="ck">Recuerda</div><ul>' + (t.rec || []).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>') +
-      (t.vocab && t.vocab.length ? blk('s-vocab', 'Vocabulario mínimo para leer el capítulo', '<p class="vintro">Palabras que el libro usa sin explicar porque las da por sabidas. Son definiciones generales, no del libro.</p><dl class="gl">' + t.vocab.map(function (v, i) { return '<div><dt>' + esc(v[0]) + '</dt><dd>' + esc(v[1]) + '</dd>' + (v[2] ? '<dd class="vbt"><button type="button" class="vbtn" data-vf="' + i + '"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="m7 14 3-3 3 3 4-5"/></svg>Ver explicación visual</button></dd>' : '') + '</div>'; }).join('') + '</dl>') : '') +
+      (t.pre ? blk('s-mapa', esc(t.pre_t || 'El mapa del capítulo'), '<div class="libro pre-libro">' + clean(t.pre) + '</div>') : '') +   // bloque previo al vocabulario (<id>.antes.md)
+      (t.vocab && t.vocab.length ? blk('s-vocab', 'Vocabulario mínimo para leer el capítulo', '<p class="vintro">Palabras que el libro usa sin explicar porque las da por sabidas. Son definiciones generales, no del libro.</p><dl class="gl">' + t.vocab.map(function (v, i) { return '<div><dt>' + esc(v[0]) + '</dt><dd>' + esc(v[1]) + '</dd>' + (typeof v[3] === 'string' && v[3] ? '<dd class="vlk">Fuente oficial: ' + clean(v[3]) + '</dd>' : '') + (typeof v[2] === 'string' && v[2] ? '<dd class="vbt"><button type="button" class="vbtn" data-vf="' + i + '"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="m7 14 3-3 3 3 4-5"/></svg>Ver explicación visual</button></dd>' : '') + '</div>'; }).join('') + '</dl>') : '') +
       (t.clean ? '' : blk('s-como', 'Cómo leer el capítulo', '<div class="call analog"><div class="ck">Guía rápida</div><div class="dbody"><p>El texto del libro está <b>completo</b> y en su orden. Debajo de los apartados que lo necesitan hay un recuadro <b>«En sencillo»</b> con la idea en llano, una analogía o un ejemplo con números; las cuentas que no son del libro lo indican.</p><p>Si ves <mark class="dudoso" title="Pasaje dudoso de la transcripción">[¿?]</mark>, es un pasaje que no se leyó con seguridad: al final del capítulo tienes la lista de dudas para contrastar con el libro.</p></div></div>')));
 
     if (!t.clean) toc.push(['ch', 'El capítulo completo']);
@@ -1254,7 +1257,29 @@ window.APEstudio = (function () {
     Marcas.pinBar($('#sbar'), $('.appbar'));
     Marcas.backTop($('#detail'), root);
     $$('.vbtn', $('#detail')).forEach(function (b) { b.addEventListener('click', function () { var v = t.vocab[+b.dataset.vf]; Marcas.viewer({ title: v[0], text: v[1], html: clean(v[2]), ret: b, host: root }); }); });
+    mountSims();
     return anchor && ID.test(anchor) ? anchor : null;
+  }
+
+  /* Simuladores (<div class="sim sim-…">, dentro de .est-skip para que las marcas no los toquen): el contenido solo trae
+     el hueco y, en el organigrama, sus datos JSON como texto (.sim-data). El código es público y va aparte:
+     manual-estudio/simuladores.js (copia literal del simuladores.js del manual), que se carga la primera vez que hace falta. */
+  var simsP = null;
+  function loadSims() {
+    if (window.SIMS) return Promise.resolve();
+    if (!simsP) simsP = new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = assetUrl('me-sims', './manual-estudio/simuladores.js');
+      s.onload = function () { window.SIMS ? resolve() : reject(new Error('sin SIMS')); };
+      s.onerror = function () { simsP = null; s.parentNode.removeChild(s); reject(new Error('sin red')); };
+      document.head.appendChild(s);
+    });
+    return simsP;
+  }
+  function mountSims() {
+    var d = $('#detail'); if (!d || !$('.sim', d)) return;
+    loadSims().then(function () { if (d.isConnected) window.SIMS.mount(d); })
+      .catch(function () { $$('.sim-ns', d).forEach(function (p) { p.textContent = 'No se ha podido cargar el simulador. Revisa la conexión y vuelve a abrir el capítulo.'; }); });
   }
   function syncProgBtn(t) {
     var p = PROG[t.id] || 0, bt = $('#progBtn'), l = $('#progLbl'); if (!bt) return;
