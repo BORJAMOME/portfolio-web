@@ -543,7 +543,7 @@
     shown.options.forEach((o,n)=>{
       const b=el('button','rt-option');b.type='button';b.setAttribute('aria-pressed',String(n===shown.idx));b.dataset.idx=n;
       const times=el('span','rt-times',hm(o.dep)+' → '+hm(o.arr));
-      const meta=el('span','rt-meta',fmtDur(o.minutes)+' · '+connectionText(o).connection);
+      const meta=el('span','rt-meta',fmtDur(o.minutes)+' · '+connectionText(o).connection+' · '+(o.exact?'':'≈ ')+fmtKm(o.km));
       const prods=el('span','rt-prods');
       for(const p of [...new Map(o.rides.map(l=>[l.product.name,l.product])).values()]){const c=el('i','rt-dot');c.style.setProperty('--c',p.color);c.title=p.name;prods.append(c,document.createTextNode(p.name+' '));}
       b.append(times,meta,prods);
@@ -553,9 +553,43 @@
     box.append(wrap);
   }
 
+  /* Distancia por vía: la suma de los km en tren del itinerario elegido (sin tramos a pie ni cambios de estación por la
+     ciudad), medida sobre el trazado IGN que recorre cada tren. Es el dato para calcular viajeros-km, así que va arriba
+     y se puede copiar como número (coma decimal, para pegarlo en Excel o Power BI con configuración española). */
+  const km1=k=>new Intl.NumberFormat('es-ES',{minimumFractionDigits:1,maximumFractionDigits:1}).format(k);
+  function distanceBlock(r){
+    const sec=el('section','rt-distance');sec.setAttribute('aria-labelledby','rt-distance-label');
+    const label=el('h3','rt-distance-label','Distancia por vía férrea');label.id='rt-distance-label';
+    const row=el('div','rt-distance-row');
+    const value=el('p','rt-distance-value');
+    value.append(el('strong',null,(r.exact?'':'≈ ')+km1(r.km)),el('span',null,' km'));
+    const copy=el('button','rt-copy','Copiar');copy.type='button';
+    copy.setAttribute('aria-label','Copiar la distancia: '+km1(r.km)+' kilómetros');
+    copy.addEventListener('click',async()=>{
+      try{await navigator.clipboard.writeText(km1(r.km));copy.textContent='Copiado';}
+      catch{copy.textContent='No se ha podido copiar';}
+      clearTimeout(copy.timer);copy.timer=setTimeout(()=>{copy.textContent='Copiar';},1800);
+    });
+    row.append(value,copy);
+    const pct=r.km?Math.round(r.hsKm/r.km*100):0;
+    const parts=r.rides.map(l=>l.product.name+' '+l.from+' → '+l.to+': '+(l.exact?'':'≈ ')+km1(l.km)+' km');
+    const detail=r.rides.length>1
+      ?'Suma de '+r.rides.length+' tramos en tren. '+parts.join(' · ')+'.'
+      :parts[0]+'.';
+    const meta=el('p','rt-distance-meta',detail+(pct?' '+pct+' % por vía de alta velocidad.':' Todo por vía convencional.')+
+      (r.legs.some(l=>l.type!=='ride')?' No cuenta los cambios de estación ni los tramos a pie.':''));
+    const how=el('p','rt-distance-how',(r.exact
+      ?'Medida sobre el trazado de la red ferroviaria del IGN que recorre el tren de esta opción.'
+      :'Algún tramo no tiene trazado verificable y se aproxima en línea recta con un 18 % de rodeo: tómala como orientativa.')+
+      ' Otra opción u otro producto (por ejemplo, convencional en vez de alta velocidad) puede dar otra distancia.');
+    sec.append(label,row,meta,how);
+    return sec;
+  }
+
   function card(r,keep){
     const timed=Boolean(r.timed);
     const box=el('div','route-card');
+    box.append(distanceBlock(r));
     if(shown?.note){const n=el('p','notice-text route-flag',shown.note);box.append(n);}
     if(timed||tt){whenControls(box);}
     if(timed&&shown.options.length>1)optionList(box);
@@ -608,11 +642,10 @@
         (r.exact?'Los kilómetros se miden sobre el trazado inferido en la red IGN.':'Algún tramo no tiene trazado verificable: sus kilómetros se aproximan en línea recta.')+' No incluye Cercanías de ancho ibérico, iryo ni redes autonómicas.'));
     const operators=[...new Set(r.rides.map(l=>l.variant.operator))];
     const summary=connectionText(r);
-    const pct=r.km?Math.round(r.hsKm/r.km*100):0;
     const subtitle=(timed?dayLabel(sel.date)+' · ':'')+summary.trains+' · '+operators.join(' y ');
     const facts=timed
       ?[{value:hm(r.dep),label:'salida'},{value:hm(r.arr),label:'llegada'},{value:fmtDur(r.minutes),label:summary.connection}]
-      :[{value:'≈ '+fmtMin(r.minutes),label:'duración estimada'},{value:(r.exact?'':'≈ ')+fmtKm(r.km),label:pct?pct+' % por alta velocidad':'por vía convencional'},{value:String(r.transfers),label:r.transfers===1?'transbordo de tren':'transbordos de tren'}];
+      :[{value:'≈ '+fmtMin(r.minutes),label:'duración estimada'},{value:String(r.transfers),label:r.transfers===1?'transbordo de tren':'transbordos de tren'}];
     const info=$('#info'),scroll=keep?info.scrollTop:0;
     showInfo('Ruta en tren',sel.origin.name+' → '+sel.destination.name,{},{subtitle,
       chips:timed?[]:[...new Map(r.rides.map(l=>[l.product.name,l.product])).values()].map(p=>({label:p.name,color:p.color})),
