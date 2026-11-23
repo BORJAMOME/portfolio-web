@@ -64,7 +64,7 @@ jobs:
       - name: Publicar en main si hay cambios
         run: |
           git add visor-ferroviario/capas/rutas.json visor-ferroviario/capas/rutas-actividad.json visor-ferroviario/capas/oferta.json visor-ferroviario/capas/cnmc.json \
-                  visor-ferroviario/capas/mercado.json \
+                  visor-ferroviario/capas/mercado.json visor-ferroviario/capas/estaciones-oferta.json \
                   visor-ferroviario/capas/cabina.json visor-ferroviario/cabina.html
           if git diff --cached --quiet; then
             echo "Sin cambios en los datos: no se confirma nada." | tee -a "$GITHUB_STEP_SUMMARY"

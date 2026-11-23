@@ -1,15 +1,32 @@
-/* Oferta de trenes a partir de los horarios integrados (capas/horarios.json + capas/servicios.json).
-   Cifras para las fichas: trenes al día en una estación, primer y último tren, trenes por hora, destinos
-   directos y operadores; horario de una ruta; trenes por un tramo. Cuenta solo lo integrado en el atlas:
-   Renfe (AV, larga y media distancia, Cercanías de ancho métrico) y OUIGO. Sin iryo ni Cercanías de ancho ibérico. */
+/* Oferta de trenes para las fichas del visor. Dos fuentes, cada una para lo que puede responder:
+   - Estaciones y zonas (forStation, forStationCode, forArea, nearest): capas/estaciones-oferta.json, que regenera cada
+     lunes tools/build-rutas.mjs con todos los trenes de viajeros con horario público (Renfe AV/LD/MD y Cercanías de
+     ancho ibérico y métrico, OUIGO e iryo). Es el mismo universo y el mismo día de referencia que Cabina.
+   - Rutas y tramos (forVariant, forEdge): capas/horarios.json + capas/servicios.json, los trenes con recorrido
+     sobre la red IGN (Renfe AV/LD/MD, Cercanías de ancho métrico y OUIGO). iryo y las Cercanías de ancho ibérico
+     no tienen ese recorrido, así que no salen en el horario de una ruta ni en los trenes de un tramo. */
 (function(root){
   'use strict';
   const nf=new Intl.NumberFormat('es-ES');
   const pad=n=>String(n).padStart(2,'0');
   const hm=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60);
   const decode=b=>Uint8Array.from(atob(b),c=>c.charCodeAt(0));
-  const SCOPE='Horarios integrados: Renfe (alta velocidad, larga y media distancia, Cercanías de ancho métrico) y OUIGO. No incluye iryo ni Cercanías de ancho ibérico.';
-  let ready=null;
+  const SCOPE='Todos los trenes de viajeros con horario público: Renfe (alta velocidad, larga y media distancia y Cercanías de ancho ibérico y métrico), OUIGO e iryo (de un GTFS comunitario, no oficial).';
+  let ready=null,stationsReady=null;
+
+  /* ── estaciones: capas/estaciones-oferta.json ──
+     fichas: [estación, laborable, sábado, domingo, primer tren en el que se puede subir, último que pasa, trenes por hora,
+     [[servicio, trenes]], [[estación de destino, trenes]] (los 8 más servidos), destinos directos]; estaciones: [código, nombre, lon, lat]. */
+  function loadStations(){
+    stationsReady??=fetch('capas/estaciones-oferta.json').then(r=>{if(!r.ok)throw new Error('estaciones-oferta');return r.json();})
+      .then(F=>({F,byCode:new Map(F.fichas.map(f=>[String(F.estaciones[f[0]][0]),f]))})).catch(e=>{stationsReady=null;throw e;});
+    return stationsReady;
+  }
+  // Día de referencia: semana completa más reciente con horarios de todas las fuentes, como en Cabina.
+  function refNote(F){
+    const old=new Date(F.referencia.domingo+'T23:59:59')<new Date();
+    return ' Día de referencia: '+label(F.referencia.laborable)+' (se actualiza cada lunes'+(old?'; esa semana ya ha pasado y los datos no se han renovado':'')+').';
+  }
 
   function load(){
     ready??=Promise.all([root.AtlasCapas.loadServices(),fetch('capas/horarios.json').then(r=>{if(!r.ok)throw new Error('horarios');return r.json();})])
@@ -147,24 +164,30 @@
   function note(text){return el('p','muted offer-note',text);}
 
   /* API para las fichas. Cada función devuelve {facts, sentence, block} o null si no hay datos. */
+  // Ficha de una estación por su código oficial (el de Renfe y Adif): sirve también para las que no tienen rutas en el atlas.
   async function forStation(sid){
-    const D=await load(),days=refDays(D);
-    const wd=stationDay(D,sid,days.weekday),sa=stationDay(D,sid,days.saturday),su=stationDay(D,sid,days.sunday);
-    if(!wd.trains&&!sa.trains&&!su.trains)return null;
+    const [S,E]=await Promise.all([root.AtlasCapas.loadServices(),loadStations()]);
+    return stationBlock(E,String(S.stations[sid]?.official_id??''));
+  }
+  async function forStationCode(code){return stationBlock(await loadStations(),String(code));}
+  function stationBlock(E,code){
+    const f=E.byCode.get(code);if(!f)return null;
+    const F=E.F,R=F.referencia,[,lab,sab,dom,first,last,hours,serv,top,ndest]=f,name=i=>F.estaciones[i][1];
     const box=section('Trenes que paran aquí');
-    const sentence=wd.trains?nf.format(wd.trains)+(wd.trains===1?' tren para':' trenes paran')+' aquí el '+label(days.weekday)+(wd.first!==null?'; el primero sale a las '+hm(wd.first)+' y el último pasa a las '+hm(wd.last)+'.':'.')
-      :'Sin trenes el '+label(days.weekday)+'; '+nf.format(sa.trains)+' el sábado y '+nf.format(su.trains)+' el domingo.';
+    const sentence=lab?nf.format(lab)+(lab===1?' tren para':' trenes paran')+' aquí el '+label(R.laborable)+(first!==null?'; el primero sale a las '+hm(first)+' y el último pasa a las '+hm(last)+'.':'.')
+      :'Sin trenes el '+label(R.laborable)+'; '+nf.format(sab)+' el sábado y '+nf.format(dom)+' el domingo.';
     box.append(el('p','offer-lead',sentence));
-    if(wd.trains){box.append(el('p','offer-sub','Trenes por hora, '+label(days.weekday)));box.append(hourChart(wd.hours));}
+    if(lab){box.append(el('p','offer-sub','Trenes por hora, '+label(R.laborable)));box.append(hourChart(hours));}
     const dl=el('dl','offer-list');
     const row=(k,v)=>{if(!v)return;dl.append(el('dt',null,k),el('dd',null,v));};
-    row('Fin de semana',nf.format(sa.trains)+' el sábado · '+nf.format(su.trains)+' el domingo');
-    if(wd.ops.length>1)row('Por operador',wd.ops.map(([o,n])=>o+' '+Math.round(n/wd.trains*100)+' %').join(' · '));
-    if(wd.dests.length)row('Destinos directos más servidos',wd.dests.slice(0,6).map(([d,n])=>d+' ('+n+')').join(' · ')+(wd.dests.length>6?' · y '+(wd.dests.length-6)+' más':''));
-    box.append(dl,note(SCOPE+' Un tren cuenta una vez aunque pare y siga; los que pasan sin parar no cuentan.'+clampNote(days)));
-    return {sentence,block:box,facts:[{value:nf.format(wd.trains),label:'trenes un día laborable'},
-      ...(wd.first!==null?[{value:hm(wd.first)+'–'+hm(wd.last),label:'primero y último'}]:[]),
-      {value:nf.format(wd.dests.length),label:'destinos directos'}]};
+    row('Fin de semana',nf.format(sab)+' el sábado · '+nf.format(dom)+' el domingo');
+    if(serv.length>1)row('Por servicio',serv.map(([o,n])=>o+' '+Math.round(n/lab*100)+' %').join(' · '));
+    else if(serv.length)row('Servicio',serv[0][0]);
+    if(top.length)row('Destinos directos más servidos',top.slice(0,6).map(([d,n])=>name(d)+' ('+n+')').join(' · ')+(ndest>6?' · y '+nf.format(ndest-6)+' más':''));
+    box.append(dl,note(SCOPE+' Un tren cuenta una vez aunque pare y siga; los que pasan sin parar no cuentan.'+refNote(F)));
+    return {sentence,block:box,facts:[{value:nf.format(lab),label:'trenes un día laborable'},
+      ...(first!==null?[{value:hm(first)+'–'+hm(last),label:'primero y último'}]:[]),
+      {value:nf.format(ndest),label:'destinos directos'}]};
   }
   async function forVariant(v){
     const D=await load(),days=refDays(D);
@@ -201,21 +224,21 @@
   }
   // Estaciones con al menos un tren el día laborable de referencia, a menos de `radius` metros.
   async function near(coord,radius){
-    const D=await load(),days=refDays(D);
-    const list=groups(D).map(g=>({...g,m:metres(coord,g.coords)})).filter(g=>g.m<=radius)
-      .map(g=>({...g,day:stationDay(D,g.sid,days.weekday)})).filter(g=>g.day.trains).sort((a,b)=>a.m-b.m);
-    return {list,label:label(days.weekday),days};
+    const {F}=await loadStations();
+    const list=F.fichas.filter(f=>f[1]).map(f=>{const [code,name,lon,lat]=F.estaciones[f[0]];
+        return {code,name,coords:[lon,lat],day:{trains:f[1],first:f[4],last:f[5],dests:f[9]}};})
+      .filter(g=>g.coords[0]!==null).map(g=>({...g,m:metres(coord,g.coords)})).filter(g=>g.m<=radius).sort((a,b)=>a.m-b.m);
+    return {list,label:label(F.referencia.laborable),F};
   }
   async function forArea(coord,radius,place){
-    const {list,label:day,days}=await near(coord,radius);
+    const {list,label:day,F}=await near(coord,radius);
     const box=section('Tren');
-    if(!list.length){box.append(el('p','offer-lead','Ninguna estación con trenes de los horarios integrados a menos de '+nf.format(radius/1000)+' km de '+place+'.'),note(SCOPE+clampNote(days)));return {block:box,facts:[]};}
-    const stops=list.reduce((a,g)=>a+g.day.trains,0),dests=new Set(list.flatMap(g=>g.day.dests.map(([d])=>d)));
-    for(const g of list)dests.delete(g.name);
-    box.append(el('p','offer-lead',nf.format(list.length)+(list.length===1?' estación':' estaciones')+' con servicio a menos de '+nf.format(radius/1000)+' km de '+place+': '+nf.format(stops)+' paradas de tren el '+day+' y '+nf.format(dests.size)+' destinos sin transbordo.'));
+    if(!list.length){box.append(el('p','offer-lead','Ninguna estación con trenes a menos de '+nf.format(radius/1000)+' km de '+place+'.'),note(SCOPE+refNote(F)));return {block:box,facts:[]};}
+    const stops=list.reduce((a,g)=>a+g.day.trains,0),best=list.reduce((a,g)=>g.day.dests>a.day.dests?g:a);
+    box.append(el('p','offer-lead',nf.format(list.length)+(list.length===1?' estación':' estaciones')+' con servicio a menos de '+nf.format(radius/1000)+' km de '+place+': '+nf.format(stops)+' paradas de tren el '+day+'. La mejor conectada, '+best.name+', tiene '+nf.format(best.day.dests)+' destinos sin transbordo.'));
     const dl=el('dl','offer-list');
     for(const g of list.slice(0,6)){dl.append(el('dt',null,g.name+' · a '+(g.m<1000?nf.format(Math.round(g.m/10)*10)+' m':nf.format(Math.round(g.m/100)/10)+' km')),el('dd',null,nf.format(g.day.trains)+' trenes'+(g.day.first!==null?' · '+hm(g.day.first)+'–'+hm(g.day.last):'')));}
-    box.append(dl,note(SCOPE+' Distancias en línea recta. Un tren que para en dos estaciones de la zona cuenta dos paradas.'+clampNote(days)));
+    box.append(dl,note(SCOPE+' Distancias en línea recta. Un tren que para en dos estaciones de la zona cuenta dos paradas.'+refNote(F)));
     return {block:box,facts:[{value:nf.format(list.length),label:list.length===1?'estación con trenes':'estaciones con trenes'},{value:nf.format(stops),label:'paradas de tren al día'}]};
   }
   // Estación con servicio más cercana (puertos y aeropuertos).
@@ -230,7 +253,7 @@
     return best;
   }
   const dur=m=>{m=Math.round(m);const h=Math.floor(m/60),r=m%60;return h?h+' h'+(r?' '+pad(r)+' min':''):r+' min';};
-  // `core`: las mismas reglas de conteo para Cabina (cabina.js), así sus cifras coinciden con las fichas.
-  root.AtlasOffer={load,forStation,forVariant,forEdge,forArea,nearest,nearestEdge,SCOPE,hm,dur,
+  // `core`: reglas de conteo sobre los horarios integrados (rutas y tramos).
+  root.AtlasOffer={load,loadStations,forStation,forStationCode,forVariant,forEdge,forArea,nearest,nearestEdge,SCOPE,hm,dur,
     core:{refDays,coverage,clampNote,label,dayIndex,runs,at,stationDay,groups,metres}};
 })(window);

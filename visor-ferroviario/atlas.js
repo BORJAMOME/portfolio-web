@@ -217,11 +217,21 @@ async function stationInfo(feature) {
   try{await Promise.all([AtlasCapas.loadServices(),AtlasThemes.prepareConnections(),AtlasTransport.load()]);}catch{}
   if(revision!==infoRevision)return;
   if(AtlasCapas.hasStation(p.CODIGO)){AtlasCapas.stationInfo(AtlasCapas.hasStation(p.CODIGO));return;}
-  showInfo("Estación Renfe",p.DESCRIPCION,{
+  // Estación sin rutas trazadas en el atlas (sobre todo Cercanías de ancho ibérico): sus trenes salen de
+  // capas/estaciones-oferta.json (oferta.js), que incluye todos los operadores y núcleos.
+  const fields={
     "Dirección":p.DIRECION,
-    "Servicios con parada":"Sin parada comercial de los trenes de alta velocidad, larga distancia, Cercanías métricas u OUIGO en los horarios integrados.",
+    "Rutas en el mapa":"Ninguna: el atlas solo traza los recorridos de alta velocidad, larga y media distancia, Cercanías de ancho métrico y OUIGO.",
+    "Ubicación":p.gtfs?"Coordenadas de los horarios publicados (GTFS): la estación no figura en el catálogo de estaciones de Renfe.":undefined,
     "Conexiones con otros transportes":connections(feature.geometry.coordinates)
-  },{subtitle:[p.POBLACION,p.PROVINCIA].filter(Boolean).join(" · ")});
+  },opts={subtitle:[p.POBLACION,p.PROVINCIA].filter(Boolean).join(" · ")};
+  showInfo("Estación Renfe",p.DESCRIPCION,fields,opts);
+  const shown=infoRevision;
+  window.AtlasOffer?.forStationCode(p.CODIGO).then(o=>{
+    if(infoRevision!==shown)return;
+    if(o)showInfo("Estación Renfe",p.DESCRIPCION,fields,{...opts,facts:o.facts,extra:o.block,keepFocus:true});
+    else showInfo("Estación Renfe",p.DESCRIPCION,{...fields,"Servicios con parada":"Ningún tren de viajeros con horario público para aquí en la semana de referencia."},{...opts,keepFocus:true});
+  }).catch(e=>console.warn(e));
 }
 function loadLineCatalog() {
   lineCatalog ??= fetch("line-catalog.geojson").then(response => {
@@ -617,6 +627,15 @@ if(map)map.on("load",async()=>{
     const themeHit = point => { const layers=[...AtlasCapas.hitLayers(),"theme-hit","urban-stations"].filter(id=>map.getLayer(id)&&map.getLayoutProperty(id,"visibility")!=="none");
       const box=[[point.x-6,point.y-6],[point.x+6,point.y+6]]; return layers.length && map.queryRenderedFeatures(box,{layers}).length; };
     map.on("click","stations",e=>{ if(window.AtlasInfrastructure?.hit(e.point)||window.AtlasTransport?.hit(e.point))return; if(map.getLayer("cx-stops")&&map.queryRenderedFeatures(e.point,{layers:["cx-stops"]}).length)return; stationInfo(e.features[0]); });
+    // Estaciones con trenes que no están en el catálogo de Renfe (sobre todo Cercanías de ancho ibérico: Sol,
+    // Majadahonda, Hernani…): se añaden con las coordenadas de los GTFS (capas/estaciones-oferta.json) para que tengan ficha.
+    window.AtlasOffer?.loadStations().then(({F})=>{
+      const known=new Set(dataset.stations.features.map(f=>String(f.properties.CODIGO))),served=new Set(F.fichas.map(f=>f[0]));
+      const extra=F.estaciones.filter(([code,,lon,lat],i)=>served.has(i)&&lon!==null&&!known.has(String(code))&&CFG.peninsular([lon,lat]))
+        .map(([code,name,lon,lat])=>({type:"Feature",geometry:{type:"Point",coordinates:[lon,lat]},properties:{CODIGO:code,DESCRIPCION:name,gtfs:1}}));
+      if(!extra.length)return;
+      dataset.stations.features.push(...extra);map.getSource("stations")?.setData(dataset.stations);
+    }).catch(e=>console.warn(e));
     map.on("click","rail-hit",e=>{
       if(window.AtlasInfrastructure?.hit(e.point)||window.AtlasTransport?.hit(e.point)||themeHit(e.point) || map.queryRenderedFeatures(e.point,{layers:["stations"]}).length)return;
       // Con Población activa, el círculo tiene prioridad sobre el tramo IGN de fondo.
