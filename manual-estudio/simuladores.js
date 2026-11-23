@@ -129,7 +129,7 @@ function costes(root){
     clear(f.chart);
     var box = el("div", "sim-2c"); f.chart.appendChild(box);
     /* barras apiladas */
-    var two = f.chart.clientWidth >= 640, W = two ? 340 : cw(f, 420), H = 250, s1 = svgBox(W, H, "Coste total de los escenarios A y B separado en fijo y variable"); box.appendChild(s1);
+    var two = f.chart.clientWidth >= 640, W = two ? Math.max(340, Math.min(480, Math.floor((f.chart.clientWidth - 24) / 2))) : cw(f, 420), H = 250, s1 = svgBox(W, H, "Coste total de los escenarios A y B separado en fijo y variable"); box.appendChild(s1);
     var ymax = niceMax(Math.max(a.CT, b.CT) * 1.1), ax = axes(s1, {w:W, h:H, l:46, r:12, t:42, b:34, x0:0, x1:2, y0:0, y1:ymax, yl:"M€ al año", fy:function(v){ return nf(v); }});
     [a, b].forEach(function(s, i){
       var wB = Math.min(84, W / 4), x = ax.X(i + 0.5) - wB / 2, yF = ax.Y(s.CF), yT = ax.Y(s.CT);
@@ -204,7 +204,7 @@ function dospartes(root){
     clear(f.chart);
     var tbl = '<div class="tw"><table class="dxtbl sim-tbl"><thead><tr><th>Perfil</th><th>Uso</th><th>Dos partes</th><th>' + esc(M.per.charAt(0).toUpperCase() + M.per.slice(1)) + '</th><th>Tarifa única</th><th>Le conviene</th></tr></thead><tbody>' +
       rows.map(function(r){ var best = r.two < r.one ? "dos partes" : (r.two > r.one ? "tarifa única" : "igual"); return "<tr><td>" + esc(r.n) + "</td><td>" + nf(r.q, M.who === "viajero" ? 0 : 1) + "</td><td>" + money(r.two) + "</td><td>" + (isFinite(r.avg) ? eur(r.avg, 2) : "—") + "</td><td>" + money(r.one) + "</td><td>" + best + "</td></tr>"; }).join("") + "</tbody></table></div>";
-    var W = cw(f, 640), H = 240, s = svgBox(W, H, "Pago total según el uso con la tarifa en dos partes y con la tarifa única");
+    var W = cw(f, 980), H = 240, s = svgBox(W, H, "Pago total según el uso con la tarifa en dos partes y con la tarifa única");
     var xmax = M.maxN, ymax = niceMax(Math.max(F + p * xmax, u * xmax) * 1.05);
     var ax = axes(s, {w:W, h:H, l:58, r:16, t:24, b:36, x0:0, x1:xmax, y0:0, y1:ymax, xt:[0, xmax / 4, xmax / 2, 3 * xmax / 4, xmax], xl:"uso (" + M.unitN + ")", yl:"pago total (" + M.unitF.split("/")[0] + ")", fx:function(v){ return nf(v, M.who === "viajero" ? 0 : 1); }});
     sv("path", {d:path([[ax.X(0), ax.Y(F)], [ax.X(xmax), ax.Y(F + p * xmax)]]), "class":"sv-l1"}, s);
@@ -227,12 +227,14 @@ function dospartes(root){
 
 /* ══ 3. Regla de Ramsey ══ */
 function ramsey(root){
-  var SEG0 = [{n:"AVE comercial", q:60, c:2.0, e:-0.4}, {n:"Regional y Cercanías", q:90, c:1.2, e:-0.9}, {n:"Mercancías", q:30, c:1.0, e:-1.8}], R0 = 120;
+  /* Segmentos inspirados en los servicios reales (AVE como Madrid–Barcelona, servicios OSP de Renfe, mercancías frente al camión);
+     tráficos, costes y elasticidades son inventados: no hay cifras oficiales públicas de elasticidad por segmento. */
+  var SEG0 = [{n:"AVE comercial (como Madrid–Barcelona)", s:"AVE", q:60, c:2.0, e:-0.4}, {n:"Media Distancia y Cercanías (OSP)", s:"Media Distancia", q:90, c:1.2, e:-0.9}, {n:"Mercancías (compite con el camión)", s:"Mercancías", q:30, c:1.0, e:-1.8}], R0 = 120;
   var f = frame(root, {note:"Modelo didáctico con tres segmentos y cifras inventadas: demanda de elasticidad constante, Q = Q₀·(p/c)^e, donde c es el coste marginal (canon básico) y Q₀ el tráfico si solo se cobrara c. La regla de Ramsey fija (p − c)/p = λ/|e| y busca el λ mínimo que alcanza la recaudación. En la realidad hay más restricciones: la Directiva exige no expulsar a quien cubre su coste directo y los cánones los informa la CNMC."});
   var gR = group(f.ctrl, "Objetivo"), gE = group(f.ctrl, "Elasticidad de cada segmento");
   var sR = slider({label:"Costes fijos que hay que recuperar", unit:"M€/año", min:0, max:300, step:5, value:R0, help:"además del canon básico"}, draw);
   gR.appendChild(sR.el);
-  var sE = SEG0.map(function(s){ var c = slider({label:s.n, unit:"e", min:-3, max:-0.1, step:0.1, value:s.e, help:"tráfico " + s.q + " M tren·km · coste marginal " + nf(s.c, 1) + " €"}, draw); gE.appendChild(c.el); return c; });
+  var sE = SEG0.map(function(s){ var c = slider({label:s.n, unit:"", min:-3, max:-0.1, step:0.1, value:s.e, help:"elasticidad · tráfico " + s.q + " M tren·km · coste marginal " + nf(s.c, 1) + " €"}, draw); gE.appendChild(c.el); return c; });
   resetBtn(f.ctrl, function(){ sR.set(R0); sE.forEach(function(c, i){ c.set(SEG0[i].e); }); draw(); });
 
   function demand(s, p, e){ return s.q * Math.pow(p / s.c, e); }
@@ -272,7 +274,7 @@ function ramsey(root){
       {l:"Pérdida de bienestar", v:(ra.fail ? "—" : meur(ra.dwl)) + " frente a " + (un.fail ? "—" : meur(un.dwl)), s:"Ramsey frente a recargo igual"}
     ]);
     clear(f.chart);
-    var W = cw(f, 640), nar = W < 520, RH = nar ? 92 : 74, H = 70 + SEG0.length * RH, s = svgBox(W, H, "Recargo por tren·km de cada segmento con la regla de Ramsey y con un recargo igual para todos");
+    var W = cw(f, 980), nar = W < 520, RH = nar ? 92 : 74, H = 70 + SEG0.length * RH, s = svgBox(W, H, "Recargo por tren·km de cada segmento con la regla de Ramsey y con un recargo igual para todos");
     var mx = niceMax(Math.max.apply(null, ra.seg.map(function(x){ return x.m; }).concat(un.seg.map(function(x){ return x.m; }))) * 1.1);
     var x0 = nar ? 8 : 170, x1 = W - (nar ? 150 : 70), X = function(v){ return x0 + v / mx * (x1 - x0); };
     txt(s, 8, 18, nar ? "Recargo (€/tren·km) y tráfico que queda" : "Recargo sobre el coste marginal (€ por tren·km) y tráfico que se conserva", "sv-axl");
@@ -280,8 +282,8 @@ function ramsey(root){
     sv("rect", {x:88, y:28, width:10, height:10, "class":"sv-f3"}, s); txt(s, 102, 37, "recargo igual para todos", "sv-tick");
     SEG0.forEach(function(sg, i){
       var y = 56 + i * RH;
-      if(nar){ txt(s, 8, y + 12, sg.n + " · e = " + nf(es[i], 1), "sv-lab"); y += 22; }
-      else { txt(s, 8, y + 16, sg.n, "sv-lab"); txt(s, 8, y + 34, "e = " + nf(es[i], 1), "sv-tick"); }
+      if(nar){ txt(s, 8, y + 12, sg.s + " · elasticidad " + nf(es[i], 1), "sv-lab"); y += 22; }
+      else { txt(s, 8, y + 16, sg.s, "sv-lab"); txt(s, 8, y + 34, "elasticidad " + nf(es[i], 1), "sv-tick"); }
       [[ra, "sv-f1", 0], [un, "sv-f3", 26]].forEach(function(t){
         var v = t[0].seg[i];
         sv("rect", {x:x0, y:y + t[2], width:Math.max(1, X(v.m) - x0), height:20, rx:3, "class":t[1]}, s);
@@ -335,15 +337,31 @@ function elasticidad(root){
       {l:"Ingresos (precio × viajeros)", v:eur(p0 * q0) + " → " + eur(p1 * q1), s:(p1 * q1 >= p0 * q0 ? "suben " : "bajan ") + (p0 * q0 ? pct(Math.abs(chg(p0 * q0, p1 * q1))) : "")}
     ]);
     clear(f.chart);
-    var W = cw(f, 640), H = 260, s = svgBox(W, H, "Precio frente a viajeros: punto inicial y punto nuevo");
+    var W = cw(f, 980), H = 260, s = svgBox(W, H, "Precio frente a viajeros: punto inicial y punto nuevo");
     var qm = niceMax(Math.max(q0, q1, 10) * 1.15), pm = niceMax(Math.max(p0, p1) * 1.2);
     var ax = axes(s, {w:W, h:H, l:56, r:20, t:24, b:38, x0:0, x1:qm, y0:0, y1:pm, xt:[0, qm / 4, qm / 2, 3 * qm / 4, qm], xl:"viajeros (cantidad demandada)", yl:"precio (€)", fy:function(v){ return nf(v, pm < 10 ? 1 : 0); }});
     sv("path", {d:path([[ax.X(q0), ax.Y(p0)], [ax.X(q1), ax.Y(p1)]]), "class":"sv-l1"}, s);
     sv("line", {x1:ax.X(q0), x2:ax.X(q0), y1:ax.Y(0), y2:ax.Y(p0), "class":"sv-dash"}, s);
     sv("line", {x1:ax.X(q1), x2:ax.X(q1), y1:ax.Y(0), y2:ax.Y(p1), "class":"sv-dash"}, s);
-    sv("circle", {cx:ax.X(q0), cy:ax.Y(p0), r:7, "class":"sv-pA"}, s); txt(s, ax.X(q0) + 10, ax.Y(p0) - 8, "inicial", "sv-val");
-    sv("circle", {cx:ax.X(q1), cy:ax.Y(p1), r:7, "class":"sv-pB"}, s); txt(s, ax.X(q1) + 10, ax.Y(p1) + 18, "nuevo", "sv-val");
+    /* etiquetas con los datos de cada punto; si el punto está a la derecha, el texto va a su izquierda para no salirse */
+    function lab(q, p, s1, dy, cls){ var right = ax.X(q) + 12 + s1.length * 7 > W - 4; txt(s, ax.X(q) + (right ? -12 : 12), ax.Y(p) + dy, s1, cls, right ? "end" : "start"); }
+    sv("circle", {cx:ax.X(q0), cy:ax.Y(p0), r:7, "class":"sv-pA"}, s);
+    sv("circle", {cx:ax.X(q1), cy:ax.Y(p1), r:7, "class":"sv-pB"}, s);
+    var up = p0 >= p1 ? [-10, 20] : [20, -10];
+    var nar = W < 520;   /* en el móvil, etiqueta corta para que no se salga del gráfico */
+    lab(q0, p0, (nar ? "" : "inicial: ") + eur(p0, p0 < 10 ? 2 : 0) + " · " + nf(q0) + (nar ? "" : " viajeros"), up[0], "sv-val");
+    lab(q1, p1, (nar ? "" : "nuevo: ") + eur(p1, p1 < 10 ? 2 : 0) + " · " + nf(q1) + (nar ? "" : " viajeros"), up[1], "sv-val");
     f.chart.appendChild(s);
+    /* la cuenta paso a paso con los números del lector */
+    var ok = !same && isFinite(Em), dd = function(v){ return v < 10 ? 2 : 0; }, sp = function(x){ return (x > 0 ? "+" : "") + pct(x); };
+    var steps = [
+      ["1", "Cuánto cambia el precio", "(" + eur(p1, dd(p1)) + " − " + eur(p0, dd(p0)) + ") ÷ " + eur((p0 + p1) / 2, 2) + " (la media)", same ? "0 %" : sp(dPm)],
+      ["2", "Cuánto cambian los viajeros", "(" + nf(q1) + " − " + nf(q0) + ") ÷ " + nf((q0 + q1) / 2, 0) + " (la media)", isFinite(dQm) ? sp(dQm) : "—"],
+      ["3", "Divide el paso 2 entre el paso 1", ok ? sp(dQm) + " ÷ " + sp(dPm) : "—", ok ? "<b>" + nf(Em, 2) + "</b>" : "no calculable"],
+      ["4", "Quita el signo y compara con 1", ok ? nf(Math.abs(Em), 2) + (Math.abs(Em) > 1 ? " es mayor que 1" : Math.abs(Em) < 1 ? " es menor que 1" : " es igual a 1") : "—", ok ? "<b>" + kind(Em) + "</b>" : "—"]
+    ];
+    f.chart.insertAdjacentHTML("beforeend", '<p class="sim-st">La cuenta paso a paso (método del punto medio)</p><div class="tw"><table class="dxtbl sim-tbl sim-steps"><thead><tr><th>Paso</th><th>Qué haces</th><th>Cuenta</th><th>Resultado</th></tr></thead><tbody>' +
+      steps.map(function(r){ return "<tr><td>" + r[0] + "</td><td>" + r[1] + "</td><td>" + r[2] + "</td><td>" + r[3] + "</td></tr>"; }).join("") + "</tbody></table></div>");
     var m = [];
     if(same) m.push("El precio no ha cambiado, así que no se puede medir la reacción al precio: si los viajeros cambian, es por otra causa (horarios, competencia, temporada).");
     else if(!isFinite(Em)) m.push("Sin viajeros ni antes ni después no hay nada que medir.");
@@ -404,7 +422,7 @@ function acb(root){
       {l:"Resultado", v:VC <= 0 ? "sin costes" : ok ? "Socialmente rentable" : "No rentable socialmente", s:pay !== null ? "recupera la inversión (descontada) en el año " + pay : "no recupera la inversión en el horizonte", cls:ok ? "sim-k-pos" : "sim-k-neg"}
     ]);
     clear(f.chart);
-    var W = cw(f, 660), H = 270, s = svgBox(W, H, "Flujos anuales descontados de beneficios y costes y VAN acumulado año a año");
+    var W = cw(f, 980), H = 270, s = svgBox(W, H, "Flujos anuales descontados de beneficios y costes y VAN acumulado año a año");
     var dv = rows.map(function(x){ var d = Math.pow(1 + r, x.t); return {t:x.t, b:x.b / d, c:x.c / d, cum:x.cum}; });
     var top = Math.max.apply(null, dv.map(function(x){ return Math.max(x.b, x.cum); }).concat([1])), bot = Math.min.apply(null, dv.map(function(x){ return Math.min(-x.c, x.cum); }).concat([-1]));
     var ymax = niceMax(top * 1.05), ymin = -niceMax(-bot * 1.05);

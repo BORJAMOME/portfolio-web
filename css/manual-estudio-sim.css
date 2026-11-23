@@ -133,3 +133,21 @@
 .pre-libro .fig{margin-top:6px}
 .gl dd.vlk{font-size:13px;margin-top:6px;color:var(--muted)}
 .gl dd.vlk a{color:var(--accent-ink);font-weight:600}
+
+/* ── Figuras con dos versiones (@svg ancha+estrecha): horizontal grande en pantallas anchas, vertical en el móvil ──
+   Decide el ancho real de la figura (container query), no el de la ventana, para que funcione también con el índice lateral. */
+.fig.fig-dual{max-width:none;container-type:inline-size}
+.fig-dual .fig-sc{background:#fff;text-align:center;overflow:hidden}
+.fig-dual .fig-img{min-width:0;width:100%;height:auto;display:block;margin:0 auto}
+.fig-dual .fig-ancho .fig-img{max-width:1320px}
+.fig-dual .fig-movil{display:none}
+.fig-dual .fig-movil .fig-img{max-width:520px}
+@container (max-width: 760px){
+  .fig-dual .fig-ancho{display:none}
+  .fig-dual .fig-movil{display:block}
+}
+
+/* ── Cuenta paso a paso (elasticidad) ── */
+.sim-st{font-size:12px;letter-spacing:.8px;text-transform:uppercase;font-weight:600;color:var(--label);margin:16px 0 6px}
+.sim-steps td,.sim-steps th{white-space:normal;vertical-align:top}
+.sim-steps td:first-child{width:3em;text-align:center;font-weight:600;color:var(--accent-ink)}
