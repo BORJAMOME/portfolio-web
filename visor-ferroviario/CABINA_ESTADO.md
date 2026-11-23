@@ -1,6 +1,6 @@
 # Cabina: estado
 
-Última actualización: 22-11-2026 (ola 3: rediseño interactivo, sin commit todavía).
+Última actualización: 23-11-2026. Todo está en `main`: ola 3 (af14b3f), pendientes de la ola 2 (PR 165) y fichas del visor con el universo de Cabina (PR 167, 02bd98c). No hay ramas abiertas de Cabina.
 La tabla de rutas tiene su propio estado en `RUTAS_ESTADO.md`.
 
 ## Ola 3 (22-11-2026): interacción, marcas y filtros
@@ -121,9 +121,14 @@ Cuadro de mando con una pregunta rectora: *¿qué servicio de tren recibe cada t
 - **Decisión:** no se ha tocado `manual-ferrocarriles/mapa/preparar_horarios.py`. Integrar los dos GTFS en `horarios.json` exigía trazar sus recorridos, multiplicaba el tamaño y seguía sin actualizarse cada semana. Las cifras por estación salen ahora de la misma tarea semanal que Cabina.
   - Ojo: `manual-ferrocarriles/mapa/exportar_visor_web.py` copia `oferta.js` y `atlas.js` desde el manual. Si se vuelve a exportar, sobrescribe estos cambios: hay que llevarlos antes al manual o no usar el exportador para esos archivos.
 - **Comprobado:** las 1.471 estaciones del archivo coinciden con `oferta.json` en laborable, sábado, domingo y destinos directos (0 discrepancias); la suma de los trenes por hora es igual al laborable. Fichas en el navegador: Sol 369 trenes (04:57–00:40), Madrid-Chamartín 1225 (05:00–00:51), zona de Madrid a 15 km con 53 estaciones. `check-a11y` sin infracciones en `index.html`; `check-links`, `version-assets --check`, `build-mapa --check`, `build-en --check` y `build-cabina --check`.
+- **Fusión (23-11-2026):** PR 167 fusionada en `main` como 02bd98c. Antes se fusionó `main` en la rama: conflicto solo en los `?v=` de `index.html`, y `estaciones-oferta.json` se regeneró con `--download` para la semana del 2026-11-23 (`rutas.json` y `oferta.json` salieron idénticos a los de `main`, 1.471 fichas sin discrepancias). CI en verde en `main` (040abe1, que ya incluye la PR 170) y en el último commit de la rama.
+  - Se corrigieron de paso los `?v=` de `perfil.js` y `ruta.js`, que las PR 168 y 169 dejaron desactualizados. `version-assets --check` no revisa los `?v=` de `index.html` ni de `cabina.html`: hay que calcularlos a mano (`sha1sum` del archivo con finales LF, 8 caracteres).
 
 ## Pendiente
 
 - **Mantenimiento:** si Hermes publica una versión nueva de la capa TEN-T, volver a revisar los corredores y actualizar `corredores.verificado`. Cuando el INE publique 2026, la tasa de accidentes incluirá Adamuz y la tarjeta lo explica.
+- **Accidente de Urda (nota de Moncloa del 3-11-2026):** Madrid–Andalucía vuelve a estar cortada. Los datos de Cabina llegan a 2026-09, así que todavía no se ve. Cuando el INE y la CNMC publiquen octubre-noviembre (4T 2026 en `ds_24408`), añadir el evento en `build-cabina-mercado.mjs` (`viajeros.choque_av.evento` admite uno; habría que convertirlo en lista) con su fuente oficial. Validación: la nota por corredor cita los dos eventos y `build-cabina --check` pasa.
+- **Exportador del manual:** llevar los cambios de `oferta.js` y `atlas.js` a `manual-ferrocarriles` o excluir esos dos archivos de `exportar_visor_web.py`. Validación: exportar no cambia esos archivos en el portfolio (`git diff` vacío).
+- **Repo (opcional):** `main` no exige checks obligatorios, así que `gh pr merge --auto` fusiona sin esperar a la CI. Marcar «Comprobaciones» como obligatoria en la protección de `main` si se quiere que espere.
 
 **Riesgo:** `tools/build-cabina.mjs` tarda unos 60 s por el cálculo de km (Dijkstra por pareja). Si crece, conviene guardar en caché los grafos por variante.
