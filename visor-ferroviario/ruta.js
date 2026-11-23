@@ -642,7 +642,8 @@
         (r.exact?'Los kilómetros se miden sobre el trazado inferido en la red IGN.':'Algún tramo no tiene trazado verificable: sus kilómetros se aproximan en línea recta.')+' No incluye Cercanías de ancho ibérico, iryo ni redes autonómicas.'));
     const operators=[...new Set(r.rides.map(l=>l.variant.operator))];
     const summary=connectionText(r);
-    const subtitle=(timed?dayLabel(sel.date)+' · ':'')+summary.trains+' · '+operators.join(' y ');
+    // Los km también en el subtítulo: en móvil apaisado la hoja es baja y el bloque de distancia queda bajo el pliegue.
+    const subtitle=(timed?dayLabel(sel.date)+' · ':'')+summary.trains+' · '+(r.exact?'':'≈ ')+fmtKm(r.km)+' por vía · '+operators.join(' y ');
     const facts=timed
       ?[{value:hm(r.dep),label:'salida'},{value:hm(r.arr),label:'llegada'},{value:fmtDur(r.minutes),label:summary.connection}]
       :[{value:'≈ '+fmtMin(r.minutes),label:'duración estimada'},{value:String(r.transfers),label:r.transfers===1?'transbordo de tren':'transbordos de tren'}];
