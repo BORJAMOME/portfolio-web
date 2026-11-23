@@ -663,7 +663,7 @@ if(map)map.on("load",async()=>{
     },onChange:writeHash,onSummary:(text,warning)=>{
       terrainSummary=text;terrainWarning=warning;syncTerrainLegend();
       if(ready&&!statusText.dataset.warning)statusText.textContent=baseStatus();
-    },padding,getSelection:()=>dataset.rail.features.find(f=>f.id===selectedId),getFeatures:()=>filtered});
+    },padding,getSelection:()=>dataset.rail.features.find(f=>f.id===selectedId),getFeatures:()=>filtered,getStations:()=>dataset.stations.features});
     map.on("moveend",writeHash);
     const finishLoading=()=>{if(loading.hidden)return;loading.hidden=true;const attrib=document.querySelector(".maplibregl-ctrl-attrib");attrib?.classList.remove("maplibregl-compact-show");attrib?.removeAttribute("open");};
     map.once("idle",finishLoading);setTimeout(finishLoading,4000);

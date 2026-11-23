@@ -225,21 +225,21 @@
       const button=sliders.scene;button.disabled=true;button.textContent='Preparando escena…';
       sliders.sceneStatus.textContent='';
       try{
-        await import('./terrain-scene.mjs?v=36f75cb6');
+        await import('./terrain-scene.mjs?v=a98557a0');
         if(disposed||request!==sceneRequest)return;
         button.disabled=false;opener?.focus?.({preventScroll:true});
-        await root.AtlasTerrainScene.open({area:{name:area[0].split(' (')[0],bounds:area[1]},features:options.getFeatures?.()||[]});
+        await root.AtlasTerrainScene.open({area:{name:area[0].split(' (')[0],bounds:area[1]},features:options.getFeatures?.()||[],stations:options.getStations?.()||[]});
       }catch(error){if(!disposed&&request===sceneRequest){button.textContent='Reintentar escena 3D';sliders.sceneStatus.textContent='No se ha podido abrir la escena. Puedes reintentarlo o seguir explorando el mapa.';}}
       finally{if(!disposed&&request===sceneRequest){button.disabled=false;if(button.textContent!=='Reintentar escena 3D')button.textContent='Abrir explorador 3D';}}
     }
     if(host){
       const hero=el('div','terrain-hero'),eyebrow=el('span','terrain-eyebrow','EXPLORADOR DEL TERRENO'),title=el('h3','', 'La forma del territorio.');
-      const image=el('img','terrain-cover');image.src='assets/terrain/guadarrama-preview.png';image.alt='';image.width=960;image.height=640;image.loading='lazy';
+      const image=el('img','terrain-cover');image.src='assets/terrain/guadarrama-preview.png?v=3f3065d0';image.alt='';image.width=960;image.height=640;image.loading='lazy';
       hero.append(image,eyebrow,title,el('p','','Gira las montañas, descubre los valles y mira la red desde otra perspectiva.'));
       const scene=el('button','terrain-launch','Abrir explorador 3D');scene.id='terrain-open-scene';scene.type='button';scene.onclick=openScene;sliders.scene=scene;
       const sceneStatus=el('p','terrain-scene-message');sceneStatus.setAttribute('role','status');sliders.sceneStatus=sceneStatus;
       hero.append(scene,sceneStatus,el('small','','Terreno IGN · escena interactiva de Guadarrama'));sliders.heroNote=hero.children[hero.children.length-1];
-      hero.append(el('small','terrain-cover-note','Portada: escala vertical 2,4×'));host.append(hero);
+      hero.append(el('small','terrain-cover-note','Portada: escala vertical 2×'));host.append(hero);
       choices('mode','Vista del mapa',[['2d','Mapa 2D'],['3d','Perspectiva 3D']],'2d',value=>setEnabled(value==='3d'));
       const camera=el('details','terrain-settings');camera.open=true;camera.append(el('summary','','Cámara y profundidad'));host.append(camera);sliders.target=camera;
       slider('pitch','Inclinación',0,75,1,0,'°',v=>{if(!enabled)setEnabled(true);map.jumpTo({pitch:v});});

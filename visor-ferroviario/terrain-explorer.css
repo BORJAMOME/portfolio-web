@@ -1,18 +1,18 @@
 /* El explorador se suma al atlas: controles claros y una entrada al terreno real. */
 #terrain-controls{--terrain-teal:#78d3be}
-#terrain-controls .terrain-hero{isolation:isolate;position:relative;overflow:hidden;background:#102b38;color:#f4fbfc;border-radius:10px;padding:20px 18px 15px;margin:0 0 20px;min-height:267px;display:flex;flex-direction:column;justify-content:flex-end;box-sizing:border-box}
-.terrain-cover{position:absolute;z-index:-2;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 38%;opacity:.78}
-.terrain-hero::after{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(180deg,#0a243214,#102b3833 28%,#102b38ed 67%,#102b38)}
-.terrain-eyebrow{display:block;margin:90px 0 8px;color:#a0e6d6;font-size:11px;font-weight:700;letter-spacing:.12em}
-#terrain-controls .terrain-hero h3{font:500 28px/1.08 'Newsreader',Georgia,serif;letter-spacing:-.025em;margin:0 0 8px;color:#fff}
-.terrain-hero p{font-size:13px;line-height:1.65;margin:0 0 13px;color:#dae8ed;max-width:28em}
-#terrain-controls .terrain-launch{display:block;width:100%;min-height:44px;background:#a0e6d6;color:#12383b;font-size:14px;font-weight:700;border:1px solid #b6efdf;border-radius:6px;margin:0 0 10px;text-align:center}
-#terrain-controls .terrain-launch:hover{background:#c4f6e8}
+#terrain-controls .terrain-hero{isolation:isolate;position:relative;overflow:hidden;background:#eaf1f2;color:#254b5b;border-radius:10px;padding:20px 18px 15px;margin:0 0 20px;min-height:267px;display:flex;flex-direction:column;justify-content:flex-end;box-sizing:border-box}
+.terrain-cover{position:absolute;z-index:-2;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 38%;opacity:.96}
+.terrain-hero::after{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(180deg,#edf2f300 10%,#eaf1f244 32%,#eaf1f2f2 67%,#eaf1f2)}
+.terrain-eyebrow{display:block;margin:90px 0 8px;color:#2c6470;font-size:11px;font-weight:700;letter-spacing:.12em}
+#terrain-controls .terrain-hero h3{font:500 28px/1.08 'Newsreader',Georgia,serif;letter-spacing:-.025em;margin:0 0 8px;color:#234555}
+.terrain-hero p{font-size:13px;line-height:1.65;margin:0 0 13px;color:#526b75;max-width:28em}
+#terrain-controls .terrain-launch{display:block;width:100%;min-height:44px;background:#285f6b;color:#fff;font-size:14px;font-weight:700;border:1px solid #285f6b;border-radius:6px;margin:0 0 10px;text-align:center}
+#terrain-controls .terrain-launch:hover{background:#1d4b56}
 #terrain-controls .terrain-launch:disabled{opacity:.7;cursor:progress}
-.terrain-hero small{font-size:11px;line-height:1.5;color:#c4d7df}
-.terrain-hero .terrain-cover-note{margin-top:3px;color:#bfd4df;font-size:10px}
+.terrain-hero small{font-size:11px;line-height:1.5;color:#526b75}
+.terrain-hero .terrain-cover-note{margin-top:3px;color:#5c727b;font-size:10px}
 .terrain-scene-message:empty{display:none}
-#terrain-controls .terrain-scene-message{color:#ffdfaf;font-size:12px;margin:0 0 10px}
+#terrain-controls .terrain-scene-message{color:#8a513d;font-size:12px;margin:0 0 10px}
 #terrain-controls .terrain-caption{font-size:13px;font-weight:500;color:var(--muted);line-height:1.5;margin:0 0 7px}
 .terrain-choices{margin:14px 0}
 .terrain-segments{display:flex;padding:3px;gap:3px;border-radius:7px;background:#e9eef2;border:1px solid #d8e1e8}

@@ -46,7 +46,43 @@
   "attribution": "Obra derivada de MDT IGN · CC BY 4.0 scne.es",
   "blender": "5.3.0",
   "bytes": 3951996,
+  "appearance": {
+    "name": "Natural daylight · light sage and stone",
+    "palette_srgb": [
+      [
+        0,
+        "a3bfb1"
+      ],
+      [
+        550,
+        "97b39a"
+      ],
+      [
+        1000,
+        "aec098"
+      ],
+      [
+        1400,
+        "c6c4a7"
+      ],
+      [
+        1800,
+        "d4ccb5"
+      ],
+      [
+        2200,
+        "e0d8c6"
+      ],
+      [
+        2600,
+        "efebe1"
+      ]
+    ],
+    "classification": "Altitude colour scale, not observed land cover",
+    "preview_transform": "AgX / Medium High Contrast / +0.35 EV",
+    "preview_lighting": "Neutral daylight, broad sky fill, soft contact shadows"
+  },
   "limitations": "Generalised surface from local IGN tiles. Not railway track elevation. DEM NoData is already encoded as zero by its source preparation; no accuracy inferred from grid spacing.",
   "preview": "guadarrama-preview.png",
-  "preview_vertical_exaggeration": 2.4
+  "preview_vertical_exaggeration": 2.0
 }
