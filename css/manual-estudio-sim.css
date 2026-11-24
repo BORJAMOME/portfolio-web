@@ -151,3 +151,112 @@
 .sim-st{font-size:12px;letter-spacing:.8px;text-transform:uppercase;font-weight:600;color:var(--label);margin:16px 0 6px}
 .sim-steps td,.sim-steps th{white-space:normal;vertical-align:top}
 .sim-steps td:first-child{width:3em;text-align:center;font-weight:600;color:var(--accent-ink)}
+
+/* ── Aprovechamiento: tren como rectángulo plazas × km ── */
+.aprov-ctl{display:flex;flex-direction:column;gap:12px}
+.aprov-hint{margin:0;font-size:13.5px;color:var(--muted);line-height:1.45}
+.aprov-gv{fill:var(--lab3);fill-opacity:.32}
+.aprov-gh{fill:var(--lab2);fill-opacity:.42}
+.aprov-cap{fill:none;stroke:var(--ink);stroke-width:1.4}
+.aprov-vx{stroke:var(--lab2);stroke-width:2;stroke-dasharray:6 4}
+.sv-val.aprov-in{fill:var(--on-accent)}
+.aprov-leg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--muted);margin-bottom:4px}
+.aprov-leg span{display:inline-flex;align-items:center;gap:6px}
+.aprov-sw{display:inline-block;width:12px;height:12px;border-radius:2px}
+.aprov-sw-o{background:var(--lab1)}
+.aprov-sw-h{background:color-mix(in srgb,var(--lab2) 42%,transparent)}
+.aprov-sw-v{background:color-mix(in srgb,var(--lab3) 32%,transparent)}
+.aprov-sw-x{height:0;border-top:2px dashed var(--lab2);border-radius:0}
+/* ── Ejemplo 2 interactivo (corredor) ── */
+.corredor-cap{fill:var(--accent-soft);stroke:none}
+.corredor-pl{stroke:var(--ink);stroke-width:1.6}
+.corredor-in{font-family:var(--sans);font-size:12px;font-weight:600;fill:var(--card)}
+.corredor-leg{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;margin:6px 0 0;font-size:12.5px;color:var(--muted)}
+.corredor-sw{display:inline-block;width:14px;height:10px;border-radius:2px;vertical-align:middle;margin-right:4px}
+.corredor-sw1{background:var(--lab1)}.corredor-sw2{background:var(--lab2)}.corredor-sw3{background:var(--lab3)}
+.corredor-sw4{background:var(--accent-soft);border:1.5px solid var(--ink)}
+.corredor-sw5{height:0;border-top:2px dashed var(--lab2);border-radius:0}
+.corredor-tbl th{position:static}
+.corredor-tbl td:first-child{width:auto;text-align:left;color:var(--ink)}
+/* ── Aprovechamiento de equilibrio ── */
+.eq-loss{fill:var(--negative);fill-opacity:.14}
+.eq-gain{fill:var(--positive);fill-opacity:.18}
+.eq-ae{stroke:var(--ink);stroke-width:1.4;stroke-dasharray:3 3}
+.eq-mg-p{stroke:var(--positive);stroke-width:3.5}
+.eq-mg-n{stroke:var(--negative);stroke-width:3.5}
+/* ── Estacionalidad (simulador estacional) ── */
+.estacional-lt{fill:none;stroke:var(--lab1);stroke-width:1.8;opacity:.75}
+.estacional-lv{fill:none;stroke:var(--lab2);stroke-width:1.8;opacity:.75}
+.estacional-lf{fill:none;stroke:var(--lab3);stroke-width:1.8;opacity:.75}
+.estacional-lm{fill:none;stroke:var(--ink);stroke-width:3.2;stroke-linejoin:round}
+.estacional-lr{fill:none;stroke:var(--lab6);stroke-width:2.4;stroke-dasharray:7 4}
+.estacional-dm{fill:var(--card);stroke:var(--ink);stroke-width:2}
+.estacional-bok{fill:var(--lab1);opacity:.85}
+.estacional-bko{fill:var(--negative)}
+.estacional-cap{stroke:var(--lab5);stroke-width:2.6;fill:none}
+.estacional-rest{margin:0;font-size:13px;color:var(--text)}
+.estacional-ms button{min-height:32px;padding:0 9px;font-size:12.5px}
+.estacional-dh .sim-st{margin-bottom:8px}
+/* ── Análisis de la frecuencia (simulador «frecuencia») ── */
+.frecuencia-desc{margin:0;font-size:13px;color:var(--muted);line-height:1.45}
+.frecuencia-pt{stroke:var(--card);stroke-width:1.5}
+.frecuencia-pt.frecuencia-ok{fill:var(--lab1)}
+.frecuencia-pt.frecuencia-no{fill:var(--lab2)}
+.frecuencia-pt.frecuencia-ad{fill:var(--lab4)}
+.frecuencia-run{stroke-width:1.6;fill:none}
+.frecuencia-run.frecuencia-ok{stroke:var(--lab1);opacity:.55}
+.frecuencia-run.frecuencia-no{stroke:var(--lab2);opacity:.75;stroke-dasharray:4 3}
+.frecuencia-run.frecuencia-ad{stroke:var(--lab4);opacity:.85;stroke-dasharray:4 3}
+.frecuencia-hgrid{opacity:.5}
+.frecuencia-z0{fill:var(--card-2)}
+.frecuencia-z1{fill:var(--card)}
+.frecuencia-det{font-size:13.5px;line-height:1.5;border:.5px solid var(--line);border-radius:var(--r-sm);padding:8px 12px;background:var(--card)}
+.frecuencia-det summary{cursor:pointer;font-weight:600;color:var(--accent-ink)}
+.frecuencia-det ul{margin:8px 0 0;padding-left:18px;max-height:220px;overflow:auto}
+.frecuencia-ok-msg{margin:0;font-size:13.5px;color:var(--muted)}
+.frecuencia-hz{margin:6px 0 0;font-size:14px;line-height:1.55}
+/* ── Perfil de carga del tren ── */
+.perfil-sel{font:inherit;font-size:14px;padding:8px 10px;border-radius:9px;border:.5px solid var(--line-2);background:var(--card);color:var(--ink);width:100%;min-height:38px}
+.perfil-area{fill:var(--lab1);fill-opacity:.22}
+.perfil-gap{fill:var(--negative-soft);stroke:var(--line-2);stroke-width:1;stroke-dasharray:3 3}
+.perfil-cap{stroke:var(--muted);stroke-width:1.4;stroke-dasharray:1 4;stroke-linecap:round}
+.perfil-under{fill:var(--card)}
+/* ── Simetría del tráfico ── */
+.simetria-sel{font:inherit;font-size:14px;padding:8px 10px;border-radius:9px;border:.5px solid var(--line-2);background:var(--card);color:var(--ink);width:100%;min-height:38px}
+.simetria-off{display:none}
+.simetria-city{fill:var(--card-2);stroke:var(--line);stroke-width:1}
+.simetria-in{font-family:var(--sans);font-size:11.5px;font-weight:600;fill:var(--card)}
+.simetria-d{stroke:var(--card);stroke-width:1.5}
+.simetria-o{fill:var(--positive)}.simetria-w{fill:var(--lab5)}.simetria-b{fill:var(--negative)}
+.simetria-dt{font-family:var(--sans);font-size:10px;font-weight:700;fill:var(--card)}
+/* unidades: los dos «ladrillos» de ingresos y costes */
+.unidades-of{fill:var(--card-2);stroke:var(--lab4);stroke-width:1.6;stroke-dasharray:5 4}
+.unidades-tr{fill:var(--lab1);fill-opacity:.85}
+.unidades-bad{fill:var(--negative);fill-opacity:.55}
+.unidades-ltr{fill:var(--card)}
+.unidades-lof{fill:var(--ink)}
+.unidades-in{fill:var(--card)}
+.unidades-pos{fill:var(--positive)}
+.unidades-neg{fill:var(--negative)}
+.unidades-st{display:flex;flex-direction:column;gap:10px}
+/* ── Ejemplo 1 interactivo (utiliza) ── */
+.utiliza-tw{overflow-x:auto}
+.utiliza-tbl{border-collapse:collapse;width:100%;font-size:13px}
+.utiliza-tbl th,.utiliza-tbl td{padding:3px 3px;text-align:right;white-space:nowrap}
+.utiliza-tbl thead th{font-size:10.5px;letter-spacing:.4px;text-transform:uppercase;font-weight:600;color:var(--label);white-space:normal;vertical-align:bottom;line-height:1.2}
+.utiliza-tbl tbody th{text-align:center;font-weight:700;color:var(--ink)}
+.utiliza-tbl input{width:58px;font:inherit;font-size:13px;padding:4px 5px;border:.5px solid var(--line-2);border-radius:7px;background:var(--card);color:var(--ink);text-align:right}
+.utiliza-tbl input:disabled{background:transparent;border-color:transparent;color:var(--muted)}
+.utiliza-tbl input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.utiliza-ob{font-weight:600;color:var(--accent-ink)}
+.utiliza-fix{margin:0;font-size:12.5px;color:var(--negative-ink);line-height:1.4}
+.utiliza-fix:empty{display:none}
+.utiliza-cap{fill:var(--accent-soft);stroke:none}
+.utiliza-pl{stroke:var(--ink);stroke-width:1.6}
+.utiliza-ov{fill:var(--negative)}
+.utiliza-leg{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;margin:6px 0 0;font-size:12.5px;color:var(--muted)}
+.utiliza-sw{display:inline-block;width:14px;height:10px;border-radius:2px;vertical-align:middle;margin-right:4px}
+.utiliza-sw1{background:var(--lab1)}
+.utiliza-sw2{background:var(--accent-soft);border:1.5px solid var(--ink)}
+.utiliza-sw3{height:0;border-top:2px dashed var(--lab2);border-radius:0}
+.utiliza-steps th{position:static}
