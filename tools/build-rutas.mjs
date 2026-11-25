@@ -213,27 +213,45 @@ export const FAMILIES=['Alta velocidad','Avant','Intercity','Regional','Cercaní
 const AV_KEY={'AVE':'ave','AVE Euromed':'ave','Avlo':'avlo','iryo':'iryo','OUIGO':'ouigo','Avant':'avant','Avant Exprés':'avant'};
 function stationOffer(all,stIdx,n,W,sources){
   const WD=W[2],SA=W[5],SU=W[6],AVK=['ave','avlo','avant','ouigo','iryo'];
-  const st=[...Array(n)].map(()=>({lab:0,sab:0,dom:0,fam:[0,0,0,0,0],av:[0,0,0,0,0],pri:null,ult:null,dest:new Set()}));
-  const fam=Object.fromEntries(FAMILIES.map(f=>[f,{lab:0,sab:0,dom:0,horas:new Array(24).fill(0)}]));
+  const st=[...Array(n)].map(()=>({lab:0,sab:0,dom:0,fam:[0,0,0,0,0],av:[0,0,0,0,0],pri:null,ult:null,dest:new Set(),
+    // Para las fichas del visor (capas/estaciones-oferta.json), solo el laborable: trenes por hora, por servicio y por destino,
+    // y el primer tren en el que se puede subir (no cuenta el que termina aquí).
+    horas:new Array(24).fill(0),serv:new Map(),destN:new Map(),sube:null}));
+  // Por familia: los tres días de referencia, los siete días de la semana (lunes a domingo) y las salidas por hora de
+  // cada día de referencia. Por marca (AVE, Avlo, OUIGO, iryo…): los mismos tres días y la semana.
+  const fam=Object.fromEntries(FAMILIES.map(f=>[f,{lab:0,sab:0,dom:0,dias:new Array(7).fill(0),horas:new Array(24).fill(0),horas_sab:new Array(24).fill(0),horas_dom:new Array(24).fill(0)}]));
+  const marcas={};
   for(const t of all){
+    const h=Math.floor(t.dep/60)%24,M=marcas[t.marca]??={familia:t.familia,lab:0,sab:0,dom:0,dias:new Array(7).fill(0)};
+    W.forEach((d,i)=>{if(t.days.has(d)){fam[t.familia].dias[i]++;M.dias[i]++;}});
     const onWD=t.days.has(WD),onSA=t.days.has(SA),onSU=t.days.has(SU);if(!onWD&&!onSA&&!onSU)continue;
-    const F=fam[t.familia];if(onWD){F.lab++;F.horas[Math.floor(t.dep/60)%24]++;}if(onSA)F.sab++;if(onSU)F.dom++;
+    const F=fam[t.familia];if(onWD){F.lab++;F.horas[h]++;M.lab++;}if(onSA){F.sab++;F.horas_sab[h]++;M.sab++;}if(onSU){F.dom++;F.horas_dom[h]++;M.dom++;}
     const fi=FAMILIES.indexOf(t.familia),ai=AVK.indexOf(AV_KEY[t.marca]);
     const seen=new Set();
     t.stops.forEach((code,i)=>{const k=stIdx.get(code);if(seen.has(k))return;seen.add(k);const x=st[k];
       if(onSA)x.sab++;if(onSU)x.dom++;
       if(!onWD)return;
       x.lab++;x.fam[fi]++;if(ai>=0)x.av[ai]++;
-      const tm=t.times[i];if(tm!==null&&tm!==undefined){x.pri=x.pri===null?tm:Math.min(x.pri,tm);x.ult=x.ult===null?tm:Math.max(x.ult,tm);}
-      for(let j=i+1;j<t.stops.length;j++)x.dest.add(stIdx.get(t.stops[j]));});
+      const tm=t.times[i];if(tm!==null&&tm!==undefined){x.pri=x.pri===null?tm:Math.min(x.pri,tm);x.ult=x.ult===null?tm:Math.max(x.ult,tm);
+        // Primero y último de la ficha: el día empieza a las 04:00 (un tren de las 00:26 es el último de la noche, no el primero).
+        const tf=tm%1440<240?tm%1440+1440:tm;
+        x.horas[Math.floor(tm/60)%24]++;if(i<t.stops.length-1)x.sube=x.sube===null?tf:Math.min(x.sube,tf);x.ultF=x.ultF==null?tf:Math.max(x.ultF,tf);}
+      const sv=t.operador==='Renfe'?t.familia:t.operador;x.serv.set(sv,(x.serv.get(sv)||0)+1);
+      const ahead=new Set();
+      for(let j=i+1;j<t.stops.length;j++){const d=stIdx.get(t.stops[j]);x.dest.add(d);if(d===k||ahead.has(d))continue;ahead.add(d);x.destN.set(d,(x.destN.get(d)||0)+1);}});
   }
   return {
     referencia:{laborable:WD,sabado:SA,domingo:SU},
     universo:'Trenes de viajeros con horario público: Renfe (alta velocidad, larga y media distancia y Cercanías de todos los núcleos, de ancho ibérico y métrico), OUIGO e iryo.',
     fuentes:Object.fromEntries(Object.entries(sources).filter(([,s])=>s.from).map(([k,s])=>[k,{label:s.label,from:s.from,to:s.to,official:s.official}])),
-    familias:fam,av_claves:AVK,
+    familias:fam,marcas,semana:W,av_claves:AVK,
     // Por estación (mismo índice que rutas.json · estaciones): [laborable, sábado, domingo, [por familia], [ave, avlo, avant, ouigo, iryo], primero, último, destinos directos]
-    por_estacion:st.map((x,k)=>[x.lab,x.sab,x.dom,x.fam,x.av,x.pri,x.ult,(x.dest.delete(k),x.dest.size)])
+    por_estacion:st.map((x,k)=>[x.lab,x.sab,x.dom,x.fam,x.av,x.pri,x.ult,(x.dest.delete(k),x.dest.size)]),
+    /* Fichas del visor (oferta.js): por estación con trenes, [índice, laborable, sábado, domingo, primer tren en el que se
+       puede subir, último que pasa, trenes por hora (24), [[servicio, trenes]], [[índice de destino, trenes]] (los 8 más
+       servidos), destinos directos]. Se escribe aparte (capas/estaciones-oferta.json) para que el visor no cargue oferta.json. */
+    fichas:st.map((x,k)=>x.lab||x.sab||x.dom?[k,x.lab,x.sab,x.dom,x.sube,x.ultF??null,x.horas,[...x.serv].sort((a,b)=>b[1]-a[1]),
+      [...x.destN].sort((a,b)=>b[1]-a[1]).slice(0,8),x.dest.size]:null).filter(Boolean)
   };
 }
 /* Tiempo directo más corto entre dos capitales de provincia, con cualquier tren que pare en las dos (no solo los que
@@ -374,7 +392,15 @@ if(process.argv[1]&&fileURLToPath(import.meta.url)===path.resolve(process.argv[1
   fs.writeFileSync(path.join(V,'capas','rutas-actividad.json'),JSON.stringify(activity)+'\n');
   fs.writeFileSync(OUT,txt);
   // oferta.json: misma lista de estaciones que rutas.json (los índices coinciden) y su oferta del día de referencia.
-  const otxt=JSON.stringify({generado:today,generado_con:'tools/build-rutas.mjs',estaciones:data.estaciones,...oferta})+'\n';
+  const {fichas,...ofertaSin}=oferta;
+  const otxt=JSON.stringify({generado:today,generado_con:'tools/build-rutas.mjs',estaciones:data.estaciones,...ofertaSin})+'\n';
+  // Fichas de estación del visor: mismo universo y mismo día de referencia que Cabina. Solo las estaciones que salen.
+  const used=new Set(fichas.flatMap(f=>[f[0],...f[8].map(d=>d[0])])),idx=[...used].sort((a,b)=>a-b),re=new Map(idx.map((k,i)=>[k,i]));
+  const ftxt=JSON.stringify({generado:today,generado_con:'tools/build-rutas.mjs',referencia:oferta.referencia,universo:oferta.universo,fuentes:oferta.fuentes,
+    estaciones:idx.map(k=>{const e=data.estaciones[k];return [e.k,e.n,e.c?.[0]??null,e.c?.[1]??null];}),
+    fichas:fichas.map(f=>[re.get(f[0]),...f.slice(1,8),f[8].map(([d,n])=>[re.get(d),n]),f[9]])})+'\n';
+  fs.writeFileSync(path.join(V,'capas','estaciones-oferta.json'),ftxt);
+  console.log('Escrito visor-ferroviario/capas/estaciones-oferta.json',(ftxt.length/1024).toFixed(0)+' KB');
   fs.writeFileSync(path.join(V,'capas','oferta.json'),otxt);
   console.log('Escrito visor-ferroviario/capas/oferta.json',(otxt.length/1024).toFixed(0)+' KB');
   console.log('Escrito',path.relative(ROOT,OUT),(txt.length/1024).toFixed(0)+' KB','· semana',data.referencia.semana,'· filas',data.rutas.length,'· estaciones',data.estaciones.length);

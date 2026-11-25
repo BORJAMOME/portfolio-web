@@ -165,7 +165,7 @@
       const X=d=>L+(W-L-R)*d/profile.total,Y=h=>T+(H-T-B)*(1-(h-lo)/(hi-lo));
       geom={X,Y,W,H,L,R,T,B};
       svgEl=svg('svg',{viewBox:`0 0 ${W} ${H}`,width:W,height:H,class:'profile-svg',tabindex:'0',role:'slider',
-        'aria-label':'Perfil de elevación: recorre el perfil con las flechas','aria-valuemin':'0','aria-valuemax':String(Math.round(profile.total/1000))});
+        'aria-label':'Perfil de elevación: recorre el perfil con las flechas','aria-valuemin':'0','aria-valuemax':String(Math.round(profile.total/1000)),'aria-valuenow':'0'});
       const gAxes=svg('g',{class:'pf-axes'});
       const ys=niceStep(hi-lo);
       for(let v=Math.ceil(lo/ys)*ys;v<=hi;v+=ys){

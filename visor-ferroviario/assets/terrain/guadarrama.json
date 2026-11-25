@@ -1,0 +1,88 @@
+{
+  "schema": "ign-terrain-gltf-v1",
+  "area": "Guadarrama",
+  "bounds": [
+    -4.35,
+    40.5,
+    -3.7,
+    41.05
+  ],
+  "center": [
+    -4.025,
+    40.775
+  ],
+  "asset": "guadarrama.glb",
+  "units": "metres",
+  "axes": {
+    "x": "east",
+    "y": "elevation",
+    "z": "south"
+  },
+  "horizontal_origin": "Mercator of center; local ground scale cos(center latitude)",
+  "width_m": 54795.02225670278,
+  "depth_m": 61226.30469610242,
+  "minimum": 595.3019970666386,
+  "maximum": 2412.831358319522,
+  "min_height_m": 595.3019970666386,
+  "max_height_m": 2412.831358319522,
+  "grid": [
+    257,
+    257
+  ],
+  "grid_spacing_m": [
+    214.04305569024524,
+    239.1652527191501
+  ],
+  "source_tile_levels": [
+    12
+  ],
+  "vertices": 66049,
+  "triangles": 131072,
+  "vertical_exaggeration": 1,
+  "railway_elevation": false,
+  "source": "https://servicios.idee.es/wcs-inspire/mdt",
+  "coverage": "Elevacion4258_25",
+  "source_retrieved": "2026-11-14",
+  "attribution": "Obra derivada de MDT IGN · CC BY 4.0 scne.es",
+  "blender": "5.3.0",
+  "bytes": 3951996,
+  "appearance": {
+    "name": "Natural daylight · light sage and stone",
+    "palette_srgb": [
+      [
+        0,
+        "a3bfb1"
+      ],
+      [
+        550,
+        "97b39a"
+      ],
+      [
+        1000,
+        "aec098"
+      ],
+      [
+        1400,
+        "c6c4a7"
+      ],
+      [
+        1800,
+        "d4ccb5"
+      ],
+      [
+        2200,
+        "e0d8c6"
+      ],
+      [
+        2600,
+        "efebe1"
+      ]
+    ],
+    "classification": "Altitude colour scale, not observed land cover",
+    "preview_transform": "AgX / Medium High Contrast / +0.35 EV",
+    "preview_lighting": "Neutral daylight, broad sky fill, soft contact shadows"
+  },
+  "limitations": "Generalised surface from local IGN tiles. Not railway track elevation. DEM NoData is already encoded as zero by its source preparation; no accuracy inferred from grid spacing.",
+  "preview": "guadarrama-preview.png",
+  "preview_vertical_exaggeration": 2.0
+}
