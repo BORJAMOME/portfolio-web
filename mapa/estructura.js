@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "033d18f",
+ "huella": "5bee54d",
  "recuento": {
   "paginas": 20,
   "proyectos": 40,
@@ -12,7 +12,7 @@ export default {
   "tablas": 41,
   "funciones": 5,
   "herramientas": 43,
-  "relaciones": 203,
+  "relaciones": 204,
   "sinExplicar": 0
  },
  "columnas": [
@@ -3996,6 +3996,12 @@ export default {
   {
    "de": "w:rutas-semanal",
    "a": "h:version-assets",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:rutas-semanal",
+   "a": "h:visor",
    "tipo": "ejecuta",
    "detalle": []
   }
