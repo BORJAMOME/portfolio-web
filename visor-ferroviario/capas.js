@@ -126,6 +126,7 @@
       for(const [fid,keys] of byEdge)for(const key of keys){const st=styleOf('tourism',key);features.push(edgeFeature(fid,{key,color:st.color,w:3,off:offsets.get(fid+'|'+key)||0,dash:0,core:0}));}
     }
     map.getSource('cx-border').setData({type:'FeatureCollection',features:borders()});
+    lastLines=features;
     map.getSource('cx-lines').setData({type:'FeatureCollection',features});
     map.setLayerZoomRange('cx-stops',theme==='services'?6.5:0,24);map.setLayerZoomRange('cx-stop-labels',theme==='services'?9:7,24);
     map.getSource('cx-stops').setData({type:'FeatureCollection',features:[...stops.values()].map(s=>({type:'Feature',geometry:{type:'Point',coordinates:s.coordinates},
@@ -562,6 +563,8 @@
     const base=id==='gauge',all=id==='all';
     map.setPaintProperty('rail','line-color',base?root.AtlasBaseRailColor:all?allColor():['case',['boolean',['feature-state','selected'],false],'#101e36','#b3bfd0']);
     map.setPaintProperty('rail','line-opacity',base||all?.95:.9);
+    // En «Ancho de vía» el ancho desconocido se distingue también por la forma (guiones claros encima), no solo por el gris.
+    if(map.getLayer('rail-unknown'))map.setLayoutProperty('rail-unknown','visibility',base?'visible':'none');
     // En «Todas las vías» la vía doble se dibuja más gruesa que la única.
     const double=['in',['get','filter_tracks'],['literal',['2','4']]];
     map.setPaintProperty('rail','line-width',all?['interpolate',['linear'],['zoom'],5,['case',double,1.3,.8],12,['case',double,3.6,2.2],16,['case',double,5,3]]:['interpolate',['linear'],['zoom'],5,.9,8,1.5,12,2.8,16,4]);
@@ -575,7 +578,7 @@
   function refresh(silent){
     if(!map.getSource('cx-lines'))return;
     if(['corridors','brands','services','tourism'].includes(state.theme))buildLines();
-    else{map.getSource('cx-lines').setData({type:'FeatureCollection',features:[]});map.getSource('cx-stops').setData({type:'FeatureCollection',features:[]});renderHighlight();}
+    else{lastLines=[];map.getSource('cx-lines').setData({type:'FeatureCollection',features:[]});map.getSource('cx-stops').setData({type:'FeatureCollection',features:[]});renderHighlight();}
     renderPanel();if(!silent)onChange?.();
   }
   function init(options){
@@ -597,9 +600,19 @@
     if(s.v&&services()?.variants.some(v=>v.id===s.v))selectVariant(s.v);
     if(s.x&&data.tourism){const e=data.tourism.experiences.find(x=>x.id===s.x);if(e)experienceInfo(e);}
   }
+  /* Estilo de la red para el explorador 3D: el mismo color que el 2D para cada tramo base y,
+     en los temas con trazados propios (corredores, marcas, servicios, turismo), esos trazados. */
+  let lastLines=[];
+  function scene3d(){
+    const theme=state.theme;
+    if(theme==='all'){const d=dimension(),colors=new Map();for(const it of d.items)for(const v of (it.values||[it.id]))colors.set(v,it.color);
+      return {baseColor:f=>colors.get(String(f.properties[d.prop]??'none'))||'#A0A7B2',overlay:[]};}
+    if(theme==='gauge')return {baseColor:f=>root.AtlasCartography.style(root.AtlasFilters.value(f,'gauge')).color,overlay:[]};
+    return {baseColor:()=>'#9aa8bc',overlay:lastLines};
+  }
   function clearSelection(){state.variant=null;state.experience=null;state.corridor=null;state.station=null;if(map.getSource('cx-lines')){renderHighlight();if(['brands','services','tourism'].includes(state.theme))buildLines();}onChange?.();}
   function hasStation(code){const s=services();if(!s||!code)return null;const id='renfe-national:'+code;return s.stations[id]?id:(s.stations['renfe-commuter:'+code]?'renfe-commuter:'+code:null);}
   async function loadServices(){if(!data.services)data.services=await load('services');return data.services;}
-  root.AtlasCapas={init,hasStation,loadServices,setTheme,legend,legendItems,getState,restore,clearSelection,current:()=>state.theme,stationInfo,servicesOnEdge,corridorsForLine,
+  root.AtlasCapas={init,scene3d,hasStation,loadServices,setTheme,legend,legendItems,getState,restore,clearSelection,current:()=>state.theme,stationInfo,servicesOnEdge,corridorsForLine,
     hitLayers:()=>['cx-stops','cx-hit'].filter(id=>map?.getLayer(id))};
 })(window);

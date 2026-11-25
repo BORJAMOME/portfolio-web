@@ -1,8 +1,12 @@
-/* Fondo Positron insertado bajo las capas del atlas: nunca sustituye el estilo
-   completo, sus imágenes, feature-state, terreno o listeners. */
+/* Fondos insertados bajo las capas del atlas: nunca sustituyen el estilo
+   completo, sus imágenes, feature-state, terreno o listeners.
+   - simple: fondo local; positron: OpenFreeMap; pnoa: «Vista aérea PNOA»
+     (WMTS oficial PNOA Máxima Actualidad del IGN, EPSG:3857). */
 (function(root){
   'use strict';
-  const valid=value=>value==='positron'?'positron':'simple';
+  const valid=value=>['positron','pnoa'].includes(value)?value:'simple';
+  const PNOA='https://www.ign.es/wmts/pnoa-ma?layer=OI.OrthoimageCoverage&style=default&tilematrixset=GoogleMapsCompatible&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/jpeg&TileMatrix={z}&TileCol={x}&TileRow={y}';
+  const PNOA_ATTRIBUTION='Vista aérea: <a href="https://pnoa.ign.es/">PNOA</a> cedido por © <a href="https://www.ign.es/">IGN</a> · CC BY 4.0 · escalas pequeñas: Copernicus Sentinel-2';
   function create(map,{select,note,retry,onChange=()=>{}}={}){
     let mode='simple',pending=null,revision=0,installed=false,disposed=false,sourceError=false;
     let layers=[];
@@ -11,11 +15,22 @@
       if(note){note.textContent=text;note.dataset.warning=warning?'1':'0';}
       if(retry)retry.hidden=!warning;
     }
+    function aerial(){
+      if(map.getSource('pnoa'))return;
+      map.addSource('pnoa',{type:'raster',tiles:[PNOA],tileSize:256,maxzoom:19,bounds:[-18.5,27,4.6,44.2],attribution:PNOA_ATTRIBUTION});
+      // Atenuada para que las vías y los rótulos destaquen sobre la imagen.
+      map.addLayer({id:'pnoa',type:'raster',source:'pnoa',layout:{visibility:'none'},
+        paint:{'raster-saturation':-.25,'raster-contrast':-.08,'raster-brightness-max':.9,'raster-opacity':['interpolate',['linear'],['zoom'],5,.85,9,1],'raster-fade-duration':150}},map.getLayer('topography')?'topography':undefined);
+    }
     function sync(){
+      const photo=mode==='pnoa';
+      if(map.getLayer('pnoa'))map.setLayoutProperty('pnoa','visibility',photo?'visible':'none');
+      if(map.getLayer('land'))map.setPaintProperty('land','fill-opacity',photo?0:1);
+      document.documentElement.dataset.basemap=mode;
       const detailed=mode==='positron'&&installed;
       const raster=map.getLayer('topography')&&map.getLayoutProperty('topography','visibility')!=='none';
       for(const layer of layers)if(map.getLayer(layer.id))map.setLayoutProperty(layer.id,'visibility',detailed&&!(raster&&layer.type==='symbol')?'visible':'none');
-      for(const id of local)if(map.getLayer(id))map.setLayoutProperty(id,'visibility',detailed||(raster&&id.endsWith('labels'))?'none':'visible');
+      for(const id of local)if(map.getLayer(id))map.setLayoutProperty(id,'visibility',detailed||(raster&&id.endsWith('labels'))||(photo&&id==='region-labels')?'none':'visible');
       if(select)select.value=mode;
     }
     async function install(){
@@ -39,6 +54,9 @@
       if(mode==='simple'){
         sync();message('Fondo simplificado local. Topografía IGN se puede superponer.');onChange(mode);return;
       }
+      if(mode==='pnoa'){
+        aerial();sync();message('Vista aérea PNOA Máxima Actualidad del IGN, en directo (requiere conexión). El mapa cartográfico sigue disponible.');onChange(mode);return;
+      }
       message('Cargando Positron…');
       try{
         await install();
@@ -52,6 +70,7 @@
       }
     }
     function error(event){
+      if(event.sourceId==='pnoa'&&mode==='pnoa'&&event.error?.name!=='AbortError'){message('Parte de la vista aérea no ha cargado. Puedes volver al fondo simplificado.',true);return;}
       if(event.sourceId!=='basemap-openmaptiles'||event.error?.name==='AbortError')return;
       sourceError=true;
       if(mode==='positron')message('Positron está incompleto. Puedes volver al fondo simplificado.',true);
