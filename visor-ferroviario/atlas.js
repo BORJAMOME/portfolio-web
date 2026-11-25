@@ -4,6 +4,7 @@ const statusText = document.querySelector("#status");
 const loading = document.querySelector("#loading");
 const number = new Intl.NumberFormat("es-ES");
 const filters = {gauge:[], electric:[], tracks:[]};
+const UNKNOWN_GAUGE=["in",["coalesce",["get","filter_gauge"],"unknown"],["literal",["unknown","pending","notApplicable"]]];
 const dimensions = {gauge:"Ancho de vía", electric:"Electrificación", tracks:"Número de vías"};
 const bounds = CFG.bounds;
 const padding = () => CFG.compact() ? {top:20,bottom:20,left:20,right:20} : {top:30,bottom:40,left:document.querySelector("#tools")?.hidden?40:(document.querySelector("#tools")?.offsetWidth||340)+24,right:40};
@@ -12,6 +13,7 @@ let peninsular = [];
 let filtered = [];
 let ready = false;
 let selectedId = null;
+let selectedStation = null;
 let savedQueries = [];
 let terrainEnabled = false;
 let terrainController;
@@ -42,7 +44,7 @@ function persistHash() {
   clearTimeout(hashTimer);
   if(!ready||restoringView)return;
   const state = {...filters, ...(window.AtlasCapas?.getState() || {}), p: window.AtlasPopulation?.state(), tp: window.AtlasTransport?.state(), d: window.AtlasDemography?.state(), ix: window.AtlasInfrastructure?.state(), r: window.AtlasRoute?.state(), m: terrainEnabled ? 1 : undefined,
-    b:basemapController?.state()==='positron'?'positron':undefined,
+    b:['positron','pnoa'].includes(basemapController?.state())?basemapController.state():undefined,
     c:window.AtlasViewState.capture(map), tv:window.AtlasViewState.terrain(terrainController?.getState()),
     l:Object.fromEntries([...document.querySelectorAll("[data-layer]")].map(input=>[input.dataset.layer,input.checked]))};
   for(const key of Object.keys(filters))if(!state[key].length)delete state[key];
@@ -54,8 +56,53 @@ function persistHash() {
     const cabina=document.querySelector("#cabina-link");if(cabina)cabina.href="cabina.html"+hash;
   } catch {}
 }
+/* Etiquetas de lo que está filtrando el mapa, con su botón para quitarlo. Solo lo que se aparta de la
+   vista por defecto: el tema elegido se muestra como contexto, sin botón (siempre hay uno). */
+function activeChips(){
+  const chips=[],CAP=window.AtlasCapas,state=CAP?.getState?.()||{};
+  const theme=state.t,themeName=CFG.themes[theme]?.name;
+  if(themeName)chips.push({label:themeName,kind:"theme",title:"Tema de las vías",open:()=>document.querySelector('#rail [data-cat="vias"]')?.click()});
+  const lists={corridors:CFG.corridors,brands:CFG.brands,services:CFG.services,tourism:CFG.tourism};
+  if(lists[theme]&&typeof state.k==="string"){
+    const all=lists[theme].map(x=>x.id),keys=state.k?state.k.split(","):[];
+    if(keys.length<all.length)chips.push({label:(keys.length?lists[theme].filter(x=>keys.includes(x.id)).map(x=>x.name.split(" · ")[0]).join(", "):"Ninguno seleccionado"),
+      title:"Selección del tema",remove:async()=>{await CAP.restore({...CAP.getState(),k:all.join(",")});applyFilters();renderLegend();writeHash();}});
+  }
+  if(theme==="corridors"&&typeof state.st==="string"){
+    const all=Object.keys(CFG.status),st=state.st?state.st.split(","):[];
+    if(st.length<all.length)chips.push({label:"Estado: "+(st.map(x=>CFG.status[x]?.name.toLowerCase()).join(", ")||"ninguno"),title:"Estado de la infraestructura",
+      remove:async()=>{await CAP.restore({...CAP.getState(),st:all.join(",")});applyFilters();renderLegend();writeHash();}});
+  }
+  const names={gauge:"Ancho",electric:"Electrificación",tracks:"Vías"};
+  for(const [dimension,values] of Object.entries(filters))for(const value of values)
+    chips.push({label:names[dimension]+": "+label(dimension,value),title:"Filtro de vías",remove:()=>{filters[dimension]=filters[dimension].filter(v=>v!==value);renderFacets();applyFilters();}});
+  for(const input of document.querySelectorAll('#tools .cat[data-cat]:not([data-cat="vias"]) input[role=switch][id]:checked')){
+    const name=input.closest(".layer")?.querySelector(".layer-name")?.textContent.trim();
+    if(name)chips.push({label:name,title:"Capa",remove:()=>{input.checked=false;input.dispatchEvent(new Event("change",{bubbles:true}));}});
+  }
+  const base=basemapController?.state();
+  if(base&&base!=="simple")chips.push({label:base==="pnoa"?"Vista aérea PNOA":"Fondo Positron",title:"Mapa base",remove:()=>basemapController.set("simple")});
+  if(terrainEnabled)chips.push({label:"Inclinado con relieve",title:"Vista del mapa",remove:()=>setTerrain(false)});
+  return chips;
+}
+function renderChips(){
+  const host=$("#active-chips");if(!host||!ready)return;
+  const chips=activeChips(),ul=host.querySelector("ul");ul.replaceChildren();
+  for(const chip of chips){
+    const li=document.createElement("li");li.className="chip"+(chip.kind?" chip-"+chip.kind:"");
+    if(chip.open){const b=document.createElement("button");b.type="button";b.className="chip-label";b.textContent=chip.label;b.title=chip.title+": cambiar";b.onclick=chip.open;li.append(b);}
+    else{const span=document.createElement("span");span.className="chip-label";span.textContent=chip.label;span.title=chip.title;li.append(span);}
+    if(chip.remove){const x=document.createElement("button");x.type="button";x.className="chip-remove";x.setAttribute("aria-label","Quitar "+chip.label);x.textContent="×";
+      x.onclick=async()=>{await chip.remove();renderChips();const next=$("#active-chips:not([hidden]) .chip-remove")||$("#map");next.focus({preventScroll:true});};li.append(x);}
+    ul.append(li);
+  }
+  const removable=chips.filter(c=>c.remove);
+  if(removable.length>1){const li=document.createElement("li"),b=document.createElement("button");b.type="button";b.className="chip-clear";b.textContent="Quitar todo";
+    b.onclick=async()=>{for(const c of removable)await c.remove();renderChips();};li.append(b);ul.append(li);}
+  host.hidden=!removable.length;
+}
 function writeHash() {
-  window.AtlasPanel?.sync();
+  window.AtlasPanel?.sync();renderChips();
   clearTimeout(hashTimer);
   if(!ready||restoringView)return;
   hashTimer = setTimeout(persistHash,150);
@@ -127,6 +174,12 @@ function setTerrain(enabled) {
   terrainController.setEnabled(enabled);
 }
 $("#mode").onclick=()=>setTerrain(true);
+function toast(text){const t=$("#toast");if(!t)return;t.textContent=text;t.hidden=false;clearTimeout(toast.timer);toast.timer=setTimeout(()=>{t.hidden=true;},4200);}
+$("#explorer").onclick=()=>{
+  if(!ready||!terrainController)return;
+  const opened=terrainController.openExplorer({center:map.getCenter().toArray(),station:selectedStation});
+  if(opened&&!opened.inside)toast("El explorador 3D cubre seis paisajes de montaña. Se abre el más cercano: "+opened.name+".");
+};
 $("#flat").onclick=()=>setTerrain(false);
 $("#home").onclick=()=>map?.fitBounds(bounds,{padding:padding(),bearing:0,pitch:terrainEnabled?55:0,duration:motion(900)});
 $("#toggle-panel").onclick=function(){
@@ -142,7 +195,7 @@ function clearSelection(){
   selectedId=null;
 }
 function closeInfo(){
-  infoRevision++;
+  infoRevision++;markStation(null);
   $("#info").hidden=true;
   clearSelection();
   window.AtlasCapas?.clearSelection();
@@ -210,7 +263,18 @@ function connections(coordinates){
   return out.length?out.join("\n"):undefined;
 }
 window.AtlasConnections=connections;
+// Nombres del catálogo en mayúsculas → forma de rótulo («MADRID-PRÍNCIPE PÍO» → «Madrid-Príncipe Pío»).
+function stationLabel(name){
+  name=String(name||"");if(name!==name.toLocaleUpperCase("es"))return name;
+  return name.toLocaleLowerCase("es").replace(/(^|[\s\-/(.])\p{L}/gu,w=>w.toLocaleUpperCase("es"))
+    .replace(/\s(De|Del|La|Las|Los|El|Y|En)\s/g,w=>w.toLocaleLowerCase("es"));
+}
+function markStation(feature){
+  selectedStation=feature||null;
+  map?.getSource("station-selected")?.setData({type:"FeatureCollection",features:feature?[{type:"Feature",geometry:feature.geometry,properties:{}}]:[]});
+}
 async function stationInfo(feature) {
+  markStation(feature);
   const revision=++infoRevision;
   const p=feature.properties;
   // La ficha de estación muestra los servicios con parada acreditada, sea cual sea el tema activo.
@@ -378,7 +442,7 @@ function applyFilters() {
     const clauses=Object.entries(filters).filter(([,values])=>values.length).map(([dimension,values])=>["in",AtlasFilters.expression(dimension),["literal",values]]);
     // «Todas las vías» dibuja la red completa: los filtros de «Ancho de vía» no se aplican.
     const expression=window.AtlasCapas?.current()==="all"?["==",["get","pen"],1]:["all",["==",["get","pen"],1],...clauses];
-    map.setFilter("rail",expression);map.setFilter("rail-hit",expression);
+    map.setFilter("rail",expression);map.setFilter("rail-hit",expression);for(const id of ["rail-casing","rail-state"])if(map.getLayer(id))map.setFilter(id,expression);if(map.getLayer("rail-unknown"))map.setFilter("rail-unknown",["all",expression,UNKNOWN_GAUGE]);
   }
   const metrics=AtlasCartography.metrics(filtered);
   const visible=$('[data-layer="rail"]').checked;
@@ -428,7 +492,7 @@ function renderLegend() {
     if(items.length){
       const h=document.createElement("strong");h.textContent=CFG.themes[theme]?.name||"Red ferroviaria";legend.append(h);
       const ul=document.createElement("ul");ul.className="legend-cols";
-      for(const item of items.slice(0,12)){const li=document.createElement("li"),sw=document.createElement("i");sw.className="swatch";sw.style.setProperty("--c",item.color);li.append(sw,document.createTextNode(item.name));ul.append(li);}
+      for(const item of items.slice(0,12)){const li=document.createElement("li"),sw=document.createElement("i");sw.className="swatch"+(theme==="gauge"&&item===AtlasCartography.style("unknown")?" dashed":"");sw.style.setProperty("--c",item.color);li.append(sw,document.createTextNode(item.name));ul.append(li);}
       if(items.length>12){const li=document.createElement("li");li.className="legend-more";li.textContent="Y "+(items.length-12)+" más: selecciona líneas para acotar la leyenda.";ul.append(li);}
       legend.append(ul);
     }
@@ -446,6 +510,7 @@ function renderLegend() {
   for(const item of infrastructure){const row=document.createElement("div"),sw=document.createElement("i");row.className="infrastructure-legend";sw.className="demo-swatch";sw.style.background=item.color;row.append(sw,document.createTextNode(item.name));legend.append(row);}
   const sizes=window.AtlasPopulation?.legend();
   if(sizes)legend.append(sizes);
+  if(basemapController?.state()==="pnoa"){const p=document.createElement("p");p.className="legend-note";p.textContent="Fondo: vista aérea PNOA Máxima Actualidad (IGN). Las vías llevan contorno claro para leerse sobre la imagen.";legend.append(p);}
   syncTerrainLegend();
   for(const sw of [...legend.querySelectorAll(".legend-cols .swatch")].slice(0,6))preview.append(sw.cloneNode());
   if(legend.querySelector(".legend-sizes")){const dot=document.createElement("i");dot.className="legend-dot";preview.append(dot);}
@@ -589,8 +654,19 @@ if(map)map.on("load",async()=>{
     map.addSource("rail",{type:"geojson",data:dataset.rail,tolerance:.2,attribution:'Obra derivada IGR-RT · IGN/SCNE · CC BY 4.0 · Atributos de línea: Adif vía <a href="https://atlas.eltercioviejo.com/ficha/ferrocarril/">Atlas Estratégico de España</a> · CC BY 4.0'});
     window.AtlasBaseRailColor=["case",["boolean",["feature-state","selected"],false],"#101e36",
       ["match",AtlasFilters.expression("gauge"),...Object.entries(AtlasCartography.styles).flatMap(([key,value])=>[key,value.color]),"#76542C"]];
-    map.addLayer({id:"rail",type:"line",source:"rail",filter:["==",["get","pen"],1],paint:{
+    // Jerarquía de la red: contorno claro (separa la vía del relieve, la ortofoto y los rellenos),
+    // halo de estado (puntero y selección) y trazo. El ancho y el color los fija el tema (capas.js).
+    map.addLayer({id:"rail-casing",type:"line",source:"rail",filter:["==",["get","pen"],1],minzoom:6,layout:{"line-join":"round","line-cap":"round"},paint:{
+      "line-color":"#fbfbfb","line-width":["interpolate",["linear"],["zoom"],6,1.8,9,3.4,12,5.6,16,8],"line-opacity":["interpolate",["linear"],["zoom"],6,0,8,.8]}});
+    map.addLayer({id:"rail-state",type:"line",source:"rail",filter:["==",["get","pen"],1],layout:{"line-join":"round","line-cap":"round"},paint:{
+      "line-color":["case",["boolean",["feature-state","selected"],false],"#101e36","#273a5f"],
+      "line-width":["interpolate",["linear"],["zoom"],5,6,12,11,16,15],"line-blur":1.5,
+      "line-opacity":["case",["boolean",["feature-state","selected"],false],.3,["boolean",["feature-state","hover"],false],.22,0]}});
+    map.addLayer({id:"rail",type:"line",source:"rail",filter:["==",["get","pen"],1],layout:{"line-join":"round"},paint:{
       "line-color":window.AtlasBaseRailColor,"line-width":["interpolate",["linear"],["zoom"],5,.9,8,1.5,12,2.8,16,4],"line-opacity":.95}});
+    // Ancho desconocido: guiones claros sobre el trazo gris (MapLibre 5.24 no admite line-dasharray por dato).
+    map.addLayer({id:"rail-unknown",type:"line",source:"rail",minzoom:7,filter:["all",["==",["get","pen"],1],UNKNOWN_GAUGE],layout:{visibility:"none"},paint:{
+      "line-color":"#fbfbfb","line-width":["interpolate",["linear"],["zoom"],7,.7,12,1.4,16,2],"line-dasharray":[1.2,1.8]}});
     map.addLayer({id:"rail-hit",type:"line",source:"rail",filter:["==",["get","pen"],1],paint:{"line-color":"#273a5f","line-width":10,"line-opacity":0}});
     const placeFeatures=[
       ...regions.filter(([name])=>!["Islas Baleares","Canarias"].includes(name)).map(([name,lat,lng])=>({type:"Feature",geometry:{type:"Point",coordinates:[lng,lat]},properties:{name,kind:"region",rank:6}})),
@@ -604,9 +680,13 @@ if(map)map.on("load",async()=>{
       layout:{"text-field":["get","name"],"text-font":["Noto Sans Regular"],"text-size":["interpolate",["linear"],["zoom"],5,12,10,14],
         "symbol-sort-key":["get","rank"],"text-variable-anchor":["top","bottom","left","right"],"text-radial-offset":.5,"text-padding":5},
       paint:{"text-color":"#1d2638","text-halo-color":"#fbfbfb","text-halo-width":2}});
+    for(const f of dataset.stations.features)f.properties.label=stationLabel(f.properties.DESCRIPCION);
     map.addSource("stations",{type:"geojson",data:dataset.stations,attribution:'Origen de los datos: Renfe Operadora · CC BY 4.0'});
-    map.addLayer({id:"stations",type:"circle",source:"stations",minzoom:7,paint:{
-      "circle-radius":["interpolate",["linear"],["zoom"],7,2,9.9,4,10,9,13,12],"circle-color":"#fbfbfb","circle-stroke-color":"#273a5f","circle-stroke-width":1.3,
+    // Jerarquía de estaciones por trenes en día laborable (capas/estaciones-oferta.json): a escala regional
+    // solo las relevantes; al acercarse, todas. Sin dato de oferta, la estación cuenta como poco servida.
+    const trains=["coalesce",["get","trains"],0];
+    map.addLayer({id:"stations",type:"circle",source:"stations",minzoom:7,filter:[">=",trains,["step",["zoom"],120,8,40,9,8,10,0]],paint:{
+      "circle-radius":["interpolate",["linear"],["zoom"],7,["step",trains,2,120,3.2],9.9,["step",trains,3.4,40,4.4],10,9,13,12],"circle-color":"#fbfbfb","circle-stroke-color":"#273a5f","circle-stroke-width":["interpolate",["linear"],["zoom"],7,1.1,10,1.4],
       // Desde el zoom 10 el punto cede el sitio al símbolo de estación y queda invisible como zona de clic.
       "circle-opacity":["step",["zoom"],1,10,0],"circle-stroke-opacity":["step",["zoom"],1,10,0],
       "circle-pitch-alignment":"viewport","circle-pitch-scale":"viewport"}});
@@ -619,21 +699,28 @@ if(map)map.on("load",async()=>{
       "icon-image":"station-symbol","icon-size":["interpolate",["linear"],["zoom"],10,.62,13,.85,16,1],"icon-allow-overlap":true,"icon-pitch-alignment":"viewport",
       visibility:$('[data-layer="stations"]').checked?"visible":"none"}},"station-labels");});
     const badge=document.createElement('canvas');badge.width=badge.height=32;const badgeContext=badge.getContext('2d');badgeContext.fillStyle='#fbfbfb';badgeContext.strokeStyle='#b9c5d6';badgeContext.lineWidth=1;badgeContext.beginPath();badgeContext.roundRect(1,1,30,30,5);badgeContext.fill();badgeContext.stroke();map.addImage('station-badge',badgeContext.getImageData(0,0,32,32),{stretchX:[[8,24]],stretchY:[[8,24]],content:[5,5,27,27],pixelRatio:2});
-    map.addLayer({id:"station-labels",type:"symbol",source:"stations",minzoom:10,layout:{
-      "icon-image":"station-badge","icon-text-fit":"both","icon-text-fit-padding":[4,6,4,6],"text-field":["get","DESCRIPCION"],"text-font":["Noto Sans Regular"],"text-size":12,
-      "text-variable-anchor":["top","bottom","left","right"],"text-radial-offset":1.35,"text-padding":4},
-      paint:{"text-color":"#273a5f","text-halo-color":"#fbfbfb","text-halo-width":2}});
+    // Rótulos (los filtros con zoom se evalúan en niveles enteros): desde z8 las estaciones con más trenes; las demás entran al acercarse y ceden el sitio
+    // por prioridad (symbol-sort-key) en vez de solaparse.
+    map.addLayer({id:"station-labels",type:"symbol",source:"stations",minzoom:8,filter:[">=",trains,["step",["zoom"],150,10,40,11,0]],layout:{
+      "icon-image":"station-badge","icon-text-fit":"both","icon-text-fit-padding":[3,6,3,6],"text-field":["coalesce",["get","label"],["get","DESCRIPCION"]],"text-font":["Noto Sans Regular"],
+      "text-size":["interpolate",["linear"],["zoom"],8,11,12,12.5],"symbol-sort-key":["-",0,trains],"text-max-width":9,
+      "text-variable-anchor":["top","bottom","left","right"],"text-radial-offset":["interpolate",["linear"],["zoom"],8,.8,10,1.35],"text-padding":6},
+      paint:{"text-color":"#1d2638","text-halo-color":"#fbfbfb","text-halo-width":1.5}});
+    map.addSource("station-selected",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
+    map.addLayer({id:"station-selected",type:"circle",source:"station-selected",paint:{"circle-radius":["interpolate",["linear"],["zoom"],6,7,10,13,14,17],"circle-color":"rgba(0,0,0,0)",
+      "circle-stroke-color":"#101e36","circle-stroke-width":2.5,"circle-pitch-alignment":"viewport"}});
     // Prioridad de selección: paradas del tema > estaciones > líneas del tema > tramo IGN > población.
     const themeHit = point => { const layers=[...AtlasCapas.hitLayers(),"theme-hit","urban-stations"].filter(id=>map.getLayer(id)&&map.getLayoutProperty(id,"visibility")!=="none");
       const box=[[point.x-6,point.y-6],[point.x+6,point.y+6]]; return layers.length && map.queryRenderedFeatures(box,{layers}).length; };
     map.on("click","stations",e=>{ if(window.AtlasInfrastructure?.hit(e.point)||window.AtlasTransport?.hit(e.point))return; if(map.getLayer("cx-stops")&&map.queryRenderedFeatures(e.point,{layers:["cx-stops"]}).length)return; stationInfo(e.features[0]); });
     // Estaciones con trenes que no están en el catálogo de Renfe (sobre todo Cercanías de ancho ibérico: Sol,
     // Majadahonda, Hernani…): se añaden con las coordenadas de los GTFS (capas/estaciones-oferta.json) para que tengan ficha.
-    window.AtlasOffer?.loadStations().then(({F})=>{
+    window.AtlasOffer?.loadStations().then(({F,byCode})=>{
+      for(const f of dataset.stations.features){const ficha=byCode.get(String(f.properties.CODIGO));if(ficha)f.properties.trains=ficha[1];}
       const known=new Set(dataset.stations.features.map(f=>String(f.properties.CODIGO))),served=new Set(F.fichas.map(f=>f[0]));
       const extra=F.estaciones.filter(([code,,lon,lat],i)=>served.has(i)&&lon!==null&&!known.has(String(code))&&CFG.peninsular([lon,lat]))
-        .map(([code,name,lon,lat])=>({type:"Feature",geometry:{type:"Point",coordinates:[lon,lat]},properties:{CODIGO:code,DESCRIPCION:name,gtfs:1}}));
-      if(!extra.length)return;
+        .map(([code,name,lon,lat])=>({type:"Feature",geometry:{type:"Point",coordinates:[lon,lat]},properties:{CODIGO:code,DESCRIPCION:name,label:stationLabel(name),gtfs:1,trains:byCode.get(String(code))?.[1]}}));
+      if(!extra.length){map.getSource("stations")?.setData(dataset.stations);return;}
       dataset.stations.features.push(...extra);map.getSource("stations")?.setData(dataset.stations);
     }).catch(e=>console.warn(e));
     map.on("click","rail-hit",e=>{
@@ -642,11 +729,15 @@ if(map)map.on("load",async()=>{
       if(map.getLayer("population-circles")&&map.getLayoutProperty("population-circles","visibility")!=="none"&&map.queryRenderedFeatures(e.point,{layers:["population-circles"]}).length)return;
       sectionInfo(e.features[0], e.lngLat);
     });
+    let hoverId=null;
+    const setHover=id=>{if(hoverId===id)return;if(hoverId!==null)map.setFeatureState({source:"rail",id:hoverId},{hover:false});hoverId=id;if(id!==null)map.setFeatureState({source:"rail",id},{hover:true});};
+    map.on("mousemove","rail-hit",e=>setHover(e.features[0]?.id??null));
+    map.on("mouseleave","rail-hit",()=>setHover(null));
     for(const id of ["rail-hit","stations"]){
       map.on("mouseenter",id,()=>map.getCanvas().style.cursor="pointer");
       map.on("mouseleave",id,()=>map.getCanvas().style.cursor="");
     }
-    basemapController=window.AtlasBasemap.create(map,{select:$("#basemap-select"),note:$("#basemap-note"),retry:$("#basemap-fallback"),onChange:mode=>{if(mode==='simple'){failedMapSources.delete('basemap-openmaptiles');updateMapStatus();}writeHash();}});
+    basemapController=window.AtlasBasemap.create(map,{select:$("#basemap-select"),note:$("#basemap-note"),retry:$("#basemap-fallback"),onChange:mode=>{if(mode==='simple'){failedMapSources.delete('basemap-openmaptiles');updateMapStatus();}renderLegend();writeHash();}});
     ready=true;
     AtlasThemes.init({map,dataset,showInfo,onChange:()=>{renderLegend();writeHash();},onLegend:()=>renderLegend()});
     AtlasCapas.init({map,dataset,showInfo,legacy:AtlasThemes,onChange:()=>applyFilters()});
@@ -663,7 +754,11 @@ if(map)map.on("load",async()=>{
     },onChange:writeHash,onSummary:(text,warning)=>{
       terrainSummary=text;terrainWarning=warning;syncTerrainLegend();
       if(ready&&!statusText.dataset.warning)statusText.textContent=baseStatus();
-    },padding,getSelection:()=>dataset.rail.features.find(f=>f.id===selectedId),getFeatures:()=>filtered,getStations:()=>dataset.stations.features});
+    },padding,getSelection:()=>dataset.rail.features.find(f=>f.id===selectedId),getFeatures:()=>filtered,getStations:()=>dataset.stations.features,
+      // El explorador 3D reutiliza el estilo del mapa: red filtrada con los colores del tema, trazados del tema y selección.
+      getNetwork:()=>{const style=window.AtlasCapas?.scene3d?.()||{};const selected=dataset.rail.features.filter(f=>f.id===selectedId);
+        return {base:filtered,baseColor:style.baseColor,overlay:style.overlay||[],overlayColor:f=>f.properties.color,selected};},
+      getFocus:()=>selectedStation?{station:selectedStation.properties.CODIGO}:null});
     map.on("moveend",writeHash);
     const finishLoading=()=>{if(loading.hidden)return;loading.hidden=true;const attrib=document.querySelector(".maplibregl-ctrl-attrib");attrib?.classList.remove("maplibregl-compact-show");attrib?.removeAttribute("open");};
     map.once("idle",finishLoading);setTimeout(finishLoading,4000);

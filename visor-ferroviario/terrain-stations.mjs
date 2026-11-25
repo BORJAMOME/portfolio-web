@@ -28,7 +28,7 @@ export function stationFeaturesInBounds(stations,bounds){
 
 export function placeStationLabels(entries,{width,height,maxLabels=18,padding=6}={}){
   if(!(width>0&&height>0))return [];
-  const limit=Math.min(maxLabels,width<600?8:maxLabels),occupied=[],accepted=[];
+  const limit=Math.min(maxLabels,width<600?6:maxLabels),occupied=[],accepted=[];
   const candidates=entries.filter(item=>item.onScreen).slice().sort((a,b)=>
     Number(Boolean(b.selected))-Number(Boolean(a.selected))||a.priority-b.priority||String(a.id).localeCompare(String(b.id)));
   for(const entry of candidates){

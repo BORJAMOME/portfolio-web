@@ -33,7 +33,7 @@
             return result;
           })();
           elevationCache.set(key,pending);
-          if(elevationCache.size>48)elevationCache.delete(elevationCache.keys().next().value);
+          if(elevationCache.size>96)elevationCache.delete(elevationCache.keys().next().value);
           try{return await pending;}catch(error){elevationCache.delete(key);throw error;}
         }
         async function prepareTile(z,x,y){
@@ -51,11 +51,12 @@
           const sources=new Map([[centreKey,await heightsAt(centreKey)]]);
           // Sample pixel centres. Border samples come from adjacent parent tiles
           // when available, preventing seams between overzoomed children.
+          // Bicubic sampling reads up to two pixels beyond the window.
           const dxs=[0],dys=[0];
-          if(startX+0.5/factor-0.5<0)dxs.push(-1);
-          if(startX+255.5/factor-0.5>=255)dxs.push(1);
-          if(startY+0.5/factor-0.5<0)dys.push(-1);
-          if(startY+255.5/factor-0.5>=255)dys.push(1);
+          if(startX+0.5/factor-0.5-1<0)dxs.push(-1);
+          if(startX+255.5/factor-0.5+2>255)dxs.push(1);
+          if(startY+0.5/factor-0.5-1<0)dys.push(-1);
+          if(startY+255.5/factor-0.5+2>255)dys.push(1);
           const neighbors=[];
           for(const dx of dxs)for(const dy of dys){
             const key=`${parent}/${px+dx}/${py+dy}`;
@@ -74,12 +75,14 @@
           }
           const canvas=document.createElement('canvas');canvas.width=canvas.height=256;
           const ctx=canvas.getContext('2d'),output=ctx.createImageData(256,256);
+          // Catmull-Rom (pendiente continua). La bilineal deja quiebros de pendiente en cada
+          // píxel de origen que el sombreado convierte en una rejilla de bandas al ampliar.
+          const cubic=(p0,p1,p2,p3,t)=>p1+.5*t*(p2-p0+t*(2*p0-5*p1+4*p2-p3+t*(3*(p1-p2)+p3-p0)));
+          const rowValue=(ix,y,t)=>cubic(sample(ix-1,y),sample(ix,y),sample(ix+1,y),sample(ix+2,y),t);
           for(let row=0;row<256;row++)for(let col=0;col<256;col++){
             const sx=startX+(col+0.5)/factor-0.5,sy=startY+(row+0.5)/factor-0.5;
             const ix=Math.floor(sx),iy=Math.floor(sy),fx=sx-ix,fy=sy-iy;
-            const top=sample(ix,iy)*(1-fx)+sample(ix+1,iy)*fx;
-            const bottom=sample(ix,iy+1)*(1-fx)+sample(ix+1,iy+1)*fx;
-            const height=top*(1-fy)+bottom*fy;
+            const height=cubic(rowValue(ix,iy-1,fx),rowValue(ix,iy,fx),rowValue(ix,iy+1,fx),rowValue(ix,iy+2,fx),fy);
             const encoded=Math.max(0,Math.min(16777215,Math.round((height+32768)*256)));
             const i=(row*256+col)*4;
             output.data[i]=Math.floor(encoded/65536);output.data[i+1]=Math.floor(encoded/256)%256;output.data[i+2]=encoded%256;output.data[i+3]=255;
@@ -113,7 +116,9 @@
         });
         protocolRegistered=true;
       }
-      const config={type:'raster-dem',tiles:['ign-dem://local/{z}/{x}/{y}.png'],encoding:'terrarium',tileSize:256,maxzoom:12,attribution:manifest.attribution};
+      // maxzoom del manifiesto: z12 en los corredores (MDT25) y z14 en las zonas piloto (MDT05);
+      // fuera de ellas el protocolo amplía la tesela antecesora, sin inventar detalle.
+      const config={type:'raster-dem',tiles:['ign-dem://local/{z}/{x}/{y}.png'],encoding:'terrarium',tileSize:256,maxzoom:manifest.maxzoom??12,attribution:manifest.attribution+((manifest.detail_zones||[]).length?' · MDT05 IGN (PNOA LiDAR) en zonas piloto':'')};
       map.addSource('ign-terrain',config);map.addSource('ign-shading',{...config});source='ign-terrain';
       if(map.getLayer('hillshade'))map.removeLayer('hillshade');
       map.addLayer({id:'hillshade',type:'hillshade',source:'ign-shading',paint:{'hillshade-exaggeration':0.45,'hillshade-shadow-color':'#4a628e','hillshade-highlight-color':'#fbfbfb','hillshade-accent-color':'#b9c5d6','hillshade-illumination-direction':315,'hillshade-illumination-anchor':'map'}},map.getLayer('outside')?'outside':undefined);
@@ -126,7 +131,8 @@
       const light=lights[lighting];
       if(map.getLayer('hillshade')){
         const values={'hillshade-method':({soft:'igor',crisp:'standard',multi:'multidirectional'})[reliefStyle],
-          'hillshade-exaggeration':strength,'hillshade-shadow-color':light.shadow,'hillshade-highlight-color':light.highlight,
+          // Más suave a escala peninsular: el relieve acompaña y la red manda.
+          'hillshade-exaggeration':['interpolate',['linear'],['zoom'],5,strength*.5,8,strength*.8,10,strength],'hillshade-shadow-color':light.shadow,'hillshade-highlight-color':light.highlight,
           'hillshade-accent-color':light.accent,'hillshade-illumination-anchor':'map',
           'hillshade-illumination-direction':reliefStyle==='multi'?[light.direction,(light.direction+90)%360,(light.direction+270)%360]:light.direction,
           'hillshade-illumination-altitude':reliefStyle==='multi'?[light.altitude,40,55]:light.altitude};
@@ -219,28 +225,44 @@
       group.append(caption,row);(sliders.target||host).append(group);
     }
     let sceneRequest=0;
-    async function openScene(){
+    async function openScene(focus=null){
       const request=++sceneRequest,area=areas[activeArea];if(!area)return;
       const opener=document.activeElement;
       const button=sliders.scene;button.disabled=true;button.textContent='Preparando escena…';
       sliders.sceneStatus.textContent='';
       try{
-        await import('./terrain-scene.mjs?v=a98557a0');
+        await import('./terrain-scene.mjs?v=7fe62d65');
         if(disposed||request!==sceneRequest)return;
         button.disabled=false;opener?.focus?.({preventScroll:true});
-        await root.AtlasTerrainScene.open({area:{name:area[0].split(' (')[0],bounds:area[1]},features:options.getFeatures?.()||[],stations:options.getStations?.()||[]});
+        await root.AtlasTerrainScene.open({area:{name:area[0].split(' (')[0],bounds:area[1]},network:options.getNetwork?.()||{base:options.getFeatures?.()||[]},
+          stations:options.getStations?.()||[],focus:focus||options.getFocus?.()||null});
       }catch(error){if(!disposed&&request===sceneRequest){button.textContent='Reintentar escena 3D';sliders.sceneStatus.textContent='No se ha podido abrir la escena. Puedes reintentarlo o seguir explorando el mapa.';}}
       finally{if(!disposed&&request===sceneRequest){button.disabled=false;if(button.textContent!=='Reintentar escena 3D')button.textContent='Abrir explorador 3D';}}
+    }
+    // Abre el explorador en el paisaje que contiene la estación seleccionada o el centro del mapa
+    // (el más pequeño: las zonas piloto tienen más detalle); si no hay ninguno, el más cercano.
+    function areaFor(point){
+      const [lng,lat]=point,inside=areas.map(([,b],i)=>({i,b})).filter(({b})=>lng>=b[0]&&lng<=b[2]&&lat>=b[1]&&lat<=b[3]);
+      if(inside.length)return {index:inside.sort((a,b)=>(a.b[2]-a.b[0])*(a.b[3]-a.b[1])-(b.b[2]-b.b[0])*(b.b[3]-b.b[1]))[0].i,inside:true};
+      let best=0,distance=Infinity;
+      areas.forEach(([,b],i)=>{const d=Math.hypot((b[0]+b[2])/2-lng,((b[1]+b[3])/2-lat)*1.3);if(d<distance){distance=d;best=i;}});
+      return {index:best,inside:false};
+    }
+    function openExplorer({center,station}={}){
+      const point=station?.geometry?.coordinates||center;if(!point||!areas.length)return null;
+      const choice=areaFor(point);activeArea=choice.index;
+      openScene({station:station?.properties?.CODIGO??null});
+      return {name:areas[choice.index][0].split(' (')[0],inside:choice.inside};
     }
     if(host){
       const hero=el('div','terrain-hero'),eyebrow=el('span','terrain-eyebrow','EXPLORADOR DEL TERRENO'),title=el('h3','', 'La forma del territorio.');
       const image=el('img','terrain-cover');image.src='assets/terrain/guadarrama-preview.png?v=3f3065d0';image.alt='';image.width=960;image.height=640;image.loading='lazy';
       hero.append(image,eyebrow,title,el('p','','Gira las montañas, descubre los valles y mira la red desde otra perspectiva.'));
-      const scene=el('button','terrain-launch','Abrir explorador 3D');scene.id='terrain-open-scene';scene.type='button';scene.onclick=openScene;sliders.scene=scene;
+      const scene=el('button','terrain-launch','Abrir explorador 3D');scene.id='terrain-open-scene';scene.type='button';scene.onclick=()=>openScene();sliders.scene=scene;
       const sceneStatus=el('p','terrain-scene-message');sceneStatus.setAttribute('role','status');sliders.sceneStatus=sceneStatus;
       hero.append(scene,sceneStatus,el('small','','Terreno IGN · escena interactiva de Guadarrama'));sliders.heroNote=hero.children[hero.children.length-1];
       hero.append(el('small','terrain-cover-note','Portada: escala vertical 2×'));host.append(hero);
-      choices('mode','Vista del mapa',[['2d','Mapa 2D'],['3d','Perspectiva 3D']],'2d',value=>setEnabled(value==='3d'));
+      choices('mode','Vista del mapa',[['2d','Plano'],['3d','Inclinado con relieve']],'2d',value=>setEnabled(value==='3d'));
       const camera=el('details','terrain-settings');camera.open=true;camera.append(el('summary','','Cámara y profundidad'));host.append(camera);sliders.target=camera;
       slider('pitch','Inclinación',0,75,1,0,'°',v=>{if(!enabled)setEnabled(true);map.jumpTo({pitch:v});});
       slider('bearing','Orientación',-180,180,1,0,'°',v=>map.jumpTo({bearing:v}));
@@ -255,8 +277,10 @@
       const label=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.checked=true;
       sliders.shade=check;
       check.onchange=()=>{shade=check.checked;appearance();changed();};label.append(check,document.createTextNode('Mostrar sombreado'));rendering.append(label);delete sliders.target;
-      host.append(el('h3','terrain-section-title','Cuatro paisajes ferroviarios'),el('p','terrain-caption','Elige un paisaje para recorrerlo en el mapa o abrir su modelo 3D.'));
-      const descriptions=['La sierra entre las dos mesetas','La Cordillera Cantábrica entre León y Asturias','El paso de Sierra Morena','El paisaje de las hoces del Cabriel'];
+      host.append(el('h3','terrain-section-title','Paisajes ferroviarios'),el('p','terrain-caption','Recórrelos inclinados en el mapa o abre su modelo en el explorador 3D. Las zonas piloto usan el MDT05 del IGN (PNOA LiDAR).'));
+      const descriptionOf=name=>({Guadarrama:'La sierra entre las dos mesetas',Pajares:'La Cordillera Cantábrica entre León y Asturias','Despeñaperros':'El paso de Sierra Morena',Contreras:'El paisaje de las hoces del Cabriel'})[name.split(' ')[0]]
+        +(/·/.test(name)?' · detalle MDT05':'');
+      const descriptions=areas.map(([name])=>descriptionOf(name));
       areas.forEach(([name,box],index)=>{
         const preset=action('Explorar '+name.split(' (')[0],()=>{
           activeArea=index;sliders.heroNote.textContent='Terreno IGN · escena interactiva de '+name.split(' (')[0];
@@ -264,12 +288,12 @@
           previousView={...getState(),center:[centre.lng,centre.lat],zoom:map.getZoom(),padding:map.getPadding?.(),roll:map.getRoll?.()};
           returnButton.disabled=false;
           map.stop();setEnabled(true,{camera:false});
-          map.fitBounds([[box[0],box[1]],[box[2],box[3]]],{padding:typeof options.padding==='function'?options.padding():options.padding??65,maxZoom:11,pitch:60,bearing:[-25,25,-20,30][index]||0,duration:motion(1100)});
+          map.fitBounds([[box[0],box[1]],[box[2],box[3]]],{padding:typeof options.padding==='function'?options.padding():options.padding??65,maxZoom:/·/.test(name)?13:11,pitch:60,bearing:[-25,25,-20,30,-25,25][index]||0,duration:motion(1100)});
         });
         preset.className='terrain-preset';preset.dataset.area=String(index);preset.setAttribute('title',descriptions[index]||name);
         const description=el('div','terrain-area-detail');description.append(el('small','',descriptions[index]||name));
         const model=el('button','terrain-model','Ver modelo 3D');model.type='button';model.setAttribute('aria-label','Ver modelo 3D de '+name.split(' (')[0]);
-        model.onclick=()=>{activeArea=index;openScene();};description.append(model);host.append(description);
+        model.onclick=()=>{activeArea=index;openScene({});};description.append(model);host.append(description);
       });
       returnButton=action('Volver al encuadre anterior',()=>{
         if(!previousView)return;
@@ -311,7 +335,7 @@
     }
     map.on('moveend',sync);map.on('error',onError);map.on('sourcedata',onSourceData);
     updateSummary();
-    return {setEnabled,getState,getSummary:()=>summary.textContent,restoreState,destroy:()=>{disposed=true;sceneRequest++;root.AtlasTerrainScene?.close();map.off('moveend',sync);map.off('error',onError);map.off('sourcedata',onSourceData);}};
+    return {setEnabled,getState,openExplorer,getSummary:()=>summary.textContent,restoreState,destroy:()=>{disposed=true;sceneRequest++;root.AtlasTerrainScene?.close();map.off('moveend',sync);map.off('error',onError);map.off('sourcedata',onSourceData);}};
   }
   root.AtlasTerrain={create};
 })(typeof window!=='undefined'?window:globalThis);

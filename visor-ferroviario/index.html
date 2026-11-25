@@ -6,17 +6,17 @@
 <meta name="robots" content="noindex, nofollow">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; worker-src 'self' blob:; child-src blob:; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://www.ign.es https://certiserviciosgis.ign.es; connect-src 'self' https://www.ign.es https://tiles.openfreemap.org https://certiserviciosgis.ign.es; object-src 'none'; base-uri 'self'; form-action 'self'">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="vendor/maplibre-gl.css?v=7e27dfc9"><link rel="stylesheet" href="atlas.css?v=738fb5bd">
-<link rel="stylesheet" href="terrain-explorer.css?v=992c0822"><link rel="stylesheet" href="terrain-scene.css?v=50309f10">
+<link rel="stylesheet" href="vendor/maplibre-gl.css?v=7e27dfc9"><link rel="stylesheet" href="atlas.css?v=cefdb55f">
+<link rel="stylesheet" href="terrain-explorer.css?v=38f14851"><link rel="stylesheet" href="terrain-scene.css?v=fc40adaa">
 <script defer src="vendor/maplibre-gl.js?v=243f9a9b"></script>
-<script defer src="capas-config.js?v=8d56ba43"></script><script defer src="etiquetas.js?v=8fa171d8"></script>
-<script defer src="filtros.js?v=a2059d81"></script><script defer src="cartography.js?v=26824df7"></script>
-<script defer src="themes.js?v=bb1c07e9"></script><script defer src="export-map.js?v=ccb4b9c1"></script>
-<script defer src="terrain-manifest.js?v=2403d37f"></script><script defer src="terrain-controls.js?v=28ff4566"></script>
-<script defer src="basemap.js?v=b0750192"></script><script defer src="line-identity.js?v=0f30d6da"></script><script defer src="view-state.js?v=3bbe494c"></script>
-<script defer src="demografia.js?v=79758eee"></script><script defer src="infraestructuras.js?v=70f6ea77"></script>
-<script defer src="poblacion.js?v=0dcfbcf6"></script><script defer src="capas.js?v=0c63e27d"></script>
-<script defer src="transporte.js?v=9fca3862"></script><script defer src="oferta.js?v=4c8d40ad"></script><script defer src="perfil.js?v=5441c7df"></script><script defer src="ruta.js?v=571ced7d"></script><script defer src="atlas.js?v=4586800f"></script><script defer src="panel.js?v=f5bae766"></script><script defer src="orientacion.js?v=3c295037"></script>
+<script defer src="capas-config.js?v=b15b8105"></script><script defer src="etiquetas.js?v=dfb3bddb"></script>
+<script defer src="filtros.js?v=86e735fe"></script><script defer src="cartography.js?v=700bc8b0"></script>
+<script defer src="themes.js?v=80a57d05"></script><script defer src="export-map.js?v=ee838b5c"></script>
+<script defer src="terrain-manifest.js?v=bd5157bd"></script><script defer src="terrain-controls.js?v=a5f0686b"></script>
+<script defer src="basemap.js?v=06b56290"></script><script defer src="line-identity.js?v=04458dbd"></script><script defer src="view-state.js?v=90880a25"></script>
+<script defer src="demografia.js?v=7711f3b9"></script><script defer src="infraestructuras.js?v=c1062b5c"></script>
+<script defer src="poblacion.js?v=125b6c99"></script><script defer src="capas.js?v=5e684fbf"></script>
+<script defer src="transporte.js?v=ed0f927e"></script><script defer src="oferta.js?v=f40c110c"></script><script defer src="perfil.js?v=4893b358"></script><script defer src="ruta.js?v=79cdbdcd"></script><script defer src="atlas.js?v=4c1f378a"></script><script defer src="panel.js?v=78a6b0e8"></script><script defer src="orientacion.js?v=46121d10"></script>
 </head>
 <body>
 <a class="skip" href="#map">Saltar al mapa</a>
@@ -30,7 +30,8 @@
 <button id="orient-portrait" type="button" aria-pressed="true" aria-label="Ver en vertical"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="7" y="2.5" width="10" height="19" rx="2.2"/><path d="M11 18.5h2"/></svg><span>Vertical</span></button>
 <button id="orient-landscape" type="button" aria-pressed="false" aria-label="Ver en horizontal a pantalla completa"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="2.5" y="7" width="19" height="10" rx="2.2"/><path d="M18.5 11v2"/></svg><span>Horizontal</span></button>
 </div>
-<div class="mode" role="group" aria-label="Modo de vista"><button id="flat" type="button" aria-pressed="true">2D</button><button id="mode" type="button" aria-pressed="false">Relieve 3D</button></div>
+<div class="mode" role="group" aria-label="Vista del mapa"><button id="flat" type="button" aria-pressed="true" title="Mapa plano, visto desde arriba">Plano</button><button id="mode" type="button" aria-pressed="false" title="El mismo mapa inclinado sobre el relieve del IGN">Inclinado</button></div>
+<button id="explorer" class="explorer-launch" type="button" title="Modelo 3D del terreno con la red filtrada (abre una ventana sobre el mapa)"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m2.5 19.5 6.5-11 4 6.5 2.5-4 6 8.5z"/></svg>Explorador 3D</button>
 </nav>
 </header>
 <main>
@@ -114,7 +115,7 @@
 <section class="cat" data-cat="territorio" hidden>
 <fieldset class="layers"><legend>Fondo cartográfico</legend>
 <label for="basemap-select" class="stack">Mapa base</label>
-<select id="basemap-select" aria-describedby="basemap-note"><option value="simple">Simplificado</option><option value="positron">Positron · calles y territorio</option></select>
+<select id="basemap-select" aria-describedby="basemap-note"><option value="simple">Simplificado</option><option value="positron">Positron · calles y territorio</option><option value="pnoa">Vista aérea PNOA · IGN</option></select>
 <p id="basemap-note" class="muted" role="status"></p>
 <button id="basemap-fallback" type="button" hidden>Volver al fondo simplificado</button>
 <div class="layer"><label class="layer-main"><input type="checkbox" role="switch" data-layer="rail" checked><span class="layer-text"><span class="layer-name">Red ferroviaria IGN</span><small>Ejes del IGN bajo el tema elegido</small></span></label></div>
@@ -155,6 +156,7 @@
 <button type="submit" id="rb-go" class="rb-go" disabled><span>Buscar</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
 <ul id="rb-list" class="rb-list" role="listbox" aria-label="Estaciones sugeridas" hidden></ul>
 </form>
+<section id="active-chips" class="active-chips" aria-label="Filtros y capas activos" hidden><ul></ul></section>
 <div id="map" aria-label="Mapa ferroviario de la España peninsular" tabindex="-1"></div>
 <div id="info" hidden role="dialog" aria-modal="false" aria-labelledby="name"><button id="close" type="button" aria-label="Cerrar ficha">×</button><small id="kind"></small><h2 id="name" tabindex="-1"></h2><p id="info-subtitle" hidden></p><ul id="info-chips" hidden></ul><div id="info-facts" hidden></div><div id="info-extra" hidden></div><figure id="info-media" hidden><img alt=""><figcaption></figcaption></figure><dl id="attributes"></dl></div>
 <section id="legend" aria-label="Leyenda" tabindex="0"></section>

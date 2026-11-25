@@ -1,8 +1,11 @@
 import * as THREE from './vendor/three/three.module.js';
 import {OrbitControls} from './vendor/three/OrbitControls.js';
-import {loadTerrainGrid,validateBounds,mercatorX,mercatorY} from './terrain-data.mjs';
-import {loadPositronTexture} from './terrain-basemap.mjs?v=7ed2acf4';
-import {createStations} from './terrain-stations.mjs?v=c347a9ba';
+import {loadTerrainGrid,validateBounds,mercatorX,mercatorY} from './terrain-data.mjs?v=9142cf00';
+import {loadPositronTexture} from './terrain-basemap.mjs?v=37461496';
+import {createStations} from './terrain-stations.mjs?v=cc5cb2c5';
+import {LineSegments2} from './vendor/three/LineSegments2.js';
+import {LineSegmentsGeometry} from './vendor/three/LineSegmentsGeometry.js';
+import {LineMaterial} from './vendor/three/LineMaterial.js';
 
 const root=globalThis;
 const format=new Intl.NumberFormat('es-ES',{maximumFractionDigits:0});
@@ -24,6 +27,11 @@ function areaOf(value){
   const match=Object.entries(areas).find(([name])=>name===value||name.toLowerCase().startsWith(String(value||'guadarrama').toLowerCase()));
   if(match)return {name:match[0].split(' (')[0],id:match[0].split(' ')[0].toLowerCase(),bounds:[...match[1]]};
   throw new Error('No se encuentra esta zona del relieve.');
+}
+/** Local PNOA crop prepared by tools/terreno/preparar_relieve.py for this exact area, if any. */
+function orthoFor(area){
+  const zone=(root.IGN_TERRAIN_MANIFEST?.detail_zones||[]).find(item=>item.ortofoto&&Array.isArray(item.bbox)&&item.bbox.every((v,i)=>Math.abs(v-area.bounds[i])<1e-6));
+  return zone?{...zone.ortofoto,zone}:null;
 }
 function disposeObject(object){
   const geometries=new Set(),materials=new Set(),textures=new Set();
@@ -67,7 +75,7 @@ function createUI(area){
   for(const [key,value] of Object.entries(LIGHTS)){const option=document.createElement('option');option.value=key;option.textContent=value.name;light.append(option);}light.value='day';lighting.append(light);
   const surface=element('label','terrain-studio-surface terrain-studio-group');surface.append(element('span','terrain-studio-label','Mapa sobre el terreno'));
   const basemap=document.createElement('select');basemap.setAttribute('aria-label','Mapa base del estudio 3D');
-  for(const [key,label] of [['positron','Positron'],['natural','Relieve natural']]){const option=document.createElement('option');option.value=key;option.textContent=label;basemap.append(option);}surface.append(basemap);
+  for(const [key,label] of [['positron','Positron · mapa'],['natural','Relieve natural'],...(orthoFor(area)?[['pnoa','Ortofoto PNOA']]:[])]){const option=document.createElement('option');option.value=key;option.textContent=label;basemap.append(option);}surface.append(basemap);
   const scale=element('label','terrain-studio-scale terrain-studio-group');
   const scaleLabel=element('span','terrain-studio-label','Escala vertical');
   const exaggeration=document.createElement('input');exaggeration.type='range';exaggeration.min='1';exaggeration.max='3';exaggeration.step='.1';exaggeration.value='2';exaggeration.setAttribute('aria-label','Escala vertical del estudio 3D');exaggeration.setAttribute('aria-valuetext','2 veces la altura del terreno');
@@ -87,23 +95,26 @@ function createUI(area){
   const stationName=element('strong'),stationCode=element('span'),stationFocus=button('Centrar estación','focus-station');stationInfo.append(stationName,stationCode,stationFocus);stage.append(stationInfo);
   const footer=element('footer','terrain-studio-footer');
   const stats=element('p','terrain-studio-stats','Preparando el modelo de elevaciones…');
-  const source=element('p','terrain-studio-source','Obra derivada de MDT IGN · CC BY 4.0. Estaciones: catálogo Renfe. Vista inicial con altura ampliada 2×; el corte lateral delimita la escena. Ejes y estaciones se apoyan sobre el terreno: no representan cotas ferroviarias, túneles ni viaductos.');
+  const detail=orthoFor(area)?.zone;
+  const source=element('p','terrain-studio-source',(detail?'Relieve: obra derivada de MDT05 (PNOA LiDAR) y MDT25 del IGN · CC BY 4.0. ':'Obra derivada de MDT IGN · CC BY 4.0. ')+'Estaciones: catálogo Renfe. Vista inicial con altura ampliada 2×; el corte lateral delimita la escena. Ejes y estaciones se apoyan sobre el terreno: no representan cotas ferroviarias, túneles ni viaductos.');
   const mapCredit=element('p','terrain-studio-map-credit');
   footer.append(stats,source,mapCredit);dialog.append(header,stage,controls,footer);document.body.append(dialog);
   return {dialog,stage,overlay,progress,status,retry,close,cameras,light,basemap,mapStatus,mapRetry,mapCredit,exaggeration,output,contours,rail,railLabel,stations,stationLabel,stationSelect,stationInfo,stationName,stationCode,stationFocus,exportButton,stats,instruction};
 }
 
+const HYPSO=[[0,0xafc4b5],[600,0xb2c7aa],[1100,0xc1ceb4],[1600,0xd0d1b8],[2100,0xdad2be],[2600,0xe5dfd1],[3400,0xf4f1e8]].map(([h,c])=>[h,new THREE.Color(c)]);
+const hypsoColor=new THREE.Color();
+// Returns a shared colour (no allocation per vertex: meshes now reach ~350k vertices).
 function hypsometric(height){
-  const stops=[[0,0xafc4b5],[600,0xb2c7aa],[1100,0xc1ceb4],[1600,0xd0d1b8],[2100,0xdad2be],[2600,0xe5dfd1],[3400,0xf4f1e8]];
-  for(let i=1;i<stops.length;i++)if(height<=stops[i][0]){
-    const fraction=THREE.MathUtils.clamp((height-stops[i-1][0])/(stops[i][0]-stops[i-1][0]),0,1);
-    return new THREE.Color(stops[i-1][1]).lerp(new THREE.Color(stops[i][1]),fraction);
+  for(let i=1;i<HYPSO.length;i++)if(height<=HYPSO[i][0]){
+    const fraction=THREE.MathUtils.clamp((height-HYPSO[i-1][0])/(HYPSO[i][0]-HYPSO[i-1][0]),0,1);
+    return hypsoColor.copy(HYPSO[i-1][1]).lerp(HYPSO[i][1],fraction);
   }
-  return new THREE.Color(stops.at(-1)[1]);
+  return hypsoColor.copy(HYPSO.at(-1)[1]);
 }
 function terrainMaterial({scale=1000,offset=0}={}){
   const uniforms={contours:{value:1},heightScale:{value:scale},heightOffset:{value:offset},cartography:{value:0},lightDirection:{value:new THREE.Vector3(-.45,1.1,.6).normalize()}};
-  const material=new THREE.MeshStandardMaterial({vertexColors:true,roughness:1,metalness:0});
+  const material=new THREE.MeshStandardMaterial({vertexColors:true,roughness:1,metalness:0,polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:2});
   material.onBeforeCompile=shader=>{
     shader.uniforms.uContours=uniforms.contours;shader.uniforms.uHeightScale=uniforms.heightScale;shader.uniforms.uHeightOffset=uniforms.heightOffset;shader.uniforms.uCartography=uniforms.cartography;shader.uniforms.uCartographyLight=uniforms.lightDirection;
     shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nvarying float vTerrainHeight;\nuniform float uHeightScale;\nuniform float uHeightOffset;')
@@ -121,7 +132,7 @@ function makeTerrain(data){
   const geometry=new THREE.BufferGeometry(),positions=new Float32Array(heights.length*3),colors=new Float32Array(heights.length*3);
   for(let row=0;row<rows;row++)for(let col=0;col<columns;col++){
     const i=row*columns+col,h=heights[i],color=hypsometric(h);
-    positions.set([(col/(columns-1)-.5)*width/1000,(h-minimum)/1000+.25,(row/(rows-1)-.5)*depth/1000],i*3);colors.set([color.r,color.g,color.b],i*3);
+    positions[i*3]=(col/(columns-1)-.5)*width/1000;positions[i*3+1]=(h-minimum)/1000+.25;positions[i*3+2]=(row/(rows-1)-.5)*depth/1000;colors[i*3]=color.r;colors[i*3+1]=color.g;colors[i*3+2]=color.b;
   }
   const indices=new Uint32Array((columns-1)*(rows-1)*6);let p=0;
   for(let row=0;row<rows-1;row++)for(let col=0;col<columns-1;col++){
@@ -149,8 +160,15 @@ function makeSkirt(data,bottom=-.35){
   const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(position,3));geometry.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));geometry.setIndex(indices);geometry.computeVertexNormals();
   return new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({vertexColors:true,roughness:1,side:THREE.DoubleSide}));
 }
-function makeRail(data,features){
-  const positions=[];
+/**
+ * Railway axes draped on the visible surface as screen-space wide lines
+ * (Line2/LineMaterial: WebGL ignores LineBasicMaterial.linewidth). Colours
+ * come from the 2D map style. Every axis sits a few metres above the mesh and
+ * the terrain is pushed back with polygonOffset, so the lines do not flicker;
+ * the height is the terrain's, not the track's (no tunnels or viaducts).
+ */
+function railSegments(data,features,colorOf){
+  const positions=[],colors=[],color=new THREE.Color();
   const [west,south,east,north]=data.bounds;
   function inside(p){return p[0]>=west&&p[0]<=east&&p[1]>=south&&p[1]<=north;}
   function intersect(a,b){
@@ -161,33 +179,56 @@ function makeRail(data,features){
     }
     return [[a[0]+dx*t0,a[1]+dy*t0],[a[0]+dx*t1,a[1]+dy*t1]];
   }
+  const lift=.006;
   for(const feature of features||[]){
     const geometry=feature?.geometry;if(!geometry)continue;
     const lines=geometry.type==='LineString'?[geometry.coordinates]:geometry.type==='MultiLineString'?geometry.coordinates:[];
+    color.set(colorOf?.(feature)||'#7a3f5b');
     for(const line of lines)for(let i=1;i<line.length;i++){
       const a=line[i-1],b=line[i];if(!Array.isArray(a)||!Array.isArray(b))continue;
       const segment=inside(a)&&inside(b)?[a,b]:intersect(a,b);if(!segment)continue;
       const p=data.point(...segment[0]),q=data.point(...segment[1]);if(!p||!q)continue;
-      const pieces=Math.min(120,Math.max(1,Math.ceil(Math.hypot(q[0]-p[0],q[2]-p[2])*1000/Math.max(60,data.gridSpacing))));
+      // Sample at the mesh spacing so the line follows the drawn triangles.
+      const pieces=Math.min(160,Math.max(1,Math.ceil(Math.hypot(q[0]-p[0],q[2]-p[2])*1000/Math.max(15,data.gridSpacing*.7))));
       let previous=p;
       for(let j=1;j<=pieces;j++){
         const f=j/pieces,point=data.point(segment[0][0]+(segment[1][0]-segment[0][0])*f,segment[0][1]+(segment[1][1]-segment[0][1])*f);
-        if(point){positions.push(previous[0],previous[1]+.018,previous[2],point[0],point[1]+.018,point[2]);previous=point;}
+        if(point){positions.push(previous[0],previous[1]+lift,previous[2],point[0],point[1]+lift,point[2]);colors.push(color.r,color.g,color.b,color.r,color.g,color.b);previous=point;}
       }
     }
   }
-  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
-  const line=new THREE.LineSegments(geometry,new THREE.LineBasicMaterial({color:0x92506c,transparent:true,opacity:.95,depthTest:true}));
-  line.name='Ejes IGN sobre superficie';return line;
+  return {positions,colors};
 }
+function wideLines({positions,colors},{width,casing=0,name,order}){
+  const group=new THREE.Group();group.name=name;
+  if(!positions.length)return group;
+  const make=(lineWidth,colorArray,flat)=>{
+    const geometry=new LineSegmentsGeometry();geometry.setPositions(positions);if(colorArray)geometry.setColors(colorArray);
+    const material=new LineMaterial({linewidth:lineWidth,vertexColors:Boolean(colorArray),color:flat??0xffffff,worldUnits:false,transparent:false,depthTest:true,depthWrite:false,alphaToCoverage:false});
+    const line=new LineSegments2(geometry,material);line.renderOrder=order;return line;
+  };
+  if(casing)group.add(Object.assign(make(width+casing,null,0xfbfbfb),{renderOrder:order-1}));
+  group.add(make(width,colors));
+  return group;
+}
+function makeRail(data,{base=[],overlay=[],selected=[],baseColor,overlayColor}={}){
+  const group=new THREE.Group();group.name='Ejes ferroviarios sobre superficie';
+  // Base network (thin), themed overlay (corridors, services…) and the selection.
+  group.add(wideLines(railSegments(data,base,baseColor),{width:overlay.length?1.6:2.4,casing:1.6,name:'Red',order:20}));
+  if(overlay.length)group.add(wideLines(railSegments(data,overlay,overlayColor),{width:3.4,casing:2,name:'Tema',order:22}));
+  if(selected.length)group.add(wideLines(railSegments(data,selected,()=>'#101e36'),{width:5,casing:3,name:'Selección',order:24}));
+  return group;
+}
+function railCount(rail){let count=0;rail.traverse(child=>{if(child.isLineSegments2)count+=child.geometry.instanceCount||0;});return count;}
+function setLineResolution(rail,width,height){rail?.traverse(child=>{if(child.material?.isLineMaterial)child.material.resolution.set(width,height);});}
 
 async function blenderSurface(area,data,signal){
   const reference=[-4.35,40.5,-3.7,41.05];
   if(!area.bounds.every((value,index)=>Math.abs(value-reference[index])<1e-6))return null;
-  const [{GLTFLoader},metadataResponse]=await Promise.all([import('./vendor/three/GLTFLoader.js'),fetch(new URL('./assets/terrain/guadarrama.json?v=35d81311',import.meta.url),{signal})]);
+  const [{GLTFLoader},metadataResponse]=await Promise.all([import('./vendor/three/GLTFLoader.js'),fetch(new URL('./assets/terrain/guadarrama.json?v=da8a41d3',import.meta.url),{signal})]);
   if(!metadataResponse.ok)return null;
   const metadata=await metadataResponse.json();
-  const response=await fetch(new URL('./assets/terrain/guadarrama.glb?v=b17e6104',import.meta.url),{signal});if(!response.ok)return null;
+  const response=await fetch(new URL('./assets/terrain/guadarrama.glb?v=dd9bc0a2',import.meta.url),{signal});if(!response.ok)return null;
   const buffer=await response.arrayBuffer();signal.throwIfAborted();
   const gltf=await new GLTFLoader().parseAsync(buffer,new URL('./assets/terrain/',import.meta.url).href);
   if(signal.aborted){disposeObject(gltf.scene);signal.throwIfAborted();}
@@ -253,7 +294,7 @@ function surfaceUV(surface,data){
 
 function applySurface(session){
   if(!session.surface)return;
-  const map=session.basemapMode==='positron'?session.mapTexture:null;
+  const map=session.basemapMode==='positron'?session.mapTexture:session.basemapMode==='pnoa'?session.orthoTexture:null;
   session.surface.traverse(mesh=>{
     if(!mesh.isMesh)return;
     for(const material of Array.isArray(mesh.material)?mesh.material:[mesh.material]){
@@ -268,6 +309,7 @@ function applySurface(session){
 
 function mapCredit(ui,visible){
   ui.mapCredit.replaceChildren();if(!visible)return;
+  if(visible==='pnoa'){const link=document.createElement('a');link.textContent='PNOA cedido por © Instituto Geográfico Nacional · CC BY 4.0';link.href='https://www.scne.es/';link.target='_blank';link.rel='noopener';ui.mapCredit.append(link);return;}
   for(const [label,href] of [['Positron','./styles/POSITRON-LICENSE.md'],['OpenFreeMap','https://openfreemap.org/'],['OpenMapTiles','https://openmaptiles.org/'],['© OpenStreetMap','https://www.openstreetmap.org/copyright']]){
     if(ui.mapCredit.childNodes.length)ui.mapCredit.append(document.createTextNode(' · '));
     const link=document.createElement('a');link.textContent=label;link.href=href;link.target='_blank';link.rel='noopener';ui.mapCredit.append(link);
@@ -279,6 +321,23 @@ function setupBasemap(session,data){
   session.setBasemap=async(value,{retry=false}={})=>{
     const ticket=++revision;session.mapController?.abort();
     session.basemapMode=value;ui.basemap.value=value;ui.mapRetry.hidden=true;
+    if(value==='pnoa'){
+      const ortho=orthoFor(session.area);if(!ortho){ui.basemap.value='natural';return session.setBasemap('natural');}
+      ui.dialog.dataset.basemap='loading';ui.mapStatus.textContent='Cargando la ortofoto PNOA…';ui.exportButton.disabled=true;session.mapLoading=true;
+      try{
+        if(!session.orthoTexture){
+          const texture=await new THREE.TextureLoader().loadAsync(new URL(`./${ortho.archivo}?v=${ortho.bytes}`,import.meta.url).href);
+          if(session.closed||ticket!==revision){texture.dispose();return;}
+          texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=Math.min(8,session.renderer.capabilities.getMaxAnisotropy());session.orthoTexture=texture;
+        }
+        if(ticket!==revision)return;
+        ui.dialog.dataset.basemap='pnoa';ui.mapStatus.textContent=`Ortofoto PNOA · ${decimal.format(ortho.m_por_pixel)} m/píxel`;mapCredit(ui,'pnoa');applySurface(session);
+      }catch(error){
+        if(session.closed||ticket!==revision)return;
+        ui.basemap.value='natural';session.basemapMode='natural';ui.mapStatus.textContent='La ortofoto no ha podido cargarse. Se muestra el relieve natural.';mapCredit(ui,false);applySurface(session);
+      }finally{if(!session.closed&&ticket===revision){session.mapLoading=false;ui.exportButton.disabled=false;}}
+      return;
+    }
     if(value==='natural'){
       session.mapLoading=false;ui.dialog.dataset.basemap='natural';ui.mapStatus.textContent='Relieve natural · color por altitud';mapCredit(ui,false);ui.exportButton.disabled=false;applySurface(session);return;
     }
@@ -309,7 +368,7 @@ function setupBasemap(session,data){
   void session.setBasemap('positron');
 }
 
-async function buildScene(session,data,features,stations){
+async function buildScene(session,data,network,stations){
   const {ui,area,controller}=session,signal=controller.signal;
   const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'default'});
   session.renderer=renderer;
@@ -328,8 +387,8 @@ async function buildScene(session,data,features,stations){
   const baseDepth=Math.max(.2,Math.min(1.5,span*.02)-.25);
   const skirt=makeSkirt(data,-baseDepth);group.add(skirt);session.skirt=skirt;
   const base=new THREE.Mesh(new THREE.BoxGeometry(data.width/1000,.10,data.depth/1000),new THREE.MeshStandardMaterial({color:0xb5c3c6,roughness:1}));base.position.y=-baseDepth-.05;base.receiveShadow=true;scene.add(base);
-  const rail=makeRail(data,features);group.add(rail);session.rail=rail;
-  const hasRail=rail.geometry.attributes.position.count>0;ui.railLabel.hidden=!hasRail;
+  const rail=makeRail(data,network);group.add(rail);session.rail=rail;
+  const hasRail=railCount(rail)>0;ui.railLabel.hidden=!hasRail;
   const ground=new THREE.Mesh(new THREE.PlaneGeometry(span*8,span*8),new THREE.ShadowMaterial({opacity:.13}));ground.rotation.x=-Math.PI/2;ground.position.y=-baseDepth-.12;ground.receiveShadow=true;scene.add(ground);
   const ambient=new THREE.HemisphereLight(0xf1f8fc,0xd0d8cc,1.5);scene.add(ambient);
   const sun=new THREE.DirectionalLight(0xfffaf0,2.3);sun.castShadow=true;
@@ -353,7 +412,8 @@ async function buildScene(session,data,features,stations){
   }
   function stationLayer(surfaceData){
     const selected=session.selectedStation?.id;session.stationLayer?.dispose();
-    const layer=createStations({data:surfaceData,stations,camera,renderer,onSelect:selectedStation,onChange:requestRender});
+    // Como mucho 10 rótulos (6 en móvil, lo limita placeStationLabels): las vías mandan; el resto se consulta al tocar.
+    const layer=createStations({data:surfaceData,stations,camera,renderer,onSelect:selectedStation,onChange:requestRender,maxLabels:10});
     session.stationLayer=layer;session.surfaceData=surfaceData;group.add(layer.group);layer.setVisible(ui.stations.checked);
     ui.stationSelect.replaceChildren();
     const empty=document.createElement('option');empty.value='';empty.textContent=layer.count?`Seleccionar estación · ${layer.count}`:'No hay estaciones en esta zona';ui.stationSelect.append(empty);
@@ -402,10 +462,13 @@ async function buildScene(session,data,features,stations){
     for(const control of ui.cameras.querySelectorAll('button'))control.setAttribute('aria-pressed',String(control.dataset.action===`camera-${key}`));
   }
   session.preset=preset;
+  // Cámara exacta (comprobaciones antes/después con el mismo encuadre).
+  session.getCamera=()=>({position:camera.position.toArray(),target:controls.target.toArray()});
+  session.setCamera=({position,target})=>{camera.position.fromArray(position);controls.target.fromArray(target);controls.update();session.userMoved=true;requestRender();};
   const resize=()=>{
     if(session.closed)return;
     const {width,height}=ui.stage.getBoundingClientRect();if(!width||!height)return;
-    renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix();
+    renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix();session.viewport=[width,height];setLineResolution(session.rail,width,height);
     if(session.presetKey&&!session.userMoved)preset(session.presetKey);else requestRender();
     // Resizing clears WebGL's drawing buffer. Draw in this same resize turn so
     // changing a footer or a map mode does not briefly show an empty canvas.
@@ -433,19 +496,27 @@ async function buildScene(session,data,features,stations){
   ui.dialog.dataset.state='ready';ui.overlay.hidden=true;ui.exportButton.disabled=false;
   setupBasemap(session,data);
   const resolution=data.minZoom===data.maxZoom?`≈${format.format(data.resolutionMin)} m/píxel`:`≈${format.format(data.resolutionMin)}–${format.format(data.resolutionMax)} m/píxel`;
-  const summary=`${decimal.format(data.width/1000)} × ${decimal.format(data.depth/1000)} km · terreno ${format.format(data.minimum)}–${format.format(data.maximum)} m · DEM ${resolution} · malla ≈${format.format(data.gridSpacing)} m`;
+  let summary=`${decimal.format(data.width/1000)} × ${decimal.format(data.depth/1000)} km · terreno ${format.format(data.minimum)}–${format.format(data.maximum)} m · DEM ${resolution} · malla ≈${format.format(data.gridSpacing)} m`;
+  const meshCount=()=>{let vertices=0,triangles=0;session.surface?.traverse(m=>{if(m.isMesh){const g=m.geometry;vertices+=g.getAttribute('position').count;triangles+=(g.index?g.index.count:g.getAttribute('position').count)/3;}});return {vertices,triangles};};
+  session.meshCount=meshCount;
+  const counts=meshCount();summary+=` · ${format.format(counts.triangles)} triángulos`;
   ui.stats.textContent=summary;session.summary=summary;
+  // Selection shared with the 2D map: the station is selected and framed if it lies in the area.
+  if(session.focus?.station){const entry=session.stationLayer.features.find(item=>String(item.code)===String(session.focus.station));if(entry){session.stationLayer.select(entry.id);session.focusStation();}}
   ui.instruction.textContent=root.matchMedia?.('(pointer:coarse)').matches?'Un dedo para girar · pellizca para acercar · dos dedos para desplazar':'Arrastra para girar · rueda para acercar · flechas con el lienzo enfocado';
   requestRender();
   // Guadarrama can use the real Blender-produced mesh. The rest of the study
   // remains usable even if the optional preprocessed asset is unavailable.
+  // The Blender GLB (257 × 257) stays as an option. «auto» keeps it only when
+  // the browser mesh would not be denser; on desktop the DEM mesh now is.
   try{
-    const blender=await blenderSurface(area,data,signal);
+    const glbGrid=257,useGlb=session.surfaceMode==='glb'||(session.surfaceMode==='auto'&&data.columns<=glbGrid&&data.rows<=glbGrid);
+    const blender=useGlb?await blenderSurface(area,data,signal):null;
     if(blender){
       if(session.closed||active!==session){disposeObject(blender.mesh);return;}
-      group.remove(terrain.mesh);terrain.mesh.material.map=null;disposeObject(terrain.mesh);group.add(blender.mesh);session.surface=blender.mesh;surfaceUV(session.surface,data);applySurface(session);
+      group.remove(terrain.mesh);terrain.mesh.material.map=null;disposeObject(terrain.mesh);group.add(blender.mesh);session.surface=blender.mesh;session.surfaceKind='glb';surfaceUV(session.surface,data);applySurface(session);
       group.remove(session.skirt);disposeObject(session.skirt);session.skirt=makeSkirt(blender.surfaceData);group.add(session.skirt);applyVerticalScale();
-      group.remove(session.rail);disposeObject(session.rail);session.rail=makeRail(blender.surfaceData,features);session.rail.visible=ui.rail.checked;group.add(session.rail);
+      group.remove(session.rail);disposeObject(session.rail);session.rail=makeRail(blender.surfaceData,network);session.rail.visible=ui.rail.checked;group.add(session.rail);setLineResolution(session.rail,...session.viewport);
       stationLayer(blender.surfaceData);
       session.contourUniforms=blender.uniforms;ui.contours.onchange();
       const blenderMinimum=Number.isFinite(blender.metadata.minimum)?blender.metadata.minimum:data.minimum;
@@ -464,7 +535,7 @@ async function saveImage(session){
     const canvas=document.createElement('canvas');canvas.width=source.width;
     const context=canvas.getContext('2d');if(!context)throw new Error('No está disponible la captura de imagen.');
     const size=Math.max(14,Math.min(22,canvas.width/70));context.font=`${Math.max(12,size-2)}px sans-serif`;
-    const credit='Obra derivada de MDT IGN · CC BY 4.0. Estaciones: catálogo Renfe. '+(session.basemapMode==='positron'?MAP_CREDIT+'. ':'')+'Alturas del terreno; ejes y estaciones no representan la cota de la vía.';
+    const credit='Obra derivada de MDT IGN · CC BY 4.0. Estaciones: catálogo Renfe. '+(session.basemapMode==='positron'?MAP_CREDIT+'. ':session.basemapMode==='pnoa'?'PNOA cedido por © IGN · CC BY 4.0. ':'')+'Alturas del terreno; ejes y estaciones no representan la cota de la vía.';
     const lines=[];let line='';
     for(const word of credit.split(' ')){const next=line?line+' '+word:word;if(context.measureText(next).width>canvas.width-48&&line){lines.push(line);line=word;}else line=next;}if(line)lines.push(line);
     canvas.height=source.height+115+lines.length*21;
@@ -485,7 +556,7 @@ export function close(){
   session.observer?.disconnect();session.controls?.dispose();
   session.stationLayer?.dispose();session.mapController?.abort();
   if(session.scene)disposeObject(session.scene);
-  session.mapTexture?.dispose();session.mapSnapshot?.dispose();
+  session.mapTexture?.dispose();session.mapSnapshot?.dispose();session.orthoTexture?.dispose();
   if(session.renderer){session.renderer.dispose();session.renderer.forceContextLoss();}
   session.ui.dialog.close();session.ui.dialog.remove();
   document.body.style.overflow=session.previousOverflow;
@@ -495,7 +566,7 @@ export function close(){
 export async function open(options={}){
   const area=areaOf(options.area);close();
   const ui=createUI(area),controller=new AbortController();
-  const session={area,ui,controller,closed:false,opener:document.activeElement,previousOverflow:document.body.style.overflow};active=session;
+  const session={area,ui,controller,closed:false,started:performance.now(),opener:document.activeElement,previousOverflow:document.body.style.overflow};active=session;
   document.body.style.overflow='hidden';ui.dialog.showModal();ui.close.focus();
   ui.dialog.addEventListener('cancel',event=>{event.preventDefault();close();});
   ui.dialog.addEventListener('click',event=>{
@@ -508,11 +579,16 @@ export async function open(options={}){
     else if(action?.startsWith('camera-'))session.preset?.(action.slice(7));
   });
   try{
-    const data=await loadTerrainGrid({bounds:area.bounds,segments:root.matchMedia?.('(max-width:760px)').matches?180:260,signal:controller.signal,
+    const compact=root.matchMedia?.('(max-width:760px), (pointer:coarse)').matches;
+    // demMaxZoom (solo comprobaciones): limita el MDT usado, p. ej. 12 = solo MDT25, para comparar con la misma cámara.
+    const manifest=Number.isInteger(options.demMaxZoom)?{...root.IGN_TERRAIN_MANIFEST,maxzoom:options.demMaxZoom}:undefined;
+    const data=await loadTerrainGrid({bounds:area.bounds,maxSegments:options.maxSegments??(compact?320:560),...(Number.isFinite(options.segments)?{segments:options.segments}:{}),signal:controller.signal,...(manifest?{manifest}:{}),
       onProgress:(done,total)=>{if(session.closed)return;ui.progress.max=total;ui.progress.value=done;ui.status.textContent=`Leyendo el terreno IGN · ${done}/${total}`;}});
     if(session.closed||active!==session)return;
     ui.status.textContent='Construyendo el relieve y su iluminación…';
-    await buildScene(session,data,options.features||[],options.stations||[]);
+    session.focus=options.focus||null;session.surfaceMode=options.surface||'auto';
+    await buildScene(session,data,options.network||{base:options.features||[]},options.stations||[]);
+    session.readyMs=Math.round(performance.now()-session.started);
   }catch(error){
     if(controller.signal.aborted||session.closed||active!==session)return;
     if(session.scene)disposeObject(session.scene);session.controls?.dispose();session.observer?.disconnect();session.renderer?.dispose();
@@ -523,4 +599,11 @@ export async function open(options={}){
 }
 
 export const isOpen=()=>Boolean(active);
-root.AtlasTerrainScene={open,close,isOpen};
+/** Measurements for checks: time to ready, mesh and line counts, data spacing. */
+export function stats(){
+  const s=active;if(!s?.scene)return null;
+  return {area:s.area.name,readyMs:s.readyMs??null,...(s.meshCount?.()||{}),railSegments:s.rail?railCount(s.rail):0,
+    gridSpacing:s.surfaceData?.gridSpacing??null,surface:s.surfaceKind||'grid',basemap:s.basemapMode,selectedStation:s.selectedStation?.code||null};
+}
+export const camera=value=>value?active?.setCamera?.(value):active?.getCamera?.();
+root.AtlasTerrainScene={open,close,isOpen,stats,camera};

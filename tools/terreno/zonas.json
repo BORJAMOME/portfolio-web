@@ -1,0 +1,21 @@
+{
+  "_comentario": "Zonas piloto de relieve detallado del visor ferroviario. bbox = [oeste, sur, este, norte] en grados ETRS89/WGS84. hojas_mtn50: hojas comprobadas en el Centro de Descargas para bajar a mano el MDT02 (vacío = sin comprobar; usa «Buscar en mapa» del CNIG).",
+  "zonas": {
+    "guadarrama-cercedilla": {
+      "nombre": "Guadarrama · Cercedilla–Cotos",
+      "descripcion": "Ferrocarril del Guadarrama (C-9) y línea Madrid–Segovia por Cercedilla",
+      "bbox": [-4.10, 40.715, -3.94, 40.835],
+      "zooms": [13, 14],
+      "hojas_mtn50": ["0508"],
+      "ortofoto_px": 2048
+    },
+    "pajares-busdongo": {
+      "nombre": "Pajares · Busdongo–Puente de los Fierros",
+      "descripcion": "Rampa de Pajares (línea convencional León–Gijón)",
+      "bbox": [-5.83, 42.965, -5.68, 43.10],
+      "zooms": [13, 14],
+      "hojas_mtn50": [],
+      "ortofoto_px": 2048
+    }
+  }
+}
