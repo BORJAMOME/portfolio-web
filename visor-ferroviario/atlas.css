@@ -620,3 +620,14 @@ main{flex:1;min-height:0}
   .basemap-ctrl-panel{width:min(300px,calc(100vw - 76px));max-height:min(60vh,calc(100vh - 260px))}
   .basemap-ctrl .basemap-ctrl-grid button{min-height:var(--hit)}
 }
+/* Grosor del trazo (capas.js · setWidth) y su leyenda. */
+.rail-width{margin:12px 0 4px}
+.rail-width-seg{display:flex;gap:3px;padding:3px;border-radius:7px;background:var(--wash);border:1px solid var(--line)}
+.rail-width-seg button{flex:1;border:1px solid transparent;background:transparent;color:var(--muted);font-size:var(--fs-s)}
+.rail-width-seg button[aria-pressed="true"]{background:#fff;border-color:var(--line-strong);color:var(--ink);font-weight:600}
+#rail-width-note{margin:6px 0 0;font-size:var(--fs-xs)}
+.swatch.ticks{border-top-width:2px;background:repeating-linear-gradient(90deg,var(--c) 0 1px,transparent 1px 6px);height:7px;margin-top:-3px}
+.legend-flow{margin-top:8px}.legend-flow p{margin:0 0 4px;font-size:var(--fs-xs);color:var(--muted)}
+.legend-flow ul{display:flex;gap:12px;align-items:center;margin:0;padding:0;list-style:none;font-size:var(--fs-xs)}
+.legend-flow li{display:flex;align-items:center;gap:5px}
+.legend-flow i{display:block;width:22px;height:var(--w);background:var(--ink);border-radius:2px}

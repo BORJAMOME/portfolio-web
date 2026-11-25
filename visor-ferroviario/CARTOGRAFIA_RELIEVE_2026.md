@@ -26,6 +26,21 @@ Rediseño del 24–25 de noviembre de 2026. Motores sin cambiar de versión: **M
   - La imagen se atenúa un poco (saturación −0,25 y brillo máximo 0,9) para que las vías y los rótulos destaquen.
   - El mapa cartográfico sigue siendo la vista inicial.
 
+## Trazo de la red (25 de noviembre de 2026)
+
+- **Simbología por escala** (`atlas.js`, color del tema en `capas.js · applyRailStyle`):
+  - z5–9: un trazo por tramo, como antes, ahora con extremos redondeados (los tramos ya no dejan cortes en las curvas).
+  - Desde z10: la vía doble son dos trazos paralelos (`line-gap-width`, capa `rail-double`).
+  - Desde z11, en «Todas las vías»: la vía electrificada lleva marcas transversales, como los postes de la catenaria (`rail-electric`: guiones muy cortos sobre un trazo ancho).
+- **Grosor «Por trenes al día»** (selector «Grosor del trazo» en Vías; en el enlace, `w:"t"`):
+  - Datos: `capas/trafico-tramos.json`, generado con `node tools/visor/trafico-tramos.mjs` a partir de `rutas.json` y `rutas-actividad.json`. La tarea semanal de rutas lo regenera.
+  - Unidad: trenes de viajeros en día laborable, los dos sentidos. AV, larga y media distancia, por sus tramos IGN; Cercanías, ajustando su trazado GTFS a los tramos IGN (85 % de puntos a menos de 20 m y nunca sobre líneas de alta velocidad).
+  - Cobertura: 96,5 % de los trenes del día (5.705 de 5.909). Faltan 185 regionales, 11 de alta velocidad y 8 Intercity sin trazado.
+  - Comprobación (`--diagnostico`): ninguna línea de Cercanías queda corta (mínimo 0,96 de su trazado). En haces de vías paralelas el tráfico se asigna a todas (25 % de kilómetros de más), lo que engrosa estaciones y bifurcaciones.
+  - Escala: raíz cuadrada de los trenes, para que los 1.000 trenes de Atocha no borren al resto. Los tramos sin viajeros se dibujan finos y atenuados.
+  - La ficha del tramo mantiene «Trenes un día laborable» (`oferta.js`, sin iryo ni Cercanías de ancho ibérico) y, en este modo, añade «Grosor en el mapa» con el universo completo. En Madrid–Sevilla son 139 frente a 162. La diferencia es compatible con los trenes de iryo, aunque no se ha comprobado tren a tren.
+  - Las cifras por tramo son verosímiles (Madrid–Sevilla 162, Madrid–Barcelona 140, Zafra–Huelva 2), pero no hay una estadística oficial por tramo con la que contrastarlas.
+
 ## Mapas base y relieve (25 de noviembre de 2026)
 
 - **Botón «Estilo del mapa»** bajo el zoom: miniaturas de los siete fondos (`img/basemaps/`), mismo estado que el selector de «Territorio» y que el enlace (`b`). Teclado con flechas, Inicio/Fin y Esc.

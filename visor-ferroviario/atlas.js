@@ -340,6 +340,9 @@ async function sectionInfo(rendered, location) {
     "Estación más próxima":station?station.name+" · a "+(station.metres<1000?number.format(Math.round(station.metres/10)*10)+" m":number.format(Math.round(station.metres/100)/10)+" km"):undefined,
     "Longitud del tramo seleccionado":number.format(Math.round(p.length_m))+" m"
   };
+  // Grosor «por trenes al día»: universo más amplio que «Trenes un día laborable» (incluye iryo y Cercanías de ancho ibérico).
+  const flow=AtlasCapas.width?.()==="traffic"?AtlasCapas.trafficOn?.(rendered.id):null;
+  if(flow)base["Grosor en el mapa"]=number.format(flow.total)+" trenes de viajeros en día laborable, los dos sentidos. Incluye iryo y Cercanías de ancho ibérico, que no salen en «Trenes un día laborable»";
   const opts = {subtitle:station?"Cerca de "+station.name:undefined,chips:[...(perf.id!=="none"?[{label:perf.name,color:perf.color}]:[]),...(net.id!=="none"?[{label:net.name,color:net.color}]:[])],facts};
   showInfo("Tramo ferroviario", "Tramo ferroviario", {"Línea":"Buscando en el catálogo de Adif…", ...base}, opts);
   const revision = infoRevision;
@@ -442,7 +445,9 @@ function applyFilters() {
     const clauses=Object.entries(filters).filter(([,values])=>values.length).map(([dimension,values])=>["in",AtlasFilters.expression(dimension),["literal",values]]);
     // «Todas las vías» dibuja la red completa: los filtros de «Ancho de vía» no se aplican.
     const expression=window.AtlasCapas?.current()==="all"?["==",["get","pen"],1]:["all",["==",["get","pen"],1],...clauses];
-    map.setFilter("rail",expression);map.setFilter("rail-hit",expression);for(const id of ["rail-casing","rail-state"])if(map.getLayer(id))map.setFilter(id,expression);if(map.getLayer("rail-unknown"))map.setFilter("rail-unknown",["all",expression,UNKNOWN_GAUGE]);
+    map.setFilter("rail",expression);map.setFilter("rail-hit",expression);for(const id of ["rail-casing","rail-state"])if(map.getLayer(id))map.setFilter(id,expression);
+    if(map.getLayer("rail-double"))map.setFilter("rail-double",["all",expression,["in",["get","filter_tracks"],["literal",["2","4"]]]]);
+    if(map.getLayer("rail-electric"))map.setFilter("rail-electric",["all",expression,["==",["get","filter_electric"],"yes"]]);if(map.getLayer("rail-unknown"))map.setFilter("rail-unknown",["all",expression,UNKNOWN_GAUGE]);
   }
   const metrics=AtlasCartography.metrics(filtered);
   const visible=$('[data-layer="rail"]').checked;
@@ -497,6 +502,7 @@ function renderLegend() {
       legend.append(ul);
     }
   }
+  window.AtlasCapas?.trafficLegend?.(legend);
   // Puntos del mapa en una sola fila.
   const points=document.createElement("div");points.className="legend-points";
   if($('[data-layer="stations"]').checked){
@@ -597,8 +603,9 @@ $("#export-map").onclick=async()=>{
 for(const checkbox of document.querySelectorAll("[data-layer]")) {
   checkbox.onchange=()=>{
     if(!ready)return;
-    const ids=checkbox.dataset.layer==="stations"?["stations","station-badges","station-labels"]:checkbox.dataset.layer==="rail"?["rail","rail-hit"]:[checkbox.dataset.layer];
+    const ids=checkbox.dataset.layer==="stations"?["stations","station-badges","station-labels"]:checkbox.dataset.layer==="rail"?["rail","rail-hit","rail-double","rail-electric"]:[checkbox.dataset.layer];
     for(const id of ids)if(map.getLayer(id))map.setLayoutProperty(id,"visibility",checkbox.checked?"visible":"none");
+    if(checkbox.dataset.layer==="rail")window.AtlasCapas?.railStyle?.();
     basemapController?.sync();
     applyFilters();
   };
@@ -662,8 +669,16 @@ if(map)map.on("load",async()=>{
       "line-color":["case",["boolean",["feature-state","selected"],false],"#101e36","#273a5f"],
       "line-width":["interpolate",["linear"],["zoom"],5,6,12,11,16,15],"line-blur":1.5,
       "line-opacity":["case",["boolean",["feature-state","selected"],false],.3,["boolean",["feature-state","hover"],false],.22,0]}});
-    map.addLayer({id:"rail",type:"line",source:"rail",filter:["==",["get","pen"],1],layout:{"line-join":"round"},paint:{
+    map.addLayer({id:"rail",type:"line",source:"rail",filter:["==",["get","pen"],1],layout:{"line-join":"round","line-cap":"round"},paint:{
       "line-color":window.AtlasBaseRailColor,"line-width":["interpolate",["linear"],["zoom"],5,.9,8,1.5,12,2.8,16,4],"line-opacity":.95}});
+    // Simbología por escala (el color lo fija el tema en capas.js · applyRailStyle):
+    // desde z10 la vía doble son dos trazos paralelos (line-gap-width) y desde z11 la electrificada lleva marcas
+    // transversales (guiones muy cortos sobre un trazo ancho), como los postes de la catenaria.
+    const DOUBLE_TRACK=["in",["get","filter_tracks"],["literal",["2","4"]]];
+    map.addLayer({id:"rail-double",type:"line",source:"rail",minzoom:10,filter:["all",["==",["get","pen"],1],DOUBLE_TRACK],layout:{"line-join":"round"},paint:{
+      "line-color":window.AtlasBaseRailColor,"line-width":["interpolate",["linear"],["zoom"],10,.9,13,1.2,16,1.8],"line-gap-width":["interpolate",["linear"],["zoom"],10,1.4,13,2.6,16,4.5],"line-opacity":.95}});
+    map.addLayer({id:"rail-electric",type:"line",source:"rail",minzoom:11,filter:["all",["==",["get","pen"],1],["==",["get","filter_electric"],"yes"]],layout:{visibility:"none"},paint:{
+      "line-color":window.AtlasBaseRailColor,"line-width":["interpolate",["linear"],["zoom"],11,5.5,14,8,16,11],"line-dasharray":[.16,4.5],"line-opacity":["interpolate",["linear"],["zoom"],11,0,11.6,.85]}});
     // Ancho desconocido: guiones claros sobre el trazo gris (MapLibre 5.24 no admite line-dasharray por dato).
     map.addLayer({id:"rail-unknown",type:"line",source:"rail",minzoom:7,filter:["all",["==",["get","pen"],1],UNKNOWN_GAUGE],layout:{visibility:"none"},paint:{
       "line-color":"#fbfbfb","line-width":["interpolate",["linear"],["zoom"],7,.7,12,1.4,16,2],"line-dasharray":[1.2,1.8]}});

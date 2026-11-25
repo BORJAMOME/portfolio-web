@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; worker-src 'self' blob:; child-src blob:; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://www.ign.es https://certiserviciosgis.ign.es; connect-src 'self' https://www.ign.es https://tiles.openfreemap.org https://tiles.versatiles.org https://certiserviciosgis.ign.es; object-src 'none'; base-uri 'self'; form-action 'self'">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="vendor/maplibre-gl.css?v=7e27dfc9"><link rel="stylesheet" href="atlas.css?v=318ab190">
+<link rel="stylesheet" href="vendor/maplibre-gl.css?v=7e27dfc9"><link rel="stylesheet" href="atlas.css?v=297cccc8">
 <link rel="stylesheet" href="terrain-explorer.css?v=4c62e09f"><link rel="stylesheet" href="terrain-scene.css?v=fc40adaa">
 <script defer src="vendor/maplibre-gl.js?v=243f9a9b"></script>
 <script defer src="capas-config.js?v=b15b8105"></script><script defer src="etiquetas.js?v=dfb3bddb"></script>
@@ -15,8 +15,8 @@
 <script defer src="terrain-manifest.js?v=bd5157bd"></script><script defer src="terrain-controls.js?v=0cf8ba49"></script>
 <script defer src="basemap.js?v=115d7c2d"></script><script defer src="line-identity.js?v=04458dbd"></script><script defer src="view-state.js?v=c9c5bd2b"></script>
 <script defer src="demografia.js?v=7711f3b9"></script><script defer src="infraestructuras.js?v=c1062b5c"></script>
-<script defer src="poblacion.js?v=125b6c99"></script><script defer src="capas.js?v=5e684fbf"></script>
-<script defer src="transporte.js?v=ed0f927e"></script><script defer src="oferta.js?v=f40c110c"></script><script defer src="perfil.js?v=4893b358"></script><script defer src="ruta.js?v=79cdbdcd"></script><script defer src="atlas.js?v=268f6ee5"></script><script defer src="panel.js?v=78a6b0e8"></script><script defer src="orientacion.js?v=46121d10"></script>
+<script defer src="poblacion.js?v=125b6c99"></script><script defer src="capas.js?v=2b120931"></script>
+<script defer src="transporte.js?v=ed0f927e"></script><script defer src="oferta.js?v=f40c110c"></script><script defer src="perfil.js?v=4893b358"></script><script defer src="ruta.js?v=79cdbdcd"></script><script defer src="atlas.js?v=b4c2a703"></script><script defer src="panel.js?v=78a6b0e8"></script><script defer src="orientacion.js?v=46121d10"></script>
 </head>
 <body>
 <a class="skip" href="#map">Saltar al mapa</a>
@@ -58,6 +58,7 @@
 
 <section class="cat" data-cat="vias">
 <fieldset class="themes"><legend>¿Qué quieres ver en las vías?</legend><div id="theme-list"></div></fieldset>
+<fieldset class="rail-width"><legend>Grosor del trazo</legend><div class="rail-width-seg" role="group" aria-label="Grosor del trazo"><button type="button" data-rail-width="tracks" aria-pressed="true">Por vías</button><button type="button" data-rail-width="traffic" aria-pressed="false">Por trenes al día</button></div><p id="rail-width-note" class="muted" role="status" hidden></p></fieldset>
 <section id="theme-panel" aria-live="polite"></section>
 <section id="gauge-panel" hidden>
 <div class="kpis" aria-label="Indicadores de la consulta" aria-live="polite">
