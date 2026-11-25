@@ -1,0 +1,97 @@
+# Regenera cada semana los datos de la tabla de rutas y de Cabina con los horarios publicados más recientes.
+# Los GTFS de Renfe se publican con vigencias cortas (Cercanías, unos 30 días): sin esta tarea, la tabla y Cabina
+# se quedarían sin trenes al caducar.
+#
+# Pasos: descarga (Renfe AV/LD/MD y Cercanías, iryo, estaciones de Renfe y CNMC) → tools/build-rutas.mjs →
+# tools/build-cnmc.mjs → tools/build-cabina-mercado.mjs (INE, Eurostat y mercancías; si falla, se conserva el
+# mercado.json anterior y sigue) → tools/build-cabina.mjs → control de cordura (tools/rutas/sanity.mjs: no publica si una
+# fuente se hunde de golpe) → comprobaciones → commit en main solo si los datos han cambiado.
+# GitHub Pages publica main como siempre. Si algo falla, el job termina en rojo, no se sube nada y GitHub avisa.
+#
+# GitHub desactiva las tareas programadas de un repo público tras 60 días sin actividad: el último paso reactiva
+# este workflow en cada ejecución (como supabase-keepalive.yml).
+name: Rutas · datos semanales
+
+on:
+  schedule:
+    - cron: '23 4 * * 1'      # lunes, 04:23 UTC (05:23 en Madrid en invierno)
+  workflow_dispatch:          # botón «Run workflow» para regenerar a mano
+
+permissions:
+  contents: write             # commit de los datos regenerados en main
+  actions: write              # solo para reactivar este mismo workflow
+
+concurrency:
+  group: rutas-semanal
+  cancel-in-progress: false
+
+jobs:
+  datos:
+    name: Regenerar rutas, CNMC y Cabina
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Rutas (descarga los GTFS y genera rutas.json y oferta.json)
+        run: node --max-old-space-size=6144 tools/build-rutas.mjs --download
+
+      - name: CNMC (descarga y genera cnmc.json)
+        run: node tools/build-cnmc.mjs --download
+
+      # Solo escribe mercado.json al final, con todo descargado y validado: si una API falla, queda el de la semana
+      # anterior y el resto de la tarea sigue.
+      - name: Mercado (INE, Eurostat y mercancías de la CNMC; genera mercado.json)
+        continue-on-error: true
+        run: node tools/build-cabina-mercado.mjs
+
+      - name: Cabina (cabina.json y titulares de cabina.html)
+        run: node --max-old-space-size=6144 tools/build-cabina.mjs
+
+      - name: Control de cordura frente a los datos anteriores
+        run: node tools/rutas/sanity.mjs
+
+      - name: Comprobaciones
+        run: |
+          node --max-old-space-size=6144 tools/build-cabina.mjs --check
+          node tools/check-links.mjs
+          node tools/rutas/test-heatmap.mjs
+          node tools/version-assets.mjs --check
+
+      - name: Publicar en main si hay cambios
+        run: |
+          git add visor-ferroviario/capas/rutas.json visor-ferroviario/capas/rutas-actividad.json visor-ferroviario/capas/oferta.json visor-ferroviario/capas/cnmc.json \
+                  visor-ferroviario/capas/mercado.json visor-ferroviario/capas/estaciones-oferta.json \
+                  visor-ferroviario/capas/cabina.json visor-ferroviario/cabina.html
+          if git diff --cached --quiet; then
+            echo "Sin cambios en los datos: no se confirma nada." | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          semana=$(node -p "require('./visor-ferroviario/capas/rutas.json').referencia.semana")
+          git commit -m "Visor ferroviario: datos semanales de rutas y Cabina (semana del $semana)" \
+                     -m "Regenerados por .github/workflows/rutas-semanal.yml con los horarios publicados de Renfe, iryo y OUIGO y los datos de la CNMC."
+          for intento in 1 2 3; do
+            git pull --rebase -q origin main && git push -q origin HEAD:main && exit 0
+            sleep $((intento * 15))
+          done
+          echo "::error::No se ha podido subir el commit a main."
+          exit 1
+
+      - name: Evitar que GitHub desactive esta tarea programada
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for intento in 1 2 3; do
+            if gh api -X PUT "repos/${{ github.repository }}/actions/workflows/rutas-semanal.yml/enable" >/dev/null; then
+              echo "Tarea programada reactivada."
+              exit 0
+            fi
+            sleep $((intento * 15))
+          done
+          echo "::warning::La API de GitHub no respondió al reactivar la tarea; se reintentará en la próxima ejecución."

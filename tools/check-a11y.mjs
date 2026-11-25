@@ -62,7 +62,10 @@ for (const p of pages) {
     return r.violations.map((v) => `${v.id} ×${v.nodes.length} · ${v.help} · ${v.nodes[0].target.join(' ')}`);
   }, ctx);
   const violations = await run({ exclude: [['body > nav']] });
-  await page.evaluate(() => scrollTo(0, 0));
+  // Subida instantánea y comprobada: con scroll-behavior:smooth, en páginas largas (descargas.html) 300 ms no bastaban
+  // y el nav se medía sobre el contenido a medio camino (fallos intermitentes de color-contrast en .nav-links).
+  await page.evaluate(() => { document.documentElement.style.scrollBehavior = 'auto'; scrollTo(0, 0); });
+  await page.waitForFunction(() => scrollY === 0, null, { timeout: 5000 }).catch(() => {});
   await page.waitForTimeout(300);
   if (await page.$('body > nav')) violations.push(...await run({ include: [['body > nav']] }));
   const bad = violations.length + jsErrors.length;

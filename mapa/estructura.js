@@ -1,18 +1,18 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "e5b2ca3",
+ "huella": "6b5a85e",
  "recuento": {
-  "paginas": 19,
+  "paginas": 20,
   "proyectos": 40,
   "recursos": 52,
   "perfil": 9,
   "capitulos": 10,
   "plataformas": 11,
   "pestanas": 10,
-  "tablas": 35,
+  "tablas": 41,
   "funciones": 5,
-  "herramientas": 18,
-  "relaciones": 183,
+  "herramientas": 41,
+  "relaciones": 202,
   "sinExplicar": 0
  },
  "columnas": [
@@ -1492,6 +1492,14 @@ export default {
        "href": "./roma-aeterna/",
        "archivo": "roma-aeterna/",
        "familia": "app"
+      },
+      {
+       "id": "p:visor-ferroviario",
+       "tipo": "pagina",
+       "etiqueta": "Atlas ferroviario de España",
+       "href": "./visor-ferroviario/",
+       "archivo": "visor-ferroviario/",
+       "familia": "pagina"
       }
      ]
     },
@@ -1633,6 +1641,13 @@ export default {
      "archivo": "area-privada-apps.js",
      "hijos": [
       {
+       "id": "m:ahorro",
+       "tipo": "modulo",
+       "etiqueta": "Ahorro con perspectiva",
+       "archivo": "area-privada-ahorro.js",
+       "familia": "privada"
+      },
+      {
        "id": "m:color",
        "tipo": "modulo",
        "etiqueta": "Color Studio",
@@ -1684,6 +1699,13 @@ export default {
        "tipo": "modulo",
        "etiqueta": "Manual de Claude",
        "archivo": "area-privada-claude.js",
+       "familia": "privada"
+      },
+      {
+       "id": "m:estudio",
+       "tipo": "modulo",
+       "etiqueta": "Manual de estudio",
+       "archivo": "area-privada-estudio.js",
        "familia": "privada"
       }
      ],
@@ -1761,6 +1783,21 @@ export default {
        "id": "q:agenda",
        "tipo": "tabla",
        "etiqueta": "agenda",
+       "familia": "dato"
+      }
+     ],
+     "familia": "dato"
+    },
+    {
+     "id": "d:ahorro",
+     "tipo": "esquema",
+     "etiqueta": "ahorro.sql",
+     "archivo": "supabase/ahorro.sql",
+     "hijos": [
+      {
+       "id": "q:ahorro_preferences",
+       "tipo": "tabla",
+       "etiqueta": "ahorro_preferences",
        "familia": "dato"
       }
      ],
@@ -1944,6 +1981,21 @@ export default {
      "familia": "dato"
     },
     {
+     "id": "d:kanban-dependencias",
+     "tipo": "esquema",
+     "etiqueta": "kanban-dependencias.sql",
+     "archivo": "supabase/kanban-dependencias.sql",
+     "hijos": [
+      {
+       "id": "q:kb_dependencias",
+       "tipo": "tabla",
+       "etiqueta": "kb_dependencias",
+       "familia": "dato"
+      }
+     ],
+     "familia": "dato"
+    },
+    {
      "id": "d:kanban",
      "tipo": "esquema",
      "etiqueta": "kanban.sql",
@@ -1977,6 +2029,21 @@ export default {
        "id": "q:kb_ajustes",
        "tipo": "tabla",
        "etiqueta": "kb_ajustes",
+       "familia": "dato"
+      }
+     ],
+     "familia": "dato"
+    },
+    {
+     "id": "d:manual-estudio",
+     "tipo": "esquema",
+     "etiqueta": "manual-estudio.sql",
+     "archivo": "supabase/manual-estudio.sql",
+     "hijos": [
+      {
+       "id": "q:me_docs",
+       "tipo": "tabla",
+       "etiqueta": "me_docs",
        "familia": "dato"
       }
      ],
@@ -2022,6 +2089,42 @@ export default {
        "id": "q:procesos_correo",
        "tipo": "tabla",
        "etiqueta": "procesos_correo",
+       "familia": "dato"
+      }
+     ],
+     "familia": "dato"
+    },
+    {
+     "id": "d:sancho-acceso",
+     "tipo": "esquema",
+     "etiqueta": "sancho-acceso.sql",
+     "archivo": "supabase/sancho-acceso.sql",
+     "hijos": [
+      {
+       "id": "q:agents",
+       "tipo": "tabla",
+       "etiqueta": "agents",
+       "familia": "dato"
+      }
+     ],
+     "familia": "dato"
+    },
+    {
+     "id": "d:sancho-latido",
+     "tipo": "esquema",
+     "etiqueta": "sancho-latido.sql",
+     "archivo": "supabase/sancho-latido.sql",
+     "hijos": [
+      {
+       "id": "q:sancho_latido",
+       "tipo": "tabla",
+       "etiqueta": "sancho_latido",
+       "familia": "dato"
+      },
+      {
+       "id": "q:sancho_vigilancia",
+       "tipo": "tabla",
+       "etiqueta": "sancho_vigilancia",
        "familia": "dato"
       }
      ],
@@ -2181,10 +2284,38 @@ export default {
      "nota": "producen archivos del sitio",
      "hijos": [
       {
+       "id": "h:build-cabina-mercado",
+       "tipo": "herramienta",
+       "etiqueta": "build-cabina-mercado.mjs",
+       "archivo": "tools/build-cabina-mercado.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:build-cabina",
+       "tipo": "herramienta",
+       "etiqueta": "build-cabina.mjs",
+       "archivo": "tools/build-cabina.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:build-cnmc",
+       "tipo": "herramienta",
+       "etiqueta": "build-cnmc.mjs",
+       "archivo": "tools/build-cnmc.mjs",
+       "familia": "herramienta"
+      },
+      {
        "id": "h:build-en",
        "tipo": "herramienta",
        "etiqueta": "build-en.mjs",
        "archivo": "tools/build-en.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:build-rutas",
+       "tipo": "herramienta",
+       "etiqueta": "build-rutas.mjs",
+       "archivo": "tools/build-rutas.mjs",
        "familia": "herramienta"
       },
       {
@@ -2217,6 +2348,13 @@ export default {
        "familia": "herramienta"
       },
       {
+       "id": "h:check-boveda",
+       "tipo": "herramienta",
+       "etiqueta": "check-boveda.mjs",
+       "archivo": "tools/check-boveda.mjs",
+       "familia": "herramienta"
+      },
+      {
        "id": "h:check-briefing",
        "tipo": "herramienta",
        "etiqueta": "check-briefing.mjs",
@@ -2245,6 +2383,13 @@ export default {
        "familia": "herramienta"
       },
       {
+       "id": "h:check-incidencias",
+       "tipo": "herramienta",
+       "etiqueta": "check-incidencias.mjs",
+       "archivo": "tools/check-incidencias.mjs",
+       "familia": "herramienta"
+      },
+      {
        "id": "h:check-kanban",
        "tipo": "herramienta",
        "etiqueta": "check-kanban.mjs",
@@ -2256,6 +2401,13 @@ export default {
        "tipo": "herramienta",
        "etiqueta": "check-links.mjs",
        "archivo": "tools/check-links.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:test-boveda",
+       "tipo": "herramienta",
+       "etiqueta": "test-boveda.cjs",
+       "archivo": "tools/test-boveda.cjs",
        "familia": "herramienta"
       },
       {
@@ -2315,6 +2467,104 @@ export default {
        "etiqueta": "color-studio/",
        "archivo": "tools/color-studio/",
        "familia": "herramienta"
+      },
+      {
+       "id": "h:incidencias-ledger",
+       "tipo": "herramienta",
+       "etiqueta": "incidencias-ledger.mjs",
+       "archivo": "tools/incidencias-ledger.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:incidencias-metro",
+       "tipo": "herramienta",
+       "etiqueta": "incidencias-metro.mjs",
+       "archivo": "tools/incidencias-metro.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:incidencias-metro.test",
+       "tipo": "herramienta",
+       "etiqueta": "incidencias-metro.test.mjs",
+       "archivo": "tools/incidencias-metro.test.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:incidencias-multifuente",
+       "tipo": "herramienta",
+       "etiqueta": "incidencias-multifuente.mjs",
+       "archivo": "tools/incidencias-multifuente.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:incidencias-multifuente.test",
+       "tipo": "herramienta",
+       "etiqueta": "incidencias-multifuente.test.mjs",
+       "archivo": "tools/incidencias-multifuente.test.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:incidencias-rail",
+       "tipo": "herramienta",
+       "etiqueta": "incidencias-rail.mjs",
+       "archivo": "tools/incidencias-rail.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:incidencias-rail.test",
+       "tipo": "herramienta",
+       "etiqueta": "incidencias-rail.test.mjs",
+       "archivo": "tools/incidencias-rail.test.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:incidencias-territorio",
+       "tipo": "herramienta",
+       "etiqueta": "incidencias-territorio.mjs",
+       "archivo": "tools/incidencias-territorio.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:incidencias-territorio.test",
+       "tipo": "herramienta",
+       "etiqueta": "incidencias-territorio.test.mjs",
+       "archivo": "tools/incidencias-territorio.test.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:incidencias.test",
+       "tipo": "herramienta",
+       "etiqueta": "incidencias.test.mjs",
+       "archivo": "tools/incidencias.test.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:manual-estudio",
+       "tipo": "herramienta",
+       "etiqueta": "manual-estudio/",
+       "archivo": "tools/manual-estudio/",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:rutas",
+       "tipo": "herramienta",
+       "etiqueta": "rutas/",
+       "archivo": "tools/rutas/",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:update-incidencias",
+       "tipo": "herramienta",
+       "etiqueta": "update-incidencias.mjs",
+       "archivo": "tools/update-incidencias.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:visor-atlas-adif",
+       "tipo": "herramienta",
+       "etiqueta": "visor-atlas-adif.mjs",
+       "archivo": "tools/visor-atlas-adif.mjs",
+       "familia": "herramienta"
       }
      ]
     },
@@ -2329,6 +2579,20 @@ export default {
        "tipo": "workflow",
        "etiqueta": "checks.yml",
        "archivo": ".github/workflows/checks.yml",
+       "familia": "herramienta"
+      },
+      {
+       "id": "w:incidencias-semanales",
+       "tipo": "workflow",
+       "etiqueta": "incidencias-semanales.yml",
+       "archivo": ".github/workflows/incidencias-semanales.yml",
+       "familia": "herramienta"
+      },
+      {
+       "id": "w:rutas-semanal",
+       "tipo": "workflow",
+       "etiqueta": "rutas-semanal.yml",
+       "archivo": ".github/workflows/rutas-semanal.yml",
        "familia": "herramienta"
       },
       {
@@ -2914,6 +3178,14 @@ export default {
    ]
   },
   {
+   "de": "h:manual-estudio",
+   "a": "d:manual-estudio",
+   "tipo": "usa",
+   "detalle": [
+    "me_docs"
+   ]
+  },
+  {
    "de": "h:mapa",
    "a": "t:mapa",
    "tipo": "alimenta",
@@ -2951,6 +3223,22 @@ export default {
    "a": "m:kanban",
    "tipo": "verifica",
    "detalle": []
+  },
+  {
+   "de": "m:ahorro",
+   "a": "d:ahorro",
+   "tipo": "usa",
+   "detalle": [
+    "ahorro_preferences"
+   ]
+  },
+  {
+   "de": "m:ahorro",
+   "a": "d:area-privada",
+   "tipo": "usa",
+   "detalle": [
+    "members"
+   ]
   },
   {
    "de": "m:claude",
@@ -2992,6 +3280,22 @@ export default {
    "tipo": "usa",
    "detalle": [
     "ap_opciones"
+   ]
+  },
+  {
+   "de": "m:estudio",
+   "a": "d:manual-estudio",
+   "tipo": "usa",
+   "detalle": [
+    "me_docs"
+   ]
+  },
+  {
+   "de": "m:kanban",
+   "a": "d:kanban-dependencias",
+   "tipo": "usa",
+   "detalle": [
+    "kb_dependencias"
    ]
   },
   {
@@ -3527,6 +3831,12 @@ export default {
   },
   {
    "de": "w:checks",
+   "a": "h:check-boveda",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:checks",
    "a": "h:check-briefing",
    "tipo": "ejecuta",
    "detalle": []
@@ -3551,6 +3861,12 @@ export default {
   },
   {
    "de": "w:checks",
+   "a": "h:check-incidencias",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:checks",
    "a": "h:check-kanban",
    "tipo": "ejecuta",
    "detalle": []
@@ -3563,13 +3879,31 @@ export default {
   },
   {
    "de": "w:checks",
+   "a": "h:incidencias.test",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:checks",
    "a": "h:mapa",
    "tipo": "ejecuta",
    "detalle": []
   },
   {
    "de": "w:checks",
+   "a": "h:rutas",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:checks",
    "a": "h:second-brain",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:checks",
+   "a": "h:test-boveda",
    "tipo": "ejecuta",
    "detalle": []
   },
@@ -3587,6 +3921,60 @@ export default {
   },
   {
    "de": "w:checks",
+   "a": "h:version-assets",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:incidencias-semanales",
+   "a": "h:incidencias.test",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:incidencias-semanales",
+   "a": "h:update-incidencias",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:rutas-semanal",
+   "a": "h:build-cabina-mercado",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:rutas-semanal",
+   "a": "h:build-cabina",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:rutas-semanal",
+   "a": "h:build-cnmc",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:rutas-semanal",
+   "a": "h:build-rutas",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:rutas-semanal",
+   "a": "h:check-links",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:rutas-semanal",
+   "a": "h:rutas",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:rutas-semanal",
    "a": "h:version-assets",
    "tipo": "ejecuta",
    "detalle": []

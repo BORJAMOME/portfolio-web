@@ -1,0 +1,387 @@
+#!/usr/bin/env node
+/* Cabina · Rutas: todas las rutas ferroviarias de viajeros de España a partir de los GTFS públicos.
+   Una fila = relación origen → destino por marca (AV, larga y media distancia, iryo y OUIGO)
+   o una línea de Cercanías por núcleo (los dos sentidos juntos). Salida: visor-ferroviario/capas/rutas.json.
+
+     node tools/build-rutas.mjs --download        descarga las fuentes a .cache/rutas/ y genera
+     node tools/build-rutas.mjs                   genera con lo ya descargado
+     node tools/build-rutas.mjs --hoy=2026-11-21  fija «hoy» (pruebas y regeneración reproducible)
+
+   Semana de referencia: la primera semana completa (lunes a domingo), a partir de la de «hoy», que cubren TODAS
+   las fuentes. Mes y año son ESTIMACIONES con esa semana tipo (× 4,35 y × 52): no recogen festivos ni cambios de horario.
+   Fuentes, licencias y decisiones: visor-ferroviario/RUTAS_ESTADO.md. */
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {readGtfs,serviceDays,minutes,unzip,columns} from './rutas/gtfs.mjs';
+import {loadRed} from './rutas/red.mjs';
+import {routeActivity} from './rutas/heatmap.mjs';
+
+const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+const CACHE=path.join(ROOT,'.cache','rutas'),V=path.join(ROOT,'visor-ferroviario'),OUT=path.join(V,'capas','rutas.json');
+const arg=k=>process.argv.find(a=>a.startsWith('--'+k+'='))?.split('=')[1];
+
+export const SOURCES={
+  renfe:{file:'renfe.zip',url:'https://ssl.renfe.com/gtransit/Fichero_AV_LD/google_transit.zip',label:'Renfe · GTFS alta velocidad, larga y media distancia',licence:'CC BY 4.0 · Origen de los datos: Renfe Operadora',official:true},
+  cercanias:{file:'cercanias.zip',url:'https://ssl.renfe.com/ftransit/Fichero_CER_FOMENTO/fomento_transit.zip',label:'Renfe · GTFS Cercanías (todos los núcleos, ancho ibérico y métrico)',licence:'CC BY 4.0 · Origen de los datos: Renfe Operadora',official:true},
+  iryo:{file:'iryo.zip',url:'https://deryclem.github.io/iryo-gtfs/gtfs-iryo.zip',label:'iryo · GTFS comunitario de Clément Desouche (@deryclem), con horarios de iryo.eu',licence:'CC BY 4.0 (compilación) · no oficial, sin relación con iryo',official:false},
+  estaciones:{file:'estaciones.csv',url:'https://ssl.renfe.com/ftransit/Fichero_estaciones/estaciones.csv',label:'Renfe · listado completo de estaciones',licence:'CC BY 4.0 · Origen de los datos: Renfe Operadora',official:true}
+};
+
+async function download(){
+  fs.mkdirSync(CACHE,{recursive:true});const meta={};
+  for(const [k,s] of Object.entries(SOURCES)){
+    const r=await fetch(s.url,{headers:{'user-agent':'borjamora.es visor ferroviario (portfolio)'}});
+    if(!r.ok)throw new Error(`${k}: HTTP ${r.status} en ${s.url}`);
+    fs.writeFileSync(path.join(CACHE,s.file),Buffer.from(await r.arrayBuffer()));
+    // Solo en la caché local: ni la fecha de descarga ni Last-Modified (Renfe lo da distinto en cada servidor, con segundos de diferencia)
+    // van a rutas.json, o la tarea semanal confirmaría un commit con los mismos datos. La vigencia de cada fuente está en from/to.
+    meta[k]={downloaded:new Date().toISOString(),last_modified:r.headers.get('last-modified')};
+  }
+  fs.writeFileSync(path.join(CACHE,'meta.json'),JSON.stringify(meta,null,1));
+}
+
+/* ── familias y marcas (nueva arquitectura de Renfe, trenes.renfe.com) ── */
+const BRAND={'AVE':'AVE','AVE EUROMED':'AVE Euromed','AVLO':'Avlo','AVANT':'Avant','AVANT EXP':'Avant Exprés','INTERCITY':'Intercity','REGIONAL':'Regional'};
+const FAMILY={'AVE':'Alta velocidad','AVE Euromed':'Alta velocidad','Avlo':'Alta velocidad','iryo':'Alta velocidad','OUIGO':'Alta velocidad',
+  'Avant':'Avant','Avant Exprés':'Avant','Intercity':'Intercity','Regional':'Regional'};
+const COMPANY={Renfe:'Pública · Renfe',iryo:'Privada',OUIGO:'Privada'};
+
+/* ── territorio: comunidad por coordenadas (NUTS 2 de Eurostat/GISCO en datos.json) ── */
+function inRing(p,ring){let c=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const [xi,yi]=ring[i],[xj,yj]=ring[j];
+  if((yi>p[1])!==(yj>p[1])&&p[0]<(xj-xi)*(p[1]-yi)/(yj-yi)+xi)c=!c;}return c;}
+function regionOf(regions){
+  return p=>{for(const f of regions){const polys=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;
+    for(const poly of polys)if(inRing(p,poly[0])&&!poly.slice(1).some(h=>inRing(p,h)))return f.properties.NAME_LATN;}
+    // Costa: los polígonos NUTS 1:1 M están generalizados y dejan fuera estaciones del litoral (≤ 3 km; más lejos
+    // se cuela la frontera: La Tor de Querol está a pocos km de Puigcerdà, pero en Francia).
+    let best=null,bm=3000;for(const f of regions){const polys=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;
+      for(const poly of polys)for(const v of poly[0]){const m=metres(p,v);if(m<bm){bm=m;best=f.properties.NAME_LATN;}}}
+    return best;};
+}
+// Terminales al otro lado de la frontera a menos de 3 km del polígono español (generalizado): Rodalies R3 y R11, Celta.
+const FOREIGN=/Tor de Querol|Cerb[eè]re|Valen[cç]a do Minho|Hendaye|Hendaia/i;
+const metres=(a,b)=>{const k=Math.cos((a[1]+b[1])/2*Math.PI/180);return Math.hypot((a[0]-b[0])*k,a[1]-b[1])*111320;};
+const title=s=>s.toLowerCase().replace(/(^|[\s,(/'-])(\p{L})/gu,(a,b,c)=>b+c.toUpperCase()).replace(/\b(De|Del|La|Las|Los|El|Y|I|D'|L')\b/g,m=>m.toLowerCase()).replace(/^./,m=>m.toUpperCase());
+
+/* ── lectura de cada GTFS a una lista de trenes ── */
+function trainsFrom(src,g,opts){
+  const days=serviceDays(g),route=new Map(g.routes.map(r=>[r.route_id,r])),byTrip=new Map();
+  const st=g.stop_times;
+  for(let i=0;i<st.trip_id.length;i++){let a=byTrip.get(st.trip_id[i]);if(!a)byTrip.set(st.trip_id[i],a=[]);
+    a.push([+st.stop_sequence[i],opts.code(st.stop_id[i]),minutes(st.arrival_time[i]),minutes(st.departure_time[i])]);}
+  const out=[],bad={bus:[],incomplete:[]};
+  for(const t of g.trips){
+    const r=route.get(t.route_id),calls=byTrip.get(t.trip_id);
+    if(r&&opts.skip?.(r)){bad.bus.push(days.get(t.service_id));continue;}
+    if(!r||!calls||calls.length<2){bad.incomplete.push(days.get(t.service_id));continue;}   // sin paradas u horas: no se puede mostrar
+    calls.sort((a,b)=>a[0]-b[0]);
+    const dep=calls[0][3]??calls[0][2],arr=calls.at(-1)[2]??calls.at(-1)[3];
+    out.push({src,...opts.describe(r,t,calls),dep,arr,stops:calls.map(c=>c[1]),times:calls.map(c=>c[3]??c[2]),number:opts.number?.(t)||null,days:days.get(t.service_id)||new Set()});
+  }
+  return {trains:out,bad};
+}
+
+function build(today){
+  const need=Object.values(SOURCES).filter(s=>!fs.existsSync(path.join(CACHE,s.file)));
+  if(need.length)throw new Error('Faltan fuentes en .cache/rutas: ejecuta con --download');
+
+  // Estaciones: catálogo de Renfe (código de 5 cifras, provincia) + nombres y coordenadas de los GTFS.
+  const catalog=new Map();
+  // El CSV de Renfe viene en Latin-1 (leído como UTF-8 salía «A Coru�a»). Provincias en castellano: de las bilingües, el nombre en castellano.
+  const raw=fs.readFileSync(path.join(CACHE,'estaciones.csv')),txt=raw.toString('utf8').includes('�')?raw.toString('latin1'):raw.toString('utf8');
+  const PROV_ES={'Alicante/Alacant':'Alicante','Castellón/Castelló':'Castellón','Valencia/València':'Valencia','Araba/Álava':'Álava'};
+  const prov=p=>{if(!p||/^desconocid/i.test(p))return null;const t=title(p).replace(/^(.*), (A|La|Las|Los|El|Les|L')$/i,(m,n,a)=>a[0].toUpperCase()+a.slice(1).toLowerCase()+' '+n);return PROV_ES[t]||t;};
+  for(const l of txt.split(/\r?\n/).slice(1)){
+    const c=l.split(';').map(x=>x.replace(/^"|"$/g,''));if(c[0])catalog.set(c[0],{prov:prov(c[7]),coord:[+c[3],+c[2]],metric:c[10]==='SI'});
+  }
+  const stations=new Map(),seeStop=(code,s,rank)=>{const x=stations.get(code);if(!x||rank<x.rank)stations.set(code,{code,name:s.stop_name,coord:[+s.stop_lon,+s.stop_lat],rank});};
+  const nuc=Object.fromEntries(JSON.parse(fs.readFileSync(path.join(V,'transit-catalog.json'),'utf8')).networks.filter(n=>n.id.startsWith('renfe-')).map(n=>[n.id.slice(6),n.name]));
+
+  const sources={},all=[],notes=[];
+  const G={};for(const k of ['renfe','cercanias','iryo'])G[k]=readGtfs(path.join(CACHE,SOURCES[k].file));
+  const id=x=>x;
+  for(const s of G.renfe.stops)seeStop(s.stop_id,s,1);
+  for(const s of G.cercanias.stops)seeStop(s.stop_id,s,2);
+  for(const s of G.iryo.stops)seeStop(s.stop_id,s,3);
+
+  const bad={};
+  const add=(k,res)=>{all.push(...res.trains);bad[k]=res.bad;sources[k]={...SOURCES[k],file:undefined,trains:res.trains.length};};
+  add('renfe',trainsFrom('renfe',G.renfe,{code:id,number:t=>t.trip_short_name,
+    describe:r=>{const marca=BRAND[r.route_short_name.trim().toUpperCase()]||r.route_short_name.trim();return {operador:'Renfe',marca,familia:FAMILY[marca]||'Regional'};}}));
+  add('cercanias',trainsFrom('cercanias',G.cercanias,{code:id,
+    skip:r=>r.route_type==='3',   // autobuses de sustitución: no son trenes
+    describe:(r,t)=>{const n=r.route_id.slice(0,2);return {operador:'Renfe',marca:r.route_short_name,familia:'Cercanías',nucleo:nuc[n]||('Núcleo '+n),line:n+'|'+r.route_short_name,long:r.route_long_name.replace(/\s+/g,' ').trim(),color:r.route_color?'#'+r.route_color:null,shape:t.shape_id||null};}}));
+  // OUIGO: su GTFS del NAP es el plan de julio de 2026 (no recoge la suspensión Madrid–Andalucía ni la programación
+  // de diciembre). Se usa el PDF oficial «Horarios OUIGO 2026-2027» que ya integra el visor (capas/horarios.json).
+  const ou=ouigoFromAtlas();for(const [code,s] of ou.stations)seeStop(code,s,4);
+  all.push(...ou.trains);sources.ouigo={label:ou.source.title,url:ou.source.url,licence:'Horario oficial de OUIGO España; trenes reconstruidos por el atlas uniendo los trayectos origen-destino del PDF',official:true,trains:ou.trains.length,skipped:0,consulted:ou.source.consulted};
+  add('iryo',trainsFrom('iryo',G.iryo,{code:id,number:t=>t.trip_short_name,describe:()=>({operador:'iryo',marca:'iryo',familia:'Alta velocidad'})}));
+
+  // Cobertura de cada fuente y semana de referencia común.
+  const iso=d=>new Date(d).toISOString().slice(0,10),U=s=>Date.UTC(+s.slice(0,4),+s.slice(5,7)-1,+s.slice(8,10));
+  for(const k of ['renfe','cercanias','ouigo','iryo']){const d=new Set();for(const t of all)if(t.src===k)for(const x of t.days)d.add(x);const s=[...d].sort();sources[k].from=s[0];sources[k].to=s.at(-1);}
+  const t0=U(today);let mon=t0-((new Date(t0).getUTCDay()+6)%7)*864e5,week=null;
+  for(let w=0;w<60&&!week;w++,mon+=7*864e5){const sun=iso(mon+6*864e5),m=iso(mon);
+    if(Object.values(sources).filter(s=>s.from).every(s=>s.from<=m&&s.to>=sun))week=m;}
+  if(!week)throw new Error('No hay ninguna semana completa cubierta por todas las fuentes');
+  const W=[...Array(7)].map((_,i)=>iso(U(week)+i*864e5)),WD=W[2];   // miércoles = día laborable de referencia
+  // Lo excluido, contado también el día laborable de referencia, para poder reconciliar con el GTFS.
+  for(const [k,b] of Object.entries(bad)){const on=a=>a.filter(d=>d?.has(WD)).length,parts=[];
+    if(b.bus.length)parts.push(b.bus.length+' viajes de autobús de sustitución ('+on(b.bus)+' el día de referencia)');
+    if(b.incomplete.length)parts.push(b.incomplete.length+' viajes sin paradas u horas en el GTFS ('+on(b.incomplete)+' el día de referencia)');
+    if(parts.length)sources[k].excluidos='Se excluyen '+parts.join(' y ')+'.';}
+  for(const [k,s] of Object.entries(sources))if(s.to<iso(U(week)+28*864e5))notes.push(s.label+': horarios publicados solo hasta el '+s.to+'.');
+
+  // Estaciones usadas → índice, comunidad y provincia.
+  const RED=loadRed(V),region=regionOf(RED.datos.regions.features);
+  const used=new Set(all.flatMap(t=>t.stops)),stIdx=new Map(),stOut=[];
+  const cat=[...catalog.values()].filter(x=>x.prov&&x.coord[0]);for(const x of cat)x.ca??=region(x.coord);
+  let provInferred=0;
+  for(const code of [...used].sort()){const s=stations.get(code)||{code,name:code,coord:null};stIdx.set(code,stOut.length);
+    const ca=!s.coord?null:FOREIGN.test(s.name)?'Fuera de España':(region(s.coord)||'Fuera de España');let pr=ca==='Fuera de España'?null:catalog.get(code)?.prov||null;   // el catálogo asigna provincia española a Cerbère o Valença
+    if(!pr&&s.coord&&ca!=='Fuera de España'){let bm=40000;for(const x of cat){if(x.ca!==ca)continue;const m=metres(s.coord,x.coord);if(m<bm){bm=m;pr=x.prov;}}if(pr)provInferred++;}
+    stOut.push({k:code,n:s.name,c:s.coord?s.coord.map(x=>+x.toFixed(5)):null,ca,pr});}
+  notes.push('Provincia: la del catálogo de estaciones de Renfe; '+provInferred+' estaciones que no figuran en él toman la de la estación del catálogo más cercana (≤ 40 km, misma comunidad).');
+
+  // Agregar trenes en filas.
+  const rows=new Map();
+  for(const t of all){
+    const o=t.stops[0],d=t.stops.at(-1);
+    const key=t.familia==='Cercanías'?'cer|'+t.line:[t.src,t.marca,o,d].join('|');
+    let r=rows.get(key);
+    if(!r)rows.set(key,r={key,src:t.src,operador:t.operador,empresa:COMPANY[t.operador],familia:t.familia,marca:t.marca,nucleo:t.nucleo||null,color:t.color||null,
+      o:t.familia==='Cercanías'?null:o,d:t.familia==='Cercanías'?null:d,long:t.long||null,trains:[]});
+    r.trains.push(t);
+  }
+  const median=a=>{if(!a.length)return null;const s=[...a].sort((x,y)=>x-y);return s[Math.floor(s.length/2)];};
+  const out=[];
+  for(const r of rows.values()){
+    const per=W.map(day=>r.trains.filter(t=>t.days.has(day)));
+    const week7=per.reduce((a,x)=>a+x.length,0);
+    const allDays=new Set();for(const t of r.trains)for(const x of t.days)allDays.add(x);const sd=[...allDays].sort();
+    if(!sd.length)continue;
+    const wd=per[2],base=wd.length?wd:per.find(x=>x.length)||[];
+    const st=new Set();for(const t of r.trains)for(const s of t.stops)st.add(stIdx.get(s));
+    let o=r.o,d=r.d;
+    if(r.familia==='Cercanías'){const f=new Map();for(const t of base){const k=[t.stops[0],t.stops.at(-1)].sort().join('>');f.set(k,(f.get(k)||0)+1);}
+      const top=[...f].sort((a,b)=>b[1]-a[1])[0];if(top)[o,d]=top[0].split('>');}
+    out.push({
+      id:r.key,src:r.src,op:r.operador,emp:r.empresa,fam:r.familia,marca:r.marca,nuc:r.nucleo,color:r.color,
+      o:o?stIdx.get(o):null,d:d?stIdx.get(d):null,linea:r.long?r.long.replace(/\s+-\s*/g,' – '):null,
+      lab:wd.length,sab:per[5].length,dom:per[6].length,sem:week7,mes:Math.round(week7*4.35),anio:week7*52,
+      dias:per.map(x=>x.length),
+      pri:base.length?Math.min(...base.map(t=>t.dep)):null,ult:base.length?Math.max(...base.map(t=>t.dep)):null,
+      dur:median(base.map(t=>t.arr-t.dep)),durMin:base.length?Math.min(...base.map(t=>t.arr-t.dep)):null,
+      par:median(base.map(t=>t.stops.length)),
+      // Salidas del miércoles: [minuto, índice de la estación de origen del tren] (en Cercanías, de cada extremo).
+      sal:wd.map(t=>[t.dep,stIdx.get(t.stops[0])]).sort((a,b)=>a[0]-b[0]),
+      est:[...st].sort((a,b)=>a-b),
+      num:[...new Set(r.trains.map(t=>t.number).filter(Boolean))].sort().slice(0,60),
+      desde:sd[0],hasta:sd.at(-1)
+    });
+  }
+  out.sort((a,b)=>b.sem-a.sem||String(a.id).localeCompare(String(b.id)));
+  const traces=viaPorRuta(out,rows,stOut,RED,catalog,path.join(CACHE,SOURCES.cercanias.file),W);
+  const activity = {version:1, referencia:W, rutas:{}, traces};
+  for(const row of out) activity.rutas[row.id] = routeActivity(rows.get(row.id).trains, stIdx, W);
+
+  const oferta=stationOffer(all,stIdx,stOut.length,W,sources);
+  oferta.capitales=capitalPairs(all,stOut,stIdx,WD);
+  const totals={};for(const k of ['renfe','cercanias','ouigo','iryo'])totals[k]={lab:out.filter(r=>r.src===k).reduce((a,r)=>a+r.lab,0),filas:out.filter(r=>r.src===k).length};
+  return {version:1,generado:today,generado_con:'tools/build-rutas.mjs',
+    referencia:{semana:W[0],laborable:WD,sabado:W[5],domingo:W[6],
+      nota:'Semana completa (lunes a domingo) que cubren todas las fuentes. Mes = semana × 4,35 y año = semana × 52: estimaciones con semana tipo, sin festivos ni cambios de horario.'},
+    fuentes:sources,totales:totals,notas:notes,estaciones:stOut,rutas:out,oferta,activity};
+}
+/* Oferta por estación y por familia en la semana de referencia, con TODOS los trenes de viajeros con horario público
+   (Renfe AV/LD/MD, Cercanías de todos los núcleos, OUIGO e iryo). Es la base de los titulares de Cabina, que así no
+   calcula nada en el navegador. Un tren cuenta una vez en cada estación donde para (llegue, salga o ambas cosas). */
+export const FAMILIES=['Alta velocidad','Avant','Intercity','Regional','Cercanías'];
+const AV_KEY={'AVE':'ave','AVE Euromed':'ave','Avlo':'avlo','iryo':'iryo','OUIGO':'ouigo','Avant':'avant','Avant Exprés':'avant'};
+function stationOffer(all,stIdx,n,W,sources){
+  const WD=W[2],SA=W[5],SU=W[6],AVK=['ave','avlo','avant','ouigo','iryo'];
+  const st=[...Array(n)].map(()=>({lab:0,sab:0,dom:0,fam:[0,0,0,0,0],av:[0,0,0,0,0],pri:null,ult:null,dest:new Set(),
+    // Para las fichas del visor (capas/estaciones-oferta.json), solo el laborable: trenes por hora, por servicio y por destino,
+    // y el primer tren en el que se puede subir (no cuenta el que termina aquí).
+    horas:new Array(24).fill(0),serv:new Map(),destN:new Map(),sube:null}));
+  // Por familia: los tres días de referencia, los siete días de la semana (lunes a domingo) y las salidas por hora de
+  // cada día de referencia. Por marca (AVE, Avlo, OUIGO, iryo…): los mismos tres días y la semana.
+  const fam=Object.fromEntries(FAMILIES.map(f=>[f,{lab:0,sab:0,dom:0,dias:new Array(7).fill(0),horas:new Array(24).fill(0),horas_sab:new Array(24).fill(0),horas_dom:new Array(24).fill(0)}]));
+  const marcas={};
+  for(const t of all){
+    const h=Math.floor(t.dep/60)%24,M=marcas[t.marca]??={familia:t.familia,lab:0,sab:0,dom:0,dias:new Array(7).fill(0)};
+    W.forEach((d,i)=>{if(t.days.has(d)){fam[t.familia].dias[i]++;M.dias[i]++;}});
+    const onWD=t.days.has(WD),onSA=t.days.has(SA),onSU=t.days.has(SU);if(!onWD&&!onSA&&!onSU)continue;
+    const F=fam[t.familia];if(onWD){F.lab++;F.horas[h]++;M.lab++;}if(onSA){F.sab++;F.horas_sab[h]++;M.sab++;}if(onSU){F.dom++;F.horas_dom[h]++;M.dom++;}
+    const fi=FAMILIES.indexOf(t.familia),ai=AVK.indexOf(AV_KEY[t.marca]);
+    const seen=new Set();
+    t.stops.forEach((code,i)=>{const k=stIdx.get(code);if(seen.has(k))return;seen.add(k);const x=st[k];
+      if(onSA)x.sab++;if(onSU)x.dom++;
+      if(!onWD)return;
+      x.lab++;x.fam[fi]++;if(ai>=0)x.av[ai]++;
+      const tm=t.times[i];if(tm!==null&&tm!==undefined){x.pri=x.pri===null?tm:Math.min(x.pri,tm);x.ult=x.ult===null?tm:Math.max(x.ult,tm);
+        // Primero y último de la ficha: el día empieza a las 04:00 (un tren de las 00:26 es el último de la noche, no el primero).
+        const tf=tm%1440<240?tm%1440+1440:tm;
+        x.horas[Math.floor(tm/60)%24]++;if(i<t.stops.length-1)x.sube=x.sube===null?tf:Math.min(x.sube,tf);x.ultF=x.ultF==null?tf:Math.max(x.ultF,tf);}
+      const sv=t.operador==='Renfe'?t.familia:t.operador;x.serv.set(sv,(x.serv.get(sv)||0)+1);
+      const ahead=new Set();
+      for(let j=i+1;j<t.stops.length;j++){const d=stIdx.get(t.stops[j]);x.dest.add(d);if(d===k||ahead.has(d))continue;ahead.add(d);x.destN.set(d,(x.destN.get(d)||0)+1);}});
+  }
+  return {
+    referencia:{laborable:WD,sabado:SA,domingo:SU},
+    universo:'Trenes de viajeros con horario público: Renfe (alta velocidad, larga y media distancia y Cercanías de todos los núcleos, de ancho ibérico y métrico), OUIGO e iryo.',
+    fuentes:Object.fromEntries(Object.entries(sources).filter(([,s])=>s.from).map(([k,s])=>[k,{label:s.label,from:s.from,to:s.to,official:s.official}])),
+    familias:fam,marcas,semana:W,av_claves:AVK,
+    // Por estación (mismo índice que rutas.json · estaciones): [laborable, sábado, domingo, [por familia], [ave, avlo, avant, ouigo, iryo], primero, último, destinos directos]
+    por_estacion:st.map((x,k)=>[x.lab,x.sab,x.dom,x.fam,x.av,x.pri,x.ult,(x.dest.delete(k),x.dest.size)]),
+    /* Fichas del visor (oferta.js): por estación con trenes, [índice, laborable, sábado, domingo, primer tren en el que se
+       puede subir, último que pasa, trenes por hora (24), [[servicio, trenes]], [[índice de destino, trenes]] (los 8 más
+       servidos), destinos directos]. Se escribe aparte (capas/estaciones-oferta.json) para que el visor no cargue oferta.json. */
+    fichas:st.map((x,k)=>x.lab||x.sab||x.dom?[k,x.lab,x.sab,x.dom,x.sube,x.ultF??null,x.horas,[...x.serv].sort((a,b)=>b[1]-a[1]),
+      [...x.destN].sort((a,b)=>b[1]-a[1]).slice(0,8),x.dest.size]:null).filter(Boolean)
+  };
+}
+/* Tiempo directo más corto entre dos capitales de provincia, con cualquier tren que pare en las dos (no solo los que
+   empiezan y terminan en ellas: un AVE Madrid–Barcelona da también Madrid–Zaragoza). Estación → capital si está a ≤ 12 km.
+   Salida: [código de estación A, código de estación B, minutos, marca, operador, familia], A antes que B en el recorrido. */
+function capitalPairs(all,stOut,stIdx,WD){
+  const caps=JSON.parse(fs.readFileSync(path.join(V,'capas','poblacion.json'),'utf8')).units.filter(u=>u.kind==='capital');
+  const capOf=new Map();
+  for(const s of stOut){if(!s.c)continue;let best=null,bd=12000;for(const c of caps){const d=metres(s.c,c.coordinates);if(d<bd){bd=d;best=c.id;}}if(best)capOf.set(s.k,best);}
+  const best=new Map();
+  for(const t of all){
+    if(t.familia==='Cercanías'||!t.days.has(WD))continue;
+    for(let i=0;i<t.stops.length;i++){const ci=capOf.get(t.stops[i]),ti=t.times[i];if(!ci||ti===null||ti===undefined)continue;
+      for(let j=i+1;j<t.stops.length;j++){const cj=capOf.get(t.stops[j]),tj=t.times[j];if(!cj||cj===ci||tj===null||tj===undefined)continue;
+        const key=t.stops[i]+'>'+t.stops[j],min=tj-ti;if(min<=0)continue;
+        const x=best.get(key);if(!x||min<x[2])best.set(key,[t.stops[i],t.stops[j],min,t.marca,t.operador,t.familia,ci,cj]);}}
+  }
+  return [...best.values()];
+}
+/* OUIGO desde capas/horarios.json (PDF oficial): registros origen-destino [paradas, t0, patrón, calendario]. Cada día se unen
+   los que comparten estación y hora de salida o de llegada (componentes conexas, como oferta.js · stationDay); un tren = una
+   componente, identificado por su secuencia de paradas y horas para juntar los días en que circula igual. */
+function ouigoFromAtlas(){
+  const S=JSON.parse(fs.readFileSync(path.join(V,'capas','servicios.json'),'utf8')),H=JSON.parse(fs.readFileSync(path.join(V,'capas','horarios.json'),'utf8'));
+  const code=sid=>S.stations[sid]?.official_id||sid,start=Date.UTC(+H.meta.start.slice(0,4),+H.meta.start.slice(5,7)-1,+H.meta.start.slice(8,10));
+  const bits=H.days.map(b=>Buffer.from(b,'base64')),runs=(cal,k)=>k>=0&&k<bits[cal].length*8&&((bits[cal][k>>3]>>(k&7))&1)===1;
+  const recs=(H.ouigo||[]).map(([sids,t0,p,cal])=>{const prof=H.patterns[p],n=sids.length;
+    return {cal,calls:sids.map((s,i)=>({code:code(s),arr:i?t0+prof[2*i-2]:null,dep:i<n-1?t0+(i?prof[2*i-1]:0):null}))};});
+  const xy=new Map();for(const s of Object.values(S.stations))if(s.official_id)xy.set(s.official_id,s.coordinates);
+  const bearing=(a,b)=>{const A=xy.get(a),B=xy.get(b);if(!A||!B)return null;return Math.atan2(B[1]-A[1],(B[0]-A[0])*Math.cos(A[1]*Math.PI/180));};
+  const sameWay=(p,q)=>p===null||q===null||Math.abs(Math.atan2(Math.sin(p-q),Math.cos(p-q)))<Math.PI/2;
+  const days=Math.round((Date.UTC(+H.meta.ouigo_end.slice(0,4),+H.meta.ouigo_end.slice(5,7)-1,+H.meta.ouigo_end.slice(8,10))-start)/864e5)+1;
+  const trains=new Map();
+  for(let k=0;k<days;k++){
+    const on=recs.filter(r=>runs(r.cal,k));if(!on.length)continue;
+    const parent=on.map((_,i)=>i),find=i=>parent[i]===i?i:(parent[i]=find(parent[i])),groups=new Map();
+    // Misma estación y misma hora de llegada (o de salida) Y mismo sentido: rumbo hacia la parada anterior/siguiente a
+    // menos de 90°. Sin el rumbo, dos trenes de sentido contrario que coinciden en Albacete a las 18:45/18:48 se unían en
+    // un tren imposible; con la parada siguiente exacta, un mismo tren listado con y sin paradas intermedias se partía.
+    on.forEach((r,i)=>r.calls.forEach((c,ci)=>{
+      if(c.arr!==null&&ci>0){const k='a'+c.code+'@'+c.arr;if(!groups.has(k))groups.set(k,[]);groups.get(k).push([i,bearing(r.calls[ci-1].code,c.code)]);}
+      if(c.dep!==null&&ci<r.calls.length-1){const k='d'+c.code+'@'+c.dep;if(!groups.has(k))groups.set(k,[]);groups.get(k).push([i,bearing(c.code,r.calls[ci+1].code)]);}}));
+    for(const g of groups.values())for(let x=0;x<g.length;x++)for(let y=x+1;y<g.length;y++)if(sameWay(g[x][1],g[y][1]))parent[find(g[x][0])]=find(g[y][0]);
+    const comp=new Map();on.forEach((r,i)=>{const root=find(i);if(!comp.has(root))comp.set(root,new Map());const m=comp.get(root);
+      for(const c of r.calls){const t=c.dep??c.arr,x=m.get(c.code);if(!x||t<x)m.set(c.code,t);}});
+    const iso=new Date(start+k*864e5).toISOString().slice(0,10);
+    for(const m of comp.values()){const seq=[...m].sort((a,b)=>a[1]-b[1]),sig=seq.map(([c,t])=>c+'@'+t).join('>');
+      let t=trains.get(sig);if(!t)trains.set(sig,t={src:'ouigo',operador:'OUIGO',marca:'OUIGO',familia:'Alta velocidad',dep:seq[0][1],arr:seq.at(-1)[1],stops:seq.map(x=>x[0]),times:seq.map(x=>x[1]),number:null,days:new Set()});
+      t.days.add(iso);}
+  }
+  const stations=new Map();for(const s of Object.values(S.stations))if(s.official_id)stations.set(s.official_id,{stop_name:s.name,stop_lon:s.coordinates[0],stop_lat:s.coordinates[1]});
+  return {trains:[...trains.values()],stations,source:S.meta.sources['ouigo-horarios']};
+}
+/* Vía e infraestructura de cada ruta.
+   - Renfe (AV/LD/MD), OUIGO e iryo: recorrido IGN inferido de la variante de servicios.json con los mismos extremos
+     (de la misma marca si la hay; si no, cualquiera: OUIGO e iryo usan las mismas vías). Km, % de alta velocidad,
+     % electrificado y ancho, con las correcciones del visor (tools/rutas/red.mjs).
+   - Cercanías: km del dibujo (shapes.txt) más frecuente de la línea el día de referencia; ancho métrico si al menos el
+     80 % de sus estaciones son de las Cercanías métricas del visor; electrificación y prestaciones sin dato.
+   Velocidad: km ÷ duración (mediana del día, y la del tren más rápido). */
+const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().slice(0,5);
+const GAUGE_GROUP=v=>['1668','1435','1000','mixed'].includes(v)?v:'unknown';
+function viaPorRuta(out,rows,stOut,RED,catalog,shapesFile,week){
+  const WD=week[2],traces={routes:{}, routeDays:{}, geometries:{}};
+  const S=JSON.parse(fs.readFileSync(path.join(V,'capas','servicios.json'),'utf8'));
+  const feat=RED.datos.rail.features,F=RED.F,code=sid=>S.stations[sid]?.official_id;
+  // Estaciones de ancho métrico: las de las Cercanías métricas del visor (el catálogo de Renfe no las marca todas).
+  const metricSet=new Set(S.variants.filter(v=>v.source==='renfe-commuter').flatMap(v=>v.calls.map(c=>code(c.s))).filter(Boolean));
+  const byEnds=new Map();
+  for(const v of S.variants){if(!v.edges?.length)continue;const a=code(v.calls[0].s),b=code(v.calls.at(-1).s);if(!a||!b)continue;
+    for(const k of [a+'>'+b,b+'>'+a]){if(!byEnds.has(k))byEnds.set(k,[]);byEnds.get(k).push(v);}}
+  const stats=edges=>{let km=0;const perf={},el={},g={};
+    for(const fid of new Set(edges)){const f=feat[fid];if(!f)continue;const m=(Number(f.properties.length_m)||0)/1000;km+=m;
+      const pf=f.properties.perf||'none';perf[pf]=(perf[pf]||0)+m;const e=F.value(f,'electric');el[e]=(el[e]||0)+m;const gg=GAUGE_GROUP(F.value(f,'gauge'));g[gg]=(g[gg]||0)+m;}
+    return {km,perf,el,g};};
+  // Cercanías: el GTFS da un único dibujo por línea (shapes.txt), no por tren. Los km de un tren son la distancia a lo
+  // largo de ese dibujo entre su primera y su última parada (cada estación, en el punto del dibujo más cercano).
+  const shapes=new Map();
+  {const c=columns(unzip(shapesFile).get('shapes.txt')(),['shape_id','shape_pt_lat','shape_pt_lon','shape_pt_sequence']),pts=new Map();
+    for(let i=0;i<c.shape_id.length;i++){const id=c.shape_id[i];if(!pts.has(id))pts.set(id,[]);pts.get(id).push([+c.shape_pt_sequence[i],+c.shape_pt_lon[i],+c.shape_pt_lat[i]]);}
+    for(const [id,a] of pts){a.sort((x,y)=>x[0]-y[0]);const xy=a.map(p=>[p[1],p[2]]),cum=[0];for(let i=1;i<xy.length;i++)cum.push(cum[i-1]+metres(xy[i-1],xy[i]));shapes.set(id,{xy,cum});}}
+  const posCache=new Map(),coordOf=new Map(stOut.map(s=>[s.k,s.c]));
+  const posOn=(sh,code)=>{const k=sh+'|'+code;if(posCache.has(k))return posCache.get(k);const S2=shapes.get(sh),c=coordOf.get(code);let b=null,bd=2000;
+    if(S2&&c)for(let i=0;i<S2.xy.length;i++){const d=metres(S2.xy[i],c);if(d<bd){bd=d;b=S2.cum[i];}}posCache.set(k,b);return b;};
+  const tripKm=t=>{if(!t.shape)return null;const a=posOn(t.shape,t.stops[0]),b=posOn(t.shape,t.stops.at(-1));return a===null||b===null||a===b?null:Math.abs(b-a)/1000;};
+  const pct=(x,t)=>t?Math.round(1000*x/t)/10:null,r1=x=>Math.round(x*10)/10;
+  for(const row of out){
+    const src=rows.get(row.id);let via=null;
+    if(row.fam==='Cercanías'){
+      const days=week.map(day=>[...new Set(src.trains.filter(t=>t.days.has(day)).map(t=>t.shape).filter(id=>shapes.has(id)))]);
+      const ids=[...new Set(days.flat())];
+      traces.routes[row.id]=ids.map(id=>'gtfs:'+id);
+      traces.routeDays[row.id]=days.map(ids=>ids.map(id=>'gtfs:'+id));
+      for(const id of ids) traces.geometries['gtfs:'+id]=shapes.get(id).xy;
+      // Solo los trenes que van de un extremo al otro de la línea (los extremos de la fila): muchos hacen solo un tramo y
+      // su dibujo puede ser el de la línea entera (con 3 minutos de viaje saldrían 600 km/h).
+      const ends=new Set([stOut[row.o]?.k,stOut[row.d]?.k]);
+      const base=src.trains.filter(t=>t.days.has(WD)&&ends.has(t.stops[0])&&ends.has(t.stops.at(-1))&&t.stops[0]!==t.stops.at(-1)),freq=new Map();
+      const med=a=>{const x=a.filter(v=>v!==null).sort((p,q)=>p-q);return x.length?x[Math.floor(x.length/2)]:null;};
+      const len=med(base.map(tripKm)),d=med(base.map(t=>t.arr-t.dep));
+      const met=row.est.filter(i=>metricSet.has(stOut[i].k)).length;
+      if(len){via={km:Math.round(len),fuente:'gtfs',ancho:met>=.8*row.est.length?'1000':'1668',tipo:null,av:null,el:null,vel:d?Math.round(len/(d/60)):null,velMax:null};}
+    }else{
+      const ends=row.o!==null&&row.d!==null?stOut[row.o].k+'>'+stOut[row.d].k:null,cands=byEnds.get(ends)||[];
+      const v=cands.find(x=>norm(x.published_brand)===norm(row.marca)&&code(x.calls[0].s)===stOut[row.o].k)||cands.find(x=>norm(x.published_brand)===norm(row.marca))||cands[0];
+      const straight=row.o!==null&&row.d!==null&&stOut[row.o].c&&stOut[row.d].c?metres(stOut[row.o].c,stOut[row.d].c)/1000:0;
+      const st0=v?stats(v.edges):null;
+      // Trazado inferido incompleto: con tramos pendientes o más corto que la línea recta entre los extremos (imposible).
+      if(v&&(v.pending_segments>0||st0.km<straight*.98)){row.via={km:null,fuente:'ign',incompleto:true,variante:v.id};continue;}
+      if(v){const st=st0,hs=st.perf.hs||0,yes=st.el.yes||0,no=st.el.no||0,unk=st.km-yes-no;
+        traces.routes[row.id]=[...new Set(v.edges)].filter(fid=>feat[fid]).map(fid=>'ign:'+fid);
+        for(const fid of new Set(v.edges))if(feat[fid])traces.geometries['ign:'+fid]=feat[fid].geometry.coordinates;
+        const gs=Object.entries(st.g).sort((a,b)=>b[1]-a[1]),dom=gs[0]?.[0]||'unknown';
+        via={km:Math.round(st.km),fuente:'ign',av:pct(hs,st.km),el:pct(yes,st.km),elSin:pct(unk,st.km),
+          ancho:gs.length>1&&gs[1][1]/st.km>=.1?'varios':dom,anchos:Object.fromEntries(gs.map(([k,m])=>[k,pct(m,st.km)])),
+          tipo:hs/st.km>=.8?'Alta velocidad':hs/st.km>=.2?'Mixta':'Convencional',
+          vel:row.dur?Math.round(st.km/(row.dur/60)):null,velMax:row.durMin?Math.round(st.km/(row.durMin/60)):null,variante:v.id};}
+    }
+    row.via=via;
+  }
+  return traces;
+}
+
+if(process.argv[1]&&fileURLToPath(import.meta.url)===path.resolve(process.argv[1])){
+  if(process.argv.includes('--download'))await download();
+  const today=arg('hoy')||new Date().toISOString().slice(0,10);
+  const {oferta,activity,...data}=build(today),txt=JSON.stringify(data)+'\n';
+  fs.writeFileSync(path.join(V,'capas','rutas-actividad.json'),JSON.stringify(activity)+'\n');
+  fs.writeFileSync(OUT,txt);
+  // oferta.json: misma lista de estaciones que rutas.json (los índices coinciden) y su oferta del día de referencia.
+  const {fichas,...ofertaSin}=oferta;
+  const otxt=JSON.stringify({generado:today,generado_con:'tools/build-rutas.mjs',estaciones:data.estaciones,...ofertaSin})+'\n';
+  // Fichas de estación del visor: mismo universo y mismo día de referencia que Cabina. Solo las estaciones que salen.
+  const used=new Set(fichas.flatMap(f=>[f[0],...f[8].map(d=>d[0])])),idx=[...used].sort((a,b)=>a-b),re=new Map(idx.map((k,i)=>[k,i]));
+  const ftxt=JSON.stringify({generado:today,generado_con:'tools/build-rutas.mjs',referencia:oferta.referencia,universo:oferta.universo,fuentes:oferta.fuentes,
+    estaciones:idx.map(k=>{const e=data.estaciones[k];return [e.k,e.n,e.c?.[0]??null,e.c?.[1]??null];}),
+    fichas:fichas.map(f=>[re.get(f[0]),...f.slice(1,8),f[8].map(([d,n])=>[re.get(d),n]),f[9]])})+'\n';
+  fs.writeFileSync(path.join(V,'capas','estaciones-oferta.json'),ftxt);
+  console.log('Escrito visor-ferroviario/capas/estaciones-oferta.json',(ftxt.length/1024).toFixed(0)+' KB');
+  fs.writeFileSync(path.join(V,'capas','oferta.json'),otxt);
+  console.log('Escrito visor-ferroviario/capas/oferta.json',(otxt.length/1024).toFixed(0)+' KB');
+  console.log('Escrito',path.relative(ROOT,OUT),(txt.length/1024).toFixed(0)+' KB','· semana',data.referencia.semana,'· filas',data.rutas.length,'· estaciones',data.estaciones.length);
+  for(const [k,t] of Object.entries(data.totales))console.log(' ',k.padEnd(9),'filas',String(t.filas).padStart(4),'· trenes el',data.referencia.laborable,t.lab);
+  for(const n of data.notas)console.log('  aviso:',n);
+}

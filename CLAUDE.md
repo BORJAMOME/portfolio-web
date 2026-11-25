@@ -27,6 +27,7 @@ En Windows, `build-en --check` puede marcar páginas como desactualizadas por lo
 ## Área privada (`area-privada.html`)
 Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde Laboratorio. Sin librerías: habla con la API de Supabase con `fetch`.
 - `area-privada.js`: shell (sesión, `api`, rutas `#/…`, diálogo) y el drive (`#/archivos`). `supabase/area-privada.sql`: tablas y RLS.
+- **SANCHO (asistente personal)** accede como agente, no como miembro: `supabase/sancho-acceso.sql` (tabla `agents`, `is_sancho()`, políticas «sancho: leer/crear/editar», **nunca borrar**; revertir con `sancho-acceso-rollback.sql`). Al crear una tabla nueva, añadirla a las listas `lectura`/`escritura` de ese archivo y volver a ejecutarlo.
 - **Pestañas en módulos** que se cargan al abrirlas: `area-privada-<nombre>.js` define `window.AP<Nombre> = { render(ctx) → Promise<paint> }`
   y se declara en el HTML como `<link rel="prefetch" data-ap-module="<nombre>">` (así `version-assets` le pone el `?v=`).
   Para una pestaña nueva: el archivo, ese `<link>`, una entrada en `MODULES` (de ahí sale también la ruta) y el enlace en `.ap-tabs`.
@@ -56,11 +57,16 @@ Zona con contraseña real (Supabase Auth + Row Level Security), enlazada desde L
   (`supabase/kanban.sql`; revertir con `kanban-rollback.sql`). El historial y `completada_en` los escribe un trigger. Orden por `posicion` (punto medio).
   Arrastre con Pointer Events propios (sin biblioteca: CSP sin CDN y regla de no añadir dependencias); teclado con Mayús+flechas; en táctil, desde el asa.
   Límites WIP y capacidad diaria en `kb_ajustes`; avisan, no bloquean. La lógica pura está en `APKanban.logic`.
+  **Dependencias** (`supabase/kanban-dependencias.sql`, revertir con `kanban-dependencias-rollback.sql`): tabla `kb_dependencias` («tarjeta_id espera a depende_de»), un trigger rechaza los ciclos.
+  «En espera» se calcula (`logic.waitingMap`: una dependencia retiene mientras no esté en Hecho ni archivada) y la tarjeta queda libre sola; no se sugiere para hoy y sale en Bloqueos.
+  Se eligen en la sección «Dependencias» de `cardDialog` (búsqueda; lo que cerraría un ciclo sale desactivado con el motivo). Sin la tabla, la sección no aparece y el tablero funciona igual. El bloqueo manual sigue para lo externo.
   Pruebas: `node tools/test-kanban.mjs` (lógica, sin dependencias) y `node tools/check-kanban.mjs` (interfaz con Playwright y un Supabase simulado en memoria; no toca la base real).
   Color semántico por estado (`--st-<estado>` en `css/area-privada.css`), siempre con icono de progreso y texto. Iconos SVG propios en `ICON`.
   **Tarjeta** (crear y editar): un único diálogo, `cardDialog`, con cabecera y pie fijos, secciones plegables (<details>), bloqueo como interruptor y protección de cambios sin guardar (X, Esc, clic fuera, Cancelar).
   Imágenes de las notas en el bucket `recursos`, ruta `kanban/<tarjeta>/` (sin columnas nuevas: se listan con `ctx.storage.list`); se suben y se quitan al guardar y se borran 10 s después de eliminar la tarjeta.
   Captura inteligente local (`logic.parseCapture`: #proyecto, !prioridad, fechas en español, @hoy). Paleta `Ctrl/⌘+K`.
+  Varias a la vez (Tablero): Ctrl/⌘ o Mayús + clic, o el botón «Seleccionar» (táctil); `selBar` mueve, añade a hoy, archiva o elimina, con un único Deshacer
+  (`reg(…, o.collect)` junta los deshacer de cada tarjeta).
   IA opcional: Edge Function `supabase/functions/kanban-ia` (desglosar, siguiente paso, plan del día, texto → tarjetas). Solo propone:
   la web enseña una revisión y guarda lo confirmado. `KB_AI_PROVIDER=off` por defecto (los botones de IA no aparecen). Guía: su `README.md`.
 - **Color Studio** (`#/color`, `/biblioteca`, `/armario`, `/calcetines`; app del catálogo, se abre en modo app): outfits con prendas reales, paletas de referencia y guía de calcetines.

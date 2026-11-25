@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rutas · Cabina · Atlas ferroviario de España</title>
+<meta name="description" content="Todas las rutas ferroviarias de viajeros de España: trenes por día, semana, mes y año, horarios y filtros por operador, servicio y territorio.">
+<meta name="robots" content="noindex, nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="./cabina.css?v=39681bae22"><link rel="stylesheet" href="./cabina-rutas.css?v=adc592d044">
+<script defer src="./cabina-rutas.js?v=a04516c1a9"></script>
+<link rel="stylesheet" href="./rutas-heatmap.css?v=8f2cafdd32">
+<script defer src="./rutas-heatmap.js?v=3fa768f937"></script>
+</head>
+<body class="rt-page">
+<a class="skip" href="#tabla">Saltar a la tabla</a>
+<header class="cb-header">
+<div class="cb-wrap cb-head">
+<div>
+<p class="rt-crumbs"><a id="back" class="cb-back" href="cabina.html"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M10 3 5 8l5 5"/></svg>Volver a Cabina</a><a id="to-visor" class="cb-back" href="index.html">Abrir el visor</a></p>
+<h1>Rutas</h1>
+<p class="cb-lead">Todas las rutas ferroviarias de viajeros de España: cuántos trenes hacen cada relación al día, a la semana, al mes y al año, y a qué horas. Filtra, ordena, compara y descarga.</p>
+</div>
+<p id="ref" class="cb-ref" aria-live="polite">Cargando las rutas…</p>
+</div>
+</header>
+
+<main id="contenido" class="cb-wrap">
+<section class="rt-filters" aria-labelledby="filtros-t">
+<h2 id="filtros-t" class="visually-hidden">Filtros</h2>
+<form id="filters" class="rt-form" role="search" autocomplete="off">
+<div class="rt-field rt-search"><label for="f-q">Buscar</label><input id="f-q" type="search" placeholder="Estación, ruta, línea o número de tren" spellcheck="false"></div>
+<div class="rt-field"><label for="f-op">Operador</label><select id="f-op"><option value="">Todos</option></select></div>
+<div class="rt-field"><label for="f-emp">Tipo de empresa</label><select id="f-emp"><option value="">Todas</option></select></div>
+<div class="rt-field"><label for="f-fam">Servicio</label><select id="f-fam"><option value="">Todos</option></select></div>
+<div class="rt-field"><label for="f-marca">Marca o línea</label><select id="f-marca"><option value="">Todas</option></select></div>
+<div class="rt-field"><label for="f-nuc">Núcleo de Cercanías</label><select id="f-nuc"><option value="">Todos</option></select></div>
+<div class="rt-field"><label for="f-ca">Comunidad</label><select id="f-ca"><option value="">Todas</option></select></div>
+<div class="rt-field"><label for="f-pr">Provincia</label><select id="f-pr"><option value="">Todas</option></select></div>
+<div class="rt-field"><label for="f-via">Tipo de vía</label><select id="f-via"><option value="">Todas</option></select></div>
+<div class="rt-field"><label for="f-ancho">Ancho</label><select id="f-ancho"><option value="">Todos</option></select></div>
+<div class="rt-field"><label for="f-elec">Electrificación</label><select id="f-elec"><option value="">Toda</option></select></div>
+<div class="rt-field"><label for="f-cor">Corredor de la CNMC</label><select id="f-cor"><option value="">Todos</option></select></div>
+<div class="rt-field"><label for="f-min">Mínimo de trenes al día</label><input id="f-min" type="number" min="0" step="1" inputmode="numeric" placeholder="0"></div>
+<div class="rt-field rt-check"><label><input id="f-activas" type="checkbox" checked> Solo con trenes la semana de referencia</label></div>
+<div class="rt-actions"><button id="f-reset" type="reset">Restablecer filtros</button></div>
+</form>
+<p class="cb-note" id="f-note">Comunidad y provincia filtran las rutas que tienen alguna parada en ellas. Tipo de vía, ancho y electrificación salen del trazado de cada ruta sobre la red IGN; en Cercanías solo se conoce el ancho.</p>
+</section>
+
+<section class="cb-kpis rt-kpis" aria-label="Resumen de la selección" aria-live="polite" id="kpis"></section>
+
+<section class="rh-panel" aria-labelledby="rh-title">
+<div class="rh-heading"><div><p class="cb-q">Análisis territorial</p><h2 id="rh-title" class="rt-h2">La red, en un mapa de calor</h2></div><button id="rh-load" class="rt-btn" type="button">Cargar mapa de calor</button></div>
+<p class="cb-note">Mapa y tabla conectados: pulsa un tramo, una estación o un municipio para consultar sus rutas y comparar sus cifras. Horarios programados del catálogo disponible.</p>
+<div id="rh-content" hidden>
+<div class="rh-controls">
+<div class="rt-field"><label for="rh-mode">Qué quieres analizar</label><select id="rh-mode"><option value="routes">Concentración de rutas</option><option value="frequency">Frecuencia de trenes</option><option value="coverage">Cobertura territorial</option><option value="connectivity">Conectividad de estaciones</option><option value="reliability">Puntualidad y fiabilidad · pendiente</option><option value="potential">Oferta por habitante</option></select></div>
+<div class="rt-field"><label for="rh-day">Día de referencia</label><select id="rh-day"><option value="2">Laborable</option><option value="5">Sábado</option><option value="6">Domingo</option></select></div>
+<div class="rt-field" id="rh-radius-field" hidden><label for="rh-radius">Distancia a una estación</label><select id="rh-radius"><option value="5">5 km</option><option value="10" selected>10 km</option><option value="20">20 km</option><option value="30">30 km</option></select></div>
+</div>
+<p id="rh-method" class="cb-note"></p>
+<p id="rh-status" role="status"></p>
+<div id="rh-kpis" class="rh-kpis" aria-label="Indicadores del mapa"></div>
+<div class="rh-layout" id="rh-layout">
+<div class="rh-map-wrap"><div class="rh-zoom" aria-label="Escala del mapa"><button class="rt-btn" type="button" id="rh-in" aria-label="Acercar mapa">+</button><button class="rt-btn" type="button" id="rh-out" aria-label="Alejar mapa">−</button><button class="rt-btn" type="button" id="rh-home">España</button></div><svg id="rh-map" viewBox="0 0 1000 670" role="img" aria-labelledby="rh-map-title rh-map-desc"><title id="rh-map-title">Mapa de calor de la red ferroviaria</title><desc id="rh-map-desc">Mapa ferroviario de España peninsular. Usa los botones para acercar y las flechas del teclado para desplazarte. Los valores también se pueden consultar en el listado contiguo.</desc></svg><div class="rh-legend" id="rh-legend"></div></div>
+<aside class="rh-inspector"><h3 id="rh-ranking-title">Explorar el mapa</h3><div id="rh-detail" aria-live="polite"></div><ol id="rh-ranking" hidden></ol></aside>
+</div>
+<p id="rh-scope" class="cb-note">Ámbito: España peninsular. Canarias, Ceuta y Melilla quedan fuera del análisis ferroviario. Baleares tiene ferrocarril, pero sus operadores todavía no están en este catálogo.</p>
+<section id="rh-table-section" aria-labelledby="rh-table-title">
+<div class="rh-table-tools"><h3 id="rh-table-title">Datos del mapa</h3><label for="rh-search" class="visually-hidden">Buscar en la tabla del mapa</label><input id="rh-search" type="search" placeholder="Buscar en los datos del mapa"><button id="rh-csv" type="button" class="rt-btn">Descargar datos del mapa</button></div>
+<div class="tbl-wrap"><table id="rh-table"><caption id="rh-caption" class="visually-hidden">Datos correspondientes al mapa de calor</caption><thead id="rh-thead"></thead><tbody id="rh-tbody"></tbody></table></div>
+<div class="rh-table-tools"><p id="rh-table-count" role="status"></p><button id="rh-prev" class="rt-btn" type="button" hidden>Anterior</button><button id="rh-more" class="rt-btn" type="button">Siguiente</button></div>
+</section>
+</div>
+</section>
+
+<section aria-labelledby="tabla-t" class="rt-table-sec">
+<div class="rt-tablehead">
+<h2 id="tabla-t" class="rt-h2">Rutas</h2>
+<p id="count" class="rt-count" aria-live="polite"></p>
+<button id="csv" type="button" class="rt-btn">Descargar CSV</button>
+</div>
+<div class="tbl-wrap rt-wrap" id="tabla" tabindex="-1">
+<table class="rt-table">
+<caption class="visually-hidden">Rutas ferroviarias; cada fila se despliega con sus horarios. Las columnas se ordenan con sus botones.</caption>
+<thead><tr id="thead"></tr></thead>
+<tbody id="tbody"></tbody>
+</table>
+</div>
+<p class="rt-more"><button id="more" type="button" class="rt-btn" hidden>Mostrar más rutas</button></p>
+</section>
+
+<section class="cb-section" aria-labelledby="notas-t">
+<p class="cb-q">Método y fuentes</p>
+<h2 id="notas-t">Cómo se cuentan las rutas y los trenes</h2>
+<div class="cb-grid">
+<article class="cb-card span-6" id="c-metodo"></article>
+<article class="cb-card span-6" id="c-fuentes"></article>
+</div>
+</section>
+</main>
+
+<aside id="compare" class="rt-compare" aria-labelledby="compare-t" hidden>
+<div class="cb-wrap">
+<div class="rt-compare-head"><h2 id="compare-t">Comparar rutas</h2><button id="compare-clear" type="button" class="rt-btn">Quitar todas</button><button id="compare-toggle" type="button" class="rt-btn" aria-expanded="false" aria-controls="compare-body">Ver comparación</button></div>
+<div id="compare-body" hidden></div>
+</div>
+</aside>
+
+<footer class="cb-wrap cb-foot"><span>Atlas ferroviario de España · Cabina · Rutas</span><a href="cabina.html">Volver a Cabina</a></footer>
+<noscript><p class="cb-wrap">Activa JavaScript para ver la tabla de rutas.</p></noscript>
+</body>
+</html>
