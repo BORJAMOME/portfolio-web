@@ -2,8 +2,8 @@
 /* Incidencias por ruta a partir del tiempo real de Renfe (GTFS-RT, CC BY 4.0 · Origen de los datos: Renfe Operadora).
 
      node tools/rutas/incidencias.mjs captura          una captura de trip_updates (AV/LD/MD y Cercanías); cada 5 min
-     node tools/rutas/incidencias.mjs cierre           cierra los días ya terminados y regenera capas/incidencias.json
-     node tools/rutas/incidencias.mjs agrega           solo regenera capas/incidencias.json
+     node tools/rutas/incidencias.mjs cierre           cierra los días ya terminados y regenera capas/incidencias-rt.json
+     node tools/rutas/incidencias.mjs agrega           solo regenera capas/incidencias-rt.json
 
    Qué se mide (por tren y día de circulación, con el GTFS estático de ESE día; nunca con el de hoy para días pasados):
    · programado: viaje del GTFS activo ese día, sin los que quedan dentro de un corte de tools/rutas/cortes.json (sup);
@@ -21,8 +21,8 @@
    sin ningún tren SCHEDULED (el feed a veces solo trae cancelados durante horas) no cuenta como captura.
 
    Estado de trabajo (no versionado): .cache/rt/ (prog-AAAA-MM-DD.json, obs-AAAA-MM-DD.json). En GitHub Actions se conserva
-   entre ejecuciones con actions/cache. Salida versionada: visor-ferroviario/capas/incidencias/AAAA-MM.json (un vector por ruta
-   y día) y visor-ferroviario/capas/incidencias.json (agregados de 1, 7, 30 y 365 días que lee la tabla de rutas). */
+   entre ejecuciones con actions/cache. Salida versionada: visor-ferroviario/capas/incidencias-rt/AAAA-MM.json (un vector por ruta
+   y día) y visor-ferroviario/capas/incidencias-rt.json (agregados de 1, 7, 30 y 365 días que lee la tabla de rutas). */
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -30,7 +30,7 @@ import {readGtfs,serviceDays,minutes} from './gtfs.mjs';
 import {SOURCES,BRAND,afectaCorte} from '../build-rutas.mjs';
 
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..','..');
-const STATE=path.join(ROOT,'.cache','rt'),V=path.join(ROOT,'visor-ferroviario','capas'),OUTDIR=path.join(V,'incidencias');
+const STATE=path.join(ROOT,'.cache','rt'),V=path.join(ROOT,'visor-ferroviario','capas'),OUTDIR=path.join(V,'incidencias-rt');
 const FEEDS={ld:'https://gtfsrt.renfe.com/trip_updates_LD.json',cer:'https://gtfsrt.renfe.com/trip_updates.json'};
 const STATIC={ld:SOURCES.renfe.url,cer:SOURCES.cercanias.url};
 const UA={'user-agent':'borjamora.es visor ferroviario (portfolio)'};
@@ -182,8 +182,8 @@ function agrega(){
       sin_dato:'programado y nunca visto: el feed solo informa de una parte de los trenes; no es una cancelación',
       dia_valido:'≥ '+MIN_CAPTURAS+' de las '+ESPERADAS+' capturas esperadas entre las 04:00 y las 24:00 y ningún hueco de más de '+MAX_HUECO+' min'},
     sin_tiempo_real:['iryo','ouigo'],...(a||{primero:null,ultimo:null,cobertura:{},rutas:{}})};
-  writeJson(path.join(V,'incidencias.json'),out);
-  console.log('Escrito visor-ferroviario/capas/incidencias.json ·',a?a.primero+' – '+a.ultimo+' · '+Object.keys(a.rutas).length+' rutas':'sin días cerrados');
+  writeJson(path.join(V,'incidencias-rt.json'),out);
+  console.log('Escrito visor-ferroviario/capas/incidencias-rt.json ·',a?a.primero+' – '+a.ultimo+' · '+Object.keys(a.rutas).length+' rutas':'sin días cerrados');
 }
 
 if(process.argv[1]&&fileURLToPath(import.meta.url)===path.resolve(process.argv[1])){

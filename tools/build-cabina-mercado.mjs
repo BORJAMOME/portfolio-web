@@ -9,6 +9,8 @@
    - INE · Estadística de Transporte de Viajeros, tabla 20239, API wstempus (viajeros mensuales por tipo de servicio).
    - CNMC Data · ds_24402 (mercancías por operador; CC BY-SA 4.0).
    - Eurostat · tran_hv_psmod y tran_hv_frmod (reparto modal de viajeros y de mercancías por tierra).
+   - CNMC Data · ds_24408 (viajeros de alta velocidad por corredor, para localizar la caída de 2026).
+   - INE · tablas 24366 (accidentes significativos) y 24365 (tren-km, en miles; se contrasta con Eurostat rail_tf_trainmv).
 
      node tools/build-cabina-mercado.mjs     descarga y escribe capas/mercado.json
    Después: node tools/build-cabina.mjs y node tools/version-assets.mjs. */
@@ -92,14 +94,47 @@ async function modal(ds, filt) {
 }
 const ue = {viajeros: await modal('tran_hv_psmod', 'vehicle=TRN'), mercancias: await modal('tran_hv_frmod', 'tra_mode=RAIL')};
 
+/* ── Choque de la alta velocidad en 2026: viajeros por corredor en el 1T, frente al 1T de 2025 (CNMC ds_24408) ──
+   Sirve para ver dónde se concentra la caída. La causa la da la fuente oficial de EVENTOS, no estos datos. */
+const C8 = await getJSON('https://catalogodatos.cnmc.es/datastore/dump/9eab841c-b915-4d53-907a-d09f600fafef?format=json');
+if (C8.fields.map(x => x.id).join() !== '_id,trimestre,corredor,empresa,plazas_ofertadas,viajeros') throw new Error('CNMC ds_24408: han cambiado los campos');
+const porCor = {};
+for (const [, tri, c, , , v] of C8.records) (porCor[c] ??= {})[tri] = (porCor[c][tri] || 0) + (+v || 0);
+viajeros.choque_av.corredores_1t = Object.entries(porCor).filter(([, s]) => s['2025T1'] && s['2026T1'])
+  .map(([c, s]) => ({corredor: c.replace('-', '–'), var: round(100 * (s['2026T1'] / s['2025T1'] - 1))})).sort((a, b) => a.var - b.var);
+// Hecho con fuente oficial que coincide en fecha y corredor con la caída.
+viajeros.choque_av.evento = {fecha: '2026-01-18', nombre: 'accidente de Adamuz (Córdoba)', consecuencia: 'tras el que se interrumpió la línea de alta velocidad Madrid–Andalucía',
+  fuente: 'Ministerio de Transportes, comunicado del 20-01-2026', url: 'https://www.transportes.gob.es/ministerio/comunicacion/sala-prensa/mar-20012026-0819'};
+
+/* ── Seguridad: accidentes significativos por millón de tren-km (INE, tablas 24366 y 24365) ──
+   El INE da los tren-km sin escala («Trenes-Km»), pero son miles: coinciden con Eurostat rail_tf_trainmv
+   (THS_TRKM) año a año. Se comprueba aquí para no publicar una tasa mil veces desviada. */
+const anual = async cod => new Map((await getJSON(`https://servicios.ine.es/wstempus/js/ES/DATOS_SERIE/${cod}?nult=15`)).Data.filter(x => x.Valor !== null).map(x => [x.Anyo, x.Valor]));
+const [tkmV, tkmM] = [await anual('TF607'), await anual('TF605')];
+const ACC = {TF631: 'colisiones', TF629: 'descarrilamientos', TF627: 'pasos_a_nivel', TF625: 'arrollamientos', TF623: 'incendios', TF621: 'otros'};
+const acc = {};
+for (const [cod, k] of Object.entries(ACC)) for (const [y, v] of await anual(cod)) (acc[y] ??= {})[k] = v;
+const es = await getJSON('https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/rail_tf_trainmv?format=JSON&lang=EN&geo=ES&train=TOTAL&unit=THS_TRKM&sinceTimePeriod=2014');
+const esT = Object.fromEntries(Object.entries(es.dimension.time.category.index).map(([t, i]) => [+t, es.value[i]]));
+const seguridad = {anual: [...tkmV.keys()].filter(y => tkmM.has(y) && acc[y] && Object.keys(acc[y]).length === 6).sort((a, b) => a - b).map(y => {
+  const tkm = tkmV.get(y) + tkmM.get(y), n = Object.values(acc[y]).reduce((a, b) => a + b, 0);
+  if (esT[y] != null && Math.abs(tkm - esT[y]) > 0.01 * esT[y]) throw new Error(`INE tren-km ${y} (${tkm}) ≠ Eurostat (${esT[y]}): revisar la unidad`);
+  return {anio: y, accidentes: n, tipos: acc[y], trenkm_mill: round(tkm / 1000, 1), tasa: round(n / (tkm / 1000), 3)};
+})};
+if (seguridad.anual.length < 5) throw new Error('INE accidentes: serie demasiado corta');
+const ref = seguridad.anual.filter(x => x.anio >= 2014 && x.anio <= 2019);
+seguridad.ref_2014_2019 = round(ref.reduce((a, x) => a + x.tasa, 0) / ref.length, 3);
+
 const out = {
   version: 1, generado_con: 'tools/build-cabina-mercado.mjs', descargado: new Date().toISOString().slice(0, 10),
   fuentes: {
     ine: {label: 'INE · Estadística de Transporte de Viajeros (tabla 20239)', url: 'https://www.ine.es/jaxiT3/Tabla.htm?t=20239', hasta: ultimo},
     cnmc_mercancias: {label: 'CNMC Data · mercancías por operador (ds_24402), CC BY-SA 4.0', url: 'https://catalogodatos.cnmc.es/dataset/ds_24402_1', hasta: mercancias.anual.at(-1).anio},
-    eurostat: {label: 'Eurostat · reparto modal por tierra (tran_hv_psmod, tran_hv_frmod)', url: 'https://ec.europa.eu/eurostat/databrowser/view/tran_hv_psmod/default/table', actualizado: ue.viajeros.actualizado}
+    eurostat: {label: 'Eurostat · reparto modal por tierra (tran_hv_psmod, tran_hv_frmod)', url: 'https://ec.europa.eu/eurostat/databrowser/view/tran_hv_psmod/default/table', actualizado: ue.viajeros.actualizado},
+    cnmc_corredores: {label: 'CNMC Data · viajeros de alta velocidad por corredor (ds_24408), CC BY-SA 4.0', url: 'https://catalogodatos.cnmc.es/dataset/ds_24408_1'},
+    ine_seguridad: {label: 'INE · accidentes ferroviarios (tabla 24366) y tren-km (tabla 24365)', url: 'https://www.ine.es/jaxiT3/Tabla.htm?t=24366', hasta: seguridad.anual.at(-1).anio}
   },
-  viajeros, mercancias, ue
+  viajeros, mercancias, ue, seguridad
 };
 // Si los datos no han cambiado, no se reescribe: así la tarea semanal no hace un commit solo por la fecha de descarga.
 const sinFecha = o => JSON.stringify({...o, descargado: null});

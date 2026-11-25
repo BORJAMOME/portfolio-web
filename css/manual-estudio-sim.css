@@ -1,0 +1,153 @@
+/* ═══════════════════════════════════════════════
+   css/manual-estudio-sim.css: simuladores y bloque previo del Manual de estudio
+   ─────────────────────────────────────────────────
+   Se carga dentro del Shadow DOM del manual (area-privada-estudio.js), después de claude-manual.css y manual-estudio.css.
+   Copia literal de simuladores.css del manual local (más .sim-data oculto): si cambia allí, se vuelve a copiar.
+   manual-estudio/simuladores.js es copia literal de simuladores.js.
+   ═══════════════════════════════════════════════ */
+.sim-data{display:none}
+/* Simuladores, organigrama y bloque previo al vocabulario (simuladores.js). Solo tokens del sistema de diseño. */
+.sim-fig{overflow:visible}
+.sim{padding:18px 20px 16px;background:var(--card)}
+.sim-ns{color:var(--muted);font-size:14px}
+.sim-w{display:grid;grid-template-columns:minmax(250px,320px) minmax(0,1fr);gap:22px;align-items:start}
+.sim-ctrl{display:flex;flex-direction:column;gap:12px;min-width:0}
+.sim-g{border:.5px solid var(--line);border-radius:var(--r);padding:10px 12px 12px;margin:0;display:flex;flex-direction:column;gap:12px;background:var(--card-2);min-width:0}
+.sim-g legend{font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:600;color:var(--label);padding:0 4px}
+.sim-c label{display:flex;flex-direction:column;gap:1px;margin-bottom:4px}
+.sim-cl{font-size:13.5px;font-weight:600;color:var(--ink)}
+.sim-ch{font-size:12px;color:var(--muted)}
+.sim-ci{display:flex;align-items:center;gap:10px}
+.sim-ci input[type=range]{flex:1;min-width:0;accent-color:var(--accent);height:28px}
+.sim-cn{display:inline-flex;align-items:center;gap:4px}
+.sim-cn input{width:74px;font:inherit;font-size:13.5px;padding:5px 6px;border:.5px solid var(--line-2);border-radius:7px;background:var(--card);color:var(--ink);text-align:right}
+.sim-cu{font-size:12px;color:var(--muted);white-space:nowrap}
+.sim-chk{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--text);line-height:1.4}
+.sim-chk input{margin-top:3px;accent-color:var(--accent)}
+.sim-reset{align-self:flex-start;min-height:36px;padding:0 14px;border-radius:9px;border:.5px solid var(--line-2);background:var(--card);color:var(--accent-ink);font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.sim-reset:hover,.sim-seg button:hover{border-color:var(--accent)}
+.sim-seg{display:flex;flex-wrap:wrap;gap:6px}
+.sim-seg button{min-height:34px;padding:0 12px;border-radius:9px;border:.5px solid var(--line-2);background:var(--card);color:var(--muted);font:inherit;font-size:13px;font-weight:500;cursor:pointer}
+.sim-seg button.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600}
+.sim input:focus-visible,.sim button:focus-visible,.sim select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sim-out{min-width:0;display:flex;flex-direction:column;gap:14px}
+.sim-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.sim-k{border:.5px solid var(--line);border-radius:var(--r);padding:9px 12px;background:var(--card);display:flex;flex-direction:column;gap:2px;min-width:0}
+.sim-kl{font-size:11px;letter-spacing:.6px;text-transform:uppercase;font-weight:600;color:var(--label)}
+.sim-k strong{font-family:var(--serif);font-size:20px;font-weight:500;color:var(--ink);line-height:1.2}
+.sim-ks{font-size:12px;color:var(--muted)}
+.sim-k-acc{background:var(--accent-soft);border-color:var(--accent-2)}
+.sim-k-pos{background:var(--positive-soft);border-color:var(--positive)}
+.sim-k-pos strong{color:var(--positive-ink)}
+.sim-k-neg{background:var(--negative-soft);border-color:var(--negative)}
+.sim-k-neg strong{color:var(--negative-ink)}
+.sim-chart{min-width:0}
+.sim-2c{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.sim-svg{width:100%;height:auto;display:block;overflow:visible}
+.sim-msg{background:var(--accent-soft-2);border-left:3px solid var(--accent-2);border-radius:var(--r-sm);padding:10px 14px;font-size:15px;line-height:1.6}
+.sim-msg p{margin:0 0 6px}
+.sim-msg p:last-child{margin:0}
+.sim-note{font-size:12.5px;color:var(--muted);margin:12px 0 0;line-height:1.5}
+.libro .sim-tbl{font-size:13.5px}
+.sim-tbl td,.sim-tbl th{white-space:nowrap}
+.sv-t,.sv-tick,.sv-val,.sv-axl,.sv-lab{font-family:var(--sans);fill:var(--muted)}
+.sv-tick{font-size:11.5px}
+.sv-axl{font-size:12px;font-weight:600;fill:var(--label)}
+.sv-val{font-size:12.5px;font-weight:600;fill:var(--ink)}
+.sv-lab{font-size:13.5px;font-weight:600;fill:var(--ink)}
+.sv-grid{stroke:var(--line);stroke-width:1}
+.sv-base{stroke:var(--line-2);stroke-width:1.2}
+.sv-f1{fill:var(--lab1)}.sv-f2{fill:var(--lab2)}.sv-f3{fill:var(--lab3)}.sv-f4{fill:var(--lab4)}
+.sv-l1{fill:none;stroke:var(--lab1);stroke-width:2.6;stroke-linejoin:round}
+.sv-l2{fill:none;stroke:var(--lab2);stroke-width:2;stroke-dasharray:6 4}
+.sv-l3{fill:none;stroke:var(--lab3);stroke-width:2.6}
+.sv-c1{fill:var(--lab1)}.sv-c2{fill:var(--lab2)}.sv-c3{fill:var(--lab3)}
+.sv-dash{stroke:var(--line-2);stroke-width:1.2;stroke-dasharray:4 4}
+.sv-pA{fill:var(--card);stroke:var(--lab1);stroke-width:2.5}
+.sv-pB{fill:var(--lab2);stroke:var(--card);stroke-width:2}
+@media(max-width:860px){
+  .sim{padding:14px 12px}
+  .sim-w,.sim-2c{grid-template-columns:minmax(0,1fr)}
+}
+
+/* ── Organigrama ── */
+.org-top{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.org-hint{margin:0;font-size:14px;color:var(--muted)}
+.org-q{font:inherit;font-size:14px;padding:8px 10px;border-radius:9px;border:.5px solid var(--line-2);background:var(--card);color:var(--ink);max-width:100%;width:620px}
+.org-leg{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:12.5px;color:var(--text)}
+.org-lt{font-weight:600;color:var(--label)}
+.org-li{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.org-li input{accent-color:var(--accent)}
+.org-li svg{width:28px;height:8px}
+.org-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,380px);gap:18px;align-items:start}
+.org-stage{position:relative;min-width:0}
+.org-lines{position:absolute;left:0;top:0;pointer-events:none;z-index:2;overflow:visible}
+.org-tiers{display:flex;flex-direction:column;gap:10px;position:relative;z-index:1}
+.org-tier{border:.5px solid var(--line);border-radius:var(--r);padding:8px 10px 10px;background:var(--card-2)}
+.org-tl{font-size:10.5px;letter-spacing:1px;text-transform:uppercase;font-weight:600;color:var(--label);margin-bottom:6px}
+.org-nodes{display:flex;flex-wrap:wrap;gap:8px}
+.org-n{display:flex;flex-direction:column;align-items:flex-start;gap:1px;text-align:left;min-height:40px;padding:6px 10px;border-radius:9px;border:1.5px solid var(--line-2);background:var(--card);color:var(--ink);font:inherit;cursor:pointer;transition:opacity .2s,border-color .2s,box-shadow .2s;max-width:230px}
+.org-nn{font-size:13px;font-weight:600;line-height:1.25}
+.org-ns{font-size:11px;color:var(--muted);line-height:1.25}
+.org-k-adm{border-color:var(--lab1)}
+.org-k-reg{border-color:var(--lab4)}
+.org-k-inf{border-color:var(--lab3)}
+.org-k-ope{border-color:var(--lab2)}
+.org-k-eco{border-style:dashed}
+.org-n:hover{box-shadow:var(--shadow-2)}
+.org-n:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.org-n.is-sel{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.org-n.is-sel .org-ns{color:var(--on-accent)}
+.org-n.is-rel{box-shadow:0 0 0 3px var(--accent-soft)}
+.org-n.is-ans{box-shadow:0 0 0 3px var(--support)}
+.org-n.is-dim{opacity:.38}
+.org-e{fill:none;stroke-width:2.2}
+.org-e-dep{stroke:var(--lab1)}
+.org-e-ads{stroke:var(--lab1);stroke-dasharray:7 4}
+.org-e-tit{stroke:var(--lab5);stroke-width:3}
+.org-e-sup{stroke:var(--lab4);stroke-dasharray:2 4;stroke-linecap:round;stroke-width:2.6}
+.org-e-con{stroke:var(--lab3)}
+.org-e-coo{stroke:var(--muted);stroke-dasharray:10 4 2 4}
+.org-e-ope{stroke:var(--lab2);stroke-dasharray:5 3}
+.org-mk{stroke:none}
+.org-mk-dep,.org-mk-ads{fill:var(--lab1)}.org-mk-tit{fill:var(--lab5)}.org-mk-sup{fill:var(--lab4)}.org-mk-con{fill:var(--lab3)}.org-mk-coo{fill:var(--muted)}.org-mk-ope{fill:var(--lab2)}
+.org-card{border:.5px solid var(--line);border-radius:var(--r-lg);padding:14px 16px;background:var(--card);font-size:14px;line-height:1.55;position:sticky;top:130px;max-height:calc(100vh - 150px);overflow:auto}
+.org-card h5{font-family:var(--serif);font-size:20px;font-weight:500;margin:0 0 8px;color:var(--ink)}
+.org-dl{margin:0;display:flex;flex-direction:column;gap:8px}
+.org-dl dt{font-size:10.5px;letter-spacing:.9px;text-transform:uppercase;font-weight:600;color:var(--label)}
+.org-dl dd{margin:2px 0 0}
+.org-dl ul{margin:2px 0 0;padding-left:18px}
+.org-dl ul.org-rels{padding-left:0;list-style:none}
+.org-rels li{margin-bottom:5px}
+.org-tag{display:inline-block;font-size:10.5px;font-weight:600;border-radius:5px;padding:1px 6px;color:var(--on-accent)}
+.org-tag-dep,.org-tag-ads{background:var(--lab1)}.org-tag-tit{background:var(--lab5);color:#1D2638}.org-tag-sup{background:var(--lab4)}.org-tag-con{background:var(--lab3)}.org-tag-coo{background:var(--muted)}.org-tag-ope{background:var(--lab2)}
+.org-web{margin:10px 0 0;font-size:13.5px}
+.org-web a{color:var(--accent-ink);font-weight:600}
+.org-ansb{background:var(--support-soft);border-radius:var(--r-sm);padding:8px 12px;margin-bottom:10px}
+.org-ansb p{margin:4px 0 0}
+@media(max-width:980px){.org-body{grid-template-columns:minmax(0,1fr)}.org-card{position:static;max-height:none}}
+@media(max-width:640px){.org-n{max-width:100%}.org-nn{font-size:12.5px}}
+
+/* ── Bloque previo al vocabulario y enlaces oficiales del vocabulario ── */
+.pre-libro{font-size:16px}
+.pre-libro .fig{margin-top:6px}
+.gl dd.vlk{font-size:13px;margin-top:6px;color:var(--muted)}
+.gl dd.vlk a{color:var(--accent-ink);font-weight:600}
+
+/* ── Figuras con dos versiones (@svg ancha+estrecha): horizontal grande en pantallas anchas, vertical en el móvil ──
+   Decide el ancho real de la figura (container query), no el de la ventana, para que funcione también con el índice lateral. */
+.fig.fig-dual{max-width:none;container-type:inline-size}
+.fig-dual .fig-sc{background:#fff;text-align:center;overflow:hidden}
+.fig-dual .fig-img{min-width:0;width:100%;height:auto;display:block;margin:0 auto}
+.fig-dual .fig-ancho .fig-img{max-width:1320px}
+.fig-dual .fig-movil{display:none}
+.fig-dual .fig-movil .fig-img{max-width:520px}
+@container (max-width: 760px){
+  .fig-dual .fig-ancho{display:none}
+  .fig-dual .fig-movil{display:block}
+}
+
+/* ── Cuenta paso a paso (elasticidad) ── */
+.sim-st{font-size:12px;letter-spacing:.8px;text-transform:uppercase;font-weight:600;color:var(--label);margin:16px 0 6px}
+.sim-steps td,.sim-steps th{white-space:normal;vertical-align:top}
+.sim-steps td:first-child{width:3em;text-align:center;font-weight:600;color:var(--accent-ink)}

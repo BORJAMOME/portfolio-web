@@ -74,6 +74,8 @@
     view.sort((a,b)=>{const x=c.val(a),y=c.val(b);if(x===y)return b.sem-a.sem;if(x===null||x===undefined)return 1;if(y===null||y===undefined)return -1;
       return (typeof x==='string'?x.localeCompare(y,'es'):x-y)*dir;});
     shown=PAGE;writeHash();renderKpis();renderTable();
+    window.RutasHeatmapSelection={rows:view,stations:ST,reference:R.referencia,filters:s};
+    window.dispatchEvent(new Event('rutas-selection'));
   }
 
   /* ── resumen de la selección ── */
@@ -247,7 +249,7 @@
 
   /* ── CNMC: cada ruta de alta velocidad comercial con Madrid en un extremo, a su corredor (capas/cnmc.json) ── */
   let CN=null;
-  /* ── incidencias (capas/incidencias.json, tools/rutas/incidencias.mjs): vector [prog, vistos, canc, contra, ret5, ret15, sup] ── */
+  /* ── incidencias (capas/incidencias-rt.json, tools/rutas/incidencias.mjs): vector [prog, vistos, canc, contra, ret5, ret15, sup] ── */
   let INC=null;
   const INC_MIN=10,incOf=(r,k='d30')=>INC?.rutas?.[r.id]?.[k]||null;
   function incPct(r,what,k='d30'){const a=incOf(r,k);if(!a)return null;const [,vis,canc,,ret5,ret15]=a.v;
@@ -291,7 +293,7 @@
     catch{$('#ref').textContent='No se han podido cargar las rutas.';$('#tbody').replaceChildren();const p=el('p','cb-empty','No se han podido cargar los datos de las rutas. Recarga la página.');$('#tabla').append(p);return;}
     ST=R.estaciones;CORTES=new Map((R.cortes||[]).map(c=>[c.id,c]));
     try{const c=await fetch('capas/cnmc.json',{cache:'no-cache'});if(c.ok)CN=await c.json();}catch{CN=null;}
-    try{const c=await fetch('capas/incidencias.json',{cache:'no-cache'});if(c.ok)INC=await c.json();}catch{INC=null;}
+    try{const c=await fetch('capas/incidencias-rt.json',{cache:'no-cache'});if(c.ok)INC=await c.json();}catch{INC=null;}
     // En Cercanías la línea (C1, R2…) ya está en la columna Servicio: el título solo lleva los extremos, para que quepa en una línea.
     rows=R.rutas.map(r=>{const o=ST[r.o]?.n,d=ST[r.d]?.n;const title=r.fam==='Cercanías'?(o&&d?o+' – '+d:r.linea):o+' → '+d;
       return {...r,_title:title,_name:r.fam==='Cercanías'?r.marca+' '+r.nuc:o+' → '+d+' ('+r.marca+')',_sub:r.fam==='Cercanías'?r.marca+' · Cercanías '+r.nuc:r.marca+' · '+r.op,
