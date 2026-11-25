@@ -30,6 +30,7 @@ window.APEstudio = (function () {
   function plain(h) { return String(h == null ? '' : h).replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim(); }
   function nb(s) { return String(s).replace(/(\d) (%|€|km\b|h\b|min\b)/g, '$1&nbsp;$2'); }
   function R(path) { return '#/estudio' + (path ? '/' + path : ''); }
+  function NUM(t) { return t.lab || t.num; }   // etiqueta visible del capítulo («11.A»); num solo ordena
   function lsGet(k, d) { try { var v = localStorage.getItem(P + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
   function lsSet(k, v) { try { localStorage.setItem(P + k, JSON.stringify(v)); } catch (e) { /* sin almacenamiento: funciona igual, sin recordar */ } }
   function assetUrl(name, fallback) {
@@ -819,7 +820,7 @@ window.APEstudio = (function () {
     var idx = [];
     d.TOPICS.forEach(function (t) {
       idx.push({ k: 'Capítulo', n: t.t, d: t.q, h: R('tema/' + t.id), s: topicText(t), txt: '' });
-      d.BOOK[t.id].secs.forEach(function (s) { idx.push({ k: 'Apartado', n: s.t, d: 'Cap. ' + t.num + ' · ' + t.t, h: R('tema/' + t.id + '/' + s.id), s: norm(s.t + ' ' + (s.txt || '')), txt: s.txt || '' }); });
+      d.BOOK[t.id].secs.forEach(function (s) { idx.push({ k: 'Apartado', n: s.t, d: 'Cap. ' + NUM(t) + ' · ' + t.t, h: R('tema/' + t.id + '/' + s.id), s: norm(s.t + ' ' + (s.txt || '')), txt: s.txt || '' }); });
     });
     d.INDIC.forEach(function (x) { idx.push({ k: 'Indicador', n: x.n, d: x.q, h: R('indicadores/' + x.id), s: indText(x), txt: '' }); });
     d.ALLG.forEach(function (g) { idx.push({ k: 'Glosario', n: g.k, d: plain(g.d), h: gHref(g), s: d.GBY ? gText(g) : norm(g.k + ' ' + g.d), txt: '' }); });
@@ -909,7 +910,7 @@ window.APEstudio = (function () {
     return '<div class="blocks">' + D.BLOCKS.map(function (b) {
       var ts = D.TOPICS.filter(function (t) { return t.b === b.id; }), done = ts.filter(function (t) { return PROG[t.id] === 2; }).length;
       return '<div class="bcard"><div class="bh"><span class="bn">' + esc(b.n) + '</span><div><h3>' + esc(b.t) + '</h3><p class="bs">' + esc(b.s) + '</p></div></div><ol class="bl">' +
-        ts.map(function (t) { return '<li><a class="tlink" href="' + R('tema/' + t.id) + '"><span class="ti">' + esc(t.num) + '</span><span class="tt">' + esc(t.t) + '</span>' + dot(t.id) + '</a></li>'; }).join('') +
+        ts.map(function (t) { return '<li><a class="tlink" href="' + R('tema/' + t.id) + '"><span class="ti">' + esc(NUM(t)) + '</span><span class="tt">' + esc(t.t) + '</span>' + dot(t.id) + '</a></li>'; }).join('') +
         '</ol><div class="bp"><span>' + done + ' de ' + ts.length + ' entendidos</span><span class="bar"><i data-w="' + (ts.length ? Math.round(done / ts.length * 100) : 0) + '"></i></span></div></div>';
     }).join('') + '</div>';
   }
@@ -927,7 +928,7 @@ window.APEstudio = (function () {
     v.innerHTML =
       '<section class="cover-hero"><div class="cover-copy"><div class="eyebrow">Manual visual · edición ' + esc(M.edition || '') + '</div><h1>' + clean(M.heroTitle || esc(M.title || '')) + '</h1>' +
       '<p class="lead">Una guía visual para entender la infraestructura, los servicios y la operación del ferrocarril en España.</p>' +
-      '<div class="hero-cta"><a class="btn solid" href="' + R('tema/' + next.id) + '">' + (done ? 'Seguir por el capítulo ' : 'Empezar por el capítulo ') + esc(next.num) + ' →</a><a class="btn" href="' + R('temas') + '">Explorar capítulos</a></div>' +
+      '<div class="hero-cta"><a class="btn solid" href="' + R('tema/' + next.id) + '">' + (done ? 'Seguir por el capítulo ' : 'Empezar por el capítulo ') + esc(NUM(next)) + ' →</a><a class="btn" href="' + R('temas') + '">Explorar capítulos</a></div>' +
       '<div class="hero-stats">' + stats.map(function (s) { return '<div class="hs"><div class="n">' + s[1] + '</div><div class="l">' + s[0] + '</div></div>'; }).join('') + '</div></div>' +
       '</section>' +
       '<section class="network-section" aria-labelledby="network-title"><div class="sec-h"><h2 id="network-title">La red ferroviaria de España</h2><p>Corredores, marcas, servicios, trenes turísticos y población de la España peninsular.</p></div>' +
@@ -954,7 +955,7 @@ window.APEstudio = (function () {
     var list = D.TOPICS.filter(function (t) { return !q || topicText(t).indexOf(q) > -1; });
     $('#tcount', v).textContent = list.length + (list.length === 1 ? ' capítulo' : ' capítulos');
     $('#tcards', v).innerHTML = list.length ? list.map(function (t) {
-      return '<a class="card" href="' + R('tema/' + t.id) + '"><div class="cb">Capítulo ' + esc(t.num) + '</div><h3>' + esc(t.t) + '</h3><p class="cq">' + esc(t.q) + '</p><div class="dmeta me-push">' + dot(t.id) + '</div></a>';
+      return '<a class="card" href="' + R('tema/' + t.id) + '"><div class="cb">Capítulo ' + esc(NUM(t)) + '</div><h3>' + esc(t.t) + '</h3><p class="cq">' + esc(t.q) + '</p><div class="dmeta me-push">' + dot(t.id) + '</div></a>';
     }).join('') : '<p class="lead">Ningún capítulo coincide con la búsqueda.</p>';
   }
 
@@ -973,7 +974,7 @@ window.APEstudio = (function () {
       '<div class="iex"><div class="iexh"><span class="ik">Ejemplo</span><span class="chip ' + o[0] + '">' + o[1] + '</span></div><p>' + clean(nb(x.ej)) + '</p></div>' +
       '<p class="itrap"><b>Ojo:</b> ' + clean(nb(x.trap)) + '</p>' +
       (x.dax ? '<details class="idax"><summary>Si lo calcularas en Power BI</summary><pre class="dcode"><code>' + esc(x.dax) + '</code></pre></details>' : '') +
-      (top && ID.test(String(x.a)) ? '<a class="ilink" href="' + R('tema/' + x.t + '/' + x.a) + '">Leer en el capítulo ' + esc(top.num) + ' →</a>' : '') +
+      (top && ID.test(String(x.a)) ? '<a class="ilink" href="' + R('tema/' + x.t + '/' + x.a) + '">Leer en el capítulo ' + esc(NUM(top)) + ' →</a>' : '') +
       (x.g && D.GBY && D.GBY[x.g] ? '<a class="ilink" href="' + R('glosario/' + x.g) + '">Ver en el glosario →</a>' : '') + '</article>';
   }
   function renderIndicadores(v, anchor) {
@@ -1047,7 +1048,7 @@ window.APEstudio = (function () {
   function gSecLabel(t, a) {
     var top = D.byId[t]; if (!top || !ID.test(String(a))) return null;
     var s = a === 's-vocab' ? 'vocabulario básico' : ((D.BOOK[t].secs.filter(function (x) { return x.id === a; })[0] || {}).t || '');
-    return 'Tema ' + top.num + (s ? ' · ' + s : '');
+    return 'Tema ' + NUM(top) + (s ? ' · ' + s : '');
   }
   function gSiglas(g) { return (g.al || []).filter(function (a) { return a !== g.k && String(a).length <= 9 && (/[A-Z].*[A-Z]/.test(a) || /[·.\/]/.test(a)); }); }
   /* Tarjeta del listado: término, siglas y definición. El resto (contexto, ejemplo, matiz, esquema, «se confunde con»,
@@ -1227,8 +1228,8 @@ window.APEstudio = (function () {
       return '<li class="' + (x[2] === 2 ? 'sub' : '') + '"><a href="' + R('tema/' + t.id + '/' + x[0]) + '" data-sec="' + esc(x[0]) + '">' + esc(x[1]) + '</a></li>';
     }).join('') + '</ol><div class="tprog"><div class="l">Tu progreso: <span id="progLbl"></span></div><button type="button" class="pbtn" id="progBtn"></button></div>';
 
-    $('#detail').innerHTML = '<div class="dtop"><a class="dback" href="' + R('temas') + '">← Capítulos</a><span class="sep">/</span><span>' + esc(b.t) + '</span><span class="sep">/</span><span>Capítulo ' + esc(t.num) + '</span></div>' +
-      '<div class="dhero"><div><h1>' + esc(t.t) + '</h1><div class="dmeta"><span class="chip acc">Capítulo ' + esc(t.num) + '</span><span class="chip">' + esc(t.nsec) + ' apartados</span></div><p class="dhero-q">' + esc(t.q) + '</p></div>' +
+    $('#detail').innerHTML = '<div class="dtop"><a class="dback" href="' + R('temas') + '">← Capítulos</a><span class="sep">/</span><span>' + esc(b.t) + '</span><span class="sep">/</span><span>Capítulo ' + esc(NUM(t)) + '</span></div>' +
+      '<div class="dhero"><div><h1>' + esc(t.t) + '</h1><div class="dmeta"><span class="chip acc">Capítulo ' + esc(NUM(t)) + '</span><span class="chip">' + esc(t.nsec) + ' apartados</span></div><p class="dhero-q">' + esc(t.q) + '</p></div>' +
       '</div>' +
       '<div class="sbar" id="sbar"><button type="button" class="sb-btn" id="tocBtn" aria-expanded="false" aria-controls="stoc"><span aria-hidden="true">☰</span> Índice<span class="sb-now" id="tocNow"></span></button>' +
       '<button type="button" class="sb-btn" id="notesBtn" aria-expanded="false" aria-label="Mis marcas y notas">✎ Mis notas<span class="sb-n" id="notesN"></span></button>' +
