@@ -12,5 +12,31 @@
     "Remove six contextual railway layers; atlas owns railway symbology",
     "Keep original Positron palette, zoom hierarchy and geographic layers"
   ],
-  "hash_normalization": "UTF-8; LF line endings"
+  "hash_normalization": "UTF-8; LF line endings",
+  "extra_styles": {
+    "versatiles-gris": {
+      "upstream": "https://tiles.versatiles.org/assets/styles/gray/style.json",
+      "upstream_style_sha256": "d7349f86d1689548491e91cdf77f1779df262b41b151abc11d6737acd40493e3",
+      "adapted_style_sha256": "63c482b2a69c5ec43987c711901f134087aa5b51b3a56501849d36845a581738",
+      "checked": "2026-11-25",
+      "adaptations": [
+        "Prefixed IDs and sources",
+        "Noto Sans Regular from local glyphs; no sprite icons or patterns",
+        "Spanish labels with name_es/name fallback",
+        "Railway and tram layers removed; atlas owns railway symbology"
+      ]
+    },
+    "versatiles-color": {
+      "upstream": "https://tiles.versatiles.org/assets/styles/colorful/style.json",
+      "upstream_style_sha256": "7ddb9675b2548eb488976f9a163e5b94d212d1c3c15858eabf1f4858bcb08e66",
+      "adapted_style_sha256": "08487870e924058a65b318f1e99314b37fa36c64f651d1acef8e45f0fb2074e4",
+      "checked": "2026-11-25",
+      "adaptations": [
+        "Prefixed IDs and sources",
+        "Noto Sans Regular from local glyphs; no sprite icons or patterns",
+        "Spanish labels with name_es/name fallback",
+        "Railway and tram layers removed; atlas owns railway symbology"
+      ]
+    }
+  }
 }

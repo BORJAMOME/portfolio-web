@@ -1074,9 +1074,10 @@ await step('Contexto y uso: temporada y formalidad en la prenda, filtros de las 
     await page.selectOption('[data-key="sugg-occasion"]', ''); await page.waitForTimeout(150);
     eq(await items(), 1);
     const sig = [T.id, B.id, S.id].sort();
-    await page.click('[data-key="sugg-wore-0"]');
+    await page.dblclick('[data-key="sugg-wore-0"]');          // un doble toque guarda un solo registro
     await page.waitForFunction(() => /Llevado hoy/.test((document.querySelector('[data-key="sugg-worn-0"]') || {}).textContent || ''));
-    eq(db.cs_wear.length, 1); eq([db.cs_wear[0].kind, db.cs_wear[0].garment_ids.slice().sort()], ['worn', sig], 'uso mal guardado');
+    await page.waitForTimeout(300);
+    eq(db.cs_wear.length, 1, 'el doble toque guardó dos registros'); eq([db.cs_wear[0].kind, db.cs_wear[0].garment_ids.slice().sort()], ['worn', sig], 'uso mal guardado');
     eq(await page.getAttribute('[data-key="sugg-wore-0"]', 'aria-pressed'), 'true');
     await page.click('[data-key="sugg-like-0"]');
     await page.waitForFunction(() => (document.querySelector('[data-key="sugg-like-0"]') || {}).getAttribute && document.querySelector('[data-key="sugg-like-0"]').getAttribute('aria-pressed') === 'true');

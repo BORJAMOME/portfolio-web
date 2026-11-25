@@ -30,6 +30,7 @@ window.APEstudio = (function () {
   function plain(h) { return String(h == null ? '' : h).replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim(); }
   function nb(s) { return String(s).replace(/(\d) (%|€|km\b|h\b|min\b)/g, '$1&nbsp;$2'); }
   function R(path) { return '#/estudio' + (path ? '/' + path : ''); }
+  function NUM(t) { return t.lab || t.num; }   // etiqueta visible del capítulo («11.A»); num solo ordena
   function lsGet(k, d) { try { var v = localStorage.getItem(P + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
   function lsSet(k, v) { try { localStorage.setItem(P + k, JSON.stringify(v)); } catch (e) { /* sin almacenamiento: funciona igual, sin recordar */ } }
   function assetUrl(name, fallback) {
@@ -803,9 +804,11 @@ window.APEstudio = (function () {
       d.GBY[nid] = e; alias[gkey(k)] = nid; all.push(e);
     }
     d.GLOSS.forEach(function (g) { addCap(g.k, g.d, g.t, g.a, 'cap', g); });
-    d.TOPICS.forEach(function (t) { (t.vocab || []).forEach(function (v) { if (v && v[0]) addCap(v[0], v[1], t.id, 's-vocab', 'vocab', v[2]); }); });
+    d.TOPICS.forEach(function (t) { (t.vocab || []).forEach(function (v) { if (v && v[0]) addCap(v[0], v[1], t.id, 's-vocab', 'vocab', vctx(v)); }); });
     return all;
   }
+  /* contexto ampliado de una entrada del vocabulario: 5.º campo (o el 3.º en datos publicados antes, cuando era un objeto) */
+  function vctx(v) { return v[4] && typeof v[4] === 'object' ? v[4] : (v[2] && typeof v[2] === 'object' ? v[2] : null); }
   function gHref(g) { return g.id && D.GBY ? R('glosario/' + g.id) : R('tema/' + g.t + (g.a && ID.test(g.a) ? '/' + g.a : '')); }
   function gText(g) { return g._s || (g._s = norm([g.k].concat(g.al || []).join(' ') + ' ' + plain(g.d) + ' ' + plain(g.x || '') + ' ' + plain(g.c || ''))); }
 
@@ -817,7 +820,7 @@ window.APEstudio = (function () {
     var idx = [];
     d.TOPICS.forEach(function (t) {
       idx.push({ k: 'Capítulo', n: t.t, d: t.q, h: R('tema/' + t.id), s: topicText(t), txt: '' });
-      d.BOOK[t.id].secs.forEach(function (s) { idx.push({ k: 'Apartado', n: s.t, d: 'Cap. ' + t.num + ' · ' + t.t, h: R('tema/' + t.id + '/' + s.id), s: norm(s.t + ' ' + (s.txt || '')), txt: s.txt || '' }); });
+      d.BOOK[t.id].secs.forEach(function (s) { idx.push({ k: 'Apartado', n: s.t, d: 'Cap. ' + NUM(t) + ' · ' + t.t, h: R('tema/' + t.id + '/' + s.id), s: norm(s.t + ' ' + (s.txt || '')), txt: s.txt || '' }); });
     });
     d.INDIC.forEach(function (x) { idx.push({ k: 'Indicador', n: x.n, d: x.q, h: R('indicadores/' + x.id), s: indText(x), txt: '' }); });
     d.ALLG.forEach(function (g) { idx.push({ k: 'Glosario', n: g.k, d: plain(g.d), h: gHref(g), s: d.GBY ? gText(g) : norm(g.k + ' ' + g.d), txt: '' }); });
@@ -860,8 +863,8 @@ window.APEstudio = (function () {
     ctx.view.textContent = '';
     host = document.createElement('div'); host.className = 'cm-host me-host'; host.hidden = true;
     root = host.attachShadow({ mode: 'open' });
-    var pending = 2, show = function () { if (--pending <= 0) host.hidden = false; };
-    [['cm-css', './css/claude-manual.css'], ['me-css', './css/manual-estudio.css']].forEach(function (a) {
+    var pending = 3, show = function () { if (--pending <= 0) host.hidden = false; };
+    [['cm-css', './css/claude-manual.css'], ['me-css', './css/manual-estudio.css'], ['me-sim-css', './css/manual-estudio-sim.css']].forEach(function (a) {
       var link = document.createElement('link'); link.rel = 'stylesheet'; link.href = assetUrl(a[0], a[1]);
       link.addEventListener('load', show); link.addEventListener('error', show); root.appendChild(link);
     });
@@ -907,7 +910,7 @@ window.APEstudio = (function () {
     return '<div class="blocks">' + D.BLOCKS.map(function (b) {
       var ts = D.TOPICS.filter(function (t) { return t.b === b.id; }), done = ts.filter(function (t) { return PROG[t.id] === 2; }).length;
       return '<div class="bcard"><div class="bh"><span class="bn">' + esc(b.n) + '</span><div><h3>' + esc(b.t) + '</h3><p class="bs">' + esc(b.s) + '</p></div></div><ol class="bl">' +
-        ts.map(function (t) { return '<li><a class="tlink" href="' + R('tema/' + t.id) + '"><span class="ti">' + esc(t.num) + '</span><span class="tt">' + esc(t.t) + '</span>' + dot(t.id) + '</a></li>'; }).join('') +
+        ts.map(function (t) { return '<li><a class="tlink" href="' + R('tema/' + t.id) + '"><span class="ti">' + esc(NUM(t)) + '</span><span class="tt">' + esc(t.t) + '</span>' + dot(t.id) + '</a></li>'; }).join('') +
         '</ol><div class="bp"><span>' + done + ' de ' + ts.length + ' entendidos</span><span class="bar"><i data-w="' + (ts.length ? Math.round(done / ts.length * 100) : 0) + '"></i></span></div></div>';
     }).join('') + '</div>';
   }
@@ -925,7 +928,7 @@ window.APEstudio = (function () {
     v.innerHTML =
       '<section class="cover-hero"><div class="cover-copy"><div class="eyebrow">Manual visual · edición ' + esc(M.edition || '') + '</div><h1>' + clean(M.heroTitle || esc(M.title || '')) + '</h1>' +
       '<p class="lead">Una guía visual para entender la infraestructura, los servicios y la operación del ferrocarril en España.</p>' +
-      '<div class="hero-cta"><a class="btn solid" href="' + R('tema/' + next.id) + '">' + (done ? 'Seguir por el capítulo ' : 'Empezar por el capítulo ') + esc(next.num) + ' →</a><a class="btn" href="' + R('temas') + '">Explorar capítulos</a></div>' +
+      '<div class="hero-cta"><a class="btn solid" href="' + R('tema/' + next.id) + '">' + (done ? 'Seguir por el capítulo ' : 'Empezar por el capítulo ') + esc(NUM(next)) + ' →</a><a class="btn" href="' + R('temas') + '">Explorar capítulos</a></div>' +
       '<div class="hero-stats">' + stats.map(function (s) { return '<div class="hs"><div class="n">' + s[1] + '</div><div class="l">' + s[0] + '</div></div>'; }).join('') + '</div></div>' +
       '</section>' +
       '<section class="network-section" aria-labelledby="network-title"><div class="sec-h"><h2 id="network-title">La red ferroviaria de España</h2><p>Corredores, marcas, servicios, trenes turísticos y población de la España peninsular.</p></div>' +
@@ -952,7 +955,7 @@ window.APEstudio = (function () {
     var list = D.TOPICS.filter(function (t) { return !q || topicText(t).indexOf(q) > -1; });
     $('#tcount', v).textContent = list.length + (list.length === 1 ? ' capítulo' : ' capítulos');
     $('#tcards', v).innerHTML = list.length ? list.map(function (t) {
-      return '<a class="card" href="' + R('tema/' + t.id) + '"><div class="cb">Capítulo ' + esc(t.num) + '</div><h3>' + esc(t.t) + '</h3><p class="cq">' + esc(t.q) + '</p><div class="dmeta me-push">' + dot(t.id) + '</div></a>';
+      return '<a class="card" href="' + R('tema/' + t.id) + '"><div class="cb">Capítulo ' + esc(NUM(t)) + '</div><h3>' + esc(t.t) + '</h3><p class="cq">' + esc(t.q) + '</p><div class="dmeta me-push">' + dot(t.id) + '</div></a>';
     }).join('') : '<p class="lead">Ningún capítulo coincide con la búsqueda.</p>';
   }
 
@@ -971,7 +974,7 @@ window.APEstudio = (function () {
       '<div class="iex"><div class="iexh"><span class="ik">Ejemplo</span><span class="chip ' + o[0] + '">' + o[1] + '</span></div><p>' + clean(nb(x.ej)) + '</p></div>' +
       '<p class="itrap"><b>Ojo:</b> ' + clean(nb(x.trap)) + '</p>' +
       (x.dax ? '<details class="idax"><summary>Si lo calcularas en Power BI</summary><pre class="dcode"><code>' + esc(x.dax) + '</code></pre></details>' : '') +
-      (top && ID.test(String(x.a)) ? '<a class="ilink" href="' + R('tema/' + x.t + '/' + x.a) + '">Leer en el capítulo ' + esc(top.num) + ' →</a>' : '') +
+      (top && ID.test(String(x.a)) ? '<a class="ilink" href="' + R('tema/' + x.t + '/' + x.a) + '">Leer en el capítulo ' + esc(NUM(top)) + ' →</a>' : '') +
       (x.g && D.GBY && D.GBY[x.g] ? '<a class="ilink" href="' + R('glosario/' + x.g) + '">Ver en el glosario →</a>' : '') + '</article>';
   }
   function renderIndicadores(v, anchor) {
@@ -1045,7 +1048,7 @@ window.APEstudio = (function () {
   function gSecLabel(t, a) {
     var top = D.byId[t]; if (!top || !ID.test(String(a))) return null;
     var s = a === 's-vocab' ? 'vocabulario básico' : ((D.BOOK[t].secs.filter(function (x) { return x.id === a; })[0] || {}).t || '');
-    return 'Tema ' + top.num + (s ? ' · ' + s : '');
+    return 'Tema ' + NUM(top) + (s ? ' · ' + s : '');
   }
   function gSiglas(g) { return (g.al || []).filter(function (a) { return a !== g.k && String(a).length <= 9 && (/[A-Z].*[A-Z]/.test(a) || /[·.\/]/.test(a)); }); }
   /* Tarjeta del listado: término, siglas y definición. El resto (contexto, ejemplo, matiz, esquema, «se confunde con»,
@@ -1212,7 +1215,8 @@ window.APEstudio = (function () {
     body += chap(1, 'Parte 1', 'Antes de leer',
       blk('s-idea', 'La idea en una frase', '<p class="oneliner">' + esc(t.one) + '</p>') +
       blk('s-rec', 'Lo que te llevas de este capítulo', '<div class="recall"><div class="ck">Recuerda</div><ul>' + (t.rec || []).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>') +
-      (t.vocab && t.vocab.length ? blk('s-vocab', 'Vocabulario mínimo para leer el capítulo', '<p class="vintro">Palabras que el libro usa sin explicar porque las da por sabidas. Son definiciones generales, no del libro.</p><dl class="gl">' + t.vocab.map(function (v, i) { return '<div><dt>' + esc(v[0]) + '</dt><dd>' + esc(v[1]) + '</dd>' + (v[2] ? '<dd class="vbt"><button type="button" class="vbtn" data-vf="' + i + '"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="m7 14 3-3 3 3 4-5"/></svg>Ver explicación visual</button></dd>' : '') + '</div>'; }).join('') + '</dl>') : '') +
+      (t.pre ? blk('s-mapa', esc(t.pre_t || 'El mapa del capítulo'), '<div class="libro pre-libro">' + clean(t.pre) + '</div>') : '') +   // bloque previo al vocabulario (<id>.antes.md)
+      (t.vocab && t.vocab.length ? blk('s-vocab', 'Vocabulario mínimo para leer el capítulo', '<p class="vintro">Palabras que el libro usa sin explicar porque las da por sabidas. Son definiciones generales, no del libro.</p><dl class="gl">' + t.vocab.map(function (v, i) { return '<div><dt>' + esc(v[0]) + '</dt><dd>' + esc(v[1]) + '</dd>' + (typeof v[3] === 'string' && v[3] ? '<dd class="vlk">Fuente oficial: ' + clean(v[3]) + '</dd>' : '') + (typeof v[2] === 'string' && v[2] ? '<dd class="vbt"><button type="button" class="vbtn" data-vf="' + i + '"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="m7 14 3-3 3 3 4-5"/></svg>Ver explicación visual</button></dd>' : '') + '</div>'; }).join('') + '</dl>') : '') +
       (t.clean ? '' : blk('s-como', 'Cómo leer el capítulo', '<div class="call analog"><div class="ck">Guía rápida</div><div class="dbody"><p>El texto del libro está <b>completo</b> y en su orden. Debajo de los apartados que lo necesitan hay un recuadro <b>«En sencillo»</b> con la idea en llano, una analogía o un ejemplo con números; las cuentas que no son del libro lo indican.</p><p>Si ves <mark class="dudoso" title="Pasaje dudoso de la transcripción">[¿?]</mark>, es un pasaje que no se leyó con seguridad: al final del capítulo tienes la lista de dudas para contrastar con el libro.</p></div></div>')));
 
     if (!t.clean) toc.push(['ch', 'El capítulo completo']);
@@ -1224,8 +1228,8 @@ window.APEstudio = (function () {
       return '<li class="' + (x[2] === 2 ? 'sub' : '') + '"><a href="' + R('tema/' + t.id + '/' + x[0]) + '" data-sec="' + esc(x[0]) + '">' + esc(x[1]) + '</a></li>';
     }).join('') + '</ol><div class="tprog"><div class="l">Tu progreso: <span id="progLbl"></span></div><button type="button" class="pbtn" id="progBtn"></button></div>';
 
-    $('#detail').innerHTML = '<div class="dtop"><a class="dback" href="' + R('temas') + '">← Capítulos</a><span class="sep">/</span><span>' + esc(b.t) + '</span><span class="sep">/</span><span>Capítulo ' + esc(t.num) + '</span></div>' +
-      '<div class="dhero"><div><h1>' + esc(t.t) + '</h1><div class="dmeta"><span class="chip acc">Capítulo ' + esc(t.num) + '</span><span class="chip">' + esc(t.nsec) + ' apartados</span></div><p class="dhero-q">' + esc(t.q) + '</p></div>' +
+    $('#detail').innerHTML = '<div class="dtop"><a class="dback" href="' + R('temas') + '">← Capítulos</a><span class="sep">/</span><span>' + esc(b.t) + '</span><span class="sep">/</span><span>Capítulo ' + esc(NUM(t)) + '</span></div>' +
+      '<div class="dhero"><div><h1>' + esc(t.t) + '</h1><div class="dmeta"><span class="chip acc">Capítulo ' + esc(NUM(t)) + '</span><span class="chip">' + esc(t.nsec) + ' apartados</span></div><p class="dhero-q">' + esc(t.q) + '</p></div>' +
       '</div>' +
       '<div class="sbar" id="sbar"><button type="button" class="sb-btn" id="tocBtn" aria-expanded="false" aria-controls="stoc"><span aria-hidden="true">☰</span> Índice<span class="sb-now" id="tocNow"></span></button>' +
       '<button type="button" class="sb-btn" id="notesBtn" aria-expanded="false" aria-label="Mis marcas y notas">✎ Mis notas<span class="sb-n" id="notesN"></span></button>' +
@@ -1254,7 +1258,29 @@ window.APEstudio = (function () {
     Marcas.pinBar($('#sbar'), $('.appbar'));
     Marcas.backTop($('#detail'), root);
     $$('.vbtn', $('#detail')).forEach(function (b) { b.addEventListener('click', function () { var v = t.vocab[+b.dataset.vf]; Marcas.viewer({ title: v[0], text: v[1], html: clean(v[2]), ret: b, host: root }); }); });
+    mountSims();
     return anchor && ID.test(anchor) ? anchor : null;
+  }
+
+  /* Simuladores (<div class="sim sim-…">, dentro de .est-skip para que las marcas no los toquen): el contenido solo trae
+     el hueco y, en el organigrama, sus datos JSON como texto (.sim-data). El código es público y va aparte:
+     manual-estudio/simuladores.js (copia literal del simuladores.js del manual), que se carga la primera vez que hace falta. */
+  var simsP = null;
+  function loadSims() {
+    if (window.SIMS) return Promise.resolve();
+    if (!simsP) simsP = new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = assetUrl('me-sims', './manual-estudio/simuladores.js');
+      s.onload = function () { window.SIMS ? resolve() : reject(new Error('sin SIMS')); };
+      s.onerror = function () { simsP = null; s.parentNode.removeChild(s); reject(new Error('sin red')); };
+      document.head.appendChild(s);
+    });
+    return simsP;
+  }
+  function mountSims() {
+    var d = $('#detail'); if (!d || !$('.sim', d)) return;
+    loadSims().then(function () { if (d.isConnected) window.SIMS.mount(d); })
+      .catch(function () { $$('.sim-ns', d).forEach(function (p) { p.textContent = 'No se ha podido cargar el simulador. Revisa la conexión y vuelve a abrir el capítulo.'; }); });
   }
   function syncProgBtn(t) {
     var p = PROG[t.id] || 0, bt = $('#progBtn'), l = $('#progLbl'); if (!bt) return;

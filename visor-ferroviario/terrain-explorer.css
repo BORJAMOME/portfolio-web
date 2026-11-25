@@ -37,3 +37,16 @@
 #terrain-controls>button:not(.terrain-preset){font-size:13px;border-color:#d5e0e6;min-height:40px;margin-top:10px;color:#31515f}
 #terrain-controls>.terrain-note{font-size:11px;line-height:1.7;background:#f0f4f7;border-left:2px solid #93b3bd;border-radius:0 5px 5px 0;padding:10px 12px}
 @media(max-width:760px){#terrain-controls .terrain-hero{min-height:265px}.terrain-eyebrow{margin-top:85px}#terrain-controls .terrain-segments button{font-size:13px;min-height:42px}#terrain-controls .terrain-control{padding:13px 0}#terrain-controls .terrain-model{min-height:38px}}
+/* Paletas del terreno (mismos tramos que PALETTES en terrain-controls.js; degradado proporcional a la altitud). */
+[data-palette="natural"].terrain-swatch,.terrain-altitude-key[data-palette="natural"]::before{background:linear-gradient(90deg,#9dbf8e 0%,#b3cb98 6%,#cdd6a6 16%,#e2dcae 25%,#e0cb9c 34%,#cfae86 47%,#b39880 59%,#a9a098 72%,#d6d4d0 84%,#ffffff 100%)}
+[data-palette="bosque"].terrain-swatch,.terrain-altitude-key[data-palette="bosque"]::before{background:linear-gradient(90deg,#7fa77a 0%,#8fb07f 9%,#a6b98a 21%,#b8b78e 32%,#a89878 44%,#8f8274 56%,#9d9a96 71%,#e4e4e2 85%,#ffffff 100%)}
+[data-palette="meseta"].terrain-swatch,.terrain-altitude-key[data-palette="meseta"]::before{background:linear-gradient(90deg,#b9c49a 0%,#d3cf9f 10%,#e3d3a0 20%,#dcbf8c 30%,#c9a274 43%,#a98a6c 60%,#9e948c 80%,#e8e6e2 100%)}
+[data-palette="suizo"].terrain-swatch,.terrain-altitude-key[data-palette="suizo"]::before{background:linear-gradient(90deg,#a4c3b6 0%,#bccfae 9%,#d6d9b3 21%,#e8ddb5 32%,#efe2c0 44%,#f3ead6 59%,#f8f5ee 76%,#ffffff 100%)}
+[data-palette="elevation"].terrain-swatch,.terrain-altitude-key[data-palette="elevation"]::before{background:linear-gradient(90deg,#bdd5ce 0%,#a6c5b3 12%,#c9d2b4 24%,#ded6b9 35%,#c0b6a6 53%,#dddcd4 71%,#fafcfc 100%)}
+.terrain-swatch[data-palette="cartographic"]{background:repeating-linear-gradient(135deg,#f4f6f9 0 6px,#e4e9f0 6px 12px)}
+.terrain-swatches{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+#terrain-controls .terrain-swatches button{display:flex;flex-direction:column;align-items:stretch;gap:5px;min-height:0;margin:0;padding:5px 5px 6px;border:1px solid #d8e1e8;border-radius:7px;background:#fff;font-size:12px;color:#526477;line-height:1.2}
+#terrain-controls .terrain-swatches button[aria-pressed=true]{border-color:#245d65;box-shadow:0 0 0 1px #245d65;color:#173d49;font-weight:700}
+.terrain-swatch{display:block;height:22px;border-radius:4px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+#terrain-controls .terrain-altitude-key[hidden]{display:none}
+@media(max-width:760px){#terrain-controls .terrain-swatches button{min-height:44px}}

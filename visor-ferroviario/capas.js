@@ -12,7 +12,7 @@
   const data={};
   const state={theme:'corridors',
     keys:{corridors:CFG.corridors.map(c=>c.id),brands:CFG.brands.map(b=>b.id),services:['highspeed','avant','md-conventional','euromed'],tourism:CFG.tourism.map(t=>t.id)},
-    statuses:['service','construction','project'],dim:'perf',variant:null,station:null,experience:null,corridor:null};
+    statuses:['service','construction','project'],dim:'perf',width:'tracks',variant:null,station:null,experience:null,corridor:null};
   const files={corridors:'capas/corredores.geojson',brands:'capas/servicios.json',services:'capas/servicios.json',tourism:'capas/turismo.json'};
   const cache={};
   function load(theme){
@@ -126,6 +126,7 @@
       for(const [fid,keys] of byEdge)for(const key of keys){const st=styleOf('tourism',key);features.push(edgeFeature(fid,{key,color:st.color,w:3,off:offsets.get(fid+'|'+key)||0,dash:0,core:0}));}
     }
     map.getSource('cx-border').setData({type:'FeatureCollection',features:borders()});
+    lastLines=features;
     map.getSource('cx-lines').setData({type:'FeatureCollection',features});
     map.setLayerZoomRange('cx-stops',theme==='services'?6.5:0,24);map.setLayerZoomRange('cx-stop-labels',theme==='services'?9:7,24);
     map.getSource('cx-stops').setData({type:'FeatureCollection',features:[...stops.values()].map(s=>({type:'Feature',geometry:{type:'Point',coordinates:s.coordinates},
@@ -464,7 +465,7 @@
       ...state.statuses.map(s=>({name:CFG.status[s].name,color:'#586278',dash:s!=='service',pattern:s}))];
     if(t==='brands')return CFG.brands.filter(b=>state.keys.brands.includes(b.id)).map(b=>({name:b.name+(b.id==='iryo'?' (sin trazado verificado)':''),color:b.color}));
     if(t==='services')return CFG.services.filter(s=>state.keys.services.includes(s.id)).map(s=>({name:s.name,color:s.color,dash:!!s.dash}));
-    if(t==='all')return [...dimension().items.filter(x=>classKm()[x.id+'_n']).map(x=>({name:x.name,color:x.color})),{name:'Vía doble (trazo grueso)',color:'#586278',thick:true}];
+    if(t==='all')return [...dimension().items.filter(x=>classKm()[x.id+'_n']).map(x=>({name:x.name,color:x.color})),{name:'Vía doble (trazo grueso; dos trazos al acercar)',color:'#586278',thick:true},{name:'Electrificada (marcas al acercar)',color:'#586278',ticks:true}];
     if(t==='tourism')return CFG.tourism.filter(x=>state.keys.tourism.includes(x.id)).map(x=>({name:x.name,color:x.color}));
     return null;
   }
@@ -473,10 +474,10 @@
     const h=document.createElement('strong');h.textContent=CFG.themes[state.theme].name+(state.theme==='all'?' · '+dimension().name.toLowerCase():'');container.append(h);
     // Leyenda compacta: los colores en columnas; los estados, trazos y paradas, en una fila aparte.
     const ul=document.createElement('ul'),row=document.createElement('ul');ul.className='legend-cols';row.className='legend-row';
-    for(const item of items){const li=document.createElement('li'),sw=document.createElement('i');sw.className='swatch'+(item.dash?' dashed':'')+(item.double?' double':'')+(item.pattern==='project'?' dotted':'')+(item.thick?' thick':'');
+    for(const item of items){const li=document.createElement('li'),sw=document.createElement('i');sw.className='swatch'+(item.dash?' dashed':'')+(item.double?' double':'')+(item.pattern==='project'?' dotted':'')+(item.thick?' thick':'')+(item.ticks?' ticks':'');
       sw.style.setProperty('--c',item.color);
       const name=item.pattern?{service:'En servicio',construction:'En obras',project:'En proyecto'}[item.pattern]||item.name:item.name.replace(/^Levante y litoral · /,'');
-      li.append(sw,document.createTextNode(name));if(name!==item.name)li.title=item.name;(item.pattern||item.thick?row:ul).append(li);}
+      li.append(sw,document.createTextNode(name));if(name!==item.name)li.title=item.name;(item.pattern||item.thick||item.ticks?row:ul).append(li);}
     if(['brands','services','tourism'].includes(state.theme)){const li=document.createElement('li'),sw=document.createElement('i');sw.className='stop-key';li.append(sw,document.createTextNode('Parada comercial'));li.title='Parada comercial acreditada';row.append(li);}
     if(state.variant||state.experience){for(const [name,cls,full] of [['Elegido · alta velocidad','','Recorrido elegido por vía de alta velocidad'],['Elegido · convencional',' dashed','Recorrido elegido por vía convencional']]){const li=document.createElement('li'),sw=document.createElement('i');sw.className='swatch'+cls;sw.style.setProperty('--c','#1d2638');li.title=full;li.append(sw,document.createTextNode(name));row.append(li);}}
     container.append(ul);if(row.childElementCount)container.append(row);return true;
@@ -554,17 +555,74 @@
     return [...out].filter(Boolean);
   }
 
+  /* ── Trazo de la red: simbología por escala y grosor por tráfico ── */
+  const DOUBLE=['in',['get','filter_tracks'],['literal',['2','4']]];
+  const TRAINS=['coalesce',['feature-state','trains'],0];
+  // Grosor por tráfico: raíz cuadrada de los trenes/día (el área del trazo crece con el tráfico, sin que
+  // los tramos de Cercanías con 1.000 trenes borren al resto). Tramos sin viajeros: finos y atenuados.
+  const FLOW_STOPS=[[5,.2,.22],[9,.45,.3],[13,1,.4],[16,2,.5]];
+  const FLOW_WIDTH=['interpolate',['linear'],['zoom'],...FLOW_STOPS.flatMap(([z,a,b])=>[z,['case',['>',TRAINS,0],['+',a,['*',b,['sqrt',TRAINS]]],a*.8]])];
+  let railLook=null,traffic=null,trafficPending=null;
+  const railOn=()=>document.querySelector('[data-layer="rail"]')?.checked!==false;
+  function applyRailStyle(){
+    if(!railLook||!map.getLayer('rail'))return;
+    const flow=state.width==='traffic'&&Boolean(traffic),{color,opacity}=railLook;
+    map.setPaintProperty('rail','line-color',color);
+    map.setPaintProperty('rail','line-width',flow?FLOW_WIDTH:railLook.width);
+    // Desde z10 la vía doble la dibuja rail-double (dos trazos); aquí se oculta para no duplicarla.
+    map.setPaintProperty('rail','line-opacity',flow?['case',['>',TRAINS,0],opacity,.35]:['step',['zoom'],opacity,10,['case',DOUBLE,0,opacity]]);
+    for(const [id,show] of [['rail-double',!flow],['rail-electric',!flow&&railLook.electric]])if(map.getLayer(id)){
+      map.setPaintProperty(id,'line-color',color);map.setLayoutProperty(id,'visibility',show&&railOn()?'visible':'none');}
+  }
+  async function loadTraffic(){
+    if(traffic)return traffic;
+    trafficPending||=(async()=>{
+      const r=await fetch('capas/trafico-tramos.json');if(!r.ok)throw new Error('No se pudo cargar el tráfico por tramo.');
+      const data=await r.json(),byFid=new Map();
+      for(const [fid,total,...families] of data.tramos){byFid.set(fid,{total,families});map.setFeatureState({source:'rail',id:fid},{trains:total});}
+      traffic={...data,byFid};return traffic;
+    })().catch(e=>{trafficPending=null;throw e;});
+    return trafficPending;
+  }
+  async function setWidth(mode,{silent}={}){
+    state.width=mode==='traffic'?'traffic':'tracks';
+    for(const b of document.querySelectorAll('[data-rail-width]'))b.setAttribute('aria-pressed',String(b.dataset.railWidth===state.width));
+    const note=document.querySelector('#rail-width-note');
+    if(state.width==='traffic'){
+      if(note){note.hidden=false;note.textContent='Cargando trenes por tramo…';}
+      try{await loadTraffic();}catch(e){state.width='tracks';if(note)note.textContent=e.message;applyRailStyle();return;}
+      if(note){const c=traffic.cobertura;note.textContent=`Trenes de viajeros en un día laborable, en los dos sentidos (horario del ${traffic.referencia?.laborable?new Date(traffic.referencia.laborable+'T12:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',year:'numeric'}):'semana tipo'}). Incluye el ${Math.round(c.trazados/c.trenes*100)} % de los trenes con GTFS público de Renfe, iryo y OUIGO; sin mercancías.`;}
+    }else if(note)note.hidden=true;
+    applyRailStyle();if(!silent)onChange?.();
+  }
+  // Clave de grosores en la leyenda (mismo cálculo que FLOW_WIDTH al zoom actual).
+  function trafficLegend(container){
+    if(state.width!=='traffic'||!traffic)return;
+    const z=Math.max(5,Math.min(16,map.getZoom())),stops=FLOW_STOPS;
+    let i=0;while(i<stops.length-2&&z>stops[i+1][0])i++;
+    const [z0,a0,b0]=stops[i],[z1,a1,b1]=stops[i+1],f=(z-z0)/(z1-z0),px=t=>(a0+(a1-a0)*f)+(b0+(b1-b0)*f)*Math.sqrt(t);
+    const box=document.createElement('div');box.className='legend-flow';
+    const h=document.createElement('p');h.textContent='Grosor: trenes de viajeros/día laborable';box.append(h);
+    const ul=document.createElement('ul');
+    for(const t of [10,100,500,1000]){const li=document.createElement('li'),bar=document.createElement('i');bar.style.setProperty('--w',Math.max(1,px(t)).toFixed(1)+'px');li.append(bar,document.createTextNode(new Intl.NumberFormat('es-ES',{useGrouping:'always'}).format(t)));ul.append(li);}
+    box.append(ul);container.append(box);
+  }
+  // Trenes por tramo para la ficha (null si no se ha cargado o el tramo no tiene viajeros).
+  const trafficOn=fid=>traffic?.byFid.get(fid)||null;
+
   /* ── API ──────────────────────────────────────────────── */
   async function setTheme(id,{silent}={}){
     if(!CFG.themes[id])id='corridors';
     state.theme=id;state.variant=null;state.experience=null;state.corridor=null;state.station=null;
     for(const input of document.querySelectorAll('input[name="theme"]'))input.checked=input.value===id;
     const base=id==='gauge',all=id==='all';
-    map.setPaintProperty('rail','line-color',base?root.AtlasBaseRailColor:all?allColor():['case',['boolean',['feature-state','selected'],false],'#101e36','#b3bfd0']);
-    map.setPaintProperty('rail','line-opacity',base||all?.95:.9);
+    const color=base?root.AtlasBaseRailColor:all?allColor():['case',['boolean',['feature-state','selected'],false],'#101e36','#b3bfd0'];
+    // En «Ancho de vía» el ancho desconocido se distingue también por la forma (guiones claros encima), no solo por el gris.
+    if(map.getLayer('rail-unknown'))map.setLayoutProperty('rail-unknown','visibility',base?'visible':'none');
     // En «Todas las vías» la vía doble se dibuja más gruesa que la única.
-    const double=['in',['get','filter_tracks'],['literal',['2','4']]];
-    map.setPaintProperty('rail','line-width',all?['interpolate',['linear'],['zoom'],5,['case',double,1.3,.8],12,['case',double,3.6,2.2],16,['case',double,5,3]]:['interpolate',['linear'],['zoom'],5,.9,8,1.5,12,2.8,16,4]);
+    railLook={color,opacity:base||all?.95:.9,electric:all,
+      width:all?['interpolate',['linear'],['zoom'],5,['case',DOUBLE,1.3,.8],12,['case',DOUBLE,3.6,2.2],16,['case',DOUBLE,5,3]]:['interpolate',['linear'],['zoom'],5,.9,8,1.5,12,2.8,16,4]};
+    applyRailStyle();
     if(['tent','transit'].includes(id))await legacy?.change(id==='tent'?'corridors':'transit',{silent});else await legacy?.change('gauge',{silent:true});
     if(state.theme!==id)return;
     renderPanel();
@@ -575,20 +633,22 @@
   function refresh(silent){
     if(!map.getSource('cx-lines'))return;
     if(['corridors','brands','services','tourism'].includes(state.theme))buildLines();
-    else{map.getSource('cx-lines').setData({type:'FeatureCollection',features:[]});map.getSource('cx-stops').setData({type:'FeatureCollection',features:[]});renderHighlight();}
+    else{lastLines=[];map.getSource('cx-lines').setData({type:'FeatureCollection',features:[]});map.getSource('cx-stops').setData({type:'FeatureCollection',features:[]});renderHighlight();}
     renderPanel();if(!silent)onChange?.();
   }
   function init(options){
     ({map,dataset,showInfo,onChange,legacy}=options);
     ensureLayers();themeList();
+    for(const b of document.querySelectorAll('[data-rail-width]'))b.onclick=()=>setWidth(b.dataset.railWidth);
   }
   function getState(){
-    return {t:state.theme,ls:['tent','transit'].includes(state.theme)?legacy?.state():undefined,k:state.keys[state.theme]&&state.keys[state.theme].join(','),st:state.theme==='corridors'?state.statuses.join(','):undefined,d:state.theme==='all'?state.dim:undefined,v:state.variant||undefined,x:state.experience||undefined};
+    return {t:state.theme,ls:['tent','transit'].includes(state.theme)?legacy?.state():undefined,k:state.keys[state.theme]&&state.keys[state.theme].join(','),st:state.theme==='corridors'?state.statuses.join(','):undefined,d:state.theme==='all'?state.dim:undefined,w:state.width==='traffic'?'t':undefined,v:state.variant||undefined,x:state.experience||undefined};
   }
   async function restore(s){
     if(!s)return setTheme(state.theme);
     if(typeof s.k==='string'&&state.keys[s.t]){const allowed=(s.t==='brands'?CFG.brands:s.t==='services'?CFG.services:s.t==='tourism'?CFG.tourism:CFG.corridors).map(x=>x.id);state.keys[s.t]=s.k.split(',').filter(x=>allowed.includes(x));}
     if(typeof s.d==='string'&&CFG.classifications[s.d])state.dim=s.d;
+    if(s.w==='t'&&state.width!=='traffic')setWidth('traffic',{silent:true});
     if(typeof s.st==='string')state.statuses=s.st.split(',').filter(x=>CFG.status[x]);
     const requestedTheme=CFG.themes[s.t]?s.t:state.theme;
     await setTheme(requestedTheme,{silent:true});
@@ -597,9 +657,19 @@
     if(s.v&&services()?.variants.some(v=>v.id===s.v))selectVariant(s.v);
     if(s.x&&data.tourism){const e=data.tourism.experiences.find(x=>x.id===s.x);if(e)experienceInfo(e);}
   }
+  /* Estilo de la red para el explorador 3D: el mismo color que el 2D para cada tramo base y,
+     en los temas con trazados propios (corredores, marcas, servicios, turismo), esos trazados. */
+  let lastLines=[];
+  function scene3d(){
+    const theme=state.theme;
+    if(theme==='all'){const d=dimension(),colors=new Map();for(const it of d.items)for(const v of (it.values||[it.id]))colors.set(v,it.color);
+      return {baseColor:f=>colors.get(String(f.properties[d.prop]??'none'))||'#A0A7B2',overlay:[]};}
+    if(theme==='gauge')return {baseColor:f=>root.AtlasCartography.style(root.AtlasFilters.value(f,'gauge')).color,overlay:[]};
+    return {baseColor:()=>'#9aa8bc',overlay:lastLines};
+  }
   function clearSelection(){state.variant=null;state.experience=null;state.corridor=null;state.station=null;if(map.getSource('cx-lines')){renderHighlight();if(['brands','services','tourism'].includes(state.theme))buildLines();}onChange?.();}
   function hasStation(code){const s=services();if(!s||!code)return null;const id='renfe-national:'+code;return s.stations[id]?id:(s.stations['renfe-commuter:'+code]?'renfe-commuter:'+code:null);}
   async function loadServices(){if(!data.services)data.services=await load('services');return data.services;}
-  root.AtlasCapas={init,hasStation,loadServices,setTheme,legend,legendItems,getState,restore,clearSelection,current:()=>state.theme,stationInfo,servicesOnEdge,corridorsForLine,
+  root.AtlasCapas={init,scene3d,hasStation,loadServices,setTheme,legend,legendItems,getState,restore,clearSelection,current:()=>state.theme,railStyle:applyRailStyle,setWidth,trafficOn,trafficLegend,width:()=>state.width,stationInfo,servicesOnEdge,corridorsForLine,
     hitLayers:()=>['cx-stops','cx-hit'].filter(id=>map?.getLayer(id))};
 })(window);

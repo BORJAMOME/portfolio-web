@@ -193,12 +193,13 @@ export function reviewImport(rows, existing) {
 /* ═══════════ EXPORTACIÓN ═══════════ */
 const pick = (o, keys) => Object.fromEntries(keys.filter((k) => o[k] !== undefined).map((k) => [k, o[k]]));
 /** Copia portable de los datos propios. Las fotos no viajan: solo su ruta en el bucket privado. */
-export function buildExport({ garments, palettes, outfits, inspirations }, now = new Date()) {
+export function buildExport({ garments, palettes, outfits, inspirations, wear }, now = new Date()) {
   return {
     format: EXPORT_FORMAT, version: EXPORT_VERSION, exported_at: now.toISOString(),
     note: 'Las fotos de las prendas y de las inspiraciones no se incluyen; image_path es su ruta en el bucket privado «armario».',
     palettes: (palettes || []).map((p) => pick(p, ['id', 'name', 'colors', 'tags', 'source_type', 'source_title', 'source_url', 'source_notes', 'notes', 'is_favorite', 'created_at', 'updated_at'])),
-    garments: (garments || []).map((g) => pick(g, ['id', 'name', 'category', 'subcategory', 'image_path', 'primary_color', 'secondary_colors', 'color_shares', 'pattern', 'material', 'notes', 'created_at', 'updated_at'])),
+    garments: (garments || []).map((g) => pick(g, ['id', 'name', 'category', 'subcategory', 'image_path', 'primary_color', 'secondary_colors', 'color_shares', 'pattern', 'material', 'seasons', 'formality', 'notes', 'created_at', 'updated_at'])),
+    wear: (wear || []).map((w) => pick(w, ['id', 'kind', 'garment_ids', 'palette_id', 'worn_on', 'created_at'])),     // «Lo he llevado» / «Me gusta»
     outfits: (outfits || []).map((o) => pick(o, ['id', 'name', 'items', 'palette_id', 'distribution_override', 'occasion', 'formality', 'notes', 'is_favorite', 'created_at', 'updated_at'])),
     inspirations: (inspirations || []).map((x) => pick(x, ['id', 'title', 'source_url', 'source_name', 'published_on', 'image_path', 'description', 'notes', 'styles', 'collections', 'seasons', 'rating', 'is_favorite', 'palette', 'suggestions', 'palette_status', 'palette_id', 'created_at', 'updated_at']))
   };

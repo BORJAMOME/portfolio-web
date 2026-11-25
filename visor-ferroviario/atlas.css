@@ -559,3 +559,75 @@ main{flex:1;min-height:0}
 .demo-sources{font-size:12px;line-height:1.6;margin:14px 0}.demo-sources summary{cursor:pointer;font-weight:600}.demo-sources a{color:var(--navy);text-decoration:underline}
 #demo-opacity-options label{display:flex;justify-content:space-between;gap:8px}#demo-opacity{width:100%;accent-color:#28695f}
 #roads-options select,#freight-options select{width:100%;margin-top:7px}
+
+/* Filtros y capas activos sobre el mapa (debajo del buscador): cada etiqueta se quita con su ×. */
+.active-chips{position:absolute;top:calc(14px + var(--rb-h,60px) + 8px);left:332px;right:56px;max-width:700px;margin:0 auto;z-index:4;pointer-events:none}
+.active-chips ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px;pointer-events:auto;width:max-content;max-width:100%}
+.active-chips .chip{display:flex;align-items:center;background:#fff;border:1px solid var(--line-strong);border-radius:999px;box-shadow:0 1px 4px #273a5f1a;font-size:var(--fs-s);color:var(--ink);overflow:hidden}
+.active-chips .chip-label{padding:0 4px 0 12px;min-height:32px;display:flex;align-items:center;max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:0;background:none;border-radius:0;color:inherit}
+.active-chips .chip-theme{background:var(--navy);border-color:var(--navy)}
+.active-chips .chip-theme .chip-label{color:#fff;padding-right:12px;font-weight:600}
+.active-chips .chip-remove{border:0;border-left:1px solid var(--line);border-radius:0;background:none;min-width:32px;min-height:32px;padding:0;font-size:17px;line-height:1;color:var(--muted)}
+.active-chips .chip-remove:hover{background:var(--wash);color:var(--ink)}
+.active-chips .chip-clear{border-radius:999px;min-height:34px;padding:0 12px;background:#fbfbfbe6;font-size:var(--fs-s)}
+@media(min-width:761px) and (min-height:521px){
+  .active-chips{left:calc(var(--rail) + var(--panel) + 24px)}
+  .tools[hidden]~.active-chips{left:calc(var(--rail) + 24px)}
+}
+@media(max-width:760px){
+  .active-chips{top:calc(8px + var(--rb-h,52px) + 6px);left:8px;right:50px;max-width:none}
+  .active-chips ul{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;width:auto;padding-bottom:2px}
+  .active-chips .chip-label{min-height:44px}.active-chips .chip-remove{min-width:44px;min-height:44px}.active-chips .chip-clear{min-height:44px}
+  .tools:not([hidden])~.active-chips{display:none}
+}
+@media(max-height:520px) and (orientation:landscape){.active-chips{display:none}}
+
+/* Cabecera: «Plano / Inclinado» son dos vistas del mismo mapa; el explorador 3D es otra herramienta. */
+.explorer-launch{display:inline-flex;align-items:center;gap:6px;border-color:var(--line-strong)}
+.explorer-launch svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
+@media(max-width:560px){.explorer-launch{font-size:0;gap:0;padding:6px 9px}.explorer-launch svg{width:18px;height:18px}}
+
+/* Vista aérea: leyenda y fichas un punto más opacas para leer sobre la imagen. */
+[data-basemap=pnoa] #legend,[data-basemap=pnoa] .active-chips .chip:not(.chip-theme){background:#fff}
+
+/* Transiciones de orientación al cambiar de vista o selección (sin movimiento si se pide). */
+@media(prefers-reduced-motion:no-preference){
+  .active-chips .chip{animation:chip-in .18s ease-out}
+  #info:not([hidden]){animation:info-in .2s ease-out}
+}
+@keyframes chip-in{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+@keyframes info-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.swatch.dashed{border-top-style:dashed}
+#legend .legend-note{display:block;margin-top:8px;padding-top:7px;border-top:1px solid var(--line);color:var(--muted);font-size:var(--fs-xs);line-height:1.35}
+/* Botón de estilos del mapa, bajo el zoom (basemap.js). */
+.basemap-ctrl{position:relative}
+.basemap-ctrl .basemap-ctrl-toggle{display:grid;place-items:center;width:29px;height:29px;min-height:0;padding:0;border:0;border-radius:4px;background:#fff;color:var(--navy)}
+.basemap-ctrl .basemap-ctrl-toggle:hover{background:var(--wash)}
+.basemap-ctrl .basemap-ctrl-toggle[aria-expanded="true"]{background:var(--navy);color:#fff}
+.basemap-ctrl-panel{position:absolute;top:0;right:calc(100% + 8px);width:300px;max-height:calc(100vh - 220px);overflow:auto;box-sizing:border-box;padding:10px;background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(29,38,56,.16);z-index:6}
+.basemap-ctrl-panel[hidden]{display:none}
+.basemap-ctrl-title{margin:0 2px 8px;font-size:var(--fs-xs);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.basemap-ctrl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.basemap-ctrl .basemap-ctrl-grid button{width:auto;height:auto;display:flex;flex-direction:column;align-items:stretch;gap:4px;min-height:0;padding:3px 3px 5px;border:1px solid transparent!important;border-radius:6px;background:none;color:var(--ink);font-size:var(--fs-xs);line-height:1.2;text-align:center}
+.basemap-ctrl .basemap-ctrl-grid button:hover{background:var(--wash)}
+.basemap-ctrl-grid img{display:block;width:100%;height:auto;aspect-ratio:88/60;object-fit:cover;border-radius:4px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);background:var(--wash)}
+.basemap-ctrl .basemap-ctrl-grid button[aria-pressed="true"]{border-color:var(--navy)!important;background:#eef2f8;font-weight:600}
+.basemap-ctrl .basemap-ctrl-grid button[aria-pressed="true"] img{outline:2px solid var(--navy);outline-offset:1px}
+.basemap-ctrl button:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+@media(prefers-reduced-motion:no-preference){.basemap-ctrl-panel:not([hidden]){animation:basemap-in .14s ease-out}@keyframes basemap-in{from{opacity:0;transform:translateX(6px)}to{opacity:1;transform:none}}}
+@media(max-width:760px){
+  .basemap-ctrl .basemap-ctrl-toggle{width:var(--hit);height:var(--hit)}
+  .basemap-ctrl-panel{width:min(300px,calc(100vw - 76px));max-height:min(60vh,calc(100vh - 260px))}
+  .basemap-ctrl .basemap-ctrl-grid button{min-height:var(--hit)}
+}
+/* Grosor del trazo (capas.js · setWidth) y su leyenda. */
+.rail-width{margin:12px 0 4px}
+.rail-width-seg{display:flex;gap:3px;padding:3px;border-radius:7px;background:var(--wash);border:1px solid var(--line)}
+.rail-width-seg button{flex:1;border:1px solid transparent;background:transparent;color:var(--muted);font-size:var(--fs-s)}
+.rail-width-seg button[aria-pressed="true"]{background:#fff;border-color:var(--line-strong);color:var(--ink);font-weight:600}
+#rail-width-note{margin:6px 0 0;font-size:var(--fs-xs)}
+.swatch.ticks{border-top-width:2px;background:repeating-linear-gradient(90deg,var(--c) 0 1px,transparent 1px 6px);height:7px;margin-top:-3px}
+.legend-flow{margin-top:8px}.legend-flow p{margin:0 0 4px;font-size:var(--fs-xs);color:var(--muted)}
+.legend-flow ul{display:flex;gap:12px;align-items:center;margin:0;padding:0;list-style:none;font-size:var(--fs-xs)}
+.legend-flow li{display:flex;align-items:center;gap:5px}
+.legend-flow i{display:block;width:22px;height:var(--w);background:var(--ink);border-radius:2px}

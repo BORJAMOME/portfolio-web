@@ -1,6 +1,6 @@
 # Cabina: estado
 
-Última actualización: 22-11-2026 (ola 3: rediseño interactivo, sin commit todavía).
+Última actualización: 23-11-2026. Todo está en `main`: ola 3 (af14b3f), pendientes de la ola 2 (PR 165) y fichas del visor con el universo de Cabina (PR 167, 02bd98c). No hay ramas abiertas de Cabina.
 La tabla de rutas tiene su propio estado en `RUTAS_ESTADO.md`.
 
 ## Ola 3 (22-11-2026): interacción, marcas y filtros
@@ -42,7 +42,7 @@ Cuadro de mando con una pregunta rectora: *¿qué servicio de tren recibe cada t
 
 - **Un solo universo de oferta:** todos los trenes de viajeros con horario público (Renfe AV/LD/MD, Cercanías de todos los núcleos, OUIGO e iryo), de `capas/oferta.json` (`tools/build-rutas.mjs`).
   - Adelanta el punto 4 de la ola 2: el GTFS de Cercanías de Renfe sí trae los horarios del ancho ibérico.
-  - Las fichas del visor (`oferta.js`) aún no incluyen Cercanías ibérico ni iryo; el glosario lo dice.
+  - Las fichas de estación y de zona del visor (`oferta.js`) usan el mismo universo desde el 23-11-2026 (`capas/estaciones-oferta.json`). El horario de una ruta y los trenes por tramo siguen sin Cercanías de ancho ibérico ni iryo; el glosario lo dice.
 - **Una cifra por concepto** (glosario en «Método y límites»):
   - km de alta velocidad = 3.681, por prestaciones. Los 3.357 de Hermes y los 4.199 de Adif AV se explican como otras medidas;
   - «alta velocidad» (trenes) = AVE, AVE Euromed, Avlo, iryo y OUIGO; Avant va aparte;
@@ -112,13 +112,26 @@ Cuadro de mando con una pregunta rectora: *¿qué servicio de tren recibe cada t
 - **Corredores (Hermes 2024):** revisados el 21-11-2026 con notas del Ministerio. Ningún tramo en obras o en proyecto se ha abierto. Murcia–Almería, Burgos–Vitoria y la Y vasca siguen en obras. València–La Encina tiene trenes a menos de 150 m porque va por la variante de ancho ibérico abierta en 2023, pero la línea de alta velocidad sigue en obras. La fecha de la revisión y su nota están en `build-cabina.mjs` (`corredores.verificado`) y se muestran en la tarjeta.
 - **Comprobado:** `check-a11y` sin infracciones en `cabina.html`; escritorio (1440) y móvil (390) sin errores ni scroll horizontal; `build-cabina --check`, `check-links`, `version-assets --check`, `build-mapa --check` y `build-en --check`.
 
+## Fichas del visor con el universo de Cabina (23-11-2026)
+
+- **Qué cambia:** `tools/build-rutas.mjs` (tarea semanal) escribe también `capas/estaciones-oferta.json` (313 KB): por estación con trenes, laborable, sábado y domingo, primer tren en el que se puede subir y último que pasa (el día empieza a las 04:00), trenes por hora, trenes por servicio (Cercanías, Alta velocidad, Avant, Intercity, Regional, OUIGO, iryo) y los 8 destinos más servidos, con el total de destinos directos.
+  - `oferta.js`: `forStation`, `forStationCode`, `forArea` y `nearest` leen ese archivo; `forVariant` y `forEdge` siguen con `horarios.json`, porque iryo y las Cercanías de ancho ibérico no tienen recorrido trazado sobre la red IGN.
+  - `atlas.js`: 337 estaciones con trenes que no estaban en el catálogo de Renfe (Sol, Majadahonda, Hernani…) se añaden a la capa de estaciones con las coordenadas del GTFS; su ficha dice de dónde sale la ubicación. Las estaciones del catálogo sin rutas trazadas ya no dicen «sin parada comercial»: muestran sus trenes.
+  - La ficha de zona ya no da destinos sin transbordo de toda la zona (necesitaría la lista completa de destinos por estación): da los de la estación mejor conectada.
+- **Decisión:** no se ha tocado `manual-ferrocarriles/mapa/preparar_horarios.py`. Integrar los dos GTFS en `horarios.json` exigía trazar sus recorridos, multiplicaba el tamaño y seguía sin actualizarse cada semana. Las cifras por estación salen ahora de la misma tarea semanal que Cabina.
+  - Ojo: `manual-ferrocarriles/mapa/exportar_visor_web.py` copia `oferta.js` y `atlas.js` desde el manual. Resuelto el 23-11-2026: el exportador ya no exporta esos archivos (ver «Pendiente»).
+- **Comprobado:** las 1.471 estaciones del archivo coinciden con `oferta.json` en laborable, sábado, domingo y destinos directos (0 discrepancias); la suma de los trenes por hora es igual al laborable. Fichas en el navegador: Sol 369 trenes (04:57–00:40), Madrid-Chamartín 1225 (05:00–00:51), zona de Madrid a 15 km con 53 estaciones. `check-a11y` sin infracciones en `index.html`; `check-links`, `version-assets --check`, `build-mapa --check`, `build-en --check` y `build-cabina --check`.
+- **Fusión (23-11-2026):** PR 167 fusionada en `main` como 02bd98c. Antes se fusionó `main` en la rama: conflicto solo en los `?v=` de `index.html`, y `estaciones-oferta.json` se regeneró con `--download` para la semana del 2026-11-23 (`rutas.json` y `oferta.json` salieron idénticos a los de `main`, 1.471 fichas sin discrepancias). CI en verde en `main` (040abe1, que ya incluye la PR 170) y en el último commit de la rama.
+  - Se corrigieron de paso los `?v=` de `perfil.js` y `ruta.js`, que las PR 168 y 169 dejaron desactualizados. `version-assets --check` no revisa los `?v=` de `index.html` ni de `cabina.html`: hay que calcularlos a mano (`sha1sum` del archivo con finales LF, 8 caracteres).
+
 ## Pendiente
 
-- **Visor: Cercanías de ancho ibérico e iryo en las fichas**, para que tengan el mismo universo que Cabina. No es un cambio de este repositorio:
-  - los horarios de las fichas (`capas/horarios.json` y `capas/servicios.json`) los genera `manual-ferrocarriles/mapa/preparar_horarios.py`;
-  - hay que añadir los dos GTFS, asignar los trenes a tramos IGN (para `forEdge`) y vigilar el tamaño, porque las Cercanías de ancho ibérico multiplican los viajes;
-  - además, `horarios.json` no se regenera cada semana y el GTFS de Cercanías dura unos 30 días, así que las fichas acabarán retrocediendo a la última semana cubierta.
-  - **Criterio de validación:** los trenes un laborable de una estación coinciden en la ficha del visor y en `oferta.json` (por ejemplo, Madrid-Atocha Cercanías y Sevilla-Santa Justa).
 - **Mantenimiento:** si Hermes publica una versión nueva de la capa TEN-T, volver a revisar los corredores y actualizar `corredores.verificado`. Cuando el INE publique 2026, la tasa de accidentes incluirá Adamuz y la tarjeta lo explica.
+- **Accidente de Urda (nota de Moncloa del 3-11-2026):** Madrid–Andalucía vuelve a estar cortada. Los datos de Cabina llegan a 2026-09, así que todavía no se ve. Cuando el INE y la CNMC publiquen octubre-noviembre (4T 2026 en `ds_24408`), añadir el evento en `build-cabina-mercado.mjs` (`viajeros.choque_av.evento` admite uno; habría que convertirlo en lista) con su fuente oficial. Validación: la nota por corredor cita los dos eventos y `build-cabina --check` pasa.
+- **Exportador del manual: hecho (23-11-2026), pendiente de commit en el manual.** El portfolio iba por delante en nueve archivos, no solo en dos: `index.html` (enlace a Cabina), `atlas.js`, `atlas.css`, `oferta.js`, `perfil.js`, `ruta.js`, `panel.js`, `line-identity.js` y `styles/provenance.json`. El manual no tenía nada que faltara en el portfolio (salvo las libreas de `capas-config.js`, que el exportador ya quita).
+  - Llevar esos archivos al manual no bastaba: piden `capas/estaciones-oferta.json` y `capas/lineas-adif.json`, que solo genera la tarea semanal del portfolio. Así que `exportar_visor_web.py` tiene ahora `PROPIOS_DEL_PORTFOLIO` y no los exporta (tampoco `index.html`); al terminar, lista los omitidos. **Esos archivos se editan directamente en el portfolio.**
+  - Comprobado: exportar a una carpeta nueva y copiarla encima de `main` deja `git diff` vacío (17 archivos con CRLF, que Git normaliza a LF por `.gitattributes`).
+  - El cambio está en la copia de trabajo de `manual-ferrocarriles` sin commit: esa copia está en la rama `t9-economia-reestructuracion` con otros cambios sin confirmar (visor 3D), y no se ha mezclado con ellos.
+- **Repo (opcional):** `main` no exige checks obligatorios, así que `gh pr merge --auto` fusiona sin esperar a la CI. Marcar «Comprobaciones» como obligatoria en la protección de `main` si se quiere que espere.
 
 **Riesgo:** `tools/build-cabina.mjs` tarda unos 60 s por el cálculo de km (Dijkstra por pareja). Si crece, conviene guardar en caché los grafos por variante.

@@ -60,7 +60,7 @@ async function readTile(key, signal) {
  * metres at its centre. The grid is a visualization, not a survey or rail grade.
  * Each point uses the best locally available tile, so coverage can be mixed.
  */
-export async function loadTerrainGrid({bounds, segments=240, signal, onProgress, manifest=globalThis.IGN_TERRAIN_MANIFEST}={}) {
+export async function loadTerrainGrid({bounds, segments, maxSegments=320, signal, onProgress, manifest=globalThis.IGN_TERRAIN_MANIFEST}={}) {
   if (!validateBounds(bounds)) throw new Error('La zona de terreno no es válida.');
   if (!manifest?.tiles?.length || manifest.encoding !== 'terrarium') throw new Error('No está disponible el catálogo local de elevaciones IGN.');
   const available = new Set(manifest.tiles);
@@ -70,7 +70,16 @@ export async function loadTerrainGrid({bounds, segments=240, signal, onProgress,
   const localScale=EARTH_CIRCUMFERENCE*Math.cos((bounds[1]+bounds[3])/2*Math.PI/180);
   const width=(east-west)*localScale, depth=(south-north)*localScale;
   const longest=Math.max(width,depth);
-  const count=Math.max(48,Math.min(320,Math.round(segments)));
+  // Mesh density follows the finest DEM available in the area (≈1,5 DEM pixels
+  // per cell), capped per device. A denser mesh than the DEM adds no detail.
+  let finest=0;
+  for(let i=0;i<=12;i++)for(let j=0;j<=12;j++){
+    const tile=findTile(west+(east-west)*i/12,north+(south-north)*j/12,available,maxZoom);
+    if(tile)finest=Math.max(finest,tile.zoom);
+  }
+  const demPixel=localScale/(TILE_SIZE*2**finest);
+  const wanted=segments??Math.ceil(longest/(demPixel*1.5));
+  const count=Math.max(48,Math.min(Math.max(48,Math.min(1024,maxSegments)),Math.round(wanted)));
   const columns=Math.max(24,Math.round(count*width/longest))+1;
   const rows=Math.max(24,Math.round(count*depth/longest))+1;
   const pointTiles=new Array(columns*rows);

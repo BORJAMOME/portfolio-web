@@ -39,6 +39,9 @@ jobs:
       - name: Rutas (descarga los GTFS y genera rutas.json y oferta.json)
         run: node --max-old-space-size=6144 tools/build-rutas.mjs --download
 
+      - name: Trenes por tramo (grosor «por trenes al día» del visor; genera trafico-tramos.json)
+        run: node tools/visor/trafico-tramos.mjs
+
       - name: CNMC (descarga y genera cnmc.json)
         run: node tools/build-cnmc.mjs --download
 
@@ -60,11 +63,12 @@ jobs:
           node tools/check-links.mjs
           node tools/rutas/test-heatmap.mjs
           node tools/version-assets.mjs --check
+          node tools/visor/trafico-tramos.mjs --check
 
       - name: Publicar en main si hay cambios
         run: |
           git add visor-ferroviario/capas/rutas.json visor-ferroviario/capas/rutas-actividad.json visor-ferroviario/capas/oferta.json visor-ferroviario/capas/cnmc.json \
-                  visor-ferroviario/capas/mercado.json \
+                  visor-ferroviario/capas/mercado.json visor-ferroviario/capas/estaciones-oferta.json visor-ferroviario/capas/trafico-tramos.json \
                   visor-ferroviario/capas/cabina.json visor-ferroviario/cabina.html
           if git diff --cached --quiet; then
             echo "Sin cambios en los datos: no se confirma nada." | tee -a "$GITHUB_STEP_SUMMARY"

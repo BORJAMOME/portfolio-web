@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "6b5a85e",
+ "huella": "5bee54d",
  "recuento": {
   "paginas": 20,
   "proyectos": 40,
@@ -11,8 +11,8 @@ export default {
   "pestanas": 10,
   "tablas": 41,
   "funciones": 5,
-  "herramientas": 41,
-  "relaciones": 202,
+  "herramientas": 43,
+  "relaciones": 204,
   "sinExplicar": 0
  },
  "columnas": [
@@ -2553,10 +2553,24 @@ export default {
        "familia": "herramienta"
       },
       {
+       "id": "h:terreno",
+       "tipo": "herramienta",
+       "etiqueta": "terreno/",
+       "archivo": "tools/terreno/",
+       "familia": "herramienta"
+      },
+      {
        "id": "h:update-incidencias",
        "tipo": "herramienta",
        "etiqueta": "update-incidencias.mjs",
        "archivo": "tools/update-incidencias.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:visor",
+       "tipo": "herramienta",
+       "etiqueta": "visor/",
+       "archivo": "tools/visor/",
        "familia": "herramienta"
       },
       {
@@ -3222,6 +3236,12 @@ export default {
    "de": "h:test-kanban",
    "a": "m:kanban",
    "tipo": "verifica",
+   "detalle": []
+  },
+  {
+   "de": "h:visor",
+   "a": "p:index",
+   "tipo": "lee",
    "detalle": []
   },
   {
@@ -3976,6 +3996,12 @@ export default {
   {
    "de": "w:rutas-semanal",
    "a": "h:version-assets",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:rutas-semanal",
+   "a": "h:visor",
    "tipo": "ejecuta",
    "detalle": []
   }

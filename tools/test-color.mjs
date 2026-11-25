@@ -1263,3 +1263,10 @@ test('Sugerencias con contexto y uso: filtra por temporada y ocasión, sube lo q
   assert.equal(idx['a,b'].lastWorn, 0, 'cuenta la vez más reciente');
   assert.ok(sigOf(mc));
 });
+test('Exportación: incluye temporada y formalidad de cada prenda y el historial de uso', () => {
+  const exp = D.buildExport({ garments: [garm('a', 'camisas', '#F4F2EC', { seasons: ['verano'], formality: 'smart' })],
+    wear: [{ id: 'w1', kind: 'worn', garment_ids: ['a', 'b'], palette_id: null, worn_on: '2026-11-04', created_at: 'x', extra: 1 }] });
+  assert.deepEqual([exp.garments[0].seasons, exp.garments[0].formality], [['verano'], 'smart']);
+  assert.deepEqual(exp.wear, [{ id: 'w1', kind: 'worn', garment_ids: ['a', 'b'], palette_id: null, worn_on: '2026-11-04', created_at: 'x' }]);
+  assert.deepEqual(D.buildExport({}).wear, [], 'sin tabla de uso, lista vacía');
+});

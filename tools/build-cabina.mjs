@@ -7,7 +7,7 @@
      (capas/lineas-adif.json · relleno). Base: ejes IGN con atributos (attr ≠ 0), 19.559 km.
    - Oferta, población servida, huecos, Pareto, velocidad y competencia: capas/oferta.json y capas/rutas.json
      (tools/build-rutas.mjs), con todos los trenes de viajeros con horario público (también Cercanías de ancho
-     ibérico e iryo, que las fichas del visor aún no incluyen).
+     ibérico e iryo; las fichas de estación del visor usan los mismos datos, vía capas/estaciones-oferta.json).
      node tools/build-cabina.mjs          escribe el JSON y los titulares
      node tools/build-cabina.mjs --check  falla si algo no está al día */
 import fs from 'node:fs';
