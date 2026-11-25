@@ -13,6 +13,16 @@
       warm:{direction:285,altitude:25,shadow:'#5c536e',highlight:'#fff0cc',accent:'#b7a2a1',sky:'#b9cadc',fog:'#eee0d2'},
       studio:{direction:345,altitude:60,shadow:'#324e63',highlight:'#e9f7ff',accent:'#85aeb9',sky:'#91b2c9',fog:'#cfdee6'}
     };
+    // Paletas hipsométricas (metros → color). Realistas salvo «Pastel», la original del visor.
+    const PALETTES={
+      natural:{label:'Natural',opacity:.85,stops:[0,'#9dbf8e',200,'#b3cb98',500,'#cdd6a6',800,'#e2dcae',1100,'#e0cb9c',1500,'#cfae86',1900,'#b39880',2300,'#a9a098',2700,'#d6d4d0',3200,'#ffffff']},
+      bosque:{label:'Bosque',opacity:.85,stops:[0,'#7fa77a',300,'#8fb07f',700,'#a6b98a',1100,'#b8b78e',1500,'#a89878',1900,'#8f8274',2400,'#9d9a96',2900,'#e4e4e2',3400,'#ffffff']},
+      meseta:{label:'Meseta',opacity:.85,stops:[0,'#b9c49a',300,'#d3cf9f',600,'#e3d3a0',900,'#dcbf8c',1300,'#c9a274',1800,'#a98a6c',2400,'#9e948c',3000,'#e8e6e2']},
+      suizo:{label:'Suizo',opacity:.9,stops:[0,'#a4c3b6',300,'#bccfae',700,'#d6d9b3',1100,'#e8ddb5',1500,'#efe2c0',2000,'#f3ead6',2600,'#f8f5ee',3400,'#ffffff']},
+      elevation:{label:'Pastel',opacity:.78,stops:[0,'#bdd5ce',400,'#a6c5b3',800,'#c9d2b4',1200,'#ded6b9',1800,'#c0b6a6',2400,'#dddcd4',3400,'#fafcfc']}
+    };
+    // Sombreados: «multidireccional» se retiró por agresivo (tres luces suman contraste en cada ladera).
+    const RELIEF={soft:{method:'igor'},crisp:{method:'standard'},slope:{method:'combined'},zenith:{method:'igor',altitude:70,gain:1.25}};
     let source='terrain';
     if(manifest?.tiles?.length) {
       const available=new Set(manifest.tiles);
@@ -124,28 +134,35 @@
       map.addLayer({id:'hillshade',type:'hillshade',source:'ign-shading',paint:{'hillshade-exaggeration':0.45,'hillshade-shadow-color':'#4a628e','hillshade-highlight-color':'#fbfbfb','hillshade-accent-color':'#b9c5d6','hillshade-illumination-direction':315,'hillshade-illumination-anchor':'map'}},map.getLayer('outside')?'outside':undefined);
     }
     map.addLayer({id:'terrain-altitude',type:'color-relief',source:source==='ign-terrain'?'ign-shading':source,
-      layout:{visibility:'none'},paint:{'color-relief-opacity':0.78,'color-relief-color':['interpolate',['linear'],['elevation'],
-        0,'#bdd5ce',400,'#a6c5b3',800,'#c9d2b4',1200,'#ded6b9',1800,'#c0b6a6',2400,'#dddcd4',3400,'#fafcfc']}},
+      layout:{visibility:'none'},paint:{'color-relief-opacity':PALETTES.natural.opacity,'color-relief-color':['interpolate',['linear'],['elevation'],...PALETTES.natural.stops]}},
       map.getLayer('hillshade')?'hillshade':undefined);
+    const sliders={};
     function appearance(){
       const light=lights[lighting];
       if(map.getLayer('hillshade')){
-        const values={'hillshade-method':({soft:'igor',crisp:'standard',multi:'multidirectional'})[reliefStyle],
+        const relief=RELIEF[reliefStyle],gain=strength*(relief.gain||1);
+        const values={'hillshade-method':relief.method,
           // Más suave a escala peninsular: el relieve acompaña y la red manda.
-          'hillshade-exaggeration':['interpolate',['linear'],['zoom'],5,strength*.5,8,strength*.8,10,strength],'hillshade-shadow-color':light.shadow,'hillshade-highlight-color':light.highlight,
+          'hillshade-exaggeration':['interpolate',['linear'],['zoom'],5,Math.min(1,gain*.5),8,Math.min(1,gain*.8),10,Math.min(1,gain)],'hillshade-shadow-color':light.shadow,'hillshade-highlight-color':light.highlight,
           'hillshade-accent-color':light.accent,'hillshade-illumination-anchor':'map',
-          'hillshade-illumination-direction':reliefStyle==='multi'?[light.direction,(light.direction+90)%360,(light.direction+270)%360]:light.direction,
-          'hillshade-illumination-altitude':reliefStyle==='multi'?[light.altitude,40,55]:light.altitude};
+          'hillshade-illumination-direction':light.direction,'hillshade-illumination-altitude':relief.altitude??light.altitude};
         for(const [key,value] of Object.entries(values))map.setPaintProperty?.('hillshade',key,value);
         map.setLayoutProperty('hillshade','visibility',shade?'visible':'none');
       }
-      if(map.getLayer('terrain-altitude'))map.setLayoutProperty('terrain-altitude','visibility',palette==='elevation'?'visible':'none');
+      if(map.getLayer('terrain-altitude')){
+        const tint=PALETTES[palette];
+        map.setLayoutProperty('terrain-altitude','visibility',tint?'visible':'none');
+        // Sobre un fondo completo (IGN, Positron…) la tinta es más ligera para que se lean sus rótulos.
+        const backdrop=options.getBasemap?.()||'simple';
+        if(tint){map.setPaintProperty('terrain-altitude','color-relief-color',['interpolate',['linear'],['elevation'],...tint.stops]);map.setPaintProperty('terrain-altitude','color-relief-opacity',backdrop==='simple'?tint.opacity:tint.opacity*.55);}
+      }
+      if(sliders.key){sliders.key.hidden=!PALETTES[palette];sliders.key.dataset.palette=palette;
+        if(PALETTES[palette])sliders.key.textContent=`${PALETTES[palette].label} · color por altitud, de 0 a ${new Intl.NumberFormat('es-ES',{useGrouping:'always'}).format(PALETTES[palette].stops.at(-2))} m`;}
       if(typeof map.setSky==='function')map.setSky({'sky-color':light.sky,'horizon-color':light.highlight,'fog-color':light.fog,
         'sky-horizon-blend':0.8,'horizon-fog-blend':0.5,'fog-ground-blend':0.12});
     }
     appearance();
     map.setMaxPitch(75);
-    const sliders={};
     const summary=document.createElement('p');summary.className='terrain-note';summary.setAttribute('role','status');
     let terrainError='',previousView=null,returnButton=null;
     const failedSources=new Set();
@@ -174,7 +191,7 @@
         }else text+=' · sin cobertura en el centro';
       }
       text+=` · escala vertical ${new Intl.NumberFormat('es-ES',{maximumFractionDigits:1}).format(exaggeration)}×`;
-      if(palette==='elevation')text+=' · color por altitud: 0–3.400 m';
+      if(PALETTES[palette])text+=` · color del terreno «${PALETTES[palette].label}» por altitud`;
       text+='. ';
       text+='El terreno no representa la cota de la vía: túneles y viaductos no están modelados. El muestreo no indica precisión altimétrica.';
       if(terrainError)text+=' '+terrainError;
@@ -216,10 +233,12 @@
     }
     function action(title,fn){const b=document.createElement('button');b.type='button';b.textContent=title;b.onclick=fn;host.append(b);return b;}
     function el(tag,className,text){const node=document.createElement(tag);node.className=className;if(text)node.textContent=text;return node;}
-    function choices(key,title,items,value,change){
-      const group=el('div','terrain-choices'),caption=el('p','terrain-caption',title),row=el('div','terrain-segments');
+    function choices(key,title,items,value,change,kind='terrain-segments'){
+      const group=el('div','terrain-choices'),caption=el('p','terrain-caption',title),row=el('div',kind);
       row.setAttribute('role','group');row.setAttribute('aria-label',title);sliders[key]={};
-      for(const [id,label] of items){const b=el('button','',label);b.type='button';b.setAttribute('aria-pressed',String(id===value));
+      for(const [id,label] of items){const b=el('button','',kind==='terrain-swatches'?'':label);b.type='button';
+        // Muestra de la paleta (degradado por CSS, sin estilos en línea).
+        if(kind==='terrain-swatches'){const swatch=el('span','terrain-swatch');swatch.dataset.palette=id;b.append(swatch,el('span','',label));}b.setAttribute('aria-pressed',String(id===value));
         b.onclick=()=>{change(id);for(const [item,button] of Object.entries(sliders[key]))button.setAttribute('aria-pressed',String(item===id));};
         row.append(b);sliders[key][id]=b;}
       group.append(caption,row);(sliders.target||host).append(group);
@@ -270,10 +289,10 @@
       delete sliders.target;
       const rendering=el('details','terrain-settings');rendering.open=true;rendering.append(el('summary','','Luz y cartografía'));host.append(rendering);sliders.target=rendering;
       choices('lighting','Iluminación',[['day','Natural'],['warm','Rasante'],['studio','Fría']],lighting,value=>{lighting=value;appearance();changed();});
-      choices('reliefStyle','Sombreado',[['soft','Suave'],['crisp','Clásico'],['multi','Multidireccional']],reliefStyle,value=>{reliefStyle=value;appearance();changed();});
+      choices('reliefStyle','Sombreado',[['soft','Suave'],['crisp','Clásico'],['slope','Pendientes'],['zenith','Cenital']],reliefStyle,value=>{reliefStyle=value;appearance();changed();});
       slider('strength','Intensidad',0.2,1,0.05,strength,'',value=>{strength=value;appearance();changed();});
-      choices('palette','Color del terreno',[['cartographic','Fondo del mapa'],['elevation','Por altitud']],palette,value=>{palette=value;appearance();updateSummary();changed();});
-      rendering.append(el('p','terrain-altitude-key','Color por altitud · de 0 a 3.400 m'));
+      choices('palette','Color del terreno',[['cartographic','Fondo del mapa'],...Object.entries(PALETTES).map(([id,item])=>[id,item.label])],palette,value=>{palette=value;appearance();updateSummary();changed();},'terrain-swatches');
+      sliders.key=el('p','terrain-altitude-key');sliders.key.hidden=true;rendering.append(sliders.key);
       const label=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.checked=true;
       sliders.shade=check;
       check.onchange=()=>{shade=check.checked;appearance();changed();};label.append(check,document.createTextNode('Mostrar sombreado'));rendering.append(label);delete sliders.target;
@@ -325,9 +344,9 @@
         if(map.getLayer('hillshade'))map.setLayoutProperty('hillshade','visibility',shade?'visible':'none');
       }
       if(Object.hasOwn(lights,state.lighting))lighting=state.lighting;
-      if(['soft','crisp','multi'].includes(state.reliefStyle))reliefStyle=state.reliefStyle;
+      if(Object.hasOwn(RELIEF,state.reliefStyle))reliefStyle=state.reliefStyle;
       if(typeof state.strength==='number'&&Number.isFinite(state.strength)&&state.strength>=0.2&&state.strength<=1)strength=state.strength;
-      if(['cartographic','elevation'].includes(state.palette))palette=state.palette;
+      if(state.palette==='cartographic'||Object.hasOwn(PALETTES,state.palette))palette=state.palette;
       for(const [key,value] of Object.entries({lighting,reliefStyle,palette}))if(sliders[key])for(const [id,button] of Object.entries(sliders[key]))button.setAttribute('aria-pressed',String(id===value));
       if(sliders.strength){sliders.strength.input.value=strength;sliders.strength.output.textContent=String(strength);}
       appearance();
@@ -335,7 +354,7 @@
     }
     map.on('moveend',sync);map.on('error',onError);map.on('sourcedata',onSourceData);
     updateSummary();
-    return {setEnabled,getState,openExplorer,getSummary:()=>summary.textContent,restoreState,destroy:()=>{disposed=true;sceneRequest++;root.AtlasTerrainScene?.close();map.off('moveend',sync);map.off('error',onError);map.off('sourcedata',onSourceData);}};
+    return {setEnabled,getState,openExplorer,refresh:appearance,getSummary:()=>summary.textContent,restoreState,destroy:()=>{disposed=true;sceneRequest++;root.AtlasTerrainScene?.close();map.off('moveend',sync);map.off('error',onError);map.off('sourcedata',onSourceData);}};
   }
   root.AtlasTerrain={create};
 })(typeof window!=='undefined'?window:globalThis);
