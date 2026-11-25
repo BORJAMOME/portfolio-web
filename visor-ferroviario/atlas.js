@@ -44,7 +44,7 @@ function persistHash() {
   clearTimeout(hashTimer);
   if(!ready||restoringView)return;
   const state = {...filters, ...(window.AtlasCapas?.getState() || {}), p: window.AtlasPopulation?.state(), tp: window.AtlasTransport?.state(), d: window.AtlasDemography?.state(), ix: window.AtlasInfrastructure?.state(), r: window.AtlasRoute?.state(), m: terrainEnabled ? 1 : undefined,
-    b:['positron','pnoa'].includes(basemapController?.state())?basemapController.state():undefined,
+    b:basemapController&&basemapController.state()!=='simple'?basemapController.state():undefined,
     c:window.AtlasViewState.capture(map), tv:window.AtlasViewState.terrain(terrainController?.getState()),
     l:Object.fromEntries([...document.querySelectorAll("[data-layer]")].map(input=>[input.dataset.layer,input.checked]))};
   for(const key of Object.keys(filters))if(!state[key].length)delete state[key];
@@ -81,7 +81,7 @@ function activeChips(){
     if(name)chips.push({label:name,title:"Capa",remove:()=>{input.checked=false;input.dispatchEvent(new Event("change",{bubbles:true}));}});
   }
   const base=basemapController?.state();
-  if(base&&base!=="simple")chips.push({label:base==="pnoa"?"Vista aérea PNOA":"Fondo Positron",title:"Mapa base",remove:()=>basemapController.set("simple")});
+  if(base&&base!=="simple")chips.push({label:"Fondo "+window.AtlasBasemap.label(base),title:"Mapa base",remove:()=>basemapController.set("simple")});
   if(terrainEnabled)chips.push({label:"Inclinado con relieve",title:"Vista del mapa",remove:()=>setTerrain(false)});
   return chips;
 }
@@ -149,7 +149,7 @@ if(map) {
     const message=String(event.error?.message||"");
     if(event.error?.name==="AbortError"||/abort/i.test(message))return;
     if(["ign-terrain","ign-shading","terrain"].includes(event.sourceId))return;
-    if(event.sourceId==='basemap-openmaptiles'&&basemapController?.state()!=='positron')return;
+    if(basemapController?.ignores(event.sourceId))return;
     console.error(event.error);
     failedMapSources.add(event.sourceId||"unknown");
     updateMapStatus();
@@ -737,7 +737,9 @@ if(map)map.on("load",async()=>{
       map.on("mouseenter",id,()=>map.getCanvas().style.cursor="pointer");
       map.on("mouseleave",id,()=>map.getCanvas().style.cursor="");
     }
-    basemapController=window.AtlasBasemap.create(map,{select:$("#basemap-select"),note:$("#basemap-note"),retry:$("#basemap-fallback"),onChange:mode=>{if(mode==='simple'){failedMapSources.delete('basemap-openmaptiles');updateMapStatus();}renderLegend();writeHash();}});
+    basemapController=window.AtlasBasemap.create(map,{select:$("#basemap-select"),note:$("#basemap-note"),retry:$("#basemap-fallback"),onChange:()=>{for(const id of failedMapSources)if(basemapController.ignores(id))failedMapSources.delete(id);updateMapStatus();terrainController?.refresh?.();renderLegend();writeHash();}});
+    // Botón de estilos justo debajo del zoom (mismo rincón, añadido después).
+    map.addControl(window.AtlasBasemap.control(basemapController),"top-right");
     ready=true;
     AtlasThemes.init({map,dataset,showInfo,onChange:()=>{renderLegend();writeHash();},onLegend:()=>renderLegend()});
     AtlasCapas.init({map,dataset,showInfo,legacy:AtlasThemes,onChange:()=>applyFilters()});
@@ -758,7 +760,8 @@ if(map)map.on("load",async()=>{
       // El explorador 3D reutiliza el estilo del mapa: red filtrada con los colores del tema, trazados del tema y selección.
       getNetwork:()=>{const style=window.AtlasCapas?.scene3d?.()||{};const selected=dataset.rail.features.filter(f=>f.id===selectedId);
         return {base:filtered,baseColor:style.baseColor,overlay:style.overlay||[],overlayColor:f=>f.properties.color,selected};},
-      getFocus:()=>selectedStation?{station:selectedStation.properties.CODIGO}:null});
+      getFocus:()=>selectedStation?{station:selectedStation.properties.CODIGO}:null,
+      getBasemap:()=>basemapController?.state()});
     map.on("moveend",writeHash);
     const finishLoading=()=>{if(loading.hidden)return;loading.hidden=true;const attrib=document.querySelector(".maplibregl-ctrl-attrib");attrib?.classList.remove("maplibregl-compact-show");attrib?.removeAttribute("open");};
     map.once("idle",finishLoading);setTimeout(finishLoading,4000);

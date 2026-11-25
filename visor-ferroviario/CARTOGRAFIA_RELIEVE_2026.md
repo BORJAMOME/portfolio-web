@@ -26,6 +26,16 @@ Rediseño del 24–25 de noviembre de 2026. Motores sin cambiar de versión: **M
   - La imagen se atenúa un poco (saturación −0,25 y brillo máximo 0,9) para que las vías y los rótulos destaquen.
   - El mapa cartográfico sigue siendo la vista inicial.
 
+## Mapas base y relieve (25 de noviembre de 2026)
+
+- **Botón «Estilo del mapa»** bajo el zoom: miniaturas de los siete fondos (`img/basemaps/`), mismo estado que el selector de «Territorio» y que el enlace (`b`). Teclado con flechas, Inicio/Fin y Esc.
+- **Fondos**:
+  - *IGN gris* (`IGNBase-gris`) e *IGN color* (`IGNBaseTodo`), WMTS `https://www.ign.es/wmts/ign-base`, comprobados con su GetCapabilities y con teselas de Francia y Portugal. Cubren todo el mundo, así que, como Positron, sustituyen la máscara exterior y los rótulos locales. La capa «Topografía IGN» (MTN ráster por WMS) sigue cubriendo solo España.
+  - *Graybeard* y *Colorful* de [VersaTiles](https://docs.versatiles.org/guides/use_tiles_versatiles_org.html): estilos CC0 adaptados con `node tools/visor/adaptar-estilos.mjs` (mismas reglas que Positron: prefijos, tipografía local, sin iconos ni capas ferroviarias, rótulos en español). El servidor público no tiene clave ni garantía de servicio.
+  - Descartados: CARTO Voyager/Dark Matter (licencia comercial restrictiva), Protomaps y MapTiler (requieren clave) y estilos oscuros (la simbología de la red está diseñada para fondo claro).
+- **Sombreado**: se retira «Multidireccional» (tres luces sumaban contraste en cada ladera). Quedan *Suave* (`igor`), *Clásico* (`standard`), *Pendientes* (`combined`) y *Cenital* (`igor` con luz a 70°, sombras cortas y difusas). Un enlace antiguo con `multi` abre *Suave*.
+- **Color del terreno** (`color-relief` sobre el mismo MDT): *Natural*, *Bosque*, *Meseta*, *Suizo* (tintas claras al estilo de Imhof) y *Pastel* (la anterior «Por altitud»). Sobre un fondo completo la tinta baja al 55 % para que se lean sus rótulos.
+
 ## Interfaz
 
 - **«Plano / Inclinado»** son dos vistas del mismo mapa. **«Explorador 3D»** es otra herramienta, que se abre en una ventana sobre el mapa:
