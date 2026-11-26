@@ -80,7 +80,7 @@ Esquema en estrella: dos tablas de hechos (relaciones y tramos) y dimensiones co
 | `ambito` | `nacional`, `internacional-fr`, `internacional-pt` | Si alguna parada está fuera de España | GTFS: AVE Francia (Lyon, Marsella); Intercity Vigo–Oporto |
 | `nucleo` y `linea` | Los 15 núcleos de renfe.com/cercanias y sus líneas (C1, R2N…) | Solo con familia `metro`. El ancho métrico es un **atributo de la línea** (`ancho_red`), no una categoría | GTFS oficial `fomento_transit.zip` |
 | `ejes[]` | Ejes de lectura (3.3) | Ejes por los que la relación recorre al menos el 20 % de sus km. Umbral por validar | Tramos de las variantes cruzados con `ejes.json` |
-| `vigencia` | `vigente`, `futura`, `sin-oferta`, `suspendida` | Regla de relación vigente (2). `suspendida` si todas sus variantes pasan por un tramo con incidencia activa al corte | Calendario del GTFS y `incidencias.json` |
+| `vigencia` | `vigente`, `futura`, `sin-oferta`, `suspendida` | Regla de relación vigente (2). `suspendida` si todas sus variantes pasan por un tramo con incidencia activa al corte | Calendario del GTFS y `cortes.json` |
 | `calidad` | `oficial`, `reconstruido`, `comunitario`, `sin-trazado` | Procedencia del horario y del trazado. iryo: horario `comunitario`; relaciones sin trazado dibujable, `sin-trazado` | `meta.sources` |
 
 Atributos que no son filtros pero entran en la búsqueda y en las fichas:
@@ -154,7 +154,7 @@ Dos niveles, como una jerarquía eje → línea:
 
 ### 3.5 Incidencias
 
-`capas/incidencias.json`: `{id, tramos[], desde, hasta|null, efecto: "suspendida", fuente, fecha_fuente, nota}`. Se aplica a las dos tablas con la misma regla y sustituye a las notas escritas a mano en `capas.js`. Primera entrada: Madrid–Andalucía entre Mora, Orgaz y Urda, desde el 28-10-2026, sin fecha de reapertura ([V] Adif, 05-11-2026).
+`capas/cortes.json` (el nombre `incidencias.json` ya lo usan los avisos de Cercanías de Cabina): `{id, nombre, desde, hasta|null, entre: [[estaciones de un lado], [del otro]], aplicar, fuente, ver}`. Una relación vigente que pasa por estaciones de los dos lados de un corte con `aplicar: true` queda `suspendida`. Con `aplicar: false` el corte se documenta sin cambiar nada, mientras los horarios publicados sigan trayendo trenes. Se aplica a las dos tablas con la misma regla y sustituye a las notas escritas a mano en `capas.js`. Primera entrada: Madrid–Andalucía entre Mora, Orgaz y Urda, desde el 28-10-2026, sin fecha de reapertura ([V] Adif, 05-11-2026).
 
 ## 4. Archivos
 
@@ -162,10 +162,10 @@ Dos niveles, como una jerarquía eje → línea:
 |---|---|---|
 | `visor-ferroviario/taxonomia.js` (UMD, como `filtros.js`) | Diccionario: dimensiones, valores, nombres, alias, orden, color, padre, regla y fuente con fecha; `ejes_rfig`, `ejes_lectura` con excepciones por línea y `osp_relaciones` | Nuevo. Sustituye a `services`, `brands`, `corridors` y `status` de `capas-config.js`, y a `FAMILY`/`BRAND`/`COMPANY` de `build-rutas.mjs` |
 | `capas/ejes.json` | `{tramo: {linea_adif, eje_rfig, ejes[]}}`, más `meta` con método, cobertura y fecha | Nuevo |
-| `capas/incidencias.json` | Ver 3.5 | Nuevo |
-| `capas/servicios.json` | Cada variante lleva un bloque `d: {op, fam, marca, reg, amb, nuc, lin, ejes, vig, cal}` con ids del diccionario | Cambia. Durante una versión conviven `categories` y `brand` para no romper enlaces |
-| `capas/cercanias.json` | Cercanías de todos los núcleos desde el GTFS oficial, con el mismo bloque `d` | Nuevo. Se carga solo al marcar Cercanías, para no inflar `servicios.json` (4,8 MB) |
-| `capas/rutas.json` | Las mismas claves `d`, los mismos ids, el mismo corte y la misma regla de vigencia | Cambia. `fam` y `marca` pasan a ser ids |
+| `capas/cortes.json` | Ver 3.5 | Nuevo (fase 2). Madrid–Andalucía con `aplicar: false` |
+| `capas/servicios.json` | Cada variante lleva un bloque `tx: {op, fam, marca, reg, amb, nuc, lin, ejes, vig, cal}` con ids del diccionario. Se llama `tx` y no `d` porque en `rutas.json` `d` ya es la estación de destino. Lo escribe `tools/visor/anotar-taxonomia.mjs` | Cambia. Durante una versión conviven `categories` y `brand` para no romper enlaces |
+| `capas/cercanias.json` | Cercanías de todos los núcleos desde el GTFS oficial, con el mismo bloque `tx` | Nuevo. Se carga solo al marcar Cercanías, para no inflar `servicios.json` (4,8 MB) |
+| `capas/rutas.json` | El mismo bloque `tx`, los mismos ids, el mismo corte y la misma regla de vigencia | Cambia. `fam` y `marca` pasan a ser ids |
 | `datos.json` (tramos) | Se añaden `linea_adif`, `eje_rfig`, `ejes` y `tent`. `perf` y `net` ya existen | Cambia |
 | `transit-catalog.json` | Solo Metro y Metro Ligero (operadores no Renfe) | Se reduce |
 
@@ -173,7 +173,7 @@ Ejemplo de variante:
 
 ```json
 {"id":"renfe-national:04e3279d3654704e","relation":"rel:…","origin":"Barcelona-Sants","destination":"Lyon Part Dieu",
- "d":{"op":"renfe","fam":"av","marca":"ave","reg":"comercial","amb":"internacional-fr",
+ "tx":{"op":"renfe","fam":"av","marca":"ave","reg":"comercial","amb":"internacional-fr",
       "nuc":null,"lin":null,"ejes":["noreste"],"vig":"vigente","cal":"oficial"},
  "alias":[],"trips":4,"numbers":["09737"],"validity":{"from":"2026-11-15","to":"2027-01-24"}}
 ```
@@ -229,7 +229,7 @@ Los temas de «Vías» pasan de 8 a 4. Cada grupo de casillas muestra su recuent
 
 ## 6. Comprobaciones nuevas (`tools/check-taxonomia.mjs`)
 
-1. Todo id que aparezca en `servicios.json`, `cercanias.json`, `rutas.json`, `datos.json`, `ejes.json` e `incidencias.json` existe en el diccionario.
+1. Todo id que aparezca en `servicios.json`, `cercanias.json`, `rutas.json`, `datos.json`, `ejes.json` y `cortes.json` existe en el diccionario.
 2. La familia de cada variante es la de su marca: no hay doble pertenencia.
 3. Cada línea de Cercanías aparece una sola vez (núcleo + línea únicos).
 4. La suma de relaciones por familia es igual al total, y lo mismo por régimen y por ámbito.
@@ -244,7 +244,7 @@ Los temas de «Vías» pasan de 8 a 4. Cada grupo de casillas muestra su recuent
 Cada paso es un PR en borrador. Primera tanda (datos, sin tocar la interfaz): pasos 1 a 4. Segunda tanda: pasos 5 y 6.
 
 1. `taxonomia.js` y `check-taxonomia.mjs` (comprobaciones 1 a 4), en modo informe. Sin cambios en la interfaz.
-2. Los generadores escriben `d` en `servicios.json` y `rutas.json` con el mismo corte y la misma regla de vigencia; `osp_relaciones`; `incidencias.json`. Comprobaciones 5 y 9.
+2. `tools/visor/anotar-taxonomia.mjs` escribe `tx` en `servicios.json` y `rutas.json` con la misma regla de vigencia (el visor la lee de `tx.vig`); `osp_relaciones`; `cortes.json`. Comprobaciones 5 y 9. **Mismo corte, pendiente:** regenerar `servicios.json` cada semana desplazaría los ids de variante de los que depende `horarios.json` (horas del buscador de rutas), cuyo generador no está en el repositorio. Hasta traerlo, la comprobación 5 informa sin bloquear.
 3. `linea_adif`, `eje_rfig` y `ejes` en `datos.json` y `ejes.json`. Comprobaciones 6 y 8, y los casos de prueba de 8.
 4. `cercanias.json` desde el GTFS oficial; `transit-catalog.json` reducido. Se mide el tamaño antes de publicar.
 5. Panel con los 4 temas y traducción de los enlaces antiguos.

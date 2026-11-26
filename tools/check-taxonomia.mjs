@@ -1,6 +1,6 @@
 // Comprueba los datos del atlas ferroviario contra el diccionario único (visor-ferroviario/taxonomia.js).
-// Fase 1 del plan de filtros (FILTROS_ARQUITECTURA.md, sección 6, comprobaciones 1 a 4), en modo informe:
-// enseña lo que no cuadra y termina bien. Con --strict termina con error si falla alguna de las comprobaciones 1 a 4.
+// Plan de filtros (FILTROS_ARQUITECTURA.md, sección 6): comprobaciones 1 a 5 y 9, en modo informe:
+// enseña lo que no cuadra y termina bien. Con --strict termina con error si falla una obligatoria (las marcadas como aviso no bloquean).
 //   node tools/check-taxonomia.mjs [--strict] [--json]
 import fs from 'node:fs';
 import path from 'node:path';
@@ -105,13 +105,34 @@ const rels = [...relaciones.values()];
   info.push(`Tabla, filas por familia: ${fmt(tf)} = ${sum(tf)}`);
   check(4, 'La suma por familia, régimen y ámbito es igual al total', p, info);
 
-  /* Vista previa de la comprobación 5 (fase 2): mismo número de relaciones vigentes por marca. */
-  const mapa = tally(rels, r => r.marca);
-  const tabla = tally(filas.filter(x => x.sem > 0), x => x.marcaId);
+}
+
+/* ── 5. mapa y tabla: mismo corte y mismas relaciones vigentes por marca ──
+   iryo queda fuera mientras su trazado sea «sin-trazado» y Cercanías hasta la fase 4 (el mapa solo trae el ancho métrico).
+   Es obligatoria cuando los dos archivos tienen el mismo corte; si no, se informa y no bloquea. */
+{
+  const corteTabla = rutas.referencia?.semana;
+  const fuera = new Set(['iryo', 'cercanias']);
+  const mapa = tally(rels.filter(r => !fuera.has(r.marca)), r => r.marca);
+  const tabla = tally(rutas.rutas.filter(x => x.sem > 0 && !fuera.has(x.tx?.marca)), x => x.tx?.marca);
   const marcas = [...new Set([...Object.keys(mapa), ...Object.keys(tabla)])].sort();
   const dif = marcas.filter(m => (mapa[m] || 0) !== (tabla[m] || 0)).map(m => `${m}: mapa ${mapa[m] || 0}, tabla ${tabla[m] || 0}`);
-  results.push({n: '5 (avance)', title: 'Mapa y tabla con el mismo número de relaciones por marca. Se exige en la fase 2', ok: dif.length === 0, problems: dif,
-    info: [`Cortes: mapa ${cutoff}, tabla ${rutas.referencia?.semana || rutas.generado}. Filas de la tabla sin trenes en la semana de referencia: ${filas.filter(x => !(x.sem > 0)).length}.`], advisory: true});
+  const mismoCorte = corteTabla === cutoff;
+  const sinTx = servicios.variants.filter(v => !v.tx).length + rutas.rutas.filter(x => !x.tx).length;
+  const p = sinTx ? [`${sinTx} filas sin bloque tx: ejecuta node tools/visor/anotar-taxonomia.mjs`] : [];
+  results.push({n: 5, title: 'Mapa y tabla con el mismo corte y las mismas relaciones vigentes por marca', ok: !p.length && !dif.length,
+    problems: [...p, ...dif], advisory: !p.length && !mismoCorte,
+    info: [`Cortes: mapa ${cutoff}, tabla ${corteTabla}. ${mismoCorte ? 'Mismo corte: obligatoria.' : 'Cortes distintos: se informa y no bloquea hasta que la tarea semanal regenere los dos.'} Fuera de la cuenta: iryo y Cercanías.`]});
+}
+
+/* ── 9. toda relación de osp_relaciones existe en los datos ── */
+{
+  const empieza = (st, c) => {const a = T.normalize(st), b = T.normalize(c); return a === b || a.startsWith(b + '-') || a.startsWith(b + ' ');};
+  const pares = [...servicios.variants.map(v => [v.origin, v.destination]),
+    ...rutas.rutas.map(x => [rutas.estaciones[x.o]?.n, rutas.estaciones[x.d]?.n])].filter(([o, d]) => o && d);
+  const falta = T.ospRelaciones.filter(r => !pares.some(([o, d]) => (empieza(o, r.origen) && empieza(d, r.destino)) || (empieza(o, r.destino) && empieza(d, r.origen))))
+    .map(r => `${r.origen}–${r.destino} (${r.regimen}) no aparece: puede haber cambiado la oferta`);
+  results.push({n: 9, title: 'Las relaciones de osp_relaciones existen en los datos', ok: !falta.length, problems: falta, info: [], advisory: true});
 }
 
 /* ── salida ── */
@@ -124,6 +145,6 @@ else {
     for (const x of r.problems) console.log(`    ✗ ${x}`);
     for (const x of r.info) console.log(`    ${x}`);
   }
-  console.log(failed.length ? `\n${failed.length} comprobación(es) con problemas${strict ? '' : ' (modo informe: no bloquea)'}.` : '\nComprobaciones 1 a 4 correctas.');
+  console.log(failed.length ? `\n${failed.length} comprobación(es) con problemas${strict ? '' : ' (modo informe: no bloquea)'}.` : '\nComprobaciones obligatorias correctas.');
 }
 process.exit(strict && failed.length ? 1 : 0);

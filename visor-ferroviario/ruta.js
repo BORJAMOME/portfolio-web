@@ -13,7 +13,7 @@
 
   /* ── núcleo: grafo de paradas y cálculo (sin DOM) ──────────── */
   function metres(a,b){const k=Math.cos((a[1]+b[1])/2*Math.PI/180);return Math.hypot((a[0]-b[0])*k,a[1]-b[1])*111320;}
-  const current=v=>v.validity&&!(v.validity.to<CUTOFF)&&!(v.validity.from>=FUTURE_FROM);
+  const current=v=>v.tx?.vig?v.tx.vig==='vigente':v.validity&&!(v.validity.to<CUTOFF)&&!(v.validity.from>=FUTURE_FROM);
   const speedOf=v=>SPEED[(v.categories||[]).find(c=>SPEED[c])]||[120,80];
   const gid=(sid,st)=>'c:'+(st?.official_id||sid);
   function minutes(v,km,hsKm){const [vh,vc]=speedOf(v);return (hsKm/vh+(km-hsKm)/vc)*60;}
