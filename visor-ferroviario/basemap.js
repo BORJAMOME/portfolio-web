@@ -1,10 +1,10 @@
 /* Fondos insertados bajo las capas del atlas: nunca sustituyen el estilo
    completo, sus imágenes, feature-state, terreno o listeners.
-   - simple: fondo local (solo España; Portugal y Francia en el color del mar).
+   - simple: fondo local. Fuera de España, en cualquier modo, una máscara #FBFBFB (atlas.js · outside).
    - Vectoriales: Positron (OpenFreeMap) y VersaTiles Graybeard y Colorful
      (estilos CC0 adaptados con tools/visor/adaptar-estilos.mjs).
    - Ráster oficiales del IGN (WMTS, EPSG:3857): Mapa base IGN gris y en color,
-     con cobertura mundial, y la vista aérea PNOA Máxima Actualidad.
+     y la vista aérea PNOA Máxima Actualidad, recortados a España por la máscara.
    También pinta el botón de estilos que va bajo los controles de zoom. */
 (function(root){
   'use strict';
@@ -17,7 +17,7 @@
     positron:{label:'Positron',hint:'Calles y territorio en gris claro',style:'styles/positron.json',sources:['basemap-openmaptiles'],
       note:'Positron · OpenFreeMap / OpenMapTiles / OpenStreetMap. Topografía IGN se superpone y sustituye sus etiquetas.'},
     'ign-gris':{label:'IGN gris',hint:'Mapa base oficial del IGN en grises',raster:{layer:'IGNBase-gris',maxzoom:20,attribution:IGN_ATTRIBUTION},
-      paint:{'raster-saturation':-.2,'raster-contrast':-.06},note:'Mapa base del IGN en gris (WMTS oficial, en directo). Cubre también Portugal, Francia y el norte de África.'},
+      paint:{'raster-saturation':-.2,'raster-contrast':-.06},note:'Mapa base del IGN en gris (WMTS oficial, en directo).'},
     'versatiles-gris':{label:'Graybeard',hint:'Gris neutro con cobertura del suelo',style:'styles/versatiles-gris.json',sources:['basemap-versatiles-shortbread','basemap-versatiles-landcover'],
       note:'Graybeard · VersaTiles (estilo CC0) con OpenStreetMap y ESA WorldCover. Servidor público sin garantías de servicio.'},
     'versatiles-color':{label:'Colorful',hint:'Color suave con bosques, agua y cultivos',style:'styles/versatiles-color.json',sources:['basemap-versatiles-shortbread','basemap-versatiles-landcover'],
@@ -38,7 +38,8 @@
   function create(map,{select,note,retry,onChange=()=>{}}={}){
     let mode='simple',revision=0,disposed=false;
     const installed={},pending={},failed=new Set(),listeners=new Set();
-    const local=['land','outside','region-lines','region-labels','city-labels'];
+    // «outside» (máscara #FBFBFB fuera de España) y su contorno se ven siempre.
+    const local=['land','region-lines','region-labels','city-labels'];
     function message(text,warning=false){
       if(note){note.textContent=text;note.dataset.warning=warning?'1':'0';}
       if(retry)retry.hidden=!warning;
@@ -71,7 +72,7 @@
       const topo=map.getLayer('topography')&&map.getLayoutProperty('topography','visibility')!=='none';
       for(const [id,layers] of Object.entries(installed))for(const layer of layers)if(map.getLayer(layer.id))
         map.setLayoutProperty(layer.id,'visibility',id===mode&&!(topo&&layer.type==='symbol')?'visible':'none');
-      // Un fondo completo (vectorial o mapa IGN) sustituye la máscara exterior y los rótulos locales.
+      // Un fondo completo (vectorial o mapa IGN) sustituye el relleno y los rótulos locales; fuera de España manda la máscara.
       for(const id of local)if(map.getLayer(id))map.setLayoutProperty(id,'visibility',covers||(topo&&id.endsWith('labels'))||(photo&&id==='region-labels')?'none':'visible');
       if(select)select.value=mode;
       for(const listener of listeners)listener(mode);
