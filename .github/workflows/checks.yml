@@ -45,6 +45,11 @@ jobs:
       - name: Agregados del mapa de calor de rutas
         if: ${{ !cancelled() }}
         run: node tools/rutas/test-heatmap.mjs
+      - name: Visor ferroviario · clasificación con el diccionario único (bloque tx y comprobaciones de taxonomia.js)
+        if: ${{ !cancelled() }}
+        run: |
+          node tools/visor/anotar-taxonomia.mjs --check
+          node tools/check-taxonomia.mjs --strict
       - name: Histórico de incidencias (deduplicación y cambio de año)
         if: ${{ !cancelled() }}
         run: node --test tools/incidencias.test.mjs

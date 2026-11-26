@@ -25,7 +25,11 @@
   const reduced=()=>CFG.reducedMotion();
 
   /* ── vigencia ─────────────────────────────────────────── */
+  // Vigencia: la calcula una sola vez tools/visor/anotar-taxonomia.mjs (bloque tx, regla única de FILTROS_ARQUITECTURA.md);
+  // las fechas fijas solo cubren un servicios.json sin anotar.
+  const TX_STATUS={vigente:'current',futura:'future','sin-oferta':'expired',suspendida:'suspended'};
   function variantStatus(v){
+    if(v.tx?.vig)return TX_STATUS[v.tx.vig]||'unknown';
     const val=v.validity;if(!val)return 'unknown';
     if(val.to<CUTOFF)return 'expired';
     if(val.from>=FUTURE_FROM)return 'future';

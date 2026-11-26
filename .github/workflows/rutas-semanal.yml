@@ -3,6 +3,7 @@
 # se quedarían sin trenes al caducar.
 #
 # Pasos: descarga (Renfe AV/LD/MD y Cercanías, iryo, estaciones de Renfe y CNMC) → tools/build-rutas.mjs →
+# tools/visor/anotar-taxonomia.mjs (bloque tx con el diccionario único) →
 # tools/build-cnmc.mjs → tools/build-cabina-mercado.mjs (INE, Eurostat y mercancías; si falla, se conserva el
 # mercado.json anterior y sigue) → tools/build-cabina.mjs → control de cordura (tools/rutas/sanity.mjs: no publica si una
 # fuente se hunde de golpe) → comprobaciones → commit en main solo si los datos han cambiado.
@@ -39,6 +40,9 @@ jobs:
       - name: Rutas (descarga los GTFS y genera rutas.json y oferta.json)
         run: node --max-old-space-size=6144 tools/build-rutas.mjs --download
 
+      - name: Clasificación con el diccionario único (bloque tx de servicios.json y rutas.json)
+        run: node tools/visor/anotar-taxonomia.mjs
+
       - name: Trenes por tramo (grosor «por trenes al día» del visor; genera trafico-tramos.json)
         run: node tools/visor/trafico-tramos.mjs
 
@@ -64,6 +68,8 @@ jobs:
           node tools/rutas/test-heatmap.mjs
           node tools/version-assets.mjs --check
           node tools/visor/trafico-tramos.mjs --check
+          node tools/visor/anotar-taxonomia.mjs --check
+          node tools/check-taxonomia.mjs --strict
 
       - name: Publicar en main si hay cambios
         run: |

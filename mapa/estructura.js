@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "3ebe23f",
+ "huella": "1e611aa",
  "recuento": {
   "paginas": 20,
   "proyectos": 40,
@@ -12,7 +12,7 @@ export default {
   "tablas": 41,
   "funciones": 5,
   "herramientas": 44,
-  "relaciones": 204,
+  "relaciones": 207,
   "sinExplicar": 0
  },
  "columnas": [
@@ -3906,6 +3906,12 @@ export default {
   },
   {
    "de": "w:checks",
+   "a": "h:check-taxonomia",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:checks",
    "a": "h:incidencias.test",
    "tipo": "ejecuta",
    "detalle": []
@@ -3953,6 +3959,12 @@ export default {
    "detalle": []
   },
   {
+   "de": "w:checks",
+   "a": "h:visor",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
    "de": "w:incidencias-semanales",
    "a": "h:incidencias.test",
    "tipo": "ejecuta",
@@ -3991,6 +4003,12 @@ export default {
   {
    "de": "w:rutas-semanal",
    "a": "h:check-links",
+   "tipo": "ejecuta",
+   "detalle": []
+  },
+  {
+   "de": "w:rutas-semanal",
+   "a": "h:check-taxonomia",
    "tipo": "ejecuta",
    "detalle": []
   },
