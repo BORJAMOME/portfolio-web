@@ -1,6 +1,6 @@
 /* Generado por tools/mapa/build-mapa.mjs: no se edita a mano. */
 export default {
- "huella": "5bee54d",
+ "huella": "3ebe23f",
  "recuento": {
   "paginas": 20,
   "proyectos": 40,
@@ -11,7 +11,7 @@ export default {
   "pestanas": 10,
   "tablas": 41,
   "funciones": 5,
-  "herramientas": 43,
+  "herramientas": 44,
   "relaciones": 204,
   "sinExplicar": 0
  },
@@ -2401,6 +2401,13 @@ export default {
        "tipo": "herramienta",
        "etiqueta": "check-links.mjs",
        "archivo": "tools/check-links.mjs",
+       "familia": "herramienta"
+      },
+      {
+       "id": "h:check-taxonomia",
+       "tipo": "herramienta",
+       "etiqueta": "check-taxonomia.mjs",
+       "archivo": "tools/check-taxonomia.mjs",
        "familia": "herramienta"
       },
       {
