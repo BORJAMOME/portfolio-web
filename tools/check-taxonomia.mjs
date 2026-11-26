@@ -125,6 +125,26 @@ const rels = [...relaciones.values()];
     info: [`Cortes: mapa ${cutoff}, tabla ${corteTabla}. ${mismoCorte ? 'Mismo corte: obligatoria.' : 'Cortes distintos: se informa y no bloquea hasta que la tarea semanal regenere los dos.'} Fuera de la cuenta: iryo y Cercanías.`]});
 }
 
+/* ── 6 y 8. ejes de los tramos (capas/ejes.json, fase 3) ── */
+{
+  const ejes = fs.existsSync(path.join(V, 'capas/ejes.json')) ? read('capas/ejes.json') : null;
+  if (!ejes) results.push({n: 6, title: 'Tramos de alta velocidad con eje', ok: false, problems: ['Falta capas/ejes.json: node tools/visor/build-ejes.mjs'], info: []});
+  else {
+    const rail = read('datos.json').rail.features;
+    const sinEje = rail.map((x, i) => [x, i]).filter(([x, i]) => x.properties.perf === 'hs' && ['adif', 'adifav'].includes(x.properties.net) && !ejes.lectura[i]);
+    const km = Math.round(sinEje.reduce((s, [x]) => s + (x.properties.length_m || 0), 0) / 1000);
+    results.push({n: 6, title: 'Ningún tramo de alta velocidad de Adif queda sin eje', ok: !sinEje.length,
+      problems: sinEje.length ? [`${sinEje.length} tramos (${km} km) sin eje; p. ej. ${sinEje.slice(0, 5).map(([x]) => x.properties.id).join(', ')}`] : [],
+      info: [`Cobertura: ${ejes.meta.cobertura.adif} tramos con línea de Adif y ${ejes.meta.cobertura.propagado} con la línea deducida por la red.`]});
+    const mal = ejes.linea.map((l, i) => [l, i]).filter(([l, i]) => l && ejes.rfig[i] !== l.slice(0, 2));
+    results.push({n: 8, title: 'El eje RFIG de cada tramo son las dos primeras cifras de su línea', ok: !mal.length,
+      problems: mal.slice(0, 5).map(([l, i]) => `tramo ${i}: línea ${l}, eje ${ejes.rfig[i]}`), info: []});
+    const vals = new Set(ejes.lectura.filter(Boolean));
+    const bad = [...vals].filter(x => !T.has('ejeLectura', x));
+    if (bad.length) results.find(r => r.n === 8).problems.push(`ejes de lectura desconocidos: ${bad.join(', ')}`), results.find(r => r.n === 8).ok = false;
+  }
+}
+
 /* ── 9. toda relación de osp_relaciones existe en los datos ── */
 {
   const empieza = (st, c) => {const a = T.normalize(st), b = T.normalize(c); return a === b || a.startsWith(b + '-') || a.startsWith(b + ' ');};
