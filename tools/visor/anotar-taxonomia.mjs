@@ -12,7 +12,8 @@ import {fileURLToPath} from 'node:url';
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const V = path.join(ROOT, 'visor-ferroviario');
 const T = createRequire(import.meta.url)(path.join(V, 'taxonomia.js'));
-const FILES = {servicios: path.join(V, 'capas', 'servicios.json'), rutas: path.join(V, 'capas', 'rutas.json'), cortes: path.join(V, 'capas', 'cortes.json')};
+const FILES = {servicios: path.join(V, 'capas', 'servicios.json'), rutas: path.join(V, 'capas', 'rutas.json'), cortes: path.join(V, 'capas', 'cortes.json'),
+  ejes: path.join(V, 'capas', 'ejes.json'), red: path.join(ROOT, 'tools', 'visor', 'servicios', 'fuentes', 'red-ign.geojson')};
 
 const addDays = (iso, d) => {const t = new Date(iso + 'T12:00:00Z'); t.setUTCDate(t.getUTCDate() + d); return t.toISOString().slice(0, 10);};
 // Regla única de vigencia (sección 2): la misma que usa el visor (capas.js y ruta.js leen el corte de servicios.json).
@@ -34,7 +35,20 @@ const norm = T.normalize;
 const activos = (cortes, cutoff) => (cortes?.cortes || []).filter(c => c.aplicar && c.desde <= cutoff && (!c.hasta || c.hasta >= cutoff));
 const cruza = (names, corte) => corte.entre.every(lado => lado.some(n => names.some(s => norm(s).startsWith(norm(n)))));
 
-export function clasificarVariante(v, {stations, cutoff, cortes}) {
+/* Ejes de una relación (FILTROS_ARQUITECTURA.md 3.3): ejes de lectura por los que pasa al menos UMBRAL_EJE de sus km.
+   Multivalor: una relación puede tener varios. Sin ninguno por encima del umbral, el de más km. */
+export const UMBRAL_EJE = 0.2;
+export function ejesDe(edges, {ejes, largo}) {
+  if (!ejes || !edges?.length) return [];
+  const km = {}; let total = 0;
+  for (const e of edges) {const i = Math.abs(e), l = largo[i] || 0; total += l; const k = ejes.lectura[i]; if (k) km[k] = (km[k] || 0) + l;}
+  if (!total) return [];
+  const orden = Object.entries(km).sort((a, b) => b[1] - a[1]);
+  const sel = orden.filter(([, l]) => l / total >= UMBRAL_EJE).map(([k]) => k);
+  return sel.length ? sel : orden.slice(0, 1).map(([k]) => k);
+}
+
+export function clasificarVariante(v, {stations, cutoff, cortes, ejes, largo}) {
   const marca = marcaDeVariante(v);
   const nuc = v.network ? T.get('nucleo', String(v.network))?.id || null : null;
   const fuera = (v.calls || []).map(c => stations[c.s]).filter(s => s && s.spain === false);
@@ -47,7 +61,7 @@ export function clasificarVariante(v, {stations, cutoff, cortes}) {
   const cal = !(v.edges?.length) && !v.geometry ? 'sin-trazado' : CAL_BY_SOURCE[v.source] || null;
   return {op: OP_BY_SOURCE[v.source] || null, fam: T.familiaDe(marca), marca,
     reg: T.regimenDe(marca, {origen: v.origin, destino: v.destination, nucleo: v.network ? String(v.network) : null}),
-    amb, nuc, lin: marca === 'cercanias' ? v.published_brand || null : null, vig, cal};
+    amb, nuc, lin: marca === 'cercanias' ? v.published_brand || null : null, ejes: ejesDe(v.edges, {ejes, largo}), vig, cal};
 }
 
 export function clasificarRuta(row, {estaciones, variantes}) {
@@ -57,17 +71,17 @@ export function clasificarRuta(row, {estaciones, variantes}) {
   const ligada = row.via?.variante ? variantes.get(row.via.variante) : null;
   return {op: OP_BY_SOURCE[row.src] || null, fam: T.familiaDe(marca), marca,
     reg: T.regimenDe(marca, {origen: name(row.o), destino: name(row.d), nucleo: nuc}),
-    amb: ligada?.tx?.amb || 'nacional', nuc, lin: marca === 'cercanias' ? row.marca : null,
+    amb: ligada?.tx?.amb || 'nacional', nuc, lin: marca === 'cercanias' ? row.marca : null, ejes: ligada?.tx?.ejes || [],
     vig: row.sem > 0 ? 'vigente' : 'sin-oferta', cal: CAL_BY_SOURCE[row.src] || null};
 }
 
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
-export function anotar({servicios, rutas, cortes}) {
+export function anotar({servicios, rutas, cortes, ejes, largo}) {
   const cutoff = servicios.meta.cutoff;
   let cambios = 0;
   for (const v of servicios.variants) {
-    const tx = clasificarVariante(v, {stations: servicios.stations, cutoff, cortes});
+    const tx = clasificarVariante(v, {stations: servicios.stations, cutoff, cortes, ejes, largo});
     if (!same(v.tx, tx)) {v.tx = tx; cambios++;}
   }
   const variantes = new Map(servicios.variants.map(v => [v.id, v]));
@@ -75,14 +89,16 @@ export function anotar({servicios, rutas, cortes}) {
     const tx = clasificarRuta(row, {estaciones: rutas.estaciones, variantes});
     if (!same(row.tx, tx)) {row.tx = tx; cambios++;}
   }
-  const meta = {diccionario: T.version, bloque: 'tx', regla_vigencia: 'validity.to >= corte y validity.from < corte + 31 días'};
+  const meta = {diccionario: T.version, bloque: 'tx', regla_vigencia: 'validity.to >= corte y validity.from < corte + 31 días', umbral_eje: UMBRAL_EJE};
   if (!same(servicios.meta.taxonomia, meta)) {servicios.meta.taxonomia = meta; cambios++;}
   return cambios;
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
   const read = f => JSON.parse(fs.readFileSync(f, 'utf8'));
-  const data = {servicios: read(FILES.servicios), rutas: read(FILES.rutas), cortes: fs.existsSync(FILES.cortes) ? read(FILES.cortes) : null};
+  const ejes = fs.existsSync(FILES.ejes) ? read(FILES.ejes) : null;
+  const largo = ejes ? (read(FILES.red).features).map(x => (x.properties || x).length_m || 0) : null;
+  const data = {servicios: read(FILES.servicios), rutas: read(FILES.rutas), cortes: fs.existsSync(FILES.cortes) ? read(FILES.cortes) : null, ejes, largo};
   const cambios = anotar(data);
   if (process.argv.includes('--check')) {
     if (cambios) {console.error(`✗ ${cambios} bloques tx sin anotar o desfasados. Ejecuta: node tools/visor/anotar-taxonomia.mjs`); process.exit(1);}

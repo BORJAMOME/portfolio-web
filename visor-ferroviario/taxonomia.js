@@ -1,5 +1,5 @@
 /* Diccionario único de clasificación del atlas ferroviario (FILTROS_ARQUITECTURA.md, versión 2).
-   Fase 1: solo lo leen las comprobaciones (tools/check-taxonomia.mjs); la interfaz sigue con capas-config.js.
+   Lo leen los generadores (tools/visor/anotar-taxonomia.mjs, build-ejes.mjs), las comprobaciones y el visor.
    Cada valor lleva su fuente y una marca de verificación: V oficial, P prensa o terceros, D deducción propia. */
 (function (root) {
   const normalize = value => String(value ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
@@ -128,7 +128,9 @@
     {id: '15', name: 'Sin identificar', lectura: null, pendiente: 'No figura en el manual. lineas-adif.json tiene 15026 (Bif. San Esteban–Bif. Casa de la Torre), 15626 (Cáceres–Bif. Peñas Blancas) y 15926 (Bif. La Isla–Bif. San Nicolás)'},
     {id: '16', name: 'Olmedo–Medina–Zamora–Ourense–Santiago de Compostela (AV)', lectura: 'norte'}
   ];
-  const ejeLineas = {};
+  // Excepciones por línea [D]: el tramo litoral Valencia–Tarragona (línea 03600) es del eje 03 en el catálogo,
+  // pero se lee como corredor litoral, no como Madrid–Levante.
+  const ejeLineas = {'03600': 'mediterraneo', '03604': 'mediterraneo'};
 
   // Relaciones con régimen distinto del de su marca. Origen y destino por nombre de ciudad, sin sentido.
   // Se aplica a toda la relación aunque solo algunos trenes lleven plazas OSP: aproximación marcada como D.

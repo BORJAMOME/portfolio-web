@@ -245,7 +245,7 @@ Cada paso es un PR en borrador. Primera tanda (datos, sin tocar la interfaz): pa
 
 1. `taxonomia.js` y `check-taxonomia.mjs` (comprobaciones 1 a 4), en modo informe. Sin cambios en la interfaz.
 2. `tools/visor/anotar-taxonomia.mjs` escribe `tx` en `servicios.json` y `rutas.json` con la misma regla de vigencia (el visor la lee de `tx.vig`); `osp_relaciones`; `cortes.json`. Comprobaciones 5 y 9. **Mismo corte, pendiente:** regenerar `servicios.json` cada semana desplazaría los ids de variante de los que depende `horarios.json` (horas del buscador de rutas), cuyo generador no está en el repositorio. Hasta traerlo, la comprobación 5 informa sin bloquear.
-3. `linea_adif`, `eje_rfig` y `ejes` en `datos.json` y `ejes.json`. Comprobaciones 6 y 8, y los casos de prueba de 8.
+3. `linea_adif`, `eje_rfig` y `ejes` en `capas/ejes.json` (`tools/visor/build-ejes.mjs`; `datos.json` no cambia) y `tx.ejes` en cada relación. Comprobaciones 6 y 8, y los casos de prueba de 8. **Hecho (fase 3):** 11.436 tramos con la línea de Adif y 31.307 con la línea deducida por la red [D]; quedan 5 km de Adif sin eje. Resultado de los casos: Barcelona–Vigo norte+noreste, Lleida–Vigo norte, Valladolid–Alicante y Valladolid–Murcia levante+norte, Madrid–Badajoz extremadura, Zaragoza–Sevilla sur+noreste, Albacete–Toledo levante. Litoral: la línea 03600 (Valencia–Sant Vicenç de Calders) se lee como `mediterraneo`.
 4. `cercanias.json` desde el GTFS oficial; `transit-catalog.json` reducido. Se mide el tamaño antes de publicar.
 5. Panel con los 4 temas y traducción de los enlaces antiguos.
 6. Se retiran `categories`, `brand` y las listas de `capas-config.js`. Comprobación 7.

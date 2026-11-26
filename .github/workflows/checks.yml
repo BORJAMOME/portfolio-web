@@ -48,6 +48,7 @@ jobs:
       - name: Visor ferroviario · clasificación con el diccionario único (bloque tx y comprobaciones de taxonomia.js)
         if: ${{ !cancelled() }}
         run: |
+          node tools/visor/build-ejes.mjs --check
           node tools/visor/anotar-taxonomia.mjs --check
           node tools/check-taxonomia.mjs --strict
       - name: Histórico de incidencias (deduplicación y cambio de año)
