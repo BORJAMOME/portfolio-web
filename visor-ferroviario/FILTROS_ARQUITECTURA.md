@@ -250,14 +250,14 @@ Cada paso es un PR en borrador. Primera tanda (datos, sin tocar la interfaz): pa
 5. Panel con los 4 temas y traducción de los enlaces antiguos.
 6. Se retiran `categories`, `brand` y las listas de `capas-config.js`. Comprobación 7.
 
-## 8. Pendiente de validar
+## 8. Pendientes: estado a 26-11-2026
 
 - **BOE-A-2025-15718.** El dossier lo cita como convenio AGE–Renfe–Gobierno Vasco para Alsasua–Vitoria–Miranda (01-07-2025 a 31-12-2027). El *Manual de ferrocarriles* (tema 9.3) lo cita como el traspaso de Cercanías al País Vasco desde el 01-01-2025. Si es lo segundo, las Cercanías de Bilbao y San Sebastián son `osp-ccaa`, no `osp-age`. Hay que leer el BOE antes del paso 2.
 - **Eje RFIG 15.** `lineas-adif.json` tiene 3 líneas con ese código y el manual no lo recoge. Hay que identificarlo en el catálogo antes del paso 3.
 - **Cobertura de `linea_adif`.** 11.436 tramos la tienen; en una relación AVE Madrid–Sevilla, solo 0,1 de 469 km [C, dossier]. El cruce de 3.3 es el punto de más riesgo.
 - **Umbral del 20 % de km** para asignar ejes a una relación. Casos de prueba: Barcelona–Vigo, Lleida–Vigo, Valladolid–Alicante, Valladolid–Murcia, Madrid–Badajoz, Zaragoza–Sevilla y Albacete–Toledo. Criterio: cada uno recibe los ejes esperados a simple vista y ninguno queda sin eje.
-- **Madrid–Andalucía.** El GTFS de Renfe y el de iryo traen trenes el 25-11 con la línea cortada. No se sabe si Renfe desvía alguno. Hay que contrastarlo antes de marcar sus relaciones como `suspendida`.
-- **iryo.** Sigue como `comunitario`. iryo.eu no permite la consulta automática; la lista de relaciones de su web es una copia manual del 26-11-2026, con errores de la propia web (el enlace «Tren a Córdoba» de la página de Málaga apunta a Málaga).
+- **Madrid–Andalucía.** Cortada desde el 28-10-2026 sin fecha de reapertura (Adif, 05-11-2026); OUIGO e iryo tienen cancelaciones publicadas hasta el 03-12-2026, y las notas del visor («hasta el 29-11») están desactualizadas. Aun así, el GTFS de Renfe y el de iryo traen trenes el 25-11. No se sabe si Renfe desvía alguno. Hay que contrastarlo antes de marcar sus relaciones como `suspendida`.
+- **iryo.** Sigue como `comunitario`. La CNMC tiene comunicada una relación Barcelona–Tarragona–Lleida que el visor no recoge: se confirma con la oferta comercial antes de añadirla. iryo.eu no permite la consulta automática; la lista de relaciones de su web es una copia manual del 26-11-2026, con errores de la propia web (el enlace «Tren a Córdoba» de la página de Málaga apunta a Málaga).
 - **Regionales catalanes.** No hay lista oficial línea a línea de los que son de la Generalitat.
 - **Avant que no figuran en renfe.com.** El GTFS publica como Avant Madrid–Albacete, Albacete–Toledo y Barcelona–Tortosa (Exprés), que no están en la lista de relaciones Avant de renfe.com. Se mantienen como `avant` porque lo dice el GTFS.
 
