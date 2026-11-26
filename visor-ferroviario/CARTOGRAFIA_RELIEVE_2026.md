@@ -26,6 +26,12 @@ Rediseño del 24–25 de noviembre de 2026. Motores sin cambiar de versión: **M
   - La imagen se atenúa un poco (saturación −0,25 y brillo máximo 0,9) para que las vías y los rótulos destaquen.
   - El mapa cartográfico sigue siendo la vista inicial.
 
+## Fuera de España (25 de noviembre de 2026)
+
+- Todo lo que queda fuera del contorno de España (Portugal, Francia, Andorra, África y el mar) se pinta en `#FBFBFB` con cualquier fondo, sombreado o color del terreno. La capa `outside` va por encima de todos ellos y `basemap.js` ya no la oculta.
+- Un contorno fino (`outside-edge`, `#b9c5d6`) dibuja la costa y las fronteras, porque el relleno del fondo simplificado (`#f5f7fa`) casi no se distingue del exterior.
+- El fondo del mapa (capa `background` y `#map` en CSS) también es `#FBFBFB`.
+
 ## Trazo de la red (25 de noviembre de 2026)
 
 - **Simbología por escala** (`atlas.js`, color del tema en `capas.js · applyRailStyle`):
@@ -45,7 +51,7 @@ Rediseño del 24–25 de noviembre de 2026. Motores sin cambiar de versión: **M
 
 - **Botón «Estilo del mapa»** bajo el zoom: miniaturas de los siete fondos (`img/basemaps/`), mismo estado que el selector de «Territorio» y que el enlace (`b`). Teclado con flechas, Inicio/Fin y Esc.
 - **Fondos**:
-  - *IGN gris* (`IGNBase-gris`) e *IGN color* (`IGNBaseTodo`), WMTS `https://www.ign.es/wmts/ign-base`, comprobados con su GetCapabilities y con teselas de Francia y Portugal. Cubren todo el mundo, así que, como Positron, sustituyen la máscara exterior y los rótulos locales. La capa «Topografía IGN» (MTN ráster por WMS) sigue cubriendo solo España.
+  - *IGN gris* (`IGNBase-gris`) e *IGN color* (`IGNBaseTodo`), WMTS `https://www.ign.es/wmts/ign-base`, comprobados con su GetCapabilities y con teselas de Francia y Portugal. Fuera de España los cubre la máscara (ver «Fuera de España»).
   - *Graybeard* y *Colorful* de [VersaTiles](https://docs.versatiles.org/guides/use_tiles_versatiles_org.html): estilos CC0 adaptados con `node tools/visor/adaptar-estilos.mjs` (mismas reglas que Positron: prefijos, tipografía local, sin iconos ni capas ferroviarias, rótulos en español). El servidor público no tiene clave ni garantía de servicio.
   - Descartados: CARTO Voyager/Dark Matter (licencia comercial restrictiva), Protomaps y MapTiler (requieren clave) y estilos oscuros (la simbología de la red está diseñada para fondo claro).
 - **Sombreado**: se retira «Multidireccional» (tres luces sumaban contraste en cada ladera). Quedan *Suave* (`igor`), *Clásico* (`standard`), *Pendientes* (`combined`) y *Cenital* (`igor` con luz a 70°, sombras cortas y difusas). Un enlace antiguo con `multi` abre *Suave*.

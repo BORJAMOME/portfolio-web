@@ -127,7 +127,7 @@ try {
     container:"map", bounds, fitBoundsOptions:{padding:padding()},
     maxBounds:[[-16,30],[10,49]], minZoom:4, maxZoom:17, attributionControl:false,
     style:{version:8,glyphs:"fonts/{fontstack}/{range}.pbf",sources:{},
-      layers:[{id:"background",type:"background",paint:{"background-color":"#cad9ea"}}]}
+      layers:[{id:"background",type:"background",paint:{"background-color":"#FBFBFB"}}]}
   });
 } catch(error) {
   loading.textContent = "El navegador no ha podido iniciar WebGL. Abre este atlas en Chrome, Edge o Firefox con aceleración gráfica.";
@@ -647,10 +647,12 @@ if(map)map.on("load",async()=>{
       tiles:["https://www.ign.es/wms-inspire/mapa-raster?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=mtn_rasterizado&STYLES=&FORMAT=image/png&TRANSPARENT=TRUE&SRS=EPSG:3857&BBOX={bbox-epsg-3857}&WIDTH=256&HEIGHT=256"],
       bounds:[-9.6,35.9,4.5,44.2],attribution:'© <a href="https://www.ign.es/">IGN</a> · CC BY 4.0'});
     map.addLayer({id:"topography",type:"raster",source:"topography",layout:{visibility:"none"},paint:{"raster-saturation":-1,"raster-opacity":.45}});
-    // Portugal y Francia quedan como contexto en el color del mar, con menor protagonismo.
     const rings=dataset.boundary.type==="Polygon"?[dataset.boundary.coordinates]:dataset.boundary.coordinates;
     map.addSource("outside",{type:"geojson",data:{type:"Feature",properties:{},geometry:{type:"Polygon",coordinates:[[[-180,-85],[180,-85],[180,85],[-180,85],[-180,-85]],...rings.map(poly=>poly[0])]}}});
-    map.addLayer({id:"outside",type:"fill",source:"outside",paint:{"fill-color":"#cad9ea"}});
+    // Fuera de España todo es #FBFBFB, con cualquier fondo, sombreado o color del terreno (basemap.js no la oculta):
+    // la máscara va por encima de todos ellos y un contorno fino dibuja la costa y la frontera.
+    map.addLayer({id:"outside",type:"fill",source:"outside",paint:{"fill-color":"#FBFBFB"}});
+    map.addLayer({id:"outside-edge",type:"line",source:"land",layout:{"line-join":"round"},paint:{"line-color":"#b9c5d6","line-width":["interpolate",["linear"],["zoom"],5,.6,10,1.1]}});
     map.addSource("regions",{type:"geojson",data:dataset.regions,attribution:'Límites © EuroGeographics · Eurostat/GISCO 2021'});
     map.addLayer({id:"region-lines",type:"line",source:"regions",paint:{"line-color":"#b9c5d6","line-width":.7,"line-dasharray":[3,3]}});
     if(!window.IGN_TERRAIN_MANIFEST?.tiles?.length){
