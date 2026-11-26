@@ -1,0 +1,306 @@
+{
+ "cutoff": "2026-11-16",
+ "note": "Registros curados a mano a partir de fuentes oficiales consultadas el 17-11-2026. Cada relación indica su fuente. Las estaciones se resuelven contra las paradas del GTFS de Renfe por nombre exacto.",
+ "sources": {
+  "renfe-national": {
+   "title": "Renfe Viajeros · GTFS Alta Velocidad y Larga Distancia",
+   "url": "https://ssl.renfe.com/gtransit/Fichero_AV_LD/google_transit.zip",
+   "edition": "Ficheros fechados el 16-11-2026",
+   "consulted": "2026-11-16",
+   "valid_from": "2026-11-15",
+   "valid_to": "2027-09-29"
+  },
+  "renfe-commuter": {
+   "title": "Renfe Cercanías · GTFS (réplica de Open Data Euskadi)",
+   "url": "https://opendata.euskadi.eus/transport/moveuskadi/renfe_cercanias/gtfs_renfe_cercanias.zip",
+   "edition": "Descarga del 16-11-2026; calendario del 17-11 al 16-12-2026",
+   "consulted": "2026-11-16",
+   "valid_from": "2026-11-17",
+   "valid_to": "2026-12-16"
+  },
+  "ouigo-horarios": {
+   "title": "OUIGO España · Horarios OUIGO 2026-2027 (PDF oficial)",
+   "url": "https://falbala-p-linux-edito-cdn-01.azureedge.net/falbala-edito-container-production/2026-10/Horarios%20OUIGO%202026-2027.pdf",
+   "edition": "Horario válido hasta el 14-06-2027",
+   "consulted": "2026-11-19",
+   "valid_from": "2026-11-19",
+   "valid_to": "2027-06-14"
+  },
+  "ouigo-nap": {
+   "title": "OUIGO · GTFS en el Punto de Acceso Nacional (requiere registro)",
+   "url": "https://nap.transportes.gob.es/api/Fichero/download/1766",
+   "consulted": "2026-11-17"
+  },
+  "iryo-horarios": {
+   "title": "iryo · buscador de estaciones y notas de prensa",
+   "url": "https://iryo.eu/es/conocenos/actualidad-iryo",
+   "edition": "Notas del 17-02, 23-04, 27-04 y 31-08-2026",
+   "consulted": "2026-11-19"
+  },
+  "iryo-destinos": {
+   "title": "iryo · Destinos",
+   "url": "https://iryo.eu/es/destinos",
+   "consulted": "2026-11-17"
+  },
+  "cercanias-madrid-carta": {
+   "title": "Renfe Cercanías Madrid · Carta de Servicios (C-9, ancho métrico)",
+   "url": "https://www.renfe.com/es/es/cercanias/cercanias-madrid/atencion-al-cliente/carta-servicios",
+   "edition": "Revisión del 03-03-2025",
+   "consulted": "2026-11-17"
+  },
+  "renfe-arquitectura": {
+   "title": "Renfe · «Más sencillo elegir. Más fácil viajar.» Nueva organización de servicios",
+   "url": "https://trenes.renfe.com/",
+   "edition": "Implantación desde el 13-11-2026; venta con los nuevos nombres para viajes desde el 25-01-2027",
+   "consulted": "2026-11-18"
+  }
+ },
+ "ouigo": [
+  {
+   "id": "ouigo-mad-bcn",
+   "origin": "Madrid-Puerta de Atocha-Almudena Grandes",
+   "destination": "Barcelona-Sants",
+   "variants": [
+    [],
+    [
+     "Zaragoza Delicias"
+    ],
+    [
+     "Zaragoza Delicias",
+     "Camp de Tarragona"
+    ]
+   ],
+   "calendar": "6 Madrid→Barcelona y 6 Barcelona→Madrid al día como máximo",
+   "madrid_assumed": true
+  },
+  {
+   "id": "ouigo-mad-vlc",
+   "origin": "Madrid-Chamartín-Clara Campoamor",
+   "destination": "València-Joaquín Sorolla",
+   "variants": [
+    [],
+    [
+     "Cuenca-Fernando Zóbel"
+    ]
+   ],
+   "calendar": "4 Madrid→Valencia y 4 Valencia→Madrid al día como máximo",
+   "madrid_assumed": true
+  },
+  {
+   "id": "ouigo-mad-ali",
+   "origin": "Madrid-Chamartín-Clara Campoamor",
+   "destination": "Alicante/Alacant-Terminal",
+   "variants": [
+    [
+     "Cuenca-Fernando Zóbel",
+     "Albacete-Los Llanos"
+    ]
+   ],
+   "calendar": "1 Alicante→Madrid al día como máximo"
+  },
+  {
+   "id": "ouigo-mad-mur",
+   "origin": "Madrid-Chamartín-Clara Campoamor",
+   "destination": "Murcia del Carmen",
+   "variants": [
+    [
+     "Albacete-Los Llanos",
+     "Elche/Elx AV"
+    ],
+    [
+     "Albacete-Los Llanos",
+     "Alicante/Alacant-Terminal",
+     "Elche/Elx AV"
+    ],
+    [
+     "Cuenca-Fernando Zóbel",
+     "Albacete-Los Llanos",
+     "Alicante/Alacant-Terminal",
+     "Elche/Elx AV"
+    ]
+   ],
+   "calendar": "3 Madrid→Murcia y 2 Murcia→Madrid al día como máximo"
+  },
+  {
+   "id": "ouigo-mad-sev",
+   "origin": "Madrid-Puerta de Atocha-Almudena Grandes",
+   "destination": "Sevilla-Santa Justa",
+   "variants": [
+    [
+     "Córdoba-Julio Anguita"
+    ]
+   ],
+   "calendar": "2 Madrid→Sevilla y 3 Sevilla→Madrid al día como máximo"
+  },
+  {
+   "id": "ouigo-mad-mal",
+   "origin": "Madrid-Puerta de Atocha-Almudena Grandes",
+   "destination": "Málaga María Zambrano",
+   "variants": [
+    [
+     "Córdoba-Julio Anguita"
+    ]
+   ],
+   "calendar": "3 Madrid→Málaga y 3 Málaga→Madrid al día como máximo"
+  },
+  {
+   "id": "ouigo-bcn-sev",
+   "origin": "Barcelona-Sants",
+   "destination": "Sevilla-Santa Justa",
+   "variants": [
+    [
+     "Zaragoza Delicias",
+     "Madrid-Puerta de Atocha-Almudena Grandes",
+     "Córdoba-Julio Anguita"
+    ],
+    [
+     "Camp de Tarragona",
+     "Zaragoza Delicias",
+     "Madrid-Puerta de Atocha-Almudena Grandes",
+     "Córdoba-Julio Anguita"
+    ]
+   ],
+   "calendar": "1 Barcelona→Sevilla y 1 Sevilla→Barcelona al día como máximo"
+  },
+  {
+   "id": "ouigo-zgz-sev",
+   "origin": "Zaragoza Delicias",
+   "destination": "Sevilla-Santa Justa",
+   "variants": [
+    [
+     "Madrid-Puerta de Atocha-Almudena Grandes",
+     "Córdoba-Julio Anguita"
+    ]
+   ],
+   "calendar": "1 Zaragoza→Sevilla al día como máximo"
+  },
+  {
+   "id": "ouigo-vll-vlc",
+   "origin": "Valladolid-Campo Grande",
+   "destination": "València-Joaquín Sorolla",
+   "variants": [
+    [
+     "Segovia-Guiomar",
+     "Madrid-Chamartín-Clara Campoamor"
+    ],
+    [
+     "Segovia-Guiomar",
+     "Madrid-Chamartín-Clara Campoamor",
+     "Cuenca-Fernando Zóbel"
+    ]
+   ],
+   "calendar": "1 Valladolid→Valencia y 1 Valencia→Valladolid al día como máximo"
+  },
+  {
+   "id": "ouigo-vll-ali",
+   "origin": "Valladolid-Campo Grande",
+   "destination": "Alicante/Alacant-Terminal",
+   "variants": [
+    [
+     "Segovia-Guiomar",
+     "Madrid-Chamartín-Clara Campoamor",
+     "Cuenca-Fernando Zóbel",
+     "Albacete-Los Llanos"
+    ]
+   ],
+   "calendar": "1 Valladolid→Alicante al día como máximo"
+  },
+  {
+   "id": "ouigo-vll-mur",
+   "origin": "Valladolid-Campo Grande",
+   "destination": "Murcia del Carmen",
+   "variants": [
+    [
+     "Segovia-Guiomar",
+     "Madrid-Chamartín-Clara Campoamor",
+     "Cuenca-Fernando Zóbel",
+     "Albacete-Los Llanos",
+     "Alicante/Alacant-Terminal",
+     "Elche/Elx AV"
+    ]
+   ],
+   "calendar": "1 Murcia→Valladolid al día como máximo"
+  }
+ ],
+ "ouigo_note": "Trenes reconstruidos del PDF oficial de horarios 2026-2027 (válido hasta el 14-06-2027). Estación de Madrid confirmada en las páginas de ruta: Atocha para Andalucía, Zaragoza y Tarragona; Chamartín para Levante y Valladolid. Madrid–Barcelona (Atocha) y Madrid–Valencia (Chamartín) se asignan por corredor. Elche: estación de alta velocidad. Madrid–Andalucía suspendido por el cierre de la línea tras el accidente de Urda, al menos hasta el 29-11-2026.",
+ "iryo": [
+  {
+   "id": "iryo-mad-bcn",
+   "origin": "Madrid",
+   "destination": "Barcelona",
+   "listed_stops": [
+    "Zaragoza",
+    "Camp de Tarragona (algunos trenes)"
+   ]
+  },
+  {
+   "id": "iryo-mad-vlc",
+   "origin": "Madrid",
+   "destination": "Valencia",
+   "listed_stops": [
+    "Cuenca (algunos trenes)"
+   ]
+  },
+  {
+   "id": "iryo-mad-ali",
+   "origin": "Madrid",
+   "destination": "Alicante",
+   "listed_stops": [
+    "Cuenca",
+    "Albacete"
+   ]
+  },
+  {
+   "id": "iryo-mad-sev",
+   "origin": "Madrid",
+   "destination": "Sevilla",
+   "listed_stops": [
+    "Córdoba",
+    "Ciudad Real y Puertollano (2 trenes desde el 01-05-2026)"
+   ]
+  },
+  {
+   "id": "iryo-mad-mal",
+   "origin": "Madrid",
+   "destination": "Málaga",
+   "listed_stops": [
+    "Córdoba"
+   ]
+  },
+  {
+   "id": "iryo-bcn-sev",
+   "origin": "Barcelona",
+   "destination": "Sevilla",
+   "listed_stops": [
+    "Zaragoza",
+    "Madrid",
+    "Córdoba"
+   ]
+  },
+  {
+   "id": "iryo-bcn-mal",
+   "origin": "Barcelona",
+   "destination": "Málaga",
+   "listed_stops": [
+    "Zaragoza",
+    "Madrid",
+    "Córdoba"
+   ]
+  }
+ ],
+ "iryo_note": "Relaciones y estaciones tomadas del buscador de iryo.eu y de sus notas de prensa (17-02, 23-04, 27-04 y 31-08-2026). No hay horario público por tren ni GTFS abierto: no se sabe qué trenes paran en Camp de Tarragona, Cuenca o Albacete, por eso no se dibujan. Barcelona–Sevilla y Barcelona–Málaga: paradas deducidas del recorrido. Antequera no figura entre las estaciones de iryo. Madrid–Andalucía suspendido tras el accidente de Urda (28-10-2026).",
+ "alvia": {
+  "status": "Renfe integra Alvia en Intercity «con el mismo nivel de servicio»; la nueva organización empezó a implantarse el 13-11-2026, antes del corte. Para viajes anteriores al 25-01-2027 se sigue comprando «como hasta ahora».",
+  "detail": "El GTFS del 16-11-2026 ya publica estos trenes como «Intercity» (y algunos como «AVE»). La capa Alvia los localiza con su denominación anterior: Intercity cuyo número de tren pertenece a la serie 04xxx, la numeración histórica de Alvia. Es un criterio del visor, no una etiqueta del horario.",
+  "alias_rule": "Número de tren de 5 cifras que empieza por 04",
+  "source": "renfe-arquitectura"
+ },
+ "night": {
+  "criterion": "Tren con plazas de cama o litera, o producto nocturno oficial del operador. Llegar de madrugada no basta.",
+  "status": "Ningún tren del GTFS oficial de Renfe del 16-11-2026 cumple el criterio; el último llega a las 01:04. No se ha encontrado oferta nocturna vigente de otros operadores en la península."
+ },
+ "renames": {
+  "note": "Arquitectura de servicios de Renfe (trenes.renfe.com): 6 servicios en 3 familias. Alta velocidad: AVE, Avlo, Avant. Distancias largas y medias: Intercity (absorbe Alvia) y Regional (absorbe Media Distancia, Regional, Regional Exprés y Proximidad). Movilidad metropolitana: Cercanías. Euromed pasa temporalmente a «AVE Euromed» y será AVE al terminar las obras del corredor en 2027. Rodalies de Catalunya y Lottu mantienen su identidad.",
+  "source": "renfe-arquitectura"
+ }
+}
