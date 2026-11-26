@@ -67,7 +67,7 @@ Es un esquema en estrella: dos tablas de hechos (servicios y tramos) y dimension
 | `operador` | `renfe`, `ouigo`, `iryo` | Lo da el GTFS o el PDF de cada operador | GTFS de Renfe, PDF de OUIGO, GTFS comunitario de iryo |
 | `familia` | `av` (Alta velocidad), `ld-md` (Distancias largas y medias), `metro` (Movilidad metropolitana), `turismo` (Experiencias turísticas) | Se deriva de la marca. Las tres primeras son las familias de Renfe (trenes.renfe.com). `turismo` queda fuera de esa arquitectura y se dice así | trenes.renfe.com, consultado el 26-11-2026 |
 | `marca` | AV: `ave`, `ave-euromed`, `avlo`, `avant`, `ouigo`, `iryo`. LD-MD: `intercity`, `regional`. Metro: `cercanias`. Turismo: `lujo`, `tematico` | `route_short_name` del GTFS, normalizado con la tabla de alias | GTFS |
-| `regimen` | `osp-age`, `osp-autonomico`, `comercial` | OSP del Estado: Cercanías, Regional y Avant (contrato AGE–Renfe 2018–2027). Autonómico: R11–R17, RG1, RL y RT de Rodalies, y los servicios que el diccionario anote expresamente. El resto es comercial | La Moncloa (14-12-2018) y CNMC (10-07-2024). **Pendiente:** confirmar uno a uno los convenios autonómicos (Aragón, Extremadura) antes de marcarlos |
+| `regimen` | `osp-age`, `osp-generalitat`, `osp-ccaa` (con `titular`), `comercial-plazas-osp`, `comercial` | Estado: Cercanías (salvo Rodalies), Regional y Avant. Generalitat: Rodalies R1–R8 y regionales R11–R17, RG1, RL y RT. Comunidad: Extremadura (Cáceres–Valencia de Alcántara, Llerena–Mérida, Plasencia–Cáceres, Zafra–Mérida) y Aragón (Caspe–Fayón, Zaragoza–Binéfar 06:10). `comercial-plazas-osp`: trenes AVE o Intercity con plazas para abonos Avant (Madrid–Salamanca, Madrid–Cuenca–Albacete, Zaragoza–Huesca…), desde una tabla de relaciones del diccionario. Los convenios que solo cofinancian (País Vasco en Alsasua–Miranda, Castilla y León en los Avant) van en el atributo `cofinanciacion` | La Moncloa (14-12-2018), RDL 45/2026 (BOE, 25-11-2026), RD 1598/2010, juntaex.es (29-07-2025), aragonhoy.es (14-03-2024), BOE-A-2025-15718 |
 | `ambito` | `nacional`, `internacional-fr`, `internacional-pt` | Si alguna parada está fuera de España | GTFS: AVE Francia (Lyon, Marsella) e Intercity Vigo–Oporto |
 | `nucleo` y `linea` | Los 15 núcleos de renfe.com/cercanias y sus líneas (C1, R2N…) | Solo cuando la familia es `metro`. El ancho métrico pasa a ser un **atributo de la línea** (`ancho_red`), no una categoría | GTFS oficial `fomento_transit.zip` |
 | `ejes[]` | Ver 3.3 | Ejes por los que la ruta recorre al menos el 20 % de sus km. Ese umbral está por validar | Tramos de la ruta cruzados con `ejes.json` |
@@ -190,9 +190,10 @@ Los temas de «Vías» pasan de 8 a 4. Cada grupo de casillas muestra su recuent
 4. Panel con los 4 temas y traducción de los enlaces antiguos.
 5. Se retiran `categories`, `brand` y las listas de `capas-config.js`.
 
-## 8. Pendiente de validar
+## 8. Pendientes: estado a 26-11-2026
 
-- **Régimen OSP autonómico.** Qué servicios cubren los convenios de Aragón y Extremadura. Hasta confirmarlo, se dejan como `osp-age` con una nota.
-- **Umbral del 20 % de km** para asignar una ruta a un eje. Hay que revisarlo con rutas largas como Barcelona–Vigo o Valladolid–Alicante.
-- **iryo.** Su GTFS es comunitario (`calidad=comunitario`). iryo.eu no permite la consulta automática.
-- **Avant Madrid–Salamanca y Madrid–Cuenca.** El mapa de servicio público de 2024 las dibuja y el GTFS del corte no las trae. Hay que contrastarlo con la oferta vigente antes de crear ninguna excepción.
+- **Régimen de servicio público:** resuelto. Ver la fila `regimen` de 3.1. Falta una lista oficial línea a línea de los regionales catalanes; hasta tenerla se aplica el criterio del RD 1598/2010 (íntegramente en Cataluña).
+- **Avant Madrid–Salamanca y Madrid–Cuenca:** existen como servicio OSP sobre trenes Intercity (Salamanca) y AVE (Cuenca), con «solo títulos multiviaje» (renfe.com; RDL 45/2026). No son marca Avant en el GTFS: se marcan con `comercial-plazas-osp`, sin excepciones en la marca.
+- **Madrid–Andalucía:** cortada desde el 28-10-2026 sin fecha de reapertura (Adif, 05-11-2026); OUIGO e iryo tienen cancelaciones publicadas hasta el 03-12-2026. Las notas del visor («hasta el 29-11») están desactualizadas. Propuesta: tabla `incidencias` (tramo, fechas, fuente) que marque las relaciones con `vigencia = suspendida`.
+- **iryo:** sigue como `comunitario`. Antequera sin confirmar (Adif solo muestra trenes de Renfe allí). La CNMC tiene comunicada una relación Barcelona–Tarragona–Lleida que el visor no recoge: confirmar con la oferta comercial antes de añadirla.
+- **Umbral del 20 % para los ejes:** no se puede validar sin `capas/ejes.json` (paso 3). `lineas-adif.json` solo enlaza 11.436 tramos con su línea de Adif. Casos de prueba: Barcelona–Vigo, Lleida–Vigo, Valladolid–Alicante, Valladolid–Murcia, Madrid–Badajoz, Zaragoza–Sevilla y Albacete–Toledo.
