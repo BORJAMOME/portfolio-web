@@ -1,0 +1,9857 @@
+{
+ "fuente": "https://falbala-p-linux-edito-cdn-01.azureedge.net/falbala-edito-container-production/2026-10/Horarios%20OUIGO%202026-2027.pdf",
+ "vigencia": "hasta el 14-06-2027",
+ "consultado": "2026-11-19",
+ "trenes": [
+  {
+   "paradas": [
+    [
+     "ALICANTE",
+     null,
+     "17:57"
+    ],
+    [
+     "ALBACETE",
+     "18:45",
+     "18:48"
+    ],
+    [
+     "CUENCA",
+     "19:20",
+     "19:23"
+    ],
+    [
+     "MADRID",
+     "20:26",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "periodo": [
+    "Todos los días"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días",
+   "notas": []
+  },
+  {
+   "paradas": [
+    [
+     "BARCELONA",
+     null,
+     "06:25"
+    ],
+    [
+     "ZARAGOZA",
+     "07:52",
+     "07:55"
+    ],
+    [
+     "MADRID",
+     "09:43",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Todos los días1"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1",
+   "notas": [
+    "Ruta cerrada el 25 de diciembre y el 1 de enero."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "BARCELONA",
+     null,
+     "07:50"
+    ],
+    [
+     "ZARAGOZA",
+     "09:16",
+     "09:19"
+    ],
+    [
+     "MADRID",
+     "11:07",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Lunes, Viernes y Sábados1",
+    "Lunes1",
+    "Todos los días1,4"
+   ],
+   "calendario": {
+    "weekdays": [
+     1,
+     2,
+     3,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1^4",
+   "notas": [
+    "Ruta cerrada el 25 de diciembre y el 1 de enero.",
+    "Excepto Lunes, Viernes y Sábados"
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "BARCELONA",
+     null,
+     "10:36"
+    ],
+    [
+     "ZARAGOZA",
+     "12:02",
+     "12:05"
+    ],
+    [
+     "MADRID",
+     "13:53",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Todos los días"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días",
+   "notas": []
+  },
+  {
+   "paradas": [
+    [
+     "BARCELONA",
+     null,
+     "13:24"
+    ],
+    [
+     "MADRID",
+     "16:26",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Todos los días"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días",
+   "notas": []
+  },
+  {
+   "paradas": [
+    [
+     "BARCELONA",
+     null,
+     "19:30"
+    ],
+    [
+     "ZARAGOZA",
+     "20:56",
+     "20:59"
+    ],
+    [
+     "MADRID",
+     "22:47",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Todos los días2"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2",
+   "notas": [
+    "Ruta cerrada el 24 y 31 de diciembre."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "BARCELONA",
+     null,
+     "20:28"
+    ],
+    [
+     "MADRID",
+     "23:30",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Todos los días3"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [
+     {
+      "days": [
+       1,
+       2
+      ],
+      "from": "2027-01-11",
+      "to": "2027-03-14"
+     }
+    ],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^3",
+   "notas": [
+    "Martes y Miércoles ruta cerrada del 11 de enero al 14 de marzo."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "BARCELONA",
+     null,
+     "15:47"
+    ],
+    [
+     "TARRAGONA",
+     "16:19",
+     "16:22"
+    ],
+    [
+     "ZARAGOZA",
+     "17:25",
+     "17:28"
+    ],
+    [
+     "MADRID",
+     "19:19",
+     "19:55"
+    ],
+    [
+     "CÓRDOBA",
+     "21:39",
+     "21:42"
+    ],
+    [
+     "SEVILLA",
+     "22:35",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Todos los días"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "6:48Todos los días",
+   "notas": []
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "06:40"
+    ],
+    [
+     "BARCELONA",
+     "09:45",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Todos los días1"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1",
+   "notas": [
+    "Ruta cerrada el 25 de diciembre y el 1 de enero."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "08:49"
+    ],
+    [
+     "ZARAGOZA",
+     "10:29",
+     "10:32"
+    ],
+    [
+     "TARRAGONA",
+     "11:34",
+     "11:37"
+    ],
+    [
+     "BARCELONA",
+     "12:16",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Todos los días1"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1",
+   "notas": [
+    "Ruta cerrada el 25 de diciembre y el 1 de enero."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "10:32"
+    ],
+    [
+     "ZARAGOZA",
+     "12:09",
+     "12:12"
+    ],
+    [
+     "BARCELONA",
+     "13:50",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Todos los días",
+    "Todos los días1"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1",
+   "notas": [
+    "Ruta cerrada el 25 de diciembre y el 1 de enero."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "15:20"
+    ],
+    [
+     "ZARAGOZA",
+     "16:57",
+     "17:00"
+    ],
+    [
+     "BARCELONA",
+     "18:38",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Todos los días"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días",
+   "notas": []
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "16:32"
+    ],
+    [
+     "BARCELONA",
+     "19:34",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Todos los días"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días",
+   "notas": []
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "19:23"
+    ],
+    [
+     "ZARAGOZA",
+     "21:00",
+     "21:03"
+    ],
+    [
+     "BARCELONA",
+     "22:41",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Todos los días2"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2",
+   "notas": [
+    "Ruta cerrada el 24 y 31 de diciembre."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "08:15"
+    ],
+    [
+     "ALBACETE",
+     "09:45",
+     "09:48"
+    ],
+    [
+     "ALICANTE",
+     "10:37",
+     "10:57"
+    ],
+    [
+     "ELCHE",
+     "11:15",
+     "11:18"
+    ],
+    [
+     "MURCIA",
+     "11:42",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "periodo": [
+    "Todos los días",
+    "Todos los días1"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "3:27Todos los días^1",
+   "notas": [
+    "Ruta cerrada el 25 de diciembre y el 1 de enero."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "17:15"
+    ],
+    [
+     "ALBACETE",
+     "18:45",
+     "18:48"
+    ],
+    [
+     "ELCHE",
+     "19:36",
+     "19:39"
+    ],
+    [
+     "MURCIA",
+     "20:03",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "periodo": [
+    "Todos los días",
+    "Todos los días1, 3",
+    "Todos los días3"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [
+     {
+      "days": [
+       1,
+       2
+      ],
+      "from": "2027-01-11",
+      "to": "2027-03-14"
+     }
+    ],
+    "start": null
+   },
+   "periodo_tabla": "2:48Todos los días^3",
+   "notas": [
+    "Martes y miércoles ruta cerrada del 11 de enero al 14 de marzo."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "18:45"
+    ],
+    [
+     "CUENCA",
+     "19:47",
+     "19:50"
+    ],
+    [
+     "ALBACETE",
+     "20:22",
+     "20:25"
+    ],
+    [
+     "ALICANTE",
+     "21:14",
+     "21:34"
+    ],
+    [
+     "ELCHE",
+     "21:53",
+     "21:56"
+    ],
+    [
+     "MURCIA",
+     "22:21",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "periodo": [
+    "Todos los días",
+    "Todos los días2"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "3:36Todos los días^2",
+   "notas": [
+    "Ruta cerrada el 24 y 31 de diciembre."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "09:55"
+    ],
+    [
+     "CÓRDOBA",
+     "11:40",
+     "11:43"
+    ],
+    [
+     "MÁLAGA",
+     "12:42",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Todos los días1"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1",
+   "notas": [
+    "Ruta cerrada el 25 de diciembre y el 1 de enero."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "17:35"
+    ],
+    [
+     "CÓRDOBA",
+     "19:20",
+     "19:23"
+    ],
+    [
+     "MÁLAGA",
+     "20:22",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Todos los días"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días",
+   "notas": []
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "19:05"
+    ],
+    [
+     "CÓRDOBA",
+     "20:50",
+     "20:53"
+    ],
+    [
+     "MÁLAGA",
+     "21:52",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Todos los días2",
+    "Todos los días3",
+    "Todos los días5"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^5",
+   "notas": [
+    "Martes y Miércoles."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "06:25"
+    ],
+    [
+     "CÓRDOBA",
+     "08:09",
+     "08:12"
+    ],
+    [
+     "SEVILLA",
+     "09:05",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Todos los días1"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1",
+   "notas": [
+    "Ruta cerrada el 25 de diciembre y el 1 de enero."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "13:30"
+    ],
+    [
+     "CÓRDOBA",
+     "15:14",
+     "15:17"
+    ],
+    [
+     "SEVILLA",
+     "16:10",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Todos los días"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días",
+   "notas": []
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "07:15"
+    ],
+    [
+     "CUENCA",
+     "08:17",
+     "08:17"
+    ],
+    [
+     "VALENCIA",
+     "09:16",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "periodo": [
+    "Todos los días1"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1",
+   "notas": [
+    "Ruta cerrada el 25 de diciembre y el 1 de enero."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "13:15"
+    ],
+    [
+     "VALENCIA",
+     "15:09",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "periodo": [
+    "Viernes y fines de semana"
+   ],
+   "calendario": {
+    "weekdays": [
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Viernes y fines de semana",
+   "notas": []
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "17:45"
+    ],
+    [
+     "VALENCIA",
+     "19:39",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "periodo": [
+    "Todos los días"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días",
+   "notas": []
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "21:15"
+    ],
+    [
+     "CUENCA",
+     "22:17",
+     "22:20"
+    ],
+    [
+     "VALENCIA",
+     "23:16",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "periodo": [
+    "Todos los días2"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2",
+   "notas": [
+    "Ruta cerrada el 24 y 31 de diciembre."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "MURCIA",
+     null,
+     "12:35"
+    ],
+    [
+     "ELCHE",
+     "12:55",
+     "12:58"
+    ],
+    [
+     "ALICANTE",
+     "13:19",
+     "13:39"
+    ],
+    [
+     "ALBACETE",
+     "14:27",
+     "14:30"
+    ],
+    [
+     "CUENCA",
+     "15:01",
+     "15:04"
+    ],
+    [
+     "MADRID",
+     "16:08",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "periodo": [
+    "Todos los días"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días",
+   "notas": []
+  },
+  {
+   "paradas": [
+    [
+     "MURCIA",
+     null,
+     "21:00"
+    ],
+    [
+     "ELCHE",
+     "21:21",
+     "21:24"
+    ],
+    [
+     "ALBACETE",
+     "22:13",
+     "22:16"
+    ],
+    [
+     "MADRID",
+     "23:48",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "periodo": [
+    "Todos los días",
+    "Todos los días1, 3",
+    "Todos los días2",
+    "Todos los días2, 3"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2",
+   "notas": [
+    "Ruta cerrada el 24 y31 de diciembre."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "MURCIA",
+     null,
+     "06:35"
+    ],
+    [
+     "ELCHE",
+     "07:00",
+     "07:03"
+    ],
+    [
+     "ALICANTE",
+     "07:23",
+     "07:51"
+    ],
+    [
+     "ALBACETE",
+     "08:39",
+     "08:42"
+    ],
+    [
+     "CUENCA",
+     "09:16",
+     "09:19"
+    ],
+    [
+     "MADRID",
+     "10:23",
+     "10:45"
+    ],
+    [
+     "SEGOVIA",
+     "11:12",
+     "11:15"
+    ],
+    [
+     "VALLADOLID",
+     "11:47",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "periodo": [
+    "Todos los días1",
+    "Todos los días1, 3"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "5:12Todos los días^1",
+   "notas": [
+    "Ruta cerrada el 25 de diciembre y el 1 de enero."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "MÁLAGA",
+     null,
+     "06:23"
+    ],
+    [
+     "CÓRDOBA",
+     "07:10",
+     "07:13"
+    ],
+    [
+     "MADRID",
+     "09:09",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Todos los días1, 3",
+    "Todos los días5"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1^3",
+   "notas": [
+    "Ruta cerrada el 25 de diciembre y el 1 de enero.",
+    "Excepto Miércoles y Jueves."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "MÁLAGA",
+     null,
+     "13:46"
+    ],
+    [
+     "CÓRDOBA",
+     "14:33",
+     "14:36"
+    ],
+    [
+     "MADRID",
+     "16:32",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Todos los días"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días",
+   "notas": []
+  },
+  {
+   "paradas": [
+    [
+     "MÁLAGA",
+     null,
+     "21:10"
+    ],
+    [
+     "CÓRDOBA",
+     "21:57",
+     "22:00"
+    ],
+    [
+     "MADRID",
+     "23:56",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Todos los días2"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2",
+   "notas": [
+    "Ruta cerrada el 24 y 31 de diciembre."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "SEVILLA",
+     null,
+     "17:02"
+    ],
+    [
+     "CÓRDOBA",
+     "17:44",
+     "17:47"
+    ],
+    [
+     "MADRID",
+     "19:42",
+     "20:10"
+    ],
+    [
+     "ZARAGOZA",
+     "21:47",
+     "21:50"
+    ],
+    [
+     "BARCELONA",
+     "23:29",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Jueves, Viernes, Sábado y Domingo2",
+    "Todos los días",
+    "Viernes, Sábado y Domingo"
+   ],
+   "calendario": {
+    "weekdays": [
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "6:27Jueves, Viernes, Sábado y Domingo^2",
+   "notas": [
+    "Ruta cerrada el 24 y31 de diciembre."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "SEVILLA",
+     null,
+     "07:13"
+    ],
+    [
+     "CÓRDOBA",
+     "07:55",
+     "07:58"
+    ],
+    [
+     "MADRID",
+     "09:52",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Todos los días1"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1",
+   "notas": [
+    "Ruta cerrada el 25 de diciembre y el 1 de enero."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "SEVILLA",
+     null,
+     "10:02"
+    ],
+    [
+     "CÓRDOBA",
+     "10:44",
+     "10:47"
+    ],
+    [
+     "MADRID",
+     "12:41",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Todos los días1"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1",
+   "notas": [
+    "Ruta cerrada el 25 de diciembre y el 1 de enero."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "SEVILLA",
+     null,
+     "15:07"
+    ],
+    [
+     "CÓRDOBA",
+     "15:48",
+     "15:51"
+    ],
+    [
+     "MADRID",
+     "17:54",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Todos los días Excepto martes, miércoles y jueves",
+    "Todos los días3, 4"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días Excepto martes, miércoles y jueves",
+   "notas": []
+  },
+  {
+   "paradas": [
+    [
+     "VALENCIA",
+     null,
+     "10:27"
+    ],
+    [
+     "MADRID",
+     "12:23",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "periodo": [
+    "Todos los días"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días",
+   "notas": []
+  },
+  {
+   "paradas": [
+    [
+     "VALENCIA",
+     null,
+     "14:57"
+    ],
+    [
+     "MADRID",
+     "16:53",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "periodo": [
+    "Todos los días"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días",
+   "notas": []
+  },
+  {
+   "paradas": [
+    [
+     "VALENCIA",
+     null,
+     "15:57"
+    ],
+    [
+     "MADRID",
+     "17:53",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "periodo": [
+    "Jueves, Viernes, Sábado y Domingo"
+   ],
+   "calendario": {
+    "weekdays": [
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Jueves, Viernes, Sábado y Domingo",
+   "notas": []
+  },
+  {
+   "paradas": [
+    [
+     "VALENCIA",
+     null,
+     "20:54"
+    ],
+    [
+     "MADRID",
+     "22:50",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "periodo": [
+    "Todos los días2"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2",
+   "notas": [
+    "Ruta cerrada el 24 y31 de diciembre."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "VALENCIA",
+     null,
+     "06:09"
+    ],
+    [
+     "CUENCA",
+     "07:04",
+     "07:07"
+    ],
+    [
+     "MADRID",
+     "08:10",
+     "08:32"
+    ],
+    [
+     "SEGOVIA",
+     "08:57",
+     "09:00"
+    ],
+    [
+     "VALLADOLID",
+     "09:33",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "periodo": [
+    "Todos los días1"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": "2026-12-13"
+   },
+   "periodo_tabla": "Todos los días^1",
+   "notas": [
+    "Ruta disponible a partir del 13 de diciembre."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "VALLADOLID",
+     null,
+     "12:57"
+    ],
+    [
+     "SEGOVIA",
+     "13:29",
+     "13:32"
+    ],
+    [
+     "MADRID",
+     "13:57",
+     "14:15"
+    ],
+    [
+     "CUENCA",
+     "15:16",
+     "15:19"
+    ],
+    [
+     "ALBACETE",
+     "15:51",
+     "15:54"
+    ],
+    [
+     "ALICANTE",
+     "16:44",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "periodo": [
+    "Todos los días",
+    "Todos los días1"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": "2026-12-13"
+   },
+   "periodo_tabla": "Todos los días^1",
+   "notas": [
+    "Ruta disponible a partir del 13 de diciembre."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "VALLADOLID",
+     null,
+     "10:55"
+    ],
+    [
+     "SEGOVIA",
+     "11:27",
+     "11:30"
+    ],
+    [
+     "MADRID",
+     "11:55",
+     "12:15"
+    ],
+    [
+     "VALENCIA",
+     "14:09",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "periodo": [
+    "Todos los días",
+    "Todos los días1"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": "2026-12-13"
+   },
+   "periodo_tabla": "Todos los días^1",
+   "notas": [
+    "Ruta disponible a partir del 13 de diciembre."
+   ]
+  },
+  {
+   "paradas": [
+    [
+     "ZARAGOZA",
+     null,
+     "09:10"
+    ],
+    [
+     "MADRID",
+     "11:05",
+     "11:40"
+    ],
+    [
+     "CÓRDOBA",
+     "13:25",
+     "13:28"
+    ],
+    [
+     "SEVILLA",
+     "14:21",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "periodo": [
+    "Lunes, Viernes, Sábado y Domingo3",
+    "Todos los días Excepto martes, miércoles y jueves"
+   ],
+   "calendario": {
+    "weekdays": [
+     0,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días Excepto martes, miércoles y jueves",
+   "notas": []
+  }
+ ],
+ "trayectos": [
+  {
+   "paradas": [
+    [
+     "ALBACETE",
+     null,
+     "09:48"
+    ],
+    [
+     "ALICANTE",
+     "10:37",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "ALBACETE",
+     null,
+     "15:54"
+    ],
+    [
+     "ALICANTE",
+     "16:44",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "ALBACETE",
+     null,
+     "20:25"
+    ],
+    [
+     "ALICANTE",
+     "21:14",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "ALBACETE",
+     null,
+     "08:42"
+    ],
+    [
+     "CUENCA",
+     "09:16",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "ALBACETE",
+     null,
+     "14:30"
+    ],
+    [
+     "CUENCA",
+     "15:01",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "ALBACETE",
+     null,
+     "18:48"
+    ],
+    [
+     "CUENCA",
+     "19:20",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "ALBACETE",
+     null,
+     "09:48"
+    ],
+    [
+     "ALICANTE",
+     "10:37",
+     "10:57"
+    ],
+    [
+     "ELCHE",
+     "11:15",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "ALBACETE",
+     null,
+     "18:48"
+    ],
+    [
+     "ELCHE",
+     "19:36",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [
+     {
+      "days": [
+       1,
+       2
+      ],
+      "from": "2027-01-11",
+      "to": "2027-03-14"
+     }
+    ],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1^3"
+  },
+  {
+   "paradas": [
+    [
+     "ALBACETE",
+     null,
+     "20:25"
+    ],
+    [
+     "ALICANTE",
+     "21:14",
+     "21:34"
+    ],
+    [
+     "ELCHE",
+     "21:53",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "ALBACETE",
+     null,
+     "08:42"
+    ],
+    [
+     "CUENCA",
+     "09:16",
+     "09:19"
+    ],
+    [
+     "MADRID",
+     "10:23",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "ALBACETE",
+     null,
+     "14:30"
+    ],
+    [
+     "CUENCA",
+     "15:01",
+     "15:04"
+    ],
+    [
+     "MADRID",
+     "16:08",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "ALBACETE",
+     null,
+     "18:48"
+    ],
+    [
+     "CUENCA",
+     "19:20",
+     "19:23"
+    ],
+    [
+     "MADRID",
+     "20:26",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "ALBACETE",
+     null,
+     "22:16"
+    ],
+    [
+     "MADRID",
+     "23:48",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [
+     {
+      "days": [
+       1,
+       2
+      ],
+      "from": "2027-01-11",
+      "to": "2027-03-14"
+     }
+    ],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2^3"
+  },
+  {
+   "paradas": [
+    [
+     "ALBACETE",
+     null,
+     "09:48"
+    ],
+    [
+     "ALICANTE",
+     "10:37",
+     "10:57"
+    ],
+    [
+     "ELCHE",
+     "11:15",
+     "11:18"
+    ],
+    [
+     "MURCIA",
+     "11:42",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "1:54Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "ALBACETE",
+     null,
+     "18:48"
+    ],
+    [
+     "ELCHE",
+     "19:36",
+     "19:39"
+    ],
+    [
+     "MURCIA",
+     "20:03",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [
+     {
+      "days": [
+       1,
+       2
+      ],
+      "from": "2027-01-11",
+      "to": "2027-03-14"
+     }
+    ],
+    "start": null
+   },
+   "periodo_tabla": "1:15Todos los días^3"
+  },
+  {
+   "paradas": [
+    [
+     "ALBACETE",
+     null,
+     "20:25"
+    ],
+    [
+     "ALICANTE",
+     "21:14",
+     "21:34"
+    ],
+    [
+     "ELCHE",
+     "21:53",
+     "21:56"
+    ],
+    [
+     "MURCIA",
+     "22:21",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "1:56Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "ALBACETE",
+     null,
+     "08:42"
+    ],
+    [
+     "CUENCA",
+     "09:16",
+     "09:19"
+    ],
+    [
+     "MADRID",
+     "10:23",
+     "10:45"
+    ],
+    [
+     "SEGOVIA",
+     "11:12",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "ALBACETE",
+     null,
+     "08:42"
+    ],
+    [
+     "CUENCA",
+     "09:16",
+     "09:19"
+    ],
+    [
+     "MADRID",
+     "10:23",
+     "10:45"
+    ],
+    [
+     "SEGOVIA",
+     "11:12",
+     "11:15"
+    ],
+    [
+     "VALLADOLID",
+     "11:47",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "3:05Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "ALICANTE",
+     null,
+     "07:51"
+    ],
+    [
+     "ALBACETE",
+     "08:39",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "ALICANTE",
+     null,
+     "13:39"
+    ],
+    [
+     "ALBACETE",
+     "14:27",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "ALICANTE",
+     null,
+     "17:57"
+    ],
+    [
+     "ALBACETE",
+     "18:45",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "ALICANTE",
+     null,
+     "07:51"
+    ],
+    [
+     "ALBACETE",
+     "08:39",
+     "08:42"
+    ],
+    [
+     "CUENCA",
+     "09:16",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "ALICANTE",
+     null,
+     "13:39"
+    ],
+    [
+     "ALBACETE",
+     "14:27",
+     "14:30"
+    ],
+    [
+     "CUENCA",
+     "15:01",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "ALICANTE",
+     null,
+     "17:57"
+    ],
+    [
+     "ALBACETE",
+     "18:45",
+     "18:48"
+    ],
+    [
+     "CUENCA",
+     "19:20",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "ALICANTE",
+     null,
+     "10:57"
+    ],
+    [
+     "ELCHE",
+     "11:15",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "ALICANTE",
+     null,
+     "21:34"
+    ],
+    [
+     "ELCHE",
+     "21:53",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "ALICANTE",
+     null,
+     "07:51"
+    ],
+    [
+     "ALBACETE",
+     "08:39",
+     "08:42"
+    ],
+    [
+     "CUENCA",
+     "09:16",
+     "09:19"
+    ],
+    [
+     "MADRID",
+     "10:23",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "ALICANTE",
+     null,
+     "13:39"
+    ],
+    [
+     "ALBACETE",
+     "14:27",
+     "14:30"
+    ],
+    [
+     "CUENCA",
+     "15:01",
+     "15:04"
+    ],
+    [
+     "MADRID",
+     "16:08",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "ALICANTE",
+     null,
+     "17:57"
+    ],
+    [
+     "ALBACETE",
+     "18:45",
+     "18:48"
+    ],
+    [
+     "CUENCA",
+     "19:20",
+     "19:23"
+    ],
+    [
+     "MADRID",
+     "20:26",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "ALICANTE",
+     null,
+     "10:57"
+    ],
+    [
+     "ELCHE",
+     "11:15",
+     "11:18"
+    ],
+    [
+     "MURCIA",
+     "11:42",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "ALICANTE",
+     null,
+     "21:34"
+    ],
+    [
+     "ELCHE",
+     "21:53",
+     "21:56"
+    ],
+    [
+     "MURCIA",
+     "22:21",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "ALICANTE",
+     null,
+     "07:51"
+    ],
+    [
+     "ALBACETE",
+     "08:39",
+     "08:42"
+    ],
+    [
+     "CUENCA",
+     "09:16",
+     "09:19"
+    ],
+    [
+     "MADRID",
+     "10:23",
+     "10:45"
+    ],
+    [
+     "SEGOVIA",
+     "11:12",
+     "11:15"
+    ],
+    [
+     "VALLADOLID",
+     "11:47",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [
+     {
+      "days": [
+       1,
+       2
+      ],
+      "from": "2027-01-11",
+      "to": "2027-03-14"
+     }
+    ],
+    "start": null
+   },
+   "periodo_tabla": "3:56Todos los días^1^3"
+  },
+  {
+   "paradas": [
+    [
+     "BARCELONA",
+     null,
+     "15:47"
+    ],
+    [
+     "TARRAGONA",
+     "16:19",
+     "16:22"
+    ],
+    [
+     "ZARAGOZA",
+     "17:25",
+     "17:28"
+    ],
+    [
+     "MADRID",
+     "19:19",
+     "19:55"
+    ],
+    [
+     "CÓRDOBA",
+     "21:39",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "5:52Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "BARCELONA",
+     null,
+     "06:25"
+    ],
+    [
+     "ZARAGOZA",
+     "07:52",
+     "07:55"
+    ],
+    [
+     "MADRID",
+     "09:43",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "BARCELONA",
+     null,
+     "07:50"
+    ],
+    [
+     "ZARAGOZA",
+     "09:16",
+     "09:19"
+    ],
+    [
+     "MADRID",
+     "11:07",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     1,
+     2,
+     3,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1^4"
+  },
+  {
+   "paradas": [
+    [
+     "BARCELONA",
+     null,
+     "10:36"
+    ],
+    [
+     "ZARAGOZA",
+     "12:02",
+     "12:05"
+    ],
+    [
+     "MADRID",
+     "13:53",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "BARCELONA",
+     null,
+     "13:24"
+    ],
+    [
+     "MADRID",
+     "16:26",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "BARCELONA",
+     null,
+     "15:47"
+    ],
+    [
+     "TARRAGONA",
+     "16:19",
+     "16:22"
+    ],
+    [
+     "ZARAGOZA",
+     "17:25",
+     "17:28"
+    ],
+    [
+     "MADRID",
+     "19:19",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "BARCELONA",
+     null,
+     "19:30"
+    ],
+    [
+     "ZARAGOZA",
+     "20:56",
+     "20:59"
+    ],
+    [
+     "MADRID",
+     "22:47",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "BARCELONA",
+     null,
+     "20:28"
+    ],
+    [
+     "MADRID",
+     "23:30",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [
+     {
+      "days": [
+       1,
+       2
+      ],
+      "from": "2027-01-11",
+      "to": "2027-03-14"
+     }
+    ],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^3"
+  },
+  {
+   "paradas": [
+    [
+     "BARCELONA",
+     null,
+     "15:47"
+    ],
+    [
+     "TARRAGONA",
+     "16:19",
+     "16:22"
+    ],
+    [
+     "ZARAGOZA",
+     "17:25",
+     "17:28"
+    ],
+    [
+     "MADRID",
+     "19:19",
+     "19:55"
+    ],
+    [
+     "CÓRDOBA",
+     "21:39",
+     "21:42"
+    ],
+    [
+     "SEVILLA",
+     "22:35",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "6:48Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "BARCELONA",
+     null,
+     "06:25"
+    ],
+    [
+     "ZARAGOZA",
+     "07:52",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "BARCELONA",
+     null,
+     "07:50"
+    ],
+    [
+     "ZARAGOZA",
+     "09:16",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Lunes^1"
+  },
+  {
+   "paradas": [
+    [
+     "BARCELONA",
+     null,
+     "10:36"
+    ],
+    [
+     "ZARAGOZA",
+     "12:02",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "BARCELONA",
+     null,
+     "15:47"
+    ],
+    [
+     "TARRAGONA",
+     "16:19",
+     "16:22"
+    ],
+    [
+     "ZARAGOZA",
+     "17:25",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "BARCELONA",
+     null,
+     "19:30"
+    ],
+    [
+     "ZARAGOZA",
+     "20:56",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "CÓRDOBA",
+     null,
+     "17:47"
+    ],
+    [
+     "MADRID",
+     "19:42",
+     "20:10"
+    ],
+    [
+     "ZARAGOZA",
+     "21:47",
+     "21:50"
+    ],
+    [
+     "BARCELONA",
+     "23:29",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "5:41Jueves, Viernes, Sábado y Domingo^2"
+  },
+  {
+   "paradas": [
+    [
+     "CÓRDOBA",
+     null,
+     "07:13"
+    ],
+    [
+     "MADRID",
+     "09:09",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^5"
+  },
+  {
+   "paradas": [
+    [
+     "CÓRDOBA",
+     null,
+     "07:58"
+    ],
+    [
+     "MADRID",
+     "09:52",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "CÓRDOBA",
+     null,
+     "10:47"
+    ],
+    [
+     "MADRID",
+     "12:41",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "CÓRDOBA",
+     null,
+     "14:36"
+    ],
+    [
+     "MADRID",
+     "16:32",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "CÓRDOBA",
+     null,
+     "15:51"
+    ],
+    [
+     "MADRID",
+     "17:54",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [
+     {
+      "days": [
+       0,
+       5
+      ],
+      "from": "2027-01-11",
+      "to": "2027-03-14"
+     }
+    ],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^3^4"
+  },
+  {
+   "paradas": [
+    [
+     "CÓRDOBA",
+     null,
+     "17:47"
+    ],
+    [
+     "MADRID",
+     "19:42",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "CÓRDOBA",
+     null,
+     "22:00"
+    ],
+    [
+     "MADRID",
+     "23:56",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "CÓRDOBA",
+     null,
+     "11:43"
+    ],
+    [
+     "MÁLAGA",
+     "12:42",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "CÓRDOBA",
+     null,
+     "19:23"
+    ],
+    [
+     "MÁLAGA",
+     "20:22",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "CÓRDOBA",
+     null,
+     "20:53"
+    ],
+    [
+     "MÁLAGA",
+     "21:52",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "CÓRDOBA",
+     null,
+     "08:12"
+    ],
+    [
+     "SEVILLA",
+     "09:05",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "CÓRDOBA",
+     null,
+     "13:27"
+    ],
+    [
+     "SEVILLA",
+     "14:20",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [
+     {
+      "days": [
+       0,
+       5
+      ],
+      "from": "2027-01-11",
+      "to": "2027-03-14"
+     }
+    ],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^3^4"
+  },
+  {
+   "paradas": [
+    [
+     "CÓRDOBA",
+     null,
+     "15:17"
+    ],
+    [
+     "SEVILLA",
+     "16:10",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "CÓRDOBA",
+     null,
+     "21:42"
+    ],
+    [
+     "SEVILLA",
+     "22:35",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "CÓRDOBA",
+     null,
+     "17:47"
+    ],
+    [
+     "MADRID",
+     "19:42",
+     "20:10"
+    ],
+    [
+     "ZARAGOZA",
+     "21:47",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Viernes, Sábado y Domingo"
+  },
+  {
+   "paradas": [
+    [
+     "CUENCA",
+     null,
+     "15:19"
+    ],
+    [
+     "ALBACETE",
+     "15:51",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "CUENCA",
+     null,
+     "19:50"
+    ],
+    [
+     "ALBACETE",
+     "20:22",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "CUENCA",
+     null,
+     "15:19"
+    ],
+    [
+     "ALBACETE",
+     "15:51",
+     "15:54"
+    ],
+    [
+     "ALICANTE",
+     "16:44",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "CUENCA",
+     null,
+     "19:50"
+    ],
+    [
+     "ALBACETE",
+     "20:22",
+     "20:25"
+    ],
+    [
+     "ALICANTE",
+     "21:14",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "CUENCA",
+     null,
+     "07:07"
+    ],
+    [
+     "MADRID",
+     "08:10",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "CUENCA",
+     null,
+     "09:19"
+    ],
+    [
+     "MADRID",
+     "10:23",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "CUENCA",
+     null,
+     "15:04"
+    ],
+    [
+     "MADRID",
+     "16:08",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "CUENCA",
+     null,
+     "19:23"
+    ],
+    [
+     "MADRID",
+     "20:26",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "CUENCA",
+     null,
+     "07:07"
+    ],
+    [
+     "MADRID",
+     "08:10",
+     "08:32"
+    ],
+    [
+     "SEGOVIA",
+     "08:57",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "CUENCA",
+     null,
+     "09:19"
+    ],
+    [
+     "MADRID",
+     "10:23",
+     "10:45"
+    ],
+    [
+     "SEGOVIA",
+     "11:12",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "CUENCA",
+     null,
+     "08:20"
+    ],
+    [
+     "VALENCIA",
+     "09:16",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "CUENCA",
+     null,
+     "22:20"
+    ],
+    [
+     "VALENCIA",
+     "23:16",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "CUENCA",
+     null,
+     "07:07"
+    ],
+    [
+     "MADRID",
+     "08:10",
+     "08:32"
+    ],
+    [
+     "SEGOVIA",
+     "08:57",
+     "09:00"
+    ],
+    [
+     "VALLADOLID",
+     "09:33",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "CUENCA",
+     null,
+     "09:19"
+    ],
+    [
+     "MADRID",
+     "10:23",
+     "10:45"
+    ],
+    [
+     "SEGOVIA",
+     "11:12",
+     "11:15"
+    ],
+    [
+     "VALLADOLID",
+     "11:47",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "ELCHE",
+     null,
+     "07:03"
+    ],
+    [
+     "ALICANTE",
+     "07:23",
+     "07:51"
+    ],
+    [
+     "ALBACETE",
+     "08:39",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "ELCHE",
+     null,
+     "12:58"
+    ],
+    [
+     "ALICANTE",
+     "13:19",
+     "13:39"
+    ],
+    [
+     "ALBACETE",
+     "14:27",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "ELCHE",
+     null,
+     "21:24"
+    ],
+    [
+     "ALBACETE",
+     "22:13",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "ELCHE",
+     null,
+     "07:03"
+    ],
+    [
+     "ALICANTE",
+     "07:23",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "ELCHE",
+     null,
+     "12:58"
+    ],
+    [
+     "ALICANTE",
+     "13:19",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "ELCHE",
+     null,
+     "07:03"
+    ],
+    [
+     "ALICANTE",
+     "07:23",
+     "07:51"
+    ],
+    [
+     "ALBACETE",
+     "08:39",
+     "08:42"
+    ],
+    [
+     "CUENCA",
+     "09:16",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "ELCHE",
+     null,
+     "12:58"
+    ],
+    [
+     "ALICANTE",
+     "13:19",
+     "13:39"
+    ],
+    [
+     "ALBACETE",
+     "14:27",
+     "14:30"
+    ],
+    [
+     "CUENCA",
+     "15:01",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "ELCHE",
+     null,
+     "07:03"
+    ],
+    [
+     "ALICANTE",
+     "07:23",
+     "07:51"
+    ],
+    [
+     "ALBACETE",
+     "08:39",
+     "08:42"
+    ],
+    [
+     "CUENCA",
+     "09:16",
+     "09:19"
+    ],
+    [
+     "MADRID",
+     "10:23",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "3:20Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "ELCHE",
+     null,
+     "12:58"
+    ],
+    [
+     "ALICANTE",
+     "13:19",
+     "13:39"
+    ],
+    [
+     "ALBACETE",
+     "14:27",
+     "14:30"
+    ],
+    [
+     "CUENCA",
+     "15:01",
+     "15:04"
+    ],
+    [
+     "MADRID",
+     "16:08",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "3:10Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "ELCHE",
+     null,
+     "11:18"
+    ],
+    [
+     "MURCIA",
+     "11:42",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "ELCHE",
+     null,
+     "19:39"
+    ],
+    [
+     "MURCIA",
+     "20:03",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "ELCHE",
+     null,
+     "21:56"
+    ],
+    [
+     "MURCIA",
+     "22:21",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "ELCHE",
+     null,
+     "07:03"
+    ],
+    [
+     "ALICANTE",
+     "07:23",
+     "07:51"
+    ],
+    [
+     "ALBACETE",
+     "08:39",
+     "08:42"
+    ],
+    [
+     "CUENCA",
+     "09:16",
+     "09:19"
+    ],
+    [
+     "MADRID",
+     "10:23",
+     "10:45"
+    ],
+    [
+     "SEGOVIA",
+     "11:12",
+     "11:15"
+    ],
+    [
+     "VALLADOLID",
+     "11:47",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "4:44Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "08:15"
+    ],
+    [
+     "ALBACETE",
+     "09:45",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "14:15"
+    ],
+    [
+     "CUENCA",
+     "15:16",
+     "15:19"
+    ],
+    [
+     "ALBACETE",
+     "15:51",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "17:15"
+    ],
+    [
+     "ALBACETE",
+     "18:45",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "18:45"
+    ],
+    [
+     "CUENCA",
+     "19:47",
+     "19:50"
+    ],
+    [
+     "ALBACETE",
+     "20:22",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "08:15"
+    ],
+    [
+     "ALBACETE",
+     "09:45",
+     "09:48"
+    ],
+    [
+     "ALICANTE",
+     "10:37",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "14:15"
+    ],
+    [
+     "CUENCA",
+     "15:16",
+     "15:19"
+    ],
+    [
+     "ALBACETE",
+     "15:51",
+     "15:54"
+    ],
+    [
+     "ALICANTE",
+     "16:44",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "18:45"
+    ],
+    [
+     "CUENCA",
+     "19:47",
+     "19:50"
+    ],
+    [
+     "ALBACETE",
+     "20:22",
+     "20:25"
+    ],
+    [
+     "ALICANTE",
+     "21:14",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "06:40"
+    ],
+    [
+     "BARCELONA",
+     "09:45",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "08:49"
+    ],
+    [
+     "ZARAGOZA",
+     "10:29",
+     "10:32"
+    ],
+    [
+     "TARRAGONA",
+     "11:34",
+     "11:37"
+    ],
+    [
+     "BARCELONA",
+     "12:16",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "10:32"
+    ],
+    [
+     "ZARAGOZA",
+     "12:09",
+     "12:12"
+    ],
+    [
+     "BARCELONA",
+     "13:50",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "15:20"
+    ],
+    [
+     "ZARAGOZA",
+     "16:57",
+     "17:00"
+    ],
+    [
+     "BARCELONA",
+     "18:38",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "16:32"
+    ],
+    [
+     "BARCELONA",
+     "19:34",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "19:23"
+    ],
+    [
+     "ZARAGOZA",
+     "21:00",
+     "21:03"
+    ],
+    [
+     "BARCELONA",
+     "22:41",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "20:10"
+    ],
+    [
+     "ZARAGOZA",
+     "21:47",
+     "21:50"
+    ],
+    [
+     "BARCELONA",
+     "23:29",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Jueves, Viernes, Sábado y Domingo^2"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "06:25"
+    ],
+    [
+     "CÓRDOBA",
+     "08:09",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "09:55"
+    ],
+    [
+     "CÓRDOBA",
+     "11:40",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "11:40"
+    ],
+    [
+     "CÓRDOBA",
+     "13:24",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": true,
+   "calendario": {
+    "weekdays": [
+     0,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^4"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "13:30"
+    ],
+    [
+     "CÓRDOBA",
+     "15:14",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "17:35"
+    ],
+    [
+     "CÓRDOBA",
+     "19:20",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "19:05"
+    ],
+    [
+     "CÓRDOBA",
+     "20:50",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [
+     {
+      "days": [
+       1,
+       2
+      ],
+      "from": "2027-01-11",
+      "to": "2027-03-14"
+     }
+    ],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^3"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "19:55"
+    ],
+    [
+     "CÓRDOBA",
+     "21:39",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "07:15"
+    ],
+    [
+     "CUENCA",
+     "08:17",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "14:15"
+    ],
+    [
+     "CUENCA",
+     "15:16",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "18:45"
+    ],
+    [
+     "CUENCA",
+     "19:47",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "21:15"
+    ],
+    [
+     "CUENCA",
+     "22:17",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "08:15"
+    ],
+    [
+     "ALBACETE",
+     "09:45",
+     "09:48"
+    ],
+    [
+     "ALICANTE",
+     "10:37",
+     "10:57"
+    ],
+    [
+     "ELCHE",
+     "11:15",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "18:45"
+    ],
+    [
+     "CUENCA",
+     "19:47",
+     "19:50"
+    ],
+    [
+     "ALBACETE",
+     "20:22",
+     "20:25"
+    ],
+    [
+     "ALICANTE",
+     "21:14",
+     "21:34"
+    ],
+    [
+     "ELCHE",
+     "21:53",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "09:55"
+    ],
+    [
+     "CÓRDOBA",
+     "11:40",
+     "11:43"
+    ],
+    [
+     "MÁLAGA",
+     "12:42",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "17:35"
+    ],
+    [
+     "CÓRDOBA",
+     "19:20",
+     "19:23"
+    ],
+    [
+     "MÁLAGA",
+     "20:22",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "19:05"
+    ],
+    [
+     "CÓRDOBA",
+     "20:50",
+     "20:53"
+    ],
+    [
+     "MÁLAGA",
+     "21:52",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^5"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "08:15"
+    ],
+    [
+     "ALBACETE",
+     "09:45",
+     "09:48"
+    ],
+    [
+     "ALICANTE",
+     "10:37",
+     "10:57"
+    ],
+    [
+     "ELCHE",
+     "11:15",
+     "11:18"
+    ],
+    [
+     "MURCIA",
+     "11:42",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "3:27Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "17:15"
+    ],
+    [
+     "ALBACETE",
+     "18:45",
+     "18:48"
+    ],
+    [
+     "ELCHE",
+     "19:36",
+     "19:39"
+    ],
+    [
+     "MURCIA",
+     "20:03",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [
+     {
+      "days": [
+       1,
+       2
+      ],
+      "from": "2027-01-11",
+      "to": "2027-03-14"
+     }
+    ],
+    "start": null
+   },
+   "periodo_tabla": "2:48Todos los días^3"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "18:45"
+    ],
+    [
+     "CUENCA",
+     "19:47",
+     "19:50"
+    ],
+    [
+     "ALBACETE",
+     "20:22",
+     "20:25"
+    ],
+    [
+     "ALICANTE",
+     "21:14",
+     "21:34"
+    ],
+    [
+     "ELCHE",
+     "21:53",
+     "21:56"
+    ],
+    [
+     "MURCIA",
+     "22:21",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "3:36Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "08:32"
+    ],
+    [
+     "SEGOVIA",
+     "08:57",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "10:45"
+    ],
+    [
+     "SEGOVIA",
+     "11:12",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "06:25"
+    ],
+    [
+     "CÓRDOBA",
+     "08:09",
+     "08:12"
+    ],
+    [
+     "SEVILLA",
+     "09:05",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "11:40"
+    ],
+    [
+     "CÓRDOBA",
+     "13:25",
+     "13:28"
+    ],
+    [
+     "SEVILLA",
+     "14:20",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [
+     {
+      "days": [
+       1,
+       2
+      ],
+      "from": "2027-01-11",
+      "to": "2027-03-14"
+     }
+    ],
+    "start": null
+   },
+   "periodo_tabla": "Lunes, Viernes, Sábado y Domingo^3"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "13:30"
+    ],
+    [
+     "CÓRDOBA",
+     "15:14",
+     "15:17"
+    ],
+    [
+     "SEVILLA",
+     "16:10",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "19:55"
+    ],
+    [
+     "CÓRDOBA",
+     "21:39",
+     "21:42"
+    ],
+    [
+     "SEVILLA",
+     "22:35",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "08:49"
+    ],
+    [
+     "ZARAGOZA",
+     "10:29",
+     "10:32"
+    ],
+    [
+     "TARRAGONA",
+     "11:34",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "07:15"
+    ],
+    [
+     "CUENCA",
+     "08:17",
+     "08:17"
+    ],
+    [
+     "VALENCIA",
+     "09:16",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "12:15"
+    ],
+    [
+     "VALENCIA",
+     "14:09",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "13:15"
+    ],
+    [
+     "VALENCIA",
+     "15:09",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Viernes y fines de semana"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "17:45"
+    ],
+    [
+     "VALENCIA",
+     "19:39",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "21:15"
+    ],
+    [
+     "CUENCA",
+     "22:17",
+     "22:20"
+    ],
+    [
+     "VALENCIA",
+     "23:16",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "08:32"
+    ],
+    [
+     "SEGOVIA",
+     "08:57",
+     "09:00"
+    ],
+    [
+     "VALLADOLID",
+     "09:33",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "10:45"
+    ],
+    [
+     "SEGOVIA",
+     "11:12",
+     "11:15"
+    ],
+    [
+     "VALLADOLID",
+     "11:47",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "08:49"
+    ],
+    [
+     "ZARAGOZA",
+     "10:29",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "10:32"
+    ],
+    [
+     "ZARAGOZA",
+     "12:09",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "15:20"
+    ],
+    [
+     "ZARAGOZA",
+     "16:57",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "19:23"
+    ],
+    [
+     "ZARAGOZA",
+     "21:00",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "MADRID",
+     null,
+     "20:10"
+    ],
+    [
+     "ZARAGOZA",
+     "21:47",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Jueves, Viernes, Sábado y Domingo^2"
+  },
+  {
+   "paradas": [
+    [
+     "MÁLAGA",
+     null,
+     "06:23"
+    ],
+    [
+     "CÓRDOBA",
+     "07:10",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1^3"
+  },
+  {
+   "paradas": [
+    [
+     "MÁLAGA",
+     null,
+     "13:46"
+    ],
+    [
+     "CÓRDOBA",
+     "14:33",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "MÁLAGA",
+     null,
+     "21:10"
+    ],
+    [
+     "CÓRDOBA",
+     "21:57",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "MÁLAGA",
+     null,
+     "06:23"
+    ],
+    [
+     "CÓRDOBA",
+     "07:10",
+     "07:13"
+    ],
+    [
+     "MADRID",
+     "09:09",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1^3"
+  },
+  {
+   "paradas": [
+    [
+     "MÁLAGA",
+     null,
+     "13:46"
+    ],
+    [
+     "CÓRDOBA",
+     "14:33",
+     "14:36"
+    ],
+    [
+     "MADRID",
+     "16:32",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "MÁLAGA",
+     null,
+     "21:10"
+    ],
+    [
+     "CÓRDOBA",
+     "21:57",
+     "22:00"
+    ],
+    [
+     "MADRID",
+     "23:56",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "MURCIA",
+     null,
+     "06:35"
+    ],
+    [
+     "ALBACETE",
+     "08:39",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MURCIA",
+     null,
+     "21:00"
+    ],
+    [
+     "ELCHE",
+     "21:21",
+     "21:24"
+    ],
+    [
+     "ALBACETE",
+     "22:13",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [
+     {
+      "days": [
+       1
+      ],
+      "from": "2027-01-11",
+      "to": "2027-03-14"
+     }
+    ],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1^3"
+  },
+  {
+   "paradas": [
+    [
+     "MURCIA",
+     null,
+     "06:35"
+    ],
+    [
+     "ELCHE",
+     "07:00",
+     "07:03"
+    ],
+    [
+     "ALICANTE",
+     "07:23",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MURCIA",
+     null,
+     "12:35"
+    ],
+    [
+     "ELCHE",
+     "12:55",
+     "12:58"
+    ],
+    [
+     "ALICANTE",
+     "13:19",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "MURCIA",
+     null,
+     "06:35"
+    ],
+    [
+     "ELCHE",
+     "07:00",
+     "07:03"
+    ],
+    [
+     "ALICANTE",
+     "07:23",
+     "07:51"
+    ],
+    [
+     "ALBACETE",
+     "08:39",
+     "08:42"
+    ],
+    [
+     "CUENCA",
+     "09:16",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "2:41Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MURCIA",
+     null,
+     "12:35"
+    ],
+    [
+     "ELCHE",
+     "12:55",
+     "12:58"
+    ],
+    [
+     "ALICANTE",
+     "13:19",
+     "13:39"
+    ],
+    [
+     "ALBACETE",
+     "14:27",
+     "14:30"
+    ],
+    [
+     "CUENCA",
+     "15:01",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "2:26Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "MURCIA",
+     null,
+     "06:35"
+    ],
+    [
+     "ELCHE",
+     "07:00",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MURCIA",
+     null,
+     "12:35"
+    ],
+    [
+     "ELCHE",
+     "12:55",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "MURCIA",
+     null,
+     "21:00"
+    ],
+    [
+     "ELCHE",
+     "21:21",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "MURCIA",
+     null,
+     "06:35"
+    ],
+    [
+     "MADRID",
+     "10:23",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MURCIA",
+     null,
+     "12:35"
+    ],
+    [
+     "MADRID",
+     "16:08",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "MURCIA",
+     null,
+     "21:00"
+    ],
+    [
+     "ELCHE",
+     "21:21",
+     "21:24"
+    ],
+    [
+     "ALBACETE",
+     "22:13",
+     "22:16"
+    ],
+    [
+     "MADRID",
+     "23:48",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "MURCIA",
+     null,
+     "06:35"
+    ],
+    [
+     "ELCHE",
+     "07:00",
+     "07:03"
+    ],
+    [
+     "ALICANTE",
+     "07:23",
+     "07:51"
+    ],
+    [
+     "ALBACETE",
+     "08:39",
+     "08:42"
+    ],
+    [
+     "CUENCA",
+     "09:16",
+     "09:19"
+    ],
+    [
+     "MADRID",
+     "10:23",
+     "10:45"
+    ],
+    [
+     "SEGOVIA",
+     "11:12",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "4:37Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "MURCIA",
+     null,
+     "06:35"
+    ],
+    [
+     "ELCHE",
+     "07:00",
+     "07:03"
+    ],
+    [
+     "ALICANTE",
+     "07:23",
+     "07:51"
+    ],
+    [
+     "ALBACETE",
+     "08:39",
+     "08:42"
+    ],
+    [
+     "CUENCA",
+     "09:16",
+     "09:19"
+    ],
+    [
+     "MADRID",
+     "10:23",
+     "10:45"
+    ],
+    [
+     "SEGOVIA",
+     "11:12",
+     "11:15"
+    ],
+    [
+     "VALLADOLID",
+     "11:47",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "5:12Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "SEGOVIA",
+     null,
+     "13:32"
+    ],
+    [
+     "MADRID",
+     "13:57",
+     "14:15"
+    ],
+    [
+     "CUENCA",
+     "15:16",
+     "15:19"
+    ],
+    [
+     "ALBACETE",
+     "15:51",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "SEGOVIA",
+     null,
+     "13:32"
+    ],
+    [
+     "MADRID",
+     "13:57",
+     "14:15"
+    ],
+    [
+     "CUENCA",
+     "15:16",
+     "15:19"
+    ],
+    [
+     "ALBACETE",
+     "15:51",
+     "15:54"
+    ],
+    [
+     "ALICANTE",
+     "16:44",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "3:12Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "SEGOVIA",
+     null,
+     "13:32"
+    ],
+    [
+     "MADRID",
+     "13:57",
+     "14:15"
+    ],
+    [
+     "CUENCA",
+     "15:16",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "SEGOVIA",
+     null,
+     "11:30"
+    ],
+    [
+     "MADRID",
+     "11:55",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "SEGOVIA",
+     null,
+     "13:32"
+    ],
+    [
+     "MADRID",
+     "13:57",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "SEGOVIA",
+     null,
+     "11:30"
+    ],
+    [
+     "MADRID",
+     "11:55",
+     "12:15"
+    ],
+    [
+     "VALENCIA",
+     "14:09",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "SEGOVIA",
+     null,
+     "09:00"
+    ],
+    [
+     "VALLADOLID",
+     "09:33",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "SEGOVIA",
+     null,
+     "11:15"
+    ],
+    [
+     "VALLADOLID",
+     "11:47",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "SEVILLA",
+     null,
+     "17:02"
+    ],
+    [
+     "CÓRDOBA",
+     "17:44",
+     "17:47"
+    ],
+    [
+     "MADRID",
+     "19:42",
+     "20:10"
+    ],
+    [
+     "ZARAGOZA",
+     "21:47",
+     "21:50"
+    ],
+    [
+     "BARCELONA",
+     "23:29",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "6:27Jueves, Viernes, Sábado y Domingo^2"
+  },
+  {
+   "paradas": [
+    [
+     "SEVILLA",
+     null,
+     "07:13"
+    ],
+    [
+     "CÓRDOBA",
+     "07:55",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "SEVILLA",
+     null,
+     "10:02"
+    ],
+    [
+     "CÓRDOBA",
+     "10:44",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "SEVILLA",
+     null,
+     "15:07"
+    ],
+    [
+     "CÓRDOBA",
+     "15:48",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días Excepto martes, miércoles y jueves"
+  },
+  {
+   "paradas": [
+    [
+     "SEVILLA",
+     null,
+     "17:02"
+    ],
+    [
+     "CÓRDOBA",
+     "17:44",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "SEVILLA",
+     null,
+     "07:13"
+    ],
+    [
+     "CÓRDOBA",
+     "07:55",
+     "07:58"
+    ],
+    [
+     "MADRID",
+     "09:52",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "SEVILLA",
+     null,
+     "10:02"
+    ],
+    [
+     "CÓRDOBA",
+     "10:44",
+     "10:47"
+    ],
+    [
+     "MADRID",
+     "12:41",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-25",
+     "2027-01-01"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "SEVILLA",
+     null,
+     "15:07"
+    ],
+    [
+     "CÓRDOBA",
+     "15:48",
+     "15:51"
+    ],
+    [
+     "MADRID",
+     "17:54",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días Excepto martes, miércoles y jueves"
+  },
+  {
+   "paradas": [
+    [
+     "SEVILLA",
+     null,
+     "17:02"
+    ],
+    [
+     "CÓRDOBA",
+     "17:44",
+     "17:47"
+    ],
+    [
+     "MADRID",
+     "19:42",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "SEVILLA",
+     null,
+     "17:02"
+    ],
+    [
+     "CÓRDOBA",
+     "17:44",
+     "17:47"
+    ],
+    [
+     "MADRID",
+     "19:42",
+     "20:10"
+    ],
+    [
+     "ZARAGOZA",
+     "21:47",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Jueves, Viernes, Sábado y Domingo^2"
+  },
+  {
+   "paradas": [
+    [
+     "TARRAGONA",
+     null,
+     "16:22"
+    ],
+    [
+     "CÓRDOBA",
+     "21:39",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": "2026-12-13"
+   },
+   "periodo_tabla": "Todos los días^1^2"
+  },
+  {
+   "paradas": [
+    [
+     "TARRAGONA",
+     null,
+     "16:22"
+    ],
+    [
+     "ZARAGOZA",
+     "17:25",
+     "17:28"
+    ],
+    [
+     "MADRID",
+     "19:19",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "TARRAGONA",
+     null,
+     "16:22"
+    ],
+    [
+     "ZARAGOZA",
+     "17:25",
+     "17:28"
+    ],
+    [
+     "MADRID",
+     "19:19",
+     "19:55"
+    ],
+    [
+     "CÓRDOBA",
+     "21:39",
+     "21:42"
+    ],
+    [
+     "SEVILLA",
+     "22:35",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "6:13Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "TARRAGONA",
+     null,
+     "16:22"
+    ],
+    [
+     "ZARAGOZA",
+     "17:25",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "VALENCIA",
+     null,
+     "06:09"
+    ],
+    [
+     "CUENCA",
+     "07:04",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": "2026-12-13"
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "VALENCIA",
+     null,
+     "06:09"
+    ],
+    [
+     "CUENCA",
+     "07:04",
+     "07:07"
+    ],
+    [
+     "MADRID",
+     "08:10",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": "2026-12-13"
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "VALENCIA",
+     null,
+     "10:27"
+    ],
+    [
+     "MADRID",
+     "12:23",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "VALENCIA",
+     null,
+     "14:57"
+    ],
+    [
+     "MADRID",
+     "16:53",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "VALENCIA",
+     null,
+     "15:57"
+    ],
+    [
+     "MADRID",
+     "17:53",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Jueves, Viernes, Sábado y Domingo"
+  },
+  {
+   "paradas": [
+    [
+     "VALENCIA",
+     null,
+     "20:54"
+    ],
+    [
+     "MADRID",
+     "22:50",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "VALENCIA",
+     null,
+     "06:09"
+    ],
+    [
+     "CUENCA",
+     "07:04",
+     "07:07"
+    ],
+    [
+     "MADRID",
+     "08:10",
+     "08:32"
+    ],
+    [
+     "SEGOVIA",
+     "08:57",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": "2026-12-13"
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "VALENCIA",
+     null,
+     "06:09"
+    ],
+    [
+     "CUENCA",
+     "07:04",
+     "07:07"
+    ],
+    [
+     "MADRID",
+     "08:10",
+     "08:32"
+    ],
+    [
+     "SEGOVIA",
+     "08:57",
+     "09:00"
+    ],
+    [
+     "VALLADOLID",
+     "09:33",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": "2026-12-13"
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "VALLADOLID",
+     null,
+     "12:57"
+    ],
+    [
+     "SEGOVIA",
+     "13:29",
+     "13:32"
+    ],
+    [
+     "MADRID",
+     "13:57",
+     "14:15"
+    ],
+    [
+     "CUENCA",
+     "15:16",
+     "15:19"
+    ],
+    [
+     "ALBACETE",
+     "15:51",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": "2026-12-13"
+   },
+   "periodo_tabla": "2:54Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "VALLADOLID",
+     null,
+     "12:57"
+    ],
+    [
+     "SEGOVIA",
+     "13:29",
+     "13:32"
+    ],
+    [
+     "MADRID",
+     "13:57",
+     "14:15"
+    ],
+    [
+     "CUENCA",
+     "15:16",
+     "15:19"
+    ],
+    [
+     "ALBACETE",
+     "15:51",
+     "15:54"
+    ],
+    [
+     "ALICANTE",
+     "16:44",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": "2026-12-13"
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "VALLADOLID",
+     null,
+     "12:57"
+    ],
+    [
+     "SEGOVIA",
+     "13:29",
+     "13:32"
+    ],
+    [
+     "MADRID",
+     "13:57",
+     "14:15"
+    ],
+    [
+     "CUENCA",
+     "15:16",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": "2026-12-13"
+   },
+   "periodo_tabla": "2:19Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "VALLADOLID",
+     null,
+     "10:55"
+    ],
+    [
+     "SEGOVIA",
+     "11:27",
+     "11:30"
+    ],
+    [
+     "MADRID",
+     "11:55",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": "2026-12-13"
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "VALLADOLID",
+     null,
+     "12:57"
+    ],
+    [
+     "SEGOVIA",
+     "13:29",
+     "13:32"
+    ],
+    [
+     "MADRID",
+     "13:57",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": "2026-12-13"
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "VALLADOLID",
+     null,
+     "10:55"
+    ],
+    [
+     "SEGOVIA",
+     "11:27",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": "2026-12-13"
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "VALLADOLID",
+     null,
+     "12:57"
+    ],
+    [
+     "SEGOVIA",
+     "13:29",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": "2026-12-13"
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "VALLADOLID",
+     null,
+     "10:55"
+    ],
+    [
+     "SEGOVIA",
+     "11:27",
+     "11:30"
+    ],
+    [
+     "MADRID",
+     "11:55",
+     "12:15"
+    ],
+    [
+     "VALENCIA",
+     "14:09",
+     null
+    ]
+   ],
+   "estacion_madrid": "Chamartín",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": "2026-12-13"
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "ZARAGOZA",
+     null,
+     "10:32"
+    ],
+    [
+     "TARRAGONA",
+     "11:34",
+     "11:37"
+    ],
+    [
+     "BARCELONA",
+     "12:16",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": "2026-12-13"
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "ZARAGOZA",
+     null,
+     "12:12"
+    ],
+    [
+     "BARCELONA",
+     "13:50",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "ZARAGOZA",
+     null,
+     "17:00"
+    ],
+    [
+     "BARCELONA",
+     "18:38",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "ZARAGOZA",
+     null,
+     "21:03"
+    ],
+    [
+     "BARCELONA",
+     "22:41",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "ZARAGOZA",
+     null,
+     "21:50"
+    ],
+    [
+     "BARCELONA",
+     "23:29",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Jueves, Viernes, Sábado y Domingo^2"
+  },
+  {
+   "paradas": [
+    [
+     "ZARAGOZA",
+     null,
+     "07:55"
+    ],
+    [
+     "MADRID",
+     "09:43",
+     "09:55"
+    ],
+    [
+     "CÓRDOBA",
+     "11:40",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": true,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "ZARAGOZA",
+     null,
+     "09:19"
+    ],
+    [
+     "MADRID",
+     "11:07",
+     "11:40"
+    ],
+    [
+     "CÓRDOBA",
+     "13:25",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Lunes"
+  },
+  {
+   "paradas": [
+    [
+     "ZARAGOZA",
+     null,
+     "07:55"
+    ],
+    [
+     "MADRID",
+     "09:43",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": "2026-12-13"
+   },
+   "periodo_tabla": "Todos los días^1"
+  },
+  {
+   "paradas": [
+    [
+     "ZARAGOZA",
+     null,
+     "09:19"
+    ],
+    [
+     "MADRID",
+     "11:07",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     4
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": "2026-12-13"
+   },
+   "periodo_tabla": "Lunes,Viernes ySábados^1"
+  },
+  {
+   "paradas": [
+    [
+     "ZARAGOZA",
+     null,
+     "12:05"
+    ],
+    [
+     "MADRID",
+     "13:53",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "ZARAGOZA",
+     null,
+     "17:28"
+    ],
+    [
+     "MADRID",
+     "19:19",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días"
+  },
+  {
+   "paradas": [
+    [
+     "ZARAGOZA",
+     null,
+     "20:59"
+    ],
+    [
+     "MADRID",
+     "22:47",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "ZARAGOZA",
+     null,
+     "09:10"
+    ],
+    [
+     "MADRID",
+     "11:05",
+     "11:40"
+    ],
+    [
+     "CÓRDOBA",
+     "13:25",
+     "13:28"
+    ],
+    [
+     "SEVILLA",
+     "14:21",
+     null
+    ]
+   ],
+   "estacion_madrid": "Atocha",
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días Excepto martes, miércoles y jueves"
+  },
+  {
+   "paradas": [
+    [
+     "ZARAGOZA",
+     null,
+     "17:28"
+    ],
+    [
+     "SEVILLA",
+     "22:35",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [
+     "2026-12-24",
+     "2026-12-31"
+    ],
+    "closed_ranges": [],
+    "start": null
+   },
+   "periodo_tabla": "Todos los días^2"
+  },
+  {
+   "paradas": [
+    [
+     "ZARAGOZA",
+     null,
+     "10:32"
+    ],
+    [
+     "TARRAGONA",
+     "11:34",
+     null
+    ]
+   ],
+   "estacion_madrid": null,
+   "madrid_por_corredor": false,
+   "calendario": {
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "closed": [],
+    "closed_ranges": [],
+    "start": "2026-12-13"
+   },
+   "periodo_tabla": "Todos los días^1"
+  }
+ ],
+ "calendario_fuente": "Columna «Periodo del viaje» de la tabla de origen a destino de cada tren y notas a pie de su grupo de origen (PDF oficial)."
+}
