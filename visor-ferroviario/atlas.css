@@ -29,6 +29,8 @@ legend{font-size:var(--fs-s);font-weight:700;color:var(--ink);margin-bottom:6px;
 .theme-option:hover{background:var(--wash)}.theme-option:has(input:checked){background:#e2e8f2}
 .theme-option input{margin-top:3px}.theme-option span{display:flex;flex-direction:column;font-weight:600;font-size:var(--fs-m)}
 .theme-option small{font-weight:400;font-size:var(--fs-xs);color:var(--muted)}
+.theme-group{margin:6px 0;padding-left:10px;border-left:2px solid var(--line-strong)}
+.theme-group-name{margin:4px 0 2px;font-size:var(--fs-xs);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 #theme-panel{border-left:3px solid var(--line);padding-left:10px;margin:8px 0 6px}
 #theme-panel:empty{display:none}
 .row{display:flex;gap:8px;align-items:center;min-height:var(--hit);font-size:var(--fs-m);cursor:pointer}

@@ -24,7 +24,14 @@
   // «Cercanías y redes urbanas» pasa a «Redes urbanas»: las Cercanías de Renfe están en «Servicios» (cercanias.json).
   // «Marcas y operadores» y «Servicios» (antiguo) se sustituyen por «Servicios» con el diccionario único (taxonomia.js):
   // siguen en `themes` para traducir los enlaces antiguos, pero ya no se ofrecen en la lista.
-  const themeOrder=['servicios','corridors','tourism','all','gauge','tent','transit'];
+  // Grupos del selector (FILTROS_ARQUITECTURA.md, sección 5): las cuatro vistas de infraestructura van juntas bajo
+  // «Infraestructura», cada una con sus filtros. `themeOrder` sale de aquí.
+  const themeGroups=[
+    {ids:['servicios','tourism']},
+    {name:'Infraestructura',ids:['corridors','all','gauge','tent']},
+    {ids:['transit']}
+  ];
+  const themeOrder=themeGroups.flatMap(g=>g.ids);
 
   const corridors=[
     {id:'sur',name:'Sur',color:'#8A5A00'},
@@ -110,5 +117,5 @@
   const compact=()=>root.matchMedia?.('(max-width: 760px), (max-height: 520px)').matches;
   const phoneLandscape=()=>root.matchMedia?.('(max-height: 520px) and (orientation: landscape)').matches;
   const reducedMotion=()=>root.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-  root.AtlasConfig={peninsular,bounds,themes,themeOrder,corridors,status,brands,services,classifications,transport,families,tourism,population,zoomFactor,radius,reducedMotion,compact,phoneLandscape};
+  root.AtlasConfig={peninsular,bounds,themes,themeGroups,themeOrder,corridors,status,brands,services,classifications,transport,families,tourism,population,zoomFactor,radius,reducedMotion,compact,phoneLandscape};
 })(window);
