@@ -1,17 +1,43 @@
 {
  "version": 1,
- "nota": "Cortes de vía que dejan sin servicio relaciones enteras. Una relación vigente que pase por estaciones de los dos lados de un corte con aplicar=true se clasifica como vigencia=suspendida (tools/visor/anotar-taxonomia.mjs). Con aplicar=false el corte queda documentado pero no cambia nada: se usa mientras los horarios publicados sigan trayendo trenes. No confundir con incidencias.json, que guarda los avisos de Cercanías de Cabina.",
+ "nota": "Cortes de vía que dejan sin servicio relaciones enteras. Una relación vigente que pase por estaciones de los dos lados de un corte con aplicar=true se clasifica como vigencia=suspendida (tools/visor/anotar-taxonomia.mjs). Con aplicar=false el corte queda documentado pero no cambia nada: se usa mientras los horarios publicados sigan trayendo trenes. No confundir con incidencias.json, que guarda los avisos de Cercanías de Cabina. «suspensiones» lista los días sin trenes de un operador por el corte; la usa tools/visor/servicios/preparar_horarios.py para quitar esos días del horario del buscador (OUIGO no tiene GTFS: sus días salen del PDF).",
  "cortes": [
   {
    "id": "madrid-andalucia-2026-10",
    "nombre": "Línea de alta velocidad Madrid–Andalucía",
    "desde": "2026-10-28",
    "hasta": null,
-   "entre": [["Madrid"], ["Córdoba", "Sevilla", "Málaga", "Granada", "Cádiz", "Huelva", "Jaén", "Antequera", "Puente Genil", "Algeciras"]],
+   "entre": [
+    [
+     "Madrid"
+    ],
+    [
+     "Córdoba",
+     "Sevilla",
+     "Málaga",
+     "Granada",
+     "Cádiz",
+     "Huelva",
+     "Jaén",
+     "Antequera",
+     "Puente Genil",
+     "Algeciras"
+    ]
+   ],
    "aplicar": false,
    "motivo_aplicar": "El GTFS de Renfe y el de iryo traen trenes el 25-11-2026 con la línea cortada y no se sabe si Renfe desvía alguno. Se activa cuando se confirme con la oferta vigente.",
    "fuente": "Adif, 05-11-2026: cortada sin fecha de reapertura. OUIGO e iryo publican cancelaciones hasta el 03-12-2026.",
-   "ver": "P"
+   "ver": "P",
+   "suspensiones": [
+    {
+     "operador": "ouigo",
+     "desde": "2026-10-28",
+     "hasta": "2026-12-03",
+     "alcance": "Todos los trayectos OUIGO con alguna parada en el segundo lado de «entre» (también los que no pasan por Madrid: el tren entero no circula).",
+     "fuente": "OUIGO publica cancelaciones hasta el 03-12-2026 (antes, aviso del 17-11-2026: «hasta al menos el 29/11»).",
+     "ver": "P"
+    }
+   ]
   }
  ]
 }
