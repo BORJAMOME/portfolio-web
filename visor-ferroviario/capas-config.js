@@ -19,8 +19,9 @@
     all:{name:'Todas las vías',hint:'Toda la red IGN por tipo de infraestructura'},
     gauge:{name:'Ancho de vía',hint:'IGN y Adif: filtra por ancho, electrificación y vías'},
     tent:{name:'Corredores TEN-T',hint:'Red transeuropea (Hermes 2024)'},
-    transit:{name:'Cercanías y redes urbanas',hint:'Líneas urbanas y de Cercanías (GTFS)'}
+    transit:{name:'Redes urbanas',hint:'Metro y Metro Ligero de Madrid (CRTM)'}
   };
+  // «Cercanías y redes urbanas» pasa a «Redes urbanas»: las Cercanías de Renfe están en «Servicios» (cercanias.json).
   // «Marcas y operadores» y «Servicios» (antiguo) se sustituyen por «Servicios» con el diccionario único (taxonomia.js):
   // siguen en `themes` para traducir los enlaces antiguos, pero ya no se ofrecen en la lista.
   const themeOrder=['servicios','corridors','tourism','all','gauge','tent','transit'];
