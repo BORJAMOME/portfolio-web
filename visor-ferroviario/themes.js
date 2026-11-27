@@ -6,7 +6,7 @@
  const number=new Intl.NumberFormat('es-ES');
  const definitions={
   corridors:{file:'tramos-ten-t.geojson',name:'Corredores TEN-T · Hermes 2024'},
-  transit:{file:'transit-catalog.json',name:'Servicios urbanos y Cercanías'}
+  transit:{file:'transit-catalog.json',name:'Redes urbanas'}
  };
  const tent={'ten-t-atlantico':{name:'Atlántico',color:'#0072B2'},'ten-t-mediterraneo':{name:'Mediterráneo',color:'#AA4499'}};
  const modeName={metro:'Metro','metro-ligero':'Metro Ligero',cercanias:'Cercanías','tram-train':'Tren-tranvía'};
@@ -15,7 +15,8 @@
  const lineLabel=l=>l.mode==='metro'?'L'+l.code:l.code;
  function options(mode,data){
   if(mode==='corridors')return Object.entries(tent).map(([id,t])=>({id,name:'TEN-T '+t.name,color:t.color}));
-  return (catalog.transit?.lines||[]).filter(l=>data.features.some(f=>f.properties.line_id===l.id)).map(l=>({id:l.id,name:[l.network||l.network_id,l.code,l.name].filter(Boolean).join(' · '),color:l.color||'#727C8B'}));
+  // Redes urbanas: sin las líneas de Renfe, que se dibujan en «Servicios» desde cercanias.json.
+  return (catalog.transit?.lines||[]).filter(l=>l.operator!=='Renfe'&&data.features.some(f=>f.properties.line_id===l.id)).map(l=>({id:l.id,name:[l.network||l.network_id,l.code,l.name!==l.code?l.name:null].filter(Boolean).join(' · '),color:l.color||'#727C8B'}));
  }
  function matches(f){if(!selected.length)return false;const p=f.properties;return current==='corridors'?(p.corridor_ids||[]).some(id=>selected.includes(id)):selected.includes(p.line_id);}
 
