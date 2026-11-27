@@ -8,13 +8,15 @@
   const CFG=root.AtlasConfig||{};
   const CUTOFF='2026-11-16', FUTURE_FROM='2026-12-17';
   // Velocidad comercial media (km/h) por tipo de servicio: [vía de alta velocidad, vía convencional].
-  const SPEED={highspeed:[215,110],euromed:[170,115],avant:[165,100],alvia:[180,95],day:[160,90],'md-conventional':[140,75],'commuter-metric':[45,45]};
+  // Velocidad máxima y media por marca (diccionario único); Intercity con serie 04xxx (antiguo Alvia) va más rápido.
+  const SPEED={ave:[215,110],avlo:[215,110],ouigo:[215,110],iryo:[215,110],'ave-euromed':[170,115],avant:[165,100],alvia:[180,95],intercity:[160,90],regional:[140,75],cercanias:[45,45]};
+  const isMetric=v=>v.tx?.marca==='cercanias';
   const DWELL=2, TRANSFER=20, BIAS=8, WALK_RADIUS=450, CITY_RADIUS=8000, ACCESS_RADIUS=1500, DETOUR=1.18;
 
   /* ── núcleo: grafo de paradas y cálculo (sin DOM) ──────────── */
   function metres(a,b){const k=Math.cos((a[1]+b[1])/2*Math.PI/180);return Math.hypot((a[0]-b[0])*k,a[1]-b[1])*111320;}
   const current=v=>v.tx?.vig?v.tx.vig==='vigente':v.validity&&!(v.validity.to<CUTOFF)&&!(v.validity.from>=FUTURE_FROM);
-  const speedOf=v=>SPEED[(v.categories||[]).find(c=>SPEED[c])]||[120,80];
+  const speedOf=v=>SPEED[v.tx?.marca==='intercity'&&(v.aliases||[]).some(a=>a.startsWith('Alvia'))?'alvia':v.tx?.marca]||[120,80];
   const gid=(sid,st)=>'c:'+(st?.official_id||sid);
   function minutes(v,km,hsKm){const [vh,vc]=speedOf(v);return (hsKm/vh+(km-hsKm)/vc)*60;}
 
@@ -34,7 +36,7 @@
       let hs=0,all=0;
       for(const fid of v.edges||[]){const p=rail?.[fid]?.properties;if(!p)continue;all+=p.length_m||0;if(p.nominalgauge===1435)hs+=p.length_m||0;}
       const ratio=all?hs/all:0;
-      const cum=[0],dwell=v.categories?.includes('commuter-metric')?0:DWELL;
+      const cum=[0],dwell=isMetric(v)?0:DWELL;
       for(let i=1;i<v.calls.length;i++){
         const a=services.stations[v.calls[i-1].s].coordinates,b=services.stations[v.calls[i].s].coordinates;
         const km=metres(a,b)/1000*DETOUR;
@@ -158,13 +160,11 @@
   }
 
   // Producto y color de una variante (misma lógica que las fichas de ruta).
+  // Marca del diccionario único (taxonomia.js) a partir del bloque tx de la variante.
   function product(v){
-    const brand=(CFG.brands||[]).find(b=>b.id===v.brand);
-    if(brand)return {name:brand.name,color:brand.color};
-    const svc=(CFG.services||[]).find(s=>(v.categories||[]).includes(s.id));
-    const raw=v.published_brand||'';
-    const name=v.categories?.includes('commuter-metric')?'Cercanías '+raw:({AVANT:'Avant','AVANT EXP':'Avant Exprés',AVLO:'Avlo'})[raw]||raw||svc?.name||'Tren';
-    return {name,color:svc?.color||'#273a5f'};
+    const m=root.AtlasTaxonomia?.marca.find(x=>x.id===v.tx?.marca),raw=v.published_brand||'';
+    if(m?.id==='cercanias')return {name:'Cercanías '+raw,color:m.color};
+    return {name:m?.name||raw||'Tren',color:m?.color||'#273a5f'};
   }
 
   function plan(graph,origin,destination){
@@ -186,7 +186,7 @@
       const alts=[...new Set(options.map(o=>product(o.v).name))].filter(n=>n!==p.name);
       const relations=new Set(options.map(o=>o.v.relation)).size;
       const stops=v.calls.slice(best.i+1,best.j).map(c=>S.stations[c.s].name);
-      const dwell=v.categories?.includes('commuter-metric')?0:DWELL*stops.length;
+      const dwell=isMetric(v)?0:DWELL*stops.length;
       legs.push({type:'ride',variant:v,product:p,alternatives:alts,relations,
         from:S.stations[v.calls[best.i].s].name,to:S.stations[v.calls[best.j].s].name,
         fromCoords:S.stations[v.calls[best.i].s].coordinates,toCoords:S.stations[v.calls[best.j].s].coordinates,
@@ -251,7 +251,7 @@
     // las recorra en orden). Con la unión de todas las variantes, el camino más corto entre dos paradas podía meterse
     // por vías de otra relación y dar un rodeo (Madrid–Zaragoza–Barcelona salía 644 km en vez de 620). La unión queda
     // solo como último recurso.
-    const ouigo=S.variants.filter(v=>v.brand==='ouigo'&&v.edges?.length);
+    const ouigo=S.variants.filter(v=>v.tx?.marca==='ouigo'&&v.edges?.length);
     const union=[...new Set(ouigo.flatMap(v=>v.edges))];
     const seq=v=>v.calls.map(c=>graph.stationGroup[c.s]);
     const covers=(big,small)=>{let k=0;for(const x of big)if(x===small[k])k++;return k===small.length;};

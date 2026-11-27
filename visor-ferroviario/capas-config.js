@@ -13,16 +13,13 @@
   const themes={
     servicios:{name:'Servicios',hint:'Operador, familia y marca, régimen, eje y Cercanías de todos los núcleos'},
     corridors:{name:'Corredores de alta velocidad',hint:'Por dónde va la red de alta velocidad'},
-    brands:{name:'Marcas y operadores',hint:'Quién opera cada ruta de alta velocidad'},
-    services:{name:'Servicios',hint:'Qué tipo de tren circula y dónde para'},
     tourism:{name:'Trenes turísticos',hint:'Viajes de varios días y excursiones'},
     all:{name:'Todas las vías',hint:'Toda la red IGN por tipo de infraestructura'},
     gauge:{name:'Ancho de vía',hint:'IGN y Adif: filtra por ancho, electrificación y vías'},
     tent:{name:'Corredores TEN-T',hint:'Red transeuropea (Hermes 2024)'},
     transit:{name:'Cercanías y redes urbanas',hint:'Líneas urbanas y de Cercanías (GTFS)'}
   };
-  // «Marcas y operadores» y «Servicios» (antiguo) se sustituyen por «Servicios» con el diccionario único (taxonomia.js):
-  // siguen en `themes` para traducir los enlaces antiguos, pero ya no se ofrecen en la lista.
+  // «Marcas y operadores» y «Servicios» (antiguos) ya no son temas: sus enlaces se traducen a «Servicios» (capas.js, translateLegacy).
   const themeOrder=['servicios','corridors','tourism','all','gauge','tent','transit'];
 
   const corridors=[
@@ -37,23 +34,7 @@
     construction:{name:'En construcción',dash:[4,2]},
     project:{name:'En proyecto',dash:[0.6,2.2]}
   };
-  const brands=[
-    {id:'ave',name:'AVE',operator:'Renfe Viajeros',color:'#4B1F6F'},
-    {id:'avlo',name:'Avlo',operator:'Renfe Viajeros',color:'#A13CB0'},
-    {id:'iryo',name:'iryo',operator:'Iryo (Intermodalidad de Levante, S. A.)',color:'#C8102E'},
-    {id:'ouigo',name:'OUIGO',operator:'OUIGO España',color:'#007C91'}
-  ];
-  // Denominaciones de la nueva arquitectura de Renfe (trenes.renfe.com, implantación desde el 13-11-2026),
-  // con la denominación anterior como alias para seguir encontrándolas.
-  const services=[
-    {id:'alvia',name:'Alvia · ahora Intercity',color:'#8A5A00',width:2.4,family:'intercity'},
-    {id:'euromed',name:'Euromed · ahora AVE Euromed',color:'#0072B2',width:2.4,aliases:['AVE Euromed'],family:'ave'},
-    {id:'highspeed',name:'Alta velocidad comercial',color:'#C8102E',width:3.2,note:'AVE, Avlo, iryo y OUIGO'},
-    {id:'md-conventional',name:'Media Distancia · ahora Regional',color:'#1E7F4C',width:2.2,family:'regional'},
-    {id:'avant',name:'Media Distancia de alta velocidad · Avant',color:'#1E7F4C',width:3.2,dash:[2,1.2],family:'avant'},
-    {id:'commuter-metric',name:'Cercanías de ancho métrico',color:'#7A2E86',width:2.4,family:'cercanias'},
-    {id:'day',name:'Convencional diurno · Intercity',color:'#1D2638',width:2,family:'intercity'}
-  ];
+  // Marcas, operadores y servicios: diccionario único en taxonomia.js (fase 6: aquí ya no hay listas propias).
   // «Todas las vías»: tres clasificaciones independientes de la red (prestaciones, titularidad y gestión,
   // ancho de vía). La propiedad de cada tramo sale de preparar_clasificacion_red.py (net, perf) o del IGN (ancho).
   const classifications={
@@ -109,5 +90,5 @@
   const compact=()=>root.matchMedia?.('(max-width: 760px), (max-height: 520px)').matches;
   const phoneLandscape=()=>root.matchMedia?.('(max-height: 520px) and (orientation: landscape)').matches;
   const reducedMotion=()=>root.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-  root.AtlasConfig={peninsular,bounds,themes,themeOrder,corridors,status,brands,services,classifications,transport,families,tourism,population,zoomFactor,radius,reducedMotion,compact,phoneLandscape};
+  root.AtlasConfig={peninsular,bounds,themes,themeOrder,corridors,status,classifications,transport,families,tourism,population,zoomFactor,radius,reducedMotion,compact,phoneLandscape};
 })(window);

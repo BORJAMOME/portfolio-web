@@ -155,6 +155,19 @@ const rels = [...relaciones.values()];
   results.push({n: 9, title: 'Las relaciones de osp_relaciones existen en los datos', ok: !falta.length, problems: falta, info: [], advisory: true});
 }
 
+/* ── 7. ningún nombre de categoría escrito a mano fuera de taxonomia.js (grep sobre los JS del visor) ── */
+{
+  const VD = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'visor-ferroviario');
+  // Listas y campos antiguos que la fase 6 sustituyó por el diccionario: no deben volver.
+  const prohibido = [/CFG\.brands\b/, /CFG\.services\b/, /AtlasConfig\.(brands|services)\b/, /\bv\.categories\b/, /\bv\.brand\b/,
+    /['"](Alvia · ahora Intercity|Euromed · ahora AVE Euromed|Media Distancia · ahora Regional)['"]/];
+  const p = [];
+  for (const f of fs.readdirSync(VD).filter(f => f.endsWith('.js') && f !== 'taxonomia.js')) {
+    fs.readFileSync(path.join(VD, f), 'utf8').split('\n').forEach((line, i) => {for (const re of prohibido) if (re.test(line)) p.push(`${f}:${i + 1} ${line.trim().slice(0, 90)}`);});
+  }
+  check(7, 'Ningún nombre de categoría escrito a mano fuera de taxonomia.js', p);
+}
+
 /* ── salida ── */
 const failed = results.filter(r => !r.ok && !r.advisory);
 if (asJson) console.log(JSON.stringify(results, null, 1));
