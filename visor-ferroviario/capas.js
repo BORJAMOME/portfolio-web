@@ -22,7 +22,7 @@
   const data={};
   const state={theme:'servicios',f:{fam:null,marca:DEFAULT_MARCAS(),op:null,reg:null,amb:null,ejes:null},nuc:null,
     keys:{corridors:CFG.corridors.map(c=>c.id),tourism:CFG.tourism.map(t=>t.id)},
-    statuses:['service','construction','project'],dim:'perf',width:'tracks',variant:null,station:null,experience:null,corridor:null};
+    statuses:['service','construction','project'],ov:[],dim:'perf',width:'tracks',variant:null,station:null,experience:null,corridor:null};
   const files={servicios:'capas/servicios.json',cercanias:'capas/cercanias.json',corridors:'capas/corredores.geojson',tourism:'capas/turismo.json'};
   const cache={};
   function load(theme){
@@ -119,10 +119,10 @@
   }
   function buildLines(){
     const theme=state.theme,features=[],stops=new Map();
-    if(theme==='corridors'&&data.corridors){
+    if((theme==='corridors'||theme==='infra'&&state.ov.includes('hs'))&&data.corridors){
       for(const f of data.corridors.features){
         const p=f.properties;
-        if(!state.keys.corridors.includes(p.corridor)||!state.statuses.includes(p.status))continue;
+        if(theme==='corridors'&&!state.keys.corridors.includes(p.corridor)||!state.statuses.includes(p.status))continue;
         const st=CFG.corridors.find(c=>c.id===p.corridor);
         features.push({type:'Feature',geometry:f.geometry,properties:{sid:p.id,key:p.corridor,color:st.color,w:st.double?4.2:3.2,off:0,
           dash:p.status==='service'?0:p.status==='construction'?1:2,core:st.double?1:0}});
@@ -463,11 +463,12 @@
   function note(text,cls='muted'){const p=document.createElement('p');p.className=cls;p.textContent=text;return p;}
   function renderPanel(){
     const panel=$('#theme-panel');panel.replaceChildren();
-    $('#gauge-panel').hidden=state.theme!=='gauge';
+    $('#gauge-panel').hidden=!['gauge','infra'].includes(state.theme);
     $('#legacy-panel').hidden=!['tent','transit'].includes(state.theme);
     if(['gauge','tent','transit'].includes(state.theme))return;
     const theme=state.theme;
     if(theme==='all'){allPanel(panel);return;}
+    if(theme==='infra'){infraPanel(panel);return;}
     if(theme==='corridors'){
       if(!data.corridors){panel.append(note('Cargando corredores…'));return;}
       const km={};for(const f of data.corridors.features){const p=f.properties;if(p.status==='service')km[p.corridor]=(km[p.corridor]||0)+p.km;}
@@ -497,6 +498,9 @@
   /* ── leyenda ──────────────────────────────────────────── */
   function legendItems(){
     const t=state.theme;
+    if(t==='infra'){const km=classKm();return [...dimension().items.filter(x=>km[x.id+'_n']).map(x=>({name:x.name,color:x.color})),
+      ...(state.ov.includes('hs')?[...CFG.corridors.map(c=>({name:'AV · '+c.name,color:c.color,double:c.double})),...state.statuses.map(s=>({name:CFG.status[s].name,color:'#586278',dash:s!=='service',pattern:s}))]:[]),
+      ...(state.ov.includes('tent')?(legacy?.legend()||[]):[])];}
     if(t==='corridors')return [...CFG.corridors.filter(c=>state.keys.corridors.includes(c.id)).map(c=>({name:(c.group?'Levante y litoral · ':'')+c.name,color:c.color,double:c.double})),
       ...state.statuses.map(s=>({name:CFG.status[s].name,color:'#586278',dash:s!=='service',pattern:s}))];
     if(t==='servicios'){const present=new Set(servItems().map(x=>x.tx.marca));return TX.marca.filter(m=>present.has(m.id)).map(m=>({name:m.name,color:m.color,dash:!!m.dash}));}
@@ -519,7 +523,12 @@
   }
 
   /* ── Todas las vías ───────────────────────────────────── */
-  const dimension=()=>CFG.classifications[state.dim]||CFG.classifications.perf;
+  // «Infraestructura» añade «Eje de lectura» a las clasificaciones de «Todas las vías» (nombres del diccionario único).
+  const EJE_COLORS={noreste:'#A3155C',levante:'#4B1F6F',sur:'#8A5A00',norte:'#0072B2',extremadura:'#1E7F4C',mediterraneo:'#C45C00',otros:'#727C8B'};
+  const ejeClass=()=>({name:'Eje de lectura',prop:'filter_eje',items:[...TX.ejeLectura.map(e=>({id:e.id,name:e.name,color:EJE_COLORS[e.id]||'#727C8B'})),
+    {id:'sin-eje',name:'Sin eje (fuera de la red de Adif)',color:'#C7CDD6'}]});
+  const classes=()=>state.theme==='infra'?{eje:ejeClass(),...CFG.classifications}:CFG.classifications;
+  const dimension=()=>classes()[state.dim]||CFG.classifications.perf;
   const valueOf=(d,p)=>{const v=p[d.prop];const item=d.items.find(i=>(i.values||[i.id]).includes(String(v)));return item?item.id:'none';};
   function allColor(){
     const d=dimension(),pairs=[];
@@ -543,7 +552,7 @@
     ['Sin servicio','Ramal de Cella (Teruel) al polígono «Platea» y al complejo aeroportuario de Caudé']];
   function allPanel(panel){
     const seg=document.createElement('div');seg.className='segmented dims';seg.setAttribute('role','radiogroup');seg.setAttribute('aria-label','Clasificar la red por');
-    for(const [id,d] of Object.entries(CFG.classifications)){
+    for(const [id,d] of Object.entries(classes())){
       const l=document.createElement('label'),i=document.createElement('input');i.type='radio';i.name='dim';i.value=id;i.checked=state.dim===id;
       i.onchange=()=>{state.dim=id;map.setPaintProperty('rail','line-color',allColor());renderPanel();onChange?.();};l.append(i,document.createTextNode(' '+d.name));seg.append(l);
     }
@@ -565,12 +574,28 @@
       perf:'Alta velocidad: tramos de los ejes «A.V.» del catálogo de Adif y la concesión LFP Perthus. Sin determinar: ancho estándar sin correspondencia con ninguna red oficial.',
       net:'Cada tramo del IGN se compara con el catálogo de Adif y los trazados oficiales de FGC, FGV, Euskotren, Metro Bilbao y el CRTM. Sin identificar: apartaderos, vías de servicio y redes sin geometría oficial integrada.',
       gauge:'Ancho del IGN completado con el catálogo de tramos de Adif (incluido el ancho mixto, que el IGN marca como «no aplica») y, en nudos sin datos, con el ancho de los tramos contiguos. La ficha de cada tramo indica de dónde sale. «Mixto» no distingue tercer carril de vías paralelas de distinto ancho.'};
+    notes.eje='Eje de cada tramo según la línea de Adif (capas/ejes.json); los tramos de Adif sin línea heredan la del tramo más cercano por la red [D].';
     panel.append(note(notes[state.dim]+' Trazo grueso: vía doble.'));
     if(state.dim==='net'){
       const det=document.createElement('details');det.className='inline';const sum=document.createElement('summary');sum.textContent='Otras derivaciones particulares (sin trazado oficial)';det.append(sum);
       for(const [t,txt] of sidings){const p=document.createElement('p');p.className='muted';const b=document.createElement('strong');b.textContent=t+': ';p.append(b,document.createTextNode(txt));det.append(p);}
       panel.append(det);
     }
+  }
+  // «Infraestructura»: colorear por (como «Todas las vías», más el eje) y capas encima; los filtros de vía van en #gauge-panel.
+  function infraPanel(panel){
+    const h=document.createElement('p');h.className='type-group';h.textContent='Colorear por';panel.append(h);
+    allPanel(panel);
+    panel.append(checkboxGroup('Superponer',[{id:'hs',name:'Corredores de alta velocidad',color:'#4B1F6F'},{id:'tent',name:'Corredores TEN-T (Hermes 2024)',color:'#0072B2'}],
+      state.ov,null,v=>{state.ov=v;syncLegacy().then(()=>refresh());}));
+    if(state.ov.includes('hs'))panel.append(checkboxGroup('Estado de los corredores de alta velocidad',Object.entries(CFG.status).map(([id,s])=>({id,name:s.name,color:'#586278',dash:id!=='service'})),state.statuses,null,v=>{state.statuses=v;refresh();}));
+    panel.append(note('Los filtros de abajo se combinan: un tramo se ve si cumple todos. Los recuentos de cada grupo tienen en cuenta los demás.'));
+  }
+  // TEN-T se dibuja con el módulo de temas heredados (themes.js): en «Infraestructura» se enciende como capa encima.
+  function syncLegacy(silent=true){
+    const id=state.theme;
+    if(['tent','transit'].includes(id))return legacy?.change(id==='tent'?'corridors':'transit',{silent})||Promise.resolve();
+    return legacy?.change(id==='infra'&&state.ov.includes('tent')?'corridors':'gauge',{silent:true})||Promise.resolve();
   }
   // Servicios con trazado vigente por un tramo IGN (ficha del tramo).
   function servicesOnEdge(fid){
@@ -649,7 +674,8 @@
     if(!CFG.themes[id])id='corridors';
     state.theme=id;state.variant=null;state.experience=null;state.corridor=null;state.station=null;
     for(const input of document.querySelectorAll('input[name="theme"]'))input.checked=input.value===id;
-    const base=id==='gauge',all=id==='all';
+    const base=id==='gauge',all=id==='all'||id==='infra';
+    if(id==='infra'&&!classes()[state.dim])state.dim='eje';
     const color=base?root.AtlasBaseRailColor:all?allColor():['case',['boolean',['feature-state','selected'],false],'#101e36','#b3bfd0'];
     // En «Ancho de vía» el ancho desconocido se distingue también por la forma (guiones claros encima), no solo por el gris.
     if(map.getLayer('rail-unknown'))map.setLayoutProperty('rail-unknown','visibility',base?'visible':'none');
@@ -657,7 +683,14 @@
     railLook={color,opacity:base||all?.95:.9,electric:all,
       width:all?['interpolate',['linear'],['zoom'],5,['case',DOUBLE,1.3,.8],12,['case',DOUBLE,3.6,2.2],16,['case',DOUBLE,5,3]]:['interpolate',['linear'],['zoom'],5,.9,8,1.5,12,2.8,16,4]};
     applyRailStyle();
-    if(['tent','transit'].includes(id))await legacy?.change(id==='tent'?'corridors':'transit',{silent});else await legacy?.change('gauge',{silent:true});
+    await syncLegacy(silent);
+    if(id==='infra'){
+      // Ejes por tramo: hasta que llegan, el color por eje y sus filtros no tienen valores.
+      try{await root.AtlasRail?.ensureEjes();delete kmCache.eje;}catch(e){$('#theme-panel').prepend(note(e.message+'. Reintenta más tarde.','notice-text'));}
+      if(state.theme!==id)return;
+      railLook.color=allColor();applyRailStyle();
+      if(state.ov.includes('hs')&&!data.corridors)data.corridors=await load('corridors').catch(()=>null);
+    }
     if(state.theme!==id)return;
     renderPanel();
     try{if(files[id])data[id==='servicios'?'services':id]=await load(id);}catch(e){$('#theme-panel').replaceChildren(note(e.message+' Reintenta más tarde.','notice-text'));}
@@ -669,7 +702,8 @@
     if(state.theme==='servicios'&&cercaniasOn()&&!data.cercanias){
       load('cercanias').then(c=>{data.cercanias=c;if(state.theme==='servicios')refresh(true);}).catch(()=>{$('#theme-panel').prepend(note('No se han podido cargar las Cercanías. Reintenta más tarde.','notice-text'));});
     }
-    if(['corridors','servicios','tourism'].includes(state.theme))buildLines();
+    if(state.theme==='infra'&&state.ov.includes('hs')&&!data.corridors){load('corridors').then(c=>{data.corridors=c;if(state.theme==='infra')refresh(true);}).catch(()=>{});}
+    if(['corridors','servicios','tourism','infra'].includes(state.theme))buildLines();
     else{lastLines=[];map.getSource('cx-lines').setData({type:'FeatureCollection',features:[]});map.getSource('cx-stops').setData({type:'FeatureCollection',features:[]});renderHighlight();}
     renderPanel();if(!silent)onChange?.();
   }
@@ -680,7 +714,7 @@
   }
   function getState(){
     const f=state.theme==='servicios'?[...DIMS.filter(d=>state.f[d.id]).map(d=>d.id+':'+state.f[d.id].join('.')),...(state.nuc?['nuc:'+state.nuc.join('.')]:[])].join('|')||undefined:undefined;
-    return {t:state.theme,f,ls:['tent','transit'].includes(state.theme)?legacy?.state():undefined,k:state.keys[state.theme]&&state.keys[state.theme].join(','),st:state.theme==='corridors'?state.statuses.join(','):undefined,d:state.theme==='all'?state.dim:undefined,w:state.width==='traffic'?'t':undefined,v:state.variant||undefined,x:state.experience||undefined};
+    return {t:state.theme,f,ls:['tent','transit'].includes(state.theme)?legacy?.state():undefined,k:state.keys[state.theme]&&state.keys[state.theme].join(','),st:state.theme==='corridors'||state.theme==='infra'&&state.ov.includes('hs')?state.statuses.join(','):undefined,dm:['all','infra'].includes(state.theme)?state.dim:undefined,ov:state.theme==='infra'&&state.ov.length?state.ov.join(','):undefined,w:state.width==='traffic'?'t':undefined,v:state.variant||undefined,x:state.experience||undefined};
   }
   // Enlaces antiguos (FILTROS_ARQUITECTURA.md, sección 5): «Marcas y operadores» y «Servicios» pasan a «Servicios» con la marca.
   // «Cercanías y redes urbanas» con líneas de Renfe (renfe-<gtfs>-<línea>) pasa a «Servicios» con Cercanías y esos núcleos.
@@ -707,9 +741,12 @@
       else state.f.marca=DEFAULT_MARCAS();
     }
     if(typeof s.k==='string'&&state.keys[s.t]){const allowed=(s.t==='tourism'?CFG.tourism:CFG.corridors).map(x=>x.id);state.keys[s.t]=s.k.split(',').filter(x=>allowed.includes(x));}
-    if(typeof s.d==='string'&&CFG.classifications[s.d])state.dim=s.d;
+    // «dm»: la clave «d» del enlace es de la capa de demografía (atlas.js), que la pisaba; se acepta «d» de texto por si alguien la escribió a mano.
+    const dm=typeof s.dm==='string'?s.dm:typeof s.d==='string'?s.d:null;
+    if(dm&&(CFG.classifications[dm]||s.t==='infra'&&dm==='eje'))state.dim=dm;
     if(s.w==='t'&&state.width!=='traffic')setWidth('traffic',{silent:true});
     if(typeof s.st==='string')state.statuses=s.st.split(',').filter(x=>CFG.status[x]);
+    if(s.t==='infra')state.ov=typeof s.ov==='string'?s.ov.split(',').filter(x=>['hs','tent'].includes(x)):[];
     const requestedTheme=CFG.themes[s.t]?s.t:state.theme;
     await setTheme(requestedTheme,{silent:true});
     if(state.theme!==requestedTheme)return;
@@ -722,7 +759,7 @@
   let lastLines=[];
   function scene3d(){
     const theme=state.theme;
-    if(theme==='all'){const d=dimension(),colors=new Map();for(const it of d.items)for(const v of (it.values||[it.id]))colors.set(v,it.color);
+    if(theme==='all'||theme==='infra'){const d=dimension(),colors=new Map();for(const it of d.items)for(const v of (it.values||[it.id]))colors.set(v,it.color);
       return {baseColor:f=>colors.get(String(f.properties[d.prop]??'none'))||'#A0A7B2',overlay:[]};}
     if(theme==='gauge')return {baseColor:f=>root.AtlasCartography.style(root.AtlasFilters.value(f,'gauge')).color,overlay:[]};
     return {baseColor:()=>'#9aa8bc',overlay:lastLines};

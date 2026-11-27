@@ -12,6 +12,7 @@
 
   const themes={
     servicios:{name:'Servicios',hint:'Operador, familia y marca, régimen, eje y Cercanías de todos los núcleos'},
+    infra:{name:'Infraestructura (todos los filtros)',hint:'Eje, línea, prestaciones, titularidad, ancho, electrificación y vías, con corredores AV y TEN-T encima'},
     corridors:{name:'Corredores de alta velocidad',hint:'Por dónde va la red de alta velocidad'},
     tourism:{name:'Trenes turísticos',hint:'Viajes de varios días y excursiones'},
     all:{name:'Todas las vías',hint:'Toda la red IGN por tipo de infraestructura'},
@@ -25,7 +26,7 @@
   // «Infraestructura», cada una con sus filtros. `themeOrder` sale de aquí.
   const themeGroups=[
     {ids:['servicios','tourism']},
-    {name:'Infraestructura',ids:['corridors','all','gauge','tent']},
+    {name:'Infraestructura',ids:['infra','corridors','all','gauge','tent']},
     {ids:['transit']}
   ];
   const themeOrder=themeGroups.flatMap(g=>g.ids);

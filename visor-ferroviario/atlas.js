@@ -3,9 +3,18 @@ const CFG = window.AtlasConfig;
 const statusText = document.querySelector("#status");
 const loading = document.querySelector("#loading");
 const number = new Intl.NumberFormat("es-ES");
-const filters = {gauge:[], electric:[], tracks:[]};
+// Filtros de vía. Los tres de «Ancho de vía» valen en todos los temas (salvo «Todas las vías»); los de eje, línea,
+// prestaciones y titularidad solo en el tema «Infraestructura» (FILTROS_ARQUITECTURA.md, sección 5).
+const BASE_DIMS = ["gauge","electric","tracks"], INFRA_DIMS = ["eje","rfig","lin","perf","net",...BASE_DIMS];
+const filters = Object.fromEntries(INFRA_DIMS.map(d=>[d,[]]));
 const UNKNOWN_GAUGE=["in",["coalesce",["get","filter_gauge"],"unknown"],["literal",["unknown","pending","notApplicable"]]];
-const dimensions = {gauge:"Ancho de vía", electric:"Electrificación", tracks:"Número de vías"};
+const dimensionNames = {eje:"Eje de lectura", rfig:"Eje del catálogo de la red (RFIG)", lin:"Línea de Adif", perf:"Prestaciones", net:"Titularidad y gestión",
+  gauge:"Ancho de vía", electric:"Electrificación", tracks:"Número de vías"};
+const isInfra = () => window.AtlasCapas?.current()==="infra";
+const activeDims = () => isInfra() ? INFRA_DIMS : BASE_DIMS;
+// Línea de Adif: se filtra por el principio del código (p. ej. «040» o «04000»), no por casillas.
+const dimValue = (p,d) => p["filter_"+d] ?? "unknown";
+const passes = (p,d) => !filters[d].length || (d==="lin" ? filters.lin.some(v=>String(p.filter_lin||"").startsWith(v)) : filters[d].includes(dimValue(p,d)));
 const bounds = CFG.bounds;
 const padding = () => CFG.compact() ? {top:20,bottom:20,left:20,right:20} : {top:30,bottom:40,left:document.querySelector("#tools")?.hidden?40:(document.querySelector("#tools")?.offsetWidth||340)+24,right:40};
 let dataset = null;
@@ -43,11 +52,11 @@ let hashTimer;
 function persistHash() {
   clearTimeout(hashTimer);
   if(!ready||restoringView)return;
-  const state = {...filters, ...(window.AtlasCapas?.getState() || {}), p: window.AtlasPopulation?.state(), tp: window.AtlasTransport?.state(), d: window.AtlasDemography?.state(), ix: window.AtlasInfrastructure?.state(), r: window.AtlasRoute?.state(), m: terrainEnabled ? 1 : undefined,
+  const state = {...Object.fromEntries(Object.entries(filters).filter(([d,v])=>v.length||BASE_DIMS.includes(d))), ...(window.AtlasCapas?.getState() || {}), p: window.AtlasPopulation?.state(), tp: window.AtlasTransport?.state(), d: window.AtlasDemography?.state(), ix: window.AtlasInfrastructure?.state(), r: window.AtlasRoute?.state(), m: terrainEnabled ? 1 : undefined,
     b:basemapController&&basemapController.state()!=='simple'?basemapController.state():undefined,
     c:window.AtlasViewState.capture(map), tv:window.AtlasViewState.terrain(terrainController?.getState()),
     l:Object.fromEntries([...document.querySelectorAll("[data-layer]")].map(input=>[input.dataset.layer,input.checked]))};
-  for(const key of Object.keys(filters))if(!state[key].length)delete state[key];
+  for(const key of Object.keys(filters))if(!state[key]?.length)delete state[key];
   if(state.p&&!state.p.on)delete state.p;
   try {
     const hash="#" + encodeURIComponent(JSON.stringify(state));
@@ -73,8 +82,8 @@ function activeChips(){
     if(st.length<all.length)chips.push({label:"Estado: "+(st.map(x=>CFG.status[x]?.name.toLowerCase()).join(", ")||"ninguno"),title:"Estado de la infraestructura",
       remove:async()=>{await CAP.restore({...CAP.getState(),st:all.join(",")});applyFilters();renderLegend();writeHash();}});
   }
-  const names={gauge:"Ancho",electric:"Electrificación",tracks:"Vías"};
-  for(const [dimension,values] of Object.entries(filters))for(const value of values)
+  const names={eje:"Eje",rfig:"Eje RFIG",lin:"Línea",perf:"Prestaciones",net:"Titularidad",gauge:"Ancho",electric:"Electrificación",tracks:"Vías"};
+  for(const [dimension,values] of Object.entries(filters))if(activeDims().includes(dimension))for(const value of values)
     chips.push({label:names[dimension]+": "+label(dimension,value),title:"Filtro de vías",remove:()=>{filters[dimension]=filters[dimension].filter(v=>v!==value);renderFacets();applyFilters();}});
   for(const input of document.querySelectorAll('#tools .cat[data-cat]:not([data-cat="vias"]) input[role=switch][id]:checked')){
     const name=input.closest(".layer")?.querySelector(".layer-name")?.textContent.trim();
@@ -110,6 +119,11 @@ function writeHash() {
 try { savedQueries = JSON.parse(localStorage.getItem("ferro_atlas_queries") || "[]"); if(!Array.isArray(savedQueries))savedQueries=[]; } catch {}
 
 function label(dimension, value) {
+  const TX=window.AtlasTaxonomia;
+  if(dimension === "eje") return value === "sin-eje" ? "Sin eje (fuera de la red de Adif)" : TX?.get("ejeLectura",value)?.name || value;
+  if(dimension === "rfig") return value === "sin-eje" ? "Sin eje (fuera de la red de Adif)" : value+" · "+(TX?.ejeRfig.find(e=>e.id===value)?.name || "");
+  if(dimension === "lin") return "empieza por "+value;
+  if(dimension === "perf" || dimension === "net") return CFG.classifications[dimension].items.find(i=>i.id===value)?.name || (value==="unknown"?"Sin información":value);
   if(dimension === "gauge" && value === "unknown") return "Sin determinar";
   if(value === "unknown") return "Sin información";
   if(value === "notApplicable") return "No aplica";
@@ -120,6 +134,21 @@ function label(dimension, value) {
   if(dimension === "electric") return value === "yes" ? "Electrificada" : "Sin electrificar";
   return value === "1" ? "Vía única" : value === "2" ? "Vía doble" : value+" vías";
 }
+
+/* Eje de lectura, eje RFIG y línea de Adif de cada tramo (capas/ejes.json, tools/visor/build-ejes.mjs): solo se
+   cargan al abrir «Infraestructura» (1,3 MB). Las listas de ejes.json van alineadas con dataset.rail.features. */
+let ejesPromise=null;
+function ensureEjes(){
+  ejesPromise??=fetch("capas/ejes.json").then(r=>{if(!r.ok)throw new Error("No se han podido cargar los ejes");return r.json();}).then(e=>{
+    dataset.rail.features.forEach((f,i)=>{const p=f.properties;p.filter_eje=e.lectura[i]||"sin-eje";p.filter_rfig=e.rfig[i]||"sin-eje";p.filter_lin=e.linea[i]||"";});
+    for(const d of ["eje","rfig"])delete facetValues[d];
+    map.getSource("rail")?.setData(dataset.rail);
+    if(ready)applyFilters(); // los filtros de eje del enlace se aplican ahora que hay valores
+    return true;
+  }).catch(e=>{ejesPromise=null;throw e;});
+  return ejesPromise;
+}
+window.AtlasRail={ensureEjes};
 
 let map;
 try {
@@ -393,26 +422,38 @@ function adifLineFields(l){
   };
 }
 
-/* ── filtros IGN (tema «Ancho de vía») ── */
-let facetValues;
+/* ── filtros de vía (temas «Ancho de vía» e «Infraestructura») ── */
+const facetValues={};
 function renderFacets() {
   const container=$("#facets");
   container.replaceChildren();
-  facetValues ??= Object.fromEntries(Object.keys(dimensions).map(d=>[d,[...new Set(peninsular.map(f=>f.properties["filter_"+d]))]]));
-  const counts=Object.fromEntries(Object.keys(dimensions).map(d=>[d,new Map()]));
+  const dims=activeDims().filter(d=>d!=="lin");
+  for(const d of dims)facetValues[d] ??= [...new Set(peninsular.map(f=>dimValue(f.properties,d)))];
+  const counts=Object.fromEntries(dims.map(d=>[d,new Map()]));
   for(const f of peninsular) {
     const p=f.properties;
-    for(const d of Object.keys(dimensions)) {
+    for(const d of dims) {
       // Recuento de cada faceta con los filtros de las otras dimensiones (lectura de filter_* precalculado).
-      if(Object.keys(dimensions).every(o=>o===d||!filters[o].length||filters[o].includes(p["filter_"+o])))
-        counts[d].set(p["filter_"+d],(counts[d].get(p["filter_"+d])||0)+1);
+      if(activeDims().every(o=>o===d||passes(p,o)))
+        counts[d].set(dimValue(p,d),(counts[d].get(dimValue(p,d))||0)+1);
     }
   }
-  for(const [dimension,title] of Object.entries(dimensions)) {
+  if(isInfra()){
+    // Línea de Adif: campo de texto (hay cientos de códigos); se aplica al pulsar Intro o al salir del campo.
+    const fieldset=document.createElement("fieldset"),legend=document.createElement("legend"),input=document.createElement("input"),hint=document.createElement("p");
+    legend.textContent=dimensionNames.lin;input.type="search";input.id="filter-lin";input.inputMode="numeric";input.placeholder="Código, p. ej. 040 o 04000";
+    input.value=filters.lin.join(" ");input.setAttribute("aria-describedby","filter-lin-hint");
+    hint.id="filter-lin-hint";hint.className="muted";hint.textContent="Uno o varios códigos (o su principio) separados por espacios. Los tramos sin línea de Adif no tienen código.";
+    const apply=()=>{const v=[...new Set(input.value.split(/[\s,;]+/).map(x=>x.replace(/\D/g,"")).filter(Boolean))].slice(0,10);
+      if(v.join(" ")!==filters.lin.join(" ")){filters.lin=v;applyFilters();}};
+    input.onchange=apply;input.onkeydown=e=>{if(e.key==="Enter")apply();};
+    fieldset.append(legend,input,hint);container.append(fieldset);
+  }
+  for(const dimension of dims) {
     const fieldset=document.createElement("fieldset"),legend=document.createElement("legend");
-    legend.textContent=title;fieldset.append(legend);
+    legend.textContent=dimensionNames[dimension];fieldset.append(legend);
     const all=new Set([...facetValues[dimension],...filters[dimension]]);
-    for(const value of [...all].sort((a,b)=>a==="unknown"?1:b==="unknown"?-1:a.localeCompare(b,undefined,{numeric:true}))) {
+    for(const value of [...all].sort((a,b)=>["unknown","sin-eje"].includes(a)?1:["unknown","sin-eje"].includes(b)?-1:a.localeCompare(b,undefined,{numeric:true}))) {
       const row=document.createElement("label"),input=document.createElement("input"),text=document.createElement("span"),count=document.createElement("span");
       row.className="row";input.type="checkbox";input.value=value;input.checked=filters[dimension].includes(value);
       text.textContent=label(dimension,value);count.className="count";count.textContent=number.format(counts[dimension].get(value)||0);
@@ -440,9 +481,12 @@ function updateStationCount(){
 }
 function applyFilters() {
   const all=window.AtlasCapas?.current()==="all";
-  filtered=all?peninsular:peninsular.filter(f=>Object.keys(filters).every(d=>!filters[d].length||filters[d].includes(f.properties["filter_"+d])));
+  const dims=activeDims();
+  filtered=all?peninsular:peninsular.filter(f=>dims.every(d=>passes(f.properties,d)));
   if(ready) {
-    const clauses=Object.entries(filters).filter(([,values])=>values.length).map(([dimension,values])=>["in",AtlasFilters.expression(dimension),["literal",values]]);
+    const clauses=dims.filter(d=>filters[d].length).map(d=>d==="lin"
+      ?["any",...filters.lin.map(v=>["==",["slice",["coalesce",["get","filter_lin"],""],0,v.length],v])]
+      :["in",AtlasFilters.expression(d),["literal",filters[d]]]);
     // «Todas las vías» dibuja la red completa: los filtros de «Ancho de vía» no se aplican.
     const expression=window.AtlasCapas?.current()==="all"?["==",["get","pen"],1]:["all",["==",["get","pen"],1],...clauses];
     map.setFilter("rail",expression);map.setFilter("rail-hit",expression);for(const id of ["rail-casing","rail-state"])if(map.getLayer(id))map.setFilter(id,expression);
@@ -455,7 +499,7 @@ function applyFilters() {
   $("#km").textContent=number.format(visible?Math.round(metrics.km):0);
   $("#gauge-coverage").textContent=visible&&metrics.gaugeCoverage!==null?number.format(Math.round(metrics.gaugeCoverage))+" %":"—";
   updateStationCount();
-  if(window.AtlasCapas?.current()==="gauge"||!window.AtlasCapas)renderFacets();
+  if(["gauge","infra"].includes(window.AtlasCapas?.current())||!window.AtlasCapas)renderFacets();
   renderLegend();
   writeHash();
   if(selectedId!==null&&!filtered.some(f=>f.id===selectedId)){$("#info").hidden=true;clearSelection();}
@@ -638,7 +682,8 @@ if(map)map.on("load",async()=>{
     dataset=await dataPromise;
     applyGauge(dataset.rail.features,await gaugePromise);
     const adif=await adifPromise;adifLines=adif?.lineas||null;
-    for(const f of dataset.rail.features){fillFromLine(f.properties,adif?.relleno);AtlasFilters.prepare(f);f.properties.pen=CFG.peninsular(f.geometry.coordinates[0])?1:0;}
+    for(const f of dataset.rail.features){fillFromLine(f.properties,adif?.relleno);AtlasFilters.prepare(f);f.properties.pen=CFG.peninsular(f.geometry.coordinates[0])?1:0;
+      f.properties.filter_perf=f.properties.perf||"none";f.properties.filter_net=f.properties.net||"none";}
     peninsular=dataset.rail.features.filter(f=>f.properties.pen);
     dataset.stations.features=dataset.stations.features.filter(f=>CFG.peninsular(f.geometry.coordinates));
     map.addSource("land",{type:"geojson",data:dataset.boundary});
@@ -788,7 +833,7 @@ if(map)map.on("load",async()=>{
     // Enlace antiguo con filtros de vía y sin tema: abrir el tema «Ancho de vía», donde esos filtros se ven.
     const legacyFilters=!hash.t&&Object.values(filters).some(v=>v.length);
     await AtlasCapas.restore(hash.t?hash:legacyFilters?{t:"gauge"}:null);
-    if(AtlasCapas.current()==="gauge")renderFacets();
+    if(["gauge","infra"].includes(AtlasCapas.current()))renderFacets();
     if(hash.p)await AtlasPopulation.restore(hash.p);
     if(hash.tp)await AtlasTransport.restore(hash.tp);
     if(hash.d)await window.AtlasDemography?.restore(hash.d);
