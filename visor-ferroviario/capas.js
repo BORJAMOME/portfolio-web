@@ -418,12 +418,20 @@
   /* ── panel ────────────────────────────────────────────── */
   function themeList(){
     const box=$('#theme-list');box.replaceChildren();
-    for(const id of CFG.themeOrder){
-      const t=CFG.themes[id],label=document.createElement('label'),input=document.createElement('input'),text=document.createElement('span'),hint=document.createElement('small');
-      label.className='theme-option';input.type='radio';input.name='theme';input.value=id;input.checked=state.theme===id;
-      input.onchange=()=>setTheme(id);
-      text.textContent=t.name;hint.textContent=t.hint;text.append(hint);label.append(input,text);box.append(label);
-    }
+    CFG.themeGroups.forEach((g,gi)=>{
+      let parent=box;
+      if(g.name){
+        parent=document.createElement('div');parent.className='theme-group';parent.setAttribute('role','group');
+        const h=document.createElement('p');h.className='theme-group-name';h.id='theme-group-'+gi;h.textContent=g.name;
+        parent.setAttribute('aria-labelledby',h.id);parent.append(h);box.append(parent);
+      }
+      for(const id of g.ids){
+        const t=CFG.themes[id],label=document.createElement('label'),input=document.createElement('input'),text=document.createElement('span'),hint=document.createElement('small');
+        label.className='theme-option';input.type='radio';input.name='theme';input.value=id;input.checked=state.theme===id;
+        input.onchange=()=>setTheme(id);
+        text.textContent=t.name;hint.textContent=t.hint;text.append(hint);label.append(input,text);parent.append(label);
+      }
+    });
   }
   function checkboxGroup(title,items,selected,counts,onToggle){
     const fs=document.createElement('fieldset'),lg=document.createElement('legend');lg.textContent=title;fs.append(lg);
