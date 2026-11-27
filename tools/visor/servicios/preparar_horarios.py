@@ -14,7 +14,8 @@ Formato compacto (lo descomprime ruta.js):
     python preparar_horarios.py --national <google_transit.zip> --commuter <gtfs_renfe_cercanias.zip> \
       --catalog <tmp>/services-catalog.json [--servicios …/capas/servicios.json] [--out …/capas/horarios.json]
 
-Copiado de manual-ferrocarriles/mapa/preparar_horarios.py (27-11-2026): solo cambian las rutas y los argumentos.
+Copiado de manual-ferrocarriles/mapa/preparar_horarios.py (27-11-2026). Cambios: rutas, argumentos y la suspensión de OUIGO
+Madrid–Andalucía, que ahora se lee de capas/cortes.json en vez de ir escrita en el código.
 """
 import argparse
 import base64
@@ -22,6 +23,7 @@ import csv
 import hashlib
 import io
 import json
+import unicodedata
 from collections import defaultdict
 from datetime import date, timedelta
 from pathlib import Path
@@ -43,6 +45,11 @@ def minutes(text):
     return int(h) * 60 + int(m)
 
 
+def norm(text):
+    """Minúsculas y sin tildes, para comparar «CÓRDOBA» (PDF de OUIGO) con «Córdoba» (cortes.json)."""
+    return "".join(c for c in unicodedata.normalize("NFD", text.lower()) if unicodedata.category(c) != "Mn")
+
+
 def parse(d):
     return date(int(d[:4]), int(d[4:6]), int(d[6:]))
 
@@ -54,6 +61,7 @@ def main():
     parser.add_argument("--catalog", type=Path, required=True, help="services-catalog.json de preparar_servicios.py")
     parser.add_argument("--servicios", type=Path, default=VISOR / "capas" / "servicios.json")
     parser.add_argument("--out", type=Path, default=VISOR / "capas" / "horarios.json")
+    parser.add_argument("--cortes", type=Path, default=VISOR / "capas" / "cortes.json")
     args = parser.parse_args()
     FEEDS = {"renfe-national": args.national, "renfe-commuter": args.commuter}
 
@@ -150,19 +158,22 @@ def main():
             "VALENCIA": "València-Joaquín Sorolla", "VALLADOLID": "Valladolid-Campo Grande", "ZARAGOZA": "Zaragoza Delicias",
             "MADRID/Atocha": "Madrid-Puerta de Atocha-Almudena Grandes", "MADRID/Chamartín": "Madrid-Chamartín-Clara Campoamor"}
     ouigo_end = date(2027, 6, 14)
-    # Aviso de OUIGO consultado el 17-11-2026: trenes entre Madrid y Andalucía suspendidos «hasta al menos el 29/11».
-    andalucia, suspended_to = {"CÓRDOBA", "SEVILLA", "MÁLAGA"}, date(2026, 11, 29)
+    # Suspensiones de OUIGO por cortes de vía (capas/cortes.json, campo «suspensiones»): un trayecto con alguna parada
+    # en el segundo lado del corte no circula entre «desde» y «hasta».
+    cortes = json.loads(args.cortes.read_text(encoding="utf-8")) if args.cortes.exists() else {"cortes": []}
+    suspensions = [([norm(n) for n in c["entre"][1]], date.fromisoformat(s["desde"]), date.fromisoformat(s["hasta"]), c["id"])
+                   for c in cortes["cortes"] for s in c.get("suspensiones", []) if s["operador"] == "ouigo"]
     extra = []
     for r in ouigo["trayectos"]:
         c = r["calendario"]
         first = max(start, date.fromisoformat(c["start"])) if c["start"] else start
         closed = {date.fromisoformat(x) for x in c["closed"]}
         ranges = [(set(x["days"]), date.fromisoformat(x["from"]), date.fromisoformat(x["to"])) for x in c["closed_ranges"]]
-        touches_andalucia = any(p[0] in andalucia for p in r["paradas"])
+        cut = [(a, b) for side, a, b, _ in suspensions if any(norm(p[0]).startswith(n) for p in r["paradas"] for n in side)]
         dates, d = set(), first
         while d <= min(ouigo_end, end):
             if (d.weekday() in c["weekdays"] and d not in closed and not any(d.weekday() in days and a <= d <= b for days, a, b in ranges)
-                    and not (touches_andalucia and d <= suspended_to)):
+                    and not any(a <= d <= b for a, b in cut)):
                 dates.add(d)
             d += timedelta(days=1)
         if not dates:
@@ -182,8 +193,9 @@ def main():
     payload = {"meta": {"start": start.isoformat(), "end": end.isoformat(),
                         "sources": {**{k: catalog["sources"][k]["edition"] for k in FEEDS}, "ouigo": "PDF oficial «Horarios OUIGO 2026-2027», válido hasta el 14-06-2027"},
                         "ouigo_end": ouigo_end.isoformat(),
-                        "note": "Horas de los GTFS oficiales de Renfe (AV/LD/MD y Cercanías) y del PDF oficial de OUIGO (trayectos origen-destino con sus días; "
-                                "Madrid–Andalucía suspendido hasta el 29-11-2026 según el aviso de OUIGO)."},
+                        "note": "Horas de los GTFS oficiales de Renfe (AV/LD/MD y Cercanías) y del PDF oficial de OUIGO (trayectos origen-destino con sus días"
+                                + "".join("; sin trenes por el corte " + i + " del " + a.strftime("%d-%m-%Y") + " al " + b.strftime("%d-%m-%Y")
+                                          for _, a, b, i in suspensions) + ", según capas/cortes.json)."},
                "days": cal_list, "patterns": pat_list, "trips": out, "ouigo": extra}
     target = args.out
     target.write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
