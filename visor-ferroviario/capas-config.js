@@ -11,6 +11,7 @@
   const bounds=[[-9.4,35.9],[3.35,43.85]];
 
   const themes={
+    servicios:{name:'Servicios',hint:'Operador, familia y marca, régimen, eje y Cercanías de todos los núcleos'},
     corridors:{name:'Corredores de alta velocidad',hint:'Por dónde va la red de alta velocidad'},
     brands:{name:'Marcas y operadores',hint:'Quién opera cada ruta de alta velocidad'},
     services:{name:'Servicios',hint:'Qué tipo de tren circula y dónde para'},
@@ -20,7 +21,9 @@
     tent:{name:'Corredores TEN-T',hint:'Red transeuropea (Hermes 2024)'},
     transit:{name:'Cercanías y redes urbanas',hint:'Líneas urbanas y de Cercanías (GTFS)'}
   };
-  const themeOrder=['corridors','brands','services','tourism','all','gauge','tent','transit'];
+  // «Marcas y operadores» y «Servicios» (antiguo) se sustituyen por «Servicios» con el diccionario único (taxonomia.js):
+  // siguen en `themes` para traducir los enlaces antiguos, pero ya no se ofrecen en la lista.
+  const themeOrder=['servicios','corridors','tourism','all','gauge','tent','transit'];
 
   const corridors=[
     {id:'sur',name:'Sur',color:'#8A5A00'},

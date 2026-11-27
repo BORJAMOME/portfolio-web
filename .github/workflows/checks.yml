@@ -52,6 +52,7 @@ jobs:
           node tools/visor/anotar-taxonomia.mjs --check
           node tools/visor/build-cercanias.mjs --check
           node tools/check-taxonomia.mjs --strict
+          node tools/visor/versionar.mjs --check
       - name: Histórico de incidencias (deduplicación y cambio de año)
         if: ${{ !cancelled() }}
         run: node --test tools/incidencias.test.mjs

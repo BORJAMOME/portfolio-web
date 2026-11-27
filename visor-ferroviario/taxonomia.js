@@ -33,19 +33,19 @@
 
   // reg = régimen por defecto; osp_relaciones lo sobrescribe por relación.
   const marca = [
-    {id: 'ave', name: 'AVE', fam: 'av', op: 'renfe', reg: 'comercial'},
-    {id: 'ave-euromed', name: 'AVE Euromed', fam: 'av', op: 'renfe', reg: 'comercial', alias: ['Euromed'],
+    {id: 'ave', name: 'AVE', fam: 'av', op: 'renfe', reg: 'comercial', color: '#4B1F6F', width: 3.2},
+    {id: 'ave-euromed', name: 'AVE Euromed', fam: 'av', op: 'renfe', reg: 'comercial', color: '#0072B2', width: 2.8, alias: ['Euromed'],
      nota: 'Nombre provisional hasta el fin de las obras del corredor (2027)'},
-    {id: 'avlo', name: 'Avlo', fam: 'av', op: 'renfe', reg: 'comercial'},
-    {id: 'avant', name: 'Avant', fam: 'av', op: 'renfe', reg: 'osp-age', alias: ['Avant Exprés', 'AVANT EXP']},
-    {id: 'ouigo', name: 'OUIGO', fam: 'av', op: 'ouigo', reg: 'comercial'},
-    {id: 'iryo', name: 'iryo', fam: 'av', op: 'iryo', reg: 'comercial'},
-    {id: 'intercity', name: 'Intercity', fam: 'ld-md', op: 'renfe', reg: 'comercial', alias: ['Alvia']},
-    {id: 'regional', name: 'Regional', fam: 'ld-md', op: 'renfe', reg: 'osp-age',
+    {id: 'avlo', name: 'Avlo', fam: 'av', op: 'renfe', reg: 'comercial', color: '#A13CB0', width: 3.2},
+    {id: 'avant', name: 'Avant', fam: 'av', op: 'renfe', reg: 'osp-age', color: '#1E7F4C', width: 3.2, dash: true, alias: ['Avant Exprés', 'AVANT EXP']},
+    {id: 'ouigo', name: 'OUIGO', fam: 'av', op: 'ouigo', reg: 'comercial', color: '#007C91', width: 3.2},
+    {id: 'iryo', name: 'iryo', fam: 'av', op: 'iryo', reg: 'comercial', color: '#C8102E', width: 3.2},
+    {id: 'intercity', name: 'Intercity', fam: 'ld-md', op: 'renfe', reg: 'comercial', color: '#8A5A00', width: 2.4, alias: ['Alvia']},
+    {id: 'regional', name: 'Regional', fam: 'ld-md', op: 'renfe', reg: 'osp-age', color: '#1D2638', width: 2.2,
      alias: ['Media Distancia', 'Regional Exprés', 'Proximidad']},
-    {id: 'cercanias', name: 'Cercanías', fam: 'metro', op: 'renfe', reg: 'osp-age', alias: ['Rodalies']},
-    {id: 'lujo', name: 'Trenes turísticos de lujo', fam: 'turismo', op: 'renfe', reg: 'comercial'},
-    {id: 'tematico', name: 'Trenes temáticos', fam: 'turismo', reg: 'comercial'}
+    {id: 'cercanias', name: 'Cercanías', fam: 'metro', op: 'renfe', reg: 'osp-age', color: '#7A2E86', width: 2.4, alias: ['Rodalies']},
+    {id: 'lujo', name: 'Trenes turísticos de lujo', fam: 'turismo', op: 'renfe', reg: 'comercial', color: '#B8860B', width: 3},
+    {id: 'tematico', name: 'Trenes temáticos', fam: 'turismo', reg: 'comercial', color: '#6B7280', width: 3}
   ];
 
   const regimen = [

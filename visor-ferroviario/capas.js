@@ -4,16 +4,26 @@
    categoría, aunque lo usen cien variantes, así que las capas no multiplican la misma ruta. */
 (function(root){
   'use strict';
-  const CFG=root.AtlasConfig;
+  const CFG=root.AtlasConfig,TX=root.AtlasTaxonomia;
+  /* Tema «Servicios» (fase 5 del plan de filtros): grupos del diccionario único sobre el bloque tx de cada relación.
+     null = todos los valores marcados. Cercanías (todos los núcleos) sale de capas/cercanias.json, que se carga al marcarla. */
+  const DIMS=[
+    {id:'fam',title:'Familia',list:()=>TX.familia.filter(f=>f.id!=='turismo')},
+    {id:'marca',title:'Marca',list:()=>TX.marca.filter(m=>m.fam!=='turismo')},
+    {id:'op',title:'Operador',list:()=>TX.operador},
+    {id:'reg',title:'Régimen',list:()=>TX.regimen},
+    {id:'amb',title:'Ámbito',list:()=>TX.ambito},
+    {id:'ejes',title:'Rutas que pasan por el eje',list:()=>TX.ejeLectura,multi:true,note:'Una ruta puede pasar por varios ejes: estas cifras no se suman.'}];
+  const DEFAULT_MARCAS=()=>DIMS[1].list().map(m=>m.id).filter(id=>id!=='cercanias');
   const number=new Intl.NumberFormat('es-ES');
   const CUTOFF='2026-11-16', FUTURE_FROM='2026-12-17';
   const $=s=>document.querySelector(s);
   let map,dataset,showInfo,onChange,legacy;
   const data={};
-  const state={theme:'corridors',
+  const state={theme:'servicios',f:{fam:null,marca:DEFAULT_MARCAS(),op:null,reg:null,amb:null,ejes:null},nuc:null,
     keys:{corridors:CFG.corridors.map(c=>c.id),brands:CFG.brands.map(b=>b.id),services:['highspeed','avant','md-conventional','euromed'],tourism:CFG.tourism.map(t=>t.id)},
     statuses:['service','construction','project'],dim:'perf',width:'tracks',variant:null,station:null,experience:null,corridor:null};
-  const files={corridors:'capas/corredores.geojson',brands:'capas/servicios.json',services:'capas/servicios.json',tourism:'capas/turismo.json'};
+  const files={servicios:'capas/servicios.json',cercanias:'capas/cercanias.json',corridors:'capas/corredores.geojson',brands:'capas/servicios.json',services:'capas/servicios.json',tourism:'capas/turismo.json'};
   const cache={};
   function load(theme){
     const file=files[theme];if(!file)return Promise.resolve(null);
@@ -36,13 +46,31 @@
     return 'current';
   }
   const services=()=>data.services;
+  function txMatch(tx,except){
+    if(!tx)return false;
+    for(const d of DIMS){if(d.id===except)continue;const sel=d.id==='marca'?(state.f.marca??null):state.f[d.id];if(!sel)continue;
+      if(d.multi?!(tx.ejes||[]).some(e=>sel.includes(e)):!sel.includes(tx[d.id]))return false;}
+    if(except!=='nuc'&&tx.marca==='cercanias'&&state.nuc&&!state.nuc.includes(tx.nuc))return false;
+    return true;
+  }
+  const marcasOn=()=>state.f.marca||DIMS[1].list().map(m=>m.id);
+  const cercaniasOn=()=>marcasOn().includes('cercanias');
+  // Relaciones del tema Servicios: variantes vigentes de servicios.json (sin las Cercanías métricas, que vienen en
+  // cercanias.json con las demás) y, si Cercanías está marcada y cargada, una fila por línea.
+  function servItems(except){
+    const out=[],s=services();
+    if(s)for(const v of s.variants)if(v.source!=='renfe-commuter'&&variantStatus(v)==='current'&&txMatch(v.tx,except))out.push({rel:v.relation,tx:v.tx,v});
+    if(data.cercanias)for(const l of data.cercanias.lineas)if(l.sem>0&&txMatch(l.tx,except))out.push({rel:l.id,tx:l.tx,l});
+    return out;
+  }
   function activeVariants(theme=state.theme){
     const s=services();if(!s)return [];
+    if(theme==='servicios')return servItems().filter(x=>x.v).map(x=>x.v);
     const keys=state.keys[theme];
     return s.variants.filter(v=>variantStatus(v)==='current'&&(theme==='brands'?keys.includes(v.brand):v.categories.some(c=>keys.includes(c))));
   }
-  function variantKey(v,theme){return theme==='brands'?v.brand:v.categories.find(c=>state.keys.services.includes(c))||v.categories[0];}
-  const styleOf=(theme,key)=>(theme==='brands'?CFG.brands:theme==='services'?CFG.services:theme==='tourism'?CFG.tourism:CFG.corridors).find(x=>x.id===key);
+  function variantKey(v,theme){if(theme==='servicios')return v.tx?.marca;return theme==='brands'?v.brand:v.categories.find(c=>state.keys.services.includes(c))||v.categories[0];}
+  const styleOf=(theme,key)=>theme==='servicios'?TX.marca.find(m=>m.id===key):(theme==='brands'?CFG.brands:theme==='services'?CFG.services:theme==='tourism'?CFG.tourism:CFG.corridors).find(x=>x.id===key);
 
   /* ── capas MapLibre ───────────────────────────────────── */
   function ensureLayers(){
@@ -99,8 +127,8 @@
         features.push({type:'Feature',geometry:f.geometry,properties:{sid:p.id,key:p.corridor,color:st.color,w:st.double?4.2:3.2,off:0,
           dash:p.status==='service'?0:p.status==='construction'?1:2,core:st.double?1:0}});
       }
-    } else if((theme==='brands'||theme==='services')&&services()){
-      const order=theme==='brands'?CFG.brands.map(b=>b.id):CFG.services.map(s=>s.id);
+    } else if((theme==='brands'||theme==='services'||theme==='servicios')&&services()){
+      const order=theme==='servicios'?TX.marca.map(m=>m.id):theme==='brands'?CFG.brands.map(b=>b.id):CFG.services.map(s=>s.id);
       const byEdge=new Map();
       for(const v of activeVariants()){
         const key=variantKey(v,theme);
@@ -111,6 +139,11 @@
       for(const [fid,keys] of byEdge)for(const key of keys){
         const st=styleOf(theme,key);
         features.push(edgeFeature(fid,{key,color:st.color,w:st.width||2.6,off:offsets.get(fid+'|'+key)||0,dash:st.dash?1:0,core:0}));
+      }
+      // Cercanías de todos los núcleos (cercanias.json): una línea por dibujo del GTFS, con el color de la línea.
+      if(theme==='servicios'&&data.cercanias&&cercaniasOn()){
+        for(const x of servItems())if(x.l)for(const g of x.l.geom){const c=data.cercanias.geometries[g];if(c)
+          features.push({type:'Feature',geometry:{type:'LineString',coordinates:c},properties:{cid:x.l.id,key:'cercanias',color:x.l.color||TX.get('marca','cercanias').color,w:2.4,off:0,dash:0,core:0}});}
       }
       // Cercanías métricas con forma GTFS propia
       if(theme==='services'&&state.keys.services.includes('commuter-metric')){
@@ -132,7 +165,7 @@
     map.getSource('cx-border').setData({type:'FeatureCollection',features:borders()});
     lastLines=features;
     map.getSource('cx-lines').setData({type:'FeatureCollection',features});
-    map.setLayerZoomRange('cx-stops',theme==='services'?6.5:0,24);map.setLayerZoomRange('cx-stop-labels',theme==='services'?9:7,24);
+    map.setLayerZoomRange('cx-stops',theme==='services'||theme==='servicios'?6.5:0,24);map.setLayerZoomRange('cx-stop-labels',theme==='services'||theme==='servicios'?9:7,24);
     map.getSource('cx-stops').setData({type:'FeatureCollection',features:[...stops.values()].map(s=>({type:'Feature',geometry:{type:'Point',coordinates:s.coordinates},
       properties:{sid:s.sid,label:s.name,color:s.keys.size>1?'#1d2638':s.color,rank:s.rank||s.keys.size,sel:s.sid===state.station?1:0}}))});
     renderHighlight();
@@ -140,7 +173,7 @@
   }
   // Continuidad internacional acreditada por el horario: rótulo en la frontera, sin dibujar fuera del ámbito.
   function borders(){
-    if(!['brands','services'].includes(state.theme)||!services())return [];
+    if(!['brands','services','servicios'].includes(state.theme)||!services())return [];
     const fr=new Set(),pt=new Set();
     for(const v of activeVariants())for(const name of v.international||[]){const st=Object.values(services().stations).find(s=>s.name===name);if(!st)continue;(st.coordinates[0]<-6?pt:fr).add(name);}
     const out=[];
@@ -368,6 +401,10 @@
     const lines=map.queryRenderedFeatures(box,{layers:['cx-hit']});
     if(!lines.length)return;
     const p=lines[0].properties;
+    if(p.cid&&data.cercanias){const l=data.cercanias.lineas.find(x=>x.id===p.cid);if(l){
+      showInfo('Cercanías · '+(TX.get('nucleo',l.nuc)?.name||l.nucleo||''),l.lin+(l.nombre?' · '+l.nombre:''),{'Trenes en un día laborable':number.format(l.lab||0),'Trenes en la semana':number.format(l.sem||0),
+        'Longitud':l.km?number.format(l.km)+' km':'—','Ancho':l.ancho==='1000'?'Métrico':l.ancho==='1668'?'Ibérico':'—','Régimen':TX.get('regimen',l.tx?.reg)?.name||'—',
+        'Fuente':'GTFS oficial de Renfe Cercanías (fomento_transit.zip), semana del '+fmtDate(data.cercanias.meta.semana)});return;}}
     if(state.theme==='corridors'){corridorInfo(data.corridors.features.find(f=>f.properties.id===p.sid).properties);return;}
     if(state.theme==='tourism'){const list=data.tourism.experiences.filter(x=>x.status==='current'&&x.edges.includes(p.fid)&&state.keys.tourism.includes(x.group));
       if(list.length===1)experienceInfo(list[0]);else showInfo('Vía de trenes turísticos','Experiencias por este tramo',{'Experiencias':list.map(x=>x.name).join('\n')},{actionsLabel:'Experiencias'},list.map(x=>({label:x.name,action:()=>experienceInfo(x)})));return;}
@@ -405,6 +442,27 @@
     }
     return fs;
   }
+  function serviciosPanel(panel){
+    const fmt=n=>number.format(n)+(n===1?' ruta':' rutas');
+    for(const d of DIMS){
+      const list=d.list(),items=servItems(d.id),counts={};
+      for(const it of list){const rels=new Set(items.filter(x=>d.multi?(x.tx.ejes||[]).includes(it.id):x.tx[d.id]===it.id).map(x=>x.rel));counts[it.id]=fmt(rels.size);}
+      if(!data.cercanias){if(d.id==='marca')counts.cercanias='se carga al marcarla';if(d.id==='fam')counts.metro='al marcar Cercanías';}
+      const shown=list.map(it=>({id:it.id,name:it.name,color:d.id==='marca'?it.color:'transparent',dash:it.dash}));
+      const sel=d.id==='marca'?marcasOn():state.f[d.id]||list.map(x=>x.id);
+      const fs=checkboxGroup(d.title,shown,sel,counts,v=>{state.f[d.id]=v.length===list.length?null:v;refresh();});
+      if(d.note)fs.append(note(d.note));
+      panel.append(fs);
+    }
+    if(cercaniasOn()&&data.cercanias){
+      const list=TX.nucleo,items=servItems('nuc').filter(x=>x.l),counts={};
+      for(const n of list)counts[n.id]=number.format(items.filter(x=>x.tx.nuc===n.id).length)+' líneas';
+      panel.append(checkboxGroup('Núcleo de Cercanías',list.map(n=>({id:n.id,name:n.name,color:'transparent'})),state.nuc||list.map(n=>n.id),counts,v=>{state.nuc=v.length===list.length?null:v;refresh();}));
+    }
+    const total=new Set(servItems().map(x=>x.rel)).size;
+    panel.append(note(total?'Rutas vigentes con esta selección: '+number.format(total)+'. Corte de los horarios: '+fmtDate(services().meta.cutoff)+'.':'Ninguna ruta vigente con esta selección.','muted status-line'));
+    if(marcasOn().includes('iryo'))panel.append(note('iryo: horario de un GTFS comunitario, sin trazado verificado. '+(services().meta.iryo_note||'')));
+  }
   function note(text,cls='muted'){const p=document.createElement('p');p.className=cls;p.textContent=text;return p;}
   function renderPanel(){
     const panel=$('#theme-panel');panel.replaceChildren();
@@ -436,6 +494,7 @@
       return;
     }
     if(!services()){panel.append(note('Cargando horarios…'));return;}
+    if(theme==='servicios'){serviciosPanel(panel);return;}
     const s=services(),items=theme==='brands'?CFG.brands:CFG.services;
     const counts={};
     for(const item of items){
@@ -467,6 +526,7 @@
     const t=state.theme;
     if(t==='corridors')return [...CFG.corridors.filter(c=>state.keys.corridors.includes(c.id)).map(c=>({name:(c.group?'Levante y litoral · ':'')+c.name,color:c.color,double:c.double})),
       ...state.statuses.map(s=>({name:CFG.status[s].name,color:'#586278',dash:s!=='service',pattern:s}))];
+    if(t==='servicios'){const present=new Set(servItems().map(x=>x.tx.marca));return TX.marca.filter(m=>present.has(m.id)).map(m=>({name:m.name,color:m.color,dash:!!m.dash}));}
     if(t==='brands')return CFG.brands.filter(b=>state.keys.brands.includes(b.id)).map(b=>({name:b.name+(b.id==='iryo'?' (sin trazado verificado)':''),color:b.color}));
     if(t==='services')return CFG.services.filter(s=>state.keys.services.includes(s.id)).map(s=>({name:s.name,color:s.color,dash:!!s.dash}));
     if(t==='all')return [...dimension().items.filter(x=>classKm()[x.id+'_n']).map(x=>({name:x.name,color:x.color})),{name:'Vía doble (trazo grueso; dos trazos al acercar)',color:'#586278',thick:true},{name:'Electrificada (marcas al acercar)',color:'#586278',ticks:true}];
@@ -482,7 +542,7 @@
       sw.style.setProperty('--c',item.color);
       const name=item.pattern?{service:'En servicio',construction:'En obras',project:'En proyecto'}[item.pattern]||item.name:item.name.replace(/^Levante y litoral · /,'');
       li.append(sw,document.createTextNode(name));if(name!==item.name)li.title=item.name;(item.pattern||item.thick||item.ticks?row:ul).append(li);}
-    if(['brands','services','tourism'].includes(state.theme)){const li=document.createElement('li'),sw=document.createElement('i');sw.className='stop-key';li.append(sw,document.createTextNode('Parada comercial'));li.title='Parada comercial acreditada';row.append(li);}
+    if(['brands','services','servicios','tourism'].includes(state.theme)){const li=document.createElement('li'),sw=document.createElement('i');sw.className='stop-key';li.append(sw,document.createTextNode('Parada comercial'));li.title='Parada comercial acreditada';row.append(li);}
     if(state.variant||state.experience){for(const [name,cls,full] of [['Elegido · alta velocidad','','Recorrido elegido por vía de alta velocidad'],['Elegido · convencional',' dashed','Recorrido elegido por vía convencional']]){const li=document.createElement('li'),sw=document.createElement('i');sw.className='swatch'+cls;sw.style.setProperty('--c','#1d2638');li.title=full;li.append(sw,document.createTextNode(name));row.append(li);}}
     container.append(ul);if(row.childElementCount)container.append(row);return true;
   }
@@ -630,13 +690,16 @@
     if(['tent','transit'].includes(id))await legacy?.change(id==='tent'?'corridors':'transit',{silent});else await legacy?.change('gauge',{silent:true});
     if(state.theme!==id)return;
     renderPanel();
-    try{if(files[id])data[id==='brands'?'services':id]=await load(id);}catch(e){$('#theme-panel').replaceChildren(note(e.message+' Reintenta más tarde.','notice-text'));}
+    try{if(files[id])data[id==='brands'||id==='servicios'?'services':id]=await load(id);}catch(e){$('#theme-panel').replaceChildren(note(e.message+' Reintenta más tarde.','notice-text'));}
     if(state.theme!==id)return;
     refresh(silent);
   }
   function refresh(silent){
     if(!map.getSource('cx-lines'))return;
-    if(['corridors','brands','services','tourism'].includes(state.theme))buildLines();
+    if(state.theme==='servicios'&&cercaniasOn()&&!data.cercanias){
+      load('cercanias').then(c=>{data.cercanias=c;if(state.theme==='servicios')refresh(true);}).catch(()=>{$('#theme-panel').prepend(note('No se han podido cargar las Cercanías. Reintenta más tarde.','notice-text'));});
+    }
+    if(['corridors','brands','services','servicios','tourism'].includes(state.theme))buildLines();
     else{lastLines=[];map.getSource('cx-lines').setData({type:'FeatureCollection',features:[]});map.getSource('cx-stops').setData({type:'FeatureCollection',features:[]});renderHighlight();}
     renderPanel();if(!silent)onChange?.();
   }
@@ -646,10 +709,25 @@
     for(const b of document.querySelectorAll('[data-rail-width]'))b.onclick=()=>setWidth(b.dataset.railWidth);
   }
   function getState(){
-    return {t:state.theme,ls:['tent','transit'].includes(state.theme)?legacy?.state():undefined,k:state.keys[state.theme]&&state.keys[state.theme].join(','),st:state.theme==='corridors'?state.statuses.join(','):undefined,d:state.theme==='all'?state.dim:undefined,w:state.width==='traffic'?'t':undefined,v:state.variant||undefined,x:state.experience||undefined};
+    const f=state.theme==='servicios'?[...DIMS.filter(d=>state.f[d.id]).map(d=>d.id+':'+state.f[d.id].join('.')),...(state.nuc?['nuc:'+state.nuc.join('.')]:[])].join('|')||undefined:undefined;
+    return {t:state.theme,f,ls:['tent','transit'].includes(state.theme)?legacy?.state():undefined,k:state.keys[state.theme]&&state.keys[state.theme].join(','),st:state.theme==='corridors'?state.statuses.join(','):undefined,d:state.theme==='all'?state.dim:undefined,w:state.width==='traffic'?'t':undefined,v:state.variant||undefined,x:state.experience||undefined};
+  }
+  // Enlaces antiguos (FILTROS_ARQUITECTURA.md, sección 5): «Marcas y operadores» y «Servicios» pasan a «Servicios» con la marca.
+  function translateLegacy(s){
+    if(s.t!=='brands'&&s.t!=='services')return s;
+    const keys=typeof s.k==='string'?s.k.split(',').filter(Boolean):null,map=TX.legado[s.t];
+    const marca=keys?[...new Set(keys.flatMap(k=>map[k]||[]))]:null;
+    return {...s,t:'servicios',k:undefined,f:marca?'marca:'+marca.join('.'):undefined};
   }
   async function restore(s){
     if(!s)return setTheme(state.theme);
+    s=translateLegacy(s);
+    if(s.t==='servicios'){
+      for(const d of DIMS)state.f[d.id]=null;state.nuc=null;
+      if(typeof s.f==='string')for(const part of s.f.split('|')){const [k,v]=part.split(':');const vals=(v||'').split('.').filter(Boolean);
+        if(k==='nuc')state.nuc=vals.filter(x=>TX.has('nucleo',x));else{const d=DIMS.find(x=>x.id===k);if(d){const ok=d.list().map(x=>x.id);state.f[k]=vals.filter(x=>ok.includes(x));}}}
+      else state.f.marca=DEFAULT_MARCAS();
+    }
     if(typeof s.k==='string'&&state.keys[s.t]){const allowed=(s.t==='brands'?CFG.brands:s.t==='services'?CFG.services:s.t==='tourism'?CFG.tourism:CFG.corridors).map(x=>x.id);state.keys[s.t]=s.k.split(',').filter(x=>allowed.includes(x));}
     if(typeof s.d==='string'&&CFG.classifications[s.d])state.dim=s.d;
     if(s.w==='t'&&state.width!=='traffic')setWidth('traffic',{silent:true});
@@ -671,7 +749,7 @@
     if(theme==='gauge')return {baseColor:f=>root.AtlasCartography.style(root.AtlasFilters.value(f,'gauge')).color,overlay:[]};
     return {baseColor:()=>'#9aa8bc',overlay:lastLines};
   }
-  function clearSelection(){state.variant=null;state.experience=null;state.corridor=null;state.station=null;if(map.getSource('cx-lines')){renderHighlight();if(['brands','services','tourism'].includes(state.theme))buildLines();}onChange?.();}
+  function clearSelection(){state.variant=null;state.experience=null;state.corridor=null;state.station=null;if(map.getSource('cx-lines')){renderHighlight();if(['brands','services','servicios','tourism'].includes(state.theme))buildLines();}onChange?.();}
   function hasStation(code){const s=services();if(!s||!code)return null;const id='renfe-national:'+code;return s.stations[id]?id:(s.stations['renfe-commuter:'+code]?'renfe-commuter:'+code:null);}
   async function loadServices(){if(!data.services)data.services=await load('services');return data.services;}
   root.AtlasCapas={init,scene3d,hasStation,loadServices,setTheme,legend,legendItems,getState,restore,clearSelection,current:()=>state.theme,railStyle:applyRailStyle,setWidth,trafficOn,trafficLegend,width:()=>state.width,stationInfo,servicesOnEdge,corridorsForLine,
