@@ -2,7 +2,8 @@
 # Los GTFS de Renfe se publican con vigencias cortas (Cercanías, unos 30 días): sin esta tarea, la tabla y Cabina
 # se quedarían sin trenes al caducar.
 #
-# Pasos: descarga (Renfe AV/LD/MD y Cercanías, iryo, estaciones de Renfe y CNMC) → tools/build-rutas.mjs →
+# Pasos: servicios.json y horarios.json (tools/visor/servicios/, Python) → descarga (Renfe AV/LD/MD y Cercanías, iryo,
+# estaciones de Renfe y CNMC) → tools/build-rutas.mjs →
 # tools/visor/anotar-taxonomia.mjs (bloque tx con el diccionario único) → tools/visor/build-cercanias.mjs →
 # tools/build-cnmc.mjs → tools/build-cabina-mercado.mjs (INE, Eurostat y mercancías; si falla, se conserva el
 # mercado.json anterior y sigue) → tools/build-cabina.mjs → control de cordura (tools/rutas/sanity.mjs: no publica si una
@@ -36,6 +37,27 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      # Servicios y horarios del visor con el mismo corte que la tabla de rutas (tools/visor/servicios/README.md).
+      # Van antes de build-rutas, que lee las variantes de servicios.json.
+      - name: Servicios y horarios del visor (servicios.json y horarios.json)
+        run: |
+          set -euo pipefail
+          d=.cache/servicios; mkdir -p "$d"; corte=$(date -u +%F)
+          curl -fsSL --retry 3 -o "$d/avld.zip" https://ssl.renfe.com/gtransit/Fichero_AV_LD/google_transit.zip
+          curl -fsSL --retry 3 -o "$d/cercanias.zip" https://opendata.euskadi.eus/transport/moveuskadi/renfe_cercanias/gtfs_renfe_cercanias.zip
+          cp visor-ferroviario/capas/servicios.json "$d/servicios-anterior.json"
+          cd tools/visor/servicios
+          python preparar_servicios.py --national "../../../$d/avld.zip" --commuter "../../../$d/cercanias.zip" --out "../../../$d/services-catalog.json" --cutoff "$corte"
+          python preparar_capa_servicios.py --catalog "../../../$d/services-catalog.json" --cutoff "$corte"
+          python preparar_horarios.py --national "../../../$d/avld.zip" --commuter "../../../$d/cercanias.zip" --catalog "../../../$d/services-catalog.json"
+          cd ../../..
+          # Cordura: no se publica si las variantes caen más de un 20 % frente a la semana anterior.
+          node -e "const r=f=>JSON.parse(require('fs').readFileSync(f)).variants.length,a=r('$d/servicios-anterior.json'),b=r('visor-ferroviario/capas/servicios.json');console.log('Variantes:',a,'→',b);if(b<a*0.8){console.error('::error::servicios.json pierde más de un 20 % de variantes');process.exit(1)}"
 
       - name: Rutas (descarga los GTFS y genera rutas.json y oferta.json)
         run: node --max-old-space-size=6144 tools/build-rutas.mjs --download
@@ -79,7 +101,8 @@ jobs:
         run: |
           git add visor-ferroviario/capas/rutas.json visor-ferroviario/capas/rutas-actividad.json visor-ferroviario/capas/oferta.json visor-ferroviario/capas/cnmc.json \
                   visor-ferroviario/capas/mercado.json visor-ferroviario/capas/estaciones-oferta.json visor-ferroviario/capas/trafico-tramos.json \
-                  visor-ferroviario/capas/cabina.json visor-ferroviario/cabina.html visor-ferroviario/capas/cercanias.json
+                  visor-ferroviario/capas/cabina.json visor-ferroviario/cabina.html visor-ferroviario/capas/cercanias.json \
+                  visor-ferroviario/capas/servicios.json visor-ferroviario/capas/horarios.json
           if git diff --cached --quiet; then
             echo "Sin cambios en los datos: no se confirma nada." | tee -a "$GITHUB_STEP_SUMMARY"
             exit 0

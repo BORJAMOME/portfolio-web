@@ -37,3 +37,4 @@ tools/second-brain/fixtures/demo/.state/
 
 # Descargas de tools/build-rutas.mjs (GTFS de Renfe, iryo…)
 /.cache/
+__pycache__/
