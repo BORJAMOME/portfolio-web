@@ -407,12 +407,20 @@
   /* ── panel ────────────────────────────────────────────── */
   function themeList(){
     const box=$('#theme-list');box.replaceChildren();
-    for(const id of CFG.themeOrder){
-      const t=CFG.themes[id],label=document.createElement('label'),input=document.createElement('input'),text=document.createElement('span'),hint=document.createElement('small');
-      label.className='theme-option';input.type='radio';input.name='theme';input.value=id;input.checked=state.theme===id;
-      input.onchange=()=>setTheme(id);
-      text.textContent=t.name;hint.textContent=t.hint;text.append(hint);label.append(input,text);box.append(label);
-    }
+    CFG.themeGroups.forEach((g,gi)=>{
+      let parent=box;
+      if(g.name){
+        parent=document.createElement('div');parent.className='theme-group';parent.setAttribute('role','group');
+        const h=document.createElement('p');h.className='theme-group-name';h.id='theme-group-'+gi;h.textContent=g.name;
+        parent.setAttribute('aria-labelledby',h.id);parent.append(h);box.append(parent);
+      }
+      for(const id of g.ids){
+        const t=CFG.themes[id],label=document.createElement('label'),input=document.createElement('input'),text=document.createElement('span'),hint=document.createElement('small');
+        label.className='theme-option';input.type='radio';input.name='theme';input.value=id;input.checked=state.theme===id;
+        input.onchange=()=>setTheme(id);
+        text.textContent=t.name;hint.textContent=t.hint;text.append(hint);label.append(input,text);parent.append(label);
+      }
+    });
   }
   function checkboxGroup(title,items,selected,counts,onToggle){
     const fs=document.createElement('fieldset'),lg=document.createElement('legend');lg.textContent=title;fs.append(lg);
@@ -675,7 +683,15 @@
     return {t:state.theme,f,ls:['tent','transit'].includes(state.theme)?legacy?.state():undefined,k:state.keys[state.theme]&&state.keys[state.theme].join(','),st:state.theme==='corridors'?state.statuses.join(','):undefined,d:state.theme==='all'?state.dim:undefined,w:state.width==='traffic'?'t':undefined,v:state.variant||undefined,x:state.experience||undefined};
   }
   // Enlaces antiguos (FILTROS_ARQUITECTURA.md, sección 5): «Marcas y operadores» y «Servicios» pasan a «Servicios» con la marca.
+  // «Cercanías y redes urbanas» con líneas de Renfe (renfe-<gtfs>-<línea>) pasa a «Servicios» con Cercanías y esos núcleos.
   function translateLegacy(s){
+    if(s.t==='transit'){
+      const ls=Array.isArray(s.ls)?s.ls:[],renfe=ls.filter(x=>/^renfe-\d+-/.test(x));
+      if(!renfe.length)return s;
+      if(renfe.length<ls.length)return {...s,ls:ls.filter(x=>!renfe.includes(x))};
+      const nuc=[...new Set(renfe.map(x=>TX.nucleo.find(n=>n.gtfs===x.split('-')[1])?.id).filter(Boolean))];
+      return {t:'servicios',f:'marca:cercanias'+(nuc.length?'|nuc:'+nuc.join('.'):''),w:s.w};
+    }
     if(s.t!=='brands'&&s.t!=='services')return s;
     const keys=typeof s.k==='string'?s.k.split(',').filter(Boolean):null,map=TX.legado[s.t];
     const marca=keys?[...new Set(keys.flatMap(k=>map[k]||[]))]:null;
