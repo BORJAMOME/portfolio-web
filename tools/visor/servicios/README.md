@@ -17,7 +17,13 @@ python preparar_fuentes_ouigo.py fuentes
 # 3. Catálogo + fuentes curadas + red IGN -> capa del visor
 python preparar_capa_servicios.py --catalog <tmp>/services-catalog.json --cutoff AAAA-MM-DD \
   [--out ../../../visor-ferroviario/capas/servicios.json]
+
+# 4. Mismos GTFS + catálogo + servicios.json -> horas de paso del buscador de rutas
+python preparar_horarios.py --national <google_transit.zip> --commuter <gtfs_renfe_cercanias.zip> \
+  --catalog <tmp>/services-catalog.json [--out ../../../visor-ferroviario/capas/horarios.json]
 ```
+
+La tarea semanal (`.github/workflows/rutas-semanal.yml`) ejecuta los pasos 1, 3 y 4 cada lunes con la fecha del día como corte, antes de `tools/build-rutas.mjs`. Así el mapa (servicios.json), el buscador (horarios.json) y la tabla (rutas.json) usan los mismos horarios.
 
 - `--cutoff` vale `2026-11-16` por defecto, que es el corte de la capa publicada. Use la misma fecha en los pasos 1 y 3.
 - `--out` del paso 3 escribe por defecto en `visor-ferroviario/capas/servicios.json`. Para probar, apúntelo a una carpeta temporal.
@@ -43,4 +49,4 @@ Fuentes de los GTFS (URL en `SOURCES`, dentro de `preparar_servicios.py`):
 
 ## Procedencia
 
-Copiado de `manual-ferrocarriles/mapa/` (commit `5ca0ec3`, 25-11-2026). Solo se han cambiado las rutas, los argumentos `--out`, `--catalog` y `--cutoff`, y la red, que ahora es la versión reducida de `fuentes/`. Con `renfe-avld-2026-11-16.zip` y `renfe-cercanias-2026-11-17.zip`, la cadena reproduce byte a byte el `servicios.json` publicado.
+Copiado de `manual-ferrocarriles/mapa/` (commit `5ca0ec3`, 25-11-2026; `preparar_horarios.py`, 27-11-2026). Solo se han cambiado las rutas, los argumentos `--out`, `--catalog` y `--cutoff`, y la red, que ahora es la versión reducida de `fuentes/`. Con `renfe-avld-2026-11-16.zip` y `renfe-cercanias-2026-11-17.zip`, la cadena reproduce byte a byte el `servicios.json` publicado.
