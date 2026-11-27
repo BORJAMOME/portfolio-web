@@ -62,7 +62,7 @@ function activeChips(){
   const chips=[],CAP=window.AtlasCapas,state=CAP?.getState?.()||{};
   const theme=state.t,themeName=CFG.themes[theme]?.name;
   if(themeName)chips.push({label:themeName,kind:"theme",title:"Tema de las vías",open:()=>document.querySelector('#rail [data-cat="vias"]')?.click()});
-  const lists={corridors:CFG.corridors,brands:CFG.brands,services:CFG.services,tourism:CFG.tourism};
+  const lists={corridors:CFG.corridors,tourism:CFG.tourism};
   if(lists[theme]&&typeof state.k==="string"){
     const all=lists[theme].map(x=>x.id),keys=state.k?state.k.split(","):[];
     if(keys.length<all.length)chips.push({label:(keys.length?lists[theme].filter(x=>keys.includes(x.id)).map(x=>x.name.split(" · ")[0]).join(", "):"Ninguno seleccionado"),

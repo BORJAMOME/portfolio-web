@@ -102,7 +102,7 @@
         if(!runs(D,cal,k))continue;
         const t=at(D.h.patterns[p],t0,i,n),to=new Set();
         if(t.dep!==null&&!v.calls[i].p)for(let j=i+1;j<n;j++){if(v.calls[j].d)continue;const name=D.S.stations[v.calls[j].s]?.name;if(name&&D.gid(v.calls[j].s)!==g)to.add(name);}
-        const op=v.brand==='ouigo'?'OUIGO':v.operator==='Renfe Viajeros'?'Renfe':v.operator;
+        const op=v.tx?.op==='ouigo'?'OUIGO':v.operator==='Renfe Viajeros'?'Renfe':v.operator;
         // Rumbo hacia la parada anterior (llegada) y la siguiente (salida): dos OUIGO de sentido contrario pueden coincidir
         // aquí a la misma hora (Albacete, 18:45/18:48) y no son el mismo tren. Misma regla que tools/build-rutas.mjs.
         const xy=c=>D.S.stations[c?.s]?.coordinates,here=xy(v.calls[i]);
